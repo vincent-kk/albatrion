@@ -25,8 +25,8 @@ const config: StorybookConfig = {
     return mergeConfig(config, {
       resolve: {
         alias: {
-          '@schema-form': resolve(__dirname, '../src'),
-          '@common': resolve(__dirname, '../../common/src'),
+          '@lumy/schema-form': resolve(__dirname, '../src'),
+          '@lumy/common': resolve(__dirname, '../../common/src'),
         },
       },
     });

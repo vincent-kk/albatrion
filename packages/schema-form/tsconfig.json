@@ -3,16 +3,16 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@schema-form": [
+      "@lumy/schema-form": [
         "./src"
       ],
-      "@schema-form/*": [
+      "@lumy/schema-form/*": [
         "./src/*"
       ],
-      "@common": [
+      "@lumy/common": [
         "../common/src"
       ],
-      "@common/*": [
+      "@lumy/common/*": [
         "../common/src/*"
       ],
     },
@@ -42,6 +42,8 @@
     "src",
     "**/*.tsx?",
     "../../packages/common",
+    "../../packages/common/*",
+    "function.d.ts",
   ],
   "exclude": [
     "node_modules",

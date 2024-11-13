@@ -3,10 +3,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@common": [
+      "@lumy/common": [
         "./src"
       ],
-      "@common/*": [
+      "@lumy/common/*": [
         "./src/*"
       ],
     },
