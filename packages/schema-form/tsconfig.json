@@ -40,10 +40,10 @@
   },
   "include": [
     "src",
-    "**/*.tsx?",
+    "src/**/*.tsx?",
+    "./**/*.d.ts",
     "../../packages/common",
     "../../packages/common/*",
-    "function.d.ts",
   ],
   "exclude": [
     "node_modules",

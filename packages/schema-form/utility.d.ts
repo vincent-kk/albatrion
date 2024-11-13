@@ -1,10 +1,12 @@
 declare type Nullish<T> = T | null | undefined;
 
-declare type StringTDict<T> = Record<string, T>;
+declare type Dictionary<T = any> = Record<string, T>;
 
-declare type StringStringDict = StringTDict<string>;
+declare type StringDictionary = Dictionary<string>;
 
-declare type SetStateFunction<S> = (value: S | ((prevState: S) => S)) => void;
+declare type SetStateAction<S = unknown> = (
+  value: S | ((prevState: S) => S),
+) => void;
 
 /** T에서 key in K를 추출하고, 이를 Required로 설정 */
 declare type PickRequired<T, K extends keyof T> = Required<Pick<T, K>>;
