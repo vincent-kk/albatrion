@@ -1,4 +1,4 @@
-declare interface Fn<Params extends Array<any>, Return = void> {
+declare interface Fn<Params extends Array<any> = [], Return = void> {
   (...props: Params): Return;
 }
 

@@ -43,10 +43,5 @@
     "ajv": ">=8",
     "react": ">=17",
     "react-dom": ">=17"
-  },
-  "eslintConfig": {
-    "extends": [
-      "plugin:storybook/recommended"
-    ]
   }
 }
