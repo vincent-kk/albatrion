@@ -10,8 +10,8 @@
     "@trivago/prettier-plugin-sort-imports"
   ],
   "importOrder": [
-    "^(?!([../]|[./]|[@lumy-pack])).*",
-    "^@lumy-pack/(.*)$",
+    "^(?!(\\.\\./|\\./)|(\\@lumy-pack)).*",
+    "^(\\@lumy-pack)/(.*)$",
     "^([../])",
     "^([./])"
   ],
