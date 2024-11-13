@@ -1,0 +1,37 @@
+
+# Node modules 폴더
+node_modules/
+
+# 빌드 및 출력 폴더 (예: dist, build)
+dist/
+build/
+
+# 환경 설정 파일
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 캐시 및 로그 파일
+.npm/
+.pnp.*
+.cache/
+yarn.lock
+package-lock.json
+*.log
+
+# TypeScript 빌드 결과물
+*.tsbuildinfo
+
+# IDE 관련 설정
+.vscode/
+.idea/
+.DS_Store
+
+# 테스트 및 리포트 파일
+coverage/
+*.spec.ts
+*.test.ts
+junit.xml
+reports/

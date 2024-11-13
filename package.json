@@ -1,0 +1,15 @@
+{
+  "name": "lumy-pack",
+  "version": "0.0.1",
+  "description": "none",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "schemaForm": "yarn workspace @lumy-pack/schema-form",
+    "common": "yarn workspace @lumy-pack/common"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "packageManager": "yarn@4.5.1"
+}
