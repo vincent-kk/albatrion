@@ -1,0 +1,15 @@
+{
+  "name": "@lumy-pack/common",
+  "version": "1.0.0",
+  "scripts": {
+    "format-types": "prettier --write '../app/src/api/*.interface.ts'",
+    "generate-graphql-types": "ts-node ./scripts/generate-graphql-types.ts",
+    "generate-types": "yarn generate-graphql-types && yarn format-types"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
+  }
+}

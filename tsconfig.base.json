@@ -36,15 +36,11 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "rootDir": "./packages",
-    "paths": {
-      "@schema-form/*": [
-        "@lumy-pack/schema-form/src/*"
-      ],
-      "@common/*": [
-        "@lumy-pack/common/src/*"
-      ]
-    }
   },
+  "include": [
+    "./packages/**/src/**/*.ts",
+    "./packages/**/src/**/*.tsx"
+  ],
   "exclude": [
     "node_modules",
     "packages/**/node_modules",

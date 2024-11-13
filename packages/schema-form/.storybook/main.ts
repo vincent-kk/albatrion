@@ -1,5 +1,6 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 import { dirname, join, resolve } from 'path';
+import { mergeConfig } from 'vite';
 
 /**
  * This function is used to resolve the absolute path of a package.
@@ -19,6 +20,16 @@ const config: StorybookConfig = {
   framework: {
     name: getAbsolutePath('@storybook/react-vite'),
     options: {},
-  }
+  },
+  async viteFinal(config) {
+    return mergeConfig(config, {
+      resolve: {
+        alias: {
+          '@schema-form': resolve(__dirname, '../src'),
+          '@common': resolve(__dirname, '../../common/src'),
+        },
+      },
+    });
+  },
 };
 export default config;

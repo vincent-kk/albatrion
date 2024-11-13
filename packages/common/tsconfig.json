@@ -3,17 +3,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@schema-form": [
+      "@common": [
         "./src"
       ],
-      "@schema-form/*": [
-        "./src/*"
-      ],
-      "@common": [
-        "../common/src"
-      ],
       "@common/*": [
-        "../common/src/*"
+        "./src/*"
       ],
     },
     "target": "ES2020",
@@ -31,7 +25,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
@@ -40,8 +33,7 @@
   },
   "include": [
     "src",
-    "**/*.tsx?",
-    "../../packages/common",
+    "**/*.ts",
   ],
   "exclude": [
     "node_modules",
@@ -53,6 +45,5 @@
     "tests",
     "**.test.tsx?",
     "**.spec.tsx?",
-    "**.stories.tsx",
   ]
 }
