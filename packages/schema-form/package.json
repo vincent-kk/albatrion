@@ -8,7 +8,8 @@
   "dependencies": {
     "ajv": "^8.17.1",
     "date-fns": "^4.1.0",
-    "es-toolkit": "^1.27.0"
+    "es-toolkit": "^1.27.0",
+    "fast-json-patch": "^3.1.1"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.2",
@@ -33,9 +34,9 @@
     "vitest": "^2.1.4"
   },
   "peerDependencies": {
-    "react": ">=17",
-    "react-dom": ">=17",
     "ajv": ">=8",
+    "react": ">=17",
+    "react-dom": ">=17"
   },
   "eslintConfig": {
     "extends": [
