@@ -1,7 +1,6 @@
-import type Ajv from 'ajv';
-
 import { voidFunction } from '@lumy/schema-form/app/constant';
 import type { AllowedValue, ExpectJsonSchema } from '@lumy/schema-form/types';
+import type Ajv from 'ajv';
 
 import {
   ArrayNode,
@@ -12,22 +11,22 @@ import {
   VirtualNode,
 } from './schemaNodes';
 
-function nodeFactory({
+export function nodeFactory({
   key,
   name,
-  schema,
+  jsonSchema,
   defaultValue,
   parentNode,
   onChange,
   refNodes,
   ajv,
 }: any) {
-  switch (schema.type) {
+  switch (jsonSchema.type) {
     case 'array':
       return new ArrayNode({
         key,
         name,
-        schema,
+        jsonSchema,
         defaultValue,
         parentNode,
         onChange,
@@ -38,7 +37,7 @@ function nodeFactory({
       return new NumberNode({
         key,
         name,
-        schema,
+        jsonSchema,
         defaultValue,
         parentNode,
         onChange,
@@ -48,7 +47,7 @@ function nodeFactory({
       return new ObjectNode({
         key,
         name,
-        schema,
+        jsonSchema,
         defaultValue,
         parentNode,
         onChange,
@@ -59,7 +58,7 @@ function nodeFactory({
       return new StringNode({
         key,
         name,
-        schema,
+        jsonSchema,
         defaultValue,
         parentNode,
         onChange,
@@ -69,7 +68,7 @@ function nodeFactory({
       return new VirtualNode({
         key,
         name,
-        schema,
+        jsonSchema,
         defaultValue,
         parentNode,
         onChange,
@@ -80,14 +79,15 @@ function nodeFactory({
       return new BooleanNode({
         key,
         name,
-        schema,
+        jsonSchema,
         defaultValue,
         parentNode,
         onChange,
         ajv,
       });
   }
-  return null;
+
+  throw new Error(`Unknown schema type: ${jsonSchema.type}`);
 }
 
 interface Options<V> {

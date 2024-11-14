@@ -1,177 +1,191 @@
-import type { ArrayValue } from '@lumy/schema-form/types';
+import type { ArraySchema, ArrayValue } from '@lumy/schema-form/types';
 
+import { nodeFactory } from '../../nodeFactory';
+import { parseArray } from '../../parsers';
 import { BaseNode } from '../BaseNode';
 import {
   type ConstructorPropsWithNodeFactory,
   MethodType,
   type SchemaNode,
 } from '../type';
-import parseArray from './parseArray';
 
 type IndexId = `[${number}]`;
 
-export class ArrayNode extends BaseNode {
+export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
   readonly type = 'array';
 
-  public children = () => this._edges().map(({ source }) => source);
-  public getValue = () => this.toArray();
-  public setValue = (value: ArrayValue) => {
-    if (Array.isArray(value)) {
-      this._ready = false;
-      this.clear();
-      value.forEach((e: any) => {
-        this.push(e);
-      });
-      this._ready = true;
-      this._emitChange();
-    }
-  };
-  public parseValue = (value: ArrayValue) => parseArray(value);
+  #mount: boolean = false;
+  #ready: boolean = true;
+  #hasChanged: boolean = false;
 
-  private _seq = 0;
-  private _ids: IndexId[] = [];
-  private _sourceMap: Record<
+  #seq: number = 0;
+  #ids: IndexId[] = [];
+  #sourceMap: Map<
     IndexId,
     {
       data: any;
       node: SchemaNode;
     }
-  > = {};
+  > = new Map();
 
-  private _emitChange: VoidFunction;
-  private _ready: boolean = false;
-  private _nodeFactory: ConstructorPropsWithNodeFactory['nodeFactory'];
+  get value() {
+    return this.toArray();
+  }
+  set value(values: ArrayValue) {
+    if (Array.isArray(values)) {
+      this.#ready = false;
+      this.clear();
+      values.forEach((value) => {
+        this.push(value);
+      });
+      this.#ready = true;
+      this.#emitChange();
+    }
+  }
 
-  hasChanged: boolean = false;
+  #onChange: (value: ArrayValue) => void;
 
-  mount: boolean = false;
+  #emitChange() {
+    if (this.#ready && this.#hasChanged) {
+      const value = this.toArray();
+      this.#onChange(value);
+      this.publish(MethodType.Change, value);
+      this.#hasChanged = false;
+    }
+  }
 
-  onChange: Function;
+  parseValue(value: ArrayValue) {
+    return parseArray(value);
+  }
+
+  /** ArrayNode의 자식 노드들 */
+  get children() {
+    return this.#edges;
+  }
+
+  get #edges() {
+    return this.#ids.map((id) => ({
+      id,
+      node: this.#sourceMap.get(id)!.node,
+    }));
+  }
+
+  get length() {
+    return this.#ids.length;
+  }
+
+  toArray() {
+    return this.#edges.map(({ node }) => node?.value);
+  }
 
   constructor({
     key,
     name,
-    schema,
+    jsonSchema,
     defaultValue,
     onChange,
     parentNode,
     ajv,
-    nodeFactory,
   }: ConstructorPropsWithNodeFactory<ArrayValue>) {
-    super({ key, name, schema, defaultValue, onChange, parentNode, ajv });
+    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
 
-    this._nodeFactory = nodeFactory;
-
-    this._emitChange = () => {
-      if (this._ready) {
-        const value = this.toArray();
-        onChange(value);
-        this.publish(MethodType.Change, value);
-      }
-      return;
-    };
+    this.#onChange = onChange;
 
     if (Array.isArray(defaultValue)) {
-      defaultValue.forEach((e: any) => {
-        this.push(e);
+      defaultValue.forEach((value) => {
+        this.push(value);
       });
+      this.#hasChanged = true;
     }
 
-    while (this.length() < (this.schema.minItems || 0)) {
+    while (this.length < (this.jsonSchema.minItems || 0)) {
       this.push();
     }
 
-    this.mount = true;
+    this.#mount = true;
+    this.#ready = true;
 
-    this.onChange = onChange;
-    this._ready = true;
-    this._emitChange();
+    this.#emitChange();
   }
 
-  public push = (data?: ArrayValue[number]) => {
-    if (this.schema.maxItems && this.schema.maxItems <= this.length()) {
+  push(data?: ArrayValue[number]) {
+    if (this.jsonSchema.maxItems && this.jsonSchema.maxItems <= this.length) {
       return;
     }
 
-    const id: IndexId = `[${this._seq++}]`;
+    const id = `[${this.#seq++}]` satisfies IndexId;
+    const name = `${this.#ids.length}`;
 
-    const name = `${this._ids.length}`;
-
-    this._ids.push(id);
+    this.#ids.push(id);
 
     const handleChange = (value: ArrayValue) => {
       this.update(id, value);
-
-      if (this.mount) {
-        this.onChange(this.toArray());
+      if (this.#mount) {
+        this.#onChange(this.toArray());
       }
     };
 
     const defaultValue =
       data ??
-      this.schema.items?.default ??
-      (this.schema.items?.type === 'object' ? {} : undefined);
+      this.jsonSchema.items?.default ??
+      (this.jsonSchema.items?.type === 'object'
+        ? {}
+        : this.jsonSchema.items.type === 'array'
+          ? []
+          : undefined);
 
-    this._sourceMap[id] = {
-      node: this._nodeFactory({
+    this.#sourceMap.set(id, {
+      node: nodeFactory({
         key: id,
         name,
-        schema: this.schema.items,
+        jsonSchema: this.jsonSchema.items,
         defaultValue,
         parentNode: this,
         onChange: handleChange,
       }),
       data: defaultValue,
-    };
-
-    this.hasChanged = true;
-    this._emitChange();
+    });
+    this.#hasChanged = true;
+    this.#emitChange();
     return this;
-  };
+  }
 
-  public update = (id: IndexId, data: ArrayValue[number]) => {
-    if (id in this._sourceMap) {
-      this._sourceMap[id].data = data;
+  update(id: IndexId, data: ArrayValue[number]) {
+    if (this.#sourceMap.has(id)) {
+      this.#sourceMap.get(id)!.data = data;
     }
-
-    this.hasChanged = true;
+    this.#hasChanged = true;
+    this.#emitChange();
     return this;
-  };
+  }
 
-  private updateChildName = () => {
-    this._ids.forEach((id, i) => {
-      if (this._sourceMap[id]?.node) {
-        const node = this._sourceMap[id].node!;
-        const newName = i.toString();
-        if (node.getName() !== newName) {
-          node.setName(newName, this);
+  remove(id: IndexId | number) {
+    let targetId = typeof id === 'number' ? this.#ids[id] : id;
+    this.#ids = this.#ids.filter((id) => id !== targetId);
+    this.#sourceMap.delete(targetId);
+    this.#updateChildName();
+    this.#hasChanged = true;
+    this.#emitChange();
+    return this;
+  }
+
+  clear() {
+    this.#ids = [];
+    this.#sourceMap.clear();
+    this.#hasChanged = true;
+    this.#emitChange();
+    return this;
+  }
+
+  #updateChildName() {
+    this.#ids.forEach((id, index) => {
+      if (this.#sourceMap.get(id)?.node) {
+        const node = this.#sourceMap.get(id)!.node;
+        const name = index.toString();
+        if (node.name !== name) {
+          node.setName(name, this);
         }
       }
     });
-  };
-
-  public remove = (idOrIndex: IndexId | number) => {
-    let id = typeof idOrIndex === 'number' ? this._ids[idOrIndex] : idOrIndex;
-    this._ids = this._ids.filter((nodeId) => nodeId !== id);
-    delete this._sourceMap[id];
-    this.hasChanged = true;
-    this.updateChildName();
-    this._emitChange();
-    return this;
-  };
-
-  public clear = () => {
-    this._ids = [];
-    this._sourceMap = {};
-    this.hasChanged = true;
-    this._emitChange();
-    return this;
-  };
-
-  private _edges = () =>
-    this._ids.map((id) => ({ id, source: this._sourceMap[id] }));
-
-  public toArray = () => this._edges().map(({ source }) => source?.data);
-
-  public length = () => this._ids.length;
+  }
 }
