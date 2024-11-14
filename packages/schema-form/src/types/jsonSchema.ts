@@ -126,12 +126,10 @@ interface BasicSchema<T> extends CustomOptions {
 }
 
 interface CustomOptions {
-  styles?: {
+  ui?: {
     show?: string | boolean;
   };
   options?: {
-    formType?: string;
-    format?: string;
     lazy?: boolean;
     watch?: string | string[];
     alias?: Record<string, ReactNode>;
