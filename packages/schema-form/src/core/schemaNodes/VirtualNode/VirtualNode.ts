@@ -1,69 +1,71 @@
-// import parseString from './parseString';
 import type { VirtualNodeValue, VirtualSchema } from '@lumy/schema-form/types';
 
+import { parseArray } from '../../parsers';
 import { BaseNode } from '../BaseNode';
-import { type ConstructorProps, MethodType, type SchemaNode } from '../type';
+import { type ConstructorProps, MethodType, SchemaNode } from '../type';
 
-export class VirtualNode extends BaseNode {
-  readonly defaultValue: VirtualNodeValue;
+export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
   readonly type = 'virtual';
 
-  public children = () => this._children;
-  public getValue = () => this._value;
-  public setValue = (value: VirtualNodeValue) => this._emitChange(value);
-  public parseValue = (value: VirtualNodeValue) => value;
+  #value: VirtualNodeValue | undefined = undefined;
+  get value() {
+    return this.#value;
+  }
+  set value(value: VirtualNodeValue | undefined) {
+    this.#emitChange(value);
+  }
+  parseValue(value: VirtualNodeValue) {
+    return parseArray(value);
+  }
 
-  private _children: { node: SchemaNode }[] = [];
-  private _emitChange: (value: VirtualNodeValue) => void;
-  private _value: VirtualNodeValue | undefined;
-  private _refNodes: SchemaNode<'base'>[];
+  #refNodes: SchemaNode[] = [];
+  #children: { node: SchemaNode }[];
+  get children() {
+    return this.#children;
+  }
+
+  #emitChange(values: VirtualNodeValue | undefined) {
+    if (values && values.length === this.#refNodes.length) {
+      values.forEach((value, i) => {
+        const node = this.#refNodes[i];
+        if (node.value !== value) {
+          node.value = value;
+        }
+      });
+    }
+  }
 
   constructor({
     key,
     name,
-    schema,
+    jsonSchema,
     defaultValue,
     onChange,
     parentNode,
     refNodes,
     ajv,
   }: ConstructorProps<VirtualNodeValue, VirtualSchema>) {
-    super({ key, name, schema, defaultValue, onChange, parentNode, ajv });
-    this.defaultValue = defaultValue || [];
-    this._value = this.defaultValue;
-    this._refNodes = refNodes || [];
+    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
 
-    this._refNodes.forEach((node, i) => {
+    this.#refNodes = refNodes || [];
+    this.#children = this.#refNodes.map((node) => ({ node }));
+
+    if (this.defaultValue !== undefined) {
+      this.#value = this.defaultValue;
+    }
+
+    this.#refNodes.forEach((node, i) => {
       node.subscribe((type, payload) => {
-        if (
-          type === MethodType.Change &&
-          this._value &&
-          this._value[i] !== payload
-        ) {
-          this._value = [
-            ...this._value.slice(0, i),
+        if (type !== MethodType.Change) return;
+        if (this.#value && this.#value[i] !== payload) {
+          this.#value = [
+            ...this.#value.slice(0, i),
             payload,
-            ...this._value.slice(i + 1),
+            ...this.#value.slice(i + 1),
           ];
-          this.publish(MethodType.Change, this._value);
+          this.publish(MethodType.Change, this.#value);
         }
       });
     });
-
-    this._children = refNodes?.map((node) => ({ node })) || [];
-
-    this._emitChange = (values) => {
-      if (values.length === this._refNodes.length) {
-        values.forEach((value, i) => {
-          const node = this._refNodes[i];
-          if (
-            node.getValue() !== value &&
-            typeof node.setValue === 'function'
-          ) {
-            node.setValue(value);
-          }
-        });
-      }
-    };
   }
 }
