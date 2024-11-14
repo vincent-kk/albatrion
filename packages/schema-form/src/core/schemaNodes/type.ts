@@ -1,4 +1,5 @@
 import type {
+  AllowedValue,
   ArraySchema,
   BooleanSchema,
   ExpectJsonSchema,
@@ -12,6 +13,7 @@ import type {
 import type { Ajv } from 'ajv';
 
 import type { ArrayNode } from './ArrayNode';
+import { BaseNode } from './BaseNode';
 import type { BooleanNode } from './BooleanNode';
 import type { NumberNode } from './NumberNode';
 import type { ObjectNode } from './ObjectNode';
@@ -41,19 +43,23 @@ export type SchemaNode =
   | BooleanNode
   | VirtualNode;
 
-export type ConstructorProps<V = any, S = unknown> = NodeFactoryProps<
-  S extends JsonSchema ? S : ExpectJsonSchema<V>,
-  V
->;
+export type ConstructorProps<
+  Value extends AllowedValue,
+  Schema extends JsonSchema = ExpectJsonSchema<Value>,
+> = NodeFactoryProps<Schema, Value>;
 
-export interface NodeFactoryProps<S extends JsonSchema = JsonSchema, V = any> {
-  schema: S;
+export interface NodeFactoryProps<
+  Schema extends JsonSchema = JsonSchema,
+  Value extends AllowedValue = any,
+  Node extends BaseNode = BaseNode,
+> {
+  jsonSchema: Schema;
   key?: string;
   name?: string;
-  defaultValue?: V;
-  onChange: (value: V | undefined) => void;
-  parentNode?: SchemaNode;
-  refNodes?: SchemaNode[];
+  defaultValue?: Value;
+  onChange: (value: Value | undefined) => void;
+  parentNode?: Node;
+  refNodes?: BaseNode[];
   ajv?: Ajv;
 }
 
