@@ -33,16 +33,6 @@ export abstract class BaseNode<
   Schema extends JsonSchema = JsonSchema,
   Value extends AllowedValue = any,
 > {
-  private name: string;
-  private path: string;
-  private key?: string;
-  private _errors: JsonSchemaError[] = [];
-  private _errorHash?: number;
-  private _errorDataPaths: string[] = [];
-  private _receivedErrors: JsonSchemaError[] = [];
-  private _receivedErrorHash?: number;
-  private _state: NodeState = {};
-
   readonly defaultValue: Value | undefined;
   readonly depth: number;
   readonly isArrayItem: boolean;
@@ -51,8 +41,16 @@ export abstract class BaseNode<
   readonly parentNode: BaseNode | null;
   readonly jsonSchema: Schema;
 
-  protected _listeners: Listener[] = [];
-  protected _validate?: Function;
+  #name: string;
+  #path: string;
+  #key?: string;
+  #errors: JsonSchemaError[] = [];
+  #errorHash?: number;
+  #errorDataPaths: string[] = [];
+  #receivedErrors: JsonSchemaError[] = [];
+  #receivedErrorHash?: number;
+  #state: NodeState = {};
+  #listeners: Listener[] = [];
 
   abstract type: SchemaNode['type'];
   abstract children: () => { node: SchemaNode }[];
@@ -63,46 +61,46 @@ export abstract class BaseNode<
   setName(name: string, actor: BaseNode) {
     // 부모만 이름을 바꿔줄 수 있음
     if (actor === this.parentNode) {
-      this.name = name;
+      this.#name = name;
       this.updatePath();
     }
   }
 
   updatePath() {
-    const newPath = this.parentNode?.getPath()
-      ? `${this.parentNode.getPath()}${JSONPath.Child}${this.getName()}`
+    const newPath = this.parentNode?.path
+      ? `${this.parentNode.path}${JSONPath.Child}${this.#name}`
       : JSONPath.Root;
-    if (this.path !== newPath) {
-      this.path = newPath;
+    if (this.#path !== newPath) {
+      this.#path = newPath;
       this.publish(MethodType.PathChange, newPath);
     }
   }
 
-  getName() {
-    return this.name;
+  get name() {
+    return this.#name;
   }
-  getPath() {
-    return this.path;
+  get path() {
+    return this.#path;
   }
-  getKey() {
-    return this.key;
+  get key() {
+    return this.#key;
   }
 
   getErrors(): JsonSchemaError[] | null {
-    const errors = [...this._receivedErrors, ...this._errors];
+    const errors = [...this.#receivedErrors, ...this.#errors];
     return errors.length > 0 ? errors : null;
   }
 
   setErrors(errors: JsonSchemaError[]) {
     const errorHash = getErrorsHash(errors);
-    if (this._errorHash === errorHash) return;
+    if (this.#errorHash === errorHash) return;
 
-    this._errorHash = errorHash;
-    this._errors = errors;
+    this.#errorHash = errorHash;
+    this.#errors = errors;
 
     this.publish(
       MethodType.Validate,
-      this.filterErrorsWithSchema([...this._receivedErrors, ...this._errors]),
+      this.filterErrorsWithSchema([...this.#receivedErrors, ...this.#errors]),
     );
   }
 
@@ -113,26 +111,26 @@ export abstract class BaseNode<
   setReceivedErrors(errors: JsonSchemaError[]) {
     // NOTE: 이미 동일한 에러가 있으면 중복 발생 방지
     const errorHash = getErrorsHash(errors);
-    if (this._receivedErrorHash === errorHash) return;
+    if (this.#receivedErrorHash === errorHash) return;
 
-    this._receivedErrorHash = errorHash;
+    this.#receivedErrorHash = errorHash;
     // 하위 노드에서 데이터 입력시 해당 항목을 찾아 삭제하기 위한 key 가 필요.
     // 참고: removeFromReceivedErrors
-    this._receivedErrors = filterErrors(errors).map((error, index) => {
+    this.#receivedErrors = filterErrors(errors).map((error, index) => {
       error.key = index;
       return error;
     });
 
     this.publish(
       MethodType.Validate,
-      this.filterErrorsWithSchema([...this._receivedErrors, ...this._errors]),
+      this.filterErrorsWithSchema([...this.#receivedErrors, ...this.#errors]),
     );
   }
 
   clearReceivedErrors() {
-    if (this._receivedErrors && this._receivedErrors.length > 0) {
+    if (this.#receivedErrors && this.#receivedErrors.length > 0) {
       if (!this.isRoot) {
-        this.rootNode.removeFromReceivedErrors(this._receivedErrors);
+        this.rootNode.removeFromReceivedErrors(this.#receivedErrors);
       }
       this.setReceivedErrors([]);
     }
@@ -142,18 +140,18 @@ export abstract class BaseNode<
     const errorKeysForDelete = new Set(
       errors.map(({ key }) => key).filter((key) => typeof key === 'number'),
     );
-    const nextErrors = this._receivedErrors.filter(
+    const nextErrors = this.#receivedErrors.filter(
       ({ key }) => typeof key === 'number' && errorKeysForDelete.has(key),
     );
-    if (this._receivedErrors.length !== nextErrors.length) {
+    if (this.#receivedErrors.length !== nextErrors.length) {
       this.setReceivedErrors(nextErrors);
     }
   }
 
-  getState = () => this._state;
+  getState = () => this.#state;
 
   setState(state: ((prev: NodeState) => NodeState) | NodeState) {
-    const nextState = typeof state === 'function' ? state(this._state) : state;
+    const nextState = typeof state === 'function' ? state(this.#state) : state;
 
     if (!nextState || typeof nextState !== 'object') return;
 
@@ -164,24 +162,24 @@ export abstract class BaseNode<
     for (const [key, newValue] of Object.entries(nextState)) {
       if (newValue !== undefined) {
         newState[key] = newValue;
-        if (this._state[key] !== newValue) {
+        if (this.#state[key] !== newValue) {
           hasChanges = true;
         }
-      } else if (key in this._state) {
+      } else if (key in this.#state) {
         hasChanges = true;
       }
     }
 
     // NOTE: 기존 state에서 nextState에 없는 키들을 유지
-    for (const [key, value] of Object.entries(this._state)) {
+    for (const [key, value] of Object.entries(this.#state)) {
       if (!(key in nextState)) {
         newState[key] = value;
       }
     }
 
     if (hasChanges) {
-      this._state = newState;
-      this.publish(MethodType.StateChange, this._state);
+      this.#state = newState;
+      this.publish(MethodType.StateChange, this.#state);
     }
   }
 
@@ -190,15 +188,15 @@ export abstract class BaseNode<
   }
 
   subscribe(callback: Listener) {
-    this._listeners.push(callback);
+    this.#listeners.push(callback);
     return () => {
-      this._listeners = this._listeners.filter(
+      this.#listeners = this.#listeners.filter(
         (listener) => listener !== callback,
       );
     };
   }
   publish<T extends MethodType>(type: T, payload: MethodPayload[T]) {
-    this._listeners.forEach((listener) => listener(type, payload));
+    this.#listeners.forEach((listener) => listener(type, payload));
   }
 
   filterErrorsWithSchema(errors: JsonSchemaError[]) {
@@ -233,12 +231,12 @@ export abstract class BaseNode<
     );
     // NOTE: 2. 얻어진 error들을 dataPath 별로 분류
     const errorsByDataPath = transformErrors(errors).reduce(
-      (accum, error) => {
-        if (!accum[error.dataPath]) {
-          accum[error.dataPath] = [];
+      (accumulator, error) => {
+        if (!accumulator[error.dataPath]) {
+          accumulator[error.dataPath] = [];
         }
-        accum[error.dataPath].push(error);
-        return accum;
+        accumulator[error.dataPath].push(error);
+        return accumulator;
       },
       {} as Record<JsonSchemaError['dataPath'], JsonSchemaError[]>,
     );
@@ -246,19 +244,18 @@ export abstract class BaseNode<
     // NOTE: 3. 전체 error를 set, 하위 노드에도 dataPath로 node를 찾아서 error set
     this.setErrors(errors);
     Object.entries(errorsByDataPath).forEach(([dataPath, errors]) => {
-      const node = this.findNode(dataPath);
-      node?.setErrors(errors);
+      this.findNode(dataPath)?.setErrors(errors);
     });
 
     // NOTE: 4. 기존 error에는 포함되어 있으나, 신규 error 목록에 포함되지 않는 error를 가진 node는 clearError
-    const _errorDataPaths = Object.keys(errorsByDataPath);
-    this._errorDataPaths
-      .filter((dataPath) => !_errorDataPaths.includes(dataPath))
+    const errorDataPaths = Object.keys(errorsByDataPath);
+    const errorDataPathsSet = new Set(errorDataPaths);
+    this.#errorDataPaths
+      .filter((dataPath) => !errorDataPathsSet.has(dataPath))
       .forEach((dataPath) => {
-        const node = this.findNode(dataPath);
-        node?.clearErrors();
+        this.findNode(dataPath)?.clearErrors();
       });
-    this._errorDataPaths = _errorDataPaths;
+    this.#errorDataPaths = errorDataPaths;
   }
 
   constructor({
@@ -277,19 +274,19 @@ export abstract class BaseNode<
     this.rootNode = (this.parentNode?.rootNode || this) as SchemaNode;
     this.isRoot = !this.parentNode;
     this.isArrayItem = this.parentNode?.jsonSchema?.type === 'array';
-    this.name = name || '';
+    this.#name = name || '';
 
-    this.path = this.parentNode?.getPath()
-      ? `${this.parentNode.getPath()}${JSONPath.Child}${this.getName()}`
+    this.#path = this.parentNode?.path
+      ? `${this.parentNode.path}${JSONPath.Child}${this.#name}`
       : JSONPath.Root;
 
-    this.key = this.parentNode?.getPath()
-      ? `${this.parentNode.getPath()}${JSONPath.Child}${
-          typeof key === 'undefined' ? this.getName() : key
+    this.#key = this.parentNode?.path
+      ? `${this.parentNode.path}${JSONPath.Child}${
+          key === undefined ? this.#name : key
         }`
       : JSONPath.Root;
 
-    this.depth = this.path.split(JSONPath.Child).filter(isTruthy).length - 1;
+    this.depth = this.#path.split(JSONPath.Child).filter(isTruthy).length - 1;
 
     if (this.parentNode) {
       this.parentNode.subscribe((type) => {
