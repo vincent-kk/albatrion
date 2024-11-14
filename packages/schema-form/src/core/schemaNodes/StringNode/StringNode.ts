@@ -1,52 +1,54 @@
-import type { StringValue } from '@lumy/schema-form/types';
+import type { StringSchema, StringValue } from '@lumy/schema-form/types';
 
+import { parseString } from '../../parsers';
 import { BaseNode } from '../BaseNode';
 import { type ConstructorProps, MethodType } from '../type';
-import { type EventOrValue, getValueFromEvent } from '../util';
-import parseString from './parseString';
 
-export class StringNode extends BaseNode {
-  readonly defaultValue: StringValue | undefined;
+export class StringNode extends BaseNode<StringSchema, StringValue> {
   readonly type = 'string';
 
-  public children = () => this._children;
-  public getValue = () => this._value;
-  public setValue = (value: StringValue) => this._emitChange(value);
-  public parseValue = (value: StringValue | undefined) =>
-    value !== undefined ? parseString(value, this.schema) : undefined;
+  #value: StringValue | undefined = undefined;
+  get value() {
+    return this.#value;
+  }
+  set value(value: StringValue | undefined) {
+    this.#emitChange(value);
+  }
+  parseValue(value: StringValue | undefined) {
+    return parseString(value);
+  }
 
-  private _children: never[] = [];
-  private _emitChange: (value: EventOrValue<StringValue | undefined>) => void;
-  private _value: StringValue | undefined;
+  #onChange: (value: StringValue | undefined) => void;
+
+  #emitChange(input: StringValue | undefined) {
+    const value = this.parseValue(input);
+    if (this.#value !== value) {
+      this.#value = value;
+      this.#onChange(value);
+      this.publish(MethodType.Change, value);
+    }
+  }
 
   constructor({
     key,
     name,
-    schema,
+    jsonSchema,
     defaultValue,
     onChange,
     parentNode,
     ajv,
   }: ConstructorProps<StringValue>) {
-    super({ key, name, schema, defaultValue, onChange, parentNode, ajv });
-    this.defaultValue = defaultValue;
-    this._value = this.defaultValue;
+    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
 
-    this._emitChange = (eventOrValue) => {
-      const value = this.parseValue(getValueFromEvent(eventOrValue));
-      if (this._value !== value) {
-        this._value = value;
-        onChange(value);
-        this.publish(MethodType.Change, value);
-      }
-    };
+    this.#onChange = onChange;
 
-    if (
-      typeof defaultValue === 'undefined' &&
-      typeof schema.default !== 'undefined'
-    ) {
-      this.defaultValue = this.parseValue(schema.default);
-      this._emitChange(this.defaultValue);
+    if (defaultValue !== undefined) {
+      this.value = defaultValue;
+    }
+
+    if (defaultValue === undefined && jsonSchema.default !== undefined) {
+      this.setDefaultValue(this.parseValue(jsonSchema.default));
+      this.#emitChange(this.defaultValue);
     }
   }
 }

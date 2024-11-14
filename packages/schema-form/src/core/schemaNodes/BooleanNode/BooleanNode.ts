@@ -1,52 +1,54 @@
-import type { BooleanValue } from '@lumy/schema-form/types';
+import type { BooleanSchema, BooleanValue } from '@lumy/schema-form/types';
 
+import { parseBoolean } from '../../parsers';
 import { BaseNode } from '../BaseNode';
 import { type ConstructorProps, MethodType } from '../type';
-import { type EventOrBoolean, getBooleanFromEvent } from '../util';
 
-export class BooleanNode extends BaseNode {
-  readonly defaultValue: BooleanValue | undefined;
-
+export class BooleanNode extends BaseNode<BooleanSchema, BooleanValue> {
   readonly type = 'boolean';
 
-  private _children: never[] = [];
-  private _value: BooleanValue | undefined;
-  private _emitChange: (value: EventOrBoolean) => void;
+  #value: BooleanValue | undefined = undefined;
+  get value() {
+    return this.#value;
+  }
+  set value(value: BooleanValue | undefined) {
+    this.#emitChange(value);
+  }
+  parseValue(value: BooleanValue | undefined) {
+    return parseBoolean(value);
+  }
 
-  public children = () => this._children;
-  public getValue = () => this._value;
-  public setValue = (value: BooleanValue) => this._emitChange(value);
-  public parseValue = (value: BooleanValue | undefined) =>
-    value !== undefined ? Boolean(value) : undefined;
+  #onChange: (value: BooleanValue | undefined) => void;
+
+  #emitChange(input: BooleanValue | undefined) {
+    const value = this.parseValue(input);
+    if (this.#value !== value) {
+      this.#value = value;
+      this.#onChange(value);
+      this.publish(MethodType.Change, value);
+    }
+  }
 
   constructor({
     key,
     name,
-    schema,
+    jsonSchema,
     defaultValue,
     onChange,
     parentNode,
     ajv,
   }: ConstructorProps<BooleanValue>) {
-    super({ key, name, schema, defaultValue, onChange, parentNode, ajv });
+    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
 
-    this._value = defaultValue;
+    this.#onChange = onChange;
 
-    this._emitChange = (eventOrValue) => {
-      const value = this.parseValue(getBooleanFromEvent(eventOrValue));
-      if (this._value !== value) {
-        this._value = value;
-        onChange(value);
-        this.publish(MethodType.Change, value);
-      }
-    };
+    if (defaultValue !== undefined) {
+      this.value = defaultValue;
+    }
 
-    if (
-      typeof defaultValue === 'undefined' &&
-      typeof schema.default !== 'undefined'
-    ) {
-      this.defaultValue = this.parseValue(schema.default);
-      this._emitChange(this.defaultValue);
+    if (defaultValue === undefined && jsonSchema.default !== undefined) {
+      this.setDefaultValue(this.parseValue(jsonSchema.default));
+      this.#emitChange(this.defaultValue);
     }
   }
 }
