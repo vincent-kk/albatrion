@@ -14,7 +14,6 @@ import type {
 import type { Ajv } from 'ajv';
 
 import type { ArrayNode } from './ArrayNode';
-import { BaseNode } from './BaseNode';
 import type { BooleanNode } from './BooleanNode';
 import type { NumberNode } from './NumberNode';
 import type { ObjectNode } from './ObjectNode';
@@ -52,7 +51,7 @@ export type ConstructorProps<
 export interface NodeFactoryProps<
   Schema extends JsonSchema = JsonSchema,
   Value extends AllowedValue = any,
-  Node extends BaseNode = BaseNode,
+  Node extends SchemaNode = SchemaNode,
 > {
   jsonSchema: Schema;
   key?: string;
@@ -60,7 +59,7 @@ export interface NodeFactoryProps<
   defaultValue?: Value;
   onChange: (value: Value | undefined) => void;
   parentNode?: Node;
-  refNodes?: BaseNode[];
+  refNodes?: SchemaNode[];
   ajv?: Ajv;
 }
 

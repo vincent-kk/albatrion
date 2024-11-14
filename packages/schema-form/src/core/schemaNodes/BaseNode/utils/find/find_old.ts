@@ -12,7 +12,7 @@ export const find = (target: BaseNode, path: string[]): BaseNode | null => {
   } else if (currPath === JSONPath.Current) {
     return find(target?.parentNode!, rest);
   } else if (target?.children) {
-    const children = target.children();
+    const children = target.children;
     const found = children.find((e) => e.node.name === currPath);
     if (found && rest.length > 0) {
       return find(found.node, rest);

@@ -33,7 +33,7 @@ export const find = <Node extends BaseNode>(
     }
 
     // 일반 경로 처리
-    const children = currentTarget.children?.();
+    const children = currentTarget.children;
     if (!children) return null;
 
     const found = children.find((e) => e.node.name === segment);
