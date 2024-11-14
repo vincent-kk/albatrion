@@ -20,6 +20,7 @@ import {
   find,
   getDataWithSchema,
   getJsonPaths,
+  getPathSegments,
   transformErrors,
 } from './utils';
 
@@ -255,7 +256,8 @@ export abstract class BaseNode<
   }
 
   findNode(path: string) {
-    return find(this, path) as SchemaNode | null;
+    const pathSegments = getPathSegments(path);
+    return find(this, pathSegments) as SchemaNode | null;
   }
 
   subscribe(callback: Listener) {
