@@ -7,6 +7,7 @@ import type {
   JsonSchemaError,
   NumberSchema,
   ObjectSchema,
+  ShowError,
   StringSchema,
   VirtualSchema,
 } from '@lumy/schema-form/types';
@@ -91,4 +92,10 @@ export type MethodPayload = {
   [MethodType.PathChange]: string;
   [MethodType.StateChange]: any;
   [MethodType.Validate]: JsonSchemaError[];
+};
+
+export type NodeState = {
+  [ShowError.Touched]?: boolean;
+  [ShowError.Dirty]?: boolean;
+  [key: string]: any;
 };
