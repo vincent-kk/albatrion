@@ -1,8 +1,8 @@
 import type { ArraySchema, ArrayValue } from '@lumy/schema-form/types';
 
-import { nodeFactory } from '../../nodeFactory';
 import { parseArray } from '../../parsers';
 import { BaseNode } from '../BaseNode';
+import { nodeFactory } from '../nodeFactory';
 import {
   type ConstructorPropsWithNodeFactory,
   MethodType,

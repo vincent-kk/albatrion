@@ -1,7 +1,3 @@
-import { voidFunction } from '@lumy/schema-form/app/constant';
-import type { AllowedValue, ExpectJsonSchema } from '@lumy/schema-form/types';
-import type Ajv from 'ajv';
-
 import {
   ArrayNode,
   BooleanNode,
@@ -9,7 +5,7 @@ import {
   ObjectNode,
   StringNode,
   VirtualNode,
-} from './schemaNodes';
+} from '.';
 
 export function nodeFactory({
   key,
@@ -86,26 +82,5 @@ export function nodeFactory({
         ajv,
       });
   }
-
   throw new Error(`Unknown schema type: ${jsonSchema.type}`);
 }
-
-interface Options<V> {
-  defaultValue?: V;
-  onChange?: SetStateAction<V>;
-  ajv?: Ajv;
-}
-
-export const nodeFromSchema = <V extends AllowedValue>(
-  schema: ExpectJsonSchema<V>,
-  options?: Options<V>,
-) => {
-  return nodeFactory({
-    name: '',
-    schema,
-    defaultValue: options?.defaultValue || undefined,
-    onChange:
-      typeof options?.onChange === 'function' ? options.onChange : voidFunction,
-    ajv: options?.ajv,
-  });
-};
