@@ -1,4 +1,4 @@
-export * from './getDataWithSchema/getDataWithSchema';
-export * from './getJsonPath/getJsonPaths';
-export * from './transformErrors/transformErrors';
+export * from './getDataWithSchema';
+export * from './getJsonPath';
+export * from './transformErrors';
 export * from './find';

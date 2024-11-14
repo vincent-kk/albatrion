@@ -1,1 +1,1 @@
-export * from './getJsonPaths';
+export { getJsonPaths } from './getJsonPaths';
