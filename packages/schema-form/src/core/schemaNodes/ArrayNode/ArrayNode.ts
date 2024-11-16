@@ -17,7 +17,7 @@ type IndexId = `[${number}]`;
 
 export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
   #mount: boolean = false;
-  #ready: boolean = true;
+  #ready: boolean = false;
   #hasChanged: boolean = false;
 
   #seq: number = 0;
@@ -87,7 +87,7 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
   }
 
   toArray() {
-    return this.#edges.map(({ node }) => node?.value);
+    return this.#edges.map(({ node }) => node.value);
   }
 
   constructor({

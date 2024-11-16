@@ -51,7 +51,7 @@ export abstract class BaseNode<
     return this.#name;
   }
   /** 노드의 이름 설정, 부모만 이름을 바꿔줄 수 있음 */
-  setName(name: string, actor: BaseNode) {
+  setName(name: string, actor: SchemaNode | BaseNode) {
     if (actor === this.parentNode || actor === this) {
       this.#name = name;
       this.updatePath();
