@@ -8,7 +8,11 @@ import { isPlainObject, merge } from 'es-toolkit';
 import { BaseNode } from '../BaseNode';
 import { type ConstructorPropsWithNodeFactory, MethodType } from '../type';
 import type { ChildNode, VirtualReference } from './type';
-import { combineConditions, sortObjectKeys } from './utils';
+import {
+  combineConditions,
+  getInvertedAnyOfMap,
+  sortObjectKeys,
+} from './utils';
 
 export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
   readonly type = 'object';
@@ -85,37 +89,12 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
       this.#value = this.defaultValue;
     }
 
-    this.#properties = Object.keys(jsonSchema.properties || {});
+    this.#properties = jsonSchema.properties
+      ? Object.keys(jsonSchema.properties)
+      : [];
 
-    const invertedAnyOf: Dictionary<string[]> = {};
-    if (jsonSchema.anyOf && Array.isArray(jsonSchema.anyOf)) {
-      jsonSchema.anyOf
-        .filter(
-          (
-            subSchema,
-          ): subSchema is PickAndPartial<
-            ObjectSchema,
-            'properties' | 'required'
-          > =>
-            subSchema.properties !== undefined &&
-            Array.isArray(subSchema.required),
-        )
-        .forEach(({ properties, required }) => {
-          const conditions = Object.entries(properties)
-            .filter(([, v]) => Array.isArray(v?.enum) && v.enum.length > 0)
-            .map(([k, v]) =>
-              v.enum && v.enum.length === 1
-                ? `${JSON.stringify(v.enum[0])} === @.${k}`
-                : `${JSON.stringify(v.enum)}.includes(@.${k})`,
-            );
-          required.forEach((field) => {
-            invertedAnyOf[field] = [
-              ...(invertedAnyOf[field] || []),
-              ...conditions,
-            ];
-          });
-        });
-    }
+    const invertedAnyOfMap: Map<string, string[]> | null =
+      getInvertedAnyOfMap(jsonSchema);
 
     const virtualReferenceFields: Dictionary<VirtualReference['fields']> = {};
     const virtualReferences: Dictionary<VirtualReference> = {};
@@ -153,23 +132,27 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
 
     const childMap = Object.entries(jsonSchema.properties || {}).reduce(
       (accum, [name, schema]) => {
+
+        const invertedAnyOfConditions = invertedAnyOfMap?.get(name);
+
         accum[name] = {
           isVirtualized:
             virtualReferenceFields[name] &&
             virtualReferenceFields[name].length > 0,
           node: nodeFactory({
             name,
-            schema: invertedAnyOf[name]
-              ? {
-                  ...schema,
-                  'ui:show': combineConditions(
+            schema: invertedAnyOfConditions
+              ? merge(schema, {
+                  ui: {
+                    show: combineConditions(
                     [
-                      schema['ui:show'],
-                      combineConditions(invertedAnyOf[name], '||'),
+                        schema.ui?.show,
+                        combineConditions(invertedAnyOfConditions || [], '||'),
                     ],
                     '&&',
                   ),
-                }
+                  },
+                })
               : schema,
             parentNode: this,
             defaultValue: defaultValue?.[name],
