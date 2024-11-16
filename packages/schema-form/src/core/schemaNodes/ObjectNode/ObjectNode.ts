@@ -1,105 +1,95 @@
-import type { ObjectSchema, VirtualSchema } from '@lumy/schema-form/types';
+import type {
+  ObjectSchema,
+  ObjectValue,
+  VirtualSchema,
+} from '@lumy/schema-form/types';
+import { isPlainObject, merge } from 'es-toolkit';
 
 import { BaseNode } from '../BaseNode';
-import {
-  type ConstructorPropsWithNodeFactory,
-  MethodType,
-  type SchemaNode,
-} from '../type';
+import { type ConstructorPropsWithNodeFactory, MethodType } from '../type';
+import type { ChildNode, VirtualReference } from './type';
+import { combineConditions, sortObjectKeys } from './utils';
 
-type ChildNode = {
-  isVirtualized?: boolean;
-  node: SchemaNode;
-};
-
-type VirtualReference = Required<ObjectSchema>['virtual'][string];
-
-type ObjectValue = Record<string, any>;
-
-export class ObjectNode extends BaseNode {
+export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
   readonly type = 'object';
 
-  public children = () => this._children;
-  public getValue = (): ObjectValue | undefined => this._value;
-  public setValue = (value: ObjectValue, replace = false) => {
-    this._draft = value;
-    this._replace = replace;
-    this._emitChange();
-  };
-  public parseValue = (value: ObjectValue) => value;
+  readonly #properties: string[] = [];
 
-  private _children: ChildNode[] = [];
-  private _value: ObjectValue | undefined;
-  private _draft: ObjectValue;
-  private _replace = false;
-  private _emitChange: () => void;
-  private _ready: boolean = false;
+  #replace: boolean = false;
+  #ready: boolean = false;
+
+  #children: ChildNode[] = [];
+  get children() {
+    return this.#children;
+  }
+
+  #value: ObjectValue | undefined = undefined;
+  #draft: ObjectValue | undefined = {};
+  get value() {
+    return this.#value;
+  }
+  set value(input: ObjectValue | undefined) {
+    this.#draft = input;
+    this.#emitChange();
+  }
+  public parseValue = (value: ObjectValue | undefined) => value;
+
+  #onChange: (value: ObjectValue | undefined) => void;
+
+  #emitChange() {
+    if (!this.#ready) return;
+
+    if (this.#draft === undefined) {
+      this.#value = undefined;
+    }
+
+    if (Object.keys(this.#draft || {}).length === 0 && !this.#replace) {
+      return;
+    }
+
+    if (this.#replace) {
+      this.#value = sortObjectKeys({ ...this.#draft }, this.#properties);
+      this.#replace = false;
+    } else {
+      this.#value = sortObjectKeys(
+        {
+          ...(isPlainObject(this.#value) && this.#value),
+          ...this.#draft,
+        },
+        this.#properties,
+      );
+    }
+
+    this.#draft = {};
+    if (typeof this.#onChange === 'function') {
+      this.#onChange(this.#value);
+      this.publish(MethodType.Change, this.#value);
+    }
+  }
 
   constructor({
     key,
     name,
-    schema,
+    jsonSchema,
     defaultValue,
     onChange,
     parentNode,
     ajv,
     nodeFactory,
   }: ConstructorPropsWithNodeFactory<ObjectValue>) {
-    super({ key, name, schema, defaultValue, onChange, parentNode, ajv });
+    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
 
-    this._value = this.defaultValue;
-    this._draft = {};
+    this.#onChange = onChange;
 
-    const keys = Object.keys(schema.properties || {});
-    const sortObjectKeys = (obj: Dictionary) => {
-      const newObj: Dictionary = {};
-      const mergedKeys = [...keys, ...Object.keys(obj || {})].filter(
-        (e, i, arr) => arr.indexOf(e) === i,
-      );
-      mergedKeys.forEach((key) => {
-        if (key in obj) {
-          newObj[key] = obj[key];
-        }
-      });
-      return newObj;
-    };
+    if (defaultValue !== undefined) {
+      this.#value = this.defaultValue;
+    }
 
-    this._emitChange = () => {
-      if (
-        this._ready &&
-        (this._draft === undefined || Object.keys(this._draft).length >= 0)
-      ) {
-        if (this._draft === undefined) {
-          this._value = undefined;
-        } else if (
-          Object.keys(this._draft || {}).length === 0 &&
-          !this._replace
-        ) {
-          return;
-        } else if (this._replace) {
-          this._value = sortObjectKeys({ ...this._draft });
-          this._replace = false;
-        } else {
-          const previous =
-            this._value &&
-            !Array.isArray(this._value) &&
-            typeof this._value === 'object'
-              ? { ...this._value }
-              : {};
-          this._value = sortObjectKeys({ ...previous, ...this._draft });
-        }
-        this._draft = {};
-        if (typeof onChange === 'function') {
-          onChange(this._value);
-          this.publish(MethodType.Change, this._value);
-        }
-      }
-      return undefined;
-    };
+    this.#properties = Object.keys(jsonSchema.properties || {});
 
     const invertedAnyOf: Dictionary<string[]> = {};
-    if (schema.anyOf && Array.isArray(schema.anyOf)) {
-      schema.anyOf
+    if (jsonSchema.anyOf && Array.isArray(jsonSchema.anyOf)) {
+      jsonSchema.anyOf
         .filter(
           (
             subSchema,
@@ -130,9 +120,9 @@ export class ObjectNode extends BaseNode {
     const virtualReferenceFields: Dictionary<VirtualReference['fields']> = {};
     const virtualReferences: Dictionary<VirtualReference> = {};
 
-    if (schema?.virtual) {
-      const knownProperties = Object.keys(schema.properties || {});
-      Object.entries(schema.virtual).forEach(([k, v]) => {
+    if (jsonSchema.virtual) {
+      const knownProperties = Object.keys(jsonSchema.properties || {});
+      Object.entries(jsonSchema.virtual).forEach(([k, v]) => {
         const { fields } = v;
 
         if (!fields) {
@@ -161,7 +151,7 @@ export class ObjectNode extends BaseNode {
       });
     }
 
-    const childMap = Object.entries(schema?.properties || {}).reduce(
+    const childMap = Object.entries(jsonSchema.properties || {}).reduce(
       (accum, [name, schema]) => {
         accum[name] = {
           isVirtualized:
@@ -196,8 +186,7 @@ export class ObjectNode extends BaseNode {
       {} as Dictionary<ChildNode>,
     );
 
-    const that = this;
-    this._children = Object.entries(childMap).reduce((accum, [name, child]) => {
+    this.#children = Object.entries(childMap).reduce((accum, [name, child]) => {
       if (Array.isArray(virtualReferenceFields[name])) {
         virtualReferenceFields[name].forEach((fieldName: string) => {
           if (virtualReferences[fieldName]) {
@@ -228,18 +217,7 @@ export class ObjectNode extends BaseNode {
       return accum;
     }, [] as ChildNode[]);
 
-    this._ready = true;
-    this._emitChange();
+    this.#ready = true;
+    this.#emitChange();
   }
-}
-
-function combineConditions(
-  conditions: (string | boolean | undefined)[],
-  operator: string,
-) {
-  let filtered = conditions.filter(Boolean) as (string | true)[];
-  if (filtered.length === 1) {
-    return filtered[0];
-  }
-  return filtered.map((item) => `(${item})`).join(` ${operator} `);
 }
