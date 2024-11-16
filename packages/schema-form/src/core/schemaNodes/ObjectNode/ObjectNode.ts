@@ -97,8 +97,11 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     const invertedAnyOfMap: Map<string, string[]> | null =
       getInvertedAnyOfMap(jsonSchema);
 
-    const virtualReferenceFields: Dictionary<VirtualReference['fields']> = {};
-    const virtualReferences: Dictionary<VirtualReference> = {};
+    const virtualReferenceFieldsMap = new Map<
+      string,
+      VirtualReference['fields']
+    >();
+    const virtualReferencesMap = new Map<string, VirtualReference>();
 
     if (jsonSchema.virtual) {
       const propertySet = new Set(this.#properties);
@@ -132,15 +135,15 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
           );
         }
 
-        fields.forEach((field: string) => {
-          virtualReferenceFields[field] = [
-            ...(virtualReferenceFields[field] || []),
-            k,
-          ];
-        });
+        for (const field of value.fields) {
+          virtualReferenceFieldsMap.set(field, [
+            ...(virtualReferenceFieldsMap.get(field) || []),
+            key,
+          ]);
+        }
 
-        virtualReferences[k] = { ...v };
-      });
+        virtualReferencesMap.set(key, value);
+      }
     }
 
     const childMap = Object.entries(jsonSchema.properties || {}).reduce(
@@ -158,9 +161,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
         const invertedAnyOfConditions = invertedAnyOfMap?.get(name);
 
         accum[name] = {
-          isVirtualized:
-            virtualReferenceFields[name] &&
-            virtualReferenceFields[name].length > 0,
+          isVirtualized: !!virtualReferenceFieldsMap.get(name)?.length,
           node: nodeFactory({
             name,
             schema: invertedAnyOfConditions
@@ -187,10 +188,10 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     );
 
     this.#children = Object.entries(childMap).reduce((accum, [name, child]) => {
-      if (Array.isArray(virtualReferenceFields[name])) {
-        virtualReferenceFields[name].forEach((fieldName: string) => {
-          if (virtualReferences[fieldName]) {
-            const reference = virtualReferences[fieldName];
+      if (Array.isArray(virtualReferenceFieldsMap.get(name))) {
+        virtualReferenceFieldsMap.get(name)?.forEach((fieldName: string) => {
+          if (virtualReferencesMap.has(fieldName)) {
+            const reference = virtualReferencesMap.get(fieldName)!;
             const schema: VirtualSchema = {
               type: 'virtual',
               ...reference,
@@ -209,7 +210,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
                 onChange: () => {},
               }),
             });
-            delete virtualReferences[fieldName];
+            virtualReferencesMap.delete(fieldName);
           }
         });
       }
