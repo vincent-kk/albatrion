@@ -6,7 +6,7 @@ import { nodeFactory } from './schemaNodes';
 
 interface Options<V> {
   defaultValue?: V;
-  onChange?: SetStateAction<V>;
+  onChange?: SetStateFn<V>;
   ajv?: Ajv;
 }
 

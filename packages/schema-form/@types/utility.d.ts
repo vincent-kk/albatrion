@@ -1,13 +1,5 @@
 declare type Nullish<T> = T | null | undefined;
 
-declare type Dictionary<T = any> = Record<string, T>;
-
-declare type StringDictionary = Dictionary<string>;
-
-declare type SetStateAction<S = unknown> = (
-  value: S | ((prevState: S) => S),
-) => void;
-
 /** T에서 key in K를 추출하고, 이를 Required로 설정 */
 declare type PickRequired<T, K extends keyof T> = Required<Pick<T, K>>;
 
@@ -24,17 +16,10 @@ declare type OmitPartial<T, K extends keyof T> = Partial<Omit<T, K>>;
 declare type PickAndPartial<T, K extends keyof T> = PickRequired<T, K> &
   OmitPartial<T, K>;
 
-declare type PromiseFunction<P extends Array<any>, T> = (
-  ...props: P
-) => Promise<T>;
+/** T에서 K를 Required로 설정하고, 나머지는 유지 */
+declare type RequiredBy<T, K extends keyof T> = PickRequired<T, K> & T;
 
-/** 중첩된 객체 구조를 가진 타입 T를 입력받아서 내부 필드들이 모두 필수인 타입을 반환 */
-declare type DeepRequired<T> = {
-  [P in keyof T]-?: NonNullable<T[P]> extends object
-    ? NonNullable<T[P]> extends any[]
-      ? DeepRequired<NonNullable<T[P]>[number]>[]
-      : DeepRequired<NonNullable<T[P]>>
-    : T[P];
-};
+/** T에서 K를 Partial로 설정하고, 나머지는 유지 */
+declare type PartialBy<T, K extends keyof T> = PickPartial<T, K> & Omit<T, K>;
 
 declare type Roll<T> = { [K in keyof T]: T[K] };
