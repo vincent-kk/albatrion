@@ -265,7 +265,8 @@ export abstract class BaseNode<
     }
 
     if (this.isRoot) {
-      const ajvInstance = ajv || new Ajv({ allErrors: true });
+      const ajvInstance =
+        ajv || new Ajv({ allErrors: true, strictSchema: false });
       try {
         this.#validate = ajvInstance.compile({ ...jsonSchema, $async: true });
       } catch (err: any) {
