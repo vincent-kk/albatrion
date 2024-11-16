@@ -11,12 +11,15 @@ export const transformErrors = (
   return errors.map((error) => {
     error.key = useKey ? ++keySeq : undefined;
     if (
-      typeof error.dataPath === 'string' &&
+      typeof error.instancePath === 'string' &&
       error.keyword === 'required' &&
       error.params?.missingProperty
     ) {
-      error.dataPath =
-        `${error.dataPath}.${error.params.missingProperty}`.replace(/^\./, '');
+      error.instancePath =
+        `${error.instancePath}.${error.params.missingProperty}`.replace(
+          /^\//,
+          '',
+        );
     }
     return error;
   });

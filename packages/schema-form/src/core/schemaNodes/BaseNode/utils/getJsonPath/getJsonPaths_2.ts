@@ -1,5 +1,7 @@
 import { isPlainObject } from 'es-toolkit';
 
+import { JSONPath } from '@lumy/schema-form/types';
+
 export const getJsonPaths = (data: any, jsonPath = ''): string[] => {
   if (data === undefined || data === null || data === false) return [];
 
@@ -19,7 +21,12 @@ export const getJsonPaths = (data: any, jsonPath = ''): string[] => {
       ? paths
       : paths.concat(
           entries.flatMap(([key, value]) =>
-            getJsonPaths(value, jsonPath ? `${jsonPath}.${key}` : `.${key}`),
+            getJsonPaths(
+              value,
+              jsonPath
+                ? `${jsonPath}${JSONPath.Child}${key}`
+                : `${JSONPath.Child}${key}`,
+            ),
           ),
         );
   }

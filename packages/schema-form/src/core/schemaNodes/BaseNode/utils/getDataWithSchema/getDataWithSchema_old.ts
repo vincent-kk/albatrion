@@ -5,7 +5,7 @@ export const getDataWithSchema = (
   schema: JsonSchema,
   options?: { ignoreAnyOf: boolean },
 ): any => {
-  let node = { ...schema };
+  const node = { ...schema };
   if (
     node.type === 'object' &&
     typeof node.properties === 'object' &&
@@ -13,7 +13,6 @@ export const getDataWithSchema = (
     typeof data === 'object' &&
     !Array.isArray(data)
   ) {
-    let items: any[];
     let omit: string[] = [];
     const { anyOf } = node;
     if (
@@ -36,17 +35,15 @@ export const getDataWithSchema = (
         });
       omit = notRequired.filter((field) => !required.includes(field));
     }
-    try {
-      items = Object.entries(node.properties).map(([k, v]) => {
-        if (k in data && !omit.includes(k)) {
-          return [k, getDataWithSchema(data[k], v, options)];
-        }
-        return false;
-      });
-    } catch (err: any) {
-      throw err;
-    }
-    return Object.fromEntries(items.filter(Boolean));
+
+    const items = Object.entries(node.properties).map(([k, v]) => {
+      if (k in data && !omit.includes(k)) {
+        return [k, getDataWithSchema(data[k], v, options)];
+      }
+      return false;
+    });
+
+    return Object.fromEntries(items.filter(Boolean) as [string, any][]);
   } else if (
     node.type === 'array' &&
     typeof node.items === 'object' &&

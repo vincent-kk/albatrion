@@ -11,7 +11,6 @@ describe('transformErrors', () => {
     errors = [
       {
         keyword: 'required',
-        dataPath: '',
         instancePath: '',
         schemaPath: '#/required',
         params: { missingProperty: 'name' },
@@ -19,7 +18,6 @@ describe('transformErrors', () => {
       },
       {
         keyword: 'type',
-        dataPath: '.age',
         instancePath: '/age',
         schemaPath: '#/properties/age/type',
         params: { type: 'number' },
@@ -34,7 +32,7 @@ describe('transformErrors', () => {
       {
         ...errors[0],
         key: undefined,
-        dataPath: 'name',
+        instancePath: 'name',
       },
       {
         ...errors[1],
@@ -49,7 +47,7 @@ describe('transformErrors', () => {
       {
         ...errors[0],
         key: 1,
-        dataPath: 'name',
+        instancePath: 'name',
       },
       {
         ...errors[1],

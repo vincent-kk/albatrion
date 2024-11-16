@@ -13,7 +13,7 @@ import type {
 export const enum JSONPath {
   Root = '$',
   Current = '@',
-  Child = '.',
+  Child = '/',
 }
 
 export const isArraySchema = (schema: JsonSchema): schema is ArraySchema =>

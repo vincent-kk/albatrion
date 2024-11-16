@@ -7,16 +7,16 @@ export const transformErrors = (
   useKey = false,
 ): JsonSchemaError[] => {
   return (Array.isArray(errors) ? errors : []).map((error) => {
-    let key = useKey ? ++keySeq : undefined;
+    const key = useKey ? ++keySeq : undefined;
     if (
-      typeof error.dataPath === 'string' &&
+      typeof error.instancePath === 'string' &&
       error.keyword === 'required' &&
       error.params?.missingProperty
     ) {
       return {
         ...error,
         key,
-        dataPath: `${error.dataPath ? `${error.dataPath}.` : ''}${
+        instancePath: `${error.instancePath ? `${error.instancePath}.` : ''}${
           error.params.missingProperty
         }`,
       };

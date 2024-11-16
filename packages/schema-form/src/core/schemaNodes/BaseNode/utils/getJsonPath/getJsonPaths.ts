@@ -1,5 +1,7 @@
 import { isPlainObject } from 'es-toolkit';
 
+import { JSONPath } from '@lumy/schema-form/types';
+
 export const getJsonPaths = (data: any, initialPath = ''): string[] => {
   const result: string[] = [];
   const stack: Array<{ data: any; path: string }> = [
@@ -26,7 +28,9 @@ export const getJsonPaths = (data: any, initialPath = ''): string[] => {
         const [key, value] = entries[i];
         stack.push({
           data: value,
-          path: path ? `${path}.${key}` : `.${key}`,
+          path: path
+            ? `${path}${JSONPath.Child}${key}`
+            : `${JSONPath.Child}${key}`,
         });
       }
     }

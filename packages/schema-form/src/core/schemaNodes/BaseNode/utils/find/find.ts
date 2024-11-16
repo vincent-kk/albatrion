@@ -1,6 +1,6 @@
 import { JSONPath } from '@lumy/schema-form/types';
 
-import type { BaseNode } from '../../BaseNode';
+import { SchemaNode } from '../../../type';
 
 /**
  * BaseNode 트리에서 주어진 경로에 해당하는 노드를 찾습니다.
@@ -8,10 +8,10 @@ import type { BaseNode } from '../../BaseNode';
  * @param pathSegments - 찾고자 하는 노드의 경로 세그먼트 배열 (예: ["root", "child", "0", "grandchild"])
  * @returns 찾은 노드 또는 null
  */
-export const find = <Node extends BaseNode>(
-  target: Node | null,
+export const find = (
+  target: SchemaNode | null,
   pathSegments: string[] | null,
-): Node | null => {
+): SchemaNode | null => {
   // 초기 검사로 빠른 반환
   if (!target) return null;
   if (!pathSegments?.length) return target;
@@ -21,13 +21,13 @@ export const find = <Node extends BaseNode>(
   for (const segment of pathSegments) {
     // 특수 경로 처리
     if (segment === JSONPath.Root) {
-      currentTarget = currentTarget.rootNode as Node;
+      currentTarget = currentTarget.rootNode;
       if (!currentTarget) return null;
       continue;
     }
 
     if (segment === JSONPath.Current) {
-      currentTarget = currentTarget.parentNode as Node;
+      currentTarget = currentTarget.parentNode!;
       if (!currentTarget) return null;
       continue;
     }
@@ -39,7 +39,7 @@ export const find = <Node extends BaseNode>(
     const found = children.find((e) => e.node.name === segment);
     if (!found) return null;
 
-    currentTarget = found.node as unknown as Node;
+    currentTarget = found.node;
   }
 
   return currentTarget;

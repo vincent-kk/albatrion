@@ -23,7 +23,7 @@ describe('getJsonPaths', () => {
       age: 30,
     };
     const result = getJsonPaths(data);
-    expect(result).toEqual(['.name', '.age']);
+    expect(result).toEqual(['/name', '/age']);
   });
 
   it('should handle a nested object', () => {
@@ -34,13 +34,13 @@ describe('getJsonPaths', () => {
       },
     };
     const result = getJsonPaths(data);
-    expect(result).toEqual(['.person', '.person.name', '.person.age']);
+    expect(result).toEqual(['/person', '/person/name', '/person/age']);
   });
 
   it('should handle an array of objects', () => {
     const data = [{ name: 'John' }, { name: 'Jane' }];
     const result = getJsonPaths(data);
-    expect(result).toEqual(['[0]', '[0].name', '[1]', '[1].name']);
+    expect(result).toEqual(['[0]', '[0]/name', '[1]', '[1]/name']);
   });
 
   it('should handle nested arrays and objects', () => {
@@ -53,14 +53,14 @@ describe('getJsonPaths', () => {
     };
     const result = getJsonPaths(data);
     expect(result).toEqual([
-      '.people',
-      '.people[0]',
-      '.people[0].name',
-      '.people[0].age',
-      '.people[1]',
-      '.people[1].name',
-      '.people[1].age',
-      '.status',
+      '/people',
+      '/people[0]',
+      '/people[0]/name',
+      '/people[0]/age',
+      '/people[1]',
+      '/people[1]/name',
+      '/people[1]/age',
+      '/status',
     ]);
   });
 
@@ -72,13 +72,13 @@ describe('getJsonPaths', () => {
     };
     const result = getJsonPaths(data);
     expect(result).toEqual([
-      '.a',
-      '.a.b',
-      '.a.b[0]',
-      '.a.b[0].c',
-      '.a.b[1]',
-      '.a.b[1].d',
-      '.a.b[1].d.e',
+      '/a',
+      '/a/b',
+      '/a/b[0]',
+      '/a/b[0]/c',
+      '/a/b[1]',
+      '/a/b[1]/d',
+      '/a/b[1]/d/e',
     ]);
   });
 });
