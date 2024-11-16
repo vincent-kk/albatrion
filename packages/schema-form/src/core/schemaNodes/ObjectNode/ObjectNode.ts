@@ -3,6 +3,7 @@ import { isPlainObject } from 'es-toolkit';
 import type { ObjectSchema, ObjectValue } from '@lumy/schema-form/types';
 
 import { BaseNode } from '../BaseNode';
+import { getFallbackValue } from '../BaseNode/utils';
 import { schemaNodeFactory } from '../schemaNodeFactory';
 import { MethodType, type SchemaNodeConstructorProps } from '../type';
 import type { ChildNode } from './type';
@@ -109,7 +110,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
           name,
           jsonSchema: mergeShowConditions(schema, invertedAnyOfMap?.get(name)),
           parentNode: this,
-          defaultValue: defaultValue?.[name],
+          defaultValue: defaultValue?.[name] ?? getFallbackValue(schema),
           onChange: (input) => {
             if (!this.#draft) return;
             const value =

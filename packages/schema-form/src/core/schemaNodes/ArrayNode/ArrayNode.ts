@@ -6,6 +6,7 @@ import type {
 
 import { parseArray } from '../../parsers';
 import { BaseNode } from '../BaseNode';
+import { getFallbackValue } from '../BaseNode/utils';
 import { schemaNodeFactory } from '../schemaNodeFactory';
 import {
   MethodType,
@@ -141,22 +142,15 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
       }
     };
 
-    const defaultValue =
-      data ??
-      this.jsonSchema.items?.default ??
-      (this.jsonSchema.items?.type === 'object'
-        ? {}
-        : this.jsonSchema.items.type === 'array'
-          ? []
-          : undefined);
+    const defaultValue = data ?? getFallbackValue(this.jsonSchema.items);
 
     this.#sourceMap.set(id, {
       node: schemaNodeFactory({
         key: id,
         name,
         jsonSchema: this.jsonSchema.items,
-        defaultValue,
         parentNode: this,
+        defaultValue,
         onChange: handleChange,
       }),
       data: defaultValue,
