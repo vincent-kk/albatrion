@@ -20,7 +20,7 @@ import type { ObjectNode } from './ObjectNode';
 import type { StringNode } from './StringNode';
 import type { VirtualNode } from './VirtualNode';
 
-export type ExpectSchemaNode<S extends JsonSchema | unknown> =
+export type InferSchemaNode<S extends JsonSchema | unknown> =
   S extends ArraySchema
     ? ArrayNode
     : S extends NumberSchema
