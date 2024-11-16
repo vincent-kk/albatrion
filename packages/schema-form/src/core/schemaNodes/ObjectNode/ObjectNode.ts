@@ -1,3 +1,4 @@
+import { SchemaNodeError } from '@lumy/schema-form/errors';
 import type {
   ObjectSchema,
   ObjectValue,
@@ -100,22 +101,34 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     const virtualReferences: Dictionary<VirtualReference> = {};
 
     if (jsonSchema.virtual) {
-      const knownProperties = Object.keys(jsonSchema.properties || {});
-      Object.entries(jsonSchema.virtual).forEach(([k, v]) => {
-        const { fields } = v;
+      const propertySet = new Set(this.#properties);
 
-        if (!fields) {
-          throw new Error(`'virtual.fields' is not found in ${name || 'root'}`);
+      for (const [key, value] of Object.entries(jsonSchema.virtual)) {
+        if (!Array.isArray(value.fields)) {
+          throw new SchemaNodeError(
+            'VIRTUAL_FIELDS_NOT_VALID',
+            `'virtual.fields' is must be an array.`,
+            {
+              nodeKey: key,
+              nodeValue: value,
+              name: name || 'root',
+            },
+          );
         }
 
         // NOTE: virtual field는 모두 properties에 정의되어 있어야 함
-        const notFoundFields = fields.filter(
-          (field) => !knownProperties.includes(field),
+        const notFoundFields = value.fields.filter(
+          (field) => !propertySet.has(field),
         );
-
         if (notFoundFields.length > 0) {
-          throw new Error(
-            `virtual fields are not found on properties. (${notFoundFields.join(', ')})`,
+          throw new SchemaNodeError(
+            'VIRTUAL_FIELDS_NOT_IN_PROPERTIES',
+            `virtual fields are not found on properties`,
+            {
+              nodeKey: key,
+              nodeValue: value,
+              notFoundFields,
+            },
           );
         }
 
