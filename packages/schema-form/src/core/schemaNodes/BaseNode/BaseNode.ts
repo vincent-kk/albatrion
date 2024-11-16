@@ -362,26 +362,28 @@ export abstract class BaseNode<
     const errors = filterErrors(
       await this.validate(getDataWithSchema(this.value, this.jsonSchema)),
     );
+
     // NOTE: 2. 얻어진 error들을 instancePath 별로 분류
-    const errorsByDataPath = transformErrors(errors).reduce(
-      (accumulator, error) => {
-        if (!accumulator[error.instancePath]) {
-          accumulator[error.instancePath] = [];
+    const errorsByDataPath = new Map<
+      JsonSchemaError['instancePath'],
+      JsonSchemaError[]
+    >();
+    for (const error of transformErrors(errors)) {
+      if (!errorsByDataPath.has(error.instancePath)) {
+        errorsByDataPath.set(error.instancePath, []);
         }
-        accumulator[error.instancePath].push(error);
-        return accumulator;
-      },
-      {} as Record<JsonSchemaError['instancePath'], JsonSchemaError[]>,
-    );
+      errorsByDataPath.get(error.instancePath)?.push(error);
+    }
 
     // NOTE: 3. 전체 error를 set, 하위 노드에도 dataPath로 node를 찾아서 error set
     this.setErrors(errors);
-    Object.entries(errorsByDataPath).forEach(([instancePath, errors]) => {
+
+    for (const [instancePath, errors] of errorsByDataPath.entries()) {
       this.findNode(instancePath)?.setErrors(errors);
-    });
+    }
 
     // NOTE: 4. 기존 error에는 포함되어 있으나, 신규 error 목록에 포함되지 않는 error를 가진 node는 clearError
-    const errorDataPaths = Object.keys(errorsByDataPath);
+    const errorDataPaths = Array.from(errorsByDataPath.keys());
     const errorDataPathsSet = new Set(errorDataPaths);
     this.#errorDataPaths
       .filter((instancePath) => !errorDataPathsSet.has(instancePath))
