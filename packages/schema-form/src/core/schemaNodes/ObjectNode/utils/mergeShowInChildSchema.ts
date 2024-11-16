@@ -1,7 +1,6 @@
+import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import type { JsonSchema } from '@lumy/schema-form/types';
 import { merge } from 'es-toolkit';
-
-import { combineConditions } from './combineConditions';
 
 export const mergeShowConditions = (
   jsonSchema: JsonSchema,
@@ -20,3 +19,14 @@ export const mergeShowConditions = (
         },
       })
     : jsonSchema;
+
+const combineConditions = (
+  conditions: (string | boolean | undefined)[],
+  operator: string,
+) => {
+  const filtered = conditions.filter(isTruthy);
+  if (filtered.length === 1) {
+    return filtered[0];
+  }
+  return filtered.map((item) => `(${item})`).join(`${operator}`);
+};
