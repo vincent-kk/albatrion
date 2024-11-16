@@ -18,7 +18,7 @@ export class NumberNode extends BaseNode<NumberSchema, NumberValue> {
     return parseNumber(input, this.jsonSchema.type === 'integer');
   }
 
-  #onChange: (value: NumberValue | undefined) => void;
+  #onChange: SetStateFn<NumberValue | undefined>;
 
   #emitChange(input: NumberValue | undefined) {
     const value = this.parseValue(input);

@@ -18,7 +18,7 @@ export class StringNode extends BaseNode<StringSchema, StringValue> {
     return parseString(input);
   }
 
-  #onChange: (value: StringValue | undefined) => void;
+  #onChange: SetStateFn<StringValue | undefined>;
 
   #emitChange(input: StringValue | undefined) {
     const value = this.parseValue(input);

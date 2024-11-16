@@ -18,7 +18,7 @@ export class BooleanNode extends BaseNode<BooleanSchema, BooleanValue> {
     return parseBoolean(input);
   }
 
-  #onChange: (value: BooleanValue | undefined) => void;
+  #onChange: SetStateFn<BooleanValue | undefined>;
 
   #emitChange(input: BooleanValue | undefined) {
     const value = this.parseValue(input);

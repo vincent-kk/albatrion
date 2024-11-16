@@ -53,7 +53,7 @@ export interface BaseNodeConstructorProps<Schema extends JsonSchema> {
 
 export interface SchemaNodeConstructorProps<Schema extends JsonSchema>
   extends BaseNodeConstructorProps<Schema> {
-  onChange: (value: InferValueType<Schema> | undefined) => void;
+  onChange: SetStateFn<InferValueType<Schema> | undefined>;
 }
 
 export interface VirtualNodeConstructorProps<Schema extends JsonSchema>

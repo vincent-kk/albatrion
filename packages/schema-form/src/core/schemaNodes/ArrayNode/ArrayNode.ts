@@ -47,7 +47,7 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     }
   }
 
-  #onChange: (value: ArrayValue) => void;
+  #onChange: SetStateFn<ArrayValue | undefined>;
 
   #emitChange() {
     if (this.#ready && this.#hasChanged) {
@@ -122,7 +122,11 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
 
     this.#ids.push(id);
 
-    const handleChange = (value: AllowedValue | undefined) => {
+    const handleChange: SetStateFn<AllowedValue | undefined> = (input) => {
+      const value =
+        typeof input === 'function'
+          ? input(this.#sourceMap.get(id)!.data)
+          : input;
       this.update(id, value);
       if (this.#mount) {
         this.#onChange(this.toArray());

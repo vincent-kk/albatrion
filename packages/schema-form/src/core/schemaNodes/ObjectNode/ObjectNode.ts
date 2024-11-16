@@ -1,8 +1,4 @@
-import type {
-  AllowedValue,
-  ObjectSchema,
-  ObjectValue,
-} from '@lumy/schema-form/types';
+import type { ObjectSchema, ObjectValue } from '@lumy/schema-form/types';
 import { isPlainObject } from 'es-toolkit';
 
 import { BaseNode } from '../BaseNode';
@@ -41,7 +37,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
   }
   public parseValue = (value: ObjectValue | undefined) => value;
 
-  #onChange: (value: ObjectValue | undefined) => void;
+  #onChange: SetStateFn<ObjectValue | undefined>;
 
   #emitChange() {
     if (!this.#ready) return;
@@ -101,12 +97,6 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     const childNodeMap = new Map<string, ChildNode>();
 
     for (const [name, schema] of Object.entries(jsonSchema.properties || {})) {
-      const handleChange = (value: AllowedValue | undefined) => {
-        if (!this.#draft) return;
-        if (value !== undefined && this.#draft[name] === value) return;
-        this.#draft[name] = value;
-        this.#emitChange();
-      };
       childNodeMap.set(name, {
         isVirtualized: !!virtualReferenceFieldsMap?.get(name)?.length,
         node: nodeFactory({
@@ -114,7 +104,14 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
           jsonSchema: mergeShowConditions(schema, invertedAnyOfMap?.get(name)),
           parentNode: this,
           defaultValue: defaultValue?.[name],
-          onChange: handleChange,
+          onChange: (input) => {
+            if (!this.#draft) return;
+            const value =
+              typeof input === 'function' ? input(this.#draft[name]) : input;
+            if (value !== undefined && this.#draft[name] === value) return;
+            this.#draft[name] = value;
+            this.#emitChange();
+          },
         }),
       });
     }
