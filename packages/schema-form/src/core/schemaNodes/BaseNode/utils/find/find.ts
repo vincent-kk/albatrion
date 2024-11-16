@@ -1,6 +1,7 @@
 import { JSONPath } from '@lumy/schema-form/types';
 
-import { SchemaNode } from '../../../type';
+import type { SchemaNode } from '../../../type';
+import type { BaseNode } from '../../BaseNode';
 
 /**
  * BaseNode 트리에서 주어진 경로에 해당하는 노드를 찾습니다.
@@ -9,14 +10,14 @@ import { SchemaNode } from '../../../type';
  * @returns 찾은 노드 또는 null
  */
 export const find = (
-  target: SchemaNode | null,
+  target: BaseNode | null,
   pathSegments: string[] | null,
 ): SchemaNode | null => {
   // 초기 검사로 빠른 반환
   if (!target) return null;
-  if (!pathSegments?.length) return target;
+  if (!pathSegments?.length) return target as SchemaNode;
 
-  let currentTarget = target;
+  let currentTarget = target as SchemaNode;
 
   for (const segment of pathSegments) {
     // 특수 경로 처리
