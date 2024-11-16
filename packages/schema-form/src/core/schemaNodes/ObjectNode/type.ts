@@ -7,4 +7,4 @@ export interface ChildNode {
   node: SchemaNode;
 }
 
-export type VirtualReference = Required<ObjectSchema>['virtual'][string];
+export type VirtualReference = NonNullable<ObjectSchema['virtual']>[string];

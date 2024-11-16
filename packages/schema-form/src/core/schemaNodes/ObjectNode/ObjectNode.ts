@@ -18,7 +18,7 @@ import {
 export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
   readonly type = 'object';
 
-  readonly #properties: string[] = [];
+  readonly #propertyKeys: string[] = [];
 
   #replace: boolean = false;
   #ready: boolean = false;
@@ -53,7 +53,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     }
 
     if (this.#replace) {
-      this.#value = sortObjectKeys({ ...this.#draft }, this.#properties);
+      this.#value = sortObjectKeys({ ...this.#draft }, this.#propertyKeys);
       this.#replace = false;
     } else {
       this.#value = sortObjectKeys(
@@ -61,7 +61,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
           ...(isPlainObject(this.#value) && this.#value),
           ...this.#draft,
         },
-        this.#properties,
+        this.#propertyKeys,
       );
     }
 
@@ -90,7 +90,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
       this.#value = this.defaultValue;
     }
 
-    this.#properties = jsonSchema.properties
+    this.#propertyKeys = jsonSchema.properties
       ? Object.keys(jsonSchema.properties)
       : [];
 
@@ -104,7 +104,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     const virtualReferencesMap = new Map<string, VirtualReference>();
 
     if (jsonSchema.virtual) {
-      const propertySet = new Set(this.#properties);
+      const propertySet = new Set(this.#propertyKeys);
 
       for (const [key, value] of Object.entries(jsonSchema.virtual)) {
         if (!Array.isArray(value.fields)) {
