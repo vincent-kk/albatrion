@@ -1,7 +1,7 @@
 import { voidFunction } from '@lumy/schema-form/app/constant';
 
-import { nodeFactory } from '../../nodeFactory';
-import { ObjectNode } from '../ObjectNode';
+import { schemaNodeFactory } from '../../schemaNodeFactory';
+import type { ObjectNode } from '../ObjectNode';
 import type { ChildNode, VirtualReference } from '../type';
 
 export const getChildren = (
@@ -27,7 +27,7 @@ export const getChildren = (
             (field) => childNodeMap.get(field)!.node,
           );
           children.push({
-            node: nodeFactory({
+            node: schemaNodeFactory({
               name: fieldName,
               jsonSchema: {
                 type: 'virtual',

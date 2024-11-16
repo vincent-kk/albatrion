@@ -3,7 +3,7 @@ import { isPlainObject } from 'es-toolkit';
 import type { ObjectSchema, ObjectValue } from '@lumy/schema-form/types';
 
 import { BaseNode } from '../BaseNode';
-import { nodeFactory } from '../nodeFactory';
+import { schemaNodeFactory } from '../schemaNodeFactory';
 import { MethodType, type SchemaNodeConstructorProps } from '../type';
 import type { ChildNode } from './type';
 import {
@@ -98,7 +98,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     for (const [name, schema] of Object.entries(jsonSchema.properties || {})) {
       childNodeMap.set(name, {
         isVirtualized: !!virtualReferenceFieldsMap?.get(name)?.length,
-        node: nodeFactory({
+        node: schemaNodeFactory({
           name,
           jsonSchema: mergeShowConditions(schema, invertedAnyOfMap?.get(name)),
           parentNode: this,

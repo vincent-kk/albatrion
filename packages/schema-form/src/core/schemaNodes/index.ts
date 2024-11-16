@@ -6,4 +6,4 @@ export * from './StringNode';
 export * from './VirtualNode';
 
 export type { ExpectSchemaNode, SchemaNode } from './type';
-export { nodeFactory } from './nodeFactory';
+export { schemaNodeFactory } from './schemaNodeFactory';

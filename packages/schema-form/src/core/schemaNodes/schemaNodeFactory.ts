@@ -15,14 +15,14 @@ import {
   ObjectNode,
   StringNode,
   VirtualNode,
-} from './';
+} from '.';
 import type {
   NodeFactoryProps,
   SchemaNodeConstructorProps,
   VirtualNodeConstructorProps,
 } from './type';
 
-export function nodeFactory<Schema extends JsonSchema>({
+export function schemaNodeFactory<Schema extends JsonSchema>({
   key,
   name,
   jsonSchema,

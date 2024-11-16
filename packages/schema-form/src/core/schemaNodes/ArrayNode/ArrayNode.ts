@@ -6,7 +6,7 @@ import type {
 
 import { parseArray } from '../../parsers';
 import { BaseNode } from '../BaseNode';
-import { nodeFactory } from '../nodeFactory';
+import { schemaNodeFactory } from '../schemaNodeFactory';
 import {
   MethodType,
   type SchemaNode,
@@ -143,7 +143,7 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
           : undefined);
 
     this.#sourceMap.set(id, {
-      node: nodeFactory({
+      node: schemaNodeFactory({
         key: id,
         name,
         jsonSchema: this.jsonSchema.items,

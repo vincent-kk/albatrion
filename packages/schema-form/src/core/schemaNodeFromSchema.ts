@@ -7,7 +7,7 @@ import type {
   JsonSchema,
 } from '@lumy/schema-form/types';
 
-import { nodeFactory } from './schemaNodes';
+import { schemaNodeFactory } from './schemaNodes';
 import type { NodeFactoryProps } from './schemaNodes/type';
 
 interface NodeFromSchemaProps<
@@ -20,13 +20,13 @@ interface NodeFromSchemaProps<
   ajv?: Ajv;
 }
 
-export const nodeFromSchema = <Schema extends JsonSchema>({
+export const schemaNodeFromSchema = <Schema extends JsonSchema>({
   jsonSchema,
   defaultValue,
   onChange,
   ajv,
 }: NodeFromSchemaProps<Schema, InferSchemaType<Schema>>) => {
-  return nodeFactory({
+  return schemaNodeFactory({
     name: '',
     jsonSchema,
     defaultValue: defaultValue || undefined,
