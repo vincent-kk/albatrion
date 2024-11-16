@@ -132,6 +132,15 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
 
     const childMap = Object.entries(jsonSchema.properties || {}).reduce(
       (accum, [name, schema]) => {
+        const handleChange = (value: any) => {
+          if (
+            this.#draft &&
+            (this.#draft[name] !== value || value === undefined)
+          ) {
+            this.#draft[name] = value;
+            this.#emitChange();
+          }
+        };
 
         const invertedAnyOfConditions = invertedAnyOfMap?.get(name);
 
@@ -145,23 +154,18 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
               ? merge(schema, {
                   ui: {
                     show: combineConditions(
-                    [
+                      [
                         schema.ui?.show,
                         combineConditions(invertedAnyOfConditions || [], '||'),
-                    ],
-                    '&&',
-                  ),
+                      ],
+                      '&&',
+                    ),
                   },
                 })
               : schema,
             parentNode: this,
             defaultValue: defaultValue?.[name],
-            onChange: (value: any) => {
-              if (this._draft[name] !== value || value === undefined) {
-                this._draft[name] = value;
-                this._emitChange();
-              }
-            },
+            onChange: handleChange,
           }),
         };
         return accum;
@@ -186,7 +190,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
               node: nodeFactory({
                 name: fieldName,
                 schema: schema,
-                parentNode: that,
+                parentNode: this,
                 refNodes: refNodes,
                 defaultValue: refNodes.map((refNode) => refNode?.defaultValue),
                 onChange: () => {},
