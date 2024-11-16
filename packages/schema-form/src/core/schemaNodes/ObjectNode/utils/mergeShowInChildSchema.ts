@@ -1,6 +1,7 @@
+import { merge } from 'es-toolkit';
+
 import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import type { JsonSchema } from '@lumy/schema-form/types';
-import { merge } from 'es-toolkit';
 
 export const mergeShowConditions = (
   jsonSchema: JsonSchema,

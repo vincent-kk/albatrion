@@ -1,3 +1,5 @@
+import Ajv, { type ValidateFunction } from 'ajv';
+
 import { filterErrors, getErrorsHash } from '@lumy/schema-form/helpers/error';
 import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import {
@@ -6,7 +8,6 @@ import {
   type JsonSchema,
   type JsonSchemaError,
 } from '@lumy/schema-form/types';
-import Ajv, { type ValidateFunction } from 'ajv';
 
 import {
   type BaseNodeConstructorProps,

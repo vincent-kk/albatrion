@@ -1,5 +1,6 @@
-import type { ObjectSchema, ObjectValue } from '@lumy/schema-form/types';
 import { isPlainObject } from 'es-toolkit';
+
+import type { ObjectSchema, ObjectValue } from '@lumy/schema-form/types';
 
 import { BaseNode } from '../BaseNode';
 import { nodeFactory } from '../nodeFactory';

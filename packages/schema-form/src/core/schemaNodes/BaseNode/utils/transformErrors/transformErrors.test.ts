@@ -1,5 +1,6 @@
-import type { JsonSchemaError } from '@lumy/schema-form/types';
 import { beforeEach, describe, expect, it } from 'vitest';
+
+import type { JsonSchemaError } from '@lumy/schema-form/types';
 
 import { transformErrors } from './transformErrors';
 

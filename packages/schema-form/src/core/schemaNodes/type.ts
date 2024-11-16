@@ -1,3 +1,5 @@
+import type { Ajv } from 'ajv';
+
 import type {
   ArraySchema,
   BooleanSchema,
@@ -10,7 +12,6 @@ import type {
   StringSchema,
   VirtualSchema,
 } from '@lumy/schema-form/types';
-import type { Ajv } from 'ajv';
 
 import type { ArrayNode } from './ArrayNode';
 import type { BooleanNode } from './BooleanNode';
