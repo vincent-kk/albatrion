@@ -1,3 +1,13 @@
+import type {
+  ArraySchema,
+  BooleanSchema,
+  JsonSchema,
+  NumberSchema,
+  ObjectSchema,
+  StringSchema,
+  VirtualSchema,
+} from '@lumy/schema-form/types';
+
 import {
   ArrayNode,
   BooleanNode,
@@ -5,9 +15,14 @@ import {
   ObjectNode,
   StringNode,
   VirtualNode,
-} from '.';
+} from './';
+import type {
+  NodeFactoryProps,
+  SchemaNodeConstructorProps,
+  VirtualNodeConstructorProps,
+} from './type';
 
-export function nodeFactory({
+export function nodeFactory<Schema extends JsonSchema>({
   key,
   name,
   jsonSchema,
@@ -16,10 +31,10 @@ export function nodeFactory({
   onChange,
   refNodes,
   ajv,
-}: any) {
+}: NodeFactoryProps<Schema>) {
   switch (jsonSchema.type) {
-    case 'array':
-      return new ArrayNode({
+    case 'boolean': {
+      return new BooleanNode({
         key,
         name,
         jsonSchema,
@@ -27,9 +42,9 @@ export function nodeFactory({
         parentNode,
         onChange,
         ajv,
-        nodeFactory,
-      });
-    case 'number':
+      } as SchemaNodeConstructorProps<BooleanSchema>);
+    }
+    case 'number': {
       return new NumberNode({
         key,
         name,
@@ -38,19 +53,9 @@ export function nodeFactory({
         parentNode,
         onChange,
         ajv,
-      });
-    case 'object':
-      return new ObjectNode({
-        key,
-        name,
-        jsonSchema,
-        defaultValue,
-        parentNode,
-        onChange,
-        ajv,
-        nodeFactory,
-      });
-    case 'string':
+      } as SchemaNodeConstructorProps<NumberSchema>);
+    }
+    case 'string': {
       return new StringNode({
         key,
         name,
@@ -59,8 +64,31 @@ export function nodeFactory({
         parentNode,
         onChange,
         ajv,
-      });
-    case 'virtual':
+      } as SchemaNodeConstructorProps<StringSchema>);
+    }
+    case 'array': {
+      return new ArrayNode({
+        key,
+        name,
+        jsonSchema,
+        defaultValue,
+        parentNode,
+        onChange,
+        ajv,
+      } as SchemaNodeConstructorProps<ArraySchema>);
+    }
+    case 'object': {
+      return new ObjectNode({
+        key,
+        name,
+        jsonSchema,
+        defaultValue,
+        parentNode,
+        onChange,
+        ajv,
+      } as SchemaNodeConstructorProps<ObjectSchema>);
+    }
+    case 'virtual': {
       return new VirtualNode({
         key,
         name,
@@ -70,17 +98,8 @@ export function nodeFactory({
         onChange,
         refNodes,
         ajv,
-      });
-    case 'boolean':
-      return new BooleanNode({
-        key,
-        name,
-        jsonSchema,
-        defaultValue,
-        parentNode,
-        onChange,
-        ajv,
-      });
+      } as VirtualNodeConstructorProps<VirtualSchema>);
+    }
   }
   throw new Error(`Unknown schema type: ${jsonSchema.type}`);
 }

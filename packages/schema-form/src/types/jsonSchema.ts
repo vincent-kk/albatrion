@@ -16,6 +16,24 @@ export const enum JSONPath {
   Child = '.',
 }
 
+export const isArraySchema = (schema: JsonSchema): schema is ArraySchema =>
+  schema.type === 'array';
+
+export const isNumberSchema = (schema: JsonSchema): schema is NumberSchema =>
+  schema.type === 'number';
+
+export const isObjectSchema = (schema: JsonSchema): schema is ObjectSchema =>
+  schema.type === 'object';
+
+export const isStringSchema = (schema: JsonSchema): schema is StringSchema =>
+  schema.type === 'string';
+
+export const isVirtualSchema = (schema: JsonSchema): schema is VirtualSchema =>
+  schema.type === 'virtual';
+
+export const isBooleanSchema = (schema: JsonSchema): schema is BooleanSchema =>
+  schema.type === 'boolean';
+
 // REF: https://github.com/ajv-validator/ajv/blob/master/lib/types/json-schema.ts
 
 /** 입력된 값을 기반으로 적절한 Schema를 추론 */
