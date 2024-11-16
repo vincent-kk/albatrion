@@ -1,17 +1,14 @@
 import { SchemaNodeError } from '@lumy/schema-form/errors';
-import type {
-  ObjectSchema,
-  ObjectValue,
-  VirtualSchema,
-} from '@lumy/schema-form/types';
-import { isPlainObject, merge } from 'es-toolkit';
+import type { ObjectSchema, ObjectValue } from '@lumy/schema-form/types';
+import { isPlainObject } from 'es-toolkit';
 
 import { BaseNode } from '../BaseNode';
 import { type ConstructorPropsWithNodeFactory, MethodType } from '../type';
 import type { ChildNode, VirtualReference } from './type';
 import {
-  combineConditions,
+  getChildren,
   getInvertedAnyOfMap,
+  mergeShowConditions,
   sortObjectKeys,
 } from './utils';
 
@@ -146,77 +143,33 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
       }
     }
 
-    const childMap = Object.entries(jsonSchema.properties || {}).reduce(
-      (accum, [name, schema]) => {
-        const handleChange = (value: any) => {
-          if (
-            this.#draft &&
-            (this.#draft[name] !== value || value === undefined)
-          ) {
-            this.#draft[name] = value;
-            this.#emitChange();
-          }
-        };
+    const childNodeMap = new Map<string, ChildNode>();
 
-        const invertedAnyOfConditions = invertedAnyOfMap?.get(name);
+    for (const [name, schema] of Object.entries(jsonSchema.properties || {})) {
+      const handleChange = (value: ObjectValue | undefined) => {
+        if (!this.#draft) return;
+        if (value !== undefined && this.#draft[name] === value) return;
+        this.#draft[name] = value;
+        this.#emitChange();
+      };
+      childNodeMap.set(name, {
+        isVirtualized: !!virtualReferenceFieldsMap.get(name)?.length,
+        node: nodeFactory({
+          name,
+          schema: mergeShowConditions(schema, invertedAnyOfMap?.get(name)),
+          parentNode: this,
+          defaultValue: defaultValue?.[name],
+          onChange: handleChange,
+        }),
+      });
+    }
 
-        accum[name] = {
-          isVirtualized: !!virtualReferenceFieldsMap.get(name)?.length,
-          node: nodeFactory({
-            name,
-            schema: invertedAnyOfConditions
-              ? merge(schema, {
-                  ui: {
-                    show: combineConditions(
-                      [
-                        schema.ui?.show,
-                        combineConditions(invertedAnyOfConditions || [], '||'),
-                      ],
-                      '&&',
-                    ),
-                  },
-                })
-              : schema,
-            parentNode: this,
-            defaultValue: defaultValue?.[name],
-            onChange: handleChange,
-          }),
-        };
-        return accum;
-      },
-      {} as Dictionary<ChildNode>,
+    this.#children = getChildren(
+      this,
+      childNodeMap,
+      virtualReferenceFieldsMap,
+      virtualReferencesMap,
     );
-
-    this.#children = Object.entries(childMap).reduce((accum, [name, child]) => {
-      if (Array.isArray(virtualReferenceFieldsMap.get(name))) {
-        virtualReferenceFieldsMap.get(name)?.forEach((fieldName: string) => {
-          if (virtualReferencesMap.has(fieldName)) {
-            const reference = virtualReferencesMap.get(fieldName)!;
-            const schema: VirtualSchema = {
-              type: 'virtual',
-              ...reference,
-            };
-            const refNodes = reference.fields.map(
-              (field) => childMap[field]?.node,
-            );
-
-            accum.push({
-              node: nodeFactory({
-                name: fieldName,
-                schema: schema,
-                parentNode: this,
-                refNodes: refNodes,
-                defaultValue: refNodes.map((refNode) => refNode?.defaultValue),
-                onChange: () => {},
-              }),
-            });
-            virtualReferencesMap.delete(fieldName);
-          }
-        });
-      }
-      accum.push(child);
-      return accum;
-    }, [] as ChildNode[]);
 
     this.#ready = true;
     this.#emitChange();

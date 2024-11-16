@@ -1,0 +1,44 @@
+import { voidFunction } from '@lumy/schema-form/app/constant';
+
+import { nodeFactory } from '../../nodeFactory';
+import { ObjectNode } from '../ObjectNode';
+import type { ChildNode, VirtualReference } from '../type';
+
+export const getChildren = (
+  parentNode: ObjectNode,
+  childNodeMap: Map<string, ChildNode>,
+  virtualReferenceFieldsMap: Map<string, string[]>,
+  virtualReferencesMap: Map<string, VirtualReference>,
+) => {
+  const children: ChildNode[] = [];
+
+  for (const [name, childNode] of childNodeMap.entries()) {
+    if (Array.isArray(virtualReferenceFieldsMap.get(name))) {
+      virtualReferenceFieldsMap.get(name)!.forEach((fieldName) => {
+        if (virtualReferencesMap.has(fieldName)) {
+          const reference = virtualReferencesMap.get(fieldName)!;
+          const refNodes = reference.fields.map(
+            (field) => childNodeMap.get(field)?.node,
+          );
+          children.push({
+            node: nodeFactory({
+              name: fieldName,
+              schema: {
+                type: 'virtual',
+                ...reference,
+              },
+              parentNode,
+              refNodes,
+              defaultValue: refNodes.map((refNode) => refNode?.defaultValue),
+              onChange: voidFunction,
+            }),
+          });
+          virtualReferencesMap.delete(fieldName);
+        }
+      });
+    }
+    children.push(childNode);
+  }
+
+  return children;
+};
