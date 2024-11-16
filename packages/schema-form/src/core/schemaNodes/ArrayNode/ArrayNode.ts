@@ -31,11 +31,11 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
   get value() {
     return this.toArray();
   }
-  set value(values: ArrayValue) {
-    if (Array.isArray(values)) {
+  set value(input: ArrayValue) {
+    if (Array.isArray(input)) {
       this.#ready = false;
       this.clear();
-      values.forEach((value) => {
+      input.forEach((value) => {
         this.push(value);
       });
       this.#ready = true;
@@ -54,8 +54,8 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     }
   }
 
-  parseValue(value: ArrayValue) {
-    return parseArray(value);
+  parseValue(input: ArrayValue) {
+    return parseArray(input);
   }
 
   /** ArrayNode의 자식 노드들 */
@@ -160,7 +160,7 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
   }
 
   remove(id: IndexId | number) {
-    let targetId = typeof id === 'number' ? this.#ids[id] : id;
+    const targetId = typeof id === 'number' ? this.#ids[id] : id;
     this.#ids = this.#ids.filter((id) => id !== targetId);
     this.#sourceMap.delete(targetId);
     this.#updateChildName();

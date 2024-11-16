@@ -11,11 +11,11 @@ export class NumberNode extends BaseNode<NumberSchema, NumberValue> {
   get value() {
     return this.#value;
   }
-  set value(value: NumberValue | undefined) {
-    this.#emitChange(value);
+  set value(input: NumberValue | undefined) {
+    this.#emitChange(input);
   }
-  parseValue(value: NumberValue | undefined) {
-    return parseNumber(value, this.jsonSchema.type === 'integer');
+  parseValue(input: NumberValue | undefined) {
+    return parseNumber(input, this.jsonSchema.type === 'integer');
   }
 
   #onChange: (value: NumberValue | undefined) => void;

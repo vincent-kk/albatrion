@@ -11,11 +11,11 @@ export class BooleanNode extends BaseNode<BooleanSchema, BooleanValue> {
   get value() {
     return this.#value;
   }
-  set value(value: BooleanValue | undefined) {
-    this.#emitChange(value);
+  set value(input: BooleanValue | undefined) {
+    this.#emitChange(input);
   }
-  parseValue(value: BooleanValue | undefined) {
-    return parseBoolean(value);
+  parseValue(input: BooleanValue | undefined) {
+    return parseBoolean(input);
   }
 
   #onChange: (value: BooleanValue | undefined) => void;

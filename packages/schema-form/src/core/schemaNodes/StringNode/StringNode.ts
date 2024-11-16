@@ -11,11 +11,11 @@ export class StringNode extends BaseNode<StringSchema, StringValue> {
   get value() {
     return this.#value;
   }
-  set value(value: StringValue | undefined) {
-    this.#emitChange(value);
+  set value(input: StringValue | undefined) {
+    this.#emitChange(input);
   }
-  parseValue(value: StringValue | undefined) {
-    return parseString(value);
+  parseValue(input: StringValue | undefined) {
+    return parseString(input);
   }
 
   #onChange: (value: StringValue | undefined) => void;

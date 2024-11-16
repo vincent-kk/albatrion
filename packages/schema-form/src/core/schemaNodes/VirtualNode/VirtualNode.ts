@@ -11,11 +11,11 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
   get value() {
     return this.#value;
   }
-  set value(value: VirtualNodeValue | undefined) {
-    this.#emitChange(value);
+  set value(input: VirtualNodeValue | undefined) {
+    this.#emitChange(input);
   }
-  parseValue(value: VirtualNodeValue) {
-    return parseArray(value);
+  parseValue(input: VirtualNodeValue) {
+    return parseArray(input);
   }
 
   #refNodes: SchemaNode[] = [];

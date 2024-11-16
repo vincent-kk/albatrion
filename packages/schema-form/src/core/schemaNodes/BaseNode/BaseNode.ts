@@ -216,9 +216,9 @@ export abstract class BaseNode<
   abstract type: SchemaNode['type'];
   /** 노드의 값 */
   abstract get value(): Value | undefined;
-  abstract set value(value: Value);
+  abstract set value(input: Value);
   /** 노드의 값 파싱 */
-  abstract parseValue(value: any): Value | undefined;
+  abstract parseValue(input: any): Value | undefined;
 
   /** 노드의 하위 노드 목록, 하위 노드를 가지지 않는 노드는 빈 배열 반환 */
   protected get children(): { node: SchemaNode }[] {
