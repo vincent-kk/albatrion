@@ -41,6 +41,8 @@ export abstract class BaseNode<
   readonly isArrayItem: boolean;
   /** 노드의 JSON Schema */
   readonly jsonSchema: Schema;
+  /** 노드의 타입 */
+  readonly type: Schema['type'];
 
   /** 노드의 이름 */
   #name: string;
@@ -213,8 +215,6 @@ export abstract class BaseNode<
     }
   }
 
-  /** 노드의 타입 */
-  abstract type: SchemaNode['type'];
   /** 노드의 값 */
   abstract get value(): Value | undefined;
   abstract set value(input: Value | undefined);
@@ -237,6 +237,7 @@ export abstract class BaseNode<
     parentNode,
     ajv,
   }: BaseNodeConstructorProps<Schema>) {
+    this.type = jsonSchema.type;
     this.jsonSchema = jsonSchema;
     this.#defaultValue = defaultValue as typeof this.value;
     this.parentNode = parentNode || null;

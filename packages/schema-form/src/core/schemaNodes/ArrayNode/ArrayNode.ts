@@ -16,8 +16,6 @@ import {
 type IndexId = `[${number}]`;
 
 export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
-  readonly type = 'array';
-
   #mount: boolean = false;
   #ready: boolean = true;
   #hasChanged: boolean = false;

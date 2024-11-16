@@ -5,8 +5,6 @@ import { BaseNode } from '../BaseNode';
 import { MethodType, type SchemaNodeConstructorProps } from '../type';
 
 export class BooleanNode extends BaseNode<BooleanSchema, BooleanValue> {
-  readonly type = 'boolean';
-
   #value: BooleanValue | undefined = undefined;
   get value() {
     return this.#value;

@@ -9,8 +9,6 @@ import {
 } from '../type';
 
 export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
-  readonly type = 'virtual';
-
   #value: VirtualNodeValue | undefined = undefined;
   get value() {
     return this.#value;

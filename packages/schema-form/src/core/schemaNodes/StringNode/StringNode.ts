@@ -5,8 +5,6 @@ import { BaseNode } from '../BaseNode';
 import { MethodType, type SchemaNodeConstructorProps } from '../type';
 
 export class StringNode extends BaseNode<StringSchema, StringValue> {
-  readonly type = 'string';
-
   #value: StringValue | undefined = undefined;
   get value() {
     return this.#value;

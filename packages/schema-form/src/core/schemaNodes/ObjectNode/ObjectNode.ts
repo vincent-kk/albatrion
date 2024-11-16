@@ -15,8 +15,6 @@ import {
 } from './utils';
 
 export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
-  readonly type = 'object';
-
   readonly #propertyKeys: string[] = [];
 
   #replace: boolean = false;

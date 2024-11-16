@@ -5,8 +5,6 @@ import { BaseNode } from '../BaseNode';
 import { MethodType, type SchemaNodeConstructorProps } from '../type';
 
 export class NumberNode extends BaseNode<NumberSchema, NumberValue> {
-  readonly type = 'number';
-
   #value: NumberValue | undefined = undefined;
   get value() {
     return this.#value;
