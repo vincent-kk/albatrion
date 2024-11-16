@@ -61,9 +61,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
       );
     }
     this.#draft = {};
-    if (typeof this.#onChange === 'function') {
-      this.#onChange(this.#value);
-    }
+    this.#onChange(this.#value);
     this.publish(MethodType.Change, this.#value);
   }
 
