@@ -1,26 +1,36 @@
-import { voidFunction } from '@lumy/schema-form/app/constant';
-import type { InferSchemaType, JsonSchema } from '@lumy/schema-form/types';
 import type Ajv from 'ajv';
+
+import { voidFunction } from '@lumy/schema-form/app/constant';
+import type {
+  AllowedValue,
+  InferSchemaType,
+  JsonSchema,
+} from '@lumy/schema-form/types';
 
 import { nodeFactory } from './schemaNodes';
 import type { NodeFactoryProps } from './schemaNodes/type';
 
-interface Options<Value> {
+interface NodeFromSchemaProps<
+  Schema extends JsonSchema,
+  Value extends AllowedValue,
+> {
+  jsonSchema: Schema;
   defaultValue?: Value | undefined;
   onChange?: SetStateFn<Value | undefined>;
   ajv?: Ajv;
 }
 
-export const nodeFromSchema = <Schema extends JsonSchema>(
-  schema: Schema,
-  options?: Options<InferSchemaType<Schema>>,
-) => {
+export const nodeFromSchema = <Schema extends JsonSchema>({
+  jsonSchema,
+  defaultValue,
+  onChange,
+  ajv,
+}: NodeFromSchemaProps<Schema, InferSchemaType<Schema>>) => {
   return nodeFactory({
     name: '',
-    jsonSchema: schema,
-    defaultValue: options?.defaultValue || undefined,
-    onChange:
-      typeof options?.onChange === 'function' ? options.onChange : voidFunction,
-    ajv: options?.ajv,
+    jsonSchema,
+    defaultValue: defaultValue || undefined,
+    onChange: typeof onChange === 'function' ? onChange : voidFunction,
+    ajv: ajv,
   } as NodeFactoryProps<Schema>);
 };
