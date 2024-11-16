@@ -12,7 +12,16 @@ export class NumberNode extends BaseNode<NumberSchema, NumberValue> {
     return this.#value;
   }
   set value(input: NumberValue | undefined) {
-    this.#emitChange(input);
+    this.setValue(input);
+  }
+  setValue(
+    input:
+      | NumberValue
+      | undefined
+      | ((prev: NumberValue | undefined) => NumberValue | undefined),
+  ) {
+    const inputValue = typeof input === 'function' ? input(this.#value) : input;
+    this.#emitChange(inputValue);
   }
   parseValue(input: NumberValue | undefined) {
     return parseNumber(input, this.jsonSchema.type === 'integer');
@@ -43,7 +52,7 @@ export class NumberNode extends BaseNode<NumberSchema, NumberValue> {
     this.#onChange = onChange;
 
     if (defaultValue !== undefined) {
-      this.value = defaultValue;
+      this.setValue(defaultValue);
     }
 
     if (defaultValue === undefined && jsonSchema.default !== undefined) {

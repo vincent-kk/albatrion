@@ -16,7 +16,16 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
     return this.#value;
   }
   set value(input: VirtualNodeValue | undefined) {
-    this.#emitChange(input);
+    this.setValue(input);
+  }
+  setValue(
+    input:
+      | VirtualNodeValue
+      | undefined
+      | ((prev: VirtualNodeValue | undefined) => VirtualNodeValue | undefined),
+  ) {
+    const inputValue = typeof input === 'function' ? input(this.#value) : input;
+    this.#emitChange(inputValue);
   }
   parseValue(input: VirtualNodeValue) {
     return parseArray(input);
@@ -33,7 +42,7 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
       values.forEach((value, i) => {
         const node = this.#refNodes[i];
         if (node.value !== value) {
-          node.value = value;
+          node.setValue(value);
         }
       });
     }

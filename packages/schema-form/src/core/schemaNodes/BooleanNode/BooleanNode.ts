@@ -12,7 +12,16 @@ export class BooleanNode extends BaseNode<BooleanSchema, BooleanValue> {
     return this.#value;
   }
   set value(input: BooleanValue | undefined) {
-    this.#emitChange(input);
+    this.setValue(input);
+  }
+  setValue(
+    input:
+      | BooleanValue
+      | undefined
+      | ((prev: BooleanValue | undefined) => BooleanValue | undefined),
+  ) {
+    const inputValue = typeof input === 'function' ? input(this.#value) : input;
+    this.#emitChange(inputValue);
   }
   parseValue(input: BooleanValue | undefined) {
     return parseBoolean(input);
@@ -43,7 +52,7 @@ export class BooleanNode extends BaseNode<BooleanSchema, BooleanValue> {
     this.#onChange = onChange;
 
     if (defaultValue !== undefined) {
-      this.value = defaultValue;
+      this.setValue(defaultValue);
     }
 
     if (defaultValue === undefined && jsonSchema.default !== undefined) {

@@ -217,7 +217,10 @@ export abstract class BaseNode<
   abstract type: SchemaNode['type'];
   /** 노드의 값 */
   abstract get value(): Value | undefined;
-  abstract set value(input: Value);
+  abstract set value(input: Value | undefined);
+  abstract setValue(
+    input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
+  ): void;
   /** 노드의 값 파싱 */
   abstract parseValue(input: any): Value | undefined;
 
@@ -302,10 +305,7 @@ export abstract class BaseNode<
   /** 노드 트리 내에서 특정 경로를 가진 노드 찾기 */
   findNode(path: string) {
     const pathSegments = getPathSegments(path);
-    return find(
-      this as unknown as SchemaNode,
-      pathSegments,
-    ) as SchemaNode | null;
+    return find(this, pathSegments);
   }
 
   /** 노드의 이벤트 리스너 목록 */
@@ -371,7 +371,7 @@ export abstract class BaseNode<
     for (const error of transformErrors(errors)) {
       if (!errorsByDataPath.has(error.instancePath)) {
         errorsByDataPath.set(error.instancePath, []);
-        }
+      }
       errorsByDataPath.get(error.instancePath)?.push(error);
     }
 

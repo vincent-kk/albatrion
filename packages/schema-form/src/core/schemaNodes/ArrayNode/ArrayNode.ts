@@ -35,11 +35,21 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
   get value() {
     return this.toArray();
   }
-  set value(input: ArrayValue) {
-    if (Array.isArray(input)) {
+  set value(input: ArrayValue | undefined) {
+    this.setValue(input);
+  }
+  setValue(
+    input:
+      | ArrayValue
+      | undefined
+      | ((prev: ArrayValue | undefined) => ArrayValue | undefined),
+  ) {
+    const inputValue =
+      typeof input === 'function' ? input(this.toArray()) : input;
+    if (Array.isArray(inputValue)) {
       this.#ready = false;
       this.clear();
-      input.forEach((value) => {
+      inputValue.forEach((value) => {
         this.push(value);
       });
       this.#ready = true;

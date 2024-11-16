@@ -33,7 +33,16 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     return this.#value;
   }
   set value(input: ObjectValue | undefined) {
-    this.#draft = input;
+    this.setValue(input);
+  }
+  setValue(
+    input:
+      | ObjectValue
+      | undefined
+      | ((prev: ObjectValue | undefined) => ObjectValue | undefined),
+  ) {
+    const inputValue = typeof input === 'function' ? input(this.#value) : input;
+    this.#draft = inputValue;
     this.#emitChange();
   }
   public parseValue = (value: ObjectValue | undefined) => value;

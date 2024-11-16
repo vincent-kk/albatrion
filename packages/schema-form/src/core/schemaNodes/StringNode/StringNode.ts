@@ -12,7 +12,16 @@ export class StringNode extends BaseNode<StringSchema, StringValue> {
     return this.#value;
   }
   set value(input: StringValue | undefined) {
-    this.#emitChange(input);
+    this.setValue(input);
+  }
+  setValue(
+    input:
+      | StringValue
+      | undefined
+      | ((prev: StringValue | undefined) => StringValue | undefined),
+  ) {
+    const inputValue = typeof input === 'function' ? input(this.#value) : input;
+    this.#emitChange(inputValue);
   }
   parseValue(input: StringValue | undefined) {
     return parseString(input);
@@ -43,7 +52,7 @@ export class StringNode extends BaseNode<StringSchema, StringValue> {
     this.#onChange = onChange;
 
     if (defaultValue !== undefined) {
-      this.value = defaultValue;
+      this.setValue(defaultValue);
     }
 
     if (defaultValue === undefined && jsonSchema.default !== undefined) {
