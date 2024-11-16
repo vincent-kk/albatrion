@@ -25,7 +25,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     return this.#children;
   }
 
-  #value: ObjectValue | undefined = undefined;
+  #value: ObjectValue | undefined = {};
   #draft: ObjectValue | undefined = {};
   get value() {
     return this.#value;

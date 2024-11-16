@@ -1,11 +1,11 @@
+import { isPlainObject } from 'es-toolkit';
+
 import type { JsonSchema, ObjectSchema } from '@lumy/schema-form/types';
 
 export const isObjectAnyOfSchema = (
   schema: NonNullable<ObjectSchema['anyOf']>[number],
 ): schema is RequiredBy<ObjectSchema, 'properties' | 'required'> =>
-  schema.type === 'object' &&
-  Array.isArray(schema.properties) &&
-  Array.isArray(schema.required);
+  isPlainObject(schema.properties) && Array.isArray(schema.required);
 
 export const isValidEnum = (
   entire: [key: string, value: JsonSchema],

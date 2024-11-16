@@ -14,7 +14,7 @@ export const getInvertedAnyOfMap = (jsonSchema: ObjectSchema) => {
         .filter(isValidEnum)
         .map(([key, value]) =>
           value.enum.length === 1
-            ? `${JSON.stringify(value.enum[0])} === @.${key}`
+            ? `${JSON.stringify(value.enum[0])}===@.${key}`
             : `${JSON.stringify(value.enum)}.includes(@.${key})`,
         );
       required.forEach((field) => {
