@@ -13,13 +13,14 @@ import {
   type SchemaNode,
   type SchemaNodeConstructorProps,
 } from '../type';
+import { OperationType } from './type';
 
 type IndexId = `[${number}]`;
 
 export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
-  #mount: boolean = false;
-  #ready: boolean = false;
-  #hasChanged: boolean = false;
+  #locked: boolean = false;
+  #operation: OperationType = OperationType.Idle;
+  #hasChanged: boolean = true;
 
   #seq: number = 0;
   #ids: IndexId[] = [];
@@ -30,6 +31,18 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
       node: SchemaNode;
     }
   > = new Map();
+
+  #startOperation(operation: OperationType) {
+    this.#operation |= operation;
+  }
+
+  #finishOperation(operation: OperationType) {
+    this.#operation &= ~operation;
+  }
+
+  get #ready() {
+    return !this.#locked && this.#operation === OperationType.Idle;
+  }
 
   get value() {
     return this.toArray();
@@ -46,12 +59,12 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     const inputValue =
       typeof input === 'function' ? input(this.toArray()) : input;
     if (Array.isArray(inputValue)) {
-      this.#ready = false;
+      this.#locked = true;
       this.clear();
       inputValue.forEach((value) => {
         this.push(value);
       });
-      this.#ready = true;
+      this.#locked = false;
       this.#emitChange();
     }
   }
@@ -104,19 +117,19 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
 
     this.#onChange = onChange;
 
+    this.#locked = true;
+
     if (Array.isArray(defaultValue)) {
       defaultValue.forEach((value) => {
         this.push(value);
       });
-      this.#hasChanged = true;
     }
 
     while (this.length < (this.jsonSchema.minItems || 0)) {
       this.push();
     }
 
-    this.#mount = true;
-    this.#ready = true;
+    this.#locked = false;
 
     this.#emitChange();
   }
@@ -129,21 +142,20 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     const id = `[${this.#seq++}]` satisfies IndexId;
     const name = `${this.#ids.length}`;
 
-    this.#ids.push(id);
+    this.#startOperation(OperationType.Push);
 
+    this.#ids.push(id);
     const handleChange: SetStateFn<AllowedValue | undefined> = (input) => {
       const value =
         typeof input === 'function'
           ? input(this.#sourceMap.get(id)!.data)
           : input;
       this.update(id, value);
-      if (this.#mount) {
+      if (this.#ready) {
         this.#onChange(this.toArray());
       }
     };
-
     const defaultValue = data ?? getFallbackValue(this.jsonSchema.items);
-
     this.#sourceMap.set(id, {
       node: schemaNodeFactory({
         key: id,
@@ -155,34 +167,53 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
       }),
       data: defaultValue,
     });
+
     this.#hasChanged = true;
+    this.#finishOperation(OperationType.Push);
+
     this.#emitChange();
     return this;
   }
 
   update(id: IndexId, data: ArrayValue[number]) {
+    this.#startOperation(OperationType.Update);
+
     if (this.#sourceMap.has(id)) {
       this.#sourceMap.get(id)!.data = data;
+      this.#hasChanged = true;
     }
-    this.#hasChanged = true;
+
+    this.#finishOperation(OperationType.Update);
+
     this.#emitChange();
     return this;
   }
 
   remove(id: IndexId | number) {
     const targetId = typeof id === 'number' ? this.#ids[id] : id;
+
+    this.#startOperation(OperationType.Remove);
+
     this.#ids = this.#ids.filter((id) => id !== targetId);
     this.#sourceMap.delete(targetId);
     this.#updateChildName();
+
     this.#hasChanged = true;
+    this.#finishOperation(OperationType.Remove);
+
     this.#emitChange();
     return this;
   }
 
   clear() {
+    this.#startOperation(OperationType.Clear);
+
     this.#ids = [];
     this.#sourceMap.clear();
+
     this.#hasChanged = true;
+    this.#finishOperation(OperationType.Clear);
+
     this.#emitChange();
     return this;
   }
