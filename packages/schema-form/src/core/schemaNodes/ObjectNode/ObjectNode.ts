@@ -1,13 +1,13 @@
-import { SchemaNodeError } from '@lumy/schema-form/errors';
 import type { ObjectSchema, ObjectValue } from '@lumy/schema-form/types';
 import { isPlainObject } from 'es-toolkit';
 
 import { BaseNode } from '../BaseNode';
 import { type ConstructorPropsWithNodeFactory, MethodType } from '../type';
-import type { ChildNode, VirtualReference } from './type';
+import type { ChildNode } from './type';
 import {
   getChildren,
   getInvertedAnyOfMap,
+  getVirtualReferencesMap,
   mergeShowConditions,
   sortObjectKeys,
 } from './utils';
@@ -40,11 +40,9 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
 
   #emitChange() {
     if (!this.#ready) return;
-
     if (this.#draft === undefined) {
       this.#value = undefined;
     }
-
     if (Object.keys(this.#draft || {}).length === 0 && !this.#replace) {
       return;
     }
@@ -61,7 +59,6 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
         this.#propertyKeys,
       );
     }
-
     this.#draft = {};
     if (typeof this.#onChange === 'function') {
       this.#onChange(this.#value);
@@ -94,54 +91,8 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     const invertedAnyOfMap: Map<string, string[]> | null =
       getInvertedAnyOfMap(jsonSchema);
 
-    const virtualReferenceFieldsMap = new Map<
-      string,
-      VirtualReference['fields']
-    >();
-    const virtualReferencesMap = new Map<string, VirtualReference>();
-
-    if (jsonSchema.virtual) {
-      const propertySet = new Set(this.#propertyKeys);
-
-      for (const [key, value] of Object.entries(jsonSchema.virtual)) {
-        if (!Array.isArray(value.fields)) {
-          throw new SchemaNodeError(
-            'VIRTUAL_FIELDS_NOT_VALID',
-            `'virtual.fields' is must be an array.`,
-            {
-              nodeKey: key,
-              nodeValue: value,
-              name: name || 'root',
-            },
-          );
-        }
-
-        // NOTE: virtual field는 모두 properties에 정의되어 있어야 함
-        const notFoundFields = value.fields.filter(
-          (field) => !propertySet.has(field),
-        );
-        if (notFoundFields.length > 0) {
-          throw new SchemaNodeError(
-            'VIRTUAL_FIELDS_NOT_IN_PROPERTIES',
-            `virtual fields are not found on properties`,
-            {
-              nodeKey: key,
-              nodeValue: value,
-              notFoundFields,
-            },
-          );
-        }
-
-        for (const field of value.fields) {
-          virtualReferenceFieldsMap.set(field, [
-            ...(virtualReferenceFieldsMap.get(field) || []),
-            key,
-          ]);
-        }
-
-        virtualReferencesMap.set(key, value);
-      }
-    }
+    const { virtualReferencesMap, virtualReferenceFieldsMap } =
+      getVirtualReferencesMap(name, this.#propertyKeys, jsonSchema.virtual);
 
     const childNodeMap = new Map<string, ChildNode>();
 
@@ -153,7 +104,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
         this.#emitChange();
       };
       childNodeMap.set(name, {
-        isVirtualized: !!virtualReferenceFieldsMap.get(name)?.length,
+        isVirtualized: !!virtualReferenceFieldsMap?.get(name)?.length,
         node: nodeFactory({
           name,
           schema: mergeShowConditions(schema, invertedAnyOfMap?.get(name)),
