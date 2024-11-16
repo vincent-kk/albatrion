@@ -24,18 +24,18 @@ export const getChildren = (
         if (virtualReferencesMap.has(fieldName)) {
           const reference = virtualReferencesMap.get(fieldName)!;
           const refNodes = reference.fields.map(
-            (field) => childNodeMap.get(field)?.node,
+            (field) => childNodeMap.get(field)!.node,
           );
           children.push({
             node: nodeFactory({
               name: fieldName,
-              schema: {
+              jsonSchema: {
                 type: 'virtual',
                 ...reference,
               },
               parentNode,
               refNodes,
-              defaultValue: refNodes.map((refNode) => refNode?.defaultValue),
+              defaultValue: refNodes.map((refNode) => refNode.defaultValue),
               onChange: voidFunction,
             }),
           });

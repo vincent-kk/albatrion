@@ -2,7 +2,7 @@ import type { StringSchema, StringValue } from '@lumy/schema-form/types';
 
 import { parseString } from '../../parsers';
 import { BaseNode } from '../BaseNode';
-import { type ConstructorProps, MethodType } from '../type';
+import { MethodType, type SchemaNodeConstructorProps } from '../type';
 
 export class StringNode extends BaseNode<StringSchema, StringValue> {
   readonly type = 'string';
@@ -37,8 +37,8 @@ export class StringNode extends BaseNode<StringSchema, StringValue> {
     onChange,
     parentNode,
     ajv,
-  }: ConstructorProps<StringValue>) {
-    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
+  }: SchemaNodeConstructorProps<StringSchema>) {
+    super({ key, name, jsonSchema, defaultValue, parentNode, ajv });
 
     this.#onChange = onChange;
 

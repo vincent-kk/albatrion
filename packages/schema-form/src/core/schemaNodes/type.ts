@@ -1,8 +1,7 @@
 import type {
-  AllowedValue,
   ArraySchema,
   BooleanSchema,
-  ExpectJsonSchema,
+  InferValueType,
   JsonSchema,
   JsonSchemaError,
   NumberSchema,
@@ -43,31 +42,27 @@ export type SchemaNode =
   | BooleanNode
   | VirtualNode;
 
-export type ConstructorProps<
-  Value extends AllowedValue,
-  Schema extends JsonSchema = ExpectJsonSchema<Value>,
-> = NodeFactoryProps<Schema, Value>;
-
-export interface NodeFactoryProps<
-  Schema extends JsonSchema = JsonSchema,
-  Value extends AllowedValue = any,
-  Node extends SchemaNode = SchemaNode,
-> {
-  jsonSchema: Schema;
+export interface BaseNodeConstructorProps<Schema extends JsonSchema> {
   key?: string;
   name?: string;
-  defaultValue?: Value;
-  onChange: (value: Value | undefined) => void;
-  parentNode?: Node;
-  refNodes?: SchemaNode[];
+  jsonSchema: Schema;
+  defaultValue?: InferValueType<Schema>;
+  parentNode?: SchemaNode;
   ajv?: Ajv;
 }
 
-export interface ConstructorPropsWithNodeFactory<
-  V extends any[] | Record<string, any> = any,
-> extends ConstructorProps<V> {
-  nodeFactory: any;
+export interface SchemaNodeConstructorProps<Schema extends JsonSchema>
+  extends BaseNodeConstructorProps<Schema> {
+  onChange: (value: InferValueType<Schema> | undefined) => void;
 }
+
+export interface VirtualNodeConstructorProps<Schema extends JsonSchema>
+  extends SchemaNodeConstructorProps<Schema> {
+  refNodes?: SchemaNode[];
+}
+
+export type NodeFactoryProps<Schema extends JsonSchema> =
+  SchemaNodeConstructorProps<Schema> & VirtualNodeConstructorProps<Schema>;
 
 export interface Listener {
   <T extends MethodType>(type: T, payload: MethodPayload[T]): void;

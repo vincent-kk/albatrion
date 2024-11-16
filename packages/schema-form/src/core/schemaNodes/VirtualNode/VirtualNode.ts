@@ -2,7 +2,11 @@ import type { VirtualNodeValue, VirtualSchema } from '@lumy/schema-form/types';
 
 import { parseArray } from '../../parsers';
 import { BaseNode } from '../BaseNode';
-import { type ConstructorProps, MethodType, SchemaNode } from '../type';
+import {
+  MethodType,
+  type SchemaNode,
+  type VirtualNodeConstructorProps,
+} from '../type';
 
 export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
   readonly type = 'virtual';
@@ -40,12 +44,11 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
     name,
     jsonSchema,
     defaultValue,
-    onChange,
     parentNode,
     refNodes,
     ajv,
-  }: ConstructorProps<VirtualNodeValue, VirtualSchema>) {
-    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
+  }: VirtualNodeConstructorProps<VirtualSchema>) {
+    super({ key, name, jsonSchema, defaultValue, parentNode, ajv });
 
     this.#refNodes = refNodes || [];
     this.#children = this.#refNodes.map((node) => ({ node }));

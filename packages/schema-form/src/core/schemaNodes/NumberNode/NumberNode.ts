@@ -2,7 +2,7 @@ import type { NumberSchema, NumberValue } from '@lumy/schema-form/types';
 
 import { parseNumber } from '../../parsers';
 import { BaseNode } from '../BaseNode';
-import { type ConstructorProps, MethodType } from '../type';
+import { MethodType, type SchemaNodeConstructorProps } from '../type';
 
 export class NumberNode extends BaseNode<NumberSchema, NumberValue> {
   readonly type = 'number';
@@ -37,8 +37,8 @@ export class NumberNode extends BaseNode<NumberSchema, NumberValue> {
     onChange,
     parentNode,
     ajv,
-  }: ConstructorProps<NumberValue>) {
-    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
+  }: SchemaNodeConstructorProps<NumberSchema>) {
+    super({ key, name, jsonSchema, defaultValue, parentNode, ajv });
 
     this.#onChange = onChange;
 

@@ -1,12 +1,16 @@
-import type { ArraySchema, ArrayValue } from '@lumy/schema-form/types';
+import type {
+  AllowedValue,
+  ArraySchema,
+  ArrayValue,
+} from '@lumy/schema-form/types';
 
 import { parseArray } from '../../parsers';
 import { BaseNode } from '../BaseNode';
 import { nodeFactory } from '../nodeFactory';
 import {
-  type ConstructorPropsWithNodeFactory,
   MethodType,
   type SchemaNode,
+  type SchemaNodeConstructorProps,
 } from '../type';
 
 type IndexId = `[${number}]`;
@@ -86,8 +90,8 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     onChange,
     parentNode,
     ajv,
-  }: ConstructorPropsWithNodeFactory<ArrayValue>) {
-    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
+  }: SchemaNodeConstructorProps<ArraySchema>) {
+    super({ key, name, jsonSchema, defaultValue, parentNode, ajv });
 
     this.#onChange = onChange;
 
@@ -118,7 +122,7 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
 
     this.#ids.push(id);
 
-    const handleChange = (value: ArrayValue) => {
+    const handleChange = (value: AllowedValue | undefined) => {
       this.update(id, value);
       if (this.#mount) {
         this.#onChange(this.toArray());

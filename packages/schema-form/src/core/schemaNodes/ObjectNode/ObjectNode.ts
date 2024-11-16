@@ -1,8 +1,13 @@
-import type { ObjectSchema, ObjectValue } from '@lumy/schema-form/types';
+import type {
+  AllowedValue,
+  ObjectSchema,
+  ObjectValue,
+} from '@lumy/schema-form/types';
 import { isPlainObject } from 'es-toolkit';
 
 import { BaseNode } from '../BaseNode';
-import { type ConstructorPropsWithNodeFactory, MethodType } from '../type';
+import { nodeFactory } from '../nodeFactory';
+import { MethodType, type SchemaNodeConstructorProps } from '../type';
 import type { ChildNode } from './type';
 import {
   getChildren,
@@ -74,9 +79,8 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     onChange,
     parentNode,
     ajv,
-    nodeFactory,
-  }: ConstructorPropsWithNodeFactory<ObjectValue>) {
-    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
+  }: SchemaNodeConstructorProps<ObjectSchema>) {
+    super({ key, name, jsonSchema, defaultValue, parentNode, ajv });
 
     this.#onChange = onChange;
 
@@ -97,7 +101,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     const childNodeMap = new Map<string, ChildNode>();
 
     for (const [name, schema] of Object.entries(jsonSchema.properties || {})) {
-      const handleChange = (value: ObjectValue | undefined) => {
+      const handleChange = (value: AllowedValue | undefined) => {
         if (!this.#draft) return;
         if (value !== undefined && this.#draft[name] === value) return;
         this.#draft[name] = value;
@@ -107,7 +111,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
         isVirtualized: !!virtualReferenceFieldsMap?.get(name)?.length,
         node: nodeFactory({
           name,
-          schema: mergeShowConditions(schema, invertedAnyOfMap?.get(name)),
+          jsonSchema: mergeShowConditions(schema, invertedAnyOfMap?.get(name)),
           parentNode: this,
           defaultValue: defaultValue?.[name],
           onChange: handleChange,

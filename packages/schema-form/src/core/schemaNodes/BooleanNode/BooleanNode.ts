@@ -2,7 +2,7 @@ import type { BooleanSchema, BooleanValue } from '@lumy/schema-form/types';
 
 import { parseBoolean } from '../../parsers';
 import { BaseNode } from '../BaseNode';
-import { type ConstructorProps, MethodType } from '../type';
+import { MethodType, type SchemaNodeConstructorProps } from '../type';
 
 export class BooleanNode extends BaseNode<BooleanSchema, BooleanValue> {
   readonly type = 'boolean';
@@ -37,8 +37,8 @@ export class BooleanNode extends BaseNode<BooleanSchema, BooleanValue> {
     onChange,
     parentNode,
     ajv,
-  }: ConstructorProps<BooleanValue>) {
-    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
+  }: SchemaNodeConstructorProps<BooleanSchema>) {
+    super({ key, name, jsonSchema, defaultValue, parentNode, ajv });
 
     this.#onChange = onChange;
 

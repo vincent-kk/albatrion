@@ -19,7 +19,7 @@ export const enum JSONPath {
 // REF: https://github.com/ajv-validator/ajv/blob/master/lib/types/json-schema.ts
 
 /** 입력된 값을 기반으로 적절한 Schema를 추론 */
-export type ExpectJsonSchema<V extends AllowedValue | unknown = any> =
+export type InferSchemaType<V extends AllowedValue | unknown = any> =
   V extends NumberValue
     ? NumberSchema
     : V extends StringValue

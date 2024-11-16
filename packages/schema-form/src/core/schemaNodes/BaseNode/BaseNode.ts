@@ -9,7 +9,7 @@ import {
 import Ajv, { type ValidateFunction } from 'ajv';
 
 import {
-  type ConstructorProps,
+  type BaseNodeConstructorProps,
   type Listener,
   type MethodPayload,
   MethodType,
@@ -232,9 +232,9 @@ export abstract class BaseNode<
     defaultValue,
     parentNode,
     ajv,
-  }: ConstructorProps<Value, Schema>) {
+  }: BaseNodeConstructorProps<Schema>) {
     this.jsonSchema = jsonSchema;
-    this.#defaultValue = defaultValue;
+    this.#defaultValue = defaultValue as typeof this.value;
     this.parentNode = parentNode || null;
 
     // NOTE: BaseNode 자체를 사용하는 경우는 없으므로, this는 SchemaNode
