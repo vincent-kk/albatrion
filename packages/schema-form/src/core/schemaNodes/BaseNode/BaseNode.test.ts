@@ -1,0 +1,138 @@
+// import { waitFor } from '@testing-library/react';
+import Ajv from 'ajv';
+import { expect, test } from 'vitest';
+
+import { schemaNodeFromSchema } from '../../schemaNodeFromSchema';
+
+const wait = (delay = 0) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, delay);
+  });
+};
+
+test('node.findNode', () => {
+  const node = schemaNodeFromSchema({
+    jsonSchema: {
+      type: 'object',
+      properties: {
+        house: {
+          type: 'object',
+          properties: {
+            name: { type: 'string', default: 'Gryffindor' },
+            founder: {
+              type: 'object',
+              properties: {
+                name: { type: 'string', default: 'Godric Gryffindor' },
+                yearOfBirth: { type: 'number', default: 900 },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const founder = node?.findNode('house/founder');
+  const founderName = founder?.findNode('name');
+  expect(founder?.value).toMatchObject({ name: 'Godric Gryffindor' });
+  expect(node?.findNode('house/founder/name')).toBe(founderName);
+  // find a relative node
+  const founderBirthOfYear1 = founderName?.findNode('@/yearOfBirth');
+  expect(founderBirthOfYear1?.value).toBe(900);
+  // find a absolute node
+  const founderBirthOfYear2 = founderName?.findNode(
+    '$/house/founder/yearOfBirth',
+  );
+  expect(founderBirthOfYear2?.value).toBe(900);
+});
+
+test('validate', async () => {
+  const node = schemaNodeFromSchema({
+    jsonSchema: {
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+          maxLength: 5,
+          pattern: '^[^A-Z]*$',
+          default: 'Ron Weasley',
+        },
+      },
+    },
+  });
+  await wait();
+
+  const name = node?.findNode('name');
+  expect((name?.errors || []).map(({ keyword }) => keyword)).toMatchObject([
+    'maxLength',
+    'pattern',
+  ]);
+  if (name && name.type === 'string') {
+    name.setValue('ron weasley');
+    await wait();
+    expect((name.errors || []).map(({ keyword }) => keyword)).toMatchObject([
+      'maxLength',
+    ]);
+    name.setValue('ron');
+    await wait();
+    expect(name.errors).toBe(null);
+  }
+});
+
+test('validate with provided ajv', async () => {
+  const ajv = new Ajv({ allErrors: true, strictSchema: false });
+
+  ajv.addKeyword({
+    keyword: 'isEven',
+    async: true,
+    validate: async (schema: boolean, data: number): Promise<boolean> => {
+      return data % 2 === (schema ? 0 : 1);
+    },
+    errors: true,
+  });
+  const node = schemaNodeFromSchema({
+    jsonSchema: {
+      type: 'object',
+      properties: {
+        num: {
+          type: 'number',
+          isEven: true,
+          default: 1,
+        },
+      },
+    },
+    ajv,
+  });
+  const num = node?.findNode('num');
+  await wait();
+  if (num && num.type === 'number') {
+    expect(num.errors?.[0]?.keyword).toBe('isEven');
+    num.setValue(2);
+    await wait();
+    expect(num.errors).toBe(null);
+  }
+});
+
+test('setState, getState', async () => {
+  const node = schemaNodeFromSchema({
+    jsonSchema: {
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+        },
+      },
+    },
+  });
+  const name = node?.findNode('name');
+  if (name) {
+    expect(name.state).toMatchObject({});
+    name.setState((state) => ({ ...state, isTouched: true }));
+    name.setState({ isDirty: true });
+    expect(name.state).toMatchObject({ isTouched: true, isDirty: true });
+    name.setState({ isDirty: undefined });
+    expect(name.state).toMatchObject({ isTouched: true });
+  }
+});
