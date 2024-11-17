@@ -1,9 +1,10 @@
 import { useLayoutEffect } from 'react';
 
-// import type { SchemaNode } from '../nodes';
+import type { SchemaNode } from '@lumy/schema-form/core';
+
 import { useTick } from './useTick';
 
-export function useTracker(node: any | null) {
+export function useTracker<Node extends SchemaNode>(node: Node | null) {
   const [, update] = useTick();
   useLayoutEffect(() => {
     const unsubscribe: Fn | null =
