@@ -79,12 +79,12 @@ export const enum MethodType {
 }
 
 export type MethodPayload = {
-  [MethodType.Focus]: null;
-  [MethodType.Select]: null;
-  [MethodType.Redraw]: undefined;
+  [MethodType.Focus]: void;
+  [MethodType.Select]: void;
+  [MethodType.Redraw]: void;
   [MethodType.Change]: any;
   [MethodType.PathChange]: string;
-  [MethodType.StateChange]: any;
+  [MethodType.StateChange]: NodeState;
   [MethodType.Validate]: JsonSchemaError[];
 };
 
