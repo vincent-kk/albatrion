@@ -1,7 +1,10 @@
-import Ajv, { type ValidateFunction } from 'ajv';
-
-import { filterErrors, getErrorsHash } from '@lumy/schema-form/helpers/error';
-import { isTruthy } from '@lumy/schema-form/helpers/filter';
+import {
+  type ValidateFunction,
+  ajvHelper,
+  filterErrors,
+  getErrorsHash,
+  isTruthy,
+} from '@lumy/schema-form/helpers';
 import {
   type AllowedValue,
   JSONPath,
@@ -269,13 +272,14 @@ export abstract class BaseNode<
     }
 
     if (this.isRoot) {
-      const ajvInstance =
-        ajv || new Ajv({ allErrors: true, strictSchema: false });
       try {
-        this.#validate = ajvInstance.compile({ ...jsonSchema, $async: true });
+        this.#validate = ajvHelper.compile({
+          jsonSchema: { ...jsonSchema, $async: true },
+          ajv,
+        });
       } catch (err: any) {
         this.#validate = Object.assign(
-          (_: any): _ is unknown => {
+          (_: unknown): _ is unknown => {
             throw {
               errors: [
                 { keyword: '__jsonSchema', parent: {}, message: err.message },

@@ -1,6 +1,5 @@
-import type Ajv from 'ajv';
-
 import { voidFunction } from '@lumy/schema-form/app/constant';
+import type { Ajv } from '@lumy/schema-form/helpers';
 import {
   type AllowedValue,
   type InferValueType,

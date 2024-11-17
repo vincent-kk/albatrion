@@ -1,5 +1,4 @@
-import type { Ajv } from 'ajv';
-
+import type { Ajv } from '@lumy/schema-form/helpers';
 import type {
   ArraySchema,
   BooleanSchema,
