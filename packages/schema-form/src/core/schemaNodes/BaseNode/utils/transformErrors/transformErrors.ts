@@ -1,4 +1,4 @@
-import type { JsonSchemaError } from '@lumy/schema-form/types';
+import { JSONPath, type JsonSchemaError } from '@lumy/schema-form/types';
 
 let keySeq = 0;
 
@@ -16,7 +16,7 @@ export const transformErrors = (
       error.params?.missingProperty
     ) {
       error.instancePath =
-        `${error.instancePath}.${error.params.missingProperty}`.replace(
+        `${error.instancePath}${JSONPath.Child}${error.params.missingProperty}`.replace(
           /^\//,
           '',
         );
