@@ -1,8 +1,8 @@
 import type { ErrorObject } from 'ajv';
 
 export const enum ShowError {
-  Touched = 2 << 0,
-  Dirty = 2 << 1,
+  Touched = 1 << 0,
+  Dirty = 1 << 1,
 }
 
 export interface JsonSchemaError extends ErrorObject {

@@ -1,7 +1,7 @@
 export const enum OperationType {
   Idle = 0,
-  Push = 2 << 0,
-  Update = 2 << 1,
-  Remove = 2 << 2,
-  Clear = 2 << 3,
+  Push = 1 << 0,
+  Update = 1 << 1,
+  Remove = 1 << 2,
+  Clear = 1 << 3,
 }

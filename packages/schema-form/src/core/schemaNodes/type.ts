@@ -70,13 +70,13 @@ export interface Listener {
 }
 
 export const enum MethodType {
-  Focus = 2 << 0,
-  Select = 2 << 1,
-  Redraw = 2 << 2,
-  Change = 2 << 3,
-  PathChange = 2 << 4,
-  StateChange = 2 << 5,
-  Validate = 2 << 6,
+  Focus = 1 << 0,
+  Select = 1 << 1,
+  Redraw = 1 << 2,
+  Change = 1 << 3,
+  PathChange = 1 << 4,
+  StateChange = 1 << 5,
+  Validate = 1 << 6,
 }
 
 export type MethodPayload = {
