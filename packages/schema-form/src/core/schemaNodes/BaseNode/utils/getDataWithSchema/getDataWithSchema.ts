@@ -1,40 +1,35 @@
+import { isPlainObject } from 'es-toolkit';
+import { isArray } from 'es-toolkit/compat';
+
 import type {
-  ArraySchema,
+  ArrayValue,
   JsonSchema,
-  ObjectSchema,
+  ObjectValue,
 } from '@lumy/schema-form/types';
 
-interface StackItem {
-  data: any;
-  schema: JsonSchema;
-  result: any;
-  isArray?: boolean;
-  arrayIndex?: number;
-  parent?: any;
-  key?: string | number;
-}
+import { type StackItem, isArrayStackItem, isObjectStackItem } from './type';
 
-export const getDataWithSchema = (
-  data: any,
+export const getDataWithSchema = <Value>(
+  value: Value | undefined,
   schema: JsonSchema,
   options?: { ignoreAnyOf: boolean },
-): any => {
-  if (data == null) return data;
+): Value | undefined => {
+  if (value == null) return value;
 
-  const stack: StackItem[] = [{ data, schema, result: undefined }];
-  let finalResult: any;
+  const stack: StackItem[] = [{ value, schema, result: undefined }];
+  let finalResult: Value | undefined;
 
   while (stack.length > 0) {
     const current = stack[stack.length - 1];
 
-    if (isObjectSchema(current.schema, current.data)) {
+    if (isObjectStackItem(current)) {
       if (handleObjectSchema(current, stack, options)) {
         continue;
       }
       finalResult = current.result;
       stack.pop();
       assignToParent(current, finalResult);
-    } else if (isArraySchema(current.schema, current.data)) {
+    } else if (isArrayStackItem(current)) {
       if (handleArraySchema(current, stack)) {
         continue;
       }
@@ -42,7 +37,7 @@ export const getDataWithSchema = (
       stack.pop();
       assignToParent(current, finalResult);
     } else {
-      finalResult = current.data;
+      finalResult = current.value;
       stack.pop();
       assignToParent(current, finalResult);
     }
@@ -51,32 +46,19 @@ export const getDataWithSchema = (
   return finalResult;
 };
 
-const isObjectSchema = (
-  schema: JsonSchema,
-  data: any,
-): schema is ObjectSchema => {
-  return (
-    schema.type === 'object' &&
-    typeof schema.properties === 'object' &&
-    typeof data === 'object' &&
-    data !== null &&
-    !Array.isArray(data)
-  );
-};
-
 const handleObjectSchema = (
-  current: StackItem,
+  current: StackItem<ObjectValue>,
   stack: StackItem[],
   options?: { ignoreAnyOf: boolean },
 ): boolean => {
   if (!current.result) {
-    const omit = createOmitSet(current.schema, options);
+    const omit = getOmit(current.schema, current.value, options);
     current.result = {};
 
     for (const key in current.schema.properties) {
-      if (key in current.data && !omit.has(key)) {
+      if (key in current.value && !omit?.has(key)) {
         stack.push({
-          data: current.data[key],
+          value: current.value[key],
           schema: current.schema.properties[key],
           result: undefined,
           parent: current.result,
@@ -89,26 +71,18 @@ const handleObjectSchema = (
   return false;
 };
 
-const isArraySchema = (
-  schema: JsonSchema,
-  data: any,
-): schema is ArraySchema => {
-  return (
-    schema.type === 'array' &&
-    typeof schema.items === 'object' &&
-    Array.isArray(data)
-  );
-};
-
-const handleArraySchema = (current: StackItem, stack: StackItem[]): boolean => {
+const handleArraySchema = (
+  current: StackItem<ArrayValue>,
+  stack: StackItem[],
+): boolean => {
   if (!current.result) {
-    current.result = new Array(current.data.length);
+    current.result = new Array(current.value.length);
     current.arrayIndex = 0;
   }
 
-  if (current.arrayIndex! < current.data.length) {
+  if (current.arrayIndex! < current.value.length) {
     stack.push({
-      data: current.data[current.arrayIndex!],
+      value: current.value[current.arrayIndex!],
       schema: current.schema.items,
       result: undefined,
       parent: current.result,
@@ -121,39 +95,41 @@ const handleArraySchema = (current: StackItem, stack: StackItem[]): boolean => {
 };
 
 // omit 집합 생성 함수
-const createOmitSet = (
-  node: JsonSchema,
+const getOmit = <Value extends Dictionary>(
+  jsonSchema: JsonSchema,
+  value: Value,
   options?: { ignoreAnyOf: boolean },
-): Set<string> => {
+): Set<string> | null => {
+  if (options?.ignoreAnyOf || !jsonSchema.anyOf?.length) {
+    return null;
+  }
+
   const omit = new Set<string>();
-
-  if (
-    !options?.ignoreAnyOf &&
-    Array.isArray(node.anyOf) &&
-    node.anyOf.length > 0
-  ) {
-    const required = new Set(node.required || []);
-    const notRequired = new Set<string>();
-
-    // anyOf 배열의 각 스키마에서 필수가 아닌 필드 수집
-    for (const subSchema of node.anyOf) {
-      if (subSchema.type === 'object' && subSchema.properties) {
-        for (const key in subSchema.properties) {
-          if (!required.has(key)) {
-            notRequired.add(key);
-          }
+  const required = new Set(jsonSchema.required || []);
+  const notRequired = new Set<string>();
+  for (const {
+    properties: anyOfProperties,
+    required: anyOfRequired,
+  } of jsonSchema.anyOf) {
+    if (isPlainObject(anyOfProperties) && isArray(anyOfRequired)) {
+      const key = Object.keys(anyOfProperties)[0];
+      if ((anyOfProperties[key]?.enum || []).includes(value?.[key])) {
+        // required인 경우 해당 필드들을 required set에 추가
+        for (const requiredKey of anyOfRequired) {
+          required.add(requiredKey);
+        }
+      } else {
+        for (const requiredKey of anyOfRequired) {
+          notRequired.add(requiredKey);
         }
       }
     }
-
-    // 필수가 아닌 필드들을 omit 셋에 추가
-    for (const field of notRequired) {
-      if (!required.has(field)) {
-        omit.add(field);
-      }
+  }
+  for (const field of notRequired) {
+    if (!required.has(field)) {
+      omit.add(field);
     }
   }
-
   return omit;
 };
 

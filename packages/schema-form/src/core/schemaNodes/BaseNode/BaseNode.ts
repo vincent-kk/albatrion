@@ -347,7 +347,7 @@ export abstract class BaseNode<
   #validate: ValidateFunction | null = null;
 
   /** 노드의 JsonSchema를 이용해서 검증 수행, rootNode에서만 사용 가능 */
-  async validate(value: Value): Promise<JsonSchemaError[]> {
+  async validate(value: Nullish<Value>): Promise<JsonSchemaError[]> {
     if (!this.isRoot || !this.#validate) return [];
     try {
       await this.#validate(value);

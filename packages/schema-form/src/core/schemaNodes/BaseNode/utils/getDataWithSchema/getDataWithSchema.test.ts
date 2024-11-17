@@ -41,10 +41,10 @@ describe('getDataWithSchema', () => {
         { properties: { status: { enum: ['active'] } }, required: ['age'] },
       ],
     };
-    const data = { status: 'active' };
+    const data = { status: 'inactive', age: 30 };
 
     const result = getDataWithSchema(data, schema, { ignoreAnyOf: true });
-    expect(result).toEqual({ status: 'active' });
+    expect(result).toEqual({ status: 'inactive', age: 30 });
   });
 
   it('should include required fields from anyOf if condition matches', () => {
@@ -58,10 +58,10 @@ describe('getDataWithSchema', () => {
         { properties: { status: { enum: ['active'] } }, required: ['age'] },
       ],
     };
-    const data = { status: 'active', age: 30 };
+    const data = { status: 'inactive', age: 30 };
 
     const result = getDataWithSchema(data, schema);
-    expect(result).toEqual({ status: 'active', age: 30 });
+    expect(result).toEqual({ status: 'inactive' });
   });
 
   it('should handle nested object schemas', () => {
