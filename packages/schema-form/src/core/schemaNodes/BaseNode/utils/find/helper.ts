@@ -1,4 +1,4 @@
-import { isTruthy } from '@lumy/schema-form/helpers';
+import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import { JSONPath } from '@lumy/schema-form/types';
 
 const ARRAY_PATTERN = /\[(\d+)\]/g;

@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import { isFunction } from '@lumy/schema-form/helpers';
+import { isFunction } from '@lumy/schema-form/helpers/filter';
 
 // fn이 함수 타입일 때의 오버로드
 export function useConstant<Return>(input: Fn<[], Return>): Return;

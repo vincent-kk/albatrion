@@ -1,4 +1,4 @@
-import type { ErrorObject } from '@lumy/schema-form/helpers';
+import type { ErrorObject } from '@lumy/schema-form/helpers/ajv';
 
 export const enum ShowError {
   Touched = 1 << 0,

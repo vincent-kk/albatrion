@@ -1,5 +1,5 @@
 import { voidFunction } from '@lumy/schema-form/app/constant';
-import type { Ajv } from '@lumy/schema-form/helpers';
+import type { Ajv } from '@lumy/schema-form/helpers/ajv';
 import {
   type AllowedValue,
   type InferValueType,
