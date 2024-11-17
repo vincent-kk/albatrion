@@ -12,14 +12,8 @@ export class NumberNode extends BaseNode<NumberSchema, NumberValue> {
   set value(input: NumberValue | undefined) {
     this.setValue(input);
   }
-  setValue(
-    input:
-      | NumberValue
-      | undefined
-      | ((prev: NumberValue | undefined) => NumberValue | undefined),
-  ) {
-    const inputValue = typeof input === 'function' ? input(this.#value) : input;
-    this.#emitChange(inputValue);
+  protected applyValue(input: NumberValue | undefined) {
+    this.#emitChange(input);
   }
   parseValue(input: NumberValue | undefined) {
     return parseNumber(input, this.jsonSchema.type === 'integer');

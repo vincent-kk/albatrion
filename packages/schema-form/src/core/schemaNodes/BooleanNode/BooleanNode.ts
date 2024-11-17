@@ -12,14 +12,8 @@ export class BooleanNode extends BaseNode<BooleanSchema, BooleanValue> {
   set value(input: BooleanValue | undefined) {
     this.setValue(input);
   }
-  setValue(
-    input:
-      | BooleanValue
-      | undefined
-      | ((prev: BooleanValue | undefined) => BooleanValue | undefined),
-  ) {
-    const inputValue = typeof input === 'function' ? input(this.#value) : input;
-    this.#emitChange(inputValue);
+  protected applyValue(input: BooleanValue | undefined) {
+    this.#emitChange(input);
   }
   parseValue(input: BooleanValue | undefined) {
     return parseBoolean(input);

@@ -136,3 +136,34 @@ test('setState, getState', async () => {
     expect(name.state).toMatchObject({ isTouched: true });
   }
 });
+
+test('setValue, applyValue', async () => {
+  const node = schemaNodeFromSchema({
+    jsonSchema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', enum: ['active', 'inactive'] },
+        age: { type: 'number' },
+      },
+      anyOf: [
+        { properties: { status: { enum: ['active'] } }, required: ['age'] },
+      ],
+    },
+  });
+  node.setValue({ status: 'active', age: 10 });
+  await wait();
+  expect(node.value).toMatchObject({ status: 'active', age: 10 });
+
+  node.setValue((prev) => ({ ...prev, age: 20 }));
+  await wait();
+  expect(node.value).toMatchObject({ status: 'active', age: 20 });
+
+  node.setValue({ status: 'inactive', age: 10 });
+  await wait();
+  expect(node.value).toMatchObject({ status: 'inactive' });
+
+  // @ts-expect-error applyValue는 모든 노드에서 동일한 타입을 받기 때문에 타입 오류 발생
+  node.applyValue({ status: 'inactive', age: 20 });
+  await wait();
+  expect(node.value).toMatchObject({ status: 'inactive', age: 20 });
+});

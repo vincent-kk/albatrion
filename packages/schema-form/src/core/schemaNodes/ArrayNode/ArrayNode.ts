@@ -50,18 +50,11 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
   set value(input: ArrayValue | undefined) {
     this.setValue(input);
   }
-  setValue(
-    input:
-      | ArrayValue
-      | undefined
-      | ((prev: ArrayValue | undefined) => ArrayValue | undefined),
-  ) {
-    const inputValue =
-      typeof input === 'function' ? input(this.toArray()) : input;
-    if (Array.isArray(inputValue)) {
+  protected applyValue(input: ArrayValue | undefined) {
+    if (Array.isArray(input)) {
       this.#locked = true;
       this.clear();
-      inputValue.forEach((value) => {
+      input.forEach((value) => {
         this.push(value);
       });
       this.#locked = false;

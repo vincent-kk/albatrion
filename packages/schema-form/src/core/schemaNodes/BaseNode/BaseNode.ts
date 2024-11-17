@@ -220,9 +220,15 @@ export abstract class BaseNode<
   /** 노드의 값 */
   abstract get value(): Value | undefined;
   abstract set value(input: Value | undefined);
-  abstract setValue(
+  /** value를 설정하는 메소드 구현 필요 */
+  protected abstract applyValue(input: Value | undefined): void;
+  /** input 값을 처리한 후, getDataWithSchema를 적용하여 applyValue에 값 전달*/
+  setValue(
     input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
-  ): void;
+  ): void {
+    const inputValue = typeof input === 'function' ? input(this.value) : input;
+    this.applyValue(getDataWithSchema(inputValue, this.jsonSchema));
+  }
   /** 노드의 값 파싱 */
   abstract parseValue(input: any): Value | undefined;
 
@@ -347,7 +353,7 @@ export abstract class BaseNode<
   #validate: ValidateFunction | null = null;
 
   /** 노드의 JsonSchema를 이용해서 검증 수행, rootNode에서만 사용 가능 */
-  async validate(value: Nullish<Value>): Promise<JsonSchemaError[]> {
+  async validate(value: Value | undefined): Promise<JsonSchemaError[]> {
     if (!this.isRoot || !this.#validate) return [];
     try {
       await this.#validate(value);

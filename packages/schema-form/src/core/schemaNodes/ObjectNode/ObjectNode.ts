@@ -34,14 +34,8 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
   set value(input: ObjectValue | undefined) {
     this.setValue(input);
   }
-  setValue(
-    input:
-      | ObjectValue
-      | undefined
-      | ((prev: ObjectValue | undefined) => ObjectValue | undefined),
-  ) {
-    const inputValue = typeof input === 'function' ? input(this.#value) : input;
-    this.#draft = inputValue;
+  protected applyValue(input: ObjectValue) {
+    this.#draft = input;
     this.#emitChange();
   }
   public parseValue = (value: ObjectValue | undefined) => value;

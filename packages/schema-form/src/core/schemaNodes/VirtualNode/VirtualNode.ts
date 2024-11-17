@@ -16,14 +16,8 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
   set value(input: VirtualNodeValue | undefined) {
     this.setValue(input);
   }
-  setValue(
-    input:
-      | VirtualNodeValue
-      | undefined
-      | ((prev: VirtualNodeValue | undefined) => VirtualNodeValue | undefined),
-  ) {
-    const inputValue = typeof input === 'function' ? input(this.#value) : input;
-    this.#emitChange(inputValue);
+  protected applyValue(input: VirtualNodeValue | undefined) {
+    this.#emitChange(input);
   }
   parseValue(input: VirtualNodeValue) {
     return parseArray(input);

@@ -12,14 +12,8 @@ export class StringNode extends BaseNode<StringSchema, StringValue> {
   set value(input: StringValue | undefined) {
     this.setValue(input);
   }
-  setValue(
-    input:
-      | StringValue
-      | undefined
-      | ((prev: StringValue | undefined) => StringValue | undefined),
-  ) {
-    const inputValue = typeof input === 'function' ? input(this.#value) : input;
-    this.#emitChange(inputValue);
+  protected applyValue(input: StringValue | undefined) {
+    this.#emitChange(input);
   }
   parseValue(input: StringValue | undefined) {
     return parseString(input);
