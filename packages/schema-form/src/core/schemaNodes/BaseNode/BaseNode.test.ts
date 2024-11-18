@@ -34,16 +34,16 @@ test('node.findNode', () => {
     },
   });
 
-  const founder = node?.findNode('house/founder');
+  const founder = node?.findNode('house.founder');
   const founderName = founder?.findNode('name');
   expect(founder?.value).toMatchObject({ name: 'Godric Gryffindor' });
-  expect(node?.findNode('house/founder/name')).toBe(founderName);
+  expect(node?.findNode('house.founder.name')).toBe(founderName);
   // find a relative node
-  const founderBirthOfYear1 = founderName?.findNode('@/yearOfBirth');
+  const founderBirthOfYear1 = founderName?.findNode('@.yearOfBirth');
   expect(founderBirthOfYear1?.value).toBe(900);
   // find a absolute node
   const founderBirthOfYear2 = founderName?.findNode(
-    '$/house/founder/yearOfBirth',
+    '$.house.founder.yearOfBirth',
   );
   expect(founderBirthOfYear2?.value).toBe(900);
 });
@@ -166,4 +166,97 @@ test('setValue, applyValue', async () => {
   node.applyValue({ status: 'inactive', age: 20 });
   await wait();
   expect(node.value).toMatchObject({ status: 'inactive', age: 20 });
+});
+
+test('child node error sending', async () => {
+  const ajv = new Ajv({ allErrors: true, strictSchema: false });
+
+  ajv.addKeyword({
+    keyword: 'isEven',
+    async: true,
+    validate: (schema: boolean, data: number): boolean => {
+      return !!(data % 2 === (schema ? 0 : 1));
+    },
+    errors: true,
+  });
+
+  const node = schemaNodeFromSchema({
+    jsonSchema: {
+      type: 'object',
+      properties: {
+        index: {
+          type: 'number',
+          isEven: true,
+          default: 1,
+        },
+        data: {
+          type: 'array',
+          items: {
+            type: 'number',
+            isEven: true,
+          },
+        },
+        name: {
+          type: 'string',
+          maxLength: 5,
+          default: 'Ron',
+        },
+      },
+    },
+    defaultValue: {
+      data: [3, 5, 7],
+    },
+    ajv,
+  });
+  await wait();
+
+  const index = node?.findNode('index');
+  if (index && index.type === 'number') {
+    expect(index.errors?.[0]?.keyword).toBe('isEven');
+    index.setValue(2);
+    await wait();
+    expect(index.errors).toBe(null);
+  }
+
+  const data = node?.findNode('data');
+  if (data && data.type === 'array') {
+    data.children.forEach((child, index) => {
+      expect(child.node.errors).toEqual([
+        {
+          dataPath: `.data.[${index}]`,
+          instancePath: `/data/${index}`,
+          key: undefined,
+          keyword: 'isEven',
+          message: 'must pass "isEven" keyword validation',
+          params: {},
+          schemaPath: '#/properties/data/items/isEven',
+        },
+      ]);
+    });
+    data.setValue([2, 4, 6]);
+    await wait();
+    data.children.forEach((child) => {
+      expect(child.node.errors).toBe(null);
+    });
+  }
+
+  const name = node?.findNode('name');
+  if (name && name.type === 'string') {
+    expect(name.errors).toBe(null);
+    name.setValue('Ron Weasley');
+    await wait();
+    expect(name.errors).toEqual([
+      {
+        dataPath: '.name',
+        instancePath: '/name',
+        key: undefined,
+        keyword: 'maxLength',
+        message: 'must NOT have more than 5 characters',
+        params: {
+          limit: 5,
+        },
+        schemaPath: '#/properties/name/maxLength',
+      },
+    ]);
+  }
 });

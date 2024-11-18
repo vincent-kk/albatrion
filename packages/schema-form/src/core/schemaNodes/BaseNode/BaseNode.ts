@@ -1,4 +1,5 @@
 import {
+  type ErrorObject,
   type ValidateFunction,
   ajvHelper,
 } from '@lumy/schema-form/helpers/ajv';
@@ -91,7 +92,7 @@ export abstract class BaseNode<
   #errors: JsonSchemaError[] = [];
   /** 자신의 Error의 해시값 */
   #errorHash?: number;
-  /** 자신의 Error의 instancePath 목록 */
+  /** 자신의 Error의 dataPath 목록 */
   #errorDataPaths: string[] = [];
   /** 자신의 Error와 하위 노드의 Error를 합친 에러 */
   get errors() {
@@ -346,9 +347,7 @@ export abstract class BaseNode<
     const visibleJsonPaths = new Set(
       getJsonPaths(getDataWithSchema(this.value, this.jsonSchema)),
     );
-    return errors.filter(({ instancePath }) =>
-      visibleJsonPaths.has(instancePath),
-    );
+    return errors.filter(({ dataPath }) => visibleJsonPaths.has(dataPath));
   }
 
   /** 노드의 Ajv 검증 함수 */
@@ -359,8 +358,8 @@ export abstract class BaseNode<
     if (!this.isRoot || !this.#validate) return [];
     try {
       await this.#validate(value);
-    } catch (err: any) {
-      return err.errors as JsonSchemaError[];
+    } catch (thrown: any) {
+      return transformErrors(thrown.errors as ErrorObject[]);
     }
     return [];
   }
@@ -375,32 +374,32 @@ export abstract class BaseNode<
       await this.validate(getDataWithSchema(this.value, this.jsonSchema)),
     );
 
-    // NOTE: 2. 얻어진 error들을 instancePath 별로 분류
+    // NOTE: 2. 얻어진 error들을 dataPath 별로 분류
     const errorsByDataPath = new Map<
-      JsonSchemaError['instancePath'],
+      JsonSchemaError['dataPath'],
       JsonSchemaError[]
     >();
-    for (const error of transformErrors(errors)) {
-      if (!errorsByDataPath.has(error.instancePath)) {
-        errorsByDataPath.set(error.instancePath, []);
+    for (const error of errors) {
+      if (!errorsByDataPath.has(error.dataPath)) {
+        errorsByDataPath.set(error.dataPath, []);
       }
-      errorsByDataPath.get(error.instancePath)?.push(error);
+      errorsByDataPath.get(error.dataPath)?.push(error);
     }
 
     // NOTE: 3. 전체 error를 set, 하위 노드에도 dataPath로 node를 찾아서 error set
     this.setErrors(errors);
 
-    for (const [instancePath, errors] of errorsByDataPath.entries()) {
-      this.findNode(instancePath)?.setErrors(errors);
+    for (const [dataPath, errors] of errorsByDataPath.entries()) {
+      this.findNode(dataPath)?.setErrors(errors);
     }
 
     // NOTE: 4. 기존 error에는 포함되어 있으나, 신규 error 목록에 포함되지 않는 error를 가진 node는 clearError
     const errorDataPaths = Array.from(errorsByDataPath.keys());
     const errorDataPathsSet = new Set(errorDataPaths);
     this.#errorDataPaths
-      .filter((instancePath) => !errorDataPathsSet.has(instancePath))
-      .forEach((instancePath) => {
-        this.findNode(instancePath)?.clearErrors();
+      .filter((dataPath) => !errorDataPathsSet.has(dataPath))
+      .forEach((dataPath) => {
+        this.findNode(dataPath)?.clearErrors();
       });
     this.#errorDataPaths = errorDataPaths;
   }

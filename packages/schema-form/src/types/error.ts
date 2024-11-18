@@ -7,6 +7,7 @@ export const enum ShowError {
 
 export interface JsonSchemaError extends ErrorObject {
   key?: number;
+  dataPath: string;
   params: ErrorParameters;
   [alt: string]: any;
 }

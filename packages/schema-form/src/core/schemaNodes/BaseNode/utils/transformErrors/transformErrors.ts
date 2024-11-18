@@ -1,26 +1,38 @@
-import { JSONPath, type JsonSchemaError } from '@lumy/schema-form/types';
+import { isArray } from 'es-toolkit/compat';
+
+import type { ErrorObject } from '@lumy/schema-form/helpers/ajv';
+import {
+  JSONPath,
+  JSONPointer,
+  type JsonSchemaError,
+} from '@lumy/schema-form/types';
 
 let keySeq = 0;
 
 export const transformErrors = (
-  errors: JsonSchemaError[],
+  errors: ErrorObject[],
   useKey = false,
 ): JsonSchemaError[] => {
-  // 입력값이 배열이 아닌 경우 빈 배열 반환
-  if (!Array.isArray(errors)) return [];
+  if (!isArray(errors)) return [];
   return errors.map((error) => {
-    error.key = useKey ? ++keySeq : undefined;
-    if (
-      typeof error.instancePath === 'string' &&
-      error.keyword === 'required' &&
-      error.params?.missingProperty
-    ) {
-      error.instancePath =
-        `${error.instancePath}${JSONPath.Child}${error.params.missingProperty}`.replace(
-          /^\//,
-          '',
-        );
-    }
-    return error;
+    (<JsonSchemaError>error).key = useKey ? ++keySeq : undefined;
+    (<JsonSchemaError>error).dataPath = transformDataPath(error);
+    return error as JsonSchemaError;
   });
+};
+
+const JSON_POINTER_CHILD_PATTERN = new RegExp(`${JSONPointer.Child}`, 'g');
+const INDEX_PATTERN = new RegExp(`(${JSONPath.Child})(\\d+)`, 'g');
+
+const transformDataPath = (error: ErrorObject): string => {
+  const dataPath = error.instancePath
+    .replace(JSON_POINTER_CHILD_PATTERN, JSONPath.Child)
+    .replace(INDEX_PATTERN, '$1[$2]');
+
+  const hasMissingProperty =
+    error.keyword === 'required' && error.params?.missingProperty;
+
+  return hasMissingProperty
+    ? `${dataPath}${JSONPath.Child}${error.params.missingProperty}`
+    : dataPath;
 };

@@ -1,11 +1,10 @@
+import type { ErrorObject } from 'ajv';
 import { beforeEach, describe, expect, it } from 'vitest';
-
-import type { JsonSchemaError } from '@lumy/schema-form/types';
 
 import { transformErrors } from './transformErrors';
 
 describe('transformErrors', () => {
-  let errors: JsonSchemaError[];
+  let errors: ErrorObject[];
 
   beforeEach(() => {
     errors = [
@@ -18,7 +17,7 @@ describe('transformErrors', () => {
       },
       {
         keyword: 'type',
-        instancePath: '/age',
+        instancePath: '/age/1/koreanAge',
         schemaPath: '#/properties/age/type',
         params: { type: 'number' },
         message: 'should be number',
@@ -32,11 +31,13 @@ describe('transformErrors', () => {
       {
         ...errors[0],
         key: undefined,
-        instancePath: 'name',
+        instancePath: '',
+        dataPath: '.name',
       },
       {
         ...errors[1],
         key: undefined,
+        dataPath: '.age.[1].koreanAge',
       },
     ]);
   });
@@ -47,11 +48,13 @@ describe('transformErrors', () => {
       {
         ...errors[0],
         key: 1,
-        instancePath: 'name',
+        dataPath: '.name',
+        instancePath: '',
       },
       {
         ...errors[1],
         key: 2,
+        dataPath: '.age.[1].koreanAge',
       },
     ]);
   });
@@ -62,7 +65,8 @@ describe('transformErrors', () => {
   });
 
   it('should handle non-array input', () => {
-    const result = transformErrors(null as unknown as JsonSchemaError[]);
+    // @ts-expect-error ajv 에러 타입 확인
+    const result = transformErrors(null);
     expect(result).toEqual([]);
   });
 });

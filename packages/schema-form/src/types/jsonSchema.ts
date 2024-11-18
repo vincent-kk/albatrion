@@ -13,6 +13,11 @@ import type {
 export const enum JSONPath {
   Root = '$',
   Current = '@',
+  Child = '.',
+}
+
+export const enum JSONPointer {
+  Root = '',
   Child = '/',
 }
 

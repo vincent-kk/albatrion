@@ -96,13 +96,13 @@ test('array.getValue', () => {
       tags: ['harry', 'ron'],
     },
   });
-  expect(node?.findNode('$/tags')?.value).toMatchObject(['harry', 'ron']);
+  expect(node?.findNode('$.tags')?.value).toMatchObject(['harry', 'ron']);
 
-  const found = node?.findNode('$/tags');
+  const found = node?.findNode('$.tags');
   if (found?.type === 'array') {
     found.setValue(['Hermione', 'ron', 'harry']);
   }
-  expect(node?.findNode('$/tags')?.value).toMatchObject([
+  expect(node?.findNode('$.tags')?.value).toMatchObject([
     'Hermione',
     'ron',
     'harry',
