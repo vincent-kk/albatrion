@@ -223,7 +223,7 @@ export abstract class BaseNode<
   abstract set value(input: Value | undefined);
   /** value를 설정하는 메소드 구현 필요 */
   protected abstract applyValue(input: Value | undefined): void;
-  /** input 값을 처리한 후, getDataWithSchema를 적용하여 applyValue에 값 전달*/
+  /** applyValue로 실제 데이터 반영 전에, input에 대한 전처리 과정 수행 */
   setValue(
     input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
   ): void {
@@ -307,9 +307,11 @@ export abstract class BaseNode<
       });
 
       // validate for initial value
-      setTimeout(() => {
-        this.validateOnChange();
-      });
+      // NOTE: 초기값이 있는 경우에 emitChange 를 호출하게 하면 초기값이 변경되는 것으로 인식하여 검증 수행
+      // 따라서 초기값이 있는 경우에는 별도로 validateOnChange 되므로, 별도 검증 불필요
+      // setTimeout(() => {
+      //   this.validateOnChange();
+      // });
     }
   }
 
