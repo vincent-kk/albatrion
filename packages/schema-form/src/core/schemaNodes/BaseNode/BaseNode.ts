@@ -228,9 +228,7 @@ export abstract class BaseNode<
     input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
   ): void {
     const inputValue = typeof input === 'function' ? input(this.value) : input;
-    this.applyValue(
-      this.isRoot ? getDataWithSchema(inputValue, this.jsonSchema) : inputValue,
-    );
+    this.applyValue(getDataWithSchema(inputValue, this.jsonSchema));
   }
   /** 노드의 값 파싱 */
   abstract parseValue(input: any): Value | undefined;
