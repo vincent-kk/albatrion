@@ -62,12 +62,10 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     }
   }
 
-  #onChange: SetStateFn<ArrayValue | undefined>;
-
   #emitChange() {
     if (this.#ready && this.#hasChanged) {
       const value = this.toArray();
-      this.#onChange(value);
+      this.onChange(value);
       this.publish(MethodType.Change, value);
       this.#hasChanged = false;
     }
@@ -106,9 +104,7 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     parentNode,
     ajv,
   }: SchemaNodeConstructorProps<ArraySchema>) {
-    super({ key, name, jsonSchema, defaultValue, parentNode, ajv });
-
-    this.#onChange = onChange;
+    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
 
     this.#locked = true;
 
@@ -145,7 +141,7 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
           : input;
       this.update(id, value);
       if (this.#ready) {
-        this.#onChange(this.toArray());
+        this.onChange(this.toArray());
       }
     };
     const defaultValue = data ?? getFallbackValue(this.jsonSchema.items);

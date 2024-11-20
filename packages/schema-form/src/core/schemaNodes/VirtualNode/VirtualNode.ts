@@ -45,11 +45,12 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
     name,
     jsonSchema,
     defaultValue,
+    onChange,
     parentNode,
     refNodes,
     ajv,
   }: VirtualNodeConstructorProps<VirtualSchema>) {
-    super({ key, name, jsonSchema, defaultValue, parentNode, ajv });
+    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
 
     this.#refNodes = refNodes || [];
     this.#children = this.#refNodes.map((node) => ({ node }));

@@ -19,13 +19,11 @@ export class StringNode extends BaseNode<StringSchema, StringValue> {
     return parseString(input);
   }
 
-  #onChange: SetStateFn<StringValue | undefined>;
-
   #emitChange(input: StringValue | undefined) {
     const value = this.parseValue(input);
     if (this.#value !== value) {
       this.#value = value;
-      this.#onChange(value);
+      this.onChange(value);
       this.publish(MethodType.Change, value);
     }
   }
@@ -39,9 +37,7 @@ export class StringNode extends BaseNode<StringSchema, StringValue> {
     parentNode,
     ajv,
   }: SchemaNodeConstructorProps<StringSchema>) {
-    super({ key, name, jsonSchema, defaultValue, parentNode, ajv });
-
-    this.#onChange = onChange;
+    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
 
     if (defaultValue !== undefined) {
       this.setValue(defaultValue);

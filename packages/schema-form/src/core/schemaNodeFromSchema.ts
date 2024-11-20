@@ -1,4 +1,3 @@
-import { voidFunction } from '@lumy/schema-form/app/constant';
 import type { Ajv } from '@lumy/schema-form/helpers/ajv';
 import {
   type AllowedValue,
@@ -30,6 +29,6 @@ export const schemaNodeFromSchema = <Schema extends JsonSchema>({
     name: JSONPath.Root,
     jsonSchema,
     defaultValue,
-    onChange: typeof onChange === 'function' ? onChange : voidFunction,
+    onChange: typeof onChange === 'function' ? onChange : undefined,
     ajv,
   } as NodeFactoryProps<Schema>) as InferSchemaNode<Schema>;

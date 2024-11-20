@@ -40,8 +40,6 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
   }
   public parseValue = (value: ObjectValue | undefined) => value;
 
-  #onChange: SetStateFn<ObjectValue | undefined>;
-
   #emitChange() {
     if (!this.#ready) return;
     if (this.#draft === undefined) {
@@ -64,7 +62,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
       );
     }
     this.#draft = {};
-    this.#onChange(this.#value);
+    this.onChange(this.#value);
     this.publish(MethodType.Change, this.#value);
   }
 
@@ -77,9 +75,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     parentNode,
     ajv,
   }: SchemaNodeConstructorProps<ObjectSchema>) {
-    super({ key, name, jsonSchema, defaultValue, parentNode, ajv });
-
-    this.#onChange = onChange;
+    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
 
     if (defaultValue !== undefined) {
       this.#value = this.defaultValue;

@@ -13,12 +13,12 @@ import {
 } from '@lumy/schema-form/types';
 
 import {
-  type BaseNodeConstructorProps,
   type Listener,
   type MethodPayload,
   MethodType,
   type NodeState,
   type SchemaNode,
+  type SchemaNodeConstructorProps,
 } from '../type';
 import {
   find,
@@ -233,6 +233,16 @@ export abstract class BaseNode<
   /** 노드의 값 파싱 */
   abstract parseValue(input: any): Value | undefined;
 
+  #handleChange: SetStateFn<Value | undefined> | undefined;
+  onChange(
+    input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
+  ): void {
+    if (typeof this.#handleChange !== 'function') return;
+
+    const inputValue = typeof input === 'function' ? input(this.value) : input;
+    this.#handleChange(inputValue);
+  }
+
   /** 노드의 하위 노드 목록, 하위 노드를 가지지 않는 노드는 빈 배열 반환 */
   get children(): { node: SchemaNode }[] {
     return [];
@@ -243,12 +253,13 @@ export abstract class BaseNode<
     name,
     jsonSchema,
     defaultValue,
+    onChange,
     parentNode,
     ajv,
-  }: BaseNodeConstructorProps<Schema>) {
+  }: SchemaNodeConstructorProps<Schema, Value>) {
     this.type = jsonSchema.type;
     this.jsonSchema = jsonSchema;
-    this.#defaultValue = defaultValue as typeof this.value;
+    this.#defaultValue = defaultValue;
     this.parentNode = parentNode || null;
 
     // NOTE: BaseNode 자체를 사용하는 경우는 없으므로, this는 SchemaNode
@@ -256,6 +267,8 @@ export abstract class BaseNode<
     this.isRoot = !this.parentNode;
     this.isArrayItem = this.parentNode?.jsonSchema?.type === 'array';
     this.#name = name || '';
+
+    this.#handleChange = onChange;
 
     this.#path = this.parentNode?.path
       ? `${this.parentNode.path}${JSONPath.Child}${this.#name}`

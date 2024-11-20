@@ -19,13 +19,11 @@ export class BooleanNode extends BaseNode<BooleanSchema, BooleanValue> {
     return parseBoolean(input);
   }
 
-  #onChange: SetStateFn<BooleanValue | undefined>;
-
   #emitChange(input: BooleanValue | undefined) {
     const value = this.parseValue(input);
     if (this.#value !== value) {
       this.#value = value;
-      this.#onChange(value);
+      this.onChange(value);
       this.publish(MethodType.Change, value);
     }
   }
@@ -39,9 +37,7 @@ export class BooleanNode extends BaseNode<BooleanSchema, BooleanValue> {
     parentNode,
     ajv,
   }: SchemaNodeConstructorProps<BooleanSchema>) {
-    super({ key, name, jsonSchema, defaultValue, parentNode, ajv });
-
-    this.#onChange = onChange;
+    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
 
     if (defaultValue !== undefined) {
       this.setValue(defaultValue);

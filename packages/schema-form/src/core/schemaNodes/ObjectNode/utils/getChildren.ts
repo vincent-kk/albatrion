@@ -1,5 +1,3 @@
-import { voidFunction } from '@lumy/schema-form/app/constant';
-
 import { schemaNodeFactory } from '../../schemaNodeFactory';
 import type { ObjectNode } from '../ObjectNode';
 import type { ChildNode, VirtualReference } from '../type';
@@ -36,7 +34,6 @@ export const getChildren = (
               parentNode,
               refNodes,
               defaultValue: refNodes.map((refNode) => refNode.defaultValue),
-              onChange: voidFunction,
             }),
           });
           virtualReferencesMap.delete(fieldName);

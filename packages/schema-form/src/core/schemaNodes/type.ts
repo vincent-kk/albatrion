@@ -1,5 +1,6 @@
 import type { Ajv } from '@lumy/schema-form/helpers/ajv';
 import type {
+  AllowedValue,
   ArraySchema,
   BooleanSchema,
   InferValueType,
@@ -42,18 +43,17 @@ export type SchemaNode =
   | BooleanNode
   | VirtualNode;
 
-export interface BaseNodeConstructorProps<Schema extends JsonSchema> {
+export interface SchemaNodeConstructorProps<
+  Schema extends JsonSchema,
+  Value extends AllowedValue = InferValueType<Schema>,
+> {
   key?: string;
   name?: string;
   jsonSchema: Schema;
-  defaultValue?: InferValueType<Schema>;
+  defaultValue?: Value;
+  onChange?: SetStateFn<Value | undefined>;
   parentNode?: SchemaNode;
   ajv?: Ajv;
-}
-
-export interface SchemaNodeConstructorProps<Schema extends JsonSchema>
-  extends BaseNodeConstructorProps<Schema> {
-  onChange: SetStateFn<InferValueType<Schema> | undefined>;
 }
 
 export interface VirtualNodeConstructorProps<Schema extends JsonSchema>

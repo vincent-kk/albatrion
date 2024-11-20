@@ -19,13 +19,11 @@ export class NumberNode extends BaseNode<NumberSchema, NumberValue> {
     return parseNumber(input, this.jsonSchema.type === 'integer');
   }
 
-  #onChange: SetStateFn<NumberValue | undefined>;
-
   #emitChange(input: NumberValue | undefined) {
     const value = this.parseValue(input);
     if (this.#value !== value) {
       this.#value = value;
-      this.#onChange(value);
+      this.onChange(value);
       this.publish(MethodType.Change, value);
     }
   }
@@ -39,9 +37,7 @@ export class NumberNode extends BaseNode<NumberSchema, NumberValue> {
     parentNode,
     ajv,
   }: SchemaNodeConstructorProps<NumberSchema>) {
-    super({ key, name, jsonSchema, defaultValue, parentNode, ajv });
-
-    this.#onChange = onChange;
+    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
 
     if (defaultValue !== undefined) {
       this.setValue(defaultValue);
