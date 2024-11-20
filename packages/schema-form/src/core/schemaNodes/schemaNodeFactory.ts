@@ -8,14 +8,12 @@ import type {
   VirtualSchema,
 } from '@lumy/schema-form/types';
 
-import {
-  ArrayNode,
-  BooleanNode,
-  NumberNode,
-  ObjectNode,
-  StringNode,
-  VirtualNode,
-} from '.';
+import { ArrayNode } from './ArrayNode';
+import { BooleanNode } from './BooleanNode';
+import { NumberNode } from './NumberNode';
+import { ObjectNode } from './ObjectNode';
+import { StringNode } from './StringNode';
+import { VirtualNode } from './VirtualNode';
 import type {
   NodeFactoryProps,
   SchemaNodeConstructorProps,
