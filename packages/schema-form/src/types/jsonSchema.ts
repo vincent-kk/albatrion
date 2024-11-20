@@ -1,5 +1,14 @@
-import type { ErrorObject } from 'ajv';
 import type { ReactNode } from 'react';
+
+import type {
+  AllowedValue,
+  ArrayValue,
+  BooleanValue,
+  NumberValue,
+  ObjectValue,
+  StringValue,
+  VirtualNodeValue,
+} from './value';
 
 export const enum JSONPath {
   Root = '$',
@@ -7,33 +16,46 @@ export const enum JSONPath {
   Child = '.',
 }
 
-export type AllowedValue =
-  | number
-  | string
-  | boolean
-  | any[]
-  | Record<string, any>
-  | null;
+export const enum JSONPointer {
+  Root = '',
+  Child = '/',
+}
+
+export const isArraySchema = (schema: JsonSchema): schema is ArraySchema =>
+  schema.type === 'array';
+
+export const isNumberSchema = (schema: JsonSchema): schema is NumberSchema =>
+  schema.type === 'number';
+
+export const isObjectSchema = (schema: JsonSchema): schema is ObjectSchema =>
+  schema.type === 'object';
+
+export const isStringSchema = (schema: JsonSchema): schema is StringSchema =>
+  schema.type === 'string';
+
+export const isVirtualSchema = (schema: JsonSchema): schema is VirtualSchema =>
+  schema.type === 'virtual';
+
+export const isBooleanSchema = (schema: JsonSchema): schema is BooleanSchema =>
+  schema.type === 'boolean';
 
 // REF: https://github.com/ajv-validator/ajv/blob/master/lib/types/json-schema.ts
 
 /** 입력된 값을 기반으로 적절한 Schema를 추론 */
-export type ExpectJsonSchema<V extends AllowedValue | unknown = any> =
-  V extends number
+export type InferJsonSchemaType<V extends AllowedValue | unknown = any> =
+  V extends NumberValue
     ? NumberSchema
-    : V extends string
+    : V extends StringValue
       ? StringSchema
-      : V extends boolean
+      : V extends BooleanValue
         ? BooleanSchema
-        : V extends any[]
+        : V extends ArrayValue
           ? ArraySchema
-          : V extends Record<string, any>
+          : V extends ObjectValue
             ? ObjectSchema
             : V extends null
               ? NullSchema
-              : V extends unknown
-                ? VirtualSchema
-                : JsonSchema;
+              : JsonSchema;
 
 export type JsonSchema =
   | NumberSchema
@@ -46,7 +68,7 @@ export type JsonSchema =
 
 type PartialJsonSchema = Partial<JsonSchema>;
 
-export interface NumberSchema extends BasicSchema<number> {
+export interface NumberSchema extends BasicSchema<NumberValue> {
   type: 'number' | 'integer';
   minimum?: number;
   maximum?: number;
@@ -56,7 +78,7 @@ export interface NumberSchema extends BasicSchema<number> {
   format?: string;
 }
 
-export interface StringSchema extends BasicSchema<string> {
+export interface StringSchema extends BasicSchema<StringValue> {
   type: 'string';
   minLength?: number;
   maxLength?: number;
@@ -64,11 +86,11 @@ export interface StringSchema extends BasicSchema<string> {
   format?: string;
 }
 
-export interface BooleanSchema extends BasicSchema<boolean> {
+export interface BooleanSchema extends BasicSchema<BooleanValue> {
   type: 'boolean';
 }
 
-export interface ArraySchema extends BasicSchema<any[]> {
+export interface ArraySchema extends BasicSchema<ArrayValue> {
   type: 'array';
   items: JsonSchema;
   contains?: PartialJsonSchema;
@@ -80,7 +102,7 @@ export interface ArraySchema extends BasicSchema<any[]> {
   additionalItems?: never;
 }
 
-export interface ObjectSchema extends BasicSchema<Record<string, any>> {
+export interface ObjectSchema extends BasicSchema<ObjectValue> {
   type: 'object';
   additionalProperties?: boolean | JsonSchema;
   unevaluatedProperties?: boolean | JsonSchema;
@@ -107,7 +129,7 @@ export interface NullSchema extends BasicSchema<null> {
   nullable: true;
 }
 
-export interface VirtualSchema extends BasicSchema<unknown> {
+export interface VirtualSchema extends BasicSchema<VirtualNodeValue> {
   type: 'virtual';
   fields?: string[];
 }
@@ -127,12 +149,10 @@ interface BasicSchema<T> extends CustomOptions {
 }
 
 interface CustomOptions {
-  styles?: {
+  ui?: {
     show?: string | boolean;
   };
   options?: {
-    formType?: string;
-    format?: string;
     lazy?: boolean;
     watch?: string | string[];
     alias?: Record<string, ReactNode>;
@@ -142,33 +162,3 @@ interface CustomOptions {
   format?: string;
   [key: string]: any;
 }
-
-export interface JsonSchemaError extends ErrorObject {
-  key?: number;
-  params: ErrorParameters;
-  [alt: string]: any;
-}
-
-// NOTE: possible ajv error parameters
-type ErrorParameters = Partial<{
-  ref: string;
-  limit: number | string;
-  additionalProperty: string;
-  property: string;
-  missingProperty: string;
-  depsCount: number;
-  deps: string;
-  format: string;
-  comparison: string;
-  exclusive: boolean;
-  multipleOf: number;
-  pattern: string;
-  type: string;
-  keyword: string;
-  missingPattern: string;
-  propertyName: string;
-  failingKeyword: string;
-  caseIndex: number;
-  allowedValues: any[];
-  [alt: string]: any;
-}>;

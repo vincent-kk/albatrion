@@ -1,11 +1,9 @@
 import { useCallback, useState } from 'react';
 
-import { getRandomNumber } from '@lumy/common/utils/random';
-
 export function useTick() {
-  const [tick, setTick] = useState(getRandomNumber());
+  const [tick, setTick] = useState(0);
   const updateTick = useCallback(() => {
-    setTick(getRandomNumber());
+    setTick((prev) => prev + 1);
   }, []);
   return [tick, updateTick] as const;
 }

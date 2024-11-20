@@ -3,19 +3,17 @@ import { useRef } from 'react';
 import { isFunction } from '@lumy/schema-form/helpers/filter';
 
 // fn이 함수 타입일 때의 오버로드
-export function useConstant<Return>(fn: Fn<[], Return>): Return;
+export function useConstant<Return>(input: Fn<[], Return>): Return;
 // fn이 값 타입일 때의 오버로드
-export function useConstant<T>(value: T): T;
+export function useConstant<T>(input: T): T;
 
 // 실제 구현부
-export function useConstant<Return>(
-  fnOrValue: Fn<[], Return> | Return,
-): Return {
+export function useConstant<Return>(input: Fn<[], Return> | Return): Return {
   const ref = useRef<{ value: Return }>();
   if (!ref.current) {
     // 함수인 경우 실행하여 결과를 저장, 값인 경우 바로 저장
     ref.current = {
-      value: isFunction(fnOrValue) ? fnOrValue() : fnOrValue,
+      value: isFunction(input) ? input() : input,
     };
   }
   return ref.current.value;
