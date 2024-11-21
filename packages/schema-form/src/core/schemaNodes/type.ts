@@ -68,7 +68,7 @@ export interface Listener {
   <T extends MethodType>(type: T, payload: MethodPayload[T]): void;
 }
 
-export const enum MethodType {
+export enum MethodType {
   Focus = 1 << 0,
   Select = 1 << 1,
   Redraw = 1 << 2,

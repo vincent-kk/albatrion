@@ -10,7 +10,7 @@ import type {
   VirtualNodeValue,
 } from './value';
 
-export const enum JSONPath {
+export enum JSONPath {
   Root = '$',
   Current = '@',
   Child = '.',
