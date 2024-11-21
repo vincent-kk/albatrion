@@ -19,12 +19,15 @@ interface NodeFromSchemaProps<
   ajv?: Ajv;
 }
 
-export const schemaNodeFromSchema = <Schema extends JsonSchema>({
+export const schemaNodeFromSchema = <
+  Schema extends JsonSchema,
+  Value extends AllowedValue = InferValueType<Schema>,
+>({
   jsonSchema,
   defaultValue,
   onChange,
   ajv,
-}: NodeFromSchemaProps<Schema, InferValueType<Schema>>) =>
+}: NodeFromSchemaProps<Schema, Value>) =>
   schemaNodeFactory({
     name: JSONPath.Root,
     jsonSchema,
