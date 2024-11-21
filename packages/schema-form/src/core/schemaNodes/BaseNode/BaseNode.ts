@@ -124,7 +124,7 @@ export abstract class BaseNode<
   /** 하위 노드에서 전달받은 Error의 해시값 */
   #receivedErrorHash?: number;
   /** 하위 노드에서 전달받은 Error를 자신의 Error와 합친 후 저장 */
-  setReceivedErrors(errors: JsonSchemaError[]) {
+  setReceivedErrors(errors: JsonSchemaError[] = []) {
     // NOTE: 이미 동일한 에러가 있으면 중복 발생 방지
     const errorHash = getErrorsHash(errors);
     if (this.#receivedErrorHash === errorHash) return;
