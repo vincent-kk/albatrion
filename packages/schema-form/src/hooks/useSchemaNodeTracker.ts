@@ -5,16 +5,20 @@ import { isFunction } from '@lumy/schema-form/helpers/filter';
 
 import { useTick } from './useTick';
 
-export function useTracker<Node extends SchemaNode>(node: Node | null) {
-  const [, update] = useTick();
+export function useSchemaNodeTracker<Node extends SchemaNode>(
+  node: Node | null,
+) {
+  const [tick, update] = useTick();
   useLayoutEffect(() => {
-    const unsubscribe = isFunction(node?.subscribe)
-      ? node.subscribe(() => {
-          update();
-        })
-      : null;
+    const unsubscribe =
+      node && isFunction(node.subscribe)
+        ? node.subscribe(() => {
+            update();
+          })
+        : null;
     return () => {
       unsubscribe?.();
     };
   }, [node, update]);
+  return tick;
 }
