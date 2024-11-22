@@ -1,6 +1,10 @@
 import { isPlainObject } from 'es-toolkit';
 
-import { isComponentType, isTruthy } from '@lumy/schema-form/helpers/filter';
+import {
+  isComponentType,
+  isFunction,
+  isTruthy,
+} from '@lumy/schema-form/helpers/filter';
 import type {
   FormTypeInputDefinition,
   FormTypeTestFn,
@@ -15,7 +19,7 @@ export const normalizeFormTypeInputDefinitions = (
   return formTypeInputDefinitions
     .map(({ Component, test }) => {
       if (isComponentType(Component)) {
-        if (typeof test === 'function') {
+        if (isFunction(test)) {
           return {
             Component,
             test,

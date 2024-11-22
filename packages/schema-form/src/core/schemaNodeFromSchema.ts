@@ -1,4 +1,5 @@
 import type { Ajv } from '@lumy/schema-form/helpers/ajv';
+import { isFunction } from '@lumy/schema-form/helpers/filter';
 import {
   type AllowedValue,
   type InferValueType,
@@ -32,6 +33,6 @@ export const schemaNodeFromSchema = <
     name: JSONPath.Root,
     jsonSchema,
     defaultValue,
-    onChange: typeof onChange === 'function' ? onChange : undefined,
+    onChange: isFunction(onChange) ? onChange : undefined,
     ajv,
   } as NodeFactoryProps<Schema>) as InferSchemaNode<Schema>;
