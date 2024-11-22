@@ -65,7 +65,9 @@ export type RestSchemaFormProps<Props extends SchemaFormInputProps> = {
   renderFormComponent?: ComponentType<Props>;
 };
 
-type TestObject = Partial<{
+export type FormTypeTestFn = Fn<[hint: Hint], boolean>;
+
+export type FormTypeTestObject = Partial<{
   type: JsonSchema['type'] | Array<JsonSchema['type']>;
   jsonSchema: JsonSchema;
   format: JsonSchema['format'] | Array<NonNullable<JsonSchema['format']>>;
@@ -82,11 +84,11 @@ export type Hint = {
   [alt: string]: any;
 };
 
-export type FormTypeDefinition<T = unknown> = {
-  test: ((hint: Hint) => boolean) | TestObject;
-  component: ComponentType<InferSchemaFormInputProps<T>>;
+export type FormTypeInputDefinition<T = unknown> = {
+  test: FormTypeTestFn | FormTypeTestObject;
+  Component: ComponentType<InferSchemaFormInputProps<T>>;
 };
 
-export type FormTypeMap<T = unknown> = {
+export type FormTypeInputMap<T = unknown> = {
   [path: string]: ComponentType<InferSchemaFormInputProps<T>>;
 };
