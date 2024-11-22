@@ -6,7 +6,7 @@ import type { InferJsonSchemaType, JsonSchema } from './jsonSchema';
 import type { AllowedValue } from './value';
 
 /**
- * SchemaFormInput Component가 만족해야 하는 props
+ * FormType Input Component가 만족해야 하는 props
  *
  * - `Value`: FormType Component에 할당된 값의 타입
  * - `WatchValues`: JsonSchema에 정의된 watch 속성에 따라 구독하는 값들의 타입
@@ -14,7 +14,7 @@ import type { AllowedValue } from './value';
  * - `Schema`: FormType Component에 할당된 schema node의 jsonSchema 타입
  * - `Node`: FormType Component에 할당된 schema node의 타입
  */
-export interface SchemaFormInputProps<
+export interface FormTypeInputProps<
   Value extends AllowedValue = any,
   WatchValues extends any[] = any[],
   Context extends Dictionary = Dictionary,
@@ -46,7 +46,7 @@ export interface SchemaFormInputProps<
   [alt: string]: any;
 }
 
-interface UnknownSchemaFormInputProps extends SchemaFormInputProps {
+interface UnknownFormTypeInputProps extends FormTypeInputProps {
   jsonSchema: any;
   node: any;
   watchValues: any[];
@@ -57,11 +57,11 @@ interface UnknownSchemaFormInputProps extends SchemaFormInputProps {
   [alt: string]: any;
 }
 
-export type InferSchemaFormInputProps<Value> = Value extends AllowedValue
-  ? SchemaFormInputProps<Value>
-  : UnknownSchemaFormInputProps;
+export type InferFormTypeInputProps<Value> = Value extends AllowedValue
+  ? FormTypeInputProps<Value>
+  : UnknownFormTypeInputProps;
 
-export type RestSchemaFormProps<Props extends SchemaFormInputProps> = {
+export type RestFormTypeInputProps<Props extends FormTypeInputProps> = {
   renderFormComponent?: ComponentType<Props>;
 };
 
@@ -86,9 +86,9 @@ export type Hint = {
 
 export type FormTypeInputDefinition<T = unknown> = {
   test: FormTypeTestFn | FormTypeTestObject;
-  Component: ComponentType<InferSchemaFormInputProps<T>>;
+  Component: ComponentType<InferFormTypeInputProps<T>>;
 };
 
 export type FormTypeInputMap<T = unknown> = {
-  [path: string]: ComponentType<InferSchemaFormInputProps<T>>;
+  [path: string]: ComponentType<InferFormTypeInputProps<T>>;
 };
