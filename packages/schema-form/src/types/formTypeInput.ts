@@ -46,7 +46,7 @@ export interface FormTypeInputProps<
   [alt: string]: any;
 }
 
-interface UnknownFormTypeInputProps extends FormTypeInputProps {
+export interface UnknownFormTypeInputProps extends FormTypeInputProps {
   jsonSchema: any;
   node: any;
   watchValues: any[];
