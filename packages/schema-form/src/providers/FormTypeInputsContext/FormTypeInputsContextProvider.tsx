@@ -23,28 +23,43 @@ export const FormTypeInputsContextProvider = ({
   formTypeInputMap,
   children,
 }: PropsWithChildren<FormTypeInputsContextProviderProps>) => {
-  const mergedFormTypeInputDefinitions = useMemo(() => {
-    const normalizedFormTypeInputMap =
-      normalizeFormTypeInputMap(formTypeInputMap);
-    const normalizedFormTypeInputDefinitions =
-      normalizeFormTypeInputDefinitions(formTypeInputDefinitions);
-    return [
-      ...normalizedFormTypeInputMap,
-      ...normalizedFormTypeInputDefinitions,
-    ].map(({ test, Component }) => {
-      return {
-        test,
-        Component: (props: FormTypeInputProps) => (
-          <ErrorBoundary>
-            <Component {...props} />
-          </ErrorBoundary>
-        ),
-      };
-    });
-  }, [formTypeInputMap, formTypeInputDefinitions]);
+  const fromFormTypeInputDefinitions = useMemo(() => {
+    return normalizeFormTypeInputDefinitions(formTypeInputDefinitions).map(
+      ({ test, Component }) => {
+        return {
+          test,
+          Component: (props: FormTypeInputProps) => (
+            <ErrorBoundary>
+              <Component {...props} />
+            </ErrorBoundary>
+          ),
+        };
+      },
+    );
+  }, [formTypeInputDefinitions]);
+
+  const fromFormTypeInputMap = useMemo(() => {
+    return normalizeFormTypeInputMap(formTypeInputMap).map(
+      ({ test, Component }) => {
+        return {
+          test,
+          Component: (props: FormTypeInputProps) => (
+            <ErrorBoundary>
+              <Component {...props} />
+            </ErrorBoundary>
+          ),
+        };
+      },
+    );
+  }, [formTypeInputMap]);
 
   return (
-    <FormTypeInputsContext.Provider value={mergedFormTypeInputDefinitions}>
+    <FormTypeInputsContext.Provider
+      value={{
+        fromFormTypeInputDefinitions,
+        fromFormTypeInputMap,
+      }}
+    >
       {children}
     </FormTypeInputsContext.Provider>
   );
