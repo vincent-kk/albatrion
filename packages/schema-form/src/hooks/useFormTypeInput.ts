@@ -1,6 +1,7 @@
 import { memo, useContext, useMemo } from 'react';
 
 import type { SchemaNode } from '@lumy/schema-form/core';
+import { fromFallbackFormTypeInputDefinitions } from '@lumy/schema-form/formTypeDefinitions';
 import { FormTypeInputsContext } from '@lumy/schema-form/providers';
 import type { Hint } from '@lumy/schema-form/types';
 
@@ -18,6 +19,12 @@ export function useFormTypeInput(node: SchemaNode) {
     }
     // NOTE: FormTypeInputDefinitions has lower priority than FormTypeInputMap
     for (const { test, Component } of fromFormTypeInputDefinitions) {
+      if (test?.(hint)) {
+        return memo(Component);
+      }
+    }
+    // NOTE: fallback FormTypeInputDefinitions has lowest priority
+    for (const { test, Component } of fromFallbackFormTypeInputDefinitions) {
       if (test?.(hint)) {
         return memo(Component);
       }
