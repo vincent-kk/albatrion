@@ -1,0 +1,1 @@
+export { SchemaNodeProxy } from './SchemaNodeProxy';
