@@ -1,0 +1,13 @@
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.row > .frame {
+  display: flex;
+  flex: 1;
+}
+
+.column > input {
+  width: 100%;
+}

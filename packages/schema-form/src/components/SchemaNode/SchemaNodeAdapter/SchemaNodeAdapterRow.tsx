@@ -13,6 +13,7 @@ import type { ChildFormTypeInputProps } from '@lumy/schema-form/types';
 import { SchemaNodeProxy } from '../SchemaNodeProxy';
 import { SchemaNodeAdapterInput } from './SchemaNodeAdapterInput';
 import { getGridStyleProps } from './helper';
+import styles from './styles.module.css';
 import type { ChildComponent, SchemaNodeAdapterRowProps } from './type';
 
 export const SchemaNodeAdapterRow = ({
@@ -58,7 +59,14 @@ export const SchemaNodeAdapterRow = ({
                   return childComponentBySchemaNodeKey.current.get(nodeKey);
                 }
                 const Wrapper = ({ children }: PropsWithChildren) => {
-                  return <div style={getGridStyleProps(grid)}>{children}</div>;
+                  return (
+                    <div
+                      style={getGridStyleProps(grid)}
+                      className={styles.column}
+                    >
+                      {children}
+                    </div>
+                  );
                 };
                 const BaseComponent = ({
                   SchemaNodeRenderer,

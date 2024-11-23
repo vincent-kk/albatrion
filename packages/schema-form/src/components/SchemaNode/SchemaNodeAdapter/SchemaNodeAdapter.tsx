@@ -8,6 +8,7 @@ import { useSnapshot } from '@lumy/schema-form/hooks/useSnapshot';
 import { type FormReactNode, isListFrom } from '../type';
 import { SchemaNodeAdapterRow } from './SchemaNodeAdapterRow';
 import { getNodeName } from './helper';
+import styles from './styles.module.css';
 import type { RawChildNode, SchemaNodeAdapterProps } from './type';
 
 export const SchemaNodeAdapter = ({
@@ -89,7 +90,7 @@ export const SchemaNodeAdapter = ({
           );
         } else {
           return (
-            <div key={`row-${index}-${grid.length}`}>
+            <div key={`row-${index}-${grid.length}`} className={styles.row}>
               <SchemaNodeAdapterRow
                 node={node}
                 watchValues={watchValues}

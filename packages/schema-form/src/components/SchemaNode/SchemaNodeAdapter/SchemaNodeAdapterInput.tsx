@@ -6,6 +6,7 @@ import { useSchemaNodeTracker } from '@lumy/schema-form/hooks/useSchemaNodeTrack
 import { UserDefinedContext } from '@lumy/schema-form/providers';
 import { ShowError } from '@lumy/schema-form/types';
 
+import styles from './styles.module.css';
 import type { SchemaNodeAdapterInputProps } from './type';
 
 export const SchemaNodeAdapterInput = memo(
@@ -51,7 +52,7 @@ export const SchemaNodeAdapterInput = memo(
     useSchemaNodeTracker(node);
 
     return FormTypeInput ? (
-      <span onFocus={handleFocus} onBlur={handleBlur}>
+      <span className={styles.frame} onFocus={handleFocus} onBlur={handleBlur}>
         <FormTypeInput
           jsonSchema={node.jsonSchema}
           readonly={!!node.jsonSchema?.readOnly}
