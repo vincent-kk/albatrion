@@ -2,7 +2,7 @@ import { type ComponentType, type PropsWithChildren, useMemo } from 'react';
 
 import { FallbackFormatError } from '@lumy/schema-form/components/FallbackComponents/FallbackFormatError';
 import { FallbackSchemaNodeRenderer } from '@lumy/schema-form/components/FallbackComponents/FallbackSchemaNodeRenderer';
-import { isComponentType, isFunction } from '@lumy/schema-form/helpers/filter';
+import { isFunction, isReactComponent } from '@lumy/schema-form/helpers/filter';
 import {
   type SchemaNodeRendererProps,
   ShowError,
@@ -35,7 +35,7 @@ export const SchemaNodeRendererContextProvider = ({
     SchemaNodeRendererContext['SchemaNodeRenderer']
   >(
     () =>
-      isComponentType(CustomSchemaNodeRenderer)
+      isReactComponent(CustomSchemaNodeRenderer)
         ? CustomSchemaNodeRenderer
         : FallbackSchemaNodeRenderer,
     [CustomSchemaNodeRenderer],

@@ -1,7 +1,6 @@
 import {
   Fragment,
   type ReactElement,
-  isValidElement,
   useEffect,
   useMemo,
   useState,
@@ -10,7 +9,7 @@ import {
 import { isPlainObject, isString } from 'es-toolkit';
 
 import { MethodType } from '@lumy/schema-form/core';
-import { isTruthy } from '@lumy/schema-form/helpers/filter';
+import { isReactElement, isTruthy } from '@lumy/schema-form/helpers/filter';
 import { useSnapshot } from '@lumy/schema-form/hooks/useSnapshot';
 
 import { type FormReactNode, isListFrom } from '../type';
@@ -68,7 +67,7 @@ export const SchemaNodeAdapter = ({
               if (!targetNode) return null;
               return { ...props, node: targetNode };
             }
-            if (isValidElement(element)) {
+            if (isReactElement(element)) {
               return {
                 element,
               };
@@ -76,7 +75,7 @@ export const SchemaNodeAdapter = ({
             if (
               isPlainObject(element) &&
               'element' in element &&
-              isValidElement(element.element)
+              isReactElement(element.element)
             ) {
               return element as {
                 element: ReactElement;

@@ -4,7 +4,7 @@ import {
   JSONPath,
 } from '@lumy/schema-form/types';
 
-import { isComponentType, isTruthy } from '../filter';
+import { isReactComponent, isTruthy } from '../filter';
 import type { NormalizedFormTypeInputDefinition } from './type';
 
 const FILTER_PATH_REGEX = new RegExp(`\\.${JSONPath.Filter}(\\.|$)`);
@@ -14,17 +14,17 @@ export const normalizeFormTypeInputMap = (
   if (!formTypeInputMap) return [];
   return Object.entries(formTypeInputMap)
     .map(([path, Component]) => {
-      if (typeof path !== 'string' || !isComponentType(Component)) return null;
+      if (typeof path !== 'string' || !isReactComponent(Component)) return null;
 
       if (FILTER_PATH_REGEX.test(path)) {
         return {
-          Component,
           test: formTypeTestFnFactory(path),
+          Component,
         };
       } else {
         return {
-          Component,
           test: pathExactMatchFnFactory(path),
+          Component,
         };
       }
     })
