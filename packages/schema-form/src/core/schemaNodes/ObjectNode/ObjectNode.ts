@@ -1,6 +1,8 @@
-import { isPlainObject } from 'es-toolkit';
-
-import type { ObjectSchema, ObjectValue } from '@lumy/schema-form/types';
+import type {
+  ObjectSchema,
+  ObjectValue,
+  SetStateOptions,
+} from '@lumy/schema-form/types';
 
 import { BaseNode } from '../BaseNode';
 import { getFallbackValue } from '../BaseNode/utils';
@@ -32,10 +34,11 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     return this.#value;
   }
   set value(input: ObjectValue | undefined) {
-    this.setValue(input);
+    this.setValue(input, { replace: true });
   }
-  protected applyValue(input: ObjectValue) {
+  protected applyValue(input: ObjectValue, options?: SetStateOptions) {
     this.#draft = input;
+    this.#replace = options?.replace || false;
     this.#emitChange();
   }
   public parseValue = (value: ObjectValue | undefined) => value;
@@ -44,18 +47,13 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     if (!this.#ready) return;
     if (this.#draft === undefined) {
       this.#value = undefined;
-    }
-    if (Object.keys(this.#draft || {}).length === 0 && !this.#replace) {
-      return;
-    }
-
-    if (this.#replace) {
-      this.#value = sortObjectKeys({ ...this.#draft }, this.#propertyKeys);
+    } else if (this.#replace) {
+      this.#value = sortObjectKeys(this.#draft, this.#propertyKeys);
       this.#replace = false;
     } else {
       this.#value = sortObjectKeys(
         {
-          ...(isPlainObject(this.#value) && this.#value),
+          ...this.#value,
           ...this.#draft,
         },
         this.#propertyKeys,

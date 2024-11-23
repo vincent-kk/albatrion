@@ -43,7 +43,7 @@ export interface FormTypeInputProps<
   /** FormType Component의 value */
   value: Value | undefined;
   /** FormType Component의 onChange */
-  onChange: SetStateFn<Value | undefined>;
+  onChange: SetStateFnWithOptions<Value | undefined>;
   /** Form에 전달된 UserDefinedContext */
   context: Context;
   [alt: string]: any;
@@ -55,7 +55,7 @@ export interface UnknownFormTypeInputProps extends FormTypeInputProps {
   watchValues: any[];
   defaultValue: any;
   value: any;
-  onChange: SetStateFn<any>;
+  onChange: SetStateFnWithOptions<any>;
   context: any;
   [alt: string]: any;
 }
@@ -99,3 +99,10 @@ export type FormTypeInputDefinition<T = unknown> = {
 export type FormTypeInputMap<T = unknown> = {
   [path: string]: ComponentType<InferFormTypeInputProps<T>>;
 };
+
+export type SetStateFnWithOptions<S = unknown> = (
+  value: S | ((prevState: S) => S),
+  options?: SetStateOptions,
+) => void;
+
+export type SetStateOptions = { replace?: boolean };

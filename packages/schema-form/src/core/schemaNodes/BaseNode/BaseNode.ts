@@ -10,6 +10,7 @@ import {
   JSONPath,
   type JsonSchema,
   type JsonSchemaError,
+  type SetStateOptions,
 } from '@lumy/schema-form/types';
 
 import {
@@ -222,13 +223,17 @@ export abstract class BaseNode<
   abstract get value(): Value | undefined;
   abstract set value(input: Value | undefined);
   /** value를 설정하는 메소드 구현 필요 */
-  protected abstract applyValue(input: Value | undefined): void;
+  protected abstract applyValue(
+    input: Value | undefined,
+    options?: SetStateOptions,
+  ): void;
   /** applyValue로 실제 데이터 반영 전에, input에 대한 전처리 과정 수행 */
   setValue(
     input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
+    options?: SetStateOptions,
   ): void {
     const inputValue = typeof input === 'function' ? input(this.value) : input;
-    this.applyValue(getDataWithSchema(inputValue, this.jsonSchema));
+    this.applyValue(getDataWithSchema(inputValue, this.jsonSchema), options);
   }
   /** 노드의 값 파싱 */
   abstract parseValue(input: any): Value | undefined;

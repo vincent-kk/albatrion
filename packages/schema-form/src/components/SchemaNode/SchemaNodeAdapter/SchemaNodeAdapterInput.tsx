@@ -4,7 +4,7 @@ import { useConstant } from '@lumy/schema-form/hooks/useConstant';
 import { useFormTypeInput } from '@lumy/schema-form/hooks/useFormTypeInput';
 import { useSchemaNodeTracker } from '@lumy/schema-form/hooks/useSchemaNodeTracker';
 import { UserDefinedContext } from '@lumy/schema-form/providers';
-import { ShowError } from '@lumy/schema-form/types';
+import { type SetStateFnWithOptions, ShowError } from '@lumy/schema-form/types';
 
 import styles from './styles.module.css';
 import type { SchemaNodeAdapterInputProps } from './type';
@@ -25,10 +25,10 @@ export const SchemaNodeAdapterInput = memo(
 
     const defaultValue = useConstant(() => node.defaultValue);
 
-    const handleChange = useCallback<SetStateFn<any>>(
-      (input) => {
+    const handleChange = useCallback<SetStateFnWithOptions<any>>(
+      (input, options) => {
         if (node?.jsonSchema?.readOnly) return;
-        node.setValue(input);
+        node.setValue(input, options);
         node.clearReceivedErrors();
         node.setState({ [ShowError.Dirty]: true });
       },
