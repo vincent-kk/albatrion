@@ -13,13 +13,8 @@ export const FallbackSchemaNodeRenderer = ({
     <div>
       <label>{name}</label>
       <Input />
-      {errors && errors.length > 0 && (
-        <ul>
-          {errors.map((error) => (
-            <li key={error.message}>{formatError?.(error) ?? error.message}</li>
-          ))}
-        </ul>
-      )}
+      <br />
+      <em>{errors && errors.length > 0 && formatError?.(errors[0])}</em>
     </div>
   );
 };
