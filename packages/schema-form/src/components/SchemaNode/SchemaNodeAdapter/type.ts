@@ -18,7 +18,7 @@ export interface SchemaNodeAdapterProps {
   PreferredFormTypeInput?: ComponentType<FormTypeInputProps>;
 }
 
-export interface SchemaNodeRowProps {
+export interface SchemaNodeAdapterRowProps {
   node: SchemaNode;
   watchValues: any[];
   overrideFormTypeInputProps: OverrideFormTypeInputProps;
@@ -26,7 +26,7 @@ export interface SchemaNodeRowProps {
   rawChildNodes: RawChildNode[];
 }
 
-export interface SchemaNodeInputProps {
+export interface SchemaNodeAdapterInputProps {
   node: SchemaNode;
   watchValues: any[];
   overrideFormTypeInputProps: OverrideFormTypeInputProps;

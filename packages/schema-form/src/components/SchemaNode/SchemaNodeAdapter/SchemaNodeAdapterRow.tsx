@@ -11,17 +11,17 @@ import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import type { ChildFormTypeInputProps } from '@lumy/schema-form/types';
 
 import { SchemaNodeProxy } from '../SchemaNodeProxy';
-import { SchemaNodeInput } from './SchemaNodeInput';
+import { SchemaNodeAdapterInput } from './SchemaNodeAdapterInput';
 import { getGridStyleProps } from './helper';
-import type { ChildComponent, SchemaNodeRowProps } from './type';
+import type { ChildComponent, SchemaNodeAdapterRowProps } from './type';
 
-export const SchemaNodeRow = ({
+export const SchemaNodeAdapterRow = ({
   node,
   watchValues,
   overrideFormTypeInputProps,
   PreferredFormTypeInput,
   rawChildNodes,
-}: SchemaNodeRowProps) => {
+}: SchemaNodeAdapterRowProps) => {
   const childComponentBySchemaNodeKey = useRef(
     new Map<string, ChildComponent>(),
   );
@@ -86,7 +86,7 @@ export const SchemaNodeRow = ({
   );
 
   return (
-    <SchemaNodeInput
+    <SchemaNodeAdapterInput
       node={node}
       watchValues={watchValues}
       overrideFormTypeInputProps={overrideFormTypeInputProps}

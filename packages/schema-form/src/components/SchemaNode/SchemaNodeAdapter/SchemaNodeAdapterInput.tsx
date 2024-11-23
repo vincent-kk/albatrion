@@ -6,16 +6,16 @@ import { useSchemaNodeTracker } from '@lumy/schema-form/hooks/useSchemaNodeTrack
 import { UserDefinedContext } from '@lumy/schema-form/providers';
 import { ShowError } from '@lumy/schema-form/types';
 
-import type { SchemaNodeInputProps } from './type';
+import type { SchemaNodeAdapterInputProps } from './type';
 
-export const SchemaNodeInput = memo(
+export const SchemaNodeAdapterInput = memo(
   ({
     node,
     watchValues,
     overrideFormTypeInputProps,
     PreferredFormTypeInput,
     childNodes,
-  }: SchemaNodeInputProps) => {
+  }: SchemaNodeAdapterInputProps) => {
     const FormTypeInputByNode = useFormTypeInput(node);
     const FormTypeInput = useMemo(
       () => PreferredFormTypeInput ?? FormTypeInputByNode,

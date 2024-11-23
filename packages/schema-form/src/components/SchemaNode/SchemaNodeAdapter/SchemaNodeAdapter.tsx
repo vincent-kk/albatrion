@@ -6,7 +6,7 @@ import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import { useSnapshot } from '@lumy/schema-form/hooks/useSnapshot';
 
 import { type FormReactNode, isListFrom } from '../type';
-import { SchemaNodeRow } from './SchemaNodeRow';
+import { SchemaNodeAdapterRow } from './SchemaNodeAdapterRow';
 import { getNodeName } from './helper';
 import type { RawChildNode, SchemaNodeAdapterProps } from './type';
 
@@ -78,7 +78,7 @@ export const SchemaNodeAdapter = ({
       {childNodeGrid.map((childNodeRow, index, grid) => {
         if (grid.length === 1) {
           return (
-            <SchemaNodeRow
+            <SchemaNodeAdapterRow
               key={`row-${index}-end`}
               node={node}
               watchValues={watchValues}
@@ -90,7 +90,7 @@ export const SchemaNodeAdapter = ({
         } else {
           return (
             <div key={`row-${index}-${grid.length}`}>
-              <SchemaNodeRow
+              <SchemaNodeAdapterRow
                 node={node}
                 watchValues={watchValues}
                 overrideFormTypeInputProps={overrideFormTypeInputProps}
