@@ -15,6 +15,7 @@ import {
   ShowError,
 } from '@lumy/schema-form/types';
 
+import { SchemaNodeAdapter } from '../SchemaNodeAdapter';
 import type { GridForm } from '../type';
 import type { SchemaNodeProxyProps } from './type';
 
@@ -22,14 +23,17 @@ export const SchemaNodeProxy = ({
   path,
   node: inputNode,
   gridFrom,
-  schemaFormAdapterProps = {},
+  overrideFormTypeInputProps = {},
+  FormTypeInput,
   SchemaNodeRenderer: InputSchemaNodeRenderer,
   Wrapper: InputWrapper,
 }: SchemaNodeProxyProps) => {
   const { node, show, watchValues } = usePrepareSchemaValues(inputNode ?? path);
 
-  const adapterPropsRef = useRef(schemaFormAdapterProps);
-  adapterPropsRef.current = useSnapshot(schemaFormAdapterProps);
+  const overrideFormTypeInputPropsRef = useRef(overrideFormTypeInputProps);
+  overrideFormTypeInputPropsRef.current = useSnapshot(
+    overrideFormTypeInputProps,
+  );
 
   const watchValuesRef = useRef(watchValues);
   watchValuesRef.current = useSnapshot(watchValues);
@@ -38,16 +42,20 @@ export const SchemaNodeProxy = ({
   gridFormRef.current = gridFrom;
 
   const Input = useMemo<SchemaNodeRendererProps['Input']>(() => {
-    const tt = adapterPropsRef.current;
     return (overrideProps) =>
       node ? (
-        <div>
-          {node.name} {watchValuesRef.current}
-        </div>
+        <SchemaNodeAdapter
+          node={node}
+          watchValues={watchValuesRef.current}
+          gridFrom={gridFormRef.current}
+          overridePropsFromProxy={overrideFormTypeInputPropsRef.current}
+          overridePropsFromInput={overrideProps}
+          PreferredFormTypeInput={FormTypeInput}
+        />
       ) : (
         <Fragment />
       );
-  }, [node, adapterPropsRef, watchValuesRef]);
+  }, [node, FormTypeInput, overrideFormTypeInputPropsRef, watchValuesRef]);
 
   const {
     SchemaNodeRenderer: ContextSchemaNodeRenderer,
@@ -69,8 +77,6 @@ export const SchemaNodeProxy = ({
 
   const { context: userDefinedContext } = useContext(UserDefinedContext);
 
-  const [tick, formElementRef] = useSchemaNodeListener(node);
-
   const formatError = useMemo(() => {
     const { [ShowError.Dirty]: dirty, [ShowError.Touched]: touched } =
       node?.state || {};
@@ -83,6 +89,8 @@ export const SchemaNodeProxy = ({
   const errorMessage = useMemo(() => {
     return node?.errors?.map((error) => formatError(error)).filter(isTruthy)[0];
   }, [node, formatError]);
+
+  const [tick, formElementRef] = useSchemaNodeListener(node);
 
   return node && show ? (
     <Wrapper key={tick}>
