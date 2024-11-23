@@ -27,3 +27,25 @@ export const isVirtualNode = (input: SchemaNode): input is VirtualNode =>
 
 export const isArrayNode = (input: SchemaNode): input is ArrayNode =>
   input.type === 'array';
+
+const BRANCH_NODE_TYPE = new Set<SchemaNode['type']>([
+  'object',
+  'array',
+  'virtual',
+]);
+
+const TERMINAL_NODE_TYPE = new Set<SchemaNode['type']>([
+  'boolean',
+  'number',
+  'string',
+]);
+
+export const isBranchNode = (
+  node: SchemaNode,
+): node is ObjectNode | ArrayNode | VirtualNode =>
+  BRANCH_NODE_TYPE.has(node.type);
+
+export const isTerminalNode = (
+  node: SchemaNode,
+): node is BooleanNode | NumberNode | StringNode =>
+  TERMINAL_NODE_TYPE.has(node.type);
