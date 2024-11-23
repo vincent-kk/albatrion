@@ -27,25 +27,29 @@ import type {
 import { SchemaNodeContext } from './SchemaNodeContext';
 
 export interface SchemaNodeContextProviderProps<
-  Value extends AllowedValue = any,
+  Value extends AllowedValue,
+  Schema extends JsonSchema,
 > {
   /** 이 SchemaForm 내에서 사용할 JSON Schema */
-  jsonSchema: JsonSchema;
+  jsonSchema: Schema;
   /** 이 SchemaForm의 기본값 */
   defaultValue?: Value | undefined;
   /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
-  onChange?: SetStateFn<Value | undefined>;
+  onChange?: Fn<[Value | undefined]>;
   /** 이 SchemaForm의 값이 검증될 때 호출되는 함수 */
-  onValidate?: (errors: JsonSchemaError[]) => void;
+  onValidate?: Fn<[JsonSchemaError[]]>;
   /** 이 SchemaForm의 루트 노드가 준비되었을 때 호출되는 함수 */
-  onReady?: (rootNode: SchemaNode) => void;
+  onReady?: Fn<[SchemaNode]>;
   /** 외부에서 선언된 Ajv 인스턴스, 없으면 내부에서 생성 */
   ajv?: Ajv;
   /** 최초로 입력되는 유효성 검증 오류*/
   errors?: JsonSchemaError[];
 }
 
-export const SchemaNodeContextProvider = <Value extends AllowedValue = any>({
+export const SchemaNodeContextProvider = <
+  Value extends AllowedValue,
+  Schema extends JsonSchema,
+>({
   jsonSchema,
   defaultValue,
   onChange = voidFunction,
@@ -54,7 +58,7 @@ export const SchemaNodeContextProvider = <Value extends AllowedValue = any>({
   errors,
   ajv,
   children,
-}: PropsWithChildren<SchemaNodeContextProviderProps<Value>>) => {
+}: PropsWithChildren<SchemaNodeContextProviderProps<Value, Schema>>) => {
   const initialValue = useConstant(defaultValue);
   const [value, setValue] = useState(() => initialValue);
 
