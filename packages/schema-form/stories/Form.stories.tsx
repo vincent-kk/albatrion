@@ -196,7 +196,7 @@ export const Watch = () => {
   );
 };
 
-export const FormTypes = () => {
+export const FormTypeMap = () => {
   const [value, setValue] = useState({});
   const schema = useMemo(
     () =>
@@ -206,6 +206,9 @@ export const FormTypes = () => {
           name: { type: 'string' },
           objectNode: {
             type: 'object',
+            properties: {
+              test: { type: 'string' },
+            },
           },
           textNode: {
             type: 'string',
@@ -223,12 +226,12 @@ export const FormTypes = () => {
   );
   const formTypeMap = useMemo<FormTypeInputMap>(() => {
     return {
-      '$.objectNode': ({ onChange }: FormTypeInputProps<{ test: string }>) => {
+      '$.objectNode': ({ onChange }: FormTypeInputProps<{ test?: string }>) => {
         const handleClick = () => {
           onChange({ test: 'wow' });
         };
         const handleUnsetClick = () => {
-          onChange(undefined);
+          onChange({}, { replace: true });
         };
         return (
           <div>
