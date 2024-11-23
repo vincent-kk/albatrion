@@ -64,14 +64,13 @@ export type InferFormTypeInputProps<Value> = Value extends AllowedValue
   ? FormTypeInputProps<Value>
   : UnknownFormTypeInputProps;
 
-export interface RestFormTypeInputProps<
-  Props extends FormTypeInputProps = FormTypeInputProps,
-> {
-  renderFormComponent?: ComponentType<Props>;
+export interface SchemaFormAdapterProps {
+  FormTypeInput?: ComponentType<FormTypeInputProps>;
+  [alt: string]: any;
 }
 
-export interface ChildFormTypeInputProps extends RestFormTypeInputProps {
-  schemaNodeRenderer?: ComponentType<SchemaNodeRendererProps>;
+export interface ChildFormTypeInputProps extends SchemaFormAdapterProps {
+  SchemaNodeRenderer?: ComponentType<SchemaNodeRendererProps>;
 }
 
 export type FormTypeTestFn = Fn<[hint: Hint], boolean>;
