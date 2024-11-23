@@ -3,6 +3,7 @@ import type { ComponentType } from 'react';
 import type { InferSchemaNode, SchemaNode } from '@lumy/schema-form/core';
 
 import type { InferJsonSchemaType, JsonSchema } from './jsonSchema';
+import type { SchemaNodeRendererProps } from './schemaNodeRenderer';
 import type { AllowedValue } from './value';
 
 /**
@@ -27,6 +28,8 @@ export interface FormTypeInputProps<
   readonly: boolean;
   /** FormType Component에 할당된 schema node */
   node: Node;
+  /** 이 FormType Component의 하위 FormType Components */
+  childNodes: WithKey<ComponentType<ChildFormTypeInputProps>>[];
   /** FormType Component에 할당된 schema node의 이름 */
   name: Node['name'];
   /** FormType Component에 할당된 schema node의 경로 */
@@ -61,9 +64,15 @@ export type InferFormTypeInputProps<Value> = Value extends AllowedValue
   ? FormTypeInputProps<Value>
   : UnknownFormTypeInputProps;
 
-export type RestFormTypeInputProps<Props extends FormTypeInputProps> = {
+export interface RestFormTypeInputProps<
+  Props extends FormTypeInputProps = FormTypeInputProps,
+> {
   renderFormComponent?: ComponentType<Props>;
-};
+}
+
+export interface ChildFormTypeInputProps extends RestFormTypeInputProps {
+  schemaNodeRenderer?: ComponentType<SchemaNodeRendererProps>;
+}
 
 export type FormTypeTestFn = Fn<[hint: Hint], boolean>;
 
