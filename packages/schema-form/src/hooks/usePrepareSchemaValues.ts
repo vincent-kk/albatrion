@@ -3,15 +3,16 @@ import { useContext, useLayoutEffect, useMemo, useState } from 'react';
 import { isString } from 'es-toolkit';
 import { isArray } from 'es-toolkit/compat';
 
+import { falseFunction } from '@lumy/schema-form/app/constant';
 import {
   MethodType,
   type SchemaNode,
   isSchemaNode,
 } from '@lumy/schema-form/core';
+import { isFunction } from '@lumy/schema-form/helpers/filter';
 import { SchemaNodeContext } from '@lumy/schema-form/providers';
+import { JSONPath } from '@lumy/schema-form/types';
 
-import { isFunction } from '../helpers/filter';
-import { JSONPath } from '../types';
 import { useSchemaNodeTracker } from './useSchemaNodeTracker';
 
 export function usePrepareSchemaValues(input?: SchemaNode | string): {
@@ -34,7 +35,7 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
 
     let checkShow: CheckShow | undefined = undefined;
     if (uiShow) {
-      checkShow = neverShow;
+      checkShow = falseFunction;
     } else if (typeof uiShow === 'string') {
       const functionBody = `return !!(${uiShow
         .replace(JSON_PATH_REGEX, (path) => {
@@ -111,8 +112,6 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
 
 type CheckShow = Fn<[dependencies: any[]], boolean>;
 type GetWatchValues = Fn<[dependencies: any[]], any[]>;
-
-const neverShow: CheckShow = () => false;
 
 const JSON_PATH_REGEX = new RegExp(
   `[\\${JSONPath.Root}\\${JSONPath.Current}]\\${JSONPath.Child}([a-zA-Z0-9]+(\\${JSONPath.Child}[a-zA-Z0-9]+)*)`,
