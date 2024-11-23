@@ -34,7 +34,7 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
     const dependencyPaths: string[] = [];
 
     let checkShow: CheckShow | undefined = undefined;
-    if (uiShow) {
+    if (uiShow === false) {
       checkShow = falseFunction;
     } else if (typeof uiShow === 'string') {
       const functionBody = `return !!(${uiShow
