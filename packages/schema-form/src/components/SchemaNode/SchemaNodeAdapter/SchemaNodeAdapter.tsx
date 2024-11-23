@@ -1,7 +1,15 @@
-import { Fragment, ReactElement, isValidElement, useMemo } from 'react';
+import {
+  Fragment,
+  type ReactElement,
+  isValidElement,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import { isPlainObject, isString } from 'es-toolkit';
 
+import { MethodType } from '@lumy/schema-form/core';
 import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import { useSnapshot } from '@lumy/schema-form/hooks/useSnapshot';
 
@@ -23,6 +31,17 @@ export const SchemaNodeAdapter = ({
     ...overridePropsFromProxy,
     ...overridePropsFromInput,
   });
+
+  const [children, setChildren] = useState<typeof node.children>(node.children);
+
+  useEffect(() => {
+    const unsubscribe = node.subscribe((type) => {
+      if (type === MethodType.Change) {
+        setChildren(node.children);
+      }
+    });
+    return () => unsubscribe();
+  }, [node]);
 
   const childNodeGrid = useMemo<RawChildNode[][]>(() => {
     if (gridFrom && Array.isArray(gridFrom)) {
@@ -70,9 +89,9 @@ export const SchemaNodeAdapter = ({
           .filter(isTruthy),
       );
     } else {
-      return [node.children];
+      return [children];
     }
-  }, [gridFrom, node]);
+  }, [gridFrom, node, children]);
 
   return (
     <Fragment>
