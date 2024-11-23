@@ -68,7 +68,7 @@ export const SchemaNodeAdapterRow = ({
                     </div>
                   );
                 };
-                const BaseComponent = ({
+                const ChildComponent = ({
                   SchemaNodeRenderer,
                   ...overrideFormTypeInputProps
                 }: ChildFormTypeInputProps) => (
@@ -80,7 +80,7 @@ export const SchemaNodeAdapterRow = ({
                   />
                 );
                 const Component: ChildComponent = Object.assign(
-                  memo(BaseComponent),
+                  memo(ChildComponent),
                   { key: nodeKey },
                 );
                 childComponentBySchemaNodeKey.current.set(nodeKey, Component);
