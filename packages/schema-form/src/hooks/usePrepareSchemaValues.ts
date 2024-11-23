@@ -50,7 +50,7 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
     }
 
     let getWatchValues: GetWatchValues | undefined = undefined;
-    if (!watch && (isString(watch) || isArray(watch))) {
+    if (watch && (isString(watch) || isArray(watch))) {
       const watchValueIndexes = (isArray(watch) ? watch : [watch]).map(
         (path) => {
           if (!dependencyPaths.includes(path)) {
