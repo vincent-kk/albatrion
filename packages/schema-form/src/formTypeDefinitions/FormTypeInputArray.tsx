@@ -34,11 +34,11 @@ export const FormTypeInputArray = memo(
       [node],
     );
     return (
-      <div style={{ padding: 20, background: 'lightYellow' }}>
+      <div>
         {childNodes &&
           childNodes.map((Node: any, i: number) => {
             return (
-              <div key={Node.key}>
+              <div key={Node.key} style={{ border: '1px dashed black' }}>
                 <Node />
                 <DeleteButton index={i} onClick={handleRemoveClick} />
               </div>
