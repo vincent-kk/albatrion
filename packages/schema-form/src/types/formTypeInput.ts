@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react';
+import type { ComponentType, HTMLAttributes } from 'react';
 
 import type { InferSchemaNode, SchemaNode } from '@lumy/schema-form/core';
 
@@ -64,13 +64,12 @@ export type InferFormTypeInputProps<Value> = Value extends AllowedValue
   ? FormTypeInputProps<Value>
   : UnknownFormTypeInputProps;
 
-export interface SchemaFormAdapterProps {
-  FormTypeInput?: ComponentType<FormTypeInputProps>;
-  [alt: string]: any;
-}
+export type OverrideFormTypeInputProps = Partial<FormTypeInputProps> &
+  Pick<HTMLAttributes<unknown>, 'className'>;
 
-export interface ChildFormTypeInputProps extends SchemaFormAdapterProps {
+export interface ChildFormTypeInputProps {
   SchemaNodeRenderer?: ComponentType<SchemaNodeRendererProps>;
+  [alt: string]: any;
 }
 
 export type FormTypeTestFn = Fn<[hint: Hint], boolean>;

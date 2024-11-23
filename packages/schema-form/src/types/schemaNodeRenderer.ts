@@ -1,9 +1,9 @@
-import type { ComponentType, HTMLAttributes, ReactNode } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 
 import type { SchemaNode } from '@lumy/schema-form/core';
 
 import type { JsonSchemaError } from './error';
-import type { InferFormTypeInputProps } from './formTypeInput';
+import type { OverrideFormTypeInputProps } from './formTypeInput';
 
 export interface SchemaNodeRendererProps {
   isArrayItem: boolean;
@@ -20,8 +20,3 @@ export interface SchemaNodeRendererProps {
   formatError: (error: JsonSchemaError) => ReactNode;
   context: Dictionary;
 }
-
-export type OverrideFormTypeInputProps<T = unknown> = Partial<
-  InferFormTypeInputProps<T>
-> &
-  Pick<HTMLAttributes<unknown>, 'className'>;
