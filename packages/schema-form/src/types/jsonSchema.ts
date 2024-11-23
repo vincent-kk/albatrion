@@ -148,6 +148,7 @@ interface BasicSchema<T> extends CustomOptions {
   anyOf?: PartialJsonSchema[];
   oneOf?: PartialJsonSchema[];
   nullable?: boolean;
+  readOnly?: boolean;
   const?: T;
   enum?: T[];
   default?: T;
