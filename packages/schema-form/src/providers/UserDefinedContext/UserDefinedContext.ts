@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-interface UserDefinedContext {
+export interface UserDefinedContext {
   context: Dictionary;
 }
 

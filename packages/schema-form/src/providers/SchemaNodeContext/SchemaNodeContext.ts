@@ -2,7 +2,7 @@ import { createContext } from 'react';
 
 import type { SchemaNode } from '@lumy/schema-form/core';
 
-interface SchemaNodeContext {
+export interface SchemaNodeContext {
   rootNode: SchemaNode;
 }
 
