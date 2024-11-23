@@ -12,9 +12,9 @@ import { SchemaNodeRendererContext } from './SchemaNodeRendererContext';
 
 export interface SchemaNodeRendererContextProviderProps {
   /** Custom form type renderer component */
-  CustomSchemaNodeRenderer: ComponentType<SchemaNodeRendererProps>;
+  CustomSchemaNodeRenderer?: ComponentType<SchemaNodeRendererProps>;
   /** Custom format error function */
-  formatError: SchemaNodeRendererProps['formatError'];
+  formatError?: SchemaNodeRendererProps['formatError'];
   /**
    * Error display condition
    *   - `true`: 항상 노출

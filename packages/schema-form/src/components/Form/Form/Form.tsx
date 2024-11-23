@@ -51,14 +51,16 @@ const FormInner = <
     showError = ShowError.Dirty & ShowError.Touched,
     context,
     ajv,
-  }: FormProps<Value, Schema>,
+  }: FormProps<Schema, Value>,
   ref: ForwardedRef<FormHandle<Schema, Value, Node>>,
 ) => {
   const [tick, update] = useTick();
   const [rootNode, setRootNode] = useState<Node>();
 
   const handleChange = useHandle((input) => {
-    if (isFunction(onChange)) onChange(input);
+    if (isFunction(onChange)) {
+      onChange(isFunction(input) ? input(rootNode?.value) : input);
+    }
     update();
   });
 
@@ -133,7 +135,7 @@ export const Form = forwardRef(FormInner) as <
   Schema extends JsonSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 >(
-  props: FormProps<Value, Schema> & {
+  props: FormProps<Schema, Value> & {
     ref?: ForwardedRef<FormHandle<Schema, Value>>;
   },
 ) => ReactNode;

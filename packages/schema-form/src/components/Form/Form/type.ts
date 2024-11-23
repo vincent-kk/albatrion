@@ -10,15 +10,14 @@ import type {
 } from '@lumy/schema-form/providers';
 import type {
   AllowedValue,
-  InferJsonSchemaType,
   InferValueType,
   JsonSchema,
   JsonSchemaError,
 } from '@lumy/schema-form/types';
 
 export interface FormChildrenProps<
-  Value extends AllowedValue = any,
-  Schema extends JsonSchema = InferJsonSchemaType<Value>,
+  Schema extends JsonSchema = JsonSchema,
+  Value extends AllowedValue = InferValueType<Schema>,
 > {
   node?: SchemaNode;
   jsonSchema: Schema;
@@ -29,16 +28,16 @@ export interface FormChildrenProps<
 }
 
 export interface FormProps<
-  Value extends AllowedValue = any,
-  Schema extends JsonSchema = InferJsonSchemaType<Value>,
+  Schema extends JsonSchema = JsonSchema,
+  Value extends AllowedValue = InferValueType<Schema>,
 > extends SchemaNodeRendererContextProviderProps,
     FormTypeInputsContextProviderProps,
-    Omit<SchemaNodeContextProviderProps<Value, Schema>, 'onReady'>,
+    Omit<SchemaNodeContextProviderProps<Schema>, 'onReady'>,
     UserDefinedContextProviderProps {
   gridFrom?: GridForm;
   children?:
     | ReactNode
-    | ((props: FormChildrenProps<Value, Schema>) => ReactNode);
+    | ((props: FormChildrenProps<Schema, Value>) => ReactNode);
 }
 
 export interface FormHandle<

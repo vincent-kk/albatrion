@@ -27,15 +27,15 @@ import type {
 import { SchemaNodeContext } from './SchemaNodeContext';
 
 export interface SchemaNodeContextProviderProps<
-  Value extends AllowedValue,
-  Schema extends JsonSchema,
+  Schema extends JsonSchema = JsonSchema,
+  Value extends AllowedValue = any,
 > {
   /** 이 SchemaForm 내에서 사용할 JSON Schema */
   jsonSchema: Schema;
   /** 이 SchemaForm의 기본값 */
   defaultValue?: Value | undefined;
   /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
-  onChange?: Fn<[Value | undefined]>;
+  onChange?: SetStateFn<Value | undefined>;
   /** 이 SchemaForm의 값이 검증될 때 호출되는 함수 */
   onValidate?: Fn<[JsonSchemaError[]]>;
   /** 이 SchemaForm의 루트 노드가 준비되었을 때 호출되는 함수 */
@@ -58,7 +58,7 @@ export const SchemaNodeContextProvider = <
   errors,
   ajv,
   children,
-}: PropsWithChildren<SchemaNodeContextProviderProps<Value, Schema>>) => {
+}: PropsWithChildren<SchemaNodeContextProviderProps<Schema, Value>>) => {
   const initialValue = useConstant(defaultValue);
   const [value, setValue] = useState(() => initialValue);
 
