@@ -1,12 +1,12 @@
-import { ReactElement, isValidElement, useMemo } from 'react';
+import { Fragment, ReactElement, isValidElement, useMemo } from 'react';
 
 import { isPlainObject, isString } from 'es-toolkit';
-import { isArray } from 'es-toolkit/compat';
 
 import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import { useSnapshot } from '@lumy/schema-form/hooks/useSnapshot';
 
-import { FormReactNode, isListFrom } from '../type';
+import { type FormReactNode, isListFrom } from '../type';
+import { getNodeName } from './helper';
 import type { SchemaNodeAdapterProps } from './type';
 
 export const SchemaNodeAdapter = ({
@@ -22,14 +22,14 @@ export const SchemaNodeAdapter = ({
     ...overridePropsFromInput,
   });
 
-  const children = useMemo(() => {
-    if (isArray(gridFrom)) {
+  const childNodeGrid = useMemo(() => {
+    if (gridFrom && Array.isArray(gridFrom)) {
       let grid: FormReactNode[][];
       if (isListFrom(gridFrom)) {
         grid = [gridFrom];
       } else {
         grid = gridFrom.map((row) => {
-          return (isArray(row) ? row : [row]).map((element) => {
+          return (Array.isArray(row) ? row : [row]).map((element) => {
             if (isString(element)) {
               return { name: element };
             } else {
@@ -70,27 +70,5 @@ export const SchemaNodeAdapter = ({
     }
   }, [gridFrom, node]);
 
-  return <div>SchemaNodeAdapter</div>;
-};
-
-const getNodeName = (
-  element: FormReactNode,
-): [
-  string?,
-  {
-    grid?: number;
-    [alt: string]: any;
-  }?,
-] => {
-  if (isString(element)) {
-    return [element, {}];
-  } else if (
-    isPlainObject(element) &&
-    'name' in element &&
-    isString(element.name)
-  ) {
-    const { name, ...rest } = element;
-    return [name, rest];
-  }
-  return [];
+  return <Fragment></Fragment>;
 };
