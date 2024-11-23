@@ -11,6 +11,7 @@ import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import type { ChildFormTypeInputProps } from '@lumy/schema-form/types';
 
 import { SchemaNodeProxy } from '../SchemaNodeProxy';
+import { SchemaNodeInput } from './SchemaNodeInput';
 import { getGridStyleProps } from './helper';
 import type { ChildComponent, SchemaNodeRowProps } from './type';
 
@@ -84,5 +85,13 @@ export const SchemaNodeRow = ({
     [node, rawChildNodes],
   );
 
-  return <Fragment></Fragment>;
+  return (
+    <SchemaNodeInput
+      node={node}
+      watchValues={watchValues}
+      overrideFormTypeInputProps={overrideFormTypeInputProps}
+      PreferredFormTypeInput={PreferredFormTypeInput}
+      childNodes={childNodes}
+    />
+  );
 };

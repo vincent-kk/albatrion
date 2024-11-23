@@ -6,8 +6,9 @@ import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import { useSnapshot } from '@lumy/schema-form/hooks/useSnapshot';
 
 import { type FormReactNode, isListFrom } from '../type';
+import { SchemaNodeRow } from './SchemaNodeRow';
 import { getNodeName } from './helper';
-import type { SchemaNodeAdapterProps } from './type';
+import type { RawChildNode, SchemaNodeAdapterProps } from './type';
 
 export const SchemaNodeAdapter = ({
   node,
@@ -22,7 +23,7 @@ export const SchemaNodeAdapter = ({
     ...overridePropsFromInput,
   });
 
-  const childNodeGrid = useMemo(() => {
+  const childNodeGrid = useMemo<RawChildNode[][]>(() => {
     if (gridFrom && Array.isArray(gridFrom)) {
       let grid: FormReactNode[][];
       if (isListFrom(gridFrom)) {
@@ -43,7 +44,9 @@ export const SchemaNodeAdapter = ({
           .map((element) => {
             const [name, props] = getNodeName(element);
             if (name) {
-              return { ...props, node: node.findNode(name) };
+              const targetNode = node.findNode(name);
+              if (!targetNode) return null;
+              return { ...props, node: targetNode };
             }
             if (isValidElement(element)) {
               return {
@@ -70,5 +73,34 @@ export const SchemaNodeAdapter = ({
     }
   }, [gridFrom, node]);
 
-  return <Fragment></Fragment>;
+  return (
+    <Fragment>
+      {childNodeGrid.map((childNodeRow, index, grid) => {
+        if (grid.length === 1) {
+          return (
+            <SchemaNodeRow
+              key={`row-${index}-end`}
+              node={node}
+              watchValues={watchValues}
+              overrideFormTypeInputProps={overrideFormTypeInputProps}
+              PreferredFormTypeInput={PreferredFormTypeInput}
+              rawChildNodes={childNodeRow}
+            />
+          );
+        } else {
+          return (
+            <div key={`row-${index}-${grid.length}`}>
+              <SchemaNodeRow
+                node={node}
+                watchValues={watchValues}
+                overrideFormTypeInputProps={overrideFormTypeInputProps}
+                PreferredFormTypeInput={PreferredFormTypeInput}
+                rawChildNodes={childNodeRow}
+              />
+            </div>
+          );
+        }
+      })}
+    </Fragment>
+  );
 };

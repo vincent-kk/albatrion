@@ -37,8 +37,7 @@ export interface SchemaNodeInputProps {
 export type ChildComponent = ElementOf<FormTypeInputProps['childNodes']>;
 
 export type RawChildNode = {
-  node?: SchemaNode;
   element?: ReactElement;
   grid?: number;
   [alt: string]: any;
-} & ObjectNodeChildNode;
+} & Partial<ObjectNodeChildNode>;
