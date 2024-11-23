@@ -1,1 +1,0 @@
-export { FallbackFromTypeRenderer } from './FallbackFromTypeRenderer';

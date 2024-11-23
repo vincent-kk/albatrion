@@ -1,6 +1,6 @@
-import { type FormTypeRendererProps } from '@lumy/schema-form/types';
+import type { SchemaNodeRendererProps } from '@lumy/schema-form/types';
 
-export const FallbackFormatError: FormTypeRendererProps['formatError'] = (
+export const FallbackFormatError: SchemaNodeRendererProps['formatError'] = (
   error,
 ) => {
   return <em>{error.message}</em>;

@@ -1,17 +1,20 @@
 import { type ComponentType, type PropsWithChildren, useMemo } from 'react';
 
 import { FallbackFormatError } from '@lumy/schema-form/components/FallbackComponents/FallbackFormatError';
-import { FallbackFromTypeRenderer } from '@lumy/schema-form/components/FallbackComponents/FallbackFromTypeRenderer';
+import { FallbackSchemaNodeRenderer } from '@lumy/schema-form/components/FallbackComponents/FallbackSchemaNodeRenderer';
 import { isComponentType, isFunction } from '@lumy/schema-form/helpers/filter';
-import { type FormTypeRendererProps, ShowError } from '@lumy/schema-form/types';
+import {
+  type SchemaNodeRendererProps,
+  ShowError,
+} from '@lumy/schema-form/types';
 
-import { FormTypeRendererContext } from './FormTypeRendererContext';
+import { SchemaNodeRendererContext } from './SchemaNodeRendererContext';
 
-export interface FormTypeRendererContextProviderProps {
+export interface SchemaNodeRendererContextProviderProps {
   /** Custom form type renderer component */
-  CustomFormTypeRenderer: ComponentType<FormTypeRendererProps>;
+  CustomSchemaNodeRenderer: ComponentType<SchemaNodeRendererProps>;
   /** Custom format error function */
-  formatError: FormTypeRendererProps['formatError'];
+  formatError: SchemaNodeRendererProps['formatError'];
   /**
    * Error display condition
    *   - `true`: 항상 노출
@@ -22,28 +25,30 @@ export interface FormTypeRendererContextProviderProps {
   showError?: boolean | ShowError;
 }
 
-export const FormTypeRendererContextProvider = ({
-  CustomFormTypeRenderer,
+export const SchemaNodeRendererContextProvider = ({
+  CustomSchemaNodeRenderer,
   formatError: customFormatError,
   showError,
   children,
-}: PropsWithChildren<FormTypeRendererContextProviderProps>) => {
-  const FormTypeRenderer = useMemo<FormTypeRendererContext['FormTypeRenderer']>(
+}: PropsWithChildren<SchemaNodeRendererContextProviderProps>) => {
+  const SchemaNodeRenderer = useMemo<
+    SchemaNodeRendererContext['SchemaNodeRenderer']
+  >(
     () =>
-      isComponentType(CustomFormTypeRenderer)
-        ? CustomFormTypeRenderer
-        : FallbackFromTypeRenderer,
-    [CustomFormTypeRenderer],
+      isComponentType(CustomSchemaNodeRenderer)
+        ? CustomSchemaNodeRenderer
+        : FallbackSchemaNodeRenderer,
+    [CustomSchemaNodeRenderer],
   );
 
-  const formatError = useMemo<FormTypeRendererContext['formatError']>(
+  const formatError = useMemo<SchemaNodeRendererContext['formatError']>(
     () =>
       isFunction(customFormatError) ? customFormatError : FallbackFormatError,
     [customFormatError],
   );
 
   const checkShowError = useMemo<
-    FormTypeRendererContext['checkShowError']
+    SchemaNodeRendererContext['checkShowError']
   >(() => {
     const errorState =
       typeof showError === 'boolean'
@@ -54,7 +59,7 @@ export const FormTypeRendererContextProvider = ({
     return ({
       dirty,
       touched,
-    }: Parameters<FormTypeRendererContext['checkShowError']>[0]) => {
+    }: Parameters<SchemaNodeRendererContext['checkShowError']>[0]) => {
       if (errorState & ALWAYS_BITMASK) return true;
       if (errorState & NEVER_BITMASK) return false;
       if (errorState & ShowError.Dirty && !dirty) return false;
@@ -64,15 +69,15 @@ export const FormTypeRendererContextProvider = ({
   }, [showError]);
 
   return (
-    <FormTypeRendererContext.Provider
+    <SchemaNodeRendererContext.Provider
       value={{
-        FormTypeRenderer,
+        SchemaNodeRenderer,
         formatError,
         checkShowError,
       }}
     >
       {children}
-    </FormTypeRendererContext.Provider>
+    </SchemaNodeRendererContext.Provider>
   );
 };
 
