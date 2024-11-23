@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 
 import { isPlainObject, isString } from 'es-toolkit';
 
@@ -25,3 +26,23 @@ export const getNodeName = (
   return [];
 };
 
+const COLUMN_12_GRID_SYSTEM = 100 / 12;
+
+export const getGridStyleProps = (grid?: number): CSSProperties => {
+  if (typeof grid === 'number') {
+    return {
+      display: 'block',
+      flexGrow: 1,
+      flexShrink: 0,
+      flexBasis: `${COLUMN_12_GRID_SYSTEM * grid}%`,
+      width: `${COLUMN_12_GRID_SYSTEM * grid}%`,
+    };
+  } else {
+    return {
+      display: 'block',
+      flexGrow: 1,
+      flexShrink: 1,
+      flexBasis: '100%',
+    };
+  }
+};

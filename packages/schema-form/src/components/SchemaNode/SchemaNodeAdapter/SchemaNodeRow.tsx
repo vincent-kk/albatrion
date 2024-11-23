@@ -1,0 +1,88 @@
+import {
+  type PropsWithChildren,
+  type ReactElement,
+  memo,
+  useMemo,
+  useRef,
+} from 'react';
+
+import { isBranchNode } from '@lumy/schema-form/core/schemaNodes';
+import { isTruthy } from '@lumy/schema-form/helpers/filter';
+import type { ChildFormTypeInputProps } from '@lumy/schema-form/types';
+
+import { SchemaNodeProxy } from '../SchemaNodeProxy';
+import { getGridStyleProps } from './helper';
+import type { ChildComponent, SchemaNodeRowProps } from './type';
+
+export const SchemaNodeRow = ({
+  node,
+  watchValues,
+  overrideFormTypeInputProps,
+  PreferredFormTypeInput,
+  rawChildNodes,
+}: SchemaNodeRowProps) => {
+  const childComponentBySchemaNodeKey = useRef(
+    new Map<string, ChildComponent>(),
+  );
+  const childComponentByElementRef = useRef(
+    new WeakMap<ReactElement, ChildComponent>(),
+  );
+
+  const sequence = useRef(0);
+
+  const childNodes = useMemo(
+    () =>
+      isBranchNode(node)
+        ? rawChildNodes
+            .filter(
+              ({ node, isVirtualized, element }) =>
+                (node && isVirtualized !== true) || !!element,
+            )
+            .map(({ node, element, grid }) => {
+              if (element) {
+                if (childComponentByElementRef.current.has(element)) {
+                  return childComponentByElementRef.current.get(element);
+                }
+                const Component: ChildComponent = () => {
+                  return <div style={getGridStyleProps(grid)}>{element}</div>;
+                };
+                Component.key = `element_${sequence.current++}`;
+                childComponentByElementRef.current.set(element, Component);
+                return Component;
+              }
+              if (node) {
+                const nodeKey = node.key;
+                if (!nodeKey) return null;
+                if (childComponentBySchemaNodeKey.current.has(nodeKey)) {
+                  return childComponentBySchemaNodeKey.current.get(nodeKey);
+                }
+                const Wrapper = ({ children }: PropsWithChildren) => {
+                  return <div style={getGridStyleProps(grid)}>{children}</div>;
+                };
+                const BaseComponent = ({
+                  SchemaNodeRenderer,
+                  ...overrideFormTypeInputProps
+                }: ChildFormTypeInputProps) => (
+                  <SchemaNodeProxy
+                    node={node}
+                    overrideFormTypeInputProps={overrideFormTypeInputProps}
+                    SchemaNodeRenderer={SchemaNodeRenderer}
+                    Wrapper={Wrapper}
+                  />
+                );
+                const Component: ChildComponent = Object.assign(
+                  memo(BaseComponent),
+                  { key: nodeKey },
+                );
+                childComponentBySchemaNodeKey.current.set(nodeKey, Component);
+                return Component;
+              }
+              return null;
+            })
+            .filter(isTruthy)
+        : [],
+    [node, rawChildNodes],
+  );
+
+  return <Fragment></Fragment>;
+};
