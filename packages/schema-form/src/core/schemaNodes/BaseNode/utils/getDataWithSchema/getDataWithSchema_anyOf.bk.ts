@@ -12,7 +12,7 @@ import { type StackItem, isArrayStackItem, isObjectStackItem } from './type';
 export const getDataWithSchema = <Value>(
   value: Value | undefined,
   schema: JsonSchema,
-  options?: { ignoreOneOf: boolean },
+  options?: { ignoreAnyOf: boolean },
 ): Value | undefined => {
   if (value == null) return value;
 
@@ -49,7 +49,7 @@ export const getDataWithSchema = <Value>(
 const handleObjectSchema = (
   current: StackItem<ObjectValue>,
   stack: StackItem[],
-  options?: { ignoreOneOf: boolean },
+  options?: { ignoreAnyOf: boolean },
 ): boolean => {
   if (!current.result) {
     const omit = getOmit(current.schema, current.value, options);
@@ -98,9 +98,9 @@ const handleArraySchema = (
 const getOmit = <Value extends Dictionary>(
   jsonSchema: JsonSchema,
   value: Value,
-  options?: { ignoreOneOf: boolean },
+  options?: { ignoreAnyOf: boolean },
 ): Set<string> | null => {
-  if (options?.ignoreOneOf || !jsonSchema.oneOf?.length) {
+  if (options?.ignoreAnyOf || !jsonSchema.anyOf?.length) {
     return null;
   }
 
@@ -110,7 +110,7 @@ const getOmit = <Value extends Dictionary>(
   for (const {
     properties: anyOfProperties,
     required: anyOfRequired,
-  } of jsonSchema.oneOf) {
+  } of jsonSchema.anyOf) {
     if (isPlainObject(anyOfProperties) && isArray(anyOfRequired)) {
       const key = Object.keys(anyOfProperties)[0];
       if ((anyOfProperties[key]?.enum || []).includes(value?.[key])) {
