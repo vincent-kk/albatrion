@@ -10,6 +10,7 @@ import { FormTypeInputBoolean } from './FormTypeInputBoolean';
 import { FormTypeInputNumber } from './FormTypeInputNumber';
 import { FormTypeInputObject } from './FormTypeInputObject';
 import { FormTypeInputString } from './FormTypeInputString';
+import { FormTypeInputStringEnum } from './FormTypeInputStringEnum';
 import { FormTypeInputVirtual } from './FormTypeInputVirtual';
 
 const formTypeDefinitions = [
@@ -32,6 +33,11 @@ const formTypeDefinitions = [
   {
     Component: FormTypeInputNumber,
     test: { type: 'number' },
+  },
+  {
+    Component: FormTypeInputStringEnum,
+    test: ({ jsonSchema }) =>
+      jsonSchema.type === 'string' && !!jsonSchema.enum?.length,
   },
   {
     Component: FormTypeInputString,
