@@ -216,7 +216,6 @@ export const OneOf = () => {
         default: 'game',
       },
       title: { type: 'string' },
-
       openingDate: {
         type: 'string',
         format: 'date',
@@ -235,10 +234,12 @@ export const OneOf = () => {
     },
   } satisfies JsonSchema;
 
+  const formHandle = useRef<FormHandle<typeof schema>>(null);
+
   const [value, setValue] = useState<Record<string, unknown>>();
   return (
     <div>
-      <Form jsonSchema={schema} onChange={setValue} />
+      <Form jsonSchema={schema} onChange={setValue} ref={formHandle} />
       <pre>{JSON.stringify(value, null, 2)}</pre>
     </div>
   );
