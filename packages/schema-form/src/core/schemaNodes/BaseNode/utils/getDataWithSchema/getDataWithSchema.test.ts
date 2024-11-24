@@ -30,7 +30,7 @@ describe('getDataWithSchema', () => {
     expect(result).toEqual(['apple', 'banana']);
   });
 
-  it('should ignore oneOf fields if ignoreAnyOf option is true', () => {
+  it('should ignore oneOf fields if ignoreOneOf option is true', () => {
     const schema: JsonSchema = {
       type: 'object',
       properties: {

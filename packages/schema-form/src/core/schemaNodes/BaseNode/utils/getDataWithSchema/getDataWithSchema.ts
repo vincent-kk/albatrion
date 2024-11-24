@@ -108,18 +108,18 @@ const getOmit = <Value extends Dictionary>(
   const required = new Set(jsonSchema.required || []);
   const notRequired = new Set<string>();
   for (const {
-    properties: anyOfProperties,
-    required: anyOfRequired,
+    properties: oneOfProperties,
+    required: oneOfRequired,
   } of jsonSchema.oneOf) {
-    if (isPlainObject(anyOfProperties) && isArray(anyOfRequired)) {
-      const key = Object.keys(anyOfProperties)[0];
-      if ((anyOfProperties[key]?.enum || []).includes(value?.[key])) {
+    if (isPlainObject(oneOfProperties) && isArray(oneOfRequired)) {
+      const key = Object.keys(oneOfProperties)[0];
+      if ((oneOfProperties[key]?.enum || []).includes(value?.[key])) {
         // required인 경우 해당 필드들을 required set에 추가
-        for (const requiredKey of anyOfRequired) {
+        for (const requiredKey of oneOfRequired) {
           required.add(requiredKey);
         }
       } else {
-        for (const requiredKey of anyOfRequired) {
+        for (const requiredKey of oneOfRequired) {
           notRequired.add(requiredKey);
         }
       }
