@@ -2,8 +2,8 @@ import {
   type ForwardedRef,
   type ReactNode,
   forwardRef,
+  useEffect,
   useImperativeHandle,
-  useMemo,
   useState,
 } from 'react';
 
@@ -29,7 +29,8 @@ import {
   ShowError,
 } from '@lumy/schema-form/types';
 
-import { FormHandle, FormProps } from './type';
+import type { FormHandle, FormProps } from './type';
+import { createChildren } from './util';
 
 const FormInner = <
   Schema extends JsonSchema,
@@ -45,7 +46,7 @@ const FormInner = <
     formTypeInputMap,
     CustomSchemaNodeRenderer,
     gridFrom,
-    children,
+    children: childrenInput,
     formatError,
     errors,
     showError = ShowError.Dirty & ShowError.Touched,
@@ -56,6 +57,7 @@ const FormInner = <
 ) => {
   const [tick, update] = useTick();
   const [rootNode, setRootNode] = useState<Node>();
+  const [children, setChildren] = useState<ReactNode>();
 
   const handleChange = useHandle((input) => {
     if (isFunction(onChange)) {
@@ -64,26 +66,23 @@ const FormInner = <
     update();
   });
 
-  const childrenNode = useMemo(() => {
-    if (!children) return null;
-
-    if (isFunction(children)) {
-      return children({
-        jsonSchema,
-        defaultValue,
-        node: rootNode,
-        value: rootNode?.value as Value,
-        errors: rootNode?.errors || undefined,
-        isArrayItem: rootNode?.isArrayItem,
-      });
-    }
-    return children;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tick, rootNode, children, jsonSchema, defaultValue]);
-
-  const handleReady = (rootNode: SchemaNode) => {
+  const handleReady = useHandle((rootNode: SchemaNode) => {
     setRootNode(rootNode as Node);
-  };
+  });
+
+  useEffect(() => {
+    if (!rootNode) return;
+    setChildren(createChildren(childrenInput, jsonSchema, rootNode));
+    const unsubscribe = rootNode.subscribe((type) => {
+      if (
+        type === MethodType.Validate ||
+        type === MethodType.Change ||
+        type === MethodType.Redraw
+      )
+        setChildren(createChildren(childrenInput, jsonSchema, rootNode));
+    });
+    return () => unsubscribe();
+  }, [childrenInput, jsonSchema, rootNode]);
 
   useImperativeHandle(
     ref,
@@ -123,7 +122,7 @@ const FormInner = <
             formTypeInputDefinitions={formTypeInputDefinitions}
             formTypeInputMap={formTypeInputMap}
           >
-            {childrenNode || <SchemaNodeProxy path="" gridFrom={gridFrom} />}
+            {children || <SchemaNodeProxy path="" gridFrom={gridFrom} />}
           </FormTypeInputsContextProvider>
         </SchemaNodeRendererContextProvider>
       </SchemaNodeContextProvider>
