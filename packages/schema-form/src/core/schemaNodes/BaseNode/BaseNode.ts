@@ -306,7 +306,11 @@ export abstract class BaseNode<
           (_: unknown): _ is unknown => {
             throw {
               errors: [
-                { keyword: '__jsonSchema', parent: {}, message: err.message },
+                {
+                  keyword: 'jsonSchemaCompileFailed',
+                  parent: {},
+                  message: err.message,
+                },
               ],
             };
           },
