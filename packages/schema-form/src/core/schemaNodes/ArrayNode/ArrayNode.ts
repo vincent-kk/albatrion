@@ -1,3 +1,4 @@
+import { getFallbackValue } from '@lumy/schema-form/helpers/getFallbackValue';
 import type {
   AllowedValue,
   ArraySchema,
@@ -6,7 +7,6 @@ import type {
 
 import { parseArray } from '../../parsers';
 import { BaseNode } from '../BaseNode';
-import { getFallbackValue } from '../BaseNode/utils';
 import { schemaNodeFactory } from '../schemaNodeFactory';
 import {
   MethodType,

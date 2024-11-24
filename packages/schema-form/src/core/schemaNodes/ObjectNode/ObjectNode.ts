@@ -1,3 +1,4 @@
+import { getFallbackValue } from '@lumy/schema-form/helpers/getFallbackValue';
 import type {
   ObjectSchema,
   ObjectValue,
@@ -5,7 +6,6 @@ import type {
 } from '@lumy/schema-form/types';
 
 import { BaseNode } from '../BaseNode';
-import { getFallbackValue } from '../BaseNode/utils';
 import { schemaNodeFactory } from '../schemaNodeFactory';
 import { MethodType, type SchemaNodeConstructorProps } from '../type';
 import type { ChildNode } from './type';
