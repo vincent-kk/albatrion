@@ -45,6 +45,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
 
   #emitChange() {
     if (!this.#ready) return;
+    const previous = { ...this.#value };
     if (this.#draft === undefined) {
       this.#value = undefined;
     } else if (this.#replace) {
@@ -59,9 +60,19 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
         this.#propertyKeys,
       );
     }
-    this.#draft = {};
     this.onChange(this.#value);
-    this.publish(MethodType.Change, this.#value);
+
+    this.publish({
+      type: MethodType.Change,
+      payload: this.#value,
+      options: {
+        previous,
+        current: this.#value,
+        difference: { ...this.#draft },
+      },
+    });
+
+    this.#draft = {};
   }
 
   constructor({

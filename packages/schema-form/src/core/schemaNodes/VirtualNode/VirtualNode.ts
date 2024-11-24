@@ -73,8 +73,9 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
             type: MethodType.Change,
             payload: this.#value,
             options: {
-              previous: previous,
+              previous,
               current: this.#value,
+              difference: { i: payload },
             },
           });
         }

@@ -103,6 +103,7 @@ export type MethodOptions = Partial<{
   [MethodType.Change]: {
     previous: any;
     current: any;
+    difference?: any;
   };
   [MethodType.PathChange]: {
     previous: string;
