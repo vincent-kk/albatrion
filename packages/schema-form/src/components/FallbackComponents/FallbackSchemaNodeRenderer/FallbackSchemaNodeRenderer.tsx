@@ -11,8 +11,10 @@ export const FallbackSchemaNodeRenderer = ({
     <Input />
   ) : (
     <div>
-      <label>{name}</label>
-      <Input />
+      <label>
+        <span>{name}</span>
+        <Input />
+      </label>
       <br />
       <em>{errors && errors.length > 0 && formatError?.(errors[0])}</em>
     </div>
