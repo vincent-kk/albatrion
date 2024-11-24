@@ -83,6 +83,75 @@ export const DateFormat = () => {
   );
 };
 
+export const StringEnum = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      radio: {
+        type: 'string',
+        enum: ['a', 'b', 'c'],
+        formType: 'radio',
+        options: {
+          alias: {
+            a: 'a label',
+            b: 'b label',
+            c: 'c label',
+          },
+        },
+      },
+      radioGroup: {
+        type: 'string',
+        enum: ['one', 'two', 'three'],
+        formType: 'radiogroup',
+        options: {
+          alias: {
+            unset: 'OFF',
+            one: 'one label',
+            two: 'two label',
+            three: 'three label',
+          },
+        },
+      },
+      checkbox: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+        enum: ['d', 'e', 'f'],
+        formType: 'checkbox',
+        options: {
+          alias: {
+            d: 'd label',
+            e: 'e label',
+            f: 'f label',
+          },
+        },
+      },
+      enum: {
+        type: 'string',
+        enum: ['', 'g', 'h', 'i'],
+        formType: 'enum',
+        options: {
+          alias: {
+            g: 'g label',
+            h: 'h label',
+            i: 'i label',
+          },
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <div>
+      <Form jsonSchema={jsonSchema} onChange={setValue} />
+      <pre>{JSON.stringify(value, null, 2)}</pre>
+    </div>
+  );
+};
+
 export const Grid = () => {
   const jsonSchema = {
     type: 'object',
