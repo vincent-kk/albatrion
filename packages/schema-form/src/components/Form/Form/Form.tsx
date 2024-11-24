@@ -52,7 +52,7 @@ const FormInner = <
     children: childrenInput,
     formatError,
     errors,
-    showError = ShowError.Dirty & ShowError.Touched,
+    showError = ShowError.Dirty | ShowError.Touched,
     context,
     ajv,
   }: FormProps<Schema, Value>,

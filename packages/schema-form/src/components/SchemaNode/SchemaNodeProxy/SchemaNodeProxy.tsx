@@ -73,18 +73,20 @@ export const SchemaNodeProxy = ({
 
   const { context: userDefinedContext } = useContext(UserDefinedContext);
 
+  const { [ShowError.Dirty]: dirty, [ShowError.Touched]: touched } =
+    node?.state || {};
+  const errors = node?.errors;
+
   const formatError = useMemo(() => {
-    const { [ShowError.Dirty]: dirty, [ShowError.Touched]: touched } =
-      node?.state || {};
     if (checkShowError({ dirty, touched }) === false) {
       return nullFunction;
     }
     return contextFormatError;
-  }, [checkShowError, contextFormatError, node]);
+  }, [checkShowError, contextFormatError, dirty, touched]);
 
   const errorMessage = useMemo(() => {
-    return node?.errors?.map((error) => formatError(error)).filter(isTruthy)[0];
-  }, [node, formatError]);
+    return errors?.map((error) => formatError(error)).filter(isTruthy)[0];
+  }, [errors, formatError]);
 
   const [tick, formElementRef] = useSchemaNodeListener(node);
 
