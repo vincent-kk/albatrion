@@ -6,6 +6,7 @@ import Form, {
   type FormTypeInputMap,
   type FormTypeInputProps,
   type JsonSchema,
+  JsonSchemaError,
   type SchemaNodeRendererProps,
 } from '../src';
 
@@ -538,4 +539,53 @@ export const DirtyTouched = () => {
   };
 
   return <Form jsonSchema={jsonSchema} CustomSchemaNodeRenderer={Renderer} />;
+};
+
+export const Errors = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      name: { type: 'string', maxLength: 3, default: 'exceed max length' },
+      message: { type: 'string', minLength: 3, default: '1' },
+    },
+  } satisfies JsonSchema;
+
+  const handleChange = (val: any) => {
+    setValue(val);
+  };
+
+  const [errors, setErrors] = useState<JsonSchemaError[]>([
+    {
+      keyword: 'maxLength',
+      dataPath: '.message',
+      instancePath: '/message',
+      schemaPath: '#/properties/message/maxLength',
+      params: {
+        limit: 20,
+      },
+      message: 'should NOT be longer than 20 characters',
+    },
+  ]);
+
+  const clearErrors = () => {
+    setErrors([]);
+  };
+
+  const [_errors, _setErrors] = useState<JsonSchemaError[]>([]);
+  return (
+    <div>
+      <Form
+        jsonSchema={schema}
+        onChange={handleChange}
+        onValidate={(errors) => _setErrors(errors ?? [])}
+        errors={errors}
+        showError={true}
+      />
+      <button onClick={clearErrors}>clear received errors</button>
+      <hr />
+      <pre>{JSON.stringify(_errors, null, 2)}</pre>
+      <pre>{JSON.stringify(value, null, 2)}</pre>
+    </div>
+  );
 };
