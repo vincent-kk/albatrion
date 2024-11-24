@@ -1,7 +1,6 @@
 import { Fragment, useContext, useMemo, useRef } from 'react';
 
 import { nullFunction } from '@lumy/schema-form/app/constant';
-import { FallbackSchemaNodeRenderer } from '@lumy/schema-form/components/FallbackComponents/FallbackSchemaNodeRenderer';
 import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import { usePrepareSchemaValues } from '@lumy/schema-form/hooks/usePrepareSchemaValues';
 import { useSchemaNodeListener } from '@lumy/schema-form/hooks/useSchemaNodeListener';
@@ -64,10 +63,7 @@ export const SchemaNodeProxy = ({
   } = useContext(SchemaNodeRendererContext);
 
   const SchemaNodeRenderer = useMemo(
-    () =>
-      InputSchemaNodeRenderer ??
-      ContextSchemaNodeRenderer ??
-      FallbackSchemaNodeRenderer,
+    () => InputSchemaNodeRenderer ?? ContextSchemaNodeRenderer,
     [InputSchemaNodeRenderer, ContextSchemaNodeRenderer],
   );
 
