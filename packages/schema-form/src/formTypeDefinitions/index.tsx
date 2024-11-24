@@ -7,6 +7,7 @@ import type {
 
 import { FormTypeInputArray } from './FormTypeInputArray';
 import { FormTypeInputBoolean } from './FormTypeInputBoolean';
+import { FormTypeInputDateFormant } from './FormTypeInputDateFormant';
 import { FormTypeInputNumber } from './FormTypeInputNumber';
 import { FormTypeInputObject } from './FormTypeInputObject';
 import { FormTypeInputString } from './FormTypeInputString';
@@ -38,6 +39,15 @@ const formTypeDefinitions = [
     Component: FormTypeInputStringEnum,
     test: ({ jsonSchema }) =>
       jsonSchema.type === 'string' && !!jsonSchema.enum?.length,
+  },
+  {
+    Component: FormTypeInputDateFormant,
+    test: ({ jsonSchema }) =>
+      jsonSchema.type === 'string' &&
+      jsonSchema.format &&
+      ['month', 'week', 'date', 'time', 'datetime-local'].includes(
+        jsonSchema.format,
+      ),
   },
   {
     Component: FormTypeInputString,
