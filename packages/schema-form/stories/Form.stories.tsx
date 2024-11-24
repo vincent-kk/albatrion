@@ -46,6 +46,43 @@ export const String = () => {
   );
 };
 
+export const DateFormat = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      date: {
+        type: 'string',
+        format: 'date',
+      },
+      dateTime: {
+        type: 'string',
+        format: 'datetime-local',
+      },
+      time: {
+        type: 'string',
+        format: 'time',
+      },
+      month: {
+        type: 'string',
+        format: 'month',
+      },
+      week: {
+        type: 'string',
+        format: 'week',
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <div>
+      <Form jsonSchema={jsonSchema} onChange={setValue} />
+      <pre>{JSON.stringify(value, null, 2)}</pre>
+    </div>
+  );
+};
+
 export const Grid = () => {
   const jsonSchema = {
     type: 'object',
