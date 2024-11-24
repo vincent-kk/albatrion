@@ -4,15 +4,25 @@ import { isArray } from 'es-toolkit/compat';
 import type {
   ArrayValue,
   JsonSchema,
+  ObjectSchema,
   ObjectValue,
 } from '@lumy/schema-form/types';
 
-import { type StackItem, isArrayStackItem, isObjectStackItem } from './type';
+import {
+  type StackItem,
+  isArrayStackItem,
+  isObjectStackItem,
+} from '../src/core/schemaNodes/BaseNode/utils/getDataWithSchema/type';
+
+export const isObjectAnyOfSchema = (
+  schema: NonNullable<ObjectSchema['anyOf']>[number],
+): schema is RequiredBy<ObjectSchema, 'properties' | 'required'> =>
+  isPlainObject(schema.properties) && Array.isArray(schema.required);
 
 export const getDataWithSchema = <Value>(
   value: Value | undefined,
   schema: JsonSchema,
-  options?: { ignoreOneOf: boolean },
+  options?: { ignoreAnyOf: boolean },
 ): Value | undefined => {
   if (value == null) return value;
 
@@ -49,7 +59,7 @@ export const getDataWithSchema = <Value>(
 const handleObjectSchema = (
   current: StackItem<ObjectValue>,
   stack: StackItem[],
-  options?: { ignoreOneOf: boolean },
+  options?: { ignoreAnyOf: boolean },
 ): boolean => {
   if (!current.result) {
     const omit = getOmit(current.schema, current.value, options);
@@ -98,9 +108,9 @@ const handleArraySchema = (
 const getOmit = <Value extends Dictionary>(
   jsonSchema: JsonSchema,
   value: Value,
-  options?: { ignoreOneOf: boolean },
+  options?: { ignoreAnyOf: boolean },
 ): Set<string> | null => {
-  if (options?.ignoreOneOf || !jsonSchema.oneOf?.length) {
+  if (options?.ignoreAnyOf || !jsonSchema.anyOf?.length) {
     return null;
   }
 
@@ -108,18 +118,18 @@ const getOmit = <Value extends Dictionary>(
   const required = new Set(jsonSchema.required || []);
   const notRequired = new Set<string>();
   for (const {
-    properties: oneOfProperties,
-    required: oneOfRequired,
-  } of jsonSchema.oneOf) {
-    if (isPlainObject(oneOfProperties) && isArray(oneOfRequired)) {
-      const key = Object.keys(oneOfProperties)[0];
-      if ((oneOfProperties[key]?.enum || []).includes(value?.[key])) {
+    properties: anyOfProperties,
+    required: anyOfRequired,
+  } of jsonSchema.anyOf) {
+    if (isPlainObject(anyOfProperties) && isArray(anyOfRequired)) {
+      const key = Object.keys(anyOfProperties)[0];
+      if ((anyOfProperties[key]?.enum || []).includes(value?.[key])) {
         // required인 경우 해당 필드들을 required set에 추가
-        for (const requiredKey of oneOfRequired) {
+        for (const requiredKey of anyOfRequired) {
           required.add(requiredKey);
         }
       } else {
-        for (const requiredKey of oneOfRequired) {
+        for (const requiredKey of anyOfRequired) {
           notRequired.add(requiredKey);
         }
       }

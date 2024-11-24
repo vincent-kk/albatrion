@@ -5,6 +5,7 @@ import type { FormTypeInputProps } from '@lumy/schema-form/types';
 
 export const FormTypeInputBoolean = ({
   name,
+  readOnly,
   defaultValue,
   onChange,
 }: FormTypeInputProps<boolean>) => {
@@ -15,6 +16,7 @@ export const FormTypeInputBoolean = ({
     <input
       type="checkbox"
       name={name}
+      readOnly={readOnly}
       defaultChecked={!!defaultValue}
       onChange={handleChange}
     />

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { JsonSchema } from '@lumy/schema-form/types';
 
-import { getDataWithSchema } from './getDataWithSchema';
+import { getDataWithSchema } from './getDataWithSchema_anyOf.bk';
 
 describe('getDataWithSchema', () => {
   it('should return transformed data for object type schema', () => {
@@ -30,31 +30,31 @@ describe('getDataWithSchema', () => {
     expect(result).toEqual(['apple', 'banana']);
   });
 
-  it('should ignore oneOf fields if ignoreOneOf option is true', () => {
+  it('should ignore anyOf fields if ignoreAnyOf option is true', () => {
     const schema: JsonSchema = {
       type: 'object',
       properties: {
         status: { type: 'string', enum: ['active', 'inactive'] },
         age: { type: 'number' },
       },
-      oneOf: [
+      anyOf: [
         { properties: { status: { enum: ['active'] } }, required: ['age'] },
       ],
     };
     const data = { status: 'inactive', age: 30 };
 
-    const result = getDataWithSchema(data, schema, { ignoreOneOf: true });
+    const result = getDataWithSchema(data, schema, { ignoreAnyOf: true });
     expect(result).toEqual({ status: 'inactive', age: 30 });
   });
 
-  it('should include required fields from oneOf if condition matches', () => {
+  it('should include required fields from anyOf if condition matches', () => {
     const schema: JsonSchema = {
       type: 'object',
       properties: {
         status: { type: 'string', enum: ['active', 'inactive'] },
         age: { type: 'number' },
       },
-      oneOf: [
+      anyOf: [
         { properties: { status: { enum: ['active'] } }, required: ['age'] },
       ],
     };

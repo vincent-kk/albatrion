@@ -4,7 +4,11 @@ import Ajv, { type Options } from 'ajv';
 
 import type { JsonSchema } from '../types';
 
-const defaultSettings: Options = { allErrors: true, strictSchema: false };
+const defaultSettings: Options = {
+  allErrors: true,
+  strictSchema: false,
+  validateFormats: false,
+};
 
 const ajvRef: MutableRefObject<Ajv | null> = {
   current: null,

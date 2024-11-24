@@ -5,16 +5,13 @@ import type { JsonSchema } from '@lumy/schema-form/types';
 
 export const mergeShowConditions = (
   jsonSchema: JsonSchema,
-  invertedAnyOfConditions: string[] | undefined,
+  conditions: string[] | undefined,
 ) =>
-  invertedAnyOfConditions
+  conditions
     ? merge(jsonSchema, {
         ui: {
           show: combineConditions(
-            [
-              jsonSchema.ui?.show,
-              combineConditions(invertedAnyOfConditions || [], '||'),
-            ],
+            [jsonSchema.ui?.show, combineConditions(conditions || [], '||')],
             '&&',
           ),
         },

@@ -55,7 +55,7 @@ export const SchemaNodeAdapterInput = memo(
       <span className={styles.frame} onFocus={handleFocus} onBlur={handleBlur}>
         <FormTypeInput
           jsonSchema={node.jsonSchema}
-          readonly={!!node.jsonSchema?.readOnly}
+          readOnly={!!node.jsonSchema?.readOnly}
           node={node}
           childNodes={childNodes}
           name={node.name}

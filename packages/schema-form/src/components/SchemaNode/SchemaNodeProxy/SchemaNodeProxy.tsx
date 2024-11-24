@@ -1,7 +1,6 @@
 import { Fragment, useContext, useMemo, useRef } from 'react';
 
 import { nullFunction } from '@lumy/schema-form/app/constant';
-import { FallbackSchemaNodeRenderer } from '@lumy/schema-form/components/FallbackComponents/FallbackSchemaNodeRenderer';
 import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import { usePrepareSchemaValues } from '@lumy/schema-form/hooks/usePrepareSchemaValues';
 import { useSchemaNodeListener } from '@lumy/schema-form/hooks/useSchemaNodeListener';
@@ -64,10 +63,7 @@ export const SchemaNodeProxy = ({
   } = useContext(SchemaNodeRendererContext);
 
   const SchemaNodeRenderer = useMemo(
-    () =>
-      InputSchemaNodeRenderer ??
-      ContextSchemaNodeRenderer ??
-      FallbackSchemaNodeRenderer,
+    () => InputSchemaNodeRenderer ?? ContextSchemaNodeRenderer,
     [InputSchemaNodeRenderer, ContextSchemaNodeRenderer],
   );
 
@@ -77,18 +73,20 @@ export const SchemaNodeProxy = ({
 
   const { context: userDefinedContext } = useContext(UserDefinedContext);
 
+  const { [ShowError.Dirty]: dirty, [ShowError.Touched]: touched } =
+    node?.state || {};
+  const errors = node?.errors;
+
   const formatError = useMemo(() => {
-    const { [ShowError.Dirty]: dirty, [ShowError.Touched]: touched } =
-      node?.state || {};
     if (checkShowError({ dirty, touched }) === false) {
       return nullFunction;
     }
     return contextFormatError;
-  }, [checkShowError, contextFormatError, node]);
+  }, [checkShowError, contextFormatError, dirty, touched]);
 
   const errorMessage = useMemo(() => {
-    return node?.errors?.map((error) => formatError(error)).filter(isTruthy)[0];
-  }, [node, formatError]);
+    return errors?.map((error) => formatError(error)).filter(isTruthy)[0];
+  }, [errors, formatError]);
 
   const [tick, formElementRef] = useSchemaNodeListener(node);
 

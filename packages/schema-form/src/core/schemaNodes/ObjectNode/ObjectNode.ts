@@ -1,3 +1,4 @@
+import { getFallbackValue } from '@lumy/schema-form/helpers/getFallbackValue';
 import type {
   ObjectSchema,
   ObjectValue,
@@ -5,13 +6,12 @@ import type {
 } from '@lumy/schema-form/types';
 
 import { BaseNode } from '../BaseNode';
-import { getFallbackValue } from '../BaseNode/utils';
 import { schemaNodeFactory } from '../schemaNodeFactory';
 import { MethodType, type SchemaNodeConstructorProps } from '../type';
 import type { ChildNode } from './type';
 import {
   getChildren,
-  getInvertedAnyOfMap,
+  getOneOfConditionsMap,
   getVirtualReferencesMap,
   mergeShowConditions,
   sortObjectKeys,
@@ -94,8 +94,8 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
       ? Object.keys(jsonSchema.properties)
       : [];
 
-    const invertedAnyOfMap: Map<string, string[]> | null =
-      getInvertedAnyOfMap(jsonSchema);
+    const oneOfConditionsMap: Map<string, string[]> | null =
+      getOneOfConditionsMap(jsonSchema);
 
     const { virtualReferencesMap, virtualReferenceFieldsMap } =
       getVirtualReferencesMap(name, this.#propertyKeys, jsonSchema.virtual);
@@ -107,7 +107,10 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
         isVirtualized: !!virtualReferenceFieldsMap?.get(name)?.length,
         node: schemaNodeFactory({
           name,
-          jsonSchema: mergeShowConditions(schema, invertedAnyOfMap?.get(name)),
+          jsonSchema: mergeShowConditions(
+            schema,
+            oneOfConditionsMap?.get(name),
+          ),
           parentNode: this,
           defaultValue: defaultValue?.[name] ?? getFallbackValue(schema),
           onChange: (input) => {

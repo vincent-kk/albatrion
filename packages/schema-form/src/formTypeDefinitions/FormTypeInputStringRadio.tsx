@@ -20,6 +20,7 @@ type RadioLabelsContext = {
 export const FormTypeInputStringRadio = ({
   jsonSchema,
   name,
+  readOnly,
   defaultValue,
   onChange,
   context,
@@ -51,6 +52,7 @@ export const FormTypeInputStringRadio = ({
           <input
             type="radio"
             name={name}
+            readOnly={readOnly}
             value={value}
             defaultChecked={value === defaultValue}
             onChange={handleChange}

@@ -118,7 +118,7 @@ export abstract class BaseNode<
 
     this.publish({
       type: MethodType.Validate,
-      payload: this.filterErrorsWithSchema(this.#mergedErrors),
+      payload: this.#filterErrorsWithSchema(this.#mergedErrors),
     });
   }
 
@@ -140,16 +140,18 @@ export abstract class BaseNode<
     this.#receivedErrorHash = errorHash;
     // 하위 노드에서 데이터 입력시 해당 항목을 찾아 삭제하기 위한 key 가 필요.
     // 참고: removeFromReceivedErrors
-    this.#receivedErrors = filterErrors(errors).map((error, index) => {
-      error.key = index;
-      return error;
-    });
+    this.#receivedErrors = filterErrors(errors, this.jsonSchema).map(
+      (error, index) => {
+        error.key = index;
+        return error;
+      },
+    );
 
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
     this.publish({
       type: MethodType.Validate,
-      payload: this.filterErrorsWithSchema(this.#mergedErrors),
+      payload: this.#filterErrorsWithSchema(this.#mergedErrors),
     });
   }
 
@@ -243,7 +245,7 @@ export abstract class BaseNode<
     options?: SetStateOptions,
   ): void {
     const inputValue = typeof input === 'function' ? input(this.value) : input;
-    this.applyValue(getDataWithSchema(inputValue, this.jsonSchema), options);
+    this.applyValue(inputValue, options);
   }
   /** 노드의 값 파싱 */
   abstract parseValue(input: any): Value | undefined;
@@ -254,7 +256,9 @@ export abstract class BaseNode<
   ): void {
     if (typeof this.#handleChange !== 'function') return;
     const inputValue = typeof input === 'function' ? input(this.value) : input;
-    this.#handleChange(inputValue);
+    this.#handleChange(
+      this.isRoot ? getDataWithSchema(inputValue, this.jsonSchema) : inputValue,
+    );
   }
 
   /** 노드의 하위 노드 목록, 하위 노드를 가지지 않는 노드는 빈 배열 반환 */
@@ -306,17 +310,18 @@ export abstract class BaseNode<
 
     if (this.isRoot) {
       try {
-        this.#validate = ajvHelper.compile({
+        this.#validator = ajvHelper.compile({
           jsonSchema: { ...jsonSchema, $async: true },
           ajv,
         });
       } catch (err: any) {
-        this.#validate = Object.assign(
+        this.#validator = Object.assign(
           (_: unknown): _ is unknown => {
             throw {
               errors: [
                 {
                   keyword: 'jsonSchemaCompileFailed',
+                  instancePath: JSONPath.Root,
                   parent: {},
                   message: err.message,
                 },
@@ -333,22 +338,15 @@ export abstract class BaseNode<
 
       this.subscribe(({ type }) => {
         if (type === MethodType.Change) {
-          this.validateOnChange();
+          this.#validateOnChange();
         }
       });
-
-      // validate for initial value
-      // NOTE: 초기값이 있는 경우에 emitChange 를 호출하게 하면 초기값이 변경되는 것으로 인식하여 검증 수행
-      // 따라서 초기값이 있는 경우에는 별도로 validateOnChange 되므로, 별도 검증 불필요
-      // setTimeout(() => {
-      //   this.validateOnChange();
-      // });
     }
   }
 
   /** 노드 트리 내에서 특정 경로를 가진 노드 찾기 */
-  findNode(path: string) {
-    const pathSegments = getPathSegments(path);
+  findNode(path?: string) {
+    const pathSegments = path ? getPathSegments(path) : [];
     return find(this, pathSegments);
   }
 
@@ -371,7 +369,7 @@ export abstract class BaseNode<
   }
 
   /** 노드의 검증 결과 필터링 */
-  filterErrorsWithSchema(errors: JsonSchemaError[]) {
+  #filterErrorsWithSchema(errors: JsonSchemaError[]) {
     if (!this.isRoot) {
       return errors;
     }
@@ -382,13 +380,12 @@ export abstract class BaseNode<
   }
 
   /** 노드의 Ajv 검증 함수 */
-  #validate: ValidateFunction | null = null;
-
+  #validator: ValidateFunction | null = null;
   /** 노드의 JsonSchema를 이용해서 검증 수행, rootNode에서만 사용 가능 */
-  async validate(value: Value | undefined): Promise<JsonSchemaError[]> {
-    if (!this.isRoot || !this.#validate) return [];
+  async #validate(value: Value | undefined): Promise<JsonSchemaError[]> {
+    if (!this.isRoot || !this.#validator) return [];
     try {
-      await this.#validate(value);
+      await this.#validator(value);
     } catch (thrown: any) {
       return transformErrors(thrown.errors as ErrorObject[]);
     }
@@ -396,13 +393,14 @@ export abstract class BaseNode<
   }
 
   /** 노드의 값이 변경될 때 검증 수행, rootNode에서만 사용 가능 */
-  async validateOnChange() {
+  async #validateOnChange() {
     // NOTE: 루트 노드가 아니면 검증 수행 안함
     if (!this.isRoot) return;
 
     // NOTE: 1. 현재 Form 내의 value와 schema를 이용해서 validation 수행
     const errors = filterErrors(
-      await this.validate(getDataWithSchema(this.value, this.jsonSchema)),
+      await this.#validate(getDataWithSchema(this.value, this.jsonSchema)),
+      this.jsonSchema,
     );
 
     // NOTE: 2. 얻어진 error들을 dataPath 별로 분류

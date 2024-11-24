@@ -145,7 +145,7 @@ test('setValue, applyValue', async () => {
         status: { type: 'string', enum: ['active', 'inactive'] },
         age: { type: 'number' },
       },
-      anyOf: [
+      oneOf: [
         { properties: { status: { enum: ['active'] } }, required: ['age'] },
       ],
     },

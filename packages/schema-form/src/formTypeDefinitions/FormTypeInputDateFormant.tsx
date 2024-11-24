@@ -13,8 +13,9 @@ type DateFormatJsonSchema = {
 };
 
 export const FormTypeInputDateFormant = ({
-  name,
   jsonSchema,
+  name,
+  readOnly,
   defaultValue,
   onChange,
 }: FormTypeInputPropsWithSchema<string, DateFormatJsonSchema>) => {
@@ -32,6 +33,7 @@ export const FormTypeInputDateFormant = ({
   return (
     <input
       name={name}
+      readOnly={readOnly}
       type={type}
       max={max}
       min={min}
