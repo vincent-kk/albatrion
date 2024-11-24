@@ -8,6 +8,7 @@ import Form, {
   type JsonSchema,
   JsonSchemaError,
   type SchemaNodeRendererProps,
+  ShowError,
 } from '../src';
 
 export default {
@@ -523,22 +524,90 @@ export const DirtyTouched = () => {
     Input,
     errorMessage,
   }: SchemaNodeRendererProps) => {
+    const { [ShowError.Dirty]: dirty, [ShowError.Touched]: touched } =
+      node.state || {};
     return depth === 0 ? (
       <Input />
     ) : (
-      <div>
-        <label>
+      <div style={{ borderBottom: '1px dashed #000', marginTop: 10 }}>
+        <label style={{ display: 'flex', gap: 10 }}>
           <span>{name}</span>
           <Input />
         </label>
-        <pre>{JSON.stringify(node.state || {})}</pre>
+        <pre>{JSON.stringify({ dirty, touched })}</pre>
         <pre>{JSON.stringify(node.errors || [])}</pre>
         {errorMessage}
       </div>
     );
   };
 
-  return <Form jsonSchema={jsonSchema} CustomSchemaNodeRenderer={Renderer} />;
+  const [showError, setShowError] = useState<ShowError | boolean>(
+    ShowError.Dirty | ShowError.Touched,
+  );
+
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: 10 }}>
+        <label>
+          <input
+            type="radio"
+            name="showError"
+            checked={showError === (ShowError.Touched | ShowError.Dirty)}
+            value={ShowError.Touched | ShowError.Dirty}
+            onChange={() => setShowError(ShowError.Touched | ShowError.Dirty)}
+          />
+          Touched+Dirty
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="showError"
+            checked={showError === ShowError.Dirty}
+            value={ShowError.Dirty}
+            onChange={() => setShowError(ShowError.Dirty)}
+          />
+          Dirty
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="showError"
+            checked={showError === ShowError.Touched}
+            value={ShowError.Touched}
+            onChange={() => setShowError(ShowError.Touched)}
+          />
+          Touched
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="showError"
+            checked={showError === true}
+            value={'true'}
+            onChange={() => setShowError(true)}
+          />
+          true
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="showError"
+            checked={showError === false}
+            value={'false'}
+            onChange={() => setShowError(false)}
+          />
+          false
+        </label>
+      </div>
+      <hr />
+      <Form
+        key={`${showError}`}
+        jsonSchema={jsonSchema}
+        showError={showError}
+        CustomSchemaNodeRenderer={Renderer}
+      />
+    </div>
+  );
 };
 
 export const Errors = () => {
