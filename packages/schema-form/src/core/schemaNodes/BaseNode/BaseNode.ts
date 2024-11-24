@@ -140,10 +140,12 @@ export abstract class BaseNode<
     this.#receivedErrorHash = errorHash;
     // 하위 노드에서 데이터 입력시 해당 항목을 찾아 삭제하기 위한 key 가 필요.
     // 참고: removeFromReceivedErrors
-    this.#receivedErrors = filterErrors(errors).map((error, index) => {
-      error.key = index;
-      return error;
-    });
+    this.#receivedErrors = filterErrors(errors, this.jsonSchema).map(
+      (error, index) => {
+        error.key = index;
+        return error;
+      },
+    );
 
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
@@ -319,6 +321,7 @@ export abstract class BaseNode<
               errors: [
                 {
                   keyword: 'jsonSchemaCompileFailed',
+                  instancePath: JSONPath.Root,
                   parent: {},
                   message: err.message,
                 },
@@ -342,8 +345,8 @@ export abstract class BaseNode<
   }
 
   /** 노드 트리 내에서 특정 경로를 가진 노드 찾기 */
-  findNode(path: string) {
-    const pathSegments = getPathSegments(path);
+  findNode(path?: string) {
+    const pathSegments = path ? getPathSegments(path) : [];
     return find(this, pathSegments);
   }
 
@@ -397,6 +400,7 @@ export abstract class BaseNode<
     // NOTE: 1. 현재 Form 내의 value와 schema를 이용해서 validation 수행
     const errors = filterErrors(
       await this.#validate(getDataWithSchema(this.value, this.jsonSchema)),
+      this.jsonSchema,
     );
 
     // NOTE: 2. 얻어진 error들을 dataPath 별로 분류
