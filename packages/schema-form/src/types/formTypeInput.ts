@@ -10,15 +10,15 @@ import type { AllowedValue } from './value';
  * FormType Input Component가 만족해야 하는 props
  *
  * - `Value`: FormType Component에 할당된 값의 타입
- * - `WatchValues`: JsonSchema에 정의된 watch 속성에 따라 구독하는 값들의 타입
  * - `Context`: Form에 전달된 UserDefinedContext의 타입
+ * - `WatchValues`: JsonSchema에 정의된 watch 속성에 따라 구독하는 값들의 타입
  * - `Schema`: FormType Component에 할당된 schema node의 jsonSchema 타입
  * - `Node`: FormType Component에 할당된 schema node의 타입
  */
 export interface FormTypeInputProps<
   Value extends AllowedValue = any,
-  WatchValues extends any[] = any[],
   Context extends Dictionary = Dictionary,
+  WatchValues extends Array<any> = Array<any>,
   Schema extends JsonSchema = InferJsonSchemaType<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
@@ -48,6 +48,32 @@ export interface FormTypeInputProps<
   context: Context;
   [alt: string]: any;
 }
+
+/**
+ * FormTypeInputPropsWithSchema 가 만족해야 하는 props
+ *
+ * - `Value`: FormType Component에 할당된 값의 타입
+ * - `Schema`: FormType Component에 할당된 schema node의 jsonSchema 타입
+ * - `Context`: Form에 전달된 UserDefinedContext의 타입
+ */
+export type FormTypeInputPropsWithSchema<
+  Value extends AllowedValue = any,
+  Schema extends JsonSchema = InferJsonSchemaType<Value>,
+  Context extends Dictionary = Dictionary,
+> = FormTypeInputProps<Value, Context, any[], Schema>;
+
+/**
+ * FormTypeInputPropsWithSchema 가 만족해야 하는 props
+ *
+ * - `Value`: FormType Component에 할당된 값의 타입
+ * - `Schema`: FormType Component에 할당된 schema node의 jsonSchema 타입
+ * - `Node`: FormType Component에 할당된 schema node의 타입
+ */
+export type FormTypeInputPropsWithNode<
+  Value extends AllowedValue = any,
+  Schema extends JsonSchema = InferJsonSchemaType<Value>,
+  Node extends SchemaNode = InferSchemaNode<Schema>,
+> = FormTypeInputProps<Value, Dictionary, any[], Schema, Node>;
 
 export interface UnknownFormTypeInputProps extends FormTypeInputProps {
   jsonSchema: any;
