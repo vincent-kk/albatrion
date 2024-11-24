@@ -11,29 +11,27 @@ import { FormTypeInputDateFormant } from './FormTypeInputDateFormant';
 import { FormTypeInputNumber } from './FormTypeInputNumber';
 import { FormTypeInputObject } from './FormTypeInputObject';
 import { FormTypeInputString } from './FormTypeInputString';
+import { FormTypeInputStringCheckbox } from './FormTypeInputStringCheckbox';
 import { FormTypeInputStringEnum } from './FormTypeInputStringEnum';
+import { FormTypeInputStringRadio } from './FormTypeInputStringRadio';
 import { FormTypeInputVirtual } from './FormTypeInputVirtual';
 
 const formTypeDefinitions = [
   {
-    Component: FormTypeInputArray,
-    test: { type: 'array' },
+    Component: FormTypeInputStringCheckbox,
+    test: ({ jsonSchema }) =>
+      jsonSchema.type === 'array' &&
+      jsonSchema.formType === 'checkbox' &&
+      jsonSchema.items?.type === 'string' &&
+      !!jsonSchema.enum?.length,
   },
   {
-    Component: FormTypeInputObject,
-    test: { type: 'object' },
-  },
-  {
-    Component: FormTypeInputVirtual,
-    test: { type: 'virtual' },
-  },
-  {
-    Component: FormTypeInputBoolean,
-    test: { type: 'boolean' },
-  },
-  {
-    Component: FormTypeInputNumber,
-    test: { type: 'number' },
+    Component: FormTypeInputStringRadio,
+    test: ({ jsonSchema }) =>
+      jsonSchema.type === 'string' &&
+      (jsonSchema.formType === 'radio' ||
+        jsonSchema.formType === 'radiogroup') &&
+      !!jsonSchema.enum?.length,
   },
   {
     Component: FormTypeInputStringEnum,
@@ -52,6 +50,26 @@ const formTypeDefinitions = [
   {
     Component: FormTypeInputString,
     test: { type: 'string' },
+  },
+  {
+    Component: FormTypeInputBoolean,
+    test: { type: 'boolean' },
+  },
+  {
+    Component: FormTypeInputNumber,
+    test: { type: 'number' },
+  },
+  {
+    Component: FormTypeInputObject,
+    test: { type: 'object' },
+  },
+  {
+    Component: FormTypeInputArray,
+    test: { type: 'array' },
+  },
+  {
+    Component: FormTypeInputVirtual,
+    test: { type: 'virtual' },
   },
 ] satisfies FormTypeInputDefinition[];
 

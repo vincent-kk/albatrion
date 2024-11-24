@@ -3,7 +3,7 @@ import { type ChangeEvent, type ReactNode, useMemo } from 'react';
 import { useHandle } from '@lumy/schema-form/hooks/useHandle';
 import type { FormTypeInputPropsWithSchema } from '@lumy/schema-form/types';
 
-type StringEnumJsonSchema = {
+type StringRadioJsonSchema = {
   type: 'string';
   enum?: string[];
   options?: {
@@ -11,13 +11,13 @@ type StringEnumJsonSchema = {
   };
 };
 
-type EnumLabelsContext = {
-  enumLabels?: {
+type RadioLabelsContext = {
+  radioLabels?: {
     [label: string]: ReactNode;
   };
 };
 
-export const FormTypeInputStringEnum = ({
+export const FormTypeInputStringRadio = ({
   jsonSchema,
   name,
   defaultValue,
@@ -25,31 +25,39 @@ export const FormTypeInputStringEnum = ({
   context,
 }: FormTypeInputPropsWithSchema<
   string,
-  StringEnumJsonSchema,
-  EnumLabelsContext
+  StringRadioJsonSchema,
+  RadioLabelsContext
 >) => {
-  const enumOptions = useMemo(
+  const radioOptions = useMemo(
     () =>
       jsonSchema.enum?.map((value) => ({
         value,
         label:
-          context.enumLabels?.[value] ||
+          context.radioLabels?.[value] ||
           jsonSchema.options?.alias?.[value] ||
           value,
       })) || [],
     [context, jsonSchema],
   );
-  const handleChange = useHandle((event: ChangeEvent<HTMLSelectElement>) => {
+
+  const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange?.(event.target.value);
   });
 
   return (
-    <select name={name} defaultValue={defaultValue} onChange={handleChange}>
-      {enumOptions.map(({ value, label }) => (
-        <option key={value} value={value}>
+    <>
+      {radioOptions.map(({ value, label }) => (
+        <label key={value}>
+          <input
+            type="radio"
+            name={name}
+            value={value}
+            defaultChecked={value === defaultValue}
+            onChange={handleChange}
+          />
           {label}
-        </option>
+        </label>
       ))}
-    </select>
+    </>
   );
 };
