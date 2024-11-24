@@ -1,7 +1,12 @@
-import { useContext, useLayoutEffect, useMemo, useState } from 'react';
+import {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import { isString } from 'es-toolkit';
-import { isArray } from 'es-toolkit/compat';
 
 import { falseFunction } from '@lumy/schema-form/app/constant';
 import {
@@ -10,6 +15,7 @@ import {
   isSchemaNode,
 } from '@lumy/schema-form/core';
 import { isFunction } from '@lumy/schema-form/helpers/filter';
+import { getFallbackValue } from '@lumy/schema-form/helpers/getFallbackValue';
 import { SchemaNodeContext } from '@lumy/schema-form/providers';
 import { JSONPath } from '@lumy/schema-form/types';
 
@@ -50,8 +56,8 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
     }
 
     let getWatchValues: GetWatchValues | undefined = undefined;
-    if (watch && (isString(watch) || isArray(watch))) {
-      const watchValueIndexes = (isArray(watch) ? watch : [watch]).map(
+    if (watch && (isString(watch) || Array.isArray(watch))) {
+      const watchValueIndexes = (Array.isArray(watch) ? watch : [watch]).map(
         (path) => {
           if (!dependencyPaths.includes(path)) {
             dependencyPaths.push(path);
@@ -83,6 +89,11 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
     if (getWatchValues) return getWatchValues(dependencies);
     return [];
   }, [dependencies, getWatchValues]);
+
+  useEffect(() => {
+    if (!node) return;
+    if (!show) node.value = getFallbackValue(node.jsonSchema);
+  }, [node, show]);
 
   useLayoutEffect(() => {
     if (!node || dependencyPaths.length === 0) return void 0;

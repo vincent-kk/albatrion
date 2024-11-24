@@ -243,7 +243,7 @@ export abstract class BaseNode<
     options?: SetStateOptions,
   ): void {
     const inputValue = typeof input === 'function' ? input(this.value) : input;
-    this.applyValue(getDataWithSchema(inputValue, this.jsonSchema), options);
+    this.applyValue(inputValue, options);
   }
   /** 노드의 값 파싱 */
   abstract parseValue(input: any): Value | undefined;
@@ -254,7 +254,9 @@ export abstract class BaseNode<
   ): void {
     if (typeof this.#handleChange !== 'function') return;
     const inputValue = typeof input === 'function' ? input(this.value) : input;
-    this.#handleChange(inputValue);
+    this.#handleChange(
+      this.isRoot ? getDataWithSchema(inputValue, this.jsonSchema) : inputValue,
+    );
   }
 
   /** 노드의 하위 노드 목록, 하위 노드를 가지지 않는 노드는 빈 배열 반환 */
