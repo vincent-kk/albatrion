@@ -6,7 +6,12 @@ import Form, {
   type FormTypeInputMap,
   type FormTypeInputProps,
   type JsonSchema,
+  type SchemaNodeRendererProps,
 } from '../src';
+
+export default {
+  title: 'Form/Common',
+};
 
 export const Common = () => {
   const jsonSchema = {
@@ -474,6 +479,63 @@ export const FormRefHandle = () => {
   );
 };
 
-export default {
-  title: 'Form/Common',
+export const ReadOnly = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+        format: 'uri',
+        default: 'https://www.google.com',
+        readOnly: true,
+      },
+    },
+  } satisfies JsonSchema;
+
+  return <Form jsonSchema={jsonSchema} />;
+};
+
+export const DirtyTouched = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      type: {
+        type: 'string',
+        enum: ['Y', 'N'],
+      },
+      name: {
+        type: 'string',
+        minLength: 5,
+        default: 'TEST',
+      },
+      email: {
+        type: 'string',
+        maxLength: 10,
+      },
+    },
+  } satisfies JsonSchema;
+
+  const Renderer = ({
+    depth,
+    name,
+    node,
+    Input,
+    errorMessage,
+  }: SchemaNodeRendererProps) => {
+    return depth === 0 ? (
+      <Input />
+    ) : (
+      <div>
+        <label>
+          <span>{name}</span>
+          <Input />
+        </label>
+        <pre>{JSON.stringify(node.state || {})}</pre>
+        <pre>{JSON.stringify(node.errors || [])}</pre>
+        {errorMessage}
+      </div>
+    );
+  };
+
+  return <Form jsonSchema={jsonSchema} CustomSchemaNodeRenderer={Renderer} />;
 };
