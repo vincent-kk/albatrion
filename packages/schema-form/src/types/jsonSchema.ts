@@ -162,6 +162,8 @@ interface CustomOptions {
     lazy?: boolean;
     watch?: string | string[];
     alias?: Record<string, ReactNode>;
+    minimum?: string;
+    maximum?: string;
     [key: string]: any;
   };
   formType?: string;
