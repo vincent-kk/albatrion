@@ -23,3 +23,7 @@ declare type RequiredBy<T, K extends keyof T> = PickRequired<T, K> & T;
 declare type PartialBy<T, K extends keyof T> = PickPartial<T, K> & Omit<T, K>;
 
 declare type Roll<T> = { [K in keyof T]: T[K] };
+
+declare type WithKey<T> = T & { key: string };
+
+declare type ElementOf<T extends any[]> = T[number];

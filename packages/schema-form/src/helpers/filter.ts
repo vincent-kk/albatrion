@@ -1,13 +1,51 @@
-import type { ComponentType } from 'react';
+import {
+  type ComponentClass,
+  type ComponentType,
+  type FC,
+  type MemoExoticComponent,
+  type ReactElement,
+  isValidElement,
+} from 'react';
 
 export const isTruthy = <T>(
   value: T,
 ): value is Exclude<T, false | null | undefined | '' | 0> => Boolean(value);
 
-export const isComponentType = <P>(
-  content: unknown,
-): content is ComponentType<P> => typeof content === 'function';
-
 export const isFunction = <Params extends Array<any>, Return>(
   content: unknown,
 ): content is Fn<Params, Return> => typeof content === 'function';
+
+// React 엘리먼트 체크
+export const isReactElement = (component: unknown): component is ReactElement =>
+  isValidElement(component);
+
+// 메모이제이션된 컴포넌트 체크
+export const isMemoComponent = <Props>(
+  component: unknown,
+): component is MemoExoticComponent<ComponentType<Props>> =>
+  typeof component === 'object' &&
+  component !== null &&
+  (component as any).$$typeof === Symbol.for('react.memo');
+
+// 클래스 컴포넌트 체크
+export const isClassComponent = <Props, State = any>(
+  component: unknown,
+): component is ComponentClass<Props, State> =>
+  typeof component === 'function' &&
+  component.prototype &&
+  !!component.prototype.isReactComponent;
+
+// 함수형 컴포넌트 체크
+export const isFunctionComponent = <Props>(
+  component: unknown,
+): component is FC<Props> =>
+  typeof component === 'function' &&
+  !(component.prototype && component.prototype.isReactComponent);
+
+// 통합 타입 체크 함수
+export const isReactComponent = <Props>(
+  component: unknown,
+): component is ComponentType<Props> =>
+  isMemoComponent<Props>(component) ||
+  isClassComponent<Props>(component) ||
+  isFunctionComponent<Props>(component);

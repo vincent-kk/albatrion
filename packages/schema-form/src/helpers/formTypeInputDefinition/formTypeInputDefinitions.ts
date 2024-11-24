@@ -1,0 +1,57 @@
+import { isPlainObject } from 'es-toolkit';
+
+import {
+  isFunction,
+  isReactComponent,
+  isTruthy,
+} from '@lumy/schema-form/helpers/filter';
+import type {
+  FormTypeInputDefinition,
+  FormTypeTestFn,
+  FormTypeTestObject,
+} from '@lumy/schema-form/types';
+
+import type { NormalizedFormTypeInputDefinition } from './type';
+
+export const normalizeFormTypeInputDefinitions = (
+  formTypeInputDefinitions: FormTypeInputDefinition[] = [],
+): NormalizedFormTypeInputDefinition[] => {
+  return formTypeInputDefinitions
+    .map(({ Component, test }) => {
+      if (isReactComponent(Component)) {
+        if (isFunction(test)) {
+          return {
+            test,
+            Component,
+          };
+        }
+        if (isPlainObject(test)) {
+          return {
+            test: formTypeTestFnFactory(test),
+            Component,
+          };
+        }
+      }
+      return null;
+    })
+    .filter(isTruthy);
+};
+
+const formTypeTestFnFactory = (test: FormTypeTestObject): FormTypeTestFn => {
+  return (hint) => {
+    for (const [key, value] of Object.entries(test)) {
+      if (!value) continue;
+
+      if (Array.isArray(value)) {
+        if (!value.includes(hint[key])) {
+          return false;
+        }
+      } else {
+        if (value !== hint[key]) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+};

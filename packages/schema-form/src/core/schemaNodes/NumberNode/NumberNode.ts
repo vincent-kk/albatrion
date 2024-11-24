@@ -20,11 +20,19 @@ export class NumberNode extends BaseNode<NumberSchema, NumberValue> {
   }
 
   #emitChange(input: NumberValue | undefined) {
-    const value = this.parseValue(input);
-    if (this.#value !== value) {
-      this.#value = value;
-      this.onChange(value);
-      this.publish(MethodType.Change, value);
+    const previous = this.#value;
+    const current = this.parseValue(input);
+    if (previous !== current) {
+      this.#value = current;
+      this.onChange(current);
+      this.publish({
+        type: MethodType.Change,
+        payload: current,
+        options: {
+          previous,
+          current,
+        },
+      });
     }
   }
 

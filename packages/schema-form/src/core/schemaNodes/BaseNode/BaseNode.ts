@@ -10,11 +10,12 @@ import {
   JSONPath,
   type JsonSchema,
   type JsonSchemaError,
+  type SetStateOptions,
 } from '@lumy/schema-form/types';
 
 import {
   type Listener,
-  type MethodPayload,
+  type MethodEvent,
   MethodType,
   type NodeState,
   type SchemaNode,
@@ -69,12 +70,19 @@ export abstract class BaseNode<
   }
   /** 노드의 경로 업데이트, 부모 노드의 경로를 참고해서 자신의 경로를 업데이트 */
   updatePath() {
-    const path = this.parentNode?.path
+    const previous = this.#path;
+    const current = this.parentNode?.path
       ? `${this.parentNode.path}${JSONPath.Child}${this.#name}`
       : JSONPath.Root;
-    if (this.#path !== path) {
-      this.#path = path;
-      this.publish(MethodType.PathChange, path);
+    if (previous !== current) {
+      this.#path = current;
+      this.publish({
+        type: MethodType.PathChange,
+        options: {
+          previous,
+          current,
+        },
+      });
     }
   }
 
@@ -108,10 +116,10 @@ export abstract class BaseNode<
 
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
-    this.publish(
-      MethodType.Validate,
-      this.filterErrorsWithSchema(this.#mergedErrors),
-    );
+    this.publish({
+      type: MethodType.Validate,
+      payload: this.filterErrorsWithSchema(this.#mergedErrors),
+    });
   }
 
   /** 자신의 Error 초기화, 하위 노드의 Error는 초기화 하지 않음 */
@@ -124,7 +132,7 @@ export abstract class BaseNode<
   /** 하위 노드에서 전달받은 Error의 해시값 */
   #receivedErrorHash?: number;
   /** 하위 노드에서 전달받은 Error를 자신의 Error와 합친 후 저장 */
-  setReceivedErrors(errors: JsonSchemaError[]) {
+  setReceivedErrors(errors: JsonSchemaError[] = []) {
     // NOTE: 이미 동일한 에러가 있으면 중복 발생 방지
     const errorHash = getErrorsHash(errors);
     if (this.#receivedErrorHash === errorHash) return;
@@ -139,10 +147,10 @@ export abstract class BaseNode<
 
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
-    this.publish(
-      MethodType.Validate,
-      this.filterErrorsWithSchema(this.#mergedErrors),
-    );
+    this.publish({
+      type: MethodType.Validate,
+      payload: this.filterErrorsWithSchema(this.#mergedErrors),
+    });
   }
 
   /** 하위 노드에서 전달받은 Error 초기화, 자신의 Error는 초기화 하지 않음 */
@@ -214,7 +222,10 @@ export abstract class BaseNode<
 
     if (hasChanges) {
       this.#state = newState;
-      this.publish(MethodType.StateChange, this.#state);
+      this.publish({
+        type: MethodType.StateChange,
+        payload: this.#state,
+      });
     }
   }
 
@@ -222,13 +233,17 @@ export abstract class BaseNode<
   abstract get value(): Value | undefined;
   abstract set value(input: Value | undefined);
   /** value를 설정하는 메소드 구현 필요 */
-  protected abstract applyValue(input: Value | undefined): void;
+  protected abstract applyValue(
+    input: Value | undefined,
+    options?: SetStateOptions,
+  ): void;
   /** applyValue로 실제 데이터 반영 전에, input에 대한 전처리 과정 수행 */
   setValue(
     input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
+    options?: SetStateOptions,
   ): void {
     const inputValue = typeof input === 'function' ? input(this.value) : input;
-    this.applyValue(getDataWithSchema(inputValue, this.jsonSchema));
+    this.applyValue(getDataWithSchema(inputValue, this.jsonSchema), options);
   }
   /** 노드의 값 파싱 */
   abstract parseValue(input: any): Value | undefined;
@@ -238,7 +253,6 @@ export abstract class BaseNode<
     input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
   ): void {
     if (typeof this.#handleChange !== 'function') return;
-
     const inputValue = typeof input === 'function' ? input(this.value) : input;
     this.#handleChange(inputValue);
   }
@@ -283,7 +297,7 @@ export abstract class BaseNode<
     this.depth = this.#path.split(JSONPath.Child).filter(isTruthy).length - 1;
 
     if (this.parentNode) {
-      this.parentNode.subscribe((type) => {
+      this.parentNode.subscribe(({ type }) => {
         if (type === MethodType.PathChange) {
           this.updatePath();
         }
@@ -301,7 +315,11 @@ export abstract class BaseNode<
           (_: unknown): _ is unknown => {
             throw {
               errors: [
-                { keyword: '__jsonSchema', parent: {}, message: err.message },
+                {
+                  keyword: 'jsonSchemaCompileFailed',
+                  parent: {},
+                  message: err.message,
+                },
               ],
             };
           },
@@ -313,7 +331,7 @@ export abstract class BaseNode<
         );
       }
 
-      this.subscribe((type) => {
+      this.subscribe(({ type }) => {
         if (type === MethodType.Change) {
           this.validateOnChange();
         }
@@ -348,8 +366,8 @@ export abstract class BaseNode<
   }
 
   /** 노드의 이벤트 발생 */
-  publish<T extends MethodType>(type: T, payload: MethodPayload[T]) {
-    this.#listeners.forEach((listener) => listener(type, payload));
+  publish(event: MethodEvent) {
+    this.#listeners.forEach((listener) => listener(event));
   }
 
   /** 노드의 검증 결과 필터링 */

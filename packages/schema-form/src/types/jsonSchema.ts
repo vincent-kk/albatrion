@@ -10,10 +10,15 @@ import type {
   VirtualNodeValue,
 } from './value';
 
-export const enum JSONPath {
+export enum JSONPath {
+  /** Root Node */
   Root = '$',
+  /** Current Node */
   Current = '@',
+  /** Child Node */
   Child = '.',
+  /** Filter Condition */
+  Filter = '#',
 }
 
 export const enum JSONPointer {
@@ -143,9 +148,16 @@ interface BasicSchema<T> extends CustomOptions {
   anyOf?: PartialJsonSchema[];
   oneOf?: PartialJsonSchema[];
   nullable?: boolean;
+  readOnly?: boolean;
   const?: T;
-  enum?: T[];
   default?: T;
+  enum?: T extends string | number | boolean
+    ? T[]
+    : T extends Array<infer E>
+      ? E
+      : T extends object
+        ? ObjectValue
+        : never;
 }
 
 interface CustomOptions {
@@ -156,6 +168,8 @@ interface CustomOptions {
     lazy?: boolean;
     watch?: string | string[];
     alias?: Record<string, ReactNode>;
+    minimum?: string;
+    maximum?: string;
     [key: string]: any;
   };
   formType?: string;

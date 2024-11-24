@@ -65,10 +65,18 @@ export type NodeFactoryProps<Schema extends JsonSchema> =
   SchemaNodeConstructorProps<Schema> & VirtualNodeConstructorProps<Schema>;
 
 export interface Listener {
-  <T extends MethodType>(type: T, payload: MethodPayload[T]): void;
+  (event: MethodEvent): void;
 }
 
-export const enum MethodType {
+export type MethodEvent = {
+  [K in MethodType]: {
+    type: K;
+    payload?: MethodPayload[K];
+    options?: MethodOptions[K];
+  };
+}[MethodType];
+
+export enum MethodType {
   Focus = 1 << 0,
   Select = 1 << 1,
   Redraw = 1 << 2,
@@ -87,6 +95,23 @@ export type MethodPayload = {
   [MethodType.StateChange]: NodeState;
   [MethodType.Validate]: JsonSchemaError[];
 };
+
+export type MethodOptions = Partial<{
+  [MethodType.Focus]: void;
+  [MethodType.Select]: void;
+  [MethodType.Redraw]: void;
+  [MethodType.Change]: {
+    previous: any;
+    current: any;
+    difference?: any;
+  };
+  [MethodType.PathChange]: {
+    previous: string;
+    current: string;
+  };
+  [MethodType.StateChange]: void;
+  [MethodType.Validate]: void;
+}>;
 
 export type NodeState = {
   [ShowError.Touched]?: boolean;

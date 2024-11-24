@@ -1,6 +1,8 @@
-import { isPlainObject } from 'es-toolkit';
-
-import type { ObjectSchema, ObjectValue } from '@lumy/schema-form/types';
+import type {
+  ObjectSchema,
+  ObjectValue,
+  SetStateOptions,
+} from '@lumy/schema-form/types';
 
 import { BaseNode } from '../BaseNode';
 import { getFallbackValue } from '../BaseNode/utils';
@@ -32,38 +34,45 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     return this.#value;
   }
   set value(input: ObjectValue | undefined) {
-    this.setValue(input);
+    this.setValue(input, { replace: true });
   }
-  protected applyValue(input: ObjectValue) {
+  protected applyValue(input: ObjectValue, options?: SetStateOptions) {
     this.#draft = input;
+    this.#replace = options?.replace || false;
     this.#emitChange();
   }
   public parseValue = (value: ObjectValue | undefined) => value;
 
   #emitChange() {
     if (!this.#ready) return;
+    const previous = { ...this.#value };
     if (this.#draft === undefined) {
       this.#value = undefined;
-    }
-    if (Object.keys(this.#draft || {}).length === 0 && !this.#replace) {
-      return;
-    }
-
-    if (this.#replace) {
-      this.#value = sortObjectKeys({ ...this.#draft }, this.#propertyKeys);
+    } else if (this.#replace) {
+      this.#value = sortObjectKeys(this.#draft, this.#propertyKeys);
       this.#replace = false;
     } else {
       this.#value = sortObjectKeys(
         {
-          ...(isPlainObject(this.#value) && this.#value),
+          ...this.#value,
           ...this.#draft,
         },
         this.#propertyKeys,
       );
     }
-    this.#draft = {};
     this.onChange(this.#value);
-    this.publish(MethodType.Change, this.#value);
+
+    this.publish({
+      type: MethodType.Change,
+      payload: this.#value,
+      options: {
+        previous,
+        current: this.#value,
+        difference: { ...this.#draft },
+      },
+    });
+
+    this.#draft = {};
   }
 
   constructor({

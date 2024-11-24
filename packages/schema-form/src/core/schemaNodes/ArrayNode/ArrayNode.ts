@@ -66,7 +66,10 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     if (this.#ready && this.#hasChanged) {
       const value = this.toArray();
       this.onChange(value);
-      this.publish(MethodType.Change, value);
+      this.publish({
+        type: MethodType.Change,
+        payload: value,
+      });
       this.#hasChanged = false;
     }
   }
