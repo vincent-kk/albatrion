@@ -45,6 +45,7 @@
     "../../packages/common",
     "../../packages/common/*",
     "stories/**/*.stories.tsx",
+    "backups/**/*.ts",
   ],
   "exclude": [
     "node_modules",
