@@ -13,7 +13,7 @@ export function useSchemaNodeListener<Node extends SchemaNode>(
 
   useLayoutEffect(() => {
     if (node && isFunction(node.subscribe)) {
-      const unsubscribe = node.subscribe((type) => {
+      const unsubscribe = node.subscribe(({ type }) => {
         if (type === MethodType.Redraw) {
           update();
         } else if (type === MethodType.Focus) {

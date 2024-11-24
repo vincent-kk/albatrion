@@ -73,7 +73,7 @@ const FormInner = <
   useEffect(() => {
     if (!rootNode) return;
     setChildren(createChildren(childrenInput, jsonSchema, rootNode));
-    const unsubscribe = rootNode.subscribe((type) => {
+    const unsubscribe = rootNode.subscribe(({ type }) => {
       if (
         type === MethodType.Validate ||
         type === MethodType.Change ||

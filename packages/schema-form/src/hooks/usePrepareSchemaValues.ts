@@ -90,7 +90,7 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
       .map((path, index) => {
         const targetNode = node.findNode(path);
         if (!targetNode) return undefined;
-        return targetNode.subscribe((type, payload) => {
+        return targetNode.subscribe(({ type, payload }) => {
           if (type === MethodType.Change) {
             setDependencies((prevDependencies) => {
               prevDependencies[index] = payload;

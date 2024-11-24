@@ -15,6 +15,7 @@ import {
 
 import {
   type Listener,
+  type MethodEvent,
   type MethodPayload,
   MethodType,
   type NodeState,
@@ -288,7 +289,7 @@ export abstract class BaseNode<
     this.depth = this.#path.split(JSONPath.Child).filter(isTruthy).length - 1;
 
     if (this.parentNode) {
-      this.parentNode.subscribe((type) => {
+      this.parentNode.subscribe(({ type }) => {
         if (type === MethodType.PathChange) {
           this.updatePath();
         }
@@ -322,7 +323,7 @@ export abstract class BaseNode<
         );
       }
 
-      this.subscribe((type) => {
+      this.subscribe(({ type }) => {
         if (type === MethodType.Change) {
           this.validateOnChange();
         }
@@ -357,8 +358,13 @@ export abstract class BaseNode<
   }
 
   /** 노드의 이벤트 발생 */
-  publish<T extends MethodType>(type: T, payload: MethodPayload[T]) {
-    this.#listeners.forEach((listener) => listener(type, payload));
+  publish<T extends MethodType>(
+    type: T,
+    payload: MethodPayload[T],
+    options?: any,
+  ) {
+    const event = { type, payload, options } satisfies MethodEvent;
+    this.#listeners.forEach((listener) => listener(event));
   }
 
   /** 노드의 검증 결과 필터링 */

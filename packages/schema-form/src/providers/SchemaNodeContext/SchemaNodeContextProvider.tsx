@@ -91,7 +91,7 @@ export const SchemaNodeContextProvider = <
 
   useEffectUntil(() => {
     if (rootNode) {
-      rootNode.subscribe((type, payload) => {
+      rootNode.subscribe(({ type, payload }) => {
         if (type === MethodType.Validate) {
           handleValidate(payload);
         }

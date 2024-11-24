@@ -60,7 +60,7 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
     }
 
     this.#refNodes.forEach((node, i) => {
-      node.subscribe((type, payload) => {
+      node.subscribe(({ type, payload }) => {
         if (type !== MethodType.Change) return;
         if (this.#value && this.#value[i] !== payload) {
           this.#value = [

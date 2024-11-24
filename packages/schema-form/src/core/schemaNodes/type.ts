@@ -65,8 +65,16 @@ export type NodeFactoryProps<Schema extends JsonSchema> =
   SchemaNodeConstructorProps<Schema> & VirtualNodeConstructorProps<Schema>;
 
 export interface Listener {
-  <T extends MethodType>(type: T, payload: MethodPayload[T]): void;
+  (event: MethodEvent): void;
 }
+
+export type MethodEvent = {
+  [K in MethodType]: {
+    type: K;
+    payload: MethodPayload[K];
+    options?: any;
+  };
+}[MethodType];
 
 export enum MethodType {
   Focus = 1 << 0,
