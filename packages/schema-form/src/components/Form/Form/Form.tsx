@@ -12,6 +12,7 @@ import {
   type InferSchemaNode,
   MethodType,
   type SchemaNode,
+  isObjectNode,
 } from '@lumy/schema-form/core';
 import { isFunction } from '@lumy/schema-form/helpers/filter';
 import { useConstant } from '@lumy/schema-form/hooks/useConstant';
@@ -27,6 +28,7 @@ import {
   type AllowedValue,
   type InferValueType,
   type JsonSchema,
+  type ObjectValue,
   ShowError,
 } from '@lumy/schema-form/types';
 
@@ -40,7 +42,7 @@ const FormInner = <
 >(
   {
     jsonSchema: jsonSchemaInput,
-    defaultValue,
+    defaultValue: defaultValueInput,
     onChange,
     onValidate,
     formTypeInputDefinitions,
@@ -56,14 +58,19 @@ const FormInner = <
   }: FormProps<Schema, Value>,
   ref: ForwardedRef<FormHandle<Schema, Value, Node>>,
 ) => {
-  const [tick, update] = useTick();
-  const [rootNode, setRootNode] = useState<Node>();
   const jsonSchema = useConstant(jsonSchemaInput);
+  const [rootNode, setRootNode] = useState<Node>();
   const [children, setChildren] = useState<ReactNode>();
+  const [defaultValue, setDefaultValue] = useState<Value>(defaultValueInput);
+  const [tick, update] = useTick();
 
-  const handleChange = useHandle((input) => {
+  const handleChange = useHandle((input: Parameter<typeof onChange>) => {
     if (isFunction(onChange))
       onChange(isFunction(input) ? input(rootNode?.value) : input);
+  });
+
+  const handleValidate = useHandle((errors: Parameter<typeof onValidate>) => {
+    if (isFunction(onValidate)) onValidate(errors);
   });
 
   const handleReady = useHandle((rootNode: SchemaNode) => {
@@ -98,8 +105,15 @@ const FormInner = <
         }),
       refresh: update,
       getValue: () => rootNode?.value as Value,
-      setValue: (input: Value) => {
-        rootNode?.setValue(input as any);
+      setValue: (input, options) => {
+        if (!rootNode) return;
+        if (isObjectNode(rootNode)) {
+          rootNode.setValue(input as ObjectValue, options);
+          setDefaultValue(rootNode.value as Value);
+        } else {
+          setDefaultValue(input as Value);
+        }
+        update();
       },
     }),
     [rootNode, update],
@@ -121,7 +135,7 @@ const FormInner = <
             jsonSchema={jsonSchema}
             defaultValue={defaultValue}
             onChange={handleChange}
-            onValidate={onValidate}
+            onValidate={handleValidate}
             onReady={handleReady}
             errors={errors}
             ajv={ajv}

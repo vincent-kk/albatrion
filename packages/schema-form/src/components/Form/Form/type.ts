@@ -13,6 +13,7 @@ import type {
   InferValueType,
   JsonSchema,
   JsonSchemaError,
+  SetStateFnWithOptions,
 } from '@lumy/schema-form/types';
 
 export interface FormChildrenProps<
@@ -50,5 +51,5 @@ export interface FormHandle<
   select: Fn<[dataPath: Node['path']]>;
   refresh: Fn;
   getValue: Fn<[], Value>;
-  setValue: Fn<[value: Value]>;
+  setValue: SetStateFnWithOptions<Value>;
 }

@@ -8,7 +8,6 @@ import {
 
 import type Ajv from 'ajv';
 
-import { voidFunction } from '@lumy/schema-form/app/constant';
 import {
   MethodType,
   type SchemaNode,
@@ -16,8 +15,6 @@ import {
 } from '@lumy/schema-form/core';
 import { transformErrors } from '@lumy/schema-form/core/schemaNodes/BaseNode/utils';
 import { useConstant } from '@lumy/schema-form/hooks/useConstant';
-import { useEffectUntil } from '@lumy/schema-form/hooks/useEffectUntil';
-import { useHandle } from '@lumy/schema-form/hooks/useHandle';
 import type {
   AllowedValue,
   JsonSchema,
@@ -37,7 +34,7 @@ export interface SchemaNodeContextProviderProps<
   /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
   onChange?: SetStateFn<Value | undefined>;
   /** 이 SchemaForm의 값이 검증될 때 호출되는 함수 */
-  onValidate?: Fn<[JsonSchemaError[]]>;
+  onValidate?: Fn<[JsonSchemaError[] | undefined]>;
   /** 이 SchemaForm의 루트 노드가 준비되었을 때 호출되는 함수 */
   onReady?: Fn<[SchemaNode]>;
   /** 외부에서 선언된 Ajv 인스턴스, 없으면 내부에서 생성 */
@@ -52,31 +49,32 @@ export const SchemaNodeContextProvider = <
 >({
   jsonSchema,
   defaultValue,
-  onChange = voidFunction,
-  onValidate = voidFunction,
+  onChange,
+  onValidate,
   onReady,
   errors,
   ajv,
   children,
-}: PropsWithChildren<SchemaNodeContextProviderProps<Schema, Value>>) => {
+}: PropsWithChildren<
+  RequiredBy<
+    SchemaNodeContextProviderProps<Schema, Value>,
+    'onChange' | 'onValidate' | 'onReady'
+  >
+>) => {
   const initialValue = useConstant(defaultValue);
-  const [value, setValue] = useState(() => initialValue);
-
-  const emitChange = useHandle(onChange);
-  const handleChange = useHandle(setValue);
-  const handleValidate = useHandle(onValidate);
+  const [value, handleChange] = useState(() => initialValue);
 
   const isFirstRender = useRef(true);
   useEffect(() => {
     if (isFirstRender.current) {
       if (initialValue !== value) {
-        emitChange(value);
+        onChange(value);
       }
       isFirstRender.current = false;
     } else {
-      emitChange(value);
+      onChange(value);
     }
-  }, [initialValue, value, emitChange]);
+  }, [initialValue, value, onChange]);
 
   const rootNode = useMemo(
     () =>
@@ -89,18 +87,16 @@ export const SchemaNodeContextProvider = <
     [jsonSchema, ajv, initialValue, handleChange],
   );
 
-  useEffectUntil(() => {
-    if (rootNode) {
-      rootNode.subscribe(({ type, payload }) => {
-        if (type === MethodType.Validate) {
-          handleValidate(payload);
-        }
-      });
-      onReady?.(rootNode);
-      return true;
-    }
-    return false;
-  }, [rootNode]);
+  useEffect(() => {
+    if (!rootNode) return;
+    const unsubscribe = rootNode.subscribe(({ type, payload }) => {
+      if (type === MethodType.Validate) {
+        onValidate(payload);
+      }
+    });
+    onReady(rootNode);
+    return () => unsubscribe();
+  }, [rootNode, onValidate, onReady]);
 
   const lastErrorDictionary = useRef<
     Record<JsonSchemaError['dataPath'], JsonSchemaError[]>
