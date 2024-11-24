@@ -196,10 +196,10 @@ export const Grid = () => {
   return <Form jsonSchema={jsonSchema} gridFrom={grid} />;
 };
 
-export const AnyOf = () => {
+export const OneOf = () => {
   const schema = {
     type: 'object',
-    anyOf: [
+    oneOf: [
       {
         properties: { category: { enum: ['movie'] } },
         required: ['title', 'openingDate'],
@@ -234,9 +234,12 @@ export const AnyOf = () => {
       numOfPlayers: { type: 'number' },
     },
   } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>();
   return (
     <div>
-      <Form jsonSchema={schema} />
+      <Form jsonSchema={schema} onChange={setValue} />
+      <pre>{JSON.stringify(value, null, 2)}</pre>
     </div>
   );
 };
