@@ -62,10 +62,8 @@ const FormInner = <
   const [children, setChildren] = useState<ReactNode>();
 
   const handleChange = useHandle((input) => {
-    if (isFunction(onChange)) {
+    if (isFunction(onChange))
       onChange(isFunction(input) ? input(rootNode?.value) : input);
-    }
-    update();
   });
 
   const handleReady = useHandle((rootNode: SchemaNode) => {
