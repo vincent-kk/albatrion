@@ -71,8 +71,8 @@ export interface Listener {
 export type MethodEvent = {
   [K in MethodType]: {
     type: K;
-    payload: MethodPayload[K];
-    options?: any;
+    payload?: MethodPayload[K];
+    options?: MethodOptions[K];
   };
 }[MethodType];
 
@@ -95,6 +95,22 @@ export type MethodPayload = {
   [MethodType.StateChange]: NodeState;
   [MethodType.Validate]: JsonSchemaError[];
 };
+
+export type MethodOptions = Partial<{
+  [MethodType.Focus]: void;
+  [MethodType.Select]: void;
+  [MethodType.Redraw]: void;
+  [MethodType.Change]: {
+    previous: any;
+    current: any;
+  };
+  [MethodType.PathChange]: {
+    previous: string;
+    current: string;
+  };
+  [MethodType.StateChange]: void;
+  [MethodType.Validate]: void;
+}>;
 
 export type NodeState = {
   [ShowError.Touched]?: boolean;

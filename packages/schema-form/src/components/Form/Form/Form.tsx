@@ -89,9 +89,13 @@ const FormInner = <
     () => ({
       node: rootNode,
       focus: (dataPath: string) =>
-        rootNode?.findNode(dataPath)?.publish(MethodType.Focus, void 0),
+        rootNode?.findNode(dataPath)?.publish({
+          type: MethodType.Focus,
+        }),
       select: (dataPath: string) =>
-        rootNode?.findNode(dataPath)?.publish(MethodType.Select, void 0),
+        rootNode?.findNode(dataPath)?.publish({
+          type: MethodType.Select,
+        }),
       refresh: update,
       getValue: () => rootNode?.value as Value,
       setValue: (input: Value) => {

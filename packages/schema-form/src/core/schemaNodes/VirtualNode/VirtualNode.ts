@@ -63,12 +63,20 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
       node.subscribe(({ type, payload }) => {
         if (type !== MethodType.Change) return;
         if (this.#value && this.#value[i] !== payload) {
+          const previous = this.#value;
           this.#value = [
             ...this.#value.slice(0, i),
             payload,
             ...this.#value.slice(i + 1),
           ];
-          this.publish(MethodType.Change, this.#value);
+          this.publish({
+            type: MethodType.Change,
+            payload: this.#value,
+            options: {
+              previous: previous,
+              current: this.#value,
+            },
+          });
         }
       });
     });

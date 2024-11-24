@@ -16,7 +16,6 @@ import {
 import {
   type Listener,
   type MethodEvent,
-  type MethodPayload,
   MethodType,
   type NodeState,
   type SchemaNode,
@@ -71,12 +70,19 @@ export abstract class BaseNode<
   }
   /** 노드의 경로 업데이트, 부모 노드의 경로를 참고해서 자신의 경로를 업데이트 */
   updatePath() {
-    const path = this.parentNode?.path
+    const previous = this.#path;
+    const current = this.parentNode?.path
       ? `${this.parentNode.path}${JSONPath.Child}${this.#name}`
       : JSONPath.Root;
-    if (this.#path !== path) {
-      this.#path = path;
-      this.publish(MethodType.PathChange, path);
+    if (previous !== current) {
+      this.#path = current;
+      this.publish({
+        type: MethodType.PathChange,
+        options: {
+          previous,
+          current,
+        },
+      });
     }
   }
 
@@ -110,10 +116,10 @@ export abstract class BaseNode<
 
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
-    this.publish(
-      MethodType.Validate,
-      this.filterErrorsWithSchema(this.#mergedErrors),
-    );
+    this.publish({
+      type: MethodType.Validate,
+      payload: this.filterErrorsWithSchema(this.#mergedErrors),
+    });
   }
 
   /** 자신의 Error 초기화, 하위 노드의 Error는 초기화 하지 않음 */
@@ -141,10 +147,10 @@ export abstract class BaseNode<
 
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
-    this.publish(
-      MethodType.Validate,
-      this.filterErrorsWithSchema(this.#mergedErrors),
-    );
+    this.publish({
+      type: MethodType.Validate,
+      payload: this.filterErrorsWithSchema(this.#mergedErrors),
+    });
   }
 
   /** 하위 노드에서 전달받은 Error 초기화, 자신의 Error는 초기화 하지 않음 */
@@ -216,7 +222,10 @@ export abstract class BaseNode<
 
     if (hasChanges) {
       this.#state = newState;
-      this.publish(MethodType.StateChange, this.#state);
+      this.publish({
+        type: MethodType.StateChange,
+        payload: this.#state,
+      });
     }
   }
 
@@ -244,7 +253,6 @@ export abstract class BaseNode<
     input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
   ): void {
     if (typeof this.#handleChange !== 'function') return;
-
     const inputValue = typeof input === 'function' ? input(this.value) : input;
     this.#handleChange(inputValue);
   }
@@ -358,12 +366,7 @@ export abstract class BaseNode<
   }
 
   /** 노드의 이벤트 발생 */
-  publish<T extends MethodType>(
-    type: T,
-    payload: MethodPayload[T],
-    options?: any,
-  ) {
-    const event = { type, payload, options } satisfies MethodEvent;
+  publish(event: MethodEvent) {
     this.#listeners.forEach((listener) => listener(event));
   }
 
