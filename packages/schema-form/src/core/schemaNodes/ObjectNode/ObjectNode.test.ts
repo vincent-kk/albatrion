@@ -24,10 +24,10 @@ test('default value', () => {
   expect(node?.value?.character.spell).toBe('expecto patronum');
 });
 
-test('anyOf', () => {
+test('oneOf', () => {
   const schema = {
     type: 'object',
-    anyOf: [
+    oneOf: [
       {
         properties: { category: { enum: ['movie'] } },
         required: ['title', 'openingDate'],
