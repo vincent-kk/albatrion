@@ -49,7 +49,7 @@ export interface FormHandle<
   node?: Node;
   focus: Fn<[dataPath: Node['path']]>;
   select: Fn<[dataPath: Node['path']]>;
-  refresh: Fn;
+  reset: Fn<[defaultValue?: Value]>;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
 }

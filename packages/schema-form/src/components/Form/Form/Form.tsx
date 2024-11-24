@@ -61,7 +61,8 @@ const FormInner = <
   const jsonSchema = useConstant(jsonSchemaInput);
   const [rootNode, setRootNode] = useState<Node>();
   const [children, setChildren] = useState<ReactNode>();
-  const [defaultValue, setDefaultValue] = useState<Value>(defaultValueInput);
+  const initialDefaultValue = useConstant(defaultValueInput);
+  const [defaultValue, setDefaultValue] = useState<Value>(initialDefaultValue);
   const [tick, update] = useTick();
 
   const handleChange = useHandle((input: Parameter<typeof onChange>) => {
@@ -103,20 +104,26 @@ const FormInner = <
         rootNode?.findNode(dataPath)?.publish({
           type: MethodType.Select,
         }),
-      refresh: update,
+      reset: (defaultValue) => {
+        setDefaultValue(defaultValue ?? initialDefaultValue);
+        update();
+      },
       getValue: () => rootNode?.value as Value,
       setValue: (input, options) => {
         if (!rootNode) return;
+        const inputValue = isFunction(input)
+          ? input(rootNode.value as Value)
+          : input;
         if (isObjectNode(rootNode)) {
-          rootNode.setValue(input as ObjectValue, options);
+          rootNode.setValue(inputValue as ObjectValue, options);
           setDefaultValue(rootNode.value as Value);
         } else {
-          setDefaultValue(input as Value);
+          setDefaultValue(inputValue as Value);
         }
         update();
       },
     }),
-    [rootNode, update],
+    [initialDefaultValue, rootNode, update],
   );
 
   return (
