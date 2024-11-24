@@ -150,8 +150,14 @@ interface BasicSchema<T> extends CustomOptions {
   nullable?: boolean;
   readOnly?: boolean;
   const?: T;
-  enum?: T[];
   default?: T;
+  enum?: T extends string | number | boolean
+    ? T[]
+    : T extends Array<infer E>
+      ? E
+      : T extends object
+        ? ObjectValue
+        : never;
 }
 
 interface CustomOptions {
