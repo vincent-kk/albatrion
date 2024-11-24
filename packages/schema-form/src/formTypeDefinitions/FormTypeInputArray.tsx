@@ -22,7 +22,7 @@ function DeleteButton({
 }
 
 export const FormTypeInputArray = memo(
-  ({ node, childNodes }: FormTypeInputProps<any[]>) => {
+  ({ node, childNodes, readOnly }: FormTypeInputProps<any[]>) => {
     const handleClick = useCallback(() => {
       node.push();
     }, [node]);
@@ -40,14 +40,18 @@ export const FormTypeInputArray = memo(
             return (
               <div key={Node.key} style={{ border: '1px dashed black' }}>
                 <Node />
-                <DeleteButton index={i} onClick={handleRemoveClick} />
+                {!readOnly && (
+                  <DeleteButton index={i} onClick={handleRemoveClick} />
+                )}
               </div>
             );
           })}
         <hr />
-        <button title="add item" onClick={handleClick}>
-          항목 추가
-        </button>
+        {!readOnly && (
+          <button title="add item" onClick={handleClick}>
+            항목 추가
+          </button>
+        )}
       </div>
     );
   },

@@ -5,6 +5,7 @@ import type { FormTypeInputProps } from '@lumy/schema-form/types';
 
 export const FormTypeInputString = ({
   name,
+  readOnly,
   defaultValue,
   onChange,
 }: FormTypeInputProps<string>) => {
@@ -15,6 +16,7 @@ export const FormTypeInputString = ({
     <input
       type="text"
       name={name}
+      readOnly={readOnly}
       defaultValue={defaultValue}
       onChange={handleChange}
     />
