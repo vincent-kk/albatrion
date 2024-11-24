@@ -14,6 +14,7 @@ import {
   type SchemaNode,
 } from '@lumy/schema-form/core';
 import { isFunction } from '@lumy/schema-form/helpers/filter';
+import { useConstant } from '@lumy/schema-form/hooks/useConstant';
 import { useHandle } from '@lumy/schema-form/hooks/useHandle';
 import { useTick } from '@lumy/schema-form/hooks/useTick';
 import {
@@ -38,7 +39,7 @@ const FormInner = <
   Node extends SchemaNode = InferSchemaNode<Schema>,
 >(
   {
-    jsonSchema,
+    jsonSchema: jsonSchemaInput,
     defaultValue,
     onChange,
     onValidate,
@@ -57,6 +58,7 @@ const FormInner = <
 ) => {
   const [tick, update] = useTick();
   const [rootNode, setRootNode] = useState<Node>();
+  const jsonSchema = useConstant(jsonSchemaInput);
   const [children, setChildren] = useState<ReactNode>();
 
   const handleChange = useHandle((input) => {
@@ -96,7 +98,6 @@ const FormInner = <
       getValue: () => rootNode?.value as Value,
       setValue: (input: Value) => {
         rootNode?.setValue(input as any);
-        update();
       },
     }),
     [rootNode, update],
@@ -104,28 +105,29 @@ const FormInner = <
 
   return (
     <UserDefinedContextProvider context={context}>
-      <SchemaNodeContextProvider
-        jsonSchema={jsonSchema}
-        defaultValue={defaultValue}
-        onChange={handleChange}
-        onValidate={onValidate}
-        onReady={handleReady}
-        errors={errors}
-        ajv={ajv}
+      <FormTypeInputsContextProvider
+        formTypeInputDefinitions={formTypeInputDefinitions}
+        formTypeInputMap={formTypeInputMap}
       >
         <SchemaNodeRendererContextProvider
           CustomSchemaNodeRenderer={CustomSchemaNodeRenderer}
           formatError={formatError}
           showError={showError}
         >
-          <FormTypeInputsContextProvider
-            formTypeInputDefinitions={formTypeInputDefinitions}
-            formTypeInputMap={formTypeInputMap}
+          <SchemaNodeContextProvider
+            key={tick}
+            jsonSchema={jsonSchema}
+            defaultValue={defaultValue}
+            onChange={handleChange}
+            onValidate={onValidate}
+            onReady={handleReady}
+            errors={errors}
+            ajv={ajv}
           >
             {children || <SchemaNodeProxy path="" gridFrom={gridFrom} />}
-          </FormTypeInputsContextProvider>
+          </SchemaNodeContextProvider>
         </SchemaNodeRendererContextProvider>
-      </SchemaNodeContextProvider>
+      </FormTypeInputsContextProvider>
     </UserDefinedContextProvider>
   );
 };
