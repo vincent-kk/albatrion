@@ -351,9 +351,23 @@ export const FormTypeMap = () => {
   const handleChange = (val: any) => {
     setValue(val);
   };
+  const refHandle = useRef<FormHandle<typeof schema>>(null);
   return (
     <div>
+      <button
+        onClick={() => {
+          const node = refHandle.current?.node?.findNode('$.textNode');
+          console.log(node);
+
+          if (node?.type === 'string') {
+            node?.setValue('wow');
+          }
+        }}
+      >
+        remove second item
+      </button>
       <Form
+        ref={refHandle}
         jsonSchema={schema}
         formTypeInputMap={formTypeMap}
         onChange={handleChange}
@@ -647,14 +661,17 @@ export const Errors = () => {
     },
   ]);
 
+  const [_errors, _setErrors] = useState<JsonSchemaError[]>([]);
+  const refHandle = useRef<FormHandle<typeof schema>>(null);
+
   const clearErrors = () => {
     setErrors([]);
   };
 
-  const [_errors, _setErrors] = useState<JsonSchemaError[]>([]);
   return (
     <div>
       <Form
+        ref={refHandle}
         jsonSchema={schema}
         onChange={handleChange}
         onValidate={(errors) => _setErrors(errors ?? [])}
@@ -664,6 +681,145 @@ export const Errors = () => {
       <button onClick={clearErrors}>clear received errors</button>
       <hr />
       <pre>{JSON.stringify(_errors, null, 2)}</pre>
+      <pre>{JSON.stringify(value, null, 2)}</pre>
+    </div>
+  );
+};
+
+export const ObjectNodeTest = () => {
+  const schema = {
+    type: 'object',
+    properties: {
+      user: {
+        type: 'object',
+        properties: {
+          name: {
+            type: 'string',
+            maxLength: 50,
+            default: 'Anonymous',
+          },
+          email: {
+            type: 'string',
+            format: 'email',
+          },
+          profile: {
+            type: 'object',
+            oneOf: [
+              {
+                properties: { type: { enum: ['adult', 'child'] } },
+                required: ['age', 'gender', 'preferences'],
+              },
+              {
+                properties: { type: { enum: ['none'] } },
+                required: [],
+              },
+            ],
+            properties: {
+              type: {
+                type: 'string',
+                enum: ['adult', 'child', 'none'],
+                default: 'adult',
+              },
+              age: {
+                type: 'integer',
+                minimum: 0,
+                default: 18,
+              },
+              gender: {
+                type: 'string',
+                enum: ['male', 'female', 'other'],
+                renderOptions: {
+                  visible: '@.age >= 18',
+                },
+              },
+              preferences: {
+                type: 'object',
+                properties: {
+                  theme: {
+                    type: 'string',
+                    enum: ['light', 'dark'],
+                    default: 'light',
+                  },
+                  notifications: {
+                    type: 'object',
+                    properties: {
+                      email: {
+                        type: 'boolean',
+                        default: true,
+                      },
+                      sms: {
+                        type: 'boolean',
+                        default: false,
+                      },
+                    },
+                    required: ['email', 'sms'],
+                  },
+                },
+                required: ['theme', 'notifications'],
+              },
+            },
+            required: ['type'],
+          },
+        },
+        required: ['name'],
+      },
+      settings: {
+        type: 'object',
+        properties: {
+          privacy: {
+            type: 'string',
+            oneOf: [
+              { const: 'public', title: 'Public' },
+              { const: 'private', title: 'Private' },
+              { const: 'custom', title: 'Custom' },
+            ],
+            default: 'public',
+          },
+          language: {
+            type: 'string',
+            enum: ['en', 'kr', 'jp'],
+            default: 'en',
+          },
+          security: {
+            type: 'object',
+            properties: {
+              '2FA': {
+                type: 'boolean',
+                default: true,
+              },
+              backupCodes: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                  pattern: '^[A-Z0-9]{8}$',
+                },
+                minItems: 5,
+                maxItems: 10,
+              },
+            },
+            required: ['2FA'],
+          },
+        },
+        required: ['privacy', 'language'],
+      },
+    },
+    required: ['user', 'settings'],
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState({});
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const refHandle = useRef<FormHandle<typeof schema>>(null);
+
+  return (
+    <div>
+      <Form
+        ref={refHandle}
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={(errors) => setErrors(errors ?? [])}
+      />
+      <hr />
+      <pre>{JSON.stringify(errors, null, 2)}</pre>
       <pre>{JSON.stringify(value, null, 2)}</pre>
     </div>
   );
