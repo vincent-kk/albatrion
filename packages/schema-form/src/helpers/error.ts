@@ -17,12 +17,9 @@ export const filterErrors = (
   errors: JsonSchemaError[],
   jsonSchema: JsonSchema,
 ) => {
-  // NOTE: oneOf property가 없는 경우, 필터링 하지 않음
-  if (!Array.isArray(jsonSchema?.oneOf)) return errors;
-
   const oneOfRequiredFieldMap = new Map<string, string[]>(
     jsonSchema.oneOf
-      .map(({ required }, index) => {
+      ?.map(({ required }, index) => {
         if (Array.isArray(required)) {
           return [
             `${JSONPath.Filter}/oneOf/${index}/required`,
@@ -34,7 +31,7 @@ export const filterErrors = (
       .filter(isTruthy),
   );
   return errors.filter(({ keyword, schemaPath, params }) => {
-    if (keyword === 'oneOf') return false;
+    if (keyword === 'oneOf' || keyword === 'enum') return false;
     if (schemaPath?.includes('oneOf')) {
       return (
         params?.missingPattern &&
