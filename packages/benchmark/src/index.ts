@@ -7,14 +7,14 @@
 //     );
 //   },
 // );
-// NOTE: Fastest is findNode_Old
-import { run as runFind } from './targets/find/benchmark';
+// NOTE: fastest: 1206271.38, slowest: 340044.93, speedRatio: 3.55:1, timeSaved: 71.81%
+// import { run as runFind } from './targets/find/benchmark';
 
-runFind().then(({ fastest, slowest, speedRatio, executionTimeSaved }) => {
-  console.log(
-    `fastest: ${fastest}, slowest: ${slowest}, speedRatio: ${speedRatio}:1, timeSaved: ${executionTimeSaved}%`,
-  );
-});
+// runFind().then(({ fastest, slowest, speedRatio, executionTimeSaved }) => {
+//   console.log(
+//     `fastest: ${fastest}, slowest: ${slowest}, speedRatio: ${speedRatio}:1, timeSaved: ${executionTimeSaved}%`,
+//   );
+// });
 
 // NOTE: fastest: 242782.94, slowest: 226187.09, speedRatio: 1.07:1, timeSaved: 6.84%
 // import { run as runGetDataWithSchema } from './targets/getDataWithSchema/benchmark';

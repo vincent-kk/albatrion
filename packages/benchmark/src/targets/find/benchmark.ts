@@ -7,6 +7,7 @@ import {
 } from '@lumy/schema-form/core/schemaNodes/BaseNode/utils';
 
 import { node, targetPath } from './data';
+import { find as find_new } from './find';
 import { find as find_old } from './find_old';
 import { find as find_oldest } from './find_oldest';
 
@@ -21,17 +22,22 @@ const findNode_Old = () => {
   return find_old(node, segments);
 };
 
-const findNode_New = () => {
+const findNode_Ref = () => {
   const segments = getPathSegments(targetPath);
   return find(node, segments);
+};
+const findNode_New = () => {
+  const segments = getPathSegments(targetPath);
+  return find_new(node, segments);
 };
 
 export const run = () => {
   return new Promise<Ratio>((resolve) => {
     suite
-      .add('findNode_Oldest', findNode_Oldest)
-      .add('findNode_Old', findNode_Old)
+      .add('findNode_Ref', findNode_Ref)
       .add('findNode_New', findNode_New)
+      .add('findNode_Old', findNode_Old)
+      .add('findNode_Oldest', findNode_Oldest)
       .on('cycle', function (event: Benchmark.Event) {
         console.log(String(event.target));
       })
