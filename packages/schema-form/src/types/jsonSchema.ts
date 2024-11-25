@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 
+import type { UnknownFormTypeInputProps } from './formTypeInput';
 import type {
   AllowedValue,
   ArrayValue,
@@ -174,7 +175,7 @@ interface CustomOptions {
     maximum?: string;
     [key: string]: any;
   };
-  formType?: string;
+  formType?: string | ComponentType<UnknownFormTypeInputProps>;
   format?: string;
   [key: string]: any;
 }

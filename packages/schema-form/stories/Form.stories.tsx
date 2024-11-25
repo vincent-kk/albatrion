@@ -1,4 +1,10 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, {
+  type ChangeEvent,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import Form, {
   type FormHandle,
@@ -7,7 +13,7 @@ import Form, {
   type FormTypeInputProps,
   type FormTypeRendererProps,
   type JsonSchema,
-  JsonSchemaError,
+  type JsonSchemaError,
   ShowError,
 } from '../src';
 
@@ -354,18 +360,6 @@ export const FormTypeMap = () => {
   const refHandle = useRef<FormHandle<typeof schema>>(null);
   return (
     <div>
-      <button
-        onClick={() => {
-          const node = refHandle.current?.node?.findNode('$.textNode');
-          console.log(node);
-
-          if (node?.type === 'string') {
-            node?.setValue('wow');
-          }
-        }}
-      >
-        remove second item
-      </button>
       <Form
         ref={refHandle}
         jsonSchema={schema}
@@ -820,6 +814,76 @@ export const ObjectNodeTest = () => {
       />
       <hr />
       <pre>{JSON.stringify(errors, null, 2)}</pre>
+      <pre>{JSON.stringify(value, null, 2)}</pre>
+    </div>
+  );
+};
+
+export const FormTypeComponentInJsonSchema = () => {
+  const CustomFormTypeStringInput = useCallback(
+    ({ defaultValue, onChange }: FormTypeInputProps<string>) => {
+      const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        onChange?.(event.target.value);
+      };
+      return (
+        <div>
+          <h3>CustomFormTypeStringInput</h3>
+          <input
+            type="text"
+            defaultValue={defaultValue}
+            onChange={handleChange}
+          />
+          <hr />
+        </div>
+      );
+    },
+    [],
+  );
+
+  const CustomFormTypeNumberInput = useCallback(
+    ({ defaultValue, onChange }: FormTypeInputProps<number>) => {
+      const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        onChange?.(event.target.valueAsNumber);
+      };
+      return (
+        <div>
+          <h3>CustomFormTypeNumberInput</h3>
+          <input
+            type="number"
+            defaultValue={defaultValue}
+            onChange={handleChange}
+          />
+          <hr />
+        </div>
+      );
+    },
+    [],
+  );
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+      },
+      nameCustom: {
+        type: 'string',
+        formType: CustomFormTypeStringInput,
+      },
+      age: {
+        type: 'number',
+      },
+      ageCustom: {
+        type: 'number',
+        formType: CustomFormTypeNumberInput,
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <div>
+      <Form jsonSchema={jsonSchema} onChange={setValue} />
       <pre>{JSON.stringify(value, null, 2)}</pre>
     </div>
   );

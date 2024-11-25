@@ -1,5 +1,8 @@
 import { ErrorBoundary } from '@lumy/schema-form/components/utils/ErrorBoundary';
-import { normalizeFormTypeInputDefinitions } from '@lumy/schema-form/helpers/formTypeInputDefinition';
+import {
+  type NormalizedFormTypeInputDefinition,
+  normalizeFormTypeInputDefinitions,
+} from '@lumy/schema-form/helpers/formTypeInputDefinition';
 import type {
   FormTypeInputDefinition,
   FormTypeInputProps,
@@ -74,15 +77,15 @@ const formTypeDefinitions = [
 ] satisfies FormTypeInputDefinition[];
 
 export const fromFallbackFormTypeInputDefinitions =
-  normalizeFormTypeInputDefinitions(formTypeDefinitions).map(
-    ({ test, Component }) => {
-      return {
-        test,
-        Component: (props: FormTypeInputProps) => (
-          <ErrorBoundary>
-            <Component {...props} />
-          </ErrorBoundary>
-        ),
-      };
-    },
-  );
+  normalizeFormTypeInputDefinitions(
+    formTypeDefinitions,
+  ).map<NormalizedFormTypeInputDefinition>(({ test, Component }) => {
+    return {
+      test,
+      Component: (props: FormTypeInputProps) => (
+        <ErrorBoundary>
+          <Component {...props} />
+        </ErrorBoundary>
+      ),
+    };
+  });

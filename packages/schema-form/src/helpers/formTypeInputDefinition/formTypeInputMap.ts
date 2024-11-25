@@ -19,7 +19,6 @@ export const normalizeFormTypeInputMap = (
   return Object.entries(formTypeInputMap)
     .map(([path, Component]) => {
       if (typeof path !== 'string' || !isReactComponent(Component)) return null;
-
       if (FILTER_PATH_REGEX.test(path)) {
         return {
           test: formTypeTestFnFactory(path),
