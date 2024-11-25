@@ -8,8 +8,15 @@ export const FormGroupRenderer = ({
   errorMessage,
 }: FormTypeRendererProps) =>
   depth ? (
-    <div>
-      <label htmlFor={path}>{name}</label>
+    <div
+      style={{
+        marginBottom: 5,
+        marginLeft: 5 * depth,
+      }}
+    >
+      <label htmlFor={path} style={{ marginRight: 5 }}>
+        {name}
+      </label>
       <Input />
       <br />
       <em>{errorMessage}</em>
