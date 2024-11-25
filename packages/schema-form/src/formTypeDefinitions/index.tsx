@@ -57,7 +57,7 @@ const formTypeDefinitions = [
   },
   {
     Component: FormTypeInputNumber,
-    test: { type: 'number' },
+    test: { type: ['number', 'integer'] },
   },
   {
     Component: FormTypeInputObject,

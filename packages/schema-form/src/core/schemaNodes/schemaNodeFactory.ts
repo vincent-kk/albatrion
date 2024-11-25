@@ -31,7 +31,7 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
   ajv,
 }: NodeFactoryProps<Schema>) {
   switch (jsonSchema.type) {
-    case 'boolean': {
+    case 'boolean':
       return new BooleanNode({
         key,
         name,
@@ -41,8 +41,8 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         onChange,
         ajv,
       } as SchemaNodeConstructorProps<BooleanSchema>);
-    }
-    case 'number': {
+    case 'number':
+    case 'integer':
       return new NumberNode({
         key,
         name,
@@ -52,8 +52,7 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         onChange,
         ajv,
       } as SchemaNodeConstructorProps<NumberSchema>);
-    }
-    case 'string': {
+    case 'string':
       return new StringNode({
         key,
         name,
@@ -63,8 +62,7 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         onChange,
         ajv,
       } as SchemaNodeConstructorProps<StringSchema>);
-    }
-    case 'array': {
+    case 'array':
       return new ArrayNode({
         key,
         name,
@@ -74,8 +72,7 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         onChange,
         ajv,
       } as SchemaNodeConstructorProps<ArraySchema>);
-    }
-    case 'object': {
+    case 'object':
       return new ObjectNode({
         key,
         name,
@@ -85,8 +82,7 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         onChange,
         ajv,
       } as SchemaNodeConstructorProps<ObjectSchema>);
-    }
-    case 'virtual': {
+    case 'virtual':
       return new VirtualNode({
         key,
         name,
@@ -97,7 +93,6 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         refNodes,
         ajv,
       } as VirtualNodeConstructorProps<VirtualSchema>);
-    }
   }
   throw new Error(`Unknown schema type: ${jsonSchema.type}`);
 }
