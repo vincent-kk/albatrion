@@ -24,7 +24,9 @@ export const SchemaNodeProxy = ({
   FormTypeRenderer: InputFormTypeRenderer,
   Wrapper: InputWrapper,
 }: SchemaNodeProxyProps) => {
-  const { node, show, watchValues } = usePrepareSchemaValues(inputNode ?? path);
+  const { node, visible, watchValues } = usePrepareSchemaValues(
+    inputNode ?? path,
+  );
 
   const overrideFormTypeInputPropsRef = useRef(overrideFormTypeInputProps);
   overrideFormTypeInputPropsRef.current = useSnapshot(
@@ -87,7 +89,10 @@ export const SchemaNodeProxy = ({
 
   const [tick, formElementRef] = useSchemaNodeListener(node);
 
-  return node && show ? (
+  // NOTE: node 이거나 visible 이 false 라면 렌더링 하지 않는다.
+  if (!node || !visible) return null;
+
+  return (
     <Wrapper key={tick}>
       <span ref={formElementRef}>
         <FormTypeRenderer
@@ -107,5 +112,5 @@ export const SchemaNodeProxy = ({
         />
       </span>
     </Wrapper>
-  ) : null;
+  );
 };
