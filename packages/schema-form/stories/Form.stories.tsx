@@ -6,7 +6,9 @@ import Form, {
   type FormTypeInputMap,
   type FormTypeInputProps,
   type JsonSchema,
+  JsonSchemaError,
   type SchemaNodeRendererProps,
+  ShowError,
 } from '../src';
 
 export default {
@@ -522,20 +524,137 @@ export const DirtyTouched = () => {
     Input,
     errorMessage,
   }: SchemaNodeRendererProps) => {
+    const { [ShowError.Dirty]: dirty, [ShowError.Touched]: touched } =
+      node.state || {};
     return depth === 0 ? (
       <Input />
     ) : (
-      <div>
-        <label>
+      <div style={{ borderBottom: '1px dashed #000', marginTop: 10 }}>
+        <label style={{ display: 'flex', gap: 10 }}>
           <span>{name}</span>
           <Input />
         </label>
-        <pre>{JSON.stringify(node.state || {})}</pre>
+        <pre>{JSON.stringify({ dirty, touched })}</pre>
         <pre>{JSON.stringify(node.errors || [])}</pre>
         {errorMessage}
       </div>
     );
   };
 
-  return <Form jsonSchema={jsonSchema} CustomSchemaNodeRenderer={Renderer} />;
+  const [showError, setShowError] = useState<ShowError | boolean>(
+    ShowError.Dirty | ShowError.Touched,
+  );
+
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: 10 }}>
+        <label>
+          <input
+            type="radio"
+            name="showError"
+            checked={showError === (ShowError.Touched | ShowError.Dirty)}
+            value={ShowError.Touched | ShowError.Dirty}
+            onChange={() => setShowError(ShowError.Touched | ShowError.Dirty)}
+          />
+          Touched+Dirty
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="showError"
+            checked={showError === ShowError.Dirty}
+            value={ShowError.Dirty}
+            onChange={() => setShowError(ShowError.Dirty)}
+          />
+          Dirty
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="showError"
+            checked={showError === ShowError.Touched}
+            value={ShowError.Touched}
+            onChange={() => setShowError(ShowError.Touched)}
+          />
+          Touched
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="showError"
+            checked={showError === true}
+            value={'true'}
+            onChange={() => setShowError(true)}
+          />
+          true
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="showError"
+            checked={showError === false}
+            value={'false'}
+            onChange={() => setShowError(false)}
+          />
+          false
+        </label>
+      </div>
+      <hr />
+      <Form
+        key={`${showError}`}
+        jsonSchema={jsonSchema}
+        showError={showError}
+        CustomSchemaNodeRenderer={Renderer}
+      />
+    </div>
+  );
+};
+
+export const Errors = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      name: { type: 'string', maxLength: 3, default: 'exceed max length' },
+      message: { type: 'string', minLength: 3, default: '1' },
+    },
+  } satisfies JsonSchema;
+
+  const handleChange = (val: any) => {
+    setValue(val);
+  };
+
+  const [errors, setErrors] = useState<JsonSchemaError[]>([
+    {
+      keyword: 'maxLength',
+      dataPath: '.message',
+      instancePath: '/message',
+      schemaPath: '#/properties/message/maxLength',
+      params: {
+        limit: 20,
+      },
+      message: 'should NOT be longer than 20 characters',
+    },
+  ]);
+
+  const clearErrors = () => {
+    setErrors([]);
+  };
+
+  const [_errors, _setErrors] = useState<JsonSchemaError[]>([]);
+  return (
+    <div>
+      <Form
+        jsonSchema={schema}
+        onChange={handleChange}
+        onValidate={(errors) => _setErrors(errors ?? [])}
+        errors={errors}
+        showError={true}
+      />
+      <button onClick={clearErrors}>clear received errors</button>
+      <hr />
+      <pre>{JSON.stringify(_errors, null, 2)}</pre>
+      <pre>{JSON.stringify(value, null, 2)}</pre>
+    </div>
+  );
 };

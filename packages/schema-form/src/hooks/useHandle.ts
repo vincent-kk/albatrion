@@ -1,5 +1,10 @@
 import { useCallback, useRef } from 'react';
 
+/**
+ * @description memoized Function을 반환합니다.
+ * @param handler - Function
+ * @returns memoized Function
+ */
 export function useHandle<P extends Array<any>, R>(
   handler: (...args: P) => R,
 ): (...args: P) => R {

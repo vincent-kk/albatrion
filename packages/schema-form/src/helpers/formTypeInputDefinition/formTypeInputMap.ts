@@ -7,7 +7,11 @@ import {
 import { isReactComponent, isTruthy } from '../filter';
 import type { NormalizedFormTypeInputDefinition } from './type';
 
-const FILTER_PATH_REGEX = new RegExp(`\\.${JSONPath.Filter}(\\.|$)`);
+/**
+ * @description 폼 타입 입력 맵을 정규화합니다.
+ * @param formTypeInputMap - 폼 타입 입력 맵
+ * @returns 정규화된 폼 타입 입력 정의
+ */
 export const normalizeFormTypeInputMap = (
   formTypeInputMap?: FormTypeInputMap,
 ): NormalizedFormTypeInputDefinition[] => {
@@ -30,6 +34,8 @@ export const normalizeFormTypeInputMap = (
     })
     .filter(isTruthy);
 };
+
+const FILTER_PATH_REGEX = new RegExp(`\\.${JSONPath.Filter}(\\.|$)`);
 
 const pathExactMatchFnFactory = (path: string): FormTypeTestFn => {
   return (hint) => hint.path === path;
