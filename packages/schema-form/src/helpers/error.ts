@@ -7,13 +7,22 @@ import {
 
 import { isTruthy } from './filter';
 
+/**
+ * @description oneOf 속성을 가진 JSON Schema에 대한 에러 제거
+ * @param errors - JSON Schema 에러 배열
+ * @param jsonSchema - JSON Schema
+ * @returns 필터링된 JSON Schema 에러 배열
+ */
 export const filterErrors = (
   errors: JsonSchemaError[],
   jsonSchema: JsonSchema,
 ) => {
+  // NOTE: oneOf property가 없는 경우, 필터링 하지 않음
+  if (!Array.isArray(jsonSchema?.oneOf)) return errors;
+
   const oneOfRequiredFieldMap = new Map<string, string[]>(
-    jsonSchema?.oneOf
-      ?.map(({ required }, index) => {
+    jsonSchema.oneOf
+      .map(({ required }, index) => {
         if (Array.isArray(required)) {
           return [
             `${JSONPath.Filter}/oneOf/${index}/required`,
@@ -22,7 +31,7 @@ export const filterErrors = (
         }
         return null;
       })
-      .filter(isTruthy) || [],
+      .filter(isTruthy),
   );
   return errors.filter(({ keyword, schemaPath, params }) => {
     if (keyword === 'oneOf') return false;
