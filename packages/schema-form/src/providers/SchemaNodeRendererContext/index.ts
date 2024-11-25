@@ -1,4 +1,4 @@
-export { SchemaNodeRendererContextProvider } from './SchemaNodeRendererContextProvider';
-export { SchemaNodeRendererContext } from './SchemaNodeRendererContext';
+export { FormTypeRendererContextProvider } from './SchemaNodeRendererContextProvider';
+export { FormTypeRendererContext } from './SchemaNodeRendererContext';
 
-export type { SchemaNodeRendererContextProviderProps } from './SchemaNodeRendererContextProvider';
+export type { FormTypeRendererContextProviderProps } from './SchemaNodeRendererContextProvider';

@@ -20,8 +20,8 @@ import { useHandle } from '@lumy/schema-form/hooks/useHandle';
 import { useTick } from '@lumy/schema-form/hooks/useTick';
 import {
   FormTypeInputsContextProvider,
+  FormTypeRendererContextProvider,
   SchemaNodeContextProvider,
-  SchemaNodeRendererContextProvider,
   UserDefinedContextProvider,
 } from '@lumy/schema-form/providers';
 import {
@@ -47,7 +47,7 @@ const FormInner = <
     onValidate,
     formTypeInputDefinitions,
     formTypeInputMap,
-    CustomSchemaNodeRenderer,
+    CustomFormTypeRenderer,
     gridFrom,
     children: childrenInput,
     formatError,
@@ -132,8 +132,8 @@ const FormInner = <
         formTypeInputDefinitions={formTypeInputDefinitions}
         formTypeInputMap={formTypeInputMap}
       >
-        <SchemaNodeRendererContextProvider
-          CustomSchemaNodeRenderer={CustomSchemaNodeRenderer}
+        <FormTypeRendererContextProvider
+          CustomFormTypeRenderer={CustomFormTypeRenderer}
           formatError={formatError}
           showError={showError}
         >
@@ -149,7 +149,7 @@ const FormInner = <
           >
             {children || <SchemaNodeProxy path="" gridFrom={gridFrom} />}
           </SchemaNodeContextProvider>
-        </SchemaNodeRendererContextProvider>
+        </FormTypeRendererContextProvider>
       </FormTypeInputsContextProvider>
     </UserDefinedContextProvider>
   );

@@ -1,14 +1,11 @@
 import { ReactElement } from 'react';
 
-import { SchemaNodeRendererContext } from '@lumy/schema-form/providers';
+import { FormTypeRendererContext } from '@lumy/schema-form/providers';
 import { FormTypeInputProps } from '@lumy/schema-form/types';
 
-export type SchemaNodeRenderer =
-  SchemaNodeRendererContext['SchemaNodeRenderer'];
+export type FormTypeRenderer = FormTypeRendererContext['FormTypeRenderer'];
 
-export type ChildSchemaNodeRenderer = ElementOf<
-  FormTypeInputProps['childNodes']
->;
+export type ChildFormTypeRenderer = ElementOf<FormTypeInputProps['childNodes']>;
 
 export type FormReactNode =
   | string

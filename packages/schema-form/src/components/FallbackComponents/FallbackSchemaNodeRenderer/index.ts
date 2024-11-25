@@ -1,1 +1,1 @@
-export { FallbackSchemaNodeRenderer } from './FallbackSchemaNodeRenderer';
+export { FallbackFormTypeRenderer } from './FallbackFormTypeRenderer';

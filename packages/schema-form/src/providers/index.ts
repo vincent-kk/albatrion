@@ -11,10 +11,10 @@ export {
 export type { FormTypeInputsContextProviderProps } from './FormTypeInputsContext';
 
 export {
-  SchemaNodeRendererContextProvider,
-  SchemaNodeRendererContext,
+  FormTypeRendererContextProvider,
+  FormTypeRendererContext,
 } from './SchemaNodeRendererContext';
-export type { SchemaNodeRendererContextProviderProps } from './SchemaNodeRendererContext';
+export type { FormTypeRendererContextProviderProps } from './SchemaNodeRendererContext';
 
 export {
   UserDefinedContextProvider,

@@ -3,7 +3,7 @@ import type { ComponentType, HTMLAttributes } from 'react';
 import type { InferSchemaNode, SchemaNode } from '@lumy/schema-form/core';
 
 import type { InferJsonSchemaType, JsonSchema } from './jsonSchema';
-import type { SchemaNodeRendererProps } from './schemaNodeRenderer';
+import type { FormTypeRendererProps } from './schemaNodeRenderer';
 import type { AllowedValue } from './value';
 
 /**
@@ -94,7 +94,7 @@ export type OverrideFormTypeInputProps = Partial<FormTypeInputProps> &
   Pick<HTMLAttributes<unknown>, 'className'>;
 
 export interface ChildFormTypeInputProps {
-  SchemaNodeRenderer?: ComponentType<SchemaNodeRendererProps>;
+  FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
   [alt: string]: any;
 }
 

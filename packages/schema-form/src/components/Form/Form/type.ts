@@ -4,8 +4,8 @@ import type { GridForm } from '@lumy/schema-form/components/SchemaNode/type';
 import type { InferSchemaNode, SchemaNode } from '@lumy/schema-form/core';
 import type {
   FormTypeInputsContextProviderProps,
+  FormTypeRendererContextProviderProps,
   SchemaNodeContextProviderProps,
-  SchemaNodeRendererContextProviderProps,
   UserDefinedContextProviderProps,
 } from '@lumy/schema-form/providers';
 import type {
@@ -31,7 +31,7 @@ export interface FormChildrenProps<
 export interface FormProps<
   Schema extends JsonSchema = JsonSchema,
   Value extends AllowedValue = InferValueType<Schema>,
-> extends SchemaNodeRendererContextProviderProps,
+> extends FormTypeRendererContextProviderProps,
     FormTypeInputsContextProviderProps,
     Omit<SchemaNodeContextProviderProps<Schema>, 'onReady'>,
     UserDefinedContextProviderProps {
