@@ -1,6 +1,6 @@
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useMemo } from 'react';
 
-import type { SchemaNode } from '@lumy/schema-form/core';
+import type { MethodType, SchemaNode } from '@lumy/schema-form/core';
 
 import { useTick } from './useTick';
 
@@ -11,13 +11,21 @@ import { useTick } from './useTick';
  */
 export function useSchemaNodeTracker<Node extends SchemaNode>(
   node: Node | null,
+  tracking?: MethodType[],
 ) {
   const [tick, update] = useTick();
+  const trackingTypeSet = useMemo(
+    () => (tracking ? new Set(tracking) : null),
+    [tracking],
+  );
   useLayoutEffect(() => {
-    const unsubscribe = node?.subscribe(update);
+    if (node === null) return;
+    const unsubscribe = node.subscribe(({ type }) => {
+      if (trackingTypeSet === null || trackingTypeSet.has(type)) update();
+    });
     return () => {
-      unsubscribe?.();
+      unsubscribe();
     };
-  }, [node, update]);
+  }, [node, trackingTypeSet, update]);
   return tick;
 }
