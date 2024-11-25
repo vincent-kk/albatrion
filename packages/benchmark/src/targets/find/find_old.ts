@@ -1,6 +1,5 @@
+import { SchemaNode } from '@lumy/schema-form/core/schemaNodes/type';
 import { JSONPath } from '@lumy/schema-form/types';
-
-import { SchemaNode } from '../../src/core/schemaNodes/type';
 
 export const find = (target: SchemaNode, path: string[]): SchemaNode | null => {
   const [currPath, ...rest] = path;
