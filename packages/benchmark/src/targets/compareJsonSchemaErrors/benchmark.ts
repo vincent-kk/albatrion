@@ -1,8 +1,8 @@
 import Benchmark from 'benchmark';
 
+import { type Ratio, getRatio } from '@lumy/benchmark/helpers/getRatio';
 import { getErrorsHash } from '@lumy/schema-form/helpers/error';
 
-import { type Ratio, getRatio } from '../helpers/getRatio';
 import { ajvErrors1, ajvErrors2 } from './data';
 
 const suite = new Benchmark.Suite();

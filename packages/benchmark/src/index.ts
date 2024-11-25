@@ -1,4 +1,4 @@
-import { run as runCompareJsonSchemaErrors } from './compareJsonSchemaErrors';
+import { run as runCompareJsonSchemaErrors } from './targets/compareJsonSchemaErrors/benchmark';
 
 runCompareJsonSchemaErrors().then(
   ({ fastest, slowest, speedRatio, executionTimeSaved }) => {
