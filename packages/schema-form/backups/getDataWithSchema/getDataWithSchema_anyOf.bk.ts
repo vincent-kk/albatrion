@@ -12,7 +12,7 @@ import {
   type StackItem,
   isArrayStackItem,
   isObjectStackItem,
-} from '../src/core/schemaNodes/BaseNode/utils/getDataWithSchema/type';
+} from '../../src/core/schemaNodes/BaseNode/utils/getDataWithSchema/type';
 
 export const isObjectAnyOfSchema = (
   schema: NonNullable<ObjectSchema['anyOf']>[number],
