@@ -1,4 +1,5 @@
 import {
+  type Ajv,
   type ErrorObject,
   type ValidateFunction,
   ajvHelper,
@@ -24,6 +25,7 @@ import {
 import {
   find,
   getDataWithSchema,
+  getFallbackValidator,
   getJsonPaths,
   getPathSegments,
   transformErrors,
@@ -196,34 +198,28 @@ export abstract class BaseNode<
     return this.#state;
   }
   /** 노드의 상태 설정, 명시적으로 undefined를 전달하지 않으면 기존 상태를 유지 */
-  setState(state: ((prev: NodeState) => NodeState) | NodeState) {
-    const nextState = typeof state === 'function' ? state(this.#state) : state;
-
-    if (!nextState || typeof nextState !== 'object') return;
+  setState(input: ((prev: NodeState) => NodeState) | NodeState) {
+    const inputState = typeof input === 'function' ? input(this.#state) : input;
+    if (!inputState || typeof inputState !== 'object') return;
 
     let hasChanges = false;
-    const newState: NodeState = {};
+    const state: NodeState = {};
 
     // NOTE: nextState의 모든 키를 기준으로 순회
-    for (const [key, newValue] of Object.entries(nextState)) {
-      if (newValue !== undefined) {
-        newState[key] = newValue;
-        if (this.#state[key] !== newValue) {
-          hasChanges = true;
-        }
-      } else if (key in this.#state) {
-        hasChanges = true;
-      }
+    for (const [key, value] of Object.entries(inputState)) {
+      if (value !== undefined) {
+        state[key] = value;
+        if (this.#state[key] !== value) hasChanges = true;
+      } else if (key in this.#state) hasChanges = true;
     }
+
     // NOTE: 기존 state에서 nextState에 없는 키들을 유지
     for (const [key, value] of Object.entries(this.#state)) {
-      if (!(key in nextState)) {
-        newState[key] = value;
-      }
+      if (!(key in inputState)) state[key] = value;
     }
 
     if (hasChanges) {
-      this.#state = newState;
+      this.#state = state;
       this.publish({
         type: MethodType.StateChange,
         payload: this.#state,
@@ -308,40 +304,8 @@ export abstract class BaseNode<
       });
     }
 
-    if (this.isRoot) {
-      try {
-        this.#validator = ajvHelper.compile({
-          jsonSchema: { ...jsonSchema, $async: true },
-          ajv,
-        });
-      } catch (err: any) {
-        this.#validator = Object.assign(
-          (_: unknown): _ is unknown => {
-            throw {
-              errors: [
-                {
-                  keyword: 'jsonSchemaCompileFailed',
-                  instancePath: JSONPath.Root,
-                  parent: {},
-                  message: err.message,
-                },
-              ],
-            };
-          },
-          {
-            errors: null,
-            schema: jsonSchema,
-            schemaEnv: {} as any,
-          },
-        );
-      }
-
-      this.subscribe(({ type }) => {
-        if (type === MethodType.Change) {
-          this.#validateOnChange();
-        }
-      });
-    }
+    // NOTE: 루트 노드에서만 validator 준비
+    if (this.isRoot) this.#prepareValidator(ajv);
   }
 
   /** 노드 트리 내에서 특정 경로를 가진 노드 찾기 */
@@ -431,5 +395,21 @@ export abstract class BaseNode<
         this.findNode(dataPath)?.clearErrors();
       });
     this.#errorDataPaths = errorDataPaths;
+  }
+
+  #prepareValidator(ajv?: Ajv) {
+    try {
+      this.#validator = ajvHelper.compile({
+        jsonSchema: { ...this.jsonSchema, $async: true },
+        ajv,
+      });
+    } catch (error: any) {
+      this.#validator = getFallbackValidator(error, this.jsonSchema);
+    }
+    this.subscribe(({ type }) => {
+      if (type === MethodType.Change) {
+        this.#validateOnChange();
+      }
+    });
   }
 }

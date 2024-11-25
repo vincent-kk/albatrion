@@ -1,0 +1,1 @@
+export { getFallbackValidator } from './getFallbackValidator';
