@@ -36,11 +36,12 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
 
   const { dependencyPaths, checkShow, getWatchValues } = useMemo(() => {
     const uiShow = node?.jsonSchema?.ui?.show;
+    const hidden = node?.jsonSchema?.hidden;
     const watch = node?.jsonSchema?.options?.watch;
     const dependencyPaths: string[] = [];
 
     let checkShow: CheckShow | undefined = undefined;
-    if (uiShow === false) {
+    if (hidden || uiShow === false) {
       checkShow = falseFunction;
     } else if (typeof uiShow === 'string') {
       const functionBody = `return !!(${uiShow

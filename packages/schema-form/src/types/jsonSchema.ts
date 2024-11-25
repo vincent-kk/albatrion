@@ -164,6 +164,7 @@ interface CustomOptions {
   ui?: {
     show?: string | boolean;
   };
+  hidden?: true;
   options?: {
     lazy?: boolean;
     watch?: string | string[];
