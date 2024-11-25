@@ -34,6 +34,8 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
     else return null;
   }, [input, rootNode]);
 
+  useSchemaNodeTracker(node, [MethodType.Change, MethodType.StateChange]);
+
   const { dependencyPaths, checkShow, getWatchValues } = useMemo(() => {
     const visible = node?.jsonSchema?.renderOptions?.visible;
     const hidden = node?.jsonSchema?.hidden;
@@ -116,8 +118,6 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
       unsubscribes.forEach((unsubscribe) => unsubscribe?.());
     };
   }, [dependencyPaths, node]);
-
-  useSchemaNodeTracker(node);
 
   return { node, show, watchValues };
 }
