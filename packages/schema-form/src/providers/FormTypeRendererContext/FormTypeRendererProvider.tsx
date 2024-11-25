@@ -1,7 +1,9 @@
 import { type ComponentType, type PropsWithChildren, useMemo } from 'react';
 
-import { FallbackFormTypeRenderer } from '@lumy/schema-form/components/FallbackComponents/FallbackFormTypeRenderer';
-import { FallbackFormatError } from '@lumy/schema-form/components/FallbackComponents/FallbackFormatError';
+import {
+  FormatError as FallbackFormatError,
+  FormGroupRenderer as FallbackRenderer,
+} from '@lumy/schema-form/components/FallbackComponents';
 import { isFunction, isReactComponent } from '@lumy/schema-form/helpers/filter';
 import { type FormTypeRendererProps, ShowError } from '@lumy/schema-form/types';
 
@@ -32,7 +34,7 @@ export const FormTypeRendererContextProvider = ({
     () =>
       isReactComponent(CustomFormTypeRenderer)
         ? CustomFormTypeRenderer
-        : FallbackFormTypeRenderer,
+        : FallbackRenderer,
     [CustomFormTypeRenderer],
   );
 
