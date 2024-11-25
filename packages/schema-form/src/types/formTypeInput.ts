@@ -91,7 +91,7 @@ export type InferFormTypeInputProps<Value> = Value extends AllowedValue
   : UnknownFormTypeInputProps;
 
 export type OverrideFormTypeInputProps = Partial<FormTypeInputProps> &
-  Pick<HTMLAttributes<unknown>, 'className'>;
+  Pick<HTMLAttributes<unknown>, 'style' | 'className'>;
 
 export interface ChildFormTypeInputProps {
   FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
