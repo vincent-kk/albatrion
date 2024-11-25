@@ -1,7 +1,8 @@
 // import { run as runCompareJsonSchemaErrors } from './targets/compareJsonSchemaErrors/benchmark';
 // import { run as runFind } from './targets/find/benchmark';
 // import { run as runGetDataWithSchema } from './targets/getDataWithSchema/benchmark';
-import { run as runGetJsonPaths } from './targets/getJsonPath/benchmark';
+// import { run as runGetJsonPaths } from './targets/getJsonPath/benchmark';
+import { run as runTransformErrors } from './targets/transformErrors/benchmark';
 
 // runCompareJsonSchemaErrors().then(
 //   ({ fastest, slowest, speedRatio, executionTimeSaved }) => {
@@ -22,7 +23,14 @@ import { run as runGetJsonPaths } from './targets/getJsonPath/benchmark';
 //     );
 //   },
 // );
-runGetJsonPaths().then(
+// runGetJsonPaths().then(
+//   ({ fastest, slowest, speedRatio, executionTimeSaved }) => {
+//     console.log(
+//       `fastest: ${fastest}, slowest: ${slowest}, speedRatio: ${speedRatio}:1, timeSaved: ${executionTimeSaved}%`,
+//     );
+//   },
+// );
+runTransformErrors().then(
   ({ fastest, slowest, speedRatio, executionTimeSaved }) => {
     console.log(
       `fastest: ${fastest}, slowest: ${slowest}, speedRatio: ${speedRatio}:1, timeSaved: ${executionTimeSaved}%`,
