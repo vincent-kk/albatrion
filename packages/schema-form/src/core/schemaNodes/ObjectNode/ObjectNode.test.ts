@@ -44,26 +44,26 @@ test('oneOf', () => {
       releaseDate: { type: 'string' },
       numOfPlayers: {
         type: 'number',
-        ui: {
-          show: '$.title==="multi"',
+        renderOptions: {
+          visible: '$.title==="multi"',
         },
       },
     },
   } satisfies ObjectSchema;
   const node = schemaNodeFromSchema({ jsonSchema: schema });
 
-  expect(node?.findNode('title')?.jsonSchema?.ui?.show).toBe(
+  expect(node?.findNode('title')?.jsonSchema?.renderOptions?.visible).toBe(
     '("movie"===@.category)||("game"===@.category)',
   );
-  expect(node?.findNode('openingDate')?.jsonSchema.ui?.show).toBe(
-    '"movie"===@.category',
-  );
-  expect(node?.findNode('releaseDate')?.jsonSchema.ui?.show).toBe(
-    '"game"===@.category',
-  );
-  expect(node?.findNode('numOfPlayers')?.jsonSchema.ui?.show).toBe(
-    '($.title==="multi")&&("game"===@.category)',
-  );
+  expect(
+    node?.findNode('openingDate')?.jsonSchema?.renderOptions?.visible,
+  ).toBe('"movie"===@.category');
+  expect(
+    node?.findNode('releaseDate')?.jsonSchema?.renderOptions?.visible,
+  ).toBe('"game"===@.category');
+  expect(
+    node?.findNode('numOfPlayers')?.jsonSchema?.renderOptions?.visible,
+  ).toBe('($.title==="multi")&&("game"===@.category)');
 });
 
 test('sorted key order', () => {
