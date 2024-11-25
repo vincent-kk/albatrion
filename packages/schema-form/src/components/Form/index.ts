@@ -1,12 +1,18 @@
 import { Form as FormBase } from './Form';
-import { FormGroup } from './FormGroup';
-import { FormInput } from './FormInput';
-import { FormRender } from './FormRender';
+import {
+  FormError,
+  FormGroup,
+  FormInput,
+  FormLabel,
+  FormRender,
+} from './components';
 
-export type { FormChildrenProps, FormProps, FormHandle } from './Form/type';
+export type { FormChildrenProps, FormProps, FormHandle } from './type';
 
 export const Form = Object.assign(FormBase, {
-  Input: FormInput,
-  Group: FormGroup,
   Render: FormRender,
+  Group: FormGroup,
+  Label: FormLabel,
+  Input: FormInput,
+  Error: FormError,
 });
