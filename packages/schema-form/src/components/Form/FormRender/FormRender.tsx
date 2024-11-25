@@ -2,7 +2,7 @@ import {
   SchemaNodeProxy,
   type SchemaNodeProxyProps,
 } from '@lumy/schema-form/components/SchemaNode/SchemaNodeProxy';
-import { FormTypeRenderer } from '@lumy/schema-form/components/SchemaNode/type';
+import type { FormTypeRenderer } from '@lumy/schema-form/components/SchemaNode/type';
 
 export interface FormRenderProps
   extends Omit<SchemaNodeProxyProps, 'FormTypeRenderer'> {
