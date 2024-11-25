@@ -2,8 +2,8 @@ import type { ComponentType, HTMLAttributes } from 'react';
 
 import type { InferSchemaNode, SchemaNode } from '@lumy/schema-form/core';
 
+import type { FormTypeRendererProps } from './formTypeRenderer';
 import type { InferJsonSchemaType, JsonSchema } from './jsonSchema';
-import type { FormTypeRendererProps } from './schemaNodeRenderer';
 import type { AllowedValue } from './value';
 
 /**

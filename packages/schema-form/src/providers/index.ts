@@ -13,8 +13,8 @@ export type { FormTypeInputsContextProviderProps } from './FormTypeInputsContext
 export {
   FormTypeRendererContextProvider,
   FormTypeRendererContext,
-} from './SchemaNodeRendererContext';
-export type { FormTypeRendererContextProviderProps } from './SchemaNodeRendererContext';
+} from './FormTypeRendererContext';
+export type { FormTypeRendererContextProviderProps } from './FormTypeRendererContext';
 
 export {
   UserDefinedContextProvider,
