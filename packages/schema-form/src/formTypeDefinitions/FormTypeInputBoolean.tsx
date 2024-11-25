@@ -4,6 +4,7 @@ import { useHandle } from '@lumy/schema-form/hooks/useHandle';
 import type { FormTypeInputProps } from '@lumy/schema-form/types';
 
 export const FormTypeInputBoolean = ({
+  path,
   name,
   readOnly,
   defaultValue,
@@ -15,6 +16,7 @@ export const FormTypeInputBoolean = ({
   return (
     <input
       type="checkbox"
+      id={path}
       name={name}
       readOnly={readOnly}
       defaultChecked={!!defaultValue}
