@@ -1,1 +1,0 @@
-export { FormLabelRenderer } from './FormLabelRenderer';
