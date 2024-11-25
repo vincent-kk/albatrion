@@ -9,9 +9,12 @@ export const mergeShowConditions = (
 ) =>
   conditions
     ? merge(jsonSchema, {
-        ui: {
-          show: combineConditions(
-            [jsonSchema.ui?.show, combineConditions(conditions || [], '||')],
+        renderOptions: {
+          visible: combineConditions(
+            [
+              jsonSchema.renderOptions?.visible,
+              combineConditions(conditions || [], '||'),
+            ],
             '&&',
           ),
         },

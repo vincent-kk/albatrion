@@ -226,15 +226,15 @@ export const OneOf = () => {
       openingDate: {
         type: 'string',
         format: 'date',
-        ui: {
-          show: '@.title === "wow"',
+        renderOptions: {
+          visible: '@.title === "wow"',
         },
       },
       releaseDate: {
         type: 'string',
         format: 'date',
-        ui: {
-          show: '@.title === "wow"',
+        renderOptions: {
+          visible: '@.title === "wow"',
         },
       },
       numOfPlayers: { type: 'number' },

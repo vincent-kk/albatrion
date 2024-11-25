@@ -161,8 +161,9 @@ interface BasicSchema<T> extends CustomOptions {
 }
 
 interface CustomOptions {
-  ui?: {
-    show?: string | boolean;
+  renderOptions?: {
+    visible?: boolean | string;
+    editable?: boolean | string;
   };
   hidden?: true;
   options?: {
