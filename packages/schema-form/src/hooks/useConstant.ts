@@ -2,12 +2,13 @@ import { useRef } from 'react';
 
 import { isFunction } from '@lumy/schema-form/helpers/filter';
 
-// fn이 함수 타입일 때의 오버로드
+/**
+ * @description 상수를 반환합니다. 함수인 경우 실행하여 결과를 저장합니다.
+ * @param input - 상수 또는 함수
+ * @returns 상수 또는 함수의 결과
+ */
 export function useConstant<Return>(input: Fn<[], Return>): Return;
-// fn이 값 타입일 때의 오버로드
 export function useConstant<T>(input: T): T;
-
-// 실제 구현부
 export function useConstant<Return>(input: Fn<[], Return> | Return): Return {
   const ref = useRef<{ value: Return }>();
   if (!ref.current) {

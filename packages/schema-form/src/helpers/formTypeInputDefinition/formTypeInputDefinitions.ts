@@ -13,6 +13,11 @@ import type {
 
 import type { NormalizedFormTypeInputDefinition } from './type';
 
+/**
+ * @description 폼 타입 입력 정의를 정규화합니다.
+ * @param formTypeInputDefinitions - 폼 타입 입력 정의
+ * @returns 정규화된 폼 타입 입력 정의
+ */
 export const normalizeFormTypeInputDefinitions = (
   formTypeInputDefinitions: FormTypeInputDefinition[] = [],
 ): NormalizedFormTypeInputDefinition[] => {

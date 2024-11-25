@@ -5,6 +5,14 @@ import { fromFallbackFormTypeInputDefinitions } from '@lumy/schema-form/formType
 import { FormTypeInputsContext } from '@lumy/schema-form/providers';
 import type { Hint } from '@lumy/schema-form/types';
 
+/**
+ * @description 스키마 노드에 대한 폼 타입 입력을 반환합니다.
+ *   - FormTypeInputMap에 먼저 정의된 폼 타입 입력을 반환합니다.
+ *   - FormTypeInputDefinitions에 정의된 폼 타입 입력을 반환합니다.
+ *   - fallback FormTypeInputDefinitions에 정의된 폼 타입 입력을 반환합니다.
+ * @param node - SchemaNode
+ * @returns FormTypeInput
+ */
 export function useFormTypeInput(node: SchemaNode) {
   const { fromFormTypeInputMap, fromFormTypeInputDefinitions } = useContext(
     FormTypeInputsContext,
