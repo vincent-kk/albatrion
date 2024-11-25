@@ -2,16 +2,15 @@ import type { FormTypeRendererProps } from '@lumy/schema-form/types';
 
 export const FormGroupRenderer = ({
   depth,
+  path,
   name,
   Input,
   errorMessage,
 }: FormTypeRendererProps) =>
   depth ? (
     <div>
-      <label>
-        <span>{name}</span>
-        <Input />
-      </label>
+      <label htmlFor={path}>{name}</label>
+      <Input />
       <br />
       <em>{errorMessage}</em>
     </div>

@@ -21,8 +21,9 @@ type CheckboxLabelsContext = {
 };
 
 export const FormTypeInputStringCheckbox = ({
-  jsonSchema,
+  path,
   name,
+  jsonSchema,
   readOnly,
   defaultValue,
   onChange,
@@ -59,6 +60,7 @@ export const FormTypeInputStringCheckbox = ({
         <label key={value}>
           <input
             type="checkbox"
+            id={path}
             name={name}
             readOnly={readOnly}
             value={value}

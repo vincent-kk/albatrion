@@ -18,8 +18,9 @@ type EnumLabelsContext = {
 };
 
 export const FormTypeInputStringEnum = ({
-  jsonSchema,
+  path,
   name,
+  jsonSchema,
   defaultValue,
   onChange,
   readOnly,
@@ -46,6 +47,7 @@ export const FormTypeInputStringEnum = ({
 
   return (
     <select
+      id={path}
       name={name}
       disabled={readOnly}
       defaultValue={defaultValue}
