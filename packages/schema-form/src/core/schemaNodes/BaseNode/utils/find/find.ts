@@ -1,47 +1,40 @@
+import type { SchemaNode } from '@lumy/schema-form/core';
 import { JSONPath } from '@lumy/schema-form/types';
 
-import type { SchemaNode } from '../../../type';
 import type { BaseNode } from '../../BaseNode';
 
 /**
  * BaseNode 트리에서 주어진 경로에 해당하는 노드를 찾습니다.
  * @param target - 검색을 시작할 루트 노드
- * @param pathSegments - 찾고자 하는 노드의 경로 세그먼트 배열 (예: ["root", "child", "0", "grandchild"])
+ * @param segments - 찾고자 하는 노드의 경로 세그먼트 배열 (예: ["root", "child", "0", "grandchild"])
  * @returns 찾은 노드 또는 null
  */
 export const find = (
   target: BaseNode | null,
-  pathSegments: string[] | null,
+  segments: string[],
 ): SchemaNode | null => {
-  // 초기 검사로 빠른 반환
   if (!target) return null;
-  if (!pathSegments?.length) return target as SchemaNode;
-
-  let currentTarget = target as SchemaNode;
-
-  for (const segment of pathSegments) {
-    // 특수 경로 처리
+  if (!segments.length) return target as SchemaNode;
+  let cursor = target as SchemaNode;
+  for (const segment of segments) {
     if (segment === JSONPath.Root) {
-      currentTarget = currentTarget.rootNode;
-      if (!currentTarget) return null;
-      continue;
+      cursor = cursor.rootNode;
+      if (!cursor) return null;
+    } else if (segment === JSONPath.Current) {
+      cursor = cursor.parentNode!;
+      if (!cursor) return null;
+    } else {
+      const children = cursor.children;
+      if (!children?.length) return null;
+      let found = false;
+      for (const child of children) {
+        if (child.node.name !== segment) continue;
+        cursor = child.node;
+        found = true;
+        break;
+      }
+      if (!found) return null;
     }
-
-    if (segment === JSONPath.Current) {
-      currentTarget = currentTarget.parentNode!;
-      if (!currentTarget) return null;
-      continue;
-    }
-
-    // 일반 경로 처리
-    const children = currentTarget.children;
-    if (!children) return null;
-
-    const found = children.find((e) => e.node.name === segment);
-    if (!found) return null;
-
-    currentTarget = found.node;
   }
-
-  return currentTarget;
+  return cursor;
 };
