@@ -1,7 +1,7 @@
+import { isValidEnum } from '@lumy/schema-form/core/schemaNodes/ObjectNode/utils/filter';
 import type { ObjectSchema } from '@lumy/schema-form/types';
 
-import { isValidEnum } from '../../src/core/schemaNodes/ObjectNode/utils/filter';
-import { isObjectAnyOfSchema } from './getDataWithSchema_anyOf.bk';
+import { isObjectAnyOfSchema } from './getDataWithSchema_anyOf';
 
 export const getInvertedAnyOfMap = (jsonSchema: ObjectSchema) => {
   if (!jsonSchema.anyOf || !Array.isArray(jsonSchema.anyOf)) {

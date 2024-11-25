@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { JsonSchema } from '@lumy/schema-form/types';
 
-import { getDataWithSchema } from './getDataWithSchema_anyOf.bk';
+import { getDataWithSchema } from './getDataWithSchema_anyOf';
 
 describe('getDataWithSchema', () => {
   it('should return transformed data for object type schema', () => {
