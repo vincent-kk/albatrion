@@ -12,24 +12,22 @@ export function useSchemaNodeListener<Node extends SchemaNode>(
   const [tick, update] = useTick();
 
   useLayoutEffect(() => {
-    if (node && isFunction(node.subscribe)) {
-      const unsubscribe = node.subscribe(({ type }) => {
-        if (type === MethodType.Redraw) {
-          update();
-        } else if (type === MethodType.Focus) {
-          getInputElement(ref)?.focus?.();
-        } else if (type === MethodType.Select) {
-          const element = getInputElement(ref);
-          if (element && 'select' in element && isFunction(element.select)) {
-            element.select();
-          }
+    if (node === null) return;
+    const unsubscribe = node.subscribe(({ type }) => {
+      if (type === MethodType.Redraw) {
+        update();
+      } else if (type === MethodType.Focus) {
+        getInputElement(ref)?.focus?.();
+      } else if (type === MethodType.Select) {
+        const element = getInputElement(ref);
+        if (element && 'select' in element && isFunction(element.select)) {
+          element.select();
         }
-      });
-      return () => {
-        unsubscribe();
-      };
-    }
-    return;
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
   }, [node, update]);
 
   return [tick, ref] as const;
