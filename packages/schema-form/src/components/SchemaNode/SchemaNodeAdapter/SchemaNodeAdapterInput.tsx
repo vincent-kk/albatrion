@@ -34,14 +34,14 @@ export const SchemaNodeAdapterInput = memo(
       [node],
     );
 
-    const blurTimer = useRef<ReturnType<typeof setTimeout>>();
+    const feedbackTimer = useRef<ReturnType<typeof setTimeout>>();
     const handleFocus = useCallback(() => {
-      if (blurTimer.current) {
-        clearTimeout(blurTimer.current);
-      }
+      if (!feedbackTimer.current) return;
+      clearTimeout(feedbackTimer.current);
+      feedbackTimer.current = undefined;
     }, []);
     const handleBlur = useCallback(() => {
-      blurTimer.current = setTimeout(() => {
+      feedbackTimer.current = setTimeout(() => {
         node.setState({ [ShowError.Touched]: true });
       });
     }, [node]);

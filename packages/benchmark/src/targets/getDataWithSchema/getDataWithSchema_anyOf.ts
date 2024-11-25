@@ -1,18 +1,17 @@
 import { isPlainObject } from 'es-toolkit';
 import { isArray } from 'es-toolkit/compat';
 
+import {
+  type StackItem,
+  isArrayStackItem,
+  isObjectStackItem,
+} from '@lumy/schema-form/core/schemaNodes/BaseNode/utils/getDataWithSchema/type';
 import type {
   ArrayValue,
   JsonSchema,
   ObjectSchema,
   ObjectValue,
 } from '@lumy/schema-form/types';
-
-import {
-  type StackItem,
-  isArrayStackItem,
-  isObjectStackItem,
-} from '../src/core/schemaNodes/BaseNode/utils/getDataWithSchema/type';
 
 export const isObjectAnyOfSchema = (
   schema: NonNullable<ObjectSchema['anyOf']>[number],

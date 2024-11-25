@@ -1,0 +1,49 @@
+import Benchmark from 'benchmark';
+
+import { type Ratio, getRatio } from '@lumy/benchmark/helpers/getRatio';
+import { getErrorsHash as getErrorsHash_Ref } from '@lumy/schema-form/helpers/error';
+
+import { ajvErrors1, ajvErrors2 } from './data';
+import { getErrorsHash } from './error';
+
+const suite = new Benchmark.Suite();
+
+const prevString = JSON.stringify(ajvErrors1);
+const prevHash = getErrorsHash(ajvErrors1);
+
+const compareJsonSchemaErrorsWithStringify = () => {
+  const next = JSON.stringify(ajvErrors2);
+  return prevString === next;
+};
+const compareJsonSchemaErrorsWithHash = () => {
+  const nextHash = getErrorsHash(ajvErrors2);
+  return prevHash === nextHash;
+};
+
+const compareJsonSchemaErrorsWithHash_Ref = () => {
+  const nextHash = getErrorsHash_Ref(ajvErrors2);
+  return prevHash === nextHash;
+};
+
+export const run = () => {
+  return new Promise<Ratio>((resolve) => {
+    suite
+      .add('compareJsonSchemaErrorsWithStringify', function () {
+        compareJsonSchemaErrorsWithStringify();
+      })
+      .add('compareJsonSchemaErrorsWithHash', function () {
+        compareJsonSchemaErrorsWithHash();
+      })
+      .add('compareJsonSchemaErrorsWithHash_Ref', function () {
+        compareJsonSchemaErrorsWithHash_Ref();
+      })
+      .on('cycle', function (event: Benchmark.Event) {
+        console.log(String(event.target));
+      })
+      .on('complete', function (this: Benchmark.Suite) {
+        console.log('Fastest is ' + this.filter('fastest').map('name'));
+        resolve(getRatio(this));
+      })
+      .run({ async: true });
+  });
+};

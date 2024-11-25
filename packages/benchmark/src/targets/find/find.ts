@@ -1,8 +1,6 @@
 import type { SchemaNode } from '@lumy/schema-form/core';
 import { JSONPath } from '@lumy/schema-form/types';
 
-import type { BaseNode } from '../../BaseNode';
-
 /**
  * BaseNode 트리에서 주어진 경로에 해당하는 노드를 찾습니다.
  * @param target - 검색을 시작할 루트 노드
@@ -10,7 +8,7 @@ import type { BaseNode } from '../../BaseNode';
  * @returns 찾은 노드 또는 null
  */
 export const find = (
-  target: BaseNode | null,
+  target: SchemaNode | null,
   segments: string[],
 ): SchemaNode | null => {
   if (!target) return null;

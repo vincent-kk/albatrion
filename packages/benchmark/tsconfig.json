@@ -3,11 +3,17 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@lumy/schema-form": [
+      "@lumy/benchmark": [
         "./src"
       ],
-      "@lumy/schema-form/*": [
+      "@lumy/benchmark/*": [
         "./src/*"
+      ],
+      "@lumy/schema-form": [
+        "../schema-form/src"
+      ],
+      "@lumy/schema-form/*": [
+        "../schema-form/src/*"
       ],
       "@lumy/common": [
         "../common/src"
@@ -31,7 +37,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
@@ -42,9 +47,10 @@
     "src",
     "src/**/*.tsx?",
     "./**/*.d.ts",
+    "../../packages/schema-form",
+    "../../packages/schema-form/*",
     "../../packages/common",
     "../../packages/common/*",
-    "stories/**/*.stories.tsx",
   ],
   "exclude": [
     "node_modules",
