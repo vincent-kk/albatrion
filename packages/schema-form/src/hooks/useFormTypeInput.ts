@@ -2,6 +2,7 @@ import { memo, useContext, useMemo } from 'react';
 
 import type { SchemaNode } from '@lumy/schema-form/core';
 import { fromFallbackFormTypeInputDefinitions } from '@lumy/schema-form/formTypeDefinitions';
+import { isReactComponent } from '@lumy/schema-form/helpers/filter';
 import { FormTypeInputsContext } from '@lumy/schema-form/providers';
 import type { Hint } from '@lumy/schema-form/types';
 
@@ -18,24 +19,22 @@ export function useFormTypeInput(node: SchemaNode) {
     FormTypeInputsContext,
   );
   const FormTypeInput = useMemo(() => {
+    // NOTE: formType이 React Component인 경우, 해당 Component를 반환합니다.
+    if (node.jsonSchema?.formType && isReactComponent(node.jsonSchema.formType))
+      return memo(node.jsonSchema.formType);
+
     const hint = getHint(node);
     // NOTE: FormTypeInputMap has higher priority than FormTypeInputDefinitions
     for (const { test, Component } of fromFormTypeInputMap) {
-      if (test?.(hint)) {
-        return memo(Component);
-      }
+      if (test(hint)) return memo(Component);
     }
     // NOTE: FormTypeInputDefinitions has lower priority than FormTypeInputMap
     for (const { test, Component } of fromFormTypeInputDefinitions) {
-      if (test?.(hint)) {
-        return memo(Component);
-      }
+      if (test(hint)) return memo(Component);
     }
     // NOTE: fallback FormTypeInputDefinitions has lowest priority
     for (const { test, Component } of fromFallbackFormTypeInputDefinitions) {
-      if (test?.(hint)) {
-        return memo(Component);
-      }
+      if (test(hint)) return memo(Component);
     }
     return null;
   }, [node, fromFormTypeInputMap, fromFormTypeInputDefinitions]);
