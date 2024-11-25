@@ -23,7 +23,7 @@ import { useSchemaNodeTracker } from './useSchemaNodeTracker';
 
 export function usePrepareSchemaValues(input?: SchemaNode | string): {
   node: SchemaNode | null;
-  show: boolean;
+  visible: boolean;
   watchValues: any[];
 } {
   const { rootNode } = useContext(SchemaNodeContext);
@@ -36,15 +36,15 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
 
   useSchemaNodeTracker(node, [MethodType.Change, MethodType.StateChange]);
 
-  const { dependencyPaths, checkShow, getWatchValues } = useMemo(() => {
+  const { dependencyPaths, checkVisible, getWatchValues } = useMemo(() => {
     const visible = node?.jsonSchema?.renderOptions?.visible;
     const hidden = node?.jsonSchema?.hidden;
     const watch = node?.jsonSchema?.options?.watch;
     const dependencyPaths: string[] = [];
 
-    let checkShow: CheckShow | undefined = undefined;
+    let checkVisible: CheckVisible | undefined = undefined;
     if (hidden || visible === false) {
-      checkShow = falseFunction;
+      checkVisible = falseFunction;
     } else if (typeof visible === 'string') {
       const functionBody = `return !!(${visible
         .replace(JSON_PATH_REGEX, (path) => {
@@ -55,7 +55,7 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
         })
         .trim()
         .replace(/;$/, '')})`;
-      checkShow = new Function('dependencies', functionBody) as CheckShow;
+      checkVisible = new Function('dependencies', functionBody) as CheckVisible;
     }
 
     let getWatchValues: GetWatchValues | undefined = undefined;
@@ -75,7 +75,7 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
       ) as GetWatchValues;
     }
 
-    return { dependencyPaths, checkShow, getWatchValues };
+    return { dependencyPaths, checkVisible, getWatchValues };
   }, [node]);
 
   const [dependencies, setDependencies] = useState<any[]>(() => {
@@ -83,10 +83,10 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
     return dependencyPaths.map((path) => node.findNode(path)?.value);
   });
 
-  const show = useMemo(() => {
-    if (checkShow) return checkShow(dependencies);
+  const visible = useMemo(() => {
+    if (checkVisible) return checkVisible(dependencies);
     return true;
-  }, [dependencies, checkShow]);
+  }, [dependencies, checkVisible]);
 
   const watchValues = useMemo(() => {
     if (getWatchValues) return getWatchValues(dependencies);
@@ -95,8 +95,8 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
 
   useEffect(() => {
     if (!node) return;
-    if (!show) node.value = getFallbackValue(node.jsonSchema);
-  }, [node, show]);
+    if (!visible) node.value = getFallbackValue(node.jsonSchema);
+  }, [node, visible]);
 
   useLayoutEffect(() => {
     if (!node || dependencyPaths.length === 0) return void 0;
@@ -119,10 +119,10 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
     };
   }, [dependencyPaths, node]);
 
-  return { node, show, watchValues };
+  return { node, visible, watchValues };
 }
 
-type CheckShow = Fn<[dependencies: any[]], boolean>;
+type CheckVisible = Fn<[dependencies: any[]], boolean>;
 type GetWatchValues = Fn<[dependencies: any[]], any[]>;
 
 const JSON_PATH_REGEX = new RegExp(
