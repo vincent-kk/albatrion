@@ -1,6 +1,5 @@
 // NOTE: fastest: 1162676.20, slowest: 582443.64, speedRatio: 2.00:1, timeSaved: 49.90%\
 // import { run as runCompareJsonSchemaErrors } from './targets/compareJsonSchemaErrors/benchmark';
-
 // runCompareJsonSchemaErrors().then(
 //   ({ fastest, slowest, speedRatio, executionTimeSaved }) => {
 //     console.log(
@@ -8,15 +7,14 @@
 //     );
 //   },
 // );
-
 // NOTE: Fastest is findNode_Old
-// import { run as runFind } from './targets/find/benchmark';
+import { run as runFind } from './targets/find/benchmark';
 
-// runFind().then(({ fastest, slowest, speedRatio, executionTimeSaved }) => {
-//   console.log(
-//     `fastest: ${fastest}, slowest: ${slowest}, speedRatio: ${speedRatio}:1, timeSaved: ${executionTimeSaved}%`,
-//   );
-// });
+runFind().then(({ fastest, slowest, speedRatio, executionTimeSaved }) => {
+  console.log(
+    `fastest: ${fastest}, slowest: ${slowest}, speedRatio: ${speedRatio}:1, timeSaved: ${executionTimeSaved}%`,
+  );
+});
 
 // NOTE: fastest: 242782.94, slowest: 226187.09, speedRatio: 1.07:1, timeSaved: 6.84%
 // import { run as runGetDataWithSchema } from './targets/getDataWithSchema/benchmark';

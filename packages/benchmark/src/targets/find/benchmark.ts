@@ -8,8 +8,13 @@ import {
 
 import { node, targetPath } from './data';
 import { find as find_old } from './find_old';
+import { find as find_oldest } from './find_oldest';
 
 const suite = new Benchmark.Suite();
+
+const findNode_Oldest = () => {
+  return find_oldest(node, targetPath);
+};
 
 const findNode_Old = () => {
   const segments = getPathSegments(targetPath);
@@ -24,12 +29,9 @@ const findNode_New = () => {
 export const run = () => {
   return new Promise<Ratio>((resolve) => {
     suite
-      .add('findNode_Old', function () {
-        findNode_Old();
-      })
-      .add('findNode_New', function () {
-        findNode_New();
-      })
+      .add('findNode_Oldest', findNode_Oldest)
+      .add('findNode_Old', findNode_Old)
+      .add('findNode_New', findNode_New)
       .on('cycle', function (event: Benchmark.Event) {
         console.log(String(event.target));
       })
