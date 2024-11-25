@@ -6,7 +6,7 @@ import type {
   OverrideFormTypeInputProps,
 } from '@lumy/schema-form/types';
 
-import type { GridForm, SchemaNodeRenderer } from '../type';
+import type { FormTypeRenderer, GridForm } from '../type';
 
 export interface SchemaNodeProxyProps {
   path?: string;
@@ -14,6 +14,6 @@ export interface SchemaNodeProxyProps {
   gridFrom?: GridForm;
   overrideFormTypeInputProps?: OverrideFormTypeInputProps;
   FormTypeInput?: ComponentType<FormTypeInputProps>;
-  SchemaNodeRenderer?: SchemaNodeRenderer;
+  FormTypeRenderer?: FormTypeRenderer;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
 }

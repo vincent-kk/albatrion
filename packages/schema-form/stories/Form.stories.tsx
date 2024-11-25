@@ -5,9 +5,9 @@ import Form, {
   type FormTypeInputDefinition,
   type FormTypeInputMap,
   type FormTypeInputProps,
+  type FormTypeRendererProps,
   type JsonSchema,
   JsonSchemaError,
-  type SchemaNodeRendererProps,
   ShowError,
 } from '../src';
 
@@ -523,7 +523,7 @@ export const DirtyTouched = () => {
     node,
     Input,
     errorMessage,
-  }: SchemaNodeRendererProps) => {
+  }: FormTypeRendererProps) => {
     const { [ShowError.Dirty]: dirty, [ShowError.Touched]: touched } =
       node.state || {};
     return depth === 0 ? (
@@ -604,7 +604,7 @@ export const DirtyTouched = () => {
         key={`${showError}`}
         jsonSchema={jsonSchema}
         showError={showError}
-        CustomSchemaNodeRenderer={Renderer}
+        CustomFormTypeRenderer={Renderer}
       />
     </div>
   );

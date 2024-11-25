@@ -1,12 +1,12 @@
-import type { SchemaNodeRendererProps } from '@lumy/schema-form/types';
+import type { FormTypeRendererProps } from '@lumy/schema-form/types';
 
-export const FallbackSchemaNodeRenderer = ({
+export const FallbackFormTypeRenderer = ({
   depth,
   name,
   errors,
   Input,
   formatError,
-}: SchemaNodeRendererProps) => {
+}: FormTypeRendererProps) => {
   return depth === 0 ? (
     <Input />
   ) : (

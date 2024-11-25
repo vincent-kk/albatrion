@@ -6,13 +6,10 @@ import { usePrepareSchemaValues } from '@lumy/schema-form/hooks/usePrepareSchema
 import { useSchemaNodeListener } from '@lumy/schema-form/hooks/useSchemaNodeListener';
 import { useSnapshot } from '@lumy/schema-form/hooks/useSnapshot';
 import {
-  SchemaNodeRendererContext,
+  FormTypeRendererContext,
   UserDefinedContext,
 } from '@lumy/schema-form/providers';
-import {
-  type SchemaNodeRendererProps,
-  ShowError,
-} from '@lumy/schema-form/types';
+import { type FormTypeRendererProps, ShowError } from '@lumy/schema-form/types';
 
 import { SchemaNodeAdapter } from '../SchemaNodeAdapter';
 import type { GridForm } from '../type';
@@ -24,7 +21,7 @@ export const SchemaNodeProxy = ({
   gridFrom,
   overrideFormTypeInputProps = {},
   FormTypeInput,
-  SchemaNodeRenderer: InputSchemaNodeRenderer,
+  FormTypeRenderer: InputFormTypeRenderer,
   Wrapper: InputWrapper,
 }: SchemaNodeProxyProps) => {
   const { node, show, watchValues } = usePrepareSchemaValues(inputNode ?? path);
@@ -40,7 +37,7 @@ export const SchemaNodeProxy = ({
   const gridFormRef = useRef<GridForm>();
   gridFormRef.current = gridFrom;
 
-  const Input = useMemo<SchemaNodeRendererProps['Input']>(() => {
+  const Input = useMemo<FormTypeRendererProps['Input']>(() => {
     return (overrideProps) =>
       node ? (
         <SchemaNodeAdapter
@@ -57,14 +54,14 @@ export const SchemaNodeProxy = ({
   }, [node, FormTypeInput, overrideFormTypeInputPropsRef, watchValuesRef]);
 
   const {
-    SchemaNodeRenderer: ContextSchemaNodeRenderer,
+    FormTypeRenderer: ContextFormTypeRenderer,
     formatError: contextFormatError,
     checkShowError,
-  } = useContext(SchemaNodeRendererContext);
+  } = useContext(FormTypeRendererContext);
 
-  const SchemaNodeRenderer = useMemo(
-    () => InputSchemaNodeRenderer ?? ContextSchemaNodeRenderer,
-    [InputSchemaNodeRenderer, ContextSchemaNodeRenderer],
+  const FormTypeRenderer = useMemo(
+    () => InputFormTypeRenderer ?? ContextFormTypeRenderer,
+    [InputFormTypeRenderer, ContextFormTypeRenderer],
   );
 
   const Wrapper = useMemo(() => {
@@ -93,7 +90,7 @@ export const SchemaNodeProxy = ({
   return node && show ? (
     <Wrapper key={tick}>
       <span ref={formElementRef}>
-        <SchemaNodeRenderer
+        <FormTypeRenderer
           node={node}
           jsonSchema={node.jsonSchema}
           isRoot={node.isRoot}

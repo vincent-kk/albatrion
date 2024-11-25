@@ -2,14 +2,12 @@ import {
   SchemaNodeProxy,
   type SchemaNodeProxyProps,
 } from '@lumy/schema-form/components/SchemaNode/SchemaNodeProxy';
-import { SchemaNodeRenderer } from '@lumy/schema-form/components/SchemaNode/type';
+import type { FormTypeRenderer } from '@lumy/schema-form/components/SchemaNode/type';
 
 export interface FormRenderProps
-  extends Omit<SchemaNodeProxyProps, 'SchemaNodeRenderer'> {
-  children: SchemaNodeRenderer;
+  extends Omit<SchemaNodeProxyProps, 'FormTypeRenderer'> {
+  children: FormTypeRenderer;
 }
 export const FormRender = ({ path, children, ...rest }: FormRenderProps) => {
-  return (
-    <SchemaNodeProxy path={path} {...rest} SchemaNodeRenderer={children} />
-  );
+  return <SchemaNodeProxy path={path} {...rest} FormTypeRenderer={children} />;
 };

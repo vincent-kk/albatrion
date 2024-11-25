@@ -13,13 +13,13 @@ import type {
   FormTypeInputProps,
   FormTypeInputPropsWithNode,
   FormTypeInputPropsWithSchema,
+  FormTypeRendererProps,
   InferJsonSchemaType,
   JsonSchema,
   JsonSchemaError,
   NullSchema,
   NumberSchema,
   ObjectSchema,
-  SchemaNodeRendererProps,
   StringSchema,
   VirtualSchema,
 } from './types';
@@ -45,7 +45,7 @@ export type {
   NullSchema,
   NumberSchema,
   ObjectSchema,
-  SchemaNodeRendererProps,
+  FormTypeRendererProps,
   StringSchema,
   VirtualSchema,
 };

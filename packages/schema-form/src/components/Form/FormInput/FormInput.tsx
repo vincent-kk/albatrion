@@ -1,25 +1,22 @@
-import { FallbackSchemaNodeRenderer } from '@lumy/schema-form/components/FallbackComponents/FallbackSchemaNodeRenderer';
+import { FallbackFormTypeRenderer } from '@lumy/schema-form/components/FallbackComponents/FallbackFormTypeRenderer';
 import {
   SchemaNodeProxy,
   type SchemaNodeProxyProps,
 } from '@lumy/schema-form/components/SchemaNode/SchemaNodeProxy';
 import type { OverrideFormTypeInputProps } from '@lumy/schema-form/types';
 
-type FormInputProps = Pick<
-  SchemaNodeProxyProps,
-  'path' | 'SchemaNodeRenderer'
-> &
+type FormInputProps = Pick<SchemaNodeProxyProps, 'path' | 'FormTypeRenderer'> &
   OverrideFormTypeInputProps;
 
 export const FormInput = ({
   path,
-  SchemaNodeRenderer,
+  FormTypeRenderer,
   ...rest
 }: FormInputProps) => {
   return (
     <SchemaNodeProxy
       path={path}
-      SchemaNodeRenderer={SchemaNodeRenderer || FallbackSchemaNodeRenderer}
+      FormTypeRenderer={FormTypeRenderer || FallbackFormTypeRenderer}
       overrideFormTypeInputProps={rest}
     />
   );

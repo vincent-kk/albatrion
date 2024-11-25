@@ -5,7 +5,7 @@ import type { SchemaNode } from '@lumy/schema-form/core';
 import type { JsonSchemaError } from './error';
 import type { OverrideFormTypeInputProps } from './formTypeInput';
 
-export interface SchemaNodeRendererProps {
+export interface FormTypeRendererProps {
   isArrayItem: boolean;
   isRoot: boolean;
   depth: number;
