@@ -7,8 +7,8 @@ type StringCheckboxJsonSchema = {
   type: 'array';
   items: {
     type: 'string';
+    enum?: string[];
   };
-  enum?: string[];
   options?: {
     alias?: { [label: string]: ReactNode };
   };
@@ -34,7 +34,7 @@ export const FormTypeInputStringCheckbox = ({
 >) => {
   const checkboxOptions = useMemo(
     () =>
-      jsonSchema.enum?.map((value) => ({
+      jsonSchema.items?.enum?.map((value) => ({
         value,
         label:
           context.checkboxLabels?.[value] ||

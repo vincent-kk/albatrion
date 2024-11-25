@@ -23,7 +23,7 @@ const formTypeDefinitions = [
       jsonSchema.type === 'array' &&
       jsonSchema.formType === 'checkbox' &&
       jsonSchema.items?.type === 'string' &&
-      !!jsonSchema.enum?.length,
+      !!jsonSchema.items?.enum?.length,
   },
   {
     Component: FormTypeInputStringRadio,

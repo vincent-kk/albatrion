@@ -123,8 +123,8 @@ export const StringEnum = () => {
         type: 'array',
         items: {
           type: 'string',
+          enum: ['d', 'e', 'f'],
         },
-        enum: ['d', 'e', 'f'],
         formType: 'checkbox',
         options: {
           alias: {
