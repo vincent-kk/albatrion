@@ -1,6 +1,7 @@
 import Benchmark from 'benchmark';
 
 import { type Ratio, getRatio } from '@lumy/benchmark/helpers/getRatio';
+import { getJsonPaths as getJsonPaths_Ref } from '@lumy/schema-form/core/schemaNodes/BaseNode/utils';
 import { getJsonPaths } from '@lumy/schema-form/core/schemaNodes/BaseNode/utils';
 
 import { value } from './data';
@@ -14,13 +15,18 @@ const runGetJsonPaths = () => {
   getJsonPaths(value, '');
 };
 
+const runGetJsonPaths_Ref = () => {
+  getJsonPaths_Ref(value, '');
+};
+
 const suite = new Benchmark.Suite();
 
 export const run = () => {
   return new Promise<Ratio>((resolve) => {
     suite
-      .add('getJsonPaths_Old', runGetJsonPaths_Old)
+      .add('getJsonPaths_Ref', runGetJsonPaths_Ref)
       .add('getJsonPaths', runGetJsonPaths)
+      .add('getJsonPaths_Old', runGetJsonPaths_Old)
       .on('cycle', function (event: Benchmark.Event) {
         console.log(String(event.target));
       })
