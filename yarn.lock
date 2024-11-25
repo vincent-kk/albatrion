@@ -945,6 +945,7 @@ __metadata:
     "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
     "@types/benchmark": "npm:^2"
     benchmark: "npm:^2.1.4"
+    es-toolkit: "npm:^1.27.0"
     prettier: "npm:^3.3.3"
     tsx: "npm:^4.19.0"
     typescript: "npm:^5.6.3"
