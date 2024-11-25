@@ -1,4 +1,5 @@
 import {
+  type Ajv,
   type ErrorObject,
   type ValidateFunction,
   ajvHelper,
@@ -24,6 +25,7 @@ import {
 import {
   find,
   getDataWithSchema,
+  getFallbackValidator,
   getJsonPaths,
   getPathSegments,
   transformErrors,
@@ -308,40 +310,8 @@ export abstract class BaseNode<
       });
     }
 
-    if (this.isRoot) {
-      try {
-        this.#validator = ajvHelper.compile({
-          jsonSchema: { ...jsonSchema, $async: true },
-          ajv,
-        });
-      } catch (err: any) {
-        this.#validator = Object.assign(
-          (_: unknown): _ is unknown => {
-            throw {
-              errors: [
-                {
-                  keyword: 'jsonSchemaCompileFailed',
-                  instancePath: JSONPath.Root,
-                  parent: {},
-                  message: err.message,
-                },
-              ],
-            };
-          },
-          {
-            errors: null,
-            schema: jsonSchema,
-            schemaEnv: {} as any,
-          },
-        );
-      }
-
-      this.subscribe(({ type }) => {
-        if (type === MethodType.Change) {
-          this.#validateOnChange();
-        }
-      });
-    }
+    // NOTE: 루트 노드에서만 validator 준비
+    if (this.isRoot) this.#prepareValidator(ajv);
   }
 
   /** 노드 트리 내에서 특정 경로를 가진 노드 찾기 */
@@ -431,5 +401,21 @@ export abstract class BaseNode<
         this.findNode(dataPath)?.clearErrors();
       });
     this.#errorDataPaths = errorDataPaths;
+  }
+
+  #prepareValidator(ajv?: Ajv) {
+    try {
+      this.#validator = ajvHelper.compile({
+        jsonSchema: { ...this.jsonSchema, $async: true },
+        ajv,
+      });
+    } catch (error: any) {
+      this.#validator = getFallbackValidator(error, this.jsonSchema);
+    }
+    this.subscribe(({ type }) => {
+      if (type === MethodType.Change) {
+        this.#validateOnChange();
+      }
+    });
   }
 }
