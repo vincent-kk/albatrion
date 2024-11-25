@@ -545,6 +545,7 @@ export const DirtyTouched = () => {
     ShowError.Dirty | ShowError.Touched,
   );
 
+  const refHandle = useRef<FormHandle<typeof jsonSchema>>(null);
   return (
     <div>
       <div style={{ display: 'flex', gap: 10 }}>
@@ -599,9 +600,18 @@ export const DirtyTouched = () => {
           false
         </label>
       </div>
+      <div>
+        <button onClick={() => refHandle.current?.focus('.name')}>
+          focus ".name"
+        </button>
+        <button onClick={() => refHandle.current?.select('.name')}>
+          select ".name"
+        </button>
+      </div>
       <hr />
       <Form
         key={`${showError}`}
+        ref={refHandle}
         jsonSchema={jsonSchema}
         showError={showError}
         CustomFormTypeRenderer={Renderer}
