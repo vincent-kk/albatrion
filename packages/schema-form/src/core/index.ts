@@ -10,4 +10,6 @@ export {
   isStringNode,
   isVirtualNode,
   isArrayNode,
+  isBranchNode,
+  isTerminalNode,
 } from './schemaNodes';
