@@ -27,6 +27,7 @@ import {
   getDataWithSchema,
   getFallbackValidator,
   getJsonPaths,
+  getNodeType,
   getPathSegments,
   transformErrors,
 } from './utils';
@@ -35,6 +36,8 @@ export abstract class BaseNode<
   Schema extends JsonSchema = JsonSchema,
   Value extends AllowedValue = any,
 > {
+  /** 노드의 타입 */
+  readonly type: Exclude<Schema['type'], 'integer'>;
   /** 노드의 깊이 */
   readonly depth: number;
   /** 루트 노드인지 여부 */
@@ -47,8 +50,6 @@ export abstract class BaseNode<
   readonly isArrayItem: boolean;
   /** 노드의 JSON Schema */
   readonly jsonSchema: Schema;
-  /** 노드의 타입 */
-  readonly type: Schema['type'];
 
   /** 노드의 이름 */
   #name: string;
@@ -271,7 +272,7 @@ export abstract class BaseNode<
     parentNode,
     ajv,
   }: SchemaNodeConstructorProps<Schema, Value>) {
-    this.type = jsonSchema.type;
+    this.type = getNodeType(jsonSchema);
     this.jsonSchema = jsonSchema;
     this.#defaultValue = defaultValue;
     this.parentNode = parentNode || null;
