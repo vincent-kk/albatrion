@@ -18,7 +18,7 @@ export const FormLabel = ({
   style,
   className,
 }: FormInputProps) => (
-  <div style={style} className={className}>
+  <label style={style} className={className} htmlFor={path}>
     <SchemaNodeProxy path={path} FormTypeRenderer={FormTypeRenderer} />
-  </div>
+  </label>
 );
