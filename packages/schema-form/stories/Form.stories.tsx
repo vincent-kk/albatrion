@@ -6,7 +6,10 @@ import React, {
   useState,
 } from 'react';
 
+import { FormTypeRenderer } from '@lumy/schema-form/components/SchemaNode/type';
+
 import Form, {
+  FormContextProvider,
   type FormHandle,
   type FormTypeInputDefinition,
   type FormTypeInputMap,
@@ -886,5 +889,81 @@ export const FormTypeComponentInJsonSchema = () => {
       <Form jsonSchema={jsonSchema} onChange={setValue} />
       <pre>{JSON.stringify(value, null, 2)}</pre>
     </div>
+  );
+};
+
+export const ExternalFormContext = () => {
+  const externalInputs = useMemo<FormTypeInputDefinition[]>(() => {
+    return [
+      {
+        test: {
+          formType: 'external-input1',
+        },
+        Component: () => {
+          return <div>external input 1</div>;
+        },
+      },
+      {
+        test: {
+          formType: 'external-input2',
+        },
+        Component: () => {
+          return <div>external input 2</div>;
+        },
+      },
+    ];
+  }, []);
+
+  const externalFormTypeRenderer = useMemo<FormTypeRenderer>(() => {
+    return ({ name, Input, errorMessage }: FormTypeRendererProps) => (
+      <div style={{ border: '1px solid red', padding: 5 }}>
+        {name}
+        <Input />
+        <em>{errorMessage}</em>
+      </div>
+    );
+  }, []);
+
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      number: {
+        type: 'number',
+        formType: 'external-input1',
+      },
+      objectNode: {
+        type: 'object',
+        properties: {
+          test: { type: 'string' },
+        },
+        formType: 'external-input2',
+      },
+    },
+  } satisfies JsonSchema;
+  const defaultValue = useRef({
+    name: 'ron',
+    number: 10,
+  });
+
+  const handleChange = (val: any) => {
+    setValue(val);
+  };
+
+  return (
+    <FormContextProvider
+      formTypeInputDefinitions={externalInputs}
+      FormTypeRenderer={externalFormTypeRenderer}
+    >
+      <div>
+        <Form
+          jsonSchema={schema}
+          defaultValue={defaultValue}
+          onChange={handleChange}
+        />
+        <pre>{JSON.stringify(value, null, 2)}</pre>
+      </div>
+    </FormContextProvider>
   );
 };
