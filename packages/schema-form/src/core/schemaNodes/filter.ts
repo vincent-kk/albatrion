@@ -10,23 +10,23 @@ import type { SchemaNode } from './type';
 export const isSchemaNode = (input: any): input is SchemaNode =>
   input instanceof BaseNode;
 
-export const isBooleanNode = (input: SchemaNode): input is BooleanNode =>
-  input.type === 'boolean';
+export const isBooleanNode = (input: any): input is BooleanNode =>
+  isSchemaNode(input) && input.type === 'boolean';
 
-export const isNumberNode = (input: SchemaNode): input is NumberNode =>
-  input.type === 'number';
+export const isNumberNode = (input: any): input is NumberNode =>
+  isSchemaNode(input) && input.type === 'number';
 
-export const isObjectNode = (input: SchemaNode): input is ObjectNode =>
-  input.type === 'object';
+export const isObjectNode = (input: any): input is ObjectNode =>
+  isSchemaNode(input) && input.type === 'object';
 
-export const isStringNode = (input: SchemaNode): input is StringNode =>
-  input.type === 'string';
+export const isStringNode = (input: any): input is StringNode =>
+  isSchemaNode(input) && input.type === 'string';
 
-export const isVirtualNode = (input: SchemaNode): input is VirtualNode =>
-  input.type === 'virtual';
+export const isVirtualNode = (input: any): input is VirtualNode =>
+  isSchemaNode(input) && input.type === 'virtual';
 
-export const isArrayNode = (input: SchemaNode): input is ArrayNode =>
-  input.type === 'array';
+export const isArrayNode = (input: any): input is ArrayNode =>
+  isSchemaNode(input) && input.type === 'array';
 
 const BRANCH_NODE_TYPE = new Set<SchemaNode['type']>([
   'object',

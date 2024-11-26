@@ -24,6 +24,7 @@ export const FormTypeInputStringEnum = ({
   defaultValue,
   onChange,
   readOnly,
+  disabled,
   context,
 }: FormTypeInputPropsWithSchema<
   string,
@@ -49,7 +50,7 @@ export const FormTypeInputStringEnum = ({
     <select
       id={path}
       name={name}
-      disabled={readOnly}
+      disabled={disabled || readOnly}
       defaultValue={defaultValue}
       onChange={handleChange}
     >

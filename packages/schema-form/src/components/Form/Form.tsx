@@ -2,6 +2,7 @@ import {
   type ForwardedRef,
   type ReactNode,
   forwardRef,
+  memo,
   useEffect,
   useImperativeHandle,
   useState,
@@ -155,7 +156,7 @@ const FormInner = <
   );
 };
 
-export const Form = forwardRef(FormInner) as <
+export const Form = memo(forwardRef(FormInner)) as <
   Schema extends JsonSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 >(

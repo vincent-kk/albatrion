@@ -11,6 +11,7 @@ export interface FormTypeRendererProps {
   depth: number;
   jsonSchema: SchemaNode['jsonSchema'];
   node: SchemaNode;
+  type: SchemaNode['type'];
   path: SchemaNode['path'];
   name: SchemaNode['name'];
   value: SchemaNode['value'];

@@ -7,6 +7,7 @@ export const FormTypeInputNumber = ({
   path,
   name,
   readOnly,
+  disabled,
   defaultValue,
   onChange,
 }: FormTypeInputProps<number>) => {
@@ -19,6 +20,7 @@ export const FormTypeInputNumber = ({
       id={path}
       name={name}
       readOnly={readOnly}
+      disabled={disabled}
       defaultValue={defaultValue}
       onChange={handleChange}
     />

@@ -1,26 +1,55 @@
+import { isBranchNode } from '@lumy/schema-form/core';
 import type { FormTypeRendererProps } from '@lumy/schema-form/types';
 
 export const FormGroupRenderer = ({
+  node,
   depth,
   path,
   name,
   Input,
   errorMessage,
-}: FormTypeRendererProps) =>
-  depth ? (
-    <div
-      style={{
-        marginBottom: 5,
-        marginLeft: 5 * depth,
-      }}
-    >
-      <label htmlFor={path} style={{ marginRight: 5 }}>
-        {name}
-      </label>
-      <Input />
-      <br />
-      <em>{errorMessage}</em>
-    </div>
-  ) : (
-    <Input />
-  );
+}: FormTypeRendererProps) => {
+  if (depth === 0)
+    return (
+      <fieldset>
+        <Input />
+      </fieldset>
+    );
+
+  if (isBranchNode(node)) {
+    return (
+      <fieldset
+        style={{
+          marginBottom: 5,
+          marginLeft: 5 * depth,
+        }}
+      >
+        <legend>{node.name}</legend>
+        <div>
+          <em style={{ fontSize: '0.85em' }}>{errorMessage}</em>
+        </div>
+        <div>
+          <Input />
+        </div>
+      </fieldset>
+    );
+  } else {
+    return (
+      <div
+        style={{
+          marginBottom: 5,
+          marginLeft: 5 * depth,
+        }}
+      >
+        {node.parentNode?.type !== 'array' && (
+          <label htmlFor={path} style={{ marginRight: 5 }}>
+            {name}
+          </label>
+        )}
+        <Input />
+        <br />
+        <em style={{ fontSize: '0.85em' }}>{errorMessage}</em>
+      </div>
+    );
+  }
+};

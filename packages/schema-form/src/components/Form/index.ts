@@ -1,4 +1,4 @@
-import { Form as FormBase } from './Form';
+import { Form as BaseFrom } from './Form';
 import {
   FormError,
   FormGroup,
@@ -9,7 +9,7 @@ import {
 
 export type { FormChildrenProps, FormProps, FormHandle } from './type';
 
-export const Form = Object.assign(FormBase, {
+export const Form = Object.assign(BaseFrom, {
   Render: FormRender,
   Group: FormGroup,
   Label: FormLabel,

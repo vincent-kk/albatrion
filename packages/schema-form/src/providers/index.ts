@@ -21,3 +21,9 @@ export {
   UserDefinedContext,
 } from './UserDefinedContext';
 export type { UserDefinedContextProviderProps } from './UserDefinedContext';
+
+export {
+  ExternalFormContextProvider,
+  ExternalFormContext,
+} from './ExternalFormContext';
+export type { ExternalFormContextProviderProps } from './ExternalFormContext';
