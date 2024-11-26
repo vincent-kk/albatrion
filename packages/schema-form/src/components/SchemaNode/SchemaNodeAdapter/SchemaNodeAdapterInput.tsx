@@ -26,7 +26,7 @@ export const SchemaNodeAdapterInput = memo(
 
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
       (input, options) => {
-        if (node?.jsonSchema?.readOnly) return;
+        if (node.jsonSchema.readOnly || node.jsonSchema.disabled) return;
         node.setValue(input, options);
         node.clearReceivedErrors();
         node.setState({ [ShowError.Dirty]: true });
@@ -48,11 +48,14 @@ export const SchemaNodeAdapterInput = memo(
 
     const { context: userDefinedContext } = useContext(UserDefinedContext);
 
-    return FormTypeInput ? (
+    if (!node || !FormTypeInput) return null;
+
+    return (
       <span className={styles.frame} onFocus={handleFocus} onBlur={handleBlur}>
         <FormTypeInput
           jsonSchema={node.jsonSchema}
-          readOnly={!!node.jsonSchema?.readOnly}
+          readOnly={!!node.jsonSchema.readOnly}
+          disabled={!!node.jsonSchema.disabled}
           node={node}
           childNodes={childNodes}
           name={node.name}
@@ -66,6 +69,6 @@ export const SchemaNodeAdapterInput = memo(
           {...overrideFormTypeInputProps}
         />
       </span>
-    ) : null;
+    );
   },
 );

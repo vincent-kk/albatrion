@@ -26,6 +26,8 @@ export interface FormTypeInputProps<
   jsonSchema: Schema;
   /** FormType Component의 readOnly */
   readOnly: boolean;
+  /** FormType Component의 disabled */
+  disabled: boolean;
   /** FormType Component에 할당된 schema node */
   node: Node;
   /** 이 FormType Component의 하위 FormType Components */

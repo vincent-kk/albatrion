@@ -149,7 +149,6 @@ interface BasicSchema<T> extends CustomOptions {
   anyOf?: PartialJsonSchema[];
   oneOf?: PartialJsonSchema[];
   nullable?: boolean;
-  readOnly?: boolean;
   const?: T;
   default?: T;
   enum?: T extends string | number | boolean
@@ -166,6 +165,8 @@ interface CustomOptions {
     visible?: boolean | string;
     editable?: boolean | string;
   };
+  readOnly?: boolean;
+  disabled?: boolean;
   hidden?: true;
   options?: {
     lazy?: boolean;
