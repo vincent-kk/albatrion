@@ -972,3 +972,61 @@ export const ExternalFormContext = () => {
     </FormContextProvider>
   );
 };
+
+export const FunctionalChildren = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      allowed: {
+        type: 'boolean',
+      },
+      name: {
+        type: 'string',
+      },
+      age: {
+        type: 'number',
+      },
+      gender: {
+        type: 'string',
+        enum: ['male', 'female'],
+      },
+    },
+  } satisfies JsonSchema;
+
+  const defaultValue = useRef({
+    allowed: false,
+  });
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <div>
+      <Form
+        jsonSchema={jsonSchema}
+        defaultValue={defaultValue.current}
+        onChange={setValue}
+      >
+        {({ defaultValue, value }) => (
+          <>
+            <div>
+              {!defaultValue?.allowed && <Form.Input path=".allowed" />}
+            </div>
+            <div>
+              <Form.Label path=".name" />
+              {value?.allowed && <Form.Input path=".name" />}
+            </div>
+            <div>
+              <Form.Label path=".age" />
+              {value?.name?.length && <Form.Input path=".age" />}
+            </div>
+            <div>
+              <Form.Label path=".gender" />
+              {typeof value?.age === 'number' && <Form.Input path=".gender" />}
+            </div>
+          </>
+        )}
+      </Form>
+      <pre>{JSON.stringify(value, null, 2)}</pre>
+    </div>
+  );
+};
