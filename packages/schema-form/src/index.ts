@@ -5,6 +5,10 @@ import {
   type FormProps,
 } from './components/Form';
 import type { GridForm } from './components/SchemaNode/type';
+import {
+  ExternalFormContextProvider as FormContextProvider,
+  type ExternalFormContextProviderProps as FormContextProviderProps,
+} from './providers';
 import { JSONPath, ShowError } from './types';
 import type {
   BooleanSchema,
@@ -26,7 +30,7 @@ import type {
 
 export default Form;
 
-export { JSONPath, ShowError };
+export { JSONPath, ShowError, FormContextProvider };
 
 export type {
   GridForm,
@@ -48,4 +52,5 @@ export type {
   FormTypeRendererProps,
   StringSchema,
   VirtualSchema,
+  FormContextProviderProps,
 };
