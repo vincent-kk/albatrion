@@ -7,6 +7,7 @@ export const FormTypeInputString = ({
   path,
   name,
   readOnly,
+  disabled,
   defaultValue,
   onChange,
 }: FormTypeInputProps<string>) => {
@@ -19,6 +20,7 @@ export const FormTypeInputString = ({
       id={path}
       name={name}
       readOnly={readOnly}
+      disabled={disabled}
       defaultValue={defaultValue}
       onChange={handleChange}
     />

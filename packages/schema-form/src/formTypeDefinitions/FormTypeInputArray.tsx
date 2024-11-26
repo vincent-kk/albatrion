@@ -3,7 +3,7 @@ import { type CSSProperties, memo, useCallback } from 'react';
 import type { FormTypeInputProps } from '@lumy/schema-form/types';
 
 export const FormTypeInputArray = memo(
-  ({ node, childNodes, readOnly }: FormTypeInputProps<any[]>) => {
+  ({ node, childNodes, readOnly, disabled }: FormTypeInputProps<any[]>) => {
     const handleClick = useCallback(() => {
       node.push();
     }, [node]);
@@ -25,6 +25,7 @@ export const FormTypeInputArray = memo(
                   <Button
                     title="remove item"
                     label="x"
+                    disabled={disabled}
                     onClick={() => handleRemoveClick(i)}
                   />
                 )}
@@ -45,6 +46,7 @@ export const FormTypeInputArray = memo(
             <Button
               title="add item"
               label="+"
+              disabled={disabled}
               onClick={handleClick}
               style={{ fontSize: '1rem' }}
             />
@@ -58,11 +60,13 @@ export const FormTypeInputArray = memo(
 function Button({
   title,
   label,
+  disabled,
   onClick,
   style,
 }: {
   title: string;
   label: string;
+  disabled?: boolean;
   onClick: () => void;
   style?: CSSProperties;
 }) {
@@ -70,6 +74,7 @@ function Button({
     <button
       title={title}
       onClick={onClick}
+      disabled={disabled}
       style={{
         width: '1.3rem',
         height: '1.3rem',

@@ -7,6 +7,7 @@ export const FormTypeInputBoolean = ({
   path,
   name,
   readOnly,
+  disabled,
   defaultValue,
   onChange,
 }: FormTypeInputProps<boolean>) => {
@@ -19,6 +20,7 @@ export const FormTypeInputBoolean = ({
       id={path}
       name={name}
       readOnly={readOnly}
+      disabled={disabled}
       defaultChecked={!!defaultValue}
       onChange={handleChange}
     />

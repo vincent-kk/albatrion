@@ -22,6 +22,7 @@ export const FormTypeInputStringRadio = ({
   name,
   jsonSchema,
   readOnly,
+  disabled,
   defaultValue,
   onChange,
   context,
@@ -55,6 +56,7 @@ export const FormTypeInputStringRadio = ({
             id={path}
             name={name}
             readOnly={readOnly}
+            disabled={disabled}
             value={value}
             defaultChecked={value === defaultValue}
             onChange={handleChange}

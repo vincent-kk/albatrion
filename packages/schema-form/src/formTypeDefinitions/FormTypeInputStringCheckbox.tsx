@@ -25,6 +25,7 @@ export const FormTypeInputStringCheckbox = ({
   name,
   jsonSchema,
   readOnly,
+  disabled,
   defaultValue,
   onChange,
   context,
@@ -63,6 +64,7 @@ export const FormTypeInputStringCheckbox = ({
             id={path}
             name={name}
             readOnly={readOnly}
+            disabled={disabled}
             value={value}
             defaultChecked={defaultValue?.includes(value)}
             onChange={handleChange}
