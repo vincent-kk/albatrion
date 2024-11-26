@@ -502,6 +502,11 @@ export const ReadOnly = () => {
         default: 'https://www.google.com',
         readOnly: true,
       },
+      age: {
+        type: 'number',
+        default: 10,
+        disabled: true,
+      },
     },
   } satisfies JsonSchema;
 
