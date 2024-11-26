@@ -1,25 +1,6 @@
-import { memo, useCallback } from 'react';
+import { type CSSProperties, memo, useCallback } from 'react';
 
 import type { FormTypeInputProps } from '@lumy/schema-form/types';
-
-function DeleteButton({
-  index,
-  onClick,
-}: {
-  index: number;
-  onClick: (index: number) => void;
-}) {
-  return (
-    <button
-      title="remove item"
-      onClick={() => {
-        onClick(index);
-      }}
-    >
-      항목 삭제
-    </button>
-  );
-}
 
 export const FormTypeInputArray = memo(
   ({ node, childNodes, readOnly }: FormTypeInputProps<any[]>) => {
@@ -34,25 +15,75 @@ export const FormTypeInputArray = memo(
       [node],
     );
     return (
-      <div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
         {childNodes &&
-          childNodes.map((Node: any, i: number) => {
+          childNodes.map((Node, i) => {
             return (
-              <div key={Node.key} style={{ border: '1px dashed black' }}>
+              <div key={Node.key} style={{ display: 'flex' }}>
                 <Node />
                 {!readOnly && (
-                  <DeleteButton index={i} onClick={handleRemoveClick} />
+                  <Button
+                    title="remove item"
+                    label="x"
+                    onClick={() => handleRemoveClick(i)}
+                  />
                 )}
               </div>
             );
           })}
-        <hr />
         {!readOnly && (
-          <button title="add item" onClick={handleClick}>
-            항목 추가
-          </button>
+          <label
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              cursor: 'pointer',
+              marginBottom: 5,
+            }}
+          >
+            <div style={{ marginRight: 10 }}>Add New Item</div>
+            <Button
+              title="add item"
+              label="+"
+              onClick={handleClick}
+              style={{ fontSize: '1rem' }}
+            />
+          </label>
         )}
       </div>
     );
   },
 );
+
+function Button({
+  title,
+  label,
+  onClick,
+  style,
+}: {
+  title: string;
+  label: string;
+  onClick: () => void;
+  style?: CSSProperties;
+}) {
+  return (
+    <button
+      title={title}
+      onClick={onClick}
+      style={{
+        width: '1.3rem',
+        height: '1.3rem',
+        fontSize: '0.8rem',
+        fontWeight: 'normal',
+        border: 'none',
+        cursor: 'pointer',
+        borderRadius: '50%',
+        paddingInline: 'unset',
+        paddingBlock: 'unset',
+        ...style,
+      }}
+    >
+      {label}
+    </button>
+  );
+}
