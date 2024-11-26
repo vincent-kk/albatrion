@@ -97,6 +97,7 @@ export const SchemaNodeProxy = ({
       <span ref={formElementRef}>
         <FormTypeRenderer
           node={node}
+          type={node.type}
           jsonSchema={node.jsonSchema}
           isRoot={node.isRoot}
           isArrayItem={node.isArrayItem}
