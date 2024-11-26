@@ -1030,3 +1030,69 @@ export const FunctionalChildren = () => {
     </div>
   );
 };
+
+export const IterableChildren = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      allowed: {
+        type: 'boolean',
+      },
+      name: {
+        type: 'string',
+        maxLength: 3,
+      },
+      age: {
+        type: 'number',
+      },
+      gender: {
+        type: 'string',
+        enum: ['male', 'female'],
+      },
+    },
+  } satisfies JsonSchema;
+
+  const defaultValue = useRef({
+    allowed: false,
+  });
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <div>
+      <Form
+        jsonSchema={jsonSchema}
+        defaultValue={defaultValue.current}
+        onChange={setValue}
+      >
+        <div>
+          <Form.Input path=".allowed" />
+        </div>
+        <div>
+          <Form.Label path=".name" />
+          <Form.Input path=".name" />
+        </div>
+        <div>
+          <Form.Render path=".age">
+            {({ Input, path }) => {
+              return (
+                <div>
+                  <label htmlFor={path}>{path}</label>
+                  <Input />
+                </div>
+              );
+            }}
+          </Form.Render>
+        </div>
+        <div>
+          <Form.Group path=".gender" />
+        </div>
+        <div>
+          name error:
+          <Form.Error path=".name" style={{ display: 'inline' }} />
+        </div>
+      </Form>
+      <pre>{JSON.stringify(value, null, 2)}</pre>
+    </div>
+  );
+};
