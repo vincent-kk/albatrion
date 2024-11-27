@@ -41,8 +41,6 @@ test('add / remove / clear items', () => {
     },
   });
 
-  console.log(node?.value?.arr);
-
   expect(node?.value?.arr).toMatchObject([]);
   (node?.findNode('arr') as ArrayNode)?.push();
   expect(node?.value?.arr).toMatchObject(['hello']);
