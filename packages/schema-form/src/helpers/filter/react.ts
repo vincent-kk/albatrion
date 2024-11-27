@@ -23,9 +23,11 @@ export const isMemoComponent = <Props>(
 export const isClassComponent = <Props, State = any>(
   component: unknown,
 ): component is ComponentClass<Props, State> =>
-  typeof component === 'function' &&
-  component.prototype &&
-  !!component.prototype.isReactComponent;
+  !!(
+    typeof component === 'function' &&
+    component.prototype &&
+    component.prototype.isReactComponent
+  );
 
 // 함수형 컴포넌트 체크
 export const isFunctionComponent = <Props>(
@@ -38,6 +40,6 @@ export const isFunctionComponent = <Props>(
 export const isReactComponent = <Props>(
   component: unknown,
 ): component is ComponentType<Props> =>
+  isFunctionComponent<Props>(component) ||
   isMemoComponent<Props>(component) ||
-  isClassComponent<Props>(component) ||
-  isFunctionComponent<Props>(component);
+  isClassComponent<Props>(component);

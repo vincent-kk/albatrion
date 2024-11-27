@@ -30,6 +30,21 @@ describe('getDataWithSchema', () => {
     expect(result).toEqual(['apple', 'banana']);
   });
 
+  it('should handle array type schema correctly', () => {
+    const schema: JsonSchema = {
+      type: 'array',
+      items: { type: 'object', properties: { name: { type: 'string' } } },
+    };
+    const data = [{ name: 'apple' }, { name: 'banana' }, { name: 'cherry' }];
+
+    const result = getDataWithSchema(data, schema);
+    expect(result).toEqual([
+      { name: 'apple' },
+      { name: 'banana' },
+      { name: 'cherry' },
+    ]);
+  });
+
   it('should ignore oneOf fields if ignoreOneOf option is true', () => {
     const schema: JsonSchema = {
       type: 'object',
