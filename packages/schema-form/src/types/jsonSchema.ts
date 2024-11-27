@@ -98,7 +98,7 @@ export interface BooleanSchema extends BasicSchema<BooleanValue> {
 
 export interface ArraySchema extends BasicSchema<ArrayValue> {
   type: 'array';
-  items?: JsonSchema;
+  items: JsonSchema;
   contains?: PartialJsonSchema;
   minItems?: number;
   maxItems?: number;

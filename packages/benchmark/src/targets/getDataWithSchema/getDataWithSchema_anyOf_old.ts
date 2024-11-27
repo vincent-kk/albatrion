@@ -46,11 +46,10 @@ export const getDataWithSchema = (
     return Object.fromEntries(items.filter(Boolean) as [string, any][]);
   } else if (
     node.type === 'array' &&
-    node.items &&
     typeof node.items === 'object' &&
     Array.isArray(data)
   ) {
-    return data.map((e) => getDataWithSchema(e, node.items!, options));
+    return data.map((e) => getDataWithSchema(e, node.items, options));
   }
   return data;
 };
