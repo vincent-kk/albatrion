@@ -7,8 +7,8 @@ import {
   type JsonSchema,
 } from '@lumy/schema-form/types';
 
-import { schemaNodeFactory } from './schemaNodes';
-import type { InferSchemaNode, NodeFactoryProps } from './schemaNodes/type';
+import { schemaNodeFactory } from './nodes';
+import type { InferSchemaNode, NodeFactoryProps } from './nodes/type';
 
 interface NodeFromSchemaProps<
   Schema extends JsonSchema,
