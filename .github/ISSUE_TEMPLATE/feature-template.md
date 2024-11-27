@@ -1,14 +1,12 @@
 ---
 name: Feature Template
 about: Feature what develop next time
-title: '[F] Title'
+title: "[F] Title"
 labels: feature
 ---
 
-## Overview
+### Overview
 
+### Detail
 
-## Detail
-
-
-## Note
+### Note

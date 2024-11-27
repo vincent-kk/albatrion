@@ -1,9 +1,7 @@
-## Related Issue
+### Related Issue
 
-Issue #
+### Changes
 
-## Changes
+### Detail
 
-## Detail
-
-## Screenshots (optional)
+### Screenshots (optional)
