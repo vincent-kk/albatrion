@@ -2,7 +2,7 @@ import { expect, test } from 'vitest';
 
 import { nodeFromJsonSchema } from '@lumy/schema-form/core';
 
-import { ArrayNode } from './ArrayNode';
+import { ArrayNode } from '../nodes/ArrayNode/ArrayNode';
 
 test('automatically add items up to minItems', () => {
   const MIN_ITEMS = 5;
