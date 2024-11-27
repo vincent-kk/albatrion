@@ -10,7 +10,7 @@ import {
 
 export interface StackItem<Value = any> {
   value: Value;
-  schema: InferJsonSchemaType<Value>;
+  schema: InferJsonSchemaType<Value> | undefined;
   result: any;
   isArray?: boolean;
   arrayIndex?: number;
@@ -21,9 +21,9 @@ export interface StackItem<Value = any> {
 export const isObjectStackItem = (
   item: StackItem,
 ): item is StackItem<ObjectValue> =>
-  isObjectSchema(item.schema) && isPlainObject(item.value);
+  !!item.schema && isObjectSchema(item.schema) && isPlainObject(item.value);
 
 export const isArrayStackItem = (
   item: StackItem,
 ): item is StackItem<ArrayValue> =>
-  isArraySchema(item.schema) && Array.isArray(item.value);
+  !!item.schema && isArraySchema(item.schema) && Array.isArray(item.value);
