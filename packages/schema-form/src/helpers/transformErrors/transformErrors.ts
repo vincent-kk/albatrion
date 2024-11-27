@@ -7,6 +7,13 @@ import {
 
 let keySeq = 0;
 
+/**
+ * @description instancePath를 기반으로 dataPath 생성, JSONPath 형식으로 변환.
+ * @warning THIS FUNCTION CHANGE INPUT ERRORS
+ * @param errors - ajv errors
+ * @param useKey - whether to use key(key is number)
+ * @returns schema-form errors
+ */
 export const transformErrors = (
   errors: ErrorObject[],
   useKey = false,

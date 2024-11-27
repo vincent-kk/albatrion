@@ -6,6 +6,7 @@ import {
 } from '@lumy/schema-form/helpers/ajv';
 import { filterErrors, getErrorsHash } from '@lumy/schema-form/helpers/error';
 import { isTruthy } from '@lumy/schema-form/helpers/filter';
+import { transformErrors } from '@lumy/schema-form/helpers/transformErrors';
 import {
   type AllowedValue,
   JSONPath,
@@ -29,7 +30,6 @@ import {
   getJsonPaths,
   getNodeType,
   getPathSegments,
-  transformErrors,
 } from './utils';
 
 export abstract class BaseNode<

@@ -13,7 +13,7 @@ import {
   type SchemaNode,
   nodeFromJsonSchema,
 } from '@lumy/schema-form/core';
-import { transformErrors } from '@lumy/schema-form/core/nodes/BaseNode/utils';
+import { transformErrors } from '@lumy/schema-form/helpers/transformErrors';
 import { useConstant } from '@lumy/schema-form/hooks/useConstant';
 import type {
   AllowedValue,
