@@ -2,7 +2,7 @@
 import Ajv from 'ajv';
 import { expect, test } from 'vitest';
 
-import { schemaNodeFromSchema } from '../../schemaNodeFromSchema';
+import { nodeFromJsonSchema } from '@lumy/schema-form/core';
 
 const wait = (delay = 0) => {
   return new Promise((resolve) => {
@@ -13,7 +13,7 @@ const wait = (delay = 0) => {
 };
 
 test('node.findNode', () => {
-  const node = schemaNodeFromSchema({
+  const node = nodeFromJsonSchema({
     jsonSchema: {
       type: 'object',
       properties: {
@@ -49,7 +49,7 @@ test('node.findNode', () => {
 });
 
 test('validate', async () => {
-  const node = schemaNodeFromSchema({
+  const node = nodeFromJsonSchema({
     jsonSchema: {
       type: 'object',
       properties: {
@@ -92,7 +92,7 @@ test('validate with provided ajv', async () => {
     },
     errors: true,
   });
-  const node = schemaNodeFromSchema({
+  const node = nodeFromJsonSchema({
     jsonSchema: {
       type: 'object',
       properties: {
@@ -116,7 +116,7 @@ test('validate with provided ajv', async () => {
 });
 
 test('setState, getState', async () => {
-  const node = schemaNodeFromSchema({
+  const node = nodeFromJsonSchema({
     jsonSchema: {
       type: 'object',
       properties: {
@@ -138,7 +138,7 @@ test('setState, getState', async () => {
 });
 
 test('setValue, applyValue', async () => {
-  const node = schemaNodeFromSchema({
+  const node = nodeFromJsonSchema({
     jsonSchema: {
       type: 'object',
       properties: {
@@ -180,7 +180,7 @@ test('child node error sending', async () => {
     errors: true,
   });
 
-  const node = schemaNodeFromSchema({
+  const node = nodeFromJsonSchema({
     jsonSchema: {
       type: 'object',
       properties: {

@@ -20,7 +20,7 @@ interface NodeFromSchemaProps<
   ajv?: Ajv;
 }
 
-export const schemaNodeFromSchema = <
+export const nodeFromJsonSchema = <
   Schema extends JsonSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 >({
