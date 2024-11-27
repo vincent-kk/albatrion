@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { removeUndefined } from './removeUndefined';
+import { removeUndefined } from '../removeUndefined';
 
 describe('removeUndefined', () => {
   it('should remove undefined properties from the object', () => {

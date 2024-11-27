@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getFallbackValue } from './getFallbackValue';
+import { getFallbackValue } from '../getFallbackValue';
 
 describe('getFallbackValue', () => {
   it('should return the default value if it exists', () => {
