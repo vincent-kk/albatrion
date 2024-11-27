@@ -1,5 +1,4 @@
 import { isPlainObject } from 'es-toolkit';
-import { isArray } from 'es-toolkit/compat';
 
 import type {
   ArrayValue,
@@ -111,7 +110,7 @@ const getOmit = <Value extends Dictionary>(
     properties: oneOfProperties,
     required: oneOfRequired,
   } of jsonSchema.oneOf) {
-    if (isPlainObject(oneOfProperties) && isArray(oneOfRequired)) {
+    if (isPlainObject(oneOfProperties) && Array.isArray(oneOfRequired)) {
       const key = Object.keys(oneOfProperties)[0];
       if ((oneOfProperties[key]?.enum || []).includes(value?.[key])) {
         // required인 경우 해당 필드들을 required set에 추가

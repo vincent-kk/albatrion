@@ -1,10 +1,9 @@
+import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import {
   JSONPath,
   type JsonSchema,
   type JsonSchemaError,
 } from '@lumy/schema-form/types';
-
-import { isTruthy } from '../filter';
 
 /**
  * @description oneOf 속성을 가진 JSON Schema에 대한 에러 제거

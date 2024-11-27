@@ -14,8 +14,8 @@ import {
   type SchemaNode,
   isSchemaNode,
 } from '@lumy/schema-form/core';
+import { getFallbackValue } from '@lumy/schema-form/helpers/fallbackValue';
 import { isFunction } from '@lumy/schema-form/helpers/filter';
-import { getFallbackValue } from '@lumy/schema-form/helpers/getFallbackValue';
 import { SchemaNodeContext } from '@lumy/schema-form/providers';
 import { JSONPath } from '@lumy/schema-form/types';
 

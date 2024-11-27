@@ -1,8 +1,8 @@
 import Benchmark from 'benchmark';
 
 import { type Ratio, getRatio } from '@lumy/benchmark/helpers/getRatio';
-import { getJsonPaths as getJsonPaths_Ref } from '@lumy/schema-form/core/schemaNodes/BaseNode/utils';
-import { getJsonPaths } from '@lumy/schema-form/core/schemaNodes/BaseNode/utils';
+import { getJsonPaths as getJsonPaths_Ref } from '@lumy/schema-form/core/nodes/BaseNode/utils';
+import { getJsonPaths } from '@lumy/schema-form/core/nodes/BaseNode/utils';
 
 import { value } from './data';
 import { getJsonPaths as getJsonPaths_Old } from './getJsonPaths_old';

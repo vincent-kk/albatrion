@@ -1,4 +1,4 @@
-import { getFallbackValue } from '@lumy/schema-form/helpers/getFallbackValue';
+import { getFallbackValue } from '@lumy/schema-form/helpers/fallbackValue';
 import type {
   ObjectSchema,
   ObjectValue,

@@ -2,7 +2,7 @@ import type { MutableRefObject } from 'react';
 
 import Ajv, { type Options } from 'ajv';
 
-import type { JsonSchema } from '../../types';
+import type { JsonSchema } from '@lumy/schema-form/types';
 
 const defaultSettings: Options = {
   allErrors: true,

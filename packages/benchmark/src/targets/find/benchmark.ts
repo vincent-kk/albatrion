@@ -4,7 +4,7 @@ import { type Ratio, getRatio } from '@lumy/benchmark/helpers/getRatio';
 import {
   find,
   getPathSegments,
-} from '@lumy/schema-form/core/schemaNodes/BaseNode/utils';
+} from '@lumy/schema-form/core/nodes/BaseNode/utils/find';
 
 import { node, targetPath } from './data';
 import { find as find_new } from './find';
