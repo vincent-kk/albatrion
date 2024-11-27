@@ -1,7 +1,7 @@
 import Benchmark from 'benchmark';
 
 import { type Ratio, getRatio } from '@lumy/benchmark/helpers/getRatio';
-import { transformErrors as transformErrors_Ref } from '@lumy/schema-form/core/schemaNodes/BaseNode/utils';
+import { transformErrors as transformErrors_Ref } from '@lumy/schema-form/helpers/error';
 
 import { ajvErrors } from './data';
 import { transformErrors } from './transformErrors';

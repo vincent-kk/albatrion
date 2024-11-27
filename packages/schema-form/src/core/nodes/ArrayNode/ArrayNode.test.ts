@@ -1,11 +1,12 @@
 import { expect, test } from 'vitest';
 
-import { schemaNodeFromSchema } from '../../schemaNodeFromSchema';
+import { nodeFromJsonSchema } from '@lumy/schema-form/core';
+
 import { ArrayNode } from './ArrayNode';
 
 test('automatically add items up to minItems', () => {
   const MIN_ITEMS = 5;
-  const node = schemaNodeFromSchema({
+  const node = nodeFromJsonSchema({
     jsonSchema: {
       type: 'object',
       properties: {
@@ -25,7 +26,7 @@ test('automatically add items up to minItems', () => {
 });
 
 test('add / remove / clear items', () => {
-  const node = schemaNodeFromSchema({
+  const node = nodeFromJsonSchema({
     jsonSchema: {
       type: 'object',
       properties: {
@@ -55,7 +56,7 @@ test('add / remove / clear items', () => {
 
 test('cannot exceed maxItems', () => {
   const MAX_ITEMS = 3;
-  const node = schemaNodeFromSchema({
+  const node = nodeFromJsonSchema({
     jsonSchema: {
       type: 'object',
       properties: {
@@ -80,7 +81,7 @@ test('cannot exceed maxItems', () => {
 });
 
 test('array.getValue', () => {
-  const node = schemaNodeFromSchema({
+  const node = nodeFromJsonSchema({
     jsonSchema: {
       type: 'object',
       properties: {

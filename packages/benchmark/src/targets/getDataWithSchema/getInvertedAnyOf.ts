@@ -1,4 +1,4 @@
-import { isValidEnum } from '@lumy/schema-form/core/schemaNodes/ObjectNode/utils/filter';
+import { isValidEnum } from '@lumy/schema-form/core/nodes/ObjectNode/utils/filter';
 import type { ObjectSchema } from '@lumy/schema-form/types';
 
 import { isObjectAnyOfSchema } from './getDataWithSchema_anyOf';

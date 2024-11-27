@@ -11,9 +11,9 @@ import type Ajv from 'ajv';
 import {
   MethodType,
   type SchemaNode,
-  schemaNodeFromSchema,
+  nodeFromJsonSchema,
 } from '@lumy/schema-form/core';
-import { transformErrors } from '@lumy/schema-form/core/schemaNodes/BaseNode/utils';
+import { transformErrors } from '@lumy/schema-form/helpers/error';
 import { useConstant } from '@lumy/schema-form/hooks/useConstant';
 import type {
   AllowedValue,
@@ -78,7 +78,7 @@ export const SchemaNodeContextProvider = <
 
   const rootNode = useMemo(
     () =>
-      schemaNodeFromSchema({
+      nodeFromJsonSchema({
         jsonSchema,
         defaultValue: initialValue,
         onChange: handleChange,

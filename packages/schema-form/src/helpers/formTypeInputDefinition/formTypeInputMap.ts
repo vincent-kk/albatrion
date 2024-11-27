@@ -1,10 +1,10 @@
+import { isReactComponent, isTruthy } from '@lumy/schema-form/helpers/filter';
 import {
   type FormTypeInputMap,
   type FormTypeTestFn,
   JSONPath,
 } from '@lumy/schema-form/types';
 
-import { isReactComponent, isTruthy } from '../filter';
 import type { NormalizedFormTypeInputDefinition } from './type';
 
 /**

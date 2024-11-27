@@ -1,6 +1,6 @@
-export { schemaNodeFromSchema } from './schemaNodeFromSchema';
+export { nodeFromJsonSchema } from './nodeFromJsonSchema';
 
-export type { InferSchemaNode, SchemaNode } from './schemaNodes';
+export type { InferSchemaNode, SchemaNode } from './nodes';
 export {
   MethodType,
   isSchemaNode,
@@ -12,4 +12,4 @@ export {
   isArrayNode,
   isBranchNode,
   isTerminalNode,
-} from './schemaNodes';
+} from './nodes';

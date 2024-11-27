@@ -1,8 +1,7 @@
 import { expect, test } from 'vitest';
 
+import { nodeFromJsonSchema } from '@lumy/schema-form/core';
 import { ObjectSchema } from '@lumy/schema-form/types';
-
-import { schemaNodeFromSchema } from '../../schemaNodeFromSchema';
 
 test('default value', () => {
   const jsonSchema = {
@@ -20,7 +19,7 @@ test('default value', () => {
     },
   } satisfies ObjectSchema;
 
-  const node = schemaNodeFromSchema({ jsonSchema });
+  const node = nodeFromJsonSchema({ jsonSchema });
   expect(node?.value?.character.spell).toBe('expecto patronum');
 });
 
@@ -50,7 +49,7 @@ test('oneOf', () => {
       },
     },
   } satisfies ObjectSchema;
-  const node = schemaNodeFromSchema({ jsonSchema: schema });
+  const node = nodeFromJsonSchema({ jsonSchema: schema });
 
   expect(node?.findNode('title')?.jsonSchema?.renderOptions?.visible).toBe(
     '("movie"===@.category)||("game"===@.category)',
@@ -74,7 +73,7 @@ test('sorted key order', () => {
       title: { type: 'string' },
     },
   } satisfies ObjectSchema;
-  const node = schemaNodeFromSchema({ jsonSchema: schema });
+  const node = nodeFromJsonSchema({ jsonSchema: schema });
   expect(JSON.stringify(node.value)).toBe(JSON.stringify({}));
 
   const found = node?.findNode('title');

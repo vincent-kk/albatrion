@@ -1,5 +1,4 @@
 import { isPlainObject } from 'es-toolkit';
-import { isArray } from 'es-toolkit/compat';
 
 import {
   type ArrayValue,
@@ -27,4 +26,4 @@ export const isObjectStackItem = (
 export const isArrayStackItem = (
   item: StackItem,
 ): item is StackItem<ArrayValue> =>
-  isArraySchema(item.schema) && isArray(item.value);
+  isArraySchema(item.schema) && Array.isArray(item.value);

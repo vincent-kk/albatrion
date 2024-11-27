@@ -5,7 +5,7 @@ import {
   type StackItem,
   isArrayStackItem,
   isObjectStackItem,
-} from '@lumy/schema-form/core/schemaNodes/BaseNode/utils/getDataWithSchema/type';
+} from '@lumy/schema-form/core/nodes/BaseNode/utils/getDataWithSchema/type';
 import type {
   ArrayValue,
   JsonSchema,
