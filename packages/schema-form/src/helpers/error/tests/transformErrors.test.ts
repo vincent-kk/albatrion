@@ -1,7 +1,7 @@
 import type { ErrorObject } from 'ajv';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { transformErrors } from './transformErrors';
+import { transformErrors } from '../transformErrors';
 
 describe('transformErrors', () => {
   let errors: ErrorObject[];

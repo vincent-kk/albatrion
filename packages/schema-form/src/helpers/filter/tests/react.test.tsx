@@ -8,7 +8,7 @@ import {
   isMemoComponent,
   isReactComponent,
   isReactElement,
-} from './react';
+} from '../react';
 
 describe('isReactElement', () => {
   it('should return true if the input is a react element', () => {

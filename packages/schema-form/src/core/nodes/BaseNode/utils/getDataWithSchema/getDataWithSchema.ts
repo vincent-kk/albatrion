@@ -54,17 +54,15 @@ const handleObjectSchema = (
     const omit = getOmit(current.schema, current.value, options);
     current.result = {};
 
-    if (current.schema?.properties) {
-      for (const key in current.schema.properties) {
-        if (key in current.value && !omit?.has(key)) {
-          stack.push({
-            value: current.value[key],
-            schema: current.schema.properties[key],
-            result: undefined,
-            parent: current.result,
-            key,
-          });
-        }
+    for (const key in current.schema.properties) {
+      if (key in current.value && !omit?.has(key)) {
+        stack.push({
+          value: current.value[key],
+          schema: current.schema.properties[key],
+          result: undefined,
+          parent: current.result,
+          key,
+        });
       }
     }
     return true;
@@ -84,7 +82,7 @@ const handleArraySchema = (
   if (current.arrayIndex! < current.value.length) {
     stack.push({
       value: current.value[current.arrayIndex!],
-      schema: current.schema?.items,
+      schema: current.schema.items,
       result: undefined,
       parent: current.result,
       key: current.arrayIndex,
@@ -97,11 +95,11 @@ const handleArraySchema = (
 
 // omit 집합 생성 함수
 const getOmit = <Value extends Dictionary>(
-  jsonSchema: JsonSchema | undefined,
+  jsonSchema: JsonSchema,
   value: Value,
   options?: { ignoreOneOf: boolean },
 ): Set<string> | null => {
-  if (options?.ignoreOneOf || !jsonSchema?.oneOf?.length) {
+  if (options?.ignoreOneOf || !jsonSchema.oneOf?.length) {
     return null;
   }
 

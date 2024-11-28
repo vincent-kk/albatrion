@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getErrorsHash } from './getErrorHash';
+import { getErrorsHash } from '../getErrorHash';
 
 describe('getErrorsHash', () => {
   it('should return hash of errors', () => {

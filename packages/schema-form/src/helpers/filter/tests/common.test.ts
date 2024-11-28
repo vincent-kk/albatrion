@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { isFunction, isTruthy } from './common';
+import { isFunction, isTruthy } from '../common';
 
 describe('isTruthy', () => {
   it('should return true if the input is truthy', () => {

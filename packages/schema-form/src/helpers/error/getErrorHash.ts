@@ -1,6 +1,11 @@
 import { Murmur3 } from '@lumy/common';
 import type { JsonSchemaError } from '@lumy/schema-form/types';
 
+/**
+ * @description JsonSchemaError의 schemaPath와 params를 문자열로 변환하여 해싱
+ * @param errors - JsonSchemaError 배열
+ * @returns Number by Murmur3
+ */
 export const getErrorsHash = (errors: JsonSchemaError[]) =>
   new Murmur3(serializeErrors(errors)).result();
 
