@@ -263,8 +263,9 @@ export abstract class BaseNode<
 
   /**
    * Node의 값 설정, 상속 받은 Node에서 재정의 가능
-   * @param input 설정할 값
+   * @param input 설정할 값이나 값을 반환하는 함수
    * @param options 설정 옵션
+   *   - replace(boolean): 기존 값 덮어쓰기, (default: false, 기존 값과 병합)
    */
   protected abstract applyValue(
     input: Value | undefined,
@@ -355,7 +356,7 @@ export abstract class BaseNode<
 
   /**
    * Node Tree에서 주어진 경로에 해당하는 Node를 찾습니다.
-   * @param path 찾고자 하는 Node의 경로(예: '.foo[0].bar')
+   * @param path 찾고자 하는 Node의 경로(예: '.foo[0].bar'), 없으면 자기 자신 반환
    * @returns 찾은 Node, 찾지 못한 경우 null
    */
   findNode(path?: string) {
