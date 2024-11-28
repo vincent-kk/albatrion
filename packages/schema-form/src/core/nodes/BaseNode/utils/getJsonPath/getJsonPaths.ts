@@ -1,5 +1,6 @@
 import { isPlainObject } from 'es-toolkit';
 
+import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import { JSONPath } from '@lumy/schema-form/types';
 
 export const getJsonPaths = (data: any, initialPath = ''): string[] => {
@@ -10,8 +11,6 @@ export const getJsonPaths = (data: any, initialPath = ''): string[] => {
 
   while (stack.length > 0) {
     const { data, path } = stack.pop()!;
-
-    if (data === undefined || data === null || data === false) continue;
 
     if (path) result.push(path);
 
@@ -36,5 +35,5 @@ export const getJsonPaths = (data: any, initialPath = ''): string[] => {
     }
   }
 
-  return result;
+  return result.filter(isTruthy);
 };
