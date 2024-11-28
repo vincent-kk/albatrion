@@ -18,7 +18,6 @@ const config: StorybookConfig = {
     '../coverage/**/*.stories.@(js|jsx|mjs|ts|tsx)',
   ],
   addons: [
-    getAbsolutePath('@storybook/addon-onboarding'),
     getAbsolutePath('@storybook/addon-essentials'),
     getAbsolutePath('@chromatic-com/storybook'),
     getAbsolutePath('@storybook/addon-interactions'),
