@@ -3,6 +3,7 @@ import { Fragment, useContext, useMemo, useRef } from 'react';
 import { nullFunction } from '@lumy/schema-form/app/constant';
 import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import { usePrepareSchemaValues } from '@lumy/schema-form/hooks/usePrepareSchemaValues';
+import { useReference } from '@lumy/schema-form/hooks/useReference';
 import { useSchemaNodeListener } from '@lumy/schema-form/hooks/useSchemaNodeListener';
 import { useSnapshot } from '@lumy/schema-form/hooks/useSnapshot';
 import {
@@ -61,9 +62,10 @@ export const SchemaNodeProxy = ({
     checkShowError,
   } = useContext(FormTypeRendererContext);
 
+  const InputFormTypeRendererRef = useReference(InputFormTypeRenderer);
   const FormTypeRenderer = useMemo(
-    () => InputFormTypeRenderer ?? ContextFormTypeRenderer,
-    [InputFormTypeRenderer, ContextFormTypeRenderer],
+    () => InputFormTypeRendererRef.current ?? ContextFormTypeRenderer,
+    [InputFormTypeRendererRef, ContextFormTypeRenderer],
   );
 
   const Wrapper = useMemo(() => {
