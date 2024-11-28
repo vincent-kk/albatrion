@@ -9,12 +9,7 @@ export const FormGroupRenderer = ({
   Input,
   errorMessage,
 }: FormTypeRendererProps) => {
-  if (depth === 0)
-    return (
-      <fieldset>
-        <Input />
-      </fieldset>
-    );
+  if (depth === 0) return <Input />;
 
   if (isBranchNode(node)) {
     return (
