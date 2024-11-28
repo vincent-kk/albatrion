@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Storybook",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:6006",
+      "webRoot": "${workspaceFolder}/packages/schema-form",
+      "sourceMaps": true,
+      "breakOnLoad": true,
+      "sourceMapPathOverrides": {
+        "webpack://schema-form/./*": "${webRoot}/*",
+        "webpack://schema-form/src/*": "${webRoot}/src/*",
+        "webpack:///./~/*": "${webRoot}/node_modules/*",
+        "webpack:///*": "*",
+        "webpack:///./src/*": "${webRoot}/src/*"
+      }
+    },
+    {
+      "name": "Debug Storybook (attach)",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "url": "http://localhost:6006",
+      "webRoot": "${workspaceFolder}/packages/schema-form",
+      "sourceMaps": true,
+      "breakOnLoad": true,
+      "sourceMapPathOverrides": {
+        "webpack://schema-form/./*": "${webRoot}/*",
+        "webpack://schema-form/src/*": "${webRoot}/src/*",
+        "webpack:///./~/*": "${webRoot}/node_modules/*",
+        "webpack:///*": "*",
+        "webpack:///./src/*": "${webRoot}/src/*"
+      }
+    }
+  ]
+}
