@@ -1,12 +1,11 @@
 import React, {
   type ChangeEvent,
+  type ComponentType,
   useCallback,
   useMemo,
   useRef,
   useState,
 } from 'react';
-
-import { FormTypeRenderer } from '@lumy/schema-form/components/SchemaNode/type';
 
 import Form, {
   FormContextProvider,
@@ -18,7 +17,7 @@ import Form, {
   type JsonSchema,
   type JsonSchemaError,
   ShowError,
-} from '../src';
+} from '@lumy-pack/schema-form/src';
 
 export default {
   title: 'Form/Common',
@@ -919,7 +918,9 @@ export const ExternalFormContext = () => {
     ];
   }, []);
 
-  const externalFormTypeRenderer = useMemo<FormTypeRenderer>(() => {
+  const externalFormTypeRenderer = useMemo<
+    ComponentType<FormTypeRendererProps>
+  >(() => {
     return ({ name, Input, errorMessage }: FormTypeRendererProps) => (
       <div style={{ border: '1px solid red', padding: 5 }}>
         {name}
