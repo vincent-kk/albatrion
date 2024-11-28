@@ -6,6 +6,8 @@ import Form, {
   type JsonSchema,
 } from '@lumy-pack/schema-form/src';
 
+import StoryLayout from './components/StoryLayout';
+
 export default {
   title: 'Form/5. WatchValues',
 };
@@ -47,8 +49,8 @@ export const Watch = () => {
     },
   ] as FormTypeInputDefinition[];
   return (
-    <div>
+    <StoryLayout jsonSchema={schema}>
       <Form jsonSchema={schema} formTypeInputDefinitions={formTypes} />
-    </div>
+    </StoryLayout>
   );
 };

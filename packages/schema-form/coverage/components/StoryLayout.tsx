@@ -1,6 +1,6 @@
 import React, { type PropsWithChildren } from 'react';
 
-import { JsonSchema } from '../../src';
+import type { JsonSchema } from '../../src';
 
 const StoryLayout = ({
   children,

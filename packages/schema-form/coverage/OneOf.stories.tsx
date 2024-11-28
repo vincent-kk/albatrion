@@ -6,6 +6,8 @@ import Form, {
   type JsonSchemaError,
 } from '@lumy-pack/schema-form/src';
 
+import StoryLayout from './components/StoryLayout';
+
 export default {
   title: 'Form/6. OneOf',
 };
@@ -52,10 +54,9 @@ export const OneOf = () => {
 
   const [value, setValue] = useState<Record<string, unknown>>();
   return (
-    <div>
+    <StoryLayout jsonSchema={schema} value={value}>
       <Form jsonSchema={schema} onChange={setValue} ref={formHandle} />
-      <pre>{JSON.stringify(value, null, 2)}</pre>
-    </div>
+    </StoryLayout>
   );
 };
 
@@ -184,16 +185,13 @@ export const ComplexOneOf = () => {
   const refHandle = useRef<FormHandle<typeof schema>>(null);
 
   return (
-    <div>
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
       <Form
         ref={refHandle}
         jsonSchema={schema}
         onChange={setValue}
         onValidate={(errors) => setErrors(errors ?? [])}
       />
-      <hr />
-      <pre>{JSON.stringify(errors, null, 2)}</pre>
-      <pre>{JSON.stringify(value, null, 2)}</pre>
-    </div>
+    </StoryLayout>
   );
 };

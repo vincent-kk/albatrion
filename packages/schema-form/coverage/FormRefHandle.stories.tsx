@@ -7,6 +7,8 @@ import Form, {
   type JsonSchema,
 } from '@lumy-pack/schema-form/src';
 
+import StoryLayout from './components/StoryLayout';
+
 export default {
   title: 'Form/7. FormRefHandle',
 };
@@ -117,14 +119,16 @@ export const FormRefHandle = () => {
       >
         change defaultValue
       </button>
-      <Form
-        ref={formHandle}
-        jsonSchema={schema}
-        defaultValue={defaultValue.current}
-        formTypeInputMap={formTypeMap}
-        onChange={handleChange}
-      />
-      <pre>{JSON.stringify(value, null, 2)}</pre>
+      <hr />
+      <StoryLayout jsonSchema={schema} value={value}>
+        <Form
+          ref={formHandle}
+          jsonSchema={schema}
+          defaultValue={defaultValue.current}
+          formTypeInputMap={formTypeMap}
+          onChange={handleChange}
+        />
+      </StoryLayout>
     </div>
   );
 };

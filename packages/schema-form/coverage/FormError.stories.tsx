@@ -8,6 +8,8 @@ import Form, {
   ShowError,
 } from '@lumy-pack/schema-form/src';
 
+import StoryLayout from './components/StoryLayout';
+
 export default {
   title: 'Form/8. FormError',
 };
@@ -47,7 +49,7 @@ export const Errors = () => {
   };
 
   return (
-    <div>
+    <StoryLayout jsonSchema={schema} value={value} errors={_errors}>
       <Form
         ref={refHandle}
         jsonSchema={schema}
@@ -57,10 +59,7 @@ export const Errors = () => {
         showError={true}
       />
       <button onClick={clearErrors}>clear received errors</button>
-      <hr />
-      <pre>{JSON.stringify(_errors, null, 2)}</pre>
-      <pre>{JSON.stringify(value, null, 2)}</pre>
-    </div>
+    </StoryLayout>
   );
 };
 
@@ -167,6 +166,7 @@ export const DirtyTouched = () => {
           false
         </label>
       </div>
+      <hr />
       <div>
         <button onClick={() => refHandle.current?.focus('.name')}>
           focus ".name"
@@ -176,13 +176,15 @@ export const DirtyTouched = () => {
         </button>
       </div>
       <hr />
-      <Form
-        key={`${showError}`}
-        ref={refHandle}
-        jsonSchema={jsonSchema}
-        showError={showError}
-        CustomFormTypeRenderer={Renderer}
-      />
+      <StoryLayout jsonSchema={jsonSchema}>
+        <Form
+          key={`${showError}`}
+          ref={refHandle}
+          jsonSchema={jsonSchema}
+          showError={showError}
+          CustomFormTypeRenderer={Renderer}
+        />
+      </StoryLayout>
     </div>
   );
 };

@@ -2,6 +2,8 @@ import React from 'react';
 
 import Form, { type JsonSchema } from '@lumy-pack/schema-form/src';
 
+import StoryLayout from './components/StoryLayout';
+
 export default {
   title: 'Form/3. FormGrid',
 };
@@ -47,5 +49,9 @@ export const Grid = () => {
     [{ name: 'city', grid: 6 }, { name: 'state' }, { name: 'zip' }],
   ];
 
-  return <Form jsonSchema={jsonSchema} gridFrom={grid} />;
+  return (
+    <StoryLayout jsonSchema={jsonSchema}>
+      <Form jsonSchema={jsonSchema} gridFrom={grid} />
+    </StoryLayout>
+  );
 };

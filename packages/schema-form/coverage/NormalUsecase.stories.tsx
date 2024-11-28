@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 
 import Form, { type JsonSchema } from '@lumy-pack/schema-form/src';
 
+import StoryLayout from './components/StoryLayout';
+
 export default {
   title: 'Form/1. NormalUsecase',
 };
@@ -22,10 +24,9 @@ export const Common = () => {
   const [value, setValue] = useState<Record<string, unknown>>();
 
   return (
-    <div>
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
       <Form jsonSchema={jsonSchema} onChange={setValue} />
-      <pre>{JSON.stringify(value, null, 2)}</pre>
-    </div>
+    </StoryLayout>
   );
 };
 
@@ -37,10 +38,9 @@ export const String = () => {
   const [value, setValue] = useState<string>();
 
   return (
-    <div>
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
       <Form jsonSchema={jsonSchema} onChange={setValue} />
-      <pre>{JSON.stringify(value, null, 2)}</pre>
-    </div>
+    </StoryLayout>
   );
 };
 
@@ -74,10 +74,9 @@ export const DateFormat = () => {
   const [value, setValue] = useState<Record<string, unknown>>();
 
   return (
-    <div>
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
       <Form jsonSchema={jsonSchema} onChange={setValue} />
-      <pre>{JSON.stringify(value, null, 2)}</pre>
-    </div>
+    </StoryLayout>
   );
 };
 
@@ -143,10 +142,9 @@ export const StringEnum = () => {
   const [value, setValue] = useState<Record<string, unknown>>();
 
   return (
-    <div>
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
       <Form jsonSchema={jsonSchema} onChange={setValue} />
-      <pre>{JSON.stringify(value, null, 2)}</pre>
-    </div>
+    </StoryLayout>
   );
 };
 
@@ -168,5 +166,9 @@ export const ReadOnly = () => {
     },
   } satisfies JsonSchema;
 
-  return <Form jsonSchema={jsonSchema} />;
+  return (
+    <StoryLayout jsonSchema={jsonSchema}>
+      <Form jsonSchema={jsonSchema} />
+    </StoryLayout>
+  );
 };

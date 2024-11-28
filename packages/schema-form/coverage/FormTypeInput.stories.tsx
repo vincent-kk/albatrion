@@ -17,6 +17,8 @@ import Form, {
   type JsonSchema,
 } from '@lumy-pack/schema-form/src';
 
+import StoryLayout from './components/StoryLayout';
+
 export default {
   title: 'Form/2. FormTypeInput',
 };
@@ -78,15 +80,14 @@ export const FormTypeMap = () => {
   };
   const refHandle = useRef<FormHandle<typeof schema>>(null);
   return (
-    <div>
+    <StoryLayout jsonSchema={schema} value={value}>
       <Form
         ref={refHandle}
         jsonSchema={schema}
         formTypeInputMap={formTypeMap}
         onChange={handleChange}
       />
-      <pre>{JSON.stringify(value, null, 2)}</pre>
-    </div>
+    </StoryLayout>
   );
 };
 
@@ -153,10 +154,9 @@ export const FormTypeComponentInJsonSchema = () => {
   const [value, setValue] = useState<Record<string, unknown>>();
 
   return (
-    <div>
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
       <Form jsonSchema={jsonSchema} onChange={setValue} />
-      <pre>{JSON.stringify(value, null, 2)}</pre>
-    </div>
+    </StoryLayout>
   );
 };
 export const ExternalFormContext = () => {
@@ -225,14 +225,13 @@ export const ExternalFormContext = () => {
       formTypeInputDefinitions={externalInputs}
       FormTypeRenderer={externalFormTypeRenderer}
     >
-      <div>
+      <StoryLayout jsonSchema={schema} value={value}>
         <Form
           jsonSchema={schema}
           defaultValue={defaultValue}
           onChange={handleChange}
         />
-        <pre>{JSON.stringify(value, null, 2)}</pre>
-      </div>
+      </StoryLayout>
     </FormContextProvider>
   );
 };

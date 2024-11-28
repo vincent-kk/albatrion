@@ -2,6 +2,8 @@ import React, { useRef, useState } from 'react';
 
 import Form, { type JsonSchema } from '@lumy-pack/schema-form/src';
 
+import StoryLayout from './components/StoryLayout';
+
 export default {
   title: 'Form/4. FromChildren',
 };
@@ -33,7 +35,7 @@ export const FunctionalChildren = () => {
   const [value, setValue] = useState<Record<string, unknown>>();
 
   return (
-    <div>
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
       <Form
         jsonSchema={jsonSchema}
         defaultValue={defaultValue.current}
@@ -59,8 +61,7 @@ export const FunctionalChildren = () => {
           </>
         )}
       </Form>
-      <pre>{JSON.stringify(value, null, 2)}</pre>
-    </div>
+    </StoryLayout>
   );
 };
 
@@ -92,7 +93,7 @@ export const IterableChildren = () => {
   const [value, setValue] = useState<Record<string, unknown>>();
 
   return (
-    <div>
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
       <Form
         jsonSchema={jsonSchema}
         defaultValue={defaultValue.current}
@@ -125,7 +126,6 @@ export const IterableChildren = () => {
           <Form.Error path=".name" style={{ display: 'inline' }} />
         </div>
       </Form>
-      <pre>{JSON.stringify(value, null, 2)}</pre>
-    </div>
+    </StoryLayout>
   );
 };
