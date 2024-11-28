@@ -37,7 +37,7 @@ describe('transformErrors', () => {
       {
         ...errors[1],
         key: undefined,
-        dataPath: '.age.[1].koreanAge',
+        dataPath: '.age[1].koreanAge',
       },
     ]);
   });
@@ -54,7 +54,7 @@ describe('transformErrors', () => {
       {
         ...errors[1],
         key: 2,
-        dataPath: '.age.[1].koreanAge',
+        dataPath: '.age[1].koreanAge',
       },
     ]);
   });

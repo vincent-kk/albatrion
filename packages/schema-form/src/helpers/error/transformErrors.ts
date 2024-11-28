@@ -27,12 +27,12 @@ export const transformErrors = (
 };
 
 const JSON_POINTER_CHILD_PATTERN = new RegExp(`${JSONPointer.Child}`, 'g');
-const INDEX_PATTERN = new RegExp(`(${JSONPath.Child})(\\d+)`, 'g');
+const INDEX_PATTERN = new RegExp(`${JSONPath.Child}(\\d+)`, 'g');
 
 const transformDataPath = (error: ErrorObject): string => {
   const dataPath = error.instancePath
     .replace(JSON_POINTER_CHILD_PATTERN, JSONPath.Child)
-    .replace(INDEX_PATTERN, '$1[$2]');
+    .replace(INDEX_PATTERN, '[$1]');
 
   const hasMissingProperty =
     error.keyword === 'required' && error.params?.missingProperty;
