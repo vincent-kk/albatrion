@@ -30,6 +30,7 @@
       "DOM.Iterable"
     ],
     "module": "ESNext",
+    "jsx": "react-jsx",
     "skipLibCheck": true,
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -47,10 +48,12 @@
     "src",
     "src/**/*.tsx?",
     "./**/*.d.ts",
-    "../../packages/schema-form",
-    "../../packages/schema-form/*",
-    "../../packages/common",
-    "../../packages/common/*",
+    "../../packages/schema-form/src",
+    "../../packages/schema-form/src/**/*.tsx?",
+    "../../packages/schema-form/src/**/*.d.ts",
+    "../../packages/common/src",
+    "../../packages/common/src/**/*.tsx?",
+    "../../packages/common/src/**/*.d.ts",
   ],
   "exclude": [
     "node_modules",
