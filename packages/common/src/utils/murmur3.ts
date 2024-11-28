@@ -1,3 +1,7 @@
+/**
+ * @description Murmur3 32-bit Hash Algorithm by JavaScript
+ * @see https://en.wikipedia.org/wiki/MurmurHash
+ */
 export class Murmur3 {
   #h1: number = 0;
   #rem: number = 0;
