@@ -6,8 +6,7 @@ import {
   useState,
 } from 'react';
 
-import type Ajv from 'ajv';
-
+import type { FormProps } from '@lumy/schema-form/components/Form';
 import {
   MethodType,
   type SchemaNode,
@@ -23,30 +22,24 @@ import type {
 
 import { SchemaNodeContext } from './SchemaNodeContext';
 
-export interface SchemaNodeContextProviderProps<
+interface SchemaNodeContextProviderProps<
   Schema extends JsonSchema = JsonSchema,
   Value extends AllowedValue = any,
 > {
   /** 이 SchemaForm 내에서 사용할 JSON Schema */
-  jsonSchema: Schema;
+  jsonSchema: FormProps<Schema, Value>['jsonSchema'];
   /** 이 SchemaForm의 기본값 */
-  defaultValue?: Value | undefined;
+  defaultValue?: FormProps<Schema, Value>['defaultValue'];
   /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
-  onChange?: SetStateFn<Value | undefined>;
+  onChange: NonNullable<FormProps<Schema, Value>['onChange']>;
   /** 이 SchemaForm의 값이 검증될 때 호출되는 함수 */
-  onValidate?: Fn<[JsonSchemaError[] | undefined]>;
-  /** 외부에서 선언된 Ajv 인스턴스, 없으면 내부에서 생성 */
-  ajv?: Ajv;
-  /** 최초로 입력되는 유효성 검증 오류*/
-  errors?: JsonSchemaError[];
-}
-
-interface SchemaNodeContextProviderInnerProps<
-  Schema extends JsonSchema = JsonSchema,
-  Value extends AllowedValue = any,
-> extends SchemaNodeContextProviderProps<Schema, Value> {
+  onValidate: NonNullable<FormProps<Schema, Value>['onValidate']>;
   /** 이 SchemaForm의 루트 노드가 준비되었을 때 호출되는 함수 */
-  onReady?: Fn<[SchemaNode]>;
+  onReady: Fn<[SchemaNode]>;
+  /** 외부에서 선언된 Ajv 인스턴스, 없으면 내부에서 생성 */
+  ajv?: FormProps<Schema, Value>['ajv'];
+  /** 최초로 입력되는 유효성 검증 오류*/
+  errors?: FormProps<Schema, Value>['errors'];
 }
 
 export const SchemaNodeContextProvider = <
@@ -61,12 +54,7 @@ export const SchemaNodeContextProvider = <
   errors,
   ajv,
   children,
-}: PropsWithChildren<
-  RequiredBy<
-    SchemaNodeContextProviderInnerProps<Schema, Value>,
-    'onChange' | 'onValidate' | 'onReady'
-  >
->) => {
+}: PropsWithChildren<SchemaNodeContextProviderProps<Schema, Value>>) => {
   const initialValue = useConstant(defaultValue);
   const [value, handleChange] = useState(() => initialValue);
 

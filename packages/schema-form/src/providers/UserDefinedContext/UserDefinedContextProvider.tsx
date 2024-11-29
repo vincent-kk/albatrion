@@ -1,9 +1,12 @@
 import { PropsWithChildren, useMemo } from 'react';
 
+import type { FormProps } from '@lumy/schema-form/components/Form';
+
 import { UserDefinedContext } from './UserDefinedContext';
 
-export interface UserDefinedContextProviderProps {
-  context?: Dictionary;
+interface UserDefinedContextProviderProps {
+  /** 사용자 정의 컨텍스트 */
+  context?: FormProps['context'];
 }
 
 export const UserDefinedContextProvider = ({
