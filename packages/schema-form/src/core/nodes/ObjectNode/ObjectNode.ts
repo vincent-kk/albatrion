@@ -86,7 +86,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
   }: SchemaNodeConstructorProps<ObjectSchema>) {
     super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
 
-    if (defaultValue !== undefined) {
+    if (this.defaultValue !== undefined) {
       this.#value = this.defaultValue;
     }
 
@@ -112,7 +112,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
             oneOfConditionsMap?.get(name),
           ),
           parentNode: this,
-          defaultValue: defaultValue?.[name] ?? getFallbackValue(schema),
+          defaultValue: this.defaultValue?.[name] ?? getFallbackValue(schema),
           onChange: (input) => {
             if (!this.#draft) return;
             const value =
