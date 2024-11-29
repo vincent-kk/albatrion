@@ -5,7 +5,7 @@ import Form, { type JsonSchema } from '@lumy-pack/schema-form/src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
-  title: 'Form/4. FromChildren',
+  title: 'Form/04. FromChildren',
 };
 
 export const FunctionalChildren = () => {

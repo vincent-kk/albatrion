@@ -8,7 +8,7 @@ import Form, {
 import StoryLayout from './components/StoryLayout';
 
 export default {
-  title: 'Form/8. VirtualSchema',
+  title: 'Form/08. VirtualSchema',
 };
 
 export const VirtualSchema = () => {

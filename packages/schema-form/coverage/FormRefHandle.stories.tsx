@@ -10,7 +10,7 @@ import Form, {
 import StoryLayout from './components/StoryLayout';
 
 export default {
-  title: 'Form/7. FormRefHandle',
+  title: 'Form/07. FormRefHandle',
 };
 
 export const FormRefHandle = () => {

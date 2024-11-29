@@ -8,7 +8,7 @@ import type { JsonSchema } from '@lumy/schema-form/types';
 export const getFallbackValue = <Schema extends JsonSchema>(
   jsonSchema: Schema,
 ) => {
-  if (jsonSchema.default) return jsonSchema.default;
+  if (jsonSchema.default !== undefined) return jsonSchema.default;
   else if (jsonSchema.type === 'array') return ArrayFallbackValue;
   else if (jsonSchema.type === 'virtual') return ArrayFallbackValue;
   else if (jsonSchema.type === 'object') return ObjectFallbackValue;

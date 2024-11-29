@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 
 import Form, {
   type FormTypeInputDefinition,
@@ -9,7 +9,7 @@ import Form, {
 import StoryLayout from './components/StoryLayout';
 
 export default {
-  title: 'Form/5. WatchValues',
+  title: 'Form/05. WatchValues',
 };
 
 export const Watch = () => {
@@ -32,25 +32,33 @@ export const Watch = () => {
       },
     },
   } satisfies JsonSchema;
-  const formTypes = [
-    {
-      test: {
-        type: 'string',
-        formType: 'greeting',
+  const formTypes = useMemo<FormTypeInputDefinition[]>(
+    () => [
+      {
+        test: {
+          type: 'string',
+          formType: 'greeting',
+        },
+        Component: ({ watchValues }: FormTypeInputProps) => {
+          return (
+            <>
+              <strong>hello '{watchValues[0]}'</strong>
+              <pre>{JSON.stringify(watchValues, null, 2)}</pre>
+            </>
+          );
+        },
       },
-      Component: ({ watchValues }: FormTypeInputProps) => {
-        return (
-          <>
-            <strong>hello '{watchValues[0]}'</strong>
-            <pre>{JSON.stringify(watchValues, null, 2)}</pre>
-          </>
-        );
-      },
-    },
-  ] as FormTypeInputDefinition[];
+    ],
+    [],
+  );
+  const [value, setValue] = useState({});
   return (
-    <StoryLayout jsonSchema={schema}>
-      <Form jsonSchema={schema} formTypeInputDefinitions={formTypes} />
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form
+        jsonSchema={schema}
+        formTypeInputDefinitions={formTypes}
+        onChange={setValue}
+      />
     </StoryLayout>
   );
 };

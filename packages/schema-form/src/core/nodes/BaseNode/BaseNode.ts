@@ -9,6 +9,7 @@ import {
   getErrorsHash,
   transformErrors,
 } from '@lumy/schema-form/helpers/error';
+import { getFallbackValue } from '@lumy/schema-form/helpers/fallbackValue';
 import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import {
   type AllowedValue,
@@ -319,7 +320,8 @@ export abstract class BaseNode<
   }: SchemaNodeConstructorProps<Schema, Value>) {
     this.type = getNodeType(jsonSchema);
     this.jsonSchema = jsonSchema;
-    this.#defaultValue = defaultValue;
+    this.#defaultValue =
+      defaultValue ?? (getFallbackValue(jsonSchema) as Value);
     this.parentNode = parentNode || null;
 
     // NOTE: BaseNode 자체를 사용하는 경우는 없으므로, this는 SchemaNode

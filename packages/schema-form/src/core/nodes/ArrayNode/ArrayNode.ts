@@ -111,8 +111,9 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
 
     this.#locked = true;
 
-    if (Array.isArray(defaultValue)) {
-      defaultValue.forEach((value) => {
+    // NOTE: defaultValue가 배열이고, 배열의 길이가 0보다 큰 경우
+    if (this.defaultValue?.length) {
+      this.defaultValue.forEach((value) => {
         this.push(value);
       });
     }
