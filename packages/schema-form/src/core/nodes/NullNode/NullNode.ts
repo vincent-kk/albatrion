@@ -43,13 +43,6 @@ export class NullNode extends BaseNode<NullSchema, NullValue> {
     ajv,
   }: SchemaNodeConstructorProps<NullSchema>) {
     super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
-
-    if (defaultValue !== undefined) {
-      this.setValue(defaultValue);
-    }
-    if (jsonSchema.default !== undefined) {
-      this.setDefaultValue(this.parseValue(jsonSchema.default));
-      this.#emitChange(this.defaultValue);
-    }
+    if (this.defaultValue !== undefined) this.setValue(this.defaultValue);
   }
 }

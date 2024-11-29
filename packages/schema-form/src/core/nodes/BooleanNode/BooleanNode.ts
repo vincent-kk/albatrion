@@ -46,14 +46,6 @@ export class BooleanNode extends BaseNode<BooleanSchema, BooleanValue> {
     ajv,
   }: SchemaNodeConstructorProps<BooleanSchema>) {
     super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
-
-    if (defaultValue !== undefined) {
-      this.setValue(defaultValue);
-    }
-
-    if (defaultValue === undefined && jsonSchema.default !== undefined) {
-      this.setDefaultValue(this.parseValue(jsonSchema.default));
-      this.#emitChange(this.defaultValue);
-    }
+    if (this.defaultValue !== undefined) this.setValue(this.defaultValue);
   }
 }
