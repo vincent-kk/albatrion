@@ -1,14 +1,11 @@
-import { Form } from '@lumy-pack/schema-form';
+import { Form, type FormProps, ObjectSchema } from '@lumy-pack/schema-form';
 
-const Root = ({ schema }: { schema: any }) => {
-  return (
-    <Form
-      schema={{
-        type: 'object',
-        properties: schema.properties,
-      }}
-    />
-  );
+const Root = ({
+  jsonSchema,
+  defaultValue,
+}: FormProps<ObjectSchema, { [key: string]: any }>) => {
+  const value = defaultValue;
+  return <Form jsonSchema={jsonSchema} />;
 };
 
 export default Root;
