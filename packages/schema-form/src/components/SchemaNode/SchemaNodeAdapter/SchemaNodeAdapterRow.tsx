@@ -6,11 +6,11 @@ import {
   useRef,
 } from 'react';
 
+import { SchemaNodeProxy } from '@lumy/schema-form/components/SchemaNode';
 import { isBranchNode } from '@lumy/schema-form/core';
 import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import type { ChildFormTypeInputProps } from '@lumy/schema-form/types';
 
-import { SchemaNodeProxy } from '../SchemaNodeProxy';
 import { SchemaNodeAdapterInput } from './SchemaNodeAdapterInput';
 import { getGridStyleProps } from './helper';
 import styles from './styles.module.css';

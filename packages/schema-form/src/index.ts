@@ -4,7 +4,7 @@ import {
   type FormHandle,
   type FormProps,
 } from './components/Form';
-import type { GridForm } from './components/SchemaNode/type';
+import type { GridForm } from './components/SchemaNode';
 import {
   type SchemaNode,
   isArrayNode,

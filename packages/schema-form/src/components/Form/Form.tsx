@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 
-import { SchemaNodeProxy } from '@lumy/schema-form/components/SchemaNode/SchemaNodeProxy';
+import { SchemaNodeProxy } from '@lumy/schema-form/components/SchemaNode';
 import {
   type InferSchemaNode,
   MethodType,

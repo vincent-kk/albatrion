@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import type { GridForm } from '@lumy/schema-form/components/SchemaNode/type';
+import type { GridForm } from '@lumy/schema-form/components/SchemaNode';
 import type { InferSchemaNode, SchemaNode } from '@lumy/schema-form/core';
 import type {
   FormTypeInputsContextProviderProps,

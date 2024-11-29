@@ -1,7 +1,7 @@
 import {
   SchemaNodeProxy,
   type SchemaNodeProxyProps,
-} from '@lumy/schema-form/components/SchemaNode/SchemaNodeProxy';
+} from '@lumy/schema-form/components/SchemaNode';
 import type { OverrideFormTypeInputProps } from '@lumy/schema-form/types';
 
 export interface FormGroupProps extends OverrideFormTypeInputProps {
