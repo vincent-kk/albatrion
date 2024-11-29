@@ -1,9 +1,23 @@
 {
   "name": "@lumy-pack/schema-form",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lumy-pack/schema-form.git",
+    "directory": "packages/schema-form"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Vincent K. Kelvin",
+    "email": "lunox273@gmail.com"
+  },
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "test": "vitest",
