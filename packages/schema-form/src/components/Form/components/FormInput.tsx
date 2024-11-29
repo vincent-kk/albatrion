@@ -2,7 +2,7 @@ import { FormInputRenderer } from '@lumy/schema-form/components/FallbackComponen
 import {
   SchemaNodeProxy,
   type SchemaNodeProxyProps,
-} from '@lumy/schema-form/components/SchemaNode/SchemaNodeProxy';
+} from '@lumy/schema-form/components/SchemaNode';
 import type { OverrideFormTypeInputProps } from '@lumy/schema-form/types';
 
 export interface FormInputProps extends OverrideFormTypeInputProps {

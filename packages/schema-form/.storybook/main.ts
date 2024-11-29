@@ -40,7 +40,6 @@ const config: StorybookConfig = {
       resolve: {
         alias: {
           '@lumy/schema-form': resolve(__dirname, '../src'),
-          '@lumy/common': resolve(__dirname, '../../common/src'),
         },
       },
     });

@@ -7,11 +7,11 @@ import type {
 
 import { parseArray } from '../../parsers';
 import { BaseNode } from '../BaseNode';
-import { schemaNodeFactory } from '../schemaNodeFactory';
 import {
+  type BranchNodeConstructorProps,
   MethodType,
+  type NodeFactory,
   type SchemaNode,
-  type SchemaNodeConstructorProps,
 } from '../type';
 import { OperationType } from './type';
 
@@ -98,16 +98,21 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     return this.#edges.map(({ node }) => node.value);
   }
 
+  #nodeFactory: NodeFactory;
+
   constructor({
     key,
     name,
     jsonSchema,
     defaultValue,
-    onChange,
     parentNode,
+    onChange,
+    nodeFactory,
     ajv,
-  }: SchemaNodeConstructorProps<ArraySchema>) {
+  }: BranchNodeConstructorProps<ArraySchema>) {
     super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
+
+    this.#nodeFactory = nodeFactory;
 
     this.#locked = true;
 
@@ -150,13 +155,14 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     };
     const defaultValue = data ?? getFallbackValue(this.jsonSchema.items);
     this.#sourceMap.set(id, {
-      node: schemaNodeFactory({
+      node: this.#nodeFactory({
         key: id,
         name,
         jsonSchema: this.jsonSchema.items,
         parentNode: this,
         defaultValue,
         onChange: handleChange,
+        nodeFactory: this.#nodeFactory,
       }),
       data: defaultValue,
     });

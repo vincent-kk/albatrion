@@ -6,8 +6,11 @@ import type {
 } from '@lumy/schema-form/types';
 
 import { BaseNode } from '../BaseNode';
-import { schemaNodeFactory } from '../schemaNodeFactory';
-import { MethodType, type SchemaNodeConstructorProps } from '../type';
+import {
+  type BranchNodeConstructorProps,
+  MethodType,
+  type NodeFactory,
+} from '../type';
 import type { ChildNode } from './type';
 import {
   getChildren,
@@ -75,16 +78,21 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     this.#draft = {};
   }
 
+  #nodeFactory: NodeFactory;
+
   constructor({
     key,
     name,
     jsonSchema,
     defaultValue,
-    onChange,
     parentNode,
+    onChange,
+    nodeFactory,
     ajv,
-  }: SchemaNodeConstructorProps<ObjectSchema>) {
+  }: BranchNodeConstructorProps<ObjectSchema>) {
     super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
+
+    this.#nodeFactory = nodeFactory;
 
     if (this.defaultValue !== undefined) {
       this.#value = this.defaultValue;
@@ -105,7 +113,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     for (const [name, schema] of Object.entries(jsonSchema.properties || {})) {
       childNodeMap.set(name, {
         isVirtualized: !!virtualReferenceFieldsMap?.get(name)?.length,
-        node: schemaNodeFactory({
+        node: this.#nodeFactory({
           name,
           jsonSchema: mergeShowConditions(
             schema,
@@ -121,6 +129,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
             this.#draft[name] = value;
             this.#emitChange();
           },
+          nodeFactory: this.#nodeFactory,
         }),
       });
     }
@@ -130,6 +139,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
       childNodeMap,
       virtualReferenceFieldsMap,
       virtualReferencesMap,
+      this.#nodeFactory,
     );
 
     this.#ready = true;

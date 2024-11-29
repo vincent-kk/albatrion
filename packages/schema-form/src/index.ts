@@ -4,7 +4,7 @@ import {
   type FormHandle,
   type FormProps,
 } from './components/Form';
-import type { GridForm } from './components/SchemaNode/type';
+import type { GridForm } from './components/SchemaNode';
 import {
   type SchemaNode,
   isArrayNode,
@@ -18,8 +18,8 @@ import {
   isVirtualNode,
 } from './core';
 import {
-  ExternalFormContextProvider as FormContextProvider,
-  type ExternalFormContextProviderProps as FormContextProviderProps,
+  ExternalFormContextProvider as FormProvider,
+  type ExternalFormContextProviderProps as FormProviderProps,
 } from './providers';
 import { JSONPath, ShowError } from './types';
 import type {
@@ -40,12 +40,17 @@ import type {
   VirtualSchema,
 } from './types';
 
-export default Form;
+export {
+  Form,
+  type FormChildrenProps,
+  type FormHandle,
+  type FormProps,
+  type GridForm,
+};
+
+export { FormProvider, type FormProviderProps };
 
 export {
-  JSONPath,
-  ShowError,
-  FormContextProvider,
   isArrayNode,
   isBooleanNode,
   isBranchNode,
@@ -55,28 +60,28 @@ export {
   isStringNode,
   isTerminalNode,
   isVirtualNode,
+  type SchemaNode,
 };
 
+export {
+  JSONPath,
+  type JsonSchema,
+  type BooleanSchema,
+  type NumberSchema,
+  type StringSchema,
+  type ObjectSchema,
+  type VirtualSchema,
+  type NullSchema,
+  type InferJsonSchemaType,
+};
+
+export { ShowError, type JsonSchemaError };
+
 export type {
-  SchemaNode,
-  GridForm,
-  FormChildrenProps,
-  FormHandle,
-  FormProps,
-  BooleanSchema,
+  FormTypeRendererProps,
   FormTypeInputDefinition,
   FormTypeInputMap,
   FormTypeInputProps,
   FormTypeInputPropsWithNode,
   FormTypeInputPropsWithSchema,
-  InferJsonSchemaType,
-  JsonSchema,
-  JsonSchemaError,
-  NullSchema,
-  NumberSchema,
-  ObjectSchema,
-  FormTypeRendererProps,
-  StringSchema,
-  VirtualSchema,
-  FormContextProviderProps,
 };

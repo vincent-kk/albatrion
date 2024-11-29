@@ -1,4 +1,4 @@
-import { Murmur3 } from '@lumy/common';
+import { Murmur3 } from '@lumy/schema-form/helpers/hash';
 import { type JsonSchemaError } from '@lumy/schema-form/types';
 
 export const serializeError = ({ schemaPath, params = {} }: JsonSchemaError) =>
