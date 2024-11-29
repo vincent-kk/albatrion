@@ -6,7 +6,6 @@ import {
   useRef,
 } from 'react';
 
-import { SchemaNodeProxy } from '@lumy/schema-form/components/SchemaNode';
 import { isBranchNode } from '@lumy/schema-form/core';
 import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import type { ChildFormTypeInputProps } from '@lumy/schema-form/types';
@@ -19,9 +18,10 @@ import type { ChildComponent, SchemaNodeAdapterRowProps } from './type';
 export const SchemaNodeAdapterRow = ({
   node,
   watchValues,
+  rawChildNodes,
   overrideFormTypeInputProps,
   PreferredFormTypeInput,
-  rawChildNodes,
+  NodeProxy,
 }: SchemaNodeAdapterRowProps) => {
   const childComponentBySchemaNodeKey = useRef(
     new Map<string, ChildComponent>(),
@@ -72,7 +72,7 @@ export const SchemaNodeAdapterRow = ({
                   FormTypeRenderer,
                   ...overrideFormTypeInputProps
                 }: ChildFormTypeInputProps) => (
-                  <SchemaNodeProxy
+                  <NodeProxy
                     node={node}
                     overrideFormTypeInputProps={overrideFormTypeInputProps}
                     FormTypeRenderer={FormTypeRenderer}
@@ -90,7 +90,7 @@ export const SchemaNodeAdapterRow = ({
             })
             .filter(isTruthy)
         : [],
-    [node, rawChildNodes],
+    [NodeProxy, node, rawChildNodes],
   );
 
   return (

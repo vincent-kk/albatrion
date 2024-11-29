@@ -46,6 +46,7 @@ export const SchemaNodeProxy = ({
           overridePropsFromProxy={overrideFormTypeInputPropsRef.current}
           overridePropsFromInput={overrideProps}
           PreferredFormTypeInput={FormTypeInput}
+          NodeProxy={SchemaNodeProxy}
         />
       ) : (
         <Fragment />

@@ -25,6 +25,7 @@ export const SchemaNodeAdapter = ({
   overridePropsFromProxy,
   overridePropsFromInput,
   PreferredFormTypeInput,
+  NodeProxy,
 }: SchemaNodeAdapterProps) => {
   const overrideFormTypeInputProps = useSnapshot({
     ...overridePropsFromProxy,
@@ -101,9 +102,10 @@ export const SchemaNodeAdapter = ({
               key={`row-${index}-end`}
               node={node}
               watchValues={watchValues}
+              rawChildNodes={childNodeRow}
               overrideFormTypeInputProps={overrideFormTypeInputProps}
               PreferredFormTypeInput={PreferredFormTypeInput}
-              rawChildNodes={childNodeRow}
+              NodeProxy={NodeProxy}
             />
           );
         } else {
@@ -112,9 +114,10 @@ export const SchemaNodeAdapter = ({
               <SchemaNodeAdapterRow
                 node={node}
                 watchValues={watchValues}
+                rawChildNodes={childNodeRow}
                 overrideFormTypeInputProps={overrideFormTypeInputProps}
                 PreferredFormTypeInput={PreferredFormTypeInput}
-                rawChildNodes={childNodeRow}
+                NodeProxy={NodeProxy}
               />
             </div>
           );
