@@ -21,6 +21,7 @@ import type { NumberNode } from './NumberNode';
 import type { ObjectNode } from './ObjectNode';
 import type { StringNode } from './StringNode';
 import type { VirtualNode } from './VirtualNode';
+import type { schemaNodeFactory } from './schemaNodeFactory';
 
 export type InferSchemaNode<S extends JsonSchema | unknown> =
   S extends ArraySchema
@@ -61,13 +62,22 @@ export interface SchemaNodeConstructorProps<
   ajv?: Ajv;
 }
 
+export type NodeFactory = typeof schemaNodeFactory;
+
+export interface BranchNodeConstructorProps<Schema extends JsonSchema>
+  extends SchemaNodeConstructorProps<Schema> {
+  nodeFactory: NodeFactory;
+}
+
 export interface VirtualNodeConstructorProps<Schema extends JsonSchema>
   extends SchemaNodeConstructorProps<Schema> {
   refNodes?: SchemaNode[];
 }
 
 export type NodeFactoryProps<Schema extends JsonSchema> =
-  SchemaNodeConstructorProps<Schema> & VirtualNodeConstructorProps<Schema>;
+  SchemaNodeConstructorProps<Schema> &
+    BranchNodeConstructorProps<Schema> &
+    VirtualNodeConstructorProps<Schema>;
 
 export interface Listener {
   (event: MethodEvent): void;
