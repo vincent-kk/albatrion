@@ -12,7 +12,7 @@ export const FormTypeInputNumber = ({
   onChange,
 }: FormTypeInputProps<number>) => {
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
-    onChange?.(event.target.valueAsNumber);
+    onChange(event.target.valueAsNumber);
   });
   return (
     <input

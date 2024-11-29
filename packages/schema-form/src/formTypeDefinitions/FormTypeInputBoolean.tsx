@@ -12,7 +12,7 @@ export const FormTypeInputBoolean = ({
   onChange,
 }: FormTypeInputProps<boolean>) => {
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
-    onChange?.(event.target.checked);
+    onChange(event.target.checked);
   });
   return (
     <input

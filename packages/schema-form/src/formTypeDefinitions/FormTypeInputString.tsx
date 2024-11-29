@@ -12,7 +12,7 @@ export const FormTypeInputString = ({
   onChange,
 }: FormTypeInputProps<string>) => {
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
-    onChange?.(event.target.value);
+    onChange(event.target.value);
   });
   return (
     <input
