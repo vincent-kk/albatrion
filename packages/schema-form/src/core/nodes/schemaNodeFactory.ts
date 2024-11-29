@@ -17,6 +17,7 @@ import { ObjectNode } from './ObjectNode';
 import { StringNode } from './StringNode';
 import { VirtualNode } from './VirtualNode';
 import type {
+  BranchNodeConstructorProps,
   NodeFactoryProps,
   SchemaNodeConstructorProps,
   VirtualNodeConstructorProps,
@@ -29,6 +30,7 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
   defaultValue,
   parentNode,
   onChange,
+  nodeFactory,
   refNodes,
   ajv,
 }: NodeFactoryProps<Schema>) {
@@ -72,8 +74,9 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         defaultValue,
         parentNode,
         onChange,
+        nodeFactory,
         ajv,
-      } as SchemaNodeConstructorProps<ArraySchema>);
+      } as BranchNodeConstructorProps<ArraySchema>);
     case 'object':
       return new ObjectNode({
         key,
@@ -82,8 +85,9 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         defaultValue,
         parentNode,
         onChange,
+        nodeFactory,
         ajv,
-      } as SchemaNodeConstructorProps<ObjectSchema>);
+      } as BranchNodeConstructorProps<ObjectSchema>);
     case 'virtual':
       return new VirtualNode({
         key,

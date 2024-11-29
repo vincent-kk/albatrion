@@ -34,5 +34,6 @@ export const nodeFromJsonSchema = <
     jsonSchema,
     defaultValue,
     onChange: isFunction(onChange) ? onChange : undefined,
+    nodeFactory: schemaNodeFactory,
     ajv,
   } as NodeFactoryProps<Schema>) as InferSchemaNode<Schema>;
