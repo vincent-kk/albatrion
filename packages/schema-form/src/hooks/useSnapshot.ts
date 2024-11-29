@@ -5,20 +5,28 @@ import { isEqual } from 'es-toolkit';
 /**
  * @description 객체의 스냅샷을 반환합니다.
  * @param object - 객체
- * @returns 객체의 스냅샷
+ * @returns 객체 스냅샷의 값
  */
 export function useSnapshot<T extends object>(object: T): T {
-  const snapshot = useRef<T>(object);
+  const snapshotRef = useSnapshotReference(object);
+  return snapshotRef.current;
+}
 
-  snapshot.current = useMemo(() => {
-    if (snapshot.current === object) {
-      return snapshot.current;
+/**
+ * @description 객체의 스냅샷의 참조를 반환합니다.
+ * @param object - 객체
+ * @returns 객체 스냅샷의 Reference
+ */
+export function useSnapshotReference<T>(object: T) {
+  const snapshotRef = useRef<T>(object);
+  snapshotRef.current = useMemo(() => {
+    if (snapshotRef.current === object) {
+      return snapshotRef.current;
     }
-    if (!isEqual(snapshot.current, object)) {
+    if (!isEqual(snapshotRef.current, object)) {
       return object;
     }
-    return snapshot.current;
+    return snapshotRef.current;
   }, [object]);
-
-  return snapshot.current;
+  return snapshotRef;
 }
