@@ -2,6 +2,7 @@ import { memo, useCallback, useContext, useMemo, useRef } from 'react';
 
 import { useConstant } from '@lumy/schema-form/hooks/useConstant';
 import { useFormTypeInput } from '@lumy/schema-form/hooks/useFormTypeInput';
+import { useOnUnmount } from '@lumy/schema-form/hooks/useOnUnmount';
 import { UserDefinedContext } from '@lumy/schema-form/providers';
 import { type SetStateFnWithOptions, ShowError } from '@lumy/schema-form/types';
 
@@ -35,23 +36,29 @@ export const SchemaNodeAdapterInput = memo(
     );
 
     const feedbackTimer = useRef<ReturnType<typeof setTimeout>>();
-    const handleFocus = useCallback(() => {
+    const clearFeedbackTimer = useCallback(() => {
       if (!feedbackTimer.current) return;
       clearTimeout(feedbackTimer.current);
-      feedbackTimer.current = undefined;
     }, []);
-    const handleBlur = useCallback(() => {
+    const setFeedbackTimer = useCallback(() => {
       feedbackTimer.current = setTimeout(() => {
         node.setState({ [ShowError.Touched]: true });
       });
     }, [node]);
+
+    // NOTE: clearFeedbackTimer is called when the component unmounts
+    useOnUnmount(clearFeedbackTimer);
 
     const { context: userDefinedContext } = useContext(UserDefinedContext);
 
     if (!node || !FormTypeInput) return null;
 
     return (
-      <span className={styles.frame} onFocus={handleFocus} onBlur={handleBlur}>
+      <span
+        className={styles.frame}
+        onFocus={clearFeedbackTimer}
+        onBlur={setFeedbackTimer}
+      >
         <FormTypeInput
           jsonSchema={node.jsonSchema}
           readOnly={!!node.jsonSchema.readOnly}
