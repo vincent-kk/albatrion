@@ -23,6 +23,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "declaration": true,
     "emitDeclarationOnly": true,
     "jsx": "react-jsx",
     /* Linting */
