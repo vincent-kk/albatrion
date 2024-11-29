@@ -35,12 +35,18 @@ export interface SchemaNodeContextProviderProps<
   onChange?: SetStateFn<Value | undefined>;
   /** 이 SchemaForm의 값이 검증될 때 호출되는 함수 */
   onValidate?: Fn<[JsonSchemaError[] | undefined]>;
-  /** 이 SchemaForm의 루트 노드가 준비되었을 때 호출되는 함수 */
-  onReady?: Fn<[SchemaNode]>;
   /** 외부에서 선언된 Ajv 인스턴스, 없으면 내부에서 생성 */
   ajv?: Ajv;
   /** 최초로 입력되는 유효성 검증 오류*/
   errors?: JsonSchemaError[];
+}
+
+interface SchemaNodeContextProviderInnerProps<
+  Schema extends JsonSchema = JsonSchema,
+  Value extends AllowedValue = any,
+> extends SchemaNodeContextProviderProps<Schema, Value> {
+  /** 이 SchemaForm의 루트 노드가 준비되었을 때 호출되는 함수 */
+  onReady?: Fn<[SchemaNode]>;
 }
 
 export const SchemaNodeContextProvider = <
@@ -57,7 +63,7 @@ export const SchemaNodeContextProvider = <
   children,
 }: PropsWithChildren<
   RequiredBy<
-    SchemaNodeContextProviderProps<Schema, Value>,
+    SchemaNodeContextProviderInnerProps<Schema, Value>,
     'onChange' | 'onValidate' | 'onReady'
   >
 >) => {

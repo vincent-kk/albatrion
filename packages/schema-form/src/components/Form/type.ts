@@ -33,7 +33,7 @@ export interface FormProps<
   Value extends AllowedValue = InferValueType<Schema>,
 > extends FormTypeRendererContextProviderProps,
     FormTypeInputsContextProviderProps,
-    Omit<SchemaNodeContextProviderProps<Schema>, 'onReady'>,
+    SchemaNodeContextProviderProps<Schema>,
     UserDefinedContextProviderProps {
   gridFrom?: GridForm;
   children?:
