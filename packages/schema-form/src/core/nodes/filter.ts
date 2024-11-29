@@ -1,6 +1,7 @@
 import type { ArrayNode } from './ArrayNode';
 import { BaseNode } from './BaseNode';
 import type { BooleanNode } from './BooleanNode';
+import type { NullNode } from './NullNode';
 import type { NumberNode } from './NumberNode';
 import type { ObjectNode } from './ObjectNode';
 import type { StringNode } from './StringNode';
@@ -28,6 +29,9 @@ export const isVirtualNode = (input: any): input is VirtualNode =>
 export const isArrayNode = (input: any): input is ArrayNode =>
   isSchemaNode(input) && input.type === 'array';
 
+export const isNullNode = (input: any): input is NullNode =>
+  isSchemaNode(input) && input.type === 'null';
+
 const BRANCH_NODE_TYPE = new Set<SchemaNode['type']>([
   'object',
   'array',
@@ -38,6 +42,7 @@ const TERMINAL_NODE_TYPE = new Set<SchemaNode['type']>([
   'boolean',
   'number',
   'string',
+  'null',
 ]);
 
 export const isBranchNode = (
@@ -47,5 +52,5 @@ export const isBranchNode = (
 
 export const isTerminalNode = (
   node: SchemaNode,
-): node is BooleanNode | NumberNode | StringNode =>
+): node is BooleanNode | NumberNode | StringNode | NullNode =>
   TERMINAL_NODE_TYPE.has(node.type);

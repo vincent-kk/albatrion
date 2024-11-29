@@ -12,4 +12,5 @@ export {
   isArrayNode,
   isBranchNode,
   isTerminalNode,
+  isNullNode,
 } from './filter';
