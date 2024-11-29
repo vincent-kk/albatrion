@@ -6,6 +6,7 @@ export type StringValue = string;
 export type ArrayValue = any[];
 export type ObjectValue = Record<string, any>;
 export type VirtualNodeValue = any[];
+export type NullValue = null;
 
 export type AllowedValue =
   | BooleanValue
@@ -13,7 +14,8 @@ export type AllowedValue =
   | StringValue
   | ObjectValue
   | ArrayValue
-  | VirtualNodeValue;
+  | VirtualNodeValue
+  | NullValue;
 
 export type InferValueType<T extends JsonSchema> = T extends {
   type: 'string';
@@ -29,4 +31,6 @@ export type InferValueType<T extends JsonSchema> = T extends {
           ? ObjectValue
           : T extends { type: 'virtual' }
             ? VirtualNodeValue
-            : never;
+            : T extends { type: 'null' }
+              ? NullValue
+              : never;
