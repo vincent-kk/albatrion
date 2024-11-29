@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 
-import Form, {
+import {
+  Form,
   type JsonSchema,
-  JsonSchemaError,
+  type JsonSchemaError,
 } from '@lumy-pack/schema-form/src';
 
 import StoryLayout from './components/StoryLayout';

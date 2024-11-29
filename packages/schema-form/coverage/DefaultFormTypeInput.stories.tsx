@@ -2,16 +2,17 @@ import React, { useState } from 'react';
 
 import { Meta, StoryFn } from '@storybook/react';
 
-import Form, { type JsonSchemaError } from '../src';
-import { FormTypeInputArray } from '../src/formTypeDefinitions/FormTypeInputArray';
-import { FormTypeInputBoolean } from '../src/formTypeDefinitions/FormTypeInputBoolean';
-import { FormTypeInputDateFormant } from '../src/formTypeDefinitions/FormTypeInputDateFormant';
-import { FormTypeInputNumber } from '../src/formTypeDefinitions/FormTypeInputNumber';
-import { FormTypeInputObject } from '../src/formTypeDefinitions/FormTypeInputObject';
-import { FormTypeInputString } from '../src/formTypeDefinitions/FormTypeInputString';
-import { FormTypeInputStringCheckbox } from '../src/formTypeDefinitions/FormTypeInputStringCheckbox';
-import { FormTypeInputStringEnum } from '../src/formTypeDefinitions/FormTypeInputStringEnum';
-import { FormTypeInputStringRadio } from '../src/formTypeDefinitions/FormTypeInputStringRadio';
+import { Form, type JsonSchemaError } from '@lumy-pack/schema-form/src';
+import { FormTypeInputArray } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputArray';
+import { FormTypeInputBoolean } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputBoolean';
+import { FormTypeInputDateFormant } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputDateFormant';
+import { FormTypeInputNumber } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputNumber';
+import { FormTypeInputObject } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputObject';
+import { FormTypeInputString } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputString';
+import { FormTypeInputStringCheckbox } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputStringCheckbox';
+import { FormTypeInputStringEnum } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputStringEnum';
+import { FormTypeInputStringRadio } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputStringRadio';
+
 import StoryLayout from './components/StoryLayout';
 
 // 레이아웃 컴포넌트
