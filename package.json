@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "schemaForm": "yarn workspace @lumy-pack/schema-form",
-    "common": "yarn workspace @lumy-pack/common",
+    "antdPlugin": "yarn workspace @lumy-pack/schema-form-antd-plugin",
     "benchmark": "yarn workspace @lumy-pack/benchmark"
   },
   "workspaces": [
