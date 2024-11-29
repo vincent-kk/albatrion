@@ -1,4 +1,4 @@
-import { schemaNodeFactory } from '../../schemaNodeFactory';
+import type { NodeFactory } from '../../type';
 import type { ObjectNode } from '../ObjectNode';
 import type { ChildNode, VirtualReference } from '../type';
 
@@ -7,6 +7,7 @@ export const getChildren = (
   childNodeMap: Map<string, ChildNode>,
   virtualReferenceFieldsMap: Map<string, string[]> | null,
   virtualReferencesMap: Map<string, VirtualReference> | null,
+  nodeFactory: NodeFactory,
 ) => {
   const children: ChildNode[] = [];
   const hasVirtualReference = !!(
@@ -25,15 +26,16 @@ export const getChildren = (
             (field) => childNodeMap.get(field)!.node,
           );
           children.push({
-            node: schemaNodeFactory({
+            node: nodeFactory({
               name: fieldName,
               jsonSchema: {
                 type: 'virtual',
                 ...reference,
               },
-              parentNode,
-              refNodes,
               defaultValue: refNodes.map((refNode) => refNode.defaultValue),
+              parentNode,
+              nodeFactory,
+              refNodes,
             }),
           });
           virtualReferencesMap.delete(fieldName);
