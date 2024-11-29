@@ -1,7 +1,7 @@
 import type { ComponentType, ReactElement } from 'react';
 
 import type { SchemaNode } from '@lumy/schema-form/core';
-import type { ObjectNodeChildNode } from '@lumy/schema-form/core/schemaNodes/ObjectNode';
+import type { ObjectNodeChildNode } from '@lumy/schema-form/core/nodes/ObjectNode';
 import type {
   FormTypeInputProps,
   OverrideFormTypeInputProps,
