@@ -9,12 +9,6 @@
       "@lumy/schema-form/*": [
         "./src/*"
       ],
-      "@lumy/common": [
-        "../common/src"
-      ],
-      "@lumy/common/*": [
-        "../common/src/*"
-      ],
     },
     "target": "ES2020",
     "useDefineForClassFields": true,
@@ -41,8 +35,6 @@
     "src",
     "src/**/*.tsx?",
     "./**/*.d.ts",
-    "../../packages/common",
-    "../../packages/common/*",
     "coverage/**/*.story.tsx",
     "coverage/**/*.stories.tsx",
   ],
