@@ -2,6 +2,7 @@ import type {
   ArraySchema,
   BooleanSchema,
   JsonSchema,
+  NullSchema,
   NumberSchema,
   ObjectSchema,
   StringSchema,
@@ -10,6 +11,7 @@ import type {
 
 import { ArrayNode } from './ArrayNode';
 import { BooleanNode } from './BooleanNode';
+import { NullNode } from './NullNode';
 import { NumberNode } from './NumberNode';
 import { ObjectNode } from './ObjectNode';
 import { StringNode } from './StringNode';
@@ -93,6 +95,20 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         refNodes,
         ajv,
       } as VirtualNodeConstructorProps<VirtualSchema>);
+    case 'null':
+      return new NullNode({
+        key,
+        name,
+        jsonSchema,
+        defaultValue,
+        parentNode,
+        onChange,
+        ajv,
+      } as SchemaNodeConstructorProps<NullSchema>);
   }
-  throw new Error(`Unknown schema type: ${jsonSchema.type}`);
+
+  // @ts-expect-error: This state is unreachable by design and should NEVER occur.
+  throw new Error(`Unknown JsonSchema: ${jsonSchema.type}`, {
+    jsonSchema,
+  });
 }

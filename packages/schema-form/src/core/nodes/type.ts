@@ -6,6 +6,7 @@ import type {
   InferValueType,
   JsonSchema,
   JsonSchemaError,
+  NullSchema,
   NumberSchema,
   ObjectSchema,
   ShowError,
@@ -15,6 +16,7 @@ import type {
 
 import type { ArrayNode } from './ArrayNode';
 import type { BooleanNode } from './BooleanNode';
+import type { NullNode } from './NullNode';
 import type { NumberNode } from './NumberNode';
 import type { ObjectNode } from './ObjectNode';
 import type { StringNode } from './StringNode';
@@ -33,7 +35,9 @@ export type InferSchemaNode<S extends JsonSchema | unknown> =
             ? BooleanNode
             : S extends VirtualSchema
               ? VirtualNode
-              : SchemaNode;
+              : S extends NullSchema
+                ? NullNode
+                : SchemaNode;
 
 export type SchemaNode =
   | ArrayNode
@@ -41,7 +45,8 @@ export type SchemaNode =
   | ObjectNode
   | StringNode
   | BooleanNode
-  | VirtualNode;
+  | VirtualNode
+  | NullNode;
 
 export interface SchemaNodeConstructorProps<
   Schema extends JsonSchema,

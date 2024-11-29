@@ -45,6 +45,9 @@ export const isVirtualSchema = (schema: JsonSchema): schema is VirtualSchema =>
 export const isBooleanSchema = (schema: JsonSchema): schema is BooleanSchema =>
   schema.type === 'boolean';
 
+export const isNullSchema = (schema: JsonSchema): schema is NullSchema =>
+  schema.type === 'null';
+
 // REF: https://github.com/ajv-validator/ajv/blob/master/lib/types/json-schema.ts
 
 /** 입력된 값을 기반으로 적절한 Schema를 추론 */
@@ -130,14 +133,14 @@ export interface ObjectSchema extends BasicSchema<ObjectValue> {
   >;
 }
 
-export interface NullSchema extends BasicSchema<null> {
-  type: 'null';
-  nullable: true;
-}
-
 export interface VirtualSchema extends BasicSchema<VirtualNodeValue> {
   type: 'virtual';
   fields?: string[];
+}
+
+export interface NullSchema extends BasicSchema<null> {
+  type: 'null';
+  nullable: true;
 }
 
 interface BasicSchema<T> extends CustomOptions {
