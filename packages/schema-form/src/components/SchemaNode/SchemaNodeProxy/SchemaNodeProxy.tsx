@@ -1,11 +1,11 @@
-import { Fragment, useContext, useMemo, useRef } from 'react';
+import { Fragment, useContext, useMemo } from 'react';
 
 import { nullFunction } from '@lumy/schema-form/app/constant';
 import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import { usePrepareSchemaValues } from '@lumy/schema-form/hooks/usePrepareSchemaValues';
 import { useReference } from '@lumy/schema-form/hooks/useReference';
 import { useSchemaNodeListener } from '@lumy/schema-form/hooks/useSchemaNodeListener';
-import { useSnapshot } from '@lumy/schema-form/hooks/useSnapshot';
+import { useSnapshotReference } from '@lumy/schema-form/hooks/useSnapshot';
 import {
   FormTypeRendererContext,
   UserDefinedContext,
@@ -13,7 +13,6 @@ import {
 import { type FormTypeRendererProps, ShowError } from '@lumy/schema-form/types';
 
 import { SchemaNodeAdapter } from '../SchemaNodeAdapter';
-import type { GridForm } from '../type';
 import type { SchemaNodeProxyProps } from './type';
 
 export const SchemaNodeProxy = ({
@@ -29,16 +28,13 @@ export const SchemaNodeProxy = ({
     inputNode ?? path,
   );
 
-  const overrideFormTypeInputPropsRef = useRef(overrideFormTypeInputProps);
-  overrideFormTypeInputPropsRef.current = useSnapshot(
+  const overrideFormTypeInputPropsRef = useSnapshotReference(
     overrideFormTypeInputProps,
   );
 
-  const watchValuesRef = useRef(watchValues);
-  watchValuesRef.current = useSnapshot(watchValues);
+  const watchValuesRef = useSnapshotReference(watchValues);
 
-  const gridFormRef = useRef<GridForm>();
-  gridFormRef.current = gridFrom;
+  const gridFormRef = useReference(gridFrom);
 
   const Input = useMemo<FormTypeRendererProps['Input']>(() => {
     return (overrideProps) =>
@@ -54,7 +50,13 @@ export const SchemaNodeProxy = ({
       ) : (
         <Fragment />
       );
-  }, [node, FormTypeInput, overrideFormTypeInputPropsRef, watchValuesRef]);
+  }, [
+    node,
+    watchValuesRef,
+    gridFormRef,
+    overrideFormTypeInputPropsRef,
+    FormTypeInput,
+  ]);
 
   const {
     FormTypeRenderer: ContextFormTypeRenderer,
