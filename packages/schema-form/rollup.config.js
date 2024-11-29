@@ -44,7 +44,7 @@ module.exports = [
         targets: [
           {
             src: '@types/**/*.d.ts',
-            dest: 'dist/@types',
+            dest: 'dist/types',
           },
         ],
         flatten: false,
@@ -57,8 +57,10 @@ module.exports = [
         tsconfigOverride: {
           compilerOptions: {
             declaration: true,
-            declarationDir: 'dist/@types',
+            declarationDir: 'dist',
             emitDeclarationOnly: false,
+            rootDir: 'src',
+            baseUrl: '.',
           },
           include: ['src/**/*'],
           exclude: [
