@@ -22,7 +22,7 @@ export const FormTypeInputDateFormant = ({
   onChange,
 }: FormTypeInputPropsWithSchema<string, DateFormatJsonSchema>) => {
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
-    onChange?.(event.target.value);
+    onChange(event.target.value);
   });
   const { type, max, min } = useMemo(
     () => ({

@@ -44,11 +44,13 @@
     "./**/*.d.ts",
     "../../packages/common",
     "../../packages/common/*",
-    "stories/**/*.stories.tsx",
+    "coverage/**/*.story.tsx",
+    "coverage/**/*.stories.tsx",
   ],
   "exclude": [
     "node_modules",
     "dist",
+    "documents",
     "build",
     "coverage",
     "scripts",
@@ -56,6 +58,7 @@
     "tests",
     "**.test.tsx?",
     "**.spec.tsx?",
+    "**.story.tsx",
     "**.stories.tsx",
   ]
 }

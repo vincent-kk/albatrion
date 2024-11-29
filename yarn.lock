@@ -974,7 +974,6 @@ __metadata:
     "@chromatic-com/storybook": "npm:^3.2.2"
     "@storybook/addon-essentials": "npm:^8.4.2"
     "@storybook/addon-interactions": "npm:^8.4.2"
-    "@storybook/addon-onboarding": "npm:^8.4.2"
     "@storybook/blocks": "npm:^8.4.2"
     "@storybook/react": "npm:^8.4.2"
     "@storybook/react-vite": "npm:^8.4.2"
@@ -1341,17 +1340,6 @@ __metadata:
   peerDependencies:
     storybook: ^8.4.2
   checksum: 10c0/3458cce88b41bb54f74f5affc610b07f486db07709ac13a1b84b7b17fb0d9c2b3fce9325b69a9f60a8d446ae0befc530a4de7d5dc133f4d818d438ff4378cf61
-  languageName: node
-  linkType: hard
-
-"@storybook/addon-onboarding@npm:^8.4.2":
-  version: 8.4.2
-  resolution: "@storybook/addon-onboarding@npm:8.4.2"
-  dependencies:
-    react-confetti: "npm:^6.1.0"
-  peerDependencies:
-    storybook: ^8.4.2
-  checksum: 10c0/0c4606212d18c30366b735bc1e95fd3d9c8bfe491534b2a5840d392f6b7a5e30cd7a60944a2622e94f189f6e83ccbbf717c411da7464d16ec0fc3f8e044ac89c
   languageName: node
   linkType: hard
 

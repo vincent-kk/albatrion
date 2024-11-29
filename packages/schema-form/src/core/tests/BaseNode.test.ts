@@ -223,7 +223,7 @@ describe('BaseNode', () => {
       data.children.forEach((child, index) => {
         expect(child.node.errors).toEqual([
           {
-            dataPath: `.data.[${index}]`,
+            dataPath: `.data[${index}]`,
             instancePath: `/data/${index}`,
             key: undefined,
             keyword: 'isEven',

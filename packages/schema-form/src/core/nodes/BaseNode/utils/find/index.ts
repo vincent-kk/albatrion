@@ -1,3 +1,3 @@
 export { find } from './find';
 
-export { getPathSegments } from './helper';
+export { getPathSegments } from './getPathSegments';

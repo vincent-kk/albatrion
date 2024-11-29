@@ -1,5 +1,5 @@
 import { JSONPath, type JsonSchema } from '@lumy/schema-form';
-import { schemaNodeFactory } from '@lumy/schema-form/core/schemaNodes';
+import { schemaNodeFactory } from '@lumy/schema-form/core/nodes';
 
 const schema = {
   type: 'object',

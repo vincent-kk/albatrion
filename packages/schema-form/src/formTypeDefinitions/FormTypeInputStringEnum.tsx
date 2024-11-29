@@ -43,7 +43,7 @@ export const FormTypeInputStringEnum = ({
     [context, jsonSchema],
   );
   const handleChange = useHandle((event: ChangeEvent<HTMLSelectElement>) => {
-    onChange?.(event.target.value);
+    onChange(event.target.value);
   });
 
   return (
