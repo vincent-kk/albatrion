@@ -9,7 +9,7 @@ import Form, {
 import StoryLayout from './components/StoryLayout';
 
 export default {
-  title: 'Form/6. OneOf',
+  title: 'Form/06. OneOf',
 };
 
 export const OneOf = () => {

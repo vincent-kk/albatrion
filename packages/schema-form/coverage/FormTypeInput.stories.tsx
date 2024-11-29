@@ -20,7 +20,7 @@ import Form, {
 import StoryLayout from './components/StoryLayout';
 
 export default {
-  title: 'Form/2. FormTypeInput',
+  title: 'Form/02. FormTypeInput',
 };
 export const FormTypeMap = () => {
   const [value, setValue] = useState({});

@@ -5,7 +5,7 @@ import Form, { type JsonSchema } from '@lumy-pack/schema-form/src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
-  title: 'Form/1. NormalUsecase',
+  title: 'Form/01. NormalUsecase',
 };
 
 export const Common = () => {

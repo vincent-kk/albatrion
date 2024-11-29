@@ -9,7 +9,7 @@ import Form, {
 import StoryLayout from './components/StoryLayout';
 
 export default {
-  title: 'Form/5. WatchValues',
+  title: 'Form/05. WatchValues',
 };
 
 export const Watch = () => {

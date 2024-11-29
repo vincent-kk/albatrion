@@ -5,7 +5,7 @@ import Form, { type JsonSchema } from '@lumy-pack/schema-form/src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
-  title: 'Form/3. FormGrid',
+  title: 'Form/03. FormGrid',
 };
 
 export const Grid = () => {

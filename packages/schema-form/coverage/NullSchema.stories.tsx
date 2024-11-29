@@ -8,7 +8,7 @@ import Form, {
 import StoryLayout from './components/StoryLayout';
 
 export default {
-  title: 'Form/9. NullSchema',
+  title: 'Form/09. NullSchema',
 };
 
 export const NullSchema = () => {
