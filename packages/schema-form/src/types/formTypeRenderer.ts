@@ -1,4 +1,4 @@
-import type { ComponentType, ReactNode } from 'react';
+import type { CSSProperties, ComponentType, ReactNode } from 'react';
 
 import type { SchemaNode } from '@lumy/schema-form/core';
 
@@ -18,6 +18,18 @@ export interface FormTypeRendererProps {
   errors: SchemaNode['errors'];
   Input: ComponentType<OverrideFormTypeInputProps>;
   errorMessage: ReactNode;
-  formatError: (error: JsonSchemaError) => ReactNode;
+  formatError: FormatError;
   context: Dictionary;
 }
+
+export type FormatError = Fn<
+  [error: JsonSchemaError, options?: FormatErrorOptions],
+  ReactNode
+>;
+
+export type FormatErrorOptions = {
+  className?: string;
+  style?: CSSProperties;
+  context?: Dictionary;
+  [alt: string]: any;
+};

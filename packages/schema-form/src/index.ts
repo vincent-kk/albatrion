@@ -30,6 +30,8 @@ import type {
   FormTypeInputPropsWithNode,
   FormTypeInputPropsWithSchema,
   FormTypeRendererProps,
+  FormatError,
+  FormatErrorOptions,
   InferJsonSchemaType,
   JsonSchema,
   JsonSchemaError,
@@ -75,7 +77,12 @@ export {
   type InferJsonSchemaType,
 };
 
-export { ShowError, type JsonSchemaError };
+export {
+  ShowError,
+  type FormatError,
+  type FormatErrorOptions,
+  type JsonSchemaError,
+};
 
 export type {
   FormTypeRendererProps,
