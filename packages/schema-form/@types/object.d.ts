@@ -1,3 +1,5 @@
+declare type PropertyKey = string | number | symbol;
+
 declare type Dictionary<T = any> = Record<string, T>;
 
 declare type StringDictionary = Dictionary<string>;

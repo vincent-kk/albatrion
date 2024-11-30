@@ -3,3 +3,4 @@ export {
   stringifyObject,
   stringifyObjectWithFullSortedKeys,
 } from './stringifyObject';
+export { merge } from './merge';

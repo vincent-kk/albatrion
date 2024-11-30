@@ -41,12 +41,18 @@
 //     );
 //   },
 // );
-import { run as runStringifyObject } from './targets/stringiftyObject/benchmark';
+// import { run as runStringifyObject } from './targets/stringiftyObject/benchmark';
+// runStringifyObject().then(
+//   ({ fastest, slowest, speedRatio, executionTimeSaved }) => {
+//     console.log(
+//       `fastest: ${fastest}, slowest: ${slowest}, speedRatio: ${speedRatio}:1, timeSaved: ${executionTimeSaved}%`,
+//     );
+//   },
+// );
+import { run as runDeepMerge } from './targets/deepMerge/benchmark';
 
-runStringifyObject().then(
-  ({ fastest, slowest, speedRatio, executionTimeSaved }) => {
-    console.log(
-      `fastest: ${fastest}, slowest: ${slowest}, speedRatio: ${speedRatio}:1, timeSaved: ${executionTimeSaved}%`,
-    );
-  },
-);
+runDeepMerge().then(({ fastest, slowest, speedRatio, executionTimeSaved }) => {
+  console.log(
+    `fastest: ${fastest}, slowest: ${slowest}, speedRatio: ${speedRatio}:1, timeSaved: ${executionTimeSaved}%`,
+  );
+});
