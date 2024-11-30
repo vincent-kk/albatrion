@@ -1,11 +1,9 @@
-import { isPlainObject } from 'es-toolkit';
-import { isArray } from 'es-toolkit/compat';
-
 import {
   type StackItem,
   isArrayStackItem,
   isObjectStackItem,
 } from '@lumy/schema-form/core/nodes/BaseNode/utils/getDataWithSchema/type';
+import { isArray, isPlainObject } from '@lumy/schema-form/helpers/filter';
 import type {
   ArrayValue,
   JsonSchema,
@@ -16,7 +14,7 @@ import type {
 export const isObjectAnyOfSchema = (
   schema: NonNullable<ObjectSchema['anyOf']>[number],
 ): schema is RequiredBy<ObjectSchema, 'properties' | 'required'> =>
-  isPlainObject(schema.properties) && Array.isArray(schema.required);
+  isPlainObject(schema.properties) && isArray(schema.required);
 
 export const getDataWithSchema = <Value>(
   value: Value | undefined,

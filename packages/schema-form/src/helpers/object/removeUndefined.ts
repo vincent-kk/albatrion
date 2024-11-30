@@ -1,4 +1,4 @@
-import { isPlainObject } from 'es-toolkit';
+import { isPlainObject } from '@lumy/schema-form/helpers/filter';
 
 type NonUndefined<T> = T extends undefined ? never : T;
 

@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-import { isPlainObject, isString } from 'es-toolkit';
+import { isPlainObject, isString } from '@lumy/schema-form/helpers/filter';
 
 import type { FormReactNode } from '../type';
 

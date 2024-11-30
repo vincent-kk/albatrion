@@ -1,5 +1,4 @@
-import { isPlainObject } from 'es-toolkit';
-
+import { isPlainObject } from '@lumy/schema-form/helpers/filter';
 import {
   isFunction,
   isReactComponent,

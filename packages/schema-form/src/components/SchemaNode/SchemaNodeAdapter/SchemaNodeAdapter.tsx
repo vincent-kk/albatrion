@@ -6,9 +6,8 @@ import {
   useState,
 } from 'react';
 
-import { isPlainObject, isString } from 'es-toolkit';
-
 import { MethodType } from '@lumy/schema-form/core';
+import { isPlainObject, isString } from '@lumy/schema-form/helpers/filter';
 import { isReactElement, isTruthy } from '@lumy/schema-form/helpers/filter';
 import { useSnapshot } from '@lumy/schema-form/hooks/useSnapshot';
 
