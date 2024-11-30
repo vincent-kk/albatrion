@@ -24,6 +24,14 @@ declare type PartialBy<T, K extends keyof T> = PickPartial<T, K> & Omit<T, K>;
 
 declare type Roll<T> = { [K in keyof T]: T[K] };
 
+type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
+
+type ExpandRecursively<T> = T extends object
+  ? T extends infer O
+    ? { [K in keyof O]: ExpandRecursively<O[K]> }
+    : never
+  : T;
+
 declare type WithKey<T> = T & { key: string };
 
 declare type ElementOf<T extends any[]> = T[number];

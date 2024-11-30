@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 
-import Form, {
+import {
+  Form,
   type JsonSchema,
-  JsonSchemaError,
+  type JsonSchemaError,
 } from '@lumy-pack/schema-form/src';
 
 import StoryLayout from './components/StoryLayout';
@@ -53,7 +54,11 @@ export const DefaultValueBySchema = () => {
 
   return (
     <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
-      <Form jsonSchema={jsonSchema} onChange={setValue} onError={setErrors} />
+      <Form
+        jsonSchema={jsonSchema}
+        onChange={setValue}
+        onValidate={setErrors}
+      />
     </StoryLayout>
   );
 };
@@ -104,7 +109,7 @@ export const DefaultValueByValue = () => {
           null: null,
         }}
         onChange={setValue}
-        onError={setErrors}
+        onValidate={setErrors}
       />
     </StoryLayout>
   );

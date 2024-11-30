@@ -48,14 +48,14 @@ const FormInner = <
     onValidate,
     formTypeInputDefinitions,
     formTypeInputMap,
-    CustomFormTypeRenderer,
-    gridFrom,
-    children: childrenInput,
-    formatError,
     errors,
+    CustomFormTypeRenderer,
+    formatError,
     showError = ShowError.Dirty | ShowError.Touched,
-    context,
+    gridFrom,
     ajv,
+    context,
+    children: childrenInput,
   }: FormProps<Schema, Value>,
   ref: ForwardedRef<FormHandle<Schema, Value, Node>>,
 ) => {
@@ -63,12 +63,16 @@ const FormInner = <
   const [rootNode, setRootNode] = useState<Node>();
   const [children, setChildren] = useState<ReactNode>();
   const initialDefaultValue = useConstant(defaultValueInput);
-  const [defaultValue, setDefaultValue] = useState<Value>(initialDefaultValue);
+  const [defaultValue, setDefaultValue] = useState<Value | undefined>(
+    initialDefaultValue,
+  );
   const [tick, update] = useTick();
 
   const handleChange = useHandle((input: Parameter<typeof onChange>) => {
     if (isFunction(onChange))
-      onChange(isFunction(input) ? input(rootNode?.value) : input);
+      onChange(
+        (isFunction(input) ? input(rootNode?.value as Value) : input) as Value,
+      );
   });
 
   const handleValidate = useHandle((errors: Parameter<typeof onValidate>) => {

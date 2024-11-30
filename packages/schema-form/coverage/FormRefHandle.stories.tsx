@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 
-import Form, {
+import {
+  Form,
   type FormHandle,
   type FormTypeInputMap,
   type FormTypeInputProps,

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 
-import Form, {
+import {
+  Form,
   type FormTypeInputDefinition,
   type FormTypeInputProps,
   type JsonSchema,

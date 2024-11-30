@@ -6,8 +6,6 @@ import {
   useState,
 } from 'react';
 
-import { isString } from 'es-toolkit';
-
 import { falseFunction } from '@lumy/schema-form/app/constant';
 import {
   MethodType,
@@ -15,6 +13,7 @@ import {
   isSchemaNode,
 } from '@lumy/schema-form/core';
 import { getFallbackValue } from '@lumy/schema-form/helpers/fallbackValue';
+import { isString } from '@lumy/schema-form/helpers/filter';
 import { isFunction } from '@lumy/schema-form/helpers/filter';
 import { SchemaNodeContext } from '@lumy/schema-form/providers';
 import { JSONPath } from '@lumy/schema-form/types';

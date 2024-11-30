@@ -1,4 +1,4 @@
-import { Murmur3 } from '@lumy/schema-form/helpers/hash';
+import { generateHash } from '@lumy/schema-form/helpers/hash';
 import type { JsonSchemaError } from '@lumy/schema-form/types';
 
 /**
@@ -7,7 +7,7 @@ import type { JsonSchemaError } from '@lumy/schema-form/types';
  * @returns Number by Murmur3
  */
 export const getErrorsHash = (errors: JsonSchemaError[]) =>
-  new Murmur3(serializeErrors(errors)).result();
+  generateHash(serializeErrors(errors));
 
 const serializeError = ({ schemaPath, params = {} }: JsonSchemaError) =>
   `${schemaPath}?${Object.entries(params)

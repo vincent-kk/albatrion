@@ -1,22 +1,18 @@
-import {
-  type ComponentType,
-  type PropsWithChildren,
-  useContext,
-  useMemo,
-} from 'react';
+import { type PropsWithChildren, useContext, useMemo } from 'react';
 
+import type { FormProps } from '@lumy/schema-form/components/Form';
 import { formatError as fallbackFormatError } from '@lumy/schema-form/components/utils/formatError';
 import { isFunction, isReactComponent } from '@lumy/schema-form/helpers/filter';
-import { type FormTypeRendererProps, ShowError } from '@lumy/schema-form/types';
+import { ShowError } from '@lumy/schema-form/types';
 
 import { ExternalFormContext } from '../ExternalFormContext';
 import { FormTypeRendererContext } from './FormTypeRendererContext';
 
-export interface FormTypeRendererContextProviderProps {
+interface FormTypeRendererContextProviderProps {
   /** Custom form type renderer component */
-  CustomFormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  CustomFormTypeRenderer?: FormProps['CustomFormTypeRenderer'];
   /** Custom format error function */
-  formatError?: FormTypeRendererProps['formatError'];
+  formatError?: FormProps['formatError'];
   /**
    * Error display condition
    *   - `true`: 항상 노출
@@ -24,7 +20,7 @@ export interface FormTypeRendererContextProviderProps {
    *   - `ShowError.Dirty`: 값이 변경된 경우 노출
    *   - `ShowError.Touched`: input에 focus 된 경우 노출
    */
-  showError?: boolean | ShowError;
+  showError?: FormProps['showError'];
 }
 
 export const FormTypeRendererContextProvider = ({

@@ -1,6 +1,6 @@
 import React, { type PropsWithChildren } from 'react';
 
-import type { JsonSchema } from '../../src';
+import type { JsonSchema } from '@lumy-pack/schema-form/src';
 
 const StoryLayout = ({
   children,

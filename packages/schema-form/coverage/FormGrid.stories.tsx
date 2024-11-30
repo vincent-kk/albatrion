@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Form, { type JsonSchema } from '@lumy-pack/schema-form/src';
+import { Form, type JsonSchema } from '@lumy-pack/schema-form/src';
 
 import StoryLayout from './components/StoryLayout';
 

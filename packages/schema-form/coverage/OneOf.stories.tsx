@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 
-import Form, {
+import {
+  Form,
   type FormHandle,
   type JsonSchema,
   type JsonSchemaError,

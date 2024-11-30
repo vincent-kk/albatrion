@@ -7,9 +7,10 @@ import React, {
   useState,
 } from 'react';
 
-import Form, {
-  FormContextProvider,
+import {
+  Form,
   type FormHandle,
+  FormProvider,
   type FormTypeInputDefinition,
   type FormTypeInputMap,
   type FormTypeInputProps,
@@ -221,7 +222,7 @@ export const ExternalFormContext = () => {
   };
 
   return (
-    <FormContextProvider
+    <FormProvider
       formTypeInputDefinitions={externalInputs}
       FormTypeRenderer={externalFormTypeRenderer}
     >
@@ -232,6 +233,6 @@ export const ExternalFormContext = () => {
           onChange={handleChange}
         />
       </StoryLayout>
-    </FormContextProvider>
+    </FormProvider>
   );
 };

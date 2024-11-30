@@ -32,8 +32,6 @@ const visualizer = require('rollup-plugin-visualizer').visualizer;
 // NOTE: 12. package.json is used to get the package information
 const packageJson = require('./package.json');
 
-const isProduction = process.env.NODE_ENV === 'production';
-
 module.exports = [
   {
     input: 'src/index.ts',
@@ -58,9 +56,6 @@ module.exports = [
       }),
       replace({
         preventAssignment: true,
-        'process.env.NODE_ENV': JSON.stringify(
-          isProduction ? 'production' : 'development',
-        ),
       }),
       postcss({
         plugins: [autoprefixer(), cssnano({ preset: 'default' })],
@@ -109,7 +104,7 @@ module.exports = [
           passes: 5,
         },
         output: {
-          comments: isProduction,
+          comments: true,
         },
       }),
       visualizer({
