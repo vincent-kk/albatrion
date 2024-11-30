@@ -30,13 +30,13 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@lumy-pack/schema-form": "workspace:*",
     "antd": "^5.22.2",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.2",
+    "@lumy-pack/schema-form": "workspace:*",
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@storybook/addon-essentials": "^8.4.5",
