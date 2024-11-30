@@ -1,7 +1,6 @@
 import { type PropsWithChildren, useContext, useMemo } from 'react';
 
 import type { FormProps } from '@lumy/schema-form/components/Form';
-import { formatError as fallbackFormatError } from '@lumy/schema-form/components/utils/formatError';
 import { isFunction, isReactComponent } from '@lumy/schema-form/helpers/filter';
 import { ShowError } from '@lumy/schema-form/types';
 
@@ -25,11 +24,12 @@ interface FormTypeRendererContextProviderProps {
 
 export const FormTypeRendererContextProvider = ({
   CustomFormTypeRenderer,
-  formatError: customFormatError,
+  formatError: inputFormatError,
   showError,
   children,
 }: PropsWithChildren<FormTypeRendererContextProviderProps>) => {
-  const { FallbackFormTypeRenderer } = useContext(ExternalFormContext);
+  const { FallbackFormTypeRenderer, fallbackFormatError } =
+    useContext(ExternalFormContext);
 
   const FormTypeRenderer = useMemo<FormTypeRendererContext['FormTypeRenderer']>(
     () =>
@@ -41,8 +41,8 @@ export const FormTypeRendererContextProvider = ({
 
   const formatError = useMemo<FormTypeRendererContext['formatError']>(
     () =>
-      isFunction(customFormatError) ? customFormatError : fallbackFormatError,
-    [customFormatError],
+      isFunction(inputFormatError) ? inputFormatError : fallbackFormatError,
+    [inputFormatError, fallbackFormatError],
   );
 
   const checkShowError = useMemo<
