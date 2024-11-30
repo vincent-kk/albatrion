@@ -43,7 +43,9 @@ export const Watch = () => {
         Component: ({ watchValues }: FormTypeInputProps) => {
           return (
             <>
-              <strong>hello '{watchValues[0]}'</strong>
+              <strong>
+                hello '{watchValues[0]}', {watchValues[1]} years old
+              </strong>
               <pre>{JSON.stringify(watchValues, null, 2)}</pre>
             </>
           );
