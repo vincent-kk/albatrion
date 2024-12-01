@@ -1,10 +1,10 @@
 import { type ComponentType, createContext } from 'react';
 
 import {
+  FormErrorRenderer,
   FormGroupRenderer,
   FormInputRenderer,
   FormLabelRenderer,
-  FromErrorRenderer,
 } from '@lumy/schema-form/components/FallbackComponents';
 import { formatError } from '@lumy/schema-form/components/utils/formatError';
 import type { NormalizedFormTypeInputDefinition } from '@lumy/schema-form/helpers/formTypeInputDefinition';
@@ -24,6 +24,6 @@ export const ExternalFormContext = createContext<ExternalFormContextProps>({
   FallbackFormTypeRenderer: FormGroupRenderer,
   FallbackFormLabelRenderer: FormLabelRenderer,
   FallbackFormInputRenderer: FormInputRenderer,
-  FallbackFormErrorRenderer: FromErrorRenderer,
+  FallbackFormErrorRenderer: FormErrorRenderer,
   fallbackFormatError: formatError,
 });

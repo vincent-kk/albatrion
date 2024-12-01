@@ -1,10 +1,10 @@
 import { type ComponentType, type PropsWithChildren, useMemo } from 'react';
 
 import {
+  FormErrorRenderer,
   FormGroupRenderer,
   FormInputRenderer,
   FormLabelRenderer,
-  FromErrorRenderer,
 } from '@lumy/schema-form/components/FallbackComponents';
 import { ErrorBoundary } from '@lumy/schema-form/components/utils/ErrorBoundary';
 import { formatError } from '@lumy/schema-form/components/utils/formatError';
@@ -66,7 +66,7 @@ export const ExternalFormContextProvider = ({
   );
 
   const FallbackFormErrorRenderer = useMemo(
-    () => InputFormErrorRenderer || FromErrorRenderer,
+    () => InputFormErrorRenderer || FormErrorRenderer,
     [InputFormErrorRenderer],
   );
 
