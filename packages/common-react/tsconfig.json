@@ -1,7 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": [
@@ -15,6 +14,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "declaration": true,
     "emitDeclarationOnly": true,
     "jsx": "react-jsx",
     /* Linting */
