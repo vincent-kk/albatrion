@@ -30,6 +30,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@lumy-pack/common-react": "workspace:*",
     "antd": "^5.22.2",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13"

@@ -1134,6 +1134,7 @@ __metadata:
   resolution: "@lumy-pack/schema-form-antd-plugin@workspace:packages/schema-form-antd-plugin"
   dependencies:
     "@chromatic-com/storybook": "npm:^3.2.2"
+    "@lumy-pack/common-react": "workspace:*"
     "@lumy-pack/schema-form": "workspace:*"
     "@rollup/plugin-commonjs": "npm:^28.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
