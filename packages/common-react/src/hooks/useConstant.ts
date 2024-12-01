@@ -7,15 +7,15 @@ import { isFunction } from '@lumy-pack/common';
  * @param input - 상수 또는 함수
  * @returns 상수 또는 함수의 결과
  */
-export function useConstant<Return>(input: Fn<[], Return>): Return;
-export function useConstant<T>(input: T): T;
-export function useConstant<Return>(input: Fn<[], Return> | Return): Return {
+export const useConstant: {
+  <Return>(input: Fn<[], Return>): Return;
+  <T>(input: T): T;
+} = <Return>(input: Fn<[], Return> | Return): Return => {
   const ref = useRef<{ value: Return }>();
   if (!ref.current) {
-    // 함수인 경우 실행하여 결과를 저장, 값인 경우 바로 저장
     ref.current = {
       value: isFunction(input) ? input() : input,
     };
   }
   return ref.current.value;
-}
+};

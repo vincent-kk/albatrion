@@ -7,7 +7,7 @@ import { generateHash, stringifyObject } from '@lumy-pack/common';
  * @param object - 객체
  * @returns 객체 스냅샷의 값
  */
-export function useSnapshot<T extends object>(object: T): T {
+export const useSnapshot = <T extends object>(object: T) => {
   const snapshotRef = useRef(object);
   const snapshotHash = useRef(generateHash(stringifyObject(object)));
   const hash = useMemo(() => generateHash(stringifyObject(object)), [object]);
@@ -16,4 +16,4 @@ export function useSnapshot<T extends object>(object: T): T {
     snapshotHash.current = hash;
   }
   return snapshotRef.current;
-}
+};
