@@ -7,15 +7,16 @@ const resolve = require('@rollup/plugin-node-resolve');
 // NOTE: 3. @rollup/plugin-replace is used to replace the process.env.NODE_ENV with 'production'
 const replace = require('@rollup/plugin-replace');
 
+// NOTE: 4. rollup-plugin-copy is used to copy the types to the dist folder
 const copy = require('rollup-plugin-copy');
 
-// NOTE: 8. @rollup/plugin-commonjs is used to convert CommonJS modules to ES modules
+// NOTE: 5. @rollup/plugin-commonjs is used to convert CommonJS modules to ES modules
 const commonjs = require('@rollup/plugin-commonjs');
 
-// NOTE: 9. rollup-plugin-typescript2 is used to convert TypeScript to JavaScript
+// NOTE: 6. rollup-plugin-typescript2 is used to convert TypeScript to JavaScript
 const typescript = require('rollup-plugin-typescript2');
 
-// NOTE: 10. rollup-plugin-terser is used to minify the JavaScript
+// NOTE: 7. rollup-plugin-terser is used to minify the JavaScript
 const { terser } = require('rollup-plugin-terser');
 
 const packageJson = require('./package.json');
