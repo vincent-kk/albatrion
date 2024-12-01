@@ -111,7 +111,7 @@ module.exports = [
       visualizer({
         filename: 'stats.html',
         gzipSize: true,
-        open: true,
+        // open: true,
       }),
     ],
     external: ['react', 'react-dom'],
