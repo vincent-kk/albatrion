@@ -32,7 +32,7 @@ module.exports = [
       },
       {
         file: packageJson.module,
-        format: 'es',
+        format: 'esm',
         exports: 'named',
         sourcemap: true,
       },
