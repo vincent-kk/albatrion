@@ -7,7 +7,8 @@
   "scripts": {
     "schemaForm": "yarn workspace @lumy-pack/schema-form",
     "antdPlugin": "yarn workspace @lumy-pack/schema-form-antd-plugin",
-    "benchmark": "yarn workspace @lumy-pack/benchmark"
+    "benchmark": "yarn workspace @lumy-pack/benchmark",
+    "common": "yarn workspace @lumy-pack/common"
   },
   "workspaces": [
     "packages/*"

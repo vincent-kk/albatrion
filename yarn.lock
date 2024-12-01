@@ -1062,6 +1062,41 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@lumy-pack/common-react@workspace:packages/common-react":
+  version: 0.0.0-use.local
+  resolution: "@lumy-pack/common-react@workspace:packages/common-react"
+  languageName: unknown
+  linkType: soft
+
+"@lumy-pack/common@workspace:packages/common":
+  version: 0.0.0-use.local
+  resolution: "@lumy-pack/common@workspace:packages/common"
+  dependencies:
+    "@rollup/plugin-commonjs": "npm:^28.0.1"
+    "@rollup/plugin-node-resolve": "npm:^15.3.0"
+    "@rollup/plugin-replace": "npm:^6.0.1"
+    "@testing-library/react": "npm:^16.0.1"
+    "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
+    "@types/react": "npm:^18.3.12"
+    "@types/react-dom": "npm:^18.3.1"
+    "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
+    autoprefixer: "npm:^10.4.20"
+    cssnano: "npm:^7.0.6"
+    eslint: "npm:^8.56.0"
+    prettier: "npm:^3.3.3"
+    rollup: "npm:^4.27.4"
+    rollup-plugin-copy: "npm:^3.5.0"
+    rollup-plugin-peer-deps-external: "npm:^2.2.4"
+    rollup-plugin-postcss: "npm:^4.0.2"
+    rollup-plugin-terser: "npm:^7.0.2"
+    rollup-plugin-typescript2: "npm:^0.36.0"
+    rollup-plugin-visualizer: "npm:^5.12.0"
+    typescript: "npm:^5.7.2"
+    vite: "npm:^5.4.11"
+    vitest: "npm:^2.1.5"
+  languageName: unknown
+  linkType: soft
+
 "@lumy-pack/schema-form-antd-plugin@workspace:packages/schema-form-antd-plugin":
   version: 0.0.0-use.local
   resolution: "@lumy-pack/schema-form-antd-plugin@workspace:packages/schema-form-antd-plugin"
