@@ -33,6 +33,8 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@lumy-pack/common": "workspace:*",
+    "@lumy-pack/common-react": "workspace:*",
     "ajv": "^8.17.1"
   },
   "devDependencies": {

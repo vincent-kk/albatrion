@@ -1062,7 +1062,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@lumy-pack/common-react@workspace:packages/common-react":
+"@lumy-pack/common-react@workspace:*, @lumy-pack/common-react@workspace:packages/common-react":
   version: 0.0.0-use.local
   resolution: "@lumy-pack/common-react@workspace:packages/common-react"
   dependencies:
@@ -1100,7 +1100,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@lumy-pack/common@workspace:packages/common":
+"@lumy-pack/common@workspace:*, @lumy-pack/common@workspace:packages/common":
   version: 0.0.0-use.local
   resolution: "@lumy-pack/common@workspace:packages/common"
   dependencies:
@@ -1187,6 +1187,8 @@ __metadata:
   resolution: "@lumy-pack/schema-form@workspace:packages/schema-form"
   dependencies:
     "@chromatic-com/storybook": "npm:^3.2.2"
+    "@lumy-pack/common": "workspace:*"
+    "@lumy-pack/common-react": "workspace:*"
     "@rollup/plugin-commonjs": "npm:^28.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
     "@rollup/plugin-replace": "npm:^6.0.1"
