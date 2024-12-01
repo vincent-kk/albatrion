@@ -34,7 +34,9 @@
   },
   "dependencies": {
     "@lumy-pack/common": "workspace:*",
-    "@lumy-pack/common-react": "workspace:*",
+    "@lumy-pack/common-react": "workspace:*"
+  },
+  "optionalDependencies": {
     "ajv": "^8.17.1"
   },
   "devDependencies": {

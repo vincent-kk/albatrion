@@ -8,10 +8,9 @@ const resolve = require('@rollup/plugin-node-resolve');
 const replace = require('@rollup/plugin-replace');
 
 // NOTE: 4. rollup-plugin-postcss is used to process the CSS files
-const postcss = require('rollup-plugin-postcss');
-
 // NOTE: 5. autoprefixer is used to add vendor prefixes to the CSS
 // NOTE: 6. cssnano is used to minify the CSS
+const postcss = require('rollup-plugin-postcss');
 const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
 
@@ -114,6 +113,6 @@ module.exports = [
       //   // open: true,
       // }),
     ],
-    external: ['react', 'react-dom'],
+    external: ['react', 'react-dom', 'ajv'],
   },
 ];
