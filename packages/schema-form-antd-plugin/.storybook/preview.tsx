@@ -1,4 +1,7 @@
+import React from 'react';
+
 import type { Preview } from '@storybook/react';
+import { ConfigProvider } from 'antd';
 
 const preview: Preview = {
   parameters: {
@@ -14,6 +17,13 @@ const preview: Preview = {
         order: ['Page', 'Components', '*'],
       },
     },
+    decorators: [
+      (Story) => (
+        <ConfigProvider theme={{ token: { colorError: '#ff4d4f' } }}>
+          <Story />
+        </ConfigProvider>
+      ),
+    ],
   },
 };
 
