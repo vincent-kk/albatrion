@@ -1,2 +1,2 @@
 export { FormTypeRendererContextProvider } from './FormTypeRendererProvider';
-export { FormTypeRendererContext } from './FormTypeRendererContext';
+export { useFormTypeRendererContext } from './useFormTypeRendererContext';

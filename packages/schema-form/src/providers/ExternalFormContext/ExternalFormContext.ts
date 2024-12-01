@@ -10,7 +10,7 @@ import { formatError } from '@lumy/schema-form/components/utils/formatError';
 import type { NormalizedFormTypeInputDefinition } from '@lumy/schema-form/helpers/formTypeInputDefinition';
 import type { FormTypeRendererProps } from '@lumy/schema-form/types';
 
-interface ExternalFormContextProps {
+export interface ExternalFormContextProps {
   fromExternalFormTypeInputDefinitions: NormalizedFormTypeInputDefinition[];
   FallbackFormTypeRenderer: ComponentType<FormTypeRendererProps>;
   FallbackFormLabelRenderer: ComponentType<FormTypeRendererProps>;

@@ -1,25 +1,25 @@
 export {
   SchemaNodeContextProvider,
-  SchemaNodeContext,
+  useSchemaNodeContext,
 } from './SchemaNodeContext';
 
 export {
   FormTypeInputsContextProvider,
-  FormTypeInputsContext,
+  useFormTypeInputsContext,
 } from './FormTypeInputsContext';
 
 export {
   FormTypeRendererContextProvider,
-  FormTypeRendererContext,
+  useFormTypeRendererContext,
 } from './FormTypeRendererContext';
 
 export {
   UserDefinedContextProvider,
-  UserDefinedContext,
+  useUserDefinedContext,
 } from './UserDefinedContext';
 
 export {
   ExternalFormContextProvider,
-  ExternalFormContext,
+  useExternalFormContext,
 } from './ExternalFormContext';
 export type { ExternalFormContextProviderProps } from './ExternalFormContext';

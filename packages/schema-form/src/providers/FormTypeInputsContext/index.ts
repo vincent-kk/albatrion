@@ -1,2 +1,2 @@
 export { FormTypeInputsContextProvider } from './FormTypeInputsContextProvider';
-export { FormTypeInputsContext } from './FormTypeInputsContext';
+export { useFormTypeInputsContext } from './useFormTypeInputsContext';
