@@ -35,6 +35,8 @@ import type {
   FormTypeInputPropsWithNode,
   FormTypeInputPropsWithSchema,
   FormTypeRendererProps,
+  FormTypeTestFn,
+  FormTypeTestObject,
   FormatError,
   FormatErrorOptions,
   InferJsonSchemaType,
@@ -95,6 +97,8 @@ export {
 };
 
 export type {
+  FormTypeTestFn,
+  FormTypeTestObject,
   FormTypeRendererProps,
   FormTypeInputDefinition,
   FormTypeInputMap,
