@@ -1,3 +1,5 @@
+import { isTruthy } from '@lumy-pack/common';
+
 import {
   type Ajv,
   type ErrorObject,
@@ -10,7 +12,6 @@ import {
   transformErrors,
 } from '@lumy/schema-form/helpers/error';
 import { getFallbackValue } from '@lumy/schema-form/helpers/fallbackValue';
-import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import {
   type AllowedValue,
   JSONPath,

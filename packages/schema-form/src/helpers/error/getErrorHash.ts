@@ -1,4 +1,5 @@
-import { generateHash } from '@lumy/schema-form/helpers/hash';
+import { generateHash } from '@lumy-pack/common';
+
 import type { JsonSchemaError } from '@lumy/schema-form/types';
 
 /**

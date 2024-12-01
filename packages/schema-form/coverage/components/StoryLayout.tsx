@@ -27,15 +27,19 @@ const StoryLayout = ({
           {children}
         </fieldset>
 
-        <fieldset style={{ flex: 1 }}>
-          <legend>Value</legend>
-          <pre>{JSON.stringify(value, null, 2)}</pre>
-        </fieldset>
+        {value && (
+          <fieldset style={{ flex: 1 }}>
+            <legend>Value</legend>
+            <pre>{JSON.stringify(value, null, 2)}</pre>
+          </fieldset>
+        )}
 
-        <fieldset style={{ flex: 1 }}>
-          <legend>Errors</legend>
-          <pre>{JSON.stringify(errors, null, 2)}</pre>
-        </fieldset>
+        {errors && (
+          <fieldset style={{ flex: 1 }}>
+            <legend>Errors</legend>
+            <pre>{JSON.stringify(errors, null, 2)}</pre>
+          </fieldset>
+        )}
       </div>
       <fieldset>
         <legend>Schema</legend>

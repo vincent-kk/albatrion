@@ -6,8 +6,9 @@ import {
   useRef,
 } from 'react';
 
+import { isTruthy } from '@lumy-pack/common';
+
 import { isBranchNode } from '@lumy/schema-form/core';
-import { isTruthy } from '@lumy/schema-form/helpers/filter';
 import type { ChildFormTypeInputProps } from '@lumy/schema-form/types';
 
 import { SchemaNodeAdapterInput } from './SchemaNodeAdapterInput';

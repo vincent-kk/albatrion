@@ -1,5 +1,5 @@
-import { isPlainObject } from '@lumy/schema-form/helpers/filter';
-import { isTruthy } from '@lumy/schema-form/helpers/filter';
+import { isPlainObject, isTruthy } from '@lumy-pack/common';
+
 import { JSONPath } from '@lumy/schema-form/types';
 
 export const getJsonPaths = (data: any, initialPath = ''): string[] => {

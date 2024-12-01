@@ -1,4 +1,5 @@
-import { isPlainObject } from '@lumy/schema-form/helpers/filter';
+import { isPlainObject } from '@lumy-pack/common';
+
 import type { JsonSchema, ObjectSchema } from '@lumy/schema-form/types';
 
 export const isObjectOneOfSchema = (

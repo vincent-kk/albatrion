@@ -1,11 +1,10 @@
 import { Fragment, useContext, useMemo } from 'react';
 
-import { nullFunction } from '@lumy/schema-form/app/constant';
-import { isTruthy } from '@lumy/schema-form/helpers/filter';
+import { isTruthy, nullFunction } from '@lumy-pack/common';
+import { useReference } from '@lumy-pack/common-react';
+
 import { usePrepareSchemaValues } from '@lumy/schema-form/hooks/usePrepareSchemaValues';
-import { useReference } from '@lumy/schema-form/hooks/useReference';
 import { useSchemaNodeListener } from '@lumy/schema-form/hooks/useSchemaNodeListener';
-import { useSnapshotReference } from '@lumy/schema-form/hooks/useSnapshot';
 import {
   FormTypeRendererContext,
   UserDefinedContext,
@@ -28,11 +27,11 @@ export const SchemaNodeProxy = ({
     inputNode ?? path,
   );
 
-  const overrideFormTypeInputPropsRef = useSnapshotReference(
+  const watchValuesRef = useReference(watchValues);
+
+  const overrideFormTypeInputPropsRef = useReference(
     overrideFormTypeInputProps,
   );
-
-  const watchValuesRef = useSnapshotReference(watchValues);
 
   const gridFormRef = useReference(gridFrom);
 
@@ -41,11 +40,11 @@ export const SchemaNodeProxy = ({
       node ? (
         <SchemaNodeAdapter
           node={node}
-          watchValues={watchValuesRef.current}
-          gridFrom={gridFormRef.current}
-          overridePropsFromProxy={overrideFormTypeInputPropsRef.current}
-          overridePropsFromInput={overrideProps}
           PreferredFormTypeInput={FormTypeInput}
+          watchValues={watchValuesRef.current}
+          overridePropsFromInput={overrideProps}
+          overridePropsFromProxy={overrideFormTypeInputPropsRef.current}
+          gridFrom={gridFormRef.current}
           NodeProxy={SchemaNodeProxy}
         />
       ) : (
@@ -54,8 +53,8 @@ export const SchemaNodeProxy = ({
   }, [
     node,
     watchValuesRef,
-    gridFormRef,
     overrideFormTypeInputPropsRef,
+    gridFormRef,
     FormTypeInput,
   ]);
 
