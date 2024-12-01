@@ -34,10 +34,8 @@
   },
   "dependencies": {
     "@lumy-pack/common": "workspace:*",
-    "@lumy-pack/common-react": "workspace:*"
-  },
-  "optionalDependencies": {
-    "ajv": "^8.17.1"
+    "@lumy-pack/common-react": "workspace:*",
+    "ajv": "^8.0.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.2",
