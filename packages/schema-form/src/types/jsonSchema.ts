@@ -5,8 +5,10 @@ import type {
   AllowedValue,
   ArrayValue,
   BooleanValue,
+  Formatter,
   NumberValue,
   ObjectValue,
+  Parser,
   StringValue,
   VirtualNodeValue,
 } from './value';
@@ -143,7 +145,7 @@ export interface NullSchema extends BasicSchema<null> {
   nullable: true;
 }
 
-interface BasicSchema<T> extends CustomOptions {
+interface BasicSchema<T> extends CustomOptions<T> {
   if?: PartialJsonSchema;
   then?: PartialJsonSchema;
   else?: PartialJsonSchema;
@@ -163,7 +165,7 @@ interface BasicSchema<T> extends CustomOptions {
         : never;
 }
 
-interface CustomOptions {
+interface CustomOptions<T> {
   renderOptions?: {
     visible?: boolean | string;
     editable?: boolean | string;
@@ -177,6 +179,8 @@ interface CustomOptions {
     alias?: Record<string, ReactNode>;
     minimum?: string;
     maximum?: string;
+    formatter?: Formatter<T>;
+    parser?: Parser<T>;
     [key: string]: any;
   };
   formType?: string | ComponentType<UnknownFormTypeInputProps>;
