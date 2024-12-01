@@ -6,6 +6,8 @@ import {
   useState,
 } from 'react';
 
+import { useConstant } from '@lumy-pack/common-react';
+
 import type { FormProps } from '@lumy/schema-form/components/Form';
 import {
   MethodType,
@@ -13,7 +15,6 @@ import {
   nodeFromJsonSchema,
 } from '@lumy/schema-form/core';
 import { transformErrors } from '@lumy/schema-form/helpers/error';
-import { useConstant } from '@lumy/schema-form/hooks/useConstant';
 import type {
   AllowedValue,
   JsonSchema,

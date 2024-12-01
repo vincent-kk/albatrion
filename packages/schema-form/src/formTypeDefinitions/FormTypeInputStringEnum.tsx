@@ -1,6 +1,7 @@
 import { type ChangeEvent, type ReactNode, useMemo } from 'react';
 
-import { useHandle } from '@lumy/schema-form/hooks/useHandle';
+import { useHandle } from '@lumy-pack/common-react';
+
 import type { FormTypeInputPropsWithSchema } from '@lumy/schema-form/types';
 
 type StringEnumJsonSchema = {

@@ -1,7 +1,9 @@
 import { type PropsWithChildren, useContext, useMemo } from 'react';
 
+import { isFunction } from '@lumy-pack/common';
+import { isReactComponent } from '@lumy-pack/common-react';
+
 import type { FormProps } from '@lumy/schema-form/components/Form';
-import { isFunction, isReactComponent } from '@lumy/schema-form/helpers/filter';
 import { ShowError } from '@lumy/schema-form/types';
 
 import { ExternalFormContext } from '../ExternalFormContext';

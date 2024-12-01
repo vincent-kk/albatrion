@@ -1,6 +1,7 @@
 import type { ChangeEvent } from 'react';
 
-import { useHandle } from '@lumy/schema-form/hooks/useHandle';
+import { useHandle } from '@lumy-pack/common-react';
+
 import type { FormTypeInputProps } from '@lumy/schema-form/types';
 
 export const FormTypeInputNumber = ({

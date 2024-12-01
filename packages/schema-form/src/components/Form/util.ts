@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 
+import { isFunction } from '@lumy-pack/common';
+
 import type { InferSchemaNode, SchemaNode } from '@lumy/schema-form/core';
-import { isFunction } from '@lumy/schema-form/helpers/filter';
 import type {
   AllowedValue,
   InferValueType,

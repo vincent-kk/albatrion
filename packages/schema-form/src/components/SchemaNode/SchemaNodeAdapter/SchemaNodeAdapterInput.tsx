@@ -1,6 +1,7 @@
 import { memo, useCallback, useContext, useMemo, useRef } from 'react';
 
-import { useConstant } from '@lumy/schema-form/hooks/useConstant';
+import { useConstant } from '@lumy-pack/common-react';
+
 import { useFormTypeInput } from '@lumy/schema-form/hooks/useFormTypeInput';
 import { UserDefinedContext } from '@lumy/schema-form/providers';
 import { type SetStateFnWithOptions, ShowError } from '@lumy/schema-form/types';

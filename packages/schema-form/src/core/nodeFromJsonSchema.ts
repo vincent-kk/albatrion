@@ -1,5 +1,6 @@
+import { isFunction } from '@lumy-pack/common';
+
 import type { Ajv } from '@lumy/schema-form/helpers/ajv';
-import { isFunction } from '@lumy/schema-form/helpers/filter';
 import {
   type AllowedValue,
   type InferValueType,
