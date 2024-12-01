@@ -18,14 +18,14 @@ export const createChildren = <
 >(
   children: FormProps<Schema, Value>['children'] | undefined,
   jsonSchema: Schema,
-  rootNode: Node,
+  rootNode?: Node,
 ): ReactNode => {
   if (!children) return null;
   if (isFunction(children)) {
     return children({
       jsonSchema,
       node: rootNode,
-      defaultValue: rootNode.defaultValue as Value,
+      defaultValue: rootNode?.defaultValue as Value,
       value: rootNode?.value as Value,
       errors: rootNode?.errors || undefined,
       isArrayItem: rootNode?.isArrayItem,
