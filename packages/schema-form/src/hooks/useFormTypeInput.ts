@@ -1,12 +1,12 @@
-import { memo, useContext, useMemo } from 'react';
+import { memo, useMemo } from 'react';
 
 import { isReactComponent } from '@lumy-pack/common-react';
 
 import type { SchemaNode } from '@lumy/schema-form/core';
 import { fromFallbackFormTypeInputDefinitions } from '@lumy/schema-form/formTypeDefinitions';
 import {
-  ExternalFormContext,
-  FormTypeInputsContext,
+  useExternalFormContext,
+  useFormTypeInputsContext,
 } from '@lumy/schema-form/providers';
 import type { Hint } from '@lumy/schema-form/types';
 
@@ -18,12 +18,10 @@ import type { Hint } from '@lumy/schema-form/types';
  * @param node - SchemaNode
  * @returns FormTypeInput
  */
-export function useFormTypeInput(node: SchemaNode) {
-  const { fromFormTypeInputMap, fromFormTypeInputDefinitions } = useContext(
-    FormTypeInputsContext,
-  );
-  const { fromExternalFormTypeInputDefinitions } =
-    useContext(ExternalFormContext);
+export const useFormTypeInput = (node: SchemaNode) => {
+  const { fromFormTypeInputMap, fromFormTypeInputDefinitions } =
+    useFormTypeInputsContext();
+  const { fromExternalFormTypeInputDefinitions } = useExternalFormContext();
 
   const FormTypeInput = useMemo(() => {
     // NOTE: formType이 React Component인 경우, 해당 Component를 반환합니다.
@@ -54,7 +52,7 @@ export function useFormTypeInput(node: SchemaNode) {
     fromExternalFormTypeInputDefinitions,
   ]);
   return FormTypeInput;
-}
+};
 
 const getHint = (node: SchemaNode): Hint => ({
   type: node.jsonSchema.type,

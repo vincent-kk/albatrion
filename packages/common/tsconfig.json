@@ -1,31 +1,22 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
     "module": "ESNext",
-    "skipLibCheck": true,
-    /* Bundler mode */
     "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "emitDeclarationOnly": true,
-    "jsx": "react-jsx",
-    /* Linting */
     "strict": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "resolveJsonModule": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
   "include": [
     "src",
-    "src/**/*.tsx?",
+    "src/**/*.ts",
     "./**/*.d.ts",
   ],
   "exclude": [
@@ -37,9 +28,7 @@
     "scripts",
     "test",
     "tests",
-    "**.test.tsx?",
-    "**.spec.tsx?",
-    "**.story.tsx",
-    "**.stories.tsx",
+    "**.test.ts",
+    "**.spec.ts",
   ]
 }

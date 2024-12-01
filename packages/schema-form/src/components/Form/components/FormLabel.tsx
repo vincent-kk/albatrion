@@ -1,12 +1,12 @@
-import type { HTMLAttributes } from 'react';
+import { type HTMLAttributes } from 'react';
 
-import { FormLabelRenderer } from '@lumy/schema-form/components/FallbackComponents';
 import {
   SchemaNodeProxy,
   type SchemaNodeProxyProps,
 } from '@lumy/schema-form/components/SchemaNode';
+import { useExternalFormContext } from '@lumy/schema-form/providers';
 
-export interface FormInputProps
+export interface FormLabelProps
   extends Pick<HTMLAttributes<unknown>, 'className' | 'style'> {
   path: SchemaNodeProxyProps['path'];
   FormTypeRenderer?: SchemaNodeProxyProps['FormTypeRenderer'];
@@ -14,11 +14,17 @@ export interface FormInputProps
 
 export const FormLabel = ({
   path,
-  FormTypeRenderer = FormLabelRenderer,
+  FormTypeRenderer,
   style,
   className,
-}: FormInputProps) => (
-  <label style={style} className={className} htmlFor={path}>
-    <SchemaNodeProxy path={path} FormTypeRenderer={FormTypeRenderer} />
-  </label>
-);
+}: FormLabelProps) => {
+  const { FallbackFormLabelRenderer } = useExternalFormContext();
+  return (
+    <label style={style} className={className} htmlFor={path}>
+      <SchemaNodeProxy
+        path={path}
+        FormTypeRenderer={FormTypeRenderer || FallbackFormLabelRenderer}
+      />
+    </label>
+  );
+};

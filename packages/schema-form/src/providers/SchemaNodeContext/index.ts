@@ -1,2 +1,2 @@
 export { SchemaNodeContextProvider } from './SchemaNodeContextProvider';
-export { SchemaNodeContext } from './SchemaNodeContext';
+export { useSchemaNodeContext } from './useSchemaNodeContext';

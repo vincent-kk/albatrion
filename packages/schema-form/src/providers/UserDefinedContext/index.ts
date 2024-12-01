@@ -1,2 +1,2 @@
 export { UserDefinedContextProvider } from './UserDefinedContextProvider';
-export { UserDefinedContext } from './UserDefinedContext';
+export { useUserDefinedContext } from './useUserDefinedContext';

@@ -9,10 +9,10 @@ import type { MethodType, SchemaNode } from '@lumy/schema-form/core';
  * @param node - SchemaNode
  * @returns tick: number
  */
-export function useSchemaNodeTracker<Node extends SchemaNode>(
+export const useSchemaNodeTracker = <Node extends SchemaNode>(
   node: Node | null,
   tracking?: MethodType[],
-) {
+) => {
   const [tick, update] = useTick();
   const trackingTypeSet = useMemo(
     () => (tracking ? new Set(tracking) : null),
@@ -28,4 +28,4 @@ export function useSchemaNodeTracker<Node extends SchemaNode>(
     };
   }, [node, trackingTypeSet, update]);
   return tick;
-}
+};

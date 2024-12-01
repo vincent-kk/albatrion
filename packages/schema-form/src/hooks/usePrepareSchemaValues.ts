@@ -1,10 +1,4 @@
-import {
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 
 import { falseFunction, isFunction, isString } from '@lumy-pack/common';
 
@@ -14,17 +8,19 @@ import {
   isSchemaNode,
 } from '@lumy/schema-form/core';
 import { getFallbackValue } from '@lumy/schema-form/helpers/fallbackValue';
-import { SchemaNodeContext } from '@lumy/schema-form/providers';
+import { useSchemaNodeContext } from '@lumy/schema-form/providers';
 import { JSONPath } from '@lumy/schema-form/types';
 
 import { useSchemaNodeTracker } from './useSchemaNodeTracker';
 
-export function usePrepareSchemaValues(input?: SchemaNode | string): {
+export const usePrepareSchemaValues = (
+  input?: SchemaNode | string,
+): {
   node: SchemaNode | null;
   visible: boolean;
   watchValues: any[];
-} {
-  const { rootNode } = useContext(SchemaNodeContext);
+} => {
+  const { rootNode } = useSchemaNodeContext();
 
   const node = useMemo(() => {
     if (isSchemaNode(input)) return input;
@@ -118,7 +114,7 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
   }, [dependencyPaths, node]);
 
   return { node, visible, watchValues };
-}
+};
 
 type CheckVisible = Fn<[dependencies: any[]], boolean>;
 type GetWatchValues = Fn<[dependencies: any[]], any[]>;

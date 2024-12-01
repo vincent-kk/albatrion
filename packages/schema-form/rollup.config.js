@@ -12,9 +12,10 @@ const postcss = require('rollup-plugin-postcss');
 
 // NOTE: 5. autoprefixer is used to add vendor prefixes to the CSS
 // NOTE: 6. cssnano is used to minify the CSS
-// NOTE: 7. rollup-plugin-copy is used to copy the types to the dist folder
 const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
+
+// NOTE: 7. rollup-plugin-copy is used to copy the types to the dist folder
 const copy = require('rollup-plugin-copy');
 
 // NOTE: 8. @rollup/plugin-commonjs is used to convert CommonJS modules to ES modules
@@ -110,7 +111,7 @@ module.exports = [
       visualizer({
         filename: 'stats.html',
         gzipSize: true,
-        open: true,
+        // open: true,
       }),
     ],
     external: ['react', 'react-dom'],
