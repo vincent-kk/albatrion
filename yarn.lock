@@ -1065,6 +1065,38 @@ __metadata:
 "@lumy-pack/common-react@workspace:packages/common-react":
   version: 0.0.0-use.local
   resolution: "@lumy-pack/common-react@workspace:packages/common-react"
+  dependencies:
+    "@rollup/plugin-commonjs": "npm:^28.0.1"
+    "@rollup/plugin-node-resolve": "npm:^15.3.0"
+    "@rollup/plugin-replace": "npm:^6.0.1"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@testing-library/react": "npm:^16.0.1"
+    "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
+    "@types/react": "npm:^18.3.12"
+    "@types/react-dom": "npm:^18.3.1"
+    "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
+    "@typescript-eslint/eslint-plugin": "npm:^8.14.0"
+    "@typescript-eslint/parser": "npm:^8.14.0"
+    autoprefixer: "npm:^10.4.20"
+    eslint: "npm:^8.56.0"
+    eslint-plugin-react: "npm:^7.37.2"
+    eslint-plugin-react-hooks: "npm:^5.0.0"
+    eslint-plugin-react-refresh: "npm:^0.4.14"
+    jsdom: "npm:^25.0.1"
+    prettier: "npm:^3.3.3"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    rollup: "npm:^4.27.4"
+    rollup-plugin-copy: "npm:^3.5.0"
+    rollup-plugin-peer-deps-external: "npm:^2.2.4"
+    rollup-plugin-postcss: "npm:^4.0.2"
+    rollup-plugin-terser: "npm:^7.0.2"
+    rollup-plugin-typescript2: "npm:^0.36.0"
+    typescript: "npm:^5.7.2"
+    vite: "npm:^5.4.11"
+    vitest: "npm:^2.1.5"
+  peerDependencies:
+    react: ">=16 <19"
   languageName: unknown
   linkType: soft
 
