@@ -28,7 +28,7 @@ const typescript = require('rollup-plugin-typescript2');
 const { terser } = require('rollup-plugin-terser');
 
 // NOTE: 11. rollup-plugin-visualizer is used to visualize the bundle size
-const visualizer = require('rollup-plugin-visualizer').visualizer;
+// const visualizer = require('rollup-plugin-visualizer').visualizer;
 
 // NOTE: 12. package.json is used to get the package information
 const packageJson = require('./package.json');
@@ -108,11 +108,11 @@ module.exports = [
           comments: true,
         },
       }),
-      visualizer({
-        filename: 'stats.html',
-        gzipSize: true,
-        // open: true,
-      }),
+      // visualizer({
+      //   filename: 'stats.html',
+      //   gzipSize: true,
+      //   // open: true,
+      // }),
     ],
     external: ['react', 'react-dom'],
   },
