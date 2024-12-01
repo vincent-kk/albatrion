@@ -38,9 +38,9 @@ export type InferValueType<T extends JsonSchema> = T extends {
 export type Formatter<Value> = (
   value: Value | undefined,
   info?: {
-    userTyping?: boolean;
-    input?: string;
+    userTyping: boolean;
+    input: string;
   },
 ) => string;
 
-export type Parser<Value> = (value: string) => Value;
+export type Parser<Value> = (value: string | undefined) => Value;
