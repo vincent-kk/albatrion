@@ -1,10 +1,10 @@
-import { type HTMLAttributes, useContext } from 'react';
+import { type HTMLAttributes } from 'react';
 
 import {
   SchemaNodeProxy,
   type SchemaNodeProxyProps,
 } from '@lumy/schema-form/components/SchemaNode';
-import { ExternalFormContext } from '@lumy/schema-form/providers';
+import { useExternalFormContext } from '@lumy/schema-form/providers';
 
 export interface FormErrorProps
   extends Pick<HTMLAttributes<unknown>, 'className' | 'style'> {
@@ -18,7 +18,7 @@ export const FormError = ({
   style,
   className,
 }: FormErrorProps) => {
-  const { FallbackFormErrorRenderer } = useContext(ExternalFormContext);
+  const { FallbackFormErrorRenderer } = useExternalFormContext();
   return (
     <div style={style} className={className}>
       <SchemaNodeProxy

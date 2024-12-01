@@ -1,9 +1,9 @@
-import { memo, useCallback, useContext, useMemo, useRef } from 'react';
+import { memo, useCallback, useMemo, useRef } from 'react';
 
 import { useConstant } from '@lumy-pack/common-react';
 
 import { useFormTypeInput } from '@lumy/schema-form/hooks/useFormTypeInput';
-import { UserDefinedContext } from '@lumy/schema-form/providers';
+import { useUserDefinedContext } from '@lumy/schema-form/providers';
 import { type SetStateFnWithOptions, ShowError } from '@lumy/schema-form/types';
 
 import styles from './styles.module.css';
@@ -46,7 +46,7 @@ export const SchemaNodeAdapterInput = memo(
       });
     }, [node]);
 
-    const { context: userDefinedContext } = useContext(UserDefinedContext);
+    const { context: userDefinedContext } = useUserDefinedContext();
 
     if (!node || !FormTypeInput) return null;
 

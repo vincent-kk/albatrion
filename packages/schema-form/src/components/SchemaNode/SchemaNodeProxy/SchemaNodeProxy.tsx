@@ -1,4 +1,4 @@
-import { Fragment, useContext, useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 
 import { isTruthy, nullFunction } from '@lumy-pack/common';
 import { useReference } from '@lumy-pack/common-react';
@@ -6,8 +6,8 @@ import { useReference } from '@lumy-pack/common-react';
 import { usePrepareSchemaValues } from '@lumy/schema-form/hooks/usePrepareSchemaValues';
 import { useSchemaNodeListener } from '@lumy/schema-form/hooks/useSchemaNodeListener';
 import {
-  FormTypeRendererContext,
-  UserDefinedContext,
+  useFormTypeRendererContext,
+  useUserDefinedContext,
 } from '@lumy/schema-form/providers';
 import { type FormTypeRendererProps, ShowError } from '@lumy/schema-form/types';
 
@@ -62,7 +62,7 @@ export const SchemaNodeProxy = ({
     FormTypeRenderer: ContextFormTypeRenderer,
     formatError: contextFormatError,
     checkShowError,
-  } = useContext(FormTypeRendererContext);
+  } = useFormTypeRendererContext();
 
   const InputFormTypeRendererRef = useReference(InputFormTypeRenderer);
   const FormTypeRenderer = useMemo(
@@ -74,7 +74,7 @@ export const SchemaNodeProxy = ({
     return InputWrapper ?? Fragment;
   }, [InputWrapper]);
 
-  const { context: userDefinedContext } = useContext(UserDefinedContext);
+  const { context: userDefinedContext } = useUserDefinedContext();
 
   const { [ShowError.Dirty]: dirty, [ShowError.Touched]: touched } =
     node?.state || {};
