@@ -1,8 +1,13 @@
 import {
   Form,
   type FormChildrenProps,
+  type FormErrorProps,
+  type FormGroupProps,
   type FormHandle,
+  type FormInputProps,
+  type FormLabelProps,
   type FormProps,
+  type FormRenderProps,
 } from './components/Form';
 import type { GridForm } from './components/SchemaNode';
 import {
@@ -48,6 +53,11 @@ export {
   type FormHandle,
   type FormProps,
   type GridForm,
+  type FormErrorProps,
+  type FormGroupProps,
+  type FormInputProps,
+  type FormLabelProps,
+  type FormRenderProps,
 };
 
 export { FormProvider, type FormProviderProps };

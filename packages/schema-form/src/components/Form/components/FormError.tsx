@@ -6,7 +6,7 @@ import {
   type SchemaNodeProxyProps,
 } from '@lumy/schema-form/components/SchemaNode';
 
-export interface FormInputProps
+export interface FormErrorProps
   extends Pick<HTMLAttributes<unknown>, 'className' | 'style'> {
   path: SchemaNodeProxyProps['path'];
   FormTypeRenderer?: SchemaNodeProxyProps['FormTypeRenderer'];
@@ -17,7 +17,7 @@ export const FormError = ({
   FormTypeRenderer = FromErrorRenderer,
   style,
   className,
-}: FormInputProps) => (
+}: FormErrorProps) => (
   <div style={style} className={className}>
     <SchemaNodeProxy path={path} FormTypeRenderer={FormTypeRenderer} />
   </div>
