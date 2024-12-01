@@ -7,6 +7,7 @@ import type { FormTypeInputProps } from '@lumy/schema-form/types';
 export const FormTypeInputNumber = ({
   path,
   name,
+  jsonSchema,
   readOnly,
   disabled,
   defaultValue,
@@ -20,6 +21,7 @@ export const FormTypeInputNumber = ({
       type="number"
       id={path}
       name={name}
+      step={jsonSchema.multipleOf}
       readOnly={readOnly}
       disabled={disabled}
       defaultValue={defaultValue}
