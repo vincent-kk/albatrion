@@ -18,7 +18,7 @@ import type { Hint } from '@lumy/schema-form/types';
  * @param node - SchemaNode
  * @returns FormTypeInput
  */
-export function useFormTypeInput(node: SchemaNode) {
+export const useFormTypeInput = (node: SchemaNode) => {
   const { fromFormTypeInputMap, fromFormTypeInputDefinitions } =
     useFormTypeInputsContext();
   const { fromExternalFormTypeInputDefinitions } = useExternalFormContext();
@@ -52,7 +52,7 @@ export function useFormTypeInput(node: SchemaNode) {
     fromExternalFormTypeInputDefinitions,
   ]);
   return FormTypeInput;
-}
+};
 
 const getHint = (node: SchemaNode): Hint => ({
   type: node.jsonSchema.type,

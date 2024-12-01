@@ -5,9 +5,9 @@ import { useTick } from '@lumy-pack/common-react';
 
 import { MethodType, type SchemaNode } from '@lumy/schema-form/core';
 
-export function useSchemaNodeListener<Node extends SchemaNode>(
+export const useSchemaNodeListener = <Node extends SchemaNode>(
   node: Node | null,
-) {
+) => {
   const ref = useRef<HTMLElement>(null);
   const [tick, update] = useTick();
 
@@ -31,7 +31,7 @@ export function useSchemaNodeListener<Node extends SchemaNode>(
   }, [node, update]);
 
   return [tick, ref] as const;
-}
+};
 
 const DOM_SELECTOR = ['input[type=text]', 'input', 'button'] as const;
 const getInputElement = (ref: RefObject<HTMLElement>) => {

@@ -13,11 +13,13 @@ import { JSONPath } from '@lumy/schema-form/types';
 
 import { useSchemaNodeTracker } from './useSchemaNodeTracker';
 
-export function usePrepareSchemaValues(input?: SchemaNode | string): {
+export const usePrepareSchemaValues = (
+  input?: SchemaNode | string,
+): {
   node: SchemaNode | null;
   visible: boolean;
   watchValues: any[];
-} {
+} => {
   const { rootNode } = useSchemaNodeContext();
 
   const node = useMemo(() => {
@@ -112,7 +114,7 @@ export function usePrepareSchemaValues(input?: SchemaNode | string): {
   }, [dependencyPaths, node]);
 
   return { node, visible, watchValues };
-}
+};
 
 type CheckVisible = Fn<[dependencies: any[]], boolean>;
 type GetWatchValues = Fn<[dependencies: any[]], any[]>;
