@@ -1,8 +1,9 @@
 import { memo, useContext, useMemo } from 'react';
 
+import { isReactComponent } from '@lumy-pack/common-react';
+
 import type { SchemaNode } from '@lumy/schema-form/core';
 import { fromFallbackFormTypeInputDefinitions } from '@lumy/schema-form/formTypeDefinitions';
-import { isReactComponent } from '@lumy/schema-form/helpers/filter';
 import {
   ExternalFormContext,
   FormTypeInputsContext,

@@ -1,8 +1,8 @@
 import { useLayoutEffect, useMemo } from 'react';
 
-import type { MethodType, SchemaNode } from '@lumy/schema-form/core';
+import { useTick } from '@lumy-pack/common-react';
 
-import { useTick } from './useTick';
+import type { MethodType, SchemaNode } from '@lumy/schema-form/core';
 
 /**
  * @description SchemaNode의 모든 event마다 tick을 업데이트합니다.

@@ -1,9 +1,6 @@
-import { isPlainObject } from '@lumy/schema-form/helpers/filter';
-import {
-  isFunction,
-  isReactComponent,
-  isTruthy,
-} from '@lumy/schema-form/helpers/filter';
+import { isFunction, isPlainObject, isTruthy } from '@lumy-pack/common';
+import { isReactComponent } from '@lumy-pack/common-react';
+
 import type {
   FormTypeInputDefinition,
   FormTypeTestFn,
