@@ -1,0 +1,70 @@
+import { useMemo } from 'react';
+
+import { DatePicker } from 'antd';
+import type { SizeType } from 'antd/es/config-provider/SizeContext';
+import dayjs, { type Dayjs } from 'dayjs';
+
+import { useHandle } from '@lumy-pack/common-react';
+import type {
+  FormTypeInputDefinition,
+  FormTypeInputPropsWithSchema,
+  StringSchema,
+} from '@lumy-pack/schema-form';
+
+const DATA_FORMAT = 'YYYY-MM-DD';
+
+interface DateJsonSchema extends StringSchema {
+  format: 'date';
+}
+
+const FormTypeDate = ({
+  path,
+  name,
+  jsonSchema,
+  defaultValue,
+  onChange,
+  context,
+}: FormTypeInputPropsWithSchema<
+  string,
+  DateJsonSchema,
+  { size?: SizeType }
+>) => {
+  const handleChange = useHandle((value: Dayjs | undefined) => {
+    onChange(value?.format(DATA_FORMAT));
+  });
+  const initialValue = useMemo(
+    () => (defaultValue ? dayjs(defaultValue, DATA_FORMAT) : undefined),
+    [defaultValue],
+  );
+  const disabledDate = useMemo(() => {
+    const { minimum, maximum } = jsonSchema.options ?? {};
+    return (date: Dayjs | null) => {
+      if (!date) return false;
+      if (!minimum && !maximum) return false;
+      if (minimum && date.isBefore(dayjs(minimum, DATA_FORMAT), 'day'))
+        return true;
+      if (maximum && date.isAfter(dayjs(maximum, DATA_FORMAT), 'day'))
+        return true;
+      return false;
+    };
+  }, [jsonSchema?.options]);
+
+  return (
+    <DatePicker
+      id={path}
+      name={name}
+      disabledDate={disabledDate}
+      defaultValue={initialValue}
+      onChange={handleChange}
+      size={context?.size}
+    />
+  );
+};
+
+export const FormTypeDateDefinition = {
+  Component: FormTypeDate,
+  test: {
+    type: 'string',
+    format: 'date',
+  },
+} satisfies FormTypeInputDefinition;
