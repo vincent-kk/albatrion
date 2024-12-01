@@ -40,7 +40,7 @@ export const NullSchema = () => {
         jsonSchema={jsonSchema}
         defaultValue={{ null: null }}
         onChange={setValue}
-        onError={setErrors}
+        onValidate={setErrors}
       />
     </StoryLayout>
   );

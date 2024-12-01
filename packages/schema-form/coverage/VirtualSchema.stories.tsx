@@ -41,7 +41,7 @@ export const VirtualSchema = () => {
         jsonSchema={jsonSchema}
         defaultValue={{}}
         onChange={setValue}
-        onError={setErrors}
+        onValidate={setErrors}
       />
     </StoryLayout>
   );
