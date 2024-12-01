@@ -9,16 +9,6 @@ import { stringifyObject } from '@lumy/schema-form/helpers/object';
  * @returns 객체 스냅샷의 값
  */
 export function useSnapshot<T extends object>(object: T): T {
-  const snapshotRef = useSnapshotReference(object);
-  return snapshotRef.current;
-}
-
-/**
- * @description 객체의 스냅샷의 참조를 반환합니다.
- * @param object - 객체
- * @returns 객체 스냅샷의 Reference
- */
-export function useSnapshotReference<T>(object: T) {
   const snapshotRef = useRef(object);
   const snapshotHash = useRef(generateHash(stringifyObject(object)));
   const hash = useMemo(() => generateHash(stringifyObject(object)), [object]);
@@ -26,5 +16,5 @@ export function useSnapshotReference<T>(object: T) {
     snapshotRef.current = object;
     snapshotHash.current = hash;
   }
-  return snapshotRef;
+  return snapshotRef.current;
 }
