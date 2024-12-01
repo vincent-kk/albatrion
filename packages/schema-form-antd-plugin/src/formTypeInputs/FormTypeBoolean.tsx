@@ -17,7 +17,7 @@ const FormTypeBoolean = ({
   onChange,
 }: FormTypeInputProps<boolean>) => {
   const [indeterminate, checked] = useMemo(
-    () => [typeof value !== 'boolean', !!value],
+    () => [value !== undefined && typeof value !== 'boolean', !!value],
     [value],
   );
   const handleChange = useHandle((event: CheckboxChangeEvent) => {

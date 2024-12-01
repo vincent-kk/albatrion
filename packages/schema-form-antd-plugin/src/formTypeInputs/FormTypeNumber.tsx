@@ -37,6 +37,7 @@ const FormTypeNumber = ({
       disabled={disabled}
       min={jsonSchema.minimum}
       max={jsonSchema.maximum}
+      step={jsonSchema.multipleOf}
       formatter={formatter}
       parser={parser}
       defaultValue={defaultValue}

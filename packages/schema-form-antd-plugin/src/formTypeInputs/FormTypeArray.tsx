@@ -8,7 +8,7 @@ import type {
 } from '@lumy-pack/schema-form';
 
 const Add = (props: ButtonProps) => (
-  <Button type="dashed" icon={<PlusOutlined />} {...props}>
+  <Button type="primary" icon={<PlusOutlined />} {...props}>
     Add
   </Button>
 );
@@ -34,7 +34,7 @@ const FormTypeArray = ({
       {childNodes &&
         childNodes.map((Node, i) => {
           return (
-            <div key={Node.key}>
+            <div key={Node.key} style={{ display: 'flex' }}>
               <Node />
               {!readOnly && (
                 <Remove
@@ -46,8 +46,11 @@ const FormTypeArray = ({
             </div>
           );
         })}
+
       {!readOnly && (
-        <Add title="add" disabled={disabled} onClick={handleClick} />
+        <div style={{ marginLeft: 5 }}>
+          <Add title="add" disabled={disabled} onClick={handleClick} />
+        </div>
       )}
     </div>
   );
