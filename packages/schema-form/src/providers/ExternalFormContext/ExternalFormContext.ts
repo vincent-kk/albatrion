@@ -1,29 +1,18 @@
 import { type ComponentType, createContext } from 'react';
 
-import {
-  FormErrorRenderer,
-  FormGroupRenderer,
-  FormInputRenderer,
-  FormLabelRenderer,
-} from '@lumy/schema-form/components/FallbackComponents';
-import { formatError } from '@lumy/schema-form/components/utils/formatError';
 import type { NormalizedFormTypeInputDefinition } from '@lumy/schema-form/helpers/formTypeInputDefinition';
-import type { FormTypeRendererProps } from '@lumy/schema-form/types';
+import type {
+  FormTypeRendererProps,
+  FormatError,
+} from '@lumy/schema-form/types';
 
 export interface ExternalFormContextProps {
-  fromExternalFormTypeInputDefinitions: NormalizedFormTypeInputDefinition[];
-  FallbackFormGroupRenderer: ComponentType<FormTypeRendererProps>;
-  FallbackFormLabelRenderer: ComponentType<FormTypeRendererProps>;
-  FallbackFormInputRenderer: ComponentType<FormTypeRendererProps>;
-  FallbackFormErrorRenderer: ComponentType<FormTypeRendererProps>;
-  fallbackFormatError: FormTypeRendererProps['formatError'];
+  fromExternalFormTypeInputDefinitions?: NormalizedFormTypeInputDefinition[];
+  FormGroupRenderer?: ComponentType<FormTypeRendererProps>;
+  FormLabelRenderer?: ComponentType<FormTypeRendererProps>;
+  FormInputRenderer?: ComponentType<FormTypeRendererProps>;
+  FormErrorRenderer?: ComponentType<FormTypeRendererProps>;
+  formatError?: FormatError;
 }
 
-export const ExternalFormContext = createContext<ExternalFormContextProps>({
-  fromExternalFormTypeInputDefinitions: [],
-  FallbackFormGroupRenderer: FormGroupRenderer,
-  FallbackFormLabelRenderer: FormLabelRenderer,
-  FallbackFormInputRenderer: FormInputRenderer,
-  FallbackFormErrorRenderer: FormErrorRenderer,
-  fallbackFormatError: formatError,
-});
+export const ExternalFormContext = createContext<ExternalFormContextProps>({});

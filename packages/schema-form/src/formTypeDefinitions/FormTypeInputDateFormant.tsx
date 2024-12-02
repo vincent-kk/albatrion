@@ -2,7 +2,10 @@ import { type ChangeEvent, useMemo } from 'react';
 
 import { useHandle } from '@lumy-pack/common-react';
 
-import type { FormTypeInputPropsWithSchema } from '@lumy/schema-form/types';
+import type {
+  FormTypeInputDefinition,
+  FormTypeInputPropsWithSchema,
+} from '@lumy/schema-form/types';
 
 type DateFormatJsonSchema = {
   type: 'string';
@@ -13,7 +16,7 @@ type DateFormatJsonSchema = {
   };
 };
 
-export const FormTypeInputDateFormant = ({
+const FormTypeInputDateFormant = ({
   path,
   name,
   jsonSchema,
@@ -47,3 +50,13 @@ export const FormTypeInputDateFormant = ({
     />
   );
 };
+
+export const FormTypeInputDateFormantDefinition = {
+  Component: FormTypeInputDateFormant,
+  test: ({ jsonSchema }) =>
+    jsonSchema.type === 'string' &&
+    jsonSchema.format &&
+    ['month', 'week', 'date', 'time', 'datetime-local'].includes(
+      jsonSchema.format,
+    ),
+} satisfies FormTypeInputDefinition;

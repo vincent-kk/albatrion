@@ -22,7 +22,7 @@ import { FormTypeInputUriDefinition } from '../src/formTypeInputs/FormTypeInputU
 import StoryLayout from './components/StoryLayout';
 
 export default {
-  title: 'Components/FormTypeInput',
+  title: 'FormTypeInput',
   component: Form,
   decorators: [
     (Story, context) => {

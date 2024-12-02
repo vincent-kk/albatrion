@@ -2,9 +2,12 @@ import type { ChangeEvent } from 'react';
 
 import { useHandle } from '@lumy-pack/common-react';
 
-import type { FormTypeInputProps } from '@lumy/schema-form/types';
+import type {
+  FormTypeInputDefinition,
+  FormTypeInputProps,
+} from '@lumy/schema-form/types';
 
-export const FormTypeInputNumber = ({
+const FormTypeInputNumber = ({
   path,
   name,
   jsonSchema,
@@ -29,3 +32,8 @@ export const FormTypeInputNumber = ({
     />
   );
 };
+
+export const FormTypeInputNumberDefinition = {
+  Component: FormTypeInputNumber,
+  test: { type: ['number', 'integer'] },
+} satisfies FormTypeInputDefinition;

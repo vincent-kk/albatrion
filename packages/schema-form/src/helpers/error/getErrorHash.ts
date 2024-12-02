@@ -12,7 +12,7 @@ export const getErrorsHash = (errors: JsonSchemaError[]) =>
 
 const serializeError = ({ schemaPath, params = {} }: JsonSchemaError) =>
   `${schemaPath}?${Object.entries(params)
-    .map(([key, value]) => `${key}=${value?.toString?.() ?? ''}`)
+    .map(([key, value]) => `${key}=${value?.toString?.() || ''}`)
     .join('&')}`;
 
 const serializeErrors = (errors: JsonSchemaError[]) =>

@@ -2,7 +2,10 @@ import { type ChangeEvent, type ReactNode, useMemo } from 'react';
 
 import { useHandle } from '@lumy-pack/common-react';
 
-import type { FormTypeInputPropsWithSchema } from '@lumy/schema-form/types';
+import type {
+  FormTypeInputDefinition,
+  FormTypeInputPropsWithSchema,
+} from '@lumy/schema-form/types';
 
 type StringRadioJsonSchema = {
   type: 'string';
@@ -18,7 +21,7 @@ type RadioLabelsContext = {
   };
 };
 
-export const FormTypeInputStringRadio = ({
+const FormTypeInputStringRadio = ({
   path,
   name,
   jsonSchema,
@@ -68,3 +71,11 @@ export const FormTypeInputStringRadio = ({
     </>
   );
 };
+
+export const FormTypeInputStringRadioDefinition = {
+  Component: FormTypeInputStringRadio,
+  test: ({ jsonSchema }) =>
+    jsonSchema.type === 'string' &&
+    (jsonSchema.formType === 'radio' || jsonSchema.formType === 'radiogroup') &&
+    !!jsonSchema.enum?.length,
+} satisfies FormTypeInputDefinition;

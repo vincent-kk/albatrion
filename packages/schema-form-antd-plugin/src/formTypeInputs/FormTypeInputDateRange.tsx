@@ -39,7 +39,7 @@ const FormTypeInputDateRange = ({
   { size?: SizeType }
 >) => {
   const handleChange = useHandle((range: OnChangeRangeValueType<Dayjs>) => {
-    const [start, end] = range ?? [];
+    const [start, end] = range || [];
     if (!start || !end) return;
     onChange([start.format(DATE_FORMAT), end.format(DATE_FORMAT)]);
   });
@@ -55,7 +55,7 @@ const FormTypeInputDateRange = ({
     [defaultValue],
   );
   const disabledDate = useMemo(() => {
-    const { minimum, maximum } = jsonSchema.options ?? {};
+    const { minimum, maximum } = jsonSchema.options || {};
     return (date: Dayjs | null) => {
       if (!date) return false;
       if (!minimum && !maximum) return false;

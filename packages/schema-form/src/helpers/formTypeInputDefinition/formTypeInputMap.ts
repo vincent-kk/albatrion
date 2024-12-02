@@ -1,6 +1,7 @@
 import { isTruthy } from '@lumy-pack/common';
 import { isReactComponent } from '@lumy-pack/common-react';
 
+import { withErrorBoundary } from '@lumy/schema-form/components/utils/withErrorBoundary';
 import {
   type FormTypeInputMap,
   type FormTypeTestFn,
@@ -24,12 +25,12 @@ export const normalizeFormTypeInputMap = (
       if (FILTER_PATH_REGEX.test(path)) {
         return {
           test: formTypeTestFnFactory(path),
-          Component,
+          Component: withErrorBoundary(Component),
         };
       } else {
         return {
           test: pathExactMatchFnFactory(path),
-          Component,
+          Component: withErrorBoundary(Component),
         };
       }
     })

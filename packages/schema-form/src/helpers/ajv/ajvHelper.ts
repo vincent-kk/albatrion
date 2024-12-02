@@ -22,7 +22,7 @@ export const ajvHelper = {
     return ajvRef.current!;
   },
   compile({ jsonSchema, ajv }: { jsonSchema: JsonSchema; ajv?: Ajv }) {
-    return (ajv ?? ajvHelper.instance).compile({ ...jsonSchema, $async: true });
+    return (ajv || ajvHelper.instance).compile({ ...jsonSchema, $async: true });
   },
 };
 

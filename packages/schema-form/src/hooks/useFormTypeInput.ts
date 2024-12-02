@@ -1,9 +1,10 @@
 import { memo, useMemo } from 'react';
 
-import { isReactComponent } from '@lumy-pack/common-react';
+import { isFunctionComponent, isMemoComponent } from '@lumy-pack/common-react';
 
+import { StaticManager } from '@lumy/schema-form/app/StaticManager';
+import { withErrorBoundary } from '@lumy/schema-form/components/utils/withErrorBoundary';
 import type { SchemaNode } from '@lumy/schema-form/core';
-import { fromFallbackFormTypeInputDefinitions } from '@lumy/schema-form/formTypeDefinitions';
 import {
   useExternalFormContext,
   useFormTypeInputsContext,
@@ -25,25 +26,39 @@ export const useFormTypeInput = (node: SchemaNode) => {
 
   const FormTypeInput = useMemo(() => {
     // NOTE: formType이 React Component인 경우, 해당 Component를 반환합니다.
-    if (node.jsonSchema?.formType && isReactComponent(node.jsonSchema.formType))
-      return memo(node.jsonSchema.formType);
+    const inlineFormType = node.jsonSchema?.formType;
+    if (inlineFormType) {
+      if (isFunctionComponent(inlineFormType))
+        return memo(withErrorBoundary(inlineFormType));
+      if (isMemoComponent(inlineFormType))
+        return withErrorBoundary(inlineFormType);
+    }
 
     const hint = getHint(node);
+
     // NOTE: FormTypeInputMap has higher priority than FormTypeInputDefinitions
     for (const { test, Component } of fromFormTypeInputMap) {
       if (test(hint)) return memo(Component);
     }
+
     // NOTE: FormTypeInputDefinitions has lower priority than FormTypeInputMap
     for (const { test, Component } of fromFormTypeInputDefinitions) {
       if (test(hint)) return memo(Component);
     }
-    for (const { test, Component } of fromExternalFormTypeInputDefinitions) {
-      if (test(hint)) return memo(Component);
+
+    // NOTE: ExternalFormTypeInputDefinitions has lowest priority, it run only if it exists
+    if (fromExternalFormTypeInputDefinitions) {
+      for (const { test, Component } of fromExternalFormTypeInputDefinitions) {
+        if (test(hint)) return memo(Component);
+      }
     }
+
     // NOTE: fallback FormTypeInputDefinitions has lowest priority
-    for (const { test, Component } of fromFallbackFormTypeInputDefinitions) {
+    const staticDefinitions = StaticManager.formTypeInputDefinitions;
+    for (const { test, Component } of staticDefinitions) {
       if (test(hint)) return memo(Component);
     }
+
     return null;
   }, [
     node,

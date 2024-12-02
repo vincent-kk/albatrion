@@ -55,7 +55,7 @@ export const Errors = () => {
         ref={refHandle}
         jsonSchema={schema}
         onChange={handleChange}
-        onValidate={(errors) => _setErrors(errors ?? [])}
+        onValidate={(errors) => _setErrors(errors || [])}
         errors={errors}
         showError={true}
       />

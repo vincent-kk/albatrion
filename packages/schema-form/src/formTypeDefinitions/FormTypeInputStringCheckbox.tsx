@@ -2,7 +2,10 @@ import { type ChangeEvent, type ReactNode, useMemo } from 'react';
 
 import { useHandle } from '@lumy-pack/common-react';
 
-import type { FormTypeInputPropsWithSchema } from '@lumy/schema-form/types';
+import type {
+  FormTypeInputDefinition,
+  FormTypeInputPropsWithSchema,
+} from '@lumy/schema-form/types';
 
 type StringCheckboxJsonSchema = {
   type: 'array';
@@ -21,7 +24,7 @@ type CheckboxLabelsContext = {
   };
 };
 
-export const FormTypeInputStringCheckbox = ({
+const FormTypeInputStringCheckbox = ({
   path,
   name,
   jsonSchema,
@@ -76,3 +79,12 @@ export const FormTypeInputStringCheckbox = ({
     </div>
   );
 };
+
+export const FormTypeInputStringCheckboxDefinition = {
+  Component: FormTypeInputStringCheckbox,
+  test: ({ jsonSchema }) =>
+    jsonSchema.type === 'array' &&
+    jsonSchema.formType === 'checkbox' &&
+    jsonSchema.items?.type === 'string' &&
+    !!jsonSchema.items?.enum?.length,
+} satisfies FormTypeInputDefinition;

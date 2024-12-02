@@ -1,5 +1,6 @@
 import { type HTMLAttributes } from 'react';
 
+import { StaticManager } from '@lumy/schema-form/app/StaticManager';
 import {
   SchemaNodeProxy,
   type SchemaNodeProxyProps,
@@ -18,12 +19,14 @@ export const FormError = ({
   style,
   className,
 }: FormErrorProps) => {
-  const { FallbackFormErrorRenderer } = useExternalFormContext();
+  const { FormErrorRenderer } = useExternalFormContext();
   return (
     <div style={style} className={className}>
       <SchemaNodeProxy
         path={path}
-        FormTypeRenderer={FormTypeRenderer || FallbackFormErrorRenderer}
+        FormTypeRenderer={
+          FormTypeRenderer || FormErrorRenderer || StaticManager.FormError
+        }
       />
     </div>
   );

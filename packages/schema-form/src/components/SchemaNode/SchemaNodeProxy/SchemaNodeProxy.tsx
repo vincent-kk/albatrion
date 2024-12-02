@@ -24,7 +24,7 @@ export const SchemaNodeProxy = ({
   Wrapper: InputWrapper,
 }: SchemaNodeProxyProps) => {
   const { node, visible, watchValues } = usePrepareSchemaValues(
-    inputNode ?? path,
+    inputNode || path,
   );
 
   const watchValuesRef = useReference(watchValues);
@@ -66,12 +66,12 @@ export const SchemaNodeProxy = ({
 
   const InputFormTypeRendererRef = useReference(InputFormTypeRenderer);
   const FormTypeRenderer = useMemo(
-    () => InputFormTypeRendererRef.current ?? ContextFormTypeRenderer,
+    () => InputFormTypeRendererRef.current || ContextFormTypeRenderer,
     [InputFormTypeRendererRef, ContextFormTypeRenderer],
   );
 
   const Wrapper = useMemo(() => {
-    return InputWrapper ?? Fragment;
+    return InputWrapper || Fragment;
   }, [InputWrapper]);
 
   const { context: userDefinedContext } = useUserDefinedContext();

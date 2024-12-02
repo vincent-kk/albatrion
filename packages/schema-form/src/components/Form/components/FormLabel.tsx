@@ -1,5 +1,6 @@
 import { type HTMLAttributes } from 'react';
 
+import { StaticManager } from '@lumy/schema-form/app/StaticManager';
 import {
   SchemaNodeProxy,
   type SchemaNodeProxyProps,
@@ -18,12 +19,14 @@ export const FormLabel = ({
   style,
   className,
 }: FormLabelProps) => {
-  const { FallbackFormLabelRenderer } = useExternalFormContext();
+  const { FormLabelRenderer } = useExternalFormContext();
   return (
     <label style={style} className={className} htmlFor={path}>
       <SchemaNodeProxy
         path={path}
-        FormTypeRenderer={FormTypeRenderer || FallbackFormLabelRenderer}
+        FormTypeRenderer={
+          FormTypeRenderer || FormLabelRenderer || StaticManager.FormLabel
+        }
       />
     </label>
   );

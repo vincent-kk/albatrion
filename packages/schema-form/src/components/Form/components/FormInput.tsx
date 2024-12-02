@@ -1,3 +1,4 @@
+import { StaticManager } from '@lumy/schema-form/app/StaticManager';
 import {
   SchemaNodeProxy,
   type SchemaNodeProxyProps,
@@ -15,11 +16,13 @@ export const FormInput = ({
   FormTypeRenderer,
   ...overrideFormTypeInputProps
 }: FormInputProps) => {
-  const { FallbackFormInputRenderer } = useExternalFormContext();
+  const { FormInputRenderer } = useExternalFormContext();
   return (
     <SchemaNodeProxy
       path={path}
-      FormTypeRenderer={FormTypeRenderer || FallbackFormInputRenderer}
+      FormTypeRenderer={
+        FormTypeRenderer || FormInputRenderer || StaticManager.FormInput
+      }
       overrideFormTypeInputProps={overrideFormTypeInputProps}
     />
   );

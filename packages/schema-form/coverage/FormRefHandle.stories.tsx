@@ -93,7 +93,7 @@ export const FormRefHandle = () => {
         onClick={() =>
           formHandle.current?.setValue((prev) => {
             return {
-              number: (prev?.number ?? 0) + 1,
+              number: (prev?.number || 0) + 1,
             };
           })
         }

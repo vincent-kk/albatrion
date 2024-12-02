@@ -2,7 +2,10 @@ import { type ChangeEvent, type ReactNode, useMemo } from 'react';
 
 import { useHandle } from '@lumy-pack/common-react';
 
-import type { FormTypeInputPropsWithSchema } from '@lumy/schema-form/types';
+import type {
+  FormTypeInputDefinition,
+  FormTypeInputPropsWithSchema,
+} from '@lumy/schema-form/types';
 
 type StringEnumJsonSchema = {
   type: 'string';
@@ -18,7 +21,7 @@ type EnumLabelsContext = {
   };
 };
 
-export const FormTypeInputStringEnum = ({
+const FormTypeInputStringEnum = ({
   path,
   name,
   jsonSchema,
@@ -63,3 +66,9 @@ export const FormTypeInputStringEnum = ({
     </select>
   );
 };
+
+export const FormTypeInputStringEnumDefinition = {
+  Component: FormTypeInputStringEnum,
+  test: ({ jsonSchema }) =>
+    jsonSchema.type === 'string' && !!jsonSchema.enum?.length,
+} satisfies FormTypeInputDefinition;

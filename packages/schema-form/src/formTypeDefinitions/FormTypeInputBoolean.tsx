@@ -2,9 +2,12 @@ import type { ChangeEvent } from 'react';
 
 import { useHandle } from '@lumy-pack/common-react';
 
-import type { FormTypeInputProps } from '@lumy/schema-form/types';
+import type {
+  FormTypeInputDefinition,
+  FormTypeInputProps,
+} from '@lumy/schema-form/types';
 
-export const FormTypeInputBoolean = ({
+const FormTypeInputBoolean = ({
   path,
   name,
   readOnly,
@@ -27,3 +30,8 @@ export const FormTypeInputBoolean = ({
     />
   );
 };
+
+export const FormTypeInputBooleanDefinition = {
+  Component: FormTypeInputBoolean,
+  test: { type: 'boolean' },
+} satisfies FormTypeInputDefinition;

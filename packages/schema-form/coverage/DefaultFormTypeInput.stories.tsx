@@ -3,15 +3,15 @@ import React, { useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 
 import { Form, type JsonSchemaError } from '@lumy-pack/schema-form/src';
-import { FormTypeInputArray } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputArray';
-import { FormTypeInputBoolean } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputBoolean';
-import { FormTypeInputDateFormant } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputDateFormant';
-import { FormTypeInputNumber } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputNumber';
-import { FormTypeInputObject } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputObject';
-import { FormTypeInputString } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputString';
-import { FormTypeInputStringCheckbox } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputStringCheckbox';
-import { FormTypeInputStringEnum } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputStringEnum';
-import { FormTypeInputStringRadio } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputStringRadio';
+import { FormTypeInputArrayDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputArray';
+import { FormTypeInputBooleanDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputBoolean';
+import { FormTypeInputDateFormantDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputDateFormant';
+import { FormTypeInputNumberDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputNumber';
+import { FormTypeInputObjectDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputObject';
+import { FormTypeInputStringDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputString';
+import { FormTypeInputStringCheckboxDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputStringCheckbox';
+import { FormTypeInputStringEnumDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputStringEnum';
+import { FormTypeInputStringRadioDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputStringRadio';
 
 import StoryLayout from './components/StoryLayout';
 
@@ -52,7 +52,7 @@ export const Boolean = Template.bind({});
 Boolean.args = {
   jsonSchema: {
     type: 'boolean',
-    formType: FormTypeInputBoolean,
+    formType: FormTypeInputBooleanDefinition.Component,
   },
 };
 
@@ -60,7 +60,7 @@ export const String = Template.bind({});
 String.args = {
   jsonSchema: {
     type: 'string',
-    formType: FormTypeInputString,
+    formType: FormTypeInputStringDefinition.Component,
   },
 };
 
@@ -72,7 +72,7 @@ StringCheckbox.args = {
       type: 'string',
       enum: ['a', 'b', 'c'],
     },
-    formType: FormTypeInputStringCheckbox,
+    formType: FormTypeInputStringCheckboxDefinition.Component,
   },
 };
 
@@ -81,7 +81,7 @@ StringRadio.args = {
   jsonSchema: {
     type: 'string',
     enum: ['a', 'b', 'c'],
-    formType: FormTypeInputStringRadio,
+    formType: FormTypeInputStringRadioDefinition.Component,
   },
 };
 
@@ -90,7 +90,7 @@ StringEnum.args = {
   jsonSchema: {
     type: 'string',
     enum: ['', 'a', 'b', 'c'],
-    formType: FormTypeInputStringEnum,
+    formType: FormTypeInputStringEnumDefinition.Component,
   },
 };
 
@@ -99,7 +99,7 @@ DateTimeFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'datetime-local',
-    formType: FormTypeInputDateFormant,
+    formType: FormTypeInputDateFormantDefinition.Component,
   },
 };
 
@@ -108,7 +108,7 @@ TimeFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'time',
-    formType: FormTypeInputDateFormant,
+    formType: FormTypeInputDateFormantDefinition.Component,
   },
 };
 
@@ -117,7 +117,7 @@ DateFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'date',
-    formType: FormTypeInputDateFormant,
+    formType: FormTypeInputDateFormantDefinition.Component,
   },
 };
 
@@ -126,7 +126,7 @@ WeekFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'week',
-    formType: FormTypeInputDateFormant,
+    formType: FormTypeInputDateFormantDefinition.Component,
   },
 };
 
@@ -135,7 +135,7 @@ MonthFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'month',
-    formType: FormTypeInputDateFormant,
+    formType: FormTypeInputDateFormantDefinition.Component,
   },
 };
 
@@ -143,7 +143,7 @@ export const Number = Template.bind({});
 Number.args = {
   jsonSchema: {
     type: 'number',
-    formType: FormTypeInputNumber,
+    formType: FormTypeInputNumberDefinition.Component,
   },
 };
 
@@ -153,12 +153,12 @@ Array.args = {
     type: 'array',
     items: {
       type: 'string',
-      formType: FormTypeInputString,
+      formType: FormTypeInputStringDefinition.Component,
       default: 'ARRAY_ITEM',
       disabled: true,
     },
     minItems: 3,
-    formType: FormTypeInputArray,
+    formType: FormTypeInputArrayDefinition.Component,
   },
 };
 
@@ -166,19 +166,19 @@ export const Object = Template.bind({});
 Object.args = {
   jsonSchema: {
     type: 'object',
-    formType: FormTypeInputObject,
+    formType: FormTypeInputObjectDefinition.Component,
     properties: {
       a: {
         type: 'boolean',
-        formType: FormTypeInputBoolean,
+        formType: FormTypeInputBooleanDefinition.Component,
       },
       b: {
         type: 'string',
-        formType: FormTypeInputString,
+        formType: FormTypeInputStringDefinition.Component,
       },
       c: {
         type: 'number',
-        formType: FormTypeInputNumber,
+        formType: FormTypeInputNumberDefinition.Component,
       },
     },
   },
