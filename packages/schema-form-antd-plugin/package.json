@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lumy-pack/schema-form.git",
+    "url": "https://github.com/lumy-pack/schema-form-antd-plugin.git",
     "directory": "packages/schema-form-antd-plugin"
   },
   "license": "MIT",
@@ -22,16 +22,18 @@
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "test": "vitest",
     "clean": "rm -rf dist",
-    "build": "yarn clean && rollup -c --bundleConfigAsCjs",
-    "build:watch": "yarn clean && rollup -c -w --bundleConfigAsCjs",
+    "prepare": "yarn workspace @lumy-pack/common build && yarn workspace @lumy-pack/common-react build",
+    "build": "yarn clean && yarn prepare && rollup -c",
+    "build:watch": "yarn clean && yarn prepare && rollup -c -w",
     "start": "yarn build && yarn storybook",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --report-unused-disable-directives --max-warnings 0",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.0.0",
     "@lumy-pack/common-react": "workspace:*",
-    "antd": "^5.0.0",
+    "antd": "^5.10.0",
     "dayjs": "^1.0.0"
   },
   "devDependencies": {
@@ -76,7 +78,7 @@
     "vitest": "^2.1.5"
   },
   "peerDependencies": {
-    "antd": ">=5",
+    "antd": ">=5.10.0",
     "dayjs": ">=1",
     "react": ">=16 <19",
     "react-dom": ">=16 <19"

@@ -7,14 +7,7 @@ const resolve = require('@rollup/plugin-node-resolve');
 // NOTE: 3. @rollup/plugin-replace is used to replace the process.env.NODE_ENV with 'production'
 const replace = require('@rollup/plugin-replace');
 
-// NOTE: 4. rollup-plugin-postcss is used to process the CSS files
-const postcss = require('rollup-plugin-postcss');
-
-// NOTE: 5. autoprefixer is used to add vendor prefixes to the CSS
-// NOTE: 6. cssnano is used to minify the CSS
 // NOTE: 7. rollup-plugin-copy is used to copy the types to the dist folder
-const autoprefixer = require('autoprefixer');
-const cssnano = require('cssnano');
 const copy = require('rollup-plugin-copy');
 
 // NOTE: 8. @rollup/plugin-commonjs is used to convert CommonJS modules to ES modules
@@ -27,12 +20,10 @@ const typescript = require('rollup-plugin-typescript2');
 const { terser } = require('rollup-plugin-terser');
 
 // NOTE: 11. rollup-plugin-visualizer is used to visualize the bundle size
-const visualizer = require('rollup-plugin-visualizer').visualizer;
+// const visualizer = require('rollup-plugin-visualizer').visualizer;
 
 // NOTE: 12. package.json is used to get the package information
 const packageJson = require('./package.json');
-
-const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = [
   {
@@ -58,17 +49,6 @@ module.exports = [
       }),
       replace({
         preventAssignment: true,
-        'process.env.NODE_ENV': JSON.stringify(
-          isProduction ? 'production' : 'development',
-        ),
-      }),
-      postcss({
-        plugins: [autoprefixer(), cssnano({ preset: 'default' })],
-        minimize: true,
-        sourceMap: true,
-        modules: {
-          generateScopedName: '[name]__[local]___[hash:base64:5]',
-        },
       }),
       copy({
         targets: [
@@ -109,14 +89,21 @@ module.exports = [
           passes: 5,
         },
         output: {
-          comments: isProduction,
+          comments: true,
         },
       }),
-      visualizer({
-        filename: 'stats.html',
-        gzipSize: true,
-      }),
+      // visualizer({
+      //   filename: 'stats.html',
+      //   gzipSize: true,
+      // }),
     ],
-    external: ['react', 'react-dom'],
+    external: [
+      'react',
+      'react-dom',
+      '@ant-design/icons',
+      'antd',
+      'ajv',
+      'dayjs',
+    ],
   },
 ];

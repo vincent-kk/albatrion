@@ -1,9 +1,6 @@
 import { Flex, Typography } from 'antd';
 
-import {
-  type FormTypeRendererProps,
-  isBranchNode,
-} from '@lumy-pack/schema-form';
+import type { FormTypeRendererProps } from '@lumy-pack/schema-form';
 
 export const FormGroup = ({
   node,
@@ -15,7 +12,11 @@ export const FormGroup = ({
 }: FormTypeRendererProps) => {
   if (depth === 0) return <Input />;
 
-  if (isBranchNode(node)) {
+  if (
+    node.type === 'object' ||
+    node.type === 'array' ||
+    node.type === 'virtual'
+  ) {
     return (
       <fieldset
         style={{
