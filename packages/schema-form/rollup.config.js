@@ -110,9 +110,9 @@ module.exports = [
       // visualizer({
       //   filename: 'stats.html',
       //   gzipSize: true,
-      //   // open: true,
+      //   open: true,
       // }),
     ],
-    external: ['react', 'react-dom', 'ajv'],
+    external: (path) => /node_modules/.test(path),
   },
 ];

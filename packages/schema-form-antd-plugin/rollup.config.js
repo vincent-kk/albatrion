@@ -97,13 +97,6 @@ module.exports = [
       //   gzipSize: true,
       // }),
     ],
-    external: [
-      'react',
-      'react-dom',
-      '@ant-design/icons',
-      'antd',
-      'ajv',
-      'dayjs',
-    ],
+    external: (path) => /node_modules/.test(path),
   },
 ];
