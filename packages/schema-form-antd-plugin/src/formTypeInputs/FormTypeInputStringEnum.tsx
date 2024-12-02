@@ -34,22 +34,21 @@ const FormTypeInputStringEnum = ({
   StringJsonSchema | ArrayJsonSchema,
   { size?: SizeType }
 >) => {
-  const [schema, mode] = useMemo(() => {
+  const [schema, alias, mode] = useMemo(() => {
     if (jsonSchema.type === 'array')
-      return [jsonSchema.items, 'multiple'] as const;
-    return [jsonSchema, undefined] as const;
+      return [jsonSchema.items, jsonSchema?.alias, 'multiple'] as const;
+    else return [jsonSchema, jsonSchema?.alias, undefined] as const;
   }, [jsonSchema]);
 
   const Options = useMemo(() => {
-    const alias = schema.options?.alias || {};
     return (
       schema.enum?.map((value, index) => (
         <Select.Option key={index + value} value={value}>
-          {alias[value] || value}
+          {alias?.[value] || value}
         </Select.Option>
       )) || []
     );
-  }, [schema]);
+  }, [alias, schema]);
 
   const handleChange = useHandle((value: string | string[]) => {
     onChange(value);
@@ -60,7 +59,6 @@ const FormTypeInputStringEnum = ({
       mode={mode}
       disabled={disabled}
       defaultValue={defaultValue}
-      options={Options}
       onChange={handleChange}
       size={context?.size}
     >
