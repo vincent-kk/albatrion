@@ -4,12 +4,12 @@ import type { Meta, StoryFn } from '@storybook/react';
 
 import { Form, type JsonSchemaError } from '@lumy-pack/schema-form';
 
-import { FormTypeArrayDefinition } from '../src/formTypeInputs/FormTypeArray';
-import { FormTypeBooleanDefinition } from '../src/formTypeInputs/FormTypeBoolean';
-import { FormTypeDateDefinition } from '../src/formTypeInputs/FormTypeDate';
-import { FormTypeNumberDefinition } from '../src/formTypeInputs/FormTypeNumber';
-import { FormTypeStringDefinition } from '../src/formTypeInputs/FormTypeString';
-import { FormTypeUriDefinition } from '../src/formTypeInputs/FormTypeUri';
+import { FormTypeInputArrayDefinition } from '../src/formTypeInputs/FormTypeInputArray';
+import { FormTypeInputBooleanDefinition } from '../src/formTypeInputs/FormTypeInputBoolean';
+import { FormTypeInputDateDefinition } from '../src/formTypeInputs/FormTypeInputDate';
+import { FormTypeInputNumberDefinition } from '../src/formTypeInputs/FormTypeInputNumber';
+import { FormTypeInputStringDefinition } from '../src/formTypeInputs/FormTypeInputString';
+import { FormTypeInputUriDefinition } from '../src/formTypeInputs/FormTypeInputUri';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -49,7 +49,7 @@ export const Boolean = Template.bind({});
 Boolean.args = {
   jsonSchema: {
     type: 'boolean',
-    formType: FormTypeBooleanDefinition.Component,
+    formType: FormTypeInputBooleanDefinition.Component,
   },
 };
 
@@ -57,7 +57,7 @@ export const String = Template.bind({});
 String.args = {
   jsonSchema: {
     type: 'string',
-    formType: FormTypeStringDefinition.Component,
+    formType: FormTypeInputStringDefinition.Component,
   },
 };
 
@@ -66,7 +66,7 @@ Password.args = {
   jsonSchema: {
     type: 'string',
     format: 'password',
-    formType: FormTypeStringDefinition.Component,
+    formType: FormTypeInputStringDefinition.Component,
   },
 };
 
@@ -74,7 +74,7 @@ export const Uri = Template.bind({});
 Uri.args = {
   jsonSchema: {
     type: 'string',
-    formType: FormTypeUriDefinition.Component,
+    formType: FormTypeInputUriDefinition.Component,
     options: {
       protocols: ['http://', 'https://', 'ftp://', 'mailto:'],
     },
@@ -134,7 +134,7 @@ DateFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'date',
-    formType: FormTypeDateDefinition.Component,
+    formType: FormTypeInputDateDefinition.Component,
   },
 };
 
@@ -161,7 +161,7 @@ Number.args = {
   jsonSchema: {
     type: 'number',
     multipleOf: 0.1,
-    formType: FormTypeNumberDefinition.Component,
+    formType: FormTypeInputNumberDefinition.Component,
   },
 };
 
@@ -170,7 +170,7 @@ Integer.args = {
   jsonSchema: {
     type: 'integer',
     multipleOf: 3,
-    formType: FormTypeNumberDefinition.Component,
+    formType: FormTypeInputNumberDefinition.Component,
   },
 };
 
@@ -180,11 +180,11 @@ Array.args = {
     type: 'array',
     items: {
       type: 'string',
-      formType: FormTypeStringDefinition.Component,
+      formType: FormTypeInputStringDefinition.Component,
       default: 'ARRAY_ITEM',
       disabled: true,
     },
     minItems: 3,
-    formType: FormTypeArrayDefinition.Component,
+    formType: FormTypeInputArrayDefinition.Component,
   },
 };
