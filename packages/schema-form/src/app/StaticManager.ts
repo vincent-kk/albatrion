@@ -28,7 +28,7 @@ interface FormType {
   formatError: FormatError;
 }
 
-const baseFormTypeRef: MutableRefObject<FormType> = {
+const staticFormTypeRef: MutableRefObject<FormType> = {
   current: {
     FormGroup: FormGroupRenderer,
     FormLabel: FormLabelRenderer,
@@ -38,35 +38,35 @@ const baseFormTypeRef: MutableRefObject<FormType> = {
   },
 };
 
-const baseFormTypeInputDefinitionsRef: MutableRefObject<
+const staticFormTypeInputDefinitionsRef: MutableRefObject<
   NormalizedFormTypeInputDefinition[]
 > = {
   current: normalizeFormTypeInputDefinitions(formTypeDefinitions),
 };
 
-export const BaseFormTypeManager = {
+export const StaticManager = {
   get FormGroup() {
-    return baseFormTypeRef.current.FormGroup;
+    return staticFormTypeRef.current.FormGroup;
   },
   get FormLabel() {
-    return baseFormTypeRef.current.FormLabel;
+    return staticFormTypeRef.current.FormLabel;
   },
   get FormInput() {
-    return baseFormTypeRef.current.FormInput;
+    return staticFormTypeRef.current.FormInput;
   },
   get FormError() {
-    return baseFormTypeRef.current.FormError;
+    return staticFormTypeRef.current.FormError;
   },
   get formatError() {
-    return baseFormTypeRef.current.formatError;
+    return staticFormTypeRef.current.formatError;
   },
   get formTypeInputDefinitions() {
-    return baseFormTypeInputDefinitionsRef.current;
+    return staticFormTypeInputDefinitionsRef.current;
   },
   appendFormType(formType: Partial<FormType> | undefined) {
     if (!formType) return;
-    baseFormTypeRef.current = {
-      ...baseFormTypeRef.current,
+    staticFormTypeRef.current = {
+      ...staticFormTypeRef.current,
       ...removeUndefined(formType),
     };
   },
@@ -74,9 +74,9 @@ export const BaseFormTypeManager = {
     formTypeInputDefinitions: FormTypeInputDefinition[] | undefined,
   ) {
     if (!formTypeInputDefinitions) return;
-    baseFormTypeInputDefinitionsRef.current = [
+    staticFormTypeInputDefinitionsRef.current = [
       ...normalizeFormTypeInputDefinitions(formTypeInputDefinitions),
-      ...baseFormTypeInputDefinitionsRef.current,
+      ...staticFormTypeInputDefinitionsRef.current,
     ];
   },
 };

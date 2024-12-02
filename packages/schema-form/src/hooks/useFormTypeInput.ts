@@ -2,7 +2,7 @@ import { memo, useMemo } from 'react';
 
 import { isFunctionComponent, isMemoComponent } from '@lumy-pack/common-react';
 
-import { BaseFormTypeManager } from '@lumy/schema-form/app/BaseFormTypeManager';
+import { StaticManager } from '@lumy/schema-form/app/StaticManager';
 import { withErrorBoundary } from '@lumy/schema-form/components/utils/withErrorBoundary';
 import type { SchemaNode } from '@lumy/schema-form/core';
 import {
@@ -54,9 +54,8 @@ export const useFormTypeInput = (node: SchemaNode) => {
     }
 
     // NOTE: fallback FormTypeInputDefinitions has lowest priority
-    const baseFormTypeInputDefinitions =
-      BaseFormTypeManager.formTypeInputDefinitions;
-    for (const { test, Component } of baseFormTypeInputDefinitions) {
+    const staticDefinitions = StaticManager.formTypeInputDefinitions;
+    for (const { test, Component } of staticDefinitions) {
       if (test(hint)) return memo(Component);
     }
 

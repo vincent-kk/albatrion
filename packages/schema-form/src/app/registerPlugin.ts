@@ -5,7 +5,7 @@ import type {
   FormTypeRendererProps,
   FormatError,
 } from '../types';
-import { BaseFormTypeManager } from './BaseFormTypeManager';
+import { StaticManager } from './StaticManager';
 
 export const registerPlugin = ({
   FormGroup,
@@ -15,14 +15,14 @@ export const registerPlugin = ({
   formatError,
   formTypeInputDefinitions,
 }: Plugin) => {
-  BaseFormTypeManager.appendFormType({
+  StaticManager.appendFormType({
     FormGroup,
     FormLabel,
     FormInput,
     FormError,
     formatError,
   });
-  BaseFormTypeManager.appendFormTypeInputDefinitions(formTypeInputDefinitions);
+  StaticManager.appendFormTypeInputDefinitions(formTypeInputDefinitions);
 };
 
 export interface Plugin {
