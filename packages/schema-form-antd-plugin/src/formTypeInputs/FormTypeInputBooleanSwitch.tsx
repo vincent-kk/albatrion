@@ -23,7 +23,7 @@ const FormTypeInputBooleanSwitch = ({
   path,
   jsonSchema,
   disabled,
-  defaultValue,
+  value,
   onChange,
   context,
 }: FormTypeInputPropsWithSchema<
@@ -44,7 +44,7 @@ const FormTypeInputBooleanSwitch = ({
     <Switch
       key={path}
       disabled={disabled}
-      checked={defaultValue}
+      checked={value}
       checkedChildren={checkedLabel}
       unCheckedChildren={uncheckedLabel}
       onChange={handleChange}

@@ -114,6 +114,7 @@ const FormTypeInputUri = ({
       readOnly={readOnly}
       disabled={disabled}
       addonBefore={ProtocolDropdown}
+      placeholder={jsonSchema.placeholder}
       defaultValue={defaultPathBody}
       onChange={handleChangeUriBody}
       size={context?.size}

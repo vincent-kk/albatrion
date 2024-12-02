@@ -57,6 +57,7 @@ const FormTypeInputStringEnum = ({
     <Select
       id={path}
       mode={mode}
+      placeholder={jsonSchema.placeholder}
       disabled={disabled}
       defaultValue={defaultValue}
       onChange={handleChange}
@@ -69,11 +70,10 @@ const FormTypeInputStringEnum = ({
 
 export const FormTypeInputStringEnumDefinition = {
   Component: FormTypeInputStringEnum,
-  test: ({ type, formType, jsonSchema }) => {
+  test: ({ type, jsonSchema }) => {
     return (
-      (type === 'string' && formType === 'select' && jsonSchema.enum?.length) ||
+      (type === 'string' && jsonSchema.enum?.length) ||
       (type === 'array' &&
-        formType === 'select' &&
         jsonSchema.items.type === 'string' &&
         jsonSchema.items.enum?.length)
     );

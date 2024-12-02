@@ -21,7 +21,7 @@ const FormTypeInputStringSwitch = ({
   path,
   jsonSchema,
   disabled,
-  defaultValue,
+  value,
   onChange,
   context,
 }: FormTypeInputPropsWithSchema<
@@ -47,7 +47,7 @@ const FormTypeInputStringSwitch = ({
     <Switch
       key={path}
       disabled={disabled}
-      checked={defaultValue === checked}
+      checked={value === checked}
       checkedChildren={checkedLabel}
       unCheckedChildren={uncheckedLabel}
       onChange={handleChange}

@@ -35,6 +35,7 @@ const FormTypeInputNumber = ({
       name={name}
       readOnly={readOnly}
       disabled={disabled}
+      placeholder={jsonSchema.placeholder}
       min={jsonSchema.minimum}
       max={jsonSchema.maximum}
       step={jsonSchema.multipleOf}

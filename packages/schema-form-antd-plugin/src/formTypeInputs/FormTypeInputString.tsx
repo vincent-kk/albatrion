@@ -43,6 +43,7 @@ const FormTypeInputString = ({
       name={name}
       readOnly={readOnly}
       disabled={disabled}
+      placeholder={jsonSchema.placeholder}
       defaultValue={defaultValue}
       onChange={handleChange}
       size={context?.size}

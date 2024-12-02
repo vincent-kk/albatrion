@@ -46,6 +46,7 @@ const FormTypeInputTextarea = ({
       disabled={disabled}
       readOnly={readOnly}
       autoSize={autoSize}
+      placeholder={jsonSchema.placeholder}
       defaultValue={defaultValue}
       onChange={handleChange}
       size={context?.size}

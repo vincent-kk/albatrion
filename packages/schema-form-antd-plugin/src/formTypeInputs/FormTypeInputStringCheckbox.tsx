@@ -45,6 +45,7 @@ const FormTypeInputStringCheckbox = ({
   return (
     <Checkbox.Group
       name={name}
+      style={{ display: 'flex' }}
       options={options}
       disabled={disabled}
       defaultValue={defaultValue}

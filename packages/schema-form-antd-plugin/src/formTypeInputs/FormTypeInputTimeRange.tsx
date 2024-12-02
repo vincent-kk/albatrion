@@ -24,7 +24,7 @@ type RangeValueType<T> = Parameter<
 
 type OnChangeRangeValueType<T> = RangeValueType<T> | null;
 
-const FormTypeInputDateRange = ({
+const FormTypeInputTimeRange = ({
   path,
   name,
   jsonSchema,
@@ -83,10 +83,10 @@ const FormTypeInputDateRange = ({
   );
 };
 
-export const FormTypeInputDateRangeDefinition = {
-  Component: FormTypeInputDateRange,
+export const FormTypeInputTimeRangeDefinition = {
+  Component: FormTypeInputTimeRange,
   test: ({ type, format, formType, jsonSchema }) =>
     type === 'array' &&
-    (format === 'month-range' || formType === 'monthRange') &&
+    (format === 'time-range' || formType === 'timeRange') &&
     jsonSchema.items?.type === 'string',
 } satisfies FormTypeInputDefinition;

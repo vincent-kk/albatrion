@@ -48,7 +48,7 @@ const FormTypeInputArray = ({
         })}
 
       {!readOnly && (
-        <div style={{ marginLeft: 5 }}>
+        <div style={{ marginLeft: 20 }}>
           <Add title="add" disabled={disabled} onClick={handleClick} />
         </div>
       )}
