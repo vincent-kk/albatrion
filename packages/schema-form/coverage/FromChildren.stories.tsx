@@ -28,7 +28,7 @@ export const FunctionalChildren = () => {
     },
   } satisfies JsonSchema;
 
-  const defaultValue = useRef({
+  const defaultValue = useRef<Record<string, any>>({
     allowed: false,
   });
 

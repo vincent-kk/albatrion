@@ -35,11 +35,14 @@ import type {
   FormTypeInputPropsWithNode,
   FormTypeInputPropsWithSchema,
   FormTypeRendererProps,
+  FormTypeTestFn,
+  FormTypeTestObject,
   FormatError,
   FormatErrorOptions,
   InferJsonSchemaType,
   JsonSchema,
   JsonSchemaError,
+  ArraySchema,
   NullSchema,
   NumberSchema,
   ObjectSchema,
@@ -78,6 +81,7 @@ export {
 export {
   JSONPath,
   type JsonSchema,
+  type ArraySchema,
   type BooleanSchema,
   type NumberSchema,
   type StringSchema,
@@ -95,6 +99,8 @@ export {
 };
 
 export type {
+  FormTypeTestFn,
+  FormTypeTestObject,
   FormTypeRendererProps,
   FormTypeInputDefinition,
   FormTypeInputMap,

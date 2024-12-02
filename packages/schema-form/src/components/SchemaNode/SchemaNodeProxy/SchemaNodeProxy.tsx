@@ -81,10 +81,8 @@ export const SchemaNodeProxy = ({
   const errors = node?.errors;
 
   const formatError = useMemo(() => {
-    if (checkShowError({ dirty, touched }) === false) {
-      return nullFunction;
-    }
-    return contextFormatError;
+    if (checkShowError({ dirty, touched }) === false) return nullFunction;
+    else return contextFormatError;
   }, [checkShowError, contextFormatError, dirty, touched]);
 
   const errorMessage = useMemo(() => {

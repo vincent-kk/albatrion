@@ -79,7 +79,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ant-design/icons@npm:^5.5.1":
+"@ant-design/icons@npm:^5.5.2":
   version: 5.5.2
   resolution: "@ant-design/icons@npm:5.5.2"
   dependencies:
@@ -1062,7 +1062,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@lumy-pack/common-react@workspace:packages/common-react":
+"@lumy-pack/common-react@workspace:*, @lumy-pack/common-react@workspace:packages/common-react":
   version: 0.0.0-use.local
   resolution: "@lumy-pack/common-react@workspace:packages/common-react"
   dependencies:
@@ -1100,7 +1100,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@lumy-pack/common@workspace:packages/common":
+"@lumy-pack/common@workspace:*, @lumy-pack/common@workspace:packages/common":
   version: 0.0.0-use.local
   resolution: "@lumy-pack/common@workspace:packages/common"
   dependencies:
@@ -1133,7 +1133,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@lumy-pack/schema-form-antd-plugin@workspace:packages/schema-form-antd-plugin"
   dependencies:
+    "@ant-design/icons": "npm:^5.5.2"
     "@chromatic-com/storybook": "npm:^3.2.2"
+    "@lumy-pack/common-react": "workspace:*"
     "@lumy-pack/schema-form": "workspace:*"
     "@rollup/plugin-commonjs": "npm:^28.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
@@ -1151,11 +1153,10 @@ __metadata:
     "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
     "@typescript-eslint/eslint-plugin": "npm:^8.14.0"
     "@typescript-eslint/parser": "npm:^8.14.0"
-    antd: "npm:^5.22.2"
+    antd: "npm:^5.10.0"
     autoprefixer: "npm:^10.4.20"
-    clsx: "npm:^2.1.1"
     cssnano: "npm:^7.0.6"
-    dayjs: "npm:^1.11.13"
+    dayjs: "npm:^1.0.0"
     eslint: "npm:^8.56.0"
     eslint-plugin-react: "npm:^7.37.2"
     eslint-plugin-react-hooks: "npm:^5.0.0"
@@ -1171,12 +1172,13 @@ __metadata:
     rollup-plugin-postcss: "npm:^4.0.2"
     rollup-plugin-terser: "npm:^7.0.2"
     rollup-plugin-typescript2: "npm:^0.36.0"
-    sass: "npm:^1.81.0"
     storybook: "npm:^8.4.5"
     typescript: "npm:^5.7.2"
     vite: "npm:^5.4.11"
     vitest: "npm:^2.1.5"
   peerDependencies:
+    antd: ">=5.10.0"
+    dayjs: ">=1"
     react: ">=16 <19"
     react-dom: ">=16 <19"
   languageName: unknown
@@ -1187,6 +1189,8 @@ __metadata:
   resolution: "@lumy-pack/schema-form@workspace:packages/schema-form"
   dependencies:
     "@chromatic-com/storybook": "npm:^3.2.2"
+    "@lumy-pack/common": "workspace:*"
+    "@lumy-pack/common-react": "workspace:*"
     "@rollup/plugin-commonjs": "npm:^28.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
     "@rollup/plugin-replace": "npm:^6.0.1"
@@ -1207,7 +1211,7 @@ __metadata:
     "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
     "@typescript-eslint/eslint-plugin": "npm:^8.14.0"
     "@typescript-eslint/parser": "npm:^8.14.0"
-    ajv: "npm:^8.17.1"
+    ajv: "npm:^8.0.0"
     autoprefixer: "npm:^10.4.20"
     cssnano: "npm:^7.0.6"
     eslint: "npm:^8.56.0"
@@ -1296,150 +1300,6 @@ __metadata:
   dependencies:
     semver: "npm:^7.3.5"
   checksum: 10c0/c37a5b4842bfdece3d14dfdb054f73fe15ed2d3da61b34ff76629fb5b1731647c49166fd2a8bf8b56fcfa51200382385ea8909a3cbecdad612310c114d3f6c99
-  languageName: node
-  linkType: hard
-
-"@parcel/watcher-android-arm64@npm:2.5.0":
-  version: 2.5.0
-  resolution: "@parcel/watcher-android-arm64@npm:2.5.0"
-  conditions: os=android & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@parcel/watcher-darwin-arm64@npm:2.5.0":
-  version: 2.5.0
-  resolution: "@parcel/watcher-darwin-arm64@npm:2.5.0"
-  conditions: os=darwin & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@parcel/watcher-darwin-x64@npm:2.5.0":
-  version: 2.5.0
-  resolution: "@parcel/watcher-darwin-x64@npm:2.5.0"
-  conditions: os=darwin & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@parcel/watcher-freebsd-x64@npm:2.5.0":
-  version: 2.5.0
-  resolution: "@parcel/watcher-freebsd-x64@npm:2.5.0"
-  conditions: os=freebsd & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@parcel/watcher-linux-arm-glibc@npm:2.5.0":
-  version: 2.5.0
-  resolution: "@parcel/watcher-linux-arm-glibc@npm:2.5.0"
-  conditions: os=linux & cpu=arm & libc=glibc
-  languageName: node
-  linkType: hard
-
-"@parcel/watcher-linux-arm-musl@npm:2.5.0":
-  version: 2.5.0
-  resolution: "@parcel/watcher-linux-arm-musl@npm:2.5.0"
-  conditions: os=linux & cpu=arm & libc=musl
-  languageName: node
-  linkType: hard
-
-"@parcel/watcher-linux-arm64-glibc@npm:2.5.0":
-  version: 2.5.0
-  resolution: "@parcel/watcher-linux-arm64-glibc@npm:2.5.0"
-  conditions: os=linux & cpu=arm64 & libc=glibc
-  languageName: node
-  linkType: hard
-
-"@parcel/watcher-linux-arm64-musl@npm:2.5.0":
-  version: 2.5.0
-  resolution: "@parcel/watcher-linux-arm64-musl@npm:2.5.0"
-  conditions: os=linux & cpu=arm64 & libc=musl
-  languageName: node
-  linkType: hard
-
-"@parcel/watcher-linux-x64-glibc@npm:2.5.0":
-  version: 2.5.0
-  resolution: "@parcel/watcher-linux-x64-glibc@npm:2.5.0"
-  conditions: os=linux & cpu=x64 & libc=glibc
-  languageName: node
-  linkType: hard
-
-"@parcel/watcher-linux-x64-musl@npm:2.5.0":
-  version: 2.5.0
-  resolution: "@parcel/watcher-linux-x64-musl@npm:2.5.0"
-  conditions: os=linux & cpu=x64 & libc=musl
-  languageName: node
-  linkType: hard
-
-"@parcel/watcher-win32-arm64@npm:2.5.0":
-  version: 2.5.0
-  resolution: "@parcel/watcher-win32-arm64@npm:2.5.0"
-  conditions: os=win32 & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@parcel/watcher-win32-ia32@npm:2.5.0":
-  version: 2.5.0
-  resolution: "@parcel/watcher-win32-ia32@npm:2.5.0"
-  conditions: os=win32 & cpu=ia32
-  languageName: node
-  linkType: hard
-
-"@parcel/watcher-win32-x64@npm:2.5.0":
-  version: 2.5.0
-  resolution: "@parcel/watcher-win32-x64@npm:2.5.0"
-  conditions: os=win32 & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@parcel/watcher@npm:^2.4.1":
-  version: 2.5.0
-  resolution: "@parcel/watcher@npm:2.5.0"
-  dependencies:
-    "@parcel/watcher-android-arm64": "npm:2.5.0"
-    "@parcel/watcher-darwin-arm64": "npm:2.5.0"
-    "@parcel/watcher-darwin-x64": "npm:2.5.0"
-    "@parcel/watcher-freebsd-x64": "npm:2.5.0"
-    "@parcel/watcher-linux-arm-glibc": "npm:2.5.0"
-    "@parcel/watcher-linux-arm-musl": "npm:2.5.0"
-    "@parcel/watcher-linux-arm64-glibc": "npm:2.5.0"
-    "@parcel/watcher-linux-arm64-musl": "npm:2.5.0"
-    "@parcel/watcher-linux-x64-glibc": "npm:2.5.0"
-    "@parcel/watcher-linux-x64-musl": "npm:2.5.0"
-    "@parcel/watcher-win32-arm64": "npm:2.5.0"
-    "@parcel/watcher-win32-ia32": "npm:2.5.0"
-    "@parcel/watcher-win32-x64": "npm:2.5.0"
-    detect-libc: "npm:^1.0.3"
-    is-glob: "npm:^4.0.3"
-    micromatch: "npm:^4.0.5"
-    node-addon-api: "npm:^7.0.0"
-    node-gyp: "npm:latest"
-  dependenciesMeta:
-    "@parcel/watcher-android-arm64":
-      optional: true
-    "@parcel/watcher-darwin-arm64":
-      optional: true
-    "@parcel/watcher-darwin-x64":
-      optional: true
-    "@parcel/watcher-freebsd-x64":
-      optional: true
-    "@parcel/watcher-linux-arm-glibc":
-      optional: true
-    "@parcel/watcher-linux-arm-musl":
-      optional: true
-    "@parcel/watcher-linux-arm64-glibc":
-      optional: true
-    "@parcel/watcher-linux-arm64-musl":
-      optional: true
-    "@parcel/watcher-linux-x64-glibc":
-      optional: true
-    "@parcel/watcher-linux-x64-musl":
-      optional: true
-    "@parcel/watcher-win32-arm64":
-      optional: true
-    "@parcel/watcher-win32-ia32":
-      optional: true
-    "@parcel/watcher-win32-x64":
-      optional: true
-  checksum: 10c0/9bad727d8b11e5d150ec47459254544c583adaa47d047b8ef65e1c74aede1a0767dc7fc6b8997649dae07318d6ef39caba6a1c405d306398d5bcd47074ec5d29
   languageName: node
   linkType: hard
 
@@ -3213,7 +3073,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^8.17.1":
+"ajv@npm:^8.0.0":
   version: 8.17.1
   resolution: "ajv@npm:8.17.1"
   dependencies:
@@ -3262,14 +3122,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"antd@npm:^5.22.2":
-  version: 5.22.2
-  resolution: "antd@npm:5.22.2"
+"antd@npm:^5.10.0":
+  version: 5.22.3
+  resolution: "antd@npm:5.22.3"
   dependencies:
     "@ant-design/colors": "npm:^7.1.0"
     "@ant-design/cssinjs": "npm:^1.21.1"
     "@ant-design/cssinjs-utils": "npm:^1.1.1"
-    "@ant-design/icons": "npm:^5.5.1"
+    "@ant-design/icons": "npm:^5.5.2"
     "@ant-design/react-slick": "npm:~1.1.2"
     "@babel/runtime": "npm:^7.25.7"
     "@ctrl/tinycolor": "npm:^3.6.1"
@@ -3287,16 +3147,16 @@ __metadata:
     rc-dialog: "npm:~9.6.0"
     rc-drawer: "npm:~7.2.0"
     rc-dropdown: "npm:~4.2.0"
-    rc-field-form: "npm:~2.5.1"
+    rc-field-form: "npm:~2.6.0"
     rc-image: "npm:~7.11.0"
-    rc-input: "npm:~1.6.3"
+    rc-input: "npm:~1.6.4"
     rc-input-number: "npm:~9.3.0"
     rc-mentions: "npm:~2.17.0"
     rc-menu: "npm:~9.16.0"
     rc-motion: "npm:^2.9.3"
     rc-notification: "npm:~5.6.2"
     rc-pagination: "npm:~4.3.0"
-    rc-picker: "npm:~4.8.1"
+    rc-picker: "npm:~4.8.2"
     rc-progress: "npm:~4.0.0"
     rc-rate: "npm:~2.13.0"
     rc-resize-observer: "npm:^1.4.0"
@@ -3305,12 +3165,12 @@ __metadata:
     rc-slider: "npm:~11.1.7"
     rc-steps: "npm:~6.0.1"
     rc-switch: "npm:~4.1.0"
-    rc-table: "npm:~7.48.1"
+    rc-table: "npm:~7.49.0"
     rc-tabs: "npm:~15.4.0"
     rc-textarea: "npm:~1.8.2"
     rc-tooltip: "npm:~6.2.1"
     rc-tree: "npm:~5.10.1"
-    rc-tree-select: "npm:~5.24.4"
+    rc-tree-select: "npm:~5.24.5"
     rc-upload: "npm:~4.8.1"
     rc-util: "npm:^5.43.0"
     scroll-into-view-if-needed: "npm:^3.1.0"
@@ -3318,7 +3178,7 @@ __metadata:
   peerDependencies:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: 10c0/e6a956821cae68ab0529d92c3ca2ead5b391251cec35133e84f9693156e246353d03f0c3cc565c49968c9c9195c067e2883ed6416bfb6749b0f2ef0bcf43ca1c
+  checksum: 10c0/5dfd8fbbcbac08843cb8631f3b1d51f2370756cb71ea6fc26cd9ec443fa56b95d745e9b210b4e13cfa7b58a34f547dd6a098a18cdc4437535cc21286e777c916
   languageName: node
   linkType: hard
 
@@ -3792,7 +3652,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:^4.0.0, chokidar@npm:^4.0.1":
+"chokidar@npm:^4.0.1":
   version: 4.0.1
   resolution: "chokidar@npm:4.0.1"
   dependencies:
@@ -3869,13 +3729,6 @@ __metadata:
     strip-ansi: "npm:^6.0.1"
     wrap-ansi: "npm:^7.0.0"
   checksum: 10c0/4bda0f09c340cbb6dfdc1ed508b3ca080f12992c18d68c6be4d9cf51756033d5266e61ec57529e610dacbf4da1c634423b0c1b11037709cc6b09045cbd815df5
-  languageName: node
-  linkType: hard
-
-"clsx@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "clsx@npm:2.1.1"
-  checksum: 10c0/c4c8eb865f8c82baab07e71bfa8897c73454881c4f99d6bc81585aecd7c441746c1399d08363dc096c550cceaf97bd4ce1e8854e1771e9998d9f94c4fe075839
   languageName: node
   linkType: hard
 
@@ -4299,7 +4152,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.11.11, dayjs@npm:^1.11.13":
+"dayjs@npm:^1.0.0, dayjs@npm:^1.11.11":
   version: 1.11.13
   resolution: "dayjs@npm:1.11.13"
   checksum: 10c0/a3caf6ac8363c7dade9d1ee797848ddcf25c1ace68d9fe8678ecf8ba0675825430de5d793672ec87b24a69bf04a1544b176547b2539982275d5542a7955f35b7
@@ -4409,15 +4262,6 @@ __metadata:
   version: 2.0.3
   resolution: "dequal@npm:2.0.3"
   checksum: 10c0/f98860cdf58b64991ae10205137c0e97d384c3a4edc7f807603887b7c4b850af1224a33d88012009f150861cbee4fa2d322c4cc04b9313bee312e47f6ecaa888
-  languageName: node
-  linkType: hard
-
-"detect-libc@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "detect-libc@npm:1.0.3"
-  bin:
-    detect-libc: ./bin/detect-libc.js
-  checksum: 10c0/4da0deae9f69e13bc37a0902d78bf7169480004b1fed3c19722d56cff578d16f0e11633b7fbf5fb6249181236c72e90024cbd68f0b9558ae06e281f47326d50d
   languageName: node
   linkType: hard
 
@@ -5979,13 +5823,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immutable@npm:^5.0.2":
-  version: 5.0.3
-  resolution: "immutable@npm:5.0.3"
-  checksum: 10c0/3269827789e1026cd25c2ea97f0b2c19be852ffd49eda1b674b20178f73d84fa8d945ad6f5ac5bc4545c2b4170af9f6e1f77129bc1cae7974a4bf9b04a9cdfb9
-  languageName: node
-  linkType: hard
-
 "import-cwd@npm:^3.0.0":
   version: 3.0.0
   resolution: "import-cwd@npm:3.0.0"
@@ -6891,7 +6728,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"micromatch@npm:^4.0.4, micromatch@npm:^4.0.5":
+"micromatch@npm:^4.0.4":
   version: 4.0.8
   resolution: "micromatch@npm:4.0.8"
   dependencies:
@@ -7124,15 +6961,6 @@ __metadata:
   version: 2.0.2
   resolution: "netmask@npm:2.0.2"
   checksum: 10c0/cafd28388e698e1138ace947929f842944d0f1c0b87d3fa2601a61b38dc89397d33c0ce2c8e7b99e968584b91d15f6810b91bef3f3826adf71b1833b61d4bf4f
-  languageName: node
-  linkType: hard
-
-"node-addon-api@npm:^7.0.0":
-  version: 7.1.1
-  resolution: "node-addon-api@npm:7.1.1"
-  dependencies:
-    node-gyp: "npm:latest"
-  checksum: 10c0/fb32a206276d608037fa1bcd7e9921e177fe992fc610d098aa3128baca3c0050fc1e014fa007e9b3874cf865ddb4f5bd9f43ccb7cbbbe4efaff6a83e920b17e9
   languageName: node
   linkType: hard
 
@@ -8534,9 +8362,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-field-form@npm:~2.5.1":
-  version: 2.5.1
-  resolution: "rc-field-form@npm:2.5.1"
+"rc-field-form@npm:~2.6.0":
+  version: 2.6.0
+  resolution: "rc-field-form@npm:2.6.0"
   dependencies:
     "@babel/runtime": "npm:^7.18.0"
     "@rc-component/async-validator": "npm:^5.0.3"
@@ -8544,7 +8372,7 @@ __metadata:
   peerDependencies:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: 10c0/3ae98e302785658634247877ad462deebe455dac72682affef5c98452bfaf5c4fe6235500d906af9e3ce02d523d05f4b47bb81aaf1eb053e526250abdea5e150
+  checksum: 10c0/b92a9662cfd9de4568b0c15085d46e703f5b89c99f330940080217e421a8427e14592a37b5de54714884e2f6b6352a3fb666b1edc697366f6a049799955883be
   languageName: node
   linkType: hard
 
@@ -8581,7 +8409,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-input@npm:~1.6.0, rc-input@npm:~1.6.3":
+"rc-input@npm:~1.6.0, rc-input@npm:~1.6.4":
   version: 1.6.4
   resolution: "rc-input@npm:1.6.4"
   dependencies:
@@ -8688,7 +8516,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-picker@npm:~4.8.1":
+"rc-picker@npm:~4.8.2":
   version: 4.8.2
   resolution: "rc-picker@npm:4.8.2"
   dependencies:
@@ -8836,9 +8664,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-table@npm:~7.48.1":
-  version: 7.48.1
-  resolution: "rc-table@npm:7.48.1"
+"rc-table@npm:~7.49.0":
+  version: 7.49.0
+  resolution: "rc-table@npm:7.49.0"
   dependencies:
     "@babel/runtime": "npm:^7.10.1"
     "@rc-component/context": "npm:^1.4.0"
@@ -8849,7 +8677,7 @@ __metadata:
   peerDependencies:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: 10c0/3b50b0ed809b62ee7f245254168f97586a1c3e59ac74e2d8cae598af8a844f351b075831a3993b67a1cd6c7992a3673e059dffef52ba7265431f2fa84a4ff9f6
+  checksum: 10c0/463edd9f971c9334d50e1928758d12689be3a55e97a0b45d10802f53efdab8b996bd12efb210a2442dcaa23511ead2c494371e2177fdc7695ee4831942496027
   languageName: node
   linkType: hard
 
@@ -8901,7 +8729,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-tree-select@npm:~5.24.4":
+"rc-tree-select@npm:~5.24.5":
   version: 5.24.5
   resolution: "rc-tree-select@npm:5.24.5"
   dependencies:
@@ -9551,23 +9379,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass@npm:^1.81.0":
-  version: 1.81.0
-  resolution: "sass@npm:1.81.0"
-  dependencies:
-    "@parcel/watcher": "npm:^2.4.1"
-    chokidar: "npm:^4.0.0"
-    immutable: "npm:^5.0.2"
-    source-map-js: "npm:>=0.6.2 <2.0.0"
-  dependenciesMeta:
-    "@parcel/watcher":
-      optional: true
-  bin:
-    sass: sass.js
-  checksum: 10c0/9c59b3c9b4231c18fcb4583cc232dbc4de501ddc11101b7a025e44833e3f3ce6031546dc1cd109ee9f04ebcfb1fe30ff870810af33b8feb9aa9e36dfba9ec1ef
-  languageName: node
-  linkType: hard
-
 "saxes@npm:^6.0.0":
   version: 6.0.0
   resolution: "saxes@npm:6.0.0"
@@ -9773,7 +9584,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map-js@npm:>=0.6.2 <2.0.0, source-map-js@npm:^1.0.1, source-map-js@npm:^1.2.1":
+"source-map-js@npm:^1.0.1, source-map-js@npm:^1.2.1":
   version: 1.2.1
   resolution: "source-map-js@npm:1.2.1"
   checksum: 10c0/7bda1fc4c197e3c6ff17de1b8b2c20e60af81b63a52cb32ec5a5d67a20a7d42651e2cb34ebe93833c5a2a084377e17455854fee3e21e7925c64a51b6a52b0faf

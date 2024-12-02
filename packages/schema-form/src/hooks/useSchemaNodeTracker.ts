@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { useTick } from '@lumy-pack/common-react';
 
@@ -18,7 +18,7 @@ export const useSchemaNodeTracker = <Node extends SchemaNode>(
     () => (tracking ? new Set(tracking) : null),
     [tracking],
   );
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (node === null) return;
     const unsubscribe = node.subscribe(({ type }) => {
       if (trackingTypeSet === null || trackingTypeSet.has(type)) update();

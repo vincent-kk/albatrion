@@ -28,7 +28,11 @@ export const usePrepareSchemaValues = (
     else return null;
   }, [input, rootNode]);
 
-  useSchemaNodeTracker(node, [MethodType.Change, MethodType.StateChange]);
+  useSchemaNodeTracker(node, [
+    MethodType.Change,
+    MethodType.StateChange,
+    MethodType.Validate,
+  ]);
 
   const { dependencyPaths, checkVisible, getWatchValues } = useMemo(() => {
     const visible = node?.jsonSchema?.renderOptions?.visible;

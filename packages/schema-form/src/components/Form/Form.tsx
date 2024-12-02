@@ -3,8 +3,8 @@ import {
   type ReactNode,
   forwardRef,
   memo,
-  useEffect,
   useImperativeHandle,
+  useLayoutEffect,
   useState,
 } from 'react';
 
@@ -60,7 +60,9 @@ const FormInner = <
 ) => {
   const jsonSchema = useConstant(jsonSchemaInput);
   const [rootNode, setRootNode] = useState<Node>();
-  const [children, setChildren] = useState<ReactNode>();
+  const [children, setChildren] = useState<ReactNode>(
+    createChildren(childrenInput, jsonSchema),
+  );
   const initialDefaultValue = useConstant(defaultValueInput);
   const [defaultValue, setDefaultValue] = useState<Value | undefined>(
     initialDefaultValue,
@@ -82,7 +84,7 @@ const FormInner = <
     setRootNode(rootNode as Node);
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!rootNode) return;
     setChildren(createChildren(childrenInput, jsonSchema, rootNode));
     const unsubscribe = rootNode.subscribe(({ type }) => {
@@ -93,7 +95,9 @@ const FormInner = <
       )
         setChildren(createChildren(childrenInput, jsonSchema, rootNode));
     });
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+    };
   }, [childrenInput, jsonSchema, rootNode]);
 
   useImperativeHandle(

@@ -34,3 +34,13 @@ export type InferValueType<T extends JsonSchema> = T extends {
             : T extends { type: 'null' }
               ? NullValue
               : never;
+
+export type Formatter<Value> = (
+  value: Value | undefined,
+  info?: {
+    userTyping: boolean;
+    input: string;
+  },
+) => string;
+
+export type Parser<Value> = (value: string | undefined) => Value;

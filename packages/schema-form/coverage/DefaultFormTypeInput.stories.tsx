@@ -15,8 +15,6 @@ import { FormTypeInputStringRadio } from '@lumy-pack/schema-form/src/formTypeDef
 
 import StoryLayout from './components/StoryLayout';
 
-// 레이아웃 컴포넌트
-
 export default {
   title: 'Sub Components/FormTypeInput',
   component: Form,
