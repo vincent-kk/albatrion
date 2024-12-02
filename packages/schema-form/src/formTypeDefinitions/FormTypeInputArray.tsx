@@ -1,8 +1,11 @@
 import { type CSSProperties, memo, useCallback } from 'react';
 
-import type { FormTypeInputProps } from '@lumy/schema-form/types';
+import type {
+  FormTypeInputDefinition,
+  FormTypeInputProps,
+} from '@lumy/schema-form/types';
 
-export const FormTypeInputArray = memo(
+const FormTypeInputArray = memo(
   ({ node, childNodes, readOnly, disabled }: FormTypeInputProps<any[]>) => {
     const handleClick = useCallback(() => {
       node.push();
@@ -92,3 +95,8 @@ function Button({
     </button>
   );
 }
+
+export const FormTypeInputArrayDefinition = {
+  Component: FormTypeInputArray,
+  test: { type: 'array' },
+} satisfies FormTypeInputDefinition;

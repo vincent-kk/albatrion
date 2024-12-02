@@ -2,9 +2,12 @@ import type { ChangeEvent } from 'react';
 
 import { useHandle } from '@lumy-pack/common-react';
 
-import type { FormTypeInputProps } from '@lumy/schema-form/types';
+import type {
+  FormTypeInputDefinition,
+  FormTypeInputProps,
+} from '@lumy/schema-form/types';
 
-export const FormTypeInputString = ({
+const FormTypeInputString = ({
   path,
   name,
   readOnly,
@@ -27,3 +30,8 @@ export const FormTypeInputString = ({
     />
   );
 };
+
+export const FormTypeInputStringDefinition = {
+  Component: FormTypeInputString,
+  test: { type: 'string' },
+} satisfies FormTypeInputDefinition;

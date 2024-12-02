@@ -1,10 +1,11 @@
 import { Fragment } from 'react/jsx-runtime';
 
-import type { FormTypeInputProps } from '@lumy/schema-form/types';
+import type {
+  FormTypeInputDefinition,
+  FormTypeInputProps,
+} from '@lumy/schema-form/types';
 
-export const FormTypeInputVirtual = ({
-  childNodes,
-}: FormTypeInputProps<object>) => {
+const FormTypeInputVirtual = ({ childNodes }: FormTypeInputProps<object>) => {
   return (
     <Fragment>
       {childNodes &&
@@ -14,3 +15,8 @@ export const FormTypeInputVirtual = ({
     </Fragment>
   );
 };
+
+export const FormTypeInputVirtualDefinition = {
+  Component: FormTypeInputVirtual,
+  test: { type: 'virtual' },
+} satisfies FormTypeInputDefinition;

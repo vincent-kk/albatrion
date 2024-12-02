@@ -8,72 +8,28 @@ import type {
   FormTypeInputProps,
 } from '@lumy/schema-form/types';
 
-import { FormTypeInputArray } from './FormTypeInputArray';
-import { FormTypeInputBoolean } from './FormTypeInputBoolean';
-import { FormTypeInputDateFormant } from './FormTypeInputDateFormant';
-import { FormTypeInputNumber } from './FormTypeInputNumber';
-import { FormTypeInputObject } from './FormTypeInputObject';
-import { FormTypeInputString } from './FormTypeInputString';
-import { FormTypeInputStringCheckbox } from './FormTypeInputStringCheckbox';
-import { FormTypeInputStringEnum } from './FormTypeInputStringEnum';
-import { FormTypeInputStringRadio } from './FormTypeInputStringRadio';
-import { FormTypeInputVirtual } from './FormTypeInputVirtual';
+import { FormTypeInputArrayDefinition } from './FormTypeInputArray';
+import { FormTypeInputBooleanDefinition } from './FormTypeInputBoolean';
+import { FormTypeInputDateFormantDefinition } from './FormTypeInputDateFormant';
+import { FormTypeInputNumberDefinition } from './FormTypeInputNumber';
+import { FormTypeInputObjectDefinition } from './FormTypeInputObject';
+import { FormTypeInputStringDefinition } from './FormTypeInputString';
+import { FormTypeInputStringCheckboxDefinition } from './FormTypeInputStringCheckbox';
+import { FormTypeInputStringEnumDefinition } from './FormTypeInputStringEnum';
+import { FormTypeInputStringRadioDefinition } from './FormTypeInputStringRadio';
+import { FormTypeInputVirtualDefinition } from './FormTypeInputVirtual';
 
 const formTypeDefinitions = [
-  {
-    Component: FormTypeInputStringCheckbox,
-    test: ({ jsonSchema }) =>
-      jsonSchema.type === 'array' &&
-      jsonSchema.formType === 'checkbox' &&
-      jsonSchema.items?.type === 'string' &&
-      !!jsonSchema.items?.enum?.length,
-  },
-  {
-    Component: FormTypeInputStringRadio,
-    test: ({ jsonSchema }) =>
-      jsonSchema.type === 'string' &&
-      (jsonSchema.formType === 'radio' ||
-        jsonSchema.formType === 'radiogroup') &&
-      !!jsonSchema.enum?.length,
-  },
-  {
-    Component: FormTypeInputStringEnum,
-    test: ({ jsonSchema }) =>
-      jsonSchema.type === 'string' && !!jsonSchema.enum?.length,
-  },
-  {
-    Component: FormTypeInputDateFormant,
-    test: ({ jsonSchema }) =>
-      jsonSchema.type === 'string' &&
-      jsonSchema.format &&
-      ['month', 'week', 'date', 'time', 'datetime-local'].includes(
-        jsonSchema.format,
-      ),
-  },
-  {
-    Component: FormTypeInputString,
-    test: { type: 'string' },
-  },
-  {
-    Component: FormTypeInputBoolean,
-    test: { type: 'boolean' },
-  },
-  {
-    Component: FormTypeInputNumber,
-    test: { type: ['number', 'integer'] },
-  },
-  {
-    Component: FormTypeInputObject,
-    test: { type: 'object' },
-  },
-  {
-    Component: FormTypeInputArray,
-    test: { type: 'array' },
-  },
-  {
-    Component: FormTypeInputVirtual,
-    test: { type: 'virtual' },
-  },
+  FormTypeInputArrayDefinition,
+  FormTypeInputBooleanDefinition,
+  FormTypeInputDateFormantDefinition,
+  FormTypeInputNumberDefinition,
+  FormTypeInputObjectDefinition,
+  FormTypeInputStringDefinition,
+  FormTypeInputStringCheckboxDefinition,
+  FormTypeInputStringEnumDefinition,
+  FormTypeInputStringRadioDefinition,
+  FormTypeInputVirtualDefinition,
 ] satisfies FormTypeInputDefinition[];
 
 export const fromFallbackFormTypeInputDefinitions =
