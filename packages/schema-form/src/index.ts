@@ -1,4 +1,4 @@
-import { type Plugin, registerPlugin } from './app/registerPlugin';
+import { type SchemaFormPlugin, registerPlugin } from './app/registerPlugin';
 import {
   Form,
   type FormChildrenProps,
@@ -66,7 +66,7 @@ export {
 
 export { FormProvider, type FormProviderProps };
 
-export { registerPlugin, type Plugin };
+export { registerPlugin, type SchemaFormPlugin };
 
 export {
   isArrayNode,

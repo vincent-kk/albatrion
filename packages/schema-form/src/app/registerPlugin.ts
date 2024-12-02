@@ -14,7 +14,7 @@ export const registerPlugin = ({
   FormError,
   formatError,
   formTypeInputDefinitions,
-}: Plugin) => {
+}: SchemaFormPlugin) => {
   StaticManager.appendFormType({
     FormGroup,
     FormLabel,
@@ -25,7 +25,7 @@ export const registerPlugin = ({
   StaticManager.appendFormTypeInputDefinitions(formTypeInputDefinitions);
 };
 
-export interface Plugin {
+export interface SchemaFormPlugin {
   FormGroup?: ComponentType<FormTypeRendererProps>;
   FormLabel?: ComponentType<FormTypeRendererProps>;
   FormInput?: ComponentType<FormTypeRendererProps>;
