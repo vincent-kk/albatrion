@@ -1,6 +1,7 @@
 import { isFunction, isPlainObject, isTruthy } from '@lumy-pack/common';
 import { isReactComponent } from '@lumy-pack/common-react';
 
+import { withErrorBoundary } from '@lumy/schema-form/components/utils/withErrorBoundary';
 import type {
   FormTypeInputDefinition,
   FormTypeTestFn,
@@ -23,13 +24,13 @@ export const normalizeFormTypeInputDefinitions = (
         if (isFunction(test)) {
           return {
             test,
-            Component,
+            Component: withErrorBoundary(Component),
           };
         }
         if (isPlainObject(test)) {
           return {
             test: formTypeTestFnFactory(test),
-            Component,
+            Component: withErrorBoundary(Component),
           };
         }
       }
