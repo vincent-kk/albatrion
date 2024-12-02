@@ -1,18 +1,10 @@
 import { type ComponentType, type PropsWithChildren, useMemo } from 'react';
 
-import {
-  FormErrorRenderer,
-  FormGroupRenderer,
-  FormInputRenderer,
-  FormLabelRenderer,
-} from '@lumy/schema-form/components/FallbackComponents';
-import { ErrorBoundary } from '@lumy/schema-form/components/utils/ErrorBoundary';
-import { formatError } from '@lumy/schema-form/components/utils/formatError';
 import { normalizeFormTypeInputDefinitions } from '@lumy/schema-form/helpers/formTypeInputDefinition';
 import type {
   FormTypeInputDefinition,
-  FormTypeInputProps,
   FormTypeRendererProps,
+  FormatError,
 } from '@lumy/schema-form/types';
 
 import { ExternalFormContext } from './ExternalFormContext';
@@ -23,7 +15,7 @@ export interface ExternalFormContextProviderProps {
   FormLabelRenderer?: ComponentType<FormTypeRendererProps>;
   FormInputRenderer?: ComponentType<FormTypeRendererProps>;
   FormErrorRenderer?: ComponentType<FormTypeRendererProps>;
-  formatError?: FormTypeRendererProps['formatError'];
+  formatError?: FormatError;
 }
 
 export const ExternalFormContextProvider = ({
@@ -35,55 +27,45 @@ export const ExternalFormContextProvider = ({
   formatError: inputFormatError,
   children,
 }: PropsWithChildren<ExternalFormContextProviderProps>) => {
-  const fromExternalFormTypeInputDefinitions = useMemo(() => {
-    return normalizeFormTypeInputDefinitions(formTypeInputDefinitions).map(
-      ({ test, Component }) => {
-        return {
-          test,
-          Component: (props: FormTypeInputProps) => (
-            <ErrorBoundary>
-              <Component {...props} />
-            </ErrorBoundary>
-          ),
-        };
-      },
-    );
-  }, [formTypeInputDefinitions]);
+  const fromExternalFormTypeInputDefinitions = useMemo(
+    () =>
+      formTypeInputDefinitions
+        ? normalizeFormTypeInputDefinitions(formTypeInputDefinitions)
+        : undefined,
+    [formTypeInputDefinitions],
+  );
 
-  const FallbackFormGroupRenderer = useMemo(
-    () => InputFormGroupRenderer || FormGroupRenderer,
+  const FormGroupRenderer = useMemo(
+    () => InputFormGroupRenderer,
     [InputFormGroupRenderer],
   );
 
-  const FallbackFormLabelRenderer = useMemo(
-    () => InputFormLabelRenderer || FormLabelRenderer,
+  const FormLabelRenderer = useMemo(
+    () => InputFormLabelRenderer,
     [InputFormLabelRenderer],
   );
 
-  const FallbackFormInputRenderer = useMemo(
-    () => InputFormInputRenderer || FormInputRenderer,
+  const FormInputRenderer = useMemo(
+    () => InputFormInputRenderer,
     [InputFormInputRenderer],
   );
 
-  const FallbackFormErrorRenderer = useMemo(
-    () => InputFormErrorRenderer || FormErrorRenderer,
+  const FormErrorRenderer = useMemo(
+    () => InputFormErrorRenderer,
     [InputFormErrorRenderer],
   );
 
-  const fallbackFormatError = useMemo(
-    () => inputFormatError || formatError,
-    [inputFormatError],
-  );
+  const formatError = useMemo(() => inputFormatError, [inputFormatError]);
 
   return (
     <ExternalFormContext.Provider
       value={{
         fromExternalFormTypeInputDefinitions,
-        FallbackFormGroupRenderer,
-        FallbackFormLabelRenderer,
-        FallbackFormInputRenderer,
-        FallbackFormErrorRenderer,
-        fallbackFormatError,
+        FormGroupRenderer,
+        FormLabelRenderer,
+        FormInputRenderer,
+        FormErrorRenderer,
+        formatError,
       }}
     >
       {children}

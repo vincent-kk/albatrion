@@ -30,21 +30,23 @@ export const FormTypeRendererContextProvider = ({
   showError,
   children,
 }: PropsWithChildren<FormTypeRendererContextProviderProps>) => {
-  const { FallbackFormGroupRenderer, fallbackFormatError } =
-    useExternalFormContext();
+  const {
+    FormGroupRenderer: ExternalFormGroupRenderer,
+    formatError: externalFormatError,
+  } = useExternalFormContext();
 
   const FormTypeRenderer = useMemo<FormTypeRendererContext['FormTypeRenderer']>(
     () =>
       isReactComponent(CustomFormTypeRenderer)
         ? CustomFormTypeRenderer
-        : FallbackFormGroupRenderer,
-    [CustomFormTypeRenderer, FallbackFormGroupRenderer],
+        : ExternalFormGroupRenderer,
+    [CustomFormTypeRenderer, ExternalFormGroupRenderer],
   );
 
   const formatError = useMemo<FormTypeRendererContext['formatError']>(
     () =>
-      isFunction(inputFormatError) ? inputFormatError : fallbackFormatError,
-    [inputFormatError, fallbackFormatError],
+      isFunction(inputFormatError) ? inputFormatError : externalFormatError,
+    [inputFormatError, externalFormatError],
   );
 
   const checkShowError = useMemo<

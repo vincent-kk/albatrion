@@ -3,6 +3,7 @@ import { Fragment, useMemo } from 'react';
 import { isTruthy, nullFunction } from '@lumy-pack/common';
 import { useReference } from '@lumy-pack/common-react';
 
+import { BaseFormTypeManager } from '@lumy/schema-form/app/BaseFormTypeManager';
 import { usePrepareSchemaValues } from '@lumy/schema-form/hooks/usePrepareSchemaValues';
 import { useSchemaNodeListener } from '@lumy/schema-form/hooks/useSchemaNodeListener';
 import {
@@ -24,7 +25,7 @@ export const SchemaNodeProxy = ({
   Wrapper: InputWrapper,
 }: SchemaNodeProxyProps) => {
   const { node, visible, watchValues } = usePrepareSchemaValues(
-    inputNode ?? path,
+    inputNode || path,
   );
 
   const watchValuesRef = useReference(watchValues);
@@ -66,12 +67,15 @@ export const SchemaNodeProxy = ({
 
   const InputFormTypeRendererRef = useReference(InputFormTypeRenderer);
   const FormTypeRenderer = useMemo(
-    () => InputFormTypeRendererRef.current ?? ContextFormTypeRenderer,
+    () =>
+      InputFormTypeRendererRef.current ||
+      ContextFormTypeRenderer ||
+      BaseFormTypeManager.FormGroup,
     [InputFormTypeRendererRef, ContextFormTypeRenderer],
   );
 
   const Wrapper = useMemo(() => {
-    return InputWrapper ?? Fragment;
+    return InputWrapper || Fragment;
   }, [InputWrapper]);
 
   const { context: userDefinedContext } = useUserDefinedContext();
@@ -82,7 +86,7 @@ export const SchemaNodeProxy = ({
 
   const formatError = useMemo(() => {
     if (checkShowError({ dirty, touched }) === false) return nullFunction;
-    else return contextFormatError;
+    else return contextFormatError || BaseFormTypeManager.formatError;
   }, [checkShowError, contextFormatError, dirty, touched]);
 
   const errorMessage = useMemo(() => {
