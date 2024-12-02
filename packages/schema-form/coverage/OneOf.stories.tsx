@@ -191,7 +191,7 @@ export const ComplexOneOf = () => {
         ref={refHandle}
         jsonSchema={schema}
         onChange={setValue}
-        onValidate={(errors) => setErrors(errors ?? [])}
+        onValidate={(errors) => setErrors(errors || [])}
       />
     </StoryLayout>
   );

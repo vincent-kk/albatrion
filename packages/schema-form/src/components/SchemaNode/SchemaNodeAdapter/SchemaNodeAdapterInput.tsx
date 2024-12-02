@@ -19,7 +19,7 @@ export const SchemaNodeAdapterInput = memo(
   }: SchemaNodeAdapterInputProps) => {
     const FormTypeInputByNode = useFormTypeInput(node);
     const FormTypeInput = useMemo(
-      () => PreferredFormTypeInput ?? FormTypeInputByNode,
+      () => PreferredFormTypeInput || FormTypeInputByNode,
       [FormTypeInputByNode, PreferredFormTypeInput],
     );
 

@@ -29,7 +29,7 @@ const FormTypeInputMonth = ({
     [defaultValue],
   );
   const disabledDate = useMemo(() => {
-    const { minimum, maximum } = jsonSchema.options ?? {};
+    const { minimum, maximum } = jsonSchema.options || {};
     return (date: Dayjs | null) => {
       if (!date) return false;
       if (!minimum && !maximum) return false;

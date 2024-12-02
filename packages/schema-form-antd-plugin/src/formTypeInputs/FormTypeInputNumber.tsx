@@ -21,7 +21,7 @@ const FormTypeInputNumber = ({
   context,
 }: FormTypeInputPropsWithSchema<number, NumberSchema, { size?: SizeType }>) => {
   const { formatter, parser } = useMemo(
-    () => jsonSchema.options ?? {},
+    () => jsonSchema.options || {},
     [jsonSchema.options],
   );
 

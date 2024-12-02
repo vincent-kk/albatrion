@@ -42,7 +42,7 @@ const FormTypeInputUri = ({
   const protocols = useMemo(
     () =>
       Array.from(
-        new Set(jsonSchema.options?.protocols ?? DEFAULT_PROTOCOLS),
+        new Set(jsonSchema.options?.protocols || DEFAULT_PROTOCOLS),
       ).sort((a, b) => b.length - a.length),
     [jsonSchema],
   );
