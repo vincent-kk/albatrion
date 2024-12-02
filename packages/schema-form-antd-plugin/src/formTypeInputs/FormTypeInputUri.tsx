@@ -90,7 +90,7 @@ const FormTypeInputUri = ({
       <Select
         value={protocol}
         onChange={handleChangeProtocol}
-        disabled={disabled}
+        disabled={disabled || readOnly}
       >
         {protocols.map((protocol) => (
           <Select.Option key={protocol} value={protocol}>
@@ -99,7 +99,7 @@ const FormTypeInputUri = ({
         ))}
       </Select>
     );
-  }, [disabled, protocol, protocols, handleChangeProtocol]);
+  }, [protocol, protocols, disabled, readOnly, handleChangeProtocol]);
 
   useEffect(() => {
     if (!protocol) return;
