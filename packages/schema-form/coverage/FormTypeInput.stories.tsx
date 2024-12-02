@@ -224,7 +224,7 @@ export const ExternalFormContext = () => {
   return (
     <FormProvider
       formTypeInputDefinitions={externalInputs}
-      FormTypeRenderer={externalFormTypeRenderer}
+      FormGroupRenderer={externalFormTypeRenderer}
     >
       <StoryLayout jsonSchema={schema} value={value}>
         <Form
