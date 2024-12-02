@@ -1,12 +1,4 @@
-import { ErrorBoundary } from '@lumy/schema-form/components/utils/ErrorBoundary';
-import {
-  type NormalizedFormTypeInputDefinition,
-  normalizeFormTypeInputDefinitions,
-} from '@lumy/schema-form/helpers/formTypeInputDefinition';
-import type {
-  FormTypeInputDefinition,
-  FormTypeInputProps,
-} from '@lumy/schema-form/types';
+import type { FormTypeInputDefinition } from '@lumy/schema-form/types';
 
 import { FormTypeInputArrayDefinition } from './FormTypeInputArray';
 import { FormTypeInputBooleanDefinition } from './FormTypeInputBoolean';
@@ -19,7 +11,7 @@ import { FormTypeInputStringEnumDefinition } from './FormTypeInputStringEnum';
 import { FormTypeInputStringRadioDefinition } from './FormTypeInputStringRadio';
 import { FormTypeInputVirtualDefinition } from './FormTypeInputVirtual';
 
-const formTypeDefinitions = [
+export const formTypeDefinitions = [
   FormTypeInputArrayDefinition,
   FormTypeInputBooleanDefinition,
   FormTypeInputDateFormantDefinition,
@@ -31,17 +23,3 @@ const formTypeDefinitions = [
   FormTypeInputStringRadioDefinition,
   FormTypeInputVirtualDefinition,
 ] satisfies FormTypeInputDefinition[];
-
-export const fromFallbackFormTypeInputDefinitions =
-  normalizeFormTypeInputDefinitions(
-    formTypeDefinitions,
-  ).map<NormalizedFormTypeInputDefinition>(({ test, Component }) => {
-    return {
-      test,
-      Component: (props: FormTypeInputProps) => (
-        <ErrorBoundary>
-          <Component {...props} />
-        </ErrorBoundary>
-      ),
-    };
-  });
