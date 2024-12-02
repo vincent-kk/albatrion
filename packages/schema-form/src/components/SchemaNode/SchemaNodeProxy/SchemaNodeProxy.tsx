@@ -3,7 +3,6 @@ import { Fragment, useMemo } from 'react';
 import { isTruthy, nullFunction } from '@lumy-pack/common';
 import { useReference } from '@lumy-pack/common-react';
 
-import { StaticManager } from '@lumy/schema-form/app/StaticManager';
 import { usePrepareSchemaValues } from '@lumy/schema-form/hooks/usePrepareSchemaValues';
 import { useSchemaNodeListener } from '@lumy/schema-form/hooks/useSchemaNodeListener';
 import {
@@ -67,10 +66,7 @@ export const SchemaNodeProxy = ({
 
   const InputFormTypeRendererRef = useReference(InputFormTypeRenderer);
   const FormTypeRenderer = useMemo(
-    () =>
-      InputFormTypeRendererRef.current ||
-      ContextFormTypeRenderer ||
-      StaticManager.FormGroup,
+    () => InputFormTypeRendererRef.current || ContextFormTypeRenderer,
     [InputFormTypeRendererRef, ContextFormTypeRenderer],
   );
 
@@ -86,7 +82,7 @@ export const SchemaNodeProxy = ({
 
   const formatError = useMemo(() => {
     if (checkShowError({ dirty, touched }) === false) return nullFunction;
-    else return contextFormatError || StaticManager.formatError;
+    else return contextFormatError;
   }, [checkShowError, contextFormatError, dirty, touched]);
 
   const errorMessage = useMemo(() => {
