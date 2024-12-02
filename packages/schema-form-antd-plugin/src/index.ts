@@ -1,7 +1,15 @@
+import type { SchemaFormPlugin } from '@lumy-pack/schema-form';
+
 import { FormError } from './components/FormError';
 import { FormGroup } from './components/FormGroup';
 import { FormInput } from './components/FormInput';
 import { FormLabel } from './components/FormLabel';
 import { formTypeInputDefinitions } from './formTypeInputs';
 
-export { FormError, FormGroup, FormLabel, FormInput, formTypeInputDefinitions };
+export const plugin = {
+  FormGroup,
+  FormLabel,
+  FormInput,
+  FormError,
+  formTypeInputDefinitions,
+} satisfies SchemaFormPlugin;
