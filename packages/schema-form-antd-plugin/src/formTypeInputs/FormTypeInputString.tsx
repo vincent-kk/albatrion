@@ -15,7 +15,7 @@ interface StringJsonSchema extends StringSchema {
   formType?: 'password';
 }
 
-const FormTypeString = ({
+const FormTypeInputString = ({
   path,
   name,
   jsonSchema,
@@ -50,8 +50,8 @@ const FormTypeString = ({
   );
 };
 
-export const FormTypeStringDefinition = {
-  Component: FormTypeString,
+export const FormTypeInputStringDefinition = {
+  Component: FormTypeInputString,
   test: {
     type: 'string',
   },

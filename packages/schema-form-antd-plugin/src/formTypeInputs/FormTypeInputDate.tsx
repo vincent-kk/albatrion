@@ -17,7 +17,7 @@ interface DateJsonSchema extends StringSchema {
   format: 'date';
 }
 
-const FormTypeDate = ({
+const FormTypeInputDate = ({
   path,
   name,
   jsonSchema,
@@ -61,8 +61,8 @@ const FormTypeDate = ({
   );
 };
 
-export const FormTypeDateDefinition = {
-  Component: FormTypeDate,
+export const FormTypeInputDateDefinition = {
+  Component: FormTypeInputDate,
   test: {
     type: 'string',
     format: 'date',

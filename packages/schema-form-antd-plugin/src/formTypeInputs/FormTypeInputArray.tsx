@@ -17,7 +17,7 @@ const Remove = (props: ButtonProps) => (
   <Button type="link" icon={<MinusCircleOutlined />} {...props} />
 );
 
-const FormTypeArray = ({
+const FormTypeInputArray = ({
   node,
   childNodes,
   readOnly,
@@ -56,8 +56,8 @@ const FormTypeArray = ({
   );
 };
 
-export const FormTypeArrayDefinition = {
-  Component: FormTypeArray,
+export const FormTypeInputArrayDefinition = {
+  Component: FormTypeInputArray,
   test: {
     type: 'array',
   },

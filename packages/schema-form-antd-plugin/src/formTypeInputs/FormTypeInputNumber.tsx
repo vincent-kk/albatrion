@@ -10,7 +10,7 @@ import type {
   NumberSchema,
 } from '@lumy-pack/schema-form';
 
-const FormTypeNumber = ({
+const FormTypeInputNumber = ({
   path,
   name,
   jsonSchema,
@@ -47,8 +47,8 @@ const FormTypeNumber = ({
   );
 };
 
-export const FormTypeNumberDefinition = {
-  Component: FormTypeNumber,
+export const FormTypeInputNumberDefinition = {
+  Component: FormTypeInputNumber,
   test: {
     type: ['number', 'integer'],
   },

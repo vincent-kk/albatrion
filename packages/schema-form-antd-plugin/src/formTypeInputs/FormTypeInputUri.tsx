@@ -25,7 +25,7 @@ interface StringJsonSchema extends StringSchema {
 
 const DEFAULT_PROTOCOLS = ['http://', 'https://'];
 
-const FormTypeUri = ({
+const FormTypeInputUri = ({
   path,
   name,
   jsonSchema,
@@ -121,8 +121,8 @@ const FormTypeUri = ({
   );
 };
 
-export const FormTypeUriDefinition = {
-  Component: FormTypeUri,
+export const FormTypeInputUriDefinition = {
+  Component: FormTypeInputUri,
   test: ({ type, format, formType }) =>
     type === 'string' && (format === 'uri' || formType === 'uri'),
 } satisfies FormTypeInputDefinition;

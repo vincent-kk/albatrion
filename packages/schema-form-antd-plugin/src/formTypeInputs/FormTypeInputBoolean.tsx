@@ -9,7 +9,7 @@ import type {
   FormTypeInputProps,
 } from '@lumy-pack/schema-form';
 
-const FormTypeBoolean = ({
+const FormTypeInputBoolean = ({
   path,
   name,
   disabled,
@@ -35,8 +35,8 @@ const FormTypeBoolean = ({
   );
 };
 
-export const FormTypeBooleanDefinition = {
-  Component: FormTypeBoolean,
+export const FormTypeInputBooleanDefinition = {
+  Component: FormTypeInputBoolean,
   test: {
     type: 'boolean',
   },
