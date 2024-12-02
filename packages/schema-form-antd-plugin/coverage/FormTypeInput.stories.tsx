@@ -6,6 +6,7 @@ import { Form, type JsonSchemaError } from '@lumy-pack/schema-form';
 
 import { FormTypeInputArrayDefinition } from '../src/formTypeInputs/FormTypeInputArray';
 import { FormTypeInputBooleanDefinition } from '../src/formTypeInputs/FormTypeInputBoolean';
+import { FormTypeInputBooleanSwitchDefinition } from '../src/formTypeInputs/FormTypeInputBooleanSwitch';
 import { FormTypeInputDateDefinition } from '../src/formTypeInputs/FormTypeInputDate';
 import { FormTypeInputDateRangeDefinition } from '../src/formTypeInputs/FormTypeInputDateRange';
 import { FormTypeInputMonthDefinition } from '../src/formTypeInputs/FormTypeInputMonth';
@@ -15,6 +16,7 @@ import { FormTypeInputRadioGroupDefinition } from '../src/formTypeInputs/FormTyp
 import { FormTypeInputStringDefinition } from '../src/formTypeInputs/FormTypeInputString';
 import { FormTypeInputStringCheckboxDefinition } from '../src/formTypeInputs/FormTypeInputStringCheckbox';
 import { FormTypeInputStringEnumDefinition } from '../src/formTypeInputs/FormTypeInputStringEnum';
+import { FormTypeInputStringSwitchDefinition } from '../src/formTypeInputs/FormTypeInputStringSwitch';
 import { FormTypeInputTimeDefinition } from '../src/formTypeInputs/FormTypeInputTime';
 import { FormTypeInputUriDefinition } from '../src/formTypeInputs/FormTypeInputUri';
 import StoryLayout from './components/StoryLayout';
@@ -57,6 +59,14 @@ Boolean.args = {
   jsonSchema: {
     type: 'boolean',
     formType: FormTypeInputBooleanDefinition.Component,
+  },
+};
+
+export const BooleanSwitch = Template.bind({});
+BooleanSwitch.args = {
+  jsonSchema: {
+    type: 'boolean',
+    formType: FormTypeInputBooleanSwitchDefinition.Component,
   },
 };
 
@@ -115,6 +125,15 @@ StringEnum.args = {
     type: 'string',
     enum: ['a', 'b', 'c'],
     formType: FormTypeInputStringEnumDefinition.Component,
+  },
+};
+
+export const StringSwitch = Template.bind({});
+StringSwitch.args = {
+  jsonSchema: {
+    type: 'string',
+    enum: ['on', 'off'],
+    formType: FormTypeInputStringSwitchDefinition.Component,
   },
 };
 
