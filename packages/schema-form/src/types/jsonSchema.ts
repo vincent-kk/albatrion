@@ -170,6 +170,7 @@ interface CustomOptions<T> {
     visible?: boolean | string;
     editable?: boolean | string;
   };
+  placeholder?: string;
   readOnly?: boolean;
   disabled?: boolean;
   hidden?: true;
