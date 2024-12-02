@@ -13,10 +13,6 @@ import type {
 
 const DATA_FORMAT = 'YYYY-MM-DD';
 
-interface DateJsonSchema extends StringSchema {
-  format: 'date';
-}
-
 const FormTypeInputDate = ({
   path,
   name,
@@ -24,11 +20,7 @@ const FormTypeInputDate = ({
   defaultValue,
   onChange,
   context,
-}: FormTypeInputPropsWithSchema<
-  string,
-  DateJsonSchema,
-  { size?: SizeType }
->) => {
+}: FormTypeInputPropsWithSchema<string, StringSchema, { size?: SizeType }>) => {
   const handleChange = useHandle((value: Dayjs | undefined) => {
     onChange(value?.format(DATA_FORMAT));
   });
