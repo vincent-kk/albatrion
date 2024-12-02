@@ -7,8 +7,15 @@ import { Form, type JsonSchemaError } from '@lumy-pack/schema-form';
 import { FormTypeInputArrayDefinition } from '../src/formTypeInputs/FormTypeInputArray';
 import { FormTypeInputBooleanDefinition } from '../src/formTypeInputs/FormTypeInputBoolean';
 import { FormTypeInputDateDefinition } from '../src/formTypeInputs/FormTypeInputDate';
+import { FormTypeInputDateRangeDefinition } from '../src/formTypeInputs/FormTypeInputDateRange';
+import { FormTypeInputMonthDefinition } from '../src/formTypeInputs/FormTypeInputMonth';
+import { FormTypeInputMonthRangeDefinition } from '../src/formTypeInputs/FormTypeInputMonthRange';
 import { FormTypeInputNumberDefinition } from '../src/formTypeInputs/FormTypeInputNumber';
+import { FormTypeInputRadioGroupDefinition } from '../src/formTypeInputs/FormTypeInputRadioGroup';
 import { FormTypeInputStringDefinition } from '../src/formTypeInputs/FormTypeInputString';
+import { FormTypeInputStringCheckboxDefinition } from '../src/formTypeInputs/FormTypeInputStringCheckbox';
+import { FormTypeInputStringEnumDefinition } from '../src/formTypeInputs/FormTypeInputStringEnum';
+import { FormTypeInputTimeDefinition } from '../src/formTypeInputs/FormTypeInputTime';
 import { FormTypeInputUriDefinition } from '../src/formTypeInputs/FormTypeInputUri';
 import StoryLayout from './components/StoryLayout';
 
@@ -81,53 +88,44 @@ Uri.args = {
   },
 };
 
-// export const StringCheckbox = Template.bind({});
-// StringCheckbox.args = {
-//   jsonSchema: {
-//     type: 'array',
-//     items: {
-//       type: 'string',
-//       enum: ['a', 'b', 'c'],
-//     },
-//     formType: FormTypeInputStringCheckbox,
-//   },
-// };
+export const StringCheckbox = Template.bind({});
+StringCheckbox.args = {
+  jsonSchema: {
+    type: 'array',
+    items: {
+      type: 'string',
+      enum: ['a', 'b', 'c'],
+    },
+    formType: FormTypeInputStringCheckboxDefinition.Component,
+  },
+};
 
-// export const StringRadio = Template.bind({});
-// StringRadio.args = {
-//   jsonSchema: {
-//     type: 'string',
-//     enum: ['a', 'b', 'c'],
-//     formType: FormTypeInputStringRadio,
-//   },
-// };
+export const StringRadio = Template.bind({});
+StringRadio.args = {
+  jsonSchema: {
+    type: 'string',
+    enum: ['a', 'b', 'c'],
+    formType: FormTypeInputRadioGroupDefinition.Component,
+  },
+};
 
-// export const StringEnum = Template.bind({});
-// StringEnum.args = {
-//   jsonSchema: {
-//     type: 'string',
-//     enum: ['', 'a', 'b', 'c'],
-//     formType: FormTypeInputStringEnum,
-//   },
-// };
+export const StringEnum = Template.bind({});
+StringEnum.args = {
+  jsonSchema: {
+    type: 'string',
+    enum: ['a', 'b', 'c'],
+    formType: FormTypeInputStringEnumDefinition.Component,
+  },
+};
 
-// export const DateTimeFormat = Template.bind({});
-// DateTimeFormat.args = {
-//   jsonSchema: {
-//     type: 'string',
-//     format: 'datetime-local',
-//     formType: FormTypeInputDateFormant,
-//   },
-// };
-
-// export const TimeFormat = Template.bind({});
-// TimeFormat.args = {
-//   jsonSchema: {
-//     type: 'string',
-//     format: 'time',
-//     formType: FormTypeInputDateFormant,
-//   },
-// };
+export const TimeFormat = Template.bind({});
+TimeFormat.args = {
+  jsonSchema: {
+    type: 'string',
+    format: 'time',
+    formType: FormTypeInputTimeDefinition.Component,
+  },
+};
 
 export const DateFormat = Template.bind({});
 DateFormat.args = {
@@ -138,23 +136,34 @@ DateFormat.args = {
   },
 };
 
-// export const WeekFormat = Template.bind({});
-// WeekFormat.args = {
-//   jsonSchema: {
-//     type: 'string',
-//     format: 'week',
-//     formType: FormTypeInputDateFormant,
-//   },
-// };
+export const DateRangeFormat = Template.bind({});
+DateRangeFormat.args = {
+  jsonSchema: {
+    type: 'string',
+    format: 'date',
+    formType: FormTypeInputDateRangeDefinition.Component,
+  },
+};
 
-// export const MonthFormat = Template.bind({});
-// MonthFormat.args = {
-//   jsonSchema: {
-//     type: 'string',
-//     format: 'month',
-//     formType: FormTypeInputDateFormant,
-//   },
-// };
+export const MonthFormat = Template.bind({});
+MonthFormat.args = {
+  jsonSchema: {
+    type: 'string',
+    format: 'month',
+    formType: FormTypeInputMonthDefinition.Component,
+  },
+};
+
+export const MonthRangeFormat = Template.bind({});
+MonthRangeFormat.args = {
+  jsonSchema: {
+    type: 'array',
+    items: {
+      type: 'string',
+    },
+    formType: FormTypeInputMonthRangeDefinition.Component,
+  },
+};
 
 export const Number = Template.bind({});
 Number.args = {
