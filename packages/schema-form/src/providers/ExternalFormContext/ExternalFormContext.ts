@@ -12,7 +12,7 @@ import type { FormTypeRendererProps } from '@lumy/schema-form/types';
 
 export interface ExternalFormContextProps {
   fromExternalFormTypeInputDefinitions: NormalizedFormTypeInputDefinition[];
-  FallbackFormTypeRenderer: ComponentType<FormTypeRendererProps>;
+  FallbackFormGroupRenderer: ComponentType<FormTypeRendererProps>;
   FallbackFormLabelRenderer: ComponentType<FormTypeRendererProps>;
   FallbackFormInputRenderer: ComponentType<FormTypeRendererProps>;
   FallbackFormErrorRenderer: ComponentType<FormTypeRendererProps>;
@@ -21,7 +21,7 @@ export interface ExternalFormContextProps {
 
 export const ExternalFormContext = createContext<ExternalFormContextProps>({
   fromExternalFormTypeInputDefinitions: [],
-  FallbackFormTypeRenderer: FormGroupRenderer,
+  FallbackFormGroupRenderer: FormGroupRenderer,
   FallbackFormLabelRenderer: FormLabelRenderer,
   FallbackFormInputRenderer: FormInputRenderer,
   FallbackFormErrorRenderer: FormErrorRenderer,

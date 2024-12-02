@@ -19,7 +19,7 @@ import { ExternalFormContext } from './ExternalFormContext';
 
 export interface ExternalFormContextProviderProps {
   formTypeInputDefinitions?: FormTypeInputDefinition[];
-  FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  FormGroupRenderer?: ComponentType<FormTypeRendererProps>;
   FormLabelRenderer?: ComponentType<FormTypeRendererProps>;
   FormInputRenderer?: ComponentType<FormTypeRendererProps>;
   FormErrorRenderer?: ComponentType<FormTypeRendererProps>;
@@ -28,7 +28,7 @@ export interface ExternalFormContextProviderProps {
 
 export const ExternalFormContextProvider = ({
   formTypeInputDefinitions,
-  FormTypeRenderer: InputFormTypeRenderer,
+  FormGroupRenderer: InputFormGroupRenderer,
   FormLabelRenderer: InputFormLabelRenderer,
   FormInputRenderer: InputFormInputRenderer,
   FormErrorRenderer: InputFormErrorRenderer,
@@ -50,9 +50,9 @@ export const ExternalFormContextProvider = ({
     );
   }, [formTypeInputDefinitions]);
 
-  const FallbackFormTypeRenderer = useMemo(
-    () => InputFormTypeRenderer || FormGroupRenderer,
-    [InputFormTypeRenderer],
+  const FallbackFormGroupRenderer = useMemo(
+    () => InputFormGroupRenderer || FormGroupRenderer,
+    [InputFormGroupRenderer],
   );
 
   const FallbackFormLabelRenderer = useMemo(
@@ -79,7 +79,7 @@ export const ExternalFormContextProvider = ({
     <ExternalFormContext.Provider
       value={{
         fromExternalFormTypeInputDefinitions,
-        FallbackFormTypeRenderer,
+        FallbackFormGroupRenderer,
         FallbackFormLabelRenderer,
         FallbackFormInputRenderer,
         FallbackFormErrorRenderer,
