@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Flex } from 'antd';
 
 import type { FormTypeRendererProps } from '@lumy-pack/schema-form';
 
@@ -8,13 +8,9 @@ export const FormInput = (props: FormTypeRendererProps) => {
   const { Input } = props;
 
   return (
-    <Fragment>
-      <div>
-        <Input />
-      </div>
-      <div>
-        <FormError {...props} />
-      </div>
-    </Fragment>
+    <Flex vertical>
+      <Input />
+      <FormError {...props} />
+    </Flex>
   );
 };
