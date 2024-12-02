@@ -1,7 +1,8 @@
 import { memo, useMemo } from 'react';
 
-import { isReactComponent } from '@lumy-pack/common-react';
+import { isFunctionComponent, isMemoComponent } from '@lumy-pack/common-react';
 
+import { withErrorBoundary } from '@lumy/schema-form/components/utils/withErrorBoundary';
 import type { SchemaNode } from '@lumy/schema-form/core';
 import { fromFallbackFormTypeInputDefinitions } from '@lumy/schema-form/formTypeDefinitions';
 import {
@@ -25,8 +26,13 @@ export const useFormTypeInput = (node: SchemaNode) => {
 
   const FormTypeInput = useMemo(() => {
     // NOTE: formType이 React Component인 경우, 해당 Component를 반환합니다.
-    if (node.jsonSchema?.formType && isReactComponent(node.jsonSchema.formType))
-      return memo(node.jsonSchema.formType);
+    const inlineFormType = node.jsonSchema?.formType;
+    if (inlineFormType) {
+      if (isFunctionComponent(inlineFormType))
+        return memo(withErrorBoundary(inlineFormType));
+      if (isMemoComponent(inlineFormType))
+        return withErrorBoundary(inlineFormType);
+    }
 
     const hint = getHint(node);
     // NOTE: FormTypeInputMap has higher priority than FormTypeInputDefinitions
