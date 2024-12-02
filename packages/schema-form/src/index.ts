@@ -1,3 +1,4 @@
+import { type Plugin, registerPlugin } from './app/registerPlugin';
 import {
   Form,
   type FormChildrenProps,
@@ -28,6 +29,7 @@ import {
 } from './providers';
 import { JSONPath, ShowError } from './types';
 import type {
+  ArraySchema,
   BooleanSchema,
   FormTypeInputDefinition,
   FormTypeInputMap,
@@ -42,7 +44,6 @@ import type {
   InferJsonSchemaType,
   JsonSchema,
   JsonSchemaError,
-  ArraySchema,
   NullSchema,
   NumberSchema,
   ObjectSchema,
@@ -64,6 +65,8 @@ export {
 };
 
 export { FormProvider, type FormProviderProps };
+
+export { registerPlugin, type Plugin };
 
 export {
   isArrayNode,
