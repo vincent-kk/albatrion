@@ -12,6 +12,8 @@ import type { SchemaNodeAdapterInputProps } from './type';
 export const SchemaNodeAdapterInput = memo(
   ({
     node,
+    readOnly,
+    disabled,
     watchValues,
     overrideFormTypeInputProps,
     PreferredFormTypeInput,
@@ -54,8 +56,8 @@ export const SchemaNodeAdapterInput = memo(
       <span className={styles.frame} onFocus={handleFocus} onBlur={handleBlur}>
         <FormTypeInput
           jsonSchema={node.jsonSchema}
-          readOnly={!!node.jsonSchema.renderOptions?.readOnly}
-          disabled={!!node.jsonSchema.renderOptions?.disabled}
+          readOnly={readOnly}
+          disabled={disabled}
           node={node}
           childNodes={childNodes}
           name={node.name}

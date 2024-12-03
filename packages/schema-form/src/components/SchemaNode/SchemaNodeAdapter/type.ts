@@ -12,8 +12,10 @@ import type { GridForm } from '../type';
 
 export interface SchemaNodeAdapterProps {
   node: SchemaNode;
-  watchValues: any[];
   gridFrom?: GridForm;
+  readOnly: boolean;
+  disabled: boolean;
+  watchValues: any[];
   overridePropsFromProxy: OverrideFormTypeInputProps;
   overridePropsFromInput: OverrideFormTypeInputProps;
   PreferredFormTypeInput?: ComponentType<FormTypeInputProps>;
@@ -22,6 +24,8 @@ export interface SchemaNodeAdapterProps {
 
 export interface SchemaNodeAdapterRowProps {
   node: SchemaNode;
+  readOnly: boolean;
+  disabled: boolean;
   watchValues: any[];
   rawChildNodes: RawChildNode[];
   overrideFormTypeInputProps: OverrideFormTypeInputProps;
@@ -31,6 +35,8 @@ export interface SchemaNodeAdapterRowProps {
 
 export interface SchemaNodeAdapterInputProps {
   node: SchemaNode;
+  readOnly: boolean;
+  disabled: boolean;
   watchValues: any[];
   overrideFormTypeInputProps: OverrideFormTypeInputProps;
   PreferredFormTypeInput?: ComponentType<FormTypeInputProps>;

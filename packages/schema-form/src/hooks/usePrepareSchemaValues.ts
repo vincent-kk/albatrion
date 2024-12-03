@@ -1,6 +1,11 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 
-import { falseFunction, isFunction, isString } from '@lumy-pack/common';
+import {
+  falseFunction,
+  isFunction,
+  isString,
+  trueFunction,
+} from '@lumy-pack/common';
 
 import {
   MethodType,
@@ -18,6 +23,8 @@ export const usePrepareSchemaValues = (
 ): {
   node: SchemaNode | null;
   visible: boolean;
+  disabled: boolean;
+  readOnly: boolean;
   watchValues: any[];
 } => {
   const { rootNode } = useSchemaNodeContext();
@@ -34,14 +41,20 @@ export const usePrepareSchemaValues = (
     MethodType.Validate,
   ]);
 
-  const { dependencyPaths, checkVisible, getWatchValues } = useMemo(() => {
-    const visible = node?.jsonSchema?.renderOptions?.visible;
-    const hidden = node?.jsonSchema?.hidden;
-    const watch = node?.jsonSchema?.options?.watch;
+  const {
+    dependencyPaths,
+    checkVisible,
+    checkDisabled,
+    checkReadOnly,
+    getWatchValues,
+  } = useMemo(() => {
     const dependencyPaths: string[] = [];
+    const jsonSchema = node?.jsonSchema;
 
-    let checkVisible: CheckVisible | undefined = undefined;
-    if (hidden || visible === false) {
+    const visible = jsonSchema?.renderOptions?.visible;
+    const isHidden = visible === false || jsonSchema?.visible === false;
+    let checkVisible: CheckRenderOption | undefined = undefined;
+    if (isHidden) {
       checkVisible = falseFunction;
     } else if (typeof visible === 'string') {
       const functionBody = `return !!(${visible
@@ -53,9 +66,55 @@ export const usePrepareSchemaValues = (
         })
         .trim()
         .replace(/;$/, '')})`;
-      checkVisible = new Function('dependencies', functionBody) as CheckVisible;
+      checkVisible = new Function(
+        'dependencies',
+        functionBody,
+      ) as CheckRenderOption;
     }
 
+    const disabled = jsonSchema?.renderOptions?.disabled;
+    const isDisabled = disabled === true || jsonSchema?.disabled === true;
+    let checkDisabled: CheckRenderOption | undefined = undefined;
+    if (isDisabled) {
+      checkDisabled = trueFunction;
+    } else if (typeof disabled === 'string') {
+      const functionBody = `return !!(${disabled
+        .replace(JSON_PATH_REGEX, (path) => {
+          if (!dependencyPaths.includes(path)) {
+            dependencyPaths.push(path);
+          }
+          return `dependencies[${dependencyPaths.indexOf(path)}]`;
+        })
+        .trim()
+        .replace(/;$/, '')})`;
+      checkDisabled = new Function(
+        'dependencies',
+        functionBody,
+      ) as CheckRenderOption;
+    }
+
+    const readOnly = jsonSchema?.renderOptions?.readOnly;
+    const isReadOnly = readOnly === true || jsonSchema?.readOnly === true;
+    let checkReadOnly: CheckRenderOption | undefined = undefined;
+    if (isReadOnly) {
+      checkReadOnly = trueFunction;
+    } else if (typeof readOnly === 'string') {
+      const functionBody = `return !!(${readOnly
+        .replace(JSON_PATH_REGEX, (path) => {
+          if (!dependencyPaths.includes(path)) {
+            dependencyPaths.push(path);
+          }
+          return `dependencies[${dependencyPaths.indexOf(path)}]`;
+        })
+        .trim()
+        .replace(/;$/, '')})`;
+      checkReadOnly = new Function(
+        'dependencies',
+        functionBody,
+      ) as CheckRenderOption;
+    }
+
+    const watch = jsonSchema?.options?.watch;
     let getWatchValues: GetWatchValues | undefined = undefined;
     if (watch && (isString(watch) || Array.isArray(watch))) {
       const watchValueIndexes = (Array.isArray(watch) ? watch : [watch]).map(
@@ -73,7 +132,13 @@ export const usePrepareSchemaValues = (
       ) as GetWatchValues;
     }
 
-    return { dependencyPaths, checkVisible, getWatchValues };
+    return {
+      dependencyPaths,
+      checkVisible,
+      checkDisabled,
+      checkReadOnly,
+      getWatchValues,
+    };
   }, [node]);
 
   const [dependencies, setDependencies] = useState<any[]>(() => {
@@ -85,6 +150,16 @@ export const usePrepareSchemaValues = (
     if (checkVisible) return checkVisible(dependencies);
     return true;
   }, [dependencies, checkVisible]);
+
+  const disabled = useMemo(() => {
+    if (checkDisabled) return checkDisabled(dependencies);
+    return false;
+  }, [dependencies, checkDisabled]);
+
+  const readOnly = useMemo(() => {
+    if (checkReadOnly) return checkReadOnly(dependencies);
+    return false;
+  }, [dependencies, checkReadOnly]);
 
   const watchValues = useMemo(() => {
     if (getWatchValues) return getWatchValues(dependencies);
@@ -117,10 +192,10 @@ export const usePrepareSchemaValues = (
     };
   }, [dependencyPaths, node]);
 
-  return { node, visible, watchValues };
+  return { node, visible, disabled, readOnly, watchValues };
 };
 
-type CheckVisible = Fn<[dependencies: any[]], boolean>;
+type CheckRenderOption = Fn<[dependencies: any[]], boolean>;
 type GetWatchValues = Fn<[dependencies: any[]], any[]>;
 
 const JSON_PATH_REGEX = new RegExp(
