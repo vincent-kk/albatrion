@@ -96,7 +96,7 @@ export const SchemaNodeProxy = ({
 
   return (
     <Wrapper key={tick}>
-      <span ref={formElementRef}>
+      <span ref={formElementRef} data-json-path={node.path}>
         <FormTypeRenderer
           node={node}
           type={node.type}
