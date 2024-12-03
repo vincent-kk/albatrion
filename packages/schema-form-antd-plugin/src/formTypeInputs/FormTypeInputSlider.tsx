@@ -28,9 +28,9 @@ const FormTypeInputSlider = ({
       min: jsonSchema.minimum,
       max: jsonSchema.maximum,
       step: jsonSchema.multipleOf,
-      ...(jsonSchema.renderOptions?.lazy === false
+      ...(jsonSchema.options?.lazy === false
         ? { onChange: handleChange }
-        : { onAfterChange: handleChange }),
+        : { onChangeComplete: handleChange }),
     } as const;
   }, [handleChange, jsonSchema]);
 
