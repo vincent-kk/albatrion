@@ -1,1 +1,1 @@
-export { removeNonComponentValue } from './removeNonComponentValue';
+export { remainOnlyReactComponent } from './remainOnlyReactComponent';
