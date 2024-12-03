@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { Radio, type RadioChangeEvent } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
@@ -14,14 +14,14 @@ import type {
 interface StringJsonSchema extends StringSchema {
   enum?: string[];
   options?: {
-    alias?: Dictionary<string>;
+    alias?: { [label: string]: ReactNode };
   };
 }
 
 interface NumberJsonSchema extends NumberSchema {
   enum?: number[];
   options?: {
-    alias?: Dictionary<string>;
+    alias?: { [label: string]: ReactNode };
   };
 }
 
@@ -36,15 +36,20 @@ const FormTypeInputRadioGroup = ({
 }: FormTypeInputPropsWithSchema<
   string | number,
   StringJsonSchema | NumberJsonSchema,
-  { size?: SizeType }
+  {
+    size?: SizeType;
+    radioLabels?: {
+      [label: string]: ReactNode;
+    };
+  }
 >) => {
   const options = useMemo(() => {
-    const alias = jsonSchema.options?.alias || {};
+    const alias = context.radioLabels || jsonSchema.options?.alias || {};
     return jsonSchema.enum?.map((value) => ({
       label: alias[value] || value,
       value,
     }));
-  }, [jsonSchema]);
+  }, [context, jsonSchema]);
   const handleChange = useHandle((event: RadioChangeEvent) => {
     onChange(event.target.value);
   });

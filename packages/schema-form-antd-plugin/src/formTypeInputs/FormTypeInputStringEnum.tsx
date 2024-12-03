@@ -14,7 +14,7 @@ import type {
 interface StringJsonSchema extends StringSchema {
   enum?: string[];
   options?: {
-    alias?: Dictionary<string>;
+    alias?: { [label: string]: string };
   };
 }
 
@@ -32,17 +32,22 @@ const FormTypeInputStringEnum = ({
 }: FormTypeInputPropsWithSchema<
   string | Array<string>,
   StringJsonSchema | ArrayJsonSchema,
-  { size?: SizeType }
+  {
+    size?: SizeType;
+    enumLabels?: {
+      [label: string]: string;
+    };
+  }
 >) => {
   const [schema, alias, mode] = useMemo(() => {
+    const alias =
+      context.enumLabels ||
+      jsonSchema.items?.options?.alias ||
+      jsonSchema.options?.alias;
     if (jsonSchema.type === 'array')
-      return [
-        jsonSchema.items,
-        jsonSchema?.options?.alias,
-        'multiple',
-      ] as const;
-    else return [jsonSchema, jsonSchema?.options?.alias, undefined] as const;
-  }, [jsonSchema]);
+      return [jsonSchema.items, alias, 'multiple'] as const;
+    else return [jsonSchema, alias, undefined] as const;
+  }, [context, jsonSchema]);
 
   const Options = useMemo(() => {
     return (
@@ -65,6 +70,7 @@ const FormTypeInputStringEnum = ({
       disabled={disabled}
       defaultValue={defaultValue}
       onChange={handleChange}
+      style={{ width: '100%' }}
       size={context?.size}
     >
       {Options}
