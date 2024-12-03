@@ -163,6 +163,10 @@ export const ReadOnly = () => {
         default: 10,
         disabled: true,
       },
+      nationality: {
+        type: 'string',
+        visible: false,
+      },
     },
   } satisfies JsonSchema;
 

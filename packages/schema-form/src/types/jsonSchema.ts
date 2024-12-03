@@ -166,25 +166,24 @@ interface BasicSchema<T> extends CustomOptions<T> {
 }
 
 interface CustomOptions<T> {
+  formType?: string | ComponentType<UnknownFormTypeInputProps>;
+  format?: string;
+  visible?: false;
+  readOnly?: true;
+  disabled?: true;
+  placeholder?: string;
   renderOptions?: {
     visible?: boolean | string;
-    editable?: boolean | string;
+    readOnly?: boolean | string;
+    disabled?: boolean | string;
   };
-  placeholder?: string;
-  readOnly?: boolean;
-  disabled?: boolean;
-  hidden?: true;
   options?: {
-    lazy?: boolean;
     watch?: string | string[];
     alias?: Record<string, ReactNode>;
-    minimum?: string;
-    maximum?: string;
+    lazy?: boolean;
     formatter?: Formatter<T>;
     parser?: Parser<T>;
     [key: string]: any;
   };
-  formType?: string | ComponentType<UnknownFormTypeInputProps>;
-  format?: string;
   [key: string]: any;
 }

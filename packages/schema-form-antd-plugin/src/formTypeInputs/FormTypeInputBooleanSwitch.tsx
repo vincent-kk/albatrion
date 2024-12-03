@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { Switch } from 'antd';
 import type { SwitchSize } from 'antd/es/switch';
@@ -13,8 +13,8 @@ import type {
 interface BooleanSwitchSchema extends BooleanSchema {
   options?: {
     alias?: {
-      checked?: string;
-      unchecked?: string;
+      checked?: ReactNode;
+      unchecked?: ReactNode;
     };
   };
 }
@@ -29,12 +29,18 @@ const FormTypeInputBooleanSwitch = ({
 }: FormTypeInputPropsWithSchema<
   boolean,
   BooleanSwitchSchema,
-  { switchSize?: SwitchSize }
+  {
+    switchSize?: SwitchSize;
+    checkboxLabels?: {
+      checked?: ReactNode;
+      unchecked?: ReactNode;
+    };
+  }
 >) => {
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
-    const alias = jsonSchema.options?.alias || {};
+    const alias = context?.checkboxLabels || jsonSchema.options?.alias || {};
     return [alias.checked, alias.unchecked];
-  }, [jsonSchema]);
+  }, [context, jsonSchema]);
 
   const handleChange = useHandle((input: boolean) => {
     onChange(input);

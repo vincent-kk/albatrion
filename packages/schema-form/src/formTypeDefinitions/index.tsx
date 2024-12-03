@@ -12,14 +12,14 @@ import { FormTypeInputStringRadioDefinition } from './FormTypeInputStringRadio';
 import { FormTypeInputVirtualDefinition } from './FormTypeInputVirtual';
 
 export const formTypeDefinitions = [
-  FormTypeInputArrayDefinition,
-  FormTypeInputBooleanDefinition,
   FormTypeInputDateFormantDefinition,
-  FormTypeInputNumberDefinition,
-  FormTypeInputObjectDefinition,
-  FormTypeInputStringDefinition,
   FormTypeInputStringCheckboxDefinition,
   FormTypeInputStringEnumDefinition,
   FormTypeInputStringRadioDefinition,
   FormTypeInputVirtualDefinition,
+  FormTypeInputArrayDefinition,
+  FormTypeInputObjectDefinition,
+  FormTypeInputBooleanDefinition,
+  FormTypeInputStringDefinition,
+  FormTypeInputNumberDefinition,
 ] satisfies FormTypeInputDefinition[];

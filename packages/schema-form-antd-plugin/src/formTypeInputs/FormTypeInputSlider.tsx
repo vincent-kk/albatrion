@@ -30,7 +30,7 @@ const FormTypeInputSlider = ({
       step: jsonSchema.multipleOf,
       ...(jsonSchema.options?.lazy === false
         ? { onChange: handleChange }
-        : { onAfterChange: handleChange }),
+        : { onChangeComplete: handleChange }),
     } as const;
   }, [handleChange, jsonSchema]);
 

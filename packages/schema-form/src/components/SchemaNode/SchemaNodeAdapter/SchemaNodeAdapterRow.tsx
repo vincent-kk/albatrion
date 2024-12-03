@@ -18,6 +18,8 @@ import type { ChildComponent, SchemaNodeAdapterRowProps } from './type';
 
 export const SchemaNodeAdapterRow = ({
   node,
+  readOnly,
+  disabled,
   watchValues,
   rawChildNodes,
   overrideFormTypeInputProps,
@@ -97,6 +99,8 @@ export const SchemaNodeAdapterRow = ({
   return (
     <SchemaNodeAdapterInput
       node={node}
+      readOnly={readOnly}
+      disabled={disabled}
       watchValues={watchValues}
       overrideFormTypeInputProps={overrideFormTypeInputProps}
       PreferredFormTypeInput={PreferredFormTypeInput}

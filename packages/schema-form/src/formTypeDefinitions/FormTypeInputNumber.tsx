@@ -27,6 +27,7 @@ const FormTypeInputNumber = ({
       step={jsonSchema.multipleOf}
       readOnly={readOnly}
       disabled={disabled}
+      placeholder={jsonSchema?.placeholder}
       defaultValue={defaultValue}
       onChange={handleChange}
     />

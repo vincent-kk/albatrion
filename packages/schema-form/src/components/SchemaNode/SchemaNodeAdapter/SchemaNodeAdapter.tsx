@@ -20,6 +20,8 @@ import type { RawChildNode, SchemaNodeAdapterProps } from './type';
 export const SchemaNodeAdapter = ({
   node,
   watchValues,
+  readOnly,
+  disabled,
   gridFrom,
   overridePropsFromProxy,
   overridePropsFromInput,
@@ -100,6 +102,8 @@ export const SchemaNodeAdapter = ({
             <SchemaNodeAdapterRow
               key={`row-${index}-end`}
               node={node}
+              readOnly={readOnly}
+              disabled={disabled}
               watchValues={watchValues}
               rawChildNodes={childNodeRow}
               overrideFormTypeInputProps={overrideFormTypeInputProps}
@@ -112,6 +116,8 @@ export const SchemaNodeAdapter = ({
             <div key={`row-${index}-${grid.length}`} className={styles.row}>
               <SchemaNodeAdapterRow
                 node={node}
+                readOnly={readOnly}
+                disabled={disabled}
                 watchValues={watchValues}
                 rawChildNodes={childNodeRow}
                 overrideFormTypeInputProps={overrideFormTypeInputProps}

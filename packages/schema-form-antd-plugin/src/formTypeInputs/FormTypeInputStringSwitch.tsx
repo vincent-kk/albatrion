@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { Switch } from 'antd';
 import type { SwitchSize } from 'antd/es/switch';
@@ -13,7 +13,7 @@ import type {
 interface StringSwitchSchema extends StringSchema {
   enum?: [string, string];
   options?: {
-    alias?: Dictionary<string>;
+    alias?: { [label: string]: ReactNode };
   };
 }
 
@@ -27,7 +27,10 @@ const FormTypeInputStringSwitch = ({
 }: FormTypeInputPropsWithSchema<
   string,
   StringSwitchSchema,
-  { switchSize?: SwitchSize }
+  {
+    switchSize?: SwitchSize;
+    switchLabels?: { [label: string]: ReactNode };
+  }
 >) => {
   const [checked, unchecked] = useMemo(() => {
     const [checked, unchecked] = jsonSchema.enum || [];
@@ -35,9 +38,9 @@ const FormTypeInputStringSwitch = ({
   }, [jsonSchema]);
 
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
-    const alias = jsonSchema.options?.alias || {};
+    const alias = context.switchLabels || jsonSchema.options?.alias || {};
     return [alias[checked] || checked, alias[unchecked] || unchecked];
-  }, [checked, unchecked, jsonSchema]);
+  }, [checked, unchecked, context, jsonSchema]);
 
   const handleChange = useHandle((input: boolean) => {
     onChange(input ? checked : unchecked);

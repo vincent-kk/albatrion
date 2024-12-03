@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { Checkbox } from 'antd';
 
@@ -13,7 +13,7 @@ import type {
 interface StringJsonSchema extends StringSchema {
   enum?: string[];
   options?: {
-    alias?: Dictionary<string>;
+    alias?: { [label: string]: ReactNode };
   };
 }
 
@@ -27,16 +27,25 @@ const FormTypeInputStringCheckbox = ({
   disabled,
   defaultValue,
   onChange,
-}: FormTypeInputPropsWithSchema<Array<string>, ArrayJsonSchema>) => {
+  context,
+}: FormTypeInputPropsWithSchema<
+  Array<string>,
+  ArrayJsonSchema,
+  { checkboxLabels?: { [label: string]: ReactNode } }
+>) => {
   const options = useMemo(() => {
-    const alias = jsonSchema?.options?.alias || {};
+    const alias =
+      context.checkboxLabels ||
+      jsonSchema.items?.options?.alias ||
+      jsonSchema.options?.alias ||
+      {};
     return (
       jsonSchema.items?.enum?.map((value: string) => ({
         label: alias[value] || value,
         value,
       })) || []
     );
-  }, [jsonSchema]);
+  }, [context, jsonSchema]);
 
   const handleChange = useHandle((value: string[]) => {
     onChange(value);

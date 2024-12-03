@@ -12,6 +12,9 @@ type StringCheckboxJsonSchema = {
   items: {
     type: 'string';
     enum?: string[];
+    options?: {
+      alias?: { [label: string]: ReactNode };
+    };
   };
   options?: {
     alias?: { [label: string]: ReactNode };
@@ -45,6 +48,7 @@ const FormTypeInputStringCheckbox = ({
         label:
           context.checkboxLabels?.[value] ||
           jsonSchema.options?.alias?.[value] ||
+          jsonSchema.items?.options?.alias?.[value] ||
           value,
       })) || [],
     [context, jsonSchema],

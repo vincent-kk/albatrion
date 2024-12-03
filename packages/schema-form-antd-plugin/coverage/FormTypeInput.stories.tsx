@@ -13,6 +13,7 @@ import { FormTypeInputMonthDefinition } from '../src/formTypeInputs/FormTypeInpu
 import { FormTypeInputMonthRangeDefinition } from '../src/formTypeInputs/FormTypeInputMonthRange';
 import { FormTypeInputNumberDefinition } from '../src/formTypeInputs/FormTypeInputNumber';
 import { FormTypeInputRadioGroupDefinition } from '../src/formTypeInputs/FormTypeInputRadioGroup';
+import { FormTypeInputSliderDefinition } from '../src/formTypeInputs/FormTypeInputSlider';
 import { FormTypeInputStringDefinition } from '../src/formTypeInputs/FormTypeInputString';
 import { FormTypeInputStringCheckboxDefinition } from '../src/formTypeInputs/FormTypeInputStringCheckbox';
 import { FormTypeInputStringEnumDefinition } from '../src/formTypeInputs/FormTypeInputStringEnum';
@@ -105,6 +106,13 @@ StringCheckbox.args = {
     items: {
       type: 'string',
       enum: ['a', 'b', 'c'],
+      options: {
+        alias: {
+          a: 'alias a',
+          b: 'alias b',
+          c: 'alias c',
+        },
+      },
     },
     formType: FormTypeInputStringCheckboxDefinition.Component,
   },
@@ -116,6 +124,13 @@ StringRadio.args = {
     type: 'string',
     enum: ['a', 'b', 'c'],
     formType: FormTypeInputRadioGroupDefinition.Component,
+    options: {
+      alias: {
+        a: 'alias a',
+        b: 'alias b',
+        c: 'alias c',
+      },
+    },
   },
 };
 
@@ -124,7 +139,15 @@ StringEnum.args = {
   jsonSchema: {
     type: 'string',
     enum: ['a', 'b', 'c'],
+    placeholder: 'select a value',
     formType: FormTypeInputStringEnumDefinition.Component,
+    options: {
+      alias: {
+        a: 'alias a',
+        b: 'alias b',
+        c: 'alias c',
+      },
+    },
   },
 };
 
@@ -134,6 +157,12 @@ StringSwitch.args = {
     type: 'string',
     enum: ['on', 'off'],
     formType: FormTypeInputStringSwitchDefinition.Component,
+    options: {
+      alias: {
+        on: 'alias on',
+        off: 'alias off',
+      },
+    },
   },
 };
 
@@ -199,6 +228,33 @@ Integer.args = {
     type: 'integer',
     multipleOf: 3,
     formType: FormTypeInputNumberDefinition.Component,
+  },
+};
+
+export const NumberSliderLazy = Template.bind({});
+NumberSliderLazy.args = {
+  jsonSchema: {
+    type: 'number',
+    multipleOf: 1,
+    default: 50,
+    minimum: 20,
+    maximum: 80,
+    formType: FormTypeInputSliderDefinition.Component,
+  },
+};
+
+export const NumberSlider = Template.bind({});
+NumberSlider.args = {
+  jsonSchema: {
+    type: 'number',
+    multipleOf: 1,
+    default: 50,
+    minimum: 20,
+    maximum: 80,
+    formType: FormTypeInputSliderDefinition.Component,
+    options: {
+      lazy: false,
+    },
   },
 };
 
