@@ -10,7 +10,7 @@
     "benchmark": "yarn workspace @lumy-pack/benchmark",
     "common": "yarn workspace @lumy-pack/common",
     "commonReact": "yarn workspace @lumy-pack/common-react",
-    "build": "yarn schemaForm build && yarn antdPlugin build"
+    "build:schemaForm": "yarn common build && yarn commonReact build && yarn schemaForm build:only && yarn antdPlugin build:only"
   },
   "workspaces": [
     "packages/*"

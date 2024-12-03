@@ -1,6 +1,6 @@
 import type { ComponentType, MutableRefObject } from 'react';
 
-import { removeNonComponentValue } from '@lumy-pack/common-react';
+import { remainOnlyReactComponent } from '@lumy-pack/common-react';
 
 import {
   FormErrorRenderer,
@@ -65,10 +65,9 @@ export const FallbackManager = {
   },
   appendFormType(formType: Partial<FormType> | undefined) {
     if (!formType) return;
-
     fallbackFormTypeRef.current = {
       ...fallbackFormTypeRef.current,
-      ...removeNonComponentValue(formType),
+      ...remainOnlyReactComponent(formType),
     };
   },
   appendFormTypeInputDefinitions(

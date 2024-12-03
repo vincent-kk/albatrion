@@ -1,16 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
-import { removeNonComponentValue } from '../removeNonComponentValue';
+import { remainOnlyReactComponent } from '../remainOnlyReactComponent';
 
-describe('removeNonComponentValue', () => {
+describe('remainOnlyReactComponent', () => {
   it('should remove non component values', () => {
-    const result = removeNonComponentValue({ a: 1, b: 2, c: 3 });
+    const result = remainOnlyReactComponent({ a: 1, b: 2, c: 3 });
     expect(result).toEqual({});
   });
 
   it('should remain component values', () => {
     const Component = () => <div />;
-    const result = removeNonComponentValue({ a: 1, b: 2, c: Component });
+    const result = remainOnlyReactComponent({ a: 1, b: 2, c: Component });
     expect(result).toMatchObject({ c: Component });
   });
 });
