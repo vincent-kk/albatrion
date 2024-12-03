@@ -105,6 +105,13 @@ StringCheckbox.args = {
     items: {
       type: 'string',
       enum: ['a', 'b', 'c'],
+      options: {
+        alias: {
+          a: 'alias a',
+          b: 'alias b',
+          c: 'alias c',
+        },
+      },
     },
     formType: FormTypeInputStringCheckboxDefinition.Component,
   },
@@ -116,6 +123,13 @@ StringRadio.args = {
     type: 'string',
     enum: ['a', 'b', 'c'],
     formType: FormTypeInputRadioGroupDefinition.Component,
+    options: {
+      alias: {
+        a: 'alias a',
+        b: 'alias b',
+        c: 'alias c',
+      },
+    },
   },
 };
 
@@ -124,7 +138,15 @@ StringEnum.args = {
   jsonSchema: {
     type: 'string',
     enum: ['a', 'b', 'c'],
+    placeholder: 'select a value',
     formType: FormTypeInputStringEnumDefinition.Component,
+    options: {
+      alias: {
+        a: 'alias a',
+        b: 'alias b',
+        c: 'alias c',
+      },
+    },
   },
 };
 
@@ -134,6 +156,12 @@ StringSwitch.args = {
     type: 'string',
     enum: ['on', 'off'],
     formType: FormTypeInputStringSwitchDefinition.Component,
+    options: {
+      alias: {
+        on: 'alias on',
+        off: 'alias off',
+      },
+    },
   },
 };
 
