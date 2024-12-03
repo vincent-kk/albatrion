@@ -140,6 +140,23 @@ export const StringEnum = () => {
         type: 'string',
         enum: ['', 'g', 'h', 'i'],
         formType: 'enum',
+        placeholder: 'select one of item',
+        options: {
+          alias: {
+            g: 'g label',
+            h: 'h label',
+            i: 'i label',
+          },
+        },
+      },
+      multiple: {
+        type: 'array',
+        placeholder: 'select one of item',
+        items: {
+          type: 'string',
+          enum: ['', 'g', 'h', 'i'],
+          formType: 'enum',
+        },
         options: {
           alias: {
             g: 'g label',
