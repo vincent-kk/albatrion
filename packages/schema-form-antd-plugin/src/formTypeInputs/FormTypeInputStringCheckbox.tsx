@@ -29,7 +29,7 @@ const FormTypeInputStringCheckbox = ({
   onChange,
 }: FormTypeInputPropsWithSchema<Array<string>, ArrayJsonSchema>) => {
   const options = useMemo(() => {
-    const alias = jsonSchema?.options?.alias || {};
+    const alias = jsonSchema.items?.options?.alias || {};
     return (
       jsonSchema.items?.enum?.map((value: string) => ({
         label: alias[value] || value,

@@ -36,8 +36,12 @@ const FormTypeInputStringEnum = ({
 >) => {
   const [schema, alias, mode] = useMemo(() => {
     if (jsonSchema.type === 'array')
-      return [jsonSchema.items, jsonSchema?.alias, 'multiple'] as const;
-    else return [jsonSchema, jsonSchema?.alias, undefined] as const;
+      return [
+        jsonSchema.items,
+        jsonSchema?.options?.alias,
+        'multiple',
+      ] as const;
+    else return [jsonSchema, jsonSchema?.options?.alias, undefined] as const;
   }, [jsonSchema]);
 
   const Options = useMemo(() => {
