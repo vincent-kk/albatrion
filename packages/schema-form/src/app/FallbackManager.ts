@@ -28,7 +28,7 @@ interface FormType {
   formatError: FormatError;
 }
 
-const staticFormTypeRef: MutableRefObject<FormType> = {
+const fallbackFormTypeRef: MutableRefObject<FormType> = {
   current: {
     FormGroup: FormGroupRenderer,
     FormLabel: FormLabelRenderer,
@@ -38,35 +38,35 @@ const staticFormTypeRef: MutableRefObject<FormType> = {
   },
 };
 
-const staticFormTypeInputDefinitionsRef: MutableRefObject<
+const fallbackFormTypeInputDefinitionsRef: MutableRefObject<
   NormalizedFormTypeInputDefinition[]
 > = {
   current: normalizeFormTypeInputDefinitions(formTypeDefinitions),
 };
 
-export const StaticManager = {
+export const FallbackManager = {
   get FormGroup() {
-    return staticFormTypeRef.current.FormGroup;
+    return fallbackFormTypeRef.current.FormGroup;
   },
   get FormLabel() {
-    return staticFormTypeRef.current.FormLabel;
+    return fallbackFormTypeRef.current.FormLabel;
   },
   get FormInput() {
-    return staticFormTypeRef.current.FormInput;
+    return fallbackFormTypeRef.current.FormInput;
   },
   get FormError() {
-    return staticFormTypeRef.current.FormError;
+    return fallbackFormTypeRef.current.FormError;
   },
   get formatError() {
-    return staticFormTypeRef.current.formatError;
+    return fallbackFormTypeRef.current.formatError;
   },
   get formTypeInputDefinitions() {
-    return staticFormTypeInputDefinitionsRef.current;
+    return fallbackFormTypeInputDefinitionsRef.current;
   },
   appendFormType(formType: Partial<FormType> | undefined) {
     if (!formType) return;
-    staticFormTypeRef.current = {
-      ...staticFormTypeRef.current,
+    fallbackFormTypeRef.current = {
+      ...fallbackFormTypeRef.current,
       ...removeUndefined(formType),
     };
   },
@@ -74,9 +74,9 @@ export const StaticManager = {
     formTypeInputDefinitions: FormTypeInputDefinition[] | undefined,
   ) {
     if (!formTypeInputDefinitions) return;
-    staticFormTypeInputDefinitionsRef.current = [
+    fallbackFormTypeInputDefinitionsRef.current = [
       ...normalizeFormTypeInputDefinitions(formTypeInputDefinitions),
-      ...staticFormTypeInputDefinitionsRef.current,
+      ...fallbackFormTypeInputDefinitionsRef.current,
     ];
   },
 };

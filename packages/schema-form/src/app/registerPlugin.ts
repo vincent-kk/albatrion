@@ -5,7 +5,7 @@ import type {
   FormTypeRendererProps,
   FormatError,
 } from '../types';
-import { StaticManager } from './StaticManager';
+import { FallbackManager } from './FallbackManager';
 
 export const registerPlugin = ({
   FormGroup,
@@ -15,14 +15,14 @@ export const registerPlugin = ({
   formatError,
   formTypeInputDefinitions,
 }: SchemaFormPlugin) => {
-  StaticManager.appendFormType({
+  FallbackManager.appendFormType({
     FormGroup,
     FormLabel,
     FormInput,
     FormError,
     formatError,
   });
-  StaticManager.appendFormTypeInputDefinitions(formTypeInputDefinitions);
+  FallbackManager.appendFormTypeInputDefinitions(formTypeInputDefinitions);
 };
 
 export interface SchemaFormPlugin {

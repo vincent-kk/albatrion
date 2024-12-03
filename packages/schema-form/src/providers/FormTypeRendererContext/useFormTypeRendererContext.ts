@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { StaticManager } from '@lumy/schema-form/app/StaticManager';
+import { FallbackManager } from '@lumy/schema-form/app/FallbackManager';
 
 import { FormTypeRendererContext } from './FormTypeRendererContext';
 
@@ -9,8 +9,8 @@ export const useFormTypeRendererContext = () => {
     FormTypeRendererContext,
   );
   return {
-    FormTypeRenderer: FormTypeRenderer || StaticManager.FormGroup,
-    formatError: formatError || StaticManager.formatError,
+    FormTypeRenderer: FormTypeRenderer || FallbackManager.FormGroup,
+    formatError: formatError || FallbackManager.formatError,
     checkShowError,
   };
 };
