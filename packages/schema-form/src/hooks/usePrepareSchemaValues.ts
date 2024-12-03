@@ -1,20 +1,18 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 
-import {
-  falseFunction,
-  isFunction,
-  isString,
-  trueFunction,
-} from '@lumy-pack/common';
+import { falseFunction, isFunction, trueFunction } from '@lumy-pack/common';
 
 import {
   MethodType,
   type SchemaNode,
   isSchemaNode,
 } from '@lumy/schema-form/core';
+import {
+  checkComputedOptionFactory,
+  getWatchValuesFactory,
+} from '@lumy/schema-form/helpers/dynamicFunction';
 import { getFallbackValue } from '@lumy/schema-form/helpers/fallbackValue';
 import { useSchemaNodeContext } from '@lumy/schema-form/providers';
-import { JSONPath } from '@lumy/schema-form/types';
 
 import { useSchemaNodeTracker } from './useSchemaNodeTracker';
 
@@ -53,84 +51,26 @@ export const usePrepareSchemaValues = (
 
     const visible = jsonSchema?.renderOptions?.visible;
     const isHidden = visible === false || jsonSchema?.visible === false;
-    let checkVisible: CheckRenderOption | undefined = undefined;
-    if (isHidden) {
-      checkVisible = falseFunction;
-    } else if (typeof visible === 'string') {
-      const functionBody = `return !!(${visible
-        .replace(JSON_PATH_REGEX, (path) => {
-          if (!dependencyPaths.includes(path)) {
-            dependencyPaths.push(path);
-          }
-          return `dependencies[${dependencyPaths.indexOf(path)}]`;
-        })
-        .trim()
-        .replace(/;$/, '')})`;
-      checkVisible = new Function(
-        'dependencies',
-        functionBody,
-      ) as CheckRenderOption;
-    }
+    const checkVisible = isHidden
+      ? falseFunction
+      : checkComputedOptionFactory(dependencyPaths, visible);
 
     const disabled = jsonSchema?.renderOptions?.disabled;
     const isDisabled = disabled === true || jsonSchema?.disabled === true;
-    let checkDisabled: CheckRenderOption | undefined = undefined;
-    if (isDisabled) {
-      checkDisabled = trueFunction;
-    } else if (typeof disabled === 'string') {
-      const functionBody = `return !!(${disabled
-        .replace(JSON_PATH_REGEX, (path) => {
-          if (!dependencyPaths.includes(path)) {
-            dependencyPaths.push(path);
-          }
-          return `dependencies[${dependencyPaths.indexOf(path)}]`;
-        })
-        .trim()
-        .replace(/;$/, '')})`;
-      checkDisabled = new Function(
-        'dependencies',
-        functionBody,
-      ) as CheckRenderOption;
-    }
+    const checkDisabled = isDisabled
+      ? trueFunction
+      : checkComputedOptionFactory(dependencyPaths, disabled);
 
     const readOnly = jsonSchema?.renderOptions?.readOnly;
     const isReadOnly = readOnly === true || jsonSchema?.readOnly === true;
-    let checkReadOnly: CheckRenderOption | undefined = undefined;
-    if (isReadOnly) {
-      checkReadOnly = trueFunction;
-    } else if (typeof readOnly === 'string') {
-      const functionBody = `return !!(${readOnly
-        .replace(JSON_PATH_REGEX, (path) => {
-          if (!dependencyPaths.includes(path)) {
-            dependencyPaths.push(path);
-          }
-          return `dependencies[${dependencyPaths.indexOf(path)}]`;
-        })
-        .trim()
-        .replace(/;$/, '')})`;
-      checkReadOnly = new Function(
-        'dependencies',
-        functionBody,
-      ) as CheckRenderOption;
-    }
+    const checkReadOnly = isReadOnly
+      ? trueFunction
+      : checkComputedOptionFactory(dependencyPaths, readOnly);
 
-    const watch = jsonSchema?.options?.watch;
-    let getWatchValues: GetWatchValues | undefined = undefined;
-    if (watch && (isString(watch) || Array.isArray(watch))) {
-      const watchValueIndexes = (Array.isArray(watch) ? watch : [watch]).map(
-        (path) => {
-          if (!dependencyPaths.includes(path)) {
-            dependencyPaths.push(path);
-          }
-          return dependencyPaths.indexOf(path);
-        },
-      );
-      const functionBody = `return [${watchValueIndexes.join(',')}].map((index) => dependencies[index])`;
-      getWatchValues = new Function(
-        'dependencies',
-        functionBody,
-      ) as GetWatchValues;
-    }
+    const getWatchValues = getWatchValuesFactory(
+      dependencyPaths,
+      jsonSchema?.options?.watch,
+    );
 
     return {
       dependencyPaths,
@@ -194,11 +134,3 @@ export const usePrepareSchemaValues = (
 
   return { node, visible, disabled, readOnly, watchValues };
 };
-
-type CheckRenderOption = Fn<[dependencies: any[]], boolean>;
-type GetWatchValues = Fn<[dependencies: any[]], any[]>;
-
-const JSON_PATH_REGEX = new RegExp(
-  `[\\${JSONPath.Root}\\${JSONPath.Current}]\\${JSONPath.Child}([a-zA-Z0-9]+(\\${JSONPath.Child}[a-zA-Z0-9]+)*)`,
-  'g',
-);
