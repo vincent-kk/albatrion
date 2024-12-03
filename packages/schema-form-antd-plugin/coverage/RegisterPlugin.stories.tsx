@@ -703,3 +703,44 @@ export const FormRefHandle = () => {
     </div>
   );
 };
+
+export const ComputedProps = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      prepared: {
+        type: 'boolean',
+      },
+      name: {
+        type: 'string',
+        placeholder: 'enter your name',
+        renderOptions: {
+          readOnly: '!@.prepared',
+        },
+      },
+      age: {
+        type: 'number',
+        placeholder: 'enter your age',
+        renderOptions: {
+          disabled: '@.name===undefined||(@.name).length<5',
+        },
+      },
+      nationality: {
+        type: 'string',
+        enum: ['', 'US', 'UK', 'JP', 'KR'],
+        placeholder: 'select your nationality',
+        renderOptions: {
+          disabled: '@.age===undefined||@.age<10',
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <Form jsonSchema={jsonSchema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
