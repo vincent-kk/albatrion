@@ -141,6 +141,9 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
       virtualReferencesMap,
       this.#nodeFactory,
     );
+    this.publish({
+      type: MethodType.ChildrenChange,
+    });
 
     this.#ready = true;
     this.#emitChange();

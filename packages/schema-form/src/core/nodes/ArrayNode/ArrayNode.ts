@@ -130,6 +130,7 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     this.#locked = false;
 
     this.#emitChange();
+    this.#publishChildrenChange();
   }
 
   push(data?: ArrayValue[number]) {
@@ -169,8 +170,8 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Push);
-
     this.#emitChange();
+    this.#publishChildrenChange();
     return this;
   }
 
@@ -199,8 +200,8 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Remove);
-
     this.#emitChange();
+    this.#publishChildrenChange();
     return this;
   }
 
@@ -212,8 +213,8 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Clear);
-
     this.#emitChange();
+    this.#publishChildrenChange();
     return this;
   }
 
@@ -226,6 +227,13 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
           node.setName(name, this);
         }
       }
+    });
+  }
+
+  #publishChildrenChange() {
+    if (!this.#ready) return;
+    this.publish({
+      type: MethodType.ChildrenChange,
     });
   }
 }

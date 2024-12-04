@@ -37,7 +37,7 @@ export const SchemaNodeAdapter = ({
 
   useEffect(() => {
     const unsubscribe = node.subscribe(({ type }) => {
-      if (type === MethodType.Change) {
+      if (type === MethodType.ChildrenChange) {
         setChildren(node.children);
       }
     });
