@@ -1,7 +1,7 @@
 import { Fragment, useMemo } from 'react';
 
 import { isTruthy, nullFunction } from '@lumy-pack/common';
-import { useReference } from '@lumy-pack/common-react';
+import { useReference, useSnapshotReference } from '@lumy-pack/common-react';
 
 import { usePrepareSchemaValues } from '@lumy/schema-form/hooks/usePrepareSchemaValues';
 import { useSchemaNodeListener } from '@lumy/schema-form/hooks/useSchemaNodeListener';
@@ -19,43 +19,45 @@ export const SchemaNodeProxy = ({
   node: inputNode,
   gridFrom,
   overrideFormTypeInputProps = {},
-  FormTypeInput,
+  FormTypeInput: PreferredFormTypeInput,
   FormTypeRenderer: InputFormTypeRenderer,
   Wrapper: InputWrapper,
 }: SchemaNodeProxyProps) => {
   const { node, visible, disabled, readOnly, watchValues } =
     usePrepareSchemaValues(inputNode || path);
 
-  const computedPropsRef = useReference({ disabled, readOnly, watchValues });
-  const overrideFormTypeInputPropsRef = useReference(
+  const computedPropsRef = useSnapshotReference({
+    disabled,
+    readOnly,
+    watchValues,
+  });
+
+  const inputPropsRef = useSnapshotReference({
+    gridFrom,
+    PreferredFormTypeInput,
     overrideFormTypeInputProps,
-  );
-  const gridFormRef = useReference(gridFrom);
+  });
 
   const Input = useMemo<FormTypeRendererProps['Input']>(() => {
     return (overrideProps) =>
       node ? (
         <SchemaNodeAdapter
           node={node}
-          gridFrom={gridFormRef.current}
           disabled={computedPropsRef.current.disabled}
           readOnly={computedPropsRef.current.readOnly}
           watchValues={computedPropsRef.current.watchValues}
           overridePropsFromInput={overrideProps}
-          overridePropsFromProxy={overrideFormTypeInputPropsRef.current}
-          PreferredFormTypeInput={FormTypeInput}
+          overridePropsFromProxy={
+            inputPropsRef.current.overrideFormTypeInputProps
+          }
+          PreferredFormTypeInput={inputPropsRef.current.PreferredFormTypeInput}
+          gridFrom={inputPropsRef.current.gridFrom}
           NodeProxy={SchemaNodeProxy}
         />
       ) : (
         <Fragment />
       );
-  }, [
-    node,
-    gridFormRef,
-    computedPropsRef,
-    overrideFormTypeInputPropsRef,
-    FormTypeInput,
-  ]);
+  }, [node, inputPropsRef, computedPropsRef]);
 
   const {
     FormTypeRenderer: ContextFormTypeRenderer,
