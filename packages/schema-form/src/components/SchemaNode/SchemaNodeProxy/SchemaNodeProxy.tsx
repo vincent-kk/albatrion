@@ -26,7 +26,7 @@ export const SchemaNodeProxy = ({
   const { node, visible, disabled, readOnly, watchValues } =
     usePrepareSchemaValues(inputNode || path);
 
-  const computedPropsRef = useSnapshotReference({
+  const computedPropsRef = useReference({
     disabled,
     readOnly,
     watchValues,
