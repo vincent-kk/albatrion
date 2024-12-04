@@ -18,7 +18,7 @@ export const SchemaNodeProxy = ({
   path,
   node: inputNode,
   gridFrom,
-  overrideFormTypeInputProps = {},
+  overridableFormTypeInputProps = {},
   FormTypeInput: PreferredFormTypeInput,
   FormTypeRenderer: InputFormTypeRenderer,
   Wrapper: InputWrapper,
@@ -35,7 +35,7 @@ export const SchemaNodeProxy = ({
   const inputPropsRef = useSnapshotReference({
     gridFrom,
     PreferredFormTypeInput,
-    overrideFormTypeInputProps,
+    overridableFormTypeInputProps,
   });
 
   const Input = useMemo<FormTypeRendererProps['Input']>(() => {
@@ -48,7 +48,7 @@ export const SchemaNodeProxy = ({
           watchValues={computedPropsRef.current.watchValues}
           overridePropsFromInput={overrideProps}
           overridePropsFromProxy={
-            inputPropsRef.current.overrideFormTypeInputProps
+            inputPropsRef.current.overridableFormTypeInputProps
           }
           PreferredFormTypeInput={inputPropsRef.current.PreferredFormTypeInput}
           gridFrom={inputPropsRef.current.gridFrom}

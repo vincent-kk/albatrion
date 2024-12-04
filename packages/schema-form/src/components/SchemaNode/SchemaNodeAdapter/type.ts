@@ -4,7 +4,7 @@ import type { SchemaNode } from '@lumy/schema-form/core';
 import type { ObjectNodeChildNode } from '@lumy/schema-form/core/nodes/ObjectNode';
 import type {
   FormTypeInputProps,
-  OverrideFormTypeInputProps,
+  OverridableFormTypeInputProps,
 } from '@lumy/schema-form/types';
 
 import type { SchemaNodeProxyProps } from '../SchemaNodeProxy';
@@ -16,8 +16,8 @@ export interface SchemaNodeAdapterProps {
   readOnly: boolean;
   disabled: boolean;
   watchValues: any[];
-  overridePropsFromProxy: OverrideFormTypeInputProps;
-  overridePropsFromInput: OverrideFormTypeInputProps;
+  overridePropsFromProxy: OverridableFormTypeInputProps;
+  overridePropsFromInput: OverridableFormTypeInputProps;
   PreferredFormTypeInput?: ComponentType<FormTypeInputProps>;
   NodeProxy: ComponentType<SchemaNodeProxyProps>;
 }
@@ -28,7 +28,7 @@ export interface SchemaNodeAdapterRowProps {
   disabled: boolean;
   watchValues: any[];
   rawChildNodes: RawChildNode[];
-  overrideFormTypeInputProps: OverrideFormTypeInputProps;
+  overrideFormTypeInputProps: OverridableFormTypeInputProps;
   PreferredFormTypeInput?: ComponentType<FormTypeInputProps>;
   NodeProxy: ComponentType<SchemaNodeProxyProps>;
 }
@@ -38,7 +38,7 @@ export interface SchemaNodeAdapterInputProps {
   readOnly: boolean;
   disabled: boolean;
   watchValues: any[];
-  overrideFormTypeInputProps: OverrideFormTypeInputProps;
+  overrideFormTypeInputProps: OverridableFormTypeInputProps;
   PreferredFormTypeInput?: ComponentType<FormTypeInputProps>;
   childNodes: ChildComponent[];
 }

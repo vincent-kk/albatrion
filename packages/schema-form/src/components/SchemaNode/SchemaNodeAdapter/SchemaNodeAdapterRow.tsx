@@ -73,11 +73,13 @@ export const SchemaNodeAdapterRow = ({
                 };
                 const ChildComponent = ({
                   FormTypeRenderer,
-                  ...overrideFormTypeInputProps
+                  ...overridableFormTypeInputProps
                 }: ChildFormTypeInputProps) => (
                   <NodeProxy
                     node={node}
-                    overrideFormTypeInputProps={overrideFormTypeInputProps}
+                    overridableFormTypeInputProps={
+                      overridableFormTypeInputProps
+                    }
                     FormTypeRenderer={FormTypeRenderer}
                     Wrapper={Wrapper}
                   />
