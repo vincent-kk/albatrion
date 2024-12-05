@@ -18,7 +18,7 @@ export const SchemaNodeProxy = ({
   path,
   node: inputNode,
   gridFrom,
-  overridableFormTypeInputProps = {},
+  overridableFormTypeInputProps,
   FormTypeInput: PreferredFormTypeInput,
   FormTypeRenderer: InputFormTypeRenderer,
   Wrapper: InputWrapper,
@@ -26,7 +26,7 @@ export const SchemaNodeProxy = ({
   const { node, visible, disabled, readOnly, watchValues } =
     usePrepareSchemaValues(inputNode || path);
 
-  const inputPropsRef = useReference({
+  const propsPackage = useReference({
     gridFrom,
     disabled,
     readOnly,
@@ -36,25 +36,25 @@ export const SchemaNodeProxy = ({
   });
 
   const Input = useMemo<FormTypeRendererProps['Input']>(() => {
-    return (overrideProps) =>
+    return (overridableProps) =>
       node ? (
         <SchemaNodeAdapter
           node={node}
-          gridFrom={inputPropsRef.current.gridFrom}
-          disabled={inputPropsRef.current.disabled}
-          readOnly={inputPropsRef.current.readOnly}
-          watchValues={inputPropsRef.current.watchValues}
-          overridePropsFromInput={overrideProps}
-          overridePropsFromProxy={
-            inputPropsRef.current.overridableFormTypeInputProps
+          gridFrom={propsPackage.current.gridFrom}
+          disabled={propsPackage.current.disabled}
+          readOnly={propsPackage.current.readOnly}
+          watchValues={propsPackage.current.watchValues}
+          overridablePropsFromInput={overridableProps}
+          overridablePropsFromProxy={
+            propsPackage.current.overridableFormTypeInputProps
           }
-          PreferredFormTypeInput={inputPropsRef.current.PreferredFormTypeInput}
+          PreferredFormTypeInput={propsPackage.current.PreferredFormTypeInput}
           NodeProxy={SchemaNodeProxy}
         />
       ) : (
         <Fragment />
       );
-  }, [node, inputPropsRef]);
+  }, [node, propsPackage]);
 
   const {
     FormTypeRenderer: ContextFormTypeRenderer,

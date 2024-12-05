@@ -24,14 +24,14 @@ export const SchemaNodeAdapter = ({
   readOnly,
   disabled,
   gridFrom,
-  overridePropsFromProxy,
-  overridePropsFromInput,
+  overridablePropsFromProxy,
+  overridablePropsFromInput,
   PreferredFormTypeInput,
   NodeProxy,
 }: SchemaNodeAdapterProps) => {
-  const overrideFormTypeInputPropsSnapshot = useSnapshot({
-    ...overridePropsFromProxy,
-    ...overridePropsFromInput,
+  const overridableProps = useSnapshot({
+    ...overridablePropsFromProxy,
+    ...overridablePropsFromInput,
   });
   const watchValuesSnapshot = useSnapshot(watchValues);
 
@@ -112,11 +112,8 @@ export const SchemaNodeAdapter = ({
     console.log('disabled', disabled);
   }, [disabled]);
   useEffect(() => {
-    console.log(
-      'overrideFormTypeInputPropsSnapshot',
-      overrideFormTypeInputPropsSnapshot,
-    );
-  }, [overrideFormTypeInputPropsSnapshot]);
+    console.log('overridableProps', overridableProps);
+  }, [overridableProps]);
 
   useEffect(() => {
     console.log('PreferredFormTypeInput', PreferredFormTypeInput);
@@ -136,7 +133,7 @@ export const SchemaNodeAdapter = ({
               disabled={disabled}
               watchValues={watchValuesSnapshot}
               rawChildNodes={childNodeRow}
-              overrideFormTypeInputProps={overrideFormTypeInputPropsSnapshot}
+              overridableProps={overridableProps}
               PreferredFormTypeInput={PreferredFormTypeInput}
               NodeProxy={NodeProxy}
             />
@@ -150,7 +147,7 @@ export const SchemaNodeAdapter = ({
                 disabled={disabled}
                 watchValues={watchValuesSnapshot}
                 rawChildNodes={childNodeRow}
-                overrideFormTypeInputProps={overrideFormTypeInputPropsSnapshot}
+                overridableProps={overridableProps}
                 PreferredFormTypeInput={PreferredFormTypeInput}
                 NodeProxy={NodeProxy}
               />

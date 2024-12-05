@@ -15,7 +15,7 @@ export const SchemaNodeAdapterInput = memo(
     readOnly,
     disabled,
     watchValues,
-    overrideFormTypeInputProps,
+    overridableProps,
     PreferredFormTypeInput,
     childNodes,
   }: SchemaNodeAdapterInputProps) => {
@@ -35,8 +35,8 @@ export const SchemaNodeAdapterInput = memo(
       console.log('watchValues', watchValues);
     }, [watchValues]);
     useEffect(() => {
-      console.log('overrideFormTypeInputProps', overrideFormTypeInputProps);
-    }, [overrideFormTypeInputProps]);
+      console.log('overridableProps', overridableProps);
+    }, [overridableProps]);
     useEffect(() => {
       console.log('PreferredFormTypeInput', PreferredFormTypeInput);
     }, [PreferredFormTypeInput]);
@@ -90,7 +90,7 @@ export const SchemaNodeAdapterInput = memo(
           value={node.value}
           onChange={handleChange}
           context={userDefinedContext}
-          {...overrideFormTypeInputProps}
+          {...overridableProps}
         />
         <div>Form: {renderCount.current}</div>
       </span>

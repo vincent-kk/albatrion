@@ -23,7 +23,7 @@ export const SchemaNodeAdapterRow = ({
   disabled,
   watchValues,
   rawChildNodes,
-  overrideFormTypeInputProps,
+  overridableProps,
   PreferredFormTypeInput,
   NodeProxy,
 }: SchemaNodeAdapterRowProps) => {
@@ -113,8 +113,8 @@ export const SchemaNodeAdapterRow = ({
     console.log('watchValues', watchValues);
   }, [watchValues]);
   useEffect(() => {
-    console.log('overrideFormTypeInputProps', overrideFormTypeInputProps);
-  }, [overrideFormTypeInputProps]);
+    console.log('overridableProps', overridableProps);
+  }, [overridableProps]);
   useEffect(() => {
     console.log('PreferredFormTypeInput', PreferredFormTypeInput);
   }, [PreferredFormTypeInput]);
@@ -125,7 +125,7 @@ export const SchemaNodeAdapterRow = ({
       readOnly={readOnly}
       disabled={disabled}
       watchValues={watchValues}
-      overrideFormTypeInputProps={overrideFormTypeInputProps}
+      overridableProps={overridableProps}
       PreferredFormTypeInput={PreferredFormTypeInput}
       childNodes={childNodes}
     />

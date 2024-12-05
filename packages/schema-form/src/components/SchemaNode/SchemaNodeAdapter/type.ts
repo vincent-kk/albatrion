@@ -16,8 +16,8 @@ export interface SchemaNodeAdapterProps {
   readOnly: boolean;
   disabled: boolean;
   watchValues: any[];
-  overridePropsFromProxy: OverridableFormTypeInputProps;
-  overridePropsFromInput: OverridableFormTypeInputProps;
+  overridablePropsFromProxy?: OverridableFormTypeInputProps;
+  overridablePropsFromInput?: OverridableFormTypeInputProps;
   PreferredFormTypeInput?: ComponentType<FormTypeInputProps>;
   NodeProxy: ComponentType<SchemaNodeProxyProps>;
 }
@@ -28,7 +28,7 @@ export interface SchemaNodeAdapterRowProps {
   disabled: boolean;
   watchValues: any[];
   rawChildNodes: RawChildNode[];
-  overrideFormTypeInputProps: OverridableFormTypeInputProps;
+  overridableProps: OverridableFormTypeInputProps;
   PreferredFormTypeInput?: ComponentType<FormTypeInputProps>;
   NodeProxy: ComponentType<SchemaNodeProxyProps>;
 }
@@ -38,7 +38,7 @@ export interface SchemaNodeAdapterInputProps {
   readOnly: boolean;
   disabled: boolean;
   watchValues: any[];
-  overrideFormTypeInputProps: OverridableFormTypeInputProps;
+  overridableProps: OverridableFormTypeInputProps;
   PreferredFormTypeInput?: ComponentType<FormTypeInputProps>;
   childNodes: ChildComponent[];
 }
