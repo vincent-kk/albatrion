@@ -23,21 +23,22 @@ export const SchemaNodeAdapter = ({
   readOnly,
   disabled,
   gridFrom,
-  overridePropsFromProxy,
-  overridePropsFromInput,
+  overridablePropsFromProxy,
+  overridablePropsFromInput,
   PreferredFormTypeInput,
   NodeProxy,
 }: SchemaNodeAdapterProps) => {
-  const overrideFormTypeInputProps = useSnapshot({
-    ...overridePropsFromProxy,
-    ...overridePropsFromInput,
+  const overridableProps = useSnapshot({
+    ...overridablePropsFromProxy,
+    ...overridablePropsFromInput,
   });
+  const watchValuesSnapshot = useSnapshot(watchValues);
 
   const [children, setChildren] = useState<typeof node.children>(node.children);
 
   useEffect(() => {
     const unsubscribe = node.subscribe(({ type }) => {
-      if (type === MethodType.Change) {
+      if (type === MethodType.ChildrenChange) {
         setChildren(node.children);
       }
     });
@@ -104,9 +105,9 @@ export const SchemaNodeAdapter = ({
               node={node}
               readOnly={readOnly}
               disabled={disabled}
-              watchValues={watchValues}
+              watchValues={watchValuesSnapshot}
               rawChildNodes={childNodeRow}
-              overrideFormTypeInputProps={overrideFormTypeInputProps}
+              overridableProps={overridableProps}
               PreferredFormTypeInput={PreferredFormTypeInput}
               NodeProxy={NodeProxy}
             />
@@ -118,9 +119,9 @@ export const SchemaNodeAdapter = ({
                 node={node}
                 readOnly={readOnly}
                 disabled={disabled}
-                watchValues={watchValues}
+                watchValues={watchValuesSnapshot}
                 rawChildNodes={childNodeRow}
-                overrideFormTypeInputProps={overrideFormTypeInputProps}
+                overridableProps={overridableProps}
                 PreferredFormTypeInput={PreferredFormTypeInput}
                 NodeProxy={NodeProxy}
               />

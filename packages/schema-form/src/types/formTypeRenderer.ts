@@ -3,7 +3,7 @@ import type { CSSProperties, ComponentType, ReactNode } from 'react';
 import type { SchemaNode } from '@lumy/schema-form/core';
 
 import type { JsonSchemaError } from './error';
-import type { OverrideFormTypeInputProps } from './formTypeInput';
+import type { OverridableFormTypeInputProps } from './formTypeInput';
 
 export interface FormTypeRendererProps {
   isArrayItem: boolean;
@@ -16,7 +16,7 @@ export interface FormTypeRendererProps {
   name: SchemaNode['name'];
   value: SchemaNode['value'];
   errors: SchemaNode['errors'];
-  Input: ComponentType<OverrideFormTypeInputProps>;
+  Input: ComponentType<OverridableFormTypeInputProps>;
   errorMessage: ReactNode;
   formatError: FormatError;
   context: Dictionary;

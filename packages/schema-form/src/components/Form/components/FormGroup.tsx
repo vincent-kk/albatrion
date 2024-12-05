@@ -1,16 +1,22 @@
-import {
-  SchemaNodeProxy,
-  type SchemaNodeProxyProps,
-} from '@lumy/schema-form/components/SchemaNode';
-import type { OverrideFormTypeInputProps } from '@lumy/schema-form/types';
+import type { ComponentType, PropsWithChildren } from 'react';
 
-export interface FormGroupProps extends OverrideFormTypeInputProps {
-  path: SchemaNodeProxyProps['path'];
-  gridFrom?: SchemaNodeProxyProps['gridFrom'];
-  FormTypeInput?: SchemaNodeProxyProps['FormTypeInput'];
-  FormTypeRenderer?: SchemaNodeProxyProps['FormTypeRenderer'];
-  Wrapper?: SchemaNodeProxyProps['Wrapper'];
-}
+import {
+  type GridForm,
+  SchemaNodeProxy,
+} from '@lumy/schema-form/components/SchemaNode';
+import type {
+  FormTypeInputProps,
+  FormTypeRendererProps,
+  OverridableFormTypeInputProps,
+} from '@lumy/schema-form/types';
+
+export type FormGroupProps = {
+  path: string;
+  gridFrom?: GridForm;
+  FormTypeInput?: ComponentType<FormTypeInputProps>;
+  FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
+} & OverridableFormTypeInputProps;
 
 export const FormGroup = ({
   path,
@@ -18,7 +24,7 @@ export const FormGroup = ({
   FormTypeInput,
   FormTypeRenderer,
   Wrapper,
-  ...overrideFormTypeInputProps
+  ...overridableFormTypeInputProps
 }: FormGroupProps) => (
   <SchemaNodeProxy
     path={path}
@@ -26,6 +32,6 @@ export const FormGroup = ({
     FormTypeInput={FormTypeInput}
     FormTypeRenderer={FormTypeRenderer}
     Wrapper={Wrapper}
-    overrideFormTypeInputProps={overrideFormTypeInputProps}
+    overridableFormTypeInputProps={overridableFormTypeInputProps}
   />
 );

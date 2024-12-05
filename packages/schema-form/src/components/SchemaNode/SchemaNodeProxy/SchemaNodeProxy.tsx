@@ -18,44 +18,43 @@ export const SchemaNodeProxy = ({
   path,
   node: inputNode,
   gridFrom,
-  overrideFormTypeInputProps = {},
-  FormTypeInput,
+  overridableFormTypeInputProps,
+  FormTypeInput: PreferredFormTypeInput,
   FormTypeRenderer: InputFormTypeRenderer,
   Wrapper: InputWrapper,
 }: SchemaNodeProxyProps) => {
   const { node, visible, disabled, readOnly, watchValues } =
     usePrepareSchemaValues(inputNode || path);
 
-  const computedPropsRef = useReference({ disabled, readOnly, watchValues });
-  const overrideFormTypeInputPropsRef = useReference(
-    overrideFormTypeInputProps,
-  );
-  const gridFormRef = useReference(gridFrom);
+  const propsPackage = useReference({
+    gridFrom,
+    disabled,
+    readOnly,
+    watchValues,
+    PreferredFormTypeInput,
+    overridableFormTypeInputProps,
+  });
 
   const Input = useMemo<FormTypeRendererProps['Input']>(() => {
-    return (overrideProps) =>
+    return (overridableProps) =>
       node ? (
         <SchemaNodeAdapter
           node={node}
-          gridFrom={gridFormRef.current}
-          disabled={computedPropsRef.current.disabled}
-          readOnly={computedPropsRef.current.readOnly}
-          watchValues={computedPropsRef.current.watchValues}
-          overridePropsFromInput={overrideProps}
-          overridePropsFromProxy={overrideFormTypeInputPropsRef.current}
-          PreferredFormTypeInput={FormTypeInput}
+          gridFrom={propsPackage.current.gridFrom}
+          disabled={propsPackage.current.disabled}
+          readOnly={propsPackage.current.readOnly}
+          watchValues={propsPackage.current.watchValues}
+          PreferredFormTypeInput={propsPackage.current.PreferredFormTypeInput}
+          overridablePropsFromProxy={
+            propsPackage.current.overridableFormTypeInputProps
+          }
+          overridablePropsFromInput={overridableProps}
           NodeProxy={SchemaNodeProxy}
         />
       ) : (
         <Fragment />
       );
-  }, [
-    node,
-    gridFormRef,
-    computedPropsRef,
-    overrideFormTypeInputPropsRef,
-    FormTypeInput,
-  ]);
+  }, [node, propsPackage]);
 
   const {
     FormTypeRenderer: ContextFormTypeRenderer,

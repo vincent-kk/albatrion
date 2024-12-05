@@ -1,20 +1,22 @@
-import { FallbackManager } from '@lumy/schema-form/app/FallbackManager';
-import {
-  SchemaNodeProxy,
-  type SchemaNodeProxyProps,
-} from '@lumy/schema-form/components/SchemaNode';
-import { useExternalFormContext } from '@lumy/schema-form/providers';
-import type { OverrideFormTypeInputProps } from '@lumy/schema-form/types';
+import type { ComponentType } from 'react';
 
-export interface FormInputProps extends OverrideFormTypeInputProps {
-  path: SchemaNodeProxyProps['path'];
-  FormTypeRenderer?: SchemaNodeProxyProps['FormTypeRenderer'];
-}
+import { FallbackManager } from '@lumy/schema-form/app/FallbackManager';
+import { SchemaNodeProxy } from '@lumy/schema-form/components/SchemaNode';
+import { useExternalFormContext } from '@lumy/schema-form/providers';
+import type {
+  FormTypeRendererProps,
+  OverridableFormTypeInputProps,
+} from '@lumy/schema-form/types';
+
+export type FormInputProps = {
+  path: string;
+  FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+} & OverridableFormTypeInputProps;
 
 export const FormInput = ({
   path,
   FormTypeRenderer,
-  ...overrideFormTypeInputProps
+  ...overridableFormTypeInputProps
 }: FormInputProps) => {
   const { FormInputRenderer } = useExternalFormContext();
   return (
@@ -23,7 +25,7 @@ export const FormInput = ({
       FormTypeRenderer={
         FormTypeRenderer || FormInputRenderer || FallbackManager.FormInput
       }
-      overrideFormTypeInputProps={overrideFormTypeInputProps}
+      overridableFormTypeInputProps={overridableFormTypeInputProps}
     />
   );
 };

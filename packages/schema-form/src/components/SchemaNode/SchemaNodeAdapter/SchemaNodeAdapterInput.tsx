@@ -15,7 +15,7 @@ export const SchemaNodeAdapterInput = memo(
     readOnly,
     disabled,
     watchValues,
-    overrideFormTypeInputProps,
+    overridableProps,
     PreferredFormTypeInput,
     childNodes,
   }: SchemaNodeAdapterInputProps) => {
@@ -29,12 +29,12 @@ export const SchemaNodeAdapterInput = memo(
 
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
       (input, options) => {
-        if (node.jsonSchema.readOnly || node.jsonSchema.disabled) return;
+        if (disabled || readOnly) return;
         node.setValue(input, options);
         node.clearReceivedErrors();
         node.setState({ [ShowError.Dirty]: true });
       },
-      [node],
+      [node, disabled, readOnly],
     );
 
     const feedbackTimer = useRef<ReturnType<typeof setTimeout>>();
@@ -68,7 +68,7 @@ export const SchemaNodeAdapterInput = memo(
           value={node.value}
           onChange={handleChange}
           context={userDefinedContext}
-          {...overrideFormTypeInputProps}
+          {...overridableProps}
         />
       </span>
     );

@@ -1,3 +1,5 @@
+import { EMPTY_ARRAY, EMPTY_OBJECT } from '@lumy-pack/common';
+
 import type { JsonSchema } from '@lumy/schema-form/types';
 
 /**
@@ -9,11 +11,8 @@ export const getFallbackValue = <Schema extends JsonSchema>(
   jsonSchema: Schema,
 ) => {
   if (jsonSchema.default !== undefined) return jsonSchema.default;
-  else if (jsonSchema.type === 'array') return ArrayFallbackValue;
-  else if (jsonSchema.type === 'virtual') return ArrayFallbackValue;
-  else if (jsonSchema.type === 'object') return ObjectFallbackValue;
+  else if (jsonSchema.type === 'array') return EMPTY_ARRAY;
+  else if (jsonSchema.type === 'virtual') return EMPTY_ARRAY;
+  else if (jsonSchema.type === 'object') return EMPTY_OBJECT;
   else return undefined;
 };
-
-const ArrayFallbackValue: any[] = [];
-const ObjectFallbackValue: Dictionary = {};

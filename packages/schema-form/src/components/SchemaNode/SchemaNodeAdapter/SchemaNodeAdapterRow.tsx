@@ -22,7 +22,7 @@ export const SchemaNodeAdapterRow = ({
   disabled,
   watchValues,
   rawChildNodes,
-  overrideFormTypeInputProps,
+  overridableProps,
   PreferredFormTypeInput,
   NodeProxy,
 }: SchemaNodeAdapterRowProps) => {
@@ -73,11 +73,13 @@ export const SchemaNodeAdapterRow = ({
                 };
                 const ChildComponent = ({
                   FormTypeRenderer,
-                  ...overrideFormTypeInputProps
+                  ...overridableFormTypeInputProps
                 }: ChildFormTypeInputProps) => (
                   <NodeProxy
                     node={node}
-                    overrideFormTypeInputProps={overrideFormTypeInputProps}
+                    overridableFormTypeInputProps={
+                      overridableFormTypeInputProps
+                    }
                     FormTypeRenderer={FormTypeRenderer}
                     Wrapper={Wrapper}
                   />
@@ -102,7 +104,7 @@ export const SchemaNodeAdapterRow = ({
       readOnly={readOnly}
       disabled={disabled}
       watchValues={watchValues}
-      overrideFormTypeInputProps={overrideFormTypeInputProps}
+      overridableProps={overridableProps}
       PreferredFormTypeInput={PreferredFormTypeInput}
       childNodes={childNodes}
     />

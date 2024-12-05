@@ -6,15 +6,15 @@ import {
 } from '@lumy/schema-form/components/SchemaNode';
 import type { FormTypeRendererProps } from '@lumy/schema-form/types';
 
-export interface FormRenderProps
-  extends Omit<SchemaNodeProxyProps, 'FormTypeRenderer'> {
+export type FormRenderProps = {
   children: ComponentType<FormTypeRendererProps>;
-}
+} & Omit<SchemaNodeProxyProps, 'FormTypeRenderer'>;
+
 export const FormRender = ({
   path,
   node,
   gridFrom,
-  overrideFormTypeInputProps,
+  overridableFormTypeInputProps,
   FormTypeInput,
   Wrapper,
   children,
@@ -23,7 +23,7 @@ export const FormRender = ({
     path={path}
     node={node}
     gridFrom={gridFrom}
-    overrideFormTypeInputProps={overrideFormTypeInputProps}
+    overridableFormTypeInputProps={overridableFormTypeInputProps}
     FormTypeInput={FormTypeInput}
     Wrapper={Wrapper}
     FormTypeRenderer={children}
