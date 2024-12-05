@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useRef } from 'react';
+import { Fragment, useMemo } from 'react';
 
 import { isTruthy, nullFunction } from '@lumy-pack/common';
 import { useReference } from '@lumy-pack/common-react';
@@ -89,9 +89,6 @@ export const SchemaNodeProxy = ({
 
   const [tick, formElementRef] = useSchemaNodeListener(node);
 
-  const renderCount = useRef(0);
-  renderCount.current += 1;
-
   // NOTE: node 이거나 visible 이 false 라면 렌더링 하지 않는다.
   if (!node || !visible) return null;
 
@@ -114,7 +111,6 @@ export const SchemaNodeProxy = ({
           formatError={formatError}
           context={userDefinedContext}
         />
-        <div>{'Renderer: ' + renderCount.current}</div>
       </span>
     </Wrapper>
   );

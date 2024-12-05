@@ -3,7 +3,6 @@ import {
   type ReactElement,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 
@@ -96,8 +95,6 @@ export const SchemaNodeAdapter = ({
     }
   }, [gridFrom, node, children]);
 
-  const renderCount = useRef(0);
-  renderCount.current += 1;
   return (
     <Fragment>
       {childNodeGrid.map((childNodeRow, index, grid) => {
@@ -132,7 +129,6 @@ export const SchemaNodeAdapter = ({
           );
         }
       })}
-      <div>Adapter: {renderCount.current}</div>
     </Fragment>
   );
 };

@@ -25,9 +25,6 @@ export const SchemaNodeAdapterInput = memo(
       [FormTypeInputByNode, PreferredFormTypeInput],
     );
 
-    const renderCount = useRef(0);
-    renderCount.current += 1;
-
     const defaultValue = useConstant(() => node.defaultValue);
 
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
@@ -73,7 +70,6 @@ export const SchemaNodeAdapterInput = memo(
           context={userDefinedContext}
           {...overridableProps}
         />
-        <div>Form: {renderCount.current}</div>
       </span>
     );
   },
