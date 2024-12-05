@@ -1,3 +1,5 @@
+import { sortObjectKeys } from '@lumy-pack/common';
+
 import { getFallbackValue } from '@lumy/schema-form/helpers/fallbackValue';
 import type {
   ObjectSchema,
@@ -17,7 +19,6 @@ import {
   getOneOfConditionsMap,
   getVirtualReferencesMap,
   mergeShowConditions,
-  sortObjectKeys,
 } from './utils';
 
 export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
