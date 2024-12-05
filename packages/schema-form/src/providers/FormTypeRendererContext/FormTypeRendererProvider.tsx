@@ -35,20 +35,6 @@ export const FormTypeRendererContextProvider = ({
     formatError: externalFormatError,
   } = useExternalFormContext();
 
-  const FormTypeRenderer = useMemo<FormTypeRendererContext['FormTypeRenderer']>(
-    () =>
-      isReactComponent(CustomFormTypeRenderer)
-        ? CustomFormTypeRenderer
-        : ExternalFormGroupRenderer,
-    [CustomFormTypeRenderer, ExternalFormGroupRenderer],
-  );
-
-  const formatError = useMemo<FormTypeRendererContext['formatError']>(
-    () =>
-      isFunction(inputFormatError) ? inputFormatError : externalFormatError,
-    [inputFormatError, externalFormatError],
-  );
-
   const checkShowError = useMemo<
     FormTypeRendererContext['checkShowError']
   >(() => {
@@ -70,14 +56,28 @@ export const FormTypeRendererContextProvider = ({
     };
   }, [showError]);
 
+  const value = useMemo(() => {
+    const FormTypeRenderer = isReactComponent(CustomFormTypeRenderer)
+      ? CustomFormTypeRenderer
+      : ExternalFormGroupRenderer;
+    const formatError = isFunction(inputFormatError)
+      ? inputFormatError
+      : externalFormatError;
+    return {
+      FormTypeRenderer,
+      formatError,
+      checkShowError,
+    };
+  }, [
+    CustomFormTypeRenderer,
+    ExternalFormGroupRenderer,
+    externalFormatError,
+    inputFormatError,
+    checkShowError,
+  ]);
+
   return (
-    <FormTypeRendererContext.Provider
-      value={{
-        FormTypeRenderer,
-        formatError,
-        checkShowError,
-      }}
-    >
+    <FormTypeRendererContext.Provider value={value}>
       {children}
     </FormTypeRendererContext.Provider>
   );

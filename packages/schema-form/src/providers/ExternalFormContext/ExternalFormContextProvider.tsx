@@ -20,54 +20,35 @@ export interface ExternalFormContextProviderProps {
 
 export const ExternalFormContextProvider = ({
   formTypeInputDefinitions,
-  FormGroupRenderer: InputFormGroupRenderer,
-  FormLabelRenderer: InputFormLabelRenderer,
-  FormInputRenderer: InputFormInputRenderer,
-  FormErrorRenderer: InputFormErrorRenderer,
-  formatError: inputFormatError,
+  FormGroupRenderer,
+  FormLabelRenderer,
+  FormInputRenderer,
+  FormErrorRenderer,
+  formatError,
   children,
 }: PropsWithChildren<ExternalFormContextProviderProps>) => {
-  const fromExternalFormTypeInputDefinitions = useMemo(
-    () =>
-      formTypeInputDefinitions
+  const value = useMemo(
+    () => ({
+      fromExternalFormTypeInputDefinitions: formTypeInputDefinitions
         ? normalizeFormTypeInputDefinitions(formTypeInputDefinitions)
         : undefined,
-    [formTypeInputDefinitions],
+      FormGroupRenderer,
+      FormLabelRenderer,
+      FormInputRenderer,
+      FormErrorRenderer,
+      formatError,
+    }),
+    [
+      formTypeInputDefinitions,
+      FormGroupRenderer,
+      FormLabelRenderer,
+      FormInputRenderer,
+      FormErrorRenderer,
+      formatError,
+    ],
   );
-
-  const FormGroupRenderer = useMemo(
-    () => InputFormGroupRenderer,
-    [InputFormGroupRenderer],
-  );
-
-  const FormLabelRenderer = useMemo(
-    () => InputFormLabelRenderer,
-    [InputFormLabelRenderer],
-  );
-
-  const FormInputRenderer = useMemo(
-    () => InputFormInputRenderer,
-    [InputFormInputRenderer],
-  );
-
-  const FormErrorRenderer = useMemo(
-    () => InputFormErrorRenderer,
-    [InputFormErrorRenderer],
-  );
-
-  const formatError = useMemo(() => inputFormatError, [inputFormatError]);
-
   return (
-    <ExternalFormContext.Provider
-      value={{
-        fromExternalFormTypeInputDefinitions,
-        FormGroupRenderer,
-        FormLabelRenderer,
-        FormInputRenderer,
-        FormErrorRenderer,
-        formatError,
-      }}
-    >
+    <ExternalFormContext.Provider value={value}>
       {children}
     </ExternalFormContext.Provider>
   );
