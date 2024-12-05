@@ -1,4 +1,4 @@
-import type { ChangeEvent } from 'react';
+import { type ChangeEvent, useRef } from 'react';
 
 import { useHandle } from '@lumy-pack/common-react';
 
@@ -19,18 +19,23 @@ const FormTypeInputNumber = ({
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.valueAsNumber);
   });
+  const renderCount = useRef(0);
+  renderCount.current += 1;
   return (
-    <input
-      type="number"
-      id={path}
-      name={name}
-      step={jsonSchema.multipleOf}
-      readOnly={readOnly}
-      disabled={disabled}
-      placeholder={jsonSchema?.placeholder}
-      defaultValue={defaultValue}
-      onChange={handleChange}
-    />
+    <div>
+      <input
+        type="number"
+        id={path}
+        name={name}
+        step={jsonSchema.multipleOf}
+        readOnly={readOnly}
+        disabled={disabled}
+        placeholder={jsonSchema?.placeholder}
+        defaultValue={defaultValue}
+        onChange={handleChange}
+      />
+      <div>input: {renderCount.current}</div>
+    </div>
   );
 };
 
