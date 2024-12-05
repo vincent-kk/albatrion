@@ -89,17 +89,6 @@ export const Common = () => {
       age: {
         type: 'number',
       },
-      check: {
-        type: 'boolean',
-      },
-      gender: {
-        type: 'string',
-        enum: ['male', 'female'],
-      },
-      birth: {
-        type: 'string',
-        format: 'date',
-      },
     },
   } satisfies JsonSchema;
 
