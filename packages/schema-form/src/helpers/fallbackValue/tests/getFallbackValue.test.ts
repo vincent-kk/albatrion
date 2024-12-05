@@ -35,6 +35,9 @@ describe('getFallbackValue', () => {
     expect(
       getFallbackValue({
         type: 'array',
+        items: {
+          type: 'string',
+        },
         default: ['test'],
       }),
     ).toEqual(['test']);
