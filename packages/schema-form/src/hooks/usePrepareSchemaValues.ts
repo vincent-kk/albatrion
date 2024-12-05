@@ -108,7 +108,9 @@ export const usePrepareSchemaValues = (
 
   useEffect(() => {
     if (!node) return;
-    if (!visible) node.value = getFallbackValue(node.jsonSchema);
+    if (!visible && node.value !== getFallbackValue(node.jsonSchema)) {
+      node.value = getFallbackValue(node.jsonSchema);
+    }
   }, [node, visible]);
 
   useLayoutEffect(() => {
