@@ -101,7 +101,7 @@ export interface OverridableFormTypeInputProps {
   className?: string;
 }
 
-export interface ChildFormTypeInputProps {
+export interface ChildFormTypeInputProps extends OverridableFormTypeInputProps {
   FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
   [alt: string]: any;
 }
