@@ -1,3 +1,5 @@
+import { sortObjectKeys } from '@lumy-pack/common';
+
 import { getFallbackValue } from '@lumy/schema-form/helpers/fallbackValue';
 import type {
   ObjectSchema,
@@ -17,7 +19,6 @@ import {
   getOneOfConditionsMap,
   getVirtualReferencesMap,
   mergeShowConditions,
-  sortObjectKeys,
 } from './utils';
 
 export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
@@ -123,9 +124,10 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
           defaultValue: this.defaultValue?.[name] ?? getFallbackValue(schema),
           onChange: (input) => {
             if (!this.#draft) return;
+            if (input === undefined) return;
             const value =
               typeof input === 'function' ? input(this.#draft[name]) : input;
-            if (value !== undefined && this.#draft[name] === value) return;
+            if (this.#draft[name] === value) return;
             this.#draft[name] = value;
             this.#emitChange();
           },
@@ -141,6 +143,9 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
       virtualReferencesMap,
       this.#nodeFactory,
     );
+    this.publish({
+      type: MethodType.ChildrenChange,
+    });
 
     this.#ready = true;
     this.#emitChange();

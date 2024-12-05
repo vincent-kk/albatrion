@@ -21,9 +21,9 @@ import type {
   JsonSchemaError,
 } from '@lumy/schema-form/types';
 
-import { SchemaNodeContext } from './SchemaNodeContext';
+import { RootNodeContext } from './RootNodeContext';
 
-interface SchemaNodeContextProviderProps<
+interface RootNodeContextProviderProps<
   Schema extends JsonSchema = JsonSchema,
   Value extends AllowedValue = any,
 > {
@@ -43,7 +43,7 @@ interface SchemaNodeContextProviderProps<
   errors?: FormProps<Schema, Value>['errors'];
 }
 
-export const SchemaNodeContextProvider = <
+export const RootNodeContextProvider = <
   Value extends AllowedValue,
   Schema extends JsonSchema,
 >({
@@ -55,7 +55,7 @@ export const SchemaNodeContextProvider = <
   errors,
   ajv,
   children,
-}: PropsWithChildren<SchemaNodeContextProviderProps<Schema, Value>>) => {
+}: PropsWithChildren<RootNodeContextProviderProps<Schema, Value>>) => {
   const initialValue = useConstant(defaultValue);
   const [value, handleChange] = useState(() => initialValue);
 
@@ -128,8 +128,8 @@ export const SchemaNodeContextProvider = <
   }, [errors, rootNode]);
 
   return (
-    <SchemaNodeContext.Provider value={{ rootNode }}>
+    <RootNodeContext.Provider value={rootNode}>
       {children}
-    </SchemaNodeContext.Provider>
+    </RootNodeContext.Provider>
   );
 };

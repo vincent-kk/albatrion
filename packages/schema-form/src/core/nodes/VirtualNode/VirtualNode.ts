@@ -53,7 +53,6 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
     super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
 
     this.#refNodes = refNodes || [];
-    this.#children = this.#refNodes.map((node) => ({ node }));
 
     if (this.defaultValue !== undefined) {
       this.#value = this.defaultValue;
@@ -80,6 +79,11 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
           });
         }
       });
+    });
+
+    this.#children = this.#refNodes.map((node) => ({ node }));
+    this.publish({
+      type: MethodType.ChildrenChange,
     });
   }
 }

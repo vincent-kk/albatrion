@@ -99,6 +99,7 @@ export enum MethodType {
   PathChange = 1 << 4,
   StateChange = 1 << 5,
   Validate = 1 << 6,
+  ChildrenChange = 1 << 7,
 }
 
 export type MethodPayload = {
@@ -109,6 +110,7 @@ export type MethodPayload = {
   [MethodType.PathChange]: string;
   [MethodType.StateChange]: NodeState;
   [MethodType.Validate]: JsonSchemaError[];
+  [MethodType.ChildrenChange]: void;
 };
 
 export type MethodOptions = Partial<{
@@ -126,6 +128,7 @@ export type MethodOptions = Partial<{
   };
   [MethodType.StateChange]: void;
   [MethodType.Validate]: void;
+  [MethodType.ChildrenChange]: void;
 }>;
 
 export type NodeState = {

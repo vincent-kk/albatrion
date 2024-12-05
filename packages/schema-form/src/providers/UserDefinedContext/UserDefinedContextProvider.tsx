@@ -10,10 +10,10 @@ interface UserDefinedContextProviderProps {
 }
 
 export const UserDefinedContextProvider = ({
-  context = {},
+  context,
   children,
 }: PropsWithChildren<UserDefinedContextProviderProps>) => {
-  const contextValue = useMemo(() => ({ context }), [context]);
+  const contextValue = useMemo(() => ({ context: context || {} }), [context]);
   return (
     <UserDefinedContext.Provider value={contextValue}>
       {children}

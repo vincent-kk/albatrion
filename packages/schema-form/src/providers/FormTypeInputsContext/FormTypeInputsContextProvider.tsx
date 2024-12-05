@@ -20,23 +20,17 @@ export const FormTypeInputsContextProvider = ({
   formTypeInputMap,
   children,
 }: PropsWithChildren<FormTypeInputsContextProviderProps>) => {
-  const fromFormTypeInputDefinitions = useMemo(
-    () => normalizeFormTypeInputDefinitions(formTypeInputDefinitions),
-    [formTypeInputDefinitions],
+  const value = useMemo(
+    () => ({
+      fromFormTypeInputDefinitions: normalizeFormTypeInputDefinitions(
+        formTypeInputDefinitions,
+      ),
+      fromFormTypeInputMap: normalizeFormTypeInputMap(formTypeInputMap),
+    }),
+    [formTypeInputDefinitions, formTypeInputMap],
   );
-
-  const fromFormTypeInputMap = useMemo(
-    () => normalizeFormTypeInputMap(formTypeInputMap),
-    [formTypeInputMap],
-  );
-
   return (
-    <FormTypeInputsContext.Provider
-      value={{
-        fromFormTypeInputDefinitions,
-        fromFormTypeInputMap,
-      }}
-    >
+    <FormTypeInputsContext.Provider value={value}>
       {children}
     </FormTypeInputsContext.Provider>
   );

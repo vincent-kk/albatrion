@@ -1,4 +1,9 @@
-import { isFunction, isPlainObject, isTruthy } from '@lumy-pack/common';
+import {
+  EMPTY_ARRAY,
+  isFunction,
+  isPlainObject,
+  isTruthy,
+} from '@lumy-pack/common';
 import { isReactComponent } from '@lumy-pack/common-react';
 
 import { withErrorBoundary } from '@lumy/schema-form/components/utils/withErrorBoundary';
@@ -16,8 +21,9 @@ import type { NormalizedFormTypeInputDefinition } from './type';
  * @returns 정규화된 폼 타입 입력 정의
  */
 export const normalizeFormTypeInputDefinitions = (
-  formTypeInputDefinitions: FormTypeInputDefinition[] = [],
+  formTypeInputDefinitions?: FormTypeInputDefinition[],
 ): NormalizedFormTypeInputDefinition[] => {
+  if (!formTypeInputDefinitions) return EMPTY_ARRAY;
   return formTypeInputDefinitions
     .map(({ Component, test }) => {
       if (isReactComponent(Component)) {

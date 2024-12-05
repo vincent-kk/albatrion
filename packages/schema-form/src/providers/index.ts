@@ -1,7 +1,4 @@
-export {
-  SchemaNodeContextProvider,
-  useSchemaNodeContext,
-} from './SchemaNodeContext';
+export { RootNodeContextProvider, useRootNodeContext } from './RootNodeContext';
 
 export {
   FormTypeInputsContextProvider,

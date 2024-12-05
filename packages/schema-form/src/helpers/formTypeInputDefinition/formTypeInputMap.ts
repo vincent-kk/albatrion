@@ -1,4 +1,4 @@
-import { isTruthy } from '@lumy-pack/common';
+import { EMPTY_ARRAY, isTruthy } from '@lumy-pack/common';
 import { isReactComponent } from '@lumy-pack/common-react';
 
 import { withErrorBoundary } from '@lumy/schema-form/components/utils/withErrorBoundary';
@@ -18,7 +18,7 @@ import type { NormalizedFormTypeInputDefinition } from './type';
 export const normalizeFormTypeInputMap = (
   formTypeInputMap?: FormTypeInputMap,
 ): NormalizedFormTypeInputDefinition[] => {
-  if (!formTypeInputMap) return [];
+  if (!formTypeInputMap) return EMPTY_ARRAY;
   return Object.entries(formTypeInputMap)
     .map(([path, Component]) => {
       if (typeof path !== 'string' || !isReactComponent(Component)) return null;
