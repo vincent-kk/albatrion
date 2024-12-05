@@ -21,7 +21,7 @@ import {
 import {
   FormTypeInputsContextProvider,
   FormTypeRendererContextProvider,
-  SchemaNodeContextProvider,
+  RootNodeContextProvider,
   UserDefinedContextProvider,
 } from '@lumy/schema-form/providers';
 import {
@@ -143,7 +143,7 @@ const FormInner = <
           formatError={formatError}
           showError={showError}
         >
-          <SchemaNodeContextProvider
+          <RootNodeContextProvider
             key={tick}
             jsonSchema={jsonSchema}
             defaultValue={defaultValue}
@@ -154,7 +154,7 @@ const FormInner = <
             ajv={ajv}
           >
             {children || <SchemaNodeProxy path="" gridFrom={gridFrom} />}
-          </SchemaNodeContextProvider>
+          </RootNodeContextProvider>
         </FormTypeRendererContextProvider>
       </FormTypeInputsContextProvider>
     </UserDefinedContextProvider>

@@ -12,7 +12,7 @@ import {
   getWatchValuesFactory,
 } from '@lumy/schema-form/helpers/dynamicFunction';
 import { getFallbackValue } from '@lumy/schema-form/helpers/fallbackValue';
-import { useSchemaNodeContext } from '@lumy/schema-form/providers';
+import { useRootNodeContext } from '@lumy/schema-form/providers';
 
 import { useSchemaNodeTracker } from './useSchemaNodeTracker';
 
@@ -25,7 +25,7 @@ export const usePrepareSchemaValues = (
   readOnly: boolean;
   watchValues: any[];
 } => {
-  const { rootNode } = useSchemaNodeContext();
+  const rootNode = useRootNodeContext();
 
   const node = useMemo(() => {
     if (isSchemaNode(input)) return input;
