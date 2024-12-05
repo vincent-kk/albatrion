@@ -74,3 +74,44 @@ export const FunctionalChildren = () => {
     </StoryLayout>
   );
 };
+
+export const Common = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+      },
+      password: {
+        type: 'string',
+        format: 'password',
+      },
+      age: {
+        type: 'number',
+      },
+      check: {
+        type: 'boolean',
+      },
+      gender: {
+        type: 'string',
+        enum: ['male', 'female'],
+      },
+      birth: {
+        type: 'string',
+        format: 'date',
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  return (
+    <div style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
+      <div style={{ flex: 1 }}>
+        <Form jsonSchema={jsonSchema} onChange={setValue} />
+      </div>
+      <div style={{ flex: 1 }}>
+        <pre>{JSON.stringify(value, null, 2)}</pre>
+      </div>
+    </div>
+  );
+};
