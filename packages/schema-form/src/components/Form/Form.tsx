@@ -3,8 +3,8 @@ import {
   type ReactNode,
   forwardRef,
   memo,
+  useEffect,
   useImperativeHandle,
-  useLayoutEffect,
   useState,
 } from 'react';
 
@@ -70,10 +70,12 @@ const FormInner = <
   const [tick, update] = useTick();
 
   const handleChange = useHandle((input: Parameter<typeof onChange>) => {
-    if (isFunction(onChange))
+    if (isFunction(onChange)) {
       onChange(
         (isFunction(input) ? input(rootNode?.value as Value) : input) as Value,
       );
+    }
+    setChildren(createChildren(childrenInput, jsonSchema, rootNode));
   });
 
   const handleValidate = useHandle((errors: Parameter<typeof onValidate>) => {
@@ -84,15 +86,11 @@ const FormInner = <
     setRootNode(rootNode as Node);
   });
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!rootNode) return;
     setChildren(createChildren(childrenInput, jsonSchema, rootNode));
     const unsubscribe = rootNode.subscribe(({ type }) => {
-      if (
-        type === MethodType.Validate ||
-        type === MethodType.Change ||
-        type === MethodType.Redraw
-      )
+      if (type === MethodType.Validate || type === MethodType.Redraw)
         setChildren(createChildren(childrenInput, jsonSchema, rootNode));
     });
     return () => {
