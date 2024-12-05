@@ -96,29 +96,6 @@ export const SchemaNodeAdapter = ({
     }
   }, [gridFrom, node, children]);
 
-  useEffect(() => {
-    console.log('gridFrom', gridFrom);
-  }, [gridFrom]);
-  useEffect(() => {
-    console.log('children', children);
-  }, [children]);
-  useEffect(() => {
-    console.log('watchValuesSnapshot', watchValuesSnapshot);
-  }, [watchValuesSnapshot]);
-  useEffect(() => {
-    console.log('readOnly', readOnly);
-  }, [readOnly]);
-  useEffect(() => {
-    console.log('disabled', disabled);
-  }, [disabled]);
-  useEffect(() => {
-    console.log('overridableProps', overridableProps);
-  }, [overridableProps]);
-
-  useEffect(() => {
-    console.log('PreferredFormTypeInput', PreferredFormTypeInput);
-  }, [PreferredFormTypeInput]);
-
   const renderCount = useRef(0);
   renderCount.current += 1;
   return (

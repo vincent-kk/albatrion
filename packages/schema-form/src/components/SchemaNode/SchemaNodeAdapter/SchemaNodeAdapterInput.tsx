@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import { memo, useCallback, useMemo, useRef } from 'react';
 
 import { useConstant } from '@lumy-pack/common-react';
 
@@ -24,25 +24,6 @@ export const SchemaNodeAdapterInput = memo(
       () => PreferredFormTypeInput || FormTypeInputByNode,
       [FormTypeInputByNode, PreferredFormTypeInput],
     );
-
-    useEffect(() => {
-      console.log('readOnly', readOnly);
-    }, [readOnly]);
-    useEffect(() => {
-      console.log('disabled', disabled);
-    }, [disabled]);
-    useEffect(() => {
-      console.log('watchValues', watchValues);
-    }, [watchValues]);
-    useEffect(() => {
-      console.log('overridableProps', overridableProps);
-    }, [overridableProps]);
-    useEffect(() => {
-      console.log('PreferredFormTypeInput', PreferredFormTypeInput);
-    }, [PreferredFormTypeInput]);
-    useEffect(() => {
-      console.log('childNodes', childNodes);
-    }, [childNodes]);
 
     const renderCount = useRef(0);
     renderCount.current += 1;

@@ -2,7 +2,6 @@ import {
   type PropsWithChildren,
   type ReactElement,
   memo,
-  useEffect,
   useMemo,
   useRef,
 } from 'react';
@@ -98,26 +97,6 @@ export const SchemaNodeAdapterRow = ({
         : [],
     [NodeProxy, node, rawChildNodes],
   );
-
-  useEffect(() => {
-    console.log('rawChildNodes', rawChildNodes);
-  }, [rawChildNodes]);
-
-  useEffect(() => {
-    console.log('readOnly', readOnly);
-  }, [readOnly]);
-  useEffect(() => {
-    console.log('disabled', disabled);
-  }, [disabled]);
-  useEffect(() => {
-    console.log('watchValues', watchValues);
-  }, [watchValues]);
-  useEffect(() => {
-    console.log('overridableProps', overridableProps);
-  }, [overridableProps]);
-  useEffect(() => {
-    console.log('PreferredFormTypeInput', PreferredFormTypeInput);
-  }, [PreferredFormTypeInput]);
 
   return (
     <SchemaNodeAdapterInput
