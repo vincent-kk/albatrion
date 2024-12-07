@@ -1,10 +1,6 @@
 import { isPlainObject } from '@lumy-pack/common';
 
-import type {
-  ArrayValue,
-  JsonSchema,
-  ObjectValue,
-} from '@lumy/schema-form/types';
+import type { ArrayValue, JsonSchema, ObjectValue } from '@/schema-form/types';
 
 import { type StackItem, isArrayStackItem, isObjectStackItem } from './type';
 

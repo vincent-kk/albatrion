@@ -1,4 +1,4 @@
-import type { ObjectSchema } from '@lumy/schema-form/types';
+import type { ObjectSchema } from '@/schema-form/types';
 
 import { isObjectOneOfSchema, isValidEnum } from './filter';
 

@@ -1,4 +1,4 @@
-import { JSONPath, type JsonSchema } from '@lumy/schema-form/types';
+import { JSONPath, type JsonSchema } from '@/schema-form/types';
 
 export const getFallbackValidator = (error: Error, jsonSchema: JsonSchema) =>
   Object.assign(

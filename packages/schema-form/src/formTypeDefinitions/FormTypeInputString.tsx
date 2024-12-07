@@ -5,7 +5,7 @@ import { useHandle } from '@lumy-pack/common-react';
 import type {
   FormTypeInputDefinition,
   FormTypeInputProps,
-} from '@lumy/schema-form/types';
+} from '@/schema-form/types';
 
 const FormTypeInputString = ({
   path,

@@ -1,13 +1,13 @@
 import type { ComponentType } from 'react';
 
-import { FallbackManager } from '@lumy/schema-form/app/FallbackManager';
-import { SchemaNodeProxy } from '@lumy/schema-form/components/SchemaNode';
-import { useExternalFormContext } from '@lumy/schema-form/providers';
+import { FallbackManager } from '@/schema-form/app/FallbackManager';
+import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
+import { useExternalFormContext } from '@/schema-form/providers';
 import type {
   FormTypeInputProps,
   FormTypeRendererProps,
   OverridableFormTypeInputProps,
-} from '@lumy/schema-form/types';
+} from '@/schema-form/types';
 
 export type FormInputProps = {
   path: string;

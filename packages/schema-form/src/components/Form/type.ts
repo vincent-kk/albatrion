@@ -2,8 +2,8 @@ import type { ComponentType, ReactNode } from 'react';
 
 import type Ajv from 'ajv';
 
-import type { GridForm } from '@lumy/schema-form/components/SchemaNode';
-import type { InferSchemaNode, SchemaNode } from '@lumy/schema-form/core';
+import type { GridForm } from '@/schema-form/components/SchemaNode';
+import type { InferSchemaNode, SchemaNode } from '@/schema-form/core';
 import type {
   AllowedValue,
   FormTypeInputDefinition,
@@ -14,7 +14,7 @@ import type {
   JsonSchemaError,
   SetStateFnWithOptions,
   ShowError,
-} from '@lumy/schema-form/types';
+} from '@/schema-form/types';
 
 export interface FormChildrenProps<
   Schema extends JsonSchema = JsonSchema,

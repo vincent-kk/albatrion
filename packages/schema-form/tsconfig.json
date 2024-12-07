@@ -3,10 +3,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@lumy/schema-form": [
+      "@/schema-form": [
         "./src"
       ],
-      "@lumy/schema-form/*": [
+      "@/schema-form/*": [
         "./src/*"
       ],
     },

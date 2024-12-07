@@ -1,11 +1,11 @@
 import type { ComponentType, ReactElement } from 'react';
 
-import type { SchemaNode } from '@lumy/schema-form/core';
-import type { ObjectNodeChildNode } from '@lumy/schema-form/core/nodes/ObjectNode';
+import type { SchemaNode } from '@/schema-form/core';
+import type { ObjectNodeChildNode } from '@/schema-form/core/nodes/ObjectNode';
 import type {
   FormTypeInputProps,
   OverridableFormTypeInputProps,
-} from '@lumy/schema-form/types';
+} from '@/schema-form/types';
 
 import type { SchemaNodeProxyProps } from '../SchemaNodeProxy';
 import type { GridForm } from '../type';

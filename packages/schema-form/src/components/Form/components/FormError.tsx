@@ -1,9 +1,9 @@
 import type { CSSProperties, ComponentType } from 'react';
 
-import { FallbackManager } from '@lumy/schema-form/app/FallbackManager';
-import { SchemaNodeProxy } from '@lumy/schema-form/components/SchemaNode';
-import { useExternalFormContext } from '@lumy/schema-form/providers';
-import type { FormTypeRendererProps } from '@lumy/schema-form/types';
+import { FallbackManager } from '@/schema-form/app/FallbackManager';
+import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
+import { useExternalFormContext } from '@/schema-form/providers';
+import type { FormTypeRendererProps } from '@/schema-form/types';
 
 export interface FormErrorProps {
   path: string;

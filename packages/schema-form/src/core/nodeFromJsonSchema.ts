@@ -1,12 +1,12 @@
 import { isFunction } from '@lumy-pack/common';
 
-import type { Ajv } from '@lumy/schema-form/helpers/ajv';
+import type { Ajv } from '@/schema-form/helpers/ajv';
 import {
   type AllowedValue,
   type InferValueType,
   JSONPath,
   type JsonSchema,
-} from '@lumy/schema-form/types';
+} from '@/schema-form/types';
 
 import { schemaNodeFactory } from './nodes';
 import type { InferSchemaNode, NodeFactoryProps } from './nodes/type';

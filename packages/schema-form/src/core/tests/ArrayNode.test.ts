@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { nodeFromJsonSchema } from '@lumy/schema-form/core';
+import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import { ArrayNode } from '../nodes/ArrayNode/ArrayNode';
 

@@ -3,7 +3,7 @@ import { type CSSProperties, memo, useCallback } from 'react';
 import type {
   FormTypeInputDefinition,
   FormTypeInputProps,
-} from '@lumy/schema-form/types';
+} from '@/schema-form/types';
 
 const FormTypeInputArray = memo(
   ({ node, childNodes, readOnly, disabled }: FormTypeInputProps<any[]>) => {

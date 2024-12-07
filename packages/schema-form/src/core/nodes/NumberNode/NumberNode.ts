@@ -1,4 +1,4 @@
-import type { NumberSchema, NumberValue } from '@lumy/schema-form/types';
+import type { NumberSchema, NumberValue } from '@/schema-form/types';
 
 import { parseNumber } from '../../parsers';
 import { BaseNode } from '../BaseNode';

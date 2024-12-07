@@ -1,6 +1,6 @@
 import { generateHash } from '@lumy-pack/common';
 
-import type { JsonSchemaError } from '@lumy/schema-form/types';
+import type { JsonSchemaError } from '@/schema-form/types';
 
 /**
  * @description JsonSchemaError의 schemaPath와 params를 문자열로 변환하여 해싱

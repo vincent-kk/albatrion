@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@lumy/schema-form/types';
+import type { JsonSchema } from '@/schema-form/types';
 
 import { getDataWithSchema } from './getDataWithSchema';
 

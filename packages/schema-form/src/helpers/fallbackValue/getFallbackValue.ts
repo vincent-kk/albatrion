@@ -1,6 +1,6 @@
 import { EMPTY_ARRAY, EMPTY_OBJECT } from '@lumy-pack/common';
 
-import type { JsonSchema } from '@lumy/schema-form/types';
+import type { JsonSchema } from '@/schema-form/types';
 
 /**
  * @description JSON Schema의 default 속성 또는 타입에 따른 기본값 반환

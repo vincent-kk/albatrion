@@ -1,7 +1,7 @@
 import type {
   FormTypeInputDefinition,
   FormTypeTestFn,
-} from '@lumy/schema-form/types';
+} from '@/schema-form/types';
 
 export interface NormalizedFormTypeInputDefinition
   extends Pick<FormTypeInputDefinition, 'Component'> {

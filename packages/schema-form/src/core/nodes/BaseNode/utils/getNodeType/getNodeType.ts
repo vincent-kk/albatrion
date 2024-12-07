@@ -1,4 +1,4 @@
-import type { JsonSchema } from '@lumy/schema-form/types';
+import type { JsonSchema } from '@/schema-form/types';
 
 export const getNodeType = <Schema extends JsonSchema>({ type }: Schema) => {
   if (type === 'number' || type === 'integer')

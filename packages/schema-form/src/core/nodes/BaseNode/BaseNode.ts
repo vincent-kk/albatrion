@@ -5,20 +5,20 @@ import {
   type ErrorObject,
   type ValidateFunction,
   ajvHelper,
-} from '@lumy/schema-form/helpers/ajv';
+} from '@/schema-form/helpers/ajv';
 import {
   filterErrors,
   getErrorsHash,
   transformErrors,
-} from '@lumy/schema-form/helpers/error';
-import { getFallbackValue } from '@lumy/schema-form/helpers/fallbackValue';
+} from '@/schema-form/helpers/error';
+import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
 import {
   type AllowedValue,
   JSONPath,
   type JsonSchema,
   type JsonSchemaError,
   type SetStateOptions,
-} from '@lumy/schema-form/types';
+} from '@/schema-form/types';
 
 import {
   type Listener,

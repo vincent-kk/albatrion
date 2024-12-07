@@ -11,26 +11,26 @@ import {
 import { isFunction } from '@lumy-pack/common';
 import { useConstant, useHandle, useTick } from '@lumy-pack/common-react';
 
-import { SchemaNodeProxy } from '@lumy/schema-form/components/SchemaNode';
+import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import {
   type InferSchemaNode,
   MethodType,
   type SchemaNode,
   isObjectNode,
-} from '@lumy/schema-form/core';
+} from '@/schema-form/core';
 import {
   FormTypeInputsContextProvider,
   FormTypeRendererContextProvider,
   RootNodeContextProvider,
   UserDefinedContextProvider,
-} from '@lumy/schema-form/providers';
+} from '@/schema-form/providers';
 import {
   type AllowedValue,
   type InferValueType,
   type JsonSchema,
   type ObjectValue,
   ShowError,
-} from '@lumy/schema-form/types';
+} from '@/schema-form/types';
 
 import type { FormHandle, FormProps } from './type';
 import { createChildren } from './util';

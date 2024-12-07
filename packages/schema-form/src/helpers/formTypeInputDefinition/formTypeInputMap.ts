@@ -1,12 +1,12 @@
 import { EMPTY_ARRAY, isTruthy } from '@lumy-pack/common';
 import { isReactComponent } from '@lumy-pack/common-react';
 
-import { withErrorBoundary } from '@lumy/schema-form/components/utils/withErrorBoundary';
+import { withErrorBoundary } from '@/schema-form/components/utils/withErrorBoundary';
 import {
   type FormTypeInputMap,
   type FormTypeTestFn,
   JSONPath,
-} from '@lumy/schema-form/types';
+} from '@/schema-form/types';
 
 import type { NormalizedFormTypeInputDefinition } from './type';
 

@@ -1,4 +1,4 @@
-import type { BooleanSchema, BooleanValue } from '@lumy/schema-form/types';
+import type { BooleanSchema, BooleanValue } from '@/schema-form/types';
 
 import { parseBoolean } from '../../parsers';
 import { BaseNode } from '../BaseNode';

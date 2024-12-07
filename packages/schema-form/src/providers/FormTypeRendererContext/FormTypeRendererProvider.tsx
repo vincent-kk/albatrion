@@ -3,8 +3,8 @@ import { type PropsWithChildren, useMemo } from 'react';
 import { isFunction } from '@lumy-pack/common';
 import { isReactComponent } from '@lumy-pack/common-react';
 
-import type { FormProps } from '@lumy/schema-form/components/Form';
-import { ShowError } from '@lumy/schema-form/types';
+import type { FormProps } from '@/schema-form/components/Form';
+import { ShowError } from '@/schema-form/types';
 
 import { useExternalFormContext } from '../ExternalFormContext';
 import { FormTypeRendererContext } from './FormTypeRendererContext';

@@ -4,7 +4,7 @@ import {
   JSONPath,
   type JsonSchema,
   type JsonSchemaError,
-} from '@lumy/schema-form/types';
+} from '@/schema-form/types';
 
 /**
  * @description oneOf 속성을 가진 JSON Schema에 대한 에러 제거

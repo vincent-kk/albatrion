@@ -1,7 +1,7 @@
 import Ajv from 'ajv';
 import { describe, expect, it } from 'vitest';
 
-import { nodeFromJsonSchema } from '@lumy/schema-form/core';
+import { nodeFromJsonSchema } from '@/schema-form/core';
 
 const wait = (delay = 0) => {
   return new Promise((resolve) => {

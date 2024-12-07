@@ -1,10 +1,7 @@
 import { type ComponentType, createContext } from 'react';
 
-import type { NormalizedFormTypeInputDefinition } from '@lumy/schema-form/helpers/formTypeInputDefinition';
-import type {
-  FormTypeRendererProps,
-  FormatError,
-} from '@lumy/schema-form/types';
+import type { NormalizedFormTypeInputDefinition } from '@/schema-form/helpers/formTypeInputDefinition';
+import type { FormTypeRendererProps, FormatError } from '@/schema-form/types';
 
 export interface ExternalFormContextProps {
   fromExternalFormTypeInputDefinitions?: NormalizedFormTypeInputDefinition[];

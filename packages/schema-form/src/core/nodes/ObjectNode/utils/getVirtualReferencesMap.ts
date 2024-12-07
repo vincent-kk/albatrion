@@ -1,4 +1,4 @@
-import { SchemaNodeError } from '@lumy/schema-form/errors';
+import { SchemaNodeError } from '@/schema-form/errors';
 
 import type { VirtualReference } from '../type';
 

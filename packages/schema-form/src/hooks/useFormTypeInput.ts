@@ -2,14 +2,14 @@ import { memo, useMemo } from 'react';
 
 import { isFunctionComponent, isMemoComponent } from '@lumy-pack/common-react';
 
-import { FallbackManager } from '@lumy/schema-form/app/FallbackManager';
-import { withErrorBoundary } from '@lumy/schema-form/components/utils/withErrorBoundary';
-import type { SchemaNode } from '@lumy/schema-form/core';
+import { FallbackManager } from '@/schema-form/app/FallbackManager';
+import { withErrorBoundary } from '@/schema-form/components/utils/withErrorBoundary';
+import type { SchemaNode } from '@/schema-form/core';
 import {
   useExternalFormContext,
   useFormTypeInputsContext,
-} from '@lumy/schema-form/providers';
-import type { Hint } from '@lumy/schema-form/types';
+} from '@/schema-form/providers';
+import type { Hint } from '@/schema-form/types';
 
 /**
  * @description 스키마 노드에 대한 폼 타입 입력을 반환합니다.

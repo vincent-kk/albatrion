@@ -4,7 +4,7 @@ import { Fragment } from 'react/jsx-runtime';
 import type {
   FormTypeInputDefinition,
   FormTypeInputProps,
-} from '@lumy/schema-form/types';
+} from '@/schema-form/types';
 
 const FormTypeInputObject = ({ childNodes }: FormTypeInputProps<object>) => {
   const children = useMemo(() => {

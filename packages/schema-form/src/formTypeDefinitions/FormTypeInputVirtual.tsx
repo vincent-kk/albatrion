@@ -3,7 +3,7 @@ import { Fragment } from 'react/jsx-runtime';
 import type {
   FormTypeInputDefinition,
   FormTypeInputProps,
-} from '@lumy/schema-form/types';
+} from '@/schema-form/types';
 
 const FormTypeInputVirtual = ({ childNodes }: FormTypeInputProps<object>) => {
   return (

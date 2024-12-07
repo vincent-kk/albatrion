@@ -1,6 +1,6 @@
 import { type ComponentType, createContext } from 'react';
 
-import type { FormTypeRendererProps } from '@lumy/schema-form/types';
+import type { FormTypeRendererProps } from '@/schema-form/types';
 
 export interface FormTypeRendererContext {
   FormTypeRenderer?: ComponentType<FormTypeRendererProps>;

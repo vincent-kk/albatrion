@@ -5,7 +5,7 @@ import { useHandle } from '@lumy-pack/common-react';
 import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
-} from '@lumy/schema-form/types';
+} from '@/schema-form/types';
 
 type StringRadioJsonSchema = {
   type: 'string';

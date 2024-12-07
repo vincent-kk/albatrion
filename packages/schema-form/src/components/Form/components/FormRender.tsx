@@ -3,8 +3,8 @@ import type { ComponentType } from 'react';
 import {
   SchemaNodeProxy,
   type SchemaNodeProxyProps,
-} from '@lumy/schema-form/components/SchemaNode';
-import type { FormTypeRendererProps } from '@lumy/schema-form/types';
+} from '@/schema-form/components/SchemaNode';
+import type { FormTypeRendererProps } from '@/schema-form/types';
 
 export type FormRenderProps = {
   children: ComponentType<FormTypeRendererProps>;

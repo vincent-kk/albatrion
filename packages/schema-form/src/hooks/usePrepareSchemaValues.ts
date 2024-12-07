@@ -2,17 +2,13 @@ import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 
 import { falseFunction, isFunction, trueFunction } from '@lumy-pack/common';
 
-import {
-  MethodType,
-  type SchemaNode,
-  isSchemaNode,
-} from '@lumy/schema-form/core';
+import { MethodType, type SchemaNode, isSchemaNode } from '@/schema-form/core';
 import {
   checkComputedOptionFactory,
   getWatchValuesFactory,
-} from '@lumy/schema-form/helpers/dynamicFunction';
-import { getFallbackValue } from '@lumy/schema-form/helpers/fallbackValue';
-import { useRootNodeContext } from '@lumy/schema-form/providers';
+} from '@/schema-form/helpers/dynamicFunction';
+import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
+import { useRootNodeContext } from '@/schema-form/providers';
 
 import { useSchemaNodeTracker } from './useSchemaNodeTracker';
 
