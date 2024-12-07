@@ -31,7 +31,7 @@ export const FormGroup = ({
     gridFrom={gridFrom}
     FormTypeInput={FormTypeInput}
     FormTypeRenderer={FormTypeRenderer}
-    Wrapper={Wrapper}
     overridableFormTypeInputProps={overridableFormTypeInputProps}
+    Wrapper={Wrapper}
   />
 );
