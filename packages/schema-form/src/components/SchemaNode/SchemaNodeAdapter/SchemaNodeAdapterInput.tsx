@@ -2,7 +2,9 @@ import { memo, useCallback, useMemo, useRef } from 'react';
 
 import { useConstant } from '@lumy-pack/common-react';
 
+import { MethodType } from '@lumy/schema-form/core';
 import { useFormTypeInput } from '@lumy/schema-form/hooks/useFormTypeInput';
+import { useSchemaNodeTracker } from '@lumy/schema-form/hooks/useSchemaNodeTracker';
 import { useUserDefinedContext } from '@lumy/schema-form/providers';
 import { type SetStateFnWithOptions, ShowError } from '@lumy/schema-form/types';
 
@@ -49,6 +51,8 @@ export const SchemaNodeAdapterInput = memo(
     }, [node]);
 
     const { context: userDefinedContext } = useUserDefinedContext();
+
+    useSchemaNodeTracker(node, [MethodType.Change, MethodType.Validate]);
 
     if (!node || !FormTypeInput) return null;
 
