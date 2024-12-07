@@ -23,9 +23,9 @@ export const FormRender = ({
     path={path}
     node={node}
     gridFrom={gridFrom}
-    overridableFormTypeInputProps={overridableFormTypeInputProps}
     FormTypeInput={FormTypeInput}
-    Wrapper={Wrapper}
     FormTypeRenderer={children}
+    overridableFormTypeInputProps={overridableFormTypeInputProps}
+    Wrapper={Wrapper}
   />
 );
