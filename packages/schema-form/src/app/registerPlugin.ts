@@ -4,7 +4,7 @@ import type {
   FormTypeInputDefinition,
   FormTypeRendererProps,
   FormatError,
-} from '../types';
+} from '@lumy/schema-form/types';
 import { FallbackManager } from './FallbackManager';
 
 export const registerPlugin = ({
