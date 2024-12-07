@@ -1,6 +1,6 @@
 import type { CSSProperties, ComponentType } from 'react';
 
-import type { InferSchemaNode, SchemaNode } from '@lumy/schema-form/core';
+import type { InferSchemaNode, SchemaNode } from '@lumy-form/core';
 
 import type { FormTypeRendererProps } from './formTypeRenderer';
 import type { InferJsonSchemaType, JsonSchema } from './jsonSchema';

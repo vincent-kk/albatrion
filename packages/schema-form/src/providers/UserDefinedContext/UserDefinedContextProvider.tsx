@@ -1,6 +1,6 @@
 import { PropsWithChildren, useMemo } from 'react';
 
-import type { FormProps } from '@lumy/schema-form/components/Form';
+import type { FormProps } from '@lumy-form/components/Form';
 
 import { UserDefinedContext } from './UserDefinedContext';
 

@@ -1,4 +1,4 @@
-import { JSONPath } from '@lumy/schema-form/types';
+import { JSONPath } from '@lumy-form/types';
 
 const JSON_PATH_REGEX = new RegExp(
   `[\\${JSONPath.Root}\\${JSONPath.Current}]\\${JSONPath.Child}([a-zA-Z0-9]+(\\${JSONPath.Child}[a-zA-Z0-9]+)*)`,

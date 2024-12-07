@@ -1,5 +1,5 @@
-import { isBranchNode } from '@lumy/schema-form/core';
-import type { FormTypeRendererProps } from '@lumy/schema-form/types';
+import { isBranchNode } from '@lumy-form/core';
+import type { FormTypeRendererProps } from '@lumy-form/types';
 
 export const FormGroupRenderer = ({
   node,

@@ -1,4 +1,4 @@
-import type { NullSchema, NullValue } from '@lumy/schema-form/types';
+import type { NullSchema, NullValue } from '@lumy-form/types';
 
 import { BaseNode } from '../BaseNode';
 import { MethodType, type SchemaNodeConstructorProps } from '../type';

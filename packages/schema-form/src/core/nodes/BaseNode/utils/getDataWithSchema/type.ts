@@ -6,7 +6,7 @@ import {
   type ObjectValue,
   isArraySchema,
   isObjectSchema,
-} from '@lumy/schema-form/types';
+} from '@lumy-form/types';
 
 export interface StackItem<Value = any> {
   value: Value;

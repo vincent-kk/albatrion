@@ -1,4 +1,4 @@
-import type { StringSchema, StringValue } from '@lumy/schema-form/types';
+import type { StringSchema, StringValue } from '@lumy-form/types';
 
 import { parseString } from '../../parsers';
 import { BaseNode } from '../BaseNode';

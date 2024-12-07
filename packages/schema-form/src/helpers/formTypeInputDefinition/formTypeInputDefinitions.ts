@@ -6,12 +6,12 @@ import {
 } from '@lumy-pack/common';
 import { isReactComponent } from '@lumy-pack/common-react';
 
-import { withErrorBoundary } from '@lumy/schema-form/components/utils/withErrorBoundary';
+import { withErrorBoundary } from '@lumy-form/components/utils/withErrorBoundary';
 import type {
   FormTypeInputDefinition,
   FormTypeTestFn,
   FormTypeTestObject,
-} from '@lumy/schema-form/types';
+} from '@lumy-form/types';
 
 import type { NormalizedFormTypeInputDefinition } from './type';
 

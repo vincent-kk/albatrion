@@ -9,7 +9,7 @@ import {
 import { isPlainObject, isString, isTruthy } from '@lumy-pack/common';
 import { isReactElement } from '@lumy-pack/common-react';
 
-import { MethodType } from '@lumy/schema-form/core';
+import { MethodType } from '@lumy-form/core';
 
 import { type FormReactNode, isListFrom } from '../type';
 import { SchemaNodeAdapterRow } from './SchemaNodeAdapterRow';

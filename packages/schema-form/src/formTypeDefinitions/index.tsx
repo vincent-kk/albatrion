@@ -1,4 +1,4 @@
-import type { FormTypeInputDefinition } from '@lumy/schema-form/types';
+import type { FormTypeInputDefinition } from '@lumy-form/types';
 
 import { FormTypeInputArrayDefinition } from './FormTypeInputArray';
 import { FormTypeInputBooleanDefinition } from './FormTypeInputBoolean';

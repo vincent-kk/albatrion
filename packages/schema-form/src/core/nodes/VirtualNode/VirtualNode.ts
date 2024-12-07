@@ -1,4 +1,4 @@
-import type { VirtualNodeValue, VirtualSchema } from '@lumy/schema-form/types';
+import type { VirtualNodeValue, VirtualSchema } from '@lumy-form/types';
 
 import { parseArray } from '../../parsers';
 import { BaseNode } from '../BaseNode';

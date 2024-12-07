@@ -1,4 +1,4 @@
-import type { Ajv } from '@lumy/schema-form/helpers/ajv';
+import type { Ajv } from '@lumy-form/helpers/ajv';
 import type {
   AllowedValue,
   ArraySchema,
@@ -12,7 +12,7 @@ import type {
   ShowError,
   StringSchema,
   VirtualSchema,
-} from '@lumy/schema-form/types';
+} from '@lumy-form/types';
 
 import type { ArrayNode } from './ArrayNode';
 import type { BooleanNode } from './BooleanNode';

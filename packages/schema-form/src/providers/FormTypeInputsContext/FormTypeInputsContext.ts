@@ -2,7 +2,7 @@ import { createContext } from 'react';
 
 import { EMPTY_ARRAY } from '@lumy-pack/common';
 
-import type { NormalizedFormTypeInputDefinition } from '@lumy/schema-form/helpers/formTypeInputDefinition';
+import type { NormalizedFormTypeInputDefinition } from '@lumy-form/helpers/formTypeInputDefinition';
 
 export interface FormTypeInputsContext {
   fromFormTypeInputDefinitions: NormalizedFormTypeInputDefinition[];

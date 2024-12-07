@@ -7,8 +7,8 @@ import {
 
 import { isReactComponent, useSnapshot } from '@lumy-pack/common-react';
 
-import type { SchemaNode } from '@lumy/schema-form/core';
-import type { OverridableFormTypeInputProps } from '@lumy/schema-form/types';
+import type { SchemaNode } from '@lumy-form/core';
+import type { OverridableFormTypeInputProps } from '@lumy-form/types';
 
 import type { SchemaNodeProxyProps } from '../SchemaNodeProxy';
 import { SchemaNodeAdapter } from './SchemaNodeAdapter';

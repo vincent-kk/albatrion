@@ -1,11 +1,11 @@
 import { sortObjectKeys } from '@lumy-pack/common';
 
-import { getFallbackValue } from '@lumy/schema-form/helpers/fallbackValue';
+import { getFallbackValue } from '@lumy-form/helpers/fallbackValue';
 import type {
   ObjectSchema,
   ObjectValue,
   SetStateOptions,
-} from '@lumy/schema-form/types';
+} from '@lumy-form/types';
 
 import { BaseNode } from '../BaseNode';
 import {

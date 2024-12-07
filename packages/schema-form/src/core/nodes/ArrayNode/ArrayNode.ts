@@ -1,9 +1,5 @@
-import { getFallbackValue } from '@lumy/schema-form/helpers/fallbackValue';
-import type {
-  AllowedValue,
-  ArraySchema,
-  ArrayValue,
-} from '@lumy/schema-form/types';
+import { getFallbackValue } from '@lumy-form/helpers/fallbackValue';
+import type { AllowedValue, ArraySchema, ArrayValue } from '@lumy-form/types';
 
 import { parseArray } from '../../parsers';
 import { BaseNode } from '../BaseNode';

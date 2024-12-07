@@ -3,13 +3,13 @@ import { Fragment, useMemo } from 'react';
 import { isTruthy, nullFunction } from '@lumy-pack/common';
 import { useReference } from '@lumy-pack/common-react';
 
-import { usePrepareSchemaValues } from '@lumy/schema-form/hooks/usePrepareSchemaValues';
-import { useSchemaNodeListener } from '@lumy/schema-form/hooks/useSchemaNodeListener';
+import { usePrepareSchemaValues } from '@lumy-form/hooks/usePrepareSchemaValues';
+import { useSchemaNodeListener } from '@lumy-form/hooks/useSchemaNodeListener';
 import {
   useFormTypeRendererContext,
   useUserDefinedContext,
-} from '@lumy/schema-form/providers';
-import { type FormTypeRendererProps, ShowError } from '@lumy/schema-form/types';
+} from '@lumy-form/providers';
+import { type FormTypeRendererProps, ShowError } from '@lumy-form/types';
 
 import { SchemaNodeAdapterWrapper } from '../SchemaNodeAdapter';
 import type { SchemaNodeProxyProps } from './type';

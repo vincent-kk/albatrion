@@ -7,7 +7,7 @@ import type {
   ObjectSchema,
   StringSchema,
   VirtualSchema,
-} from '@lumy/schema-form/types';
+} from '@lumy-form/types';
 
 import { ArrayNode } from './ArrayNode';
 import { BooleanNode } from './BooleanNode';

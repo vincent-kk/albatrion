@@ -3,7 +3,7 @@ import { type RefObject, useLayoutEffect, useRef } from 'react';
 import { isFunction } from '@lumy-pack/common';
 import { useTick } from '@lumy-pack/common-react';
 
-import { MethodType, type SchemaNode } from '@lumy/schema-form/core';
+import { MethodType, type SchemaNode } from '@lumy-form/core';
 
 export const useSchemaNodeListener = <Node extends SchemaNode>(
   node: Node | null,

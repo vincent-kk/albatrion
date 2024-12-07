@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { nodeFromJsonSchema } from '@lumy/schema-form/core';
-import type { ObjectSchema } from '@lumy/schema-form/types';
+import { nodeFromJsonSchema } from '@lumy-form/core';
+import type { ObjectSchema } from '@lumy-form/types';
 
 describe('ObjectNode', () => {
   it('default value', () => {

@@ -1,5 +1,5 @@
-import type { SchemaNode } from '@lumy/schema-form/core';
-import { JSONPath } from '@lumy/schema-form/types';
+import type { SchemaNode } from '@lumy-form/core';
+import { JSONPath } from '@lumy-form/types';
 
 import type { BaseNode } from '../../BaseNode';
 

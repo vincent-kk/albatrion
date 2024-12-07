@@ -2,12 +2,12 @@ import type { ReactNode } from 'react';
 
 import { isFunction } from '@lumy-pack/common';
 
-import type { InferSchemaNode, SchemaNode } from '@lumy/schema-form/core';
+import type { InferSchemaNode, SchemaNode } from '@lumy-form/core';
 import type {
   AllowedValue,
   InferValueType,
   JsonSchema,
-} from '@lumy/schema-form/types';
+} from '@lumy-form/types';
 
 import type { FormProps } from './type';
 

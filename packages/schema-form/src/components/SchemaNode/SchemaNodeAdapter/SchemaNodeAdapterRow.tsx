@@ -8,8 +8,8 @@ import {
 
 import { isTruthy } from '@lumy-pack/common';
 
-import { isBranchNode } from '@lumy/schema-form/core';
-import type { ChildFormTypeInputProps } from '@lumy/schema-form/types';
+import { isBranchNode } from '@lumy-form/core';
+import type { ChildFormTypeInputProps } from '@lumy-form/types';
 
 import { SchemaNodeAdapterInput } from './SchemaNodeAdapterInput';
 import { getGridStyleProps } from './helper';

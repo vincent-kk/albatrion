@@ -5,7 +5,7 @@ import { useHandle } from '@lumy-pack/common-react';
 import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
-} from '@lumy/schema-form/types';
+} from '@lumy-form/types';
 
 type StringCheckboxJsonSchema = {
   type: 'array';

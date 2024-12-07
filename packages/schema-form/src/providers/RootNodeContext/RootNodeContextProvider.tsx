@@ -8,18 +8,18 @@ import {
 
 import { useConstant } from '@lumy-pack/common-react';
 
-import type { FormProps } from '@lumy/schema-form/components/Form';
+import type { FormProps } from '@lumy-form/components/Form';
 import {
   MethodType,
   type SchemaNode,
   nodeFromJsonSchema,
-} from '@lumy/schema-form/core';
-import { transformErrors } from '@lumy/schema-form/helpers/error';
+} from '@lumy-form/core';
+import { transformErrors } from '@lumy-form/helpers/error';
 import type {
   AllowedValue,
   JsonSchema,
   JsonSchemaError,
-} from '@lumy/schema-form/types';
+} from '@lumy-form/types';
 
 import { RootNodeContext } from './RootNodeContext';
 

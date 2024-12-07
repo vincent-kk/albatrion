@@ -1,6 +1,6 @@
 import { isPlainObject } from '@lumy-pack/common';
 
-import type { JsonSchema, ObjectSchema } from '@lumy/schema-form/types';
+import type { JsonSchema, ObjectSchema } from '@lumy-form/types';
 
 export const isObjectOneOfSchema = (
   schema: NonNullable<ObjectSchema['oneOf']>[number],

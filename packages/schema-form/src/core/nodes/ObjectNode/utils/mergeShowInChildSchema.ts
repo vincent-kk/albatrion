@@ -1,6 +1,6 @@
 import { isTruthy, merge } from '@lumy-pack/common';
 
-import type { JsonSchema } from '@lumy/schema-form/types';
+import type { JsonSchema } from '@lumy-form/types';
 
 export const mergeShowConditions = (
   jsonSchema: JsonSchema,

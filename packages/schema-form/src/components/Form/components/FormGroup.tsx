@@ -3,12 +3,12 @@ import type { ComponentType, PropsWithChildren } from 'react';
 import {
   type GridForm,
   SchemaNodeProxy,
-} from '@lumy/schema-form/components/SchemaNode';
+} from '@lumy-form/components/SchemaNode';
 import type {
   FormTypeInputProps,
   FormTypeRendererProps,
   OverridableFormTypeInputProps,
-} from '@lumy/schema-form/types';
+} from '@lumy-form/types';
 
 export type FormGroupProps = {
   path: string;

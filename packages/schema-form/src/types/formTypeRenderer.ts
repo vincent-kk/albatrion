@@ -1,6 +1,6 @@
 import type { CSSProperties, ComponentType, ReactNode } from 'react';
 
-import type { SchemaNode } from '@lumy/schema-form/core';
+import type { SchemaNode } from '@lumy-form/core';
 
 import type { JsonSchemaError } from './error';
 import type { OverridableFormTypeInputProps } from './formTypeInput';

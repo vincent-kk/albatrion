@@ -7,18 +7,18 @@ import {
   FormGroupRenderer,
   FormInputRenderer,
   FormLabelRenderer,
-} from '@lumy/schema-form/components/FallbackComponents';
-import { formatError } from '@lumy/schema-form/components/utils/formatError';
-import { formTypeDefinitions } from '@lumy/schema-form/formTypeDefinitions';
+} from '@lumy-form/components/FallbackComponents';
+import { formatError } from '@lumy-form/components/utils/formatError';
+import { formTypeDefinitions } from '@lumy-form/formTypeDefinitions';
 import {
   type NormalizedFormTypeInputDefinition,
   normalizeFormTypeInputDefinitions,
-} from '@lumy/schema-form/helpers/formTypeInputDefinition';
+} from '@lumy-form/helpers/formTypeInputDefinition';
 import type {
   FormTypeInputDefinition,
   FormTypeRendererProps,
   FormatError,
-} from '@lumy/schema-form/types';
+} from '@lumy-form/types';
 
 interface FormType {
   FormGroup: ComponentType<FormTypeRendererProps>;

@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { FallbackManager } from '@lumy/schema-form/app/FallbackManager';
+import { FallbackManager } from '@lumy-form/app/FallbackManager';
 
 import { FormTypeRendererContext } from './FormTypeRendererContext';
 

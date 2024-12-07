@@ -1,6 +1,6 @@
 import { isTruthy } from '@lumy-pack/common';
 
-import { JSONPath } from '@lumy/schema-form/types';
+import { JSONPath } from '@lumy-form/types';
 
 const ARRAY_PATTERN = /\[(\d+)\]/g;
 

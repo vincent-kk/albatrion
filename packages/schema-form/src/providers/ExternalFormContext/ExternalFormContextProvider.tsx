@@ -1,11 +1,11 @@
 import { type ComponentType, type PropsWithChildren, useMemo } from 'react';
 
-import { normalizeFormTypeInputDefinitions } from '@lumy/schema-form/helpers/formTypeInputDefinition';
+import { normalizeFormTypeInputDefinitions } from '@lumy-form/helpers/formTypeInputDefinition';
 import type {
   FormTypeInputDefinition,
   FormTypeRendererProps,
   FormatError,
-} from '@lumy/schema-form/types';
+} from '@lumy-form/types';
 
 import { ExternalFormContext } from './ExternalFormContext';
 
