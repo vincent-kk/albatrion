@@ -23,5 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
+schema-form-antd-plugin-stats.html
+
 # StoryBook 빌드 결과
 storybook-static
