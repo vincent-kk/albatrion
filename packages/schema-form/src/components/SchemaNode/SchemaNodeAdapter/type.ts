@@ -10,14 +10,22 @@ import type {
 import type { SchemaNodeProxyProps } from '../SchemaNodeProxy';
 import type { GridForm } from '../type';
 
+export interface PropsPackage {
+  gridFrom?: GridForm;
+  readOnly: boolean;
+  disabled: boolean;
+  watchValues: any[];
+  overridableProps?: OverridableFormTypeInputProps;
+  PreferredFormTypeInput?: ComponentType<FormTypeInputProps>;
+}
+
 export interface SchemaNodeAdapterProps {
   node: SchemaNode;
   gridFrom?: GridForm;
   readOnly: boolean;
   disabled: boolean;
   watchValues: any[];
-  overridablePropsFromProxy?: OverridableFormTypeInputProps;
-  overridablePropsFromInput?: OverridableFormTypeInputProps;
+  overridableProps: OverridableFormTypeInputProps;
   PreferredFormTypeInput?: ComponentType<FormTypeInputProps>;
   NodeProxy: ComponentType<SchemaNodeProxyProps>;
 }
