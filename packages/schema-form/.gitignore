@@ -23,5 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
+dependency-graph.dot
+dependency-graph.png
+
 # StoryBook 빌드 결과
 storybook-static
