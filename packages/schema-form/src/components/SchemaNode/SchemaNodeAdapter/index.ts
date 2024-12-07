@@ -1,1 +1,1 @@
-export { SchemaNodeAdapter } from './SchemaNodeAdapter';
+export { SchemaNodeAdapterWrapper } from './SchemaNodeAdapterWrapper';

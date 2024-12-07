@@ -7,7 +7,7 @@ import {
 } from 'react';
 
 import { isPlainObject, isString, isTruthy } from '@lumy-pack/common';
-import { isReactElement, useSnapshot } from '@lumy-pack/common-react';
+import { isReactElement } from '@lumy-pack/common-react';
 
 import { MethodType } from '@lumy/schema-form/core';
 
@@ -19,21 +19,14 @@ import type { RawChildNode, SchemaNodeAdapterProps } from './type';
 
 export const SchemaNodeAdapter = ({
   node,
-  watchValues,
   readOnly,
   disabled,
   gridFrom,
-  overridablePropsFromProxy,
-  overridablePropsFromInput,
+  watchValues,
+  overridableProps,
   PreferredFormTypeInput,
   NodeProxy,
 }: SchemaNodeAdapterProps) => {
-  const overridableProps = useSnapshot({
-    ...overridablePropsFromProxy,
-    ...overridablePropsFromInput,
-  });
-  const watchValuesSnapshot = useSnapshot(watchValues);
-
   const [children, setChildren] = useState<typeof node.children>(node.children);
 
   useEffect(() => {
@@ -105,7 +98,7 @@ export const SchemaNodeAdapter = ({
               node={node}
               readOnly={readOnly}
               disabled={disabled}
-              watchValues={watchValuesSnapshot}
+              watchValues={watchValues}
               rawChildNodes={childNodeRow}
               overridableProps={overridableProps}
               PreferredFormTypeInput={PreferredFormTypeInput}
@@ -119,7 +112,7 @@ export const SchemaNodeAdapter = ({
                 node={node}
                 readOnly={readOnly}
                 disabled={disabled}
-                watchValues={watchValuesSnapshot}
+                watchValues={watchValues}
                 rawChildNodes={childNodeRow}
                 overridableProps={overridableProps}
                 PreferredFormTypeInput={PreferredFormTypeInput}

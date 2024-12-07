@@ -11,7 +11,7 @@ import {
 } from '@lumy/schema-form/providers';
 import { type FormTypeRendererProps, ShowError } from '@lumy/schema-form/types';
 
-import { SchemaNodeAdapter } from '../SchemaNodeAdapter';
+import { SchemaNodeAdapterWrapper } from '../SchemaNodeAdapter';
 import type { SchemaNodeProxyProps } from './type';
 
 export const SchemaNodeProxy = ({
@@ -26,7 +26,7 @@ export const SchemaNodeProxy = ({
   const { node, visible, disabled, readOnly, watchValues } =
     usePrepareSchemaValues(inputNode || path);
 
-  const propsPackage = useReference({
+  const inputPropsRef = useReference({
     gridFrom,
     disabled,
     readOnly,
@@ -36,25 +36,8 @@ export const SchemaNodeProxy = ({
   });
 
   const Input = useMemo<FormTypeRendererProps['Input']>(() => {
-    return (overridableProps) =>
-      node ? (
-        <SchemaNodeAdapter
-          node={node}
-          gridFrom={propsPackage.current.gridFrom}
-          disabled={propsPackage.current.disabled}
-          readOnly={propsPackage.current.readOnly}
-          watchValues={propsPackage.current.watchValues}
-          PreferredFormTypeInput={propsPackage.current.PreferredFormTypeInput}
-          overridablePropsFromProxy={
-            propsPackage.current.overridableFormTypeInputProps
-          }
-          overridablePropsFromInput={overridableProps}
-          NodeProxy={SchemaNodeProxy}
-        />
-      ) : (
-        <Fragment />
-      );
-  }, [node, propsPackage]);
+    return SchemaNodeAdapterWrapper(node, inputPropsRef, SchemaNodeProxy);
+  }, [node, inputPropsRef]);
 
   const {
     FormTypeRenderer: ContextFormTypeRenderer,
