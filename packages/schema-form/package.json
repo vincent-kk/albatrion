@@ -32,7 +32,8 @@
     "size-limit": "size-limit",
     "make-dependency-graph": "npx depcruise src --config .dependency-cruiser.js --output-type dot > dependency-graph.dot && dot -Tpng dependency-graph.dot -o dependency-graph.png",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "publish": "npm publish"
   },
   "dependencies": {
     "@lumy-pack/common": "workspace:*",
