@@ -1,6 +1,11 @@
-import { type ComponentType, Fragment, type MutableRefObject } from 'react';
+import {
+  type ComponentType,
+  type MutableRefObject,
+  memo,
+  useMemo,
+} from 'react';
 
-import { useSnapshot } from '@lumy-pack/common-react';
+import { isReactComponent, useSnapshot } from '@lumy-pack/common-react';
 
 import type { SchemaNode } from '@lumy/schema-form/core';
 import type { OverridableFormTypeInputProps } from '@lumy/schema-form/types';
@@ -23,18 +28,23 @@ export const SchemaNodeAdapterWrapper = (
     });
     const watchValues = useSnapshot(propsRef.current.watchValues);
 
-    if (!node) {
-      return <Fragment />;
-    }
+    const PreferredFormTypeInput = useMemo(() => {
+      return isReactComponent(propsRef.current.PreferredFormTypeInput)
+        ? memo(propsRef.current.PreferredFormTypeInput)
+        : undefined;
+    }, []);
+
+    if (!node) return null;
+
     return (
       <SchemaNodeAdapter
         node={node}
-        watchValues={watchValues}
-        overridableProps={overridableProps}
         gridFrom={propsRef.current.gridFrom}
         disabled={propsRef.current.disabled}
         readOnly={propsRef.current.readOnly}
-        PreferredFormTypeInput={propsRef.current.PreferredFormTypeInput}
+        watchValues={watchValues}
+        overridableProps={overridableProps}
+        PreferredFormTypeInput={PreferredFormTypeInput}
         NodeProxy={NodeProxy}
       />
     );
