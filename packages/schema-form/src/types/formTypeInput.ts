@@ -77,9 +77,16 @@ export type FormTypeInputPropsWithNode<
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > = FormTypeInputProps<Value, Dictionary, any[], Schema, Node>;
 
-export interface UnknownFormTypeInputProps extends FormTypeInputProps {
+/**  Type 추론이 불필요한 경우에 사용하는 FormTypeInputProps */
+export interface UnknownFormTypeInputProps {
   jsonSchema: any;
+  readOnly: boolean;
+  disabled: boolean;
   node: any;
+  childNodes: WithKey<ComponentType<any>>[];
+  name: string;
+  path: string;
+  errors: any[];
   watchValues: any[];
   defaultValue: any;
   value: any;
