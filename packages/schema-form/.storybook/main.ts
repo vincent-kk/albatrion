@@ -39,7 +39,7 @@ const config: StorybookConfig = {
     return mergeConfig(config, {
       resolve: {
         alias: {
-          '@lumy/schema-form': resolve(__dirname, '../src'),
+          '@lumy-form': resolve(__dirname, '../src'),
         },
       },
     });

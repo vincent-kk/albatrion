@@ -14,8 +14,8 @@
     "<THIRD_PARTY_MODULES>",
     "^(\\@lumy-pack).*",
     "^(\\@lumy-pack)/(.*)$",
-    "^(\\@lumy).*",
-    "^(\\@lumy)/(.*)$",
+    "^(\\@lumy-form).*",
+    "^(\\@lumy-form)/(.*)$",
     "^([../])",
     "^([./])"
   ],
