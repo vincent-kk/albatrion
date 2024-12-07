@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 
-import { Form, JsonSchema } from '@lumy-pack/schema-form/src';
+import { useRenderCount } from '@lumy-pack/development-helper';
+import { Form, type JsonSchema } from '@lumy-pack/schema-form/src';
 
 import StoryLayout from './components/StoryLayout';
 
@@ -94,13 +95,92 @@ export const Common = () => {
 
   const [value, setValue] = useState<Record<string, unknown>>();
   return (
-    <div style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
-      <div style={{ flex: 1 }}>
-        <Form jsonSchema={jsonSchema} onChange={setValue} />
-      </div>
-      <div style={{ flex: 1 }}>
-        <pre>{JSON.stringify(value, null, 2)}</pre>
-      </div>
-    </div>
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <Form jsonSchema={jsonSchema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+export const Grid = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      email: { type: 'string' },
+      password: { type: 'string', formType: 'password' },
+      address: { type: 'string' },
+      address2: { type: 'string' },
+      city: { type: 'string' },
+      state: { type: 'string' },
+      zip: { type: 'string' },
+    },
+  } satisfies JsonSchema;
+  const grid = [
+    ['email', 'password'],
+    [
+      {
+        element: (
+          <div style={{ background: 'yellow', textAlign: 'center' }}>
+            - divider -
+          </div>
+        ),
+        grid: 3,
+      },
+      <div style={{ background: 'orange', textAlign: 'center' }}>
+        - - - divider - - -
+      </div>,
+    ],
+    [<h1>address</h1>],
+  ];
+  const [value, setValue] = useState<Record<string, unknown>>();
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <Form jsonSchema={jsonSchema} gridFrom={grid} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+export const InsertInputForm = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+      },
+      password: {
+        type: 'string',
+        format: 'password',
+      },
+      age: {
+        type: 'number',
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <Form jsonSchema={jsonSchema} onChange={setValue}>
+        <Form.Input path=".name" />
+        <Form.Input path=".password" />
+        <Form.Input
+          path=".age"
+          FormTypeInput={({ onChange, value }) => {
+            const RenderCount = useRenderCount('FormTypeInput');
+            return (
+              <div>
+                <button
+                  onClick={() => {
+                    onChange((prev) => (prev || 0) + 1);
+                  }}
+                >
+                  custom input {value}
+                </button>
+                {RenderCount}
+              </div>
+            );
+          }}
+        />
+      </Form>
+    </StoryLayout>
   );
 };
