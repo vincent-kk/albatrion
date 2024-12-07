@@ -26,9 +26,11 @@ export const Common = () => {
     properties: {
       name: {
         type: 'string',
+        maxLength: 5,
       },
       age: {
         type: 'number',
+        maximum: 20,
       },
     },
   } satisfies JsonSchema;
