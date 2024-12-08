@@ -105,44 +105,6 @@ export const Common = () => {
   );
 };
 
-export const Grid = () => {
-  const jsonSchema = {
-    type: 'object',
-    properties: {
-      email: { type: 'string' },
-      password: { type: 'string', formType: 'password' },
-      address: { type: 'string' },
-      address2: { type: 'string' },
-      city: { type: 'string' },
-      state: { type: 'string' },
-      zip: { type: 'string' },
-    },
-  } satisfies JsonSchema;
-  const grid = [
-    ['email', 'password'],
-    [
-      {
-        element: (
-          <div style={{ background: 'yellow', textAlign: 'center' }}>
-            - divider -
-          </div>
-        ),
-        grid: 3,
-      },
-      <div style={{ background: 'orange', textAlign: 'center' }}>
-        - - - divider - - -
-      </div>,
-    ],
-    [<h1>address</h1>],
-  ];
-  const [value, setValue] = useState<Record<string, unknown>>();
-  return (
-    <StoryLayout jsonSchema={jsonSchema} value={value}>
-      <Form jsonSchema={jsonSchema} gridFrom={grid} onChange={setValue} />
-    </StoryLayout>
-  );
-};
-
 export const InsertInputForm = () => {
   const jsonSchema = {
     type: 'object',
