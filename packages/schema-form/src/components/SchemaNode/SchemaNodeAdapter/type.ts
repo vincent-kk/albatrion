@@ -1,4 +1,4 @@
-import type { ComponentType, ReactElement } from 'react';
+import type { ComponentType } from 'react';
 
 import type { SchemaNode } from '@/schema-form/core';
 import type { ObjectNodeChildNode } from '@/schema-form/core/nodes/ObjectNode';
@@ -8,10 +8,8 @@ import type {
 } from '@/schema-form/types';
 
 import type { SchemaNodeProxyProps } from '../SchemaNodeProxy';
-import type { GridForm } from '../type';
 
 export interface PropsPackage {
-  gridFrom?: GridForm;
   readOnly: boolean;
   disabled: boolean;
   watchValues: any[];
@@ -21,7 +19,6 @@ export interface PropsPackage {
 
 export interface SchemaNodeAdapterProps {
   node: SchemaNode;
-  gridFrom?: GridForm;
   readOnly: boolean;
   disabled: boolean;
   watchValues: any[];
@@ -53,8 +50,4 @@ export interface SchemaNodeAdapterInputProps {
 
 export type ChildComponent = ElementOf<FormTypeInputProps['childNodes']>;
 
-export type RawChildNode = {
-  element?: ReactElement;
-  grid?: number;
-  [alt: string]: any;
-} & Partial<ObjectNodeChildNode>;
+export type RawChildNode = ObjectNodeChildNode;

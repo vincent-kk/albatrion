@@ -8,7 +8,6 @@ import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import { useUserDefinedContext } from '@/schema-form/providers';
 import { type SetStateFnWithOptions, ShowError } from '@/schema-form/types';
 
-import styles from './styles.module.css';
 import type { SchemaNodeAdapterInputProps } from './type';
 
 export const SchemaNodeAdapterInput = memo(
@@ -57,7 +56,7 @@ export const SchemaNodeAdapterInput = memo(
     if (!node || !FormTypeInput) return null;
 
     return (
-      <span className={styles.frame} onFocus={handleFocus} onBlur={handleBlur}>
+      <span onFocus={handleFocus} onBlur={handleBlur}>
         <FormTypeInput
           jsonSchema={node.jsonSchema}
           readOnly={readOnly}

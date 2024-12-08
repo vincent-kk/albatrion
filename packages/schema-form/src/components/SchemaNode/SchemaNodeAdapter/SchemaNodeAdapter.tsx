@@ -1,27 +1,14 @@
-import {
-  Fragment,
-  type ReactElement,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-
-import { isPlainObject, isString, isTruthy } from '@lumy-pack/common';
-import { isReactElement } from '@lumy-pack/common-react';
+import { Fragment, useEffect, useState } from 'react';
 
 import { MethodType } from '@/schema-form/core';
 
-import { type FormReactNode, isListFrom } from '../type';
 import { SchemaNodeAdapterRow } from './SchemaNodeAdapterRow';
-import { getNodeName } from './helper';
-import styles from './styles.module.css';
-import type { RawChildNode, SchemaNodeAdapterProps } from './type';
+import type { SchemaNodeAdapterProps } from './type';
 
 export const SchemaNodeAdapter = ({
   node,
   readOnly,
   disabled,
-  gridFrom,
   watchValues,
   overridableProps,
   PreferredFormTypeInput,
@@ -31,97 +18,23 @@ export const SchemaNodeAdapter = ({
 
   useEffect(() => {
     const unsubscribe = node.subscribe(({ type }) => {
-      if (type === MethodType.ChildrenChange) {
-        setChildren(node.children);
-      }
+      if (type === MethodType.ChildrenChange) setChildren(node.children);
     });
     return () => unsubscribe();
   }, [node]);
 
-  const childNodeGrid = useMemo<RawChildNode[][]>(() => {
-    if (gridFrom && Array.isArray(gridFrom)) {
-      let grid: FormReactNode[][];
-      if (isListFrom(gridFrom)) {
-        grid = [gridFrom];
-      } else {
-        grid = gridFrom.map((row) => {
-          return (Array.isArray(row) ? row : [row]).map((element) => {
-            if (isString(element)) {
-              return { name: element };
-            } else {
-              return element;
-            }
-          });
-        });
-      }
-      return grid.map((row) =>
-        row
-          .map((element) => {
-            const [name, props] = getNodeName(element);
-            if (name) {
-              const targetNode = node.findNode(name);
-              if (!targetNode) return null;
-              return { ...props, node: targetNode };
-            }
-            if (isReactElement(element)) {
-              return {
-                element,
-              };
-            }
-            if (
-              isPlainObject(element) &&
-              'element' in element &&
-              isReactElement(element.element)
-            ) {
-              return element as {
-                element: ReactElement;
-                grid?: number;
-                [alt: string]: any;
-              };
-            }
-            return null;
-          })
-          .filter(isTruthy),
-      );
-    } else {
-      return [children];
-    }
-  }, [gridFrom, node, children]);
-
   return (
     <Fragment>
-      {childNodeGrid.map((childNodeRow, index, grid) => {
-        if (grid.length === 1) {
-          return (
-            <SchemaNodeAdapterRow
-              key={`row-${index}-end`}
-              node={node}
-              readOnly={readOnly}
-              disabled={disabled}
-              watchValues={watchValues}
-              rawChildNodes={childNodeRow}
-              overridableProps={overridableProps}
-              PreferredFormTypeInput={PreferredFormTypeInput}
-              NodeProxy={NodeProxy}
-            />
-          );
-        } else {
-          return (
-            <div key={`row-${index}-${grid.length}`} className={styles.row}>
-              <SchemaNodeAdapterRow
-                node={node}
-                readOnly={readOnly}
-                disabled={disabled}
-                watchValues={watchValues}
-                rawChildNodes={childNodeRow}
-                overridableProps={overridableProps}
-                PreferredFormTypeInput={PreferredFormTypeInput}
-                NodeProxy={NodeProxy}
-              />
-            </div>
-          );
-        }
-      })}
+      <SchemaNodeAdapterRow
+        node={node}
+        readOnly={readOnly}
+        disabled={disabled}
+        watchValues={watchValues}
+        rawChildNodes={children}
+        overridableProps={overridableProps}
+        PreferredFormTypeInput={PreferredFormTypeInput}
+        NodeProxy={NodeProxy}
+      />
     </Fragment>
   );
 };

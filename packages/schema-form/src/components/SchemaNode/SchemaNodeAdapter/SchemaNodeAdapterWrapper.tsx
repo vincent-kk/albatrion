@@ -39,7 +39,6 @@ export const SchemaNodeAdapterWrapper = (
     return (
       <SchemaNodeAdapter
         node={node}
-        gridFrom={propsRef.current.gridFrom}
         disabled={propsRef.current.disabled}
         readOnly={propsRef.current.readOnly}
         watchValues={watchValues}
