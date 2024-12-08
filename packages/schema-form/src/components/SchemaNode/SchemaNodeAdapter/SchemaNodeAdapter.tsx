@@ -1,127 +1,85 @@
-import {
-  Fragment,
-  type ReactElement,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { isPlainObject, isString, isTruthy } from '@lumy-pack/common';
-import { isReactElement } from '@lumy-pack/common-react';
+import { EMPTY_ARRAY, isTruthy } from '@lumy-pack/common';
+import { useMemorize } from '@lumy-pack/common-react';
 
-import { MethodType } from '@/schema-form/core';
+import { MethodType, isBranchNode } from '@/schema-form/core';
+import type { ChildFormTypeInputProps } from '@/schema-form/types';
 
-import { type FormReactNode, isListFrom } from '../type';
-import { SchemaNodeAdapterRow } from './SchemaNodeAdapterRow';
-import { getNodeName } from './helper';
-import styles from './styles.module.css';
-import type { RawChildNode, SchemaNodeAdapterProps } from './type';
+import { SchemaNodeAdapterInput } from './SchemaNodeAdapterInput';
+import type {
+  ChildComponent,
+  NodeChildren,
+  SchemaNodeAdapterProps,
+} from './type';
 
 export const SchemaNodeAdapter = ({
   node,
   readOnly,
   disabled,
-  gridFrom,
   watchValues,
   overridableProps,
   PreferredFormTypeInput,
   NodeProxy,
 }: SchemaNodeAdapterProps) => {
-  const [children, setChildren] = useState<typeof node.children>(node.children);
-
+  const [children, setChildren] = useState<NodeChildren>(node.children);
   useEffect(() => {
     const unsubscribe = node.subscribe(({ type }) => {
-      if (type === MethodType.ChildrenChange) {
-        setChildren(node.children);
-      }
+      if (type === MethodType.ChildrenChange) setChildren(node.children);
     });
     return () => unsubscribe();
   }, [node]);
 
-  const childNodeGrid = useMemo<RawChildNode[][]>(() => {
-    if (gridFrom && Array.isArray(gridFrom)) {
-      let grid: FormReactNode[][];
-      if (isListFrom(gridFrom)) {
-        grid = [gridFrom];
-      } else {
-        grid = gridFrom.map((row) => {
-          return (Array.isArray(row) ? row : [row]).map((element) => {
-            if (isString(element)) {
-              return { name: element };
-            } else {
-              return element;
-            }
-          });
-        });
-      }
-      return grid.map((row) =>
-        row
-          .map((element) => {
-            const [name, props] = getNodeName(element);
-            if (name) {
-              const targetNode = node.findNode(name);
-              if (!targetNode) return null;
-              return { ...props, node: targetNode };
-            }
-            if (isReactElement(element)) {
-              return {
-                element,
+  const childComponentBySchemaNodeKey = useRef(
+    new Map<string, ChildComponent>(),
+  );
+  const childNodes = useMemo(
+    () =>
+      isBranchNode(node)
+        ? children
+            .filter(({ node, isVirtualized }) => node && isVirtualized !== true)
+            .map(({ node }) => {
+              if (!node?.key) return null;
+              const nodeKey = node.key;
+              if (childComponentBySchemaNodeKey.current.has(nodeKey)) {
+                return childComponentBySchemaNodeKey.current.get(nodeKey);
+              }
+              const ChildComponent = ({
+                FormTypeRenderer: InputFormTypeRenderer,
+                ...restProps
+              }: ChildFormTypeInputProps) => {
+                const FormTypeRenderer = useMemorize(InputFormTypeRenderer);
+                const overridableFormTypeInputProps = useMemorize(restProps);
+                return (
+                  <NodeProxy
+                    node={node}
+                    overridableFormTypeInputProps={
+                      overridableFormTypeInputProps
+                    }
+                    FormTypeRenderer={FormTypeRenderer}
+                  />
+                );
               };
-            }
-            if (
-              isPlainObject(element) &&
-              'element' in element &&
-              isReactElement(element.element)
-            ) {
-              return element as {
-                element: ReactElement;
-                grid?: number;
-                [alt: string]: any;
-              };
-            }
-            return null;
-          })
-          .filter(isTruthy),
-      );
-    } else {
-      return [children];
-    }
-  }, [gridFrom, node, children]);
+              const Component: ChildComponent = Object.assign(ChildComponent, {
+                key: nodeKey,
+              });
+              childComponentBySchemaNodeKey.current.set(nodeKey, Component);
+              return Component;
+            })
+            .filter(isTruthy)
+        : EMPTY_ARRAY,
+    [NodeProxy, node, children],
+  );
 
   return (
-    <Fragment>
-      {childNodeGrid.map((childNodeRow, index, grid) => {
-        if (grid.length === 1) {
-          return (
-            <SchemaNodeAdapterRow
-              key={`row-${index}-end`}
-              node={node}
-              readOnly={readOnly}
-              disabled={disabled}
-              watchValues={watchValues}
-              rawChildNodes={childNodeRow}
-              overridableProps={overridableProps}
-              PreferredFormTypeInput={PreferredFormTypeInput}
-              NodeProxy={NodeProxy}
-            />
-          );
-        } else {
-          return (
-            <div key={`row-${index}-${grid.length}`} className={styles.row}>
-              <SchemaNodeAdapterRow
-                node={node}
-                readOnly={readOnly}
-                disabled={disabled}
-                watchValues={watchValues}
-                rawChildNodes={childNodeRow}
-                overridableProps={overridableProps}
-                PreferredFormTypeInput={PreferredFormTypeInput}
-                NodeProxy={NodeProxy}
-              />
-            </div>
-          );
-        }
-      })}
-    </Fragment>
+    <SchemaNodeAdapterInput
+      node={node}
+      readOnly={readOnly}
+      disabled={disabled}
+      watchValues={watchValues}
+      overridableProps={overridableProps}
+      PreferredFormTypeInput={PreferredFormTypeInput}
+      childNodes={childNodes}
+    />
   );
 };

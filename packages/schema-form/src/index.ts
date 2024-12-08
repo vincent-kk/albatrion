@@ -10,7 +10,6 @@ import {
   type FormProps,
   type FormRenderProps,
 } from './components/Form';
-import type { GridForm } from './components/SchemaNode';
 import {
   type SchemaNode,
   isArrayNode,
@@ -56,7 +55,6 @@ export {
   type FormChildrenProps,
   type FormHandle,
   type FormProps,
-  type GridForm,
   type FormErrorProps,
   type FormGroupProps,
   type FormInputProps,
