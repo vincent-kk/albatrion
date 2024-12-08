@@ -7,12 +7,9 @@ import type {
   OverridableFormTypeInputProps,
 } from '@/schema-form/types';
 
-import type { GridForm } from '../type';
-
 export interface SchemaNodeProxyProps {
   path?: string;
   node?: SchemaNode;
-  gridFrom?: GridForm;
   overridableFormTypeInputProps?: OverridableFormTypeInputProps;
   FormTypeInput?: ComponentType<FormTypeInputProps>;
   FormTypeRenderer?: ComponentType<FormTypeRendererProps>;

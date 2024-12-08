@@ -15,7 +15,6 @@ export type FormRenderProps = {
 export const FormRender = ({
   path,
   node,
-  gridFrom,
   FormTypeInput: InputFormTypeInput,
   overridableFormTypeInputProps,
   Wrapper: InputWrapper,
@@ -28,7 +27,6 @@ export const FormRender = ({
     <SchemaNodeProxy
       path={path}
       node={node}
-      gridFrom={gridFrom}
       FormTypeInput={FormTypeInput}
       FormTypeRenderer={FormTypeRenderer}
       overridableFormTypeInputProps={overridableFormTypeInputProps}

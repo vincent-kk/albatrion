@@ -51,7 +51,6 @@ const FormInner = <
     CustomFormTypeRenderer,
     formatError,
     showError = ShowError.Dirty | ShowError.Touched,
-    gridFrom,
     ajv,
     context,
     children: childrenInput,
@@ -153,7 +152,7 @@ const FormInner = <
             errors={errors}
             ajv={ajv}
           >
-            {children || <SchemaNodeProxy path="" gridFrom={gridFrom} />}
+            {children || <SchemaNodeProxy path="" />}
           </RootNodeContextProvider>
         </FormTypeRendererContextProvider>
       </FormTypeInputsContextProvider>

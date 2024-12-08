@@ -2,7 +2,6 @@ import type { ComponentType, ReactNode } from 'react';
 
 import type Ajv from 'ajv';
 
-import type { GridForm } from '@/schema-form/components/SchemaNode';
 import type { InferSchemaNode, SchemaNode } from '@/schema-form/core';
 import type {
   AllowedValue,
@@ -58,8 +57,6 @@ export interface FormProps<
    *   - `ShowError.Touched`: input에 focus 된 경우 노출
    */
   showError?: boolean | ShowError;
-  /** 그리드 폼 정의 */
-  gridFrom?: GridForm;
   /** 외부에서 선언된 Ajv 인스턴스, 없으면 내부에서 생성 */
   ajv?: Ajv;
   /** 사용자 정의 컨텍스트 */
