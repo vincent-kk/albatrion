@@ -7,13 +7,6 @@ const resolve = require('@rollup/plugin-node-resolve');
 // NOTE: 3. @rollup/plugin-replace is used to replace the process.env.NODE_ENV with 'production'
 const replace = require('@rollup/plugin-replace');
 
-// NOTE: 4. rollup-plugin-postcss is used to process the CSS files
-// NOTE: 5. autoprefixer is used to add vendor prefixes to the CSS
-// NOTE: 6. cssnano is used to minify the CSS
-const postcss = require('rollup-plugin-postcss');
-const autoprefixer = require('autoprefixer');
-const cssnano = require('cssnano');
-
 // NOTE: 7. rollup-plugin-copy is used to copy the types to the dist folder
 const copy = require('rollup-plugin-copy');
 
@@ -44,7 +37,7 @@ module.exports = [
       },
       {
         file: packageJson.module,
-        format: 'esm',
+        format: 'es',
         exports: 'named',
         sourcemap: true,
       },
@@ -56,14 +49,6 @@ module.exports = [
       }),
       replace({
         preventAssignment: true,
-      }),
-      postcss({
-        plugins: [autoprefixer(), cssnano({ preset: 'default' })],
-        minimize: true,
-        sourceMap: true,
-        modules: {
-          generateScopedName: '[name]__[local]___[hash:base64:5]',
-        },
       }),
       copy({
         targets: [
@@ -108,7 +93,7 @@ module.exports = [
         },
       }),
       visualizer({
-        filename: 'schema-form-stats.html',
+        filename: 'schema-form-antd-mobile-plugin-stats.html',
         gzipSize: true,
       }),
     ],
