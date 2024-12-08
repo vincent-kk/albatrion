@@ -53,33 +53,42 @@ export const isNullSchema = (schema: JsonSchema): schema is NullSchema =>
 // REF: https://github.com/ajv-validator/ajv/blob/master/lib/types/json-schema.ts
 
 /** 입력된 값을 기반으로 적절한 Schema를 추론 */
-export type InferJsonSchemaType<V extends AllowedValue | unknown = any> =
-  V extends NumberValue
-    ? NumberSchema
-    : V extends StringValue
-      ? StringSchema
-      : V extends BooleanValue
-        ? BooleanSchema
-        : V extends ArrayValue
-          ? ArraySchema
-          : V extends ObjectValue
-            ? ObjectSchema
-            : V extends null
-              ? NullSchema
-              : JsonSchema;
+export type InferJsonSchemaType<
+  V extends AllowedValue | unknown = any,
+  Options extends Dictionary = object,
+  RenderOptions extends Dictionary = object,
+> = V extends NumberValue
+  ? NumberSchema<Options, RenderOptions>
+  : V extends StringValue
+    ? StringSchema<Options, RenderOptions>
+    : V extends BooleanValue
+      ? BooleanSchema<Options, RenderOptions>
+      : V extends ArrayValue
+        ? ArraySchema<Options, RenderOptions>
+        : V extends ObjectValue
+          ? ObjectSchema<Options, RenderOptions>
+          : V extends null
+            ? NullSchema<Options, RenderOptions>
+            : JsonSchema<Options, RenderOptions>;
 
-export type JsonSchema =
-  | NumberSchema
-  | StringSchema
-  | BooleanSchema
-  | ArraySchema
-  | ObjectSchema
-  | NullSchema
-  | VirtualSchema;
+export type JsonSchema<
+  Options extends Dictionary = object,
+  RenderOptions extends Dictionary = object,
+> =
+  | NumberSchema<Options, RenderOptions>
+  | StringSchema<Options, RenderOptions>
+  | BooleanSchema<Options, RenderOptions>
+  | ArraySchema<Options, RenderOptions>
+  | ObjectSchema<Options, RenderOptions>
+  | NullSchema<Options, RenderOptions>
+  | VirtualSchema<Options, RenderOptions>;
 
 type PartialJsonSchema = Partial<JsonSchema>;
 
-export interface NumberSchema extends BasicSchema<NumberValue> {
+export interface NumberSchema<
+  Options extends Dictionary = object,
+  RenderOptions extends Dictionary = object,
+> extends BasicSchema<NumberValue, Options, RenderOptions> {
   type: 'number' | 'integer';
   minimum?: number;
   maximum?: number;
@@ -89,7 +98,10 @@ export interface NumberSchema extends BasicSchema<NumberValue> {
   format?: string;
 }
 
-export interface StringSchema extends BasicSchema<StringValue> {
+export interface StringSchema<
+  Options extends Dictionary = object,
+  RenderOptions extends Dictionary = object,
+> extends BasicSchema<StringValue, Options, RenderOptions> {
   type: 'string';
   minLength?: number;
   maxLength?: number;
@@ -97,13 +109,19 @@ export interface StringSchema extends BasicSchema<StringValue> {
   format?: string;
 }
 
-export interface BooleanSchema extends BasicSchema<BooleanValue> {
+export interface BooleanSchema<
+  Options extends Dictionary = object,
+  RenderOptions extends Dictionary = object,
+> extends BasicSchema<BooleanValue, Options, RenderOptions> {
   type: 'boolean';
 }
 
-export interface ArraySchema extends BasicSchema<ArrayValue> {
+export interface ArraySchema<
+  Options extends Dictionary = object,
+  RenderOptions extends Dictionary = object,
+> extends BasicSchema<ArrayValue, Options, RenderOptions> {
   type: 'array';
-  items: JsonSchema;
+  items: JsonSchema<Options, RenderOptions>;
   contains?: PartialJsonSchema;
   minItems?: number;
   maxItems?: number;
@@ -113,39 +131,51 @@ export interface ArraySchema extends BasicSchema<ArrayValue> {
   additionalItems?: never;
 }
 
-export interface ObjectSchema extends BasicSchema<ObjectValue> {
+export interface ObjectSchema<
+  Options extends Dictionary = object,
+  RenderOptions extends Dictionary = object,
+> extends BasicSchema<ObjectValue, Options, RenderOptions> {
   type: 'object';
-  additionalProperties?: boolean | JsonSchema;
-  unevaluatedProperties?: boolean | JsonSchema;
-  properties?: Record<string, JsonSchema>;
-  patternProperties?: Record<string, JsonSchema>;
-  propertyNames?: Omit<StringSchema, 'type'> & { type?: 'string' };
-  dependencies?: Record<string, PartialJsonSchema | string[]>;
-  dependentRequired?: Record<string, string[]>;
-  dependentSchemas?: Record<string, PartialJsonSchema>;
+  additionalProperties?: boolean | JsonSchema<Options, RenderOptions>;
+  unevaluatedProperties?: boolean | JsonSchema<Options, RenderOptions>;
+  properties?: Dictionary<JsonSchema<Options, RenderOptions>>;
+  patternProperties?: Dictionary<JsonSchema<Options, RenderOptions>>;
+  propertyNames?: Omit<StringSchema<Options, RenderOptions>, 'type'> & {
+    type?: 'string';
+  };
+  dependencies?: Dictionary<PartialJsonSchema | string[]>;
+  dependentRequired?: Dictionary<string[]>;
+  dependentSchemas?: Dictionary<PartialJsonSchema>;
   minProperties?: number;
   maxProperties?: number;
   required?: string[];
-  virtual?: Record<
-    string,
-    {
-      formType?: string;
-      fields: string[];
-    }
-  >;
+  virtual?: Dictionary<{
+    formType?: string;
+    fields: string[];
+  }>;
 }
 
-export interface VirtualSchema extends BasicSchema<VirtualNodeValue> {
+export interface VirtualSchema<
+  Options extends Dictionary = object,
+  RenderOptions extends Dictionary = object,
+> extends BasicSchema<VirtualNodeValue, Options, RenderOptions> {
   type: 'virtual';
   fields?: string[];
 }
 
-export interface NullSchema extends BasicSchema<null> {
+export interface NullSchema<
+  Options extends Dictionary = object,
+  RenderOptions extends Dictionary = object,
+> extends BasicSchema<null, Options, RenderOptions> {
   type: 'null';
   nullable: true;
 }
 
-interface BasicSchema<T> extends CustomOptions<T> {
+interface BasicSchema<
+  T,
+  Options extends Dictionary,
+  RenderOptions extends Dictionary,
+> extends CustomOptions<T, Options, RenderOptions> {
   if?: PartialJsonSchema;
   then?: PartialJsonSchema;
   else?: PartialJsonSchema;
@@ -165,25 +195,31 @@ interface BasicSchema<T> extends CustomOptions<T> {
         : never;
 }
 
-interface CustomOptions<T> {
+interface CustomOptions<
+  T,
+  Options extends Dictionary,
+  RenderOptions extends Dictionary,
+> {
   formType?: string | ComponentType<UnknownFormTypeInputProps>;
+  label?: string | Dictionary<string>;
   format?: string;
-  visible?: false;
-  readOnly?: true;
-  disabled?: true;
+  visible?: boolean;
+  readOnly?: boolean;
+  disabled?: boolean;
   placeholder?: string;
+  options?: {
+    watch?: string | string[];
+    alias?: Dictionary<ReactNode>;
+    lazy?: boolean;
+    formatter?: Formatter<T>;
+    parser?: Parser<T>;
+    [alt: string]: any;
+  } & Options;
   renderOptions?: {
     visible?: boolean | string;
     readOnly?: boolean | string;
     disabled?: boolean | string;
-  };
-  options?: {
-    watch?: string | string[];
-    alias?: Record<string, ReactNode>;
-    lazy?: boolean;
-    formatter?: Formatter<T>;
-    parser?: Parser<T>;
-    [key: string]: any;
-  };
-  [key: string]: any;
+    [alt: string]: any;
+  } & RenderOptions;
+  [alt: string]: any;
 }
