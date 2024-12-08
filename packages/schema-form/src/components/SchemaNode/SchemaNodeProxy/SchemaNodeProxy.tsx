@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from 'react';
+import { Fragment, memo, useMemo } from 'react';
 
 import { isTruthy, nullFunction } from '@lumy-pack/common';
 import { useReference } from '@lumy-pack/common-react';
@@ -14,7 +14,8 @@ import { type FormTypeRendererProps, ShowError } from '@/schema-form/types';
 import { SchemaNodeAdapterWrapper } from '../SchemaNodeAdapter';
 import type { SchemaNodeProxyProps } from './type';
 
-export const SchemaNodeProxy = ({
+export const SchemaNodeProxy = memo(
+  ({
   path,
   node: inputNode,
   gridFrom,
@@ -97,4 +98,5 @@ export const SchemaNodeProxy = ({
       </span>
     </Wrapper>
   );
-};
+  },
+);
