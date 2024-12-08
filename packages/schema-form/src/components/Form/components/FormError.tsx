@@ -1,4 +1,6 @@
-import type { CSSProperties, ComponentType } from 'react';
+import { type CSSProperties, type ComponentType } from 'react';
+
+import { useMemorize } from '@lumy-pack/common-react';
 
 import { FallbackManager } from '@/schema-form/app/FallbackManager';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
@@ -16,9 +18,10 @@ export const FormError = ({
   path,
   style,
   className,
-  FormTypeRenderer,
+  FormTypeRenderer: InputFormTypeRenderer,
 }: FormErrorProps) => {
   const { FormErrorRenderer } = useExternalFormContext();
+  const FormTypeRenderer = useMemorize(InputFormTypeRenderer);
   return (
     <div style={style} className={className}>
       <SchemaNodeProxy

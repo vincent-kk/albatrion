@@ -1,4 +1,6 @@
-import type { CSSProperties, ComponentType } from 'react';
+import { type CSSProperties, type ComponentType } from 'react';
+
+import { useMemorize } from '@lumy-pack/common-react';
 
 import { FallbackManager } from '@/schema-form/app/FallbackManager';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
@@ -14,11 +16,12 @@ export interface FormLabelProps {
 
 export const FormLabel = ({
   path,
-  FormTypeRenderer,
   style,
   className,
+  FormTypeRenderer: InputFormTypeRenderer,
 }: FormLabelProps) => {
   const { FormLabelRenderer } = useExternalFormContext();
+  const FormTypeRenderer = useMemorize(InputFormTypeRenderer);
   return (
     <label style={style} className={className} htmlFor={path}>
       <SchemaNodeProxy
