@@ -18,17 +18,19 @@ export const FormGroup = ({
     node.type === 'virtual'
   ) {
     return (
-      <Space direction="vertical">
+      <Space direction="vertical" block>
         <Input />
       </Space>
     );
   } else {
     return (
-      <Space direction="vertical">
-        {node.parentNode?.type !== 'array' && (
-          <label htmlFor={path}>{name}</label>
-        )}
-        <Input />
+      <Space direction="vertical" block>
+        <div>
+          {node.parentNode?.type !== 'array' && (
+            <label htmlFor={path}>{name}</label>
+          )}
+          <Input />
+        </div>
         {errorMessage}
       </Space>
     );
