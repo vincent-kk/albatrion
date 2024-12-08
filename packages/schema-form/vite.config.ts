@@ -4,8 +4,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   resolve: {
     alias: {
-      '@lumy/schema-form': resolve(__dirname, './src'),
-      '@lumy/common': resolve(__dirname, './../common/src'),
+      '@/schema-form': resolve(__dirname, './src'),
     },
   },
   test: {
