@@ -12,7 +12,7 @@ import { useRootNodeContext } from '@/schema-form/providers';
 
 import { useSchemaNodeTracker } from './useSchemaNodeTracker';
 
-export const usePrepareSchemaValues = (
+export const useComputeSchemaNode = (
   input?: SchemaNode | string,
 ): {
   node: SchemaNode | null;

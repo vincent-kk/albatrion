@@ -3,7 +3,7 @@ import { Fragment, memo, useMemo } from 'react';
 import { isTruthy, nullFunction } from '@lumy-pack/common';
 import { useReference } from '@lumy-pack/common-react';
 
-import { usePrepareSchemaValues } from '@/schema-form/hooks/usePrepareSchemaValues';
+import { useComputeSchemaNode } from '@/schema-form/hooks/useComputeSchemaNode';
 import { useSchemaNodeListener } from '@/schema-form/hooks/useSchemaNodeListener';
 import {
   useFormTypeRendererContext,
@@ -24,7 +24,7 @@ export const SchemaNodeProxy = memo(
     Wrapper: InputWrapper,
   }: SchemaNodeProxyProps) => {
     const { node, visible, disabled, readOnly, watchValues } =
-      usePrepareSchemaValues(inputNode || path);
+      useComputeSchemaNode(inputNode || path);
 
     const inputPropsRef = useReference({
       disabled,
