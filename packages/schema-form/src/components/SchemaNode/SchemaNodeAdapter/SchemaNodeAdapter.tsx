@@ -1,9 +1,17 @@
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { MethodType } from '@/schema-form/core';
+import { EMPTY_ARRAY, isTruthy } from '@lumy-pack/common';
+import { useMemorize } from '@lumy-pack/common-react';
 
-import { SchemaNodeAdapterRow } from './SchemaNodeAdapterRow';
-import type { SchemaNodeAdapterProps } from './type';
+import { MethodType, isBranchNode } from '@/schema-form/core';
+import type { ChildFormTypeInputProps } from '@/schema-form/types';
+
+import { SchemaNodeAdapterInput } from './SchemaNodeAdapterInput';
+import type {
+  ChildComponent,
+  NodeChildren,
+  SchemaNodeAdapterProps,
+} from './type';
 
 export const SchemaNodeAdapter = ({
   node,
@@ -14,8 +22,7 @@ export const SchemaNodeAdapter = ({
   PreferredFormTypeInput,
   NodeProxy,
 }: SchemaNodeAdapterProps) => {
-  const [children, setChildren] = useState<typeof node.children>(node.children);
-
+  const [children, setChildren] = useState<NodeChildren>(node.children);
   useEffect(() => {
     const unsubscribe = node.subscribe(({ type }) => {
       if (type === MethodType.ChildrenChange) setChildren(node.children);
@@ -23,18 +30,56 @@ export const SchemaNodeAdapter = ({
     return () => unsubscribe();
   }, [node]);
 
+  const childComponentBySchemaNodeKey = useRef(
+    new Map<string, ChildComponent>(),
+  );
+  const childNodes = useMemo(
+    () =>
+      isBranchNode(node)
+        ? children
+            .filter(({ node, isVirtualized }) => node && isVirtualized !== true)
+            .map(({ node }) => {
+              if (!node?.key) return null;
+              const nodeKey = node.key;
+              if (childComponentBySchemaNodeKey.current.has(nodeKey)) {
+                return childComponentBySchemaNodeKey.current.get(nodeKey);
+              }
+              const ChildComponent = ({
+                FormTypeRenderer: InputFormTypeRenderer,
+                ...restProps
+              }: ChildFormTypeInputProps) => {
+                const FormTypeRenderer = useMemorize(InputFormTypeRenderer);
+                const overridableFormTypeInputProps = useMemorize(restProps);
+                return (
+                  <NodeProxy
+                    node={node}
+                    overridableFormTypeInputProps={
+                      overridableFormTypeInputProps
+                    }
+                    FormTypeRenderer={FormTypeRenderer}
+                  />
+                );
+              };
+              const Component: ChildComponent = Object.assign(ChildComponent, {
+                key: nodeKey,
+              });
+              childComponentBySchemaNodeKey.current.set(nodeKey, Component);
+              return Component;
+            })
+            .filter(isTruthy)
+        : EMPTY_ARRAY,
+    [NodeProxy, node, children],
+  );
+
   return (
-    <Fragment>
-      <SchemaNodeAdapterRow
-        node={node}
-        readOnly={readOnly}
-        disabled={disabled}
-        watchValues={watchValues}
-        rawChildNodes={children}
-        overridableProps={overridableProps}
-        PreferredFormTypeInput={PreferredFormTypeInput}
-        NodeProxy={NodeProxy}
-      />
-    </Fragment>
+    <SchemaNodeAdapterInput
+      node={node}
+      readOnly={readOnly}
+      disabled={disabled}
+      watchValues={watchValues}
+      overridableProps={overridableProps}
+      PreferredFormTypeInput={PreferredFormTypeInput}
+      childNodes={childNodes}
+    />
   );
 };
