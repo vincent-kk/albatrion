@@ -1,4 +1,6 @@
-import type { ComponentType, PropsWithChildren } from 'react';
+import { type ComponentType, type PropsWithChildren } from 'react';
+
+import { useMemorize } from '@lumy-pack/common-react';
 
 import {
   type GridForm,
@@ -21,17 +23,23 @@ export type FormGroupProps = {
 export const FormGroup = ({
   path,
   gridFrom,
-  FormTypeInput,
-  FormTypeRenderer,
-  Wrapper,
-  ...overridableFormTypeInputProps
-}: FormGroupProps) => (
-  <SchemaNodeProxy
-    path={path}
-    gridFrom={gridFrom}
-    FormTypeInput={FormTypeInput}
-    FormTypeRenderer={FormTypeRenderer}
-    overridableFormTypeInputProps={overridableFormTypeInputProps}
-    Wrapper={Wrapper}
-  />
-);
+  FormTypeInput: InputFormTypeInput,
+  FormTypeRenderer: InputFormTypeRenderer,
+  Wrapper: InputWrapper,
+  ...restProps
+}: FormGroupProps) => {
+  const FormTypeInput = useMemorize(InputFormTypeInput);
+  const FormTypeRenderer = useMemorize(InputFormTypeRenderer);
+  const overridableFormTypeInputProps = useMemorize(restProps);
+  const Wrapper = useMemorize(InputWrapper);
+  return (
+    <SchemaNodeProxy
+      path={path}
+      gridFrom={gridFrom}
+      FormTypeInput={FormTypeInput}
+      FormTypeRenderer={FormTypeRenderer}
+      overridableFormTypeInputProps={overridableFormTypeInputProps}
+      Wrapper={Wrapper}
+    />
+  );
+};

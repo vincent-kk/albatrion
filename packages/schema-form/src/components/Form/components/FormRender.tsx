@@ -1,4 +1,6 @@
-import type { ComponentType } from 'react';
+import { type ComponentType } from 'react';
+
+import { useMemorize } from '@lumy-pack/common-react';
 
 import {
   SchemaNodeProxy,
@@ -14,18 +16,23 @@ export const FormRender = ({
   path,
   node,
   gridFrom,
+  FormTypeInput: InputFormTypeInput,
   overridableFormTypeInputProps,
-  FormTypeInput,
-  Wrapper,
+  Wrapper: InputWrapper,
   children,
-}: FormRenderProps) => (
-  <SchemaNodeProxy
-    path={path}
-    node={node}
-    gridFrom={gridFrom}
-    FormTypeInput={FormTypeInput}
-    FormTypeRenderer={children}
-    overridableFormTypeInputProps={overridableFormTypeInputProps}
-    Wrapper={Wrapper}
-  />
-);
+}: FormRenderProps) => {
+  const FormTypeInput = useMemorize(InputFormTypeInput);
+  const FormTypeRenderer = useMemorize(children);
+  const Wrapper = useMemorize(InputWrapper);
+  return (
+    <SchemaNodeProxy
+      path={path}
+      node={node}
+      gridFrom={gridFrom}
+      FormTypeInput={FormTypeInput}
+      FormTypeRenderer={FormTypeRenderer}
+      overridableFormTypeInputProps={overridableFormTypeInputProps}
+      Wrapper={Wrapper}
+    />
+  );
+};

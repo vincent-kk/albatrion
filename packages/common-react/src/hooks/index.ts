@@ -6,3 +6,4 @@ export { useReference } from './useReference';
 export { useSnapshot, useSnapshotReference } from './useSnapshot';
 export { useTick } from './useTick';
 export { useUnmount } from './useUnmount';
+export { useMemorize } from './useMemorize';
