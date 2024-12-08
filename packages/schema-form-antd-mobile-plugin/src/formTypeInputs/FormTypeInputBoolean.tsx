@@ -28,6 +28,10 @@ const FormTypeInputBoolean = ({
       indeterminate={indeterminate}
       checked={checked}
       onChange={handleChange}
+      style={{
+        '--icon-size': '24px',
+        '--font-size': '20px',
+      }}
     />
   );
 };

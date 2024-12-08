@@ -52,17 +52,27 @@ const FormTypeInputStringCheckbox = ({
   });
 
   return (
-    <Checkbox.Group
-      disabled={disabled}
-      defaultValue={defaultValue}
-      onChange={handleChange}
-    >
-      {options.map((option) => (
-        <Checkbox key={option.value} value={option.value}>
-          {option.label}
-        </Checkbox>
-      ))}
-    </Checkbox.Group>
+    <div style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
+      <Checkbox.Group
+        disabled={disabled}
+        defaultValue={defaultValue}
+        onChange={handleChange}
+      >
+        {options.map((option) => (
+          <Checkbox
+            key={option.value}
+            value={option.value}
+            style={{
+              '--icon-size': '24px',
+              '--font-size': '20px',
+              '--gap': '6px',
+            }}
+          >
+            {option.label}
+          </Checkbox>
+        ))}
+      </Checkbox.Group>
+    </div>
   );
 };
 

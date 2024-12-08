@@ -54,17 +54,27 @@ const FormTypeInputRadioGroup = ({
   });
 
   return (
-    <Radio.Group
-      disabled={disabled}
-      defaultValue={defaultValue}
-      onChange={handleChange}
-    >
-      {options.map((option) => (
-        <Radio key={option.value} value={option.value}>
-          {option.label}
-        </Radio>
-      ))}
-    </Radio.Group>
+    <div style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
+      <Radio.Group
+        disabled={disabled}
+        defaultValue={defaultValue}
+        onChange={handleChange}
+      >
+        {options.map((option) => (
+          <Radio
+            key={option.value}
+            value={option.value}
+            style={{
+              '--icon-size': '24px',
+              '--font-size': '20px',
+              '--gap': '6px',
+            }}
+          >
+            {option.label}
+          </Radio>
+        ))}
+      </Radio.Group>
+    </div>
   );
 };
 
