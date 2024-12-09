@@ -31,7 +31,7 @@ export const SchemaNodeProxy = memo(
       readOnly,
       watchValues,
       PreferredFormTypeInput,
-      overridableFormTypeInputProps,
+      overridableProps: overridableFormTypeInputProps,
     });
 
     const Input = useMemo<FormTypeRendererProps['Input']>(() => {
