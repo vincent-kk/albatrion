@@ -1,6 +1,6 @@
 import { type ComponentType } from 'react';
 
-import { useMemorize } from '@lumy-pack/common-react';
+import { useMemorize, useSnapshot } from '@lumy-pack/common-react';
 
 import { FallbackManager } from '@/schema-form/app/FallbackManager';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
@@ -13,6 +13,7 @@ import type {
 
 export type FormInputProps = {
   path: string;
+
   FormTypeInput?: ComponentType<FormTypeInputProps>;
   FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
 } & OverridableFormTypeInputProps;
@@ -26,7 +27,7 @@ export const FormInput = ({
   const { FormInputRenderer } = useExternalFormContext();
   const FormTypeInput = useMemorize(InputFormTypeInput);
   const FormTypeRenderer = useMemorize(InputFormTypeRenderer);
-  const overridableFormTypeInputProps = useMemorize(restProps);
+  const overrideProps = useSnapshot(restProps);
   return (
     <SchemaNodeProxy
       path={path}
@@ -34,7 +35,7 @@ export const FormInput = ({
       FormTypeRenderer={
         FormTypeRenderer || FormInputRenderer || FallbackManager.FormInput
       }
-      overridableFormTypeInputProps={overridableFormTypeInputProps}
+      overridableFormTypeInputProps={overrideProps}
     />
   );
 };

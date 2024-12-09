@@ -1,9 +1,11 @@
 export { isEmptyObject } from './isEmptyObject';
+export { isEmptyArray } from './isEmptyArray';
 export { isPlainObject } from './isPlainObject';
 export { isFunction } from './isFunction';
 export { isTruthy } from './isTruthy';
 export { isUndefined } from './isUndefined';
 export { isNull } from './isNull';
+export { isNil } from './isNil';
 export { isBoolean } from './isBoolean';
 export { isNumber } from './isNumber';
 export { isString } from './isString';

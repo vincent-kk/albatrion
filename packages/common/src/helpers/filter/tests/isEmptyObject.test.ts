@@ -13,5 +13,6 @@ describe('isEmptyObject', () => {
     expect(isEmptyObject(1)).toBe(false);
     expect(isEmptyObject('')).toBe(false);
     expect(isEmptyObject([])).toBe(false);
+    expect(isEmptyObject(new Date())).toBe(false);
   });
 });

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { EMPTY_ARRAY, isTruthy } from '@lumy-pack/common';
-import { useMemorize } from '@lumy-pack/common-react';
+import { useMemorize, useSnapshot } from '@lumy-pack/common-react';
 
 import { MethodType, isBranchNode } from '@/schema-form/core';
 import type { ChildFormTypeInputProps } from '@/schema-form/types';
@@ -49,13 +49,11 @@ export const SchemaNodeAdapter = ({
                 ...restProps
               }: ChildFormTypeInputProps) => {
                 const FormTypeRenderer = useMemorize(InputFormTypeRenderer);
-                const overridableFormTypeInputProps = useMemorize(restProps);
+                const overrideProps = useSnapshot(restProps);
                 return (
                   <NodeProxy
                     node={node}
-                    overridableFormTypeInputProps={
-                      overridableFormTypeInputProps
-                    }
+                    overridableFormTypeInputProps={overrideProps}
                     FormTypeRenderer={FormTypeRenderer}
                   />
                 );

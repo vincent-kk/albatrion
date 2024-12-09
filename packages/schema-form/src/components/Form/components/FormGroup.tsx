@@ -1,6 +1,6 @@
 import { type ComponentType, type PropsWithChildren } from 'react';
 
-import { useMemorize } from '@lumy-pack/common-react';
+import { useMemorize, useSnapshot } from '@lumy-pack/common-react';
 
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import type {
@@ -18,7 +18,6 @@ export type FormGroupProps = {
 
 export const FormGroup = ({
   path,
-
   FormTypeInput: InputFormTypeInput,
   FormTypeRenderer: InputFormTypeRenderer,
   Wrapper: InputWrapper,
@@ -26,14 +25,14 @@ export const FormGroup = ({
 }: FormGroupProps) => {
   const FormTypeInput = useMemorize(InputFormTypeInput);
   const FormTypeRenderer = useMemorize(InputFormTypeRenderer);
-  const overridableFormTypeInputProps = useMemorize(restProps);
   const Wrapper = useMemorize(InputWrapper);
+  const overrideProps = useSnapshot(restProps);
   return (
     <SchemaNodeProxy
       path={path}
       FormTypeInput={FormTypeInput}
       FormTypeRenderer={FormTypeRenderer}
-      overridableFormTypeInputProps={overridableFormTypeInputProps}
+      overridableFormTypeInputProps={overrideProps}
       Wrapper={Wrapper}
     />
   );

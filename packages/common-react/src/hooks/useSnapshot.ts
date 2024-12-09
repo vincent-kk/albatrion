@@ -2,6 +2,8 @@ import { useMemo, useRef } from 'react';
 
 import { generateHash, stringifyObject } from '@lumy-pack/common';
 
+import { isInvalidValue } from '../utils/isInvalidValue';
+
 /**
  * @description 객체의 스냅샷을 반환합니다.
  * @param object - 객체
@@ -25,16 +27,19 @@ export const useSnapshotReference = <T extends object>(
   omit?: Array<keyof T>,
 ) => {
   const snapshotRef = useRef(object);
-  const snapshotHash = useRef(
-    generateHash(stringifyObject(object, omit as string[])),
-  );
-  const hash = useMemo(
-    () => generateHash(stringifyObject(object, omit as string[])),
-    [object, omit],
-  );
-  if (snapshotHash.current !== hash) {
+  const snapshotHash = useRef(getSnapshotHash(object, omit));
+  const hash = useMemo(() => getSnapshotHash(object, omit), [object, omit]);
+  if (hash && snapshotHash.current !== hash) {
     snapshotRef.current = object;
     snapshotHash.current = hash;
   }
   return snapshotRef;
+};
+
+const getSnapshotHash = <T extends object>(
+  object: T,
+  omit?: Array<keyof T>,
+): number | null => {
+  if (isInvalidValue(object)) return null;
+  return generateHash(stringifyObject(object, omit as string[]));
 };

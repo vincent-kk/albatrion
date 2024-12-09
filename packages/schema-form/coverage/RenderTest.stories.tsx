@@ -50,7 +50,6 @@ export const FunctionalChildren = () => {
           INPUT
           <Form.Input
             path=".allowed"
-            name="allowed"
             style={{ color: 'red' }}
             context={{ a: 1 }}
           />
@@ -119,6 +118,9 @@ export const InsertInputForm = () => {
       age: {
         type: 'number',
       },
+      phone: {
+        type: 'string',
+      },
     },
   } satisfies JsonSchema;
 
@@ -130,7 +132,11 @@ export const InsertInputForm = () => {
         <Form.Render path=".password">
           {({ path, Input, value, errorMessage }: FormTypeRendererProps) => {
             return (
-              <div>
+              <div
+                style={{
+                  border: `1px solid ${value ? 'red' : 'blue'}`,
+                }}
+              >
                 {path}
                 <Input /> {value}
                 <div>{errorMessage}</div>
@@ -156,6 +162,11 @@ export const InsertInputForm = () => {
               </div>
             );
           }}
+        />
+        <Form.Input
+          path=".phone"
+          readOnly={!!value?.age}
+          disabled={value?.phone === '12345'}
         />
       </Form>
     </StoryLayout>
