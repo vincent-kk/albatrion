@@ -1,5 +1,7 @@
 import type { ComponentType } from 'react';
 
+import { isPlainObject } from '@lumy-pack/common';
+
 import type {
   FormTypeInputDefinition,
   FormTypeRendererProps,
@@ -8,21 +10,10 @@ import type {
 
 import { FallbackManager } from './FallbackManager';
 
-export const registerPlugin = ({
-  FormGroup,
-  FormLabel,
-  FormInput,
-  FormError,
-  formatError,
-  formTypeInputDefinitions,
-}: SchemaFormPlugin) => {
-  FallbackManager.appendFormType({
-    FormGroup,
-    FormLabel,
-    FormInput,
-    FormError,
-    formatError,
-  });
+export const registerPlugin = (plugin: SchemaFormPlugin) => {
+  if (!isPlainObject(plugin)) return;
+  const { formTypeInputDefinitions, ...formType } = plugin;
+  FallbackManager.appendFormType(formType);
   FallbackManager.appendFormTypeInputDefinitions(formTypeInputDefinitions);
 };
 

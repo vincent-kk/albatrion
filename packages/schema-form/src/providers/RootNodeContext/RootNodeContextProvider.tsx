@@ -62,13 +62,9 @@ export const RootNodeContextProvider = <
   const isFirstRender = useRef(true);
   useEffect(() => {
     if (isFirstRender.current) {
-      if (initialValue !== value) {
-        onChange(value);
-      }
+      if (initialValue !== value) onChange(value);
       isFirstRender.current = false;
-    } else {
-      onChange(value);
-    }
+    } else onChange(value);
   }, [initialValue, value, onChange]);
 
   const rootNode = useMemo(

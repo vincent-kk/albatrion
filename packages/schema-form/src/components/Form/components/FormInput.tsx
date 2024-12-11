@@ -13,7 +13,6 @@ import type {
 
 export type FormInputProps = {
   path: string;
-
   FormTypeInput?: ComponentType<FormTypeInputProps>;
   FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
 } & OverridableFormTypeInputProps;
