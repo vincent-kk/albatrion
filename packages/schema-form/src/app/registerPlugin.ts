@@ -1,7 +1,12 @@
 import type { ComponentType } from 'react';
 
-import { isPlainObject } from '@lumy-pack/common';
+import {
+  generateHash,
+  isPlainObject,
+  stringifyObject,
+} from '@lumy-pack/common';
 
+import { UnhandledError } from '@/schema-form/errors';
 import type {
   FormTypeInputDefinition,
   FormTypeRendererProps,
@@ -10,11 +15,23 @@ import type {
 
 import { FallbackManager } from './FallbackManager';
 
+const RegisteredPlugin = new Set<number>();
+
 export const registerPlugin = (plugin: SchemaFormPlugin) => {
   if (!isPlainObject(plugin)) return;
-  const { formTypeInputDefinitions, ...formType } = plugin;
-  FallbackManager.appendFormType(formType);
-  FallbackManager.appendFormTypeInputDefinitions(formTypeInputDefinitions);
+  const hash = generateHash(stringifyObject(plugin));
+  if (RegisteredPlugin.has(hash)) return;
+  try {
+    const { formTypeInputDefinitions, ...formType } = plugin;
+    FallbackManager.appendFormType(formType);
+    FallbackManager.appendFormTypeInputDefinitions(formTypeInputDefinitions);
+  } catch (error) {
+    throw new UnhandledError('REGISTER_PLUGIN', 'Failed to register plugin', {
+      plugin,
+      error,
+    });
+  }
+  RegisteredPlugin.add(hash);
 };
 
 export interface SchemaFormPlugin {
