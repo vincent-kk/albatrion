@@ -10,7 +10,7 @@ import {
 
 import { useHandle } from '@lumy-pack/common-react';
 
-import Presenter from '@/promise-modal/components/Presenter';
+import { Presenter } from '@/promise-modal/components/Presenter';
 import { useModalContext } from '@/promise-modal/providers/ModalContextProvider';
 import { type ManagedModal, type Modal } from '@/promise-modal/types';
 
