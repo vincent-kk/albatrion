@@ -46,8 +46,10 @@ export const ShowFormInputOnly = () => {
   return (
     <FormProvider FormInputRenderer={FormInputRenderer}>
       <Form jsonSchema={jsonSchema} showError={true}>
-        <Form.Input path="username" />
-        <Form.Error path="username" />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <Form.Input path="username" />
+          <Form.Error path="username" />
+        </div>
       </Form>
     </FormProvider>
   );

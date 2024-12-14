@@ -152,7 +152,7 @@ export const FormErrorComponent = () => {
       formTypeInputDefinitions={formTypeInputDefinitions}
     >
       <Form jsonSchema={jsonSchema} showError>
-        <Form.Error path="username" FormTypeRenderer={FormError} />
+        <Form.Error path="username" />
       </Form>
     </FormProvider>
   );
