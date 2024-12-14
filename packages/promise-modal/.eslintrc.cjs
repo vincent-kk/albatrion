@@ -13,6 +13,7 @@ module.exports = {
     'react-refresh/only-export-components': 'warn',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-require-imports': 'off',
-    'react-hooks/exhaustive-deps': 'off',
+    'no-fallthrough': 'off',
+    'no-constant-condition': 'off',
   },
 };

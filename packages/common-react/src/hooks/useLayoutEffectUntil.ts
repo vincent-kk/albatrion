@@ -13,6 +13,5 @@ export const useLayoutEffectUntil = <Dependencies extends DependencyList>(
   useLayoutEffect(() => {
     if (isCompleted.current) return;
     isCompleted.current = !!effect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
 };

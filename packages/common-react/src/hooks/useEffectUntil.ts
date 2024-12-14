@@ -13,6 +13,5 @@ export const useEffectUntil = <Dependencies extends DependencyList>(
   useEffect(() => {
     if (isCompleted.current) return;
     isCompleted.current = !!effect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
 };
