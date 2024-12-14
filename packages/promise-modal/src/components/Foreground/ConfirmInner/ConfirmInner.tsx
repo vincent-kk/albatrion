@@ -23,7 +23,7 @@ export const ConfirmInner = memo(
     ManagedEntity &
     Pick<ModalHandlers, 'onConfirm' | 'onClose'>) => {
     const handleConfirm = useCallback(() => onConfirm(id), [id, onConfirm]);
-    const handleClose = useCallback(() => () => onClose(id), [id, onClose]);
+    const handleClose = useCallback(() => onClose(id), [id, onClose]);
 
     const {
       TitleComponent,
