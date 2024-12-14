@@ -1,4 +1,4 @@
-import { openModal } from '@/promise-modal/components/Anchor';
+import { ModalManager } from '@/promise-modal/app/ModalManager';
 import type { ConfirmModal } from '@/promise-modal/types';
 
 export const confirm = <B = any>(
@@ -6,7 +6,7 @@ export const confirm = <B = any>(
 ) => {
   return new Promise<boolean>((resolve, reject) => {
     try {
-      openModal({
+      ModalManager.open({
         ...props,
         type: 'confirm',
         resolve: (result) => resolve(result ?? false),

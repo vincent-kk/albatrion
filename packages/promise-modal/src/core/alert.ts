@@ -1,4 +1,4 @@
-import { openModal } from '@/promise-modal/components/Anchor';
+import { ModalManager } from '@/promise-modal/app/ModalManager';
 import type { AlertModal } from '@/promise-modal/types';
 
 export const alert = <B = any>(
@@ -6,7 +6,7 @@ export const alert = <B = any>(
 ) => {
   return new Promise<void>((resolve, reject) => {
     try {
-      openModal({
+      ModalManager.open({
         ...props,
         type: 'alert',
         resolve: () => resolve(),

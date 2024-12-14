@@ -1,5 +1,6 @@
-import { openModal } from '@/promise-modal/components/Anchor';
 import type { PromptInputProps, PromptModal } from '@/promise-modal/types';
+
+import { ModalManager } from '../app/ModalManager';
 
 export const prompt = <T, B = any>({
   defaultValue,
@@ -9,7 +10,7 @@ export const prompt = <T, B = any>({
 }) => {
   return new Promise<T>((resolve, reject) => {
     try {
-      openModal({
+      ModalManager.open({
         ...props,
         type: 'prompt',
         resolve: (result) => resolve(result as T),

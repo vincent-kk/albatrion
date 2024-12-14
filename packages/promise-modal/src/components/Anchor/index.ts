@@ -1,1 +1,1 @@
-export { Anchor, openModal } from './Anchor';
+export { Anchor } from './Anchor';

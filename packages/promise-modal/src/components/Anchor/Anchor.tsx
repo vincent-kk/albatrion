@@ -10,18 +10,12 @@ import {
 
 import { useHandle } from '@lumy-pack/common-react';
 
+import { ModalManager } from '@/promise-modal/app/ModalManager';
 import { Presenter } from '@/promise-modal/components/Presenter';
 import { useModalContext } from '@/promise-modal/providers/ModalContextProvider';
 import { type ManagedModal, type Modal } from '@/promise-modal/types';
 
 import styles from './Anchor.module.css';
-
-let __modalList__: Modal[] = [];
-
-// eslint-disable-next-line react-refresh/only-export-components
-export let openModal = (modal: Modal) => {
-  __modalList__.push(modal);
-};
 
 interface AnchorProps {
   pathname: string;
@@ -35,7 +29,7 @@ export const Anchor = memo(({ pathname }: AnchorProps) => {
 
   useLayoutEffect(() => {
     setModalList(
-      __modalList__.map((modal) => ({
+      ModalManager.prerender.map((modal) => ({
         ...modal,
         id: ++modalId.current,
         initiator: initiator.current,
@@ -43,9 +37,7 @@ export const Anchor = memo(({ pathname }: AnchorProps) => {
         isVisible: true,
       })),
     );
-    __modalList__ = [];
-
-    openModal = (modal: Modal) => {
+    ModalManager.setup((modal: Modal) => {
       setModalList((modals) => [
         ...modals.filter((modal) => modal.isValid),
         {
@@ -56,10 +48,8 @@ export const Anchor = memo(({ pathname }: AnchorProps) => {
           isVisible: true,
         },
       ]);
-    };
-    return () => {
-      __modalList__ = [];
-    };
+    });
+    ModalManager.clearPrerender();
   }, []);
 
   useLayoutEffect(() => {

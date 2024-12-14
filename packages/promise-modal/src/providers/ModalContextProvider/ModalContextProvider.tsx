@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 
 import { useOnMount, useTick } from '@lumy-pack/common-react';
 
+import { ModalManager } from '@/promise-modal/app/ModalManager';
 import {
   DEFAULT_ANIMATION_DURATION,
   DEFAULT_BACKDROP_COLOR,
@@ -16,7 +17,6 @@ import {
   FallbackSubtitle,
   FallbackTitle,
 } from '@/promise-modal/components/FallbackComponents';
-import { createAnchor } from '@/promise-modal/helpers/createAnchor';
 import { usePathname as useDefaultPathname } from '@/promise-modal/hooks/useDefaultPathname';
 import type {
   FooterComponentProps,
@@ -57,7 +57,7 @@ export const ModalContextProvider = ({
   const portalRef = useRef<HTMLElement | null>(null);
 
   useOnMount(() => {
-    portalRef.current = createAnchor('div');
+    portalRef.current = ModalManager.anchor('div');
     update();
     return () => {
       if (portalRef.current) {
