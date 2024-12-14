@@ -2,7 +2,6 @@ import {
   type ChangeEvent,
   memo,
   useCallback,
-  useContext,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -11,10 +10,10 @@ import {
 
 import { useHandle } from '@lumy-pack/common-react';
 
-import { ModalContext } from '@/promise-modal/providers/ModalProvider';
+import Presenter from '@/promise-modal/components/Presenter';
+import { useModalContext } from '@/promise-modal/providers/ModalContextProvider';
 import { type ManagedModal, type Modal } from '@/promise-modal/types';
 
-import Presenter from '../Presenter';
 import styles from './Anchor.module.css';
 
 let __modalList__: Modal[] = [];
@@ -31,7 +30,7 @@ interface AnchorProps {
 export const Anchor = memo(({ pathname }: AnchorProps) => {
   const [modalList, setModalList] = useState<ManagedModal[]>([]);
   const initiator = useRef(pathname);
-  const { options } = useContext(ModalContext);
+  const { options } = useModalContext();
   const modalId = useRef(0);
 
   useLayoutEffect(() => {

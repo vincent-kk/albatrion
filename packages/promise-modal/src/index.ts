@@ -1,4 +1,4 @@
-export { default as ModalProvider } from './providers/ModalProvider';
+export { ModalContextProvider } from './providers/ModalContextProvider';
 
 export { alert, confirm, prompt } from './handler';
 
@@ -6,7 +6,7 @@ export {
   useModalOptions,
   useModalDuration,
   useModalBackdrop,
-} from './hooks/useModalOptions';
+} from './providers/ModalContextProvider/useModalContext';
 
 export type {
   ModalFrameProps,

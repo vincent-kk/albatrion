@@ -1,5 +1,8 @@
-import ModalProvider, { ModalContext } from './ModalContextProvider';
+export { ModalContextProvider } from './ModalContextProvider';
 
-export default ModalProvider;
-
-export { ModalContext };
+export {
+  useModalContext,
+  useModalOptions,
+  useModalDuration,
+  useModalBackdrop,
+} from './useModalContext';
