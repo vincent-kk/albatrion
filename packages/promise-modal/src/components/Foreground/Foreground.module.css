@@ -15,16 +15,3 @@
 .root.active > * {
   pointer-events: all !important;
 }
-
-.backdrop {
-  pointer-events: none;
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-}
-
-.backdrop.active {
-  pointer-events: all !important;
-  display: block !important;
-}

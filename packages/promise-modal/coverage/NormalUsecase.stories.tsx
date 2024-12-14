@@ -31,7 +31,6 @@ export const NormalUsecase = () => {
         return <input onChange={onChange} />;
       },
       defaultValue: '',
-      closeOnBackgroundClick: true,
     }).then((value) => {
       setValue(value);
     });

@@ -6,7 +6,6 @@ export interface BaseModal<T, B> {
   title?: ReactNode;
   subtitle?: ReactNode;
   background?: ModalBackground<B>;
-  closeOnBackgroundClick?: boolean;
   resolve: (result: T | null) => void;
 }
 
