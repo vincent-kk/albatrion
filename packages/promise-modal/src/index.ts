@@ -1,6 +1,6 @@
 export { ModalContextProvider as ModalProvider } from './providers/ModalContextProvider';
 
-export { alert, confirm, prompt } from './handler';
+export { alert, confirm, prompt } from './core';
 
 export {
   useModalOptions,
