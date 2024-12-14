@@ -1,3 +1,1 @@
-import AlertInner from './AlertInner';
-
-export default AlertInner;
+export { AlertInner } from './AlertInner';

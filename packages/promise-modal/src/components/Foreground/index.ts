@@ -1,3 +1,1 @@
-import Foreground from './Foreground';
-
-export { Foreground };
+export { Foreground } from './Foreground';

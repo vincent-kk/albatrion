@@ -1,3 +1,1 @@
-import PromptInner from './PromptInner';
-
-export default PromptInner;
+export { PromptInner } from './PromptInner';

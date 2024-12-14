@@ -1,3 +1,1 @@
-import ConfirmInner from './ConfirmInner';
-
-export default ConfirmInner;
+export { ConfirmInner } from './ConfirmInner';

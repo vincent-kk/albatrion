@@ -1,72 +1,58 @@
-import cx from 'classnames';
-import { memo, useContext, useMemo, useRef } from 'react';
+import { memo } from 'react';
 
-import { useWindowSize } from '@amata/modal/src/hooks/useWindowSize';
-import { ModalContext } from '@amata/modal/src/providers/ModalProvider';
-import type { UniversalModalProps } from '@amata/modal/src/types';
+import cx from 'clsx';
 
-import { DefaultForegroundFrameWithRef } from '../DefaultForegroundFrame';
-import AlertInner from './AlertInner';
-import ConfirmInner from './ConfirmInner';
-import styles from './Foreground.module.scss';
-import PromptInner from './PromptInner';
+import { useModalContext } from '@/promise-modal/providers/ModalContextProvider';
+import type { UniversalModalProps } from '@/promise-modal/types';
 
-function Foreground({
-  onConfirm,
-  onClose,
-  onChange,
-  onCleanup,
-  ...modalProps
-}: UniversalModalProps) {
-  const { height: windowHeight } = useWindowSize();
-  const areaRef = useRef<HTMLDivElement>(null);
+import { AlertInner } from './AlertInner';
+import { ConfirmInner } from './ConfirmInner';
+import styles from './Foreground.module.css';
+import { PromptInner } from './PromptInner';
 
-  const modalHeight = areaRef.current?.clientHeight;
-  const needScroll = modalHeight && modalHeight >= windowHeight;
+export const Foreground = memo(
+  ({
+    onConfirm,
+    onClose,
+    onChange,
+    onCleanup,
+    ...modalProps
+  }: UniversalModalProps) => {
+    const { ForegroundComponent } = useModalContext();
 
-  const { ForegroundComponent } = useContext(ModalContext);
-  const ForegroundFrame = useMemo(
-    () => ForegroundComponent || DefaultForegroundFrameWithRef,
-    [ForegroundComponent],
-  );
-
-  return (
-    <div
-      className={cx(styles.root, {
-        [styles.active]: modalProps.isValid,
-      })}
-    >
-      <ForegroundFrame
-        ref={areaRef}
-        onChange={onChange}
-        onConfirm={onConfirm}
-        onClose={onClose}
-        onCleanup={onCleanup}
-        {...modalProps}
+    return (
+      <div
+        className={cx(styles.root, {
+          [styles.active]: modalProps.isValid,
+        })}
       >
-        {modalProps.type === 'alert' && (
-          <AlertInner {...modalProps} onConfirm={onConfirm} />
-        )}
-        {modalProps.type === 'confirm' && (
-          <ConfirmInner
-            {...modalProps}
-            onConfirm={onConfirm}
-            onClose={onClose}
-          />
-        )}
-        {modalProps.type === 'prompt' && (
-          <PromptInner
-            {...modalProps}
-            onChange={onChange}
-            onConfirm={onConfirm}
-            onClose={onClose}
-          />
-        )}
-      </ForegroundFrame>
-    </div>
-  );
-}
-
-const MemoizedForeground = memo(Foreground);
-
-export default MemoizedForeground;
+        <ForegroundComponent
+          onChange={onChange}
+          onConfirm={onConfirm}
+          onClose={onClose}
+          onCleanup={onCleanup}
+          {...modalProps}
+        >
+          {modalProps.type === 'alert' && (
+            <AlertInner {...modalProps} onConfirm={onConfirm} />
+          )}
+          {modalProps.type === 'confirm' && (
+            <ConfirmInner
+              {...modalProps}
+              onConfirm={onConfirm}
+              onClose={onClose}
+            />
+          )}
+          {modalProps.type === 'prompt' && (
+            <PromptInner
+              {...modalProps}
+              onChange={onChange}
+              onConfirm={onConfirm}
+              onClose={onClose}
+            />
+          )}
+        </ForegroundComponent>
+      </div>
+    );
+  },
+);

@@ -1,0 +1,9 @@
+.root {
+  pointer-events: none;
+  display: none;
+}
+
+.root.active {
+  pointer-events: all !important;
+  display: block !important;
+}

@@ -1,99 +1,75 @@
-import { match } from 'ts-pattern';
+import { Fragment, memo, useCallback } from 'react';
 
-import { isString } from 'es-toolkit';
-import { memo, useCallback, useContext, useMemo } from 'react';
+import { isString } from '@lumy-pack/common';
+import { isFunctionComponent, isReactElement } from '@lumy-pack/common-react';
 
-import { isComponentType } from '@amata/modal/src/helpers/filter';
-import { ModalContext } from '@amata/modal/src/providers/ModalProvider';
+import { useModalContext } from '@/promise-modal/providers/ModalContextProvider';
 import type {
-  ConfirmContentProps,
   ConfirmModal,
   ManagedEntity,
   ModalHandlers,
-} from '@amata/modal/src/types';
+} from '@/promise-modal/types';
 
-import DefaultFooter from '../../DefaultFooter';
-import DefaultSubtitle from '../../DefaultSubtitle';
-import DefaultContent from '../../DefaultSubtitle';
-import DefaultTitle from '../../DefaultTitle';
+export const ConfirmInner = memo(
+  <B,>({
+    id,
+    title,
+    subtitle,
+    content,
+    footer,
+    onConfirm,
+    onClose,
+  }: ConfirmModal<B> &
+    ManagedEntity &
+    Pick<ModalHandlers, 'onConfirm' | 'onClose'>) => {
+    const handleConfirm = useCallback(() => onConfirm(id), [id, onConfirm]);
+    const handleClose = useCallback(() => () => onClose(id), [id, onClose]);
 
-function ConfirmInner<B>({
-  id,
-  title,
-  subtitle,
-  content,
-  footer,
-  onConfirm,
-  onClose,
-}: ConfirmModal<B> &
-  ManagedEntity &
-  Pick<ModalHandlers, 'onConfirm' | 'onClose'>) {
-  const handleConfirm = useCallback(() => onConfirm(id), [id, onConfirm]);
-  const handleClose = useCallback(() => () => onClose(id), [id, onClose]);
+    const {
+      TitleComponent,
+      SubtitleComponent,
+      ContentComponent,
+      FooterComponent,
+    } = useModalContext();
 
-  const {
-    TitleComponent,
-    SubtitleComponent,
-    ContentComponent,
-    FooterComponent,
-  } = useContext(ModalContext);
-
-  const TitleFrame = useMemo(
-    () => TitleComponent || DefaultTitle,
-    [TitleComponent],
-  );
-
-  const SubtitleFrame = useMemo(
-    () => SubtitleComponent || DefaultSubtitle,
-    [SubtitleComponent],
-  );
-
-  const ContentFrame = useMemo(
-    () => ContentComponent || DefaultContent,
-    [ContentComponent],
-  );
-
-  const FooterFrame = useMemo(
-    () => FooterComponent || DefaultFooter,
-    [FooterComponent],
-  );
-
-  return (
-    <>
-      {title && (isString(title) ? <TitleFrame>{title}</TitleFrame> : title)}
-      {subtitle &&
-        (isString(subtitle) ? (
-          <SubtitleFrame>{subtitle}</SubtitleFrame>
-        ) : (
-          subtitle
-        ))}
-      {content &&
-        match(content)
-          .when(isString, (content) => <ContentFrame>{content}</ContentFrame>)
-          .when(isComponentType<ConfirmContentProps>, (Content) => (
-            <Content onConfirm={handleConfirm} onCancel={handleClose} />
-          ))
-          .otherwise(() => content)}
-      {footer !== false &&
-        (typeof footer === 'function' ? (
-          footer({
-            onConfirm: handleConfirm,
-            onCancel: handleClose,
-          })
-        ) : (
-          <FooterFrame
-            onConfirm={handleConfirm}
-            onCancel={handleClose}
-            confirmLabel={footer?.confirm}
-            cancelLabel={footer?.cancel}
-            hideConfirm={footer?.hideConfirm}
-            hideCancel={footer?.hideCancel}
-          />
-        ))}
-    </>
-  );
-}
-
-const MemoizedConfirmInner = memo(ConfirmInner);
-
-export default MemoizedConfirmInner;
+    return (
+      <Fragment>
+        {title &&
+          (isString(title) ? <TitleComponent>{title}</TitleComponent> : title)}
+        {subtitle &&
+          (isString(subtitle) ? (
+            <SubtitleComponent>{subtitle}</SubtitleComponent>
+          ) : (
+            subtitle
+          ))}
+        {content &&
+          (isString(content) ? (
+            <ContentComponent>{content}</ContentComponent>
+          ) : isFunctionComponent(content) ? (
+            content({
+              onConfirm: handleConfirm,
+              onCancel: handleClose,
+            })
+          ) : isReactElement(content) ? (
+            content
+          ) : null)}
+        {footer !== false &&
+          (typeof footer === 'function' ? (
+            footer({
+              onConfirm: handleConfirm,
+              onCancel: handleClose,
+            })
+          ) : (
+            <FooterComponent
+              onConfirm={handleConfirm}
+              onCancel={handleClose}
+              confirmLabel={footer?.confirm}
+              cancelLabel={footer?.cancel}
+              hideConfirm={footer?.hideConfirm}
+              hideCancel={footer?.hideCancel}
+            />
+          ))}
+      </Fragment>
+    );
+  },
+);
