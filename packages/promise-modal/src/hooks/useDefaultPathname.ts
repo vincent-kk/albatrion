@@ -7,16 +7,18 @@ export const usePathname = () => {
     let requestId: number;
 
     const checkPathname = () => {
-      cancelAnimationFrame(requestId);
+      if (requestId) cancelAnimationFrame(requestId);
       if (pathname !== window.location.pathname) {
         setPathname(window.location.pathname);
       } else {
-        requestAnimationFrame(checkPathname);
+        requestId = requestAnimationFrame(checkPathname);
       }
     };
-    checkPathname();
+
+    requestId = requestAnimationFrame(checkPathname);
+
     return () => {
-      cancelAnimationFrame(requestId);
+      if (requestId) cancelAnimationFrame(requestId);
     };
   }, [pathname]);
 
