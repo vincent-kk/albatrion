@@ -1,6 +1,6 @@
-import type { FooterComponentProps } from '@amata/modal/src/types';
+import type { FooterComponentProps } from '@/promise-modal/types';
 
-function DefaultFooter({
+export const FallbackFooter = ({
   confirmLabel,
   hideConfirm = false,
   cancelLabel,
@@ -8,7 +8,7 @@ function DefaultFooter({
   disable,
   onConfirm,
   onCancel,
-}: FooterComponentProps) {
+}: FooterComponentProps) => {
   return (
     <div>
       {!hideConfirm && (
@@ -33,6 +33,4 @@ function DefaultFooter({
       )}
     </div>
   );
-}
-
-export default DefaultFooter;
+};
