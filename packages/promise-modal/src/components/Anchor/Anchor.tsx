@@ -16,7 +16,7 @@ import {
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import { Presenter } from '@/promise-modal/components/Presenter';
-import { useModalContext } from '@/promise-modal/providers/ModalContextProvider';
+import { useModalContext } from '@/promise-modal/providers';
 import { type ManagedModal, type Modal } from '@/promise-modal/types';
 
 import styles from './Anchor.module.css';
