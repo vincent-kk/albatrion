@@ -1,7 +1,11 @@
 import { Fragment, memo, useCallback, useEffect, useMemo } from 'react';
 
 import { isString } from '@lumy-pack/common';
-import { isFunctionComponent, isReactElement } from '@lumy-pack/common-react';
+import {
+  isFunctionComponent,
+  isReactElement,
+  useMemorize,
+} from '@lumy-pack/common-react';
 
 import { useModalContext } from '@/promise-modal/providers/ModalContextProvider';
 import type {
@@ -34,6 +38,8 @@ export const PromptInner = memo(
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value]);
+
+    const Input = useMemorize(input);
 
     const disable = useMemo(
       () => disabled?.(value) || false,
@@ -83,11 +89,13 @@ export const PromptInner = memo(
             content
           ) : null)}
 
-        {input?.({
-          value,
-          onChange: handleChange,
-          onConfirm: handleConfirm,
-        })}
+        {Input && (
+          <Input
+            value={value}
+            onChange={handleChange}
+            onConfirm={handleConfirm}
+          />
+        )}
 
         {footer !== false &&
           (typeof footer === 'function' ? (
