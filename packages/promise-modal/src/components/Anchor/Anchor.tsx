@@ -36,19 +36,19 @@ export const Anchor = memo(({ pathname }: AnchorProps) => {
         ...modal,
         id: ++modalId.current,
         initiator: initiator.current,
-        isValid: true,
-        isVisible: true,
+        alive: true,
+        visible: true,
       })),
     );
     ModalManager.setup((modal: Modal) => {
       setModalList((modals) => [
-        ...modals.filter((modal) => modal.isValid),
+        ...modals.filter((modal) => modal.alive),
         {
           ...modal,
           id: ++modalId.current,
           initiator: initiator.current,
-          isValid: true,
-          isVisible: true,
+          alive: true,
+          visible: true,
         },
       ]);
     });
@@ -59,8 +59,8 @@ export const Anchor = memo(({ pathname }: AnchorProps) => {
     setModalList((modals) =>
       modals.map((modal) => {
         if (modal.initiator === pathname)
-          return modal.isValid ? { ...modal, isVisible: true } : modal;
-        else return { ...modal, isVisible: false };
+          return modal.alive ? { ...modal, visible: true } : modal;
+        else return { ...modal, visible: false };
       }),
     );
     initiator.current = pathname;
@@ -68,7 +68,7 @@ export const Anchor = memo(({ pathname }: AnchorProps) => {
 
   const hideModal = useCallback((modalId: ManagedModal['id']) => {
     setModalList((modals) =>
-      modals.map((m) => (m.id === modalId ? { ...m, isVisible: false } : m)),
+      modals.map((m) => (m.id === modalId ? { ...m, visible: false } : m)),
     );
   }, []);
 
@@ -139,14 +139,14 @@ export const Anchor = memo(({ pathname }: AnchorProps) => {
     [hideModal, modalListRef],
   );
 
-  const onCleanup = useCallback((modalId: ManagedModal['id']) => {
+  const onDestroy = useCallback((modalId: ManagedModal['id']) => {
     setModalList((modals) =>
-      modals.map((m) => (m.id === modalId ? { ...m, isValid: false } : m)),
+      modals.map((m) => (m.id === modalId ? { ...m, alive: false } : m)),
     );
   }, []);
 
   const dimmed = useMemo(
-    () => modalList.some((modal) => modal.isVisible),
+    () => modalList.some((modal) => modal.visible),
     [modalList],
   );
 
@@ -165,7 +165,7 @@ export const Anchor = memo(({ pathname }: AnchorProps) => {
           onConfirm={onConfirm}
           onClose={onClose}
           onChange={onChange}
-          onCleanup={onCleanup}
+          onDestroy={onDestroy}
         />
       ))}
     </div>

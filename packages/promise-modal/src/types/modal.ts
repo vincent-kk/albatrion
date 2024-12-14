@@ -11,8 +11,8 @@ export type Modal<T = any, B = any> =
 
 export type ManagedEntity = {
   id: number;
-  isValid: boolean;
-  isVisible: boolean;
+  alive: boolean;
+  visible: boolean;
   initiator: string;
 };
 
@@ -29,5 +29,5 @@ export type ModalHandlers = {
     modalId: ManagedModal['id'],
     changeEvent: ChangeEvent<{ value?: any }> | any,
   ) => void;
-  onCleanup: (modalId: ManagedModal['id']) => void;
+  onDestroy: (modalId: ManagedModal['id']) => void;
 };
