@@ -1,0 +1,56 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/promise-modal": [
+        "./src"
+      ],
+      "@/promise-modal/*": [
+        "./src/*"
+      ],
+    },
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "jsx": "react-jsx",
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": [
+    "src",
+    "src/**/*.tsx?",
+    "./**/*.d.ts",
+    "coverage/**/*.story.tsx",
+    "coverage/**/*.stories.tsx",
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "documents",
+    "build",
+    "coverage",
+    "scripts",
+    "test",
+    "tests",
+    "**.test.tsx?",
+    "**.spec.tsx?",
+    "**.story.tsx",
+    "**.stories.tsx",
+  ]
+}

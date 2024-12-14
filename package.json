@@ -8,6 +8,7 @@
     "schemaForm": "yarn workspace @lumy-pack/schema-form",
     "antdPlugin": "yarn workspace @lumy-pack/schema-form-antd-plugin",
     "antdMobilePlugin": "yarn workspace @lumy-pack/schema-form-antd-mobile-plugin",
+    "promiseModal": "yarn workspace @lumy-pack/promise-modal",
     "benchmark": "yarn workspace @lumy-pack/benchmark",
     "common": "yarn workspace @lumy-pack/common",
     "commonReact": "yarn workspace @lumy-pack/common-react",
