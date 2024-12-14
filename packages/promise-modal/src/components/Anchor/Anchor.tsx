@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 
-import { useHandle } from '@lumy-pack/common-react';
+import { useOnMountLayout, useReference } from '@lumy-pack/common-react';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import { Presenter } from '@/promise-modal/components/Presenter';
@@ -23,11 +23,14 @@ interface AnchorProps {
 
 export const Anchor = memo(({ pathname }: AnchorProps) => {
   const [modalList, setModalList] = useState<ManagedModal[]>([]);
-  const initiator = useRef(pathname);
+  const modalListRef = useReference(modalList);
+
   const { options } = useModalContext();
+
+  const initiator = useRef(pathname);
   const modalId = useRef(0);
 
-  useLayoutEffect(() => {
+  useOnMountLayout(() => {
     setModalList(
       ModalManager.prerender.map((modal) => ({
         ...modal,
@@ -50,7 +53,7 @@ export const Anchor = memo(({ pathname }: AnchorProps) => {
       ]);
     });
     ModalManager.clearPrerender();
-  }, []);
+  });
 
   useLayoutEffect(() => {
     setModalList((modals) =>
@@ -74,7 +77,7 @@ export const Anchor = memo(({ pathname }: AnchorProps) => {
       modalId: ManagedModal['id'],
       changeEvent: ChangeEvent<{ value?: any }>,
     ) => {
-      const modal = modalList.find((modal) => modal.id === modalId);
+      const modal = modalListRef.current.find((modal) => modal.id === modalId);
 
       if (!modal) return;
 
@@ -93,12 +96,12 @@ export const Anchor = memo(({ pathname }: AnchorProps) => {
         );
       }
     },
-    [modalList],
+    [modalListRef],
   );
 
   const onConfirm = useCallback(
     (modalId: ManagedModal['id']) => {
-      const modal = modalList.find((modal) => modal.id === modalId);
+      const modal = modalListRef.current.find((modal) => modal.id === modalId);
 
       if (!modal) return;
 
@@ -111,12 +114,12 @@ export const Anchor = memo(({ pathname }: AnchorProps) => {
       }
       hideModal(modalId);
     },
-    [hideModal, modalList],
+    [hideModal, modalListRef],
   );
 
   const onClose = useCallback(
     (modalId: ManagedModal['id']) => {
-      const modal = modalList.find((modal) => modal.id === modalId);
+      const modal = modalListRef.current.find((modal) => modal.id === modalId);
 
       if (!modal) return;
 
@@ -133,7 +136,7 @@ export const Anchor = memo(({ pathname }: AnchorProps) => {
       }
       hideModal(modalId);
     },
-    [hideModal, modalList],
+    [hideModal, modalListRef],
   );
 
   const onCleanup = useCallback((modalId: ManagedModal['id']) => {
@@ -141,11 +144,6 @@ export const Anchor = memo(({ pathname }: AnchorProps) => {
       modals.map((m) => (m.id === modalId ? { ...m, isValid: false } : m)),
     );
   }, []);
-
-  const handleChange = useHandle(onChange);
-  const handleConfirm = useHandle(onConfirm);
-  const handleClose = useHandle(onClose);
-  const handleCleanup = useHandle(onCleanup);
 
   const dimmed = useMemo(
     () => modalList.some((modal) => modal.isVisible),
@@ -164,10 +162,10 @@ export const Anchor = memo(({ pathname }: AnchorProps) => {
         <Presenter
           key={modal.id}
           {...modal}
-          onConfirm={handleConfirm}
-          onClose={handleClose}
-          onChange={handleChange}
-          onCleanup={handleCleanup}
+          onConfirm={onConfirm}
+          onClose={onClose}
+          onChange={onChange}
+          onCleanup={onCleanup}
         />
       ))}
     </div>
