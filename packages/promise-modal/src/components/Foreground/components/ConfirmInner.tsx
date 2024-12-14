@@ -3,14 +3,14 @@ import { Fragment, memo, useCallback } from 'react';
 import { isString } from '@lumy-pack/common';
 import { isFunctionComponent, isReactElement } from '@lumy-pack/common-react';
 
-import { useModalContext } from '@/promise-modal/providers/ModalContextProvider';
+import { useModalContext } from '@/promise-modal/providers';
 import type {
-  AlertModal,
+  ConfirmModal,
   ManagedEntity,
   ModalHandlers,
 } from '@/promise-modal/types';
 
-export const AlertInner = memo(
+export const ConfirmInner = memo(
   <B,>({
     id,
     title,
@@ -18,8 +18,12 @@ export const AlertInner = memo(
     content,
     footer,
     onConfirm,
-  }: AlertModal<B> & ManagedEntity & Pick<ModalHandlers, 'onConfirm'>) => {
+    onClose,
+  }: ConfirmModal<B> &
+    ManagedEntity &
+    Pick<ModalHandlers, 'onConfirm' | 'onClose'>) => {
     const handleConfirm = useCallback(() => onConfirm(id), [id, onConfirm]);
+    const handleClose = useCallback(() => onClose(id), [id, onClose]);
 
     const {
       TitleComponent,
@@ -44,6 +48,7 @@ export const AlertInner = memo(
           ) : isFunctionComponent(content) ? (
             content({
               onConfirm: handleConfirm,
+              onCancel: handleClose,
             })
           ) : isReactElement(content) ? (
             content
@@ -52,12 +57,16 @@ export const AlertInner = memo(
           (typeof footer === 'function' ? (
             footer({
               onConfirm: handleConfirm,
+              onCancel: handleClose,
             })
           ) : (
             <FooterComponent
               onConfirm={handleConfirm}
+              onCancel={handleClose}
               confirmLabel={footer?.confirm}
+              cancelLabel={footer?.cancel}
               hideConfirm={footer?.hideConfirm}
+              hideCancel={footer?.hideCancel}
             />
           ))}
       </Fragment>

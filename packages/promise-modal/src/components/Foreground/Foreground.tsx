@@ -1,16 +1,14 @@
-import { Fragment, memo, useMemo } from 'react';
+import { Fragment, type MouseEvent, memo, useMemo } from 'react';
 
 import cx from 'clsx';
 
 import { useHandle } from '@lumy-pack/common-react';
 
-import { useModalContext } from '@/promise-modal/providers/ModalContextProvider';
+import { useModalContext } from '@/promise-modal/providers';
 import type { UniversalModalProps } from '@/promise-modal/types';
 
-import { AlertInner } from './AlertInner';
-import { ConfirmInner } from './ConfirmInner';
 import styles from './Foreground.module.css';
-import { PromptInner } from './PromptInner';
+import { AlertInner, ConfirmInner, PromptInner } from './components';
 
 export const Foreground = memo((props: UniversalModalProps) => {
   const { ForegroundComponent } = useModalContext();
@@ -41,8 +39,9 @@ export const Foreground = memo((props: UniversalModalProps) => {
     };
   }, [props]);
 
-  const handleClose = useHandle(() => {
-    onClose(modalProps.id);
+  const handleClose = useHandle((event: MouseEvent) => {
+    if (closeOnBackgroundClick) onClose(modalProps.id);
+    event.stopPropagation();
   });
 
   return (
@@ -79,14 +78,12 @@ export const Foreground = memo((props: UniversalModalProps) => {
           )}
         </ForegroundComponent>
       </div>
-      {closeOnBackgroundClick && (
-        <div
-          className={cx(styles.backdrop, {
-            [styles.active]: modalProps.alive,
-          })}
-          onClick={handleClose}
-        />
-      )}
+      <div
+        className={cx(styles.backdrop, {
+          [styles.active]: modalProps.alive,
+        })}
+        onClick={handleClose}
+      />
     </Fragment>
   );
 });

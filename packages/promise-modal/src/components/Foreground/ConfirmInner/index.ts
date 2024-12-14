@@ -1,1 +1,0 @@
-export { ConfirmInner } from './ConfirmInner';
