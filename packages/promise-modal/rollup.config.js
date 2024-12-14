@@ -49,6 +49,10 @@ module.exports = [
         sourcemap: true,
       },
     ],
+    onwarn(warning, warn) {
+      if (warning.code === 'CIRCULAR_DEPENDENCY') return;
+      warn(warning);
+    },
     plugins: [
       peerDepsExternal(),
       resolve({
@@ -108,7 +112,7 @@ module.exports = [
         },
       }),
       visualizer({
-        filename: 'schema-form-stats.html',
+        filename: 'promise-modal-stats.html',
         gzipSize: true,
       }),
     ],
