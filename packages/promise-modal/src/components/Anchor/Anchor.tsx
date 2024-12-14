@@ -59,25 +59,26 @@ export const Anchor = memo(({ pathname }: AnchorProps) => {
         visible: true,
       };
       modalDictionary.current.set(modal.id, modal);
-      setModalIds((ids) => [...ids, modal.id]);
+      setModalIds((ids) => {
+        const aliveIds = ids.filter((id) => {
+          const destroyed = !modalDictionary.current.get(id)?.alive;
+          if (destroyed) modalDictionary.current.delete(id);
+          return !destroyed;
+        });
+        return [...aliveIds, modal.id];
+      });
     });
     ModalManager.clearPrerender();
   });
 
   useLayoutEffect(() => {
-    const cleanupTargets: Set<ManagedModal['id']> = new Set();
     for (const id of modalIdsRef.current) {
       const modal = modalDictionary.current.get(id);
-      if (!modal) continue;
-      if (!modal.alive) cleanupTargets.add(id);
-      else {
-        if (modal.initiator === pathname) modal.visible = true;
-        else modal.visible = false;
-        modalDictionary.current.set(id, modal);
-      }
+      if (!modal?.alive) continue;
+      if (modal.initiator === pathname) modal.visible = true;
+      else modal.visible = false;
+      modalDictionary.current.set(id, modal);
     }
-    for (const id of cleanupTargets) modalDictionary.current.delete(id);
-    setModalIds((ids) => ids.filter((id) => !cleanupTargets.has(id)));
     initiator.current = pathname;
   }, [modalIdsRef, pathname]);
 
