@@ -4,13 +4,28 @@ import type { ModalFrameProps } from '@/promise-modal/types';
 
 export const FallbackForegroundFrame = forwardRef(
   (
-    { id, isVisible, onCleanup, children }: ModalFrameProps,
+    { id, visible, children, onDestroy }: ModalFrameProps,
     ref: ForwardedRef<HTMLDivElement>,
   ) => {
     useEffect(() => {
-      if (isVisible) return;
-      onCleanup(id);
-    }, [isVisible, id, onCleanup]);
-    return <div ref={ref}>{children}</div>;
+      if (visible) return;
+      onDestroy(id);
+    }, [visible, id, onDestroy]);
+    return (
+      <div
+        ref={ref}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'white',
+          padding: '20px 80px',
+          gap: '10px',
+        }}
+      >
+        {children}
+      </div>
+    );
   },
 );

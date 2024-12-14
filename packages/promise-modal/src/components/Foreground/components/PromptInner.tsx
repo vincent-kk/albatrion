@@ -7,7 +7,7 @@ import {
   useMemorize,
 } from '@lumy-pack/common-react';
 
-import { useModalContext } from '@/promise-modal/providers/ModalContextProvider';
+import { useModalContext } from '@/promise-modal/providers';
 import type {
   ManagedEntity,
   ModalHandlers,

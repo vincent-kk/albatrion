@@ -32,7 +32,10 @@ export const ModalManager = {
     openModalRef.current = open;
   },
   anchor(name: string, label = 'modal-anchor'): HTMLElement {
-    if (anchorRef.current) return anchorRef.current;
+    if (anchorRef.current) {
+      const anchor = document.getElementById(anchorRef.current.id);
+      if (anchor) return anchor;
+    }
     const node = document.createElement(name);
     node.setAttribute('id', `${label}-${getRandomNumber()}`);
     document.body.appendChild(node);
