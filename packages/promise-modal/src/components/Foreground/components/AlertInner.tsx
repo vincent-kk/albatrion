@@ -1,7 +1,11 @@
-import { Fragment, memo, useCallback } from 'react';
+import { Fragment, memo, useMemo } from 'react';
 
 import { isString } from '@lumy-pack/common';
-import { isFunctionComponent, isReactElement } from '@lumy-pack/common-react';
+import {
+  isFunctionComponent,
+  isReactElement,
+  useHandle,
+} from '@lumy-pack/common-react';
 
 import { useModalContext } from '@/promise-modal/providers';
 import type {
@@ -10,16 +14,17 @@ import type {
   ModalHandlers,
 } from '@/promise-modal/types';
 
+interface AlertInnerProps<B> {
+  modal: AlertModal<B> & ManagedEntity;
+  handlers: Pick<ModalHandlers, 'onConfirm'>;
+}
+
 export const AlertInner = memo(
-  <B,>({
-    id,
-    title,
-    subtitle,
-    content,
-    footer,
-    onConfirm,
-  }: AlertModal<B> & ManagedEntity & Pick<ModalHandlers, 'onConfirm'>) => {
-    const handleConfirm = useCallback(() => onConfirm(id), [id, onConfirm]);
+  <B,>({ modal, handlers }: AlertInnerProps<B>) => {
+    const { title, subtitle, content, footer } = useMemo(() => modal, [modal]);
+    const { onConfirm } = useMemo(() => handlers, [handlers]);
+
+    const handleConfirm = useHandle(onConfirm);
 
     const {
       TitleComponent,
@@ -42,17 +47,13 @@ export const AlertInner = memo(
           (isString(content) ? (
             <ContentComponent>{content}</ContentComponent>
           ) : isFunctionComponent(content) ? (
-            content({
-              onConfirm: handleConfirm,
-            })
+            content({ onConfirm: handleConfirm })
           ) : isReactElement(content) ? (
             content
           ) : null)}
         {footer !== false &&
           (typeof footer === 'function' ? (
-            footer({
-              onConfirm: handleConfirm,
-            })
+            footer({ onConfirm: handleConfirm })
           ) : (
             <FooterComponent
               onConfirm={handleConfirm}

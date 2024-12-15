@@ -1,14 +1,14 @@
-import type { UniversalModalProps } from '@/promise-modal/types';
+import type { ModalIdProps } from '@/promise-modal/types';
 
 import { Background } from '../Background';
 import { Foreground } from '../Foreground';
 import styles from './Presenter.module.css';
 
-export const Presenter = (props: UniversalModalProps) => {
+export const Presenter = ({ modalId }: ModalIdProps) => {
   return (
     <div className={styles.modal}>
-      <Background {...props} />
-      <Foreground {...props} />
+      <Background modalId={modalId} />
+      <Foreground modalId={modalId} />
     </div>
   );
 };

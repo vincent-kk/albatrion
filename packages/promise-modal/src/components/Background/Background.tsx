@@ -1,51 +1,47 @@
-import { type MouseEvent, memo, useCallback, useMemo } from 'react';
+import { type MouseEvent, useCallback } from 'react';
 
 import cx from 'clsx';
 
-import { useModalContext } from '@/promise-modal/providers';
-import type { UniversalModalProps } from '@/promise-modal/types';
+import { useModalContext, useModalHandlers } from '@/promise-modal/providers';
+import type { ModalIdProps } from '@/promise-modal/types';
 
 import styles from './Background.module.css';
 
-export const Background = memo((props: UniversalModalProps) => {
+export const Background = ({ modalId }: ModalIdProps) => {
   const { BackgroundComponent } = useModalContext();
-
-  const { onConfirm, onClose, onChange, onDestroy, modalProps } =
-    useMemo(() => {
-      const { onConfirm, onClose, onChange, onDestroy, ...modalProps } = props;
-      return {
-        onConfirm,
-        onClose,
-        onChange,
-        onDestroy,
-        modalProps,
-      };
-    }, [props]);
+  const { getModalData, onClose, onChange, onConfirm, onDestroy } =
+    useModalHandlers(modalId);
 
   const handleClose = useCallback(
     (event: MouseEvent) => {
-      onClose(modalProps.id);
+      onClose();
       event.stopPropagation();
     },
-    [modalProps.id, onClose],
+    [onClose],
   );
+
+  const modal = getModalData();
+
+  if (!modal) return null;
 
   return (
     <div
       className={cx(styles.root, {
-        [styles.active]: modalProps.visible,
+        [styles.active]: modal.visible,
       })}
       onClick={handleClose}
     >
       {BackgroundComponent && (
         <BackgroundComponent
-          onChange={onChange}
-          onConfirm={onConfirm}
-          onClose={onClose}
-          onDestroy={onDestroy}
-          {...modalProps}
+          modal={modal}
+          handlers={{
+            onChange: onChange,
+            onConfirm: onConfirm,
+            onClose: onClose,
+            onDestroy: onDestroy,
+          }}
         />
       )}
     </div>
   );
-});
+};

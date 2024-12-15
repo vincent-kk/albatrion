@@ -11,18 +11,18 @@ import type {
 export interface ModalDataContextProps extends ModalHandlersWithId {
   modalIds: ManagedModal['id'][];
   getModalData: (id: ManagedModal['id']) => ManagedModal | undefined;
-  hideModal: (id: ManagedModal['id']) => void;
   getModalHandlers: (id: ManagedModal['id']) => ModalHandlers;
+  setUpdater: (updater: Fn) => void;
 }
 
 export const ModalDataContext = createContext<ModalDataContextProps>({
   modalIds: [],
   getModalData: undefinedFunction,
-  hideModal: undefinedFunction,
   onChange: undefinedFunction,
   onConfirm: undefinedFunction,
   onClose: undefinedFunction,
   onDestroy: undefinedFunction,
+  setUpdater: undefinedFunction,
   getModalHandlers: () => ({
     getModalData: undefinedFunction,
     onConfirm: undefinedFunction,

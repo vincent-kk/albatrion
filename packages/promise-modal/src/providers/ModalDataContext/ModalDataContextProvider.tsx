@@ -1,9 +1,9 @@
 import {
-  type ChangeEvent,
   type PropsWithChildren,
   memo,
   useCallback,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -32,8 +32,6 @@ export const ModalDataContextProvider = memo(
 
     const initiator = useRef(pathname);
     const modalIdSequence = useRef(0);
-
-    // const [tick, update] = useTick();
 
     useOnMountLayout(() => {
       for (const data of ModalManager.prerender) {
@@ -84,29 +82,23 @@ export const ModalDataContextProvider = memo(
       return modalDictionary.current.get(modalId);
     }, []);
 
+    const updaterRef = useRef<Fn>();
     const hideModal = useCallback((modalId: ManagedModal['id']) => {
       const modal = modalDictionary.current.get(modalId);
       if (!modal) return;
       modal.visible = false;
       modalDictionary.current.set(modalId, modal);
+      updaterRef.current?.();
     }, []);
 
-    const onChange = useCallback(
-      (
-        modalId: ManagedModal['id'],
-        changeEvent: ChangeEvent<{ value?: any }>,
-      ) => {
-        const modal = modalDictionary.current.get(modalId);
-        if (!modal) return;
-        if (modal.type === 'prompt') {
-          modal.value = changeEvent?.target?.value
-            ? changeEvent.target.value
-            : changeEvent;
-          modalDictionary.current.set(modalId, modal);
-        }
-      },
-      [],
-    );
+    const onChange = useCallback((modalId: ManagedModal['id'], value: any) => {
+      const modal = modalDictionary.current.get(modalId);
+      if (!modal) return;
+      if (modal.type === 'prompt') {
+        modal.value = value;
+        modalDictionary.current.set(modalId, modal);
+      }
+    }, []);
 
     const onConfirm = useCallback(
       (modalId: ManagedModal['id']) => {
@@ -149,35 +141,32 @@ export const ModalDataContextProvider = memo(
       if (!modal) return;
       modal.alive = false;
       modalDictionary.current.set(modalId, modal);
+      updaterRef.current?.();
     }, []);
 
-    const getModalHandlers = useCallback(
-      (modalId: ManagedModal['id']) => {
-        return {
+    const value = useMemo(() => {
+      return {
+        modalIds,
+        getModalData,
+        onChange,
+        onConfirm,
+        onClose,
+        onDestroy,
+        setUpdater: (updater: Fn) => {
+          updaterRef.current = updater;
+        },
+        getModalHandlers: (modalId: ManagedModal['id']) => ({
           getModalData: () => getModalData(modalId),
-          onChange: (changeEvent: ChangeEvent<{ value?: any }>) =>
-            onChange(modalId, changeEvent),
           onConfirm: () => onConfirm(modalId),
           onClose: () => onClose(modalId),
+          onChange: (value: any) => onChange(modalId, value),
           onDestroy: () => onDestroy(modalId),
-        };
-      },
-      [getModalData, onChange, onConfirm, onClose, onDestroy],
-    );
+        }),
+      };
+    }, [modalIds, getModalData, onChange, onConfirm, onClose, onDestroy]);
 
     return (
-      <ModalDataContext.Provider
-        value={{
-          modalIds,
-          getModalData,
-          hideModal,
-          onChange,
-          onConfirm,
-          onClose,
-          onDestroy,
-          getModalHandlers,
-        }}
-      >
+      <ModalDataContext.Provider value={value}>
         {children}
       </ModalDataContext.Provider>
     );

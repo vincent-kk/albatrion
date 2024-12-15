@@ -12,7 +12,8 @@ export type PromptFooterRender<T> = (props: {
 
 export interface PromptInputProps<T> {
   value: T | null;
-  onChange: SetStateFn<T>;
+  defaultValue: T | null;
+  onChange: SetStateFn<T | null>;
   onConfirm?: VoidFunction;
 }
 
@@ -22,7 +23,7 @@ export interface PromptModal<T = Record<string, any>, B = any>
   extends BaseModal<T, B> {
   type: 'prompt';
   content?: ReactNode | ComponentType<PromptContentProps>;
-  input: (props: PromptInputProps<T>) => ReactNode;
+  Input: (props: PromptInputProps<T>) => ReactNode;
   value: T | null;
   disabled?: (value: T | null) => boolean;
   immediate?: boolean;

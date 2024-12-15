@@ -12,24 +12,13 @@ export const FallbackFooter = ({
   return (
     <div>
       {!hideConfirm && (
-        <button
-          onClick={() => {
-            onConfirm();
-          }}
-          disabled={disabled}
-        >
+        <button onClick={onConfirm} disabled={disabled}>
           {confirmLabel || '확인'}
         </button>
       )}
 
       {!hideCancel && typeof onCancel === 'function' && (
-        <button
-          onClick={() => {
-            onCancel();
-          }}
-        >
-          {cancelLabel || '취소'}
-        </button>
+        <button onClick={onCancel}>{cancelLabel || '취소'}</button>
       )}
     </div>
   );

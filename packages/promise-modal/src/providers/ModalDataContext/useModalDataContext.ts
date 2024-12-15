@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 
 import type { ManagedModal } from '@/promise-modal/types';
 
@@ -8,5 +8,5 @@ export const useModalDataContext = () => useContext(ModalDataContext);
 
 export const useModalHandlers = (id: ManagedModal['id']) => {
   const { getModalHandlers } = useModalDataContext();
-  return getModalHandlers(id);
+  return useMemo(() => getModalHandlers(id), [id, getModalHandlers]);
 };

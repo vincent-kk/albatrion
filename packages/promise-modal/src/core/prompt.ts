@@ -14,8 +14,13 @@ export const prompt = <T, B = any>({
         ...props,
         type: 'prompt',
         resolve: (result) => resolve(result as T),
-        input: ({ value, onChange, onConfirm }: PromptInputProps<T>) =>
-          props.input({ value, onChange, onConfirm }),
+        Input: ({ value, onChange, onConfirm }: PromptInputProps<T>) =>
+          props.Input({
+            value,
+            onChange,
+            onConfirm,
+            defaultValue: defaultValue ?? null,
+          }),
         value: defaultValue ?? null,
       });
     } catch (error) {

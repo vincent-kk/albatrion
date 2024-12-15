@@ -1,4 +1,4 @@
-import type { ChangeEvent, PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
 
 import type { AlertModal } from './alert';
 import type { ConfirmModal } from './confirm';
@@ -20,7 +20,7 @@ export type ManagedModal = ManagedEntity & Modal;
 
 export type UniversalModalProps = {
   modal: ManagedModal;
-  handlers: ModalHandlers;
+  handlers: Omit<ModalHandlers, 'getModalData'>;
 };
 
 export type ModalFrameProps = PropsWithChildren<UniversalModalProps>;
@@ -32,17 +32,14 @@ export type ModalIdProps = {
 export interface ModalHandlersWithId {
   onConfirm: (modalId: ManagedModal['id']) => void;
   onClose: (modalId: ManagedModal['id']) => void;
-  onChange: (
-    modalId: ManagedModal['id'],
-    changeEvent: ChangeEvent<{ value?: any }> | any,
-  ) => void;
+  onChange: (modalId: ManagedModal['id'], value: any) => void;
   onDestroy: (modalId: ManagedModal['id']) => void;
 }
 
 export type ModalHandlers = {
-  getModalData: () => ManagedModal | undefined;
   onConfirm: () => void;
   onClose: () => void;
-  onChange: (changeEvent: ChangeEvent<{ value?: any }>) => void;
+  onChange: (value: any) => void;
   onDestroy: () => void;
+  getModalData: () => ManagedModal | undefined;
 };
