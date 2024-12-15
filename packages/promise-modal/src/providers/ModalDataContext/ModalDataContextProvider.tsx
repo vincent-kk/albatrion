@@ -11,7 +11,9 @@ import {
 import { useOnMountLayout, useReference } from '@lumy-pack/common-react';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
+import { emitEvent } from '@/promise-modal/helpers/emitEvent';
 import { getMillisecondsFromDuration } from '@/promise-modal/helpers/getMillisecondsFromDuration';
+import { subscribeFactory } from '@/promise-modal/helpers/subscribeFactory';
 import { useModalOptions } from '@/promise-modal/providers';
 import type { ManagedModal, Modal } from '@/promise-modal/types';
 
@@ -27,6 +29,9 @@ export const ModalDataContextProvider = memo(
     children,
   }: PropsWithChildren<ModalDataContextProviderProps>) => {
     const modalDictionary = useRef<Map<ManagedModal['id'], ManagedModal>>(
+      new Map(),
+    );
+    const modalEventListeners = useRef<Map<ManagedModal['id'], Fn[]>>(
       new Map(),
     );
     const [modalIds, setModalIds] = useState<ManagedModal['id'][]>([]);
@@ -47,30 +52,37 @@ export const ModalDataContextProvider = memo(
 
     useOnMountLayout(() => {
       for (const data of ModalManager.prerender) {
+        const modalId = modalIdSequence.current++;
         const modal = {
           ...data,
-          id: modalIdSequence.current++,
+          id: modalId,
           initiator: initiator.current,
           alive: true,
           visible: true,
+          subscribe: subscribeFactory(modalId, modalEventListeners.current),
         };
         modalDictionary.current.set(modal.id, modal);
         setModalIds((ids) => [...ids, modal.id]);
       }
 
       ModalManager.setup((data: Modal) => {
+        const modalId = modalIdSequence.current++;
         const modal = {
           ...data,
-          id: modalIdSequence.current++,
+          id: modalId,
           initiator: initiator.current,
           alive: true,
           visible: true,
+          subscribe: subscribeFactory(modalId, modalEventListeners.current),
         };
         modalDictionary.current.set(modal.id, modal);
         setModalIds((ids) => {
           const aliveIds = ids.filter((id) => {
             const destroyed = !modalDictionary.current.get(id)?.alive;
-            if (destroyed) modalDictionary.current.delete(id);
+            if (destroyed) {
+              modalDictionary.current.delete(id);
+              modalEventListeners.current.delete(id);
+            }
             return !destroyed;
           });
           return [...aliveIds, modal.id];
@@ -94,14 +106,30 @@ export const ModalDataContextProvider = memo(
       return modalDictionary.current.get(modalId);
     }, []);
 
-    const updaterRef = useRef<Fn>();
-    const hideModal = useCallback((modalId: ManagedModal['id']) => {
+    const onDestroy = useCallback((modalId: ManagedModal['id']) => {
       const modal = modalDictionary.current.get(modalId);
       if (!modal) return;
-      modal.visible = false;
+      modal.alive = false;
       modalDictionary.current.set(modalId, modal);
       updaterRef.current?.();
     }, []);
+
+    const updaterRef = useRef<Fn>();
+    const hideModal = useCallback(
+      (modalId: ManagedModal['id']) => {
+        const modal = modalDictionary.current.get(modalId);
+        if (!modal) return;
+        modal.visible = false;
+        modalDictionary.current.set(modalId, modal);
+        updaterRef.current?.();
+        emitEvent(modalId, modalEventListeners.current);
+        if (!manualDestroy)
+          setTimeout(() => {
+            onDestroy(modalId);
+          }, duration);
+      },
+      [manualDestroy, duration, onDestroy],
+    );
 
     const onChange = useCallback((modalId: ManagedModal['id'], value: any) => {
       const modal = modalDictionary.current.get(modalId);
@@ -110,14 +138,6 @@ export const ModalDataContextProvider = memo(
         modal.value = value;
         modalDictionary.current.set(modalId, modal);
       }
-    }, []);
-
-    const onDestroy = useCallback((modalId: ManagedModal['id']) => {
-      const modal = modalDictionary.current.get(modalId);
-      if (!modal) return;
-      modal.alive = false;
-      modalDictionary.current.set(modalId, modal);
-      updaterRef.current?.();
     }, []);
 
     const onConfirm = useCallback(
@@ -132,13 +152,8 @@ export const ModalDataContextProvider = memo(
           modal.resolve(modal.value);
         }
         hideModal(modalId);
-
-        if (!manualDestroy)
-          setTimeout(() => {
-            onDestroy(modalId);
-          }, duration);
       },
-      [manualDestroy, duration, onDestroy, hideModal],
+      [hideModal],
     );
 
     const onClose = useCallback(
@@ -154,13 +169,8 @@ export const ModalDataContextProvider = memo(
           else modal.resolve(null);
         }
         hideModal(modalId);
-
-        if (!manualDestroy)
-          setTimeout(() => {
-            onDestroy(modalId);
-          }, duration);
       },
-      [manualDestroy, duration, onDestroy, hideModal],
+      [hideModal],
     );
 
     const getModalHandlers = useCallback(

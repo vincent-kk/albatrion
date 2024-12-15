@@ -14,6 +14,7 @@ export type ManagedEntity = {
   alive: boolean;
   visible: boolean;
   initiator: string;
+  subscribe: (listener: Fn) => Fn;
 };
 
 export type ManagedModal = ManagedEntity & Modal;

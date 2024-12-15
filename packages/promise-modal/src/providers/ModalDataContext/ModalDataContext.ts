@@ -10,9 +10,9 @@ import type {
 
 export interface ModalDataContextProps extends ModalHandlersWithId {
   modalIds: ManagedModal['id'][];
-  getModalData: (id: ManagedModal['id']) => ManagedModal | undefined;
-  getModalHandlers: (id: ManagedModal['id']) => ModalHandlers;
-  setUpdater: (updater: Fn) => void;
+  getModalData: Fn<[id: ManagedModal['id']], ManagedModal | undefined>;
+  getModalHandlers: Fn<[id: ManagedModal['id']], ModalHandlers>;
+  setUpdater: Fn<[updater: Fn]>;
 }
 
 export const ModalDataContext = createContext<ModalDataContextProps>({
