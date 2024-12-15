@@ -1,4 +1,10 @@
-import { ComponentType, type PropsWithChildren, useMemo, useRef } from 'react';
+import {
+  type ComponentType,
+  type PropsWithChildren,
+  memo,
+  useMemo,
+  useRef,
+} from 'react';
 
 import { createPortal } from 'react-dom';
 
@@ -23,6 +29,7 @@ import type {
   ModalFrameProps,
 } from '@/promise-modal/types';
 
+import { ModalDataContextProvider } from '../ModalDataContext';
 import { ModalContext } from './ModalContext';
 
 interface ModalContextProviderProps {
@@ -41,61 +48,68 @@ interface ModalContextProviderProps {
   usePathname?: () => { pathname: string };
 }
 
-export const ModalContextProvider = ({
-  ForegroundComponent,
-  BackgroundComponent,
-  TitleComponent,
-  SubtitleComponent,
-  ContentComponent,
-  FooterComponent,
-  options,
-  usePathname,
-  children,
-}: PropsWithChildren<ModalContextProviderProps>) => {
-  const { pathname } = (usePathname || useDefaultPathname)();
-  const [, update] = useTick();
-  const portalRef = useRef<HTMLElement | null>(null);
+export const ModalContextProvider = memo(
+  ({
+    ForegroundComponent,
+    BackgroundComponent,
+    TitleComponent,
+    SubtitleComponent,
+    ContentComponent,
+    FooterComponent,
+    options,
+    usePathname,
+    children,
+  }: PropsWithChildren<ModalContextProviderProps>) => {
+    const { pathname } = (usePathname || useDefaultPathname)();
+    const [, update] = useTick();
+    const portalRef = useRef<HTMLElement | null>(null);
 
-  useOnMount(() => {
-    portalRef.current = ModalManager.anchor('div');
-    update();
-    return () => {
-      if (portalRef.current) {
-        portalRef.current.remove();
-      }
-    };
-  });
+    useOnMount(() => {
+      portalRef.current = ModalManager.anchor('div');
+      update();
+      return () => {
+        if (portalRef.current) {
+          portalRef.current.remove();
+        }
+      };
+    });
 
-  const value = useMemo(
-    () => ({
-      BackgroundComponent,
-      ForegroundComponent: ForegroundComponent || FallbackForegroundFrame,
-      TitleComponent: TitleComponent || FallbackTitle,
-      SubtitleComponent: SubtitleComponent || FallbackSubtitle,
-      ContentComponent: ContentComponent || FallbackContent,
-      FooterComponent: FooterComponent || FallbackFooter,
-      options: {
-        duration: DEFAULT_ANIMATION_DURATION,
-        backdrop: DEFAULT_BACKDROP_COLOR,
-        ...options,
-      } satisfies ModalContextProviderProps['options'],
-    }),
-    [
-      ForegroundComponent,
-      BackgroundComponent,
-      ContentComponent,
-      FooterComponent,
-      SubtitleComponent,
-      TitleComponent,
-      options,
-    ],
-  );
+    const value = useMemo(
+      () => ({
+        BackgroundComponent,
+        ForegroundComponent: ForegroundComponent || FallbackForegroundFrame,
+        TitleComponent: TitleComponent || FallbackTitle,
+        SubtitleComponent: SubtitleComponent || FallbackSubtitle,
+        ContentComponent: ContentComponent || FallbackContent,
+        FooterComponent: FooterComponent || FallbackFooter,
+        options: {
+          duration: DEFAULT_ANIMATION_DURATION,
+          backdrop: DEFAULT_BACKDROP_COLOR,
+          ...options,
+        } satisfies ModalContextProviderProps['options'],
+      }),
+      [
+        ForegroundComponent,
+        BackgroundComponent,
+        ContentComponent,
+        FooterComponent,
+        SubtitleComponent,
+        TitleComponent,
+        options,
+      ],
+    );
 
-  return (
-    <ModalContext.Provider value={value}>
-      {children}
-      {portalRef.current &&
-        createPortal(<Anchor pathname={pathname} />, portalRef.current)}
-    </ModalContext.Provider>
-  );
-};
+    return (
+      <ModalContext.Provider value={value}>
+        {children}
+        {portalRef.current &&
+          createPortal(
+            <ModalDataContextProvider pathname={pathname}>
+              <Anchor />
+            </ModalDataContextProvider>,
+            portalRef.current,
+          )}
+      </ModalContext.Provider>
+    );
+  },
+);

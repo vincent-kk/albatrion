@@ -5,3 +5,9 @@ export {
   useModalDuration,
   useModalBackdrop,
 } from './ModalContext';
+
+export {
+  ModalDataContextProvider,
+  useModalDataContext,
+  useModalHandlers,
+} from './ModalDataContext';
