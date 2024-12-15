@@ -49,7 +49,7 @@ export const ModalDataContextProvider = memo(
       for (const data of ModalManager.prerender) {
         const modal = {
           ...data,
-          id: ++modalIdSequence.current,
+          id: modalIdSequence.current++,
           initiator: initiator.current,
           alive: true,
           visible: true,
@@ -61,7 +61,7 @@ export const ModalDataContextProvider = memo(
       ModalManager.setup((data: Modal) => {
         const modal = {
           ...data,
-          id: ++modalIdSequence.current,
+          id: modalIdSequence.current++,
           initiator: initiator.current,
           alive: true,
           visible: true,
