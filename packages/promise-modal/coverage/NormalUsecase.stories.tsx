@@ -27,8 +27,11 @@ export const NormalUsecase = () => {
     prompt({
       title: 'Hello, world!',
       content: 'This is a test prompt.',
-      input: ({ onChange }) => {
-        return <input onChange={onChange} />;
+      Input: ({ onChange }) => {
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+          onChange(e.target.value);
+        };
+        return <input onChange={handleChange} />;
       },
       defaultValue: '',
     }).then((value) => {
