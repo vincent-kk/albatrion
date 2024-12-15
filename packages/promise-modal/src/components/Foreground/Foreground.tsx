@@ -1,60 +1,53 @@
-import { memo, useMemo } from 'react';
-
 import cx from 'clsx';
 
-import { useModalContext } from '@/promise-modal/providers';
-import type { UniversalModalProps } from '@/promise-modal/types';
+import { useModalContext, useModalHandlers } from '@/promise-modal/providers';
+import type { ModalLayerProps } from '@/promise-modal/types';
 
 import styles from './Foreground.module.css';
 import { AlertInner, ConfirmInner, PromptInner } from './components';
 
-export const Foreground = memo((props: UniversalModalProps) => {
-  const { ForegroundComponent } = useModalContext();
+export const Foreground = ({ modalId, onChangeOrder }: ModalLayerProps) => {
+  const { ForegroundComponent, options } = useModalContext();
 
-  const { onConfirm, onClose, onChange, onDestroy, modalProps } =
-    useMemo(() => {
-      const { onConfirm, onClose, onChange, onDestroy, ...modalProps } = props;
-      return {
-        onConfirm,
-        onClose,
-        onChange,
-        onDestroy,
-        modalProps,
-      };
-    }, [props]);
+  const { getModalData, onChange, onConfirm, onClose, onDestroy } =
+    useModalHandlers(modalId);
+
+  const modal = getModalData();
+
+  if (!modal) return null;
 
   return (
     <div
       className={cx(styles.root, {
-        [styles.active]: modalProps.alive,
+        [styles.active]:
+          modal.manualDestroy || options?.manualDestroy
+            ? modal.alive
+            : modal.visible,
       })}
     >
       <ForegroundComponent
-        {...modalProps}
-        onChange={onChange}
-        onConfirm={onConfirm}
-        onClose={onClose}
-        onDestroy={onDestroy}
+        modal={modal}
+        handlers={{
+          onChange,
+          onConfirm,
+          onClose,
+          onDestroy,
+          onChangeOrder,
+        }}
       >
-        {modalProps.type === 'alert' && (
-          <AlertInner {...modalProps} onConfirm={onConfirm} />
+        {modal.type === 'alert' && (
+          <AlertInner modal={modal} handlers={{ onConfirm }} />
         )}
-        {modalProps.type === 'confirm' && (
-          <ConfirmInner
-            {...modalProps}
-            onConfirm={onConfirm}
-            onClose={onClose}
-          />
+        {modal.type === 'confirm' && (
+          <ConfirmInner modal={modal} handlers={{ onConfirm, onClose }} />
         )}
-        {modalProps.type === 'prompt' && (
+        {modal.type === 'prompt' && (
           <PromptInner
-            {...modalProps}
-            onChange={onChange}
-            onConfirm={onConfirm}
-            onClose={onClose}
+            modal={modal}
+            handlers={{ onChange, onConfirm, onClose }}
           />
         )}
       </ForegroundComponent>
     </div>
   );
-});
+};

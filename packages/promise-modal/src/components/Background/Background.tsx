@@ -1,51 +1,53 @@
-import { type MouseEvent, memo, useCallback, useMemo } from 'react';
+import { type MouseEvent, useCallback } from 'react';
 
 import cx from 'clsx';
 
-import { useModalContext } from '@/promise-modal/providers';
-import type { UniversalModalProps } from '@/promise-modal/types';
+import { useModalContext, useModalHandlers } from '@/promise-modal/providers';
+import type { ModalLayerProps } from '@/promise-modal/types';
 
 import styles from './Background.module.css';
 
-export const Background = memo((props: UniversalModalProps) => {
-  const { BackgroundComponent } = useModalContext();
+export const Background = ({ modalId, onChangeOrder }: ModalLayerProps) => {
+  const { BackgroundComponent, options } = useModalContext();
+  const { getModalData, onClose, onChange, onConfirm, onDestroy } =
+    useModalHandlers(modalId);
 
-  const { onConfirm, onClose, onChange, onDestroy, modalProps } =
-    useMemo(() => {
-      const { onConfirm, onClose, onChange, onDestroy, ...modalProps } = props;
-      return {
-        onConfirm,
-        onClose,
-        onChange,
-        onDestroy,
-        modalProps,
-      };
-    }, [props]);
+  const modal = getModalData();
+
+  const closeOnBackdropClick =
+    modal?.closeOnBackdropClick &&
+    options.closeOnBackdropClick &&
+    modal?.visible;
 
   const handleClose = useCallback(
     (event: MouseEvent) => {
-      onClose(modalProps.id);
+      if (closeOnBackdropClick) onClose();
       event.stopPropagation();
     },
-    [modalProps.id, onClose],
+    [closeOnBackdropClick, onClose],
   );
+
+  if (!modal) return null;
 
   return (
     <div
       className={cx(styles.root, {
-        [styles.active]: modalProps.visible,
+        [styles.clickable]: modal?.visible,
       })}
       onClick={handleClose}
     >
       {BackgroundComponent && (
         <BackgroundComponent
-          onChange={onChange}
-          onConfirm={onConfirm}
-          onClose={onClose}
-          onDestroy={onDestroy}
-          {...modalProps}
+          modal={modal}
+          handlers={{
+            onChange,
+            onConfirm,
+            onClose,
+            onDestroy,
+            onChangeOrder,
+          }}
         />
       )}
     </div>
   );
-});
+};

@@ -4,4 +4,10 @@ export {
   useModalOptions,
   useModalDuration,
   useModalBackdrop,
-} from './ModalContextProvider';
+} from './ModalContext';
+
+export {
+  ModalDataContextProvider,
+  useModalDataContext,
+  useModalHandlers,
+} from './ModalDataContext';

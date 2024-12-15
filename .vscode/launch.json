@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug Storybook",
+      "name": "[Schema Form] Debug Storybook",
       "type": "chrome",
       "request": "launch",
       "url": "http://localhost:6006",
@@ -18,7 +18,7 @@
       }
     },
     {
-      "name": "Debug Storybook (attach)",
+      "name": "[Schema Form] Debug Storybook (attach)",
       "type": "chrome",
       "request": "attach",
       "port": 9222,
@@ -33,6 +33,39 @@
         "webpack:///*": "*",
         "webpack:///./src/*": "${webRoot}/src/*"
       }
-    }
+    },
+    {
+      "name": "[Promise Modal] Debug Storybook",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:6006",
+      "webRoot": "${workspaceFolder}/packages/promise-modal",
+      "sourceMaps": true,
+      "breakOnLoad": true,
+      "sourceMapPathOverrides": {
+        "webpack://promise-modal/./*": "${workspaceFolder}/packages/promise-modal/*",
+        "webpack://promise-modal/src/*": "${workspaceFolder}/packages/promise-modal/src/*",
+        "webpack:///./~/*": "${workspaceFolder}/node_modules/*",
+        "webpack:///*": "*",
+        "webpack:///./src/*": "${workspaceFolder}/packages/promise-modal/src/*"
+      }
+    },
+    {
+      "name": "[Promise Modal] Debug Storybook (attach)",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "url": "http://localhost:6006",
+      "webRoot": "${workspaceFolder}/packages/promise-modal",
+      "sourceMaps": true,
+      "breakOnLoad": true,
+      "sourceMapPathOverrides": {
+        "webpack://promise-modal/./*": "${webRoot}/*",
+        "webpack://promise-modal/src/*": "${webRoot}/src/*",
+        "webpack:///./~/*": "${webRoot}/node_modules/*",
+        "webpack:///*": "*",
+        "webpack:///./src/*": "${webRoot}/src/*"
+      }
+    },
   ]
 }

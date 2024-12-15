@@ -1,7 +1,11 @@
-import { Fragment, memo, useCallback } from 'react';
+import { Fragment, memo, useMemo } from 'react';
 
 import { isString } from '@lumy-pack/common';
-import { isFunctionComponent, isReactElement } from '@lumy-pack/common-react';
+import {
+  isFunctionComponent,
+  isReactElement,
+  useHandle,
+} from '@lumy-pack/common-react';
 
 import { useModalContext } from '@/promise-modal/providers';
 import type {
@@ -10,20 +14,18 @@ import type {
   ModalHandlers,
 } from '@/promise-modal/types';
 
+interface ConfirmInnerProps<B> {
+  modal: ConfirmModal<B> & ManagedEntity;
+  handlers: Pick<ModalHandlers, 'onConfirm' | 'onClose'>;
+}
+
 export const ConfirmInner = memo(
-  <B,>({
-    id,
-    title,
-    subtitle,
-    content,
-    footer,
-    onConfirm,
-    onClose,
-  }: ConfirmModal<B> &
-    ManagedEntity &
-    Pick<ModalHandlers, 'onConfirm' | 'onClose'>) => {
-    const handleConfirm = useCallback(() => onConfirm(id), [id, onConfirm]);
-    const handleClose = useCallback(() => onClose(id), [id, onClose]);
+  <B,>({ modal, handlers }: ConfirmInnerProps<B>) => {
+    const { title, subtitle, content, footer } = useMemo(() => modal, [modal]);
+    const { onConfirm, onClose } = useMemo(() => handlers, [handlers]);
+
+    const handleConfirm = useHandle(onConfirm);
+    const handleClose = useHandle(onClose);
 
     const {
       TitleComponent,

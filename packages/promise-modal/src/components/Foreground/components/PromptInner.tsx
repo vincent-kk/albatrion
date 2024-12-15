@@ -1,10 +1,11 @@
-import { Fragment, memo, useCallback, useEffect, useMemo } from 'react';
+import { Fragment, memo, useCallback, useMemo, useState } from 'react';
 
-import { isString } from '@lumy-pack/common';
+import { isFunction, isString } from '@lumy-pack/common';
 import {
   isFunctionComponent,
   isReactElement,
-  useMemorize,
+  useConstant,
+  useHandle,
 } from '@lumy-pack/common-react';
 
 import { useModalContext } from '@/promise-modal/providers';
@@ -14,51 +15,56 @@ import type {
   PromptModal,
 } from '@/promise-modal/types';
 
+interface PromptInnerProps<T, B> {
+  modal: PromptModal<T, B> & ManagedEntity;
+  handlers: Pick<ModalHandlers, 'onChange' | 'onClose' | 'onConfirm'>;
+}
+
 export const PromptInner = memo(
-  <T, B>({
-    id,
-    input,
-    value,
-    disabled,
-    immediate,
-    title,
-    subtitle,
-    content,
-    footer,
-    onConfirm,
-    onClose,
-    onChange,
-  }: PromptModal<T, B> &
-    ManagedEntity &
-    Pick<ModalHandlers, 'onChange' | 'onClose' | 'onConfirm'>) => {
-    useEffect(() => {
-      if (!value || disabled?.(value)) return;
-      if (immediate) {
-        onConfirm(id);
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [value]);
-
-    const Input = useMemorize(input);
-
-    const disable = useMemo(
-      () => disabled?.(value) || false,
-      [disabled, value],
+  <T, B>({ modal, handlers }: PromptInnerProps<T, B>) => {
+    const {
+      Input,
+      value: receivedValue,
+      disabled: checkDisabled,
+      title,
+      subtitle,
+      content,
+      footer,
+    } = useMemo(
+      () => ({
+        ...modal,
+        Input: memo(modal.Input),
+      }),
+      [modal],
     );
 
-    const handleChange = useCallback(
-      (value: any) => onChange(id, value),
-      [id, onChange],
+    const defaultValue = useConstant(receivedValue);
+
+    const [value, setValue] = useState<T>(defaultValue);
+
+    const { onChange, onClose, onConfirm } = useMemo(
+      () => handlers,
+      [handlers],
     );
+
+    const handleClose = useHandle(onClose);
+    const handleChange = useHandle((inputValue: T | ((prevState: T) => T)) => {
+      const input = isFunction(inputValue) ? inputValue(value) : inputValue;
+      setValue(input);
+      onChange(input);
+    });
 
     const handleConfirm = useCallback(() => {
       // NOTE: wait for the next tick to ensure the value is updated
       setTimeout(() => {
-        onConfirm(id);
+        onConfirm();
       });
-    }, [id, onConfirm]);
+    }, [onConfirm]);
 
-    const handleClose = useCallback(() => onClose(id), [id, onClose]);
+    const disabled = useMemo(
+      () => checkDisabled?.(value) || false,
+      [checkDisabled, value],
+    );
 
     const {
       TitleComponent,
@@ -91,6 +97,7 @@ export const PromptInner = memo(
 
         {Input && (
           <Input
+            defaultValue={defaultValue}
             value={value}
             onChange={handleChange}
             onConfirm={handleConfirm}
@@ -102,15 +109,15 @@ export const PromptInner = memo(
             footer({
               onConfirm: handleConfirm,
               onCancel: handleClose,
-              value,
               onChange: handleChange,
-              disable,
+              value,
+              disabled,
             })
           ) : (
             <FooterComponent
               onConfirm={handleConfirm}
               onCancel={handleClose}
-              disable={disable}
+              disabled={disabled}
               confirmLabel={footer?.confirm}
               cancelLabel={footer?.cancel}
               hideConfirm={footer?.hideConfirm}

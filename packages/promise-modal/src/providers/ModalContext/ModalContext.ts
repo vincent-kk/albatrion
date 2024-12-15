@@ -27,6 +27,8 @@ export interface ModalContextProps {
   options: {
     duration: `${number}ms` | `${number}s`;
     backdrop: Color;
+    manualDestroy?: boolean;
+    closeOnBackdropClick?: boolean;
   };
 }
 

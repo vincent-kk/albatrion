@@ -5,31 +5,20 @@ export const FallbackFooter = ({
   hideConfirm = false,
   cancelLabel,
   hideCancel = false,
-  disable,
+  disabled,
   onConfirm,
   onCancel,
 }: FooterComponentProps) => {
   return (
     <div>
       {!hideConfirm && (
-        <button
-          onClick={() => {
-            onConfirm();
-          }}
-          disabled={disable}
-        >
+        <button onClick={onConfirm} disabled={disabled}>
           {confirmLabel || '확인'}
         </button>
       )}
 
       {!hideCancel && typeof onCancel === 'function' && (
-        <button
-          onClick={() => {
-            onCancel();
-          }}
-        >
-          {cancelLabel || '취소'}
-        </button>
+        <button onClick={onCancel}>{cancelLabel || '취소'}</button>
       )}
     </div>
   );

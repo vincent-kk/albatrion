@@ -6,6 +6,8 @@ export interface BaseModal<T, B> {
   title?: ReactNode;
   subtitle?: ReactNode;
   background?: ModalBackground<B>;
+  manualDestroy?: boolean;
+  closeOnBackdropClick?: boolean;
   resolve: (result: T | null) => void;
 }
 
@@ -26,7 +28,7 @@ export type FooterComponentProps = {
   hideConfirm?: boolean;
   cancelLabel?: string;
   hideCancel?: boolean;
-  disable?: boolean;
+  disabled?: boolean;
   onConfirm: VoidFunction;
   onCancel?: VoidFunction;
 };
