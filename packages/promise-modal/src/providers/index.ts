@@ -4,4 +4,4 @@ export {
   useModalOptions,
   useModalDuration,
   useModalBackdrop,
-} from './ModalContextProvider';
+} from './ModalContext';
