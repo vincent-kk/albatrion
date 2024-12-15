@@ -95,6 +95,7 @@ export const PromptInner = memo(
         {InputComponent && (
           <InputComponent
             defaultValue={defaultValue}
+            value={value}
             onChange={handleChange}
             onConfirm={handleConfirm}
           />
