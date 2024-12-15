@@ -1,8 +1,9 @@
-import { memo, useEffect, useMemo } from 'react';
+import { memo, useEffect } from 'react';
 
 import { useTick } from '@lumy-pack/common-react';
 
 import { Presenter } from '@/promise-modal/components/Presenter';
+import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
 import { useModalContext } from '@/promise-modal/providers';
 import { useModalDataContext } from '@/promise-modal/providers/ModalDataContext';
 
@@ -11,7 +12,7 @@ import styles from './Anchor.module.css';
 export const Anchor = memo(() => {
   const [key, update] = useTick();
 
-  const { modalIds, getModalData, setUpdater } = useModalDataContext();
+  const { modalIds, setUpdater } = useModalDataContext();
 
   useEffect(() => {
     setUpdater(update);
@@ -19,11 +20,7 @@ export const Anchor = memo(() => {
 
   const { options } = useModalContext();
 
-  const dimmed = useMemo(
-    () => modalIds.some((id) => getModalData(id)?.visible),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [modalIds, key],
-  );
+  const dimmed = useActiveModalCount(key);
 
   return (
     <div
