@@ -80,8 +80,8 @@ export const ModalContextProvider = memo(
         ForegroundComponent: ForegroundComponent || FallbackForegroundFrame,
         TitleComponent: TitleComponent || FallbackTitle,
         SubtitleComponent: SubtitleComponent || FallbackSubtitle,
-        ContentComponent: ContentComponent || FallbackContent,
-        FooterComponent: FooterComponent || FallbackFooter,
+        ContentComponent: memo(ContentComponent || FallbackContent),
+        FooterComponent: memo(FooterComponent || FallbackFooter),
         options: {
           duration: DEFAULT_ANIMATION_DURATION,
           backdrop: DEFAULT_BACKDROP_COLOR,

@@ -1,16 +1,10 @@
-import {
-  Fragment,
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { Fragment, memo, useCallback, useMemo, useState } from 'react';
 
 import { isFunction, isString } from '@lumy-pack/common';
 import {
   isFunctionComponent,
   isReactElement,
+  useConstant,
   useHandle,
   useMemorize,
 } from '@lumy-pack/common-react';
@@ -31,18 +25,19 @@ export const PromptInner = memo(
   <T, B>({ modal, handlers }: PromptInnerProps<T, B>) => {
     const {
       Input,
-      value: defaultValue,
+      value: receivedValue,
       disabled: checkDisabled,
-      immediate,
       title,
       subtitle,
       content,
       footer,
     } = useMemo(() => modal, [modal]);
 
-    const InputComponent = useMemorize(Input);
+    const InputComponent = useMemorize(memo(Input));
 
-    const [value, setValue] = useState<T | null>(defaultValue);
+    const defaultValue = useConstant(receivedValue);
+
+    const [value, setValue] = useState<T>(defaultValue);
 
     const { onChange, onClose, onConfirm } = useMemo(
       () => handlers,
@@ -50,13 +45,11 @@ export const PromptInner = memo(
     );
 
     const handleClose = useHandle(onClose);
-    const handleChange = useHandle(
-      (inputValue: T | null | ((prevState: T | null) => T | null)) => {
-        const input = isFunction(inputValue) ? inputValue(value) : inputValue;
-        setValue(input);
-        onChange(input);
-      },
-    );
+    const handleChange = useHandle((inputValue: T | ((prevState: T) => T)) => {
+      const input = isFunction(inputValue) ? inputValue(value) : inputValue;
+      setValue(input);
+      onChange(input);
+    });
 
     const handleConfirm = useCallback(() => {
       // NOTE: wait for the next tick to ensure the value is updated
@@ -64,13 +57,6 @@ export const PromptInner = memo(
         onConfirm();
       });
     }, [onConfirm]);
-
-    useEffect(() => {
-      if (!value || checkDisabled?.(value)) return;
-      if (immediate) {
-        onConfirm();
-      }
-    }, [value]);
 
     const disabled = useMemo(
       () => checkDisabled?.(value) || false,
@@ -108,7 +94,6 @@ export const PromptInner = memo(
 
         {InputComponent && (
           <InputComponent
-            value={value}
             defaultValue={defaultValue}
             onChange={handleChange}
             onConfirm={handleConfirm}

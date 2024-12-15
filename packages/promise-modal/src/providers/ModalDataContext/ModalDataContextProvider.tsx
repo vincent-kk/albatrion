@@ -144,6 +144,19 @@ export const ModalDataContextProvider = memo(
       updaterRef.current?.();
     }, []);
 
+    const getModalHandlers = useCallback(
+      (modalId: ManagedModal['id']) => {
+        return {
+          getModalData: () => getModalData(modalId),
+          onConfirm: () => onConfirm(modalId),
+          onClose: () => onClose(modalId),
+          onChange: (value: any) => onChange(modalId, value),
+          onDestroy: () => onDestroy(modalId),
+        };
+      },
+      [getModalData, onConfirm, onClose, onChange, onDestroy],
+    );
+
     const value = useMemo(() => {
       return {
         modalIds,
@@ -152,18 +165,20 @@ export const ModalDataContextProvider = memo(
         onConfirm,
         onClose,
         onDestroy,
+        getModalHandlers,
         setUpdater: (updater: Fn) => {
           updaterRef.current = updater;
         },
-        getModalHandlers: (modalId: ManagedModal['id']) => ({
-          getModalData: () => getModalData(modalId),
-          onConfirm: () => onConfirm(modalId),
-          onClose: () => onClose(modalId),
-          onChange: (value: any) => onChange(modalId, value),
-          onDestroy: () => onDestroy(modalId),
-        }),
       };
-    }, [modalIds, getModalData, onChange, onConfirm, onClose, onDestroy]);
+    }, [
+      modalIds,
+      getModalData,
+      getModalHandlers,
+      onChange,
+      onConfirm,
+      onClose,
+      onDestroy,
+    ]);
 
     return (
       <ModalDataContext.Provider value={value}>

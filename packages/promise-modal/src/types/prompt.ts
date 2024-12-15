@@ -5,15 +5,15 @@ import type { BaseModal, ContentComponentProps, FooterOptions } from './base';
 export type PromptFooterRender<T> = (props: {
   onConfirm: VoidFunction;
   onCancel: VoidFunction;
-  value: T | null;
+  value: T;
   onChange: SetStateFn<T>;
   disabled: boolean;
 }) => ReactNode;
 
 export interface PromptInputProps<T> {
-  value: T | null;
-  defaultValue: T | null;
-  onChange: SetStateFn<T | null>;
+  value?: T;
+  defaultValue?: T;
+  onChange: SetStateFn<T>;
   onConfirm?: VoidFunction;
 }
 
@@ -24,9 +24,8 @@ export interface PromptModal<T = Record<string, any>, B = any>
   type: 'prompt';
   content?: ReactNode | ComponentType<PromptContentProps>;
   Input: (props: PromptInputProps<T>) => ReactNode;
-  value: T | null;
-  disabled?: (value: T | null) => boolean;
-  immediate?: boolean;
+  value: T;
+  disabled?: (value: T) => boolean;
   returnOnCancel?: boolean;
-  footer?: PromptFooterRender<T | null> | FooterOptions | false;
+  footer?: PromptFooterRender<T> | FooterOptions | false;
 }
