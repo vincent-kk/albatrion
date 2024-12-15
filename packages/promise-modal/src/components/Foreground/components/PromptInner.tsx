@@ -104,13 +104,13 @@ export const PromptInner = memo(
               onCancel: handleClose,
               value,
               onChange: handleChange,
-              disable,
+              disabled,
             })
           ) : (
             <FooterComponent
               onConfirm={handleConfirm}
               onCancel={handleClose}
-              disable={disable}
+              disabled={disabled}
               confirmLabel={footer?.confirm}
               cancelLabel={footer?.cancel}
               hideConfirm={footer?.hideConfirm}

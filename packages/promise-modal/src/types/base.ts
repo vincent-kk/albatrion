@@ -26,7 +26,7 @@ export type FooterComponentProps = {
   hideConfirm?: boolean;
   cancelLabel?: string;
   hideCancel?: boolean;
-  disable?: boolean;
+  disabled?: boolean;
   onConfirm: VoidFunction;
   onCancel?: VoidFunction;
 };

@@ -7,7 +7,7 @@ export type PromptFooterRender<T> = (props: {
   onCancel: VoidFunction;
   value: T | null;
   onChange: SetStateFn<T>;
-  disable: boolean;
+  disabled: boolean;
 }) => ReactNode;
 
 export interface PromptInputProps<T> {

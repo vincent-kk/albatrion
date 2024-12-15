@@ -5,7 +5,7 @@ export const FallbackFooter = ({
   hideConfirm = false,
   cancelLabel,
   hideCancel = false,
-  disable,
+  disabled,
   onConfirm,
   onCancel,
 }: FooterComponentProps) => {
@@ -16,7 +16,7 @@ export const FallbackFooter = ({
           onClick={() => {
             onConfirm();
           }}
-          disabled={disable}
+          disabled={disabled}
         >
           {confirmLabel || '확인'}
         </button>
