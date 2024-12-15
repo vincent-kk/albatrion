@@ -1,18 +1,9 @@
-import { type ForwardedRef, forwardRef, useEffect } from 'react';
+import { type ForwardedRef, forwardRef } from 'react';
 
 import type { ModalFrameProps } from '@/promise-modal/types';
 
 export const FallbackForegroundFrame = forwardRef(
-  (
-    { modal, handlers, children }: ModalFrameProps,
-    ref: ForwardedRef<HTMLDivElement>,
-  ) => {
-    const visible = modal.visible;
-    const onDestroy = handlers.onDestroy;
-    useEffect(() => {
-      if (visible) return;
-      onDestroy();
-    }, [visible, onDestroy]);
+  ({ children }: ModalFrameProps, ref: ForwardedRef<HTMLDivElement>) => {
     return (
       <div
         ref={ref}

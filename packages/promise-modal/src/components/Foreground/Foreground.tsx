@@ -7,7 +7,7 @@ import styles from './Foreground.module.css';
 import { AlertInner, ConfirmInner, PromptInner } from './components';
 
 export const Foreground = ({ modalId }: ModalIdProps) => {
-  const { ForegroundComponent } = useModalContext();
+  const { ForegroundComponent, options } = useModalContext();
 
   const { getModalData, onChange, onConfirm, onClose, onDestroy } =
     useModalHandlers(modalId);
@@ -19,7 +19,7 @@ export const Foreground = ({ modalId }: ModalIdProps) => {
   return (
     <div
       className={cx(styles.root, {
-        [styles.active]: modal.alive,
+        [styles.active]: options?.manualDestroy ? modal.alive : modal.visible,
       })}
     >
       <ForegroundComponent

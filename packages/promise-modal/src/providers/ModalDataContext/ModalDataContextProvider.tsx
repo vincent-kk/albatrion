@@ -11,6 +11,8 @@ import {
 import { useOnMountLayout, useReference } from '@lumy-pack/common-react';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
+import { getMillisecondsFromDuration } from '@/promise-modal/helpers/getMillisecondsFromDuration';
+import { useModalOptions } from '@/promise-modal/providers';
 import type { ManagedModal, Modal } from '@/promise-modal/types';
 
 import { ModalDataContext } from './ModalDataContext';
@@ -32,6 +34,16 @@ export const ModalDataContextProvider = memo(
 
     const initiator = useRef(pathname);
     const modalIdSequence = useRef(0);
+
+    const options = useModalOptions();
+
+    const { manualDestroy, duration } = useMemo(
+      () => ({
+        manualDestroy: options.manualDestroy,
+        duration: getMillisecondsFromDuration(options.duration),
+      }),
+      [options],
+    );
 
     useOnMountLayout(() => {
       for (const data of ModalManager.prerender) {
@@ -100,6 +112,14 @@ export const ModalDataContextProvider = memo(
       }
     }, []);
 
+    const onDestroy = useCallback((modalId: ManagedModal['id']) => {
+      const modal = modalDictionary.current.get(modalId);
+      if (!modal) return;
+      modal.alive = false;
+      modalDictionary.current.set(modalId, modal);
+      updaterRef.current?.();
+    }, []);
+
     const onConfirm = useCallback(
       (modalId: ManagedModal['id']) => {
         const modal = modalDictionary.current.get(modalId);
@@ -112,8 +132,13 @@ export const ModalDataContextProvider = memo(
           modal.resolve(modal.value);
         }
         hideModal(modalId);
+
+        if (!manualDestroy)
+          setTimeout(() => {
+            onDestroy(modalId);
+          }, duration);
       },
-      [hideModal],
+      [manualDestroy, duration, onDestroy, hideModal],
     );
 
     const onClose = useCallback(
@@ -125,24 +150,18 @@ export const ModalDataContextProvider = memo(
         } else if (modal.type === 'confirm') {
           modal.resolve(false);
         } else if (modal.type === 'prompt') {
-          if (modal.returnOnCancel) {
-            modal.resolve(modal.value);
-          } else {
-            modal.resolve(null);
-          }
+          if (modal.returnOnCancel) modal.resolve(modal.value);
+          else modal.resolve(null);
         }
         hideModal(modalId);
-      },
-      [hideModal],
-    );
 
-    const onDestroy = useCallback((modalId: ManagedModal['id']) => {
-      const modal = modalDictionary.current.get(modalId);
-      if (!modal) return;
-      modal.alive = false;
-      modalDictionary.current.set(modalId, modal);
-      updaterRef.current?.();
-    }, []);
+        if (!manualDestroy)
+          setTimeout(() => {
+            onDestroy(modalId);
+          }, duration);
+      },
+      [manualDestroy, duration, onDestroy, hideModal],
+    );
 
     const getModalHandlers = useCallback(
       (modalId: ManagedModal['id']) => {

@@ -44,6 +44,10 @@ interface ModalContextProviderProps {
     duration?: `${number}ms` | `${number}s`;
     /** Modal backdrop color */
     backdrop?: Color;
+    /** Whether to destroy the modal manually */
+    manualDestroy?: boolean;
+    /** Whether to close the modal when the backdrop is clicked */
+    closeOnBackdropClick?: boolean;
   };
   usePathname?: () => { pathname: string };
 }
