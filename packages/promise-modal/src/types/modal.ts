@@ -21,14 +21,20 @@ export type ManagedModal = ManagedEntity & Modal;
 
 export type UniversalModalProps = {
   modal: ManagedModal;
-  handlers: Omit<ModalHandlers, 'getModalData'>;
+  handlers: Omit<ModalHandlers, 'getModalData'> & {
+    onChangeOrder: Fn;
+  };
 };
 
 export type ModalFrameProps = PropsWithChildren<UniversalModalProps>;
 
-export type ModalIdProps = {
+export interface ModalIdProps {
   modalId: ManagedModal['id'];
-};
+}
+
+export interface ModalLayerProps extends ModalIdProps {
+  onChangeOrder: Fn;
+}
 
 export interface ModalHandlersWithId {
   onConfirm: (modalId: ManagedModal['id']) => void;

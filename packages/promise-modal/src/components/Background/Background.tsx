@@ -3,11 +3,11 @@ import { type MouseEvent, useCallback } from 'react';
 import cx from 'clsx';
 
 import { useModalContext, useModalHandlers } from '@/promise-modal/providers';
-import type { ModalIdProps } from '@/promise-modal/types';
+import type { ModalLayerProps } from '@/promise-modal/types';
 
 import styles from './Background.module.css';
 
-export const Background = ({ modalId }: ModalIdProps) => {
+export const Background = ({ modalId, onChangeOrder }: ModalLayerProps) => {
   const { BackgroundComponent, options } = useModalContext();
   const { getModalData, onClose, onChange, onConfirm, onDestroy } =
     useModalHandlers(modalId);
@@ -37,10 +37,11 @@ export const Background = ({ modalId }: ModalIdProps) => {
         <BackgroundComponent
           modal={modal}
           handlers={{
-            onChange: onChange,
-            onConfirm: onConfirm,
-            onClose: onClose,
-            onDestroy: onDestroy,
+            onChange,
+            onConfirm,
+            onClose,
+            onDestroy,
+            onChangeOrder,
           }}
         />
       )}

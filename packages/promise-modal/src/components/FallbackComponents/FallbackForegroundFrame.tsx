@@ -7,7 +7,10 @@ const MAX_MODAL_COUNT = 5;
 const MAX_MODAL_LEVEL = 3;
 
 export const FallbackForegroundFrame = forwardRef(
-  ({ modal, children }: ModalFrameProps, ref: ForwardedRef<HTMLDivElement>) => {
+  (
+    { modal, handlers, children }: ModalFrameProps,
+    ref: ForwardedRef<HTMLDivElement>,
+  ) => {
     const activeCount = useActiveModalCount();
     const [level, offset] = useMemo(() => {
       const stacked = activeCount > 1;
@@ -21,6 +24,7 @@ export const FallbackForegroundFrame = forwardRef(
     return (
       <div
         ref={ref}
+        onClick={handlers.onChangeOrder}
         style={{
           display: 'flex',
           flexDirection: 'column',

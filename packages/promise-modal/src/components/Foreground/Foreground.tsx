@@ -1,12 +1,12 @@
 import cx from 'clsx';
 
 import { useModalContext, useModalHandlers } from '@/promise-modal/providers';
-import type { ModalIdProps } from '@/promise-modal/types';
+import type { ModalLayerProps } from '@/promise-modal/types';
 
 import styles from './Foreground.module.css';
 import { AlertInner, ConfirmInner, PromptInner } from './components';
 
-export const Foreground = ({ modalId }: ModalIdProps) => {
+export const Foreground = ({ modalId, onChangeOrder }: ModalLayerProps) => {
   const { ForegroundComponent, options } = useModalContext();
 
   const { getModalData, onChange, onConfirm, onClose, onDestroy } =
@@ -29,6 +29,7 @@ export const Foreground = ({ modalId }: ModalIdProps) => {
           onConfirm,
           onClose,
           onDestroy,
+          onChangeOrder,
         }}
       >
         {modal.type === 'alert' && (
