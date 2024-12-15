@@ -8,6 +8,6 @@
   pointer-events: none;
 }
 
-.root.active {
+.root.clickable {
   pointer-events: all !important;
 }

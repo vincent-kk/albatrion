@@ -89,6 +89,8 @@ export const ModalContextProvider = memo(
         options: {
           duration: DEFAULT_ANIMATION_DURATION,
           backdrop: DEFAULT_BACKDROP_COLOR,
+          closeOnBackdropClick: true,
+          manualDestroy: false,
           ...options,
         } satisfies ModalContextProviderProps['options'],
       }),

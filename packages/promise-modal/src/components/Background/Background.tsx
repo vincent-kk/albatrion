@@ -8,26 +8,28 @@ import type { ModalIdProps } from '@/promise-modal/types';
 import styles from './Background.module.css';
 
 export const Background = ({ modalId }: ModalIdProps) => {
-  const { BackgroundComponent } = useModalContext();
+  const { BackgroundComponent, options } = useModalContext();
   const { getModalData, onClose, onChange, onConfirm, onDestroy } =
     useModalHandlers(modalId);
 
+  const modal = getModalData();
+
+  const backdropClickable = options.closeOnBackdropClick && modal?.visible;
+
   const handleClose = useCallback(
     (event: MouseEvent) => {
-      onClose();
+      if (backdropClickable) onClose();
       event.stopPropagation();
     },
-    [onClose],
+    [onClose, backdropClickable],
   );
-
-  const modal = getModalData();
 
   if (!modal) return null;
 
   return (
     <div
       className={cx(styles.root, {
-        [styles.active]: modal.visible,
+        [styles.clickable]: backdropClickable,
       })}
       onClick={handleClose}
     >
