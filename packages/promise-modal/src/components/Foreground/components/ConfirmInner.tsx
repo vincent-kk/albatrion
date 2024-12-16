@@ -7,15 +7,12 @@ import {
   useHandle,
 } from '@lumy-pack/common-react';
 
+import type { ConfirmNode } from '@/promise-modal/core';
 import { useModalContext } from '@/promise-modal/providers';
-import type {
-  ConfirmModal,
-  ManagedEntity,
-  ModalHandlers,
-} from '@/promise-modal/types';
+import type { ModalHandlers } from '@/promise-modal/types';
 
 interface ConfirmInnerProps<B> {
-  modal: ConfirmModal<B> & ManagedEntity;
+  modal: ConfirmNode<B>;
   handlers: Pick<ModalHandlers, 'onConfirm' | 'onClose'>;
 }
 

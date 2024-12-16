@@ -4,19 +4,15 @@ import { isFunction, isString } from '@lumy-pack/common';
 import {
   isFunctionComponent,
   isReactElement,
-  useConstant,
   useHandle,
 } from '@lumy-pack/common-react';
 
+import type { PromptNode } from '@/promise-modal/core';
 import { useModalContext } from '@/promise-modal/providers';
-import type {
-  ManagedEntity,
-  ModalHandlers,
-  PromptModal,
-} from '@/promise-modal/types';
+import type { ModalHandlers } from '@/promise-modal/types';
 
 interface PromptInnerProps<T, B> {
-  modal: PromptModal<T, B> & ManagedEntity;
+  modal: PromptNode<T, B>;
   handlers: Pick<ModalHandlers, 'onChange' | 'onClose' | 'onConfirm'>;
 }
 
@@ -24,7 +20,7 @@ export const PromptInner = memo(
   <T, B>({ modal, handlers }: PromptInnerProps<T, B>) => {
     const {
       Input,
-      value: receivedValue,
+      defaultValue,
       disabled: checkDisabled,
       title,
       subtitle,
@@ -38,9 +34,7 @@ export const PromptInner = memo(
       [modal],
     );
 
-    const defaultValue = useConstant(receivedValue);
-
-    const [value, setValue] = useState<T>(defaultValue);
+    const [value, setValue] = useState<T | undefined>(defaultValue);
 
     const { onChange, onClose, onConfirm } = useMemo(
       () => handlers,
@@ -48,11 +42,13 @@ export const PromptInner = memo(
     );
 
     const handleClose = useHandle(onClose);
-    const handleChange = useHandle((inputValue: T | ((prevState: T) => T)) => {
-      const input = isFunction(inputValue) ? inputValue(value) : inputValue;
-      setValue(input);
-      onChange(input);
-    });
+    const handleChange = useHandle(
+      (inputValue?: T | ((prevState: T | undefined) => T | undefined)) => {
+        const input = isFunction(inputValue) ? inputValue(value) : inputValue;
+        setValue(input);
+        onChange(input);
+      },
+    );
 
     const handleConfirm = useCallback(() => {
       // NOTE: wait for the next tick to ensure the value is updated
@@ -62,7 +58,7 @@ export const PromptInner = memo(
     }, [onConfirm]);
 
     const disabled = useMemo(
-      () => checkDisabled?.(value) || false,
+      () => (value ? !!checkDisabled?.(value) : false),
       [checkDisabled, value],
     );
 
