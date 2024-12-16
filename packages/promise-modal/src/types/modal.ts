@@ -11,13 +11,10 @@ export type Modal<T = any, B = any> =
 
 export type ManagedEntity = {
   id: number;
-  alive: boolean;
-  visible: boolean;
   initiator: string;
-  subscribe: (listener: Fn) => Fn;
 };
 
-export type ManagedModal = ManagedEntity & Modal;
+export type ManagedModal<T = any, B = any> = ManagedEntity & Modal<T, B>;
 
 export type UniversalModalProps = {
   modal: ManagedModal;

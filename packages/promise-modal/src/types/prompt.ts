@@ -19,12 +19,11 @@ export interface PromptInputProps<T> {
 
 export type PromptContentProps = ContentComponentProps;
 
-export interface PromptModal<T = Record<string, any>, B = any>
-  extends BaseModal<T, B> {
+export interface PromptModal<T = any, B = any> extends BaseModal<T, B> {
   type: 'prompt';
   content?: ReactNode | ComponentType<PromptContentProps>;
+  defaultValue?: T;
   Input: (props: PromptInputProps<T>) => ReactNode;
-  value: T;
   disabled?: (value: T) => boolean;
   returnOnCancel?: boolean;
   footer?: PromptFooterRender<T> | FooterOptions | false;

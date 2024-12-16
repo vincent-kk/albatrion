@@ -5,7 +5,7 @@ export {
   useModalBackdrop,
 } from './providers';
 
-export { alert, confirm, prompt } from './core/handler';
+export { alert, confirm, prompt } from './core';
 
 export type {
   ModalFrameProps,
