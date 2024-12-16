@@ -9,5 +9,5 @@ export {
 export {
   ModalDataContextProvider,
   useModalDataContext,
-  useModalHandlers,
+  useModal,
 } from './ModalDataContext';

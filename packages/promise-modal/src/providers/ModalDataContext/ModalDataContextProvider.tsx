@@ -90,7 +90,7 @@ export const ModalDataContextProvider = memo(
       initiator.current = pathname;
     }, [modalIdsRef, pathname]);
 
-    const getModalData = useCallback((modalId: ModalNode['id']) => {
+    const getModalNode = useCallback((modalId: ModalNode['id']) => {
       return modalDictionary.current.get(modalId);
     }, []);
 
@@ -142,36 +142,34 @@ export const ModalDataContextProvider = memo(
       [hideModal],
     );
 
-    const getModalHandlers = useCallback(
-      (modalId: ModalNode['id']) => {
-        return {
-          getModalData: () => getModalData(modalId),
-          onConfirm: () => onConfirm(modalId),
-          onClose: () => onClose(modalId),
-          onChange: (value: any) => onChange(modalId, value),
-          onDestroy: () => onDestroy(modalId),
-        };
-      },
-      [getModalData, onConfirm, onClose, onChange, onDestroy],
+    const getModal = useCallback(
+      (modalId: ModalNode['id']) => ({
+        modal: getModalNode(modalId),
+        onConfirm: () => onConfirm(modalId),
+        onClose: () => onClose(modalId),
+        onChange: (value: any) => onChange(modalId, value),
+        onDestroy: () => onDestroy(modalId),
+      }),
+      [getModalNode, onConfirm, onClose, onChange, onDestroy],
     );
 
     const value = useMemo(() => {
       return {
         modalIds,
-        getModalData,
+        getModalNode,
         onChange,
         onConfirm,
         onClose,
         onDestroy,
-        getModalHandlers,
+        getModal,
         setUpdater: (updater: Fn) => {
           updaterRef.current = updater;
         },
       };
     }, [
       modalIds,
-      getModalData,
-      getModalHandlers,
+      getModal,
+      getModalNode,
       onChange,
       onConfirm,
       onClose,

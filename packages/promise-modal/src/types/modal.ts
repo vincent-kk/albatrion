@@ -20,7 +20,7 @@ export type ManagedModal<T = any, B = any> = ManagedEntity & Modal<T, B>;
 
 export type UniversalModalProps = {
   modal: ModalNode;
-  handlers: Omit<ModalHandlers, 'getModalData'> & {
+  handlers: Omit<ModalActions, 'modal'> & {
     onChangeOrder: Fn;
   };
 };
@@ -42,10 +42,10 @@ export interface ModalHandlersWithId {
   onDestroy: (modalId: ModalNode['id']) => void;
 }
 
-export type ModalHandlers = {
+export type ModalActions = {
   onConfirm: () => void;
   onClose: () => void;
   onChange: (value: any) => void;
   onDestroy: () => void;
-  getModalData: () => ModalNode | undefined;
+  modal: ModalNode | undefined;
 };

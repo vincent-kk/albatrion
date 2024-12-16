@@ -5,7 +5,7 @@ import { useHandle } from '@lumy-pack/common-react';
 import { Background } from '@/promise-modal/components/Background';
 import { Foreground } from '@/promise-modal/components/Foreground';
 import { useSubscribeModal } from '@/promise-modal/hooks/useSubscribeModal';
-import { useModalHandlers } from '@/promise-modal/providers';
+import { useModal } from '@/promise-modal/providers';
 import type { ModalIdProps } from '@/promise-modal/types';
 
 import styles from './Presenter.module.css';
@@ -14,8 +14,8 @@ let zIndex = 1;
 
 export const Presenter = memo(({ modalId }: ModalIdProps) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { getModalData } = useModalHandlers(modalId);
-  useSubscribeModal(getModalData());
+  const { modal } = useModal(modalId);
+  useSubscribeModal(modal);
   const handleChangeOrder = useHandle(() => {
     if (ref.current) {
       ref.current.style.zIndex = `${zIndex++}`;
