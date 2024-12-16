@@ -1,5 +1,4 @@
 import type { StorybookConfig } from '@storybook/react-vite';
-
 import { dirname, join, resolve } from 'path';
 import { mergeConfig } from 'vite';
 
@@ -40,7 +39,9 @@ const config: StorybookConfig = {
     return mergeConfig(config, {
       resolve: {
         alias: {
+          ...(config.resolve?.alias || {}),
           '@/schema-form': resolve(__dirname, '../src'),
+          sass: 'sass-embedded',
         },
       },
     });
