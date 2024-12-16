@@ -43,9 +43,9 @@ export interface ModalHandlersWithId {
 }
 
 export type ModalActions = {
+  modal: ModalNode | undefined;
   onConfirm: () => void;
   onClose: () => void;
   onChange: (value: any) => void;
   onDestroy: () => void;
-  modal: ModalNode | undefined;
 };
