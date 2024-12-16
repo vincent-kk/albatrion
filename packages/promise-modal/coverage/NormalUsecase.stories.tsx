@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from 'react';
 
-import { alert, confirm, prompt } from '../src';
+import { ModalProvider, alert, confirm, prompt } from '../src';
 
 export default {
   title: 'PromiseModal/NormalUsecase',
+  decorators: [
+    (Story) => (
+      <ModalProvider>
+        <Story />
+      </ModalProvider>
+    ),
+  ],
 };
 
 export const NormalUsecase = () => {
