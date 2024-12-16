@@ -1,2 +1,2 @@
 export { ModalDataContextProvider } from './ModalDataContextProvider';
-export { useModalDataContext, useModalHandlers } from './useModalDataContext';
+export { useModalDataContext, useModal } from './useModalDataContext';

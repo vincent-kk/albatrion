@@ -1,5 +1,7 @@
 import { useContext } from 'react';
 
+import { getMillisecondsFromDuration } from '@/promise-modal/helpers/getMillisecondsFromDuration';
+
 import { ModalContext } from './ModalContext';
 
 export const useModalContext = () => useContext(ModalContext);
@@ -11,7 +13,7 @@ export const useModalOptions = () => {
 
 export const useModalDuration = () => {
   const { duration } = useModalOptions();
-  return duration;
+  return { duration, milliseconds: getMillisecondsFromDuration(duration) };
 };
 
 export const useModalBackdrop = () => {

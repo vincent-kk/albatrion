@@ -3,13 +3,13 @@ import { useMemo } from 'react';
 import { useModalDataContext } from '../providers';
 
 export const useActiveModalCount = (tick: string | number = 0) => {
-  const { modalIds, getModalData } = useModalDataContext();
+  const { modalIds, getModalNode } = useModalDataContext();
   return useMemo(() => {
     let count = 0;
     for (const id of modalIds) {
-      if (getModalData(id)?.visible) count++;
+      if (getModalNode(id)?.visible) count++;
     }
     return count;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getModalData, modalIds, tick]);
+  }, [getModalNode, modalIds, tick]);
 };

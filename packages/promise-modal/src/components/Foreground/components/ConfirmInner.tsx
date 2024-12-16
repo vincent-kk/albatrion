@@ -9,11 +9,11 @@ import {
 
 import type { ConfirmNode } from '@/promise-modal/core';
 import { useModalContext } from '@/promise-modal/providers';
-import type { ModalHandlers } from '@/promise-modal/types';
+import type { ModalActions } from '@/promise-modal/types';
 
 interface ConfirmInnerProps<B> {
   modal: ConfirmNode<B>;
-  handlers: Pick<ModalHandlers, 'onConfirm' | 'onClose'>;
+  handlers: Pick<ModalActions, 'onConfirm' | 'onClose'>;
 }
 
 export const ConfirmInner = memo(

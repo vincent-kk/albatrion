@@ -5,6 +5,9 @@ export {
   useModalBackdrop,
 } from './providers';
 
+export { useSubscribeModal } from './hooks/useSubscribeModal';
+export { useDestroyAfter } from './hooks/useDestroyAfter';
+
 export { alert, confirm, prompt } from './core';
 
 export type {

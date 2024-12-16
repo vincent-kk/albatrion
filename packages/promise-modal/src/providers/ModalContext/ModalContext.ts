@@ -25,7 +25,7 @@ export interface ModalContextProps {
   ContentComponent: ComponentType<PropsWithChildren>;
   FooterComponent: ComponentType<FooterComponentProps>;
   options: {
-    duration: `${number}ms` | `${number}s`;
+    duration: Duration;
     backdrop: Color;
     manualDestroy?: boolean;
     closeOnBackdropClick?: boolean;
@@ -41,5 +41,7 @@ export const ModalContext = createContext<ModalContextProps>({
   options: {
     duration: DEFAULT_ANIMATION_DURATION,
     backdrop: DEFAULT_BACKDROP_COLOR,
+    manualDestroy: false,
+    closeOnBackdropClick: true,
   },
 });

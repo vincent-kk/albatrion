@@ -9,11 +9,11 @@ import {
 
 import type { AlertNode } from '@/promise-modal/core';
 import { useModalContext } from '@/promise-modal/providers';
-import type { ModalHandlers } from '@/promise-modal/types';
+import type { ModalActions } from '@/promise-modal/types';
 
 interface AlertInnerProps<B> {
   modal: AlertNode<B>;
-  handlers: Pick<ModalHandlers, 'onConfirm'>;
+  handlers: Pick<ModalActions, 'onConfirm'>;
 }
 
 export const AlertInner = memo(

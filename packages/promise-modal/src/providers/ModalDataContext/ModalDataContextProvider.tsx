@@ -37,20 +37,22 @@ export const ModalDataContextProvider = memo(
 
     const options = useModalOptions();
 
-    const { manualDestroy, duration } = useMemo(
-      () => ({
-        manualDestroy: options.manualDestroy,
-        duration: getMillisecondsFromDuration(options.duration),
-      }),
+    const duration = useMemo(
+      () => getMillisecondsFromDuration(options.duration),
       [options],
     );
 
     useOnMountLayout(() => {
+      const { manualDestroy, closeOnBackdropClick } = options;
+
       for (const data of ModalManager.prerender) {
         const modal = nodeFactory({
+          ...data,
           id: modalIdSequence.current++,
           initiator: initiator.current,
-          ...data,
+          manualDestroy: data.manualDestroy || manualDestroy,
+          closeOnBackdropClick:
+            data.closeOnBackdropClick || closeOnBackdropClick,
         });
         modalDictionary.current.set(modal.id, modal);
         setModalIds((ids) => [...ids, modal.id]);
@@ -58,9 +60,12 @@ export const ModalDataContextProvider = memo(
 
       ModalManager.setupOpen((data: Modal) => {
         const modal = nodeFactory({
+          ...data,
           id: modalIdSequence.current++,
           initiator: initiator.current,
-          ...data,
+          manualDestroy: data.manualDestroy || manualDestroy,
+          closeOnBackdropClick:
+            data.closeOnBackdropClick || closeOnBackdropClick,
         });
         modalDictionary.current.set(modal.id, modal);
         setModalIds((ids) => {
@@ -85,7 +90,7 @@ export const ModalDataContextProvider = memo(
       initiator.current = pathname;
     }, [modalIdsRef, pathname]);
 
-    const getModalData = useCallback((modalId: ModalNode['id']) => {
+    const getModalNode = useCallback((modalId: ModalNode['id']) => {
       return modalDictionary.current.get(modalId);
     }, []);
 
@@ -103,12 +108,12 @@ export const ModalDataContextProvider = memo(
         if (!modal) return;
         modal.onHide();
         updaterRef.current?.();
-        if (!manualDestroy || !modal.manualDestroy)
+        if (!modal.manualDestroy)
           setTimeout(() => {
             modal.onDestroy();
           }, duration);
       },
-      [manualDestroy, duration],
+      [duration],
     );
 
     const onChange = useCallback((modalId: ModalNode['id'], value: any) => {
@@ -137,36 +142,34 @@ export const ModalDataContextProvider = memo(
       [hideModal],
     );
 
-    const getModalHandlers = useCallback(
-      (modalId: ModalNode['id']) => {
-        return {
-          getModalData: () => getModalData(modalId),
-          onConfirm: () => onConfirm(modalId),
-          onClose: () => onClose(modalId),
-          onChange: (value: any) => onChange(modalId, value),
-          onDestroy: () => onDestroy(modalId),
-        };
-      },
-      [getModalData, onConfirm, onClose, onChange, onDestroy],
+    const getModal = useCallback(
+      (modalId: ModalNode['id']) => ({
+        modal: getModalNode(modalId),
+        onConfirm: () => onConfirm(modalId),
+        onClose: () => onClose(modalId),
+        onChange: (value: any) => onChange(modalId, value),
+        onDestroy: () => onDestroy(modalId),
+      }),
+      [getModalNode, onConfirm, onClose, onChange, onDestroy],
     );
 
     const value = useMemo(() => {
       return {
         modalIds,
-        getModalData,
+        getModalNode,
         onChange,
         onConfirm,
         onClose,
         onDestroy,
-        getModalHandlers,
+        getModal,
         setUpdater: (updater: Fn) => {
           updaterRef.current = updater;
         },
       };
     }, [
       modalIds,
-      getModalData,
-      getModalHandlers,
+      getModal,
+      getModalNode,
       onChange,
       onConfirm,
       onClose,

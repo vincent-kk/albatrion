@@ -9,11 +9,11 @@ import {
 
 import type { PromptNode } from '@/promise-modal/core';
 import { useModalContext } from '@/promise-modal/providers';
-import type { ModalHandlers } from '@/promise-modal/types';
+import type { ModalActions } from '@/promise-modal/types';
 
 interface PromptInnerProps<T, B> {
   modal: PromptNode<T, B>;
-  handlers: Pick<ModalHandlers, 'onChange' | 'onClose' | 'onConfirm'>;
+  handlers: Pick<ModalActions, 'onChange' | 'onClose' | 'onConfirm'>;
 }
 
 export const PromptInner = memo(

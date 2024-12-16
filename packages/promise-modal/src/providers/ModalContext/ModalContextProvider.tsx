@@ -41,7 +41,7 @@ interface ModalContextProviderProps {
   FooterComponent?: ComponentType<FooterComponentProps>;
   options?: {
     /** Modal transition time(ms, s) */
-    duration?: `${number}ms` | `${number}s`;
+    duration?: Duration;
     /** Modal backdrop color */
     backdrop?: Color;
     /** Whether to destroy the modal manually */

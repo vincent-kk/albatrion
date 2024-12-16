@@ -51,7 +51,7 @@ export const prompt = <T, B = any>({
             onChange,
             onConfirm,
           }),
-        value: defaultValue,
+        defaultValue,
         disabled,
         returnOnCancel,
         background,

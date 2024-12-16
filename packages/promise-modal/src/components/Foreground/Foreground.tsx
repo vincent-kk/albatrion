@@ -1,6 +1,6 @@
 import cx from 'clsx';
 
-import { useModalContext, useModalHandlers } from '@/promise-modal/providers';
+import { useModal, useModalContext } from '@/promise-modal/providers';
 import type { ModalLayerProps } from '@/promise-modal/types';
 
 import styles from './Foreground.module.css';
@@ -9,10 +9,7 @@ import { AlertInner, ConfirmInner, PromptInner } from './components';
 export const Foreground = ({ modalId, onChangeOrder }: ModalLayerProps) => {
   const { ForegroundComponent, options } = useModalContext();
 
-  const { getModalData, onChange, onConfirm, onClose, onDestroy } =
-    useModalHandlers(modalId);
-
-  const modal = getModalData();
+  const { modal, onChange, onConfirm, onClose, onDestroy } = useModal(modalId);
 
   if (!modal) return null;
 

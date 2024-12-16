@@ -6,7 +6,7 @@ import { ModalDataContext } from './ModalDataContext';
 
 export const useModalDataContext = () => useContext(ModalDataContext);
 
-export const useModalHandlers = (id: ManagedModal['id']) => {
-  const { getModalHandlers } = useModalDataContext();
-  return useMemo(() => getModalHandlers(id), [id, getModalHandlers]);
+export const useModal = (id: ManagedModal['id']) => {
+  const { getModal } = useModalDataContext();
+  return useMemo(() => getModal(id), [id, getModal]);
 };

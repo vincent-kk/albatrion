@@ -67,7 +67,9 @@ export abstract class BaseNode<T, B> {
     this.#resolve(result);
   }
   onDestroy() {
+    const needPublish = this.#alive === true;
     this.#alive = false;
+    if (this.manualDestroy && needPublish) this.publish();
   }
   onShow() {
     const needPublish = this.#visible === false;
