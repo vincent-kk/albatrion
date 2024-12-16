@@ -28,7 +28,7 @@ export const ModalManager = {
   open(modal: Modal) {
     openModalRef.current(modal);
   },
-  setup(open: (modal: Modal) => void) {
+  setupOpen(open: (modal: Modal) => void) {
     openModalRef.current = open;
   },
   anchor(name: string, label = 'modal-anchor'): HTMLElement {

@@ -56,7 +56,7 @@ export const ModalDataContextProvider = memo(
         setModalIds((ids) => [...ids, modal.id]);
       }
 
-      ModalManager.setup((data: Modal) => {
+      ModalManager.setupOpen((data: Modal) => {
         const modal = nodeFactory({
           id: modalIdSequence.current++,
           initiator: initiator.current,
