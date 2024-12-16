@@ -8,7 +8,7 @@ import type {
   ManagedEntity,
 } from '@/promise-modal/types';
 
-import { BaseNode } from './BaseNode';
+import { BaseNode } from './AbstractBaseNode';
 
 type ConfirmNodeProps<B> = ConfirmModal<B> & ManagedEntity;
 

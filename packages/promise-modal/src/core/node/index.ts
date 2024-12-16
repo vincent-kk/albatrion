@@ -1,2 +1,2 @@
 export { nodeFactory } from './nodeFactory';
-export type { ModalNode } from './type';
+export type { ModalNode, AlertNode, ConfirmNode, PromptNode } from './type';

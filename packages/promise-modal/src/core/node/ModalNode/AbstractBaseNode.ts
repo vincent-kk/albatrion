@@ -61,7 +61,7 @@ export abstract class BaseNode<T, B> {
     };
   }
   publish() {
-    this.#listeners.forEach((listener) => listener());
+    for (const listener of this.#listeners) listener();
   }
   protected resolve(result: T | null) {
     this.#resolve(result);

@@ -2,16 +2,13 @@ import { createContext } from 'react';
 
 import { undefinedFunction } from '@lumy-pack/common';
 
-import type {
-  ManagedModal,
-  ModalHandlers,
-  ModalHandlersWithId,
-} from '@/promise-modal/types';
+import type { ModalNode } from '@/promise-modal/core';
+import type { ModalHandlers, ModalHandlersWithId } from '@/promise-modal/types';
 
 export interface ModalDataContextProps extends ModalHandlersWithId {
-  modalIds: ManagedModal['id'][];
-  getModalData: Fn<[id: ManagedModal['id']], ManagedModal | undefined>;
-  getModalHandlers: Fn<[id: ManagedModal['id']], ModalHandlers>;
+  modalIds: ModalNode['id'][];
+  getModalData: Fn<[id: ModalNode['id']], ModalNode | undefined>;
+  getModalHandlers: Fn<[id: ModalNode['id']], ModalHandlers>;
   setUpdater: Fn<[updater: Fn]>;
 }
 

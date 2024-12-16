@@ -9,7 +9,7 @@ import type {
   PromptModal,
 } from '@/promise-modal/types';
 
-import { BaseNode } from './BaseNode';
+import { BaseNode } from './AbstractBaseNode';
 
 type PromptNodeProps<T, B> = PromptModal<T, B> & ManagedEntity;
 
