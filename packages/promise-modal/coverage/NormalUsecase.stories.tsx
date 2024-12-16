@@ -11,6 +11,8 @@ export const NormalUsecase = () => {
     alert({
       title: 'Hello, world!',
       content: 'This is a test alert.',
+    }).then((result) => {
+      console.log(result);
     });
   };
 
@@ -18,6 +20,8 @@ export const NormalUsecase = () => {
     confirm({
       title: 'Hello, world!',
       content: 'This is a test confirm.',
+    }).then((result) => {
+      console.log(result);
     });
   };
 
@@ -53,6 +57,8 @@ export const MultiModalUsecase = () => {
     alert({
       title: 'Hello, world!',
       content: 'This is a test alert.',
+    }).then((result) => {
+      console.log(result);
     });
   };
 
@@ -60,6 +66,8 @@ export const MultiModalUsecase = () => {
     confirm({
       title: 'Hello, world!',
       content: 'This is a test confirm.',
+    }).then((result) => {
+      console.log(result);
     });
   };
 
@@ -90,6 +98,19 @@ export const MultiModalUsecase = () => {
           content: 'This is a test alert.',
         });
       }
+      prompt({
+        title: 'Hello, world!',
+        content: 'This is a test prompt.',
+        Input: ({ defaultValue, onChange }) => {
+          const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            onChange(e.target.value);
+          };
+          return <input defaultValue={defaultValue} onChange={handleChange} />;
+        },
+        defaultValue: 'value',
+      }).then((value) => {
+        setValue(value);
+      });
     }, 250);
   }, []);
 

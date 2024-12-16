@@ -1,5 +1,7 @@
 import type { PropsWithChildren } from 'react';
 
+import type { ModalNode } from '@/promise-modal/core';
+
 import type { AlertModal } from './alert';
 import type { ConfirmModal } from './confirm';
 import type { PromptModal } from './prompt';
@@ -11,16 +13,13 @@ export type Modal<T = any, B = any> =
 
 export type ManagedEntity = {
   id: number;
-  alive: boolean;
-  visible: boolean;
   initiator: string;
-  subscribe: (listener: Fn) => Fn;
 };
 
-export type ManagedModal = ManagedEntity & Modal;
+export type ManagedModal<T = any, B = any> = ManagedEntity & Modal<T, B>;
 
 export type UniversalModalProps = {
-  modal: ManagedModal;
+  modal: ModalNode;
   handlers: Omit<ModalHandlers, 'getModalData'> & {
     onChangeOrder: Fn;
   };
@@ -29,7 +28,7 @@ export type UniversalModalProps = {
 export type ModalFrameProps = PropsWithChildren<UniversalModalProps>;
 
 export interface ModalIdProps {
-  modalId: ManagedModal['id'];
+  modalId: ModalNode['id'];
 }
 
 export interface ModalLayerProps extends ModalIdProps {
@@ -37,10 +36,10 @@ export interface ModalLayerProps extends ModalIdProps {
 }
 
 export interface ModalHandlersWithId {
-  onConfirm: (modalId: ManagedModal['id']) => void;
-  onClose: (modalId: ManagedModal['id']) => void;
-  onChange: (modalId: ManagedModal['id'], value: any) => void;
-  onDestroy: (modalId: ManagedModal['id']) => void;
+  onConfirm: (modalId: ModalNode['id']) => void;
+  onClose: (modalId: ModalNode['id']) => void;
+  onChange: (modalId: ModalNode['id'], value: any) => void;
+  onDestroy: (modalId: ModalNode['id']) => void;
 }
 
 export type ModalHandlers = {
@@ -48,5 +47,5 @@ export type ModalHandlers = {
   onClose: () => void;
   onChange: (value: any) => void;
   onDestroy: () => void;
-  getModalData: () => ManagedModal | undefined;
+  getModalData: () => ModalNode | undefined;
 };

@@ -7,15 +7,12 @@ import {
   useHandle,
 } from '@lumy-pack/common-react';
 
+import type { AlertNode } from '@/promise-modal/core';
 import { useModalContext } from '@/promise-modal/providers';
-import type {
-  AlertModal,
-  ManagedEntity,
-  ModalHandlers,
-} from '@/promise-modal/types';
+import type { ModalHandlers } from '@/promise-modal/types';
 
 interface AlertInnerProps<B> {
-  modal: AlertModal<B> & ManagedEntity;
+  modal: AlertNode<B>;
   handlers: Pick<ModalHandlers, 'onConfirm'>;
 }
 
