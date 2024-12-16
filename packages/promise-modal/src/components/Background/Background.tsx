@@ -8,23 +8,18 @@ import type { ModalLayerProps } from '@/promise-modal/types';
 import styles from './Background.module.css';
 
 export const Background = ({ modalId, onChangeOrder }: ModalLayerProps) => {
-  const { BackgroundComponent, options } = useModalContext();
+  const { BackgroundComponent } = useModalContext();
   const { getModalData, onClose, onChange, onConfirm, onDestroy } =
     useModalHandlers(modalId);
 
   const modal = getModalData();
 
-  const closeOnBackdropClick =
-    modal?.closeOnBackdropClick &&
-    options.closeOnBackdropClick &&
-    modal?.visible;
-
   const handleClose = useCallback(
     (event: MouseEvent) => {
-      if (closeOnBackdropClick) onClose();
+      if (modal && modal.closeOnBackdropClick && modal.visible) onClose();
       event.stopPropagation();
     },
-    [closeOnBackdropClick, onClose],
+    [modal, onClose],
   );
 
   if (!modal) return null;
