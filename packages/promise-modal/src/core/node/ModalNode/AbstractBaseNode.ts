@@ -70,10 +70,14 @@ export abstract class BaseNode<T, B> {
     this.#alive = false;
   }
   onShow() {
+    const needPublish = this.#visible === false;
     this.#visible = true;
+    if (needPublish) this.publish();
   }
   onHide() {
+    const needPublish = this.#visible === true;
     this.#visible = false;
+    if (needPublish) this.publish();
   }
   abstract onClose(): void;
   abstract onConfirm(): void;

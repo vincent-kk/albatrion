@@ -102,7 +102,6 @@ export const ModalDataContextProvider = memo(
         const modal = modalDictionary.current.get(modalId);
         if (!modal) return;
         modal.onHide();
-        modal.publish();
         updaterRef.current?.();
         if (!manualDestroy || !modal.manualDestroy)
           setTimeout(() => {
