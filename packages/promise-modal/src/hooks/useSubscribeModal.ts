@@ -1,12 +1,10 @@
 import { useOnMount, useTick } from '@lumy-pack/common-react';
 
-import { useModalDataContext } from '@/promise-modal/providers';
+import type { ModalNode } from '@/promise-modal/core';
 
-export const useSubscribeModal = (modalId: number) => {
+export const useSubscribeModal = (modal?: ModalNode) => {
   const [tick, update] = useTick();
-  const { getModalData } = useModalDataContext();
   useOnMount(() => {
-    const modal = getModalData(modalId);
     if (!modal) return;
     const unsubscribe = modal.subscribe(update);
     return unsubscribe;
