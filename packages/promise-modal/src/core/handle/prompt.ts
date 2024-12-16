@@ -8,7 +8,7 @@ import type {
   PromptInputProps,
 } from '@/promise-modal/types';
 
-import { ModalManager } from '../app/ModalManager';
+import { ModalManager } from '../../app/ModalManager';
 
 interface PromptProps<T, B = any> {
   title?: ReactNode;
