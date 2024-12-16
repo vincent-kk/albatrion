@@ -61,6 +61,7 @@ export const AmataModalUsecase = () => {
         const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           onChange(e.target.value);
         };
+        console.log('defaultValue', defaultValue);
         return <Input defaultValue={defaultValue} onChange={handleChange} />;
       },
       defaultValue: 'value',

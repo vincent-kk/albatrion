@@ -1,15 +1,14 @@
 import React, {
   type ForwardedRef,
   forwardRef,
-  useEffect,
   useLayoutEffect,
   useRef,
 } from 'react';
 
 import {
   type ModalFrameProps,
+  useDestroyAfter,
   useModalDuration,
-  useSubscribeModal,
 } from '../../../src';
 // @ts-expect-error scss module
 import styles from './Foreground.module.scss';
@@ -18,9 +17,9 @@ function Foreground(
   { modal, handlers, children }: ModalFrameProps,
   ref: ForwardedRef<HTMLDivElement>,
 ) {
-  const { onClose, onDestroy } = handlers;
+  const { onClose } = handlers;
   const modalRef = useRef<HTMLDivElement>(null);
-  const { duration, milliseconds } = useModalDuration();
+  const { duration } = useModalDuration();
 
   useLayoutEffect(() => {
     let timer: NodeJS.Timeout | null = null;
@@ -41,17 +40,7 @@ function Foreground(
     };
   }, [modal.visible]);
 
-  const tick = useSubscribeModal(modal);
-
-  useEffect(() => {
-    if (!modal.visible && modal.alive) {
-      setTimeout(() => {
-        onDestroy();
-      }, milliseconds);
-    }
-  }, [milliseconds, modal, onDestroy, tick]);
-
-  console.log('modal.alive', modal.alive);
+  useDestroyAfter(modal.id, duration);
 
   return (
     <div className={styles.root}>
