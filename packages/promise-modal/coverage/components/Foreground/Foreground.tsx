@@ -14,10 +14,9 @@ import {
 import styles from './Foreground.module.scss';
 
 function Foreground(
-  { modal, handlers, children }: ModalFrameProps,
+  { id, visible, onClose, children }: ModalFrameProps,
   ref: ForwardedRef<HTMLDivElement>,
 ) {
-  const { onClose } = handlers;
   const modalRef = useRef<HTMLDivElement>(null);
   const { duration } = useModalDuration();
 
@@ -25,7 +24,7 @@ function Foreground(
     let timer: NodeJS.Timeout | null = null;
     if (modalRef?.current) {
       const { current } = modalRef;
-      if (modal.visible) {
+      if (visible) {
         timer = setTimeout(() => {
           current.classList.add(styles.visible);
         });
@@ -38,9 +37,9 @@ function Foreground(
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [modal.visible]);
+  }, [visible]);
 
-  useDestroyAfter(modal.id, duration);
+  useDestroyAfter(id, duration);
 
   return (
     <div className={styles.root}>

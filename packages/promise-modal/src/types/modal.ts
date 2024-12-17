@@ -19,14 +19,18 @@ export type ManagedEntity = {
 export type ManagedModal<T = any, B = any> = ManagedEntity & Modal<T, B>;
 
 export type UniversalModalProps = {
-  modal: ModalNode;
-  handlers: {
-    onConfirm: () => void;
-    onClose: () => void;
-    onChange: (value: any) => void;
-    onDestroy: () => void;
-    onChangeOrder: Fn;
-  };
+  id: number;
+  initiator: string;
+  type: 'alert' | 'confirm' | 'prompt';
+  alive: boolean;
+  visible: boolean;
+  manualDestroy: boolean;
+  closeOnBackdropClick: boolean;
+  onConfirm: () => void;
+  onClose: () => void;
+  onChange: (value: any) => void;
+  onDestroy: () => void;
+  onChangeOrder: Fn;
 };
 
 export type ModalFrameProps = PropsWithChildren<UniversalModalProps>;
