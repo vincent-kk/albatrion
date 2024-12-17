@@ -26,8 +26,8 @@ export const confirm = <B = any>({
   content,
   background,
   footer,
-  manualDestroy = false,
-  closeOnBackdropClick = true,
+  manualDestroy,
+  closeOnBackdropClick,
 }: ConfirmProps<B>) => {
   return new Promise<boolean>((resolve, reject) => {
     try {

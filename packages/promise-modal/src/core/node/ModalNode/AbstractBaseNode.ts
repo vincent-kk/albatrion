@@ -37,8 +37,8 @@ export abstract class BaseNode<T, B> {
     title,
     subtitle,
     background,
-    manualDestroy,
-    closeOnBackdropClick,
+    manualDestroy = false,
+    closeOnBackdropClick = true,
     resolve,
   }: BaseNodeProps<T, B>) {
     this.id = id;
