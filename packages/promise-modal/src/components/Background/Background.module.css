@@ -1,7 +1,5 @@
 .root {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: none;
   position: fixed;
   inset: 0;
   z-index: -999;
@@ -10,4 +8,14 @@
 
 .root.active {
   pointer-events: all !important;
+}
+
+.root.visible {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.root > * {
+  pointer-events: none;
 }
