@@ -1,5 +1,3 @@
-import type { PropsWithChildren } from 'react';
-
 import type { ModalNode } from '@/promise-modal/core';
 
 import type { AlertModal } from './alert';
@@ -19,7 +17,7 @@ export type ManagedEntity = {
 
 export type ManagedModal<T = any, B = any> = ManagedEntity & Modal<T, B>;
 
-export type UniversalModalProps<B> = {
+export type ModalFrameProps<B = any> = {
   id: number;
   type: 'alert' | 'confirm' | 'prompt';
   alive: boolean;
@@ -34,10 +32,6 @@ export type UniversalModalProps<B> = {
   onDestroy: () => void;
   onChangeOrder: Fn;
 };
-
-export type ModalFrameProps<B = any> = PropsWithChildren<
-  UniversalModalProps<B>
->;
 
 export interface ModalIdProps {
   modalId: ModalNode['id'];

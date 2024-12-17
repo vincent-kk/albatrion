@@ -1,4 +1,9 @@
-import { type ForwardedRef, forwardRef, useMemo } from 'react';
+import {
+  type ForwardedRef,
+  type PropsWithChildren,
+  forwardRef,
+  useMemo,
+} from 'react';
 
 import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
 import type { ModalFrameProps } from '@/promise-modal/types';
@@ -10,7 +15,7 @@ const MAX_MODAL_LEVEL = 3;
 
 export const FallbackForegroundFrame = forwardRef(
   (
-    { id, onChangeOrder, children }: ModalFrameProps,
+    { id, onChangeOrder, children }: PropsWithChildren<ModalFrameProps>,
     ref: ForwardedRef<HTMLDivElement>,
   ) => {
     const activeCount = useActiveModalCount();
