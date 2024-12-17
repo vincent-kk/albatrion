@@ -31,12 +31,13 @@ export const Background = ({ modalId, onChangeOrder }: ModalLayerProps) => {
       {BackgroundComponent && (
         <BackgroundComponent
           id={modal.id}
-          initiator={modal.initiator}
           type={modal.type}
           alive={modal.alive}
           visible={modal.visible}
+          initiator={modal.initiator}
           manualDestroy={modal.manualDestroy}
           closeOnBackdropClick={modal.closeOnBackdropClick}
+          background={modal.background}
           onChange={onChange}
           onConfirm={onConfirm}
           onClose={onClose}

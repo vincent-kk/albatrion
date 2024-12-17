@@ -3,6 +3,7 @@ import type { PropsWithChildren } from 'react';
 import type { ModalNode } from '@/promise-modal/core';
 
 import type { AlertModal } from './alert';
+import type { ModalBackground } from './background';
 import type { ConfirmModal } from './confirm';
 import type { PromptModal } from './prompt';
 
@@ -18,14 +19,15 @@ export type ManagedEntity = {
 
 export type ManagedModal<T = any, B = any> = ManagedEntity & Modal<T, B>;
 
-export type UniversalModalProps = {
+export type UniversalModalProps<B> = {
   id: number;
-  initiator: string;
   type: 'alert' | 'confirm' | 'prompt';
   alive: boolean;
   visible: boolean;
+  initiator: string;
   manualDestroy: boolean;
   closeOnBackdropClick: boolean;
+  background?: ModalBackground<B>;
   onConfirm: () => void;
   onClose: () => void;
   onChange: (value: any) => void;
@@ -33,7 +35,9 @@ export type UniversalModalProps = {
   onChangeOrder: Fn;
 };
 
-export type ModalFrameProps = PropsWithChildren<UniversalModalProps>;
+export type ModalFrameProps<B = any> = PropsWithChildren<
+  UniversalModalProps<B>
+>;
 
 export interface ModalIdProps {
   modalId: ModalNode['id'];

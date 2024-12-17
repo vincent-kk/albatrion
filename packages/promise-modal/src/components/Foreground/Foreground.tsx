@@ -27,6 +27,7 @@ export const Foreground = ({ modalId, onChangeOrder }: ModalLayerProps) => {
         initiator={modal.initiator}
         manualDestroy={modal.manualDestroy}
         closeOnBackdropClick={modal.closeOnBackdropClick}
+        background={modal.background}
         onChange={onChange}
         onConfirm={onConfirm}
         onClose={onClose}
