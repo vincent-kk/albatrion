@@ -16,8 +16,8 @@ export abstract class BaseNode<T, B> {
   readonly subtitle?: ReactNode;
   readonly background?: ModalBackground<B>;
 
-  readonly manualDestroy?: boolean;
-  readonly closeOnBackdropClick?: boolean;
+  readonly manualDestroy: boolean;
+  readonly closeOnBackdropClick: boolean;
 
   #alive: boolean;
   get alive() {
