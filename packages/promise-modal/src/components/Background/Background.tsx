@@ -24,7 +24,7 @@ export const Background = ({ modalId, onChangeOrder }: ModalLayerProps) => {
   return (
     <div
       className={cx(styles.root, {
-        [styles.clickable]: modal?.visible,
+        [styles.active]: modal.closeOnBackdropClick && modal.visible,
       })}
       onClick={handleClose}
     >

@@ -50,9 +50,14 @@ export const ModalDataContextProvider = memo(
           ...data,
           id: modalIdSequence.current++,
           initiator: initiator.current,
-          manualDestroy: data.manualDestroy || manualDestroy,
+          manualDestroy:
+            data.manualDestroy !== undefined
+              ? data.manualDestroy
+              : manualDestroy,
           closeOnBackdropClick:
-            data.closeOnBackdropClick || closeOnBackdropClick,
+            data.closeOnBackdropClick !== undefined
+              ? data.closeOnBackdropClick
+              : closeOnBackdropClick,
         });
         modalDictionary.current.set(modal.id, modal);
         setModalIds((ids) => [...ids, modal.id]);
@@ -63,9 +68,14 @@ export const ModalDataContextProvider = memo(
           ...data,
           id: modalIdSequence.current++,
           initiator: initiator.current,
-          manualDestroy: data.manualDestroy || manualDestroy,
+          manualDestroy:
+            data.manualDestroy !== undefined
+              ? data.manualDestroy
+              : manualDestroy,
           closeOnBackdropClick:
-            data.closeOnBackdropClick || closeOnBackdropClick,
+            data.closeOnBackdropClick !== undefined
+              ? data.closeOnBackdropClick
+              : closeOnBackdropClick,
         });
         modalDictionary.current.set(modal.id, modal);
         setModalIds((ids) => {

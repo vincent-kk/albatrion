@@ -16,10 +16,7 @@ export const Foreground = ({ modalId, onChangeOrder }: ModalLayerProps) => {
   return (
     <div
       className={cx(styles.root, {
-        [styles.active]:
-          modal.manualDestroy || options?.manualDestroy
-            ? modal.alive
-            : modal.visible,
+        [styles.active]: modal.manualDestroy ? modal.alive : modal.visible,
       })}
     >
       <ForegroundComponent
