@@ -18,8 +18,8 @@ import {
 import { FooterComponentProps, ModalFrameProps } from '@/promise-modal/types';
 
 export interface ModalContextProps {
+  ForegroundComponent: ComponentType<PropsWithChildren<ModalFrameProps>>;
   BackgroundComponent?: ComponentType<ModalFrameProps>;
-  ForegroundComponent: ComponentType<ModalFrameProps>;
   TitleComponent: ComponentType<PropsWithChildren>;
   SubtitleComponent: ComponentType<PropsWithChildren>;
   ContentComponent: ComponentType<PropsWithChildren>;
@@ -27,8 +27,8 @@ export interface ModalContextProps {
   options: {
     duration: Duration;
     backdrop: Color;
-    manualDestroy?: boolean;
-    closeOnBackdropClick?: boolean;
+    manualDestroy: boolean;
+    closeOnBackdropClick: boolean;
   };
 }
 

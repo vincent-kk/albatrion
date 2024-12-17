@@ -34,8 +34,8 @@ export const prompt = <T, B = any>({
   returnOnCancel,
   background,
   footer,
-  manualDestroy = false,
-  closeOnBackdropClick = true,
+  manualDestroy,
+  closeOnBackdropClick,
 }: PromptProps<T, B>) => {
   return new Promise<T>((resolve, reject) => {
     try {

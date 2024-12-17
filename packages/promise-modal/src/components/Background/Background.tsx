@@ -21,23 +21,31 @@ export const Background = ({ modalId, onChangeOrder }: ModalLayerProps) => {
 
   if (!modal) return null;
 
+  const visible = modal.manualDestroy ? modal.alive : modal.visible;
+
   return (
     <div
       className={cx(styles.root, {
-        [styles.clickable]: modal?.visible,
+        [styles.visible]: visible,
+        [styles.active]: modal.closeOnBackdropClick && visible,
       })}
       onClick={handleClose}
     >
       {BackgroundComponent && (
         <BackgroundComponent
-          modal={modal}
-          handlers={{
-            onChange,
-            onConfirm,
-            onClose,
-            onDestroy,
-            onChangeOrder,
-          }}
+          id={modal.id}
+          type={modal.type}
+          alive={modal.alive}
+          visible={modal.visible}
+          initiator={modal.initiator}
+          manualDestroy={modal.manualDestroy}
+          closeOnBackdropClick={modal.closeOnBackdropClick}
+          background={modal.background}
+          onChange={onChange}
+          onConfirm={onConfirm}
+          onClose={onClose}
+          onDestroy={onDestroy}
+          onChangeOrder={onChangeOrder}
         />
       )}
     </div>

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Input } from 'antd';
 
 import { ModalProvider, alert, confirm, prompt } from '../src';
+import { Background } from './components/Background';
 import Content from './components/DefaultContent';
 import Footer from './components/DefaultFooter';
 import Subtitle from './components/DefaultSubtitle';
@@ -15,6 +16,7 @@ export default {
     (Story) => (
       <ModalProvider
         ForegroundComponent={Foreground}
+        BackgroundComponent={Background}
         TitleComponent={Title}
         SubtitleComponent={Subtitle}
         ContentComponent={Content}
@@ -37,6 +39,9 @@ export const AmataModalUsecase = () => {
     alert({
       title: 'Hello, world!',
       content: 'This is a test alert.',
+      background: {
+        data: 'alert',
+      },
     }).then((result) => {
       console.log(result);
     });
@@ -46,6 +51,9 @@ export const AmataModalUsecase = () => {
     confirm({
       title: 'Hello, world!',
       content: 'This is a test confirm.',
+      background: {
+        data: 'confirm',
+      },
     }).then((result) => {
       console.log(result);
     });
@@ -65,6 +73,9 @@ export const AmataModalUsecase = () => {
         return <Input defaultValue={defaultValue} onChange={handleChange} />;
       },
       defaultValue: 'value',
+      background: {
+        data: 'prompt',
+      },
     }).then((value) => {
       setValue(value);
     });

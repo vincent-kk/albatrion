@@ -1,0 +1,9 @@
+.root {
+  transition-property: opacity;
+  transition-timing-function: ease-out;
+  opacity: 0;
+}
+
+.root.visible {
+  opacity: 1;
+}

@@ -1,1 +1,1 @@
-export { ForegroundWithRef as Foreground } from './Foreground';
+export { Foreground } from './Foreground';

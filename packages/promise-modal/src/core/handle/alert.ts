@@ -29,8 +29,8 @@ export const alert = <B = any>({
   content,
   background,
   footer,
-  manualDestroy = false,
-  closeOnBackdropClick = true,
+  manualDestroy,
+  closeOnBackdropClick,
 }: AlertProps<B>) => {
   return new Promise<void>((resolve, reject) => {
     try {

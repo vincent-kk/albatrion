@@ -16,8 +16,8 @@ export abstract class BaseNode<T, B> {
   readonly subtitle?: ReactNode;
   readonly background?: ModalBackground<B>;
 
-  readonly manualDestroy?: boolean;
-  readonly closeOnBackdropClick?: boolean;
+  readonly manualDestroy: boolean;
+  readonly closeOnBackdropClick: boolean;
 
   #alive: boolean;
   get alive() {
@@ -37,8 +37,8 @@ export abstract class BaseNode<T, B> {
     title,
     subtitle,
     background,
-    manualDestroy,
-    closeOnBackdropClick,
+    manualDestroy = false,
+    closeOnBackdropClick = true,
     resolve,
   }: BaseNodeProps<T, B>) {
     this.id = id;
