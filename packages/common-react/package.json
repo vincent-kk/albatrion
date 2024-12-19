@@ -22,6 +22,7 @@
     "clean": "rm -rf dist",
     "build": "yarn clean && rollup -c",
     "build:watch": "yarn clean && rollup -c -w",
+    "publish": "npm publish",
     "test": "vitest"
   },
   "sideEffects": false,
