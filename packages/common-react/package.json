@@ -19,10 +19,12 @@
     "README.md"
   ],
   "scripts": {
+    "dependencies:build": "yarn workspace @lumy-pack/common build",
     "clean": "rm -rf dist",
-    "build": "yarn clean && rollup -c",
-    "build:watch": "yarn clean && rollup -c -w",
-    "publish": "npm publish",
+    "build": "yarn clean && yarn dependencies:build && rollup -c",
+    "build:only": "yarn clean && rollup -c",
+    "build:watch": "yarn clean && yarn dependencies:build && rollup -c -w",
+    "publish:npm": "yarn build && npm publish --access public",
     "test": "vitest"
   },
   "sideEffects": false,

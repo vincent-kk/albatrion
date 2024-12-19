@@ -7184,12 +7184,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lumy-pack@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "lumy-pack@workspace:."
-  languageName: unknown
-  linkType: soft
-
 "lz-string@npm:^1.5.0":
   version: 1.5.0
   resolution: "lz-string@npm:1.5.0"
@@ -10116,6 +10110,12 @@ __metadata:
   checksum: 10c0/1442650cfea5e4617ce14743784f6f578817e31db56f9c8aaf96a82daa9bc20b6ccd66c0d677dbf302a4da3e70664dc3bef11a1aec85e6aff3cecccb945b1d35
   languageName: node
   linkType: hard
+
+"root-workspace-0b6124@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "root-workspace-0b6124@workspace:."
+  languageName: unknown
+  linkType: soft
 
 "rrweb-cssom@npm:^0.7.1":
   version: 0.7.1

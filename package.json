@@ -1,9 +1,7 @@
 {
-  "name": "lumy-pack",
   "version": "0.0.0",
   "description": "none",
   "license": "MIT",
-  "private": true,
   "scripts": {
     "schemaForm": "yarn workspace @lumy-pack/schema-form",
     "antdPlugin": "yarn workspace @lumy-pack/schema-form-antd-plugin",
