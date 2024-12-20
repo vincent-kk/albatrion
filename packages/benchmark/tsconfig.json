@@ -1,48 +1,28 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./",
+    "outDir": "./dist",
     "paths": {
-      "@lumy/benchmark": [
+      "@/benchmark": [
         "./src"
       ],
-      "@lumy/benchmark/*": [
+      "@/benchmark/*": [
         "./src/*"
       ],
-      "@lumy/schema-form": [
+      "@/schema-form": [
         "../schema-form/src"
       ],
-      "@lumy/schema-form/*": [
+      "@/schema-form/*": [
         "../schema-form/src/*"
       ],
-      "@lumy/common": [
+      "@/common": [
         "../common/src"
       ],
-      "@lumy/common/*": [
+      "@/common/*": [
         "../common/src/*"
       ],
     },
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "module": "ESNext",
-    "jsx": "react-jsx",
-    "skipLibCheck": true,
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "src",

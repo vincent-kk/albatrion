@@ -2,12 +2,14 @@
   "compilerOptions": {
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
+    "useDefineForClassFields": true,
     "alwaysStrict": true,
     "composite": true,
     "declaration": true,
     "declarationMap": true,
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
+    "emitDeclarationOnly": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
@@ -16,7 +18,8 @@
       "ES2020",
       "DOM"
     ],
-    "module": "ES2020",
+    "jsx": "react-jsx",
+    "module": "ESNext",
     "target": "ES2020",
     "moduleResolution": "Node",
     "noFallthroughCasesInSwitch": true,
@@ -35,12 +38,8 @@
     "strictFunctionTypes": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
-    "rootDir": "./packages",
+    "isolatedModules": true,
   },
-  "include": [
-    "./packages/**/src/**/*.ts",
-    "./packages/**/src/**/*.tsx"
-  ],
   "exclude": [
     "node_modules",
     "packages/**/node_modules",
