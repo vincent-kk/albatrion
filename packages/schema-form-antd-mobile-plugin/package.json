@@ -30,7 +30,7 @@
     "lint": "eslint \"src/**/*.{ts,tsx}\" --report-unused-disable-directives --max-warnings 0",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "publish:npm": "yarn build && npm publish --access public"
+    "publish:npm": "yarn build && yarn npm publish --access public"
   },
   "dependencies": {
     "@lumy-pack/common-react": "workspace:*",

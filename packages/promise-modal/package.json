@@ -33,7 +33,7 @@
     "make-dependency-graph": "npx depcruise src --config .dependency-cruiser.js --output-type dot > dependency-graph.dot && dot -Tpng dependency-graph.dot -o dependency-graph.png",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "publish:npm": "yarn build && npm publish --access public"
+    "publish:npm": "yarn build && yarn npm publish --access public"
   },
   "dependencies": {
     "@lumy-pack/common": "workspace:*",
