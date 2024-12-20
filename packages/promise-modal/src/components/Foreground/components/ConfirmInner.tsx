@@ -1,11 +1,7 @@
 import { Fragment, memo, useMemo } from 'react';
 
 import { isString } from '@lumy-pack/common';
-import {
-  isFunctionComponent,
-  isReactElement,
-  useHandle,
-} from '@lumy-pack/common-react';
+import { renderComponent, useHandle } from '@lumy-pack/common-react';
 
 import type { ConfirmNode } from '@/promise-modal/core';
 import { useModalContext } from '@/promise-modal/providers';
@@ -44,14 +40,12 @@ export const ConfirmInner = memo(
         {content &&
           (isString(content) ? (
             <ContentComponent>{content}</ContentComponent>
-          ) : isFunctionComponent(content) ? (
-            content({
+          ) : (
+            renderComponent(content, {
               onConfirm: handleConfirm,
               onCancel: handleClose,
             })
-          ) : isReactElement(content) ? (
-            content
-          ) : null)}
+          ))}
         {footer !== false &&
           (typeof footer === 'function' ? (
             footer({

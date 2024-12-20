@@ -1,11 +1,7 @@
 import { Fragment, memo, useMemo } from 'react';
 
 import { isString } from '@lumy-pack/common';
-import {
-  isFunctionComponent,
-  isReactElement,
-  useHandle,
-} from '@lumy-pack/common-react';
+import { renderComponent, useHandle } from '@lumy-pack/common-react';
 
 import type { AlertNode } from '@/promise-modal/core';
 import { useModalContext } from '@/promise-modal/providers';
@@ -43,11 +39,11 @@ export const AlertInner = memo(
         {content &&
           (isString(content) ? (
             <ContentComponent>{content}</ContentComponent>
-          ) : isFunctionComponent(content) ? (
-            content({ onConfirm: handleConfirm })
-          ) : isReactElement(content) ? (
-            content
-          ) : null)}
+          ) : (
+            renderComponent(content, {
+              onConfirm: handleConfirm,
+            })
+          ))}
         {footer !== false &&
           (typeof footer === 'function' ? (
             footer({ onConfirm: handleConfirm })
