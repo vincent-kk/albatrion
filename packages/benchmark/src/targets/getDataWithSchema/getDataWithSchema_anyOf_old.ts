@@ -1,4 +1,4 @@
-import type { JsonSchema } from '@lumy/schema-form/types';
+import type { JsonSchema } from '@lumy-pack/schema-form';
 
 export const getDataWithSchema = (
   data: any,
@@ -38,7 +38,10 @@ export const getDataWithSchema = (
 
     const items = Object.entries(node.properties).map(([k, v]) => {
       if (k in data && !omit.includes(k)) {
-        return [k, getDataWithSchema(data[k], v, options)];
+        return [
+          k,
+          getDataWithSchema(data[k], v as unknown as JsonSchema, options),
+        ];
       }
       return false;
     });

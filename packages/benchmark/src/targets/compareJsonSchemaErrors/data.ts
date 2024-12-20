@@ -1,4 +1,4 @@
-import type { JsonSchemaError } from '@lumy/schema-form';
+import type { JsonSchemaError } from '@lumy-pack/schema-form/src/types';
 
 export const ajvErrors1 = [
   {

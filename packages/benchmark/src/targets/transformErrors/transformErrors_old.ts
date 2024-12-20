@@ -2,7 +2,7 @@ import {
   JSONPath,
   JSONPointer,
   type JsonSchemaError,
-} from '@lumy/schema-form/types';
+} from '@lumy-pack/schema-form/src/types';
 
 let keySeq = 0;
 

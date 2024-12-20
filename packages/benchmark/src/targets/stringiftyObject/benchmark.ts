@@ -1,6 +1,6 @@
 import Benchmark from 'benchmark';
 
-import { type Ratio, getRatio } from '@lumy/benchmark/helpers/getRatio';
+import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 
 import { data } from './data';
 import { stringifyObject } from './stringifyObject';

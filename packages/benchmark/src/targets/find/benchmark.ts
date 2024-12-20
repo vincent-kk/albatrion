@@ -1,10 +1,11 @@
 import Benchmark from 'benchmark';
 
-import { type Ratio, getRatio } from '@lumy/benchmark/helpers/getRatio';
 import {
   find,
   getPathSegments,
-} from '@lumy/schema-form/core/nodes/BaseNode/utils/find';
+} from '@lumy-pack/schema-form/src/core/nodes/BaseNode/utils/find';
+
+import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 
 import { node, targetPath } from './data';
 import { find as find_new } from './find';

@@ -1,7 +1,8 @@
 import Benchmark from 'benchmark';
 
-import { type Ratio, getRatio } from '@lumy/benchmark/helpers/getRatio';
-import { getErrorsHash as getErrorsHash_Ref } from '@lumy/schema-form/helpers/error';
+import { getErrorsHash as getErrorsHash_Ref } from '@lumy-pack/schema-form/src/helpers/error';
+
+import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 
 import { ajvErrors1, ajvErrors2 } from './data';
 import { getErrorsHash } from './error';

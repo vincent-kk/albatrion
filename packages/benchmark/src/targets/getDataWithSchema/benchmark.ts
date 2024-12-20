@@ -1,6 +1,5 @@
+import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 import Benchmark from 'benchmark';
-
-import { type Ratio, getRatio } from '@lumy/benchmark/helpers/getRatio';
 
 import { schema, value } from './data';
 import { getDataWithSchema } from './getDataWithSchema_anyOf';
