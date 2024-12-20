@@ -1,5 +1,5 @@
-import { isValidEnum } from '@lumy/schema-form/core/nodes/ObjectNode/utils';
-import type { ObjectSchema } from '@lumy/schema-form/types';
+import { isValidEnum } from '@lumy-pack/schema-form/src/core/nodes/ObjectNode/utils';
+import type { ObjectSchema } from '@lumy-pack/schema-form/src/types';
 
 import { isObjectAnyOfSchema } from './getDataWithSchema_anyOf';
 

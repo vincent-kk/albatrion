@@ -22,7 +22,7 @@
     "clean": "rm -rf dist",
     "build": "yarn clean && rollup -c",
     "build:watch": "yarn clean && rollup -c -w",
-    "publish:npm": "yarn build && npm publish --access public",
+    "publish:npm": "yarn build && yarn npm publish --access public",
     "test": "vitest"
   },
   "sideEffects": false,
@@ -49,6 +49,5 @@
     "typescript": "^5.7.2",
     "vite": "^5.4.11",
     "vitest": "^2.1.5"
-  },
-  "packageManager": "yarn@4.5.1"
+  }
 }

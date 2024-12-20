@@ -1,6 +1,5 @@
 import { Murmur3 } from '@lumy-pack/common';
-
-import { type JsonSchemaError } from '@lumy/schema-form/types';
+import { type JsonSchemaError } from '@lumy-pack/schema-form/src/types';
 
 export const serializeError = ({ schemaPath, params = {} }: JsonSchemaError) =>
   `${schemaPath}?${Object.entries(params)

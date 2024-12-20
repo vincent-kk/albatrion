@@ -1,15 +1,15 @@
+import { isArray, isPlainObject } from '@lumy-pack/common';
 import {
   type StackItem,
   isArrayStackItem,
   isObjectStackItem,
-} from '@lumy/schema-form/core/nodes/BaseNode/utils/getDataWithSchema/type';
-import { isArray, isPlainObject } from '@lumy/schema-form/helpers/filter';
+} from '@lumy-pack/schema-form/src/core/nodes/BaseNode/utils/getDataWithSchema/type';
 import type {
   ArrayValue,
   JsonSchema,
   ObjectSchema,
   ObjectValue,
-} from '@lumy/schema-form/types';
+} from '@lumy-pack/schema-form/src/types';
 
 export const isObjectAnyOfSchema = (
   schema: NonNullable<ObjectSchema['anyOf']>[number],
@@ -40,11 +40,11 @@ export const getDataWithSchema = <Value>(
       if (handleArraySchema(current, stack)) {
         continue;
       }
-      finalResult = current.result;
+      finalResult = (current as any).result;
       stack.pop();
       assignToParent(current, finalResult);
     } else {
-      finalResult = current.value;
+      finalResult = (current as any).value;
       stack.pop();
       assignToParent(current, finalResult);
     }

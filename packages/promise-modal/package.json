@@ -24,7 +24,7 @@
     "clean": "rm -rf dist",
     "dependencies:build": "yarn workspace @lumy-pack/common build && yarn workspace @lumy-pack/common-react build:only",
     "test": "yarn dependencies:build && vitest",
-    "build:only": "yarn clean && rollup -c",
+    "build:only": "yarn clean && rollup -c && tsc-alias",
     "build": "yarn dependencies:build && yarn build:only",
     "build:watch": "yarn clean && yarn build:only -w",
     "start": "yarn build && yarn storybook",
@@ -33,7 +33,7 @@
     "make-dependency-graph": "npx depcruise src --config .dependency-cruiser.js --output-type dot > dependency-graph.dot && dot -Tpng dependency-graph.dot -o dependency-graph.png",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "publish:npm": "yarn build && npm publish --access public"
+    "publish:npm": "yarn build && yarn npm publish --access public"
   },
   "dependencies": {
     "@lumy-pack/common": "workspace:*",
@@ -85,6 +85,7 @@
     "sass-embedded": "^1.83.0",
     "size-limit": "^11.1.6",
     "storybook": "^8.4.7",
+    "tsc-alias": "^1.8.10",
     "typescript": "^5.7.2",
     "vite": "^5.4.11",
     "vitest": "^2.1.5"

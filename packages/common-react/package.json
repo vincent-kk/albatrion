@@ -24,7 +24,7 @@
     "build": "yarn clean && yarn dependencies:build && rollup -c",
     "build:only": "yarn clean && rollup -c",
     "build:watch": "yarn clean && yarn dependencies:build && rollup -c -w",
-    "publish:npm": "yarn build && npm publish --access public",
+    "publish:npm": "yarn build && yarn npm publish --access public",
     "test": "vitest"
   },
   "sideEffects": false,
@@ -61,6 +61,5 @@
   },
   "peerDependencies": {
     "react": ">=16 <19"
-  },
-  "packageManager": "yarn@4.5.1"
+  }
 }

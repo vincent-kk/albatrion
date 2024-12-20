@@ -1,9 +1,9 @@
-import type { ErrorObject } from '@lumy/schema-form/helpers/ajv';
+import type { ErrorObject } from '@lumy-pack/schema-form/src/helpers/ajv';
 import {
   JSONPath,
   JSONPointer,
   type JsonSchemaError,
-} from '@lumy/schema-form/types';
+} from '@lumy-pack/schema-form/src/types';
 
 let keySeq = 0;
 
@@ -13,9 +13,9 @@ export const transformErrors = (
 ): JsonSchemaError[] => {
   if (!Array.isArray(errors)) return [];
   return errors.map((error) => {
-    (error as JsonSchemaError).key = useKey ? ++keySeq : undefined;
-    (error as JsonSchemaError).dataPath = transformDataPath(error);
-    return error as JsonSchemaError;
+    (error as unknown as JsonSchemaError).key = useKey ? ++keySeq : undefined;
+    (error as unknown as JsonSchemaError).dataPath = transformDataPath(error);
+    return error as unknown as JsonSchemaError;
   });
 };
 

@@ -1,5 +1,5 @@
-import { JSONPath, type JsonSchema } from '@lumy/schema-form';
-import { schemaNodeFactory } from '@lumy/schema-form/core/nodes';
+import { schemaNodeFactory } from '@lumy-pack/schema-form/src/core/nodes';
+import { JSONPath, type JsonSchema } from '@lumy-pack/schema-form/src/types';
 
 const schema = {
   type: 'object',
@@ -123,6 +123,7 @@ const schema = {
 export const node = schemaNodeFactory({
   name: JSONPath.Root,
   jsonSchema: schema,
+  nodeFactory: schemaNodeFactory,
 });
 
 export const targetPath = '$.user.profile.preferences.notifications';

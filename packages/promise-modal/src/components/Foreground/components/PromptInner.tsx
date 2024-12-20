@@ -1,11 +1,7 @@
 import { Fragment, memo, useCallback, useMemo, useState } from 'react';
 
 import { isFunction, isString } from '@lumy-pack/common';
-import {
-  isFunctionComponent,
-  isReactElement,
-  useHandle,
-} from '@lumy-pack/common-react';
+import { renderComponent, useHandle } from '@lumy-pack/common-react';
 
 import type { PromptNode } from '@/promise-modal/core';
 import { useModalContext } from '@/promise-modal/providers';
@@ -82,14 +78,12 @@ export const PromptInner = memo(
         {content &&
           (isString(content) ? (
             <ContentComponent>{content}</ContentComponent>
-          ) : isFunctionComponent(content) ? (
-            content({
+          ) : (
+            renderComponent(content, {
               onConfirm: handleConfirm,
               onCancel: handleClose,
             })
-          ) : isReactElement(content) ? (
-            content
-          ) : null)}
+          ))}
 
         {Input && (
           <Input

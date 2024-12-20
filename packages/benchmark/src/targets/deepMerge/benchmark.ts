@@ -1,6 +1,6 @@
 import Benchmark from 'benchmark';
 
-import { type Ratio, getRatio } from '@lumy/benchmark/helpers/getRatio';
+import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 
 import { data1, data2 } from './data';
 import { merge as localMerge } from './deepMerge';
