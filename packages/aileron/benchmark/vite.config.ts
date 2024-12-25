@@ -5,8 +5,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@/benchmark': resolve(__dirname, './src'),
-      '@/schema-form': resolve(__dirname, './../schema-form/src'),
-      '@/common': resolve(__dirname, './../common/src'),
+      '@/schema-form': resolve(__dirname, './../../canard/schema-form/src'),
+      '@/common-utils': resolve(__dirname, './../../winglet/common-utils/src'),
     },
   },
   test: {
