@@ -4,7 +4,7 @@ import {
   Form,
   type JsonSchema,
   type JsonSchemaError,
-} from '@lumy-pack/schema-form/src';
+} from '@canard/schema-form/src';
 
 import StoryLayout from './components/StoryLayout';
 

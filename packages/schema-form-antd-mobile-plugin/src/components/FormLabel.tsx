@@ -1,4 +1,4 @@
-import type { FormTypeRendererProps } from '@lumy-pack/schema-form';
+import type { FormTypeRendererProps } from '@canard/schema-form';
 
 export const FormLabel = ({ name, path }: FormTypeRendererProps) => {
   return <label htmlFor={path}>{name}</label>;

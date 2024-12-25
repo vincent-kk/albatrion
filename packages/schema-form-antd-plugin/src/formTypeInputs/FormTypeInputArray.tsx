@@ -1,11 +1,12 @@
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { useHandle } from '@winglet/react-utils';
 import { Button, type ButtonProps } from 'antd';
+
+import { useHandle } from '@winglet/react-utils';
 
 import type {
   FormTypeInputDefinition,
   FormTypeInputProps,
-} from '@lumy-pack/schema-form';
+} from '@canard/schema-form';
 
 const Add = (props: ButtonProps) => (
   <Button type="primary" icon={<PlusOutlined />} {...props}>

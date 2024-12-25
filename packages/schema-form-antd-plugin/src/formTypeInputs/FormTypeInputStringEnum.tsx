@@ -1,15 +1,16 @@
 import { useMemo } from 'react';
 
-import { useHandle } from '@winglet/react-utils';
 import { Select } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
+
+import { useHandle } from '@winglet/react-utils';
 
 import type {
   ArraySchema,
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
   StringSchema,
-} from '@lumy-pack/schema-form';
+} from '@canard/schema-form';
 
 interface StringJsonSchema extends StringSchema {
   enum?: string[];

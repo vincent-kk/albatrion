@@ -1,5 +1,5 @@
-import { isValidEnum } from '@lumy-pack/schema-form/src/core/nodes/ObjectNode/utils';
-import type { ObjectSchema } from '@lumy-pack/schema-form/src/types';
+import { isValidEnum } from '@canard/schema-form/src/core/nodes/ObjectNode/utils';
+import type { ObjectSchema } from '@canard/schema-form/src/types';
 
 import { isObjectAnyOfSchema } from './getDataWithSchema_anyOf';
 

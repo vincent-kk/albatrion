@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 
-import { useHandle } from '@winglet/react-utils';
 import { Checkbox } from 'antd-mobile';
+
+import { useHandle } from '@winglet/react-utils';
 
 import type {
   FormTypeInputDefinition,
   FormTypeInputProps,
-} from '@lumy-pack/schema-form';
+} from '@canard/schema-form';
 
 const FormTypeInputBoolean = ({
   path,

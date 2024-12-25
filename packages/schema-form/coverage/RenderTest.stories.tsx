@@ -1,12 +1,12 @@
 import React, { useRef, useState } from 'react';
 
-import { useRenderCount } from '@aileron/development-helper';
-
 import {
   Form,
   type FormTypeRendererProps,
   type JsonSchema,
-} from '@lumy-pack/schema-form/src';
+} from '@canard/schema-form/src';
+
+import { useRenderCount } from '@aileron/development-helper';
 
 import StoryLayout from './components/StoryLayout';
 

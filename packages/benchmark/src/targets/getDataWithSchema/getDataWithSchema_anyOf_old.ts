@@ -1,4 +1,4 @@
-import type { JsonSchema } from '@lumy-pack/schema-form';
+import type { JsonSchema } from '@canard/schema-form';
 
 export const getDataWithSchema = (
   data: any,

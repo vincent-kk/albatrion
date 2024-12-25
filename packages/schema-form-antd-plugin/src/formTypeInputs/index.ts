@@ -1,4 +1,4 @@
-import type { FormTypeInputDefinition } from '@lumy-pack/schema-form';
+import type { FormTypeInputDefinition } from '@canard/schema-form';
 
 import { FormTypeInputArrayDefinition } from './FormTypeInputArray';
 import { FormTypeInputBooleanDefinition } from './FormTypeInputBoolean';

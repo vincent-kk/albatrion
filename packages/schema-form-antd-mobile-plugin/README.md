@@ -1,4 +1,4 @@
-# @lumy-pack/schema-form-antd-mobile-plugin
+# @canard/schema-form-antd-mobile-plugin
 
 [![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
 [![Javascript](https://img.shields.io/badge/javascript-✔-yellow.svg)]()
@@ -10,19 +10,19 @@
 
 ## Overview
 
-`@lumy-pack/schema-form-antd-mobile-plugin` is a plugin for `@lumy-pack/schema-form` that provides Ant Design Mobile components.
+`@canard/schema-form-antd-mobile-plugin` is a plugin for `@canard/schema-form` that provides Ant Design Mobile components.
 
 ---
 
 ## How to use
 
 ```bash
-yarn add @lumy-pack/schema-form @lumy-pack/schema-form-antd-mobile-plugin
+yarn add @canard/schema-form @canard/schema-form-antd-mobile-plugin
 ```
 
 ```tsx
-import { SchemaForm, registerPlugin } from '@lumy-pack/schema-form';
-import { plugin } from '@lumy-pack/schema-form-antd-mobile-plugin';
+import { SchemaForm, registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-antd-mobile-plugin';
 
 // Plugin will be registered globally
 registerPlugin(plugin);

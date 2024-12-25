@@ -1,5 +1,5 @@
-import { schemaNodeFactory } from '@lumy-pack/schema-form/src/core/nodes';
-import { JSONPath, type JsonSchema } from '@lumy-pack/schema-form/src/types';
+import { schemaNodeFactory } from '@canard/schema-form/src/core/nodes';
+import { JSONPath, type JsonSchema } from '@canard/schema-form/src/types';
 
 const schema = {
   type: 'object',

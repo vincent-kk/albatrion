@@ -1,13 +1,14 @@
 import { useMemo } from 'react';
 
-import { useHandle } from '@winglet/react-utils';
 import { Stepper } from 'antd-mobile';
+
+import { useHandle } from '@winglet/react-utils';
 
 import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
   NumberSchema,
-} from '@lumy-pack/schema-form';
+} from '@canard/schema-form';
 
 const FormTypeInputNumber = ({
   jsonSchema,

@@ -4,13 +4,13 @@ import {
   type StackItem,
   isArrayStackItem,
   isObjectStackItem,
-} from '@lumy-pack/schema-form/src/core/nodes/BaseNode/utils/getDataWithSchema/type';
+} from '@canard/schema-form/src/core/nodes/BaseNode/utils/getDataWithSchema/type';
 import type {
   ArrayValue,
   JsonSchema,
   ObjectSchema,
   ObjectValue,
-} from '@lumy-pack/schema-form/src/types';
+} from '@canard/schema-form/src/types';
 
 export const isObjectAnyOfSchema = (
   schema: NonNullable<ObjectSchema['anyOf']>[number],

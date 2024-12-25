@@ -21,13 +21,13 @@
       ],
       "@/common-utils/*": [
         "../common-utils/src/*"
-      ],
-    },
+      ]
+    }
   },
   "include": [
     "src",
     "src/**/*.tsx?",
-    "./**/*.d.ts",
+    "./**/*.d.ts"
   ],
   "exclude": [
     "node_modules",
@@ -39,6 +39,6 @@
     "tests",
     "**.test.tsx?",
     "**.spec.tsx?",
-    "**.stories.tsx",
+    "**.stories.tsx"
   ]
 }

@@ -1,4 +1,4 @@
-import type { SchemaFormPlugin } from '@lumy-pack/schema-form';
+import type { SchemaFormPlugin } from '@canard/schema-form';
 
 import { FormError } from './components/FormError';
 import { FormGroup } from './components/FormGroup';

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import type { Meta, StoryFn } from '@storybook/react';
 
-import { Form, type JsonSchemaError } from '@lumy-pack/schema-form';
+import { Form, type JsonSchemaError } from '@canard/schema-form';
 
 import { FormTypeInputArrayDefinition } from '../src/formTypeInputs/FormTypeInputArray';
 import { FormTypeInputBooleanDefinition } from '../src/formTypeInputs/FormTypeInputBoolean';

@@ -1,9 +1,9 @@
-import type { ErrorObject } from '@lumy-pack/schema-form/src/helpers/ajv';
+import type { ErrorObject } from '@canard/schema-form/src/helpers/ajv';
 import {
   JSONPath,
   JSONPointer,
   type JsonSchemaError,
-} from '@lumy-pack/schema-form/src/types';
+} from '@canard/schema-form/src/types';
 
 let keySeq = 0;
 

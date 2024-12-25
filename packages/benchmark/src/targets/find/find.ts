@@ -1,5 +1,5 @@
-import type { SchemaNode } from '@lumy-pack/schema-form/src/core/nodes/type';
-import { JSONPath } from '@lumy-pack/schema-form/src/types';
+import type { SchemaNode } from '@canard/schema-form/src/core/nodes/type';
+import { JSONPath } from '@canard/schema-form/src/types';
 
 /**
  * BaseNode 트리에서 주어진 경로에 해당하는 노드를 찾습니다.

@@ -1,6 +1,6 @@
 import Benchmark from 'benchmark';
 
-import { transformErrors as transformErrors_Ref } from '@lumy-pack/schema-form/src/helpers/error';
+import { transformErrors as transformErrors_Ref } from '@canard/schema-form/src/helpers/error';
 
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 

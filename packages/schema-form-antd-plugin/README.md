@@ -1,4 +1,4 @@
-# @lumy-pack/schema-form-antd-plugin
+# @canard/schema-form-antd-plugin
 
 [![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
 [![Javascript](https://img.shields.io/badge/javascript-✔-yellow.svg)]()
@@ -10,19 +10,19 @@
 
 ## Overview
 
-`@lumy-pack/schema-form-antd-plugin` is a plugin for `@lumy-pack/schema-form` that provides Ant Design components.
+`@canard/schema-form-antd-plugin` is a plugin for `@canard/schema-form` that provides Ant Design components.
 
 ---
 
 ## How to use
 
 ```bash
-yarn add @lumy-pack/schema-form @lumy-pack/schema-form-antd-plugin
+yarn add @canard/schema-form @canard/schema-form-antd-plugin
 ```
 
 ```tsx
-import { SchemaForm, registerPlugin } from '@lumy-pack/schema-form';
-import { plugin } from '@lumy-pack/schema-form-antd-plugin';
+import { SchemaForm, registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-antd-plugin';
 
 // Plugin will be registered globally
 registerPlugin(plugin);

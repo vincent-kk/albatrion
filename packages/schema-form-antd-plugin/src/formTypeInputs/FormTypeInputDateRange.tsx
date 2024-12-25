@@ -1,16 +1,17 @@
 import { useMemo } from 'react';
 
-import { useHandle } from '@winglet/react-utils';
 import { DatePicker } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 import dayjs, { type Dayjs } from 'dayjs';
+
+import { useHandle } from '@winglet/react-utils';
 
 import type {
   ArraySchema,
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
   StringSchema,
-} from '@lumy-pack/schema-form';
+} from '@canard/schema-form';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 

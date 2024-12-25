@@ -1,4 +1,4 @@
-# @lumy-pack/schema-form
+# @canard/schema-form
 
 [![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
 [![Javascript](https://img.shields.io/badge/javascript-✔-yellow.svg)]()
@@ -10,7 +10,7 @@
 
 ## Overview
 
-`@lumy-pack/schema-form` is a React-based component library that renders forms based on a provided [JSON Schema](https://json-schema.org/).
+`@canard/schema-form` is a React-based component library that renders forms based on a provided [JSON Schema](https://json-schema.org/).
 
 It utilizes JSON Schema for validation, leveraging [ajv@8](https://ajv.js.org/) for this purpose.
 
@@ -21,11 +21,11 @@ By defining various `FormTypeInput` components, it offers the flexibility to acc
 ## How to use
 
 ```bash
-yarn add @lumy-pack/schema-form
+yarn add @canard/schema-form
 ```
 
 ```tsx
-import { Form } from '@lumy-pack/schema-form';
+import { Form } from '@canard/schema-form';
 
 export const App = () => {
   const jsonSchema = {

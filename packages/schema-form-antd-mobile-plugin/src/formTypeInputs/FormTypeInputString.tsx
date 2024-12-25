@@ -1,11 +1,12 @@
-import { useHandle } from '@winglet/react-utils';
 import { Input } from 'antd-mobile';
+
+import { useHandle } from '@winglet/react-utils';
 
 import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
   StringSchema,
-} from '@lumy-pack/schema-form';
+} from '@canard/schema-form';
 
 interface StringJsonSchema extends StringSchema {
   format?: 'password';

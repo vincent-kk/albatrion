@@ -1,14 +1,15 @@
 import { type ReactNode, useMemo } from 'react';
 
-import { useHandle } from '@winglet/react-utils';
 import { Switch } from 'antd';
 import type { SwitchSize } from 'antd/es/switch';
+
+import { useHandle } from '@winglet/react-utils';
 
 import type {
   BooleanSchema,
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
-} from '@lumy-pack/schema-form';
+} from '@canard/schema-form';
 
 interface BooleanSwitchSchema extends BooleanSchema {
   options?: {

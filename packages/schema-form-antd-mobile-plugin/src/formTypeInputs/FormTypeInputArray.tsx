@@ -1,10 +1,11 @@
-import { useHandle } from '@winglet/react-utils';
 import { Button, type ButtonProps } from 'antd-mobile';
+
+import { useHandle } from '@winglet/react-utils';
 
 import type {
   FormTypeInputDefinition,
   FormTypeInputProps,
-} from '@lumy-pack/schema-form';
+} from '@canard/schema-form';
 
 const Add = (props: ButtonProps) => (
   <div>

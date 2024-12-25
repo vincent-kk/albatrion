@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 
+import { Form, type JsonSchemaError } from '@canard/schema-form/src';
+import { FormTypeInputArrayDefinition } from '@canard/schema-form/src/formTypeDefinitions/FormTypeInputArray';
+import { FormTypeInputBooleanDefinition } from '@canard/schema-form/src/formTypeDefinitions/FormTypeInputBoolean';
+import { FormTypeInputDateFormantDefinition } from '@canard/schema-form/src/formTypeDefinitions/FormTypeInputDateFormant';
+import { FormTypeInputNumberDefinition } from '@canard/schema-form/src/formTypeDefinitions/FormTypeInputNumber';
+import { FormTypeInputObjectDefinition } from '@canard/schema-form/src/formTypeDefinitions/FormTypeInputObject';
+import { FormTypeInputStringDefinition } from '@canard/schema-form/src/formTypeDefinitions/FormTypeInputString';
+import { FormTypeInputStringCheckboxDefinition } from '@canard/schema-form/src/formTypeDefinitions/FormTypeInputStringCheckbox';
+import { FormTypeInputStringEnumDefinition } from '@canard/schema-form/src/formTypeDefinitions/FormTypeInputStringEnum';
+import { FormTypeInputStringRadioDefinition } from '@canard/schema-form/src/formTypeDefinitions/FormTypeInputStringRadio';
 import { Meta, StoryFn } from '@storybook/react';
-
-import { Form, type JsonSchemaError } from '@lumy-pack/schema-form/src';
-import { FormTypeInputArrayDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputArray';
-import { FormTypeInputBooleanDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputBoolean';
-import { FormTypeInputDateFormantDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputDateFormant';
-import { FormTypeInputNumberDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputNumber';
-import { FormTypeInputObjectDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputObject';
-import { FormTypeInputStringDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputString';
-import { FormTypeInputStringCheckboxDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputStringCheckbox';
-import { FormTypeInputStringEnumDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputStringEnum';
-import { FormTypeInputStringRadioDefinition } from '@lumy-pack/schema-form/src/formTypeDefinitions/FormTypeInputStringRadio';
 
 import StoryLayout from './components/StoryLayout';
 

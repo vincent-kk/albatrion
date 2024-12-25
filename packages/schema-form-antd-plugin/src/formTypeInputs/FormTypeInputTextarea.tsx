@@ -1,14 +1,15 @@
 import { type ChangeEvent, useMemo } from 'react';
 
-import { useHandle } from '@winglet/react-utils';
 import { Input } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
+
+import { useHandle } from '@winglet/react-utils';
 
 import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
   StringSchema,
-} from '@lumy-pack/schema-form';
+} from '@canard/schema-form';
 
 interface TextareaSchema extends StringSchema {
   minRows?: number;

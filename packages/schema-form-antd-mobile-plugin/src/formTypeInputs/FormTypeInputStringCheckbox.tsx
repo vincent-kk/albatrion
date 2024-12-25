@@ -1,15 +1,16 @@
 import { type ReactNode, useMemo } from 'react';
 
-import { useHandle } from '@winglet/react-utils';
 import { Checkbox } from 'antd-mobile';
 import type { CheckboxValue } from 'antd-mobile/es/components/checkbox';
+
+import { useHandle } from '@winglet/react-utils';
 
 import type {
   ArraySchema,
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
   StringSchema,
-} from '@lumy-pack/schema-form';
+} from '@canard/schema-form';
 
 interface StringJsonSchema extends StringSchema {
   enum?: string[];

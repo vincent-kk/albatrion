@@ -3,9 +3,9 @@
   "description": "none",
   "license": "MIT",
   "scripts": {
-    "schemaForm": "yarn workspace @lumy-pack/schema-form",
-    "antdPlugin": "yarn workspace @lumy-pack/schema-form-antd-plugin",
-    "antdMobilePlugin": "yarn workspace @lumy-pack/schema-form-antd-mobile-plugin",
+    "schemaForm": "yarn workspace @canard/schema-form",
+    "antdPlugin": "yarn workspace @canard/schema-form-antd-plugin",
+    "antdMobilePlugin": "yarn workspace @canard/schema-form-antd-mobile-plugin",
     "promiseModal": "yarn workspace @lerx/promise-modal",
     "benchmark": "yarn workspace @aileron/benchmark",
     "commonUtils": "yarn workspace @winglet/common-utils",

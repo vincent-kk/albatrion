@@ -1,5 +1,5 @@
-import type { BaseNode } from '@lumy-pack/schema-form/src/core/nodes/BaseNode';
-import { JSONPath } from '@lumy-pack/schema-form/src/types';
+import type { BaseNode } from '@canard/schema-form/src/core/nodes/BaseNode';
+import { JSONPath } from '@canard/schema-form/src/types';
 
 export function find(target: any, path: string): BaseNode | any {
   const [currPath, ...rest] = path

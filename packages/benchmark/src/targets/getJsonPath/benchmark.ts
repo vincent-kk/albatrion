@@ -1,7 +1,7 @@
 import Benchmark from 'benchmark';
 
-import { getJsonPaths as getJsonPaths_Ref } from '@lumy-pack/schema-form/src/core/nodes/BaseNode/utils';
-import { getJsonPaths } from '@lumy-pack/schema-form/src/core/nodes/BaseNode/utils';
+import { getJsonPaths as getJsonPaths_Ref } from '@canard/schema-form/src/core/nodes/BaseNode/utils';
+import { getJsonPaths } from '@canard/schema-form/src/core/nodes/BaseNode/utils';
 
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 

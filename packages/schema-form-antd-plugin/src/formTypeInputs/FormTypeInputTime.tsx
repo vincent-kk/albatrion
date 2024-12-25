@@ -1,14 +1,15 @@
 import { useMemo } from 'react';
 
-import { useHandle } from '@winglet/react-utils';
 import { TimePicker } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 import dayjs, { type Dayjs } from 'dayjs';
 
+import { useHandle } from '@winglet/react-utils';
+
 import type {
   FormTypeInputDefinition,
   FormTypeInputProps,
-} from '@lumy-pack/schema-form';
+} from '@canard/schema-form';
 
 const DATE_FORMAT = 'HH:mm:00Z';
 

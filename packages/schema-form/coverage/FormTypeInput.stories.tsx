@@ -16,7 +16,7 @@ import {
   type FormTypeInputProps,
   type FormTypeRendererProps,
   type JsonSchema,
-} from '@lumy-pack/schema-form/src';
+} from '@canard/schema-form/src';
 
 import StoryLayout from './components/StoryLayout';
 

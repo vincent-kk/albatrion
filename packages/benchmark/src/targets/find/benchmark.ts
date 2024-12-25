@@ -3,7 +3,7 @@ import Benchmark from 'benchmark';
 import {
   find,
   getPathSegments,
-} from '@lumy-pack/schema-form/src/core/nodes/BaseNode/utils/find';
+} from '@canard/schema-form/src/core/nodes/BaseNode/utils/find';
 
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 

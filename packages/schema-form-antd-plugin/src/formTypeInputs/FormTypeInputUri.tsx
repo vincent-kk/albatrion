@@ -13,7 +13,7 @@ import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
   StringSchema,
-} from '@lumy-pack/schema-form';
+} from '@canard/schema-form';
 
 interface StringJsonSchema extends StringSchema {
   format?: 'uri';

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Form, FormProvider, type JsonSchema } from '@lumy-pack/schema-form';
+import { Form, FormProvider, type JsonSchema } from '@canard/schema-form';
 
 import { FormError } from '../src/components/FormError';
 import { FormGroup } from '../src/components/FormGroup';

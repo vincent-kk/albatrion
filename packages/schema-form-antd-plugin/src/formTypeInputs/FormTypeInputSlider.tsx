@@ -6,7 +6,7 @@ import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
   NumberSchema,
-} from '@lumy-pack/schema-form';
+} from '@canard/schema-form';
 
 const FormTypeInputSlider = ({
   path,

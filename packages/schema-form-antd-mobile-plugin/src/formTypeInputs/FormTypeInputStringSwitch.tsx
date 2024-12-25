@@ -1,13 +1,14 @@
 import { type ReactNode, useMemo } from 'react';
 
-import { useHandle } from '@winglet/react-utils';
 import { Switch } from 'antd-mobile';
+
+import { useHandle } from '@winglet/react-utils';
 
 import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
   StringSchema,
-} from '@lumy-pack/schema-form';
+} from '@canard/schema-form';
 
 interface StringSwitchSchema extends StringSchema {
   enum?: [string, string];

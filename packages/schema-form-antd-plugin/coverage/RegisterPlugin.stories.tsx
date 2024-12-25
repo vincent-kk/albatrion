@@ -9,7 +9,7 @@ import {
   type JsonSchema,
   type JsonSchemaError,
   registerPlugin,
-} from '@lumy-pack/schema-form';
+} from '@canard/schema-form';
 
 import { plugin } from '../src';
 import StoryLayout from './components/StoryLayout';

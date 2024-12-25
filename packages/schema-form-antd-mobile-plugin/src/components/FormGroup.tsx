@@ -1,6 +1,6 @@
 import { Space } from 'antd-mobile';
 
-import type { FormTypeRendererProps } from '@lumy-pack/schema-form';
+import type { FormTypeRendererProps } from '@canard/schema-form';
 
 export const FormGroup = ({
   node,

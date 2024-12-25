@@ -12,8 +12,9 @@
   "importOrder": [
     "^(react/(.*)$)|^(react$)",
     "<THIRD_PARTY_MODULES>",
-    "^(\\@lumy-pack).*",
-    "^(\\@lumy-pack)/(.*)$",
+    "^(\\@winglet)/(.*)$",
+    "^(\\@canard)/(.*)$",
+    "^(\\@aileron)/(.*)$",
     "^(\\@)/(.*)$",
     "^([../])",
     "^([./])"

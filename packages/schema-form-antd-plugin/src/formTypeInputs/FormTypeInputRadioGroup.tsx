@@ -1,15 +1,16 @@
 import { type ReactNode, useMemo } from 'react';
 
-import { useHandle } from '@winglet/react-utils';
 import { Radio, type RadioChangeEvent } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
+
+import { useHandle } from '@winglet/react-utils';
 
 import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
   NumberSchema,
   StringSchema,
-} from '@lumy-pack/schema-form';
+} from '@canard/schema-form';
 
 interface StringJsonSchema extends StringSchema {
   enum?: string[];
