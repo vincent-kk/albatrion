@@ -1,12 +1,12 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "./",
     "outDir": "./dist"
   },
   "include": [
     "src",
-    "src/**/*.tsx?",
+    "src/**/*.ts",
     "./**/*.d.ts"
   ],
   "exclude": [
@@ -18,9 +18,7 @@
     "scripts",
     "test",
     "tests",
-    "**.test.tsx?",
-    "**.spec.tsx?",
-    "**.story.tsx",
-    "**.stories.tsx"
+    "**.test.ts",
+    "**.spec.ts"
   ]
 }

@@ -22,7 +22,7 @@
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "clean": "rm -rf dist",
-    "dependencies:build": "yarn workspace @winglet/common-utils build && yarn workspace @winglet/react-utils build:only",
+    "dependencies:build": "yarn workspace @winglet/common-utils build && yarn workspace @winglet/react-utils build:only && yarn workspace @aileron/development-helper build",
     "test": "yarn dependencies:build && vitest",
     "build:only": "yarn clean && rollup -c && tsc-alias",
     "build": "yarn dependencies:build && yarn build:only",

@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "./",
     "outDir": "./dist"
@@ -7,9 +7,7 @@
   "include": [
     "src",
     "src/**/*.tsx?",
-    "./**/*.d.ts",
-    "coverage/**/*.story.tsx",
-    "coverage/**/*.stories.tsx"
+    "./**/*.d.ts"
   ],
   "exclude": [
     "node_modules",

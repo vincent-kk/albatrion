@@ -1,16 +1,8 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "./",
-    "outDir": "./dist",
-    "paths": {
-      "@/schema-form": [
-        "./src"
-      ],
-      "@/schema-form/*": [
-        "./src/*"
-      ]
-    }
+    "outDir": "./dist"
   },
   "include": [
     "src",
