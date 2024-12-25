@@ -11,7 +11,7 @@
     "commonUtils": "yarn workspace @winglet/common-utils",
     "reactUtils": "yarn workspace @winglet/react-utils",
     "developmentHelper": "yarn workspace @aileron/development-helper",
-    "build:schemaForm": "yarn commonUtils build && yarn reactUtils build && yarn schemaForm build:only && yarn antdPlugin build:only",
+    "run:all": "yarn workspaces foreach --all --topological run",
     "login:npm": "yarn npm login"
   },
   "workspaces": [
