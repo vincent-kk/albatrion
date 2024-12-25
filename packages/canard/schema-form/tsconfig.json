@@ -1,0 +1,36 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist",
+    "paths": {
+      "@/schema-form": [
+        "./src"
+      ],
+      "@/schema-form/*": [
+        "./src/*"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "src/**/*.tsx?",
+    "./**/*.d.ts",
+    "coverage/**/*.story.tsx",
+    "coverage/**/*.stories.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "documents",
+    "build",
+    "coverage",
+    "scripts",
+    "test",
+    "tests",
+    "**.test.tsx?",
+    "**.spec.tsx?",
+    "**.story.tsx",
+    "**.stories.tsx"
+  ]
+}

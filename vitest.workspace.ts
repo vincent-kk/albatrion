@@ -1,9 +1,9 @@
-import { defineWorkspace } from 'vitest/config'
+import { defineWorkspace } from "vitest/config";
 
 export default defineWorkspace([
-  "./packages/common-react/vite.config.ts",
-  "./packages/common/vite.config.ts",
-  "./packages/schema-form-antd-plugin/vite.config.ts",
-  "./packages/schema-form/vite.config.ts",
-  "./packages/benchmark/vite.config.ts"
-])
+  "./packages/winglet/react-utils/vite.config.ts",
+  "./packages/winglet/common-utils/vite.config.ts",
+  "./packages/canard/schema-form-antd-plugin/vite.config.ts",
+  "./packages/canard/schema-form/vite.config.ts",
+  "./packages/aileron/benchmark/vite.config.ts",
+]);
