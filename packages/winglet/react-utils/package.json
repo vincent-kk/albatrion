@@ -19,11 +19,9 @@
     "README.md"
   ],
   "scripts": {
-    "dependencies:build": "yarn workspace @winglet/common-utils build",
     "clean": "rm -rf dist",
-    "build": "yarn clean && yarn dependencies:build && rollup -c",
-    "build:only": "yarn clean && rollup -c",
-    "build:watch": "yarn clean && yarn dependencies:build && rollup -c -w",
+    "build": "yarn clean && rollup -c",
+    "build:chain": "yarn clean && yarn workspaces foreach --recursive --topological run build",
     "publish:npm": "yarn build && yarn npm publish --access public",
     "test": "vitest"
   },
