@@ -1,4 +1,4 @@
-# @lumy-pack/promise-modal
+# @lerx/promise-modal
 
 [![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
 [![Javascript](https://img.shields.io/badge/javascript-✔-yellow.svg)]()
@@ -8,7 +8,7 @@
 
 ## Overview
 
-`@lumy-pack/promise-modal` is a universal modal utility based on React.
+`@lerx/promise-modal` is a universal modal utility based on React.
 
 It can be used even in places not included in React components,
 
@@ -19,7 +19,7 @@ and after the modal is opened, you can retrieve the result as a promise.
 ## How to use
 
 ```bash
-yarn add @lumy-pack/promise-modal
+yarn add @lerx/promise-modal
 ```
 
 _Under Preparation_

@@ -6,7 +6,7 @@
     "schemaForm": "yarn workspace @lumy-pack/schema-form",
     "antdPlugin": "yarn workspace @lumy-pack/schema-form-antd-plugin",
     "antdMobilePlugin": "yarn workspace @lumy-pack/schema-form-antd-mobile-plugin",
-    "promiseModal": "yarn workspace @lumy-pack/promise-modal",
+    "promiseModal": "yarn workspace @lerx/promise-modal",
     "benchmark": "yarn workspace @aileron/benchmark",
     "commonUtils": "yarn workspace @winglet/common-utils",
     "reactUtils": "yarn workspace @winglet/react-utils",
