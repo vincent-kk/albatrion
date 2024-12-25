@@ -21,8 +21,8 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "yarn clean && rollup -c",
-    "build:watch": "yarn clean && rollup -c -w",
-    "publish:npm": "yarn build && yarn npm publish --access public",
+    "build:chain": "yarn clean && yarn workspaces foreach --recursive --topological run build",
+    "publish:npm": "yarn build:chain && yarn npm publish --access public",
     "test": "vitest"
   },
   "sideEffects": false,
