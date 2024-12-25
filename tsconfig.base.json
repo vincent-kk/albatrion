@@ -38,7 +38,7 @@
     "strictFunctionTypes": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
-    "isolatedModules": true,
+    "isolatedModules": true
   },
   "exclude": [
     "node_modules",

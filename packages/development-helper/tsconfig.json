@@ -2,12 +2,12 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "./",
-    "outDir": "./dist",
+    "outDir": "./dist"
   },
   "include": [
     "src",
     "src/**/*.tsx?",
-    "./**/*.d.ts",
+    "./**/*.d.ts"
   ],
   "exclude": [
     "node_modules",
@@ -21,6 +21,6 @@
     "**.test.tsx?",
     "**.spec.tsx?",
     "**.story.tsx",
-    "**.stories.tsx",
+    "**.stories.tsx"
   ]
 }
