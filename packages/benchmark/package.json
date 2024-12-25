@@ -1,5 +1,5 @@
 {
-  "name": "@lumy-pack/benchmark",
+  "name": "@aileron/benchmark",
   "version": "1.0.0",
   "scripts": {
     "start": "tsx --require ./ignore-css.ts ./src/index.ts",

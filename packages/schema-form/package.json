@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lumy-pack/schema-form.git",
+    "url": "https://github.com/aileron/schema-form.git",
     "directory": "packages/schema-form"
   },
   "license": "MIT",

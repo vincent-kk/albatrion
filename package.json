@@ -7,10 +7,10 @@
     "antdPlugin": "yarn workspace @lumy-pack/schema-form-antd-plugin",
     "antdMobilePlugin": "yarn workspace @lumy-pack/schema-form-antd-mobile-plugin",
     "promiseModal": "yarn workspace @lumy-pack/promise-modal",
-    "benchmark": "yarn workspace @lumy-pack/benchmark",
+    "benchmark": "yarn workspace @aileron/benchmark",
     "common": "yarn workspace @lumy-pack/common",
     "commonReact": "yarn workspace @lumy-pack/common-react",
-    "developmentHelper": "yarn workspace @lumy-pack/development-helper",
+    "developmentHelper": "yarn workspace @aileron/development-helper",
     "build:schemaForm": "yarn common build && yarn commonReact build && yarn schemaForm build:only && yarn antdPlugin build:only",
     "login:npm": "yarn npm login"
   },

@@ -1,9 +1,9 @@
 {
-  "name": "@lumy-pack/development-helper",
+  "name": "@aileron/development-helper",
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lumy-pack/development-helper.git",
+    "url": "https://github.com/aileron/development-helper.git",
     "directory": "packages/development-helper"
   },
   "license": "MIT",

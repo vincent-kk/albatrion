@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lumy-pack/common-react.git",
+    "url": "https://github.com/aileron/common-react.git",
     "directory": "packages/common-react"
   },
   "license": "MIT",
