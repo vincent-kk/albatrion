@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { undefinedFunction } from '@lumy-pack/common';
+import { undefinedFunction } from '@winglet/common-utils';
 
 import type { ModalNode } from '@/promise-modal/core';
 import type { ModalActions, ModalHandlersWithId } from '@/promise-modal/types';

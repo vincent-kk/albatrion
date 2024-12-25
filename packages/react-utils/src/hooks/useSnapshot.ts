@@ -1,6 +1,6 @@
 import { useMemo, useRef } from 'react';
 
-import { generateHash, stringifyObject } from '@lumy-pack/common';
+import { generateHash, stringifyObject } from '@winglet/common-utils';
 
 import { isInvalidValue } from '../utils/isInvalidValue';
 

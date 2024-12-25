@@ -1,4 +1,4 @@
-import { isArray, isString } from '@lumy-pack/common';
+import { isArray, isString } from '@winglet/common-utils';
 
 type GetWatchValues = Fn<[dependencies: any[]], any[]>;
 

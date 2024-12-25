@@ -1,6 +1,6 @@
 import { memo, useEffect } from 'react';
 
-import { useTick } from '@lumy-pack/common-react';
+import { useTick } from '@winglet/react-utils';
 
 import { Presenter } from '@/promise-modal/components/Presenter';
 import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';

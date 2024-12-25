@@ -1,10 +1,10 @@
 {
-  "name": "@lumy-pack/common-react",
+  "name": "@winglet/common-utils",
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aileron/common-react.git",
-    "directory": "packages/common-react"
+    "url": "https://github.com/aileron/common.git",
+    "directory": "packages/common"
   },
   "license": "MIT",
   "author": {
@@ -19,11 +19,9 @@
     "README.md"
   ],
   "scripts": {
-    "dependencies:build": "yarn workspace @lumy-pack/common build",
     "clean": "rm -rf dist",
-    "build": "yarn clean && yarn dependencies:build && rollup -c",
-    "build:only": "yarn clean && rollup -c",
-    "build:watch": "yarn clean && yarn dependencies:build && rollup -c -w",
+    "build": "yarn clean && rollup -c",
+    "build:watch": "yarn clean && rollup -c -w",
     "publish:npm": "yarn build && yarn npm publish --access public",
     "test": "vitest"
   },
@@ -32,34 +30,24 @@
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-replace": "^6.0.1",
-    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@types/rollup-plugin-peer-deps-external": "^2.2.5",
-    "@typescript-eslint/eslint-plugin": "^8.14.0",
-    "@typescript-eslint/parser": "^8.14.0",
     "autoprefixer": "^10.4.20",
+    "cssnano": "^7.0.6",
     "eslint": "^8.56.0",
-    "eslint-plugin-react": "^7.37.2",
-    "eslint-plugin-react-hooks": "^5.0.0",
-    "eslint-plugin-react-refresh": "^0.4.14",
-    "jsdom": "^25.0.1",
     "prettier": "^3.3.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "rollup": "^4.27.4",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.36.0",
+    "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.7.2",
     "vite": "^5.4.11",
     "vitest": "^2.1.5"
-  },
-  "peerDependencies": {
-    "react": ">=16 <19"
   }
 }

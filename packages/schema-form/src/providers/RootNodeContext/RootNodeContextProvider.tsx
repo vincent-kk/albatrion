@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 
-import { useConstant } from '@lumy-pack/common-react';
+import { useConstant } from '@winglet/react-utils';
 
 import type { FormProps } from '@/schema-form/components/Form';
 import {

@@ -1,4 +1,4 @@
-import { isTruthy } from '@lumy-pack/common';
+import { isTruthy } from '@winglet/common-utils';
 
 import { JSONPath } from '@/schema-form/types';
 

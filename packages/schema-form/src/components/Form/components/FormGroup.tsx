@@ -1,6 +1,6 @@
 import { type ComponentType, type PropsWithChildren } from 'react';
 
-import { useMemorize, useSnapshot } from '@lumy-pack/common-react';
+import { useMemorize, useSnapshot } from '@winglet/react-utils';
 
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import type {

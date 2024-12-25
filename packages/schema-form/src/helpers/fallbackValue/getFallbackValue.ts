@@ -1,4 +1,4 @@
-import { EMPTY_ARRAY, EMPTY_OBJECT } from '@lumy-pack/common';
+import { EMPTY_ARRAY, EMPTY_OBJECT } from '@winglet/common-utils';
 
 import type { JsonSchema } from '@/schema-form/types';
 

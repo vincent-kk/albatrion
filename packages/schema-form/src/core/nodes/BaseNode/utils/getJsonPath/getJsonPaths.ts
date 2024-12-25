@@ -1,4 +1,4 @@
-import { isPlainObject, isTruthy } from '@lumy-pack/common';
+import { isPlainObject, isTruthy } from '@winglet/common-utils';
 
 import { JSONPath } from '@/schema-form/types';
 

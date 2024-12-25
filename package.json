@@ -8,10 +8,10 @@
     "antdMobilePlugin": "yarn workspace @lumy-pack/schema-form-antd-mobile-plugin",
     "promiseModal": "yarn workspace @lumy-pack/promise-modal",
     "benchmark": "yarn workspace @aileron/benchmark",
-    "common": "yarn workspace @lumy-pack/common",
-    "commonReact": "yarn workspace @lumy-pack/common-react",
+    "commonUtils": "yarn workspace @winglet/common-utils",
+    "reactUtils": "yarn workspace @winglet/react-utils",
     "developmentHelper": "yarn workspace @aileron/development-helper",
-    "build:schemaForm": "yarn common build && yarn commonReact build && yarn schemaForm build:only && yarn antdPlugin build:only",
+    "build:schemaForm": "yarn commonUtils build && yarn reactUtils build && yarn schemaForm build:only && yarn antdPlugin build:only",
     "login:npm": "yarn npm login"
   },
   "workspaces": [

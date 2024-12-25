@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
 
-import { useMemorize, useSnapshot } from '@lumy-pack/common-react';
+import { useMemorize, useSnapshot } from '@winglet/react-utils';
 
 import { FallbackManager } from '@/schema-form/app/FallbackManager';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';

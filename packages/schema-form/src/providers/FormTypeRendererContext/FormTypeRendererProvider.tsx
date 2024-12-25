@@ -1,7 +1,7 @@
 import { type PropsWithChildren, useMemo } from 'react';
 
-import { isFunction } from '@lumy-pack/common';
-import { isReactComponent } from '@lumy-pack/common-react';
+import { isFunction } from '@winglet/common-utils';
+import { isReactComponent } from '@winglet/react-utils';
 
 import type { FormProps } from '@/schema-form/components/Form';
 import { ShowError } from '@/schema-form/types';

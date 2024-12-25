@@ -1,4 +1,4 @@
-import { sortObjectKeys } from '@lumy-pack/common';
+import { sortObjectKeys } from '@winglet/common-utils';
 
 import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
 import type {

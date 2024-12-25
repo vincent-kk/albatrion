@@ -22,7 +22,7 @@
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "clean": "rm -rf dist",
-    "dependencies:build": "yarn workspace @lumy-pack/common build && yarn workspace @lumy-pack/common-react build:only",
+    "dependencies:build": "yarn workspace @winglet/common-utils build && yarn workspace @winglet/react-utils build:only",
     "test": "yarn dependencies:build && vitest",
     "build:only": "yarn clean && rollup -c && tsc-alias",
     "build": "yarn dependencies:build && yarn build:only",
@@ -36,8 +36,8 @@
     "publish:npm": "yarn build && yarn npm publish --access public"
   },
   "dependencies": {
-    "@lumy-pack/common": "workspace:*",
-    "@lumy-pack/common-react": "workspace:*",
+    "@winglet/common-utils": "workspace:*",
+    "@winglet/react-utils": "workspace:*",
     "clsx": "^2.0.0"
   },
   "devDependencies": {

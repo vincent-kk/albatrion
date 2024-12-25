@@ -1,4 +1,4 @@
-import { generateHash } from '@lumy-pack/common';
+import { generateHash } from '@winglet/common-utils';
 
 import type { JsonSchemaError } from '@/schema-form/types';
 

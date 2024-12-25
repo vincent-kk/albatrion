@@ -1,4 +1,4 @@
-import { isPlainObject } from '@lumy-pack/common';
+import { isPlainObject } from '@winglet/common-utils';
 
 import type { JsonSchema, ObjectSchema } from '@/schema-form/types';
 

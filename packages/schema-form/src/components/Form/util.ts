@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { isFunction } from '@lumy-pack/common';
+import { isFunction } from '@winglet/common-utils';
 
 import type { InferSchemaNode, SchemaNode } from '@/schema-form/core';
 import type {

@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 
+import { useHandle } from '@winglet/react-utils';
 import { TimePicker } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 import dayjs, { type Dayjs } from 'dayjs';
 
-import { useHandle } from '@lumy-pack/common-react';
 import type {
   FormTypeInputDefinition,
   FormTypeInputProps,

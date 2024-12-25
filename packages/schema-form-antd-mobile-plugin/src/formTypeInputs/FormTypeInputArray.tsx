@@ -1,6 +1,6 @@
+import { useHandle } from '@winglet/react-utils';
 import { Button, type ButtonProps } from 'antd-mobile';
 
-import { useHandle } from '@lumy-pack/common-react';
 import type {
   FormTypeInputDefinition,
   FormTypeInputProps,

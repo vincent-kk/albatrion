@@ -1,4 +1,4 @@
-import { isArray, isPlainObject } from '@lumy-pack/common';
+import { isArray, isPlainObject } from '@winglet/common-utils';
 
 /**
  * @description Nil value or empty object or empty array is invalid object like

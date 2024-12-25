@@ -1,4 +1,5 @@
-import { isArray, isPlainObject } from '@lumy-pack/common';
+import { isArray, isPlainObject } from '@winglet/common-utils';
+
 import {
   type StackItem,
   isArrayStackItem,

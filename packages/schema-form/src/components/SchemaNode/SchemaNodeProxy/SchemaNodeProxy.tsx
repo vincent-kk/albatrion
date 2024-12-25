@@ -1,7 +1,7 @@
 import { Fragment, memo, useMemo } from 'react';
 
-import { isTruthy, nullFunction } from '@lumy-pack/common';
-import { useReference } from '@lumy-pack/common-react';
+import { isTruthy, nullFunction } from '@winglet/common-utils';
+import { useReference } from '@winglet/react-utils';
 
 import { useComputeSchemaNode } from '@/schema-form/hooks/useComputeSchemaNode';
 import { useSchemaNodeListener } from '@/schema-form/hooks/useSchemaNodeListener';

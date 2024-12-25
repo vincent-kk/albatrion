@@ -1,4 +1,5 @@
-import { isPlainObject } from '@lumy-pack/common';
+import { isPlainObject } from '@winglet/common-utils';
+
 import { JSONPath } from '@lumy-pack/schema-form/src/types';
 
 export const getJsonPaths = (data: any, jsonPath = '') => {

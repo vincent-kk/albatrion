@@ -1,4 +1,4 @@
-import { isTruthy } from '@lumy-pack/common';
+import { isTruthy } from '@winglet/common-utils';
 
 import {
   type Ajv,

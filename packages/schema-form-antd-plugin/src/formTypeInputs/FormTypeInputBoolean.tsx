@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 
+import { useHandle } from '@winglet/react-utils';
 import { Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 
-import { useHandle } from '@lumy-pack/common-react';
 import type {
   FormTypeInputDefinition,
   FormTypeInputProps,

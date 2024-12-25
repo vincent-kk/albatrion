@@ -1,7 +1,7 @@
 import { type RefObject, useLayoutEffect, useRef } from 'react';
 
-import { isFunction } from '@lumy-pack/common';
-import { useTick } from '@lumy-pack/common-react';
+import { isFunction } from '@winglet/common-utils';
+import { useTick } from '@winglet/react-utils';
 
 import { MethodType, type SchemaNode } from '@/schema-form/core';
 

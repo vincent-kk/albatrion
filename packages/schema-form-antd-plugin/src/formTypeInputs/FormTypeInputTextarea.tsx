@@ -1,9 +1,9 @@
 import { type ChangeEvent, useMemo } from 'react';
 
+import { useHandle } from '@winglet/react-utils';
 import { Input } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
-import { useHandle } from '@lumy-pack/common-react';
 import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,

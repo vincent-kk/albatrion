@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import { isFunction } from '@lumy-pack/common';
+import { isFunction } from '@winglet/common-utils';
 
 /**
  * @description 상수를 반환합니다. 함수인 경우 실행하여 결과를 저장합니다.

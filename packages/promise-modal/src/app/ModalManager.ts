@@ -1,6 +1,6 @@
 import { MutableRefObject } from 'react';
 
-import { getRandomNumber } from '@lumy-pack/common';
+import { getRandomNumber } from '@winglet/common-utils';
 
 import type { Modal } from '@/promise-modal/types';
 

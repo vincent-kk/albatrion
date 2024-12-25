@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 
-import { useTick } from '@lumy-pack/common-react';
+import { useTick } from '@winglet/react-utils';
 
 import type { MethodType, SchemaNode } from '@/schema-form/core';
 

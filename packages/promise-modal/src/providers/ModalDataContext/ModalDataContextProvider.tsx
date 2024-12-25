@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 
-import { useOnMountLayout, useReference } from '@lumy-pack/common-react';
+import { useOnMountLayout, useReference } from '@winglet/react-utils';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import { type ModalNode, nodeFactory } from '@/promise-modal/core';

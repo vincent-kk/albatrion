@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 
-import { falseFunction, isFunction, trueFunction } from '@lumy-pack/common';
+import { falseFunction, isFunction, trueFunction } from '@winglet/common-utils';
 
 import { MethodType, type SchemaNode, isSchemaNode } from '@/schema-form/core';
 import {

@@ -1,7 +1,7 @@
 import { Fragment, memo, useMemo } from 'react';
 
-import { isString } from '@lumy-pack/common';
-import { renderComponent, useHandle } from '@lumy-pack/common-react';
+import { isString } from '@winglet/common-utils';
+import { renderComponent, useHandle } from '@winglet/react-utils';
 
 import type { AlertNode } from '@/promise-modal/core';
 import { useModalContext } from '@/promise-modal/providers';

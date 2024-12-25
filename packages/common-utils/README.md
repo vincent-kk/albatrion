@@ -1,21 +1,20 @@
-# @lumy-pack/common-react
+# @winglet/common-utils
 
 [![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
 [![Javascript](https://img.shields.io/badge/javascript-✔-yellow.svg)]()
-[![React](https://img.shields.io/badge/react-✔-61DAFB.svg)]()
 
 ---
 
 ## Overview
 
-`@lumy-pack/common-react`
+`@winglet/common-utils`
 
 ---
 
 ## How to use
 
 ```bash
-yarn add @lumy-pack/common-react
+yarn add @winglet/common-utils
 ```
 
 _Under Preparation_

@@ -1,6 +1,6 @@
 import { type ChangeEvent, type ReactNode, useMemo } from 'react';
 
-import { useHandle } from '@lumy-pack/common-react';
+import { useHandle } from '@winglet/react-utils';
 
 import type {
   FormTypeInputDefinition,

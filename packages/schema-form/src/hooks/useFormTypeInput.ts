@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react';
 
-import { isFunctionComponent, isMemoComponent } from '@lumy-pack/common-react';
+import { isFunctionComponent, isMemoComponent } from '@winglet/react-utils';
 
 import { FallbackManager } from '@/schema-form/app/FallbackManager';
 import { withErrorBoundary } from '@/schema-form/components/utils/withErrorBoundary';

@@ -1,4 +1,4 @@
-import { isFunction } from '@lumy-pack/common';
+import { isFunction } from '@winglet/common-utils';
 
 import type { Ajv } from '@/schema-form/helpers/ajv';
 import {

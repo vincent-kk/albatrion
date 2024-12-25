@@ -1,6 +1,6 @@
 import { memo, useRef } from 'react';
 
-import { useHandle } from '@lumy-pack/common-react';
+import { useHandle } from '@winglet/react-utils';
 
 import { Background } from '@/promise-modal/components/Background';
 import { Foreground } from '@/promise-modal/components/Foreground';

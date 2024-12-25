@@ -22,7 +22,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "test": "vitest",
     "clean": "rm -rf dist",
-    "dependencies:build": "yarn workspace @lumy-pack/common build && yarn workspace @lumy-pack/common-react build",
+    "dependencies:build": "yarn workspace @winglet/common-utils build && yarn workspace @winglet/react-utils build",
     "build:only": "yarn clean && rollup -c",
     "build": "yarn dependencies:build && yarn build:only",
     "build:watch": "yarn clean && yarn build:only -w",
@@ -33,7 +33,7 @@
     "publish:npm": "yarn build && yarn npm publish --access public"
   },
   "dependencies": {
-    "@lumy-pack/common-react": "workspace:*",
+    "@winglet/react-utils": "workspace:*",
     "antd-mobile": "^5.0.0",
     "dayjs": "^1.0.0"
   },

@@ -1,6 +1,6 @@
 import { memo, useCallback, useMemo, useRef } from 'react';
 
-import { useConstant } from '@lumy-pack/common-react';
+import { useConstant } from '@winglet/react-utils';
 
 import { MethodType } from '@/schema-form/core';
 import { useFormTypeInput } from '@/schema-form/hooks/useFormTypeInput';

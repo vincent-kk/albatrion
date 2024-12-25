@@ -1,6 +1,6 @@
+import { useHandle } from '@winglet/react-utils';
 import { Input } from 'antd-mobile';
 
-import { useHandle } from '@lumy-pack/common-react';
 import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,

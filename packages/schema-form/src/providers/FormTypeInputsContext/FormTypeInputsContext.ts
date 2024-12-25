@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { EMPTY_ARRAY } from '@lumy-pack/common';
+import { EMPTY_ARRAY } from '@winglet/common-utils';
 
 import type { NormalizedFormTypeInputDefinition } from '@/schema-form/helpers/formTypeInputDefinition';
 

@@ -4,7 +4,7 @@ import {
   generateHash,
   isPlainObject,
   stringifyObject,
-} from '@lumy-pack/common';
+} from '@winglet/common-utils';
 
 import { UnhandledError } from '@/schema-form/errors';
 import type {

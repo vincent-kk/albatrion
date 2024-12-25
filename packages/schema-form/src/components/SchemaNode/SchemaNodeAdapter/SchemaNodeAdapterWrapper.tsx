@@ -5,7 +5,7 @@ import {
   useMemo,
 } from 'react';
 
-import { isReactComponent, useSnapshot } from '@lumy-pack/common-react';
+import { isReactComponent, useSnapshot } from '@winglet/react-utils';
 
 import type { SchemaNode } from '@/schema-form/core';
 import type { OverridableFormTypeInputProps } from '@/schema-form/types';

@@ -3,8 +3,8 @@ import {
   isFunction,
   isPlainObject,
   isTruthy,
-} from '@lumy-pack/common';
-import { isReactComponent } from '@lumy-pack/common-react';
+} from '@winglet/common-utils';
+import { isReactComponent } from '@winglet/react-utils';
 
 import { withErrorBoundary } from '@/schema-form/components/utils/withErrorBoundary';
 import type {

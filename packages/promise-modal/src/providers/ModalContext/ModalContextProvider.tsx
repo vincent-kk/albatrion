@@ -6,9 +6,8 @@ import {
   useRef,
 } from 'react';
 
+import { useOnMount, useTick } from '@winglet/react-utils';
 import { createPortal } from 'react-dom';
-
-import { useOnMount, useTick } from '@lumy-pack/common-react';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import {

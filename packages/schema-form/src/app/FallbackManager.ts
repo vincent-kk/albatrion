@@ -1,6 +1,6 @@
 import type { ComponentType, MutableRefObject } from 'react';
 
-import { remainOnlyReactComponent } from '@lumy-pack/common-react';
+import { remainOnlyReactComponent } from '@winglet/react-utils';
 
 import {
   FormErrorRenderer,

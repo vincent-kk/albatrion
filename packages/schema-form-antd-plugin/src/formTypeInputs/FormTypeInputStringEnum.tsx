@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 
+import { useHandle } from '@winglet/react-utils';
 import { Select } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
-import { useHandle } from '@lumy-pack/common-react';
 import type {
   ArraySchema,
   FormTypeInputDefinition,

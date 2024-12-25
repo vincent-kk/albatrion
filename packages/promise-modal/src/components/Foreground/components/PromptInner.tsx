@@ -1,7 +1,7 @@
 import { Fragment, memo, useCallback, useMemo, useState } from 'react';
 
-import { isFunction, isString } from '@lumy-pack/common';
-import { renderComponent, useHandle } from '@lumy-pack/common-react';
+import { isFunction, isString } from '@winglet/common-utils';
+import { renderComponent, useHandle } from '@winglet/react-utils';
 
 import type { PromptNode } from '@/promise-modal/core';
 import { useModalContext } from '@/promise-modal/providers';

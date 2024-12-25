@@ -1,6 +1,6 @@
 import { type ComponentType } from 'react';
 
-import { useMemorize } from '@lumy-pack/common-react';
+import { useMemorize } from '@winglet/react-utils';
 
 import {
   SchemaNodeProxy,

@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
+import { useHandle } from '@winglet/react-utils';
 import { Stepper } from 'antd-mobile';
 
-import { useHandle } from '@lumy-pack/common-react';
 import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,

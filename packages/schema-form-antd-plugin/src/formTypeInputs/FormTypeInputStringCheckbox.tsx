@@ -1,8 +1,8 @@
 import { type ReactNode, useMemo } from 'react';
 
+import { useHandle } from '@winglet/react-utils';
 import { Checkbox } from 'antd';
 
-import { useHandle } from '@lumy-pack/common-react';
 import type {
   ArraySchema,
   FormTypeInputDefinition,
