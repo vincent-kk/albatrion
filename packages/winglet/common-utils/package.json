@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aileron/common.git",
-    "directory": "packages/common"
+    "url": "https://github.com/vincent-kk/aileron.git",
+    "directory": "packages/common-utils"
   },
   "license": "MIT",
   "author": {

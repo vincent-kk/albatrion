@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aileron/common-react.git",
-    "directory": "packages/common-react"
+    "url": "https://github.com/vincent-kk/aileron.git",
+    "directory": "packages/react-utils"
   },
   "license": "MIT",
   "author": {
