@@ -36,10 +36,4 @@ declare type WithKey<T> = T & { key: string };
 
 declare type ElementOf<T extends any[]> = T[number];
 
-declare type DeepRequired<T> = {
-  [P in keyof T]-?: NonNullable<T[P]> extends object
-    ? NonNullable<T[P]> extends any[]
-      ? DeepRequired<NonNullable<T[P]>[number]>[]
-      : DeepRequired<NonNullable<T[P]>>
-    : T[P];
-};
+declare type Params<T extends Array<string>> = Record<T[number], string>;
