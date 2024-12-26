@@ -2,6 +2,8 @@ import { MutableRefObject } from 'react';
 
 import { getRandomNumber } from '@winglet/common-utils';
 
+import type { Fn } from '@aileron/types';
+
 import type { Modal } from '@/promise-modal/types';
 
 const prerenderListRef: MutableRefObject<Modal[]> = {

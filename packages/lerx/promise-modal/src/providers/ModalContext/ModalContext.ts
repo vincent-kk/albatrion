@@ -4,6 +4,8 @@ import {
   createContext,
 } from 'react';
 
+import type { Color, Duration } from '@aileron/types';
+
 import {
   DEFAULT_ANIMATION_DURATION,
   DEFAULT_BACKDROP_COLOR,
@@ -15,7 +17,10 @@ import {
   FallbackSubtitle,
   FallbackTitle,
 } from '@/promise-modal/components/FallbackComponents';
-import { FooterComponentProps, ModalFrameProps } from '@/promise-modal/types';
+import type {
+  FooterComponentProps,
+  ModalFrameProps,
+} from '@/promise-modal/types';
 
 export interface ModalContextProps {
   ForegroundComponent: ComponentType<PropsWithChildren<ModalFrameProps>>;

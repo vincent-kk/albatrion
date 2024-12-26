@@ -72,8 +72,8 @@ module.exports = [
       copy({
         targets: [
           {
-            src: '@types/**/*.d.ts',
-            dest: 'dist/types',
+            src: '@aileron/**/*.d.ts',
+            dest: 'dist/@aileron',
           },
         ],
         flatten: false,
@@ -116,6 +116,10 @@ module.exports = [
         gzipSize: true,
       }),
     ],
-    external: (path) => /node_modules/.test(path),
+    external: (path) => {
+      if (path.startsWith('@aileron')) return false;
+      if (path.startsWith('@winglet')) return true;
+      return /node_modules/.test(path);
+    },
   },
 ];

@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import type { Fn } from '@aileron/types';
+
 import type {
   BaseModal,
   ManagedEntity,

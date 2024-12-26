@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/types';
+
 import type { ModalNode } from '@/promise-modal/core';
 
 import type { AlertModal } from './alert';
