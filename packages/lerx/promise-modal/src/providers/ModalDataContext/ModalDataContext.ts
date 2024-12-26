@@ -2,6 +2,8 @@ import { createContext } from 'react';
 
 import { undefinedFunction } from '@winglet/common-utils';
 
+import type { Fn } from '@aileron/types';
+
 import type { ModalNode } from '@/promise-modal/core';
 import type { ModalActions, ModalHandlersWithId } from '@/promise-modal/types';
 

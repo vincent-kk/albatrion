@@ -1,5 +1,7 @@
 import { type ComponentType, createContext } from 'react';
 
+import type { Fn } from '@aileron/types';
+
 import type { FormTypeRendererProps } from '@/schema-form/types';
 
 export interface FormTypeRendererContext {

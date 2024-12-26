@@ -9,6 +9,9 @@
       ],
       "@/promise-modal/*": [
         "./src/*"
+      ],
+      "@aileron/types": [
+        "./@aileron/types"
       ]
     }
   },

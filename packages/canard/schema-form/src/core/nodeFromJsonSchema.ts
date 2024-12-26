@@ -1,5 +1,7 @@
 import { isFunction } from '@winglet/common-utils';
 
+import type { SetStateFn } from '@aileron/types';
+
 import type { Ajv } from '@/schema-form/helpers/ajv';
 import {
   type AllowedValue,

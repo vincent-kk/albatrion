@@ -1,3 +1,5 @@
+import type { SetStateFn } from '@aileron/types';
+
 import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
 import type {
   AllowedValue,

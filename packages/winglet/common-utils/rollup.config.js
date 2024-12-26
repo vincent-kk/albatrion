@@ -49,8 +49,8 @@ module.exports = [
       copy({
         targets: [
           {
-            src: '@types/**/*.d.ts',
-            dest: 'dist/types',
+            src: '@aileron/**/*.d.ts',
+            dest: 'dist/@aileron',
           },
         ],
         flatten: false,
@@ -68,7 +68,7 @@ module.exports = [
             rootDir: 'src',
             baseUrl: '.',
           },
-          include: ['src/**/*'],
+          include: ['src/**/*', '../@types/**/*'],
           exclude: [
             'node_modules',
             '**/*.test.ts',
@@ -89,5 +89,6 @@ module.exports = [
         },
       }),
     ],
+    external: (path) => /node_modules/.test(path),
   },
 ];

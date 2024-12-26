@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 
 import { isString } from '@winglet/common-utils';
 
+import type { Duration } from '@aileron/types';
+
 import type { ModalNode } from '@/promise-modal/core';
 import { getMillisecondsFromDuration } from '@/promise-modal/helpers/getMillisecondsFromDuration';
 

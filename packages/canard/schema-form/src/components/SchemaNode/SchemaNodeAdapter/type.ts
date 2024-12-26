@@ -1,5 +1,7 @@
 import type { ComponentType } from 'react';
 
+import type { ElementOf } from '@aileron/types';
+
 import type { SchemaNode } from '@/schema-form/core';
 import type { ObjectNodeChildNode } from '@/schema-form/core/nodes/ObjectNode';
 import type {

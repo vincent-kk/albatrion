@@ -1,5 +1,7 @@
 import { isPlainObject } from '@winglet/common-utils';
 
+import type { Dictionary } from '@aileron/types';
+
 import type { ArrayValue, JsonSchema, ObjectValue } from '@/schema-form/types';
 
 import { type StackItem, isArrayStackItem, isObjectStackItem } from './type';

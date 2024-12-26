@@ -10,6 +10,8 @@ import { createPortal } from 'react-dom';
 
 import { useOnMount, useTick } from '@winglet/react-utils';
 
+import type { Color, Duration } from '@aileron/types';
+
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import {
   DEFAULT_ANIMATION_DURATION,

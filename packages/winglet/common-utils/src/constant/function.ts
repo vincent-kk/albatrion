@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/types';
+
 export const voidFunction: Fn = () => void 0;
 
 export const undefinedFunction: Fn<[], undefined> = () => undefined;

@@ -9,6 +9,9 @@
       ],
       "@/schema-form/*": [
         "./src/*"
+      ],
+      "@aileron/types": [
+        "./@aileron/types"
       ]
     }
   },

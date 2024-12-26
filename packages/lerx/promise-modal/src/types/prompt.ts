@@ -1,5 +1,7 @@
 import type { ComponentType, ReactNode } from 'react';
 
+import type { SetStateFn } from '@aileron/types';
+
 import type { BaseModal, ContentComponentProps, FooterOptions } from './base';
 
 export type PromptFooterRender<T> = (props: {

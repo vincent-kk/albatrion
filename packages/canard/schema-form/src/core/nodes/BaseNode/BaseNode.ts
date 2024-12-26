@@ -1,5 +1,7 @@
 import { isTruthy } from '@winglet/common-utils';
 
+import type { SetStateFn } from '@aileron/types';
+
 import {
   type Ajv,
   type ErrorObject,

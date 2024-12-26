@@ -1,5 +1,7 @@
 import { isPlainObject } from '@winglet/common-utils';
 
+import type { RequiredBy } from '@aileron/types';
+
 import type { JsonSchema, ObjectSchema } from '@/schema-form/types';
 
 export const isObjectOneOfSchema = (

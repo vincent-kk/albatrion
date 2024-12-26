@@ -1,6 +1,6 @@
 {
   "name": "@winglet/common-utils",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/vincent-kk/altovion.git",
@@ -20,7 +20,7 @@
   ],
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "yarn clean && rollup -c",
+    "build": "yarn clean && rollup -c && tsc-alias",
     "build:chain": "yarn clean && yarn workspaces foreach --recursive --topological run build",
     "publish:npm": "yarn build:chain && yarn npm publish --access public",
     "test": "vitest"
@@ -46,6 +46,7 @@
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.36.0",
     "rollup-plugin-visualizer": "^5.12.0",
+    "tsc-alias": "^1.8.10",
     "typescript": "^5.7.2",
     "vite": "^5.4.11",
     "vitest": "^2.1.5"
