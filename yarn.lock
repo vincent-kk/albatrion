@@ -27,6 +27,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@aileron/common@workspace:packages/aileron/common":
+  version: 0.0.0-use.local
+  resolution: "@aileron/common@workspace:packages/aileron/common"
+  languageName: unknown
+  linkType: soft
+
 "@aileron/development-helper@workspace:packages/aileron/development-helper":
   version: 0.0.0-use.local
   resolution: "@aileron/development-helper@workspace:packages/aileron/development-helper"

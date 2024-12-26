@@ -1,0 +1,16 @@
+{
+  "name": "@aileron/common",
+  "author": {
+    "name": "Vincent K. Kelvin",
+    "email": "lunox273@gmail.com"
+  },
+  "types": "index.d.ts",
+  "main": "index.d.ts",
+  "files": [
+    "*.d.ts"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "yarn clean && rollup -c"
+  }
+}

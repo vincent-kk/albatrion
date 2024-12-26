@@ -1,4 +1,4 @@
-declare type DomSize =
+export type DomSize =
   | number
   | `${number}%`
   | `${number}px`
@@ -8,10 +8,12 @@ declare type DomSize =
   | `${number}vw`
   | `calc(${string})`;
 
-declare type Color =
+export type Color =
   | `#${string}`
   | `rgb(${number}, ${number}, ${number})`
   | `rgba(${number}, ${number}, ${number}, ${number})`
   | `var(--${string})`;
 
-declare type Duration = `${number}ms` | `${number}s`;
+export type Time = `${number}ms` | `${number}s`;
+
+export type Duration = `${number}ms`;
