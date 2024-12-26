@@ -50,8 +50,8 @@ module.exports = [
       copy({
         targets: [
           {
-            src: '@types/**/*.d.ts',
-            dest: 'dist/types',
+            src: '@aileron/**/*.d.ts',
+            dest: 'dist/@aileron',
           },
         ],
         flatten: false,
@@ -90,6 +90,11 @@ module.exports = [
         },
       }),
     ],
-    external: ['react'],
+    external: (path) => {
+      if (path.startsWith('@aileron')) return false;
+      if (path.startsWith('@winglet') && path !== '@winglet/react-utils')
+        return true;
+      return /node_modules/.test(path);
+    },
   },
 ];

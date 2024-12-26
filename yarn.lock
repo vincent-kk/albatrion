@@ -27,12 +27,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@aileron/common@workspace:packages/aileron/common":
-  version: 0.0.0-use.local
-  resolution: "@aileron/common@workspace:packages/aileron/common"
-  languageName: unknown
-  linkType: soft
-
 "@aileron/development-helper@workspace:packages/aileron/development-helper":
   version: 0.0.0-use.local
   resolution: "@aileron/development-helper@workspace:packages/aileron/development-helper"
@@ -3100,6 +3094,7 @@ __metadata:
     rollup-plugin-terser: "npm:^7.0.2"
     rollup-plugin-typescript2: "npm:^0.36.0"
     rollup-plugin-visualizer: "npm:^5.12.0"
+    tsc-alias: "npm:^1.8.10"
     typescript: "npm:^5.7.2"
     vite: "npm:^5.4.11"
     vitest: "npm:^2.1.5"
@@ -3121,6 +3116,7 @@ __metadata:
     "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
     "@typescript-eslint/eslint-plugin": "npm:^8.14.0"
     "@typescript-eslint/parser": "npm:^8.14.0"
+    "@winglet/common-utils": "workspace:*"
     autoprefixer: "npm:^10.4.20"
     eslint: "npm:^8.56.0"
     eslint-plugin-react: "npm:^7.37.2"
@@ -3136,6 +3132,7 @@ __metadata:
     rollup-plugin-postcss: "npm:^4.0.2"
     rollup-plugin-terser: "npm:^7.0.2"
     rollup-plugin-typescript2: "npm:^0.36.0"
+    tsc-alias: "npm:^1.8.10"
     typescript: "npm:^5.7.2"
     vite: "npm:^5.4.11"
     vitest: "npm:^2.1.5"
