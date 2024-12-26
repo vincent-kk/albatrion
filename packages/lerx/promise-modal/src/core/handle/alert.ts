@@ -10,7 +10,7 @@ import type {
 
 interface AlertProps<B> {
   subtype?: 'info' | 'success' | 'warning' | 'error';
-  title: string;
+  title?: ReactNode;
   subtitle?: ReactNode;
   content?: ReactNode | ComponentType<AlertContentProps>;
   background?: ModalBackground<B>;
