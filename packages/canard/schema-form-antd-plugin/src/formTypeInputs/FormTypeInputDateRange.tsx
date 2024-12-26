@@ -13,6 +13,8 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import type { Parameter } from '@aileron/types';
+
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 interface DateRangeSchema extends ArraySchema {

@@ -53,8 +53,8 @@ module.exports = [
       copy({
         targets: [
           {
-            src: '@types/**/*.d.ts',
-            dest: 'dist/types',
+            src: '@aileron/**/*.d.ts',
+            dest: 'dist/@aileron',
           },
         ],
         flatten: false,

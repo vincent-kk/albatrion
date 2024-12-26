@@ -2,7 +2,12 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "./",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "paths": {
+      "@aileron/types": [
+        "./@aileron/types"
+      ]
+    }
   },
   "include": [
     "src",
