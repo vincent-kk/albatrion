@@ -32,12 +32,12 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.0",
-    "@winglet/react-utils": "workspace:*",
+    "@winglet/react-utils": "workspace:^*",
     "antd": "^5.10.0",
     "dayjs": "^1.0.0"
   },
   "devDependencies": {
-    "@canard/schema-form": "workspace:*",
+    "@canard/schema-form": "workspace:^*",
     "@chromatic-com/storybook": "^3.2.2",
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",

@@ -27,7 +27,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@winglet/common-utils": "workspace:*"
+    "@winglet/common-utils": "workspace:^*"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.1",

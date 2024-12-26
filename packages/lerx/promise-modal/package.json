@@ -34,8 +34,8 @@
     "publish:npm": "yarn build:chain && yarn npm publish --access public"
   },
   "dependencies": {
-    "@winglet/common-utils": "workspace:*",
-    "@winglet/react-utils": "workspace:*",
+    "@winglet/common-utils": "workspace:^*",
+    "@winglet/react-utils": "workspace:^*",
     "clsx": "^2.0.0"
   },
   "devDependencies": {
