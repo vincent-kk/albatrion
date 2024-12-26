@@ -1,4 +1,4 @@
-# Altovion
+# Albatrion
 
 [![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
 [![Javascript](https://img.shields.io/badge/javascript-✔-yellow.svg)]()
@@ -9,7 +9,7 @@
 
 ## Overview
 
-**Altovion** is a monorepo that gathers **TypeScript / JavaScript packages running on React**, striving for high speed and reliability.  
+**Albatrion** is a monorepo that gathers **TypeScript / JavaScript packages running on React**, striving for high speed and reliability.  
 It includes various utilities and ancillary code to ensure stable performance and high trust in production environments.
 
 ---
