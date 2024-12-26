@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/types';
+
 import { JSONPath } from '@/schema-form/types';
 
 const JSON_PATH_REGEX = new RegExp(

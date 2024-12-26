@@ -1,5 +1,7 @@
 import type { ComponentType, ReactNode } from 'react';
 
+import type { Dictionary } from '@aileron/types';
+
 import type { UnknownFormTypeInputProps } from './formTypeInput';
 import type {
   AllowedValue,

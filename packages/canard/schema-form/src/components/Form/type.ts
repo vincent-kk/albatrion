@@ -2,6 +2,8 @@ import type { ComponentType, ReactNode } from 'react';
 
 import type Ajv from 'ajv';
 
+import type { Dictionary, Fn, SetStateFn } from '@aileron/types';
+
 import type { InferSchemaNode, SchemaNode } from '@/schema-form/core';
 import type {
   AllowedValue,

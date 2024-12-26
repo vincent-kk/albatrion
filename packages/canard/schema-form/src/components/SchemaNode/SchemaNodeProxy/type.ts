@@ -1,5 +1,7 @@
 import type { ComponentType, PropsWithChildren } from 'react';
 
+import type { Dictionary } from '@aileron/types';
+
 import type { SchemaNode } from '@/schema-form/core';
 import type {
   FormTypeInputProps,

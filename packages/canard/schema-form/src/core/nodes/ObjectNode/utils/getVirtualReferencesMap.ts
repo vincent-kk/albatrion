@@ -1,3 +1,5 @@
+import type { Dictionary } from '@aileron/types';
+
 import { SchemaNodeError } from '@/schema-form/errors';
 
 import type { VirtualReference } from '../type';

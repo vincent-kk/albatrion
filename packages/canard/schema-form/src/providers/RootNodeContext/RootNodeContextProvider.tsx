@@ -8,6 +8,8 @@ import {
 
 import { useConstant } from '@winglet/react-utils';
 
+import type { Fn } from '@aileron/types';
+
 import type { FormProps } from '@/schema-form/components/Form';
 import {
   MethodType,

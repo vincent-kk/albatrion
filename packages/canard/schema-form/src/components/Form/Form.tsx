@@ -11,6 +11,8 @@ import {
 import { isFunction } from '@winglet/common-utils';
 import { useConstant, useHandle, useTick } from '@winglet/react-utils';
 
+import type { Parameter } from '@aileron/types';
+
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import {
   type InferSchemaNode,

@@ -1,5 +1,7 @@
 import { isArray, isString } from '@winglet/common-utils';
 
+import type { Fn } from '@aileron/types';
+
 type GetWatchValues = Fn<[dependencies: any[]], any[]>;
 
 export const getWatchValuesFactory = (
