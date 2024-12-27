@@ -8,7 +8,7 @@ import {
 import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
 import type { ModalFrameProps } from '@/promise-modal/types';
 
-import styles from './styles.module.css';
+import { frame } from './classNames';
 
 const MAX_MODAL_COUNT = 5;
 const MAX_MODAL_LEVEL = 3;
@@ -31,7 +31,7 @@ export const FallbackForegroundFrame = forwardRef(
     return (
       <div
         ref={ref}
-        className={styles.frame}
+        className={frame}
         onClick={onChangeOrder}
         style={{
           marginBottom: `calc(25vh + ${level}px)`,

@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from 'react';
 
-import styles from './styles.module.css';
+import { fallback } from './classNames';
 
 export const FallbackTitle = ({ children }: PropsWithChildren) => {
-  return <h2 className={styles.fallback}>{children}</h2>;
+  return <h2 className={fallback}>{children}</h2>;
 };

@@ -1,11 +1,11 @@
 import { type MouseEvent, useCallback } from 'react';
 
-import cx from 'clsx';
+import { cx } from '@emotion/css';
 
 import { useModal, useModalContext } from '@/promise-modal/providers';
 import type { ModalLayerProps } from '@/promise-modal/types';
 
-import styles from './Background.module.css';
+import { active, root, visible } from './classNames';
 
 export const Background = ({ modalId, onChangeOrder }: ModalLayerProps) => {
   const { BackgroundComponent } = useModalContext();
@@ -21,13 +21,13 @@ export const Background = ({ modalId, onChangeOrder }: ModalLayerProps) => {
 
   if (!modal) return null;
 
-  const visible = modal.manualDestroy ? modal.alive : modal.visible;
+  const isVisible = modal.manualDestroy ? modal.alive : modal.visible;
 
   return (
     <div
-      className={cx(styles.root, {
-        [styles.visible]: visible,
-        [styles.active]: modal.closeOnBackdropClick && visible,
+      className={cx(root, {
+        [visible]: isVisible,
+        [active]: modal.closeOnBackdropClick && isVisible,
       })}
       onClick={handleClose}
     >

@@ -1,21 +1,22 @@
-.root {
+import { css } from '@emotion/css';
+
+export const root = css`
   display: none;
   position: fixed;
   inset: 0;
   z-index: -999;
   pointer-events: none;
-}
+  > * {
+    pointer-events: none;
+  }
+`;
 
-.root.active {
+export const active = css`
   pointer-events: all !important;
-}
+`;
 
-.root.visible {
+export const visible = css`
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.root > * {
-  pointer-events: none;
-}
+`;
