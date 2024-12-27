@@ -7,7 +7,7 @@ import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
 import { useModalContext } from '@/promise-modal/providers';
 import { useModalDataContext } from '@/promise-modal/providers/ModalDataContext';
 
-import styles from './Anchor.module.css';
+import { root } from './classNames.emotion';
 
 export const Anchor = memo(() => {
   const [key, update] = useTick();
@@ -24,7 +24,7 @@ export const Anchor = memo(() => {
 
   return (
     <div
-      className={styles.root}
+      className={root}
       style={{
         transitionDuration: options.duration,
         backgroundColor: dimmed ? options.backdrop : 'transparent',

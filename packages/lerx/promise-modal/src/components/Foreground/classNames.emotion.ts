@@ -1,17 +1,18 @@
-.root {
+import { css } from '@emotion/css';
+
+export const root = css`
   pointer-events: none;
   display: none;
   position: fixed;
   inset: 0;
   z-index: 1;
-}
+`;
 
-.root.active {
+export const active = css`
   display: flex !important;
   justify-content: center;
   align-items: center;
-}
-
-.root.active > * {
-  pointer-events: all !important;
-}
+  > * {
+    pointer-events: all;
+  }
+`;
