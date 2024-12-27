@@ -8,7 +8,7 @@ import {
 import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
 import type { ModalFrameProps } from '@/promise-modal/types';
 
-import { frame } from './classNames';
+import { frame } from './classNames.emotion';
 
 const MAX_MODAL_COUNT = 5;
 const MAX_MODAL_LEVEL = 3;

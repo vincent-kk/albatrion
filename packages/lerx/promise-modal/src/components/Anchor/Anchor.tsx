@@ -7,7 +7,7 @@ import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
 import { useModalContext } from '@/promise-modal/providers';
 import { useModalDataContext } from '@/promise-modal/providers/ModalDataContext';
 
-import { root } from './classNames';
+import { root } from './classNames.emotion';
 
 export const Anchor = memo(() => {
   const [key, update] = useTick();

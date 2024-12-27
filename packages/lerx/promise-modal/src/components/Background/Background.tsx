@@ -5,7 +5,7 @@ import { cx } from '@emotion/css';
 import { useModal, useModalContext } from '@/promise-modal/providers';
 import type { ModalLayerProps } from '@/promise-modal/types';
 
-import { active, root, visible } from './classNames';
+import { active, root, visible } from './classNames.emotion';
 
 export const Background = ({ modalId, onChangeOrder }: ModalLayerProps) => {
   const { BackgroundComponent } = useModalContext();

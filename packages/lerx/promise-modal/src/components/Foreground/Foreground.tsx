@@ -3,7 +3,7 @@ import { cx } from '@emotion/css';
 import { useModal, useModalContext } from '@/promise-modal/providers';
 import type { ModalLayerProps } from '@/promise-modal/types';
 
-import { active, root } from './classNames';
+import { active, root } from './classNames.emotion';
 import { AlertInner, ConfirmInner, PromptInner } from './components';
 
 export const Foreground = ({ modalId, onChangeOrder }: ModalLayerProps) => {

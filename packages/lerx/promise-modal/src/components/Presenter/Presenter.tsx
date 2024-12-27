@@ -8,7 +8,7 @@ import { useSubscribeModal } from '@/promise-modal/hooks/useSubscribeModal';
 import { useModal } from '@/promise-modal/providers';
 import type { ModalIdProps } from '@/promise-modal/types';
 
-import { root } from './classNames';
+import { root } from './classNames.emotion';
 
 let zIndex = 1;
 
