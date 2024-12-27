@@ -7,7 +7,10 @@ const resolve = require('@rollup/plugin-node-resolve');
 // NOTE: 3. @rollup/plugin-replace is used to replace the process.env.NODE_ENV with 'production'
 const replace = require('@rollup/plugin-replace');
 
-// NOTE: 7. rollup-plugin-copy is used to copy the types to the dist folder
+// NOTE: 4. @rollup/plugin-babel is used to convert TypeScript to JavaScript
+const babel = require('@rollup/plugin-babel');
+
+// NOTE: 6. rollup-plugin-copy is used to copy the types to the dist folder
 const copy = require('rollup-plugin-copy');
 
 // NOTE: 8. @rollup/plugin-commonjs is used to convert CommonJS modules to ES modules
@@ -64,6 +67,21 @@ module.exports = [
         flatten: false,
       }),
       commonjs(),
+      babel({
+        babelHelpers: 'bundled',
+        // NOTE: babel은 emotion.ts 파일만 처리, ts 처리는 typescript 플러그인에서 처리
+        extensions: ['.emotion.ts'],
+        plugins: [
+          [
+            '@emotion',
+            {
+              sourceMap: false,
+              autoLabel: 'dev-only',
+              labelFormat: '[local]',
+            },
+          ],
+        ],
+      }),
       typescript({
         useTsconfigDeclarationDir: true,
         tsconfig: './tsconfig.json',
