@@ -19,6 +19,7 @@
     "README.md"
   ],
   "scripts": {
+    "aileron:types": "ln -sf ../../../aileron/common/@types ./@aileron/types",
     "clean": "rm -rf dist",
     "build": "yarn clean && rollup -c && tsc-alias",
     "build:chain": "yarn clean && yarn workspaces foreach --recursive --topological run build",

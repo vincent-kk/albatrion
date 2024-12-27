@@ -19,6 +19,7 @@
     "README.md"
   ],
   "scripts": {
+    "aileron:types": "ln -sf ../../../aileron/common/@types ./@aileron/types",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "test": "yarn build:chain && vitest",
     "clean": "rm -rf dist",
