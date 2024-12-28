@@ -34,6 +34,8 @@ __metadata:
     "@rollup/plugin-commonjs": "npm:^28.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
     "@rollup/plugin-replace": "npm:^6.0.1"
+    "@rollup/plugin-terser": "npm:^0.4.4"
+    "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.0.1"
     "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
@@ -53,7 +55,6 @@ __metadata:
     rollup: "npm:^4.27.4"
     rollup-plugin-copy: "npm:^3.5.0"
     rollup-plugin-peer-deps-external: "npm:^2.2.4"
-    rollup-plugin-terser: "npm:^7.0.2"
     rollup-plugin-typescript2: "npm:^0.36.0"
     typescript: "npm:^5.7.2"
     vite: "npm:^5.4.11"
@@ -179,7 +180,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.18.9":
+"@babel/core@npm:^7.18.9, @babel/core@npm:^7.26.0":
   version: 7.26.0
   resolution: "@babel/core@npm:7.26.0"
   dependencies:
@@ -425,16 +426,18 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@canard/schema-form-antd-mobile-plugin@workspace:packages/canard/schema-form-antd-mobile-plugin"
   dependencies:
-    "@canard/schema-form": "workspace:^*"
+    "@canard/schema-form": "workspace:^"
     "@chromatic-com/storybook": "npm:^3.2.2"
     "@rollup/plugin-commonjs": "npm:^28.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
+    "@rollup/plugin-terser": "npm:^0.4.4"
     "@storybook/addon-essentials": "npm:^8.4.7"
     "@storybook/addon-interactions": "npm:^8.4.7"
     "@storybook/blocks": "npm:^8.4.7"
     "@storybook/react": "npm:^8.4.7"
     "@storybook/react-vite": "npm:^8.4.7"
     "@storybook/test": "npm:^8.4.7"
+    "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.0.1"
     "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
@@ -443,7 +446,7 @@ __metadata:
     "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
     "@typescript-eslint/eslint-plugin": "npm:^8.14.0"
     "@typescript-eslint/parser": "npm:^8.14.0"
-    "@winglet/react-utils": "workspace:^*"
+    "@winglet/react-utils": "workspace:^"
     antd-mobile: "npm:^5.0.0"
     dayjs: "npm:^1.0.0"
     eslint: "npm:^8.56.0"
@@ -458,7 +461,6 @@ __metadata:
     rollup: "npm:^4.27.4"
     rollup-plugin-copy: "npm:^3.5.0"
     rollup-plugin-peer-deps-external: "npm:^2.2.4"
-    rollup-plugin-terser: "npm:^7.0.2"
     rollup-plugin-typescript2: "npm:^0.36.0"
     storybook: "npm:^8.4.7"
     typescript: "npm:^5.7.2"
@@ -477,16 +479,18 @@ __metadata:
   resolution: "@canard/schema-form-antd-plugin@workspace:packages/canard/schema-form-antd-plugin"
   dependencies:
     "@ant-design/icons": "npm:^5.0.0"
-    "@canard/schema-form": "workspace:^*"
+    "@canard/schema-form": "workspace:^"
     "@chromatic-com/storybook": "npm:^3.2.2"
     "@rollup/plugin-commonjs": "npm:^28.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
+    "@rollup/plugin-terser": "npm:^0.4.4"
     "@storybook/addon-essentials": "npm:^8.4.7"
     "@storybook/addon-interactions": "npm:^8.4.7"
     "@storybook/blocks": "npm:^8.4.7"
     "@storybook/react": "npm:^8.4.7"
     "@storybook/react-vite": "npm:^8.4.7"
     "@storybook/test": "npm:^8.4.7"
+    "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.0.1"
     "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
@@ -495,7 +499,7 @@ __metadata:
     "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
     "@typescript-eslint/eslint-plugin": "npm:^8.14.0"
     "@typescript-eslint/parser": "npm:^8.14.0"
-    "@winglet/react-utils": "workspace:^*"
+    "@winglet/react-utils": "workspace:^"
     antd: "npm:^5.10.0"
     dayjs: "npm:^1.0.0"
     eslint: "npm:^8.56.0"
@@ -510,7 +514,6 @@ __metadata:
     rollup: "npm:^4.27.4"
     rollup-plugin-copy: "npm:^3.5.0"
     rollup-plugin-peer-deps-external: "npm:^2.2.4"
-    rollup-plugin-terser: "npm:^7.0.2"
     rollup-plugin-typescript2: "npm:^0.36.0"
     storybook: "npm:^8.4.7"
     typescript: "npm:^5.7.2"
@@ -524,7 +527,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@canard/schema-form@workspace:^*, @canard/schema-form@workspace:packages/canard/schema-form":
+"@canard/schema-form@workspace:^, @canard/schema-form@workspace:packages/canard/schema-form":
   version: 0.0.0-use.local
   resolution: "@canard/schema-form@workspace:packages/canard/schema-form"
   dependencies:
@@ -532,6 +535,7 @@ __metadata:
     "@rollup/plugin-commonjs": "npm:^28.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
     "@rollup/plugin-replace": "npm:^6.0.1"
+    "@rollup/plugin-terser": "npm:^0.4.4"
     "@size-limit/preset-app": "npm:^11.1.6"
     "@size-limit/preset-big-lib": "npm:^11.1.6"
     "@size-limit/preset-small-lib": "npm:^11.1.6"
@@ -541,6 +545,7 @@ __metadata:
     "@storybook/react": "npm:^8.4.7"
     "@storybook/react-vite": "npm:^8.4.7"
     "@storybook/test": "npm:^8.4.7"
+    "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.0.1"
     "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
@@ -549,8 +554,8 @@ __metadata:
     "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
     "@typescript-eslint/eslint-plugin": "npm:^8.14.0"
     "@typescript-eslint/parser": "npm:^8.14.0"
-    "@winglet/common-utils": "workspace:^*"
-    "@winglet/react-utils": "workspace:^*"
+    "@winglet/common-utils": "workspace:^"
+    "@winglet/react-utils": "workspace:^"
     ajv: "npm:^8.0.0"
     dependency-cruiser: "npm:^16.7.0"
     eslint: "npm:^8.56.0"
@@ -565,7 +570,6 @@ __metadata:
     rollup: "npm:^4.27.4"
     rollup-plugin-copy: "npm:^3.5.0"
     rollup-plugin-peer-deps-external: "npm:^2.2.4"
-    rollup-plugin-terser: "npm:^7.0.2"
     rollup-plugin-typescript2: "npm:^0.36.0"
     rollup-plugin-visualizer: "npm:^5.12.0"
     size-limit: "npm:^11.1.6"
@@ -1409,6 +1413,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@lerx/promise-modal@workspace:packages/lerx/promise-modal"
   dependencies:
+    "@babel/core": "npm:^7.26.0"
     "@chromatic-com/storybook": "npm:^3.2.2"
     "@emotion/babel-plugin": "npm:^11.13.5"
     "@emotion/css": "npm:^11.0.0"
@@ -1416,6 +1421,7 @@ __metadata:
     "@rollup/plugin-commonjs": "npm:^28.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
     "@rollup/plugin-replace": "npm:^6.0.1"
+    "@rollup/plugin-terser": "npm:^0.4.4"
     "@size-limit/preset-app": "npm:^11.1.6"
     "@size-limit/preset-big-lib": "npm:^11.1.6"
     "@size-limit/preset-small-lib": "npm:^11.1.6"
@@ -1425,16 +1431,17 @@ __metadata:
     "@storybook/react": "npm:^8.4.7"
     "@storybook/react-vite": "npm:^8.4.7"
     "@storybook/test": "npm:^8.4.7"
+    "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.0.1"
+    "@testing-library/react": "npm:^16.1.0"
     "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
     "@types/react": "npm:^18.3.12"
     "@types/react-dom": "npm:^18.3.1"
     "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
     "@typescript-eslint/eslint-plugin": "npm:^8.14.0"
     "@typescript-eslint/parser": "npm:^8.14.0"
-    "@winglet/common-utils": "workspace:^*"
-    "@winglet/react-utils": "workspace:^*"
+    "@winglet/common-utils": "workspace:^"
+    "@winglet/react-utils": "workspace:^"
     antd: "npm:^5.22.5"
     dependency-cruiser: "npm:^16.7.0"
     eslint: "npm:^8.56.0"
@@ -1449,7 +1456,6 @@ __metadata:
     rollup: "npm:^4.27.4"
     rollup-plugin-copy: "npm:^3.5.0"
     rollup-plugin-peer-deps-external: "npm:^2.2.4"
-    rollup-plugin-terser: "npm:^7.0.2"
     rollup-plugin-typescript2: "npm:^0.36.0"
     rollup-plugin-visualizer: "npm:^5.12.0"
     sass-embedded: "npm:^1.83.0"
@@ -1826,6 +1832,22 @@ __metadata:
     rollup:
       optional: true
   checksum: 10c0/71c0dea46f560c8dff59853446d43fa0e8258139a74d2af09fce5790d0540ff3d874c8fd9962cb049577d25327262bfc97485ef90b2a0a21bf28a9d3bd8c6d44
+  languageName: node
+  linkType: hard
+
+"@rollup/plugin-terser@npm:^0.4.4":
+  version: 0.4.4
+  resolution: "@rollup/plugin-terser@npm:0.4.4"
+  dependencies:
+    serialize-javascript: "npm:^6.0.1"
+    smob: "npm:^1.0.0"
+    terser: "npm:^5.17.4"
+  peerDependencies:
+    rollup: ^2.0.0||^3.0.0||^4.0.0
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+  checksum: 10c0/b9cb6c8f02ac1c1344019e9fb854321b74f880efebc41b6bdd84f18331fce0f4a2aadcdb481042245cd3f409b429ac363af71f9efec4a2024731d67d32af36ee
   languageName: node
   linkType: hard
 
@@ -2448,7 +2470,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:10.4.0":
+"@testing-library/dom@npm:10.4.0, @testing-library/dom@npm:^10.4.0":
   version: 10.4.0
   resolution: "@testing-library/dom@npm:10.4.0"
   dependencies:
@@ -2494,7 +2516,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^16.0.1":
+"@testing-library/react@npm:^16.0.1, @testing-library/react@npm:^16.1.0":
   version: 16.1.0
   resolution: "@testing-library/react@npm:16.1.0"
   dependencies:
@@ -3178,24 +3200,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@winglet/common-utils@workspace:^*, @winglet/common-utils@workspace:packages/winglet/common-utils":
+"@winglet/common-utils@workspace:^, @winglet/common-utils@workspace:packages/winglet/common-utils":
   version: 0.0.0-use.local
   resolution: "@winglet/common-utils@workspace:packages/winglet/common-utils"
   dependencies:
+    "@babel/core": "npm:^7.26.0"
     "@rollup/plugin-commonjs": "npm:^28.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
     "@rollup/plugin-replace": "npm:^6.0.1"
-    "@testing-library/react": "npm:^16.0.1"
+    "@rollup/plugin-terser": "npm:^0.4.4"
     "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
-    "@types/react": "npm:^18.3.12"
-    "@types/react-dom": "npm:^18.3.1"
     "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
     eslint: "npm:^8.56.0"
     prettier: "npm:^3.3.3"
     rollup: "npm:^4.27.4"
     rollup-plugin-copy: "npm:^3.5.0"
     rollup-plugin-peer-deps-external: "npm:^2.2.4"
-    rollup-plugin-terser: "npm:^7.0.2"
     rollup-plugin-typescript2: "npm:^0.36.0"
     rollup-plugin-visualizer: "npm:^5.12.0"
     tsc-alias: "npm:^1.8.10"
@@ -3205,22 +3225,25 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@winglet/react-utils@workspace:^*, @winglet/react-utils@workspace:packages/winglet/react-utils":
+"@winglet/react-utils@workspace:^, @winglet/react-utils@workspace:packages/winglet/react-utils":
   version: 0.0.0-use.local
   resolution: "@winglet/react-utils@workspace:packages/winglet/react-utils"
   dependencies:
+    "@babel/core": "npm:^7.26.0"
     "@rollup/plugin-commonjs": "npm:^28.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
     "@rollup/plugin-replace": "npm:^6.0.1"
+    "@rollup/plugin-terser": "npm:^0.4.4"
+    "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.0.1"
+    "@testing-library/react": "npm:^16.1.0"
     "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
     "@types/react": "npm:^18.3.12"
     "@types/react-dom": "npm:^18.3.1"
     "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
     "@typescript-eslint/eslint-plugin": "npm:^8.14.0"
     "@typescript-eslint/parser": "npm:^8.14.0"
-    "@winglet/common-utils": "workspace:^*"
+    "@winglet/common-utils": "workspace:^"
     eslint: "npm:^8.56.0"
     eslint-plugin-react: "npm:^7.37.2"
     eslint-plugin-react-hooks: "npm:^5.0.0"
@@ -3232,7 +3255,6 @@ __metadata:
     rollup: "npm:^4.27.4"
     rollup-plugin-copy: "npm:^3.5.0"
     rollup-plugin-peer-deps-external: "npm:^2.2.4"
-    rollup-plugin-terser: "npm:^7.0.2"
     rollup-plugin-typescript2: "npm:^0.36.0"
     tsc-alias: "npm:^1.8.10"
     typescript: "npm:^5.7.2"
@@ -6408,17 +6430,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-worker@npm:^26.2.1":
-  version: 26.6.2
-  resolution: "jest-worker@npm:26.6.2"
-  dependencies:
-    "@types/node": "npm:*"
-    merge-stream: "npm:^2.0.0"
-    supports-color: "npm:^7.0.0"
-  checksum: 10c0/07e4dba650381604cda253ab6d5837fe0279c8d68c25884995b45bfe149a7a1e1b5a97f304b4518f257dac2a9ddc1808d57d650649c3ab855e9e60cf824d2970
-  languageName: node
-  linkType: hard
-
 "jest-worker@npm:^27.4.5":
   version: 27.5.1
   resolution: "jest-worker@npm:27.5.1"
@@ -8572,20 +8583,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-terser@npm:^7.0.2":
-  version: 7.0.2
-  resolution: "rollup-plugin-terser@npm:7.0.2"
-  dependencies:
-    "@babel/code-frame": "npm:^7.10.4"
-    jest-worker: "npm:^26.2.1"
-    serialize-javascript: "npm:^4.0.0"
-    terser: "npm:^5.0.0"
-  peerDependencies:
-    rollup: ^2.0.0
-  checksum: 10c0/f79b851c6f7b06555d3a8ce7a4e32abd2b7cb8318e89fb8db73e662fa6e3af1a59920e881d111efc65a7437fd9582b61b1f4859b6fd839ba948616829d92432d
-  languageName: node
-  linkType: hard
-
 "rollup-plugin-typescript2@npm:^0.36.0":
   version: 0.36.0
   resolution: "rollup-plugin-typescript2@npm:0.36.0"
@@ -9095,16 +9092,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serialize-javascript@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "serialize-javascript@npm:4.0.0"
-  dependencies:
-    randombytes: "npm:^2.1.0"
-  checksum: 10c0/510dfe7f0311c0b2f7ab06311afa1668ba2969ab2f1faaac0a4924ede76b7f22ba85cfdeaa0052ec5a047bca42c8cd8ac8df8f0efe52f9bd290b3a39ae69fe9d
-  languageName: node
-  linkType: hard
-
-"serialize-javascript@npm:^6.0.2":
+"serialize-javascript@npm:^6.0.1, serialize-javascript@npm:^6.0.2":
   version: 6.0.2
   resolution: "serialize-javascript@npm:6.0.2"
   dependencies:
@@ -9252,6 +9240,13 @@ __metadata:
   version: 4.2.0
   resolution: "smart-buffer@npm:4.2.0"
   checksum: 10c0/a16775323e1404dd43fabafe7460be13a471e021637bc7889468eb45ce6a6b207261f454e4e530a19500cc962c4cc5348583520843b363f4193cee5c00e1e539
+  languageName: node
+  linkType: hard
+
+"smob@npm:^1.0.0":
+  version: 1.5.0
+  resolution: "smob@npm:1.5.0"
+  checksum: 10c0/a1067f23265812de8357ed27312101af49b89129eb973e3f26ab5856ea774f88cace13342e66e32470f933ccfa916e0e9d0f7ca8bbd4f92dfab2af45c15956c2
   languageName: node
   linkType: hard
 
@@ -9548,7 +9543,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supports-color@npm:^7.0.0, supports-color@npm:^7.1.0":
+"supports-color@npm:^7.1.0":
   version: 7.2.0
   resolution: "supports-color@npm:7.2.0"
   dependencies:
@@ -9691,7 +9686,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"terser@npm:^5.0.0, terser@npm:^5.31.1":
+"terser@npm:^5.17.4, terser@npm:^5.31.1":
   version: 5.37.0
   resolution: "terser@npm:5.37.0"
   dependencies:

@@ -19,8 +19,8 @@ const commonjs = require('@rollup/plugin-commonjs');
 // NOTE: 9. rollup-plugin-typescript2 is used to convert TypeScript to JavaScript
 const typescript = require('rollup-plugin-typescript2');
 
-// NOTE: 10. rollup-plugin-terser is used to minify the JavaScript
-const { terser } = require('rollup-plugin-terser');
+// NOTE: 10. @rollup/plugin-terser is used to minify the JavaScript
+const terser = require('@rollup/plugin-terser');
 
 // NOTE: 11. rollup-plugin-visualizer is used to visualize the bundle size
 const visualizer = require('rollup-plugin-visualizer').visualizer;

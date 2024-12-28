@@ -1,6 +1,6 @@
 {
   "name": "@lerx/promise-modal",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "repository": {
     "type": "git",
     "url": "https://github.com/vincent-kk/albatrion.git",
@@ -32,20 +32,26 @@
     "make-dependency-graph": "npx depcruise src --config .dependency-cruiser.js --output-type dot > dependency-graph.dot && dot -Tpng dependency-graph.dot -o dependency-graph.png",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "publish:npm": "yarn build:chain && yarn npm publish --access public"
+    "version:patch": "yarn version patch",
+    "version:minor": "yarn version minor",
+    "version:major": "yarn version major",
+    "publish:npm": "yarn build && yarn npm publish --access public",
+    "publish:chain": "yarn build:chain && yarn npm publish --access public"
   },
   "dependencies": {
     "@emotion/css": "^11.0.0",
-    "@winglet/common-utils": "workspace:^*",
-    "@winglet/react-utils": "workspace:^*"
+    "@winglet/common-utils": "workspace:^",
+    "@winglet/react-utils": "workspace:^"
   },
   "devDependencies": {
+    "@babel/core": "^7.26.0",
     "@chromatic-com/storybook": "^3.2.2",
     "@emotion/babel-plugin": "^11.13.5",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-replace": "^6.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
     "@size-limit/preset-app": "^11.1.6",
     "@size-limit/preset-big-lib": "^11.1.6",
     "@size-limit/preset-small-lib": "^11.1.6",
@@ -55,8 +61,9 @@
     "@storybook/react": "^8.4.7",
     "@storybook/react-vite": "^8.4.7",
     "@storybook/test": "^8.4.7",
+    "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.0.1",
+    "@testing-library/react": "^16.1.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
@@ -77,7 +84,6 @@
     "rollup": "^4.27.4",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.36.0",
     "rollup-plugin-visualizer": "^5.12.0",
     "sass-embedded": "^1.83.0",

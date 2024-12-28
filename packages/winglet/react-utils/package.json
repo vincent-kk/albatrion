@@ -1,6 +1,6 @@
 {
   "name": "@winglet/react-utils",
-  "version": "0.0.2",
+  "version": "0.0.6",
   "repository": {
     "type": "git",
     "url": "https://github.com/vincent-kk/albatrion.git",
@@ -20,22 +20,29 @@
   ],
   "scripts": {
     "aileron:types": "ln -sf ../../../aileron/common/@types ./@aileron/types",
+    "test": "vitest",
     "clean": "rm -rf dist",
     "build": "yarn clean && rollup -c && tsc-alias",
     "build:chain": "yarn clean && yarn workspaces foreach --recursive --topological run build",
-    "publish:npm": "yarn build:chain && yarn npm publish --access public",
-    "test": "vitest"
+    "version:patch": "yarn version patch",
+    "version:minor": "yarn version minor",
+    "version:major": "yarn version major",
+    "publish:npm": "yarn build && yarn npm publish --access public",
+    "publish:chain": "yarn build:chain && yarn npm publish --access public"
   },
   "sideEffects": false,
   "dependencies": {
-    "@winglet/common-utils": "workspace:^*"
+    "@winglet/common-utils": "workspace:^"
   },
   "devDependencies": {
+    "@babel/core": "^7.26.0",
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-replace": "^6.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.0.1",
+    "@testing-library/react": "^16.1.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
@@ -53,7 +60,6 @@
     "rollup": "^4.27.4",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.36.0",
     "tsc-alias": "^1.8.10",
     "typescript": "^5.7.2",

@@ -1,6 +1,6 @@
 {
   "name": "@aileron/benchmark",
-  "version": "1.0.0",
+  "private": true,
   "scripts": {
     "start": "tsx --require ./ignore-css.ts ./src/index.ts",
     "test": "vitest"
