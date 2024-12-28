@@ -1,7 +1,11 @@
 import { Fragment, memo, useCallback, useMemo, useState } from 'react';
 
 import { isFunction, isString } from '@winglet/common-utils';
-import { renderComponent, useHandle } from '@winglet/react-utils';
+import {
+  renderComponent,
+  useHandle,
+  withErrorBoundary,
+} from '@winglet/react-utils';
 
 import type { PromptNode } from '@/promise-modal/core';
 import { useModalContext } from '@/promise-modal/providers';
@@ -25,7 +29,7 @@ export const PromptInner = memo(
     } = useMemo(
       () => ({
         ...modal,
-        Input: memo(modal.Input),
+        Input: memo(withErrorBoundary(modal.Input)),
       }),
       [modal],
     );
