@@ -1,5 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 
+import { FallbackMessage } from './FallbackMessage';
+
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
@@ -11,7 +13,8 @@ interface State {
 }
 
 export class ErrorBoundary extends Component<Props, State> {
-  static #fallback = (<p>Something went wrong.</p>);
+  static #fallback = (<FallbackMessage />);
+
   constructor(props: Props) {
     super(props);
     this.state = {
