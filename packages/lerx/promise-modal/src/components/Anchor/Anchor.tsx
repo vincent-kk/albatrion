@@ -1,6 +1,6 @@
 import { memo, useEffect } from 'react';
 
-import { useTick } from '@winglet/react-utils';
+import { useTick, withErrorBoundary } from '@winglet/react-utils';
 
 import { Presenter } from '@/promise-modal/components/Presenter';
 import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
@@ -9,7 +9,7 @@ import { useModalDataContext } from '@/promise-modal/providers/ModalDataContext'
 
 import { root } from './classNames.emotion';
 
-export const Anchor = memo(() => {
+const AnchorInner = () => {
   const [key, update] = useTick();
 
   const { modalIds, setUpdater } = useModalDataContext();
@@ -35,4 +35,6 @@ export const Anchor = memo(() => {
       })}
     </div>
   );
-});
+};
+
+export const Anchor = memo(withErrorBoundary(AnchorInner));
