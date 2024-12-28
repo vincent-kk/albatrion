@@ -9,7 +9,12 @@ import {
 } from 'react';
 
 import { isFunction } from '@winglet/common-utils';
-import { useConstant, useHandle, useTick } from '@winglet/react-utils';
+import {
+  useConstant,
+  useHandle,
+  useTick,
+  withErrorBoundary,
+} from '@winglet/react-utils';
 
 import type { Parameter } from '@aileron/types';
 
@@ -162,7 +167,7 @@ const FormInner = <
   );
 };
 
-export const Form = memo(forwardRef(FormInner)) as <
+export const Form = memo(withErrorBoundary(forwardRef(FormInner))) as <
   Schema extends JsonSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 >(
