@@ -50,6 +50,7 @@ export interface FormTypeInputProps<
   onChange: SetStateFnWithOptions<Value | undefined>;
   /** Form에 전달된 UserDefinedContext */
   context: Context;
+  /** 추가 속성을 자유롭게 정의할 수 있음 */
   [alt: string]: any;
 }
 

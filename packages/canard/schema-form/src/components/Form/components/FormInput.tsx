@@ -1,19 +1,24 @@
-import type { ComponentType } from 'react';
+import type { CSSProperties, ComponentType } from 'react';
 
 import { useMemorize, useSnapshot } from '@winglet/react-utils';
+
+import type { Dictionary } from '@aileron/types';
 
 import { FallbackManager } from '@/schema-form/app/FallbackManager';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import { useExternalFormContext } from '@/schema-form/providers';
-import type {
-  FormTypeInputProps,
-  OverridableFormTypeInputProps,
-} from '@/schema-form/types';
+import type { FormTypeInputProps } from '@/schema-form/types';
 
 export type FormInputProps = {
   path: string;
+  name?: string;
+  readOnly?: boolean;
+  disabled?: boolean;
   FormTypeInput?: ComponentType<FormTypeInputProps>;
-} & OverridableFormTypeInputProps;
+  style?: CSSProperties;
+  className?: string;
+  context?: Dictionary;
+};
 
 export const FormInput = ({
   path,

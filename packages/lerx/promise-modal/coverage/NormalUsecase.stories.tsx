@@ -50,11 +50,23 @@ export const NormalUsecase = () => {
     });
   };
 
+  const handleErrorPrompt = () => {
+    prompt({
+      title: 'Error Prompt',
+      content: 'Error will be thrown from Input',
+      Input: () => {
+        throw new Error('Error from Prompt Input');
+        return <div>Input</div>;
+      },
+    });
+  };
+
   return (
     <div>
       <button onClick={handleAlert}>Open Alert</button>
       <button onClick={handleConfirm}>Open Confirm</button>
       <button onClick={handlePrompt}>Open Prompt: {value}</button>
+      <button onClick={handleErrorPrompt}>Error from Prompt Input</button>
     </div>
   );
 };

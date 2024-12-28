@@ -1,5 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 
+import { FallbackMessage } from './FallbackMessage';
+
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
@@ -11,6 +13,8 @@ interface State {
 }
 
 export class ErrorBoundary extends Component<Props, State> {
+  static #fallback = (<FallbackMessage />);
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -27,16 +31,12 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // 에러 로깅 서비스에 에러를 기록할 수 있습니다
     console.error('ErrorBoundary caught an error:', error, errorInfo);
   }
 
   render(): ReactNode {
-    const { hasError } = this.state;
-    const { children, fallback = <p>Something went wrong.</p> } = this.props;
-    if (hasError) {
-      return fallback;
-    }
-    return children;
+    if (this.state.hasError)
+      return this.props.fallback || ErrorBoundary.#fallback;
+    return this.props.children;
   }
 }

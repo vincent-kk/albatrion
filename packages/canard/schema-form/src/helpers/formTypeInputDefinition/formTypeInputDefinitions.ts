@@ -4,9 +4,8 @@ import {
   isPlainObject,
   isTruthy,
 } from '@winglet/common-utils';
-import { isReactComponent } from '@winglet/react-utils';
+import { isReactComponent, withErrorBoundary } from '@winglet/react-utils';
 
-import { withErrorBoundary } from '@/schema-form/components/utils/withErrorBoundary';
 import type {
   FormTypeInputDefinition,
   FormTypeTestFn,

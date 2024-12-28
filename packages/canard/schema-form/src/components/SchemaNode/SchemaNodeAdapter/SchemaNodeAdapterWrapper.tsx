@@ -5,7 +5,11 @@ import {
   useMemo,
 } from 'react';
 
-import { isReactComponent, useSnapshot } from '@winglet/react-utils';
+import {
+  isReactComponent,
+  useSnapshot,
+  withErrorBoundary,
+} from '@winglet/react-utils';
 
 import type { SchemaNode } from '@/schema-form/core';
 import type { OverridableFormTypeInputProps } from '@/schema-form/types';
@@ -30,7 +34,7 @@ export const SchemaNodeAdapterWrapper = (
 
     const PreferredFormTypeInput = useMemo(() => {
       return isReactComponent(propsRef.current.PreferredFormTypeInput)
-        ? memo(propsRef.current.PreferredFormTypeInput)
+        ? memo(withErrorBoundary(propsRef.current.PreferredFormTypeInput))
         : undefined;
     }, []);
 
