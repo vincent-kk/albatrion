@@ -1,9 +1,12 @@
 import { memo, useMemo } from 'react';
 
-import { isFunctionComponent, isMemoComponent } from '@winglet/react-utils';
+import {
+  isFunctionComponent,
+  isMemoComponent,
+  withErrorBoundary,
+} from '@winglet/react-utils';
 
 import { FallbackManager } from '@/schema-form/app/FallbackManager';
-import { withErrorBoundary } from '@/schema-form/components/utils/withErrorBoundary';
 import type { SchemaNode } from '@/schema-form/core';
 import {
   useExternalFormContext,
