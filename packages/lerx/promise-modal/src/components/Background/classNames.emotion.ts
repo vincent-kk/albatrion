@@ -12,7 +12,7 @@ export const root = css`
 `;
 
 export const active = css`
-  pointer-events: all !important;
+  pointer-events: all;
 `;
 
 export const visible = css`

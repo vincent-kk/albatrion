@@ -5,17 +5,13 @@ import React, {
   useRef,
 } from 'react';
 
-import {
-  ModalFrameProps,
-  useDestroyAfter,
-  useModalDuration,
-} from '../../../src';
+import { ModalFrameProps, useModalDuration } from '../../../src';
 // @ts-expect-error css module
 import styles from './Background.module.css';
 
 export const Background = forwardRef(
   (
-    { id, visible, background }: ModalFrameProps,
+    { visible, background }: ModalFrameProps,
     ref: ForwardedRef<HTMLDivElement>,
   ) => {
     const modalRef = useRef<HTMLDivElement>(null);
@@ -39,7 +35,6 @@ export const Background = forwardRef(
       };
     }, [visible]);
 
-    useDestroyAfter(id, duration);
     return (
       <div ref={ref}>
         <div

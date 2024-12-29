@@ -21,13 +21,11 @@ export const Background = ({ modalId, onChangeOrder }: ModalLayerProps) => {
 
   if (!modal) return null;
 
-  const isVisible = modal.manualDestroy ? modal.alive : modal.visible;
-
   return (
     <div
       className={cx(root, {
-        [visible]: isVisible,
-        [active]: modal.closeOnBackdropClick && isVisible,
+        [visible]: modal.manualDestroy ? modal.alive : modal.visible,
+        [active]: modal.closeOnBackdropClick && modal.visible,
       })}
       onClick={handleClose}
     >

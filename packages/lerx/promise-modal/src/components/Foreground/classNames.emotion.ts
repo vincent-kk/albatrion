@@ -9,10 +9,13 @@ export const root = css`
 `;
 
 export const active = css`
-  display: flex !important;
-  justify-content: center;
-  align-items: center;
   > * {
     pointer-events: all;
   }
+`;
+
+export const visible = css`
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
 `;
