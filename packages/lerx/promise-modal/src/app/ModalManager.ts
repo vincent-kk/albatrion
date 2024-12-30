@@ -1,6 +1,6 @@
 import { MutableRefObject } from 'react';
 
-import { getRandomNumber } from '@winglet/common-utils';
+import { getRandomString } from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/types';
 
@@ -33,13 +33,13 @@ export const ModalManager = {
   setupOpen(open: (modal: Modal) => void) {
     openModalRef.current = open;
   },
-  anchor(name: string, label = 'modal-anchor'): HTMLElement {
+  anchor(name: string, prefix = 'promise-modal'): HTMLElement {
     if (anchorRef.current) {
       const anchor = document.getElementById(anchorRef.current.id);
       if (anchor) return anchor;
     }
     const node = document.createElement(name);
-    node.setAttribute('id', `${label}-${getRandomNumber()}`);
+    node.setAttribute('id', `${prefix}-${getRandomString(36)}`);
     document.body.appendChild(node);
     anchorRef.current = node;
     return node;

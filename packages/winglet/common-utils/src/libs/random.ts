@@ -1,1 +1,2 @@
-export const getRandomNumber = () => `${Math.random()}`.slice(2);
+export const getRandomString = (radix?: number) =>
+  Math.random().toString(radix).slice(2);
