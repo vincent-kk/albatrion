@@ -3,7 +3,7 @@ import { cx } from '@emotion/css';
 import { useModal, useModalContext } from '@/promise-modal/providers';
 import type { ModalLayerProps } from '@/promise-modal/types';
 
-import { active, root, visible } from './classNames.emotion';
+import { active, foreground, visible } from './classNames.emotion';
 import { AlertInner, ConfirmInner, PromptInner } from './components';
 
 export const Foreground = ({ modalId, onChangeOrder }: ModalLayerProps) => {
@@ -15,7 +15,7 @@ export const Foreground = ({ modalId, onChangeOrder }: ModalLayerProps) => {
 
   return (
     <div
-      className={cx(root, {
+      className={cx(foreground, {
         [visible]: modal.manualDestroy ? modal.alive : modal.visible,
         [active]: modal.visible,
       })}

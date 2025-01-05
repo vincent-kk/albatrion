@@ -1,6 +1,6 @@
 import { css } from '@emotion/css';
 
-export const root = css`
+export const foreground = css`
   pointer-events: none;
   display: none;
   position: fixed;

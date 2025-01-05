@@ -8,7 +8,7 @@ import { useSubscribeModal } from '@/promise-modal/hooks/useSubscribeModal';
 import { useModal } from '@/promise-modal/providers';
 import type { ModalIdProps } from '@/promise-modal/types';
 
-import { root } from './classNames.emotion';
+import { presenter } from './classNames.emotion';
 
 let zIndex = 1;
 
@@ -22,7 +22,7 @@ export const Presenter = memo(({ modalId }: ModalIdProps) => {
     }
   });
   return (
-    <div ref={ref} className={root}>
+    <div ref={ref} className={presenter}>
       <Background modalId={modalId} onChangeOrder={handleChangeOrder} />
       <Foreground modalId={modalId} onChangeOrder={handleChangeOrder} />
     </div>
