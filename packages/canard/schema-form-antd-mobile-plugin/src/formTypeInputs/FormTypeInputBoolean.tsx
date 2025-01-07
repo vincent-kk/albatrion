@@ -19,9 +19,7 @@ const FormTypeInputBoolean = ({
     () => [value !== undefined && typeof value !== 'boolean', !!value],
     [value],
   );
-  const handleChange = useHandle((event: boolean) => {
-    onChange(event);
-  });
+  const handleChange = useHandle(onChange);
   return (
     <Checkbox
       id={path}

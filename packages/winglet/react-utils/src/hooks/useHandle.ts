@@ -8,7 +8,7 @@ import { useReference } from './useReference';
  * @returns memoized Function
  */
 export const useHandle = <P extends Array<any>, R>(
-  handler: (...args: P) => R,
+  handler?: (...args: P) => R,
 ): ((...args: P) => R) => {
   const handelRef = useReference(handler);
   return useCallback(

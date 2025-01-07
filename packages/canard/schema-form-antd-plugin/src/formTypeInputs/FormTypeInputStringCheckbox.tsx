@@ -48,9 +48,7 @@ const FormTypeInputStringCheckbox = ({
     );
   }, [context, jsonSchema]);
 
-  const handleChange = useHandle((value: string[]) => {
-    onChange(value);
-  });
+  const handleChange = useHandle(onChange);
 
   return (
     <Checkbox.Group

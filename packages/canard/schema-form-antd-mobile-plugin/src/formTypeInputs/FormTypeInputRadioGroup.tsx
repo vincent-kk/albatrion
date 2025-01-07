@@ -50,9 +50,7 @@ const FormTypeInputRadioGroup = ({
     );
   }, [context, jsonSchema]);
 
-  const handleChange = useHandle((event: string | number) => {
-    onChange(event);
-  });
+  const handleChange = useHandle(onChange);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>

@@ -41,9 +41,7 @@ const FormTypeInputBooleanSwitch = ({
     return [alias.checked, alias.unchecked];
   }, [context, jsonSchema]);
 
-  const handleChange = useHandle((input: boolean) => {
-    onChange(input);
-  });
+  const handleChange = useHandle(onChange);
 
   return (
     <Switch

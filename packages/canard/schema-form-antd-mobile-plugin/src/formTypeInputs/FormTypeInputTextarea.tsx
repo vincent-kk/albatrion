@@ -24,9 +24,7 @@ const FormTypeInputTextarea = ({
   defaultValue,
   onChange,
 }: FormTypeInputPropsWithSchema<string, TextareaSchema>) => {
-  const handleChange = useHandle((value: string) => {
-    onChange(value);
-  });
+  const handleChange = useHandle(onChange);
   const autoSize = useMemo(
     () => ({
       minRows: jsonSchema.minRows,

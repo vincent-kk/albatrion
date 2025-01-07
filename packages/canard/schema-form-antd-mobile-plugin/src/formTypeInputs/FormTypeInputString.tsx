@@ -23,9 +23,7 @@ const FormTypeInputString = ({
   onChange,
 }: FormTypeInputPropsWithSchema<string, StringJsonSchema>) => {
   const type = jsonSchema.format === 'password' ? 'password' : 'text';
-  const handleChange = useHandle((value: string) => {
-    onChange(value);
-  });
+  const handleChange = useHandle(onChange);
   return (
     <Input
       id={path}

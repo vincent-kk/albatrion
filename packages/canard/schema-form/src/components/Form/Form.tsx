@@ -13,10 +13,10 @@ import {
   useConstant,
   useHandle,
   useTick,
-  withErrorBoundary,
+  withErrorBoundaryForwardRef,
 } from '@winglet/react-utils';
 
-import type { Parameter } from '@aileron/types';
+import type { Fn, Parameter } from '@aileron/types';
 
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import {
@@ -84,13 +84,9 @@ const FormInner = <
     setChildren(createChildren(childrenInput, jsonSchema, rootNode));
   });
 
-  const handleValidate = useHandle((errors: Parameter<typeof onValidate>) => {
-    if (isFunction(onValidate)) onValidate(errors);
-  });
+  const handleValidate = useHandle(onValidate);
 
-  const handleReady = useHandle((rootNode: SchemaNode) => {
-    setRootNode(rootNode as Node);
-  });
+  const handleReady = useHandle(setRootNode) as Fn<[SchemaNode], void>;
 
   useEffect(() => {
     if (!rootNode) return;
@@ -167,7 +163,9 @@ const FormInner = <
   );
 };
 
-export const Form = memo(withErrorBoundary(forwardRef(FormInner))) as <
+export const Form = memo(
+  withErrorBoundaryForwardRef(forwardRef(FormInner)),
+) as <
   Schema extends JsonSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 >(
