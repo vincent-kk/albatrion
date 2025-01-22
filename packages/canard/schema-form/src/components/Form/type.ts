@@ -38,9 +38,9 @@ export interface FormProps<
   /** 이 SchemaForm의 기본값 */
   defaultValue?: Value;
   /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
-  onChange?: SetStateFn<Value | undefined>;
+  onChange?: SetStateFn<Value>;
   /** 이 SchemaForm의 값이 검증될 때 호출되는 함수 */
-  onValidate?: Fn<[JsonSchemaError[] | undefined]>;
+  onValidate?: Fn<[JsonSchemaError[]]>;
   /** FormTypeInput 정의 목록 */
   formTypeInputDefinitions?: FormTypeInputDefinition[];
   /** FormTypeInput 경로 매핑 */

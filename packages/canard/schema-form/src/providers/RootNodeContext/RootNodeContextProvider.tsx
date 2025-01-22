@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 
+import { EMPTY_ARRAY } from '@winglet/common-utils';
 import { useConstant } from '@winglet/react-utils';
 
 import type { Fn } from '@aileron/types';
@@ -63,6 +64,7 @@ export const RootNodeContextProvider = <
 
   const isFirstRender = useRef(true);
   useEffect(() => {
+    if (value === undefined) return;
     if (isFirstRender.current) {
       if (initialValue !== value) onChange(value);
       isFirstRender.current = false;
@@ -84,7 +86,7 @@ export const RootNodeContextProvider = <
     if (!rootNode) return;
     const unsubscribe = rootNode.subscribe(({ type, payload }) => {
       if (type === MethodType.Validate) {
-        onValidate(payload);
+        onValidate(payload || EMPTY_ARRAY);
       }
     });
     onReady(rootNode);

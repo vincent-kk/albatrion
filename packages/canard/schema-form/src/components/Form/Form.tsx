@@ -76,12 +76,11 @@ const FormInner = <
   const [tick, update] = useTick();
 
   const handleChange = useHandle((input: Parameter<typeof onChange>) => {
-    if (isFunction(onChange)) {
-      onChange(
-        (isFunction(input) ? input(rootNode?.value as Value) : input) as Value,
-      );
-    }
-    setChildren(createChildren(childrenInput, jsonSchema, rootNode));
+    if (!isFunction(onChange)) return;
+    if (isFunction(input)) {
+      const prevValue = (rootNode?.value || defaultValue) as Value;
+      onChange(input(prevValue) as Value);
+    } else onChange(input);
   });
 
   const handleValidate = useHandle(onValidate);
