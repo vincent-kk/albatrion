@@ -203,7 +203,7 @@ interface CustomOptions<
   RenderOptions extends Dictionary,
 > {
   formType?: string | ComponentType<UnknownFormTypeInputProps>;
-  label?: string | Dictionary<string>;
+  label?: ReactNode;
   format?: string;
   visible?: boolean;
   readOnly?: boolean;

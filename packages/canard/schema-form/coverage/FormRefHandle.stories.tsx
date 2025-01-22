@@ -135,7 +135,7 @@ export const FormRefHandle = () => {
 };
 
 export const FormRefHandleWithGetData = () => {
-  const [value, setValue] = useState({});
+  const [value, setValue] = useState();
   const schema = {
     type: 'object',
     properties: {

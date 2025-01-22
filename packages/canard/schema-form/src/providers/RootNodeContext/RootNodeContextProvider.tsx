@@ -18,17 +18,13 @@ import {
   nodeFromJsonSchema,
 } from '@/schema-form/core';
 import { transformErrors } from '@/schema-form/helpers/error';
-import type {
-  AllowedValue,
-  JsonSchema,
-  JsonSchemaError,
-} from '@/schema-form/types';
+import type { JsonSchema, JsonSchemaError } from '@/schema-form/types';
 
 import { RootNodeContext } from './RootNodeContext';
 
 interface RootNodeContextProviderProps<
   Schema extends JsonSchema = JsonSchema,
-  Value extends AllowedValue = any,
+  Value = any,
 > {
   /** 이 SchemaForm 내에서 사용할 JSON Schema */
   jsonSchema: FormProps<Schema, Value>['jsonSchema'];
@@ -46,10 +42,7 @@ interface RootNodeContextProviderProps<
   errors?: FormProps<Schema, Value>['errors'];
 }
 
-export const RootNodeContextProvider = <
-  Value extends AllowedValue,
-  Schema extends JsonSchema,
->({
+export const RootNodeContextProvider = <Value, Schema extends JsonSchema>({
   jsonSchema,
   defaultValue,
   onChange,

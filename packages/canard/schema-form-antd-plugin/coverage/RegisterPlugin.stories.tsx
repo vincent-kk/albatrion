@@ -2,6 +2,7 @@ import React, { useMemo, useRef, useState } from 'react';
 
 import {
   Form,
+  type FormChildrenProps,
   type FormHandle,
   type FormTypeInputDefinition,
   type FormTypeInputMap,
@@ -242,9 +243,9 @@ export const OneOf = () => {
     },
   } satisfies JsonSchema;
 
-  const formHandle = useRef<FormHandle<typeof schema>>(null);
-
   const [value, setValue] = useState<Record<string, unknown>>();
+  const formHandle = useRef<FormHandle<typeof schema, typeof value>>(null);
+
   return (
     <StoryLayout jsonSchema={schema} value={value}>
       <Form jsonSchema={schema} onChange={setValue} ref={formHandle} />
@@ -408,16 +409,24 @@ export const FunctionalChildren = () => {
     allowed: false,
   });
 
-  const [value, setValue] = useState<Record<string, unknown>>();
+  const [data, setData] = useState<{
+    allowed?: boolean;
+    name?: string;
+    age?: number;
+    gender?: string;
+  }>();
 
   return (
-    <StoryLayout jsonSchema={jsonSchema} value={value}>
+    <StoryLayout jsonSchema={jsonSchema} value={data}>
       <Form
         jsonSchema={jsonSchema}
         defaultValue={defaultValue.current}
-        onChange={setValue}
+        onChange={setData}
       >
-        {({ defaultValue, value }) => (
+        {({
+          defaultValue,
+          value,
+        }: FormChildrenProps<typeof jsonSchema, typeof data>) => (
           <>
             <div>
               {!defaultValue?.allowed && <Form.Input path=".allowed" />}

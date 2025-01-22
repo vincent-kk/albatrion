@@ -3,17 +3,13 @@ import type { ReactNode } from 'react';
 import { isFunction } from '@winglet/common-utils';
 
 import type { InferSchemaNode, SchemaNode } from '@/schema-form/core';
-import type {
-  AllowedValue,
-  InferValueType,
-  JsonSchema,
-} from '@/schema-form/types';
+import type { InferValueType, JsonSchema } from '@/schema-form/types';
 
 import type { FormProps } from './type';
 
 export const createChildren = <
   Schema extends JsonSchema,
-  Value extends AllowedValue = InferValueType<Schema>,
+  Value = InferValueType<Schema>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 >(
   children: FormProps<Schema, Value>['children'] | undefined,

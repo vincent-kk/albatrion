@@ -42,7 +42,7 @@ export default {
   argTypes: {
     jsonSchema: { control: 'object' }, // 컨트롤 패널에서 JSON 스키마 편집 가능
   },
-} as Meta<typeof Form>;
+} as Meta<typeof Form<any, Record<string, unknown>>>;
 
 const Template: StoryFn<typeof Form> = (args) => {
   return <Form {...args} />;

@@ -4,7 +4,6 @@ import type { SetStateFn } from '@aileron/types';
 
 import type { Ajv } from '@/schema-form/helpers/ajv';
 import {
-  type AllowedValue,
   type InferValueType,
   JSONPath,
   type JsonSchema,
@@ -13,10 +12,7 @@ import {
 import { schemaNodeFactory } from './nodes';
 import type { InferSchemaNode, NodeFactoryProps } from './nodes/type';
 
-interface NodeFromSchemaProps<
-  Schema extends JsonSchema,
-  Value extends AllowedValue,
-> {
+interface NodeFromSchemaProps<Schema extends JsonSchema, Value> {
   jsonSchema: Schema;
   defaultValue?: Value | undefined;
   onChange?: SetStateFn<Value | undefined>;
@@ -25,7 +21,7 @@ interface NodeFromSchemaProps<
 
 export const nodeFromJsonSchema = <
   Schema extends JsonSchema,
-  Value extends AllowedValue = InferValueType<Schema>,
+  Value = InferValueType<Schema>,
 >({
   jsonSchema,
   defaultValue,

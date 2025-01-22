@@ -32,7 +32,6 @@ import {
   UserDefinedContextProvider,
 } from '@/schema-form/providers';
 import {
-  type AllowedValue,
   type InferValueType,
   type JsonSchema,
   type ObjectValue,
@@ -44,7 +43,7 @@ import { createChildren } from './util';
 
 const FormInner = <
   Schema extends JsonSchema,
-  Value extends AllowedValue = InferValueType<Schema>,
+  Value = InferValueType<Schema>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 >(
   {
@@ -164,10 +163,7 @@ const FormInner = <
 
 export const Form = memo(
   withErrorBoundaryForwardRef(forwardRef(FormInner)),
-) as <
-  Schema extends JsonSchema,
-  Value extends AllowedValue = InferValueType<Schema>,
->(
+) as <Schema extends JsonSchema, Value = InferValueType<Schema>>(
   props: FormProps<Schema, Value> & {
     ref?: ForwardedRef<FormHandle<Schema, Value>>;
   },

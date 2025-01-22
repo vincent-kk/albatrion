@@ -18,7 +18,7 @@ import type { AllowedValue } from './value';
  * - `Node`: FormType Component에 할당된 schema node의 타입
  */
 export interface FormTypeInputProps<
-  Value extends AllowedValue = any,
+  Value = any,
   Context extends Dictionary = Dictionary,
   WatchValues extends Array<any> = Array<any>,
   Schema extends JsonSchema = InferJsonSchemaType<Value>,
@@ -62,7 +62,7 @@ export interface FormTypeInputProps<
  * - `Context`: Form에 전달된 UserDefinedContext의 타입
  */
 export type FormTypeInputPropsWithSchema<
-  Value extends AllowedValue = any,
+  Value = any,
   Schema extends JsonSchema = InferJsonSchemaType<Value>,
   Context extends Dictionary = Dictionary,
 > = FormTypeInputProps<Value, Context, any[], Schema>;
@@ -75,7 +75,7 @@ export type FormTypeInputPropsWithSchema<
  * - `Node`: FormType Component에 할당된 schema node의 타입
  */
 export type FormTypeInputPropsWithNode<
-  Value extends AllowedValue = any,
+  Value = any,
   Schema extends JsonSchema = InferJsonSchemaType<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > = FormTypeInputProps<Value, Dictionary, any[], Schema, Node>;

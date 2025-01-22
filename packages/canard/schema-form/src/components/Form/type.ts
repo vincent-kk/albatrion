@@ -6,7 +6,6 @@ import type { Dictionary, Fn, SetStateFn } from '@aileron/types';
 
 import type { InferSchemaNode, SchemaNode } from '@/schema-form/core';
 import type {
-  AllowedValue,
   FormTypeInputDefinition,
   FormTypeInputMap,
   FormTypeRendererProps,
@@ -19,7 +18,7 @@ import type {
 
 export interface FormChildrenProps<
   Schema extends JsonSchema = JsonSchema,
-  Value extends AllowedValue = InferValueType<Schema>,
+  Value = InferValueType<Schema>,
 > {
   node?: SchemaNode;
   jsonSchema: Schema;
@@ -31,7 +30,7 @@ export interface FormChildrenProps<
 
 export interface FormProps<
   Schema extends JsonSchema = JsonSchema,
-  Value extends AllowedValue = InferValueType<Schema>,
+  Value = InferValueType<Schema>,
 > {
   /** 이 SchemaForm 내에서 사용할 JSON Schema */
   jsonSchema: Schema;
@@ -71,7 +70,7 @@ export interface FormProps<
 
 export interface FormHandle<
   Schema extends JsonSchema,
-  Value extends AllowedValue = InferValueType<Schema>,
+  Value = InferValueType<Schema>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
   node?: Node;
