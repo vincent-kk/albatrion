@@ -7,6 +7,7 @@ export type ArrayValue = any[];
 export type ObjectValue = Record<string, any>;
 export type VirtualNodeValue = any[];
 export type NullValue = null;
+export type UndefinedValue = undefined;
 
 export type AllowedValue =
   | BooleanValue
@@ -15,7 +16,8 @@ export type AllowedValue =
   | ObjectValue
   | ArrayValue
   | VirtualNodeValue
-  | NullValue;
+  | NullValue
+  | UndefinedValue;
 
 export type InferValueType<T extends JsonSchema> = T extends {
   type: 'string';
@@ -33,7 +35,7 @@ export type InferValueType<T extends JsonSchema> = T extends {
             ? VirtualNodeValue
             : T extends { type: 'null' }
               ? NullValue
-              : never;
+              : UndefinedValue;
 
 export type Formatter<Value> = (
   value: Value | undefined,

@@ -1,3 +1,4 @@
+import { SchemaNodeError } from '@/schema-form/errors';
 import type {
   ArraySchema,
   BooleanSchema,
@@ -111,8 +112,12 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
       } as SchemaNodeConstructorProps<NullSchema>);
   }
 
-  // @ts-expect-error: This state is unreachable by design and should NEVER occur.
-  throw new Error(`Unknown JsonSchema: ${jsonSchema.type}`, {
-    jsonSchema,
-  });
+  throw new SchemaNodeError(
+    'UNKNOWN_JSON_SCHEMA',
+    // @ts-expect-error: This state is unreachable by design and should NEVER occur.
+    `Unknown JsonSchema: ${jsonSchema.type}`,
+    {
+      jsonSchema,
+    },
+  );
 }
