@@ -124,10 +124,9 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
           defaultValue: this.defaultValue?.[name] ?? getFallbackValue(schema),
           onChange: (input) => {
             if (!this.#draft) return;
-            if (input === undefined) return;
             const value =
               typeof input === 'function' ? input(this.#draft[name]) : input;
-            if (this.#draft[name] === value) return;
+            if (value !== undefined && this.#draft[name] === value) return;
             this.#draft[name] = value;
             this.#emitChange();
           },
