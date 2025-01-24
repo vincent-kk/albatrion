@@ -3,6 +3,7 @@ export * from './errors';
 export * from './helpers/filter';
 export * from './helpers/generateHash';
 export * from './helpers/object';
+export * from './helpers/promise';
 export * from './libs/merge';
 export * from './libs/murmur3';
 export * from './libs/random';
