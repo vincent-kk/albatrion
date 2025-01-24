@@ -59,7 +59,7 @@ export interface SchemaNodeConstructorProps<
   name?: string;
   jsonSchema: Schema;
   defaultValue?: Value;
-  onChange?: SetStateFn<Value | undefined>;
+  onChange?: SetStateFn<Value>;
   parentNode?: SchemaNode;
   ajv?: Ajv;
 }

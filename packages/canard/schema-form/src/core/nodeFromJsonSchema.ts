@@ -18,8 +18,8 @@ interface NodeFromSchemaProps<
   Value extends AllowedValue,
 > {
   jsonSchema: Schema;
-  defaultValue?: Value | undefined;
-  onChange?: SetStateFn<Value | undefined>;
+  defaultValue?: Value;
+  onChange?: SetStateFn<Value>;
   ajv?: Ajv;
 }
 
