@@ -5,6 +5,7 @@ import {
   memo,
   useEffect,
   useImperativeHandle,
+  useRef,
   useState,
 } from 'react';
 
@@ -73,10 +74,14 @@ const FormInner = <
   const [defaultValue, setDefaultValue] = useState<Value | undefined>(
     initialDefaultValue,
   );
-  const [tick, update] = useTick();
+  const [tick, update] = useTick(() => {
+    ready.current = false;
+  });
+
+  const ready = useRef(false);
 
   const handleChange = useHandle((input: Parameter<typeof onChange>) => {
-    if (!isFunction(onChange)) return;
+    if (!ready.current || !isFunction(onChange)) return;
     if (isFunction(input)) {
       const prevValue = (rootNode?.value || defaultValue) as Value;
       onChange(input(prevValue) as Value);
@@ -85,7 +90,11 @@ const FormInner = <
 
   const handleValidate = useHandle(onValidate);
 
-  const handleReady = useHandle(setRootNode) as Fn<[SchemaNode], void>;
+  const handleReady = useHandle((rootNode: SchemaNode) => {
+    setRootNode(rootNode as Node);
+    if (isFunction(onChange)) onChange(rootNode.value as Value);
+    ready.current = true;
+  }) as Fn<[SchemaNode], void>;
 
   useEffect(() => {
     if (!rootNode) return;
