@@ -187,8 +187,11 @@ DateFormat.args = {
 export const DateRangeFormat = Template.bind({});
 DateRangeFormat.args = {
   jsonSchema: {
-    type: 'string',
+    type: 'array',
     format: 'date',
+    items: {
+      type: 'string',
+    },
     formType: FormTypeInputDateRangeDefinition.Component,
   },
 };
