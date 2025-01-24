@@ -1,13 +1,6 @@
-import {
-  type PropsWithChildren,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { type PropsWithChildren, useEffect, useMemo, useRef } from 'react';
 
 import { EMPTY_ARRAY } from '@winglet/common-utils';
-import { useConstant } from '@winglet/react-utils';
 
 import type { Fn } from '@aileron/types';
 
@@ -59,27 +52,15 @@ export const RootNodeContextProvider = <
   ajv,
   children,
 }: PropsWithChildren<RootNodeContextProviderProps<Schema, Value>>) => {
-  const initialValue = useConstant(defaultValue);
-  const [value, handleChange] = useState(() => initialValue);
-
-  const isFirstRender = useRef(true);
-  useEffect(() => {
-    if (value === undefined) return;
-    if (isFirstRender.current) {
-      if (initialValue !== value) onChange(value);
-      isFirstRender.current = false;
-    } else onChange(value);
-  }, [initialValue, value, onChange]);
-
   const rootNode = useMemo(
     () =>
       nodeFromJsonSchema({
         jsonSchema,
-        defaultValue: initialValue,
-        onChange: handleChange,
+        defaultValue,
+        onChange,
         ajv,
       }),
-    [jsonSchema, ajv, initialValue, handleChange],
+    [jsonSchema, defaultValue, onChange, ajv],
   );
 
   useEffect(() => {

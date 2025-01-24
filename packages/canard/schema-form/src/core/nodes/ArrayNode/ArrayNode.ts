@@ -146,7 +146,7 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     this.#startOperation(OperationType.Push);
 
     this.#ids.push(id);
-    const handleChange: SetStateFn<AllowedValue | undefined> = (input) => {
+    const handleChange = (<T extends AllowedValue>(input: T) => {
       const value =
         typeof input === 'function'
           ? input(this.#sourceMap.get(id)!.data)
@@ -155,7 +155,8 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
       if (this.#ready) {
         this.onChange(this.toArray());
       }
-    };
+    }) satisfies SetStateFn<AllowedValue>;
+
     const defaultValue = data ?? getFallbackValue(this.jsonSchema.items);
     this.#sourceMap.set(id, {
       node: this.#nodeFactory({

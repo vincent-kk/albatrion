@@ -292,7 +292,7 @@ export abstract class BaseNode<
   /** Node의 값 파싱 */
   abstract parseValue(input: any): Value | undefined;
 
-  #handleChange: SetStateFn<Value | undefined> | undefined;
+  #handleChange: SetStateFn<Value> | undefined;
   /**
    * Node의 값이 변경될 때 호출되는 함수
    * @param input 변경된 값이나 값을 반환하는 함수

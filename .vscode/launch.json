@@ -6,7 +6,7 @@
       "type": "chrome",
       "request": "launch",
       "url": "http://localhost:6006",
-      "webRoot": "${workspaceFolder}/packages/schema-form",
+      "webRoot": "${workspaceFolder}/packages/canard/schema-form",
       "sourceMaps": true,
       "breakOnLoad": true,
       "sourceMapPathOverrides": {
@@ -23,7 +23,7 @@
       "request": "attach",
       "port": 9222,
       "url": "http://localhost:6006",
-      "webRoot": "${workspaceFolder}/packages/schema-form",
+      "webRoot": "${workspaceFolder}/packages/canard/schema-form",
       "sourceMaps": true,
       "breakOnLoad": true,
       "sourceMapPathOverrides": {
@@ -39,7 +39,7 @@
       "type": "chrome",
       "request": "launch",
       "url": "http://localhost:6006",
-      "webRoot": "${workspaceFolder}/packages/promise-modal",
+      "webRoot": "${workspaceFolder}/packages/lerx/promise-modal",
       "sourceMaps": true,
       "breakOnLoad": true,
       "sourceMapPathOverrides": {
@@ -56,7 +56,7 @@
       "request": "attach",
       "port": 9222,
       "url": "http://localhost:6006",
-      "webRoot": "${workspaceFolder}/packages/promise-modal",
+      "webRoot": "${workspaceFolder}/packages/lerx/promise-modal",
       "sourceMaps": true,
       "breakOnLoad": true,
       "sourceMapPathOverrides": {
