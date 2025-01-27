@@ -1,2 +1,4 @@
+import { isArray } from './isArray';
+
 export const isEmptyArray = (value: unknown): value is any[] =>
-  Array.isArray(value) && value.length === 0;
+  isArray(value) && value.length === 0;
