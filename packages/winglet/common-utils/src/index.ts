@@ -1,6 +1,7 @@
 export * from './constant';
 export * from './errors';
 export * from './helpers/filter';
+export * from './helpers/function';
 export * from './helpers/generateHash';
 export * from './helpers/object';
 export * from './helpers/promise';
