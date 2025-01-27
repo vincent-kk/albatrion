@@ -19,8 +19,10 @@ export const debounce = <F extends Fn<any[]>>(
   const debounced = function (this: any, ...args: Parameters<F>) {
     if (signal?.aborted) return;
     const immediately = leading && context.isIdle;
+
     context.setArguments(this, args);
     context.schedule(trailing);
+
     if (immediately) context.execute();
   };
 

@@ -16,24 +16,19 @@ export const throttle = <F extends Fn<any[]>>(
 ): ThrottledFn<F> => {
   const context = new FunctionContext(fn, ms);
 
-  let previous: number | null = null;
+  let previous = 0;
   const throttled = function (this: any, ...args: Parameters<F>) {
     if (signal?.aborted) return;
-
-    const current = Date.now();
     const immediately = leading && context.isIdle;
+    const current = Date.now();
 
-    if (previous === null) {
+    context.setArguments(this, args);
+
+    if (current - previous > ms) {
       previous = current;
-      context.setArguments(this, args);
       context.schedule(trailing);
-    } else {
-      context.setArguments(this, args);
-      if (current - previous > ms) {
-        previous = current;
-        context.schedule(trailing);
-      }
     }
+
     if (immediately) context.execute();
   };
 
