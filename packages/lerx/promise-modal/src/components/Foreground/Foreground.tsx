@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { cx } from '@emotion/css';
 
 import { useModal, useModalContext } from '@/promise-modal/providers';
@@ -11,6 +13,11 @@ export const Foreground = ({ modalId, onChangeOrder }: ModalLayerProps) => {
 
   const { modal, onChange, onConfirm, onClose, onDestroy } = useModal(modalId);
 
+  const Foreground = useMemo(
+    () => modal?.ForegroundComponent || ForegroundComponent,
+    [ForegroundComponent, modal],
+  );
+
   if (!modal) return null;
 
   return (
@@ -20,7 +27,7 @@ export const Foreground = ({ modalId, onChangeOrder }: ModalLayerProps) => {
         [active]: modal.visible,
       })}
     >
-      <ForegroundComponent
+      <Foreground
         id={modal.id}
         type={modal.type}
         alive={modal.alive}
@@ -47,7 +54,7 @@ export const Foreground = ({ modalId, onChangeOrder }: ModalLayerProps) => {
             handlers={{ onChange, onConfirm, onClose }}
           />
         )}
-      </ForegroundComponent>
+      </Foreground>
     </div>
   );
 };

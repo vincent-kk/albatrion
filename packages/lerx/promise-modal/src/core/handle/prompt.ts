@@ -1,7 +1,9 @@
 import type { ComponentType, ReactNode } from 'react';
 
 import type {
+  BackgroundComponent,
   FooterOptions,
+  ForegroundComponent,
   ModalBackground,
   PromptContentProps,
   PromptFooterRender,
@@ -22,6 +24,8 @@ interface PromptProps<T, B = any> {
   footer?: PromptFooterRender<T> | FooterOptions | false;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
+  ForegroundComponent?: ForegroundComponent;
+  BackgroundComponent?: BackgroundComponent;
 }
 
 export const prompt = <T, B = any>({
@@ -36,6 +40,8 @@ export const prompt = <T, B = any>({
   footer,
   manualDestroy,
   closeOnBackdropClick,
+  ForegroundComponent,
+  BackgroundComponent,
 }: PromptProps<T, B>) => {
   return new Promise<T>((resolve, reject) => {
     try {
@@ -58,6 +64,8 @@ export const prompt = <T, B = any>({
         footer,
         manualDestroy,
         closeOnBackdropClick,
+        ForegroundComponent,
+        BackgroundComponent,
       });
     } catch (error) {
       reject(error);

@@ -18,13 +18,14 @@ import {
   FallbackTitle,
 } from '@/promise-modal/components/FallbackComponents';
 import type {
+  BackgroundComponent,
   FooterComponentProps,
-  ModalFrameProps,
+  ForegroundComponent,
 } from '@/promise-modal/types';
 
 export interface ModalContextProps {
-  ForegroundComponent: ComponentType<PropsWithChildren<ModalFrameProps>>;
-  BackgroundComponent?: ComponentType<ModalFrameProps>;
+  ForegroundComponent: ForegroundComponent;
+  BackgroundComponent?: BackgroundComponent;
   TitleComponent: ComponentType<PropsWithChildren>;
   SubtitleComponent: ComponentType<PropsWithChildren>;
   ContentComponent: ComponentType<PropsWithChildren>;

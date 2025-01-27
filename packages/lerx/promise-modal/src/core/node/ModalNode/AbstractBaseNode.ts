@@ -3,7 +3,9 @@ import type { ReactNode } from 'react';
 import type { Fn } from '@aileron/types';
 
 import type {
+  BackgroundComponent,
   BaseModal,
+  ForegroundComponent,
   ManagedEntity,
   ModalBackground,
 } from '@/promise-modal/types';
@@ -20,6 +22,9 @@ export abstract class BaseNode<T, B> {
 
   readonly manualDestroy: boolean;
   readonly closeOnBackdropClick: boolean;
+
+  readonly ForegroundComponent?: ForegroundComponent;
+  readonly BackgroundComponent?: BackgroundComponent;
 
   #alive: boolean;
   get alive() {
@@ -42,6 +47,8 @@ export abstract class BaseNode<T, B> {
     manualDestroy = false,
     closeOnBackdropClick = true,
     resolve,
+    ForegroundComponent,
+    BackgroundComponent,
   }: BaseNodeProps<T, B>) {
     this.id = id;
     this.initiator = initiator;
@@ -50,6 +57,9 @@ export abstract class BaseNode<T, B> {
     this.background = background;
     this.manualDestroy = manualDestroy;
     this.closeOnBackdropClick = closeOnBackdropClick;
+
+    this.ForegroundComponent = ForegroundComponent;
+    this.BackgroundComponent = BackgroundComponent;
 
     this.#alive = true;
     this.#visible = true;
