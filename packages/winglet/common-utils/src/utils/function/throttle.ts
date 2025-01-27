@@ -1,7 +1,7 @@
 import type { Fn } from '@aileron/types';
 
 import { FunctionContext } from './helpers/FunctionContext';
-import { type ExecutionOptions, ExecutionPolicy } from './helpers/type';
+import type { ExecutionOptions } from './helpers/type';
 
 export interface ThrottledFn<F extends Fn<any[]>> {
   (...args: Parameters<F>): void;
@@ -12,15 +12,9 @@ export interface ThrottledFn<F extends Fn<any[]>> {
 export const throttle = <F extends Fn<any[]>>(
   fn: F,
   ms: number,
-  {
-    signal,
-    policy = [ExecutionPolicy.Leading, ExecutionPolicy.Trailing],
-  }: ExecutionOptions = {},
+  { signal, leading = true, trailing = true }: ExecutionOptions = {},
 ): ThrottledFn<F> => {
   const context = new FunctionContext(fn, ms);
-
-  const leading = policy.includes(ExecutionPolicy.Leading);
-  const trailing = policy.includes(ExecutionPolicy.Trailing);
 
   let previous: number | null = null;
   const throttled = function (this: any, ...args: Parameters<F>) {

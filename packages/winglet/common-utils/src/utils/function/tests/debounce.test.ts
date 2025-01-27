@@ -24,7 +24,8 @@ describe('debounce', () => {
     const fn = vi.fn();
     const delayMs = 50;
     const debouncedFn = debounce(fn, delayMs, {
-      policy: ['leading', 'trailing'],
+      leading: true,
+      trailing: true,
     });
 
     debouncedFn();
@@ -36,7 +37,8 @@ describe('debounce', () => {
     const fn = vi.fn();
     const delayMs = 50;
     const debouncedFn = debounce(fn, delayMs, {
-      policy: ['leading', 'trailing'],
+      leading: true,
+      trailing: true,
     });
 
     debouncedFn();

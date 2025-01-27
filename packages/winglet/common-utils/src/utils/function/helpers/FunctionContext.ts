@@ -1,6 +1,9 @@
 import type { Fn } from '@aileron/types';
 
-import type { ExecutionContext } from './type';
+interface ExecutionContext<F extends Fn<any[]>> {
+  self: any;
+  args: Parameters<F> | null;
+}
 
 export class FunctionContext<F extends Fn<any[]>> {
   #context: ExecutionContext<F>;
