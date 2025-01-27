@@ -1,6 +1,7 @@
 import { EMPTY_ARRAY, isTruthy } from '@winglet/common-utils';
 import { isReactComponent, withErrorBoundary } from '@winglet/react-utils';
 
+import { FormError } from '@/schema-form/errors';
 import {
   type FormTypeInputMap,
   type FormTypeTestFn,
@@ -39,7 +40,20 @@ export const normalizeFormTypeInputMap = (
 const FILTER_PATH_REGEX = new RegExp(`\\.${JSONPath.Filter}(\\.|$)`);
 
 const pathExactMatchFnFactory = (path: string): FormTypeTestFn => {
-  return (hint) => hint.path === path;
+  try {
+    const regex = new RegExp(path);
+    return (hint) => {
+      if (hint.path === path) return true;
+      if (regex.test(hint.path)) return true;
+      return false;
+    };
+  } catch (error) {
+    throw new FormError(
+      'FORM_TYPE_INPUT_MAP',
+      `FormTypeInputMap contains an invalid key pattern.: ${path}`,
+      { path, error },
+    );
+  }
 };
 
 const NUMBER_REGEX = /^[0-9]+$/;
