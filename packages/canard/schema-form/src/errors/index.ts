@@ -1,3 +1,4 @@
 export * from './ValidationErrors';
 export * from './SchemaNodeError';
-export * from './UnhandledErrors';
+export * from './UnhandledError';
+export * from './ValidationError';
