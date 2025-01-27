@@ -1,0 +1,1 @@
+export { withUploader } from './withUploader';
