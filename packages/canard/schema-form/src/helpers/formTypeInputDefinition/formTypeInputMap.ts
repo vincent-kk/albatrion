@@ -39,7 +39,12 @@ export const normalizeFormTypeInputMap = (
 const FILTER_PATH_REGEX = new RegExp(`\\.${JSONPath.Filter}(\\.|$)`);
 
 const pathExactMatchFnFactory = (path: string): FormTypeTestFn => {
-  return (hint) => hint.path === path;
+  const regex = new RegExp(path);
+  return (hint) => {
+    if (hint.path === path) return true;
+    if (regex.test(hint.path)) return true;
+    return false;
+  };
 };
 
 const NUMBER_REGEX = /^[0-9]+$/;
