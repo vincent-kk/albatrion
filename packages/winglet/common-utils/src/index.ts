@@ -1,10 +1,13 @@
 export * from './constant';
+
 export * from './errors';
-export * from './helpers/filter';
-export * from './helpers/function';
-export * from './helpers/generateHash';
-export * from './helpers/object';
-export * from './helpers/promise';
+
 export * from './libs/merge';
 export * from './libs/murmur3';
 export * from './libs/random';
+
+export * from './utils/filter';
+export * from './utils/function';
+export * from './utils/generateHash';
+export * from './utils/object';
+export * from './utils/promise';
