@@ -1,4 +1,4 @@
-import { isArray, isPlainObject } from '../helpers/filter';
+import { isArray, isPlainObject } from '../utils/filter';
 
 export const merge = <
   T extends Record<PropertyKey, any>,
