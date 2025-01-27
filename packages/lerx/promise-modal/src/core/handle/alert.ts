@@ -4,7 +4,9 @@ import { ModalManager } from '@/promise-modal/app/ModalManager';
 import type {
   AlertContentProps,
   AlertFooterRender,
+  BackgroundComponent,
   FooterOptions,
+  ForegroundComponent,
   ModalBackground,
 } from '@/promise-modal/types';
 
@@ -20,6 +22,8 @@ interface AlertProps<B> {
     | false;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
+  ForegroundComponent?: ForegroundComponent;
+  BackgroundComponent?: BackgroundComponent;
 }
 
 export const alert = <B = any>({
@@ -31,6 +35,8 @@ export const alert = <B = any>({
   footer,
   manualDestroy,
   closeOnBackdropClick,
+  ForegroundComponent,
+  BackgroundComponent,
 }: AlertProps<B>) => {
   return new Promise<void>((resolve, reject) => {
     try {
@@ -45,6 +51,8 @@ export const alert = <B = any>({
         footer,
         manualDestroy,
         closeOnBackdropClick,
+        ForegroundComponent,
+        BackgroundComponent,
       });
     } catch (error) {
       reject(error);

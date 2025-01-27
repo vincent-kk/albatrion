@@ -31,6 +31,8 @@ export class ConfirmNode<B> extends BaseNode<boolean, B> {
     manualDestroy,
     closeOnBackdropClick,
     resolve,
+    ForegroundComponent,
+    BackgroundComponent,
   }: ConfirmNodeProps<B>) {
     super({
       id,
@@ -41,6 +43,8 @@ export class ConfirmNode<B> extends BaseNode<boolean, B> {
       manualDestroy,
       closeOnBackdropClick,
       resolve,
+      ForegroundComponent,
+      BackgroundComponent,
     });
     this.type = type;
     this.subtype = subtype;

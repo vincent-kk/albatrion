@@ -39,6 +39,8 @@ export class PromptNode<T, B> extends BaseNode<T, B> {
     manualDestroy,
     closeOnBackdropClick,
     resolve,
+    ForegroundComponent,
+    BackgroundComponent,
   }: PromptNodeProps<T, B>) {
     super({
       id,
@@ -49,6 +51,8 @@ export class PromptNode<T, B> extends BaseNode<T, B> {
       manualDestroy,
       closeOnBackdropClick,
       resolve,
+      ForegroundComponent,
+      BackgroundComponent,
     });
     this.type = type;
     this.content = content;

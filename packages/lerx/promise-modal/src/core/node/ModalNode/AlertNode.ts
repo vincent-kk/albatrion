@@ -34,6 +34,8 @@ export class AlertNode<B> extends BaseNode<null, B> {
     manualDestroy,
     closeOnBackdropClick,
     resolve,
+    ForegroundComponent,
+    BackgroundComponent,
   }: AlertNodeProps<B>) {
     super({
       id,
@@ -44,6 +46,8 @@ export class AlertNode<B> extends BaseNode<null, B> {
       manualDestroy,
       closeOnBackdropClick,
       resolve,
+      ForegroundComponent,
+      BackgroundComponent,
     });
     this.type = type;
     this.subtype = subtype;

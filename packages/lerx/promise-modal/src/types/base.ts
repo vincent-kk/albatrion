@@ -1,6 +1,7 @@
-import type { ReactNode } from 'react';
+import type { ComponentType, PropsWithChildren, ReactNode } from 'react';
 
 import type { ModalBackground } from './background';
+import type { ModalFrameProps } from './modal';
 
 export interface BaseModal<T, B> {
   title?: ReactNode;
@@ -9,7 +10,14 @@ export interface BaseModal<T, B> {
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
   resolve: (result: T | null) => void;
+  ForegroundComponent?: ForegroundComponent;
+  BackgroundComponent?: BackgroundComponent;
 }
+
+export type ForegroundComponent = ComponentType<
+  PropsWithChildren<ModalFrameProps>
+>;
+export type BackgroundComponent = ComponentType<ModalFrameProps>;
 
 export interface ContentComponentProps {
   onConfirm: VoidFunction;
