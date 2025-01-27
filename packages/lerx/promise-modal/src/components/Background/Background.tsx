@@ -1,4 +1,4 @@
-import { type MouseEvent, useCallback } from 'react';
+import { type MouseEvent, useCallback, useMemo } from 'react';
 
 import { cx } from '@emotion/css';
 
@@ -19,6 +19,11 @@ export const Background = ({ modalId, onChangeOrder }: ModalLayerProps) => {
     [modal, onClose],
   );
 
+  const Background = useMemo(
+    () => modal?.BackgroundComponent || BackgroundComponent,
+    [BackgroundComponent, modal],
+  );
+
   if (!modal) return null;
 
   return (
@@ -29,8 +34,8 @@ export const Background = ({ modalId, onChangeOrder }: ModalLayerProps) => {
       })}
       onClick={handleClose}
     >
-      {BackgroundComponent && (
-        <BackgroundComponent
+      {Background && (
+        <Background
           id={modal.id}
           type={modal.type}
           alive={modal.alive}
