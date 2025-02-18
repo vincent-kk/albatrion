@@ -34,6 +34,7 @@ export const withUploader = <Props extends BaseProps>(
         ({ target }: ChangeEvent<HTMLInputElement>) => {
           const file = target?.files?.[0];
           if (file) onChange?.(file);
+          target.value = '';
         },
       );
 
