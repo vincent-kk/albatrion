@@ -17,6 +17,7 @@ export interface PromptInputProps<T> {
   defaultValue?: T;
   onChange: SetStateFn<T | undefined>;
   onConfirm?: VoidFunction;
+  onCancel?: VoidFunction;
 }
 
 export type PromptContentProps = ContentComponentProps;

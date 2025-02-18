@@ -95,15 +95,16 @@ export const PromptInner = memo(
             value={value}
             onChange={handleChange}
             onConfirm={handleConfirm}
+            onCancel={handleClose}
           />
         )}
 
         {footer !== false &&
           (typeof footer === 'function' ? (
             footer({
+              onChange: handleChange,
               onConfirm: handleConfirm,
               onCancel: handleClose,
-              onChange: handleChange,
               value,
               disabled,
             })
