@@ -5,7 +5,6 @@ import { EMPTY_OBJECT } from '@winglet/common-utils';
 import type { Dictionary } from '@aileron/types';
 
 export interface UserDefinedContext {
-  /** 사용자 정의 컨텍스트 */
   context: Dictionary;
 }
 

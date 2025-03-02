@@ -10,7 +10,7 @@ import { createPortal } from 'react-dom';
 
 import { useOnMount, useTick } from '@winglet/react-utils';
 
-import type { Color, Duration } from '@aileron/types';
+import type { Color, Dictionary, Duration } from '@aileron/types';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import {
@@ -29,17 +29,19 @@ import { usePathname as useDefaultPathname } from '@/promise-modal/hooks/useDefa
 import type {
   FooterComponentProps,
   ModalFrameProps,
+  WrapperComponentProps,
 } from '@/promise-modal/types';
 
 import { ModalDataContextProvider } from '../ModalDataContext';
+import { UserDefinedContextProvider } from '../UserDefinedContext';
 import { ModalContext } from './ModalContext';
 
 interface ModalContextProviderProps {
   BackgroundComponent?: ComponentType<ModalFrameProps>;
   ForegroundComponent?: ComponentType<ModalFrameProps>;
-  TitleComponent?: ComponentType<PropsWithChildren>;
-  SubtitleComponent?: ComponentType<PropsWithChildren>;
-  ContentComponent?: ComponentType<PropsWithChildren>;
+  TitleComponent?: ComponentType<WrapperComponentProps>;
+  SubtitleComponent?: ComponentType<WrapperComponentProps>;
+  ContentComponent?: ComponentType<WrapperComponentProps>;
   FooterComponent?: ComponentType<FooterComponentProps>;
   options?: {
     /** Modal transition time(ms, s) */
@@ -51,6 +53,7 @@ interface ModalContextProviderProps {
     /** Whether to close the modal when the backdrop is clicked */
     closeOnBackdropClick?: boolean;
   };
+  context?: Dictionary;
   usePathname?: () => { pathname: string };
 }
 
@@ -63,6 +66,7 @@ export const ModalContextProvider = memo(
     ContentComponent,
     FooterComponent,
     options,
+    context,
     usePathname,
     children,
   }: PropsWithChildren<ModalContextProviderProps>) => {
@@ -112,9 +116,11 @@ export const ModalContextProvider = memo(
         {children}
         {portalRef.current &&
           createPortal(
-            <ModalDataContextProvider pathname={pathname}>
-              <Anchor />
-            </ModalDataContextProvider>,
+            <UserDefinedContextProvider context={context}>
+              <ModalDataContextProvider pathname={pathname}>
+                <Anchor />
+              </ModalDataContextProvider>
+            </UserDefinedContextProvider>,
             portalRef.current,
           )}
       </ModalContext.Provider>

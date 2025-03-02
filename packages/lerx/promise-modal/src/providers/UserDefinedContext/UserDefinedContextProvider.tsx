@@ -2,13 +2,13 @@ import { PropsWithChildren, useMemo } from 'react';
 
 import { EMPTY_OBJECT } from '@winglet/common-utils';
 
-import type { FormProps } from '@/schema-form/components/Form';
+import type { Dictionary } from '@aileron/types';
 
 import { UserDefinedContext } from './UserDefinedContext';
 
 interface UserDefinedContextProviderProps {
   /** 사용자 정의 컨텍스트 */
-  context: FormProps['context'];
+  context?: Dictionary;
 }
 
 export const UserDefinedContextProvider = ({

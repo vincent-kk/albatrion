@@ -18,4 +18,5 @@ export type {
   AlertContentProps,
   ConfirmContentProps,
   PromptContentProps,
+  WrapperComponentProps,
 } from './types';

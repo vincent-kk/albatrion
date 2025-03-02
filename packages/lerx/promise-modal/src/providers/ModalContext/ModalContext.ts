@@ -1,8 +1,4 @@
-import {
-  type ComponentType,
-  type PropsWithChildren,
-  createContext,
-} from 'react';
+import { type ComponentType, createContext } from 'react';
 
 import type { Color, Duration } from '@aileron/types';
 
@@ -21,14 +17,15 @@ import type {
   BackgroundComponent,
   FooterComponentProps,
   ForegroundComponent,
+  WrapperComponentProps,
 } from '@/promise-modal/types';
 
 export interface ModalContextProps {
   ForegroundComponent: ForegroundComponent;
   BackgroundComponent?: BackgroundComponent;
-  TitleComponent: ComponentType<PropsWithChildren>;
-  SubtitleComponent: ComponentType<PropsWithChildren>;
-  ContentComponent: ComponentType<PropsWithChildren>;
+  TitleComponent: ComponentType<WrapperComponentProps>;
+  SubtitleComponent: ComponentType<WrapperComponentProps>;
+  ContentComponent: ComponentType<WrapperComponentProps>;
   FooterComponent: ComponentType<FooterComponentProps>;
   options: {
     duration: Duration;

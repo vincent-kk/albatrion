@@ -1,1 +1,1 @@
-export { Background } from './Background';
+export { BackgroundFrame as Background } from './Background';

@@ -1,5 +1,7 @@
 import type { ComponentType, PropsWithChildren, ReactNode } from 'react';
 
+import type { Dictionary } from '@aileron/types';
+
 import type { ModalBackground } from './background';
 import type { ModalFrameProps } from './modal';
 
@@ -19,10 +21,18 @@ export type ForegroundComponent = ComponentType<
 >;
 export type BackgroundComponent = ComponentType<ModalFrameProps>;
 
-export interface ContentComponentProps {
+export interface ContentComponentProps<
+  Context extends Dictionary = Dictionary,
+> {
   onConfirm: VoidFunction;
   onCancel: VoidFunction;
+  context: Context;
 }
+
+export type WrapperComponentProps<Context extends Dictionary = Dictionary> =
+  PropsWithChildren<{
+    context: Context;
+  }>;
 
 export interface FooterOptions {
   confirm?: string;
@@ -31,7 +41,7 @@ export interface FooterOptions {
   hideCancel?: boolean;
 }
 
-export type FooterComponentProps = {
+export type FooterComponentProps<Context extends Dictionary = Dictionary> = {
   confirmLabel?: string;
   hideConfirm?: boolean;
   cancelLabel?: string;
@@ -39,4 +49,5 @@ export type FooterComponentProps = {
   disabled?: boolean;
   onConfirm: VoidFunction;
   onCancel?: VoidFunction;
+  context: Context;
 };

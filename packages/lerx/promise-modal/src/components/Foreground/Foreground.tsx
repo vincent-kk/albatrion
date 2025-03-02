@@ -3,13 +3,18 @@ import { useMemo } from 'react';
 import { cx } from '@emotion/css';
 
 import { useModal, useModalContext } from '@/promise-modal/providers';
+import { useUserDefinedContext } from '@/promise-modal/providers/UserDefinedContext';
 import type { ModalLayerProps } from '@/promise-modal/types';
 
 import { active, foreground, visible } from './classNames.emotion';
 import { AlertInner, ConfirmInner, PromptInner } from './components';
 
-export const Foreground = ({ modalId, onChangeOrder }: ModalLayerProps) => {
+export const ForegroundFrame = ({
+  modalId,
+  onChangeOrder,
+}: ModalLayerProps) => {
   const { ForegroundComponent } = useModalContext();
+  const { context: userDefinedContext } = useUserDefinedContext();
 
   const { modal, onChange, onConfirm, onClose, onDestroy } = useModal(modalId);
 
@@ -41,6 +46,7 @@ export const Foreground = ({ modalId, onChangeOrder }: ModalLayerProps) => {
         onClose={onClose}
         onDestroy={onDestroy}
         onChangeOrder={onChangeOrder}
+        context={userDefinedContext}
       >
         {modal.type === 'alert' && (
           <AlertInner modal={modal} handlers={{ onConfirm }} />
