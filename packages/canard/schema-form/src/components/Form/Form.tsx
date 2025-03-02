@@ -59,13 +59,19 @@ const FormInner = <
     CustomFormTypeRenderer,
     formatError,
     showError = ShowError.Dirty | ShowError.Touched,
+    readOnly,
+    disabled,
     ajv,
     context,
     children: childrenInput,
   }: FormProps<Schema, Value>,
   ref: ForwardedRef<FormHandle<Schema, Value, Node>>,
 ) => {
-  const jsonSchema = useConstant(jsonSchemaInput);
+  const jsonSchema = useConstant(() => {
+    if (readOnly) jsonSchemaInput.readOnly = readOnly;
+    if (disabled) jsonSchemaInput.disabled = disabled;
+    return jsonSchemaInput;
+  });
   const [rootNode, setRootNode] = useState<Node>();
   const [children, setChildren] = useState<ReactNode>(
     createChildren(childrenInput, jsonSchema),

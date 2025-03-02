@@ -59,6 +59,10 @@ export interface FormProps<
    *   - `ShowError.Touched`: input에 focus 된 경우 노출
    */
   showError?: boolean | ShowError;
+  /** FormTypeInput 전체에 readOnly 속성 적용 */
+  readOnly?: boolean;
+  /** FormTypeInput 전체에 disabled 속성 적용 */
+  disabled?: boolean;
   /** 외부에서 선언된 Ajv 인스턴스, 없으면 내부에서 생성 */
   ajv?: Ajv;
   /** 사용자 정의 컨텍스트 */
