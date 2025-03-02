@@ -1,4 +1,4 @@
-import type { Fn } from '@aileron/types';
+import type { Dictionary, Fn } from '@aileron/types';
 
 import type { ModalNode } from '@/promise-modal/core';
 
@@ -33,6 +33,7 @@ export type ModalFrameProps<B = any> = {
   onChange: (value: any) => void;
   onDestroy: () => void;
   onChangeOrder: Fn;
+  context: Dictionary;
 };
 
 export interface ModalIdProps {
