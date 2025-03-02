@@ -46,19 +46,25 @@ export const useComputeSchemaNode = (
     const jsonSchema = node?.jsonSchema;
 
     const visible = jsonSchema?.renderOptions?.visible;
-    const isHidden = visible === false || jsonSchema?.visible === false;
+    const isHidden = jsonSchema?.visible === false || visible === false;
     const checkVisible = isHidden
       ? falseFunction
       : checkComputedOptionFactory(dependencyPaths, visible);
 
     const disabled = jsonSchema?.renderOptions?.disabled;
-    const isDisabled = disabled === true || jsonSchema?.disabled === true;
+    const isDisabled =
+      rootNode.jsonSchema.disabled === true ||
+      jsonSchema?.disabled === true ||
+      disabled === true;
     const checkDisabled = isDisabled
       ? trueFunction
       : checkComputedOptionFactory(dependencyPaths, disabled);
 
     const readOnly = jsonSchema?.renderOptions?.readOnly;
-    const isReadOnly = readOnly === true || jsonSchema?.readOnly === true;
+    const isReadOnly =
+      rootNode.jsonSchema.readOnly === true ||
+      jsonSchema?.readOnly === true ||
+      readOnly === true;
     const checkReadOnly = isReadOnly
       ? trueFunction
       : checkComputedOptionFactory(dependencyPaths, readOnly);
@@ -75,7 +81,7 @@ export const useComputeSchemaNode = (
       checkReadOnly,
       getWatchValues,
     };
-  }, [node]);
+  }, [rootNode, node]);
 
   const [dependencies, setDependencies] = useState<any[]>(() => {
     if (!node || dependencyPaths.length === 0) return [];
