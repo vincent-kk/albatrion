@@ -23,8 +23,7 @@ const FormTypeInputBoolean = ({
       type="checkbox"
       id={path}
       name={name}
-      readOnly={readOnly}
-      disabled={disabled}
+      disabled={disabled || readOnly}
       defaultChecked={!!defaultValue}
       onChange={handleChange}
     />
