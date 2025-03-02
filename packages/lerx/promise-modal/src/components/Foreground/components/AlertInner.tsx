@@ -5,6 +5,7 @@ import { renderComponent, useHandle } from '@winglet/react-utils';
 
 import type { AlertNode } from '@/promise-modal/core';
 import { useModalContext } from '@/promise-modal/providers';
+import { useUserDefinedContext } from '@/promise-modal/providers/UserDefinedContext';
 import type { ModalActions } from '@/promise-modal/types';
 
 interface AlertInnerProps<B> {
@@ -15,6 +16,7 @@ interface AlertInnerProps<B> {
 export const AlertInner = memo(
   <B,>({ modal, handlers }: AlertInnerProps<B>) => {
     const { title, subtitle, content, footer } = useMemo(() => modal, [modal]);
+    const { context: userDefinedContext } = useUserDefinedContext();
     const { onConfirm } = useMemo(() => handlers, [handlers]);
 
     const handleConfirm = useHandle(onConfirm);
@@ -29,16 +31,26 @@ export const AlertInner = memo(
     return (
       <Fragment>
         {title &&
-          (isString(title) ? <TitleComponent>{title}</TitleComponent> : title)}
+          (isString(title) ? (
+            <TitleComponent context={userDefinedContext}>
+              {title}
+            </TitleComponent>
+          ) : (
+            title
+          ))}
         {subtitle &&
           (isString(subtitle) ? (
-            <SubtitleComponent>{subtitle}</SubtitleComponent>
+            <SubtitleComponent context={userDefinedContext}>
+              {subtitle}
+            </SubtitleComponent>
           ) : (
             subtitle
           ))}
         {content &&
           (isString(content) ? (
-            <ContentComponent>{content}</ContentComponent>
+            <ContentComponent context={userDefinedContext}>
+              {content}
+            </ContentComponent>
           ) : (
             renderComponent(content, {
               onConfirm: handleConfirm,
@@ -46,12 +58,16 @@ export const AlertInner = memo(
           ))}
         {footer !== false &&
           (typeof footer === 'function' ? (
-            footer({ onConfirm: handleConfirm })
+            footer({
+              onConfirm: handleConfirm,
+              context: userDefinedContext,
+            })
           ) : (
             <FooterComponent
               onConfirm={handleConfirm}
               confirmLabel={footer?.confirm}
               hideConfirm={footer?.hideConfirm}
+              context={userDefinedContext}
             />
           ))}
       </Fragment>

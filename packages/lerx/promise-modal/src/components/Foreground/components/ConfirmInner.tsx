@@ -5,6 +5,7 @@ import { renderComponent, useHandle } from '@winglet/react-utils';
 
 import type { ConfirmNode } from '@/promise-modal/core';
 import { useModalContext } from '@/promise-modal/providers';
+import { useUserDefinedContext } from '@/promise-modal/providers/UserDefinedContext';
 import type { ModalActions } from '@/promise-modal/types';
 
 interface ConfirmInnerProps<B> {
@@ -15,6 +16,7 @@ interface ConfirmInnerProps<B> {
 export const ConfirmInner = memo(
   <B,>({ modal, handlers }: ConfirmInnerProps<B>) => {
     const { title, subtitle, content, footer } = useMemo(() => modal, [modal]);
+    const { context: userDefinedContext } = useUserDefinedContext();
     const { onConfirm, onClose } = useMemo(() => handlers, [handlers]);
 
     const handleConfirm = useHandle(onConfirm);
@@ -30,20 +32,31 @@ export const ConfirmInner = memo(
     return (
       <Fragment>
         {title &&
-          (isString(title) ? <TitleComponent>{title}</TitleComponent> : title)}
+          (isString(title) ? (
+            <TitleComponent context={userDefinedContext}>
+              {title}
+            </TitleComponent>
+          ) : (
+            title
+          ))}
         {subtitle &&
           (isString(subtitle) ? (
-            <SubtitleComponent>{subtitle}</SubtitleComponent>
+            <SubtitleComponent context={userDefinedContext}>
+              {subtitle}
+            </SubtitleComponent>
           ) : (
             subtitle
           ))}
         {content &&
           (isString(content) ? (
-            <ContentComponent>{content}</ContentComponent>
+            <ContentComponent context={userDefinedContext}>
+              {content}
+            </ContentComponent>
           ) : (
             renderComponent(content, {
               onConfirm: handleConfirm,
               onCancel: handleClose,
+              context: userDefinedContext,
             })
           ))}
         {footer !== false &&
@@ -51,6 +64,7 @@ export const ConfirmInner = memo(
             footer({
               onConfirm: handleConfirm,
               onCancel: handleClose,
+              context: userDefinedContext,
             })
           ) : (
             <FooterComponent
@@ -60,6 +74,7 @@ export const ConfirmInner = memo(
               cancelLabel={footer?.cancel}
               hideConfirm={footer?.hideConfirm}
               hideCancel={footer?.hideCancel}
+              context={userDefinedContext}
             />
           ))}
       </Fragment>

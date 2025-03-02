@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode } from 'react';
 
-import type { SetStateFn } from '@aileron/types';
+import type { Dictionary, SetStateFn } from '@aileron/types';
 
 import type { BaseModal, ContentComponentProps, FooterOptions } from './base';
 
@@ -10,6 +10,7 @@ export type PromptFooterRender<T> = (props: {
   value: T | undefined;
   onChange: SetStateFn<T | undefined>;
   disabled: boolean;
+  context: Dictionary;
 }) => ReactNode;
 
 export interface PromptInputProps<T> {
@@ -18,6 +19,7 @@ export interface PromptInputProps<T> {
   onChange: SetStateFn<T | undefined>;
   onConfirm?: VoidFunction;
   onCancel?: VoidFunction;
+  context: Dictionary;
 }
 
 export type PromptContentProps = ContentComponentProps;

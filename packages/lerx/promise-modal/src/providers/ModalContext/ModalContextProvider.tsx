@@ -29,6 +29,7 @@ import { usePathname as useDefaultPathname } from '@/promise-modal/hooks/useDefa
 import type {
   FooterComponentProps,
   ModalFrameProps,
+  WrapperComponentProps,
 } from '@/promise-modal/types';
 
 import { ModalDataContextProvider } from '../ModalDataContext';
@@ -38,9 +39,9 @@ import { ModalContext } from './ModalContext';
 interface ModalContextProviderProps {
   BackgroundComponent?: ComponentType<ModalFrameProps>;
   ForegroundComponent?: ComponentType<ModalFrameProps>;
-  TitleComponent?: ComponentType<PropsWithChildren>;
-  SubtitleComponent?: ComponentType<PropsWithChildren>;
-  ContentComponent?: ComponentType<PropsWithChildren>;
+  TitleComponent?: ComponentType<WrapperComponentProps>;
+  SubtitleComponent?: ComponentType<WrapperComponentProps>;
+  ContentComponent?: ComponentType<WrapperComponentProps>;
   FooterComponent?: ComponentType<FooterComponentProps>;
   options?: {
     /** Modal transition time(ms, s) */

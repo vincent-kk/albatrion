@@ -9,6 +9,7 @@ import {
 
 import type { PromptNode } from '@/promise-modal/core';
 import { useModalContext } from '@/promise-modal/providers';
+import { useUserDefinedContext } from '@/promise-modal/providers/UserDefinedContext';
 import type { ModalActions } from '@/promise-modal/types';
 
 interface PromptInnerProps<T, B> {
@@ -33,6 +34,8 @@ export const PromptInner = memo(
       }),
       [modal],
     );
+
+    const { context: userDefinedContext } = useUserDefinedContext();
 
     const [value, setValue] = useState<T | undefined>(defaultValue);
 
@@ -72,20 +75,31 @@ export const PromptInner = memo(
     return (
       <Fragment>
         {title &&
-          (isString(title) ? <TitleComponent>{title}</TitleComponent> : title)}
+          (isString(title) ? (
+            <TitleComponent context={userDefinedContext}>
+              {title}
+            </TitleComponent>
+          ) : (
+            title
+          ))}
         {subtitle &&
           (isString(subtitle) ? (
-            <SubtitleComponent>{subtitle}</SubtitleComponent>
+            <SubtitleComponent context={userDefinedContext}>
+              {subtitle}
+            </SubtitleComponent>
           ) : (
             subtitle
           ))}
         {content &&
           (isString(content) ? (
-            <ContentComponent>{content}</ContentComponent>
+            <ContentComponent context={userDefinedContext}>
+              {content}
+            </ContentComponent>
           ) : (
             renderComponent(content, {
               onConfirm: handleConfirm,
               onCancel: handleClose,
+              context: userDefinedContext,
             })
           ))}
 
@@ -96,27 +110,30 @@ export const PromptInner = memo(
             onChange={handleChange}
             onConfirm={handleConfirm}
             onCancel={handleClose}
+            context={userDefinedContext}
           />
         )}
 
         {footer !== false &&
           (typeof footer === 'function' ? (
             footer({
+              value,
+              disabled,
               onChange: handleChange,
               onConfirm: handleConfirm,
               onCancel: handleClose,
-              value,
-              disabled,
+              context: userDefinedContext,
             })
           ) : (
             <FooterComponent
+              disabled={disabled}
               onConfirm={handleConfirm}
               onCancel={handleClose}
-              disabled={disabled}
               confirmLabel={footer?.confirm}
               cancelLabel={footer?.cancel}
               hideConfirm={footer?.hideConfirm}
               hideCancel={footer?.hideCancel}
+              context={userDefinedContext}
             />
           ))}
       </Fragment>
