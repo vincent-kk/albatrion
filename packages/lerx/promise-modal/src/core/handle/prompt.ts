@@ -51,18 +51,7 @@ export const prompt = <T, B = any>({
         title,
         subtitle,
         content,
-        Input: ({
-          defaultValue,
-          onChange,
-          onConfirm,
-          onCancel,
-        }: PromptInputProps<T>) =>
-          Input({
-            defaultValue,
-            onChange,
-            onConfirm,
-            onCancel,
-          }),
+        Input,
         defaultValue,
         disabled,
         returnOnCancel,
