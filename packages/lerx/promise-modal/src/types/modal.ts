@@ -7,10 +7,10 @@ import type { ModalBackground } from './background';
 import type { ConfirmModal } from './confirm';
 import type { PromptModal } from './prompt';
 
-export type Modal<T = any, B = any> =
-  | AlertModal<B>
-  | ConfirmModal<B>
-  | PromptModal<T, B>;
+export type Modal<T = any, B = any, Context extends Dictionary = Dictionary> =
+  | AlertModal<B, Context>
+  | ConfirmModal<B, Context>
+  | PromptModal<T, B, Context>;
 
 export type ManagedEntity = {
   id: number;
@@ -19,7 +19,10 @@ export type ManagedEntity = {
 
 export type ManagedModal<T = any, B = any> = ManagedEntity & Modal<T, B>;
 
-export type ModalFrameProps<B = any> = {
+export type ModalFrameProps<
+  Context extends Dictionary = Dictionary,
+  B = any,
+> = {
   id: number;
   type: 'alert' | 'confirm' | 'prompt';
   alive: boolean;
@@ -33,7 +36,7 @@ export type ModalFrameProps<B = any> = {
   onChange: (value: any) => void;
   onDestroy: () => void;
   onChangeOrder: Fn;
-  context: Dictionary;
+  context: Context;
 };
 
 export interface ModalIdProps {
