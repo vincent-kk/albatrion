@@ -47,3 +47,71 @@ export const Common = () => {
     </StoryLayout>
   );
 };
+
+export const GlobalReadOnly = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      prepared: {
+        type: 'boolean',
+      },
+      name: {
+        type: 'string',
+        placeholder: 'enter your name',
+      },
+      age: {
+        type: 'number',
+        placeholder: 'enter your age',
+      },
+      nationality: {
+        type: 'string',
+        enum: ['', 'US', 'UK', 'JP', 'KR'],
+        renderOptions: {
+          disabled: '@.age===undefined||@.age<10',
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <Form jsonSchema={jsonSchema} onChange={setValue} readOnly />
+    </StoryLayout>
+  );
+};
+
+export const GlobalDisabled = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      prepared: {
+        type: 'boolean',
+      },
+      name: {
+        type: 'string',
+        placeholder: 'enter your name',
+      },
+      age: {
+        type: 'number',
+        placeholder: 'enter your age',
+      },
+      nationality: {
+        type: 'string',
+        enum: ['', 'US', 'UK', 'JP', 'KR'],
+        renderOptions: {
+          disabled: '@.age===undefined||@.age<10',
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <Form jsonSchema={jsonSchema} onChange={setValue} disabled />
+    </StoryLayout>
+  );
+};
