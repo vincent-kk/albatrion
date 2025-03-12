@@ -1,3 +1,3 @@
-export const isWeakMap = <Key extends WeakKey, Value>(
+export const isWeakMap = <T extends WeakMap<any, any>>(
   value: unknown,
-): value is WeakMap<Key, Value> => value instanceof WeakMap;
+): value is T => value instanceof WeakMap;

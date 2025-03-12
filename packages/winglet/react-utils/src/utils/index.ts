@@ -1,1 +1,3 @@
-export { renderComponent } from './renderComponent';
+export * from './filter';
+export * from './object';
+export * from './render';

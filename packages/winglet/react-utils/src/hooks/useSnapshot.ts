@@ -2,7 +2,7 @@ import { useMemo, useRef } from 'react';
 
 import { generateHash, stringifyObject } from '@winglet/common-utils';
 
-import { isInvalidValue } from '../utils/isInvalidValue';
+import { isInvalidValue } from '../utils/filter/isInvalidValue';
 
 /**
  * @description 객체의 스냅샷을 반환합니다.

@@ -1,6 +1,6 @@
 import { type ComponentType, type ReactNode, createElement } from 'react';
 
-import { isReactComponent, isReactElement } from '../helpers';
+import { isReactComponent, isReactElement } from '../filter';
 
 type ReactComponent<P> = ReactNode | ComponentType<P>;
 

@@ -1,2 +1,2 @@
-export const isPromise = <T>(value: unknown): value is Promise<T> =>
+export const isPromise = <T extends Promise<any>>(value: unknown): value is T =>
   value instanceof Promise;
