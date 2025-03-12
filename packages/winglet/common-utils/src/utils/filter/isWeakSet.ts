@@ -1,3 +1,2 @@
-export const isWeakSet = <Key extends WeakKey>(
-  value: unknown,
-): value is WeakSet<Key> => value instanceof WeakSet;
+export const isWeakSet = <T extends WeakSet<any>>(value: unknown): value is T =>
+  value instanceof WeakSet;

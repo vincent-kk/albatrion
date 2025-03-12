@@ -1,2 +1,2 @@
-export const isSet = <T>(value: unknown): value is Set<T> =>
+export const isSet = <T extends Set<any>>(value: unknown): value is T =>
   value instanceof Set;

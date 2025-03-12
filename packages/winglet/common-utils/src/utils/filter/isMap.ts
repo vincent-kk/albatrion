@@ -1,2 +1,2 @@
-export const isMap = <Key, Value>(value: unknown): value is Map<Key, Value> =>
+export const isMap = <T extends Map<any, any>>(value: unknown): value is T =>
   value instanceof Map;

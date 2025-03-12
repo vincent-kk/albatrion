@@ -1,6 +1,6 @@
-export function isPlainObject(
+export const isPlainObject = <T extends Record<PropertyKey, any>>(
   value: unknown,
-): value is Record<PropertyKey, any> {
+): value is T => {
   if (!value || typeof value !== 'object') return false;
 
   const proto = Object.getPrototypeOf(value) as typeof Object.prototype | null;
@@ -11,4 +11,4 @@ export function isPlainObject(
   if (!hasObjectPrototype) return false;
 
   return Object.prototype.toString.call(value) === '[object Object]';
-}
+};
