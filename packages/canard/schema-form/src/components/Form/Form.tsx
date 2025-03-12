@@ -90,7 +90,7 @@ const FormInner = <
     if (!ready.current || !isFunction(onChange)) return;
     if (isFunction(input)) {
       const prevValue = (rootNode?.value || defaultValue) as Value;
-      onChange(input(prevValue) as Value);
+      onChange(input(prevValue));
     } else onChange(input);
   });
 
