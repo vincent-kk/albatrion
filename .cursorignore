@@ -30,8 +30,5 @@ package-lock.json
 .DS_Store
 
 # 테스트 및 리포트 파일
-coverage/
-*.spec.ts
-*.test.ts
 junit.xml
 reports/
