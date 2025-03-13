@@ -127,14 +127,14 @@ describe('stableSerialize', () => {
 
     // 테스트 코드
 
-    expect(stableSerialize(directCircular)).toEqual('%self:0@|');
-    expect(stableSerialize(objA)).toEqual('%child:%parent:1@||');
-    expect(stableSerialize(obj1)).toEqual('%next:%next:%next:3@|||');
-    expect(stableSerialize(arrayCircular)).toEqual('#%array:6@|,');
+    expect(stableSerialize(directCircular)).toEqual('%self:1@|');
+    expect(stableSerialize(objA)).toEqual('%child:%parent:2@||');
+    expect(stableSerialize(obj1)).toEqual('%next:%next:%next:4@|||');
+    expect(stableSerialize(arrayCircular)).toEqual('#%array:7@|,');
     expect(stableSerialize(complex)).toEqual(
-      '%name:복잡한 객체|data:%parent:8@|items:#%ref:8@|,||',
+      '%name:복잡한 객체|data:%parent:9@|items:#%ref:9@|,||',
     );
-    expect(stableSerialize(map)).toEqual('12@');
+    expect(stableSerialize(map)).toEqual('13@');
   });
 });
 
