@@ -1,11 +1,11 @@
-export const counterFactory = () => {
-  let __value__ = 0;
+export const counterFactory = (initialValue = 0) => {
+  let value = initialValue;
   return {
     get value() {
-      return __value__;
+      return value;
     },
-    increment: () => __value__++,
-    decrement: () => __value__--,
-    reset: () => (__value__ = 0),
+    increment: () => ++value,
+    decrement: () => --value,
+    reset: () => (value = initialValue),
   };
 };
