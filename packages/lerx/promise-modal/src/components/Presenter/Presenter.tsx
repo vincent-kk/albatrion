@@ -11,7 +11,7 @@ import type { ModalIdProps } from '@/promise-modal/types';
 
 import { presenter } from './classNames.emotion';
 
-const zIndex = counterFactory();
+const zIndex = counterFactory(1);
 
 export const Presenter = memo(({ modalId }: ModalIdProps) => {
   const ref = useRef<HTMLDivElement>(null);
