@@ -6,6 +6,7 @@ import { data } from './data';
 import { stringifyObject as legacySerialize } from './legacyStringifyObject';
 import { stableHash } from './org';
 import { serialize } from './serialize';
+import { serializeObject } from './serializeObject';
 import { serializeSingleDepth } from './serializeSingleDepth';
 import { serializeWithFullSortedKeys } from './serializeWithFullSortedKeys';
 
@@ -19,6 +20,9 @@ export const run = () => {
       })
       .add('serializeWithFullSortedKeys', function () {
         serializeWithFullSortedKeys(data);
+      })
+      .add('serializeObject', function () {
+        serializeObject(data);
       })
       .add('serializeSingleDepth', function () {
         serializeSingleDepth(data);
