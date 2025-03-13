@@ -158,17 +158,20 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     }) satisfies SetStateFn<AllowedValue>;
 
     const defaultValue = data ?? getFallbackValue(this.jsonSchema.items);
+
+    const childNode = this.#nodeFactory({
+      key: id,
+      name,
+      jsonSchema: this.jsonSchema.items,
+      parentNode: this,
+      defaultValue,
+      onChange: handleChange,
+      nodeFactory: this.#nodeFactory,
+    });
+
     this.#sourceMap.set(id, {
-      node: this.#nodeFactory({
-        key: id,
-        name,
-        jsonSchema: this.jsonSchema.items,
-        parentNode: this,
-        defaultValue,
-        onChange: handleChange,
-        nodeFactory: this.#nodeFactory,
-      }),
-      data: defaultValue,
+      node: childNode,
+      data: childNode.value,
     });
 
     this.#hasChanged = true;
