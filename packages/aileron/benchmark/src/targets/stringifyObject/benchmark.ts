@@ -3,19 +3,27 @@ import Benchmark from 'benchmark';
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 
 import { data } from './data';
-import { stringifyObject } from './stringifyObject';
-import { stringifyObject as stringifyObject2 } from './stringifyObject2';
+import { stringifyObject as legacySerialize } from './legacyStringifyObject';
+import { serialize } from './serialize';
+import { serializeSingleDepth } from './serializeSingleDepth';
+import { serializeWithFullSortedKeys } from './serializeWithFullSortedKeys';
 
 const suite = new Benchmark.Suite();
 
 export const run = () => {
   return new Promise<Ratio>((resolve) => {
     suite
-      .add('stringifyObject with 1 depth sorted keys', function () {
-        stringifyObject(data);
+      .add('legacySerialize', function () {
+        legacySerialize(data);
       })
-      .add('stringifyObject with all sorted keys', function () {
-        stringifyObject2(data);
+      .add('serializeWithFullSortedKeys', function () {
+        serializeWithFullSortedKeys(data);
+      })
+      .add('serializeSingleDepth', function () {
+        serializeSingleDepth(data);
+      })
+      .add('serialize', function () {
+        serialize(data);
       })
       .add('JSON.stringify', function () {
         JSON.stringify(data);
