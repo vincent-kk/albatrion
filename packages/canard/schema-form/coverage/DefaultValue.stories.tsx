@@ -30,16 +30,26 @@ export const DefaultValueBySchema = () => {
       },
       array: {
         type: 'array',
-        items: { type: 'number' },
-        default: [1, 2, 3],
+        items: { type: 'number', default: 0 },
+        minItems: 2,
       },
       object: {
         type: 'object',
         properties: {
-          a: { type: 'number' },
-          b: { type: 'number' },
+          name: { type: 'string', default: 'adult' },
+          age: { type: 'number', default: 19 },
         },
-        default: { a: 1, b: 2 },
+      },
+      objectArray: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            name: { type: 'string', default: 'anonymous' },
+            age: { type: 'number', default: 0 },
+          },
+        },
+        minItems: 3,
       },
       null: {
         type: 'null',
@@ -78,13 +88,25 @@ export const DefaultValueByValue = () => {
       array: {
         type: 'array',
         items: { type: 'number' },
+        minItems: 2,
       },
       object: {
         type: 'object',
         properties: {
-          a: { type: 'number' },
-          b: { type: 'number' },
+          name: { type: 'string' },
+          age: { type: 'number' },
         },
+      },
+      objectArray: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            age: { type: 'number' },
+          },
+        },
+        minItems: 3,
       },
       null: {
         type: 'null',
@@ -104,8 +126,13 @@ export const DefaultValueByValue = () => {
           string: 'default value',
           number: 10,
           boolean: true,
-          array: [1, 2, 3],
-          object: { a: 1, b: 2 },
+          array: [0, 0],
+          object: { name: 'adult', age: 19 },
+          objectArray: [
+            { name: 'anonymous', age: 0 },
+            { name: 'anonymous', age: 0 },
+            { name: 'anonymous', age: 0 },
+          ],
           null: null,
         }}
         onChange={setValue}
