@@ -1,4 +1,4 @@
-export const stringifyObject = (object: any, omit?: string[]): string => {
+export const serializeSingleDepth = (object: any, omit?: string[]): string => {
   if (!object || typeof object !== 'object') return JSON.stringify(object);
   const entries = Object.entries(object).sort(([key1], [key2]) =>
     key1.localeCompare(key2),

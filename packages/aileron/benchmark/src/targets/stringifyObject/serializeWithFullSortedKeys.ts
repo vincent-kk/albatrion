@@ -1,4 +1,4 @@
-export const stringifyObjectWithFullSortedKeys = (object: any): string => {
+export const serializeWithFullSortedKeys = (object: any): string => {
   if (!object || typeof object !== 'object') return String(object);
   const stack: Array<{ obj: any; prefix: string }> = [
     { obj: object, prefix: '' },

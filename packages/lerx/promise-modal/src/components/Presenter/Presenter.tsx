@@ -1,5 +1,6 @@
 import { memo, useRef } from 'react';
 
+import { counterFactory } from '@winglet/common-utils';
 import { useHandle } from '@winglet/react-utils';
 
 import { Background } from '@/promise-modal/components/Background';
@@ -10,7 +11,7 @@ import type { ModalIdProps } from '@/promise-modal/types';
 
 import { presenter } from './classNames.emotion';
 
-let zIndex = 1;
+const { increment } = counterFactory(1);
 
 export const Presenter = memo(({ modalId }: ModalIdProps) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -18,7 +19,7 @@ export const Presenter = memo(({ modalId }: ModalIdProps) => {
   useSubscribeModal(modal);
   const handleChangeOrder = useHandle(() => {
     if (ref.current) {
-      ref.current.style.zIndex = `${zIndex++}`;
+      ref.current.style.zIndex = `${increment()}`;
     }
   });
   return (
