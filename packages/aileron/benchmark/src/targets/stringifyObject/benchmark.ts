@@ -4,6 +4,7 @@ import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 
 import { data } from './data';
 import { stringifyObject as legacySerialize } from './legacyStringifyObject';
+import { stableHash } from './org';
 import { serialize } from './serialize';
 import { serializeSingleDepth } from './serializeSingleDepth';
 import { serializeWithFullSortedKeys } from './serializeWithFullSortedKeys';
@@ -24,6 +25,9 @@ export const run = () => {
       })
       .add('serialize', function () {
         serialize(data);
+      })
+      .add('stableHash', function () {
+        stableHash(data);
       })
       .add('JSON.stringify', function () {
         JSON.stringify(data);
