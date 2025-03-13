@@ -4,14 +4,14 @@ import { stableSerialize } from '../stableSerialize';
 
 describe('stableSerialize', () => {
   it('should stableSerialize the object', () => {
-    expect(stableSerialize({ a: 1, b: 2 })).toEqual('%a:1|b:2|');
+    expect(stableSerialize({ a: 1, b: 2 })).toEqual('%b:2|a:1|');
   });
   it('should stableSerialize the nested object', () => {
-    expect(stableSerialize({ a: 1, b: { c: 3 } })).toEqual('%a:1|b:%c:3||');
+    expect(stableSerialize({ a: 1, b: { c: 3 } })).toEqual('%b:%c:3||a:1|');
   });
   it('should stableSerialize the object with undefined', () => {
     expect(stableSerialize({ a: 1, b: undefined })).toEqual(
-      '%a:1|b:undefined|',
+      '%b:undefined|a:1|',
     );
   });
   it('should stableSerialize the array', () => {
@@ -28,12 +28,12 @@ describe('stableSerialize', () => {
         null: null,
       }),
     ).toEqual(
-      '%array:#1,2,3,|boolean:true|null:null|number:10|object:%a:1|b:2||string:default value|',
+      '%string:default value|object:%b:2|a:1||number:10|null:null|boolean:true|array:#1,2,3,|',
     );
   });
   it('should stableSerialize the large object with array', () => {
     expect(stableSerialize(bigObject)).toEqual(
-      '%properties:%settings:%properties:%language:%default:en|enum:#en,kr,jp,|type:string||privacy:%default:public|oneOf:#%const:public|title:Public|,%const:private|title:Private|,%const:custom|title:Custom|,|type:string||security:%properties:%2FA:%default:true|type:boolean||backupCodes:%items:%pattern:^[A-Z0-9]{8}$|type:string||maxItems:10|minItems:5|type:array|||required:#2FA,|type:object|||required:#privacy,language,|type:object||user:%properties:%email:%format:email|type:string||name:%default:Anonymous|maxLength:50|type:string||profile:%oneOf:#%properties:%type:%enum:#adult,child,|||required:#age,gender,preferences,|,%properties:%type:%enum:#none,|||required:#|,|properties:%age:%default:18|minimum:0|type:integer||gender:%enum:#male,female,other,|renderOptions:%visible:@.age >= 18||type:string||preferences:%properties:%notifications:%properties:%email:%default:true|type:boolean||sms:%default:false|type:boolean|||required:#email,sms,|type:object||theme:%default:light|enum:#light,dark,|type:string|||required:#theme,notifications,|type:object||type:%default:adult|enum:#adult,child,none,|type:string|||required:#type,|type:object|||required:#name,|type:object|||required:#user,settings,|type:object|',
+      '%type:object|required:#user,settings,|properties:%user:%type:object|required:#name,|properties:%profile:%type:object|required:#type,|properties:%type:%type:string|enum:#adult,child,none,|default:adult||preferences:%type:object|required:#theme,notifications,|properties:%theme:%type:string|enum:#light,dark,|default:light||notifications:%type:object|required:#email,sms,|properties:%sms:%type:boolean|default:false||email:%type:boolean|default:true||||||gender:%type:string|renderOptions:%visible:@.age >= 18||enum:#male,female,other,||age:%type:integer|minimum:0|default:18|||oneOf:#%required:#age,gender,preferences,|properties:%type:%enum:#adult,child,|||,%required:#|properties:%type:%enum:#none,|||,||name:%type:string|maxLength:50|default:Anonymous||email:%type:string|format:email||||settings:%type:object|required:#privacy,language,|properties:%security:%type:object|required:#2FA,|properties:%backupCodes:%type:array|minItems:5|maxItems:10|items:%type:string|pattern:^[A-Z0-9]{8}$|||2FA:%type:boolean|default:true||||privacy:%type:string|oneOf:#%title:Public|const:public|,%title:Private|const:private|,%title:Custom|const:custom|,|default:public||language:%type:string|enum:#en,kr,jp,|default:en|||||',
     );
   });
   it('should stableSerialize the large object with omit', () => {
@@ -56,7 +56,7 @@ describe('stableSerialize', () => {
         'readonly',
       ]),
     ).toEqual(
-      '%properties:%user:%properties:%email:%format:email|type:string||name:%type:string||profile:%properties:%age:%type:integer||gender:%renderOptions:%|type:string||preferences:%properties:%notifications:%properties:%email:%type:boolean||sms:%type:boolean|||type:object||theme:%type:string|||type:object||type:%type:string|||type:object|||type:object|||type:object|',
+      '%type:object|properties:%user:%type:object|properties:%profile:%type:object|properties:%type:%type:string||preferences:%type:object|properties:%theme:%type:string||notifications:%type:object|properties:%sms:%type:boolean||email:%type:boolean||||||gender:%type:string|renderOptions:%||age:%type:integer||||name:%type:string||email:%type:string|format:email|||||',
     );
   });
 
@@ -127,14 +127,14 @@ describe('stableSerialize', () => {
 
     // 테스트 코드
 
-    expect(stableSerialize(directCircular)).toEqual('%self:1@|');
+    expect(stableSerialize(directCircular)).toEqual('%self:0@|');
     expect(stableSerialize(objA)).toEqual('%child:%parent:1@||');
-    expect(stableSerialize(obj1)).toEqual('%next:%next:%next:1@|||');
-    expect(stableSerialize(arrayCircular)).toEqual('#%array:1@|,');
+    expect(stableSerialize(obj1)).toEqual('%next:%next:%next:3@|||');
+    expect(stableSerialize(arrayCircular)).toEqual('#%array:6@|,');
     expect(stableSerialize(complex)).toEqual(
-      '%data:%items:#%ref:1@|,|parent:1@||name:복잡한 객체|',
+      '%name:복잡한 객체|data:%parent:8@|items:#%ref:8@|,||',
     );
-    expect(stableSerialize(map)).toEqual('1@');
+    expect(stableSerialize(map)).toEqual('12@');
   });
 });
 

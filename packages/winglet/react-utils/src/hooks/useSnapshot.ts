@@ -1,6 +1,6 @@
 import { useMemo, useRef } from 'react';
 
-import { generateHash, serialize } from '@winglet/common-utils';
+import { generateHash, serializeObject } from '@winglet/common-utils';
 
 import { isInvalidValue } from '../utils/filter/isInvalidValue';
 
@@ -41,5 +41,5 @@ const getSnapshotHash = <T extends object>(
   omit?: Array<keyof T>,
 ): number | null => {
   if (isInvalidValue(object)) return null;
-  return generateHash(serialize(object, omit as string[]));
+  return generateHash(serializeObject(object, omit as string[]));
 };
