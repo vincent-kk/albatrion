@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { nodeFromJsonSchema } from '@/schema-form/core';
+import { JsonSchema } from '@/schema-form/types';
 
 import { ArrayNode } from '../nodes/ArrayNode/ArrayNode';
 
@@ -107,5 +108,114 @@ describe('ArrayNode', () => {
       'ron',
       'harry',
     ]);
+  });
+
+  it('ArrayNode with defaultValue', () => {
+    const jsonSchema = {
+      type: 'object',
+      properties: {
+        array: {
+          type: 'array',
+          items: { type: 'number' },
+          minItems: 2,
+        },
+        objectArray: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              name: { type: 'string' },
+              age: { type: 'number' },
+            },
+          },
+          minItems: 3,
+        },
+      },
+    } satisfies JsonSchema;
+
+    const node = nodeFromJsonSchema({
+      jsonSchema,
+      defaultValue: {
+        array: [0, 0],
+        objectArray: [
+          {
+            name: 'anonymous',
+            age: 0,
+          },
+          {
+            name: 'anonymous',
+            age: 0,
+          },
+          {
+            name: 'anonymous',
+            age: 0,
+          },
+        ],
+      },
+    });
+
+    expect(node.value).toEqual({
+      array: [0, 0],
+      objectArray: [
+        {
+          name: 'anonymous',
+          age: 0,
+        },
+        {
+          name: 'anonymous',
+          age: 0,
+        },
+        {
+          name: 'anonymous',
+          age: 0,
+        },
+      ],
+    });
+  });
+
+  it('ArrayNode with default in schema', () => {
+    const jsonSchema = {
+      type: 'object',
+      properties: {
+        array: {
+          type: 'array',
+          items: { type: 'number', default: 0 },
+          minItems: 2,
+        },
+        objectArray: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              name: { type: 'string', default: 'anonymous' },
+              age: { type: 'number', default: 0 },
+            },
+          },
+          minItems: 3,
+        },
+      },
+    } satisfies JsonSchema;
+
+    const node = nodeFromJsonSchema({
+      jsonSchema,
+    });
+
+    expect(node.value).toEqual({
+      array: [0, 0],
+      objectArray: [
+        {
+          name: 'anonymous',
+          age: 0,
+        },
+        {
+          name: 'anonymous',
+          age: 0,
+        },
+        {
+          name: 'anonymous',
+          age: 0,
+        },
+      ],
+    });
   });
 });
