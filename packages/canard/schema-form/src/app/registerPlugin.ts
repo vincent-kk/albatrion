@@ -1,10 +1,6 @@
 import type { ComponentType } from 'react';
 
-import {
-  generateHash,
-  isPlainObject,
-  stringifyObject,
-} from '@winglet/common-utils';
+import { generateHash, isPlainObject, serialize } from '@winglet/common-utils';
 
 import { UnhandledError } from '@/schema-form/errors';
 import type {
@@ -19,7 +15,7 @@ const RegisteredPlugin = new Set<number>();
 
 export const registerPlugin = (plugin: SchemaFormPlugin) => {
   if (!isPlainObject(plugin)) return;
-  const hash = generateHash(stringifyObject(plugin));
+  const hash = generateHash(serialize(plugin));
   if (RegisteredPlugin.has(hash)) return;
   try {
     const { formTypeInputDefinitions, ...formType } = plugin;
