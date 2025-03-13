@@ -6,42 +6,41 @@ import {
   isPlainObject,
   isPrimitiveObject,
   isRegex,
+  isUndefined,
 } from '../filter';
 
-type CreateHashOptions = {
-  omit: Set<string> | null;
-  counter: ReturnType<typeof counterFactory>;
-};
-
 const cache = weakMapCacheFactory<WeakMap<object, string>>();
+const counter = counterFactory();
 
 export const serialize = (input: unknown, omitKeys?: string[]): string => {
-  const counter = counterFactory();
   const omit = omitKeys ? new Set(omitKeys) : null;
-  return createHash(input, { counter, omit });
+  return createHash(input, omit);
 };
 
-const createHash = (input: unknown, options: CreateHashOptions): string => {
+const createHash = (input: unknown, omit: Set<string> | null): string => {
   if (isPrimitiveObject(input) && !isDate(input) && !isRegex(input)) {
     let result = cache.get(input);
     if (result) return result;
 
-    result = options.counter.increment() + '@';
+    result = counter.increment() + '@';
     cache.set(input, result);
 
     if (isArray(input)) {
       const segments = ['#'];
       for (let index = 0; index < input.length; index++) {
-        segments.push(createHash(input[index], options) + ',');
+        segments.push(createHash(input[index], omit) + ',');
       }
       result = segments.join('');
     } else if (isPlainObject(input)) {
       const segments = ['%'];
+
       const keys = Object.keys(input).sort();
-      for (const key of keys) {
-        if (options.omit?.has(key)) continue;
-        segments.push(key + ':' + createHash(input[key], options) + '|');
+      let key: string;
+      while (!isUndefined((key = keys.pop() as string))) {
+        if (omit?.has(key)) continue;
+        segments.push(key + ':' + createHash(input[key], omit) + '|');
       }
+
       result = segments.join('');
     }
     cache.set(input, result);
