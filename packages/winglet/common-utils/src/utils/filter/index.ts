@@ -15,6 +15,7 @@ export { isNotNil } from './isNotNil';
 export { isNull } from './isNull';
 export { isNumber } from './isNumber';
 export { isPlainObject } from './isPlainObject';
+export { isPrimitiveObject } from './isPrimitiveObject';
 export { isPrimitiveType } from './isPrimitiveType';
 export { isPromise } from './isPromise';
 export { isRegex } from './isRegex';
