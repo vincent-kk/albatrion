@@ -1,23 +1,25 @@
 import { describe, expect, it } from 'vitest';
 
-import { serialize } from '../serialize';
+import { stableSerialize } from '../stableSerialize';
 
-describe('serialize', () => {
-  it('should serialize the object', () => {
-    expect(serialize({ a: 1, b: 2 })).toEqual('%a:1|b:2|');
+describe('stableSerialize', () => {
+  it('should stableSerialize the object', () => {
+    expect(stableSerialize({ a: 1, b: 2 })).toEqual('%a:1|b:2|');
   });
-  it('should serialize the nested object', () => {
-    expect(serialize({ a: 1, b: { c: 3 } })).toEqual('%a:1|b:%c:3||');
+  it('should stableSerialize the nested object', () => {
+    expect(stableSerialize({ a: 1, b: { c: 3 } })).toEqual('%a:1|b:%c:3||');
   });
-  it('should serialize the object with undefined', () => {
-    expect(serialize({ a: 1, b: undefined })).toEqual('%a:1|b:undefined|');
+  it('should stableSerialize the object with undefined', () => {
+    expect(stableSerialize({ a: 1, b: undefined })).toEqual(
+      '%a:1|b:undefined|',
+    );
   });
-  it('should serialize the array', () => {
-    expect(serialize([1, 2, 3])).toEqual('#1,2,3,');
+  it('should stableSerialize the array', () => {
+    expect(stableSerialize([1, 2, 3])).toEqual('#1,2,3,');
   });
-  it('should serialize the object with array', () => {
+  it('should stableSerialize the object with array', () => {
     expect(
-      serialize({
+      stableSerialize({
         string: 'default value',
         number: 10,
         boolean: true,
@@ -29,14 +31,14 @@ describe('serialize', () => {
       '%array:#1,2,3,|boolean:true|null:null|number:10|object:%a:1|b:2||string:default value|',
     );
   });
-  it('should serialize the large object with array', () => {
-    expect(serialize(bigObject)).toEqual(
+  it('should stableSerialize the large object with array', () => {
+    expect(stableSerialize(bigObject)).toEqual(
       '%properties:%settings:%properties:%language:%default:en|enum:#en,kr,jp,|type:string||privacy:%default:public|oneOf:#%const:public|title:Public|,%const:private|title:Private|,%const:custom|title:Custom|,|type:string||security:%properties:%2FA:%default:true|type:boolean||backupCodes:%items:%pattern:^[A-Z0-9]{8}$|type:string||maxItems:10|minItems:5|type:array|||required:#2FA,|type:object|||required:#privacy,language,|type:object||user:%properties:%email:%format:email|type:string||name:%default:Anonymous|maxLength:50|type:string||profile:%oneOf:#%properties:%type:%enum:#adult,child,|||required:#age,gender,preferences,|,%properties:%type:%enum:#none,|||required:#|,|properties:%age:%default:18|minimum:0|type:integer||gender:%enum:#male,female,other,|renderOptions:%visible:@.age >= 18||type:string||preferences:%properties:%notifications:%properties:%email:%default:true|type:boolean||sms:%default:false|type:boolean|||required:#email,sms,|type:object||theme:%default:light|enum:#light,dark,|type:string|||required:#theme,notifications,|type:object||type:%default:adult|enum:#adult,child,none,|type:string|||required:#type,|type:object|||required:#name,|type:object|||required:#user,settings,|type:object|',
     );
   });
-  it('should serialize the large object with omit', () => {
+  it('should stableSerialize the large object with omit', () => {
     expect(
-      serialize(bigObject, [
+      stableSerialize(bigObject, [
         'oneOf',
         'settings',
         'required',
@@ -58,7 +60,7 @@ describe('serialize', () => {
     );
   });
 
-  it('should serialize the object with circular reference', () => {
+  it('should stableSerialize the object with circular reference', () => {
     // 1. 직접 자기 자신을 참조하는 객체
     interface DirectCircular {
       self?: DirectCircular;
@@ -125,14 +127,14 @@ describe('serialize', () => {
 
     // 테스트 코드
 
-    expect(serialize(directCircular)).toEqual('%self:1@|');
-    expect(serialize(objA)).toEqual('%child:%parent:1@||');
-    expect(serialize(obj1)).toEqual('%next:%next:%next:1@|||');
-    expect(serialize(arrayCircular)).toEqual('#%array:1@|,');
-    expect(serialize(complex)).toEqual(
+    expect(stableSerialize(directCircular)).toEqual('%self:1@|');
+    expect(stableSerialize(objA)).toEqual('%child:%parent:1@||');
+    expect(stableSerialize(obj1)).toEqual('%next:%next:%next:1@|||');
+    expect(stableSerialize(arrayCircular)).toEqual('#%array:1@|,');
+    expect(stableSerialize(complex)).toEqual(
       '%data:%items:#%ref:1@|,|parent:1@||name:복잡한 객체|',
     );
-    expect(serialize(map)).toEqual('1@');
+    expect(stableSerialize(map)).toEqual('1@');
   });
 });
 

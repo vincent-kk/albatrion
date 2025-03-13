@@ -1,5 +1,5 @@
 export { removeUndefined } from './removeUndefined';
-export { serialize } from './serialize';
-export { serializeSingleDepth } from './serializeSingleDepth';
+export { serializeObject } from './serializeObject';
 export { serializeWithFullSortedKeys } from './serializeWithFullSortedKeys';
+export { stableSerialize } from './stableSerialize';
 export { sortObjectKeys } from './sortObjectKeys';

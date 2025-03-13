@@ -12,7 +12,10 @@ import {
 const cache = weakMapCacheFactory<WeakMap<object, string>>();
 const counter = counterFactory();
 
-export const serialize = (input: unknown, omitKeys?: string[]): string => {
+export const stableSerialize = (
+  input: unknown,
+  omitKeys?: string[],
+): string => {
   const omit = omitKeys ? new Set(omitKeys) : null;
   return createHash(input, omit);
 };
