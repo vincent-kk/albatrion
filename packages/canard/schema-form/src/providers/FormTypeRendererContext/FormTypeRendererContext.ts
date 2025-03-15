@@ -8,7 +8,13 @@ export interface FormTypeRendererContext {
   FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
   formatError?: FormTypeRendererProps['formatError'];
   checkShowError: Fn<
-    [condition: { touched?: boolean; dirty?: boolean }],
+    [
+      condition: {
+        dirty?: boolean;
+        touched?: boolean;
+        showError?: boolean;
+      },
+    ],
     boolean
   >;
 }

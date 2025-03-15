@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { EMPTY_ARRAY, isTruthy } from '@winglet/common-utils';
 import { useMemorize, useSnapshot } from '@winglet/react-utils';
 
-import { MethodType, isBranchNode } from '@/schema-form/core';
+import { NodeMethod, isBranchNode } from '@/schema-form/core';
 import type { ChildFormTypeInputProps } from '@/schema-form/types';
 
 import { SchemaNodeAdapterInput } from './SchemaNodeAdapterInput';
@@ -25,7 +25,7 @@ export const SchemaNodeAdapter = ({
   const [children, setChildren] = useState<NodeChildren>(node.children);
   useEffect(() => {
     const unsubscribe = node.subscribe(({ type }) => {
-      if (type === MethodType.ChildrenChange) setChildren(node.children);
+      if (type === NodeMethod.ChildrenChange) setChildren(node.children);
     });
     return () => unsubscribe();
   }, [node]);

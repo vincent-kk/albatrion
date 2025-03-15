@@ -10,8 +10,8 @@ import type {
 import { BaseNode } from '../BaseNode';
 import {
   type BranchNodeConstructorProps,
-  MethodType,
   type NodeFactory,
+  NodeMethod,
 } from '../type';
 import type { ChildNode } from './type';
 import {
@@ -67,7 +67,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     this.onChange(this.#value);
 
     this.publish({
-      type: MethodType.Change,
+      type: NodeMethod.Change,
       payload: this.#value,
       options: {
         previous,
@@ -143,7 +143,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
       this.#nodeFactory,
     );
     this.publish({
-      type: MethodType.ChildrenChange,
+      type: NodeMethod.ChildrenChange,
     });
 
     this.#ready = true;

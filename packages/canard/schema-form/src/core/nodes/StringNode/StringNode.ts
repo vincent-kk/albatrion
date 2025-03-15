@@ -2,7 +2,7 @@ import type { StringSchema, StringValue } from '@/schema-form/types';
 
 import { parseString } from '../../parsers';
 import { BaseNode } from '../BaseNode';
-import { MethodType, type SchemaNodeConstructorProps } from '../type';
+import { NodeMethod, type SchemaNodeConstructorProps } from '../type';
 
 export class StringNode extends BaseNode<StringSchema, StringValue> {
   #value: StringValue | undefined = undefined;
@@ -26,7 +26,7 @@ export class StringNode extends BaseNode<StringSchema, StringValue> {
       this.#value = current;
       this.onChange(current);
       this.publish({
-        type: MethodType.Change,
+        type: NodeMethod.Change,
         payload: current,
         options: {
           previous,

@@ -2,7 +2,8 @@ export { nodeFromJsonSchema } from './nodeFromJsonSchema';
 
 export type { InferSchemaNode, SchemaNode } from './nodes';
 export {
-  MethodType,
+  NodeState,
+  NodeMethod,
   isSchemaNode,
   isBooleanNode,
   isNumberNode,

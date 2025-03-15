@@ -47,7 +47,9 @@ export const FormTypeRendererContextProvider = ({
     return ({
       dirty,
       touched,
+      showError,
     }: Parameters<FormTypeRendererContext['checkShowError']>[0]) => {
+      if (showError !== undefined) return showError;
       if (errorState & ALWAYS_BITMASK) return true;
       if (errorState & NEVER_BITMASK) return false;
       if (errorState & ShowError.Dirty && !dirty) return false;

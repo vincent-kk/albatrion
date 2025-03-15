@@ -25,8 +25,8 @@ import {
 import {
   type Listener,
   type MethodEvent,
-  MethodType,
-  type NodeState,
+  NodeMethod,
+  type NodeStateFlags,
   type SchemaNode,
   type SchemaNodeConstructorProps,
 } from '../type';
@@ -94,7 +94,7 @@ export abstract class BaseNode<
     if (previous === current) return false;
     this.#path = current;
     this.publish({
-      type: MethodType.PathChange,
+      type: NodeMethod.PathChange,
       options: {
         previous,
         current,
@@ -137,7 +137,7 @@ export abstract class BaseNode<
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
     this.publish({
-      type: MethodType.Validate,
+      type: NodeMethod.Validate,
       payload: this.#filterErrorsWithSchema(this.#mergedErrors),
     });
   }
@@ -175,7 +175,7 @@ export abstract class BaseNode<
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
     this.publish({
-      type: MethodType.Validate,
+      type: NodeMethod.Validate,
       payload: this.#filterErrorsWithSchema(this.#mergedErrors),
     });
   }
@@ -223,7 +223,7 @@ export abstract class BaseNode<
   }
 
   /** Node의 상태 */
-  #state: NodeState = {};
+  #state: NodeStateFlags = {};
   /** Node의 상태 */
   get state() {
     return this.#state;
@@ -232,12 +232,12 @@ export abstract class BaseNode<
    * Node의 상태 설정, 명시적으로 undefined를 전달하지 않으면 기존 상태를 유지
    * @param input 설정할 상태
    */
-  setState(input: ((prev: NodeState) => NodeState) | NodeState) {
+  setState(input: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags) {
     const inputState = typeof input === 'function' ? input(this.#state) : input;
     if (!inputState || typeof inputState !== 'object') return;
 
     let hasChanges = false;
-    const state: NodeState = {};
+    const state: NodeStateFlags = {};
 
     // NOTE: nextState의 모든 키를 기준으로 순회
     for (const [key, value] of Object.entries(inputState)) {
@@ -255,7 +255,7 @@ export abstract class BaseNode<
     if (hasChanges) {
       this.#state = state;
       this.publish({
-        type: MethodType.StateChange,
+        type: NodeMethod.StateChange,
         payload: this.#state,
       });
     }
@@ -349,7 +349,7 @@ export abstract class BaseNode<
 
     if (this.parentNode) {
       this.parentNode.subscribe(({ type }) => {
-        if (type === MethodType.PathChange) {
+        if (type === NodeMethod.PathChange) {
           this.updatePath();
         }
       });
@@ -389,7 +389,7 @@ export abstract class BaseNode<
   /**
    * Node의 listener에 대해 이벤트 발행
    * @param event 발행할 이벤트
-   *    - type: 이벤트 타입(MethodType 참고)
+   *    - type: 이벤트 타입(NodeMethod 참고)
    *    - payload: 이벤트에 대한 데이터(MethodPayload 참고)
    *    - options: 이벤트에 대한 옵션(MethodOptions 참고)
    */
@@ -486,7 +486,7 @@ export abstract class BaseNode<
       this.#validator = getFallbackValidator(error, this.jsonSchema);
     }
     this.subscribe(({ type }) => {
-      if (type === MethodType.Change) {
+      if (type === NodeMethod.Change) {
         this.#validateOnChange();
       }
     });

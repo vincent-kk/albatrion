@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 
 import { falseFunction, isFunction, trueFunction } from '@winglet/common-utils';
 
-import { MethodType, type SchemaNode, isSchemaNode } from '@/schema-form/core';
+import { NodeMethod, type SchemaNode, isSchemaNode } from '@/schema-form/core';
 import {
   checkComputedOptionFactory,
   getWatchValuesFactory,
@@ -30,9 +30,9 @@ export const useComputeSchemaNode = (
   }, [input, rootNode]);
 
   useSchemaNodeTracker(node, [
-    MethodType.Change,
-    MethodType.StateChange,
-    MethodType.Validate,
+    NodeMethod.Change,
+    NodeMethod.StateChange,
+    NodeMethod.Validate,
   ]);
 
   const {
@@ -122,7 +122,7 @@ export const useComputeSchemaNode = (
         const targetNode = node.findNode(path);
         if (!targetNode) return undefined;
         return targetNode.subscribe(({ type, payload }) => {
-          if (type === MethodType.Change) {
+          if (type === NodeMethod.Change) {
             setDependencies((prevDependencies) => {
               prevDependencies[index] = payload;
               return [...prevDependencies];

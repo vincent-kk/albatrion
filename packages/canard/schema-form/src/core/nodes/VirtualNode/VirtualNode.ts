@@ -3,7 +3,7 @@ import type { VirtualNodeValue, VirtualSchema } from '@/schema-form/types';
 import { parseArray } from '../../parsers';
 import { BaseNode } from '../BaseNode';
 import {
-  MethodType,
+  NodeMethod,
   type SchemaNode,
   type VirtualNodeConstructorProps,
 } from '../type';
@@ -60,7 +60,7 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
 
     this.#refNodes.forEach((node, i) => {
       node.subscribe(({ type, payload }) => {
-        if (type !== MethodType.Change) return;
+        if (type !== NodeMethod.Change) return;
         if (this.#value && this.#value[i] !== payload) {
           const previous = this.#value;
           this.#value = [
@@ -69,7 +69,7 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
             ...this.#value.slice(i + 1),
           ];
           this.publish({
-            type: MethodType.Change,
+            type: NodeMethod.Change,
             payload: this.#value,
             options: {
               previous,
@@ -83,7 +83,7 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
 
     this.#children = this.#refNodes.map((node) => ({ node }));
     this.publish({
-      type: MethodType.ChildrenChange,
+      type: NodeMethod.ChildrenChange,
     });
   }
 }

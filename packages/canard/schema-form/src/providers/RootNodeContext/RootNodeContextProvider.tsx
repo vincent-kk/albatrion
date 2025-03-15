@@ -6,7 +6,7 @@ import type { Fn } from '@aileron/types';
 
 import type { FormProps } from '@/schema-form/components/Form';
 import {
-  MethodType,
+  NodeMethod,
   type SchemaNode,
   nodeFromJsonSchema,
 } from '@/schema-form/core';
@@ -66,7 +66,7 @@ export const RootNodeContextProvider = <
   useEffect(() => {
     if (!rootNode) return;
     const unsubscribe = rootNode.subscribe(({ type, payload }) => {
-      if (type === MethodType.Validate) {
+      if (type === NodeMethod.Validate) {
         onValidate(payload || EMPTY_ARRAY);
       }
     });

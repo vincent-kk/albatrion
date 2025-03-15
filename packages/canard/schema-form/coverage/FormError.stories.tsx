@@ -6,6 +6,7 @@ import {
   type FormTypeRendererProps,
   type JsonSchema,
   type JsonSchemaError,
+  NodeState,
   ShowError,
 } from '@canard/schema-form/src';
 
@@ -91,8 +92,11 @@ export const DirtyTouched = () => {
     Input,
     errorMessage,
   }: FormTypeRendererProps) => {
-    const { [ShowError.Dirty]: dirty, [ShowError.Touched]: touched } =
-      node.state || {};
+    const {
+      [NodeState.Dirty]: dirty,
+      [NodeState.Touched]: touched,
+      [NodeState.ShowError]: showError,
+    } = node.state || {};
     return depth === 0 ? (
       <Input />
     ) : (
@@ -100,8 +104,26 @@ export const DirtyTouched = () => {
         <label style={{ display: 'flex', gap: 10 }}>
           <span>{name}</span>
           <Input />
+          <button
+            onClick={() =>
+              showError !== true
+                ? node.setState({ [NodeState.ShowError]: true })
+                : node.setState({ [NodeState.ShowError]: undefined })
+            }
+          >
+            Show Error
+          </button>
+          <button
+            onClick={() =>
+              showError !== false
+                ? node.setState({ [NodeState.ShowError]: false })
+                : node.setState({ [NodeState.ShowError]: undefined })
+            }
+          >
+            Hide Error
+          </button>
         </label>
-        <pre>{JSON.stringify({ dirty, touched })}</pre>
+        <pre>{JSON.stringify({ dirty, touched, showError })}</pre>
         <pre>{JSON.stringify(node.errors || [])}</pre>
         {errorMessage}
       </div>

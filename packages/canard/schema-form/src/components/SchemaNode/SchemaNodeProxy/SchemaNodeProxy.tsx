@@ -3,13 +3,14 @@ import { Fragment, memo, useMemo } from 'react';
 import { isTruthy, nullFunction } from '@winglet/common-utils';
 import { useReference, withErrorBoundary } from '@winglet/react-utils';
 
+import { NodeState } from '@/schema-form/core';
 import { useComputeSchemaNode } from '@/schema-form/hooks/useComputeSchemaNode';
 import { useSchemaNodeListener } from '@/schema-form/hooks/useSchemaNodeListener';
 import {
   useFormTypeRendererContext,
   useUserDefinedContext,
 } from '@/schema-form/providers';
-import { type FormTypeRendererProps, ShowError } from '@/schema-form/types';
+import type { FormTypeRendererProps } from '@/schema-form/types';
 
 import { SchemaNodeAdapterWrapper } from '../SchemaNodeAdapter';
 import type { SchemaNodeProxyProps } from './type';
@@ -59,14 +60,18 @@ export const SchemaNodeProxy = memo(
 
     const { context: userDefinedContext } = useUserDefinedContext();
 
-    const { [ShowError.Dirty]: dirty, [ShowError.Touched]: touched } =
-      node?.state || {};
+    const {
+      [NodeState.Dirty]: dirty,
+      [NodeState.Touched]: touched,
+      [NodeState.ShowError]: showError,
+    } = node?.state || {};
     const errors = node?.errors;
 
     const formatError = useMemo(() => {
-      if (checkShowError({ dirty, touched }) === false) return nullFunction;
+      if (checkShowError({ dirty, touched, showError }) === false)
+        return nullFunction;
       else return contextFormatError;
-    }, [checkShowError, contextFormatError, dirty, touched]);
+    }, [dirty, touched, showError, checkShowError, contextFormatError]);
 
     const errorMessage = useMemo(() => {
       return errors?.map((error) => formatError(error)).filter(isTruthy)[0];

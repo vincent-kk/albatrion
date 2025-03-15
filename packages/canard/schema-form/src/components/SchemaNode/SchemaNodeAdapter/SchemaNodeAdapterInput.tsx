@@ -2,11 +2,11 @@ import { memo, useCallback, useMemo, useRef } from 'react';
 
 import { useConstant } from '@winglet/react-utils';
 
-import { MethodType } from '@/schema-form/core';
+import { NodeMethod, NodeState } from '@/schema-form/core';
 import { useFormTypeInput } from '@/schema-form/hooks/useFormTypeInput';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import { useUserDefinedContext } from '@/schema-form/providers';
-import { type SetStateFnWithOptions, ShowError } from '@/schema-form/types';
+import type { SetStateFnWithOptions } from '@/schema-form/types';
 
 import type { SchemaNodeAdapterInputProps } from './type';
 
@@ -33,7 +33,7 @@ export const SchemaNodeAdapterInput = memo(
         if (disabled || readOnly) return;
         node.setValue(input, options);
         node.clearReceivedErrors();
-        node.setState({ [ShowError.Dirty]: true });
+        node.setState({ [NodeState.Dirty]: true });
       },
       [node, disabled, readOnly],
     );
@@ -45,13 +45,13 @@ export const SchemaNodeAdapterInput = memo(
     }, []);
     const handleBlur = useCallback(() => {
       feedbackTimer.current = setTimeout(() => {
-        node.setState({ [ShowError.Touched]: true });
+        node.setState({ [NodeState.Touched]: true });
       });
     }, [node]);
 
     const { context: userDefinedContext } = useUserDefinedContext();
 
-    useSchemaNodeTracker(node, [MethodType.Change, MethodType.Validate]);
+    useSchemaNodeTracker(node, [NodeMethod.Change, NodeMethod.Validate]);
 
     if (!node || !FormTypeInput) return null;
 

@@ -11,7 +11,6 @@ import type {
   NullSchema,
   NumberSchema,
   ObjectSchema,
-  ShowError,
   StringSchema,
   VirtualSchema,
 } from '@/schema-form/types';
@@ -86,14 +85,14 @@ export interface Listener {
 }
 
 export type MethodEvent = {
-  [K in MethodType]: {
+  [K in NodeMethod]: {
     type: K;
     payload?: MethodPayload[K];
     options?: MethodOptions[K];
   };
-}[MethodType];
+}[NodeMethod];
 
-export enum MethodType {
+export enum NodeMethod {
   Focus = 1 << 0,
   Select = 1 << 1,
   Redraw = 1 << 2,
@@ -105,36 +104,43 @@ export enum MethodType {
 }
 
 export type MethodPayload = {
-  [MethodType.Focus]: void;
-  [MethodType.Select]: void;
-  [MethodType.Redraw]: void;
-  [MethodType.Change]: any;
-  [MethodType.PathChange]: string;
-  [MethodType.StateChange]: NodeState;
-  [MethodType.Validate]: JsonSchemaError[];
-  [MethodType.ChildrenChange]: void;
+  [NodeMethod.Focus]: void;
+  [NodeMethod.Select]: void;
+  [NodeMethod.Redraw]: void;
+  [NodeMethod.Change]: any;
+  [NodeMethod.PathChange]: string;
+  [NodeMethod.StateChange]: NodeStateFlags;
+  [NodeMethod.Validate]: JsonSchemaError[];
+  [NodeMethod.ChildrenChange]: void;
 };
 
 export type MethodOptions = Partial<{
-  [MethodType.Focus]: void;
-  [MethodType.Select]: void;
-  [MethodType.Redraw]: void;
-  [MethodType.Change]: {
+  [NodeMethod.Focus]: void;
+  [NodeMethod.Select]: void;
+  [NodeMethod.Redraw]: void;
+  [NodeMethod.Change]: {
     previous: any;
     current: any;
     difference?: any;
   };
-  [MethodType.PathChange]: {
+  [NodeMethod.PathChange]: {
     previous: string;
     current: string;
   };
-  [MethodType.StateChange]: void;
-  [MethodType.Validate]: void;
-  [MethodType.ChildrenChange]: void;
+  [NodeMethod.StateChange]: void;
+  [NodeMethod.Validate]: void;
+  [NodeMethod.ChildrenChange]: void;
 }>;
 
-export type NodeState = {
-  [ShowError.Touched]?: boolean;
-  [ShowError.Dirty]?: boolean;
+export enum NodeState {
+  Dirty = 1 << 0,
+  Touched = 1 << 1,
+  ShowError = 1 << 2,
+}
+
+export type NodeStateFlags = {
+  [NodeState.Dirty]?: boolean;
+  [NodeState.Touched]?: boolean;
+  [NodeState.ShowError]?: boolean;
   [key: string]: any;
 };
