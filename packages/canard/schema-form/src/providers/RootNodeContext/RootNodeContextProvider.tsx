@@ -8,6 +8,7 @@ import type { FormProps } from '@/schema-form/components/Form';
 import {
   NodeMethod,
   type SchemaNode,
+  type ValidationMode,
   nodeFromJsonSchema,
 } from '@/schema-form/core';
 import { transformErrors } from '@/schema-form/helpers/error';
@@ -27,16 +28,23 @@ interface RootNodeContextProviderProps<
   jsonSchema: FormProps<Schema, Value>['jsonSchema'];
   /** 이 SchemaForm의 기본값 */
   defaultValue?: FormProps<Schema, Value>['defaultValue'];
+  /** 최초로 입력되는 유효성 검증 오류, 기본값은 undefined */
+  errors?: FormProps<Schema, Value>['errors'];
   /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
   onChange: NonNullable<FormProps<Schema, Value>['onChange']>;
   /** 이 SchemaForm의 값이 검증될 때 호출되는 함수 */
   onValidate: NonNullable<FormProps<Schema, Value>['onValidate']>;
   /** 이 SchemaForm의 루트 노드가 준비되었을 때 호출되는 함수 */
   onReady: Fn<[SchemaNode]>;
+  /**
+   * Execute Validation Mode (default: ValidationMode.OnChange)
+   *  - `ValidationMode.None`: 유효성 검증 비활성화
+   *  - `ValidationMode.OnChange`: 값이 변경될 때 유효성 검증
+   *  - `ValidationMode.OnRequest`: 요청할 때 유효성 검증
+   */
+  validationMode: ValidationMode;
   /** 외부에서 선언된 Ajv 인스턴스, 없으면 내부에서 생성 */
   ajv?: FormProps<Schema, Value>['ajv'];
-  /** 최초로 입력되는 유효성 검증 오류*/
-  errors?: FormProps<Schema, Value>['errors'];
 }
 
 export const RootNodeContextProvider = <
@@ -45,10 +53,11 @@ export const RootNodeContextProvider = <
 >({
   jsonSchema,
   defaultValue,
+  errors,
   onChange,
   onValidate,
   onReady,
-  errors,
+  validationMode,
   ajv,
   children,
 }: PropsWithChildren<RootNodeContextProviderProps<Schema, Value>>) => {
@@ -58,9 +67,10 @@ export const RootNodeContextProvider = <
         jsonSchema,
         defaultValue,
         onChange,
+        validationMode,
         ajv,
       }),
-    [jsonSchema, defaultValue, onChange, ajv],
+    [jsonSchema, defaultValue, onChange, validationMode, ajv],
   );
 
   useEffect(() => {

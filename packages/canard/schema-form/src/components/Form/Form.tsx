@@ -24,6 +24,7 @@ import {
   type InferSchemaNode,
   NodeMethod,
   type SchemaNode,
+  ValidationMode,
   isObjectNode,
 } from '@/schema-form/core';
 import {
@@ -51,16 +52,17 @@ const FormInner = <
   {
     jsonSchema: jsonSchemaInput,
     defaultValue: defaultValueInput,
+    readOnly,
+    disabled,
     onChange,
     onValidate,
     formTypeInputDefinitions,
     formTypeInputMap,
-    errors,
     CustomFormTypeRenderer,
+    errors,
     formatError,
     showError = ShowError.Dirty | ShowError.Touched,
-    readOnly,
-    disabled,
+    validationMode = ValidationMode.OnChange,
     ajv,
     context,
     children: childrenInput,
@@ -163,10 +165,11 @@ const FormInner = <
             key={tick}
             jsonSchema={jsonSchema}
             defaultValue={defaultValue}
+            errors={errors}
             onChange={handleChange}
             onValidate={handleValidate}
             onReady={handleReady}
-            errors={errors}
+            validationMode={validationMode}
             ajv={ajv}
           >
             {children || <SchemaNodeProxy path="" />}

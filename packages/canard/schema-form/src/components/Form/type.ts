@@ -4,7 +4,11 @@ import type Ajv from 'ajv';
 
 import type { Dictionary, Fn, SetStateFn } from '@aileron/types';
 
-import type { InferSchemaNode, SchemaNode } from '@/schema-form/core';
+import type {
+  InferSchemaNode,
+  SchemaNode,
+  ValidationMode,
+} from '@/schema-form/core';
 import type {
   AllowedValue,
   FormTypeInputDefinition,
@@ -37,6 +41,10 @@ export interface FormProps<
   jsonSchema: Schema;
   /** 이 SchemaForm의 기본값 */
   defaultValue?: Value;
+  /** FormTypeInput 전체에 readOnly 속성 적용 */
+  readOnly?: boolean;
+  /** FormTypeInput 전체에 disabled 속성 적용 */
+  disabled?: boolean;
   /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
   onChange?: SetStateFn<Value>;
   /** 이 SchemaForm의 값이 검증될 때 호출되는 함수 */
@@ -45,24 +53,27 @@ export interface FormProps<
   formTypeInputDefinitions?: FormTypeInputDefinition[];
   /** FormTypeInput 경로 매핑 */
   formTypeInputMap?: FormTypeInputMap;
-  /** 최초로 입력되는 유효성 검증 오류*/
-  errors?: JsonSchemaError[];
   /** Custom form type renderer component */
   CustomFormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  /** 최초로 입력되는 유효성 검증 오류, 기본값은 undefined */
+  errors?: JsonSchemaError[];
   /** Custom format error function */
   formatError?: FormTypeRendererProps['formatError'];
   /**
-   * Error display condition
+   * Error display condition (default: ShowError.Dirty | ShowError.Touched)
    *   - `true`: 항상 노출
    *   - `false`: 항상 미노출
    *   - `ShowError.Dirty`: 값이 변경된 경우 노출
    *   - `ShowError.Touched`: input에 focus 된 경우 노출
    */
   showError?: boolean | ShowError;
-  /** FormTypeInput 전체에 readOnly 속성 적용 */
-  readOnly?: boolean;
-  /** FormTypeInput 전체에 disabled 속성 적용 */
-  disabled?: boolean;
+  /**
+   * Execute Validation Mode (default: ValidationMode.OnChange)
+   *  - `ValidationMode.None`: 유효성 검증 비활성화
+   *  - `ValidationMode.OnChange`: 값이 변경될 때 유효성 검증
+   *  - `ValidationMode.OnRequest`: 요청할 때 유효성 검증
+   */
+  validationMode?: ValidationMode;
   /** 외부에서 선언된 Ajv 인스턴스, 없으면 내부에서 생성 */
   ajv?: Ajv;
   /** 사용자 정의 컨텍스트 */

@@ -16,6 +16,7 @@ export {
   type SchemaNode,
   NodeState,
   NodeMethod,
+  ValidationMode,
   isArrayNode,
   isBooleanNode,
   isBranchNode,
