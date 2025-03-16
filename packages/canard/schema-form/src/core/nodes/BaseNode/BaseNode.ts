@@ -138,7 +138,7 @@ export abstract class BaseNode<
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
     this.publish({
-      type: NodeMethod.Validate,
+      type: NodeMethod.UpdateError,
       payload: this.#filterErrorsWithSchema(this.#mergedErrors),
     });
   }
@@ -176,7 +176,7 @@ export abstract class BaseNode<
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
     this.publish({
-      type: NodeMethod.Validate,
+      type: NodeMethod.UpdateError,
       payload: this.#filterErrorsWithSchema(this.#mergedErrors),
     });
   }
@@ -430,7 +430,7 @@ export abstract class BaseNode<
   /**
    * 자기 자신의 값이 변경될 때 검증 수행, rootNode에서만 동작
    */
-  async #validateOnChange() {
+  async #handleValidation() {
     if (!this.isRoot) return;
 
     // NOTE: 현재 Form 내의 value와 schema를 이용해서 validation 수행
