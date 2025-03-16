@@ -8,6 +8,7 @@ import {
   type JsonSchemaError,
   NodeState,
   ShowError,
+  ValidationMode,
 } from '@canard/schema-form/src';
 
 import StoryLayout from './components/StoryLayout';
@@ -61,6 +62,75 @@ export const Errors = () => {
         showError={true}
       />
       <button onClick={clearErrors}>clear received errors</button>
+    </StoryLayout>
+  );
+};
+
+export const ValidateOnRequest = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      name: { type: 'string', maxLength: 3, default: 'exceed max length' },
+      message: { type: 'string', minLength: 3, default: '1' },
+    },
+  } satisfies JsonSchema;
+
+  const handleChange = (val: any) => {
+    setValue(val);
+  };
+
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  const refHandle = useRef<FormHandle<typeof schema>>(null);
+
+  const handleValidate = () => {
+    refHandle.current?.validate();
+  };
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <Form
+        ref={refHandle}
+        jsonSchema={schema}
+        onChange={handleChange}
+        onValidate={(errors) => setErrors(errors || [])}
+        showError={true}
+        validationMode={ValidationMode.OnRequest}
+      />
+      <button onClick={handleValidate}>Request Validate</button>
+    </StoryLayout>
+  );
+};
+
+export const NoValidate = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      name: { type: 'string', maxLength: 3, default: 'exceed max length' },
+      message: { type: 'string', minLength: 3, default: '1' },
+    },
+  } satisfies JsonSchema;
+
+  const handleChange = (val: any) => {
+    setValue(val);
+  };
+
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  const refHandle = useRef<FormHandle<typeof schema>>(null);
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <Form
+        ref={refHandle}
+        jsonSchema={schema}
+        onChange={handleChange}
+        onValidate={(errors) => setErrors(errors || [])}
+        showError={true}
+        validationMode={ValidationMode.None}
+      />
     </StoryLayout>
   );
 };
