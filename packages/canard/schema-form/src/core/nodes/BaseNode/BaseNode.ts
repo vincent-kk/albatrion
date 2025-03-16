@@ -29,6 +29,7 @@ import {
   type NodeStateFlags,
   type SchemaNode,
   type SchemaNodeConstructorProps,
+  ValidationMode,
 } from '../type';
 import {
   find,
@@ -319,6 +320,7 @@ export abstract class BaseNode<
     defaultValue,
     onChange,
     parentNode,
+    validationMode,
     ajv,
   }: SchemaNodeConstructorProps<Schema, Value>) {
     this.type = getNodeType(jsonSchema);
@@ -356,7 +358,7 @@ export abstract class BaseNode<
     }
 
     // NOTE: 루트 Node에서만 validator 준비
-    if (this.isRoot) this.#prepareValidator(ajv);
+    if (this.isRoot) this.#prepareValidator(ajv, validationMode);
   }
 
   /**
@@ -476,7 +478,8 @@ export abstract class BaseNode<
    * Ajv를 이용해서 validator 준비, rootNode에서만 사용 가능
    * @param ajv Ajv 인스턴스, 없는 경우 신규 생성
    */
-  #prepareValidator(ajv?: Ajv) {
+  #prepareValidator(ajv?: Ajv, validationMode?: ValidationMode) {
+    if (!validationMode) return;
     try {
       this.#validator = ajvHelper.compile({
         jsonSchema: { ...this.jsonSchema, $async: true },

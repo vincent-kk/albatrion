@@ -48,9 +48,19 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
     onChange,
     parentNode,
     refNodes,
+    validationMode,
     ajv,
   }: VirtualNodeConstructorProps<VirtualSchema>) {
-    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
+    super({
+      key,
+      name,
+      jsonSchema,
+      defaultValue,
+      onChange,
+      parentNode,
+      validationMode,
+      ajv,
+    });
 
     this.#refNodes = refNodes || [];
 
