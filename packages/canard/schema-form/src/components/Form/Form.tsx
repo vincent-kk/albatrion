@@ -146,6 +146,9 @@ const FormInner = <
         }
         update();
       },
+      validate: () => {
+        rootNode?.publish({ type: NodeMethod.Validate });
+      },
     }),
     [initialDefaultValue, rootNode, update],
   );

@@ -95,4 +95,5 @@ export interface FormHandle<
   reset: Fn<[defaultValue?: Value]>;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
+  validate: Fn;
 }
