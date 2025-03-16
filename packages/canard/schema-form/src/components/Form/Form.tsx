@@ -145,7 +145,7 @@ const FormInner = <
         update();
       },
       validate: () => {
-        rootNode?.publish({ type: NodeMethod.Validate });
+        rootNode?.validate();
       },
     }),
     [initialDefaultValue, rootNode, update],
