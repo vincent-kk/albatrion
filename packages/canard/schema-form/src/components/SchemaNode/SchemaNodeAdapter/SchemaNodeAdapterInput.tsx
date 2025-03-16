@@ -51,7 +51,7 @@ export const SchemaNodeAdapterInput = memo(
 
     const { context: userDefinedContext } = useUserDefinedContext();
 
-    useSchemaNodeTracker(node, [NodeMethod.Change, NodeMethod.Validate]);
+    useSchemaNodeTracker(node, NodeMethod.Change | NodeMethod.UpdateError);
 
     if (!node || !FormTypeInput) return null;
 

@@ -351,9 +351,7 @@ export abstract class BaseNode<
 
     if (this.parentNode) {
       this.parentNode.subscribe(({ type }) => {
-        if (type === NodeMethod.PathChange) {
-          this.updatePath();
-        }
+        if (type & NodeMethod.PathChange) this.updatePath();
       });
     }
 
@@ -488,10 +486,11 @@ export abstract class BaseNode<
     } catch (error: any) {
       this.#validator = getFallbackValidator(error, this.jsonSchema);
     }
+    const triggers =
+      (validationMode & ValidationMode.OnChange ? NodeMethod.Change : 0) |
+      (validationMode & ValidationMode.OnRequest ? NodeMethod.Validate : 0);
     this.subscribe(({ type }) => {
-      if (type === NodeMethod.Change) {
-        this.#validateOnChange();
-      }
+      if (type & triggers) this.#handleValidation();
     });
   }
 }

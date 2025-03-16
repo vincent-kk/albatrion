@@ -14,11 +14,11 @@ export const useSchemaNodeListener = <Node extends SchemaNode>(
   useLayoutEffect(() => {
     if (node === null) return;
     const unsubscribe = node.subscribe(({ type }) => {
-      if (type === NodeMethod.Redraw) {
+      if (type & NodeMethod.Redraw) {
         update();
-      } else if (type === NodeMethod.Focus) {
+      } else if (type & NodeMethod.Focus) {
         getInputElement(ref)?.focus?.();
-      } else if (type === NodeMethod.Select) {
+      } else if (type & NodeMethod.Select) {
         const element = getInputElement(ref);
         if (element && 'select' in element && isFunction(element.select)) {
           element.select();
