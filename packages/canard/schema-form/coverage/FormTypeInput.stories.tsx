@@ -1,6 +1,5 @@
 import React, {
-  type ChangeEvent,
-  type ComponentType,
+  ChangeEvent,
   useCallback,
   useMemo,
   useRef,
@@ -10,11 +9,8 @@ import React, {
 import {
   Form,
   type FormHandle,
-  FormProvider,
-  type FormTypeInputDefinition,
   type FormTypeInputMap,
   type FormTypeInputProps,
-  type FormTypeRendererProps,
   type JsonSchema,
 } from '@canard/schema-form/src';
 
@@ -230,81 +226,5 @@ export const FormTypeComponentInJsonSchema = () => {
     <StoryLayout jsonSchema={jsonSchema} value={value}>
       <Form jsonSchema={jsonSchema} onChange={setValue} />
     </StoryLayout>
-  );
-};
-export const ExternalFormContext = () => {
-  const externalInputs = useMemo<FormTypeInputDefinition[]>(() => {
-    return [
-      {
-        test: {
-          formType: 'external-input1',
-        },
-        Component: () => {
-          return <div>external input 1</div>;
-        },
-      },
-      {
-        test: {
-          formType: 'external-input2',
-        },
-        Component: () => {
-          return <div>external input 2</div>;
-        },
-      },
-    ];
-  }, []);
-
-  const externalFormTypeRenderer = useMemo<
-    ComponentType<FormTypeRendererProps>
-  >(() => {
-    return ({ name, Input, errorMessage }: FormTypeRendererProps) => (
-      <div style={{ border: '1px solid red', padding: 5 }}>
-        {name}
-        <Input />
-        <em>{errorMessage}</em>
-      </div>
-    );
-  }, []);
-
-  const [value, setValue] = useState({});
-  const schema = {
-    type: 'object',
-    properties: {
-      name: { type: 'string' },
-      number: {
-        type: 'number',
-        formType: 'external-input1',
-      },
-      objectNode: {
-        type: 'object',
-        properties: {
-          test: { type: 'string' },
-        },
-        formType: 'external-input2',
-      },
-    },
-  } satisfies JsonSchema;
-  const defaultValue = useRef({
-    name: 'ron',
-    number: 10,
-  });
-
-  const handleChange = (val: any) => {
-    setValue(val);
-  };
-
-  return (
-    <FormProvider
-      formTypeInputDefinitions={externalInputs}
-      FormGroupRenderer={externalFormTypeRenderer}
-    >
-      <StoryLayout jsonSchema={schema} value={value}>
-        <Form
-          jsonSchema={schema}
-          defaultValue={defaultValue}
-          onChange={handleChange}
-        />
-      </StoryLayout>
-    </FormProvider>
   );
 };
