@@ -21,6 +21,9 @@ import type {
 import { useExternalFormContext } from '../ExternalFormContext';
 import { RootNodeContext } from './RootNodeContext';
 
+const DEFAULT_VALIDATION_MODE =
+  ValidationMode.OnChange | ValidationMode.OnRequest;
+
 interface RootNodeContextProviderProps<
   Schema extends JsonSchema = JsonSchema,
   Value extends AllowedValue = any,
@@ -73,7 +76,7 @@ export const RootNodeContextProvider = <
         validationMode:
           inputValidationMode ??
           externalValidationMode ??
-          ValidationMode.OnChange,
+          DEFAULT_VALIDATION_MODE,
         ajv: inputAjv ?? externalAjv,
       }),
     [

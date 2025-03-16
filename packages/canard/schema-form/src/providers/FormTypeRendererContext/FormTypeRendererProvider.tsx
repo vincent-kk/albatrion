@@ -9,6 +9,8 @@ import { ShowError } from '@/schema-form/types';
 import { useExternalFormContext } from '../ExternalFormContext';
 import { FormTypeRendererContext } from './FormTypeRendererContext';
 
+const DEFAULT_SHOW_ERROR = ShowError.Dirty | ShowError.Touched;
+
 interface FormTypeRendererContextProviderProps {
   /** Custom form type renderer component */
   CustomFormTypeRenderer?: FormProps['CustomFormTypeRenderer'];
@@ -86,8 +88,6 @@ export const FormTypeRendererContextProvider = ({
     </FormTypeRendererContext.Provider>
   );
 };
-
-const DEFAULT_SHOW_ERROR = ShowError.Dirty | ShowError.Touched;
 
 const ALWAYS_BITMASK = 0b1000 as const;
 const NEVER_BITMASK = 0b0100 as const;
