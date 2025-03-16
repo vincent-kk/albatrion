@@ -398,6 +398,15 @@ export abstract class BaseNode<
   }
 
   /**
+   * 현재 값을 기준으로 유효성 검증 수행, `ValidationMode.OnRequest` 인 경우에만 동작
+   */
+  validate() {
+    this.rootNode.publish({
+      type: NodeMethod.Validate,
+    });
+  }
+
+  /**
    * 주어진 에러 목록에서 자기 자신이 노출할 에러만 필터링
    * @param errors 필터링할 에러 목록
    * @returns 필터링된 에러 목록

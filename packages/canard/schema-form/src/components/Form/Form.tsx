@@ -24,7 +24,6 @@ import {
   type InferSchemaNode,
   NodeMethod,
   type SchemaNode,
-  ValidationMode,
   isObjectNode,
 } from '@/schema-form/core';
 import {
@@ -33,12 +32,11 @@ import {
   RootNodeContextProvider,
   UserDefinedContextProvider,
 } from '@/schema-form/providers';
-import {
-  type AllowedValue,
-  type InferValueType,
-  type JsonSchema,
-  type ObjectValue,
-  ShowError,
+import type {
+  AllowedValue,
+  InferValueType,
+  JsonSchema,
+  ObjectValue,
 } from '@/schema-form/types';
 
 import type { FormHandle, FormProps } from './type';
@@ -61,8 +59,8 @@ const FormInner = <
     CustomFormTypeRenderer,
     errors,
     formatError,
-    showError = ShowError.Dirty | ShowError.Touched,
-    validationMode = ValidationMode.OnChange,
+    showError,
+    validationMode,
     ajv,
     context,
     children: childrenInput,
@@ -147,7 +145,7 @@ const FormInner = <
         update();
       },
       validate: () => {
-        rootNode?.publish({ type: NodeMethod.Validate });
+        rootNode?.validate();
       },
     }),
     [initialDefaultValue, rootNode, update],
