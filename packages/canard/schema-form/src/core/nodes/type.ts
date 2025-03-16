@@ -50,6 +50,11 @@ export type SchemaNode =
   | VirtualNode
   | NullNode;
 
+export enum ValidationMode {
+  None = 0,
+  OnChange = 1 << 1,
+  OnRequest = 1 << 2,
+}
 export interface SchemaNodeConstructorProps<
   Schema extends JsonSchema,
   Value extends AllowedValue = InferValueType<Schema>,
@@ -60,6 +65,7 @@ export interface SchemaNodeConstructorProps<
   defaultValue?: Value;
   onChange?: SetStateFn<Value>;
   parentNode?: SchemaNode;
+  validationMode?: ValidationMode;
   ajv?: Ajv;
 }
 

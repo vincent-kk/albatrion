@@ -30,6 +30,7 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
   jsonSchema,
   defaultValue,
   parentNode,
+  validationMode,
   onChange,
   nodeFactory,
   refNodes,
@@ -42,8 +43,9 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         name,
         jsonSchema,
         defaultValue,
-        parentNode,
         onChange,
+        parentNode,
+        validationMode,
         ajv,
       } as SchemaNodeConstructorProps<BooleanSchema>);
     case 'number':
@@ -53,8 +55,9 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         name,
         jsonSchema,
         defaultValue,
-        parentNode,
         onChange,
+        parentNode,
+        validationMode,
         ajv,
       } as SchemaNodeConstructorProps<NumberSchema>);
     case 'string':
@@ -63,8 +66,9 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         name,
         jsonSchema,
         defaultValue,
-        parentNode,
         onChange,
+        parentNode,
+        validationMode,
         ajv,
       } as SchemaNodeConstructorProps<StringSchema>);
     case 'array':
@@ -73,9 +77,10 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         name,
         jsonSchema,
         defaultValue,
-        parentNode,
-        onChange,
         nodeFactory,
+        onChange,
+        parentNode,
+        validationMode,
         ajv,
       } as BranchNodeConstructorProps<ArraySchema>);
     case 'object':
@@ -84,9 +89,10 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         name,
         jsonSchema,
         defaultValue,
-        parentNode,
-        onChange,
         nodeFactory,
+        onChange,
+        parentNode,
+        validationMode,
         ajv,
       } as BranchNodeConstructorProps<ObjectSchema>);
     case 'virtual':
@@ -95,9 +101,10 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         name,
         jsonSchema,
         defaultValue,
-        parentNode,
         onChange,
+        parentNode,
         refNodes,
+        validationMode,
         ajv,
       } as VirtualNodeConstructorProps<VirtualSchema>);
     case 'null':
@@ -106,8 +113,9 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         name,
         jsonSchema,
         defaultValue,
-        parentNode,
         onChange,
+        parentNode,
+        validationMode,
         ajv,
       } as SchemaNodeConstructorProps<NullSchema>);
   }
