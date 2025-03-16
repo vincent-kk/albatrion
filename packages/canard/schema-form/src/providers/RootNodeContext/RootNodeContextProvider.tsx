@@ -8,7 +8,7 @@ import type { FormProps } from '@/schema-form/components/Form';
 import {
   NodeMethod,
   type SchemaNode,
-  type ValidationMode,
+  ValidationMode,
   nodeFromJsonSchema,
 } from '@/schema-form/core';
 import { transformErrors } from '@/schema-form/helpers/error';
@@ -18,6 +18,7 @@ import type {
   JsonSchemaError,
 } from '@/schema-form/types';
 
+import { useExternalFormContext } from '../ExternalFormContext';
 import { RootNodeContext } from './RootNodeContext';
 
 interface RootNodeContextProviderProps<
@@ -42,7 +43,7 @@ interface RootNodeContextProviderProps<
    *  - `ValidationMode.OnChange`: 값이 변경될 때 유효성 검증
    *  - `ValidationMode.OnRequest`: 요청할 때 유효성 검증
    */
-  validationMode: ValidationMode;
+  validationMode?: ValidationMode;
   /** 외부에서 선언된 Ajv 인스턴스, 없으면 내부에서 생성 */
   ajv?: FormProps<Schema, Value>['ajv'];
 }
@@ -57,20 +58,33 @@ export const RootNodeContextProvider = <
   onChange,
   onValidate,
   onReady,
-  validationMode,
-  ajv,
+  validationMode: inputValidationMode,
+  ajv: inputAjv,
   children,
 }: PropsWithChildren<RootNodeContextProviderProps<Schema, Value>>) => {
+  const { validationMode: externalValidationMode, ajv: externalAjv } =
+    useExternalFormContext();
   const rootNode = useMemo(
     () =>
       nodeFromJsonSchema({
         jsonSchema,
         defaultValue,
         onChange,
-        validationMode,
-        ajv,
+        validationMode:
+          inputValidationMode ??
+          externalValidationMode ??
+          ValidationMode.OnChange,
+        ajv: inputAjv ?? externalAjv,
       }),
-    [jsonSchema, defaultValue, onChange, validationMode, ajv],
+    [
+      jsonSchema,
+      defaultValue,
+      onChange,
+      inputValidationMode,
+      externalValidationMode,
+      inputAjv,
+      externalAjv,
+    ],
   );
 
   useEffect(() => {

@@ -27,23 +27,25 @@ interface FormTypeRendererContextProviderProps {
 export const FormTypeRendererContextProvider = ({
   CustomFormTypeRenderer,
   formatError: inputFormatError,
-  showError,
+  showError: inputShowError,
   children,
 }: PropsWithChildren<FormTypeRendererContextProviderProps>) => {
   const {
     FormGroupRenderer: ExternalFormGroupRenderer,
     formatError: externalFormatError,
+    showError: externalShowError,
   } = useExternalFormContext();
 
   const checkShowError = useMemo<
     FormTypeRendererContext['checkShowError']
   >(() => {
+    const showError = inputShowError ?? externalShowError ?? DEFAULT_SHOW_ERROR;
     const errorState =
       typeof showError === 'boolean'
         ? showError
           ? ALWAYS_BITMASK
           : NEVER_BITMASK
-        : showError || 0;
+        : showError;
     return ({
       dirty,
       touched,
@@ -56,7 +58,7 @@ export const FormTypeRendererContextProvider = ({
       if (errorState & ShowError.Touched && !touched) return false;
       return true;
     };
-  }, [showError]);
+  }, [inputShowError, externalShowError]);
 
   const value = useMemo(() => {
     const FormTypeRenderer = isReactComponent(CustomFormTypeRenderer)
@@ -84,6 +86,8 @@ export const FormTypeRendererContextProvider = ({
     </FormTypeRendererContext.Provider>
   );
 };
+
+const DEFAULT_SHOW_ERROR = ShowError.Dirty | ShowError.Touched;
 
 const ALWAYS_BITMASK = 0b1000 as const;
 const NEVER_BITMASK = 0b0100 as const;
