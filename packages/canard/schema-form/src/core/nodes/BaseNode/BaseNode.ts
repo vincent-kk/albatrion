@@ -29,6 +29,7 @@ import {
   type NodeStateFlags,
   type SchemaNode,
   type SchemaNodeConstructorProps,
+  ValidationMode,
 } from '../type';
 import {
   find,
@@ -137,7 +138,7 @@ export abstract class BaseNode<
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
     this.publish({
-      type: NodeMethod.Validate,
+      type: NodeMethod.UpdateError,
       payload: this.#filterErrorsWithSchema(this.#mergedErrors),
     });
   }
@@ -175,7 +176,7 @@ export abstract class BaseNode<
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
     this.publish({
-      type: NodeMethod.Validate,
+      type: NodeMethod.UpdateError,
       payload: this.#filterErrorsWithSchema(this.#mergedErrors),
     });
   }
@@ -319,6 +320,7 @@ export abstract class BaseNode<
     defaultValue,
     onChange,
     parentNode,
+    validationMode,
     ajv,
   }: SchemaNodeConstructorProps<Schema, Value>) {
     this.type = getNodeType(jsonSchema);
@@ -349,14 +351,12 @@ export abstract class BaseNode<
 
     if (this.parentNode) {
       this.parentNode.subscribe(({ type }) => {
-        if (type === NodeMethod.PathChange) {
-          this.updatePath();
-        }
+        if (type & NodeMethod.PathChange) this.updatePath();
       });
     }
 
     // NOTE: 루트 Node에서만 validator 준비
-    if (this.isRoot) this.#prepareValidator(ajv);
+    if (this.isRoot) this.#prepareValidator(ajv, validationMode);
   }
 
   /**
@@ -428,7 +428,7 @@ export abstract class BaseNode<
   /**
    * 자기 자신의 값이 변경될 때 검증 수행, rootNode에서만 동작
    */
-  async #validateOnChange() {
+  async #handleValidation() {
     if (!this.isRoot) return;
 
     // NOTE: 현재 Form 내의 value와 schema를 이용해서 validation 수행
@@ -476,7 +476,8 @@ export abstract class BaseNode<
    * Ajv를 이용해서 validator 준비, rootNode에서만 사용 가능
    * @param ajv Ajv 인스턴스, 없는 경우 신규 생성
    */
-  #prepareValidator(ajv?: Ajv) {
+  #prepareValidator(ajv?: Ajv, validationMode?: ValidationMode) {
+    if (!validationMode) return;
     try {
       this.#validator = ajvHelper.compile({
         jsonSchema: { ...this.jsonSchema, $async: true },
@@ -485,10 +486,11 @@ export abstract class BaseNode<
     } catch (error: any) {
       this.#validator = getFallbackValidator(error, this.jsonSchema);
     }
+    const triggers =
+      (validationMode & ValidationMode.OnChange ? NodeMethod.Change : 0) |
+      (validationMode & ValidationMode.OnRequest ? NodeMethod.Validate : 0);
     this.subscribe(({ type }) => {
-      if (type === NodeMethod.Change) {
-        this.#validateOnChange();
-      }
+      if (type & triggers) this.#handleValidation();
     });
   }
 }

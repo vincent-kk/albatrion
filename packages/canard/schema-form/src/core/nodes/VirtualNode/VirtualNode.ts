@@ -48,9 +48,19 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
     onChange,
     parentNode,
     refNodes,
+    validationMode,
     ajv,
   }: VirtualNodeConstructorProps<VirtualSchema>) {
-    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
+    super({
+      key,
+      name,
+      jsonSchema,
+      defaultValue,
+      onChange,
+      parentNode,
+      validationMode,
+      ajv,
+    });
 
     this.#refNodes = refNodes || [];
 
@@ -60,7 +70,7 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
 
     this.#refNodes.forEach((node, i) => {
       node.subscribe(({ type, payload }) => {
-        if (type !== NodeMethod.Change) return;
+        if (!(type & NodeMethod.Change)) return;
         if (this.#value && this.#value[i] !== payload) {
           const previous = this.#value;
           this.#value = [

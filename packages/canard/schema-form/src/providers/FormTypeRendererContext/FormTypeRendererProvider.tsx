@@ -15,7 +15,7 @@ interface FormTypeRendererContextProviderProps {
   /** Custom format error function */
   formatError?: FormProps['formatError'];
   /**
-   * Error display condition
+   * Error display condition (default: ShowError.Dirty | ShowError.Touched)
    *   - `true`: 항상 노출
    *   - `false`: 항상 미노출
    *   - `ShowError.Dirty`: 값이 변경된 경우 노출

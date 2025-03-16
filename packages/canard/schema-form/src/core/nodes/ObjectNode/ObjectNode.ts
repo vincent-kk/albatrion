@@ -86,12 +86,22 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     name,
     jsonSchema,
     defaultValue,
-    parentNode,
     onChange,
     nodeFactory,
+    parentNode,
+    validationMode,
     ajv,
   }: BranchNodeConstructorProps<ObjectSchema>) {
-    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
+    super({
+      key,
+      name,
+      jsonSchema,
+      defaultValue,
+      onChange,
+      parentNode,
+      validationMode,
+      ajv,
+    });
 
     this.#nodeFactory = nodeFactory;
 
@@ -120,7 +130,6 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
             schema,
             oneOfConditionsMap?.get(name),
           ),
-          parentNode: this,
           defaultValue: this.defaultValue?.[name] ?? getFallbackValue(schema),
           onChange: (input) => {
             if (!this.#draft) return;
@@ -131,6 +140,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
             this.#emitChange();
           },
           nodeFactory: this.#nodeFactory,
+          parentNode: this,
         }),
       });
     }

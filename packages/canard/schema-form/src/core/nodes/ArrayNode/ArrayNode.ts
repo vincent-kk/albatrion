@@ -107,12 +107,22 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     name,
     jsonSchema,
     defaultValue,
-    parentNode,
     onChange,
     nodeFactory,
+    parentNode,
+    validationMode,
     ajv,
   }: BranchNodeConstructorProps<ArraySchema>) {
-    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
+    super({
+      key,
+      name,
+      jsonSchema,
+      defaultValue,
+      onChange,
+      parentNode,
+      validationMode,
+      ajv,
+    });
 
     this.#nodeFactory = nodeFactory;
 

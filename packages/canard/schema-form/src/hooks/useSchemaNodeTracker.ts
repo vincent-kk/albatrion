@@ -1,5 +1,6 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 
+import { BITMASK_ALL } from '@winglet/common-utils';
 import { useTick } from '@winglet/react-utils';
 
 import type { NodeMethod, SchemaNode } from '@/schema-form/core';
@@ -11,21 +12,18 @@ import type { NodeMethod, SchemaNode } from '@/schema-form/core';
  */
 export const useSchemaNodeTracker = <Node extends SchemaNode>(
   node: Node | null,
-  tracking?: NodeMethod[],
+  tracking: NodeMethod = BITMASK_ALL,
 ) => {
   const [tick, update] = useTick();
-  const trackingTypeSet = useMemo(
-    () => (tracking ? new Set(tracking) : null),
-    [tracking],
-  );
+
   useEffect(() => {
     if (node === null) return;
     const unsubscribe = node.subscribe(({ type }) => {
-      if (trackingTypeSet === null || trackingTypeSet.has(type)) update();
+      if (tracking & type) update();
     });
     return () => {
       unsubscribe();
     };
-  }, [node, trackingTypeSet, update]);
+  }, [node, tracking, update]);
   return tick;
 };

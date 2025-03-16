@@ -4,6 +4,7 @@ export type { InferSchemaNode, SchemaNode } from './nodes';
 export {
   NodeState,
   NodeMethod,
+  ValidationMode,
   isSchemaNode,
   isBooleanNode,
   isNumberNode,

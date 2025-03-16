@@ -2,7 +2,7 @@ export interface Fn<Params extends Array<any> = [], Return = void> {
   (...props: Params): Return;
 }
 
-export interface AsyncFn<Params extends Array<any>, Return = void> {
+export interface AsyncFn<Params extends Array<any> = [], Return = void> {
   (...props: Params): Promise<Return>;
 }
 

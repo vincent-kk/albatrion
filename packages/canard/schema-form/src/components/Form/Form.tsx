@@ -24,6 +24,7 @@ import {
   type InferSchemaNode,
   NodeMethod,
   type SchemaNode,
+  ValidationMode,
   isObjectNode,
 } from '@/schema-form/core';
 import {
@@ -51,16 +52,17 @@ const FormInner = <
   {
     jsonSchema: jsonSchemaInput,
     defaultValue: defaultValueInput,
+    readOnly,
+    disabled,
     onChange,
     onValidate,
     formTypeInputDefinitions,
     formTypeInputMap,
-    errors,
     CustomFormTypeRenderer,
+    errors,
     formatError,
     showError = ShowError.Dirty | ShowError.Touched,
-    readOnly,
-    disabled,
+    validationMode = ValidationMode.OnChange,
     ajv,
     context,
     children: childrenInput,
@@ -106,7 +108,7 @@ const FormInner = <
     if (!rootNode) return;
     setChildren(createChildren(childrenInput, jsonSchema, rootNode));
     const unsubscribe = rootNode.subscribe(({ type }) => {
-      if (type === NodeMethod.Validate || type === NodeMethod.Redraw)
+      if (type & (NodeMethod.UpdateError | NodeMethod.Redraw))
         setChildren(createChildren(childrenInput, jsonSchema, rootNode));
     });
     return () => {
@@ -144,6 +146,9 @@ const FormInner = <
         }
         update();
       },
+      validate: () => {
+        rootNode?.publish({ type: NodeMethod.Validate });
+      },
     }),
     [initialDefaultValue, rootNode, update],
   );
@@ -163,10 +168,11 @@ const FormInner = <
             key={tick}
             jsonSchema={jsonSchema}
             defaultValue={defaultValue}
+            errors={errors}
             onChange={handleChange}
             onValidate={handleValidate}
             onReady={handleReady}
-            errors={errors}
+            validationMode={validationMode}
             ajv={ajv}
           >
             {children || <SchemaNodeProxy path="" />}

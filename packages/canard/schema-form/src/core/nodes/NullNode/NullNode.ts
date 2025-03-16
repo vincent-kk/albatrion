@@ -40,9 +40,19 @@ export class NullNode extends BaseNode<NullSchema, NullValue> {
     defaultValue,
     onChange,
     parentNode,
+    validationMode,
     ajv,
   }: SchemaNodeConstructorProps<NullSchema>) {
-    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
+    super({
+      key,
+      name,
+      jsonSchema,
+      defaultValue,
+      onChange,
+      parentNode,
+      validationMode,
+      ajv,
+    });
     if (this.defaultValue !== undefined) this.setValue(this.defaultValue);
   }
 }

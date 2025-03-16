@@ -43,9 +43,19 @@ export class StringNode extends BaseNode<StringSchema, StringValue> {
     defaultValue,
     onChange,
     parentNode,
+    validationMode,
     ajv,
   }: SchemaNodeConstructorProps<StringSchema>) {
-    super({ key, name, jsonSchema, defaultValue, onChange, parentNode, ajv });
+    super({
+      key,
+      name,
+      jsonSchema,
+      defaultValue,
+      onChange,
+      parentNode,
+      validationMode,
+      ajv,
+    });
     if (this.defaultValue !== undefined) this.setValue(this.defaultValue);
   }
 }

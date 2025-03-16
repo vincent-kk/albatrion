@@ -1,5 +1,5 @@
 export type { InferSchemaNode, SchemaNode } from './type';
-export { NodeState, NodeMethod } from './type';
+export { NodeState, NodeMethod, ValidationMode } from './type';
 export { schemaNodeFactory } from './schemaNodeFactory';
 
 export {

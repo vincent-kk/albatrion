@@ -29,11 +29,10 @@ export const useComputeSchemaNode = (
     else return null;
   }, [input, rootNode]);
 
-  useSchemaNodeTracker(node, [
-    NodeMethod.Change,
-    NodeMethod.StateChange,
-    NodeMethod.Validate,
-  ]);
+  useSchemaNodeTracker(
+    node,
+    NodeMethod.Change | NodeMethod.StateChange | NodeMethod.UpdateError,
+  );
 
   const {
     dependencyPaths,
@@ -122,7 +121,7 @@ export const useComputeSchemaNode = (
         const targetNode = node.findNode(path);
         if (!targetNode) return undefined;
         return targetNode.subscribe(({ type, payload }) => {
-          if (type === NodeMethod.Change) {
+          if (type & NodeMethod.Change) {
             setDependencies((prevDependencies) => {
               prevDependencies[index] = payload;
               return [...prevDependencies];

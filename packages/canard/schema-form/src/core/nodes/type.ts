@@ -50,6 +50,11 @@ export type SchemaNode =
   | VirtualNode
   | NullNode;
 
+export enum ValidationMode {
+  None = 0,
+  OnChange = 1 << 1,
+  OnRequest = 1 << 2,
+}
 export interface SchemaNodeConstructorProps<
   Schema extends JsonSchema,
   Value extends AllowedValue = InferValueType<Schema>,
@@ -60,6 +65,7 @@ export interface SchemaNodeConstructorProps<
   defaultValue?: Value;
   onChange?: SetStateFn<Value>;
   parentNode?: SchemaNode;
+  validationMode?: ValidationMode;
   ajv?: Ajv;
 }
 
@@ -97,10 +103,11 @@ export enum NodeMethod {
   Select = 1 << 1,
   Redraw = 1 << 2,
   Change = 1 << 3,
-  PathChange = 1 << 4,
-  StateChange = 1 << 5,
-  Validate = 1 << 6,
-  ChildrenChange = 1 << 7,
+  Validate = 1 << 4,
+  PathChange = 1 << 5,
+  StateChange = 1 << 6,
+  UpdateError = 1 << 7,
+  ChildrenChange = 1 << 8,
 }
 
 export type MethodPayload = {
@@ -108,9 +115,10 @@ export type MethodPayload = {
   [NodeMethod.Select]: void;
   [NodeMethod.Redraw]: void;
   [NodeMethod.Change]: any;
+  [NodeMethod.Validate]: void;
   [NodeMethod.PathChange]: string;
   [NodeMethod.StateChange]: NodeStateFlags;
-  [NodeMethod.Validate]: JsonSchemaError[];
+  [NodeMethod.UpdateError]: JsonSchemaError[];
   [NodeMethod.ChildrenChange]: void;
 };
 
@@ -123,12 +131,13 @@ export type MethodOptions = Partial<{
     current: any;
     difference?: any;
   };
+  [NodeMethod.Validate]: void;
   [NodeMethod.PathChange]: {
     previous: string;
     current: string;
   };
   [NodeMethod.StateChange]: void;
-  [NodeMethod.Validate]: void;
+  [NodeMethod.UpdateError]: void;
   [NodeMethod.ChildrenChange]: void;
 }>;
 

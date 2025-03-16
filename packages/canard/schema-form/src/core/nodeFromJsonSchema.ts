@@ -11,7 +11,11 @@ import {
 } from '@/schema-form/types';
 
 import { schemaNodeFactory } from './nodes';
-import type { InferSchemaNode, NodeFactoryProps } from './nodes/type';
+import type {
+  InferSchemaNode,
+  NodeFactoryProps,
+  ValidationMode,
+} from './nodes/type';
 
 interface NodeFromSchemaProps<
   Schema extends JsonSchema,
@@ -20,6 +24,7 @@ interface NodeFromSchemaProps<
   jsonSchema: Schema;
   defaultValue?: Value;
   onChange?: SetStateFn<Value>;
+  validationMode?: ValidationMode;
   ajv?: Ajv;
 }
 
@@ -30,13 +35,15 @@ export const nodeFromJsonSchema = <
   jsonSchema,
   defaultValue,
   onChange,
+  validationMode,
   ajv,
 }: NodeFromSchemaProps<Schema, Value>) =>
   schemaNodeFactory({
     name: JSONPath.Root,
     jsonSchema,
     defaultValue,
-    onChange: isFunction(onChange) ? onChange : undefined,
     nodeFactory: schemaNodeFactory,
+    onChange: isFunction(onChange) ? onChange : undefined,
+    validationMode,
     ajv,
   } as NodeFactoryProps<Schema>) as InferSchemaNode<Schema>;
