@@ -91,12 +91,10 @@ export interface Listener {
 }
 
 export type MethodEvent = {
-  [K in NodeMethod]: {
-    type: K;
-    payload?: MethodPayload[K];
-    options?: MethodOptions[K];
-  };
-}[NodeMethod];
+  type: NodeMethod;
+  payload?: Partial<MethodPayload>;
+  options?: Partial<MethodOptions>;
+};
 
 export enum NodeMethod {
   Focus = 1 << 0,

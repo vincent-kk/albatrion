@@ -31,3 +31,4 @@ export { isWeakSet } from './isWeakSet';
 
 export type { TypedArray } from './isTypedArray';
 export type { PrimitiveType } from './isPrimitiveType';
+export type { Falsy } from './isTruthy';

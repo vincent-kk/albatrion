@@ -60,28 +60,3 @@ export const FunctionalChildren = () => {
     </StoryLayout>
   );
 };
-
-export const Common = () => {
-  const jsonSchema = {
-    type: 'object',
-    properties: {
-      name: {
-        type: 'string',
-      },
-      password: {
-        type: 'string',
-        format: 'password',
-      },
-      age: {
-        type: 'number',
-      },
-    },
-  } satisfies JsonSchema;
-
-  const [value, setValue] = useState<Record<string, unknown>>();
-  return (
-    <StoryLayout jsonSchema={jsonSchema} value={value}>
-      <Form jsonSchema={jsonSchema} onChange={setValue} />
-    </StoryLayout>
-  );
-};

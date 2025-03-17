@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 
-import { falseFunction, isFunction, trueFunction } from '@winglet/common-utils';
+import { falseFunction, isTruthy, trueFunction } from '@winglet/common-utils';
 
 import { NodeMethod, type SchemaNode, isSchemaNode } from '@/schema-form/core';
 import {
@@ -123,15 +123,15 @@ export const useComputeSchemaNode = (
         return targetNode.subscribe(({ type, payload }) => {
           if (type & NodeMethod.Change) {
             setDependencies((prevDependencies) => {
-              prevDependencies[index] = payload;
+              prevDependencies[index] = payload?.[NodeMethod.Change];
               return [...prevDependencies];
             });
           }
         });
       })
-      .filter(isFunction);
+      .filter(isTruthy);
     return () => {
-      unsubscribes.forEach((unsubscribe) => unsubscribe?.());
+      unsubscribes.forEach((unsubscribe) => unsubscribe());
     };
   }, [dependencyPaths, node]);
 

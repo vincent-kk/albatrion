@@ -27,10 +27,14 @@ export class NumberNode extends BaseNode<NumberSchema, NumberValue> {
       this.onChange(current);
       this.publish({
         type: NodeMethod.Change,
-        payload: current,
+        payload: {
+          [NodeMethod.Change]: current,
+        },
         options: {
-          previous,
-          current,
+          [NodeMethod.Change]: {
+            previous,
+            current,
+          },
         },
       });
     }

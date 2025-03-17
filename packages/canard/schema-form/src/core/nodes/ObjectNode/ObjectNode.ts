@@ -65,14 +65,17 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
       );
     }
     this.onChange(this.#value);
-
     this.publish({
       type: NodeMethod.Change,
-      payload: this.#value,
+      payload: {
+        [NodeMethod.Change]: this.#value,
+      },
       options: {
-        previous,
-        current: this.#value,
-        difference: { ...this.#draft },
+        [NodeMethod.Change]: {
+          previous,
+          current: this.#value,
+          difference: { ...this.#draft },
+        },
       },
     });
 

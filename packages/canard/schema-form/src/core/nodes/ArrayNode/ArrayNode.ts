@@ -70,7 +70,9 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
       this.onChange(value);
       this.publish({
         type: NodeMethod.Change,
-        payload: value,
+        payload: {
+          [NodeMethod.Change]: value,
+        },
       });
       this.#hasChanged = false;
     }

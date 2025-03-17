@@ -71,20 +71,25 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
     this.#refNodes.forEach((node, i) => {
       node.subscribe(({ type, payload }) => {
         if (!(type & NodeMethod.Change)) return;
-        if (this.#value && this.#value[i] !== payload) {
+        const onChangePayload = payload?.[NodeMethod.Change];
+        if (this.#value && this.#value[i] !== onChangePayload) {
           const previous = this.#value;
           this.#value = [
             ...this.#value.slice(0, i),
-            payload,
+            onChangePayload,
             ...this.#value.slice(i + 1),
           ];
           this.publish({
             type: NodeMethod.Change,
-            payload: this.#value,
+            payload: {
+              [NodeMethod.Change]: this.#value,
+            },
             options: {
-              previous,
-              current: this.#value,
-              difference: { i: payload },
+              [NodeMethod.Change]: {
+                previous,
+                current: this.#value,
+                difference: { i: onChangePayload },
+              },
             },
           });
         }

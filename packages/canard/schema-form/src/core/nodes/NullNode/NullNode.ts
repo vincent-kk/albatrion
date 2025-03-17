@@ -25,10 +25,14 @@ export class NullNode extends BaseNode<NullSchema, NullValue> {
       this.onChange(current);
       this.publish({
         type: NodeMethod.Change,
-        payload: current,
+        payload: {
+          [NodeMethod.Change]: current,
+        },
         options: {
-          previous,
-          current,
+          [NodeMethod.Change]: {
+            previous,
+            current,
+          },
         },
       });
     }

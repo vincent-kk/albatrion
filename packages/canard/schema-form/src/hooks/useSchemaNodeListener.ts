@@ -10,26 +10,21 @@ export const useSchemaNodeListener = <Node extends SchemaNode>(
 ) => {
   const ref = useRef<HTMLElement>(null);
   const [tick, update] = useTick();
-
   useLayoutEffect(() => {
     if (node === null) return;
     const unsubscribe = node.subscribe(({ type }) => {
-      if (type & NodeMethod.Redraw) {
-        update();
-      } else if (type & NodeMethod.Focus) {
-        getInputElement(ref)?.focus?.();
-      } else if (type & NodeMethod.Select) {
+      if (type & NodeMethod.Redraw) update();
+      if (type & NodeMethod.Focus) getInputElement(ref)?.focus?.();
+      if (type & NodeMethod.Select) {
         const element = getInputElement(ref);
-        if (element && 'select' in element && isFunction(element.select)) {
+        if (element && 'select' in element && isFunction(element.select))
           element.select();
-        }
       }
     });
     return () => {
       unsubscribe();
     };
   }, [node, update]);
-
   return [tick, ref] as const;
 };
 

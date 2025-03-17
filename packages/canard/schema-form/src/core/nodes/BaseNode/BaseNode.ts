@@ -96,9 +96,14 @@ export abstract class BaseNode<
     this.#path = current;
     this.publish({
       type: NodeMethod.PathChange,
+      payload: {
+        [NodeMethod.PathChange]: current,
+      },
       options: {
-        previous,
-        current,
+        [NodeMethod.PathChange]: {
+          previous,
+          current,
+        },
       },
     });
     return true;
@@ -139,7 +144,11 @@ export abstract class BaseNode<
 
     this.publish({
       type: NodeMethod.UpdateError,
-      payload: this.#filterErrorsWithSchema(this.#mergedErrors),
+      payload: {
+        [NodeMethod.UpdateError]: this.#filterErrorsWithSchema(
+          this.#mergedErrors,
+        ),
+      },
     });
   }
 
@@ -177,7 +186,11 @@ export abstract class BaseNode<
 
     this.publish({
       type: NodeMethod.UpdateError,
-      payload: this.#filterErrorsWithSchema(this.#mergedErrors),
+      payload: {
+        [NodeMethod.UpdateError]: this.#filterErrorsWithSchema(
+          this.#mergedErrors,
+        ),
+      },
     });
   }
 
@@ -257,7 +270,9 @@ export abstract class BaseNode<
       this.#state = state;
       this.publish({
         type: NodeMethod.StateChange,
-        payload: this.#state,
+        payload: {
+          [NodeMethod.StateChange]: this.#state,
+        },
       });
     }
   }

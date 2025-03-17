@@ -15,7 +15,6 @@ export const useSchemaNodeTracker = <Node extends SchemaNode>(
   tracking: NodeMethod = BITMASK_ALL,
 ) => {
   const [tick, update] = useTick();
-
   useEffect(() => {
     if (node === null) return;
     const unsubscribe = node.subscribe(({ type }) => {
