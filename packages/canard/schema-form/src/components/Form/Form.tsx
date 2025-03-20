@@ -80,11 +80,10 @@ const FormInner = <
   const [defaultValue, setDefaultValue] = useState<Value | undefined>(
     initialDefaultValue,
   );
-  const [tick, update] = useTick(() => {
+  const ready = useRef(false);
+  const [key, update] = useTick(() => {
     ready.current = false;
   });
-
-  const ready = useRef(false);
 
   const handleChange = useHandle((input: Parameter<typeof onChange>) => {
     if (!ready.current || !isFunction(onChange)) return;
@@ -163,7 +162,7 @@ const FormInner = <
           showError={showError}
         >
           <RootNodeContextProvider
-            key={tick}
+            key={key}
             jsonSchema={jsonSchema}
             defaultValue={defaultValue}
             errors={errors}

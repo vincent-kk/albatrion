@@ -357,9 +357,7 @@ export abstract class BaseNode<
       : JSONPath.Root;
 
     this.#key = this.parentNode?.path
-      ? `${this.parentNode.path}${JSONPath.Child}${
-          key === undefined ? this.#name : key
-        }`
+      ? `${this.parentNode.path}${JSONPath.Child}${key ?? this.#name}`
       : JSONPath.Root;
 
     this.depth = this.#path.split(JSONPath.Child).filter(isTruthy).length - 1;
@@ -444,7 +442,7 @@ export abstract class BaseNode<
     try {
       await this.#validator(value);
     } catch (thrown: any) {
-      return transformErrors(thrown.errors as ErrorObject[]);
+      return transformErrors(thrown?.errors as ErrorObject[]);
     }
     return [];
   }
