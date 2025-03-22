@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { BITMASK_ALL } from '@winglet/common-utils';
 import { useTick } from '@winglet/react-utils';
 
-import type { NodeMethod, SchemaNode } from '@/schema-form/core';
+import type { NodeEventType, SchemaNode } from '@/schema-form/core';
 
 /**
  * @description SchemaNode의 모든 event마다 tick을 업데이트합니다.
@@ -12,7 +12,7 @@ import type { NodeMethod, SchemaNode } from '@/schema-form/core';
  */
 export const useSchemaNodeTracker = <Node extends SchemaNode>(
   node: Node | null,
-  tracking: NodeMethod = BITMASK_ALL,
+  tracking: NodeEventType = BITMASK_ALL,
 ) => {
   const [tick, update] = useTick();
   useEffect(() => {

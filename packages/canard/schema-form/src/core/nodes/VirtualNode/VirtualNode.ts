@@ -3,7 +3,7 @@ import type { VirtualNodeValue, VirtualSchema } from '@/schema-form/types';
 import { parseArray } from '../../parsers';
 import { BaseNode } from '../BaseNode';
 import {
-  NodeMethod,
+  NodeEventType,
   type SchemaNode,
   type VirtualNodeConstructorProps,
 } from '../type';
@@ -70,8 +70,8 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
 
     this.#refNodes.forEach((node, i) => {
       node.subscribe(({ type, payload }) => {
-        if (!(type & NodeMethod.Change)) return;
-        const onChangePayload = payload?.[NodeMethod.Change];
+        if (!(type & NodeEventType.Change)) return;
+        const onChangePayload = payload?.[NodeEventType.Change];
         if (this.#value && this.#value[i] !== onChangePayload) {
           const previous = this.#value;
           this.#value = [
@@ -80,12 +80,12 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
             ...this.#value.slice(i + 1),
           ];
           this.publish({
-            type: NodeMethod.Change,
+            type: NodeEventType.Change,
             payload: {
-              [NodeMethod.Change]: this.#value,
+              [NodeEventType.Change]: this.#value,
             },
             options: {
-              [NodeMethod.Change]: {
+              [NodeEventType.Change]: {
                 previous,
                 current: this.#value,
                 difference: { i: onChangePayload },
@@ -98,7 +98,7 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
 
     this.#children = this.#refNodes.map((node) => ({ node }));
     this.publish({
-      type: NodeMethod.ChildrenChange,
+      type: NodeEventType.ChildrenChange,
     });
   }
 }

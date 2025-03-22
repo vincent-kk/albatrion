@@ -11,8 +11,8 @@ import { parseArray } from '../../parsers';
 import { BaseNode } from '../BaseNode';
 import {
   type BranchNodeConstructorProps,
+  NodeEventType,
   type NodeFactory,
-  NodeMethod,
   type SchemaNode,
 } from '../type';
 import { OperationType } from './type';
@@ -69,9 +69,9 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
       const value = this.toArray();
       this.onChange(value);
       this.publish({
-        type: NodeMethod.Change,
+        type: NodeEventType.Change,
         payload: {
-          [NodeMethod.Change]: value,
+          [NodeEventType.Change]: value,
         },
       });
       this.#hasChanged = false;
@@ -251,7 +251,7 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
   #publishChildrenChange() {
     if (!this.#ready) return;
     this.publish({
-      type: NodeMethod.ChildrenChange,
+      type: NodeEventType.ChildrenChange,
     });
   }
 }

@@ -2,7 +2,11 @@ import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 
 import { falseFunction, isTruthy, trueFunction } from '@winglet/common-utils';
 
-import { NodeMethod, type SchemaNode, isSchemaNode } from '@/schema-form/core';
+import {
+  NodeEventType,
+  type SchemaNode,
+  isSchemaNode,
+} from '@/schema-form/core';
 import {
   checkComputedOptionFactory,
   getWatchValuesFactory,
@@ -31,7 +35,9 @@ export const useComputeSchemaNode = (
 
   useSchemaNodeTracker(
     node,
-    NodeMethod.Change | NodeMethod.StateChange | NodeMethod.UpdateError,
+    NodeEventType.Change |
+      NodeEventType.StateChange |
+      NodeEventType.UpdateError,
   );
 
   const {
@@ -121,9 +127,9 @@ export const useComputeSchemaNode = (
         const targetNode = node.findNode(path);
         if (!targetNode) return undefined;
         return targetNode.subscribe(({ type, payload }) => {
-          if (type & NodeMethod.Change) {
+          if (type & NodeEventType.Change) {
             setDependencies((prevDependencies) => {
-              prevDependencies[index] = payload?.[NodeMethod.Change];
+              prevDependencies[index] = payload?.[NodeEventType.Change];
               return [...prevDependencies];
             });
           }

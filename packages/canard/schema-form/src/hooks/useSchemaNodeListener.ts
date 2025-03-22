@@ -3,7 +3,7 @@ import { type RefObject, useLayoutEffect, useRef } from 'react';
 import { isFunction } from '@winglet/common-utils';
 import { useTick } from '@winglet/react-utils';
 
-import { NodeMethod, type SchemaNode } from '@/schema-form/core';
+import { NodeEventType, type SchemaNode } from '@/schema-form/core';
 
 export const useSchemaNodeListener = <Node extends SchemaNode>(
   node: Node | null,
@@ -13,9 +13,9 @@ export const useSchemaNodeListener = <Node extends SchemaNode>(
   useLayoutEffect(() => {
     if (node === null) return;
     const unsubscribe = node.subscribe(({ type }) => {
-      if (type & NodeMethod.Redraw) update();
-      if (type & NodeMethod.Focus) getInputElement(ref)?.focus?.();
-      if (type & NodeMethod.Select) {
+      if (type & NodeEventType.Redraw) update();
+      if (type & NodeEventType.Focus) getInputElement(ref)?.focus?.();
+      if (type & NodeEventType.Select) {
         const element = getInputElement(ref);
         if (element && 'select' in element && isFunction(element.select))
           element.select();

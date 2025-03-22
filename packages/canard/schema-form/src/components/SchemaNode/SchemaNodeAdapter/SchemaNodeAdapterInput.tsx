@@ -2,7 +2,7 @@ import { memo, useCallback, useMemo, useRef } from 'react';
 
 import { useConstant } from '@winglet/react-utils';
 
-import { NodeMethod, NodeState } from '@/schema-form/core';
+import { NodeEventType, NodeState } from '@/schema-form/core';
 import { useFormTypeInput } from '@/schema-form/hooks/useFormTypeInput';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import { useUserDefinedContext } from '@/schema-form/providers';
@@ -51,7 +51,10 @@ export const SchemaNodeAdapterInput = memo(
 
     const { context: userDefinedContext } = useUserDefinedContext();
 
-    useSchemaNodeTracker(node, NodeMethod.Change | NodeMethod.UpdateError);
+    useSchemaNodeTracker(
+      node,
+      NodeEventType.Change | NodeEventType.UpdateError,
+    );
 
     if (!node || !FormTypeInput) return null;
 

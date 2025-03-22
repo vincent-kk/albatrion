@@ -1,7 +1,7 @@
 import type { NullSchema, NullValue } from '@/schema-form/types';
 
 import { BaseNode } from '../BaseNode';
-import { NodeMethod, type SchemaNodeConstructorProps } from '../type';
+import { NodeEventType, type SchemaNodeConstructorProps } from '../type';
 
 export class NullNode extends BaseNode<NullSchema, NullValue> {
   #value: NullValue | undefined;
@@ -24,12 +24,12 @@ export class NullNode extends BaseNode<NullSchema, NullValue> {
       this.#value = current;
       this.onChange(current);
       this.publish({
-        type: NodeMethod.Change,
+        type: NodeEventType.Change,
         payload: {
-          [NodeMethod.Change]: current,
+          [NodeEventType.Change]: current,
         },
         options: {
-          [NodeMethod.Change]: {
+          [NodeEventType.Change]: {
             previous,
             current,
           },

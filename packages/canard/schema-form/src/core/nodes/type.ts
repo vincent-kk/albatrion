@@ -87,16 +87,16 @@ export type NodeFactoryProps<Schema extends JsonSchema> =
     VirtualNodeConstructorProps<Schema>;
 
 export interface Listener {
-  (event: MethodEvent): void;
+  (event: NodeEvent): void;
 }
 
-export type MethodEvent = {
-  type: NodeMethod;
-  payload?: Partial<MethodPayload>;
-  options?: Partial<MethodOptions>;
+export type NodeEvent = {
+  type: NodeEventType;
+  payload?: Partial<NodeEventPayload>;
+  options?: Partial<NodeEventOptions>;
 };
 
-export enum NodeMethod {
+export enum NodeEventType {
   Focus = 1 << 0,
   Select = 1 << 1,
   Redraw = 1 << 2,
@@ -108,35 +108,35 @@ export enum NodeMethod {
   ChildrenChange = 1 << 8,
 }
 
-export type MethodPayload = {
-  [NodeMethod.Focus]: void;
-  [NodeMethod.Select]: void;
-  [NodeMethod.Redraw]: void;
-  [NodeMethod.Change]: any;
-  [NodeMethod.Validate]: void;
-  [NodeMethod.PathChange]: string;
-  [NodeMethod.StateChange]: NodeStateFlags;
-  [NodeMethod.UpdateError]: JsonSchemaError[];
-  [NodeMethod.ChildrenChange]: void;
+export type NodeEventPayload = {
+  [NodeEventType.Focus]: void;
+  [NodeEventType.Select]: void;
+  [NodeEventType.Redraw]: void;
+  [NodeEventType.Change]: any;
+  [NodeEventType.Validate]: void;
+  [NodeEventType.PathChange]: string;
+  [NodeEventType.StateChange]: NodeStateFlags;
+  [NodeEventType.UpdateError]: JsonSchemaError[];
+  [NodeEventType.ChildrenChange]: void;
 };
 
-export type MethodOptions = Partial<{
-  [NodeMethod.Focus]: void;
-  [NodeMethod.Select]: void;
-  [NodeMethod.Redraw]: void;
-  [NodeMethod.Change]: {
+export type NodeEventOptions = Partial<{
+  [NodeEventType.Focus]: void;
+  [NodeEventType.Select]: void;
+  [NodeEventType.Redraw]: void;
+  [NodeEventType.Change]: {
     previous: any;
     current: any;
     difference?: any;
   };
-  [NodeMethod.Validate]: void;
-  [NodeMethod.PathChange]: {
+  [NodeEventType.Validate]: void;
+  [NodeEventType.PathChange]: {
     previous: string;
     current: string;
   };
-  [NodeMethod.StateChange]: void;
-  [NodeMethod.UpdateError]: void;
-  [NodeMethod.ChildrenChange]: void;
+  [NodeEventType.StateChange]: void;
+  [NodeEventType.UpdateError]: void;
+  [NodeEventType.ChildrenChange]: void;
 }>;
 
 export enum NodeState {

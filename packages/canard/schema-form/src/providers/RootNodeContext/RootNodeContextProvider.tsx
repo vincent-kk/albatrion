@@ -6,7 +6,7 @@ import type { Fn } from '@aileron/types';
 
 import type { FormProps } from '@/schema-form/components/Form';
 import {
-  NodeMethod,
+  NodeEventType,
   type SchemaNode,
   ValidationMode,
   nodeFromJsonSchema,
@@ -93,8 +93,8 @@ export const RootNodeContextProvider = <
   useEffect(() => {
     if (!rootNode) return;
     const unsubscribe = rootNode.subscribe(({ type, payload }) => {
-      if (type & NodeMethod.UpdateError)
-        onValidate(payload?.[NodeMethod.UpdateError] || EMPTY_ARRAY);
+      if (type & NodeEventType.UpdateError)
+        onValidate(payload?.[NodeEventType.UpdateError] || EMPTY_ARRAY);
     });
     onReady(rootNode);
     return () => unsubscribe();

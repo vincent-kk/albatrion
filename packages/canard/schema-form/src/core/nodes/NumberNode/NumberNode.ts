@@ -2,7 +2,7 @@ import type { NumberSchema, NumberValue } from '@/schema-form/types';
 
 import { parseNumber } from '../../parsers';
 import { BaseNode } from '../BaseNode';
-import { NodeMethod, type SchemaNodeConstructorProps } from '../type';
+import { NodeEventType, type SchemaNodeConstructorProps } from '../type';
 
 export class NumberNode extends BaseNode<NumberSchema, NumberValue> {
   #value: NumberValue | undefined = undefined;
@@ -26,12 +26,12 @@ export class NumberNode extends BaseNode<NumberSchema, NumberValue> {
       this.#value = current;
       this.onChange(current);
       this.publish({
-        type: NodeMethod.Change,
+        type: NodeEventType.Change,
         payload: {
-          [NodeMethod.Change]: current,
+          [NodeEventType.Change]: current,
         },
         options: {
-          [NodeMethod.Change]: {
+          [NodeEventType.Change]: {
             previous,
             current,
           },

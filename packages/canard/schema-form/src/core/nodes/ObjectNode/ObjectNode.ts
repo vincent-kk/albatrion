@@ -10,8 +10,8 @@ import type {
 import { BaseNode } from '../BaseNode';
 import {
   type BranchNodeConstructorProps,
+  NodeEventType,
   type NodeFactory,
-  NodeMethod,
 } from '../type';
 import type { ChildNode } from './type';
 import {
@@ -66,12 +66,12 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     }
     this.onChange(this.#value);
     this.publish({
-      type: NodeMethod.Change,
+      type: NodeEventType.Change,
       payload: {
-        [NodeMethod.Change]: this.#value,
+        [NodeEventType.Change]: this.#value,
       },
       options: {
-        [NodeMethod.Change]: {
+        [NodeEventType.Change]: {
           previous,
           current: this.#value,
           difference: { ...this.#draft },
@@ -156,7 +156,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
       this.#nodeFactory,
     );
     this.publish({
-      type: NodeMethod.ChildrenChange,
+      type: NodeEventType.ChildrenChange,
     });
 
     this.#ready = true;

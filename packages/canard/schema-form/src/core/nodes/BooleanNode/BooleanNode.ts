@@ -2,7 +2,7 @@ import type { BooleanSchema, BooleanValue } from '@/schema-form/types';
 
 import { parseBoolean } from '../../parsers';
 import { BaseNode } from '../BaseNode';
-import { NodeMethod, type SchemaNodeConstructorProps } from '../type';
+import { NodeEventType, type SchemaNodeConstructorProps } from '../type';
 
 export class BooleanNode extends BaseNode<BooleanSchema, BooleanValue> {
   #value: BooleanValue | undefined = undefined;
@@ -26,12 +26,12 @@ export class BooleanNode extends BaseNode<BooleanSchema, BooleanValue> {
       this.#value = current;
       this.onChange(current);
       this.publish({
-        type: NodeMethod.Change,
+        type: NodeEventType.Change,
         payload: {
-          [NodeMethod.Change]: current,
+          [NodeEventType.Change]: current,
         },
         options: {
-          [NodeMethod.Change]: {
+          [NodeEventType.Change]: {
             previous,
             current,
           },

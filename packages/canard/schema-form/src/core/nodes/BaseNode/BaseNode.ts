@@ -24,8 +24,8 @@ import {
 
 import {
   type Listener,
-  type MethodEvent,
-  NodeMethod,
+  type NodeEvent,
+  NodeEventType,
   type NodeStateFlags,
   type SchemaNode,
   type SchemaNodeConstructorProps,
@@ -95,12 +95,12 @@ export abstract class BaseNode<
     if (previous === current) return false;
     this.#path = current;
     this.publish({
-      type: NodeMethod.PathChange,
+      type: NodeEventType.PathChange,
       payload: {
-        [NodeMethod.PathChange]: current,
+        [NodeEventType.PathChange]: current,
       },
       options: {
-        [NodeMethod.PathChange]: {
+        [NodeEventType.PathChange]: {
           previous,
           current,
         },
@@ -143,9 +143,9 @@ export abstract class BaseNode<
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
     this.publish({
-      type: NodeMethod.UpdateError,
+      type: NodeEventType.UpdateError,
       payload: {
-        [NodeMethod.UpdateError]: this.#filterErrorsWithSchema(
+        [NodeEventType.UpdateError]: this.#filterErrorsWithSchema(
           this.#mergedErrors,
         ),
       },
@@ -185,9 +185,9 @@ export abstract class BaseNode<
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
     this.publish({
-      type: NodeMethod.UpdateError,
+      type: NodeEventType.UpdateError,
       payload: {
-        [NodeMethod.UpdateError]: this.#filterErrorsWithSchema(
+        [NodeEventType.UpdateError]: this.#filterErrorsWithSchema(
           this.#mergedErrors,
         ),
       },
@@ -199,9 +199,8 @@ export abstract class BaseNode<
    */
   clearReceivedErrors() {
     if (this.#receivedErrors && this.#receivedErrors.length > 0) {
-      if (!this.isRoot) {
+      if (!this.isRoot)
         this.rootNode.removeFromReceivedErrors(this.#receivedErrors);
-      }
       this.setReceivedErrors([]);
     }
   }
@@ -269,9 +268,9 @@ export abstract class BaseNode<
     if (hasChanges) {
       this.#state = state;
       this.publish({
-        type: NodeMethod.StateChange,
+        type: NodeEventType.StateChange,
         payload: {
-          [NodeMethod.StateChange]: this.#state,
+          [NodeEventType.StateChange]: this.#state,
         },
       });
     }
@@ -364,7 +363,7 @@ export abstract class BaseNode<
 
     if (this.parentNode) {
       this.parentNode.subscribe(({ type }) => {
-        if (type & NodeMethod.PathChange) this.updatePath();
+        if (type & NodeEventType.PathChange) this.updatePath();
       });
     }
 
@@ -402,11 +401,11 @@ export abstract class BaseNode<
   /**
    * Node의 listener에 대해 이벤트 발행
    * @param event 발행할 이벤트
-   *    - type: 이벤트 타입(NodeMethod 참고)
+   *    - type: 이벤트 타입(NodeEventType 참고)
    *    - payload: 이벤트에 대한 데이터(MethodPayload 참고)
    *    - options: 이벤트에 대한 옵션(MethodOptions 참고)
    */
-  publish(event: MethodEvent) {
+  publish(event: NodeEvent) {
     this.#listeners.forEach((listener) => listener(event));
   }
 
@@ -415,7 +414,7 @@ export abstract class BaseNode<
    */
   validate() {
     this.rootNode.publish({
-      type: NodeMethod.Validate,
+      type: NodeEventType.Validate,
     });
   }
 
@@ -509,8 +508,8 @@ export abstract class BaseNode<
       this.#validator = getFallbackValidator(error, this.jsonSchema);
     }
     const triggers =
-      (validationMode & ValidationMode.OnChange ? NodeMethod.Change : 0) |
-      (validationMode & ValidationMode.OnRequest ? NodeMethod.Validate : 0);
+      (validationMode & ValidationMode.OnChange ? NodeEventType.Change : 0) |
+      (validationMode & ValidationMode.OnRequest ? NodeEventType.Validate : 0);
     this.subscribe(({ type }) => {
       if (type & triggers) this.#handleValidation();
     });

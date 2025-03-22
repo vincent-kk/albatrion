@@ -22,7 +22,7 @@ import type { Fn, Parameter } from '@aileron/types';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import {
   type InferSchemaNode,
-  NodeMethod,
+  NodeEventType,
   type SchemaNode,
   isObjectNode,
 } from '@/schema-form/core';
@@ -105,7 +105,7 @@ const FormInner = <
     if (!rootNode) return;
     setChildren(createChildren(childrenInput, jsonSchema, rootNode));
     const unsubscribe = rootNode.subscribe(({ type }) => {
-      if (type & (NodeMethod.UpdateError | NodeMethod.Redraw))
+      if (type & (NodeEventType.UpdateError | NodeEventType.Redraw))
         setChildren(createChildren(childrenInput, jsonSchema, rootNode));
     });
     return () => {
@@ -119,11 +119,11 @@ const FormInner = <
       node: rootNode,
       focus: (dataPath: string) =>
         rootNode?.findNode(dataPath)?.publish({
-          type: NodeMethod.Focus,
+          type: NodeEventType.Focus,
         }),
       select: (dataPath: string) =>
         rootNode?.findNode(dataPath)?.publish({
-          type: NodeMethod.Select,
+          type: NodeEventType.Select,
         }),
       reset: (defaultValue) => {
         setDefaultValue(defaultValue ?? initialDefaultValue);
