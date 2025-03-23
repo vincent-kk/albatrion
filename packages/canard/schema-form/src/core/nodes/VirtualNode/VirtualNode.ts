@@ -70,28 +70,29 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
 
     this.#refNodes.forEach((node, i) => {
       node.subscribe(({ type, payload }) => {
-        if (!(type & NodeEventType.Change)) return;
-        const onChangePayload = payload?.[NodeEventType.Change];
-        if (this.#value && this.#value[i] !== onChangePayload) {
-          const previous = this.#value;
-          this.#value = [
-            ...this.#value.slice(0, i),
-            onChangePayload,
-            ...this.#value.slice(i + 1),
-          ];
-          this.publish({
-            type: NodeEventType.Change,
-            payload: {
-              [NodeEventType.Change]: this.#value,
-            },
-            options: {
-              [NodeEventType.Change]: {
-                previous,
-                current: this.#value,
-                difference: { i: onChangePayload },
+        if (type & NodeEventType.Change) {
+          const onChangePayload = payload?.[NodeEventType.Change];
+          if (this.#value && this.#value[i] !== onChangePayload) {
+            const previous = this.#value;
+            this.#value = [
+              ...this.#value.slice(0, i),
+              onChangePayload,
+              ...this.#value.slice(i + 1),
+            ];
+            this.publish({
+              type: NodeEventType.Change,
+              payload: {
+                [NodeEventType.Change]: this.#value,
               },
-            },
-          });
+              options: {
+                [NodeEventType.Change]: {
+                  previous,
+                  current: this.#value,
+                  difference: { i: onChangePayload },
+                },
+              },
+            });
+          }
         }
       });
     });
