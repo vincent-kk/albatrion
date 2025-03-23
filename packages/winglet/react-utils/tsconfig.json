@@ -4,6 +4,12 @@
     "baseUrl": "./",
     "outDir": "./dist",
     "paths": {
+      "@/react-utils": [
+        "./src"
+      ],
+      "@/react-utils/*": [
+        "./src/*"
+      ],
       "@aileron/*": [
         "./@aileron/*"
       ],
