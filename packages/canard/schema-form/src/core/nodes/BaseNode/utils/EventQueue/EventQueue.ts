@@ -1,0 +1,49 @@
+import { BITMASK_NONE, microtask } from '@winglet/common-utils';
+
+import type { Fn } from '@aileron/types';
+
+import type { NodeEvent, NodeEventType } from '../../../type';
+
+type Batch<Value> = {
+  resolved?: boolean;
+  events: Array<Value>;
+};
+
+export class EventQueue {
+  #currentBatch: Batch<NodeEvent> | null = null;
+  get #batch(): Batch<NodeEvent> {
+    const batch = this.#currentBatch;
+    if (batch && !batch.resolved) return batch;
+    const nextBatch: Batch<NodeEvent> = { events: [] };
+    this.#currentBatch = nextBatch;
+    microtask(() => {
+      nextBatch.resolved = true;
+      this.#batchHandler(mergeEvents(nextBatch.events));
+    });
+    return nextBatch;
+  }
+  #batchHandler: Fn<[NodeEvent]>;
+  constructor(batchHandler: Fn<[NodeEvent]>) {
+    this.#batchHandler = batchHandler;
+  }
+  push(event: NodeEvent): void {
+    const batch = this.#batch;
+    batch.events.push(event);
+  }
+}
+
+const mergeEvents = (events: ReadonlyArray<NodeEvent>) => {
+  const merged: Required<NodeEvent> = {
+    type: BITMASK_NONE as NodeEventType,
+    payload: {},
+    options: {},
+  };
+  for (const { type, payload, options } of events) {
+    merged.type |= type;
+    if (payload?.[type])
+      (merged.payload[type] as (typeof payload)[typeof type]) = payload[type];
+    if (options?.[type])
+      (merged.options[type] as (typeof options)[typeof type]) = options[type];
+  }
+  return merged;
+};

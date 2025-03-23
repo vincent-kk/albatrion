@@ -3,6 +3,9 @@ import { describe, expect, it } from 'vitest';
 
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
+import { StringNode } from '../nodes/StringNode';
+import { NodeEvent, NodeEventType } from '../nodes/type';
+
 const wait = (delay = 0) => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -259,5 +262,80 @@ describe('BaseNode', () => {
         },
       ]);
     }
+  });
+  it('event queue for node', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          startDate: {
+            type: 'string',
+            format: 'date',
+          },
+          endDate: {
+            type: 'string',
+            format: 'date',
+          },
+        },
+        virtual: {
+          period: {
+            fields: ['startDate', 'endDate'],
+          },
+        },
+      },
+    });
+    let receivedEvent: NodeEvent | undefined;
+    node.subscribe((event) => {
+      receivedEvent = event;
+    });
+
+    await wait();
+
+    // 최초로 node tree를 만들때 발생하는 이벤트
+    expect(receivedEvent).toEqual({
+      type: NodeEventType.Change | NodeEventType.ChildrenChange,
+      payload: {
+        [NodeEventType.Change]: {},
+      },
+      options: {
+        [NodeEventType.Change]: {
+          current: {},
+          difference: {},
+          previous: {},
+        },
+      },
+    });
+
+    node?.findNode('period')?.subscribe((event) => {
+      receivedEvent = event;
+    });
+
+    await wait();
+
+    const endDate = node?.findNode('endDate');
+
+    (endDate as StringNode)?.setValue('2021-01-02');
+
+    await wait();
+
+    expect(receivedEvent).toEqual({
+      type: NodeEventType.Change,
+      payload: {
+        [NodeEventType.Change]: [undefined, '2021-01-02'],
+      },
+      options: {
+        [NodeEventType.Change]: {
+          current: [undefined, '2021-01-02'],
+          previous: [undefined, undefined],
+          difference: {
+            1: '2021-01-02',
+          },
+        },
+      },
+    });
+
+    expect(node.value).toEqual({
+      endDate: '2021-01-02',
+    });
   });
 });

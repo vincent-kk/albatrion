@@ -9,3 +9,7 @@ export const nullFunction: Fn<[], null> = () => null;
 export const falseFunction: Fn<[], false> = () => false;
 
 export const trueFunction: Fn<[], true> = () => true;
+
+export const identityFunction = <T>(value: T): T => value;
+
+export const noopFunction = () => void 0;

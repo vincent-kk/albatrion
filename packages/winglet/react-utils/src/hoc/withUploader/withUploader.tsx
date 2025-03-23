@@ -11,7 +11,7 @@ import { isFunction } from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/types';
 
-import { useHandle } from '../../hooks';
+import { useHandle } from '@/react-utils/hooks/useHandle';
 
 interface BaseProps {
   onClick?: Fn<[e?: MouseEvent]>;

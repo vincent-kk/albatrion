@@ -1,5 +1,6 @@
 export { isArray } from './isArray';
 export { isArrayBuffer } from './isArrayBuffer';
+export { isArrayLike } from './isArrayLike';
 export { isBlob } from './isBlob';
 export { isBoolean } from './isBoolean';
 export { isBuffer } from './isBuffer';

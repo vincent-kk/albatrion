@@ -120,7 +120,7 @@ export type NodeEventPayload = {
   [NodeEventType.ChildrenChange]: void;
 };
 
-export type NodeEventOptions = Partial<{
+export type NodeEventOptions = {
   [NodeEventType.Focus]: void;
   [NodeEventType.Select]: void;
   [NodeEventType.Redraw]: void;
@@ -137,7 +137,7 @@ export type NodeEventOptions = Partial<{
   [NodeEventType.StateChange]: void;
   [NodeEventType.UpdateError]: void;
   [NodeEventType.ChildrenChange]: void;
-}>;
+};
 
 export enum NodeState {
   Dirty = 1 << 0,

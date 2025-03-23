@@ -69,7 +69,7 @@ export const FallbackManager = {
     fallbackFormTypeRef.current = {
       ...fallbackFormTypeRef.current,
       ...remainOnlyReactComponent(FromTypes),
-      ...(formatError ? { formatError } : {}),
+      ...(formatError && { formatError }),
     };
   },
   appendFormTypeInputDefinitions(

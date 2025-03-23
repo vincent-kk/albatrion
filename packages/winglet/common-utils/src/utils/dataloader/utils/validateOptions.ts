@@ -1,0 +1,78 @@
+import type { Fn } from '@aileron/types';
+
+import { identityFunction } from '@/common-utils/constant';
+import { InvalidTypeError } from '@/common-utils/errors/InvalidTypeError';
+import { postPromise } from '@/common-utils/libs/postPromise';
+import { isFunction } from '@/common-utils/utils/filter/isFunction';
+
+import type { BatchLoader, MapLike } from '../type';
+
+export const getValidBatchLoader = <Key, Value>(
+  batchLoader: BatchLoader<Key, Value>,
+): BatchLoader<Key, Value> => {
+  if (!isFunction(batchLoader))
+    throw new InvalidTypeError(
+      'INVALID_BATCH_LOADER',
+      `DataLoader > batchLoader must be a function: ${batchLoader}`,
+      { batchLoader },
+    );
+  return batchLoader;
+};
+
+export const getValidBatchScheduler = (batchScheduler?: Fn<[Fn]>): Fn<[Fn]> => {
+  if (batchScheduler === undefined) return postPromise;
+  if (!isFunction(batchScheduler))
+    throw new InvalidTypeError(
+      'INVALID_BATCH_SCHEDULER',
+      `DataLoaderOptions > batchScheduler must be a function: ${batchScheduler}`,
+      { batchScheduler },
+    );
+  return batchScheduler;
+};
+
+export const getValidMaxBatchSize = (options?: {
+  maxBatchSize?: number;
+  disableBatch?: boolean;
+}): number => {
+  if (options?.disableBatch === true) return 1;
+  const maxBatchSize = options?.maxBatchSize;
+  if (maxBatchSize === undefined) return Infinity;
+  if (typeof maxBatchSize !== 'number' || maxBatchSize < 1)
+    throw new InvalidTypeError(
+      'INVALID_MAX_BATCH_SIZE',
+      `DataLoaderOptions > maxBatchSize must be a positive integer : ${maxBatchSize}`,
+      { maxBatchSize },
+    );
+  return maxBatchSize;
+};
+
+export const getValidCacheMap = <CacheKey, Value>(
+  cacheMap?: MapLike<CacheKey, Promise<Value>> | false,
+): MapLike<CacheKey, Promise<Value>> | null => {
+  if (cacheMap === false) return null;
+  if (cacheMap === undefined) return new Map();
+  const missingMethods = ['get', 'set', 'delete', 'clear'].filter(
+    (fnName) =>
+      !isFunction(cacheMap[fnName as keyof MapLike<CacheKey, Value>] as any),
+  );
+  if (missingMethods.length > 0)
+    throw new InvalidTypeError(
+      'INVALID_CACHE',
+      `DataLoaderOptions > cache must additionally implement the following methods: ${missingMethods.join(', ')}`,
+      { cacheMap, missingMethods },
+    );
+  return cacheMap;
+};
+
+export const getValidCacheKeyFn = <Key, CacheKey>(
+  cacheKeyFn?: Fn<[Key], CacheKey>,
+): Fn<[Key], CacheKey> => {
+  if (cacheKeyFn === undefined) return identityFunction as Fn<[Key], CacheKey>;
+  if (!isFunction(cacheKeyFn))
+    throw new InvalidTypeError(
+      'INVALID_CACHE_KEY_FN',
+      `DataLoaderOptions > cacheKeyFn must be a function: ${cacheKeyFn}`,
+      { cacheKeyFn },
+    );
+  return cacheKeyFn;
+};

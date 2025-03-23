@@ -4,6 +4,12 @@
     "baseUrl": "./",
     "outDir": "./dist",
     "paths": {
+      "@/common-utils": [
+        "./src"
+      ],
+      "@/common-utils/*": [
+        "./src/*"
+      ],
       "@aileron/*": [
         "./@aileron/*"
       ],
