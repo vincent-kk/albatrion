@@ -201,7 +201,7 @@ export const DirtyTouched = () => {
   };
 
   const [showError, setShowError] = useState<ShowError | boolean>(
-    ShowError.Dirty | ShowError.Touched,
+    ShowError.DirtyTouched,
   );
 
   const refHandle = useRef<FormHandle<typeof jsonSchema>>(null);
@@ -210,33 +210,101 @@ export const DirtyTouched = () => {
       <div style={{ display: 'flex', gap: 10 }}>
         <label>
           <input
-            type="radio"
+            type="checkbox"
             name="showError"
-            checked={showError === (ShowError.Touched | ShowError.Dirty)}
-            value={ShowError.Touched | ShowError.Dirty}
-            onChange={() => setShowError(ShowError.Touched | ShowError.Dirty)}
+            checked={
+              !!(
+                typeof showError === 'number' &&
+                showError & ShowError.DirtyTouched
+              )
+            }
+            value={ShowError.DirtyTouched}
+            onChange={(e) => {
+              setShowError((prev) => {
+                if (typeof prev === 'boolean') return ShowError.DirtyTouched;
+                return e.target.checked
+                  ? prev | ShowError.DirtyTouched
+                  : prev & ~ShowError.DirtyTouched;
+              });
+            }}
           />
-          Touched+Dirty
+          DirtyTouched
         </label>
         <label>
           <input
-            type="radio"
+            type="checkbox"
             name="showError"
-            checked={showError === ShowError.Dirty}
+            checked={
+              !!(typeof showError === 'number' && showError & ShowError.Dirty)
+            }
             value={ShowError.Dirty}
-            onChange={() => setShowError(ShowError.Dirty)}
+            onChange={(e) => {
+              setShowError((prev) => {
+                if (typeof prev === 'boolean') return ShowError.Dirty;
+                return e.target.checked
+                  ? prev | ShowError.Dirty
+                  : prev & ~ShowError.Dirty;
+              });
+            }}
           />
           Dirty
         </label>
         <label>
           <input
-            type="radio"
+            type="checkbox"
             name="showError"
-            checked={showError === ShowError.Touched}
+            checked={
+              !!(typeof showError === 'number' && showError & ShowError.Touched)
+            }
             value={ShowError.Touched}
-            onChange={() => setShowError(ShowError.Touched)}
+            onChange={(e) => {
+              setShowError((prev) => {
+                if (typeof prev === 'boolean') return ShowError.Touched;
+                return e.target.checked
+                  ? prev | ShowError.Touched
+                  : prev & ~ShowError.Touched;
+              });
+            }}
           />
           Touched
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            name="showError"
+            checked={
+              !!(typeof showError === 'number' && showError & ShowError.Always)
+            }
+            value={ShowError.Always}
+            onChange={(e) => {
+              setShowError((prev) => {
+                if (typeof prev === 'boolean') return ShowError.Always;
+                return e.target.checked
+                  ? prev | ShowError.Always
+                  : prev & ~ShowError.Always;
+              });
+            }}
+          />
+          Always
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            name="showError"
+            checked={
+              !!(typeof showError === 'number' && showError & ShowError.Never)
+            }
+            value={ShowError.Never}
+            onChange={(e) => {
+              setShowError((prev) => {
+                if (typeof prev === 'boolean') return ShowError.Never;
+                return e.target.checked
+                  ? prev | ShowError.Never
+                  : prev & ~ShowError.Never;
+              });
+            }}
+          />
+          Never
         </label>
         <label>
           <input

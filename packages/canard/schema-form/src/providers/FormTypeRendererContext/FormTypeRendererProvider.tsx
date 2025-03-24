@@ -9,7 +9,7 @@ import { ShowError } from '@/schema-form/types';
 import { useExternalFormContext } from '../ExternalFormContext';
 import { FormTypeRendererContext } from './FormTypeRendererContext';
 
-const DEFAULT_SHOW_ERROR = ShowError.Dirty | ShowError.Touched;
+const DEFAULT_SHOW_ERROR = ShowError.DirtyTouched;
 
 interface FormTypeRendererContextProviderProps {
   /** Custom form type renderer component */
@@ -45,8 +45,8 @@ export const FormTypeRendererContextProvider = ({
     const errorState =
       typeof showError === 'boolean'
         ? showError
-          ? ALWAYS_BITMASK
-          : NEVER_BITMASK
+          ? ShowError.Always
+          : ShowError.Never
         : showError;
     return ({
       dirty,
@@ -54,11 +54,12 @@ export const FormTypeRendererContextProvider = ({
       showError,
     }: Parameters<FormTypeRendererContext['checkShowError']>[0]) => {
       if (showError !== undefined) return showError;
-      if (errorState & ALWAYS_BITMASK) return true;
-      if (errorState & NEVER_BITMASK) return false;
-      if (errorState & ShowError.Dirty && !dirty) return false;
-      if (errorState & ShowError.Touched && !touched) return false;
-      return true;
+      if (errorState & ShowError.Always) return true;
+      if (errorState & ShowError.Never) return false;
+      if (errorState & ShowError.Dirty && dirty) return true;
+      if (errorState & ShowError.Touched && touched) return true;
+      if (errorState & ShowError.DirtyTouched && dirty && touched) return true;
+      return false;
     };
   }, [inputShowError, externalShowError]);
 
@@ -88,6 +89,3 @@ export const FormTypeRendererContextProvider = ({
     </FormTypeRendererContext.Provider>
   );
 };
-
-const ALWAYS_BITMASK = 0b1000 as const;
-const NEVER_BITMASK = 0b0100 as const;
