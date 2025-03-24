@@ -1,64 +1,66 @@
-import { type CSSProperties, memo, useCallback } from 'react';
+import { type CSSProperties, useCallback } from 'react';
 
 import type {
   FormTypeInputDefinition,
   FormTypeInputProps,
 } from '@/schema-form/types';
 
-const FormTypeInputArray = memo(
-  ({ node, childNodes, readOnly, disabled }: FormTypeInputProps<any[]>) => {
-    const handleClick = useCallback(() => {
-      node.push();
-    }, [node]);
-
-    const handleRemoveClick = useCallback(
-      (index: number) => {
-        node.remove(index);
-      },
-      [node],
-    );
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-        {childNodes &&
-          childNodes.map((Node, i) => {
-            return (
-              <div key={Node.key} style={{ display: 'flex' }}>
-                <Node />
-                {!readOnly && (
-                  <Button
-                    title="remove item"
-                    label="x"
-                    disabled={disabled}
-                    onClick={() => handleRemoveClick(i)}
-                  />
-                )}
-              </div>
-            );
-          })}
-        {!readOnly && (
-          <label
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              alignItems: 'center',
-              cursor: 'pointer',
-              marginBottom: 5,
-            }}
-          >
-            <div style={{ marginRight: 10 }}>Add New Item</div>
-            <Button
-              title="add item"
-              label="+"
-              disabled={disabled}
-              onClick={handleClick}
-              style={{ fontSize: '1rem' }}
-            />
-          </label>
-        )}
-      </div>
-    );
-  },
-);
+const FormTypeInputArray = ({
+  node,
+  childNodes,
+  readOnly,
+  disabled,
+}: FormTypeInputProps<any[]>) => {
+  const handleClick = useCallback(() => {
+    node.push();
+  }, [node]);
+  const handleRemoveClick = useCallback(
+    (index: number) => {
+      node.remove(index);
+    },
+    [node],
+  );
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+      {childNodes &&
+        childNodes.map((Node, i) => {
+          return (
+            <div key={Node.key} style={{ display: 'flex' }}>
+              <Node />
+              {!readOnly && (
+                <Button
+                  title="remove item"
+                  label="x"
+                  disabled={disabled}
+                  onClick={() => handleRemoveClick(i)}
+                />
+              )}
+            </div>
+          );
+        })}
+      {!readOnly && (
+        <label
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            cursor: 'pointer',
+            marginBottom: 5,
+          }}
+        >
+          <div style={{ marginRight: 10 }}>Add New Item</div>
+          <Button
+            title="add item"
+            label="+"
+            disabled={disabled}
+            onClick={handleClick}
+            style={{ fontSize: '1rem' }}
+          />
+        </label>
+      )}
+    </div>
+  );
+};
 
 function Button({
   title,
