@@ -2,13 +2,17 @@ import { isPlainObject } from '@winglet/common-utils';
 
 import type { Dictionary } from '@aileron/types';
 
-import type { ArrayValue, JsonSchema, ObjectValue } from '@/schema-form/types';
+import type {
+  ArrayValue,
+  JsonSchemaWithVirtual,
+  ObjectValue,
+} from '@/schema-form/types';
 
 import { type StackItem, isArrayStackItem, isObjectStackItem } from './type';
 
 export const getDataWithSchema = <Value>(
   value: Value | undefined,
-  schema: JsonSchema,
+  schema: JsonSchemaWithVirtual,
   options?: { ignoreOneOf: boolean },
 ): Value | undefined => {
   if (value == null) return value;
@@ -93,7 +97,7 @@ const handleArraySchema = (
 
 // omit 집합 생성 함수
 const getOmit = <Value extends Dictionary>(
-  jsonSchema: JsonSchema,
+  jsonSchema: JsonSchemaWithVirtual,
   value: Value,
   options?: { ignoreOneOf: boolean },
 ): Set<string> | null => {

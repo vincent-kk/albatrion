@@ -31,8 +31,6 @@ export {
 export { JSONPath, ShowError } from './types';
 
 export type {
-  ArraySchema,
-  BooleanSchema,
   FormTypeInputDefinition,
   FormTypeInputMap,
   FormTypeInputProps,
@@ -43,14 +41,15 @@ export type {
   FormTypeTestObject,
   FormatError,
   FormatErrorOptions,
-  InferJsonSchemaType,
-  JsonSchema,
   JsonSchemaError,
-  NullSchema,
+  JsonSchema,
+  BooleanSchema,
   NumberSchema,
-  ObjectSchema,
   StringSchema,
-  VirtualSchema,
+  ArraySchema,
+  ObjectSchema,
+  NullSchema,
+  InferJsonSchemaType,
 } from './types';
 
 export {

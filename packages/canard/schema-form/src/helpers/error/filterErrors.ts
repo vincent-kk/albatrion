@@ -2,8 +2,8 @@ import { isTruthy } from '@winglet/common-utils';
 
 import {
   JSONPath,
-  type JsonSchema,
   type JsonSchemaError,
+  type JsonSchemaWithVirtual,
 } from '@/schema-form/types';
 
 /**
@@ -14,7 +14,7 @@ import {
  */
 export const filterErrors = (
   errors: JsonSchemaError[],
-  jsonSchema: JsonSchema,
+  jsonSchema: JsonSchemaWithVirtual,
 ) => {
   const oneOfRequiredFieldMap = new Map<string, string[]>(
     jsonSchema.oneOf

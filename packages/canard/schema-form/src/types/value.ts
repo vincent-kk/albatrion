@@ -1,4 +1,4 @@
-import type { JsonSchema } from './jsonSchema';
+import type { JsonSchemaWithVirtual } from './jsonSchema';
 
 export type BooleanValue = boolean;
 export type NumberValue = number;
@@ -19,7 +19,7 @@ export type AllowedValue =
   | NullValue
   | UndefinedValue;
 
-export type InferValueType<T extends JsonSchema> = T extends {
+export type InferValueType<T extends JsonSchemaWithVirtual> = T extends {
   type: 'string';
 }
   ? StringValue

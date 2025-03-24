@@ -2,7 +2,7 @@ import type { MutableRefObject } from 'react';
 
 import Ajv, { type Options } from 'ajv';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 const defaultSettings: Options = {
   allErrors: true,
@@ -21,7 +21,13 @@ export const ajvHelper = {
     }
     return ajvRef.current!;
   },
-  compile({ jsonSchema, ajv }: { jsonSchema: JsonSchema; ajv?: Ajv }) {
+  compile({
+    jsonSchema,
+    ajv,
+  }: {
+    jsonSchema: JsonSchemaWithVirtual;
+    ajv?: Ajv;
+  }) {
     return (ajv || ajvHelper.instance).compile({ ...jsonSchema, $async: true });
   },
 };

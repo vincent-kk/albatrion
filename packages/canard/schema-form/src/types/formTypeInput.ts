@@ -5,7 +5,7 @@ import type { Dictionary, Fn, WithKey } from '@aileron/types';
 import type { InferSchemaNode, SchemaNode } from '@/schema-form/core';
 
 import type { FormTypeRendererProps } from './formTypeRenderer';
-import type { InferJsonSchemaType, JsonSchema } from './jsonSchema';
+import type { InferJsonSchemaType, JsonSchemaWithVirtual } from './jsonSchema';
 import type { AllowedValue } from './value';
 
 /**
@@ -21,7 +21,7 @@ export interface FormTypeInputProps<
   Value extends AllowedValue = any,
   Context extends Dictionary = Dictionary,
   WatchValues extends Array<any> = Array<any>,
-  Schema extends JsonSchema = InferJsonSchemaType<Value>,
+  Schema extends JsonSchemaWithVirtual = InferJsonSchemaType<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
   /** FormType Component의 jsonSchema */
@@ -63,7 +63,7 @@ export interface FormTypeInputProps<
  */
 export type FormTypeInputPropsWithSchema<
   Value extends AllowedValue = any,
-  Schema extends JsonSchema = InferJsonSchemaType<Value>,
+  Schema extends JsonSchemaWithVirtual = InferJsonSchemaType<Value>,
   Context extends Dictionary = Dictionary,
 > = FormTypeInputProps<Value, Context, any[], Schema>;
 
@@ -76,7 +76,7 @@ export type FormTypeInputPropsWithSchema<
  */
 export type FormTypeInputPropsWithNode<
   Value extends AllowedValue = any,
-  Schema extends JsonSchema = InferJsonSchemaType<Value>,
+  Schema extends JsonSchemaWithVirtual = InferJsonSchemaType<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > = FormTypeInputProps<Value, Dictionary, any[], Schema, Node>;
 
@@ -119,18 +119,22 @@ export interface ChildFormTypeInputProps extends OverridableFormTypeInputProps {
 export type FormTypeTestFn = Fn<[hint: Hint], boolean>;
 
 export type FormTypeTestObject = Partial<{
-  type: JsonSchema['type'] | Array<JsonSchema['type']>;
-  jsonSchema: JsonSchema;
-  format: JsonSchema['format'] | Array<NonNullable<JsonSchema['format']>>;
-  formType: JsonSchema['formType'] | Array<NonNullable<JsonSchema['formType']>>;
+  type: JsonSchemaWithVirtual['type'] | Array<JsonSchemaWithVirtual['type']>;
+  jsonSchema: JsonSchemaWithVirtual;
+  format:
+    | JsonSchemaWithVirtual['format']
+    | Array<NonNullable<JsonSchemaWithVirtual['format']>>;
+  formType:
+    | JsonSchemaWithVirtual['formType']
+    | Array<NonNullable<JsonSchemaWithVirtual['formType']>>;
   [alt: string]: any;
 }>;
 
 export type Hint = {
-  jsonSchema: JsonSchema;
-  type: JsonSchema['type'];
-  format: JsonSchema['format'];
-  formType: JsonSchema['formType'];
+  jsonSchema: JsonSchemaWithVirtual;
+  type: JsonSchemaWithVirtual['type'];
+  format: JsonSchemaWithVirtual['format'];
+  formType: JsonSchemaWithVirtual['formType'];
   path: SchemaNode['path'];
   [alt: string]: any;
 };

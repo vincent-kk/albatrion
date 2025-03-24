@@ -17,8 +17,8 @@ import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
 import {
   type AllowedValue,
   JSONPath,
-  type JsonSchema,
   type JsonSchemaError,
+  type JsonSchemaWithVirtual,
   type SetStateOptions,
 } from '@/schema-form/types';
 
@@ -42,7 +42,7 @@ import {
 } from './utils';
 
 export abstract class BaseNode<
-  Schema extends JsonSchema = JsonSchema,
+  Schema extends JsonSchemaWithVirtual = JsonSchemaWithVirtual,
   Value extends AllowedValue = any,
 > {
   /** Node의 타입 */

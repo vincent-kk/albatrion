@@ -1,6 +1,9 @@
-import { JSONPath, type JsonSchema } from '@/schema-form/types';
+import { JSONPath, type JsonSchemaWithVirtual } from '@/schema-form/types';
 
-export const getFallbackValidator = (error: Error, jsonSchema: JsonSchema) =>
+export const getFallbackValidator = (
+  error: Error,
+  jsonSchema: JsonSchemaWithVirtual,
+) =>
   Object.assign(
     (_: unknown): _ is unknown => {
       throw {

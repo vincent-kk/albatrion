@@ -1,9 +1,9 @@
 import { isTruthy, merge } from '@winglet/common-utils';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 export const mergeShowConditions = (
-  jsonSchema: JsonSchema,
+  jsonSchema: JsonSchemaWithVirtual,
   conditions: string[] | undefined,
 ) =>
   conditions

@@ -2,7 +2,7 @@ import { SchemaNodeError } from '@/schema-form/errors';
 import type {
   ArraySchema,
   BooleanSchema,
-  JsonSchema,
+  JsonSchemaWithVirtual,
   NullSchema,
   NumberSchema,
   ObjectSchema,
@@ -24,7 +24,7 @@ import type {
   VirtualNodeConstructorProps,
 } from './type';
 
-export function schemaNodeFactory<Schema extends JsonSchema>({
+export function schemaNodeFactory<Schema extends JsonSchemaWithVirtual>({
   key,
   name,
   jsonSchema,
@@ -95,6 +95,18 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         validationMode,
         ajv,
       } as BranchNodeConstructorProps<ObjectSchema>);
+
+    case 'null':
+      return new NullNode({
+        key,
+        name,
+        jsonSchema,
+        defaultValue,
+        onChange,
+        parentNode,
+        validationMode,
+        ajv,
+      } as SchemaNodeConstructorProps<NullSchema>);
     case 'virtual':
       return new VirtualNode({
         key,
@@ -107,19 +119,7 @@ export function schemaNodeFactory<Schema extends JsonSchema>({
         validationMode,
         ajv,
       } as VirtualNodeConstructorProps<VirtualSchema>);
-    case 'null':
-      return new NullNode({
-        key,
-        name,
-        jsonSchema,
-        defaultValue,
-        onChange,
-        parentNode,
-        validationMode,
-        ajv,
-      } as SchemaNodeConstructorProps<NullSchema>);
   }
-
   throw new SchemaNodeError(
     'UNKNOWN_JSON_SCHEMA',
     // @ts-expect-error: This state is unreachable by design and should NEVER occur.

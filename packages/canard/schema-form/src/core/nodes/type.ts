@@ -6,8 +6,8 @@ import type {
   ArraySchema,
   BooleanSchema,
   InferValueType,
-  JsonSchema,
   JsonSchemaError,
+  JsonSchemaWithVirtual,
   NullSchema,
   NumberSchema,
   ObjectSchema,
@@ -24,7 +24,7 @@ import type { StringNode } from './StringNode';
 import type { VirtualNode } from './VirtualNode';
 import type { schemaNodeFactory } from './schemaNodeFactory';
 
-export type InferSchemaNode<S extends JsonSchema | unknown> =
+export type InferSchemaNode<S extends JsonSchemaWithVirtual | unknown> =
   S extends ArraySchema
     ? ArrayNode
     : S extends NumberSchema
@@ -56,7 +56,7 @@ export enum ValidationMode {
   OnRequest = 1 << 2,
 }
 export interface SchemaNodeConstructorProps<
-  Schema extends JsonSchema,
+  Schema extends JsonSchemaWithVirtual,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   key?: string;
@@ -71,17 +71,19 @@ export interface SchemaNodeConstructorProps<
 
 export type NodeFactory = typeof schemaNodeFactory;
 
-export interface BranchNodeConstructorProps<Schema extends JsonSchema>
-  extends SchemaNodeConstructorProps<Schema> {
+export interface BranchNodeConstructorProps<
+  Schema extends JsonSchemaWithVirtual,
+> extends SchemaNodeConstructorProps<Schema> {
   nodeFactory: NodeFactory;
 }
 
-export interface VirtualNodeConstructorProps<Schema extends JsonSchema>
-  extends SchemaNodeConstructorProps<Schema> {
+export interface VirtualNodeConstructorProps<
+  Schema extends JsonSchemaWithVirtual,
+> extends SchemaNodeConstructorProps<Schema> {
   refNodes?: SchemaNode[];
 }
 
-export type NodeFactoryProps<Schema extends JsonSchema> =
+export type NodeFactoryProps<Schema extends JsonSchemaWithVirtual> =
   SchemaNodeConstructorProps<Schema> &
     BranchNodeConstructorProps<Schema> &
     VirtualNodeConstructorProps<Schema>;

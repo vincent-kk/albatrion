@@ -31,26 +31,33 @@ export const enum JSONPointer {
   Child = '/',
 }
 
-export const isArraySchema = (schema: JsonSchema): schema is ArraySchema =>
-  schema.type === 'array';
+export const isArraySchema = (
+  schema: JsonSchemaWithVirtual,
+): schema is ArraySchema => schema.type === 'array';
 
-export const isNumberSchema = (schema: JsonSchema): schema is NumberSchema =>
-  schema.type === 'number';
+export const isNumberSchema = (
+  schema: JsonSchemaWithVirtual,
+): schema is NumberSchema => schema.type === 'number';
 
-export const isObjectSchema = (schema: JsonSchema): schema is ObjectSchema =>
-  schema.type === 'object';
+export const isObjectSchema = (
+  schema: JsonSchemaWithVirtual,
+): schema is ObjectSchema => schema.type === 'object';
 
-export const isStringSchema = (schema: JsonSchema): schema is StringSchema =>
-  schema.type === 'string';
+export const isStringSchema = (
+  schema: JsonSchemaWithVirtual,
+): schema is StringSchema => schema.type === 'string';
 
-export const isVirtualSchema = (schema: JsonSchema): schema is VirtualSchema =>
-  schema.type === 'virtual';
+export const isVirtualSchema = (
+  schema: JsonSchemaWithVirtual,
+): schema is VirtualSchema => schema.type === 'virtual';
 
-export const isBooleanSchema = (schema: JsonSchema): schema is BooleanSchema =>
-  schema.type === 'boolean';
+export const isBooleanSchema = (
+  schema: JsonSchemaWithVirtual,
+): schema is BooleanSchema => schema.type === 'boolean';
 
-export const isNullSchema = (schema: JsonSchema): schema is NullSchema =>
-  schema.type === 'null';
+export const isNullSchema = (
+  schema: JsonSchemaWithVirtual,
+): schema is NullSchema => schema.type === 'null';
 
 // REF: https://github.com/ajv-validator/ajv/blob/master/lib/types/json-schema.ts
 
@@ -71,7 +78,7 @@ export type InferJsonSchemaType<
           ? ObjectSchema<Options, RenderOptions>
           : V extends null
             ? NullSchema<Options, RenderOptions>
-            : JsonSchema<Options, RenderOptions>;
+            : JsonSchemaWithVirtual<Options, RenderOptions>;
 
 export type JsonSchema<
   Options extends Dictionary = object,
@@ -82,8 +89,12 @@ export type JsonSchema<
   | BooleanSchema<Options, RenderOptions>
   | ArraySchema<Options, RenderOptions>
   | ObjectSchema<Options, RenderOptions>
-  | NullSchema<Options, RenderOptions>
-  | VirtualSchema<Options, RenderOptions>;
+  | NullSchema<Options, RenderOptions>;
+
+export type JsonSchemaWithVirtual<
+  Options extends Dictionary = object,
+  RenderOptions extends Dictionary = object,
+> = JsonSchema<Options, RenderOptions> | VirtualSchema<Options, RenderOptions>;
 
 type PartialJsonSchema = Partial<JsonSchema>;
 
@@ -123,7 +134,7 @@ export interface ArraySchema<
   RenderOptions extends Dictionary = object,
 > extends BasicSchema<ArrayValue, Options, RenderOptions> {
   type: 'array';
-  items: JsonSchema<Options, RenderOptions>;
+  items: JsonSchemaWithVirtual<Options, RenderOptions>;
   contains?: PartialJsonSchema;
   minItems?: number;
   maxItems?: number;
@@ -138,10 +149,14 @@ export interface ObjectSchema<
   RenderOptions extends Dictionary = object,
 > extends BasicSchema<ObjectValue, Options, RenderOptions> {
   type: 'object';
-  additionalProperties?: boolean | JsonSchema<Options, RenderOptions>;
-  unevaluatedProperties?: boolean | JsonSchema<Options, RenderOptions>;
-  properties?: Dictionary<JsonSchema<Options, RenderOptions>>;
-  patternProperties?: Dictionary<JsonSchema<Options, RenderOptions>>;
+  additionalProperties?:
+    | boolean
+    | JsonSchemaWithVirtual<Options, RenderOptions>;
+  unevaluatedProperties?:
+    | boolean
+    | JsonSchemaWithVirtual<Options, RenderOptions>;
+  properties?: Dictionary<JsonSchemaWithVirtual<Options, RenderOptions>>;
+  patternProperties?: Dictionary<JsonSchemaWithVirtual<Options, RenderOptions>>;
   propertyNames?: Omit<StringSchema<Options, RenderOptions>, 'type'> & {
     type?: 'string';
   };
