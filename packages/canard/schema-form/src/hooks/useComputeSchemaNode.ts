@@ -21,11 +21,15 @@ export const useComputeSchemaNode = (
 ): {
   node: SchemaNode | null;
   visible: boolean;
-  disabled: boolean;
   readOnly: boolean;
+  disabled: boolean;
   watchValues: any[];
 } => {
-  const rootNode = useRootNodeContext();
+  const {
+    rootNode,
+    readOnly: rootReadOnly,
+    disabled: rootDisabled,
+  } = useRootNodeContext();
 
   const node = useMemo(() => {
     if (isSchemaNode(input)) return input;
@@ -43,8 +47,8 @@ export const useComputeSchemaNode = (
   const {
     dependencyPaths,
     checkVisible,
-    checkDisabled,
     checkReadOnly,
+    checkDisabled,
     getWatchValues,
   } = useMemo(() => {
     const dependencyPaths: string[] = [];
@@ -56,23 +60,25 @@ export const useComputeSchemaNode = (
       ? falseFunction
       : checkComputedOptionFactory(dependencyPaths, visible);
 
-    const disabled = jsonSchema?.renderOptions?.disabled;
-    const isDisabled =
-      rootNode.jsonSchema.disabled === true ||
-      jsonSchema?.disabled === true ||
-      disabled === true;
-    const checkDisabled = isDisabled
-      ? trueFunction
-      : checkComputedOptionFactory(dependencyPaths, disabled);
-
     const readOnly = jsonSchema?.renderOptions?.readOnly;
     const isReadOnly =
+      rootReadOnly === true ||
       rootNode.jsonSchema.readOnly === true ||
       jsonSchema?.readOnly === true ||
       readOnly === true;
     const checkReadOnly = isReadOnly
       ? trueFunction
       : checkComputedOptionFactory(dependencyPaths, readOnly);
+
+    const disabled = jsonSchema?.renderOptions?.disabled;
+    const isDisabled =
+      rootDisabled === true ||
+      rootNode.jsonSchema.disabled === true ||
+      jsonSchema?.disabled === true ||
+      disabled === true;
+    const checkDisabled = isDisabled
+      ? trueFunction
+      : checkComputedOptionFactory(dependencyPaths, disabled);
 
     const getWatchValues = getWatchValuesFactory(
       dependencyPaths,
@@ -82,11 +88,11 @@ export const useComputeSchemaNode = (
     return {
       dependencyPaths,
       checkVisible,
-      checkDisabled,
       checkReadOnly,
+      checkDisabled,
       getWatchValues,
     };
-  }, [rootNode, node]);
+  }, [rootNode, node, rootReadOnly, rootDisabled]);
 
   const [dependencies, setDependencies] = useState<any[]>(() => {
     if (!node || dependencyPaths.length === 0) return [];
@@ -98,15 +104,15 @@ export const useComputeSchemaNode = (
     return true;
   }, [dependencies, checkVisible]);
 
-  const disabled = useMemo(() => {
-    if (checkDisabled) return checkDisabled(dependencies);
-    return false;
-  }, [dependencies, checkDisabled]);
-
   const readOnly = useMemo(() => {
     if (checkReadOnly) return checkReadOnly(dependencies);
     return false;
   }, [dependencies, checkReadOnly]);
+
+  const disabled = useMemo(() => {
+    if (checkDisabled) return checkDisabled(dependencies);
+    return false;
+  }, [dependencies, checkDisabled]);
 
   const watchValues = useMemo(() => {
     if (getWatchValues) return getWatchValues(dependencies);
@@ -141,5 +147,5 @@ export const useComputeSchemaNode = (
     };
   }, [dependencyPaths, node]);
 
-  return { node, visible, disabled, readOnly, watchValues };
+  return { node, visible, readOnly, disabled, watchValues };
 };

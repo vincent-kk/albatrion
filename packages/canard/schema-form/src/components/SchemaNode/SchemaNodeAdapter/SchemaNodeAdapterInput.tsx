@@ -30,12 +30,12 @@ export const SchemaNodeAdapterInput = memo(
 
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
       (input, options) => {
-        if (disabled || readOnly) return;
+        if (readOnly || disabled) return;
         node.setValue(input, options);
         node.clearReceivedErrors();
         node.setState({ [NodeState.Dirty]: true });
       },
-      [node, disabled, readOnly],
+      [node, readOnly, disabled],
     );
 
     const feedbackTimer = useRef<ReturnType<typeof setTimeout>>();

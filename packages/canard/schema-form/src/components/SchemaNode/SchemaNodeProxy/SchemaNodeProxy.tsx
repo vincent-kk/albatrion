@@ -24,12 +24,12 @@ export const SchemaNodeProxy = memo(
     FormTypeRenderer: InputFormTypeRenderer,
     Wrapper: InputWrapper,
   }: SchemaNodeProxyProps) => {
-    const { node, visible, disabled, readOnly, watchValues } =
+    const { node, visible, readOnly, disabled, watchValues } =
       useComputeSchemaNode(inputNode || path);
 
     const inputPropsRef = useReference({
-      disabled,
       readOnly,
+      disabled,
       watchValues,
       PreferredFormTypeInput,
       overridableProps: overridableFormTypeInputProps,

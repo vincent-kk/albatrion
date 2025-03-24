@@ -19,8 +19,8 @@ const FormTypeInputTextarea = ({
   path,
   name,
   jsonSchema,
-  disabled,
   readOnly,
+  disabled,
   defaultValue,
   onChange,
 }: FormTypeInputPropsWithSchema<string, TextareaSchema>) => {

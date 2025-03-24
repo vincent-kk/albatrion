@@ -67,11 +67,7 @@ const FormInner = <
   }: FormProps<Schema, Value>,
   ref: ForwardedRef<FormHandle<Schema, Value, Node>>,
 ) => {
-  const jsonSchema = useConstant(() => {
-    if (readOnly) jsonSchemaInput.readOnly = readOnly;
-    if (disabled) jsonSchemaInput.disabled = disabled;
-    return jsonSchemaInput;
-  });
+  const jsonSchema = useConstant(jsonSchemaInput);
   const [rootNode, setRootNode] = useState<Node>();
   const [children, setChildren] = useState<ReactNode>(
     createChildren(childrenInput, jsonSchema),
@@ -165,6 +161,8 @@ const FormInner = <
             key={key}
             jsonSchema={jsonSchema}
             defaultValue={defaultValue}
+            readOnly={readOnly}
+            disabled={disabled}
             errors={errors}
             onChange={handleChange}
             onValidate={handleValidate}

@@ -2,4 +2,12 @@ import { createContext } from 'react';
 
 import type { SchemaNode } from '@/schema-form/core';
 
-export const RootNodeContext = createContext<SchemaNode>({} as SchemaNode);
+export interface RootNodeContext {
+  rootNode: SchemaNode;
+  readOnly?: boolean;
+  disabled?: boolean;
+}
+
+export const RootNodeContext = createContext<RootNodeContext>(
+  {} as RootNodeContext,
+);

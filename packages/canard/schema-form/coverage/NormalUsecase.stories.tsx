@@ -176,3 +176,38 @@ export const ReadOnly = () => {
     </StoryLayout>
   );
 };
+
+export const ReadOnlyProps = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+        format: 'uri',
+        default: 'https://www.google.com',
+      },
+      age: {
+        type: 'number',
+        default: 10,
+      },
+      nationality: {
+        type: 'string',
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [readOnly, setReadOnly] = useState<boolean>(false);
+  const [disabled, setDisabled] = useState<boolean>(false);
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema}>
+      <button onClick={() => setReadOnly((prev) => !prev)}>
+        {readOnly ? 'readOnly' : 'readOnly: false'}
+      </button>
+      <button onClick={() => setDisabled((prev) => !prev)}>
+        {disabled ? 'disabled' : 'disabled: false'}
+      </button>
+      <Form jsonSchema={jsonSchema} readOnly={readOnly} disabled={disabled} />
+    </StoryLayout>
+  );
+};

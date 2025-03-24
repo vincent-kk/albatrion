@@ -43,8 +43,8 @@ export const SchemaNodeAdapterWrapper = (
     return (
       <SchemaNodeAdapter
         node={node}
-        disabled={propsRef.current.disabled}
         readOnly={propsRef.current.readOnly}
+        disabled={propsRef.current.disabled}
         watchValues={watchValues}
         overridableProps={overridableProps}
         PreferredFormTypeInput={PreferredFormTypeInput}
