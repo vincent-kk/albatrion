@@ -73,6 +73,7 @@ export const SchemaNodeAdapterInput = memo(
           defaultValue={defaultValue}
           value={node.value}
           onChange={handleChange}
+          style={node.jsonSchema.style}
           context={userDefinedContext}
           {...overridableProps}
         />

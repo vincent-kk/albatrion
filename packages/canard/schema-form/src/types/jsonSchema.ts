@@ -1,4 +1,4 @@
-import type { ComponentType, ReactNode } from 'react';
+import type { CSSProperties, ComponentType, ReactNode } from 'react';
 
 import type { Dictionary } from '@aileron/types';
 
@@ -224,6 +224,7 @@ interface CustomOptions<
   readOnly?: boolean;
   disabled?: boolean;
   placeholder?: string;
+  style?: CSSProperties;
   options?: {
     watch?: string | string[];
     alias?: Dictionary<ReactNode>;

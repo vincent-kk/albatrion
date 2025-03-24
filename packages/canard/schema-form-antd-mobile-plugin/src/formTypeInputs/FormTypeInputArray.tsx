@@ -28,6 +28,7 @@ const FormTypeInputArray = ({
   childNodes,
   readOnly,
   disabled,
+  style,
 }: FormTypeInputProps<any[]>) => {
   const handleClick = useHandle(() => {
     node.push();
@@ -36,7 +37,7 @@ const FormTypeInputArray = ({
     node.remove(index);
   });
   return (
-    <div>
+    <div style={style}>
       {childNodes &&
         childNodes.map((Node, i) => {
           return (

@@ -31,6 +31,7 @@ const FormTypeInputRadioGroup = ({
   defaultValue,
   onChange,
   context,
+  style,
 }: FormTypeInputPropsWithSchema<
   string | number,
   StringJsonSchema | NumberJsonSchema,
@@ -53,7 +54,7 @@ const FormTypeInputRadioGroup = ({
   const handleChange = useHandle(onChange);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
+    <div style={{ display: 'flex', flexDirection: 'row', gap: 8, ...style }}>
       <Radio.Group
         disabled={disabled}
         defaultValue={defaultValue}
