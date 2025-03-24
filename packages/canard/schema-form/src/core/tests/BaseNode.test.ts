@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import { StringNode } from '../nodes/StringNode';
-import { NodeEvent, NodeEventType } from '../nodes/type';
+import { NodeEvent, NodeEventType, ValidationMode } from '../nodes/type';
 
 const wait = (delay = 0) => {
   return new Promise((resolve) => {
@@ -35,11 +35,15 @@ describe('BaseNode', () => {
           },
         },
       },
+      validationMode: ValidationMode.OnChange,
     });
 
     const founder = node?.findNode('house.founder');
     const founderName = founder?.findNode('name');
-    expect(founder?.value).toMatchObject({ name: 'Godric Gryffindor' });
+    expect(founder?.value).toEqual({
+      name: 'Godric Gryffindor',
+      yearOfBirth: 900,
+    });
     expect(node?.findNode('house.founder.name')).toBe(founderName);
     // find a relative node
     const founderBirthOfYear1 = founderName?.findNode('@.yearOfBirth');
@@ -64,18 +68,19 @@ describe('BaseNode', () => {
           },
         },
       },
+      validationMode: ValidationMode.OnChange,
     });
     await wait();
 
     const name = node?.findNode('name');
-    expect((name?.errors || []).map(({ keyword }) => keyword)).toMatchObject([
+    expect((name?.errors || []).map(({ keyword }) => keyword)).toEqual([
       'maxLength',
       'pattern',
     ]);
     if (name && name.type === 'string') {
       name.setValue('ron weasley');
       await wait();
-      expect((name.errors || []).map(({ keyword }) => keyword)).toMatchObject([
+      expect((name.errors || []).map(({ keyword }) => keyword)).toEqual([
         'maxLength',
       ]);
       name.setValue('ron');
@@ -106,6 +111,7 @@ describe('BaseNode', () => {
           },
         },
       },
+      validationMode: ValidationMode.OnChange,
       ajv,
     });
     const num = node?.findNode('num');
@@ -131,12 +137,12 @@ describe('BaseNode', () => {
     });
     const name = node?.findNode('name');
     if (name) {
-      expect(name.state).toMatchObject({});
+      expect(name.state).toEqual({});
       name.setState((state) => ({ ...state, isTouched: true }));
       name.setState({ isDirty: true });
-      expect(name.state).toMatchObject({ isTouched: true, isDirty: true });
+      expect(name.state).toEqual({ isTouched: true, isDirty: true });
       name.setState({ isDirty: undefined });
-      expect(name.state).toMatchObject({ isTouched: true });
+      expect(name.state).toEqual({ isTouched: true });
     }
   });
 
@@ -155,20 +161,20 @@ describe('BaseNode', () => {
     });
     node.setValue({ status: 'active', age: 10 });
     await wait();
-    expect(node.value).toMatchObject({ status: 'active', age: 10 });
+    expect(node.value).toEqual({ status: 'active', age: 10 });
 
     node.setValue((prev) => ({ ...prev, age: 20 }));
     await wait();
-    expect(node.value).toMatchObject({ status: 'active', age: 20 });
+    expect(node.value).toEqual({ status: 'active', age: 20 });
 
     node.setValue({ status: 'inactive', age: 10 });
     await wait();
-    expect(node.value).toMatchObject({ status: 'inactive' });
+    expect(node.value).toEqual({ status: 'inactive', age: 10 });
 
     // @ts-expect-error applyValue는 모든 노드에서 동일한 타입을 받기 때문에 타입 오류 발생
     node.applyValue({ status: 'inactive', age: 20 });
     await wait();
-    expect(node.value).toMatchObject({ status: 'inactive', age: 20 });
+    expect(node.value).toEqual({ status: 'inactive', age: 20 });
   });
 
   it('child node error sending', async () => {
@@ -209,6 +215,7 @@ describe('BaseNode', () => {
       defaultValue: {
         data: [3, 5, 7],
       },
+      validationMode: ValidationMode.OnChange,
       ajv,
     });
     await wait();
