@@ -35,16 +35,16 @@ export type WrapperComponentProps<Context extends Dictionary = Dictionary> =
   }>;
 
 export interface FooterOptions {
-  confirm?: string;
+  confirm?: ReactNode;
   hideConfirm?: boolean;
-  cancel?: string;
+  cancel?: ReactNode;
   hideCancel?: boolean;
 }
 
 export type FooterComponentProps<Context extends Dictionary = Dictionary> = {
-  confirmLabel?: string;
+  confirmLabel?: ReactNode;
   hideConfirm?: boolean;
-  cancelLabel?: string;
+  cancelLabel?: ReactNode;
   hideCancel?: boolean;
   disabled?: boolean;
   onConfirm: VoidFunction;
