@@ -22,6 +22,7 @@ export abstract class BaseNode<T, B> {
 
   readonly manualDestroy: boolean;
   readonly closeOnBackdropClick: boolean;
+  readonly dimmed: boolean;
 
   readonly ForegroundComponent?: ForegroundComponent;
   readonly BackgroundComponent?: BackgroundComponent;
@@ -44,6 +45,7 @@ export abstract class BaseNode<T, B> {
     title,
     subtitle,
     background,
+    dimmed = true,
     manualDestroy = false,
     closeOnBackdropClick = true,
     resolve,
@@ -55,6 +57,8 @@ export abstract class BaseNode<T, B> {
     this.title = title;
     this.subtitle = subtitle;
     this.background = background;
+
+    this.dimmed = dimmed;
     this.manualDestroy = manualDestroy;
     this.closeOnBackdropClick = closeOnBackdropClick;
 

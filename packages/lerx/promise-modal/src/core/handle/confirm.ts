@@ -17,8 +17,9 @@ interface ConfirmProps<B> {
   content?: ReactNode | ComponentType<ConfirmContentProps>;
   background?: ModalBackground<B>;
   footer?: ConfirmFooterRender | FooterOptions | false;
-  closeOnBackdropClick?: boolean;
+  dimmed?: boolean;
   manualDestroy?: boolean;
+  closeOnBackdropClick?: boolean;
   ForegroundComponent?: ForegroundComponent;
   BackgroundComponent?: BackgroundComponent;
 }
@@ -30,6 +31,7 @@ export const confirm = <B = any>({
   content,
   background,
   footer,
+  dimmed,
   manualDestroy,
   closeOnBackdropClick,
   ForegroundComponent,
@@ -46,6 +48,7 @@ export const confirm = <B = any>({
         content,
         background,
         footer,
+        dimmed,
         manualDestroy,
         closeOnBackdropClick,
         ForegroundComponent,

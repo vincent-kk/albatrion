@@ -3,6 +3,7 @@ import { memo, useEffect } from 'react';
 import { useTick, withErrorBoundary } from '@winglet/react-utils';
 
 import { Presenter } from '@/promise-modal/components/Presenter';
+import type { ModalNode } from '@/promise-modal/core';
 import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
 import { useModalContext } from '@/promise-modal/providers';
 import { useModalDataContext } from '@/promise-modal/providers/ModalDataContext';
@@ -10,7 +11,7 @@ import { useModalDataContext } from '@/promise-modal/providers/ModalDataContext'
 import { anchor } from './classNames.emotion';
 
 const AnchorInner = () => {
-  const [key, update] = useTick();
+  const [refreshKey, update] = useTick();
 
   const { modalIds, setUpdater } = useModalDataContext();
 
@@ -20,7 +21,7 @@ const AnchorInner = () => {
 
   const { options } = useModalContext();
 
-  const dimmed = useActiveModalCount(key);
+  const dimmed = useActiveModalCount(validateDimmable, refreshKey);
 
   return (
     <div
@@ -36,5 +37,7 @@ const AnchorInner = () => {
     </div>
   );
 };
+
+const validateDimmable = (modal?: ModalNode) => modal?.visible && modal.dimmed;
 
 export const Anchor = memo(withErrorBoundary(AnchorInner));

@@ -43,6 +43,7 @@ export const AmataModalUsecase = () => {
       background: {
         data: 'alert',
       },
+      dimmed: false,
     }).then((result) => {
       console.log(result);
     });

@@ -22,6 +22,7 @@ interface PromptProps<T, B = any> {
   returnOnCancel?: boolean;
   background?: ModalBackground<B>;
   footer?: PromptFooterRender<T> | FooterOptions | false;
+  dimmed?: boolean;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
   ForegroundComponent?: ForegroundComponent;
@@ -38,6 +39,7 @@ export const prompt = <T, B = any>({
   returnOnCancel,
   background,
   footer,
+  dimmed,
   manualDestroy,
   closeOnBackdropClick,
   ForegroundComponent,
@@ -57,6 +59,7 @@ export const prompt = <T, B = any>({
         returnOnCancel,
         background,
         footer,
+        dimmed,
         manualDestroy,
         closeOnBackdropClick,
         ForegroundComponent,

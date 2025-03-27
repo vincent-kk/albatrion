@@ -20,6 +20,7 @@ interface AlertProps<B> {
     | AlertFooterRender
     | Pick<FooterOptions, 'confirm' | 'hideConfirm'>
     | false;
+  dimmed?: boolean;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
   ForegroundComponent?: ForegroundComponent;
@@ -33,6 +34,7 @@ export const alert = <B = any>({
   content,
   background,
   footer,
+  dimmed,
   manualDestroy,
   closeOnBackdropClick,
   ForegroundComponent,
@@ -49,6 +51,7 @@ export const alert = <B = any>({
         content,
         background,
         footer,
+        dimmed,
         manualDestroy,
         closeOnBackdropClick,
         ForegroundComponent,

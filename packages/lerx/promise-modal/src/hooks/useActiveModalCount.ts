@@ -1,15 +1,23 @@
 import { useMemo } from 'react';
 
+import type { Fn } from '@aileron/types';
+
+import type { ModalNode } from '../core';
 import { useModalDataContext } from '../providers';
 
-export const useActiveModalCount = (tick: string | number = 0) => {
+const defaultValidate = (modal?: ModalNode) => modal?.visible;
+
+export const useActiveModalCount = (
+  validate: Fn<[ModalNode?], boolean | undefined> = defaultValidate,
+  refreshKey: string | number = 0,
+) => {
   const { modalIds, getModalNode } = useModalDataContext();
   return useMemo(() => {
     let count = 0;
     for (const id of modalIds) {
-      if (getModalNode(id)?.visible) count++;
+      if (validate(getModalNode(id))) count++;
     }
     return count;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getModalNode, modalIds, tick]);
+  }, [getModalNode, modalIds, refreshKey]);
 };
