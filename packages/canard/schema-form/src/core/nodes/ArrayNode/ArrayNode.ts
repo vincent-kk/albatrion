@@ -56,9 +56,9 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     if (Array.isArray(input)) {
       this.#locked = true;
       this.clear();
-      input.forEach((value) => {
+      for (const value of input) {
         this.push(value);
-      });
+      }
       this.#locked = false;
       this.#emitChange();
     }
@@ -132,9 +132,7 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
 
     // NOTE: defaultValue가 배열이고, 배열의 길이가 0보다 큰 경우
     if (this.defaultValue?.length)
-      this.defaultValue.forEach((value) => {
-        this.push(value);
-      });
+      for (const value of this.defaultValue) this.push(value);
 
     while (this.length < (this.jsonSchema.minItems || 0)) this.push();
 
@@ -219,15 +217,15 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
   }
 
   #updateData(id: IndexId, data: ArrayValue[number]) {
-    this.#startOperation(OperationType.Update);
-
     if (this.#sourceMap.has(id)) {
+      this.#startOperation(OperationType.Update);
+
       this.#sourceMap.get(id)!.data = data;
       this.#hasChanged = true;
-    }
 
-    this.#finishOperation(OperationType.Update);
-    this.#emitChange();
+      this.#finishOperation(OperationType.Update);
+      this.#emitChange();
+    }
     return this;
   }
 
