@@ -114,9 +114,9 @@ export type NodeEventPayload = {
   [NodeEventType.Focus]: void;
   [NodeEventType.Select]: void;
   [NodeEventType.Redraw]: void;
-  [NodeEventType.UpdateValue]: any;
   [NodeEventType.Validate]: void;
   [NodeEventType.UpdatePath]: string;
+  [NodeEventType.UpdateValue]: any;
   [NodeEventType.UpdateState]: NodeStateFlags;
   [NodeEventType.UpdateError]: JsonSchemaError[];
   [NodeEventType.UpdateChildren]: void;
@@ -126,15 +126,15 @@ export type NodeEventOptions = {
   [NodeEventType.Focus]: void;
   [NodeEventType.Select]: void;
   [NodeEventType.Redraw]: void;
-  [NodeEventType.UpdateValue]: {
-    previous: any;
-    current: any;
-    difference?: any;
-  };
   [NodeEventType.Validate]: void;
   [NodeEventType.UpdatePath]: {
     previous: string;
     current: string;
+  };
+  [NodeEventType.UpdateValue]: {
+    previous: any;
+    current: any;
+    difference?: any;
   };
   [NodeEventType.UpdateState]: void;
   [NodeEventType.UpdateError]: void;
