@@ -1,4 +1,4 @@
-import { EMPTY_OBJECT, isTruthy } from '@winglet/common-utils';
+import { BITMASK_NONE, EMPTY_OBJECT, isTruthy } from '@winglet/common-utils';
 
 import type { SetStateFn } from '@aileron/types';
 
@@ -512,8 +512,10 @@ export abstract class BaseNode<
     const triggers =
       (validationMode & ValidationMode.OnChange
         ? NodeEventType.UpdateValue
-        : 0) |
-      (validationMode & ValidationMode.OnRequest ? NodeEventType.Validate : 0);
+        : BITMASK_NONE) |
+      (validationMode & ValidationMode.OnRequest
+        ? NodeEventType.Validate
+        : BITMASK_NONE);
     this.subscribe(({ type }) => {
       if (type & triggers) this.#handleValidation();
     });
