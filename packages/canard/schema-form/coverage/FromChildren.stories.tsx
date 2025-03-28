@@ -17,6 +17,7 @@ export const FunctionalChildren = () => {
       },
       name: {
         type: 'string',
+        maxLength: 3,
       },
       age: {
         type: 'number',
@@ -41,7 +42,7 @@ export const FunctionalChildren = () => {
         defaultValue={defaultValue.current}
         onChange={setValue}
       >
-        {({ defaultValue, value }) => (
+        {({ defaultValue, value, errors }) => (
           <>
             <div>
               {!defaultValue?.allowed && <Form.Input path=".allowed" />}
@@ -58,6 +59,60 @@ export const FunctionalChildren = () => {
               <Form.Label path=".gender" />
               {typeof value?.age === 'number' && <Form.Input path=".gender" />}
             </div>
+            {defaultValue && <div>{JSON.stringify(defaultValue, null, 2)}</div>}
+            {value && <div>{JSON.stringify(value, null, 2)}</div>}
+            {errors?.length && <div>{JSON.stringify(errors, null, 2)}</div>}
+          </>
+        )}
+      </Form>
+    </StoryLayout>
+  );
+};
+
+export const FunctionalArrayChildren = () => {
+  const jsonSchema = {
+    type: 'array',
+    items: {
+      type: 'object',
+      properties: {
+        allowed: {
+          type: 'boolean',
+        },
+        name: {
+          type: 'string',
+          maxLength: 3,
+        },
+        age: {
+          type: 'number',
+        },
+        gender: {
+          type: 'string',
+          enum: ['male', 'female'],
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  const defaultValue = useRef<Record<string, any>>({
+    allowed: false,
+  });
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <Form
+        jsonSchema={jsonSchema}
+        defaultValue={defaultValue.current}
+        onChange={setValue}
+      >
+        {({ node, defaultValue, value, errors }) => (
+          <>
+            <button onClick={() => node?.push()}>push new element</button>
+            <Form.Input />
+            {defaultValue && <div>{JSON.stringify(defaultValue, null, 2)}</div>}
+            {value && <div>{JSON.stringify(value, null, 2)}</div>}
+            {errors?.length && <div>{JSON.stringify(errors, null, 2)}</div>}
           </>
         )}
       </Form>

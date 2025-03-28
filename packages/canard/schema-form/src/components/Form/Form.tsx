@@ -101,7 +101,7 @@ const FormInner = <
     if (!rootNode) return;
     setChildren(createChildren(childrenInput, jsonSchema, rootNode));
     const unsubscribe = rootNode.subscribe(({ type }) => {
-      if (type & (NodeEventType.UpdateError | NodeEventType.Redraw))
+      if (type & (NodeEventType.Redraw | NodeEventType.UpdateError))
         setChildren(createChildren(childrenInput, jsonSchema, rootNode));
     });
     return () => {

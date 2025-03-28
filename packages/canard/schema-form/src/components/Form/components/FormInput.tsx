@@ -7,10 +7,10 @@ import type { Dictionary } from '@aileron/types';
 import { FallbackManager } from '@/schema-form/app/FallbackManager';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import { useExternalFormContext } from '@/schema-form/providers';
-import type { FormTypeInputProps } from '@/schema-form/types';
+import { type FormTypeInputProps, JSONPath } from '@/schema-form/types';
 
 export type FormInputProps = {
-  path: string;
+  path?: string;
   name?: string;
   readOnly?: boolean;
   disabled?: boolean;
@@ -30,7 +30,7 @@ export const FormInput = ({
   const overrideProps = useSnapshot(restProps);
   return (
     <SchemaNodeProxy
-      path={path}
+      path={path ?? JSONPath.Root}
       FormTypeInput={FormTypeInput}
       FormTypeRenderer={FormInputRenderer || FallbackManager.FormInput}
       overridableFormTypeInputProps={overrideProps}

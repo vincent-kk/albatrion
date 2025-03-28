@@ -6,7 +6,7 @@ import {
   SchemaNodeProxy,
   type SchemaNodeProxyProps,
 } from '@/schema-form/components/SchemaNode';
-import type { FormTypeRendererProps } from '@/schema-form/types';
+import { type FormTypeRendererProps, JSONPath } from '@/schema-form/types';
 
 export type FormRenderProps = {
   children: ComponentType<FormTypeRendererProps>;
@@ -25,7 +25,7 @@ export const FormRender = ({
   const Wrapper = useMemorize(InputWrapper);
   return (
     <SchemaNodeProxy
-      path={path}
+      path={path ?? JSONPath.Root}
       node={node}
       FormTypeInput={FormTypeInput}
       FormTypeRenderer={FormTypeRenderer}
