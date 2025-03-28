@@ -10,30 +10,30 @@ import type {
 
 import { type StackItem, isArrayStackItem, isObjectStackItem } from './type';
 
+/**
+ * 주어진 값과 스키마를 기반으로 필요한 데이터를 추출하는 함수
+ * @param value 추출할 값
+ * @param schema 추출할 값의 스키마
+ * @param options 추출 옵션
+ * @returns 추출된 값
+ */
 export const getDataWithSchema = <Value>(
   value: Value | undefined,
   schema: JsonSchemaWithVirtual,
   options?: { ignoreOneOf: boolean },
 ): Value | undefined => {
   if (value == null) return value;
-
   const stack: StackItem[] = [{ value, schema, result: undefined }];
   let finalResult: Value | undefined;
-
   while (stack.length > 0) {
     const current = stack[stack.length - 1];
-
     if (isObjectStackItem(current)) {
-      if (handleObjectSchema(current, stack, options)) {
-        continue;
-      }
+      if (handleObjectSchema(current, stack, options)) continue;
       finalResult = current.result;
       stack.pop();
       assignToParent(current, finalResult);
     } else if (isArrayStackItem(current)) {
-      if (handleArraySchema(current, stack)) {
-        continue;
-      }
+      if (handleArraySchema(current, stack)) continue;
       finalResult = current.result;
       stack.pop();
       assignToParent(current, finalResult);
@@ -43,7 +43,6 @@ export const getDataWithSchema = <Value>(
       assignToParent(current, finalResult);
     }
   }
-
   return finalResult;
 };
 
@@ -52,11 +51,13 @@ const handleObjectSchema = (
   stack: StackItem[],
   options?: { ignoreOneOf: boolean },
 ): boolean => {
-  if (!current.result) {
-    const omit = getOmit(current.schema, current.value, options);
+  if (current.result) return false;
+  if (current.schema.properties) {
     current.result = {};
-
-    for (const key in current.schema.properties) {
+    const omit = getOmit(current.schema, current.value, options);
+    const keys = Object.keys(current.schema.properties);
+    for (let i = keys.length - 1; i >= 0; i--) {
+      const key = keys[i];
       if (key in current.value && !omit?.has(key)) {
         stack.push({
           value: current.value[key],
@@ -67,9 +68,8 @@ const handleObjectSchema = (
         });
       }
     }
-    return true;
   }
-  return false;
+  return true;
 };
 
 const handleArraySchema = (
@@ -80,7 +80,6 @@ const handleArraySchema = (
     current.result = new Array(current.value.length);
     current.arrayIndex = 0;
   }
-
   if (current.arrayIndex! < current.value.length) {
     stack.push({
       value: current.value[current.arrayIndex!],
@@ -95,7 +94,6 @@ const handleArraySchema = (
   return false;
 };
 
-// omit 집합 생성 함수
 const getOmit = <Value extends Dictionary>(
   jsonSchema: JsonSchemaWithVirtual,
   value: Value,
@@ -104,7 +102,6 @@ const getOmit = <Value extends Dictionary>(
   if (options?.ignoreOneOf || !jsonSchema.oneOf?.length) {
     return null;
   }
-
   const omit = new Set<string>();
   const required = new Set(jsonSchema.required || []);
   const notRequired = new Set<string>();
@@ -134,7 +131,6 @@ const getOmit = <Value extends Dictionary>(
   return omit;
 };
 
-// 현재 결과를 부모에 할당하는 함수
 const assignToParent = (current: StackItem, finalResult: any): void => {
   if (current.parent && current.key !== undefined) {
     current.parent[current.key] = finalResult;
