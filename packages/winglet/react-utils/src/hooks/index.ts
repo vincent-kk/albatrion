@@ -8,3 +8,4 @@ export { useOnUnmount, useOnUnmountLayout } from './useOnUnmount';
 export { useReference } from './useReference';
 export { useSnapshot, useSnapshotReference } from './useSnapshot';
 export { useTick } from './useTick';
+export { useWindowSize } from './useWindowSize';
