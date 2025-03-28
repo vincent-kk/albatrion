@@ -131,15 +131,12 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     this.#locked = true;
 
     // NOTE: defaultValue가 배열이고, 배열의 길이가 0보다 큰 경우
-    if (this.defaultValue?.length) {
+    if (this.defaultValue?.length)
       this.defaultValue.forEach((value) => {
         this.push(value);
       });
-    }
 
-    while (this.length < (this.jsonSchema.minItems || 0)) {
-      this.push();
-    }
+    while (this.length < (this.jsonSchema.minItems || 0)) this.push();
 
     this.#locked = false;
 
@@ -148,9 +145,8 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
   }
 
   push(data?: ArrayValue[number]) {
-    if (this.jsonSchema.maxItems && this.jsonSchema.maxItems <= this.length) {
+    if (this.jsonSchema.maxItems && this.jsonSchema.maxItems <= this.length)
       return;
-    }
 
     const id = `[${this.#seq++}]` satisfies IndexId;
     const name = `${this.#ids.length}`;
@@ -202,7 +198,6 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     }
 
     this.#finishOperation(OperationType.Update);
-
     this.#emitChange();
     return this;
   }
@@ -241,9 +236,7 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
       if (this.#sourceMap.get(id)?.node) {
         const node = this.#sourceMap.get(id)!.node;
         const name = index.toString();
-        if (node.name !== name) {
-          node.setName(name, this);
-        }
+        if (node.name !== name) node.setName(name, this);
       }
     });
   }

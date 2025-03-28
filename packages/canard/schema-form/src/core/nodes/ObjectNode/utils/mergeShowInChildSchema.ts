@@ -25,8 +25,6 @@ const combineConditions = (
   operator: string,
 ) => {
   const filtered = conditions.filter(isTruthy);
-  if (filtered.length === 1) {
-    return filtered[0];
-  }
+  if (filtered.length === 1) return filtered[0];
   return filtered.map((item) => `(${item})`).join(`${operator}`);
 };

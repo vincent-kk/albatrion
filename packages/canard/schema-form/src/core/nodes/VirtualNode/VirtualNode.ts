@@ -64,9 +64,7 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
 
     this.#refNodes = refNodes || [];
 
-    if (this.defaultValue !== undefined) {
-      this.#value = this.defaultValue;
-    }
+    if (this.defaultValue !== undefined) this.#value = this.defaultValue;
 
     this.#refNodes.forEach((node, index) => {
       node.subscribe(({ type, payload }) => {

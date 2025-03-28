@@ -78,7 +78,6 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
         },
       },
     });
-
     this.#draft = {};
   }
 
@@ -108,9 +107,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
 
     this.#nodeFactory = nodeFactory;
 
-    if (this.defaultValue !== undefined) {
-      this.#value = this.defaultValue;
-    }
+    if (this.defaultValue !== undefined) this.#value = this.defaultValue;
 
     this.#propertyKeys = jsonSchema.properties
       ? Object.keys(jsonSchema.properties)
@@ -155,6 +152,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
       virtualReferencesMap,
       this.#nodeFactory,
     );
+
     this.publish({
       type: NodeEventType.ChildrenChange,
     });

@@ -17,6 +17,7 @@ export class NullNode extends BaseNode<NullSchema, NullValue> {
   parseValue(input: NullValue | undefined) {
     return input;
   }
+
   #emitChange(input: NullValue | undefined) {
     const previous = this.#value;
     const current = this.parseValue(input);
@@ -37,6 +38,7 @@ export class NullNode extends BaseNode<NullSchema, NullValue> {
       });
     }
   }
+
   constructor({
     key,
     name,

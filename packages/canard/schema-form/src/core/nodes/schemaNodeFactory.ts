@@ -95,7 +95,6 @@ export function schemaNodeFactory<Schema extends JsonSchemaWithVirtual>({
         validationMode,
         ajv,
       } as BranchNodeConstructorProps<ObjectSchema>);
-
     case 'null':
       return new NullNode({
         key,

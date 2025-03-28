@@ -430,9 +430,7 @@ export abstract class BaseNode<
    * @returns 필터링된 에러 목록
    */
   #filterErrorsWithSchema(errors: JsonSchemaError[]) {
-    if (!this.isRoot) {
-      return errors;
-    }
+    if (!this.isRoot) return errors;
     const visibleJsonPaths = new Set(
       getJsonPaths(getDataWithSchema(this.value, this.jsonSchema)),
     );
@@ -491,9 +489,7 @@ export abstract class BaseNode<
     const errorDataPathsSet = new Set(errorDataPaths);
     this.#errorDataPaths
       .filter((dataPath) => !errorDataPathsSet.has(dataPath))
-      .forEach((dataPath) => {
-        this.findNode(dataPath)?.clearErrors();
-      });
+      .forEach((dataPath) => this.findNode(dataPath)?.clearErrors());
 
     // error를 가진 dataPath 목록 업데이트
     this.#errorDataPaths = errorDataPaths;
