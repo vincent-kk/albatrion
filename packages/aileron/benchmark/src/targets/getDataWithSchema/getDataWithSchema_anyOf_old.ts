@@ -1,8 +1,8 @@
-import type { JsonSchema } from '@canard/schema-form';
+import type { JsonSchemaWithVirtual } from '@canard/schema-form/src/types';
 
 export const getDataWithSchema = (
   data: any,
-  schema: JsonSchema,
+  schema: JsonSchemaWithVirtual,
   options?: { ignoreAnyOf: boolean },
 ): any => {
   const node = { ...schema };
@@ -40,7 +40,11 @@ export const getDataWithSchema = (
       if (k in data && !omit.includes(k)) {
         return [
           k,
-          getDataWithSchema(data[k], v as unknown as JsonSchema, options),
+          getDataWithSchema(
+            data[k],
+            v as unknown as JsonSchemaWithVirtual,
+            options,
+          ),
         ];
       }
       return false;
