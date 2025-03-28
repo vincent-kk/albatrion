@@ -102,43 +102,43 @@ export enum NodeEventType {
   Focus = 1 << 0,
   Select = 1 << 1,
   Redraw = 1 << 2,
-  Change = 1 << 3,
-  Validate = 1 << 4,
-  PathChange = 1 << 5,
-  StateChange = 1 << 6,
+  Validate = 1 << 3,
+  UpdatePath = 1 << 4,
+  UpdateValue = 1 << 5,
+  UpdateState = 1 << 6,
   UpdateError = 1 << 7,
-  ChildrenChange = 1 << 8,
+  UpdateChildren = 1 << 8,
 }
 
 export type NodeEventPayload = {
   [NodeEventType.Focus]: void;
   [NodeEventType.Select]: void;
   [NodeEventType.Redraw]: void;
-  [NodeEventType.Change]: any;
+  [NodeEventType.UpdateValue]: any;
   [NodeEventType.Validate]: void;
-  [NodeEventType.PathChange]: string;
-  [NodeEventType.StateChange]: NodeStateFlags;
+  [NodeEventType.UpdatePath]: string;
+  [NodeEventType.UpdateState]: NodeStateFlags;
   [NodeEventType.UpdateError]: JsonSchemaError[];
-  [NodeEventType.ChildrenChange]: void;
+  [NodeEventType.UpdateChildren]: void;
 };
 
 export type NodeEventOptions = {
   [NodeEventType.Focus]: void;
   [NodeEventType.Select]: void;
   [NodeEventType.Redraw]: void;
-  [NodeEventType.Change]: {
+  [NodeEventType.UpdateValue]: {
     previous: any;
     current: any;
     difference?: any;
   };
   [NodeEventType.Validate]: void;
-  [NodeEventType.PathChange]: {
+  [NodeEventType.UpdatePath]: {
     previous: string;
     current: string;
   };
-  [NodeEventType.StateChange]: void;
+  [NodeEventType.UpdateState]: void;
   [NodeEventType.UpdateError]: void;
-  [NodeEventType.ChildrenChange]: void;
+  [NodeEventType.UpdateChildren]: void;
 };
 
 export enum NodeState {

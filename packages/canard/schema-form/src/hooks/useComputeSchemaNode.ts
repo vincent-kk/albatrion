@@ -39,8 +39,8 @@ export const useComputeSchemaNode = (
 
   useSchemaNodeTracker(
     node,
-    NodeEventType.Change |
-      NodeEventType.StateChange |
+    NodeEventType.UpdateValue |
+      NodeEventType.UpdateState |
       NodeEventType.UpdateError,
   );
 
@@ -133,9 +133,9 @@ export const useComputeSchemaNode = (
         const targetNode = node.findNode(path);
         if (!targetNode) return undefined;
         return targetNode.subscribe(({ type, payload }) => {
-          if (type & NodeEventType.Change) {
+          if (type & NodeEventType.UpdateValue) {
             setDependencies((prevDependencies) => {
-              prevDependencies[index] = payload?.[NodeEventType.Change];
+              prevDependencies[index] = payload?.[NodeEventType.UpdateValue];
               return [...prevDependencies];
             });
           }

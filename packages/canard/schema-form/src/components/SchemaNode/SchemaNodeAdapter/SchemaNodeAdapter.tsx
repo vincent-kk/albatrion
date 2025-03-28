@@ -25,7 +25,7 @@ export const SchemaNodeAdapter = ({
   const [children, setChildren] = useState<NodeChildren>(node.children);
   useEffect(() => {
     const unsubscribe = node.subscribe(({ type }) => {
-      if (type & NodeEventType.ChildrenChange) setChildren(node.children);
+      if (type & NodeEventType.UpdateChildren) setChildren(node.children);
     });
     return () => unsubscribe();
   }, [node]);

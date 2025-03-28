@@ -68,8 +68,8 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
 
     this.#refNodes.forEach((node, index) => {
       node.subscribe(({ type, payload }) => {
-        if (type & NodeEventType.Change) {
-          const onChangePayload = payload?.[NodeEventType.Change];
+        if (type & NodeEventType.UpdateValue) {
+          const onChangePayload = payload?.[NodeEventType.UpdateValue];
           if (this.#value && this.#value[index] !== onChangePayload) {
             const previous = this.#value;
             this.#value = [
@@ -78,12 +78,12 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
               ...this.#value.slice(index + 1),
             ];
             this.publish({
-              type: NodeEventType.Change,
+              type: NodeEventType.UpdateValue,
               payload: {
-                [NodeEventType.Change]: this.#value,
+                [NodeEventType.UpdateValue]: this.#value,
               },
               options: {
-                [NodeEventType.Change]: {
+                [NodeEventType.UpdateValue]: {
                   previous,
                   current: this.#value,
                   difference: { [index]: onChangePayload },
@@ -97,7 +97,7 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
 
     this.#children = this.#refNodes.map((node) => ({ node }));
     this.publish({
-      type: NodeEventType.ChildrenChange,
+      type: NodeEventType.UpdateChildren,
     });
   }
 }

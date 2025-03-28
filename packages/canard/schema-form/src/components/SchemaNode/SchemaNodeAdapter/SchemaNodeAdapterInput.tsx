@@ -53,7 +53,7 @@ export const SchemaNodeAdapterInput = memo(
 
     useSchemaNodeTracker(
       node,
-      NodeEventType.Change | NodeEventType.UpdateError,
+      NodeEventType.UpdateValue | NodeEventType.UpdateError,
     );
 
     if (!node || !FormTypeInput) return null;

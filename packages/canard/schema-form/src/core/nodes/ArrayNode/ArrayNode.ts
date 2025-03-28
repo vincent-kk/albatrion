@@ -69,9 +69,9 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
       const value = this.toArray();
       this.onChange(value);
       this.publish({
-        type: NodeEventType.Change,
+        type: NodeEventType.UpdateValue,
         payload: {
-          [NodeEventType.Change]: value,
+          [NodeEventType.UpdateValue]: value,
         },
       });
       this.#hasChanged = false;
@@ -244,7 +244,7 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
   #publishChildrenChange() {
     if (!this.#ready) return;
     this.publish({
-      type: NodeEventType.ChildrenChange,
+      type: NodeEventType.UpdateChildren,
     });
   }
 }

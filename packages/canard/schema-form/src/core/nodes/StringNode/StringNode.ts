@@ -26,12 +26,12 @@ export class StringNode extends BaseNode<StringSchema, StringValue> {
     this.#value = current;
     this.onChange(current);
     this.publish({
-      type: NodeEventType.Change,
+      type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.Change]: current,
+        [NodeEventType.UpdateValue]: current,
       },
       options: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous,
           current,
         },

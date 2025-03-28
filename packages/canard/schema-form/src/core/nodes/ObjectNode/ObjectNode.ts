@@ -66,12 +66,12 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     }
     this.onChange(this.#value);
     this.publish({
-      type: NodeEventType.Change,
+      type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.Change]: this.#value,
+        [NodeEventType.UpdateValue]: this.#value,
       },
       options: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous,
           current: this.#value,
           difference: { ...this.#draft },
@@ -154,7 +154,7 @@ export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
     );
 
     this.publish({
-      type: NodeEventType.ChildrenChange,
+      type: NodeEventType.UpdateChildren,
     });
 
     this.#ready = true;

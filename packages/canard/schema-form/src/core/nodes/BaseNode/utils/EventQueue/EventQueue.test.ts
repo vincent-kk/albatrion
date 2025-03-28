@@ -7,9 +7,9 @@ describe('EventQueue', () => {
   it('should handle single event', () => {
     const eventWindow = new EventQueue((event) => {
       expect(event).toEqual({
-        type: NodeEventType.Change,
+        type: NodeEventType.UpdateValue,
         payload: {
-          [NodeEventType.Change]: {
+          [NodeEventType.UpdateValue]: {
             previous: 2,
             current: 1,
           },
@@ -19,9 +19,9 @@ describe('EventQueue', () => {
     });
 
     eventWindow.push({
-      type: NodeEventType.Change,
+      type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 2,
           current: 1,
         },
@@ -32,9 +32,9 @@ describe('EventQueue', () => {
   it('should merge multiple events of same type', () => {
     const eventWindow = new EventQueue((event) => {
       expect(event).toEqual({
-        type: NodeEventType.Change,
+        type: NodeEventType.UpdateValue,
         payload: {
-          [NodeEventType.Change]: {
+          [NodeEventType.UpdateValue]: {
             previous: 3,
             current: 2,
           },
@@ -44,18 +44,18 @@ describe('EventQueue', () => {
     });
 
     eventWindow.push({
-      type: NodeEventType.Change,
+      type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 2,
           current: 1,
         },
       },
     });
     eventWindow.push({
-      type: NodeEventType.Change,
+      type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 3,
           current: 2,
         },
@@ -66,15 +66,15 @@ describe('EventQueue', () => {
   it('should handle events with options', () => {
     const eventWindow = new EventQueue((event) => {
       expect(event).toEqual({
-        type: NodeEventType.Change,
+        type: NodeEventType.UpdateValue,
         payload: {
-          [NodeEventType.Change]: {
+          [NodeEventType.UpdateValue]: {
             previous: 2,
             current: 1,
           },
         },
         options: {
-          [NodeEventType.Change]: {
+          [NodeEventType.UpdateValue]: {
             previous: 2,
             current: 1,
           },
@@ -83,15 +83,15 @@ describe('EventQueue', () => {
     });
 
     eventWindow.push({
-      type: NodeEventType.Change,
+      type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 2,
           current: 1,
         },
       },
       options: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 2,
           current: 1,
         },
@@ -118,9 +118,12 @@ describe('EventQueue', () => {
   it('should handle multiple event types', () => {
     const eventWindow = new EventQueue((event) => {
       expect(event).toEqual({
-        type: NodeEventType.Change | NodeEventType.Focus | NodeEventType.Select,
+        type:
+          NodeEventType.UpdateValue |
+          NodeEventType.Focus |
+          NodeEventType.Select,
         payload: {
-          [NodeEventType.Change]: {
+          [NodeEventType.UpdateValue]: {
             previous: 2,
             current: 1,
           },
@@ -130,9 +133,9 @@ describe('EventQueue', () => {
     });
 
     eventWindow.push({
-      type: NodeEventType.Change,
+      type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 2,
           current: 1,
         },
@@ -149,9 +152,9 @@ describe('EventQueue', () => {
   it('should handle events with different payloads for same type', () => {
     const eventWindow = new EventQueue((event) => {
       expect(event).toEqual({
-        type: NodeEventType.Change,
+        type: NodeEventType.UpdateValue,
         payload: {
-          [NodeEventType.Change]: {
+          [NodeEventType.UpdateValue]: {
             previous: 3,
             current: 2,
           },
@@ -161,18 +164,18 @@ describe('EventQueue', () => {
     });
 
     eventWindow.push({
-      type: NodeEventType.Change,
+      type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 2,
           current: 1,
         },
       },
     });
     eventWindow.push({
-      type: NodeEventType.Change,
+      type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 3,
           current: 2,
         },
@@ -183,15 +186,15 @@ describe('EventQueue', () => {
   it('should merge options for same event type', () => {
     const eventWindow = new EventQueue((event) => {
       expect(event).toEqual({
-        type: NodeEventType.Change,
+        type: NodeEventType.UpdateValue,
         payload: {
-          [NodeEventType.Change]: {
+          [NodeEventType.UpdateValue]: {
             previous: 3,
             current: 2,
           },
         },
         options: {
-          [NodeEventType.Change]: {
+          [NodeEventType.UpdateValue]: {
             previous: 3,
             current: 2,
             difference: 1,
@@ -201,30 +204,30 @@ describe('EventQueue', () => {
     });
 
     eventWindow.push({
-      type: NodeEventType.Change,
+      type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 2,
           current: 1,
         },
       },
       options: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 2,
           current: 1,
         },
       },
     });
     eventWindow.push({
-      type: NodeEventType.Change,
+      type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 3,
           current: 2,
         },
       },
       options: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 3,
           current: 2,
           difference: 1,
@@ -236,20 +239,20 @@ describe('EventQueue', () => {
   it('should handle options for different event types', () => {
     const eventWindow = new EventQueue((event) => {
       expect(event).toEqual({
-        type: NodeEventType.Change | NodeEventType.PathChange,
+        type: NodeEventType.UpdateValue | NodeEventType.UpdatePath,
         payload: {
-          [NodeEventType.Change]: {
+          [NodeEventType.UpdateValue]: {
             previous: 2,
             current: 1,
           },
-          [NodeEventType.PathChange]: 'new.path',
+          [NodeEventType.UpdatePath]: 'new.path',
         },
         options: {
-          [NodeEventType.Change]: {
+          [NodeEventType.UpdateValue]: {
             previous: 2,
             current: 1,
           },
-          [NodeEventType.PathChange]: {
+          [NodeEventType.UpdatePath]: {
             previous: 'old.path',
             current: 'new.path',
           },
@@ -258,27 +261,27 @@ describe('EventQueue', () => {
     });
 
     eventWindow.push({
-      type: NodeEventType.Change,
+      type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 2,
           current: 1,
         },
       },
       options: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 2,
           current: 1,
         },
       },
     });
     eventWindow.push({
-      type: NodeEventType.PathChange,
+      type: NodeEventType.UpdatePath,
       payload: {
-        [NodeEventType.PathChange]: 'new.path',
+        [NodeEventType.UpdatePath]: 'new.path',
       },
       options: {
-        [NodeEventType.PathChange]: {
+        [NodeEventType.UpdatePath]: {
           previous: 'old.path',
           current: 'new.path',
         },
@@ -289,15 +292,15 @@ describe('EventQueue', () => {
   it('should handle events with additional options', () => {
     const eventWindow = new EventQueue((event) => {
       expect(event).toEqual({
-        type: NodeEventType.Change,
+        type: NodeEventType.UpdateValue,
         payload: {
-          [NodeEventType.Change]: {
+          [NodeEventType.UpdateValue]: {
             previous: 2,
             current: 1,
           },
         },
         options: {
-          [NodeEventType.Change]: {
+          [NodeEventType.UpdateValue]: {
             previous: 2,
             current: 1,
             difference: 1,
@@ -307,30 +310,30 @@ describe('EventQueue', () => {
     });
 
     eventWindow.push({
-      type: NodeEventType.Change,
+      type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 2,
           current: 1,
         },
       },
       options: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 2,
           current: 1,
         },
       },
     });
     eventWindow.push({
-      type: NodeEventType.Change,
+      type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 2,
           current: 1,
         },
       },
       options: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           previous: 2,
           current: 1,
           difference: 1,

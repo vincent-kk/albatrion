@@ -96,12 +96,12 @@ export abstract class BaseNode<
     if (previous === current) return false;
     this.#path = current;
     this.publish({
-      type: NodeEventType.PathChange,
+      type: NodeEventType.UpdatePath,
       payload: {
-        [NodeEventType.PathChange]: current,
+        [NodeEventType.UpdatePath]: current,
       },
       options: {
-        [NodeEventType.PathChange]: {
+        [NodeEventType.UpdatePath]: {
           previous,
           current,
         },
@@ -269,9 +269,9 @@ export abstract class BaseNode<
     if (hasChanges) {
       this.#state = state;
       this.publish({
-        type: NodeEventType.StateChange,
+        type: NodeEventType.UpdateState,
         payload: {
-          [NodeEventType.StateChange]: this.#state,
+          [NodeEventType.UpdateState]: this.#state,
         },
       });
     }
@@ -364,7 +364,7 @@ export abstract class BaseNode<
 
     if (this.parentNode) {
       this.parentNode.subscribe(({ type }) => {
-        if (type & NodeEventType.PathChange) this.updatePath();
+        if (type & NodeEventType.UpdatePath) this.updatePath();
       });
     }
 
@@ -510,7 +510,9 @@ export abstract class BaseNode<
       this.#validator = getFallbackValidator(error, this.jsonSchema);
     }
     const triggers =
-      (validationMode & ValidationMode.OnChange ? NodeEventType.Change : 0) |
+      (validationMode & ValidationMode.OnChange
+        ? NodeEventType.UpdateValue
+        : 0) |
       (validationMode & ValidationMode.OnRequest ? NodeEventType.Validate : 0);
     this.subscribe(({ type }) => {
       if (type & triggers) this.#handleValidation();

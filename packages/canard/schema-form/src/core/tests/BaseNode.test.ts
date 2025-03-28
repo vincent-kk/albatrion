@@ -300,12 +300,12 @@ describe('BaseNode', () => {
 
     // 최초로 node tree를 만들때 발생하는 이벤트
     expect(receivedEvent).toEqual({
-      type: NodeEventType.Change | NodeEventType.ChildrenChange,
+      type: NodeEventType.UpdateValue | NodeEventType.UpdateChildren,
       payload: {
-        [NodeEventType.Change]: {},
+        [NodeEventType.UpdateValue]: {},
       },
       options: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           current: {},
           difference: {},
           previous: {},
@@ -326,12 +326,12 @@ describe('BaseNode', () => {
     await wait();
 
     expect(receivedEvent).toEqual({
-      type: NodeEventType.Change,
+      type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.Change]: [undefined, '2021-01-02'],
+        [NodeEventType.UpdateValue]: [undefined, '2021-01-02'],
       },
       options: {
-        [NodeEventType.Change]: {
+        [NodeEventType.UpdateValue]: {
           current: [undefined, '2021-01-02'],
           previous: [undefined, undefined],
           difference: {
