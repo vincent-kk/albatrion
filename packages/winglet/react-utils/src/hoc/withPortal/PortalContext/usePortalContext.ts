@@ -8,9 +8,8 @@ import { PortalContext } from './PortalContext';
  */
 export const usePortalContext = () => {
   const context = useContext(PortalContext);
-  if (!context) {
+  if (!context)
     throw new Error('PortalContext must be used within a PortalProvider');
-  }
   return context;
 };
 
