@@ -7,6 +7,7 @@ export {
 
 export { useSubscribeModal } from './hooks/useSubscribeModal';
 export { useDestroyAfter } from './hooks/useDestroyAfter';
+export { useActiveModalCount } from './hooks/useActiveModalCount';
 
 export { alert, confirm, prompt } from './core';
 
