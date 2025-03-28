@@ -148,25 +148,22 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     if (this.jsonSchema.maxItems && this.jsonSchema.maxItems <= this.length)
       return;
 
-    const id = `[${this.#seq++}]` satisfies IndexId;
-    const name = `${this.#ids.length}`;
-
     this.#startOperation(OperationType.Push);
 
+    const id = `[${this.#seq++}]` satisfies IndexId;
+    const name = `${this.#ids.length}`;
     this.#ids.push(id);
     const handleChange = (<T extends AllowedValue>(input: T) => {
       const value =
         typeof input === 'function'
           ? input(this.#sourceMap.get(id)!.data)
           : input;
-      this.update(id, value);
+      this.#updateData(id, value);
       if (this.#ready) {
         this.onChange(this.toArray());
       }
     }) satisfies SetStateFn<AllowedValue>;
-
     const defaultValue = data ?? getFallbackValue(this.jsonSchema.items);
-
     const childNode = this.#nodeFactory({
       key: id,
       name,
@@ -176,7 +173,6 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
       onChange: handleChange,
       nodeFactory: this.#nodeFactory,
     });
-
     this.#sourceMap.set(id, {
       node: childNode,
       data: childNode.value,
@@ -189,16 +185,9 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     return this;
   }
 
-  update(id: IndexId, data: ArrayValue[number]) {
-    this.#startOperation(OperationType.Update);
-
-    if (this.#sourceMap.has(id)) {
-      this.#sourceMap.get(id)!.data = data;
-      this.#hasChanged = true;
-    }
-
-    this.#finishOperation(OperationType.Update);
-    this.#emitChange();
+  update(id: IndexId | number, data: ArrayValue[number]) {
+    const targetId = typeof id === 'number' ? this.#ids[id] : id;
+    this.#sourceMap.get(targetId)?.node.setValue(data);
     return this;
   }
 
@@ -228,6 +217,19 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     this.#finishOperation(OperationType.Clear);
     this.#emitChange();
     this.#publishChildrenChange();
+    return this;
+  }
+
+  #updateData(id: IndexId, data: ArrayValue[number]) {
+    this.#startOperation(OperationType.Update);
+
+    if (this.#sourceMap.has(id)) {
+      this.#sourceMap.get(id)!.data = data;
+      this.#hasChanged = true;
+    }
+
+    this.#finishOperation(OperationType.Update);
+    this.#emitChange();
     return this;
   }
 
