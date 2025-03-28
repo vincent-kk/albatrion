@@ -9,12 +9,11 @@ export const getVirtualReferencesMap = (
   allowedPropertyKeys: string[],
   virtualReferences: Dictionary<VirtualReference> | undefined,
 ) => {
-  if (!virtualReferences) {
+  if (!virtualReferences)
     return {
       virtualReferencesMap: null,
       virtualReferenceFieldsMap: null,
     };
-  }
 
   const virtualReferenceFieldsMap = new Map<
     string,

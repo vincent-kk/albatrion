@@ -3,9 +3,7 @@ import type { ObjectSchema } from '@/schema-form/types';
 import { isObjectOneOfSchema, isValidEnum } from './filter';
 
 export const getOneOfConditionsMap = (jsonSchema: ObjectSchema) => {
-  if (!jsonSchema.oneOf || !Array.isArray(jsonSchema.oneOf)) {
-    return null;
-  }
+  if (!jsonSchema.oneOf || !Array.isArray(jsonSchema.oneOf)) return null;
   const oneOfConditionsMap: Map<string, string[]> = new Map();
   jsonSchema.oneOf
     .filter(isObjectOneOfSchema)

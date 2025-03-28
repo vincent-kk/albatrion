@@ -73,6 +73,7 @@ export const RootNodeContextProvider = <
 }: PropsWithChildren<RootNodeContextProviderProps<Schema, Value>>) => {
   const { validationMode: externalValidationMode, ajv: externalAjv } =
     useExternalFormContext();
+
   const rootNode = useMemo(
     () =>
       nodeFromJsonSchema({

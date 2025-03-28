@@ -16,9 +16,7 @@ const ajvRef: MutableRefObject<Ajv | null> = {
 
 export const ajvHelper = {
   get instance() {
-    if (!ajvRef.current) {
-      ajvRef.current = new Ajv(defaultSettings);
-    }
+    if (!ajvRef.current) ajvRef.current = new Ajv(defaultSettings);
     return ajvRef.current!;
   },
   compile({

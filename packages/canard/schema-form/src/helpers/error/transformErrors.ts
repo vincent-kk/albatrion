@@ -33,10 +33,8 @@ const transformDataPath = (error: ErrorObject): string => {
   const dataPath = error.instancePath
     .replace(JSON_POINTER_CHILD_PATTERN, JSONPath.Child)
     .replace(INDEX_PATTERN, '[$1]');
-
   const hasMissingProperty =
     error.keyword === 'required' && error.params?.missingProperty;
-
   return hasMissingProperty
     ? `${dataPath}${JSONPath.Child}${error.params.missingProperty}`
     : dataPath;

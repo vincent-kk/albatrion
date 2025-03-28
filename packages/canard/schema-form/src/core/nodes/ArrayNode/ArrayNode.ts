@@ -151,7 +151,7 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
     this.#startOperation(OperationType.Push);
 
     const id = `[${this.#seq++}]` satisfies IndexId;
-    const name = `${this.#ids.length}`;
+    const name = this.#ids.length.toString();
     this.#ids.push(id);
     const handleChange = (<T extends AllowedValue>(input: T) => {
       const value =
@@ -159,9 +159,7 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
           ? input(this.#sourceMap.get(id)!.data)
           : input;
       this.#updateData(id, value);
-      if (this.#ready) {
-        this.onChange(this.toArray());
-      }
+      if (this.#ready) this.onChange(this.toArray());
     }) satisfies SetStateFn<AllowedValue>;
     const defaultValue = data ?? getFallbackValue(this.jsonSchema.items);
     const childNode = this.#nodeFactory({
@@ -235,7 +233,7 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
 
   #updateChildName() {
     this.#ids.forEach((id, index) => {
-      if (this.#sourceMap.get(id)?.node) {
+      if (this.#sourceMap.has(id)) {
         const node = this.#sourceMap.get(id)!.node;
         const name = index.toString();
         if (node.name !== name) node.setName(name, this);

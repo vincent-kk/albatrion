@@ -503,7 +503,7 @@ export abstract class BaseNode<
     if (!validationMode) return;
     try {
       this.#validator = ajvHelper.compile({
-        jsonSchema: { ...this.jsonSchema, $async: true },
+        jsonSchema: this.jsonSchema,
         ajv,
       });
     } catch (error: any) {

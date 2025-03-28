@@ -22,22 +22,21 @@ export class StringNode extends BaseNode<StringSchema, StringValue> {
   #emitChange(input: StringValue | undefined) {
     const previous = this.#value;
     const current = this.parseValue(input);
-    if (previous !== current) {
-      this.#value = current;
-      this.onChange(current);
-      this.publish({
-        type: NodeEventType.Change,
-        payload: {
-          [NodeEventType.Change]: current,
+    if (previous === current) return;
+    this.#value = current;
+    this.onChange(current);
+    this.publish({
+      type: NodeEventType.Change,
+      payload: {
+        [NodeEventType.Change]: current,
+      },
+      options: {
+        [NodeEventType.Change]: {
+          previous,
+          current,
         },
-        options: {
-          [NodeEventType.Change]: {
-            previous,
-            current,
-          },
-        },
-      });
-    }
+      },
+    });
   }
 
   constructor({
