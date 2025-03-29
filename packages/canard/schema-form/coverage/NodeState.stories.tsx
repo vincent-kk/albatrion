@@ -57,7 +57,7 @@ export const CheckNodeState = () => {
           <span>{renderCount}</span>
         </label>
         <pre>{JSON.stringify({ dirty, touched, showError })}</pre>
-        <pre>{JSON.stringify(node.errors || [])}</pre>
+        <pre>{JSON.stringify(node.errors)}</pre>
         {errorMessage}
       </div>
     );

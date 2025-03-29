@@ -128,7 +128,7 @@ export abstract class BaseNode<
   #errorDataPaths: string[] = [];
   /** 자신의 Error와 하위 Node의 Error를 합친 에러 */
   get errors() {
-    return this.#mergedErrors.length > 0 ? this.#mergedErrors : null;
+    return this.#mergedErrors;
   }
   /**
    * 자신의 Error를 전달받아서 하위 Node에서 전달받은 Error와 합친 후 전달

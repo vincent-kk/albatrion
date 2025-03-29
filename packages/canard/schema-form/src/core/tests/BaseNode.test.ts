@@ -73,19 +73,17 @@ describe('BaseNode', () => {
     await wait();
 
     const name = node?.findNode('name');
-    expect((name?.errors || []).map(({ keyword }) => keyword)).toEqual([
+    expect(name?.errors.map(({ keyword }) => keyword)).toEqual([
       'maxLength',
       'pattern',
     ]);
     if (name && name.type === 'string') {
       name.setValue('ron weasley');
       await wait();
-      expect((name.errors || []).map(({ keyword }) => keyword)).toEqual([
-        'maxLength',
-      ]);
+      expect(name.errors.map(({ keyword }) => keyword)).toEqual(['maxLength']);
       name.setValue('ron');
       await wait();
-      expect(name.errors).toBe(null);
+      expect(name.errors).toEqual([]);
     }
   });
 
@@ -120,7 +118,7 @@ describe('BaseNode', () => {
       expect(num.errors?.[0]?.keyword).toBe('isEven');
       num.setValue(2);
       await wait();
-      expect(num.errors).toBe(null);
+      expect(num.errors).toEqual([]);
     }
   });
 
@@ -225,7 +223,7 @@ describe('BaseNode', () => {
       expect(index.errors?.[0]?.keyword).toBe('isEven');
       index.setValue(2);
       await wait();
-      expect(index.errors).toBe(null);
+      expect(index.errors).toEqual([]);
     }
 
     const data = node?.findNode('data');
@@ -246,13 +244,13 @@ describe('BaseNode', () => {
       data.setValue([2, 4, 6]);
       await wait();
       data.children.forEach((child) => {
-        expect(child.node.errors).toBe(null);
+        expect(child.node.errors).toEqual([]);
       });
     }
 
     const name = node?.findNode('name');
     if (name && name.type === 'string') {
-      expect(name.errors).toBe(null);
+      expect(name.errors).toEqual([]);
       name.setValue('Ron Weasley');
       await wait();
       expect(name.errors).toEqual([
