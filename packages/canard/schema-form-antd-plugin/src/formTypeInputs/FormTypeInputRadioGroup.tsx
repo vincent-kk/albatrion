@@ -26,6 +26,15 @@ interface NumberJsonSchema extends NumberSchema {
   };
 }
 
+interface FormTypeInputRadioGroupProps
+  extends FormTypeInputPropsWithSchema<
+    string | number,
+    StringJsonSchema | NumberJsonSchema,
+    { size?: SizeType; radioLabels?: { [label: string]: ReactNode } }
+  > {
+  size?: SizeType;
+}
+
 const FormTypeInputRadioGroup = ({
   path,
   name,
@@ -34,16 +43,8 @@ const FormTypeInputRadioGroup = ({
   defaultValue,
   onChange,
   context,
-}: FormTypeInputPropsWithSchema<
-  string | number,
-  StringJsonSchema | NumberJsonSchema,
-  {
-    size?: SizeType;
-    radioLabels?: {
-      [label: string]: ReactNode;
-    };
-  }
->) => {
+  size,
+}: FormTypeInputRadioGroupProps) => {
   const options = useMemo(() => {
     const alias = context.radioLabels || jsonSchema.options?.alias || {};
     return jsonSchema.enum?.map((value) => ({
@@ -62,7 +63,7 @@ const FormTypeInputRadioGroup = ({
       defaultValue={defaultValue}
       options={options}
       onChange={handleChange}
-      size={context?.size}
+      size={size || context?.size}
     />
   );
 };

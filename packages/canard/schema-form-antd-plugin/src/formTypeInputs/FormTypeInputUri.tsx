@@ -25,6 +25,15 @@ interface StringJsonSchema extends StringSchema {
 
 const DEFAULT_PROTOCOLS = ['http://', 'https://'];
 
+interface FormTypeInputUriProps
+  extends FormTypeInputPropsWithSchema<
+    string,
+    StringJsonSchema,
+    { size?: SizeType }
+  > {
+  size?: SizeType;
+}
+
 const FormTypeInputUri = ({
   path,
   name,
@@ -34,11 +43,8 @@ const FormTypeInputUri = ({
   defaultValue,
   onChange,
   context,
-}: FormTypeInputPropsWithSchema<
-  string,
-  StringJsonSchema,
-  { size?: SizeType }
->) => {
+  size,
+}: FormTypeInputUriProps) => {
   const protocols = useMemo(
     () =>
       Array.from(
@@ -117,7 +123,7 @@ const FormTypeInputUri = ({
       placeholder={jsonSchema.placeholder}
       defaultValue={defaultPathBody}
       onChange={handleChangeUriBody}
-      size={context?.size}
+      size={size || context?.size}
     />
   );
 };

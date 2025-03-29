@@ -27,6 +27,15 @@ type RangeValueType<T> = Parameter<
 
 type OnChangeRangeValueType<T> = RangeValueType<T> | null;
 
+interface FormTypeInputTimeRangeProps
+  extends FormTypeInputPropsWithSchema<
+    [string, string],
+    DateRangeSchema,
+    { size?: SizeType }
+  > {
+  size?: SizeType;
+}
+
 const FormTypeInputTimeRange = ({
   path,
   name,
@@ -36,11 +45,8 @@ const FormTypeInputTimeRange = ({
   defaultValue,
   onChange,
   context,
-}: FormTypeInputPropsWithSchema<
-  [string, string],
-  DateRangeSchema,
-  { size?: SizeType }
->) => {
+  size,
+}: FormTypeInputTimeRangeProps) => {
   const handleChange = useHandle((range: OnChangeRangeValueType<Dayjs>) => {
     const [start, end] = range || [];
     if (!start || !end) return;
@@ -81,7 +87,7 @@ const FormTypeInputTimeRange = ({
       defaultValue={initialValue}
       onChange={handleChange}
       onPanelChange={handleChange}
-      size={context?.size}
+      size={size || context?.size}
     />
   );
 };

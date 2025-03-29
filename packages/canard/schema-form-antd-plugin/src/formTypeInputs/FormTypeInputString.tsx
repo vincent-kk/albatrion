@@ -16,6 +16,15 @@ interface StringJsonSchema extends StringSchema {
   formType?: 'password';
 }
 
+interface FormTypeInputStringProps
+  extends FormTypeInputPropsWithSchema<
+    string,
+    StringJsonSchema,
+    { size?: SizeType }
+  > {
+  size?: SizeType;
+}
+
 const FormTypeInputString = ({
   path,
   name,
@@ -25,11 +34,8 @@ const FormTypeInputString = ({
   defaultValue,
   onChange,
   context,
-}: FormTypeInputPropsWithSchema<
-  string,
-  StringJsonSchema,
-  { size?: SizeType }
->) => {
+  size,
+}: FormTypeInputStringProps) => {
   const TextInput = useMemo(() => {
     if (jsonSchema.format === 'password' || jsonSchema.formType === 'password')
       return Input.Password;
@@ -47,7 +53,7 @@ const FormTypeInputString = ({
       placeholder={jsonSchema.placeholder}
       defaultValue={defaultValue}
       onChange={handleChange}
-      size={context?.size}
+      size={size || context?.size}
     />
   );
 };

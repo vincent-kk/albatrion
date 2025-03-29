@@ -20,6 +20,21 @@ interface BooleanSwitchSchema extends BooleanSchema {
   };
 }
 
+interface FormTypeInputBooleanSwitchProps
+  extends FormTypeInputPropsWithSchema<
+    boolean,
+    BooleanSwitchSchema,
+    {
+      switchSize?: SwitchSize;
+      checkboxLabels?: {
+        checked?: ReactNode;
+        unchecked?: ReactNode;
+      };
+    }
+  > {
+  size?: SwitchSize;
+}
+
 const FormTypeInputBooleanSwitch = ({
   path,
   jsonSchema,
@@ -27,17 +42,8 @@ const FormTypeInputBooleanSwitch = ({
   value,
   onChange,
   context,
-}: FormTypeInputPropsWithSchema<
-  boolean,
-  BooleanSwitchSchema,
-  {
-    switchSize?: SwitchSize;
-    checkboxLabels?: {
-      checked?: ReactNode;
-      unchecked?: ReactNode;
-    };
-  }
->) => {
+  size,
+}: FormTypeInputBooleanSwitchProps) => {
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
     const alias = context?.checkboxLabels || jsonSchema.options?.alias || {};
     return [alias.checked, alias.unchecked];
@@ -55,7 +61,7 @@ const FormTypeInputBooleanSwitch = ({
       checkedChildren={checkedLabel}
       unCheckedChildren={uncheckedLabel}
       onChange={handleChange}
-      size={context.switchSize}
+      size={size || context?.switchSize}
     />
   );
 };

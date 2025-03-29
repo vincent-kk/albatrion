@@ -27,6 +27,15 @@ type RangeValueType<T> = Parameter<
 
 type OnChangeRangeValueType<T> = RangeValueType<T> | null;
 
+interface FormTypeInputMonthRangeProps
+  extends FormTypeInputPropsWithSchema<
+    [string, string],
+    MonthRangeSchema,
+    { size?: SizeType }
+  > {
+  size?: SizeType;
+}
+
 const FormTypeInputMonthRange = ({
   path,
   name,
@@ -36,11 +45,8 @@ const FormTypeInputMonthRange = ({
   defaultValue,
   onChange,
   context,
-}: FormTypeInputPropsWithSchema<
-  [string, string],
-  MonthRangeSchema,
-  { size?: SizeType }
->) => {
+  size,
+}: FormTypeInputMonthRangeProps) => {
   const handleChange = useHandle((range: OnChangeRangeValueType<Dayjs>) => {
     const [start, end] = range || [];
     if (!start || !end) return;
@@ -80,7 +86,7 @@ const FormTypeInputMonthRange = ({
       defaultValue={initialValue}
       onChange={handleChange}
       onPanelChange={handleChange}
-      size={context?.size}
+      size={size || context?.size}
     />
   );
 };

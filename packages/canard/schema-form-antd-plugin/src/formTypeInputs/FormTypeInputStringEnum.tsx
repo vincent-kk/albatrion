@@ -23,6 +23,15 @@ interface ArrayJsonSchema extends ArraySchema {
   items: StringJsonSchema;
 }
 
+interface FormTypeInputStringEnumProps
+  extends FormTypeInputPropsWithSchema<
+    string | Array<string>,
+    StringJsonSchema | ArrayJsonSchema,
+    { size?: SizeType; enumLabels?: { [label: string]: string } }
+  > {
+  size?: SizeType;
+}
+
 const FormTypeInputStringEnum = ({
   path,
   jsonSchema,
@@ -30,16 +39,8 @@ const FormTypeInputStringEnum = ({
   defaultValue,
   onChange,
   context,
-}: FormTypeInputPropsWithSchema<
-  string | Array<string>,
-  StringJsonSchema | ArrayJsonSchema,
-  {
-    size?: SizeType;
-    enumLabels?: {
-      [label: string]: string;
-    };
-  }
->) => {
+  size,
+}: FormTypeInputStringEnumProps) => {
   const [schema, alias, mode] = useMemo(() => {
     const alias =
       context.enumLabels ||
@@ -72,7 +73,7 @@ const FormTypeInputStringEnum = ({
       defaultValue={defaultValue}
       onChange={handleChange}
       style={{ width: '100%' }}
-      size={context?.size}
+      size={size || context?.size}
     >
       {Options}
     </Select>

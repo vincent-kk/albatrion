@@ -13,6 +13,11 @@ import type {
 
 const DATE_FORMAT = 'HH:mm:00Z';
 
+interface FormTypeInputTimeProps
+  extends FormTypeInputProps<string, { size?: SizeType }> {
+  size?: SizeType;
+}
+
 const FormTypeInputTime = ({
   path,
   name,
@@ -21,7 +26,8 @@ const FormTypeInputTime = ({
   defaultValue,
   onChange,
   context,
-}: FormTypeInputProps<string, { size?: SizeType }>) => {
+  size,
+}: FormTypeInputTimeProps) => {
   const handleChange = useHandle((date: Dayjs | null) => {
     onChange(date?.format(DATE_FORMAT));
   });
@@ -38,7 +44,7 @@ const FormTypeInputTime = ({
       format={'HH:mm'}
       defaultValue={initialValue}
       onChange={handleChange}
-      size={context?.size}
+      size={size || context?.size}
     />
   );
 };

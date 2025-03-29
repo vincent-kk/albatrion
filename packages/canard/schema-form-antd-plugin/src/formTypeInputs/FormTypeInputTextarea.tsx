@@ -16,6 +16,15 @@ interface TextareaSchema extends StringSchema {
   maxRows?: number;
 }
 
+interface FormTypeInputTextareaProps
+  extends FormTypeInputPropsWithSchema<
+    string,
+    TextareaSchema,
+    { size?: SizeType }
+  > {
+  size?: SizeType;
+}
+
 const FormTypeInputTextarea = ({
   path,
   name,
@@ -25,11 +34,8 @@ const FormTypeInputTextarea = ({
   defaultValue,
   onChange,
   context,
-}: FormTypeInputPropsWithSchema<
-  string,
-  TextareaSchema,
-  { size?: SizeType }
->) => {
+  size,
+}: FormTypeInputTextareaProps) => {
   const handleChange = useHandle((value: ChangeEvent<HTMLTextAreaElement>) => {
     onChange(value.target.value);
   });
@@ -50,7 +56,7 @@ const FormTypeInputTextarea = ({
       placeholder={jsonSchema.placeholder}
       defaultValue={defaultValue}
       onChange={handleChange}
-      size={context?.size}
+      size={size || context?.size}
     />
   );
 };

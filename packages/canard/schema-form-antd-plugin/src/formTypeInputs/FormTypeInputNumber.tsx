@@ -11,6 +11,15 @@ import type {
   NumberSchema,
 } from '@canard/schema-form';
 
+interface FormTypeInputNumberProps
+  extends FormTypeInputPropsWithSchema<
+    number,
+    NumberSchema,
+    { size?: SizeType }
+  > {
+  size?: SizeType;
+}
+
 const FormTypeInputNumber = ({
   path,
   name,
@@ -20,7 +29,8 @@ const FormTypeInputNumber = ({
   defaultValue,
   onChange,
   context,
-}: FormTypeInputPropsWithSchema<number, NumberSchema, { size?: SizeType }>) => {
+  size,
+}: FormTypeInputNumberProps) => {
   const { formatter, parser } = useMemo(
     () => jsonSchema.options || {},
     [jsonSchema.options],
@@ -44,7 +54,7 @@ const FormTypeInputNumber = ({
       parser={parser}
       defaultValue={defaultValue}
       onChange={handleChange}
-      size={context?.size}
+      size={size || context?.size}
     />
   );
 };

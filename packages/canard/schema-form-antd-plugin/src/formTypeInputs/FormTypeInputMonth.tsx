@@ -14,6 +14,15 @@ import type {
 
 const DATA_FORMAT = 'YYYY-MM';
 
+interface FormTypeInputMonthProps
+  extends FormTypeInputPropsWithSchema<
+    string,
+    StringSchema,
+    { size?: SizeType }
+  > {
+  size?: SizeType;
+}
+
 const FormTypeInputMonth = ({
   path,
   name,
@@ -21,7 +30,8 @@ const FormTypeInputMonth = ({
   defaultValue,
   onChange,
   context,
-}: FormTypeInputPropsWithSchema<string, StringSchema, { size?: SizeType }>) => {
+  size,
+}: FormTypeInputMonthProps) => {
   const handleChange = useHandle((value: Dayjs | undefined) => {
     onChange(value?.format(DATA_FORMAT));
   });
@@ -50,7 +60,7 @@ const FormTypeInputMonth = ({
       disabledDate={disabledDate}
       defaultValue={initialValue}
       onChange={handleChange}
-      size={context?.size}
+      size={size || context?.size}
     />
   );
 };

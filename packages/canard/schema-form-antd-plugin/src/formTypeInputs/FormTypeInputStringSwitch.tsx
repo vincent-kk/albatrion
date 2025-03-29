@@ -18,6 +18,15 @@ interface StringSwitchSchema extends StringSchema {
   };
 }
 
+interface FormTypeInputStringSwitchProps
+  extends FormTypeInputPropsWithSchema<
+    string,
+    StringSwitchSchema,
+    { switchSize?: SwitchSize; switchLabels?: { [label: string]: ReactNode } }
+  > {
+  size?: SwitchSize;
+}
+
 const FormTypeInputStringSwitch = ({
   path,
   jsonSchema,
@@ -25,14 +34,8 @@ const FormTypeInputStringSwitch = ({
   value,
   onChange,
   context,
-}: FormTypeInputPropsWithSchema<
-  string,
-  StringSwitchSchema,
-  {
-    switchSize?: SwitchSize;
-    switchLabels?: { [label: string]: ReactNode };
-  }
->) => {
+  size,
+}: FormTypeInputStringSwitchProps) => {
   const [checked, unchecked] = useMemo(() => {
     const [checked, unchecked] = jsonSchema.enum || [];
     return [checked || 'on', unchecked || 'off'];
@@ -55,7 +58,7 @@ const FormTypeInputStringSwitch = ({
       checkedChildren={checkedLabel}
       unCheckedChildren={uncheckedLabel}
       onChange={handleChange}
-      size={context.switchSize}
+      size={size || context?.switchSize}
     />
   );
 };
