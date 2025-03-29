@@ -1,6 +1,6 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
+import type { Config } from '@docusaurus/types';
+import { themes as prismThemes } from 'prism-react-renderer';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
@@ -75,14 +75,23 @@ const config: Config = {
       },
       items: [
         {
-          type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: '@canard',
+          to: '/docs/canard',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/facebook/docusaurus',
+          position: 'left',
+          label: '@lerx',
+          to: '/docs/lerx',
+        },
+        {
+          position: 'left',
+          label: '@winglet',
+          to: '/docs/winglet',
+        },
+        { to: '/blog', label: 'Blog', position: 'left' },
+        {
+          href: 'https://github.com/vincent-kk/albatrion',
           label: 'GitHub',
           position: 'right',
         },
@@ -107,14 +116,6 @@ const config: Config = {
               label: 'Stack Overflow',
               href: 'https://stackoverflow.com/questions/tagged/docusaurus',
             },
-            {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'X',
-              href: 'https://x.com/docusaurus',
-            },
           ],
         },
         {
@@ -131,7 +132,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © 2024 Albatrion.`,
     },
     prism: {
       theme: prismThemes.github,
