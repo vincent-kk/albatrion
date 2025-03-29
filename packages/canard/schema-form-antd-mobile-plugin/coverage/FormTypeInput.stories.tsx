@@ -52,7 +52,7 @@ export const Boolean = Template.bind({});
 Boolean.args = {
   jsonSchema: {
     type: 'boolean',
-    formType: FormTypeInputBooleanDefinition.Component,
+    FormType: FormTypeInputBooleanDefinition.Component,
   },
 };
 
@@ -60,7 +60,7 @@ export const BooleanSwitch = Template.bind({});
 BooleanSwitch.args = {
   jsonSchema: {
     type: 'boolean',
-    formType: FormTypeInputBooleanSwitchDefinition.Component,
+    FormType: FormTypeInputBooleanSwitchDefinition.Component,
   },
 };
 
@@ -68,7 +68,7 @@ export const String = Template.bind({});
 String.args = {
   jsonSchema: {
     type: 'string',
-    formType: FormTypeInputStringDefinition.Component,
+    FormType: FormTypeInputStringDefinition.Component,
   },
 };
 
@@ -77,7 +77,7 @@ Password.args = {
   jsonSchema: {
     type: 'string',
     format: 'password',
-    formType: FormTypeInputStringDefinition.Component,
+    FormType: FormTypeInputStringDefinition.Component,
   },
 };
 
@@ -96,7 +96,7 @@ StringCheckbox.args = {
         },
       },
     },
-    formType: FormTypeInputStringCheckboxDefinition.Component,
+    FormType: FormTypeInputStringCheckboxDefinition.Component,
   },
 };
 
@@ -105,7 +105,7 @@ StringRadio.args = {
   jsonSchema: {
     type: 'string',
     enum: ['a', 'b', 'c'],
-    formType: FormTypeInputRadioGroupDefinition.Component,
+    FormType: FormTypeInputRadioGroupDefinition.Component,
     options: {
       alias: {
         a: 'alias a',
@@ -121,7 +121,7 @@ StringSwitch.args = {
   jsonSchema: {
     type: 'string',
     enum: ['on', 'off'],
-    formType: FormTypeInputStringSwitchDefinition.Component,
+    FormType: FormTypeInputStringSwitchDefinition.Component,
     options: {
       alias: {
         on: 'alias on',
@@ -136,7 +136,7 @@ Number.args = {
   jsonSchema: {
     type: 'number',
     multipleOf: 0.1,
-    formType: FormTypeInputNumberDefinition.Component,
+    FormType: FormTypeInputNumberDefinition.Component,
   },
 };
 
@@ -145,7 +145,7 @@ Integer.args = {
   jsonSchema: {
     type: 'integer',
     multipleOf: 3,
-    formType: FormTypeInputNumberDefinition.Component,
+    FormType: FormTypeInputNumberDefinition.Component,
   },
 };
 
@@ -157,7 +157,7 @@ NumberSliderLazy.args = {
     default: 50,
     minimum: 20,
     maximum: 80,
-    formType: FormTypeInputSliderDefinition.Component,
+    FormType: FormTypeInputSliderDefinition.Component,
   },
 };
 
@@ -169,7 +169,7 @@ NumberSlider.args = {
     default: 50,
     minimum: 20,
     maximum: 80,
-    formType: FormTypeInputSliderDefinition.Component,
+    FormType: FormTypeInputSliderDefinition.Component,
     options: {
       lazy: false,
     },
@@ -182,11 +182,11 @@ Array.args = {
     type: 'array',
     items: {
       type: 'string',
-      formType: FormTypeInputStringDefinition.Component,
+      FormType: FormTypeInputStringDefinition.Component,
       default: 'ARRAY_ITEM',
       disabled: true,
     },
     minItems: 3,
-    formType: FormTypeInputArrayDefinition.Component,
+    FormType: FormTypeInputArrayDefinition.Component,
   },
 };

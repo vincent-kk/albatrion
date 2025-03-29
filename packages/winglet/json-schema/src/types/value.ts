@@ -15,7 +15,7 @@ export type AllowedValue =
   | NullValue
   | UndefinedValue;
 
-export type InferValueType<T extends { type: string }> = T extends {
+export type InferValueType<T extends { type?: string }> = T extends {
   type: 'string';
 }
   ? StringValue

@@ -7,7 +7,7 @@ export type VirtualNodeValue = any[];
 
 export type AllowedValue = BaseAllowedValue | VirtualNodeValue;
 
-export type InferValueType<T extends { type: string }> = T extends {
+export type InferValueType<T extends { type?: string }> = T extends {
   type: 'virtual';
 }
   ? VirtualNodeValue

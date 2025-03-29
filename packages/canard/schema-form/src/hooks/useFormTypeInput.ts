@@ -29,12 +29,12 @@ export const useFormTypeInput = (node: SchemaNode) => {
 
   const FormTypeInput = useMemo(() => {
     // NOTE: formType이 React Component인 경우, 해당 Component를 반환합니다.
-    const inlineFormType = node.jsonSchema?.formType;
-    if (inlineFormType) {
-      if (isFunctionComponent(inlineFormType))
-        return memo(withErrorBoundary(inlineFormType));
-      if (isMemoComponent(inlineFormType))
-        return withErrorBoundary(inlineFormType);
+    const InlineFormType = node.jsonSchema?.FormType;
+    if (InlineFormType) {
+      if (isFunctionComponent(InlineFormType))
+        return memo(withErrorBoundary(InlineFormType));
+      if (isMemoComponent(InlineFormType))
+        return withErrorBoundary(InlineFormType);
     }
 
     const hint = getHint(node);

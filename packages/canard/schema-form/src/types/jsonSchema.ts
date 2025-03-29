@@ -68,33 +68,33 @@ export type JsonSchemaWithVirtual<
   RenderOptions extends Dictionary = object,
 > = JsonSchema<Options, RenderOptions> | VirtualSchema<Options, RenderOptions>;
 
-type PartialJsonSchema = Partial<BaseJsonSchema>;
+type PartialSchema = Partial<BaseJsonSchema>;
 
 export type NumberSchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
-> = BaseNumberSchema<Options, RenderOptions, PartialJsonSchema> &
-  BasicSchema<NumberValue, Options, RenderOptions>;
+> = BasicSchema<NumberValue> &
+  BaseNumberSchema<Options, RenderOptions, PartialSchema>;
 
 export type StringSchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
-> = BaseStringSchema<Options, RenderOptions, PartialJsonSchema> &
-  BasicSchema<StringValue, Options, RenderOptions>;
+> = BasicSchema<StringValue> &
+  BaseStringSchema<Options, RenderOptions, PartialSchema>;
 
 export type BooleanSchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
-> = BaseBooleanSchema<Options, RenderOptions, PartialJsonSchema> &
-  BasicSchema<BooleanValue, Options, RenderOptions>;
+> = BasicSchema<BooleanValue> &
+  BaseBooleanSchema<Options, RenderOptions, PartialSchema>;
 
 export type ArraySchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
 > = {
   items: JsonSchema<Options, RenderOptions>;
-} & BaseArraySchema<Options, RenderOptions, PartialJsonSchema> &
-  BasicSchema<ArrayValue, Options, RenderOptions>;
+} & BasicSchema<ArrayValue> &
+  BaseArraySchema<Options, RenderOptions, PartialSchema>;
 
 export type ObjectSchema<
   Options extends Dictionary = object,
@@ -104,8 +104,8 @@ export type ObjectSchema<
   unevaluatedProperties?: boolean | JsonSchema<Options, RenderOptions>;
   properties?: Dictionary<JsonSchema<Options, RenderOptions>>;
   patternProperties?: Dictionary<JsonSchema<Options, RenderOptions>>;
-} & BasicSchema<ObjectValue, Options, RenderOptions> &
-  BaseObjectSchema<Options, RenderOptions, PartialJsonSchema>;
+} & BasicSchema<ObjectValue> &
+  BaseObjectSchema<Options, RenderOptions, PartialSchema>;
 
 export type VirtualSchema<
   Options extends Dictionary = object,
@@ -113,21 +113,17 @@ export type VirtualSchema<
 > = {
   type: 'virtual';
   fields?: string[];
-} & BasicSchema<VirtualNodeValue, Options, RenderOptions> &
-  BaseBasicSchema<VirtualNodeValue, Options, RenderOptions, PartialJsonSchema>;
+} & BasicSchema<VirtualNodeValue> &
+  BaseBasicSchema<VirtualNodeValue, Options, RenderOptions, PartialSchema>;
 
 export type NullSchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
-> = BaseNullSchema<Options, RenderOptions, PartialJsonSchema> &
-  BasicSchema<NullValue, Options, RenderOptions>;
+> = BasicSchema<NullValue> &
+  BaseNullSchema<Options, RenderOptions, PartialSchema>;
 
-type BasicSchema<
-  Type,
-  Options extends Dictionary,
-  RenderOptions extends Dictionary,
-> = {
-  formType?: string | ComponentType<UnknownFormTypeInputProps>;
+type BasicSchema<Type> = {
+  FormType?: ComponentType<UnknownFormTypeInputProps>;
   style?: CSSProperties;
   label?: ReactNode;
   options?: {
@@ -137,12 +133,12 @@ type BasicSchema<
     formatter?: Formatter<Type>;
     parser?: Parser<Type>;
     [alt: string]: any;
-  } & Options;
+  };
   renderOptions?: {
     visible?: boolean | string;
     readOnly?: boolean | string;
     disabled?: boolean | string;
     [alt: string]: any;
-  } & RenderOptions;
+  };
   [alt: string]: any;
 };
