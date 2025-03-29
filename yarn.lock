@@ -548,6 +548,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^8.14.0"
     "@typescript-eslint/parser": "npm:^8.14.0"
     "@winglet/common-utils": "workspace:^"
+    "@winglet/json-schema": "workspace:^"
     "@winglet/react-utils": "workspace:^"
     ajv: "npm:^8.0.0"
     dependency-cruiser: "npm:^16.7.0"
@@ -3410,7 +3411,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@winglet/json-schema@workspace:packages/winglet/json-schema":
+"@winglet/json-schema@workspace:^, @winglet/json-schema@workspace:packages/winglet/json-schema":
   version: 0.0.0-use.local
   resolution: "@winglet/json-schema@workspace:packages/winglet/json-schema"
   dependencies:

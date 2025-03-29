@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@winglet/common-utils": "workspace:^",
+    "@winglet/json-schema": "workspace:^",
     "@winglet/react-utils": "workspace:^",
     "ajv": "^8.0.0"
   },
