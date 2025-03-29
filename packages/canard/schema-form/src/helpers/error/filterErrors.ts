@@ -1,9 +1,9 @@
 import { isTruthy } from '@winglet/common-utils';
+import { JSONPath } from '@winglet/json-schema';
 
-import {
-  JSONPath,
-  type JsonSchemaError,
-  type JsonSchemaWithVirtual,
+import type {
+  JsonSchemaError,
+  JsonSchemaWithVirtual,
 } from '@/schema-form/types';
 
 /**

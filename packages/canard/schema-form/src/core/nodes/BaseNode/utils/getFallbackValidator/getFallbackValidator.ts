@@ -1,4 +1,6 @@
-import { JSONPath, type JsonSchemaWithVirtual } from '@/schema-form/types';
+import { JSONPath } from '@winglet/json-schema';
+
+import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 export const getFallbackValidator = (
   error: Error,

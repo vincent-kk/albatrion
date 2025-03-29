@@ -1,4 +1,5 @@
 import { BITMASK_NONE, EMPTY_OBJECT, isTruthy } from '@winglet/common-utils';
+import { JSONPath } from '@winglet/json-schema';
 
 import type { SetStateFn } from '@aileron/types';
 
@@ -14,12 +15,11 @@ import {
   transformErrors,
 } from '@/schema-form/helpers/error';
 import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
-import {
-  type AllowedValue,
-  JSONPath,
-  type JsonSchemaError,
-  type JsonSchemaWithVirtual,
-  type SetStateOptions,
+import type {
+  AllowedValue,
+  JsonSchemaError,
+  JsonSchemaWithVirtual,
+  SetStateOptions,
 } from '@/schema-form/types';
 
 import {

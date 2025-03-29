@@ -1,9 +1,10 @@
 import type { CSSProperties } from 'react';
 
+import { JSONPath } from '@winglet/json-schema';
+
 import { FallbackManager } from '@/schema-form/app/FallbackManager';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import { useExternalFormContext } from '@/schema-form/providers';
-import { JSONPath } from '@/schema-form/types';
 
 export interface FormErrorProps {
   path?: string;

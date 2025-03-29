@@ -1,6 +1,5 @@
 import { isTruthy } from '@winglet/common-utils';
-
-import { JSONPath } from '@/schema-form/types';
+import { JSONPath } from '@winglet/json-schema';
 
 const ARRAY_PATTERN = /\[(\d+)\]/g;
 

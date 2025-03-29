@@ -1,5 +1,6 @@
 import type { CSSProperties, ComponentType } from 'react';
 
+import { JSONPath } from '@winglet/json-schema';
 import { useMemorize, useSnapshot } from '@winglet/react-utils';
 
 import type { Dictionary } from '@aileron/types';
@@ -7,7 +8,7 @@ import type { Dictionary } from '@aileron/types';
 import { FallbackManager } from '@/schema-form/app/FallbackManager';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import { useExternalFormContext } from '@/schema-form/providers';
-import { type FormTypeInputProps, JSONPath } from '@/schema-form/types';
+import type { FormTypeInputProps } from '@/schema-form/types';
 
 export type FormInputProps = {
   path?: string;

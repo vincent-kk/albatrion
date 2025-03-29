@@ -1,6 +1,5 @@
 import { isPlainObject, isTruthy } from '@winglet/common-utils';
-
-import { JSONPath } from '@/schema-form/types';
+import { JSONPath } from '@winglet/json-schema';
 
 export const getJsonPaths = (data: any, initialPath = ''): string[] => {
   const result: string[] = [];

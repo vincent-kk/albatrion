@@ -1,14 +1,14 @@
 import type { CSSProperties, ComponentType, PropsWithChildren } from 'react';
 
+import { JSONPath } from '@winglet/json-schema';
 import { useMemorize, useSnapshot } from '@winglet/react-utils';
 
 import type { Dictionary } from '@aileron/types';
 
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
-import {
-  type FormTypeInputProps,
-  type FormTypeRendererProps,
-  JSONPath,
+import type {
+  FormTypeInputProps,
+  FormTypeRendererProps,
 } from '@/schema-form/types';
 
 export type FormGroupProps = {
