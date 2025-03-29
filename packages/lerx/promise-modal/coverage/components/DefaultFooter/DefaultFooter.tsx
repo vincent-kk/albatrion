@@ -4,8 +4,8 @@ import { Button } from 'antd';
 import cx from 'classnames';
 
 import type { FooterComponentProps } from '../../../src';
-// @ts-expect-error scss module
-import styles from './DefaultFooter.module.scss';
+// @ts-expect-error css module
+import styles from './DefaultFooter.module.css';
 
 function DefaultFooter({
   confirmLabel,

@@ -1,6 +1,5 @@
 import type { StorybookConfig } from '@storybook/react-vite';
-import { dirname, join, resolve } from 'path';
-import { mergeConfig } from 'vite';
+import { dirname, join } from 'path';
 
 /**
  * This function is used to resolve the absolute path of a package.
@@ -34,17 +33,6 @@ const config: StorybookConfig = {
         prop.parent ? !/node_modules/.test(prop.parent.fileName) : true,
       skipChildrenPropWithoutDoc: false,
     },
-  },
-  async viteFinal(config) {
-    return mergeConfig(config, {
-      resolve: {
-        alias: {
-          ...(config.resolve?.alias || {}),
-          '@/schema-form': resolve(__dirname, '../src'),
-          sass: 'sass-embedded',
-        },
-      },
-    });
   },
 };
 export default config;

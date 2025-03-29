@@ -12,8 +12,8 @@ import {
   useModalDuration,
 } from '../../../src';
 import type { UserDefinedContext } from '../type';
-// @ts-expect-error scss module
-import styles from './Foreground.module.scss';
+// @ts-expect-error css module
+import styles from './Foreground.module.css';
 
 export const Foreground = forwardRef(
   (

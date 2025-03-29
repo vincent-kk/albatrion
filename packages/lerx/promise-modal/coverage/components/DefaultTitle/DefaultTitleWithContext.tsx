@@ -2,8 +2,8 @@ import React from 'react';
 
 import type { WrapperComponentProps } from '../../../src';
 import type { UserDefinedContext } from '../type';
-// @ts-expect-error scss module
-import styles from './DefaultTitle.module.scss';
+// @ts-expect-error css module
+import styles from './DefaultTitle.module.css';
 
 function DefaultTitle({
   children,
