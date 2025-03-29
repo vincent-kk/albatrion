@@ -10,12 +10,12 @@ export class Murmur3 {
 
   constructor(key?: string, seed?: number) {
     this.reset(seed);
-    if (typeof key === 'string' && key.length > 0) {
-      this.hash(key);
-    }
+    if (key?.length) this.hash(key);
   }
 
   public hash(key: string): Murmur3 {
+    if (typeof key !== 'string')
+      throw new TypeError("Murmur3.hash: 'key' must be a string");
     let h1 = this.#h1;
     let k1 = this.#k1;
     let i = 0;
@@ -105,8 +105,10 @@ export class Murmur3 {
     return h1 >>> 0;
   }
 
-  public reset(seed?: number): Murmur3 {
-    this.#h1 = typeof seed === 'number' ? seed : 0;
+  public reset(seed: number = 0): Murmur3 {
+    if (typeof seed !== 'number')
+      throw new TypeError("Murmur3.reset: 'seed' must be a number");
+    this.#h1 = seed;
     this.#rem = this.#k1 = this.#len = 0;
     return this;
   }
