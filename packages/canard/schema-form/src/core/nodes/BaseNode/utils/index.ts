@@ -1,4 +1,4 @@
-export * from './EventQueue';
+export * from './EventCascade';
 export * from './find';
 export * from './getDataWithSchema';
 export * from './getFallbackValidator';

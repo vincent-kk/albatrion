@@ -32,7 +32,7 @@ import {
   ValidationMode,
 } from '../type';
 import {
-  EventQueue,
+  EventCascade,
   find,
   getDataWithSchema,
   getFallbackValidator,
@@ -386,7 +386,7 @@ export abstract class BaseNode<
   #listeners: Listener[] = [];
 
   /** push 된 event를 모아서 한번에 발행 */
-  #eventQueue = new EventQueue((event: NodeEvent) =>
+  #eventCascade = new EventCascade((event: NodeEvent) =>
     this.#listeners.forEach((listener) => listener(event)),
   );
 
@@ -412,7 +412,7 @@ export abstract class BaseNode<
    *    - options: 이벤트에 대한 옵션(MethodOptions 참고)
    */
   publish(event: NodeEvent) {
-    this.#eventQueue.push(event);
+    this.#eventCascade.push(event);
   }
 
   /**

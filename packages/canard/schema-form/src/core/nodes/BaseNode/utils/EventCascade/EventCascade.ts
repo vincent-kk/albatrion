@@ -9,7 +9,7 @@ type Batch<Value> = {
   events: Array<Value>;
 };
 
-export class EventQueue {
+export class EventCascade {
   #currentBatch: Batch<NodeEvent> | null = null;
   get #batch(): Batch<NodeEvent> {
     const batch = this.#currentBatch;

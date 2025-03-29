@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import { NodeEventType } from '../../../type';
-import { EventQueue } from './EventQueue';
+import { EventCascade } from './EventCascade';
 
-describe('EventQueue', () => {
-  it('should handle single event', () => {
-    const eventWindow = new EventQueue((event) => {
+describe('EventCascade', () => {
+  it('should batch events and emit merged event', () => {
+    const eventWindow = new EventCascade((event) => {
       expect(event).toEqual({
         type: NodeEventType.UpdateValue,
         payload: {
@@ -30,7 +30,7 @@ describe('EventQueue', () => {
   });
 
   it('should merge multiple events of same type', () => {
-    const eventWindow = new EventQueue((event) => {
+    const eventWindow = new EventCascade((event) => {
       expect(event).toEqual({
         type: NodeEventType.UpdateValue,
         payload: {
@@ -64,7 +64,7 @@ describe('EventQueue', () => {
   });
 
   it('should handle events with options', () => {
-    const eventWindow = new EventQueue((event) => {
+    const eventWindow = new EventCascade((event) => {
       expect(event).toEqual({
         type: NodeEventType.UpdateValue,
         payload: {
@@ -100,7 +100,7 @@ describe('EventQueue', () => {
   });
 
   it('should handle empty events', () => {
-    const eventWindow = new EventQueue((event) => {
+    const eventWindow = new EventCascade((event) => {
       expect(event).toEqual({
         type: NodeEventType.Focus,
         payload: {},
@@ -116,7 +116,7 @@ describe('EventQueue', () => {
   });
 
   it('should handle multiple event types', () => {
-    const eventWindow = new EventQueue((event) => {
+    const eventWindow = new EventCascade((event) => {
       expect(event).toEqual({
         type:
           NodeEventType.UpdateValue |
@@ -150,7 +150,7 @@ describe('EventQueue', () => {
   });
 
   it('should handle events with different payloads for same type', () => {
-    const eventWindow = new EventQueue((event) => {
+    const eventWindow = new EventCascade((event) => {
       expect(event).toEqual({
         type: NodeEventType.UpdateValue,
         payload: {
@@ -184,7 +184,7 @@ describe('EventQueue', () => {
   });
 
   it('should merge options for same event type', () => {
-    const eventWindow = new EventQueue((event) => {
+    const eventWindow = new EventCascade((event) => {
       expect(event).toEqual({
         type: NodeEventType.UpdateValue,
         payload: {
@@ -237,7 +237,7 @@ describe('EventQueue', () => {
   });
 
   it('should handle options for different event types', () => {
-    const eventWindow = new EventQueue((event) => {
+    const eventWindow = new EventCascade((event) => {
       expect(event).toEqual({
         type: NodeEventType.UpdateValue | NodeEventType.UpdatePath,
         payload: {
@@ -290,7 +290,7 @@ describe('EventQueue', () => {
   });
 
   it('should handle events with additional options', () => {
-    const eventWindow = new EventQueue((event) => {
+    const eventWindow = new EventCascade((event) => {
       expect(event).toEqual({
         type: NodeEventType.UpdateValue,
         payload: {
