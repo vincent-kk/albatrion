@@ -96,7 +96,7 @@
     "vitest": "^2.1.5"
   },
   "peerDependencies": {
-    "react": ">=16 <19",
-    "react-dom": ">=16 <19"
+    "react": ">=16 <=19",
+    "react-dom": ">=16 <=19"
   }
 }
