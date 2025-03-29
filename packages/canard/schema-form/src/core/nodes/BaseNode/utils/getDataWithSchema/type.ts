@@ -1,11 +1,10 @@
 import { isPlainObject } from '@winglet/common-utils';
+import { isArraySchema, isObjectSchema } from '@winglet/json-schema';
 
-import {
-  type ArrayValue,
-  type InferJsonSchemaType,
-  type ObjectValue,
-  isArraySchema,
-  isObjectSchema,
+import type {
+  ArrayValue,
+  InferJsonSchemaType,
+  ObjectValue,
 } from '@/schema-form/types';
 
 export interface StackItem<Value = any> {

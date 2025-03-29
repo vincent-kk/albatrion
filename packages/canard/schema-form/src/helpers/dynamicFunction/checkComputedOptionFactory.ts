@@ -1,6 +1,6 @@
-import type { Fn } from '@aileron/types';
+import { JSONPath } from '@winglet/json-schema';
 
-import { JSONPath } from '@/schema-form/types';
+import type { Fn } from '@aileron/types';
 
 const JSON_PATH_REGEX = new RegExp(
   `[\\${JSONPath.Root}\\${JSONPath.Current}]\\${JSONPath.Child}([a-zA-Z0-9]+(\\${JSONPath.Child}[a-zA-Z0-9]+)*)`,

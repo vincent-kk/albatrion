@@ -9,6 +9,7 @@
     "promiseModal": "yarn workspace @lerx/promise-modal",
     "benchmark": "yarn workspace @aileron/benchmark",
     "commonUtils": "yarn workspace @winglet/common-utils",
+    "jsonSchema": "yarn workspace @winglet/json-schema",
     "reactUtils": "yarn workspace @winglet/react-utils",
     "developmentHelper": "yarn workspace @aileron/development-helper",
     "run:all": "yarn workspaces foreach --all --topological run",

@@ -1,9 +1,7 @@
+import { JSONPath, JSONPointer } from '@winglet/json-schema';
+
 import type { ErrorObject } from '@/schema-form/helpers/ajv';
-import {
-  JSONPath,
-  JSONPointer,
-  type JsonSchemaError,
-} from '@/schema-form/types';
+import type { JsonSchemaError } from '@/schema-form/types';
 
 let keySeq = 0;
 

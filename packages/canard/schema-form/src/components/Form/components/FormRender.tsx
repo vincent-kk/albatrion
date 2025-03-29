@@ -1,12 +1,13 @@
 import type { ComponentType } from 'react';
 
+import { JSONPath } from '@winglet/json-schema';
 import { useMemorize } from '@winglet/react-utils';
 
 import {
   SchemaNodeProxy,
   type SchemaNodeProxyProps,
 } from '@/schema-form/components/SchemaNode';
-import { type FormTypeRendererProps, JSONPath } from '@/schema-form/types';
+import type { FormTypeRendererProps } from '@/schema-form/types';
 
 export type FormRenderProps = {
   children: ComponentType<FormTypeRendererProps>;

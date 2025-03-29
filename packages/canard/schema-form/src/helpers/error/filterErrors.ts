@@ -1,9 +1,9 @@
 import { isTruthy } from '@winglet/common-utils';
+import { JSONPath } from '@winglet/json-schema';
 
-import {
-  JSONPath,
-  type JsonSchemaError,
-  type JsonSchemaWithVirtual,
+import type {
+  JsonSchemaError,
+  JsonSchemaWithVirtual,
 } from '@/schema-form/types';
 
 /**
@@ -19,13 +19,11 @@ export const filterErrors = (
   const oneOfRequiredFieldMap = new Map<string, string[]>(
     jsonSchema.oneOf
       ?.map(({ required }, index) => {
-        if (Array.isArray(required)) {
-          return [
-            `${JSONPath.Filter}/oneOf/${index}/required`,
-            required,
-          ] as const;
-        }
-        return null;
+        if (!Array.isArray(required)) return null;
+        return [
+          `${JSONPath.Filter}/oneOf/${index}/required`,
+          required,
+        ] as const;
       })
       .filter(isTruthy),
   );

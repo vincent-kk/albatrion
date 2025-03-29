@@ -1,4 +1,5 @@
 import { BITMASK_NONE, EMPTY_OBJECT, isTruthy } from '@winglet/common-utils';
+import { JSONPath } from '@winglet/json-schema';
 
 import type { SetStateFn } from '@aileron/types';
 
@@ -14,12 +15,11 @@ import {
   transformErrors,
 } from '@/schema-form/helpers/error';
 import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
-import {
-  type AllowedValue,
-  JSONPath,
-  type JsonSchemaError,
-  type JsonSchemaWithVirtual,
-  type SetStateOptions,
+import type {
+  AllowedValue,
+  JsonSchemaError,
+  JsonSchemaWithVirtual,
+  SetStateOptions,
 } from '@/schema-form/types';
 
 import {
@@ -128,7 +128,7 @@ export abstract class BaseNode<
   #errorDataPaths: string[] = [];
   /** 자신의 Error와 하위 Node의 Error를 합친 에러 */
   get errors() {
-    return this.#mergedErrors.length > 0 ? this.#mergedErrors : null;
+    return this.#mergedErrors;
   }
   /**
    * 자신의 Error를 전달받아서 하위 Node에서 전달받은 Error와 합친 후 전달

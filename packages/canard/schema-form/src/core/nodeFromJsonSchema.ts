@@ -1,13 +1,13 @@
 import { isFunction } from '@winglet/common-utils';
+import { JSONPath } from '@winglet/json-schema';
 
 import type { SetStateFn } from '@aileron/types';
 
 import type { Ajv } from '@/schema-form/helpers/ajv';
-import {
-  type AllowedValue,
-  type InferValueType,
-  JSONPath,
-  type JsonSchema,
+import type {
+  AllowedValue,
+  InferValueType,
+  JsonSchema,
 } from '@/schema-form/types';
 
 import { schemaNodeFactory } from './nodes';

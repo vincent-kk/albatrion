@@ -1,0 +1,35 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist",
+    "paths": {
+      "@/json-schema": [
+        "./src"
+      ],
+      "@/json-schema/*": [
+        "./src/*"
+      ],
+      "@aileron/*": [
+        "./@aileron/*"
+      ],
+    }
+  },
+  "include": [
+    "src",
+    "src/**/*.ts",
+    "./**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "documents",
+    "build",
+    "coverage",
+    "scripts",
+    "test",
+    "tests",
+    "**.test.ts",
+    "**.spec.ts"
+  ]
+}

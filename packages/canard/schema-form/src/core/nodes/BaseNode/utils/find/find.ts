@@ -1,5 +1,6 @@
+import { JSONPath } from '@winglet/json-schema';
+
 import type { SchemaNode } from '@/schema-form/core';
-import { JSONPath } from '@/schema-form/types';
 
 import type { BaseNode } from '../../BaseNode';
 
