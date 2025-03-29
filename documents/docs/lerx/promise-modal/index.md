@@ -59,6 +59,3 @@ async function handleDelete() {
 ## 문서 목차
 
 1. [시작하기](./getting-started.md)
-2. [API](./api.md)
-3. [예제](./examples.md)
-4. [고급 사용법](./advanced-usage.md)
