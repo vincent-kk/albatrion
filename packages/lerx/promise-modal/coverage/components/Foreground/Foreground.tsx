@@ -11,8 +11,8 @@ import {
   useDestroyAfter,
   useModalDuration,
 } from '../../../src';
-// @ts-expect-error scss module
-import styles from './Foreground.module.scss';
+// @ts-expect-error css module
+import styles from './Foreground.module.css';
 
 export const Foreground = forwardRef(
   (

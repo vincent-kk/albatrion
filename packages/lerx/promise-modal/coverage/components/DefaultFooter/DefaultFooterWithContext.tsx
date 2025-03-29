@@ -5,8 +5,8 @@ import cx from 'classnames';
 
 import type { FooterComponentProps } from '../../../src';
 import type { UserDefinedContext } from '../type';
-// @ts-expect-error scss module
-import styles from './DefaultFooter.module.scss';
+// @ts-expect-error css module
+import styles from './DefaultFooter.module.css';
 
 function DefaultFooter({
   confirmLabel,
