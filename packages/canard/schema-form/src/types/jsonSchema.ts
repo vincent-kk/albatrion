@@ -1,5 +1,7 @@
 import type { CSSProperties, ComponentType, ReactNode } from 'react';
 
+import type { BasicSchema as BaseBasicSchema } from '@winglet/json-schema';
+
 import type { Dictionary } from '@aileron/types';
 
 import type { UnknownFormTypeInputProps } from './formTypeInput';
@@ -14,22 +16,6 @@ import type {
   StringValue,
   VirtualNodeValue,
 } from './value';
-
-export enum JSONPath {
-  /** Root Node */
-  Root = '$',
-  /** Current Node */
-  Current = '@',
-  /** Child Node */
-  Child = '.',
-  /** Filter Condition */
-  Filter = '#',
-}
-
-export const enum JSONPointer {
-  Root = '',
-  Child = '/',
-}
 
 export const isArraySchema = (
   schema: JsonSchemaWithVirtual,
@@ -63,20 +49,20 @@ export const isNullSchema = (
 
 /** 입력된 값을 기반으로 적절한 Schema를 추론 */
 export type InferJsonSchemaType<
-  V extends AllowedValue | unknown = any,
+  Value extends AllowedValue | unknown = any,
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
-> = V extends NumberValue
+> = Value extends NumberValue
   ? NumberSchema<Options, RenderOptions>
-  : V extends StringValue
+  : Value extends StringValue
     ? StringSchema<Options, RenderOptions>
-    : V extends BooleanValue
+    : Value extends BooleanValue
       ? BooleanSchema<Options, RenderOptions>
-      : V extends ArrayValue
+      : Value extends ArrayValue
         ? ArraySchema<Options, RenderOptions>
-        : V extends ObjectValue
+        : Value extends ObjectValue
           ? ObjectSchema<Options, RenderOptions>
-          : V extends null
+          : Value extends null
             ? NullSchema<Options, RenderOptions>
             : JsonSchemaWithVirtual<Options, RenderOptions>;
 
@@ -189,10 +175,10 @@ export interface NullSchema<
 }
 
 interface BasicSchema<
-  T,
+  Type,
   Options extends Dictionary,
   RenderOptions extends Dictionary,
-> extends CustomOptions<T, Options, RenderOptions> {
+> extends Omit<BaseBasicSchema<Type, Options, RenderOptions>, 'formType'> {
   if?: PartialJsonSchema;
   then?: PartialJsonSchema;
   else?: PartialJsonSchema;
@@ -200,37 +186,15 @@ interface BasicSchema<
   allOf?: PartialJsonSchema[];
   anyOf?: PartialJsonSchema[];
   oneOf?: PartialJsonSchema[];
-  nullable?: boolean;
-  const?: T;
-  default?: T;
-  enum?: T extends string | number | boolean
-    ? T[]
-    : T extends Array<infer E>
-      ? E
-      : T extends object
-        ? ObjectValue
-        : never;
-}
-
-interface CustomOptions<
-  T,
-  Options extends Dictionary,
-  RenderOptions extends Dictionary,
-> {
   formType?: string | ComponentType<UnknownFormTypeInputProps>;
-  label?: ReactNode;
-  format?: string;
-  visible?: boolean;
-  readOnly?: boolean;
-  disabled?: boolean;
-  placeholder?: string;
   style?: CSSProperties;
+  label?: ReactNode;
   options?: {
     watch?: string | string[];
     alias?: Dictionary<ReactNode>;
     lazy?: boolean;
-    formatter?: Formatter<T>;
-    parser?: Parser<T>;
+    formatter?: Formatter<Type>;
+    parser?: Parser<Type>;
     [alt: string]: any;
   } & Options;
   renderOptions?: {

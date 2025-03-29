@@ -1,41 +1,17 @@
-import type { JsonSchemaWithVirtual } from './jsonSchema';
+import type {
+  AllowedValue as BaseAllowedValue,
+  InferValueType as BaseInferValueType,
+} from '@winglet/json-schema';
 
-export type BooleanValue = boolean;
-export type NumberValue = number;
-export type StringValue = string;
-export type ArrayValue = any[];
-export type ObjectValue = Record<string, any>;
 export type VirtualNodeValue = any[];
-export type NullValue = null;
-export type UndefinedValue = undefined;
 
-export type AllowedValue =
-  | BooleanValue
-  | NumberValue
-  | StringValue
-  | ObjectValue
-  | ArrayValue
-  | VirtualNodeValue
-  | NullValue
-  | UndefinedValue;
+export type AllowedValue = BaseAllowedValue | VirtualNodeValue;
 
-export type InferValueType<T extends JsonSchemaWithVirtual> = T extends {
-  type: 'string';
+export type InferValueType<T extends { type: string }> = T extends {
+  type: 'virtual';
 }
-  ? StringValue
-  : T extends { type: 'number' | 'integer' }
-    ? NumberValue
-    : T extends { type: 'boolean' }
-      ? BooleanValue
-      : T extends { type: 'array' }
-        ? ArrayValue
-        : T extends { type: 'object' }
-          ? ObjectValue
-          : T extends { type: 'virtual' }
-            ? VirtualNodeValue
-            : T extends { type: 'null' }
-              ? NullValue
-              : UndefinedValue;
+  ? VirtualNodeValue
+  : BaseInferValueType<T>;
 
 export type Formatter<Value> = (
   value: Value | undefined,
@@ -46,3 +22,13 @@ export type Formatter<Value> = (
 ) => string;
 
 export type Parser<Value> = (value: string | undefined) => Value;
+
+export type {
+  BooleanValue,
+  NumberValue,
+  StringValue,
+  ArrayValue,
+  ObjectValue,
+  NullValue,
+  UndefinedValue,
+} from '@winglet/json-schema';
