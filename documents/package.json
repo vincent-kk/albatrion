@@ -15,9 +15,15 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@canard/schema-form": "workspace:^",
+    "@canard/schema-form-antd-mobile-plugin": "workspace:^",
+    "@canard/schema-form-antd-plugin": "workspace:^",
     "@docusaurus/core": "3.7.0",
     "@docusaurus/preset-classic": "3.7.0",
+    "@lerx/promise-modal": "workspace:^",
     "@mdx-js/react": "^3.0.0",
+    "@winglet/common-utils": "workspace:^",
+    "@winglet/react-utils": "workspace:^",
     "clsx": "^2.0.0",
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",

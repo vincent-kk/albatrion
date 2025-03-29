@@ -68,12 +68,18 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@albatrion/documents@workspace:documents"
   dependencies:
+    "@canard/schema-form": "workspace:^"
+    "@canard/schema-form-antd-mobile-plugin": "workspace:^"
+    "@canard/schema-form-antd-plugin": "workspace:^"
     "@docusaurus/core": "npm:3.7.0"
     "@docusaurus/module-type-aliases": "npm:3.7.0"
     "@docusaurus/preset-classic": "npm:3.7.0"
     "@docusaurus/tsconfig": "npm:^3.7.0"
     "@docusaurus/types": "npm:3.7.0"
+    "@lerx/promise-modal": "workspace:^"
     "@mdx-js/react": "npm:^3.0.0"
+    "@winglet/common-utils": "workspace:^"
+    "@winglet/react-utils": "workspace:^"
     clsx: "npm:^2.0.0"
     prism-react-renderer: "npm:^2.3.0"
     react: "npm:^19.0.0"
@@ -1820,7 +1826,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@canard/schema-form-antd-mobile-plugin@workspace:packages/canard/schema-form-antd-mobile-plugin":
+"@canard/schema-form-antd-mobile-plugin@workspace:^, @canard/schema-form-antd-mobile-plugin@workspace:packages/canard/schema-form-antd-mobile-plugin":
   version: 0.0.0-use.local
   resolution: "@canard/schema-form-antd-mobile-plugin@workspace:packages/canard/schema-form-antd-mobile-plugin"
   dependencies:
@@ -1872,7 +1878,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@canard/schema-form-antd-plugin@workspace:packages/canard/schema-form-antd-plugin":
+"@canard/schema-form-antd-plugin@workspace:^, @canard/schema-form-antd-plugin@workspace:packages/canard/schema-form-antd-plugin":
   version: 0.0.0-use.local
   resolution: "@canard/schema-form-antd-plugin@workspace:packages/canard/schema-form-antd-plugin"
   dependencies:
@@ -4157,7 +4163,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lerx/promise-modal@workspace:packages/lerx/promise-modal":
+"@lerx/promise-modal@workspace:^, @lerx/promise-modal@workspace:packages/lerx/promise-modal":
   version: 0.0.0-use.local
   resolution: "@lerx/promise-modal@workspace:packages/lerx/promise-modal"
   dependencies:
