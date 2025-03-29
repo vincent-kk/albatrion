@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# API 참조
+# FormProps 참조
 
 ## Form 컴포넌트
 
