@@ -8,11 +8,11 @@ import type {
   ManagedEntity,
 } from '@/promise-modal/types';
 
-import { BaseNode } from './AbstractBaseNode';
+import { AbstractNode } from './AbstractNode';
 
 type AlertNodeProps<B> = AlertModal<B> & ManagedEntity;
 
-export class AlertNode<B> extends BaseNode<null, B> {
+export class AlertNode<B> extends AbstractNode<null, B> {
   readonly type: 'alert';
   readonly subtype?: 'info' | 'success' | 'warning' | 'error';
   readonly content?: ReactNode | ComponentType<AlertContentProps>;

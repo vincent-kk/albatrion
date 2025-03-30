@@ -10,9 +10,9 @@ import type {
   ModalBackground,
 } from '@/promise-modal/types';
 
-type BaseNodeProps<T, B> = BaseModal<T, B> & ManagedEntity;
+type AbstractNodeProps<T, B> = BaseModal<T, B> & ManagedEntity;
 
-export abstract class BaseNode<T, B> {
+export abstract class AbstractNode<T, B> {
   readonly id: number;
   readonly initiator: string;
 
@@ -51,7 +51,7 @@ export abstract class BaseNode<T, B> {
     resolve,
     ForegroundComponent,
     BackgroundComponent,
-  }: BaseNodeProps<T, B>) {
+  }: AbstractNodeProps<T, B>) {
     this.id = id;
     this.initiator = initiator;
     this.title = title;

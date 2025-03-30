@@ -9,11 +9,11 @@ import type {
   PromptModal,
 } from '@/promise-modal/types';
 
-import { BaseNode } from './AbstractBaseNode';
+import { AbstractNode } from './AbstractNode';
 
 type PromptNodeProps<T, B> = PromptModal<T, B> & ManagedEntity;
 
-export class PromptNode<T, B> extends BaseNode<T, B> {
+export class PromptNode<T, B> extends AbstractNode<T, B> {
   readonly type: 'prompt';
   readonly content?: ReactNode | ComponentType<PromptContentProps>;
   readonly defaultValue: T | undefined;
