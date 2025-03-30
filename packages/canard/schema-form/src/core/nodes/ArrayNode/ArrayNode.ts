@@ -8,7 +8,7 @@ import type {
 } from '@/schema-form/types';
 
 import { parseArray } from '../../parsers';
-import { BaseNode } from '../BaseNode';
+import { AbstractNode } from '../AbstractNode';
 import {
   type BranchNodeConstructorProps,
   NodeEventType,
@@ -19,7 +19,7 @@ import { OperationType } from './type';
 
 type IndexId = `[${number}]`;
 
-export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
+export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   #locked: boolean = false;
   #operation: OperationType = OperationType.Idle;
   #hasChanged: boolean = true;

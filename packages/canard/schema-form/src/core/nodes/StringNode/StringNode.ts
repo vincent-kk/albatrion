@@ -1,10 +1,10 @@
 import type { StringSchema, StringValue } from '@/schema-form/types';
 
 import { parseString } from '../../parsers';
-import { BaseNode } from '../BaseNode';
+import { AbstractNode } from '../AbstractNode';
 import { NodeEventType, type SchemaNodeConstructorProps } from '../type';
 
-export class StringNode extends BaseNode<StringSchema, StringValue> {
+export class StringNode extends AbstractNode<StringSchema, StringValue> {
   #value: StringValue | undefined = undefined;
   get value() {
     return this.#value;

@@ -1,7 +1,7 @@
-import type { BaseNode } from '@canard/schema-form/src/core/nodes/BaseNode';
+import type { AbstractNode } from '@canard/schema-form/src/core/nodes/AbstractNode';
 import { JSONPath } from '@canard/schema-form/src/types';
 
-export function find(target: any, path: string): BaseNode | any {
+export function find(target: any, path: string): AbstractNode | any {
   const [currPath, ...rest] = path
     .replace(/^\.([^.])/, '$1')
     // to access array items

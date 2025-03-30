@@ -2,16 +2,16 @@ import { JSONPath } from '@winglet/json-schema';
 
 import type { SchemaNode } from '@/schema-form/core';
 
-import type { BaseNode } from '../../BaseNode';
+import type { AbstractNode } from '../../AbstractNode';
 
 /**
- * BaseNode 트리에서 주어진 경로에 해당하는 노드를 찾습니다.
+ * AbstractNode 트리에서 주어진 경로에 해당하는 노드를 찾습니다.
  * @param target - 검색을 시작할 루트 노드
  * @param segments - 찾고자 하는 노드의 경로 세그먼트 배열 (예: ["root", "child", "0", "grandchild"])
  * @returns 찾은 노드 또는 null
  */
 export const find = (
-  target: BaseNode | null,
+  target: AbstractNode | null,
   segments: string[],
 ): SchemaNode | null => {
   if (!target) return null;

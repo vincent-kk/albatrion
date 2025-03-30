@@ -1,14 +1,14 @@
 import type { VirtualNodeValue, VirtualSchema } from '@/schema-form/types';
 
 import { parseArray } from '../../parsers';
-import { BaseNode } from '../BaseNode';
+import { AbstractNode } from '../AbstractNode';
 import {
   NodeEventType,
   type SchemaNode,
   type VirtualNodeConstructorProps,
 } from '../type';
 
-export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
+export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
   #value: VirtualNodeValue | undefined = undefined;
   get value() {
     return this.#value;

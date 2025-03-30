@@ -1,5 +1,5 @@
+import { AbstractNode } from './AbstractNode';
 import type { ArrayNode } from './ArrayNode';
-import { BaseNode } from './BaseNode';
 import type { BooleanNode } from './BooleanNode';
 import type { NullNode } from './NullNode';
 import type { NumberNode } from './NumberNode';
@@ -9,7 +9,7 @@ import type { VirtualNode } from './VirtualNode';
 import type { SchemaNode } from './type';
 
 export const isSchemaNode = (input: any): input is SchemaNode =>
-  input instanceof BaseNode;
+  input instanceof AbstractNode;
 
 export const isBooleanNode = (input: any): input is BooleanNode =>
   isSchemaNode(input) && input.type === 'boolean';

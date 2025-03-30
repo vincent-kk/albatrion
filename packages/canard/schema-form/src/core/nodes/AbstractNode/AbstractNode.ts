@@ -41,7 +41,7 @@ import {
   getPathSegments,
 } from './utils';
 
-export abstract class BaseNode<
+export abstract class AbstractNode<
   Schema extends JsonSchemaWithVirtual = JsonSchemaWithVirtual,
   Value extends AllowedValue = any,
 > {
@@ -71,7 +71,7 @@ export abstract class BaseNode<
    * @param name 설정할 이름
    * @param actor 이름을 설정하는 Node
    */
-  setName(name: string, actor: SchemaNode | BaseNode) {
+  setName(name: string, actor: SchemaNode | AbstractNode) {
     if (actor === this.parentNode || actor === this) {
       this.#name = name;
       this.updatePath();
@@ -344,7 +344,7 @@ export abstract class BaseNode<
       defaultValue ?? (getFallbackValue(jsonSchema) as Value);
     this.parentNode = parentNode || null;
 
-    // NOTE: BaseNode 자체를 사용하는 경우는 없으므로, this는 SchemaNode
+    // NOTE: AbstractNode 자체를 사용하는 경우는 없으므로, this는 SchemaNode
     this.rootNode = (this.parentNode?.rootNode || this) as SchemaNode;
     this.isRoot = !this.parentNode;
     this.isArrayItem = this.parentNode?.jsonSchema?.type === 'array';

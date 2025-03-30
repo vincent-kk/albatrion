@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { getPathSegments } from './getPathSegments';
 
 // TODO: 테스트 코드 작성
-// BaseNode 수정이 완료된 후 테스트 가능
+// AbstractNode 수정이 완료된 후 테스트 가능
 
 describe('getPathSegments', () => {
   it('should split path into segments correctly', () => {

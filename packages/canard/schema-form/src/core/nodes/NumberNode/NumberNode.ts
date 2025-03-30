@@ -1,10 +1,10 @@
 import type { NumberSchema, NumberValue } from '@/schema-form/types';
 
 import { parseNumber } from '../../parsers';
-import { BaseNode } from '../BaseNode';
+import { AbstractNode } from '../AbstractNode';
 import { NodeEventType, type SchemaNodeConstructorProps } from '../type';
 
-export class NumberNode extends BaseNode<NumberSchema, NumberValue> {
+export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   #value: NumberValue | undefined = undefined;
   get value() {
     return this.#value;

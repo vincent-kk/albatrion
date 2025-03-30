@@ -1,9 +1,9 @@
 import type { NullSchema, NullValue } from '@/schema-form/types';
 
-import { BaseNode } from '../BaseNode';
+import { AbstractNode } from '../AbstractNode';
 import { NodeEventType, type SchemaNodeConstructorProps } from '../type';
 
-export class NullNode extends BaseNode<NullSchema, NullValue> {
+export class NullNode extends AbstractNode<NullSchema, NullValue> {
   #value: NullValue | undefined;
   get value() {
     return this.#value;

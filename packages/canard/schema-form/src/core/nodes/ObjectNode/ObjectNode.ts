@@ -7,7 +7,7 @@ import type {
   SetStateOptions,
 } from '@/schema-form/types';
 
-import { BaseNode } from '../BaseNode';
+import { AbstractNode } from '../AbstractNode';
 import {
   type BranchNodeConstructorProps,
   NodeEventType,
@@ -21,7 +21,7 @@ import {
   mergeShowConditions,
 } from './utils';
 
-export class ObjectNode extends BaseNode<ObjectSchema, ObjectValue> {
+export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   readonly #propertyKeys: string[] = [];
 
   #replace: boolean = false;

@@ -1,10 +1,10 @@
 import type { BooleanSchema, BooleanValue } from '@/schema-form/types';
 
 import { parseBoolean } from '../../parsers';
-import { BaseNode } from '../BaseNode';
+import { AbstractNode } from '../AbstractNode';
 import { NodeEventType, type SchemaNodeConstructorProps } from '../type';
 
-export class BooleanNode extends BaseNode<BooleanSchema, BooleanValue> {
+export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   #value: BooleanValue | undefined = undefined;
   get value() {
     return this.#value;

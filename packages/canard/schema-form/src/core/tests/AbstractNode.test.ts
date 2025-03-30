@@ -14,7 +14,7 @@ const wait = (delay = 0) => {
   });
 };
 
-describe('BaseNode', () => {
+describe('AbstractNode', () => {
   it('node.findNode', () => {
     const node = nodeFromJsonSchema({
       jsonSchema: {
