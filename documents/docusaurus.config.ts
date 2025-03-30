@@ -89,6 +89,11 @@ const config: Config = {
           label: '@winglet',
           to: '/docs/winglet',
         },
+        {
+          position: 'left',
+          label: 'Schema Form',
+          to: '/schema-form',
+        },
         { to: '/blog', label: 'Blog', position: 'left' },
         {
           href: 'https://github.com/vincent-kk/albatrion',
