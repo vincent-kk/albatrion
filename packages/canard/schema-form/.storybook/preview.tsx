@@ -1,7 +1,6 @@
 import React from 'react';
 
 import type { Preview } from '@storybook/react';
-import { ConfigProvider } from 'antd';
 
 import {
   LOCAL_STORAGE_THEME_KEY,
@@ -48,11 +47,6 @@ export const decorators = [
     }
     return <Story />;
   },
-  (Story) => (
-    <ConfigProvider theme={{ token: { colorError: '#ff4d4f' } }}>
-      <Story />
-    </ConfigProvider>
-  ),
 ];
 
 export default preview;
