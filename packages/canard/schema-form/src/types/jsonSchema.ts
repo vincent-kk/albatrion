@@ -31,8 +31,6 @@ export const isVirtualSchema = (schema: {
   type: string;
 }): schema is VirtualSchema => schema.type === 'virtual';
 
-// REF: https://github.com/ajv-validator/ajv/blob/master/lib/types/json-schema.ts
-
 /** 입력된 값을 기반으로 적절한 Schema를 추론 */
 export type InferJsonSchemaType<
   Value extends AllowedValue | unknown = any,
