@@ -1,4 +1,4 @@
-export * from './dataLoader';
+export * from './DataLoader';
 export * from './filter';
 export * from './function';
 export * from './generateHash';
