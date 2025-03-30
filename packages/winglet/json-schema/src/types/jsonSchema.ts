@@ -42,7 +42,7 @@ export type JsonSchema<
   | ObjectSchema<Options, RenderOptions, PartialSchema>
   | NullSchema<Options, RenderOptions, PartialSchema>;
 
-type MinimalJsonSchema = Pick<JsonSchema, 'type'>;
+type MinimalJsonSchema = { type?: JsonSchema['type']; [key: string]: any };
 
 export interface NumberSchema<
   Options extends Dictionary = object,
