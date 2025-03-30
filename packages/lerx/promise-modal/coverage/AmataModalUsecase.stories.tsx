@@ -10,6 +10,7 @@ import Subtitle from './components/DefaultSubtitle';
 import Title from './components/DefaultTitle';
 import { FallbackForegroundFrame } from './components/FallbackForegroundFrame';
 import { Foreground } from './components/Foreground';
+import { toast } from './components/Toast';
 
 export default {
   title: 'PromiseModal/AmataModalUsecase',
@@ -153,6 +154,23 @@ export const AmataModalUsecase = () => {
     });
   };
 
+  const handleToast = () => {
+    toast({
+      message: (
+        <div
+          style={{
+            color: 'white',
+            backgroundColor: 'black',
+            padding: '10px 20px',
+            borderRadius: '10px',
+          }}
+        >
+          Hello, world!
+        </div>
+      ),
+    });
+  };
+
   return (
     <div>
       <button onClick={handleAlert}>Open Alert</button>
@@ -164,6 +182,7 @@ export const AmataModalUsecase = () => {
       <button onClick={handleAltForegroundPrompt}>
         Open Prompt with Alt Foreground: {value2}
       </button>
+      <button onClick={handleToast}>show Toast</button>
     </div>
   );
 };

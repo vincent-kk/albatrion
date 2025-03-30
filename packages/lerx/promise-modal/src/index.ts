@@ -8,6 +8,7 @@ export {
 export { useSubscribeModal } from './hooks/useSubscribeModal';
 export { useDestroyAfter } from './hooks/useDestroyAfter';
 export { useActiveModalCount } from './hooks/useActiveModalCount';
+export { useModalAnimation } from './hooks/useModalAnimation';
 
 export { alert, confirm, prompt } from './core';
 

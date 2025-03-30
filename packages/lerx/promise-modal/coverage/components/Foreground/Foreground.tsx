@@ -2,13 +2,13 @@ import React, {
   type ForwardedRef,
   type PropsWithChildren,
   forwardRef,
-  useLayoutEffect,
   useRef,
 } from 'react';
 
 import {
   type ModalFrameProps,
   useDestroyAfter,
+  useModalAnimation,
   useModalDuration,
 } from '../../../src';
 // @ts-expect-error css module
@@ -22,24 +22,14 @@ export const Foreground = forwardRef(
     const modalRef = useRef<HTMLDivElement>(null);
     const { duration } = useModalDuration();
 
-    useLayoutEffect(() => {
-      let timer: NodeJS.Timeout | null = null;
-      if (modalRef?.current) {
-        const { current } = modalRef;
-        if (visible) {
-          timer = setTimeout(() => {
-            current.classList.add(styles.visible);
-          });
-        } else {
-          timer = setTimeout(() => {
-            current.classList.remove(styles.visible);
-          });
-        }
-      }
-      return () => {
-        if (timer) clearTimeout(timer);
-      };
-    }, [visible]);
+    useModalAnimation(visible, {
+      onVisible: () => {
+        modalRef.current?.classList.add(styles.visible);
+      },
+      onHidden: () => {
+        modalRef.current?.classList.remove(styles.visible);
+      },
+    });
 
     useDestroyAfter(id, duration);
 

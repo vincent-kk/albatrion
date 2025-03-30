@@ -23,7 +23,7 @@ export const NormalUsecase = () => {
   const handleAlert = () => {
     alert({
       title: 'Hello, world!',
-      content: 'This is a test alert.',
+      content: 'This modal should be remained because manualDestroy is true',
       background: {
         data: 'alert',
       },

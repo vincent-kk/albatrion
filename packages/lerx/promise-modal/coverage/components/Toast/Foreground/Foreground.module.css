@@ -1,0 +1,23 @@
+.root {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 10vh;
+  transition-duration: 200ms;
+
+  position: fixed;
+  inset: 0;
+
+  opacity: 0;
+  transform: translateY(10px);
+  transition-property: transform, opacity;
+  transition-timing-function: ease-out;
+
+  pointer-events: none;
+  background-color: transparent;
+}
+
+.root.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
