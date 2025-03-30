@@ -386,9 +386,9 @@ export abstract class BaseNode<
   #listeners: Listener[] = [];
 
   /** push 된 event를 모아서 한번에 발행 */
-  #eventCascade = new EventCascade((event: NodeEvent) =>
-    this.#listeners.forEach((listener) => listener(event)),
-  );
+  #eventCascade = new EventCascade((event: NodeEvent) => {
+    for (const listener of this.#listeners) listener(event);
+  });
 
   /**
    * Node의 이벤트 리스너 등록
@@ -487,9 +487,11 @@ export abstract class BaseNode<
     // 기존 error에는 포함되어 있으나, 신규 error 목록에 포함되지 않는 error를 가진 node는 clearError
     const errorDataPaths = Array.from(errorsByDataPath.keys());
     const errorDataPathsSet = new Set(errorDataPaths);
-    this.#errorDataPaths
-      .filter((dataPath) => !errorDataPathsSet.has(dataPath))
-      .forEach((dataPath) => this.findNode(dataPath)?.clearErrors());
+
+    for (const dataPath of this.#errorDataPaths) {
+      if (!errorDataPathsSet.has(dataPath))
+        this.findNode(dataPath)?.clearErrors();
+    }
 
     // error를 가진 dataPath 목록 업데이트
     this.#errorDataPaths = errorDataPaths;

@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils';
+
 import type { NodeFactory } from '../../type';
 import type { ObjectNode } from '../ObjectNode';
 import type { ChildNode, VirtualReference } from '../type';
@@ -15,11 +17,9 @@ export const getChildren = (
   );
 
   for (const [name, childNode] of childNodeMap.entries()) {
-    if (
-      hasVirtualReference &&
-      Array.isArray(virtualReferenceFieldsMap.get(name))
-    ) {
-      virtualReferenceFieldsMap.get(name)!.forEach((fieldName) => {
+    const virtualReferenceFields = virtualReferenceFieldsMap?.get(name);
+    if (hasVirtualReference && isArray(virtualReferenceFields)) {
+      for (const fieldName of virtualReferenceFields) {
         if (virtualReferencesMap.has(fieldName)) {
           const reference = virtualReferencesMap.get(fieldName)!;
           const refNodes = reference.fields.map(
@@ -40,7 +40,7 @@ export const getChildren = (
           });
           virtualReferencesMap.delete(fieldName);
         }
-      });
+      }
     }
     children.push(childNode);
   }

@@ -31,12 +31,11 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
 
   #emitChange(values: VirtualNodeValue | undefined) {
     if (values && values.length === this.#refNodes.length) {
-      values.forEach((value, i) => {
+      for (let i = 0; i < values.length; i++) {
+        const value = values[i];
         const node = this.#refNodes[i];
-        if (node.value !== value) {
-          node.setValue(value);
-        }
-      });
+        if (node.value !== value) node.setValue(value);
+      }
     }
   }
 
@@ -66,7 +65,8 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
 
     if (this.defaultValue !== undefined) this.#value = this.defaultValue;
 
-    this.#refNodes.forEach((node, index) => {
+    for (let index = 0; index < this.#refNodes.length; index++) {
+      const node = this.#refNodes[index];
       node.subscribe(({ type, payload }) => {
         if (type & NodeEventType.UpdateValue) {
           const onChangePayload = payload?.[NodeEventType.UpdateValue];
@@ -93,7 +93,7 @@ export class VirtualNode extends BaseNode<VirtualSchema, VirtualNodeValue> {
           }
         }
       });
-    });
+    }
 
     this.#children = this.#refNodes.map((node) => ({ node }));
     this.publish({

@@ -122,12 +122,12 @@ export const RootNodeContextProvider = <
     const transformedErrors = errors ? transformErrors(errors, true) : [];
     const currentErrorDictionary: Record<string, JsonSchemaError[]> = {};
 
-    transformedErrors.forEach((error) => {
+    for (const error of transformedErrors) {
       if (!currentErrorDictionary[error.dataPath]) {
         currentErrorDictionary[error.dataPath] = [];
       }
       currentErrorDictionary[error.dataPath].push(error);
-    });
+    }
 
     rootNode.setReceivedErrors(transformedErrors);
 

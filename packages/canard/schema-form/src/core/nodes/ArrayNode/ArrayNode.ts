@@ -230,13 +230,14 @@ export class ArrayNode extends BaseNode<ArraySchema, ArrayValue> {
   }
 
   #updateChildName() {
-    this.#ids.forEach((id, index) => {
+    for (let index = 0; index < this.#ids.length; index++) {
+      const id = this.#ids[index];
       if (this.#sourceMap.has(id)) {
         const node = this.#sourceMap.get(id)!.node;
         const name = index.toString();
         if (node.name !== name) node.setName(name, this);
       }
-    });
+    }
   }
 
   #publishChildrenChange() {

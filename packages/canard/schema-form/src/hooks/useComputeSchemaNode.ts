@@ -143,7 +143,7 @@ export const useComputeSchemaNode = (
       })
       .filter(isTruthy);
     return () => {
-      unsubscribes.forEach((unsubscribe) => unsubscribe());
+      for (const unsubscribe of unsubscribes) unsubscribe();
     };
   }, [dependencyPaths, node]);
 
