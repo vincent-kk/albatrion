@@ -31,7 +31,7 @@ export const isVirtualSchema = (schema: {
 }): schema is VirtualSchema => schema.type === 'virtual';
 
 /** 입력된 값을 기반으로 적절한 Schema를 추론 */
-export type InferJsonSchemaType<
+export type InferJsonSchema<
   Value extends AllowedValue | unknown = any,
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,

@@ -5,7 +5,7 @@ import type { Dictionary, Fn, WithKey } from '@aileron/types';
 import type { InferSchemaNode, SchemaNode } from '@/schema-form/core';
 
 import type { FormTypeRendererProps } from './formTypeRenderer';
-import type { InferJsonSchemaType, JsonSchemaWithVirtual } from './jsonSchema';
+import type { InferJsonSchema, JsonSchemaWithVirtual } from './jsonSchema';
 import type { AllowedValue } from './value';
 
 /**
@@ -21,7 +21,7 @@ export interface FormTypeInputProps<
   Value extends AllowedValue = any,
   Context extends Dictionary = Dictionary,
   WatchValues extends Array<any> = Array<any>,
-  Schema extends JsonSchemaWithVirtual = InferJsonSchemaType<Value>,
+  Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
   /** FormType Component의 jsonSchema */
@@ -65,7 +65,7 @@ export interface FormTypeInputProps<
  */
 export type FormTypeInputPropsWithSchema<
   Value extends AllowedValue = any,
-  Schema extends JsonSchemaWithVirtual = InferJsonSchemaType<Value>,
+  Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
   Context extends Dictionary = Dictionary,
 > = FormTypeInputProps<Value, Context, any[], Schema>;
 
@@ -78,7 +78,7 @@ export type FormTypeInputPropsWithSchema<
  */
 export type FormTypeInputPropsWithNode<
   Value extends AllowedValue = any,
-  Schema extends JsonSchemaWithVirtual = InferJsonSchemaType<Value>,
+  Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > = FormTypeInputProps<Value, Dictionary, any[], Schema, Node>;
 

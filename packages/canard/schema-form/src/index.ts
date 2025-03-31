@@ -49,7 +49,7 @@ export type {
   ArraySchema,
   ObjectSchema,
   NullSchema,
-  InferJsonSchemaType,
+  InferJsonSchema,
 } from './types';
 
 export {
