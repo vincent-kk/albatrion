@@ -4,7 +4,6 @@ import type {
   ArraySchema as BaseArraySchema,
   BasicSchema as BaseBasicSchema,
   BooleanSchema as BaseBooleanSchema,
-  JsonSchema as BaseJsonSchema,
   NullSchema as BaseNullSchema,
   NumberSchema as BaseNumberSchema,
   ObjectSchema as BaseObjectSchema,
@@ -66,44 +65,35 @@ export type JsonSchemaWithVirtual<
   RenderOptions extends Dictionary = object,
 > = JsonSchema<Options, RenderOptions> | VirtualSchema<Options, RenderOptions>;
 
-type PartialSchema = Partial<BaseJsonSchema>;
-
 export type NumberSchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
 > = BasicSchema<NumberValue> &
-  BaseNumberSchema<Options, RenderOptions, PartialSchema>;
+  BaseNumberSchema<Options, RenderOptions, JsonSchema<Options, RenderOptions>>;
 
 export type StringSchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
 > = BasicSchema<StringValue> &
-  BaseStringSchema<Options, RenderOptions, PartialSchema>;
+  BaseStringSchema<Options, RenderOptions, JsonSchema<Options, RenderOptions>>;
 
 export type BooleanSchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
 > = BasicSchema<BooleanValue> &
-  BaseBooleanSchema<Options, RenderOptions, PartialSchema>;
+  BaseBooleanSchema<Options, RenderOptions, JsonSchema<Options, RenderOptions>>;
 
 export type ArraySchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
-> = {
-  items: JsonSchema<Options, RenderOptions>;
-} & BasicSchema<ArrayValue> &
-  BaseArraySchema<Options, RenderOptions, PartialSchema>;
+> = BasicSchema<ArrayValue> &
+  BaseArraySchema<Options, RenderOptions, JsonSchema<Options, RenderOptions>>;
 
 export type ObjectSchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
-> = {
-  additionalProperties?: boolean | JsonSchema<Options, RenderOptions>;
-  unevaluatedProperties?: boolean | JsonSchema<Options, RenderOptions>;
-  properties?: Dictionary<JsonSchema<Options, RenderOptions>>;
-  patternProperties?: Dictionary<JsonSchema<Options, RenderOptions>>;
-} & BasicSchema<ObjectValue> &
-  BaseObjectSchema<Options, RenderOptions, PartialSchema>;
+> = BasicSchema<ObjectValue> &
+  BaseObjectSchema<Options, RenderOptions, JsonSchema<Options, RenderOptions>>;
 
 export type VirtualSchema<
   Options extends Dictionary = object,
@@ -112,13 +102,18 @@ export type VirtualSchema<
   type: 'virtual';
   fields?: string[];
 } & BasicSchema<VirtualNodeValue> &
-  BaseBasicSchema<VirtualNodeValue, Options, RenderOptions, PartialSchema>;
+  BaseBasicSchema<
+    VirtualNodeValue,
+    Options,
+    RenderOptions,
+    JsonSchema<Options, RenderOptions>
+  >;
 
 export type NullSchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
 > = BasicSchema<NullValue> &
-  BaseNullSchema<Options, RenderOptions, PartialSchema>;
+  BaseNullSchema<Options, RenderOptions, JsonSchema<Options, RenderOptions>>;
 
 type BasicSchema<Type> = {
   FormType?: ComponentType<UnknownFormTypeInputProps>;

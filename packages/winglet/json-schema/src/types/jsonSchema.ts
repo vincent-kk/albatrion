@@ -11,47 +11,44 @@ import type {
 
 type Dictionary<Value = any> = Record<string, Value>;
 
-type MinimalSchema = { type?: JsonSchema['type']; [key: string]: any };
-
 type UnknownSchema = { type?: string; [key: string]: any };
 
 /** 입력된 값을 기반으로 적절한 Schema를 추론 */
-export type InferJsonSchemaType<
+export type InferJsonSchema<
   Value extends AllowedValue | unknown = any,
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
-  PartialSchema extends UnknownSchema = MinimalSchema,
+  Schema extends UnknownSchema = JsonSchema,
 > = Value extends NumberValue
-  ? NumberSchema<Options, RenderOptions, PartialSchema>
+  ? NumberSchema<Options, RenderOptions, Schema>
   : Value extends StringValue
-    ? StringSchema<Options, RenderOptions, PartialSchema>
+    ? StringSchema<Options, RenderOptions, Schema>
     : Value extends BooleanValue
-      ? BooleanSchema<Options, RenderOptions, PartialSchema>
+      ? BooleanSchema<Options, RenderOptions, Schema>
       : Value extends ArrayValue
-        ? ArraySchema<Options, RenderOptions, PartialSchema>
+        ? ArraySchema<Options, RenderOptions, Schema>
         : Value extends ObjectValue
-          ? ObjectSchema<Options, RenderOptions, PartialSchema>
+          ? ObjectSchema<Options, RenderOptions, Schema>
           : Value extends null
-            ? NullSchema<Options, RenderOptions, PartialSchema>
-            : JsonSchema<Options, RenderOptions, PartialSchema>;
+            ? NullSchema<Options, RenderOptions, Schema>
+            : JsonSchema<Options, RenderOptions>;
 
 export type JsonSchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
-  PartialSchema extends UnknownSchema = MinimalSchema,
 > =
-  | NumberSchema<Options, RenderOptions, PartialSchema>
-  | StringSchema<Options, RenderOptions, PartialSchema>
-  | BooleanSchema<Options, RenderOptions, PartialSchema>
-  | ArraySchema<Options, RenderOptions, PartialSchema>
-  | ObjectSchema<Options, RenderOptions, PartialSchema>
-  | NullSchema<Options, RenderOptions, PartialSchema>;
+  | NumberSchema<Options, RenderOptions, JsonSchema>
+  | StringSchema<Options, RenderOptions, JsonSchema>
+  | BooleanSchema<Options, RenderOptions, JsonSchema>
+  | ArraySchema<Options, RenderOptions, JsonSchema>
+  | ObjectSchema<Options, RenderOptions, JsonSchema>
+  | NullSchema<Options, RenderOptions, JsonSchema>;
 
 export interface NumberSchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
-  PartialSchema extends UnknownSchema = MinimalSchema,
-> extends BasicSchema<NumberValue, Options, RenderOptions, PartialSchema> {
+  Schema extends UnknownSchema = JsonSchema,
+> extends BasicSchema<NumberValue, Options, RenderOptions, Schema> {
   type: 'number' | 'integer';
   minimum?: number;
   maximum?: number;
@@ -64,8 +61,8 @@ export interface NumberSchema<
 export interface StringSchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
-  PartialSchema extends UnknownSchema = MinimalSchema,
-> extends BasicSchema<StringValue, Options, RenderOptions, PartialSchema> {
+  Schema extends UnknownSchema = JsonSchema,
+> extends BasicSchema<StringValue, Options, RenderOptions, Schema> {
   type: 'string';
   minLength?: number;
   maxLength?: number;
@@ -76,19 +73,19 @@ export interface StringSchema<
 export interface BooleanSchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
-  PartialSchema extends UnknownSchema = MinimalSchema,
-> extends BasicSchema<BooleanValue, Options, RenderOptions, PartialSchema> {
+  Schema extends UnknownSchema = JsonSchema,
+> extends BasicSchema<BooleanValue, Options, RenderOptions, Schema> {
   type: 'boolean';
 }
 
 export interface ArraySchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
-  PartialSchema extends UnknownSchema = MinimalSchema,
-> extends BasicSchema<ArrayValue, Options, RenderOptions, PartialSchema> {
+  Schema extends UnknownSchema = JsonSchema,
+> extends BasicSchema<ArrayValue, Options, RenderOptions, Schema> {
   type: 'array';
-  items: JsonSchema<Options, RenderOptions, PartialSchema>;
-  contains?: PartialSchema;
+  items: Schema;
+  contains?: Partial<Schema>;
   minItems?: number;
   maxItems?: number;
   minContains?: number;
@@ -100,19 +97,17 @@ export interface ArraySchema<
 export interface ObjectSchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
-  PartialSchema extends UnknownSchema = MinimalSchema,
-> extends BasicSchema<ObjectValue, Options, RenderOptions, PartialSchema> {
+  Schema extends UnknownSchema = JsonSchema,
+> extends BasicSchema<ObjectValue, Options, RenderOptions, Schema> {
   type: 'object';
-  additionalProperties?: boolean | JsonSchema<Options, RenderOptions>;
-  unevaluatedProperties?: boolean | JsonSchema<Options, RenderOptions>;
-  properties?: Dictionary<JsonSchema<Options, RenderOptions>>;
-  patternProperties?: Dictionary<JsonSchema<Options, RenderOptions>>;
-  propertyNames?: Omit<StringSchema<Options, RenderOptions>, 'type'> & {
-    type?: 'string';
-  };
-  dependencies?: Dictionary<PartialSchema | string[]>;
+  additionalProperties?: boolean | Schema;
+  unevaluatedProperties?: boolean | Schema;
+  properties?: Dictionary<Schema>;
+  patternProperties?: Dictionary<Schema>;
+  propertyNames?: Schema['type'] extends 'string' ? Partial<Schema> : never;
+  dependencies?: Dictionary<Partial<Schema> | string[]>;
   dependentRequired?: Dictionary<string[]>;
-  dependentSchemas?: Dictionary<PartialSchema>;
+  dependentSchemas?: Dictionary<Partial<Schema>>;
   minProperties?: number;
   maxProperties?: number;
   required?: string[];
@@ -125,8 +120,8 @@ export interface ObjectSchema<
 export interface NullSchema<
   Options extends Dictionary = object,
   RenderOptions extends Dictionary = object,
-  PartialSchema extends UnknownSchema = MinimalSchema,
-> extends BasicSchema<null, Options, RenderOptions, PartialSchema> {
+  Schema extends UnknownSchema = JsonSchema,
+> extends BasicSchema<null, Options, RenderOptions, Schema> {
   type: 'null';
   nullable: true;
 }
@@ -135,15 +130,15 @@ export interface BasicSchema<
   Type,
   Options extends Dictionary,
   RenderOptions extends Dictionary,
-  PartialSchema extends UnknownSchema = MinimalSchema,
+  Schema extends UnknownSchema = JsonSchema,
 > extends CustomOptions<Options, RenderOptions> {
-  if?: PartialSchema;
-  then?: PartialSchema;
-  else?: PartialSchema;
-  not?: PartialSchema;
-  allOf?: PartialSchema[];
-  anyOf?: PartialSchema[];
-  oneOf?: PartialSchema[];
+  if?: Partial<Schema>;
+  then?: Partial<Schema>;
+  else?: Partial<Schema>;
+  not?: Partial<Schema>;
+  allOf?: Partial<Schema>[];
+  anyOf?: Partial<Schema>[];
+  oneOf?: Partial<Schema>[];
   nullable?: boolean;
   const?: Type;
   default?: Type;
