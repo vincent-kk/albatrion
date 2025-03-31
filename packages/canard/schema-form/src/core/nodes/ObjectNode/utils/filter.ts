@@ -10,6 +10,5 @@ export const isObjectOneOfSchema = (
   isPlainObject(schema.properties) && Array.isArray(schema.required);
 
 export const isValidEnum = (
-  entire: [key: string, value: JsonSchemaWithVirtual],
-): entire is [key: string, value: RequiredBy<JsonSchemaWithVirtual, 'enum'>] =>
-  !!entire[1].enum?.length;
+  value: JsonSchemaWithVirtual,
+): value is RequiredBy<JsonSchemaWithVirtual, 'enum'> => !!value.enum?.length;
