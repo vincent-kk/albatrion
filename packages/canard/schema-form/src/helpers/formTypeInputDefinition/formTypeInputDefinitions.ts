@@ -1,9 +1,4 @@
-import {
-  EMPTY_ARRAY,
-  isFunction,
-  isPlainObject,
-  isTruthy,
-} from '@winglet/common-utils';
+import { isFunction, isPlainObject, isTruthy } from '@winglet/common-utils';
 import { isReactComponent, withErrorBoundary } from '@winglet/react-utils';
 
 import type {
@@ -22,7 +17,7 @@ import type { NormalizedFormTypeInputDefinition } from './type';
 export const normalizeFormTypeInputDefinitions = (
   formTypeInputDefinitions?: FormTypeInputDefinition[],
 ): NormalizedFormTypeInputDefinition[] => {
-  if (!formTypeInputDefinitions) return EMPTY_ARRAY;
+  if (!formTypeInputDefinitions) return [];
   return formTypeInputDefinitions
     .map(({ Component, test }) => {
       if (isReactComponent(Component)) {

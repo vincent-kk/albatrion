@@ -1,5 +1,3 @@
-import { EMPTY_ARRAY, EMPTY_OBJECT } from '@winglet/common-utils';
-
 /**
  * @description JSON Schema의 default 속성 또는 타입에 따른 기본값 반환
  * @param jsonSchema - JSON Schema
@@ -11,8 +9,8 @@ export const getFallbackValue = <
   jsonSchema: Schema,
 ) => {
   if (jsonSchema.default !== undefined) return jsonSchema.default;
-  else if (jsonSchema.type === 'array') return EMPTY_ARRAY;
-  else if (jsonSchema.type === 'virtual') return EMPTY_ARRAY;
-  else if (jsonSchema.type === 'object') return EMPTY_OBJECT;
+  else if (jsonSchema.type === 'array') return [];
+  else if (jsonSchema.type === 'virtual') return [];
+  else if (jsonSchema.type === 'object') return {};
   else return undefined;
 };

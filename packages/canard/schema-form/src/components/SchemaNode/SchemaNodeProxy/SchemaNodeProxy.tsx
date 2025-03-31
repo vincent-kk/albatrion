@@ -1,6 +1,6 @@
 import { Fragment, memo, useMemo } from 'react';
 
-import { EMPTY_OBJECT, isTruthy, nullFunction } from '@winglet/common-utils';
+import { isTruthy, nullFunction } from '@winglet/common-utils';
 import { useReference, withErrorBoundary } from '@winglet/react-utils';
 
 import { NodeState } from '@/schema-form/core';
@@ -64,7 +64,7 @@ export const SchemaNodeProxy = memo(
       [NodeState.Dirty]: dirty,
       [NodeState.Touched]: touched,
       [NodeState.ShowError]: showError,
-    } = node?.state || EMPTY_OBJECT;
+    } = node?.state || {};
     const errors = node?.errors;
 
     const formatError = useMemo(() => {

@@ -1,7 +1,5 @@
 import { createContext } from 'react';
 
-import { undefinedFunction } from '@winglet/common-utils';
-
 import type { Fn } from '@aileron/types';
 
 import type { ModalNode } from '@/promise-modal/core';
@@ -14,19 +12,6 @@ export interface ModalDataContextProps extends ModalHandlersWithId {
   setUpdater: Fn<[updater: Fn]>;
 }
 
-export const ModalDataContext = createContext<ModalDataContextProps>({
-  modalIds: [],
-  getModalNode: undefinedFunction,
-  onChange: undefinedFunction,
-  onConfirm: undefinedFunction,
-  onClose: undefinedFunction,
-  onDestroy: undefinedFunction,
-  setUpdater: undefinedFunction,
-  getModal: () => ({
-    modal: undefined,
-    onConfirm: undefinedFunction,
-    onClose: undefinedFunction,
-    onChange: undefinedFunction,
-    onDestroy: undefinedFunction,
-  }),
-});
+export const ModalDataContext = createContext<ModalDataContextProps>(
+  {} as ModalDataContextProps,
+);

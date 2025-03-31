@@ -41,4 +41,6 @@ export interface ExternalFormContextProps {
   ajv?: Ajv;
 }
 
-export const ExternalFormContext = createContext<ExternalFormContextProps>({});
+export const ExternalFormContext = createContext<ExternalFormContextProps>(
+  {} as ExternalFormContextProps,
+);

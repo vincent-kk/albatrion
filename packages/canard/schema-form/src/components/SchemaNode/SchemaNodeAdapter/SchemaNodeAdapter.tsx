@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { EMPTY_ARRAY, isTruthy } from '@winglet/common-utils';
+import { isTruthy } from '@winglet/common-utils';
 import { useMemorize, useSnapshot } from '@winglet/react-utils';
 
 import { NodeEventType, isBranchNode } from '@/schema-form/core';
@@ -65,7 +65,7 @@ export const SchemaNodeAdapter = ({
               return Component;
             })
             .filter(isTruthy)
-        : EMPTY_ARRAY,
+        : [],
     [NodeProxy, node, children],
   );
 

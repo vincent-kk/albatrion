@@ -1,4 +1,4 @@
-import { EMPTY_ARRAY, isTruthy } from '@winglet/common-utils';
+import { isTruthy } from '@winglet/common-utils';
 import { JSONPath } from '@winglet/json-schema';
 import { isReactComponent, withErrorBoundary } from '@winglet/react-utils';
 
@@ -15,7 +15,7 @@ import type { NormalizedFormTypeInputDefinition } from './type';
 export const normalizeFormTypeInputMap = (
   formTypeInputMap?: FormTypeInputMap,
 ): NormalizedFormTypeInputDefinition[] => {
-  if (!formTypeInputMap) return EMPTY_ARRAY;
+  if (!formTypeInputMap) return [];
   return Object.entries(formTypeInputMap)
     .map(([path, Component]) => {
       if (typeof path !== 'string' || !isReactComponent(Component)) return null;

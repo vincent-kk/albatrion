@@ -1,7 +1,5 @@
 import { PropsWithChildren, useMemo } from 'react';
 
-import { EMPTY_OBJECT } from '@winglet/common-utils';
-
 import type { Dictionary } from '@aileron/types';
 
 import { UserDefinedContext } from './UserDefinedContext';
@@ -15,10 +13,7 @@ export const UserDefinedContextProvider = ({
   context,
   children,
 }: PropsWithChildren<UserDefinedContextProviderProps>) => {
-  const contextValue = useMemo(
-    () => ({ context: context || EMPTY_OBJECT }),
-    [context],
-  );
+  const contextValue = useMemo(() => ({ context: context || {} }), [context]);
   return (
     <UserDefinedContext.Provider value={contextValue}>
       {children}

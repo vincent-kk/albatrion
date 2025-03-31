@@ -1,7 +1,5 @@
 import { type PropsWithChildren, useEffect, useMemo, useRef } from 'react';
 
-import { EMPTY_ARRAY } from '@winglet/common-utils';
-
 import type { Fn } from '@aileron/types';
 
 import type { FormProps } from '@/schema-form/components/Form';
@@ -106,7 +104,7 @@ export const RootNodeContextProvider = <
     if (!rootNode) return;
     const unsubscribe = rootNode.subscribe(({ type, payload }) => {
       if (type & NodeEventType.UpdateError)
-        onValidate(payload?.[NodeEventType.UpdateError] || EMPTY_ARRAY);
+        onValidate(payload?.[NodeEventType.UpdateError] || []);
     });
     onReady(rootNode);
     return () => unsubscribe();

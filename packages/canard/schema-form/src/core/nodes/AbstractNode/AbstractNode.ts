@@ -1,4 +1,4 @@
-import { BITMASK_NONE, EMPTY_OBJECT, isTruthy } from '@winglet/common-utils';
+import { BITMASK_NONE, isTruthy } from '@winglet/common-utils';
 import { JSONPath } from '@winglet/json-schema';
 
 import type { SetStateFn } from '@aileron/types';
@@ -237,7 +237,7 @@ export abstract class AbstractNode<
   }
 
   /** Node의 상태 */
-  #state: NodeStateFlags = EMPTY_OBJECT;
+  #state: NodeStateFlags = {};
   /** Node의 상태 */
   get state() {
     return this.#state;
