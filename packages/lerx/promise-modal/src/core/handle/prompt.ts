@@ -1,5 +1,6 @@
 import type { ComponentType, ReactNode } from 'react';
 
+import { ModalManager } from '@/promise-modal/app/ModalManager';
 import type {
   BackgroundComponent,
   FooterOptions,
@@ -9,8 +10,6 @@ import type {
   PromptFooterRender,
   PromptInputProps,
 } from '@/promise-modal/types';
-
-import { ModalManager } from '../../app/ModalManager';
 
 interface PromptProps<T, B = any> {
   title?: ReactNode;

@@ -1,47 +1,44 @@
-import type { MutableRefObject } from 'react';
-
 import { getRandomString } from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/types';
 
 import type { Modal } from '@/promise-modal/types';
 
-const prerenderListRef: MutableRefObject<Modal[]> = {
-  current: [],
-};
-
-const openModalRef: MutableRefObject<Fn<[Modal], void>> = {
-  current: (modal: Modal) => {
-    prerenderListRef.current.push(modal);
-  },
-};
-
-const anchorRef: MutableRefObject<HTMLElement | null> = {
-  current: null,
-};
-
-export const ModalManager = {
-  get prerender() {
-    return prerenderListRef.current;
-  },
-  clearPrerender() {
-    prerenderListRef.current = [];
-  },
-  open(modal: Modal) {
-    openModalRef.current(modal);
-  },
-  setupOpen(open: (modal: Modal) => void) {
-    openModalRef.current = open;
-  },
-  anchor(name: string, prefix = 'promise-modal'): HTMLElement {
-    if (anchorRef.current) {
-      const anchor = document.getElementById(anchorRef.current.id);
+export class ModalManager {
+  static #anchor: HTMLElement | null = null;
+  static #prerenderList: Modal[] = [];
+  static #openHandler: Fn<[Modal], void> = (modal: Modal) =>
+    ModalManager.#prerenderList.push(modal);
+  static set openHandler(handler: Fn<[Modal], void>) {
+    ModalManager.#openHandler = handler;
+  }
+  static get prerender() {
+    return ModalManager.#prerenderList;
+  }
+  static clearPrerender() {
+    ModalManager.#prerenderList = [];
+  }
+  static open(modal: Modal) {
+    ModalManager.#openHandler(modal);
+  }
+  static anchor(options?: {
+    tagName?: string;
+    prefix?: string;
+    root?: HTMLElement;
+  }): HTMLElement {
+    if (ModalManager.#anchor) {
+      const anchor = document.getElementById(ModalManager.#anchor.id);
       if (anchor) return anchor;
     }
-    const node = document.createElement(name);
+    const {
+      tagName = 'div',
+      prefix = 'promise-modal',
+      root = document.body,
+    } = options || {};
+    const node = document.createElement(tagName);
     node.setAttribute('id', `${prefix}-${getRandomString(36)}`);
-    document.body.appendChild(node);
-    anchorRef.current = node;
+    root.appendChild(node);
+    ModalManager.#anchor = node;
     return node;
-  },
-};
+  }
+}

@@ -75,7 +75,7 @@ export const ModalContextProvider = memo(
     const portalRef = useRef<HTMLElement | null>(null);
 
     useOnMount(() => {
-      portalRef.current = ModalManager.anchor('div');
+      portalRef.current = ModalManager.anchor();
       update();
       return () => {
         if (portalRef.current) {

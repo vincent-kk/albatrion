@@ -65,7 +65,7 @@ export const ModalDataContextProvider = memo(
         setModalIds((ids) => [...ids, modal.id]);
       }
 
-      ModalManager.setupOpen((data: Modal) => {
+      ModalManager.openHandler = (data: Modal) => {
         const modal = nodeFactory({
           ...data,
           id: modalIdSequence.current++,
@@ -88,7 +88,7 @@ export const ModalDataContextProvider = memo(
           });
           return [...aliveIds, modal.id];
         });
-      });
+      };
       ModalManager.clearPrerender();
     });
 
