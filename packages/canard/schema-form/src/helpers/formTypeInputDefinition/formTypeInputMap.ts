@@ -2,7 +2,7 @@ import { EMPTY_ARRAY, isTruthy } from '@winglet/common-utils';
 import { JSONPath } from '@winglet/json-schema';
 import { isReactComponent, withErrorBoundary } from '@winglet/react-utils';
 
-import { FormError } from '@/schema-form/errors';
+import { SchemaFormError } from '@/schema-form/errors';
 import type { FormTypeInputMap, FormTypeTestFn } from '@/schema-form/types';
 
 import type { NormalizedFormTypeInputDefinition } from './type';
@@ -45,7 +45,7 @@ const pathExactMatchFnFactory = (path: string): FormTypeTestFn => {
       return false;
     };
   } catch (error) {
-    throw new FormError(
+    throw new SchemaFormError(
       'FORM_TYPE_INPUT_MAP',
       `FormTypeInputMap contains an invalid key pattern.: ${path}`,
       { path, error },
