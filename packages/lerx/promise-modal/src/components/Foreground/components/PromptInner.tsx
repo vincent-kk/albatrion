@@ -8,8 +8,10 @@ import {
 } from '@winglet/react-utils';
 
 import type { PromptNode } from '@/promise-modal/core';
-import { useModalContext } from '@/promise-modal/providers';
-import { useUserDefinedContext } from '@/promise-modal/providers/UserDefinedContext';
+import {
+  useConfigurationContext,
+  useUserDefinedContext,
+} from '@/promise-modal/providers';
 import type { ModalActions } from '@/promise-modal/types';
 
 interface PromptInnerProps<T, B> {
@@ -70,7 +72,7 @@ export const PromptInner = memo(
       SubtitleComponent,
       ContentComponent,
       FooterComponent,
-    } = useModalContext();
+    } = useConfigurationContext();
 
     return (
       <Fragment>

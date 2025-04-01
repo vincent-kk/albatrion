@@ -2,8 +2,11 @@ import { type MouseEvent, useCallback, useMemo } from 'react';
 
 import { cx } from '@emotion/css';
 
-import { useModal, useModalContext } from '@/promise-modal/providers';
-import { useUserDefinedContext } from '@/promise-modal/providers/UserDefinedContext';
+import {
+  useConfigurationContext,
+  useModal,
+  useUserDefinedContext,
+} from '@/promise-modal/providers';
 import type { ModalLayerProps } from '@/promise-modal/types';
 
 import { active, background, visible } from './classNames.emotion';
@@ -12,7 +15,7 @@ export const BackgroundFrame = ({
   modalId,
   onChangeOrder,
 }: ModalLayerProps) => {
-  const { BackgroundComponent } = useModalContext();
+  const { BackgroundComponent } = useConfigurationContext();
   const { context: userDefinedContext } = useUserDefinedContext();
   const { modal, onClose, onChange, onConfirm, onDestroy } = useModal(modalId);
 

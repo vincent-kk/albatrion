@@ -9,7 +9,7 @@ import type {
   WrapperComponentProps,
 } from '@/promise-modal/types';
 
-export interface ModalContextProps {
+export interface ConfigurationContextProps {
   ForegroundComponent: ForegroundComponent;
   BackgroundComponent?: BackgroundComponent;
   TitleComponent: ComponentType<WrapperComponentProps>;
@@ -24,6 +24,6 @@ export interface ModalContextProps {
   };
 }
 
-export const ModalContext = createContext<ModalContextProps>(
-  {} as ModalContextProps,
+export const ConfigurationContext = createContext<ConfigurationContextProps>(
+  {} as ConfigurationContextProps,
 );

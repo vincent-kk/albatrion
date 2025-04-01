@@ -8,27 +8,27 @@ import {
   useState,
 } from 'react';
 
+import { convertMsFromDuration } from '@winglet/common-utils';
 import { useOnMountLayout, useReference } from '@winglet/react-utils';
 
 import type { Fn } from '@aileron/types';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import { type ModalNode, nodeFactory } from '@/promise-modal/core';
-import { getMillisecondsFromDuration } from '@/promise-modal/helpers/getMillisecondsFromDuration';
-import { useModalOptions } from '@/promise-modal/providers';
+import { useConfigurationOptions } from '@/promise-modal/providers';
 import type { Modal } from '@/promise-modal/types';
 
-import { ModalDataContext } from './ModalDataContext';
+import { ModalManagerContext } from './ModalManagerContext';
 
-interface ModalDataContextProviderProps {
+interface ModalManagerContextProviderProps {
   pathname: string;
 }
 
-export const ModalDataContextProvider = memo(
+export const ModalManagerContextProvider = memo(
   ({
     pathname,
     children,
-  }: PropsWithChildren<ModalDataContextProviderProps>) => {
+  }: PropsWithChildren<ModalManagerContextProviderProps>) => {
     const modalDictionary = useRef<Map<ModalNode['id'], ModalNode>>(new Map());
 
     const [modalIds, setModalIds] = useState<ModalNode['id'][]>([]);
@@ -37,10 +37,10 @@ export const ModalDataContextProvider = memo(
     const initiator = useRef(pathname);
     const modalIdSequence = useRef(0);
 
-    const options = useModalOptions();
+    const options = useConfigurationOptions();
 
     const duration = useMemo(
-      () => getMillisecondsFromDuration(options.duration),
+      () => convertMsFromDuration(options.duration),
       [options],
     );
 
@@ -89,7 +89,9 @@ export const ModalDataContextProvider = memo(
           return [...aliveIds, modal.id];
         });
       };
-      ModalManager.clearPrerender();
+      return () => {
+        ModalManager.reset();
+      };
     });
 
     useLayoutEffect(() => {
@@ -189,9 +191,9 @@ export const ModalDataContextProvider = memo(
     ]);
 
     return (
-      <ModalDataContext.Provider value={value}>
+      <ModalManagerContext.Provider value={value}>
         {children}
-      </ModalDataContext.Provider>
+      </ModalManagerContext.Provider>
     );
   },
 );
