@@ -2,6 +2,7 @@ import { Fragment, type PropsWithChildren, useRef } from 'react';
 
 import { createPortal } from 'react-dom';
 
+import { printError } from '@winglet/common-utils';
 import { useOnMount, useTick } from '@winglet/react-utils';
 
 import type { Dictionary } from '@aileron/types';
@@ -36,11 +37,23 @@ export const Initializer = ({
 }: PropsWithChildren<InitializerProps>) => {
   const { pathname } = (usePathname || useDefaultPathname)();
   const [, update] = useTick();
-  const portalRef = useRef<HTMLElement | null>(null);
+  const portalRef = useRef<HTMLElement>(
+    ModalManager.unanchored ? ModalManager.anchor() : null,
+  );
 
   useOnMount(() => {
-    portalRef.current = ModalManager.anchor();
-    update();
+    if (portalRef.current) update();
+    else
+      printError(
+        'ModalProvider is already initialized',
+        [
+          'ModalProvider can only be initialized once.',
+          'Nesting ModalProvider will be ignored...',
+        ],
+        {
+          info: 'Something is wrong with the ModalProvider initialization...',
+        },
+      );
     return () => {
       if (portalRef.current) {
         portalRef.current.remove();

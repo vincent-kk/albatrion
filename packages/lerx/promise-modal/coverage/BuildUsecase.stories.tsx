@@ -59,6 +59,55 @@ export const BuildUsecase = () => {
   );
 };
 
+export const NestedModalProviderUsecase = () => {
+  const handleAlert = () => {
+    alert({
+      title: 'Hello, world!',
+      content: 'This is a test alert.',
+    }).then((result) => {
+      console.log(result);
+    });
+  };
+
+  const handleConfirm = () => {
+    confirm({
+      title: 'Hello, world!',
+      content: 'This is a test confirm.',
+    }).then((result) => {
+      console.log(result);
+    });
+  };
+
+  const [value, setValue] = useState('');
+
+  const handlePrompt = () => {
+    prompt({
+      title: 'Hello, world!',
+      content: 'This is a test prompt.',
+      Input: ({ defaultValue, onChange }) => {
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+          onChange(e.target.value);
+        };
+        return <input defaultValue={defaultValue} onChange={handleChange} />;
+      },
+      defaultValue: 'value',
+    }).then((value) => {
+      setValue(value);
+    });
+  };
+
+  return (
+    <div>
+      <button onClick={handleAlert}>Open Alert</button>
+      <button onClick={handleConfirm}>Open Confirm</button>
+      <button onClick={handlePrompt}>Open Prompt: {value}</button>
+      <ModalProvider SubtitleComponent={() => <div>Nested Modal</div>}>
+        <button onClick={handleAlert}>Open Inner Provider Alert</button>
+      </ModalProvider>
+    </div>
+  );
+};
+
 export const MultiModalUsecase = () => {
   const handleAlert = () => {
     alert({
