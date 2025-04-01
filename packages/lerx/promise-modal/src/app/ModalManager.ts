@@ -5,20 +5,6 @@ import type { Fn } from '@aileron/types';
 import type { Modal } from '@/promise-modal/types';
 
 export class ModalManager {
-  static #prerenderList: Modal[] = [];
-  static get prerender() {
-    return ModalManager.#prerenderList;
-  }
-
-  static #openHandlerStandby = false;
-  static #openHandler: Fn<[Modal], void> = (modal: Modal) =>
-    ModalManager.#prerenderList.push(modal);
-  static set openHandler(handler: Fn<[Modal], void>) {
-    ModalManager.#openHandler = handler;
-    ModalManager.#openHandlerStandby = true;
-    ModalManager.#prerenderList = [];
-  }
-
   static #anchor: HTMLElement | null = null;
   static anchor(options?: {
     tag?: string;
@@ -41,8 +27,30 @@ export class ModalManager {
     return node;
   }
 
+  static #prerenderList: Modal[] = [];
+  static get prerender() {
+    return ModalManager.#prerenderList;
+  }
+
+  static #openHandlerStandby = false;
+  static #openHandler: Fn<[Modal], void> = (modal: Modal) =>
+    ModalManager.#prerenderList.push(modal);
+  static set openHandler(handler: Fn<[Modal], void>) {
+    ModalManager.#openHandler = handler;
+    ModalManager.#openHandlerStandby = true;
+    ModalManager.#prerenderList = [];
+  }
+
   static get isInitialized() {
     return !!(ModalManager.#anchor && ModalManager.#openHandlerStandby);
+  }
+
+  static reset() {
+    ModalManager.#anchor = null;
+    ModalManager.#prerenderList = [];
+    ModalManager.#openHandlerStandby = false;
+    ModalManager.#openHandler = (modal: Modal) =>
+      ModalManager.#prerenderList.push(modal);
   }
 
   static open(modal: Modal) {
