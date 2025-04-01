@@ -6,8 +6,8 @@ import type { Duration } from '@aileron/types';
 
 import type { ModalNode } from '@/promise-modal/core';
 import { getMillisecondsFromDuration } from '@/promise-modal/helpers/getMillisecondsFromDuration';
+import { useModal } from '@/promise-modal/providers';
 
-import { useModal } from '../providers';
 import { useSubscribeModal } from './useSubscribeModal';
 
 export const useDestroyAfter = (

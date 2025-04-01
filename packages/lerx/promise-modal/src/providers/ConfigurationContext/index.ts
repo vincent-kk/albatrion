@@ -1,4 +1,7 @@
-export { ConfigurationContextProvider } from './ConfigurationContextProvider';
+export {
+  ConfigurationContextProvider,
+  type ConfigurationContextProviderProps,
+} from './ConfigurationContextProvider';
 
 export {
   useConfigurationContext,

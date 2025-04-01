@@ -1,8 +1,8 @@
 export {
-  ModalContextProvider as ModalProvider,
-  useModalOptions,
-  useModalDuration,
-  useModalBackdrop,
+  Initializer as ModalProvider,
+  useConfigurationOptions as useModalOptions,
+  useConfigurationDuration as useModalDuration,
+  useConfigurationBackdrop as useModalBackdrop,
 } from './providers';
 
 export { useSubscribeModal } from './hooks/useSubscribeModal';

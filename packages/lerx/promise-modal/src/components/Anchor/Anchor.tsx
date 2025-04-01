@@ -5,21 +5,23 @@ import { useTick, withErrorBoundary } from '@winglet/react-utils';
 import { Presenter } from '@/promise-modal/components/Presenter';
 import type { ModalNode } from '@/promise-modal/core';
 import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
-import { useModalContext } from '@/promise-modal/providers';
-import { useModalDataContext } from '@/promise-modal/providers/ModalDataContext';
+import {
+  useConfigurationOptions,
+  useModalManagerContext,
+} from '@/promise-modal/providers';
 
 import { anchor } from './classNames.emotion';
 
 const AnchorInner = () => {
   const [refreshKey, update] = useTick();
 
-  const { modalIds, setUpdater } = useModalDataContext();
+  const { modalIds, setUpdater } = useModalManagerContext();
 
   useEffect(() => {
     setUpdater(update);
   }, [setUpdater, update]);
 
-  const { options } = useModalContext();
+  const options = useConfigurationOptions();
 
   const dimmed = useActiveModalCount(validateDimmable, refreshKey);
 

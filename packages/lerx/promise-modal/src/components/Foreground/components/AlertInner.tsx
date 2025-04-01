@@ -4,8 +4,10 @@ import { isString } from '@winglet/common-utils';
 import { renderComponent, useHandle } from '@winglet/react-utils';
 
 import type { AlertNode } from '@/promise-modal/core';
-import { useModalContext } from '@/promise-modal/providers';
-import { useUserDefinedContext } from '@/promise-modal/providers/UserDefinedContext';
+import {
+  useConfigurationContext,
+  useUserDefinedContext,
+} from '@/promise-modal/providers';
 import type { ModalActions } from '@/promise-modal/types';
 
 interface AlertInnerProps<B> {
@@ -26,7 +28,7 @@ export const AlertInner = memo(
       SubtitleComponent,
       ContentComponent,
       FooterComponent,
-    } = useModalContext();
+    } = useConfigurationContext();
 
     return (
       <Fragment>

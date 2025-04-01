@@ -1,13 +1,12 @@
-export {
-  ModalContextProvider,
-  useModalContext,
-  useModalOptions,
-  useModalDuration,
-  useModalBackdrop,
-} from './ModalContext';
+export { Initializer } from './Initializer';
+
+export { useModalManagerContext, useModal } from './ModalManagerContext';
 
 export {
-  ModalDataContextProvider,
-  useModalDataContext,
-  useModal,
-} from './ModalDataContext';
+  useConfigurationContext,
+  useConfigurationOptions,
+  useConfigurationDuration,
+  useConfigurationBackdrop,
+} from './ConfigurationContext';
+
+export { useUserDefinedContext } from './UserDefinedContext';

@@ -15,7 +15,7 @@ import type { Fn } from '@aileron/types';
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import { type ModalNode, nodeFactory } from '@/promise-modal/core';
 import { getMillisecondsFromDuration } from '@/promise-modal/helpers/getMillisecondsFromDuration';
-import { useModalOptions } from '@/promise-modal/providers';
+import { useConfigurationOptions } from '@/promise-modal/providers';
 import type { Modal } from '@/promise-modal/types';
 
 import { ModalManagerContext } from './ModalManagerContext';
@@ -37,7 +37,7 @@ export const ModalManagerContextProvider = memo(
     const initiator = useRef(pathname);
     const modalIdSequence = useRef(0);
 
-    const options = useModalOptions();
+    const options = useConfigurationOptions();
 
     const duration = useMemo(
       () => getMillisecondsFromDuration(options.duration),

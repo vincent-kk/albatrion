@@ -26,7 +26,7 @@ import type {
 
 import { ConfigurationContext } from './ConfigurationContext';
 
-interface ConfigurationContextProviderProps {
+export interface ConfigurationContextProviderProps {
   BackgroundComponent?: ComponentType<ModalFrameProps>;
   ForegroundComponent?: ComponentType<ModalFrameProps>;
   TitleComponent?: ComponentType<WrapperComponentProps>;

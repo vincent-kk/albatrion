@@ -2,8 +2,11 @@ import { useMemo } from 'react';
 
 import { cx } from '@emotion/css';
 
-import { useModal, useModalContext } from '@/promise-modal/providers';
-import { useUserDefinedContext } from '@/promise-modal/providers/UserDefinedContext';
+import {
+  useConfigurationContext,
+  useModal,
+  useUserDefinedContext,
+} from '@/promise-modal/providers';
 import type { ModalLayerProps } from '@/promise-modal/types';
 
 import { active, foreground, visible } from './classNames.emotion';
@@ -13,7 +16,7 @@ export const ForegroundFrame = ({
   modalId,
   onChangeOrder,
 }: ModalLayerProps) => {
-  const { ForegroundComponent } = useModalContext();
+  const { ForegroundComponent } = useConfigurationContext();
   const { context: userDefinedContext } = useUserDefinedContext();
 
   const { modal, onChange, onConfirm, onClose, onDestroy } = useModal(modalId);
