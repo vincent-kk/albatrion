@@ -32,23 +32,20 @@ export class ModalManager {
     return ModalManager.#prerenderList;
   }
 
-  static #openHandlerStandby = false;
   static #openHandler: Fn<[Modal], void> = (modal: Modal) =>
     ModalManager.#prerenderList.push(modal);
   static set openHandler(handler: Fn<[Modal], void>) {
     ModalManager.#openHandler = handler;
-    ModalManager.#openHandlerStandby = true;
     ModalManager.#prerenderList = [];
   }
 
-  static get isInitialized() {
-    return !!(ModalManager.#anchor && ModalManager.#openHandlerStandby);
+  static get unanchored() {
+    return !ModalManager.#anchor;
   }
 
   static reset() {
     ModalManager.#anchor = null;
     ModalManager.#prerenderList = [];
-    ModalManager.#openHandlerStandby = false;
     ModalManager.#openHandler = (modal: Modal) =>
       ModalManager.#prerenderList.push(modal);
   }
