@@ -18,17 +18,17 @@ import { getMillisecondsFromDuration } from '@/promise-modal/helpers/getMillisec
 import { useModalOptions } from '@/promise-modal/providers';
 import type { Modal } from '@/promise-modal/types';
 
-import { ModalDataContext } from './ModalDataContext';
+import { ModalManagerContext } from './ModalManagerContext';
 
-interface ModalDataContextProviderProps {
+interface ModalManagerContextProviderProps {
   pathname: string;
 }
 
-export const ModalDataContextProvider = memo(
+export const ModalManagerContextProvider = memo(
   ({
     pathname,
     children,
-  }: PropsWithChildren<ModalDataContextProviderProps>) => {
+  }: PropsWithChildren<ModalManagerContextProviderProps>) => {
     const modalDictionary = useRef<Map<ModalNode['id'], ModalNode>>(new Map());
 
     const [modalIds, setModalIds] = useState<ModalNode['id'][]>([]);
@@ -188,9 +188,9 @@ export const ModalDataContextProvider = memo(
     ]);
 
     return (
-      <ModalDataContext.Provider value={value}>
+      <ModalManagerContext.Provider value={value}>
         {children}
-      </ModalDataContext.Provider>
+      </ModalManagerContext.Provider>
     );
   },
 );
