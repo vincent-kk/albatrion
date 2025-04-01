@@ -10,17 +10,13 @@ export class ModalManager {
     return ModalManager.#prerenderList;
   }
 
-  static #isInitialized = false;
-  static get isInitialized() {
-    return ModalManager.#isInitialized;
-  }
-
+  static #openHandlerStandby = false;
   static #openHandler: Fn<[Modal], void> = (modal: Modal) =>
     ModalManager.#prerenderList.push(modal);
   static set openHandler(handler: Fn<[Modal], void>) {
     ModalManager.#openHandler = handler;
+    ModalManager.#openHandlerStandby = true;
     ModalManager.#prerenderList = [];
-    ModalManager.#isInitialized = true;
   }
 
   static #anchor: HTMLElement | null = null;
@@ -43,6 +39,10 @@ export class ModalManager {
     root.appendChild(node);
     ModalManager.#anchor = node;
     return node;
+  }
+
+  static get isInitialized() {
+    return !!(ModalManager.#anchor && ModalManager.#openHandlerStandby);
   }
 
   static open(modal: Modal) {
