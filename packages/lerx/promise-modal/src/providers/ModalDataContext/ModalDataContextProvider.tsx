@@ -89,7 +89,6 @@ export const ModalDataContextProvider = memo(
           return [...aliveIds, modal.id];
         });
       };
-      ModalManager.clearPrerender();
     });
 
     useLayoutEffect(() => {
