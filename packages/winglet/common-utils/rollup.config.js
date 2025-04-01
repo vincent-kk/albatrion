@@ -80,7 +80,7 @@ module.exports = [
       }),
       terser({
         compress: {
-          drop_console: true,
+          drop_console: false,
           dead_code: true,
           passes: 5,
         },
