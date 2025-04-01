@@ -8,13 +8,13 @@ import {
   useState,
 } from 'react';
 
+import { convertMsFromDuration } from '@winglet/common-utils';
 import { useOnMountLayout, useReference } from '@winglet/react-utils';
 
 import type { Fn } from '@aileron/types';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import { type ModalNode, nodeFactory } from '@/promise-modal/core';
-import { getMillisecondsFromDuration } from '@/promise-modal/helpers/getMillisecondsFromDuration';
 import { useConfigurationOptions } from '@/promise-modal/providers';
 import type { Modal } from '@/promise-modal/types';
 
@@ -40,7 +40,7 @@ export const ModalManagerContextProvider = memo(
     const options = useConfigurationOptions();
 
     const duration = useMemo(
-      () => getMillisecondsFromDuration(options.duration),
+      () => convertMsFromDuration(options.duration),
       [options],
     );
 

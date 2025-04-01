@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { getMillisecondsFromDuration } from '@/promise-modal/helpers/getMillisecondsFromDuration';
+import { convertMsFromDuration } from '@winglet/common-utils';
 
 import { ConfigurationContext } from './ConfigurationContext';
 
@@ -15,7 +15,7 @@ export const useConfigurationDuration = () => {
   const context = useConfigurationOptions();
   return {
     duration: context.duration,
-    milliseconds: getMillisecondsFromDuration(context.duration),
+    milliseconds: convertMsFromDuration(context.duration),
   };
 };
 

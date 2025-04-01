@@ -1,11 +1,10 @@
 import { useEffect, useRef } from 'react';
 
-import { isString } from '@winglet/common-utils';
+import { convertMsFromDuration, isString } from '@winglet/common-utils';
 
 import type { Duration } from '@aileron/types';
 
 import type { ModalNode } from '@/promise-modal/core';
-import { getMillisecondsFromDuration } from '@/promise-modal/helpers/getMillisecondsFromDuration';
 import { useModal } from '@/promise-modal/providers';
 
 import { useSubscribeModal } from './useSubscribeModal';
@@ -21,7 +20,7 @@ export const useDestroyAfter = (
     modal,
     onDestroy,
     milliseconds: isString(duration)
-      ? getMillisecondsFromDuration(duration)
+      ? convertMsFromDuration(duration)
       : duration,
   });
 
