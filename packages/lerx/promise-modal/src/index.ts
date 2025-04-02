@@ -12,6 +12,8 @@ export { useModalAnimation } from './hooks/useModalAnimation';
 
 export { alert, confirm, prompt } from './core';
 
+export { bootstrap } from './core/bootstrap';
+
 export type {
   ModalFrameProps,
   FooterComponentProps,
