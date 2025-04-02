@@ -14,7 +14,7 @@ export type Modal<T = any, B = any, Context extends Dictionary = Dictionary> =
 
 export type ManagedEntity = {
   id: number;
-  initiator?: string;
+  initiator: string;
 };
 
 export type ManagedModal<T = any, B = any> = ManagedEntity & Modal<T, B>;
