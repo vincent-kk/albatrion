@@ -44,7 +44,7 @@ export const BootstrapProvider = forwardRef<
     const anchorRef = useRef<HTMLElement | null>(null);
     const [, update] = useTick();
 
-    const handelBootstrap = useCallback(
+    const handleInitialize = useCallback(
       (root?: HTMLElement) => {
         if (permitted.current) {
           anchorRef.current = ModalManager.anchor({ root });
@@ -67,14 +67,14 @@ export const BootstrapProvider = forwardRef<
     useImperativeHandle(
       handleRef,
       () => ({
-        bootstrap: handelBootstrap,
+        initialize: handleInitialize,
       }),
-      [handelBootstrap],
+      [handleInitialize],
     );
 
     useOnMount(() => {
       if (handleRef) return;
-      handelBootstrap();
+      handleInitialize();
       return () => {
         if (anchorRef.current) anchorRef.current.remove();
       };

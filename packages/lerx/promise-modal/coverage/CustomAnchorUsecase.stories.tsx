@@ -64,7 +64,7 @@ export const NormalUsecase = () => {
 
   useEffect(() => {
     if (modalRoot.current) {
-      modalHandle.current?.bootstrap(modalRoot.current);
+      modalHandle.current?.initialize(modalRoot.current);
     }
   }, []);
 

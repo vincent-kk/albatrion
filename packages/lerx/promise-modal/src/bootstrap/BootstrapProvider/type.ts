@@ -9,5 +9,5 @@ export type BootstrapProviderProps = {
 } & ConfigurationContextProviderProps;
 
 export interface BootstrapProviderHandle {
-  bootstrap: Fn<[HTMLElement]>;
+  initialize: Fn<[HTMLElement]>;
 }
