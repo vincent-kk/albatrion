@@ -1,7 +1,7 @@
 import { Fragment, type PropsWithChildren, useRef } from 'react';
 
 import { printError } from '@winglet/common-utils';
-import { useHandle, useOnMount, useTick } from '@winglet/react-utils';
+import { useHandle, useOnMount } from '@winglet/react-utils';
 
 import type { Dictionary, Fn } from '@aileron/types';
 
@@ -31,14 +31,12 @@ export const Initializer = ({
   children,
 }: PropsWithChildren<InitializerProps>) => {
   const usePathname = useHandle(useExternalPathname || useDefaultPathname);
-  const [, update] = useTick();
   const portalRef = useRef<HTMLElement>(
     ModalManager.unanchored ? ModalManager.anchor({ root }) : null,
   );
 
   useOnMount(() => {
-    if (portalRef.current) update();
-    else
+    if (!portalRef.current)
       printError(
         'ModalProvider is already initialized',
         [
