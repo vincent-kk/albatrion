@@ -1,4 +1,4 @@
-import { AbortError } from '../../errors';
+import { AbortError } from '@/common-utils/errors/AbortError';
 
 export interface DelayOptions {
   signal?: AbortSignal;

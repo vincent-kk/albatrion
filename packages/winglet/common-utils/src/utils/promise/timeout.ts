@@ -1,5 +1,5 @@
-import { TimeoutError } from '../../errors';
-import { type DelayOptions, delay } from './delay';
+import { TimeoutError } from '@/common-utils/errors/TimeoutError';
+import { type DelayOptions, delay } from '@/common-utils/utils/promise/delay';
 
 /**
  * @description 일정 시간을 기다린 후, TimeoutError를 발생시키는 함수
