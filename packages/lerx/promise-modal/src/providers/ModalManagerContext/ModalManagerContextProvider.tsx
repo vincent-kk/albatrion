@@ -21,18 +21,19 @@ import type { Modal } from '@/promise-modal/types';
 import { ModalManagerContext } from './ModalManagerContext';
 
 interface ModalManagerContextProviderProps {
-  pathname: string;
+  usePathname: Fn<[], { pathname: string }>;
 }
 
 export const ModalManagerContextProvider = memo(
   ({
-    pathname,
+    usePathname,
     children,
   }: PropsWithChildren<ModalManagerContextProviderProps>) => {
     const modalDictionary = useRef<Map<ModalNode['id'], ModalNode>>(new Map());
 
     const [modalIds, setModalIds] = useState<ModalNode['id'][]>([]);
     const modalIdsRef = useReference(modalIds);
+    const { pathname } = usePathname();
 
     const initiator = useRef(pathname);
     const modalIdSequence = useRef(0);
