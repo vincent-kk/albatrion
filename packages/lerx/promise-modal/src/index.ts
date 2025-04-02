@@ -5,10 +5,11 @@ export {
 } from './providers';
 
 export {
-  Initialize as ModalProvider,
-  type InitializeHandle as ModalProviderHandle,
-  type InitializeProps as ModalProviderProps,
-} from './providers/Initialize';
+  bootstrap,
+  BootstrapProvider as ModalProvider,
+  type BootstrapProviderHandle as ModalProviderHandle,
+  type BootstrapProviderProps as ModalProviderProps,
+} from './bootstrap';
 
 export { useSubscribeModal } from './hooks/useSubscribeModal';
 export { useDestroyAfter } from './hooks/useDestroyAfter';
@@ -16,8 +17,6 @@ export { useActiveModalCount } from './hooks/useActiveModalCount';
 export { useModalAnimation } from './hooks/useModalAnimation';
 
 export { alert, confirm, prompt } from './core';
-
-export { bootstrap } from './core/bootstrap';
 
 export type {
   ModalFrameProps,

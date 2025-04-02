@@ -12,14 +12,14 @@ import { printError } from '@winglet/common-utils';
 import { useOnMount, useTick } from '@winglet/react-utils';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
-import { bootstrap } from '@/promise-modal/core/bootstrap';
 import { usePathname as useDefaultPathname } from '@/promise-modal/hooks/useDefaultPathname';
 
-import type { InitializeHandle, InitializeProps } from './type';
+import { bootstrap } from '../bootstrap';
+import type { BootstrapProviderHandle, BootstrapProviderProps } from './type';
 
-export const Initialize = forwardRef<
-  InitializeHandle,
-  PropsWithChildren<InitializeProps>
+export const BootstrapProvider = forwardRef<
+  BootstrapProviderHandle,
+  PropsWithChildren<BootstrapProviderProps>
 >(
   (
     {
@@ -33,7 +33,7 @@ export const Initialize = forwardRef<
       options,
       context,
       children,
-    }: PropsWithChildren<InitializeProps>,
+    },
     handleRef,
   ) => {
     const usePathname = useMemo(
