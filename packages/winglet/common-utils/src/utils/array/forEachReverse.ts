@@ -1,4 +1,4 @@
-export const reverseForEach = <Type>(
+export const forEachReverse = <Type>(
   array: Type[],
   callback: (item: Type, index: number, array: Type[]) => void,
 ) => {

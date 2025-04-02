@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { dualForEach } from '../dualForEach';
+import { forEachDual } from '../forEachDual';
 
-describe('dualForEach', () => {
+describe('forEachDual', () => {
   it('두 배열의 길이가 같을 때 모든 요소를 순회해야 합니다', () => {
     const array1 = [1, 2, 3];
     const array2 = ['a', 'b', 'c'];
     const result: Array<[number | undefined, string | undefined, number]> = [];
 
-    dualForEach(array1, array2, (item1, item2, index) => {
+    forEachDual(array1, array2, (item1, item2, index) => {
       result.push([item1, item2, index]);
     });
 
@@ -24,7 +24,7 @@ describe('dualForEach', () => {
     const array2 = ['a', 'b'];
     const result: Array<[number | undefined, string | undefined, number]> = [];
 
-    dualForEach(array1, array2, (item1, item2, index) => {
+    forEachDual(array1, array2, (item1, item2, index) => {
       result.push([item1, item2, index]);
     });
 
@@ -41,7 +41,7 @@ describe('dualForEach', () => {
     const array2 = ['a', 'b', 'c', 'd'];
     const result: Array<[number | undefined, string | undefined, number]> = [];
 
-    dualForEach(array1, array2, (item1, item2, index) => {
+    forEachDual(array1, array2, (item1, item2, index) => {
       result.push([item1, item2, index]);
     });
 
@@ -58,7 +58,7 @@ describe('dualForEach', () => {
     const array2: string[] = [];
     const result: Array<[number | undefined, string | undefined, number]> = [];
 
-    dualForEach(array1, array2, (item1, item2, index) => {
+    forEachDual(array1, array2, (item1, item2, index) => {
       result.push([item1, item2, index]);
     });
 
@@ -70,7 +70,7 @@ describe('dualForEach', () => {
     const array2 = ['a', 'b', 'c'];
     const result: Array<[number[], string[]]> = [];
 
-    dualForEach(array1, array2, (_, __, ___, arr1, arr2) => {
+    forEachDual(array1, array2, (_, __, ___, arr1, arr2) => {
       result.push([arr1, arr2]);
     });
 
@@ -93,7 +93,7 @@ describe('dualForEach', () => {
 
     const result: Array<[User | undefined, Order | undefined, number]> = [];
 
-    dualForEach(users, orders, (user, order, index) => {
+    forEachDual(users, orders, (user, order, index) => {
       result.push([user, order, index]);
     });
 
@@ -109,7 +109,7 @@ describe('dualForEach', () => {
     const array2 = ['a', 'b', 'c'];
     const result: number[] = [];
 
-    dualForEach(array1, array2, (_, __, index, arr1) => {
+    forEachDual(array1, array2, (_, __, index, arr1) => {
       arr1[index] = arr1[index] * 2;
       result.push(arr1[index]);
     });

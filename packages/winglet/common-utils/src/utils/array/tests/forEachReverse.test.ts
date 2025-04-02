@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { reverseForEach } from '../reverseForEach';
+import { forEachReverse } from '../forEachReverse';
 
-describe('reverseForEach', () => {
+describe('forEachReverse', () => {
   it('배열을 역순으로 순회해야 합니다', () => {
     const array = [1, 2, 3, 4, 5];
     const result: number[] = [];
 
-    reverseForEach(array, (item) => {
+    forEachReverse(array, (item) => {
       result.push(item);
     });
 
@@ -18,7 +18,7 @@ describe('reverseForEach', () => {
     const array = ['a', 'b', 'c'];
     const result: Array<[string, number, string[]]> = [];
 
-    reverseForEach(array, (item, index, arr) => {
+    forEachReverse(array, (item, index, arr) => {
       result.push([item, index, arr]);
     });
 
@@ -33,7 +33,7 @@ describe('reverseForEach', () => {
     const array: number[] = [];
     const result: number[] = [];
 
-    reverseForEach(array, (item) => {
+    forEachReverse(array, (item) => {
       result.push(item);
     });
 
@@ -44,7 +44,7 @@ describe('reverseForEach', () => {
     const array = ['hello', 'world', 'test'];
     const result: string[] = [];
 
-    reverseForEach(array, (item) => {
+    forEachReverse(array, (item) => {
       result.push(item);
     });
 
@@ -59,7 +59,7 @@ describe('reverseForEach', () => {
     ];
     const result: Array<{ id: number; name: string }> = [];
 
-    reverseForEach(array, (item) => {
+    forEachReverse(array, (item) => {
       result.push(item);
     });
 
@@ -74,7 +74,7 @@ describe('reverseForEach', () => {
     const array = [1, 2, 3];
     const result: number[] = [];
 
-    reverseForEach(array, (_, index, arr) => {
+    forEachReverse(array, (_, index, arr) => {
       arr[index] = arr[index] * 2;
       result.push(arr[index]);
     });

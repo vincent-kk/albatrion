@@ -1,4 +1,4 @@
-export const dualForEach = <Type1, Type2>(
+export const forEachDual = <Type1, Type2>(
   array1: Type1[],
   array2: Type2[],
   callback: (
