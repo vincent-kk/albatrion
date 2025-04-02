@@ -73,8 +73,12 @@ export const BootstrapProvider = forwardRef<
     );
 
     useOnMount(() => {
-      if (handleRef) return;
-      handleInitialize();
+      /**
+       * NOTE: `handleRef` being null indicates that no `ref` was provided.
+       *   In this case, the `ModalProvider`(=`BootstrapProvider`) is not receiving the `ref`,
+       *   so it should be initialized automatically.
+       */
+      if (handleRef === null) handleInitialize();
       return () => {
         if (anchorRef.current) anchorRef.current.remove();
       };
