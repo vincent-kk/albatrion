@@ -1,9 +1,14 @@
 export {
-  Initialize as ModalProvider,
   useConfigurationOptions as useModalOptions,
   useConfigurationDuration as useModalDuration,
   useConfigurationBackdrop as useModalBackdrop,
 } from './providers';
+
+export {
+  Initialize as ModalProvider,
+  type InitializeHandle as ModalProviderHandle,
+  type InitializeProps as ModalProviderProps,
+} from './providers/Initialize';
 
 export { useSubscribeModal } from './hooks/useSubscribeModal';
 export { useDestroyAfter } from './hooks/useDestroyAfter';

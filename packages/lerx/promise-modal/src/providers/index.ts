@@ -1,5 +1,3 @@
-export { Initialize } from './Initialize';
-
 export { useModalManagerContext, useModal } from './ModalManagerContext';
 
 export {
