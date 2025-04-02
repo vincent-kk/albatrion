@@ -1,6 +1,6 @@
 import type { Dictionary, Fn } from '@aileron/types';
 
-import { ConfigurationContextProviderProps } from '../ConfigurationContext';
+import type { ConfigurationContextProviderProps } from '../ConfigurationContext';
 
 export interface InitializeProps extends ConfigurationContextProviderProps {
   usePathname?: Fn<[], { pathname: string }>;
