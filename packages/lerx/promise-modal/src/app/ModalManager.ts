@@ -2,9 +2,8 @@ import { getRandomString } from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/types';
 
+import { bootstrap } from '@/promise-modal/core/bootstrap';
 import type { Modal } from '@/promise-modal/types';
-
-import { initializeModal } from '../providers/Initializer/initializeModal';
 
 export class ModalManager {
   static #anchor: HTMLElement | null = null;
@@ -53,7 +52,7 @@ export class ModalManager {
   }
 
   static open(modal: Modal) {
-    if (ModalManager.unanchored) initializeModal({ root: document.body });
+    if (!ModalManager.#anchor) bootstrap({ anchor: ModalManager.anchor() });
     ModalManager.#openHandler(modal);
   }
 }
