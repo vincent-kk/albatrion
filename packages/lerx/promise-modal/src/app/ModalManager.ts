@@ -4,6 +4,8 @@ import type { Fn } from '@aileron/types';
 
 import type { Modal } from '@/promise-modal/types';
 
+import { initializeModal } from '../providers/Initializer/initializeModal';
+
 export class ModalManager {
   static #anchor: HTMLElement | null = null;
   static anchor(options?: {
@@ -51,6 +53,7 @@ export class ModalManager {
   }
 
   static open(modal: Modal) {
+    if (ModalManager.unanchored) initializeModal({ root: document.body });
     ModalManager.#openHandler(modal);
   }
 }
