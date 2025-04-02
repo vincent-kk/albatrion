@@ -1,3 +1,4 @@
+export * from './array';
 export * from './console';
 export * from './convert';
 export * from './DataLoader';
