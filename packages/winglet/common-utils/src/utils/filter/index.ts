@@ -10,6 +10,7 @@ export { isEmptyObject } from './isEmptyObject';
 export { isError } from './isError';
 export { isFile } from './isFile';
 export { isFunction } from './isFunction';
+export { isInteger } from './isInteger';
 export { isMap } from './isMap';
 export { isNil } from './isNil';
 export { isNotNil } from './isNotNil';
