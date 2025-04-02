@@ -1,7 +1,7 @@
 import { Fragment, type PropsWithChildren, useRef } from 'react';
 
 import { printError } from '@winglet/common-utils';
-import { useHandle, useOnMount } from '@winglet/react-utils';
+import { useHandle, useOnMount, useTick } from '@winglet/react-utils';
 
 import type { Dictionary, Fn } from '@aileron/types';
 
@@ -14,7 +14,7 @@ import type { ConfigurationContextProviderProps } from '../ConfigurationContext'
 interface InitializerProps extends ConfigurationContextProviderProps {
   usePathname?: Fn<[], { pathname: string }>;
   context?: Dictionary;
-  root?: HTMLElement;
+  root?: HTMLElement | null;
 }
 
 export const Initialize = ({
@@ -31,12 +31,16 @@ export const Initialize = ({
   children,
 }: PropsWithChildren<InitializerProps>) => {
   const usePathname = useHandle(useExternalPathname || useDefaultPathname);
-  const portalRef = useRef<HTMLElement>(
-    ModalManager.unanchored ? ModalManager.anchor({ root }) : null,
-  );
+  const permitted = useRef(ModalManager.bootstrap());
+  const anchorRef = useRef<HTMLElement | null>(null);
+  const [, update] = useTick();
 
   useOnMount(() => {
-    if (!portalRef.current)
+    if (permitted.current) {
+      if (root === null) return;
+      anchorRef.current = ModalManager.anchor({ root });
+      update();
+    } else
       printError(
         'ModalProvider is already initialized',
         [
@@ -48,16 +52,14 @@ export const Initialize = ({
         },
       );
     return () => {
-      if (portalRef.current) {
-        portalRef.current.remove();
-      }
+      if (anchorRef.current) anchorRef.current.remove();
     };
   });
 
   return (
     <Fragment>
       {children}
-      {portalRef.current &&
+      {anchorRef.current &&
         bootstrap({
           ForegroundComponent,
           BackgroundComponent,
@@ -68,7 +70,7 @@ export const Initialize = ({
           usePathname,
           options,
           context,
-          anchor: portalRef.current,
+          anchor: anchorRef.current,
         })}
     </Fragment>
   );

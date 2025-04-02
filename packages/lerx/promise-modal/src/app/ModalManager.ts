@@ -5,6 +5,12 @@ import type { Fn } from '@aileron/types';
 import type { Modal } from '@/promise-modal/types';
 
 export class ModalManager {
+  static #active = false;
+  static bootstrap() {
+    if (ModalManager.#active) return false;
+    return (ModalManager.#active = true);
+  }
+
   static #anchor: HTMLElement | null = null;
   static anchor(options?: {
     tag?: string;
@@ -44,6 +50,7 @@ export class ModalManager {
   }
 
   static reset() {
+    ModalManager.#active = false;
     ModalManager.#anchor = null;
     ModalManager.#prerenderList = [];
     ModalManager.#openHandler = (modal: Modal) =>
