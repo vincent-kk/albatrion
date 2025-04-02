@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom';
 
-import type { Dictionary } from '@aileron/types';
+import type { Dictionary, Fn } from '@aileron/types';
 
 import { Anchor } from '@/promise-modal/components/Anchor';
 import {
@@ -10,9 +10,8 @@ import {
 import { ModalManagerContextProvider } from '@/promise-modal/providers/ModalManagerContext';
 import { UserDefinedContextProvider } from '@/promise-modal/providers/UserDefinedContext';
 
-interface InitializeModalProps extends ConfigurationContextProviderProps {
+  usePathname: Fn<[], { pathname: string }>;
   context?: Dictionary;
-  pathname?: string;
   anchor: HTMLElement;
 }
 
@@ -23,9 +22,9 @@ export const bootstrap = ({
   SubtitleComponent,
   ContentComponent,
   FooterComponent,
+  usePathname,
   options,
   context,
-  pathname,
   anchor,
 }: InitializeModalProps) =>
   createPortal(
@@ -39,7 +38,7 @@ export const bootstrap = ({
         FooterComponent={FooterComponent}
         options={options}
       >
-        <ModalManagerContextProvider pathname={pathname}>
+        <ModalManagerContextProvider usePathname={usePathname}>
           <Anchor />
         </ModalManagerContextProvider>
       </ConfigurationContextProvider>

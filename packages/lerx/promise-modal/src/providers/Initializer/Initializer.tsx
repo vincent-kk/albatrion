@@ -1,9 +1,9 @@
 import { Fragment, type PropsWithChildren, useRef } from 'react';
 
 import { printError } from '@winglet/common-utils';
-import { useOnMount, useTick } from '@winglet/react-utils';
+import { useHandle, useOnMount, useTick } from '@winglet/react-utils';
 
-import type { Dictionary } from '@aileron/types';
+import type { Dictionary, Fn } from '@aileron/types';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import { bootstrap } from '@/promise-modal/core/bootstrap';
@@ -12,12 +12,13 @@ import { usePathname as useDefaultPathname } from '@/promise-modal/hooks/useDefa
 import type { ConfigurationContextProviderProps } from '../ConfigurationContext';
 
 interface InitializerProps extends ConfigurationContextProviderProps {
+  usePathname?: Fn<[], { pathname: string }>;
   context?: Dictionary;
-  usePathname?: () => { pathname: string };
   root?: HTMLElement;
 }
 
 export const Initializer = ({
+  usePathname: useExternalPathname,
   ForegroundComponent,
   BackgroundComponent,
   TitleComponent,
@@ -26,11 +27,10 @@ export const Initializer = ({
   FooterComponent,
   options,
   context,
-  usePathname,
   root,
   children,
 }: PropsWithChildren<InitializerProps>) => {
-  const { pathname } = (usePathname || useDefaultPathname)();
+  const usePathname = useHandle(useExternalPathname || useDefaultPathname);
   const [, update] = useTick();
   const portalRef = useRef<HTMLElement>(
     ModalManager.unanchored ? ModalManager.anchor({ root }) : null,
@@ -67,9 +67,9 @@ export const Initializer = ({
           SubtitleComponent,
           ContentComponent,
           FooterComponent,
+          usePathname,
           options,
           context,
-          pathname,
           anchor: portalRef.current,
         })}
     </Fragment>
