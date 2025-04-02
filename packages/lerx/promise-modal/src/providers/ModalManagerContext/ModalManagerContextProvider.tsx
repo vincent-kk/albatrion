@@ -21,7 +21,7 @@ import type { Modal } from '@/promise-modal/types';
 import { ModalManagerContext } from './ModalManagerContext';
 
 interface ModalManagerContextProviderProps {
-  pathname: string;
+  pathname?: string;
 }
 
 export const ModalManagerContextProvider = memo(
