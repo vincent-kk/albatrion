@@ -40,7 +40,7 @@ export const BootstrapProvider = forwardRef<
       () => useExternalPathname || useDefaultPathname,
       [useExternalPathname],
     );
-    const permitted = useRef(ModalManager.bootstrap());
+    const permitted = useRef(ModalManager.activate());
     const anchorRef = useRef<HTMLElement | null>(null);
     const [, update] = useTick();
 

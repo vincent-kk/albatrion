@@ -6,7 +6,7 @@ import type { Modal } from '@/promise-modal/types';
 
 export class ModalManager {
   static #active = false;
-  static bootstrap() {
+  static activate() {
     if (ModalManager.#active) return false;
     return (ModalManager.#active = true);
   }
