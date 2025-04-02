@@ -10,6 +10,7 @@ import {
 import { ModalManagerContextProvider } from '@/promise-modal/providers/ModalManagerContext';
 import { UserDefinedContextProvider } from '@/promise-modal/providers/UserDefinedContext';
 
+interface BootstrapProps extends ConfigurationContextProviderProps {
   usePathname: Fn<[], { pathname: string }>;
   context?: Dictionary;
   anchor: HTMLElement;
@@ -26,7 +27,7 @@ export const bootstrap = ({
   options,
   context,
   anchor,
-}: InitializeModalProps) =>
+}: BootstrapProps) =>
   createPortal(
     <UserDefinedContextProvider context={context}>
       <ConfigurationContextProvider
