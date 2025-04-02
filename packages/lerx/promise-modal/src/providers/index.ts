@@ -1,4 +1,4 @@
-export { Initializer } from './Initializer';
+export { Initialize } from './Initialize';
 
 export { useModalManagerContext, useModal } from './ModalManagerContext';
 

@@ -17,7 +17,7 @@ interface InitializerProps extends ConfigurationContextProviderProps {
   root?: HTMLElement;
 }
 
-export const Initializer = ({
+export const Initialize = ({
   usePathname: useExternalPathname,
   ForegroundComponent,
   BackgroundComponent,

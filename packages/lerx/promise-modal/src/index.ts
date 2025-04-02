@@ -1,5 +1,5 @@
 export {
-  Initializer as ModalProvider,
+  Initialize as ModalProvider,
   useConfigurationOptions as useModalOptions,
   useConfigurationDuration as useModalDuration,
   useConfigurationBackdrop as useModalBackdrop,
