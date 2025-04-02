@@ -14,6 +14,7 @@ import { initializeModal } from './initializeModal';
 interface InitializerProps extends ConfigurationContextProviderProps {
   context?: Dictionary;
   usePathname?: () => { pathname: string };
+  root?: HTMLElement;
 }
 
 export const Initializer = ({
@@ -26,12 +27,13 @@ export const Initializer = ({
   options,
   context,
   usePathname,
+  root,
   children,
 }: PropsWithChildren<InitializerProps>) => {
   const { pathname } = (usePathname || useDefaultPathname)();
   const [, update] = useTick();
   const portalRef = useRef<HTMLElement>(
-    ModalManager.unanchored ? ModalManager.anchor() : null,
+    ModalManager.unanchored ? ModalManager.anchor({ root }) : null,
   );
 
   useOnMount(() => {
