@@ -3,21 +3,20 @@ import { createPortal } from 'react-dom';
 import type { Dictionary } from '@aileron/types';
 
 import { Anchor } from '@/promise-modal/components/Anchor';
-
 import {
   ConfigurationContextProvider,
   type ConfigurationContextProviderProps,
-} from '../ConfigurationContext';
-import { ModalManagerContextProvider } from '../ModalManagerContext';
-import { UserDefinedContextProvider } from '../UserDefinedContext';
+} from '@/promise-modal/providers/ConfigurationContext';
+import { ModalManagerContextProvider } from '@/promise-modal/providers/ModalManagerContext';
+import { UserDefinedContextProvider } from '@/promise-modal/providers/UserDefinedContext';
 
 interface InitializeModalProps extends ConfigurationContextProviderProps {
   context?: Dictionary;
   pathname?: string;
-  root: HTMLElement;
+  anchor: HTMLElement;
 }
 
-export const initializeModal = ({
+export const bootstrap = ({
   ForegroundComponent,
   BackgroundComponent,
   TitleComponent,
@@ -27,7 +26,7 @@ export const initializeModal = ({
   options,
   context,
   pathname,
-  root,
+  anchor,
 }: InitializeModalProps) =>
   createPortal(
     <UserDefinedContextProvider context={context}>
@@ -45,5 +44,5 @@ export const initializeModal = ({
         </ModalManagerContextProvider>
       </ConfigurationContextProvider>
     </UserDefinedContextProvider>,
-    root,
+    anchor,
   );

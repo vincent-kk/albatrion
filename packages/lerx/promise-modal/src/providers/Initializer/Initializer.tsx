@@ -6,10 +6,10 @@ import { useOnMount, useTick } from '@winglet/react-utils';
 import type { Dictionary } from '@aileron/types';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
+import { bootstrap } from '@/promise-modal/core/bootstrap';
 import { usePathname as useDefaultPathname } from '@/promise-modal/hooks/useDefaultPathname';
 
 import type { ConfigurationContextProviderProps } from '../ConfigurationContext';
-import { initializeModal } from './initializeModal';
 
 interface InitializerProps extends ConfigurationContextProviderProps {
   context?: Dictionary;
@@ -60,7 +60,7 @@ export const Initializer = ({
     <Fragment>
       {children}
       {portalRef.current &&
-        initializeModal({
+        bootstrap({
           ForegroundComponent,
           BackgroundComponent,
           TitleComponent,
@@ -70,7 +70,7 @@ export const Initializer = ({
           options,
           context,
           pathname,
-          root: portalRef.current,
+          anchor: portalRef.current,
         })}
     </Fragment>
   );
