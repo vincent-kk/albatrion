@@ -82,4 +82,17 @@ describe('forEachReverse', () => {
     expect(result).toEqual([6, 4, 2]);
     expect(array).toEqual([2, 4, 6]);
   });
+
+  it('콜백 함수에서 false를 반환하면 루프를 중단해야 합니다', () => {
+    const array = [1, 2, 3, 4, 5];
+    const result: number[] = [];
+
+    forEachReverse(array, (item) => {
+      result.push(item);
+      if (item === 3) return false;
+      return true;
+    });
+
+    expect(result).toEqual([5, 4, 3]);
+  });
 });

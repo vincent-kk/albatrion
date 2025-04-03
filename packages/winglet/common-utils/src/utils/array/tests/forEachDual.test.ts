@@ -117,4 +117,22 @@ describe('forEachDual', () => {
     expect(result).toEqual([2, 4, 6]);
     expect(array1).toEqual([2, 4, 6]);
   });
+
+  it('콜백 함수에서 false를 반환하면 루프를 중단해야 합니다', () => {
+    const array1 = [1, 2, 3, 4, 5];
+    const array2 = ['a', 'b', 'c', 'd', 'e'];
+    const result: Array<[number | undefined, string | undefined, number]> = [];
+
+    forEachDual(array1, array2, (item1, item2, index) => {
+      result.push([item1, item2, index]);
+      if (index === 2) return false;
+      return true;
+    });
+
+    expect(result).toEqual([
+      [1, 'a', 0],
+      [2, 'b', 1],
+      [3, 'c', 2],
+    ]);
+  });
 });

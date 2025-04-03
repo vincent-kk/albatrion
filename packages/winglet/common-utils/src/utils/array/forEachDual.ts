@@ -7,7 +7,7 @@ export const forEachDual = <Type1, Type2>(
     index: number,
     array1: Type1[],
     array2: Type2[],
-  ) => void,
+  ) => boolean | void,
 ) => {
   const array1Length = array1.length;
   const array2Length = array2.length;
@@ -15,6 +15,6 @@ export const forEachDual = <Type1, Type2>(
   for (let i = 0; i < length; i++) {
     const item1 = i < array1Length ? array1[i] : undefined;
     const item2 = i < array2Length ? array2[i] : undefined;
-    callback(item1, item2, i, array1, array2);
+    if (callback(item1, item2, i, array1, array2) === false) break;
   }
 };
