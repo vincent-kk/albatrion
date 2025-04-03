@@ -5,7 +5,7 @@ import { useMemorize, useSnapshot } from '@winglet/react-utils';
 
 import type { Dictionary } from '@aileron/types';
 
-import { FallbackManager } from '@/schema-form/app/FallbackManager';
+import { PluginManager } from '@/schema-form/app/plugin';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import { useExternalFormContext } from '@/schema-form/providers';
 import type { FormTypeInputProps } from '@/schema-form/types';
@@ -33,7 +33,7 @@ export const FormInput = ({
     <SchemaNodeProxy
       path={path ?? JSONPath.Root}
       FormTypeInput={FormTypeInput}
-      FormTypeRenderer={FormInputRenderer || FallbackManager.FormInput}
+      FormTypeRenderer={FormInputRenderer || PluginManager.FormInput}
       overridableFormTypeInputProps={overrideProps}
     />
   );

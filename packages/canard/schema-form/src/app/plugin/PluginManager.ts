@@ -1,4 +1,4 @@
-import type { ComponentType, MutableRefObject } from 'react';
+import type { ComponentType } from 'react';
 
 import { remainOnlyReactComponent } from '@winglet/react-utils';
 
@@ -20,7 +20,7 @@ import type {
   FormatError,
 } from '@/schema-form/types';
 
-interface FormType {
+interface RenderKit {
   FormGroup: ComponentType<FormTypeRendererProps>;
   FormLabel: ComponentType<FormTypeRendererProps>;
   FormInput: ComponentType<FormTypeRendererProps>;
@@ -28,57 +28,52 @@ interface FormType {
   formatError: FormatError;
 }
 
-const fallbackFormTypeRef: MutableRefObject<FormType> = {
-  current: {
+export class PluginManager {
+  static #renderKit: RenderKit = {
     FormGroup: FormGroupRenderer,
     FormLabel: FormLabelRenderer,
     FormInput: FormInputRenderer,
     FormError: FormErrorRenderer,
     formatError: formatError,
-  },
-};
+  };
+  static #formTypeInputDefinitions: NormalizedFormTypeInputDefinition[] =
+    normalizeFormTypeInputDefinitions(formTypeDefinitions);
 
-const fallbackFormTypeInputDefinitionsRef: MutableRefObject<
-  NormalizedFormTypeInputDefinition[]
-> = {
-  current: normalizeFormTypeInputDefinitions(formTypeDefinitions),
-};
+  static get FormGroup() {
+    return PluginManager.#renderKit.FormGroup;
+  }
+  static get FormLabel() {
+    return PluginManager.#renderKit.FormLabel;
+  }
+  static get FormInput() {
+    return PluginManager.#renderKit.FormInput;
+  }
+  static get FormError() {
+    return PluginManager.#renderKit.FormError;
+  }
+  static get formatError() {
+    return PluginManager.#renderKit.formatError;
+  }
+  static get formTypeInputDefinitions() {
+    return PluginManager.#formTypeInputDefinitions;
+  }
 
-export const FallbackManager = {
-  get FormGroup() {
-    return fallbackFormTypeRef.current.FormGroup;
-  },
-  get FormLabel() {
-    return fallbackFormTypeRef.current.FormLabel;
-  },
-  get FormInput() {
-    return fallbackFormTypeRef.current.FormInput;
-  },
-  get FormError() {
-    return fallbackFormTypeRef.current.FormError;
-  },
-  get formatError() {
-    return fallbackFormTypeRef.current.formatError;
-  },
-  get formTypeInputDefinitions() {
-    return fallbackFormTypeInputDefinitionsRef.current;
-  },
-  appendFormType(formType: Partial<FormType> | undefined) {
-    if (!formType) return;
-    const { formatError, ...FromTypes } = formType;
-    fallbackFormTypeRef.current = {
-      ...fallbackFormTypeRef.current,
+  static appendRenderKit(renderKit: Partial<RenderKit> | undefined) {
+    if (!renderKit) return;
+    const { formatError, ...FromTypes } = renderKit;
+    PluginManager.#renderKit = {
+      ...PluginManager.#renderKit,
       ...remainOnlyReactComponent(FromTypes),
       ...(formatError && { formatError }),
     };
-  },
-  appendFormTypeInputDefinitions(
+  }
+  static appendFormTypeInputDefinitions(
     formTypeInputDefinitions: FormTypeInputDefinition[] | undefined,
   ) {
     if (!formTypeInputDefinitions) return;
-    fallbackFormTypeInputDefinitionsRef.current = [
+    PluginManager.#formTypeInputDefinitions = [
       ...normalizeFormTypeInputDefinitions(formTypeInputDefinitions),
-      ...fallbackFormTypeInputDefinitionsRef.current,
+      ...PluginManager.#formTypeInputDefinitions,
     ];
-  },
-};
+  }
+}

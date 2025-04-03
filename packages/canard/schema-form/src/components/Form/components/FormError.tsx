@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 
 import { JSONPath } from '@winglet/json-schema';
 
-import { FallbackManager } from '@/schema-form/app/FallbackManager';
+import { PluginManager } from '@/schema-form/app/plugin';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import { useExternalFormContext } from '@/schema-form/providers';
 
@@ -18,7 +18,7 @@ export const FormError = ({ path, style, className }: FormErrorProps) => {
     <span style={style} className={className}>
       <SchemaNodeProxy
         path={path ?? JSONPath.Root}
-        FormTypeRenderer={FormErrorRenderer || FallbackManager.FormError}
+        FormTypeRenderer={FormErrorRenderer || PluginManager.FormError}
       />
     </span>
   );

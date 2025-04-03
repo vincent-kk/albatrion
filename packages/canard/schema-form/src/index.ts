@@ -1,4 +1,4 @@
-export { type SchemaFormPlugin, registerPlugin } from './app/registerPlugin';
+export { type SchemaFormPlugin, registerPlugin } from './app/plugin';
 
 export {
   Form,

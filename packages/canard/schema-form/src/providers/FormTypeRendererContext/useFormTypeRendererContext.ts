@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { FallbackManager } from '@/schema-form/app/FallbackManager';
+import { PluginManager } from '@/schema-form/app/plugin';
 
 import { FormTypeRendererContext } from './FormTypeRendererContext';
 
@@ -9,8 +9,8 @@ export const useFormTypeRendererContext = () => {
     FormTypeRendererContext,
   );
   return {
-    FormTypeRenderer: FormTypeRenderer || FallbackManager.FormGroup,
-    formatError: formatError || FallbackManager.formatError,
+    FormTypeRenderer: FormTypeRenderer || PluginManager.FormGroup,
+    formatError: formatError || PluginManager.formatError,
     checkShowError,
   };
 };

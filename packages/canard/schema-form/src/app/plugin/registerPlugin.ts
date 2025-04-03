@@ -13,7 +13,7 @@ import type {
   FormatError,
 } from '@/schema-form/types';
 
-import { FallbackManager } from './FallbackManager';
+import { PluginManager } from './PluginManager';
 
 const RegisteredPlugin = new Set<number>();
 
@@ -22,9 +22,9 @@ export const registerPlugin = (plugin: SchemaFormPlugin) => {
   const hash = generateHash(stableSerialize(plugin));
   if (RegisteredPlugin.has(hash)) return;
   try {
-    const { formTypeInputDefinitions, ...formType } = plugin;
-    FallbackManager.appendFormType(formType);
-    FallbackManager.appendFormTypeInputDefinitions(formTypeInputDefinitions);
+    const { formTypeInputDefinitions, ...renderKit } = plugin;
+    PluginManager.appendRenderKit(renderKit);
+    PluginManager.appendFormTypeInputDefinitions(formTypeInputDefinitions);
   } catch (error) {
     throw new UnhandledError('REGISTER_PLUGIN', 'Failed to register plugin', {
       plugin,

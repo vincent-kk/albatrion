@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 
 import { JSONPath } from '@winglet/json-schema';
 
-import { FallbackManager } from '@/schema-form/app/FallbackManager';
+import { PluginManager } from '@/schema-form/app/plugin';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import { useExternalFormContext } from '@/schema-form/providers';
 
@@ -18,7 +18,7 @@ export const FormLabel = ({ path, style, className }: FormLabelProps) => {
     <label style={style} className={className} htmlFor={path}>
       <SchemaNodeProxy
         path={path ?? JSONPath.Root}
-        FormTypeRenderer={FormLabelRenderer || FallbackManager.FormLabel}
+        FormTypeRenderer={FormLabelRenderer || PluginManager.FormLabel}
       />
     </label>
   );

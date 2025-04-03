@@ -6,7 +6,7 @@ import {
   withErrorBoundary,
 } from '@winglet/react-utils';
 
-import { FallbackManager } from '@/schema-form/app/FallbackManager';
+import { PluginManager } from '@/schema-form/app/plugin';
 import type { SchemaNode } from '@/schema-form/core';
 import {
   useExternalFormContext,
@@ -57,7 +57,7 @@ export const useFormTypeInput = (node: SchemaNode) => {
     }
 
     // NOTE: fallback FormTypeInputDefinitions has lowest priority
-    const fallbackDefinitions = FallbackManager.formTypeInputDefinitions;
+    const fallbackDefinitions = PluginManager.formTypeInputDefinitions;
     for (const { test, Component } of fallbackDefinitions) {
       if (test(hint)) return memo(Component);
     }
