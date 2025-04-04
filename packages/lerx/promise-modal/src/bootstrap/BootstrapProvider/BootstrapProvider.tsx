@@ -2,19 +2,16 @@ import {
   Fragment,
   type PropsWithChildren,
   forwardRef,
-  useCallback,
   useImperativeHandle,
   useMemo,
-  useRef,
 } from 'react';
 
-import { printError } from '@winglet/common-utils';
-import { useOnMount, useTick } from '@winglet/react-utils';
+import { useOnMount } from '@winglet/react-utils';
 
-import { ModalManager } from '@/promise-modal/app/ModalManager';
 import { usePathname as useDefaultPathname } from '@/promise-modal/hooks/useDefaultPathname';
 
-import { bootstrap } from '../bootstrap';
+import { bootstrap } from './helpers/bootstrap';
+import { useInitialize } from './hooks/useInitialize';
 import type { BootstrapProviderHandle, BootstrapProviderProps } from './type';
 
 export const BootstrapProvider = forwardRef<
@@ -40,29 +37,8 @@ export const BootstrapProvider = forwardRef<
       () => useExternalPathname || useDefaultPathname,
       [useExternalPathname],
     );
-    const permitted = useRef(ModalManager.activate());
-    const anchorRef = useRef<HTMLElement | null>(null);
-    const [, update] = useTick();
 
-    const handleInitialize = useCallback(
-      (root?: HTMLElement) => {
-        if (permitted.current) {
-          anchorRef.current = ModalManager.anchor({ root });
-          update();
-        } else
-          printError(
-            'ModalProvider is already initialized',
-            [
-              'ModalProvider can only be initialized once.',
-              'Nesting ModalProvider will be ignored...',
-            ],
-            {
-              info: 'Something is wrong with the ModalProvider initialization...',
-            },
-          );
-      },
-      [update],
-    );
+    const { anchorRef, handleInitialize } = useInitialize();
 
     useImperativeHandle(
       handleRef,

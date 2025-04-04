@@ -1,5 +1,5 @@
-export { bootstrap } from './bootstrap';
 export {
+  useBootstrap,
   BootstrapProvider,
   type BootstrapProviderHandle,
   type BootstrapProviderProps,

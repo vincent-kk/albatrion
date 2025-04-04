@@ -5,7 +5,7 @@ export {
 } from './providers';
 
 export {
-  bootstrap,
+  useBootstrap as useInitializeModal,
   BootstrapProvider as ModalProvider,
   type BootstrapProviderHandle as ModalProviderHandle,
   type BootstrapProviderProps as ModalProviderProps,
