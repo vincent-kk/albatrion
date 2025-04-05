@@ -17,11 +17,12 @@ interface FormTypeRendererContextProviderProps {
   /** Custom format error function */
   formatError?: FormProps['formatError'];
   /**
-   * Error display condition (default: ShowError.Dirty | ShowError.Touched)
+   * Error display condition (default: ShowError.DirtyTouched)
    *   - `true`: 항상 노출
    *   - `false`: 항상 미노출
    *   - `ShowError.Dirty`: 값이 변경된 경우 노출
    *   - `ShowError.Touched`: input에 focus 된 경우 노출
+   *   - `ShowError.DirtyTouched`: Dirty 상태와 Touched 상태가 모두 충족된 경우 노출
    */
   showError?: FormProps['showError'];
 }
