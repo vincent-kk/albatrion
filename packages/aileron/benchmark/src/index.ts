@@ -11,7 +11,7 @@ import { run as runTransformErrors } from './targets/transformErrors/benchmark';
 const benchmarks = {
   // fastest: 1162676.20, slowest: 582443.64, speedRatio: 2.00:1, timeSaved: 49.90%
   compareJsonSchemaErrors: runCompareJsonSchemaErrors,
-  // similar to es-toolkit...
+  // fastest: 194722.56, slowest: 191773.18, speedRatio: 1.02:1, timeSaved: 1.51%
   deepMerge: runDeepMerge,
   // fastest: 1206271.38, slowest: 340044.93, speedRatio: 3.55:1, timeSaved: 71.81%
   find: runFind,

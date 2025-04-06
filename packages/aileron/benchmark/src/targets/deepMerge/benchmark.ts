@@ -1,10 +1,10 @@
 import Benchmark from 'benchmark';
+import { merge as esToolsMerge } from 'es-toolkit';
 
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 
 import { data1, data2 } from './data';
 import { merge as localMerge } from './deepMerge';
-import { merge as esToolsMerge } from './es-tools';
 
 const suite = new Benchmark.Suite();
 
