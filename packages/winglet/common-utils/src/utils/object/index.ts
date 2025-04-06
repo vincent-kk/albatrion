@@ -1,3 +1,4 @@
+export { merge } from './merge';
 export { removeUndefined } from './removeUndefined';
 export { serializeObject } from './serializeObject';
 export { serializeWithFullSortedKeys } from './serializeWithFullSortedKeys';
