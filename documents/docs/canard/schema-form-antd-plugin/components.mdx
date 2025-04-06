@@ -1,0 +1,197 @@
+---
+sidebar_position: 1
+---
+
+# 컴포넌트
+
+이 문서에서는 `@canard/schema-form-antd-plugin`에서 제공하는 각 컴포넌트의 사용법을 설명합니다.
+
+## Input
+
+기본적인 텍스트 입력을 위한 컴포넌트입니다.
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      title: '이름',
+      'ui:widget': 'input',
+      'ui:placeholder': '이름을 입력하세요',
+    },
+  },
+};
+```
+
+<FormProvider>
+  <Form schema={schema} />
+</FormProvider>
+
+### 속성
+
+| 속성             | 타입                             | 설명                                 |
+| ---------------- | -------------------------------- | ------------------------------------ |
+| `ui:type`        | `string`                         | 입력 타입 (text, password, email 등) |
+| `ui:placeholder` | `string`                         | 플레이스홀더 텍스트                  |
+| `ui:prefix`      | `string`                         | 입력 필드 앞에 표시될 아이콘         |
+| `ui:suffix`      | `string`                         | 입력 필드 뒤에 표시될 아이콘         |
+| `ui:size`        | `'small' \| 'middle' \| 'large'` | 입력 필드 크기                       |
+
+## Select
+
+드롭다운 선택을 위한 컴포넌트입니다.
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    type: {
+      type: 'string',
+      title: '타입',
+      'ui:widget': 'select',
+      enum: ['A', 'B', 'C'],
+      'ui:placeholder': '타입을 선택하세요',
+    },
+  },
+};
+```
+
+<FormProvider>
+  <Form schema={schema} />
+</FormProvider>
+
+### 속성
+
+| 속성             | 타입                             | 설명                |
+| ---------------- | -------------------------------- | ------------------- |
+| `ui:mode`        | `'multiple' \| 'tags'`           | 다중 선택 모드      |
+| `ui:placeholder` | `string`                         | 플레이스홀더 텍스트 |
+| `ui:allowClear`  | `boolean`                        | 선택 해제 가능 여부 |
+| `ui:size`        | `'small' \| 'middle' \| 'large'` | 선택 필드 크기      |
+
+## DatePicker
+
+날짜 선택을 위한 컴포넌트입니다.
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    date: {
+      type: 'string',
+      title: '날짜',
+      'ui:widget': 'datepicker',
+      'ui:placeholder': '날짜를 선택하세요',
+    },
+  },
+};
+```
+
+<FormProvider>
+  <Form schema={schema} />
+</FormProvider>
+
+### 속성
+
+| 속성             | 타입                             | 설명                |
+| ---------------- | -------------------------------- | ------------------- |
+| `ui:showTime`    | `boolean`                        | 시간 선택 표시 여부 |
+| `ui:format`      | `string`                         | 날짜 포맷           |
+| `ui:placeholder` | `string`                         | 플레이스홀더 텍스트 |
+| `ui:size`        | `'small' \| 'middle' \| 'large'` | 날짜 선택 필드 크기 |
+
+## Checkbox
+
+체크박스 선택을 위한 컴포넌트입니다.
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    terms: {
+      type: 'boolean',
+      title: '약관 동의',
+      'ui:widget': 'checkbox',
+      default: false,
+    },
+  },
+};
+```
+
+<FormProvider>
+  <Form schema={schema} />
+</FormProvider>
+
+### 속성
+
+| 속성               | 타입      | 설명                |
+| ------------------ | --------- | ------------------- |
+| `ui:disabled`      | `boolean` | 비활성화 여부       |
+| `ui:indeterminate` | `boolean` | 중간 상태 표시 여부 |
+
+## Radio
+
+라디오 버튼 선택을 위한 컴포넌트입니다.
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    gender: {
+      type: 'string',
+      title: '성별',
+      'ui:widget': 'radio',
+      enum: ['남성', '여성'],
+    },
+  },
+};
+```
+
+<FormProvider>
+  <Form schema={schema} />
+</FormProvider>
+
+### 속성
+
+| 속성             | 타입                             | 설명             |
+| ---------------- | -------------------------------- | ---------------- |
+| `ui:buttonStyle` | `'outline' \| 'solid'`           | 버튼 스타일      |
+| `ui:optionType`  | `'default' \| 'button'`          | 옵션 타입        |
+| `ui:size`        | `'small' \| 'middle' \| 'large'` | 라디오 버튼 크기 |
+
+## Switch
+
+토글 스위치를 위한 컴포넌트입니다.
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    active: {
+      type: 'boolean',
+      title: '활성화',
+      'ui:widget': 'switch',
+      default: false,
+    },
+  },
+};
+```
+
+<FormProvider>
+  <Form schema={schema} />
+</FormProvider>
+
+### 속성
+
+| 속성                   | 타입                   | 설명                 |
+| ---------------------- | ---------------------- | -------------------- |
+| `ui:checkedChildren`   | `string`               | 활성화 상태 텍스트   |
+| `ui:unCheckedChildren` | `string`               | 비활성화 상태 텍스트 |
+| `ui:size`              | `'default' \| 'small'` | 스위치 크기          |
+| `ui:loading`           | `boolean`              | 로딩 상태            |
+
+## 다음 단계
+
+- [스키마 확장](./schema-extensions.md)에서 스키마에 추가할 수 있는 UI 속성들을 확인하세요
+- [예제](./examples.md)에서 다양한 사용 사례를 살펴보세요

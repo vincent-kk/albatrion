@@ -12,6 +12,7 @@
     "jsonSchema": "yarn workspace @winglet/json-schema",
     "reactUtils": "yarn workspace @winglet/react-utils",
     "developmentHelper": "yarn workspace @aileron/development-helper",
+    "documents": "yarn workspace @albatrion/documents",
     "run:all": "yarn workspaces foreach --all --topological run",
     "patch:all": "yarn workspaces foreach --all --topological --no-private run version:patch",
     "minor:all": "yarn workspaces foreach --all --topological --no-private run version:minor",
@@ -20,6 +21,7 @@
     "login:npm": "yarn npm login --publish"
   },
   "workspaces": [
+    "documents",
     "packages/**/*"
   ],
   "packageManager": "yarn@4.8.0"
