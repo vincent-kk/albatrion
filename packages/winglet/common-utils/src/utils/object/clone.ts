@@ -11,9 +11,12 @@ import {
 
 import { getSymbols } from './getSymbols';
 
-export const deepClone = <Type>(target: Type): Type => clone(target);
+export const clone = <Type>(target: Type): Type => replicate(target);
 
-const clone = <Type>(value: Type, cache = new WeakMap<object, any>()): Type => {
+const replicate = <Type>(
+  value: Type,
+  cache = new WeakMap<object, any>(),
+): Type => {
   if (isPrimitiveType(value)) return value as Type;
 
   // @ts-expect-error: After passing `isPrimitiveType`, value must be an object.
@@ -23,7 +26,7 @@ const clone = <Type>(value: Type, cache = new WeakMap<object, any>()): Type => {
     const result = new Array(value.length);
     cache.set(value, result);
     for (let i = 0; i < value.length; i++)
-      if (i in value) result[i] = clone(value[i], cache);
+      if (i in value) result[i] = replicate(value[i], cache);
     // @ts-expect-error: The `index` property is only available in the result of a RegExp match.
     if ('index' in value) result.index = value.index;
     // @ts-expect-error: The `input` property is only available in the result of a RegExp match.
@@ -42,14 +45,15 @@ const clone = <Type>(value: Type, cache = new WeakMap<object, any>()): Type => {
   if (value instanceof Map) {
     const result = new Map();
     cache.set(value, result);
-    for (const [k, v] of value) result.set(clone(k, cache), clone(v, cache));
+    for (const [k, v] of value)
+      result.set(replicate(k, cache), replicate(v, cache));
     return result as Type;
   }
 
   if (value instanceof Set) {
     const result = new Set();
     cache.set(value, result);
-    for (const v of value) result.add(clone(v, cache));
+    for (const v of value) result.add(replicate(v, cache));
     return result as Type;
   }
 
@@ -67,7 +71,7 @@ const clone = <Type>(value: Type, cache = new WeakMap<object, any>()): Type => {
       value.byteLength,
     );
     cache.set(value, result);
-    copyProperties(result, value, cache);
+    replicateProperties(result, value, cache);
     return result as Type;
   }
 
@@ -77,14 +81,14 @@ const clone = <Type>(value: Type, cache = new WeakMap<object, any>()): Type => {
       lastModified: value.lastModified,
     });
     cache.set(value, result);
-    copyProperties(result, value, cache);
+    replicateProperties(result, value, cache);
     return result as Type;
   }
 
   if (isBlob(value)) {
     const result = new Blob([value], { type: value.type });
     cache.set(value, result);
-    copyProperties(result, value, cache);
+    replicateProperties(result, value, cache);
     return result as Type;
   }
 
@@ -95,8 +99,8 @@ const clone = <Type>(value: Type, cache = new WeakMap<object, any>()): Type => {
     result.name = value.name;
     result.stack = value.stack;
     // @ts-expect-error: The `cause` property is not available on Error prior to ES2022.
-    if ('cause' in value) result.cause = clone(value.cause, cache);
-    copyProperties(result, value, cache);
+    if ('cause' in value) result.cause = replicate(value.cause, cache);
+    replicateProperties(result, value, cache);
     return result as Type;
   }
 
@@ -104,14 +108,14 @@ const clone = <Type>(value: Type, cache = new WeakMap<object, any>()): Type => {
     const result = Object.create(Object.getPrototypeOf(value));
     // `isCloneable` will not allow a nullish object to be passed.
     cache.set(value!, result);
-    copyProperties(result, value!, cache);
+    replicateProperties(result, value!, cache);
     return result as Type;
   }
 
   return value;
 };
 
-const copyProperties = (
+const replicateProperties = (
   target: Record<PropertyKey, any>,
   source: Record<PropertyKey, any>,
   cache?: WeakMap<object, any>,
@@ -122,7 +126,7 @@ const copyProperties = (
       const key = keys[i];
       const descriptor = Object.getOwnPropertyDescriptor(target, key);
       if (descriptor == null || descriptor.writable)
-        target[key] = clone(source[key], cache);
+        target[key] = replicate(source[key], cache);
     }
   const symbols = getSymbols(source);
   if (symbols.length > 0)
@@ -130,6 +134,6 @@ const copyProperties = (
       const key = symbols[i];
       const descriptor = Object.getOwnPropertyDescriptor(target, key);
       if (descriptor == null || descriptor.writable)
-        target[key] = clone(source[key], cache);
+        target[key] = replicate(source[key], cache);
     }
 };
