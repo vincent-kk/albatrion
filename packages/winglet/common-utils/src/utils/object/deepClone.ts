@@ -16,15 +16,18 @@ export const deepClone = <Type>(target: Type): Type => clone(target);
 const clone = <Type>(value: Type, cache = new WeakMap<object, any>()): Type => {
   if (isPrimitiveType(value)) return value as Type;
 
-  if (cache.has(value as object)) return cache.get(value as object) as Type;
+  // @ts-expect-error: After passing `isPrimitiveType`, value must be an object.
+  if (cache.has(value)) return cache.get(value) as Type;
 
   if (isArray(value)) {
-    const result = Array.from(value);
-    cache.set(value as object, result);
+    const result = new Array(value.length);
+    cache.set(value, result);
     for (let i = 0; i < value.length; i++)
       if (i in value) result[i] = clone(value[i], cache);
-    if ('index' in value) (result as any).index = value.index;
-    if ('input' in value) (result as any).input = value.input;
+    // @ts-expect-error: The `index` property is only available in the result of a RegExp match.
+    if ('index' in value) result.index = value.index;
+    // @ts-expect-error: The `input` property is only available in the result of a RegExp match.
+    if ('input' in value) result.input = value.input;
     return result as Type;
   }
 
@@ -38,14 +41,14 @@ const clone = <Type>(value: Type, cache = new WeakMap<object, any>()): Type => {
 
   if (value instanceof Map) {
     const result = new Map();
-    cache.set(value as object, result);
+    cache.set(value, result);
     for (const [k, v] of value) result.set(clone(k, cache), clone(v, cache));
     return result as Type;
   }
 
   if (value instanceof Set) {
     const result = new Set();
-    cache.set(value as object, result);
+    cache.set(value, result);
     for (const v of value) result.add(clone(v, cache));
     return result as Type;
   }
@@ -63,7 +66,7 @@ const clone = <Type>(value: Type, cache = new WeakMap<object, any>()): Type => {
       value.byteOffset,
       value.byteLength,
     );
-    cache.set(value as object, result);
+    cache.set(value, result);
     copyProperties(result, value, cache);
     return result as Type;
   }
@@ -71,36 +74,36 @@ const clone = <Type>(value: Type, cache = new WeakMap<object, any>()): Type => {
   if (typeof File !== 'undefined' && value instanceof File) {
     const result = new File([value], value.name, {
       type: value.type,
+      lastModified: value.lastModified,
     });
-    cache.set(value as object, result);
+    cache.set(value, result);
     copyProperties(result, value, cache);
     return result as Type;
   }
 
   if (isBlob(value)) {
     const result = new Blob([value], { type: value.type });
-    cache.set(value as object, result);
+    cache.set(value, result);
     copyProperties(result, value, cache);
     return result as Type;
   }
 
   if (value instanceof Error) {
-    const result = new (value.constructor as { new (): Error })();
-    cache.set(value as object, result);
+    const result = new (value.constructor as { new (...args: any[]): Error })();
+    cache.set(value, result);
     result.message = value.message;
     result.name = value.name;
     result.stack = value.stack;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    result.cause = value.cause;
+    // @ts-expect-error: The `cause` property is not available on Error prior to ES2022.
+    if ('cause' in value) result.cause = clone(value.cause, cache);
     copyProperties(result, value, cache);
     return result as Type;
   }
 
   if (typeof value === 'object' && isCloneable(value)) {
     const result = Object.create(Object.getPrototypeOf(value));
-    cache.set(value as object, result);
-    // isCloneable will not allow to pass nullish object
+    // `isCloneable` will not allow a nullish object to be passed.
+    cache.set(value!, result);
     copyProperties(result, value!, cache);
     return result as Type;
   }
