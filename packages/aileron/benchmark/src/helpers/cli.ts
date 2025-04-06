@@ -8,10 +8,12 @@ export async function main(benchmarks: Record<string, () => Promise<any>>) {
       message: 'What would you like to do?',
       choices: [
         { name: 'Run all benchmarks', value: 'all' },
-        ...Object.keys(benchmarks).map((name) => ({
-          name: `Run [${name}] benchmark`,
-          value: name,
-        })),
+        ...Object.keys(benchmarks)
+          .sort()
+          .map((name) => ({
+            name: `Run [${name}] benchmark`,
+            value: name,
+          })),
       ],
     },
   ]);
