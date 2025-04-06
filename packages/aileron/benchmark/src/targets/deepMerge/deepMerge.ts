@@ -1,5 +1,4 @@
-import { isPlainObject } from 'es-toolkit';
-import { isArray } from 'es-toolkit/compat';
+import { isArray, isPlainObject } from '@winglet/common-utils';
 
 export const merge = <
   T extends Record<PropertyKey, any>,
