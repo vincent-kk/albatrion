@@ -2,7 +2,7 @@
   "name": "@aileron/benchmark",
   "private": true,
   "scripts": {
-    "start": "tsx --require ./ignore-css.ts ./src/cli.ts",
+    "start": "tsx --require ./ignore-css.ts ./src/index.ts",
     "test": "vitest"
   },
   "devDependencies": {
