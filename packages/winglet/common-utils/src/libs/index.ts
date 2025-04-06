@@ -1,5 +1,6 @@
 export * from './cache';
 export * from './counter';
+export * from './getTypeTag';
 export * from './microtask';
 export * from './murmur3';
 export * from './postPromise';
