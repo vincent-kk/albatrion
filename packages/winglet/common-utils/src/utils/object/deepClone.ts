@@ -19,11 +19,12 @@ const clone = <Type>(value: Type, cache = new WeakMap<object, any>()): Type => {
   if (cache.has(value as object)) return cache.get(value as object) as Type;
 
   if (isArray(value)) {
-    const result: any = new Array(value.length);
+    const result = Array.from(value);
     cache.set(value as object, result);
-    for (let i = 0; i < value.length; i++) result[i] = clone(value[i], cache);
-    if ('index' in value) result.index = value.index;
-    if ('input' in value) result.input = value.input;
+    for (let i = 0; i < value.length; i++)
+      if (i in value) result[i] = clone(value[i], cache);
+    if ('index' in value) (result as any).index = value.index;
+    if ('input' in value) (result as any).input = value.input;
     return result as Type;
   }
 
