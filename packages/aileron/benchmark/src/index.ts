@@ -1,68 +1,36 @@
-// NOTE: fastest: 1162676.20, slowest: 582443.64, speedRatio: 2.00:1, timeSaved: 49.90%\
-// import { run as runCompareJsonSchemaErrors } from './targets/compareJsonSchemaErrors/benchmark';
-// runCompareJsonSchemaErrors().then(
-//   ({ fastest, slowest, speedRatio, executionTimeSaved }) => {
-//     console.log(
-//       `fastest: ${fastest}, slowest: ${slowest}, speedRatio: ${speedRatio}:1, timeSaved: ${executionTimeSaved}%`,
-//     );
-//   },
-// );
-// NOTE: fastest: 1206271.38, slowest: 340044.93, speedRatio: 3.55:1, timeSaved: 71.81%
-// import { run as runFind } from './targets/find/benchmark';
-// runFind().then(({ fastest, slowest, speedRatio, executionTimeSaved }) => {
-//   console.log(
-//     `fastest: ${fastest}, slowest: ${slowest}, speedRatio: ${speedRatio}:1, timeSaved: ${executionTimeSaved}%`,
-//   );
-// });
-// NOTE: fastest: 242782.94, slowest: 226187.09, speedRatio: 1.07:1, timeSaved: 6.84%
-// import { run as runGetDataWithSchema } from './targets/getDataWithSchema/benchmark';
-// runGetDataWithSchema().then(
-//   ({ fastest, slowest, speedRatio, executionTimeSaved }) => {
-//     console.log(
-//       `fastest: ${fastest}, slowest: ${slowest}, speedRatio: ${speedRatio}:1, timeSaved: ${executionTimeSaved}%`,
-//     );
-//   },
-// );
-// NOTE: fastest: 594715.92, slowest: 118951.10, speedRatio: 5.00:1, timeSaved: 80.00%
-// import { run as runGetJsonPaths } from './targets/getJsonPath/benchmark';
-// runGetJsonPaths().then(
-//   ({ fastest, slowest, speedRatio, executionTimeSaved }) => {
-//     console.log(
-//       `fastest: ${fastest}, slowest: ${slowest}, speedRatio: ${speedRatio}:1, timeSaved: ${executionTimeSaved}%`,
-//     );
-//   },
-// );
-// NOTE: fastest: 1128561.73, slowest: 567012.23, speedRatio: 1.99:1, timeSaved: 49.76%
-// import { run as runTransformErrors } from './targets/transformErrors/benchmark';
-// runTransformErrors().then(
-//   ({ fastest, slowest, speedRatio, executionTimeSaved }) => {
-//     console.log(
-//       `fastest: ${fastest}, slowest: ${slowest}, speedRatio: ${speedRatio}:1, timeSaved: ${executionTimeSaved}%`,
-//     );
-//   },
-// );
-// NOTE: Fastest is serialize
-// NOTE: fastest: 64045091.33, slowest: 80672.09, speedRatio: 793.89:1, timeSaved: 99.87%
-// import { run as runStringifyObject } from './targets/stringifyObject/benchmark';
-// runStringifyObject().then(
-//   ({ fastest, slowest, speedRatio, executionTimeSaved }) => {
-//     console.log(
-//       `fastest: ${fastest}, slowest: ${slowest}, speedRatio: ${speedRatio}:1, timeSaved: ${executionTimeSaved}%`,
-//     );
-//   },
-// );
-// import { run as runDeepMerge } from './targets/deepMerge/benchmark';
-// runDeepMerge().then(({ fastest, slowest, speedRatio, executionTimeSaved }) => {
-//   console.log(
-//     `fastest: ${fastest}, slowest: ${slowest}, speedRatio: ${speedRatio}:1, timeSaved: ${executionTimeSaved}%`,
-//   );
-// });
+import { main } from './helpers/cli';
+import { run as runClone } from './targets/clone/benchmark';
+import { run as runCompareJsonSchemaErrors } from './targets/compareJsonSchemaErrors/benchmark';
+import { run as runDeepMerge } from './targets/deepMerge/benchmark';
+import { run as runFind } from './targets/find/benchmark';
+import { run as runGetDataWithSchema } from './targets/getDataWithSchema/benchmark';
+import { run as runGetJsonPaths } from './targets/getJsonPath/benchmark';
 import { run as runSortObjectKeys } from './targets/sortObjectKeys/benchmark';
+import { run as runStringifyObject } from './targets/stringifyObject/benchmark';
+import { run as runTransformErrors } from './targets/transformErrors/benchmark';
 
-runSortObjectKeys().then(
-  ({ fastest, slowest, speedRatio, executionTimeSaved }) => {
-    console.log(
-      `fastest: ${fastest}, slowest: ${slowest}, speedRatio: ${speedRatio}:1, timeSaved: ${executionTimeSaved}%`,
-    );
-  },
-);
+const benchmarks = {
+  // fastest: 1162676.20, slowest: 582443.64, speedRatio: 2.00:1, timeSaved: 49.90%
+  compareJsonSchemaErrors: runCompareJsonSchemaErrors,
+  // fastest: 194722.56, slowest: 191773.18, speedRatio: 1.02:1, timeSaved: 1.51%
+  deepMerge: runDeepMerge,
+  // fastest: 1206271.38, slowest: 340044.93, speedRatio: 3.55:1, timeSaved: 71.81%
+  find: runFind,
+  // fastest: 242782.94, slowest: 226187.09, speedRatio: 1.07:1, timeSaved: 6.84%
+  getDataWithSchema: runGetDataWithSchema,
+  // fastest: 594715.92, slowest: 118951.10, speedRatio: 5.00:1, timeSaved: 80.00%
+  getJsonPaths: runGetJsonPaths,
+  // Result: fastest: 1123.40, slowest: 408.95, speedRatio: 2.75:1, timeSaved: 63.60%
+  sortObjectKeys: runSortObjectKeys,
+  // fastest(serialize): 64045091.33, slowest: 80672.09, speedRatio: 793.89:1, timeSaved: 99.87%
+  stringifyObject: runStringifyObject,
+  // fastest: 1128561.73, slowest: 567012.23, speedRatio: 1.99:1, timeSaved: 49.76%
+  transformErrors: runTransformErrors,
+  // fastest: 2222.87, slowest: 1195.36, speedRatio: 1.86:1, timeSaved: 46.22%
+  clone: runClone,
+};
+
+main(benchmarks).catch((error) => {
+  console.error('Error:', error);
+  process.exit(1);
+});

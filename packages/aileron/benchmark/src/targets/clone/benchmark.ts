@@ -1,21 +1,26 @@
 import Benchmark from 'benchmark';
-import { merge as esToolsMerge } from 'es-toolkit';
+import { cloneDeep as esToolsClone } from 'es-toolkit';
 
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 
-import { data1, data2 } from './data';
-import { merge as localMerge } from './deepMerge';
+import { clone } from './clone';
+import { mixedData } from './data';
+
+const sample = mixedData;
 
 const suite = new Benchmark.Suite();
 
 export const run = () => {
   return new Promise<Ratio>((resolve) => {
     suite
-      .add('localMerge', function () {
-        localMerge(data1, data2);
+      .add('JSON clone', function () {
+        JSON.parse(JSON.stringify(sample));
       })
-      .add('es-toolkit', function () {
-        esToolsMerge(data1, data2);
+      .add('clone', function () {
+        clone(sample);
+      })
+      .add('es-toolkit cloneDeep', function () {
+        esToolsClone(sample);
       })
       .on('cycle', function (event: Benchmark.Event) {
         console.log(String(event.target));

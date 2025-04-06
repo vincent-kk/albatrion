@@ -1,5 +1,6 @@
+import { JSONPath, type JsonSchema } from '@winglet/json-schema';
+
 import { schemaNodeFactory } from '@canard/schema-form/src/core/nodes';
-import { JSONPath, type JsonSchema } from '@canard/schema-form/src/types';
 
 const schema = {
   type: 'object',

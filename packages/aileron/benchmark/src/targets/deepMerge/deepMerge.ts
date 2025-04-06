@@ -1,5 +1,4 @@
-import { isPlainObject } from 'es-toolkit';
-import { isArray } from 'es-toolkit/compat';
+import { isArray, isPlainObject } from '@winglet/common-utils';
 
 export const merge = <
   T extends Record<PropertyKey, any>,
@@ -9,22 +8,20 @@ export const merge = <
   source: S,
 ): T & S => {
   const sourceKeys = Object.keys(source) as Array<keyof S>;
-  const length = sourceKeys.length;
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < sourceKeys.length; i++) {
     const key = sourceKeys[i];
     const sourceValue = source[key];
     const targetValue = target[key];
-    if (isArray(sourceValue)) {
+    if (isArray(sourceValue))
       target[key] = isArray(targetValue)
         ? merge(targetValue, sourceValue)
         : merge([], sourceValue);
-    } else if (isPlainObject(sourceValue)) {
+    else if (isPlainObject(sourceValue))
       target[key] = isPlainObject(targetValue)
         ? merge(targetValue, sourceValue)
         : merge({}, sourceValue);
-    } else if (targetValue === undefined || sourceValue !== undefined) {
+    else if (targetValue === undefined || sourceValue !== undefined)
       target[key] = sourceValue;
-    }
   }
   return target;
 };

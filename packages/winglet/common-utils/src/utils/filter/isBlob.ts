@@ -1,4 +1,2 @@
-export const isBlob = (value: unknown): value is Blob => {
-  if (Blob === undefined) return false;
-  return value instanceof Blob;
-};
+export const isBlob = (value: unknown): value is Blob =>
+  Blob !== undefined && value instanceof Blob;
