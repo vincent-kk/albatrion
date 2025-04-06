@@ -39,7 +39,7 @@ const clone = <Type>(value: Type, cache = new WeakMap<object, any>()): Type => {
   if (value instanceof Map) {
     const result = new Map();
     cache.set(value as object, result);
-    for (const [k, v] of value) result.set(k, clone(v, cache));
+    for (const [k, v] of value) result.set(clone(k, cache), clone(v, cache));
     return result as Type;
   }
 
@@ -52,16 +52,10 @@ const clone = <Type>(value: Type, cache = new WeakMap<object, any>()): Type => {
 
   if (isBuffer(value)) return value.subarray() as Type;
 
-  if (isTypedArray(value)) {
-    const result = new (Object.getPrototypeOf(value).constructor)(value.length);
-    cache.set(value as object, result);
-    for (let i = 0; i < value.length; i++) result[i] = clone(value[i], cache);
-    return result as Type;
-  }
+  if (isTypedArray(value)) return value.slice() as Type;
 
-  if (isArrayBuffer(value) || isSharedArrayBuffer(value)) {
+  if (isArrayBuffer(value) || isSharedArrayBuffer(value))
     return value.slice() as Type;
-  }
 
   if (value instanceof DataView) {
     const result = new DataView(
