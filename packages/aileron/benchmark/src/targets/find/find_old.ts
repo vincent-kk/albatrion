@@ -1,5 +1,6 @@
+import { JSONPath } from '@winglet/json-schema';
+
 import { SchemaNode } from '@canard/schema-form/src/core/nodes/type';
-import { JSONPath } from '@canard/schema-form/src/types';
 
 export const find = (target: SchemaNode, path: string[]): SchemaNode | null => {
   const [currPath, ...rest] = path;

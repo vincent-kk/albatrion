@@ -1,6 +1,5 @@
 import { isPlainObject } from '@winglet/common-utils';
-
-import { JSONPath } from '@canard/schema-form/src/types';
+import { JSONPath } from '@winglet/json-schema';
 
 export const getJsonPaths = (data: any, jsonPath = '') => {
   const jsonPaths = [jsonPath];

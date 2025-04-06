@@ -1,5 +1,6 @@
+import { JSONPath } from '@winglet/json-schema';
+
 import type { AbstractNode } from '@canard/schema-form/src/core/nodes/AbstractNode';
-import { JSONPath } from '@canard/schema-form/src/types';
 
 export function find(target: any, path: string): AbstractNode | any {
   const [currPath, ...rest] = path
