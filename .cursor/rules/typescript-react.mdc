@@ -1,7 +1,7 @@
 ---
 description: 
-globs: 
-alwaysApply: true
+globs: *.ts,*.tsx,*.js,*.jsx
+alwaysApply: false
 ---
 # Typescript and React Rules
 
