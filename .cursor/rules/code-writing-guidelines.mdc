@@ -1,0 +1,94 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Code Writing Guidelines
+
+## 1. Readability
+1. **Sequential Flow**  
+   - Ensure that code reads naturally from top to bottom.  
+   - Avoid code that forces readers to constantly shift their focus up and down, and maintain a clear sequential execution flow.
+
+2. **Concise Length**  
+   - Write code so that it can be understood without viewing more than five lines at once.  
+   - If a code block exceeds five lines, conceptually divide it into smaller functions or modules.
+
+3. **Avoid Duplicate Variables**  
+   - Do not reuse the same variable name multiple times.  
+   - If it’s unavoidable, the purpose and functionality must be distinctly different to prevent confusion.
+
+4. **Clear Naming**  
+   - Give every variable, function, and class a name that clearly reflects its behavior and identity.  
+   - For example: `calculateSum()`, `totalCount`, etc.
+
+---
+
+## 2. Performance
+1. **Prioritize Speed**  
+   - Strive to write fast and efficient code whenever possible.  
+   - Keep time complexity and space complexity in mind.
+
+2. **Simplicity**  
+   - Avoid unnecessary complexity and write straightforward logic.  
+   - Compress the logic without sacrificing readability.
+
+3. **Minimize Repetition**  
+   - Make efforts to reduce the total number of iterations.  
+   - Be cautious with nested loops, and modularize repetitive code into functions for reusability.
+
+---
+
+## 3. Explicit I/O
+1. **Specify Input and Output Types**  
+   - Declare your code’s inputs and outputs clearly.  
+   - In TypeScript, for instance, specify function return types and parameter types explicitly.
+
+2. **Comments for Clarity**  
+   - Use comments to explain the input and output behavior before delving into the code.  
+   - Briefly describe the main function or class role, input types, return types, and possible exceptions.
+
+---
+
+## 4. Maintainability
+1. **Continuous Improvement**  
+   - Refactor code regularly as needed to keep it simple and stable.  
+   - Address technical debt promptly by adjusting priorities.
+
+2. **Well-Defined Structure**  
+   - Design modules, classes, and functions so that their responsibilities are clearly separated.  
+   - Adhere to the Single Responsibility Principle, ensuring one function or class does not handle too many tasks.
+
+3. **Test Code**  
+   - Implement unit tests, integration tests, etc. to automatically verify your code’s functionality.  
+   - Write test cases for critical features or changes so that refactoring doesn’t break existing functionality.
+
+4. **Consistent Coding Style**  
+   - Use automated formatters and linters such as ESLint and Prettier to maintain a uniform coding style.  
+   - Consistent visual elements (indentation, line breaks, brackets, etc.) help reduce errors and improve readability.
+
+---
+
+## 5. Error Handling
+1. **Clear Exception Handling**  
+   - Throw exceptions or errors when the function or method cannot handle a situation, and ensure they’re ultimately handled to maintain stability.  
+   - Differentiate between errors that should be shown to users and those that should be logged internally.
+
+2. **Error Logging and Tracing**  
+   - Log necessary information when exceptions occur to make debugging easier.  
+   - At the service level, use monitoring tools to detect incidents in real time.
+
+---
+
+## 6. Collaboration Process
+1. **Code Review**  
+   - Use Pull Requests (or Merge Requests) so that other team members can review code quality and check for bugs in advance.  
+   - Provide a brief summary of key changes or issue resolutions for the reviewer’s convenience.
+
+2. **Version Control Guidelines**  
+   - Adopt a version control strategy such as Git Flow or Trunk-Based Development, depending on the project.  
+   - Write concise, meaningful commit messages to keep a clear history of changes.
+
+---
+
+> Copyright © 2025 Vincent K. Kelvin. All rights reserved.
