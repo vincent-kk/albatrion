@@ -1,0 +1,322 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Typescript and React Rules
+
+> This document defines global rules to maintain code consistency and improve quality in a React + TypeScript project using Cursor IDE and static analysis tools. Each section is structured in Markdown format and serves as a reference during automation or code reviews.
+
+---
+
+## Project Directory Structure
+
+```
+package-root/
+ ├── @types/                  # global types and package.json for deploy `@types` (.d.ts).
+ ├── coverage/                # Storybook stories and E2E test.
+ ├── src/                     # Application source code.
+ │   ├── app/                 # Global App config or env ect.
+ │   ├── components/          # React Components for reuse. Check falowing example.
+ │   ├── core/                # Core domain logics or structure.
+ │   ├── errors/              # Error handling and Error definitions.
+ │   ├── helpers/             # Utility functions with domain logic.
+ │   ├── hooks/               # Custom React hooks.
+ │   ├── providers/           # React Contexts and Context Providers.
+ │   ├── types/               # Shared TypeScript type for this project.
+ │   └── utils/               # Utility functions without domian logic.
+ ├── .yarnrc.yml              # Yarn setting.
+ ├── tsconfig.json            # TypeScript setting.
+ ├── vite.config.ts           # Vite setting.
+ └── package.json             # Package definition.
+```
+
+### Example structure for `components` directory
+
+```
+src/components/
+├── common/
+│   ├── Button/
+│   │   ├── Button.tsx
+│   │   ├── type.ts
+│   │   ├── Button.test.tsx
+│   │   ├── Button.stories.tsx
+│   │   ├── Button.module.scss
+│   │   └── hooks/
+│   │       ├── useClick.ts
+│   │       └── useHover.ts
+│   └── Label/
+│       └── ...
+├── layout/
+│   ├── Header/
+│   ├── Content/
+│   └── Footer/
+└── modal/
+    ├── Alert/
+    ├── Prompt/
+    └── CustomInput/
+```
+
+---
+
+## typescript/type-definitions
+
+**Enabled**: ✅  
+**Category**: TypeScript  
+**Tags**: interface, type, any, inference, utility-types  
+**Applies To**: `*.ts`, `*.tsx`
+
+**Rule**
+
+- Use `interface` as the default for type definitions. Use `type` when union, tuple, or other cases make it more suitable.
+- Use `any` sparingly, only in test code or external libraries. Prefer to eliminate it using `module` declarations or other strategies.
+- Even if there's no performance or structural issue, consider using `@ts-expect-error` or `ts-ignore` instead of `any`.
+- Rely on TypeScript’s type inference where possible and avoid explicit type annotations.
+- Utilize advanced utility types like `Mapped`, `Conditional`, `Generic`, etc., proactively.
+
+**Reason**  
+Improves maintainability, scalability, type safety, and readability.
+
+---
+
+## react/components
+
+**Enabled**: ✅  
+**Category**: React  
+**Tags**: functional-component, props, arrow-function, interface, default-value  
+**Applies To**: `*.tsx`
+
+**Rule**
+
+- Use arrow function-based functional components for all components.
+- `ErrorBoundary` is the only exception allowed as a class component.
+- Define props using `interface` with the naming convention `{ComponentName}Props`.
+- Destructure props with default values where necessary.
+- Utility types are allowed, but avoid redundant declarations—reuse within a single definition.
+
+**Reason**  
+Ensures reusability, type safety, and maintainability of components.
+
+---
+
+## project/structure
+
+**Enabled**: ✅  
+**Category**: Project Conventions  
+**Tags**: directory-structure, naming, modularity  
+**Applies To**: `/`
+
+**Rule**
+
+- Use plural for directory names, singular for file names, all lowercase.
+- Each directory may include internal types or hooks, with public exposure only through `index.ts`.
+- Use relative paths for internal references, and absolute paths (`@/...`) for external ones.
+
+**Reason**  
+To maintain structural consistency and define clear module boundaries.
+
+---
+
+## components/structure
+
+**Enabled**: ✅  
+**Category**: UI Architecture  
+**Tags**: components, modular-ui, file-structure  
+**Applies To**: `src/components/**`
+
+**Rule**
+
+- Organize components into functional folders like `common/`, `layout/`, `modal/`, etc.
+- Name each component directory in PascalCase and include files like `Button.tsx`, `type.ts`, and `tests/`.
+- Class definition files should also follow PascalCase.
+
+**Reason**  
+Enables clear separation for development, testing, documentation, and styling.
+
+---
+
+## testing/strategy
+
+**Enabled**: ✅  
+**Category**: Testing  
+**Tags**: vitest, storybook, unit-test, integration-test, e2e  
+**Applies To**: `**/tests/*.test.ts(x)`
+
+**Rule**
+
+- Adopt a progressive testing approach: Unit → Component (Storybook) → Integration → E2E.
+- Aim for 100% test pass rate, with 80%+ coverage for individual functions.
+- Place test code close to the target code under a `tests/` folder.
+
+**Reason**  
+A stepwise testing strategy balances realistic resources and gradual quality improvements.
+
+---
+
+## state-management/client
+
+**Enabled**: ✅  
+**Category**: State Management  
+**Tags**: react-context, zustand, jotai, cleanup  
+**Applies To**: `src/providers/**`
+
+**Rule**
+
+- Use React Context for global state, with gradual adoption of Zustand/Jotai as needed.
+- Access context via custom hooks and modularize them under the `ModalContextProvider/` directory.
+- Perform state cleanup via `useEffect` or centralized handlers.
+
+**Reason**  
+Improves dependency clarity and testability with Context-based state management.
+
+---
+
+## state-management/persistence
+
+**Enabled**: ✅  
+**Category**: State Management  
+**Tags**: local-storage, session, cleanup  
+**Applies To**: `src/utilities/**`
+
+**Rule**
+
+- Introduce persistence only when needed and encapsulate access to `localStorage` via utilities.
+- Minimize sensitive data storage and ensure deletion on logout.
+
+**Reason**  
+Ensures security and predictability.
+
+---
+
+## vite/configuration
+
+**Enabled**: ✅  
+**Category**: Tooling  
+**Tags**: vite, build-tool, alias, env  
+**Applies To**: `vite.config.ts`, `tsconfig.json`
+
+**Rule**
+
+- Use `@/{package-name}` format for all absolute imports.
+- For monorepo packages like `@{group}/{package-name}`, shorten to `@/{package-name}`.
+  - Example: `@winglet/common-utils` → `@/common-utils`
+- Configure aliases in both Vite and tsconfig based on `src/` at the project root.
+
+```ts
+// vite.config.ts
+resolve: {
+  alias: {
+    '@/common-utils': path.resolve(__dirname, './src')
+  }
+}
+```
+
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    ...
+    "paths": {
+      ...
+      "@/common-utils": [
+        "./src"
+      ],
+      "@/common-utils/*": [
+        "./src/*"
+      ],
+      ...
+    }
+  },
+  ...
+}
+```
+
+- Use absolute path alias only when:
+  1. The import path requires two or more upward references (`../../`)
+  2. Always use absolute paths for intra-package imports
+- Use relative paths only for same or one-level-up directories.
+
+**Reason**  
+Unifying import patterns improves clarity, maintainability, and reduces refactor risks.
+
+---
+
+## ui/styling
+
+**Enabled**: ✅  
+**Category**: UI & Styling  
+**Tags**: antd, styling, modular-css  
+**Applies To**: `*.tsx`, `*.css`, `*.scss`
+
+**Rule**
+
+- Use Ant Design (antd) as the base UI component library.
+- For customization, use `className`, wrapper components, or `style` prop.
+- Inject global styles at the `App.tsx` level when needed.
+
+**Reason**  
+Ensures consistent UI components and development based on a design system.
+
+---
+
+## package-management/yarn
+
+**Enabled**: ✅  
+**Category**: Package Management  
+**Tags**: yarn4, node-modules, semver  
+**Applies To**: `.yarnrc.yml`, `package.json`
+
+**Rule**
+
+- Use Yarn 4, disable PnP, and fix to `node_modules` strategy.
+- Maintain a workspace-based monorepo structure.
+- Minimize dependencies and follow SemVer rules (`^`, `~` based on context).
+- Avoid customizing `.yarnrc.yml` beyond the default setup.
+
+**Reason**  
+Balances Yarn performance and ecosystem compatibility.
+
+---
+
+## package-management/constraints
+
+**Enabled**: ✅  
+**Category**: Package Management  
+**Tags**: yarn4, constraints.pro  
+**Applies To**: `.yarn/constraints.pro`
+
+**Rule**
+
+- Use `constraints.pro` to analyze inter-workspace dependencies, version consistency, and invalid devDependency placements.
+- Start with the following rules during initial setup:
+
+  ```prolog
+  gen_enforced_dependency("react", "^18.2.0").
+  ```
+
+**Reason**  
+To prevent dependency errors and ensure quality in a monorepo environment.
+
+---
+
+## documentation/strategy
+
+**Enabled**: ✅  
+**Category**: Documentation  
+**Tags**: tsdoc, readme, storybook, github-pages  
+**Applies To**: `README.md`, `*.stories.tsx`, `docs/`
+
+**Rule**
+
+- Use TSDoc/JSDoc-style comments for functions, components, and types.
+- README should include installation, usage, concepts, and benefits.
+- Support multilingual documentation, including files like `README.ko.md`.
+- Use `*.stories.tsx` for Storybook. Docs/MDX documentation to be adopted later.
+- Deploy static documentation via GitHub Pages using Docusaurus.
+
+**Reason**  
+Documentation is key for collaboration, maintenance, and knowledge transfer, especially when automated and visualized.
+
+---
+
+> Copyright © 2025 Vincent K. Kelvin. All rights reserved.
