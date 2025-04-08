@@ -245,14 +245,14 @@ Unifying import patterns improves clarity, maintainability, and reduces refactor
 
 **Enabled**: ✅  
 **Category**: UI & Styling  
-**Tags**: antd, styling, modular-css  
+**Tags**: antd, shadcn-ui, radix-ui, styling, modular-css  
 **Applies To**: `*.tsx`, `*.css`, `*.scss`
 
 **Rule**
 
-- Use Ant Design (antd) as the base UI component library.
-- For customization, use `className`, wrapper components, or `style` prop.
-- Inject global styles at the `App.tsx` level when needed.
+- Use one of the following libraries as the base UI component library: Ant Design (antd), Shadcn UI, or Radix UI.
+- For customization, use the className prop with CSS modules for wrapper components, or apply inline styles using the style prop.
+- When global styles are needed, inject them at the App.tsx level.
 
 **Reason**  
 Ensures consistent UI components and development based on a design system.
