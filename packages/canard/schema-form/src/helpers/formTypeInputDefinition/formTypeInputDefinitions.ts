@@ -1,4 +1,4 @@
-import { isFunction, isPlainObject, isTruthy } from '@winglet/common-utils';
+import { isFunction, isPlainObject } from '@winglet/common-utils';
 import { isReactComponent, withErrorBoundary } from '@winglet/react-utils';
 
 import type {
@@ -18,25 +18,21 @@ export const normalizeFormTypeInputDefinitions = (
   formTypeInputDefinitions?: FormTypeInputDefinition[],
 ): NormalizedFormTypeInputDefinition[] => {
   if (!formTypeInputDefinitions) return [];
-  return formTypeInputDefinitions
-    .map(({ Component, test }) => {
-      if (isReactComponent(Component)) {
-        if (isFunction(test)) {
-          return {
-            test,
-            Component: withErrorBoundary(Component),
-          };
-        }
-        if (isPlainObject(test)) {
-          return {
-            test: formTypeTestFnFactory(test),
-            Component: withErrorBoundary(Component),
-          };
-        }
-      }
-      return null;
-    })
-    .filter(isTruthy);
+  const result: NormalizedFormTypeInputDefinition[] = [];
+  for (const { Component, test } of formTypeInputDefinitions) {
+    if (!isReactComponent(Component)) continue;
+    if (isFunction(test))
+      result.push({
+        test,
+        Component: withErrorBoundary(Component),
+      });
+    if (isPlainObject(test))
+      result.push({
+        test: formTypeTestFnFactory(test),
+        Component: withErrorBoundary(Component),
+      });
+  }
+  return result;
 };
 
 const formTypeTestFnFactory = (test: FormTypeTestObject): FormTypeTestFn => {

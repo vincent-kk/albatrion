@@ -176,12 +176,13 @@ export abstract class AbstractNode<
     this.#receivedErrorHash = errorHash;
     // 하위 Node에서 데이터 입력시 해당 항목을 찾아 삭제하기 위한 key 가 필요.
     // 참고: removeFromReceivedErrors
-    this.#receivedErrors = filterErrors(errors, this.jsonSchema).map(
-      (error, index) => {
-        error.key = index;
-        return error;
-      },
-    );
+    this.#receivedErrors = [];
+    const filteredErrors = filterErrors(errors, this.jsonSchema);
+    for (let index = 0; index < filteredErrors.length; index++) {
+      const error = filteredErrors[index];
+      error.key = index;
+      this.#receivedErrors.push(error);
+    }
 
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
@@ -211,15 +212,14 @@ export abstract class AbstractNode<
    * @param errors 삭제할 Error List
    */
   removeFromReceivedErrors(errors: JsonSchemaError[]) {
-    const errorKeysForDelete = new Set(
-      errors.map(({ key }) => key).filter((key) => typeof key === 'number'),
-    );
+    const deleteKeys = new Set<number>();
+    for (const error of errors)
+      if (typeof error.key === 'number') deleteKeys.add(error.key);
     const nextErrors = this.#receivedErrors.filter(
-      ({ key }) => typeof key === 'number' && errorKeysForDelete.has(key),
+      ({ key }) => !deleteKeys.has(key!),
     );
-    if (this.#receivedErrors.length !== nextErrors.length) {
+    if (this.#receivedErrors.length !== nextErrors.length)
       this.setReceivedErrors(nextErrors);
-    }
   }
 
   /** Node의 기본값 */

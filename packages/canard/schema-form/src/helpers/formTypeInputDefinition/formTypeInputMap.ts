@@ -1,4 +1,3 @@
-import { isTruthy } from '@winglet/common-utils';
 import { JSONPath } from '@winglet/json-schema';
 import { isReactComponent, withErrorBoundary } from '@winglet/react-utils';
 
@@ -16,22 +15,22 @@ export const normalizeFormTypeInputMap = (
   formTypeInputMap?: FormTypeInputMap,
 ): NormalizedFormTypeInputDefinition[] => {
   if (!formTypeInputMap) return [];
-  return Object.entries(formTypeInputMap)
-    .map(([path, Component]) => {
-      if (typeof path !== 'string' || !isReactComponent(Component)) return null;
-      if (FILTER_PATH_REGEX.test(path)) {
-        return {
-          test: formTypeTestFnFactory(path),
-          Component: withErrorBoundary(Component),
-        };
-      } else {
-        return {
-          test: pathExactMatchFnFactory(path),
-          Component: withErrorBoundary(Component),
-        };
-      }
-    })
-    .filter(isTruthy);
+
+  const result: NormalizedFormTypeInputDefinition[] = [];
+  for (const [path, Component] of Object.entries(formTypeInputMap)) {
+    if (!isReactComponent(Component)) continue;
+    if (FILTER_PATH_REGEX.test(path))
+      result.push({
+        test: formTypeTestFnFactory(path),
+        Component: withErrorBoundary(Component),
+      });
+    else
+      result.push({
+        test: pathExactMatchFnFactory(path),
+        Component: withErrorBoundary(Component),
+      });
+  }
+  return result;
 };
 
 const FILTER_PATH_REGEX = new RegExp(`\\.${JSONPath.Filter}(\\.|$)`);

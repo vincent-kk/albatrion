@@ -17,11 +17,14 @@ export const transformErrors = (
   useKey = false,
 ): JsonSchemaError[] => {
   if (!Array.isArray(errors)) return [];
-  return errors.map((error) => {
+  const result = new Array<JsonSchemaError>(errors.length);
+  for (let i = 0; i < errors.length; i++) {
+    const error = errors[i];
     (error as JsonSchemaError).key = useKey ? ++keySeq : undefined;
     (error as JsonSchemaError).dataPath = transformDataPath(error);
-    return error as JsonSchemaError;
-  });
+    result[i] = error as JsonSchemaError;
+  }
+  return result;
 };
 
 const JSON_POINTER_CHILD_PATTERN = new RegExp(`${JSONPointer.Child}`, 'g');

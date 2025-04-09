@@ -1,4 +1,4 @@
-import { isTruthy } from '@winglet/common-utils';
+import { isArray } from '@winglet/common-utils';
 import { JSONPath } from '@winglet/json-schema';
 
 import type {
@@ -16,17 +16,17 @@ export const filterErrors = (
   errors: JsonSchemaError[],
   jsonSchema: JsonSchemaWithVirtual,
 ) => {
-  const oneOfRequiredFieldMap = new Map<string, string[]>(
-    jsonSchema.oneOf
-      ?.map(({ required }, index) => {
-        if (!Array.isArray(required)) return null;
-        return [
-          `${JSONPath.Filter}/oneOf/${index}/required`,
-          required,
-        ] as const;
-      })
-      .filter(isTruthy),
-  );
+  const oneOfRequiredFieldMap = new Map<string, string[]>();
+  if (isArray(jsonSchema.oneOf)) {
+    for (let i = 0; i < jsonSchema.oneOf.length; i++) {
+      const schema = jsonSchema.oneOf[i];
+      if (!isArray(schema.required)) continue;
+      oneOfRequiredFieldMap.set(
+        `${JSONPath.Filter}/oneOf/${i}/required`,
+        schema.required,
+      );
+    }
+  }
   return errors.filter(({ keyword, schemaPath, params }) => {
     if (keyword === 'oneOf' || keyword === 'enum') return false;
     if (schemaPath?.includes('oneOf')) {

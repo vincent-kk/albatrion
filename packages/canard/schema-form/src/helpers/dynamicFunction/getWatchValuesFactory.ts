@@ -2,7 +2,7 @@ import { isArray, isString } from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/types';
 
-type GetWatchValues = Fn<[dependencies: any[]], any[]>;
+type GetWatchValues = Fn<[dependencies: unknown[]], unknown[]>;
 
 /**
  * 의존성 경로와 watchValue paths를 받아 watchValues를 반환하는 함수를 생성합니다.

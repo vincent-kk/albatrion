@@ -10,10 +10,19 @@ import type { JsonSchemaError } from '@/schema-form/types';
 export const getErrorsHash = (errors: JsonSchemaError[]) =>
   generateHash(serializeErrors(errors));
 
-const serializeError = ({ schemaPath, params = {} }: JsonSchemaError) =>
-  `${schemaPath}?${Object.entries(params)
-    .map(([key, value]) => `${key}=${value?.toString?.() || ''}`)
-    .join('&')}`;
+const serializeError = ({ schemaPath, params = {} }: JsonSchemaError) => {
+  const paramsEntries = Object.entries(params);
+  const serializedParams = new Array<string>(paramsEntries.length);
+  for (let i = 0; i < paramsEntries.length; i++) {
+    const [key, value] = paramsEntries[i];
+    serializedParams[i] = `${key}=${value?.toString?.() || ''}`;
+  }
+  return `${schemaPath}?${serializedParams.join('&')}`;
+};
 
-const serializeErrors = (errors: JsonSchemaError[]) =>
-  errors.map(serializeError).join('|');
+const serializeErrors = (errors: JsonSchemaError[]) => {
+  const serializedErrors = new Array<string>(errors.length);
+  for (let i = 0; i < errors.length; i++)
+    serializedErrors[i] = serializeError(errors[i]);
+  return serializedErrors.join('|');
+};

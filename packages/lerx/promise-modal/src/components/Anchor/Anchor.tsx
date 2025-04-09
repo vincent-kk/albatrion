@@ -33,9 +33,9 @@ const AnchorInner = () => {
         backgroundColor: dimmed ? options.backdrop : 'transparent',
       }}
     >
-      {modalIds.map((id) => {
-        return <Presenter key={id} modalId={id} />;
-      })}
+      {modalIds.map((id) => (
+        <Presenter key={id} modalId={id} />
+      ))}
     </div>
   );
 };

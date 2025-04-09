@@ -1,6 +1,8 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 
-import { falseFunction, isTruthy, trueFunction } from '@winglet/common-utils';
+import { falseFunction, trueFunction } from '@winglet/common-utils';
+
+import type { Fn } from '@aileron/types';
 
 import {
   NodeEventType,
@@ -94,9 +96,12 @@ export const useComputeSchemaNode = (
     };
   }, [rootNode, node, rootReadOnly, rootDisabled]);
 
-  const [dependencies, setDependencies] = useState<any[]>(() => {
+  const [dependencies, setDependencies] = useState<unknown[]>(() => {
     if (!node || dependencyPaths.length === 0) return [];
-    return dependencyPaths.map((path) => node.findNode(path)?.value);
+    const dependencies = new Array<unknown>(dependencyPaths.length);
+    for (let i = 0; i < dependencyPaths.length; i++)
+      dependencies[i] = node.findNode(dependencyPaths[i])?.value;
+    return dependencies;
   });
 
   const visible = useMemo(() => {
@@ -127,21 +132,21 @@ export const useComputeSchemaNode = (
   }, [node, visible]);
 
   useLayoutEffect(() => {
-    if (!node || dependencyPaths.length === 0) return void 0;
-    const unsubscribes = dependencyPaths
-      .map((path, index) => {
-        const targetNode = node.findNode(path);
-        if (!targetNode) return undefined;
-        return targetNode.subscribe(({ type, payload }) => {
-          if (type & NodeEventType.UpdateValue) {
+    if (!node || dependencyPaths.length === 0) return;
+    const unsubscribes: Fn[] = [];
+    for (let i = 0; i < dependencyPaths.length; i++) {
+      const targetNode = node.findNode(dependencyPaths[i]);
+      if (!targetNode) continue;
+      unsubscribes.push(
+        targetNode.subscribe(({ type, payload }) => {
+          if (type & NodeEventType.UpdateValue)
             setDependencies((prevDependencies) => {
-              prevDependencies[index] = payload?.[NodeEventType.UpdateValue];
+              prevDependencies[i] = payload?.[NodeEventType.UpdateValue];
               return [...prevDependencies];
             });
-          }
-        });
-      })
-      .filter(isTruthy);
+        }),
+      );
+    }
     return () => {
       for (const unsubscribe of unsubscribes) unsubscribe();
     };

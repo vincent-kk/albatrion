@@ -8,7 +8,7 @@ const JSON_PATH_REGEX = new RegExp(
   'g',
 );
 
-type CheckComputedOption = Fn<[dependencies: any[]], boolean>;
+type CheckComputedOption = Fn<[dependencies: unknown[]], boolean>;
 
 /**
  * jsonPath 표현식을 확인하는 함수를 생성합니다.

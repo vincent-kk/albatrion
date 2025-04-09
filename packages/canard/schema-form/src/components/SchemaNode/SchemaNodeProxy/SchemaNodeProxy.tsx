@@ -1,6 +1,6 @@
 import { Fragment, memo, useMemo } from 'react';
 
-import { isTruthy, nullFunction } from '@winglet/common-utils';
+import { nullFunction } from '@winglet/common-utils';
 import { useReference, withErrorBoundary } from '@winglet/react-utils';
 
 import { NodeState } from '@/schema-form/core';
@@ -74,7 +74,12 @@ export const SchemaNodeProxy = memo(
     }, [dirty, touched, showError, checkShowError, contextFormatError]);
 
     const errorMessage = useMemo(() => {
-      return errors?.map((error) => formatError(error)).filter(isTruthy)[0];
+      if (!errors) return null;
+      for (const error of errors) {
+        const message = formatError(error);
+        if (message) return message;
+      }
+      return null;
     }, [errors, formatError]);
 
     const [tick, formElementRef] = useSchemaNodeListener(node);

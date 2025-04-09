@@ -88,10 +88,17 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   }
 
   get #edges() {
-    return this.#ids.map((id) => ({
-      id,
-      node: this.#sourceMap.get(id)!.node,
-    }));
+    const edges = new Array<{ id: IndexId; node: SchemaNode }>(
+      this.#ids.length,
+    );
+    for (let i = 0; i < this.#ids.length; i++) {
+      const id = this.#ids[i];
+      edges[i] = {
+        id,
+        node: this.#sourceMap.get(id)!.node,
+      };
+    }
+    return edges;
   }
 
   get length() {
@@ -99,7 +106,12 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   }
 
   toArray() {
-    return this.#edges.map(({ node }) => node.value);
+    const values = new Array<AllowedValue>(this.#ids.length);
+    for (let i = 0; i < this.#ids.length; i++) {
+      const edge = this.#sourceMap.get(this.#ids[i]);
+      if (edge) values[i] = edge.node.value;
+    }
+    return values;
   }
 
   #nodeFactory: NodeFactory;
