@@ -54,9 +54,15 @@ export const OneOf = () => {
   const formHandle = useRef<FormHandle<typeof schema>>(null);
 
   const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
   return (
-    <StoryLayout jsonSchema={schema} value={value}>
-      <Form jsonSchema={schema} onChange={setValue} ref={formHandle} />
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
     </StoryLayout>
   );
 };

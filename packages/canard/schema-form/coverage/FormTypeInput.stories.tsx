@@ -9,6 +9,7 @@ import React, {
 import {
   Form,
   type FormHandle,
+  type FormTypeInputDefinition,
   type FormTypeInputMap,
   type FormTypeInputProps,
   type JsonSchema,
@@ -18,6 +19,89 @@ import StoryLayout from './components/StoryLayout';
 
 export default {
   title: 'Form/02. FormTypeInput',
+};
+
+export const FormTypeInputDefinitions = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      objectNode: {
+        type: 'object',
+        properties: {
+          test: { type: 'string' },
+        },
+      },
+      textNode: {
+        type: 'string',
+        formType: 'text-node',
+      },
+      arrayNode: {
+        type: 'array',
+        items: {
+          type: 'string',
+          formType: 'array-item',
+        },
+        minItems: 5,
+      },
+    },
+  } satisfies JsonSchema;
+
+  const formTypeInputDefinitions = useMemo<FormTypeInputDefinition[]>(() => {
+    return [
+      {
+        test: (hint) => {
+          return hint.path === '$.objectNode';
+        },
+        Component: ({ onChange }: FormTypeInputProps<{ test?: string }>) => {
+          const handleClick = () => {
+            onChange({ test: 'wow' });
+          };
+          return (
+            <div>
+              <button style={{ color: 'green' }} onClick={handleClick}>
+                object set
+              </button>
+            </div>
+          );
+        },
+      },
+      {
+        test: (hint) => {
+          return hint.formType === 'text-node';
+        },
+        Component: ({ onChange }: FormTypeInputProps) => {
+          return (
+            <button style={{ color: 'blue' }} onClick={() => onChange('wow')}>
+              text set
+            </button>
+          );
+        },
+      },
+      {
+        test: { formType: 'array-item' },
+        Component: () => {
+          return <div style={{ color: 'red' }}>i am array item</div>;
+        },
+      },
+    ];
+  }, []);
+
+  const handleChange = (val: any) => {
+    setValue(val);
+  };
+  const refHandle = useRef<FormHandle<typeof schema>>(null);
+  return (
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form
+        ref={refHandle}
+        jsonSchema={schema}
+        formTypeInputDefinitions={formTypeInputDefinitions}
+        onChange={handleChange}
+      />
+    </StoryLayout>
+  );
 };
 export const FormTypeMap = () => {
   const [value, setValue] = useState({});
