@@ -15,5 +15,6 @@ module.exports = {
     '@typescript-eslint/no-require-imports': 'off',
     'no-fallthrough': 'off',
     'no-constant-condition': 'off',
+    curly: ['error', 'single'],
   },
 };
