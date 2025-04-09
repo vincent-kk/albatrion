@@ -7,22 +7,22 @@ alwaysApply: false
 
 ## 1. Project Configuration
 
-### 1.1.	Enable Strict Mode
-	•	Set the strict option to true in your tsconfig.json
-	•	Leverage noImplicitAny, strictNullChecks, strictFunctionTypes, strictBindCallApply to maximize code safety
+### 1.1. Enable Strict Mode
+ • Set the strict option to true in your tsconfig.json
+ • Leverage noImplicitAny, strictNullChecks, strictFunctionTypes, strictBindCallApply to maximize code safety
 
-### 1.2.	Target ES6+
-	•	Set target to es2019 (or higher) to use the latest JavaScript features
+### 1.2. Target ES6+
+ • Set target to es2019 (or higher) to use the latest JavaScript features
 
-### 1.3.	Path Mapping
-	•	Use the paths option to use absolute imports(eg. `@/utils`)
+### 1.3. Path Mapping
+ • Use the paths option to use absolute imports(eg. `@/utils`)
 
 ⸻
 
 ## 2. Type Declarations
 
 ### 2.1 Interface-Centric Design
-	•	In many cases, interface can be more flexible than type for reusability and extensibility
+ • In many cases, interface can be more flexible than type for reusability and extensibility
 
 ```ts
 interface User {
@@ -33,7 +33,7 @@ interface User {
 ```
 
 ### 2.2 Using Type Aliases
-	•	Suitable for union types, utility types, and complex template types
+ • Suitable for union types, utility types, and complex template types
 
 ```ts
 type UUID = string;
@@ -41,7 +41,7 @@ type ResponseState = 'idle' | 'loading' | 'success' | 'error';
 ```
 
 ### 2.3 Enums or Constant Objects
-	•	Manage constants using enum or constant objects
+ • Manage constants using enum or constant objects
 
 ```ts
 enum UserRole {
@@ -52,11 +52,11 @@ enum UserRole {
 ```
 
 ### 2.4 Utilizing .d.ts Files
-	•	Provide type declarations for external libraries, or separate your project-specific types into dedicated declaration files
+ • Provide type declarations for external libraries, or separate your project-specific types into dedicated declaration files
 
 ### 2.5 Branded Types
-	•	A technique to add a ‘label’ to primitive types (string, number) so that different purposes with the same underlying shape can be distinguished
-	•	Commonly used for various ID types (e.g., UserID, PostID) to enforce strict checks at compile time
+ • A technique to add a ‘label’ to primitive types (string, number) so that different purposes with the same underlying shape can be distinguished
+ • Commonly used for various ID types (e.g., UserID, PostID) to enforce strict checks at compile time
 
 ```ts
 type Brand<T, B> = T & { __brand: B };
@@ -74,9 +74,9 @@ function getCommentsForPost(postId: PostID, userId: UserID) {
 
 ## 3. Functions & Classes
 
-### 3.1.	Explicit Function Signatures
-	•	Specify parameter and return types for all functions (including methods)
-	•	Use arrow functions instead of the `function` keyword when possible
+### 3.1. Explicit Function Signatures
+ • Specify parameter and return types for all functions (including methods)
+ • Use arrow functions instead of the `function` keyword when possible
 
 ```ts
 function getUserName(userId: number): string {
@@ -89,8 +89,8 @@ const getUserName = (userId: number): string => {
 
 ```
 
-### 3.2.	Leverage Generics
-	•	Use generics in utilities, functions, and classes for type abstraction
+### 3.2. Leverage Generics
+ • Use generics in utilities, functions, and classes for type abstraction
 
 ```ts
 function identity<T>(arg: T): T {
@@ -102,8 +102,8 @@ const identity = <T>(arg: T): T => {
 }
 ```
 
-### 3.3.	Specify Class Member Accessibility
-	•	Use public, private, and protected to define encapsulation levels
+### 3.3. Specify Class Member Accessibility
+ • Use public, private, and protected to define encapsulation levels
 
 ```ts
 class Person {
@@ -116,15 +116,15 @@ class Person {
 }
 ```
 
-### 3.4.	Method Chaining vs. Imperative Approach
-	•	Choose method chaining for succinctness or imperative style for clarity, depending on API needs
+### 3.4. Method Chaining vs. Imperative Approach
+ • Choose method chaining for succinctness or imperative style for clarity, depending on API needs
 
 ⸻
 
 ## 4. Error Handling & Exceptions
 
-### 4.1.	Type Guards with try/catch
-	•	Errors thrown can be of type unknown, so use instanceof or other checks for safety
+### 4.1. Type Guards with try/catch
+ • Errors thrown can be of type unknown, so use instanceof or other checks for safety
 
 ```ts
 try {
@@ -136,8 +136,8 @@ try {
 }
 ```
 
-### 4.2.	Custom Error Classes
-	•	Differentiate error types with classes such as ValidationError, NotFoundError, etc.
+### 4.2. Custom Error Classes
+ • Differentiate error types with classes such as ValidationError, NotFoundError, etc.
 
 ```ts
 class ValidationError extends Error {
@@ -148,15 +148,15 @@ class ValidationError extends Error {
 }
 ```
 
-### 4.3.	Propagating Error Information
-	•	Forward errors to the caller if they cannot be handled in the current scope
+### 4.3. Propagating Error Information
+ • Forward errors to the caller if they cannot be handled in the current scope
 
 ⸻
 
 ## 5. Asynchronous Programming
 
-### 5.1.	Use async/await
-	•	Prefer async/await over callbacks or .then() chains for better readability
+### 5.1. Use async/await
+ • Prefer async/await over callbacks or .then() chains for better readability
 
 ```ts
 async function fetchData(url: string): Promise<Data> {
@@ -165,8 +165,8 @@ async function fetchData(url: string): Promise<Data> {
 }
 ```
 
-### 5.2.	Explicit Promise Return Types
-	•	Clearly declare return types as Promise<T> for async functions
+### 5.2. Explicit Promise Return Types
+ • Clearly declare return types as Promise<T> for async functions
 
 ```ts
 async function getUser(id: number): Promise<User> {
@@ -174,18 +174,18 @@ async function getUser(id: number): Promise<User> {
 }
 ```
 
-### 5.3.	Parallel Execution
-	•	Utilize Promise.all and Promise.race for concurrent async operations
+### 5.3. Parallel Execution
+ • Utilize Promise.all and Promise.race for concurrent async operations
 
-### 5.4.	Error Handling
-	•	Handle exceptions using try/catch or .catch() chains
+### 5.4. Error Handling
+ • Handle exceptions using try/catch or .catch() chains
 
 ⸻
 
 ## 6. Code Quality
 
-### 6.1.	Lint & Formatter
-	•	Use ESLint, Prettier, etc. with TypeScript to maintain consistent code style
+### 6.1. Lint & Formatter
+ • Use ESLint, Prettier, etc. with TypeScript to maintain consistent code style
 
 ```cjs
 // .eslintrc.cjs
@@ -233,22 +233,22 @@ module.exports = {
 }
 ```
 
-### 6.2.	Code Review & PR
-	•	Exchange feedback among team members through Pull Requests and code reviews
+### 6.2. Code Review & PR
+ • Exchange feedback among team members through Pull Requests and code reviews
 
-### 6.3.	Test Coverage
-	•	Write unit, integration, and end-to-end tests using Jest, Mocha, Vitest, etc.
-	•	Check type compatibility as part of tests
+### 6.3. Test Coverage
+ • Write unit, integration, and end-to-end tests using Jest, Mocha, Vitest, etc.
+ • Check type compatibility as part of tests
 
-### 6.4.	Minimize Dead Code & Duplication
-	•	Use tools like SonarQube to detect and remove redundant code
+### 6.4. Minimize Dead Code & Duplication
+ • Use tools like SonarQube to detect and remove redundant code
 
 ⸻
 
 ## 7. Performance & Optimization
 
-### 7.1.	Type Narrowing
-	•	Narrow down union types with runtime checks to improve reliability and efficiency
+### 7.1. Type Narrowing
+ • Narrow down union types with runtime checks to improve reliability and efficiency
 
 ```ts
 function handleResponse(res: number | string) {
@@ -260,27 +260,27 @@ function handleResponse(res: number | string) {
 }
 ```
 
-### 7.2.	Generics
-	•	Abstract repetitive logic via generics for cleaner, more maintainable code
+### 7.2. Generics
+ • Abstract repetitive logic via generics for cleaner, more maintainable code
 
-### 7.3.	Immutable Data Structures
-	•	Keep data immutable to improve predictability and debugging
+### 7.3. Immutable Data Structures
+ • Keep data immutable to improve predictability and debugging
 
-### 7.4.	Tree Shaking
-	•	Use ES modules so unused code can be removed from the final bundle
+### 7.4. Tree Shaking
+ • Use ES modules so unused code can be removed from the final bundle
 
 ⸻
 
 ## 8. Maintainability
 
-### 8.1.	Meaningful Variable/Function Names
-	•	Use clear, self-explanatory names like isLoading, fetchUserInfo
+### 8.1. Meaningful Variable/Function Names
+ • Use clear, self-explanatory names like isLoading, fetchUserInfo
 
-### 8.2.	Small, Focused Modules
-	•	Follow the Single Responsibility Principle so each file handles only one task
+### 8.2. Small, Focused Modules
+ • Follow the Single Responsibility Principle so each file handles only one task
 
-### 8.3.	Comments & JSDoc
-	•	For complex logic or shared libraries, use TSDoc to clarify intent and usage
+### 8.3. Comments & JSDoc
+ • For complex logic or shared libraries, use TSDoc to clarify intent and usage
 
 ```ts
 /**
@@ -290,24 +290,24 @@ function handleResponse(res: number | string) {
 function getUserById(id: number): User { /* ... */ }
 ```
 
-### 8.4.	Versioning & Deployment
-	•	Document changes (including type changes) in release notes to keep the team in sync
+### 8.4. Versioning & Deployment
+ • Document changes (including type changes) in release notes to keep the team in sync
 
 ⸻
 
 ## 9. Additional Considerations
 
-### 9.1.	API Interfaces
-	•	Define DTOs for requests/responses to clarify data structures
+### 9.1. API Interfaces
+ • Define DTOs for requests/responses to clarify data structures
 
-### 9.2.	Shared Libraries / Utilities
-	•	Separate common logic (logging, error handling, data transformation) into utility modules
+### 9.2. Shared Libraries / Utilities
+ • Separate common logic (logging, error handling, data transformation) into utility modules
 
-### 9.3.	General Security
-	•	Secure sensitive information (passwords, tokens) via HTTPS, encryption, etc.
+### 9.3. General Security
+ • Secure sensitive information (passwords, tokens) via HTTPS, encryption, etc.
 
-### 9.4.	Clear Type Guards
-	•	Use in, instanceof, typeof for stronger runtime type checks
+### 9.4. Clear Type Guards
+ • Use in, instanceof, typeof for stronger runtime type checks
 
 ⸻
 
