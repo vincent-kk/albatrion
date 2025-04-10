@@ -215,9 +215,9 @@ export abstract class AbstractNode<
     const deleteKeys = new Set<number>();
     for (const error of errors)
       if (typeof error.key === 'number') deleteKeys.add(error.key);
-    const nextErrors = this.#receivedErrors.filter(
-      ({ key }) => !deleteKeys.has(key!),
-    );
+    const nextErrors: JsonSchemaError[] = [];
+    for (const error of this.#receivedErrors)
+      if (!deleteKeys.has(error.key!)) nextErrors.push(error);
     if (this.#receivedErrors.length !== nextErrors.length)
       this.setReceivedErrors(nextErrors);
   }
@@ -434,7 +434,10 @@ export abstract class AbstractNode<
     const visibleJsonPaths = new Set(
       getJsonPaths(getDataWithSchema(this.value, this.jsonSchema)),
     );
-    return errors.filter(({ dataPath }) => visibleJsonPaths.has(dataPath));
+    const filtered = [];
+    for (const error of errors)
+      if (visibleJsonPaths.has(error.dataPath)) filtered.push(error);
+    return filtered;
   }
 
   /** Node의 Ajv 검증 함수 */

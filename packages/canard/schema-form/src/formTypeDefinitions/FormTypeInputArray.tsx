@@ -1,5 +1,7 @@
 import { type CSSProperties, useCallback } from 'react';
 
+import { map } from '@winglet/common-utils';
+
 import type {
   FormTypeInputDefinition,
   FormTypeInputProps,
@@ -24,7 +26,7 @@ const FormTypeInputArray = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 5, ...style }}>
       {childNodes &&
-        childNodes.map((Node, i) => {
+        map(childNodes, (Node, i) => {
           return (
             <div key={Node.key} style={{ display: 'flex' }}>
               <Node />

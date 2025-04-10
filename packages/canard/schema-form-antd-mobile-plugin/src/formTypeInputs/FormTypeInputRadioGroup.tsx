@@ -2,6 +2,7 @@ import { type ReactNode, useMemo } from 'react';
 
 import { Radio } from 'antd-mobile';
 
+import { map } from '@winglet/common-utils';
 import { useHandle } from '@winglet/react-utils';
 
 import type {
@@ -43,12 +44,12 @@ const FormTypeInputRadioGroup = ({
 >) => {
   const options = useMemo(() => {
     const alias = context.radioLabels || jsonSchema.options?.alias || {};
-    return (
-      jsonSchema.enum?.map((value) => ({
-        label: alias[value] || value,
-        value,
-      })) || []
-    );
+    return jsonSchema.enum
+      ? map(jsonSchema.enum, (value: string | number) => ({
+          label: alias[value] || value,
+          value,
+        }))
+      : [];
   }, [context, jsonSchema]);
 
   const handleChange = useHandle(onChange);
@@ -60,7 +61,7 @@ const FormTypeInputRadioGroup = ({
         defaultValue={defaultValue}
         onChange={handleChange}
       >
-        {options.map((option) => (
+        {map(options, (option) => (
           <Radio
             key={option.value}
             value={option.value}

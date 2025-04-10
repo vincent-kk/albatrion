@@ -1,5 +1,6 @@
 import { type ChangeEvent, type ReactNode, useMemo } from 'react';
 
+import { map } from '@winglet/common-utils';
 import { useHandle } from '@winglet/react-utils';
 
 import type {
@@ -43,14 +44,16 @@ const FormTypeInputStringCheckbox = ({
 >) => {
   const checkboxOptions = useMemo(
     () =>
-      jsonSchema.items?.enum?.map((value) => ({
-        value,
-        label:
-          context.checkboxLabels?.[value] ||
-          jsonSchema.options?.alias?.[value] ||
-          jsonSchema.items?.options?.alias?.[value] ||
-          value,
-      })) || [],
+      jsonSchema.items?.enum
+        ? map(jsonSchema.items.enum, (value) => ({
+            value,
+            label:
+              context.checkboxLabels?.[value] ||
+              jsonSchema.options?.alias?.[value] ||
+              jsonSchema.items?.options?.alias?.[value] ||
+              value,
+          }))
+        : [],
     [context, jsonSchema],
   );
 
@@ -65,7 +68,7 @@ const FormTypeInputStringCheckbox = ({
 
   return (
     <div>
-      {checkboxOptions.map(({ value, label }) => (
+      {map(checkboxOptions, ({ value, label }) => (
         <label key={value}>
           <input
             type="checkbox"

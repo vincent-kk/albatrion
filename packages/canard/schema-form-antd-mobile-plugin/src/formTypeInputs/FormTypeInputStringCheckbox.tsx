@@ -3,6 +3,7 @@ import { type ReactNode, useMemo } from 'react';
 import { Checkbox } from 'antd-mobile';
 import type { CheckboxValue } from 'antd-mobile/es/components/checkbox';
 
+import { map } from '@winglet/common-utils';
 import { useHandle } from '@winglet/react-utils';
 
 import type {
@@ -40,16 +41,16 @@ const FormTypeInputStringCheckbox = ({
       jsonSchema.items?.options?.alias ||
       jsonSchema.options?.alias ||
       {};
-    return (
-      jsonSchema.items?.enum?.map((value: string) => ({
-        label: alias[value] || value,
-        value,
-      })) || []
-    );
+    return jsonSchema.items?.enum
+      ? map(jsonSchema.items.enum, (value: string) => ({
+          label: alias[value] || value,
+          value,
+        }))
+      : [];
   }, [context, jsonSchema]);
 
   const handleChange = useHandle((value: CheckboxValue[]) => {
-    onChange(value.map((v) => v.toString()));
+    onChange(map(value, (v) => v.toString()));
   });
 
   return (
@@ -59,7 +60,7 @@ const FormTypeInputStringCheckbox = ({
         defaultValue={defaultValue}
         onChange={handleChange}
       >
-        {options.map((option) => (
+        {map(options, (option) => (
           <Checkbox
             key={option.value}
             value={option.value}

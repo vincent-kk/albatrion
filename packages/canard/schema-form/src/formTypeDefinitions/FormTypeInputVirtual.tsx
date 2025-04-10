@@ -1,5 +1,7 @@
 import { Fragment } from 'react/jsx-runtime';
 
+import { map } from '@winglet/common-utils';
+
 import type {
   FormTypeInputDefinition,
   FormTypeInputProps,
@@ -8,10 +10,7 @@ import type {
 const FormTypeInputVirtual = ({ childNodes }: FormTypeInputProps<object>) => {
   return (
     <Fragment>
-      {childNodes &&
-        childNodes.map((Node) => {
-          return <Node key={Node.key} />;
-        })}
+      {childNodes && map(childNodes, (Node) => <Node key={Node.key} />)}
     </Fragment>
   );
 };

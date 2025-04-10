@@ -9,7 +9,7 @@ import {
 
 import { createPortal } from 'react-dom';
 
-import { getRandomString } from '@winglet/common-utils';
+import { getRandomString, map } from '@winglet/common-utils';
 
 import { PortalContext } from './PortalContext';
 
@@ -43,7 +43,7 @@ export const PortalContextProvider = ({ children }: PropsWithChildren) => {
       {portalAnchorRef.current &&
         createPortal(
           <Fragment>
-            {components.map(({ id, element }) => (
+            {map(components, ({ id, element }) => (
               <Fragment key={id}>{element}</Fragment>
             ))}
           </Fragment>,

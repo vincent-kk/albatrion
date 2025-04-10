@@ -9,6 +9,8 @@ import {
 import { Input, Select } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
+import { map } from '@winglet/common-utils';
+
 import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
@@ -98,7 +100,7 @@ const FormTypeInputUri = ({
         onChange={handleChangeProtocol}
         disabled={disabled || readOnly}
       >
-        {protocols.map((protocol) => (
+        {map(protocols, (protocol) => (
           <Select.Option key={protocol} value={protocol}>
             {protocol}
           </Select.Option>

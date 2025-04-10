@@ -1,5 +1,6 @@
 import { type ChangeEvent, type ReactNode, useMemo } from 'react';
 
+import { map } from '@winglet/common-utils';
 import { useHandle } from '@winglet/react-utils';
 
 import type {
@@ -37,13 +38,15 @@ const FormTypeInputStringEnum = ({
 >) => {
   const enumOptions = useMemo(
     () =>
-      jsonSchema.enum?.map((value) => ({
-        value,
-        label:
-          context.enumLabels?.[value] ||
-          jsonSchema.options?.alias?.[value] ||
-          value,
-      })) || [],
+      jsonSchema.enum
+        ? map(jsonSchema.enum, (value) => ({
+            value,
+            label:
+              context.enumLabels?.[value] ||
+              jsonSchema.options?.alias?.[value] ||
+              value,
+          }))
+        : [],
     [context, jsonSchema],
   );
   const handleChange = useHandle((event: ChangeEvent<HTMLSelectElement>) => {
@@ -58,7 +61,7 @@ const FormTypeInputStringEnum = ({
       defaultValue={defaultValue}
       onChange={handleChange}
     >
-      {enumOptions.map(({ value, label }) => (
+      {map(enumOptions, ({ value, label }) => (
         <option key={value} value={value}>
           {label}
         </option>

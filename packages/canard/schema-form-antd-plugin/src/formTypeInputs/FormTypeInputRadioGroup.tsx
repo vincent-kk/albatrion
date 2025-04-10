@@ -3,6 +3,7 @@ import { type ReactNode, useMemo } from 'react';
 import { Radio, type RadioChangeEvent } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
+import { map } from '@winglet/common-utils';
 import { useHandle } from '@winglet/react-utils';
 
 import type {
@@ -47,10 +48,12 @@ const FormTypeInputRadioGroup = ({
 }: FormTypeInputRadioGroupProps) => {
   const options = useMemo(() => {
     const alias = context.radioLabels || jsonSchema.options?.alias || {};
-    return jsonSchema.enum?.map((value) => ({
-      label: alias[value] || value,
-      value,
-    }));
+    return jsonSchema.enum
+      ? map(jsonSchema.enum, (value: string | number) => ({
+          label: alias[value] || value,
+          value,
+        }))
+      : [];
   }, [context, jsonSchema]);
   const handleChange = useHandle((event: RadioChangeEvent) => {
     onChange(event.target.value);

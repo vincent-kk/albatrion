@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.0",
+    "@winglet/common-utils": "workspace:^",
     "@winglet/react-utils": "workspace:^",
     "antd": "^5.10.0",
     "dayjs": "^1.0.0"

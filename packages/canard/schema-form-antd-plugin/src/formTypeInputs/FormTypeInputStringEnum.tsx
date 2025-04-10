@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { Select } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
+import { map } from '@winglet/common-utils';
 import { useHandle } from '@winglet/react-utils';
 
 import type {
@@ -52,13 +53,13 @@ const FormTypeInputStringEnum = ({
   }, [context, jsonSchema]);
 
   const Options = useMemo(() => {
-    return (
-      schema.enum?.map((value, index) => (
-        <Select.Option key={index + value} value={value}>
-          {alias?.[value] || value}
-        </Select.Option>
-      )) || []
-    );
+    return schema.enum
+      ? map(schema.enum, (value, index) => (
+          <Select.Option key={index + value} value={value}>
+            {alias?.[value] || value}
+          </Select.Option>
+        ))
+      : [];
   }, [alias, schema]);
 
   const handleChange = useHandle((value: string | string[]) => {

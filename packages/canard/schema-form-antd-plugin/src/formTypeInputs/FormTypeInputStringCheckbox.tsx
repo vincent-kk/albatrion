@@ -2,6 +2,7 @@ import { type ReactNode, useMemo } from 'react';
 
 import { Checkbox } from 'antd';
 
+import { map } from '@winglet/common-utils';
 import { useHandle } from '@winglet/react-utils';
 
 import type {
@@ -40,12 +41,12 @@ const FormTypeInputStringCheckbox = ({
       jsonSchema.items?.options?.alias ||
       jsonSchema.options?.alias ||
       {};
-    return (
-      jsonSchema.items?.enum?.map((value: string) => ({
-        label: alias[value] || value,
-        value,
-      })) || []
-    );
+    return jsonSchema.items?.enum
+      ? map(jsonSchema.items.enum, (value: string) => ({
+          label: alias[value] || value,
+          value,
+        }))
+      : [];
   }, [context, jsonSchema]);
 
   const handleChange = useHandle(onChange);

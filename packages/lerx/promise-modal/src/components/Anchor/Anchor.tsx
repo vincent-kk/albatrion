@@ -1,5 +1,6 @@
 import { memo, useEffect } from 'react';
 
+import { map } from '@winglet/common-utils';
 import { useTick, withErrorBoundary } from '@winglet/react-utils';
 
 import { Presenter } from '@/promise-modal/components/Presenter';
@@ -33,7 +34,7 @@ const AnchorInner = () => {
         backgroundColor: dimmed ? options.backdrop : 'transparent',
       }}
     >
-      {modalIds.map((id) => (
+      {map(modalIds, (id) => (
         <Presenter key={id} modalId={id} />
       ))}
     </div>

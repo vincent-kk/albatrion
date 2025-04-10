@@ -82,11 +82,12 @@ export const ModalManagerContextProvider = memo(
         });
         modalDictionary.current.set(modal.id, modal);
         setModalIds((ids) => {
-          const aliveIds = ids.filter((id) => {
+          const aliveIds: number[] = [];
+          for (const id of ids) {
             const destroyed = !modalDictionary.current.get(id)?.alive;
             if (destroyed) modalDictionary.current.delete(id);
-            return !destroyed;
-          });
+            else aliveIds.push(id);
+          }
           return [...aliveIds, modal.id];
         });
       };

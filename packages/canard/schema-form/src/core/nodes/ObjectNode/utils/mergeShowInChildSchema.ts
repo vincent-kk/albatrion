@@ -1,4 +1,4 @@
-import { isTruthy, merge } from '@winglet/common-utils';
+import { isTruthy, map, merge } from '@winglet/common-utils';
 
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
@@ -26,5 +26,5 @@ const combineConditions = (
 ) => {
   const filtered = conditions.filter(isTruthy);
   if (filtered.length === 1) return filtered[0];
-  return filtered.map((item) => `(${item})`).join(`${operator}`);
+  return map(filtered, (item) => `(${item})`).join(`${operator}`);
 };

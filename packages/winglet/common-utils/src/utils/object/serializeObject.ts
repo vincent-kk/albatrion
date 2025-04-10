@@ -1,9 +1,9 @@
 export const serializeObject = (object: any, omitKeys?: string[]): string => {
   if (!object || typeof object !== 'object') return JSON.stringify(object);
   const omit = omitKeys ? new Set(omitKeys) : null;
-  const keys = Object.keys(object)
-    .filter((key) => !omit?.has(key))
-    .sort();
+  const keys: string[] = [];
+  for (const key of Object.keys(object).sort())
+    if (!omit?.has(key)) keys.push(key);
   const segments = new Array(keys.length);
   let key = keys.pop();
   let index = 0;

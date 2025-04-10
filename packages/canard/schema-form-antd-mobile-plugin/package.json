@@ -37,6 +37,7 @@
     "publish:chain": "yarn build:chain && yarn npm publish --access public"
   },
   "dependencies": {
+    "@winglet/common-utils": "workspace:^",
     "@winglet/react-utils": "workspace:^",
     "antd-mobile": "^5.0.0",
     "dayjs": "^1.0.0"

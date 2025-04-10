@@ -1,5 +1,6 @@
 import { type ChangeEvent, type ReactNode, useMemo } from 'react';
 
+import { map } from '@winglet/common-utils';
 import { useHandle } from '@winglet/react-utils';
 
 import type {
@@ -37,13 +38,15 @@ const FormTypeInputStringRadio = ({
 >) => {
   const radioOptions = useMemo(
     () =>
-      jsonSchema.enum?.map((value) => ({
-        value,
-        label:
-          context.radioLabels?.[value] ||
-          jsonSchema.options?.alias?.[value] ||
-          value,
-      })) || [],
+      jsonSchema.enum
+        ? map(jsonSchema.enum, (value: string | number) => ({
+            value,
+            label:
+              context.radioLabels?.[value] ||
+              jsonSchema.options?.alias?.[value] ||
+              value,
+          }))
+        : [],
     [context, jsonSchema],
   );
 
@@ -53,7 +56,7 @@ const FormTypeInputStringRadio = ({
 
   return (
     <>
-      {radioOptions.map(({ value, label }) => (
+      {map(radioOptions, ({ value, label }) => (
         <label key={value}>
           <input
             type="radio"

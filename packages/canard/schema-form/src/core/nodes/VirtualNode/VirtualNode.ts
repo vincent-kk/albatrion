@@ -1,3 +1,5 @@
+import { map } from '@winglet/common-utils';
+
 import type { VirtualNodeValue, VirtualSchema } from '@/schema-form/types';
 
 import { parseArray } from '../../parsers';
@@ -95,9 +97,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
       });
     }
 
-    this.#children = new Array(this.#refNodes.length);
-    for (let i = 0; i < this.#refNodes.length; i++)
-      this.#children[i] = { node: this.#refNodes[i] };
+    this.#children = map(this.#refNodes, (node) => ({ node }));
 
     this.publish({
       type: NodeEventType.UpdateChildren,

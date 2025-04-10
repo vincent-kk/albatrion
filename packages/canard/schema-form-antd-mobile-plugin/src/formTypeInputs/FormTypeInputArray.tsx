@@ -1,5 +1,6 @@
 import { Button, type ButtonProps } from 'antd-mobile';
 
+import { map } from '@winglet/common-utils';
 import { useHandle } from '@winglet/react-utils';
 
 import type {
@@ -39,19 +40,17 @@ const FormTypeInputArray = ({
   return (
     <div style={style}>
       {childNodes &&
-        childNodes.map((Node, i) => {
-          return (
-            <div key={Node.key} style={{ display: 'flex' }}>
-              <Node />
-              {!readOnly && (
-                <Remove
-                  disabled={disabled}
-                  onClick={() => handleRemoveClick(i)}
-                />
-              )}
-            </div>
-          );
-        })}
+        map(childNodes, (Node, i) => (
+          <div key={Node.key} style={{ display: 'flex' }}>
+            <Node />
+            {!readOnly && (
+              <Remove
+                disabled={disabled}
+                onClick={() => handleRemoveClick(i)}
+              />
+            )}
+          </div>
+        ))}
 
       {!readOnly && (
         <div>
