@@ -1,0 +1,59 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Project Structure
+
+## Project Directory Structure
+
+```
+package-root/
+ ├── @types/                  # global types and package.json for deploy `@types` (.d.ts).
+ ├── coverage/                # Storybook stories and E2E test.
+ ├── src/                     # Application source code.
+ │   ├── app/                 # Global App config or env ect.
+ │   ├── components/          # React Components for reuse. Check falowing example.
+ │   ├── core/                # Core domain logics or structure.
+ │   ├── errors/              # Error handling and Error definitions.
+ │   ├── helpers/             # Utility functions with domain logic.
+ │   ├── hooks/               # Custom React hooks.
+ │   ├── providers/           # React Contexts and Context Providers.
+ │   ├── types/               # Shared TypeScript type for this project.
+ │   └── utils/               # Utility functions without domian logic.
+ ├── .yarnrc.yml              # Yarn setting.
+ ├── tsconfig.json            # TypeScript setting.
+ ├── vite.config.ts           # Vite setting.
+ └── package.json             # Package definition.
+```
+
+### Example structure for `components` directory
+
+```
+src/components/
+├── common/
+│   ├── Button/
+│   │   ├── Button.tsx
+│   │   ├── type.ts
+│   │   ├── Button.test.tsx
+│   │   ├── Button.stories.tsx
+│   │   ├── Button.module.scss
+│   │   └── hooks/
+│   │       ├── useClick.ts
+│   │       └── useHover.ts
+│   └── Label/
+│       └── ...
+├── layout/
+│   ├── Header/
+│   ├── Content/
+│   └── Footer/
+└── modal/
+    ├── Alert/
+    ├── Prompt/
+    └── CustomInput/
+```
+
+---
+
+> Copyright © 2025 Vincent K. Kelvin. All rights reserved.
