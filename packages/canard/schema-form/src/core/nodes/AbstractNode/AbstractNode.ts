@@ -383,7 +383,7 @@ export abstract class AbstractNode<
   }
 
   /** Node의 이벤트 리스너 목록 */
-  #listeners: Listener[] = [];
+  #listeners: Set<Listener> = new Set();
 
   /** push 된 event를 모아서 한번에 발행 */
   #eventCascade = new EventCascade((event: NodeEvent) => {
@@ -392,15 +392,13 @@ export abstract class AbstractNode<
 
   /**
    * Node의 이벤트 리스너 등록
-   * @param callback 이벤트 리스너
+   * @param listener 이벤트 리스너
    * @returns 이벤트 리스너 제거 함수
    */
-  subscribe(callback: Listener) {
-    this.#listeners.push(callback);
+  subscribe(listener: Listener) {
+    this.#listeners.add(listener);
     return () => {
-      this.#listeners = this.#listeners.filter(
-        (listener) => listener !== callback,
-      );
+      this.#listeners.delete(listener);
     };
   }
 

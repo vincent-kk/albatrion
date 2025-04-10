@@ -37,7 +37,7 @@ export abstract class AbstractNode<T, B> {
   }
 
   #resolve: (result: T | null) => void;
-  #listeners: Fn[] = [];
+  #listeners: Set<Fn> = new Set();
 
   constructor({
     id,
@@ -71,9 +71,9 @@ export abstract class AbstractNode<T, B> {
   }
 
   subscribe(listener: Fn) {
-    this.#listeners.push(listener);
+    this.#listeners.add(listener);
     return () => {
-      this.#listeners = this.#listeners.filter((l) => l !== listener);
+      this.#listeners.delete(listener);
     };
   }
   publish() {
