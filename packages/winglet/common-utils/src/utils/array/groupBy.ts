@@ -1,5 +1,5 @@
 export const groupBy = <Type, Key extends PropertyKey>(
-  array: readonly Type[],
+  array: Type[],
   getKey: (item: Type) => Key,
 ): Record<Key, Type[]> => {
   const result = {} as Record<Key, Type[]>;

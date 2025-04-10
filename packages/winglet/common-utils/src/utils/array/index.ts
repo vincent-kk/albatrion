@@ -1,8 +1,10 @@
 export { at } from './at';
 export { chunk } from './chunk';
 export { difference } from './difference';
+export { forEach } from './forEach';
 export { forEachDual } from './forEachDual';
 export { forEachReverse } from './forEachReverse';
 export { groupBy } from './groupBy';
 export { intersection } from './intersection';
+export { map } from './map';
 export { unique } from './unique';

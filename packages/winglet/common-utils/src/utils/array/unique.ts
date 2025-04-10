@@ -1,9 +1,9 @@
 import { isFunction } from '@/common-utils/utils/filter';
 
 export const unique = <Type, SubType>(
-  source: readonly Type[],
+  source: Type[],
   options?: {
-    isEqual?: (a: Type, b: Type) => boolean;
+    isEqual?: (item1: Type, item2: Type) => boolean;
     mapper?: (item: Type) => SubType;
   },
 ): Type[] => {
@@ -12,7 +12,13 @@ export const unique = <Type, SubType>(
     const result: Type[] = [];
     for (let i = 0; i < source.length; i++) {
       const item = source[i];
-      if (result.every((v) => !isEqual(v, item))) result.push(item);
+      let isDuplicate = false;
+      for (let j = 0; j < result.length; j++)
+        if (isEqual(item, result[j])) {
+          isDuplicate = true;
+          break;
+        }
+      if (!isDuplicate) result.push(item);
     }
     return result;
   }
