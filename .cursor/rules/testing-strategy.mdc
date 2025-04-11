@@ -1,0 +1,106 @@
+---
+description: 
+globs: *.ts,*.tsx,*.js,*.jsx
+alwaysApply: false
+---
+
+# Testing Strategy
+
+📁 testing/strategy
+
+Enabled: ✅
+Category: Testing
+Tags: vitest, storybook, unit-test, integration-test, e2e
+Applies To: **/tests/*.test.ts(x)
+
+⸻
+
+✅ Rule
+
+1. Test Tools
+	•	Use vitest for unit and integration testing.
+	•	Use storybook for component and visual regression testing.
+	•	Use Playwright or Cypress for E2E tests.
+
+⸻
+
+2. Progressive Testing Approach
+	1.	Unit Test
+	•	Pure functions, utility logic, no side effects
+	2.	Component Test (Storybook-based)
+	•	React components, UI logic and events
+	3.	Integration Test
+	•	Combined behavior of multiple modules (e.g., API + state + UI)
+	4.	E2E Test
+	•	Full scenario simulation from a user’s perspective
+
+⸻
+
+3. Quality Goals
+	•	Test pass rate: 100%
+	•	Coverage targets:
+	•	Core utilities and functions: 80%+
+	•	UI components: 60–80%+
+	•	Global baseline: 70%, improved progressively
+	•	Use vitest --coverage to track
+
+⸻
+
+4. Test File Structure
+	•	Place test code next to target source code under a tests/ subfolder
+
+⸻
+
+5. Naming and Style
+	•	Use .test.ts or .test.tsx as file extension
+	•	Use descriptive test names like:
+should call onClick when clicked
+	•	Prefer AAA structure: Arrange → Act → Assert
+
+⸻
+
+6. Mocking & Isolation
+	•	Always mock:
+	•	External APIs (e.g., fetch, localStorage)
+	•	Browser-specific behavior
+	•	For state libraries (React Query, Zustand, etc.), use proper mocking or providers
+
+⸻
+
+7. CI Integration
+	•	All tests must run automatically on CI (e.g., GitHub Actions)
+	•	Coverage data should be uploaded for PR comparison (e.g., Codecov)
+	•	Use standard debug logs for test failures (e.g., error stack + mock context)
+
+⸻
+
+💡 Recommended Add-ons
+
+1. Snapshot Testing Policy
+	•	Use snapshots only for intentional UI tracking
+	•	Avoid shallow or meaningless snapshots
+
+2. Storybook + Testing Synergy
+	•	Use play() function in Storybook stories for basic interaction tests
+	•	Align documentation scenarios with test coverage
+
+3. Avoid Skipping Tests
+	•	Ban test.skip, test.only in commits
+	•	Enforce this via pre-commit hooks or linter rules
+
+4. Debug Logging Standard
+	•	Avoid raw console.log
+	•	Use custom debug() utility for structured diagnostics
+	•	Auto-log mock info and test context when failures occur
+
+⸻
+
+📌 Reason
+
+A well-defined testing strategy improves code safety, confidence, and long-term maintainability.
+A progressive test pyramid allows for realistic resource planning while building confidence over time.
+Unified structure and criteria increase team productivity and reduce onboarding cost.
+
+⸻
+
+> Copyright © 2025 Vincent K. Kelvin. All rights reserved.

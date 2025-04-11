@@ -85,24 +85,6 @@ Enables clear separation for development, testing, documentation, and styling.
 
 ---
 
-## testing/strategy
-
-**Enabled**: ✅  
-**Category**: Testing  
-**Tags**: vitest, storybook, unit-test, integration-test, e2e  
-**Applies To**: `**/tests/*.test.ts(x)`
-
-**Rule**
-
-- Adopt a progressive testing approach: Unit → Component (Storybook) → Integration → E2E.
-- Aim for 100% test pass rate, with 80%+ coverage for individual functions.
-- Place test code close to the target code under a `tests/` folder.
-
-**Reason**  
-A stepwise testing strategy balances realistic resources and gradual quality improvements.
-
----
-
 ## state-management/client
 
 **Enabled**: ✅  
