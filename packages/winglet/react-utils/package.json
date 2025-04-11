@@ -18,6 +18,14 @@
     "dist",
     "README.md"
   ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
     "aileron:types": "mkdir -p ./@aileron && ln -sf ../../../aileron/common/@types ./@aileron/types",
     "test": "vitest",

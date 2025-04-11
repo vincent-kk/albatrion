@@ -1,31 +1,22 @@
-// NOTE: 1. rollup-plugin-peer-deps-external is used to externalize peer dependencies
-const peerDepsExternal = require('rollup-plugin-peer-deps-external');
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
+import replace from '@rollup/plugin-replace';
+import terser from '@rollup/plugin-terser';
+import { readFileSync } from 'fs';
+import { dirname, resolve as resolvePath } from 'path';
+import copy from 'rollup-plugin-copy';
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import typescript from 'rollup-plugin-typescript2';
+import { fileURLToPath } from 'url';
 
-// NOTE: 2. @rollup/plugin-node-resolve is used to resolve the entry point of the package
-const resolve = require('@rollup/plugin-node-resolve');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-// NOTE: 3. @rollup/plugin-replace is used to replace the process.env.NODE_ENV with 'production'
-const replace = require('@rollup/plugin-replace');
+const packageJson = JSON.parse(
+  readFileSync(resolvePath(__dirname, './package.json'), 'utf8'),
+);
 
-// NOTE: 7. rollup-plugin-copy is used to copy the types to the dist folder
-const copy = require('rollup-plugin-copy');
-
-// NOTE: 8. @rollup/plugin-commonjs is used to convert CommonJS modules to ES modules
-const commonjs = require('@rollup/plugin-commonjs');
-
-// NOTE: 9. rollup-plugin-typescript2 is used to convert TypeScript to JavaScript
-const typescript = require('rollup-plugin-typescript2');
-
-// NOTE: 10. @rollup/plugin-terser is used to minify the JavaScript
-const terser = require('@rollup/plugin-terser');
-
-// NOTE: 11. rollup-plugin-visualizer is used to visualize the bundle size
-const visualizer = require('rollup-plugin-visualizer').visualizer;
-
-// NOTE: 12. package.json is used to get the package information
-const packageJson = require('./package.json');
-
-module.exports = [
+export default [
   {
     input: 'src/index.ts',
     output: [
@@ -37,7 +28,7 @@ module.exports = [
       },
       {
         file: packageJson.module,
-        format: 'es',
+        format: 'esm',
         exports: 'named',
         sourcemap: true,
       },
@@ -72,7 +63,7 @@ module.exports = [
             rootDir: 'src',
             baseUrl: '.',
           },
-          include: ['src/**/*'],
+          include: ['src/**/*', '../@types/**/*'],
           exclude: [
             'node_modules',
             '**/*.test.ts',
@@ -91,10 +82,6 @@ module.exports = [
         output: {
           comments: true,
         },
-      }),
-      visualizer({
-        filename: 'schema-form-antd-plugin-stats.html',
-        gzipSize: true,
       }),
     ],
     external: (path) => /node_modules/.test(path),
