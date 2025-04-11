@@ -2,6 +2,7 @@ export { clone } from './clone';
 export { getSymbols } from './getSymbols';
 export { merge } from './merge';
 export { removeUndefined } from './removeUndefined';
+export { serializeNative } from './serializeNative';
 export { serializeObject } from './serializeObject';
 export { serializeWithFullSortedKeys } from './serializeWithFullSortedKeys';
 export { stableSerialize } from './stableSerialize';
