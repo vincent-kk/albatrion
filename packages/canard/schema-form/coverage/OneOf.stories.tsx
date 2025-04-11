@@ -13,13 +13,13 @@ export default {
   title: 'Form/06. OneOf',
 };
 
-export const OneOf = () => {
+export const OneOfEnum = () => {
   const schema = {
     type: 'object',
     oneOf: [
       {
         properties: { category: { enum: ['movie'] } },
-        required: ['title', 'openingDate'],
+        required: ['title', 'openingDate', 'price'],
       },
       {
         properties: { category: { enum: ['game'] } },
@@ -48,6 +48,68 @@ export const OneOf = () => {
         },
       },
       numOfPlayers: { type: 'number' },
+      price: {
+        type: 'number',
+        minimum: 50,
+      },
+    },
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema>>(null);
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
+    </StoryLayout>
+  );
+};
+
+export const OneOfConst = () => {
+  const schema = {
+    type: 'object',
+    oneOf: [
+      {
+        properties: { category: { const: 'movie' } },
+        required: ['title', 'openingDate', 'price'],
+      },
+      {
+        properties: { category: { const: 'game' } },
+        required: ['title', 'releaseDate', 'numOfPlayers'],
+      },
+    ],
+    properties: {
+      category: {
+        type: 'string',
+        enum: ['game', 'movie'],
+        default: 'game',
+      },
+      title: { type: 'string' },
+      openingDate: {
+        type: 'string',
+        format: 'date',
+        renderOptions: {
+          visible: '@.title === "wow"',
+        },
+      },
+      releaseDate: {
+        type: 'string',
+        format: 'date',
+        renderOptions: {
+          visible: '@.title === "wow"',
+        },
+      },
+      numOfPlayers: { type: 'number' },
+      price: {
+        type: 'number',
+        minimum: 50,
+      },
     },
   } satisfies JsonSchema;
 

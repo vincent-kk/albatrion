@@ -10,5 +10,10 @@ export const isObjectOneOfSchema = (
   isPlainObject(schema.properties) && Array.isArray(schema.required);
 
 export const isValidEnum = (
-  value: JsonSchemaWithVirtual,
-): value is RequiredBy<JsonSchemaWithVirtual, 'enum'> => !!value.enum?.length;
+  schema: JsonSchemaWithVirtual,
+): schema is RequiredBy<JsonSchemaWithVirtual, 'enum'> => !!schema.enum?.length;
+
+export const isValidConst = (
+  schema: JsonSchemaWithVirtual,
+): schema is RequiredBy<JsonSchemaWithVirtual, 'const'> =>
+  schema.const !== undefined;

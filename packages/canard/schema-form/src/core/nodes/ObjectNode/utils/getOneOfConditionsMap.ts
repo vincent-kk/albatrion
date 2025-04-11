@@ -1,8 +1,10 @@
+import { serializeNative } from '@winglet/common-utils';
+
 import type { Dictionary } from '@aileron/types';
 
 import type { JsonSchema, ObjectSchema } from '@/schema-form/types';
 
-import { isObjectOneOfSchema, isValidEnum } from './filter';
+import { isObjectOneOfSchema, isValidConst, isValidEnum } from './filter';
 
 export const getOneOfConditionsMap = (jsonSchema: ObjectSchema) => {
   if (!jsonSchema.oneOf || !Array.isArray(jsonSchema.oneOf)) return null;
@@ -24,12 +26,14 @@ export const getOneOfConditionsMap = (jsonSchema: ObjectSchema) => {
 const getConditions = (properties: Dictionary<JsonSchema>) => {
   const conditions: string[] = [];
   for (const [key, value] of Object.entries(properties)) {
-    if (!isValidEnum(value)) continue;
-    conditions.push(
-      value.enum.length === 1
-        ? `${JSON.stringify(value.enum[0])}===@.${key}`
-        : `${JSON.stringify(value.enum)}.includes(@.${key})`,
-    );
+    if (isValidConst(value))
+      conditions.push(`@.${key}===${serializeNative(value.const)}`);
+    else if (isValidEnum(value))
+      conditions.push(
+        value.enum.length === 1
+          ? `${serializeNative(value.enum[0])}===@.${key}`
+          : `${serializeNative(value.enum)}.includes(@.${key})`,
+      );
   }
   return conditions;
 };
