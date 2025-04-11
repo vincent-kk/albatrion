@@ -16,6 +16,7 @@ import {
 import type { ChildNode } from './type';
 import {
   getChildren,
+  getDataWithSchema,
   getOneOfConditionsMap,
   getVirtualReferencesMap,
   mergeShowConditions,
@@ -49,19 +50,25 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
   #emitChange() {
     if (!this.#ready) return;
-    const previous = { ...this.#value };
+    const previous = this.#value ? { ...this.#value } : undefined;
     if (this.#draft === undefined) {
       this.#value = undefined;
     } else if (this.#replace) {
-      this.#value = sortObjectKeys(this.#draft, this.#propertyKeys);
+      this.#value = getDataWithSchema(
+        sortObjectKeys(this.#draft, this.#propertyKeys),
+        this.jsonSchema,
+      );
       this.#replace = false;
     } else {
-      this.#value = sortObjectKeys(
-        {
-          ...this.#value,
-          ...this.#draft,
-        },
-        this.#propertyKeys,
+      this.#value = getDataWithSchema(
+        sortObjectKeys(
+          {
+            ...this.#value,
+            ...this.#draft,
+          },
+          this.#propertyKeys,
+        ),
+        this.jsonSchema,
       );
     }
     this.onChange(this.#value);
@@ -74,7 +81,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         [NodeEventType.UpdateValue]: {
           previous,
           current: this.#value,
-          difference: { ...this.#draft },
+          difference: { ...(this.#draft || {}) },
         },
       },
     });

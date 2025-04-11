@@ -154,6 +154,9 @@ describe('AbstractNode', () => {
         },
         oneOf: [
           { properties: { status: { enum: ['active'] } }, required: ['age'] },
+          {
+            properties: { status: { enum: ['inactive'] } },
+          },
         ],
       },
     });
@@ -167,12 +170,12 @@ describe('AbstractNode', () => {
 
     node.setValue({ status: 'inactive', age: 10 });
     await wait();
-    expect(node.value).toEqual({ status: 'inactive', age: 10 });
+    expect(node.value).toEqual({ status: 'inactive' });
 
     // @ts-expect-error applyValue는 모든 노드에서 동일한 타입을 받기 때문에 타입 오류 발생
     node.applyValue({ status: 'inactive', age: 20 });
     await wait();
-    expect(node.value).toEqual({ status: 'inactive', age: 20 });
+    expect(node.value).toEqual({ status: 'inactive' });
   });
 
   it('child node error sending', async () => {

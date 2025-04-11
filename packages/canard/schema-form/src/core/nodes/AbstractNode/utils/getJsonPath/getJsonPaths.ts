@@ -6,7 +6,6 @@ export const getJsonPaths = (data: any, initialPath = ''): string[] => {
   const stack: Array<{ data: any; path: string }> = [
     { data, path: initialPath },
   ];
-
   while (stack.length > 0) {
     const { data, path } = stack.pop()!;
     if (path) result.push(path);

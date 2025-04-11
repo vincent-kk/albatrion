@@ -34,7 +34,6 @@ import {
 import {
   EventCascade,
   find,
-  getDataWithSchema,
   getFallbackValidator,
   getJsonPaths,
   getNodeType,
@@ -318,9 +317,7 @@ export abstract class AbstractNode<
   ): void {
     if (typeof this.#handleChange !== 'function') return;
     const inputValue = typeof input === 'function' ? input(this.value) : input;
-    this.#handleChange(
-      this.isRoot ? getDataWithSchema(inputValue, this.jsonSchema) : inputValue,
-    );
+    this.#handleChange(inputValue);
   }
 
   /** Node의 하위 Node 목록, 하위 Node를 가지지 않는 Node는 빈 배열 반환 */
@@ -429,9 +426,7 @@ export abstract class AbstractNode<
    */
   #filterErrorsWithSchema(errors: JsonSchemaError[]) {
     if (!this.isRoot) return errors;
-    const visibleJsonPaths = new Set(
-      getJsonPaths(getDataWithSchema(this.value, this.jsonSchema)),
-    );
+    const visibleJsonPaths = new Set(getJsonPaths(this.value));
     const filtered = [];
     for (const error of errors)
       if (visibleJsonPaths.has(error.dataPath)) filtered.push(error);
@@ -461,7 +456,7 @@ export abstract class AbstractNode<
     //    - getDataWithSchema: 현재 JsonSchema를 기반으로 Value의 데이터를 변환하여 반환
     //    - filterErrors: errors에서 oneOf 관련 error 필터링
     const errors = filterErrors(
-      await this.#validate(getDataWithSchema(this.value, this.jsonSchema)),
+      await this.#validate(this.value),
       this.jsonSchema,
     );
 

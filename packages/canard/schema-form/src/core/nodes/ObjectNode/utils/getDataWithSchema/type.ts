@@ -17,11 +17,6 @@ export interface StackItem<Value = any> {
   key?: string | number;
 }
 
-export type Options = {
-  ignoreOneOf?: boolean;
-  ignoreAdditionalProperties?: boolean;
-};
-
 export const isObjectStackItem = (
   item: StackItem,
 ): item is StackItem<ObjectValue> =>
