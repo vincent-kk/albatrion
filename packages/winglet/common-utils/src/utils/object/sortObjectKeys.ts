@@ -5,13 +5,16 @@ export const sortObjectKeys = <Dict extends Dictionary>(
   keys: string[] = [],
 ): Dict => {
   if (!object) return {} as Dict;
-  const keySet = new Set(keys);
   const result: Dictionary = {};
-  for (const key of keys) {
+  const inputKeysSet = new Set(keys);
+  const objectKeys = Object.keys(object);
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
     if (key in object) result[key] = object[key];
   }
-  for (const key of Object.keys(object)) {
-    if (!keySet.has(key)) result[key] = object[key];
+  for (let i = 0; i < objectKeys.length; i++) {
+    const key = objectKeys[i];
+    if (!inputKeysSet.has(key)) result[key] = object[key];
   }
   return result as Dict;
 };
