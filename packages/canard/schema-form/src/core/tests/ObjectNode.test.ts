@@ -285,31 +285,58 @@ describe('ObjectNode', () => {
     });
   });
 
-  // it('객체 노드의 추가 속성이 허용되지 않아야 함', async () => {
-  //   const node = nodeFromJsonSchema({
-  //     jsonSchema: {
-  //       type: 'object',
-  //       properties: {
-  //         user: {
-  //           type: 'object',
-  //           properties: {
-  //             name: { type: 'string' },
-  //             age: { type: 'number' },
-  //           },
-  //           additionalProperties: false,
-  //         },
-  //       },
-  //     },
-  //     validationMode: ValidationMode.OnChange,
-  //   });
+  it('객체 노드의 추가 속성이 허용되지 않아야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          user: {
+            type: 'object',
+            properties: {
+              name: { type: 'string' },
+              age: { type: 'number' },
+            },
+            additionalProperties: false,
+          },
+        },
+      },
+      validationMode: ValidationMode.OnChange,
+    });
 
-  //   const objectNode = node?.findNode('user') as ObjectNode;
-  //   await delay();
+    const objectNode = node?.findNode('user') as ObjectNode;
+    await delay();
 
-  //   // 추가 속성이 있는 값 설정
-  //   objectNode.setValue({ name: '홍길동', age: 30, email: 'hong@example.com' });
-  //   await delay();
-  //   expect(objectNode.errors.length).toBeGreaterThan(0);
-  //   expect(objectNode.errors[0].keyword).toBe('additionalProperties');
-  // });
+    // 추가 속성이 있는 값 설정
+    objectNode.setValue({ name: '홍길동', age: 30, email: 'hong@example.com' });
+    await delay();
+    expect(objectNode.errors.length).toBeGreaterThan(0);
+    expect(objectNode.errors[0].keyword).toBe('additionalProperties');
+  });
+
+  it('객체 노드의 추가 속성 제한이 없으면 추가 속성이 허용되어야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          user: {
+            type: 'object',
+          },
+        },
+      },
+      validationMode: ValidationMode.OnChange,
+    });
+
+    const objectNode = node?.findNode('user') as ObjectNode;
+    await delay();
+
+    // 추가 속성이 있는 값 설정
+    objectNode.setValue({ name: '홍길동', age: 30, email: 'hong@example.com' });
+    await delay();
+    expect(objectNode.errors).toEqual([]);
+    expect(objectNode.value).toEqual({
+      name: '홍길동',
+      age: 30,
+      email: 'hong@example.com',
+    });
+  });
 });

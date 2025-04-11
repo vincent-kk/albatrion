@@ -1,4 +1,4 @@
-import { isPlainObject } from '@winglet/common-utils';
+import { isArray, isPlainObject } from '@winglet/common-utils';
 
 import type { Dictionary } from '@aileron/types';
 
@@ -8,7 +8,17 @@ import type {
   ObjectValue,
 } from '@/schema-form/types';
 
-import { type StackItem, isArrayStackItem, isObjectStackItem } from './type';
+import {
+  type Options,
+  type StackItem,
+  isArrayStackItem,
+  isObjectStackItem,
+} from './type';
+
+const omitCache = new WeakMap<
+  JsonSchemaWithVirtual,
+  Map<string, Set<string>>
+>();
 
 /**
  * 주어진 값과 스키마를 기반으로 필요한 데이터를 추출하는 함수
@@ -20,7 +30,7 @@ import { type StackItem, isArrayStackItem, isObjectStackItem } from './type';
 export const getDataWithSchema = <Value>(
   value: Value | undefined,
   schema: JsonSchemaWithVirtual,
-  options?: { ignoreOneOf: boolean },
+  options?: Options,
 ): Value | undefined => {
   if (value == null) return value;
   const stack: StackItem[] = [{ value, schema, result: undefined }];
@@ -49,24 +59,43 @@ export const getDataWithSchema = <Value>(
 const handleObjectSchema = (
   current: StackItem<ObjectValue>,
   stack: StackItem[],
-  options?: { ignoreOneOf: boolean },
+  options?: Options,
 ): boolean => {
   if (current.result) return false;
-  if (current.schema.properties) {
-    current.result = {};
-    const omit = getOmit(current.schema, current.value, options);
-    const keys = Object.keys(current.schema.properties);
-    for (let i = keys.length - 1; i >= 0; i--) {
-      const key = keys[i];
-      if (key in current.value && !omit?.has(key)) {
+
+  current.result = {};
+  const value = current.value;
+  const schema = current.schema;
+  const allowAdditionalProperties = !options?.ignoreAdditionalProperties;
+
+  const inputKeys = Object.keys(value);
+  const inputKeysLength = inputKeys.length;
+  if (schema.properties) {
+    const definedKeys = Object.keys(schema.properties);
+    const definedKeysLength = definedKeys.length;
+    const omit = definedKeysLength > 0 ? getOmit(schema, value, options) : null;
+    for (let i = 0; i < definedKeysLength; i++) {
+      const key = definedKeys[i];
+      if (value.hasOwnProperty(key) && (!omit || !omit.has(key)))
         stack.push({
-          value: current.value[key],
-          schema: current.schema.properties[key],
+          value: value[key],
+          schema: schema.properties[key],
           result: undefined,
           parent: current.result,
           key,
         });
+    }
+    if (allowAdditionalProperties && inputKeysLength !== definedKeysLength) {
+      for (let i = 0; i < inputKeysLength; i++) {
+        const key = inputKeys[i];
+        if (!schema.properties.hasOwnProperty(key))
+          current.result[key] = value[key];
       }
+    }
+  } else if (allowAdditionalProperties) {
+    for (let i = 0; i < inputKeysLength; i++) {
+      const key = inputKeys[i];
+      current.result[key] = value[key];
     }
   }
   return true;
@@ -97,42 +126,46 @@ const handleArraySchema = (
 const getOmit = <Value extends Dictionary>(
   jsonSchema: JsonSchemaWithVirtual,
   value: Value,
-  options?: { ignoreOneOf: boolean },
+  options?: Options,
 ): Set<string> | null => {
-  if (options?.ignoreOneOf || !jsonSchema.oneOf?.length) {
-    return null;
+  if (options?.ignoreOneOf || !jsonSchema.oneOf?.length) return null;
+  const schemaCache = omitCache.get(jsonSchema);
+  if (schemaCache) {
+    const valueKey = JSON.stringify(value);
+    const cachedOmit = schemaCache.get(valueKey);
+    if (cachedOmit) return cachedOmit;
   }
   const omit = new Set<string>();
   const required = new Set(jsonSchema.required || []);
   const notRequired = new Set<string>();
-  for (const {
-    properties: oneOfProperties,
-    required: oneOfRequired,
-  } of jsonSchema.oneOf) {
-    if (isPlainObject(oneOfProperties) && Array.isArray(oneOfRequired)) {
+  const oneOfLength = jsonSchema.oneOf.length;
+  for (let i = 0; i < oneOfLength; i++) {
+    const oneOfItem = jsonSchema.oneOf[i] as JsonSchemaWithVirtual;
+    const oneOfProperties = oneOfItem.properties;
+    const oneOfRequired = oneOfItem.required;
+    if (isPlainObject(oneOfProperties) && isArray(oneOfRequired)) {
       const key = Object.keys(oneOfProperties)[0];
-      if ((oneOfProperties[key]?.enum || []).includes(value?.[key])) {
-        // required인 경우 해당 필드들을 required set에 추가
-        for (const requiredKey of oneOfRequired) {
-          required.add(requiredKey);
-        }
-      } else {
-        for (const requiredKey of oneOfRequired) {
-          notRequired.add(requiredKey);
-        }
-      }
+      const enumValues = oneOfProperties[key]?.enum || [];
+      if (enumValues.includes(value?.[key]))
+        for (let j = 0; j < oneOfRequired.length; j++)
+          required.add(oneOfRequired[j]);
+      else
+        for (let j = 0; j < oneOfRequired.length; j++)
+          notRequired.add(oneOfRequired[j]);
     }
   }
   for (const field of notRequired) {
-    if (!required.has(field)) {
-      omit.add(field);
-    }
+    if (!required.has(field)) omit.add(field);
   }
+  if (!schemaCache) {
+    const newCache = new Map();
+    newCache.set(JSON.stringify(value), omit);
+    omitCache.set(jsonSchema, newCache);
+  } else schemaCache.set(JSON.stringify(value), omit);
   return omit;
 };
 
 const assignToParent = (current: StackItem, finalResult: any): void => {
-  if (current.parent && current.key !== undefined) {
+  if (current.parent && current.key !== undefined)
     current.parent[current.key] = finalResult;
-  }
 };

@@ -105,4 +105,25 @@ describe('getDataWithSchema', () => {
     const result = getDataWithSchema(data, schema);
     expect(result).toBe('just a string');
   });
+
+  it('should pass additionalProperties', () => {
+    const schema: JsonSchema = { type: 'object' };
+    const data = { name: 'John', age: 30 };
+
+    const result = getDataWithSchema(data, schema);
+    expect(result).toEqual({ name: 'John', age: 30 });
+  });
+
+  it('ignore additionalProperties', () => {
+    const schema: JsonSchema = {
+      type: 'object',
+      properties: { name: { type: 'string' } },
+    };
+    const data = { name: 'John', age: 30 };
+
+    const result = getDataWithSchema(data, schema, {
+      ignoreAdditionalProperties: true,
+    });
+    expect(result).toEqual({ name: 'John' });
+  });
 });
