@@ -7,7 +7,7 @@ import { type DependencyList, useEffect, useRef } from 'react';
  */
 export const useEffectUntil = <Dependencies extends DependencyList>(
   effect: () => boolean,
-  dependencies: Dependencies,
+  dependencies?: Dependencies,
 ) => {
   const isCompleted = useRef(false);
   useEffect(() => {

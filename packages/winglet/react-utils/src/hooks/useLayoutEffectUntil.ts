@@ -7,7 +7,7 @@ import { type DependencyList, useLayoutEffect, useRef } from 'react';
  */
 export const useLayoutEffectUntil = <Dependencies extends DependencyList>(
   effect: () => boolean,
-  dependencies: Dependencies,
+  dependencies?: Dependencies,
 ) => {
   const isCompleted = useRef(false);
   useLayoutEffect(() => {
