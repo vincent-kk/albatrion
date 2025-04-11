@@ -4,7 +4,7 @@ import {
   type StackItem,
   isArrayStackItem,
   isObjectStackItem,
-} from '@canard/schema-form/src/core/nodes/AbstractNode/utils/getDataWithSchema/type';
+} from '@canard/schema-form/src/core/nodes/ObjectNode/utils/getDataWithSchema/type';
 import type {
   ArrayValue,
   JsonSchema,

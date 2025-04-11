@@ -27,6 +27,16 @@ export const schema = {
               required: [],
             },
           ],
+          anyOf: [
+            {
+              properties: { type: { enum: ['adult', 'child'] } },
+              required: ['age', 'gender', 'preferences'],
+            },
+            {
+              properties: { type: { enum: ['none'] } },
+              required: [],
+            },
+          ],
           properties: {
             type: {
               type: 'string',
@@ -81,11 +91,6 @@ export const schema = {
       properties: {
         privacy: {
           type: 'string',
-          oneOf: [
-            { const: 'public', title: 'Public' },
-            { const: 'private', title: 'Private' },
-            { const: 'custom', title: 'Custom' },
-          ],
           default: 'public',
         },
         language: {
@@ -133,6 +138,14 @@ export const value = {
           email: true,
           sms: false,
         },
+      },
+    },
+    extra: {
+      type: 'adult',
+      age: 30,
+      gender: 'male',
+      preferences: {
+        theme: 'dark',
       },
     },
   },
