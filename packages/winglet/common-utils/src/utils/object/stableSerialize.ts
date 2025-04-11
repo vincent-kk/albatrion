@@ -9,6 +9,8 @@ import { isRegex } from '@/common-utils/utils/filter/isRegex';
 import { isUndefined } from '@/common-utils/utils/filter/isUndefined';
 import { generateHash } from '@/common-utils/utils/generateHash';
 
+import { serializeNative } from './serializeNative';
+
 const { get, set } = weakMapCacheFactory<string>();
 const { increment } = counterFactory();
 
@@ -59,5 +61,5 @@ const createHash = (
 
   if (isFunction(input?.toString)) return input.toString();
 
-  return JSON.stringify(input);
+  return serializeNative(input);
 };

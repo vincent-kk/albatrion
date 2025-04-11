@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { serializeNative } from '../serializeNative';
 import { sortObjectKeys } from '../sortObjectKeys';
 
 describe('sortObjectKeys', () => {
@@ -55,7 +56,7 @@ describe('sortObjectKeys', () => {
       const expectedKeys = Object.keys(expected);
       expect(resultKeys).toEqual(expectedKeys);
       expect(result).toEqual(expected);
-      expect(JSON.stringify(result)).toBe(JSON.stringify(expected));
+      expect(serializeNative(result)).toBe(serializeNative(expected));
     });
   });
 });
