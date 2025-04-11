@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils';
+
 import type { SetStateFn } from '@aileron/types';
 
 import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
@@ -49,29 +51,32 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   get value() {
     return this.toArray();
   }
-  set value(input: ArrayValue | undefined) {
+  set value(input: ArrayValue) {
     this.setValue(input);
   }
-  protected applyValue(input: ArrayValue | undefined) {
-    if (Array.isArray(input)) {
-      this.#locked = true;
-      this.clear();
-      for (const value of input) {
-        this.push(value);
-      }
-      this.#locked = false;
-      this.#emitChange();
-    }
+  protected applyValue(input: ArrayValue) {
+    if (!isArray(input)) return;
+    this.#locked = true;
+    this.clear();
+    for (const value of input) this.push(value);
+    this.#locked = false;
+    this.#emitChange();
   }
 
   #emitChange() {
     if (this.#ready && this.#hasChanged) {
-      const value = this.toArray();
+      const value = this.value;
       this.onChange(value);
       this.publish({
         type: NodeEventType.UpdateValue,
         payload: {
           [NodeEventType.UpdateValue]: value,
+        },
+        options: {
+          [NodeEventType.UpdateValue]: {
+            previous: undefined,
+            current: value,
+          },
         },
       });
       this.#hasChanged = false;

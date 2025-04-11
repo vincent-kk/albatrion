@@ -1,9 +1,12 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+import { delay } from '@winglet/common-utils';
 
 import { nodeFromJsonSchema } from '@/schema-form/core';
 import { JsonSchema } from '@/schema-form/types';
 
-import { ArrayNode } from '../nodes/ArrayNode/ArrayNode';
+import { NodeEventType, ValidationMode } from '../nodes';
+import { ArrayNode } from '../nodes/ArrayNode';
 
 describe('ArrayNode', () => {
   it('automatically add items up to minItems', () => {
@@ -217,5 +220,321 @@ describe('ArrayNode', () => {
         },
       ],
     });
+  });
+
+  it('배열 노드가 정상적으로 생성되어야 함', () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          tags: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+        },
+      },
+    });
+
+    const arrayNode = node?.findNode('tags');
+    expect(arrayNode).toBeDefined();
+    expect(arrayNode?.type).toBe('array');
+  });
+
+  it('배열 노드의 값이 정상적으로 설정되어야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          tags: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+        },
+      },
+    });
+
+    const arrayNode = node?.findNode('tags') as ArrayNode;
+    expect(arrayNode.value).toEqual([]);
+
+    arrayNode.setValue(['태그1', '태그2', '태그3']);
+    await delay();
+    expect(arrayNode.value).toEqual(['태그1', '태그2', '태그3']);
+  });
+
+  it('배열 노드의 기본값이 정상적으로 설정되어야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          tags: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+            default: ['기본태그1', '기본태그2'],
+          },
+        },
+      },
+    });
+
+    const arrayNode = node?.findNode('tags') as ArrayNode;
+    await delay();
+    expect(arrayNode.value).toEqual(['기본태그1', '기본태그2']);
+  });
+
+  it('배열 노드의 이벤트가 정상적으로 발생해야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          tags: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+        },
+      },
+    });
+
+    await delay(50);
+
+    const arrayNode = node?.findNode('tags') as ArrayNode;
+
+    // 이벤트 리스너 등록
+    const mockListener = vi.fn();
+    arrayNode.subscribe(mockListener);
+
+    // 값 변경
+    arrayNode.setValue(['새태그1', '새태그2']);
+
+    await delay();
+
+    // 이벤트가 발생했는지 확인
+    expect(mockListener).toHaveBeenCalledWith({
+      type: NodeEventType.UpdateValue,
+      payload: {
+        [NodeEventType.UpdateValue]: ['새태그1', '새태그2'],
+      },
+      options: {
+        [NodeEventType.UpdateValue]: {
+          previous: undefined,
+          current: ['새태그1', '새태그2'],
+        },
+      },
+    });
+  });
+
+  it('배열 노드의 아이템 추가가 정상적으로 동작해야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          tags: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+        },
+      },
+    });
+
+    const arrayNode = node?.findNode('tags') as ArrayNode;
+    await delay();
+
+    // 초기값 설정
+    arrayNode.setValue(['태그1', '태그2']);
+    await delay();
+
+    // 아이템 추가
+    arrayNode.push('태그3');
+    await delay();
+
+    // 값 확인
+    expect(arrayNode.value).toEqual(['태그1', '태그2', '태그3']);
+  });
+
+  it('배열 노드의 아이템 삭제가 정상적으로 동작해야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          tags: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+        },
+      },
+    });
+
+    const arrayNode = node?.findNode('tags') as ArrayNode;
+    await delay();
+
+    // 초기값 설정
+    arrayNode.setValue(['태그1', '태그2', '태그3']);
+    await delay();
+
+    // 아이템 삭제
+    arrayNode.remove(1);
+    await delay();
+
+    // 값 확인
+    expect(arrayNode.value).toEqual(['태그1', '태그3']);
+  });
+
+  it('배열 노드의 아이템 이동이 정상적으로 동작해야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          tags: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+        },
+      },
+    });
+
+    const arrayNode = node?.findNode('tags') as ArrayNode;
+    await delay();
+
+    // 초기값 설정
+    arrayNode.setValue(['태그1', '태그2', '태그3']);
+    await delay();
+  });
+
+  it('배열 노드의 유효성 검사가 정상적으로 동작해야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          numbers: {
+            type: 'array',
+            items: {
+              type: 'number',
+              minimum: 0,
+              maximum: 100,
+            },
+            minItems: 2,
+            maxItems: 5,
+          },
+        },
+      },
+      validationMode: ValidationMode.OnChange,
+    });
+
+    const arrayNode = node?.findNode('numbers') as ArrayNode;
+    await delay();
+
+    // 최소 아이템 수 이하 설정
+    arrayNode.setValue([1]);
+    await delay();
+    expect(arrayNode.errors.length).toBeGreaterThan(0);
+    expect(arrayNode.errors[0].keyword).toBe('minItems');
+
+    // 최대 아이템 수 초과 설정시, 최대 아이템 수만큼만 저장되어야 함
+    arrayNode.setValue([1, 2, 3, 4, 5, 6]);
+    await delay();
+    expect(arrayNode.value.length).toBe(5);
+
+    // 유효한 값 설정
+    arrayNode.setValue([1, 2, 3]);
+    await delay();
+    expect(arrayNode.errors).toEqual([]);
+
+    // Array item에 대한 유효성 오류는 개별 item에 저장됨
+    arrayNode.setValue([1, 2, 150]);
+    await delay();
+    expect(arrayNode.errors.length).toBe(0);
+  });
+
+  it('배열 노드의 고유 아이템 검사가 정상적으로 동작해야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          tags: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+            uniqueItems: true,
+          },
+        },
+      },
+      validationMode: ValidationMode.OnChange,
+    });
+
+    const arrayNode = node?.findNode('tags') as ArrayNode;
+    await delay();
+
+    // 중복 아이템이 있는 값 설정
+    arrayNode.setValue(['태그1', '태그2', '태그1']);
+    await delay();
+    expect(arrayNode.errors.length).toBeGreaterThan(0);
+    expect(arrayNode.errors[0].keyword).toBe('uniqueItems');
+
+    // 중복 아이템이 없는 값 설정
+    arrayNode.setValue(['태그1', '태그2', '태그3']);
+    await delay();
+    expect(arrayNode.errors).toEqual([]);
+  });
+
+  it('배열 노드의 복잡한 아이템 타입이 정상적으로 처리되어야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          users: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                age: { type: 'number' },
+              },
+              required: ['name', 'age'],
+            },
+          },
+        },
+      },
+    });
+
+    const arrayNode = node?.findNode('users') as ArrayNode;
+    await delay();
+
+    // 복잡한 아이템 값 설정
+    arrayNode.setValue([
+      { name: '홍길동', age: 30 },
+      { name: '김철수', age: 25 },
+    ]);
+    await delay();
+
+    // 값 확인
+    expect(arrayNode.value).toEqual([
+      { name: '홍길동', age: 30 },
+      { name: '김철수', age: 25 },
+    ]);
+
+    // 아이템 노드 확인
+    const itemNodes = arrayNode.children;
+    expect(itemNodes.length).toBe(2);
+    expect(itemNodes[0].node.type).toBe('object');
+    expect(itemNodes[1].node.type).toBe('object');
+
+    // 아이템 노드의 자식 노드 확인
+    const firstItemNameNode = itemNodes[0].node.findNode('name');
+    const firstItemAgeNode = itemNodes[0].node.findNode('age');
+    expect(firstItemNameNode?.value).toBe('홍길동');
+    expect(firstItemAgeNode?.value).toBe(30);
   });
 });

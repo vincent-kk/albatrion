@@ -40,9 +40,9 @@ const mergeEvents = (events: ReadonlyArray<NodeEvent>) => {
   };
   for (const { type, payload, options } of events) {
     merged.type |= type;
-    if (payload?.[type])
+    if (payload?.[type] !== undefined)
       (merged.payload[type] as (typeof payload)[typeof type]) = payload[type];
-    if (options?.[type])
+    if (options?.[type] !== undefined)
       (merged.options[type] as (typeof options)[typeof type]) = options[type];
   }
   return merged;

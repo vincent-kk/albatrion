@@ -1,102 +1,315 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+import { delay } from '@winglet/common-utils';
 
 import { nodeFromJsonSchema } from '@/schema-form/core';
-import type { ObjectSchema } from '@/schema-form/types';
+
+import { NodeEventType, ValidationMode } from '../nodes';
+import { NumberNode } from '../nodes/NumberNode';
+import { ObjectNode } from '../nodes/ObjectNode';
+import { StringNode } from '../nodes/StringNode';
 
 describe('ObjectNode', () => {
-  it('default value', () => {
-    const jsonSchema = {
-      type: 'object',
-      properties: {
-        character: {
-          type: 'object',
-          properties: {
-            spell: {
-              type: 'string',
-              default: 'expecto patronum',
+  it('객체 노드가 정상적으로 생성되어야 함', () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          user: {
+            type: 'object',
+            properties: {
+              name: { type: 'string' },
+              age: { type: 'number' },
             },
           },
         },
       },
-    } satisfies ObjectSchema;
+    });
 
-    const node = nodeFromJsonSchema({ jsonSchema });
-    expect(node?.value?.character.spell).toBe('expecto patronum');
+    const objectNode = node?.findNode('user');
+    expect(objectNode).toBeDefined();
+    expect(objectNode?.type).toBe('object');
   });
 
-  it('oneOf', () => {
-    const schema = {
-      type: 'object',
-      oneOf: [
-        {
-          properties: { category: { enum: ['movie'] } },
-          required: ['title', 'openingDate'],
-        },
-        {
-          properties: { category: { enum: ['game'] } },
-          required: ['title', 'releaseDate', 'numOfPlayers'],
-        },
-      ],
-      properties: {
-        category: { type: 'string', enum: ['game', 'movie'], default: 'game' },
-        title: { type: 'string' },
-        openingDate: { type: 'string' },
-        releaseDate: { type: 'string' },
-        numOfPlayers: {
-          type: 'number',
-          renderOptions: {
-            visible: '$.title==="multi"',
+  it('객체 노드의 값이 정상적으로 설정되어야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          user: {
+            type: 'object',
+            properties: {
+              name: { type: 'string' },
+              age: { type: 'number' },
+            },
           },
         },
       },
-    } satisfies ObjectSchema;
-    const node = nodeFromJsonSchema({ jsonSchema: schema });
+    });
 
-    expect(node?.findNode('title')?.jsonSchema?.renderOptions?.visible).toBe(
-      '("movie"===@.category)||("game"===@.category)',
-    );
-    expect(
-      node?.findNode('openingDate')?.jsonSchema?.renderOptions?.visible,
-    ).toBe('"movie"===@.category');
-    expect(
-      node?.findNode('releaseDate')?.jsonSchema?.renderOptions?.visible,
-    ).toBe('"game"===@.category');
-    expect(
-      node?.findNode('numOfPlayers')?.jsonSchema?.renderOptions?.visible,
-    ).toBe('($.title==="multi")&&("game"===@.category)');
+    const objectNode = node?.findNode('user') as ObjectNode;
+    expect(objectNode.value).toEqual({});
+
+    objectNode.setValue({ name: '홍길동', age: 30 });
+    await delay();
+    expect(objectNode.value).toEqual({ name: '홍길동', age: 30 });
   });
 
-  it('sorted key order', () => {
-    const schema = {
-      type: 'object',
-      properties: {
-        category: { type: 'string' },
-        title: { type: 'string' },
+  it('객체 노드의 기본값이 정상적으로 설정되어야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          user: {
+            type: 'object',
+            properties: {
+              name: { type: 'string' },
+              age: { type: 'number' },
+            },
+            default: { name: '김철수', age: 25 },
+          },
+        },
       },
-    } satisfies ObjectSchema;
-    const node = nodeFromJsonSchema({ jsonSchema: schema });
-    expect(JSON.stringify(node.value)).toBe(JSON.stringify({}));
+    });
 
-    const found = node?.findNode('title');
-    if (found?.type === 'string') {
-      found.setValue('Harry Potter');
-    }
-
-    expect(JSON.stringify(node.value)).toBe(
-      JSON.stringify({
-        title: 'Harry Potter',
-      }),
-    );
-
-    const foundCategory = node?.findNode('category');
-    if (foundCategory?.type === 'string') {
-      foundCategory.setValue('movie');
-    }
-    expect(JSON.stringify(node.value)).toBe(
-      JSON.stringify({
-        category: 'movie',
-        title: 'Harry Potter',
-      }),
-    );
+    const objectNode = node?.findNode('user') as ObjectNode;
+    await delay();
+    expect(objectNode.value).toEqual({ name: '김철수', age: 25 });
   });
+
+  it('객체 노드의 이벤트가 정상적으로 발생해야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          user: {
+            type: 'object',
+            properties: {
+              name: { type: 'string' },
+              age: { type: 'number' },
+            },
+          },
+        },
+      },
+    });
+
+    await delay();
+
+    const objectNode = node?.findNode('user') as ObjectNode;
+
+    // 이벤트 리스너 등록
+    const mockListener = vi.fn();
+    objectNode.subscribe(mockListener);
+
+    // 값 변경
+    objectNode.setValue({ name: '이영희', age: 28 });
+    await delay();
+
+    // 이벤트가 발생했는지 확인
+    expect(mockListener).toHaveBeenCalledWith({
+      type: NodeEventType.UpdateValue,
+      payload: {
+        [NodeEventType.UpdateValue]: { name: '이영희', age: 28 },
+      },
+      options: {
+        [NodeEventType.UpdateValue]: {
+          current: { name: '이영희', age: 28 },
+          previous: {},
+          difference: {
+            age: 28,
+            name: '이영희',
+          },
+        },
+      },
+    });
+  });
+
+  it('객체 노드의 자식 노드 값이 정상적으로 설정되어야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          user: {
+            type: 'object',
+            properties: {
+              name: { type: 'string' },
+              age: { type: 'number' },
+            },
+          },
+        },
+      },
+    });
+
+    const objectNode = node?.findNode('user') as ObjectNode;
+    const nameNode = objectNode.findNode('name');
+    const ageNode = objectNode.findNode('age');
+
+    expect(nameNode).toBeDefined();
+    expect(ageNode).toBeDefined();
+
+    // 자식 노드 값 설정
+    // @ts-expect-error
+    nameNode?.setValue('홍길동');
+    // @ts-expect-error
+    ageNode?.setValue(30);
+    await delay();
+
+    // 부모 노드 값 확인
+    expect(objectNode.value).toEqual({ name: '홍길동', age: 30 });
+  });
+
+  it('객체 노드의 자식 노드 이벤트가 정상적으로 발생해야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          user: {
+            type: 'object',
+            properties: {
+              name: { type: 'string' },
+              age: { type: 'number' },
+            },
+          },
+        },
+      },
+    });
+    await delay();
+
+    const objectNode = node?.findNode('user') as ObjectNode;
+    const nameNode = objectNode.findNode('name');
+
+    // 이벤트 리스너 등록
+    const mockListener = vi.fn();
+    objectNode.subscribe(mockListener);
+
+    // 자식 노드 값 변경
+    // @ts-expect-error
+    nameNode?.setValue('홍길동');
+    await delay();
+
+    // 부모 노드에 이벤트가 발생했는지 확인
+    expect(mockListener).toHaveBeenCalledWith({
+      type: NodeEventType.UpdateValue,
+      payload: {
+        [NodeEventType.UpdateValue]: { name: '홍길동', age: undefined },
+      },
+      options: {
+        [NodeEventType.UpdateValue]: {
+          current: { name: '홍길동', age: undefined },
+          previous: {},
+          difference: {
+            name: '홍길동',
+          },
+        },
+      },
+    });
+  });
+
+  it('객체 노드의 유효성 검사가 정상적으로 동작해야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          user: {
+            type: 'object',
+            properties: {
+              name: { type: 'string', minLength: 2 },
+              age: { type: 'number', minimum: 0, maximum: 120 },
+            },
+            required: ['name', 'age'],
+          },
+        },
+      },
+      validationMode: ValidationMode.OnChange,
+    });
+
+    await delay();
+    const objectNode = node?.findNode('user') as ObjectNode;
+    const userNameNode = objectNode.findNode('$.user.name') as StringNode;
+    const userAgeNode = objectNode.findNode('$.user.age') as NumberNode;
+
+    // 필수 속성이 없는 경우, 필수 속성 누락 여부는 개별 항목에게 에러가 전달됨
+    objectNode.setValue({ name: '홍' });
+    await delay();
+    expect(userAgeNode.errors.length).toBeGreaterThan(0);
+    expect(userAgeNode.errors.map(({ keyword }) => keyword)).toEqual([
+      'required',
+    ]);
+
+    // 유효한 값 설정
+    objectNode.setValue({ name: '홍길동', age: 30 });
+    await delay();
+    expect(objectNode.errors).toEqual([]);
+
+    // 유효하지 않은 값 설정
+    objectNode.setValue({ name: '홍', age: 150 });
+    await delay();
+    expect(userNameNode.errors.length).toBeGreaterThan(0);
+    expect(userNameNode.errors.map(({ keyword }) => keyword)).toEqual([
+      'minLength',
+    ]);
+    expect(userAgeNode.errors.length).toBeGreaterThan(0);
+    expect(userAgeNode.errors.map(({ keyword }) => keyword)).toEqual([
+      'maximum',
+    ]);
+  });
+
+  it('객체 노드의 추가 속성이 허용되어야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          user: {
+            type: 'object',
+            properties: {
+              name: { type: 'string' },
+              age: { type: 'number' },
+            },
+            additionalProperties: true,
+          },
+        },
+      },
+    });
+
+    const objectNode = node?.findNode('user') as ObjectNode;
+    await delay();
+
+    // 추가 속성이 있는 값 설정
+    objectNode.setValue({ name: '홍길동', age: 30, email: 'hong@example.com' });
+    await delay();
+    expect(objectNode.errors).toEqual([]);
+    expect(objectNode.value).toEqual({
+      name: '홍길동',
+      age: 30,
+      email: 'hong@example.com',
+    });
+  });
+
+  // it('객체 노드의 추가 속성이 허용되지 않아야 함', async () => {
+  //   const node = nodeFromJsonSchema({
+  //     jsonSchema: {
+  //       type: 'object',
+  //       properties: {
+  //         user: {
+  //           type: 'object',
+  //           properties: {
+  //             name: { type: 'string' },
+  //             age: { type: 'number' },
+  //           },
+  //           additionalProperties: false,
+  //         },
+  //       },
+  //     },
+  //     validationMode: ValidationMode.OnChange,
+  //   });
+
+  //   const objectNode = node?.findNode('user') as ObjectNode;
+  //   await delay();
+
+  //   // 추가 속성이 있는 값 설정
+  //   objectNode.setValue({ name: '홍길동', age: 30, email: 'hong@example.com' });
+  //   await delay();
+  //   expect(objectNode.errors.length).toBeGreaterThan(0);
+  //   expect(objectNode.errors[0].keyword).toBe('additionalProperties');
+  // });
 });

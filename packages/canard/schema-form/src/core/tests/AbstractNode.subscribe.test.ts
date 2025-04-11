@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { delay } from '@winglet/common-utils';
+
 import type { AllowedValue, JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import { NodeEventType } from '../nodes';
@@ -47,7 +49,7 @@ describe('AbstractNode', () => {
       node.publish({ type: NodeEventType.UpdateValue });
 
       // microtask가 실행될 때까지 대기
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await delay();
 
       expect(mockListener).toHaveBeenCalledTimes(1);
       expect(mockListener).toHaveBeenCalledWith({
@@ -60,7 +62,7 @@ describe('AbstractNode', () => {
       node.publish({ type: NodeEventType.UpdateValue });
 
       // microtask가 실행될 때까지 대기
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await delay();
 
       expect(mockListener).toHaveBeenCalledTimes(2);
     });
@@ -75,7 +77,7 @@ describe('AbstractNode', () => {
       node.publish({ type: NodeEventType.UpdateValue });
 
       // microtask가 실행될 때까지 대기
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await delay();
 
       expect(mockListener).toHaveBeenCalledTimes(1);
 
@@ -86,7 +88,7 @@ describe('AbstractNode', () => {
       node.publish({ type: NodeEventType.UpdateValue });
 
       // microtask가 실행될 때까지 대기
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await delay();
 
       expect(mockListener).toHaveBeenCalledTimes(1); // 카운트가 증가하지 않아야 함
     });
@@ -105,7 +107,7 @@ describe('AbstractNode', () => {
       node.publish({ type: NodeEventType.UpdateValue });
 
       // microtask가 실행될 때까지 대기
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await delay();
 
       expect(mockListener1).toHaveBeenCalledTimes(1);
       expect(mockListener2).toHaveBeenCalledTimes(1);
@@ -118,7 +120,7 @@ describe('AbstractNode', () => {
       node.publish({ type: NodeEventType.UpdateValue });
 
       // microtask가 실행될 때까지 대기
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await delay();
 
       expect(mockListener1).toHaveBeenCalledTimes(2);
       expect(mockListener2).toHaveBeenCalledTimes(1); // 카운트가 증가하지 않아야 함
@@ -137,7 +139,7 @@ describe('AbstractNode', () => {
       node.publish({ type: NodeEventType.UpdateValue });
 
       // microtask가 실행될 때까지 대기
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await delay();
 
       expect(mockListener).not.toHaveBeenCalled();
     });
@@ -157,7 +159,7 @@ describe('AbstractNode', () => {
       node.publish(event);
 
       // microtask가 실행될 때까지 대기
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await delay();
 
       expect(mockListener).toHaveBeenCalledWith({
         type: NodeEventType.UpdateValue,

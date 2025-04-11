@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { delay } from '@/common-utils/utils';
+
 import { postPromise } from '../postPromise';
 
 describe('postPromise', () => {
@@ -103,7 +105,7 @@ describe('postPromise', () => {
 
     // 모든 큐가 비워질 때까지 대기
     await Promise.resolve();
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await delay();
 
     setTimeout(() => {
       expect(executionOrder).toEqual([1, 2, 3, 3.5, 4, 5]);
