@@ -32,13 +32,12 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
   }
 
   #emitChange(values: VirtualNodeValue | undefined) {
-    if (values && values.length === this.#refNodes.length) {
+    if (values && values.length === this.#refNodes.length)
       for (let i = 0; i < values.length; i++) {
         const value = values[i];
         const node = this.#refNodes[i];
         if (node.value !== value) node.setValue(value);
       }
-    }
   }
 
   constructor({

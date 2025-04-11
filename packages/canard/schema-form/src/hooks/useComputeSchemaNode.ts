@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 
-import { falseFunction, trueFunction } from '@winglet/common-utils';
+import { falseFunction, map, trueFunction } from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/types';
 
@@ -98,10 +98,7 @@ export const useComputeSchemaNode = (
 
   const [dependencies, setDependencies] = useState<unknown[]>(() => {
     if (!node || dependencyPaths.length === 0) return [];
-    const dependencies = new Array<unknown>(dependencyPaths.length);
-    for (let i = 0; i < dependencyPaths.length; i++)
-      dependencies[i] = node.findNode(dependencyPaths[i])?.value;
-    return dependencies;
+    return map(dependencyPaths, (path) => node.findNode(path)?.value);
   });
 
   const visible = useMemo(() => {
