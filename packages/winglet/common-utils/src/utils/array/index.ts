@@ -1,10 +1,16 @@
 export { at } from './at';
 export { chunk } from './chunk';
 export { difference } from './difference';
+export { differenceBy } from './differenceBy';
+export { differenceWith } from './differenceWith';
 export { forEach } from './forEach';
 export { forEachDual } from './forEachDual';
 export { forEachReverse } from './forEachReverse';
 export { groupBy } from './groupBy';
 export { intersection } from './intersection';
+export { intersectionBy } from './intersectionBy';
+export { intersectionWith } from './intersectionWith';
 export { map } from './map';
 export { unique } from './unique';
+export { uniqueBy } from './uniqueBy';
+export { uniqueWith } from './uniqueWith';
