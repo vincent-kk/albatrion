@@ -1,5 +1,7 @@
 import React, { type ComponentType, useMemo, useRef, useState } from 'react';
 
+import Ajv from 'ajv';
+
 import {
   Form,
   FormProvider,
@@ -9,9 +11,7 @@ import {
   JsonSchemaError,
   NodeState,
   ValidationMode,
-} from '@canard/schema-form/src';
-import Ajv from 'ajv';
-
+} from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {

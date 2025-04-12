@@ -6,8 +6,7 @@ import {
   type FormTypeInputMap,
   type FormTypeInputProps,
   type JsonSchema,
-} from '@canard/schema-form/src';
-
+} from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {

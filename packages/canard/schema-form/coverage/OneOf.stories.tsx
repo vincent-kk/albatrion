@@ -5,8 +5,7 @@ import {
   type FormHandle,
   type JsonSchema,
   type JsonSchemaError,
-} from '@canard/schema-form/src';
-
+} from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {

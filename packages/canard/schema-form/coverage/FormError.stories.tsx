@@ -9,8 +9,7 @@ import {
   NodeState,
   ShowError,
   ValidationMode,
-} from '@canard/schema-form/src';
-
+} from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {

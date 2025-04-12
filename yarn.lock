@@ -6929,6 +6929,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"albatrion@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "albatrion@workspace:."
+  languageName: unknown
+  linkType: soft
+
 "algoliasearch-helper@npm:^3.22.6":
   version: 3.24.3
   resolution: "algoliasearch-helper@npm:3.24.3"
@@ -17924,12 +17930,6 @@ __metadata:
   checksum: 10c0/fcd0321df78fdc74b36858e92c4b73ebf5aa8f0b9cf7c446f008e0dc3c5c4ed855d662dc44e5a09c7794bbe91017b4dd7be88b619c239f0494f9f0fbfa67c557
   languageName: node
   linkType: hard
-
-"root-workspace-0b6124@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "root-workspace-0b6124@workspace:."
-  languageName: unknown
-  linkType: soft
 
 "rrweb-cssom@npm:^0.7.1":
   version: 0.7.1

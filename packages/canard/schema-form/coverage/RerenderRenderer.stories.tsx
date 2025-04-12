@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { Form, FormProvider, type JsonSchema } from '@canard/schema-form/src';
-
+import { Form, FormProvider, type JsonSchema } from '../src';
 import {
   FormErrorRenderer,
   FormInputRenderer,

@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 
-import {
-  Form,
-  type JsonSchema,
-  type JsonSchemaError,
-} from '@canard/schema-form/src';
-
+import { Form, type JsonSchema, type JsonSchemaError } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {

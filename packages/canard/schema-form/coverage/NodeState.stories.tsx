@@ -1,5 +1,7 @@
 import React, { useRef, useState } from 'react';
 
+import { useRenderCount } from '@aileron/development-helper';
+
 import {
   Form,
   type FormHandle,
@@ -7,10 +9,7 @@ import {
   type JsonSchema,
   NodeState,
   ShowError,
-} from '@canard/schema-form/src';
-
-import { useRenderCount } from '@aileron/development-helper';
-
+} from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
