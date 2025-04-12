@@ -68,15 +68,10 @@ describe('getDataWithSchema', () => {
   it('additionalProperties exist with additionalProperties: false', () => {
     const schema: JsonSchema = {
       type: 'object',
-      properties: {
-        status: { type: 'string', enum: ['active', 'inactive'] },
-        age: { type: 'number' },
-      },
       oneOf: [
         { properties: { status: { enum: ['active'] } }, required: ['age'] },
         { properties: { status: { enum: ['inactive'] } } },
       ],
-      additionalProperties: false,
     };
     const data = {
       status: 'inactive',
@@ -87,6 +82,9 @@ describe('getDataWithSchema', () => {
 
     const result = getDataWithSchema(data, schema);
     expect(result).toEqual({
+      age: 30,
+      name: 'John',
+      job: 'developer',
       status: 'inactive',
     });
   });

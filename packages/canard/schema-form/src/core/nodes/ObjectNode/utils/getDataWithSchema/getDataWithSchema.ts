@@ -20,11 +20,7 @@ export const getDataWithSchema = <Value>(
   value: Value | undefined,
   schema: ObjectSchema,
 ): Value | undefined => {
-  if (
-    value == null ||
-    (!schema.oneOf?.length && schema.additionalProperties !== false)
-  )
-    return value;
+  if (value == null || !schema.oneOf?.length) return value;
 
   const stack: StackItem[] = [{ value, schema, result: undefined }];
   let finalResult: Value | undefined;
@@ -63,26 +59,27 @@ const handleObjectSchema = (
     const inputKeys = Object.keys(value);
     const definedKeys = Object.keys(schema.properties);
     const differenceKeys = difference(inputKeys, definedKeys);
-    const required =
-      definedKeys.length > 0 ? requiredFactory(schema, value) : null;
-    for (let i = definedKeys.length - 1; i >= 0; i--) {
-      const key = definedKeys[i];
-      if (value.hasOwnProperty(key) && (!required || required(key)))
-        stack.push({
-          value: value[key],
-          schema: schema.properties[key],
-          result: undefined,
-          parent: current.result,
-          key,
-        });
+    if (definedKeys.length) {
+      const required = requiredFactory(schema, value);
+      for (let i = definedKeys.length - 1; i >= 0; i--) {
+        const key = definedKeys[i];
+        if (value.hasOwnProperty(key) && (!required || required(key)))
+          stack.push({
+            value: value[key],
+            schema: schema.properties[key],
+            result: undefined,
+            parent: current.result,
+            key,
+          });
+      }
     }
-    if (schema.additionalProperties !== false && differenceKeys.length > 0)
+    if (differenceKeys.length)
       for (let i = 0; i < differenceKeys.length; i++) {
         const key = differenceKeys[i];
         if (!schema.properties.hasOwnProperty(key))
           current.result[key] = value[key];
       }
-  }
+  } else current.result = value;
   return true;
 };
 
