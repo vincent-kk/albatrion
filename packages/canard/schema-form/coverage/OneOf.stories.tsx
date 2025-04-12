@@ -128,6 +128,52 @@ export const OneOfConst = () => {
   );
 };
 
+export const AdditionalProperties = () => {
+  const schema = {
+    type: 'object',
+    properties: {
+      users: {
+        type: 'array',
+        items: {
+          type: 'object',
+          FormType: ({ onChange }) => {
+            return (
+              <div>
+                <button
+                  onClick={() =>
+                    onChange({
+                      name: 'test',
+                      email: 'test@test.com',
+                      extra: 'extra',
+                    })
+                  }
+                >
+                  Set Value
+                </button>
+              </div>
+            );
+          },
+          properties: {
+            name: { type: 'string' },
+            email: { type: 'string' },
+          },
+          additionalProperties: false,
+        },
+        minItems: 3,
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState({});
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <Form jsonSchema={schema} onChange={setValue} onValidate={setErrors} />
+    </StoryLayout>
+  );
+};
+
 export const ComplexOneOf = () => {
   const schema = {
     type: 'object',

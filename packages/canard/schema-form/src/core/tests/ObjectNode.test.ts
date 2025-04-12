@@ -309,8 +309,67 @@ describe('ObjectNode', () => {
     // 추가 속성이 있는 값 설정
     objectNode.setValue({ name: '홍길동', age: 30, email: 'hong@example.com' });
     await delay();
-    expect(objectNode.errors.length).toBeGreaterThan(0);
-    expect(objectNode.errors[0].keyword).toBe('additionalProperties');
+    expect(objectNode.errors.length).toBe(0);
+    const data = objectNode.value;
+    expect(data).toEqual({
+      name: '홍길동',
+      age: 30,
+    });
+  });
+
+  it('객체 노드의 추가 속성이 허용되지 않아야 함, 객체 내부에 additionalProperties 속성이 있는 경우', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          users: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                id: { type: 'number' },
+                name: { type: 'string' },
+                email: { type: 'string' },
+              },
+              additionalProperties: false,
+            },
+          },
+        },
+      },
+      defaultValue: {
+        users: [
+          {
+            id: 1,
+            name: 'User 1',
+            email: 'user1@example.com',
+            extra: 'extra1',
+          },
+          {
+            id: 2,
+            name: 'User 2',
+            email: 'user2@example.com',
+            extra: 'extra2',
+          },
+          {
+            id: 3,
+            name: 'User 3',
+            email: 'user3@example.com',
+            extra: 'extra3',
+          },
+        ],
+      },
+      validationMode: ValidationMode.OnChange,
+    });
+    await delay();
+
+    const objectNode = node?.findNode('users') as ObjectNode;
+    expect(objectNode.errors.length).toBe(0);
+    const data = objectNode.value;
+    expect(data).toEqual([
+      { id: 1, name: 'User 1', email: 'user1@example.com' },
+      { id: 2, name: 'User 2', email: 'user2@example.com' },
+      { id: 3, name: 'User 3', email: 'user3@example.com' },
+    ]);
   });
 
   it('객체 노드의 추가 속성 제한이 없으면 추가 속성이 허용되어야 함', async () => {

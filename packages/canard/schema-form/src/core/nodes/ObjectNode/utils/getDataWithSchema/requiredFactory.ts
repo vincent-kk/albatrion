@@ -31,6 +31,7 @@ export const requiredFactory = (
 };
 
 const getRequiredFactory = (oneOfDetails: OneOfDetail[], value: Dictionary) => {
+  if (oneOfDetails.length === 0) return null;
   const required = new Set<string>();
   for (let i = 0; i < oneOfDetails.length; i++) {
     const { properties, requiredFields } = oneOfDetails[i];

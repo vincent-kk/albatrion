@@ -48,6 +48,7 @@ describe('getDataWithSchema', () => {
         { properties: { status: { enum: ['active'] } }, required: ['age'] },
         { properties: { status: { enum: ['inactive'] } } },
       ],
+      additionalProperties: true,
     };
     const data = {
       status: 'inactive',
@@ -61,6 +62,32 @@ describe('getDataWithSchema', () => {
       status: 'inactive',
       name: 'John',
       job: 'developer',
+    });
+  });
+
+  it('additionalProperties exist with additionalProperties: false', () => {
+    const schema: JsonSchema = {
+      type: 'object',
+      properties: {
+        status: { type: 'string', enum: ['active', 'inactive'] },
+        age: { type: 'number' },
+      },
+      oneOf: [
+        { properties: { status: { enum: ['active'] } }, required: ['age'] },
+        { properties: { status: { enum: ['inactive'] } } },
+      ],
+      additionalProperties: false,
+    };
+    const data = {
+      status: 'inactive',
+      age: 30,
+      name: 'John',
+      job: 'developer',
+    };
+
+    const result = getDataWithSchema(data, schema);
+    expect(result).toEqual({
+      status: 'inactive',
     });
   });
 
@@ -270,9 +297,9 @@ describe('getDataWithSchema', () => {
 
     const data = {
       users: [
-        { id: 1, name: 'User 1', email: 'user1@example.com' },
-        { id: 2, name: 'User 2', email: 'user2@example.com' },
-        { id: 3, name: 'User 3', email: 'user3@example.com' },
+        { id: 1, name: 'User 1', email: 'user1@example.com', extra: 'extra1' },
+        { id: 2, name: 'User 2', email: 'user2@example.com', extra: 'extra2' },
+        { id: 3, name: 'User 3', email: 'user3@example.com', extra: 'extra3' },
       ],
     };
 

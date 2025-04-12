@@ -20,7 +20,11 @@ export const getDataWithSchema = <Value>(
   value: Value | undefined,
   schema: ObjectSchema,
 ): Value | undefined => {
-  if (value == null || !schema.oneOf?.length) return value;
+  if (
+    value == null ||
+    (!schema.oneOf?.length && schema.additionalProperties !== false)
+  )
+    return value;
 
   const stack: StackItem[] = [{ value, schema, result: undefined }];
   let finalResult: Value | undefined;
@@ -72,7 +76,7 @@ const handleObjectSchema = (
           key,
         });
     }
-    if (differenceKeys.length > 0)
+    if (schema.additionalProperties !== false && differenceKeys.length > 0)
       for (let i = 0; i < differenceKeys.length; i++) {
         const key = differenceKeys[i];
         if (!schema.properties.hasOwnProperty(key))
