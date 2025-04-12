@@ -1,10 +1,10 @@
 import { sortObjectKeys } from '@winglet/common-utils';
 
 import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
-import type {
-  ObjectSchema,
-  ObjectValue,
-  SetStateOptions,
+import {
+  type ObjectSchema,
+  type ObjectValue,
+  SetStateOption,
 } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
@@ -39,27 +39,27 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     return this.#value;
   }
   set value(input: ObjectValue | undefined) {
-    this.setValue(input, { replace: true });
+    this.setValue(input);
   }
-  protected applyValue(input: ObjectValue, options?: SetStateOptions) {
+  protected applyValue(input: ObjectValue, option: SetStateOption) {
     this.#draft = input;
-    this.#replace = options?.replace || false;
-    this.#emitChange();
+    this.#replace = !!(option & SetStateOption.Replace);
+    this.#emitChange(option);
   }
   public parseValue = (value: ObjectValue | undefined) => value;
 
-  #emitChange() {
+  #emitChange(option: SetStateOption) {
     if (!this.#ready) return;
+
     const previous = this.#value ? { ...this.#value } : undefined;
-    if (this.#draft === undefined) {
-      this.#value = undefined;
-    } else if (this.#replace) {
+
+    if (this.#draft === undefined) this.#value = undefined;
+    else if (this.#replace)
       this.#value = getDataWithSchema(
         sortObjectKeys(this.#draft, this.#propertyKeys),
         this.jsonSchema,
       );
-      this.#replace = false;
-    } else {
+    else
       this.#value = getDataWithSchema(
         sortObjectKeys(
           {
@@ -70,7 +70,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         ),
         this.jsonSchema,
       );
-    }
+
     this.onChange(this.#value);
     this.publish({
       type: NodeEventType.UpdateValue,
@@ -85,6 +85,18 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         },
       },
     });
+
+    if (option & SetStateOption.Propagate) {
+      const target = this.#value || {};
+      for (let i = 0; i < this.#children.length; i++) {
+        const node = this.#children[i].node;
+        if (node.type !== 'virtual') node.setValue(target[node.name], option);
+      }
+    }
+
+    if (option & SetStateOption.Refresh) this.refresh(this.#value);
+
+    if (this.#replace) this.#replace = false;
     this.#draft = {};
   }
 
@@ -144,7 +156,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
               typeof input === 'function' ? input(this.#draft[name]) : input;
             if (value !== undefined && this.#draft[name] === value) return;
             this.#draft[name] = value;
-            this.#emitChange();
+            this.#emitChange(SetStateOption.None);
           },
           nodeFactory: this.#nodeFactory,
           parentNode: this,
@@ -165,6 +177,6 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     });
 
     this.#ready = true;
-    this.#emitChange();
+    this.#emitChange(SetStateOption.None);
   }
 }

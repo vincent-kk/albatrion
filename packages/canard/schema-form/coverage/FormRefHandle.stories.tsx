@@ -6,6 +6,7 @@ import {
   type FormTypeInputMap,
   type FormTypeInputProps,
   type JsonSchema,
+  SetStateOption,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
 
@@ -42,7 +43,7 @@ export const FormRefHandle = () => {
           onChange({ test: 'wow' });
         };
         const handleUnsetClick = () => {
-          onChange({}, { replace: true });
+          onChange({}, SetStateOption.Replace);
         };
         return (
           <div>
@@ -81,9 +82,12 @@ export const FormRefHandle = () => {
     <div>
       <button
         onClick={() =>
-          formHandle.current?.setValue({
-            name: 'harry',
-          })
+          formHandle.current?.setValue(
+            {
+              name: 'harry',
+            },
+            SetStateOption.Propagate | SetStateOption.Refresh,
+          )
         }
       >
         set name
@@ -94,19 +98,16 @@ export const FormRefHandle = () => {
             return {
               number: (prev?.number || 0) + 1,
             };
-          })
+          }, SetStateOption.Propagate | SetStateOption.Refresh)
         }
       >
         increase number
       </button>
       <button
         onClick={() =>
-          formHandle.current?.setValue(
-            {
-              number: 100,
-            },
-            { replace: true },
-          )
+          formHandle.current?.setValue({
+            number: 100,
+          })
         }
       >
         overwrite number
@@ -162,7 +163,7 @@ export const FormRefHandleWithGetData = () => {
           onChange({ test: 'wow' });
         };
         const handleUnsetClick = () => {
-          onChange({}, { replace: true });
+          onChange({});
         };
         return (
           <div>
@@ -215,19 +216,16 @@ export const FormRefHandleWithGetData = () => {
             return {
               number: (prev?.number || 0) + 1,
             };
-          })
+          }, SetStateOption.Propagate | SetStateOption.Refresh)
         }
       >
         increase number
       </button>
       <button
         onClick={() =>
-          formHandle.current?.setValue(
-            {
-              number: 100,
-            },
-            { replace: true },
-          )
+          formHandle.current?.setValue({
+            number: 100,
+          })
         }
       >
         overwrite number

@@ -15,11 +15,11 @@ import {
   transformErrors,
 } from '@/schema-form/helpers/error';
 import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
-import type {
-  AllowedValue,
-  JsonSchemaError,
-  JsonSchemaWithVirtual,
-  SetStateOptions,
+import {
+  type AllowedValue,
+  type JsonSchemaError,
+  type JsonSchemaWithVirtual,
+  SetStateOption,
 } from '@/schema-form/types';
 
 import {
@@ -199,11 +199,10 @@ export abstract class AbstractNode<
    * 하위 Node에서 전달받은 Error 초기화, 자신의 Error는 초기화 하지 않음
    */
   clearReceivedErrors() {
-    if (this.#receivedErrors && this.#receivedErrors.length > 0) {
-      if (!this.isRoot)
-        this.rootNode.removeFromReceivedErrors(this.#receivedErrors);
-      this.setReceivedErrors([]);
-    }
+    if (!this.#receivedErrors.length) return;
+    if (!this.isRoot)
+      this.rootNode.removeFromReceivedErrors(this.#receivedErrors);
+    this.setReceivedErrors([]);
   }
 
   /**
@@ -233,6 +232,13 @@ export abstract class AbstractNode<
    */
   protected setDefaultValue(value: Value | undefined) {
     this.#defaultValue = value;
+  }
+
+  protected refresh(defaultValue?: Value) {
+    this.#defaultValue = defaultValue;
+    this.publish({
+      type: NodeEventType.Refresh,
+    });
   }
 
   /** Node의 상태 */
@@ -288,7 +294,7 @@ export abstract class AbstractNode<
    */
   protected abstract applyValue(
     input: Value | undefined,
-    options?: SetStateOptions,
+    option: SetStateOption,
   ): void;
 
   /**
@@ -299,10 +305,10 @@ export abstract class AbstractNode<
    */
   setValue(
     input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
-    options?: SetStateOptions,
+    option: SetStateOption = SetStateOption.Reset,
   ): void {
     const inputValue = typeof input === 'function' ? input(this.value) : input;
-    this.applyValue(inputValue, options);
+    this.applyValue(inputValue, option);
   }
   /** Node의 값 파싱 */
   abstract parseValue(input: any): Value | undefined;

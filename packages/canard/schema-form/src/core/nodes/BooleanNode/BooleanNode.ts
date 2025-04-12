@@ -1,4 +1,8 @@
-import type { BooleanSchema, BooleanValue } from '@/schema-form/types';
+import {
+  type BooleanSchema,
+  type BooleanValue,
+  SetStateOption,
+} from '@/schema-form/types';
 
 import { parseBoolean } from '../../parsers';
 import { AbstractNode } from '../AbstractNode';
@@ -12,14 +16,17 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   set value(input: BooleanValue | undefined) {
     this.setValue(input);
   }
-  protected applyValue(input: BooleanValue | undefined) {
-    this.#emitChange(input);
+  protected applyValue(
+    input: BooleanValue | undefined,
+    option: SetStateOption,
+  ) {
+    this.#emitChange(input, option);
   }
   parseValue(input: BooleanValue | undefined) {
     return parseBoolean(input);
   }
 
-  #emitChange(input: BooleanValue | undefined) {
+  #emitChange(input: BooleanValue | undefined, option: SetStateOption) {
     const previous = this.#value;
     const current = this.parseValue(input);
     if (previous === current) return;
@@ -37,6 +44,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
         },
       },
     });
+    if (option & SetStateOption.Refresh) this.refresh(current);
   }
 
   constructor({
@@ -59,6 +67,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
       validationMode,
       ajv,
     });
-    if (this.defaultValue !== undefined) this.setValue(this.defaultValue);
+    if (this.defaultValue !== undefined)
+      this.setValue(this.defaultValue, SetStateOption.None);
   }
 }

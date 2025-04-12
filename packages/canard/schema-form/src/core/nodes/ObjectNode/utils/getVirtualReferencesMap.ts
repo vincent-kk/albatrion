@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils';
+
 import type { Dictionary } from '@aileron/types';
 
 import { SchemaNodeError } from '@/schema-form/errors';
@@ -23,7 +25,7 @@ export const getVirtualReferencesMap = (
 
   const propertySet = new Set(allowedPropertyKeys);
   for (const [key, value] of Object.entries(virtualReferences)) {
-    if (!Array.isArray(value.fields)) {
+    if (!isArray(value.fields))
       throw new SchemaNodeError(
         'VIRTUAL_FIELDS_NOT_VALID',
         `'virtual.fields' is must be an array.`,
@@ -33,12 +35,11 @@ export const getVirtualReferencesMap = (
           name: nodeName || 'root',
         },
       );
-    }
     // NOTE: virtual field는 모두 properties에 정의되어 있어야 함
     const notFoundFields = value.fields.filter(
       (field) => !propertySet.has(field),
     );
-    if (notFoundFields.length > 0) {
+    if (notFoundFields.length)
       throw new SchemaNodeError(
         'VIRTUAL_FIELDS_NOT_IN_PROPERTIES',
         `virtual fields are not found on properties`,
@@ -48,16 +49,13 @@ export const getVirtualReferencesMap = (
           notFoundFields,
         },
       );
-    }
     for (const field of value.fields) {
-      virtualReferenceFieldsMap.set(field, [
-        ...(virtualReferenceFieldsMap.get(field) || []),
-        key,
-      ]);
+      const virtualReferenceFields = virtualReferenceFieldsMap.get(field) || [];
+      virtualReferenceFields.push(key);
+      virtualReferenceFieldsMap.set(field, virtualReferenceFields);
     }
     virtualReferencesMap.set(key, value);
   }
-
   return {
     virtualReferencesMap,
     virtualReferenceFieldsMap,

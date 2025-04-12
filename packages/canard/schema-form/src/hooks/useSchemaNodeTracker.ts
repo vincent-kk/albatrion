@@ -18,11 +18,9 @@ export const useSchemaNodeTracker = <Node extends SchemaNode>(
   useEffect(() => {
     if (node === null) return;
     const unsubscribe = node.subscribe(({ type }) => {
-      if (tracking & type) update();
+      if (type & tracking) update();
     });
-    return () => {
-      unsubscribe();
-    };
+    return unsubscribe;
   }, [node, tracking, update]);
   return version;
 };
