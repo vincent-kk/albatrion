@@ -7,6 +7,7 @@ import { dirname, resolve as resolvePath } from 'path';
 import copy from 'rollup-plugin-copy';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import typescript from 'rollup-plugin-typescript2';
+import { visualizer } from 'rollup-plugin-visualizer';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -82,6 +83,10 @@ export default [
         output: {
           comments: true,
         },
+      }),
+      visualizer({
+        filename: 'react-utils-stats.html',
+        gzipSize: true,
       }),
     ],
     external: (path) => {
