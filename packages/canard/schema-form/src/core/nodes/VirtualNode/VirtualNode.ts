@@ -6,7 +6,6 @@ import {
   type VirtualSchema,
 } from '@/schema-form/types';
 
-import { parseArray } from '../../parsers';
 import { AbstractNode } from '../AbstractNode';
 import {
   NodeEventType,
