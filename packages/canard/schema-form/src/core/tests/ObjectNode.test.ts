@@ -108,7 +108,7 @@ describe('ObjectNode', () => {
 
     // 이벤트가 발생했는지 확인
     expect(mockListener).toHaveBeenCalledWith({
-      type: NodeEventType.UpdateValue,
+      type: NodeEventType.UpdateValue | NodeEventType.Refresh,
       payload: {
         [NodeEventType.UpdateValue]: { name: '이영희', age: 28 },
       },
@@ -339,31 +339,28 @@ describe('ObjectNode', () => {
     });
     await delay();
 
-    node.setValue(
-      {
-        users: [
-          {
-            id: 1,
-            name: 'User 1',
-            email: 'user1@example.com',
-            extra: 'extra1',
-          },
-          {
-            id: 2,
-            name: 'User 2',
-            email: 'user2@example.com',
-            extra: 'extra2',
-          },
-          {
-            id: 3,
-            name: 'User 3',
-            email: 'user3@example.com',
-            extra: 'extra3',
-          },
-        ],
-      },
-      { propagate: true },
-    );
+    node.setValue({
+      users: [
+        {
+          id: 1,
+          name: 'User 1',
+          email: 'user1@example.com',
+          extra: 'extra1',
+        },
+        {
+          id: 2,
+          name: 'User 2',
+          email: 'user2@example.com',
+          extra: 'extra2',
+        },
+        {
+          id: 3,
+          name: 'User 3',
+          email: 'user3@example.com',
+          extra: 'extra3',
+        },
+      ],
+    });
 
     await delay();
 
