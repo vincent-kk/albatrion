@@ -197,7 +197,6 @@ describe('EventCascade', () => {
           [NodeEventType.UpdateValue]: {
             previous: 3,
             current: 2,
-            difference: 1,
           },
         },
       });
@@ -230,7 +229,6 @@ describe('EventCascade', () => {
         [NodeEventType.UpdateValue]: {
           previous: 3,
           current: 2,
-          difference: 1,
         },
       },
     });
@@ -303,7 +301,6 @@ describe('EventCascade', () => {
           [NodeEventType.UpdateValue]: {
             previous: 2,
             current: 1,
-            difference: 1,
           },
         },
       });
@@ -336,7 +333,6 @@ describe('EventCascade', () => {
         [NodeEventType.UpdateValue]: {
           previous: 2,
           current: 1,
-          difference: 1,
         },
       },
     });

@@ -161,7 +161,6 @@ describe('VirtualNode', () => {
         [NodeEventType.UpdateValue]: {
           previous: [undefined, undefined],
           current: ['2021-03-01', undefined],
-          difference: { 0: '2021-03-01' },
         },
       },
     });

@@ -308,7 +308,6 @@ describe('AbstractNode', () => {
       options: {
         [NodeEventType.UpdateValue]: {
           current: {},
-          difference: {},
           previous: {},
         },
       },
@@ -335,9 +334,6 @@ describe('AbstractNode', () => {
         [NodeEventType.UpdateValue]: {
           current: [undefined, '2021-01-02'],
           previous: [undefined, undefined],
-          difference: {
-            1: '2021-01-02',
-          },
         },
       },
     });

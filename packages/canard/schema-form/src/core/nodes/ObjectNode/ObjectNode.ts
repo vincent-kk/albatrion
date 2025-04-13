@@ -81,7 +81,6 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         [NodeEventType.UpdateValue]: {
           previous,
           current: this.#value,
-          difference: { ...(this.#draft || {}) },
         },
       },
     });

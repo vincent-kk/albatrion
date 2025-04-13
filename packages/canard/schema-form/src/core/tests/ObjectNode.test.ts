@@ -116,10 +116,6 @@ describe('ObjectNode', () => {
         [NodeEventType.UpdateValue]: {
           current: { name: '이영희', age: 28 },
           previous: {},
-          difference: {
-            age: 28,
-            name: '이영희',
-          },
         },
       },
     });
@@ -198,9 +194,6 @@ describe('ObjectNode', () => {
         [NodeEventType.UpdateValue]: {
           current: { name: '홍길동', age: undefined },
           previous: {},
-          difference: {
-            name: '홍길동',
-          },
         },
       },
     });

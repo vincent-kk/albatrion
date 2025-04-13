@@ -137,7 +137,6 @@ export type NodeEventOptions = {
   [NodeEventType.UpdateValue]: {
     previous: any;
     current: any;
-    difference?: any;
   };
   [NodeEventType.UpdateState]: void;
   [NodeEventType.UpdateError]: void;
