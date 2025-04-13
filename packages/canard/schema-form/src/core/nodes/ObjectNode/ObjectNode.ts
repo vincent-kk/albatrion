@@ -45,8 +45,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.#emitChange(option);
   }
 
-  #parseValue(input: ObjectValue | undefined) {
-    if (input === undefined) return undefined;
+  #parseValue(input: ObjectValue) {
     return getDataWithSchema(
       sortObjectKeys(input, this.#propertyKeys),
       this.jsonSchema,
