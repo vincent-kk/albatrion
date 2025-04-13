@@ -19,13 +19,13 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
   protected applyValue(input: StringValue | undefined, option: SetStateOption) {
     this.#emitChange(input, option);
   }
-  parseValue(input: StringValue | undefined) {
+
+  #parseValue(input: StringValue | undefined) {
     return parseString(input);
   }
-
   #emitChange(input: StringValue | undefined, option: SetStateOption) {
     const previous = this.#value;
-    const current = this.parseValue(input);
+    const current = this.#parseValue(input);
     if (previous === current) return;
     this.#value = current;
     this.onChange(current);

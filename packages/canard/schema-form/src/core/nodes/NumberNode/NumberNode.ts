@@ -19,13 +19,13 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   protected applyValue(input: NumberValue | undefined, option: SetStateOption) {
     this.#emitChange(input, option);
   }
-  parseValue(input: NumberValue | undefined) {
+
+  #parseValue(input: NumberValue | undefined) {
     return parseNumber(input, this.jsonSchema.type === 'integer');
   }
-
   #emitChange(input: NumberValue | undefined, option: SetStateOption) {
     const previous = this.#value;
-    const current = this.parseValue(input);
+    const current = this.#parseValue(input);
     if (previous === current) return;
     this.#value = current;
     this.onChange(current);

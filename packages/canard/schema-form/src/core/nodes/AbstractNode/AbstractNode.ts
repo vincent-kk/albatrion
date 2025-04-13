@@ -310,8 +310,6 @@ export abstract class AbstractNode<
     const inputValue = typeof input === 'function' ? input(this.value) : input;
     this.applyValue(inputValue, option);
   }
-  /** Node의 값 파싱 */
-  abstract parseValue(input: any): Value | undefined;
 
   #handleChange: SetStateFn<Value> | undefined;
   /**

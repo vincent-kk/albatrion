@@ -46,9 +46,13 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.#replace = !!(option & SetStateOption.Replace);
     this.#emitChange(option);
   }
-  public parseValue = (value: ObjectValue | undefined) => value;
-
-  #emitChange(option: SetStateOption) {
+  #parseValue(input: ObjectValue | undefined) {
+    if (input === undefined) return undefined;
+    return getDataWithSchema(
+      sortObjectKeys(input, this.#propertyKeys),
+      this.jsonSchema,
+    );
+  }
     if (!this.#ready) return;
 
     const previous = this.#value ? { ...this.#value } : undefined;

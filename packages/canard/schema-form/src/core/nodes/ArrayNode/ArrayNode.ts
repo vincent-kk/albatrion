@@ -90,10 +90,6 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     }
   }
 
-  parseValue(input: ArrayValue) {
-    return parseArray(input);
-  }
-
   /** ArrayNode의 자식 노드들 */
   get children() {
     return this.#edges;

@@ -22,13 +22,13 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   ) {
     this.#emitChange(input, option);
   }
-  parseValue(input: BooleanValue | undefined) {
+
+  #parseValue(input: BooleanValue | undefined) {
     return parseBoolean(input);
   }
-
   #emitChange(input: BooleanValue | undefined, option: SetStateOption) {
     const previous = this.#value;
-    const current = this.parseValue(input);
+    const current = this.#parseValue(input);
     if (previous === current) return;
     this.#value = current;
     this.onChange(current);

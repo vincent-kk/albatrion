@@ -18,13 +18,13 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
   protected applyValue(input: NullValue | undefined, option: SetStateOption) {
     this.#emitChange(input, option);
   }
-  parseValue(input: NullValue | undefined) {
+
+  #parseValue(input: NullValue | undefined) {
     return input;
   }
-
   #emitChange(input: NullValue | undefined, option: SetStateOption) {
     const previous = this.#value;
-    const current = this.parseValue(input);
+    const current = this.#parseValue(input);
     if (previous === current) return;
     this.#value = current;
     this.onChange(current);

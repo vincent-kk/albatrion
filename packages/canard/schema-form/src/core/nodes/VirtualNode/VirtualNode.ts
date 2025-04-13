@@ -28,9 +28,6 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
   ) {
     this.#emitChange(input, option);
   }
-  parseValue(input: VirtualNodeValue) {
-    return parseArray(input);
-  }
 
   #refNodes: SchemaNode[] = [];
   #children: { node: SchemaNode }[];
