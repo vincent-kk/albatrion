@@ -13,6 +13,8 @@ import {
 
 import type { SchemaNodeAdapterInputProps } from './type';
 
+const RERENDERING_EVENT = NodeEventType.UpdateValue | NodeEventType.UpdateError;
+
 export const SchemaNodeAdapterInput = memo(
   ({
     node,
@@ -53,10 +55,7 @@ export const SchemaNodeAdapterInput = memo(
 
     const { context: userDefinedContext } = useUserDefinedContext();
 
-    useSchemaNodeTracker(
-      node,
-      NodeEventType.UpdateValue | NodeEventType.UpdateError,
-    );
+    useSchemaNodeTracker(node, RERENDERING_EVENT);
 
     const version = useSchemaNodeTracker(node, NodeEventType.Refresh);
 

@@ -40,6 +40,8 @@ import type {
 import type { FormHandle, FormProps } from './type';
 import { createChildren } from './util';
 
+const UPDATE_CHILDREN_MASK = NodeEventType.Redraw | NodeEventType.UpdateError;
+
 const FormInner = <
   Schema extends JsonSchema,
   Value extends AllowedValue = InferValueType<Schema>,
@@ -99,7 +101,7 @@ const FormInner = <
     if (!rootNode) return;
     setChildren(createChildren(childrenInput, jsonSchema, rootNode));
     const unsubscribe = rootNode.subscribe(({ type }) => {
-      if (type & (NodeEventType.Redraw | NodeEventType.UpdateError))
+      if (type & UPDATE_CHILDREN_MASK)
         setChildren(createChildren(childrenInput, jsonSchema, rootNode));
     });
     return () => {
