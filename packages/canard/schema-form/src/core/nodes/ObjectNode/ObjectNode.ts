@@ -24,8 +24,6 @@ import {
 
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   readonly #propertyKeys: string[] = [];
-
-  #replace: boolean = false;
   #ready: boolean = false;
 
   #children: ChildNode[] = [];
@@ -35,6 +33,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
   #value: ObjectValue | undefined = {};
   #draft: ObjectValue | undefined = {};
+
   get value() {
     return this.#value;
   }
@@ -43,9 +42,9 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   }
   protected applyValue(input: ObjectValue, option: SetStateOption) {
     this.#draft = input;
-    this.#replace = !!(option & SetStateOption.Replace);
     this.#emitChange(option);
   }
+
   #parseValue(input: ObjectValue | undefined) {
     if (input === undefined) return undefined;
     return getDataWithSchema(
@@ -53,27 +52,22 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       this.jsonSchema,
     );
   }
+  #emitChange(option: SetStateOption) {
     if (!this.#ready) return;
 
+    const replace = option & SetStateOption.Replace;
     const previous = this.#value ? { ...this.#value } : undefined;
 
-    if (this.#draft === undefined) this.#value = undefined;
-    else if (this.#replace)
-      this.#value = getDataWithSchema(
-        sortObjectKeys(this.#draft, this.#propertyKeys),
-        this.jsonSchema,
-      );
-    else
-      this.#value = getDataWithSchema(
-        sortObjectKeys(
-          {
-            ...this.#value,
-            ...this.#draft,
-          },
-          this.#propertyKeys,
-        ),
-        this.jsonSchema,
-      );
+    if (this.#draft === undefined) {
+      this.#value = undefined;
+    } else if (replace) {
+      this.#value = this.#parseValue(this.#draft);
+    } else {
+      this.#value = this.#parseValue({
+        ...this.#value,
+        ...this.#draft,
+      });
+    }
 
     this.onChange(this.#value);
     this.publish({
@@ -90,16 +84,23 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     });
 
     if (option & SetStateOption.Propagate) {
-      const target = this.#value || {};
-      for (let i = 0; i < this.#children.length; i++) {
-        const node = this.#children[i].node;
-        if (node.type !== 'virtual') node.setValue(target[node.name], option);
+      if (replace) {
+        const target = this.#value || {};
+        for (let i = 0; i < this.#children.length; i++) {
+          const node = this.#children[i].node;
+          node.setValue(target[node.name], option);
+        }
+      } else {
+        const target = this.#draft || {};
+        for (let i = 0; i < this.#children.length; i++) {
+          const node = this.#children[i].node;
+          if (node.name in target) node.setValue(target[node.name], option);
+        }
       }
     }
 
     if (option & SetStateOption.Refresh) this.refresh(this.#value);
 
-    if (this.#replace) this.#replace = false;
     this.#draft = {};
   }
 
@@ -142,7 +143,6 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       getVirtualReferencesMap(name, this.#propertyKeys, jsonSchema.virtual);
 
     const childNodeMap = new Map<string, ChildNode>();
-
     for (const [name, schema] of Object.entries(jsonSchema.properties || {})) {
       childNodeMap.set(name, {
         isVirtualized: !!virtualReferenceFieldsMap?.get(name)?.length,
@@ -175,11 +175,11 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       this.#nodeFactory,
     );
 
+    this.#ready = true;
+
+    this.#emitChange(SetStateOption.None);
     this.publish({
       type: NodeEventType.UpdateChildren,
     });
-
-    this.#ready = true;
-    this.#emitChange(SetStateOption.None);
   }
 }
