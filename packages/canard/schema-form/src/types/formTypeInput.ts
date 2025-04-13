@@ -153,7 +153,13 @@ export type FormTypeInputMap<T = unknown> = {
 
 export type SetStateFnWithOptions<S = unknown> = (
   value: S | ((prevState: S) => S),
-  options?: SetStateOptions,
+  options?: SetStateOption,
 ) => void;
 
-export type SetStateOptions = { replace?: boolean };
+export enum SetStateOption {
+  None = 0,
+  Replace = 1 << 0,
+  Refresh = 1 << 1,
+  Propagate = 1 << 2,
+  Reset = Replace | Refresh | Propagate,
+}

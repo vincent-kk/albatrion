@@ -5,6 +5,7 @@ import { delay } from '@winglet/common-utils';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import { NodeEventType, ValidationMode } from '../nodes';
+import { ArrayNode } from '../nodes/ArrayNode';
 import { NumberNode } from '../nodes/NumberNode';
 import { ObjectNode } from '../nodes/ObjectNode';
 import { StringNode } from '../nodes/StringNode';
@@ -107,7 +108,7 @@ describe('ObjectNode', () => {
 
     // 이벤트가 발생했는지 확인
     expect(mockListener).toHaveBeenCalledWith({
-      type: NodeEventType.UpdateValue,
+      type: NodeEventType.UpdateValue | NodeEventType.Refresh,
       payload: {
         [NodeEventType.UpdateValue]: { name: '이영희', age: 28 },
       },
@@ -115,10 +116,6 @@ describe('ObjectNode', () => {
         [NodeEventType.UpdateValue]: {
           current: { name: '이영희', age: 28 },
           previous: {},
-          difference: {
-            age: 28,
-            name: '이영희',
-          },
         },
       },
     });
@@ -197,9 +194,6 @@ describe('ObjectNode', () => {
         [NodeEventType.UpdateValue]: {
           current: { name: '홍길동', age: undefined },
           previous: {},
-          difference: {
-            name: '홍길동',
-          },
         },
       },
     });
@@ -309,12 +303,10 @@ describe('ObjectNode', () => {
     // 추가 속성이 있는 값 설정
     objectNode.setValue({ name: '홍길동', age: 30, email: 'hong@example.com' });
     await delay();
-    expect(objectNode.errors.length).toBe(0);
-    const data = objectNode.value;
-    expect(data).toEqual({
-      name: '홍길동',
-      age: 30,
-    });
+    expect(objectNode.errors.length).toBe(1);
+    expect(objectNode.errors.map(({ keyword }) => keyword)).toEqual([
+      'additionalProperties',
+    ]);
   });
 
   it('객체 노드의 추가 속성이 허용되지 않아야 함, 객체 내부에 additionalProperties 속성이 있는 경우', async () => {
@@ -336,40 +328,50 @@ describe('ObjectNode', () => {
           },
         },
       },
-      defaultValue: {
-        users: [
-          {
-            id: 1,
-            name: 'User 1',
-            email: 'user1@example.com',
-            extra: 'extra1',
-          },
-          {
-            id: 2,
-            name: 'User 2',
-            email: 'user2@example.com',
-            extra: 'extra2',
-          },
-          {
-            id: 3,
-            name: 'User 3',
-            email: 'user3@example.com',
-            extra: 'extra3',
-          },
-        ],
-      },
       validationMode: ValidationMode.OnChange,
     });
     await delay();
 
-    const objectNode = node?.findNode('users') as ObjectNode;
-    expect(objectNode.errors.length).toBe(0);
-    const data = objectNode.value;
-    expect(data).toEqual([
-      { id: 1, name: 'User 1', email: 'user1@example.com' },
-      { id: 2, name: 'User 2', email: 'user2@example.com' },
-      { id: 3, name: 'User 3', email: 'user3@example.com' },
-    ]);
+    node.setValue({
+      users: [
+        {
+          id: 1,
+          name: 'User 1',
+          email: 'user1@example.com',
+          extra: 'extra1',
+        },
+        {
+          id: 2,
+          name: 'User 2',
+          email: 'user2@example.com',
+          extra: 'extra2',
+        },
+        {
+          id: 3,
+          name: 'User 3',
+          email: 'user3@example.com',
+          extra: 'extra3',
+        },
+      ],
+    });
+
+    await delay();
+
+    const arrayNode = node?.findNode('users') as ArrayNode;
+    const childNodes = arrayNode.children;
+    expect(childNodes.length).toBe(3);
+    childNodes.forEach(({ node }, index) => {
+      expect(node.value).toEqual({
+        id: index + 1,
+        name: `User ${index + 1}`,
+        email: `user${index + 1}@example.com`,
+        extra: `extra${index + 1}`,
+      });
+      expect(node.errors.length).toBe(1);
+      expect(node.errors.map(({ keyword }) => keyword)).toEqual([
+        'additionalProperties',
+      ]);
+    });
   });
 
   it('객체 노드의 추가 속성 제한이 없으면 추가 속성이 허용되어야 함', async () => {

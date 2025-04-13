@@ -6,7 +6,10 @@ import { NodeEventType, NodeState } from '@/schema-form/core';
 import { useFormTypeInput } from '@/schema-form/hooks/useFormTypeInput';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import { useUserDefinedContext } from '@/schema-form/providers';
-import type { SetStateFnWithOptions } from '@/schema-form/types';
+import {
+  type SetStateFnWithOptions,
+  SetStateOption,
+} from '@/schema-form/types';
 
 import type { SchemaNodeAdapterInputProps } from './type';
 
@@ -25,13 +28,12 @@ export const SchemaNodeAdapterInput = memo(
       () => PreferredFormTypeInput || FormTypeInputByNode,
       [FormTypeInputByNode, PreferredFormTypeInput],
     );
-
     const defaultValue = useConstant(() => node.defaultValue);
 
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
-      (input, options) => {
+      (input, option = SetStateOption.None) => {
         if (readOnly || disabled) return;
-        node.setValue(input, options);
+        node.setValue(input, option);
         node.clearReceivedErrors();
         node.setState({ [NodeState.Dirty]: true });
       },
@@ -56,11 +58,14 @@ export const SchemaNodeAdapterInput = memo(
       NodeEventType.UpdateValue | NodeEventType.UpdateError,
     );
 
+    const version = useSchemaNodeTracker(node, NodeEventType.Refresh);
+
     if (!node || !FormTypeInput) return null;
 
     return (
       <span onFocus={handleFocus} onBlur={handleBlur}>
         <FormTypeInput
+          key={version}
           jsonSchema={node.jsonSchema}
           readOnly={readOnly}
           disabled={disabled}

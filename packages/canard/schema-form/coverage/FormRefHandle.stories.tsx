@@ -6,6 +6,7 @@ import {
   type FormTypeInputMap,
   type FormTypeInputProps,
   type JsonSchema,
+  SetStateOption,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
 
@@ -42,7 +43,7 @@ export const FormRefHandle = () => {
           onChange({ test: 'wow' });
         };
         const handleUnsetClick = () => {
-          onChange({}, { replace: true });
+          onChange({}, SetStateOption.Replace);
         };
         return (
           <div>
@@ -81,9 +82,12 @@ export const FormRefHandle = () => {
     <div>
       <button
         onClick={() =>
-          formHandle.current?.setValue({
-            name: 'harry',
-          })
+          formHandle.current?.setValue(
+            {
+              name: 'harry',
+            },
+            SetStateOption.Propagate | SetStateOption.Refresh,
+          )
         }
       >
         set name
@@ -94,19 +98,16 @@ export const FormRefHandle = () => {
             return {
               number: (prev?.number || 0) + 1,
             };
-          })
+          }, SetStateOption.Propagate | SetStateOption.Refresh)
         }
       >
         increase number
       </button>
       <button
         onClick={() =>
-          formHandle.current?.setValue(
-            {
-              number: 100,
-            },
-            { replace: true },
-          )
+          formHandle.current?.setValue({
+            number: 100,
+          })
         }
       >
         overwrite number
@@ -126,6 +127,129 @@ export const FormRefHandle = () => {
           jsonSchema={schema}
           defaultValue={defaultValue.current}
           formTypeInputMap={formTypeMap}
+          onChange={handleChange}
+        />
+      </StoryLayout>
+    </div>
+  );
+};
+
+export const FormRefHandleWithArray = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      users: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            id: { type: 'number' },
+            name: { type: 'string' },
+            email: { type: 'string' },
+          },
+        },
+      },
+    },
+  } satisfies JsonSchema;
+  const defaultValue = useRef({
+    users: [
+      {
+        id: 1,
+        name: 'ron',
+        email: 'ron@example.com',
+      },
+    ],
+  });
+
+  const formHandle = useRef<FormHandle<typeof schema>>(null);
+
+  const handleChange = (val: any) => {
+    setValue(val);
+  };
+
+  return (
+    <div>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue({
+            users: [
+              {
+                id: 2,
+                name: 'harry',
+                email: 'harry@example.com',
+              },
+            ],
+          })
+        }
+      >
+        set new user
+      </button>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue((prev) => {
+            return {
+              users: [
+                ...(prev?.users || []),
+                {
+                  id: 3,
+                  name: 'hermione',
+                  email: 'hermione@example.com',
+                },
+              ],
+            };
+          }, SetStateOption.Propagate | SetStateOption.Refresh)
+        }
+      >
+        set value with function
+      </button>
+      <button
+        onClick={() => {
+          formHandle.current?.node.findNode('users').setValue([
+            {
+              id: 66,
+              name: 'rin',
+              email: 'rin@example.com',
+            },
+            {
+              id: 77,
+              name: 'momo',
+              email: 'momo@example.com',
+            },
+          ]);
+        }}
+      >
+        set user for array node
+      </button>
+      <button
+        onClick={() => {
+          formHandle.current?.node.findNode('users').update(0, {
+            id: 4,
+            name: 'rin',
+            email: 'rin@example.com',
+          });
+        }}
+      >
+        update user[0]
+      </button>
+      <button
+        onClick={() => {
+          formHandle.current?.node.findNode('users').push({
+            id: ~~(Math.random() * 100),
+            name: 'random',
+            email: 'random@example.com',
+          });
+        }}
+      >
+        push new user
+      </button>
+      <button onClick={() => formHandle.current?.reset()}>reset</button>
+      <hr />
+      <StoryLayout jsonSchema={schema} value={value}>
+        <Form
+          ref={formHandle}
+          jsonSchema={schema}
+          defaultValue={defaultValue.current}
           onChange={handleChange}
         />
       </StoryLayout>
@@ -162,7 +286,7 @@ export const FormRefHandleWithGetData = () => {
           onChange({ test: 'wow' });
         };
         const handleUnsetClick = () => {
-          onChange({}, { replace: true });
+          onChange({});
         };
         return (
           <div>
@@ -215,19 +339,16 @@ export const FormRefHandleWithGetData = () => {
             return {
               number: (prev?.number || 0) + 1,
             };
-          })
+          }, SetStateOption.Propagate | SetStateOption.Refresh)
         }
       >
         increase number
       </button>
       <button
         onClick={() =>
-          formHandle.current?.setValue(
-            {
-              number: 100,
-            },
-            { replace: true },
-          )
+          formHandle.current?.setValue({
+            number: 100,
+          })
         }
       >
         overwrite number

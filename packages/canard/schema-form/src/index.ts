@@ -28,7 +28,7 @@ export {
   isVirtualNode,
 } from './core';
 
-export { ShowError } from './types';
+export { ShowError, SetStateOption } from './types';
 
 export type {
   FormTypeInputDefinition,

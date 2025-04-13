@@ -3,13 +3,13 @@ import { isArray } from '@winglet/common-utils';
 import type { SetStateFn } from '@aileron/types';
 
 import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
-import type {
-  AllowedValue,
-  ArraySchema,
-  ArrayValue,
+import {
+  type AllowedValue,
+  type ArraySchema,
+  type ArrayValue,
+  SetStateOption,
 } from '@/schema-form/types';
 
-import { parseArray } from '../../parsers';
 import { AbstractNode } from '../AbstractNode';
 import {
   type BranchNodeConstructorProps,
@@ -54,16 +54,16 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   set value(input: ArrayValue) {
     this.setValue(input);
   }
-  protected applyValue(input: ArrayValue) {
+  protected applyValue(input: ArrayValue, option: SetStateOption) {
     if (!isArray(input)) return;
     this.#locked = true;
-    this.clear();
+    this.clear(SetStateOption.None);
     for (const value of input) this.push(value);
     this.#locked = false;
-    this.#emitChange();
+    this.#emitChange(option);
   }
 
-  #emitChange() {
+  #emitChange(option: SetStateOption) {
     if (this.#ready && this.#hasChanged) {
       const value = this.value;
       this.onChange(value);
@@ -79,12 +79,14 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
           },
         },
       });
+
+      if (option & SetStateOption.Refresh) {
+        this.refresh(value);
+        this.#publishChildrenChange();
+      }
+
       this.#hasChanged = false;
     }
-  }
-
-  parseValue(input: ArrayValue) {
-    return parseArray(input);
   }
 
   /** ArrayNode의 자식 노드들 */
@@ -155,11 +157,14 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#locked = false;
 
-    this.#emitChange();
+    this.#emitChange(SetStateOption.None);
     this.#publishChildrenChange();
   }
 
-  push(data?: ArrayValue[number]) {
+  push(
+    data?: ArrayValue[number],
+    option: SetStateOption = SetStateOption.Reset,
+  ) {
     if (this.jsonSchema.maxItems && this.jsonSchema.maxItems <= this.length)
       return;
 
@@ -193,18 +198,22 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Push);
-    this.#emitChange();
+    this.#emitChange(option);
     this.#publishChildrenChange();
     return this;
   }
 
-  update(id: IndexId | number, data: ArrayValue[number]) {
+  update(
+    id: IndexId | number,
+    data: ArrayValue[number],
+    option: SetStateOption = SetStateOption.Reset,
+  ) {
     const targetId = typeof id === 'number' ? this.#ids[id] : id;
-    this.#sourceMap.get(targetId)?.node.setValue(data);
+    this.#sourceMap.get(targetId)?.node.setValue(data, option);
     return this;
   }
 
-  remove(id: IndexId | number) {
+  remove(id: IndexId | number, option: SetStateOption = SetStateOption.Reset) {
     const targetId = typeof id === 'number' ? this.#ids[id] : id;
 
     this.#startOperation(OperationType.Remove);
@@ -215,12 +224,12 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Remove);
-    this.#emitChange();
+    this.#emitChange(option);
     this.#publishChildrenChange();
     return this;
   }
 
-  clear() {
+  clear(option: SetStateOption = SetStateOption.Reset) {
     this.#startOperation(OperationType.Clear);
 
     this.#ids = [];
@@ -228,7 +237,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Clear);
-    this.#emitChange();
+    this.#emitChange(option);
     this.#publishChildrenChange();
     return this;
   }
@@ -241,7 +250,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       this.#hasChanged = true;
 
       this.#finishOperation(OperationType.Update);
-      this.#emitChange();
+      this.#emitChange(SetStateOption.None);
     }
     return this;
   }

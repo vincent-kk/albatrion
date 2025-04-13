@@ -1,4 +1,8 @@
-import type { StringSchema, StringValue } from '@/schema-form/types';
+import {
+  SetStateOption,
+  type StringSchema,
+  type StringValue,
+} from '@/schema-form/types';
 
 import { parseString } from '../../parsers';
 import { AbstractNode } from '../AbstractNode';
@@ -12,16 +16,16 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
   set value(input: StringValue | undefined) {
     this.setValue(input);
   }
-  protected applyValue(input: StringValue | undefined) {
-    this.#emitChange(input);
-  }
-  parseValue(input: StringValue | undefined) {
-    return parseString(input);
+  protected applyValue(input: StringValue | undefined, option: SetStateOption) {
+    this.#emitChange(input, option);
   }
 
-  #emitChange(input: StringValue | undefined) {
+  #parseValue(input: StringValue | undefined) {
+    return parseString(input);
+  }
+  #emitChange(input: StringValue | undefined, option: SetStateOption) {
     const previous = this.#value;
-    const current = this.parseValue(input);
+    const current = this.#parseValue(input);
     if (previous === current) return;
     this.#value = current;
     this.onChange(current);
@@ -37,6 +41,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
         },
       },
     });
+    if (option & SetStateOption.Refresh) this.refresh(current);
   }
 
   constructor({
@@ -59,6 +64,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
       validationMode,
       ajv,
     });
-    if (this.defaultValue !== undefined) this.setValue(this.defaultValue);
+    if (this.defaultValue !== undefined)
+      this.setValue(this.defaultValue, SetStateOption.None);
   }
 }

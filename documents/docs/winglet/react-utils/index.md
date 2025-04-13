@@ -38,7 +38,7 @@ const WithPortal = hoc.withPortal(Component);
 
 - `useSnapshot`: 값의 스냅샷을 생성하고 관리
 - `useConstant`: 컴포넌트 생명주기 동안 유지되는 상수 생성
-- `useTick`: 주기적으로 실행되는 타이머 훅
+- `useVersion`: 주기적으로 실행되는 타이머 훅
 - `useHandle`: 이벤트 핸들러 생성 및 관리
 - `useOnUnmount`: 컴포넌트 언마운트 시 실행되는 훅
 - `useEffectUntil`: 조건이 충족될 때까지 실행되는 effect

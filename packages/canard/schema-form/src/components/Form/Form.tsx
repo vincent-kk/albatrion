@@ -13,7 +13,7 @@ import { isFunction } from '@winglet/common-utils';
 import {
   useConstant,
   useHandle,
-  useTick,
+  useVersion,
   withErrorBoundaryForwardRef,
 } from '@winglet/react-utils';
 
@@ -24,7 +24,6 @@ import {
   type InferSchemaNode,
   NodeEventType,
   type SchemaNode,
-  isObjectNode,
 } from '@/schema-form/core';
 import {
   FormTypeInputsContextProvider,
@@ -36,7 +35,6 @@ import type {
   AllowedValue,
   InferValueType,
   JsonSchema,
-  ObjectValue,
 } from '@/schema-form/types';
 
 import type { FormHandle, FormProps } from './type';
@@ -77,7 +75,7 @@ const FormInner = <
     initialDefaultValue,
   );
   const ready = useRef(false);
-  const [key, update] = useTick(() => {
+  const [version, update] = useVersion(() => {
     ready.current = false;
   });
 
@@ -126,18 +124,9 @@ const FormInner = <
         update();
       },
       getValue: () => rootNode?.value as Value,
-      setValue: (input, options) => {
-        if (!rootNode) return;
-        const inputValue = isFunction(input)
-          ? input(rootNode.value as Value)
-          : input;
-        if (isObjectNode(rootNode)) {
-          rootNode.setValue(inputValue as ObjectValue, options);
-          setDefaultValue(rootNode.value as Value);
-        } else {
-          setDefaultValue(inputValue as Value);
-        }
-        update();
+      setValue: (value, options) => {
+        // @ts-expect-error: It can’t be checked due to runtime typing.
+        rootNode?.setValue(value, options);
       },
       validate: () => {
         rootNode?.validate();
@@ -158,7 +147,7 @@ const FormInner = <
           showError={showError}
         >
           <RootNodeContextProvider
-            key={key}
+            key={version}
             jsonSchema={jsonSchema}
             defaultValue={defaultValue}
             readOnly={readOnly}

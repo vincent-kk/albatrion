@@ -1,4 +1,8 @@
-import type { NumberSchema, NumberValue } from '@/schema-form/types';
+import {
+  type NumberSchema,
+  type NumberValue,
+  SetStateOption,
+} from '@/schema-form/types';
 
 import { parseNumber } from '../../parsers';
 import { AbstractNode } from '../AbstractNode';
@@ -12,16 +16,16 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   set value(input: NumberValue | undefined) {
     this.setValue(input);
   }
-  protected applyValue(input: NumberValue | undefined) {
-    this.#emitChange(input);
-  }
-  parseValue(input: NumberValue | undefined) {
-    return parseNumber(input, this.jsonSchema.type === 'integer');
+  protected applyValue(input: NumberValue | undefined, option: SetStateOption) {
+    this.#emitChange(input, option);
   }
 
-  #emitChange(input: NumberValue | undefined) {
+  #parseValue(input: NumberValue | undefined) {
+    return parseNumber(input, this.jsonSchema.type === 'integer');
+  }
+  #emitChange(input: NumberValue | undefined, option: SetStateOption) {
     const previous = this.#value;
-    const current = this.parseValue(input);
+    const current = this.#parseValue(input);
     if (previous === current) return;
     this.#value = current;
     this.onChange(current);
@@ -37,6 +41,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
         },
       },
     });
+    if (option & SetStateOption.Refresh) this.refresh(current);
   }
 
   constructor({
@@ -59,6 +64,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
       validationMode,
       ajv,
     });
-    if (this.defaultValue !== undefined) this.setValue(this.defaultValue);
+    if (this.defaultValue !== undefined)
+      this.setValue(this.defaultValue, SetStateOption.None);
   }
 }

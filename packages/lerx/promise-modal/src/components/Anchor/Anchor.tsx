@@ -1,7 +1,7 @@
 import { memo, useEffect } from 'react';
 
 import { map } from '@winglet/common-utils';
-import { useTick, withErrorBoundary } from '@winglet/react-utils';
+import { useVersion, withErrorBoundary } from '@winglet/react-utils';
 
 import { Presenter } from '@/promise-modal/components/Presenter';
 import type { ModalNode } from '@/promise-modal/core';
@@ -14,7 +14,7 @@ import {
 import { anchor } from './classNames.emotion';
 
 const AnchorInner = () => {
-  const [refreshKey, update] = useTick();
+  const [version, update] = useVersion();
 
   const { modalIds, setUpdater } = useModalManagerContext();
 
@@ -24,7 +24,7 @@ const AnchorInner = () => {
 
   const options = useConfigurationOptions();
 
-  const dimmed = useActiveModalCount(validateDimmable, refreshKey);
+  const dimmed = useActiveModalCount(validateDimmable, version);
 
   return (
     <div

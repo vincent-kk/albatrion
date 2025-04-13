@@ -1,14 +1,14 @@
 import { useCallback, useRef } from 'react';
 
 import { printError } from '@winglet/common-utils';
-import { useTick } from '@winglet/react-utils';
+import { useVersion } from '@winglet/react-utils';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 
 export const useInitialize = () => {
   const permitted = useRef(ModalManager.activate());
   const anchorRef = useRef<HTMLElement | null>(null);
-  const [, update] = useTick();
+  const [, update] = useVersion();
 
   const handleInitialize = useCallback(
     (root?: HTMLElement) => {
