@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { BITMASK_ALL } from '@winglet/common-utils';
-import { useTick } from '@winglet/react-utils';
+import { useVersion } from '@winglet/react-utils';
 
 import type { NodeEventType, SchemaNode } from '@/schema-form/core';
 
@@ -14,7 +14,7 @@ export const useSchemaNodeTracker = <Node extends SchemaNode>(
   node: Node | null,
   tracking: NodeEventType = BITMASK_ALL,
 ) => {
-  const [tick, update] = useTick();
+  const [version, update] = useVersion();
   useEffect(() => {
     if (node === null) return;
     const unsubscribe = node.subscribe(({ type }) => {
@@ -24,5 +24,5 @@ export const useSchemaNodeTracker = <Node extends SchemaNode>(
       unsubscribe();
     };
   }, [node, tracking, update]);
-  return tick;
+  return version;
 };

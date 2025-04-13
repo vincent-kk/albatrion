@@ -7,5 +7,5 @@ export { useOnMount, useOnMountLayout } from './useOnMount';
 export { useOnUnmount, useOnUnmountLayout } from './useOnUnmount';
 export { useReference } from './useReference';
 export { useSnapshot, useSnapshotReference } from './useSnapshot';
-export { useTick } from './useTick';
+export { useVersion } from './useVersion';
 export { useWindowSize } from './useWindowSize';

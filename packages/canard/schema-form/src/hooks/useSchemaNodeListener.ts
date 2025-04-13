@@ -1,7 +1,7 @@
 import { type RefObject, useLayoutEffect, useRef } from 'react';
 
 import { isFunction } from '@winglet/common-utils';
-import { useTick } from '@winglet/react-utils';
+import { useVersion } from '@winglet/react-utils';
 
 import { NodeEventType, type SchemaNode } from '@/schema-form/core';
 
@@ -9,7 +9,7 @@ export const useSchemaNodeListener = <Node extends SchemaNode>(
   node: Node | null,
 ) => {
   const ref = useRef<HTMLElement>(null);
-  const [tick, update] = useTick();
+  const [version, update] = useVersion();
   useLayoutEffect(() => {
     if (node === null) return;
     const unsubscribe = node.subscribe(({ type }) => {
@@ -25,7 +25,7 @@ export const useSchemaNodeListener = <Node extends SchemaNode>(
       unsubscribe();
     };
   }, [node, update]);
-  return [tick, ref] as const;
+  return [version, ref] as const;
 };
 
 const DOM_SELECTOR = ['input[type=text]', 'input', 'button'] as const;

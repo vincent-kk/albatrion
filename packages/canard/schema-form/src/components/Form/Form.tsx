@@ -13,7 +13,7 @@ import { isFunction } from '@winglet/common-utils';
 import {
   useConstant,
   useHandle,
-  useTick,
+  useVersion,
   withErrorBoundaryForwardRef,
 } from '@winglet/react-utils';
 
@@ -77,7 +77,7 @@ const FormInner = <
     initialDefaultValue,
   );
   const ready = useRef(false);
-  const [key, update] = useTick(() => {
+  const [version, update] = useVersion(() => {
     ready.current = false;
   });
 
@@ -158,7 +158,7 @@ const FormInner = <
           showError={showError}
         >
           <RootNodeContextProvider
-            key={key}
+            key={version}
             jsonSchema={jsonSchema}
             defaultValue={defaultValue}
             readOnly={readOnly}
