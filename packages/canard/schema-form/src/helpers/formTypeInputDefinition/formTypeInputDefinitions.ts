@@ -1,4 +1,4 @@
-import { isFunction, isPlainObject } from '@winglet/common-utils';
+import { isArray, isFunction, isPlainObject } from '@winglet/common-utils';
 import { isReactComponent, withErrorBoundary } from '@winglet/react-utils';
 
 import type {
@@ -39,7 +39,7 @@ const formTypeTestFnFactory = (test: FormTypeTestObject): FormTypeTestFn => {
   return (hint) => {
     for (const [key, value] of Object.entries(test)) {
       if (!value) continue;
-      if (Array.isArray(value)) {
+      if (isArray(value)) {
         if (!value.includes(hint[key])) return false;
       } else {
         if (value !== hint[key]) return false;

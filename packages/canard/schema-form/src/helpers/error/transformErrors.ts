@@ -1,3 +1,4 @@
+import { isArray } from '@winglet/common-utils';
 import { JSONPath, JSONPointer } from '@winglet/json-schema';
 
 import type { ErrorObject } from '@/schema-form/helpers/ajv';
@@ -16,7 +17,7 @@ export const transformErrors = (
   errors: ErrorObject[],
   useKey = false,
 ): JsonSchemaError[] => {
-  if (!Array.isArray(errors)) return [];
+  if (!isArray(errors)) return [];
   const result = new Array<JsonSchemaError>(errors.length);
   for (let i = 0; i < errors.length; i++) {
     const error = errors[i];

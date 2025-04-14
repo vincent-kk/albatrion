@@ -1,4 +1,4 @@
-import { isPlainObject } from '@winglet/common-utils';
+import { isArray, isPlainObject } from '@winglet/common-utils';
 
 import type { RequiredBy } from '@aileron/types';
 
@@ -7,7 +7,7 @@ import type { JsonSchemaWithVirtual, ObjectSchema } from '@/schema-form/types';
 export const isObjectOneOfSchema = (
   schema: NonNullable<ObjectSchema['oneOf']>[number],
 ): schema is RequiredBy<ObjectSchema, 'properties' | 'required'> =>
-  isPlainObject(schema.properties) && Array.isArray(schema.required);
+  isPlainObject(schema.properties) && isArray(schema.required);
 
 export const isValidEnum = (
   schema: JsonSchemaWithVirtual,

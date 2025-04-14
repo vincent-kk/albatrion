@@ -1,4 +1,4 @@
-import { isPlainObject } from '@winglet/common-utils';
+import { isArray, isPlainObject } from '@winglet/common-utils';
 import { isArraySchema, isObjectSchema } from '@winglet/json-schema';
 
 import type {
@@ -25,4 +25,4 @@ export const isObjectStackItem = (
 export const isArrayStackItem = (
   item: StackItem,
 ): item is StackItem<ArrayValue> =>
-  isArraySchema(item.schema) && Array.isArray(item.value);
+  isArraySchema(item.schema) && isArray(item.value);

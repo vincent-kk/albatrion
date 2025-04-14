@@ -1,4 +1,4 @@
-import { serializeNative } from '@winglet/common-utils';
+import { isArray, serializeNative } from '@winglet/common-utils';
 
 import type { Dictionary } from '@aileron/types';
 
@@ -7,7 +7,7 @@ import type { JsonSchema, ObjectSchema } from '@/schema-form/types';
 import { isObjectOneOfSchema, isValidConst, isValidEnum } from './filter';
 
 export const getOneOfConditionsMap = (jsonSchema: ObjectSchema) => {
-  if (!jsonSchema.oneOf || !Array.isArray(jsonSchema.oneOf)) return null;
+  if (!jsonSchema.oneOf || !isArray(jsonSchema.oneOf)) return null;
   const oneOfConditionsMap: Map<string, string[]> = new Map();
   for (const oneOfSchema of jsonSchema.oneOf) {
     if (!isObjectOneOfSchema(oneOfSchema)) continue;
