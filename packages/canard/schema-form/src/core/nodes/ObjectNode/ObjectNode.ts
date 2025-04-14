@@ -52,12 +52,14 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     );
   }
   #propagate(replace: boolean, option: SetStateOption) {
-    const target = (replace ? this.#value : this.#draft) || {};
+    const target = this.#value || {};
+    const draft = this.#draft || {};
     for (let i = 0; i < this.#children.length; i++) {
       const node = this.#children[i].node;
       if (node.type === 'virtual') continue;
-      if (replace || node.name in target)
-        node.setValue(target[node.name], option);
+      const key = node.name;
+      if (replace || (key in draft && key in target))
+        node.setValue(target[key], option);
     }
   }
 

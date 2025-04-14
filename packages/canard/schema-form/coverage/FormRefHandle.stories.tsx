@@ -112,6 +112,19 @@ export const FormRefHandle = () => {
       >
         overwrite number
       </button>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue({
+            name: 'new one',
+            number: 50,
+            objectNode: {
+              test: 'new wow',
+            },
+          })
+        }
+      >
+        set new member
+      </button>
       <button onClick={() => formHandle.current?.reset()}>reset</button>
       <button
         onClick={() => {
@@ -127,6 +140,129 @@ export const FormRefHandle = () => {
           jsonSchema={schema}
           defaultValue={defaultValue.current}
           formTypeInputMap={formTypeMap}
+          onChange={handleChange}
+        />
+      </StoryLayout>
+    </div>
+  );
+};
+
+export const FormRefHandleWithOneOf = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    oneOf: [
+      {
+        properties: { category: { enum: ['movie'] } },
+        required: ['title', 'openingDate', 'price'],
+      },
+      {
+        properties: { category: { enum: ['game'] } },
+        required: ['title', 'releaseDate', 'numOfPlayers'],
+      },
+    ],
+    properties: {
+      category: {
+        type: 'string',
+        enum: ['game', 'movie'],
+        default: 'game',
+      },
+      title: { type: 'string' },
+      openingDate: {
+        type: 'string',
+        format: 'date',
+        renderOptions: {
+          visible: '@.title === "wow"',
+        },
+      },
+      releaseDate: {
+        type: 'string',
+        format: 'date',
+        renderOptions: {
+          visible: '@.title === "wow"',
+        },
+      },
+      numOfPlayers: { type: 'number' },
+      price: {
+        type: 'number',
+        minimum: 50,
+      },
+    },
+  } satisfies JsonSchema;
+
+  const defaultValue = useRef({});
+
+  const formHandle = useRef<FormHandle<typeof schema>>(null);
+
+  const handleChange = (val: any) => {
+    setValue(val);
+  };
+
+  return (
+    <div>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue(
+            {
+              category: 'movie',
+            },
+            SetStateOption.Propagate,
+          )
+        }
+      >
+        set category to movie
+      </button>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue(
+            {
+              category: 'game',
+            },
+            SetStateOption.Propagate,
+          )
+        }
+      >
+        set category to game
+      </button>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue(
+            { category: 'game', title: 'wow' },
+            SetStateOption.Propagate,
+          )
+        }
+      >
+        set {JSON.stringify({ category: 'game', title: 'wow' })}
+      </button>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue({
+            category: 'movie',
+            title: 'wow',
+            openingDate: '2025-01-01',
+            price: 100,
+          })
+        }
+      >
+        set new member
+      </button>
+      <button onClick={() => formHandle.current?.reset()}>reset</button>
+      <button
+        onClick={() => {
+          formHandle.current?.reset({
+            category: 'game',
+            title: 'wow',
+          });
+        }}
+      >
+        change defaultValue
+      </button>
+      <hr />
+      <StoryLayout jsonSchema={schema} value={value}>
+        <Form
+          ref={formHandle}
+          jsonSchema={schema}
+          defaultValue={defaultValue.current}
           onChange={handleChange}
         />
       </StoryLayout>
