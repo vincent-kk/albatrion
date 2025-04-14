@@ -41,7 +41,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
         },
       },
     });
-    if (option & SetStateOption.Refresh) this.refresh(current);
+    if (option & SetStateOption.Propagate) this.refresh(current);
   }
 
   constructor({

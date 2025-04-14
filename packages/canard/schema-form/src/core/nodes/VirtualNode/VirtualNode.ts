@@ -41,7 +41,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
         const node = this.#refNodes[i];
         if (node.value !== value) node.setValue(value);
       }
-      if (option & SetStateOption.Refresh) this.refresh(values);
+      if (option & SetStateOption.Propagate) this.refresh(values);
     }
   }
 

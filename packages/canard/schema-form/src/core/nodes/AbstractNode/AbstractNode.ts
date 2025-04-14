@@ -305,7 +305,7 @@ export abstract class AbstractNode<
    */
   setValue(
     input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
-    option: SetStateOption = SetStateOption.Reset,
+    option: SetStateOption = SetStateOption.Refresh,
   ): void {
     const inputValue = typeof input === 'function' ? input(this.value) : input;
     this.applyValue(inputValue, option);

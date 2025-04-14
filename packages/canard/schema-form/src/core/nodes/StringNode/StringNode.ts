@@ -41,7 +41,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
         },
       },
     });
-    if (option & SetStateOption.Refresh) this.refresh(current);
+    if (option & SetStateOption.Propagate) this.refresh(current);
   }
 
   constructor({

@@ -86,7 +86,7 @@ export const FormRefHandle = () => {
             {
               name: 'harry',
             },
-            SetStateOption.Propagate | SetStateOption.Refresh,
+            SetStateOption.Propagate,
           )
         }
       >
@@ -98,7 +98,7 @@ export const FormRefHandle = () => {
             return {
               number: (prev?.number || 0) + 1,
             };
-          }, SetStateOption.Propagate | SetStateOption.Refresh)
+          }, SetStateOption.Propagate)
         }
       >
         increase number
@@ -198,7 +198,7 @@ export const FormRefHandleWithArray = () => {
                 },
               ],
             };
-          }, SetStateOption.Propagate | SetStateOption.Refresh)
+          }, SetStateOption.Propagate)
         }
       >
         set value with function
@@ -339,7 +339,7 @@ export const FormRefHandleWithGetData = () => {
             return {
               number: (prev?.number || 0) + 1,
             };
-          }, SetStateOption.Propagate | SetStateOption.Refresh)
+          }, SetStateOption.Propagate)
         }
       >
         increase number

@@ -80,7 +80,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
         },
       });
 
-      if (option & SetStateOption.Refresh) {
+      if (option & SetStateOption.Propagate) {
         this.refresh(value);
         this.#publishChildrenChange();
       }
@@ -163,7 +163,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
   push(
     data?: ArrayValue[number],
-    option: SetStateOption = SetStateOption.Reset,
+    option: SetStateOption = SetStateOption.Refresh,
   ) {
     if (this.jsonSchema.maxItems && this.jsonSchema.maxItems <= this.length)
       return;
@@ -206,14 +206,17 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   update(
     id: IndexId | number,
     data: ArrayValue[number],
-    option: SetStateOption = SetStateOption.Reset,
+    option: SetStateOption = SetStateOption.Refresh,
   ) {
     const targetId = typeof id === 'number' ? this.#ids[id] : id;
     this.#sourceMap.get(targetId)?.node.setValue(data, option);
     return this;
   }
 
-  remove(id: IndexId | number, option: SetStateOption = SetStateOption.Reset) {
+  remove(
+    id: IndexId | number,
+    option: SetStateOption = SetStateOption.Refresh,
+  ) {
     const targetId = typeof id === 'number' ? this.#ids[id] : id;
 
     this.#startOperation(OperationType.Remove);
@@ -229,7 +232,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     return this;
   }
 
-  clear(option: SetStateOption = SetStateOption.Reset) {
+  clear(option: SetStateOption = SetStateOption.Refresh) {
     this.#startOperation(OperationType.Clear);
 
     this.#ids = [];

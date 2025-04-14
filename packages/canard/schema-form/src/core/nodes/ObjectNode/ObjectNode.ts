@@ -96,9 +96,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
           if (node.name in target) node.setValue(target[node.name], option);
         }
       }
+      this.refresh(this.#value);
     }
-
-    if (option & SetStateOption.Refresh) this.refresh(this.#value);
 
     this.#draft = {};
   }
