@@ -22,13 +22,13 @@ export default [
     input: 'src/index.ts',
     output: [
       {
-        file: packageJson.main,
+        file: packageJson.publishConfig.main,
         format: 'cjs',
         exports: 'named',
         sourcemap: true,
       },
       {
-        file: packageJson.module,
+        file: packageJson.publishConfig.module,
         format: 'esm',
         exports: 'named',
         sourcemap: true,
