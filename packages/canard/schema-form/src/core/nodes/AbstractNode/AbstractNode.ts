@@ -220,25 +220,17 @@ export abstract class AbstractNode<
       this.setReceivedErrors(nextErrors);
   }
 
-  /** Node의 기본값 */
+  /**
+   * Node의 기본값
+   *  - set: `setDefaultValue`, 상속 받은 Node에서만 update 가능
+   *  - get: `defaultValue`, 모든 상황에서 읽을 수 있음
+   */
   #defaultValue: Value | undefined;
-  /** Node의 기본값 */
   get defaultValue() {
     return this.#defaultValue;
   }
-  /**
-   * Node의 기본값 설정, 상속 받은 Node에서 재정의 가능
-   * @param value 설정할 기본값
-   */
   protected setDefaultValue(value: Value | undefined) {
     this.#defaultValue = value;
-  }
-
-  protected refresh(defaultValue?: Value) {
-    this.#defaultValue = defaultValue;
-    this.publish({
-      type: NodeEventType.Refresh,
-    });
   }
 
   /** Node의 상태 */
@@ -412,6 +404,13 @@ export abstract class AbstractNode<
    */
   publish(event: NodeEvent) {
     this.#eventCascade.push(event);
+  }
+
+  refresh(defaultValue?: Value) {
+    this.#defaultValue = defaultValue;
+    this.publish({
+      type: NodeEventType.Refresh,
+    });
   }
 
   /**

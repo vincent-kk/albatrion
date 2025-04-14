@@ -51,10 +51,20 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       this.jsonSchema,
     );
   }
+  #propagate(replace: boolean, option: SetStateOption) {
+    const target = (replace ? this.#value : this.#draft) || {};
+    for (let i = 0; i < this.#children.length; i++) {
+      const node = this.#children[i].node;
+      if (node.type === 'virtual') continue;
+      if (replace || node.name in target)
+        node.setValue(target[node.name], option);
+    }
+  }
+
   #emitChange(option: SetStateOption) {
     if (!this.#ready) return;
 
-    const replace = option & SetStateOption.Replace;
+    const replace = !!(option & SetStateOption.Replace);
     const previous = this.#value ? { ...this.#value } : undefined;
 
     if (this.#draft === undefined) {
@@ -83,19 +93,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     });
 
     if (option & SetStateOption.Propagate) {
-      if (replace) {
-        const target = this.#value || {};
-        for (let i = 0; i < this.#children.length; i++) {
-          const node = this.#children[i].node;
-          node.setValue(target[node.name], option);
-        }
-      } else {
-        const target = this.#draft || {};
-        for (let i = 0; i < this.#children.length; i++) {
-          const node = this.#children[i].node;
-          if (node.name in target) node.setValue(target[node.name], option);
-        }
-      }
+      this.#propagate(replace, option);
       this.refresh(this.#value);
     }
 

@@ -57,7 +57,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   protected applyValue(input: ArrayValue, option: SetStateOption) {
     if (!isArray(input)) return;
     this.#locked = true;
-    this.clear(SetStateOption.None);
+    this.clear();
     for (const value of input) this.push(value);
     this.#locked = false;
     this.#emitChange(option);
@@ -81,8 +81,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       });
 
       if (option & SetStateOption.Propagate) {
-        this.refresh(value);
         this.#publishChildrenChange();
+        this.refresh(value);
       }
 
       this.#hasChanged = false;
@@ -161,10 +161,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     this.#publishChildrenChange();
   }
 
-  push(
-    data?: ArrayValue[number],
-    option: SetStateOption = SetStateOption.Refresh,
-  ) {
+  push(data?: ArrayValue[number]) {
     if (this.jsonSchema.maxItems && this.jsonSchema.maxItems <= this.length)
       return;
 
@@ -198,25 +195,18 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Push);
-    this.#emitChange(option);
+    this.#emitChange(SetStateOption.None);
     this.#publishChildrenChange();
     return this;
   }
 
-  update(
-    id: IndexId | number,
-    data: ArrayValue[number],
-    option: SetStateOption = SetStateOption.Refresh,
-  ) {
+  update(id: IndexId | number, data: ArrayValue[number]) {
     const targetId = typeof id === 'number' ? this.#ids[id] : id;
-    this.#sourceMap.get(targetId)?.node.setValue(data, option);
+    this.#sourceMap.get(targetId)?.node.setValue(data, SetStateOption.Refresh);
     return this;
   }
 
-  remove(
-    id: IndexId | number,
-    option: SetStateOption = SetStateOption.Refresh,
-  ) {
+  remove(id: IndexId | number) {
     const targetId = typeof id === 'number' ? this.#ids[id] : id;
 
     this.#startOperation(OperationType.Remove);
@@ -227,12 +217,12 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Remove);
-    this.#emitChange(option);
+    this.#emitChange(SetStateOption.None);
     this.#publishChildrenChange();
     return this;
   }
 
-  clear(option: SetStateOption = SetStateOption.Refresh) {
+  clear() {
     this.#startOperation(OperationType.Clear);
 
     this.#ids = [];
@@ -240,7 +230,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Clear);
-    this.#emitChange(option);
+    this.#emitChange(SetStateOption.None);
     this.#publishChildrenChange();
     return this;
   }
