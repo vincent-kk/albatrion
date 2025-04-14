@@ -416,4 +416,127 @@ describe('getDataWithSchema', () => {
     const resultC = getDataWithSchema(dataC, schema);
     expect(resultC).toEqual({ type: 'C', extraC: true });
   });
+
+  it('should handle non-properties schema', () => {
+    // properties is empty object
+    const schema1: JsonSchema = {
+      type: 'object',
+      properties: {},
+      oneOf: [
+        { properties: { type: { enum: ['A'] } }, required: ['extraA'] },
+        { properties: { type: { enum: ['B'] } }, required: ['extraB'] },
+        { properties: { type: { enum: ['C'] } }, required: ['extraC'] },
+      ],
+    };
+
+    const data = { type: 'A', value: 'test', extraA: 'valueA' };
+    const result = getDataWithSchema(data, schema1);
+    expect(result).toBe(data);
+
+    // properties is undefined
+    const schema2: JsonSchema = {
+      type: 'object',
+      oneOf: [
+        { properties: { type: { enum: ['A'] } }, required: ['extraA'] },
+        { properties: { type: { enum: ['B'] } }, required: ['extraB'] },
+        { properties: { type: { enum: ['C'] } }, required: ['extraC'] },
+      ],
+    };
+    const dataB = { type: 'B', value: 'test', extraB: 42 };
+    const resultB = getDataWithSchema(dataB, schema2);
+    expect(resultB).toBe(dataB);
+  });
+
+  it('should handle arrays with mixed types', () => {
+    const schema: JsonSchema = {
+      type: 'object',
+      properties: {
+        mixedArray: {
+          type: 'array',
+          items: { type: 'string' },
+        },
+      },
+    };
+
+    const data = {
+      mixedArray: ['string', '42', 'true', 'another string', '100'],
+    };
+    const result = getDataWithSchema(data, schema);
+    expect(result).toBe(data);
+  });
+
+  it('should handle arrays with nested oneOf conditions', () => {
+    const schema: JsonSchema = {
+      type: 'object',
+      properties: {
+        type: { type: 'string', enum: ['A', 'B'] },
+        items: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              type: { type: 'string', enum: ['A', 'B'] },
+              value: { type: 'string' },
+              extraA: { type: 'string' },
+              extraB: { type: 'number' },
+            },
+            oneOf: [
+              { properties: { type: { enum: ['A'] } }, required: ['extraA'] },
+              { properties: { type: { enum: ['B'] } }, required: ['extraB'] },
+            ],
+          },
+        },
+      },
+      oneOf: [
+        {
+          properties: { type: { const: 'A' } },
+          required: ['items'],
+        },
+      ],
+    };
+
+    const data = {
+      type: 'A',
+      items: [
+        { type: 'A', value: 'test1', extraA: 'valueA1', extraB: 42 },
+        { type: 'B', value: 'test2', extraA: 'valueA2', extraB: 100 },
+        { type: 'A', value: 'test3', extraA: 'valueA3' },
+      ],
+    };
+
+    const result = getDataWithSchema(data, schema);
+    expect(result).toEqual({
+      type: 'A',
+      items: [
+        { type: 'A', extraA: 'valueA1' },
+        { type: 'B', extraB: 100 },
+        { type: 'A', extraA: 'valueA3' },
+      ],
+    });
+  });
+
+  it('should handle objects with patternProperties', () => {
+    const schema: JsonSchema = {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        tag_important: { type: 'string' },
+        tag_category: { type: 'string' },
+        meta_priority: { type: 'number' },
+        meta_count: { type: 'number' },
+      },
+    };
+
+    const data = {
+      name: 'Item',
+      tag_important: 'yes',
+      tag_category: 'electronics',
+      meta_priority: 5,
+      meta_count: 10,
+      extra: 'value',
+    };
+
+    const result = getDataWithSchema(data, schema);
+    expect(result).toBe(data);
+  });
 });
