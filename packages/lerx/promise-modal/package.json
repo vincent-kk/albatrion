@@ -6,19 +6,13 @@
     "url": "https://github.com/vincent-kk/albatrion.git",
     "directory": "packages/promise-modal"
   },
+  "license": "MIT",
   "author": {
     "name": "Vincent K. Kelvin",
     "email": "lunox273@gmail.com"
   },
-  "license": "MIT",
+  "sideEffects": false,
   "type": "module",
-  "files": [
-    "dist",
-    "README.md"
-  ],
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -26,25 +20,31 @@
       "require": "./dist/index.cjs.js"
     }
   },
-  "sideEffects": false,
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
-    "clean": "rm -rf dist",
-    "test": "yarn build:chain && vitest",
     "build": "yarn clean && rollup -c && tsc-alias",
-    "build:chain": "yarn clean && yarn workspaces foreach --recursive --topological run build",
-    "start": "yarn build && yarn storybook",
-    "lint": "eslint \"src/**/*.{ts,tsx}\" --report-unused-disable-directives --max-warnings 0",
-    "size-limit": "size-limit",
-    "make-dependency-graph": "npx depcruise src --config .dependency-cruiser.js --output-type dot > dependency-graph.dot && dot -Tpng dependency-graph.dot -o dependency-graph.png",
-    "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "storybook:upgrade": "npx storybook@latest upgrade",
-    "version:patch": "yarn version patch",
-    "version:minor": "yarn version minor",
-    "version:major": "yarn version major",
+    "build:chain": "yarn clean && yarn workspaces foreach --recursive --topological run build",
+    "clean": "rm -rf dist",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" --report-unused-disable-directives --max-warnings 0",
+    "make-dependency-graph": "npx depcruise src --config .dependency-cruiser.js --output-type dot > dependency-graph.dot && dot -Tpng dependency-graph.dot -o dependency-graph.png",
+    "publish:chain": "yarn build:chain && yarn npm publish --access public",
     "publish:npm": "yarn build && yarn npm publish --access public",
-    "publish:chain": "yarn build:chain && yarn npm publish --access public"
+    "size-limit": "size-limit",
+    "start": "yarn build && yarn storybook",
+    "storybook": "storybook dev -p 6006",
+    "storybook:upgrade": "npx storybook@latest upgrade",
+    "test": "yarn build:chain && vitest",
+    "version:major": "yarn version major",
+    "version:minor": "yarn version minor",
+    "version:patch": "yarn version patch"
   },
   "dependencies": {
     "@emotion/css": "^11.0.0",
