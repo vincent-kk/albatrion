@@ -9,6 +9,7 @@ import {
   type FormTypeInputProps,
   type JsonSchema,
   type JsonSchemaError,
+  SetStateOption,
   registerPlugin,
 } from '@canard/schema-form';
 
@@ -641,7 +642,7 @@ export const FormRefHandle = () => {
           onChange({ test: 'wow' });
         };
         const handleUnsetClick = () => {
-          onChange({}, { replace: true });
+          onChange({}, SetStateOption.Replace);
         };
         return (
           <div>
@@ -704,7 +705,7 @@ export const FormRefHandle = () => {
             {
               number: 100,
             },
-            { replace: true },
+            SetStateOption.Replace,
           )
         }
       >
@@ -713,7 +714,7 @@ export const FormRefHandle = () => {
       <button onClick={() => formHandle.current?.reset()}>reset</button>
       <button
         onClick={() => {
-          formHandle.current?.reset({ name: 'hermione', number: 12 });
+          formHandle.current?.setValue({ name: 'hermione', number: 12 });
         }}
       >
         change defaultValue

@@ -157,7 +157,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
               typeof input === 'function' ? input(this.#draft[name]) : input;
             if (value !== undefined && this.#draft[name] === value) return;
             this.#draft[name] = value;
-            this.#emitChange(SetStateOption.None);
+            this.#emitChange(SetStateOption.Merge);
           },
           nodeFactory: this.#nodeFactory,
           parentNode: this,
@@ -175,7 +175,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     this.#ready = true;
 
-    this.#emitChange(SetStateOption.None);
+    this.#emitChange(SetStateOption.Merge);
     this.publish({
       type: NodeEventType.UpdateChildren,
     });

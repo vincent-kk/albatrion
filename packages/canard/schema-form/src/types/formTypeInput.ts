@@ -157,7 +157,7 @@ export type SetStateFnWithOptions<S = unknown> = (
 ) => void;
 
 export enum SetStateOption {
-  None = 0,
+  Merge = 0,
   Replace = 1 << 0,
   Propagate = 1 << 1,
   Refresh = Replace | Propagate,

@@ -65,6 +65,6 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
       ajv,
     });
     if (this.defaultValue !== undefined)
-      this.setValue(this.defaultValue, SetStateOption.None);
+      this.setValue(this.defaultValue, SetStateOption.Merge);
   }
 }

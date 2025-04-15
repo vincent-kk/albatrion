@@ -72,10 +72,7 @@ const FormInner = <
   const [children, setChildren] = useState<ReactNode>(
     createChildren(childrenInput, jsonSchema),
   );
-  const initialDefaultValue = useConstant(defaultValueInput);
-  const [defaultValue, setDefaultValue] = useState<Value | undefined>(
-    initialDefaultValue,
-  );
+  const defaultValue = useConstant(defaultValueInput);
   const ready = useRef(false);
   const [version, update] = useVersion(() => {
     ready.current = false;
@@ -121,20 +118,21 @@ const FormInner = <
         rootNode?.findNode(dataPath)?.publish({
           type: NodeEventType.Select,
         }),
-      reset: (defaultValue) => {
-        setDefaultValue(defaultValue ?? initialDefaultValue);
-        update();
-      },
+      refresh: update,
       getValue: () => rootNode?.value as Value,
       setValue: (value, options) => {
         // @ts-expect-error: It can’t be checked due to runtime typing.
         rootNode?.setValue(value, options);
       },
+      reset: () => {
+        // @ts-expect-error: It can’t be checked due to runtime typing.
+        rootNode?.setValue(defaultValue);
+      },
       validate: () => {
         rootNode?.validate();
       },
     }),
-    [initialDefaultValue, rootNode, update],
+    [rootNode, defaultValue, update],
   );
 
   return (

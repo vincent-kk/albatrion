@@ -157,7 +157,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#locked = false;
 
-    this.#emitChange(SetStateOption.None);
+    this.#emitChange(SetStateOption.Merge);
     this.#publishChildrenChange();
   }
 
@@ -195,7 +195,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Push);
-    this.#emitChange(SetStateOption.None);
+    this.#emitChange(SetStateOption.Merge);
     this.#publishChildrenChange();
     return this;
   }
@@ -217,7 +217,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Remove);
-    this.#emitChange(SetStateOption.None);
+    this.#emitChange(SetStateOption.Merge);
     this.#publishChildrenChange();
     return this;
   }
@@ -230,7 +230,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Clear);
-    this.#emitChange(SetStateOption.None);
+    this.#emitChange(SetStateOption.Merge);
     this.#publishChildrenChange();
     return this;
   }
@@ -243,7 +243,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       this.#hasChanged = true;
 
       this.#finishOperation(OperationType.Update);
-      this.#emitChange(SetStateOption.None);
+      this.#emitChange(SetStateOption.Merge);
     }
     return this;
   }

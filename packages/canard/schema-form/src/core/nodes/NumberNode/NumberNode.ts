@@ -65,6 +65,6 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
       ajv,
     });
     if (this.defaultValue !== undefined)
-      this.setValue(this.defaultValue, SetStateOption.None);
+      this.setValue(this.defaultValue, SetStateOption.Merge);
   }
 }

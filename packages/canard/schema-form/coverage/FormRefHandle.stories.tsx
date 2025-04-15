@@ -8,6 +8,7 @@ import {
   type JsonSchema,
   SetStateOption,
 } from '../src';
+import type { ArrayNode } from '../src/core/nodes/ArrayNode/ArrayNode';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -70,6 +71,9 @@ export const FormRefHandle = () => {
       {
         name?: string;
         number?: number;
+        objectNode?: {
+          test?: string;
+        };
       }
     >
   >(null);
@@ -128,7 +132,7 @@ export const FormRefHandle = () => {
       <button onClick={() => formHandle.current?.reset()}>reset</button>
       <button
         onClick={() => {
-          formHandle.current?.reset({ name: 'hermione', number: 12 });
+          formHandle.current?.setValue({ name: 'hermione', number: 12 });
         }}
       >
         change defaultValue
@@ -249,7 +253,7 @@ export const FormRefHandleWithOneOf = () => {
       <button onClick={() => formHandle.current?.reset()}>reset</button>
       <button
         onClick={() => {
-          formHandle.current?.reset({
+          formHandle.current?.setValue({
             category: 'game',
             title: 'wow',
           });
@@ -341,7 +345,7 @@ export const FormRefHandleWithArray = () => {
       </button>
       <button
         onClick={() => {
-          formHandle.current?.node.findNode('users').setValue([
+          (formHandle.current?.node?.findNode('users') as ArrayNode)?.setValue([
             {
               id: 66,
               name: 'rin',
@@ -359,18 +363,21 @@ export const FormRefHandleWithArray = () => {
       </button>
       <button
         onClick={() => {
-          formHandle.current?.node.findNode('users').update(0, {
-            id: 4,
-            name: 'rin',
-            email: 'rin@example.com',
-          });
+          (formHandle.current?.node?.findNode('users') as ArrayNode)?.update(
+            0,
+            {
+              id: 4,
+              name: 'rin',
+              email: 'rin@example.com',
+            },
+          );
         }}
       >
         update user[0]
       </button>
       <button
         onClick={() => {
-          formHandle.current?.node.findNode('users').push({
+          (formHandle.current?.node?.findNode('users') as ArrayNode)?.push({
             id: ~~(Math.random() * 100),
             name: 'random',
             email: 'random@example.com',
@@ -454,7 +461,7 @@ export const FormRefHandleWithGetData = () => {
   >(null);
 
   const handleChange = () => {
-    setValue(formHandle.current?.getValue());
+    setValue(formHandle.current?.getValue() as any);
   };
 
   return (
@@ -492,7 +499,7 @@ export const FormRefHandleWithGetData = () => {
       <button onClick={() => formHandle.current?.reset()}>reset</button>
       <button
         onClick={() => {
-          formHandle.current?.reset({ name: 'hermione', number: 12 });
+          formHandle.current?.setValue({ name: 'hermione', number: 12 });
         }}
       >
         change defaultValue
