@@ -1,6 +1,6 @@
 import { JSONPath } from '@winglet/json-schema';
 
-import type { SchemaNode } from '@canard/schema-form/src/core/nodes/type';
+import type { SchemaNode } from '@/schema-form/core/nodes/type';
 
 /**
  * AbstractNode 트리에서 주어진 경로에 해당하는 노드를 찾습니다.
