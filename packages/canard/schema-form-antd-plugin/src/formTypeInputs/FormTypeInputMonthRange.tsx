@@ -13,7 +13,7 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-import type { Parameter } from '@aileron/types';
+import type { Parameter } from '@aileron/declare';
 
 const DATE_FORMAT = 'YYYY-MM';
 
