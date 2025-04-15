@@ -27,7 +27,6 @@
     }
   },
   "scripts": {
-    "aileron:types": "mkdir -p ./@aileron && ln -sf ../../../aileron/common/@types ./@aileron/declare",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "test": "yarn build:chain && vitest",
     "clean": "rm -rf dist",
