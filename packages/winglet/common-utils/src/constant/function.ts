@@ -1,4 +1,4 @@
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 export const voidFunction: Fn = () => void 0;
 

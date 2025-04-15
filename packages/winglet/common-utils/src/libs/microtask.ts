@@ -1,4 +1,4 @@
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 const getMicrotask = (): Fn<[Fn]> => {
   if (typeof queueMicrotask === 'function') return queueMicrotask;

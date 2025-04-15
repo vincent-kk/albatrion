@@ -1,4 +1,4 @@
-import type { Dictionary, Nullish } from '@aileron/types';
+import type { Dictionary, Nullish } from '@aileron/declare';
 
 export const sortObjectKeys = <Dict extends Dictionary>(
   object: Nullish<Dict>,

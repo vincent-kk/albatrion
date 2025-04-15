@@ -1,4 +1,4 @@
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 export const isFunction = <T extends Fn<any[], any>>(
   value: unknown,

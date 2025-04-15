@@ -1,4 +1,4 @@
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 import { noopFunction } from '@/common-utils/constant';
 import { InvalidTypeError } from '@/common-utils/errors/InvalidTypeError';
