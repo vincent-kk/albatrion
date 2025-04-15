@@ -17,19 +17,10 @@
   },
   "include": [
     "src",
-    "src/**/*.ts",
-    "./**/*.d.ts"
+    "src/**/*.tsx?",
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "documents",
-    "build",
-    "coverage",
-    "scripts",
-    "test",
-    "tests",
-    "**.test.ts",
-    "**.spec.ts"
   ]
 }

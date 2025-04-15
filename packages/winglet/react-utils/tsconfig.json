@@ -18,20 +18,9 @@
   "include": [
     "src",
     "src/**/*.tsx?",
-    "./**/*.d.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "documents",
-    "build",
-    "coverage",
-    "scripts",
-    "test",
-    "tests",
-    "**.test.tsx?",
-    "**.spec.tsx?",
-    "**.story.tsx",
-    "**.stories.tsx"
   ]
 }

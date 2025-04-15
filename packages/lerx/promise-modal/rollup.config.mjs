@@ -88,8 +88,10 @@ export default [
           include: ['src/**/*'],
           exclude: [
             'node_modules',
-            '**/*.test.ts',
-            '**/*.test.tsx',
+            '**/tests/**',
+            '**/coverage/**',
+            '**/*.test.tsx?',
+            '**/*.spec.tsx?',
             '**/*.story.tsx',
             '**/*.stories.tsx',
           ],

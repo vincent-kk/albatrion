@@ -56,10 +56,9 @@ export default [
           include: ['src/**/*', '../@types/**/*'],
           exclude: [
             'node_modules',
-            '**/*.test.ts',
-            '**/*.test.tsx',
-            '**/*.story.tsx',
-            '**/*.stories.tsx',
+            '**/tests/**',
+            '**/*.test.tsx?',
+            '**/*.spec.tsx?',
           ],
         },
       }),
