@@ -4,7 +4,6 @@ import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
 import { readFileSync } from 'fs';
 import { dirname, resolve as resolvePath } from 'path';
-import copy from 'rollup-plugin-copy';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import typescript from 'rollup-plugin-typescript2';
 import { fileURLToPath } from 'url';
@@ -41,15 +40,6 @@ export default [
       replace({
         preventAssignment: true,
       }),
-      copy({
-        targets: [
-          {
-            src: '@aileron/**/*.d.ts',
-            dest: 'dist/@aileron',
-          },
-        ],
-        flatten: false,
-      }),
       commonjs(),
       typescript({
         useTsconfigDeclarationDir: true,
@@ -66,10 +56,9 @@ export default [
           include: ['src/**/*', '../@types/**/*'],
           exclude: [
             'node_modules',
-            '**/*.test.ts',
-            '**/*.test.tsx',
-            '**/*.story.tsx',
-            '**/*.stories.tsx',
+            '**/tests/**',
+            '**/*.test.tsx?',
+            '**/*.spec.tsx?',
           ],
         },
       }),

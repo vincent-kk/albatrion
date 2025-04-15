@@ -1,6 +1,6 @@
 import { type ComponentType, createContext } from 'react';
 
-import type { Color, Duration } from '@aileron/types';
+import type { Color, Duration } from '@aileron/declare';
 
 import type {
   BackgroundComponent,

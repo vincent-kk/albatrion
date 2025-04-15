@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 import type { ModalNode } from '@/promise-modal/core';
 import { useModalManagerContext } from '@/promise-modal/providers';

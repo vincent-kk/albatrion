@@ -13,6 +13,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const packagesRoot = resolvePath(__dirname, '../../');
 
 const packageJson = JSON.parse(
   readFileSync(resolvePath(__dirname, './package.json'), 'utf8'),
@@ -50,11 +51,12 @@ export default [
       copy({
         targets: [
           {
-            src: '@aileron/**/*.d.ts',
-            dest: 'dist/@aileron',
+            src: resolvePath(packagesRoot, 'aileron/common/**/*.d.ts'),
+            dest: 'dist/@aileron/declare',
           },
         ],
-        flatten: false,
+        copyOnce: true,
+        flatten: true,
       }),
       commonjs(),
       babel({
@@ -82,13 +84,14 @@ export default [
             declarationDir: 'dist',
             emitDeclarationOnly: false,
             rootDir: 'src',
-            baseUrl: '.',
           },
           include: ['src/**/*'],
           exclude: [
             'node_modules',
-            '**/*.test.ts',
-            '**/*.test.tsx',
+            '**/tests/**',
+            '**/coverage/**',
+            '**/*.test.tsx?',
+            '**/*.spec.tsx?',
             '**/*.story.tsx',
             '**/*.stories.tsx',
           ],

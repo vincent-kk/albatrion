@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect } from 'react';
 
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 export const useOnUnmount = (handler: Fn) => {
   useEffect(() => {

@@ -5,7 +5,7 @@ import {
   useMemo,
 } from 'react';
 
-import type { Color, Duration } from '@aileron/types';
+import type { Color, Duration } from '@aileron/declare';
 
 import {
   DEFAULT_ANIMATION_DURATION,

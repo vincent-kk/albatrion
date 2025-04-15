@@ -1,37 +1,26 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": "../../",
     "outDir": "./dist",
     "paths": {
       "@/react-utils": [
-        "./src"
+        "./winglet/react-utils/src"
       ],
       "@/react-utils/*": [
-        "./src/*"
+        "./winglet/react-utils/src/*"
       ],
       "@aileron/*": [
-        "./@aileron/*"
+        "./aileron/common/*"
       ],
     }
   },
   "include": [
     "src",
     "src/**/*.tsx?",
-    "./**/*.d.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "documents",
-    "build",
-    "coverage",
-    "scripts",
-    "test",
-    "tests",
-    "**.test.tsx?",
-    "**.spec.tsx?",
-    "**.story.tsx",
-    "**.stories.tsx"
   ]
 }

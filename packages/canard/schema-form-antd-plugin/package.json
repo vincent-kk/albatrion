@@ -11,13 +11,6 @@
     "name": "Vincent K. Kelvin",
     "email": "lunox273@gmail.com"
   },
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist",
-    "README.md"
-  ],
   "type": "module",
   "exports": {
     ".": {
@@ -26,23 +19,29 @@
       "require": "./dist/index.cjs.js"
     }
   },
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
-    "aileron:types": "mkdir -p ./@aileron && ln -sf ../../../aileron/common/@types ./@aileron/types",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
-    "test": "yarn build:chain && vitest",
-    "clean": "rm -rf dist",
     "build": "yarn clean && rollup -c",
-    "build:chain": "yarn clean && yarn workspaces foreach --recursive --topological run build",
-    "start": "yarn build && yarn storybook",
-    "lint": "eslint \"src/**/*.{ts,tsx}\" --report-unused-disable-directives --max-warnings 0",
-    "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "storybook:upgrade": "npx storybook@latest upgrade",
-    "version:patch": "yarn version patch",
-    "version:minor": "yarn version minor",
-    "version:major": "yarn version major",
+    "build:chain": "yarn clean && yarn workspaces foreach --recursive --topological run build",
+    "clean": "rm -rf dist",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" --report-unused-disable-directives --max-warnings 0",
+    "publish:chain": "yarn build:chain && yarn npm publish --access public",
     "publish:npm": "yarn build && yarn npm publish --access public",
-    "publish:chain": "yarn build:chain && yarn npm publish --access public"
+    "start": "yarn build && yarn storybook",
+    "storybook": "storybook dev -p 6006",
+    "storybook:upgrade": "npx storybook@latest upgrade",
+    "test": "yarn build:chain && vitest",
+    "version:major": "yarn version major",
+    "version:minor": "yarn version minor",
+    "version:patch": "yarn version patch"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.0",

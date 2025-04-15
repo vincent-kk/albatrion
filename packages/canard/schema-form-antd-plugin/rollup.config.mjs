@@ -12,6 +12,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const packagesRoot = resolvePath(__dirname, '../../');
 
 const packageJson = JSON.parse(
   readFileSync(resolvePath(__dirname, './package.json'), 'utf8'),
@@ -29,7 +30,7 @@ export default [
       },
       {
         file: packageJson.module,
-        format: 'es',
+        format: 'esm',
         exports: 'named',
         sourcemap: true,
       },
@@ -45,11 +46,12 @@ export default [
       copy({
         targets: [
           {
-            src: '@aileron/**/*.d.ts',
-            dest: 'dist/@aileron',
+            src: resolvePath(packagesRoot, 'aileron/common/**/*.d.ts'),
+            dest: 'dist/@aileron/declare',
           },
         ],
-        flatten: false,
+        copyOnce: true,
+        flatten: true,
       }),
       commonjs(),
       typescript({
@@ -62,13 +64,14 @@ export default [
             declarationDir: 'dist',
             emitDeclarationOnly: false,
             rootDir: 'src',
-            baseUrl: '.',
           },
           include: ['src/**/*'],
           exclude: [
             'node_modules',
-            '**/*.test.ts',
-            '**/*.test.tsx',
+            '**/tests/**',
+            '**/coverage/**',
+            '**/*.test.tsx?',
+            '**/*.spec.tsx?',
             '**/*.story.tsx',
             '**/*.stories.tsx',
           ],
@@ -89,6 +92,10 @@ export default [
         gzipSize: true,
       }),
     ],
-    external: (path) => /node_modules/.test(path),
+    external: (path) => {
+      if (path.startsWith('@aileron')) return false;
+      if (path.startsWith('@winglet')) return true;
+      return /node_modules/.test(path);
+    },
   },
 ];

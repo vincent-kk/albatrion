@@ -1,6 +1,6 @@
 import { isArray, isString } from '@winglet/common-utils';
 
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 type GetWatchValues = Fn<[dependencies: unknown[]], unknown[]>;
 

@@ -1,4 +1,4 @@
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 import { FunctionContext } from './helpers/FunctionContext';
 import type { ExecutionOptions } from './helpers/type';

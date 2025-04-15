@@ -1,11 +1,10 @@
 import Benchmark from 'benchmark';
 
+import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 import {
   find,
   getPathSegments,
-} from '@canard/schema-form/src/core/nodes/AbstractNode/utils/find';
-
-import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
+} from '@/schema-form/core/nodes/AbstractNode/utils/find';
 
 import { node, targetPath } from './data';
 import { find as find_new } from './find';

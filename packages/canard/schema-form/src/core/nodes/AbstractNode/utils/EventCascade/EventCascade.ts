@@ -1,6 +1,6 @@
 import { BITMASK_NONE, microtask } from '@winglet/common-utils';
 
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 import type { NodeEvent, NodeEventType } from '../../../type';
 

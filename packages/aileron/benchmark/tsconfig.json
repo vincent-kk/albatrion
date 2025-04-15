@@ -1,33 +1,39 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": "../../",
+    "rootDir": "../../",
     "outDir": "./dist",
     "paths": {
       "@/benchmark": [
-        "./src"
+        "./aileron/benchmark/src"
       ],
       "@/benchmark/*": [
-        "./src/*"
+        "./aileron/benchmark/src/*"
       ],
       "@/schema-form": [
-        "../../canard/schema-form/src"
+        "./canard/schema-form/src"
       ],
       "@/schema-form/*": [
-        "../../canard/schema-form/src/*"
+        "./canard/schema-form/src/*"
       ],
       "@/common-utils": [
-        "../../winglet/common-utils/src"
+        "./winglet/common-utils/src"
       ],
       "@/common-utils/*": [
-        "../../winglet/common-utils/src/*"
-      ]
+        "./winglet/common-utils/src/*"
+      ],
+      "@aileron/*": [
+        "./aileron/common/*"
+      ],
     }
   },
   "include": [
     "src",
     "src/**/*.tsx?",
-    "./**/*.d.ts"
+    "src/**/*.d.ts",
+    "../../canard/schema-form/src/**/*.ts",
+    "../../winglet/common-utils/src/**/*.ts"
   ],
   "exclude": [
     "node_modules",

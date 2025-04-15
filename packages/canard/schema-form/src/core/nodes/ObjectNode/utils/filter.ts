@@ -1,6 +1,6 @@
 import { isArray, isPlainObject } from '@winglet/common-utils';
 
-import type { RequiredBy } from '@aileron/types';
+import type { RequiredBy } from '@aileron/declare';
 
 import type { JsonSchemaWithVirtual, ObjectSchema } from '@/schema-form/types';
 

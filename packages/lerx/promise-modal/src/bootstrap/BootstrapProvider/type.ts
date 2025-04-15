@@ -1,4 +1,4 @@
-import type { Dictionary, Fn } from '@aileron/types';
+import type { Dictionary, Fn } from '@aileron/declare';
 
 import type { ConfigurationContextProviderProps } from '@/promise-modal/providers/ConfigurationContext';
 

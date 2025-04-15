@@ -1,6 +1,6 @@
 import { type PropsWithChildren, useEffect, useMemo, useRef } from 'react';
 
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 import type { FormProps } from '@/schema-form/components/Form';
 import {

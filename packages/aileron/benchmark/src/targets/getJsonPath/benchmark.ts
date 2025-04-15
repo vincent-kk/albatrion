@@ -1,9 +1,8 @@
 import Benchmark from 'benchmark';
 
-import { getJsonPaths as getJsonPaths_Ref } from '@canard/schema-form/src/core/nodes/AbstractNode/utils';
-import { getJsonPaths } from '@canard/schema-form/src/core/nodes/AbstractNode/utils';
-
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
+import { getJsonPaths as getJsonPaths_Ref } from '@/schema-form/core/nodes/AbstractNode/utils';
+import { getJsonPaths } from '@/schema-form/core/nodes/AbstractNode/utils';
 
 import { value } from './data';
 import { getJsonPaths as getJsonPaths_Old } from './getJsonPaths_old';

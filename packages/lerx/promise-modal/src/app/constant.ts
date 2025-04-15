@@ -1,4 +1,4 @@
-import type { Color, Duration } from '@aileron/types';
+import type { Color, Duration } from '@aileron/declare';
 
 export const DEFAULT_ANIMATION_DURATION: Duration = '300ms';
 

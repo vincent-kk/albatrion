@@ -1,6 +1,6 @@
 import type { CSSProperties, ComponentType } from 'react';
 
-import type { Dictionary, Fn, WithKey } from '@aileron/types';
+import type { Dictionary, Fn, WithKey } from '@aileron/declare';
 
 import type { InferSchemaNode, SchemaNode } from '@/schema-form/core';
 

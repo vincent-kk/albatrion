@@ -9,7 +9,7 @@ import {
 
 import { isFunction } from '@winglet/common-utils';
 
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 import { useHandle } from '@/react-utils/hooks/useHandle';
 

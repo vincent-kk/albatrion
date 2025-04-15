@@ -1,4 +1,4 @@
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 const getPostPromise = (): Fn<[Fn]> => {
   try {

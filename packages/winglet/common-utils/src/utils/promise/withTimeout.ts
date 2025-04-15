@@ -1,4 +1,4 @@
-import type { AsyncFn } from '@aileron/types';
+import type { AsyncFn } from '@aileron/declare';
 
 import type { DelayOptions } from './delay';
 import { timeout } from './timeout';

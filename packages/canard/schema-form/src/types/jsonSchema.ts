@@ -10,7 +10,7 @@ import type {
   StringSchema as BaseStringSchema,
 } from '@winglet/json-schema';
 
-import type { Dictionary } from '@aileron/types';
+import type { Dictionary } from '@aileron/declare';
 
 import type { UnknownFormTypeInputProps } from './formTypeInput';
 import type {

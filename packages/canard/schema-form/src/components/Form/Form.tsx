@@ -17,7 +17,7 @@ import {
   withErrorBoundaryForwardRef,
 } from '@winglet/react-utils';
 
-import type { Fn, Parameter } from '@aileron/types';
+import type { Fn, Parameter } from '@aileron/declare';
 
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import {

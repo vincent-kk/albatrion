@@ -1,4 +1,4 @@
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 interface ExecutionContext<F extends Fn<any[]>> {
   self: any;

@@ -1,16 +1,18 @@
 import { isArray, isPlainObject } from '@winglet/common-utils';
 
+import type { Dictionary, RequiredBy } from '@aileron/declare';
+
 import {
   type StackItem,
   isArrayStackItem,
   isObjectStackItem,
-} from '@canard/schema-form/src/core/nodes/ObjectNode/utils/getDataWithSchema/type';
+} from '@/schema-form/core/nodes/ObjectNode/utils/getDataWithSchema/type';
 import type {
   ArrayValue,
   JsonSchema,
   ObjectSchema,
   ObjectValue,
-} from '@canard/schema-form/src/types';
+} from '@/schema-form/types';
 
 export const isObjectAnyOfSchema = (
   schema: NonNullable<ObjectSchema['anyOf']>[number],

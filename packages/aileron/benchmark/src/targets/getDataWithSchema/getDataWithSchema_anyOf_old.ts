@@ -1,4 +1,4 @@
-import type { JsonSchemaWithVirtual } from '@canard/schema-form/src/types';
+import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 export const getDataWithSchema = (
   data: any,

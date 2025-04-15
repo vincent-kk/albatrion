@@ -1,8 +1,7 @@
 import Benchmark from 'benchmark';
 
-import { getErrorsHash as getErrorsHash_Ref } from '@canard/schema-form/src/helpers/error';
-
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
+import { getErrorsHash as getErrorsHash_Ref } from '@/schema-form/helpers/error/getErrorHash';
 
 import { ajvErrors1, ajvErrors2 } from './data';
 import { getErrorsHash } from './error';

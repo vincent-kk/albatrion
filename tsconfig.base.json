@@ -1,49 +1,45 @@
 {
   "compilerOptions": {
-    "allowJs": false,
-    "allowSyntheticDefaultImports": true,
-    "useDefineForClassFields": true,
-    "alwaysStrict": true,
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "downlevelIteration": true,
-    "emitDecoratorMetadata": true,
-    "emitDeclarationOnly": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "forceConsistentCasingInFileNames": true,
-    "importHelpers": true,
+    "target": "ES2020",
     "lib": [
       "ES2020",
       "DOM"
     ],
-    "jsx": "react-jsx",
     "module": "ESNext",
-    "target": "ES2020",
     "moduleResolution": "Node",
-    "noFallthroughCasesInSwitch": true,
+    "jsx": "react-jsx",
+    // Strict Type-Checking Options
+    "strict": true,
     "noImplicitAny": true,
-    "noImplicitReturns": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
     "noImplicitThis": true,
-    "noLib": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    // Module Resolution Options
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    // Emit Options
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "removeComments": true,
+    // Project References
+    "composite": true,
+    // Additional Checks
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "preserveSymlinks": true,
-    "removeComments": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "strict": true,
-    "strictFunctionTypes": true,
-    "strictNullChecks": true,
-    "strictPropertyInitialization": true,
-    "isolatedModules": true
+    "forceConsistentCasingInFileNames": true,
+    // Decorators
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "exclude": [
     "node_modules",
     "packages/**/node_modules",
-    "packages/**/dist",
-    "packages/**/lib"
+    "packages/**/dist"
   ]
 }

@@ -3,7 +3,7 @@ import type { CSSProperties, ComponentType, PropsWithChildren } from 'react';
 import { JSONPath } from '@winglet/json-schema';
 import { useMemorize, useSnapshot } from '@winglet/react-utils';
 
-import type { Dictionary } from '@aileron/types';
+import type { Dictionary } from '@aileron/declare';
 
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import type {

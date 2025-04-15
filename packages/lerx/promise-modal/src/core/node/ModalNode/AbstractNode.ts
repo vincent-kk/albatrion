@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 import type {
   BackgroundComponent,

@@ -1,39 +1,27 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": "../../",
     "outDir": "./dist",
     "paths": {
       "@/schema-form": [
-        "./src"
+        "./canard/schema-form/src"
       ],
       "@/schema-form/*": [
-        "./src/*"
+        "./canard/schema-form/src/*"
       ],
-      "@aileron/types": [
-        "./@aileron/types"
-      ]
+      "@aileron/*": [
+        "./aileron/common/*"
+      ],
     }
   },
   "include": [
     "src",
     "src/**/*.tsx?",
-    "./**/*.d.ts",
-    "coverage/**/*.story.tsx",
-    "coverage/**/*.stories.tsx"
+    "coverage/**/*.tsx?"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "documents",
-    "build",
-    "coverage",
-    "scripts",
-    "test",
-    "tests",
-    "**.test.tsx?",
-    "**.spec.tsx?",
-    "**.story.tsx",
-    "**.stories.tsx"
   ]
 }

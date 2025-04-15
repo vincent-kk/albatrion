@@ -1,8 +1,7 @@
 import Benchmark from 'benchmark';
 
-import { transformErrors as transformErrors_Ref } from '@canard/schema-form/src/helpers/error';
-
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
+import { transformErrors as transformErrors_Ref } from '@/schema-form/helpers/error/transformErrors';
 
 import { ajvErrors } from './data';
 import { transformErrors } from './transformErrors';
