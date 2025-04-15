@@ -1,17 +1,17 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": "../../",
     "outDir": "./dist",
     "paths": {
       "@/json-schema": [
-        "./src"
+        "./winglet/json-schema/src"
       ],
       "@/json-schema/*": [
-        "./src/*"
+        "./winglet/json-schema/src/*"
       ],
       "@aileron/*": [
-        "./@aileron/*"
+        "./aileron/common/*"
       ],
     }
   },
