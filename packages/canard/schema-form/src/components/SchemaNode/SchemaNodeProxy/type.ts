@@ -1,6 +1,6 @@
 import type { ComponentType, PropsWithChildren } from 'react';
 
-import type { Dictionary } from '@aileron/types';
+import type { Dictionary } from '@aileron/declare';
 
 import type { SchemaNode } from '@/schema-form/core';
 import type {

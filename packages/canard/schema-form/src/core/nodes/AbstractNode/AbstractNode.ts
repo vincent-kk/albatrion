@@ -1,7 +1,7 @@
 import { BITMASK_NONE, isTruthy } from '@winglet/common-utils';
 import { JSONPath } from '@winglet/json-schema';
 
-import type { SetStateFn } from '@aileron/types';
+import type { SetStateFn } from '@aileron/declare';
 
 import {
   type Ajv,

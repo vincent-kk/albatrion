@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 
 import { falseFunction, map, trueFunction } from '@winglet/common-utils';
 
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 import {
   NodeEventType,

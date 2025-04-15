@@ -1,18 +1,18 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": "../../",
     "outDir": "./dist",
     "paths": {
       "@/schema-form": [
-        "./src"
+        "./canard/schema-form/src"
       ],
       "@/schema-form/*": [
-        "./src/*"
+        "./canard/schema-form/src/*"
       ],
-      "@aileron/types": [
-        "./@aileron/types"
-      ]
+      "@aileron/*": [
+        "./aileron/common/*"
+      ],
     }
   },
   "include": [

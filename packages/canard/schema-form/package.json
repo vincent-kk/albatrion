@@ -6,34 +6,29 @@
     "url": "https://github.com/vincent-kk/albatrion.git",
     "directory": "packages/schema-form"
   },
-  "license": "MIT",
   "author": {
     "name": "Vincent K. Kelvin",
     "email": "lunox273@gmail.com"
   },
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
+  "license": "MIT",
+  "type": "module",
   "files": [
     "dist",
     "README.md"
   ],
-  "type": "module",
-  "publishConfig": {
-    "main": "dist/index.cjs.js",
-    "module": "dist/index.esm.js",
-    "types": "dist/index.d.ts",
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.esm.js",
-        "require": "./dist/index.cjs.js"
-      }
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js"
     }
   },
   "sideEffects": false,
   "scripts": {
-    "aileron:types": "mkdir -p ./@aileron && ln -sf ../../../aileron/common/@types ./@aileron/types",
+    "aileron:types": "mkdir -p ./@aileron && ln -sf ../../../aileron/common/@types ./@aileron/declare",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "clean": "rm -rf dist",
     "test": "yarn build:chain && vitest",

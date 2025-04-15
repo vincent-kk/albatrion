@@ -1,7 +1,7 @@
 import { isString } from '@winglet/common-utils';
 import { JSONPath } from '@winglet/json-schema';
 
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 const JSON_PATH_REGEX = new RegExp(
   `[\\${JSONPath.Root}\\${JSONPath.Current}]\\${JSONPath.Child}([a-zA-Z0-9]+(\\${JSONPath.Child}[a-zA-Z0-9]+)*)`,

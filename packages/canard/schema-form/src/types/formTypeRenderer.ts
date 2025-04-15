@@ -1,6 +1,6 @@
 import type { CSSProperties, ComponentType, ReactNode } from 'react';
 
-import type { Dictionary, Fn } from '@aileron/types';
+import type { Dictionary, Fn } from '@aileron/declare';
 
 import type { SchemaNode } from '@/schema-form/core';
 

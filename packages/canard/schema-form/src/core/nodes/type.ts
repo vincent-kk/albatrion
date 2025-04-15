@@ -1,4 +1,4 @@
-import type { SetStateFn } from '@aileron/types';
+import type { SetStateFn } from '@aileron/declare';
 
 import type { Ajv } from '@/schema-form/helpers/ajv';
 import type {

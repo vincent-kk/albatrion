@@ -1,7 +1,7 @@
 import { isFunction } from '@winglet/common-utils';
 import { JSONPath } from '@winglet/json-schema';
 
-import type { SetStateFn } from '@aileron/types';
+import type { SetStateFn } from '@aileron/declare';
 
 import type { Ajv } from '@/schema-form/helpers/ajv';
 import type {

@@ -1,6 +1,6 @@
 import { isArray, serializeNative } from '@winglet/common-utils';
 
-import type { Dictionary } from '@aileron/types';
+import type { Dictionary } from '@aileron/declare';
 
 import type { JsonSchema, ObjectSchema } from '@/schema-form/types';
 

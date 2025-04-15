@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils';
 
-import type { SetStateFn } from '@aileron/types';
+import type { SetStateFn } from '@aileron/declare';
 
 import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
 import {

@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import type { Dictionary } from '@aileron/types';
+import type { Dictionary } from '@aileron/declare';
 
 export interface UserDefinedContext {
   context: Dictionary;

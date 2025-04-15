@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils';
 
-import type { Dictionary } from '@aileron/types';
+import type { Dictionary } from '@aileron/declare';
 
 import { SchemaNodeError } from '@/schema-form/errors';
 
