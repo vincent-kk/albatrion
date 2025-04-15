@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 import { useReference } from './useReference';
 

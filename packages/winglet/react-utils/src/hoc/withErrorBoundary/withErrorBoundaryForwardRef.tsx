@@ -6,7 +6,7 @@ import {
   forwardRef,
 } from 'react';
 
-import type { Dictionary } from '@aileron/types';
+import type { Dictionary } from '@aileron/declare';
 
 import { ErrorBoundary } from './ErrorBoundary';
 
