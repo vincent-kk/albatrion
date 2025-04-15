@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode } from 'react';
 
-import type { Dictionary, SetStateFn } from '@aileron/types';
+import type { Dictionary, SetStateFn } from '@aileron/declare';
 
 import type { BaseModal, ContentComponentProps, FooterOptions } from './base';
 

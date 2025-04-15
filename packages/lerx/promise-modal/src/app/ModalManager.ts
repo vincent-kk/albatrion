@@ -1,6 +1,6 @@
 import { getRandomString } from '@winglet/common-utils';
 
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 import type { Modal } from '@/promise-modal/types';
 

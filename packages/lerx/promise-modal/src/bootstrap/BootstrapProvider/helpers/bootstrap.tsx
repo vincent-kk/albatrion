@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom';
 
-import type { Dictionary, Fn } from '@aileron/types';
+import type { Dictionary, Fn } from '@aileron/declare';
 
 import { Anchor } from '@/promise-modal/components/Anchor';
 import {

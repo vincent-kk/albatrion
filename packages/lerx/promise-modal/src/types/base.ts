@@ -1,6 +1,6 @@
 import type { ComponentType, PropsWithChildren, ReactNode } from 'react';
 
-import type { Dictionary } from '@aileron/types';
+import type { Dictionary } from '@aileron/declare';
 
 import type { ModalBackground } from './background';
 import type { ModalFrameProps } from './modal';

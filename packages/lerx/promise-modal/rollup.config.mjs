@@ -13,6 +13,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const packagesRoot = resolvePath(__dirname, '../../');
 
 const packageJson = JSON.parse(
   readFileSync(resolvePath(__dirname, './package.json'), 'utf8'),
@@ -23,13 +24,13 @@ export default [
     input: 'src/index.ts',
     output: [
       {
-        file: packageJson.publishConfig.main,
+        file: packageJson.main,
         format: 'cjs',
         exports: 'named',
         sourcemap: true,
       },
       {
-        file: packageJson.publishConfig.module,
+        file: packageJson.module,
         format: 'esm',
         exports: 'named',
         sourcemap: true,
@@ -50,11 +51,12 @@ export default [
       copy({
         targets: [
           {
-            src: '@aileron/**/*.d.ts',
-            dest: 'dist/@aileron',
+            src: resolvePath(packagesRoot, 'aileron/common/**/*.d.ts'),
+            dest: 'dist/@aileron/declare',
           },
         ],
-        flatten: false,
+        copyOnce: true,
+        flatten: true,
       }),
       commonjs(),
       babel({
@@ -82,7 +84,6 @@ export default [
             declarationDir: 'dist',
             emitDeclarationOnly: false,
             rootDir: 'src',
-            baseUrl: '.',
           },
           include: ['src/**/*'],
           exclude: [

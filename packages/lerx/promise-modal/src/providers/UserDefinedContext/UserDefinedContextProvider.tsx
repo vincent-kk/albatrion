@@ -1,6 +1,6 @@
 import { PropsWithChildren, useMemo } from 'react';
 
-import type { Dictionary } from '@aileron/types';
+import type { Dictionary } from '@aileron/declare';
 
 import { UserDefinedContext } from './UserDefinedContext';
 

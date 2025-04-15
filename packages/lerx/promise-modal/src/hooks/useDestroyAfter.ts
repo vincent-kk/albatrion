@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 import { convertMsFromDuration, isString } from '@winglet/common-utils';
 
-import type { Duration } from '@aileron/types';
+import type { Duration } from '@aileron/declare';
 
 import type { ModalNode } from '@/promise-modal/core';
 import { useModal } from '@/promise-modal/providers';

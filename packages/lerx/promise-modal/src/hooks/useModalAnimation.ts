@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 
-import type { Fn } from '@aileron/types';
+import type { Fn } from '@aileron/declare';
 
 interface ModalAnimationHandler {
   onVisible?: Fn;
