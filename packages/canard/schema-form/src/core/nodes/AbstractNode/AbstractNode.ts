@@ -33,6 +33,7 @@ import {
 } from '../type';
 import {
   EventCascade,
+  computedPropertiesFactory,
   find,
   getFallbackValidator,
   getJsonPaths,
@@ -323,6 +324,13 @@ export abstract class AbstractNode<
       });
     }
 
+    this.#computedProperties = computedPropertiesFactory(
+      this.jsonSchema,
+      this.rootNode.jsonSchema,
+    );
+
+    this.#prepareUpdateDependencies();
+
     // NOTE: 루트 Node에서만 validator 준비
     if (this.isRoot) this.#prepareValidator(ajv, validationMode);
   }
@@ -373,6 +381,68 @@ export abstract class AbstractNode<
     this.publish({
       type: NodeEventType.Refresh,
     });
+  }
+
+  #computedProperties: ReturnType<typeof computedPropertiesFactory>;
+  #dependencies: any[] = [];
+
+  #visible: boolean = true;
+  get visible() {
+    return this.#visible;
+  }
+
+  #readOnly: boolean = false;
+  get readOnly() {
+    return this.#readOnly;
+  }
+
+  #disabled: boolean = false;
+  get disabled() {
+    return this.#disabled;
+  }
+
+  #watchValues: ReadonlyArray<any> = [];
+  get watchValues() {
+    return this.#watchValues;
+  }
+
+  #prepareUpdateDependencies() {
+    const dependencyPaths = this.#computedProperties.dependencyPaths;
+    if (dependencyPaths.length === 0) return;
+    this.#dependencies = new Array(dependencyPaths.length);
+    for (let index = 0; index < dependencyPaths.length; index++) {
+      const dependencyPath = dependencyPaths[index];
+      const targetNode = this.findNode(dependencyPath);
+      if (!targetNode) continue;
+      targetNode.subscribe(({ type, payload }) => {
+        if (type & NodeEventType.UpdateValue) {
+          if (
+            this.#dependencies[index] !== payload?.[NodeEventType.UpdateValue]
+          ) {
+            this.#dependencies[index] = payload?.[NodeEventType.UpdateValue];
+            this.publish({
+              type: NodeEventType.UpdateDependencies,
+            });
+          }
+        }
+      });
+    }
+    this.subscribe(({ type }) => {
+      if (type & NodeEventType.UpdateDependencies)
+        this.#updateComputedProperties();
+    });
+  }
+
+  #updateComputedProperties() {
+    this.#visible =
+      this.#computedProperties.checkVisible?.(this.#dependencies) ?? true;
+    this.#readOnly =
+      this.#computedProperties.checkReadOnly?.(this.#dependencies) ?? false;
+    this.#disabled =
+      this.#computedProperties.checkDisabled?.(this.#dependencies) ?? false;
+    this.#watchValues =
+      this.#computedProperties.getWatchValues?.(this.#dependencies) || [];
+    this.publish({ type: NodeEventType.UpdateComputedProperties });
   }
 
   /** Node의 상태 */

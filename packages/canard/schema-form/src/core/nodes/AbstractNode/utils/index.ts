@@ -1,3 +1,4 @@
+export * from './computedPropertiesFactory';
 export * from './EventCascade';
 export * from './find';
 export * from './getFallbackValidator';
