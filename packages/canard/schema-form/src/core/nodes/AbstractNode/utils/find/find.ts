@@ -17,7 +17,8 @@ export const find = (
   if (!target) return null;
   if (!segments.length) return target as SchemaNode;
   let cursor = target as SchemaNode;
-  for (const segment of segments) {
+  for (let i = 0; i < segments.length; i++) {
+    const segment = segments[i];
     if (segment === JSONPath.Root) {
       cursor = cursor.rootNode;
       if (!cursor) return null;
