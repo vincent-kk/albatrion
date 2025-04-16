@@ -233,47 +233,6 @@ export abstract class AbstractNode<
     this.#defaultValue = value;
   }
 
-  /** Node의 상태 */
-  #state: NodeStateFlags = {};
-  /** Node의 상태 */
-  get state() {
-    return this.#state;
-  }
-  /**
-   * Node의 상태 설정, 명시적으로 undefined를 전달하지 않으면 기존 상태를 유지
-   * @param input 설정할 상태
-   */
-  setState(input: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags) {
-    const inputState = typeof input === 'function' ? input(this.#state) : input;
-    if (!inputState || typeof inputState !== 'object') return;
-
-    let hasChanges = false;
-    const state: NodeStateFlags = {};
-
-    // NOTE: nextState의 모든 키를 기준으로 순회
-    for (const [key, value] of Object.entries(inputState)) {
-      if (value !== undefined) {
-        state[key] = value;
-        if (this.#state[key] !== value) hasChanges = true;
-      } else if (key in this.#state) hasChanges = true;
-    }
-
-    // NOTE: 기존 state에서 nextState에 없는 키들을 유지
-    for (const [key, value] of Object.entries(this.#state)) {
-      if (!(key in inputState)) state[key] = value;
-    }
-
-    if (hasChanges) {
-      this.#state = state;
-      this.publish({
-        type: NodeEventType.UpdateState,
-        payload: {
-          [NodeEventType.UpdateState]: this.#state,
-        },
-      });
-    }
-  }
-
   /** Node의 값 */
   abstract get value(): Value | undefined;
   abstract set value(input: Value | undefined);
@@ -414,6 +373,47 @@ export abstract class AbstractNode<
     this.publish({
       type: NodeEventType.Refresh,
     });
+  }
+
+  /** Node의 상태 */
+  #state: NodeStateFlags = {};
+  /** Node의 상태 */
+  get state() {
+    return this.#state;
+  }
+  /**
+   * Node의 상태 설정, 명시적으로 undefined를 전달하지 않으면 기존 상태를 유지
+   * @param input 설정할 상태
+   */
+  setState(input: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags) {
+    const inputState = typeof input === 'function' ? input(this.#state) : input;
+    if (!inputState || typeof inputState !== 'object') return;
+
+    let hasChanges = false;
+    const state: NodeStateFlags = {};
+
+    // NOTE: nextState의 모든 키를 기준으로 순회
+    for (const [key, value] of Object.entries(inputState)) {
+      if (value !== undefined) {
+        state[key] = value;
+        if (this.#state[key] !== value) hasChanges = true;
+      } else if (key in this.#state) hasChanges = true;
+    }
+
+    // NOTE: 기존 state에서 nextState에 없는 키들을 유지
+    for (const [key, value] of Object.entries(this.#state)) {
+      if (!(key in inputState)) state[key] = value;
+    }
+
+    if (hasChanges) {
+      this.#state = state;
+      this.publish({
+        type: NodeEventType.UpdateState,
+        payload: {
+          [NodeEventType.UpdateState]: this.#state,
+        },
+      });
+    }
   }
 
   /**
