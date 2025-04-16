@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useState } from 'react';
 
 import { falseFunction, map, trueFunction } from '@winglet/common-utils';
 
@@ -13,10 +13,7 @@ import {
   checkComputedOptionFactory,
   getWatchValuesFactory,
 } from '@/schema-form/helpers/dynamicFunction';
-import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
 import { useRootNodeContext } from '@/schema-form/providers';
-
-import { useSchemaNodeTracker } from './useSchemaNodeTracker';
 
 export const useComputeSchemaNode = (
   input?: SchemaNode | string,
@@ -38,13 +35,6 @@ export const useComputeSchemaNode = (
     else if (typeof input === 'string') return rootNode.findNode(input);
     else return null;
   }, [input, rootNode]);
-
-  useSchemaNodeTracker(
-    node,
-    NodeEventType.UpdateValue |
-      NodeEventType.UpdateState |
-      NodeEventType.UpdateError,
-  );
 
   const {
     dependencyPaths,
@@ -120,13 +110,6 @@ export const useComputeSchemaNode = (
     if (getWatchValues) return getWatchValues(dependencies);
     return [];
   }, [dependencies, getWatchValues]);
-
-  useEffect(() => {
-    if (!node) return;
-    if (!visible && node.value !== getFallbackValue(node.jsonSchema)) {
-      node.value = getFallbackValue(node.jsonSchema);
-    }
-  }, [node, visible]);
 
   useLayoutEffect(() => {
     if (!node || dependencyPaths.length === 0) return;
