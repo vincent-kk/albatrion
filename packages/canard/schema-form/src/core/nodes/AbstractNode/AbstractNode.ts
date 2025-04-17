@@ -387,6 +387,11 @@ export abstract class AbstractNode<
     });
   }
 
+  prepare(this: AbstractNode, actor: SchemaNode) {
+    if (actor === this.parentNode || (this.isRoot && actor === this))
+      this.#prepareUpdateDependencies();
+  }
+
   #computedProperties: ReturnType<typeof computedPropertiesFactory>;
   #dependencies: any[] = [];
 
