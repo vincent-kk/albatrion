@@ -159,7 +159,7 @@ const FormInner = <
             validationMode={validationMode}
             ajv={ajv}
           >
-            {children || <SchemaNodeProxy path="" />}
+              {children || <SchemaNodeProxy />}
           </RootNodeContextProvider>
         </FormTypeRendererContextProvider>
       </FormTypeInputsContextProvider>

@@ -6,11 +6,10 @@ import { useRootNodeContext } from '@/schema-form/providers';
 export const useSchemaNode = (
   input?: SchemaNode | string,
 ): SchemaNode | null => {
-  const { rootNode } = useRootNodeContext();
+  const rootNode = useRootNodeContext();
   const node = useMemo(() => {
     if (isSchemaNode(input)) return input;
-    else if (typeof input === 'string') return rootNode.findNode(input);
-    else return null;
+    else return rootNode.findNode(input);
   }, [input, rootNode]);
   return node;
 };
