@@ -16,14 +16,22 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
   set value(input: StringValue | undefined) {
     this.setValue(input);
   }
-  protected applyValue(input: StringValue | undefined, option: SetStateOption) {
+  protected applyValue(
+    this: StringNode,
+    input: StringValue | undefined,
+    option: SetStateOption,
+  ) {
     this.#emitChange(input, option);
   }
 
-  #parseValue(input: StringValue | undefined) {
+  #parseValue(this: StringNode, input: StringValue | undefined) {
     return parseString(input);
   }
-  #emitChange(input: StringValue | undefined, option: SetStateOption) {
+  #emitChange(
+    this: StringNode,
+    input: StringValue | undefined,
+    option: SetStateOption,
+  ) {
     const previous = this.#value;
     const current = this.#parseValue(input);
     if (previous === current) return;
