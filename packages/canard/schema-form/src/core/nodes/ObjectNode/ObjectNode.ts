@@ -12,6 +12,7 @@ import {
   type BranchNodeConstructorProps,
   NodeEventType,
   type NodeFactory,
+  type SchemaNode,
 } from '../type';
 import type { ChildNode } from './type';
 import {
@@ -40,18 +41,22 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   set value(input: ObjectValue | undefined) {
     this.setValue(input);
   }
-  protected applyValue(input: ObjectValue, option: SetStateOption) {
+  protected applyValue(
+    this: ObjectNode,
+    input: ObjectValue,
+    option: SetStateOption,
+  ) {
     this.#draft = input;
     this.#emitChange(option);
   }
 
-  #parseValue(input: ObjectValue) {
+  #parseValue(this: ObjectNode, input: ObjectValue) {
     return getDataWithSchema(
       sortObjectKeys(input, this.#propertyKeys),
       this.jsonSchema,
     );
   }
-  #propagate(replace: boolean, option: SetStateOption) {
+  #propagate(this: ObjectNode, replace: boolean, option: SetStateOption) {
     const target = this.#value || {};
     const draft = this.#draft || {};
     for (let i = 0; i < this.#children.length; i++) {
@@ -63,7 +68,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     }
   }
 
-  #emitChange(option: SetStateOption) {
+  #emitChange(this: ObjectNode, option: SetStateOption) {
     if (!this.#ready) return;
 
     const replace = !!(option & SetStateOption.Replace);
@@ -100,6 +105,15 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     }
 
     this.#draft = {};
+  }
+
+  prepare(this: ObjectNode, actor?: SchemaNode): boolean {
+    if (super.prepare(actor)) {
+      for (let i = 0; i < this.#children.length; i++)
+        (this.#children[i].node as AbstractNode).prepare(this);
+      return true;
+    }
+    return false;
   }
 
   #nodeFactory: NodeFactory;
@@ -179,5 +193,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.publish({
       type: NodeEventType.UpdateChildren,
     });
+
+    this.prepare();
   }
 }

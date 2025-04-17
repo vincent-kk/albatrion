@@ -9,12 +9,12 @@ import type { SchemaNode } from '@/schema-form/core';
  * @returns 찾은 노드 또는 null
  */
 export const find = (
-  target: SchemaNode,
+  target: any | null,
   segments: string[],
 ): SchemaNode | null => {
   if (!target) return null;
-  if (!segments.length) return target;
-  let cursor = target;
+  if (!segments.length) return target as SchemaNode;
+  let cursor = target as SchemaNode;
   for (let i = 0; i < segments.length; i++) {
     const segment = segments[i];
     if (segment === JSONPath.Root) {

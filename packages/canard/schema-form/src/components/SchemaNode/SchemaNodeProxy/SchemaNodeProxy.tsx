@@ -3,9 +3,10 @@ import { Fragment, memo, useMemo } from 'react';
 import { nullFunction } from '@winglet/common-utils';
 import { useReference, withErrorBoundary } from '@winglet/react-utils';
 
-import { NodeState } from '@/schema-form/core';
-import { useComputeSchemaNode } from '@/schema-form/hooks/useComputeSchemaNode';
+import { NodeEventType, NodeState } from '@/schema-form/core';
+import { useSchemaNode } from '@/schema-form/hooks/useSchemaNode';
 import { useSchemaNodeListener } from '@/schema-form/hooks/useSchemaNodeListener';
+import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
   useFormTypeRendererContext,
   useUserDefinedContext,
@@ -14,6 +15,13 @@ import type { FormTypeRendererProps } from '@/schema-form/types';
 
 import { SchemaNodeAdapterWrapper } from '../SchemaNodeAdapter';
 import type { SchemaNodeProxyProps } from './type';
+
+const RERENDERING_EVENT =
+  NodeEventType.Redraw |
+  NodeEventType.UpdateValue |
+  NodeEventType.UpdateState |
+  NodeEventType.UpdateError |
+  NodeEventType.UpdateComputedProperties;
 
 export const SchemaNodeProxy = memo(
   ({
@@ -24,13 +32,9 @@ export const SchemaNodeProxy = memo(
     FormTypeRenderer: InputFormTypeRenderer,
     Wrapper: InputWrapper,
   }: SchemaNodeProxyProps) => {
-    const { node, visible, readOnly, disabled, watchValues } =
-      useComputeSchemaNode(inputNode || path);
+    const node = useSchemaNode(inputNode || path);
 
     const inputPropsRef = useReference({
-      readOnly,
-      disabled,
-      watchValues,
       PreferredFormTypeInput,
       overridableProps: overridableFormTypeInputProps,
     });
@@ -82,13 +86,14 @@ export const SchemaNodeProxy = memo(
       return null;
     }, [errors, formatError]);
 
-    const [tick, formElementRef] = useSchemaNodeListener(node);
+    useSchemaNodeTracker(node, RERENDERING_EVENT);
 
-    // NOTE: node 이거나 visible 이 false 라면 렌더링 하지 않는다.
-    if (!node || !visible) return null;
+    const [version, formElementRef] = useSchemaNodeListener(node);
+
+    if (!node?.visible) return null;
 
     return (
-      <Wrapper key={tick}>
+      <Wrapper key={version}>
         <span ref={formElementRef} data-json-path={node.path}>
           <FormTypeRenderer
             node={node}

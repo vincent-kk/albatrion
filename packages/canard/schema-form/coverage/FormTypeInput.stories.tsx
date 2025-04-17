@@ -137,10 +137,14 @@ export const FormTypeMap = () => {
         const handleUnsetClick = () => {
           onChange({}, SetStateOption.Replace);
         };
+        const removeClick = () => {
+          onChange(undefined, SetStateOption.Replace);
+        };
         return (
           <div>
             <button onClick={handleClick}>object set</button>
             <button onClick={handleUnsetClick}>object unset</button>
+            <button onClick={removeClick}>object remove</button>
           </div>
         );
       },

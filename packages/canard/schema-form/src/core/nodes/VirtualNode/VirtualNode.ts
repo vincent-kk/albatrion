@@ -22,6 +22,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     this.setValue(input);
   }
   protected applyValue(
+    this: VirtualNode,
     input: VirtualNodeValue | undefined,
     option: SetStateOption,
   ) {
@@ -34,7 +35,11 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     return this.#children;
   }
 
-  #emitChange(values: VirtualNodeValue | undefined, option: SetStateOption) {
+  #emitChange(
+    this: VirtualNode,
+    values: VirtualNodeValue | undefined,
+    option: SetStateOption,
+  ) {
     if (values && values.length === this.#refNodes.length) {
       for (let i = 0; i < values.length; i++) {
         const value = values[i];
@@ -105,5 +110,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     this.publish({
       type: NodeEventType.UpdateChildren,
     });
+
+    this.prepare();
   }
 }

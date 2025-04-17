@@ -30,10 +30,6 @@ interface RootNodeContextProviderProps<
   jsonSchema: FormProps<Schema, Value>['jsonSchema'];
   /** 이 SchemaForm의 기본값 */
   defaultValue?: FormProps<Schema, Value>['defaultValue'];
-  /** FormTypeInput 전체에 readOnly 속성 적용 */
-  readOnly?: boolean;
-  /** FormTypeInput 전체에 disabled 속성 적용 */
-  disabled?: boolean;
   /** 최초로 입력되는 유효성 검증 오류, 기본값은 undefined */
   errors?: FormProps<Schema, Value>['errors'];
   /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
@@ -59,8 +55,6 @@ export const RootNodeContextProvider = <
 >({
   jsonSchema,
   defaultValue,
-  readOnly,
-  disabled,
   errors,
   onChange,
   onValidate,
@@ -93,11 +87,6 @@ export const RootNodeContextProvider = <
       inputAjv,
       externalAjv,
     ],
-  );
-
-  const value = useMemo(
-    () => ({ rootNode, readOnly, disabled }),
-    [rootNode, readOnly, disabled],
   );
 
   useEffect(() => {
@@ -145,7 +134,7 @@ export const RootNodeContextProvider = <
   }, [errors, rootNode]);
 
   return (
-    <RootNodeContext.Provider value={value}>
+    <RootNodeContext.Provider value={rootNode}>
       {children}
     </RootNodeContext.Provider>
   );

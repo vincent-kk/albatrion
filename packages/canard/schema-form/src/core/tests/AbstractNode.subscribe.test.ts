@@ -2,10 +2,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import type { AllowedValue, JsonSchemaWithVirtual } from '@/schema-form/types';
+import type {
+  AllowedValue,
+  JsonSchema,
+  JsonSchemaWithVirtual,
+} from '@/schema-form/types';
 
-import { NodeEventType } from '../nodes';
+import { nodeFromJsonSchema } from '../nodeFromJsonSchema';
 import { AbstractNode } from '../nodes/AbstractNode/AbstractNode';
+import { NodeEventType } from '../nodes/type';
 
 // 테스트를 위한 구체 클래스 구현
 class TestNode extends AbstractNode<JsonSchemaWithVirtual, AllowedValue> {
@@ -168,6 +173,194 @@ describe('AbstractNode', () => {
           [NodeEventType.UpdateValue]: { previous: 'old', current: 'new' },
         },
       });
+    });
+  });
+});
+
+describe('SchemaNode computed properties', () => {
+  describe('visible property', () => {
+    it('should update visible based on renderOptions.visible condition', async () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          title: { type: 'string' },
+          openingDate: {
+            type: 'string',
+            format: 'date',
+            renderOptions: {
+              visible: '@.title === "wow"',
+            },
+          },
+        },
+      } satisfies JsonSchema;
+
+      const node = nodeFromJsonSchema({ jsonSchema: schema });
+
+      await delay();
+
+      const openingDateNode = node.findNode('.openingDate');
+
+      expect(openingDateNode?.visible).toBe(false); // 초기값은 true
+
+      node.setValue({ title: 'wow' });
+      await delay();
+      expect(openingDateNode?.visible).toBe(true); // title이 "wow"이므로 true
+
+      node.setValue({ title: 'hello' });
+      await delay();
+      expect(openingDateNode?.visible).toBe(false); // title이 "wow"가 아니므로 false
+    });
+  });
+
+  describe('readOnly property', () => {
+    it('should update readOnly based on renderOptions.readOnly condition', async () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          isAdmin: { type: 'boolean' },
+          userInfo: {
+            type: 'object',
+            properties: {
+              name: {
+                type: 'string',
+                renderOptions: {
+                  readOnly: '$.isAdmin===false',
+                },
+              },
+            },
+          },
+        },
+      } satisfies JsonSchema;
+
+      const node = nodeFromJsonSchema({ jsonSchema: schema });
+      const nameNode = node.findNode('.userInfo.name');
+
+      expect(nameNode?.readOnly).toBe(false); // 초기값은 false
+
+      node.setValue({ isAdmin: false });
+      await delay();
+      expect(nameNode?.readOnly).toBe(true); // isAdmin이 false이므로 readOnly
+
+      node.setValue({ isAdmin: true });
+      await delay();
+      expect(nameNode?.readOnly).toBe(false); // isAdmin이 true이므로 편집 가능
+    });
+  });
+
+  describe('disabled property', () => {
+    it('should update disabled based on renderOptions.disabled condition', async () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          isLoading: { type: 'boolean' },
+          submitButton: {
+            type: 'string',
+            renderOptions: {
+              disabled: '$.isLoading === true',
+            },
+          },
+        },
+      } satisfies JsonSchema;
+
+      const node = nodeFromJsonSchema({ jsonSchema: schema });
+      const buttonNode = node.findNode('.submitButton');
+
+      expect(buttonNode?.disabled).toBe(false); // 초기값은 false
+
+      node.setValue({ isLoading: true });
+      await delay();
+      expect(buttonNode?.disabled).toBe(true); // isLoading이 true이므로 disabled
+
+      node.setValue({ isLoading: false });
+      await delay();
+      expect(buttonNode?.disabled).toBe(false); // isLoading이 false이므로 활성화
+    });
+  });
+
+  describe('watchValues property', () => {
+    it('should update watchValues based on options.watch paths', async () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          profile: {
+            type: 'object',
+            properties: {
+              name: { type: 'string', default: 'harry' },
+              age: { type: 'number', default: 10 },
+            },
+          },
+          greeting: {
+            type: 'string',
+            formType: 'greeting',
+            options: {
+              watch: ['$.profile.name', '$.profile.age', '$.profile'],
+            },
+          },
+        },
+      } satisfies JsonSchema;
+
+      const node = nodeFromJsonSchema({ jsonSchema: schema });
+      const greetingNode = node.findNode('.greeting');
+
+      await delay();
+
+      // 초기값 확인
+      expect(greetingNode?.watchValues).toEqual([
+        'harry',
+        10,
+        { name: 'harry', age: 10 },
+      ]);
+
+      // profile.name 변경 시 watchValues 업데이트 확인
+      node.setValue({ profile: { name: 'ron', age: 10 } });
+      await delay();
+      expect(greetingNode?.watchValues).toEqual([
+        'ron',
+        10,
+        { name: 'ron', age: 10 },
+      ]);
+
+      // profile.age 변경 시 watchValues 업데이트 확인
+      node.setValue({ profile: { name: 'ron', age: 11 } });
+      await delay();
+      expect(greetingNode?.watchValues).toEqual([
+        'ron',
+        11,
+        { name: 'ron', age: 11 },
+      ]);
+    });
+  });
+
+  describe('computed properties update events', () => {
+    it('should emit UpdateComputedProperties event when dependencies change', async () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          title: { type: 'string' },
+          description: {
+            type: 'string',
+            renderOptions: {
+              visible: '@.title === "test"',
+            },
+          },
+        },
+      } satisfies JsonSchema;
+
+      const node = nodeFromJsonSchema({ jsonSchema: schema });
+      const descriptionNode = node.findNode('.description');
+      const listener = vi.fn();
+
+      descriptionNode?.subscribe(listener);
+
+      node.setValue({ title: 'test' });
+
+      await delay();
+
+      expect(listener).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: NodeEventType.UpdateComputedProperties,
+        }),
+      );
     });
   });
 });

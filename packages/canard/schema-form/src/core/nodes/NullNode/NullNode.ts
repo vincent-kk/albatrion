@@ -15,14 +15,22 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
   set value(input: NullValue | undefined) {
     this.setValue(input);
   }
-  protected applyValue(input: NullValue | undefined, option: SetStateOption) {
+  protected applyValue(
+    this: NullNode,
+    input: NullValue | undefined,
+    option: SetStateOption,
+  ) {
     this.#emitChange(input, option);
   }
 
-  #parseValue(input: NullValue | undefined) {
+  #parseValue(this: NullNode, input: NullValue | undefined) {
     return input;
   }
-  #emitChange(input: NullValue | undefined, option: SetStateOption) {
+  #emitChange(
+    this: NullNode,
+    input: NullValue | undefined,
+    option: SetStateOption,
+  ) {
     const previous = this.#value;
     const current = this.#parseValue(input);
     if (previous === current) return;
@@ -65,5 +73,6 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
     });
     if (this.defaultValue !== undefined)
       this.setValue(this.defaultValue, SetStateOption.Merge);
+    this.prepare();
   }
 }

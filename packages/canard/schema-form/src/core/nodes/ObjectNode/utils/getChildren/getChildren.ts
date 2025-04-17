@@ -2,9 +2,9 @@ import { isArray } from '@winglet/common-utils';
 
 import type { AllowedValue } from '@/schema-form/types';
 
-import type { NodeFactory, SchemaNode } from '../../type';
-import type { ObjectNode } from '../ObjectNode';
-import type { ChildNode, VirtualReference } from '../type';
+import type { NodeFactory, SchemaNode } from '../../../type';
+import type { ObjectNode } from '../../ObjectNode';
+import type { ChildNode, VirtualReference } from '../../type';
 
 export const getChildren = (
   parentNode: ObjectNode,

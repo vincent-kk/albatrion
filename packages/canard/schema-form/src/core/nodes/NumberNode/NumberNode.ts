@@ -16,14 +16,22 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   set value(input: NumberValue | undefined) {
     this.setValue(input);
   }
-  protected applyValue(input: NumberValue | undefined, option: SetStateOption) {
+  protected applyValue(
+    this: NumberNode,
+    input: NumberValue | undefined,
+    option: SetStateOption,
+  ) {
     this.#emitChange(input, option);
   }
 
-  #parseValue(input: NumberValue | undefined) {
+  #parseValue(this: NumberNode, input: NumberValue | undefined) {
     return parseNumber(input, this.jsonSchema.type === 'integer');
   }
-  #emitChange(input: NumberValue | undefined, option: SetStateOption) {
+  #emitChange(
+    this: NumberNode,
+    input: NumberValue | undefined,
+    option: SetStateOption,
+  ) {
     const previous = this.#value;
     const current = this.#parseValue(input);
     if (previous === current) return;
@@ -66,5 +74,6 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     });
     if (this.defaultValue !== undefined)
       this.setValue(this.defaultValue, SetStateOption.Merge);
+    this.prepare();
   }
 }

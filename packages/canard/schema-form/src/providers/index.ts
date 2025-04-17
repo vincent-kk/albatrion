@@ -1,4 +1,8 @@
-export { RootNodeContextProvider, useRootNodeContext } from './RootNodeContext';
+export {
+  ExternalFormContextProvider,
+  useExternalFormContext,
+} from './ExternalFormContext';
+export type { ExternalFormContextProviderProps } from './ExternalFormContext';
 
 export {
   FormTypeInputsContextProvider,
@@ -11,12 +15,13 @@ export {
 } from './FormTypeRendererContext';
 
 export {
+  InputControlContextProvider,
+  useInputControlContext,
+} from './InputControlContext';
+
+export { RootNodeContextProvider, useRootNodeContext } from './RootNodeContext';
+
+export {
   UserDefinedContextProvider,
   useUserDefinedContext,
 } from './UserDefinedContext';
-
-export {
-  ExternalFormContextProvider,
-  useExternalFormContext,
-} from './ExternalFormContext';
-export type { ExternalFormContextProviderProps } from './ExternalFormContext';

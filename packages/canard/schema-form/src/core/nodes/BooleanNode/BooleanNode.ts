@@ -17,16 +17,21 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
     this.setValue(input);
   }
   protected applyValue(
+    this: BooleanNode,
     input: BooleanValue | undefined,
     option: SetStateOption,
   ) {
     this.#emitChange(input, option);
   }
 
-  #parseValue(input: BooleanValue | undefined) {
+  #parseValue(this: BooleanNode, input: BooleanValue | undefined) {
     return parseBoolean(input);
   }
-  #emitChange(input: BooleanValue | undefined, option: SetStateOption) {
+  #emitChange(
+    this: BooleanNode,
+    input: BooleanValue | undefined,
+    option: SetStateOption,
+  ) {
     const previous = this.#value;
     const current = this.#parseValue(input);
     if (previous === current) return;
@@ -69,5 +74,6 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
     });
     if (this.defaultValue !== undefined)
       this.setValue(this.defaultValue, SetStateOption.Merge);
+    this.prepare();
   }
 }

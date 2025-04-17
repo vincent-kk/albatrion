@@ -33,6 +33,7 @@ import {
 } from '../type';
 import {
   EventCascade,
+  computeFactory,
   find,
   getFallbackValidator,
   getJsonPaths,
@@ -70,7 +71,7 @@ export abstract class AbstractNode<
    * @param name 설정할 이름
    * @param actor 이름을 설정하는 Node
    */
-  setName(name: string, actor: SchemaNode | AbstractNode) {
+  setName(this: AbstractNode, name: string, actor: SchemaNode) {
     if (actor === this.parentNode || actor === this) {
       this.#name = name;
       this.updatePath();
@@ -87,7 +88,7 @@ export abstract class AbstractNode<
    * Node의 경로 업데이트, 부모 Node의 경로를 참고해서 자신의 경로를 업데이트
    * @returns 경로가 변경되었는지 여부
    */
-  updatePath() {
+  updatePath(this: AbstractNode) {
     const previous = this.#path;
     const current = this.parentNode?.path
       ? `${this.parentNode.path}${JSONPath.Child}${this.#name}`
@@ -133,7 +134,7 @@ export abstract class AbstractNode<
    * 자신의 Error를 전달받아서 하위 Node에서 전달받은 Error와 합친 후 전달
    * @param errors 전달받은 Error List
    */
-  setErrors(errors: JsonSchemaError[]) {
+  setErrors(this: AbstractNode, errors: JsonSchemaError[]) {
     const errorHash = getErrorsHash(errors);
     if (this.#errorHash === errorHash) return;
 
@@ -155,7 +156,7 @@ export abstract class AbstractNode<
   /**
    * 자신의 Error 초기화, 하위 Node의 Error는 초기화 하지 않음
    */
-  clearErrors() {
+  clearErrors(this: AbstractNode) {
     this.setErrors([]);
   }
 
@@ -167,7 +168,7 @@ export abstract class AbstractNode<
    * 하위 Node에서 전달받은 Error를 자신의 Error와 합친 후 저장
    * @param errors 전달받은 Error List
    */
-  setReceivedErrors(errors: JsonSchemaError[] = []) {
+  setReceivedErrors(this: AbstractNode, errors: JsonSchemaError[] = []) {
     // NOTE: 이미 동일한 에러가 있으면 중복 발생 방지
     const errorHash = getErrorsHash(errors);
     if (this.#receivedErrorHash === errorHash) return;
@@ -198,7 +199,7 @@ export abstract class AbstractNode<
   /**
    * 하위 Node에서 전달받은 Error 초기화, 자신의 Error는 초기화 하지 않음
    */
-  clearReceivedErrors() {
+  clearReceivedErrors(this: AbstractNode) {
     if (!this.#receivedErrors.length) return;
     if (!this.isRoot)
       this.rootNode.removeFromReceivedErrors(this.#receivedErrors);
@@ -209,7 +210,7 @@ export abstract class AbstractNode<
    * 하위 Node에서 전달받은 Error 중 삭제할 Error 찾아서 삭제
    * @param errors 삭제할 Error List
    */
-  removeFromReceivedErrors(errors: JsonSchemaError[]) {
+  removeFromReceivedErrors(this: AbstractNode, errors: JsonSchemaError[]) {
     const deleteKeys = new Set<number>();
     for (const error of errors)
       if (typeof error.key === 'number') deleteKeys.add(error.key);
@@ -229,49 +230,8 @@ export abstract class AbstractNode<
   get defaultValue() {
     return this.#defaultValue;
   }
-  protected setDefaultValue(value: Value | undefined) {
+  protected setDefaultValue(this: AbstractNode, value: Value | undefined) {
     this.#defaultValue = value;
-  }
-
-  /** Node의 상태 */
-  #state: NodeStateFlags = {};
-  /** Node의 상태 */
-  get state() {
-    return this.#state;
-  }
-  /**
-   * Node의 상태 설정, 명시적으로 undefined를 전달하지 않으면 기존 상태를 유지
-   * @param input 설정할 상태
-   */
-  setState(input: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags) {
-    const inputState = typeof input === 'function' ? input(this.#state) : input;
-    if (!inputState || typeof inputState !== 'object') return;
-
-    let hasChanges = false;
-    const state: NodeStateFlags = {};
-
-    // NOTE: nextState의 모든 키를 기준으로 순회
-    for (const [key, value] of Object.entries(inputState)) {
-      if (value !== undefined) {
-        state[key] = value;
-        if (this.#state[key] !== value) hasChanges = true;
-      } else if (key in this.#state) hasChanges = true;
-    }
-
-    // NOTE: 기존 state에서 nextState에 없는 키들을 유지
-    for (const [key, value] of Object.entries(this.#state)) {
-      if (!(key in inputState)) state[key] = value;
-    }
-
-    if (hasChanges) {
-      this.#state = state;
-      this.publish({
-        type: NodeEventType.UpdateState,
-        payload: {
-          [NodeEventType.UpdateState]: this.#state,
-        },
-      });
-    }
   }
 
   /** Node의 값 */
@@ -285,6 +245,7 @@ export abstract class AbstractNode<
    *   - replace(boolean): 기존 값 덮어쓰기, (default: false, 기존 값과 병합)
    */
   protected abstract applyValue(
+    this: AbstractNode,
     input: Value | undefined,
     option: SetStateOption,
   ): void;
@@ -299,6 +260,7 @@ export abstract class AbstractNode<
    *   - Refresh: 자신의 값 대체 후 하위 Node에 전파
    */
   setValue(
+    this: AbstractNode,
     input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
     option: SetStateOption = SetStateOption.Refresh,
   ): void {
@@ -312,6 +274,7 @@ export abstract class AbstractNode<
    * @param input 변경된 값이나 값을 반환하는 함수
    */
   onChange(
+    this: AbstractNode,
     input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
   ): void {
     if (typeof this.#handleChange !== 'function') return;
@@ -364,6 +327,8 @@ export abstract class AbstractNode<
       });
     }
 
+    this.#compute = computeFactory(this.jsonSchema, this.rootNode.jsonSchema);
+
     // NOTE: 루트 Node에서만 validator 준비
     if (this.isRoot) this.#prepareValidator(ajv, validationMode);
   }
@@ -373,8 +338,9 @@ export abstract class AbstractNode<
    * @param path 찾고자 하는 Node의 경로(예: '.foo[0].bar'), 없으면 자기 자신 반환
    * @returns 찾은 Node, 찾지 못한 경우 null
    */
-  findNode(path?: string) {
+  findNode(this: AbstractNode, path?: string) {
     const pathSegments = path ? getPathSegments(path) : [];
+    // @ts-expect-error: find must be used in SchemaNode
     return find(this, pathSegments);
   }
 
@@ -391,7 +357,7 @@ export abstract class AbstractNode<
    * @param listener 이벤트 리스너
    * @returns 이벤트 리스너 제거 함수
    */
-  subscribe(listener: Listener) {
+  subscribe(this: AbstractNode, listener: Listener) {
     this.#listeners.add(listener);
     return () => {
       this.#listeners.delete(listener);
@@ -405,21 +371,142 @@ export abstract class AbstractNode<
    *    - payload: 이벤트에 대한 데이터(MethodPayload 참고)
    *    - options: 이벤트에 대한 옵션(MethodOptions 참고)
    */
-  publish(event: NodeEvent) {
+  publish(this: AbstractNode, event: NodeEvent) {
     this.#eventCascade.push(event);
   }
 
-  refresh(defaultValue?: Value) {
+  refresh(this: AbstractNode, defaultValue?: Value) {
     this.#defaultValue = defaultValue;
     this.publish({
       type: NodeEventType.Refresh,
     });
   }
 
+  #prepared: boolean = false;
+  prepare(this: AbstractNode, actor?: SchemaNode) {
+    if (this.#prepared || (actor !== this.parentNode && !this.isRoot))
+      return false;
+    this.#prepareUpdateDependencies();
+    this.#prepared = true;
+    return true;
+  }
+
+  #compute: ReturnType<typeof computeFactory>;
+  #dependencies: any[] = [];
+
+  #visible: boolean = true;
+  get visible() {
+    return this.#visible;
+  }
+
+  #readOnly: boolean = false;
+  get readOnly() {
+    return this.#readOnly;
+  }
+
+  #disabled: boolean = false;
+  get disabled() {
+    return this.#disabled;
+  }
+
+  #watchValues: ReadonlyArray<any> = [];
+  get watchValues() {
+    return this.#watchValues;
+  }
+
+  #prepareUpdateDependencies(this: AbstractNode) {
+    const dependencyPaths = this.#compute.dependencyPaths;
+    if (dependencyPaths.length > 0) {
+      this.#dependencies = new Array(dependencyPaths.length);
+      for (let index = 0; index < dependencyPaths.length; index++) {
+        const dependencyPath = dependencyPaths[index];
+        const targetNode = this.findNode(dependencyPath);
+        if (!targetNode) continue;
+        this.#dependencies[index] = targetNode.value;
+        targetNode.subscribe(({ type, payload }) => {
+          if (type & NodeEventType.UpdateValue) {
+            if (
+              this.#dependencies[index] !== payload?.[NodeEventType.UpdateValue]
+            ) {
+              this.#dependencies[index] = payload?.[NodeEventType.UpdateValue];
+              this.publish({
+                type: NodeEventType.UpdateDependencies,
+              });
+            }
+          }
+        });
+      }
+      this.subscribe(({ type }) => {
+        if (type & NodeEventType.UpdateDependencies)
+          this.#updateComputedProperties();
+      });
+    }
+    this.#updateComputedProperties();
+  }
+
+  #updateComputedProperties(this: AbstractNode) {
+    this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
+    this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
+    this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
+    this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
+
+    if (!this.#visible) this.#resetValue();
+    this.publish({ type: NodeEventType.UpdateComputedProperties });
+  }
+
+  #resetValue(this: AbstractNode) {
+    const fullbackValue = getFallbackValue(this.jsonSchema);
+    if (this.value !== fullbackValue) this.value = fullbackValue;
+  }
+
+  /** Node의 상태 */
+  #state: NodeStateFlags = {};
+  /** Node의 상태 */
+  get state() {
+    return this.#state;
+  }
+  /**
+   * Node의 상태 설정, 명시적으로 undefined를 전달하지 않으면 기존 상태를 유지
+   * @param input 설정할 상태
+   */
+  setState(
+    this: AbstractNode,
+    input: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags,
+  ) {
+    const inputState = typeof input === 'function' ? input(this.#state) : input;
+    if (!inputState || typeof inputState !== 'object') return;
+
+    let hasChanges = false;
+    const state: NodeStateFlags = {};
+
+    // NOTE: nextState의 모든 키를 기준으로 순회
+    for (const [key, value] of Object.entries(inputState)) {
+      if (value !== undefined) {
+        state[key] = value;
+        if (this.#state[key] !== value) hasChanges = true;
+      } else if (key in this.#state) hasChanges = true;
+    }
+
+    // NOTE: 기존 state에서 nextState에 없는 키들을 유지
+    for (const [key, value] of Object.entries(this.#state)) {
+      if (!(key in inputState)) state[key] = value;
+    }
+
+    if (hasChanges) {
+      this.#state = state;
+      this.publish({
+        type: NodeEventType.UpdateState,
+        payload: {
+          [NodeEventType.UpdateState]: this.#state,
+        },
+      });
+    }
+  }
+
   /**
    * 현재 값을 기준으로 유효성 검증 수행, `ValidationMode.OnRequest` 인 경우에만 동작
    */
-  validate() {
+  validate(this: AbstractNode) {
     this.rootNode.publish({
       type: NodeEventType.Validate,
     });
@@ -430,7 +517,7 @@ export abstract class AbstractNode<
    * @param errors 필터링할 에러 목록
    * @returns 필터링된 에러 목록
    */
-  #filterErrorsWithSchema(errors: JsonSchemaError[]) {
+  #filterErrorsWithSchema(this: AbstractNode, errors: JsonSchemaError[]) {
     if (!this.isRoot) return errors;
     const visibleJsonPaths = new Set(getJsonPaths(this.value));
     const filtered = [];
@@ -442,7 +529,10 @@ export abstract class AbstractNode<
   /** Node의 Ajv 검증 함수 */
   #validator: ValidateFunction | null = null;
   /** Node의 JsonSchema를 이용해서 검증 수행, rootNode에서만 사용 가능 */
-  async #validate(value: Value | undefined): Promise<JsonSchemaError[]> {
+  async #validate(
+    this: AbstractNode,
+    value: Value | undefined,
+  ): Promise<JsonSchemaError[]> {
     if (!this.isRoot || !this.#validator) return [];
     try {
       await this.#validator(value);
@@ -455,7 +545,7 @@ export abstract class AbstractNode<
   /**
    * 자기 자신의 값이 변경될 때 검증 수행, rootNode에서만 동작
    */
-  async #handleValidation() {
+  async #handleValidation(this: AbstractNode) {
     if (!this.isRoot) return;
 
     // NOTE: 현재 Form 내의 value와 schema를 이용해서 validation 수행
@@ -503,7 +593,11 @@ export abstract class AbstractNode<
    * Ajv를 이용해서 validator 준비, rootNode에서만 사용 가능
    * @param ajv Ajv 인스턴스, 없는 경우 신규 생성
    */
-  #prepareValidator(ajv?: Ajv, validationMode?: ValidationMode) {
+  #prepareValidator(
+    this: AbstractNode,
+    ajv?: Ajv,
+    validationMode?: ValidationMode,
+  ) {
     if (!validationMode) return;
     try {
       this.#validator = ajvHelper.compile({

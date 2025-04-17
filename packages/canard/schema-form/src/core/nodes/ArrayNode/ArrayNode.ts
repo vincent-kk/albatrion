@@ -36,11 +36,11 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     }
   > = new Map();
 
-  #startOperation(operation: OperationType) {
+  #startOperation(this: ArrayNode, operation: OperationType) {
     this.#operation |= operation;
   }
 
-  #finishOperation(operation: OperationType) {
+  #finishOperation(this: ArrayNode, operation: OperationType) {
     this.#operation &= ~operation;
   }
 
@@ -54,7 +54,11 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   set value(input: ArrayValue) {
     this.setValue(input);
   }
-  protected applyValue(input: ArrayValue, option: SetStateOption) {
+  protected applyValue(
+    this: ArrayNode,
+    input: ArrayValue,
+    option: SetStateOption,
+  ) {
     if (!isArray(input)) return;
     this.#locked = true;
     this.clear();
@@ -63,7 +67,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     this.#emitChange(option);
   }
 
-  #emitChange(option: SetStateOption) {
+  #emitChange(this: ArrayNode, option: SetStateOption) {
     if (this.#ready && this.#hasChanged) {
       const value = this.value;
       this.onChange(value);
@@ -112,13 +116,22 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     return this.#ids.length;
   }
 
-  toArray() {
+  toArray(this: ArrayNode) {
     const values = new Array<AllowedValue>(this.#ids.length);
     for (let i = 0; i < this.#ids.length; i++) {
       const edge = this.#sourceMap.get(this.#ids[i]);
       if (edge) values[i] = edge.node.value;
     }
     return values;
+  }
+
+  prepare(this: ArrayNode, actor?: SchemaNode): boolean {
+    if (super.prepare(actor)) {
+      for (let i = 0; i < this.#ids.length; i++)
+        (this.#sourceMap.get(this.#ids[i])?.node as AbstractNode).prepare(this);
+      return true;
+    }
+    return false;
   }
 
   #nodeFactory: NodeFactory;
@@ -159,9 +172,11 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#emitChange(SetStateOption.Merge);
     this.#publishChildrenChange();
+
+    this.prepare();
   }
 
-  push(data?: ArrayValue[number]) {
+  push(this: ArrayNode, data?: ArrayValue[number]) {
     if (this.jsonSchema.maxItems && this.jsonSchema.maxItems <= this.length)
       return;
 
@@ -200,13 +215,13 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     return this;
   }
 
-  update(id: IndexId | number, data: ArrayValue[number]) {
+  update(this: ArrayNode, id: IndexId | number, data: ArrayValue[number]) {
     const targetId = typeof id === 'number' ? this.#ids[id] : id;
     this.#sourceMap.get(targetId)?.node.setValue(data, SetStateOption.Refresh);
     return this;
   }
 
-  remove(id: IndexId | number) {
+  remove(this: ArrayNode, id: IndexId | number) {
     const targetId = typeof id === 'number' ? this.#ids[id] : id;
 
     this.#startOperation(OperationType.Remove);
@@ -222,7 +237,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     return this;
   }
 
-  clear() {
+  clear(this: ArrayNode) {
     this.#startOperation(OperationType.Clear);
 
     this.#ids = [];
@@ -235,7 +250,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     return this;
   }
 
-  #updateData(id: IndexId, data: ArrayValue[number]) {
+  #updateData(this: ArrayNode, id: IndexId, data: ArrayValue[number]) {
     if (this.#sourceMap.has(id)) {
       this.#startOperation(OperationType.Update);
 
@@ -248,7 +263,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     return this;
   }
 
-  #updateChildName() {
+  #updateChildName(this: ArrayNode) {
     for (let index = 0; index < this.#ids.length; index++) {
       const id = this.#ids[index];
       if (this.#sourceMap.has(id)) {
@@ -259,7 +274,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     }
   }
 
-  #publishChildrenChange() {
+  #publishChildrenChange(this: ArrayNode) {
     if (!this.#ready) return;
     this.publish({
       type: NodeEventType.UpdateChildren,

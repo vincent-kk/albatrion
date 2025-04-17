@@ -4,7 +4,7 @@ import type { Dictionary } from '@aileron/declare';
 
 import { SchemaNodeError } from '@/schema-form/errors';
 
-import type { VirtualReference } from '../type';
+import type { VirtualReference } from '../../type';
 
 export const getVirtualReferencesMap = (
   nodeName: string | undefined,
