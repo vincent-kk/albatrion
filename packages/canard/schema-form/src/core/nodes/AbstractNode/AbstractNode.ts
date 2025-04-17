@@ -332,8 +332,6 @@ export abstract class AbstractNode<
       this.rootNode.jsonSchema,
     );
 
-    this.#prepareUpdateDependencies();
-
     // NOTE: 루트 Node에서만 validator 준비
     if (this.isRoot) this.#prepareValidator(ajv, validationMode);
   }
@@ -387,9 +385,13 @@ export abstract class AbstractNode<
     });
   }
 
-  prepare(this: AbstractNode, actor: SchemaNode) {
-    if (actor === this.parentNode || (this.isRoot && actor === this))
-      this.#prepareUpdateDependencies();
+  #prepared: boolean = false;
+  prepare(this: AbstractNode, actor?: SchemaNode) {
+    if (this.#prepared || (actor !== this.parentNode && !this.isRoot))
+      return false;
+    this.#prepareUpdateDependencies();
+    this.#prepared = true;
+    return true;
   }
 
   #computedProperties: ReturnType<typeof computedPropertiesFactory>;
@@ -418,29 +420,30 @@ export abstract class AbstractNode<
   #prepareUpdateDependencies(this: AbstractNode) {
     const dependencyPaths = this.#computedProperties.dependencyPaths;
     if (dependencyPaths.length > 0) {
-    this.#dependencies = new Array(dependencyPaths.length);
-    for (let index = 0; index < dependencyPaths.length; index++) {
-      const dependencyPath = dependencyPaths[index];
-      const targetNode = this.findNode(dependencyPath);
-      if (!targetNode) continue;
+      this.#dependencies = new Array(dependencyPaths.length);
+      for (let index = 0; index < dependencyPaths.length; index++) {
+        const dependencyPath = dependencyPaths[index];
+        const targetNode = this.findNode(dependencyPath);
+        if (!targetNode) continue;
         this.#dependencies[index] = targetNode.value;
-      targetNode.subscribe(({ type, payload }) => {
-        if (type & NodeEventType.UpdateValue) {
-          if (
-            this.#dependencies[index] !== payload?.[NodeEventType.UpdateValue]
-          ) {
-            this.#dependencies[index] = payload?.[NodeEventType.UpdateValue];
-            this.publish({
-              type: NodeEventType.UpdateDependencies,
-            });
+        targetNode.subscribe(({ type, payload }) => {
+          if (type & NodeEventType.UpdateValue) {
+            if (
+              this.#dependencies[index] !== payload?.[NodeEventType.UpdateValue]
+            ) {
+              this.#dependencies[index] = payload?.[NodeEventType.UpdateValue];
+              this.publish({
+                type: NodeEventType.UpdateDependencies,
+              });
+            }
           }
-        }
+        });
+      }
+      this.subscribe(({ type }) => {
+        if (type & NodeEventType.UpdateDependencies)
+          this.#updateComputedProperties();
       });
     }
-    this.subscribe(({ type }) => {
-      if (type & NodeEventType.UpdateDependencies)
-        this.#updateComputedProperties();
-    });
     this.#updateComputedProperties();
   }
 
@@ -453,7 +456,14 @@ export abstract class AbstractNode<
       this.#computedProperties.checkDisabled?.(this.#dependencies) ?? false;
     this.#watchValues =
       this.#computedProperties.getWatchValues?.(this.#dependencies) || [];
+
+    if (!this.#visible) this.#resetValue();
     this.publish({ type: NodeEventType.UpdateComputedProperties });
+  }
+
+  #resetValue(this: AbstractNode) {
+    const fullbackValue = getFallbackValue(this.jsonSchema);
+    if (this.value !== fullbackValue) this.value = fullbackValue;
   }
 
   /** Node의 상태 */

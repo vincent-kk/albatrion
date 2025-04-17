@@ -73,5 +73,6 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
     });
     if (this.defaultValue !== undefined)
       this.setValue(this.defaultValue, SetStateOption.Merge);
+    this.prepare();
   }
 }

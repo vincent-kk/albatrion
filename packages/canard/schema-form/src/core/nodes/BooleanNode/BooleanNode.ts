@@ -74,5 +74,6 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
     });
     if (this.defaultValue !== undefined)
       this.setValue(this.defaultValue, SetStateOption.Merge);
+    this.prepare();
   }
 }

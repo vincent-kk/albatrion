@@ -110,5 +110,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     this.publish({
       type: NodeEventType.UpdateChildren,
     });
+
+    this.prepare();
   }
 }

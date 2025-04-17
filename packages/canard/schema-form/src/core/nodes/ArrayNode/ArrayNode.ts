@@ -125,6 +125,15 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     return values;
   }
 
+  prepare(this: ArrayNode, actor?: SchemaNode): boolean {
+    if (super.prepare(actor)) {
+      for (let i = 0; i < this.#ids.length; i++)
+        (this.#sourceMap.get(this.#ids[i])?.node as AbstractNode).prepare(this);
+      return true;
+    }
+    return false;
+  }
+
   #nodeFactory: NodeFactory;
 
   constructor({
@@ -163,6 +172,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#emitChange(SetStateOption.Merge);
     this.#publishChildrenChange();
+
+    this.prepare();
   }
 
   push(this: ArrayNode, data?: ArrayValue[number]) {
