@@ -28,6 +28,7 @@ import {
 import {
   FormTypeInputsContextProvider,
   FormTypeRendererContextProvider,
+  InputControlContextProvider,
   RootNodeContextProvider,
   UserDefinedContextProvider,
 } from '@/schema-form/providers';
@@ -146,21 +147,21 @@ const FormInner = <
           formatError={formatError}
           showError={showError}
         >
-          <RootNodeContextProvider
-            key={version}
-            jsonSchema={jsonSchema}
-            defaultValue={defaultValue}
-            readOnly={readOnly}
-            disabled={disabled}
-            errors={errors}
-            onChange={handleChange}
-            onValidate={handleValidate}
-            onReady={handleReady}
-            validationMode={validationMode}
-            ajv={ajv}
-          >
+          <InputControlContextProvider readOnly={readOnly} disabled={disabled}>
+            <RootNodeContextProvider
+              key={version}
+              jsonSchema={jsonSchema}
+              defaultValue={defaultValue}
+              errors={errors}
+              onChange={handleChange}
+              onValidate={handleValidate}
+              onReady={handleReady}
+              validationMode={validationMode}
+              ajv={ajv}
+            >
               {children || <SchemaNodeProxy />}
-          </RootNodeContextProvider>
+            </RootNodeContextProvider>
+          </InputControlContextProvider>
         </FormTypeRendererContextProvider>
       </FormTypeInputsContextProvider>
     </UserDefinedContextProvider>

@@ -6,7 +6,7 @@ import { NodeEventType, NodeState } from '@/schema-form/core';
 import { useFormTypeInput } from '@/schema-form/hooks/useFormTypeInput';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
-  useRootNodeContext,
+  useInputControlContext,
   useUserDefinedContext,
 } from '@/schema-form/providers';
 import {
@@ -28,8 +28,6 @@ export const SchemaNodeAdapterInput = memo(
     PreferredFormTypeInput,
     childNodes,
   }: SchemaNodeAdapterInputProps) => {
-    const { readOnly: rootReadOnly, disabled: rootDisabled } =
-      useRootNodeContext();
     const FormTypeInputByNode = useFormTypeInput(node);
     const FormTypeInput = useMemo(
       () => PreferredFormTypeInput || FormTypeInputByNode,
@@ -59,6 +57,8 @@ export const SchemaNodeAdapterInput = memo(
     }, [node]);
 
     const { context: userDefinedContext } = useUserDefinedContext();
+    const { readOnly: rootReadOnly, disabled: rootDisabled } =
+      useInputControlContext();
 
     useSchemaNodeTracker(node, RERENDERING_EVENT);
 
