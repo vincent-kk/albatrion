@@ -12,18 +12,12 @@ import type {
 import type { SchemaNodeProxyProps } from '../SchemaNodeProxy';
 
 export interface PropsPackage {
-  readOnly: boolean;
-  disabled: boolean;
-  watchValues: any[];
   overridableProps?: OverridableFormTypeInputProps;
   PreferredFormTypeInput?: ComponentType<FormTypeInputProps>;
 }
 
 export interface SchemaNodeAdapterProps {
   node: SchemaNode;
-  readOnly: boolean;
-  disabled: boolean;
-  watchValues: any[];
   overridableProps: OverridableFormTypeInputProps;
   PreferredFormTypeInput?: ComponentType<FormTypeInputProps>;
   NodeProxy: ComponentType<SchemaNodeProxyProps>;
@@ -31,9 +25,6 @@ export interface SchemaNodeAdapterProps {
 
 export interface SchemaNodeAdapterInputProps {
   node: SchemaNode;
-  readOnly: boolean;
-  disabled: boolean;
-  watchValues: any[];
   overridableProps: OverridableFormTypeInputProps;
   PreferredFormTypeInput?: ComponentType<FormTypeInputProps>;
   childNodes: ChildComponent[];

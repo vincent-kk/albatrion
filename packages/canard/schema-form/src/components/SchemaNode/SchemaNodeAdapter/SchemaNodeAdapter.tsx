@@ -14,9 +14,6 @@ import type {
 
 export const SchemaNodeAdapter = ({
   node,
-  readOnly,
-  disabled,
-  watchValues,
   overridableProps,
   PreferredFormTypeInput,
   NodeProxy,
@@ -65,9 +62,6 @@ export const SchemaNodeAdapter = ({
   return (
     <SchemaNodeAdapterInput
       node={node}
-      readOnly={readOnly}
-      disabled={disabled}
-      watchValues={watchValues}
       overridableProps={overridableProps}
       PreferredFormTypeInput={PreferredFormTypeInput}
       childNodes={childNodes}

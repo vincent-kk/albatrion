@@ -30,7 +30,6 @@ export const SchemaNodeAdapterWrapper = (
       ...propsRef.current.overridableProps,
       ...preferredProps,
     });
-    const watchValues = useSnapshot(propsRef.current.watchValues);
 
     const PreferredFormTypeInput = useMemo(() => {
       return isReactComponent(propsRef.current.PreferredFormTypeInput)
@@ -43,9 +42,6 @@ export const SchemaNodeAdapterWrapper = (
     return (
       <SchemaNodeAdapter
         node={node}
-        readOnly={propsRef.current.readOnly}
-        disabled={propsRef.current.disabled}
-        watchValues={watchValues}
         overridableProps={overridableProps}
         PreferredFormTypeInput={PreferredFormTypeInput}
         NodeProxy={NodeProxy}
