@@ -1,11 +1,6 @@
 import { useMemo, useRef } from 'react';
 
-import {
-  generateHash,
-  isArray,
-  isPlainObject,
-  serializeObject,
-} from '@winglet/common-utils';
+import { generateHash, isObject, serializeObject } from '@winglet/common-utils';
 
 /**
  * @description 객체의 스냅샷을 반환합니다.
@@ -49,9 +44,8 @@ const getSnapshotHash = <T extends object>(
 
 const isInvalidValue = (value: unknown): boolean => {
   if (!value) return true;
-  else if (isPlainObject(value)) {
+  else if (isObject(value)) {
     for (const _ in value) return false;
     return true;
-  } else if (isArray(value)) return value.length === 0;
-  return false;
+  } else return false;
 };

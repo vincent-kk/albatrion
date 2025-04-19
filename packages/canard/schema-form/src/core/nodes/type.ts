@@ -124,7 +124,12 @@ export type NodeEventPayload = {
   [NodeEventType.UpdateError]: JsonSchemaError[];
   [NodeEventType.UpdateChildren]: void;
   [NodeEventType.UpdateDependencies]: void;
-  [NodeEventType.UpdateComputedProperties]: void;
+  [NodeEventType.UpdateComputedProperties]: {
+    visible: boolean;
+    readOnly: boolean;
+    disabled: boolean;
+    watchValues: ReadonlyArray<any>;
+  };
   [NodeEventType.RequestValidate]: void;
 };
 

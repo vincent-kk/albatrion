@@ -94,6 +94,12 @@ describe('NumberNode', () => {
         NodeEventType.UpdateComputedProperties,
       payload: {
         [NodeEventType.UpdateValue]: 35,
+        [NodeEventType.UpdateComputedProperties]: {
+          disabled: false,
+          readOnly: false,
+          visible: true,
+          watchValues: [],
+        },
       },
       options: {
         [NodeEventType.UpdateValue]: {

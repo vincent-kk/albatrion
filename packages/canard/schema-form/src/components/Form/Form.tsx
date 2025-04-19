@@ -123,12 +123,11 @@ const FormInner = <
         // @ts-expect-error: It can’t be checked due to runtime typing.
         rootNode?.setValue(value, options);
       },
-
       validate: () => {
         rootNode?.validate();
       },
     }),
-    [rootNode, defaultValue, update],
+    [rootNode, update],
   );
 
   return (

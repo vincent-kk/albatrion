@@ -308,6 +308,12 @@ describe('AbstractNode', () => {
         NodeEventType.UpdateComputedProperties,
       payload: {
         [NodeEventType.UpdateValue]: {},
+        [NodeEventType.UpdateComputedProperties]: {
+          disabled: false,
+          readOnly: false,
+          visible: true,
+          watchValues: [],
+        },
       },
       options: {
         [NodeEventType.UpdateValue]: {

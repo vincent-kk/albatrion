@@ -1,11 +1,15 @@
 import { Fragment, memo, useMemo } from 'react';
 
 import { nullFunction } from '@winglet/common-utils';
-import { useReference, withErrorBoundary } from '@winglet/react-utils';
+import {
+  useMemorize,
+  useReference,
+  withErrorBoundary,
+} from '@winglet/react-utils';
 
 import { NodeEventType, NodeState } from '@/schema-form/core';
 import { useSchemaNode } from '@/schema-form/hooks/useSchemaNode';
-import { useSchemaNodeListener } from '@/schema-form/hooks/useSchemaNodeListener';
+import { useSchemaNodeInputControl } from '@/schema-form/hooks/useSchemaNodeInputControl';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
   useFormTypeRendererContext,
@@ -17,7 +21,6 @@ import { SchemaNodeAdapterWrapper } from '../SchemaNodeAdapter';
 import type { SchemaNodeProxyProps } from './type';
 
 const RERENDERING_EVENT =
-  NodeEventType.Redraw |
   NodeEventType.UpdateValue |
   NodeEventType.UpdateState |
   NodeEventType.UpdateError |
@@ -33,15 +36,16 @@ export const SchemaNodeProxy = memo(
     Wrapper: InputWrapper,
   }: SchemaNodeProxyProps) => {
     const node = useSchemaNode(inputNode || path);
+    const refresh = useSchemaNodeTracker(node, RERENDERING_EVENT);
 
     const inputPropsRef = useReference({
       PreferredFormTypeInput,
       overridableProps: overridableFormTypeInputProps,
     });
-
     const Input = useMemo<FormTypeRendererProps['Input']>(() => {
       return SchemaNodeAdapterWrapper(node, inputPropsRef, SchemaNodeProxy);
-    }, [node, inputPropsRef]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [node]);
 
     const {
       FormTypeRenderer: ContextFormTypeRenderer,
@@ -49,46 +53,40 @@ export const SchemaNodeProxy = memo(
       checkShowError,
     } = useFormTypeRendererContext();
 
-    const InputFormTypeRendererRef = useReference(InputFormTypeRenderer);
-    const FormTypeRenderer = useMemo(
-      () =>
-        withErrorBoundary(
-          InputFormTypeRendererRef.current || ContextFormTypeRenderer,
-        ),
-      [InputFormTypeRendererRef, ContextFormTypeRenderer],
+    const FormTypeRenderer = useMemorize(
+      withErrorBoundary(InputFormTypeRenderer || ContextFormTypeRenderer),
     );
 
-    const Wrapper = useMemo(() => {
-      return InputWrapper || Fragment;
-    }, [InputWrapper]);
+    const Wrapper = useMemorize(InputWrapper || Fragment);
 
     const { context: userDefinedContext } = useUserDefinedContext();
 
-    const {
-      [NodeState.Dirty]: dirty,
-      [NodeState.Touched]: touched,
-      [NodeState.ShowError]: showError,
-    } = node?.state || {};
-    const errors = node?.errors;
-
     const formatError = useMemo(() => {
-      if (checkShowError({ dirty, touched, showError }) === false)
-        return nullFunction;
-      else return contextFormatError;
-    }, [dirty, touched, showError, checkShowError, contextFormatError]);
+      const state = node?.state || {};
+      if (
+        checkShowError({
+          dirty: state[NodeState.Dirty],
+          touched: state[NodeState.Touched],
+          showError: state[NodeState.ShowError],
+        })
+      )
+        return contextFormatError;
+      else return nullFunction;
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [node, refresh, checkShowError, contextFormatError]);
 
     const errorMessage = useMemo(() => {
+      const errors = node?.errors;
       if (!errors) return null;
       for (const error of errors) {
         const message = formatError(error);
         if (message) return message;
       }
       return null;
-    }, [errors, formatError]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [node, refresh, formatError]);
 
-    useSchemaNodeTracker(node, RERENDERING_EVENT);
-
-    const [version, formElementRef] = useSchemaNodeListener(node);
+    const [version, formElementRef] = useSchemaNodeInputControl(node);
 
     if (!node?.visible) return null;
 

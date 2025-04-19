@@ -473,7 +473,17 @@ export abstract class AbstractNode<
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
 
     if (!this.#visible) this.#resetValue();
-    this.publish({ type: NodeEventType.UpdateComputedProperties });
+    this.publish({
+      type: NodeEventType.UpdateComputedProperties,
+      payload: {
+        [NodeEventType.UpdateComputedProperties]: {
+          visible: this.#visible,
+          readOnly: this.#readOnly,
+          disabled: this.#disabled,
+          watchValues: this.#watchValues,
+        },
+      },
+    });
   }
 
   #resetValue(this: AbstractNode) {

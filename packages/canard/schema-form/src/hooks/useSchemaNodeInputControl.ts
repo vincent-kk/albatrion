@@ -5,7 +5,7 @@ import { useVersion } from '@winglet/react-utils';
 
 import { NodeEventType, type SchemaNode } from '@/schema-form/core';
 
-export const useSchemaNodeListener = <Node extends SchemaNode>(
+export const useSchemaNodeInputControl = <Node extends SchemaNode>(
   node: Node | null,
 ) => {
   const ref = useRef<HTMLElement>(null);

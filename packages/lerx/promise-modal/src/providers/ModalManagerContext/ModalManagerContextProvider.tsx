@@ -104,7 +104,7 @@ export const ModalManagerContextProvider = memo(
         else modal.onHide();
       }
       initiator.current = pathname;
-    }, [modalIdsRef, pathname]);
+    }, [pathname]);
 
     const getModalNode = useCallback((modalId: ModalNode['id']) => {
       return modalDictionary.current.get(modalId);
