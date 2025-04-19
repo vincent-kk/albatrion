@@ -19,7 +19,9 @@ export const getValidBatchLoader = <Key, Value>(
   return batchLoader;
 };
 
-export const getValidBatchScheduler = (batchScheduler?: Fn<[Fn]>): Fn<[Fn]> => {
+export const getValidBatchScheduler = (
+  batchScheduler?: Fn<[task: Fn]>,
+): Fn<[task: Fn]> => {
   if (batchScheduler === undefined) return postPromise;
   if (!isFunction(batchScheduler))
     throw new InvalidTypeError(
@@ -65,9 +67,10 @@ export const getValidCacheMap = <CacheKey, Value>(
 };
 
 export const getValidCacheKeyFn = <Key, CacheKey>(
-  cacheKeyFn?: Fn<[Key], CacheKey>,
-): Fn<[Key], CacheKey> => {
-  if (cacheKeyFn === undefined) return identityFunction as Fn<[Key], CacheKey>;
+  cacheKeyFn?: Fn<[key: Key], CacheKey>,
+): Fn<[key: Key], CacheKey> => {
+  if (cacheKeyFn === undefined)
+    return identityFunction as Fn<[key: Key], CacheKey>;
   if (!isFunction(cacheKeyFn))
     throw new InvalidTypeError(
       'INVALID_CACHE_KEY_FN',

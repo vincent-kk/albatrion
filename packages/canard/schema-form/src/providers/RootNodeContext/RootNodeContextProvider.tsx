@@ -37,7 +37,7 @@ interface RootNodeContextProviderProps<
   /** 이 SchemaForm의 값이 검증될 때 호출되는 함수 */
   onValidate: NonNullable<FormProps<Schema, Value>['onValidate']>;
   /** 이 SchemaForm의 루트 노드가 준비되었을 때 호출되는 함수 */
-  onReady: Fn<[SchemaNode]>;
+  onReady: Fn<[rootNode: SchemaNode]>;
   /**
    * Execute Validation Mode (default: ValidationMode.OnChange)
    *  - `ValidationMode.None`: 유효성 검증 비활성화

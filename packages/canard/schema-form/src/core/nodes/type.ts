@@ -1,4 +1,4 @@
-import type { SetStateFn } from '@aileron/declare';
+import type { Fn, SetStateFn } from '@aileron/declare';
 
 import type { Ajv } from '@/schema-form/helpers/ajv';
 import type {
@@ -88,9 +88,7 @@ export type NodeFactoryProps<Schema extends JsonSchemaWithVirtual> =
     BranchNodeConstructorProps<Schema> &
     VirtualNodeConstructorProps<Schema>;
 
-export interface Listener {
-  (event: NodeEvent): void;
-}
+export type NodeListener = Fn<[event: NodeEvent]>;
 
 export type NodeEvent = {
   type: NodeEventType;

@@ -7,8 +7,8 @@ export type BatchLoader<Key, Value> = (
 export type DataLoaderOptions<Key, Value, CacheKey = Key> = {
   name?: string;
   cache?: MapLike<CacheKey, Promise<Value>> | false;
-  batchScheduler?: Fn<[Fn]>;
-  cacheKeyFn?: Fn<[Key], CacheKey>;
+  batchScheduler?: Fn<[task: Fn]>;
+  cacheKeyFn?: Fn<[key: Key], CacheKey>;
 } & (
   | {
       maxBatchSize?: number;
@@ -29,8 +29,8 @@ export type Batch<Key, Value> = {
   isResolved: boolean;
   keys: Array<Key>;
   promises: Array<{
-    resolve: Fn<[Value]>;
-    reject: Fn<[Error]>;
+    resolve: Fn<[value: Value]>;
+    reject: Fn<[error: Error]>;
   }>;
   cacheHits?: Array<Fn>;
 };

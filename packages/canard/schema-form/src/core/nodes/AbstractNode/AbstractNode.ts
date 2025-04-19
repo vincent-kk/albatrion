@@ -23,9 +23,9 @@ import {
 } from '@/schema-form/types';
 
 import {
-  type Listener,
   type NodeEvent,
   NodeEventType,
+  type NodeListener,
   type NodeStateFlags,
   type SchemaNode,
   type SchemaNodeConstructorProps,
@@ -346,7 +346,7 @@ export abstract class AbstractNode<
   }
 
   /** Node의 이벤트 리스너 목록 */
-  #listeners: Set<Listener> = new Set();
+  #listeners: Set<NodeListener> = new Set();
 
   /** push 된 event를 모아서 한번에 발행 */
   #eventCascade = new EventCascade((event: NodeEvent) => {
@@ -377,7 +377,7 @@ export abstract class AbstractNode<
    * @param listener 이벤트 리스너
    * @returns 이벤트 리스너 제거 함수
    */
-  subscribe(this: AbstractNode, listener: Listener) {
+  subscribe(this: AbstractNode, listener: NodeListener) {
     this.#listeners.add(listener);
     return () => {
       this.#listeners.delete(listener);

@@ -22,8 +22,8 @@ export class EventCascade {
     });
     return nextBatch;
   }
-  #batchHandler: Fn<[NodeEvent]>;
-  constructor(batchHandler: Fn<[NodeEvent]>) {
+  #batchHandler: Fn<[event: NodeEvent]>;
+  constructor(batchHandler: Fn<[event: NodeEvent]>) {
     this.#batchHandler = batchHandler;
   }
   push(event: NodeEvent): void {

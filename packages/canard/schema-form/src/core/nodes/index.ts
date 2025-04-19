@@ -1,4 +1,4 @@
-export type { InferSchemaNode, SchemaNode } from './type';
+export type { InferSchemaNode, SchemaNode, NodeListener } from './type';
 export { NodeState, NodeEventType, ValidationMode } from './type';
 export { schemaNodeFactory } from './schemaNodeFactory';
 

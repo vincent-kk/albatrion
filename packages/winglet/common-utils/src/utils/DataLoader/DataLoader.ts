@@ -25,9 +25,9 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
 
   readonly #batchLoader: BatchLoader<Key, Value>;
   readonly #maxBatchSize: number;
-  readonly #batchScheduler: Fn<[Fn]>;
+  readonly #batchScheduler: Fn<[task: Fn]>;
   readonly #cacheMap: MapLike<CacheKey, Promise<Value>> | null;
-  readonly #cacheKeyFn: Fn<[Key], CacheKey>;
+  readonly #cacheKeyFn: Fn<[key: Key], CacheKey>;
 
   #currentBatch: Batch<Key, Value> | null = null;
 

@@ -1,22 +1,22 @@
 import type { Fn } from '@aileron/declare';
 
-const getPostPromise = (): Fn<[Fn]> => {
+const getPostPromise = (): Fn<[task: Fn]> => {
   try {
     if (typeof process?.nextTick === 'function') {
       const resolve = Promise.resolve();
-      return (fn: Fn) => {
-        resolve.then(() => process.nextTick(fn));
+      return (task: Fn) => {
+        resolve.then(() => process.nextTick(task));
       };
     }
   } catch {
     // NOTE: In a Browser environment, accessing `process` may throw an error.
   }
   if (typeof setImmediate === 'function')
-    return (fn: Fn) => {
-      setImmediate(fn);
+    return (task: Fn) => {
+      setImmediate(task);
     };
-  return (fn: Fn) => {
-    setTimeout(fn, 0);
+  return (task: Fn) => {
+    setTimeout(task, 0);
   };
 };
 
