@@ -386,8 +386,9 @@ export abstract class AbstractNode<
   prepare(this: AbstractNode, actor?: SchemaNode) {
     if (this.#prepared || (actor !== this.parentNode && !this.isRoot))
       return false;
-    this.#prepareUpdateDependencies();
     this.#prepared = true;
+    this.#prepareUpdateDependencies();
+    this.publish({ type: NodeEventType.Activated });
     return true;
   }
 
@@ -508,7 +509,7 @@ export abstract class AbstractNode<
    */
   validate(this: AbstractNode) {
     this.rootNode.publish({
-      type: NodeEventType.Validate,
+      type: NodeEventType.RequestValidate,
     });
   }
 
@@ -612,7 +613,7 @@ export abstract class AbstractNode<
         ? NodeEventType.UpdateValue
         : BITMASK_NONE) |
       (validationMode & ValidationMode.OnRequest
-        ? NodeEventType.Validate
+        ? NodeEventType.RequestValidate
         : BITMASK_NONE);
     this.subscribe(({ type }) => {
       if (type & triggers) this.#handleValidation();

@@ -25,7 +25,7 @@ import {
 
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   readonly #propertyKeys: string[] = [];
-  #ready: boolean = false;
+  #locked: boolean = true;
 
   #children: ChildNode[] = [];
   get children() {
@@ -57,6 +57,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     );
   }
   #propagate(this: ObjectNode, replace: boolean, option: SetStateOption) {
+    this.#locked = true;
     const target = this.#value || {};
     const draft = this.#draft || {};
     for (let i = 0; i < this.#children.length; i++) {
@@ -66,10 +67,11 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       if (replace || (key in draft && key in target))
         node.setValue(target[key], option);
     }
+    this.#locked = false;
   }
 
   #emitChange(this: ObjectNode, option: SetStateOption) {
-    if (!this.#ready) return;
+    if (this.#locked) return;
 
     const replace = !!(option & SetStateOption.Replace);
     const previous = this.#value ? { ...this.#value } : undefined;
@@ -187,7 +189,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       this.#nodeFactory,
     );
 
-    this.#ready = true;
+    this.#locked = false;
 
     this.#emitChange(SetStateOption.Merge);
     this.publish({

@@ -119,16 +119,13 @@ const FormInner = <
         rootNode?.findNode(dataPath)?.publish({
           type: NodeEventType.Select,
         }),
-      refresh: update,
+      reset: update,
       getValue: () => rootNode?.value as Value,
       setValue: (value, options) => {
         // @ts-expect-error: It can’t be checked due to runtime typing.
         rootNode?.setValue(value, options);
       },
-      reset: () => {
-        // @ts-expect-error: It can’t be checked due to runtime typing.
-        rootNode?.setValue(defaultValue);
-      },
+
       validate: () => {
         rootNode?.validate();
       },

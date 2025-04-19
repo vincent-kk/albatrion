@@ -99,28 +99,27 @@ export type NodeEvent = {
 };
 
 export enum NodeEventType {
-  Standby = 1 << 0,
+  Activated = 1 << 0,
   Focus = 1 << 1,
   Select = 1 << 2,
   Redraw = 1 << 3,
   Refresh = 1 << 4,
-  Validate = 1 << 5,
-  UpdatePath = 1 << 6,
-  UpdateValue = 1 << 7,
-  UpdateState = 1 << 8,
-  UpdateError = 1 << 9,
-  UpdateChildren = 1 << 10,
-  UpdateDependencies = 1 << 11,
-  UpdateComputedProperties = 1 << 12,
+  UpdatePath = 1 << 5,
+  UpdateValue = 1 << 6,
+  UpdateState = 1 << 7,
+  UpdateError = 1 << 8,
+  UpdateChildren = 1 << 9,
+  UpdateDependencies = 1 << 10,
+  UpdateComputedProperties = 1 << 11,
+  RequestValidate = 1 << 12,
 }
 
 export type NodeEventPayload = {
-  [NodeEventType.Standby]: void;
+  [NodeEventType.Activated]: void;
   [NodeEventType.Focus]: void;
   [NodeEventType.Select]: void;
   [NodeEventType.Redraw]: void;
   [NodeEventType.Refresh]: void;
-  [NodeEventType.Validate]: void;
   [NodeEventType.UpdatePath]: string;
   [NodeEventType.UpdateValue]: any;
   [NodeEventType.UpdateState]: NodeStateFlags;
@@ -128,15 +127,15 @@ export type NodeEventPayload = {
   [NodeEventType.UpdateChildren]: void;
   [NodeEventType.UpdateDependencies]: void;
   [NodeEventType.UpdateComputedProperties]: void;
+  [NodeEventType.RequestValidate]: void;
 };
 
 export type NodeEventOptions = {
-  [NodeEventType.Standby]: void;
+  [NodeEventType.Activated]: void;
   [NodeEventType.Focus]: void;
   [NodeEventType.Select]: void;
   [NodeEventType.Redraw]: void;
   [NodeEventType.Refresh]: void;
-  [NodeEventType.Validate]: void;
   [NodeEventType.UpdatePath]: {
     previous: string;
     current: string;
@@ -150,6 +149,7 @@ export type NodeEventOptions = {
   [NodeEventType.UpdateChildren]: void;
   [NodeEventType.UpdateDependencies]: void;
   [NodeEventType.UpdateComputedProperties]: void;
+  [NodeEventType.RequestValidate]: void;
 };
 
 export enum NodeState {

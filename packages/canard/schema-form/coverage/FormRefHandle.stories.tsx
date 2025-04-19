@@ -6,6 +6,7 @@ import {
   type FormTypeInputMap,
   type FormTypeInputProps,
   type JsonSchema,
+  type JsonSchemaError,
   SetStateOption,
 } from '../src';
 import type { ArrayNode } from '../src/core/nodes/ArrayNode/ArrayNode';
@@ -511,6 +512,87 @@ export const FormRefHandleWithGetData = () => {
           jsonSchema={schema}
           defaultValue={defaultValue.current}
           formTypeInputMap={formTypeMap}
+        />
+      </StoryLayout>
+    </div>
+  );
+};
+
+export const SetComplexValueWithSetValue = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      string: {
+        type: 'string',
+      },
+      number: {
+        type: 'number',
+      },
+      boolean: {
+        type: 'boolean',
+      },
+      array: {
+        type: 'array',
+        items: { type: 'number' },
+        minItems: 2,
+      },
+      object: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          age: { type: 'number' },
+        },
+      },
+      objectArray: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            age: { type: 'number' },
+          },
+        },
+        minItems: 3,
+      },
+      null: {
+        type: 'null',
+        nullable: true,
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>({});
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  const formHandle = useRef<FormHandle<typeof jsonSchema>>(null);
+  return (
+    <div>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue({
+            string: 'default value',
+            number: 10,
+            boolean: true,
+            array: [0, 0],
+            object: { name: 'adult', age: 19 },
+            objectArray: [
+              { name: 'anonymous', age: 0 },
+              { name: 'anonymous', age: 0 },
+              { name: 'anonymous', age: 0 },
+            ],
+            null: null,
+          })
+        }
+      >
+        set Value
+      </button>
+      <button onClick={() => formHandle.current?.reset()}>reset</button>
+      <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
+        <Form
+          ref={formHandle}
+          jsonSchema={jsonSchema}
+          onChange={setValue}
+          onValidate={setErrors}
         />
       </StoryLayout>
     </div>

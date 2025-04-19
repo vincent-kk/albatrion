@@ -302,6 +302,7 @@ describe('AbstractNode', () => {
     // 최초로 node tree를 만들때 발생하는 이벤트
     expect(receivedEvent).toEqual({
       type:
+        NodeEventType.Activated |
         NodeEventType.UpdateValue |
         NodeEventType.UpdateChildren |
         NodeEventType.UpdateComputedProperties,

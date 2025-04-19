@@ -51,9 +51,9 @@ describe('ObjectNode', () => {
     const objectNode = node?.findNode('user') as ObjectNode;
     expect(objectNode.value).toEqual({});
 
-    objectNode.setValue({ name: '홍길동', age: 30 });
+    objectNode.setValue({ name: 'John', age: 30 });
     await delay();
-    expect(objectNode.value).toEqual({ name: '홍길동', age: 30 });
+    expect(objectNode.value).toEqual({ name: 'John', age: 30 });
   });
 
   it('객체 노드의 기본값이 정상적으로 설정되어야 함', async () => {
@@ -67,7 +67,7 @@ describe('ObjectNode', () => {
               name: { type: 'string' },
               age: { type: 'number' },
             },
-            default: { name: '김철수', age: 25 },
+            default: { name: 'Lee', age: 25 },
           },
         },
       },
@@ -75,7 +75,7 @@ describe('ObjectNode', () => {
 
     const objectNode = node?.findNode('user') as ObjectNode;
     await delay();
-    expect(objectNode.value).toEqual({ name: '김철수', age: 25 });
+    expect(objectNode.value).toEqual({ name: 'Lee', age: 25 });
   });
 
   it('객체 노드의 이벤트가 정상적으로 발생해야 함', async () => {
@@ -103,18 +103,18 @@ describe('ObjectNode', () => {
     objectNode.subscribe(mockListener);
 
     // 값 변경
-    objectNode.setValue({ name: '이영희', age: 28 });
+    objectNode.setValue({ name: 'Ron', age: 28 });
     await delay();
 
     // 이벤트가 발생했는지 확인
     expect(mockListener).toHaveBeenCalledWith({
       type: NodeEventType.UpdateValue | NodeEventType.Refresh,
       payload: {
-        [NodeEventType.UpdateValue]: { name: '이영희', age: 28 },
+        [NodeEventType.UpdateValue]: { name: 'Ron', age: 28 },
       },
       options: {
         [NodeEventType.UpdateValue]: {
-          current: { name: '이영희', age: 28 },
+          current: { name: 'Ron', age: 28 },
           previous: {},
         },
       },
@@ -146,13 +146,13 @@ describe('ObjectNode', () => {
 
     // 자식 노드 값 설정
     // @ts-expect-error
-    nameNode?.setValue('홍길동');
+    nameNode?.setValue('John');
     // @ts-expect-error
     ageNode?.setValue(30);
     await delay();
 
     // 부모 노드 값 확인
-    expect(objectNode.value).toEqual({ name: '홍길동', age: 30 });
+    expect(objectNode.value).toEqual({ name: 'John', age: 30 });
   });
 
   it('객체 노드의 자식 노드 이벤트가 정상적으로 발생해야 함', async () => {
@@ -181,18 +181,18 @@ describe('ObjectNode', () => {
 
     // 자식 노드 값 변경
     // @ts-expect-error
-    nameNode?.setValue('홍길동');
+    nameNode?.setValue('John');
     await delay();
 
     // 부모 노드에 이벤트가 발생했는지 확인
     expect(mockListener).toHaveBeenCalledWith({
       type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.UpdateValue]: { name: '홍길동', age: undefined },
+        [NodeEventType.UpdateValue]: { name: 'John', age: undefined },
       },
       options: {
         [NodeEventType.UpdateValue]: {
-          current: { name: '홍길동', age: undefined },
+          current: { name: 'John', age: undefined },
           previous: {},
         },
       },
@@ -223,7 +223,7 @@ describe('ObjectNode', () => {
     const userAgeNode = objectNode.findNode('$.user.age') as NumberNode;
 
     // 필수 속성이 없는 경우, 필수 속성 누락 여부는 개별 항목에게 에러가 전달됨
-    objectNode.setValue({ name: '홍' });
+    objectNode.setValue({ name: 'J' });
     await delay();
     expect(userAgeNode.errors.length).toBeGreaterThan(0);
     expect(userAgeNode.errors.map(({ keyword }) => keyword)).toEqual([
@@ -231,7 +231,7 @@ describe('ObjectNode', () => {
     ]);
 
     // 유효한 값 설정
-    objectNode.setValue({ name: '홍길동', age: 30 });
+    objectNode.setValue({ name: 'John', age: 30 });
     await delay();
     expect(objectNode.errors).toEqual([]);
 
@@ -269,11 +269,11 @@ describe('ObjectNode', () => {
     await delay();
 
     // 추가 속성이 있는 값 설정
-    objectNode.setValue({ name: '홍길동', age: 30, email: 'hong@example.com' });
+    objectNode.setValue({ name: 'John', age: 30, email: 'hong@example.com' });
     await delay();
     expect(objectNode.errors).toEqual([]);
     expect(objectNode.value).toEqual({
-      name: '홍길동',
+      name: 'John',
       age: 30,
       email: 'hong@example.com',
     });
@@ -301,7 +301,7 @@ describe('ObjectNode', () => {
     await delay();
 
     // 추가 속성이 있는 값 설정
-    objectNode.setValue({ name: '홍길동', age: 30, email: 'hong@example.com' });
+    objectNode.setValue({ name: 'John', age: 30, email: 'hong@example.com' });
     await delay();
     expect(objectNode.errors.length).toBe(1);
     expect(objectNode.errors.map(({ keyword }) => keyword)).toEqual([
@@ -391,11 +391,11 @@ describe('ObjectNode', () => {
     await delay();
 
     // 추가 속성이 있는 값 설정
-    objectNode.setValue({ name: '홍길동', age: 30, email: 'hong@example.com' });
+    objectNode.setValue({ name: 'John', age: 30, email: 'hong@example.com' });
     await delay();
     expect(objectNode.errors).toEqual([]);
     expect(objectNode.value).toEqual({
-      name: '홍길동',
+      name: 'John',
       age: 30,
       email: 'hong@example.com',
     });

@@ -40,9 +40,9 @@ describe('StringNode', () => {
     const stringNode = node?.findNode('name') as StringNode;
     expect(stringNode.value).toBeUndefined();
 
-    stringNode.setValue('홍길동');
+    stringNode.setValue('Lee');
     await delay();
-    expect(stringNode.value).toBe('홍길동');
+    expect(stringNode.value).toBe('Lee');
   });
 
   it('문자열 노드의 기본값이 정상적으로 설정되어야 함', async () => {
@@ -52,7 +52,7 @@ describe('StringNode', () => {
         properties: {
           name: {
             type: 'string',
-            default: '김철수',
+            default: 'John',
           },
         },
       },
@@ -60,7 +60,7 @@ describe('StringNode', () => {
 
     const stringNode = node?.findNode('name') as StringNode;
     await delay();
-    expect(stringNode.value).toBe('김철수');
+    expect(stringNode.value).toBe('John');
   });
 
   it('문자열 노드의 이벤트가 정상적으로 발생해야 함', async () => {
@@ -82,22 +82,23 @@ describe('StringNode', () => {
     stringNode.subscribe(mockListener);
 
     // 값 변경
-    stringNode.setValue('이영희');
+    stringNode.setValue('Ron');
     await delay();
 
     // 이벤트가 발생했는지 확인
     expect(mockListener).toHaveBeenCalledWith({
       type:
-        NodeEventType.UpdateValue |
+        NodeEventType.Activated |
         NodeEventType.Refresh |
+        NodeEventType.UpdateValue |
         NodeEventType.UpdateComputedProperties,
       payload: {
-        [NodeEventType.UpdateValue]: '이영희',
+        [NodeEventType.UpdateValue]: 'Ron',
       },
       options: {
         [NodeEventType.UpdateValue]: {
           previous: undefined,
-          current: '이영희',
+          current: 'Ron',
         },
       },
     });
