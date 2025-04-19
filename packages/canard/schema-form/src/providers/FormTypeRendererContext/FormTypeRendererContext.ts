@@ -4,7 +4,7 @@ import type { Fn } from '@aileron/declare';
 
 import type { FormTypeRendererProps } from '@/schema-form/types';
 
-export interface FormTypeRendererContext {
+export interface FormTypeRendererContextProps {
   FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
   formatError?: FormTypeRendererProps['formatError'];
   checkShowError: Fn<
@@ -19,6 +19,7 @@ export interface FormTypeRendererContext {
   >;
 }
 
-export const FormTypeRendererContext = createContext<FormTypeRendererContext>(
-  {} as FormTypeRendererContext,
-);
+export const FormTypeRendererContext =
+  createContext<FormTypeRendererContextProps>(
+    {} as FormTypeRendererContextProps,
+  );

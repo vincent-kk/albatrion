@@ -7,7 +7,10 @@ import type { FormProps } from '@/schema-form/components/Form';
 import { ShowError } from '@/schema-form/types';
 
 import { useExternalFormContext } from '../ExternalFormContext';
-import { FormTypeRendererContext } from './FormTypeRendererContext';
+import {
+  FormTypeRendererContext,
+  type FormTypeRendererContextProps,
+} from './FormTypeRendererContext';
 
 const DEFAULT_SHOW_ERROR = ShowError.DirtyTouched;
 
@@ -40,7 +43,7 @@ export const FormTypeRendererContextProvider = ({
   } = useExternalFormContext();
 
   const checkShowError = useMemo<
-    FormTypeRendererContext['checkShowError']
+    FormTypeRendererContextProps['checkShowError']
   >(() => {
     const showError = inputShowError ?? externalShowError ?? DEFAULT_SHOW_ERROR;
     const errorState =
@@ -53,7 +56,7 @@ export const FormTypeRendererContextProvider = ({
       dirty,
       touched,
       showError,
-    }: Parameters<FormTypeRendererContext['checkShowError']>[0]) => {
+    }: Parameters<FormTypeRendererContextProps['checkShowError']>[0]) => {
       if (showError !== undefined) return showError;
       if (errorState & ShowError.Always) return true;
       if (errorState & ShowError.Never) return false;

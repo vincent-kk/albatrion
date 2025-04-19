@@ -1,10 +1,10 @@
 import { createContext } from 'react';
 
-export interface InputControlContext {
+export interface InputControlContextProps {
   readOnly?: boolean;
   disabled?: boolean;
 }
 
-export const InputControlContext = createContext<InputControlContext>(
-  {} as InputControlContext,
+export const InputControlContext = createContext<InputControlContextProps>(
+  {} as InputControlContextProps,
 );

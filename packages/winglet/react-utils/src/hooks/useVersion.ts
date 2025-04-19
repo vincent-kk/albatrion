@@ -15,6 +15,7 @@ export const useVersion = (callback?: Fn) => {
   const update = useCallback(() => {
     callbackRef.current?.();
     setVersion((prev) => prev + 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return [version, update] as const;
 };
