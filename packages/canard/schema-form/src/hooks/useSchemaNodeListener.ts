@@ -21,9 +21,7 @@ export const useSchemaNodeListener = <Node extends SchemaNode>(
           element.select();
       }
     });
-    return () => {
-      unsubscribe();
-    };
+    return unsubscribe;
   }, [node, update]);
   return [version, ref] as const;
 };

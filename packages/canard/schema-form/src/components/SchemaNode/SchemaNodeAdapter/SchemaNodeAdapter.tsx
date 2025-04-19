@@ -23,7 +23,7 @@ export const SchemaNodeAdapter = ({
     const unsubscribe = node.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateChildren) setChildren(node.children);
     });
-    return () => unsubscribe();
+    return unsubscribe;
   }, [node]);
   const childComponentBySchemaNodeKey = useRef(
     new Map<string, ChildComponent>(),

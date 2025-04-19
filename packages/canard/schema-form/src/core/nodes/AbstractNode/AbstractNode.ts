@@ -1,7 +1,7 @@
 import { BITMASK_NONE, isTruthy } from '@winglet/common-utils';
 import { JSONPath } from '@winglet/json-schema';
 
-import type { SetStateFn } from '@aileron/declare';
+import type { Fn, SetStateFn } from '@aileron/declare';
 
 import {
   type Ajv,
@@ -322,9 +322,10 @@ export abstract class AbstractNode<
     this.depth = this.#path.split(JSONPath.Child).filter(isTruthy).length - 1;
 
     if (this.parentNode) {
-      this.parentNode.subscribe(({ type }) => {
+      const unsubscribe = this.parentNode.subscribe(({ type }) => {
         if (type & NodeEventType.UpdatePath) this.updatePath();
       });
+      this.saveUnsubscribe(unsubscribe);
     }
 
     this.#compute = computeFactory(this.jsonSchema, this.rootNode.jsonSchema);
@@ -351,6 +352,25 @@ export abstract class AbstractNode<
   #eventCascade = new EventCascade((event: NodeEvent) => {
     for (const listener of this.#listeners) listener(event);
   });
+
+  /** 다른 node에 대한 unsubscribe 목록 */
+  #unsubscribes: Array<Fn> = [];
+
+  protected saveUnsubscribe(this: AbstractNode, unsubscribe: Fn) {
+    this.#unsubscribes.push(unsubscribe);
+  }
+
+  #clearUnsubscribes(this: AbstractNode) {
+    for (let index = 0; index < this.#unsubscribes.length; index++)
+      this.#unsubscribes[index]();
+    this.#unsubscribes = [];
+  }
+
+  cleanUp(this: AbstractNode, actor?: SchemaNode) {
+    if (actor !== this.parentNode && !this.isRoot) return;
+    this.#clearUnsubscribes();
+    this.#listeners.clear();
+  }
 
   /**
    * Node의 이벤트 리스너 등록
@@ -424,7 +444,7 @@ export abstract class AbstractNode<
         const targetNode = this.findNode(dependencyPath);
         if (!targetNode) continue;
         this.#dependencies[index] = targetNode.value;
-        targetNode.subscribe(({ type, payload }) => {
+        const unsubscribe = targetNode.subscribe(({ type, payload }) => {
           if (type & NodeEventType.UpdateValue) {
             if (
               this.#dependencies[index] !== payload?.[NodeEventType.UpdateValue]
@@ -436,6 +456,7 @@ export abstract class AbstractNode<
             }
           }
         });
+        this.saveUnsubscribe(unsubscribe);
       }
       this.subscribe(({ type }) => {
         if (type & NodeEventType.UpdateDependencies)

@@ -96,7 +96,7 @@ export const RootNodeContextProvider = <
         onValidate(payload?.[NodeEventType.UpdateError] || []);
     });
     onReady(rootNode);
-    return () => unsubscribe();
+    return unsubscribe;
   }, [rootNode, onValidate, onReady]);
 
   const lastErrorDictionary = useRef<

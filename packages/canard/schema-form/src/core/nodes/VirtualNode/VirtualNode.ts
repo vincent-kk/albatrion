@@ -78,7 +78,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
 
     for (let index = 0; index < this.#refNodes.length; index++) {
       const node = this.#refNodes[index];
-      node.subscribe(({ type, payload }) => {
+      const unsubscribe = node.subscribe(({ type, payload }) => {
         if (type & NodeEventType.UpdateValue) {
           const onChangePayload = payload?.[NodeEventType.UpdateValue];
           if (this.#value && this.#value[index] !== onChangePayload) {
@@ -103,6 +103,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
           }
         }
       });
+      this.saveUnsubscribe(unsubscribe);
     }
 
     this.#children = map(this.#refNodes, (node) => ({ node }));

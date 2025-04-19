@@ -240,6 +240,9 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   clear(this: ArrayNode) {
     this.#startOperation(OperationType.Clear);
 
+    for (let i = 0; i < this.#ids.length; i++)
+      this.#sourceMap.get(this.#ids[i])?.node.cleanUp(this);
+
     this.#ids = [];
     this.#sourceMap.clear();
 

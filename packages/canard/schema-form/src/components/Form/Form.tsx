@@ -102,9 +102,7 @@ const FormInner = <
       if (type & UPDATE_CHILDREN_MASK)
         setChildren(createChildren(childrenInput, jsonSchema, rootNode));
     });
-    return () => {
-      unsubscribe();
-    };
+    return unsubscribe;
   }, [childrenInput, jsonSchema, rootNode]);
 
   useImperativeHandle(
