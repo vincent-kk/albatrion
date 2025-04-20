@@ -13,7 +13,7 @@ export const useConstant: {
   <Return>(input: Fn<[], Return>): Return;
   <T>(input: T): T;
 } = <Return>(input: Fn<[], Return> | Return): Return => {
-  const ref = useRef<{ value: Return }>();
+  const ref = useRef<{ value: Return }>(undefined);
   if (!ref.current) {
     ref.current = {
       value: isFunction(input) ? input() : input,

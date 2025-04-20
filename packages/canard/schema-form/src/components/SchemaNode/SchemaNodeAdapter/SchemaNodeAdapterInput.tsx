@@ -42,7 +42,7 @@ export const SchemaNodeAdapterInput = memo(
       [node],
     );
 
-    const feedbackTimer = useRef<ReturnType<typeof setTimeout>>();
+    const feedbackTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
     const handleFocus = useCallback(() => {
       if (!feedbackTimer.current) return;
       clearTimeout(feedbackTimer.current);

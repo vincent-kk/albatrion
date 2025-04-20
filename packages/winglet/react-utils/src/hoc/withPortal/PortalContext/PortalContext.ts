@@ -1,7 +1,7 @@
 import { type ReactNode, type RefObject, createContext } from 'react';
 
 type PortalContextType = {
-  portalAnchorRef: RefObject<HTMLDivElement>;
+  portalAnchorRef: RefObject<HTMLDivElement | null>;
   register: (element: ReactNode) => string;
   unregister: (id: string) => void;
 };

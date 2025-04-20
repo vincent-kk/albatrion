@@ -104,6 +104,7 @@ export const ModalManagerContextProvider = memo(
         else modal.onHide();
       }
       initiator.current = pathname;
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pathname]);
 
     const getModalNode = useCallback((modalId: ModalNode['id']) => {
@@ -117,7 +118,7 @@ export const ModalManagerContextProvider = memo(
       updaterRef.current?.();
     }, []);
 
-    const updaterRef = useRef<Fn>();
+    const updaterRef = useRef<Fn>(undefined);
     const hideModal = useCallback(
       (modalId: ModalNode['id']) => {
         const modal = modalDictionary.current.get(modalId);

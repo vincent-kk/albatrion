@@ -27,7 +27,7 @@ export const useSchemaNodeInputControl = <Node extends SchemaNode>(
 };
 
 const DOM_SELECTOR = ['input[type=text]', 'input', 'button'] as const;
-const getInputElement = (ref: RefObject<HTMLElement>) => {
+const getInputElement = (ref: RefObject<HTMLElement | null>) => {
   for (const selector of DOM_SELECTOR) {
     const target = ref.current?.querySelector(selector);
     if (
