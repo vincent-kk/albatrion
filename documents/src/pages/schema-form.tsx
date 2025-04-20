@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { type ReactElement } from 'react';
 
 import Layout from '@theme/Layout';
 
 import styles from './schema-form.module.css';
 
-export default function SchemaForm(): JSX.Element {
+export default function SchemaForm(): ReactElement {
   return (
     <Layout title="Schema Form">
       <main className="container margin-vert--lg">
