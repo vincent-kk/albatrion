@@ -1,4 +1,5 @@
 export { clone } from './clone';
+export { getObjectKeys } from './getObjectKeys';
 export { getSymbols } from './getSymbols';
 export { merge } from './merge';
 export { removeUndefined } from './removeUndefined';

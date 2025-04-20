@@ -1,11 +1,9 @@
+import { getObjectKeys } from './getObjectKeys';
 import { serializeNative } from './serializeNative';
 
-export const serializeObject = (object: any, omitKeys?: string[]): string => {
+export const serializeObject = (object: any, emit?: string[]): string => {
   if (!object || typeof object !== 'object') return serializeNative(object);
-  const omit = omitKeys ? new Set(omitKeys) : null;
-  const keys: string[] = [];
-  for (const key of Object.keys(object).sort())
-    if (!omit?.has(key)) keys.push(key);
+  const keys = getObjectKeys(object, emit) as string[];
   const segments = new Array(keys.length);
   let key = keys.pop();
   let index = 0;
