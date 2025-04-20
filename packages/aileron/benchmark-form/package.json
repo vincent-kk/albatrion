@@ -1,0 +1,51 @@
+{
+  "name": "@aileron/benchmark-form",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts --all-versions",
+    "check": "tsx src/index.ts",
+    "generate-report": "tsx src/reporters/generate-report.ts",
+    "setup": "node scripts/setup-versions.js",
+    "visualize": "vite src/visualizer",
+    "build:visualize": "vite build src/visualizer"
+  },
+  "dependencies": {
+    "@canard/schema-form": "workspace:^",
+    "@canard/schema-form_0.0.40": "npm:@canard/schema-form@0.0.40",
+    "@canard/schema-form_0.0.41": "npm:@canard/schema-form@0.0.41",
+    "@canard/schema-form_0.0.42": "npm:@canard/schema-form@0.0.42",
+    "@canard/schema-form_0.0.43": "npm:@canard/schema-form@0.0.43",
+    "@canard/schema-form_0.0.44": "npm:@canard/schema-form@0.0.44",
+    "@canard/schema-form_0.0.45": "npm:@canard/schema-form@0.0.45",
+    "@canard/schema-form_0.0.46": "npm:@canard/schema-form@0.0.46",
+    "@canard/schema-form_0.0.47": "npm:@canard/schema-form@0.0.47",
+    "@canard/schema-form_0.0.48": "npm:@canard/schema-form@0.0.48",
+    "@canard/schema-form_0.0.49": "npm:@canard/schema-form@0.0.49",
+    "@canard/schema-form_0.0.50": "npm:@canard/schema-form@0.0.50",
+    "@canard/schema-form_0.0.51": "npm:@canard/schema-form@0.0.51",
+    "@canard/schema-form_0.0.52": "npm:@canard/schema-form@0.0.52",
+    "@react-genie-form/next": "^0.2.46",
+    "benchmark": "^2.1.4",
+    "d3": "^7.8.5",
+    "microtime": "^3.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tsx": "^4.7.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^14.2.1",
+    "@types/benchmark": "^2.1.5",
+    "@types/d3": "^7.4.3",
+    "@types/jsdom": "^21.1.7",
+    "@types/microtime": "^2.1.0",
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "jsdom": "^24.0.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12"
+  }
+}
