@@ -26,22 +26,24 @@ export const SchemaNodeProxy = memo(
   ({
     path,
     node: inputNode,
-    FormTypeInput,
     overrideProps,
+    FormTypeInput,
     FormTypeRenderer: InputFormTypeRenderer,
     Wrapper: InputWrapper,
   }: SchemaNodeProxyProps) => {
     const node = useSchemaNode(inputNode || path);
     const refresh = useSchemaNodeTracker(node, RERENDERING_EVENT);
 
-    const Input = useMemo<FormTypeRendererProps['Input']>(() => {
-      return SchemaNodeAdapterWrapper(
-        node,
-        overrideProps,
-        FormTypeInput,
-        SchemaNodeProxy,
-      );
-    }, [node, overrideProps, FormTypeInput]);
+    const Input = useMemo<FormTypeRendererProps['Input']>(
+      () =>
+        SchemaNodeAdapterWrapper(
+          node,
+          overrideProps,
+          FormTypeInput,
+          SchemaNodeProxy,
+        ),
+      [node, overrideProps, FormTypeInput],
+    );
 
     const {
       FormTypeRenderer: ContextFormTypeRenderer,

@@ -1,5 +1,6 @@
 import { type ComponentType, memo } from 'react';
 
+import { nullFunction } from '@winglet/common-utils';
 import {
   isReactComponent,
   useMemorize,
@@ -22,9 +23,8 @@ export const SchemaNodeAdapterWrapper = (
   OverridePreferredFormTypeInput: ComponentType<FormTypeInputProps> | undefined,
   NodeProxy: ComponentType<SchemaNodeProxyProps>,
 ) => {
-  return function SchemaNodeAdapterWrapperInner(
-    preferredOverrideProps: OverridableFormTypeInputProps,
-  ) {
+  if (!node) return nullFunction;
+  return (preferredOverrideProps: OverridableFormTypeInputProps) => {
     const overrideProps = useRestProperties({
       ...overrideFormTypeInputProps,
       ...preferredOverrideProps,
@@ -34,7 +34,6 @@ export const SchemaNodeAdapterWrapper = (
         ? memo(withErrorBoundary(OverridePreferredFormTypeInput))
         : undefined,
     );
-    if (!node) return null;
     return (
       <SchemaNodeAdapter
         node={node}
