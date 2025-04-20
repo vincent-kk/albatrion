@@ -10,6 +10,6 @@ export const useSubscribeModal = (modal?: ModalNode) => {
     if (!modal) return;
     const unsubscribe = modal.subscribe(update);
     return unsubscribe;
-  }, [modal]);
+  }, [modal, update]);
   return version;
 };
