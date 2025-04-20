@@ -6,6 +6,7 @@ export { useMemorize } from './useMemorize';
 export { useOnMount, useOnMountLayout } from './useOnMount';
 export { useOnUnmount, useOnUnmountLayout } from './useOnUnmount';
 export { useReference } from './useReference';
+export { useRestProperties } from './useRestProperties';
 export { useSnapshot, useSnapshotReference } from './useSnapshot';
 export { useVersion } from './useVersion';
 export { useWindowSize } from './useWindowSize';
