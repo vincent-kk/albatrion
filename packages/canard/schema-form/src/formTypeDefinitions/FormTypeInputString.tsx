@@ -15,6 +15,8 @@ const FormTypeInputString = ({
   jsonSchema,
   defaultValue,
   onChange,
+  style,
+  className,
 }: FormTypeInputProps<string>) => {
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
@@ -29,6 +31,8 @@ const FormTypeInputString = ({
       placeholder={jsonSchema?.placeholder}
       defaultValue={defaultValue}
       onChange={handleChange}
+      style={style}
+      className={className}
     />
   );
 };

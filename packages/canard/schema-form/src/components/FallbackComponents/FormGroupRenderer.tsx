@@ -8,6 +8,8 @@ export const FormGroupRenderer = ({
   name,
   Input,
   errorMessage,
+  style,
+  className,
 }: FormTypeRendererProps) => {
   if (depth === 0) return <Input />;
 
@@ -17,7 +19,9 @@ export const FormGroupRenderer = ({
         style={{
           marginBottom: 5,
           marginLeft: 5 * depth,
+          ...style,
         }}
+        className={className}
       >
         <legend>{node.name}</legend>
         <div>
@@ -34,7 +38,9 @@ export const FormGroupRenderer = ({
         style={{
           marginBottom: 5,
           marginLeft: 5 * depth,
+          ...style,
         }}
+        className={className}
       >
         {node.parentNode?.type !== 'array' && (
           <label htmlFor={path} style={{ marginRight: 5 }}>

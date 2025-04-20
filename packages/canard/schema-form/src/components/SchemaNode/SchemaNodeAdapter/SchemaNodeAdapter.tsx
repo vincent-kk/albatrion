@@ -1,6 +1,10 @@
 import { memo, useMemo, useRef, useState } from 'react';
 
-import { useMemorize, useSnapshot } from '@winglet/react-utils';
+import {
+  useMemorize,
+  useOnUnmount,
+  useRestProperties,
+} from '@winglet/react-utils';
 
 import { NodeEventType, isTerminalNode } from '@/schema-form/core';
 import { useSchemaNodeSubscribe } from '@/schema-form/hooks/useSchemaNodeSubscribe';
@@ -16,17 +20,20 @@ import type {
 export const SchemaNodeAdapter = memo(
   ({
     node,
-    overridableProps,
+    overrideProps,
     PreferredFormTypeInput,
     NodeProxy,
   }: SchemaNodeAdapterProps) => {
     const [children, setChildren] = useState<NodeChildren>(node.children);
-    useSchemaNodeSubscribe(node, ({ type }) => {
-      if (type & NodeEventType.UpdateChildren) setChildren(node.children);
-    });
     const childComponentBySchemaNodeKey = useRef(
       new Map<string, ChildComponent>(),
     );
+    useSchemaNodeSubscribe(node, ({ type }) => {
+      if (type & NodeEventType.UpdateChildren) setChildren(node.children);
+    });
+    useOnUnmount(() => {
+      childComponentBySchemaNodeKey.current.clear();
+    });
     const childNodes = useMemo(() => {
       if (isTerminalNode(node)) return [];
       const childNodes = [] as ChildComponent[];
@@ -41,12 +48,12 @@ export const SchemaNodeAdapter = memo(
             ...restProps
           }: ChildFormTypeInputProps) => {
             const FormTypeRenderer = useMemorize(InputFormTypeRenderer);
-            const overrideProps = useSnapshot(restProps);
+            const overrideProps = useRestProperties(restProps);
             return (
               <NodeProxy
                 node={node}
                 FormTypeRenderer={FormTypeRenderer}
-                overridableFormTypeInputProps={overrideProps}
+                overrideProps={overrideProps}
               />
             );
           };
@@ -61,7 +68,7 @@ export const SchemaNodeAdapter = memo(
     return (
       <SchemaNodeAdapterInput
         node={node}
-        overridableProps={overridableProps}
+        overrideProps={overrideProps}
         PreferredFormTypeInput={PreferredFormTypeInput}
         childNodes={childNodes}
       />

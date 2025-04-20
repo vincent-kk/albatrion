@@ -12,7 +12,7 @@ import type {
 export interface SchemaNodeProxyProps {
   path?: string;
   node?: SchemaNode;
-  overridableFormTypeInputProps?: OverridableFormTypeInputProps;
+  overrideProps?: OverridableFormTypeInputProps;
   FormTypeInput?: ComponentType<FormTypeInputProps>;
   FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;

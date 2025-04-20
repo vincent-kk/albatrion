@@ -22,7 +22,7 @@ const RERENDERING_EVENT =
 export const SchemaNodeAdapterInput = memo(
   ({
     node,
-    overridableProps,
+    overrideProps,
     PreferredFormTypeInput,
     childNodes,
   }: SchemaNodeAdapterInputProps) => {
@@ -81,7 +81,7 @@ export const SchemaNodeAdapterInput = memo(
           onChange={handleChange}
           style={node.jsonSchema.style}
           context={userDefinedContext}
-          {...overridableProps}
+          {...overrideProps}
         />
       </span>
     );

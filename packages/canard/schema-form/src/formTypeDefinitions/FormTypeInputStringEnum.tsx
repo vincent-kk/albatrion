@@ -31,6 +31,8 @@ const FormTypeInputStringEnum = ({
   readOnly,
   disabled,
   context,
+  style,
+  className,
 }: FormTypeInputPropsWithSchema<
   string,
   StringEnumJsonSchema,
@@ -60,6 +62,8 @@ const FormTypeInputStringEnum = ({
       disabled={disabled || readOnly}
       defaultValue={defaultValue}
       onChange={handleChange}
+      style={style}
+      className={className}
     >
       {map(enumOptions, ({ value, label }) => (
         <option key={value} value={value}>

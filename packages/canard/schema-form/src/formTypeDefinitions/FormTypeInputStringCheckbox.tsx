@@ -37,6 +37,8 @@ const FormTypeInputStringCheckbox = ({
   defaultValue,
   onChange,
   context,
+  style,
+  className,
 }: FormTypeInputPropsWithSchema<
   string[],
   StringCheckboxJsonSchema,
@@ -69,7 +71,7 @@ const FormTypeInputStringCheckbox = ({
   return (
     <div>
       {map(checkboxOptions, ({ value, label }) => (
-        <label key={value}>
+        <label key={value} style={style} className={className}>
           <input
             type="checkbox"
             id={path}

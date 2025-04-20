@@ -1,25 +1,20 @@
-import type { CSSProperties, ComponentType } from 'react';
+import type { ComponentType } from 'react';
 
 import { JSONPath } from '@winglet/json-schema';
 import { useMemorize, useSnapshot } from '@winglet/react-utils';
 
-import type { Dictionary } from '@aileron/declare';
-
 import { PluginManager } from '@/schema-form/app/plugin';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import { useExternalFormContext } from '@/schema-form/providers';
-import type { FormTypeInputProps } from '@/schema-form/types';
+import type {
+  FormTypeInputProps,
+  OverridableFormTypeInputProps,
+} from '@/schema-form/types';
 
 export type FormInputProps = {
   path?: string;
-  name?: string;
-  readOnly?: boolean;
-  disabled?: boolean;
   FormTypeInput?: ComponentType<FormTypeInputProps>;
-  style?: CSSProperties;
-  className?: string;
-  context?: Dictionary;
-};
+} & OverridableFormTypeInputProps;
 
 export const FormInput = ({
   path,
@@ -34,7 +29,7 @@ export const FormInput = ({
       path={path ?? JSONPath.Root}
       FormTypeInput={FormTypeInput}
       FormTypeRenderer={FormInputRenderer || PluginManager.FormInput}
-      overridableFormTypeInputProps={overrideProps}
+      overrideProps={overrideProps}
     />
   );
 };

@@ -24,6 +24,8 @@ const FormTypeInputDateFormant = ({
   disabled,
   defaultValue,
   onChange,
+  style,
+  className,
 }: FormTypeInputPropsWithSchema<string, DateFormatJsonSchema>) => {
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
@@ -47,6 +49,8 @@ const FormTypeInputDateFormant = ({
       min={min}
       defaultValue={defaultValue}
       onChange={handleChange}
+      style={style}
+      className={className}
     />
   );
 };

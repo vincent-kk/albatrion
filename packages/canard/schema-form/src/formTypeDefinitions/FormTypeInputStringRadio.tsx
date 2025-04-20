@@ -31,6 +31,8 @@ const FormTypeInputStringRadio = ({
   defaultValue,
   onChange,
   context,
+  style,
+  className,
 }: FormTypeInputPropsWithSchema<
   string,
   StringRadioJsonSchema,
@@ -57,7 +59,7 @@ const FormTypeInputStringRadio = ({
   return (
     <>
       {map(radioOptions, ({ value, label }) => (
-        <label key={value}>
+        <label key={value} style={style} className={className}>
           <input
             type="radio"
             id={path}

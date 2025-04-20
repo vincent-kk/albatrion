@@ -14,6 +14,8 @@ const FormTypeInputBoolean = ({
   disabled,
   defaultValue,
   onChange,
+  style,
+  className,
 }: FormTypeInputProps<boolean>) => {
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.checked);
@@ -26,6 +28,8 @@ const FormTypeInputBoolean = ({
       disabled={disabled || readOnly}
       defaultChecked={!!defaultValue}
       onChange={handleChange}
+      style={style}
+      className={className}
     />
   );
 };

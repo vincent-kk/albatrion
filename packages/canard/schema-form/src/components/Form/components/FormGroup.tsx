@@ -1,4 +1,4 @@
-import type { CSSProperties, ComponentType, PropsWithChildren } from 'react';
+import type { ComponentType, PropsWithChildren } from 'react';
 
 import { JSONPath } from '@winglet/json-schema';
 import { useMemorize, useSnapshot } from '@winglet/react-utils';
@@ -9,20 +9,15 @@ import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import type {
   FormTypeInputProps,
   FormTypeRendererProps,
+  OverridableFormTypeInputProps,
 } from '@/schema-form/types';
 
 export type FormGroupProps = {
   path?: string;
-  name?: string;
-  readOnly?: boolean;
-  disabled?: boolean;
   FormTypeInput?: ComponentType<FormTypeInputProps>;
   FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
-  style?: CSSProperties;
-  className?: string;
-  context?: Dictionary;
-};
+} & OverridableFormTypeInputProps;
 
 export const FormGroup = ({
   path,
@@ -40,7 +35,7 @@ export const FormGroup = ({
       path={path ?? JSONPath.Root}
       FormTypeInput={FormTypeInput}
       FormTypeRenderer={FormTypeRenderer}
-      overridableFormTypeInputProps={overrideProps}
+      overrideProps={overrideProps}
       Wrapper={Wrapper}
     />
   );

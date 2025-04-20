@@ -1,36 +1,41 @@
-import type { ComponentType } from 'react';
+import type { ComponentType, PropsWithChildren } from 'react';
 
 import { JSONPath } from '@winglet/json-schema';
-import { useMemorize } from '@winglet/react-utils';
+import { useMemorize, useSnapshot } from '@winglet/react-utils';
 
-import {
-  SchemaNodeProxy,
-  type SchemaNodeProxyProps,
-} from '@/schema-form/components/SchemaNode';
-import type { FormTypeRendererProps } from '@/schema-form/types';
+import type { Dictionary } from '@aileron/declare';
+
+import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
+import type {
+  FormTypeInputProps,
+  FormTypeRendererProps,
+  OverridableFormTypeInputProps,
+} from '@/schema-form/types';
 
 export type FormRenderProps = {
+  path?: string;
+  FormTypeInput?: ComponentType<FormTypeInputProps>;
   children: ComponentType<FormTypeRendererProps>;
-} & Omit<SchemaNodeProxyProps, 'FormTypeRenderer'>;
+  Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
+} & OverridableFormTypeInputProps;
 
 export const FormRender = ({
   path,
-  node,
   FormTypeInput: InputFormTypeInput,
-  overridableFormTypeInputProps,
   Wrapper: InputWrapper,
   children,
+  ...restProps
 }: FormRenderProps) => {
   const FormTypeInput = useMemorize(InputFormTypeInput);
   const FormTypeRenderer = useMemorize(children);
   const Wrapper = useMemorize(InputWrapper);
+  const overrideProps = useSnapshot(restProps);
   return (
     <SchemaNodeProxy
       path={path ?? JSONPath.Root}
-      node={node}
       FormTypeInput={FormTypeInput}
       FormTypeRenderer={FormTypeRenderer}
-      overridableFormTypeInputProps={overridableFormTypeInputProps}
+      overrideProps={overrideProps}
       Wrapper={Wrapper}
     />
   );

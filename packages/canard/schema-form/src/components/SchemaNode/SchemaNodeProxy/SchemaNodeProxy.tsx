@@ -1,11 +1,7 @@
 import { Fragment, memo, useMemo } from 'react';
 
 import { nullFunction } from '@winglet/common-utils';
-import {
-  useMemorize,
-  useReference,
-  withErrorBoundary,
-} from '@winglet/react-utils';
+import { useMemorize, withErrorBoundary } from '@winglet/react-utils';
 
 import { NodeEventType, NodeState } from '@/schema-form/core';
 import { useSchemaNode } from '@/schema-form/hooks/useSchemaNode';
@@ -30,22 +26,22 @@ export const SchemaNodeProxy = memo(
   ({
     path,
     node: inputNode,
-    overridableFormTypeInputProps,
-    FormTypeInput: PreferredFormTypeInput,
+    FormTypeInput,
+    overrideProps,
     FormTypeRenderer: InputFormTypeRenderer,
     Wrapper: InputWrapper,
   }: SchemaNodeProxyProps) => {
     const node = useSchemaNode(inputNode || path);
     const refresh = useSchemaNodeTracker(node, RERENDERING_EVENT);
 
-    const inputPropsRef = useReference({
-      PreferredFormTypeInput,
-      overridableProps: overridableFormTypeInputProps,
-    });
     const Input = useMemo<FormTypeRendererProps['Input']>(() => {
-      return SchemaNodeAdapterWrapper(node, inputPropsRef, SchemaNodeProxy);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [node]);
+      return SchemaNodeAdapterWrapper(
+        node,
+        overrideProps,
+        FormTypeInput,
+        SchemaNodeProxy,
+      );
+    }, [node, overrideProps, FormTypeInput]);
 
     const {
       FormTypeRenderer: ContextFormTypeRenderer,
@@ -108,6 +104,7 @@ export const SchemaNodeProxy = memo(
             errorMessage={errorMessage}
             formatError={formatError}
             context={userDefinedContext}
+            {...overrideProps}
           />
         </span>
       </Wrapper>

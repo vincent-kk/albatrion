@@ -7,7 +7,7 @@ import type { SchemaNode } from '@/schema-form/core';
 import type { JsonSchemaError } from './error';
 import type { OverridableFormTypeInputProps } from './formTypeInput';
 
-export interface FormTypeRendererProps {
+export interface FormTypeRendererProps extends OverridableFormTypeInputProps {
   isArrayItem: boolean;
   isRoot: boolean;
   depth: number;
@@ -22,6 +22,7 @@ export interface FormTypeRendererProps {
   errorMessage: ReactNode;
   formatError: FormatError;
   context: Dictionary;
+  [alt: string]: any;
 }
 
 export type FormatError = Fn<

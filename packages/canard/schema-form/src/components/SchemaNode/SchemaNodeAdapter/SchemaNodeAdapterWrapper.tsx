@@ -1,48 +1,44 @@
-import {
-  type ComponentType,
-  type MutableRefObject,
-  memo,
-  useMemo,
-} from 'react';
+import { type ComponentType, memo } from 'react';
 
 import {
   isReactComponent,
-  useSnapshot,
+  useMemorize,
+  useRestProperties,
   withErrorBoundary,
 } from '@winglet/react-utils';
 
 import type { SchemaNode } from '@/schema-form/core';
-import type { OverridableFormTypeInputProps } from '@/schema-form/types';
+import type {
+  FormTypeInputProps,
+  OverridableFormTypeInputProps,
+} from '@/schema-form/types';
 
 import type { SchemaNodeProxyProps } from '../SchemaNodeProxy';
 import { SchemaNodeAdapter } from './SchemaNodeAdapter';
-import type { PropsPackage } from './type';
 
 export const SchemaNodeAdapterWrapper = (
   node: SchemaNode | null,
-  propsRef: MutableRefObject<PropsPackage>,
+  overrideFormTypeInputProps: OverridableFormTypeInputProps | undefined,
+  OverridePreferredFormTypeInput: ComponentType<FormTypeInputProps> | undefined,
   NodeProxy: ComponentType<SchemaNodeProxyProps>,
 ) => {
   return function SchemaNodeAdapterWrapperInner(
-    preferredProps: OverridableFormTypeInputProps,
+    preferredOverrideProps: OverridableFormTypeInputProps,
   ) {
-    const overridableProps = useSnapshot({
-      ...propsRef.current.overridableProps,
-      ...preferredProps,
+    const overrideProps = useRestProperties({
+      ...overrideFormTypeInputProps,
+      ...preferredOverrideProps,
     });
-
-    const PreferredFormTypeInput = useMemo(() => {
-      return isReactComponent(propsRef.current.PreferredFormTypeInput)
-        ? memo(withErrorBoundary(propsRef.current.PreferredFormTypeInput))
-        : undefined;
-    }, []);
-
+    const PreferredFormTypeInput = useMemorize(
+      isReactComponent(OverridePreferredFormTypeInput)
+        ? memo(withErrorBoundary(OverridePreferredFormTypeInput))
+        : undefined,
+    );
     if (!node) return null;
-
     return (
       <SchemaNodeAdapter
         node={node}
-        overridableProps={overridableProps}
+        overrideProps={overrideProps}
         PreferredFormTypeInput={PreferredFormTypeInput}
         NodeProxy={NodeProxy}
       />

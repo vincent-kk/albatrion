@@ -183,3 +183,67 @@ export const IterableChildren = () => {
     </StoryLayout>
   );
 };
+
+export const FormWithSeparatedChildren = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      allowed: {
+        type: 'boolean',
+      },
+      name: {
+        type: 'string',
+        maxLength: 3,
+      },
+      age: {
+        type: 'number',
+      },
+      gender: {
+        type: 'string',
+        enum: ['male', 'female'],
+      },
+    },
+  } satisfies JsonSchema;
+
+  const defaultValue = useRef({
+    allowed: false,
+  });
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <Form
+        jsonSchema={jsonSchema}
+        defaultValue={defaultValue.current}
+        onChange={setValue}
+      >
+        <div>
+          <Form.Label path=".allowed" style={{ color: 'red' }} />
+          <Form.Input path=".allowed" style={{ color: 'blue' }} />
+          <Form.Error path=".allowed" style={{ color: 'green' }} />
+        </div>
+        <div>
+          <Form.Label path=".name" style={{ color: 'red' }} />
+          <Form.Input path=".name" style={{ color: 'blue' }} />
+          <Form.Error path=".name" style={{ color: 'green' }} />
+        </div>
+        <div>
+          <Form.Render path=".age" style={{ color: 'orange' }}>
+            {({ Input, path, style }) => {
+              return (
+                <div style={style}>
+                  <label htmlFor={path}>{path}</label>
+                  <Input />
+                </div>
+              );
+            }}
+          </Form.Render>
+        </div>
+        <div>
+          <Form.Group path=".gender" style={{ color: 'purple' }} />
+        </div>
+      </Form>
+    </StoryLayout>
+  );
+};

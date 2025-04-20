@@ -15,6 +15,8 @@ const FormTypeInputNumber = ({
   disabled,
   defaultValue,
   onChange,
+  style,
+  className,
 }: FormTypeInputProps<number>) => {
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.valueAsNumber);
@@ -30,6 +32,8 @@ const FormTypeInputNumber = ({
       placeholder={jsonSchema?.placeholder}
       defaultValue={defaultValue}
       onChange={handleChange}
+      style={style}
+      className={className}
     />
   );
 };
