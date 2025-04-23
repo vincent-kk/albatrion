@@ -230,8 +230,26 @@ export abstract class AbstractNode<
   get defaultValue() {
     return this.#defaultValue;
   }
+  /**
+   * Node의 기본값을 변경, 상속받은 Node에서만 수행 가능
+   * `constructor`에서 사용하기 위한 용도
+   * @param value input value for update defaultValue
+   */
   protected setDefaultValue(this: AbstractNode, value: Value | undefined) {
     this.#defaultValue = value;
+  }
+
+  /**
+   *
+   * Node의 기본값을 변경한 후, Refresh event 발행. 상속받은 Node에서만 수행 가능
+   * `constructor` 외부에서 사용하기 위한 용도
+   * @param value input value for update defaultValue
+   */
+  protected refresh(this: AbstractNode, value: Value | undefined) {
+    this.#defaultValue = value;
+    this.publish({
+      type: NodeEventType.Refresh,
+    });
   }
 
   /** Node의 값 */
@@ -393,13 +411,6 @@ export abstract class AbstractNode<
    */
   publish(this: AbstractNode, event: NodeEvent) {
     this.#eventCascade.push(event);
-  }
-
-  refresh(this: AbstractNode, defaultValue?: Value) {
-    this.#defaultValue = defaultValue;
-    this.publish({
-      type: NodeEventType.Refresh,
-    });
   }
 
   #prepared: boolean = false;
