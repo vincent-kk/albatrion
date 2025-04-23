@@ -230,8 +230,26 @@ export abstract class AbstractNode<
   get defaultValue() {
     return this.#defaultValue;
   }
+  /**
+   * Node의 기본값을 변경, 상속받은 Node에서만 수행 가능
+   * `constructor`에서 사용하기 위한 용도
+   * @param value input value for update defaultValue
+   */
   protected setDefaultValue(this: AbstractNode, value: Value | undefined) {
     this.#defaultValue = value;
+  }
+
+  /**
+   *
+   * Node의 기본값을 변경한 후, Refresh event 발행. 상속받은 Node에서만 수행 가능
+   * `constructor` 외부에서 사용하기 위한 용도
+   * @param value input value for update defaultValue
+   */
+  protected refresh(this: AbstractNode, value: Value | undefined) {
+    this.#defaultValue = value;
+    this.publish({
+      type: NodeEventType.Refresh,
+    });
   }
 
   /** Node의 값 */
@@ -254,15 +272,17 @@ export abstract class AbstractNode<
    * applyValue로 실제 데이터 반영 전에, input에 대한 전처리 과정 수행
    * @param input 설정할 값이나 값을 반환하는 함수
    * @param option 설정 옵션, 각각을 비트 연산자로 조합 가능
-   *   - Merge: 기존 값과 병합
-   *   - Replace: 기존 값 대체
-   *   - Propagate: 하위 Node에 전파
-   *   - Refresh: 자신의 값 대체 후 하위 Node에 전파
+   *   - `Overwrite`(default): `Replace` | `Propagate` | `Refresh`
+   *   - `Merge`: `Propagate` | `Refresh`
+   *   - `Replace`: Replace the current value
+   *   - `Propagate`: Propagate the update to child nodes
+   *   - `Refresh`: Trigger a refresh to update the FormTypeInput
+   *   - `Normal`: Only update the value
    */
   setValue(
     this: AbstractNode,
     input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
-    option: SetValueOption = SetValueOption.Refresh,
+    option: SetValueOption = SetValueOption.Overwrite,
   ): void {
     const inputValue = typeof input === 'function' ? input(this.value) : input;
     this.applyValue(inputValue, option);
@@ -393,13 +413,6 @@ export abstract class AbstractNode<
    */
   publish(this: AbstractNode, event: NodeEvent) {
     this.#eventCascade.push(event);
-  }
-
-  refresh(this: AbstractNode, defaultValue?: Value) {
-    this.#defaultValue = defaultValue;
-    this.publish({
-      type: NodeEventType.Refresh,
-    });
   }
 
   #prepared: boolean = false;

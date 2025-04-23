@@ -91,7 +91,7 @@ export const FormRefHandle = () => {
             {
               name: 'harry',
             },
-            SetValueOption.Propagate,
+            SetValueOption.Merge,
           )
         }
       >
@@ -103,7 +103,7 @@ export const FormRefHandle = () => {
             return {
               number: (prev?.number || 0) + 1,
             };
-          }, SetValueOption.Propagate)
+          }, SetValueOption.Merge)
         }
       >
         increase number
@@ -211,7 +211,7 @@ export const FormRefHandleWithOneOf = () => {
             {
               category: 'movie',
             },
-            SetValueOption.Propagate,
+            SetValueOption.Merge,
           )
         }
       >
@@ -223,7 +223,7 @@ export const FormRefHandleWithOneOf = () => {
             {
               category: 'game',
             },
-            SetValueOption.Propagate,
+            SetValueOption.Merge,
           )
         }
       >
@@ -233,7 +233,7 @@ export const FormRefHandleWithOneOf = () => {
         onClick={() =>
           formHandle.current?.setValue(
             { category: 'game', title: 'wow' },
-            SetValueOption.Propagate,
+            SetValueOption.Merge,
           )
         }
       >
@@ -339,7 +339,7 @@ export const FormRefHandleWithArray = () => {
                 },
               ],
             };
-          }, SetValueOption.Propagate)
+          }, SetValueOption.Merge)
         }
       >
         set value with function
@@ -395,6 +395,97 @@ export const FormRefHandleWithArray = () => {
           jsonSchema={schema}
           defaultValue={defaultValue.current}
           onChange={handleChange}
+        />
+      </StoryLayout>
+    </div>
+  );
+};
+
+export const FormRefHandleWithVirtualSchema = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      startDate: {
+        type: 'string',
+        format: 'date',
+      },
+      endDate: {
+        type: 'string',
+        format: 'date',
+      },
+    },
+    virtual: {
+      period: {
+        fields: ['startDate', 'endDate'],
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>({});
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const formHandle = useRef<FormHandle<typeof jsonSchema>>(null);
+
+  return (
+    <div>
+      <div>
+        <button
+          onClick={() =>
+            formHandle.current?.node
+              .findNode('.startDate')
+              .setValue('2025-04-01')
+          }
+        >
+          startDate "2025-04-01"
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.node
+              .findNode('.startDate')
+              .setValue('2025-04-05')
+          }
+        >
+          startDate "2025-04-05"
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.node.findNode('.endDate').setValue('2025-04-25')
+          }
+        >
+          endDate '2025-04-25'
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.node.findNode('.endDate').setValue('2025-04-30')
+          }
+        >
+          endDate '2025-04-30'
+        </button>
+      </div>
+      <button
+        onClick={() =>
+          formHandle.current?.node
+            .findNode('.period')
+            .setValue(['2025-03-13', '2025-04-26'])
+        }
+      >
+        period ['2025-03-13','2025-04-26']
+      </button>
+      <button
+        onClick={() =>
+          formHandle.current?.node
+            .findNode('.period')
+            .setValue(['2025-03-01', '2025-04-01'])
+        }
+      >
+        period ['2025-03-01','2025-04-01']
+      </button>
+
+      <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
+        <Form
+          ref={formHandle}
+          jsonSchema={jsonSchema}
+          onChange={setValue}
+          onValidate={setErrors}
         />
       </StoryLayout>
     </div>
@@ -483,7 +574,7 @@ export const FormRefHandleWithGetData = () => {
             return {
               number: (prev?.number || 0) + 1,
             };
-          }, SetValueOption.Propagate)
+          }, SetValueOption.Merge)
         }
       >
         increase number

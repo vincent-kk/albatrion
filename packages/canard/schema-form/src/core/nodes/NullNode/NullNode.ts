@@ -48,7 +48,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
         },
       },
     });
-    if (option & SetValueOption.Propagate) this.refresh(current);
+    if (option & SetValueOption.Refresh) this.refresh(current);
   }
 
   constructor({
@@ -72,7 +72,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
       ajv,
     });
     if (this.defaultValue !== undefined)
-      this.setValue(this.defaultValue, SetValueOption.Merge);
+      this.setValue(this.defaultValue, SetValueOption.Normal);
     this.prepare();
   }
 }
