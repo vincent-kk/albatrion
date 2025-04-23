@@ -9,6 +9,7 @@ export { isDataView } from './isDataView';
 export { isDate } from './isDate';
 export { isEmptyArray } from './isEmptyArray';
 export { isEmptyObject } from './isEmptyObject';
+export { isEmptyPlainObject } from './isEmptyPlainObject';
 export { isError } from './isError';
 export { isFile } from './isFile';
 export { isFunction } from './isFunction';
