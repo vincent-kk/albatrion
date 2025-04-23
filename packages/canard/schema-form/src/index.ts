@@ -17,6 +17,7 @@ export {
   NodeState,
   NodeEventType,
   ValidationMode,
+  SetValueOption,
   isArrayNode,
   isBooleanNode,
   isBranchNode,
@@ -28,7 +29,7 @@ export {
   isVirtualNode,
 } from './core';
 
-export { ShowError, SetStateOption } from './types';
+export { ShowError } from './types';
 
 export type {
   FormTypeInputDefinition,

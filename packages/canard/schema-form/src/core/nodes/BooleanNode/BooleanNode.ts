@@ -1,12 +1,12 @@
-import {
-  type BooleanSchema,
-  type BooleanValue,
-  SetStateOption,
-} from '@/schema-form/types';
+import type { BooleanSchema, BooleanValue } from '@/schema-form/types';
 
 import { parseBoolean } from '../../parsers';
 import { AbstractNode } from '../AbstractNode';
-import { NodeEventType, type SchemaNodeConstructorProps } from '../type';
+import {
+  NodeEventType,
+  type SchemaNodeConstructorProps,
+  SetValueOption,
+} from '../type';
 
 export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   #value: BooleanValue | undefined = undefined;
@@ -19,7 +19,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   protected applyValue(
     this: BooleanNode,
     input: BooleanValue | undefined,
-    option: SetStateOption,
+    option: SetValueOption,
   ) {
     this.#emitChange(input, option);
   }
@@ -30,7 +30,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   #emitChange(
     this: BooleanNode,
     input: BooleanValue | undefined,
-    option: SetStateOption,
+    option: SetValueOption,
   ) {
     const previous = this.#value;
     const current = this.#parseValue(input);
@@ -49,7 +49,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
         },
       },
     });
-    if (option & SetStateOption.Propagate) this.refresh(current);
+    if (option & SetValueOption.Propagate) this.refresh(current);
   }
 
   constructor({
@@ -73,7 +73,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
       ajv,
     });
     if (this.defaultValue !== undefined)
-      this.setValue(this.defaultValue, SetStateOption.Merge);
+      this.setValue(this.defaultValue, SetValueOption.Merge);
     this.prepare();
   }
 }

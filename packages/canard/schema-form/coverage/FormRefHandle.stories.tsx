@@ -7,7 +7,7 @@ import {
   type FormTypeInputProps,
   type JsonSchema,
   type JsonSchemaError,
-  SetStateOption,
+  SetValueOption,
 } from '../src';
 import type { ArrayNode } from '../src/core/nodes/ArrayNode/ArrayNode';
 import StoryLayout from './components/StoryLayout';
@@ -45,7 +45,7 @@ export const FormRefHandle = () => {
           onChange({ test: 'wow' });
         };
         const handleUnsetClick = () => {
-          onChange({}, SetStateOption.Replace);
+          onChange({}, SetValueOption.Replace);
         };
         return (
           <div>
@@ -91,7 +91,7 @@ export const FormRefHandle = () => {
             {
               name: 'harry',
             },
-            SetStateOption.Propagate,
+            SetValueOption.Propagate,
           )
         }
       >
@@ -103,7 +103,7 @@ export const FormRefHandle = () => {
             return {
               number: (prev?.number || 0) + 1,
             };
-          }, SetStateOption.Propagate)
+          }, SetValueOption.Propagate)
         }
       >
         increase number
@@ -211,7 +211,7 @@ export const FormRefHandleWithOneOf = () => {
             {
               category: 'movie',
             },
-            SetStateOption.Propagate,
+            SetValueOption.Propagate,
           )
         }
       >
@@ -223,7 +223,7 @@ export const FormRefHandleWithOneOf = () => {
             {
               category: 'game',
             },
-            SetStateOption.Propagate,
+            SetValueOption.Propagate,
           )
         }
       >
@@ -233,7 +233,7 @@ export const FormRefHandleWithOneOf = () => {
         onClick={() =>
           formHandle.current?.setValue(
             { category: 'game', title: 'wow' },
-            SetStateOption.Propagate,
+            SetValueOption.Propagate,
           )
         }
       >
@@ -339,7 +339,7 @@ export const FormRefHandleWithArray = () => {
                 },
               ],
             };
-          }, SetStateOption.Propagate)
+          }, SetValueOption.Propagate)
         }
       >
         set value with function
@@ -483,7 +483,7 @@ export const FormRefHandleWithGetData = () => {
             return {
               number: (prev?.number || 0) + 1,
             };
-          }, SetStateOption.Propagate)
+          }, SetValueOption.Propagate)
         }
       >
         increase number

@@ -3,11 +3,10 @@ import { isArray } from '@winglet/common-utils';
 import type { SetStateFn } from '@aileron/declare';
 
 import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
-import {
-  type AllowedValue,
-  type ArraySchema,
-  type ArrayValue,
-  SetStateOption,
+import type {
+  AllowedValue,
+  ArraySchema,
+  ArrayValue,
 } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
@@ -16,6 +15,7 @@ import {
   NodeEventType,
   type NodeFactory,
   type SchemaNode,
+  SetValueOption,
 } from '../type';
 import { OperationType } from './type';
 
@@ -57,7 +57,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   protected applyValue(
     this: ArrayNode,
     input: ArrayValue,
-    option: SetStateOption,
+    option: SetValueOption,
   ) {
     if (!isArray(input)) return;
     this.#locked = true;
@@ -67,7 +67,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     this.#emitChange(option);
   }
 
-  #emitChange(this: ArrayNode, option: SetStateOption) {
+  #emitChange(this: ArrayNode, option: SetValueOption) {
     if (this.#ready && this.#hasChanged) {
       const value = this.value;
       this.onChange(value);
@@ -84,7 +84,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
         },
       });
 
-      if (option & SetStateOption.Propagate) {
+      if (option & SetValueOption.Propagate) {
         this.#publishChildrenChange();
         this.refresh(value);
       }
@@ -170,7 +170,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#locked = false;
 
-    this.#emitChange(SetStateOption.Merge);
+    this.#emitChange(SetValueOption.Merge);
     this.#publishChildrenChange();
 
     this.prepare();
@@ -210,14 +210,14 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Push);
-    this.#emitChange(SetStateOption.Merge);
+    this.#emitChange(SetValueOption.Merge);
     this.#publishChildrenChange();
     return this;
   }
 
   update(this: ArrayNode, id: IndexId | number, data: ArrayValue[number]) {
     const targetId = typeof id === 'number' ? this.#ids[id] : id;
-    this.#sourceMap.get(targetId)?.node.setValue(data, SetStateOption.Refresh);
+    this.#sourceMap.get(targetId)?.node.setValue(data, SetValueOption.Refresh);
     return this;
   }
 
@@ -232,7 +232,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Remove);
-    this.#emitChange(SetStateOption.Merge);
+    this.#emitChange(SetValueOption.Merge);
     this.#publishChildrenChange();
     return this;
   }
@@ -248,7 +248,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Clear);
-    this.#emitChange(SetStateOption.Merge);
+    this.#emitChange(SetValueOption.Merge);
     this.#publishChildrenChange();
     return this;
   }
@@ -261,7 +261,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       this.#hasChanged = true;
 
       this.#finishOperation(OperationType.Update);
-      this.#emitChange(SetStateOption.Merge);
+      this.#emitChange(SetValueOption.Merge);
     }
     return this;
   }

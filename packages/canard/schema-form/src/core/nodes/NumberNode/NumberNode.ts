@@ -1,12 +1,12 @@
-import {
-  type NumberSchema,
-  type NumberValue,
-  SetStateOption,
-} from '@/schema-form/types';
+import type { NumberSchema, NumberValue } from '@/schema-form/types';
 
 import { parseNumber } from '../../parsers';
 import { AbstractNode } from '../AbstractNode';
-import { NodeEventType, type SchemaNodeConstructorProps } from '../type';
+import {
+  NodeEventType,
+  type SchemaNodeConstructorProps,
+  SetValueOption,
+} from '../type';
 
 export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   #value: NumberValue | undefined = undefined;
@@ -19,7 +19,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   protected applyValue(
     this: NumberNode,
     input: NumberValue | undefined,
-    option: SetStateOption,
+    option: SetValueOption,
   ) {
     this.#emitChange(input, option);
   }
@@ -30,7 +30,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   #emitChange(
     this: NumberNode,
     input: NumberValue | undefined,
-    option: SetStateOption,
+    option: SetValueOption,
   ) {
     const previous = this.#value;
     const current = this.#parseValue(input);
@@ -49,7 +49,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
         },
       },
     });
-    if (option & SetStateOption.Propagate) this.refresh(current);
+    if (option & SetValueOption.Propagate) this.refresh(current);
   }
 
   constructor({
@@ -73,7 +73,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
       ajv,
     });
     if (this.defaultValue !== undefined)
-      this.setValue(this.defaultValue, SetStateOption.Merge);
+      this.setValue(this.defaultValue, SetValueOption.Merge);
     this.prepare();
   }
 }

@@ -5,6 +5,7 @@ export {
   NodeState,
   NodeEventType,
   ValidationMode,
+  SetValueOption,
   isSchemaNode,
   isBooleanNode,
   isNumberNode,

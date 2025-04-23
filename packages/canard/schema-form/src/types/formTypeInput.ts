@@ -2,7 +2,11 @@ import type { CSSProperties, ComponentType } from 'react';
 
 import type { Dictionary, Fn, WithKey } from '@aileron/declare';
 
-import type { InferSchemaNode, SchemaNode } from '@/schema-form/core';
+import type {
+  InferSchemaNode,
+  SchemaNode,
+  SetValueOption,
+} from '@/schema-form/core';
 
 import type { FormTypeRendererProps } from './formTypeRenderer';
 import type { InferJsonSchema, JsonSchemaWithVirtual } from './jsonSchema';
@@ -153,12 +157,5 @@ export type FormTypeInputMap<T = unknown> = {
 
 export type SetStateFnWithOptions<S = unknown> = (
   value: S | ((prevState: S) => S),
-  options?: SetStateOption,
+  options?: SetValueOption,
 ) => void;
-
-export enum SetStateOption {
-  Merge = 0,
-  Replace = 1 << 0,
-  Propagate = 1 << 1,
-  Refresh = Replace | Propagate,
-}

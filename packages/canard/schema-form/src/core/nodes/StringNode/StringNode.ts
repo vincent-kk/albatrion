@@ -1,12 +1,12 @@
-import {
-  SetStateOption,
-  type StringSchema,
-  type StringValue,
-} from '@/schema-form/types';
+import type { StringSchema, StringValue } from '@/schema-form/types';
 
 import { parseString } from '../../parsers';
 import { AbstractNode } from '../AbstractNode';
-import { NodeEventType, type SchemaNodeConstructorProps } from '../type';
+import {
+  NodeEventType,
+  type SchemaNodeConstructorProps,
+  SetValueOption,
+} from '../type';
 
 export class StringNode extends AbstractNode<StringSchema, StringValue> {
   #value: StringValue | undefined = undefined;
@@ -19,7 +19,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
   protected applyValue(
     this: StringNode,
     input: StringValue | undefined,
-    option: SetStateOption,
+    option: SetValueOption,
   ) {
     this.#emitChange(input, option);
   }
@@ -30,7 +30,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
   #emitChange(
     this: StringNode,
     input: StringValue | undefined,
-    option: SetStateOption,
+    option: SetValueOption,
   ) {
     const previous = this.#value;
     const current = this.#parseValue(input);
@@ -49,7 +49,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
         },
       },
     });
-    if (option & SetStateOption.Propagate) this.refresh(current);
+    if (option & SetValueOption.Propagate) this.refresh(current);
   }
 
   constructor({
@@ -73,7 +73,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
       ajv,
     });
     if (this.defaultValue !== undefined)
-      this.setValue(this.defaultValue, SetStateOption.Merge);
+      this.setValue(this.defaultValue, SetValueOption.Merge);
     this.prepare();
   }
 }

@@ -1,16 +1,13 @@
 import { memo, useCallback, useMemo, useRef } from 'react';
 
-import { NodeEventType, NodeState } from '@/schema-form/core';
+import { NodeEventType, NodeState, SetValueOption } from '@/schema-form/core';
 import { useFormTypeInput } from '@/schema-form/hooks/useFormTypeInput';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
   useInputControlContext,
   useUserDefinedContext,
 } from '@/schema-form/providers';
-import {
-  type SetStateFnWithOptions,
-  SetStateOption,
-} from '@/schema-form/types';
+import type { SetStateFnWithOptions } from '@/schema-form/types';
 
 import type { SchemaNodeAdapterInputProps } from './type';
 
@@ -33,7 +30,7 @@ export const SchemaNodeAdapterInput = memo(
     );
 
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
-      (input, option = SetStateOption.Merge) => {
+      (input, option = SetValueOption.Merge) => {
         if (node.readOnly || node.disabled) return;
         node.setValue(input, option);
         node.clearReceivedErrors();

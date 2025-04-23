@@ -1,11 +1,7 @@
 import { sortObjectKeys } from '@winglet/common-utils';
 
 import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
-import {
-  type ObjectSchema,
-  type ObjectValue,
-  SetStateOption,
-} from '@/schema-form/types';
+import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
 import {
@@ -13,6 +9,7 @@ import {
   NodeEventType,
   type NodeFactory,
   type SchemaNode,
+  SetValueOption,
 } from '../type';
 import type { ChildNode } from './type';
 import {
@@ -44,7 +41,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   protected applyValue(
     this: ObjectNode,
     input: ObjectValue,
-    option: SetStateOption,
+    option: SetValueOption,
   ) {
     this.#draft = input;
     this.#emitChange(option);
@@ -56,7 +53,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       this.jsonSchema,
     );
   }
-  #propagate(this: ObjectNode, replace: boolean, option: SetStateOption) {
+  #propagate(this: ObjectNode, replace: boolean, option: SetValueOption) {
     this.#locked = true;
     const target = this.#value || {};
     const draft = this.#draft || {};
@@ -70,10 +67,10 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.#locked = false;
   }
 
-  #emitChange(this: ObjectNode, option: SetStateOption) {
+  #emitChange(this: ObjectNode, option: SetValueOption) {
     if (this.#locked) return;
 
-    const replace = !!(option & SetStateOption.Replace);
+    const replace = !!(option & SetValueOption.Replace);
     const previous = this.#value ? { ...this.#value } : undefined;
 
     if (this.#draft === undefined) {
@@ -101,7 +98,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       },
     });
 
-    if (option & SetStateOption.Propagate) {
+    if (option & SetValueOption.Propagate) {
       this.#propagate(replace, option);
       this.refresh(this.#value);
     }
@@ -174,7 +171,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
               typeof input === 'function' ? input(this.#draft[name]) : input;
             if (value !== undefined && this.#draft[name] === value) return;
             this.#draft[name] = value;
-            this.#emitChange(SetStateOption.Merge);
+            this.#emitChange(SetValueOption.Merge);
           },
           nodeFactory: this.#nodeFactory,
           parentNode: this,
@@ -192,7 +189,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     this.#locked = false;
 
-    this.#emitChange(SetStateOption.Merge);
+    this.#emitChange(SetValueOption.Merge);
     this.setDefaultValue(this.#value);
 
     this.publish({

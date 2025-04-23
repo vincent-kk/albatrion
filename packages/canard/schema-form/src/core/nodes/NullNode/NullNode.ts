@@ -1,11 +1,11 @@
-import {
-  type NullSchema,
-  type NullValue,
-  SetStateOption,
-} from '@/schema-form/types';
+import type { NullSchema, NullValue } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
-import { NodeEventType, type SchemaNodeConstructorProps } from '../type';
+import {
+  NodeEventType,
+  type SchemaNodeConstructorProps,
+  SetValueOption,
+} from '../type';
 
 export class NullNode extends AbstractNode<NullSchema, NullValue> {
   #value: NullValue | undefined;
@@ -18,7 +18,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
   protected applyValue(
     this: NullNode,
     input: NullValue | undefined,
-    option: SetStateOption,
+    option: SetValueOption,
   ) {
     this.#emitChange(input, option);
   }
@@ -29,7 +29,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
   #emitChange(
     this: NullNode,
     input: NullValue | undefined,
-    option: SetStateOption,
+    option: SetValueOption,
   ) {
     const previous = this.#value;
     const current = this.#parseValue(input);
@@ -48,7 +48,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
         },
       },
     });
-    if (option & SetStateOption.Propagate) this.refresh(current);
+    if (option & SetValueOption.Propagate) this.refresh(current);
   }
 
   constructor({
@@ -72,7 +72,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
       ajv,
     });
     if (this.defaultValue !== undefined)
-      this.setValue(this.defaultValue, SetStateOption.Merge);
+      this.setValue(this.defaultValue, SetValueOption.Merge);
     this.prepare();
   }
 }

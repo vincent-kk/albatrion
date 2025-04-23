@@ -167,3 +167,10 @@ export type NodeStateFlags = {
   [NodeState.ShowError]?: boolean;
   [key: string]: any;
 };
+
+export enum SetValueOption {
+  Merge = 0,
+  Replace = 1 << 0,
+  Propagate = 1 << 1,
+  Refresh = Replace | Propagate,
+}

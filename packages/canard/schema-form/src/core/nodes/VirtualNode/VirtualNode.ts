@@ -1,15 +1,12 @@
 import { map } from '@winglet/common-utils';
 
-import {
-  SetStateOption,
-  type VirtualNodeValue,
-  type VirtualSchema,
-} from '@/schema-form/types';
+import type { VirtualNodeValue, VirtualSchema } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
 import {
   NodeEventType,
   type SchemaNode,
+  SetValueOption,
   type VirtualNodeConstructorProps,
 } from '../type';
 
@@ -24,7 +21,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
   protected applyValue(
     this: VirtualNode,
     input: VirtualNodeValue | undefined,
-    option: SetStateOption,
+    option: SetValueOption,
   ) {
     this.#emitChange(input, option);
   }
@@ -38,7 +35,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
   #emitChange(
     this: VirtualNode,
     values: VirtualNodeValue | undefined,
-    option: SetStateOption,
+    option: SetValueOption,
   ) {
     if (values && values.length === this.#refNodes.length) {
       for (let i = 0; i < values.length; i++) {
@@ -46,7 +43,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
         const node = this.#refNodes[i];
         if (node.value !== value) node.setValue(value);
       }
-      if (option & SetStateOption.Propagate) this.refresh(values);
+      if (option & SetValueOption.Propagate) this.refresh(values);
     }
   }
 

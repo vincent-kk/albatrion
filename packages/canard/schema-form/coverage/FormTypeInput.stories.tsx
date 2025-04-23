@@ -13,7 +13,7 @@ import {
   type FormTypeInputMap,
   type FormTypeInputProps,
   type JsonSchema,
-  SetStateOption,
+  SetValueOption,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
 
@@ -135,10 +135,10 @@ export const FormTypeMap = () => {
           onChange({ test: 'wow' });
         };
         const handleUnsetClick = () => {
-          onChange({}, SetStateOption.Replace);
+          onChange({}, SetValueOption.Replace);
         };
         const removeClick = () => {
-          onChange(undefined, SetStateOption.Replace);
+          onChange(undefined, SetValueOption.Replace);
         };
         return (
           <div>

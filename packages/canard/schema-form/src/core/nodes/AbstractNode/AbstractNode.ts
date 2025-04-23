@@ -15,11 +15,10 @@ import {
   transformErrors,
 } from '@/schema-form/helpers/error';
 import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
-import {
-  type AllowedValue,
-  type JsonSchemaError,
-  type JsonSchemaWithVirtual,
-  SetStateOption,
+import type {
+  AllowedValue,
+  JsonSchemaError,
+  JsonSchemaWithVirtual,
 } from '@/schema-form/types';
 
 import {
@@ -29,6 +28,7 @@ import {
   type NodeStateFlags,
   type SchemaNode,
   type SchemaNodeConstructorProps,
+  SetValueOption,
   ValidationMode,
 } from '../type';
 import {
@@ -247,7 +247,7 @@ export abstract class AbstractNode<
   protected abstract applyValue(
     this: AbstractNode,
     input: Value | undefined,
-    option: SetStateOption,
+    option: SetValueOption,
   ): void;
 
   /**
@@ -262,7 +262,7 @@ export abstract class AbstractNode<
   setValue(
     this: AbstractNode,
     input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
-    option: SetStateOption = SetStateOption.Refresh,
+    option: SetValueOption = SetValueOption.Refresh,
   ): void {
     const inputValue = typeof input === 'function' ? input(this.value) : input;
     this.applyValue(inputValue, option);
