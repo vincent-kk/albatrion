@@ -401,6 +401,97 @@ export const FormRefHandleWithArray = () => {
   );
 };
 
+export const FormRefHandleWithVirtualSchema = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      startDate: {
+        type: 'string',
+        format: 'date',
+      },
+      endDate: {
+        type: 'string',
+        format: 'date',
+      },
+    },
+    virtual: {
+      period: {
+        fields: ['startDate', 'endDate'],
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>({});
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const formHandle = useRef<FormHandle<typeof jsonSchema>>(null);
+
+  return (
+    <div>
+      <div>
+        <button
+          onClick={() =>
+            formHandle.current?.node
+              .findNode('.startDate')
+              .setValue('2025-04-01')
+          }
+        >
+          startDate "2025-04-01"
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.node
+              .findNode('.startDate')
+              .setValue('2025-04-05')
+          }
+        >
+          startDate "2025-04-05"
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.node.findNode('.endDate').setValue('2025-04-25')
+          }
+        >
+          endDate '2025-04-25'
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.node.findNode('.endDate').setValue('2025-04-30')
+          }
+        >
+          endDate '2025-04-30'
+        </button>
+      </div>
+      <button
+        onClick={() =>
+          formHandle.current?.node
+            .findNode('.period')
+            .setValue(['2025-03-13', '2025-04-26'])
+        }
+      >
+        period ['2025-03-13','2025-04-26']
+      </button>
+      <button
+        onClick={() =>
+          formHandle.current?.node
+            .findNode('.period')
+            .setValue(['2025-03-01', '2025-04-01'])
+        }
+      >
+        period ['2025-03-01','2025-04-01']
+      </button>
+
+      <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
+        <Form
+          ref={formHandle}
+          jsonSchema={jsonSchema}
+          onChange={setValue}
+          onValidate={setErrors}
+        />
+      </StoryLayout>
+    </div>
+  );
+};
+
 export const FormRefHandleWithGetData = () => {
   const [value, setValue] = useState();
   const schema = {

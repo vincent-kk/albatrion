@@ -37,14 +37,13 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     values: VirtualNodeValue | undefined,
     option: SetValueOption,
   ) {
-    if (values && values.length === this.#refNodes.length) {
-      for (let i = 0; i < values.length; i++) {
-        const value = values[i];
-        const node = this.#refNodes[i];
-        if (node.value !== value) node.setValue(value);
-      }
-      if (option & SetValueOption.Refresh) this.refresh(values);
+    if (!values || values.length !== this.#refNodes.length) return;
+    for (let i = 0; i < values.length; i++) {
+      const value = values[i];
+      const node = this.#refNodes[i];
+      if (node.value !== value) node.setValue(value, option);
     }
+    if (option & SetValueOption.Refresh) this.refresh(values);
   }
 
   constructor({
@@ -80,11 +79,8 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
           const onChangePayload = payload?.[NodeEventType.UpdateValue];
           if (this.#value && this.#value[index] !== onChangePayload) {
             const previous = this.#value;
-            this.#value = [
-              ...this.#value.slice(0, index),
-              onChangePayload,
-              ...this.#value.slice(index + 1),
-            ];
+            this.#value = [...this.#value];
+            this.#value[index] = onChangePayload;
             this.publish({
               type: NodeEventType.UpdateValue,
               payload: {
