@@ -30,6 +30,7 @@ __metadata:
     "@canard/schema-form_0.0.50": "npm:@canard/schema-form@0.0.50"
     "@canard/schema-form_0.0.51": "npm:@canard/schema-form@0.0.51"
     "@canard/schema-form_0.0.52": "npm:@canard/schema-form@0.0.52"
+    "@canard/schema-form_0.0.53": "npm:@canard/schema-form@0.0.53"
     "@react-genie-form/next": "npm:^0.2.46"
     "@testing-library/react": "npm:^14.2.1"
     "@types/benchmark": "npm:^2.1.5"
@@ -1893,7 +1894,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@canard/schema-form@workspace:^, @canard/schema-form@workspace:packages/canard/schema-form, @canard/schema-form_0.0.52@npm:@canard/schema-form@0.0.52":
+"@canard/schema-form@workspace:^, @canard/schema-form@workspace:packages/canard/schema-form, @canard/schema-form_0.0.53@npm:@canard/schema-form@0.0.53":
   version: 0.0.0-use.local
   resolution: "@canard/schema-form@workspace:packages/canard/schema-form"
   dependencies:
@@ -2141,6 +2142,22 @@ __metadata:
     react: ">=16 <=19"
     react-dom: ">=16 <=19"
   checksum: 10c0/5a855b7bcc0d88d17d19352901241669ae3ac3a59233b7eaf667810a9e58cee63abd35dd830c4d3ed12156b9f5e9504586666962424a6ea951b2d2bbb0d00f22
+  languageName: node
+  linkType: hard
+
+"@canard/schema-form_0.0.52@npm:@canard/schema-form@0.0.52":
+  version: 0.0.52
+  resolution: "@canard/schema-form@npm:0.0.52"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.0.52"
+    "@winglet/json-schema": "npm:^0.0.52"
+    "@winglet/react-utils": "npm:^0.0.52"
+    ajv: "npm:^8.0.0"
+  peerDependencies:
+    ajv: ">=8"
+    react: ">=16 <20"
+    react-dom: ">=16 <20"
+  checksum: 10c0/7dc70e932999abc4ac2632ff8894e63de0275a01dcb665bdb3cd352f239a81e8e4a38ab13f1a38587d96551b0a324c482a5c02f3355965731a993de73f9442dd
   languageName: node
   linkType: hard
 
@@ -6902,6 +6919,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@winglet/common-utils@npm:^0.0.52":
+  version: 0.0.52
+  resolution: "@winglet/common-utils@npm:0.0.52"
+  checksum: 10c0/2cb9c9c3118ee5e363d93bfe354aad635efd3ed7a19cbbb475e042492a66070c4bea8760888f12c857db190fbaf1cf7432547d5faae3902c10e1117d3210d3fa
+  languageName: node
+  linkType: hard
+
 "@winglet/common-utils@workspace:^, @winglet/common-utils@workspace:packages/winglet/common-utils":
   version: 0.0.0-use.local
   resolution: "@winglet/common-utils@workspace:packages/winglet/common-utils"
@@ -7008,6 +7032,13 @@ __metadata:
   version: 0.0.51
   resolution: "@winglet/json-schema@npm:0.0.51"
   checksum: 10c0/68076033c63d9a85301622e45264a1f3aeb95aa3a5e60f3bf9cc9cfec44103eb70b25ba1204d829a867b1992fce1ca32ed18e9f0fa327ac9acdb47369b31f914
+  languageName: node
+  linkType: hard
+
+"@winglet/json-schema@npm:^0.0.52":
+  version: 0.0.52
+  resolution: "@winglet/json-schema@npm:0.0.52"
+  checksum: 10c0/7eed526c60acd7de059981233b219531a4bbe79044cb8fb66e0c073629c7c46c6f5c97ce71e809e0dd3dddad1e0ad1ade2d00f4050af166949e5984c35215395
   languageName: node
   linkType: hard
 
@@ -7177,6 +7208,18 @@ __metadata:
     react: ">=16 <=19"
     react-dom: ">=16 <=19"
   checksum: 10c0/be1f5438680229ae194edb019723e19ba5c1ff90c7bf94251a210a32271c37f982c535fea7547e16e0cb59e7b1caa41b8545d2f816c464a0d192243f1e614858
+  languageName: node
+  linkType: hard
+
+"@winglet/react-utils@npm:^0.0.52":
+  version: 0.0.52
+  resolution: "@winglet/react-utils@npm:0.0.52"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.0.52"
+  peerDependencies:
+    react: ">=16 <20"
+    react-dom: ">=16 <20"
+  checksum: 10c0/8d51500eabce5f80932f8798302317c9289d72e0e017f70619060090cffaa5585a1e3c79d9b89b15d24dfb0710573dafc1e1947c006d30eb289ad38cb9ee2298
   languageName: node
   linkType: hard
 
