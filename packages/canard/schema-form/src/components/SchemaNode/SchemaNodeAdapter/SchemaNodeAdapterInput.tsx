@@ -30,7 +30,7 @@ export const SchemaNodeAdapterInput = memo(
     );
 
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
-      (input, option = SetValueOption.Merge) => {
+      (input, option = SetValueOption.Propagate) => {
         if (node.readOnly || node.disabled) return;
         node.setValue(input, option);
         node.clearReceivedErrors();
