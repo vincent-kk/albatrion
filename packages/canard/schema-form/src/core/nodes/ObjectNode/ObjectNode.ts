@@ -24,16 +24,16 @@ import {
 } from './utils';
 
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
-  readonly #propertyKeys: string[] = [];
+  readonly #propertyKeys: string[];
   #locked: boolean = true;
 
-  #children: ChildNode[] = [];
+  #children: ChildNode[];
   get children() {
     return this.#children;
   }
 
-  #value: ObjectValue | undefined = {};
-  #draft: ObjectValue | undefined = {};
+  #value: ObjectValue | undefined;
+  #draft: ObjectValue | undefined;
 
   get value() {
     return this.#value;
@@ -78,7 +78,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     if (this.#draft === undefined) {
       this.#value = undefined;
-    } else if (replace) {
+    } else if (replace || this.#value === undefined) {
       this.#value = this.#parseValue(this.#draft);
     } else {
       this.#value = this.#parseValue({
@@ -144,7 +144,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     this.#nodeFactory = nodeFactory;
 
-    if (this.defaultValue !== undefined) this.#value = this.defaultValue;
+    this.#value = this.defaultValue;
+    this.#draft = {};
 
     this.#propertyKeys = jsonSchema.properties
       ? Object.keys(jsonSchema.properties)
@@ -192,6 +193,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.#locked = false;
 
     this.#emitChange(SetStateOption.Merge);
+    this.setDefaultValue(this.#value);
+
     this.publish({
       type: NodeEventType.UpdateChildren,
     });

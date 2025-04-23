@@ -136,3 +136,32 @@ export const DefaultValueByValue = () => {
     </StoryLayout>
   );
 };
+
+export const SetDefaultValueOnParentAndChild = () => {
+  const schema = {
+    type: 'object',
+    properties: {
+      profile: {
+        type: 'object',
+        default: {
+          name: 'ron',
+        },
+        properties: {
+          name: { type: 'string', default: 'harry' },
+          age: { type: 'number', default: 9 },
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>({});
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  return (
+    <div>
+      <StoryLayout jsonSchema={schema} errors={errors} value={value}>
+        <Form jsonSchema={schema} onChange={setValue} onValidate={setErrors} />
+      </StoryLayout>
+    </div>
+  );
+};
