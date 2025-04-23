@@ -169,8 +169,16 @@ export type NodeStateFlags = {
 };
 
 export enum SetValueOption {
-  Merge = 0,
+  /** Only update the value */
+  Normal = 0,
+  /** Replace the current value */
   Replace = 1 << 0,
+  /** Propagate the update to child nodes */
   Propagate = 1 << 1,
-  Refresh = Replace | Propagate,
+  /** Trigger a refresh to update the FormTypeInput */
+  Refresh = 1 << 2,
+  /** Both propagate to children and trigger a refresh */
+  Merge = Propagate | Refresh,
+  /** Replace the value and propagate the update with refresh */
+  Overwrite = Replace | Propagate | Refresh,
 }

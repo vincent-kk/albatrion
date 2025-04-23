@@ -98,10 +98,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       },
     });
 
-    if (option & SetValueOption.Propagate) {
-      this.#propagate(replace, option);
-      this.refresh(this.#value);
-    }
+    if (option & SetValueOption.Propagate) this.#propagate(replace, option);
+    if (option & SetValueOption.Refresh) this.refresh(this.#value);
 
     this.#draft = {};
   }
@@ -171,7 +169,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
               typeof input === 'function' ? input(this.#draft[name]) : input;
             if (value !== undefined && this.#draft[name] === value) return;
             this.#draft[name] = value;
-            this.#emitChange(SetValueOption.Merge);
+            this.#emitChange(SetValueOption.Normal);
           },
           nodeFactory: this.#nodeFactory,
           parentNode: this,
@@ -189,7 +187,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     this.#locked = false;
 
-    this.#emitChange(SetValueOption.Merge);
+    this.#emitChange(SetValueOption.Normal);
     this.setDefaultValue(this.#value);
 
     this.publish({

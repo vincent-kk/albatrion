@@ -91,7 +91,7 @@ export const FormRefHandle = () => {
             {
               name: 'harry',
             },
-            SetValueOption.Propagate,
+            SetValueOption.Merge,
           )
         }
       >
@@ -103,7 +103,7 @@ export const FormRefHandle = () => {
             return {
               number: (prev?.number || 0) + 1,
             };
-          }, SetValueOption.Propagate)
+          }, SetValueOption.Merge)
         }
       >
         increase number
@@ -211,7 +211,7 @@ export const FormRefHandleWithOneOf = () => {
             {
               category: 'movie',
             },
-            SetValueOption.Propagate,
+            SetValueOption.Merge,
           )
         }
       >
@@ -223,7 +223,7 @@ export const FormRefHandleWithOneOf = () => {
             {
               category: 'game',
             },
-            SetValueOption.Propagate,
+            SetValueOption.Merge,
           )
         }
       >
@@ -233,7 +233,7 @@ export const FormRefHandleWithOneOf = () => {
         onClick={() =>
           formHandle.current?.setValue(
             { category: 'game', title: 'wow' },
-            SetValueOption.Propagate,
+            SetValueOption.Merge,
           )
         }
       >
@@ -339,7 +339,7 @@ export const FormRefHandleWithArray = () => {
                 },
               ],
             };
-          }, SetValueOption.Propagate)
+          }, SetValueOption.Merge)
         }
       >
         set value with function
@@ -483,7 +483,7 @@ export const FormRefHandleWithGetData = () => {
             return {
               number: (prev?.number || 0) + 1,
             };
-          }, SetValueOption.Propagate)
+          }, SetValueOption.Merge)
         }
       >
         increase number

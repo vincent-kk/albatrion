@@ -272,15 +272,17 @@ export abstract class AbstractNode<
    * applyValue로 실제 데이터 반영 전에, input에 대한 전처리 과정 수행
    * @param input 설정할 값이나 값을 반환하는 함수
    * @param option 설정 옵션, 각각을 비트 연산자로 조합 가능
-   *   - Merge: 기존 값과 병합
-   *   - Replace: 기존 값 대체
-   *   - Propagate: 하위 Node에 전파
-   *   - Refresh: 자신의 값 대체 후 하위 Node에 전파
+   *   - `Overwrite`(default): `Replace` | `Propagate` | `Refresh`
+   *   - `Merge`: `Propagate` | `Refresh`
+   *   - `Replace`: Replace the current value
+   *   - `Propagate`: Propagate the update to child nodes
+   *   - `Refresh`: Trigger a refresh to update the FormTypeInput
+   *   - `Normal`: Only update the value
    */
   setValue(
     this: AbstractNode,
     input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
-    option: SetValueOption = SetValueOption.Refresh,
+    option: SetValueOption = SetValueOption.Overwrite,
   ): void {
     const inputValue = typeof input === 'function' ? input(this.value) : input;
     this.applyValue(inputValue, option);

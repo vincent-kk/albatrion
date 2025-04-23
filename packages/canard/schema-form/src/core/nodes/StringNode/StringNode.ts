@@ -49,7 +49,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
         },
       },
     });
-    if (option & SetValueOption.Propagate) this.refresh(current);
+    if (option & SetValueOption.Refresh) this.refresh(current);
   }
 
   constructor({
@@ -73,7 +73,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
       ajv,
     });
     if (this.defaultValue !== undefined)
-      this.setValue(this.defaultValue, SetValueOption.Merge);
+      this.setValue(this.defaultValue, SetValueOption.Normal);
     this.prepare();
   }
 }

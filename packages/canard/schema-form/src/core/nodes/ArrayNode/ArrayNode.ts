@@ -84,10 +84,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
         },
       });
 
-      if (option & SetValueOption.Propagate) {
-        this.#publishChildrenChange();
-        this.refresh(value);
-      }
+      if (option & SetValueOption.Propagate) this.#publishChildrenChange();
+      if (option & SetValueOption.Refresh) this.refresh(value);
 
       this.#hasChanged = false;
     }
@@ -170,7 +168,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#locked = false;
 
-    this.#emitChange(SetValueOption.Merge);
+    this.#emitChange(SetValueOption.Normal);
     this.#publishChildrenChange();
 
     this.prepare();
@@ -210,14 +208,14 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Push);
-    this.#emitChange(SetValueOption.Merge);
+    this.#emitChange(SetValueOption.Normal);
     this.#publishChildrenChange();
     return this;
   }
 
   update(this: ArrayNode, id: IndexId | number, data: ArrayValue[number]) {
     const targetId = typeof id === 'number' ? this.#ids[id] : id;
-    this.#sourceMap.get(targetId)?.node.setValue(data, SetValueOption.Refresh);
+    this.#sourceMap.get(targetId)?.node.setValue(data);
     return this;
   }
 
@@ -232,7 +230,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Remove);
-    this.#emitChange(SetValueOption.Merge);
+    this.#emitChange(SetValueOption.Normal);
     this.#publishChildrenChange();
     return this;
   }
@@ -248,7 +246,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Clear);
-    this.#emitChange(SetValueOption.Merge);
+    this.#emitChange(SetValueOption.Normal);
     this.#publishChildrenChange();
     return this;
   }
@@ -261,7 +259,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       this.#hasChanged = true;
 
       this.#finishOperation(OperationType.Update);
-      this.#emitChange(SetValueOption.Merge);
+      this.#emitChange(SetValueOption.Normal);
     }
     return this;
   }
