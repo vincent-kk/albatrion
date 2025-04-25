@@ -91,4 +91,11 @@ alwaysApply: true
 
 ---
 
+## Rule Compliance
+1. Adherence to Guidelines
+  - When writing code, follow the guidelines outlined here, along with any project-specific coding standards.
+	- Consistently applying these rules ensures maintainable, high-quality code across the entire project.
+
+---
+
 > Copyright © 2025 Vincent K. Kelvin. All rights reserved.
