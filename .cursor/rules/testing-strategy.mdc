@@ -11,7 +11,7 @@ alwaysApply: false
 Enabled: ✅
 Category: Testing
 Tags: vitest, storybook, unit-test, integration-test, e2e
-Applies To: **/tests/*.test.ts(x)
+Applies To: **/__tests__/*.test.ts(x)
 
 ⸻
 
@@ -47,7 +47,7 @@ Applies To: **/tests/*.test.ts(x)
 ⸻
 
 4. Test File Structure
-	•	Place test code next to target source code under a tests/ subfolder
+	•	Place test code next to target source code under a `__tests__`/ subfolder
 
 ⸻
 

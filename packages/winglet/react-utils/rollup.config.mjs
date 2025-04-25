@@ -68,7 +68,7 @@ export default [
           include: ['src/**/*'],
           exclude: [
             'node_modules',
-            '**/tests/**',
+            '**/__tests__/**',
             '**/*.test.tsx?',
             '**/*.spec.tsx?',
           ],

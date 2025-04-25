@@ -77,7 +77,7 @@ To maintain structural consistency and define clear module boundaries.
 **Rule**
 
 - Organize components into functional folders like `common/`, `layout/`, `modal/`, etc.
-- Name each component directory in PascalCase and include files like `Button.tsx`, `type.ts`, and `tests/`.
+- Name each component directory in PascalCase and include files like `Button.tsx`, `type.ts`, and `__tests__/`.
 - Class definition files should also follow PascalCase.
 
 **Reason**  

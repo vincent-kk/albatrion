@@ -202,7 +202,13 @@ module.exports = {
     /* Which modules to exclude */
     exclude: {
       /* path: an array of regular expressions in strings to match against */
-      path: ['node_modules', 'types', 'tests', 'type.ts', 'styles.module.css'],
+      path: [
+        'node_modules',
+        'types',
+        '__tests__',
+        'type.ts',
+        'styles.module.css',
+      ],
     },
 
     /* Which modules to exclusively include (array of regular expressions in strings)

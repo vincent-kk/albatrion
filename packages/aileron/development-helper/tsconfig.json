@@ -16,11 +16,11 @@
     "build",
     "coverage",
     "scripts",
-    "test",
-    "tests",
-    "**.test.tsx?",
-    "**.spec.tsx?",
-    "**.story.tsx",
-    "**.stories.tsx"
+    "__test__",
+    "__tests__",
+    "**/*.test.tsx?",
+    "**/*.spec.tsx?",
+    "**/*.story.tsx",
+    "**/*.stories.tsx"
   ]
 }
