@@ -1,4 +1,3 @@
-export * from './enum';
 export * from './filter';
 export * from './utils';
 export type * from './types/jsonSchema';

@@ -1,0 +1,1 @@
+export { JSONPath } from './enum';
