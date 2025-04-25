@@ -1,1 +1,1 @@
-export { JSONPointer } from './JSONPointer';
+export { JSONPointer } from './enum';
