@@ -4,12 +4,15 @@ import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
 import { readFileSync } from 'fs';
 import { dirname, resolve as resolvePath } from 'path';
+import copy from 'rollup-plugin-copy';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import typescript from 'rollup-plugin-typescript2';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+const packagesRoot = resolvePath(__dirname, '../../');
 
 const packageJson = JSON.parse(
   readFileSync(resolvePath(__dirname, './package.json'), 'utf8'),
@@ -40,6 +43,16 @@ export default [
       replace({
         preventAssignment: true,
       }),
+      copy({
+        targets: [
+          {
+            src: resolvePath(packagesRoot, 'aileron/common/**/*.d.ts'),
+            dest: 'dist/@aileron/declare',
+          },
+        ],
+        copyOnce: true,
+        flatten: true,
+      }),
       commonjs(),
       typescript({
         useTsconfigDeclarationDir: true,
@@ -51,9 +64,8 @@ export default [
             declarationDir: 'dist',
             emitDeclarationOnly: false,
             rootDir: 'src',
-            baseUrl: '.',
           },
-          include: ['src/**/*', '../@types/**/*'],
+          include: ['src/**/*'],
           exclude: [
             'node_modules',
             '**/__tests__/**',
