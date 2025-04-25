@@ -1,4 +1,4 @@
-import { BaseError, type ErrorDetails } from '@winglet/common-utils';
+import { BaseError, type ErrorDetails } from '@/common-utils/errors/BaseError';
 
 export class JSONPointerError extends BaseError {
   static readonly #group = 'JSON_POINTER';

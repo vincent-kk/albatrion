@@ -1,4 +1,5 @@
-import { isArray, isString } from '@winglet/common-utils';
+import { isArray } from '@/common-utils/utils/filter/isArray';
+import { isString } from '@/common-utils/utils/filter/isString';
 
 import { JSONPointer } from '../enum';
 import { JSONPointerError } from './error';

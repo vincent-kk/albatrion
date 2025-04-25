@@ -1,15 +1,16 @@
-import { isArray, isArrayIndex } from '@winglet/common-utils';
-
 import type { Dictionary } from '@aileron/declare';
+
+import { isArray } from '@/common-utils/utils/filter/isArray';
+import { isArrayIndex } from '@/common-utils/utils/filter/isArrayIndex';
 
 import { isForbiddenKey } from './isForbiddenKey';
 import { unescape } from './unescape';
 
-export const setValue = (
-  input: Dictionary,
+export const setValue = <Input extends Dictionary>(
+  input: Input,
   segments: string[],
   value: unknown,
-): unknown => {
+): Input => {
   const length = segments.length;
   if (length === 0) return input;
 

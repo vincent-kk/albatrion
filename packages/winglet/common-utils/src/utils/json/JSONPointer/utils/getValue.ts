@@ -2,7 +2,10 @@ import type { Dictionary } from '@aileron/declare';
 
 import { unescape } from './unescape';
 
-export const getValue = (input: Dictionary, segments: string[]): unknown => {
+export const getValue = <Input extends Dictionary>(
+  input: Input,
+  segments: string[],
+): unknown => {
   const length = segments.length;
   if (length === 0) return input;
 
