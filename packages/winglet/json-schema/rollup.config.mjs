@@ -85,6 +85,11 @@ export default [
         },
       }),
     ],
-    external: (path) => /node_modules/.test(path),
+    external: (path) => {
+      if (path.startsWith('@aileron')) return false;
+      if (path.startsWith('@winglet') && path !== '@winglet/react-utils')
+        return true;
+      return /node_modules/.test(path);
+    },
   },
 ];
