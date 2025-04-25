@@ -11,7 +11,7 @@ import type {
 
 type Dictionary<Value = any> = Record<string, Value>;
 
-type UnknownSchema = { type?: string; [key: string]: any };
+export type UnknownSchema = { type?: string; [key: string]: any };
 
 /** 입력된 값을 기반으로 적절한 Schema를 추론 */
 export type InferJsonSchema<
