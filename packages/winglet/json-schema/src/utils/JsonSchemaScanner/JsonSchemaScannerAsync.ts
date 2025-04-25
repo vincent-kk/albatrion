@@ -1,3 +1,4 @@
+import { JSONPointer } from '@/json-schema/enum';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import {
@@ -25,13 +26,13 @@ export class JsonSchemaScannerAsync<ContextType = void> {
   }
 
   public async scan(schema: UnknownSchema): Promise<void> {
-    await this.walk(schema, '#', 0);
+    await this.walk(schema, JSONPointer.Root);
   }
 
   private async walk(
     node: UnknownSchema,
     path: string,
-    depth: number,
+    depth: number = 0,
   ): Promise<void> {
     if (depth > this.#options.maxDepth) return;
     if (!this.#options.filter(node, path, depth, this.#options.context)) return;

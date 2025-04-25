@@ -10,6 +10,6 @@ export enum JSONPath {
 }
 
 export enum JSONPointer {
-  Root = '',
+  Root = '#',
   Child = '/',
 }

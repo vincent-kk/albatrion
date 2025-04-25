@@ -1,3 +1,4 @@
+import { JSONPointer } from '@/json-schema/enum';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import {
@@ -26,11 +27,11 @@ export class JsonSchemaScanner<ContextType = void> {
 
   /* ── public ── */
   public scan(schema: UnknownSchema): void {
-    this.walk(schema, '#', 0);
+    this.walk(schema, JSONPointer.Root);
   }
 
   /* ── 내부 순회 ── */
-  private walk(node: UnknownSchema, path: string, depth: number): void {
+  private walk(node: UnknownSchema, path: string, depth: number = 0): void {
     if (depth > this.#options.maxDepth) return;
     if (!this.#options.filter(node, path, depth, this.#options.context)) return;
 
