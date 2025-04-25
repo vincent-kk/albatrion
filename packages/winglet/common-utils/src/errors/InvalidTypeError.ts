@@ -8,8 +8,5 @@ export class InvalidTypeError extends BaseError {
   }
 }
 
-export const isInvalidTypeError = (
-  error: unknown,
-): error is InvalidTypeError => {
-  return error instanceof InvalidTypeError;
-};
+export const isInvalidTypeError = (error: unknown): error is InvalidTypeError =>
+  error instanceof InvalidTypeError;

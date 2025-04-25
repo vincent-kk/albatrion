@@ -8,6 +8,5 @@ export class UnhandledError extends BaseError {
   }
 }
 
-export const isUnhandledError = (error: unknown): error is UnhandledError => {
-  return error instanceof UnhandledError;
-};
+export const isUnhandledError = (error: unknown): error is UnhandledError =>
+  error instanceof UnhandledError;

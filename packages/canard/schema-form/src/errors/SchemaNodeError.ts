@@ -8,6 +8,5 @@ export class SchemaNodeError extends BaseError {
   }
 }
 
-export const isSchemaNodeError = (error: unknown): error is SchemaNodeError => {
-  return error instanceof SchemaNodeError;
-};
+export const isSchemaNodeError = (error: unknown): error is SchemaNodeError =>
+  error instanceof SchemaNodeError;
