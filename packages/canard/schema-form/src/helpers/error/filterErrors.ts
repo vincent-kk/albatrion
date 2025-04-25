@@ -1,5 +1,4 @@
-import { isArray } from '@winglet/common-utils';
-import { JSONPath } from '@winglet/json-schema';
+import { JSONPath, isArray } from '@winglet/common-utils';
 
 import type {
   JsonSchemaError,

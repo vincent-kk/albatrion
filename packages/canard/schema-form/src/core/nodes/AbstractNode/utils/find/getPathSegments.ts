@@ -1,5 +1,4 @@
-import { isTruthy } from '@winglet/common-utils';
-import { JSONPath } from '@winglet/json-schema';
+import { JSONPath, isTruthy } from '@winglet/common-utils';
 
 const ARRAY_PATTERN = /\[(\d+)\]/g;
 

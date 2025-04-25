@@ -1,5 +1,4 @@
-import { BITMASK_NONE, isTruthy } from '@winglet/common-utils';
-import { JSONPath } from '@winglet/json-schema';
+import { BITMASK_NONE, JSONPath, isTruthy } from '@winglet/common-utils';
 
 import type { Fn, SetStateFn } from '@aileron/declare';
 

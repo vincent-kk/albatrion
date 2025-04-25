@@ -1,4 +1,5 @@
-import { JSONPath, type JsonSchema } from '@winglet/json-schema';
+import { JSONPath } from '@winglet/common-utils';
+import type { JsonSchema } from '@winglet/json-schema';
 
 import { schemaNodeFactory } from '@/schema-form/core/nodes';
 

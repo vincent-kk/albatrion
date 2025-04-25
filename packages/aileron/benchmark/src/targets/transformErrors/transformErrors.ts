@@ -1,4 +1,4 @@
-import { JSONPath, JSONPointer } from '@winglet/json-schema';
+import { JSONPath, JSONPointer } from '@winglet/common-utils';
 
 import type { ErrorObject } from '@/schema-form/helpers/ajv';
 import type { JsonSchemaError } from '@/schema-form/types';

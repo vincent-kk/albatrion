@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
 
-import { JSONPath } from '@winglet/json-schema';
+import { JSONPath } from '@winglet/common-utils';
 import { useMemorize, useSnapshot } from '@winglet/react-utils';
 
 import { PluginManager } from '@/schema-form/app/plugin';
