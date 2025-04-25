@@ -1,6 +1,6 @@
+import { JSONPointer } from '@winglet/common-utils';
 import { describe, expect, it, vi } from 'vitest';
 
-import { JSONPointer } from '@/json-schema/enum';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JsonSchemaScanner } from '../JsonSchemaScanner';

@@ -1,6 +1,6 @@
+import { JSONPointer } from '@winglet/common-utils';
 import { describe, expect, it, vi } from 'vitest';
 
-import { JSONPointer } from '@/json-schema/enum';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JsonSchemaScanner } from '../JsonSchemaScanner';
@@ -114,6 +114,178 @@ describe('JsonSchemaScanner', () => {
         2,
         undefined,
       );
+    });
+  });
+
+  describe('스키마 참조 및 정의 저장 테스트', () => {
+    it('should store $ref schemas in external map with JsonPointer', () => {
+      const schemaMap = new Map<string, UnknownSchema>();
+      const visitor = {
+        enter: vi.fn((node: UnknownSchema, path: string) => {
+          if ((node as any).$ref) {
+            schemaMap.set(path, node);
+          }
+        }),
+        exit: vi.fn(),
+      };
+
+      const schema: UnknownSchema = {
+        type: 'object',
+        properties: {
+          user: { $ref: '#/definitions/user' },
+          address: { $ref: '#/definitions/address' },
+        },
+        definitions: {
+          user: {
+            type: 'object',
+            properties: {
+              name: { type: 'string' },
+              age: { type: 'number' },
+            },
+          },
+          address: {
+            type: 'object',
+            properties: {
+              street: { type: 'string' },
+              city: { type: 'string' },
+            },
+          },
+        },
+      };
+
+      const scanner = new JsonSchemaScanner(visitor);
+      scanner.scan(schema);
+
+      expect(schemaMap.size).toBe(2);
+      expect(schemaMap.has(`${JSONPointer.Root}/properties/user`)).toBe(true);
+      expect(schemaMap.has(`${JSONPointer.Root}/properties/address`)).toBe(
+        true,
+      );
+      expect(schemaMap.get(`${JSONPointer.Root}/properties/user`)).toEqual({
+        $ref: '#/definitions/user',
+      });
+      expect(schemaMap.get(`${JSONPointer.Root}/properties/address`)).toEqual({
+        $ref: '#/definitions/address',
+      });
+    });
+
+    it('should store $defs schemas directly in external map', () => {
+      const defsMap = new Map<string, UnknownSchema>();
+      const visitor = {
+        enter: vi.fn((node: UnknownSchema, path: string) => {
+          if ((node as any).$defs) {
+            for (const [key, value] of Object.entries((node as any).$defs)) {
+              defsMap.set(key, value as UnknownSchema);
+            }
+          }
+        }),
+        exit: vi.fn(),
+      };
+
+      const schema: UnknownSchema = {
+        type: 'object',
+        $defs: {
+          stringType: { type: 'string', minLength: 1 },
+          numberType: { type: 'number', minimum: 0 },
+        },
+        properties: {
+          name: { type: 'string' },
+        },
+      };
+
+      const scanner = new JsonSchemaScanner(visitor);
+      scanner.scan(schema);
+
+      expect(defsMap.size).toBe(2);
+      expect(defsMap.has('stringType')).toBe(true);
+      expect(defsMap.has('numberType')).toBe(true);
+      expect(defsMap.get('stringType')).toEqual({
+        type: 'string',
+        minLength: 1,
+      });
+      expect(defsMap.get('numberType')).toEqual({
+        type: 'number',
+        minimum: 0,
+      });
+    });
+
+    it('should handle both $ref and $defs in the same schema', () => {
+      const schemaMap = new Map<string, UnknownSchema>();
+      const defsMap = new Map<string, UnknownSchema>();
+
+      const visitor = {
+        enter: vi.fn((node: UnknownSchema, path: string) => {
+          if ((node as any).$ref) {
+            schemaMap.set(path, node);
+          }
+          if ((node as any).$defs) {
+            for (const [key, value] of Object.entries((node as any).$defs)) {
+              defsMap.set(key, value as UnknownSchema);
+            }
+          }
+        }),
+        exit: vi.fn(),
+      };
+
+      const schema: UnknownSchema = {
+        type: 'object',
+        $defs: {
+          email: { type: 'string', format: 'email' },
+          phone: { type: 'string', pattern: '^\\+?\\d{10,}$' },
+        },
+        properties: {
+          user: {
+            type: 'object',
+            properties: {
+              primaryContact: { $ref: '#/$defs/email' },
+              secondaryContact: { $ref: '#/$defs/phone' },
+            },
+          },
+        },
+      };
+
+      const scanner = new JsonSchemaScanner(visitor);
+      scanner.scan(schema);
+
+      // Check $defs storage
+      expect(defsMap.size).toBe(2);
+      expect(defsMap.has('email')).toBe(true);
+      expect(defsMap.has('phone')).toBe(true);
+      expect(defsMap.get('email')).toEqual({
+        type: 'string',
+        format: 'email',
+      });
+      expect(defsMap.get('phone')).toEqual({
+        type: 'string',
+        pattern: '^\\+?\\d{10,}$',
+      });
+
+      // Check $ref storage
+      expect(schemaMap.size).toBe(2);
+      expect(
+        schemaMap.has(
+          `${JSONPointer.Root}/properties/user/properties/primaryContact`,
+        ),
+      ).toBe(true);
+      expect(
+        schemaMap.has(
+          `${JSONPointer.Root}/properties/user/properties/secondaryContact`,
+        ),
+      ).toBe(true);
+      expect(
+        schemaMap.get(
+          `${JSONPointer.Root}/properties/user/properties/primaryContact`,
+        ),
+      ).toEqual({
+        $ref: '#/$defs/email',
+      });
+      expect(
+        schemaMap.get(
+          `${JSONPointer.Root}/properties/user/properties/secondaryContact`,
+        ),
+      ).toEqual({
+        $ref: '#/$defs/phone',
+      });
     });
   });
 });

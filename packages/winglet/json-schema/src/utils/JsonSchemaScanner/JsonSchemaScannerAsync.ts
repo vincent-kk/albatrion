@@ -1,4 +1,5 @@
-import { JSONPointer } from '@/json-schema/enum';
+import { JSONPointer } from '@winglet/common-utils';
+
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import {
