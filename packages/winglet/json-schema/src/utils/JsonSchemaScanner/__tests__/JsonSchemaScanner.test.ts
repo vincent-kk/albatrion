@@ -27,23 +27,29 @@ describe('JsonSchemaScanner', () => {
 
       // Root object visit
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema,
-        JSONPointer.Root,
-        0,
+        {
+          schema,
+          path: JSONPointer.Root,
+          depth: 0,
+        },
         undefined,
       );
 
       // Properties visits
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema.properties.name,
-        `${JSONPointer.Root}/properties/name`,
-        1,
+        {
+          schema: schema.properties.name,
+          path: `${JSONPointer.Root}/properties/name`,
+          depth: 1,
+        },
         undefined,
       );
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema.properties.age,
-        `${JSONPointer.Root}/properties/age`,
-        1,
+        {
+          schema: schema.properties.age,
+          path: `${JSONPointer.Root}/properties/age`,
+          depth: 1,
+        },
         undefined,
       );
     });
@@ -72,15 +78,19 @@ describe('JsonSchemaScanner', () => {
       // Should only visit root and first level
       expect(visitor.enter).toHaveBeenCalledTimes(2);
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema,
-        JSONPointer.Root,
-        0,
+        {
+          schema,
+          path: JSONPointer.Root,
+          depth: 0,
+        },
         undefined,
       );
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema.properties.user,
-        `${JSONPointer.Root}/properties/user`,
-        1,
+        {
+          schema: schema.properties.user,
+          path: `${JSONPointer.Root}/properties/user`,
+          depth: 1,
+        },
         undefined,
       );
     });
@@ -96,12 +106,21 @@ describe('JsonSchemaScanner', () => {
       });
 
       expect(enter).toHaveBeenCalledWith(
-        { type: 'string' },
-        '#', // path
-        0, // depth
-        undefined, // context
+        {
+          schema: { type: 'string' },
+          path: '#',
+          depth: 0,
+        },
+        undefined,
       );
-      expect(exit).toHaveBeenCalledWith({ type: 'string' }, '#', 0, undefined);
+      expect(exit).toHaveBeenCalledWith(
+        {
+          schema: { type: 'string' },
+          path: '#',
+          depth: 0,
+        },
+        undefined,
+      );
     });
 
     it('maxDepth 옵션이 동작하는지 확인', () => {
@@ -137,8 +156,8 @@ describe('JsonSchemaScanner', () => {
       };
 
       // 'number' 타입만 방문
-      const filter = (node: UnknownSchema) =>
-        node.type === 'number' || node.type === 'object';
+      const filter = ({ schema }: { schema: UnknownSchema }) =>
+        schema.type === 'number' || schema.type === 'object';
 
       const scanner = new JsonSchemaScanner({ enter, exit }, { filter });
 
@@ -174,9 +193,11 @@ describe('JsonSchemaScanner', () => {
 
       // $ref가 resolve되어 type: 'string' 노드를 방문
       expect(enter).toHaveBeenCalledWith(
-        { type: 'string' }, // resolveReference의 반환값
-        expect.any(String),
-        expect.any(Number),
+        {
+          schema: { type: 'string' },
+          path: expect.any(String),
+          depth: expect.any(Number),
+        },
         undefined,
       );
     });
@@ -193,9 +214,14 @@ describe('JsonSchemaScanner', () => {
 
       scanner.scan(schema);
 
-      expect(enter).toHaveBeenCalledWith({ type: 'string' }, '#', 0, {
-        user: 'vincent',
-      });
+      expect(enter).toHaveBeenCalledWith(
+        {
+          schema: { type: 'string' },
+          path: '#',
+          depth: 0,
+        },
+        { user: 'vincent' },
+      );
     });
   });
 
@@ -222,9 +248,12 @@ describe('JsonSchemaScanner', () => {
         undefined,
       );
       expect(visitor.enter).toHaveBeenCalledWith(
-        { type: 'string' },
-        `${JSONPointer.Root}/properties/ref -> (#/definitions/string)`,
-        2,
+        {
+          schema: { type: 'string' },
+          path: `${JSONPointer.Root}/properties/ref`,
+          depth: 2,
+          referencePath: '#/definitions/string',
+        },
         undefined,
       );
     });
@@ -258,7 +287,7 @@ describe('JsonSchemaScanner', () => {
 
       const schemaMap = new Map<string, UnknownSchema>();
       const visitor = {
-        enter: vi.fn((schema: UnknownSchema) => {
+        enter: vi.fn(({ schema }: { schema: UnknownSchema }) => {
           if ('$ref' in schema) {
             schemaMap.set(
               schema.$ref,
@@ -294,13 +323,15 @@ describe('JsonSchemaScanner', () => {
     it('should store $defs schemas directly in external map', () => {
       const defsMap = new Map<string, UnknownSchema>();
       const visitor = {
-        enter: vi.fn((schema: UnknownSchema, path: string) => {
-          if ('$defs' in schema) {
-            for (const [key, value] of Object.entries(schema.$defs)) {
-              defsMap.set(path + '/$defs/' + key, value as UnknownSchema);
+        enter: vi.fn(
+          ({ schema, path }: { schema: UnknownSchema; path: string }) => {
+            if ('$defs' in schema) {
+              for (const [key, value] of Object.entries(schema.$defs)) {
+                defsMap.set(path + '/$defs/' + key, value as UnknownSchema);
+              }
             }
-          }
-        }),
+          },
+        ),
         exit: vi.fn(),
       };
 
@@ -336,16 +367,20 @@ describe('JsonSchemaScanner', () => {
       const defsMap = new Map<string, UnknownSchema>();
 
       const visitor = {
-        enter: vi.fn((node: UnknownSchema, path: string) => {
-          if ((node as any).$ref) {
-            schemaMap.set(path, node);
-          }
-          if ((node as any).$defs) {
-            for (const [key, value] of Object.entries((node as any).$defs)) {
-              defsMap.set(key, value as UnknownSchema);
+        enter: vi.fn(
+          ({ schema, path }: { schema: UnknownSchema; path: string }) => {
+            if ((schema as any).$ref) {
+              schemaMap.set(path, schema);
             }
-          }
-        }),
+            if ((schema as any).$defs) {
+              for (const [key, value] of Object.entries(
+                (schema as any).$defs,
+              )) {
+                defsMap.set(key, value as UnknownSchema);
+              }
+            }
+          },
+        ),
         exit: vi.fn(),
       };
 
@@ -432,21 +467,27 @@ describe('JsonSchemaScannerAsync', () => {
       await scanner.scan(schema);
 
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema,
-        JSONPointer.Root,
-        0,
+        {
+          schema,
+          path: JSONPointer.Root,
+          depth: 0,
+        },
         undefined,
       );
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema.properties.name,
-        `${JSONPointer.Root}/properties/name`,
-        1,
+        {
+          schema: schema.properties.name,
+          path: `${JSONPointer.Root}/properties/name`,
+          depth: 1,
+        },
         undefined,
       );
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema.properties.age,
-        `${JSONPointer.Root}/properties/age`,
-        1,
+        {
+          schema: schema.properties.age,
+          path: `${JSONPointer.Root}/properties/age`,
+          depth: 1,
+        },
         undefined,
       );
     });
@@ -475,9 +516,12 @@ describe('JsonSchemaScannerAsync', () => {
         undefined,
       );
       expect(visitor.enter).toHaveBeenCalledWith(
-        { type: 'string' },
-        `${JSONPointer.Root}/properties/ref -> (#/definitions/string)`,
-        2,
+        {
+          schema: { type: 'string' },
+          path: `${JSONPointer.Root}/properties/ref`,
+          depth: 2,
+          referencePath: '#/definitions/string',
+        },
         undefined,
       );
     });

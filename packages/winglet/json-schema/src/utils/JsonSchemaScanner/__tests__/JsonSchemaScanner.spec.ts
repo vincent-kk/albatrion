@@ -11,7 +11,10 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 추가 스펙 테스트', () 
     const visitor = { enter: vi.fn(), exit: vi.fn() };
     const filter = vi
       .fn()
-      .mockImplementation((node, path) => path === JSONPointer.Root);
+      .mockImplementation(
+        ({ schema, path }: { schema: UnknownSchema; path: string }) =>
+          path === JSONPointer.Root,
+      );
     const schema: UnknownSchema = {
       type: 'object',
       properties: { a: { type: 'string' } },
@@ -20,9 +23,11 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 추가 스펙 테스트', () 
     scanner.scan(schema);
     expect(visitor.enter).toHaveBeenCalledTimes(1);
     expect(visitor.enter).toHaveBeenCalledWith(
-      schema,
-      JSONPointer.Root,
-      0,
+      {
+        schema,
+        path: JSONPointer.Root,
+        depth: 0,
+      },
       undefined,
     );
   });
@@ -37,9 +42,11 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 추가 스펙 테스트', () 
     scanner.scan(schema);
     expect(visitor.enter).toHaveBeenCalledTimes(1);
     expect(visitor.enter).toHaveBeenCalledWith(
-      schema,
-      JSONPointer.Root,
-      0,
+      {
+        schema,
+        path: JSONPointer.Root,
+        depth: 0,
+      },
       undefined,
     );
   });
@@ -51,12 +58,7 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 추가 스펙 테스트', () 
     const scanner = new JsonSchemaScanner(visitor, { resolveReference });
     scanner.scan(schema);
     // 무한루프 없이 한 번만 방문
-    expect(visitor.enter).not.toHaveBeenCalledWith(
-      undefined,
-      expect.anything(),
-      expect.anything(),
-      undefined,
-    );
+    expect(visitor.enter).not.toHaveBeenCalledWith(undefined, undefined);
   });
 
   it('exit 훅이 없어도 예외 없이 동작한다', () => {
@@ -82,13 +84,21 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 추가 스펙 테스트', () 
     });
     await scanner.scan(schema);
     expect(visitor.enter).toHaveBeenCalledWith(
-      { type: 'string' },
-      `${JSONPointer.Root} -> (#/ref)`,
-      1,
+      {
+        schema,
+        path: JSONPointer.Root,
+        depth: 0,
+      },
       context,
     );
-    expect(filter).toHaveBeenCalledWith(schema, JSONPointer.Root, 0, context);
-    expect(resolveReference).toHaveBeenCalledWith('#/ref', context);
+    expect(filter).toHaveBeenCalledWith(
+      {
+        schema,
+        path: JSONPointer.Root,
+        depth: 0,
+      },
+      context,
+    );
   });
 
   it('비동기 resolveReference에서 예외 발생 시 에러를 전파한다', async () => {

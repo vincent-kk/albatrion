@@ -28,43 +28,55 @@ describe('JsonSchemaScanner Advanced Features', () => {
 
       // Check allOf visits
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema.allOf[0],
-        `${JSONPointer.Root}/allOf/0`,
-        1,
+        {
+          schema: schema.allOf[0],
+          path: `${JSONPointer.Root}/allOf/0`,
+          depth: 1,
+        },
         undefined,
       );
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema.allOf[1],
-        `${JSONPointer.Root}/allOf/1`,
-        1,
+        {
+          schema: schema.allOf[1],
+          path: `${JSONPointer.Root}/allOf/1`,
+          depth: 1,
+        },
         undefined,
       );
 
       // Check anyOf visits
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema.anyOf[0],
-        `${JSONPointer.Root}/anyOf/0`,
-        1,
+        {
+          schema: schema.anyOf[0],
+          path: `${JSONPointer.Root}/anyOf/0`,
+          depth: 1,
+        },
         undefined,
       );
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema.anyOf[1],
-        `${JSONPointer.Root}/anyOf/1`,
-        1,
+        {
+          schema: schema.anyOf[1],
+          path: `${JSONPointer.Root}/anyOf/1`,
+          depth: 1,
+        },
         undefined,
       );
 
       // Check oneOf visits
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema.oneOf[0],
-        `${JSONPointer.Root}/oneOf/0`,
-        1,
+        {
+          schema: schema.oneOf[0],
+          path: `${JSONPointer.Root}/oneOf/0`,
+          depth: 1,
+        },
         undefined,
       );
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema.oneOf[1],
-        `${JSONPointer.Root}/oneOf/1`,
-        1,
+        {
+          schema: schema.oneOf[1],
+          path: `${JSONPointer.Root}/oneOf/1`,
+          depth: 1,
+        },
         undefined,
       );
     });
@@ -87,21 +99,27 @@ describe('JsonSchemaScanner Advanced Features', () => {
       scanner.scan(schema);
 
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema.if,
-        `${JSONPointer.Root}/if`,
-        1,
+        {
+          schema: schema.if,
+          path: `${JSONPointer.Root}/if`,
+          depth: 1,
+        },
         undefined,
       );
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema.then,
-        `${JSONPointer.Root}/then`,
-        1,
+        {
+          schema: schema.then,
+          path: `${JSONPointer.Root}/then`,
+          depth: 1,
+        },
         undefined,
       );
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema.else,
-        `${JSONPointer.Root}/else`,
-        1,
+        {
+          schema: schema.else,
+          path: `${JSONPointer.Root}/else`,
+          depth: 1,
+        },
         undefined,
       );
     });
@@ -127,15 +145,19 @@ describe('JsonSchemaScanner Advanced Features', () => {
       scanner.scan(schema);
 
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema.definitions.stringType,
-        `${JSONPointer.Root}/definitions/stringType`,
-        1,
+        {
+          schema: schema.definitions.stringType,
+          path: `${JSONPointer.Root}/definitions/stringType`,
+          depth: 1,
+        },
         undefined,
       );
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema.$defs.numberType,
-        `${JSONPointer.Root}/$defs/numberType`,
-        1,
+        {
+          schema: schema.$defs.numberType,
+          path: `${JSONPointer.Root}/$defs/numberType`,
+          depth: 1,
+        },
         undefined,
       );
     });
@@ -173,9 +195,11 @@ describe('JsonSchemaScannerAsync Advanced Features', () => {
       expect(filter).toHaveBeenCalled();
       expect(context.visited.size).toBeGreaterThan(0);
       expect(visitor.enter).toHaveBeenCalledWith(
-        schema,
-        JSONPointer.Root,
-        0,
+        {
+          schema,
+          path: JSONPointer.Root,
+          depth: 0,
+        },
         context,
       );
     });
