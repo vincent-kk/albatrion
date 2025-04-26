@@ -1,4 +1,4 @@
-import { JSONPointer } from '@winglet/common-utils';
+import { JSONPointer, setValueByPointer } from '@winglet/common-utils';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
@@ -14,7 +14,8 @@ interface JsonSchemaScannerProps<ContextType> {
 export class JsonSchemaScanner<ContextType = void> {
   readonly #visitor: SchemaVisitor<ContextType>;
   readonly #options: JsonScannerOptions<ContextType>;
-  #value: UnknownSchema | undefined;
+  #schema: UnknownSchema | undefined;
+  #resolved = new Map<string, UnknownSchema>();
 
   constructor(props?: JsonSchemaScannerProps<ContextType>) {
     this.#visitor = props?.visitor || {};
@@ -22,29 +23,39 @@ export class JsonSchemaScanner<ContextType = void> {
   }
 
   public scan(this: this, schema: UnknownSchema): this {
-    this.#value = undefined;
+    this.#schema = schema;
+    this.#resolved.clear();
     this.#run(schema);
     return this;
   }
 
   public getValue(this: this): UnknownSchema | undefined {
-    return this.#value;
+    if (!this.#schema) return undefined;
+    if (this.#resolved.size === 0) return this.#schema;
+    for (const [path, schema] of this.#resolved)
+      this.#schema = setValueByPointer(this.#schema, path, schema);
+    this.#resolved.clear();
+    return this.#schema;
   }
 
   #run(this: this, schema: UnknownSchema): void {
     const visitedRefs = new Set<string>();
     const stack: SchemaEntry[] = [{ schema, path: JSONPointer.Root, depth: 0 }];
-    const visited = new Set<string>();
+    const visited = new Set<SchemaEntry>();
 
     while (stack.length > 0) {
       const entry = stack[stack.length - 1];
-      if (!visited.has(entry.path)) {
+
+      if (!visited.has(entry)) {
         if (entry.resolvedReference) {
           this.#visitor.enter?.(entry, this.#options.context);
           this.#visitor.exit?.(entry, this.#options.context);
           stack.pop();
           continue;
         }
+
+        if (entry.referencePath) this.#resolved.set(entry.path, entry.schema);
+
         if (
           (this.#options.maxDepth !== undefined &&
             entry.depth > this.#options.maxDepth) ||
@@ -54,8 +65,11 @@ export class JsonSchemaScanner<ContextType = void> {
           stack.pop();
           continue;
         }
+
         this.#visitor.enter?.(entry, this.#options.context);
-        visited.add(entry.path);
+
+        visited.add(entry);
+
         if (typeof entry.schema.$ref === 'string')
           handleReferenceNodeSync(
             entry,
@@ -72,7 +86,6 @@ export class JsonSchemaScanner<ContextType = void> {
         }
       }
       this.#visitor.exit?.(entry, this.#options.context);
-      if (entry.path === JSONPointer.Root) this.#value = entry.schema;
       stack.pop();
     }
   }

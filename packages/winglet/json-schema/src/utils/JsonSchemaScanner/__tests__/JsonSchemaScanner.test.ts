@@ -190,7 +190,7 @@ describe('JsonSchemaScanner', () => {
 
       const resolveReference = (ref: string) => {
         if (ref === '#/definitions/Bar') {
-          return { type: 'string' };
+          return { type: 'number' };
         }
         return undefined;
       };
@@ -224,7 +224,7 @@ describe('JsonSchemaScanner', () => {
         },
         undefined,
       );
-      expect(result).toEqual({ type: 'string' });
+      expect(result).toEqual({ type: 'number' });
     });
 
     it('context 옵션이 콜백에 전달되는지 확인', () => {
