@@ -10,17 +10,19 @@ import type {
 import { getStackEntriesForNode } from './utils/getStackEntriesForNode';
 import { handleRefNodeAsync } from './utils/handleRefNodeAsync';
 
+interface JsonSchemaScannerProps<ContextType> {
+  visitor?: SchemaVisitor<ContextType>;
+  options?: JsonScannerOptionsAsync<ContextType>;
+}
+
 export class JsonSchemaScannerAsync<ContextType = void> {
   readonly #visitor: SchemaVisitor<ContextType>;
   readonly #options: JsonScannerOptionsAsync<ContextType>;
   #value: UnknownSchema | undefined;
 
-  constructor(
-    visitor: SchemaVisitor<ContextType> = {},
-    options: JsonScannerOptionsAsync<ContextType> = {},
-  ) {
-    this.#visitor = visitor;
-    this.#options = options;
+  constructor(props?: JsonSchemaScannerProps<ContextType>) {
+    this.#visitor = props?.visitor || {};
+    this.#options = props?.options || {};
   }
 
   public async scan(this: this, schema: UnknownSchema): Promise<this> {

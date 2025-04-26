@@ -23,7 +23,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         oneOf: [{ type: 'boolean' }, { type: 'null' }],
       };
 
-      const scanner = new JsonSchemaScanner(visitor);
+      const scanner = new JsonSchemaScanner({ visitor });
       scanner.scan(schema);
 
       // Check allOf visits
@@ -95,7 +95,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         else: { type: 'number' },
       };
 
-      const scanner = new JsonSchemaScanner(visitor);
+      const scanner = new JsonSchemaScanner({ visitor });
       scanner.scan(schema);
 
       expect(visitor.enter).toHaveBeenCalledWith(
@@ -141,7 +141,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         },
       };
 
-      const scanner = new JsonSchemaScanner(visitor);
+      const scanner = new JsonSchemaScanner({ visitor });
       scanner.scan(schema);
 
       expect(visitor.enter).toHaveBeenCalledWith(
@@ -186,9 +186,12 @@ describe('JsonSchemaScannerAsync Advanced Features', () => {
         },
       };
 
-      const scanner = new JsonSchemaScannerAsync(visitor, {
-        filter,
-        context,
+      const scanner = new JsonSchemaScannerAsync({
+        visitor,
+        options: {
+          filter,
+          context,
+        },
       });
       await scanner.scan(schema);
 
@@ -219,7 +222,10 @@ describe('JsonSchemaScannerAsync Advanced Features', () => {
         $ref: '#/definitions/error',
       };
 
-      const scanner = new JsonSchemaScannerAsync(visitor, { resolveReference });
+      const scanner = new JsonSchemaScannerAsync({
+        visitor,
+        options: { resolveReference },
+      });
 
       await expect(scanner.scan(schema)).rejects.toThrow('Failed to resolve');
     });
@@ -239,7 +245,7 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 스펙 테스트', () => {
       type: 'object',
       properties: { a: { type: 'string' } },
     };
-    const scanner = new JsonSchemaScanner(visitor, { filter });
+    const scanner = new JsonSchemaScanner({ visitor, options: { filter } });
     scanner.scan(schema);
     expect(visitor.enter).toHaveBeenCalledTimes(1);
     expect(visitor.enter).toHaveBeenCalledWith(
@@ -258,7 +264,10 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 스펙 테스트', () => {
       type: 'object',
       properties: { a: { type: 'string' } },
     };
-    const scanner = new JsonSchemaScanner(visitor, { maxDepth: 0 });
+    const scanner = new JsonSchemaScanner({
+      visitor,
+      options: { maxDepth: 0 },
+    });
     scanner.scan(schema);
     expect(visitor.enter).toHaveBeenCalledTimes(1);
     expect(visitor.enter).toHaveBeenCalledWith(
@@ -275,7 +284,10 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 스펙 테스트', () => {
     const visitor = { enter: vi.fn(), exit: vi.fn() };
     const schema: UnknownSchema = { $ref: '#/self' };
     const resolveReference = vi.fn().mockReturnValue(schema);
-    const scanner = new JsonSchemaScanner(visitor, { resolveReference });
+    const scanner = new JsonSchemaScanner({
+      visitor,
+      options: { resolveReference },
+    });
     scanner.scan(schema);
     // 무한루프 없이 한 번만 방문
     expect(visitor.enter).not.toHaveBeenCalledWith(undefined, undefined);
@@ -284,7 +296,7 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 스펙 테스트', () => {
   it('exit 훅이 없어도 예외 없이 동작한다', () => {
     const visitor = { enter: vi.fn() };
     const schema: UnknownSchema = { type: 'string' };
-    const scanner = new JsonSchemaScanner(visitor);
+    const scanner = new JsonSchemaScanner({ visitor });
     expect(() => scanner.scan(schema)).not.toThrow();
   });
 
@@ -297,10 +309,9 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 스펙 테스트', () => {
     const filter = vi.fn().mockReturnValue(true);
     const resolveReference = vi.fn().mockResolvedValue({ type: 'string' });
     const schema: UnknownSchema = { $ref: '#/ref' };
-    const scanner = new JsonSchemaScannerAsync(visitor, {
-      filter,
-      resolveReference,
-      context,
+    const scanner = new JsonSchemaScannerAsync({
+      visitor,
+      options: { filter, resolveReference, context },
     });
     await scanner.scan(schema);
     expect(visitor.enter).toHaveBeenCalledWith(
@@ -325,7 +336,10 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 스펙 테스트', () => {
     const visitor = { enter: vi.fn(), exit: vi.fn() };
     const resolveReference = vi.fn().mockRejectedValue(new Error('fail'));
     const schema: UnknownSchema = { $ref: '#/fail' };
-    const scanner = new JsonSchemaScannerAsync(visitor, { resolveReference });
+    const scanner = new JsonSchemaScannerAsync({
+      visitor,
+      options: { resolveReference },
+    });
     await expect(scanner.scan(schema)).rejects.toThrow('fail');
   });
 });

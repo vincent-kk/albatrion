@@ -6,17 +6,19 @@ import type { JsonScannerOptions, SchemaVisitor, StackEntry } from './type';
 import { getStackEntriesForNode } from './utils/getStackEntriesForNode';
 import { handleRefNodeSync } from './utils/handleRefNodeSync';
 
+interface JsonSchemaScannerProps<ContextType> {
+  visitor?: SchemaVisitor<ContextType>;
+  options?: JsonScannerOptions<ContextType>;
+}
+
 export class JsonSchemaScanner<ContextType = void> {
   readonly #visitor: SchemaVisitor<ContextType>;
   readonly #options: JsonScannerOptions<ContextType>;
   #value: UnknownSchema | undefined;
 
-  constructor(
-    visitor: SchemaVisitor<ContextType> = {},
-    options: JsonScannerOptions<ContextType> = {},
-  ) {
-    this.#visitor = visitor;
-    this.#options = options;
+  constructor(props?: JsonSchemaScannerProps<ContextType>) {
+    this.#visitor = props?.visitor || {};
+    this.#options = props?.options || {};
   }
 
   public scan(this: this, schema: UnknownSchema): this {

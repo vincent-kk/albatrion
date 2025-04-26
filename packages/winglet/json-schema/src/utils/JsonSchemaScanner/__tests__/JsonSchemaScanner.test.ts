@@ -22,7 +22,7 @@ describe('JsonSchemaScanner', () => {
         },
       };
 
-      const scanner = new JsonSchemaScanner(visitor);
+      const scanner = new JsonSchemaScanner({ visitor });
       scanner.scan(schema);
 
       // Root object visit
@@ -72,7 +72,10 @@ describe('JsonSchemaScanner', () => {
         },
       };
 
-      const scanner = new JsonSchemaScanner(visitor, { maxDepth: 1 });
+      const scanner = new JsonSchemaScanner({
+        visitor,
+        options: { maxDepth: 1 },
+      });
       scanner.scan(schema);
 
       // Should only visit root and first level
@@ -99,7 +102,9 @@ describe('JsonSchemaScanner', () => {
       const enter = vi.fn();
       const exit = vi.fn();
 
-      const scanner = new JsonSchemaScanner({ enter, exit }, {});
+      const scanner = new JsonSchemaScanner({
+        visitor: { enter, exit },
+      });
 
       scanner.scan({
         type: 'string',
@@ -134,7 +139,10 @@ describe('JsonSchemaScanner', () => {
         },
       };
 
-      const scanner = new JsonSchemaScanner({ enter, exit }, { maxDepth: 0 });
+      const scanner = new JsonSchemaScanner({
+        visitor: { enter, exit },
+        options: { maxDepth: 0 },
+      });
 
       scanner.scan(schema);
 
@@ -159,7 +167,10 @@ describe('JsonSchemaScanner', () => {
       const filter = ({ schema }: { schema: UnknownSchema }) =>
         schema.type === 'number' || schema.type === 'object';
 
-      const scanner = new JsonSchemaScanner({ enter, exit }, { filter });
+      const scanner = new JsonSchemaScanner({
+        visitor: { enter, exit },
+        options: { filter },
+      });
 
       scanner.scan(schema);
 
@@ -184,10 +195,10 @@ describe('JsonSchemaScanner', () => {
         return undefined;
       };
 
-      const scanner = new JsonSchemaScanner(
-        { enter, exit },
-        { resolveReference },
-      );
+      const scanner = new JsonSchemaScanner({
+        visitor: { enter, exit },
+        options: { resolveReference },
+      });
 
       const result = scanner.scan(schema).getValue();
 
@@ -213,7 +224,10 @@ describe('JsonSchemaScanner', () => {
 
       const schema: UnknownSchema = { type: 'string' };
 
-      const scanner = new JsonSchemaScanner({ enter, exit }, { context });
+      const scanner = new JsonSchemaScanner({
+        visitor: { enter, exit },
+        options: { context },
+      });
 
       scanner.scan(schema);
 
@@ -243,7 +257,10 @@ describe('JsonSchemaScanner', () => {
         },
       };
 
-      const scanner = new JsonSchemaScanner(visitor, { resolveReference });
+      const scanner = new JsonSchemaScanner({
+        visitor,
+        options: { resolveReference },
+      });
       scanner.scan(schema);
 
       expect(resolveReference).toHaveBeenCalledWith(
@@ -301,7 +318,7 @@ describe('JsonSchemaScanner', () => {
         exit: vi.fn(),
       };
 
-      const scanner = new JsonSchemaScanner(visitor);
+      const scanner = new JsonSchemaScanner({ visitor });
       scanner.scan(jsonSchema);
 
       expect(schemaMap.size).toBe(2);
@@ -349,7 +366,7 @@ describe('JsonSchemaScanner', () => {
         },
       };
 
-      const scanner = new JsonSchemaScanner(visitor);
+      const scanner = new JsonSchemaScanner({ visitor });
       scanner.scan(schema);
 
       expect(defsMap.size).toBe(2);
@@ -404,7 +421,7 @@ describe('JsonSchemaScanner', () => {
         },
       };
 
-      const scanner = new JsonSchemaScanner(visitor);
+      const scanner = new JsonSchemaScanner({ visitor });
       const value = scanner.scan(schema).getValue();
 
       // Check $defs storage
@@ -492,7 +509,7 @@ describe('JsonSchemaScannerAsync', () => {
         },
       };
 
-      const scanner = new JsonSchemaScannerAsync(visitor);
+      const scanner = new JsonSchemaScannerAsync({ visitor });
       await scanner.scan(schema);
 
       expect(visitor.enter).toHaveBeenCalledWith(
@@ -537,7 +554,10 @@ describe('JsonSchemaScannerAsync', () => {
         },
       };
 
-      const scanner = new JsonSchemaScannerAsync(visitor, { resolveReference });
+      const scanner = new JsonSchemaScannerAsync({
+        visitor,
+        options: { resolveReference },
+      });
       await scanner.scan(schema);
 
       expect(resolveReference).toHaveBeenCalledWith(
@@ -569,7 +589,10 @@ describe('JsonSchemaScannerAsync', () => {
         },
       };
 
-      const scanner = new JsonSchemaScannerAsync(visitor, { resolveReference });
+      const scanner = new JsonSchemaScannerAsync({
+        visitor,
+        options: { resolveReference },
+      });
       await scanner.scan(schema);
 
       expect(resolveReference).toHaveBeenCalledWith(
@@ -587,14 +610,14 @@ describe('JsonSchemaScannerAsync', () => {
   });
 
   it('scan 이전 getValue는 undefined를 반환한다', async () => {
-    const scanner = new JsonSchemaScannerAsync({});
+    const scanner = new JsonSchemaScannerAsync();
     const value = scanner.getValue();
     expect(value).toBeUndefined();
   });
 
   it('scan 후 getValue는 root schema를 반환한다', async () => {
     const schema: UnknownSchema = { type: 'string' };
-    const scanner = new JsonSchemaScannerAsync({});
+    const scanner = new JsonSchemaScannerAsync();
     await scanner.scan(schema);
     const value = scanner.getValue();
     expect(value).toEqual(schema);
@@ -616,7 +639,7 @@ describe('JsonSchemaScannerAsync', () => {
         },
       };
       const schema: UnknownSchema = { type: 'string' };
-      const scanner = new JsonSchemaScannerAsync(visitor);
+      const scanner = new JsonSchemaScannerAsync({ visitor });
       await scanner.scan(schema);
       expect(callOrder).toEqual(['enter', 'enter-done', 'exit', 'exit-done']);
     });
