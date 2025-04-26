@@ -31,16 +31,13 @@ export class JsonSchemaScannerAsync<ContextType = void> {
   }
 
   public async scan(schema: UnknownSchema): Promise<void> {
-    await this.#run(schema, JSONPointer.Root);
+    await this.#run(schema);
   }
 
-  async #run(
-    rootNode: UnknownSchema,
-    rootPath: string,
-    rootDepth: number = 0,
-  ): Promise<void> {
+  async #run(schema: UnknownSchema): Promise<void> {
+    const visitedRefs = new Set<string>();
     const stack: StackEntry[] = [
-      { node: rootNode, path: rootPath, depth: rootDepth },
+      { node: schema, path: JSONPointer.Root, depth: 0 },
     ];
 
     let entry: StackEntry | undefined;
@@ -63,6 +60,11 @@ export class JsonSchemaScannerAsync<ContextType = void> {
         await this.#visitor.enter(node, path, depth, this.#options.context);
 
       if (typeof node.$ref === 'string') {
+        if (visitedRefs.has(node.$ref)) {
+          this.#visitor.exit?.(node, path, depth, this.#options.context);
+          continue;
+        }
+        visitedRefs.add(node.$ref);
         const resolved = await this.#options.resolveReference(
           node.$ref,
           this.#options.context,

@@ -23,12 +23,13 @@ export class JsonSchemaScanner<ContextType = void> {
   }
 
   public scan(schema: UnknownSchema): void {
-    this.#run(schema, JSONPointer.Root);
+    this.#run(schema);
   }
 
-  #run(rootNode: UnknownSchema, rootPath: string, rootDepth: number = 0): void {
+  #run(schema: UnknownSchema): void {
+    const visitedRefs = new Set<string>();
     const stack: StackEntry[] = [
-      { node: rootNode, path: rootPath, depth: rootDepth },
+      { node: schema, path: JSONPointer.Root, depth: 0 },
     ];
 
     let entry: StackEntry | undefined;
@@ -48,6 +49,12 @@ export class JsonSchemaScanner<ContextType = void> {
 
       this.#visitor.enter?.(node, path, depth, this.#options.context);
       if (typeof node.$ref === 'string') {
+        if (visitedRefs.has(node.$ref)) {
+          this.#visitor.exit?.(node, path, depth, this.#options.context);
+          continue;
+        }
+        visitedRefs.add(node.$ref);
+
         const resolved = this.#options.resolveReference(
           node.$ref,
           this.#options.context,
