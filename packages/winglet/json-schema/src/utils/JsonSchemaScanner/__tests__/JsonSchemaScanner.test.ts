@@ -585,4 +585,40 @@ describe('JsonSchemaScannerAsync', () => {
       );
     });
   });
+
+  it('scan 이전 getValue는 undefined를 반환한다', async () => {
+    const scanner = new JsonSchemaScannerAsync({});
+    const value = scanner.getValue();
+    expect(value).toBeUndefined();
+  });
+
+  it('scan 후 getValue는 root schema를 반환한다', async () => {
+    const schema: UnknownSchema = { type: 'string' };
+    const scanner = new JsonSchemaScannerAsync({});
+    await scanner.scan(schema);
+    const value = scanner.getValue();
+    expect(value).toEqual(schema);
+  });
+
+  describe('비동기 콜백 동작 테스트', () => {
+    it('visitor.enter/exit가 비동기로 동작하면 scan이 await로 동작한다', async () => {
+      const callOrder: string[] = [];
+      const visitor = {
+        enter: async ({ schema }: { schema: UnknownSchema }) => {
+          callOrder.push('enter');
+          await new Promise((resolve) => setTimeout(resolve, 30));
+          callOrder.push('enter-done');
+        },
+        exit: async ({ schema }: { schema: UnknownSchema }) => {
+          callOrder.push('exit');
+          await new Promise((resolve) => setTimeout(resolve, 10));
+          callOrder.push('exit-done');
+        },
+      };
+      const schema: UnknownSchema = { type: 'string' };
+      const scanner = new JsonSchemaScannerAsync(visitor);
+      await scanner.scan(schema);
+      expect(callOrder).toEqual(['enter', 'enter-done', 'exit', 'exit-done']);
+    });
+  });
 });
