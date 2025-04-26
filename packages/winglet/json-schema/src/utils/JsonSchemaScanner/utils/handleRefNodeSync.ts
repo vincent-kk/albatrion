@@ -9,7 +9,7 @@ export const handleRefNodeSync = <ContextType = void>(
   stack: StackEntry[],
   visitedRefs: Set<string>,
   visitor: SchemaVisitor<ContextType>,
-  options: Required<JsonScannerOptions<ContextType>>,
+  options: JsonScannerOptions<ContextType>,
 ): void => {
   if (visitedRefs.has(node.$ref)) {
     visitor.exit?.(node, path, depth, options.context);
@@ -17,7 +17,7 @@ export const handleRefNodeSync = <ContextType = void>(
   }
   visitedRefs.add(node.$ref);
 
-  const resolved = options.resolveReference(node.$ref, options.context);
+  const resolved = options.resolveReference?.(node.$ref, options.context);
   if (resolved) {
     stack.push({ node, path, depth, parentIsRef: true });
     stack.push({

@@ -14,21 +14,36 @@ export interface StackEntry {
 
 export interface SchemaVisitor<ContextType = void> {
   enter?: Fn<
-    [schema: UnknownSchema, path: string, depth: number, context: ContextType]
+    [
+      schema: UnknownSchema,
+      path: string,
+      depth: number,
+      context: ContextType | undefined,
+    ]
   >;
   exit?: Fn<
-    [schema: UnknownSchema, path: string, depth: number, context: ContextType]
+    [
+      schema: UnknownSchema,
+      path: string,
+      depth: number,
+      context: ContextType | undefined,
+    ]
   >;
 }
 
 export interface JsonScannerOptions<ContextType = void> {
   maxDepth?: number;
   filter?: Fn<
-    [schema: UnknownSchema, path: string, depth: number, context: ContextType],
+    [
+      schema: UnknownSchema,
+      path: string,
+      depth: number,
+      context: ContextType | undefined,
+    ],
     boolean
   >;
   resolveReference?: Fn<
-    [reference: string, context: ContextType],
+    [reference: string, context: ContextType | undefined],
     UnknownSchema | undefined
   >;
   context?: ContextType;
@@ -37,7 +52,7 @@ export interface JsonScannerOptions<ContextType = void> {
 export interface JsonScannerOptionsAsync<ContextType = void>
   extends JsonScannerOptions<ContextType> {
   resolveReference?: Fn<
-    [reference: string, context: ContextType],
+    [reference: string, context: ContextType | undefined],
     UnknownSchema | Promise<UnknownSchema | undefined> | undefined
   >;
 }

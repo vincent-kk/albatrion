@@ -1,8 +1,4 @@
-import {
-  JSONPointer,
-  trueFunction,
-  undefinedFunction,
-} from '@winglet/common-utils';
+import { JSONPointer } from '@winglet/common-utils';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
@@ -16,19 +12,14 @@ import { handleRefNodeAsync } from './utils/handleRefNodeAsync';
 
 export class JsonSchemaScannerAsync<ContextType = void> {
   readonly #visitor: SchemaVisitor<ContextType>;
-  readonly #options: Required<JsonScannerOptionsAsync<ContextType>>;
+  readonly #options: JsonScannerOptionsAsync<ContextType>;
 
   constructor(
     visitor: SchemaVisitor<ContextType>,
     options: JsonScannerOptionsAsync<ContextType> = {},
   ) {
     this.#visitor = visitor;
-    this.#options = {
-      maxDepth: options.maxDepth ?? Infinity,
-      filter: options.filter ?? trueFunction,
-      resolveReference: options.resolveReference ?? undefinedFunction,
-      context: options.context as ContextType,
-    };
+    this.#options = options;
   }
 
   public async scan(schema: UnknownSchema): Promise<void> {
@@ -52,8 +43,15 @@ export class JsonSchemaScannerAsync<ContextType = void> {
       }
 
       if (
-        depth > this.#options.maxDepth ||
-        !(await this.#options.filter(node, path, depth, this.#options.context))
+        (this.#options.maxDepth !== undefined &&
+          depth > this.#options.maxDepth) ||
+        (this.#options.filter !== undefined &&
+          !(await this.#options.filter(
+            node,
+            path,
+            depth,
+            this.#options.context,
+          )))
       )
         continue;
 

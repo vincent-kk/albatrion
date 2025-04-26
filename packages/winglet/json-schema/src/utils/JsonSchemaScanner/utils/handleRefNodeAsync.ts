@@ -13,7 +13,7 @@ export const handleRefNodeAsync = async <ContextType = void>(
   stack: StackEntry[],
   visitedRefs: Set<string>,
   visitor: SchemaVisitor<ContextType>,
-  options: Required<JsonScannerOptionsAsync<ContextType>>,
+  options: JsonScannerOptionsAsync<ContextType>,
 ): Promise<void> => {
   if (visitedRefs.has(node.$ref)) {
     await visitor.exit?.(node, path, depth, options.context);
@@ -21,7 +21,7 @@ export const handleRefNodeAsync = async <ContextType = void>(
   }
   visitedRefs.add(node.$ref);
 
-  const resolved = await options.resolveReference(node.$ref, options.context);
+  const resolved = await options.resolveReference?.(node.$ref, options.context);
   if (resolved) {
     stack.push({ node, path, depth, parentIsRef: true });
     stack.push({

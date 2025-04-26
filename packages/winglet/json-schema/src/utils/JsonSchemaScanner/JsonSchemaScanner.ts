@@ -8,19 +8,14 @@ import { handleRefNodeSync } from './utils/handleRefNodeSync';
 
 export class JsonSchemaScanner<ContextType = void> {
   readonly #visitor: SchemaVisitor<ContextType>;
-  readonly #options: Required<JsonScannerOptions<ContextType>>;
+  readonly #options: JsonScannerOptions<ContextType>;
 
   constructor(
     visitor: SchemaVisitor<ContextType>,
     options: JsonScannerOptions<ContextType> = {},
   ) {
     this.#visitor = visitor;
-    this.#options = {
-      maxDepth: options.maxDepth ?? Infinity,
-      filter: options.filter ?? (() => true),
-      resolveReference: options.resolveReference ?? (() => undefined),
-      context: options.context as ContextType,
-    };
+    this.#options = options;
   }
 
   public scan(schema: UnknownSchema): void {
@@ -43,8 +38,10 @@ export class JsonSchemaScanner<ContextType = void> {
       }
 
       if (
-        depth > this.#options.maxDepth ||
-        !this.#options.filter(node, path, depth, this.#options.context)
+        (this.#options.maxDepth !== undefined &&
+          depth > this.#options.maxDepth) ||
+        (this.#options.filter !== undefined &&
+          !this.#options.filter(node, path, depth, this.#options.context))
       )
         continue;
 
