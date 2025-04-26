@@ -13,19 +13,19 @@ export const handleReferenceNodeSync = <ContextType = void>(
   }
   visitedRefs.add(entry.schema.$ref);
 
-  const resolved = options.resolveReference?.(
+  const resolvedReference = options.resolveReference?.(
     entry.schema.$ref,
     options.context,
   );
-  if (resolved) {
+  if (resolvedReference) {
     stack.push({
       schema: entry.schema,
       path: entry.path,
       depth: entry.depth,
-      resolvedReference: true,
+      referenceResolved: true,
     });
     stack.push({
-      schema: resolved,
+      schema: resolvedReference,
       path: entry.path,
       depth: entry.depth + 1,
       referencePath: entry.schema.$ref,

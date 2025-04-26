@@ -52,7 +52,7 @@ export class JsonSchemaScannerAsync<ContextType = void> {
       const entry = stack[stack.length - 1];
 
       if (!visited.has(entry)) {
-        if (entry.resolvedReference) {
+        if (entry.referenceResolved) {
           if (this.#visitor.enter)
             await this.#visitor.enter(entry, this.#options.context);
           if (this.#visitor.exit)

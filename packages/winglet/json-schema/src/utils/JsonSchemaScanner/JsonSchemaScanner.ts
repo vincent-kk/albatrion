@@ -47,7 +47,7 @@ export class JsonSchemaScanner<ContextType = void> {
       const entry = stack[stack.length - 1];
 
       if (!visited.has(entry)) {
-        if (entry.resolvedReference) {
+        if (entry.referenceResolved) {
           this.#visitor.enter?.(entry, this.#options.context);
           this.#visitor.exit?.(entry, this.#options.context);
           stack.pop();

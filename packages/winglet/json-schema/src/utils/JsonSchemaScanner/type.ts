@@ -11,7 +11,7 @@ export interface SchemaEntry {
   depth: number;
   hasReference?: boolean;
   referencePath?: string;
-  resolvedReference?: boolean;
+  referenceResolved?: boolean;
 }
 
 export interface SchemaVisitor<ContextType = void> {
