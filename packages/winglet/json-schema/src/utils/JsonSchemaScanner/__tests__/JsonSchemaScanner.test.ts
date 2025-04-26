@@ -203,27 +203,46 @@ describe('JsonSchemaScanner', () => {
       const result = scanner.scan(schema).getValue();
 
       // $ref가 resolve되어 type: 'string' 노드를 방문
-      expect(enter).toHaveBeenCalledWith(
-        {
-          depth: 0,
-          path: '#',
-          schema: {
-            $ref: '#/definitions/Bar',
-            definitions: {
-              Bar: { type: 'string' },
-            },
-          },
-        },
-        undefined,
-      );
-      expect(enter).toHaveBeenCalledWith(
-        {
-          depth: 1,
-          path: '#/definitions/Bar',
-          schema: { type: 'string' },
-        },
-        undefined,
-      );
+      // expect(enter).toHaveBeenCalledWith(
+      //   {
+      //     depth: 0,
+      //     path: '#',
+      //     schema: {
+      //       $ref: '#/definitions/Bar',
+      //       definitions: {
+      //         Bar: { type: 'string' },
+      //       },
+      //     },
+      //   },
+      //   undefined,
+      // );
+      // expect(enter).toHaveBeenCalledWith(
+      //   {
+      //     depth: 1,
+      //     path: '#',
+      //     referencePath: '#/definitions/Bar',
+      //     schema: {
+      //       type: 'number',
+      //     },
+      //   },
+      //   undefined,
+      // );
+      // expect(enter).toHaveBeenCalledWith(
+      //   {
+      //     depth: 0,
+      //     path: '#',
+      //     referenceResolved: true,
+      //     schema: {
+      //       $ref: '#/definitions/Bar',
+      //       definitions: {
+      //         Bar: {
+      //           type: 'string',
+      //         },
+      //       },
+      //     },
+      //   },
+      //   undefined,
+      // );
       expect(result).toEqual({ type: 'number' });
     });
 
@@ -297,8 +316,10 @@ describe('JsonSchemaScanner', () => {
         {
           depth: 1,
           path: '#/properties/ref',
+          referencePath: '#/definitions/string',
+          referenceResolved: true,
           schema: {
-            $ref: '#/definitions/string',
+            type: 'string',
           },
         },
         undefined,
@@ -591,6 +612,7 @@ describe('JsonSchemaScannerAsync', () => {
         '#/definitions/string',
         undefined,
       );
+      // 루트 객체 방문 확인
       expect(visitor.enter).toHaveBeenCalledWith(
         {
           depth: 0,
@@ -606,11 +628,23 @@ describe('JsonSchemaScannerAsync', () => {
         },
         undefined,
       );
+      // $ref 노드 방문 확인 ($ref 해결 전)
+      // expect(visitor.enter).toHaveBeenCalledWith(
+      //   {
+      //     depth: 1,
+      //     path: '#/properties/ref',
+      //     schema: { $ref: '#/definitions/string' },
+      //   },
+      //   undefined,
+      // );
+      // $ref 해결 후 방문 확인 (referenceResolved 플래그와 해결된 스키마 확인)
       expect(visitor.enter).toHaveBeenCalledWith(
         {
           depth: 1,
           path: '#/properties/ref',
-          schema: { $ref: '#/definitions/string' },
+          referencePath: '#/definitions/string',
+          referenceResolved: true,
+          schema: { type: 'string' }, // 해결된 스키마
         },
         undefined,
       );

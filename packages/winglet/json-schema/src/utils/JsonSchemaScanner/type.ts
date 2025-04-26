@@ -5,6 +5,13 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 export const COMPOSITION_KEYWORDS = ['allOf', 'anyOf', 'oneOf'] as const;
 export const CONDITIONAL_KEYWORDS = ['not', 'if', 'then', 'else'] as const;
 
+export enum OperationPhase {
+  Enter = 1 << 0,
+  ChildEntries = 1 << 1,
+  Reference = 1 << 2,
+  Exit = 1 << 3,
+}
+
 export interface SchemaEntry {
   schema: UnknownSchema;
   path: string;

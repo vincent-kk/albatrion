@@ -316,7 +316,11 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 스펙 테스트', () => {
     await scanner.scan(schema);
     expect(visitor.enter).toHaveBeenCalledWith(
       {
-        schema,
+        schema: {
+          type: 'string',
+        },
+        referencePath: '#/ref',
+        referenceResolved: true,
         path: JSONPointer.Root,
         depth: 0,
       },
@@ -324,9 +328,13 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 스펙 테스트', () => {
     );
     expect(filter).toHaveBeenCalledWith(
       {
-        schema,
-        path: JSONPointer.Root,
         depth: 0,
+        path: '#',
+        referencePath: '#/ref',
+        referenceResolved: true,
+        schema: {
+          type: 'string',
+        },
       },
       context,
     );

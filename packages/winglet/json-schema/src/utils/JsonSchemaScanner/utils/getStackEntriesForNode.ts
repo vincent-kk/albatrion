@@ -9,8 +9,8 @@ import {
 } from '../type';
 
 /**
- * 주어진 노드의 하위 노드들을 StackEntry 배열로 반환합니다.
- * 순회 순서 보장을 위해 역순으로 push할 수 있도록 배열 순서를 맞춥니다.
+ * 주어진 노드의 하위 노드들을 SchemaEntry 배열로 반환합니다.
+ * 스택 기반 순회를 위해 역순으로 스택에 추가될 수 있도록 순서를 맞춥니다.
  */
 export const getStackEntriesForNode = (entry: SchemaEntry): SchemaEntry[] => {
   const { schema, path, depth } = entry;
@@ -24,9 +24,9 @@ export const getStackEntriesForNode = (entry: SchemaEntry): SchemaEntry[] => {
   if ('additionalProperties' in schema)
     handleAdditionalProperties(schema, entries, path, depth);
 
-  handleChunkNode(schema, entries, path, depth);
+  handleConditionalNode(schema, entries, path, depth);
 
-  handleConditionNode(schema, entries, path, depth);
+  handleCompositionNode(schema, entries, path, depth);
 
   if (schema.type === 'array' && 'items' in schema)
     handleArrayItems(schema, entries, path, depth);
@@ -73,37 +73,37 @@ const handleDefinitionsNode = (
   }
 };
 
-const handleChunkNode = (
+const handleConditionalNode = (
   schema: UnknownSchema,
   entries: SchemaEntry[],
   path: string,
   depth: number,
 ) => {
-  for (let i = 0; i < CONDITIONAL_KEYWORDS.length; i++) {
+  for (let i = CONDITIONAL_KEYWORDS.length - 1; i >= 0; i--) {
     const keyword = CONDITIONAL_KEYWORDS[i];
-    const chunkNode = schema[keyword];
-    if (!chunkNode || typeof chunkNode !== 'object') continue;
+    const conditionalNode = schema[keyword];
+    if (!conditionalNode || typeof conditionalNode !== 'object') continue;
     entries.push({
-      schema: chunkNode,
+      schema: conditionalNode,
       path: `${path}/${keyword}`,
       depth: depth + 1,
     });
   }
 };
 
-const handleConditionNode = (
+const handleCompositionNode = (
   schema: UnknownSchema,
   entries: SchemaEntry[],
   path: string,
   depth: number,
 ) => {
-  for (let i = 0; i < COMPOSITION_KEYWORDS.length; i++) {
+  for (let i = COMPOSITION_KEYWORDS.length - 1; i >= 0; i--) {
     const keyword = COMPOSITION_KEYWORDS[i];
-    const conditionNode = schema[keyword];
-    if (!conditionNode || !isArray(conditionNode)) continue;
-    for (let j = conditionNode.length - 1; j >= 0; j--) {
+    const compositionNode = schema[keyword];
+    if (!compositionNode || !isArray(compositionNode)) continue;
+    for (let j = compositionNode.length - 1; j >= 0; j--) {
       entries.push({
-        schema: conditionNode[j],
+        schema: compositionNode[j],
         path: `${path}/${keyword}/${j}`,
         depth: depth + 1,
       });
