@@ -4,6 +4,7 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import type { JsonScannerOptions, SchemaVisitor, StackEntry } from './type';
 import { getStackEntriesForNode } from './utils/getStackEntriesForNode';
+import { handleRefNodeSync } from './utils/handleRefNodeSync';
 
 export class JsonSchemaScanner<ContextType = void> {
   readonly #visitor: SchemaVisitor<ContextType>;
@@ -48,29 +49,16 @@ export class JsonSchemaScanner<ContextType = void> {
         continue;
 
       this.#visitor.enter?.(node, path, depth, this.#options.context);
-      if (typeof node.$ref === 'string') {
-        if (visitedRefs.has(node.$ref)) {
-          this.#visitor.exit?.(node, path, depth, this.#options.context);
-          continue;
-        }
-        visitedRefs.add(node.$ref);
-
-        const resolved = this.#options.resolveReference(
-          node.$ref,
-          this.#options.context,
+      if (typeof node.$ref === 'string')
+        handleRefNodeSync(
+          node,
+          path,
+          depth,
+          stack,
+          visitedRefs,
+          this.#visitor,
+          this.#options,
         );
-        if (resolved) {
-          stack.push({ node, path, depth, parentIsRef: true });
-          stack.push({
-            node: resolved,
-            path: `${path} -> (${node.$ref})`,
-            depth: depth + 1,
-          });
-          continue;
-        }
-        this.#visitor.exit?.(node, path, depth, this.#options.context);
-        continue;
-      }
 
       const entries = getStackEntriesForNode(node, path, depth);
       for (let i = 0; i < entries.length; i++) stack.push(entries[i]);

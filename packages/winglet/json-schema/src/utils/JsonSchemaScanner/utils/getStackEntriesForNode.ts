@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils';
+
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import {
@@ -17,93 +19,151 @@ export const getStackEntriesForNode = (
 ): StackEntry[] => {
   const entries: StackEntry[] = [];
 
-  if ((node as any).$defs) {
-    const $defs = (node as any).$defs;
-    for (const k of Object.keys($defs).reverse()) {
-      entries.push({
-        node: $defs[k],
-        path: `${path}/$defs/${k}`,
-        depth: depth + 1,
-      });
-    }
-  }
+  if ('$defs' in node) handleDefsNode(node, entries, path, depth);
 
-  if ((node as any).definitions) {
-    const definitions = (node as any).definitions;
-    for (const k of Object.keys(definitions).reverse()) {
-      entries.push({
-        node: definitions[k],
-        path: `${path}/definitions/${k}`,
-        depth: depth + 1,
-      });
-    }
-  }
-  // CONDITIONAL_KEYWORDS
-  for (let i = CONDITIONAL_KEYWORDS.length - 1; i >= 0; i--) {
-    const keyword = CONDITIONAL_KEYWORDS[i];
-    const chunk = (node as any)[keyword];
-    if (chunk && typeof chunk === 'object') {
-      entries.push({
-        node: chunk,
-        path: `${path}/${keyword}`,
-        depth: depth + 1,
-      });
-    }
-  }
+  if ('definitions' in node) handleDefinitionsNode(node, entries, path, depth);
 
-  for (let i = COMPOSITION_KEYWORDS.length - 1; i >= 0; i--) {
-    const keyword = COMPOSITION_KEYWORDS[i];
-    const chunk = (node as any)[keyword];
-    if (Array.isArray(chunk)) {
-      for (let j = chunk.length - 1; j >= 0; j--) {
-        entries.push({
-          node: chunk[j],
-          path: `${path}/${keyword}/${j}`,
-          depth: depth + 1,
-        });
-      }
-    }
-  }
+  if ('additionalProperties' in node)
+    handleAdditionalProperties(node, entries, path, depth);
 
-  if (
-    (node as any).additionalProperties &&
-    typeof (node as any).additionalProperties === 'object'
-  ) {
+  handleChunkNode(node, entries, path, depth);
+
+  handleConditionNode(node, entries, path, depth);
+
+  if (node.type === 'array' && 'items' in node)
+    handleArrayItems(node, entries, path, depth);
+
+  if (node.type === 'object' && 'properties' in node)
+    handleObjectProperties(node, entries, path, depth);
+
+  return entries;
+};
+
+const handleDefsNode = (
+  node: UnknownSchema,
+  entries: StackEntry[],
+  path: string,
+  depth: number,
+) => {
+  const $defs = node.$defs;
+  const keys = Object.keys($defs);
+  for (let i = keys.length - 1; i >= 0; i--) {
+    const key = keys[i];
     entries.push({
-      node: (node as any).additionalProperties,
-      path: `${path}/additionalProperties`,
+      node: $defs[key],
+      path: `${path}/$defs/${key}`,
       depth: depth + 1,
     });
   }
+};
 
-  if ((node as any).items) {
-    const items = (node as any).items;
-    if (Array.isArray(items)) {
-      for (let i = items.length - 1; i >= 0; i--) {
-        entries.push({
-          node: items[i],
-          path: `${path}/items/${i}`,
-          depth: depth + 1,
-        });
-      }
-    } else {
+const handleDefinitionsNode = (
+  node: UnknownSchema,
+  entries: StackEntry[],
+  path: string,
+  depth: number,
+) => {
+  const definitions = node.definitions;
+  const keys = Object.keys(definitions);
+  for (let i = keys.length - 1; i >= 0; i--) {
+    const key = keys[i];
+    entries.push({
+      node: definitions[key],
+      path: `${path}/definitions/${key}`,
+      depth: depth + 1,
+    });
+  }
+};
+
+const handleChunkNode = (
+  node: UnknownSchema,
+  entries: StackEntry[],
+  path: string,
+  depth: number,
+) => {
+  for (let i = 0; i < CONDITIONAL_KEYWORDS.length; i++) {
+    const keyword = CONDITIONAL_KEYWORDS[i];
+    const chunkNode = node[keyword];
+    if (!chunkNode || typeof chunkNode !== 'object') continue;
+    entries.push({
+      node: chunkNode,
+      path: `${path}/${keyword}`,
+      depth: depth + 1,
+    });
+  }
+};
+
+const handleConditionNode = (
+  node: UnknownSchema,
+  entries: StackEntry[],
+  path: string,
+  depth: number,
+) => {
+  for (let i = 0; i < COMPOSITION_KEYWORDS.length; i++) {
+    const keyword = COMPOSITION_KEYWORDS[i];
+    const conditionNode = node[keyword];
+    if (!conditionNode || !isArray(conditionNode)) continue;
+    for (let j = conditionNode.length - 1; j >= 0; j--) {
       entries.push({
-        node: items,
-        path: `${path}/items`,
+        node: conditionNode[j],
+        path: `${path}/${keyword}/${j}`,
         depth: depth + 1,
       });
     }
   }
+};
 
-  if ((node as any).properties) {
-    const properties = (node as any).properties;
-    for (const k of Object.keys(properties).reverse()) {
+const handleAdditionalProperties = (
+  node: UnknownSchema,
+  entries: StackEntry[],
+  path: string,
+  depth: number,
+) => {
+  entries.push({
+    node: node.additionalProperties,
+    path: `${path}/additionalProperties`,
+    depth: depth + 1,
+  });
+};
+
+const handleArrayItems = (
+  node: UnknownSchema,
+  entries: StackEntry[],
+  path: string,
+  depth: number,
+) => {
+  const items = node.items;
+  if (isArray(items)) {
+    for (let i = items.length - 1; i >= 0; i--) {
       entries.push({
-        node: properties[k],
-        path: `${path}/properties/${k}`,
+        node: items[i],
+        path: `${path}/items/${i}`,
         depth: depth + 1,
       });
     }
+  } else {
+    entries.push({
+      node: items,
+      path: `${path}/items`,
+      depth: depth + 1,
+    });
   }
-  return entries;
+};
+
+const handleObjectProperties = (
+  node: UnknownSchema,
+  entries: StackEntry[],
+  path: string,
+  depth: number,
+) => {
+  const properties = node.properties;
+  const keys = Object.keys(properties);
+  for (let i = keys.length - 1; i >= 0; i--) {
+    const key = keys[i];
+    entries.push({
+      node: properties[key],
+      path: `${path}/properties/${key}`,
+      depth: depth + 1,
+    });
+  }
 };
