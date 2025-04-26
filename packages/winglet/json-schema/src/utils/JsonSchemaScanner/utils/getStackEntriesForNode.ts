@@ -12,45 +12,43 @@ import {
  * 주어진 노드의 하위 노드들을 StackEntry 배열로 반환합니다.
  * 순회 순서 보장을 위해 역순으로 push할 수 있도록 배열 순서를 맞춥니다.
  */
-export const getStackEntriesForNode = (
-  node: UnknownSchema,
-  path: string,
-  depth: number,
-): StackEntry[] => {
+export const getStackEntriesForNode = (entry: StackEntry): StackEntry[] => {
+  const { schema, path, depth } = entry;
   const entries: StackEntry[] = [];
 
-  if ('$defs' in node) handleDefsNode(node, entries, path, depth);
+  if ('$defs' in schema) handleDefsNode(schema, entries, path, depth);
 
-  if ('definitions' in node) handleDefinitionsNode(node, entries, path, depth);
+  if ('definitions' in schema)
+    handleDefinitionsNode(schema, entries, path, depth);
 
-  if ('additionalProperties' in node)
-    handleAdditionalProperties(node, entries, path, depth);
+  if ('additionalProperties' in schema)
+    handleAdditionalProperties(schema, entries, path, depth);
 
-  handleChunkNode(node, entries, path, depth);
+  handleChunkNode(schema, entries, path, depth);
 
-  handleConditionNode(node, entries, path, depth);
+  handleConditionNode(schema, entries, path, depth);
 
-  if (node.type === 'array' && 'items' in node)
-    handleArrayItems(node, entries, path, depth);
+  if (schema.type === 'array' && 'items' in schema)
+    handleArrayItems(schema, entries, path, depth);
 
-  if (node.type === 'object' && 'properties' in node)
-    handleObjectProperties(node, entries, path, depth);
+  if (schema.type === 'object' && 'properties' in schema)
+    handleObjectProperties(schema, entries, path, depth);
 
   return entries;
 };
 
 const handleDefsNode = (
-  node: UnknownSchema,
+  schema: UnknownSchema,
   entries: StackEntry[],
   path: string,
   depth: number,
 ) => {
-  const $defs = node.$defs;
+  const $defs = schema.$defs;
   const keys = Object.keys($defs);
   for (let i = keys.length - 1; i >= 0; i--) {
     const key = keys[i];
     entries.push({
-      node: $defs[key],
+      schema: $defs[key],
       path: `${path}/$defs/${key}`,
       depth: depth + 1,
     });
@@ -58,17 +56,17 @@ const handleDefsNode = (
 };
 
 const handleDefinitionsNode = (
-  node: UnknownSchema,
+  schema: UnknownSchema,
   entries: StackEntry[],
   path: string,
   depth: number,
 ) => {
-  const definitions = node.definitions;
+  const definitions = schema.definitions;
   const keys = Object.keys(definitions);
   for (let i = keys.length - 1; i >= 0; i--) {
     const key = keys[i];
     entries.push({
-      node: definitions[key],
+      schema: definitions[key],
       path: `${path}/definitions/${key}`,
       depth: depth + 1,
     });
@@ -76,17 +74,17 @@ const handleDefinitionsNode = (
 };
 
 const handleChunkNode = (
-  node: UnknownSchema,
+  schema: UnknownSchema,
   entries: StackEntry[],
   path: string,
   depth: number,
 ) => {
   for (let i = 0; i < CONDITIONAL_KEYWORDS.length; i++) {
     const keyword = CONDITIONAL_KEYWORDS[i];
-    const chunkNode = node[keyword];
+    const chunkNode = schema[keyword];
     if (!chunkNode || typeof chunkNode !== 'object') continue;
     entries.push({
-      node: chunkNode,
+      schema: chunkNode,
       path: `${path}/${keyword}`,
       depth: depth + 1,
     });
@@ -94,18 +92,18 @@ const handleChunkNode = (
 };
 
 const handleConditionNode = (
-  node: UnknownSchema,
+  schema: UnknownSchema,
   entries: StackEntry[],
   path: string,
   depth: number,
 ) => {
   for (let i = 0; i < COMPOSITION_KEYWORDS.length; i++) {
     const keyword = COMPOSITION_KEYWORDS[i];
-    const conditionNode = node[keyword];
+    const conditionNode = schema[keyword];
     if (!conditionNode || !isArray(conditionNode)) continue;
     for (let j = conditionNode.length - 1; j >= 0; j--) {
       entries.push({
-        node: conditionNode[j],
+        schema: conditionNode[j],
         path: `${path}/${keyword}/${j}`,
         depth: depth + 1,
       });
@@ -114,36 +112,36 @@ const handleConditionNode = (
 };
 
 const handleAdditionalProperties = (
-  node: UnknownSchema,
+  schema: UnknownSchema,
   entries: StackEntry[],
   path: string,
   depth: number,
 ) => {
   entries.push({
-    node: node.additionalProperties,
+    schema: schema.additionalProperties,
     path: `${path}/additionalProperties`,
     depth: depth + 1,
   });
 };
 
 const handleArrayItems = (
-  node: UnknownSchema,
+  schema: UnknownSchema,
   entries: StackEntry[],
   path: string,
   depth: number,
 ) => {
-  const items = node.items;
+  const items = schema.items;
   if (isArray(items)) {
     for (let i = items.length - 1; i >= 0; i--) {
       entries.push({
-        node: items[i],
+        schema: items[i],
         path: `${path}/items/${i}`,
         depth: depth + 1,
       });
     }
   } else {
     entries.push({
-      node: items,
+      schema: items,
       path: `${path}/items`,
       depth: depth + 1,
     });
@@ -151,17 +149,17 @@ const handleArrayItems = (
 };
 
 const handleObjectProperties = (
-  node: UnknownSchema,
+  schema: UnknownSchema,
   entries: StackEntry[],
   path: string,
   depth: number,
 ) => {
-  const properties = node.properties;
+  const properties = schema.properties;
   const keys = Object.keys(properties);
   for (let i = keys.length - 1; i >= 0; i--) {
     const key = keys[i];
     entries.push({
-      node: properties[key],
+      schema: properties[key],
       path: `${path}/properties/${key}`,
       depth: depth + 1,
     });

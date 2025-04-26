@@ -24,43 +24,37 @@ export class JsonSchemaScanner<ContextType = void> {
 
   #run(schema: UnknownSchema): void {
     const visitedRefs = new Set<string>();
-    const stack: StackEntry[] = [
-      { node: schema, path: JSONPointer.Root, depth: 0 },
-    ];
+    const stack: StackEntry[] = [{ schema, path: JSONPointer.Root, depth: 0 }];
 
     let entry: StackEntry | undefined;
     while ((entry = stack.pop()) !== undefined) {
-      const { node, path, depth, parentIsRef } = entry;
-
-      if (parentIsRef) {
-        this.#visitor.exit?.(node, path, depth, this.#options.context);
+      if (entry.resolvedRef) {
+        this.#visitor.exit?.(entry, this.#options.context);
         continue;
       }
 
       if (
         (this.#options.maxDepth !== undefined &&
-          depth > this.#options.maxDepth) ||
+          entry.depth > this.#options.maxDepth) ||
         (this.#options.filter !== undefined &&
-          !this.#options.filter(node, path, depth, this.#options.context))
+          !this.#options.filter(entry, this.#options.context))
       )
         continue;
 
-      this.#visitor.enter?.(node, path, depth, this.#options.context);
-      if (typeof node.$ref === 'string')
+      this.#visitor.enter?.(entry, this.#options.context);
+      if (typeof entry.schema.$ref === 'string')
         handleRefNodeSync(
-          node,
-          path,
-          depth,
+          entry,
           stack,
           visitedRefs,
           this.#visitor,
           this.#options,
         );
 
-      const entries = getStackEntriesForNode(node, path, depth);
+      const entries = getStackEntriesForNode(entry);
       for (let i = 0; i < entries.length; i++) stack.push(entries[i]);
 
-      this.#visitor.exit?.(node, path, depth, this.#options.context);
+      this.#visitor.exit?.(entry, this.#options.context);
     }
   }
 }

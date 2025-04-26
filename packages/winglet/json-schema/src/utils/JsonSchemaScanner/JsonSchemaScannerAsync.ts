@@ -28,52 +28,41 @@ export class JsonSchemaScannerAsync<ContextType = void> {
 
   async #run(schema: UnknownSchema): Promise<void> {
     const visitedRefs = new Set<string>();
-    const stack: StackEntry[] = [
-      { node: schema, path: JSONPointer.Root, depth: 0 },
-    ];
+    const stack: StackEntry[] = [{ schema, path: JSONPointer.Root, depth: 0 }];
 
     let entry: StackEntry | undefined;
     while ((entry = stack.pop()) !== undefined) {
-      const { node, path, depth, parentIsRef } = entry;
-
-      if (parentIsRef) {
+      if (entry.resolvedRef) {
         if (this.#visitor.exit)
-          await this.#visitor.exit(node, path, depth, this.#options.context);
+          await this.#visitor.exit(entry, this.#options.context);
         continue;
       }
 
       if (
         (this.#options.maxDepth !== undefined &&
-          depth > this.#options.maxDepth) ||
+          entry.depth > this.#options.maxDepth) ||
         (this.#options.filter !== undefined &&
-          !(await this.#options.filter(
-            node,
-            path,
-            depth,
-            this.#options.context,
-          )))
+          !(await this.#options.filter(entry, this.#options.context)))
       )
         continue;
 
       if (this.#visitor.enter)
-        await this.#visitor.enter(node, path, depth, this.#options.context);
+        await this.#visitor.enter(entry, this.#options.context);
 
-      if (typeof node.$ref === 'string')
+      if (typeof entry.schema.$ref === 'string')
         await handleRefNodeAsync(
-          node,
-          path,
-          depth,
+          entry,
           stack,
           visitedRefs,
           this.#visitor,
           this.#options,
         );
 
-      const entries = getStackEntriesForNode(node, path, depth);
+      const entries = getStackEntriesForNode(entry);
       for (let i = 0; i < entries.length; i++) stack.push(entries[i]);
 
       if (this.#visitor.exit)
-        await this.#visitor.exit(node, path, depth, this.#options.context);
+        await this.#visitor.exit(entry, this.#options.context);
     }
   }
 }

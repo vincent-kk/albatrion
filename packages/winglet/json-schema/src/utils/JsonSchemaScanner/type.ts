@@ -6,42 +6,21 @@ export const COMPOSITION_KEYWORDS = ['allOf', 'anyOf', 'oneOf'] as const;
 export const CONDITIONAL_KEYWORDS = ['not', 'if', 'then', 'else'] as const;
 
 export interface StackEntry {
-  node: UnknownSchema;
+  schema: UnknownSchema;
   path: string;
   depth: number;
-  parentIsRef?: boolean; // $ref 처리 후 exit 호출 여부 구분용
+  resolvedRef?: boolean;
+  referencePath?: string;
 }
 
 export interface SchemaVisitor<ContextType = void> {
-  enter?: Fn<
-    [
-      schema: UnknownSchema,
-      path: string,
-      depth: number,
-      context: ContextType | undefined,
-    ]
-  >;
-  exit?: Fn<
-    [
-      schema: UnknownSchema,
-      path: string,
-      depth: number,
-      context: ContextType | undefined,
-    ]
-  >;
+  enter?: Fn<[entry: StackEntry, context: ContextType | undefined]>;
+  exit?: Fn<[entry: StackEntry, context: ContextType | undefined]>;
 }
 
 export interface JsonScannerOptions<ContextType = void> {
   maxDepth?: number;
-  filter?: Fn<
-    [
-      schema: UnknownSchema,
-      path: string,
-      depth: number,
-      context: ContextType | undefined,
-    ],
-    boolean
-  >;
+  filter?: Fn<[entry: StackEntry, context: ContextType | undefined], boolean>;
   resolveReference?: Fn<
     [reference: string, context: ContextType | undefined],
     UnknownSchema | undefined

@@ -1,5 +1,3 @@
-import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
-
 import type {
   JsonScannerOptionsAsync,
   SchemaVisitor,
@@ -7,29 +5,36 @@ import type {
 } from '../type';
 
 export const handleRefNodeAsync = async <ContextType = void>(
-  node: UnknownSchema,
-  path: string,
-  depth: number,
+  entry: StackEntry,
   stack: StackEntry[],
   visitedRefs: Set<string>,
   visitor: SchemaVisitor<ContextType>,
   options: JsonScannerOptionsAsync<ContextType>,
 ): Promise<void> => {
-  if (visitedRefs.has(node.$ref)) {
-    await visitor.exit?.(node, path, depth, options.context);
+  if (visitedRefs.has(entry.schema.$ref)) {
+    await visitor.exit?.(entry, options.context);
     return;
   }
-  visitedRefs.add(node.$ref);
+  visitedRefs.add(entry.schema.$ref);
 
-  const resolved = await options.resolveReference?.(node.$ref, options.context);
+  const resolved = await options.resolveReference?.(
+    entry.schema.$ref,
+    options.context,
+  );
   if (resolved) {
-    stack.push({ node, path, depth, parentIsRef: true });
     stack.push({
-      node: resolved,
-      path: `${path} -> (${node.$ref})`,
-      depth: depth + 1,
+      schema: entry.schema,
+      path: entry.path,
+      depth: entry.depth,
+      resolvedRef: true,
+    });
+    stack.push({
+      schema: resolved,
+      path: entry.path,
+      depth: entry.depth + 1,
+      referencePath: entry.schema.$ref,
     });
   } else if (visitor.exit) {
-    await visitor.exit(node, path, depth, options.context);
+    await visitor.exit(entry, options.context);
   }
 };
