@@ -205,15 +205,26 @@ describe('JsonSchemaScanner', () => {
       // $ref가 resolve되어 type: 'string' 노드를 방문
       expect(enter).toHaveBeenCalledWith(
         {
-          schema: { type: 'string' },
-          path: expect.any(String),
-          depth: expect.any(Number),
+          depth: 0,
+          path: '#',
+          schema: {
+            $ref: '#/definitions/Bar',
+            definitions: {
+              Bar: { type: 'string' },
+            },
+          },
         },
         undefined,
       );
-      expect(result).toEqual({
-        type: 'string',
-      });
+      expect(enter).toHaveBeenCalledWith(
+        {
+          depth: 1,
+          path: '#/definitions/Bar',
+          schema: { type: 'string' },
+        },
+        undefined,
+      );
+      expect(result).toEqual({ type: 'string' });
     });
 
     it('context 옵션이 콜백에 전달되는지 확인', () => {
@@ -269,10 +280,26 @@ describe('JsonSchemaScanner', () => {
       );
       expect(visitor.enter).toHaveBeenCalledWith(
         {
-          schema: { type: 'string' },
-          path: `${JSONPointer.Root}/properties/ref`,
-          depth: 2,
-          referencePath: '#/definitions/string',
+          depth: 0,
+          path: '#',
+          schema: {
+            properties: {
+              ref: {
+                $ref: '#/definitions/string',
+              },
+            },
+            type: 'object',
+          },
+        },
+        undefined,
+      );
+      expect(visitor.enter).toHaveBeenCalledWith(
+        {
+          depth: 1,
+          path: '#/properties/ref',
+          schema: {
+            $ref: '#/definitions/string',
+          },
         },
         undefined,
       );
@@ -566,10 +593,24 @@ describe('JsonSchemaScannerAsync', () => {
       );
       expect(visitor.enter).toHaveBeenCalledWith(
         {
-          schema: { type: 'string' },
-          path: `${JSONPointer.Root}/properties/ref`,
-          depth: 2,
-          referencePath: '#/definitions/string',
+          depth: 0,
+          path: '#',
+          schema: {
+            properties: {
+              ref: {
+                $ref: '#/definitions/string',
+              },
+            },
+            type: 'object',
+          },
+        },
+        undefined,
+      );
+      expect(visitor.enter).toHaveBeenCalledWith(
+        {
+          depth: 1,
+          path: '#/properties/ref',
+          schema: { $ref: '#/definitions/string' },
         },
         undefined,
       );

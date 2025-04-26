@@ -5,7 +5,7 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 export const COMPOSITION_KEYWORDS = ['allOf', 'anyOf', 'oneOf'] as const;
 export const CONDITIONAL_KEYWORDS = ['not', 'if', 'then', 'else'] as const;
 
-export interface StackEntry {
+export interface SchemaEntry {
   schema: UnknownSchema;
   path: string;
   depth: number;
@@ -15,13 +15,13 @@ export interface StackEntry {
 }
 
 export interface SchemaVisitor<ContextType = void> {
-  enter?: Fn<[entry: StackEntry, context: ContextType | undefined]>;
-  exit?: Fn<[entry: StackEntry, context: ContextType | undefined]>;
+  enter?: Fn<[entry: SchemaEntry, context: ContextType | undefined]>;
+  exit?: Fn<[entry: SchemaEntry, context: ContextType | undefined]>;
 }
 
 export interface JsonScannerOptions<ContextType = void> {
   maxDepth?: number;
-  filter?: Fn<[entry: StackEntry, context: ContextType | undefined], boolean>;
+  filter?: Fn<[entry: SchemaEntry, context: ContextType | undefined], boolean>;
   resolveReference?: Fn<
     [reference: string, context: ContextType | undefined],
     UnknownSchema | undefined

@@ -5,16 +5,16 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 import {
   COMPOSITION_KEYWORDS,
   CONDITIONAL_KEYWORDS,
-  type StackEntry,
+  type SchemaEntry,
 } from '../type';
 
 /**
  * 주어진 노드의 하위 노드들을 StackEntry 배열로 반환합니다.
  * 순회 순서 보장을 위해 역순으로 push할 수 있도록 배열 순서를 맞춥니다.
  */
-export const getStackEntriesForNode = (entry: StackEntry): StackEntry[] => {
+export const getStackEntriesForNode = (entry: SchemaEntry): SchemaEntry[] => {
   const { schema, path, depth } = entry;
-  const entries: StackEntry[] = [];
+  const entries: SchemaEntry[] = [];
 
   if ('$defs' in schema) handleDefsNode(schema, entries, path, depth);
 
@@ -39,7 +39,7 @@ export const getStackEntriesForNode = (entry: StackEntry): StackEntry[] => {
 
 const handleDefsNode = (
   schema: UnknownSchema,
-  entries: StackEntry[],
+  entries: SchemaEntry[],
   path: string,
   depth: number,
 ) => {
@@ -57,7 +57,7 @@ const handleDefsNode = (
 
 const handleDefinitionsNode = (
   schema: UnknownSchema,
-  entries: StackEntry[],
+  entries: SchemaEntry[],
   path: string,
   depth: number,
 ) => {
@@ -75,7 +75,7 @@ const handleDefinitionsNode = (
 
 const handleChunkNode = (
   schema: UnknownSchema,
-  entries: StackEntry[],
+  entries: SchemaEntry[],
   path: string,
   depth: number,
 ) => {
@@ -93,7 +93,7 @@ const handleChunkNode = (
 
 const handleConditionNode = (
   schema: UnknownSchema,
-  entries: StackEntry[],
+  entries: SchemaEntry[],
   path: string,
   depth: number,
 ) => {
@@ -113,7 +113,7 @@ const handleConditionNode = (
 
 const handleAdditionalProperties = (
   schema: UnknownSchema,
-  entries: StackEntry[],
+  entries: SchemaEntry[],
   path: string,
   depth: number,
 ) => {
@@ -126,7 +126,7 @@ const handleAdditionalProperties = (
 
 const handleArrayItems = (
   schema: UnknownSchema,
-  entries: StackEntry[],
+  entries: SchemaEntry[],
   path: string,
   depth: number,
 ) => {
@@ -150,7 +150,7 @@ const handleArrayItems = (
 
 const handleObjectProperties = (
   schema: UnknownSchema,
-  entries: StackEntry[],
+  entries: SchemaEntry[],
   path: string,
   depth: number,
 ) => {

@@ -1,23 +1,19 @@
-import type {
-  JsonScannerOptionsAsync,
-  SchemaVisitor,
-  StackEntry,
-} from '../type';
+import type { JsonScannerOptions, SchemaEntry, SchemaVisitor } from '../type';
 
-export const handleRefNodeAsync = async <ContextType = void>(
-  entry: StackEntry,
-  stack: StackEntry[],
+export const handleReferenceNodeSync = <ContextType = void>(
+  entry: SchemaEntry,
+  stack: SchemaEntry[],
   visitedRefs: Set<string>,
   visitor: SchemaVisitor<ContextType>,
-  options: JsonScannerOptionsAsync<ContextType>,
-): Promise<void> => {
+  options: JsonScannerOptions<ContextType>,
+): void => {
   if (visitedRefs.has(entry.schema.$ref)) {
-    await visitor.exit?.(entry, options.context);
+    visitor.exit?.(entry, options.context);
     return;
   }
   visitedRefs.add(entry.schema.$ref);
 
-  const resolved = await options.resolveReference?.(
+  const resolved = options.resolveReference?.(
     entry.schema.$ref,
     options.context,
   );
@@ -34,8 +30,8 @@ export const handleRefNodeAsync = async <ContextType = void>(
       depth: entry.depth + 1,
       referencePath: entry.schema.$ref,
     });
-  } else if (visitor.exit)
-    await visitor.exit(
+  } else
+    visitor.exit?.(
       {
         schema: entry.schema,
         path: entry.path,
