@@ -9,6 +9,7 @@ import { handleRefNodeSync } from './utils/handleRefNodeSync';
 export class JsonSchemaScanner<ContextType = void> {
   readonly #visitor: SchemaVisitor<ContextType>;
   readonly #options: JsonScannerOptions<ContextType>;
+  #value: UnknownSchema | undefined;
 
   constructor(
     visitor: SchemaVisitor<ContextType>,
@@ -18,11 +19,17 @@ export class JsonSchemaScanner<ContextType = void> {
     this.#options = options;
   }
 
-  public scan(schema: UnknownSchema): void {
+  public scan(this: this, schema: UnknownSchema): this {
+    this.#value = undefined;
     this.#run(schema);
+    return this;
   }
 
-  #run(schema: UnknownSchema): void {
+  public getValue(this: this): UnknownSchema | undefined {
+    return this.#value;
+  }
+
+  #run(this: this, schema: UnknownSchema): void {
     const visitedRefs = new Set<string>();
     const stack: StackEntry[] = [{ schema, path: JSONPointer.Root, depth: 0 }];
 
@@ -55,6 +62,8 @@ export class JsonSchemaScanner<ContextType = void> {
       for (let i = 0; i < entries.length; i++) stack.push(entries[i]);
 
       this.#visitor.exit?.(entry, this.#options.context);
+
+      if (entry.path === JSONPointer.Root) this.#value = entry.schema;
     }
   }
 }

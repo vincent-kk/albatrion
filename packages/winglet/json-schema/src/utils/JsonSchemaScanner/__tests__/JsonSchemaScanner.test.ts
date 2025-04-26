@@ -189,7 +189,7 @@ describe('JsonSchemaScanner', () => {
         { resolveReference },
       );
 
-      scanner.scan(schema);
+      const result = scanner.scan(schema).getValue();
 
       // $ref가 resolve되어 type: 'string' 노드를 방문
       expect(enter).toHaveBeenCalledWith(
@@ -200,6 +200,9 @@ describe('JsonSchemaScanner', () => {
         },
         undefined,
       );
+      expect(result).toEqual({
+        type: 'string',
+      });
     });
 
     it('context 옵션이 콜백에 전달되는지 확인', () => {
@@ -402,7 +405,7 @@ describe('JsonSchemaScanner', () => {
       };
 
       const scanner = new JsonSchemaScanner(visitor);
-      scanner.scan(schema);
+      const value = scanner.scan(schema).getValue();
 
       // Check $defs storage
       expect(defsMap.size).toBe(2);
@@ -442,6 +445,32 @@ describe('JsonSchemaScanner', () => {
         ),
       ).toEqual({
         $ref: '#/$defs/phone',
+      });
+      expect(value).toEqual({
+        $defs: {
+          email: {
+            format: 'email',
+            type: 'string',
+          },
+          phone: {
+            pattern: '^\\+?\\d{10,}$',
+            type: 'string',
+          },
+        },
+        properties: {
+          user: {
+            properties: {
+              primaryContact: {
+                $ref: '#/$defs/email',
+              },
+              secondaryContact: {
+                $ref: '#/$defs/phone',
+              },
+            },
+            type: 'object',
+          },
+        },
+        type: 'object',
       });
     });
   });
