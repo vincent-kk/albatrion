@@ -3,16 +3,16 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import { JsonSchemaScanner } from '../JsonSchemaScanner';
+import { JsonSchemaScannerAsync } from '../JsonSchemaScannerAsync';
 
-describe('JsonSchemaScanner 실제 데이터 테스트', () => {
+describe('JsonSchemaScannerAsync 실제 데이터 테스트', () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
   it('schema1에 대한 데이터 처리', async () => {
     const jsonSchema = schema1;
     const defs = new Map<string, UnknownSchema>();
-    const scanner = new JsonSchemaScanner({
+    const scanner = new JsonSchemaScannerAsync({
       visitor: {
         exit: ({ schema, hasReference }) => {
           if (hasReference && typeof schema.$ref === 'string')
@@ -20,19 +20,19 @@ describe('JsonSchemaScanner 실제 데이터 테스트', () => {
         },
       },
     });
-    scanner.scan(jsonSchema);
+    await scanner.scan(jsonSchema);
 
     expect(Array.from(defs.entries())).toEqual([
       ['#/$defs/Name', { type: 'string', minLength: 1 }],
     ]);
 
-    const finalSchema = new JsonSchemaScanner({
-      options: {
-        resolveReference: (path) => defs.get(path),
-      },
-    })
-      .scan(jsonSchema)
-      .getValue();
+    const finalSchema = (
+      await new JsonSchemaScannerAsync({
+        options: {
+          resolveReference: (path) => defs.get(path),
+        },
+      }).scan(jsonSchema)
+    ).getValue();
 
     expect(finalSchema).toEqual({
       type: 'object',
@@ -55,7 +55,7 @@ describe('JsonSchemaScanner 실제 데이터 테스트', () => {
   it('schema2에 대한 데이터 처리', async () => {
     const jsonSchema = schema2;
     const defs = new Map<string, UnknownSchema>();
-    const scanner = new JsonSchemaScanner({
+    const scanner = new JsonSchemaScannerAsync({
       visitor: {
         exit: ({ schema, hasReference }) => {
           if (hasReference && typeof schema.$ref === 'string')
@@ -63,7 +63,7 @@ describe('JsonSchemaScanner 실제 데이터 테스트', () => {
         },
       },
     });
-    scanner.scan(jsonSchema);
+    await scanner.scan(jsonSchema);
 
     expect(Array.from(defs.entries())).toEqual([
       [
@@ -95,13 +95,13 @@ describe('JsonSchemaScanner 실제 데이터 테스트', () => {
       ],
     ]);
 
-    const finalSchema = new JsonSchemaScanner({
-      options: {
-        resolveReference: (path) => defs.get(path),
-      },
-    })
-      .scan(jsonSchema)
-      .getValue();
+    const finalSchema = (
+      await new JsonSchemaScannerAsync({
+        options: {
+          resolveReference: (path) => defs.get(path),
+        },
+      }).scan(jsonSchema)
+    ).getValue();
 
     expect(finalSchema).toEqual({
       type: 'object',
@@ -153,7 +153,7 @@ describe('JsonSchemaScanner 실제 데이터 테스트', () => {
   it('schema3에 대한 데이터 처리', async () => {
     const jsonSchema = schema3;
     const defs = new Map<string, UnknownSchema>();
-    const scanner = new JsonSchemaScanner({
+    const scanner = new JsonSchemaScannerAsync({
       visitor: {
         exit: ({ schema, hasReference }) => {
           if (hasReference && typeof schema.$ref === 'string')
@@ -184,13 +184,13 @@ describe('JsonSchemaScanner 실제 데이터 테스트', () => {
       ],
     ]);
 
-    const finalSchema = new JsonSchemaScanner({
-      options: {
-        resolveReference: (path) => defs.get(path),
-      },
-    })
-      .scan(jsonSchema)
-      .getValue();
+    const finalSchema = (
+      await new JsonSchemaScannerAsync({
+        options: {
+          resolveReference: (path) => defs.get(path),
+        },
+      }).scan(jsonSchema)
+    ).getValue();
 
     expect(finalSchema).toEqual({
       type: 'object',
@@ -218,7 +218,7 @@ describe('JsonSchemaScanner 실제 데이터 테스트', () => {
   it('schema4에 대한 데이터 처리', async () => {
     const jsonSchema = schema4;
     const defs = new Map<string, UnknownSchema>();
-    const scanner = new JsonSchemaScanner({
+    const scanner = new JsonSchemaScannerAsync({
       visitor: {
         exit: ({ schema, hasReference }) => {
           if (hasReference && typeof schema.$ref === 'string')
@@ -226,7 +226,7 @@ describe('JsonSchemaScanner 실제 데이터 테스트', () => {
         },
       },
     });
-    scanner.scan(jsonSchema);
+    await scanner.scan(jsonSchema);
 
     expect(Array.from(defs.entries())).toEqual([
       [
@@ -261,13 +261,13 @@ describe('JsonSchemaScanner 실제 데이터 테스트', () => {
       ],
     ]);
 
-    const finalSchema = new JsonSchemaScanner({
-      options: {
-        resolveReference: (path) => defs.get(path),
-      },
-    })
-      .scan(jsonSchema)
-      .getValue();
+    const finalSchema = (
+      await new JsonSchemaScannerAsync({
+        options: {
+          resolveReference: (path) => defs.get(path),
+        },
+      }).scan(jsonSchema)
+    ).getValue();
 
     expect(finalSchema).toEqual({
       $defs: {
