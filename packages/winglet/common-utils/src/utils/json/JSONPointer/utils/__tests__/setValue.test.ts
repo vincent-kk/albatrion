@@ -68,7 +68,7 @@ describe('setValue', () => {
     it('should return original for empty segments', () => {
       const obj = { foo: 'bar' };
       const result = setValue(obj, [], 'new');
-      expect(result).toBe(obj);
+      expect(result).toBe('new');
     });
 
     it('should handle non-existent intermediate paths', () => {

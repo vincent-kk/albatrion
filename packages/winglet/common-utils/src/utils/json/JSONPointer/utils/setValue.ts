@@ -9,10 +9,10 @@ import { unescape } from './unescape';
 export const setValue = <Input extends Dictionary>(
   input: Input,
   segments: string[],
-  value: unknown,
-): Input => {
+  value: any,
+): Dictionary => {
   const length = segments.length;
-  if (length === 0) return input;
+  if (length === 0) return value;
 
   let current: any = input;
   let part = '';

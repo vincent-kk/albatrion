@@ -11,7 +11,7 @@ export const setValueByPointer = <Input extends Dictionary>(
   input: Input,
   pointer: string | string[],
   value: any,
-): Input => {
+): Dictionary => {
   if (!(isPlainObject(input) || isArray(input)))
     throw new JSONPointerError(
       'INVALID_INPUT',

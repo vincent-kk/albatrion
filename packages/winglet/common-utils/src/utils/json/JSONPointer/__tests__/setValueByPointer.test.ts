@@ -107,4 +107,8 @@ describe('setValueByPointer', () => {
       '': { '': 'value' },
     });
   });
+
+  it('should return value if root path is provided', () => {
+    expect(setValueByPointer(testObj, '#', 'value')).toEqual('value');
+  });
 });
