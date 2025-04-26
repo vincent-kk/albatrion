@@ -84,6 +84,119 @@ describe('JsonSchemaScanner', () => {
         undefined,
       );
     });
+
+    it('enter/exit 콜백이 올바르게 호출되는지 확인', () => {
+      const enter = vi.fn();
+      const exit = vi.fn();
+
+      const scanner = new JsonSchemaScanner({ enter, exit }, {});
+
+      scanner.scan({
+        type: 'string',
+      });
+
+      expect(enter).toHaveBeenCalledWith(
+        { type: 'string' },
+        '#', // path
+        0, // depth
+        undefined, // context
+      );
+      expect(exit).toHaveBeenCalledWith({ type: 'string' }, '#', 0, undefined);
+    });
+
+    it('maxDepth 옵션이 동작하는지 확인', () => {
+      const enter = vi.fn();
+      const exit = vi.fn();
+
+      const schema: UnknownSchema = {
+        type: 'object',
+        properties: {
+          foo: { type: 'string' },
+        },
+      };
+
+      const scanner = new JsonSchemaScanner({ enter, exit }, { maxDepth: 0 });
+
+      scanner.scan(schema);
+
+      // depth 0만 방문, properties 내부는 방문하지 않음
+      expect(enter).toHaveBeenCalledTimes(1);
+      expect(exit).toHaveBeenCalledTimes(1);
+    });
+
+    it('filter 옵션이 동작하는지 확인', () => {
+      const enter = vi.fn();
+      const exit = vi.fn();
+
+      const schema: UnknownSchema = {
+        type: 'object',
+        properties: {
+          foo: { type: 'string' },
+          bar: { type: 'number' },
+        },
+      };
+
+      // 'number' 타입만 방문
+      const filter = (node: UnknownSchema) =>
+        node.type === 'number' || node.type === 'object';
+
+      const scanner = new JsonSchemaScanner({ enter, exit }, { filter });
+
+      scanner.scan(schema);
+
+      expect(enter).toHaveBeenCalledTimes(2);
+    });
+
+    it('resolveReference 옵션이 동작하는지 확인', () => {
+      const enter = vi.fn();
+      const exit = vi.fn();
+
+      const schema: UnknownSchema = {
+        $ref: '#/definitions/Bar',
+        definitions: {
+          Bar: { type: 'string' },
+        },
+      };
+
+      const resolveReference = (ref: string) => {
+        if (ref === '#/definitions/Bar') {
+          return { type: 'string' };
+        }
+        return undefined;
+      };
+
+      const scanner = new JsonSchemaScanner(
+        { enter, exit },
+        { resolveReference },
+      );
+
+      scanner.scan(schema);
+
+      // $ref가 resolve되어 type: 'string' 노드를 방문
+      expect(enter).toHaveBeenCalledWith(
+        { type: 'string' }, // resolveReference의 반환값
+        expect.any(String),
+        expect.any(Number),
+        undefined,
+      );
+    });
+
+    it('context 옵션이 콜백에 전달되는지 확인', () => {
+      const enter = vi.fn();
+      const exit = vi.fn();
+
+      const context = { user: 'vincent' };
+
+      const schema: UnknownSchema = { type: 'string' };
+
+      const scanner = new JsonSchemaScanner({ enter, exit }, { context });
+
+      scanner.scan(schema);
+
+      expect(enter).toHaveBeenCalledWith({ type: 'string' }, '#', 0, {
+        user: 'vincent',
+      });
+    });
   });
 
   describe('참조 해결 테스트', () => {
