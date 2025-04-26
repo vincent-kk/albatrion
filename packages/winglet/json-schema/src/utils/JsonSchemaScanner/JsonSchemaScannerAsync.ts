@@ -13,20 +13,26 @@ import { handleRefNodeAsync } from './utils/handleRefNodeAsync';
 export class JsonSchemaScannerAsync<ContextType = void> {
   readonly #visitor: SchemaVisitor<ContextType>;
   readonly #options: JsonScannerOptionsAsync<ContextType>;
+  #value: UnknownSchema | undefined;
 
   constructor(
-    visitor: SchemaVisitor<ContextType>,
+    visitor: SchemaVisitor<ContextType> = {},
     options: JsonScannerOptionsAsync<ContextType> = {},
   ) {
     this.#visitor = visitor;
     this.#options = options;
   }
 
-  public async scan(schema: UnknownSchema): Promise<void> {
+  public async scan(this: this, schema: UnknownSchema): Promise<this> {
     await this.#run(schema);
+    return this;
   }
 
-  async #run(schema: UnknownSchema): Promise<void> {
+  public getValue(this: this): UnknownSchema | undefined {
+    return this.#value;
+  }
+
+  async #run(this: this, schema: UnknownSchema): Promise<void> {
     const visitedRefs = new Set<string>();
     const stack: StackEntry[] = [{ schema, path: JSONPointer.Root, depth: 0 }];
 
@@ -63,6 +69,8 @@ export class JsonSchemaScannerAsync<ContextType = void> {
 
       if (this.#visitor.exit)
         await this.#visitor.exit(entry, this.#options.context);
+
+      if (entry.path === JSONPointer.Root) this.#value = entry.schema;
     }
   }
 }

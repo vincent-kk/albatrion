@@ -12,7 +12,7 @@ export class JsonSchemaScanner<ContextType = void> {
   #value: UnknownSchema | undefined;
 
   constructor(
-    visitor: SchemaVisitor<ContextType>,
+    visitor: SchemaVisitor<ContextType> = {},
     options: JsonScannerOptions<ContextType> = {},
   ) {
     this.#visitor = visitor;
