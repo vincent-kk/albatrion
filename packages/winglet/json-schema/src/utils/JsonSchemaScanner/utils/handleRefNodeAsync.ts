@@ -26,7 +26,7 @@ export const handleRefNodeAsync = async <ContextType = void>(
       schema: entry.schema,
       path: entry.path,
       depth: entry.depth,
-      resolvedRef: true,
+      resolvedReference: true,
     });
     stack.push({
       schema: resolved,
@@ -34,7 +34,14 @@ export const handleRefNodeAsync = async <ContextType = void>(
       depth: entry.depth + 1,
       referencePath: entry.schema.$ref,
     });
-  } else if (visitor.exit) {
-    await visitor.exit(entry, options.context);
-  }
+  } else if (visitor.exit)
+    await visitor.exit(
+      {
+        schema: entry.schema,
+        path: entry.path,
+        depth: entry.depth,
+        hasReference: true,
+      },
+      options.context,
+    );
 };

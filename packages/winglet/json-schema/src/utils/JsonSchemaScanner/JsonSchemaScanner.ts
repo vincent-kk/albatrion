@@ -37,7 +37,7 @@ export class JsonSchemaScanner<ContextType = void> {
 
     let entry: StackEntry | undefined;
     while ((entry = stack.pop()) !== undefined) {
-      if (entry.resolvedRef) {
+      if (entry.resolvedReference) {
         this.#visitor.exit?.(entry, this.#options.context);
         continue;
       }

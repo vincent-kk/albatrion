@@ -22,7 +22,7 @@ export const handleRefNodeSync = <ContextType = void>(
       schema: entry.schema,
       path: entry.path,
       depth: entry.depth,
-      resolvedRef: true,
+      resolvedReference: true,
     });
     stack.push({
       schema: resolved,
@@ -30,5 +30,14 @@ export const handleRefNodeSync = <ContextType = void>(
       depth: entry.depth + 1,
       referencePath: entry.schema.$ref,
     });
-  } else visitor.exit?.(entry, options.context);
+  } else
+    visitor.exit?.(
+      {
+        schema: entry.schema,
+        path: entry.path,
+        depth: entry.depth,
+        hasReference: true,
+      },
+      options.context,
+    );
 };

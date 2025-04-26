@@ -9,8 +9,9 @@ export interface StackEntry {
   schema: UnknownSchema;
   path: string;
   depth: number;
-  resolvedRef?: boolean;
+  hasReference?: boolean;
   referencePath?: string;
+  resolvedReference?: boolean;
 }
 
 export interface SchemaVisitor<ContextType = void> {
