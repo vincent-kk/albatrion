@@ -5,6 +5,13 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 export const COMPOSITION_KEYWORDS = ['allOf', 'anyOf', 'oneOf'] as const;
 export const CONDITIONAL_KEYWORDS = ['not', 'if', 'then', 'else'] as const;
 
+export interface StackEntry {
+  node: UnknownSchema;
+  path: string;
+  depth: number;
+  parentIsRef?: boolean; // $ref 처리 후 exit 호출 여부 구분용
+}
+
 export interface SchemaVisitor<ContextType = void> {
   enter?: Fn<
     [schema: UnknownSchema, path: string, depth: number, context: ContextType]
