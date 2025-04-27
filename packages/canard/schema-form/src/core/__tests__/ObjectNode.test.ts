@@ -448,7 +448,23 @@ describe('ObjectNode', () => {
     expect(children.jsonSchema).toEqual({
       type: 'array',
       items: {
-        $ref: '#/$defs/TreeNode',
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+          },
+          name: {
+            type: 'string',
+          },
+          children: {
+            type: 'array',
+            items: {
+              $ref: '#/$defs/TreeNode',
+            },
+          },
+        },
+        required: ['id', 'name'],
+        additionalProperties: false,
       },
     });
 

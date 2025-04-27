@@ -79,10 +79,6 @@ export interface BranchNodeConstructorProps<
   nodeFactory: SchemaNodeFactory;
 }
 
-export interface ArrayNodeConstructorProps
-  extends BranchNodeConstructorProps<ArraySchema> {
-  itemSchema: JsonSchemaWithVirtual;
-}
 export interface VirtualNodeConstructorProps<
   Schema extends JsonSchemaWithVirtual,
 > extends SchemaNodeConstructorProps<Schema> {

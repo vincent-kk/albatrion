@@ -1,6 +1,7 @@
 import { SchemaNodeError } from '@/schema-form/errors';
 import type { ResolveSchema } from '@/schema-form/helpers/jsonSchema';
 import type {
+  ArraySchema,
   BooleanSchema,
   JsonSchemaWithVirtual,
   NullSchema,
@@ -18,7 +19,6 @@ import { ObjectNode } from './ObjectNode';
 import { StringNode } from './StringNode';
 import { VirtualNode } from './VirtualNode';
 import type {
-  ArrayNodeConstructorProps,
   BranchNodeConstructorProps,
   NodeFactoryProps,
   SchemaNodeConstructorProps,
@@ -83,14 +83,13 @@ export const createSchemaNodeFactory =
           key,
           name,
           jsonSchema,
-          itemSchema: resolveSchema(jsonSchema.items),
           defaultValue,
           nodeFactory,
           onChange,
           parentNode,
           validationMode,
           ajv,
-        } as ArrayNodeConstructorProps);
+        } as BranchNodeConstructorProps<ArraySchema>);
       case 'object':
         return new ObjectNode({
           key,
