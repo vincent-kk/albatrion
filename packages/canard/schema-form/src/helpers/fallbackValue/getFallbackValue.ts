@@ -4,7 +4,7 @@
  * @returns 기본값
  */
 export const getFallbackValue = <
-  Schema extends { type: string; default?: any },
+  Schema extends { type?: string; default?: any },
 >(
   jsonSchema: Schema,
 ) => {

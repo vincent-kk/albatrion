@@ -8,6 +8,7 @@ import type {
   NumberSchema as BaseNumberSchema,
   ObjectSchema as BaseObjectSchema,
   StringSchema as BaseStringSchema,
+  RefSchema,
 } from '@winglet/json-schema';
 
 import type { Dictionary } from '@aileron/declare';
@@ -58,7 +59,8 @@ export type JsonSchema<
   | BooleanSchema<Options, RenderOptions>
   | ArraySchema<Options, RenderOptions>
   | ObjectSchema<Options, RenderOptions>
-  | NullSchema<Options, RenderOptions>;
+  | NullSchema<Options, RenderOptions>
+  | RefSchema;
 
 export type JsonSchemaWithVirtual<
   Options extends Dictionary = object,
