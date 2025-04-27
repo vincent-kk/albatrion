@@ -22,7 +22,6 @@ import type { NumberNode } from './NumberNode';
 import type { ObjectNode } from './ObjectNode';
 import type { StringNode } from './StringNode';
 import type { VirtualNode } from './VirtualNode';
-import type { schemaNodeFactory } from './schemaNodeFactory';
 
 export type InferSchemaNode<S extends JsonSchemaWithVirtual | unknown> =
   S extends ArraySchema
@@ -55,6 +54,11 @@ export enum ValidationMode {
   OnChange = 1 << 1,
   OnRequest = 1 << 2,
 }
+
+export type SchemaNodeFactory<
+  Schema extends JsonSchemaWithVirtual = JsonSchemaWithVirtual,
+> = Fn<[props: NodeFactoryProps<Schema>], SchemaNode>;
+
 export interface SchemaNodeConstructorProps<
   Schema extends JsonSchemaWithVirtual,
   Value extends AllowedValue = InferValueType<Schema>,
@@ -69,14 +73,16 @@ export interface SchemaNodeConstructorProps<
   ajv?: Ajv;
 }
 
-export type NodeFactory = typeof schemaNodeFactory;
-
 export interface BranchNodeConstructorProps<
   Schema extends JsonSchemaWithVirtual,
 > extends SchemaNodeConstructorProps<Schema> {
-  nodeFactory: NodeFactory;
+  nodeFactory: SchemaNodeFactory;
 }
 
+export interface ArrayNodeConstructorProps
+  extends BranchNodeConstructorProps<ArraySchema> {
+  itemSchema: JsonSchemaWithVirtual;
+}
 export interface VirtualNodeConstructorProps<
   Schema extends JsonSchemaWithVirtual,
 > extends SchemaNodeConstructorProps<Schema> {

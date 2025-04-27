@@ -2,7 +2,7 @@ import { isArray } from '@winglet/common-utils';
 
 import type { AllowedValue } from '@/schema-form/types';
 
-import type { NodeFactory, SchemaNode } from '../../../type';
+import type { SchemaNode, SchemaNodeFactory } from '../../../type';
 import type { ObjectNode } from '../../ObjectNode';
 import type { ChildNode, VirtualReference } from '../../type';
 
@@ -11,7 +11,7 @@ export const getChildren = (
   childNodeMap: Map<string, ChildNode>,
   virtualReferenceFieldsMap: Map<string, string[]> | null,
   virtualReferencesMap: Map<string, VirtualReference> | null,
-  nodeFactory: NodeFactory,
+  nodeFactory: SchemaNodeFactory,
 ) => {
   const children: ChildNode[] = [];
   const hasVirtualReference = !!(
