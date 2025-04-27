@@ -1,6 +1,5 @@
-import type { JsonSchemaScanner } from '@winglet/json-schema';
-
 import { SchemaNodeError } from '@/schema-form/errors';
+import type { ResolveSchema } from '@/schema-form/helpers/jsonSchema';
 import type {
   BooleanSchema,
   JsonSchemaWithVirtual,
@@ -29,7 +28,7 @@ import type {
 
 export const createSchemaNodeFactory =
   <Schema extends JsonSchemaWithVirtual>(
-    schemaResolver?: JsonSchemaScanner,
+    resolveSchema: ResolveSchema,
   ): SchemaNodeFactory<Schema> =>
   ({
     key,
@@ -43,8 +42,7 @@ export const createSchemaNodeFactory =
     refNodes,
     ajv,
   }: NodeFactoryProps<Schema>) => {
-    const jsonSchema =
-      schemaResolver?.scan(inputJsonSchema).getValue() || inputJsonSchema;
+    const jsonSchema = resolveSchema(inputJsonSchema);
     switch (jsonSchema.type) {
       case 'boolean':
         return new BooleanNode({
@@ -85,9 +83,7 @@ export const createSchemaNodeFactory =
           key,
           name,
           jsonSchema,
-          itemSchema:
-            schemaResolver?.scan(jsonSchema.items).getValue() ||
-            jsonSchema.items,
+          itemSchema: resolveSchema(jsonSchema.items),
           defaultValue,
           nodeFactory,
           onChange,

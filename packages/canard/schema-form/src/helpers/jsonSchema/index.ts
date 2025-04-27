@@ -1,1 +1,1 @@
-export { getJsonSchemaResolver } from './getJsonSchemaResolver';
+export { getResolveSchema, type ResolveSchema } from './getResolveSchema';

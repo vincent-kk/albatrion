@@ -3,7 +3,7 @@ import { JsonSchemaScanner } from '@winglet/json-schema';
 
 import type { JsonSchema } from '@/schema-form/types';
 
-export const getReferenceTableFromSchema = (jsonSchema: JsonSchema) => {
+export const getReferenceTable = (jsonSchema: JsonSchema) => {
   const referenceTable = new Map<string, JsonSchema>();
   new JsonSchemaScanner({
     visitor: {
@@ -16,5 +16,6 @@ export const getReferenceTableFromSchema = (jsonSchema: JsonSchema) => {
       },
     },
   }).scan(jsonSchema);
+  if (referenceTable.size === 0) return null;
   return referenceTable;
 };

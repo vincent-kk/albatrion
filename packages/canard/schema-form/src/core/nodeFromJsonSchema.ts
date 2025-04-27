@@ -3,7 +3,7 @@ import { JSONPath, isFunction } from '@winglet/common-utils';
 import type { SetStateFn } from '@aileron/declare';
 
 import type { Ajv } from '@/schema-form/helpers/ajv';
-import { getJsonSchemaResolver } from '@/schema-form/helpers/jsonSchema';
+import { getResolveSchema } from '@/schema-form/helpers/jsonSchema';
 import type {
   AllowedValue,
   InferValueType,
@@ -34,8 +34,8 @@ export const nodeFromJsonSchema = <
   validationMode,
   ajv,
 }: NodeFromSchemaProps<Schema, Value>) => {
-  const resolver = getJsonSchemaResolver(jsonSchema);
-  const nodeFactory = createSchemaNodeFactory(resolver);
+  const resolveSchema = getResolveSchema(jsonSchema);
+  const nodeFactory = createSchemaNodeFactory(resolveSchema);
   return nodeFactory({
     name: JSONPath.Root,
     jsonSchema,
