@@ -10,10 +10,6 @@ import {
   nodeFromJsonSchema,
 } from '@/schema-form/core';
 import { transformErrors } from '@/schema-form/helpers/error';
-import {
-  getReferenceTable,
-  getSchemaResolver,
-} from '@/schema-form/helpers/jsonSchemaScanner';
 import type {
   AllowedValue,
   JsonSchema,
@@ -70,18 +66,11 @@ export const RootNodeContextProvider = <
   const { validationMode: externalValidationMode, ajv: externalAjv } =
     useExternalFormContext();
 
-  const schemaResolver = useMemo(() => {
-    const referenceTable = getReferenceTable(jsonSchema);
-    if (referenceTable.size === 0) return undefined;
-    return getSchemaResolver(referenceTable);
-  }, [jsonSchema]);
-
   const rootNode = useMemo(() => {
     return nodeFromJsonSchema({
       jsonSchema,
       defaultValue,
       onChange,
-      schemaResolver,
       validationMode:
         inputValidationMode ??
         externalValidationMode ??
@@ -92,7 +81,6 @@ export const RootNodeContextProvider = <
     jsonSchema,
     defaultValue,
     onChange,
-    schemaResolver,
     inputValidationMode,
     externalValidationMode,
     inputAjv,

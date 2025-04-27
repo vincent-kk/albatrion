@@ -1,10 +1,9 @@
-import type { JsonSchemaScanner } from 'winglet/json-schema/dist';
-
 import { JSONPath, isFunction } from '@winglet/common-utils';
 
 import type { SetStateFn } from '@aileron/declare';
 
 import type { Ajv } from '@/schema-form/helpers/ajv';
+import { getJsonSchemaResolver } from '@/schema-form/helpers/jsonSchema';
 import type {
   AllowedValue,
   InferValueType,
@@ -21,7 +20,6 @@ interface NodeFromSchemaProps<
   jsonSchema: Schema;
   defaultValue?: Value;
   onChange?: SetStateFn<Value>;
-  schemaResolver?: JsonSchemaScanner;
   validationMode?: ValidationMode;
   ajv?: Ajv;
 }
@@ -34,19 +32,16 @@ export const nodeFromJsonSchema = <
   defaultValue,
   onChange,
   validationMode,
-  schemaResolver,
   ajv,
 }: NodeFromSchemaProps<Schema, Value>) => {
-  const nodeFactory = createSchemaNodeFactory(schemaResolver);
-  const handleChange = isFunction(onChange)
-    ? (onChange as SetStateFn<AllowedValue>)
-    : undefined;
+  const resolver = getJsonSchemaResolver(jsonSchema);
+  const nodeFactory = createSchemaNodeFactory(resolver);
   return nodeFactory({
     name: JSONPath.Root,
     jsonSchema,
     defaultValue,
     nodeFactory,
-    onChange: handleChange,
+    onChange: isFunction(onChange) ? onChange : undefined,
     validationMode,
     ajv,
   }) as InferSchemaNode<Schema>;

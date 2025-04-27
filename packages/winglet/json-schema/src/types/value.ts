@@ -5,6 +5,7 @@ export type ArrayValue = any[];
 export type ObjectValue = Record<string, any>;
 export type NullValue = null;
 export type UndefinedValue = undefined;
+export type AnyValue = any;
 
 export type AllowedValue =
   | BooleanValue
@@ -29,4 +30,4 @@ export type InferValueType<T extends { type?: string }> = T extends {
           ? ObjectValue
           : T extends { type: 'null' }
             ? NullValue
-            : UndefinedValue;
+            : AnyValue;

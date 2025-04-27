@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { delay } from '@winglet/common-utils';
 
 import { nodeFromJsonSchema } from '@/schema-form/core';
+import type { JsonSchema } from '@/schema-form/types';
 
 import { NodeEventType, ValidationMode } from '../nodes';
 import { ArrayNode } from '../nodes/ArrayNode';
@@ -399,5 +400,87 @@ describe('ObjectNode', () => {
       age: 30,
       email: 'hong@example.com',
     });
+  });
+
+  it('객체 노드의 jsonSchema 참조가 정상적으로 동작해야 함', async () => {
+    const jsonSchema = {
+      title: 'Tree Schema with $defs',
+      type: 'object',
+      properties: {
+        root: {
+          $ref: '#/$defs/TreeNode',
+        },
+      },
+      required: ['root'],
+      $defs: {
+        TreeNode: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+            },
+            name: {
+              type: 'string',
+            },
+            children: {
+              type: 'array',
+              items: {
+                $ref: '#/$defs/TreeNode',
+              },
+            },
+          },
+          required: ['id', 'name'],
+          additionalProperties: false,
+        },
+      },
+    } satisfies JsonSchema;
+
+    const node = nodeFromJsonSchema({
+      jsonSchema,
+    });
+    await delay();
+
+    const root = node.findNode('root') as ObjectNode;
+    expect(root.jsonSchema).toEqual(jsonSchema.$defs.TreeNode);
+
+    const children = node.findNode('root.children') as ArrayNode;
+
+    expect(children.jsonSchema).toEqual({
+      type: 'array',
+      items: {
+        additionalProperties: false,
+        properties: {
+          children: {
+            items: {
+              $ref: '#/$defs/TreeNode',
+            },
+            type: 'array',
+          },
+          id: {
+            type: 'string',
+          },
+          name: {
+            type: 'string',
+          },
+        },
+        required: ['id', 'name'],
+        type: 'object',
+      },
+    });
+
+    children.push({
+      id: '4',
+      name: 'User 4',
+      children: [],
+    });
+    await delay();
+
+    const firstChild = node.findNode('root.children.0') as ObjectNode;
+    expect(firstChild.value).toEqual({
+      id: '4',
+      name: 'User 4',
+      children: [],
+    });
+    expect(firstChild.jsonSchema).toEqual(jsonSchema.$defs.TreeNode);
   });
 });

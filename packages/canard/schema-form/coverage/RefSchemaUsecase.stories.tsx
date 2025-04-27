@@ -113,6 +113,17 @@ export const TreeSchema = () => {
               $ref: '#/$defs/TreeNode',
             },
           },
+          address: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                city: { type: 'string' },
+                country: { type: 'string' },
+              },
+            },
+            minItems: 3,
+          },
         },
         required: ['id', 'name'],
         additionalProperties: false,
