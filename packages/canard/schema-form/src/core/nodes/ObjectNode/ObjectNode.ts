@@ -7,7 +7,6 @@ import { AbstractNode } from '../AbstractNode';
 import {
   type BranchNodeConstructorProps,
   NodeEventType,
-  type NodeFactory,
   type SchemaNode,
   SetValueOption,
 } from '../type';
@@ -113,8 +112,6 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     return false;
   }
 
-  #nodeFactory: NodeFactory;
-
   constructor({
     key,
     name,
@@ -137,8 +134,6 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       ajv,
     });
 
-    this.#nodeFactory = nodeFactory;
-
     this.#value = this.defaultValue;
     this.#draft = {};
 
@@ -156,7 +151,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     for (const [name, schema] of Object.entries(jsonSchema.properties || {})) {
       childNodeMap.set(name, {
         isVirtualized: !!virtualReferenceFieldsMap?.get(name)?.length,
-        node: this.#nodeFactory({
+        node: nodeFactory({
           name,
           jsonSchema: mergeShowConditions(
             schema,
@@ -171,7 +166,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
             this.#draft[name] = value;
             this.#emitChange(SetValueOption.Normal);
           },
-          nodeFactory: this.#nodeFactory,
+          nodeFactory,
           parentNode: this,
         }),
       });
@@ -182,7 +177,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       childNodeMap,
       virtualReferenceFieldsMap,
       virtualReferencesMap,
-      this.#nodeFactory,
+      nodeFactory,
     );
 
     this.#locked = false;

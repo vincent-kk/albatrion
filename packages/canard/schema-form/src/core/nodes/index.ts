@@ -5,7 +5,7 @@ export {
   ValidationMode,
   SetValueOption,
 } from './type';
-export { schemaNodeFactory } from './schemaNodeFactory';
+export { createSchemaNodeFactory } from './schemaNodeFactory';
 
 export {
   isSchemaNode,

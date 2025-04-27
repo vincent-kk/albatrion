@@ -70,12 +70,14 @@ export class JsonSchemaScanner<ContextType = void> {
    * @returns {UnknownSchema | undefined} 처리된 최종 스키마. 스캔 전이면 undefined 반환.
    * 참조가 해결되지 않았으면 원본 스키마의 깊은 복사본을 반환합니다.
    */
-  public getValue(this: this): UnknownSchema | undefined {
+  public getValue<Schema extends UnknownSchema>(
+    this: this,
+  ): Schema | undefined {
     if (!this.#originalSchema) return undefined;
-    if (this.#processedSchema) return this.#processedSchema;
+    if (this.#processedSchema) return this.#processedSchema as Schema;
     if (!this.#pendingResolves || this.#pendingResolves.length === 0) {
       this.#processedSchema = this.#originalSchema;
-      return this.#processedSchema;
+      return this.#processedSchema as Schema;
     }
 
     this.#processedSchema = clone(this.#originalSchema);
@@ -87,9 +89,8 @@ export class JsonSchemaScanner<ContextType = void> {
         resolvedSchema,
       );
     }
-
     this.#pendingResolves = undefined;
-    return this.#processedSchema;
+    return this.#processedSchema as Schema;
   }
 
   /**

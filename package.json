@@ -2,6 +2,10 @@
   "name": "albatrion",
   "version": "0.0.0",
   "description": "none",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vincent-kk/albatrion.git"
+  },
   "license": "MIT",
   "workspaces": [
     "documents",

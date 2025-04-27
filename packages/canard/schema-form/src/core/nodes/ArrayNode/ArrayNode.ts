@@ -7,14 +7,15 @@ import type {
   AllowedValue,
   ArraySchema,
   ArrayValue,
+  JsonSchemaWithVirtual,
 } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
 import {
-  type BranchNodeConstructorProps,
+  type ArrayNodeConstructorProps,
   NodeEventType,
-  type NodeFactory,
   type SchemaNode,
+  type SchemaNodeFactory,
   SetValueOption,
 } from '../type';
 import { OperationType } from './type';
@@ -22,6 +23,7 @@ import { OperationType } from './type';
 type IndexId = `[${number}]`;
 
 export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
+  readonly #itemSchema: JsonSchemaWithVirtual;
   #locked: boolean = false;
   #operation: OperationType = OperationType.Idle;
   #hasChanged: boolean = true;
@@ -132,19 +134,20 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     return false;
   }
 
-  #nodeFactory: NodeFactory;
+  #nodeFactory: SchemaNodeFactory;
 
   constructor({
     key,
     name,
     jsonSchema,
+    itemSchema,
     defaultValue,
     onChange,
     nodeFactory,
     parentNode,
     validationMode,
     ajv,
-  }: BranchNodeConstructorProps<ArraySchema>) {
+  }: ArrayNodeConstructorProps) {
     super({
       key,
       name,
@@ -157,6 +160,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     });
 
     this.#nodeFactory = nodeFactory;
+    this.#itemSchema = itemSchema;
 
     this.#locked = true;
 
@@ -191,11 +195,11 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       this.#updateData(id, value);
       if (this.#ready) this.onChange(this.toArray());
     }) satisfies SetStateFn<AllowedValue>;
-    const defaultValue = data ?? getFallbackValue(this.jsonSchema.items);
+    const defaultValue = data ?? getFallbackValue(this.#itemSchema);
     const childNode = this.#nodeFactory({
       key: id,
       name,
-      jsonSchema: this.jsonSchema.items,
+      jsonSchema: this.#itemSchema,
       parentNode: this,
       defaultValue,
       onChange: handleChange,
