@@ -8,8 +8,3 @@ export enum JSONPath {
   /** Filter Condition */
   Filter = '#',
 }
-
-export enum JSONPointer {
-  Root = '',
-  Child = '/',
-}

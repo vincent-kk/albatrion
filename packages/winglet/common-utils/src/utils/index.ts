@@ -5,5 +5,6 @@ export * from './DataLoader';
 export * from './filter';
 export * from './function';
 export * from './generateHash';
+export * from './json';
 export * from './object';
 export * from './promise';

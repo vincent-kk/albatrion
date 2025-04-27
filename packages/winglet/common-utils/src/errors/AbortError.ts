@@ -8,6 +8,5 @@ export class AbortError extends BaseError {
   }
 }
 
-export const isAbortError = (error: unknown): error is AbortError => {
-  return error instanceof AbortError;
-};
+export const isAbortError = (error: unknown): error is AbortError =>
+  error instanceof AbortError;

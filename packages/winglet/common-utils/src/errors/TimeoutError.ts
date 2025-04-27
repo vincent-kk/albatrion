@@ -8,6 +8,5 @@ export class TimeoutError extends BaseError {
   }
 }
 
-export const isTimeoutError = (error: unknown): error is TimeoutError => {
-  return error instanceof TimeoutError;
-};
+export const isTimeoutError = (error: unknown): error is TimeoutError =>
+  error instanceof TimeoutError;

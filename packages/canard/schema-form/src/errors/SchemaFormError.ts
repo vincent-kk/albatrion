@@ -8,6 +8,5 @@ export class SchemaFormError extends BaseError {
   }
 }
 
-export const isSchemaFormError = (error: unknown): error is SchemaFormError => {
-  return error instanceof SchemaFormError;
-};
+export const isSchemaFormError = (error: unknown): error is SchemaFormError =>
+  error instanceof SchemaFormError;

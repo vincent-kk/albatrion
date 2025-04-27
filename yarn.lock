@@ -7053,6 +7053,7 @@ __metadata:
     "@rollup/plugin-terser": "npm:^0.4.4"
     "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
     "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
+    "@winglet/common-utils": "workspace:^"
     eslint: "npm:^8.56.0"
     prettier: "npm:^3.3.3"
     rollup: "npm:^4.27.4"

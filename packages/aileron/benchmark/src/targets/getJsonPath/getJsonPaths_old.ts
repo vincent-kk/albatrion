@@ -1,5 +1,4 @@
-import { isPlainObject } from '@winglet/common-utils';
-import { JSONPath } from '@winglet/json-schema';
+import { JSONPath, isPlainObject } from '@winglet/common-utils';
 
 export const getJsonPaths = (data: any, jsonPath = '') => {
   const jsonPaths = [jsonPath];

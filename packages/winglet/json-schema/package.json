@@ -38,6 +38,9 @@
     "version:minor": "yarn version minor",
     "version:patch": "yarn version patch"
   },
+  "dependencies": {
+    "@winglet/common-utils": "workspace:^"
+  },
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@rollup/plugin-commonjs": "^28.0.1",

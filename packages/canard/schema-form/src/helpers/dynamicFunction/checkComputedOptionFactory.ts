@@ -1,5 +1,4 @@
-import { isString } from '@winglet/common-utils';
-import { JSONPath } from '@winglet/json-schema';
+import { JSONPath, isString } from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/declare';
 
