@@ -366,7 +366,6 @@ describe('JsonSchemaScanner 실제 데이터 테스트', () => {
     const finalSchema = new JsonSchemaScanner({
       options: {
         resolveReference: (path) => defs.get(path),
-        maxDepth: 2,
       },
     })
       .scan(jsonSchema)
@@ -446,7 +445,6 @@ describe('JsonSchemaScanner 실제 데이터 테스트', () => {
     const finalSchema = new JsonSchemaScanner({
       options: {
         resolveReference: (path) => defs.get(path),
-        maxDepth: 2,
       },
     })
       .scan(jsonSchema)
@@ -520,7 +518,6 @@ describe('JsonSchemaScanner 실제 데이터 테스트', () => {
     const finalSchema = new JsonSchemaScanner({
       options: {
         resolveReference: (path) => defs.get(path),
-        maxDepth: 2,
       },
     })
       .scan(jsonSchema)
