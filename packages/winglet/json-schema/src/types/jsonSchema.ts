@@ -123,7 +123,13 @@ export interface NullSchema<
   Schema extends UnknownSchema = JsonSchema,
 > extends BasicSchema<null, Options, RenderOptions, Schema> {
   type: 'null';
-  nullable: true;
+  nullable?: true;
+}
+
+export interface RefSchema {
+  type?: undefined;
+  $ref: string;
+  [alt: string]: any;
 }
 
 export interface BasicSchema<
@@ -132,6 +138,7 @@ export interface BasicSchema<
   RenderOptions extends Dictionary,
   Schema extends UnknownSchema = JsonSchema,
 > extends CustomOptions<Options, RenderOptions> {
+  $defs?: Dictionary<Schema>;
   if?: Partial<Schema>;
   then?: Partial<Schema>;
   else?: Partial<Schema>;
