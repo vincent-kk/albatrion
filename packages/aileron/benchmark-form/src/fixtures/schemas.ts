@@ -264,3 +264,96 @@ export const sampleSchemas = [
     },
   },
 ] as JsonSchema[];
+
+export const referenceSchemas = [
+  {
+    type: 'object',
+    $defs: {
+      Name: {
+        type: 'string',
+        minLength: 1,
+      },
+    },
+    properties: {
+      name: {
+        $ref: '#/$defs/Name',
+      },
+    },
+    required: ['name'],
+  },
+  {
+    type: 'object',
+    $defs: {
+      Person: {
+        type: 'object',
+        $defs: {
+          Name: {
+            type: 'string',
+            minLength: 1,
+          },
+        },
+        properties: {
+          firstName: { $ref: '#/$defs/Person/$defs/Name' },
+          lastName: { $ref: '#/$defs/Person/$defs/Name' },
+        },
+      },
+    },
+    properties: {
+      person: { $ref: '#/$defs/Person' },
+    },
+  },
+  {
+    type: 'object',
+    properties: {
+      id: { type: 'string' },
+      children: {
+        type: 'array',
+        items: { $ref: '#' },
+      },
+    },
+    required: ['id'],
+  },
+  // 트리 구조 폼
+  {
+    title: 'Tree Schema with $defs',
+    type: 'object',
+    properties: {
+      root: {
+        $ref: '#/$defs/TreeNode',
+      },
+    },
+    required: ['root'],
+    $defs: {
+      TreeNode: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+          },
+          name: {
+            type: 'string',
+          },
+          children: {
+            type: 'array',
+            items: {
+              $ref: '#/$defs/TreeNode',
+            },
+          },
+          address: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                city: { type: 'string' },
+                country: { type: 'string' },
+              },
+            },
+            minItems: 3,
+          },
+        },
+        required: ['id', 'name'],
+        additionalProperties: false,
+      },
+    },
+  },
+] as JsonSchema[];

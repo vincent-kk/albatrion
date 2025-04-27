@@ -1,0 +1,46 @@
+{
+  "timestamp": "2025-04-27T17-06-45-766Z",
+  "results": [
+    {
+      "name": "@canard/schema-form@0.0.54 - Form Rendering",
+      "hz": 194.70990024872387,
+      "stats": {
+        "mean": 0.005135845679765603,
+        "deviation": 0.00039381318572190164
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - Form Rendering",
+      "hz": 196.66289828846038,
+      "stats": {
+        "mean": 0.005084843194638697,
+        "deviation": 0.0003776208212263538
+      }
+    }
+  ],
+  "chartConfig": {
+    "type": "bar",
+    "data": {
+      "labels": [
+        "@canard/schema-form@0.0.54 - Form Rendering",
+        "@canard/schema-form@latest - Form Rendering"
+      ],
+      "datasets": [
+        {
+          "label": "Operations/sec",
+          "data": [
+            194.70990024872387,
+            196.66289828846038
+          ]
+        }
+      ]
+    },
+    "options": {
+      "scales": {
+        "y": {
+          "beginAtZero": true
+        }
+      }
+    }
+  }
+}
