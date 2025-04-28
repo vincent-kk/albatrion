@@ -3,7 +3,7 @@ import { isString } from '@/common-utils/utils/filter/isString';
 
 import { JSONPointer } from '../enum';
 import { JSONPointerError } from './error';
-import { unescape } from './unescape';
+import { unescapePointer } from './unescapePointer';
 
 export const compilePointer = (pointer: string | string[]) => {
   if (isString(pointer)) return handleStringPointer(pointer);
@@ -41,7 +41,7 @@ const handleStringPointer = (pointer: string) => {
   const segments = new Array<string>(length);
   for (let index = 0; index < length; index++) {
     const part = parts[index + 1];
-    segments[index] = unescape(part);
+    segments[index] = unescapePointer(part);
   }
   return segments;
 };

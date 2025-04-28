@@ -1,0 +1,47 @@
+import { describe, expect, it } from 'vitest';
+
+import { escapePointer } from '../escapePointer';
+
+describe('escapePointer', () => {
+  // Test case 1: 빈 문자열
+  it('should return an empty string for an empty input', () => {
+    expect(escapePointer('')).toBe('');
+  });
+
+  // Test case 2: 특별한 문자 없음
+  it('should return the original string if no special characters are present', () => {
+    expect(escapePointer('foo')).toBe('foo');
+    expect(escapePointer('bar123')).toBe('bar123');
+  });
+
+  // Test case 3: '/' 만 포함
+  it('should escape only / characters', () => {
+    expect(escapePointer('/foo')).toBe('~1foo');
+    expect(escapePointer('foo/bar')).toBe('foo~1bar');
+    expect(escapePointer('foo/')).toBe('foo~1');
+    expect(escapePointer('//')).toBe('~1~1');
+  });
+
+  // Test case 4: '~' 만 포함
+  it('should escape only ~ characters', () => {
+    expect(escapePointer('~foo')).toBe('~0foo');
+    expect(escapePointer('foo~bar')).toBe('foo~0bar');
+    expect(escapePointer('foo~')).toBe('foo~0');
+    expect(escapePointer('~~')).toBe('~0~0');
+  });
+
+  // Test case 5: '/' 와 '~' 모두 포함
+  it('should escape both / and ~ characters', () => {
+    expect(escapePointer('/~foo')).toBe('~1~0foo');
+    expect(escapePointer('foo/~bar')).toBe('foo~1~0bar');
+    expect(escapePointer('~foo/bar~')).toBe('~0foo~1bar~0');
+    expect(escapePointer('/~/~')).toBe('~1~0~1~0');
+    expect(escapePointer('a/b~c/d')).toBe('a~1b~0c~1d');
+  });
+
+  // Test case 6: 복잡한 경로
+  it('should handle complex paths correctly', () => {
+    expect(escapePointer('m~n/o~p')).toBe('m~0n~1o~0p');
+    expect(escapePointer('/clients/~1/scopes')).toBe('~1clients~1~01~1scopes'); // From RFC6901 example
+  });
+});

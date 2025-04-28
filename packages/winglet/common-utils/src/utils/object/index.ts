@@ -1,10 +1,14 @@
 export { clone } from './clone';
+export { equals } from './equals';
+export { getJSONPointer } from './getJSONPointer';
 export { getObjectKeys } from './getObjectKeys';
 export { getSymbols } from './getSymbols';
+export { hasUndefined } from './hasUndefined';
 export { merge } from './merge';
 export { removeUndefined } from './removeUndefined';
 export { serializeNative } from './serializeNative';
 export { serializeObject } from './serializeObject';
 export { serializeWithFullSortedKeys } from './serializeWithFullSortedKeys';
+export { stableEquals } from './stableEquals';
 export { stableSerialize } from './stableSerialize';
 export { sortObjectKeys } from './sortObjectKeys';

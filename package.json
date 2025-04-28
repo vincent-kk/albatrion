@@ -4,7 +4,8 @@
   "description": "none",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vincent-kk/albatrion.git"
+    "url": "https://github.com/vincent-kk/albatrion.git",
+    "owner": "vincent-kk"
   },
   "license": "MIT",
   "workspaces": [
