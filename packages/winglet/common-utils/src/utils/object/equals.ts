@@ -1,5 +1,3 @@
-import type { Dictionary } from '@aileron/declare';
-
 import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 
 /**
@@ -9,7 +7,21 @@ import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
  * @param rightOperand 비교할 두 번째 값
  * @returns 두 값이 동일하면 true, 그렇지 않으면 false
  */
-export const equals = (left: unknown, right: unknown): boolean => {
+
+export const equals = (
+  left: unknown,
+  right: unknown,
+  omit?: PropertyKey[],
+): boolean => {
+  const omits = omit ? new Set(omit) : null;
+  return equalsRecursive(left, right, omits);
+};
+
+const equalsRecursive = (
+  left: unknown,
+  right: unknown,
+  omits: Set<PropertyKey> | null,
+): boolean => {
   if (left === right || (left !== left && right !== right)) return true;
 
   if (
@@ -29,7 +41,7 @@ export const equals = (left: unknown, right: unknown): boolean => {
     const length = left.length;
     if (length !== right.length) return false;
     for (let index = 0; index < length; index++)
-      if (!equals(left[index], right[index])) return false;
+      if (!equalsRecursive(left[index], right[index], omits)) return false;
     return true;
   }
 
@@ -40,9 +52,10 @@ export const equals = (left: unknown, right: unknown): boolean => {
 
   for (let index = 0; index < length; index++) {
     const key = keys[index];
+    if (omits?.has(key)) continue;
     if (
       !hasOwnProperty(right, key) ||
-      !equals((left as Dictionary)[key], (right as Dictionary)[key])
+      !equalsRecursive((left as any)[key], (right as any)[key], omits)
     )
       return false;
   }

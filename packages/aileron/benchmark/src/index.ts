@@ -22,7 +22,7 @@ const benchmarks = {
   getDataWithSchema: runGetDataWithSchema,
   // fastest: 594715.92, slowest: 118951.10, speedRatio: 5.00:1, timeSaved: 80.00%
   getJsonPaths: runGetJsonPaths,
-  // Result: fastest: 1123.40, slowest: 408.95, speedRatio: 2.75:1, timeSaved: 63.60%
+  // fastest: 1123.40, slowest: 408.95, speedRatio: 2.75:1, timeSaved: 63.60%
   sortObjectKeys: runSortObjectKeys,
   // fastest(serialize): 64045091.33, slowest: 80672.09, speedRatio: 793.89:1, timeSaved: 99.87%
   stringifyObject: runStringifyObject,
@@ -32,7 +32,7 @@ const benchmarks = {
   clone: runClone,
   // fastest: 954274056.54, slowest: 949024019.24, speedRatio: 1.01:1, timeSaved: 0.55%
   getter: runGetter,
-  // fastest: 1123.40, slowest: 408.95, speedRatio: 2.75:1, timeSaved: 63.60%
+  // fastest: 740379.96, slowest: 84011.72, speedRatio: 8.81:1, timeSaved: 88.65%
   compare: runCompare,
 };
 

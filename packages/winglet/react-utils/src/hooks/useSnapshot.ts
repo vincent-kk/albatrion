@@ -1,17 +1,17 @@
 import { useMemo, useRef } from 'react';
 
-import { generateHash, isObject, serializeObject } from '@winglet/common-utils';
+import { equals, isObject } from '@winglet/common-utils';
 
 /**
  * @description 객체의 스냅샷을 반환합니다.
  * @param object - 객체
  * @returns 객체 스냅샷의 값
  */
-export const useSnapshot = <T extends object>(
-  object: T,
-  omit?: Array<keyof T>,
+export const useSnapshot = <Input extends object>(
+  input: Input,
+  omit?: Array<keyof Input>,
 ) => {
-  const snapshotRef = useSnapshotReference(object, omit);
+  const snapshotRef = useSnapshotReference(input, omit);
   return snapshotRef.current;
 };
 
@@ -20,29 +20,20 @@ export const useSnapshot = <T extends object>(
  * @param object - 객체
  * @returns 객체 스냅샷의 참조
  */
-export const useSnapshotReference = <T extends object>(
-  object: T,
-  omit?: Array<keyof T>,
+export const useSnapshotReference = <Input extends object>(
+  input: Input,
+  omit?: Array<keyof Input>,
 ) => {
-  const snapshotRef = useRef(object);
-  const snapshotHash = useRef(getSnapshotHash(object, omit));
-  const hash = useMemo(() => getSnapshotHash(object, omit), [object, omit]);
-  if (hash && snapshotHash.current !== hash) {
-    snapshotRef.current = object;
-    snapshotHash.current = hash;
-  }
-  return snapshotRef;
+  const snapshotRef = useRef(input);
+  return useMemo(() => {
+    if (isEmptyObject(input) || equals(snapshotRef.current, input, omit))
+      return snapshotRef;
+    snapshotRef.current = input;
+    return snapshotRef;
+  }, [input, omit]);
 };
 
-const getSnapshotHash = <T extends object>(
-  object: T,
-  omit?: Array<keyof T>,
-): number | null => {
-  if (isInvalidValue(object)) return null;
-  return generateHash(serializeObject(object, omit as string[]));
-};
-
-const isInvalidValue = (value: unknown): boolean => {
+const isEmptyObject = (value: unknown): boolean => {
   if (!value) return true;
   else if (isObject(value)) {
     for (const _ in value) return false;

@@ -1,4 +1,9 @@
-import { BITMASK_NONE, JSONPath, isTruthy } from '@winglet/common-utils';
+import {
+  BITMASK_NONE,
+  JSONPath,
+  equals,
+  isTruthy,
+} from '@winglet/common-utils';
 
 import type { Fn, SetStateFn } from '@aileron/declare';
 
@@ -8,11 +13,7 @@ import {
   type ValidateFunction,
   ajvHelper,
 } from '@/schema-form/helpers/ajv';
-import {
-  filterErrors,
-  getErrorsHash,
-  transformErrors,
-} from '@/schema-form/helpers/error';
+import { filterErrors, transformErrors } from '@/schema-form/helpers/error';
 import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
 import type {
   AllowedValue,
@@ -121,8 +122,6 @@ export abstract class AbstractNode<
 
   /** 자신의 Error */
   #errors: JsonSchemaError[] = [];
-  /** 자신의 Error의 해시값 */
-  #errorHash?: number;
   /** 자신의 Error의 dataPath 목록 */
   #errorDataPaths: string[] = [];
   /** 자신의 Error와 하위 Node의 Error를 합친 에러 */
@@ -134,14 +133,9 @@ export abstract class AbstractNode<
    * @param errors 전달받은 Error List
    */
   setErrors(this: AbstractNode, errors: JsonSchemaError[]) {
-    const errorHash = getErrorsHash(errors);
-    if (this.#errorHash === errorHash) return;
-
-    this.#errorHash = errorHash;
+    if (equals(this.#errors, errors)) return;
     this.#errors = errors;
-
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
-
     this.publish({
       type: NodeEventType.UpdateError,
       payload: {
@@ -161,28 +155,20 @@ export abstract class AbstractNode<
 
   /** 하위 Node에서 전달받은 Error */
   #receivedErrors: JsonSchemaError[] = [];
-  /** 하위 Node에서 전달받은 Error의 해시값 */
-  #receivedErrorHash?: number;
   /**
    * 하위 Node에서 전달받은 Error를 자신의 Error와 합친 후 저장
    * @param errors 전달받은 Error List
    */
   setReceivedErrors(this: AbstractNode, errors: JsonSchemaError[] = []) {
     // NOTE: 이미 동일한 에러가 있으면 중복 발생 방지
-    const errorHash = getErrorsHash(errors);
-    if (this.#receivedErrorHash === errorHash) return;
+    if (equals(this.#receivedErrors, errors, ['key'])) return;
 
-    this.#receivedErrorHash = errorHash;
     // 하위 Node에서 데이터 입력시 해당 항목을 찾아 삭제하기 위한 key 가 필요.
     // 참고: removeFromReceivedErrors
-    this.#receivedErrors = [];
     const filteredErrors = filterErrors(errors, this.jsonSchema);
-    for (let index = 0; index < filteredErrors.length; index++) {
-      const error = filteredErrors[index];
-      error.key = index;
-      this.#receivedErrors.push(error);
-    }
-
+    this.#receivedErrors = new Array<JsonSchemaError>(filteredErrors.length);
+    for (let index = 0; index < filteredErrors.length; index++)
+      this.#receivedErrors[index] = { ...filteredErrors[index], key: index };
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
     this.publish({
@@ -215,7 +201,7 @@ export abstract class AbstractNode<
       if (typeof error.key === 'number') deleteKeys.add(error.key);
     const nextErrors: JsonSchemaError[] = [];
     for (const error of this.#receivedErrors)
-      if (!deleteKeys.has(error.key!)) nextErrors.push(error);
+      if (!error.key || !deleteKeys.has(error.key)) nextErrors.push(error);
     if (this.#receivedErrors.length !== nextErrors.length)
       this.setReceivedErrors(nextErrors);
   }

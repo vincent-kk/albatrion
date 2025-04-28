@@ -50,6 +50,27 @@ export const Errors = () => {
     setErrors([]);
   };
 
+  const setReceivedErrors = () => {
+    setErrors([
+      {
+        keyword: 'wrongInput',
+        dataPath: '.name',
+        instancePath: '/name',
+        schemaPath: '#/properties/name/wrongInput',
+        params: {},
+        message: 'wrong input',
+      },
+      {
+        keyword: 'unique',
+        dataPath: '.message',
+        instancePath: '/message',
+        schemaPath: '#/properties/message/unique',
+        params: {},
+        message: 'should be unique',
+      },
+    ]);
+  };
+
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={_errors}>
       <Form
@@ -61,6 +82,7 @@ export const Errors = () => {
         showError={true}
       />
       <button onClick={clearErrors}>clear received errors</button>
+      <button onClick={setReceivedErrors}>set received errors</button>
     </StoryLayout>
   );
 };

@@ -108,9 +108,8 @@ export const RootNodeContextProvider = <
     const currentErrorDictionary: Record<string, JsonSchemaError[]> = {};
 
     for (const error of transformedErrors) {
-      if (!currentErrorDictionary[error.dataPath]) {
+      if (!currentErrorDictionary[error.dataPath])
         currentErrorDictionary[error.dataPath] = [];
-      }
       currentErrorDictionary[error.dataPath].push(error);
     }
 
@@ -120,7 +119,6 @@ export const RootNodeContextProvider = <
       ...Object.keys(lastErrorDictionary.current),
       ...Object.keys(currentErrorDictionary),
     ]);
-
     for (const path of paths)
       rootNode.find(path)?.setReceivedErrors(currentErrorDictionary[path]);
 
