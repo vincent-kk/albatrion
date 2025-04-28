@@ -9,7 +9,7 @@ export const useSchemaNode = (
   const rootNode = useRootNodeContext();
   const node = useMemo(() => {
     if (isSchemaNode(input)) return input;
-    else return rootNode.findNode(input);
+    else return rootNode.find(input);
   }, [input, rootNode]);
   return node;
 };

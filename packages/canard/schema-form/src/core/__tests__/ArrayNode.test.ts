@@ -47,13 +47,13 @@ describe('ArrayNode', () => {
     });
 
     expect(node?.value?.arr).toMatchObject([]);
-    (node?.findNode('arr') as ArrayNode)?.push();
+    (node?.find('arr') as ArrayNode)?.push();
     expect(node?.value?.arr).toMatchObject(['hello']);
-    (node?.findNode('arr') as ArrayNode)?.push('world');
+    (node?.find('arr') as ArrayNode)?.push('world');
     expect(node?.value?.arr).toMatchObject(['hello', 'world']);
-    (node?.findNode('arr') as ArrayNode)?.remove(0);
+    (node?.find('arr') as ArrayNode)?.remove(0);
     expect(node?.value?.arr).toMatchObject(['world']);
-    (node?.findNode('arr') as ArrayNode)?.clear();
+    (node?.find('arr') as ArrayNode)?.clear();
     expect(node?.value?.arr).toMatchObject([]);
   });
 
@@ -78,7 +78,7 @@ describe('ArrayNode', () => {
     Array(MAX_ITEMS + 10)
       .fill(true)
       .forEach(() => {
-        (node?.findNode('arr') as ArrayNode)?.push();
+        (node?.find('arr') as ArrayNode)?.push();
       });
     expect(node?.value?.arr.length).toBe(MAX_ITEMS);
   });
@@ -100,13 +100,13 @@ describe('ArrayNode', () => {
         tags: ['harry', 'ron'],
       },
     });
-    expect(node?.findNode('$.tags')?.value).toMatchObject(['harry', 'ron']);
+    expect(node?.find('$.tags')?.value).toMatchObject(['harry', 'ron']);
 
-    const found = node?.findNode('$.tags');
+    const found = node?.find('$.tags');
     if (found?.type === 'array') {
       found.setValue(['Hermione', 'ron', 'harry']);
     }
-    expect(node?.findNode('$.tags')?.value).toMatchObject([
+    expect(node?.find('$.tags')?.value).toMatchObject([
       'Hermione',
       'ron',
       'harry',
@@ -237,7 +237,7 @@ describe('ArrayNode', () => {
       },
     });
 
-    const arrayNode = node?.findNode('tags');
+    const arrayNode = node?.find('tags');
     expect(arrayNode).toBeDefined();
     expect(arrayNode?.type).toBe('array');
   });
@@ -257,7 +257,7 @@ describe('ArrayNode', () => {
       },
     });
 
-    const arrayNode = node?.findNode('tags') as ArrayNode;
+    const arrayNode = node?.find('tags') as ArrayNode;
     expect(arrayNode.value).toEqual([]);
 
     arrayNode.setValue(['태그1', '태그2', '태그3']);
@@ -281,7 +281,7 @@ describe('ArrayNode', () => {
       },
     });
 
-    const arrayNode = node?.findNode('tags') as ArrayNode;
+    const arrayNode = node?.find('tags') as ArrayNode;
     await delay();
     expect(arrayNode.value).toEqual(['기본태그1', '기본태그2']);
   });
@@ -303,7 +303,7 @@ describe('ArrayNode', () => {
 
     await delay(50);
 
-    const arrayNode = node?.findNode('tags') as ArrayNode;
+    const arrayNode = node?.find('tags') as ArrayNode;
 
     // 이벤트 리스너 등록
     const mockListener = vi.fn();
@@ -347,7 +347,7 @@ describe('ArrayNode', () => {
       },
     });
 
-    const arrayNode = node?.findNode('tags') as ArrayNode;
+    const arrayNode = node?.find('tags') as ArrayNode;
     await delay();
 
     // 초기값 설정
@@ -377,7 +377,7 @@ describe('ArrayNode', () => {
       },
     });
 
-    const arrayNode = node?.findNode('tags') as ArrayNode;
+    const arrayNode = node?.find('tags') as ArrayNode;
     await delay();
 
     // 초기값 설정
@@ -407,7 +407,7 @@ describe('ArrayNode', () => {
       },
     });
 
-    const arrayNode = node?.findNode('tags') as ArrayNode;
+    const arrayNode = node?.find('tags') as ArrayNode;
     await delay();
 
     // 초기값 설정
@@ -435,7 +435,7 @@ describe('ArrayNode', () => {
       validationMode: ValidationMode.OnChange,
     });
 
-    const arrayNode = node?.findNode('numbers') as ArrayNode;
+    const arrayNode = node?.find('numbers') as ArrayNode;
     await delay();
 
     // 최소 아이템 수 이하 설정
@@ -477,7 +477,7 @@ describe('ArrayNode', () => {
       validationMode: ValidationMode.OnChange,
     });
 
-    const arrayNode = node?.findNode('tags') as ArrayNode;
+    const arrayNode = node?.find('tags') as ArrayNode;
     await delay();
 
     // 중복 아이템이 있는 값 설정
@@ -512,7 +512,7 @@ describe('ArrayNode', () => {
       },
     });
 
-    const arrayNode = node?.findNode('users') as ArrayNode;
+    const arrayNode = node?.find('users') as ArrayNode;
     await delay();
 
     // 복잡한 아이템 값 설정
@@ -535,8 +535,8 @@ describe('ArrayNode', () => {
     expect(itemNodes[1].node.type).toBe('object');
 
     // 아이템 노드의 자식 노드 확인
-    const firstItemNameNode = itemNodes[0].node.findNode('name');
-    const firstItemAgeNode = itemNodes[0].node.findNode('age');
+    const firstItemNameNode = itemNodes[0].node.find('name');
+    const firstItemAgeNode = itemNodes[0].node.find('age');
     expect(firstItemNameNode?.value).toBe('홍길동');
     expect(firstItemAgeNode?.value).toBe(30);
   });

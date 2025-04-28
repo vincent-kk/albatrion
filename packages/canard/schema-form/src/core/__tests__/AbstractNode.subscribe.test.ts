@@ -198,7 +198,7 @@ describe('SchemaNode computed properties', () => {
 
       await delay();
 
-      const openingDateNode = node.findNode('.openingDate');
+      const openingDateNode = node.find('.openingDate');
 
       expect(openingDateNode?.visible).toBe(false); // 초기값은 true
 
@@ -233,7 +233,7 @@ describe('SchemaNode computed properties', () => {
       } satisfies JsonSchema;
 
       const node = nodeFromJsonSchema({ jsonSchema: schema });
-      const nameNode = node.findNode('.userInfo.name');
+      const nameNode = node.find('.userInfo.name');
 
       expect(nameNode?.readOnly).toBe(false); // 초기값은 false
 
@@ -263,7 +263,7 @@ describe('SchemaNode computed properties', () => {
       } satisfies JsonSchema;
 
       const node = nodeFromJsonSchema({ jsonSchema: schema });
-      const buttonNode = node.findNode('.submitButton');
+      const buttonNode = node.find('.submitButton');
 
       expect(buttonNode?.disabled).toBe(false); // 초기값은 false
 
@@ -300,7 +300,7 @@ describe('SchemaNode computed properties', () => {
       } satisfies JsonSchema;
 
       const node = nodeFromJsonSchema({ jsonSchema: schema });
-      const greetingNode = node.findNode('.greeting');
+      const greetingNode = node.find('.greeting');
 
       await delay();
 
@@ -347,7 +347,7 @@ describe('SchemaNode computed properties', () => {
       } satisfies JsonSchema;
 
       const node = nodeFromJsonSchema({ jsonSchema: schema });
-      const descriptionNode = node.findNode('.description');
+      const descriptionNode = node.find('.description');
       const listener = vi.fn();
 
       descriptionNode?.subscribe(listener);

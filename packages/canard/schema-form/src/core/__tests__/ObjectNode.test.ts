@@ -28,7 +28,7 @@ describe('ObjectNode', () => {
       },
     });
 
-    const objectNode = node?.findNode('user');
+    const objectNode = node?.find('user');
     expect(objectNode).toBeDefined();
     expect(objectNode?.type).toBe('object');
   });
@@ -49,7 +49,7 @@ describe('ObjectNode', () => {
       },
     });
 
-    const objectNode = node?.findNode('user') as ObjectNode;
+    const objectNode = node?.find('user') as ObjectNode;
     expect(objectNode.value).toEqual({});
 
     objectNode.setValue({ name: 'John', age: 30 });
@@ -74,7 +74,7 @@ describe('ObjectNode', () => {
       },
     });
 
-    const objectNode = node?.findNode('user') as ObjectNode;
+    const objectNode = node?.find('user') as ObjectNode;
     await delay();
     expect(objectNode.value).toEqual({ name: 'Lee', age: 25 });
   });
@@ -97,7 +97,7 @@ describe('ObjectNode', () => {
 
     await delay();
 
-    const objectNode = node?.findNode('user') as ObjectNode;
+    const objectNode = node?.find('user') as ObjectNode;
 
     // 이벤트 리스너 등록
     const mockListener = vi.fn();
@@ -138,9 +138,9 @@ describe('ObjectNode', () => {
       },
     });
 
-    const objectNode = node?.findNode('user') as ObjectNode;
-    const nameNode = objectNode.findNode('name');
-    const ageNode = objectNode.findNode('age');
+    const objectNode = node?.find('user') as ObjectNode;
+    const nameNode = objectNode.find('name');
+    const ageNode = objectNode.find('age');
 
     expect(nameNode).toBeDefined();
     expect(ageNode).toBeDefined();
@@ -173,8 +173,8 @@ describe('ObjectNode', () => {
     });
     await delay();
 
-    const objectNode = node?.findNode('user') as ObjectNode;
-    const nameNode = objectNode.findNode('name');
+    const objectNode = node?.find('user') as ObjectNode;
+    const nameNode = objectNode.find('name');
 
     // 이벤트 리스너 등록
     const mockListener = vi.fn();
@@ -219,9 +219,9 @@ describe('ObjectNode', () => {
     });
 
     await delay();
-    const objectNode = node?.findNode('user') as ObjectNode;
-    const userNameNode = objectNode.findNode('$.user.name') as StringNode;
-    const userAgeNode = objectNode.findNode('$.user.age') as NumberNode;
+    const objectNode = node?.find('user') as ObjectNode;
+    const userNameNode = objectNode.find('$.user.name') as StringNode;
+    const userAgeNode = objectNode.find('$.user.age') as NumberNode;
 
     // 필수 속성이 없는 경우, 필수 속성 누락 여부는 개별 항목에게 에러가 전달됨
     objectNode.setValue({ name: 'J' });
@@ -266,7 +266,7 @@ describe('ObjectNode', () => {
       },
     });
 
-    const objectNode = node?.findNode('user') as ObjectNode;
+    const objectNode = node?.find('user') as ObjectNode;
     await delay();
 
     // 추가 속성이 있는 값 설정
@@ -298,7 +298,7 @@ describe('ObjectNode', () => {
       validationMode: ValidationMode.OnChange,
     });
 
-    const objectNode = node?.findNode('user') as ObjectNode;
+    const objectNode = node?.find('user') as ObjectNode;
     await delay();
 
     // 추가 속성이 있는 값 설정
@@ -358,7 +358,7 @@ describe('ObjectNode', () => {
 
     await delay();
 
-    const arrayNode = node?.findNode('users') as ArrayNode;
+    const arrayNode = node?.find('users') as ArrayNode;
     const childNodes = arrayNode.children;
     expect(childNodes.length).toBe(3);
     childNodes.forEach(({ node }, index) => {
@@ -388,7 +388,7 @@ describe('ObjectNode', () => {
       validationMode: ValidationMode.OnChange,
     });
 
-    const objectNode = node?.findNode('user') as ObjectNode;
+    const objectNode = node?.find('user') as ObjectNode;
     await delay();
 
     // 추가 속성이 있는 값 설정
@@ -440,10 +440,10 @@ describe('ObjectNode', () => {
     });
     await delay();
 
-    const root = node.findNode('root') as ObjectNode;
+    const root = node.find('root') as ObjectNode;
     expect(root.jsonSchema).toEqual(jsonSchema.$defs.TreeNode);
 
-    const children = node.findNode('root.children') as ArrayNode;
+    const children = node.find('root.children') as ArrayNode;
 
     expect(children.jsonSchema).toEqual({
       type: 'array',
@@ -475,7 +475,7 @@ describe('ObjectNode', () => {
     });
     await delay();
 
-    const firstChild = node.findNode('root.children.0') as ObjectNode;
+    const firstChild = node.find('root.children.0') as ObjectNode;
     expect(firstChild.value).toEqual({
       id: '4',
       name: 'User 4',

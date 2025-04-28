@@ -358,7 +358,7 @@ export abstract class AbstractNode<
    * @param path 찾고자 하는 Node의 경로(예: '.foo[0].bar'), 없으면 자기 자신 반환
    * @returns 찾은 Node, 찾지 못한 경우 null
    */
-  findNode(this: AbstractNode, path?: string) {
+  find(this: AbstractNode, path?: string) {
     const pathSegments = path ? getPathSegments(path) : [];
     // @ts-expect-error: find must be used in SchemaNode
     return find(this, pathSegments);
@@ -453,7 +453,7 @@ export abstract class AbstractNode<
       this.#dependencies = new Array(dependencyPaths.length);
       for (let index = 0; index < dependencyPaths.length; index++) {
         const dependencyPath = dependencyPaths[index];
-        const targetNode = this.findNode(dependencyPath);
+        const targetNode = this.find(dependencyPath);
         if (!targetNode) continue;
         this.#dependencies[index] = targetNode.value;
         const unsubscribe = targetNode.subscribe(({ type, payload }) => {
@@ -617,7 +617,7 @@ export abstract class AbstractNode<
 
     // 하위 Node에도 dataPath로 node를 찾아서 error setting
     for (const [dataPath, errors] of errorsByDataPath.entries()) {
-      this.findNode(dataPath)?.setErrors(errors);
+      this.find(dataPath)?.setErrors(errors);
     }
 
     // 기존 error에는 포함되어 있으나, 신규 error 목록에 포함되지 않는 error를 가진 node는 clearError
@@ -625,8 +625,7 @@ export abstract class AbstractNode<
     const errorDataPathsSet = new Set(errorDataPaths);
 
     for (const dataPath of this.#errorDataPaths) {
-      if (!errorDataPathsSet.has(dataPath))
-        this.findNode(dataPath)?.clearErrors();
+      if (!errorDataPathsSet.has(dataPath)) this.find(dataPath)?.clearErrors();
     }
 
     // error를 가진 dataPath 목록 업데이트

@@ -32,13 +32,13 @@ describe('VirtualNode', () => {
     });
 
     // 가상 노드가 생성되었는지 확인
-    const virtualNode = node?.findNode('period');
+    const virtualNode = node?.find('period');
     expect(virtualNode).toBeDefined();
     expect(virtualNode?.type).toBe('virtual');
 
     // 참조 노드가 정상적으로 연결되었는지 확인
-    const startDateNode = node?.findNode('startDate');
-    const endDateNode = node?.findNode('endDate');
+    const startDateNode = node?.find('startDate');
+    const endDateNode = node?.find('endDate');
     expect(startDateNode).toBeDefined();
     expect(endDateNode).toBeDefined();
   });
@@ -65,9 +65,9 @@ describe('VirtualNode', () => {
       },
     });
 
-    const virtualNode = node?.findNode('period');
-    const startDateNode = node?.findNode('startDate') as StringNode;
-    const endDateNode = node?.findNode('endDate') as StringNode;
+    const virtualNode = node?.find('period');
+    const startDateNode = node?.find('startDate') as StringNode;
+    const endDateNode = node?.find('endDate') as StringNode;
 
     // 초기값 확인
     expect(virtualNode?.value).toEqual([undefined, undefined]);
@@ -105,9 +105,9 @@ describe('VirtualNode', () => {
       },
     });
 
-    const virtualNode = node?.findNode('period') as VirtualNode;
-    const startDateNode = node?.findNode('startDate') as StringNode;
-    const endDateNode = node?.findNode('endDate') as StringNode;
+    const virtualNode = node?.find('period') as VirtualNode;
+    const startDateNode = node?.find('startDate') as StringNode;
+    const endDateNode = node?.find('endDate') as StringNode;
 
     // 가상 노드의 값 변경
     virtualNode?.setValue(['2021-02-01', '2021-02-02']);
@@ -140,8 +140,8 @@ describe('VirtualNode', () => {
       },
     });
 
-    const virtualNode = node?.findNode('period');
-    const startDateNode = node?.findNode('startDate') as StringNode;
+    const virtualNode = node?.find('period');
+    const startDateNode = node?.find('startDate') as StringNode;
 
     // 이벤트 리스너 등록
     const mockListener = vi.fn();
@@ -192,7 +192,7 @@ describe('VirtualNode', () => {
       },
     });
 
-    const virtualNode = node?.findNode('period');
+    const virtualNode = node?.find('period');
     await delay();
 
     // 가상 노드의 기본값이 정상적으로 설정되었는지 확인
@@ -221,7 +221,7 @@ describe('VirtualNode', () => {
       },
     });
 
-    const virtualNode = node?.findNode('period');
+    const virtualNode = node?.find('period');
     await delay();
 
     // 가상 노드의 자식 노드가 정상적으로 생성되었는지 확인

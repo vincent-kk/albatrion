@@ -15,7 +15,7 @@ const wait = (delay = 0) => {
 };
 
 describe('AbstractNode', () => {
-  it('node.findNode', () => {
+  it('node.find', () => {
     const node = nodeFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -38,18 +38,18 @@ describe('AbstractNode', () => {
       validationMode: ValidationMode.OnChange,
     });
 
-    const founder = node?.findNode('house.founder');
-    const founderName = founder?.findNode('name');
+    const founder = node?.find('house.founder');
+    const founderName = founder?.find('name');
     expect(founder?.value).toEqual({
       name: 'Godric Gryffindor',
       yearOfBirth: 900,
     });
-    expect(node?.findNode('house.founder.name')).toBe(founderName);
+    expect(node?.find('house.founder.name')).toBe(founderName);
     // find a relative node
-    const founderBirthOfYear1 = founderName?.findNode('@.yearOfBirth');
+    const founderBirthOfYear1 = founderName?.find('@.yearOfBirth');
     expect(founderBirthOfYear1?.value).toBe(900);
     // find a absolute node
-    const founderBirthOfYear2 = founderName?.findNode(
+    const founderBirthOfYear2 = founderName?.find(
       '$.house.founder.yearOfBirth',
     );
     expect(founderBirthOfYear2?.value).toBe(900);
@@ -72,7 +72,7 @@ describe('AbstractNode', () => {
     });
     await wait();
 
-    const name = node?.findNode('name');
+    const name = node?.find('name');
     expect(name?.errors.map(({ keyword }) => keyword)).toEqual([
       'maxLength',
       'pattern',
@@ -112,7 +112,7 @@ describe('AbstractNode', () => {
       validationMode: ValidationMode.OnChange,
       ajv,
     });
-    const num = node?.findNode('num');
+    const num = node?.find('num');
     await wait();
     if (num && num.type === 'number') {
       expect(num.errors?.[0]?.keyword).toBe('isEven');
@@ -133,7 +133,7 @@ describe('AbstractNode', () => {
         },
       },
     });
-    const name = node?.findNode('name');
+    const name = node?.find('name');
     if (name) {
       expect(name.state).toEqual({});
       name.setState((state) => ({ ...state, isTouched: true }));
@@ -221,7 +221,7 @@ describe('AbstractNode', () => {
     });
     await wait();
 
-    const index = node?.findNode('index');
+    const index = node?.find('index');
     if (index && index.type === 'number') {
       expect(index.errors?.[0]?.keyword).toBe('isEven');
       index.setValue(2);
@@ -229,7 +229,7 @@ describe('AbstractNode', () => {
       expect(index.errors).toEqual([]);
     }
 
-    const data = node?.findNode('data');
+    const data = node?.find('data');
     if (data && data.type === 'array') {
       data.children.forEach((child, index) => {
         expect(child.node.errors).toEqual([
@@ -251,7 +251,7 @@ describe('AbstractNode', () => {
       });
     }
 
-    const name = node?.findNode('name');
+    const name = node?.find('name');
     if (name && name.type === 'string') {
       expect(name.errors).toEqual([]);
       name.setValue('Ron Weasley');
@@ -323,13 +323,13 @@ describe('AbstractNode', () => {
       },
     });
 
-    node?.findNode('period')?.subscribe((event) => {
+    node?.find('period')?.subscribe((event) => {
       receivedEvent = event;
     });
 
     await wait();
 
-    const endDate = node?.findNode('endDate');
+    const endDate = node?.find('endDate');
 
     (endDate as StringNode)?.setValue('2021-01-02');
 

@@ -110,11 +110,11 @@ const FormInner = <
     () => ({
       node: rootNode,
       focus: (dataPath: string) =>
-        rootNode?.findNode(dataPath)?.publish({
+        rootNode?.find(dataPath)?.publish({
           type: NodeEventType.Focus,
         }),
       select: (dataPath: string) =>
-        rootNode?.findNode(dataPath)?.publish({
+        rootNode?.find(dataPath)?.publish({
           type: NodeEventType.Select,
         }),
       reset: update,

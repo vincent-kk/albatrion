@@ -20,7 +20,7 @@ describe('BooleanNode', () => {
       },
     });
 
-    const booleanNode = node?.findNode('isActive');
+    const booleanNode = node?.find('isActive');
     expect(booleanNode).toBeDefined();
     expect(booleanNode?.type).toBe('boolean');
   });
@@ -37,7 +37,7 @@ describe('BooleanNode', () => {
       },
     });
 
-    const booleanNode = node?.findNode('isActive') as BooleanNode;
+    const booleanNode = node?.find('isActive') as BooleanNode;
     expect(booleanNode.value).toBeUndefined();
 
     booleanNode.setValue(true);
@@ -62,7 +62,7 @@ describe('BooleanNode', () => {
       },
     });
 
-    const booleanNode = node?.findNode('isActive') as BooleanNode;
+    const booleanNode = node?.find('isActive') as BooleanNode;
     await delay();
     expect(booleanNode.value).toBe(true);
   });
@@ -79,7 +79,7 @@ describe('BooleanNode', () => {
       },
     });
 
-    const booleanNode = node?.findNode('isActive') as BooleanNode;
+    const booleanNode = node?.find('isActive') as BooleanNode;
 
     // 이벤트 리스너 등록
     const mockListener = vi.fn();
@@ -126,7 +126,7 @@ describe('BooleanNode', () => {
       },
     });
 
-    const booleanNode = node?.findNode('isActive') as BooleanNode;
+    const booleanNode = node?.find('isActive') as BooleanNode;
 
     // 문자열 'true'를 불리언으로 파싱
     // @ts-expect-error
@@ -166,7 +166,7 @@ describe('BooleanNode', () => {
       validationMode: ValidationMode.OnChange,
     });
 
-    const booleanNode = node?.findNode('isActive') as BooleanNode;
+    const booleanNode = node?.find('isActive') as BooleanNode;
     await delay();
 
     // 유효한 값 설정

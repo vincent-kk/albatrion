@@ -20,7 +20,7 @@ describe('StringNode', () => {
       },
     });
 
-    const stringNode = node?.findNode('name');
+    const stringNode = node?.find('name');
     expect(stringNode).toBeDefined();
     expect(stringNode?.type).toBe('string');
   });
@@ -37,7 +37,7 @@ describe('StringNode', () => {
       },
     });
 
-    const stringNode = node?.findNode('name') as StringNode;
+    const stringNode = node?.find('name') as StringNode;
     expect(stringNode.value).toBeUndefined();
 
     stringNode.setValue('Lee');
@@ -58,7 +58,7 @@ describe('StringNode', () => {
       },
     });
 
-    const stringNode = node?.findNode('name') as StringNode;
+    const stringNode = node?.find('name') as StringNode;
     await delay();
     expect(stringNode.value).toBe('John');
   });
@@ -75,7 +75,7 @@ describe('StringNode', () => {
       },
     });
 
-    const stringNode = node?.findNode('name') as StringNode;
+    const stringNode = node?.find('name') as StringNode;
 
     // 이벤트 리스너 등록
     const mockListener = vi.fn();
@@ -122,7 +122,7 @@ describe('StringNode', () => {
       },
     });
 
-    const stringNode = node?.findNode('name') as StringNode;
+    const stringNode = node?.find('name') as StringNode;
 
     // 숫자를 문자열로 파싱
     // @ts-expect-error
@@ -159,7 +159,7 @@ describe('StringNode', () => {
       validationMode: ValidationMode.OnChange,
     });
 
-    const stringNode = node?.findNode('email') as StringNode;
+    const stringNode = node?.find('email') as StringNode;
     await delay();
 
     // 유효한 값 설정
@@ -194,7 +194,7 @@ describe('StringNode', () => {
       validationMode: ValidationMode.OnChange,
     });
 
-    const stringNode = node?.findNode('phoneNumber') as StringNode;
+    const stringNode = node?.find('phoneNumber') as StringNode;
     await delay();
 
     // 유효한 값 설정

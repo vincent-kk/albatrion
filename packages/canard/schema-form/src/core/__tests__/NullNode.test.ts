@@ -21,7 +21,7 @@ describe('NullNode', () => {
       },
     });
 
-    const nullNode = node?.findNode('emptyValue');
+    const nullNode = node?.find('emptyValue');
     expect(nullNode).toBeDefined();
     expect(nullNode?.type).toBe('null');
   });
@@ -39,7 +39,7 @@ describe('NullNode', () => {
       },
     });
 
-    const nullNode = node?.findNode('emptyValue') as NullNode;
+    const nullNode = node?.find('emptyValue') as NullNode;
     expect(nullNode.value).toBeUndefined();
 
     nullNode.setValue(null);
@@ -61,7 +61,7 @@ describe('NullNode', () => {
       },
     });
 
-    const nullNode = node?.findNode('emptyValue') as NullNode;
+    const nullNode = node?.find('emptyValue') as NullNode;
     await delay();
     expect(nullNode.value).toBeNull();
   });
@@ -79,7 +79,7 @@ describe('NullNode', () => {
       },
     });
 
-    const nullNode = node?.findNode('emptyValue') as NullNode;
+    const nullNode = node?.find('emptyValue') as NullNode;
 
     // 이벤트 리스너 등록
     const mockListener = vi.fn();
@@ -127,7 +127,7 @@ describe('NullNode', () => {
       },
     });
 
-    const nullNode = node?.findNode('emptyValue') as NullNode;
+    const nullNode = node?.find('emptyValue') as NullNode;
 
     // null 값을 파싱
     nullNode.setValue(null);
@@ -154,7 +154,7 @@ describe('NullNode', () => {
       validationMode: ValidationMode.OnChange,
     });
 
-    const nullNode = node?.findNode('emptyValue') as NullNode;
+    const nullNode = node?.find('emptyValue') as NullNode;
     await delay();
 
     // 유효한 값 설정

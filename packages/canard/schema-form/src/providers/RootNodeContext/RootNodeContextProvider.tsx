@@ -121,12 +121,8 @@ export const RootNodeContextProvider = <
       ...Object.keys(currentErrorDictionary),
     ]);
 
-    for (const path of paths) {
-      const node = rootNode.findNode(path);
-      if (node) {
-        node.setReceivedErrors(currentErrorDictionary[path]);
-      }
-    }
+    for (const path of paths)
+      rootNode.find(path)?.setReceivedErrors(currentErrorDictionary[path]);
 
     lastErrorDictionary.current = currentErrorDictionary;
   }, [errors, rootNode]);

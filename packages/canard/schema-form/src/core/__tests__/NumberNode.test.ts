@@ -20,7 +20,7 @@ describe('NumberNode', () => {
       },
     });
 
-    const numberNode = node?.findNode('age');
+    const numberNode = node?.find('age');
     expect(numberNode).toBeDefined();
     expect(numberNode?.type).toBe('number');
   });
@@ -37,7 +37,7 @@ describe('NumberNode', () => {
       },
     });
 
-    const numberNode = node?.findNode('age') as NumberNode;
+    const numberNode = node?.find('age') as NumberNode;
     expect(numberNode.value).toBeUndefined();
 
     numberNode.setValue(25);
@@ -58,7 +58,7 @@ describe('NumberNode', () => {
       },
     });
 
-    const numberNode = node?.findNode('age') as NumberNode;
+    const numberNode = node?.find('age') as NumberNode;
     await delay();
     expect(numberNode.value).toBe(30);
   });
@@ -75,7 +75,7 @@ describe('NumberNode', () => {
       },
     });
 
-    const numberNode = node?.findNode('age') as NumberNode;
+    const numberNode = node?.find('age') as NumberNode;
 
     // 이벤트 리스너 등록
     const mockListener = vi.fn();
@@ -122,7 +122,7 @@ describe('NumberNode', () => {
       },
     });
 
-    const numberNode = node?.findNode('age') as NumberNode;
+    const numberNode = node?.find('age') as NumberNode;
 
     // 문자열 숫자를 숫자로 파싱
     // @ts-expect-error
@@ -146,7 +146,7 @@ describe('NumberNode', () => {
           },
         },
       },
-    }).findNode('count') as NumberNode;
+    }).find('count') as NumberNode;
 
     // @ts-expect-error
     integerNode.setValue('60.7');
@@ -169,7 +169,7 @@ describe('NumberNode', () => {
       validationMode: ValidationMode.OnChange,
     });
 
-    const numberNode = node?.findNode('score') as NumberNode;
+    const numberNode = node?.find('score') as NumberNode;
     await delay();
 
     // 유효한 값 설정

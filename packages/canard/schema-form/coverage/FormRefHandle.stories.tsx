@@ -346,7 +346,7 @@ export const FormRefHandleWithArray = () => {
       </button>
       <button
         onClick={() => {
-          (formHandle.current?.node?.findNode('users') as ArrayNode)?.setValue([
+          (formHandle.current?.node?.find('users') as ArrayNode)?.setValue([
             {
               id: 66,
               name: 'rin',
@@ -364,21 +364,18 @@ export const FormRefHandleWithArray = () => {
       </button>
       <button
         onClick={() => {
-          (formHandle.current?.node?.findNode('users') as ArrayNode)?.update(
-            0,
-            {
-              id: 4,
-              name: 'rin',
-              email: 'rin@example.com',
-            },
-          );
+          (formHandle.current?.node?.find('users') as ArrayNode)?.update(0, {
+            id: 4,
+            name: 'rin',
+            email: 'rin@example.com',
+          });
         }}
       >
         update user[0]
       </button>
       <button
         onClick={() => {
-          (formHandle.current?.node?.findNode('users') as ArrayNode)?.push({
+          (formHandle.current?.node?.find('users') as ArrayNode)?.push({
             id: ~~(Math.random() * 100),
             name: 'random',
             email: 'random@example.com',
@@ -430,32 +427,28 @@ export const FormRefHandleWithVirtualSchema = () => {
       <div>
         <button
           onClick={() =>
-            formHandle.current?.node
-              .findNode('.startDate')
-              .setValue('2025-04-01')
+            formHandle.current?.node.find('.startDate').setValue('2025-04-01')
           }
         >
           startDate "2025-04-01"
         </button>
         <button
           onClick={() =>
-            formHandle.current?.node
-              .findNode('.startDate')
-              .setValue('2025-04-05')
+            formHandle.current?.node.find('.startDate').setValue('2025-04-05')
           }
         >
           startDate "2025-04-05"
         </button>
         <button
           onClick={() =>
-            formHandle.current?.node.findNode('.endDate').setValue('2025-04-25')
+            formHandle.current?.node.find('.endDate').setValue('2025-04-25')
           }
         >
           endDate '2025-04-25'
         </button>
         <button
           onClick={() =>
-            formHandle.current?.node.findNode('.endDate').setValue('2025-04-30')
+            formHandle.current?.node.find('.endDate').setValue('2025-04-30')
           }
         >
           endDate '2025-04-30'
@@ -464,7 +457,7 @@ export const FormRefHandleWithVirtualSchema = () => {
       <button
         onClick={() =>
           formHandle.current?.node
-            .findNode('.period')
+            .find('.period')
             .setValue(['2025-03-13', '2025-04-26'])
         }
       >
@@ -473,7 +466,7 @@ export const FormRefHandleWithVirtualSchema = () => {
       <button
         onClick={() =>
           formHandle.current?.node
-            .findNode('.period')
+            .find('.period')
             .setValue(['2025-03-01', '2025-04-01'])
         }
       >
