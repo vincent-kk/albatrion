@@ -4,7 +4,7 @@ import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isArrayIndex } from '@/common-utils/utils/filter/isArrayIndex';
 
 import { isForbiddenKey } from './isForbiddenKey';
-import { unescape } from './unescape';
+import { unescapePointer } from './unescapePointer';
 
 export const setValue = <Input extends Dictionary>(
   input: Input,
@@ -17,7 +17,7 @@ export const setValue = <Input extends Dictionary>(
   let current: any = input;
   let part = '';
   for (let index = 0; index < length; ) {
-    part = unescape(segments[index++]);
+    part = unescapePointer(segments[index++]);
     if (isForbiddenKey(part)) return input;
     const isLastSegment = index === length;
     if (current[part] === undefined && !isLastSegment) {
