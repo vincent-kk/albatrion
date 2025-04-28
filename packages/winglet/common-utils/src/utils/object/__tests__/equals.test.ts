@@ -230,4 +230,42 @@ describe('equals 함수 테스트', () => {
       expect(equals(complex1, complex3)).toBe(false);
     });
   });
+
+  describe('equals with omits option', () => {
+    it('should return true if differences are only in omitted keys', () => {
+      const left = { a: 1, b: 2, c: 3 };
+      const right = { a: 1, b: 99, c: 3 };
+      expect(equals(left, right, ['b'])).toBe(true);
+    });
+
+    it('should return false if differences exist in non-omitted keys', () => {
+      const left = { a: 1, b: 2, c: 3 };
+      const right = { a: 1, b: 99, c: 100 };
+      expect(equals(left, right, ['b'])).toBe(false);
+    });
+
+    it('should return false if omits option is not provided and values differ', () => {
+      const left = { a: 1, b: 2, c: 3 };
+      const right = { a: 1, b: 99, c: 3 };
+      expect(equals(left, right)).toBe(false);
+    });
+
+    it('should handle multiple omitted keys', () => {
+      const left = { a: 1, b: 2, c: 3, d: 4 };
+      const right = { a: 1, b: 99, c: 100, d: 4 };
+      expect(equals(left, right, ['b', 'c'])).toBe(true);
+    });
+
+    it('should return true for identical objects even with omits', () => {
+      const left = { a: 1, b: 2 };
+      const right = { a: 1, b: 2 };
+      expect(equals(left, right, ['b'])).toBe(true);
+    });
+
+    it('should return true for empty omits array', () => {
+      const left = { a: 1, b: 2 };
+      const right = { a: 1, b: 99 };
+      expect(equals(left, right, [])).toBe(false);
+    });
+  });
 });

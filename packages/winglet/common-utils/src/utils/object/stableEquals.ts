@@ -8,17 +8,20 @@
  * @returns 두 값이 동일하면 true, 그렇지 않으면 false
  */
 export const stableEquals = (
-  leftOperand: unknown,
-  rightOperand: unknown,
+  left: unknown,
+  right: unknown,
+  omit?: PropertyKey[],
 ): boolean => {
+  const omits = omit ? new Set(omit) : null;
   const visited = new WeakMap<object, Set<object>>();
-  return stableEqualsRecursive(leftOperand, rightOperand, visited);
+  return stableEqualsRecursive(left, right, visited, omits);
 };
 
 const stableEqualsRecursive = (
   left: unknown,
   right: unknown,
   visited: WeakMap<object, Set<object>>,
+  omits: Set<PropertyKey> | null,
 ): boolean => {
   if (left === right || (left !== left && right !== right)) return true;
 
@@ -74,7 +77,7 @@ const stableEqualsRecursive = (
       const rightHasIndex = index in right;
       if (leftHasIndex !== rightHasIndex) return false;
       if (leftHasIndex)
-        if (!stableEqualsRecursive(left[index], right[index], visited))
+        if (!stableEqualsRecursive(left[index], right[index], visited, omits))
           return false;
     }
     return true;
@@ -85,9 +88,15 @@ const stableEqualsRecursive = (
   if (leftKeys.length !== Reflect.ownKeys(right).length) return false;
   for (let index = 0; index < leftKeys.length; index++) {
     const key = leftKeys[index];
+    if (omits?.has(key)) continue;
     if (!Reflect.has(right, key)) return false;
     if (
-      !stableEqualsRecursive((left as any)[key], (right as any)[key], visited)
+      !stableEqualsRecursive(
+        (left as any)[key],
+        (right as any)[key],
+        visited,
+        omits,
+      )
     )
       return false;
   }
