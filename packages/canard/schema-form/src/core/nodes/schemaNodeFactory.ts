@@ -28,12 +28,12 @@ import type {
 
 export const createSchemaNodeFactory =
   <Schema extends JsonSchemaWithVirtual>(
-    resolveSchema: ResolveSchema,
+    resolveSchema: ResolveSchema | null,
   ): SchemaNodeFactory<Schema> =>
   ({
     key,
     name,
-    jsonSchema: inputJsonSchema,
+    jsonSchema: schema,
     defaultValue,
     parentNode,
     validationMode,
@@ -42,7 +42,7 @@ export const createSchemaNodeFactory =
     refNodes,
     ajv,
   }: NodeFactoryProps<Schema>) => {
-    const jsonSchema = resolveSchema(inputJsonSchema);
+    const jsonSchema = resolveSchema?.(schema) || schema;
     switch (jsonSchema.type) {
       case 'boolean':
         return new BooleanNode({
