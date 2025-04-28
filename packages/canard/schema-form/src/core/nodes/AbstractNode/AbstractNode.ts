@@ -155,26 +155,20 @@ export abstract class AbstractNode<
 
   /** 하위 Node에서 전달받은 Error */
   #receivedErrors: JsonSchemaError[] = [];
-  #receivedErrorsOrigin: JsonSchemaError[] = [];
   /**
    * 하위 Node에서 전달받은 Error를 자신의 Error와 합친 후 저장
    * @param errors 전달받은 Error List
    */
   setReceivedErrors(this: AbstractNode, errors: JsonSchemaError[] = []) {
     // NOTE: 이미 동일한 에러가 있으면 중복 발생 방지
-    if (equals(this.#receivedErrorsOrigin, errors)) return;
-    this.#receivedErrorsOrigin = errors;
+    if (equals(this.#receivedErrors, errors, ['key'])) return;
 
     // 하위 Node에서 데이터 입력시 해당 항목을 찾아 삭제하기 위한 key 가 필요.
     // 참고: removeFromReceivedErrors
     const filteredErrors = filterErrors(errors, this.jsonSchema);
     this.#receivedErrors = new Array<JsonSchemaError>(filteredErrors.length);
-    for (let index = 0; index < filteredErrors.length; index++) {
-      const error = filteredErrors[index];
-      error.key = index;
-      this.#receivedErrors[index] = error;
-    }
-
+    for (let index = 0; index < filteredErrors.length; index++)
+      this.#receivedErrors[index] = { ...filteredErrors[index], key: index };
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
     this.publish({
@@ -207,7 +201,7 @@ export abstract class AbstractNode<
       if (typeof error.key === 'number') deleteKeys.add(error.key);
     const nextErrors: JsonSchemaError[] = [];
     for (const error of this.#receivedErrors)
-      if (!deleteKeys.has(error.key!)) nextErrors.push(error);
+      if (!error.key || !deleteKeys.has(error.key)) nextErrors.push(error);
     if (this.#receivedErrors.length !== nextErrors.length)
       this.setReceivedErrors(nextErrors);
   }
