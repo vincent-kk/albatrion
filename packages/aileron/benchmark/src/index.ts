@@ -1,5 +1,6 @@
 import { main } from './helpers/cli';
 import { run as runClone } from './targets/clone/benchmark';
+import { run as runCompare } from './targets/compare/benchmark';
 import { run as runCompareJsonSchemaErrors } from './targets/compareJsonSchemaErrors/benchmark';
 import { run as runDeepMerge } from './targets/deepMerge/benchmark';
 import { run as runFind } from './targets/find/benchmark';
@@ -31,6 +32,8 @@ const benchmarks = {
   clone: runClone,
   // fastest: 954274056.54, slowest: 949024019.24, speedRatio: 1.01:1, timeSaved: 0.55%
   getter: runGetter,
+  // fastest: 1123.40, slowest: 408.95, speedRatio: 2.75:1, timeSaved: 63.60%
+  compare: runCompare,
 };
 
 main(benchmarks).catch((error) => {

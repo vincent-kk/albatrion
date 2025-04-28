@@ -1,7 +1,6 @@
-import { JSONPath } from '@winglet/common-utils';
 import type { JsonSchema } from '@winglet/json-schema';
 
-import { schemaNodeFactory } from '@/schema-form/core/nodes';
+import { nodeFromJsonSchema } from '@/schema-form/core';
 
 const schema = {
   type: 'object',
@@ -122,10 +121,8 @@ const schema = {
   required: ['user', 'settings'],
 } satisfies JsonSchema;
 
-export const node = schemaNodeFactory({
-  name: JSONPath.Root,
+export const node = nodeFromJsonSchema({
   jsonSchema: schema,
-  nodeFactory: schemaNodeFactory,
 });
 
 export const targetPath = '$.user.profile.preferences.notifications';
