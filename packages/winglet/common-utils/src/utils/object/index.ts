@@ -1,6 +1,7 @@
 export { clone } from './clone';
 export { getObjectKeys } from './getObjectKeys';
 export { getSymbols } from './getSymbols';
+export { hasUndefined } from './hasUndefined';
 export { merge } from './merge';
 export { removeUndefined } from './removeUndefined';
 export { serializeNative } from './serializeNative';
