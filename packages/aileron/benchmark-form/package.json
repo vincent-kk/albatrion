@@ -31,6 +31,7 @@
     "@canard/schema-form_0.0.55": "npm:@canard/schema-form@0.0.55",
     "@canard/schema-form_0.0.56": "npm:@canard/schema-form@0.0.56",
     "@canard/schema-form_0.0.57": "npm:@canard/schema-form@0.0.57",
+    "@canard/schema-form_0.0.58": "npm:@canard/schema-form@0.0.58",
     "@react-genie-form/next": "^0.2.46",
     "benchmark": "^2.1.4",
     "d3": "^7.8.5",
