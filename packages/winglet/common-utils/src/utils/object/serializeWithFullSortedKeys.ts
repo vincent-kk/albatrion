@@ -10,11 +10,9 @@ export const serializeWithFullSortedKeys = (object: any): string => {
     for (const key of keys) {
       const value = obj[key];
       const fullKey = prefix ? `${prefix}.${key}` : key;
-      if (value && typeof value === 'object') {
+      if (value && typeof value === 'object')
         stack.push({ obj: value, prefix: fullKey });
-      } else {
-        parts.push(`${fullKey}:${String(value)}`);
-      }
+      else parts.push(`${fullKey}:${String(value)}`);
     }
   }
   return parts.join('|');
