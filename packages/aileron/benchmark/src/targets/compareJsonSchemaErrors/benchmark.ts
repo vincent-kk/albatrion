@@ -1,6 +1,7 @@
 import Benchmark from 'benchmark';
 
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
+import { equals } from '@/common-utils';
 import { getErrorsHash as getErrorsHash_Ref } from '@/schema-form/helpers/error/getErrorHash';
 
 import { ajvErrors1, ajvErrors2 } from './data';
@@ -25,6 +26,10 @@ const compareJsonSchemaErrorsWithHash_Ref = () => {
   return prevHash === nextHash;
 };
 
+const compareJsonSchemaErrorsWithEquals = () => {
+  return equals(ajvErrors1, ajvErrors2);
+};
+
 export const run = () => {
   return new Promise<Ratio>((resolve) => {
     suite
@@ -36,6 +41,9 @@ export const run = () => {
       })
       .add('compareJsonSchemaErrorsWithHash_Ref', function () {
         compareJsonSchemaErrorsWithHash_Ref();
+      })
+      .add('compareJsonSchemaErrorsWithEquals', function () {
+        compareJsonSchemaErrorsWithEquals();
       })
       .on('cycle', function (event: Benchmark.Event) {
         console.log(String(event.target));
