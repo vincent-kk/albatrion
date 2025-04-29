@@ -23,6 +23,12 @@
       "@/common-utils/*": [
         "./winglet/common-utils/src/*"
       ],
+      "@/json-schema": [
+        "./winglet/json-schema/src"
+      ],
+      "@/json-schema/*": [
+        "./winglet/json-schema/src/*"
+      ],
       "@aileron/*": [
         "./aileron/common/*"
       ],
@@ -33,7 +39,8 @@
     "src/**/*.tsx?",
     "src/**/*.d.ts",
     "../../canard/schema-form/src/**/*.ts",
-    "../../winglet/common-utils/src/**/*.ts"
+    "../../winglet/common-utils/src/**/*.ts",
+    "../../winglet/json-schema/src/**/*.ts"
   ],
   "exclude": [
     "node_modules",
