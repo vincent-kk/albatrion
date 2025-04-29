@@ -41,6 +41,8 @@ import {
   getPathSegments,
 } from './utils';
 
+const OMITTED_KEYS = new Set(['key']);
+
 export abstract class AbstractNode<
   Schema extends JsonSchemaWithVirtual = JsonSchemaWithVirtual,
   Value extends AllowedValue = any,
@@ -161,7 +163,7 @@ export abstract class AbstractNode<
    */
   setReceivedErrors(this: AbstractNode, errors: JsonSchemaError[] = []) {
     // NOTE: 이미 동일한 에러가 있으면 중복 발생 방지
-    if (equals(this.#receivedErrors, errors, ['key'])) return;
+    if (equals(this.#receivedErrors, errors, OMITTED_KEYS)) return;
 
     // 하위 Node에서 데이터 입력시 해당 항목을 찾아 삭제하기 위한 key 가 필요.
     // 참고: removeFromReceivedErrors
