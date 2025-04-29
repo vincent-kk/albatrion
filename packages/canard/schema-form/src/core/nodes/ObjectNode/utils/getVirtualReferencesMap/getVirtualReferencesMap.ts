@@ -8,7 +8,7 @@ import type { VirtualReference } from '../../type';
 
 export const getVirtualReferencesMap = (
   nodeName: string | undefined,
-  allowedPropertyKeys: string[],
+  propertyKeys: string[],
   virtualReferences: Dictionary<VirtualReference> | undefined,
 ) => {
   if (!virtualReferences)
@@ -23,7 +23,6 @@ export const getVirtualReferencesMap = (
   >();
   const virtualReferencesMap = new Map<string, VirtualReference>();
 
-  const propertySet = new Set(allowedPropertyKeys);
   for (const [key, value] of Object.entries(virtualReferences)) {
     if (!isArray(value.fields))
       throw new SchemaNodeError(
@@ -37,7 +36,7 @@ export const getVirtualReferencesMap = (
       );
     // NOTE: virtual field는 모두 properties에 정의되어 있어야 함
     const notFoundFields = value.fields.filter(
-      (field) => !propertySet.has(field),
+      (field) => !propertyKeys.includes(field),
     );
     if (notFoundFields.length)
       throw new SchemaNodeError(
