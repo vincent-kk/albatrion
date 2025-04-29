@@ -16,13 +16,14 @@ const { increment } = counterFactory();
 
 export const stableSerialize = (
   input: unknown,
-  omitKeys?: string[],
+  omit?: Set<string> | Array<string>,
 ): string => {
-  const omit = omitKeys ? new Set(omitKeys) : null;
+  const omitSet = omit ? (omit instanceof Set ? omit : new Set(omit)) : null;
+  const omitKeys = omit ? (isArray(omit) ? omit : Array.from(omit)) : null;
   const omitHash = omitKeys
-    ? generateHash(omitKeys?.join(',')).toString(36)
+    ? generateHash(omitKeys.join(',')).toString(36)
     : '';
-  return createHash(input, omit, omitHash);
+  return createHash(input, omitSet, omitHash);
 };
 
 const createHash = (

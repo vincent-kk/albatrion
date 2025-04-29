@@ -2,10 +2,10 @@ import type { Dictionary, Fn } from '@aileron/declare';
 
 export const getObjectKeys = <Type extends Dictionary>(
   object: Type,
-  omit?: Array<keyof Type>,
+  omit?: Set<keyof Type> | Array<keyof Type>,
   sort?: Fn<[a: string, b: string], number>,
 ): Array<keyof Type> => {
-  const omits = omit ? new Set(omit) : null;
+  const omits = omit ? (omit instanceof Set ? omit : new Set(omit)) : null;
   const sortedKeys = Object.keys(object).sort(sort);
   if (!omits) return sortedKeys as Array<keyof Type>;
   const keys: Array<keyof Type> = [];
