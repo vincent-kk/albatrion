@@ -1,10 +1,7 @@
 import { difference } from '@winglet/common-utils';
 
-import type {
-  ArrayValue,
-  ObjectSchema,
-  ObjectValue,
-} from '@/schema-form/types';
+import type { JsonSchema } from '@/json-schema/types/jsonSchema';
+import type { ArrayValue, ObjectValue } from '@/json-schema/types/value';
 
 import { requiredFactory } from './requiredFactory';
 import { type StackItem, isArrayStackItem, isObjectStackItem } from './type';
@@ -16,9 +13,9 @@ import { type StackItem, isArrayStackItem, isObjectStackItem } from './type';
  * @param options 추출 옵션
  * @returns 추출된 값
  */
-export const getDataWithSchema = <Value>(
+export const getValueWithSchema = <Value>(
   value: Value | undefined,
-  schema: ObjectSchema,
+  schema: JsonSchema,
 ): Value | undefined => {
   if (value == null || !schema.oneOf?.length) return value;
 

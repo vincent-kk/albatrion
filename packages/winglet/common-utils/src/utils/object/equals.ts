@@ -11,9 +11,9 @@ import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 export const equals = (
   left: unknown,
   right: unknown,
-  omit?: PropertyKey[],
+  omit?: Set<PropertyKey> | Array<PropertyKey>,
 ): boolean => {
-  const omits = omit ? new Set(omit) : null;
+  const omits = omit ? (omit instanceof Set ? omit : new Set(omit)) : null;
   return equalsRecursive(left, right, omits);
 };
 

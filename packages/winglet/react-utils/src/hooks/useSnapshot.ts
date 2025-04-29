@@ -9,7 +9,7 @@ import { equals, isObject } from '@winglet/common-utils';
  */
 export const useSnapshot = <Input extends object>(
   input: Input,
-  omit?: Array<keyof Input>,
+  omit?: Set<keyof Input> | Array<keyof Input>,
 ) => {
   const snapshotRef = useSnapshotReference(input, omit);
   return snapshotRef.current;
@@ -22,15 +22,19 @@ export const useSnapshot = <Input extends object>(
  */
 export const useSnapshotReference = <Input extends object>(
   input: Input,
-  omit?: Array<keyof Input>,
+  omit?: Set<keyof Input> | Array<keyof Input>,
 ) => {
   const snapshotRef = useRef(input);
+  const omitRef = useRef(omit && (omit instanceof Set ? omit : new Set(omit)));
   return useMemo(() => {
-    if (isEmptyObject(input) || equals(snapshotRef.current, input, omit))
+    if (
+      isEmptyObject(input) ||
+      equals(snapshotRef.current, input, omitRef.current)
+    )
       return snapshotRef;
     snapshotRef.current = input;
     return snapshotRef;
-  }, [input, omit]);
+  }, [input]);
 };
 
 const isEmptyObject = (value: unknown): boolean => {
