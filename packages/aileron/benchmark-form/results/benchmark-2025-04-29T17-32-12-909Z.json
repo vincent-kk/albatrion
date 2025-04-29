@@ -1,0 +1,156 @@
+{
+  "timestamp": "2025-04-29T17-32-12-909Z",
+  "results": [
+    {
+      "name": "@react-genie-form/next - Form Rendering",
+      "hz": 64.43093249044475,
+      "stats": {
+        "mean": 0.015520495534474878,
+        "deviation": 0.012097250622040848
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.50 - Form Rendering",
+      "hz": 197.2808834580375,
+      "stats": {
+        "mean": 0.005068914851107225,
+        "deviation": 0.0003694796497050151
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.51 - Form Rendering",
+      "hz": 196.27987201281454,
+      "stats": {
+        "mean": 0.005094765906178668,
+        "deviation": 0.00037561457599984637
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.52 - Form Rendering",
+      "hz": 196.22425638473533,
+      "stats": {
+        "mean": 0.005096209910151516,
+        "deviation": 0.0003360619814790706
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.53 - Form Rendering",
+      "hz": 196.29278239636338,
+      "stats": {
+        "mean": 0.0050944308180458425,
+        "deviation": 0.000327806484036707
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.54 - Form Rendering",
+      "hz": 196.35052974608297,
+      "stats": {
+        "mean": 0.005092932528846152,
+        "deviation": 0.0003774340571366445
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.55 - Form Rendering",
+      "hz": 194.63556370330534,
+      "stats": {
+        "mean": 0.0051378071970668215,
+        "deviation": 0.0003567945201020058
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.56 - Form Rendering",
+      "hz": 193.50364231811693,
+      "stats": {
+        "mean": 0.005167861379870131,
+        "deviation": 0.0004035123869725751
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.57 - Form Rendering",
+      "hz": 193.77187535447712,
+      "stats": {
+        "mean": 0.005160707652597402,
+        "deviation": 0.0003460888864620565
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.58 - Form Rendering",
+      "hz": 194.1462438216498,
+      "stats": {
+        "mean": 0.00515075635930736,
+        "deviation": 0.00038301692223318817
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.59 - Form Rendering",
+      "hz": 193.3323562988384,
+      "stats": {
+        "mean": 0.005172439932683986,
+        "deviation": 0.0004390456503097733
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.60 - Form Rendering",
+      "hz": 195.97393364129883,
+      "stats": {
+        "mean": 0.005102719435281385,
+        "deviation": 0.0003929934299125347
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - Form Rendering",
+      "hz": 189.9307757193312,
+      "stats": {
+        "mean": 0.005265076163737375,
+        "deviation": 0.00039823587846855656
+      }
+    }
+  ],
+  "chartConfig": {
+    "type": "bar",
+    "data": {
+      "labels": [
+        "@react-genie-form/next - Form Rendering",
+        "@canard/schema-form@0.0.50 - Form Rendering",
+        "@canard/schema-form@0.0.51 - Form Rendering",
+        "@canard/schema-form@0.0.52 - Form Rendering",
+        "@canard/schema-form@0.0.53 - Form Rendering",
+        "@canard/schema-form@0.0.54 - Form Rendering",
+        "@canard/schema-form@0.0.55 - Form Rendering",
+        "@canard/schema-form@0.0.56 - Form Rendering",
+        "@canard/schema-form@0.0.57 - Form Rendering",
+        "@canard/schema-form@0.0.58 - Form Rendering",
+        "@canard/schema-form@0.0.59 - Form Rendering",
+        "@canard/schema-form@0.0.60 - Form Rendering",
+        "@canard/schema-form@latest - Form Rendering"
+      ],
+      "datasets": [
+        {
+          "label": "Operations/sec",
+          "data": [
+            64.43093249044475,
+            197.2808834580375,
+            196.27987201281454,
+            196.22425638473533,
+            196.29278239636338,
+            196.35052974608297,
+            194.63556370330534,
+            193.50364231811693,
+            193.77187535447712,
+            194.1462438216498,
+            193.3323562988384,
+            195.97393364129883,
+            189.9307757193312
+          ]
+        }
+      ]
+    },
+    "options": {
+      "scales": {
+        "y": {
+          "beginAtZero": true
+        }
+      }
+    }
+  }
+}
