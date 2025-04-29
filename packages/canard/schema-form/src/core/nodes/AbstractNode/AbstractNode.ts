@@ -196,12 +196,12 @@ export abstract class AbstractNode<
    * @param errors 삭제할 Error List
    */
   removeFromReceivedErrors(this: AbstractNode, errors: JsonSchemaError[]) {
-    const deleteKeys = new Set<number>();
+    const deleteKeys: Array<number> = [];
     for (const error of errors)
-      if (typeof error.key === 'number') deleteKeys.add(error.key);
+      if (typeof error.key === 'number') deleteKeys.push(error.key);
     const nextErrors: JsonSchemaError[] = [];
     for (const error of this.#receivedErrors)
-      if (!error.key || !deleteKeys.has(error.key)) nextErrors.push(error);
+      if (!error.key || !deleteKeys.includes(error.key)) nextErrors.push(error);
     if (this.#receivedErrors.length !== nextErrors.length)
       this.setReceivedErrors(nextErrors);
   }
@@ -549,10 +549,10 @@ export abstract class AbstractNode<
    */
   #filterErrorsWithSchema(this: AbstractNode, errors: JsonSchemaError[]) {
     if (!this.isRoot) return errors;
-    const visibleJsonPaths = new Set(getJsonPaths(this.value));
+    const visibleJsonPaths = getJsonPaths(this.value);
     const filtered = [];
     for (const error of errors)
-      if (visibleJsonPaths.has(error.dataPath)) filtered.push(error);
+      if (visibleJsonPaths.includes(error.dataPath)) filtered.push(error);
     return filtered;
   }
 
@@ -608,11 +608,9 @@ export abstract class AbstractNode<
 
     // 기존 error에는 포함되어 있으나, 신규 error 목록에 포함되지 않는 error를 가진 node는 clearError
     const errorDataPaths = Array.from(errorsByDataPath.keys());
-    const errorDataPathsSet = new Set(errorDataPaths);
-
-    for (const dataPath of this.#errorDataPaths) {
-      if (!errorDataPathsSet.has(dataPath)) this.find(dataPath)?.clearErrors();
-    }
+    for (const dataPath of this.#errorDataPaths)
+      if (!errorDataPaths.includes(dataPath))
+        this.find(dataPath)?.clearErrors();
 
     // error를 가진 dataPath 목록 업데이트
     this.#errorDataPaths = errorDataPaths;
