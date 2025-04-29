@@ -1,5 +1,5 @@
 export * from './getChildren';
-export * from './getDataWithSchema';
+export * from './getObjectValueWithSchema';
 export * from './getOneOfConditionsMap';
 export * from './getVirtualReferencesMap';
 export * from './mergeShowConditions';

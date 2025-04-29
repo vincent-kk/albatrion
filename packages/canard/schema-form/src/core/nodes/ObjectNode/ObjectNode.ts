@@ -13,7 +13,7 @@ import {
 import type { ChildNode } from './type';
 import {
   getChildren,
-  getDataWithSchema,
+  getObjectValueWithSchema,
   getOneOfConditionsMap,
   getVirtualReferencesMap,
   mergeShowConditions,
@@ -47,7 +47,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   }
 
   #parseValue(this: ObjectNode, input: ObjectValue) {
-    return getDataWithSchema(
+    return getObjectValueWithSchema(
       sortObjectKeys(input, this.#propertyKeys),
       this.jsonSchema,
     );

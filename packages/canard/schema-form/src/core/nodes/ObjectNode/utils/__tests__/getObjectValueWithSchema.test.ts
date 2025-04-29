@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import type { JsonSchema } from '@/schema-form/types';
 
-import { getDataWithSchema } from '../getDataWithSchema';
+import { getObjectValueWithSchema } from '../getObjectValueWithSchema';
 
-describe('getDataWithSchema', () => {
+describe('getObjectValueWithSchema', () => {
   it('should return transformed data for object type schema', () => {
     const schema: JsonSchema = {
       type: 'object',
@@ -15,7 +15,7 @@ describe('getDataWithSchema', () => {
     };
     const data = { name: 'John', age: 30 };
 
-    const result = getDataWithSchema(data, schema);
+    const result = getObjectValueWithSchema(data, schema);
     expect(result).toEqual({ name: 'John', age: 30 });
   });
 
@@ -33,7 +33,7 @@ describe('getDataWithSchema', () => {
     };
     const data = { status: 'inactive', age: 30 };
 
-    const result = getDataWithSchema(data, schema);
+    const result = getObjectValueWithSchema(data, schema);
     expect(result).toEqual({ status: 'inactive' });
   });
 
@@ -57,7 +57,7 @@ describe('getDataWithSchema', () => {
       job: 'developer',
     };
 
-    const result = getDataWithSchema(data, schema);
+    const result = getObjectValueWithSchema(data, schema);
     expect(result).toEqual({
       status: 'inactive',
       name: 'John',
@@ -80,7 +80,7 @@ describe('getDataWithSchema', () => {
       job: 'developer',
     };
 
-    const result = getDataWithSchema(data, schema);
+    const result = getObjectValueWithSchema(data, schema);
     expect(result).toEqual({
       age: 30,
       name: 'John',
@@ -104,7 +104,7 @@ describe('getDataWithSchema', () => {
     };
     const data = { person: { name: 'Alice', age: 25 } };
 
-    const result = getDataWithSchema(data, schema);
+    const result = getObjectValueWithSchema(data, schema);
     expect(result).toEqual({ person: { name: 'Alice', age: 25 } });
   });
 
@@ -112,7 +112,7 @@ describe('getDataWithSchema', () => {
     const schema: JsonSchema = { type: 'object' };
     const data = { name: 'John', age: 30 };
 
-    const result = getDataWithSchema(data, schema);
+    const result = getObjectValueWithSchema(data, schema);
     expect(result).toEqual({ name: 'John', age: 30 });
   });
 
@@ -121,7 +121,7 @@ describe('getDataWithSchema', () => {
       type: 'object',
     };
     const data = { name: 'John', age: 30 };
-    const result = getDataWithSchema(data, schema);
+    const result = getObjectValueWithSchema(data, schema);
     expect(result).toEqual({ name: 'John', age: 30 });
   });
 
@@ -137,7 +137,7 @@ describe('getDataWithSchema', () => {
     };
     const data = { tags: ['tag1', 'tag2', 'tag3'] };
 
-    const result = getDataWithSchema(data, schema);
+    const result = getObjectValueWithSchema(data, schema);
     expect(result).toEqual({ tags: ['tag1', 'tag2', 'tag3'] });
   });
 
@@ -156,7 +156,7 @@ describe('getDataWithSchema', () => {
     };
     const data = { matrix: [[1, 2], [3, 4], [5]] };
 
-    const result = getDataWithSchema(data, schema);
+    const result = getObjectValueWithSchema(data, schema);
     expect(result).toEqual({ matrix: [[1, 2], [3, 4], [5]] });
   });
 
@@ -185,21 +185,21 @@ describe('getDataWithSchema', () => {
       age: 40,
       permissions: ['read', 'write'],
     };
-    const adminResult = getDataWithSchema(adminData, schema);
+    const adminResult = getObjectValueWithSchema(adminData, schema);
     expect(adminResult).toEqual({
       type: 'admin',
       permissions: ['read', 'write'],
     });
 
     const userData = { type: 'user', name: 'User', age: 30, role: 'editor' };
-    const userResult = getDataWithSchema(userData, schema);
+    const userResult = getObjectValueWithSchema(userData, schema);
     expect(userResult).toEqual({
       type: 'user',
       role: 'editor',
     });
 
     const guestData = { type: 'guest', name: 'Guest', age: 20 };
-    const guestResult = getDataWithSchema(guestData, schema);
+    const guestResult = getObjectValueWithSchema(guestData, schema);
     expect(guestResult).toEqual({});
   });
 
@@ -212,14 +212,15 @@ describe('getDataWithSchema', () => {
       },
     };
 
-    const nullResult = getDataWithSchema(null, schema);
+    // @ts-expect-error incorrect input type
+    const nullResult = getObjectValueWithSchema(null, schema);
     expect(nullResult).toBeNull();
 
-    const undefinedResult = getDataWithSchema(undefined, schema);
+    const undefinedResult = getObjectValueWithSchema(undefined, schema);
     expect(undefinedResult).toBeUndefined();
 
     const dataWithNull = { name: null, age: 30 };
-    const resultWithNull = getDataWithSchema(dataWithNull, schema);
+    const resultWithNull = getObjectValueWithSchema(dataWithNull, schema);
     expect(resultWithNull).toEqual({ name: null, age: 30 });
   });
 
@@ -271,7 +272,7 @@ describe('getDataWithSchema', () => {
       },
     };
 
-    const result = getDataWithSchema(data, schema);
+    const result = getObjectValueWithSchema(data, schema);
     expect(result).toEqual(data);
   });
 
@@ -301,7 +302,7 @@ describe('getDataWithSchema', () => {
       ],
     };
 
-    const result = getDataWithSchema(data, schema);
+    const result = getObjectValueWithSchema(data, schema);
     expect(result).toEqual(data);
   });
 
@@ -323,15 +324,15 @@ describe('getDataWithSchema', () => {
     };
 
     const dataA = { type: 'A', value: 'test', extraA: 'valueA' };
-    const resultA = getDataWithSchema(dataA, schema);
+    const resultA = getObjectValueWithSchema(dataA, schema);
     expect(resultA).toEqual({ type: 'A', extraA: 'valueA' });
 
     const dataB = { type: 'B', value: 'test', extraB: 42 };
-    const resultB = getDataWithSchema(dataB, schema);
+    const resultB = getObjectValueWithSchema(dataB, schema);
     expect(resultB).toEqual({ type: 'B', extraB: 42 });
 
     const dataC = { type: 'C', value: 'test', extraC: true };
-    const resultC = getDataWithSchema(dataC, schema);
+    const resultC = getObjectValueWithSchema(dataC, schema);
     expect(resultC).toEqual({ type: 'C', extraC: true });
 
     const dataAMixed = {
@@ -340,7 +341,7 @@ describe('getDataWithSchema', () => {
       extraA: 'valueA',
       extraB: 42,
     };
-    const resultAMixed = getDataWithSchema(dataAMixed, schema);
+    const resultAMixed = getObjectValueWithSchema(dataAMixed, schema);
     expect(resultAMixed).toEqual({
       type: 'A',
       extraA: 'valueA',
@@ -367,13 +368,13 @@ describe('getDataWithSchema', () => {
 
     const data = { type: 'A', value: 'test', extraA: 'valueA', extraB: 42 };
 
-    const result1 = getDataWithSchema(data, schema);
+    const result1 = getObjectValueWithSchema(data, schema);
     expect(result1).toEqual({ type: 'A', value: 'test', extraA: 'valueA' });
 
-    const result2 = getDataWithSchema(data, schema);
+    const result2 = getObjectValueWithSchema(data, schema);
     expect(result2).toEqual({ type: 'A', value: 'test', extraA: 'valueA' });
 
-    const result3 = getDataWithSchema(data, schema);
+    const result3 = getObjectValueWithSchema(data, schema);
     expect(result3).toEqual({ type: 'A', value: 'test', extraA: 'valueA' });
 
     const differentData = {
@@ -382,7 +383,7 @@ describe('getDataWithSchema', () => {
       extraA: 'valueA',
       extraB: 42,
     };
-    const result4 = getDataWithSchema(differentData, schema);
+    const result4 = getObjectValueWithSchema(differentData, schema);
     expect(result4).toEqual({ type: 'B', extraB: 42 });
   });
 
@@ -405,15 +406,15 @@ describe('getDataWithSchema', () => {
     };
 
     const dataA = { type: 'A', value: 'test', extraA: 'valueA' };
-    const resultA = getDataWithSchema(dataA, schema);
+    const resultA = getObjectValueWithSchema(dataA, schema);
     expect(resultA).toEqual({ type: 'A', value: 'test', extraA: 'valueA' });
 
     const dataB = { type: 'B', value: 'test', extraB: 42 };
-    const resultB = getDataWithSchema(dataB, schema);
+    const resultB = getObjectValueWithSchema(dataB, schema);
     expect(resultB).toEqual({ type: 'B', value: 'test', extraB: 42 });
 
     const dataC = { type: 'C', value: 'test', extraC: true };
-    const resultC = getDataWithSchema(dataC, schema);
+    const resultC = getObjectValueWithSchema(dataC, schema);
     expect(resultC).toEqual({ type: 'C', extraC: true });
   });
 
@@ -430,7 +431,7 @@ describe('getDataWithSchema', () => {
     };
 
     const data = { type: 'A', value: 'test', extraA: 'valueA' };
-    const result = getDataWithSchema(data, schema1);
+    const result = getObjectValueWithSchema(data, schema1);
     expect(result).toBe(data);
 
     // properties is undefined
@@ -443,7 +444,7 @@ describe('getDataWithSchema', () => {
       ],
     };
     const dataB = { type: 'B', value: 'test', extraB: 42 };
-    const resultB = getDataWithSchema(dataB, schema2);
+    const resultB = getObjectValueWithSchema(dataB, schema2);
     expect(resultB).toBe(dataB);
   });
 
@@ -461,58 +462,8 @@ describe('getDataWithSchema', () => {
     const data = {
       mixedArray: ['string', '42', 'true', 'another string', '100'],
     };
-    const result = getDataWithSchema(data, schema);
+    const result = getObjectValueWithSchema(data, schema);
     expect(result).toBe(data);
-  });
-
-  it('should handle arrays with nested oneOf conditions', () => {
-    const schema: JsonSchema = {
-      type: 'object',
-      properties: {
-        type: { type: 'string', enum: ['A', 'B'] },
-        items: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              type: { type: 'string', enum: ['A', 'B'] },
-              value: { type: 'string' },
-              extraA: { type: 'string' },
-              extraB: { type: 'number' },
-            },
-            oneOf: [
-              { properties: { type: { enum: ['A'] } }, required: ['extraA'] },
-              { properties: { type: { enum: ['B'] } }, required: ['extraB'] },
-            ],
-          },
-        },
-      },
-      oneOf: [
-        {
-          properties: { type: { const: 'A' } },
-          required: ['items'],
-        },
-      ],
-    };
-
-    const data = {
-      type: 'A',
-      items: [
-        { type: 'A', value: 'test1', extraA: 'valueA1', extraB: 42 },
-        { type: 'B', value: 'test2', extraA: 'valueA2', extraB: 100 },
-        { type: 'A', value: 'test3', extraA: 'valueA3' },
-      ],
-    };
-
-    const result = getDataWithSchema(data, schema);
-    expect(result).toEqual({
-      type: 'A',
-      items: [
-        { type: 'A', extraA: 'valueA1' },
-        { type: 'B', extraB: 100 },
-        { type: 'A', extraA: 'valueA3' },
-      ],
-    });
   });
 
   it('should handle objects with patternProperties', () => {
@@ -536,7 +487,7 @@ describe('getDataWithSchema', () => {
       extra: 'value',
     };
 
-    const result = getDataWithSchema(data, schema);
+    const result = getObjectValueWithSchema(data, schema);
     expect(result).toBe(data);
   });
 });

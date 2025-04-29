@@ -1,0 +1,1 @@
+export { getObjectValueWithSchema } from './getObjectValueWithSchema';
