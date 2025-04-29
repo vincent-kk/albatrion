@@ -47,11 +47,53 @@ describe('sortObjectKeys', () => {
       keys: ['d', 'e'],
       expected: { c: 3, a: 1, b: 2 },
     },
+    {
+      name: 'omitUndefined: true - undefined 값 포함',
+      input: { c: undefined, a: 1, b: 2 },
+      keys: ['a', 'b'],
+      omitUndefined: true,
+      expected: { a: 1, b: 2 },
+    },
+    {
+      name: 'omitUndefined: true - keys 배열에 undefined 값 포함',
+      input: { c: 3, a: undefined, b: 2 },
+      keys: ['a', 'b'],
+      omitUndefined: true,
+      expected: { b: 2, c: 3 },
+    },
+    {
+      name: 'omitUndefined: true - 모든 값이 undefined',
+      input: { c: undefined, a: undefined, b: undefined },
+      keys: ['a', 'b'],
+      omitUndefined: true,
+      expected: {},
+    },
+    {
+      name: 'omitUndefined: false (기본값) - undefined 값 포함',
+      input: { c: undefined, a: 1, b: 2 },
+      keys: ['a', 'b'],
+      omitUndefined: false,
+      expected: { a: 1, b: 2, c: undefined },
+    },
+    {
+      name: 'omitUndefined: false - keys 배열에 undefined 값 포함',
+      input: { c: 3, a: undefined, b: 2 },
+      keys: ['a', 'b'],
+      omitUndefined: false,
+      expected: { a: undefined, b: 2, c: 3 },
+    },
+    {
+      name: 'omitUndefined: 기본값(false) 동작 확인',
+      input: { c: undefined, a: 1, b: 2 },
+      keys: ['a', 'b'],
+      // omitUndefined is omitted here, defaults to false
+      expected: { a: 1, b: 2, c: undefined },
+    },
   ];
 
-  testCases.forEach(({ name, input, keys, expected }) => {
+  testCases.forEach(({ name, input, keys, expected, omitUndefined }) => {
     it(name, () => {
-      const result = sortObjectKeys(input, keys);
+      const result = sortObjectKeys(input, keys, omitUndefined);
       const resultKeys = Object.keys(result);
       const expectedKeys = Object.keys(expected);
       expect(resultKeys).toEqual(expectedKeys);
