@@ -21,7 +21,6 @@ import {
 
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   readonly #propertyKeys: string[];
-  readonly #propertyKeysSet: Set<string>;
   #locked: boolean = true;
 
   #children: ChildNode[];
@@ -49,7 +48,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
   #parseValue(this: ObjectNode, input: ObjectValue) {
     return getObjectValueWithSchema(
-      sortObjectKeys(input, this.#propertyKeys, this.#propertyKeysSet),
+      sortObjectKeys(input, this.#propertyKeys, true),
       this.jsonSchema,
     );
   }
@@ -141,7 +140,6 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.#propertyKeys = jsonSchema.properties
       ? Object.keys(jsonSchema.properties)
       : [];
-    this.#propertyKeysSet = new Set(this.#propertyKeys);
 
     const oneOfConditionsMap: Map<string, string[]> | null =
       getOneOfConditionsMap(jsonSchema);
