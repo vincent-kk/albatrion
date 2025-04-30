@@ -21,12 +21,6 @@ Each package includes its own `README.md` to describe usage, dependencies, and e
 
 ---
 
-## Contribution Guidelines
-
-_Under Preparation_
-
----
-
 ## License
 
 This repository is licensed under the MIT License. Please refer to the [`LICENSE`](./LICENSE) file for details.
