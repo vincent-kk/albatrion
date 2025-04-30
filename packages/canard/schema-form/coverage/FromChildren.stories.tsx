@@ -92,11 +92,13 @@ export const FunctionalArrayChildren = () => {
     },
   } satisfies JsonSchema;
 
-  const defaultValue = useRef<Record<string, any>>({
-    allowed: false,
-  });
+  const defaultValue = useRef<Record<string, any>[]>([
+    {
+      allowed: false,
+    },
+  ]);
 
-  const [value, setValue] = useState<Record<string, unknown>>();
+  const [value, setValue] = useState<Record<string, unknown>[]>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value}>
@@ -105,9 +107,15 @@ export const FunctionalArrayChildren = () => {
         defaultValue={defaultValue.current}
         onChange={setValue}
       >
-        {({ node, defaultValue, value, errors }) => (
+        {({ node, defaultValue, value, errors, jsonSchema }) => (
           <>
-            <button onClick={() => node?.push()}>push new element</button>
+            <button
+              onClick={() => {
+                node?.push();
+              }}
+            >
+              push new element
+            </button>
             <Form.Input />
             {defaultValue && <div>{JSON.stringify(defaultValue, null, 2)}</div>}
             {value && <div>{JSON.stringify(value, null, 2)}</div>}
@@ -162,7 +170,7 @@ export const IterableChildren = () => {
         </div>
         <div>
           <Form.Render path=".age">
-            {({ Input, path }) => {
+            {({ Input, path, node }) => {
               return (
                 <div>
                   <label htmlFor={path}>{path}</label>

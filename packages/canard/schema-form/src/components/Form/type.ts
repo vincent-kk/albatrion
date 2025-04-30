@@ -22,10 +22,10 @@ import type {
 } from '@/schema-form/types';
 
 export interface FormChildrenProps<
-  Schema extends JsonSchema = JsonSchema,
+  Schema extends JsonSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: SchemaNode;
+  node?: InferSchemaNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
@@ -82,17 +82,16 @@ export interface FormProps<
   /** 하위 컴포넌트 */
   children?:
     | ReactNode
-    | ((props: FormChildrenProps<Schema, Value>) => ReactNode);
+    | Fn<[props: FormChildrenProps<Schema, Value>], ReactNode>;
 }
 
 export interface FormHandle<
   Schema extends JsonSchema,
   Value extends AllowedValue = InferValueType<Schema>,
-  Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
-  node?: Node;
-  focus: Fn<[dataPath: Node['path']]>;
-  select: Fn<[dataPath: Node['path']]>;
+  node?: InferSchemaNode<Schema>;
+  focus: Fn<[dataPath: SchemaNode['path']]>;
+  select: Fn<[dataPath: SchemaNode['path']]>;
   reset: Fn;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;

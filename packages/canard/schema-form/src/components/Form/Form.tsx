@@ -46,7 +46,6 @@ const UPDATE_CHILDREN_MASK = NodeEventType.Redraw | NodeEventType.UpdateError;
 const FormInner = <
   Schema extends JsonSchema,
   Value extends AllowedValue = InferValueType<Schema>,
-  Node extends SchemaNode = InferSchemaNode<Schema>,
 >(
   {
     jsonSchema: jsonSchemaInput,
@@ -66,8 +65,9 @@ const FormInner = <
     context,
     children: childrenInput,
   }: FormProps<Schema, Value>,
-  ref: ForwardedRef<FormHandle<Schema, Value, Node>>,
+  ref: ForwardedRef<FormHandle<Schema, Value>>,
 ) => {
+  type Node = InferSchemaNode<Schema>;
   const jsonSchema = useConstant(jsonSchemaInput);
   const [rootNode, setRootNode] = useState<Node>();
   const [children, setChildren] = useState<ReactNode>(
@@ -89,8 +89,8 @@ const FormInner = <
 
   const handleValidate = useHandle(onValidate);
 
-  const handleReady = useHandle((rootNode: SchemaNode) => {
-    setRootNode(rootNode as Node);
+  const handleReady = useHandle((rootNode: Node) => {
+    setRootNode(rootNode);
     if (isFunction(onChange)) onChange(rootNode.value as Value);
     ready.current = true;
   }) as Fn<[SchemaNode], void>;

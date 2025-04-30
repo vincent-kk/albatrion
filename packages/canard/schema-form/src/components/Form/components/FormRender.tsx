@@ -1,9 +1,9 @@
-import type { ComponentType, PropsWithChildren } from 'react';
+import type { ComponentType, PropsWithChildren, ReactNode } from 'react';
 
 import { JSONPath } from '@winglet/common-utils';
 import { useMemorize, useSnapshot } from '@winglet/react-utils';
 
-import type { Dictionary } from '@aileron/declare';
+import type { Dictionary, Fn } from '@aileron/declare';
 
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import type {
@@ -15,7 +15,7 @@ import type {
 export type FormRenderProps = {
   path?: string;
   FormTypeInput?: ComponentType<FormTypeInputProps>;
-  children: ComponentType<FormTypeRendererProps>;
+  children: Fn<[props: FormTypeRendererProps], ReactNode>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
 } & OverridableFormTypeInputProps;
 

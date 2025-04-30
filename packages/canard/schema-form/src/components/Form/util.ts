@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import { isFunction } from '@winglet/common-utils';
 
-import type { InferSchemaNode, SchemaNode } from '@/schema-form/core';
+import type { InferSchemaNode } from '@/schema-form/core';
 import type {
   AllowedValue,
   InferValueType,
@@ -14,11 +14,10 @@ import type { FormProps } from './type';
 export const createChildren = <
   Schema extends JsonSchema,
   Value extends AllowedValue = InferValueType<Schema>,
-  Node extends SchemaNode = InferSchemaNode<Schema>,
 >(
   children: FormProps<Schema, Value>['children'] | undefined,
   jsonSchema: Schema,
-  rootNode?: Node,
+  rootNode?: InferSchemaNode<Schema>,
 ): ReactNode => {
   if (!children) return null;
   if (isFunction(children)) {
