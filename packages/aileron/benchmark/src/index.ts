@@ -6,6 +6,7 @@ import { run as runDeepMerge } from './targets/deepMerge/benchmark';
 import { run as runFind } from './targets/find/benchmark';
 import { run as runGetDataWithSchema } from './targets/getDataWithSchema/benchmark';
 import { run as runGetJsonPaths } from './targets/getJsonPath/benchmark';
+import { run as runGetObjectKeys } from './targets/getObjectKeys/benchmark';
 import { run as runGetter } from './targets/getter/benchmark';
 import { run as runSortObjectKeys } from './targets/sortObjectKeys/benchmark';
 import { run as runStringifyObject } from './targets/stringifyObject/benchmark';
@@ -34,6 +35,7 @@ const benchmarks = {
   getter: runGetter,
   // fastest: 740379.96, slowest: 84011.72, speedRatio: 8.81:1, timeSaved: 88.65%
   compare: runCompare,
+  getObjectKeys: runGetObjectKeys,
 };
 
 main(benchmarks).catch((error) => {
