@@ -19,8 +19,7 @@ export const getChildren = (
     virtualReferencesMap && virtualReferenceFieldsMap
   );
   for (const name of propertyKeys) {
-    const childNode = childNodeMap.get(name);
-    if (!childNode) continue;
+    const childNode = childNodeMap.get(name)!;
     const virtualReferenceFields = virtualReferenceFieldsMap?.get(name);
     if (hasVirtualReference && isArray(virtualReferenceFields)) {
       for (const fieldName of virtualReferenceFields) {

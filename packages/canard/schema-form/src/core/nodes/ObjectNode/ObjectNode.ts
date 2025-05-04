@@ -1,4 +1,4 @@
-import { sortObjectKeys } from '@winglet/common-utils';
+import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils';
 
 import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
@@ -137,9 +137,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.#value = this.defaultValue;
     this.#draft = {};
 
-    this.#propertyKeys = jsonSchema.properties
-      ? Object.keys(jsonSchema.properties)
-      : [];
+    const properties = jsonSchema.properties;
+    this.#propertyKeys = getObjectKeys(properties);
 
     const oneOfConditionsMap: Map<string, string[]> | null =
       getOneOfConditionsMap(jsonSchema);
@@ -148,28 +147,32 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       getVirtualReferencesMap(name, this.#propertyKeys, jsonSchema.virtual);
 
     const childNodeMap = new Map<string, ChildNode>();
-    for (const [name, schema] of Object.entries(jsonSchema.properties || {})) {
-      childNodeMap.set(name, {
-        isVirtualized: !!virtualReferenceFieldsMap?.get(name)?.length,
-        node: nodeFactory({
-          name,
-          jsonSchema: mergeShowConditions(
-            schema,
-            oneOfConditionsMap?.get(name),
-          ),
-          defaultValue: this.defaultValue?.[name] ?? getFallbackValue(schema),
-          onChange: (input) => {
-            if (!this.#draft) this.#draft = {};
-            const value =
-              typeof input === 'function' ? input(this.#draft[name]) : input;
-            if (value !== undefined && this.#draft[name] === value) return;
-            this.#draft[name] = value;
-            this.#emitChange(SetValueOption.Normal);
-          },
-          nodeFactory,
-          parentNode: this,
-        }),
-      });
+
+    if (properties) {
+      for (const name of this.#propertyKeys) {
+        const schema = properties[name];
+        childNodeMap.set(name, {
+          isVirtualized: !!virtualReferenceFieldsMap?.get(name)?.length,
+          node: nodeFactory({
+            name,
+            jsonSchema: mergeShowConditions(
+              schema,
+              oneOfConditionsMap?.get(name),
+            ),
+            defaultValue: this.defaultValue?.[name] ?? getFallbackValue(schema),
+            onChange: (input) => {
+              if (!this.#draft) this.#draft = {};
+              const value =
+                typeof input === 'function' ? input(this.#draft[name]) : input;
+              if (value !== undefined && this.#draft[name] === value) return;
+              this.#draft[name] = value;
+              this.#emitChange(SetValueOption.Normal);
+            },
+            nodeFactory,
+            parentNode: this,
+          }),
+        });
+      }
     }
 
     this.#children = getChildren(
