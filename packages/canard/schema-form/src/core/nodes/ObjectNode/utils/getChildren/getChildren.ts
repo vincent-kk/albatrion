@@ -8,6 +8,7 @@ import type { ChildNode, VirtualReference } from '../../type';
 
 export const getChildren = (
   parentNode: ObjectNode,
+  propertyKeys: string[],
   childNodeMap: Map<string, ChildNode>,
   virtualReferenceFieldsMap: Map<string, string[]> | null,
   virtualReferencesMap: Map<string, VirtualReference> | null,
@@ -17,7 +18,9 @@ export const getChildren = (
   const hasVirtualReference = !!(
     virtualReferencesMap && virtualReferenceFieldsMap
   );
-  for (const [name, childNode] of childNodeMap.entries()) {
+  for (const name of propertyKeys) {
+    const childNode = childNodeMap.get(name);
+    if (!childNode) continue;
     const virtualReferenceFields = virtualReferenceFieldsMap?.get(name);
     if (hasVirtualReference && isArray(virtualReferenceFields)) {
       for (const fieldName of virtualReferenceFields) {

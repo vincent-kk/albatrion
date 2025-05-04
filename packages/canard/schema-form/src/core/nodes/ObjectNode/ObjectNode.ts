@@ -174,6 +174,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     this.#children = getChildren(
       this,
+      this.#propertyKeys,
       childNodeMap,
       virtualReferenceFieldsMap,
       virtualReferencesMap,
