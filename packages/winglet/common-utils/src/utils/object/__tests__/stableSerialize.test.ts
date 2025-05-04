@@ -56,7 +56,7 @@ describe('stableSerialize', () => {
         'readonly',
       ]),
     ).toEqual(
-      'ahsqdz{type:object|properties:ahsqdz{user:ahsqdz{type:object|properties:ahsqdz{profile:ahsqdz{type:object|properties:ahsqdz{type:ahsqdz{type:string}|preferences:ahsqdz{type:object|properties:ahsqdz{theme:ahsqdz{type:string}|notifications:ahsqdz{type:object|properties:ahsqdz{sms:ahsqdz{type:boolean}|email:ahsqdz{type:boolean}}}}}|gender:ahsqdz{type:string|renderOptions:ahsqdz{}}|age:ahsqdz{type:integer}}}|name:ahsqdz{type:string}|email:ahsqdz{type:string|format:email}}}}}',
+      '1toy9cy{type:object|properties:1toy9cy{user:1toy9cy{type:object|properties:1toy9cy{profile:1toy9cy{type:object|properties:1toy9cy{type:1toy9cy{type:string}|preferences:1toy9cy{type:object|properties:1toy9cy{theme:1toy9cy{type:string}|notifications:1toy9cy{type:object|properties:1toy9cy{sms:1toy9cy{type:boolean}|email:1toy9cy{type:boolean}}}}}|gender:1toy9cy{type:string|renderOptions:1toy9cy{}}|age:1toy9cy{type:integer}}}|name:1toy9cy{type:string}|email:1toy9cy{type:string|format:email}}}}}',
     );
   });
 
