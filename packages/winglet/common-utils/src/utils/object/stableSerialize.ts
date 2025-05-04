@@ -7,7 +7,7 @@ import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
 import { isPrimitiveObject } from '@/common-utils/utils/filter/isPrimitiveObject';
 import { isRegex } from '@/common-utils/utils/filter/isRegex';
 import { isUndefined } from '@/common-utils/utils/filter/isUndefined';
-import { generateHash } from '@/common-utils/utils/generateHash';
+import { Murmur3 } from '@/common-utils/utils/hash';
 
 import { serializeNative } from './serializeNative';
 
@@ -21,7 +21,7 @@ export const stableSerialize = (
   const omitSet = omit ? (omit instanceof Set ? omit : new Set(omit)) : null;
   const omitKeys = omit ? (isArray(omit) ? omit : Array.from(omit)) : null;
   const omitHash = omitKeys
-    ? generateHash(omitKeys.join(',')).toString(36)
+    ? Murmur3.hash(omitKeys.join(',')).toString(36)
     : '';
   return createHash(input, omitSet, omitHash);
 };

@@ -1,8 +1,8 @@
 import type { Dictionary, Fn } from '@aileron/declare';
 
-export const serializeObject = (object: any, emit?: string[]): string => {
+export const serializeObject = (object: any, omits?: string[]): string => {
   if (!object || typeof object !== 'object') return JSON.stringify(object);
-  const keys = getObjectKeys(object, emit) as string[];
+  const keys = getObjectKeys(object, omits) as string[];
   const segments = new Array(keys.length);
   let key = keys.pop();
   let index = 0;

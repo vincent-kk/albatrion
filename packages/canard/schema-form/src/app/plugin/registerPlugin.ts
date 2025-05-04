@@ -1,10 +1,6 @@
 import type { ComponentType } from 'react';
 
-import {
-  generateHash,
-  isPlainObject,
-  stableSerialize,
-} from '@winglet/common-utils';
+import { Murmur3, isPlainObject, stableSerialize } from '@winglet/common-utils';
 
 import { UnhandledError } from '@/schema-form/errors';
 import type {
@@ -19,7 +15,7 @@ const RegisteredPlugin = new Set<number>();
 
 export const registerPlugin = (plugin: SchemaFormPlugin) => {
   if (!isPlainObject(plugin)) return;
-  const hash = generateHash(stableSerialize(plugin));
+  const hash = Murmur3.hash(stableSerialize(plugin));
   if (RegisteredPlugin.has(hash)) return;
   try {
     const { formTypeInputDefinitions, ...renderKit } = plugin;

@@ -4,6 +4,5 @@ export * from './getKeys';
 export * from './getTypeTag';
 export * from './hasOwnProperty';
 export * from './microtask';
-export * from './murmur3';
 export * from './postPromise';
 export * from './random';

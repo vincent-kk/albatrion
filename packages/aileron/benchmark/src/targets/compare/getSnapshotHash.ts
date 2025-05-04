@@ -1,11 +1,11 @@
-import { generateHash, isObject, serializeObject } from '@/common-utils';
+import { Murmur3, isObject, serializeObject } from '@/common-utils';
 
 export const getSnapshotHash = <T extends object>(
   object: T,
   omit?: Array<keyof T>,
 ): number | null => {
   if (isInvalidValue(object)) return null;
-  return generateHash(serializeObject(object, omit as string[]));
+  return Murmur3.hash(serializeObject(object, omit as string[]));
 };
 
 const isInvalidValue = (value: unknown): boolean => {
