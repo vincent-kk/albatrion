@@ -1,6 +1,6 @@
 import {
+  Murmur3,
   counterFactory,
-  generateHash,
   isArray,
   isDate,
   isFunction,
@@ -20,7 +20,7 @@ export const stableSerialize = (
 ): string => {
   const omit = omitKeys ? new Set(omitKeys) : null;
   const omitHash = omitKeys
-    ? generateHash(omitKeys?.join(',')).toString(36)
+    ? Murmur3.hash(omitKeys?.join(',')).toString(36)
     : '';
   return createHash(input, omit, omitHash);
 };
