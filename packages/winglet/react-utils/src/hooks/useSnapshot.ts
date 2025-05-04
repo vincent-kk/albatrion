@@ -1,6 +1,6 @@
 import { useMemo, useRef } from 'react';
 
-import { equals, isObject } from '@winglet/common-utils';
+import { equals, getTypeTag, isObject } from '@winglet/common-utils';
 
 /**
  * @description 객체의 스냅샷을 반환합니다.
@@ -25,10 +25,11 @@ export const useSnapshotReference = <Input extends object>(
   omit?: Set<keyof Input> | Array<keyof Input>,
 ) => {
   const snapshotRef = useRef(input);
+  const typeRef = useRef(getTypeTag(input));
   const omitRef = useRef(omit && (omit instanceof Set ? omit : new Set(omit)));
   return useMemo(() => {
     if (
-      isEmptyObject(input) ||
+      (typeRef.current === getTypeTag(input) && isEmpty(input)) ||
       equals(snapshotRef.current, input, omitRef.current)
     )
       return snapshotRef;
@@ -37,7 +38,7 @@ export const useSnapshotReference = <Input extends object>(
   }, [input]);
 };
 
-const isEmptyObject = (value: unknown): boolean => {
+const isEmpty = (value: unknown): boolean => {
   if (!value) return true;
   else if (isObject(value)) {
     for (const _ in value) return false;
