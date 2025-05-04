@@ -1,17 +1,24 @@
 import type { Dictionary, Fn } from '@aileron/declare';
 
 export const getObjectKeys = <Type extends Dictionary>(
-  object: Type,
+  object: Type | undefined,
   omit?: Set<keyof Type> | Array<keyof Type>,
-  sort?: Fn<[a: string, b: string], number>,
+  sort?: Fn<[a: keyof Type, b: keyof Type], number>,
 ): Array<keyof Type> => {
-  const omits = omit ? (omit instanceof Set ? omit : new Set(omit)) : null;
-  const sortedKeys = Object.keys(object).sort(sort);
-  if (!omits) return sortedKeys as Array<keyof Type>;
-  const keys: Array<keyof Type> = [];
-  for (let i = 0; i < sortedKeys.length; i++) {
-    const key = sortedKeys[i];
-    if (!omits.has(key)) keys.push(key);
+  if (!object) return [];
+  let keys: Array<keyof Type> = Object.keys(object);
+
+  if (omit) {
+    const omits = omit instanceof Set ? omit : new Set(omit);
+    const filteredKeys: Array<keyof Type> = [];
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      if (!omits.has(key)) filteredKeys.push(key);
+    }
+    keys = filteredKeys;
   }
+
+  if (sort) keys = keys.sort(sort);
+
   return keys;
 };
