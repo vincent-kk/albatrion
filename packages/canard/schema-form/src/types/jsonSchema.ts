@@ -35,87 +35,56 @@ export const isVirtualSchema = (schema: {
 export type InferJsonSchema<
   Value extends AllowedValue | unknown = any,
   Options extends Dictionary = object,
-  RenderOptions extends Dictionary = object,
 > = Value extends NumberValue
-  ? NumberSchema<Options, RenderOptions>
+  ? NumberSchema<Options>
   : Value extends StringValue
-    ? StringSchema<Options, RenderOptions>
+    ? StringSchema<Options>
     : Value extends BooleanValue
-      ? BooleanSchema<Options, RenderOptions>
+      ? BooleanSchema<Options>
       : Value extends ArrayValue
-        ? ArraySchema<Options, RenderOptions>
+        ? ArraySchema<Options>
         : Value extends ObjectValue
-          ? ObjectSchema<Options, RenderOptions>
+          ? ObjectSchema<Options>
           : Value extends null
-            ? NullSchema<Options, RenderOptions>
-            : JsonSchemaWithVirtual<Options, RenderOptions>;
+            ? NullSchema<Options>
+            : JsonSchemaWithVirtual<Options>;
 
-export type JsonSchema<
-  Options extends Dictionary = object,
-  RenderOptions extends Dictionary = object,
-> =
-  | NumberSchema<Options, RenderOptions>
-  | StringSchema<Options, RenderOptions>
-  | BooleanSchema<Options, RenderOptions>
-  | ArraySchema<Options, RenderOptions>
-  | ObjectSchema<Options, RenderOptions>
-  | NullSchema<Options, RenderOptions>
+export type JsonSchema<Options extends Dictionary = object> =
+  | NumberSchema<Options>
+  | StringSchema<Options>
+  | BooleanSchema<Options>
+  | ArraySchema<Options>
+  | ObjectSchema<Options>
+  | NullSchema<Options>
   | RefSchema;
 
-export type JsonSchemaWithVirtual<
-  Options extends Dictionary = object,
-  RenderOptions extends Dictionary = object,
-> = JsonSchema<Options, RenderOptions> | VirtualSchema<Options, RenderOptions>;
+export type JsonSchemaWithVirtual<Options extends Dictionary = object> =
+  | JsonSchema<Options>
+  | VirtualSchema<Options>;
 
-export type NumberSchema<
-  Options extends Dictionary = object,
-  RenderOptions extends Dictionary = object,
-> = BasicSchema<NumberValue> &
-  BaseNumberSchema<Options, RenderOptions, JsonSchema<Options, RenderOptions>>;
+export type NumberSchema<Options extends Dictionary = object> =
+  BasicSchema<NumberValue> & BaseNumberSchema<Options, JsonSchema<Options>>;
 
-export type StringSchema<
-  Options extends Dictionary = object,
-  RenderOptions extends Dictionary = object,
-> = BasicSchema<StringValue> &
-  BaseStringSchema<Options, RenderOptions, JsonSchema<Options, RenderOptions>>;
+export type StringSchema<Options extends Dictionary = object> =
+  BasicSchema<StringValue> & BaseStringSchema<Options, JsonSchema<Options>>;
 
-export type BooleanSchema<
-  Options extends Dictionary = object,
-  RenderOptions extends Dictionary = object,
-> = BasicSchema<BooleanValue> &
-  BaseBooleanSchema<Options, RenderOptions, JsonSchema<Options, RenderOptions>>;
+export type BooleanSchema<Options extends Dictionary = object> =
+  BasicSchema<BooleanValue> & BaseBooleanSchema<Options, JsonSchema<Options>>;
 
-export type ArraySchema<
-  Options extends Dictionary = object,
-  RenderOptions extends Dictionary = object,
-> = BasicSchema<ArrayValue> &
-  BaseArraySchema<Options, RenderOptions, JsonSchema<Options, RenderOptions>>;
+export type ArraySchema<Options extends Dictionary = object> =
+  BasicSchema<ArrayValue> & BaseArraySchema<Options, JsonSchema<Options>>;
 
-export type ObjectSchema<
-  Options extends Dictionary = object,
-  RenderOptions extends Dictionary = object,
-> = BasicSchema<ObjectValue> &
-  BaseObjectSchema<Options, RenderOptions, JsonSchema<Options, RenderOptions>>;
+export type ObjectSchema<Options extends Dictionary = object> =
+  BasicSchema<ObjectValue> & BaseObjectSchema<Options, JsonSchema<Options>>;
 
-export type VirtualSchema<
-  Options extends Dictionary = object,
-  RenderOptions extends Dictionary = object,
-> = {
+export type VirtualSchema<Options extends Dictionary = object> = {
   type: 'virtual';
   fields?: string[];
 } & BasicSchema<VirtualNodeValue> &
-  BaseBasicSchema<
-    VirtualNodeValue,
-    Options,
-    RenderOptions,
-    JsonSchema<Options, RenderOptions>
-  >;
+  BaseBasicSchema<VirtualNodeValue, Options, JsonSchema<Options>>;
 
-export type NullSchema<
-  Options extends Dictionary = object,
-  RenderOptions extends Dictionary = object,
-> = BasicSchema<NullValue> &
-  BaseNullSchema<Options, RenderOptions, JsonSchema<Options, RenderOptions>>;
+export type NullSchema<Options extends Dictionary = object> =
+  BasicSchema<NullValue> & BaseNullSchema<Options, JsonSchema<Options>>;
 
 type BasicSchema<Type> = {
   FormType?: ComponentType<UnknownFormTypeInputProps>;
