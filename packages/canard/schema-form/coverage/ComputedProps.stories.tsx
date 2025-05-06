@@ -18,21 +18,21 @@ export const Common = () => {
         type: 'string',
         placeholder: 'enter your name',
         computed: {
-          readOnly: '!@.prepared',
+          readOnly: '!_.prepared',
         },
       },
       age: {
         type: 'number',
         placeholder: 'enter your age',
         computed: {
-          disabled: '@.name===undefined||(@.name).length<5',
+          disabled: '_.name===undefined||(_.name).length<5',
         },
       },
       nationality: {
         type: 'string',
         enum: ['', 'US', 'UK', 'JP', 'KR'],
         computed: {
-          disabled: '@.age===undefined||@.age<10',
+          disabled: '_.age===undefined||_.age<10',
         },
       },
     },
@@ -66,7 +66,7 @@ export const GlobalReadOnly = () => {
         type: 'string',
         enum: ['', 'US', 'UK', 'JP', 'KR'],
         computed: {
-          disabled: '@.age===undefined||@.age<10',
+          disabled: '_.age===undefined||_.age<10',
         },
       },
     },
@@ -100,7 +100,7 @@ export const GlobalDisabled = () => {
         type: 'string',
         enum: ['', 'US', 'UK', 'JP', 'KR'],
         computed: {
-          disabled: '@.age===undefined||@.age<10',
+          disabled: '_.age===undefined||_.age<10',
         },
       },
     },

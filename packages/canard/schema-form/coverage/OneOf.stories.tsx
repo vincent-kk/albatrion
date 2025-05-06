@@ -9,7 +9,7 @@ import {
 import StoryLayout from './components/StoryLayout';
 
 export default {
-  title: 'Form/15. OneOf',
+  title: 'Form/17. OneOf',
 };
 
 export const OneOf = () => {
@@ -18,31 +18,31 @@ export const OneOf = () => {
     oneOf: [
       {
         computed: {
-          if: "@.category==='movie'",
-        },
-        properties: {
-          date: {
-            type: 'string',
-            format: 'date',
-            '&visible': '@.title === "wow"',
-          },
-          price: {
-            type: 'number',
-            minimum: 50,
-          },
-        },
-      },
-      {
-        computed: {
           if: "@.category==='game'",
         },
         properties: {
           date: {
             type: 'string',
             format: 'date',
-            '&visible': '@.title === "wow"',
+            // '&visible': '@.title === "wow"',
           },
           price: { type: 'number' },
+        },
+      },
+      {
+        computed: {
+          if: "@.category==='movie'",
+        },
+        properties: {
+          date: {
+            type: 'string',
+            format: 'date',
+            // '&visible': '@.title === "wow"',
+          },
+          price: {
+            type: 'number',
+            minimum: 50,
+          },
         },
       },
     ],

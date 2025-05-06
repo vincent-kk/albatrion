@@ -67,16 +67,16 @@ describe('getOneOfIndexFactory', () => {
     const schema = {
       type: 'object',
       oneOf: [
-        { computed: { if: '$.value === "option1"' } },
-        { computed: { if: '$.value === "option2"' } },
-        { computed: { if: '$.count > 10' } },
+        { computed: { if: '_.value === "option1"' } },
+        { computed: { if: '_.value === "option2"' } },
+        { computed: { if: '_.count > 10' } },
       ],
     } as unknown as JsonSchema;
 
     const result = getOneOfIndexFactory(dependencyPaths, schema);
 
-    expect(dependencyPaths).toContain('$.value');
-    expect(dependencyPaths).toContain('$.count');
+    expect(dependencyPaths).toContain('_.value');
+    expect(dependencyPaths).toContain('_.count');
     expect(result).toBeDefined();
 
     // 단순 동등성 비교

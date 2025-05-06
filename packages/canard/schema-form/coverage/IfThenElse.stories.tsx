@@ -27,14 +27,14 @@ export const IfThenElse = () => {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '@.title === "wow"',
+          visible: '_.title === "wow"',
         },
       },
       releaseDate: {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '@.title === "wow"',
+          visible: '_.title === "wow"',
         },
       },
       numOfPlayers: { type: 'number' },
