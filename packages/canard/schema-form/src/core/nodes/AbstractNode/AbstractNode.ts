@@ -13,7 +13,7 @@ import {
   type ValidateFunction,
   ajvHelper,
 } from '@/schema-form/helpers/ajv';
-import { filterErrors, transformErrors } from '@/schema-form/helpers/error';
+import { transformErrors } from '@/schema-form/helpers/error';
 import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
 import type {
   AllowedValue,
@@ -167,10 +167,9 @@ export abstract class AbstractNode<
 
     // 하위 Node에서 데이터 입력시 해당 항목을 찾아 삭제하기 위한 key 가 필요.
     // 참고: removeFromReceivedErrors
-    const filteredErrors = filterErrors(errors, this.jsonSchema);
-    this.#receivedErrors = new Array<JsonSchemaError>(filteredErrors.length);
-    for (let index = 0; index < filteredErrors.length; index++)
-      this.#receivedErrors[index] = { ...filteredErrors[index], key: index };
+    this.#receivedErrors = new Array<JsonSchemaError>(errors.length);
+    for (let index = 0; index < errors.length; index++)
+      this.#receivedErrors[index] = { ...errors[index], key: index };
     this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
 
     this.publish({
@@ -577,10 +576,7 @@ export abstract class AbstractNode<
     // NOTE: 현재 Form 내의 value와 schema를 이용해서 validation 수행
     //    - getDataWithSchema: 현재 JsonSchema를 기반으로 Value의 데이터를 변환하여 반환
     //    - filterErrors: errors에서 oneOf 관련 error 필터링
-    const errors = filterErrors(
-      await this.#validate(this.value),
-      this.jsonSchema,
-    );
+    const errors = await this.#validate(this.value);
 
     // 얻어진 errors를 dataPath 별로 분류
     const errorsByDataPath = new Map<
