@@ -152,12 +152,14 @@ describe('AbstractNode', () => {
           status: { type: 'string', enum: ['active', 'inactive'] },
           age: { type: 'number' },
         },
-        oneOf: [
-          { properties: { status: { enum: ['active'] } }, required: ['age'] },
-          {
-            properties: { status: { enum: ['inactive'] } },
+        if: {
+          properties: {
+            status: { enum: ['active'] },
           },
-        ],
+        },
+        then: {
+          required: ['age'],
+        },
       },
     });
     node.setValue({ status: 'active', age: 10 });

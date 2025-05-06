@@ -4,7 +4,7 @@ import type { Dictionary } from '@aileron/declare';
 
 import type { FlattenCondition } from '../flattenConditions';
 
-export const getIfConditionsMap = (flattedConditions: FlattenCondition[]) => {
+export const getConditionsMap = (flattedConditions: FlattenCondition[]) => {
   const oneOfConditionsMap: Map<string, string[]> = new Map();
   for (const flattedCondition of flattedConditions) {
     const { condition, required, inverse } = flattedCondition;

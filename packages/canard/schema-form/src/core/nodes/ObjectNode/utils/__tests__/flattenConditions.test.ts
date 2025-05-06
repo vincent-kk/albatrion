@@ -418,7 +418,7 @@ describe('flattenConditions', () => {
       },
     } satisfies JsonSchema;
 
-    const expected: any[] = [];
+    const expected = null;
     expect(flattenConditions(schema)).toEqual(expected);
   });
 
@@ -432,7 +432,7 @@ describe('flattenConditions', () => {
       required: ['x'],
     } satisfies JsonSchema;
 
-    expect(flattenConditions(schema)).toEqual([]);
+    expect(flattenConditions(schema)).toEqual(null);
   });
 
   it('should handle if-then with empty required array', () => {

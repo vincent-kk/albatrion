@@ -55,7 +55,7 @@ const flattenConditionsInto = (
       flattenConditionsInto(schema.else, conditions, collectedConditions);
     } else {
       const elseRequired = schema.else.required;
-      if (elseRequired.length) {
+      if (elseRequired?.length) {
         // 지금까지 수집된 모든 조건을 통합
         const inverseCondition: Record<string, string | string[]> = {};
 

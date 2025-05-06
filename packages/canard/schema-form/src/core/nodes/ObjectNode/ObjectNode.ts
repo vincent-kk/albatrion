@@ -15,7 +15,7 @@ import {
   flattenConditions,
   getChildNodeMap,
   getChildren,
-  getIfConditionsMap,
+  getConditionsMap,
   getObjectValueWithSchema,
   getVirtualReferencesMap,
 } from './utils';
@@ -52,6 +52,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     return getObjectValueWithSchema(
       sortObjectKeys(input, this.#propertyKeys, true),
       this.jsonSchema,
+      this.#flattedConditions,
     );
   }
   #propagate(this: ObjectNode, replace: boolean, option: SetValueOption) {
@@ -144,8 +145,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     this.#flattedConditions = flattenConditions(jsonSchema);
 
-    const ifConditionsMap: Map<string, string[]> | null =
-      this.#flattedConditions && getIfConditionsMap(this.#flattedConditions);
+    const conditionsMap: Map<string, string[]> | null =
+      this.#flattedConditions && getConditionsMap(this.#flattedConditions);
 
     const { virtualReferencesMap, virtualReferenceFieldsMap } =
       getVirtualReferencesMap(name, this.#propertyKeys, jsonSchema.virtual);
@@ -165,7 +166,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       this.#propertyKeys,
       this.defaultValue,
       virtualReferenceFieldsMap,
-      ifConditionsMap,
+      conditionsMap,
       handelChangeFactory,
       nodeFactory,
     );

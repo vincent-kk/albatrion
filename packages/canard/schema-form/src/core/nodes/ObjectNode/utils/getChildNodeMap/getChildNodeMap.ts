@@ -14,7 +14,7 @@ export const getChildNodeMap = (
   propertyKeys: string[],
   defaultValue: ObjectValue | undefined,
   virtualReferenceFieldsMap: Map<string, string[]> | null,
-  ifConditionsMap: Map<string, string[]> | null,
+  conditionsMap: Map<string, string[]> | null,
   handelChangeFactory: Fn<[name: string], (input: any) => void>,
   nodeFactory: SchemaNodeFactory,
 ) => {
@@ -27,7 +27,7 @@ export const getChildNodeMap = (
       isVirtualized: !!virtualReferenceFieldsMap?.get(name)?.length,
       node: nodeFactory({
         name,
-        jsonSchema: mergeShowConditions(schema, ifConditionsMap?.get(name)),
+        jsonSchema: mergeShowConditions(schema, conditionsMap?.get(name)),
         defaultValue: defaultValue?.[name] ?? getFallbackValue(schema),
         onChange: handelChangeFactory(name),
         nodeFactory,
