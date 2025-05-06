@@ -213,22 +213,20 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.prepare();
   }
 
-  #prevOneOfIndex: number | undefined;
-
+  #previousIndex: number | undefined;
   #prepareOneOfChildren(this: ObjectNode) {
     if (!this.#oneOfChildrenList) return;
     this.subscribe(({ type, payload }) => {
       if (type & NodeEventType.UpdateComputedProperties) {
-        const oneOfIndex =
+        const index =
           payload?.[NodeEventType.UpdateComputedProperties]?.oneOfIndex;
-        if (oneOfIndex === undefined || oneOfIndex === this.#prevOneOfIndex)
-          return;
+        if (index === undefined || index === this.#previousIndex) return;
         const oneOfChildren =
-          oneOfIndex > -1 ? this.#oneOfChildrenList?.[oneOfIndex] : undefined;
+          index > -1 ? this.#oneOfChildrenList?.[index] : undefined;
         this.#children = oneOfChildren
           ? [...this.#propertyChildren, ...oneOfChildren]
           : this.#propertyChildren;
-        this.#prevOneOfIndex = oneOfIndex;
+        this.#previousIndex = index;
         this.#publishChildrenChange();
       }
     });
