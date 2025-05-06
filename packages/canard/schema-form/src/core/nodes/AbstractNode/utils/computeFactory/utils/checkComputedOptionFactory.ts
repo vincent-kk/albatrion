@@ -2,7 +2,7 @@ import { isString } from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/declare';
 
-import { JSON_PATH_REGEX } from './type';
+import { JSON_PATH_REGEX } from './regex';
 
 export type CheckComputedOption = Fn<[dependencies: unknown[]], boolean>;
 
