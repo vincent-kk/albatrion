@@ -57,6 +57,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     return getObjectValueWithSchema(
       sortObjectKeys(input, this.#propertyKeys, true),
       this.jsonSchema,
+      this.oneOfIndex,
       this.#flattedConditions,
     );
   }

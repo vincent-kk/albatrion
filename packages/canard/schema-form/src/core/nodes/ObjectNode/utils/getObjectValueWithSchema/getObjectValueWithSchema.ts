@@ -15,7 +15,8 @@ import { requiredFactory } from './requiredFactory';
 export const getObjectValueWithSchema = (
   value: ObjectValue | undefined,
   schema: ObjectSchema,
-  conditions: FlattenCondition[] | null,
+  oneOfIndex: number | undefined,
+  conditions: FlattenCondition[] | undefined,
 ): ObjectValue | undefined => {
   if (value == null || !conditions) return value;
 
@@ -25,7 +26,7 @@ export const getObjectValueWithSchema = (
     const computedValue: ObjectValue = {};
     const inputKeys = Object.keys(value);
     const differenceKeys = difference(inputKeys, propertyKeys);
-    const required = requiredFactory(value, conditions);
+    const required = requiredFactory(value, schema, oneOfIndex, conditions);
     for (let i = 0; i < propertyKeys.length; i++) {
       const key = propertyKeys[i];
       if (key in value && (!required || required(key)))

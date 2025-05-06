@@ -1,8 +1,12 @@
-import { isArray } from '@winglet/common-utils';
+import { isArray, map, weakMapCacheFactory } from '@winglet/common-utils';
 
 import type { Dictionary } from '@aileron/declare';
 
+import type { JsonSchema, ObjectSchema } from '@/schema-form/types';
+
 import type { FlattenCondition } from '../flattenConditions';
+
+const { get, set } = weakMapCacheFactory<Array<string[]>, JsonSchema>();
 
 /**
  * 스키마 조건을 분석하여 특정 값에 대해 어떤 속성이 필수인지 결정하는 함수를 반환합니다.
@@ -13,15 +17,31 @@ import type { FlattenCondition } from '../flattenConditions';
  */
 export const requiredFactory = (
   value: Dictionary,
+  schema: ObjectSchema,
+  oneOfIndex: number | undefined,
   conditions: FlattenCondition[] | null,
 ): ((key: string) => boolean) | null => {
-  if (!conditions) return null;
-  const requiredFields = new Set<string>();
+  if (!conditions && oneOfIndex === undefined) return null;
 
+  const oneOfRequiredFields = getOneOfRequiredFields(schema, oneOfIndex);
+  const ifConditionFields = getIfConditionFields(value, conditions);
+  return (key: string) => {
+    if (oneOfRequiredFields?.includes(key)) return true;
+    if (ifConditionFields?.includes(key)) return true;
+    return false;
+  };
+};
+
+const getIfConditionFields = (
+  value: Dictionary,
+  conditions: FlattenCondition[] | null,
+) => {
+  if (!conditions) return null;
+  const requiredFields: string[] = [];
   for (const { condition, required, inverse } of conditions) {
     let matches = true;
     for (const [key, conditionValue] of Object.entries(condition)) {
-      requiredFields.add(key);
+      requiredFields.push(key);
       const currentValue = value[key];
       if (isArray(conditionValue))
         matches = conditionValue.includes(currentValue);
@@ -30,8 +50,34 @@ export const requiredFactory = (
     }
     if (inverse) matches = !matches;
     if (matches) {
-      for (const field of required) requiredFields.add(field);
+      for (const field of required) requiredFields.push(field);
     }
   }
-  return (key: string) => requiredFields.has(key);
+  return requiredFields;
+};
+
+const getOneOfRequiredFields = (
+  schema: JsonSchema,
+  oneOfIndex: number | undefined,
+) => {
+  if (oneOfIndex === undefined || oneOfIndex < 0) return null;
+  let oneOfDetails = get(schema);
+  if (!oneOfDetails) {
+    oneOfDetails = analyzeOneOfSchema(schema);
+    set(schema, oneOfDetails);
+  }
+  return oneOfDetails[oneOfIndex] || [];
+};
+
+const analyzeOneOfSchema = (schema: JsonSchema) => {
+  const oneOfDetails: Array<string[]> = [];
+  const oneOfLength = schema.oneOf?.length;
+  if (!oneOfLength) return oneOfDetails;
+  for (let i = 0; i < oneOfLength; i++) {
+    const oneOfItem = schema.oneOf![i] as JsonSchema;
+    if (!oneOfItem.properties) continue;
+    const required = Object.keys(oneOfItem.properties);
+    oneOfDetails.push(required);
+  }
+  return oneOfDetails;
 };

@@ -16,7 +16,7 @@ describe('getObjectValueWithSchema', () => {
     };
     const data = { name: 'John', age: 30 };
 
-    const result = getObjectValueWithSchema(data, schema, null);
+    const result = getObjectValueWithSchema(data, schema, undefined, undefined);
     expect(result).toEqual({ name: 'John', age: 30 });
   });
 
@@ -43,7 +43,12 @@ describe('getObjectValueWithSchema', () => {
 
     const flattenedConditions = flattenConditions(schema);
 
-    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
+    const result = getObjectValueWithSchema(
+      data,
+      schema,
+      undefined,
+      flattenedConditions,
+    );
     expect(result).toEqual({ status: 'inactive' });
   });
 
@@ -76,7 +81,12 @@ describe('getObjectValueWithSchema', () => {
 
     const flattenedConditions = flattenConditions(schema);
 
-    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
+    const result = getObjectValueWithSchema(
+      data,
+      schema,
+      undefined,
+      flattenedConditions,
+    );
     expect(result).toEqual({
       status: 'inactive',
       name: 'John',
@@ -108,7 +118,12 @@ describe('getObjectValueWithSchema', () => {
 
     const flattenedConditions = flattenConditions(schema);
 
-    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
+    const result = getObjectValueWithSchema(
+      data,
+      schema,
+      undefined,
+      flattenedConditions,
+    );
     expect(result).toEqual({
       age: 30,
       name: 'John',
@@ -134,7 +149,12 @@ describe('getObjectValueWithSchema', () => {
 
     const flattenedConditions = flattenConditions(schema);
 
-    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
+    const result = getObjectValueWithSchema(
+      data,
+      schema,
+      undefined,
+      flattenedConditions,
+    );
     expect(result).toEqual({ person: { name: 'Alice', age: 25 } });
   });
 
@@ -144,7 +164,12 @@ describe('getObjectValueWithSchema', () => {
 
     const flattenedConditions = flattenConditions(schema);
 
-    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
+    const result = getObjectValueWithSchema(
+      data,
+      schema,
+      undefined,
+      flattenedConditions,
+    );
     expect(result).toEqual({ name: 'John', age: 30 });
   });
 
@@ -156,7 +181,12 @@ describe('getObjectValueWithSchema', () => {
 
     const flattenedConditions = flattenConditions(schema);
 
-    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
+    const result = getObjectValueWithSchema(
+      data,
+      schema,
+      undefined,
+      flattenedConditions,
+    );
     expect(result).toEqual({ name: 'John', age: 30 });
   });
 
@@ -174,7 +204,12 @@ describe('getObjectValueWithSchema', () => {
 
     const flattenedConditions = flattenConditions(schema);
 
-    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
+    const result = getObjectValueWithSchema(
+      data,
+      schema,
+      undefined,
+      flattenedConditions,
+    );
     expect(result).toEqual({ tags: ['tag1', 'tag2', 'tag3'] });
   });
 
@@ -195,7 +230,12 @@ describe('getObjectValueWithSchema', () => {
 
     const flattenedConditions = flattenConditions(schema);
 
-    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
+    const result = getObjectValueWithSchema(
+      data,
+      schema,
+      undefined,
+      flattenedConditions,
+    );
     expect(result).toEqual({ matrix: [[1, 2], [3, 4], [5]] });
   });
 
@@ -240,6 +280,7 @@ describe('getObjectValueWithSchema', () => {
     const adminResult = getObjectValueWithSchema(
       adminData,
       schema,
+      undefined,
       flattenedConditions,
     );
     expect(adminResult).toEqual({
@@ -251,6 +292,7 @@ describe('getObjectValueWithSchema', () => {
     const userResult = getObjectValueWithSchema(
       userData,
       schema,
+      undefined,
       flattenedConditions,
     );
     expect(userResult).toEqual({
@@ -262,6 +304,7 @@ describe('getObjectValueWithSchema', () => {
     const guestResult = getObjectValueWithSchema(
       guestData,
       schema,
+      undefined,
       flattenedConditions,
     );
     expect(guestResult).toEqual({ type: 'guest' });
@@ -282,6 +325,7 @@ describe('getObjectValueWithSchema', () => {
       // @ts-ignore
       null,
       schema,
+      undefined,
       flattenedConditions,
     );
     expect(nullResult).toBeNull();
@@ -289,6 +333,7 @@ describe('getObjectValueWithSchema', () => {
     const undefinedResult = getObjectValueWithSchema(
       undefined,
       schema,
+      undefined,
       flattenedConditions,
     );
     expect(undefinedResult).toBeUndefined();
@@ -297,6 +342,7 @@ describe('getObjectValueWithSchema', () => {
     const resultWithNull = getObjectValueWithSchema(
       dataWithNull,
       schema,
+      undefined,
       flattenedConditions,
     );
     expect(resultWithNull).toEqual({ name: null, age: 30 });
@@ -352,7 +398,12 @@ describe('getObjectValueWithSchema', () => {
 
     const flattenedConditions = flattenConditions(schema);
 
-    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
+    const result = getObjectValueWithSchema(
+      data,
+      schema,
+      undefined,
+      flattenedConditions,
+    );
     expect(result).toEqual(data);
   });
 
@@ -384,7 +435,12 @@ describe('getObjectValueWithSchema', () => {
 
     const flattenedConditions = flattenConditions(schema);
 
-    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
+    const result = getObjectValueWithSchema(
+      data,
+      schema,
+      undefined,
+      flattenedConditions,
+    );
     expect(result).toEqual(data);
   });
 
@@ -427,6 +483,7 @@ describe('getObjectValueWithSchema', () => {
     const resultA = getObjectValueWithSchema(
       dataA,
       schema,
+      undefined,
       flattenedConditions,
     );
     expect(resultA).toEqual({ type: 'A', extraA: 'valueA' });
@@ -435,6 +492,7 @@ describe('getObjectValueWithSchema', () => {
     const resultB = getObjectValueWithSchema(
       dataB,
       schema,
+      undefined,
       flattenedConditions,
     );
     expect(resultB).toEqual({ type: 'B', extraB: 42 });
@@ -443,6 +501,7 @@ describe('getObjectValueWithSchema', () => {
     const resultC = getObjectValueWithSchema(
       dataC,
       schema,
+      undefined,
       flattenedConditions,
     );
     expect(resultC).toEqual({ type: 'C', extraC: true });
@@ -456,6 +515,7 @@ describe('getObjectValueWithSchema', () => {
     const resultAMixed = getObjectValueWithSchema(
       dataAMixed,
       schema,
+      undefined,
       flattenedConditions,
     );
     expect(resultAMixed).toEqual({
@@ -490,13 +550,28 @@ describe('getObjectValueWithSchema', () => {
 
     const flattenedConditions = flattenConditions(schema);
 
-    const result1 = getObjectValueWithSchema(data, schema, flattenedConditions);
+    const result1 = getObjectValueWithSchema(
+      data,
+      schema,
+      undefined,
+      flattenedConditions,
+    );
     expect(result1).toEqual({ type: 'A', value: 'test', extraA: 'valueA' });
 
-    const result2 = getObjectValueWithSchema(data, schema, flattenedConditions);
+    const result2 = getObjectValueWithSchema(
+      data,
+      schema,
+      undefined,
+      flattenedConditions,
+    );
     expect(result2).toEqual({ type: 'A', value: 'test', extraA: 'valueA' });
 
-    const result3 = getObjectValueWithSchema(data, schema, flattenedConditions);
+    const result3 = getObjectValueWithSchema(
+      data,
+      schema,
+      undefined,
+      flattenedConditions,
+    );
     expect(result3).toEqual({ type: 'A', value: 'test', extraA: 'valueA' });
 
     const differentData = {
@@ -508,6 +583,7 @@ describe('getObjectValueWithSchema', () => {
     const result4 = getObjectValueWithSchema(
       differentData,
       schema,
+      undefined,
       flattenedConditions,
     );
     expect(result4).toEqual({ type: 'B', extraB: 42 });
@@ -569,6 +645,7 @@ describe('getObjectValueWithSchema', () => {
     const resultA = getObjectValueWithSchema(
       dataA,
       schema,
+      undefined,
       flattenedConditions,
     );
     expect(resultA).toEqual({ type: 'A', value: 'test', extraA: 'valueA' });
@@ -577,6 +654,7 @@ describe('getObjectValueWithSchema', () => {
     const resultB = getObjectValueWithSchema(
       dataB,
       schema,
+      undefined,
       flattenedConditions,
     );
     expect(resultB).toEqual({ type: 'B', value: 'test', extraB: 42 });
@@ -585,6 +663,7 @@ describe('getObjectValueWithSchema', () => {
     const resultC = getObjectValueWithSchema(
       dataC,
       schema,
+      undefined,
       flattenedConditions,
     );
     expect(resultC).toEqual({ type: 'C', extraC: true });
@@ -624,6 +703,7 @@ describe('getObjectValueWithSchema', () => {
     const result = getObjectValueWithSchema(
       data,
       schema1,
+      undefined,
       flattenedConditions1,
     );
     expect(result).toBe(data);
@@ -659,6 +739,7 @@ describe('getObjectValueWithSchema', () => {
     const resultB = getObjectValueWithSchema(
       dataB,
       schema2,
+      undefined,
       flattenedConditions2,
     );
     expect(resultB).toBe(dataB);
@@ -680,7 +761,12 @@ describe('getObjectValueWithSchema', () => {
     };
     const flattenedConditions = flattenConditions(schema);
 
-    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
+    const result = getObjectValueWithSchema(
+      data,
+      schema,
+      undefined,
+      flattenedConditions,
+    );
     expect(result).toBe(data);
   });
 
@@ -707,7 +793,12 @@ describe('getObjectValueWithSchema', () => {
 
     const flattenedConditions = flattenConditions(schema);
 
-    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
+    const result = getObjectValueWithSchema(
+      data,
+      schema,
+      undefined,
+      flattenedConditions,
+    );
     expect(result).toBe(data);
   });
 });
