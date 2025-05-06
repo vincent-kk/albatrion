@@ -23,7 +23,7 @@ import {
 
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   readonly #propertyKeys: string[];
-  readonly #flattedConditions: FlattenCondition[] | null;
+  readonly #flattedConditions: FlattenCondition[] | undefined;
   #locked: boolean = true;
 
   #propertyChildren: ChildNode[];
@@ -155,7 +155,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     this.#flattedConditions = flattenConditions(jsonSchema);
 
-    const conditionsMap: Map<string, string[]> | null =
+    const conditionsMap: Map<string, string[]> | undefined =
       this.#flattedConditions && getConditionsMap(this.#flattedConditions);
 
     const { virtualReferencesMap, virtualReferenceFieldsMap } =

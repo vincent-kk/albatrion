@@ -14,10 +14,10 @@ export interface FlattenCondition {
 
 export const flattenConditions = (
   schema: JsonSchema,
-): FlattenCondition[] | null => {
+): FlattenCondition[] | undefined => {
   const conditions: FlattenCondition[] = [];
   flattenConditionsInto(schema, conditions);
-  return conditions.length > 0 ? conditions : null;
+  return conditions.length > 0 ? conditions : undefined;
 };
 
 const flattenConditionsInto = (

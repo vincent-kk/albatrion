@@ -418,8 +418,7 @@ describe('flattenConditions', () => {
       },
     } satisfies JsonSchema;
 
-    const expected = null;
-    expect(flattenConditions(schema)).toEqual(expected);
+    expect(flattenConditions(schema)).toBeUndefined();
   });
 
   it('should handle schema without if-then-else', () => {
@@ -432,7 +431,7 @@ describe('flattenConditions', () => {
       required: ['x'],
     } satisfies JsonSchema;
 
-    expect(flattenConditions(schema)).toEqual(null);
+    expect(flattenConditions(schema)).toBeUndefined();
   });
 
   it('should handle if-then with empty required array', () => {

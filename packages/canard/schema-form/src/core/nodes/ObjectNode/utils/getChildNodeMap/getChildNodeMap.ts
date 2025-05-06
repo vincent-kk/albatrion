@@ -13,8 +13,8 @@ export const getChildNodeMap = (
   jsonSchema: ObjectSchema,
   propertyKeys: string[],
   defaultValue: ObjectValue | undefined,
-  virtualReferenceFieldsMap: Map<string, string[]> | null,
-  conditionsMap: Map<string, string[]> | null,
+  virtualReferenceFieldsMap: Map<string, string[]> | undefined,
+  conditionsMap: Map<string, string[]> | undefined,
   handelChangeFactory: Fn<[name: string], (input: any) => void>,
   nodeFactory: SchemaNodeFactory,
 ) => {

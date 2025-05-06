@@ -10,8 +10,8 @@ export const getChildren = (
   parentNode: ObjectNode,
   propertyKeys: string[],
   childNodeMap: Map<string, ChildNode>,
-  virtualReferenceFieldsMap: Map<string, string[]> | null,
-  virtualReferencesMap: Map<string, VirtualReference> | null,
+  virtualReferenceFieldsMap: Map<string, string[]> | undefined,
+  virtualReferencesMap: Map<string, VirtualReference> | undefined,
   nodeFactory: SchemaNodeFactory,
 ) => {
   const children: ChildNode[] = [];
