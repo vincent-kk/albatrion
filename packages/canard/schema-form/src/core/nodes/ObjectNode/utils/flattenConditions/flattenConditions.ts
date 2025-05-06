@@ -4,23 +4,25 @@ import type { Dictionary } from '@aileron/declare';
 
 import type { JsonSchema } from '@/schema-form/types';
 
-import { isValidConst, isValidEnum } from './filter';
+import { isValidConst, isValidEnum } from './utils/filter';
 
-interface FlatRequiredRule {
+export interface FlattenCondition {
   condition: Record<string, string | string[]>;
   required: string[];
   inverse?: boolean;
 }
 
-export const flattenConditions = (schema: JsonSchema): FlatRequiredRule[] => {
-  const conditions: FlatRequiredRule[] = [];
+export const flattenConditions = (
+  schema: JsonSchema,
+): FlattenCondition[] | null => {
+  const conditions: FlattenCondition[] = [];
   flattenConditionsInto(schema, conditions);
-  return conditions;
+  return conditions.length > 0 ? conditions : null;
 };
 
 const flattenConditionsInto = (
   schema: JsonSchema,
-  conditions: FlatRequiredRule[],
+  conditions: FlattenCondition[],
   collectedConditions: Dictionary<Array<string | string[]>> = {},
 ): void => {
   if (!schema.if || !schema.then) return;

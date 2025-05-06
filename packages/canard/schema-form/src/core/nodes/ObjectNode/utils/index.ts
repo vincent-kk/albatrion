@@ -1,3 +1,4 @@
+export * from './flattenConditions';
 export * from './getChildNodeMap';
 export * from './getChildren';
 export * from './getObjectValueWithSchema';

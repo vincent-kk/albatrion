@@ -2,18 +2,12 @@ import { isString, serializeNative } from '@winglet/common-utils';
 
 import type { Dictionary } from '@aileron/declare';
 
-import type { ObjectSchema } from '@/schema-form/types';
+import type { FlattenCondition } from '../flattenConditions';
 
-import { flattenConditions } from './utils/flattenConditions';
-
-export const getIfConditionsMap = (jsonSchema: ObjectSchema) => {
-  if (!jsonSchema.if || !jsonSchema.then) return null;
-
-  const flattedConditionSchemas = flattenConditions(jsonSchema);
-
+export const getIfConditionsMap = (flattedConditions: FlattenCondition[]) => {
   const oneOfConditionsMap: Map<string, string[]> = new Map();
-  for (const conditionSchema of flattedConditionSchemas) {
-    const { condition, required, inverse } = conditionSchema;
+  for (const flattedCondition of flattedConditions) {
+    const { condition, required, inverse } = flattedCondition;
     const operations = getOperations(condition, inverse);
     for (const field of required) {
       oneOfConditionsMap.set(field, [

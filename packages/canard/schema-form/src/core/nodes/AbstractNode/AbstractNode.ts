@@ -472,7 +472,6 @@ export abstract class AbstractNode<
     this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
 
-    if (!this.#visible) this.#resetValue();
     this.publish({
       type: NodeEventType.UpdateComputedProperties,
       payload: {
@@ -484,11 +483,6 @@ export abstract class AbstractNode<
         },
       },
     });
-  }
-
-  #resetValue(this: AbstractNode) {
-    const fullbackValue = getFallbackValue(this.jsonSchema);
-    if (this.value !== fullbackValue) this.value = fullbackValue;
   }
 
   /** Node의 상태 */
