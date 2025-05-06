@@ -51,7 +51,7 @@ export const schema = {
             gender: {
               type: 'string',
               enum: ['male', 'female', 'other'],
-              renderOptions: {
+              computed: {
                 visible: '@.age >= 18',
               },
             },

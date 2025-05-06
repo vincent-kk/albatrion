@@ -647,7 +647,7 @@ export const ConditionalForm = () => {
         options: {
           watch: 'employmentType',
         },
-        renderOptions: {
+        computed: {
           visible: "employmentType === 'fulltime'",
         },
       },
@@ -657,7 +657,7 @@ export const ConditionalForm = () => {
         options: {
           watch: 'employmentType',
         },
-        renderOptions: {
+        computed: {
           visible:
             "employmentType === 'parttime' || employmentType === 'contractor'",
         },
@@ -725,7 +725,7 @@ export const AntdForm = () => {
       name: {
         type: 'string',
         title: 'Name',
-        renderOptions: {
+        computed: {
           // Ant Design specific options
           size: 'large',
           placeholder: 'Enter your name',
@@ -739,7 +739,7 @@ export const AntdForm = () => {
         },
         // Use Ant Design Select component
         FormType: 'antd.select',
-        renderOptions: {
+        computed: {
           mode: 'tags',
           placeholder: 'Enter tags',
         },

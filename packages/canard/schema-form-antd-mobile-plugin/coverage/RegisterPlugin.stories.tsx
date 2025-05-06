@@ -229,14 +229,14 @@ export const OneOf = () => {
       openingDate: {
         type: 'string',
         format: 'date',
-        renderOptions: {
+        computed: {
           visible: '@.title === "wow"',
         },
       },
       releaseDate: {
         type: 'string',
         format: 'date',
-        renderOptions: {
+        computed: {
           visible: '@.title === "wow"',
         },
       },
@@ -297,7 +297,7 @@ export const ComplexOneOf = () => {
               gender: {
                 type: 'string',
                 enum: ['male', 'female', 'other'],
-                renderOptions: {
+                computed: {
                   visible: '@.age >= 18',
                 },
               },
@@ -744,14 +744,14 @@ export const ComputedProps = () => {
       name: {
         type: 'string',
         placeholder: 'enter your name',
-        renderOptions: {
+        computed: {
           readOnly: '!@.prepared',
         },
       },
       age: {
         type: 'number',
         placeholder: 'enter your age',
-        renderOptions: {
+        computed: {
           disabled: '@.name===undefined||(@.name).length<5',
         },
       },
@@ -759,7 +759,7 @@ export const ComputedProps = () => {
         type: 'string',
         enum: ['', 'US', 'UK', 'JP', 'KR'],
         placeholder: 'select your nationality',
-        renderOptions: {
+        computed: {
           disabled: '@.age===undefined||@.age<10',
         },
       },

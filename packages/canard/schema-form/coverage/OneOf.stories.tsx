@@ -35,14 +35,14 @@ export const OneOfEnum = () => {
       openingDate: {
         type: 'string',
         format: 'date',
-        renderOptions: {
+        computed: {
           visible: '@.title === "wow"',
         },
       },
       releaseDate: {
         type: 'string',
         format: 'date',
-        renderOptions: {
+        computed: {
           visible: '@.title === "wow"',
         },
       },
@@ -93,14 +93,14 @@ export const OneOfConst = () => {
       openingDate: {
         type: 'string',
         format: 'date',
-        renderOptions: {
+        computed: {
           visible: '@.title === "wow"',
         },
       },
       releaseDate: {
         type: 'string',
         format: 'date',
-        renderOptions: {
+        computed: {
           visible: '@.title === "wow"',
         },
       },
@@ -216,7 +216,7 @@ export const ComplexOneOf = () => {
               gender: {
                 type: 'string',
                 enum: ['male', 'female', 'other'],
-                renderOptions: {
+                computed: {
                   visible: '@.age >= 18',
                 },
               },

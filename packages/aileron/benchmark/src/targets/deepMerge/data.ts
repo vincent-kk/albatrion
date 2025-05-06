@@ -39,7 +39,7 @@ export const data1 = {
             gender: {
               type: 'string',
               enum: ['male', 'female', 'other'],
-              renderOptions: {
+              computed: {
                 visible: '@.age >= 18',
               },
             },
@@ -156,7 +156,7 @@ export const data2 = {
             gender: {
               type: 'string',
               enum: ['male', '3', 'other'],
-              renderOptions: {
+              computed: {
                 visible: '@.age >= 18',
               },
             },

@@ -176,14 +176,14 @@ export const FormRefHandleWithOneOf = () => {
       openingDate: {
         type: 'string',
         format: 'date',
-        renderOptions: {
+        computed: {
           visible: '@.title === "wow"',
         },
       },
       releaseDate: {
         type: 'string',
         format: 'date',
-        renderOptions: {
+        computed: {
           visible: '@.title === "wow"',
         },
       },

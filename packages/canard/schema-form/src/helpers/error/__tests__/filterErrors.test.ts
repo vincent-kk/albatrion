@@ -177,27 +177,27 @@ describe('filterErrors', () => {
             },
             title: {
               type: 'string',
-              renderOptions: {
+              computed: {
                 visible: '("movie"===@.category)||("game"===@.category)',
               },
             },
             openingDate: {
               type: 'string',
               format: 'date',
-              renderOptions: {
+              computed: {
                 visible: '(@.title === "wow")&&("movie"===@.category)',
               },
             },
             releaseDate: {
               type: 'string',
               format: 'date',
-              renderOptions: {
+              computed: {
                 visible: '(@.title === "wow")&&("game"===@.category)',
               },
             },
             numOfPlayers: {
               type: 'number',
-              renderOptions: {
+              computed: {
                 visible: '"game"===@.category',
               },
             },
@@ -310,28 +310,28 @@ describe('filterErrors', () => {
             },
             title: {
               type: 'string',
-              renderOptions: {
+              computed: {
                 visible: '("movie"===@.category)||("game"===@.category)',
               },
             },
             openingDate: {
               type: 'string',
               format: 'date',
-              renderOptions: {
+              computed: {
                 visible: '(@.title === "wow")&&("movie"===@.category)',
               },
             },
             releaseDate: {
               type: 'string',
               format: 'date',
-              renderOptions: {
+              computed: {
                 visible: '(@.title === "wow")&&("game"===@.category)',
               },
             },
             numOfPlayers: {
               type: 'number',
               minimum: 5,
-              renderOptions: {
+              computed: {
                 visible: '"game"===@.category',
               },
             },

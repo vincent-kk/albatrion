@@ -93,16 +93,14 @@ type BasicSchema<Type> = {
   options?: {
     watch?: string | string[];
     alias?: Dictionary<ReactNode>;
-    lazy?: boolean;
     formatter?: Formatter<Type>;
     parser?: Parser<Type>;
     [alt: string]: any;
   };
-  renderOptions?: {
+  computed?: {
     visible?: boolean | string;
     readOnly?: boolean | string;
     disabled?: boolean | string;
-    [alt: string]: any;
   };
   [alt: string]: any;
 };

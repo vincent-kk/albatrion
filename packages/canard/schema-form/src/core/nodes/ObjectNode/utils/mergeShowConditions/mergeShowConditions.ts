@@ -8,10 +8,10 @@ export const mergeShowConditions = (
 ) =>
   conditions
     ? merge(jsonSchema, {
-        renderOptions: {
+        computed: {
           visible: combineConditions(
             [
-              jsonSchema.renderOptions?.visible,
+              jsonSchema.computed?.visible,
               combineConditions(conditions || [], '||'),
             ],
             '&&',
