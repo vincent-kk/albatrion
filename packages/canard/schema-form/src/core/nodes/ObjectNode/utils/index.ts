@@ -1,3 +1,4 @@
+export * from './getChildNodeMap';
 export * from './getChildren';
 export * from './getObjectValueWithSchema';
 export * from './getOneOfConditionsMap';
