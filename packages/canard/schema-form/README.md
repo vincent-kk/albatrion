@@ -230,7 +230,7 @@ interface FormTypeInputProps<
   path: Node['path'];
   /** Errors of the schema node assigned to the FormType Component */
   errors: Node['errors'];
-  /** Values being watched according to the computed.watch property defined in JsonSchema */
+  /** Values being watched according to the `computed.watch`(=`&watch`) property defined in JsonSchema */
   watchValues: WatchValues;
   /** Default value for the FormType Component */
   defaultValue: Value | undefined;

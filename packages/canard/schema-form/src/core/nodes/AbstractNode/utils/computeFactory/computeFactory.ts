@@ -10,13 +10,15 @@ export const computeFactory = (
 ) => {
   const dependencyPaths: string[] = [];
 
-  const computedVisible = jsonSchema?.computed?.visible;
+  const computedVisible =
+    jsonSchema?.computed?.visible ?? jsonSchema?.['&visible'];
   const isHidden = jsonSchema?.visible === false || computedVisible === false;
   const visible = isHidden
     ? falseFunction
     : checkComputedOptionFactory(dependencyPaths, computedVisible);
 
-  const computedReadOnly = jsonSchema?.computed?.readOnly;
+  const computedReadOnly =
+    jsonSchema?.computed?.readOnly ?? jsonSchema?.['&readOnly'];
   const isReadOnly =
     rootJsonSchema.readOnly === true ||
     jsonSchema?.readOnly === true ||
@@ -25,7 +27,8 @@ export const computeFactory = (
     ? trueFunction
     : checkComputedOptionFactory(dependencyPaths, computedReadOnly);
 
-  const computedDisabled = jsonSchema?.computed?.disabled;
+  const computedDisabled =
+    jsonSchema?.computed?.disabled ?? jsonSchema?.['&disabled'];
   const isDisabled =
     rootJsonSchema.disabled === true ||
     jsonSchema?.disabled === true ||
@@ -36,7 +39,7 @@ export const computeFactory = (
 
   const watchValues = getWatchValuesFactory(
     dependencyPaths,
-    jsonSchema?.computed?.watch,
+    jsonSchema?.computed?.watch ?? jsonSchema?.['&watch'],
   );
 
   return {

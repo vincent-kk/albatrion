@@ -93,16 +93,12 @@ export const OneOfConst = () => {
       openingDate: {
         type: 'string',
         format: 'date',
-        computed: {
-          visible: '@.title === "wow"',
-        },
+        '&visible': '@.title === "wow"',
       },
       releaseDate: {
         type: 'string',
         format: 'date',
-        computed: {
-          visible: '@.title === "wow"',
-        },
+        '&visible': '@.title === "wow"',
       },
       numOfPlayers: { type: 'number' },
       price: {

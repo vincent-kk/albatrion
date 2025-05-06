@@ -96,6 +96,14 @@ type BasicSchema<Type> = {
     parser?: Parser<Type>;
     [alt: string]: any;
   };
+  /** Alias for computed.watch */
+  '&watch'?: string | string[];
+  /** Alias for computed.visible */
+  '&visible'?: boolean | string;
+  /** Alias for computed.readOnly */
+  '&readOnly'?: boolean | string;
+  /** Alias for computed.disabled */
+  '&disabled'?: boolean | string;
   computed?: {
     watch?: string | string[];
     visible?: boolean | string;

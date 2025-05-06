@@ -11,7 +11,7 @@ export const mergeShowConditions = (
         computed: {
           visible: combineConditions(
             [
-              jsonSchema.computed?.visible,
+              jsonSchema.computed?.visible ?? jsonSchema['&visible'],
               combineConditions(conditions || [], '||'),
             ],
             '&&',
