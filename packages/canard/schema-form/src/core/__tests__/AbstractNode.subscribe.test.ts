@@ -278,7 +278,7 @@ describe('SchemaNode computed properties', () => {
   });
 
   describe('watchValues property', () => {
-    it('should update watchValues based on options.watch paths', async () => {
+    it('should update watchValues based on computed.watch paths', async () => {
       const schema = {
         type: 'object',
         properties: {
@@ -292,7 +292,7 @@ describe('SchemaNode computed properties', () => {
           greeting: {
             type: 'string',
             formType: 'greeting',
-            options: {
+            computed: {
               watch: ['$.profile.name', '$.profile.age', '$.profile'],
             },
           },

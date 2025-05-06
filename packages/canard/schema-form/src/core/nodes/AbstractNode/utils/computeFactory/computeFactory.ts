@@ -36,7 +36,7 @@ export const computeFactory = (
 
   const watchValues = getWatchValuesFactory(
     dependencyPaths,
-    jsonSchema?.options?.watch,
+    jsonSchema?.computed?.watch,
   );
 
   return {

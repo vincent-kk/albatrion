@@ -230,7 +230,7 @@ interface FormTypeInputProps<
   path: Node['path'];
   /** Errors of the schema node assigned to the FormType Component */
   errors: Node['errors'];
-  /** Values being watched according to the watch property defined in JsonSchema */
+  /** Values being watched according to the computed.watch property defined in JsonSchema */
   watchValues: WatchValues;
   /** Default value for the FormType Component */
   defaultValue: Value | undefined;
@@ -644,20 +644,16 @@ export const ConditionalForm = () => {
       salary: {
         type: 'number',
         title: 'Annual Salary',
-        options: {
-          watch: 'employmentType',
-        },
         computed: {
+          watch: 'employmentType',
           visible: "employmentType === 'fulltime'",
         },
       },
       hourlyRate: {
         type: 'number',
         title: 'Hourly Rate',
-        options: {
-          watch: 'employmentType',
-        },
         computed: {
+          watch: 'employmentType',
           visible:
             "employmentType === 'parttime' || employmentType === 'contractor'",
         },

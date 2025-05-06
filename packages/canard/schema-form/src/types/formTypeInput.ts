@@ -44,7 +44,7 @@ export interface FormTypeInputProps<
   path: Node['path'];
   /** FormType Component에 할당된 schema node의 에러 */
   errors: Node['errors'];
-  /** JsonSchema에 정의된 watch 속성에 따라 구독하는 값들 */
+  /** JsonSchema에 정의된 computed.watch 속성에 따라 구독하는 값들 */
   watchValues: WatchValues;
   /** FormType Component의 defaultValue */
   defaultValue: Value | undefined;

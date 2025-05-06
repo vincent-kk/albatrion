@@ -91,13 +91,13 @@ type BasicSchema<Type> = {
   style?: CSSProperties;
   label?: ReactNode;
   options?: {
-    watch?: string | string[];
     alias?: Dictionary<ReactNode>;
     formatter?: Formatter<Type>;
     parser?: Parser<Type>;
     [alt: string]: any;
   };
   computed?: {
+    watch?: string | string[];
     visible?: boolean | string;
     readOnly?: boolean | string;
     disabled?: boolean | string;
