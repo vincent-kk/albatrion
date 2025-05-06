@@ -42,6 +42,11 @@ describe('getOneOfIndexFactory', () => {
         { computed: { if: '$.value === "option1"' } },
         { computed: { if: '$.value === "option2"' } },
         { computed: { if: '$.value === "option3"' } },
+        { computed: { if: '$.value === "option3"' } },
+        { computed: { if: '$.value === "option2"' } },
+        { computed: { if: '$.value === "option2"' } },
+        { computed: { if: '$.value === "option2"' } },
+        { computed: { if: '$.value === "option3"' } },
       ],
     } as unknown as JsonSchema;
 

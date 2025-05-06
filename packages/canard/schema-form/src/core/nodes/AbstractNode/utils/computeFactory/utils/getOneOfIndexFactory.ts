@@ -2,19 +2,19 @@ import { isArray } from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/declare';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import { JSON_PATH_REGEX } from './regex';
 
-export type GetOneOf = Fn<[dependencies: unknown[]], number | null>;
+export type GetOneOfIndex = Fn<[dependencies: unknown[]], number>;
 
 const SIMPLE_EQUALITY_REGEX =
   /^\s*dependencies\[(\d+)\]\s*===\s*(['"])([^'"]+)\2\s*$/;
 
 export const getOneOfIndexFactory = (
   dependencyPaths: string[],
-  jsonSchema: JsonSchema,
-): GetOneOf | undefined => {
+  jsonSchema: JsonSchemaWithVirtual,
+): GetOneOfIndex | undefined => {
   if (jsonSchema.type !== 'object' || !isArray(jsonSchema.oneOf))
     return undefined;
 
@@ -64,7 +64,8 @@ export const getOneOfIndexFactory = (
       const depIndex = parseInt(matches[1], 10);
       const value = matches[3];
       if (!equalityMap[depIndex]) equalityMap[depIndex] = {};
-      equalityMap[depIndex][value] = schemaIndices[index];
+      if (!(value in equalityMap[depIndex]))
+        equalityMap[depIndex][value] = schemaIndices[index];
     } else {
       isSimpleEquality = false;
       break;
@@ -93,5 +94,5 @@ export const getOneOfIndexFactory = (
     `${lines.join('\n')}
     return -1;
   `,
-  ) as GetOneOf;
+  ) as GetOneOfIndex;
 };
