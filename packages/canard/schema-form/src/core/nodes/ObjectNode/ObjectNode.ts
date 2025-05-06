@@ -185,10 +185,15 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.#emitChange(SetValueOption.Normal);
     this.setDefaultValue(this.#value);
 
+    this.#publishChildrenChange();
+
+    this.prepare();
+  }
+
+  #publishChildrenChange(this: ObjectNode) {
+    if (this.#locked) return;
     this.publish({
       type: NodeEventType.UpdateChildren,
     });
-
-    this.prepare();
   }
 }
