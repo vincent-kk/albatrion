@@ -26,7 +26,9 @@ const getOperations = (
   const operations: string[] = [];
   for (const [key, value] of Object.entries(condition)) {
     if (isString(value))
-      operations.push(`@.${key}${inverse ? '!==' : '==='}"${value}"`);
+      operations.push(
+        `@.${key}${inverse ? '!==' : '==='}${serializeNative(value)}`,
+      );
     else
       operations.push(
         `${inverse ? '!' : ''}${serializeNative(value)}.includes(@.${key})`,

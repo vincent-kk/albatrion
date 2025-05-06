@@ -133,6 +133,7 @@ describe('getConditionsMap', () => {
         userType: { type: 'string', enum: ['admin', 'user', 'guest'] },
         status: { type: 'string', enum: ['active', 'inactive'] },
         adminPanel: { type: 'boolean' },
+        none: { type: 'null' },
       },
       if: {
         properties: {
@@ -152,6 +153,9 @@ describe('getConditionsMap', () => {
         then: {
           required: ['adminPanel'],
         },
+        else: {
+          required: ['none'],
+        },
       },
     };
 
@@ -162,10 +166,15 @@ describe('getConditionsMap', () => {
       : null;
 
     expect(result).toBeInstanceOf(Map);
-    expect(result?.size).toBe(1);
+    expect(result?.size).toBe(2);
     const adminPanelConditions = result?.get('adminPanel');
     expect(adminPanelConditions).toContain('@.userType==="admin"');
     expect(adminPanelConditions).toContain('@.userType==="user"');
     expect(adminPanelConditions).toContain('@.status==="active"');
+    const noneConditions = result?.get('none');
+    expect(noneConditions).toEqual([
+      '!["admin","user"].includes(@.userType)',
+      '@.status!=="active"',
+    ]);
   });
 });
