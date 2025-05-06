@@ -1,12 +1,15 @@
 import { isArray, isEmptyObject } from '@winglet/common-utils';
 
+import type { Dictionary } from '@aileron/declare';
+
 import type { JsonSchema } from '@/schema-form/types';
 
 import { isValidConst, isValidEnum } from './filter';
 
 interface FlatRequiredRule {
-  condition: Record<string, string | string[]> | true;
+  condition: Record<string, string | string[]>;
   required: string[];
+  inverse?: boolean;
 }
 
 export const flattenConditions = (schema: JsonSchema): FlatRequiredRule[] => {
@@ -18,6 +21,7 @@ export const flattenConditions = (schema: JsonSchema): FlatRequiredRule[] => {
 const flattenConditionsInto = (
   schema: JsonSchema,
   conditions: FlatRequiredRule[],
+  collectedConditions: Dictionary<Array<string | string[]>> = {},
 ): void => {
   if (!schema.if || !schema.then) return;
 
@@ -26,9 +30,17 @@ const flattenConditionsInto = (
     ? extractCondition(schema.if.properties)
     : null;
 
+  if (ifCondition === null) return;
+
+  // 현재 조건을 수집
+  for (const [key, value] of Object.entries(ifCondition)) {
+    if (!collectedConditions[key]) collectedConditions[key] = [];
+    collectedConditions[key].push(value);
+  }
+
   // then 부분 처리
   const thenRequired = schema.then?.required;
-  if (ifCondition && isArray(thenRequired) && thenRequired.length > 0)
+  if (isArray(thenRequired) && thenRequired.length > 0)
     conditions[conditions.length] = {
       condition: ifCondition,
       required: thenRequired,
@@ -37,15 +49,36 @@ const flattenConditionsInto = (
   // else 부분 처리
   if (schema.else) {
     // 중첩된 if-then-else 처리 (재귀 호출)
-    if (schema.else.if && schema.else.then)
-      flattenConditionsInto(schema.else, conditions);
-    else {
+    if (schema.else.if && schema.else.then) {
+      flattenConditionsInto(schema.else, conditions, collectedConditions);
+    } else {
       const elseRequired = schema.else.required;
-      if (isArray(elseRequired) && elseRequired.length > 0)
+      if (elseRequired.length) {
+        // 지금까지 수집된 모든 조건을 통합
+        const inverseCondition: Record<string, string | string[]> = {};
+
+        for (const [key, values] of Object.entries(collectedConditions)) {
+          if (values.length === 1) {
+            inverseCondition[key] = values[0];
+          } else {
+            // 배열로 병합
+            const merged: string[] = [];
+            values.forEach((value) => {
+              if (Array.isArray(value)) {
+                merged.push(...value);
+              } else {
+                merged.push(value);
+              }
+            });
+            inverseCondition[key] = merged;
+          }
+        }
         conditions[conditions.length] = {
-          condition: true,
+          condition: inverseCondition,
           required: elseRequired,
+          inverse: true,
         };
+      }
     }
   }
 };
@@ -54,7 +87,7 @@ const flattenConditionsInto = (
 const extractCondition = (
   properties: Record<string, any>,
 ): Record<string, string | string[]> | null => {
-  const condition: Record<string, string | string[]> = {};
+  const condition: Dictionary<string | string[]> = {};
   const propertyEntries = Object.entries(properties);
 
   for (let i = 0; i < propertyEntries.length; i++) {

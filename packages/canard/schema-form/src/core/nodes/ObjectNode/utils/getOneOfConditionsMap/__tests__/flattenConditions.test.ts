@@ -40,8 +40,9 @@ describe('flattenConditions', () => {
         required: ['y'],
       },
       {
-        condition: true,
+        condition: { x: 'SHOW Y' },
         required: ['z'],
+        inverse: true,
       },
     ];
     expect(flattenConditions(schema)).toEqual(expected);
@@ -83,8 +84,9 @@ describe('flattenConditions', () => {
         required: ['y'],
       },
       {
-        condition: true,
+        condition: { x: 'SHOW Y' },
         required: ['else'],
+        inverse: true,
       },
     ];
     expect(flattenConditions(schema)).toEqual(expected);
@@ -126,8 +128,9 @@ describe('flattenConditions', () => {
         required: ['yz'],
       },
       {
-        condition: true,
+        condition: { x: ['SHOW Y', 'SHOW Z'] },
         required: ['else'],
+        inverse: true,
       },
     ];
     expect(flattenConditions(schema)).toEqual(expected);
@@ -206,8 +209,9 @@ describe('flattenConditions', () => {
         required: ['d'],
       },
       {
-        condition: true,
+        condition: { a: ['SHOW B', 'SHOW C', 'SHOW D'] },
         required: ['e'],
+        inverse: true,
       },
     ];
     expect(flattenConditions(schema)).toEqual(expected);
@@ -269,8 +273,9 @@ describe('flattenConditions', () => {
         required: ['z'],
       },
       {
-        condition: true,
+        condition: { x: 'VALUE X', y: 'VALUE Y' },
         required: ['x', 'y'],
+        inverse: true,
       },
     ];
     expect(flattenConditions(schema)).toEqual(expected);
@@ -305,8 +310,9 @@ describe('flattenConditions', () => {
         required: ['output'],
       },
       {
-        condition: true,
+        condition: { num: '123', bool: 'true' },
         required: ['str'],
+        inverse: true,
       },
     ];
     expect(flattenConditions(schema)).toEqual(expected);
@@ -384,8 +390,9 @@ describe('flattenConditions', () => {
         required: ['option4'],
       },
       {
-        condition: true,
+        condition: { level: ['1', '2', '3', '4'] },
         required: ['option5'],
+        inverse: true,
       },
     ];
     expect(flattenConditions(schema)).toEqual(expected);
@@ -411,12 +418,7 @@ describe('flattenConditions', () => {
       },
     } satisfies JsonSchema;
 
-    const expected = [
-      {
-        condition: true,
-        required: ['x'],
-      },
-    ];
+    const expected: any[] = [];
     expect(flattenConditions(schema)).toEqual(expected);
   });
 
@@ -455,8 +457,11 @@ describe('flattenConditions', () => {
 
     const expected = [
       {
-        condition: true,
+        condition: {
+          x: 'SHOW Y',
+        },
         required: ['x'],
+        inverse: true,
       },
     ];
     expect(flattenConditions(schema)).toEqual(expected);
@@ -491,8 +496,9 @@ describe('flattenConditions', () => {
         required: ['details', 'reason'],
       },
       {
-        condition: true,
+        condition: { type: 'error', status: ['pending', 'rejected'] },
         required: ['details'],
+        inverse: true,
       },
     ];
     expect(flattenConditions(schema)).toEqual(expected);
@@ -527,8 +533,9 @@ describe('flattenConditions', () => {
         required: ['fallback'],
       },
       {
-        condition: true,
+        condition: { isEnabled: 'true', hasValue: 'false' },
         required: ['value'],
+        inverse: true,
       },
     ];
     expect(flattenConditions(schema)).toEqual(expected);
