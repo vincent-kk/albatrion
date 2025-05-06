@@ -56,6 +56,7 @@ export const getOneOfChildrenList = (
         );
       const schema = properties[property];
       childNodes[keyIndex] = {
+        index,
         node: nodeFactory({
           name: property,
           jsonSchema: schema,
