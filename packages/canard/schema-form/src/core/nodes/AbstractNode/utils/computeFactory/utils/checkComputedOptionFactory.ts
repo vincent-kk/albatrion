@@ -1,11 +1,8 @@
-import { JSONPath, isString } from '@winglet/common-utils';
+import { isString } from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/declare';
 
-const JSON_PATH_REGEX = new RegExp(
-  `[\\${JSONPath.Root}\\${JSONPath.Current}]\\${JSONPath.Child}([a-zA-Z0-9]+(\\${JSONPath.Child}[a-zA-Z0-9]+)*)`,
-  'g',
-);
+import { JSON_PATH_REGEX } from './type';
 
 export type CheckComputedOption = Fn<[dependencies: unknown[]], boolean>;
 
