@@ -17,6 +17,7 @@ import {
   getChildren,
   getConditionsMap,
   getObjectValueWithSchema,
+  getOneOfChildrenList,
   getVirtualReferencesMap,
 } from './utils';
 
@@ -24,6 +25,10 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   readonly #propertyKeys: string[];
   readonly #flattedConditions: FlattenCondition[] | null;
   #locked: boolean = true;
+
+  #propertyChildren: ChildNode[];
+
+  #oneOfChildrenList: Array<ChildNode[]> | undefined;
 
   #children: ChildNode[];
   get children() {
@@ -108,8 +113,12 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
   prepare(this: ObjectNode, actor?: SchemaNode): boolean {
     if (super.prepare(actor)) {
-      for (let i = 0; i < this.#children.length; i++)
-        (this.#children[i].node as AbstractNode).prepare(this);
+      for (let i = 0; i < this.#propertyChildren.length; i++)
+        (this.#propertyChildren[i].node as AbstractNode).prepare(this);
+      if (this.#oneOfChildrenList)
+        for (let i = 0; i < this.#oneOfChildrenList.length; i++)
+          for (let j = 0; j < this.#oneOfChildrenList[i].length; j++)
+            (this.#oneOfChildrenList[i][j].node as AbstractNode).prepare(this);
       return true;
     }
     return false;
@@ -171,7 +180,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       nodeFactory,
     );
 
-    this.#children = getChildren(
+    this.#propertyChildren = getChildren(
       this,
       this.#propertyKeys,
       childNodeMap,
@@ -180,14 +189,48 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       nodeFactory,
     );
 
+    this.#oneOfChildrenList = getOneOfChildrenList(
+      this,
+      jsonSchema,
+      this.defaultValue,
+      childNodeMap,
+      handelChangeFactory,
+      nodeFactory,
+    );
+
+    this.#children = this.#propertyChildren;
+
+    this.#publishChildrenChange();
+
     this.#locked = false;
 
     this.#emitChange(SetValueOption.Normal);
     this.setDefaultValue(this.#value);
 
-    this.#publishChildrenChange();
+    this.#prepareOneOfChildren();
 
     this.prepare();
+  }
+
+  #prevOneOfIndex: number | undefined;
+
+  #prepareOneOfChildren(this: ObjectNode) {
+    if (!this.#oneOfChildrenList) return;
+    this.subscribe(({ type, payload }) => {
+      if (type & NodeEventType.UpdateComputedProperties) {
+        const oneOfIndex =
+          payload?.[NodeEventType.UpdateComputedProperties]?.oneOfIndex;
+        if (oneOfIndex === undefined || oneOfIndex === this.#prevOneOfIndex)
+          return;
+        const oneOfChildren =
+          oneOfIndex > -1 ? this.#oneOfChildrenList?.[oneOfIndex] : undefined;
+        this.#children = oneOfChildren
+          ? [...this.#propertyChildren, ...oneOfChildren]
+          : this.#propertyChildren;
+        this.#prevOneOfIndex = oneOfIndex;
+        this.#publishChildrenChange();
+      }
+    });
   }
 
   #publishChildrenChange(this: ObjectNode) {
