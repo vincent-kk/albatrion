@@ -9,22 +9,13 @@ import {
 import StoryLayout from './components/StoryLayout';
 
 export default {
-  title: 'Form/06. OneOf',
+  title: 'Form/06. IfThenElse',
 };
 
-export const OneOfEnum = () => {
+export const IfThenElse = () => {
   const schema = {
     type: 'object',
-    oneOf: [
-      {
-        properties: { category: { enum: ['movie'] } },
-        required: ['title', 'openingDate', 'price'],
-      },
-      {
-        properties: { category: { enum: ['game'] } },
-        required: ['title', 'releaseDate', 'numOfPlayers'],
-      },
-    ],
+
     properties: {
       category: {
         type: 'string',
@@ -52,6 +43,31 @@ export const OneOfEnum = () => {
         minimum: 50,
       },
     },
+    if: {
+      properties: {
+        category: {
+          enum: ['movie'],
+        },
+      },
+    },
+    then: {
+      required: ['title', 'openingDate', 'price'],
+    },
+    else: {
+      if: {
+        properties: {
+          category: {
+            enum: ['game'],
+          },
+        },
+      },
+      then: {
+        required: ['title', 'releaseDate', 'numOfPlayers'],
+      },
+      else: {
+        required: ['title'],
+      },
+    },
   } satisfies JsonSchema;
 
   const formHandle = useRef<FormHandle<typeof schema>>(null);
@@ -73,16 +89,7 @@ export const OneOfEnum = () => {
 export const OneOfConst = () => {
   const schema = {
     type: 'object',
-    oneOf: [
-      {
-        properties: { category: { const: 'movie' } },
-        required: ['title', 'openingDate', 'price'],
-      },
-      {
-        properties: { category: { const: 'game' } },
-        required: ['title', 'releaseDate', 'numOfPlayers'],
-      },
-    ],
+
     properties: {
       category: {
         type: 'string',
@@ -104,6 +111,31 @@ export const OneOfConst = () => {
       price: {
         type: 'number',
         minimum: 50,
+      },
+    },
+    if: {
+      properties: {
+        category: {
+          const: 'movie',
+        },
+      },
+    },
+    then: {
+      required: ['title', 'openingDate', 'price'],
+    },
+    else: {
+      if: {
+        properties: {
+          category: {
+            const: 'game',
+          },
+        },
+      },
+      then: {
+        required: ['title', 'releaseDate', 'numOfPlayers'],
+      },
+      else: {
+        required: ['title'],
       },
     },
   } satisfies JsonSchema;
@@ -188,16 +220,14 @@ export const ComplexOneOf = () => {
           },
           profile: {
             type: 'object',
-            oneOf: [
-              {
-                properties: { type: { enum: ['adult', 'child'] } },
-                required: ['age', 'gender', 'preferences'],
+            if: {
+              properties: {
+                type: { enum: ['adult', 'child'] },
               },
-              {
-                properties: { type: { enum: ['none'] } },
-                required: [],
-              },
-            ],
+            },
+            then: {
+              required: ['age', 'gender', 'preferences'],
+            },
             properties: {
               type: {
                 type: 'string',

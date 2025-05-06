@@ -1,6 +1,5 @@
 import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils';
 
-import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
@@ -12,15 +11,18 @@ import {
 } from '../type';
 import type { ChildNode } from './type';
 import {
+  FlattenCondition,
+  flattenConditions,
+  getChildNodeMap,
   getChildren,
+  getConditionsMap,
   getObjectValueWithSchema,
-  getOneOfConditionsMap,
   getVirtualReferencesMap,
-  mergeShowConditions,
 } from './utils';
 
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   readonly #propertyKeys: string[];
+  readonly #flattedConditions: FlattenCondition[] | null;
   #locked: boolean = true;
 
   #children: ChildNode[];
@@ -50,6 +52,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     return getObjectValueWithSchema(
       sortObjectKeys(input, this.#propertyKeys, true),
       this.jsonSchema,
+      this.#flattedConditions,
     );
   }
   #propagate(this: ObjectNode, replace: boolean, option: SetValueOption) {
@@ -140,40 +143,33 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     const properties = jsonSchema.properties;
     this.#propertyKeys = getObjectKeys(properties);
 
-    const oneOfConditionsMap: Map<string, string[]> | null =
-      getOneOfConditionsMap(jsonSchema);
+    this.#flattedConditions = flattenConditions(jsonSchema);
+
+    const conditionsMap: Map<string, string[]> | null =
+      this.#flattedConditions && getConditionsMap(this.#flattedConditions);
 
     const { virtualReferencesMap, virtualReferenceFieldsMap } =
       getVirtualReferencesMap(name, this.#propertyKeys, jsonSchema.virtual);
 
-    const childNodeMap = new Map<string, ChildNode>();
+    const handelChangeFactory = (name: string) => (input: any) => {
+      if (!this.#draft) this.#draft = {};
+      const value =
+        typeof input === 'function' ? input(this.#draft[name]) : input;
+      if (value !== undefined && this.#draft[name] === value) return;
+      this.#draft[name] = value;
+      this.#emitChange(SetValueOption.Normal);
+    };
 
-    if (properties) {
-      for (const name of this.#propertyKeys) {
-        const schema = properties[name];
-        childNodeMap.set(name, {
-          isVirtualized: !!virtualReferenceFieldsMap?.get(name)?.length,
-          node: nodeFactory({
-            name,
-            jsonSchema: mergeShowConditions(
-              schema,
-              oneOfConditionsMap?.get(name),
-            ),
-            defaultValue: this.defaultValue?.[name] ?? getFallbackValue(schema),
-            onChange: (input) => {
-              if (!this.#draft) this.#draft = {};
-              const value =
-                typeof input === 'function' ? input(this.#draft[name]) : input;
-              if (value !== undefined && this.#draft[name] === value) return;
-              this.#draft[name] = value;
-              this.#emitChange(SetValueOption.Normal);
-            },
-            nodeFactory,
-            parentNode: this,
-          }),
-        });
-      }
-    }
+    const childNodeMap = getChildNodeMap(
+      this,
+      jsonSchema,
+      this.#propertyKeys,
+      this.defaultValue,
+      virtualReferenceFieldsMap,
+      conditionsMap,
+      handelChangeFactory,
+      nodeFactory,
+    );
 
     this.#children = getChildren(
       this,

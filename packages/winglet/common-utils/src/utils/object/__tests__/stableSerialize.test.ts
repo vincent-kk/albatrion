@@ -33,7 +33,7 @@ describe('stableSerialize', () => {
   });
   it('should stableSerialize the large object with array', () => {
     expect(stableSerialize(bigObject)).toEqual(
-      '{type:object|required:[user,settings]|properties:{user:{type:object|required:[name]|properties:{profile:{type:object|required:[type]|properties:{type:{type:string|enum:[adult,child,none]|default:adult}|preferences:{type:object|required:[theme,notifications]|properties:{theme:{type:string|enum:[light,dark]|default:light}|notifications:{type:object|required:[email,sms]|properties:{sms:{type:boolean|default:false}|email:{type:boolean|default:true}}}}}|gender:{type:string|renderOptions:{visible:@.age >= 18}|enum:[male,female,other]}|age:{type:integer|minimum:0|default:18}}|oneOf:[{required:[age,gender,preferences]|properties:{type:{enum:[adult,child]}}},{required:[]|properties:{type:{enum:[none]}}}]}|name:{type:string|maxLength:50|default:Anonymous}|email:{type:string|format:email}}}|settings:{type:object|required:[privacy,language]|properties:{security:{type:object|required:[2FA]|properties:{backupCodes:{type:array|minItems:5|maxItems:10|items:{type:string|pattern:^[A-Z0-9]{8}$}}|2FA:{type:boolean|default:true}}}|privacy:{type:string|oneOf:[{title:Public|const:public},{title:Private|const:private},{title:Custom|const:custom}]|default:public}|language:{type:string|enum:[en,kr,jp]|default:en}}}}}',
+      '{type:object|required:[user,settings]|properties:{user:{type:object|required:[name]|properties:{profile:{type:object|required:[type]|properties:{type:{type:string|enum:[adult,child,none]|default:adult}|preferences:{type:object|required:[theme,notifications]|properties:{theme:{type:string|enum:[light,dark]|default:light}|notifications:{type:object|required:[email,sms]|properties:{sms:{type:boolean|default:false}|email:{type:boolean|default:true}}}}}|gender:{type:string|enum:[male,female,other]|computed:{visible:@.age >= 18}}|age:{type:integer|minimum:0|default:18}}|oneOf:[{required:[age,gender,preferences]|properties:{type:{enum:[adult,child]}}},{required:[]|properties:{type:{enum:[none]}}}]}|name:{type:string|maxLength:50|default:Anonymous}|email:{type:string|format:email}}}|settings:{type:object|required:[privacy,language]|properties:{security:{type:object|required:[2FA]|properties:{backupCodes:{type:array|minItems:5|maxItems:10|items:{type:string|pattern:^[A-Z0-9]{8}$}}|2FA:{type:boolean|default:true}}}|privacy:{type:string|oneOf:[{title:Public|const:public},{title:Private|const:private},{title:Custom|const:custom}]|default:public}|language:{type:string|enum:[en,kr,jp]|default:en}}}}}',
     );
   });
   it('should stableSerialize the large object with omit', () => {
@@ -56,7 +56,7 @@ describe('stableSerialize', () => {
         'readonly',
       ]),
     ).toEqual(
-      '1toy9cy{type:object|properties:1toy9cy{user:1toy9cy{type:object|properties:1toy9cy{profile:1toy9cy{type:object|properties:1toy9cy{type:1toy9cy{type:string}|preferences:1toy9cy{type:object|properties:1toy9cy{theme:1toy9cy{type:string}|notifications:1toy9cy{type:object|properties:1toy9cy{sms:1toy9cy{type:boolean}|email:1toy9cy{type:boolean}}}}}|gender:1toy9cy{type:string|renderOptions:1toy9cy{}}|age:1toy9cy{type:integer}}}|name:1toy9cy{type:string}|email:1toy9cy{type:string|format:email}}}}}',
+      '1toy9cy{type:object|properties:1toy9cy{user:1toy9cy{type:object|properties:1toy9cy{profile:1toy9cy{type:object|properties:1toy9cy{type:1toy9cy{type:string}|preferences:1toy9cy{type:object|properties:1toy9cy{theme:1toy9cy{type:string}|notifications:1toy9cy{type:object|properties:1toy9cy{sms:1toy9cy{type:boolean}|email:1toy9cy{type:boolean}}}}}|gender:1toy9cy{type:string|computed:1toy9cy{}}|age:1toy9cy{type:integer}}}|name:1toy9cy{type:string}|email:1toy9cy{type:string|format:email}}}}}',
     );
   });
 
@@ -179,7 +179,7 @@ const bigObject = {
             gender: {
               type: 'string',
               enum: ['male', 'female', 'other'],
-              renderOptions: {
+              computed: {
                 visible: '@.age >= 18',
               },
             },

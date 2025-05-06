@@ -179,7 +179,7 @@ describe('AbstractNode', () => {
 
 describe('SchemaNode computed properties', () => {
   describe('visible property', () => {
-    it('should update visible based on renderOptions.visible condition', async () => {
+    it('should update visible based on computed.visible condition', async () => {
       const schema = {
         type: 'object',
         properties: {
@@ -187,7 +187,7 @@ describe('SchemaNode computed properties', () => {
           openingDate: {
             type: 'string',
             format: 'date',
-            renderOptions: {
+            computed: {
               visible: '@.title === "wow"',
             },
           },
@@ -213,7 +213,7 @@ describe('SchemaNode computed properties', () => {
   });
 
   describe('readOnly property', () => {
-    it('should update readOnly based on renderOptions.readOnly condition', async () => {
+    it('should update readOnly based on computed.readOnly condition', async () => {
       const schema = {
         type: 'object',
         properties: {
@@ -223,7 +223,7 @@ describe('SchemaNode computed properties', () => {
             properties: {
               name: {
                 type: 'string',
-                renderOptions: {
+                computed: {
                   readOnly: '$.isAdmin===false',
                 },
               },
@@ -248,14 +248,14 @@ describe('SchemaNode computed properties', () => {
   });
 
   describe('disabled property', () => {
-    it('should update disabled based on renderOptions.disabled condition', async () => {
+    it('should update disabled based on computed.disabled condition', async () => {
       const schema = {
         type: 'object',
         properties: {
           isLoading: { type: 'boolean' },
           submitButton: {
             type: 'string',
-            renderOptions: {
+            computed: {
               disabled: '$.isLoading === true',
             },
           },
@@ -278,7 +278,7 @@ describe('SchemaNode computed properties', () => {
   });
 
   describe('watchValues property', () => {
-    it('should update watchValues based on options.watch paths', async () => {
+    it('should update watchValues based on computed.watch paths', async () => {
       const schema = {
         type: 'object',
         properties: {
@@ -292,7 +292,7 @@ describe('SchemaNode computed properties', () => {
           greeting: {
             type: 'string',
             formType: 'greeting',
-            options: {
+            computed: {
               watch: ['$.profile.name', '$.profile.age', '$.profile'],
             },
           },
@@ -339,7 +339,7 @@ describe('SchemaNode computed properties', () => {
           title: { type: 'string' },
           description: {
             type: 'string',
-            renderOptions: {
+            computed: {
               visible: '@.title === "test"',
             },
           },

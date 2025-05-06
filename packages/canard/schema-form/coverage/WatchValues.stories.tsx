@@ -28,7 +28,7 @@ export const Watch = () => {
       greeting: {
         type: 'string',
         formType: 'greeting',
-        options: {
+        computed: {
           watch: ['$.profile.name', '$.profile.age', '$.profile'],
         },
       },
@@ -123,7 +123,7 @@ export const WatchWithBranchNode = () => {
       greeting: {
         type: 'string',
         formType: 'greeting',
-        options: {
+        computed: {
           watch: ['$.profile.name', '$.profile.age', '$.profile'],
         },
       },

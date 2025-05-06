@@ -156,16 +156,7 @@ export const FormRefHandleWithOneOf = () => {
   const [value, setValue] = useState({});
   const schema = {
     type: 'object',
-    oneOf: [
-      {
-        properties: { category: { enum: ['movie'] } },
-        required: ['title', 'openingDate', 'price'],
-      },
-      {
-        properties: { category: { enum: ['game'] } },
-        required: ['title', 'releaseDate', 'numOfPlayers'],
-      },
-    ],
+
     properties: {
       category: {
         type: 'string',
@@ -176,14 +167,14 @@ export const FormRefHandleWithOneOf = () => {
       openingDate: {
         type: 'string',
         format: 'date',
-        renderOptions: {
+        computed: {
           visible: '@.title === "wow"',
         },
       },
       releaseDate: {
         type: 'string',
         format: 'date',
-        renderOptions: {
+        computed: {
           visible: '@.title === "wow"',
         },
       },
@@ -191,6 +182,31 @@ export const FormRefHandleWithOneOf = () => {
       price: {
         type: 'number',
         minimum: 50,
+      },
+    },
+    if: {
+      properties: {
+        category: {
+          enum: ['movie'],
+        },
+      },
+    },
+    then: {
+      required: ['title', 'openingDate', 'price'],
+    },
+    else: {
+      if: {
+        properties: {
+          category: {
+            enum: ['game'],
+          },
+        },
+      },
+      then: {
+        required: ['title', 'releaseDate', 'numOfPlayers'],
+      },
+      else: {
+        required: ['title'],
       },
     },
   } satisfies JsonSchema;

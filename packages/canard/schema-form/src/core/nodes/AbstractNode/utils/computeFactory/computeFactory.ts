@@ -10,33 +10,36 @@ export const computeFactory = (
 ) => {
   const dependencyPaths: string[] = [];
 
-  const renderVisible = jsonSchema?.renderOptions?.visible;
-  const isHidden = jsonSchema?.visible === false || renderVisible === false;
+  const computedVisible =
+    jsonSchema?.computed?.visible ?? jsonSchema?.['&visible'];
+  const isHidden = jsonSchema?.visible === false || computedVisible === false;
   const visible = isHidden
     ? falseFunction
-    : checkComputedOptionFactory(dependencyPaths, renderVisible);
+    : checkComputedOptionFactory(dependencyPaths, computedVisible);
 
-  const renderReadOnly = jsonSchema?.renderOptions?.readOnly;
+  const computedReadOnly =
+    jsonSchema?.computed?.readOnly ?? jsonSchema?.['&readOnly'];
   const isReadOnly =
     rootJsonSchema.readOnly === true ||
     jsonSchema?.readOnly === true ||
-    renderReadOnly === true;
+    computedReadOnly === true;
   const readOnly = isReadOnly
     ? trueFunction
-    : checkComputedOptionFactory(dependencyPaths, renderReadOnly);
+    : checkComputedOptionFactory(dependencyPaths, computedReadOnly);
 
-  const renderDisabled = jsonSchema?.renderOptions?.disabled;
+  const computedDisabled =
+    jsonSchema?.computed?.disabled ?? jsonSchema?.['&disabled'];
   const isDisabled =
     rootJsonSchema.disabled === true ||
     jsonSchema?.disabled === true ||
-    renderDisabled === true;
+    computedDisabled === true;
   const disabled = isDisabled
     ? trueFunction
-    : checkComputedOptionFactory(dependencyPaths, renderDisabled);
+    : checkComputedOptionFactory(dependencyPaths, computedDisabled);
 
   const watchValues = getWatchValuesFactory(
     dependencyPaths,
-    jsonSchema?.options?.watch,
+    jsonSchema?.computed?.watch ?? jsonSchema?.['&watch'],
   );
 
   return {

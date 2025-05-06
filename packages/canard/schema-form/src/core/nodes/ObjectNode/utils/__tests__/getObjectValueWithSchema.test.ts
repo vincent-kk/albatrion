@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { JsonSchema } from '@/schema-form/types';
 
+import { flattenConditions } from '../flattenConditions';
 import { getObjectValueWithSchema } from '../getObjectValueWithSchema';
 
 describe('getObjectValueWithSchema', () => {
@@ -15,25 +16,34 @@ describe('getObjectValueWithSchema', () => {
     };
     const data = { name: 'John', age: 30 };
 
-    const result = getObjectValueWithSchema(data, schema);
+    const result = getObjectValueWithSchema(data, schema, null);
     expect(result).toEqual({ name: 'John', age: 30 });
   });
 
-  it('should include required fields from oneOf if condition matches', () => {
+  it('should include required fields from if-then-else if condition matches', () => {
     const schema: JsonSchema = {
       type: 'object',
       properties: {
         status: { type: 'string', enum: ['active', 'inactive'] },
         age: { type: 'number' },
       },
-      oneOf: [
-        { properties: { status: { enum: ['active'] } }, required: ['age'] },
-        { properties: { status: { enum: ['inactive'] } } },
-      ],
+      if: {
+        properties: {
+          status: { enum: ['active'] },
+        },
+      },
+      then: {
+        required: ['age'],
+      },
+      else: {
+        required: [],
+      },
     };
     const data = { status: 'inactive', age: 30 };
 
-    const result = getObjectValueWithSchema(data, schema);
+    const flattenedConditions = flattenConditions(schema);
+
+    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
     expect(result).toEqual({ status: 'inactive' });
   });
 
@@ -44,10 +54,17 @@ describe('getObjectValueWithSchema', () => {
         status: { type: 'string', enum: ['active', 'inactive'] },
         age: { type: 'number' },
       },
-      oneOf: [
-        { properties: { status: { enum: ['active'] } }, required: ['age'] },
-        { properties: { status: { enum: ['inactive'] } } },
-      ],
+      if: {
+        properties: {
+          status: { enum: ['active'] },
+        },
+      },
+      then: {
+        required: ['age'],
+      },
+      else: {
+        // 'inactive' 상태일 때는 추가 필수 필드 없음
+      },
       additionalProperties: true,
     };
     const data = {
@@ -57,7 +74,9 @@ describe('getObjectValueWithSchema', () => {
       job: 'developer',
     };
 
-    const result = getObjectValueWithSchema(data, schema);
+    const flattenedConditions = flattenConditions(schema);
+
+    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
     expect(result).toEqual({
       status: 'inactive',
       name: 'John',
@@ -68,10 +87,17 @@ describe('getObjectValueWithSchema', () => {
   it('additionalProperties exist with additionalProperties: false', () => {
     const schema: JsonSchema = {
       type: 'object',
-      oneOf: [
-        { properties: { status: { enum: ['active'] } }, required: ['age'] },
-        { properties: { status: { enum: ['inactive'] } } },
-      ],
+      if: {
+        properties: {
+          status: { enum: ['active'] },
+        },
+      },
+      then: {
+        required: ['age'],
+      },
+      else: {
+        // 'inactive' 상태일 때는 추가 필수 필드 없음
+      },
     };
     const data = {
       status: 'inactive',
@@ -80,7 +106,9 @@ describe('getObjectValueWithSchema', () => {
       job: 'developer',
     };
 
-    const result = getObjectValueWithSchema(data, schema);
+    const flattenedConditions = flattenConditions(schema);
+
+    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
     expect(result).toEqual({
       age: 30,
       name: 'John',
@@ -104,7 +132,9 @@ describe('getObjectValueWithSchema', () => {
     };
     const data = { person: { name: 'Alice', age: 25 } };
 
-    const result = getObjectValueWithSchema(data, schema);
+    const flattenedConditions = flattenConditions(schema);
+
+    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
     expect(result).toEqual({ person: { name: 'Alice', age: 25 } });
   });
 
@@ -112,7 +142,9 @@ describe('getObjectValueWithSchema', () => {
     const schema: JsonSchema = { type: 'object' };
     const data = { name: 'John', age: 30 };
 
-    const result = getObjectValueWithSchema(data, schema);
+    const flattenedConditions = flattenConditions(schema);
+
+    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
     expect(result).toEqual({ name: 'John', age: 30 });
   });
 
@@ -121,7 +153,10 @@ describe('getObjectValueWithSchema', () => {
       type: 'object',
     };
     const data = { name: 'John', age: 30 };
-    const result = getObjectValueWithSchema(data, schema);
+
+    const flattenedConditions = flattenConditions(schema);
+
+    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
     expect(result).toEqual({ name: 'John', age: 30 });
   });
 
@@ -137,7 +172,9 @@ describe('getObjectValueWithSchema', () => {
     };
     const data = { tags: ['tag1', 'tag2', 'tag3'] };
 
-    const result = getObjectValueWithSchema(data, schema);
+    const flattenedConditions = flattenConditions(schema);
+
+    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
     expect(result).toEqual({ tags: ['tag1', 'tag2', 'tag3'] });
   });
 
@@ -156,11 +193,13 @@ describe('getObjectValueWithSchema', () => {
     };
     const data = { matrix: [[1, 2], [3, 4], [5]] };
 
-    const result = getObjectValueWithSchema(data, schema);
+    const flattenedConditions = flattenConditions(schema);
+
+    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
     expect(result).toEqual({ matrix: [[1, 2], [3, 4], [5]] });
   });
 
-  it('should handle complex oneOf conditions', () => {
+  it('should handle complex if-then-else conditions', () => {
     const schema: JsonSchema = {
       type: 'object',
       properties: {
@@ -170,13 +209,24 @@ describe('getObjectValueWithSchema', () => {
         role: { type: 'string' },
         permissions: { type: 'array', items: { type: 'string' } },
       },
-      oneOf: [
-        {
-          properties: { type: { enum: ['admin'] } },
-          required: ['permissions'],
+      if: {
+        properties: {
+          type: { enum: ['admin'] },
         },
-        { properties: { type: { enum: ['user'] } }, required: ['role'] },
-      ],
+      },
+      then: {
+        required: ['permissions'],
+      },
+      else: {
+        if: {
+          properties: {
+            type: { enum: ['user'] },
+          },
+        },
+        then: {
+          required: ['role'],
+        },
+      },
     };
 
     const adminData = {
@@ -185,22 +235,36 @@ describe('getObjectValueWithSchema', () => {
       age: 40,
       permissions: ['read', 'write'],
     };
-    const adminResult = getObjectValueWithSchema(adminData, schema);
+    const flattenedConditions = flattenConditions(schema);
+
+    const adminResult = getObjectValueWithSchema(
+      adminData,
+      schema,
+      flattenedConditions,
+    );
     expect(adminResult).toEqual({
       type: 'admin',
       permissions: ['read', 'write'],
     });
 
     const userData = { type: 'user', name: 'User', age: 30, role: 'editor' };
-    const userResult = getObjectValueWithSchema(userData, schema);
+    const userResult = getObjectValueWithSchema(
+      userData,
+      schema,
+      flattenedConditions,
+    );
     expect(userResult).toEqual({
       type: 'user',
       role: 'editor',
     });
 
     const guestData = { type: 'guest', name: 'Guest', age: 20 };
-    const guestResult = getObjectValueWithSchema(guestData, schema);
-    expect(guestResult).toEqual({});
+    const guestResult = getObjectValueWithSchema(
+      guestData,
+      schema,
+      flattenedConditions,
+    );
+    expect(guestResult).toEqual({ type: 'guest' });
   });
 
   it('should handle null and undefined values', () => {
@@ -212,15 +276,29 @@ describe('getObjectValueWithSchema', () => {
       },
     };
 
-    // @ts-expect-error incorrect input type
-    const nullResult = getObjectValueWithSchema(null, schema);
+    const flattenedConditions = flattenConditions(schema);
+
+    const nullResult = getObjectValueWithSchema(
+      // @ts-ignore
+      null,
+      schema,
+      flattenedConditions,
+    );
     expect(nullResult).toBeNull();
 
-    const undefinedResult = getObjectValueWithSchema(undefined, schema);
+    const undefinedResult = getObjectValueWithSchema(
+      undefined,
+      schema,
+      flattenedConditions,
+    );
     expect(undefinedResult).toBeUndefined();
 
     const dataWithNull = { name: null, age: 30 };
-    const resultWithNull = getObjectValueWithSchema(dataWithNull, schema);
+    const resultWithNull = getObjectValueWithSchema(
+      dataWithNull,
+      schema,
+      flattenedConditions,
+    );
     expect(resultWithNull).toEqual({ name: null, age: 30 });
   });
 
@@ -272,7 +350,9 @@ describe('getObjectValueWithSchema', () => {
       },
     };
 
-    const result = getObjectValueWithSchema(data, schema);
+    const flattenedConditions = flattenConditions(schema);
+
+    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
     expect(result).toEqual(data);
   });
 
@@ -302,11 +382,13 @@ describe('getObjectValueWithSchema', () => {
       ],
     };
 
-    const result = getObjectValueWithSchema(data, schema);
+    const flattenedConditions = flattenConditions(schema);
+
+    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
     expect(result).toEqual(data);
   });
 
-  it('should handle oneOf with multiple conditions', () => {
+  it('should handle if-then-else with multiple conditions', () => {
     const schema: JsonSchema = {
       type: 'object',
       properties: {
@@ -316,23 +398,53 @@ describe('getObjectValueWithSchema', () => {
         extraB: { type: 'number' },
         extraC: { type: 'boolean' },
       },
-      oneOf: [
-        { properties: { type: { enum: ['A'] } }, required: ['extraA'] },
-        { properties: { type: { enum: ['B'] } }, required: ['extraB'] },
-        { properties: { type: { enum: ['C'] } }, required: ['extraC'] },
-      ],
+      if: {
+        properties: {
+          type: { enum: ['A'] },
+        },
+      },
+      then: {
+        required: ['extraA'],
+      },
+      else: {
+        if: {
+          properties: {
+            type: { enum: ['B'] },
+          },
+        },
+        then: {
+          required: ['extraB'],
+        },
+        else: {
+          required: ['extraC'],
+        },
+      },
     };
 
     const dataA = { type: 'A', value: 'test', extraA: 'valueA' };
-    const resultA = getObjectValueWithSchema(dataA, schema);
+    const flattenedConditions = flattenConditions(schema);
+
+    const resultA = getObjectValueWithSchema(
+      dataA,
+      schema,
+      flattenedConditions,
+    );
     expect(resultA).toEqual({ type: 'A', extraA: 'valueA' });
 
     const dataB = { type: 'B', value: 'test', extraB: 42 };
-    const resultB = getObjectValueWithSchema(dataB, schema);
+    const resultB = getObjectValueWithSchema(
+      dataB,
+      schema,
+      flattenedConditions,
+    );
     expect(resultB).toEqual({ type: 'B', extraB: 42 });
 
     const dataC = { type: 'C', value: 'test', extraC: true };
-    const resultC = getObjectValueWithSchema(dataC, schema);
+    const resultC = getObjectValueWithSchema(
+      dataC,
+      schema,
+      flattenedConditions,
+    );
     expect(resultC).toEqual({ type: 'C', extraC: true });
 
     const dataAMixed = {
@@ -341,7 +453,11 @@ describe('getObjectValueWithSchema', () => {
       extraA: 'valueA',
       extraB: 42,
     };
-    const resultAMixed = getObjectValueWithSchema(dataAMixed, schema);
+    const resultAMixed = getObjectValueWithSchema(
+      dataAMixed,
+      schema,
+      flattenedConditions,
+    );
     expect(resultAMixed).toEqual({
       type: 'A',
       extraA: 'valueA',
@@ -357,24 +473,30 @@ describe('getObjectValueWithSchema', () => {
         extraA: { type: 'string' },
         extraB: { type: 'number' },
       },
-      oneOf: [
-        {
-          properties: { type: { enum: ['A'] } },
-          required: ['extraA', 'value'],
+      if: {
+        properties: {
+          type: { enum: ['A'] },
         },
-        { properties: { type: { enum: ['B'] } }, required: ['extraB'] },
-      ],
+      },
+      then: {
+        required: ['extraA', 'value'],
+      },
+      else: {
+        required: ['extraB'],
+      },
     };
 
     const data = { type: 'A', value: 'test', extraA: 'valueA', extraB: 42 };
 
-    const result1 = getObjectValueWithSchema(data, schema);
+    const flattenedConditions = flattenConditions(schema);
+
+    const result1 = getObjectValueWithSchema(data, schema, flattenedConditions);
     expect(result1).toEqual({ type: 'A', value: 'test', extraA: 'valueA' });
 
-    const result2 = getObjectValueWithSchema(data, schema);
+    const result2 = getObjectValueWithSchema(data, schema, flattenedConditions);
     expect(result2).toEqual({ type: 'A', value: 'test', extraA: 'valueA' });
 
-    const result3 = getObjectValueWithSchema(data, schema);
+    const result3 = getObjectValueWithSchema(data, schema, flattenedConditions);
     expect(result3).toEqual({ type: 'A', value: 'test', extraA: 'valueA' });
 
     const differentData = {
@@ -383,11 +505,15 @@ describe('getObjectValueWithSchema', () => {
       extraA: 'valueA',
       extraB: 42,
     };
-    const result4 = getObjectValueWithSchema(differentData, schema);
+    const result4 = getObjectValueWithSchema(
+      differentData,
+      schema,
+      flattenedConditions,
+    );
     expect(result4).toEqual({ type: 'B', extraB: 42 });
   });
 
-  it('should handle multiple oneOf conditions with the same property', () => {
+  it('should handle multiple if-then-else conditions with the same property', () => {
     const schema: JsonSchema = {
       type: 'object',
       properties: {
@@ -397,24 +523,70 @@ describe('getObjectValueWithSchema', () => {
         extraB: { type: 'number' },
         extraC: { type: 'boolean' },
       },
-      oneOf: [
-        { properties: { type: { enum: ['A'] } }, required: ['extraA'] },
-        { properties: { type: { enum: ['B'] } }, required: ['extraB'] },
-        { properties: { type: { enum: ['C'] } }, required: ['extraC'] },
-        { properties: { type: { enum: ['A', 'B'] } }, required: ['value'] },
-      ],
+      if: {
+        properties: {
+          type: { enum: ['A'] },
+        },
+      },
+      then: {
+        required: ['extraA'],
+      },
+      else: {
+        if: {
+          properties: {
+            type: { enum: ['B'] },
+          },
+        },
+        then: {
+          required: ['extraB'],
+        },
+        else: {
+          if: {
+            properties: {
+              type: { enum: ['C'] },
+            },
+          },
+          then: {
+            required: ['extraC'],
+          },
+          else: {
+            if: {
+              properties: {
+                type: { enum: ['A', 'B'] },
+              },
+            },
+            then: {
+              required: ['value'],
+            },
+          },
+        },
+      },
     };
 
     const dataA = { type: 'A', value: 'test', extraA: 'valueA' };
-    const resultA = getObjectValueWithSchema(dataA, schema);
+    const flattenedConditions = flattenConditions(schema);
+
+    const resultA = getObjectValueWithSchema(
+      dataA,
+      schema,
+      flattenedConditions,
+    );
     expect(resultA).toEqual({ type: 'A', value: 'test', extraA: 'valueA' });
 
     const dataB = { type: 'B', value: 'test', extraB: 42 };
-    const resultB = getObjectValueWithSchema(dataB, schema);
+    const resultB = getObjectValueWithSchema(
+      dataB,
+      schema,
+      flattenedConditions,
+    );
     expect(resultB).toEqual({ type: 'B', value: 'test', extraB: 42 });
 
     const dataC = { type: 'C', value: 'test', extraC: true };
-    const resultC = getObjectValueWithSchema(dataC, schema);
+    const resultC = getObjectValueWithSchema(
+      dataC,
+      schema,
+      flattenedConditions,
+    );
     expect(resultC).toEqual({ type: 'C', extraC: true });
   });
 
@@ -423,28 +595,72 @@ describe('getObjectValueWithSchema', () => {
     const schema1: JsonSchema = {
       type: 'object',
       properties: {},
-      oneOf: [
-        { properties: { type: { enum: ['A'] } }, required: ['extraA'] },
-        { properties: { type: { enum: ['B'] } }, required: ['extraB'] },
-        { properties: { type: { enum: ['C'] } }, required: ['extraC'] },
-      ],
+      if: {
+        properties: {
+          type: { enum: ['A'] },
+        },
+      },
+      then: {
+        required: ['extraA'],
+      },
+      else: {
+        if: {
+          properties: {
+            type: { enum: ['B'] },
+          },
+        },
+        then: {
+          required: ['extraB'],
+        },
+        else: {
+          required: ['extraC'],
+        },
+      },
     };
 
     const data = { type: 'A', value: 'test', extraA: 'valueA' };
-    const result = getObjectValueWithSchema(data, schema1);
+    const flattenedConditions1 = flattenConditions(schema1);
+
+    const result = getObjectValueWithSchema(
+      data,
+      schema1,
+      flattenedConditions1,
+    );
     expect(result).toBe(data);
 
     // properties is undefined
     const schema2: JsonSchema = {
       type: 'object',
-      oneOf: [
-        { properties: { type: { enum: ['A'] } }, required: ['extraA'] },
-        { properties: { type: { enum: ['B'] } }, required: ['extraB'] },
-        { properties: { type: { enum: ['C'] } }, required: ['extraC'] },
-      ],
+      if: {
+        properties: {
+          type: { enum: ['A'] },
+        },
+      },
+      then: {
+        required: ['extraA'],
+      },
+      else: {
+        if: {
+          properties: {
+            type: { enum: ['B'] },
+          },
+        },
+        then: {
+          required: ['extraB'],
+        },
+        else: {
+          required: ['extraC'],
+        },
+      },
     };
     const dataB = { type: 'B', value: 'test', extraB: 42 };
-    const resultB = getObjectValueWithSchema(dataB, schema2);
+    const flattenedConditions2 = flattenConditions(schema2);
+
+    const resultB = getObjectValueWithSchema(
+      dataB,
+      schema2,
+      flattenedConditions2,
+    );
     expect(resultB).toBe(dataB);
   });
 
@@ -462,7 +678,9 @@ describe('getObjectValueWithSchema', () => {
     const data = {
       mixedArray: ['string', '42', 'true', 'another string', '100'],
     };
-    const result = getObjectValueWithSchema(data, schema);
+    const flattenedConditions = flattenConditions(schema);
+
+    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
     expect(result).toBe(data);
   });
 
@@ -487,7 +705,9 @@ describe('getObjectValueWithSchema', () => {
       extra: 'value',
     };
 
-    const result = getObjectValueWithSchema(data, schema);
+    const flattenedConditions = flattenConditions(schema);
+
+    const result = getObjectValueWithSchema(data, schema, flattenedConditions);
     expect(result).toBe(data);
   });
 });

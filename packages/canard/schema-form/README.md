@@ -230,7 +230,7 @@ interface FormTypeInputProps<
   path: Node['path'];
   /** Errors of the schema node assigned to the FormType Component */
   errors: Node['errors'];
-  /** Values being watched according to the watch property defined in JsonSchema */
+  /** Values being watched according to the `computed.watch`(=`&watch`) property defined in JsonSchema */
   watchValues: WatchValues;
   /** Default value for the FormType Component */
   defaultValue: Value | undefined;
@@ -644,20 +644,16 @@ export const ConditionalForm = () => {
       salary: {
         type: 'number',
         title: 'Annual Salary',
-        options: {
+        computed: {
           watch: 'employmentType',
-        },
-        renderOptions: {
           visible: "employmentType === 'fulltime'",
         },
       },
       hourlyRate: {
         type: 'number',
         title: 'Hourly Rate',
-        options: {
+        computed: {
           watch: 'employmentType',
-        },
-        renderOptions: {
           visible:
             "employmentType === 'parttime' || employmentType === 'contractor'",
         },
@@ -725,7 +721,7 @@ export const AntdForm = () => {
       name: {
         type: 'string',
         title: 'Name',
-        renderOptions: {
+        computed: {
           // Ant Design specific options
           size: 'large',
           placeholder: 'Enter your name',
@@ -739,7 +735,7 @@ export const AntdForm = () => {
         },
         // Use Ant Design Select component
         FormType: 'antd.select',
-        renderOptions: {
+        computed: {
           mode: 'tags',
           placeholder: 'Enter tags',
         },
