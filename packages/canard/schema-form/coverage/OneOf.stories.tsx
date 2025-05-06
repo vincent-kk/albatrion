@@ -24,7 +24,7 @@ export const OneOf = () => {
           date: {
             type: 'string',
             format: 'date',
-            // '&visible': '@.title === "wow"',
+            '&visible': '_.title === "wow"',
           },
           price: { type: 'number' },
         },
@@ -37,7 +37,7 @@ export const OneOf = () => {
           date: {
             type: 'string',
             format: 'date',
-            // '&visible': '@.title === "wow"',
+            '&visible': '_.title === "wow"',
           },
           price: {
             type: 'number',
@@ -79,12 +79,12 @@ export const OneOfAlias = () => {
       {
         '&if': "@.category==='movie'",
         properties: {
-          date: {
+          date1: {
             type: 'string',
             format: 'date',
-            '&visible': '@.title === "wow"',
+            '&visible': '_.title === "wow"',
           },
-          price: {
+          price1: {
             type: 'number',
             minimum: 50,
           },
@@ -93,12 +93,12 @@ export const OneOfAlias = () => {
       {
         '&if': "@.category==='game'",
         properties: {
-          date: {
+          date2: {
             type: 'string',
             format: 'date',
-            '&visible': '@.title === "wow"',
+            '&visible': '_.title === "wow"',
           },
-          price: { type: 'number' },
+          price2: { type: 'number' },
         },
       },
     ],

@@ -15,7 +15,7 @@ export const requiredFactory = (
   value: Dictionary,
   conditions: FlattenCondition[] | undefined,
 ): ((key: string) => boolean) | null => {
-  if (!conditions) return null;
+  if (!conditions?.length) return null;
   const requiredFields = new Set<string>();
 
   for (const { condition, required, inverse } of conditions) {

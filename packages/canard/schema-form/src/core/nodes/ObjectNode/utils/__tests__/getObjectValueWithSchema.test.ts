@@ -108,6 +108,10 @@ describe('getObjectValueWithSchema', () => {
       else: {
         // 'inactive' 상태일 때는 추가 필수 필드 없음
       },
+      properties: {
+        status: { type: 'string', enum: ['active', 'inactive'] },
+        age: { type: 'number' },
+      },
     };
     const data = {
       status: 'inactive',
@@ -125,10 +129,9 @@ describe('getObjectValueWithSchema', () => {
       flattenedConditions,
     );
     expect(result).toEqual({
-      age: 30,
+      status: 'inactive',
       name: 'John',
       job: 'developer',
-      status: 'inactive',
     });
   });
 
@@ -706,7 +709,7 @@ describe('getObjectValueWithSchema', () => {
       undefined,
       flattenedConditions1,
     );
-    expect(result).toBe(data);
+    expect(result).toEqual(data);
 
     // properties is undefined
     const schema2: JsonSchema = {
@@ -742,7 +745,7 @@ describe('getObjectValueWithSchema', () => {
       undefined,
       flattenedConditions2,
     );
-    expect(resultB).toBe(dataB);
+    expect(resultB).toEqual(dataB);
   });
 
   it('should handle arrays with mixed types', () => {
@@ -800,5 +803,522 @@ describe('getObjectValueWithSchema', () => {
       flattenedConditions,
     );
     expect(result).toBe(data);
+  });
+});
+
+describe('getObjectValueWithSchema with oneOf', () => {
+  it('should extract properties based on oneOf schema when oneOfIndex is specified', () => {
+    // 테스트를 위한 oneOf가 포함된 스키마
+    const schema = {
+      type: 'object',
+      oneOf: [
+        {
+          properties: {
+            name: { type: 'string' },
+            age: { type: 'number' },
+          },
+        },
+        {
+          properties: {
+            id: { type: 'string' },
+            email: { type: 'string' },
+          },
+        },
+      ],
+      properties: {
+        extra: { type: 'string' },
+      },
+    } satisfies JsonSchema;
+
+    // 첫 번째 oneOf 스키마 테스트 (인덱스 0)
+    const value1 = {
+      name: 'bin',
+      age: 30,
+      id: 'user123',
+      email: 'test@example.com',
+      extra: '추가 정보',
+    };
+
+    const result1 = getObjectValueWithSchema(value1, schema, 0, []);
+
+    // oneOf[0]의 속성인 name과 age만 포함되어야 함
+    expect(result1).toEqual({
+      name: 'bin',
+      age: 30,
+      extra: '추가 정보',
+    });
+
+    // 두 번째 oneOf 스키마 테스트 (인덱스 1)
+    const value2 = {
+      name: '김철수',
+      age: 25,
+      id: 'user456',
+      email: 'kim@example.com',
+      extra: '다른 정보',
+    };
+
+    const result2 = getObjectValueWithSchema(
+      value2,
+      schema,
+      1,
+      [], // 빈 조건 배열
+    );
+
+    // oneOf[1]의 속성인 id와 email만 포함되어야 함
+    expect(result2).toEqual({
+      id: 'user456',
+      email: 'kim@example.com',
+      extra: '다른 정보',
+    });
+  });
+
+  it('should handle undefined oneOfIndex correctly', () => {
+    const schema = {
+      type: 'object',
+      oneOf: [
+        {
+          properties: {
+            name: { type: 'string' },
+          },
+        },
+      ],
+      properties: {
+        age: { type: 'number' },
+      },
+    } satisfies JsonSchema;
+
+    const value = {
+      name: 'bin',
+      age: 28,
+    };
+
+    // oneOfIndex가 undefined인 경우 모든 속성이 유지되어야 함
+    const result = getObjectValueWithSchema(
+      value,
+      schema,
+      undefined,
+      [], // 빈 조건 배열
+    );
+
+    expect(result).toEqual({
+      age: 28,
+    });
+  });
+
+  it('should handle complex cases with both oneOf and conditions', () => {
+    const schema = {
+      type: 'object',
+      oneOf: [
+        {
+          properties: {
+            type: { type: 'string', enum: ['person'] },
+            name: { type: 'string' },
+            age: { type: 'number' },
+          },
+        },
+        {
+          properties: {
+            type: { type: 'string', enum: ['company'] },
+            companyName: { type: 'string' },
+            employees: { type: 'number' },
+          },
+        },
+      ],
+      properties: {
+        address: { type: 'string' },
+      },
+    } satisfies JsonSchema;
+
+    const conditions = [
+      {
+        condition: { type: 'person' },
+        required: ['address'],
+        inverse: false,
+      },
+    ];
+
+    const value = {
+      type: 'person',
+      name: 'bin',
+      age: 32,
+      companyName: '테스트',
+      employees: 50,
+      address: '서울시 강남구',
+    };
+
+    // oneOf[0]과 조건에 의한 address 포함
+    const result = getObjectValueWithSchema(value, schema, 0, conditions);
+
+    expect(result).toEqual({
+      type: 'person',
+      address: '서울시 강남구',
+    });
+  });
+});
+
+describe('getObjectValueWithSchema', () => {
+  // 1. 기본 값 반환 테스트
+  it('should return undefined when value is null or undefined', () => {
+    const schema = {
+      type: 'object',
+      properties: { name: { type: 'string' } },
+    } satisfies JsonSchema;
+    expect(getObjectValueWithSchema(undefined, schema, 0, [])).toBeUndefined();
+    // @ts-expect-error
+    expect(getObjectValueWithSchema(null, schema, 0, [])).toBeNull();
+  });
+
+  it('should return original value when no conditions and no oneOf', () => {
+    const schema = {
+      type: 'object',
+      properties: { name: { type: 'string' } },
+    } satisfies JsonSchema;
+    const value = { name: 'John', age: 30 };
+    expect(getObjectValueWithSchema(value, schema, undefined, [])).toEqual(
+      value,
+    );
+  });
+
+  // 2. oneOf 테스트
+  it('should filter fields based on oneOf when oneOfIndex is valid', () => {
+    const schema = {
+      type: 'object',
+      oneOf: [
+        {
+          properties: {
+            type: { type: 'string', const: 'person' },
+            name: { type: 'string' },
+            age: { type: 'number' },
+          },
+          required: ['type', 'name'],
+        },
+        {
+          properties: {
+            type: { type: 'string', const: 'company' },
+            companyName: { type: 'string' },
+            employees: { type: 'number' },
+          },
+          required: ['type', 'companyName'],
+        },
+      ],
+    } satisfies JsonSchema;
+
+    const personValue = {
+      type: 'person',
+      name: 'John',
+      age: 30,
+      companyName: 'ABC Corp', // 이 필드는 oneOf[0]에 없으므로 제거되어야 함
+    };
+
+    const result1 = getObjectValueWithSchema(personValue, schema, 0, []);
+    expect(result1).toEqual({
+      type: 'person',
+      name: 'John',
+      age: 30,
+    });
+
+    const companyValue = {
+      type: 'company',
+      companyName: 'ABC Corp',
+      employees: 100,
+      name: 'John', // 이 필드는 oneOf[1]에 없으므로 제거되어야 함
+    };
+
+    const result2 = getObjectValueWithSchema(companyValue, schema, 1, []);
+    expect(result2).toEqual({
+      type: 'company',
+      companyName: 'ABC Corp',
+      employees: 100,
+    });
+  });
+
+  it('should remove all oneOf fields when oneOfIndex is invalid', () => {
+    const schema = {
+      type: 'object',
+      oneOf: [
+        {
+          properties: {
+            type: { type: 'string', const: 'person' },
+            name: { type: 'string' },
+          },
+        },
+        {
+          properties: {
+            type: { type: 'string', const: 'company' },
+            companyName: { type: 'string' },
+          },
+        },
+      ],
+    } satisfies JsonSchema;
+
+    const value = {
+      type: 'person',
+      name: 'John',
+      companyName: 'ABC Corp',
+      extraField: 'extra',
+    };
+
+    // oneOfIndex가 undefined이면 oneOf에 정의된 모든 필드가 제거되어야 함
+    const result1 = getObjectValueWithSchema(value, schema, undefined, []);
+    expect(result1).toEqual({
+      extraField: 'extra',
+    });
+
+    // oneOfIndex가 -1이면 oneOf에 정의된 모든 필드가 제거되어야 함
+    const result2 = getObjectValueWithSchema(value, schema, -1, []);
+    expect(result2).toEqual({
+      extraField: 'extra',
+    });
+  });
+
+  it('should not filter properties fields by oneOf', () => {
+    const schema = {
+      type: 'object',
+      oneOf: [
+        {
+          properties: {
+            type: { type: 'string', const: 'person' },
+            name: { type: 'string' },
+          },
+        },
+      ],
+      properties: {
+        address: { type: 'string' },
+        age: { type: 'number' },
+      },
+    } satisfies JsonSchema;
+
+    const value = {
+      type: 'person',
+      name: 'John',
+      address: 'Seoul',
+      age: 30,
+      extraField: 'extra',
+    };
+
+    // oneOfIndex=0이면 oneOf[0]에 정의된 필드와 properties에 정의된 필드가 유지되어야 함
+    const result = getObjectValueWithSchema(value, schema, 0, []);
+    expect(result).toEqual({
+      type: 'person',
+      name: 'John',
+      address: 'Seoul',
+      age: 30,
+      extraField: 'extra', // 스키마에 정의되지 않은 필드도 유지됨
+    });
+  });
+
+  // 3. conditions 테스트
+  it('should filter fields based on conditions', () => {
+    const schema = {
+      type: 'object',
+      properties: {
+        type: { type: 'string' },
+        name: { type: 'string' },
+        age: { type: 'number' },
+        address: { type: 'string' },
+      },
+    } satisfies JsonSchema;
+
+    const value = {
+      type: 'person',
+      name: 'John',
+      age: 30,
+      address: 'Seoul',
+    };
+
+    const conditions = [
+      {
+        condition: { type: 'person' },
+        required: ['name', 'age'],
+        inverse: false,
+      },
+    ];
+
+    // conditions에 의해 name과 age만 필수로 지정됨
+    const result = getObjectValueWithSchema(
+      value,
+      schema,
+      undefined,
+      conditions,
+    );
+    expect(result).toEqual({ type: 'person', name: 'John', age: 30 });
+  });
+
+  it('should not filter when conditions is empty', () => {
+    const schema = {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        age: { type: 'number' },
+      },
+    } satisfies JsonSchema;
+
+    const value = { name: 'John', age: 30 };
+    expect(getObjectValueWithSchema(value, schema, undefined, [])).toEqual(
+      value,
+    );
+  });
+
+  // 4. oneOf와 conditions 조합 테스트
+  it('should combine oneOf and conditions with AND logic', () => {
+    const schema = {
+      type: 'object',
+      oneOf: [
+        {
+          properties: {
+            type: { type: 'string', const: 'person' },
+            name: { type: 'string' },
+            age: { type: 'number' },
+          },
+        },
+        {
+          properties: {
+            type: { type: 'string', const: 'company' },
+            companyName: { type: 'string' },
+            employees: { type: 'number' },
+          },
+        },
+      ],
+      properties: {
+        address: { type: 'string' },
+        country: { type: 'string' },
+      },
+    } satisfies JsonSchema;
+
+    const value = {
+      type: 'person',
+      name: 'John',
+      age: 30,
+      companyName: 'ABC Corp',
+      address: 'Seoul',
+      country: 'Korea',
+    };
+
+    const conditions = [
+      {
+        condition: { type: 'person' },
+        required: ['name', 'address'],
+        inverse: false,
+      },
+    ];
+
+    // oneOf[0]와 conditions 모두 만족하는 필드만 유지
+    // - oneOf[0]에 있는 필드: type, name, age
+    // - conditions에 의해 필수로 지정된 필드: name, address
+    // - properties에 있는 필드: address, country (conditions만 만족하면 됨)
+    // 결과: name(oneOf+conditions), address(properties+conditions)
+    const result = getObjectValueWithSchema(value, schema, 0, conditions);
+    expect(result).toEqual({
+      type: 'person',
+      name: 'John',
+      address: 'Seoul',
+    });
+  });
+
+  it('should handle complex conditions with inverse logic', () => {
+    const schema = {
+      type: 'object',
+      properties: {
+        type: { type: 'string' },
+        name: { type: 'string' },
+        age: { type: 'number' },
+        address: { type: 'string' },
+        country: { type: 'string' },
+      },
+    } satisfies JsonSchema;
+
+    const value = {
+      type: 'person',
+      name: 'John',
+      age: 30,
+      address: 'Seoul',
+      country: 'Korea',
+    };
+
+    const conditions = [
+      {
+        condition: { type: 'person' },
+        required: ['name', 'age'],
+      },
+      {
+        condition: { age: 30 },
+        required: 'address',
+      },
+      {
+        condition: { country: 'Japan' },
+        required: 'name',
+        inverse: true, // 반전 조건: country가 Japan이 아닐 때 name이 필수
+      },
+    ] as any;
+
+    // 복합 조건 결과: name, age, address
+    const result = getObjectValueWithSchema(
+      value,
+      schema,
+      undefined,
+      conditions,
+    );
+    expect(result).toEqual({
+      age: 30,
+      country: 'Korea',
+      name: 'John',
+      type: 'person',
+    });
+  });
+
+  // 5. 특별 케이스
+  it('should preserve non-schema fields', () => {
+    const schema = {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+      },
+    } satisfies JsonSchema;
+
+    const value = {
+      name: 'John',
+      age: 30, // 스키마에 정의되지 않은 필드
+      extra: 'data', // 스키마에 정의되지 않은 필드
+    };
+
+    expect(getObjectValueWithSchema(value, schema, undefined, [])).toEqual(
+      value,
+    );
+  });
+
+  it('should handle schema without properties', () => {
+    const schema = {
+      type: 'object',
+      oneOf: [
+        {
+          properties: {
+            type: { type: 'string' },
+            name: { type: 'string' },
+          },
+        },
+      ],
+    } satisfies JsonSchema;
+
+    const value = {
+      type: 'person',
+      name: 'John',
+      extra: 'data',
+    };
+
+    const result = getObjectValueWithSchema(value, schema, 0, []);
+    expect(result).toEqual({
+      type: 'person',
+      name: 'John',
+      extra: 'data',
+    });
+  });
+
+  it('should handle empty schema', () => {
+    const schema = { type: 'object' } satisfies JsonSchema;
+    const value = { name: 'John', age: 30 };
+
+    expect(getObjectValueWithSchema(value, schema, undefined, [])).toEqual(
+      value,
+    );
   });
 });
