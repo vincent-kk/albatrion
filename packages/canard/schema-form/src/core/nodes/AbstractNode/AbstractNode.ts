@@ -429,6 +429,11 @@ export abstract class AbstractNode<
     return this.#disabled;
   }
 
+  #oneOfIndex: number | undefined;
+  protected get oneOfIndex() {
+    return this.#oneOfIndex;
+  }
+
   #watchValues: ReadonlyArray<any> = [];
   get watchValues() {
     return this.#watchValues;
@@ -470,6 +475,7 @@ export abstract class AbstractNode<
     this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
     this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
+    this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies);
 
     this.publish({
       type: NodeEventType.UpdateComputedProperties,
@@ -478,6 +484,7 @@ export abstract class AbstractNode<
           visible: this.#visible,
           readOnly: this.#readOnly,
           disabled: this.#disabled,
+          oneOfIndex: this.#oneOfIndex,
           watchValues: this.#watchValues,
         },
       },

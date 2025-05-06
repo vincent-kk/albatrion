@@ -130,6 +130,7 @@ export type NodeEventPayload = {
     visible: boolean;
     readOnly: boolean;
     disabled: boolean;
+    oneOfIndex: number | undefined;
     watchValues: ReadonlyArray<any>;
   };
   [NodeEventType.RequestValidate]: void;
