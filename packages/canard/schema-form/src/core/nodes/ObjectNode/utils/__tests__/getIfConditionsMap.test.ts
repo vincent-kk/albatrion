@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { ObjectSchema } from '@/schema-form/types';
 
-import { getIfConditionsMap } from '../getOneOfConditionsMap/getIfConditionsMap';
+import { getIfConditionsMap } from '../getIfConditionsMap';
 
 describe('getIfConditionsMap', () => {
   it('should return null if schema has no if or then condition', () => {

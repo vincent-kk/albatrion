@@ -1,0 +1,1 @@
+export { getIfConditionsMap } from './getIfConditionsMap';

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { ObjectSchema } from '@/schema-form/types';
 
-import { getOneOfConditionsMap } from '../getOneOfConditionsMap/getOneOfConditionsMap';
+import { getOneOfConditionsMap } from '../getIfConditionsMap/getOneOfConditionsMap';
 
 describe('getOneOfConditionsMap', () => {
   it('should return null when oneOf is not available', () => {

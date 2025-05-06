@@ -13,8 +13,8 @@ import type { ChildNode } from './type';
 import {
   getChildNodeMap,
   getChildren,
+  getIfConditionsMap,
   getObjectValueWithSchema,
-  getOneOfConditionsMap,
   getVirtualReferencesMap,
 } from './utils';
 
@@ -139,8 +139,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     const properties = jsonSchema.properties;
     this.#propertyKeys = getObjectKeys(properties);
 
-    const oneOfConditionsMap: Map<string, string[]> | null =
-      getOneOfConditionsMap(jsonSchema);
+    const ifConditionsMap: Map<string, string[]> | null =
+      getIfConditionsMap(jsonSchema);
 
     const { virtualReferencesMap, virtualReferenceFieldsMap } =
       getVirtualReferencesMap(name, this.#propertyKeys, jsonSchema.virtual);
@@ -160,7 +160,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       this.#propertyKeys,
       this.defaultValue,
       virtualReferenceFieldsMap,
-      oneOfConditionsMap,
+      ifConditionsMap,
       handelChangeFactory,
       nodeFactory,
     );
