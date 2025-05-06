@@ -2,7 +2,7 @@ import { isArray, isEmptyObject } from '@winglet/common-utils';
 
 import type { JsonSchema } from '@/schema-form/types';
 
-import { isValidConst, isValidEnum } from '../filter';
+import { isValidConst, isValidEnum } from './filter';
 
 interface FlatRequiredRule {
   condition: Record<string, string | string[]> | true;

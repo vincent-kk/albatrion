@@ -4,7 +4,7 @@ import type { Dictionary } from '@aileron/declare';
 
 import type { JsonSchema, ObjectSchema } from '@/schema-form/types';
 
-import { isObjectOneOfSchema, isValidConst, isValidEnum } from './filter';
+import { isObjectOneOfSchema, isValidConst, isValidEnum } from './utils/filter';
 
 export const getOneOfConditionsMap = (jsonSchema: ObjectSchema) => {
   if (!jsonSchema.oneOf || !isArray(jsonSchema.oneOf)) return null;
