@@ -5,9 +5,8 @@ import type { Dictionary } from '@aileron/declare';
 import { FieldConditionMap } from '../getFieldConditionMap';
 
 export const getConditionsMap = (
-  fieldConditionMap: FieldConditionMap | undefined,
-): Map<string, string[]> | undefined => {
-  if (!fieldConditionMap) return undefined;
+  fieldConditionMap: FieldConditionMap,
+): Map<string, string[]> => {
   const oneOfConditionsMap: Map<string, string[]> = new Map();
   for (const [field, conditions] of fieldConditionMap.entries()) {
     const operations: string[] = [];

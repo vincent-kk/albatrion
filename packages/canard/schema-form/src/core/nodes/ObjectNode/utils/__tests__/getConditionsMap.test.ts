@@ -16,7 +16,8 @@ describe('getConditionsMap', () => {
     };
 
     const flattedConditions = flattenConditions(schema);
-    const fieldConditionMap = getFieldConditionMap(flattedConditions);
+    const fieldConditionMap =
+      getFieldConditionMap(flattedConditions) || new Map();
     const result = getConditionsMap(fieldConditionMap);
     expect(result).toBeUndefined();
   });
@@ -40,7 +41,8 @@ describe('getConditionsMap', () => {
     };
 
     const flattedConditions = flattenConditions(schema);
-    const fieldConditionMap = getFieldConditionMap(flattedConditions);
+    const fieldConditionMap =
+      getFieldConditionMap(flattedConditions) || new Map();
     const result = getConditionsMap(fieldConditionMap);
 
     expect(result).toBeInstanceOf(Map);
@@ -77,7 +79,8 @@ describe('getConditionsMap', () => {
     };
 
     const flattedConditions = flattenConditions(schema);
-    const fieldConditionMap = getFieldConditionMap(flattedConditions);
+    const fieldConditionMap =
+      getFieldConditionMap(flattedConditions) || new Map();
     const result = getConditionsMap(fieldConditionMap);
 
     expect(result).toBeInstanceOf(Map);
@@ -110,7 +113,8 @@ describe('getConditionsMap', () => {
     };
 
     const flattedConditions = flattenConditions(schema) || [];
-    const fieldConditionMap = getFieldConditionMap(flattedConditions);
+    const fieldConditionMap =
+      getFieldConditionMap(flattedConditions) || new Map();
     const result = getConditionsMap(fieldConditionMap);
 
     expect(result).toBeInstanceOf(Map);
@@ -153,7 +157,8 @@ describe('getConditionsMap', () => {
     };
 
     const flattedConditions = flattenConditions(schema) || [];
-    const fieldConditionMap = getFieldConditionMap(flattedConditions);
+    const fieldConditionMap =
+      getFieldConditionMap(flattedConditions) || new Map();
     const result = getConditionsMap(fieldConditionMap);
 
     expect(result).toBeInstanceOf(Map);

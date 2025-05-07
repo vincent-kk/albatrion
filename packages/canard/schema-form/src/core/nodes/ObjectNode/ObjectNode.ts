@@ -11,11 +11,12 @@ import {
 } from '../type';
 import type { ChildNode } from './type';
 import {
-  FlattenCondition,
+  type FieldConditionMap,
   flattenConditions,
   getChildNodeMap,
   getChildren,
   getConditionsMap,
+  getFieldConditionMap,
   getObjectValueWithSchema,
   getOneOfChildrenList,
   getVirtualReferencesMap,
@@ -23,7 +24,8 @@ import {
 
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   readonly #propertyKeys: string[];
-  readonly #flattedConditions: FlattenCondition[] | undefined;
+
+  readonly #fieldConditionMap: FieldConditionMap | undefined;
   #locked: boolean = true;
 
   #propertyChildren: ChildNode[];
@@ -153,10 +155,12 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     const properties = jsonSchema.properties;
     this.#propertyKeys = getObjectKeys(properties);
 
-    this.#flattedConditions = flattenConditions(jsonSchema);
+    this.#fieldConditionMap = getFieldConditionMap(
+      flattenConditions(jsonSchema),
+    );
 
     const conditionsMap: Map<string, string[]> | undefined =
-      this.#flattedConditions && getConditionsMap(this.#flattedConditions);
+      this.#fieldConditionMap && getConditionsMap(this.#fieldConditionMap);
 
     const { virtualReferencesMap, virtualReferenceFieldsMap } =
       getVirtualReferencesMap(name, this.#propertyKeys, jsonSchema.virtual);
