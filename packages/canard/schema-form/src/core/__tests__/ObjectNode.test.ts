@@ -50,7 +50,7 @@ describe('ObjectNode', () => {
     });
 
     const objectNode = node?.find('user') as ObjectNode;
-    expect(objectNode.value).toEqual({});
+    expect(objectNode.value).toEqual(undefined);
 
     objectNode.setValue({ name: 'John', age: 30 });
     await delay();
@@ -116,7 +116,7 @@ describe('ObjectNode', () => {
       options: {
         [NodeEventType.UpdateValue]: {
           current: { name: 'Ron', age: 28 },
-          previous: {},
+          previous: undefined,
         },
       },
     });
@@ -189,12 +189,11 @@ describe('ObjectNode', () => {
     expect(mockListener).toHaveBeenCalledWith({
       type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.UpdateValue]: { name: 'John', age: undefined },
+        [NodeEventType.UpdateValue]: { name: 'John' },
       },
       options: {
         [NodeEventType.UpdateValue]: {
-          current: { name: 'John', age: undefined },
-          previous: {},
+          current: { name: 'John' },
         },
       },
     });
@@ -479,7 +478,6 @@ describe('ObjectNode', () => {
     expect(firstChild.value).toEqual({
       id: '4',
       name: 'User 4',
-      children: [],
     });
     expect(firstChild.jsonSchema).toEqual(jsonSchema.$defs.TreeNode);
   });

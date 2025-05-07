@@ -98,12 +98,6 @@ describe('BooleanNode', () => {
         NodeEventType.UpdateComputedProperties,
       payload: {
         [NodeEventType.UpdateValue]: true,
-        [NodeEventType.UpdateComputedProperties]: {
-          disabled: false,
-          readOnly: false,
-          visible: true,
-          watchValues: [],
-        },
       },
       options: {
         [NodeEventType.UpdateValue]: {
