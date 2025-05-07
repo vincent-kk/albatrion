@@ -23,16 +23,14 @@ export const getValueWithCondition = (
   if (!properties || !propertyKeys?.length) return value;
   if (!inputKeys.length) return {};
 
-  const isRequired = requiredFactory(value, fieldConditionMap);
+  const required = requiredFactory(value, fieldConditionMap);
   const filteredValue: ObjectValue = {};
 
   for (let i = 0, len = inputKeys.length; i < len; i++) {
     const key = inputKeys[i];
-    if (key in properties!) {
-      if (!isRequired || isRequired(key)) filteredValue[key] = value[key];
-    } else {
-      filteredValue[key] = value[key];
-    }
+    if (key in properties) {
+      if (!required || required(key)) filteredValue[key] = value[key];
+    } else filteredValue[key] = value[key];
   }
   return filteredValue;
 };
