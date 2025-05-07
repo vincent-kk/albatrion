@@ -34,6 +34,8 @@ describe('getFieldConditionMap', () => {
     expect(map?.get('c')).toEqual([
       { condition: { a: ['1', '2'] }, inverse: undefined },
     ]);
+    expect(map?.get('a')).toBe(true);
+    expect(map?.get('x')).toBe(true);
   });
 
   it('동일 필드에 여러 조건이 매핑될 때 모두 포함한다', () => {
@@ -57,6 +59,8 @@ describe('getFieldConditionMap', () => {
         inverse: true,
       },
     ]);
+    expect(map?.get('type')).toBe(true);
+    expect(map?.get('status')).toBe(true);
   });
 
   it('빈 배열 입력 시 빈 Map을 반환한다', () => {
