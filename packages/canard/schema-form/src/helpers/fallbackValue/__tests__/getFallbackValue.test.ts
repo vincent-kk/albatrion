@@ -43,7 +43,7 @@ describe('getFallbackValue', () => {
     ).toEqual(['test']);
   });
   it('should return an empty object if the type is object', () => {
-    expect(getFallbackValue({ type: 'object' })).toEqual({});
+    expect(getFallbackValue({ type: 'object' })).toEqual(undefined);
   });
   it('should return an empty array if the type is array', () => {
     expect(
@@ -53,7 +53,7 @@ describe('getFallbackValue', () => {
           type: 'string',
         },
       }),
-    ).toEqual([]);
+    ).toEqual(undefined);
   });
   it('should return undefined if the type is not object, array, or string', () => {
     expect(getFallbackValue({ type: 'string' })).toBeUndefined();

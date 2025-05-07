@@ -1,4 +1,8 @@
-import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils';
+import {
+  getObjectKeys,
+  isEmptyObject,
+  sortObjectKeys,
+} from '@winglet/common-utils';
 
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
@@ -59,7 +63,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   }
 
   #parseValue(this: ObjectNode, input: ObjectValue) {
-    return sortObjectKeys(input, this.#propertyKeys, true);
+    const value = sortObjectKeys(input, this.#propertyKeys, true);
+    return isEmptyObject(value) ? undefined : value;
   }
   #propagate(this: ObjectNode, replace: boolean, option: SetValueOption) {
     this.#locked = true;
@@ -74,7 +79,6 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     }
     this.#locked = false;
   }
-
   #emitChange(this: ObjectNode, option: SetValueOption) {
     if (this.#locked) return;
 

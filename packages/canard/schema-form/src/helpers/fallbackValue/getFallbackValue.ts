@@ -9,8 +9,6 @@ export const getFallbackValue = <
   jsonSchema: Schema,
 ) => {
   if (jsonSchema.default !== undefined) return jsonSchema.default;
-  else if (jsonSchema.type === 'array') return [];
   else if (jsonSchema.type === 'virtual') return [];
-  else if (jsonSchema.type === 'object') return {};
   else return undefined;
 };

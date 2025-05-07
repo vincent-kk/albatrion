@@ -49,9 +49,10 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   }
 
   get value() {
-    return this.toArray();
+    if (this.#ids.length === 0) return undefined;
+    return this.#toArray();
   }
-  set value(input: ArrayValue) {
+  set value(input: ArrayValue | undefined) {
     this.setValue(input);
   }
   protected applyValue(
@@ -59,12 +60,14 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     input: ArrayValue,
     option: SetValueOption,
   ) {
-    if (!isArray(input)) return;
-    this.#locked = true;
-    this.clear();
-    for (const value of input) this.push(value);
-    this.#locked = false;
-    this.#emitChange(option);
+    if (input === undefined) this.clear();
+    else if (isArray(input)) {
+      this.#locked = true;
+      this.clear();
+      for (const value of input) this.push(value);
+      this.#locked = false;
+      this.#emitChange(option);
+    }
   }
 
   #emitChange(this: ArrayNode, option: SetValueOption) {
@@ -85,7 +88,6 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       });
       if (option & SetValueOption.Propagate) this.#publishChildrenChange();
       if (option & SetValueOption.Refresh) this.refresh(value);
-
       this.#hasChanged = false;
     }
   }
@@ -113,7 +115,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     return this.#ids.length;
   }
 
-  toArray(this: ArrayNode) {
+  #toArray(this: ArrayNode) {
     const values = new Array<AllowedValue>(this.#ids.length);
     for (let i = 0; i < this.#ids.length; i++) {
       const edge = this.#sourceMap.get(this.#ids[i]);
@@ -184,7 +186,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     this.#ids.push(id);
     const handleChange = (<T extends AllowedValue>(input: T) => {
       this.#updateData(id, input);
-      if (this.#ready) this.onChange(this.toArray());
+      if (this.#ready) this.onChange(this.value);
     }) satisfies SetStateFn<AllowedValue>;
     const defaultValue = data ?? getFallbackValue(this.jsonSchema.items);
     const childNode = this.#nodeFactory({
