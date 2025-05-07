@@ -15,12 +15,8 @@ import {
 } from '../type';
 import type { ChildNode } from './type';
 import {
-  type FieldConditionMap,
-  flattenConditions,
   getChildNodeMap,
   getChildren,
-  getConditionsMap,
-  getFieldConditionMap,
   getOneOfChildrenList,
   getOneOfProperties,
   getVirtualReferencesMap,
@@ -28,9 +24,7 @@ import {
 } from './utils';
 
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
-  readonly #propertyKeys: string[];
-
-  readonly #fieldConditionMap: FieldConditionMap | undefined;
+  readonly #schemaKeys: string[];
   readonly #oneOfKeySet: Set<string> | undefined;
 
   #locked: boolean = true;
@@ -63,7 +57,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   }
 
   #parseValue(this: ObjectNode, input: ObjectValue) {
-    const value = sortObjectKeys(input, this.#propertyKeys, true);
+    const value = sortObjectKeys(input, this.#schemaKeys, true);
     return isEmptyObject(value) ? undefined : value;
   }
   #propagate(this: ObjectNode, replace: boolean, option: SetValueOption) {
@@ -155,18 +149,15 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.#draft = {};
 
     const properties = jsonSchema.properties;
-    this.#propertyKeys = getObjectKeys(properties);
+    const propertyKeys = getObjectKeys(properties);
 
     this.#oneOfKeySet = getOneOfProperties(jsonSchema);
-    this.#fieldConditionMap = getFieldConditionMap(
-      flattenConditions(jsonSchema),
-    );
-
-    const conditionsMap: Map<string, string[]> | undefined =
-      this.#fieldConditionMap && getConditionsMap(this.#fieldConditionMap);
+    this.#schemaKeys = this.#oneOfKeySet
+      ? [...propertyKeys, ...Array.from(this.#oneOfKeySet)]
+      : propertyKeys;
 
     const { virtualReferencesMap, virtualReferenceFieldsMap } =
-      getVirtualReferencesMap(name, this.#propertyKeys, jsonSchema.virtual);
+      getVirtualReferencesMap(name, propertyKeys, jsonSchema.virtual);
 
     const handelChangeFactory = (name: string) => (input: any) => {
       if (!this.#draft) this.#draft = {};
@@ -180,17 +171,16 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     const childNodeMap = getChildNodeMap(
       this,
       jsonSchema,
-      this.#propertyKeys,
+      propertyKeys,
       this.defaultValue,
       virtualReferenceFieldsMap,
-      conditionsMap,
       handelChangeFactory,
       nodeFactory,
     );
 
     this.#propertyChildren = getChildren(
       this,
-      this.#propertyKeys,
+      propertyKeys,
       childNodeMap,
       virtualReferenceFieldsMap,
       virtualReferencesMap,
@@ -208,15 +198,14 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     this.#children = this.#propertyChildren;
 
-    this.#publishChildrenChange();
-
     this.#locked = false;
+
+    this.#publishChildrenChange();
 
     this.#emitChange(SetValueOption.Normal);
     this.setDefaultValue(this.#value);
 
     this.#prepareOneOfChildren();
-
     this.prepare();
   }
 

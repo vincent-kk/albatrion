@@ -2,11 +2,12 @@ import { JSONPath, isString, serializeNative } from '@winglet/common-utils';
 
 import type { Dictionary } from '@aileron/declare';
 
-import { FieldConditionMap } from '../getFieldConditionMap';
+import type { FieldConditionMap } from './getFieldConditionMap';
 
 export const getConditionsMap = (
-  fieldConditionMap: FieldConditionMap,
-): Map<string, string[]> => {
+  fieldConditionMap: FieldConditionMap | undefined,
+): Map<string, string[]> | undefined => {
+  if (!fieldConditionMap) return undefined;
   const oneOfConditionsMap: Map<string, string[]> = new Map();
   for (const [field, conditions] of fieldConditionMap.entries()) {
     if (conditions === true) continue;

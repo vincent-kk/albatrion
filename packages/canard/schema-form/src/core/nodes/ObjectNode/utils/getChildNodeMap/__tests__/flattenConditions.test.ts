@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { JsonSchema } from '@/schema-form/types';
 
-import { flattenConditions } from '../flattenConditions';
+import { flattenConditions } from '../utils/flattenConditions';
 
 describe('flattenConditions', () => {
   it('should flatten const if-then-else with single if-then', () => {

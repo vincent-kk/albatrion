@@ -2,10 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import type { JsonSchema } from '@/schema-form/types';
 
-import {
-  getOneOfProperties,
-  removeOneOfProperties,
-} from '../removeOneOfProperties';
+import { getOneOfProperties } from '../getOneOfProperties';
+import { removeOneOfProperties } from '../removeOneOfProperties';
 
 describe('removeOneOfProperties', () => {
   it('should remove oneOf fields and keep properties fields', () => {

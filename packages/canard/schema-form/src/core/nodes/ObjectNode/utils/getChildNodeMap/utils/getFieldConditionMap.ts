@@ -1,6 +1,6 @@
 import type { Dictionary } from '@aileron/declare';
 
-import type { FlattenCondition } from '../flattenConditions';
+import type { FlattenCondition } from './flattenConditions';
 
 export type FieldConditionMap = Map<
   string,
