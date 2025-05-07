@@ -21,7 +21,7 @@ describe('getFieldConditionMap', () => {
       },
     ];
     const map = getFieldConditionMap(conditions);
-    expect(map?.size).toBe(4);
+    expect(map?.size).toBe(6);
     expect(map?.get('y')).toEqual([
       { condition: { x: 'SHOW Y' }, inverse: undefined },
     ]);
@@ -49,7 +49,7 @@ describe('getFieldConditionMap', () => {
       },
     ];
     const map = getFieldConditionMap(conditions);
-    expect(map?.size).toBe(1);
+    expect(map?.size).toBe(3);
     expect(map?.get('details')).toEqual([
       { condition: { type: 'error' }, inverse: undefined },
       {

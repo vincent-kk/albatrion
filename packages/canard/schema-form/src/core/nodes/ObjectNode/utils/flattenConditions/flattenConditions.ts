@@ -7,7 +7,7 @@ import type { JsonSchema } from '@/schema-form/types';
 import { isValidConst, isValidEnum } from './utils/filter';
 
 export interface FlattenCondition {
-  condition: Record<string, string | string[]>;
+  condition: Dictionary<string | string[]>;
   required: string[];
   inverse?: boolean;
 }
