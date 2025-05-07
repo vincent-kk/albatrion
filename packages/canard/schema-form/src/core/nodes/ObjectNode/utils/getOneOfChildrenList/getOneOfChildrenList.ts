@@ -26,13 +26,13 @@ export const getOneOfChildrenList = (
   for (let index = 0; index < oneOfSchema.length; index++) {
     const schema = oneOfSchema[index];
 
-    if (jsonSchema.type === schema.type)
+    if (schema.type && jsonSchema.type !== schema.type)
       throw new SchemaNodeError(
         'ONEOF_TYPE_REDEFINITION',
         `Type cannot be redefined in 'oneOf' schema. It must either be omitted or match the parent schema type.`,
         {
           jsonSchema,
-          name: parentNode.name,
+          path: parentNode.path,
           type: jsonSchema.type,
           oneOfType: schema.type,
         },
@@ -50,7 +50,7 @@ export const getOneOfChildrenList = (
           `Property '${property}' defined in 'oneOf' schema cannot redefine a property already defined in the parent schema.`,
           {
             jsonSchema,
-            name: parentNode.name,
+            path: parentNode.path,
             property,
           },
         );
