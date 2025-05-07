@@ -4,9 +4,9 @@ import type { ObjectSchema } from '@/schema-form/types';
 
 import { flattenConditions } from '../flattenConditions';
 import { getFieldConditionMap } from '../getFieldConditionMap/getFieldConditionMap';
-import { getValueWithSchema } from '../getValueWithSchema/getValueWithSchema';
+import { getValueWithCondition } from '../getValueWithCondition';
 
-describe('getValueWithSchema', () => {
+describe('getValueWithCondition', () => {
   it('should return all properties if no conditions', () => {
     const schema: ObjectSchema = {
       type: 'object',
@@ -16,7 +16,7 @@ describe('getValueWithSchema', () => {
       },
     };
     const value = { name: 'John', age: 30 };
-    const result = getValueWithSchema(value, schema, undefined);
+    const result = getValueWithCondition(value, schema, undefined);
     expect(result).toEqual({ name: 'John', age: 30 });
   });
 
@@ -42,7 +42,7 @@ describe('getValueWithSchema', () => {
     const value = { status: 'inactive', age: 30 };
     const conditions = flattenConditions(schema);
     const fieldConditionMap = getFieldConditionMap(conditions);
-    const result = getValueWithSchema(value, schema, fieldConditionMap);
+    const result = getValueWithCondition(value, schema, fieldConditionMap);
     expect(result).toEqual({ status: 'inactive' });
   });
 
@@ -54,7 +54,7 @@ describe('getValueWithSchema', () => {
       },
     };
     const value = { name: 'John', age: 30, extra: 'data' };
-    const result = getValueWithSchema(value, schema, undefined);
+    const result = getValueWithCondition(value, schema, undefined);
     expect(result).toEqual({ name: 'John', age: 30, extra: 'data' });
   });
 
@@ -66,7 +66,7 @@ describe('getValueWithSchema', () => {
       },
     };
     const value = {};
-    const result = getValueWithSchema(value, schema, undefined);
+    const result = getValueWithCondition(value, schema, undefined);
     expect(result).toEqual({});
   });
 
@@ -77,7 +77,7 @@ describe('getValueWithSchema', () => {
         name: { type: 'string' },
       },
     };
-    const result = getValueWithSchema(undefined, schema, undefined);
+    const result = getValueWithCondition(undefined, schema, undefined);
     expect(result).toBeUndefined();
   });
 
@@ -120,17 +120,21 @@ describe('getValueWithSchema', () => {
     const guestData = { type: 'guest', name: 'Guest', age: 20 };
     const conditions = flattenConditions(schema);
     const fieldConditionMap = getFieldConditionMap(conditions);
-    expect(getValueWithSchema(adminData, schema, fieldConditionMap)).toEqual({
-      type: 'admin',
-      permissions: ['read', 'write'],
-    });
-    expect(getValueWithSchema(userData, schema, fieldConditionMap)).toEqual({
+    expect(getValueWithCondition(adminData, schema, fieldConditionMap)).toEqual(
+      {
+        type: 'admin',
+        permissions: ['read', 'write'],
+      },
+    );
+    expect(getValueWithCondition(userData, schema, fieldConditionMap)).toEqual({
       type: 'user',
       role: 'editor',
     });
-    expect(getValueWithSchema(guestData, schema, fieldConditionMap)).toEqual({
-      type: 'guest',
-    });
+    expect(getValueWithCondition(guestData, schema, fieldConditionMap)).toEqual(
+      {
+        type: 'guest',
+      },
+    );
   });
 
   it('should handle null and undefined values', () => {
@@ -144,14 +148,14 @@ describe('getValueWithSchema', () => {
     const conditions = flattenConditions(schema);
     const fieldConditionMap = getFieldConditionMap(conditions);
     // @ts-ignore
-    expect(getValueWithSchema(null, schema, fieldConditionMap)).toBeNull();
+    expect(getValueWithCondition(null, schema, fieldConditionMap)).toBeNull();
     expect(
-      getValueWithSchema(undefined, schema, fieldConditionMap),
+      getValueWithCondition(undefined, schema, fieldConditionMap),
     ).toBeUndefined();
     const dataWithNull = { name: null, age: 30 };
-    expect(getValueWithSchema(dataWithNull, schema, fieldConditionMap)).toEqual(
-      { name: null, age: 30 },
-    );
+    expect(
+      getValueWithCondition(dataWithNull, schema, fieldConditionMap),
+    ).toEqual({ name: null, age: 30 });
   });
 
   it('should handle deeply nested structures', () => {
@@ -202,6 +206,8 @@ describe('getValueWithSchema', () => {
     };
     const conditions = flattenConditions(schema);
     const fieldConditionMap = getFieldConditionMap(conditions);
-    expect(getValueWithSchema(data, schema, fieldConditionMap)).toEqual(data);
+    expect(getValueWithCondition(data, schema, fieldConditionMap)).toEqual(
+      data,
+    );
   });
 });

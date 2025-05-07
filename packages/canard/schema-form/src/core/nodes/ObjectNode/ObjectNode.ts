@@ -18,7 +18,7 @@ import {
   getConditionsMap,
   getFieldConditionMap,
   getOneOfChildrenList,
-  getValueWithSchema,
+  getValueWithCondition,
   getVirtualReferencesMap,
 } from './utils';
 
@@ -56,7 +56,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   }
 
   #parseValue(this: ObjectNode, input: ObjectValue) {
-    return getValueWithSchema(
+    return getValueWithCondition(
       sortObjectKeys(input, this.#propertyKeys, true),
       this.jsonSchema,
       this.#fieldConditionMap,

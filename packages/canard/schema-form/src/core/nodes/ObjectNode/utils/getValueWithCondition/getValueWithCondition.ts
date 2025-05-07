@@ -10,7 +10,7 @@ import { requiredFactory } from './utils/requiredFactory';
  * @param fieldConditionMap 필드별 조건 Map
  * @returns 추출된 값
  */
-export const getValueWithSchema = (
+export const getValueWithCondition = (
   value: ObjectValue | undefined,
   schema: ObjectSchema,
   fieldConditionMap: FieldConditionMap | undefined,
