@@ -188,7 +188,7 @@ describe('SchemaNode computed properties', () => {
             type: 'string',
             format: 'date',
             computed: {
-              visible: '@.title === "wow"',
+              visible: '_.title === "wow"',
             },
           },
         },
@@ -358,7 +358,10 @@ describe('SchemaNode computed properties', () => {
 
       expect(listener).toHaveBeenCalledWith(
         expect.objectContaining({
-          type: NodeEventType.UpdateComputedProperties,
+          type:
+            NodeEventType.Activated | NodeEventType.UpdateComputedProperties,
+          options: {},
+          payload: {},
         }),
       );
     });

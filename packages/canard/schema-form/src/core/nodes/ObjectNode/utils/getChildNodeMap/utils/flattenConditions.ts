@@ -1,23 +1,21 @@
 import { isArray, isEmptyObject } from '@winglet/common-utils';
 
-import type { Dictionary } from '@aileron/declare';
+import type { Dictionary, RequiredBy } from '@aileron/declare';
 
-import type { JsonSchema } from '@/schema-form/types';
-
-import { isValidConst, isValidEnum } from './utils/filter';
+import type { JsonSchema, JsonSchemaWithVirtual } from '@/schema-form/types';
 
 export interface FlattenCondition {
-  condition: Record<string, string | string[]>;
+  condition: Dictionary<string | string[]>;
   required: string[];
   inverse?: boolean;
 }
 
 export const flattenConditions = (
   schema: JsonSchema,
-): FlattenCondition[] | null => {
+): FlattenCondition[] | undefined => {
   const conditions: FlattenCondition[] = [];
   flattenConditionsInto(schema, conditions);
-  return conditions.length > 0 ? conditions : null;
+  return conditions.length > 0 ? conditions : undefined;
 };
 
 const flattenConditionsInto = (
@@ -113,3 +111,12 @@ const extractCondition = (
 
   return isEmptyObject(condition) ? null : condition;
 };
+
+const isValidEnum = (
+  schema: JsonSchemaWithVirtual,
+): schema is RequiredBy<JsonSchemaWithVirtual, 'enum'> => !!schema.enum?.length;
+
+const isValidConst = (
+  schema: JsonSchemaWithVirtual,
+): schema is RequiredBy<JsonSchemaWithVirtual, 'const'> =>
+  schema.const !== undefined;

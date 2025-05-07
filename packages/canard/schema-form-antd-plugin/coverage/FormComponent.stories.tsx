@@ -40,16 +40,20 @@ const bigSchema = {
         },
         profile: {
           type: 'object',
-          oneOf: [
-            {
-              properties: { type: { enum: ['adult', 'child'] } },
-              required: ['age', 'gender', 'preferences'],
-            },
-            {
+          if: {
+            properties: { type: { enum: ['adult', 'child'] } },
+          },
+          then: {
+            required: ['age', 'gender', 'preferences'],
+          },
+          else: {
+            if: {
               properties: { type: { enum: ['none'] } },
+            },
+            then: {
               required: [],
             },
-          ],
+          },
           properties: {
             type: {
               type: 'string',
@@ -65,7 +69,7 @@ const bigSchema = {
               type: 'string',
               enum: ['male', 'female', 'other'],
               computed: {
-                visible: '@.age >= 18',
+                visible: '_.age >= 18',
               },
               placeholder: 'Select gender',
             },

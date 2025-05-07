@@ -98,12 +98,6 @@ describe('NullNode', () => {
         NodeEventType.UpdateComputedProperties,
       payload: {
         [NodeEventType.UpdateValue]: null,
-        [NodeEventType.UpdateComputedProperties]: {
-          disabled: false,
-          readOnly: false,
-          visible: true,
-          watchValues: [],
-        },
       },
       options: {
         [NodeEventType.UpdateValue]: {

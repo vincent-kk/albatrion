@@ -54,6 +54,27 @@ export const CheckNodeState = () => {
           <span>{name}</span>
           <Input />
           <span>{renderCount}</span>
+          <button
+            onClick={() => node.setState({ [NodeState.ShowError]: true })}
+          >
+            showError
+          </button>
+          <button onClick={() => node.setState()}>state clear</button>
+          <button
+            onClick={() => node.setState({ [NodeState.Dirty]: undefined })}
+          >
+            dirty clear
+          </button>
+          <button
+            onClick={() => node.setState({ [NodeState.Touched]: undefined })}
+          >
+            touched clear
+          </button>
+          <button
+            onClick={() => node.setState({ [NodeState.ShowError]: undefined })}
+          >
+            showError clear
+          </button>
         </label>
         <pre>{JSON.stringify({ dirty, touched, showError })}</pre>
         <pre>{JSON.stringify(node.errors)}</pre>

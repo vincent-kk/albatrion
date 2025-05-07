@@ -1,5 +1,5 @@
 import Ajv from 'ajv';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
@@ -46,7 +46,7 @@ describe('AbstractNode', () => {
     });
     expect(node?.find('house.founder.name')).toBe(founderName);
     // find a relative node
-    const founderBirthOfYear1 = founderName?.find('@.yearOfBirth');
+    const founderBirthOfYear1 = founderName?.find('_.yearOfBirth');
     expect(founderBirthOfYear1?.value).toBe(900);
     // find a absolute node
     const founderBirthOfYear2 = founderName?.find(
@@ -145,6 +145,7 @@ describe('AbstractNode', () => {
   });
 
   it('setValue, applyValue', async () => {
+    const onChange = vi.fn();
     const node = nodeFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -161,23 +162,24 @@ describe('AbstractNode', () => {
           required: ['age'],
         },
       },
+      onChange,
     });
     node.setValue({ status: 'active', age: 10 });
     await wait();
-    expect(node.value).toEqual({ status: 'active', age: 10 });
+    expect(onChange).toHaveBeenCalledWith({ status: 'active', age: 10 });
 
     node.setValue((prev) => ({ ...prev, age: 20 }));
     await wait();
-    expect(node.value).toEqual({ status: 'active', age: 20 });
+    expect(onChange).toHaveBeenCalledWith({ status: 'active', age: 20 });
 
     node.setValue({ status: 'inactive', age: 10 });
     await wait();
-    expect(node.value).toEqual({ status: 'inactive' });
+    expect(onChange).toHaveBeenCalledWith({ status: 'inactive' });
 
     // @ts-expect-error applyValue는 모든 노드에서 동일한 타입을 받기 때문에 타입 오류 발생
     node.applyValue({ status: 'inactive', age: 20 });
     await wait();
-    expect(node.value).toEqual({ status: 'inactive' });
+    expect(onChange).toHaveBeenCalledWith({ status: 'inactive' });
   });
 
   it('child node error sending', async () => {
@@ -308,19 +310,11 @@ describe('AbstractNode', () => {
         NodeEventType.UpdateValue |
         NodeEventType.UpdateChildren |
         NodeEventType.UpdateComputedProperties,
-      payload: {
-        [NodeEventType.UpdateValue]: {},
-        [NodeEventType.UpdateComputedProperties]: {
-          disabled: false,
-          readOnly: false,
-          visible: true,
-          watchValues: [],
-        },
-      },
+      payload: {},
       options: {
         [NodeEventType.UpdateValue]: {
-          current: {},
-          previous: {},
+          current: undefined,
+          previous: undefined,
         },
       },
     });

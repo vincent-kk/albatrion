@@ -46,7 +46,7 @@ describe('ArrayNode', () => {
       },
     });
 
-    expect(node?.value?.arr).toMatchObject([]);
+    expect(node?.value?.arr).toBeUndefined();
     (node?.find('arr') as ArrayNode)?.push();
     expect(node?.value?.arr).toMatchObject(['hello']);
     (node?.find('arr') as ArrayNode)?.push('world');
@@ -54,10 +54,10 @@ describe('ArrayNode', () => {
     (node?.find('arr') as ArrayNode)?.remove(0);
     expect(node?.value?.arr).toMatchObject(['world']);
     (node?.find('arr') as ArrayNode)?.clear();
-    expect(node?.value?.arr).toMatchObject([]);
+    expect(node?.value?.arr).toBeUndefined();
   });
 
-  it('cannot exceed maxItems', () => {
+  it('cannot exceed maxIte  ms', () => {
     const MAX_ITEMS = 3;
     const node = nodeFromJsonSchema({
       jsonSchema: {
@@ -74,7 +74,7 @@ describe('ArrayNode', () => {
         },
       },
     });
-    expect(node?.value?.arr).toMatchObject([]);
+    expect(node?.value?.arr).toBeUndefined();
     Array(MAX_ITEMS + 10)
       .fill(true)
       .forEach(() => {
@@ -258,7 +258,7 @@ describe('ArrayNode', () => {
     });
 
     const arrayNode = node?.find('tags') as ArrayNode;
-    expect(arrayNode.value).toEqual([]);
+    expect(arrayNode.value).toBeUndefined();
 
     arrayNode.setValue(['태그1', '태그2', '태그3']);
     await delay();
@@ -447,7 +447,7 @@ describe('ArrayNode', () => {
     // 최대 아이템 수 초과 설정시, 최대 아이템 수만큼만 저장되어야 함
     arrayNode.setValue([1, 2, 3, 4, 5, 6]);
     await delay();
-    expect(arrayNode.value.length).toBe(5);
+    expect(arrayNode.value?.length).toBe(5);
 
     // 유효한 값 설정
     arrayNode.setValue([1, 2, 3]);

@@ -50,7 +50,7 @@ describe('ObjectNode', () => {
     });
 
     const objectNode = node?.find('user') as ObjectNode;
-    expect(objectNode.value).toEqual({});
+    expect(objectNode.value).toEqual(undefined);
 
     objectNode.setValue({ name: 'John', age: 30 });
     await delay();
@@ -116,7 +116,7 @@ describe('ObjectNode', () => {
       options: {
         [NodeEventType.UpdateValue]: {
           current: { name: 'Ron', age: 28 },
-          previous: {},
+          previous: undefined,
         },
       },
     });
@@ -189,12 +189,11 @@ describe('ObjectNode', () => {
     expect(mockListener).toHaveBeenCalledWith({
       type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.UpdateValue]: { name: 'John', age: undefined },
+        [NodeEventType.UpdateValue]: { name: 'John' },
       },
       options: {
         [NodeEventType.UpdateValue]: {
-          current: { name: 'John', age: undefined },
-          previous: {},
+          current: { name: 'John' },
         },
       },
     });
@@ -479,8 +478,99 @@ describe('ObjectNode', () => {
     expect(firstChild.value).toEqual({
       id: '4',
       name: 'User 4',
-      children: [],
     });
     expect(firstChild.jsonSchema).toEqual(jsonSchema.$defs.TreeNode);
+  });
+
+  it('oneOf schema는 properties 속성을 재정의할 수 없음', async () => {
+    const jsonSchema = {
+      type: 'object',
+      oneOf: [
+        {
+          '&if': "@.category==='movie'",
+          properties: {
+            category: {
+              type: 'string',
+              format: 'date',
+              '&visible': '_.title === "wow"',
+            },
+            title: {
+              type: 'number',
+              minimum: 50,
+            },
+          },
+        },
+        {
+          '&if': "@.category==='game'",
+          properties: {
+            date2: {
+              type: 'string',
+              format: 'date',
+              '&visible': '_.title === "wow"',
+            },
+            price2: { type: 'number' },
+          },
+        },
+      ],
+      properties: {
+        category: {
+          type: 'string',
+          enum: ['game', 'movie'],
+          default: 'game',
+        },
+        title: { type: 'string' },
+      },
+    } satisfies JsonSchema;
+
+    expect(() =>
+      nodeFromJsonSchema({
+        jsonSchema,
+      }),
+    ).toThrowError(
+      "Property 'category' defined in 'oneOf' schema cannot redefine a property already defined in the parent schema.",
+    );
+  });
+
+  it('oneOf schema는 properties 속성을 재정의할 수 없음', async () => {
+    const jsonSchema = {
+      type: 'object',
+      oneOf: [
+        {
+          '&if': "@.category==='movie'",
+          type: 'object', // 부모와 같은 타입은 허용됨
+          properties: {
+            date1: {
+              type: 'string',
+              format: 'date',
+              '&visible': '_.title === "wow"',
+            },
+            price1: {
+              type: 'number',
+              minimum: 50,
+            },
+          },
+        },
+        {
+          '&if': "@.category==='game'",
+          type: 'string', // 부모와 다른 타입은 허용되지 않음
+        },
+      ],
+      properties: {
+        category: {
+          type: 'string',
+          enum: ['game', 'movie'],
+          default: 'game',
+        },
+        title: { type: 'string' },
+      },
+    } satisfies JsonSchema;
+
+    expect(() =>
+      nodeFromJsonSchema({
+        jsonSchema,
+      }),
+    ).toThrowError(
+      "Type cannot be redefined in 'oneOf' schema. It must either be omitted or match the parent schema type.",
+    );
   });
 });

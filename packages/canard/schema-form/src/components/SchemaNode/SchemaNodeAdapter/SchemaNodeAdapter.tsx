@@ -37,9 +37,9 @@ export const SchemaNodeAdapter = memo(
     const childNodes = useMemo(() => {
       if (isTerminalNode(node)) return [];
       const childNodes = [] as ChildComponent[];
-      for (const { node, isVirtualized } of children) {
+      for (const { node, isVirtualized, index } of children) {
         if (!node?.key || isVirtualized === true) continue;
-        const key = node.key;
+        const key = index ? `${node.key}:${index}` : node.key;
         const CachedComponent = childComponentBySchemaNodeKey.current.get(key);
         if (CachedComponent) childNodes.push(CachedComponent);
         else {

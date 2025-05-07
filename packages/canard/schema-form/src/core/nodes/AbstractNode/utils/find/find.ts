@@ -14,15 +14,18 @@ export const find = (
 ): SchemaNode | null => {
   if (!target) return null;
   if (!segments.length) return target;
-  let cursor = target;
+  const current = target;
+  let cursor = current;
   for (let i = 0; i < segments.length; i++) {
     const segment = segments[i];
     if (segment === JSONPath.Root) {
       cursor = cursor.rootNode;
       if (!cursor) return null;
-    } else if (segment === JSONPath.Current) {
+    } else if (segment === JSONPath.Parent) {
       cursor = cursor.parentNode!;
       if (!cursor) return null;
+    } else if (segment === JSONPath.Current) {
+      cursor = current;
     } else {
       const children = cursor.children;
       if (!children?.length) return null;

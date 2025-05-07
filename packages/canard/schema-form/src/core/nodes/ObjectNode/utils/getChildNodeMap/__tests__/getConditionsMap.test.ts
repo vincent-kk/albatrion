@@ -2,11 +2,12 @@ import { describe, expect, it } from 'vitest';
 
 import type { ObjectSchema } from '@/schema-form/types';
 
-import { flattenConditions } from '../flattenConditions';
-import { getConditionsMap } from '../getConditionsMap';
+import { flattenConditions } from '../utils/flattenConditions';
+import { getConditionsMap } from '../utils/getConditionsMap';
+import { getFieldConditionMap } from '../utils/getFieldConditionMap';
 
 describe('getConditionsMap', () => {
-  it('should return null if schema has no if or then condition', () => {
+  it('should return undefined if schema has no if or then condition', () => {
     const schema: ObjectSchema = {
       type: 'object',
       properties: {
@@ -15,11 +16,10 @@ describe('getConditionsMap', () => {
     };
 
     const flattedConditions = flattenConditions(schema);
-
-    const result = flattedConditions
-      ? getConditionsMap(flattedConditions)
-      : null;
-    expect(result).toBeNull();
+    const fieldConditionMap =
+      getFieldConditionMap(flattedConditions) || new Map();
+    const result = getConditionsMap(fieldConditionMap);
+    expect(result?.size).toBe(0);
   });
 
   it('should correctly parse simple if-then condition with string value', () => {
@@ -41,14 +41,13 @@ describe('getConditionsMap', () => {
     };
 
     const flattedConditions = flattenConditions(schema);
-
-    const result = flattedConditions
-      ? getConditionsMap(flattedConditions)
-      : null;
+    const fieldConditionMap =
+      getFieldConditionMap(flattedConditions) || new Map();
+    const result = getConditionsMap(fieldConditionMap);
 
     expect(result).toBeInstanceOf(Map);
     expect(result?.size).toBe(1);
-    expect(result?.get('taxId')).toEqual(['@.type==="company"']);
+    expect(result?.get('taxId')).toEqual(['_.type==="company"']);
   });
 
   it('should correctly parse if-then-else conditions with array values', () => {
@@ -80,17 +79,16 @@ describe('getConditionsMap', () => {
     };
 
     const flattedConditions = flattenConditions(schema);
-
-    const result = flattedConditions
-      ? getConditionsMap(flattedConditions)
-      : null;
+    const fieldConditionMap =
+      getFieldConditionMap(flattedConditions) || new Map();
+    const result = getConditionsMap(fieldConditionMap);
 
     expect(result).toBeInstanceOf(Map);
     expect(result?.size).toBe(2);
     expect(result?.get('state')).toEqual([
-      '["USA","Mexico"].includes(@.country)',
+      '["USA","Mexico"].includes(_.country)',
     ]);
-    expect(result?.get('province')).toEqual(['@.country==="Canada"']);
+    expect(result?.get('province')).toEqual(['_.country==="Canada"']);
   });
 
   it('should handle inverse conditions correctly', () => {
@@ -115,15 +113,14 @@ describe('getConditionsMap', () => {
     };
 
     const flattedConditions = flattenConditions(schema) || [];
-
-    const result = flattedConditions
-      ? getConditionsMap(flattedConditions)
-      : null;
+    const fieldConditionMap =
+      getFieldConditionMap(flattedConditions) || new Map();
+    const result = getConditionsMap(fieldConditionMap);
 
     expect(result).toBeInstanceOf(Map);
     expect(result?.size).toBe(2);
-    expect(result?.get('companyName')).toEqual(['@.isEmployed==="yes"']);
-    expect(result?.get('reasonUnemployed')).toEqual(['@.isEmployed!=="yes"']);
+    expect(result?.get('companyName')).toEqual(['_.isEmployed==="yes"']);
+    expect(result?.get('reasonUnemployed')).toEqual(['_.isEmployed!=="yes"']);
   });
 
   it('should combine multiple conditions for the same field', () => {
@@ -133,6 +130,7 @@ describe('getConditionsMap', () => {
         userType: { type: 'string', enum: ['admin', 'user', 'guest'] },
         status: { type: 'string', enum: ['active', 'inactive'] },
         adminPanel: { type: 'boolean' },
+        none: { type: 'null' },
       },
       if: {
         properties: {
@@ -152,20 +150,27 @@ describe('getConditionsMap', () => {
         then: {
           required: ['adminPanel'],
         },
+        else: {
+          required: ['none'],
+        },
       },
     };
 
     const flattedConditions = flattenConditions(schema) || [];
-
-    const result = flattedConditions
-      ? getConditionsMap(flattedConditions)
-      : null;
+    const fieldConditionMap =
+      getFieldConditionMap(flattedConditions) || new Map();
+    const result = getConditionsMap(fieldConditionMap);
 
     expect(result).toBeInstanceOf(Map);
-    expect(result?.size).toBe(1);
+    expect(result?.size).toBe(2);
     const adminPanelConditions = result?.get('adminPanel');
-    expect(adminPanelConditions).toContain('@.userType==="admin"');
-    expect(adminPanelConditions).toContain('@.userType==="user"');
-    expect(adminPanelConditions).toContain('@.status==="active"');
+    expect(adminPanelConditions).toContain('_.userType==="admin"');
+    expect(adminPanelConditions).toContain('_.userType==="user"');
+    expect(adminPanelConditions).toContain('_.status==="active"');
+    const noneConditions = result?.get('none');
+    expect(noneConditions).toEqual([
+      '!["admin","user"].includes(_.userType)',
+      '_.status!=="active"',
+    ]);
   });
 });

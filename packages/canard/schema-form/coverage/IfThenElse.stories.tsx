@@ -27,14 +27,14 @@ export const IfThenElse = () => {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '@.title === "wow"',
+          visible: '_.title === "wow"',
         },
       },
       releaseDate: {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '@.title === "wow"',
+          visible: '_.title === "wow"',
         },
       },
       numOfPlayers: { type: 'number' },
@@ -100,12 +100,12 @@ export const OneOfConst = () => {
       openingDate: {
         type: 'string',
         format: 'date',
-        '&visible': '@.title === "wow"',
+        '&visible': '_.title === "wow"',
       },
       releaseDate: {
         type: 'string',
         format: 'date',
-        '&visible': '@.title === "wow"',
+        '&visible': '_.title === "wow"',
       },
       numOfPlayers: { type: 'number' },
       price: {
@@ -243,7 +243,7 @@ export const ComplexOneOf = () => {
                 type: 'string',
                 enum: ['male', 'female', 'other'],
                 computed: {
-                  visible: '@.age >= 18',
+                  visible: '_.age >= 18',
                 },
               },
               preferences: {

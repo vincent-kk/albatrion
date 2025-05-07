@@ -2,6 +2,8 @@ import {
   BITMASK_NONE,
   JSONPath,
   equals,
+  isEmptyObject,
+  isObject,
   isTruthy,
 } from '@winglet/common-utils';
 
@@ -279,13 +281,10 @@ export abstract class AbstractNode<
    * Node의 값이 변경될 때 호출되는 함수
    * @param input 변경된 값이나 값을 반환하는 함수
    */
-  onChange(
-    this: AbstractNode,
-    input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
-  ): void {
+  protected onChange(this: AbstractNode, input: Value | undefined): void {
     if (typeof this.#handleChange !== 'function') return;
-    const inputValue = typeof input === 'function' ? input(this.value) : input;
-    this.#handleChange(inputValue);
+    if (this.isRoot) setTimeout(() => this.#handleChange?.(this.value));
+    else this.#handleChange(input);
   }
 
   /** Node의 하위 Node 목록, 하위 Node를 가지지 않는 Node는 빈 배열 반환 */
@@ -429,9 +428,27 @@ export abstract class AbstractNode<
     return this.#disabled;
   }
 
+  #oneOfIndex: number | undefined;
+  protected get oneOfIndex() {
+    return this.#oneOfIndex;
+  }
+
   #watchValues: ReadonlyArray<any> = [];
   get watchValues() {
     return this.#watchValues;
+  }
+
+  #updateComputedProperties(this: AbstractNode) {
+    this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
+    this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
+    this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
+    this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
+    this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies);
+    if (!this.#visible) this.#resetNodeState();
+  }
+  #resetNodeState(this: AbstractNode) {
+    this.value = undefined;
+    this.setState(undefined);
   }
 
   #prepareUpdateDependencies(this: AbstractNode) {
@@ -449,38 +466,19 @@ export abstract class AbstractNode<
               this.#dependencies[index] !== payload?.[NodeEventType.UpdateValue]
             ) {
               this.#dependencies[index] = payload?.[NodeEventType.UpdateValue];
+              this.#updateComputedProperties();
               this.publish({
-                type: NodeEventType.UpdateDependencies,
+                type: NodeEventType.UpdateComputedProperties,
               });
             }
           }
         });
         this.saveUnsubscribe(unsubscribe);
       }
-      this.subscribe(({ type }) => {
-        if (type & NodeEventType.UpdateDependencies)
-          this.#updateComputedProperties();
-      });
     }
     this.#updateComputedProperties();
-  }
-
-  #updateComputedProperties(this: AbstractNode) {
-    this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
-    this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
-    this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
-    this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
-
     this.publish({
       type: NodeEventType.UpdateComputedProperties,
-      payload: {
-        [NodeEventType.UpdateComputedProperties]: {
-          visible: this.#visible,
-          readOnly: this.#readOnly,
-          disabled: this.#disabled,
-          watchValues: this.#watchValues,
-        },
-      },
     });
   }
 
@@ -496,36 +494,35 @@ export abstract class AbstractNode<
    */
   setState(
     this: AbstractNode,
-    input: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags,
+    input?: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags,
   ) {
-    const inputState = typeof input === 'function' ? input(this.#state) : input;
-    if (!inputState || typeof inputState !== 'object') return;
-
-    let hasChanges = false;
-    const state: NodeStateFlags = {};
-
-    // NOTE: nextState의 모든 키를 기준으로 순회
-    for (const [key, value] of Object.entries(inputState)) {
-      if (value !== undefined) {
-        state[key] = value;
-        if (this.#state[key] !== value) hasChanges = true;
-      } else if (key in this.#state) hasChanges = true;
+    // 함수로 받은 경우 이전 상태를 기반으로 새 상태 계산
+    const newInput = typeof input === 'function' ? input(this.#state) : input;
+    let updated = false;
+    if (newInput === undefined) {
+      if (isEmptyObject(this.#state)) return;
+      this.#state = Object.create(null);
+      updated = true;
+    } else if (isObject(newInput)) {
+      for (const [key, value] of Object.entries(newInput)) {
+        if (value === undefined) {
+          if (key in this.#state) {
+            delete this.#state[key];
+            updated = true;
+          }
+        } else if (this.#state[key] !== value) {
+          this.#state[key] = value;
+          updated = true;
+        }
+      }
     }
-
-    // NOTE: 기존 state에서 nextState에 없는 키들을 유지
-    for (const [key, value] of Object.entries(this.#state)) {
-      if (!(key in inputState)) state[key] = value;
-    }
-
-    if (hasChanges) {
-      this.#state = state;
-      this.publish({
-        type: NodeEventType.UpdateState,
-        payload: {
-          [NodeEventType.UpdateState]: this.#state,
-        },
-      });
-    }
+    if (!updated) return;
+    this.publish({
+      type: NodeEventType.UpdateState,
+      payload: {
+        [NodeEventType.UpdateState]: this.#state,
+      },
+    });
   }
 
   /**

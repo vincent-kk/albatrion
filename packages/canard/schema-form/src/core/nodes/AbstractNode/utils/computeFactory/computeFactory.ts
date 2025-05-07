@@ -2,7 +2,11 @@ import { falseFunction, trueFunction } from '@winglet/common-utils';
 
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
-import { checkComputedOptionFactory, getWatchValuesFactory } from './utils';
+import {
+  checkComputedOptionFactory,
+  getOneOfIndexFactory,
+  getWatchValuesFactory,
+} from './utils';
 
 export const computeFactory = (
   jsonSchema: JsonSchemaWithVirtual,
@@ -37,6 +41,8 @@ export const computeFactory = (
     ? trueFunction
     : checkComputedOptionFactory(dependencyPaths, computedDisabled);
 
+  const oneOfIndex = getOneOfIndexFactory(dependencyPaths, jsonSchema);
+
   const watchValues = getWatchValuesFactory(
     dependencyPaths,
     jsonSchema?.computed?.watch ?? jsonSchema?.['&watch'],
@@ -47,6 +53,7 @@ export const computeFactory = (
     visible,
     readOnly,
     disabled,
+    oneOfIndex,
     watchValues,
   };
 };

@@ -4,6 +4,7 @@ import type { SchemaNode } from '../type';
 
 export interface ChildNode {
   isVirtualized?: boolean;
+  index?: number;
   node: SchemaNode;
 }
 

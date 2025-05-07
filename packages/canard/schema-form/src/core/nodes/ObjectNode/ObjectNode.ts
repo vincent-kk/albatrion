@@ -1,4 +1,8 @@
-import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils';
+import {
+  getObjectKeys,
+  isEmptyObject,
+  sortObjectKeys,
+} from '@winglet/common-utils';
 
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
@@ -11,19 +15,23 @@ import {
 } from '../type';
 import type { ChildNode } from './type';
 import {
-  FlattenCondition,
-  flattenConditions,
   getChildNodeMap,
   getChildren,
-  getConditionsMap,
-  getObjectValueWithSchema,
+  getOneOfChildrenList,
+  getOneOfProperties,
   getVirtualReferencesMap,
+  removeOneOfProperties,
 } from './utils';
 
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
-  readonly #propertyKeys: string[];
-  readonly #flattedConditions: FlattenCondition[] | null;
+  readonly #schemaKeys: string[];
+  readonly #oneOfKeySet: Set<string> | undefined;
+
   #locked: boolean = true;
+
+  #propertyChildren: ChildNode[];
+
+  #oneOfChildrenList: Array<ChildNode[]> | undefined;
 
   #children: ChildNode[];
   get children() {
@@ -49,11 +57,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   }
 
   #parseValue(this: ObjectNode, input: ObjectValue) {
-    return getObjectValueWithSchema(
-      sortObjectKeys(input, this.#propertyKeys, true),
-      this.jsonSchema,
-      this.#flattedConditions,
-    );
+    const value = sortObjectKeys(input, this.#schemaKeys, true);
+    return isEmptyObject(value) ? undefined : value;
   }
   #propagate(this: ObjectNode, replace: boolean, option: SetValueOption) {
     this.#locked = true;
@@ -68,7 +73,6 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     }
     this.#locked = false;
   }
-
   #emitChange(this: ObjectNode, option: SetValueOption) {
     if (this.#locked) return;
 
@@ -108,8 +112,12 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
   prepare(this: ObjectNode, actor?: SchemaNode): boolean {
     if (super.prepare(actor)) {
-      for (let i = 0; i < this.#children.length; i++)
-        (this.#children[i].node as AbstractNode).prepare(this);
+      for (let i = 0; i < this.#propertyChildren.length; i++)
+        (this.#propertyChildren[i].node as AbstractNode).prepare(this);
+      if (this.#oneOfChildrenList)
+        for (let i = 0; i < this.#oneOfChildrenList.length; i++)
+          for (let j = 0; j < this.#oneOfChildrenList[i].length; j++)
+            (this.#oneOfChildrenList[i][j].node as AbstractNode).prepare(this);
       return true;
     }
     return false;
@@ -141,15 +149,15 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.#draft = {};
 
     const properties = jsonSchema.properties;
-    this.#propertyKeys = getObjectKeys(properties);
+    const propertyKeys = getObjectKeys(properties);
 
-    this.#flattedConditions = flattenConditions(jsonSchema);
-
-    const conditionsMap: Map<string, string[]> | null =
-      this.#flattedConditions && getConditionsMap(this.#flattedConditions);
+    this.#oneOfKeySet = getOneOfProperties(jsonSchema);
+    this.#schemaKeys = this.#oneOfKeySet
+      ? [...propertyKeys, ...Array.from(this.#oneOfKeySet)]
+      : propertyKeys;
 
     const { virtualReferencesMap, virtualReferenceFieldsMap } =
-      getVirtualReferencesMap(name, this.#propertyKeys, jsonSchema.virtual);
+      getVirtualReferencesMap(name, propertyKeys, jsonSchema.virtual);
 
     const handelChangeFactory = (name: string) => (input: any) => {
       if (!this.#draft) this.#draft = {};
@@ -163,32 +171,73 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     const childNodeMap = getChildNodeMap(
       this,
       jsonSchema,
-      this.#propertyKeys,
+      propertyKeys,
       this.defaultValue,
       virtualReferenceFieldsMap,
-      conditionsMap,
       handelChangeFactory,
       nodeFactory,
     );
 
-    this.#children = getChildren(
+    this.#propertyChildren = getChildren(
       this,
-      this.#propertyKeys,
+      propertyKeys,
       childNodeMap,
       virtualReferenceFieldsMap,
       virtualReferencesMap,
       nodeFactory,
     );
 
+    this.#oneOfChildrenList = getOneOfChildrenList(
+      this,
+      jsonSchema,
+      this.defaultValue,
+      childNodeMap,
+      handelChangeFactory,
+      nodeFactory,
+    );
+
+    this.#children = this.#propertyChildren;
+
     this.#locked = false;
+
+    this.#publishChildrenChange();
 
     this.#emitChange(SetValueOption.Normal);
     this.setDefaultValue(this.#value);
 
+    this.#prepareOneOfChildren();
+    this.prepare();
+  }
+
+  #previousIndex: number | undefined;
+  #prepareOneOfChildren(this: ObjectNode) {
+    if (!this.#oneOfChildrenList) return;
+    this.subscribe(({ type }) => {
+      if (type & NodeEventType.UpdateComputedProperties) {
+        const index = this.oneOfIndex;
+        if (index === undefined || index === this.#previousIndex) return;
+        const oneOfChildren =
+          index > -1 ? this.#oneOfChildrenList?.[index] : undefined;
+
+        this.#children = oneOfChildren
+          ? [...this.#propertyChildren, ...oneOfChildren]
+          : this.#propertyChildren;
+        for (const child of this.#children) child.node.setState();
+        this.setValue(
+          removeOneOfProperties(this.#value, this.#oneOfKeySet),
+          SetValueOption.Propagate | SetValueOption.Replace,
+        );
+
+        this.#previousIndex = this.oneOfIndex;
+        this.#publishChildrenChange();
+      }
+    });
+  }
+
+  #publishChildrenChange(this: ObjectNode) {
+    if (this.#locked) return;
     this.publish({
       type: NodeEventType.UpdateChildren,
     });
-
-    this.prepare();
   }
 }

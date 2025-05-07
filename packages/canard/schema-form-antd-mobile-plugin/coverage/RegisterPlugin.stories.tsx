@@ -209,16 +209,24 @@ export const ReadOnly = () => {
 export const OneOf = () => {
   const schema = {
     type: 'object',
-    oneOf: [
-      {
+    if: {
+      properties: {
+        category: {
+          enum: ['game'],
+        },
+      },
+    },
+    then: {
+      required: ['title', 'releaseDate', 'numOfPlayers'],
+    },
+    else: {
+      if: {
         properties: { category: { enum: ['movie'] } },
+      },
+      then: {
         required: ['title', 'openingDate'],
       },
-      {
-        properties: { category: { enum: ['game'] } },
-        required: ['title', 'releaseDate', 'numOfPlayers'],
-      },
-    ],
+    },
     properties: {
       category: {
         type: 'string',
@@ -230,14 +238,14 @@ export const OneOf = () => {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '@.title === "wow"',
+          visible: '_.title === "wow"',
         },
       },
       releaseDate: {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '@.title === "wow"',
+          visible: '_.title === "wow"',
         },
       },
       numOfPlayers: { type: 'number' },
@@ -273,16 +281,20 @@ export const ComplexOneOf = () => {
           },
           profile: {
             type: 'object',
-            oneOf: [
-              {
-                properties: { type: { enum: ['adult', 'child'] } },
-                required: ['age', 'gender', 'preferences'],
-              },
-              {
+            if: {
+              properties: { type: { enum: ['adult', 'child'] } },
+            },
+            then: {
+              required: ['age', 'gender', 'preferences'],
+            },
+            else: {
+              if: {
                 properties: { type: { enum: ['none'] } },
+              },
+              then: {
                 required: [],
               },
-            ],
+            },
             properties: {
               type: {
                 type: 'string',
@@ -298,7 +310,7 @@ export const ComplexOneOf = () => {
                 type: 'string',
                 enum: ['male', 'female', 'other'],
                 computed: {
-                  visible: '@.age >= 18',
+                  visible: '_.age >= 18',
                 },
               },
               preferences: {

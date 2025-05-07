@@ -11,11 +11,7 @@ export const getVirtualReferencesMap = (
   propertyKeys: string[],
   virtualReferences: Dictionary<VirtualReference> | undefined,
 ) => {
-  if (!virtualReferences)
-    return {
-      virtualReferencesMap: null,
-      virtualReferenceFieldsMap: null,
-    };
+  if (!virtualReferences) return {};
 
   const virtualReferenceFieldsMap = new Map<
     string,
