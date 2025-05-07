@@ -1,4 +1,4 @@
-import { isString, serializeNative } from '@winglet/common-utils';
+import { JSONPath, isString, serializeNative } from '@winglet/common-utils';
 
 import type { Dictionary } from '@aileron/declare';
 
@@ -27,11 +27,11 @@ const getOperations = (
   for (const [key, value] of Object.entries(condition)) {
     if (isString(value))
       operations.push(
-        `@.${key}${inverse ? '!==' : '==='}${serializeNative(value)}`,
+        `${JSONPath.Parent}${JSONPath.Child}${key}${inverse ? '!==' : '==='}${serializeNative(value)}`,
       );
     else
       operations.push(
-        `${inverse ? '!' : ''}${serializeNative(value)}.includes(@.${key})`,
+        `${inverse ? '!' : ''}${serializeNative(value)}.includes(${JSONPath.Parent}${JSONPath.Child}${key})`,
       );
   }
 };
