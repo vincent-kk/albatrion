@@ -281,7 +281,8 @@ export abstract class AbstractNode<
    */
   protected onChange(this: AbstractNode, input: Value | undefined): void {
     if (typeof this.#handleChange !== 'function') return;
-    this.#handleChange(input);
+    if (this.isRoot) setTimeout(() => this.#handleChange?.(this.value));
+    else this.#handleChange(input);
   }
 
   /** Node의 하위 Node 목록, 하위 Node를 가지지 않는 Node는 빈 배열 반환 */
