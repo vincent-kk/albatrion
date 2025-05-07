@@ -279,13 +279,9 @@ export abstract class AbstractNode<
    * Node의 값이 변경될 때 호출되는 함수
    * @param input 변경된 값이나 값을 반환하는 함수
    */
-  onChange(
-    this: AbstractNode,
-    input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
-  ): void {
+  protected onChange(this: AbstractNode, input: Value | undefined): void {
     if (typeof this.#handleChange !== 'function') return;
-    const inputValue = typeof input === 'function' ? input(this.value) : input;
-    this.#handleChange(inputValue);
+    this.#handleChange(input);
   }
 
   /** Node의 하위 Node 목록, 하위 Node를 가지지 않는 Node는 빈 배열 반환 */
@@ -445,6 +441,7 @@ export abstract class AbstractNode<
     this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies);
+    if (!this.#visible) this.value = undefined;
   }
 
   #prepareUpdateDependencies(this: AbstractNode) {

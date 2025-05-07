@@ -20,9 +20,7 @@ describe('removeOneOfProperties', () => {
     const value = { a: 'A', b: 1, c: 'C', d: 2, e: true, x: 99 };
     const oneOfKeySet = getOneOfProperties(schema);
 
-    const result = oneOfKeySet
-      ? removeOneOfProperties(value, oneOfKeySet)
-      : value;
+    const result = removeOneOfProperties(value, oneOfKeySet);
     expect(result).toEqual({
       a: 'A',
       b: 1,
@@ -39,9 +37,7 @@ describe('removeOneOfProperties', () => {
     const value = { a: 'A', c: 'C', d: 2, y: 100 };
     const oneOfKeySet = getOneOfProperties(schema);
 
-    const result = oneOfKeySet
-      ? removeOneOfProperties(value, oneOfKeySet)
-      : value;
+    const result = removeOneOfProperties(value, oneOfKeySet);
     expect(result).toEqual({
       a: 'A',
       c: 'C',
@@ -58,9 +54,7 @@ describe('removeOneOfProperties', () => {
     const value = { a: 'A', b: 'B', z: 'Z' };
     const oneOfKeySet = getOneOfProperties(schema);
 
-    const result = oneOfKeySet
-      ? removeOneOfProperties(value, oneOfKeySet)
-      : value;
+    const result = removeOneOfProperties(value, oneOfKeySet);
     expect(result).toEqual({
       a: 'A',
       z: 'Z',
@@ -72,9 +66,7 @@ describe('removeOneOfProperties', () => {
     const value = { a: 1, b: 2 };
     const oneOfKeySet = getOneOfProperties(schema);
 
-    const result = oneOfKeySet
-      ? removeOneOfProperties(value, oneOfKeySet)
-      : value;
+    const result = removeOneOfProperties(value, oneOfKeySet);
     expect(result).toEqual({ a: 1, b: 2 });
   });
 
@@ -86,9 +78,7 @@ describe('removeOneOfProperties', () => {
     };
     const oneOfKeySet = getOneOfProperties(schema);
 
-    const result = oneOfKeySet
-      ? removeOneOfProperties(undefined, oneOfKeySet)
-      : undefined;
+    const result = removeOneOfProperties(undefined, oneOfKeySet);
     expect(result).toBeUndefined();
   });
 
@@ -100,9 +90,7 @@ describe('removeOneOfProperties', () => {
     };
     const oneOfKeySet = getOneOfProperties(schema);
 
-    const result = oneOfKeySet
-      ? removeOneOfProperties(null as any, oneOfKeySet)
-      : null;
+    const result = removeOneOfProperties(null as any, oneOfKeySet);
     expect(result).toBeNull();
   });
 
@@ -115,9 +103,7 @@ describe('removeOneOfProperties', () => {
     const value = { a: 'A', b: 'B', c: 'C' };
     const oneOfKeySet = getOneOfProperties(schema);
 
-    const result = oneOfKeySet
-      ? removeOneOfProperties(value, oneOfKeySet)
-      : value;
+    const result = removeOneOfProperties(value, oneOfKeySet);
     expect(result).toEqual({
       a: 'A',
       c: 'C',
@@ -134,9 +120,7 @@ describe('removeOneOfProperties', () => {
     // only top-level b is removed
     const oneOfKeySet = getOneOfProperties(schema);
 
-    const result = oneOfKeySet
-      ? removeOneOfProperties(value, oneOfKeySet)
-      : value;
+    const result = removeOneOfProperties(value, oneOfKeySet);
     expect(result).toEqual({
       a: 'A',
       nested: { b: 'B2', a: 'A2' },
@@ -156,9 +140,7 @@ describe('removeOneOfProperties', () => {
     // b는 properties에도 있으므로 유지, c/d는 제거, e는 유지
     const oneOfKeySet = getOneOfProperties(schema);
 
-    const result = oneOfKeySet
-      ? removeOneOfProperties(value, oneOfKeySet)
-      : value;
+    const result = removeOneOfProperties(value, oneOfKeySet);
     expect(result).toEqual({
       a: 'A',
       b: 'B',
@@ -175,9 +157,7 @@ describe('removeOneOfProperties', () => {
     const value = { a: 'A', b: 'B' };
     const oneOfKeySet = getOneOfProperties(schema);
 
-    const result = oneOfKeySet
-      ? removeOneOfProperties(value, oneOfKeySet)
-      : value;
+    const result = removeOneOfProperties(value, oneOfKeySet);
     expect(result).toEqual({
       a: 'A',
       b: 'B',
@@ -194,9 +174,7 @@ describe('removeOneOfProperties', () => {
     const value: any = { a: 'A', b: 'B', c: 'C' };
     const oneOfKeySet = getOneOfProperties(schema);
 
-    const result = oneOfKeySet
-      ? removeOneOfProperties(value, oneOfKeySet)
-      : value;
+    const result = removeOneOfProperties(value, oneOfKeySet);
     expect(result).not.toBeUndefined();
     expect((result as any).a).toBe('A');
     expect((result as any).b).toBeUndefined();

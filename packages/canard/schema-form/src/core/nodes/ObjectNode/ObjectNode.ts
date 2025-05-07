@@ -19,8 +19,8 @@ import {
   getFieldConditionMap,
   getOneOfChildrenList,
   getOneOfProperties,
-  getValueWithCondition,
   getVirtualReferencesMap,
+  removeOneOfProperties,
 } from './utils';
 
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
@@ -59,11 +59,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   }
 
   #parseValue(this: ObjectNode, input: ObjectValue) {
-    return getValueWithCondition(
-      sortObjectKeys(input, this.#propertyKeys, true),
-      this.jsonSchema,
-      this.#fieldConditionMap,
-    );
+    return sortObjectKeys(input, this.#propertyKeys, true);
   }
   #propagate(this: ObjectNode, replace: boolean, option: SetValueOption) {
     this.#locked = true;
@@ -229,10 +225,16 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         if (index === undefined || index === this.#previousIndex) return;
         const oneOfChildren =
           index > -1 ? this.#oneOfChildrenList?.[index] : undefined;
+
         this.#children = oneOfChildren
           ? [...this.#propertyChildren, ...oneOfChildren]
           : this.#propertyChildren;
-        this.#previousIndex = index;
+        this.setValue(
+          removeOneOfProperties(this.#value, this.#oneOfKeySet),
+          SetValueOption.Propagate | SetValueOption.Replace,
+        );
+
+        this.#previousIndex = this.oneOfIndex;
         this.#publishChildrenChange();
       }
     });

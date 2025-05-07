@@ -83,7 +83,6 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
           },
         },
       });
-
       if (option & SetValueOption.Propagate) this.#publishChildrenChange();
       if (option & SetValueOption.Refresh) this.refresh(value);
 
@@ -184,11 +183,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     const name = this.#ids.length.toString();
     this.#ids.push(id);
     const handleChange = (<T extends AllowedValue>(input: T) => {
-      const value =
-        typeof input === 'function'
-          ? input(this.#sourceMap.get(id)!.data)
-          : input;
-      this.#updateData(id, value);
+      this.#updateData(id, input);
       if (this.#ready) this.onChange(this.toArray());
     }) satisfies SetStateFn<AllowedValue>;
     const defaultValue = data ?? getFallbackValue(this.jsonSchema.items);
