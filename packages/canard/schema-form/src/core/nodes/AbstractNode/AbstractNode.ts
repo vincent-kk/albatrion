@@ -2,6 +2,8 @@ import {
   BITMASK_NONE,
   JSONPath,
   equals,
+  isEmptyObject,
+  isObject,
   isTruthy,
 } from '@winglet/common-utils';
 
@@ -492,29 +494,29 @@ export abstract class AbstractNode<
    */
   setState(
     this: AbstractNode,
-    input: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags,
+    input?: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags,
   ) {
-    const inputState = typeof input === 'function' ? input(this.#state) : input;
-    if (!inputState || typeof inputState !== 'object') return;
-
-    let hasChanges = false;
-    const state: NodeStateFlags = {};
-
-    // NOTE: nextState의 모든 키를 기준으로 순회
-    for (const [key, value] of Object.entries(inputState)) {
-      if (value !== undefined) {
-        state[key] = value;
-        if (this.#state[key] !== value) hasChanges = true;
-      } else if (key in this.#state) hasChanges = true;
+    // 함수로 받은 경우 이전 상태를 기반으로 새 상태 계산
+    const newInput = typeof input === 'function' ? input(this.#state) : input;
+    let dirty = false;
+    if (newInput === undefined) {
+      if (isEmptyObject(this.#state)) return;
+      this.#state = Object.create(null);
+      dirty = true;
+    } else if (isObject(newInput)) {
+      for (const [key, value] of Object.entries(newInput)) {
+        if (value === undefined) {
+          if (key in this.#state) {
+            delete this.#state[key];
+            dirty = true;
+          }
+        } else if (this.#state[key] !== value) {
+          this.#state[key] = value;
+          dirty = true;
+        }
+      }
     }
-
-    // NOTE: 기존 state에서 nextState에 없는 키들을 유지
-    for (const [key, value] of Object.entries(this.#state)) {
-      if (!(key in inputState)) state[key] = value;
-    }
-
-    if (hasChanges) {
-      this.#state = state;
+    if (dirty) {
       this.publish({
         type: NodeEventType.UpdateState,
         payload: {
