@@ -18,6 +18,7 @@ import {
   getConditionsMap,
   getFieldConditionMap,
   getOneOfChildrenList,
+  getOneOfProperties,
   getValueWithCondition,
   getVirtualReferencesMap,
 } from './utils';
@@ -26,6 +27,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   readonly #propertyKeys: string[];
 
   readonly #fieldConditionMap: FieldConditionMap | undefined;
+  readonly #oneOfKeySet: Set<string> | undefined;
+
   #locked: boolean = true;
 
   #propertyChildren: ChildNode[];
@@ -154,6 +157,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     const properties = jsonSchema.properties;
     this.#propertyKeys = getObjectKeys(properties);
 
+    this.#oneOfKeySet = getOneOfProperties(jsonSchema);
     this.#fieldConditionMap = getFieldConditionMap(
       flattenConditions(jsonSchema),
     );
