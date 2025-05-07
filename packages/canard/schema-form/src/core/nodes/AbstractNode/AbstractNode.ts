@@ -439,6 +439,14 @@ export abstract class AbstractNode<
     return this.#watchValues;
   }
 
+  #updateComputedProperties(this: AbstractNode) {
+    this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
+    this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
+    this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
+    this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
+    this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies);
+  }
+
   #prepareUpdateDependencies(this: AbstractNode) {
     const dependencyPaths = this.#compute.dependencyPaths;
     if (dependencyPaths.length > 0) {
@@ -454,40 +462,19 @@ export abstract class AbstractNode<
               this.#dependencies[index] !== payload?.[NodeEventType.UpdateValue]
             ) {
               this.#dependencies[index] = payload?.[NodeEventType.UpdateValue];
+              this.#updateComputedProperties();
               this.publish({
-                type: NodeEventType.UpdateDependencies,
+                type: NodeEventType.UpdateComputedProperties,
               });
             }
           }
         });
         this.saveUnsubscribe(unsubscribe);
       }
-      this.subscribe(({ type }) => {
-        if (type & NodeEventType.UpdateDependencies)
-          this.#updateComputedProperties();
-      });
     }
     this.#updateComputedProperties();
-  }
-
-  #updateComputedProperties(this: AbstractNode) {
-    this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
-    this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
-    this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
-    this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
-    this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies);
-
     this.publish({
       type: NodeEventType.UpdateComputedProperties,
-      payload: {
-        [NodeEventType.UpdateComputedProperties]: {
-          visible: this.#visible,
-          readOnly: this.#readOnly,
-          disabled: this.#disabled,
-          oneOfIndex: this.#oneOfIndex,
-          watchValues: this.#watchValues,
-        },
-      },
     });
   }
 

@@ -223,10 +223,9 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   #previousIndex: number | undefined;
   #prepareOneOfChildren(this: ObjectNode) {
     if (!this.#oneOfChildrenList) return;
-    this.subscribe(({ type, payload }) => {
+    this.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateComputedProperties) {
-        const index =
-          payload?.[NodeEventType.UpdateComputedProperties]?.oneOfIndex;
+        const index = this.oneOfIndex;
         if (index === undefined || index === this.#previousIndex) return;
         const oneOfChildren =
           index > -1 ? this.#oneOfChildrenList?.[index] : undefined;
