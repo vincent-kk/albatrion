@@ -2,6 +2,7 @@ export * from './flattenConditions';
 export * from './getChildNodeMap';
 export * from './getChildren';
 export * from './getConditionsMap';
+export * from './getFieldConditionMap';
 export * from './getObjectValueWithSchema';
 export * from './getOneOfChildrenList';
 export * from './getVirtualReferencesMap';

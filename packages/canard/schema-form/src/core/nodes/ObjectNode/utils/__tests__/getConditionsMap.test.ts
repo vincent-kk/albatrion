@@ -4,9 +4,10 @@ import type { ObjectSchema } from '@/schema-form/types';
 
 import { flattenConditions } from '../flattenConditions';
 import { getConditionsMap } from '../getConditionsMap';
+import { getFieldConditionMap } from '../getFieldConditionMap/getFieldConditionMap';
 
 describe('getConditionsMap', () => {
-  it('should return null if schema has no if or then condition', () => {
+  it('should return undefined if schema has no if or then condition', () => {
     const schema: ObjectSchema = {
       type: 'object',
       properties: {
@@ -15,11 +16,9 @@ describe('getConditionsMap', () => {
     };
 
     const flattedConditions = flattenConditions(schema);
-
-    const result = flattedConditions
-      ? getConditionsMap(flattedConditions)
-      : null;
-    expect(result).toBeNull();
+    const fieldConditionMap = getFieldConditionMap(flattedConditions);
+    const result = getConditionsMap(fieldConditionMap);
+    expect(result).toBeUndefined();
   });
 
   it('should correctly parse simple if-then condition with string value', () => {
@@ -41,10 +40,8 @@ describe('getConditionsMap', () => {
     };
 
     const flattedConditions = flattenConditions(schema);
-
-    const result = flattedConditions
-      ? getConditionsMap(flattedConditions)
-      : null;
+    const fieldConditionMap = getFieldConditionMap(flattedConditions);
+    const result = getConditionsMap(fieldConditionMap);
 
     expect(result).toBeInstanceOf(Map);
     expect(result?.size).toBe(1);
@@ -80,10 +77,8 @@ describe('getConditionsMap', () => {
     };
 
     const flattedConditions = flattenConditions(schema);
-
-    const result = flattedConditions
-      ? getConditionsMap(flattedConditions)
-      : null;
+    const fieldConditionMap = getFieldConditionMap(flattedConditions);
+    const result = getConditionsMap(fieldConditionMap);
 
     expect(result).toBeInstanceOf(Map);
     expect(result?.size).toBe(2);
@@ -115,10 +110,8 @@ describe('getConditionsMap', () => {
     };
 
     const flattedConditions = flattenConditions(schema) || [];
-
-    const result = flattedConditions
-      ? getConditionsMap(flattedConditions)
-      : null;
+    const fieldConditionMap = getFieldConditionMap(flattedConditions);
+    const result = getConditionsMap(fieldConditionMap);
 
     expect(result).toBeInstanceOf(Map);
     expect(result?.size).toBe(2);
@@ -160,10 +153,8 @@ describe('getConditionsMap', () => {
     };
 
     const flattedConditions = flattenConditions(schema) || [];
-
-    const result = flattedConditions
-      ? getConditionsMap(flattedConditions)
-      : null;
+    const fieldConditionMap = getFieldConditionMap(flattedConditions);
+    const result = getConditionsMap(fieldConditionMap);
 
     expect(result).toBeInstanceOf(Map);
     expect(result?.size).toBe(2);

@@ -2,19 +2,19 @@ import { isString, serializeNative } from '@winglet/common-utils';
 
 import type { Dictionary } from '@aileron/declare';
 
-import type { FlattenCondition } from '../flattenConditions';
+import { FieldConditionMap } from '../getFieldConditionMap';
 
-export const getConditionsMap = (flattedConditions: FlattenCondition[]) => {
+export const getConditionsMap = (
+  fieldConditionMap: FieldConditionMap | undefined,
+): Map<string, string[]> | undefined => {
+  if (!fieldConditionMap) return undefined;
   const oneOfConditionsMap: Map<string, string[]> = new Map();
-  for (const flattedCondition of flattedConditions) {
-    const { condition, required, inverse } = flattedCondition;
-    const operations = getOperations(condition, inverse);
-    for (const field of required) {
-      oneOfConditionsMap.set(field, [
-        ...(oneOfConditionsMap.get(field) || []),
-        ...operations,
-      ]);
-    }
+  for (const [field, conditions] of fieldConditionMap.entries()) {
+    const operations: string[] = [];
+    for (let i = 0; i < conditions.length; i++)
+      getOperations(conditions[i].condition, conditions[i].inverse, operations);
+
+    oneOfConditionsMap.set(field, operations);
   }
   return oneOfConditionsMap;
 };
@@ -22,8 +22,8 @@ export const getConditionsMap = (flattedConditions: FlattenCondition[]) => {
 const getOperations = (
   condition: Dictionary<string | string[]>,
   inverse: boolean | undefined,
+  operations: string[],
 ) => {
-  const operations: string[] = [];
   for (const [key, value] of Object.entries(condition)) {
     if (isString(value))
       operations.push(
@@ -34,5 +34,4 @@ const getOperations = (
         `${inverse ? '!' : ''}${serializeNative(value)}.includes(@.${key})`,
       );
   }
-  return operations;
 };
