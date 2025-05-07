@@ -9,6 +9,7 @@ export const getConditionsMap = (
 ): Map<string, string[]> => {
   const oneOfConditionsMap: Map<string, string[]> = new Map();
   for (const [field, conditions] of fieldConditionMap.entries()) {
+    if (conditions === true) continue;
     const operations: string[] = [];
     for (let i = 0; i < conditions.length; i++)
       getOperations(conditions[i].condition, conditions[i].inverse, operations);

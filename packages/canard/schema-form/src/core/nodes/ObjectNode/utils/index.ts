@@ -5,5 +5,6 @@ export * from './getConditionsMap';
 export * from './getFieldConditionMap';
 export * from './getObjectValueWithSchema';
 export * from './getOneOfChildrenList';
+export * from './getValueWithSchema';
 export * from './getVirtualReferencesMap';
 export * from './mergeShowConditions';

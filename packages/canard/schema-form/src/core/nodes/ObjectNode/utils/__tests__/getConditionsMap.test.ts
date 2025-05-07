@@ -19,7 +19,7 @@ describe('getConditionsMap', () => {
     const fieldConditionMap =
       getFieldConditionMap(flattedConditions) || new Map();
     const result = getConditionsMap(fieldConditionMap);
-    expect(result).toBeUndefined();
+    expect(result.size).toBe(0);
   });
 
   it('should correctly parse simple if-then condition with string value', () => {
