@@ -442,7 +442,11 @@ export abstract class AbstractNode<
     this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies);
-    if (!this.#visible) this.value = undefined;
+    if (!this.#visible) this.#resetNodeState();
+  }
+  #resetNodeState(this: AbstractNode) {
+    this.value = undefined;
+    this.setState(undefined);
   }
 
   #prepareUpdateDependencies(this: AbstractNode) {

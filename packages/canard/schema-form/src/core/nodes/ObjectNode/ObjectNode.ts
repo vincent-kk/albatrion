@@ -233,6 +233,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         this.#children = oneOfChildren
           ? [...this.#propertyChildren, ...oneOfChildren]
           : this.#propertyChildren;
+        for (const child of this.#children) child.node.setState();
         this.setValue(
           removeOneOfProperties(this.#value, this.#oneOfKeySet),
           SetValueOption.Propagate | SetValueOption.Replace,
