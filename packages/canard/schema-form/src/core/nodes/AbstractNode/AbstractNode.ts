@@ -66,6 +66,8 @@ export abstract class AbstractNode<
   readonly isArrayItem: boolean;
   /** Node의 JSON Schema */
   readonly jsonSchema: Schema;
+  /** Node의 property key 원본  */
+  readonly propertyKey: string;
 
   /** Node의 이름 */
   #name: string;
@@ -323,6 +325,7 @@ export abstract class AbstractNode<
     this.isRoot = !this.parentNode;
     this.isArrayItem = this.parentNode?.jsonSchema?.type === 'array';
     this.#name = name || '';
+    this.propertyKey = this.#name;
 
     this.#path = this.parentNode?.path
       ? `${this.parentNode.path}${JSONPath.Child}${this.#name}`

@@ -70,7 +70,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     for (let i = 0; i < this.#children.length; i++) {
       const node = this.#children[i].node;
       if (node.type === 'virtual') continue;
-      const key = node.name;
+      const key = node.propertyKey;
       if (replace || (key in draft && key in target))
         node.setValue(target[key], option);
     }
@@ -163,12 +163,12 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     const { virtualReferencesMap, virtualReferenceFieldsMap } =
       getVirtualReferencesMap(name, propertyKeys, jsonSchema.virtual);
 
-    const handelChangeFactory = (name: string) => (input: any) => {
+    const handelChangeFactory = (propertyKey: string) => (input: any) => {
       if (!this.#draft) this.#draft = {};
       const value =
-        typeof input === 'function' ? input(this.#draft[name]) : input;
-      if (value !== undefined && this.#draft[name] === value) return;
-      this.#draft[name] = value;
+        typeof input === 'function' ? input(this.#draft[propertyKey]) : input;
+      if (value !== undefined && this.#draft[propertyKey] === value) return;
+      this.#draft[propertyKey] = value;
       this.#emitChange(SetValueOption.EmitChange);
     };
 
