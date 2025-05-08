@@ -36,7 +36,10 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
     const current = this.#parseValue(input);
     if (previous === current) return;
     this.#value = current;
-    this.onChange(current);
+
+    if (option & SetValueOption.EmitChange) this.onChange(current);
+    if (option & SetValueOption.Refresh) this.refresh(current);
+
     this.publish({
       type: NodeEventType.UpdateValue,
       payload: {
@@ -49,7 +52,6 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
         },
       },
     });
-    if (option & SetValueOption.Refresh) this.refresh(current);
   }
 
   constructor({
@@ -73,7 +75,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
       ajv,
     });
     if (this.defaultValue !== undefined)
-      this.setValue(this.defaultValue, SetValueOption.Normal);
+      this.setValue(this.defaultValue, SetValueOption.EmitChange);
     this.prepare();
   }
 }

@@ -93,7 +93,11 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       });
     }
 
-    this.onChange(this.#value);
+    if (option & SetValueOption.EmitChange) this.onChange(this.#value);
+    if (option & SetValueOption.Propagate) this.#propagate(replace, option);
+    if (option & SetValueOption.Refresh) this.refresh(this.#value);
+
+    this.#draft = {};
     this.publish({
       type: NodeEventType.UpdateValue,
       payload: {
@@ -106,11 +110,6 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         },
       },
     });
-
-    if (option & SetValueOption.Propagate) this.#propagate(replace, option);
-    if (option & SetValueOption.Refresh) this.refresh(this.#value);
-
-    this.#draft = {};
   }
 
   prepare(this: ObjectNode, actor?: SchemaNode): boolean {
@@ -170,7 +169,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         typeof input === 'function' ? input(this.#draft[name]) : input;
       if (value !== undefined && this.#draft[name] === value) return;
       this.#draft[name] = value;
-      this.#emitChange(SetValueOption.Normal);
+      this.#emitChange(SetValueOption.EmitChange);
     };
 
     const childNodeMap = getChildNodeMap(
@@ -207,7 +206,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     this.#publishChildrenChange();
 
-    this.#emitChange(SetValueOption.Normal);
+    this.#emitChange(SetValueOption.EmitChange);
     this.setDefaultValue(this.#value);
 
     this.#prepareOneOfChildren();

@@ -60,8 +60,10 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     input: ArrayValue,
     option: SetValueOption,
   ) {
-    if (input === undefined) this.clear();
-    else if (isArray(input)) {
+    if (input === undefined) {
+      this.clear();
+      this.#emitChange(option);
+    } else if (isArray(input)) {
       this.#locked = true;
       this.clear();
       for (const value of input) this.push(value);
@@ -73,7 +75,14 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   #emitChange(this: ArrayNode, option: SetValueOption) {
     if (this.#ready && this.#hasChanged) {
       const value = this.value;
-      this.onChange(value);
+
+      if (this.path === '$.details.platforms')
+        console.log('emitChange', this.path, value, this.#hasChanged);
+      if (option & SetValueOption.EmitChange) this.onChange(value);
+      if (option & SetValueOption.Propagate) this.#publishChildrenChange();
+      if (option & SetValueOption.Refresh) this.refresh(value);
+      this.#hasChanged = false;
+
       this.publish({
         type: NodeEventType.UpdateValue,
         payload: {
@@ -86,9 +95,6 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
           },
         },
       });
-      if (option & SetValueOption.Propagate) this.#publishChildrenChange();
-      if (option & SetValueOption.Refresh) this.refresh(value);
-      this.#hasChanged = false;
     }
   }
 
@@ -169,7 +175,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#locked = false;
 
-    this.#emitChange(SetValueOption.Normal);
+    this.#emitChange(SetValueOption.EmitChange);
     this.#publishChildrenChange();
 
     this.prepare();
@@ -205,7 +211,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Push);
-    this.#emitChange(SetValueOption.Normal);
+    this.#emitChange(SetValueOption.EmitChange);
     this.#publishChildrenChange();
     return this;
   }
@@ -227,7 +233,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Remove);
-    this.#emitChange(SetValueOption.Normal);
+    this.#emitChange(SetValueOption.EmitChange);
     this.#publishChildrenChange();
     return this;
   }
@@ -243,7 +249,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Clear);
-    this.#emitChange(SetValueOption.Normal);
+    this.#emitChange(SetValueOption.EmitChange);
     this.#publishChildrenChange();
     return this;
   }
@@ -256,7 +262,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       this.#hasChanged = true;
 
       this.#finishOperation(OperationType.Update);
-      this.#emitChange(SetValueOption.Normal);
+      this.#emitChange(SetValueOption.EmitChange);
     }
     return this;
   }
