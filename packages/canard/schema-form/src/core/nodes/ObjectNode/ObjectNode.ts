@@ -48,7 +48,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   #value: ObjectValue | undefined;
   #draft: ObjectValue | undefined;
 
-  #internalEvent: boolean | undefined;
+  #internalEvent: boolean = true;
 
   get value() {
     return this.#value;
@@ -236,9 +236,10 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         const previousOneOfChildren =
           targetIndex > -1 ? this.#oneOfChildrenList?.[targetIndex] : undefined;
         if (previousOneOfChildren)
-          for (const child of previousOneOfChildren)
-            if (this.#internalEvent) child.node.resetNode();
-            else child.node.resetNode(this.#value?.[child.node.propertyKey]);
+          for (const { node } of previousOneOfChildren)
+            if (this.#internalEvent) node.resetNode();
+            else node.resetNode(this.#value?.[node.propertyKey]);
+
         const oneOfChildren =
           targetIndex > -1 ? this.#oneOfChildrenList?.[targetIndex] : undefined;
         this.#children = oneOfChildren

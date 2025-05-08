@@ -488,8 +488,8 @@ export abstract class AbstractNode<
     this.publish({ type: NodeEventType.UpdateComputedProperties });
   }
   resetNode(this: AbstractNode, input?: Value | undefined) {
-    this.#defaultValue = this.#initialValue;
     const value = input ?? this.#initialValue;
+    this.#defaultValue = value;
     this.setValue(value, RESET_NODE_OPTION);
     this.onChange(value);
     this.setState();
