@@ -42,13 +42,13 @@ export const SchemaNodeAdapterInput = memo(
       [node],
     );
 
-    const feedbackTimer = useRef<number>(undefined);
+    const feedbackTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
     const handleFocus = useCallback(() => {
       if (!feedbackTimer.current) return;
-      cancelAnimationFrame(feedbackTimer.current);
+      clearTimeout(feedbackTimer.current);
     }, []);
     const handleBlur = useCallback(() => {
-      feedbackTimer.current = requestAnimationFrame(() => {
+      feedbackTimer.current = setTimeout(() => {
         node.setState({ [NodeState.Touched]: true });
       });
     }, [node]);
