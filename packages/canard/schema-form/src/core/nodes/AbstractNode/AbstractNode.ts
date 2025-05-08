@@ -211,12 +211,13 @@ export abstract class AbstractNode<
       this.setReceivedErrors(nextErrors);
   }
 
+  #initialValue: Value | undefined;
+  #defaultValue: Value | undefined;
   /**
    * Node의 기본값
    *  - set: `setDefaultValue`, 상속 받은 Node에서만 update 가능
    *  - get: `defaultValue`, 모든 상황에서 읽을 수 있음
    */
-  #defaultValue: Value | undefined;
   get defaultValue() {
     return this.#defaultValue;
   }
@@ -226,7 +227,7 @@ export abstract class AbstractNode<
    * @param value input value for update defaultValue
    */
   protected setDefaultValue(this: AbstractNode, value: Value | undefined) {
-    this.#defaultValue = value;
+    this.#initialValue = this.#defaultValue = value;
   }
 
   /**
@@ -306,17 +307,15 @@ export abstract class AbstractNode<
   }: SchemaNodeConstructorProps<Schema, Value>) {
     this.type = getNodeType(jsonSchema);
     this.jsonSchema = jsonSchema;
-    this.#defaultValue =
-      defaultValue ?? (getFallbackValue(jsonSchema) as Value);
     this.parentNode = parentNode || null;
 
-    // NOTE: AbstractNode 자체를 사용하는 경우는 없으므로, this는 SchemaNode
+    this.#handleChange = onChange;
+    this.setDefaultValue(defaultValue ?? getFallbackValue(jsonSchema));
+
     this.rootNode = (this.parentNode?.rootNode || this) as SchemaNode;
     this.isRoot = !this.parentNode;
     this.isArrayItem = this.parentNode?.jsonSchema?.type === 'array';
     this.#name = name || '';
-
-    this.#handleChange = onChange;
 
     this.#path = this.parentNode?.path
       ? `${this.parentNode.path}${JSONPath.Child}${this.#name}`
@@ -478,7 +477,8 @@ export abstract class AbstractNode<
     this.publish({ type: NodeEventType.UpdateComputedProperties });
   }
   resetNode(this: AbstractNode) {
-    this.setValue(this.#defaultValue, RESET_NODE_OPTION);
+    this.#defaultValue = this.#initialValue;
+    this.setValue(this.#initialValue, RESET_NODE_OPTION);
     this.setState(undefined);
   }
 
