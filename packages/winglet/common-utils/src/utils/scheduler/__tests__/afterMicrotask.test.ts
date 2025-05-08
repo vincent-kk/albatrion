@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { afterMicrotask } from '../afterMicrotask';
+import { afterMicrotask } from '../scheduleAfterMicrotask';
 
 describe('afterMicrotask', () => {
   it('should execute callback after the microtask queue is cleared', async () => {

@@ -2,6 +2,7 @@ import {
   BITMASK_NONE,
   JSONPath,
   afterMicrotask,
+  cancelAfterMicrotask,
   equals,
   isEmptyObject,
   isObject,
@@ -280,14 +281,20 @@ export abstract class AbstractNode<
   }
 
   #handleChange: SetStateFn<Value> | undefined;
+  #scheduleId: number | undefined;
   /**
    * Node의 값이 변경될 때 호출되는 함수
    * @param input 변경된 값이나 값을 반환하는 함수
    */
   protected onChange(this: AbstractNode, input: Value | undefined): void {
     if (typeof this.#handleChange !== 'function') return;
-    if (this.isRoot) afterMicrotask(() => this.#handleChange?.(this.value));
-    else this.#handleChange(input);
+    if (this.isRoot) {
+      if (this.#scheduleId) cancelAfterMicrotask(this.#scheduleId);
+      this.#scheduleId = afterMicrotask(() => {
+        this.#handleChange?.(this.value);
+        this.#scheduleId = undefined;
+      });
+    } else this.#handleChange(input);
   }
 
   /** Node의 하위 Node 목록, 하위 Node를 가지지 않는 Node는 빈 배열 반환 */
