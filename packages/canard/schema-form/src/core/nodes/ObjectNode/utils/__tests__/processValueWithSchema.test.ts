@@ -38,7 +38,6 @@ describe('processValueWithOneOfSchema', () => {
       },
     } satisfies JsonSchema;
 
-    const fieldConditionMap = getFieldConditionMap(schema);
     const { oneOfKeySet, oneOfKeySetList } = getOneOfKeyInfo(schema) || {};
     // oneOf.#.computed.if 조건을 기반으로 계산된 oneOf의 index
     const oneOfIndex = 1;
@@ -264,7 +263,7 @@ describe('processValueWithCondition', () => {
 
     // 모킹된 isRequired 함수 - isRequired가 모든 필드에 대해 true 반환하도록 설정
     // 실제 구현에서는 다른 로직이 있을 수 있음
-    const mockIsRequired = vi.fn((key: string) => true);
+    const mockIsRequired = vi.fn(() => true);
 
     (requiredFactory as any).mockReturnValue(mockIsRequired);
 
