@@ -5,7 +5,7 @@ type OneOfKeyInfo = {
   oneOfKeySetList: Array<Set<string>>;
 };
 
-export const getOneOfProperties = (
+export const getOneOfKeyInfo = (
   schema: ObjectSchema,
 ): OneOfKeyInfo | undefined => {
   if (!schema.oneOf?.length) return undefined;

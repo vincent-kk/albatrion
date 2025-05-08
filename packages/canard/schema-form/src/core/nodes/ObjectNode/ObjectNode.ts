@@ -18,7 +18,7 @@ import {
   getChildNodeMap,
   getChildren,
   getOneOfChildrenList,
-  getOneOfProperties,
+  getOneOfKeyInfo,
   getVirtualReferencesMap,
   removeOneOfProperties,
 } from './utils';
@@ -153,7 +153,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     const properties = jsonSchema.properties;
     const propertyKeys = getObjectKeys(properties);
-    const oneOfKeyInfo = getOneOfProperties(jsonSchema);
+    const oneOfKeyInfo = getOneOfKeyInfo(jsonSchema);
 
     if (oneOfKeyInfo) {
       this.#oneOfKeySet = oneOfKeyInfo.oneOfKeySet;
