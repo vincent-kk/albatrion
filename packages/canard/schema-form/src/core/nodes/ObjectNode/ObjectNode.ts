@@ -224,26 +224,22 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
         const previousOneOfChildren =
           targetIndex > -1 ? this.#oneOfChildrenList?.[targetIndex] : undefined;
-
         if (previousOneOfChildren)
           for (const child of previousOneOfChildren) child.node.resetNode();
 
         const oneOfChildren =
           targetIndex > -1 ? this.#oneOfChildrenList?.[targetIndex] : undefined;
-
         this.#children = oneOfChildren
           ? [...this.#propertyChildren, ...oneOfChildren]
           : this.#propertyChildren;
 
+        const allowedKeySet =
+          targetIndex > -1 ? this.#oneOfKeySetList?.[targetIndex] : undefined;
         this.setValue(
-          removeOneOfProperties(
-            this.#value,
-            this.#oneOfKeySet,
-            this.#oneOfKeySetList,
-            targetIndex,
-          ),
+          removeOneOfProperties(this.#value, this.#oneOfKeySet, allowedKeySet),
           RESET_NODE_OPTION,
         );
+        this.onChange(this.#value);
 
         this.#previousIndex = targetIndex;
         this.#publishChildrenChange();

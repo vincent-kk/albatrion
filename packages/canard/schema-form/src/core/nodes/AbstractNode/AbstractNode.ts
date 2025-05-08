@@ -486,6 +486,7 @@ export abstract class AbstractNode<
   resetNode(this: AbstractNode) {
     this.#defaultValue = this.#initialValue;
     this.setValue(this.#initialValue, RESET_NODE_OPTION);
+    this.onChange(this.#initialValue);
     this.setState(undefined);
   }
 

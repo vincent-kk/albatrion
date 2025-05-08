@@ -5,14 +5,181 @@ import type { JsonSchema, ObjectValue } from '@/schema-form/types';
 import { getOneOfKeyInfo } from '../getOneOfKeyInfo';
 import { removeOneOfProperties } from '../removeOneOfProperties';
 
-/**
- * 새로운 테스트 코드
- * removeOneOfProperties 함수가 4개의 매개변수를 받도록 업데이트됨:
- * 1. value: ObjectValue | undefined - 원본 객체 값
- * 2. oneOfKeySet: Set<string> | undefined - oneOf에 정의된 속성 키 집합
- * 3. oneOfKeySetList: Array<Set<string>> | undefined - 각 oneOf 항목별 속성 키 집합 목록
- * 4. allowedKeySetIndex: number - 허용된 속성 키 집합의 인덱스
- */
+describe('removeOneOfProperties', () => {
+  it('should remove oneOf fields and keep properties fields', () => {
+    const schema: JsonSchema = {
+      type: 'object',
+      properties: { a: { type: 'string' }, b: { type: 'number' } },
+      oneOf: [
+        { properties: { c: { type: 'string' }, d: { type: 'number' } } },
+        { properties: { e: { type: 'boolean' } } },
+      ],
+    };
+    const value = { a: 'A', b: 1, c: 'C', d: 2, e: true, x: 99 };
+    const oneOfKeySet = getOneOfKeyInfo(schema);
+
+    const result = removeOneOfProperties(value, oneOfKeySet?.oneOfKeySet);
+    expect(result).toEqual({
+      a: 'A',
+      b: 1,
+      x: 99,
+    });
+  });
+
+  it('should keep properties fields even if also in oneOf', () => {
+    const schema: JsonSchema = {
+      type: 'object',
+      properties: { a: { type: 'string' }, c: { type: 'string' } },
+      oneOf: [{ properties: { d: { type: 'number' } } }],
+    };
+    const value = { a: 'A', c: 'C', d: 2, y: 100 };
+    const oneOfKeySet = getOneOfKeyInfo(schema);
+
+    const result = removeOneOfProperties(value, oneOfKeySet?.oneOfKeySet);
+    expect(result).toEqual({
+      a: 'A',
+      c: 'C',
+      y: 100,
+    });
+  });
+
+  it('should keep fields not in properties or oneOf', () => {
+    const schema: JsonSchema = {
+      type: 'object',
+      properties: { a: { type: 'string' } },
+      oneOf: [{ properties: { b: { type: 'string' } } }],
+    };
+    const value = { a: 'A', b: 'B', z: 'Z' };
+    const oneOfKeySet = getOneOfKeyInfo(schema);
+
+    const result = removeOneOfProperties(value, oneOfKeySet?.oneOfKeySet);
+    expect(result).toEqual({
+      a: 'A',
+      z: 'Z',
+    });
+  });
+
+  it('should handle empty properties and oneOf', () => {
+    const schema: JsonSchema = { type: 'object' };
+    const value = { a: 1, b: 2 };
+    const oneOfKeySet = getOneOfKeyInfo(schema);
+
+    const result = removeOneOfProperties(value, oneOfKeySet?.oneOfKeySet);
+    expect(result).toEqual({ a: 1, b: 2 });
+  });
+
+  it('should handle undefined value', () => {
+    const schema: JsonSchema = {
+      type: 'object',
+      properties: { a: { type: 'string' } },
+      oneOf: [{ properties: { b: { type: 'string' } } }],
+    };
+    const oneOfKeySet = getOneOfKeyInfo(schema);
+
+    const result = removeOneOfProperties(undefined, oneOfKeySet?.oneOfKeySet);
+    expect(result).toBeUndefined();
+  });
+
+  it('should handle null value', () => {
+    const schema: JsonSchema = {
+      type: 'object',
+      properties: { a: { type: 'string' } },
+      oneOf: [{ properties: { b: { type: 'string' } } }],
+    };
+    const oneOfKeySet = getOneOfKeyInfo(schema);
+
+    const result = removeOneOfProperties(null as any, oneOfKeySet?.oneOfKeySet);
+    expect(result).toBeNull();
+  });
+
+  it('should handle oneOf with no properties', () => {
+    const schema: JsonSchema = {
+      type: 'object',
+      properties: { a: { type: 'string' } },
+      oneOf: [{}, { properties: { b: { type: 'string' } } }],
+    };
+    const value = { a: 'A', b: 'B', c: 'C' };
+    const oneOfKeySet = getOneOfKeyInfo(schema);
+
+    const result = removeOneOfProperties(value, oneOfKeySet?.oneOfKeySet);
+    expect(result).toEqual({
+      a: 'A',
+      c: 'C',
+    });
+  });
+
+  it('should handle deeply nested objects (shallow removal only)', () => {
+    const schema: JsonSchema = {
+      type: 'object',
+      properties: { a: { type: 'string' } },
+      oneOf: [{ properties: { b: { type: 'string' } } }],
+    };
+    const value = { a: 'A', b: 'B', nested: { b: 'B2', a: 'A2' } };
+    // only top-level b is removed
+    const oneOfKeySet = getOneOfKeyInfo(schema);
+
+    const result = removeOneOfProperties(value, oneOfKeySet?.oneOfKeySet);
+    expect(result).toEqual({
+      a: 'A',
+      nested: { b: 'B2', a: 'A2' },
+    });
+  });
+
+  it('should handle oneOf with overlapping keys', () => {
+    const schema: JsonSchema = {
+      type: 'object',
+      properties: { a: { type: 'string' }, b: { type: 'string' } },
+      oneOf: [
+        { properties: { c: { type: 'string' } } },
+        { properties: { d: { type: 'string' } } },
+      ],
+    };
+    const value = { a: 'A', b: 'B', c: 'C', d: 'D', e: 'E' };
+    // b는 properties에도 있으므로 유지, c/d는 제거, e는 유지
+    const oneOfKeySet = getOneOfKeyInfo(schema);
+
+    const result = removeOneOfProperties(value, oneOfKeySet?.oneOfKeySet);
+    expect(result).toEqual({
+      a: 'A',
+      b: 'B',
+      e: 'E',
+    });
+  });
+
+  it('should handle oneOf with empty array', () => {
+    const schema: JsonSchema = {
+      type: 'object',
+      properties: { a: { type: 'string' } },
+      oneOf: [],
+    };
+    const value = { a: 'A', b: 'B' };
+    const oneOfKeySet = getOneOfKeyInfo(schema);
+
+    const result = removeOneOfProperties(value, oneOfKeySet?.oneOfKeySet);
+    expect(result).toEqual({
+      a: 'A',
+      b: 'B',
+    });
+  });
+
+  it('should handle value with symbol keys', () => {
+    const schema: JsonSchema = {
+      type: 'object',
+      properties: { a: { type: 'string' } },
+      oneOf: [{ properties: { b: { type: 'string' } } }],
+    };
+
+    const value: any = { a: 'A', b: 'B', c: 'C' };
+    const oneOfKeySet = getOneOfKeyInfo(schema);
+
+    const result = removeOneOfProperties(value, oneOfKeySet?.oneOfKeySet);
+    expect(result).not.toBeUndefined();
+    expect((result as any).a).toBe('A');
+    expect((result as any).b).toBeUndefined();
+    expect((result as any).c).toBe('C');
+  });
+});
+
 describe('removeOneOfProperties', () => {
   // 기본 동작 테스트
   it('기본 동작: oneOf에 정의된 프로퍼티 제거', () => {
@@ -24,34 +191,20 @@ describe('removeOneOfProperties', () => {
     };
 
     const oneOfKeySet = new Set(['age', 'email']);
-    const oneOfKeySetList = [new Set(['age']), new Set(['email'])];
-    const allowedKeySetIndex = 0; // age만 허용
-
-    const result = removeOneOfProperties(
-      value,
-      oneOfKeySet,
-      oneOfKeySetList,
-      allowedKeySetIndex,
-    );
+    const result = removeOneOfProperties(value, oneOfKeySet, undefined);
 
     expect(result).toEqual({
       name: 'John',
-      age: 30,
       address: '서울시',
     });
   });
 
   // value가 undefined인 경우
   it('value가 undefined인 경우 undefined 반환', () => {
-    const oneOfKeySet = new Set(['test']);
-    const oneOfKeySetList = [new Set(['test'])];
-    const allowedKeySetIndex = 0;
-
     const result = removeOneOfProperties(
       undefined,
-      oneOfKeySet,
-      oneOfKeySetList,
-      allowedKeySetIndex,
+      new Set(['test']),
+      undefined,
     );
     expect(result).toBeUndefined();
   });
@@ -59,20 +212,12 @@ describe('removeOneOfProperties', () => {
   // oneOfKeySet이 undefined인 경우
   it('oneOfKeySet이 undefined인 경우 원본 value 반환', () => {
     const value: ObjectValue = { name: 'John', age: 30 };
-    const result = removeOneOfProperties(value, undefined, undefined, 0);
+    const result = removeOneOfProperties(value, undefined, undefined);
     expect(result).toBe(value);
   });
 
-  // oneOfKeySetList가 undefined인 경우
-  it('oneOfKeySetList가 undefined인 경우 원본 value 반환', () => {
-    const value: ObjectValue = { name: 'John', age: 30 };
-    const oneOfKeySet = new Set(['age']);
-    const result = removeOneOfProperties(value, oneOfKeySet, undefined, 0);
-    expect(result).toBe(value);
-  });
-
-  // allowedKeySetIndex와 oneOfKeySetList 처리 테스트
-  it('allowedKeySetIndex에 해당하는 oneOfKeySetList의 키는 제거하지 않음', () => {
+  // allowedKeySet 기능 테스트
+  it('allowedKeySet에 포함된 키는 oneOf에 있어도 제거하지 않음', () => {
     const value: ObjectValue = {
       name: 'John',
       age: 30,
@@ -81,25 +226,18 @@ describe('removeOneOfProperties', () => {
     };
 
     const oneOfKeySet = new Set(['age', 'email', 'address']);
-    const oneOfKeySetList = [new Set(['age']), new Set(['email', 'address'])];
-    const allowedKeySetIndex = 1; // email과 address가 허용됨
+    const allowedKeySet = new Set(['email']); // email은 oneOf에 있지만 allowed이므로 유지
 
-    const result = removeOneOfProperties(
-      value,
-      oneOfKeySet,
-      oneOfKeySetList,
-      allowedKeySetIndex,
-    );
+    const result = removeOneOfProperties(value, oneOfKeySet, allowedKeySet);
 
     expect(result).toEqual({
       name: 'John',
       email: 'john@example.com',
-      address: '서울시',
     });
   });
 
-  // 복합 테스트
-  it('복합 케이스: oneOfKeySetList와 allowedKeySetIndex 상호작용', () => {
+  // allowedKeySet과 oneOfKeySet 둘 다 있는 경우 (복합 테스트)
+  it('복합 케이스: allowedKeySet과 oneOfKeySet 상호작용', () => {
     const value: ObjectValue = {
       id: 1,
       name: 'John',
@@ -111,30 +249,21 @@ describe('removeOneOfProperties', () => {
     };
 
     const oneOfKeySet = new Set(['age', 'email', 'phone', 'address']);
-    const oneOfKeySetList = [
-      new Set(['age', 'email']),
-      new Set(['phone', 'address']),
-    ];
-    const allowedKeySetIndex = 0; // age와 email만 허용
+    const allowedKeySet = new Set(['email', 'phone']); // email과 phone은 oneOf에 있지만 allowed이므로 유지
 
-    const result = removeOneOfProperties(
-      value,
-      oneOfKeySet,
-      oneOfKeySetList,
-      allowedKeySetIndex,
-    );
+    const result = removeOneOfProperties(value, oneOfKeySet, allowedKeySet);
 
     expect(result).toEqual({
       id: 1,
       name: 'John',
       role: 'user',
-      age: 30,
       email: 'john@example.com',
+      phone: '010-1234-5678',
     });
   });
 
-  // allowedKeySetIndex가 범위를 벗어나는 경우
-  it('allowedKeySetIndex가 oneOfKeySetList 범위를 벗어나는 경우', () => {
+  // allowedKeySet이 empty인 경우
+  it('allowedKeySet이 빈 Set인 경우', () => {
     const value: ObjectValue = {
       name: 'John',
       age: 30,
@@ -142,24 +271,17 @@ describe('removeOneOfProperties', () => {
     };
 
     const oneOfKeySet = new Set(['age', 'email']);
-    const oneOfKeySetList = [new Set(['age']), new Set(['email'])];
-    const outOfBoundsIndex = 5; // 범위를 벗어남
+    const allowedKeySet = new Set<string>(); // 빈 Set
 
-    const result = removeOneOfProperties(
-      value,
-      oneOfKeySet,
-      oneOfKeySetList,
-      outOfBoundsIndex,
-    );
+    const result = removeOneOfProperties(value, oneOfKeySet, allowedKeySet);
 
-    // 범위를 벗어나면 oneOf 속성들이 전부 제거되어야 함
     expect(result).toEqual({
       name: 'John',
     });
   });
 
-  // oneOfKeySetList가 빈 배열인 경우
-  it('oneOfKeySetList가 빈 배열인 경우', () => {
+  // allowedKeySet은 있지만 oneOfKeySet과 겹치지 않는 경우
+  it('allowedKeySet은 있지만 oneOfKeySet과 겹치지 않는 경우', () => {
     const value: ObjectValue = {
       id: 1,
       name: 'John',
@@ -167,87 +289,13 @@ describe('removeOneOfProperties', () => {
     };
 
     const oneOfKeySet = new Set(['age']);
-    const oneOfKeySetList: Array<Set<string>> = [];
-    const allowedKeySetIndex = 0;
+    const allowedKeySet = new Set(['id']); // id는 oneOf에 없음
 
-    const result = removeOneOfProperties(
-      value,
-      oneOfKeySet,
-      oneOfKeySetList,
-      allowedKeySetIndex,
-    );
+    const result = removeOneOfProperties(value, oneOfKeySet, allowedKeySet);
 
-    // oneOfKeyList가 비어있으면 모든 oneOf 속성이 제거되어야 함
     expect(result).toEqual({
       id: 1,
       name: 'John',
     });
-  });
-
-  // 실제 스키마와 함께 테스트
-  it('실제 JSON 스키마와 함께 테스트', () => {
-    const schema: JsonSchema = {
-      type: 'object',
-      properties: { a: { type: 'string' }, b: { type: 'number' } },
-      oneOf: [
-        { properties: { c: { type: 'string' }, d: { type: 'number' } } },
-        { properties: { e: { type: 'boolean' } } },
-      ],
-    };
-
-    const value = { a: 'A', b: 1, c: 'C', d: 2, e: true, x: 99 };
-
-    // oneOfKeyInfo를 직접 만들지 않고 getOneOfKeyInfo 함수 사용
-    const oneOfKeyInfo = getOneOfKeyInfo(schema);
-
-    if (oneOfKeyInfo) {
-      const { oneOfKeySet, oneOfKeySetList } = oneOfKeyInfo;
-
-      // allowedKeySetIndex를 0으로 설정하여 첫 번째 oneOf 항목 (c, d)를 허용
-      const result = removeOneOfProperties(
-        value,
-        oneOfKeySet,
-        oneOfKeySetList,
-        0,
-      );
-
-      expect(result).toEqual({
-        a: 'A',
-        b: 1,
-        c: 'C',
-        d: 2,
-        x: 99, // 어디에도 정의되지 않은 속성은 유지
-      });
-
-      // allowedKeySetIndex를 1로 설정하여 두 번째 oneOf 항목 (e)를 허용
-      const result2 = removeOneOfProperties(
-        value,
-        oneOfKeySet,
-        oneOfKeySetList,
-        1,
-      );
-
-      expect(result2).toEqual({
-        a: 'A',
-        b: 1,
-        e: true,
-        x: 99, // 어디에도 정의되지 않은 속성은 유지
-      });
-    }
-  });
-
-  // null 입력 처리 테스트
-  it('value가 null인 경우', () => {
-    const oneOfKeySet = new Set(['test']);
-    const oneOfKeySetList = [new Set(['test'])];
-    const allowedKeySetIndex = 0;
-
-    const result = removeOneOfProperties(
-      null as any,
-      oneOfKeySet,
-      oneOfKeySetList,
-      allowedKeySetIndex,
-    );
-    expect(result).toBeNull();
   });
 });

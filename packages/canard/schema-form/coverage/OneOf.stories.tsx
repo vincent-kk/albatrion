@@ -45,11 +45,27 @@ export const OneOf = () => {
           },
         },
       },
+      {
+        computed: {
+          if: "@.category==='console'",
+        },
+        properties: {
+          date: {
+            type: 'string',
+            format: 'date',
+            '&visible': '_.title === "wow"',
+          },
+          price: {
+            type: 'number',
+            minimum: 50,
+          },
+        },
+      },
     ],
     properties: {
       category: {
         type: 'string',
-        enum: ['game', 'movie'],
+        enum: ['game', 'movie', 'console'],
         default: 'game',
       },
       title: { type: 'string' },
@@ -203,10 +219,12 @@ export const ComplexOneOf = () => {
               },
               platforms: {
                 type: 'array',
+                formType: 'checkbox',
                 items: {
                   type: 'string',
+                  enum: ['theater', 'streaming'],
                 },
-                enum: ['theater', 'streaming'],
+                default: ['theater'],
               },
               actors: {
                 type: 'array',
@@ -223,13 +241,13 @@ export const ComplexOneOf = () => {
       {
         '&if': "@.type==='game'",
         properties: {
-          developer: { type: 'string', placeholder: 'developer of the game' },
+          owner: { type: 'string', placeholder: 'developer of the game' },
         },
       },
       {
         '&if': "@.type==='movie'",
         properties: {
-          director: { type: 'string', placeholder: 'director of the movie' },
+          owner: { type: 'string', placeholder: 'director of the movie' },
         },
       },
     ],
