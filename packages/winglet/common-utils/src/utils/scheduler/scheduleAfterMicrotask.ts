@@ -5,12 +5,6 @@ type SchedulerFunctions<Id = any> = {
   cancelAfterMicrotask: Fn<[id: Id]>;
 };
 const getScheduleAfterMicrotask = (): SchedulerFunctions => {
-  if (typeof globalThis.requestAnimationFrame === 'function')
-    return {
-      afterMicrotask: globalThis.requestAnimationFrame.bind(globalThis),
-      cancelAfterMicrotask: globalThis.cancelAnimationFrame.bind(globalThis),
-    } as const;
-
   if (typeof globalThis.setImmediate === 'function')
     return {
       afterMicrotask: globalThis.setImmediate.bind(globalThis),
