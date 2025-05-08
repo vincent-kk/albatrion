@@ -4,5 +4,3 @@ export * from './getKeys';
 export * from './getTypeTag';
 export * from './hasOwnProperty';
 export * from './random';
-export * from './scheduleMicrotask';
-export * from './scheduleNextTick';
