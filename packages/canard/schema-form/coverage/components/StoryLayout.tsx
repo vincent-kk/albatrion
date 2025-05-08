@@ -1,4 +1,4 @@
-import React, { type PropsWithChildren } from 'react';
+import React, { type PropsWithChildren, useEffect } from 'react';
 
 import type { JsonSchema } from '../../src';
 
@@ -12,6 +12,9 @@ const StoryLayout = ({
   value?: any;
   errors?: any[];
 }>) => {
+  useEffect(() => {
+    console.log('value', value);
+  }, [value]);
   return (
     <div
       style={{
