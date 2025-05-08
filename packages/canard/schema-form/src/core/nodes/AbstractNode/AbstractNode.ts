@@ -1,6 +1,7 @@
 import {
   BITMASK_NONE,
   JSONPath,
+  afterMicrotask,
   equals,
   isEmptyObject,
   isObject,
@@ -283,7 +284,7 @@ export abstract class AbstractNode<
    */
   protected onChange(this: AbstractNode, input: Value | undefined): void {
     if (typeof this.#handleChange !== 'function') return;
-    if (this.isRoot) setTimeout(() => this.#handleChange?.(this.value));
+    if (this.isRoot) afterMicrotask(() => this.#handleChange?.(this.value));
     else this.#handleChange(input);
   }
 

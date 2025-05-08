@@ -1,4 +1,4 @@
-import { BITMASK_NONE, microtask } from '@winglet/common-utils';
+import { BITMASK_NONE, scheduleMicrotask } from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/declare';
 
@@ -16,7 +16,7 @@ export class EventCascade {
     if (batch && !batch.resolved) return batch;
     const nextBatch: Batch<NodeEvent> = { events: [] };
     this.#currentBatch = nextBatch;
-    microtask(() => {
+    scheduleMicrotask(() => {
       nextBatch.resolved = true;
       this.#batchHandler(mergeEvents(nextBatch.events));
     });
