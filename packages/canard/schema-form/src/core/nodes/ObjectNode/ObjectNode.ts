@@ -23,6 +23,8 @@ import {
   removeOneOfProperties,
 } from './utils';
 
+const RESET_NODE_OPTION = SetValueOption.Replace | SetValueOption.Propagate;
+
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   readonly #schemaKeys: string[];
   readonly #oneOfKeySet: Set<string> | undefined;
@@ -216,16 +218,23 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       if (type & NodeEventType.UpdateComputedProperties) {
         const index = this.oneOfIndex;
         if (index === undefined || index === this.#previousIndex) return;
+
+        const previousOneOfChildren =
+          index > -1 ? this.#oneOfChildrenList?.[index] : undefined;
+
+        if (previousOneOfChildren)
+          for (const child of previousOneOfChildren) child.node.resetNode();
+
         const oneOfChildren =
           index > -1 ? this.#oneOfChildrenList?.[index] : undefined;
 
         this.#children = oneOfChildren
           ? [...this.#propertyChildren, ...oneOfChildren]
           : this.#propertyChildren;
-        for (const child of this.#children) child.node.setState();
+
         this.setValue(
           removeOneOfProperties(this.#value, this.#oneOfKeySet),
-          SetValueOption.Propagate | SetValueOption.Replace,
+          RESET_NODE_OPTION,
         );
 
         this.#previousIndex = this.oneOfIndex;

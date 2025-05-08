@@ -45,6 +45,7 @@ import {
 } from './utils';
 
 const OMITTED_KEYS = new Set(['key']);
+const RESET_NODE_OPTION = SetValueOption.Replace | SetValueOption.Propagate;
 
 export abstract class AbstractNode<
   Schema extends JsonSchemaWithVirtual = JsonSchemaWithVirtual,
@@ -473,12 +474,11 @@ export abstract class AbstractNode<
     this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies);
-    if (!this.#visible) this.#resetNodeState();
-
+    if (!this.#visible) this.resetNode();
     this.publish({ type: NodeEventType.UpdateComputedProperties });
   }
-  #resetNodeState(this: AbstractNode) {
-    this.value = undefined;
+  resetNode(this: AbstractNode) {
+    this.setValue(this.#defaultValue, RESET_NODE_OPTION);
     this.setState(undefined);
   }
 
