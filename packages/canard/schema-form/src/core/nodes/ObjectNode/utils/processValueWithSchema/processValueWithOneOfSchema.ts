@@ -8,7 +8,7 @@ import type { ObjectValue } from '@/schema-form/types';
  * @param schema 객체 스키마 정의
  * @returns oneOf에 정의된 프로퍼티가 제거된 객체 값
  */
-export const removeOneOfProperties = (
+export const processValueWithOneOfSchema = (
   value: ObjectValue | undefined,
   oneOfKeySet?: Set<string>,
   allowedKeySet?: Set<string>,

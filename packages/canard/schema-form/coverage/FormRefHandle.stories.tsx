@@ -152,7 +152,7 @@ export const FormRefHandle = () => {
   );
 };
 
-export const FormRefHandleWithOneOf = () => {
+export const FormRefHandleWithIfThenElse = () => {
   const [value, setValue] = useState({});
   const schema = {
     type: 'object',
@@ -285,6 +285,143 @@ export const FormRefHandleWithOneOf = () => {
           jsonSchema={schema}
           defaultValue={defaultValue.current}
           onChange={handleChange}
+        />
+      </StoryLayout>
+    </div>
+  );
+};
+
+export const FormRefHandleWithIfThenElse2 = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      status: { type: 'string', enum: ['active', 'inactive'] },
+      age: { type: 'number' },
+    },
+    if: {
+      properties: {
+        status: { enum: ['active'] },
+      },
+    },
+    then: {
+      required: ['age'],
+    },
+  } satisfies JsonSchema;
+
+  const defaultValue = useRef({});
+
+  const formHandle = useRef<FormHandle<typeof schema>>(null);
+
+  const handleChange = (val: any) => {
+    setValue(val);
+  };
+
+  return (
+    <div>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue({ status: 'active', age: 10 })
+        }
+      >
+        set {JSON.stringify({ status: 'active', age: 10 })}
+      </button>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue({ status: 'active', age: 20 })
+        }
+      >
+        set {JSON.stringify({ status: 'active', age: 20 })}
+      </button>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue({ status: 'inactive', age: 10 })
+        }
+      >
+        set {JSON.stringify({ status: 'inactive', age: 10 })}
+      </button>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue({ status: 'inactive', age: 20 })
+        }
+      >
+        set {JSON.stringify({ status: 'inactive', age: 20 })}
+      </button>
+      <hr />
+      <StoryLayout jsonSchema={schema} value={value}>
+        <Form
+          ref={formHandle}
+          jsonSchema={schema}
+          defaultValue={defaultValue.current}
+          onChange={handleChange}
+        />
+      </StoryLayout>
+    </div>
+  );
+};
+
+export const FormRefHandleWithOneOf = () => {
+  const schema = {
+    type: 'object',
+    oneOf: [
+      {
+        computed: {
+          if: "@.category==='game'",
+        },
+        properties: {
+          price: { type: 'number' },
+        },
+      },
+    ],
+    properties: {
+      category: {
+        type: 'string',
+        enum: ['game', 'movie'],
+        default: 'game',
+      },
+    },
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema>>(null);
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  return (
+    <div>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue({ category: 'game', price: 100 })
+        }
+      >
+        set {JSON.stringify({ category: 'game', price: 100 })}
+      </button>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue({ category: 'game', price: 200 })
+        }
+      >
+        set {JSON.stringify({ category: 'game', price: 200 })}
+      </button>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue({ category: 'movie', price: 300 })
+        }
+      >
+        set {JSON.stringify({ category: 'movie', price: 300 })}
+      </button>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue({ category: 'movie', price: 400 })
+        }
+      >
+        set {JSON.stringify({ category: 'movie', price: 400 })}
+      </button>
+      <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+        <Form
+          jsonSchema={schema}
+          onChange={setValue}
+          onValidate={setErrors}
+          ref={formHandle}
         />
       </StoryLayout>
     </div>

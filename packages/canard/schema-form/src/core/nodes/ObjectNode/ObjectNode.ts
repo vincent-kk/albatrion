@@ -21,8 +21,9 @@ import {
   getFieldConditionMap,
   getOneOfChildrenList,
   getOneOfKeyInfo,
-  getValueWithSchema,
   getVirtualReferencesMap,
+  processValueWithCondition,
+  processValueWithOneOfSchema,
 } from './utils';
 
 const RESET_NODE_OPTION = SetValueOption.Replace | SetValueOption.Propagate;
@@ -68,17 +69,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   #parseValue(this: ObjectNode, input: ObjectValue) {
     const value = sortObjectKeys(input, this.#schemaKeys, true);
     if (this.#internalEvent) return value;
-    return this.#processValue(value);
-  }
-  #processValue(this: ObjectNode, input: ObjectValue | undefined) {
-    return getValueWithSchema(
-      input,
-      this.#fieldConditionMap,
-      this.#oneOfKeySet,
-      this.oneOfIndex > -1
-        ? this.#oneOfKeySetList?.[this.oneOfIndex]
-        : undefined,
-    );
+    return processValueWithCondition(value, this.#fieldConditionMap);
   }
   #propagate(this: ObjectNode, replace: boolean, option: SetValueOption) {
     this.#locked = true;
@@ -241,28 +232,29 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateComputedProperties) {
         const targetIndex = this.oneOfIndex;
-        const value = this.#processValue(this.#value);
-        if (targetIndex === undefined || targetIndex === this.#previousIndex)
-          return;
-
+        if (this.#internalEvent && targetIndex === this.#previousIndex) return;
         const previousOneOfChildren =
           targetIndex > -1 ? this.#oneOfChildrenList?.[targetIndex] : undefined;
         if (previousOneOfChildren)
-          for (const { node } of previousOneOfChildren)
-            if (this.#internalEvent) node.resetNode();
-            else node.resetNode(value?.[node.propertyKey]);
-
+          for (const child of previousOneOfChildren)
+            if (this.#internalEvent) child.node.resetNode();
+            else child.node.resetNode(this.#value?.[child.node.propertyKey]);
         const oneOfChildren =
           targetIndex > -1 ? this.#oneOfChildrenList?.[targetIndex] : undefined;
         this.#children = oneOfChildren
           ? [...this.#propertyChildren, ...oneOfChildren]
           : this.#propertyChildren;
-
-        this.setValue(value, RESET_NODE_OPTION);
+        this.setValue(
+          processValueWithOneOfSchema(
+            this.#value,
+            this.#oneOfKeySet,
+            targetIndex > -1 ? this.#oneOfKeySetList?.[targetIndex] : undefined,
+          ),
+          RESET_NODE_OPTION,
+        );
         this.onChange(this.#value);
-
-        this.#previousIndex = targetIndex;
         this.#publishChildrenChange();
+        this.#previousIndex = targetIndex;
       }
     });
   }
