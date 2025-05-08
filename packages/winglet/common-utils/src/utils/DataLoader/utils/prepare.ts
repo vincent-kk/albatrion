@@ -2,12 +2,12 @@ import type { Fn } from '@aileron/declare';
 
 import { identityFunction } from '@/common-utils/constant';
 import { InvalidTypeError } from '@/common-utils/errors/InvalidTypeError';
-import { postPromise } from '@/common-utils/libs/postPromise';
+import { scheduleNextTick } from '@/common-utils/libs/scheduleNextTick';
 import { isFunction } from '@/common-utils/utils/filter/isFunction';
 
 import type { BatchLoader, MapLike } from '../type';
 
-export const getValidBatchLoader = <Key, Value>(
+export const prepareBatchLoader = <Key, Value>(
   batchLoader: BatchLoader<Key, Value>,
 ): BatchLoader<Key, Value> => {
   if (!isFunction(batchLoader))
@@ -19,10 +19,10 @@ export const getValidBatchLoader = <Key, Value>(
   return batchLoader;
 };
 
-export const getValidBatchScheduler = (
+export const prepareBatchScheduler = (
   batchScheduler?: Fn<[task: Fn]>,
 ): Fn<[task: Fn]> => {
-  if (batchScheduler === undefined) return postPromise;
+  if (batchScheduler === undefined) return scheduleNextTick;
   if (!isFunction(batchScheduler))
     throw new InvalidTypeError(
       'INVALID_BATCH_SCHEDULER',
@@ -32,7 +32,7 @@ export const getValidBatchScheduler = (
   return batchScheduler;
 };
 
-export const getValidMaxBatchSize = (options?: {
+export const prepareMaxBatchSize = (options?: {
   maxBatchSize?: number;
   disableBatch?: boolean;
 }): number => {
@@ -48,7 +48,7 @@ export const getValidMaxBatchSize = (options?: {
   return maxBatchSize;
 };
 
-export const getValidCacheMap = <CacheKey, Value>(
+export const prepareCacheMap = <CacheKey, Value>(
   cacheMap?: MapLike<CacheKey, Promise<Value>> | false,
 ): MapLike<CacheKey, Promise<Value>> | null => {
   if (cacheMap === false) return null;
@@ -66,7 +66,7 @@ export const getValidCacheMap = <CacheKey, Value>(
   return cacheMap;
 };
 
-export const getValidCacheKeyFn = <Key, CacheKey>(
+export const prepareCacheKeyFn = <Key, CacheKey>(
   cacheKeyFn?: Fn<[key: Key], CacheKey>,
 ): Fn<[key: Key], CacheKey> => {
   if (cacheKeyFn === undefined)

@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import { delay } from '@/common-utils/utils';
 
-import { postPromise } from '../postPromise';
+import { scheduleNextTick } from '../scheduleNextTick';
 
-describe('postPromise', () => {
+describe('scheduleNextTick', () => {
   it('should execute after microtask and promise queue', async () => {
     const executionOrder: number[] = [];
 
@@ -21,8 +21,8 @@ describe('postPromise', () => {
       executionOrder.push(4);
     });
 
-    // postPromise 큐에 작업 추가
-    postPromise(() => {
+    // scheduleNextTick 큐에 작업 추가
+    scheduleNextTick(() => {
       executionOrder.push(5);
     });
 
@@ -58,10 +58,10 @@ describe('postPromise', () => {
       });
     });
 
-    // postPromise 작업들
-    postPromise(() => {
+    // scheduleNextTick 작업들
+    scheduleNextTick(() => {
       executionOrder.push(8);
-      postPromise(() => {
+      scheduleNextTick(() => {
         executionOrder.push(9);
       });
     });
@@ -95,8 +95,8 @@ describe('postPromise', () => {
       executionOrder.push(3.5);
     });
 
-    // postPromise
-    postPromise(() => {
+    // scheduleNextTick
+    scheduleNextTick(() => {
       executionOrder.push(5);
     });
 
@@ -119,7 +119,7 @@ describe('postPromise', () => {
     executionOrder.push(1);
 
     // async 콜백
-    postPromise(async () => {
+    scheduleNextTick(async () => {
       executionOrder.push(4);
       await Promise.resolve();
       executionOrder.push(5);
