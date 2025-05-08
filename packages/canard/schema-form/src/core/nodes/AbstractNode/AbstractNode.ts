@@ -439,19 +439,6 @@ export abstract class AbstractNode<
     return this.#watchValues;
   }
 
-  #updateComputedProperties(this: AbstractNode) {
-    this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
-    this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
-    this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
-    this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
-    this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies);
-    if (!this.#visible) this.#resetNodeState();
-  }
-  #resetNodeState(this: AbstractNode) {
-    this.value = undefined;
-    this.setState(undefined);
-  }
-
   #prepareUpdateDependencies(this: AbstractNode) {
     const dependencyPaths = this.#compute.dependencyPaths;
     if (dependencyPaths.length > 0) {
@@ -467,20 +454,32 @@ export abstract class AbstractNode<
               this.#dependencies[index] !== payload?.[NodeEventType.UpdateValue]
             ) {
               this.#dependencies[index] = payload?.[NodeEventType.UpdateValue];
-              this.#updateComputedProperties();
-              this.publish({
-                type: NodeEventType.UpdateComputedProperties,
-              });
+              this.publish({ type: NodeEventType.UpdateDependencies });
             }
           }
         });
         this.saveUnsubscribe(unsubscribe);
       }
+      this.subscribe(({ type }) => {
+        if (type & NodeEventType.UpdateDependencies)
+          this.#updateComputedProperties();
+      });
     }
     this.#updateComputedProperties();
-    this.publish({
-      type: NodeEventType.UpdateComputedProperties,
-    });
+  }
+  #updateComputedProperties(this: AbstractNode) {
+    this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
+    this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
+    this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
+    this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
+    this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies);
+    if (!this.#visible) this.#resetNodeState();
+
+    this.publish({ type: NodeEventType.UpdateComputedProperties });
+  }
+  #resetNodeState(this: AbstractNode) {
+    this.value = undefined;
+    this.setState(undefined);
   }
 
   /** Node의 상태 */

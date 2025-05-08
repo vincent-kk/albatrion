@@ -109,8 +109,9 @@ export enum NodeEventType {
   UpdateState = 1 << 7,
   UpdateError = 1 << 8,
   UpdateChildren = 1 << 9,
-  UpdateComputedProperties = 1 << 10,
-  RequestValidate = 1 << 11,
+  UpdateDependencies = 1 << 10,
+  UpdateComputedProperties = 1 << 11,
+  RequestValidate = 1 << 12,
 }
 
 export type NodeEventPayload = {
@@ -124,6 +125,7 @@ export type NodeEventPayload = {
   [NodeEventType.UpdateState]: NodeStateFlags;
   [NodeEventType.UpdateError]: JsonSchemaError[];
   [NodeEventType.UpdateChildren]: void;
+  [NodeEventType.UpdateDependencies]: void;
   [NodeEventType.UpdateComputedProperties]: void;
   [NodeEventType.RequestValidate]: void;
 };
@@ -145,6 +147,7 @@ export type NodeEventOptions = {
   [NodeEventType.UpdateState]: void;
   [NodeEventType.UpdateError]: void;
   [NodeEventType.UpdateChildren]: void;
+  [NodeEventType.UpdateDependencies]: void;
   [NodeEventType.UpdateComputedProperties]: void;
   [NodeEventType.RequestValidate]: void;
 };
