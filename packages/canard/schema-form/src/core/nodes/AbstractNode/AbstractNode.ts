@@ -439,7 +439,7 @@ export abstract class AbstractNode<
     return this.#disabled;
   }
 
-  #oneOfIndex: number | undefined;
+  #oneOfIndex: number = -1;
   protected get oneOfIndex() {
     return this.#oneOfIndex;
   }
@@ -477,20 +477,22 @@ export abstract class AbstractNode<
     }
     this.#updateComputedProperties();
   }
+
   #updateComputedProperties(this: AbstractNode) {
     this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
     this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
     this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
-    this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies);
+    this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
     if (!this.#visible) this.resetNode();
     this.publish({ type: NodeEventType.UpdateComputedProperties });
   }
-  resetNode(this: AbstractNode) {
+  resetNode(this: AbstractNode, input?: Value | undefined) {
     this.#defaultValue = this.#initialValue;
-    this.setValue(this.#initialValue, RESET_NODE_OPTION);
-    this.onChange(this.#initialValue);
-    this.setState(undefined);
+    const value = input ?? this.#initialValue;
+    this.setValue(value, RESET_NODE_OPTION);
+    this.onChange(value);
+    this.setState();
   }
 
   /** Node의 상태 */

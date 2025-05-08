@@ -6,9 +6,8 @@ import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 import type { SchemaNodeFactory } from '../../../type';
 import type { ObjectNode } from '../../ObjectNode';
 import type { ChildNode } from '../../type';
-import { flattenConditions } from './utils/flattenConditions';
+import type { FieldConditionMap } from '../getFieldConditionMap';
 import { getConditionsMap } from './utils/getConditionsMap';
-import { getFieldConditionMap } from './utils/getFieldConditionMap';
 import { mergeShowConditions } from './utils/mergeShowConditions';
 
 export const getChildNodeMap = (
@@ -16,13 +15,12 @@ export const getChildNodeMap = (
   jsonSchema: ObjectSchema,
   propertyKeys: string[],
   defaultValue: ObjectValue | undefined,
+  fieldConditionMap: FieldConditionMap | undefined,
   virtualReferenceFieldsMap: Map<string, string[]> | undefined,
   handelChangeFactory: Fn<[name: string], (input: any) => void>,
   nodeFactory: SchemaNodeFactory,
 ) => {
-  const conditionsMap: Map<string, string[]> | undefined = getConditionsMap(
-    getFieldConditionMap(flattenConditions(jsonSchema)),
-  );
+  const conditionsMap = getConditionsMap(fieldConditionMap);
   const childNodeMap = new Map<string, ChildNode>();
   const properties = jsonSchema.properties;
   if (!properties) return childNodeMap;

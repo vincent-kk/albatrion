@@ -176,8 +176,10 @@ export enum SetValueOption {
   Propagate = 1 << 2,
   /** Trigger a refresh to update the FormTypeInput */
   Refresh = 1 << 3,
+  /** Reset the node */
+  External = 1 << 4,
   /** Both propagate to children and trigger a refresh */
-  Merge = EmitChange | Propagate | Refresh,
+  Merge = EmitChange | Propagate | Refresh | External,
   /** Replace the value and propagate the update with refresh */
-  Overwrite = EmitChange | Replace | Propagate | Refresh,
+  Overwrite = EmitChange | Replace | Propagate | Refresh | External,
 }

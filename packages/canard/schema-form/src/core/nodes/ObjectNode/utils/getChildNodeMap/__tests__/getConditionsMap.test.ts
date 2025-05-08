@@ -2,9 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import type { ObjectSchema } from '@/schema-form/types';
 
-import { flattenConditions } from '../utils/flattenConditions';
+import { getFieldConditionMap } from '../../getFieldConditionMap';
 import { getConditionsMap } from '../utils/getConditionsMap';
-import { getFieldConditionMap } from '../utils/getFieldConditionMap';
 
 describe('getConditionsMap', () => {
   it('should return undefined if schema has no if or then condition', () => {
@@ -15,9 +14,7 @@ describe('getConditionsMap', () => {
       },
     };
 
-    const flattedConditions = flattenConditions(schema);
-    const fieldConditionMap =
-      getFieldConditionMap(flattedConditions) || new Map();
+    const fieldConditionMap = getFieldConditionMap(schema) || new Map();
     const result = getConditionsMap(fieldConditionMap);
     expect(result?.size).toBe(0);
   });
@@ -40,9 +37,7 @@ describe('getConditionsMap', () => {
       },
     };
 
-    const flattedConditions = flattenConditions(schema);
-    const fieldConditionMap =
-      getFieldConditionMap(flattedConditions) || new Map();
+    const fieldConditionMap = getFieldConditionMap(schema) || new Map();
     const result = getConditionsMap(fieldConditionMap);
 
     expect(result).toBeInstanceOf(Map);
@@ -78,9 +73,7 @@ describe('getConditionsMap', () => {
       },
     };
 
-    const flattedConditions = flattenConditions(schema);
-    const fieldConditionMap =
-      getFieldConditionMap(flattedConditions) || new Map();
+    const fieldConditionMap = getFieldConditionMap(schema) || new Map();
     const result = getConditionsMap(fieldConditionMap);
 
     expect(result).toBeInstanceOf(Map);
@@ -112,9 +105,7 @@ describe('getConditionsMap', () => {
       },
     };
 
-    const flattedConditions = flattenConditions(schema) || [];
-    const fieldConditionMap =
-      getFieldConditionMap(flattedConditions) || new Map();
+    const fieldConditionMap = getFieldConditionMap(schema) || new Map();
     const result = getConditionsMap(fieldConditionMap);
 
     expect(result).toBeInstanceOf(Map);
@@ -156,9 +147,7 @@ describe('getConditionsMap', () => {
       },
     };
 
-    const flattedConditions = flattenConditions(schema) || [];
-    const fieldConditionMap =
-      getFieldConditionMap(flattedConditions) || new Map();
+    const fieldConditionMap = getFieldConditionMap(schema) || new Map();
     const result = getConditionsMap(fieldConditionMap);
 
     expect(result).toBeInstanceOf(Map);

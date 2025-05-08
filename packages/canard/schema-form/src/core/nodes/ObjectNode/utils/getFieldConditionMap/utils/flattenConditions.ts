@@ -4,7 +4,7 @@ import type { Dictionary, RequiredBy } from '@aileron/declare';
 
 import type { JsonSchema, JsonSchemaWithVirtual } from '@/schema-form/types';
 
-export interface FlattenCondition {
+interface FlattenCondition {
   condition: Dictionary<string | string[]>;
   required: string[];
   inverse?: boolean;
