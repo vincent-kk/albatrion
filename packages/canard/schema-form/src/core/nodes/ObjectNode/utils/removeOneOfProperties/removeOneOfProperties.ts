@@ -1,5 +1,7 @@
 import type { ObjectValue } from '@/schema-form/types';
 
+import { checkAllowedKeyFactory } from './utils/checkAllowedKeyFactory';
+
 /**
  * value에서 oneOf에 정의된 프로퍼티만 제거(properties의 키만 유지)
  * 아무 곳에도 정의되지 않은 프로퍼티는 그대로 유지
@@ -10,15 +12,25 @@ import type { ObjectValue } from '@/schema-form/types';
  */
 export const removeOneOfProperties = (
   value: ObjectValue | undefined,
-  oneOfKeySet?: Set<string>,
-  allowedKeySet?: Set<string>,
+  oneOfKeySet: Set<string> | undefined,
+  oneOfKeySetList: Array<Set<string>> | undefined,
+  allowedKeySetIndex: number,
 ): ObjectValue | undefined => {
-  if (value == null || oneOfKeySet === undefined) return value;
+  if (
+    value == null ||
+    oneOfKeySet === undefined ||
+    oneOfKeySetList === undefined
+  )
+    return value;
+  const checkAllowedKey = checkAllowedKeyFactory(
+    oneOfKeySetList,
+    allowedKeySetIndex,
+  );
   const result: ObjectValue = {};
   const keys = Object.keys(value);
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
-    if (!allowedKeySet?.has(key) && oneOfKeySet.has(key)) continue;
+    if (oneOfKeySet.has(key) && !checkAllowedKey?.(key)) continue;
     result[key] = value[key];
   }
   return result;

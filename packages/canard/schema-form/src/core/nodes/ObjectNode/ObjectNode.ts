@@ -219,31 +219,34 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     if (!this.#oneOfChildrenList) return;
     this.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateComputedProperties) {
-        const index = this.oneOfIndex;
-        if (index === undefined || index === this.#previousIndex) return;
+        const targetIndex = this.oneOfIndex;
+        if (targetIndex === undefined || targetIndex === this.#previousIndex)
+          return;
 
         const previousOneOfChildren =
-          index > -1 ? this.#oneOfChildrenList?.[index] : undefined;
+          targetIndex > -1 ? this.#oneOfChildrenList?.[targetIndex] : undefined;
 
         if (previousOneOfChildren)
           for (const child of previousOneOfChildren) child.node.resetNode();
 
         const oneOfChildren =
-          index > -1 ? this.#oneOfChildrenList?.[index] : undefined;
+          targetIndex > -1 ? this.#oneOfChildrenList?.[targetIndex] : undefined;
 
         this.#children = oneOfChildren
           ? [...this.#propertyChildren, ...oneOfChildren]
           : this.#propertyChildren;
 
-        const allowedKeySet =
-          index > -1 ? this.#oneOfKeySetList?.[index] : undefined;
-
         this.setValue(
-          removeOneOfProperties(this.#value, this.#oneOfKeySet, allowedKeySet),
+          removeOneOfProperties(
+            this.#value,
+            this.#oneOfKeySet,
+            this.#oneOfKeySetList,
+            targetIndex,
+          ),
           RESET_NODE_OPTION,
         );
 
-        this.#previousIndex = this.oneOfIndex;
+        this.#previousIndex = targetIndex;
         this.#publishChildrenChange();
       }
     });
