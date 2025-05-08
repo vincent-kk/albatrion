@@ -505,25 +505,25 @@ export abstract class AbstractNode<
   ) {
     // 함수로 받은 경우 이전 상태를 기반으로 새 상태 계산
     const newInput = typeof input === 'function' ? input(this.#state) : input;
-    let updated = false;
+    let hasChanged = false;
     if (newInput === undefined) {
       if (isEmptyObject(this.#state)) return;
       this.#state = Object.create(null);
-      updated = true;
+      hasChanged = true;
     } else if (isObject(newInput)) {
       for (const [key, value] of Object.entries(newInput)) {
         if (value === undefined) {
           if (key in this.#state) {
             delete this.#state[key];
-            updated = true;
+            hasChanged = true;
           }
         } else if (this.#state[key] !== value) {
           this.#state[key] = value;
-          updated = true;
+          hasChanged = true;
         }
       }
     }
-    if (!updated) return;
+    if (!hasChanged) return;
     this.publish({
       type: NodeEventType.UpdateState,
       payload: {
