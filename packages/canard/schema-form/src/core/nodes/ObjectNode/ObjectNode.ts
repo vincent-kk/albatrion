@@ -28,6 +28,7 @@ const RESET_NODE_OPTION = SetValueOption.Replace | SetValueOption.Propagate;
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   readonly #schemaKeys: string[];
   readonly #oneOfKeySet: Set<string> | undefined;
+  readonly #oneOfKeySetList: Array<Set<string>> | undefined;
 
   #locked: boolean = true;
 
@@ -152,11 +153,13 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     const properties = jsonSchema.properties;
     const propertyKeys = getObjectKeys(properties);
+    const oneOfKeyInfo = getOneOfProperties(jsonSchema);
 
-    this.#oneOfKeySet = getOneOfProperties(jsonSchema);
-    this.#schemaKeys = this.#oneOfKeySet
-      ? [...propertyKeys, ...Array.from(this.#oneOfKeySet)]
-      : propertyKeys;
+    if (oneOfKeyInfo) {
+      this.#oneOfKeySet = oneOfKeyInfo.oneOfKeySet;
+      this.#oneOfKeySetList = oneOfKeyInfo.oneOfKeySetList;
+      this.#schemaKeys = [...propertyKeys, ...Array.from(this.#oneOfKeySet)];
+    } else this.#schemaKeys = propertyKeys;
 
     const { virtualReferencesMap, virtualReferenceFieldsMap } =
       getVirtualReferencesMap(name, propertyKeys, jsonSchema.virtual);
@@ -232,8 +235,11 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
           ? [...this.#propertyChildren, ...oneOfChildren]
           : this.#propertyChildren;
 
+        const allowedKeySet =
+          index > -1 ? this.#oneOfKeySetList?.[index] : undefined;
+
         this.setValue(
-          removeOneOfProperties(this.#value, this.#oneOfKeySet),
+          removeOneOfProperties(this.#value, this.#oneOfKeySet, allowedKeySet),
           RESET_NODE_OPTION,
         );
 

@@ -10,14 +10,15 @@ import type { ObjectValue } from '@/schema-form/types';
  */
 export const removeOneOfProperties = (
   value: ObjectValue | undefined,
-  oneOfKeySet: Set<string> | undefined,
+  oneOfKeySet?: Set<string>,
+  allowedKeySet?: Set<string>,
 ): ObjectValue | undefined => {
   if (value == null || oneOfKeySet === undefined) return value;
   const result: ObjectValue = {};
   const keys = Object.keys(value);
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
-    if (oneOfKeySet.has(key)) continue;
+    if (!allowedKeySet?.has(key) && oneOfKeySet.has(key)) continue;
     result[key] = value[key];
   }
   return result;
