@@ -1831,8 +1831,8 @@ __metadata:
     vitest: "npm:^2.1.5"
   peerDependencies:
     dayjs: ">=1"
-    react: ">=16 <20"
-    react-dom: ">=16 <20"
+    react: ">=18 <20"
+    react-dom: ">=18 <20"
   languageName: unknown
   linkType: soft
 
@@ -1887,8 +1887,8 @@ __metadata:
   peerDependencies:
     antd: ">=5.10.0"
     dayjs: ">=1"
-    react: ">=16 <20"
-    react-dom: ">=16 <20"
+    react: ">=18 <20"
+    react-dom: ">=18 <20"
   languageName: unknown
   linkType: soft
 
@@ -1946,8 +1946,8 @@ __metadata:
     vitest: "npm:^2.1.5"
   peerDependencies:
     ajv: ">=8"
-    react: ">=16 <20"
-    react-dom: ">=16 <20"
+    react: ">=18 <20"
+    react-dom: ">=18 <20"
   languageName: unknown
   linkType: soft
 
@@ -3991,8 +3991,8 @@ __metadata:
     vite: "npm:^5.4.11"
     vitest: "npm:^2.1.5"
   peerDependencies:
-    react: ">=16 <20"
-    react-dom: ">=16 <20"
+    react: ">=18 <20"
+    react-dom: ">=18 <20"
   languageName: unknown
   linkType: soft
 
