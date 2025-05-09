@@ -11,6 +11,9 @@ import type { SetStateFnWithOptions } from '@/schema-form/types';
 
 import type { SchemaNodeAdapterInputProps } from './type';
 
+const HANDLE_CHANGE_OPTION =
+  SetValueOption.EmitChange | SetValueOption.Propagate;
+
 const RERENDERING_EVENT =
   NodeEventType.UpdateValue |
   NodeEventType.UpdateError |
@@ -30,7 +33,7 @@ export const SchemaNodeAdapterInput = memo(
     );
 
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
-      (input, option = SetValueOption.Propagate) => {
+      (input, option = HANDLE_CHANGE_OPTION) => {
         if (node.readOnly || node.disabled) return;
         node.setValue(input, option);
         node.clearReceivedErrors();

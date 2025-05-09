@@ -57,9 +57,7 @@ export const PromptInner = memo(
 
     const handleConfirm = useCallback(() => {
       // NOTE: wait for the next tick to ensure the value is updated
-      setTimeout(() => {
-        onConfirm();
-      });
+      requestAnimationFrame(onConfirm);
     }, [onConfirm]);
 
     const disabled = useMemo(

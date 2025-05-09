@@ -68,12 +68,18 @@ export const AmataModalUsecase = () => {
     prompt({
       title: 'Hello, world!',
       content: 'This is a test prompt.',
-      Input: ({ defaultValue, onChange }) => {
+      Input: ({ defaultValue, onChange, onConfirm, onCancel }) => {
         const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           onChange(e.target.value);
         };
         console.log('defaultValue', defaultValue);
-        return <Input defaultValue={defaultValue} onChange={handleChange} />;
+        return (
+          <div>
+            <Input defaultValue={defaultValue} onChange={handleChange} />
+            <Button onClick={onConfirm}>Confirm</Button>
+            <Button onClick={onCancel}>Cancel</Button>
+          </div>
+        );
       },
       defaultValue: 'value',
       background: {

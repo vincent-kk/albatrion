@@ -90,8 +90,8 @@ export const RootNodeContextProvider = <
   useEffect(() => {
     if (!rootNode) return;
     const unsubscribe = rootNode.subscribe(({ type, payload }) => {
-      if (type & NodeEventType.UpdateError)
-        onValidate(payload?.[NodeEventType.UpdateError] || []);
+      if (type & NodeEventType.UpdateInternalError)
+        onValidate(payload?.[NodeEventType.UpdateInternalError] || []);
     });
     onReady(rootNode);
     return unsubscribe;

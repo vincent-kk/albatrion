@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { filterErrors } from './filterErrors.bk';
+import { filterErrors } from './filterErrors';
 
 describe('filterErrors', () => {
   it('should return empty array if errors is empty', () => {

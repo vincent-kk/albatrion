@@ -1,5 +1,4 @@
 import {
-  BITMASK_NONE,
   JSONPath,
   equals,
   isEmptyObject,
@@ -9,6 +8,7 @@ import {
 
 import type { Fn, SetStateFn } from '@aileron/declare';
 
+import { BIT_MASK_NONE } from '@/schema-form/app/constants/binary';
 import {
   type Ajv,
   type ErrorObject,
@@ -31,19 +31,22 @@ import {
   type SchemaNode,
   type SchemaNodeConstructorProps,
   SetValueOption,
+  type UnionSetValueOption,
   ValidationMode,
 } from '../type';
 import {
   EventCascade,
+  afterMicrotask,
   computeFactory,
   find,
   getFallbackValidator,
-  getJsonPaths,
   getNodeType,
   getPathSegments,
+  getSafeEmptyValue,
 } from './utils';
 
 const OMITTED_KEYS = new Set(['key']);
+const RESET_NODE_OPTION = SetValueOption.Replace | SetValueOption.Propagate;
 
 export abstract class AbstractNode<
   Schema extends JsonSchemaWithVirtual = JsonSchemaWithVirtual,
@@ -63,6 +66,8 @@ export abstract class AbstractNode<
   readonly isArrayItem: boolean;
   /** Node의 JSON Schema */
   readonly jsonSchema: Schema;
+  /** Node의 property key 원본  */
+  readonly propertyKey: string;
 
   /** Node의 이름 */
   #name: string;
@@ -121,100 +126,13 @@ export abstract class AbstractNode<
     return this.#key;
   }
 
-  /** 자신의 Error와 하위 Node의 Error를 합친 에러 */
-  #mergedErrors: JsonSchemaError[] = [];
-
-  /** 자신의 Error */
-  #errors: JsonSchemaError[] = [];
-  /** 자신의 Error의 dataPath 목록 */
-  #errorDataPaths: string[] = [];
-  /** 자신의 Error와 하위 Node의 Error를 합친 에러 */
-  get errors() {
-    return this.#mergedErrors;
-  }
-  /**
-   * 자신의 Error를 전달받아서 하위 Node에서 전달받은 Error와 합친 후 전달
-   * @param errors 전달받은 Error List
-   */
-  setErrors(this: AbstractNode, errors: JsonSchemaError[]) {
-    if (equals(this.#errors, errors)) return;
-    this.#errors = errors;
-    this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
-    this.publish({
-      type: NodeEventType.UpdateError,
-      payload: {
-        [NodeEventType.UpdateError]: this.#filterErrorsWithSchema(
-          this.#mergedErrors,
-        ),
-      },
-    });
-  }
-
-  /**
-   * 자신의 Error 초기화, 하위 Node의 Error는 초기화 하지 않음
-   */
-  clearErrors(this: AbstractNode) {
-    this.setErrors([]);
-  }
-
-  /** 하위 Node에서 전달받은 Error */
-  #receivedErrors: JsonSchemaError[] = [];
-  /**
-   * 하위 Node에서 전달받은 Error를 자신의 Error와 합친 후 저장
-   * @param errors 전달받은 Error List
-   */
-  setReceivedErrors(this: AbstractNode, errors: JsonSchemaError[] = []) {
-    // NOTE: 이미 동일한 에러가 있으면 중복 발생 방지
-    if (equals(this.#receivedErrors, errors, OMITTED_KEYS)) return;
-
-    // 하위 Node에서 데이터 입력시 해당 항목을 찾아 삭제하기 위한 key 가 필요.
-    // 참고: removeFromReceivedErrors
-    this.#receivedErrors = new Array<JsonSchemaError>(errors.length);
-    for (let index = 0; index < errors.length; index++)
-      this.#receivedErrors[index] = { ...errors[index], key: index };
-    this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
-
-    this.publish({
-      type: NodeEventType.UpdateError,
-      payload: {
-        [NodeEventType.UpdateError]: this.#filterErrorsWithSchema(
-          this.#mergedErrors,
-        ),
-      },
-    });
-  }
-
-  /**
-   * 하위 Node에서 전달받은 Error 초기화, 자신의 Error는 초기화 하지 않음
-   */
-  clearReceivedErrors(this: AbstractNode) {
-    if (!this.#receivedErrors.length) return;
-    if (!this.isRoot)
-      this.rootNode.removeFromReceivedErrors(this.#receivedErrors);
-    this.setReceivedErrors([]);
-  }
-
-  /**
-   * 하위 Node에서 전달받은 Error 중 삭제할 Error 찾아서 삭제
-   * @param errors 삭제할 Error List
-   */
-  removeFromReceivedErrors(this: AbstractNode, errors: JsonSchemaError[]) {
-    const deleteKeys: Array<number> = [];
-    for (const error of errors)
-      if (typeof error.key === 'number') deleteKeys.push(error.key);
-    const nextErrors: JsonSchemaError[] = [];
-    for (const error of this.#receivedErrors)
-      if (!error.key || !deleteKeys.includes(error.key)) nextErrors.push(error);
-    if (this.#receivedErrors.length !== nextErrors.length)
-      this.setReceivedErrors(nextErrors);
-  }
-
+  #initialValue: Value | undefined;
+  #defaultValue: Value | undefined;
   /**
    * Node의 기본값
    *  - set: `setDefaultValue`, 상속 받은 Node에서만 update 가능
    *  - get: `defaultValue`, 모든 상황에서 읽을 수 있음
    */
-  #defaultValue: Value | undefined;
   get defaultValue() {
     return this.#defaultValue;
   }
@@ -224,7 +142,7 @@ export abstract class AbstractNode<
    * @param value input value for update defaultValue
    */
   protected setDefaultValue(this: AbstractNode, value: Value | undefined) {
-    this.#defaultValue = value;
+    this.#initialValue = this.#defaultValue = value;
   }
 
   /**
@@ -253,7 +171,7 @@ export abstract class AbstractNode<
   protected abstract applyValue(
     this: AbstractNode,
     input: Value | undefined,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ): void;
 
   /**
@@ -270,7 +188,7 @@ export abstract class AbstractNode<
   setValue(
     this: AbstractNode,
     input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
-    option: SetValueOption = SetValueOption.Overwrite,
+    option: UnionSetValueOption = SetValueOption.Overwrite,
   ): void {
     const inputValue = typeof input === 'function' ? input(this.value) : input;
     this.applyValue(inputValue, option);
@@ -282,9 +200,7 @@ export abstract class AbstractNode<
    * @param input 변경된 값이나 값을 반환하는 함수
    */
   protected onChange(this: AbstractNode, input: Value | undefined): void {
-    if (typeof this.#handleChange !== 'function') return;
-    if (this.isRoot) setTimeout(() => this.#handleChange?.(this.value));
-    else this.#handleChange(input);
+    this.#handleChange?.(input);
   }
 
   /** Node의 하위 Node 목록, 하위 Node를 가지지 않는 Node는 빈 배열 반환 */
@@ -304,17 +220,13 @@ export abstract class AbstractNode<
   }: SchemaNodeConstructorProps<Schema, Value>) {
     this.type = getNodeType(jsonSchema);
     this.jsonSchema = jsonSchema;
-    this.#defaultValue =
-      defaultValue ?? (getFallbackValue(jsonSchema) as Value);
     this.parentNode = parentNode || null;
 
-    // NOTE: AbstractNode 자체를 사용하는 경우는 없으므로, this는 SchemaNode
     this.rootNode = (this.parentNode?.rootNode || this) as SchemaNode;
     this.isRoot = !this.parentNode;
     this.isArrayItem = this.parentNode?.jsonSchema?.type === 'array';
     this.#name = name || '';
-
-    this.#handleChange = onChange;
+    this.propertyKey = this.#name;
 
     this.#path = this.parentNode?.path
       ? `${this.parentNode.path}${JSONPath.Child}${this.#name}`
@@ -335,7 +247,15 @@ export abstract class AbstractNode<
 
     this.#compute = computeFactory(this.jsonSchema, this.rootNode.jsonSchema);
 
-    // NOTE: 루트 Node에서만 validator 준비
+    this.setDefaultValue(defaultValue ?? getFallbackValue(jsonSchema));
+    if (typeof onChange === 'function')
+      this.#handleChange = this.isRoot
+        ? afterMicrotask(() =>
+            onChange(getSafeEmptyValue(this.value, this.jsonSchema)),
+          )
+        : onChange;
+
+    // NOTE: Special behavior for root node
     if (this.isRoot) this.#prepareValidator(ajv, validationMode);
   }
 
@@ -428,7 +348,7 @@ export abstract class AbstractNode<
     return this.#disabled;
   }
 
-  #oneOfIndex: number | undefined;
+  #oneOfIndex: number = -1;
   protected get oneOfIndex() {
     return this.#oneOfIndex;
   }
@@ -436,19 +356,6 @@ export abstract class AbstractNode<
   #watchValues: ReadonlyArray<any> = [];
   get watchValues() {
     return this.#watchValues;
-  }
-
-  #updateComputedProperties(this: AbstractNode) {
-    this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
-    this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
-    this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
-    this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
-    this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies);
-    if (!this.#visible) this.#resetNodeState();
-  }
-  #resetNodeState(this: AbstractNode) {
-    this.value = undefined;
-    this.setState(undefined);
   }
 
   #prepareUpdateDependencies(this: AbstractNode) {
@@ -466,20 +373,36 @@ export abstract class AbstractNode<
               this.#dependencies[index] !== payload?.[NodeEventType.UpdateValue]
             ) {
               this.#dependencies[index] = payload?.[NodeEventType.UpdateValue];
-              this.#updateComputedProperties();
-              this.publish({
-                type: NodeEventType.UpdateComputedProperties,
-              });
+              this.publish({ type: NodeEventType.UpdateDependencies });
             }
           }
         });
         this.saveUnsubscribe(unsubscribe);
       }
+      this.subscribe(({ type }) => {
+        if (type & NodeEventType.UpdateDependencies)
+          this.#updateComputedProperties();
+      });
     }
     this.#updateComputedProperties();
-    this.publish({
-      type: NodeEventType.UpdateComputedProperties,
-    });
+  }
+
+  #updateComputedProperties(this: AbstractNode) {
+    const isVisible = this.#visible;
+    this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
+    this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
+    this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
+    this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
+    this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
+    if (isVisible && !this.#visible) this.resetNode();
+    this.publish({ type: NodeEventType.UpdateComputedProperties });
+  }
+  resetNode(this: AbstractNode, input?: Value | undefined) {
+    const value = input ?? this.#initialValue;
+    this.#defaultValue = value;
+    this.setValue(value, RESET_NODE_OPTION);
+    this.onChange(value);
+    this.setState();
   }
 
   /** Node의 상태 */
@@ -498,25 +421,25 @@ export abstract class AbstractNode<
   ) {
     // 함수로 받은 경우 이전 상태를 기반으로 새 상태 계산
     const newInput = typeof input === 'function' ? input(this.#state) : input;
-    let updated = false;
+    let hasChanged = false;
     if (newInput === undefined) {
       if (isEmptyObject(this.#state)) return;
       this.#state = Object.create(null);
-      updated = true;
+      hasChanged = true;
     } else if (isObject(newInput)) {
       for (const [key, value] of Object.entries(newInput)) {
         if (value === undefined) {
           if (key in this.#state) {
             delete this.#state[key];
-            updated = true;
+            hasChanged = true;
           }
         } else if (this.#state[key] !== value) {
           this.#state[key] = value;
-          updated = true;
+          hasChanged = true;
         }
       }
     }
-    if (!updated) return;
+    if (!hasChanged) return;
     this.publish({
       type: NodeEventType.UpdateState,
       payload: {
@@ -534,18 +457,132 @@ export abstract class AbstractNode<
     });
   }
 
+  /** 외부에서 전달받은 Error */
+  #receivedErrors: JsonSchemaError[] = [];
+
+  /** [Root Node Only] Form 내부에서 발생한 Error 전체 */
+  #internalErrors: JsonSchemaError[] | undefined;
+
+  /** [Root Node Only] Form 내부에서 발생한 Error 전체의 dataPath 목록 */
+  #errorDataPaths: string[] | undefined;
+
+  /** [Root Node Only] Form 내부에서 발생한 Error 전체와 외부에서 전달받은 Error를 병합한 결과 */
+  #mergedInternalErrors: JsonSchemaError[] | undefined;
+
+  /** 자신의 Error */
+  #localErrors: JsonSchemaError[] = [];
+
+  /** 자신의 Error와 외부에서 전달받은 Error를 병합한 결과 */
+  #mergedLocalErrors: JsonSchemaError[] = [];
+
+  get internalErrors() {
+    return this.#mergedInternalErrors;
+  }
+
+  /** 자신의 Error와 외부에서 전달받은 Error를 병합한 결과 */
+  get errors() {
+    return this.#mergedLocalErrors;
+  }
   /**
-   * 주어진 에러 목록에서 자기 자신이 노출할 에러만 필터링
-   * @param errors 필터링할 에러 목록
-   * @returns 필터링된 에러 목록
+   * 자신의 Error 업데이트 후 외부 전달받은 Error와 병합
+   * @param errors 전달받은 Error List
    */
-  #filterErrorsWithSchema(this: AbstractNode, errors: JsonSchemaError[]) {
-    if (!this.isRoot) return errors;
-    const visibleJsonPaths = getJsonPaths(this.value);
-    const filtered = [];
+  setErrors(this: AbstractNode, errors: JsonSchemaError[]) {
+    if (equals(this.#localErrors, errors)) return;
+    this.#localErrors = errors;
+    this.#mergedLocalErrors = [...this.#receivedErrors, ...this.#localErrors];
+    this.publish({
+      type: NodeEventType.UpdateError,
+      payload: {
+        [NodeEventType.UpdateError]: this.#mergedLocalErrors,
+      },
+    });
+  }
+
+  #setInternalErrors(this: AbstractNode, errors: JsonSchemaError[]) {
+    if (equals(this.#internalErrors, errors)) return false;
+    this.#internalErrors = errors;
+    this.#mergedInternalErrors = [
+      ...this.#receivedErrors,
+      ...this.#internalErrors,
+    ];
+    this.publish({
+      type: NodeEventType.UpdateInternalError,
+      payload: {
+        [NodeEventType.UpdateInternalError]: this.#mergedInternalErrors,
+      },
+    });
+    return true;
+  }
+
+  /**
+   * 자신의 Error 초기화, 전달받은 Error는 초기화 하지 않음
+   */
+  clearErrors(this: AbstractNode) {
+    this.setErrors([]);
+  }
+
+  /**
+   * 외부에서 전달받은 Error를 local Error와 병합, rootNode의 경우 internalError 병합
+   * @param errors 전달받은 Error List
+   */
+  setReceivedErrors(this: AbstractNode, errors: JsonSchemaError[] = []) {
+    if (equals(this.#receivedErrors, errors, OMITTED_KEYS)) return;
+
+    this.#receivedErrors = new Array<JsonSchemaError>(errors.length);
+    for (let index = 0; index < errors.length; index++)
+      this.#receivedErrors[index] = { ...errors[index], key: index };
+
+    this.#mergedLocalErrors = [...this.#receivedErrors, ...this.#localErrors];
+    this.publish({
+      type: NodeEventType.UpdateError,
+      payload: {
+        [NodeEventType.UpdateError]: this.#mergedLocalErrors,
+      },
+    });
+    this.publish({
+      type: NodeEventType.UpdateError,
+      payload: {
+        [NodeEventType.UpdateError]: this.#mergedLocalErrors,
+      },
+    });
+
+    if (this.isRoot) {
+      this.#mergedInternalErrors = this.#internalErrors
+        ? [...this.#receivedErrors, ...this.#internalErrors]
+        : this.#receivedErrors;
+      this.publish({
+        type: NodeEventType.UpdateInternalError,
+        payload: {
+          [NodeEventType.UpdateInternalError]: this.#mergedInternalErrors,
+        },
+      });
+    }
+  }
+
+  /**
+   * 외부에서 전달받은 Error 초기화, localErrors / internalErrors 초기화 하지 않음
+   */
+  clearReceivedErrors(this: AbstractNode) {
+    if (!this.#receivedErrors.length) return;
+    if (!this.isRoot)
+      this.rootNode.removeFromReceivedErrors(this.#receivedErrors);
+    this.setReceivedErrors([]);
+  }
+
+  /**
+   * 외부에서 전달받은 Error 중 삭제할 Error 찾아서 삭제
+   * @param errors 삭제할 Error List
+   */
+  removeFromReceivedErrors(this: AbstractNode, errors: JsonSchemaError[]) {
+    const deleteKeys: Array<number> = [];
     for (const error of errors)
-      if (visibleJsonPaths.includes(error.dataPath)) filtered.push(error);
-    return filtered;
+      if (typeof error.key === 'number') deleteKeys.push(error.key);
+    const nextErrors: JsonSchemaError[] = [];
+    for (const error of this.#receivedErrors)
+      if (!error.key || !deleteKeys.includes(error.key)) nextErrors.push(error);
+    if (this.#receivedErrors.length !== nextErrors.length)
+      this.setReceivedErrors(nextErrors);
   }
 
   /** Node의 Ajv 검증 함수 */
@@ -573,33 +610,33 @@ export abstract class AbstractNode<
     // NOTE: 현재 Form 내의 value와 schema를 이용해서 validation 수행
     //    - getDataWithSchema: 현재 JsonSchema를 기반으로 Value의 데이터를 변환하여 반환
     //    - filterErrors: errors에서 oneOf 관련 error 필터링
-    const errors = await this.#validate(this.value);
+    const internalErrors = await this.#validate(this.value);
+
+    // 전체 error를 저장, 이전 error와 동일한 경우 setInternalErrors false 반환
+    if (!this.#setInternalErrors(internalErrors)) return;
 
     // 얻어진 errors를 dataPath 별로 분류
     const errorsByDataPath = new Map<
       JsonSchemaError['dataPath'],
       JsonSchemaError[]
     >();
-    for (const error of errors) {
+    for (const error of internalErrors) {
       if (!errorsByDataPath.has(error.dataPath)) {
         errorsByDataPath.set(error.dataPath, []);
       }
       errorsByDataPath.get(error.dataPath)?.push(error);
     }
 
-    // 전체 error를 setting,
-    this.setErrors(errors);
-
     // 하위 Node에도 dataPath로 node를 찾아서 error setting
-    for (const [dataPath, errors] of errorsByDataPath.entries()) {
+    for (const [dataPath, errors] of errorsByDataPath.entries())
       this.find(dataPath)?.setErrors(errors);
-    }
 
     // 기존 error에는 포함되어 있으나, 신규 error 목록에 포함되지 않는 error를 가진 node는 clearError
     const errorDataPaths = Array.from(errorsByDataPath.keys());
-    for (const dataPath of this.#errorDataPaths)
-      if (!errorDataPaths.includes(dataPath))
-        this.find(dataPath)?.clearErrors();
+    if (this.#errorDataPaths)
+      for (const dataPath of this.#errorDataPaths)
+        if (!errorDataPaths.includes(dataPath))
+          this.find(dataPath)?.clearErrors();
 
     // error를 가진 dataPath 목록 업데이트
     this.#errorDataPaths = errorDataPaths;
@@ -626,10 +663,10 @@ export abstract class AbstractNode<
     const triggers =
       (validationMode & ValidationMode.OnChange
         ? NodeEventType.UpdateValue
-        : BITMASK_NONE) |
+        : BIT_MASK_NONE) |
       (validationMode & ValidationMode.OnRequest
         ? NodeEventType.RequestValidate
-        : BITMASK_NONE);
+        : BIT_MASK_NONE);
     this.subscribe(({ type }) => {
       if (type & triggers) this.#handleValidation();
     });
