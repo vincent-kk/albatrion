@@ -14,15 +14,17 @@ let keySeq = 0;
  */
 export const transformErrors = (
   errors: ErrorObject[],
-  useKey = false,
+  omits?: Set<string>,
+  useKey?: boolean,
 ): JsonSchemaError[] => {
   if (!isArray(errors)) return [];
-  const result = new Array<JsonSchemaError>(errors.length);
+  const result = new Array<JsonSchemaError>();
   for (let i = 0; i < errors.length; i++) {
+    if (omits?.has(errors[i].keyword)) continue;
     const error = errors[i];
     (error as JsonSchemaError).key = useKey ? ++keySeq : undefined;
     (error as JsonSchemaError).dataPath = transformDataPath(error);
-    result[i] = error as JsonSchemaError;
+    result[result.length] = error as JsonSchemaError;
   }
   return result;
 };

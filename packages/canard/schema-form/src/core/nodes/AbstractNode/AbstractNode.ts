@@ -45,7 +45,8 @@ import {
   getSafeEmptyValue,
 } from './utils';
 
-const OMITTED_KEYS = new Set(['key']);
+const IGNORE_ERROR_KEYWORDS = new Set(['oneOf']);
+const RECURSIVE_ERROR_OMITTED_KEYS = new Set(['key']);
 const RESET_NODE_OPTION = SetValueOption.Replace | SetValueOption.Propagate;
 
 export abstract class AbstractNode<
@@ -546,7 +547,8 @@ export abstract class AbstractNode<
    * @param errors - 전달받은 Error 목록
    */
   setReceivedErrors(this: AbstractNode, errors: JsonSchemaError[] = []) {
-    if (equals(this.#receivedErrors, errors, OMITTED_KEYS)) return;
+    if (equals(this.#receivedErrors, errors, RECURSIVE_ERROR_OMITTED_KEYS))
+      return;
 
     this.#receivedErrors = new Array<JsonSchemaError>(errors.length);
     for (let index = 0; index < errors.length; index++)
@@ -615,7 +617,10 @@ export abstract class AbstractNode<
     try {
       await this.#validator(value);
     } catch (thrown: any) {
-      return transformErrors(thrown?.errors as ErrorObject[]);
+      return transformErrors(
+        thrown?.errors as ErrorObject[],
+        IGNORE_ERROR_KEYWORDS,
+      );
     }
     return [];
   }
