@@ -15,9 +15,9 @@ export {
 export {
   type SchemaNode,
   NodeState,
-  NodeEventType,
   ValidationMode,
-  SetValueOption,
+  PublicNodeEventType as NodeEventType,
+  PublicSetValueOption as SetValueOption,
   isArrayNode,
   isBooleanNode,
   isBranchNode,

@@ -6,6 +6,7 @@ import {
   NodeEventType,
   type SchemaNodeConstructorProps,
   SetValueOption,
+  type UnionSetValueOption,
 } from '../type';
 
 export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
@@ -19,7 +20,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   protected applyValue(
     this: BooleanNode,
     input: BooleanValue | undefined,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ) {
     this.#emitChange(input, option);
   }
@@ -30,13 +31,16 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   #emitChange(
     this: BooleanNode,
     input: BooleanValue | undefined,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ) {
     const previous = this.#value;
     const current = this.#parseValue(input);
     if (previous === current) return;
     this.#value = current;
-    this.onChange(current);
+
+    if (option & SetValueOption.EmitChange) this.onChange(current);
+    if (option & SetValueOption.Refresh) this.refresh(current);
+
     this.publish({
       type: NodeEventType.UpdateValue,
       payload: {
@@ -49,7 +53,6 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
         },
       },
     });
-    if (option & SetValueOption.Refresh) this.refresh(current);
   }
 
   constructor({
@@ -73,7 +76,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
       ajv,
     });
     if (this.defaultValue !== undefined)
-      this.setValue(this.defaultValue, SetValueOption.Normal);
+      this.setValue(this.defaultValue, SetValueOption.EmitChange);
     this.prepare();
   }
 }

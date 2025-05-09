@@ -4,6 +4,8 @@ export {
   NodeEventType,
   ValidationMode,
   SetValueOption,
+  PublicNodeEventType,
+  PublicSetValueOption,
 } from './type';
 export { createSchemaNodeFactory } from './schemaNodeFactory';
 

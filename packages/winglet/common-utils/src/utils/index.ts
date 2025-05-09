@@ -8,3 +8,4 @@ export * from './hash';
 export * from './json';
 export * from './object';
 export * from './promise';
+export * from './scheduler';

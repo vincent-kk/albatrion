@@ -5,6 +5,7 @@ import {
   NodeEventType,
   type SchemaNodeConstructorProps,
   SetValueOption,
+  type UnionSetValueOption,
 } from '../type';
 
 export class NullNode extends AbstractNode<NullSchema, NullValue> {
@@ -18,7 +19,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
   protected applyValue(
     this: NullNode,
     input: NullValue | undefined,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ) {
     this.#emitChange(input, option);
   }
@@ -29,13 +30,16 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
   #emitChange(
     this: NullNode,
     input: NullValue | undefined,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ) {
     const previous = this.#value;
     const current = this.#parseValue(input);
     if (previous === current) return;
     this.#value = current;
-    this.onChange(current);
+
+    if (option & SetValueOption.EmitChange) this.onChange(current);
+    if (option & SetValueOption.Refresh) this.refresh(current);
+
     this.publish({
       type: NodeEventType.UpdateValue,
       payload: {
@@ -48,7 +52,6 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
         },
       },
     });
-    if (option & SetValueOption.Refresh) this.refresh(current);
   }
 
   constructor({
@@ -72,7 +75,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
       ajv,
     });
     if (this.defaultValue !== undefined)
-      this.setValue(this.defaultValue, SetValueOption.Normal);
+      this.setValue(this.defaultValue, SetValueOption.EmitChange);
     this.prepare();
   }
 }

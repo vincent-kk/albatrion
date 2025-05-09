@@ -135,10 +135,10 @@ export const FormTypeMap = () => {
           onChange({ test: 'wow' });
         };
         const handleUnsetClick = () => {
-          onChange({}, SetValueOption.Replace);
+          onChange({}, SetValueOption.Overwrite);
         };
         const removeClick = () => {
-          onChange(undefined, SetValueOption.Replace);
+          onChange(undefined, SetValueOption.Overwrite);
         };
         return (
           <div>

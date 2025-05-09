@@ -13,12 +13,12 @@ import {
   resolveCacheHits,
 } from './utils/dispatch';
 import {
-  getValidBatchLoader,
-  getValidBatchScheduler,
-  getValidCacheKeyFn,
-  getValidCacheMap,
-  getValidMaxBatchSize,
-} from './utils/validateOptions';
+  prepareBatchLoader,
+  prepareBatchScheduler,
+  prepareCacheKeyFn,
+  prepareCacheMap,
+  prepareMaxBatchSize,
+} from './utils/prepare';
 
 export class DataLoader<Key = string, Value = any, CacheKey = Key> {
   public readonly name: string | null = null;
@@ -47,11 +47,11 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
     batchLoader: BatchLoader<Key, Value>,
     options?: DataLoaderOptions<Key, Value, CacheKey>,
   ) {
-    this.#batchLoader = getValidBatchLoader(batchLoader);
-    this.#maxBatchSize = getValidMaxBatchSize(options);
-    this.#batchScheduler = getValidBatchScheduler(options?.batchScheduler);
-    this.#cacheMap = getValidCacheMap(options?.cache);
-    this.#cacheKeyFn = getValidCacheKeyFn(options?.cacheKeyFn);
+    this.#batchLoader = prepareBatchLoader(batchLoader);
+    this.#maxBatchSize = prepareMaxBatchSize(options);
+    this.#batchScheduler = prepareBatchScheduler(options?.batchScheduler);
+    this.#cacheMap = prepareCacheMap(options?.cache);
+    this.#cacheKeyFn = prepareCacheKeyFn(options?.cacheKeyFn);
     this.name = options?.name ?? null;
   }
 

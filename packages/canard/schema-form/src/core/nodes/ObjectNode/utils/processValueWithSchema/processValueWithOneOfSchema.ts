@@ -8,16 +8,17 @@ import type { ObjectValue } from '@/schema-form/types';
  * @param schema 객체 스키마 정의
  * @returns oneOf에 정의된 프로퍼티가 제거된 객체 값
  */
-export const removeOneOfProperties = (
+export const processValueWithOneOfSchema = (
   value: ObjectValue | undefined,
-  oneOfKeySet: Set<string> | undefined,
+  oneOfKeySet?: Set<string>,
+  allowedKeySet?: Set<string>,
 ): ObjectValue | undefined => {
   if (value == null || oneOfKeySet === undefined) return value;
   const result: ObjectValue = {};
   const keys = Object.keys(value);
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
-    if (oneOfKeySet.has(key)) continue;
+    if (oneOfKeySet.has(key) && !allowedKeySet?.has(key)) continue;
     result[key] = value[key];
   }
   return result;

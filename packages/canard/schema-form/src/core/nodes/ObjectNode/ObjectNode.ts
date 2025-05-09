@@ -12,20 +12,28 @@ import {
   NodeEventType,
   type SchemaNode,
   SetValueOption,
+  type UnionSetValueOption,
 } from '../type';
 import type { ChildNode } from './type';
 import {
+  type FieldConditionMap,
   getChildNodeMap,
   getChildren,
+  getFieldConditionMap,
   getOneOfChildrenList,
-  getOneOfProperties,
+  getOneOfKeyInfo,
   getVirtualReferencesMap,
-  removeOneOfProperties,
+  processValueWithCondition,
+  processValueWithOneOfSchema,
 } from './utils';
+
+const RESET_NODE_OPTION = SetValueOption.Replace | SetValueOption.Propagate;
 
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   readonly #schemaKeys: string[];
   readonly #oneOfKeySet: Set<string> | undefined;
+  readonly #oneOfKeySetList: Array<Set<string>> | undefined;
+  readonly #fieldConditionMap: FieldConditionMap | undefined;
 
   #locked: boolean = true;
 
@@ -41,6 +49,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   #value: ObjectValue | undefined;
   #draft: ObjectValue | undefined;
 
+  #internalEvent: boolean = true;
+
   get value() {
     return this.#value;
   }
@@ -50,30 +60,32 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   protected applyValue(
     this: ObjectNode,
     input: ObjectValue,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ) {
     this.#draft = input;
+    this.#internalEvent = !(option & SetValueOption.External);
     this.#emitChange(option);
   }
 
   #parseValue(this: ObjectNode, input: ObjectValue) {
     const value = sortObjectKeys(input, this.#schemaKeys, true);
-    return isEmptyObject(value) ? undefined : value;
+    if (this.#internalEvent) return value;
+    return processValueWithCondition(value, this.#fieldConditionMap);
   }
-  #propagate(this: ObjectNode, replace: boolean, option: SetValueOption) {
+  #propagate(this: ObjectNode, replace: boolean, option: UnionSetValueOption) {
     this.#locked = true;
     const target = this.#value || {};
     const draft = this.#draft || {};
     for (let i = 0; i < this.#children.length; i++) {
       const node = this.#children[i].node;
       if (node.type === 'virtual') continue;
-      const key = node.name;
+      const key = node.propertyKey;
       if (replace || (key in draft && key in target))
         node.setValue(target[key], option);
     }
     this.#locked = false;
   }
-  #emitChange(this: ObjectNode, option: SetValueOption) {
+  #emitChange(this: ObjectNode, option: UnionSetValueOption) {
     if (this.#locked) return;
 
     const replace = !!(option & SetValueOption.Replace);
@@ -89,8 +101,15 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         ...this.#draft,
       });
     }
+    this.#value = isEmptyObject(this.#value) ? undefined : this.#value;
 
-    this.onChange(this.#value);
+    if (option & SetValueOption.EmitChange) this.onChange(this.#value);
+    if (option & SetValueOption.Propagate) this.#propagate(replace, option);
+    if (option & SetValueOption.Refresh) this.refresh(this.#value);
+    if (option & SetValueOption.External)
+      this.publish({ type: NodeEventType.UpdateDependencies });
+
+    this.#draft = {};
     this.publish({
       type: NodeEventType.UpdateValue,
       payload: {
@@ -103,11 +122,6 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         },
       },
     });
-
-    if (option & SetValueOption.Propagate) this.#propagate(replace, option);
-    if (option & SetValueOption.Refresh) this.refresh(this.#value);
-
-    this.#draft = {};
   }
 
   prepare(this: ObjectNode, actor?: SchemaNode): boolean {
@@ -148,24 +162,27 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.#value = this.defaultValue;
     this.#draft = {};
 
+    this.#fieldConditionMap = getFieldConditionMap(jsonSchema);
     const properties = jsonSchema.properties;
     const propertyKeys = getObjectKeys(properties);
+    const oneOfKeyInfo = getOneOfKeyInfo(jsonSchema);
 
-    this.#oneOfKeySet = getOneOfProperties(jsonSchema);
-    this.#schemaKeys = this.#oneOfKeySet
-      ? [...propertyKeys, ...Array.from(this.#oneOfKeySet)]
-      : propertyKeys;
+    if (oneOfKeyInfo) {
+      this.#oneOfKeySet = oneOfKeyInfo.oneOfKeySet;
+      this.#oneOfKeySetList = oneOfKeyInfo.oneOfKeySetList;
+      this.#schemaKeys = [...propertyKeys, ...Array.from(this.#oneOfKeySet)];
+    } else this.#schemaKeys = propertyKeys;
 
     const { virtualReferencesMap, virtualReferenceFieldsMap } =
       getVirtualReferencesMap(name, propertyKeys, jsonSchema.virtual);
 
-    const handelChangeFactory = (name: string) => (input: any) => {
+    const handelChangeFactory = (propertyKey: string) => (input: any) => {
       if (!this.#draft) this.#draft = {};
       const value =
-        typeof input === 'function' ? input(this.#draft[name]) : input;
-      if (value !== undefined && this.#draft[name] === value) return;
-      this.#draft[name] = value;
-      this.#emitChange(SetValueOption.Normal);
+        typeof input === 'function' ? input(this.#draft[propertyKey]) : input;
+      if (value !== undefined && this.#draft[propertyKey] === value) return;
+      this.#draft[propertyKey] = value;
+      this.#emitChange(SetValueOption.EmitChange);
     };
 
     const childNodeMap = getChildNodeMap(
@@ -173,6 +190,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       jsonSchema,
       propertyKeys,
       this.defaultValue,
+      this.#fieldConditionMap,
       virtualReferenceFieldsMap,
       handelChangeFactory,
       nodeFactory,
@@ -202,7 +220,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     this.#publishChildrenChange();
 
-    this.#emitChange(SetValueOption.Normal);
+    this.#emitChange(SetValueOption.EmitChange);
     this.setDefaultValue(this.#value);
 
     this.#prepareOneOfChildren();
@@ -214,22 +232,34 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     if (!this.#oneOfChildrenList) return;
     this.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateComputedProperties) {
-        const index = this.oneOfIndex;
-        if (index === undefined || index === this.#previousIndex) return;
-        const oneOfChildren =
-          index > -1 ? this.#oneOfChildrenList?.[index] : undefined;
+        const targetIndex = this.oneOfIndex;
+        if (this.#internalEvent && targetIndex === this.#previousIndex) return;
 
+        const previousOneOfChildren =
+          targetIndex > -1 ? this.#oneOfChildrenList?.[targetIndex] : undefined;
+        if (previousOneOfChildren)
+          for (const { node } of previousOneOfChildren)
+            if (this.#internalEvent) node.resetNode();
+            else node.resetNode(this.#value?.[node.propertyKey]);
+
+        const oneOfChildren =
+          targetIndex > -1 ? this.#oneOfChildrenList?.[targetIndex] : undefined;
         this.#children = oneOfChildren
           ? [...this.#propertyChildren, ...oneOfChildren]
           : this.#propertyChildren;
-        for (const child of this.#children) child.node.setState();
-        this.setValue(
-          removeOneOfProperties(this.#value, this.#oneOfKeySet),
-          SetValueOption.Propagate | SetValueOption.Replace,
-        );
 
-        this.#previousIndex = this.oneOfIndex;
+        this.setValue(
+          processValueWithOneOfSchema(
+            this.#value,
+            this.#oneOfKeySet,
+            targetIndex > -1 ? this.#oneOfKeySetList?.[targetIndex] : undefined,
+          ),
+          RESET_NODE_OPTION,
+        );
+        this.onChange(this.#value);
+
         this.#publishChildrenChange();
+        this.#previousIndex = targetIndex;
       }
     });
   }

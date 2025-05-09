@@ -6,6 +6,8 @@ export {
   NodeEventType,
   ValidationMode,
   SetValueOption,
+  PublicSetValueOption,
+  PublicNodeEventType,
   isSchemaNode,
   isBooleanNode,
   isNumberNode,

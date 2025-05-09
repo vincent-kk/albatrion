@@ -1,6 +1,6 @@
 import type { Fn } from '@aileron/declare';
 
-const getPostPromise = (): Fn<[task: Fn]> => {
+const getScheduleNextTick = (): Fn<[task: Fn]> => {
   try {
     if (typeof process?.nextTick === 'function') {
       const resolve = Promise.resolve();
@@ -20,4 +20,4 @@ const getPostPromise = (): Fn<[task: Fn]> => {
   };
 };
 
-export const postPromise = getPostPromise();
+export const scheduleNextTick = getScheduleNextTick();

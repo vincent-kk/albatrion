@@ -1,23 +1,23 @@
 import { describe, expect, it } from 'vitest';
 
-import { microtask } from '../microtask';
+import { scheduleMicrotask } from '../scheduleMicrotask';
 
-describe('microtask', () => {
-  it('should execute callback in the next microtask', async () => {
+describe('scheduleMicrotask', () => {
+  it('should execute callback in the next scheduleMicrotask', async () => {
     const executionOrder: number[] = [];
 
     // 동기 코드
     executionOrder.push(1);
 
-    // microtask 큐에 작업 추가
-    microtask(() => {
+    // scheduleMicrotask 큐에 작업 추가
+    scheduleMicrotask(() => {
       executionOrder.push(3);
     });
 
     // 동기 코드
     executionOrder.push(2);
 
-    // microtask 큐가 비워질 때까지 대기
+    // scheduleMicrotask 큐가 비워질 때까지 대기
     await Promise.resolve();
 
     expect(executionOrder).toEqual([1, 2, 3]);
@@ -29,22 +29,22 @@ describe('microtask', () => {
     // 동기 코드
     executionOrder.push(1);
 
-    // 여러 microtask 큐에 작업 추가
-    microtask(() => {
+    // 여러 scheduleMicrotask 큐에 작업 추가
+    scheduleMicrotask(() => {
       executionOrder.push(3);
-      microtask(() => {
+      scheduleMicrotask(() => {
         executionOrder.push(5);
       });
     });
 
-    microtask(() => {
+    scheduleMicrotask(() => {
       executionOrder.push(4);
     });
 
     // 동기 코드
     executionOrder.push(2);
 
-    // microtask 큐가 비워질 때까지 대기
+    // scheduleMicrotask 큐가 비워질 때까지 대기
     await Promise.resolve();
 
     await Promise.resolve();
@@ -63,15 +63,15 @@ describe('microtask', () => {
       executionOrder.push(4);
     }, 0);
 
-    // microtask
-    microtask(() => {
+    // scheduleMicrotask
+    scheduleMicrotask(() => {
       executionOrder.push(3);
     });
 
     // 동기 코드
     executionOrder.push(2);
 
-    // microtask 큐가 비워질 때까지 대기
+    // scheduleMicrotask 큐가 비워질 때까지 대기
     await Promise.resolve();
 
     setTimeout(() => {
@@ -86,7 +86,7 @@ describe('microtask', () => {
     executionOrder.push(1);
 
     // async 콜백
-    microtask(async () => {
+    scheduleMicrotask(async () => {
       executionOrder.push(3);
       await Promise.resolve();
       executionOrder.push(4);
@@ -95,7 +95,7 @@ describe('microtask', () => {
     // 동기 코드
     executionOrder.push(2);
 
-    // microtask 큐가 비워질 때까지 대기
+    // scheduleMicrotask 큐가 비워질 때까지 대기
     await Promise.resolve();
 
     expect(executionOrder).toEqual([1, 2, 3]);

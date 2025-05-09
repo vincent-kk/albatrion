@@ -1,6 +1,8 @@
 import type { Dictionary } from '@aileron/declare';
 
-import type { FlattenCondition } from './flattenConditions';
+import type { JsonSchema } from '@/schema-form/types';
+
+import { flattenConditions } from './utils/flattenConditions';
 
 export type FieldConditionMap = Map<
   string,
@@ -11,13 +13,14 @@ export type FieldConditionMap = Map<
   | true
 >;
 /**
- * FlattenCondition[]을 필드별로 정제하여, 각 필드가 required가 되는 조건(및 inverse 여부) 배열을 반환합니다.
- * @param conditions FlattenCondition[]
+ * jsonSchema를 필드별로 정제하여, 각 필드가 required가 되는 조건(및 inverse 여부) 배열을 반환합니다.
+ * @param jsonSchema jsonSchema
  * @returns Map<필드명, Array<{ condition, inverse }>> | true
  */
 export const getFieldConditionMap = (
-  conditions: FlattenCondition[] | undefined,
+  jsonSchema: JsonSchema,
 ): FieldConditionMap | undefined => {
+  const conditions = flattenConditions(jsonSchema);
   if (!conditions) return undefined;
   const fieldConditionMap: FieldConditionMap = new Map();
   for (let i = 0; i < conditions.length; i++) {

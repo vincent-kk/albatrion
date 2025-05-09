@@ -2,7 +2,7 @@ import { JSONPath, isString, serializeNative } from '@winglet/common-utils';
 
 import type { Dictionary } from '@aileron/declare';
 
-import type { FieldConditionMap } from './getFieldConditionMap';
+import type { FieldConditionMap } from '../../getFieldConditionMap';
 
 export const getConditionsMap = (
   fieldConditionMap: FieldConditionMap | undefined,

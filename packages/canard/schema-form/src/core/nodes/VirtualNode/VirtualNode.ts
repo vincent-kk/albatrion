@@ -7,6 +7,7 @@ import {
   NodeEventType,
   type SchemaNode,
   SetValueOption,
+  type UnionSetValueOption,
   type VirtualNodeConstructorProps,
 } from '../type';
 
@@ -21,7 +22,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
   protected applyValue(
     this: VirtualNode,
     input: VirtualNodeValue | undefined,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ) {
     this.#emitChange(input, option);
   }
@@ -35,7 +36,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
   #emitChange(
     this: VirtualNode,
     values: VirtualNodeValue | undefined,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ) {
     if (!values || values.length !== this.#refNodes.length) return;
     for (let i = 0; i < values.length; i++) {

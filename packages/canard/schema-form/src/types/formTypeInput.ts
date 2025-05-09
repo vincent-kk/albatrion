@@ -4,8 +4,8 @@ import type { Dictionary, Fn, WithKey } from '@aileron/declare';
 
 import type {
   InferSchemaNode,
+  PublicSetValueOption,
   SchemaNode,
-  SetValueOption,
 } from '@/schema-form/core';
 
 import type { FormTypeRendererProps } from './formTypeRenderer';
@@ -157,5 +157,5 @@ export type FormTypeInputMap<T = unknown> = {
 
 export type SetStateFnWithOptions<S = unknown> = (
   value: S | ((prevState: S) => S),
-  options?: SetValueOption,
+  options?: PublicSetValueOption,
 ) => void;

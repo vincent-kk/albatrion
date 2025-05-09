@@ -1,5 +1,22 @@
 import type { Fn, SetStateFn } from '@aileron/declare';
 
+import {
+  BIT_FLAG_01,
+  BIT_FLAG_02,
+  BIT_FLAG_03,
+  BIT_FLAG_04,
+  BIT_FLAG_05,
+  BIT_FLAG_06,
+  BIT_FLAG_07,
+  BIT_FLAG_08,
+  BIT_FLAG_09,
+  BIT_FLAG_10,
+  BIT_FLAG_11,
+  BIT_FLAG_12,
+  BIT_FLAG_13,
+  BIT_FLAG_14,
+  BIT_MASK_NONE,
+} from '@/schema-form/app/constants/binary';
 import type { Ajv } from '@/schema-form/helpers/ajv';
 import type {
   AllowedValue,
@@ -50,9 +67,9 @@ export type SchemaNode =
   | NullNode;
 
 export enum ValidationMode {
-  None = 0,
-  OnChange = 1 << 1,
-  OnRequest = 1 << 2,
+  None = BIT_MASK_NONE,
+  OnChange = BIT_FLAG_01,
+  OnRequest = BIT_FLAG_02,
 }
 
 export type SchemaNodeFactory<
@@ -93,25 +110,37 @@ export type NodeFactoryProps<Schema extends JsonSchemaWithVirtual> =
 export type NodeListener = Fn<[event: NodeEvent]>;
 
 export type NodeEvent = {
-  type: NodeEventType;
+  type: UnionNodeEventType;
   payload?: Partial<NodeEventPayload>;
   options?: Partial<NodeEventOptions>;
 };
 
 export enum NodeEventType {
-  Activated = 1 << 0,
-  Focus = 1 << 1,
-  Select = 1 << 2,
-  Redraw = 1 << 3,
-  Refresh = 1 << 4,
-  UpdatePath = 1 << 5,
-  UpdateValue = 1 << 6,
-  UpdateState = 1 << 7,
-  UpdateError = 1 << 8,
-  UpdateChildren = 1 << 9,
-  UpdateComputedProperties = 1 << 10,
-  RequestValidate = 1 << 11,
+  Activated = BIT_FLAG_01,
+  Focus = BIT_FLAG_02,
+  Select = BIT_FLAG_03,
+  Redraw = BIT_FLAG_04,
+  Refresh = BIT_FLAG_05,
+  UpdatePath = BIT_FLAG_06,
+  UpdateValue = BIT_FLAG_07,
+  UpdateState = BIT_FLAG_08,
+  UpdateError = BIT_FLAG_09,
+  UpdateInternalError = BIT_FLAG_10,
+  UpdateChildren = BIT_FLAG_11,
+  UpdateDependencies = BIT_FLAG_12,
+  UpdateComputedProperties = BIT_FLAG_13,
+  RequestValidate = BIT_FLAG_14,
 }
+
+export enum PublicNodeEventType {
+  Focus = NodeEventType.Focus,
+  Select = NodeEventType.Select,
+  UpdateValue = NodeEventType.UpdateValue,
+  UpdateState = NodeEventType.UpdateState,
+  UpdateError = NodeEventType.UpdateError,
+}
+
+export type UnionNodeEventType = NodeEventType | PublicNodeEventType;
 
 export type NodeEventPayload = {
   [NodeEventType.Activated]: void;
@@ -123,7 +152,9 @@ export type NodeEventPayload = {
   [NodeEventType.UpdateValue]: any;
   [NodeEventType.UpdateState]: NodeStateFlags;
   [NodeEventType.UpdateError]: JsonSchemaError[];
+  [NodeEventType.UpdateInternalError]: JsonSchemaError[];
   [NodeEventType.UpdateChildren]: void;
+  [NodeEventType.UpdateDependencies]: void;
   [NodeEventType.UpdateComputedProperties]: void;
   [NodeEventType.RequestValidate]: void;
 };
@@ -144,15 +175,17 @@ export type NodeEventOptions = {
   };
   [NodeEventType.UpdateState]: void;
   [NodeEventType.UpdateError]: void;
+  [NodeEventType.UpdateInternalError]: void;
   [NodeEventType.UpdateChildren]: void;
+  [NodeEventType.UpdateDependencies]: void;
   [NodeEventType.UpdateComputedProperties]: void;
   [NodeEventType.RequestValidate]: void;
 };
 
 export enum NodeState {
-  Dirty = 1 << 0,
-  Touched = 1 << 1,
-  ShowError = 1 << 2,
+  Dirty = BIT_FLAG_01,
+  Touched = BIT_FLAG_02,
+  ShowError = BIT_FLAG_03,
 }
 
 export type NodeStateFlags = {
@@ -164,15 +197,26 @@ export type NodeStateFlags = {
 
 export enum SetValueOption {
   /** Only update the value */
-  Normal = 0,
+  None = BIT_MASK_NONE,
+  /** Update the value and trigger onChange */
+  EmitChange = BIT_FLAG_01,
   /** Replace the current value */
-  Replace = 1 << 0,
+  Replace = BIT_FLAG_02,
   /** Propagate the update to child nodes */
-  Propagate = 1 << 1,
+  Propagate = BIT_FLAG_03,
   /** Trigger a refresh to update the FormTypeInput */
-  Refresh = 1 << 2,
+  Refresh = BIT_FLAG_04,
+  /** Reset the node */
+  External = BIT_FLAG_05,
   /** Both propagate to children and trigger a refresh */
-  Merge = Propagate | Refresh,
+  Merge = EmitChange | Propagate | Refresh | External,
   /** Replace the value and propagate the update with refresh */
-  Overwrite = Replace | Propagate | Refresh,
+  Overwrite = EmitChange | Replace | Propagate | Refresh | External,
 }
+
+export enum PublicSetValueOption {
+  Merge = SetValueOption.Merge,
+  Overwrite = SetValueOption.Overwrite,
+}
+
+export type UnionSetValueOption = SetValueOption | PublicSetValueOption;

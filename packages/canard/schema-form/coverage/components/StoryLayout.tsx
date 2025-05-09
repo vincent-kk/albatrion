@@ -12,6 +12,10 @@ const StoryLayout = ({
   value?: any;
   errors?: any[];
 }>) => {
+  // NOTE: Form이 생성하는 값 자체를 테스트할때 사용
+  // useEffect(() => {
+  //   console.log('value', value);
+  // }, [value]);
   return (
     <div
       style={{
