@@ -11,6 +11,12 @@ export type GetOneOfIndex = Fn<[dependencies: unknown[]], number>;
 const SIMPLE_EQUALITY_REGEX =
   /^\s*dependencies\[(\d+)\]\s*===\s*(['"])([^'"]+)\2\s*$/;
 
+/**
+ * oneOf 스키마의 현재 인덱스를 계산하는 함수를 생성합니다.
+ * @param dependencyPaths - 의존성 경로 배열
+ * @param jsonSchema - JSON 스키마
+ * @returns oneOf 인덱스를 계산하는 함수 또는 undefined
+ */
 export const getOneOfIndexFactory = (
   dependencyPaths: string[],
   jsonSchema: JsonSchemaWithVirtual,
