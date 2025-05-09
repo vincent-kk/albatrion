@@ -13,6 +13,12 @@ import { getRandomString, map } from '@winglet/common-utils';
 
 import { PortalContext } from './PortalContext';
 
+/**
+ * Portal 기능을 위한 컨텍스트 프로바이더입니다.
+ * Portal 컴포넌트를 사용하여 특정 DOM 위치에 콘텐츠를 렌더하는 기능을 제공합니다.
+ * @param props - 프로바이더에 전달되는 자식 요소
+ * @returns Portal 컨텍스트 프로바이더
+ */
 export const PortalContextProvider = ({ children }: PropsWithChildren) => {
   const [components, setComponents] = useState<
     { id: string; element: ReactNode }[]
