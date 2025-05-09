@@ -3,9 +3,17 @@
  * 객체와 배열의 내용을 반복적으로 비교하며, NaN === NaN 도 true로 처리합니다.
  * 순환 참조, Date, RegExp, TypedArray, Symbol 키, 희소 배열 등을 처리합니다.
  * Set과 Map은 현재 참조 동일성만 비교합니다. (추후 값 비교로 확장 가능)
- * @param leftOperand 비교할 첫 번째 값
- * @param rightOperand 비교할 두 번째 값
+ *
+ * @param left - 비교할 첫 번째 값
+ * @param right - 비교할 두 번째 값
+ * @param omit - 비교 시 제외할 속성 키 배열 (선택사항)
  * @returns 두 값이 동일하면 true, 그렇지 않으면 false
+ *
+ * @example
+ * stableEquals({a: 1, b: 2}, {a: 1, b: 2}); // true
+ * stableEquals({a: 1, b: NaN}, {a: 1, b: NaN}); // true
+ * stableEquals({a: 1, b: 2}, {a: 1, b: 3}); // false
+ * stableEquals({a: 1, b: 2, c: 3}, {a: 1, b: 2}, ['c']); // true (c 속성 무시)
  */
 export const stableEquals = (
   left: unknown,
@@ -17,6 +25,16 @@ export const stableEquals = (
   return stableEqualsRecursive(left, right, visited, omits);
 };
 
+/**
+ * 두 값의 깊은 동등성을 재귀적으로 비교합니다.
+ * 순환 참조를 처리하고 다양한 데이터 타입을 지원합니다.
+ *
+ * @param left - 비교할 첫 번째 값
+ * @param right - 비교할 두 번째 값
+ * @param visited - 이미 방문한 객체 쌍을 추적하는 맵
+ * @param omits - 비교 시 제외할 속성 키 집합
+ * @returns 두 값이 동일하면 true, 그렇지 않으면 false
+ */
 const stableEqualsRecursive = (
   left: unknown,
   right: unknown,
