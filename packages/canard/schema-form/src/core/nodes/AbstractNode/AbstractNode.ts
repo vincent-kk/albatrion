@@ -1,8 +1,6 @@
 import {
   BITMASK_NONE,
   JSONPath,
-  afterMicrotask,
-  cancelAfterMicrotask,
   equals,
   isEmptyObject,
   isObject,
@@ -37,6 +35,7 @@ import {
 } from '../type';
 import {
   EventCascade,
+  afterMicrotask,
   computeFactory,
   find,
   getFallbackValidator,
@@ -283,20 +282,12 @@ export abstract class AbstractNode<
   }
 
   #handleChange: SetStateFn<Value> | undefined;
-  #scheduleId: number | undefined;
   /**
    * Node의 값이 변경될 때 호출되는 함수
    * @param input 변경된 값이나 값을 반환하는 함수
    */
   protected onChange(this: AbstractNode, input: Value | undefined): void {
-    if (typeof this.#handleChange !== 'function') return;
-    if (this.isRoot) {
-      if (this.#scheduleId) cancelAfterMicrotask(this.#scheduleId);
-      this.#scheduleId = afterMicrotask(() => {
-        this.#handleChange?.(this.value);
-        this.#scheduleId = undefined;
-      });
-    } else this.#handleChange(input);
+    this.#handleChange?.(input);
   }
 
   /** Node의 하위 Node 목록, 하위 Node를 가지지 않는 Node는 빈 배열 반환 */
@@ -317,9 +308,6 @@ export abstract class AbstractNode<
     this.type = getNodeType(jsonSchema);
     this.jsonSchema = jsonSchema;
     this.parentNode = parentNode || null;
-
-    this.#handleChange = onChange;
-    this.setDefaultValue(defaultValue ?? getFallbackValue(jsonSchema));
 
     this.rootNode = (this.parentNode?.rootNode || this) as SchemaNode;
     this.isRoot = !this.parentNode;
@@ -346,7 +334,13 @@ export abstract class AbstractNode<
 
     this.#compute = computeFactory(this.jsonSchema, this.rootNode.jsonSchema);
 
-    // NOTE: 루트 Node에서만 validator 준비
+    this.setDefaultValue(defaultValue ?? getFallbackValue(jsonSchema));
+    if (typeof onChange === 'function')
+      this.#handleChange = this.isRoot
+        ? afterMicrotask(() => onChange(this.value!))
+        : onChange;
+
+    // NOTE: Special behavior for root node
     if (this.isRoot) this.#prepareValidator(ajv, validationMode);
   }
 
