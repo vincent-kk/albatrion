@@ -654,7 +654,7 @@ export const FormRefHandle = () => {
           onChange({ test: 'wow' });
         };
         const handleUnsetClick = () => {
-          onChange({}, SetValueOption.Replace);
+          onChange({}, SetValueOption.Overwrite);
         };
         return (
           <div>
@@ -693,9 +693,12 @@ export const FormRefHandle = () => {
     <div>
       <button
         onClick={() =>
-          formHandle.current?.setValue({
-            name: 'harry',
-          })
+          formHandle.current?.setValue(
+            {
+              name: 'harry',
+            },
+            SetValueOption.Merge,
+          )
         }
       >
         set name
@@ -706,19 +709,16 @@ export const FormRefHandle = () => {
             return {
               number: (prev?.number || 0) + 1,
             };
-          })
+          }, SetValueOption.Merge)
         }
       >
         increase number
       </button>
       <button
         onClick={() =>
-          formHandle.current?.setValue(
-            {
-              number: 100,
-            },
-            SetValueOption.Replace,
-          )
+          formHandle.current?.setValue({
+            number: 100,
+          })
         }
       >
         overwrite number
