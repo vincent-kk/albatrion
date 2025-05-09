@@ -1,18 +1,18 @@
-import type { ErrorObject } from '@/schema-form/helpers/ajv';
-
 import {
+  BIT_FLAG_00,
   BIT_FLAG_01,
   BIT_FLAG_02,
   BIT_FLAG_03,
   BIT_FLAG_04,
-  BIT_FLAG_05,
-} from '../app/constants/binary';
+} from '@winglet/common-utils';
+
+import type { ErrorObject } from '@/schema-form/helpers/ajv';
 
 export enum ShowError {
   /** Always show error */
-  Always = BIT_FLAG_01,
+  Always = BIT_FLAG_00,
   /** Never show error */
-  Never = BIT_FLAG_02,
+  Never = BIT_FLAG_01,
   /** Show error when the input's value is updated */
   Dirty = BIT_FLAG_02,
   /** Show error when the input is touched */

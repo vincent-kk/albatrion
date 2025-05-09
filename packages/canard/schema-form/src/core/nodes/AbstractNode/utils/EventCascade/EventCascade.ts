@@ -1,8 +1,6 @@
-import { scheduleMicrotask } from '@winglet/common-utils';
+import { BIT_MASK_NONE, scheduleMicrotask } from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/declare';
-
-import { BIT_MASK_NONE } from '@/schema-form/app/constants/binary';
 
 import type { NodeEvent, NodeEventType } from '../../../type';
 

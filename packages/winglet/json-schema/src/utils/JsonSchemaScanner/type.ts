@@ -1,38 +1,61 @@
+import {
+  BIT_FLAG_00,
+  BIT_FLAG_01,
+  BIT_FLAG_02,
+  BIT_FLAG_03,
+} from '@winglet/common-utils';
+
 import type { Fn } from '@aileron/declare';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 export enum OperationPhase {
-  Enter = 1 << 0,      // 노드를 처음 방문할 때의 단계
-  ChildEntries = 1 << 1, // 하위 노드를 추가할 단계
-  Reference = 1 << 2,   // $ref를 처리할 단계
-  Exit = 1 << 3,       // 노드 방문을 완료할 단계
+  /** 노드를 처음 방문할 때의 단계 */
+  Enter = BIT_FLAG_00,
+  /** 하위 노드를 추가할 단계 */
+  ChildEntries = BIT_FLAG_01,
+  /** $ref를 처리할 단계 */
+  Reference = BIT_FLAG_02,
+  /** 노드 방문을 완료할 단계 */
+  Exit = BIT_FLAG_03,
 }
 
 export const $DEFS = '$defs';
 
 export interface SchemaEntry {
-  schema: UnknownSchema;  // 처리 중인 스키마 노드
-  path: string;          // 현재 노드의 JSON 포인터 경로
-  depth: number;         // 탐색 깊이
-  hasReference?: boolean;       // 참조가 있는지 여부
-  referencePath?: string;       // 처리된 참조 경로
-  referenceResolved?: boolean;  // 참조 해결 여부
+  /** 처리 중인 스키마 노드 */
+  schema: UnknownSchema;
+  /** 현재 노드의 JSON 포인터 경로 */
+  path: string;
+  /** 탐색 깊이 */
+  depth: number;
+  /** 참조가 있는지 여부 */
+  hasReference?: boolean;
+  /** 처리된 참조 경로 */
+  referencePath?: string;
+  /** 참조 해결 여부 */
+  referenceResolved?: boolean;
 }
 
 export interface SchemaVisitor<ContextType = void> {
-  enter?: Fn<[entry: SchemaEntry, context?: ContextType]>;  // 노드 진입 시 호출되는 콜백
-  exit?: Fn<[entry: SchemaEntry, context?: ContextType]>;   // 노드 종료 시 호출되는 콜백
+  /** 노드 처리 시작 시 호출되는 콜백 */
+  enter?: Fn<[entry: SchemaEntry, context?: ContextType]>;
+  /** 노드 처리 종료 시 호출되는 콜백 */
+  exit?: Fn<[entry: SchemaEntry, context?: ContextType]>;
 }
 
 export interface JsonScannerOptions<ContextType = void> {
-  filter?: Fn<[entry: SchemaEntry, context?: ContextType], boolean>;  // 스키마 노드 필터링 함수
+  /** 스키마 노드 필터링 함수 */
+  filter?: Fn<[entry: SchemaEntry, context?: ContextType], boolean>;
+  /** $ref 참조 해결 함수 */
   resolveReference?: Fn<
     [reference: string, context?: ContextType],
     UnknownSchema | undefined
-  >;  // $ref 참조 해결 함수
-  maxDepth?: number;  // 최대 탐색 깊이
-  context?: ContextType;  // 방문자와 필터에 전달되는 컨텍스트 객체
+  >;
+  /** 최대 탐색 깊이 */
+  maxDepth?: number;
+  /** 방문자와 필터에 전달되는 컨텍스트 객체 */
+  context?: ContextType;
 }
 
 export interface JsonScannerOptionsAsync<ContextType = void>

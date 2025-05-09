@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 
+import { BIT_MASK_ALL } from '@winglet/common-utils';
 import { useVersion } from '@winglet/react-utils';
 
 import type { NodeEventType, SchemaNode } from '@/schema-form/core';
-
-import { BIT_MASK_ALL } from '../app/constants/binary';
 
 /**
  * @description SchemaNode의 모든 event마다 tick을 업데이트합니다.

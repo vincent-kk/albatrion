@@ -1,4 +1,5 @@
 import {
+  BIT_MASK_NONE,
   JSONPath,
   equals,
   isEmptyObject,
@@ -8,7 +9,6 @@ import {
 
 import type { Fn, SetStateFn } from '@aileron/declare';
 
-import { BIT_MASK_NONE } from '@/schema-form/app/constants/binary';
 import {
   type Ajv,
   type ErrorObject,
