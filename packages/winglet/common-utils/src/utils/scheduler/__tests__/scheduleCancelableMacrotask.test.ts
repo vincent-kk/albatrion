@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { scheduleAfterMicrotask } from '../scheduleAfterMicrotask';
+import { scheduleCancelableMacrotask } from '../scheduleMacrotask';
 
-describe('scheduleAfterMicrotask', () => {
+describe('scheduleCancelableMacrotask', () => {
   it('should execute callback after the microtask queue is cleared', async () => {
     const executionOrder: number[] = [];
 
@@ -14,8 +14,8 @@ describe('scheduleAfterMicrotask', () => {
       executionOrder.push(3);
     });
 
-    // scheduleAfterMicrotask (macrotask)
-    scheduleAfterMicrotask(() => {
+    // scheduleCancelableMacrotask (macrotask)
+    scheduleCancelableMacrotask(() => {
       executionOrder.push(4);
     });
 
@@ -45,8 +45,8 @@ describe('scheduleAfterMicrotask', () => {
       executionOrder.push(3);
     });
 
-    // scheduleAfterMicrotask (macrotask)
-    const cancel = scheduleAfterMicrotask(mockFn);
+    // scheduleCancelableMacrotask (macrotask)
+    const cancel = scheduleCancelableMacrotask(mockFn);
 
     // 동기 코드
     executionOrder.push(2);
@@ -78,8 +78,8 @@ describe('scheduleAfterMicrotask', () => {
       executionOrder.push(3);
     });
 
-    // scheduleAfterMicrotask (macrotask)
-    const cancel = scheduleAfterMicrotask(mockFn);
+    // scheduleCancelableMacrotask (macrotask)
+    const cancel = scheduleCancelableMacrotask(mockFn);
 
     // 동기 코드
     executionOrder.push(2);
@@ -108,18 +108,18 @@ describe('scheduleAfterMicrotask', () => {
       executionOrder.push(3);
     });
 
-    // 첫 번째 scheduleAfterMicrotask (취소 예정)
-    const cancel1 = scheduleAfterMicrotask(() => {
+    // 첫 번째 scheduleCancelableMacrotask (취소 예정)
+    const cancel1 = scheduleCancelableMacrotask(() => {
       executionOrder.push(999); // 이 콜백은 실행되지 않아야 함
     });
 
-    // 두 번째 scheduleAfterMicrotask (실행 예정)
-    scheduleAfterMicrotask(() => {
+    // 두 번째 scheduleCancelableMacrotask (실행 예정)
+    scheduleCancelableMacrotask(() => {
       executionOrder.push(4);
     });
 
-    // 세 번째 scheduleAfterMicrotask (취소 예정)
-    const cancel3 = scheduleAfterMicrotask(() => {
+    // 세 번째 scheduleCancelableMacrotask (취소 예정)
+    const cancel3 = scheduleCancelableMacrotask(() => {
       executionOrder.push(999); // 이 콜백도 실행되지 않아야 함
     });
 
@@ -145,8 +145,8 @@ describe('scheduleAfterMicrotask', () => {
     // 동기 코드
     executionOrder.push(1);
 
-    // 외부 scheduleAfterMicrotask
-    scheduleAfterMicrotask(() => {
+    // 외부 scheduleCancelableMacrotask
+    scheduleCancelableMacrotask(() => {
       executionOrder.push(4);
 
       // 내부 microtask
@@ -154,12 +154,12 @@ describe('scheduleAfterMicrotask', () => {
         executionOrder.push(5);
       });
 
-      // 내부 scheduleAfterMicrotask (다음 macrotask 틱에서 실행)
-      scheduleAfterMicrotask(() => {
+      // 내부 scheduleCancelableMacrotask (다음 macrotask 틱에서 실행)
+      scheduleCancelableMacrotask(() => {
         executionOrder.push(7);
       });
 
-      // 동기 코드 (scheduleAfterMicrotask 콜백 내부)
+      // 동기 코드 (scheduleCancelableMacrotask 콜백 내부)
       executionOrder.push(6);
     });
 

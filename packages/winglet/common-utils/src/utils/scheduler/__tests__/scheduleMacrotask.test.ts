@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { afterMicrotask } from '../scheduleAfterMicrotask';
+import { scheduleMacrotask } from '../scheduleMacrotask';
 
-describe('afterMicrotask', () => {
+describe('scheduleMacrotask', () => {
   it('should execute callback after the microtask queue is cleared', async () => {
     const executionOrder: number[] = [];
 
@@ -14,8 +14,8 @@ describe('afterMicrotask', () => {
       executionOrder.push(3);
     });
 
-    // afterMicrotask (macrotask)
-    afterMicrotask(() => {
+    // scheduleMacrotask (macrotask)
+    scheduleMacrotask(() => {
       executionOrder.push(4);
     });
 
@@ -47,8 +47,8 @@ describe('afterMicrotask', () => {
       executionOrder.push(3);
     });
 
-    // afterMicrotask (macrotask with higher priority than setTimeout)
-    afterMicrotask(() => {
+    // scheduleMacrotask (macrotask with higher priority than setTimeout)
+    scheduleMacrotask(() => {
       executionOrder.push(4);
     });
 
@@ -80,13 +80,13 @@ describe('afterMicrotask', () => {
       executionOrder.push(3);
     });
 
-    // 첫 번째 afterMicrotask (macrotask)
-    afterMicrotask(() => {
+    // 첫 번째 scheduleMacrotask (macrotask)
+    scheduleMacrotask(() => {
       executionOrder.push(4);
     });
 
-    // 두 번째 afterMicrotask (macrotask)
-    afterMicrotask(() => {
+    // 두 번째 scheduleMacrotask (macrotask)
+    scheduleMacrotask(() => {
       executionOrder.push(5);
     });
 
@@ -116,8 +116,8 @@ describe('afterMicrotask', () => {
       executionOrder.push(3);
     });
 
-    // afterMicrotask (macrotask)
-    afterMicrotask(() => {
+    // scheduleMacrotask (macrotask)
+    scheduleMacrotask(() => {
       executionOrder.push(4);
 
       // nested microtask
@@ -125,12 +125,12 @@ describe('afterMicrotask', () => {
         executionOrder.push(5);
       });
 
-      // nested afterMicrotask
-      afterMicrotask(() => {
+      // nested scheduleMacrotask
+      scheduleMacrotask(() => {
         executionOrder.push(7);
       });
 
-      // 동기 코드 (afterMicrotask 콜백 내부)
+      // 동기 코드 (scheduleMacrotask 콜백 내부)
       executionOrder.push(6);
     });
 
