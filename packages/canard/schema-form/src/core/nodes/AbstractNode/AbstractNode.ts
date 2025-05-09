@@ -476,12 +476,13 @@ export abstract class AbstractNode<
   }
 
   #updateComputedProperties(this: AbstractNode) {
+    const isVisible = this.#visible;
     this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
     this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
     this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
-    if (!this.#visible) this.resetNode();
+    if (isVisible && !this.#visible) this.resetNode();
     this.publish({ type: NodeEventType.UpdateComputedProperties });
   }
   resetNode(this: AbstractNode, input?: Value | undefined) {
