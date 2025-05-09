@@ -126,94 +126,6 @@ export abstract class AbstractNode<
     return this.#key;
   }
 
-  /** 자신의 Error와 하위 Node의 Error를 합친 에러 */
-  #mergedErrors: JsonSchemaError[] = [];
-
-  /** 자신의 Error */
-  #errors: JsonSchemaError[] = [];
-  /** 자신의 Error의 dataPath 목록 */
-  #errorDataPaths: string[] = [];
-  /** 자신의 Error와 하위 Node의 Error를 합친 에러 */
-  get errors() {
-    return this.#mergedErrors;
-  }
-  /**
-   * 자신의 Error를 전달받아서 하위 Node에서 전달받은 Error와 합친 후 전달
-   * @param errors 전달받은 Error List
-   */
-  setErrors(this: AbstractNode, errors: JsonSchemaError[]) {
-    if (equals(this.#errors, errors)) return;
-    this.#errors = errors;
-    this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
-    this.publish({
-      type: NodeEventType.UpdateError,
-      payload: {
-        [NodeEventType.UpdateError]: this.#filterErrorsWithSchema(
-          this.#mergedErrors,
-        ),
-      },
-    });
-  }
-
-  /**
-   * 자신의 Error 초기화, 하위 Node의 Error는 초기화 하지 않음
-   */
-  clearErrors(this: AbstractNode) {
-    this.setErrors([]);
-  }
-
-  /** 하위 Node에서 전달받은 Error */
-  #receivedErrors: JsonSchemaError[] = [];
-  /**
-   * 하위 Node에서 전달받은 Error를 자신의 Error와 합친 후 저장
-   * @param errors 전달받은 Error List
-   */
-  setReceivedErrors(this: AbstractNode, errors: JsonSchemaError[] = []) {
-    // NOTE: 이미 동일한 에러가 있으면 중복 발생 방지
-    if (equals(this.#receivedErrors, errors, OMITTED_KEYS)) return;
-
-    // 하위 Node에서 데이터 입력시 해당 항목을 찾아 삭제하기 위한 key 가 필요.
-    // 참고: removeFromReceivedErrors
-    this.#receivedErrors = new Array<JsonSchemaError>(errors.length);
-    for (let index = 0; index < errors.length; index++)
-      this.#receivedErrors[index] = { ...errors[index], key: index };
-    this.#mergedErrors = [...this.#receivedErrors, ...this.#errors];
-
-    this.publish({
-      type: NodeEventType.UpdateError,
-      payload: {
-        [NodeEventType.UpdateError]: this.#filterErrorsWithSchema(
-          this.#mergedErrors,
-        ),
-      },
-    });
-  }
-
-  /**
-   * 하위 Node에서 전달받은 Error 초기화, 자신의 Error는 초기화 하지 않음
-   */
-  clearReceivedErrors(this: AbstractNode) {
-    if (!this.#receivedErrors.length) return;
-    if (!this.isRoot)
-      this.rootNode.removeFromReceivedErrors(this.#receivedErrors);
-    this.setReceivedErrors([]);
-  }
-
-  /**
-   * 하위 Node에서 전달받은 Error 중 삭제할 Error 찾아서 삭제
-   * @param errors 삭제할 Error List
-   */
-  removeFromReceivedErrors(this: AbstractNode, errors: JsonSchemaError[]) {
-    const deleteKeys: Array<number> = [];
-    for (const error of errors)
-      if (typeof error.key === 'number') deleteKeys.push(error.key);
-    const nextErrors: JsonSchemaError[] = [];
-    for (const error of this.#receivedErrors)
-      if (!error.key || !deleteKeys.includes(error.key)) nextErrors.push(error);
-    if (this.#receivedErrors.length !== nextErrors.length)
-      this.setReceivedErrors(nextErrors);
-  }
-
   #initialValue: Value | undefined;
   #defaultValue: Value | undefined;
   /**
@@ -545,18 +457,132 @@ export abstract class AbstractNode<
     });
   }
 
+  /** 외부에서 전달받은 Error */
+  #receivedErrors: JsonSchemaError[] = [];
+
+  /** [Root Node Only] Form 내부에서 발생한 Error 전체 */
+  #internalErrors: JsonSchemaError[] | undefined;
+
+  /** [Root Node Only] Form 내부에서 발생한 Error 전체의 dataPath 목록 */
+  #errorDataPaths: string[] | undefined;
+
+  /** [Root Node Only] Form 내부에서 발생한 Error 전체와 외부에서 전달받은 Error를 병합한 결과 */
+  #mergedInternalErrors: JsonSchemaError[] | undefined;
+
+  /** 자신의 Error */
+  #localErrors: JsonSchemaError[] = [];
+
+  /** 자신의 Error와 외부에서 전달받은 Error를 병합한 결과 */
+  #mergedLocalErrors: JsonSchemaError[] = [];
+
+  get internalErrors() {
+    return this.#mergedInternalErrors;
+  }
+
+  /** 자신의 Error와 외부에서 전달받은 Error를 병합한 결과 */
+  get errors() {
+    return this.#mergedLocalErrors;
+  }
   /**
-   * 주어진 에러 목록에서 자기 자신이 노출할 에러만 필터링
-   * @param errors 필터링할 에러 목록
-   * @returns 필터링된 에러 목록
+   * 자신의 Error 업데이트 후 외부 전달받은 Error와 병합
+   * @param errors 전달받은 Error List
    */
-  #filterErrorsWithSchema(this: AbstractNode, errors: JsonSchemaError[]) {
-    if (!this.isRoot) return errors;
-    const visibleJsonPaths = getJsonPaths(this.value);
-    const filtered = [];
+  setErrors(this: AbstractNode, errors: JsonSchemaError[]) {
+    if (equals(this.#localErrors, errors)) return;
+    this.#localErrors = errors;
+    this.#mergedLocalErrors = [...this.#receivedErrors, ...this.#localErrors];
+    this.publish({
+      type: NodeEventType.UpdateError,
+      payload: {
+        [NodeEventType.UpdateError]: this.#mergedLocalErrors,
+      },
+    });
+  }
+
+  #setInternalErrors(this: AbstractNode, errors: JsonSchemaError[]) {
+    if (equals(this.#internalErrors, errors)) return false;
+    this.#internalErrors = errors;
+    this.#mergedInternalErrors = [
+      ...this.#receivedErrors,
+      ...this.#internalErrors,
+    ];
+    this.publish({
+      type: NodeEventType.UpdateInternalError,
+      payload: {
+        [NodeEventType.UpdateInternalError]: this.#mergedInternalErrors,
+      },
+    });
+    return true;
+  }
+
+  /**
+   * 자신의 Error 초기화, 전달받은 Error는 초기화 하지 않음
+   */
+  clearErrors(this: AbstractNode) {
+    this.setErrors([]);
+  }
+
+  /**
+   * 외부에서 전달받은 Error를 local Error와 병합, rootNode의 경우 internalError 병합
+   * @param errors 전달받은 Error List
+   */
+  setReceivedErrors(this: AbstractNode, errors: JsonSchemaError[] = []) {
+    if (equals(this.#receivedErrors, errors, OMITTED_KEYS)) return;
+
+    this.#receivedErrors = new Array<JsonSchemaError>(errors.length);
+    for (let index = 0; index < errors.length; index++)
+      this.#receivedErrors[index] = { ...errors[index], key: index };
+
+    this.#mergedLocalErrors = [...this.#receivedErrors, ...this.#localErrors];
+    this.publish({
+      type: NodeEventType.UpdateError,
+      payload: {
+        [NodeEventType.UpdateError]: this.#mergedLocalErrors,
+      },
+    });
+    this.publish({
+      type: NodeEventType.UpdateError,
+      payload: {
+        [NodeEventType.UpdateError]: this.#mergedLocalErrors,
+      },
+    });
+
+    if (this.isRoot) {
+      this.#mergedInternalErrors = this.#internalErrors
+        ? [...this.#receivedErrors, ...this.#internalErrors]
+        : this.#receivedErrors;
+      this.publish({
+        type: NodeEventType.UpdateInternalError,
+        payload: {
+          [NodeEventType.UpdateInternalError]: this.#mergedInternalErrors,
+        },
+      });
+    }
+  }
+
+  /**
+   * 외부에서 전달받은 Error 초기화, localErrors / internalErrors 초기화 하지 않음
+   */
+  clearReceivedErrors(this: AbstractNode) {
+    if (!this.#receivedErrors.length) return;
+    if (!this.isRoot)
+      this.rootNode.removeFromReceivedErrors(this.#receivedErrors);
+    this.setReceivedErrors([]);
+  }
+
+  /**
+   * 외부에서 전달받은 Error 중 삭제할 Error 찾아서 삭제
+   * @param errors 삭제할 Error List
+   */
+  removeFromReceivedErrors(this: AbstractNode, errors: JsonSchemaError[]) {
+    const deleteKeys: Array<number> = [];
     for (const error of errors)
-      if (visibleJsonPaths.includes(error.dataPath)) filtered.push(error);
-    return filtered;
+      if (typeof error.key === 'number') deleteKeys.push(error.key);
+    const nextErrors: JsonSchemaError[] = [];
+    for (const error of this.#receivedErrors)
+      if (!error.key || !deleteKeys.includes(error.key)) nextErrors.push(error);
+    if (this.#receivedErrors.length !== nextErrors.length)
+      this.setReceivedErrors(nextErrors);
   }
 
   /** Node의 Ajv 검증 함수 */
@@ -584,33 +610,33 @@ export abstract class AbstractNode<
     // NOTE: 현재 Form 내의 value와 schema를 이용해서 validation 수행
     //    - getDataWithSchema: 현재 JsonSchema를 기반으로 Value의 데이터를 변환하여 반환
     //    - filterErrors: errors에서 oneOf 관련 error 필터링
-    const errors = await this.#validate(this.value);
+    const internalErrors = await this.#validate(this.value);
+
+    // 전체 error를 저장, 이전 error와 동일한 경우 setInternalErrors false 반환
+    if (!this.#setInternalErrors(internalErrors)) return;
 
     // 얻어진 errors를 dataPath 별로 분류
     const errorsByDataPath = new Map<
       JsonSchemaError['dataPath'],
       JsonSchemaError[]
     >();
-    for (const error of errors) {
+    for (const error of internalErrors) {
       if (!errorsByDataPath.has(error.dataPath)) {
         errorsByDataPath.set(error.dataPath, []);
       }
       errorsByDataPath.get(error.dataPath)?.push(error);
     }
 
-    // 전체 error를 setting,
-    this.setErrors(errors);
-
     // 하위 Node에도 dataPath로 node를 찾아서 error setting
-    for (const [dataPath, errors] of errorsByDataPath.entries()) {
+    for (const [dataPath, errors] of errorsByDataPath.entries())
       this.find(dataPath)?.setErrors(errors);
-    }
 
     // 기존 error에는 포함되어 있으나, 신규 error 목록에 포함되지 않는 error를 가진 node는 clearError
     const errorDataPaths = Array.from(errorsByDataPath.keys());
-    for (const dataPath of this.#errorDataPaths)
-      if (!errorDataPaths.includes(dataPath))
-        this.find(dataPath)?.clearErrors();
+    if (this.#errorDataPaths)
+      for (const dataPath of this.#errorDataPaths)
+        if (!errorDataPaths.includes(dataPath))
+          this.find(dataPath)?.clearErrors();
 
     // error를 가진 dataPath 목록 업데이트
     this.#errorDataPaths = errorDataPaths;
