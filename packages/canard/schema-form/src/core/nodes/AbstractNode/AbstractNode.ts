@@ -75,10 +75,11 @@ export abstract class AbstractNode<
   get name() {
     return this.#name;
   }
+
   /**
-   * Node의 이름 설정, 부모만 이름을 바꿔줄 수 있음
-   * @param name 설정할 이름
-   * @param actor 이름을 설정하는 Node
+   * Node의 이름을 설정합니다. 부모만 이름을 바꿔줄 수 있습니다.
+   * @param name - 설정할 이름
+   * @param actor - 이름을 설정하는 Node
    */
   setName(this: AbstractNode, name: string, actor: SchemaNode) {
     if (actor === this.parentNode || actor === this) {
@@ -93,8 +94,9 @@ export abstract class AbstractNode<
   get path() {
     return this.#path;
   }
+
   /**
-   * Node의 경로 업데이트, 부모 Node의 경로를 참고해서 자신의 경로를 업데이트
+   * Node의 경로를 업데이트합니다. 부모 Node의 경로를 참고해서 자신의 경로를 업데이트합니다.
    * @returns 경로가 변경되었는지 여부
    */
   updatePath(this: AbstractNode) {
@@ -175,9 +177,9 @@ export abstract class AbstractNode<
   ): void;
 
   /**
-   * applyValue로 실제 데이터 반영 전에, input에 대한 전처리 과정 수행
-   * @param input 설정할 값이나 값을 반환하는 함수
-   * @param option 설정 옵션, 각각을 비트 연산자로 조합 가능
+   * Node의 값을 설정합니다. applyValue로 실제 데이터 반영 전에, input에 대한 전처리 과정을 수행합니다.
+   * @param input - 설정할 값이나 값을 반환하는 함수
+   * @param option - 설정 옵션, 각각을 비트 연산자로 조합 가능
    *   - `Overwrite`(default): `Replace` | `Propagate` | `Refresh`
    *   - `Merge`: `Propagate` | `Refresh`
    *   - `Replace`: Replace the current value
@@ -195,9 +197,10 @@ export abstract class AbstractNode<
   }
 
   #handleChange: SetStateFn<Value> | undefined;
+
   /**
-   * Node의 값이 변경될 때 호출되는 함수
-   * @param input 변경된 값이나 값을 반환하는 함수
+   * Node의 값이 변경될 때 호출되는 함수입니다.
+   * @param input - 변경된 값
    */
   protected onChange(this: AbstractNode, input: Value | undefined): void {
     this.#handleChange?.(input);
@@ -261,7 +264,7 @@ export abstract class AbstractNode<
 
   /**
    * Node Tree에서 주어진 경로에 해당하는 Node를 찾습니다.
-   * @param path 찾고자 하는 Node의 경로(예: '.foo[0].bar'), 없으면 자기 자신 반환
+   * @param path - 찾고자 하는 Node의 경로(예: '.foo[0].bar'), 없으면 자기 자신 반환
    * @returns 찾은 Node, 찾지 못한 경우 null
    */
   find(this: AbstractNode, path?: string) {
@@ -281,10 +284,17 @@ export abstract class AbstractNode<
   /** 다른 node에 대한 unsubscribe 목록 */
   #unsubscribes: Array<Fn> = [];
 
+  /**
+   * 이벤트 구독 취소 함수를 저장합니다.
+   * @param unsubscribe - 저장할 구독 취소 함수
+   */
   protected saveUnsubscribe(this: AbstractNode, unsubscribe: Fn) {
     this.#unsubscribes.push(unsubscribe);
   }
 
+  /**
+   * 저장된 모든 이벤트 구독을 취소합니다.
+   */
   #clearUnsubscribes(this: AbstractNode) {
     for (let index = 0; index < this.#unsubscribes.length; index++)
       this.#unsubscribes[index]();
@@ -412,8 +422,8 @@ export abstract class AbstractNode<
     return this.#state;
   }
   /**
-   * Node의 상태 설정, 명시적으로 undefined를 전달하지 않으면 기존 상태를 유지
-   * @param input 설정할 상태
+   * Node의 상태를 설정합니다. 명시적으로 undefined를 전달하지 않으면 기존 상태를 유지합니다.
+   * @param input - 설정할 상태 또는 이전 상태를 기반으로 새 상태를 계산하는 함수
    */
   setState(
     this: AbstractNode,
@@ -449,7 +459,7 @@ export abstract class AbstractNode<
   }
 
   /**
-   * 현재 값을 기준으로 유효성 검증 수행, `ValidationMode.OnRequest` 인 경우에만 동작
+   * 현재 값을 기준으로 유효성 검증을 수행합니다. `ValidationMode.OnRequest` 인 경우에만 동작합니다.
    */
   validate(this: AbstractNode) {
     this.rootNode.publish({
@@ -475,17 +485,26 @@ export abstract class AbstractNode<
   /** 자신의 Error와 외부에서 전달받은 Error를 병합한 결과 */
   #mergedLocalErrors: JsonSchemaError[] = [];
 
+  /**
+   * Form 내부에서 발생한 오류와 외부에서 전달받은 오류를 병합한 결과를 반환합니다.
+   * @returns 병합된 내부 Error 목록
+   */
   get internalErrors() {
     return this.#mergedInternalErrors;
   }
 
   /** 자신의 Error와 외부에서 전달받은 Error를 병합한 결과 */
+  /**
+   * 자신의 오류와 외부에서 전달받은 오류를 병합한 결과를 반환합니다.
+   * @returns 병합된 Error 목록
+   */
   get errors() {
     return this.#mergedLocalErrors;
   }
+
   /**
-   * 자신의 Error 업데이트 후 외부 전달받은 Error와 병합
-   * @param errors 전달받은 Error List
+   * 자신의 오류를 업데이트한 후 외부에서 전달받은 오류와 병합합니다.
+   * @param errors - 설정할 Error 목록
    */
   setErrors(this: AbstractNode, errors: JsonSchemaError[]) {
     if (equals(this.#localErrors, errors)) return;
@@ -516,15 +535,15 @@ export abstract class AbstractNode<
   }
 
   /**
-   * 자신의 Error 초기화, 전달받은 Error는 초기화 하지 않음
+   * 자신의 오류를 초기화합니다. 전달받은 오류는 초기화하지 않습니다.
    */
   clearErrors(this: AbstractNode) {
     this.setErrors([]);
   }
 
   /**
-   * 외부에서 전달받은 Error를 local Error와 병합, rootNode의 경우 internalError 병합
-   * @param errors 전달받은 Error List
+   * 외부에서 전달받은 오류를 로컬 오류와 병합합니다. rootNode의 경우 internalError도 병합합니다.
+   * @param errors - 전달받은 Error 목록
    */
   setReceivedErrors(this: AbstractNode, errors: JsonSchemaError[] = []) {
     if (equals(this.#receivedErrors, errors, OMITTED_KEYS)) return;
@@ -561,7 +580,7 @@ export abstract class AbstractNode<
   }
 
   /**
-   * 외부에서 전달받은 Error 초기화, localErrors / internalErrors 초기화 하지 않음
+   * 외부에서 전달받은 오류를 초기화합니다. localErrors / internalErrors는 초기화하지 않습니다.
    */
   clearReceivedErrors(this: AbstractNode) {
     if (!this.#receivedErrors.length) return;
@@ -571,8 +590,8 @@ export abstract class AbstractNode<
   }
 
   /**
-   * 외부에서 전달받은 Error 중 삭제할 Error 찾아서 삭제
-   * @param errors 삭제할 Error List
+   * 외부에서 전달받은 Error 중 삭제할 오류를 찾아서 삭제합니다.
+   * @param errors - 삭제할 Error 목록
    */
   removeFromReceivedErrors(this: AbstractNode, errors: JsonSchemaError[]) {
     const deleteKeys: Array<number> = [];

@@ -26,6 +26,12 @@ import type {
   VirtualNodeConstructorProps,
 } from './type';
 
+/**
+ * JSON Schema에 맞는 SchemaNode 팩토리 함수를 생성합니다.
+ * @typeParam Schema - JSON Schema 타입
+ * @param resolveSchema - 스키마 해석 함수, 참조를 해석하기 위해 사용
+ * @returns SchemaNode를 생성하는 팩토리 함수
+ */
 export const createSchemaNodeFactory =
   <Schema extends JsonSchemaWithVirtual>(
     resolveSchema: ResolveSchema | null,
