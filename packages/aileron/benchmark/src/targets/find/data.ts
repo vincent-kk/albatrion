@@ -5,120 +5,109 @@ import { nodeFromJsonSchema } from '@/schema-form/core';
 const schema = {
   type: 'object',
   properties: {
-    user: {
+    type: {
+      type: 'string',
+      enum: ['game', 'movie'],
+      default: 'game',
+    },
+    title: { type: 'string' },
+    details: {
       type: 'object',
-      properties: {
-        name: {
-          type: 'string',
-          maxLength: 50,
-          default: 'Anonymous',
-        },
-        email: {
-          type: 'string',
-          format: 'email',
-        },
-        profile: {
-          type: 'object',
-          oneOf: [
-            {
-              properties: { type: { enum: ['adult', 'child'] } },
-              required: ['age', 'gender', 'preferences'],
-            },
-            {
-              properties: { type: { enum: ['none'] } },
-              required: [],
-            },
-          ],
+      oneOf: [
+        {
+          '&if': "_.type==='game'",
           properties: {
-            type: {
-              type: 'string',
-              enum: ['adult', 'child', 'none'],
-              default: 'adult',
-            },
-            age: {
-              type: 'integer',
-              minimum: 0,
-              default: 18,
-            },
-            gender: {
-              type: 'string',
-              enum: ['male', 'female', 'other'],
-              computed: {
-                visible: '@.age >= 18',
+            stages: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  label: { type: 'number' },
+                  name: { type: 'string' },
+                  description: { type: 'string' },
+                },
+                default: {
+                  label: 1,
+                  name: 'stage 1',
+                  description: 'stage 1 description',
+                },
               },
             },
-            preferences: {
+            platforms: {
+              type: 'array',
+              formType: 'checkbox',
+              items: {
+                type: 'string',
+                enum: ['pc', 'console', 'mobile'],
+              },
+              default: ['pc', 'console'],
+            },
+            specs: {
               type: 'object',
               properties: {
-                theme: {
+                cpu: { type: 'string', default: 'Intel Core i5' },
+                gpu: {
                   type: 'string',
-                  enum: ['light', 'dark'],
-                  default: 'light',
+                  default: 'NVIDIA GeForce GTX 1660 Ti',
                 },
-                notifications: {
-                  type: 'object',
-                  properties: {
-                    email: {
-                      type: 'boolean',
-                      default: true,
-                    },
-                    sms: {
-                      type: 'boolean',
-                      default: false,
-                    },
-                  },
-                  required: ['email', 'sms'],
-                },
+                memory: { type: 'string', default: '16GB' },
+                storage: { type: 'string', default: '1TB' },
               },
-              required: ['theme', 'notifications'],
             },
           },
-          required: ['type'],
         },
-      },
-      required: ['name'],
-    },
-    settings: {
-      type: 'object',
-      properties: {
-        privacy: {
-          type: 'string',
-          oneOf: [
-            { const: 'public', title: 'Public' },
-            { const: 'private', title: 'Private' },
-            { const: 'custom', title: 'Custom' },
-          ],
-          default: 'public',
-        },
-        language: {
-          type: 'string',
-          enum: ['en', 'kr', 'jp'],
-          default: 'en',
-        },
-        security: {
-          type: 'object',
+        {
+          '&if': "_.type==='movie'",
           properties: {
-            '2FA': {
-              type: 'boolean',
-              default: true,
-            },
-            backupCodes: {
+            genres: {
               type: 'array',
               items: {
                 type: 'string',
-                pattern: '^[A-Z0-9]{8}$',
               },
-              minItems: 5,
-              maxItems: 10,
+              enum: [
+                'action',
+                'comedy',
+                'drama',
+                'horror',
+                'romance',
+                'sci-fi',
+                'thriller',
+              ],
+            },
+            platforms: {
+              type: 'array',
+              formType: 'checkbox',
+              items: {
+                type: 'string',
+                enum: ['theater', 'streaming'],
+              },
+              default: ['theater'],
+            },
+            actors: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
             },
           },
-          required: ['2FA'],
         },
-      },
-      required: ['privacy', 'language'],
+      ],
     },
   },
-  required: ['user', 'settings'],
+  oneOf: [
+    {
+      '&if': "@.type==='game'",
+      properties: {
+        owner: { type: 'string', placeholder: 'developer of the game' },
+      },
+    },
+    {
+      '&if': "@.type==='movie'",
+      properties: {
+        owner: { type: 'string', placeholder: 'director of the movie' },
+      },
+    },
+  ],
 } satisfies JsonSchema;
 
 export const node = nodeFromJsonSchema({
