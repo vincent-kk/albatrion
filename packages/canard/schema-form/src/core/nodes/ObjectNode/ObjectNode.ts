@@ -233,6 +233,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       if (type & NodeEventType.UpdateComputedProperties) {
         const targetIndex = this.oneOfIndex;
         if (this.#internalEvent && targetIndex === this.#previousIndex) return;
+
         const previousOneOfChildren =
           targetIndex > -1 ? this.#oneOfChildrenList?.[targetIndex] : undefined;
         if (previousOneOfChildren)
@@ -245,6 +246,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         this.#children = oneOfChildren
           ? [...this.#propertyChildren, ...oneOfChildren]
           : this.#propertyChildren;
+
         this.setValue(
           processValueWithOneOfSchema(
             this.#value,
@@ -254,6 +256,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
           RESET_NODE_OPTION,
         );
         this.onChange(this.#value);
+
         this.#publishChildrenChange();
         this.#previousIndex = targetIndex;
       }
