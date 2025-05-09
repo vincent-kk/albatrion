@@ -45,7 +45,7 @@ export const FormRefHandle = () => {
           onChange({ test: 'wow' });
         };
         const handleUnsetClick = () => {
-          onChange({}, SetValueOption.Replace);
+          onChange({}, SetValueOption.Overwrite);
         };
         return (
           <div>
