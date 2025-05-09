@@ -75,9 +75,6 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   #emitChange(this: ArrayNode, option: SetValueOption) {
     if (this.#ready && this.#hasChanged) {
       const value = this.value;
-
-      if (this.path === '$.details.platforms')
-        console.log('emitChange', this.path, value, this.#hasChanged);
       if (option & SetValueOption.EmitChange) this.onChange(value);
       if (option & SetValueOption.Propagate) this.#publishChildrenChange();
       if (option & SetValueOption.Refresh) this.refresh(value);
