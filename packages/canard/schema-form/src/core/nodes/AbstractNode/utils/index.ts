@@ -5,3 +5,4 @@ export * from './find';
 export * from './getFallbackValidator';
 export * from './getJsonPath';
 export * from './getNodeType';
+export * from './getSafeEmptyValue';

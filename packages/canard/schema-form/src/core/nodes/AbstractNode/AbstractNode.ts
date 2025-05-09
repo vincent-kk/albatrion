@@ -42,6 +42,7 @@ import {
   getJsonPaths,
   getNodeType,
   getPathSegments,
+  getSafeEmptyValue,
 } from './utils';
 
 const OMITTED_KEYS = new Set(['key']);
@@ -337,7 +338,9 @@ export abstract class AbstractNode<
     this.setDefaultValue(defaultValue ?? getFallbackValue(jsonSchema));
     if (typeof onChange === 'function')
       this.#handleChange = this.isRoot
-        ? afterMicrotask(() => onChange(this.value!))
+        ? afterMicrotask(() =>
+            onChange(getSafeEmptyValue(this.value, this.jsonSchema)),
+          )
         : onChange;
 
     // NOTE: Special behavior for root node
