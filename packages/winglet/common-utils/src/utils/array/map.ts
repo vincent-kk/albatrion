@@ -11,7 +11,7 @@ export const map = <Type, Result = Type>(
   callback: (item: Type, index: number, array: Type[]) => Result,
 ): Result[] => {
   const result = new Array<Result>(array.length);
-  for (let i = 0; i < array.length; i++)
-    result[i] = callback(array[i], i, array);
+  for (let index = 0; index < array.length; index++)
+    result[index] = callback(array[index], index, array);
   return result;
 };
