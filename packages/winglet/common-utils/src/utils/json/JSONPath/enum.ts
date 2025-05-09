@@ -1,12 +1,15 @@
+/**
+ * JSONPath 표현식에서 사용되는 특수 문자 상수
+ */
 export enum JSONPath {
-  /** Root Node */
+  /** 데이터의 최상위 루트 노드 ($) */
   Root = '$',
-  /** Parent Node */
+  /** 현재 노드의 부모 노드 (_) */
   Parent = '_',
-  /** Current Node */
+  /** 현재 처리 중인 노드 (@) */
   Current = '@',
-  /** Child Node */
+  /** 자식 노드 접근 연산자 (.) */
   Child = '.',
-  /** Filter Condition */
+  /** 필터 조건 연산자 (#) */
   Filter = '#',
 }
