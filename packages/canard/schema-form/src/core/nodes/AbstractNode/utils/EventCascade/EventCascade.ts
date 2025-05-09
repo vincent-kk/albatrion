@@ -1,6 +1,8 @@
-import { BITMASK_NONE, scheduleMicrotask } from '@winglet/common-utils';
+import { scheduleMicrotask } from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/declare';
+
+import { BIT_MASK_NONE } from '@/schema-form/app/constants/binary';
 
 import type { NodeEvent, NodeEventType } from '../../../type';
 
@@ -34,7 +36,7 @@ export class EventCascade {
 
 const mergeEvents = (events: ReadonlyArray<NodeEvent>) => {
   const merged: Required<NodeEvent> = {
-    type: BITMASK_NONE as NodeEventType,
+    type: BIT_MASK_NONE as NodeEventType,
     payload: {},
     options: {},
   };

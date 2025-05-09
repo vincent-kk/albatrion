@@ -1,5 +1,4 @@
 import {
-  BITMASK_NONE,
   JSONPath,
   equals,
   isEmptyObject,
@@ -9,6 +8,7 @@ import {
 
 import type { Fn, SetStateFn } from '@aileron/declare';
 
+import { BIT_MASK_NONE } from '@/schema-form/app/constants/binary';
 import {
   type Ajv,
   type ErrorObject,
@@ -39,7 +39,6 @@ import {
   computeFactory,
   find,
   getFallbackValidator,
-  getJsonPaths,
   getNodeType,
   getPathSegments,
   getSafeEmptyValue,
@@ -663,10 +662,10 @@ export abstract class AbstractNode<
     const triggers =
       (validationMode & ValidationMode.OnChange
         ? NodeEventType.UpdateValue
-        : BITMASK_NONE) |
+        : BIT_MASK_NONE) |
       (validationMode & ValidationMode.OnRequest
         ? NodeEventType.RequestValidate
-        : BITMASK_NONE);
+        : BIT_MASK_NONE);
     this.subscribe(({ type }) => {
       if (type & triggers) this.#handleValidation();
     });
