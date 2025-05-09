@@ -24,6 +24,9 @@ import {
 } from '@/common-utils/constant/typeTag';
 import { getTypeTag } from '@/common-utils/libs/getTypeTag';
 
+/**
+ * 복제 가능한 타입 태그의 집합
+ */
 const CLONEABLE_TAGS = new Set([
   ARGUMENTS_TAG,
   ARRAY_TAG,
@@ -49,5 +52,11 @@ const CLONEABLE_TAGS = new Set([
   UINT_32_ARRAY_TAG,
 ]);
 
+/**
+ * 객체가 복제 가능한 타입인지 확인하는 함수
+ * 복제 가능한 타입에는 배열, 객체, 데이터 구조 등이 포함됨
+ * @param object - 확인할 객체 또는 값
+ * @returns 복제 가능한 타입이면 true, 아니면 false
+ */
 export const isCloneable = (object: unknown): boolean =>
   CLONEABLE_TAGS.has(getTypeTag(object));
