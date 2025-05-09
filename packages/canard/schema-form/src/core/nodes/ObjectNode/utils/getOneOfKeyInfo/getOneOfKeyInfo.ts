@@ -1,10 +1,18 @@
 import type { ObjectSchema } from '@/schema-form/types';
 
+/**
+ * oneOf 키 정보를 나타내는 타입
+ */
 type OneOfKeyInfo = {
   oneOfKeySet: Set<string>;
   oneOfKeySetList: Array<Set<string>>;
 };
 
+/**
+ * 오브젝트 스키마의 oneOf 키 정보를 추출합니다.
+ * @param schema - 오브젝트 JSON 스키마
+ * @returns oneOf 키 정보 또는 oneOf가 없을 경우 undefined
+ */
 export const getOneOfKeyInfo = (
   schema: ObjectSchema,
 ): OneOfKeyInfo | undefined => {

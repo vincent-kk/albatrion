@@ -1,3 +1,8 @@
+/**
+ * 값이 원시 데이터 객체인지 확인하는 함수
+ * @param value - 확인할 값
+ * @returns 값이 원시 데이터 객체이면 true, 아니면 false
+ */
 export const isPrimitiveObject = <T extends object>(
   value: unknown,
 ): value is T => {

@@ -1,4 +1,4 @@
-import type { MutableRefObject } from 'react';
+import type { RefObject } from 'react';
 
 import Ajv, { type Options } from 'ajv';
 
@@ -10,7 +10,7 @@ const defaultSettings: Options = {
   validateFormats: false,
 };
 
-const ajvRef: MutableRefObject<Ajv | null> = {
+const ajvRef: RefObject<Ajv | null> = {
   current: null,
 };
 

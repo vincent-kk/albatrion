@@ -29,6 +29,10 @@ import {
 
 const RESET_NODE_OPTION = SetValueOption.Replace | SetValueOption.Propagate;
 
+/**
+ * 객체 스키마를 처리하기 위한 노드 클래스입니다.
+ * 객체의 프로퍼티를 관리하고 oneOf와 같은 복잡한 스키마를 처리합니다.
+ */
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   readonly #schemaKeys: string[];
   readonly #oneOfKeySet: Set<string> | undefined;
@@ -42,6 +46,10 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   #oneOfChildrenList: Array<ChildNode[]> | undefined;
 
   #children: ChildNode[];
+  /**
+   * 객체 노드의 자식 노드들을 가져옵니다.
+   * @returns 자식 노드 목록
+   */
   get children() {
     return this.#children;
   }
@@ -51,12 +59,25 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
   #internalEvent: boolean = true;
 
+  /**
+   * 객체 노드의 값을 가져옵니다.
+   * @returns 객체 값 또는 undefined
+   */
   get value() {
     return this.#value;
   }
+  /**
+   * 객체 노드의 값을 설정합니다.
+   * @param input - 설정할 객체 값
+   */
   set value(input: ObjectValue | undefined) {
     this.setValue(input);
   }
+  /**
+   * 입력값을 객체 노드에 적용합니다.
+   * @param input - 설정할 객체 값
+   * @param option - 설정 옵션
+   */
   protected applyValue(
     this: ObjectNode,
     input: ObjectValue,
@@ -67,11 +88,21 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.#emitChange(option);
   }
 
+  /**
+   * 입력값을 파싱하여 객체로 처리합니다.
+   * @param input - 파싱할 객체
+   * @returns 파싱된 객체
+   */
   #parseValue(this: ObjectNode, input: ObjectValue) {
     const value = sortObjectKeys(input, this.#schemaKeys, true);
     if (this.#internalEvent) return value;
     return processValueWithCondition(value, this.#fieldConditionMap);
   }
+  /**
+   * 값 변경을 하위 노드로 전파합니다.
+   * @param replace - 기존 값 대체 여부
+   * @param option - 설정 옵션
+   */
   #propagate(this: ObjectNode, replace: boolean, option: UnionSetValueOption) {
     this.#locked = true;
     const target = this.#value || {};
@@ -85,6 +116,10 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     }
     this.#locked = false;
   }
+  /**
+   * 값 변경을 반영하고 관련 이벤트를 발행합니다.
+   * @param option - 설정 옵션
+   */
   #emitChange(this: ObjectNode, option: UnionSetValueOption) {
     if (this.#locked) return;
 
@@ -124,6 +159,11 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     });
   }
 
+  /**
+   * 노드를 초기화하고 자식 노드를 준비합니다.
+   * @param actor - 준비를 요청한 노드
+   * @returns 초기화 완료 여부
+   */
   prepare(this: ObjectNode, actor?: SchemaNode): boolean {
     if (super.prepare(actor)) {
       for (let i = 0; i < this.#propertyChildren.length; i++)
@@ -228,6 +268,9 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   }
 
   #previousIndex: number | undefined;
+  /**
+   * oneOf 스키마에 대한 자식 노드를 준비합니다.
+   */
   #prepareOneOfChildren(this: ObjectNode) {
     if (!this.#oneOfChildrenList) return;
     this.subscribe(({ type }) => {
@@ -264,6 +307,9 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     });
   }
 
+  /**
+   * 자식 노드 변경 이벤트를 발행합니다.
+   */
   #publishChildrenChange(this: ObjectNode) {
     if (this.#locked) return;
     this.publish({

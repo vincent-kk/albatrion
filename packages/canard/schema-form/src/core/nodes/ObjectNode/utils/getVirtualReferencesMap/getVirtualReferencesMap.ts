@@ -6,6 +6,13 @@ import { SchemaNodeError } from '@/schema-form/errors';
 
 import type { VirtualReference } from '../../type';
 
+/**
+ * 가상 참조 맵을 생성합니다.
+ * @param nodeName - 현재 노드의 이름
+ * @param propertyKeys - 프로퍼티 키 목록
+ * @param virtualReferences - 가상 참조 정의
+ * @returns 가상 참조 맵과 가상 참조 필드 맵
+ */
 export const getVirtualReferencesMap = (
   nodeName: string | undefined,
   propertyKeys: string[],

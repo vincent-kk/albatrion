@@ -1,19 +1,23 @@
-import type { ErrorObject } from '@/schema-form/helpers/ajv';
-
 import {
+  BIT_FLAG_00,
   BIT_FLAG_01,
   BIT_FLAG_02,
   BIT_FLAG_03,
   BIT_FLAG_04,
-  BIT_FLAG_05,
-} from '../app/constants/binary';
+} from '@/schema-form/app/constants/bitmask';
+import type { ErrorObject } from '@/schema-form/helpers/ajv';
 
 export enum ShowError {
-  Always = BIT_FLAG_01,
-  Never = BIT_FLAG_02,
-  Dirty = BIT_FLAG_03,
-  Touched = BIT_FLAG_04,
-  DirtyTouched = BIT_FLAG_05,
+  /** Always show error */
+  Always = BIT_FLAG_00,
+  /** Never show error */
+  Never = BIT_FLAG_01,
+  /** Show error when the input's value is updated */
+  Dirty = BIT_FLAG_02,
+  /** Show error when the input is touched */
+  Touched = BIT_FLAG_03,
+  /** Show error when the input's value is updated and touched */
+  DirtyTouched = BIT_FLAG_04,
 }
 
 export interface JsonSchemaError extends ErrorObject {

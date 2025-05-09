@@ -14,6 +14,19 @@ import { serializeNative } from './serializeNative';
 const { get, set } = weakMapCacheFactory<string>();
 const { increment } = counterFactory();
 
+/**
+ * 객체를 안정적으로 직렬화합니다. 동일한 객체는 항상 동일한 문자열로 직렬화됩니다.
+ * 순환 참조가 있는 객체도 직렬화할 수 있습니다.
+ *
+ * @param input - 직렬화할 값
+ * @param omit - 직렬화에서 제외할 속성 키의 집합 또는 배열 (선택사항)
+ * @returns 직렬화된 문자열
+ *
+ * @example
+ * stableSerialize({a: 1, b: 2}); // '{b:2|a:1}'
+ * stableSerialize({a: 1, b: {c: 3}}); // '{b:{c:3}|a:1}'
+ * stableSerialize([1, 2, 3]); // '[1,2,3]'
+ */
 export const stableSerialize = (
   input: unknown,
   omit?: Set<string> | Array<string>,
@@ -26,6 +39,14 @@ export const stableSerialize = (
   return createHash(input, omitSet, omitHash);
 };
 
+/**
+ * 주어진 값을 안정적으로 해시한 문자열을 생성합니다.
+ *
+ * @param input - 해시할 값
+ * @param omit - 해시에서 제외할 속성 키의 집합
+ * @param omitHash - 제외된 키들의 해시 프리픽스
+ * @returns 해시된 문자열
+ */
 const createHash = (
   input: unknown,
   omit: Set<string> | null,

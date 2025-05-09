@@ -9,8 +9,31 @@ import { isTypedArray } from '@/common-utils/utils/filter/isTypedArray';
 
 import { getSymbols } from './getSymbols';
 
+/**
+ * 값의 깊은 복제본을 생성합니다.
+ * 원시 타입, 배열, 객체, Date, RegExp, Map, Set, TypedArray 등 다양한 타입을 지원합니다.
+ * 순환 참조도 올바르게 처리합니다.
+ *
+ * @template Type - 복제할 값의 타입
+ * @param target - 복제할 값
+ * @returns 원본과 동일한 구조와 값을 가진 새로운 복제본
+ *
+ * @example
+ * clone(123); // 123
+ * clone('abc'); // 'abc'
+ * clone({a: 1, b: {c: 2}}); // {a: 1, b: {c: 2}}
+ * clone(new Date()); // 새로운 Date 객체
+ */
 export const clone = <Type>(target: Type): Type => replicate(target);
 
+/**
+ * 값을 재귀적으로 복제합니다.
+ *
+ * @template Type - 복제할 값의 타입
+ * @param value - 복제할 값
+ * @param cache - 이미 복제된 객체를 추적하는 WeakMap (순환 참조 처리)
+ * @returns 복제된 값
+ */
 const replicate = <Type>(
   value: Type,
   cache = new WeakMap<object, any>(),
@@ -113,6 +136,13 @@ const replicate = <Type>(
   return value;
 };
 
+/**
+ * 소스 객체의 모든 속성(문자열 키와 심볼 키 모두)을 대상 객체에 복사합니다.
+ *
+ * @param target - 속성을 복사할 대상 객체
+ * @param source - 속성을 복사할 소스 객체
+ * @param cache - 이미 복제된 객체를 추적하는 WeakMap
+ */
 const replicateProperties = (
   target: Record<PropertyKey, any>,
   source: Record<PropertyKey, any>,

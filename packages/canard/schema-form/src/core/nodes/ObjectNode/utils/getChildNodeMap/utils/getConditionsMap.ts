@@ -4,6 +4,11 @@ import type { Dictionary } from '@aileron/declare';
 
 import type { FieldConditionMap } from '../../getFieldConditionMap';
 
+/**
+ * FieldConditionMap를 기반으로 executable code 목록을 field 별로 생성합니다.
+ * @param fieldConditionMap - 필드 조건 맵
+ * @returns 필드와 executable code 목록을 포함한 맵. 또는 조건이 없을 경우 undefined
+ */
 export const getConditionsMap = (
   fieldConditionMap: FieldConditionMap | undefined,
 ): Map<string, string[]> | undefined => {
@@ -20,6 +25,12 @@ export const getConditionsMap = (
   return oneOfConditionsMap;
 };
 
+/**
+ * 조건에서 executable code 문자열을 생성합니다.
+ * @param condition - 조건 사전
+ * @param inverse - 역조건 여부
+ * @param operations - 결과를 저장할 배열
+ */
 const getOperations = (
   condition: Dictionary<string | string[]>,
   inverse: boolean | undefined,

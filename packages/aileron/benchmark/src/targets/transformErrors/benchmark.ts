@@ -21,7 +21,7 @@ const testTransformErrors_Old = () => {
 
 const error3 = JSON.parse(JSON.stringify(ajvErrors));
 const testTransformErrors_Ref = () => {
-  transformErrors_Ref(error3, true);
+  transformErrors_Ref(error3, undefined, true);
 };
 
 export const run = () => {

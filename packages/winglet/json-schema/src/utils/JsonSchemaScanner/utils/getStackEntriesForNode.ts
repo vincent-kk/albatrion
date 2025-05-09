@@ -4,9 +4,14 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import type { SchemaEntry } from '../type';
 
+const CONDITIONAL_KEYWORDS = ['not', 'if', 'then', 'else'] as const;
+const COMPOSITION_KEYWORDS = ['allOf', 'anyOf', 'oneOf'] as const;
+
 /**
  * 주어진 노드의 하위 노드들을 SchemaEntry 배열로 반환합니다.
  * 스택 기반 순회를 위해 역순으로 스택에 추가될 수 있도록 순서를 맞춥니다.
+ * @param entry 하위 노드를 추출할 스키마 항목
+ * @returns 하위 스키마 항목 배열
  */
 export const getStackEntriesForNode = (entry: SchemaEntry): SchemaEntry[] => {
   const { schema, path, depth } = entry;
@@ -33,6 +38,13 @@ export const getStackEntriesForNode = (entry: SchemaEntry): SchemaEntry[] => {
   return entries;
 };
 
+/**
+ * $defs 노드의 하위 스키마들을 처리하여 스택 항목에 추가합니다.
+ * @param schema 스키마 객체
+ * @param entries 추가할 스택 항목 배열
+ * @param path 현재 경로
+ * @param depth 현재 깊이
+ */
 const handleDefsNode = (
   schema: UnknownSchema,
   entries: SchemaEntry[],
@@ -51,6 +63,13 @@ const handleDefsNode = (
   }
 };
 
+/**
+ * definitions 노드의 하위 스키마들을 처리하여 스택 항목에 추가합니다.
+ * @param schema 스키마 객체
+ * @param entries 추가할 스택 항목 배열
+ * @param path 현재 경로
+ * @param depth 현재 깊이
+ */
 const handleDefinitionsNode = (
   schema: UnknownSchema,
   entries: SchemaEntry[],
@@ -69,7 +88,13 @@ const handleDefinitionsNode = (
   }
 };
 
-const CONDITIONAL_KEYWORDS = ['not', 'if', 'then', 'else'] as const;
+/**
+ * 조건부 노드(not, if, then, else)의 하위 스키마들을 처리하여 스택 항목에 추가합니다.
+ * @param schema 스키마 객체
+ * @param entries 추가할 스택 항목 배열
+ * @param path 현재 경로
+ * @param depth 현재 깊이
+ */
 const handleConditionalNode = (
   schema: UnknownSchema,
   entries: SchemaEntry[],
@@ -88,7 +113,13 @@ const handleConditionalNode = (
   }
 };
 
-const COMPOSITION_KEYWORDS = ['allOf', 'anyOf', 'oneOf'] as const;
+/**
+ * 결합 노드(allOf, anyOf, oneOf)의 하위 스키마들을 처리하여 스택 항목에 추가합니다.
+ * @param schema 스키마 객체
+ * @param entries 추가할 스택 항목 배열
+ * @param path 현재 경로
+ * @param depth 현재 깊이
+ */
 const handleCompositionNode = (
   schema: UnknownSchema,
   entries: SchemaEntry[],
@@ -109,6 +140,13 @@ const handleCompositionNode = (
   }
 };
 
+/**
+ * additionalProperties 노드의 하위 스키마를 처리하여 스택 항목에 추가합니다.
+ * @param schema 스키마 객체
+ * @param entries 추가할 스택 항목 배열
+ * @param path 현재 경로
+ * @param depth 현재 깊이
+ */
 const handleAdditionalProperties = (
   schema: UnknownSchema,
   entries: SchemaEntry[],
@@ -122,6 +160,13 @@ const handleAdditionalProperties = (
   });
 };
 
+/**
+ * 배열 타입 스키마의 items 노드를 처리하여 스택 항목에 추가합니다.
+ * @param schema 스키마 객체
+ * @param entries 추가할 스택 항목 배열
+ * @param path 현재 경로
+ * @param depth 현재 깊이
+ */
 const handleArrayItems = (
   schema: UnknownSchema,
   entries: SchemaEntry[],
@@ -146,6 +191,13 @@ const handleArrayItems = (
   }
 };
 
+/**
+ * 객체 타입 스키마의 properties 노드를 처리하여 스택 항목에 추가합니다.
+ * @param schema 스키마 객체
+ * @param entries 추가할 스택 항목 배열
+ * @param path 현재 경로
+ * @param depth 현재 깊이
+ */
 const handleObjectProperties = (
   schema: UnknownSchema,
   entries: SchemaEntry[],
