@@ -110,7 +110,7 @@ export type NodeFactoryProps<Schema extends JsonSchemaWithVirtual> =
 export type NodeListener = Fn<[event: NodeEvent]>;
 
 export type NodeEvent = {
-  type: NodeEventType;
+  type: UnionNodeEventType;
   payload?: Partial<NodeEventPayload>;
   options?: Partial<NodeEventOptions>;
 };
@@ -131,6 +131,16 @@ export enum NodeEventType {
   UpdateComputedProperties = BIT_FLAG_13,
   RequestValidate = BIT_FLAG_14,
 }
+
+export enum PublicNodeEventType {
+  Focus = NodeEventType.Focus,
+  Select = NodeEventType.Select,
+  UpdateValue = NodeEventType.UpdateValue,
+  UpdateState = NodeEventType.UpdateState,
+  UpdateError = NodeEventType.UpdateError,
+}
+
+export type UnionNodeEventType = NodeEventType | PublicNodeEventType;
 
 export type NodeEventPayload = {
   [NodeEventType.Activated]: void;
