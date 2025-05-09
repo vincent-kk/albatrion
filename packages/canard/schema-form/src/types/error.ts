@@ -9,11 +9,16 @@ import {
 } from '../app/constants/binary';
 
 export enum ShowError {
+  /** Always show error */
   Always = BIT_FLAG_01,
+  /** Never show error */
   Never = BIT_FLAG_02,
-  Dirty = BIT_FLAG_03,
-  Touched = BIT_FLAG_04,
-  DirtyTouched = BIT_FLAG_05,
+  /** Show error when the input's value is updated */
+  Dirty = BIT_FLAG_02,
+  /** Show error when the input is touched */
+  Touched = BIT_FLAG_03,
+  /** Show error when the input's value is updated and touched */
+  DirtyTouched = BIT_FLAG_04,
 }
 
 export interface JsonSchemaError extends ErrorObject {

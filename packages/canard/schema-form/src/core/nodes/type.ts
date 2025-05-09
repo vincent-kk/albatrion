@@ -73,12 +73,12 @@ export type SchemaNode =
   | VirtualNode
   | NullNode;
 
-/**
- * 유효성 검증 모드를 정의합니다.
- */
 export enum ValidationMode {
+  /** No validation */
   None = BIT_MASK_NONE,
+  /** Validate on value change */
   OnChange = BIT_FLAG_01,
+  /** Validate on request */
   OnRequest = BIT_FLAG_02,
 }
 
@@ -138,59 +138,60 @@ export type NodeFactoryProps<Schema extends JsonSchemaWithVirtual> =
     BranchNodeConstructorProps<Schema> &
     VirtualNodeConstructorProps<Schema>;
 
-/**
- * 노드 이벤트 리스너 함수 타입입니다.
- */
 export type NodeListener = Fn<[event: NodeEvent]>;
 
-/**
- * 노드에서 발생하는 이벤트의 구조입니다.
- */
 export type NodeEvent = {
   type: UnionNodeEventType;
   payload?: Partial<NodeEventPayload>;
   options?: Partial<NodeEventOptions>;
 };
 
-/**
- * 노드 이벤트 타입을 정의합니다.
- */
 export enum NodeEventType {
+  /** The node has been activated */
   Activated = BIT_FLAG_01,
+  /** The node has been focused */
   Focus = BIT_FLAG_02,
+  /** The node has been selected */
   Select = BIT_FLAG_03,
+  /** The node has been redrawn */
   Redraw = BIT_FLAG_04,
+  /** The node has been refreshed */
   Refresh = BIT_FLAG_05,
+  /** The node's path has been updated */
   UpdatePath = BIT_FLAG_06,
+  /** The node's value has been updated */
   UpdateValue = BIT_FLAG_07,
+  /** The node's state has been updated */
   UpdateState = BIT_FLAG_08,
+  /** The node's error has been updated */
   UpdateError = BIT_FLAG_09,
+  /** The node's internal error has been updated */
   UpdateInternalError = BIT_FLAG_10,
+  /** The node's children have been updated */
   UpdateChildren = BIT_FLAG_11,
+  /** The node's dependencies have been updated */
   UpdateDependencies = BIT_FLAG_12,
+  /** The node's computed properties have been updated */
   UpdateComputedProperties = BIT_FLAG_13,
+  /** The node's validation has been requested */
   RequestValidate = BIT_FLAG_14,
 }
 
-/**
- * 외부에 노출되는 노드 이벤트 타입을 정의합니다.
- */
 export enum PublicNodeEventType {
+  /** The node has been focused */
   Focus = NodeEventType.Focus,
+  /** The node has been selected */
   Select = NodeEventType.Select,
+  /** The node's value has been updated */
   UpdateValue = NodeEventType.UpdateValue,
+  /** The node's state has been updated */
   UpdateState = NodeEventType.UpdateState,
+  /** The node's error has been updated */
   UpdateError = NodeEventType.UpdateError,
 }
 
-/**
- * 내부 및 외부 노드 이벤트 타입을 합치는 유니언 타입입니다.
- */
 export type UnionNodeEventType = NodeEventType | PublicNodeEventType;
 
-/**
- * 노드 이벤트의 페이로드 타입을 정의합니다.
- */
 export type NodeEventPayload = {
   [NodeEventType.Activated]: void;
   [NodeEventType.Focus]: void;
@@ -208,9 +209,6 @@ export type NodeEventPayload = {
   [NodeEventType.RequestValidate]: void;
 };
 
-/**
- * 노드 이벤트의 옵션 타입을 정의합니다.
- */
 export type NodeEventOptions = {
   [NodeEventType.Activated]: void;
   [NodeEventType.Focus]: void;
@@ -234,18 +232,15 @@ export type NodeEventOptions = {
   [NodeEventType.RequestValidate]: void;
 };
 
-/**
- * 노드의 상태를 정의하는 열거형입니다.
- */
 export enum NodeState {
+  /** The node has been modified */
   Dirty = BIT_FLAG_01,
+  /** The node has been touched */
   Touched = BIT_FLAG_02,
+  /** Show error message */
   ShowError = BIT_FLAG_03,
 }
 
-/**
- * 노드 상태 플래그를 정의하는 타입입니다.
- */
 export type NodeStateFlags = {
   [NodeState.Dirty]?: boolean;
   [NodeState.Touched]?: boolean;
@@ -253,9 +248,6 @@ export type NodeStateFlags = {
   [key: string]: any;
 };
 
-/**
- * 값 설정 옵션을 정의하는 열거형입니다.
- */
 export enum SetValueOption {
   /** Only update the value */
   None = BIT_MASK_NONE,
@@ -275,15 +267,11 @@ export enum SetValueOption {
   Overwrite = EmitChange | Replace | Propagate | Refresh | External,
 }
 
-/**
- * 외부에 노출되는 값 설정 옵션을 정의하는 열거형입니다.
- */
 export enum PublicSetValueOption {
+  /** Both propagate to children and trigger a refresh */
   Merge = SetValueOption.Merge,
+  /** Replace the value and propagate the update with refresh */
   Overwrite = SetValueOption.Overwrite,
 }
 
-/**
- * 내부 및 외부 값 설정 옵션을 합치는 유니언 타입입니다.
- */
 export type UnionSetValueOption = SetValueOption | PublicSetValueOption;
