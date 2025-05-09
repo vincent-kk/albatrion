@@ -16,6 +16,7 @@ import {
   type SchemaNode,
   type SchemaNodeFactory,
   SetValueOption,
+  type UnionSetValueOption,
 } from '../type';
 import { OperationType } from './type';
 
@@ -58,7 +59,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   protected applyValue(
     this: ArrayNode,
     input: ArrayValue,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ) {
     if (input === undefined) {
       this.clear();
@@ -72,7 +73,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     }
   }
 
-  #emitChange(this: ArrayNode, option: SetValueOption) {
+  #emitChange(this: ArrayNode, option: UnionSetValueOption) {
     if (this.#ready && this.#hasChanged) {
       const value = this.value;
       if (option & SetValueOption.EmitChange) this.onChange(value);

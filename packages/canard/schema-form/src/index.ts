@@ -17,7 +17,7 @@ export {
   NodeState,
   NodeEventType,
   ValidationMode,
-  SetValueOption,
+  PublicSetValueOption as SetValueOption,
   isArrayNode,
   isBooleanNode,
   isBranchNode,

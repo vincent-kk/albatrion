@@ -5,6 +5,7 @@ import {
   NodeEventType,
   type SchemaNodeConstructorProps,
   SetValueOption,
+  type UnionSetValueOption,
 } from '../type';
 
 export class NullNode extends AbstractNode<NullSchema, NullValue> {
@@ -18,7 +19,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
   protected applyValue(
     this: NullNode,
     input: NullValue | undefined,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ) {
     this.#emitChange(input, option);
   }
@@ -29,7 +30,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
   #emitChange(
     this: NullNode,
     input: NullValue | undefined,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ) {
     const previous = this.#value;
     const current = this.#parseValue(input);

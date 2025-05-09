@@ -12,6 +12,7 @@ import {
   NodeEventType,
   type SchemaNode,
   SetValueOption,
+  type UnionSetValueOption,
 } from '../type';
 import type { ChildNode } from './type';
 import {
@@ -59,7 +60,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   protected applyValue(
     this: ObjectNode,
     input: ObjectValue,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ) {
     this.#draft = input;
     this.#internalEvent = !(option & SetValueOption.External);
@@ -71,7 +72,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     if (this.#internalEvent) return value;
     return processValueWithCondition(value, this.#fieldConditionMap);
   }
-  #propagate(this: ObjectNode, replace: boolean, option: SetValueOption) {
+  #propagate(this: ObjectNode, replace: boolean, option: UnionSetValueOption) {
     this.#locked = true;
     const target = this.#value || {};
     const draft = this.#draft || {};
@@ -84,7 +85,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     }
     this.#locked = false;
   }
-  #emitChange(this: ObjectNode, option: SetValueOption) {
+  #emitChange(this: ObjectNode, option: UnionSetValueOption) {
     if (this.#locked) return;
 
     const replace = !!(option & SetValueOption.Replace);

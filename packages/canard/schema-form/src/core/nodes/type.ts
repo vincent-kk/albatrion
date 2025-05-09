@@ -203,3 +203,10 @@ export enum SetValueOption {
   /** Replace the value and propagate the update with refresh */
   Overwrite = EmitChange | Replace | Propagate | Refresh | External,
 }
+
+export enum PublicSetValueOption {
+  Merge = SetValueOption.Merge,
+  Overwrite = SetValueOption.Overwrite,
+}
+
+export type UnionSetValueOption = SetValueOption | PublicSetValueOption;

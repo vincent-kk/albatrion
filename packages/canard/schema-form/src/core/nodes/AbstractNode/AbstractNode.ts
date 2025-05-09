@@ -31,6 +31,7 @@ import {
   type SchemaNode,
   type SchemaNodeConstructorProps,
   SetValueOption,
+  type UnionSetValueOption,
   ValidationMode,
 } from '../type';
 import {
@@ -170,7 +171,7 @@ export abstract class AbstractNode<
   protected abstract applyValue(
     this: AbstractNode,
     input: Value | undefined,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ): void;
 
   /**
@@ -187,7 +188,7 @@ export abstract class AbstractNode<
   setValue(
     this: AbstractNode,
     input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
-    option: SetValueOption = SetValueOption.Overwrite,
+    option: UnionSetValueOption = SetValueOption.Overwrite,
   ): void {
     const inputValue = typeof input === 'function' ? input(this.value) : input;
     this.applyValue(inputValue, option);

@@ -6,6 +6,7 @@ import {
   NodeEventType,
   type SchemaNodeConstructorProps,
   SetValueOption,
+  type UnionSetValueOption,
 } from '../type';
 
 export class StringNode extends AbstractNode<StringSchema, StringValue> {
@@ -19,7 +20,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
   protected applyValue(
     this: StringNode,
     input: StringValue | undefined,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ) {
     this.#emitChange(input, option);
   }
@@ -30,7 +31,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
   #emitChange(
     this: StringNode,
     input: StringValue | undefined,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ) {
     const previous = this.#value;
     const current = this.#parseValue(input);

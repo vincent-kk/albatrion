@@ -6,6 +6,7 @@ import {
   NodeEventType,
   type SchemaNodeConstructorProps,
   SetValueOption,
+  type UnionSetValueOption,
 } from '../type';
 
 export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
@@ -19,7 +20,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   protected applyValue(
     this: NumberNode,
     input: NumberValue | undefined,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ) {
     this.#emitChange(input, option);
   }
@@ -30,7 +31,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   #emitChange(
     this: NumberNode,
     input: NumberValue | undefined,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ) {
     const previous = this.#value;
     const current = this.#parseValue(input);

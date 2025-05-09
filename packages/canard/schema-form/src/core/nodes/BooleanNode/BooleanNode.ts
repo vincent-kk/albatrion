@@ -6,6 +6,7 @@ import {
   NodeEventType,
   type SchemaNodeConstructorProps,
   SetValueOption,
+  type UnionSetValueOption,
 } from '../type';
 
 export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
@@ -19,7 +20,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   protected applyValue(
     this: BooleanNode,
     input: BooleanValue | undefined,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ) {
     this.#emitChange(input, option);
   }
@@ -30,7 +31,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   #emitChange(
     this: BooleanNode,
     input: BooleanValue | undefined,
-    option: SetValueOption,
+    option: UnionSetValueOption,
   ) {
     const previous = this.#value;
     const current = this.#parseValue(input);
