@@ -6,6 +6,16 @@ import type { SchemaNode, SchemaNodeFactory } from '../../../type';
 import type { ObjectNode } from '../../ObjectNode';
 import type { ChildNode, VirtualReference } from '../../type';
 
+/**
+ * 객체 스키마에 정의된 프로퍼티와 가상 참조로부터 자식 노드 목록을 생성합니다.
+ * @param parentNode - 부모 객체 노드
+ * @param propertyKeys - 프로퍼티 키 목록
+ * @param childNodeMap - 자식 노드 맵
+ * @param virtualReferenceFieldsMap - 가상 참조 필드 맵
+ * @param virtualReferencesMap - 가상 참조 맵
+ * @param nodeFactory - 노드 생성 팩토리 함수
+ * @returns 자식 노드 목록
+ */
 export const getChildren = (
   parentNode: ObjectNode,
   propertyKeys: string[],
@@ -51,6 +61,12 @@ export const getChildren = (
   return children;
 };
 
+/**
+ * 참조를 위한 노드와 기본값을 가져옵니다.
+ * @param reference - 가상 참조 정의
+ * @param childNodeMap - 자식 노드 맵
+ * @returns 참조 노드와 기본값
+ */
 const getRefNodes = (
   reference: VirtualReference,
   childNodeMap: Map<string, ChildNode>,

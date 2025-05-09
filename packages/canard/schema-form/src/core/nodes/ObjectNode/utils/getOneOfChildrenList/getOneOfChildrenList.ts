@@ -10,6 +10,16 @@ import type { SchemaNodeFactory } from '../../../type';
 import type { ObjectNode } from '../../ObjectNode';
 import type { ChildNode } from '../../type';
 
+/**
+ * oneOf 스키마에 정의된 프로퍼티에 대한 자식 노드 목록을 생성합니다.
+ * @param parentNode - 부모 객체 노드
+ * @param jsonSchema - 오브젝트 JSON 스키마
+ * @param defaultValue - 기본값
+ * @param childNodeMap - 자식 노드 맵
+ * @param handelChangeFactory - 변경 핸들러 팩토리 함수
+ * @param nodeFactory - 노드 생성 팩토리 함수
+ * @returns oneOf 자식 노드 목록들의 배열 또는 oneOf가 없는 경우 undefined
+ */
 export const getOneOfChildrenList = (
   parentNode: ObjectNode,
   jsonSchema: ObjectSchema,

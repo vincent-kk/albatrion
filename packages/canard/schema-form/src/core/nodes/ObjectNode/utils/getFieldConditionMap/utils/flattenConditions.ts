@@ -4,12 +4,20 @@ import type { Dictionary, RequiredBy } from '@aileron/declare';
 
 import type { JsonSchema, JsonSchemaWithVirtual } from '@/schema-form/types';
 
+/**
+ * 필드의 조건을 평탄화한 형태로 나타내는 인터페이스
+ */
 interface FlattenCondition {
   condition: Dictionary<string | string[]>;
   required: string[];
   inverse?: boolean;
 }
 
+/**
+ * JSON 스키마의 if-then-else 구조를 평탄화하여 조건 목록을 추출합니다.
+ * @param schema - 평탄화할 JSON 스키마
+ * @returns 평탄화된 조건 목록 또는 조건이 없을 경우 undefined
+ */
 export const flattenConditions = (
   schema: JsonSchema,
 ): FlattenCondition[] | undefined => {
@@ -18,6 +26,12 @@ export const flattenConditions = (
   return conditions.length > 0 ? conditions : undefined;
 };
 
+/**
+ * 스키마에서 추출한 조건을 배열에 추가합니다.
+ * @param schema - 추출할 JSON 스키마
+ * @param conditions - 조건을 추가할 배열
+ * @param collectedConditions - 수집된 조건들
+ */
 const flattenConditionsInto = (
   schema: JsonSchema,
   conditions: FlattenCondition[],
@@ -83,7 +97,11 @@ const flattenConditionsInto = (
   }
 };
 
-// 조건 추출 함수
+/**
+ * JSON 스키마 if 조건에서 속성들의 값 조건을 추출합니다.
+ * @param properties - 스키마 속성들
+ * @returns 추출된 조건 객체 또는 조건이 없을 경우 null
+ */
 const extractCondition = (
   properties: Record<string, any>,
 ): Record<string, string | string[]> | null => {
@@ -112,10 +130,20 @@ const extractCondition = (
   return isEmptyObject(condition) ? null : condition;
 };
 
+/**
+ * 스키마가 유효한 enum 속성을 가지는지 확인합니다.
+ * @param schema - 확인할 스키마
+ * @returns enum 속성을 가지는지 여부
+ */
 const isValidEnum = (
   schema: JsonSchemaWithVirtual,
 ): schema is RequiredBy<JsonSchemaWithVirtual, 'enum'> => !!schema.enum?.length;
 
+/**
+ * 스키마가 유효한 const 속성을 가지는지 확인합니다.
+ * @param schema - 확인할 스키마
+ * @returns const 속성을 가지는지 여부
+ */
 const isValidConst = (
   schema: JsonSchemaWithVirtual,
 ): schema is RequiredBy<JsonSchemaWithVirtual, 'const'> =>
