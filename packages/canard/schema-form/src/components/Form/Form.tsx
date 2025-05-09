@@ -91,7 +91,6 @@ const FormInner = <
 
   const handleReady = useHandle((rootNode: Node) => {
     setRootNode(rootNode);
-    if (isFunction(onChange)) onChange(rootNode.value as Value);
     ready.current = true;
   }) as Fn<[SchemaNode], void>;
 
