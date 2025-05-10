@@ -141,8 +141,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     if (option & SetValueOption.EmitChange) this.onChange(this.#value);
     if (option & SetValueOption.Propagate) this.#propagate(replace, option);
     if (option & SetValueOption.Refresh) this.refresh(this.#value);
-    if (option & SetValueOption.External)
-      this.publish({ type: NodeEventType.UpdateDependencies });
+    if (option & SetValueOption.External) this.updateComputedProperties();
 
     this.#draft = {};
     this.publish({

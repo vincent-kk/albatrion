@@ -384,29 +384,33 @@ export abstract class AbstractNode<
               this.#dependencies[index] !== payload?.[NodeEventType.UpdateValue]
             ) {
               this.#dependencies[index] = payload?.[NodeEventType.UpdateValue];
-              this.publish({ type: NodeEventType.UpdateDependencies });
+              this.updateComputedProperties();
             }
           }
         });
         this.saveUnsubscribe(unsubscribe);
       }
-      this.subscribe(({ type }) => {
-        if (type & NodeEventType.UpdateDependencies)
-          this.#updateComputedProperties();
-      });
     }
-    this.#updateComputedProperties();
+    this.updateComputedProperties();
+    this.subscribe(({ type }) => {
+      if (type & NodeEventType.UpdateComputedProperties)
+        this.#hasPublishedUpdateComputedProperties = false;
+    });
   }
 
-  #updateComputedProperties(this: AbstractNode) {
-    const isVisible = this.#visible;
+  #hasPublishedUpdateComputedProperties = false;
+  protected updateComputedProperties(this: AbstractNode) {
+    const previousVisible = this.#visible;
     this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
     this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
     this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
-    if (isVisible && !this.#visible) this.resetNode();
-    this.publish({ type: NodeEventType.UpdateComputedProperties });
+    if (previousVisible && !this.#visible) this.resetNode();
+    if (!this.#hasPublishedUpdateComputedProperties) {
+      this.publish({ type: NodeEventType.UpdateComputedProperties });
+      this.#hasPublishedUpdateComputedProperties = true;
+    }
   }
   resetNode(this: AbstractNode, input?: Value | undefined) {
     const value = input ?? this.#initialValue;
