@@ -14,7 +14,6 @@ import {
   BIT_FLAG_10,
   BIT_FLAG_11,
   BIT_FLAG_12,
-  BIT_FLAG_13,
   BIT_MASK_NONE,
 } from '@/schema-form/app/constants/bitmask';
 import type { Ajv } from '@/schema-form/helpers/ajv';
@@ -166,15 +165,13 @@ export enum NodeEventType {
   /** The node's error has been updated */
   UpdateError = BIT_FLAG_08,
   /** The node's internal error has been updated */
-  UpdateInternalError = BIT_FLAG_09,
+  UpdateOmniError = BIT_FLAG_09,
   /** The node's children have been updated */
   UpdateChildren = BIT_FLAG_10,
-  /** The node's dependencies have been updated */
-  UpdateDependencies = BIT_FLAG_11,
   /** The node's computed properties have been updated */
-  UpdateComputedProperties = BIT_FLAG_12,
+  UpdateComputedProperties = BIT_FLAG_11,
   /** The node's validation has been requested */
-  RequestValidate = BIT_FLAG_13,
+  RequestValidate = BIT_FLAG_12,
 }
 
 export enum PublicNodeEventType {
@@ -202,9 +199,8 @@ export type NodeEventPayload = {
   [NodeEventType.UpdateValue]: any;
   [NodeEventType.UpdateState]: NodeStateFlags;
   [NodeEventType.UpdateError]: JsonSchemaError[];
-  [NodeEventType.UpdateInternalError]: JsonSchemaError[];
+  [NodeEventType.UpdateOmniError]: JsonSchemaError[];
   [NodeEventType.UpdateChildren]: void;
-  [NodeEventType.UpdateDependencies]: void;
   [NodeEventType.UpdateComputedProperties]: void;
   [NodeEventType.RequestValidate]: void;
 };
@@ -225,9 +221,8 @@ export type NodeEventOptions = {
   };
   [NodeEventType.UpdateState]: void;
   [NodeEventType.UpdateError]: void;
-  [NodeEventType.UpdateInternalError]: void;
+  [NodeEventType.UpdateOmniError]: void;
   [NodeEventType.UpdateChildren]: void;
-  [NodeEventType.UpdateDependencies]: void;
   [NodeEventType.UpdateComputedProperties]: void;
   [NodeEventType.RequestValidate]: void;
 };

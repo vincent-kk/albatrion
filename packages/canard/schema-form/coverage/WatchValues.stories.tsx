@@ -86,8 +86,8 @@ export const WatchWithBranchNode = () => {
           const handleChange = useHandle(onChange);
           useEffect(() => {
             handleChange({
-              ...(name && { name }),
-              ...(age && { age }),
+              name,
+              age,
             });
           }, [name, age, handleChange]);
           return (
@@ -98,7 +98,12 @@ export const WatchWithBranchNode = () => {
                   <input
                     type="text"
                     defaultValue={defaultValue?.name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => {
+                      console.log('text onChange', e.target.value);
+                      setName(
+                        e.target.value.length > 0 ? e.target.value : undefined,
+                      );
+                    }}
                   />
                 </label>
               </div>
@@ -108,7 +113,14 @@ export const WatchWithBranchNode = () => {
                   <input
                     type="number"
                     defaultValue={defaultValue?.age}
-                    onChange={(e) => setAge(Number(e.target.value))}
+                    onChange={(e) => {
+                      console.log('number onChange', e.target.value);
+                      setAge(
+                        e.target.value.length > 0
+                          ? Number(e.target.value)
+                          : undefined,
+                      );
+                    }}
                   />
                 </label>
               </div>

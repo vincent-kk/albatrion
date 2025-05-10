@@ -104,6 +104,6 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     });
     if (this.defaultValue !== undefined)
       this.setValue(this.defaultValue, SetValueOption.EmitChange);
-    this.prepare();
+    this.activateLink();
   }
 }

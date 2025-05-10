@@ -112,7 +112,7 @@ describe('ObjectNode', () => {
       type:
         NodeEventType.UpdateValue |
         NodeEventType.Refresh |
-        NodeEventType.UpdateDependencies,
+        NodeEventType.UpdateComputedProperties,
       payload: {
         [NodeEventType.UpdateValue]: { name: 'Ron', age: 28 },
       },

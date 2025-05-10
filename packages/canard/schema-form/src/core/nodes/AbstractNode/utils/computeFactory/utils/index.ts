@@ -1,12 +1,3 @@
-export {
-  checkComputedOptionFactory,
-  type CheckComputedOption,
-} from './checkComputedOptionFactory';
-export {
-  getOneOfIndexFactory,
-  type GetOneOfIndex,
-} from './getOneOfIndexFactory';
-export {
-  getWatchValuesFactory,
-  type GetWatchValues,
-} from './getWatchValuesFactory';
+export { checkComputedOptionFactory } from './checkComputedOptionFactory';
+export { getConditionIndexFactory } from './getConditionIndexFactory';
+export { getObservedValuesFactory } from './getObservedValuesFactory';

@@ -128,10 +128,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
 
     this.#children = map(this.#refNodes, (node) => ({ node }));
 
-    this.publish({
-      type: NodeEventType.UpdateChildren,
-    });
-
-    this.prepare();
+    this.publish({ type: NodeEventType.UpdateChildren });
+    this.activateLink();
   }
 }

@@ -182,10 +182,10 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @param actor - 준비를 요청한 노드
    * @returns 초기화 완료 여부
    */
-  prepare(this: ArrayNode, actor?: SchemaNode): boolean {
-    if (super.prepare(actor)) {
-      for (let i = 0; i < this.#ids.length; i++)
-        (this.#sourceMap.get(this.#ids[i])?.node as AbstractNode).prepare(this);
+  activateLink(this: ArrayNode, actor?: SchemaNode): boolean {
+    if (super.activateLink(actor)) {
+      for (const id of this.#ids)
+        (this.#sourceMap.get(id)?.node as AbstractNode).activateLink(this);
       return true;
     }
     return false;
@@ -228,9 +228,9 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     this.#locked = false;
 
     this.#emitChange(SetValueOption.EmitChange);
-    this.#publishChildrenChange();
 
-    this.prepare();
+    this.#publishChildrenChange();
+    this.activateLink();
   }
 
   /**
@@ -364,8 +364,6 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    */
   #publishChildrenChange(this: ArrayNode) {
     if (!this.#ready) return;
-    this.publish({
-      type: NodeEventType.UpdateChildren,
-    });
+    this.publish({ type: NodeEventType.UpdateChildren });
   }
 }

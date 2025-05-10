@@ -141,8 +141,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     if (option & SetValueOption.EmitChange) this.onChange(this.#value);
     if (option & SetValueOption.Propagate) this.#propagate(replace, option);
     if (option & SetValueOption.Refresh) this.refresh(this.#value);
-    if (option & SetValueOption.External)
-      this.publish({ type: NodeEventType.UpdateDependencies });
+    if (option & SetValueOption.External) this.updateComputedProperties();
 
     this.#draft = {};
     this.publish({
@@ -164,14 +163,14 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * @param actor - 준비를 요청한 노드
    * @returns 초기화 완료 여부
    */
-  prepare(this: ObjectNode, actor?: SchemaNode): boolean {
-    if (super.prepare(actor)) {
-      for (let i = 0; i < this.#propertyChildren.length; i++)
-        (this.#propertyChildren[i].node as AbstractNode).prepare(this);
+  activateLink(this: ObjectNode, actor?: SchemaNode): boolean {
+    if (super.activateLink(actor)) {
+      for (const child of this.#propertyChildren)
+        (child.node as AbstractNode).activateLink(this);
       if (this.#oneOfChildrenList)
-        for (let i = 0; i < this.#oneOfChildrenList.length; i++)
-          for (let j = 0; j < this.#oneOfChildrenList[i].length; j++)
-            (this.#oneOfChildrenList[i][j].node as AbstractNode).prepare(this);
+        for (const children of this.#oneOfChildrenList)
+          for (const child of children)
+            (child.node as AbstractNode).activateLink(this);
       return true;
     }
     return false;
@@ -264,7 +263,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.setDefaultValue(this.#value);
 
     this.#prepareOneOfChildren();
-    this.prepare();
+    this.activateLink();
   }
 
   #previousIndex: number | undefined;
@@ -312,8 +311,6 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    */
   #publishChildrenChange(this: ObjectNode) {
     if (this.#locked) return;
-    this.publish({
-      type: NodeEventType.UpdateChildren,
-    });
+    this.publish({ type: NodeEventType.UpdateChildren });
   }
 }

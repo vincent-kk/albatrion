@@ -1,11 +1,9 @@
-import { falseFunction, trueFunction } from '@winglet/common-utils';
-
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import {
   checkComputedOptionFactory,
-  getOneOfIndexFactory,
-  getWatchValuesFactory,
+  getConditionIndexFactory,
+  getObservedValuesFactory,
 } from './utils';
 
 /**
@@ -15,51 +13,19 @@ import {
  * @returns 계산된 프로퍼티 함수뤼
  */
 export const computeFactory = (
-  jsonSchema: JsonSchemaWithVirtual,
-  rootJsonSchema: JsonSchemaWithVirtual,
+  schema: JsonSchemaWithVirtual,
+  rootSchema: JsonSchemaWithVirtual,
 ) => {
+  const checkComputedOption = checkComputedOptionFactory(schema, rootSchema);
+  const getConditionIndex = getConditionIndexFactory(schema);
+  const getObservedValues = getObservedValuesFactory(schema);
   const dependencyPaths: string[] = [];
-
-  const computedVisible =
-    jsonSchema?.computed?.visible ?? jsonSchema?.['&visible'];
-  const isHidden = jsonSchema?.visible === false || computedVisible === false;
-  const visible = isHidden
-    ? falseFunction
-    : checkComputedOptionFactory(dependencyPaths, computedVisible);
-
-  const computedReadOnly =
-    jsonSchema?.computed?.readOnly ?? jsonSchema?.['&readOnly'];
-  const isReadOnly =
-    rootJsonSchema.readOnly === true ||
-    jsonSchema?.readOnly === true ||
-    computedReadOnly === true;
-  const readOnly = isReadOnly
-    ? trueFunction
-    : checkComputedOptionFactory(dependencyPaths, computedReadOnly);
-
-  const computedDisabled =
-    jsonSchema?.computed?.disabled ?? jsonSchema?.['&disabled'];
-  const isDisabled =
-    rootJsonSchema.disabled === true ||
-    jsonSchema?.disabled === true ||
-    computedDisabled === true;
-  const disabled = isDisabled
-    ? trueFunction
-    : checkComputedOptionFactory(dependencyPaths, computedDisabled);
-
-  const oneOfIndex = getOneOfIndexFactory(dependencyPaths, jsonSchema);
-
-  const watchValues = getWatchValuesFactory(
-    dependencyPaths,
-    jsonSchema?.computed?.watch ?? jsonSchema?.['&watch'],
-  );
-
   return {
     dependencyPaths,
-    visible,
-    readOnly,
-    disabled,
-    oneOfIndex,
-    watchValues,
+    visible: checkComputedOption(dependencyPaths, 'visible', false),
+    readOnly: checkComputedOption(dependencyPaths, 'readOnly', true),
+    disabled: checkComputedOption(dependencyPaths, 'disabled', true),
+    oneOfIndex: getConditionIndex(dependencyPaths, 'oneOf'),
+    watchValues: getObservedValues(dependencyPaths, 'watch'),
   };
 };
