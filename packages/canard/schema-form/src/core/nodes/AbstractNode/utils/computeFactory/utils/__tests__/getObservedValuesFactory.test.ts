@@ -1,35 +1,54 @@
 import { describe, expect, it } from 'vitest';
 
-import { getWatchValuesFactory } from '../getWatchValuesFactory';
+import { getObservedValuesFactory } from '../getObservedValuesFactory';
 
-describe('getWatchValuesFactory', () => {
+describe('getObservedValuesFactory', () => {
   it('watch가 없을 때 undefined를 반환해야 함', () => {
     const dependencyPaths: string[] = [];
 
-    expect(getWatchValuesFactory(dependencyPaths, undefined)).toBeUndefined();
+    expect(
+      getObservedValuesFactory({ type: 'object' })(dependencyPaths, 'watch'),
+    ).toBeUndefined();
   });
 
   it('watch가 문자열이나 배열이 아닐 때 undefined를 반환해야 함', () => {
     const dependencyPaths: string[] = [];
 
     // 숫자형을 전달하는 런타임 테스트
-    expect(getWatchValuesFactory(dependencyPaths, 123 as any)).toBeUndefined();
+    expect(
+      // @ts-expect-error
+      getObservedValuesFactory({ type: 'object', computed: { watch: 123123 } })(
+        dependencyPaths,
+        'watch',
+      ),
+    ).toBeUndefined();
     // 객체형을 전달하는 런타임 테스트
     expect(
-      getWatchValuesFactory(dependencyPaths, { key: 'value' } as any),
+      getObservedValuesFactory({
+        type: 'object',
+        // @ts-expect-error
+        computed: { watch: { value: 'value' } },
+      })(dependencyPaths, 'watch' as any),
     ).toBeUndefined();
   });
 
   it('watch가 빈 배열일 때 undefined를 반환해야 함', () => {
     const dependencyPaths: string[] = [];
 
-    expect(getWatchValuesFactory(dependencyPaths, [])).toBeUndefined();
+    expect(
+      getObservedValuesFactory({ type: 'object', computed: { watch: [] } })(
+        dependencyPaths,
+        'watch',
+      ),
+    ).toBeUndefined();
   });
 
   it('문자열 watch로 함수를 생성해야 함', () => {
     const dependencyPaths: string[] = [];
-    const watch = '$.value';
-    const result = getWatchValuesFactory(dependencyPaths, watch);
+    const result = getObservedValuesFactory({
+      type: 'object',
+      computed: { watch: '$.value' },
+    })(dependencyPaths, 'watch');
 
     expect(dependencyPaths).toContain('$.value');
     expect(result).toBeDefined();
@@ -41,10 +60,12 @@ describe('getWatchValuesFactory', () => {
 
   it('문자열 배열 watch로 함수를 생성해야 함', () => {
     const dependencyPaths: string[] = [];
-    const watch = ['$.value1', '$.value2', '$.value3'];
-    const result = getWatchValuesFactory(dependencyPaths, watch);
+    const result = getObservedValuesFactory({
+      type: 'object',
+      computed: { watch: ['$.value1', '$.value2', '$.value3'] },
+    })(dependencyPaths, 'watch');
 
-    expect(dependencyPaths).toEqual(watch);
+    expect(dependencyPaths).toEqual(['$.value1', '$.value2', '$.value3']);
     expect(result).toBeDefined();
 
     const values = [10, 'test', true];
@@ -53,8 +74,10 @@ describe('getWatchValuesFactory', () => {
 
   it('이미 의존성 경로 배열에 있는 경로를 다시 추가하지 않아야 함', () => {
     const dependencyPaths: string[] = ['$.existingPath'];
-    const watch = ['$.existingPath', '$.newPath'];
-    const result = getWatchValuesFactory(dependencyPaths, watch);
+    const result = getObservedValuesFactory({
+      type: 'object',
+      computed: { watch: ['$.existingPath', '$.newPath'] },
+    })(dependencyPaths, 'watch');
 
     expect(dependencyPaths).toContain('$.existingPath');
     expect(dependencyPaths).toContain('$.newPath');
@@ -66,8 +89,10 @@ describe('getWatchValuesFactory', () => {
 
   it('의존성 배열에서 올바른 인덱스의 값을 가져와야 함', () => {
     const dependencyPaths: string[] = ['$.value1', '$.value2', '$.value3'];
-    const watch = ['$.value2', '$.value1']; // 순서가 다른 경우
-    const result = getWatchValuesFactory(dependencyPaths, watch);
+    const result = getObservedValuesFactory({
+      type: 'object',
+      computed: { watch: ['$.value2', '$.value1'] },
+    })(dependencyPaths, 'watch');
 
     // 새로운 경로는 추가되지 않아야 함
     expect(dependencyPaths.length).toBe(3);
@@ -84,8 +109,10 @@ describe('getWatchValuesFactory', () => {
       '$.value3',
       '$.value4',
     ];
-    const watch = ['$.value2', '$.value4'];
-    const result = getWatchValuesFactory(dependencyPaths, watch);
+    const result = getObservedValuesFactory({
+      type: 'object',
+      computed: { watch: ['$.value2', '$.value4'] },
+    })(dependencyPaths, 'watch');
 
     const values = [1, 2, 3, 4, 5]; // 더 많은 값이 있는 경우
     expect(result!(values)).toEqual([2, 4]);

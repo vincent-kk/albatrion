@@ -3,7 +3,7 @@ import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 import {
   checkComputedOptionFactory,
   getConditionIndexFactory,
-  getWatchValuesFactory,
+  getObservedValuesFactory,
 } from './utils';
 
 /**
@@ -18,28 +18,14 @@ export const computeFactory = (
 ) => {
   const checkComputedOption = checkComputedOptionFactory(schema, rootSchema);
   const getConditionIndex = getConditionIndexFactory(schema);
-
+  const getObservedValues = getObservedValuesFactory(schema);
   const dependencyPaths: string[] = [];
-
-  const visible = checkComputedOption(dependencyPaths, 'visible', false);
-
-  const readOnly = checkComputedOption(dependencyPaths, 'readOnly', true);
-
-  const disabled = checkComputedOption(dependencyPaths, 'disabled', true);
-
-  const oneOfIndex = getConditionIndex(dependencyPaths, 'oneOf');
-
-  const watchValues = getWatchValuesFactory(
-    dependencyPaths,
-    schema?.computed?.watch ?? schema?.['&watch'],
-  );
-
   return {
     dependencyPaths,
-    visible,
-    readOnly,
-    disabled,
-    oneOfIndex,
-    watchValues,
+    visible: checkComputedOption(dependencyPaths, 'visible', false),
+    readOnly: checkComputedOption(dependencyPaths, 'readOnly', true),
+    disabled: checkComputedOption(dependencyPaths, 'disabled', true),
+    oneOfIndex: getConditionIndex(dependencyPaths, 'oneOf'),
+    watchValues: getObservedValues(dependencyPaths, 'watch'),
   };
 };
