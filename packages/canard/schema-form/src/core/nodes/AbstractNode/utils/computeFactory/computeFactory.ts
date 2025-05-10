@@ -16,9 +16,10 @@ export const computeFactory = (
   schema: JsonSchemaWithVirtual,
   rootSchema: JsonSchemaWithVirtual,
 ) => {
-  const dependencyPaths: string[] = [];
-
   const checkComputedOption = checkComputedOptionFactory(schema, rootSchema);
+  const getConditionIndex = getConditionIndexFactory(schema);
+
+  const dependencyPaths: string[] = [];
 
   const visible = checkComputedOption(dependencyPaths, 'visible', false);
 
@@ -26,7 +27,7 @@ export const computeFactory = (
 
   const disabled = checkComputedOption(dependencyPaths, 'disabled', true);
 
-  const oneOfIndex = getConditionIndexFactory(dependencyPaths, schema);
+  const oneOfIndex = getConditionIndex(dependencyPaths, 'oneOf');
 
   const watchValues = getWatchValuesFactory(
     dependencyPaths,
