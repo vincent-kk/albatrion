@@ -2,7 +2,7 @@ import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import {
   checkComputedOptionFactory,
-  getOneOfIndexFactory,
+  getConditionIndexFactory,
   getWatchValuesFactory,
 } from './utils';
 
@@ -26,7 +26,7 @@ export const computeFactory = (
 
   const disabled = checkComputedOption(dependencyPaths, 'disabled', true);
 
-  const oneOfIndex = getOneOfIndexFactory(dependencyPaths, schema);
+  const oneOfIndex = getConditionIndexFactory(dependencyPaths, schema);
 
   const watchValues = getWatchValuesFactory(
     dependencyPaths,

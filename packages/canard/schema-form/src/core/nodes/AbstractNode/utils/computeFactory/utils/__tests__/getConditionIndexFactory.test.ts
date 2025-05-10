@@ -2,26 +2,26 @@ import { describe, expect, it } from 'vitest';
 
 import type { JsonSchema } from '@/schema-form/types';
 
-import { getOneOfIndexFactory } from '../getOneOfIndexFactory';
+import { getConditionIndexFactory } from '../getConditionIndexFactory';
 
-describe('getOneOfIndexFactory', () => {
+describe('getConditionIndexFactory', () => {
   it('유효하지 않은 스키마에 대해 undefined를 반환해야 함', () => {
     const dependencyPaths: string[] = [];
 
     // type이 object가 아닌 경우
     const schema1 = { type: 'string' } as JsonSchema;
-    expect(getOneOfIndexFactory(dependencyPaths, schema1)).toBeUndefined();
+    expect(getConditionIndexFactory(dependencyPaths, schema1)).toBeUndefined();
 
     // oneOf가 배열이 아닌 경우
     const schema2 = {
       type: 'object',
       oneOf: 'invalid',
     } as unknown as JsonSchema;
-    expect(getOneOfIndexFactory(dependencyPaths, schema2)).toBeUndefined();
+    expect(getConditionIndexFactory(dependencyPaths, schema2)).toBeUndefined();
 
     // oneOf가 없는 경우
     const schema3 = { type: 'object' } as JsonSchema;
-    expect(getOneOfIndexFactory(dependencyPaths, schema3)).toBeUndefined();
+    expect(getConditionIndexFactory(dependencyPaths, schema3)).toBeUndefined();
   });
 
   it('유효한 표현식이 없는 경우 undefined를 반환해야 함', () => {
@@ -31,7 +31,7 @@ describe('getOneOfIndexFactory', () => {
       oneOf: [{}, { computed: {} }, { computed: { if: false } }],
     } as unknown as JsonSchema;
 
-    expect(getOneOfIndexFactory(dependencyPaths, schema)).toBeUndefined();
+    expect(getConditionIndexFactory(dependencyPaths, schema)).toBeUndefined();
   });
 
   it('단순 동등성 비교에 대해 최적화된 함수를 생성해야 함', () => {
@@ -50,7 +50,7 @@ describe('getOneOfIndexFactory', () => {
       ],
     } as unknown as JsonSchema;
 
-    const result = getOneOfIndexFactory(dependencyPaths, schema);
+    const result = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(dependencyPaths).toContain('$.value');
     expect(result).toBeDefined();
@@ -73,7 +73,7 @@ describe('getOneOfIndexFactory', () => {
       ],
     } as unknown as JsonSchema;
 
-    const result = getOneOfIndexFactory(dependencyPaths, schema);
+    const result = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(dependencyPaths).toContain('_.value');
     expect(dependencyPaths).toContain('_.count');
@@ -101,7 +101,7 @@ describe('getOneOfIndexFactory', () => {
       ],
     } as unknown as JsonSchema;
 
-    const result = getOneOfIndexFactory(dependencyPaths, schema);
+    const result = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(dependencyPaths).toContain('$.type');
     expect(dependencyPaths).toContain('$.length');
@@ -133,7 +133,7 @@ describe('getOneOfIndexFactory', () => {
       ],
     } as unknown as JsonSchema;
 
-    const result = getOneOfIndexFactory(dependencyPaths, schema);
+    const result = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(dependencyPaths).toContain('$.age');
     expect(result).toBeDefined();
@@ -154,7 +154,7 @@ describe('getOneOfIndexFactory', () => {
       ],
     } as unknown as JsonSchema;
 
-    const result = getOneOfIndexFactory(dependencyPaths, schema);
+    const result = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(dependencyPaths).toContain('$.value');
     expect(result).toBeDefined();
@@ -170,7 +170,7 @@ describe('getOneOfIndexFactory', () => {
       oneOf: [{ type: 'object', computed: { if: '$.value === "option1";' } }],
     } as unknown as JsonSchema;
 
-    const result = getOneOfIndexFactory(dependencyPaths, schema);
+    const result = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(result!(['option1'])).toBe(0);
   });
@@ -186,7 +186,7 @@ describe('getOneOfIndexFactory', () => {
       ],
     } as unknown as JsonSchema;
 
-    const result = getOneOfIndexFactory(dependencyPaths, schema);
+    const result = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(result).toBeDefined();
     // true 조건은 항상 매칭되어야 함 (인덱스 1)
@@ -210,7 +210,7 @@ describe('getOneOfIndexFactory', () => {
       ],
     } as unknown as JsonSchema;
 
-    const result = getOneOfIndexFactory(dependencyPaths, schema);
+    const result = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(result).toBeDefined();
     // 구체적인 조건이 우선
@@ -231,7 +231,7 @@ describe('getOneOfIndexFactory', () => {
       ],
     } as unknown as JsonSchema;
 
-    const result = getOneOfIndexFactory(dependencyPaths, schema);
+    const result = getConditionIndexFactory(dependencyPaths, schema);
 
     // 유효한 표현식이 없으므로 undefined 반환
     expect(result).toBeUndefined();
@@ -247,7 +247,7 @@ describe('getOneOfIndexFactory', () => {
       ],
     } as unknown as JsonSchema;
 
-    const result = getOneOfIndexFactory(dependencyPaths, schema);
+    const result = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(result).toBeDefined();
     expect(result!(['test'])).toBe(1);
@@ -265,7 +265,7 @@ describe('getOneOfIndexFactory', () => {
       ],
     } as unknown as JsonSchema;
 
-    const result = getOneOfIndexFactory(dependencyPaths, schema);
+    const result = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(result).toBeDefined();
     // true 조건은 항상 매칭되어야 함 (인덱스 1)
@@ -287,7 +287,7 @@ describe('getOneOfIndexFactory', () => {
       ],
     } as unknown as JsonSchema;
 
-    const result = getOneOfIndexFactory(dependencyPaths, schema);
+    const result = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(result).toBeDefined();
     // 구체적인 조건이 우선
@@ -309,7 +309,7 @@ describe('getOneOfIndexFactory', () => {
       ],
     } as unknown as JsonSchema;
 
-    const result = getOneOfIndexFactory(dependencyPaths, schema);
+    const result = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(result).toBeDefined();
     // 빈 문자열은 유효하지 않으므로 무시되고, true 조건(인덱스 2)이 선택됨
@@ -317,7 +317,7 @@ describe('getOneOfIndexFactory', () => {
   });
 });
 
-describe('getOneOfIndexFactory custom test', () => {
+describe('getConditionIndexFactory custom test', () => {
   // 기본 케이스: 단순 동등성 비교 (최적화된 경로)
   it('단순 동등성 비교: 문자열 일치 케이스를 올바르게 처리해야 함', () => {
     const schema: JsonSchema = {
@@ -342,7 +342,7 @@ describe('getOneOfIndexFactory custom test', () => {
     };
 
     const dependencyPaths: string[] = ['@.root.type'];
-    const getOneOfIndex = getOneOfIndexFactory(dependencyPaths, schema);
+    const getOneOfIndex = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(getOneOfIndex).toBeDefined();
     expect(getOneOfIndex!(['foo'])).toBe(0);
@@ -373,7 +373,7 @@ describe('getOneOfIndexFactory custom test', () => {
     };
 
     const dependencyPaths: string[] = [];
-    const getOneOfIndex = getOneOfIndexFactory(dependencyPaths, schema);
+    const getOneOfIndex = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(getOneOfIndex).toBeDefined();
     expect(getOneOfIndex!([25, 'adult'])).toBe(0);
@@ -409,7 +409,7 @@ describe('getOneOfIndexFactory custom test', () => {
     };
 
     const dependencyPaths: string[] = [];
-    const getOneOfIndex = getOneOfIndexFactory(dependencyPaths, schema);
+    const getOneOfIndex = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(getOneOfIndex).toBeDefined();
     expect(getOneOfIndex!(['simple', 0, ''])).toBe(0);
@@ -426,7 +426,7 @@ describe('getOneOfIndexFactory custom test', () => {
       oneOf: [],
     };
     let dependencyPaths: string[] = [];
-    let getOneOfIndex = getOneOfIndexFactory(dependencyPaths, schema);
+    let getOneOfIndex = getConditionIndexFactory(dependencyPaths, schema);
     expect(getOneOfIndex).toBeUndefined();
 
     // oneOf가 배열이 아닌 경우
@@ -435,7 +435,7 @@ describe('getOneOfIndexFactory custom test', () => {
       oneOf: 'invalid' as any,
     };
     dependencyPaths = [];
-    getOneOfIndex = getOneOfIndexFactory(dependencyPaths, schema);
+    getOneOfIndex = getConditionIndexFactory(dependencyPaths, schema);
     expect(getOneOfIndex).toBeUndefined();
 
     // oneOf 배열이 비어있는 경우
@@ -444,7 +444,7 @@ describe('getOneOfIndexFactory custom test', () => {
       oneOf: [],
     };
     dependencyPaths = [];
-    getOneOfIndex = getOneOfIndexFactory(dependencyPaths, schema);
+    getOneOfIndex = getConditionIndexFactory(dependencyPaths, schema);
     expect(getOneOfIndex).toBeUndefined();
   });
 
@@ -473,7 +473,7 @@ describe('getOneOfIndexFactory custom test', () => {
     };
 
     const dependencyPaths: string[] = [];
-    const getOneOfIndex = getOneOfIndexFactory(dependencyPaths, schema);
+    const getOneOfIndex = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(getOneOfIndex).toBeDefined();
     // null 값과 undefined 비교
@@ -505,7 +505,7 @@ describe('getOneOfIndexFactory custom test', () => {
     };
 
     const dependencyPaths: string[] = [];
-    const getOneOfIndex = getOneOfIndexFactory(dependencyPaths, schema);
+    const getOneOfIndex = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(getOneOfIndex).toBeDefined();
     expect(getOneOfIndex!(['따옴표가 있는 문자열'])).toBe(0);
@@ -532,7 +532,7 @@ describe('getOneOfIndexFactory custom test', () => {
     };
 
     const dependencyPaths: string[] = [];
-    const getOneOfIndex = getOneOfIndexFactory(dependencyPaths, schema);
+    const getOneOfIndex = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(getOneOfIndex).toBeDefined();
     // 중첩 객체에서 값을 정확히 찾아야 함
@@ -567,7 +567,7 @@ describe('getOneOfIndexFactory custom test', () => {
       '@.rootPath2',
       '@.rootPath3',
     ];
-    const getOneOfIndex = getOneOfIndexFactory(dependencyPaths, schema);
+    const getOneOfIndex = getConditionIndexFactory(dependencyPaths, schema);
 
     expect(getOneOfIndex).toBeDefined();
     // 첫 번째 조건 매칭

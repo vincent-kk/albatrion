@@ -6,7 +6,7 @@ import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import { JSON_PATH_REGEX } from './regex';
 
-export type CheckComputedOption = Fn<[dependencies: unknown[]], boolean>;
+type CheckComputedOption = Fn<[dependencies: unknown[]], boolean>;
 
 /**
  * 주어진 JSON 스키마에서 계산된 옵션을 확인하는 함수를 생성합니다.

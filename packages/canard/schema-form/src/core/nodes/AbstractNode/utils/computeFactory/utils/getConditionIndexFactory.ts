@@ -6,7 +6,7 @@ import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import { JSON_PATH_REGEX } from './regex';
 
-export type GetOneOfIndex = Fn<[dependencies: unknown[]], number>;
+type GetConditionIndex = Fn<[dependencies: unknown[]], number>;
 
 const SIMPLE_EQUALITY_REGEX =
   /^\s*dependencies\[(\d+)\]\s*===\s*(['"])([^'"]+)\2\s*$/;
@@ -17,10 +17,10 @@ const SIMPLE_EQUALITY_REGEX =
  * @param jsonSchema - JSON 스키마
  * @returns oneOf 인덱스를 계산하는 함수 또는 undefined
  */
-export const getOneOfIndexFactory = (
+export const getConditionIndexFactory = (
   dependencyPaths: string[],
   jsonSchema: JsonSchemaWithVirtual,
-): GetOneOfIndex | undefined => {
+): GetConditionIndex | undefined => {
   if (jsonSchema.type !== 'object' || !isArray(jsonSchema.oneOf))
     return undefined;
 
@@ -100,5 +100,5 @@ export const getOneOfIndexFactory = (
     `${lines.join('\n')}
     return -1;
   `,
-  ) as GetOneOfIndex;
+  ) as GetConditionIndex;
 };
