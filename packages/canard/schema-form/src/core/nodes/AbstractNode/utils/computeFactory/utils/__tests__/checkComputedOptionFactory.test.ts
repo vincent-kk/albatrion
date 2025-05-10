@@ -1,76 +1,174 @@
 import { describe, expect, it } from 'vitest';
 
+import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+
 import { checkComputedOptionFactory } from '../checkComputedOptionFactory';
 
 describe('checkComputedOptionFactory', () => {
-  it('문자열이 아닌 expression에 대해 undefined를 반환해야 함', () => {
+  it('preferredCondition이 true일 때 항상 checkCondition을 반환', () => {
+    const jsonSchema: JsonSchemaWithVirtual = { type: 'object', visible: true };
+    const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
     const dependencyPaths: string[] = [];
-
-    expect(checkComputedOptionFactory(dependencyPaths, true)).toBeUndefined();
-    expect(
-      checkComputedOptionFactory(dependencyPaths, undefined),
-    ).toBeUndefined();
+    const fieldName = 'visible';
+    const checkCondition = true;
+    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      dependencyPaths,
+      fieldName,
+      checkCondition,
+    );
+    expect(fn).toBeDefined();
+    expect(fn && fn([])).toBe(true);
   });
 
-  it('빈 표현식에 대해 undefined를 반환해야 함', () => {
+  it('rootJsonSchema에 checkCondition이 있을 때도 항상 checkCondition을 반환', () => {
+    const jsonSchema: JsonSchemaWithVirtual = { type: 'object' };
+    const rootJsonSchema: JsonSchemaWithVirtual = {
+      type: 'object',
+      visible: false,
+    };
     const dependencyPaths: string[] = [];
-
-    expect(checkComputedOptionFactory(dependencyPaths, '')).toBeUndefined();
+    const fieldName = 'visible';
+    const checkCondition = false;
+    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      dependencyPaths,
+      fieldName,
+      checkCondition,
+    );
+    expect(fn).toBeDefined();
+    expect(fn && fn([])).toBe(false);
   });
 
-  it('JSON 경로가 없는 표현식으로부터 함수를 생성해야 함', () => {
+  it('computed string expression이 있을 때 동적으로 평가', () => {
+    const jsonSchema: JsonSchemaWithVirtual = {
+      type: 'object',
+      computed: { visible: '$.value > 10' },
+    };
+    const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
     const dependencyPaths: string[] = [];
-    const result = checkComputedOptionFactory(dependencyPaths, 'true');
-
-    expect(result).toBeDefined();
-    expect(typeof result).toBe('function');
-    expect(result!([]).valueOf()).toBe(true);
-  });
-
-  it('JSON 경로가 있는 표현식을 올바르게 변환해야 함', () => {
-    const dependencyPaths: string[] = [];
-    const expression = '$.value > 10';
-    const result = checkComputedOptionFactory(dependencyPaths, expression);
-
+    const fieldName = 'visible';
+    const checkCondition = true;
+    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      dependencyPaths,
+      fieldName,
+      checkCondition,
+    );
+    expect(fn).toBeDefined();
+    // dependencies[0]이 11이면 true, 5면 false
+    expect(fn && fn([11])).toBe(true);
+    expect(fn && fn([5])).toBe(false);
     expect(dependencyPaths).toContain('$.value');
-    expect(result).toBeDefined();
-
-    expect(result!([5])).toBe(false);
-    expect(result!([15])).toBe(true);
   });
 
-  it('여러 JSON 경로가 있는 복잡한 표현식을 올바르게 처리해야 함', () => {
+  it('computed가 undefined이고 &필드가 string일 때 동적으로 평가', () => {
+    const jsonSchema: JsonSchemaWithVirtual = {
+      type: 'object',
+      '&visible': '$.count === 3',
+    };
+    const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
     const dependencyPaths: string[] = [];
-    const expression = '$.value1 > 10 && $.value2 === "test"';
-    const result = checkComputedOptionFactory(dependencyPaths, expression);
-
-    expect(dependencyPaths).toContain('$.value1');
-    expect(dependencyPaths).toContain('$.value2');
-    expect(dependencyPaths.length).toBe(2);
-
-    expect(result!([15, 'wrong'])).toBe(false);
-    expect(result!([5, 'test'])).toBe(false);
-    expect(result!([15, 'test'])).toBe(true);
+    const fieldName = 'visible';
+    const checkCondition = true;
+    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      dependencyPaths,
+      fieldName,
+      checkCondition,
+    );
+    expect(fn).toBeDefined();
+    expect(fn && fn([3])).toBe(true);
+    expect(fn && fn([2])).toBe(false);
+    expect(dependencyPaths).toContain('$.count');
   });
 
-  it('표현식 끝의 세미콜론을 제거해야 함', () => {
+  it('computed string이 세미콜론으로 끝나도 정상 동작', () => {
+    const jsonSchema: JsonSchemaWithVirtual = {
+      type: 'object',
+      computed: { visible: '$.value === 1;' },
+    };
+    const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
     const dependencyPaths: string[] = [];
-    const expression = '$.value > 10;';
-    const result = checkComputedOptionFactory(dependencyPaths, expression);
-
-    expect(result!([15])).toBe(true);
+    const fieldName = 'visible';
+    const checkCondition = true;
+    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      dependencyPaths,
+      fieldName,
+      checkCondition,
+    );
+    expect(fn).toBeDefined();
+    expect(fn && fn([1])).toBe(true);
+    expect(fn && fn([2])).toBe(false);
   });
 
-  it('이미 의존성 경로 배열에 있는 경로를 다시 추가하지 않아야 함', () => {
-    const dependencyPaths: string[] = ['$.value'];
-    const expression = '$.value > 10 && $.newValue === true';
-    const result = checkComputedOptionFactory(dependencyPaths, expression);
+  it('computed string이 비어있으면 undefined 반환', () => {
+    const jsonSchema: JsonSchemaWithVirtual = {
+      type: 'object',
+      computed: { visible: '' },
+    };
+    const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
+    const dependencyPaths: string[] = [];
+    const fieldName = 'visible';
+    const checkCondition = true;
+    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      dependencyPaths,
+      fieldName,
+      checkCondition,
+    );
+    expect(fn).toBeUndefined();
+  });
 
-    expect(dependencyPaths).toContain('$.value');
-    expect(dependencyPaths).toContain('$.newValue');
-    expect(dependencyPaths.length).toBe(2);
+  it('computed가 boolean이면 preferredCondition이 아니면 undefined', () => {
+    const jsonSchema: JsonSchemaWithVirtual = {
+      type: 'object',
+      computed: { visible: false },
+    };
+    const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
+    const dependencyPaths: string[] = [];
+    const fieldName = 'visible';
+    const checkCondition = true;
+    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      dependencyPaths,
+      fieldName,
+      checkCondition,
+    );
+    expect(fn).toBeUndefined();
+  });
 
-    expect(result!([15, true])).toBe(true);
-    expect(result!([15, false])).toBe(false);
+  it('expression이 여러 dependencyPaths를 동적으로 추가', () => {
+    const jsonSchema: JsonSchemaWithVirtual = {
+      type: 'object',
+      computed: { visible: '$.a > 1 && $.b < 5' },
+    };
+    const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
+    const dependencyPaths: string[] = [];
+    const fieldName = 'visible';
+    const checkCondition = true;
+    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      dependencyPaths,
+      fieldName,
+      checkCondition,
+    );
+    expect(fn).toBeDefined();
+    expect(fn && fn([2, 4])).toBe(true);
+    expect(fn && fn([0, 4])).toBe(false);
+    expect(fn && fn([2, 6])).toBe(false);
+    expect(dependencyPaths).toContain('$.a');
+    expect(dependencyPaths).toContain('$.b');
+  });
+
+  it('preferredCondition이 false일 때 항상 false 반환', () => {
+    const jsonSchema: JsonSchemaWithVirtual = {
+      type: 'object',
+      visible: false,
+    };
+    const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
+    const dependencyPaths: string[] = [];
+    const fieldName = 'visible';
+    const checkCondition = false;
+    const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
+      dependencyPaths,
+      fieldName,
+      checkCondition,
+    );
+    expect(fn).toBeDefined();
+    expect(fn && fn([])).toBe(false);
   });
 });

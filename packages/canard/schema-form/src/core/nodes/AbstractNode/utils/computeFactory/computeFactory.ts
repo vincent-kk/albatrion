@@ -1,5 +1,3 @@
-import { falseFunction, trueFunction } from '@winglet/common-utils';
-
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import {
@@ -15,43 +13,24 @@ import {
  * @returns 계산된 프로퍼티 함수뤼
  */
 export const computeFactory = (
-  jsonSchema: JsonSchemaWithVirtual,
-  rootJsonSchema: JsonSchemaWithVirtual,
+  schema: JsonSchemaWithVirtual,
+  rootSchema: JsonSchemaWithVirtual,
 ) => {
   const dependencyPaths: string[] = [];
 
-  const computedVisible =
-    jsonSchema?.computed?.visible ?? jsonSchema?.['&visible'];
-  const isHidden = jsonSchema?.visible === false || computedVisible === false;
-  const visible = isHidden
-    ? falseFunction
-    : checkComputedOptionFactory(dependencyPaths, computedVisible);
+  const checkComputedOption = checkComputedOptionFactory(schema, rootSchema);
 
-  const computedReadOnly =
-    jsonSchema?.computed?.readOnly ?? jsonSchema?.['&readOnly'];
-  const isReadOnly =
-    rootJsonSchema.readOnly === true ||
-    jsonSchema?.readOnly === true ||
-    computedReadOnly === true;
-  const readOnly = isReadOnly
-    ? trueFunction
-    : checkComputedOptionFactory(dependencyPaths, computedReadOnly);
+  const visible = checkComputedOption(dependencyPaths, 'visible', false);
 
-  const computedDisabled =
-    jsonSchema?.computed?.disabled ?? jsonSchema?.['&disabled'];
-  const isDisabled =
-    rootJsonSchema.disabled === true ||
-    jsonSchema?.disabled === true ||
-    computedDisabled === true;
-  const disabled = isDisabled
-    ? trueFunction
-    : checkComputedOptionFactory(dependencyPaths, computedDisabled);
+  const readOnly = checkComputedOption(dependencyPaths, 'readOnly', true);
 
-  const oneOfIndex = getOneOfIndexFactory(dependencyPaths, jsonSchema);
+  const disabled = checkComputedOption(dependencyPaths, 'disabled', true);
+
+  const oneOfIndex = getOneOfIndexFactory(dependencyPaths, schema);
 
   const watchValues = getWatchValuesFactory(
     dependencyPaths,
-    jsonSchema?.computed?.watch ?? jsonSchema?.['&watch'],
+    schema?.computed?.watch ?? schema?.['&watch'],
   );
 
   return {
