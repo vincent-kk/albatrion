@@ -89,7 +89,6 @@ export abstract class AbstractNode<
     }
   }
 
-  /** Node의 경로 */
   #path: string;
   /** Node의 경로 */
   get path() {
@@ -420,9 +419,8 @@ export abstract class AbstractNode<
     this.setState();
   }
 
-  /** Node의 상태 */
   #state: NodeStateFlags = {};
-  /** Node의 상태 */
+  /** Node의 상태 플래그 */
   get state() {
     return this.#state;
   }
@@ -500,7 +498,6 @@ export abstract class AbstractNode<
       : this.rootNode.#mergedOmniErrors;
   }
 
-  /** 자신의 Error와 외부에서 전달받은 Error를 병합한 결과 */
   /**
    * 자신의 Error와 외부에서 전달받은 Error를 병합한 결과를 반환합니다.
    * @returns 병합된 Error 목록
