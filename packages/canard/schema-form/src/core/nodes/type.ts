@@ -166,7 +166,7 @@ export enum NodeEventType {
   /** The node's error has been updated */
   UpdateError = BIT_FLAG_08,
   /** The node's internal error has been updated */
-  UpdateInternalError = BIT_FLAG_09,
+  UpdateOmniError = BIT_FLAG_09,
   /** The node's children have been updated */
   UpdateChildren = BIT_FLAG_10,
   /** The node's dependencies have been updated */
@@ -202,7 +202,7 @@ export type NodeEventPayload = {
   [NodeEventType.UpdateValue]: any;
   [NodeEventType.UpdateState]: NodeStateFlags;
   [NodeEventType.UpdateError]: JsonSchemaError[];
-  [NodeEventType.UpdateInternalError]: JsonSchemaError[];
+  [NodeEventType.UpdateOmniError]: JsonSchemaError[];
   [NodeEventType.UpdateChildren]: void;
   [NodeEventType.UpdateDependencies]: void;
   [NodeEventType.UpdateComputedProperties]: void;
@@ -225,7 +225,7 @@ export type NodeEventOptions = {
   };
   [NodeEventType.UpdateState]: void;
   [NodeEventType.UpdateError]: void;
-  [NodeEventType.UpdateInternalError]: void;
+  [NodeEventType.UpdateOmniError]: void;
   [NodeEventType.UpdateChildren]: void;
   [NodeEventType.UpdateDependencies]: void;
   [NodeEventType.UpdateComputedProperties]: void;
