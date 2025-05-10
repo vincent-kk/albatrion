@@ -104,6 +104,6 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     });
     if (this.defaultValue !== undefined)
       this.setValue(this.defaultValue, SetValueOption.EmitChange);
-    this.prepare();
+    this.activateLink();
   }
 }

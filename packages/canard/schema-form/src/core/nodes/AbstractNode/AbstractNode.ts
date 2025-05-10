@@ -331,11 +331,11 @@ export abstract class AbstractNode<
     this.#eventCascade.push(event);
   }
 
-  #prepared: boolean = false;
-  prepare(this: AbstractNode, actor?: SchemaNode) {
-    if (this.#prepared || (actor !== this.parentNode && !this.isRoot))
+  #activated: boolean = false;
+  activateLink(this: AbstractNode, actor?: SchemaNode) {
+    if (this.#activated || (actor !== this.parentNode && !this.isRoot))
       return false;
-    this.#prepared = true;
+    this.#activated = true;
     this.#prepareUpdateDependencies();
     this.publish({ type: NodeEventType.Activated });
     return true;
