@@ -32,5 +32,5 @@
     "schemaForm": "yarn workspace @canard/schema-form",
     "sort:packages": "npx sort-package-json '**/package.json'"
   },
-  "packageManager": "yarn@4.8.0"
+  "packageManager": "yarn@4.9.1"
 }
