@@ -238,6 +238,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       data: childNode.value,
     });
 
+    if (this.activated) (childNode as AbstractNode).activateLink(this);
+
     this.#dirty = true;
     this.#publishRequestEmitChange();
     this.#publishUpdateChildren();
