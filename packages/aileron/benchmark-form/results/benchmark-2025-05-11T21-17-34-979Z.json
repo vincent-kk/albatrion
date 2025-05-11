@@ -1,0 +1,146 @@
+{
+  "timestamp": "2025-05-11T21-17-34-979Z",
+  "results": [
+    {
+      "name": "@react-genie-form/next - Form Rendering",
+      "hz": 65.58900351704358,
+      "stats": {
+        "mean": 0.015246458192342346,
+        "deviation": 0.012212926209673697
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.55 - Form Rendering",
+      "hz": 199.21813020150555,
+      "stats": {
+        "mean": 0.005019623459915612,
+        "deviation": 0.0003640002279095966
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.56 - Form Rendering",
+      "hz": 197.195955010557,
+      "stats": {
+        "mean": 0.005071097933760683,
+        "deviation": 0.00036881297646366285
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.57 - Form Rendering",
+      "hz": 198.49914972962497,
+      "stats": {
+        "mean": 0.00503780495464135,
+        "deviation": 0.00039721700791115594
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.58 - Form Rendering",
+      "hz": 199.01199217601243,
+      "stats": {
+        "mean": 0.005024822821308018,
+        "deviation": 0.0003886663332495995
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.59 - Form Rendering",
+      "hz": 192.82645789256824,
+      "stats": {
+        "mean": 0.00518601031688889,
+        "deviation": 0.0003981286963374973
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.60 - Form Rendering",
+      "hz": 191.23652333006072,
+      "stats": {
+        "mean": 0.005229126646870016,
+        "deviation": 0.0004449564453968715
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.61 - Form Rendering",
+      "hz": 191.65651542866433,
+      "stats": {
+        "mean": 0.005217667647579692,
+        "deviation": 0.00045413042109257066
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.62 - Form Rendering",
+      "hz": 191.7572483777266,
+      "stats": {
+        "mean": 0.005214926728767944,
+        "deviation": 0.0004424092090132061
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.63 - Form Rendering",
+      "hz": 191.48569297134105,
+      "stats": {
+        "mean": 0.0052223222763157886,
+        "deviation": 0.0004157264928178841
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.64 - Form Rendering",
+      "hz": 193.73622060704326,
+      "stats": {
+        "mean": 0.005161657416804409,
+        "deviation": 0.0004012187913366543
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - Form Rendering",
+      "hz": 189.99507819050973,
+      "stats": {
+        "mean": 0.005263294236481701,
+        "deviation": 0.0004136957285459868
+      }
+    }
+  ],
+  "chartConfig": {
+    "type": "bar",
+    "data": {
+      "labels": [
+        "@react-genie-form/next - Form Rendering",
+        "@canard/schema-form@0.0.55 - Form Rendering",
+        "@canard/schema-form@0.0.56 - Form Rendering",
+        "@canard/schema-form@0.0.57 - Form Rendering",
+        "@canard/schema-form@0.0.58 - Form Rendering",
+        "@canard/schema-form@0.0.59 - Form Rendering",
+        "@canard/schema-form@0.0.60 - Form Rendering",
+        "@canard/schema-form@0.0.61 - Form Rendering",
+        "@canard/schema-form@0.0.62 - Form Rendering",
+        "@canard/schema-form@0.0.63 - Form Rendering",
+        "@canard/schema-form@0.0.64 - Form Rendering",
+        "@canard/schema-form@latest - Form Rendering"
+      ],
+      "datasets": [
+        {
+          "label": "Operations/sec",
+          "data": [
+            65.58900351704358,
+            199.21813020150555,
+            197.195955010557,
+            198.49914972962497,
+            199.01199217601243,
+            192.82645789256824,
+            191.23652333006072,
+            191.65651542866433,
+            191.7572483777266,
+            191.48569297134105,
+            193.73622060704326,
+            189.99507819050973
+          ]
+        }
+      ]
+    },
+    "options": {
+      "scales": {
+        "y": {
+          "beginAtZero": true
+        }
+      }
+    }
+  }
+}
