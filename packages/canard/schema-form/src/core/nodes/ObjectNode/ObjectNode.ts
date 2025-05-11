@@ -120,7 +120,10 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * 값 변경을 반영하고 관련 이벤트를 발행합니다.
    * @param option - 설정 옵션
    */
-  #emitChange(this: ObjectNode, option: UnionSetValueOption) {
+  #emitChange(
+    this: ObjectNode,
+    option: UnionSetValueOption = SetValueOption.Default,
+  ) {
     if (this.#locked) return;
 
     const replace = !!(option & SetValueOption.Replace);
@@ -142,20 +145,20 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     if (option & SetValueOption.Propagate) this.#propagate(replace, option);
     if (option & SetValueOption.Refresh) this.refresh(this.#value);
     if (option & SetValueOption.External) this.updateComputedProperties();
-
-    this.#draft = {};
-    this.publish({
-      type: NodeEventType.UpdateValue,
-      payload: {
-        [NodeEventType.UpdateValue]: this.#value,
-      },
-      options: {
-        [NodeEventType.UpdateValue]: {
-          previous,
-          current: this.#value,
+    if (option & SetValueOption.PublishEvent)
+      this.publish({
+        type: NodeEventType.UpdateValue,
+        payload: {
+          [NodeEventType.UpdateValue]: this.#value,
         },
-      },
-    });
+        options: {
+          [NodeEventType.UpdateValue]: {
+            previous,
+            current: this.#value,
+          },
+        },
+      });
+    this.#draft = {};
   }
 
   /**
@@ -221,7 +224,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         typeof input === 'function' ? input(this.#draft[propertyKey]) : input;
       if (value !== undefined && this.#draft[propertyKey] === value) return;
       this.#draft[propertyKey] = value;
-      this.#emitChange(SetValueOption.EmitChange);
+      this.#emitChange();
     };
 
     const childNodeMap = getChildNodeMap(
@@ -259,7 +262,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     this.#publishChildrenChange();
 
-    this.#emitChange(SetValueOption.EmitChange);
+    this.#emitChange();
     this.setDefaultValue(this.#value);
 
     this.#prepareOneOfChildren();

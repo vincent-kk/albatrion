@@ -57,7 +57,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
   #emitChange(
     this: NullNode,
     input: NullValue | undefined,
-    option: UnionSetValueOption,
+    option: UnionSetValueOption = SetValueOption.Default,
   ) {
     const previous = this.#value;
     const current = this.#parseValue(input);
@@ -66,19 +66,19 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
 
     if (option & SetValueOption.EmitChange) this.onChange(current);
     if (option & SetValueOption.Refresh) this.refresh(current);
-
-    this.publish({
-      type: NodeEventType.UpdateValue,
-      payload: {
-        [NodeEventType.UpdateValue]: current,
-      },
-      options: {
-        [NodeEventType.UpdateValue]: {
-          previous,
-          current,
+    if (option & SetValueOption.PublishEvent)
+      this.publish({
+        type: NodeEventType.UpdateValue,
+        payload: {
+          [NodeEventType.UpdateValue]: current,
         },
-      },
-    });
+        options: {
+          [NodeEventType.UpdateValue]: {
+            previous,
+            current,
+          },
+        },
+      });
   }
 
   constructor({
@@ -101,8 +101,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
       validationMode,
       ajv,
     });
-    if (this.defaultValue !== undefined)
-      this.setValue(this.defaultValue, SetValueOption.EmitChange);
+    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
     this.activateLink();
   }
 }

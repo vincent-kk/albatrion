@@ -106,26 +106,29 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * 값 변경을 반영하고 관련 이벤트를 발행합니다.
    * @param option - 설정 옵션
    */
-  #emitChange(this: ArrayNode, option: UnionSetValueOption) {
+  #emitChange(
+    this: ArrayNode,
+    option: UnionSetValueOption = SetValueOption.Default,
+  ) {
     if (this.#ready && this.#hasChanged) {
       const value = this.value;
       if (option & SetValueOption.EmitChange) this.onChange(value);
       if (option & SetValueOption.Propagate) this.#publishChildrenChange();
       if (option & SetValueOption.Refresh) this.refresh(value);
-      this.#hasChanged = false;
-
-      this.publish({
-        type: NodeEventType.UpdateValue,
-        payload: {
-          [NodeEventType.UpdateValue]: value,
-        },
-        options: {
-          [NodeEventType.UpdateValue]: {
-            previous: undefined,
-            current: value,
+      if (option & SetValueOption.PublishEvent)
+        this.publish({
+          type: NodeEventType.UpdateValue,
+          payload: {
+            [NodeEventType.UpdateValue]: value,
           },
-        },
-      });
+          options: {
+            [NodeEventType.UpdateValue]: {
+              previous: undefined,
+              current: value,
+            },
+          },
+        });
+      this.#hasChanged = false;
     }
   }
 
@@ -227,7 +230,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#locked = false;
 
-    this.#emitChange(SetValueOption.EmitChange);
+    this.#emitChange();
 
     this.#publishChildrenChange();
     this.activateLink();
@@ -268,7 +271,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Push);
-    this.#emitChange(SetValueOption.EmitChange);
+    this.#emitChange();
     this.#publishChildrenChange();
     return this;
   }
@@ -301,7 +304,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Remove);
-    this.#emitChange(SetValueOption.EmitChange);
+    this.#emitChange();
     this.#publishChildrenChange();
     return this;
   }
@@ -321,7 +324,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#hasChanged = true;
     this.#finishOperation(OperationType.Clear);
-    this.#emitChange(SetValueOption.EmitChange);
+    this.#emitChange();
     this.#publishChildrenChange();
     return this;
   }
@@ -340,7 +343,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       this.#hasChanged = true;
 
       this.#finishOperation(OperationType.Update);
-      this.#emitChange(SetValueOption.EmitChange);
+      this.#emitChange();
     }
     return this;
   }

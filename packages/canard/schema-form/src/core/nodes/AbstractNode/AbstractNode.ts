@@ -455,9 +455,7 @@ export abstract class AbstractNode<
     if (!hasChanged) return;
     this.publish({
       type: NodeEventType.UpdateState,
-      payload: {
-        [NodeEventType.UpdateState]: this.#state,
-      },
+      payload: { [NodeEventType.UpdateState]: this.#state },
     });
   }
 
@@ -465,9 +463,7 @@ export abstract class AbstractNode<
    * 현재 값을 기준으로 유효성 검증을 수행합니다. `ValidationMode.OnRequest` 인 경우에만 동작합니다.
    */
   validate(this: AbstractNode) {
-    this.rootNode.publish({
-      type: NodeEventType.RequestValidate,
-    });
+    this.rootNode.publish({ type: NodeEventType.RequestValidate });
   }
 
   /** 외부에서 전달받은 Error */
@@ -516,9 +512,7 @@ export abstract class AbstractNode<
     this.#mergedLocalErrors = [...this.#receivedErrors, ...this.#localErrors];
     this.publish({
       type: NodeEventType.UpdateError,
-      payload: {
-        [NodeEventType.UpdateError]: this.#mergedLocalErrors,
-      },
+      payload: { [NodeEventType.UpdateError]: this.#mergedLocalErrors },
     });
   }
 
@@ -528,9 +522,7 @@ export abstract class AbstractNode<
     this.#mergedOmniErrors = [...this.#receivedErrors, ...this.#omniErrors];
     this.publish({
       type: NodeEventType.UpdateOmniError,
-      payload: {
-        [NodeEventType.UpdateOmniError]: this.#mergedOmniErrors,
-      },
+      payload: { [NodeEventType.UpdateOmniError]: this.#mergedOmniErrors },
     });
     return true;
   }
@@ -557,15 +549,11 @@ export abstract class AbstractNode<
     this.#mergedLocalErrors = [...this.#receivedErrors, ...this.#localErrors];
     this.publish({
       type: NodeEventType.UpdateError,
-      payload: {
-        [NodeEventType.UpdateError]: this.#mergedLocalErrors,
-      },
+      payload: { [NodeEventType.UpdateError]: this.#mergedLocalErrors },
     });
     this.publish({
       type: NodeEventType.UpdateError,
-      payload: {
-        [NodeEventType.UpdateError]: this.#mergedLocalErrors,
-      },
+      payload: { [NodeEventType.UpdateError]: this.#mergedLocalErrors },
     });
 
     if (this.isRoot) {
@@ -574,9 +562,7 @@ export abstract class AbstractNode<
         : this.#receivedErrors;
       this.publish({
         type: NodeEventType.UpdateOmniError,
-        payload: {
-          [NodeEventType.UpdateOmniError]: this.#mergedOmniErrors,
-        },
+        payload: { [NodeEventType.UpdateOmniError]: this.#mergedOmniErrors },
       });
     }
   }

@@ -62,7 +62,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
   #emitChange(
     this: VirtualNode,
     values: VirtualNodeValue | undefined,
-    option: UnionSetValueOption,
+    option: UnionSetValueOption = SetValueOption.Default,
   ) {
     if (!values || values.length !== this.#refNodes.length) return;
     for (let i = 0; i < values.length; i++) {
