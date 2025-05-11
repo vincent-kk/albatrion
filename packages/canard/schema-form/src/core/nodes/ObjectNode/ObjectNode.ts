@@ -148,9 +148,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     if (option & SetValueOption.PublishEvent)
       this.publish({
         type: NodeEventType.UpdateValue,
-        payload: {
-          [NodeEventType.UpdateValue]: this.#value,
-        },
+        payload: { [NodeEventType.UpdateValue]: this.#value },
         options: {
           [NodeEventType.UpdateValue]: {
             previous,
@@ -326,9 +324,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     if (this.#locked) return;
     this.publish({
       type: NodeEventType.RequestEmitChange,
-      payload: {
-        [NodeEventType.RequestEmitChange]: option,
-      },
+      payload: { [NodeEventType.RequestEmitChange]: option },
     });
   }
 }

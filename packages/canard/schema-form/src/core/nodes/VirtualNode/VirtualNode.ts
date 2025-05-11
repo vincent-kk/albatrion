@@ -110,9 +110,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
             this.#value[index] = onChangePayload;
             this.publish({
               type: NodeEventType.UpdateValue,
-              payload: {
-                [NodeEventType.UpdateValue]: this.#value,
-              },
+              payload: { [NodeEventType.UpdateValue]: this.#value },
               options: {
                 [NodeEventType.UpdateValue]: {
                   previous,

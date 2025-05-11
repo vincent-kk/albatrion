@@ -92,9 +92,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     if (option & SetValueOption.PublishEvent)
       this.publish({
         type: NodeEventType.UpdateValue,
-        payload: {
-          [NodeEventType.UpdateValue]: value,
-        },
+        payload: { [NodeEventType.UpdateValue]: value },
         options: {
           [NodeEventType.UpdateValue]: {
             previous: undefined,
@@ -331,9 +329,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     if (this.#locked) return;
     this.publish({
       type: NodeEventType.RequestEmitChange,
-      payload: {
-        [NodeEventType.RequestEmitChange]: option,
-      },
+      payload: { [NodeEventType.RequestEmitChange]: option },
     });
   }
 }

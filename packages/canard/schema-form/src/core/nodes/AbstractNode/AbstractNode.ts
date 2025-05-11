@@ -108,9 +108,7 @@ export abstract class AbstractNode<
     this.#path = current;
     this.publish({
       type: NodeEventType.UpdatePath,
-      payload: {
-        [NodeEventType.UpdatePath]: current,
-      },
+      payload: { [NodeEventType.UpdatePath]: current },
       options: {
         [NodeEventType.UpdatePath]: {
           previous,
@@ -155,9 +153,7 @@ export abstract class AbstractNode<
    */
   protected refresh(this: AbstractNode, value: Value | undefined) {
     this.#defaultValue = value;
-    this.publish({
-      type: NodeEventType.Refresh,
-    });
+    this.publish({ type: NodeEventType.Refresh });
   }
 
   /** Node의 값 */

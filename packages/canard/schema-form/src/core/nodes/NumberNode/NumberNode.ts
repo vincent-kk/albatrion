@@ -70,9 +70,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     if (option & SetValueOption.PublishEvent)
       this.publish({
         type: NodeEventType.UpdateValue,
-        payload: {
-          [NodeEventType.UpdateValue]: current,
-        },
+        payload: { [NodeEventType.UpdateValue]: current },
         options: {
           [NodeEventType.UpdateValue]: {
             previous,
