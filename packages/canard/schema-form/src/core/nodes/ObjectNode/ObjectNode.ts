@@ -85,7 +85,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   ) {
     this.#draft = input;
     this.#internalEvent = !(option & SetValueOption.ExternalEvent);
-    this.#emitChange(option);
+    this.#publishRequestEmitChange(option);
   }
 
   /**
@@ -224,7 +224,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         typeof input === 'function' ? input(this.#draft[propertyKey]) : input;
       if (value !== undefined && this.#draft[propertyKey] === value) return;
       this.#draft[propertyKey] = value;
-      this.publish({ type: NodeEventType.RequestEmitChange });
+      this.#publishRequestEmitChange();
     };
 
     this.subscribe(({ type, payload }) => {
@@ -298,14 +298,17 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
           ? [...this.#propertyChildren, ...oneOfChildren]
           : this.#propertyChildren;
 
-        this.setValue(
-          processValueWithOneOfSchema(
-            this.#value,
-            this.#oneOfKeySet,
-            targetIndex > -1 ? this.#oneOfKeySetList?.[targetIndex] : undefined,
-          ),
-          RESET_NODE_OPTION,
+        this.#draft = processValueWithOneOfSchema(
+          this.#parseValue({
+            ...(this.#value || {}),
+            ...(this.#draft || {}),
+          }),
+          this.#oneOfKeySet,
+          targetIndex > -1 ? this.#oneOfKeySetList?.[targetIndex] : undefined,
         );
+
+        this.#emitChange(RESET_NODE_OPTION);
+
         this.onChange(this.#value);
 
         this.#publishChildrenChange();
@@ -314,11 +317,18 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     });
   }
 
-  /**
-   * 자식 노드 변경 이벤트를 발행합니다.
-   */
   #publishChildrenChange(this: ObjectNode) {
     if (this.#locked) return;
     this.publish({ type: NodeEventType.UpdateChildren });
+  }
+
+  #publishRequestEmitChange(this: ObjectNode, option?: UnionSetValueOption) {
+    if (this.#locked) return;
+    this.publish({
+      type: NodeEventType.RequestEmitChange,
+      payload: {
+        [NodeEventType.RequestEmitChange]: option,
+      },
+    });
   }
 }
