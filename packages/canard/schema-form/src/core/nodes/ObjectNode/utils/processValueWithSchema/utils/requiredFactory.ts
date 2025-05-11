@@ -12,10 +12,8 @@ import type { FieldConditionMap } from '../../getFieldConditionMap';
  */
 export const requiredFactory = (
   value: Dictionary,
-  fieldConditionMap: FieldConditionMap | undefined,
-): ((key: string) => boolean) | null => {
-  if (!fieldConditionMap) return null;
-
+  fieldConditionMap: FieldConditionMap,
+): ((key: string) => boolean) => {
   return (key: string): boolean => {
     const conditions = fieldConditionMap.get(key);
     if (!conditions) return false;

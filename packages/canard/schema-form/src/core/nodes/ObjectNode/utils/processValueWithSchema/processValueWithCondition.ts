@@ -22,10 +22,11 @@ export const processValueWithCondition = (
   if (!inputKeys.length) return value;
 
   const isRequired = requiredFactory(value, fieldConditionMap);
+
   const filteredValue: ObjectValue = {};
   for (let i = 0; i < inputKeys.length; i++) {
     const key = inputKeys[i];
-    if (isRequired && !isRequired(key)) continue;
+    if (!isRequired(key)) continue;
     filteredValue[key] = value[key];
   }
   return filteredValue;
