@@ -269,6 +269,116 @@ export const ComplexOneOf = () => {
   );
 };
 
+export const ComplexOneOfSmall = () => {
+  const schema = {
+    type: 'object',
+    properties: {
+      type: {
+        type: 'string',
+        enum: ['game', 'movie'],
+        default: 'game',
+      },
+      details: {
+        type: 'object',
+        oneOf: [
+          {
+            '&if': "_.type==='game'",
+            properties: {
+              stages: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    label: { type: 'number' },
+                    name: { type: 'string' },
+                    description: { type: 'string' },
+                  },
+                  default: {
+                    label: 1,
+                    name: 'stage 1',
+                    description: 'stage 1 description',
+                  },
+                },
+              },
+              platforms: {
+                type: 'array',
+                formType: 'checkbox',
+                items: {
+                  type: 'string',
+                  enum: ['pc', 'console', 'mobile'],
+                },
+                default: ['pc', 'console'],
+              },
+              specs: {
+                type: 'object',
+                properties: {
+                  cpu: { type: 'string', default: 'Intel Core i5' },
+                  gpu: {
+                    type: 'string',
+                    default: 'NVIDIA GeForce GTX 1660 Ti',
+                  },
+                  memory: { type: 'string', default: '16GB' },
+                  storage: { type: 'string', default: '1TB' },
+                },
+              },
+            },
+          },
+          {
+            '&if': "_.type==='movie'",
+            properties: {
+              genres: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+                enum: [
+                  'action',
+                  'comedy',
+                  'drama',
+                  'horror',
+                  'romance',
+                  'sci-fi',
+                  'thriller',
+                ],
+              },
+              platforms: {
+                type: 'array',
+                formType: 'checkbox',
+                items: {
+                  type: 'string',
+                  enum: ['theater', 'streaming'],
+                },
+                default: ['theater'],
+              },
+              actors: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        ],
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState({});
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const refHandle = useRef<FormHandle<typeof schema>>(null);
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <Form
+        ref={refHandle}
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={(errors) => setErrors(errors || [])}
+      />
+    </StoryLayout>
+  );
+};
+
 export const ErrorCase1 = () => {
   const schema = {
     type: 'object',
