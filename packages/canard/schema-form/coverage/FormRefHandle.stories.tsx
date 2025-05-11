@@ -438,9 +438,9 @@ export const FormRefHandleWithArray = () => {
         items: {
           type: 'object',
           properties: {
-            id: { type: 'number' },
-            name: { type: 'string' },
-            email: { type: 'string' },
+            id: { type: 'number', default: 0 },
+            name: { type: 'string', default: 'anonymous' },
+            email: { type: 'string', default: 'anonymous@example.com' },
           },
         },
       },
