@@ -57,7 +57,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   #value: ObjectValue | undefined;
   #draft: ObjectValue | undefined;
 
-  #internalEvent: boolean = true;
+  #isExternalContext: boolean = false;
 
   /**
    * 객체 노드의 값을 가져옵니다.
@@ -84,7 +84,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     option: UnionSetValueOption,
   ) {
     this.#draft = input;
-    this.#internalEvent = !(option & SetValueOption.ExternalEvent);
+    this.#isExternalContext = !!(option & SetValueOption.ExternalEvent);
     this.#publishRequestEmitChange(option);
   }
 
@@ -95,8 +95,9 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    */
   #parseValue(this: ObjectNode, input: ObjectValue) {
     const value = sortObjectKeys(input, this.#schemaKeys, true);
-    if (this.#internalEvent) return value;
-    return processValueWithCondition(value, this.#fieldConditionMap);
+    if (this.#isExternalContext)
+      return processValueWithCondition(value, this.#fieldConditionMap);
+    return value;
   }
   /**
    * 값 변경을 하위 노드로 전파합니다.
@@ -272,26 +273,27 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.activateLink();
   }
 
-  #previousIndex: number | undefined;
-  /**
-   * oneOf 스키마에 대한 자식 노드를 준비합니다.
-   */
+  #previousIndex: number = -1;
   #prepareOneOfChildren(this: ObjectNode) {
     if (!this.#oneOfChildrenList) return;
     this.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateComputedProperties) {
-        const targetIndex = this.oneOfIndex;
-        if (this.#internalEvent && targetIndex === this.#previousIndex) return;
+        const current = this.oneOfIndex;
+        const previous = this.#previousIndex;
+        if (!this.#isExternalContext && current === previous) return;
 
         const previousOneOfChildren =
-          targetIndex > -1 ? this.#oneOfChildrenList?.[targetIndex] : undefined;
+          previous > -1 ? this.#oneOfChildrenList?.[previous] : undefined;
         if (previousOneOfChildren)
           for (const { node } of previousOneOfChildren)
-            if (this.#internalEvent) node.resetNode();
-            else node.resetNode(this.#value?.[node.propertyKey]);
+            node.resetNode(this.#isExternalContext);
 
         const oneOfChildren =
-          targetIndex > -1 ? this.#oneOfChildrenList?.[targetIndex] : undefined;
+          current > -1 ? this.#oneOfChildrenList?.[current] : undefined;
+        if (oneOfChildren)
+          for (const { node } of oneOfChildren)
+            node.resetNode(this.#isExternalContext);
+
         this.#children = oneOfChildren
           ? [...this.#propertyChildren, ...oneOfChildren]
           : this.#propertyChildren;
@@ -302,7 +304,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
             ...(this.#draft || {}),
           }),
           this.#oneOfKeySet,
-          targetIndex > -1 ? this.#oneOfKeySetList?.[targetIndex] : undefined,
+          current > -1 ? this.#oneOfKeySetList?.[current] : undefined,
         );
 
         this.#emitChange(RESET_NODE_OPTION);
@@ -310,7 +312,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         this.onChange(this.#value);
 
         this.#publishChildrenChange();
-        this.#previousIndex = targetIndex;
+        this.#previousIndex = current;
       }
     });
   }

@@ -401,14 +401,16 @@ export abstract class AbstractNode<
     this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
-    if (previousVisible !== this.#visible) this.resetNode();
+    if (previousVisible !== this.#visible) this.resetNode(true);
     if (!this.#hasPublishedUpdateComputedProperties) {
       this.publish({ type: NodeEventType.UpdateComputedProperties });
       this.#hasPublishedUpdateComputedProperties = true;
     }
   }
-  resetNode(this: AbstractNode, input?: Value | undefined) {
-    const defaultValue = input ?? this.value ?? this.#initialValue;
+  resetNode(this: AbstractNode, preferLatest: boolean) {
+    const defaultValue = preferLatest
+      ? (this.value ?? this.#initialValue)
+      : this.#initialValue;
     this.#defaultValue = defaultValue;
 
     const value = this.#visible ? defaultValue : undefined;
