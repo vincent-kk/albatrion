@@ -252,19 +252,19 @@ export enum SetValueOption {
   /** Replace the current value */
   Replace = BIT_FLAG_00,
   /** Update the value and trigger onChange */
-  EmitChange = BIT_FLAG_01,
+  EmitChange = BIT_FLAG_02,
   /** SetValue from outside */
-  ExternalEvent = BIT_FLAG_02,
+  ExternalEvent = BIT_FLAG_03,
   /** Update the value and publish UpdateValue event */
-  Propagate = BIT_FLAG_03,
+  Propagate = BIT_FLAG_04,
   /** Propagate the update to child nodes */
-  Refresh = BIT_FLAG_04,
+  Refresh = BIT_FLAG_05,
   /** Trigger a refresh to update the FormTypeInput */
-  PublishUpdateEvent = BIT_FLAG_05,
+  PublishUpdateEvent = BIT_FLAG_06,
   /** Default SetValue option */
   Default = EmitChange | PublishUpdateEvent,
   /** Both propagate to children and trigger a refresh */
-  Merge = EmitChange | ExternalEvent | Propagate | Refresh | PublishUpdateEvent,
+  Merge = ExternalEvent | Propagate | Refresh | Default,
   /** Replace the value and propagate the update with refresh */
   Overwrite = Replace | Merge,
 }
