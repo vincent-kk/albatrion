@@ -164,6 +164,7 @@ describe('AbstractNode', () => {
       },
       onChange,
     });
+    await wait();
     node.setValue({ status: 'active', age: 10 });
     await wait();
     expect(onChange).toHaveBeenCalledWith({ status: 'active', age: 10 });

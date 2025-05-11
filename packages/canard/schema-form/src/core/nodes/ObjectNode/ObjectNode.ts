@@ -142,9 +142,9 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.#value = isEmptyObject(this.#value) ? undefined : this.#value;
 
     if (option & SetValueOption.EmitChange) this.onChange(this.#value);
+    if (option & SetValueOption.External) this.updateComputedProperties();
     if (option & SetValueOption.Propagate) this.#propagate(replace, option);
     if (option & SetValueOption.Refresh) this.refresh(this.#value);
-    if (option & SetValueOption.External) this.updateComputedProperties();
     if (option & SetValueOption.PublishEvent)
       this.publish({
         type: NodeEventType.UpdateValue,

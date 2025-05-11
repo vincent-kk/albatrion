@@ -412,7 +412,7 @@ export abstract class AbstractNode<
     }
   }
   resetNode(this: AbstractNode, input?: Value | undefined) {
-    const defaultValue = input ?? this.#initialValue;
+    const defaultValue = input ?? this.value ?? this.#initialValue;
     this.#defaultValue = defaultValue;
 
     const value = this.#visible ? defaultValue : undefined;
@@ -437,25 +437,25 @@ export abstract class AbstractNode<
   ) {
     // 함수로 받은 경우 이전 상태를 기반으로 새 상태 계산
     const newInput = typeof input === 'function' ? input(this.#state) : input;
-    let hasChanged = false;
+    let dirty = false;
     if (newInput === undefined) {
       if (isEmptyObject(this.#state)) return;
       this.#state = Object.create(null);
-      hasChanged = true;
+      dirty = true;
     } else if (isObject(newInput)) {
       for (const [key, value] of Object.entries(newInput)) {
         if (value === undefined) {
           if (key in this.#state) {
             delete this.#state[key];
-            hasChanged = true;
+            dirty = true;
           }
         } else if (this.#state[key] !== value) {
           this.#state[key] = value;
-          hasChanged = true;
+          dirty = true;
         }
       }
     }
-    if (!hasChanged) return;
+    if (!dirty) return;
     this.publish({
       type: NodeEventType.UpdateState,
       payload: { [NodeEventType.UpdateState]: this.#state },
