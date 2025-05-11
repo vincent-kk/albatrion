@@ -407,9 +407,13 @@ export abstract class AbstractNode<
       this.#hasPublishedUpdateComputedProperties = true;
     }
   }
-  resetNode(this: AbstractNode, preferLatest: boolean) {
+  resetNode(
+    this: AbstractNode,
+    preferLatest: boolean,
+    input?: Value | undefined,
+  ) {
     const defaultValue = preferLatest
-      ? (this.value ?? this.#initialValue)
+      ? (input ?? this.value ?? this.#initialValue)
       : this.#initialValue;
     this.#defaultValue = defaultValue;
 

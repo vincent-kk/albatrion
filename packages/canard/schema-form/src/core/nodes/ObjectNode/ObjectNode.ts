@@ -57,7 +57,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   #value: ObjectValue | undefined;
   #draft: ObjectValue | undefined;
 
-  #isExternalContext: boolean = false;
+  #isExternalEvent: boolean = false;
 
   /**
    * 객체 노드의 값을 가져옵니다.
@@ -84,7 +84,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     option: UnionSetValueOption,
   ) {
     this.#draft = input;
-    this.#isExternalContext = !!(option & SetValueOption.ExternalEvent);
+    this.#isExternalEvent = !!(option & SetValueOption.ExternalEvent);
     this.#publishRequestEmitChange(option);
   }
 
@@ -95,7 +95,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    */
   #parseValue(this: ObjectNode, input: ObjectValue) {
     const value = sortObjectKeys(input, this.#schemaKeys, true);
-    if (this.#isExternalContext)
+    if (this.#isExternalEvent)
       return processValueWithCondition(value, this.#fieldConditionMap);
     return value;
   }
@@ -219,10 +219,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     const handelChangeFactory = (propertyKey: string) => (input: any) => {
       if (!this.#draft) this.#draft = {};
-      const value =
-        typeof input === 'function' ? input(this.#draft[propertyKey]) : input;
-      if (value !== undefined && this.#draft[propertyKey] === value) return;
-      this.#draft[propertyKey] = value;
+      if (input !== undefined && this.#draft[propertyKey] === input) return;
+      this.#draft[propertyKey] = input;
       this.#publishRequestEmitChange();
     };
 
@@ -280,19 +278,19 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       if (type & NodeEventType.UpdateComputedProperties) {
         const current = this.oneOfIndex;
         const previous = this.#previousIndex;
-        if (!this.#isExternalContext && current === previous) return;
+        if (!this.#isExternalEvent && current === previous) return;
 
         const previousOneOfChildren =
           previous > -1 ? this.#oneOfChildrenList?.[previous] : undefined;
         if (previousOneOfChildren)
           for (const { node } of previousOneOfChildren)
-            node.resetNode(this.#isExternalContext);
+            node.resetNode(this.#isExternalEvent);
 
         const oneOfChildren =
           current > -1 ? this.#oneOfChildrenList?.[current] : undefined;
         if (oneOfChildren)
           for (const { node } of oneOfChildren)
-            node.resetNode(this.#isExternalContext);
+            node.resetNode(this.#isExternalEvent);
 
         this.#children = oneOfChildren
           ? [...this.#propertyChildren, ...oneOfChildren]
