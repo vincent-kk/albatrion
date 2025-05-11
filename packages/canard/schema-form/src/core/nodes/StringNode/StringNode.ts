@@ -67,7 +67,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
 
     if (option & SetValueOption.EmitChange) this.onChange(current);
     if (option & SetValueOption.Refresh) this.refresh(current);
-    if (option & SetValueOption.PublishEvent)
+    if (option & SetValueOption.PublishUpdateEvent)
       this.publish({
         type: NodeEventType.UpdateValue,
         payload: { [NodeEventType.UpdateValue]: current },

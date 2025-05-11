@@ -89,7 +89,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     if (option & SetValueOption.EmitChange) this.onChange(value);
     if (option & SetValueOption.Propagate) this.#publishUpdateChildren();
     if (option & SetValueOption.Refresh) this.refresh(value);
-    if (option & SetValueOption.PublishEvent)
+    if (option & SetValueOption.PublishUpdateEvent)
       this.publish({
         type: NodeEventType.UpdateValue,
         payload: { [NodeEventType.UpdateValue]: value },

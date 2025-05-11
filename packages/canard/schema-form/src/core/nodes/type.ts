@@ -260,11 +260,11 @@ export enum SetValueOption {
   /** Propagate the update to child nodes */
   Refresh = BIT_FLAG_04,
   /** Trigger a refresh to update the FormTypeInput */
-  PublishEvent = BIT_FLAG_05,
+  PublishUpdateEvent = BIT_FLAG_05,
   /** Default SetValue option */
-  Default = EmitChange | PublishEvent,
+  Default = EmitChange | PublishUpdateEvent,
   /** Both propagate to children and trigger a refresh */
-  Merge = EmitChange | ExternalEvent | Propagate | Refresh | PublishEvent,
+  Merge = EmitChange | ExternalEvent | Propagate | Refresh | PublishUpdateEvent,
   /** Replace the value and propagate the update with refresh */
   Overwrite = Replace | Merge,
 }

@@ -12,10 +12,10 @@ import type { SetStateFnWithOptions } from '@/schema-form/types';
 import type { SchemaNodeAdapterInputProps } from './type';
 
 const HANDLE_CHANGE_OPTION =
-  SetValueOption.EmitChange |
-  SetValueOption.PublishEvent |
+  SetValueOption.Replace |
   SetValueOption.Propagate |
-  SetValueOption.Replace;
+  SetValueOption.EmitChange |
+  SetValueOption.PublishUpdateEvent;
 
 const RERENDERING_EVENT =
   NodeEventType.UpdateValue |
