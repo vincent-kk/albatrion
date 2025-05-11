@@ -84,7 +84,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     option: UnionSetValueOption,
   ) {
     this.#draft = input;
-    this.#internalEvent = !(option & SetValueOption.External);
+    this.#internalEvent = !(option & SetValueOption.ExternalEvent);
     this.#emitChange(option);
   }
 
@@ -142,7 +142,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.#value = isEmptyObject(this.#value) ? undefined : this.#value;
 
     if (option & SetValueOption.EmitChange) this.onChange(this.#value);
-    if (option & SetValueOption.External) this.updateComputedProperties();
+    if (option & SetValueOption.ExternalEvent) this.updateComputedProperties();
     if (option & SetValueOption.Propagate) this.#propagate(replace, option);
     if (option & SetValueOption.Refresh) this.refresh(this.#value);
     if (option & SetValueOption.PublishEvent)

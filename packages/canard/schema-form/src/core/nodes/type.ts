@@ -244,22 +244,22 @@ export type NodeStateFlags = {
 };
 
 export enum SetValueOption {
-  /** Update the value and trigger onChange */
-  EmitChange = BIT_FLAG_00,
-  /** Update the value and publish UpdateValue event */
-  PublishEvent = BIT_FLAG_01,
   /** Replace the current value */
-  Replace = BIT_FLAG_02,
-  /** Propagate the update to child nodes */
-  Propagate = BIT_FLAG_03,
-  /** Trigger a refresh to update the FormTypeInput */
-  Refresh = BIT_FLAG_04,
+  Replace = BIT_FLAG_00,
+  /** Update the value and trigger onChange */
+  EmitChange = BIT_FLAG_01,
   /** SetValue from outside */
-  External = BIT_FLAG_05,
+  ExternalEvent = BIT_FLAG_02,
+  /** Update the value and publish UpdateValue event */
+  Propagate = BIT_FLAG_03,
+  /** Propagate the update to child nodes */
+  Refresh = BIT_FLAG_04,
+  /** Trigger a refresh to update the FormTypeInput */
+  PublishEvent = BIT_FLAG_05,
   /** Default SetValue option */
   Default = EmitChange | PublishEvent,
   /** Both propagate to children and trigger a refresh */
-  Merge = EmitChange | PublishEvent | Propagate | Refresh | External,
+  Merge = EmitChange | ExternalEvent | Propagate | Refresh | PublishEvent,
   /** Replace the value and propagate the update with refresh */
   Overwrite = Replace | Merge,
 }
