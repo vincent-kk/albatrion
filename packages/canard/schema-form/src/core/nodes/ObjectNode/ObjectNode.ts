@@ -224,8 +224,13 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         typeof input === 'function' ? input(this.#draft[propertyKey]) : input;
       if (value !== undefined && this.#draft[propertyKey] === value) return;
       this.#draft[propertyKey] = value;
-      this.#emitChange();
+      this.publish({ type: NodeEventType.RequestEmitChange });
     };
+
+    this.subscribe(({ type, payload }) => {
+      if (type & NodeEventType.RequestEmitChange)
+        this.#emitChange(payload?.[NodeEventType.RequestEmitChange]);
+    });
 
     const childNodeMap = getChildNodeMap(
       this,
@@ -260,9 +265,9 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     this.#locked = false;
 
+    this.#emitChange();
     this.#publishChildrenChange();
 
-    this.#emitChange();
     this.setDefaultValue(this.#value);
 
     this.#prepareOneOfChildren();
