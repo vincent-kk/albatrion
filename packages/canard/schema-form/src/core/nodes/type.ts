@@ -14,6 +14,7 @@ import {
   BIT_FLAG_10,
   BIT_FLAG_11,
   BIT_FLAG_12,
+  BIT_FLAG_13,
   BIT_MASK_NONE,
 } from '@/schema-form/app/constants/bitmask';
 import type { Ajv } from '@/schema-form/helpers/ajv';
@@ -170,8 +171,10 @@ export enum NodeEventType {
   UpdateChildren = BIT_FLAG_10,
   /** The node's computed properties have been updated */
   UpdateComputedProperties = BIT_FLAG_11,
+  /** The node's value has been updated */
+  RequestEmitChange = BIT_FLAG_12,
   /** The node's validation has been requested */
-  RequestValidate = BIT_FLAG_12,
+  RequestValidate = BIT_FLAG_13,
 }
 
 export enum PublicNodeEventType {
@@ -202,6 +205,7 @@ export type NodeEventPayload = {
   [NodeEventType.UpdateOmniError]: JsonSchemaError[];
   [NodeEventType.UpdateChildren]: void;
   [NodeEventType.UpdateComputedProperties]: void;
+  [NodeEventType.RequestEmitChange]: UnionSetValueOption;
   [NodeEventType.RequestValidate]: void;
 };
 
@@ -224,6 +228,7 @@ export type NodeEventOptions = {
   [NodeEventType.UpdateOmniError]: void;
   [NodeEventType.UpdateChildren]: void;
   [NodeEventType.UpdateComputedProperties]: void;
+  [NodeEventType.RequestEmitChange]: void;
   [NodeEventType.RequestValidate]: void;
 };
 
