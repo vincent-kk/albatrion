@@ -36,11 +36,13 @@ export const IfThenElse = () => {
         computed: {
           visible: '_.title === "wow"',
         },
+        default: '2025-01-01',
       },
       numOfPlayers: { type: 'number' },
       price: {
         type: 'number',
         minimum: 50,
+        default: 100,
       },
     },
     if: {
@@ -152,6 +154,74 @@ export const OneOfConst = () => {
         onValidate={setErrors}
         ref={formHandle}
       />
+    </StoryLayout>
+  );
+};
+
+export const IfThenElse2 = () => {
+  const schema = {
+    type: 'object',
+    if: {
+      properties: {
+        type: { enum: ['adult', 'child'] },
+      },
+    },
+    then: {
+      required: ['age', 'gender', 'preferences'],
+    },
+    properties: {
+      type: {
+        type: 'string',
+        enum: ['adult', 'child', 'none'],
+        default: 'adult',
+      },
+      age: {
+        type: 'integer',
+        minimum: 0,
+        default: 18,
+      },
+      gender: {
+        type: 'string',
+        enum: ['male', 'female', 'other'],
+        computed: {
+          visible: '_.age >= 18',
+        },
+      },
+      preferences: {
+        type: 'object',
+        properties: {
+          theme: {
+            type: 'string',
+            enum: ['light', 'dark'],
+            default: 'light',
+          },
+          notifications: {
+            type: 'object',
+            properties: {
+              email: {
+                type: 'boolean',
+                default: true,
+              },
+              sms: {
+                type: 'boolean',
+                default: false,
+              },
+            },
+            required: ['email', 'sms'],
+          },
+        },
+        required: ['theme', 'notifications'],
+      },
+    },
+    required: ['type'],
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema>>(null);
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  return (
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form jsonSchema={schema} onChange={setValue} ref={formHandle} />
     </StoryLayout>
   );
 };

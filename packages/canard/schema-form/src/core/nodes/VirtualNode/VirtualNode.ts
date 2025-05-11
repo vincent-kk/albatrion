@@ -62,7 +62,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
   #emitChange(
     this: VirtualNode,
     values: VirtualNodeValue | undefined,
-    option: UnionSetValueOption,
+    option: UnionSetValueOption = SetValueOption.Default,
   ) {
     if (!values || values.length !== this.#refNodes.length) return;
     for (let i = 0; i < values.length; i++) {
@@ -110,9 +110,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
             this.#value[index] = onChangePayload;
             this.publish({
               type: NodeEventType.UpdateValue,
-              payload: {
-                [NodeEventType.UpdateValue]: this.#value,
-              },
+              payload: { [NodeEventType.UpdateValue]: this.#value },
               options: {
                 [NodeEventType.UpdateValue]: {
                   previous,

@@ -147,6 +147,70 @@ export const StringEnum = () => {
   );
 };
 
+export const Array = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      type: {
+        type: 'string',
+        enum: ['real world', 'internet'],
+        default: 'real world',
+      },
+      items: {
+        type: 'array',
+        items: {
+          type: 'object',
+          oneOf: [
+            {
+              '&if': '$.type==="real world"',
+              properties: {
+                name: {
+                  type: 'string',
+                  default: 'John Doe',
+                },
+                age: {
+                  type: 'number',
+                  default: 30,
+                },
+                nationality: {
+                  type: 'string',
+                  default: 'United States',
+                },
+              },
+            },
+            {
+              '&if': '$.type==="internet"',
+              properties: {
+                ip: {
+                  type: 'string',
+                  default: '192.168.0.1',
+                },
+                port: {
+                  type: 'number',
+                  default: 80,
+                },
+                domainName: {
+                  type: 'string',
+                  default: 'example.com',
+                },
+              },
+            },
+          ],
+        },
+        minItems: 3,
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>[]>([]);
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <Form jsonSchema={jsonSchema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
 export const ReadOnly = () => {
   const jsonSchema = {
     type: 'object',

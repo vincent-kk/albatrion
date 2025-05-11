@@ -57,7 +57,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   #value: ObjectValue | undefined;
   #draft: ObjectValue | undefined;
 
-  #internalEvent: boolean = true;
+  #isExternalEvent: boolean = false;
 
   /**
    * 객체 노드의 값을 가져옵니다.
@@ -84,8 +84,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     option: UnionSetValueOption,
   ) {
     this.#draft = input;
-    this.#internalEvent = !(option & SetValueOption.External);
-    this.#emitChange(option);
+    this.#isExternalEvent = !!(option & SetValueOption.ExternalEvent);
+    this.#publishRequestEmitChange(option);
   }
 
   /**
@@ -95,8 +95,9 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    */
   #parseValue(this: ObjectNode, input: ObjectValue) {
     const value = sortObjectKeys(input, this.#schemaKeys, true);
-    if (this.#internalEvent) return value;
-    return processValueWithCondition(value, this.#fieldConditionMap);
+    if (this.#isExternalEvent)
+      return processValueWithCondition(value, this.#fieldConditionMap);
+    return value;
   }
   /**
    * 값 변경을 하위 노드로 전파합니다.
@@ -120,7 +121,10 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * 값 변경을 반영하고 관련 이벤트를 발행합니다.
    * @param option - 설정 옵션
    */
-  #emitChange(this: ObjectNode, option: UnionSetValueOption) {
+  #emitChange(
+    this: ObjectNode,
+    option: UnionSetValueOption = SetValueOption.Default,
+  ) {
     if (this.#locked) return;
 
     const replace = !!(option & SetValueOption.Replace);
@@ -141,21 +145,19 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     if (option & SetValueOption.EmitChange) this.onChange(this.#value);
     if (option & SetValueOption.Propagate) this.#propagate(replace, option);
     if (option & SetValueOption.Refresh) this.refresh(this.#value);
-    if (option & SetValueOption.External) this.updateComputedProperties();
-
-    this.#draft = {};
-    this.publish({
-      type: NodeEventType.UpdateValue,
-      payload: {
-        [NodeEventType.UpdateValue]: this.#value,
-      },
-      options: {
-        [NodeEventType.UpdateValue]: {
-          previous,
-          current: this.#value,
+    if (option & SetValueOption.ExternalEvent) this.updateComputedProperties();
+    if (option & SetValueOption.PublishUpdateEvent)
+      this.publish({
+        type: NodeEventType.UpdateValue,
+        payload: { [NodeEventType.UpdateValue]: this.#value },
+        options: {
+          [NodeEventType.UpdateValue]: {
+            previous,
+            current: this.#value,
+          },
         },
-      },
-    });
+      });
+    this.#draft = {};
   }
 
   /**
@@ -217,12 +219,15 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     const handelChangeFactory = (propertyKey: string) => (input: any) => {
       if (!this.#draft) this.#draft = {};
-      const value =
-        typeof input === 'function' ? input(this.#draft[propertyKey]) : input;
-      if (value !== undefined && this.#draft[propertyKey] === value) return;
-      this.#draft[propertyKey] = value;
-      this.#emitChange(SetValueOption.EmitChange);
+      if (input !== undefined && this.#draft[propertyKey] === input) return;
+      this.#draft[propertyKey] = input;
+      this.#publishRequestEmitChange();
     };
+
+    this.subscribe(({ type, payload }) => {
+      if (type & NodeEventType.RequestEmitChange)
+        this.#emitChange(payload?.[NodeEventType.RequestEmitChange]);
+    });
 
     const childNodeMap = getChildNodeMap(
       this,
@@ -257,60 +262,72 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     this.#locked = false;
 
+    this.#emitChange();
     this.#publishChildrenChange();
 
-    this.#emitChange(SetValueOption.EmitChange);
     this.setDefaultValue(this.#value);
 
     this.#prepareOneOfChildren();
     this.activateLink();
   }
 
-  #previousIndex: number | undefined;
-  /**
-   * oneOf 스키마에 대한 자식 노드를 준비합니다.
-   */
+  #previousIndex: number = -1;
   #prepareOneOfChildren(this: ObjectNode) {
     if (!this.#oneOfChildrenList) return;
     this.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateComputedProperties) {
-        const targetIndex = this.oneOfIndex;
-        if (this.#internalEvent && targetIndex === this.#previousIndex) return;
+        const current = this.oneOfIndex;
+        const previous = this.#previousIndex;
+        if (!this.#isExternalEvent && current === previous) return;
 
         const previousOneOfChildren =
-          targetIndex > -1 ? this.#oneOfChildrenList?.[targetIndex] : undefined;
+          previous > -1 ? this.#oneOfChildrenList?.[previous] : undefined;
         if (previousOneOfChildren)
           for (const { node } of previousOneOfChildren)
-            if (this.#internalEvent) node.resetNode();
-            else node.resetNode(this.#value?.[node.propertyKey]);
+            node.resetNode(this.#isExternalEvent);
 
         const oneOfChildren =
-          targetIndex > -1 ? this.#oneOfChildrenList?.[targetIndex] : undefined;
+          current > -1 ? this.#oneOfChildrenList?.[current] : undefined;
+        if (oneOfChildren)
+          for (const { node } of oneOfChildren)
+            node.resetNode(
+              this.#isExternalEvent,
+              this.#value?.[node.propertyKey],
+            );
+
         this.#children = oneOfChildren
           ? [...this.#propertyChildren, ...oneOfChildren]
           : this.#propertyChildren;
 
-        this.setValue(
-          processValueWithOneOfSchema(
-            this.#value,
-            this.#oneOfKeySet,
-            targetIndex > -1 ? this.#oneOfKeySetList?.[targetIndex] : undefined,
-          ),
-          RESET_NODE_OPTION,
+        this.#draft = processValueWithOneOfSchema(
+          this.#parseValue({
+            ...(this.#value || {}),
+            ...(this.#draft || {}),
+          }),
+          this.#oneOfKeySet,
+          current > -1 ? this.#oneOfKeySetList?.[current] : undefined,
         );
+
+        this.#emitChange(RESET_NODE_OPTION);
+
         this.onChange(this.#value);
 
         this.#publishChildrenChange();
-        this.#previousIndex = targetIndex;
+        this.#previousIndex = current;
       }
     });
   }
 
-  /**
-   * 자식 노드 변경 이벤트를 발행합니다.
-   */
   #publishChildrenChange(this: ObjectNode) {
     if (this.#locked) return;
     this.publish({ type: NodeEventType.UpdateChildren });
+  }
+
+  #publishRequestEmitChange(this: ObjectNode, option?: UnionSetValueOption) {
+    if (this.#locked) return;
+    this.publish({
+      type: NodeEventType.RequestEmitChange,
+      payload: { [NodeEventType.RequestEmitChange]: option },
+    });
   }
 }

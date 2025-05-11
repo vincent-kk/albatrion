@@ -30,7 +30,7 @@ describe('ArrayNode', () => {
     expect(node?.value?.arr.length).toBe(MIN_ITEMS);
   });
 
-  it('add / remove / clear items', () => {
+  it('add / remove / clear items', async () => {
     const node = nodeFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -48,16 +48,20 @@ describe('ArrayNode', () => {
 
     expect(node?.value?.arr).toBeUndefined();
     (node?.find('arr') as ArrayNode)?.push();
+    await delay();
     expect(node?.value?.arr).toMatchObject(['hello']);
     (node?.find('arr') as ArrayNode)?.push('world');
+    await delay();
     expect(node?.value?.arr).toMatchObject(['hello', 'world']);
     (node?.find('arr') as ArrayNode)?.remove(0);
+    await delay();
     expect(node?.value?.arr).toMatchObject(['world']);
     (node?.find('arr') as ArrayNode)?.clear();
+    await delay();
     expect(node?.value?.arr).toBeUndefined();
   });
 
-  it('cannot exceed maxIte  ms', () => {
+  it('cannot exceed maxItems', async () => {
     const MAX_ITEMS = 3;
     const node = nodeFromJsonSchema({
       jsonSchema: {
@@ -80,6 +84,7 @@ describe('ArrayNode', () => {
       .forEach(() => {
         (node?.find('arr') as ArrayNode)?.push();
       });
+    await delay();
     expect(node?.value?.arr.length).toBe(MAX_ITEMS);
   });
 

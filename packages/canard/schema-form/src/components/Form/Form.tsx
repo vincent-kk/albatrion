@@ -109,22 +109,13 @@ const FormInner = <
     () => ({
       node: rootNode,
       focus: (dataPath: string) =>
-        rootNode?.find(dataPath)?.publish({
-          type: NodeEventType.Focus,
-        }),
+        rootNode?.find(dataPath)?.publish({ type: NodeEventType.Focus }),
       select: (dataPath: string) =>
-        rootNode?.find(dataPath)?.publish({
-          type: NodeEventType.Select,
-        }),
+        rootNode?.find(dataPath)?.publish({ type: NodeEventType.Select }),
       reset: update,
       getValue: () => rootNode?.value as Value,
-      setValue: (value, options) => {
-        // @ts-expect-error: It can’t be checked due to runtime typing.
-        rootNode?.setValue(value, options);
-      },
-      validate: () => {
-        rootNode?.validate();
-      },
+      setValue: (value, options) => rootNode?.setValue(value as any, options),
+      validate: () => rootNode?.validate(),
     }),
     [rootNode, update],
   );

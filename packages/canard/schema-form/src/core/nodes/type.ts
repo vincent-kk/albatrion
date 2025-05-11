@@ -14,6 +14,7 @@ import {
   BIT_FLAG_10,
   BIT_FLAG_11,
   BIT_FLAG_12,
+  BIT_FLAG_13,
   BIT_MASK_NONE,
 } from '@/schema-form/app/constants/bitmask';
 import type { Ajv } from '@/schema-form/helpers/ajv';
@@ -170,8 +171,10 @@ export enum NodeEventType {
   UpdateChildren = BIT_FLAG_10,
   /** The node's computed properties have been updated */
   UpdateComputedProperties = BIT_FLAG_11,
+  /** The node's value has been updated */
+  RequestEmitChange = BIT_FLAG_12,
   /** The node's validation has been requested */
-  RequestValidate = BIT_FLAG_12,
+  RequestValidate = BIT_FLAG_13,
 }
 
 export enum PublicNodeEventType {
@@ -202,6 +205,7 @@ export type NodeEventPayload = {
   [NodeEventType.UpdateOmniError]: JsonSchemaError[];
   [NodeEventType.UpdateChildren]: void;
   [NodeEventType.UpdateComputedProperties]: void;
+  [NodeEventType.RequestEmitChange]: UnionSetValueOption;
   [NodeEventType.RequestValidate]: void;
 };
 
@@ -224,6 +228,7 @@ export type NodeEventOptions = {
   [NodeEventType.UpdateOmniError]: void;
   [NodeEventType.UpdateChildren]: void;
   [NodeEventType.UpdateComputedProperties]: void;
+  [NodeEventType.RequestEmitChange]: void;
   [NodeEventType.RequestValidate]: void;
 };
 
@@ -244,22 +249,24 @@ export type NodeStateFlags = {
 };
 
 export enum SetValueOption {
-  /** Only update the value */
-  None = BIT_MASK_NONE,
-  /** Update the value and trigger onChange */
-  EmitChange = BIT_FLAG_00,
   /** Replace the current value */
-  Replace = BIT_FLAG_01,
-  /** Propagate the update to child nodes */
+  Replace = BIT_FLAG_00,
+  /** Update the value and trigger onChange */
+  EmitChange = BIT_FLAG_01,
+  /** Update the value and publish UpdateValue event */
   Propagate = BIT_FLAG_02,
-  /** Trigger a refresh to update the FormTypeInput */
+  /** Propagate the update to child nodes */
   Refresh = BIT_FLAG_03,
-  /** Reset the node */
-  External = BIT_FLAG_04,
+  /** SetValue from outside */
+  ExternalEvent = BIT_FLAG_04,
+  /** Trigger a refresh to update the FormTypeInput */
+  PublishUpdateEvent = BIT_FLAG_05,
+  /** Default SetValue option */
+  Default = EmitChange | PublishUpdateEvent,
   /** Both propagate to children and trigger a refresh */
-  Merge = EmitChange | Propagate | Refresh | External,
+  Merge = ExternalEvent | Propagate | Refresh | Default,
   /** Replace the value and propagate the update with refresh */
-  Overwrite = EmitChange | Replace | Propagate | Refresh | External,
+  Overwrite = Replace | Merge,
 }
 
 export enum PublicSetValueOption {

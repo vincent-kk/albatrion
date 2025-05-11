@@ -18,7 +18,6 @@ import {
   SetValueOption,
   type UnionSetValueOption,
 } from '../type';
-import { OperationType } from './type';
 
 type IndexId = `[${number}]`;
 
@@ -27,9 +26,8 @@ type IndexId = `[${number}]`;
  * 배열의 각 요소를 관리하고 추가/삭제/업데이트 기능을 제공합니다.
  */
 export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
-  #locked: boolean = false;
-  #operation: OperationType = OperationType.Idle;
-  #hasChanged: boolean = true;
+  #locked: boolean = true;
+  #dirty: boolean = true;
 
   #seq: number = 0;
   #ids: IndexId[] = [];
@@ -40,30 +38,6 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       node: SchemaNode;
     }
   > = new Map();
-
-  /**
-   * 지정된 작업을 시작합니다.
-   * @param operation - 시작할 작업 타입
-   */
-  #startOperation(this: ArrayNode, operation: OperationType) {
-    this.#operation |= operation;
-  }
-
-  /**
-   * 지정된 작업을 완료합니다.
-   * @param operation - 완료할 작업 타입
-   */
-  #finishOperation(this: ArrayNode, operation: OperationType) {
-    this.#operation &= ~operation;
-  }
-
-  /**
-   * 현재 작업이 완료되었고 잠금이 풀렸는지 확인합니다.
-   * @returns 노드가 준비 상태인지 여부
-   */
-  get #ready() {
-    return !this.#locked && this.#operation === OperationType.Idle;
-  }
 
   /**
    * 배열 노드의 값을 가져옵니다.
@@ -92,13 +66,13 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   ) {
     if (input === undefined) {
       this.clear();
-      this.#emitChange(option);
+      this.#publishRequestEmitChange(option);
     } else if (isArray(input)) {
       this.#locked = true;
       this.clear();
       for (const value of input) this.push(value);
       this.#locked = false;
-      this.#emitChange(option);
+      this.#publishRequestEmitChange(option);
     }
   }
 
@@ -106,19 +80,19 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * 값 변경을 반영하고 관련 이벤트를 발행합니다.
    * @param option - 설정 옵션
    */
-  #emitChange(this: ArrayNode, option: UnionSetValueOption) {
-    if (this.#ready && this.#hasChanged) {
-      const value = this.value;
-      if (option & SetValueOption.EmitChange) this.onChange(value);
-      if (option & SetValueOption.Propagate) this.#publishChildrenChange();
-      if (option & SetValueOption.Refresh) this.refresh(value);
-      this.#hasChanged = false;
-
+  #emitChange(
+    this: ArrayNode,
+    option: UnionSetValueOption = SetValueOption.Default,
+  ) {
+    if (this.#locked || !this.#dirty) return;
+    const value = this.value;
+    if (option & SetValueOption.EmitChange) this.onChange(value);
+    if (option & SetValueOption.Propagate) this.#publishUpdateChildren();
+    if (option & SetValueOption.Refresh) this.refresh(value);
+    if (option & SetValueOption.PublishUpdateEvent)
       this.publish({
         type: NodeEventType.UpdateValue,
-        payload: {
-          [NodeEventType.UpdateValue]: value,
-        },
+        payload: { [NodeEventType.UpdateValue]: value },
         options: {
           [NodeEventType.UpdateValue]: {
             previous: undefined,
@@ -126,7 +100,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
           },
         },
       });
-    }
+    this.#dirty = false;
   }
 
   /** ArrayNode의 자식 노드들 */
@@ -217,19 +191,22 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
     this.#nodeFactory = nodeFactory;
 
-    this.#locked = true;
-
     // NOTE: defaultValue가 배열이고, 배열의 길이가 0보다 큰 경우
     if (this.defaultValue?.length)
       for (const value of this.defaultValue) this.push(value);
 
     while (this.length < (this.jsonSchema.minItems || 0)) this.push();
 
+    this.subscribe(({ type, payload }) => {
+      if (type & NodeEventType.RequestEmitChange)
+        this.#emitChange(payload?.[NodeEventType.RequestEmitChange]);
+    });
+
     this.#locked = false;
 
-    this.#emitChange(SetValueOption.EmitChange);
+    this.#emitChange();
+    this.#publishUpdateChildren();
 
-    this.#publishChildrenChange();
     this.activateLink();
   }
 
@@ -242,15 +219,10 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     if (this.jsonSchema.maxItems && this.jsonSchema.maxItems <= this.length)
       return;
 
-    this.#startOperation(OperationType.Push);
-
     const id = `[${this.#seq++}]` satisfies IndexId;
     const name = this.#ids.length.toString();
     this.#ids.push(id);
-    const handleChange = (<T extends AllowedValue>(input: T) => {
-      this.#updateData(id, input);
-      if (this.#ready) this.onChange(this.value);
-    }) satisfies SetStateFn<AllowedValue>;
+
     const defaultValue = data ?? getFallbackValue(this.jsonSchema.items);
     const childNode = this.#nodeFactory({
       key: id,
@@ -258,7 +230,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       jsonSchema: this.jsonSchema.items,
       parentNode: this,
       defaultValue,
-      onChange: handleChange,
+      onChange: this.#handleChangeFactory(id),
       nodeFactory: this.#nodeFactory,
     });
     this.#sourceMap.set(id, {
@@ -266,10 +238,11 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       data: childNode.value,
     });
 
-    this.#hasChanged = true;
-    this.#finishOperation(OperationType.Push);
-    this.#emitChange(SetValueOption.EmitChange);
-    this.#publishChildrenChange();
+    if (this.activated) (childNode as AbstractNode).activateLink(this);
+
+    this.#dirty = true;
+    this.#publishRequestEmitChange();
+    this.#publishUpdateChildren();
     return this;
   }
 
@@ -293,16 +266,13 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   remove(this: ArrayNode, id: IndexId | number) {
     const targetId = typeof id === 'number' ? this.#ids[id] : id;
 
-    this.#startOperation(OperationType.Remove);
-
     this.#ids = this.#ids.filter((id) => id !== targetId);
     this.#sourceMap.delete(targetId);
     this.#updateChildName();
 
-    this.#hasChanged = true;
-    this.#finishOperation(OperationType.Remove);
-    this.#emitChange(SetValueOption.EmitChange);
-    this.#publishChildrenChange();
+    this.#dirty = true;
+    this.#publishRequestEmitChange();
+    this.#publishUpdateChildren();
     return this;
   }
 
@@ -311,18 +281,15 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns 자기 자신(this)을 반환하여 체이닝 지원
    */
   clear(this: ArrayNode) {
-    this.#startOperation(OperationType.Clear);
-
     for (let i = 0; i < this.#ids.length; i++)
       this.#sourceMap.get(this.#ids[i])?.node.cleanUp(this);
 
     this.#ids = [];
     this.#sourceMap.clear();
 
-    this.#hasChanged = true;
-    this.#finishOperation(OperationType.Clear);
-    this.#emitChange(SetValueOption.EmitChange);
-    this.#publishChildrenChange();
+    this.#dirty = true;
+    this.#publishRequestEmitChange();
+    this.#publishUpdateChildren();
     return this;
   }
 
@@ -332,17 +299,13 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @param data - 새로운 값
    * @returns 자기 자신(this)을 반환하여 체이닝 지원
    */
-  #updateData(this: ArrayNode, id: IndexId, data: ArrayValue[number]) {
-    if (this.#sourceMap.has(id)) {
-      this.#startOperation(OperationType.Update);
-
+  #handleChangeFactory(this: ArrayNode, id: IndexId): SetStateFn<AllowedValue> {
+    return (data: AllowedValue) => {
+      if (!this.#sourceMap.has(id)) return;
       this.#sourceMap.get(id)!.data = data;
-      this.#hasChanged = true;
-
-      this.#finishOperation(OperationType.Update);
-      this.#emitChange(SetValueOption.EmitChange);
-    }
-    return this;
+      this.#dirty = true;
+      this.#publishRequestEmitChange();
+    };
   }
 
   /**
@@ -359,11 +322,16 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     }
   }
 
-  /**
-   * 자식 노드 변경 이벤트를 발행합니다.
-   */
-  #publishChildrenChange(this: ArrayNode) {
-    if (!this.#ready) return;
+  #publishUpdateChildren(this: ArrayNode) {
+    if (this.#locked) return;
     this.publish({ type: NodeEventType.UpdateChildren });
+  }
+
+  #publishRequestEmitChange(this: ArrayNode, option?: UnionSetValueOption) {
+    if (this.#locked) return;
+    this.publish({
+      type: NodeEventType.RequestEmitChange,
+      payload: { [NodeEventType.RequestEmitChange]: option },
+    });
   }
 }

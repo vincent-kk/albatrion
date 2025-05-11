@@ -108,9 +108,7 @@ export abstract class AbstractNode<
     this.#path = current;
     this.publish({
       type: NodeEventType.UpdatePath,
-      payload: {
-        [NodeEventType.UpdatePath]: current,
-      },
+      payload: { [NodeEventType.UpdatePath]: current },
       options: {
         [NodeEventType.UpdatePath]: {
           previous,
@@ -155,9 +153,7 @@ export abstract class AbstractNode<
    */
   protected refresh(this: AbstractNode, value: Value | undefined) {
     this.#defaultValue = value;
-    this.publish({
-      type: NodeEventType.Refresh,
-    });
+    this.publish({ type: NodeEventType.Refresh });
   }
 
   /** Node의 값 */
@@ -331,6 +327,10 @@ export abstract class AbstractNode<
   }
 
   #activated: boolean = false;
+  get activated() {
+    return this.#activated;
+  }
+
   activateLink(this: AbstractNode, actor?: SchemaNode) {
     if (this.#activated || (actor !== this.parentNode && !this.isRoot))
       return false;
@@ -405,17 +405,26 @@ export abstract class AbstractNode<
     this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
-    if (previousVisible && !this.#visible) this.resetNode();
+    if (previousVisible !== this.#visible) this.resetNode(true);
     if (!this.#hasPublishedUpdateComputedProperties) {
       this.publish({ type: NodeEventType.UpdateComputedProperties });
       this.#hasPublishedUpdateComputedProperties = true;
     }
   }
-  resetNode(this: AbstractNode, input?: Value | undefined) {
-    const value = input ?? this.#initialValue;
-    this.#defaultValue = value;
+  resetNode(
+    this: AbstractNode,
+    preferLatest: boolean,
+    input?: Value | undefined,
+  ) {
+    const defaultValue = preferLatest
+      ? (input ?? this.value ?? this.#initialValue)
+      : this.#initialValue;
+    this.#defaultValue = defaultValue;
+
+    const value = this.#visible ? defaultValue : undefined;
     this.setValue(value, RESET_NODE_OPTION);
     this.onChange(value);
+
     this.setState();
   }
 
@@ -434,30 +443,28 @@ export abstract class AbstractNode<
   ) {
     // 함수로 받은 경우 이전 상태를 기반으로 새 상태 계산
     const newInput = typeof input === 'function' ? input(this.#state) : input;
-    let hasChanged = false;
+    let dirty = false;
     if (newInput === undefined) {
       if (isEmptyObject(this.#state)) return;
       this.#state = Object.create(null);
-      hasChanged = true;
+      dirty = true;
     } else if (isObject(newInput)) {
       for (const [key, value] of Object.entries(newInput)) {
         if (value === undefined) {
           if (key in this.#state) {
             delete this.#state[key];
-            hasChanged = true;
+            dirty = true;
           }
         } else if (this.#state[key] !== value) {
           this.#state[key] = value;
-          hasChanged = true;
+          dirty = true;
         }
       }
     }
-    if (!hasChanged) return;
+    if (!dirty) return;
     this.publish({
       type: NodeEventType.UpdateState,
-      payload: {
-        [NodeEventType.UpdateState]: this.#state,
-      },
+      payload: { [NodeEventType.UpdateState]: this.#state },
     });
   }
 
@@ -465,9 +472,7 @@ export abstract class AbstractNode<
    * 현재 값을 기준으로 유효성 검증을 수행합니다. `ValidationMode.OnRequest` 인 경우에만 동작합니다.
    */
   validate(this: AbstractNode) {
-    this.rootNode.publish({
-      type: NodeEventType.RequestValidate,
-    });
+    this.rootNode.publish({ type: NodeEventType.RequestValidate });
   }
 
   /** 외부에서 전달받은 Error */
@@ -516,9 +521,7 @@ export abstract class AbstractNode<
     this.#mergedLocalErrors = [...this.#receivedErrors, ...this.#localErrors];
     this.publish({
       type: NodeEventType.UpdateError,
-      payload: {
-        [NodeEventType.UpdateError]: this.#mergedLocalErrors,
-      },
+      payload: { [NodeEventType.UpdateError]: this.#mergedLocalErrors },
     });
   }
 
@@ -528,9 +531,7 @@ export abstract class AbstractNode<
     this.#mergedOmniErrors = [...this.#receivedErrors, ...this.#omniErrors];
     this.publish({
       type: NodeEventType.UpdateOmniError,
-      payload: {
-        [NodeEventType.UpdateOmniError]: this.#mergedOmniErrors,
-      },
+      payload: { [NodeEventType.UpdateOmniError]: this.#mergedOmniErrors },
     });
     return true;
   }
@@ -557,15 +558,11 @@ export abstract class AbstractNode<
     this.#mergedLocalErrors = [...this.#receivedErrors, ...this.#localErrors];
     this.publish({
       type: NodeEventType.UpdateError,
-      payload: {
-        [NodeEventType.UpdateError]: this.#mergedLocalErrors,
-      },
+      payload: { [NodeEventType.UpdateError]: this.#mergedLocalErrors },
     });
     this.publish({
       type: NodeEventType.UpdateError,
-      payload: {
-        [NodeEventType.UpdateError]: this.#mergedLocalErrors,
-      },
+      payload: { [NodeEventType.UpdateError]: this.#mergedLocalErrors },
     });
 
     if (this.isRoot) {
@@ -574,9 +571,7 @@ export abstract class AbstractNode<
         : this.#receivedErrors;
       this.publish({
         type: NodeEventType.UpdateOmniError,
-        payload: {
-          [NodeEventType.UpdateOmniError]: this.#mergedOmniErrors,
-        },
+        payload: { [NodeEventType.UpdateOmniError]: this.#mergedOmniErrors },
       });
     }
   }

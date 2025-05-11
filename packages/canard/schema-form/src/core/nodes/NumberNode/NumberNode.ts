@@ -58,7 +58,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   #emitChange(
     this: NumberNode,
     input: NumberValue | undefined,
-    option: UnionSetValueOption,
+    option: UnionSetValueOption = SetValueOption.Default,
   ) {
     const previous = this.#value;
     const current = this.#parseValue(input);
@@ -67,19 +67,17 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
 
     if (option & SetValueOption.EmitChange) this.onChange(current);
     if (option & SetValueOption.Refresh) this.refresh(current);
-
-    this.publish({
-      type: NodeEventType.UpdateValue,
-      payload: {
-        [NodeEventType.UpdateValue]: current,
-      },
-      options: {
-        [NodeEventType.UpdateValue]: {
-          previous,
-          current,
+    if (option & SetValueOption.PublishUpdateEvent)
+      this.publish({
+        type: NodeEventType.UpdateValue,
+        payload: { [NodeEventType.UpdateValue]: current },
+        options: {
+          [NodeEventType.UpdateValue]: {
+            previous,
+            current,
+          },
         },
-      },
-    });
+      });
   }
 
   constructor({
@@ -102,8 +100,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
       validationMode,
       ajv,
     });
-    if (this.defaultValue !== undefined)
-      this.setValue(this.defaultValue, SetValueOption.EmitChange);
+    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
     this.activateLink();
   }
 }
