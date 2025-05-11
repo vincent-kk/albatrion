@@ -143,9 +143,9 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.#value = isEmptyObject(this.#value) ? undefined : this.#value;
 
     if (option & SetValueOption.EmitChange) this.onChange(this.#value);
-    if (option & SetValueOption.ExternalEvent) this.updateComputedProperties();
     if (option & SetValueOption.Propagate) this.#propagate(replace, option);
     if (option & SetValueOption.Refresh) this.refresh(this.#value);
+    if (option & SetValueOption.ExternalEvent) this.updateComputedProperties();
     if (option & SetValueOption.PublishUpdateEvent)
       this.publish({
         type: NodeEventType.UpdateValue,
@@ -290,7 +290,10 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
           current > -1 ? this.#oneOfChildrenList?.[current] : undefined;
         if (oneOfChildren)
           for (const { node } of oneOfChildren)
-            node.resetNode(this.#isExternalEvent);
+            node.resetNode(
+              this.#isExternalEvent,
+              this.#value?.[node.propertyKey],
+            );
 
         this.#children = oneOfChildren
           ? [...this.#propertyChildren, ...oneOfChildren]
