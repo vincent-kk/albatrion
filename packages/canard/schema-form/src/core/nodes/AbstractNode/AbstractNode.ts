@@ -405,17 +405,20 @@ export abstract class AbstractNode<
     this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
-    if (previousVisible && !this.#visible) this.resetNode();
+    if (previousVisible !== this.#visible) this.resetNode();
     if (!this.#hasPublishedUpdateComputedProperties) {
       this.publish({ type: NodeEventType.UpdateComputedProperties });
       this.#hasPublishedUpdateComputedProperties = true;
     }
   }
   resetNode(this: AbstractNode, input?: Value | undefined) {
-    const value = input ?? this.#initialValue;
-    this.#defaultValue = value;
+    const defaultValue = input ?? this.#initialValue;
+    this.#defaultValue = defaultValue;
+
+    const value = this.#visible ? defaultValue : undefined;
     this.setValue(value, RESET_NODE_OPTION);
     this.onChange(value);
+
     this.setState();
   }
 
