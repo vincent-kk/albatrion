@@ -5,59 +5,59 @@
 
 ---
 
-## Overview
+## 개요
 
-`@winglet/json-schema` is a powerful utility library for working with JSON Schema and JSON data. It provides key functionalities such as JSON Schema structure traversal, validation, reference resolution, and filtering. Written in TypeScript to ensure type safety, it offers various features for structured processing of JSON Schema.
+`@winglet/json-schema`는 JSON Schema 및 JSON 데이터를 다루기 위한 강력한 유틸리티 라이브러리입니다. 주요 기능으로는 JSON Schema 구조 탐색, 유효성 검증, 참조 해결(reference resolution), 필터링 등을 제공합니다. 타입스크립트로 작성되어 있어 타입 안정성이 보장되며, JSON Schema의 구조화된 처리를 위한 다양한 기능을 제공합니다.
 
 ---
 
-## Installation
+## 설치 방법
 
 ```bash
-# Using npm
+# npm 사용
 npm install @winglet/json-schema
 
-# Using yarn
+# yarn 사용
 yarn add @winglet/json-schema
 ```
 
 ---
 
-## Key Features
+## 주요 기능
 
-### 1. Schema Traversal and Validation
+### 1. 스키마 탐색 및 유효성 검사
 
-- **[`JsonSchemaScanner`](./src/utils/JsonSchemaScanner/JsonSchemaScanner.ts)**: A class that traverses JSON schema using depth-first search (DFS) approach, implements the Visitor pattern, and resolves $ref references
-- **[`JsonSchemaScannerAsync`](./src/utils/JsonSchemaScanner/JsonSchemaScannerAsync.ts)**: An extension of JsonSchemaScanner that supports asynchronous operations
+- **[`JsonSchemaScanner`](./src/utils/JsonSchemaScanner/JsonSchemaScanner.ts)**: JSON 스키마를 깊이 우선 탐색(DFS) 방식으로 순회하며 방문자(Visitor) 패턴을 적용하고 $ref 참조를 해결하는 클래스
+- **[`JsonSchemaScannerAsync`](./src/utils/JsonSchemaScanner/JsonSchemaScannerAsync.ts)**: 비동기 작업을 지원하는 JsonSchemaScanner 확장 클래스
 
-### 2. Type Validation and Filtering
+### 2. 타입 검증 및 필터링
 
-- **[`isArraySchema`](./src/filter.ts)**: Check if a schema is an array type
-- **[`isNumberSchema`](./src/filter.ts)**: Check if a schema is a number type
-- **[`isObjectSchema`](./src/filter.ts)**: Check if a schema is an object type
-- **[`isStringSchema`](./src/filter.ts)**: Check if a schema is a string type
-- **[`isBooleanSchema`](./src/filter.ts)**: Check if a schema is a boolean type
-- **[`isNullSchema`](./src/filter.ts)**: Check if a schema is a null type
+- **[`isArraySchema`](./src/filter.ts)**: 스키마가 배열 타입인지 확인
+- **[`isNumberSchema`](./src/filter.ts)**: 스키마가 숫자 타입인지 확인
+- **[`isObjectSchema`](./src/filter.ts)**: 스키마가 객체 타입인지 확인
+- **[`isStringSchema`](./src/filter.ts)**: 스키마가 문자열 타입인지 확인
+- **[`isBooleanSchema`](./src/filter.ts)**: 스키마가 불리언 타입인지 확인
+- **[`isNullSchema`](./src/filter.ts)**: 스키마가 null 타입인지 확인
 
-### 3. Schema-based Data Processing
+### 3. 스키마 기반 데이터 처리
 
-- **[`getValueWithSchema`](./src/utils/getValueWithSchema/getValueWithSchema.ts)**: Extract necessary data based on given value and schema
+- **[`getValueWithSchema`](./src/utils/getValueWithSchema/getValueWithSchema.ts)**: 주어진 값과 스키마를 기반으로 필요한 데이터를 추출
 
-### 4. JSON Schema Type Definitions
+### 4. JSON Schema 타입 정의
 
-- Various JSON Schema type definitions ([`ObjectSchema`](./src/types/jsonSchema.ts), [`ArraySchema`](./src/types/jsonSchema.ts), [`StringSchema`](./src/types/jsonSchema.ts), etc.)
-- Utility types for inferring value types from schemas ([`InferValueType`](./src/types/value.ts))
+- 다양한 JSON Schema 타입 정의 ([`ObjectSchema`](./src/types/jsonSchema.ts), [`ArraySchema`](./src/types/jsonSchema.ts), [`StringSchema`](./src/types/jsonSchema.ts) 등)
+- 스키마에서 값 타입을 추론하는 유틸리티 타입 ([`InferValueType`](./src/types/value.ts))
 
 ---
 
-## Usage Examples
+## 사용 예제
 
-### Using JsonSchemaScanner
+### JsonSchemaScanner 사용하기
 
 ```typescript
 import { JsonSchemaScanner } from '@winglet/json-schema';
 
-// Schema definition
+// 스키마 정의
 const schema = {
   type: 'object',
   properties: {
@@ -73,7 +73,7 @@ const schema = {
   },
 };
 
-// Using Visitor pattern to traverse schema
+// Visitor 패턴으로 스키마 탐색
 const scanner = new JsonSchemaScanner({
   visitor: {
     enter: (entry, context) => {
@@ -84,22 +84,22 @@ const scanner = new JsonSchemaScanner({
     },
   },
   options: {
-    maxDepth: 5, // Set maximum traversal depth
+    maxDepth: 5, // 최대 탐색 깊이 설정
     filter: (entry, context) => {
-      // Filter nodes based on specific conditions
+      // 특정 조건에 따라 노드 필터링
       return true;
     },
   },
 });
 
-// Scan the schema
+// 스키마 스캔
 scanner.scan(schema);
 
-// Get the processed schema
+// 처리된 스키마 가져오기
 const processedSchema = scanner.getValue();
 ```
 
-### Checking Schema Types
+### 스키마 타입 검사하기
 
 ```typescript
 import {
@@ -116,17 +116,17 @@ const schema = {
 };
 
 if (isObjectSchema(schema)) {
-  // Process object schema
+  // 객체 스키마 처리
   const properties = schema.properties;
   // ...
 } else if (isArraySchema(schema)) {
-  // Process array schema
+  // 배열 스키마 처리
   const items = schema.items;
   // ...
 }
 ```
 
-### Extracting Data Based on Schema
+### 스키마를 기반으로 데이터 추출하기
 
 ```typescript
 import { getValueWithSchema } from '@winglet/json-schema';
@@ -138,7 +138,7 @@ const schema = {
     age: { type: 'number' },
   },
   required: ['name'],
-  oneOf: [{}], // oneOf is required for this to work
+  oneOf: [{}], // oneOf가 있어야 작동합니다
 };
 
 const data = {
@@ -153,31 +153,31 @@ console.log(result); // { name: 'John Doe', age: 30 }
 
 ---
 
-## Development Environment Setup
+## 개발 환경 설정
 
 ```bash
-# Clone repository
+# 저장소 클론
 dir=your-albatrion && git clone https://github.com/vincent-kk/albatrion.git "$dir" && cd "$dir"
 
-# Install dependencies
+# 의존성 설치
 nvm use && yarn install && yarn run:all build
 
-# Development build
+# 개발 빌드
 yarn jsonSchema build
 
-# Run tests
+# 테스트 실행
 yarn jsonSchema test
 ```
 
 ---
 
-## API Reference
+## API 참조
 
-### Main Classes and Functions
+### 주요 클래스 및 함수
 
 #### JsonSchemaScanner
 
-A class for traversing JSON schema and resolving references.
+JSON 스키마를 순회하고 참조를 해결하는 클래스입니다.
 
 ```typescript
 class JsonSchemaScanner<ContextType = void> {
@@ -192,7 +192,7 @@ class JsonSchemaScanner<ContextType = void> {
 
 #### JsonSchemaScannerAsync
 
-An extension of JsonSchemaScanner that supports asynchronous operations.
+비동기 작업을 지원하는 JsonSchemaScanner 확장 클래스입니다.
 
 ```typescript
 class JsonSchemaScannerAsync<
@@ -203,7 +203,7 @@ class JsonSchemaScannerAsync<
 }
 ```
 
-#### Type Validation Functions
+#### 타입 검증 함수
 
 ```typescript
 function isArraySchema(schema: UnknownSchema): schema is ArraySchema;
@@ -214,7 +214,7 @@ function isBooleanSchema(schema: UnknownSchema): schema is BooleanSchema;
 function isNullSchema(schema: UnknownSchema): schema is NullSchema;
 ```
 
-#### Value Extraction Function
+#### 값 추출 함수
 
 ```typescript
 function getValueWithSchema<Value>(
@@ -223,10 +223,10 @@ function getValueWithSchema<Value>(
 ): Value | undefined;
 ```
 
-### Main Type Definitions
+### 주요 타입 정의
 
 ```typescript
-// Basic JSON Schema types
+// 기본 JSON 스키마 타입
 type JsonSchema<Options extends Dictionary = object> =
   | NumberSchema<Options, JsonSchema>
   | StringSchema<Options, JsonSchema>
@@ -235,7 +235,7 @@ type JsonSchema<Options extends Dictionary = object> =
   | ObjectSchema<Options, JsonSchema>
   | NullSchema<Options, JsonSchema>;
 
-// Value types
+// 값 타입
 type BooleanValue = boolean;
 type NumberValue = number;
 type StringValue = string;
@@ -246,12 +246,12 @@ type NullValue = null;
 
 ---
 
-## License
+## 라이선스
 
-This repository is provided under the MIT License. For details, please refer to the [`LICENSE`](./LICENSE) file.
+이 저장소는 MIT 라이선스로 제공됩니다. 자세한 내용은 [`LICENSE`](./LICENSE) 파일을 참조하세요.
 
 ---
 
-## Contact
+## 연락처
 
-For inquiries or suggestions related to the project, please create an issue.
+이 프로젝트에 관한 질문이나 제안이 있으시면 이슈를 생성해 주세요.
