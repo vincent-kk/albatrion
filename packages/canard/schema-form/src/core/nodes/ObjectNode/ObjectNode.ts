@@ -283,8 +283,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         const previousOneOfChildren =
           previous > -1 ? this.#oneOfChildrenList?.[previous] : undefined;
         if (previousOneOfChildren)
-          for (const { node } of previousOneOfChildren)
-            node.resetNode(this.#isolationMode);
+          for (const { node } of previousOneOfChildren) node.resetNode(false);
 
         const oneOfChildren =
           current > -1 ? this.#oneOfChildrenList?.[current] : undefined;
