@@ -789,7 +789,7 @@ The library is optimized for performance with features like:
 
 ## Browser Support
 
-`@canard/schema-form` supports all modern browsers (Chrome, Firefox, Safari, Edge) and IE11 with appropriate polyfills.
+`@canard/schema-form` supports all modern browsers (Chrome, Firefox, Safari, Edge), but IE11 is not support.
 
 ---
 

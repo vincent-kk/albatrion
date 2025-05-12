@@ -6,26 +6,26 @@
 
 ---
 
-## Overview
+## 개요
 
-`@lerx/promise-modal` is a universal modal utility based on React.
+`@lerx/promise-modal`은 React를 기반으로 한 보편적인 모달 유틸리티입니다.
 
-Key features include:
+주요 기능은 다음과 같습니다:
 
-- Can be used even in places not included in React components
-- After opening a modal, you can retrieve the result as a promise
-- Supports various modal types (alert, confirm, prompt)
-- Highly customizable component structure
+- React 컴포넌트에 포함되지 않은 곳에서도 사용할 수 있습니다
+- 모달을 열은 후 결과를 프로미스로 반환할 수 있습니다
+- 다양한 모달 유형(알림, 확인, 입력) 지원
+- 고도로 커스터마이징 가능한 컴포넌트 구조
 
 ---
 
-## Installation
+## 설치
 
 ```bash
 yarn add @lerx/promise-modal
 ```
 
-or
+또는
 
 ```bash
 npm install @lerx/promise-modal
@@ -33,11 +33,11 @@ npm install @lerx/promise-modal
 
 ---
 
-## How to Use
+## 사용 방법
 
-### 1. Setting up the Modal Provider
+### 1. 모달 제공자 설정
 
-Install `ModalProvider` at the root of your application:
+응용 프로그램의 루트에 `ModalProvider`를 설치합니다:
 
 ```tsx
 import { ModalProvider } from '@lerx/promise-modal';
@@ -51,7 +51,7 @@ function App() {
 }
 ```
 
-You can also apply custom options and components:
+맞춤형 옵션과 컴포넌트를 적용할 수도 있습니다:
 
 ```tsx
 import { ModalProvider } from '@lerx/promise-modal';
@@ -75,13 +75,13 @@ function App() {
       ContentComponent={CustomContent}
       FooterComponent={CustomFooter}
       options={{
-        duration: '250ms', // Animation duration
-        backdrop: 'rgba(0, 0, 0, 0.35)', // Background overlay color
-        manualDestroy: false, // Default auto-destroy behavior
-        closeOnBackdropClick: true, // Default backdrop click behavior
+        duration: '250ms', // 애니메이션 지속 시간
+        backdrop: 'rgba(0, 0, 0, 0.35)', // 배경 오버레이 색상
+        manualDestroy: false, // 기본 자동 파괴 동작
+        closeOnBackdropClick: true, // 기본 배경 클릭 동작
       }}
       context={{
-        // Context values accessible in all modal components
+        // 모든 모달 컴포넌트에서 액세스 가능한 컨텍스트 값
         theme: 'light',
         locale: 'en-US',
       }}
@@ -92,36 +92,36 @@ function App() {
 }
 ```
 
-### 2. Using Basic Modals
+### 2. 기본 모달 사용
 
-#### Alert Modal
+#### 알림 모달
 
-Alert modals provide simple information display with a confirmation button.
+알림 모달은 확인 버튼과 함께 간단한 정보를 표시합니다.
 
 ```tsx
 import { alert } from '@lerx/promise-modal';
 
-// Basic usage
+// 기본 사용법
 async function showAlert() {
   await alert({
-    title: 'Notification',
-    content: 'The task has been completed.',
+    title: '알림',
+    content: '작업이 완료되었습니다.',
   });
-  console.log('User closed the modal.');
+  console.log('사용자가 모달을 닫았습니다.');
 }
 
-// Using various options
+// 다양한 옵션 사용
 async function showDetailedAlert() {
   await alert({
     subtype: 'success', // 'info' | 'success' | 'warning' | 'error'
-    title: 'Success',
-    subtitle: 'Details',
-    content: 'The task has been successfully completed.',
-    dimmed: true, // Dim the background
-    closeOnBackdropClick: true, // Close on backdrop click
-    // If use close animation, you need to set manualDestroy to true
-    manualDestroy: false, // Auto-destroy (false: auto, true: manual)
-    // Data to pass to the background
+    title: '성공',
+    subtitle: '상세 정보',
+    content: '작업이 성공적으로 완료되었습니다.',
+    dimmed: true, // 배경 흐림
+    closeOnBackdropClick: true, // 배경 클릭 시 닫기
+    // 닫기 애니메이션을 사용하려면 manualDestroy를 true로 설정해야 합니다
+    manualDestroy: false, // 자동 파괴 (false: 자동, true: 수동)
+    // 배경에 전달할 데이터
     background: {
       data: 'custom-data',
     },
@@ -129,96 +129,96 @@ async function showDetailedAlert() {
 }
 ```
 
-#### Confirm Modal
+#### 확인 모달
 
-Confirm modals are used for actions that require user confirmation.
+확인 모달은 사용자의 확인이 필요한 작업에 사용됩니다.
 
 ```tsx
 import { confirm } from '@lerx/promise-modal';
 
 async function showConfirm() {
   const result = await confirm({
-    title: 'Confirm',
-    content: 'Are you sure you want to delete this?',
-    // Custom footer text
+    title: '확인',
+    content: '이 데이터를 삭제하시겠습니까?',
+    // 사용자 정의 하단 텍스트
     footer: {
-      confirm: 'Delete',
-      cancel: 'Cancel',
+      confirm: '삭제',
+      cancel: '취소',
     },
   });
 
   if (result) {
-    console.log('User clicked confirm.');
-    // Execute delete logic
+    console.log('사용자가 확인을 클릭했습니다.');
+    // 삭제 로직 실행
   } else {
-    console.log('User clicked cancel.');
+    console.log('사용자가 취소를 클릭했습니다.');
   }
 }
 ```
 
-#### Prompt Modal
+#### 프롬프트 모달
 
-Prompt modals are used to receive input from users.
+프롬프트 모달은 사용자로부터 입력을 받는 데 사용됩니다.
 
 ```tsx
 import { prompt } from '@lerx/promise-modal';
 
 async function showPrompt() {
-  // Text input
+  // 텍스트 입력
   const name = await prompt<string>({
-    title: 'Enter Name',
-    content: 'Please enter your name.',
-    defaultValue: '', // Default value
+    title: '이름 입력',
+    content: '이름을 입력해 주세요.',
+    defaultValue: '', // 기본값
     Input: ({ value, onChange }) => {
-      // Important: value is the current value, onChange is the function to update the value
+      // 중요: value는 현재 값이며, onChange는 값을 업데이트하는 함수입니다
       return (
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="Enter name"
+          placeholder="이름을 입력하세요”
         />
       );
     },
-    // Validate input to control the confirmation button
+    // 입력 값을 검증하여 확인 버튼을 제어합니다
     disabled: (value) => value.length < 2,
   });
 
-  console.log('Entered name:', name);
+  console.log('입력된 이름:', name);
 
-  // Complex data input
-  const userInfo = await prompt<{ name: string; age: number }>({
-    title: 'User Information',
+  // 복잡한 데이터 입력
+const userInfo = await prompt<{ name: string; age: number }>({
+    title: '사용자 정보',
     defaultValue: { name: '', age: 0 },
-    Input: ({ value, onChange }) => (
+    입력: ({ value, onChange }) => (
       <div>
         <input
           value={value.name}
           onChange={(e) => onChange({ ...value, name: e.target.value })}
-          placeholder="Name"
+          placeholder=“이름”
         />
         <input
-          type="number"
+          type=”number”
           value={value.age}
           onChange={(e) => onChange({ ...value, age: Number(e.target.value) })}
-          placeholder="Age"
+          placeholder="Age”
         />
       </div>
     ),
   });
 
-  console.log('User info:', userInfo);
+console.log(‘User info:’, userInfo);
 }
 ```
 
-### 3. Using Custom Components
+### 3. 사용자 정의 컴포넌트 사용
 
-You can customize the appearance and behavior of modals:
+모달의 외관과 동작을 사용자 정의할 수 있습니다:
 
 ```tsx
 import { css } from '@emotion/css';
 import { ModalProvider, alert, confirm } from '@lerx/promise-modal';
 
-// Custom foreground component
+// 사용자 정의 배경 컴포넌트
 const CustomForegroundComponent = ({ children, type, ...props }) => {
   return (
     <div
@@ -237,9 +237,9 @@ const CustomForegroundComponent = ({ children, type, ...props }) => {
   );
 };
 
-// Custom background component (utilizing background data)
+// 배경 데이터 활용 커스텀 배경 컴포넌트
 const CustomBackgroundComponent = ({ children, onClick, background }) => {
-  // Apply different styles based on background data
+  // 배경 데이터에 따라 다른 스타일 적용
   const getBgColor = () => {
     if (background?.data === 'alert') return 'rgba(0, 0, 0, 0.7)';
     if (background?.data === 'confirm') return 'rgba(0, 0, 0, 0.5)';
@@ -268,7 +268,7 @@ const CustomBackgroundComponent = ({ children, onClick, background }) => {
   );
 };
 
-// Custom title component
+// 사용자 정의 제목 컴포넌트
 const CustomTitleComponent = ({ children, context }) => {
   return (
     <h2
@@ -283,7 +283,7 @@ const CustomTitleComponent = ({ children, context }) => {
   );
 };
 
-// Custom subtitle component
+// 사용자 정의 부제목 컴포넌트
 const CustomSubtitleComponent = ({ children, context }) => {
   return (
     <h3
@@ -298,7 +298,7 @@ const CustomSubtitleComponent = ({ children, context }) => {
   );
 };
 
-// Custom content component
+// 사용자 정의 콘텐츠 컴포넌트
 const CustomContentComponent = ({ children, context }) => {
   return (
     <div
@@ -312,7 +312,7 @@ const CustomContentComponent = ({ children, context }) => {
   );
 };
 
-// Custom footer component
+// 사용자 정의 푸터 컴포넌트
 const CustomFooterComponent = ({
   onConfirm,
   onClose,
@@ -329,7 +329,7 @@ const CustomFooterComponent = ({
         margin-top: 24px;
       `}
     >
-      {/* Display cancel button for confirm and prompt modals */}
+      {/* 확인 및 프롬프트 모달에 취소 버튼 표시 */}
       {(type === 'confirm' || type === 'prompt') && (
         <button
           className={css`
@@ -344,18 +344,18 @@ const CustomFooterComponent = ({
           `}
           onClick={type === 'confirm' ? () => onConfirm(false) : onCancel}
         >
-          Cancel
+          취소
         </button>
       )}
       <button
         className={css`
-          padding: 8px 16px;
-          background-color: #4a90e2;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: ${disabled ? 'not-allowed' : 'pointer'};
-          opacity: ${disabled ? 0.6 : 1};
+          패딩: 8px 16px;
+          배경색: #4a90e2;
+          색상: 흰색;
+          경계선: 없음;
+          경계선반경: 4px;
+          커서: ${disabled ? 'not-allowed' : 'pointer'};
+          투명도: ${disabled ? 0.6 : 1};
           &:hover {
             background-color: ${disabled ? '#4a90e2' : '#357ac7'};
           }
@@ -363,13 +363,13 @@ const CustomFooterComponent = ({
         onClick={() => onConfirm(type === 'confirm' ? true : undefined)}
         disabled={disabled}
       >
-        Confirm
+        확인
       </button>
     </div>
   );
 };
 
-// Global setup in provider
+// 글로벌 설정 제공자
 function App() {
   return (
     <ModalProvider
@@ -380,10 +380,10 @@ function App() {
       ContentComponent={CustomContentComponent}
       FooterComponent={CustomFooterComponent}
       options={{
-        duration: 300, // Animation duration (ms)
+        duration: 300, // 애니메이션 지속 시간 (ms)
       }}
       context={{
-        // Context accessible in all modals
+        // 모든 모달에서 접근 가능한 컨텍스트
         theme: 'light',
         locale: 'en-US',
       }}
@@ -393,12 +393,12 @@ function App() {
   );
 }
 
-// Applying custom components to specific modals
+// 특정 모달에 커스텀 컴포넌트 적용
 async function showCustomAlert() {
   await alert({
-    title: 'Notification',
-    content: 'Content',
-    // Custom component only for this modal
+    title: '알림',
+    content: '콘텐츠',
+    // 이 모달에만 적용되는 커스텀 컴포넌트
     ForegroundComponent: ({ children }) => (
       <div
         className={css`
@@ -411,7 +411,7 @@ async function showCustomAlert() {
         {children}
       </div>
     ),
-    // Pass background data
+    // 배경 데이터 전달
     background: {
       data: 'custom-alert',
     },
@@ -419,9 +419,9 @@ async function showCustomAlert() {
 }
 ```
 
-### 4. Using Custom Anchors and Initialization
+### 4. 커스텀 앵커 및 초기화 사용
 
-You can specify the DOM element where modals will be rendered:
+모달이 렌더링될 DOM 요소를 지정할 수 있습니다:
 
 ```tsx
 import { useEffect, useRef } from 'react';
@@ -433,15 +433,15 @@ import {
   useInitializeModal,
 } from '@lerx/promise-modal';
 
-// Using refs
+// refs 사용
 function CustomAnchorExample() {
-  // Modal provider handle reference
+  // 모달 제공자 핸들 참조
   const modalProviderRef = useRef<ModalProviderHandle>(null);
-  // Container reference for modal display
+  // 모달 표시용 컨테이너 참조
   const modalContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Initialize modal when container is ready
+    // 컨테이너가 준비되면 모달 초기화
     if (modalContainerRef.current && modalProviderRef.current) {
       modalProviderRef.current.initialize(modalContainerRef.current);
     }
@@ -450,7 +450,7 @@ function CustomAnchorExample() {
   return (
     <ModalProvider ref={modalProviderRef}>
       <div>
-        {/* Modals will render inside this div */}
+        {/* 모달이 이 div 내부에 렌더링됩니다 */}
         <div
           ref={modalContainerRef}
           style={{
@@ -464,32 +464,32 @@ function CustomAnchorExample() {
 
         <button
           onClick={() =>
-            alert({ title: 'Notice', content: 'Displayed in custom anchor.' })
+            alert({ title: '알림', content: '커스텀 앵커에 표시됨.' })
           }
         >
-          Show Modal
-        </button>
+모달 표시
+</button>
       </div>
     </ModalProvider>
   );
 }
 
-// Using the useInitializeModal hook
+// useInitializeModal 훅 사용
 function CustomAnchorWithHookExample() {
-  // useInitializeModal hook (manual mode: manual initialization)
+  // useInitializeModal 훅 (수동 모드: 수동 초기화)
   const { initialize, portal } = useInitializeModal({ mode: 'manual' });
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (containerRef.current) {
-      // Initialize modal with container element
+      // 모달 초기화 (컨테이너 요소로)
       initialize(containerRef.current);
     }
   }, [initialize]);
 
   return (
     <div>
-      {/* Container for modal rendering */}
+      {/* 모달 렌더링용 컨테이너 */}
       <div
         ref={containerRef}
         style={{
@@ -501,22 +501,22 @@ function CustomAnchorWithHookExample() {
 
       <button
         onClick={() =>
-          alert({ title: 'Notice', content: 'Displayed in custom anchor.' })
+          alert({ title: '알림', content: '커스텀 앵커에 표시됨.' })
         }
       >
-        Show Modal
-      </button>
+모달 표시
+</button>
 
-      {/* Portal rendering in another location (optional) */}
-      <div id="another-container">{portal}</div>
+{/* 다른 위치에 포털 렌더링 (선택 사항) */}
+<div id=“another-container”>{portal}</div>
     </div>
   );
 }
 ```
 
-### 5. Implementing Toast Messages
+### 5. 토스트 메시지 구현
 
-You can implement toast message functionality using `promise-modal`. This example is based on actual implementation in the project:
+`promise-modal`을 사용하여 토스트 메시지 기능을 구현할 수 있습니다. 이 예제는 프로젝트의 실제 구현을 기반으로 합니다:
 
 ```tsx
 import React, { type ReactNode, useEffect, useRef } from 'react';
@@ -530,7 +530,7 @@ import {
   useModalDuration,
 } from '@lerx/promise-modal';
 
-// Toast foreground component definition
+// 토스트 포그라운드 컴포넌트 정의
 const ToastForeground = ({
   id,
   visible,
@@ -541,14 +541,14 @@ const ToastForeground = ({
   const modalRef = useRef(null);
   const { duration } = useModalDuration();
 
-  // Auto-close after specified time
-  useEffect(() => {
+// 지정된 시간 후 자동 닫기
+useEffect(() => {
     const timer = setTimeout(onClose, hideAfterMs);
     return () => clearTimeout(timer);
-  }, [onClose, hideAfterMs]);
+}, [onClose, hideAfterMs]);
 
-  // Animation handling
-  useModalAnimation(visible, {
+// 애니메이션 처리
+useModalAnimation(visible, {
     onVisible: () => {
       modalRef.current?.classList.add('visible');
     },
@@ -557,10 +557,10 @@ const ToastForeground = ({
     },
   });
 
-  // Destroy after closing
-  useDestroyAfter(id, duration);
+// 닫힌 후 파괴
+useDestroyAfter(id, duration);
 
-  return (
+return (
     <div
       ref={modalRef}
       className={css`
@@ -583,34 +583,34 @@ const ToastForeground = ({
   );
 };
 
-// Toast message interface
+// 토스트 메시지 인터페이스
 interface ToastProps {
   message: ReactNode;
   duration?: number;
 }
 
-// Handler to remove previous toast
-let onDestroyPrevToast: () => void;
+// 이전 토스트 제거 핸들러
+onDestroyPrevToast: () => void;
 
-// Toast display function
+// 토스트 표시 함수
 export const toast = ({ message, duration = 1250 }: ToastProps) => {
-  // Remove previous toast if exists
+  // 이전 토스트가 존재하면 제거
   onDestroyPrevToast?.();
 
   return alert({
     content: message,
     ForegroundComponent: (props: ModalFrameProps) => {
-      // Store destroy function of new toast
-      onDestroyPrevToast = props.onDestroy;
-      return <ToastForeground {...props} hideAfterMs={duration} />;
+      // 새 토스트의 제거 함수를 저장
+onDestroyPrevToast = props.onDestroy;
+return <ToastForeground {...props} hideAfterMs={duration} />;
     },
-    footer: false, // Hide footer
-    dimmed: false, // Disable background dim
-    closeOnBackdropClick: false, // Disable closing on backdrop click
+    footer: false, // 하단 바 숨기기
+dimmed: false, // 배경 어두워짐 비활성화
+closeOnBackdropClick: false, // 배경 클릭 시 닫기 비활성화
   });
 };
 
-// Usage example
+// 사용 예시
 function showToastExample() {
   toast({
     message: (
@@ -622,76 +622,76 @@ function showToastExample() {
           border-radius: 8px;
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         `}
-      >
-        Task completed!
-      </div>
+>
+작업 완료!
+</div>
     ),
-    duration: 2000, // Auto-close after 2 seconds
+    duration: 2000, // 2초 후 자동 닫기
   });
 }
 ```
 
-### 6. Various Modal Configuration Options
+### 6. 다양한 모달 구성 옵션
 
-Examples utilizing various modal configuration options:
+다양한 모달 구성 옵션 활용 예시:
 
 ```tsx
 import { alert, confirm } from '@lerx/promise-modal';
 
-// Basic alert modal
+// 기본 알림 모달
 async function showBasicAlert() {
   await alert({
-    title: 'Basic Notification',
-    content: 'This is an alert modal with default settings.',
+    title: '기본 알림',
+    content: '이것은 기본 설정으로 설정된 알림 모달입니다.',
   });
 }
 
-// Modal settings by type
+// 유형별 모달 설정
 async function showModalByType() {
-  // Success notification
+  // 성공 알림
   await alert({
-    title: 'Success',
-    content: 'Task completed successfully.',
+    title: '성공',
+    content: '작업이 성공적으로 완료되었습니다.',
     subtype: 'success',
     dimmed: true,
   });
 
-  // Warning confirmation
+  // 경고 확인
   const result = await confirm({
-    title: 'Warning',
-    content: 'This action cannot be undone. Continue?',
+    title: '경고',
+    content: '이 작업은 되돌릴 수 없습니다. 계속하시겠습니까?',
     subtype: 'warning',
-    closeOnBackdropClick: false, // Prevent closing by backdrop click
+    closeOnBackdropClick: false, // 배경 클릭으로 닫히지 않도록 방지
   });
 
-  // Error notification
+  // 오류 알림
   await alert({
-    title: 'Error',
-    content: 'Unable to complete the task.',
+    title: '오류',
+    content: '작업이 완료되지 않았습니다.',
     subtype: 'error',
-    // Custom footer text
+    // 사용자 정의 하단 텍스트
     footer: {
-      confirm: 'I understand',
+      confirm: '동의합니다',
     },
   });
 }
 
-// Using manual destroy mode
+// 수동 파괴 모드 사용
 async function showManualDestroyModal() {
   await alert({
-    title: 'Notification',
+    title: '알림',
     content:
-      "This modal won't close on backdrop click and requires confirmation button to close.",
-    manualDestroy: true, // Enable manual destroy mode
-    closeOnBackdropClick: false, // Prevent closing by backdrop click
+      “이 모달은 배경 창 클릭으로 닫히지 않으며 확인 버튼을 눌러야 닫힐 수 있습니다.”,
+    manualDestroy: true, // 수동 파괴 모드 활성화
+    closeOnBackdropClick: false, // 배경 클릭으로 닫히지 않도록 방지
   });
 }
 
-// Using background data
+// 배경 데이터 사용
 async function showModalWithBackground() {
   await alert({
-    title: 'Background Data Usage',
-    content: 'This modal passes data to the background component.',
+    title: '배경 데이터 사용',
+    content: '이 모달은 데이터를 배경 컴포넌트로 전달합니다.',
     background: {
       data: 'custom-background-data',
       opacity: 0.8,
@@ -703,39 +703,39 @@ async function showModalWithBackground() {
 
 ---
 
-## API Reference
+## API 참조
 
-### Core Functions
+### 핵심 기능
 
 #### `alert(options)`
 
-Opens a simple alert modal to display information to the user.
+사용자에게 정보를 표시하는 간단한 알림 모달을 열습니다.
 
-**Parameters:**
+**매개변수:**
 
-- `options`: Alert modal configuration object
-  - `title?`: Modal title (ReactNode)
-  - `subtitle?`: Subtitle (ReactNode)
-  - `content?`: Modal content (ReactNode or component)
-  - `subtype?`: Modal type ('info' | 'success' | 'warning' | 'error')
-  - `background?`: Background settings (ModalBackground object)
-  - `footer?`: Footer settings
-    - Function: `(props: FooterComponentProps) => ReactNode`
-    - Object: `{ confirm?: string; hideConfirm?: boolean }`
-    - `false`: Hide footer
-  - `dimmed?`: Whether to dim the background (boolean)
-  - `manualDestroy?`: Enable manual destroy mode (boolean)
-  - `closeOnBackdropClick?`: Whether to close on backdrop click (boolean)
-  - `ForegroundComponent?`: Custom foreground component
-  - `BackgroundComponent?`: Custom background component
+- `options`: 알림 모달 구성 객체
+- `title?`: 모달 제목 (ReactNode)
+  - `subtitle?`: 부제목 (ReactNode)
+- `content?`: 모달 콘텐츠 (ReactNode 또는 컴포넌트)
+- `subtype?`: 모달 유형 ('info' | 'success' | 'warning' | 'error')
+- `background?`: 배경 설정 (ModalBackground 객체)
+- `footer?`: 푸터 설정
+  - 함수: `(props: FooterComponentProps) => ReactNode`
+- 객체: `{ confirm?: string; hideConfirm?: boolean }`
+- `false`: 푸터 숨기기
+- `dimmed?`: 배경 흐림 여부 (boolean)
+- `manualDestroy?`: 수동 파괴 모드 활성화 (boolean)
+  - `closeOnBackdropClick?`: 배경 클릭 시 닫기 여부 (부울)
+- `ForegroundComponent?`: 사용자 정의 포그라운드 컴포넌트
+- `BackgroundComponent?`: 사용자 정의 배경 컴포넌트
 
-**Returns:** `Promise<void>` - Resolved when the modal is closed
+**반환 값:** `Promise<void>` - 모달이 닫힐 때 해결됩니다
 
 ```typescript
-// Example
+// 예시
 await alert({
-  title: 'Notification',
-  content: 'Content',
+  title: '알림',
+  content: '내용',
   subtype: 'info',
   closeOnBackdropClick: true,
 });
@@ -743,54 +743,54 @@ await alert({
 
 #### `confirm(options)`
 
-Opens a confirmation modal that requests user confirmation.
+사용자의 확인을 요청하는 확인 모달을 열습니다.
 
-**Parameters:**
+**매개변수:**
 
-- `options`: Confirm modal configuration
-  - Same options as `alert`, plus:
-  - `footer?`: Footer settings
-    - Function: `(props: FooterComponentProps) => ReactNode`
-    - Object: `{ confirm?: string; cancel?: string; hideConfirm?: boolean; hideCancel?: boolean }`
-    - `false`: Hide footer
+- `options`: 확인 모달 구성
+- `alert`와 동일한 옵션에 추가로:
+- `footer?`: 하단 설정
+  - 함수: `(props: FooterComponentProps) => ReactNode`
+- 객체: `{ confirm?: string; cancel?: string; hideConfirm?: boolean; hideCancel?: boolean }`
+- `false`: 푸터 숨기기
 
-**Returns:** `Promise<boolean>` - Resolves to true if confirmed, false if canceled
+**반환 값:** `Promise<boolean>` - 확인 시 true, 취소 시 false로 해결됩니다
 
 ```typescript
-// Example
+// 예시
 const result = await confirm({
-  title: 'Confirm',
-  content: 'Do you want to proceed?',
+  title: '확인',
+  content: '계속하시겠습니까?',
   footer: {
-    confirm: 'Confirm',
-    cancel: 'Cancel',
+    confirm: '확인',
+    cancel: '취소',
   },
 });
 ```
 
 #### `prompt<T>(options)`
 
-Opens a prompt modal to receive input from the user.
+사용자로부터 입력을 받기 위해 프롬프트 모달을 열습니다.
 
-**Parameters:**
+**매개변수:**
 
-- `options`: Prompt modal configuration object
-  - Same options as `alert`, plus:
-  - `Input`: Function to render input field
-    - `(props: PromptInputProps<T>) => ReactNode`
-    - props: `{ value: T; onChange: (value: T) => void }`
-  - `defaultValue?`: Default value (T)
-  - `disabled?`: Function to determine if confirm button should be disabled
-    - `(value: T) => boolean`
-  - `returnOnCancel?`: Whether to return default value on cancel (boolean)
-  - `footer?`: Footer settings (similar to confirm)
+- `options`: 프롬프트 모달 구성 객체
+- `alert`와 동일한 옵션에 추가로:
+- `Input`: 입력 필드를 렌더링하는 함수
+- `(props: PromptInputProps<T>) => ReactNode`
+- props: `{ value: T; onChange: (value: T) => void }`
+- `defaultValue?`: 기본 값 (T)
+  - `disabled?`: 확인 버튼을 비활성화할지 여부를 결정하는 함수
+- `(value: T) => boolean`
+- `returnOnCancel?`: 취소 시 기본 값을 반환할지 여부 (boolean)
+- `footer?`: 푸터 설정 (확인 모달과 유사)
 
-**Returns:** `Promise<T>` - Resolves to the input value
+**반환 값:** `Promise<T>` - 입력 값으로 해결됩니다
 
 ```typescript
-// Example
+// 예시
 const value = await prompt<string>({
-  title: 'Input',
+  title: '입력',
   defaultValue: '',
   Input: ({ value, onChange }) => (
     <input
@@ -802,36 +802,36 @@ const value = await prompt<string>({
 });
 ```
 
-### Components
+### 구성 요소
 
-#### `ModalProvider` (or `BootstrapProvider`)
+#### `ModalProvider` (또는 `BootstrapProvider`)
 
-Component that initializes and provides the modal service.
+모달 서비스를 초기화하고 제공하는 구성 요소.
 
-**Props:**
+**프로퍼티:**
 
-- `ForegroundComponent?`: Custom foreground component
+- `ForegroundComponent?`: 사용자 정의 포그라운드 구성 요소
+- `(props: WrapperComponentProps) => ReactNode`
+- `BackgroundComponent?`: 사용자 정의 배경 구성 요소
   - `(props: WrapperComponentProps) => ReactNode`
-- `BackgroundComponent?`: Custom background component
-  - `(props: WrapperComponentProps) => ReactNode`
-- `TitleComponent?`: Custom title component
-- `SubtitleComponent?`: Custom subtitle component
-- `ContentComponent?`: Custom content component
-- `FooterComponent?`: Custom footer component
-  - `(props: FooterComponentProps) => ReactNode`
-- `options?`: Global modal options
-  - `duration?`: Animation duration (milliseconds)
-  - `backdrop?`: Backdrop click handling
-  - Other options...
-- `context?`: Context object to pass to modal components
-- `usePathname?`: Custom pathname hook function
+- `TitleComponent?`: 사용자 정의 제목 컴포넌트
+- `SubtitleComponent?`: 사용자 정의 부제목 컴포넌트
+- `ContentComponent?`: 사용자 정의 콘텐츠 컴포넌트
+- `FooterComponent?`: 사용자 정의 푸터 컴포넌트
+- `(props: FooterComponentProps) => ReactNode`
+- `options?`: 글로벌 모달 옵션
+  - `duration?`: 애니메이션 지속 시간 (밀리초)
+- `backdrop?`: 배경 클릭 처리
+- 기타 옵션...
+- `context?`: 모달 컴포넌트에 전달할 컨텍스트 객체
+- `usePathname?`: 사용자 정의 경로 이름 훅 함수
 
-**Handle:**
+**처리:**
 
-- `initialize`: Method to manually initialize modal service
+- `initialize`: 모달 서비스를 수동으로 초기화하는 메서드
 
 ```typescript
-// Example using ref for control
+// ref를 사용하여 제어하는 예시
 import { useRef } from 'react';
 import { ModalProvider, ModalProviderHandle } from '@lerx/promise-modal';
 
@@ -854,7 +854,7 @@ function App() {
 
 #### `useModalOptions`
 
-Read global options for modals.
+모달의 글로벌 옵션을 읽습니다.
 
 ```typescript
 import { useModalOptions } from '@lerx/promise-modal';
@@ -869,13 +869,13 @@ function Component() {
 
 #### `useModalDuration`
 
-Read modal animation duration.
+모달 애니메이션 지속 시간을 읽습니다.
 
 ```typescript
 import { useModalDuration } from '@lerx/promise-modal';
 
 function Component() {
-  // duration is 300ms, milliseconds is 300
+  // duration은 300ms, 밀리초는 300
   const { duration, milliseconds } = useModalDuration();
   // ...
 }
@@ -883,13 +883,13 @@ function Component() {
 
 #### `useModalBackdrop`
 
-Read modal backdrop settings.
+모달 배경 설정 읽기.
 
 ```typescript
 import { useModalBackdrop } from '@lerx/promise-modal';
 
 function Component() {
-  // backdrop is Color(#000000~#ffffff or rgba(0,0,0,0.5))
+  // 배경색은 Color(#000000~#ffffff 또는 rgba(0,0,0,0.5))
   const backdrop = useModalBackdrop();
   // ...
 }
@@ -897,7 +897,7 @@ function Component() {
 
 #### `useInitializeModal`
 
-Initializes the modal service. Usually called automatically by `ModalProvider`.
+모달 서비스를 초기화합니다. 일반적으로 `ModalProvider`에 의해 자동으로 호출됩니다.
 
 ```typescript
 import { useInitializeModal } from '@lerx/promise-modal';
@@ -905,7 +905,7 @@ import { useInitializeModal } from '@lerx/promise-modal';
 function Component() {
   const { initialize } = useInitializeModal();
 
-  // Manually initialize if needed
+  // 필요 시 수동으로 초기화
   useEffect(() => {
     initialize();
   }, [initialize]);
@@ -916,13 +916,13 @@ function Component() {
 
 #### `useSubscribeModal`
 
-Subscribes to modal state changes.
+모달 상태 변경에 구독합니다.
 
 ```typescript
 import { useSubscribeModal } from '@lerx/promise-modal';
 
 function Component({ modal }) {
-  // Component rerenders when modal state changes
+  // 모달 상태가 변경되면 컴포넌트가 재렌더링됩니다
   const version = useSubscribeModal(modal);
 
   // ...
@@ -931,13 +931,13 @@ function Component({ modal }) {
 
 #### `useDestroyAfter`
 
-Automatically destroys a modal after specified time.
+지정된 시간이 지나면 모달을 자동으로 파괴합니다.
 
 ```typescript
 import { useDestroyAfter } from '@lerx/promise-modal';
 
 function Component({ modalId }) {
-  // Auto-close modal after 3 seconds
+  // 3초 후에 모달 자동 닫기
   useDestroyAfter(modalId, 3000);
 
   // ...
@@ -946,7 +946,7 @@ function Component({ modalId }) {
 
 #### `useActiveModalCount`
 
-Returns the number of currently active modals.
+현재 활성화된 모달의 수를 반환합니다.
 
 ```typescript
 import { useActiveModalCount } from '@lerx/promise-modal';
@@ -956,7 +956,7 @@ function Component() {
 
   return (
     <div>
-      Currently open modals: {count}
+      현재 열려 있는 모달: {count}
     </div>
   );
 }
@@ -964,7 +964,7 @@ function Component() {
 
 #### `useModalAnimation`
 
-Provides modal animation state and control.
+모달 애니메이션 상태 및 제어를 제공합니다.
 
 ```typescript
 import { useModalAnimation } from '@lerx/promise-modal';
@@ -977,7 +977,7 @@ export const Foreground = ({
   hideAfterMs,
 }: PropsWithChildren<ForegroundProps>) => {
   const modalRef = useRef<HTMLDivElement>(null);
-  useModalAnimation(visible, {
+useModalAnimation(visible, {
     onVisible: () => {
       modalRef.current?.classList.add(styles.visible);
     },
@@ -989,13 +989,13 @@ export const Foreground = ({
 }
 ```
 
-### Type Definitions
+### 유형 정의
 
-The library provides various types for TypeScript compatibility:
+라이브러리는 TypeScript 호환성을 위해 다양한 유형을 제공합니다:
 
 #### `ModalFrameProps`
 
-Properties passed to the modal frame component.
+모달 프레임 컴포넌트에 전달되는 속성.
 
 ```typescript
 interface ModalFrameProps<Context = any, B = any> {
@@ -1018,19 +1018,19 @@ interface ModalFrameProps<Context = any, B = any> {
 
 #### `FooterComponentProps`
 
-Properties passed to the footer component.
+푸터 컴포넌트에 전달되는 속성.
 
 ```typescript
 interface FooterComponentProps {
   onConfirm: () => void;
   onClose: () => void;
-  // Other props...
+  // 기타 속성...
 }
 ```
 
 #### `PromptInputProps<T>`
 
-Properties passed to the input component in prompt modals.
+프로ンプ트 모달의 입력 컴포넌트에 전달되는 속성.
 
 ```typescript
 interface PromptInputProps<T> {
@@ -1039,133 +1039,133 @@ interface PromptInputProps<T> {
 }
 ```
 
-Additional types provided:
+추가 유형:
 
-- `ModalBackground`: Modal background settings type
-- `AlertContentProps`: Alert modal content component props
-- `ConfirmContentProps`: Confirm modal content component props
-- `PromptContentProps`: Prompt modal content component props
-- `WrapperComponentProps`: Modal wrapper component props
+- `ModalBackground`: 모달 배경 설정 유형
+- `AlertContentProps`: 알림 모달 콘텐츠 컴포넌트 속성
+- `ConfirmContentProps`: 확인 모달 콘텐츠 컴포넌트 속성
+- `PromptContentProps`: 프롬프트 모달 콘텐츠 컴포넌트 속성
+- `WrapperComponentProps`: 모달 래퍼 컴포넌트 속성
 
 ---
 
-## Advanced Usage Examples
+## 고급 사용 예제
 
-### 1. Nested Modals (Opening Modals inside Other Modals)
+### 1. 중첩 모달 (다른 모달 내부에 모달 열기)
 
-You can open modals inside other modals to create complex user interactions.
+다른 모달 내부에 모달을 열어서 복잡한 사용자 상호작용을 만들 수 있습니다.
 
 ```tsx
 import { alert, confirm, prompt } from '@lerx/promise-modal';
 
-// Multi-step modal workflow example
+// 다단계 모달 워크플로우 예시
 async function multiStepProcess() {
-  // First modal: confirm to proceed
+  // 첫 번째 모달: 진행 여부를 확인
   const shouldProceed = await confirm({
-    title: 'Start Task',
-    content: 'This task involves multiple steps. Do you want to continue?',
+    title: '작업 시작',
+    content: '이 작업은 여러 단계로 구성되어 있습니다. 계속하시겠습니까?',
     footer: {
-      confirm: 'Proceed',
-      cancel: 'Cancel',
+      confirm: '진행',
+      cancel: '취소',
     },
   });
 
   if (!shouldProceed) return;
 
-  // Second modal: get user input
+  // 두 번째 모달: 사용자 입력 받기
   const userName = await prompt<string>({
-    title: 'User Information',
-    content: 'Please enter your name.',
+    title: '사용자 정보',
+    content: '이름을 입력해 주세요.',
     defaultValue: '',
     Input: ({ value, onChange }) => (
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Name"
+        placeholder="이름"
       />
     ),
   });
 
   if (!userName) return;
 
-  // Third modal: final confirmation
+  // 세 번째 모달: 최종 확인
   const confirmed = await confirm({
-    title: 'Final Confirmation',
-    content: `${userName}, are you sure you want to proceed?`,
+    title: '최종 확인',
+    content: `${userName}, 정말 계속하시겠습니까?`,
     subtype: 'warning',
   });
 
   if (confirmed) {
-    // Last modal: completion notification
+    // 마지막 모달: 완료 알림
     await alert({
-      title: 'Complete',
-      content: `${userName}, the task has been completed successfully.`,
+      title: '완료',
+      content: `${userName}, 작업이 성공적으로 완료되었습니다.`,
       subtype: 'success',
     });
   }
 }
 
-// Opening modal from within a footer
+// 풋터 내에서 모달 열기
 async function nestedModalInFooter() {
   const result = await confirm({
-    title: 'Confirmation Required',
-    content: 'Do you want to proceed with this task?',
-    // Custom footer that opens another modal
+    title: '확인 필요',
+    content: '이 작업을 계속하시겠습니까?',
+    // 다른 모달을 열기 위한 커스텀 풋터
     footer: ({ onConfirm, onClose }) => {
       const handleConfirm = async () => {
-        // Open another modal when confirm button is clicked
+        // 확인 버튼이 클릭되면 다른 모달 열기
         const isConfirmed = await confirm({
-          title: 'Final Confirmation',
-          content: 'Are you really sure? This action cannot be undone.',
+          title: '최종 확인',
+          content: '정말 확인하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
           closeOnBackdropClick: false,
-          // Apply different design to second modal
+          // 두 번째 모달에 다른 디자인 적용
           ForegroundComponent: CustomForegroundComponent,
         });
 
-        // Process first modal result based on second modal result
+        // 두 번째 모달 결과에 따라 첫 번째 모달 처리
         if (isConfirmed) onConfirm();
         else onClose();
       };
 
       return (
         <div>
-          <button onClick={onClose}>Cancel</button>
-          <button onClick={handleConfirm}>Next Step</button>
+          <button onClick={onClose}>취소</button>
+          <button onClick={handleConfirm}>다음 단계</button>
         </div>
       );
     },
   });
 
   if (result) {
-    console.log('Proceeding with the task.');
+    console.log('작업 진행 중입니다.');
   }
 }
 
-// Opening modal from within a prompt modal
+// 프롬프트 모달 내부에 모달 열기
 async function promptWithNestedModal() {
   const value = await prompt<{ title: string; description: string }>({
-    title: 'Create Content',
+    title: '콘텐츠 생성',
     defaultValue: { title: '', description: '' },
     Input: ({ value, onChange }) => {
-      // Show help modal when help button is clicked
+      // 도움말 버튼이 클릭되면 도움말 모달 표시
       const showHelp = () => {
         alert({
-          title: 'Help',
-          content: 'Enter a title and description. Title is required.',
+          title: '도움말',
+          content: '제목과 설명을 입력하세요. 제목은 필수입니다.',
         });
       };
 
       return (
         <div>
           <div>
-            <label>Title</label>
+            <label>제목</label>
             <input
               value={value.title}
               onChange={(e) => onChange({ ...value, title: e.target.value })}
             />
           </div>
           <div>
-            <label>Description</label>
+            <label>설명</label>
             <textarea
               value={value.description}
               onChange={(e) =>
@@ -1173,8 +1173,8 @@ async function promptWithNestedModal() {
               }
             />
           </div>
-          <button type="button" onClick={showHelp}>
-            Help
+          <button type=“button” onClick={showHelp}>
+도움말
           </button>
         </div>
       );
@@ -1182,22 +1182,22 @@ async function promptWithNestedModal() {
     disabled: (value) => !value.title,
   });
 
-  console.log('Input value:', value);
+  console.log('입력 값:', value);
 }
 ```
 
-## Browser Support
+## 브라우저 지원
 
-`@lerx/promise-modal` supports all modern browsers (Chrome, Firefox, Safari, Edge), but IE11 is not support.
-
----
-
-## License
-
-This repository is licensed under the MIT License. Please refer to the [`LICENSE`](./LICENSE) file for details.
+`@lerx/promise-modal`은 모든 현대 브라우저(Chrome, Firefox, Safari, Edge)를 지원하지만 IE11은 지원하지 않습니다.
 
 ---
 
-## Contact
+## 라이선스
 
-For inquiries or suggestions related to the project, please create an issue.
+이 저장소는 MIT 라이선스 하에 배포됩니다. 자세한 내용은 [`LICENSE`](./LICENSE) 파일을 참조하세요.
+
+---
+
+## 연락처
+
+프로젝트와 관련된 문의나 제안은 이슈를 생성해 주세요.

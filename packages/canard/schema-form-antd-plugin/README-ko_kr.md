@@ -8,13 +8,13 @@
 
 ---
 
-## Overview
+## 개요
 
-`@canard/schema-form-antd-plugin` is a plugin for `@canard/schema-form` that provides Ant Design components.
+`@canard/schema-form-antd-plugin`은 Ant Design 컴포넌트를 제공하는 `@canard/schema-form`용 플러그인입니다.
 
 ---
 
-## How to use
+## 사용 방법
 
 ```bash
 yarn add @canard/schema-form @canard/schema-form-antd-plugin
@@ -24,24 +24,24 @@ yarn add @canard/schema-form @canard/schema-form-antd-plugin
 import { SchemaForm, registerPlugin } from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-antd-plugin';
 
-// Plugin will be registered globally
+// 플러그인이 전역으로 등록됩니다
 registerPlugin(plugin);
 ```
 
 ---
 
-## Browser Support
+## 브라우저 지원
 
-`@canard/schema-form-antd-plugin` supports all modern browsers (Chrome, Firefox, Safari, Edge), but IE11 is not support.
-
----
-
-## License
-
-This repository is licensed under the MIT License. Please refer to the [`LICENSE`](./LICENSE) file for details.
+`@canard/schema-form-antd-plugin`은 모든 현대 브라우저(Chrome, Firefox, Safari, Edge)를 지원하지만 IE11은 지원하지 않습니다.
 
 ---
 
-## Contact
+## 라이선스
 
-For inquiries or suggestions related to the project, please create an issue.
+이 저장소는 MIT 라이선스 하에 배포됩니다. 자세한 내용은 [`LICENSE`](./LICENSE) 파일을 참조하세요.
+
+---
+
+## 연락처
+
+프로젝트와 관련된 문의나 제안은 이슈를 생성해 주세요.
