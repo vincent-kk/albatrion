@@ -135,8 +135,12 @@ yarn add @winglet/common-utils
 
 #### JSON
 
-- **[`JSONPath`](./src/utils/json/JSONPath)**: Expression system for searching and manipulating values in JSON data
-- **[`JSONPointer`](./src/utils/json/JSONPointer)**: Implementation of RFC 6901 JSON Pointer for referencing specific locations in a JSON document
+- **[`JSONPath`](./src/utils/json/JSONPath/enum.ts)**: An expression system for querying and manipulating specific values within JSON data.
+- **[`JSONPointer`](./src/utils/json/JSONPointer/enum.ts)**: An implementation of JSON Pointer as defined in RFC 6901, used to reference specific locations within a JSON document.
+  - **[`getValueByPointer`](./src/utils/json/JSONPointer/getValueByPointer.ts)**: Retrieves a value from JSON data based on a JSON Pointer.
+  - **[`setValueByPointer`](./src/utils/json/JSONPointer/setValueByPointer.ts)**: Sets a value in JSON data based on a JSON Pointer.
+  - **[`escapePointer`](./src/utils/json/JSONPointer/utils/escapePointer.ts)**: Escapes a JSON Pointer string.
+  - **[`unescapePointer`](./src/utils/json/JSONPointer/utils/unescapePointer.ts)**: Unescapes a JSON Pointer string.
 
 #### Object
 

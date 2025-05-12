@@ -139,8 +139,8 @@ yarn add @winglet/common-utils
 - **[`JSONPointer`](./src/utils/json/JSONPointer/enum.ts)**: RFC 6901에 정의된 JSON Pointer 구현으로, JSON 문서 내 특정 위치를 참조하는 문자열을 처리
   - **[`getValueByPointer`](./src/utils/json/JSONPointer/getValueByPointer.ts)**: JSON Pointer를 기반으로 JSON 데이터에서 값을 가져오는 함수
   - **[`setValueByPointer`](./src/utils/json/JSONPointer/setValueByPointer.ts)**: JSON Pointer를 기반으로 JSON 데이터에서 값을 설정하는 함수
-  - **[`escapePointer`](./src/utils/json/JSONPointer/escapePointer.ts)**: JSON Pointer를 이스케이프하는 함수
-  - **[`unescapePointer`](./src/utils/json/JSONPointer/unescapePointer.ts)**: JSON Pointer를 이스케이프 해제하는 함수
+  - **[`escapePointer`](./src/utils/json/JSONPointer/utils/escapePointer.ts)**: JSON Pointer를 이스케이프하는 함수
+  - **[`unescapePointer`](./src/utils/json/JSONPointer/utils/unescapePointer.ts)**: JSON Pointer를 이스케이프 해제하는 함수
 
 #### 객체 (Object)
 
