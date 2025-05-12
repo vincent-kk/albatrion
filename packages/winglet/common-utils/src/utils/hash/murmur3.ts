@@ -1,12 +1,11 @@
 /**
- * Murmur3 - A fast 32-bit hash algorithm optimized for browser environments
+ * [Murmur3](https://en.wikipedia.org/wiki/MurmurHash) - A fast 32-bit hash algorithm optimized for browser environments
  * Implementation based on the MurmurHash3 algorithm by Austin Appleby
  * Supports string, ArrayBuffer, and Uint8Array inputs with incremental hashing
  *
- * @see https://en.wikipedia.org/wiki/MurmurHash
  * @see https://github.com/aappleby/smhasher
  *
- * Note: This is a non-cryptographic hash function.
+ * NOTE: This is a non-cryptographic hash function.
  * Do not use for security-critical applications.
  */
 export class Murmur3 {

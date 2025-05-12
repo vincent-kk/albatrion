@@ -21,11 +21,17 @@ import {
 } from './utils/prepare';
 
 /**
- * 데이터 로딩 및 캐싱을 관리하는 클래스
- * 일관된 패턴을 사용하여 데이터를 배치로 로딩하고 캐싱하는 기능 제공
- * @template Key - 데이터 로딩을 위한 키 타입
- * @template Value - 로딩될 값의 타입
- * @template CacheKey - 캐시에 사용되는 키 타입
+ * DataLoader – A rewritten utility for batching and caching asynchronous data fetching.
+ *
+ * This implementation is inspired by the original "Loader" API developed by [@schrockn](https://github.com/schrockn)
+ * at Facebook in 2010, which was designed to simplify and consolidate various key-value store back-end APIs.
+ *
+ * While conceptually based on [GraphQL DataLoader](https://github.com/graphql/dataloader), this version is a
+ * ground-up rewrite focused on performance optimizations, type safety, and adaptation to specific runtime requirements.
+ *
+ * @see https://github.com/graphql/dataloader
+ *
+ * NOTE: This implementation may differ from the original API and is not guaranteed to be fully compatible.
  */
 export class DataLoader<Key = string, Value = any, CacheKey = Key> {
   /** DataLoader의 이름 */
