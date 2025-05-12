@@ -560,10 +560,6 @@ export abstract class AbstractNode<
       type: NodeEventType.UpdateError,
       payload: { [NodeEventType.UpdateError]: this.#mergedLocalErrors },
     });
-    this.publish({
-      type: NodeEventType.UpdateError,
-      payload: { [NodeEventType.UpdateError]: this.#mergedLocalErrors },
-    });
 
     if (this.isRoot) {
       this.#mergedOmniErrors = this.#omniErrors
