@@ -631,63 +631,7 @@ function showToastExample() {
 }
 ```
 
-### 6. Nested Modal Providers
-
-You can use multiple modal providers with different settings within the same application:
-
-```tsx
-import { ModalProvider, alert } from '@lerx/promise-modal';
-
-function NestedModalProviders() {
-  return (
-    <ModalProvider
-      options={{
-        duration: 300,
-        backdrop: 'rgba(0, 0, 0, 0.5)',
-      }}
-    >
-      {/* Modal using outer provider settings */}
-      <button
-        onClick={() =>
-          alert({
-            title: 'Outer Modal',
-            content: 'This uses outer modal provider settings.',
-          })
-        }
-      >
-        Open Outer Modal
-      </button>
-
-      {/* Inner provider with different settings */}
-      <div className="inner-section">
-        <ModalProvider
-          SubtitleComponent={() => (
-            <div className="custom-subtitle">Inner Modal</div>
-          )}
-          options={{
-            duration: 500,
-            backdrop: 'rgba(0, 0, 0, 0.8)',
-          }}
-        >
-          {/* Modal using inner provider settings */}
-          <button
-            onClick={() =>
-              alert({
-                title: 'Inner Modal',
-                content: 'This uses inner modal provider settings.',
-              })
-            }
-          >
-            Open Inner Modal
-          </button>
-        </ModalProvider>
-      </div>
-    </ModalProvider>
-  );
-}
-```
-
-### 7. Various Modal Configuration Options
+### 6. Various Modal Configuration Options
 
 Examples utilizing various modal configuration options:
 
@@ -1025,10 +969,23 @@ Provides modal animation state and control.
 ```typescript
 import { useModalAnimation } from '@lerx/promise-modal';
 
-function Component() {
-  const { isAnimating, animate } = useModalAnimation();
-
-  // ...
+export const Foreground = ({
+  id,
+  visible,
+  children,
+  onClose,
+  hideAfterMs,
+}: PropsWithChildren<ForegroundProps>) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+  useModalAnimation(visible, {
+    onVisible: () => {
+      modalRef.current?.classList.add(styles.visible);
+    },
+    onHidden: () => {
+      modalRef.current?.classList.remove(styles.visible);
+    },
+  });
+  ...
 }
 ```
 
