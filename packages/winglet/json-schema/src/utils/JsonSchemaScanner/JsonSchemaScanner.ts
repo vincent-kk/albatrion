@@ -1,4 +1,9 @@
-import { JSONPointer, clone, setValueByPointer } from '@winglet/common-utils';
+import {
+  JSONPointer,
+  clone,
+  getValueByPointer,
+  setValueByPointer,
+} from '@winglet/common-utils';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
@@ -202,5 +207,29 @@ export class JsonSchemaScanner<ContextType = void> {
         }
       }
     }
+  }
+
+  static resolveReference(
+    jsonSchema: UnknownSchema,
+  ): UnknownSchema | undefined {
+    const definitionMap = new Map<string, UnknownSchema>();
+    new JsonSchemaScanner({
+      visitor: {
+        exit: ({ schema, hasReference }) => {
+          if (hasReference && typeof schema.$ref === 'string')
+            definitionMap.set(
+              schema.$ref,
+              getValueByPointer(jsonSchema, schema.$ref),
+            );
+        },
+      },
+    }).scan(jsonSchema);
+    return new JsonSchemaScanner({
+      options: {
+        resolveReference: (path) => definitionMap.get(path),
+      },
+    })
+      .scan(jsonSchema)
+      .getValue();
   }
 }
