@@ -3,6 +3,7 @@ import { isArray, isObject } from '@winglet/common-utils';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import type { SchemaEntry } from '../type';
+import { $DEFS, DEFINITIONS } from './isDefinitionSchema';
 
 const CONDITIONAL_KEYWORDS = ['not', 'if', 'then', 'else'] as const;
 const COMPOSITION_KEYWORDS = ['allOf', 'anyOf', 'oneOf'] as const;
@@ -17,10 +18,11 @@ export const getStackEntriesForNode = (entry: SchemaEntry): SchemaEntry[] => {
   const { schema, path, depth } = entry;
   const entries: SchemaEntry[] = [];
 
-  if ('$defs' in schema) handleDefsNode(schema, entries, path, depth);
+  if ($DEFS in schema)
+    handleDefinitionsNode(schema, entries, path, depth, $DEFS);
 
-  if ('definitions' in schema)
-    handleDefinitionsNode(schema, entries, path, depth);
+  if (DEFINITIONS in schema)
+    handleDefinitionsNode(schema, entries, path, depth, DEFINITIONS);
 
   if ('additionalProperties' in schema && isObject(schema.additionalProperties))
     handleAdditionalProperties(schema, entries, path, depth);
@@ -39,31 +41,6 @@ export const getStackEntriesForNode = (entry: SchemaEntry): SchemaEntry[] => {
 };
 
 /**
- * $defs 노드의 하위 스키마들을 처리하여 스택 항목에 추가합니다.
- * @param schema 스키마 객체
- * @param entries 추가할 스택 항목 배열
- * @param path 현재 경로
- * @param depth 현재 깊이
- */
-const handleDefsNode = (
-  schema: UnknownSchema,
-  entries: SchemaEntry[],
-  path: string,
-  depth: number,
-) => {
-  const $defs = schema.$defs;
-  const keys = Object.keys($defs);
-  for (let i = keys.length - 1; i >= 0; i--) {
-    const key = keys[i];
-    entries.push({
-      schema: $defs[key],
-      path: `${path}/$defs/${key}`,
-      depth: depth + 1,
-    });
-  }
-};
-
-/**
  * definitions 노드의 하위 스키마들을 처리하여 스택 항목에 추가합니다.
  * @param schema 스키마 객체
  * @param entries 추가할 스택 항목 배열
@@ -75,14 +52,15 @@ const handleDefinitionsNode = (
   entries: SchemaEntry[],
   path: string,
   depth: number,
+  fieldName: string,
 ) => {
-  const definitions = schema.definitions;
+  const definitions = schema[fieldName];
   const keys = Object.keys(definitions);
   for (let i = keys.length - 1; i >= 0; i--) {
     const key = keys[i];
     entries.push({
       schema: definitions[key],
-      path: `${path}/definitions/${key}`,
+      path: `${path}/${fieldName}/${key}`,
       depth: depth + 1,
     });
   }

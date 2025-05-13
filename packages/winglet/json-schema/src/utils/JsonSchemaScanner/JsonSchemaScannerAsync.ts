@@ -3,13 +3,13 @@ import { JSONPointer, clone, setValueByPointer } from '@winglet/common-utils';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import {
-  $DEFS,
   type JsonScannerOptionsAsync,
   OperationPhase,
   type SchemaEntry,
   type SchemaVisitor,
 } from './type';
 import { getStackEntriesForNode } from './utils/getStackEntriesForNode';
+import { isDefinitionSchema } from './utils/isDefinitionSchema';
 
 interface JsonSchemaScannerProps<ContextType> {
   visitor?: SchemaVisitor<ContextType>;
@@ -80,7 +80,6 @@ export class JsonSchemaScannerAsync<ContextType = void> {
 
     this.#processedSchema = clone(this.#originalSchema);
     for (const [path, resolvedSchema] of this.#pendingResolves) {
-      if (path.includes($DEFS)) continue;
       this.#processedSchema = setValueByPointer(
         this.#processedSchema,
         path,
@@ -136,12 +135,13 @@ export class JsonSchemaScannerAsync<ContextType = void> {
               break;
             }
 
-            const resolvedReference = this.#options.resolveReference
-              ? await this.#options.resolveReference(
-                  referencePath,
-                  this.#options.context,
-                )
-              : undefined;
+            const resolvedReference =
+              this.#options.resolveReference && !isDefinitionSchema(entry.path)
+                ? await this.#options.resolveReference(
+                    referencePath,
+                    this.#options.context,
+                  )
+                : undefined;
 
             if (resolvedReference) {
               if (!this.#pendingResolves) this.#pendingResolves = new Array();

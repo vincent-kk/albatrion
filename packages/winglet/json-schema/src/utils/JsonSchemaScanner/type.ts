@@ -13,8 +13,6 @@ export enum OperationPhase {
   Exit = 1 << 3,
 }
 
-export const $DEFS = '$defs';
-
 export interface SchemaEntry {
   /** 처리 중인 스키마 노드 */
   schema: UnknownSchema;
