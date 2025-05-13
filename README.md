@@ -21,19 +21,19 @@ Each package provides individual `README.md` documentation with detailed usage i
 
 ### `canard`
 
-- **[`canard/schema-form`](./packages/canard/schema-form/README.md)** - JSON Schema based form utilities
-- **[`canard/schema-form-antd-plugin`](./packages/canard/schema-form-antd-plugin/README.md)** - Ant Design plugin applicable to `canard/schema-form`
-- **[`canard/schema-form-antd-mobile-plugin`](./packages/canard/schema-form-antd-mobile-plugin/README.md)** - Ant Design Mobile plugin applicable to `canard/schema-form`
+- **[`@canard/schema-form`](./packages/canard/schema-form/README.md)** - JSON Schema based form utilities
+- **[`@canard/schema-form-antd-plugin`](./packages/canard/schema-form-antd-plugin/README.md)** - Ant Design plugin applicable to `canard/schema-form`
+- **[`@canard/schema-form-antd-mobile-plugin`](./packages/canard/schema-form-antd-mobile-plugin/README.md)** - Ant Design Mobile plugin applicable to `canard/schema-form`
 
 ### `lerx`
 
-- **[`lerx/promise-modal`](./packages/lerx/promise-modal/README.md)** - Promise-based modal utilities
+- **[`@lerx/promise-modal`](./packages/lerx/promise-modal/README.md)** - Promise-based modal utilities
 
 ### `winglet`
 
-- **[`winglet/common-utils`](./packages/winglet/common-utils/README.md)** - JavaScript utilities
-- **[`winglet/json-schema`](./packages/winglet/json-schema/README.md)** - JSON Schema utilities
-- **[`winglet/react-utils`](./packages/winglet/react-utils/README.md)** - React utilities
+- **[`@winglet/common-utils`](./packages/winglet/common-utils/README.md)** - JavaScript utilities
+- **[`@winglet/json-schema`](./packages/winglet/json-schema/README.md)** - JSON Schema utilities
+- **[`@winglet/react-utils`](./packages/winglet/react-utils/README.md)** - React utilities
 
 ---
 

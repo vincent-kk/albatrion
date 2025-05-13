@@ -21,19 +21,19 @@
 
 ### `canard`
 
-- **[`canard/schema-form`](./packages/canard/schema-form/README-ko_kr.md)** - JSON Schema 기반 폼 유틸리티
-- **[`canard/schema-form-antd-plugin`](./packages/canard/schema-form-antd-plugin/README-ko_kr.md)** - `canard/schema-form`에 적용할 수 있는 Ant Design 플러그인
-- **[`canard/schema-form-antd-mobile-plugin`](./packages/canard/schema-form-antd-mobile-plugin/README-ko_kr.md)** - `canard/schema-form`에 적용할 수 있는 Ant Design Mobile 플러그인
+- **[`@canard/schema-form`](./packages/canard/schema-form/README-ko_kr.md)** - JSON Schema 기반 폼 유틸리티
+- **[`@canard/schema-form-antd-plugin`](./packages/canard/schema-form-antd-plugin/README-ko_kr.md)** - `canard/schema-form`에 적용할 수 있는 Ant Design 플러그인
+- **[`@canard/schema-form-antd-mobile-plugin`](./packages/canard/schema-form-antd-mobile-plugin/README-ko_kr.md)** - `canard/schema-form`에 적용할 수 있는 Ant Design Mobile 플러그인
 
 ### `lerx`
 
-- **[`lerx/promise-modal`](./packages/lerx/promise-modal/README-ko_kr.md)** - Promise 기반 모달 유틸리티
+- **[`@lerx/promise-modal`](./packages/lerx/promise-modal/README-ko_kr.md)** - Promise 기반 모달 유틸리티
 
 ### `winglet`
 
-- **[`winglet/common-utils`](./packages/winglet/common-utils/README-ko_kr.md)** - JavaScript 유틸리티
-- **[`winglet/json-schema`](./packages/winglet/json-schema/README-ko_kr.md)** - JSON Schema 유틸리티
-- **[`winglet/react-utils`](./packages/winglet/react-utils/README-ko_kr.md)** - React 유틸리티
+- **[`@winglet/common-utils`](./packages/winglet/common-utils/README-ko_kr.md)** - JavaScript 유틸리티
+- **[`@winglet/json-schema`](./packages/winglet/json-schema/README-ko_kr.md)** - JSON Schema 유틸리티
+- **[`@winglet/react-utils`](./packages/winglet/react-utils/README-ko_kr.md)** - React 유틸리티
 
 ---
 
