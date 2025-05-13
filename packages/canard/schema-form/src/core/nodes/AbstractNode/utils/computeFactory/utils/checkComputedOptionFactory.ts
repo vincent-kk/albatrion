@@ -4,7 +4,7 @@ import type { Fn } from '@aileron/declare';
 
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
-import { JSON_PATH_REGEX } from './regex';
+import { ALIAS, JSON_PATH_REGEX } from './regex';
 
 type CheckComputedOption = Fn<[dependencies: unknown[]], boolean>;
 
@@ -30,9 +30,9 @@ export const checkComputedOptionFactory =
     fieldName: string,
     checkCondition: boolean,
   ): CheckComputedOption | undefined => {
-    // computed 또는 가상 속성에서 표현식 추출
+    // `computed.[<fieldName>]` 또는 `&[<fieldName>]` 필드에서 표현식 추출
     const expression =
-      jsonSchema?.computed?.[fieldName] ?? jsonSchema?.[`&${fieldName}`];
+      jsonSchema?.computed?.[fieldName] ?? jsonSchema?.[`${ALIAS}${fieldName}`];
 
     // 선호되는 조건이 이미 boolean 값과 일치하는지 확인
     const preferredCondition =

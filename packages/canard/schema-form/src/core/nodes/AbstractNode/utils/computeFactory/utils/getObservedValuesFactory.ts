@@ -4,6 +4,8 @@ import type { Fn } from '@aileron/declare';
 
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
+import { ALIAS } from './regex';
+
 type GetObservedValues = Fn<[dependencies: unknown[]], unknown[]>;
 
 /**
@@ -25,8 +27,9 @@ export const getObservedValuesFactory =
     dependencyPaths: string[],
     fieldName: string,
   ): GetObservedValues | undefined => {
-    // computed 또는 가상 속성에서 watch 값 추출
-    const watch = schema?.computed?.[fieldName] ?? schema?.[`&${fieldName}`];
+    // `computed.[<fieldName>]` 또는 `&[<fieldName>]` 필드에서 표현식 추출
+    const watch =
+      schema?.computed?.[fieldName] ?? schema?.[`${ALIAS}${fieldName}`];
 
     // 유효한 watch 값이 없으면 undefined 반환
     if (!watch || !(isString(watch) || isArray(watch))) return;

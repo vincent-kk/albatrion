@@ -4,7 +4,7 @@ import type { Fn } from '@aileron/declare';
 
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
-import { JSON_PATH_REGEX } from './regex';
+import { ALIAS, JSON_PATH_REGEX } from './regex';
 
 type GetConditionIndex = Fn<[dependencies: unknown[]], number>;
 
@@ -28,11 +28,13 @@ export const getConditionIndexFactory =
    *
    * @param dependencyPaths - 의존성 경로 배열
    * @param fieldName - 인덱스를 계산할 필드명 (oneOf, anyOf 등)
+   * @param conditionField - 조건이 명시된 필드명 (if, ifNot, ifAny, ifAll)
    * @returns 조건 인덱스 계산 함수 또는 undefined
    */
   (
     dependencyPaths: string[],
     fieldName: string,
+    conditionField: string,
   ): GetConditionIndex | undefined => {
     // 유효하지 않은 스키마면 undefined 반환
     if (jsonSchema.type !== 'object' || !isArray(jsonSchema[fieldName]))
@@ -44,9 +46,10 @@ export const getConditionIndexFactory =
 
     // 유효한 표현식만 수집하고 원래 스키마 인덱스 유지
     for (let index = 0; index < conditionSchemas.length; index++) {
+      // `computed.[<conditionField>]` 또는 `&[<conditionField>]` 필드에서 표현식 추출
       const condition =
-        conditionSchemas[index]?.computed?.if ??
-        conditionSchemas[index]?.['&if'];
+        conditionSchemas[index]?.computed?.[conditionField] ??
+        conditionSchemas[index]?.[`${ALIAS}${conditionField}`];
 
       // 불리언 조건 처리
       if (typeof condition === 'boolean') {

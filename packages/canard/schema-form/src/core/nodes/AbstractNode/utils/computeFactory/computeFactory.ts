@@ -25,7 +25,7 @@ export const computeFactory = (
     visible: checkComputedOption(dependencyPaths, 'visible', false),
     readOnly: checkComputedOption(dependencyPaths, 'readOnly', true),
     disabled: checkComputedOption(dependencyPaths, 'disabled', true),
-    oneOfIndex: getConditionIndex(dependencyPaths, 'oneOf'),
+    oneOfIndex: getConditionIndex(dependencyPaths, 'oneOf', 'if'),
     watchValues: getObservedValues(dependencyPaths, 'watch'),
   };
 };
