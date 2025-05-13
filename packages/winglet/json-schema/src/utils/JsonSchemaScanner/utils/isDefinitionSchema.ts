@@ -11,16 +11,16 @@ export const isDefinitionSchema = (path: string): boolean => {
   const segments: string[] = [];
   let start = path[0] === '/' ? 1 : 2;
   let cursor = start;
-  let lastLoop = false;
+  let isFinal = false;
 
   while (cursor <= path.length) {
     let end = cursor;
     while (end < path.length && path[end] !== '/') end++;
     if (end > cursor) {
       const segment = path.slice(start, end);
-      segments[segments.length] = segment;
-      if (lastLoop) break;
-      lastLoop = segment === $DEFS || segment === DEFINITIONS;
+      segments.push(segment);
+      if (isFinal) break;
+      isFinal = segment === $DEFS || segment === DEFINITIONS;
     }
     start = end + 1;
     cursor = start;
