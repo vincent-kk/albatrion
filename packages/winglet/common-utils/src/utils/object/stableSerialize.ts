@@ -62,7 +62,7 @@ const createHash = (
     if (isArray(input)) {
       const segments = [];
       for (let index = 0; index < input.length; index++) {
-        segments.push(createHash(input[index], omit, omitHash));
+        segments[segments.length] = createHash(input[index], omit, omitHash);
       }
       result = `${omitHash}[${segments.join(',')}]`;
     } else if (isPlainObject(input)) {
@@ -71,7 +71,8 @@ const createHash = (
       let key: string;
       while (!isUndefined((key = keys.pop() as string))) {
         if (omit?.has(key)) continue;
-        segments.push(key + ':' + createHash(input[key], omit, omitHash));
+        segments[segments.length] =
+          key + ':' + createHash(input[key], omit, omitHash);
       }
       result = `${omitHash}{${segments.join('|')}}`;
     }

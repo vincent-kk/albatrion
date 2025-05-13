@@ -22,7 +22,7 @@ export const differenceWith = <Type1, Type2>(
         isFound = true;
         break;
       }
-    if (!isFound) result.push(item);
+    if (!isFound) result[result.length] = item;
   }
   return result;
 };

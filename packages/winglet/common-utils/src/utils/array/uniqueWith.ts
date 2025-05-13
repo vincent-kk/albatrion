@@ -20,7 +20,7 @@ export const uniqueWith = <Type>(
         isDuplicate = true;
         break;
       }
-    if (!isDuplicate) result.push(item);
+    if (!isDuplicate) result[result.length] = item;
   }
   return result;
 };

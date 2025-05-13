@@ -26,11 +26,11 @@ export const hasUndefined = (value: any): boolean => {
 
     if (Array.isArray(current)) {
       for (let i = 0, len = current.length; i < len; i++)
-        stack.push(current[i]);
+        stack[stack.length] = current[i];
     } else {
       const keys = getKeys(current);
       for (let i = 0, len = keys.length; i < len; i++)
-        stack.push(current[keys[i]]);
+        stack[stack.length] = current[keys[i]];
     }
   }
 

@@ -32,7 +32,7 @@ export const getObjectKeys = <Type extends Dictionary>(
     const filteredKeys: Array<keyof Type> = [];
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
-      if (!omits.has(key)) filteredKeys.push(key);
+      if (!omits.has(key)) filteredKeys[filteredKeys.length] = key;
     }
     keys = filteredKeys;
   }

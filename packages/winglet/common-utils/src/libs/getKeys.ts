@@ -16,6 +16,7 @@ export const getKeys = <Value>(value: Value) => {
   }
   if (value && typeof value === 'object') return Object.keys(value);
   const keys = [];
-  for (let i in value) if (hasOwnProperty(value, i)) keys.push(i);
+  for (const key in value)
+    if (hasOwnProperty(value, key)) keys[keys.length] = key;
   return keys;
 };

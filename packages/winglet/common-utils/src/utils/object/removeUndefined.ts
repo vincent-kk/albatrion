@@ -18,7 +18,7 @@ export const removeUndefined = <Type>(input: Type): Type => {
     const result = [] as typeof input;
     for (let i = 0; i < input.length; i++) {
       const item = removeUndefined(input[i]);
-      if (item !== undefined) result.push(item);
+      if (item !== undefined) result[result.length] = item;
     }
     return result;
   }

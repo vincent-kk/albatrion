@@ -28,14 +28,14 @@ export const getFieldConditionMap = (
     // 1. required 필드 처리 (기존과 동일)
     for (let j = 0; j < required.length; j++) {
       const field = required[j];
-      const prev = fieldConditionMap.get(field);
-      if (prev === true) continue; // 이미 true면 skip
-      if (!prev) fieldConditionMap.set(field, [{ condition, inverse }]);
-      else prev.push({ condition, inverse });
+      const previous = fieldConditionMap.get(field);
+      if (previous === true) continue; // 이미 true면 skip
+      if (!previous) fieldConditionMap.set(field, [{ condition, inverse }]);
+      else previous.push({ condition, inverse });
     }
     // 2. condition에만 등장하는 필드 처리
-    for (const condField of Object.keys(condition))
-      if (!required.includes(condField)) fieldConditionMap.set(condField, true);
+    for (const key of Object.keys(condition))
+      if (!required.includes(key)) fieldConditionMap.set(key, true);
   }
   return fieldConditionMap;
 };

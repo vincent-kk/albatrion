@@ -20,7 +20,8 @@ export const getSymbols = <Type extends object>(
   const result: Array<symbol> = [];
   for (let i = 0; i < symbols.length; i++) {
     const symbol = symbols[i];
-    if (propertyIsEnumerable.call(object, symbol)) result.push(symbol);
+    if (propertyIsEnumerable.call(object, symbol))
+      result[result.length] = symbol;
   }
   return result;
 };

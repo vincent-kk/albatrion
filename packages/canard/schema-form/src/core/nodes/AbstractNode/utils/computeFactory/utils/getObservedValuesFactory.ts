@@ -53,7 +53,7 @@ export const getObservedValuesFactory =
       `const result = [];
      const indexes = [${watchValueIndexes.join(',')}];
      for (let i = 0; i < indexes.length; i++)
-       result.push(dependencies[indexes[i]]);
+       result[result.length] = dependencies[indexes[i]];
      return result;`,
     ) as GetObservedValues;
   };

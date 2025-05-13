@@ -19,7 +19,7 @@ export const intersectionWith = <Type1, Type2>(
     const item = source[i];
     for (let j = 0; j < target.length; j++) {
       if (isEqual(item, target[j])) {
-        result.push(item);
+        result[result.length] = item;
         break;
       }
     }

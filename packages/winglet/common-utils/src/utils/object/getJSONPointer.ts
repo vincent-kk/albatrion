@@ -49,7 +49,7 @@ const getPointer = (
           const segments = escapePointer('' + index);
           const path = currentPath ? `${currentPath}/${segments}` : segments;
           if (value === target) return path;
-          if (isObject(value)) stack.push([value, path]);
+          if (isObject(value)) stack[stack.length] = [value, path] as const;
         }
       } else {
         for (const key in currentNode) {
@@ -58,7 +58,7 @@ const getPointer = (
           const segments = escapePointer(key);
           const path = currentPath ? `${currentPath}/${segments}` : segments;
           if (value === target) return path;
-          if (isObject(value)) stack.push([value, path]);
+          if (isObject(value)) stack[stack.length] = [value, path] as const;
         }
       }
     }

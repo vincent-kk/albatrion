@@ -20,7 +20,7 @@ export const differenceBy = <Type1, Type2>(
   for (let i = 0; i < source.length; i++) {
     const item = source[i];
     const mappedItem = mapper(item);
-    if (!excludeSet.has(mappedItem)) result.push(item);
+    if (!excludeSet.has(mappedItem)) result[result.length] = item;
   }
   return result;
 };

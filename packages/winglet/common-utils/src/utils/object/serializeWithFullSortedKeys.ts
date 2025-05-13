@@ -22,8 +22,8 @@ export const serializeWithFullSortedKeys = (object: any): string => {
       const value = obj[key];
       const fullKey = prefix ? `${prefix}.${key}` : key;
       if (value && typeof value === 'object')
-        stack.push({ obj: value, prefix: fullKey });
-      else parts.push(`${fullKey}:${String(value)}`);
+        stack[stack.length] = { obj: value, prefix: fullKey };
+      else parts[parts.length] = `${fullKey}:${String(value)}`;
     }
   }
   return parts.join('|');

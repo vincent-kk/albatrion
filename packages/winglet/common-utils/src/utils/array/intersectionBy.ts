@@ -20,7 +20,7 @@ export const intersectionBy = <Type1, Type2>(
   const result: Type1[] = [];
   for (let i = 0; i < source.length; i++) {
     const item = source[i];
-    if (targetSet.has(mapper(item))) result.push(item);
+    if (targetSet.has(mapper(item))) result[result.length] = item;
   }
   return result;
 };

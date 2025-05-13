@@ -77,13 +77,11 @@ const flattenConditionsInto = (
           } else {
             // 배열로 병합
             const merged: string[] = [];
-            values.forEach((value) => {
-              if (Array.isArray(value)) {
-                merged.push(...value);
-              } else {
-                merged.push(value);
-              }
-            });
+            for (let i = 0; i < values.length; i++) {
+              const value = values[i];
+              if (isArray(value)) merged.push(...value);
+              else merged.push(value);
+            }
             inverseCondition[key] = merged;
           }
         }
