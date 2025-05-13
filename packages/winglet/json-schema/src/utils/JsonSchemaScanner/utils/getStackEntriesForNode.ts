@@ -2,7 +2,8 @@ import { isArray, isObject } from '@winglet/common-utils';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import { $DEFS, DEFINITIONS, type SchemaEntry } from '../type';
+import type { SchemaEntry } from '../type';
+import { $DEFS, DEFINITIONS } from './isDefinitionSchema';
 
 const CONDITIONAL_KEYWORDS = ['not', 'if', 'then', 'else'] as const;
 const COMPOSITION_KEYWORDS = ['allOf', 'anyOf', 'oneOf'] as const;
