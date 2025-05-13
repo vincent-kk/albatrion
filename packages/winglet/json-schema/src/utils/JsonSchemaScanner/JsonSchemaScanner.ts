@@ -8,13 +8,13 @@ import {
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import {
-  $DEFS,
   type JsonScannerOptions,
   OperationPhase,
   type SchemaEntry,
   type SchemaVisitor,
 } from './type';
 import { getStackEntriesForNode } from './utils/getStackEntriesForNode';
+import { isDefinitionSchema } from './utils/isDefinitionSchema';
 
 interface JsonSchemaScannerProps<ContextType> {
   visitor?: SchemaVisitor<ContextType>;
@@ -87,7 +87,6 @@ export class JsonSchemaScanner<ContextType = void> {
 
     this.#processedSchema = clone(this.#originalSchema);
     for (const [path, resolvedSchema] of this.#pendingResolves) {
-      if (path.includes($DEFS)) continue;
       this.#processedSchema = setValueByPointer(
         this.#processedSchema,
         path,
@@ -139,11 +138,13 @@ export class JsonSchemaScanner<ContextType = void> {
               entryPhase.set(entry, OperationPhase.Exit);
               break;
             }
-
-            const resolvedReference = this.#options.resolveReference?.(
-              referencePath,
-              this.#options.context,
-            );
+            const resolvedReference =
+              this.#options.resolveReference && !isDefinitionSchema(entry.path)
+                ? this.#options.resolveReference(
+                    referencePath,
+                    this.#options.context,
+                  )
+                : undefined;
 
             if (resolvedReference) {
               if (!this.#pendingResolves) this.#pendingResolves = new Array();
