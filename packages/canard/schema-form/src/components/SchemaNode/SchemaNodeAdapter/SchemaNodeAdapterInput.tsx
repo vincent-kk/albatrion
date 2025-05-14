@@ -40,7 +40,8 @@ export const SchemaNodeAdapterInput = memo(
         if (node.readOnly || node.disabled) return;
         node.setValue(input, option);
         node.clearExternalErrors();
-        node.setState({ [NodeState.Dirty]: true });
+        if (!node.state[NodeState.Dirty])
+          node.setState({ [NodeState.Dirty]: true });
       },
       [node],
     );
@@ -51,6 +52,7 @@ export const SchemaNodeAdapterInput = memo(
       clearTimeout(feedbackTimer.current);
     }, []);
     const handleBlur = useCallback(() => {
+      if (node.state[NodeState.Touched]) return;
       feedbackTimer.current = setTimeout(() => {
         node.setState({ [NodeState.Touched]: true });
       });
