@@ -476,7 +476,7 @@ export abstract class AbstractNode<
   }
 
   /** 외부에서 전달받은 Error */
-  #receivedErrors: JsonSchemaError[] = [];
+  #externalErrors: JsonSchemaError[] = [];
 
   /** [Root Node Only] Form 내부에서 발생한 Error 전체 */
   #globalErrors: JsonSchemaError[] | undefined;
@@ -518,7 +518,7 @@ export abstract class AbstractNode<
   setErrors(this: AbstractNode, errors: JsonSchemaError[]) {
     if (equals(this.#localErrors, errors)) return;
     this.#localErrors = errors;
-    this.#mergedLocalErrors = [...this.#receivedErrors, ...this.#localErrors];
+    this.#mergedLocalErrors = [...this.#externalErrors, ...this.#localErrors];
     this.publish({
       type: NodeEventType.UpdateError,
       payload: { [NodeEventType.UpdateError]: this.#mergedLocalErrors },
@@ -528,7 +528,7 @@ export abstract class AbstractNode<
   #setGlobalErrors(this: AbstractNode, errors: JsonSchemaError[]) {
     if (equals(this.#globalErrors, errors)) return false;
     this.#globalErrors = errors;
-    this.#mergedGlobalErrors = [...this.#receivedErrors, ...this.#globalErrors];
+    this.#mergedGlobalErrors = [...this.#externalErrors, ...this.#globalErrors];
     this.publish({
       type: NodeEventType.UpdateGlobalError,
       payload: { [NodeEventType.UpdateGlobalError]: this.#mergedGlobalErrors },
@@ -547,15 +547,15 @@ export abstract class AbstractNode<
    * 외부에서 전달받은 Error를 로컬 Error와 병합합니다. rootNode의 경우 internalError도 병합합니다.
    * @param errors - 전달받은 Error 목록
    */
-  setReceivedErrors(this: AbstractNode, errors: JsonSchemaError[] = []) {
-    if (equals(this.#receivedErrors, errors, RECURSIVE_ERROR_OMITTED_KEYS))
+  setExternalErrors(this: AbstractNode, errors: JsonSchemaError[] = []) {
+    if (equals(this.#externalErrors, errors, RECURSIVE_ERROR_OMITTED_KEYS))
       return;
 
-    this.#receivedErrors = new Array<JsonSchemaError>(errors.length);
+    this.#externalErrors = new Array<JsonSchemaError>(errors.length);
     for (let index = 0; index < errors.length; index++)
-      this.#receivedErrors[index] = { ...errors[index], key: index };
+      this.#externalErrors[index] = { ...errors[index], key: index };
 
-    this.#mergedLocalErrors = [...this.#receivedErrors, ...this.#localErrors];
+    this.#mergedLocalErrors = [...this.#externalErrors, ...this.#localErrors];
     this.publish({
       type: NodeEventType.UpdateError,
       payload: { [NodeEventType.UpdateError]: this.#mergedLocalErrors },
@@ -563,8 +563,8 @@ export abstract class AbstractNode<
 
     if (this.isRoot) {
       this.#mergedGlobalErrors = this.#globalErrors
-        ? [...this.#receivedErrors, ...this.#globalErrors]
-        : this.#receivedErrors;
+        ? [...this.#externalErrors, ...this.#globalErrors]
+        : this.#externalErrors;
       this.publish({
         type: NodeEventType.UpdateGlobalError,
         payload: {
@@ -577,26 +577,26 @@ export abstract class AbstractNode<
   /**
    * 외부에서 전달받은 Error를 초기화합니다. localErrors / internalErrors는 초기화하지 않습니다.
    */
-  clearReceivedErrors(this: AbstractNode) {
-    if (!this.#receivedErrors.length) return;
+  clearExternalErrors(this: AbstractNode) {
+    if (!this.#externalErrors.length) return;
     if (!this.isRoot)
-      this.rootNode.removeFromReceivedErrors(this.#receivedErrors);
-    this.setReceivedErrors([]);
+      this.rootNode.removeFromExternalErrors(this.#externalErrors);
+    this.setExternalErrors([]);
   }
 
   /**
    * 외부에서 전달받은 Error 중 삭제할 Error를 찾아서 삭제합니다.
    * @param errors - 삭제할 Error 목록
    */
-  removeFromReceivedErrors(this: AbstractNode, errors: JsonSchemaError[]) {
+  removeFromExternalErrors(this: AbstractNode, errors: JsonSchemaError[]) {
     const deleteKeys: Array<number> = [];
     for (const error of errors)
       if (typeof error.key === 'number') deleteKeys.push(error.key);
     const nextErrors: JsonSchemaError[] = [];
-    for (const error of this.#receivedErrors)
+    for (const error of this.#externalErrors)
       if (!error.key || !deleteKeys.includes(error.key)) nextErrors.push(error);
-    if (this.#receivedErrors.length !== nextErrors.length)
-      this.setReceivedErrors(nextErrors);
+    if (this.#externalErrors.length !== nextErrors.length)
+      this.setExternalErrors(nextErrors);
   }
 
   /** Node의 Ajv 검증 함수 */

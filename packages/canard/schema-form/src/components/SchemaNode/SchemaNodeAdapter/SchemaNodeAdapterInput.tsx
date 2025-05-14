@@ -39,7 +39,7 @@ export const SchemaNodeAdapterInput = memo(
       (input, option = HANDLE_CHANGE_OPTION) => {
         if (node.readOnly || node.disabled) return;
         node.setValue(input, option);
-        node.clearReceivedErrors();
+        node.clearExternalErrors();
         node.setState({ [NodeState.Dirty]: true });
       },
       [node],

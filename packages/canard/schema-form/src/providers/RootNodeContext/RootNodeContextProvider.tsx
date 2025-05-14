@@ -113,14 +113,14 @@ export const RootNodeContextProvider = <
       currentErrorDictionary[error.dataPath].push(error);
     }
 
-    rootNode.setReceivedErrors(transformedErrors);
+    rootNode.setExternalErrors(transformedErrors);
 
     const paths = new Set([
       ...Object.keys(lastErrorDictionary.current),
       ...Object.keys(currentErrorDictionary),
     ]);
     for (const path of paths)
-      rootNode.find(path)?.setReceivedErrors(currentErrorDictionary[path]);
+      rootNode.find(path)?.setExternalErrors(currentErrorDictionary[path]);
 
     lastErrorDictionary.current = currentErrorDictionary;
   }, [errors, rootNode]);

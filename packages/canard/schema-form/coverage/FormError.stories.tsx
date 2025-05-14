@@ -50,7 +50,7 @@ export const Errors = () => {
     setErrors([]);
   };
 
-  const setReceivedErrors = () => {
+  const setExternalErrors = () => {
     setErrors([
       {
         keyword: 'wrongInput',
@@ -81,8 +81,8 @@ export const Errors = () => {
         errors={errors}
         showError={true}
       />
-      <button onClick={clearErrors}>clear received errors</button>
-      <button onClick={setReceivedErrors}>set received errors</button>
+      <button onClick={clearErrors}>clear external errors</button>
+      <button onClick={setExternalErrors}>set external errors</button>
     </StoryLayout>
   );
 };

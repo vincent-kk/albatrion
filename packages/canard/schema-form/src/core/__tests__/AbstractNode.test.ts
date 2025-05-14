@@ -297,15 +297,15 @@ describe('AbstractNode', () => {
         },
       },
     });
-    let receivedEvent: NodeEvent | undefined;
+    let externalEvent: NodeEvent | undefined;
     node.subscribe((event) => {
-      receivedEvent = event;
+      externalEvent = event;
     });
 
     await wait();
 
     // 최초로 node tree를 만들때 발생하는 이벤트
-    expect(receivedEvent).toEqual({
+    expect(externalEvent).toEqual({
       type:
         NodeEventType.Activated |
         NodeEventType.UpdateValue |
@@ -321,7 +321,7 @@ describe('AbstractNode', () => {
     });
 
     node?.find('period')?.subscribe((event) => {
-      receivedEvent = event;
+      externalEvent = event;
     });
 
     await wait();
@@ -332,7 +332,7 @@ describe('AbstractNode', () => {
 
     await wait();
 
-    expect(receivedEvent).toEqual({
+    expect(externalEvent).toEqual({
       type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: [undefined, '2021-01-02'],
