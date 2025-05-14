@@ -479,13 +479,13 @@ export abstract class AbstractNode<
   #receivedErrors: JsonSchemaError[] = [];
 
   /** [Root Node Only] Form 내부에서 발생한 Error 전체 */
-  #omniErrors: JsonSchemaError[] | undefined;
+  #globalErrors: JsonSchemaError[] | undefined;
 
   /** [Root Node Only] Form 내부에서 발생한 Error 전체의 dataPath 목록 */
   #errorDataPaths: string[] | undefined;
 
   /** [Root Node Only] Form 내부에서 발생한 Error 전체와 외부에서 전달받은 Error를 병합한 결과 */
-  #mergedOmniErrors: JsonSchemaError[] | undefined;
+  #mergedGlobalErrors: JsonSchemaError[] | undefined;
 
   /** 자신의 Error */
   #localErrors: JsonSchemaError[] = [];
@@ -497,10 +497,10 @@ export abstract class AbstractNode<
    * Form 내부에서 발생한 Error와 외부에서 전달받은 Error를 병합한 결과를 반환합니다.
    * @returns 병합된 내부 Error 목록
    */
-  get omniErrors() {
+  get globalErrors() {
     return this.isRoot
-      ? this.#mergedOmniErrors
-      : this.rootNode.#mergedOmniErrors;
+      ? this.#mergedGlobalErrors
+      : this.rootNode.#mergedGlobalErrors;
   }
 
   /**
@@ -525,13 +525,13 @@ export abstract class AbstractNode<
     });
   }
 
-  #setOmniErrors(this: AbstractNode, errors: JsonSchemaError[]) {
-    if (equals(this.#omniErrors, errors)) return false;
-    this.#omniErrors = errors;
-    this.#mergedOmniErrors = [...this.#receivedErrors, ...this.#omniErrors];
+  #setGlobalErrors(this: AbstractNode, errors: JsonSchemaError[]) {
+    if (equals(this.#globalErrors, errors)) return false;
+    this.#globalErrors = errors;
+    this.#mergedGlobalErrors = [...this.#receivedErrors, ...this.#globalErrors];
     this.publish({
-      type: NodeEventType.UpdateOmniError,
-      payload: { [NodeEventType.UpdateOmniError]: this.#mergedOmniErrors },
+      type: NodeEventType.UpdateGlobalError,
+      payload: { [NodeEventType.UpdateGlobalError]: this.#mergedGlobalErrors },
     });
     return true;
   }
@@ -562,12 +562,14 @@ export abstract class AbstractNode<
     });
 
     if (this.isRoot) {
-      this.#mergedOmniErrors = this.#omniErrors
-        ? [...this.#receivedErrors, ...this.#omniErrors]
+      this.#mergedGlobalErrors = this.#globalErrors
+        ? [...this.#receivedErrors, ...this.#globalErrors]
         : this.#receivedErrors;
       this.publish({
-        type: NodeEventType.UpdateOmniError,
-        payload: { [NodeEventType.UpdateOmniError]: this.#mergedOmniErrors },
+        type: NodeEventType.UpdateGlobalError,
+        payload: {
+          [NodeEventType.UpdateGlobalError]: this.#mergedGlobalErrors,
+        },
       });
     }
   }
@@ -625,17 +627,17 @@ export abstract class AbstractNode<
     // NOTE: 현재 Form 내의 value와 schema를 이용해서 validation 수행
     //    - getDataWithSchema: 현재 JsonSchema를 기반으로 Value의 데이터를 변환하여 반환
     //    - filterErrors: errors에서 oneOf 관련 error 필터링
-    const omniErrors = await this.#validate(this.value);
+    const globalErrors = await this.#validate(this.value);
 
     // 전체 error를 저장, 이전 error와 동일한 경우 setInternalErrors false 반환
-    if (!this.#setOmniErrors(omniErrors)) return;
+    if (!this.#setGlobalErrors(globalErrors)) return;
 
     // 얻어진 errors를 dataPath 별로 분류
     const errorsByDataPath = new Map<
       JsonSchemaError['dataPath'],
       JsonSchemaError[]
     >();
-    for (const error of omniErrors) {
+    for (const error of globalErrors) {
       if (!errorsByDataPath.has(error.dataPath))
         errorsByDataPath.set(error.dataPath, []);
       errorsByDataPath.get(error.dataPath)?.push(error);
