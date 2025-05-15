@@ -627,17 +627,17 @@ export abstract class AbstractNode<
     // NOTE: 현재 Form 내의 value와 schema를 이용해서 validation 수행
     //    - getDataWithSchema: 현재 JsonSchema를 기반으로 Value의 데이터를 변환하여 반환
     //    - filterErrors: errors에서 oneOf 관련 error 필터링
-    const globalErrors = await this.#validate(this.value);
+    const internalErrors = await this.#validate(this.value);
 
     // 전체 error를 저장, 이전 error와 동일한 경우 setInternalErrors false 반환
-    if (!this.#setGlobalErrors(globalErrors)) return;
+    if (!this.#setGlobalErrors(internalErrors)) return;
 
     // 얻어진 errors를 dataPath 별로 분류
     const errorsByDataPath = new Map<
       JsonSchemaError['dataPath'],
       JsonSchemaError[]
     >();
-    for (const error of globalErrors) {
+    for (const error of internalErrors) {
       if (!errorsByDataPath.has(error.dataPath))
         errorsByDataPath.set(error.dataPath, []);
       errorsByDataPath.get(error.dataPath)?.push(error);
