@@ -35,17 +35,17 @@ export const isVirtualSchema = (schema: {
 export type InferJsonSchema<
   Value extends AllowedValue | unknown = any,
   Options extends Dictionary = object,
-> = Value extends NumberValue
+> = Value extends NumberValue | undefined
   ? NumberSchema<Options>
-  : Value extends StringValue
+  : Value extends StringValue | undefined
     ? StringSchema<Options>
-    : Value extends BooleanValue
+    : Value extends BooleanValue | undefined
       ? BooleanSchema<Options>
-      : Value extends ArrayValue
+      : Value extends ArrayValue | undefined
         ? ArraySchema<Options>
-        : Value extends ObjectValue
+        : Value extends ObjectValue | undefined
           ? ObjectSchema<Options>
-          : Value extends null
+          : Value extends null | undefined
             ? NullSchema<Options>
             : JsonSchemaWithVirtual<Options>;
 
