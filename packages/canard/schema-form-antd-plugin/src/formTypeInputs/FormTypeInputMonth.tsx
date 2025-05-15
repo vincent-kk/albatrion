@@ -33,7 +33,7 @@ const FormTypeInputMonth = ({
   size,
 }: FormTypeInputMonthProps) => {
   const handleChange = useHandle((value: Dayjs | undefined) => {
-    onChange(value?.format(DATA_FORMAT));
+    onChange(value?.format(DATA_FORMAT) || '');
   });
   const initialValue = useMemo(
     () => (defaultValue ? dayjs(defaultValue, DATA_FORMAT) : undefined),

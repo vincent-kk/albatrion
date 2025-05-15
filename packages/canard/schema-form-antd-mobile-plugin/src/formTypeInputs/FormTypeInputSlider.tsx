@@ -16,7 +16,7 @@ const FormTypeInputSlider = ({
 }: FormTypeInputPropsWithSchema<number | [number, number], NumberSchema>) => {
   const handleChange = useCallback(
     (value: number | [number, number] | null) => {
-      if (value === null) onChange(undefined);
+      if (value === null) onChange(NaN);
       else if (typeof value === 'number') onChange(value);
       else onChange(value);
     },

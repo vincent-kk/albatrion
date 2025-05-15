@@ -49,9 +49,9 @@ export interface FormTypeInputProps<
   /** FormType Component의 defaultValue */
   defaultValue: Value | undefined;
   /** FormType Component의 value */
-  value: Value | undefined;
+  value: Value;
   /** FormType Component의 onChange */
-  onChange: SetStateFnWithOptions<Value | undefined>;
+  onChange: SetStateFnWithOptions<Value>;
   /** FormType Component의 style */
   style: CSSProperties | undefined;
   /** Form에 전달된 UserDefinedContext */

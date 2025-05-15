@@ -29,7 +29,7 @@ const FormTypeInputTime = ({
   size,
 }: FormTypeInputTimeProps) => {
   const handleChange = useHandle((date: Dayjs | null) => {
-    onChange(date?.format(DATE_FORMAT));
+    onChange(date?.format(DATE_FORMAT) || '');
   });
   const initialValue = useMemo(
     () => (defaultValue ? dayjs(defaultValue, DATE_FORMAT) : undefined),

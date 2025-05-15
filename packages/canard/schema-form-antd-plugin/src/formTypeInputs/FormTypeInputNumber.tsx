@@ -37,7 +37,7 @@ const FormTypeInputNumber = ({
   );
 
   const handleChange = useHandle((value: number | null) => {
-    if (value === null) onChange(undefined);
+    if (value === null) onChange(NaN);
     else onChange(value);
   });
   return (
