@@ -152,7 +152,7 @@ export abstract class AbstractNode<
    * `constructor` 외부에서 사용하기 위한 용도
    * @param value input value for update defaultValue
    */
-  protected refresh(this: AbstractNode, value: Value | undefined) {
+  refresh(this: AbstractNode, value: Value | undefined) {
     this.#defaultValue = value;
     this.publish({ type: NodeEventType.Refresh });
   }
@@ -199,7 +199,7 @@ export abstract class AbstractNode<
    * Node의 값이 변경될 때 호출되는 함수입니다.
    * @param input - 변경된 값
    */
-  protected onChange(this: AbstractNode, input: Value | undefined): void {
+  onChange(this: AbstractNode, input: Value | undefined): void {
     this.#handleChange?.(input);
   }
 
