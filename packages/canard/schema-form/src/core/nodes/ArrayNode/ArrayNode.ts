@@ -1,14 +1,13 @@
 import type { ArraySchema, ArrayValue } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
-import {
-  type BranchNodeConstructorProps,
-  type SchemaNode,
-  type UnionSetValueOption,
+import type {
+  BranchNodeConstructorProps,
+  SchemaNode,
+  UnionSetValueOption,
 } from '../type';
-import { BranchStrategy } from './strategies/BranchStrategy';
-import { TerminalStrategy } from './strategies/TerminalStrategy';
-import { ArrayNodeStrategy, IndexId } from './strategies/type';
+import { BranchStrategy, TerminalStrategy } from './strategies';
+import type { ArrayNodeStrategy, IndexId } from './strategies/type';
 
 /**
  * 배열 스키마를 처리하기 위한 노드 클래스입니다.
@@ -96,10 +95,15 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       ajv,
     });
 
+    const handleChange = (value: ArrayValue | undefined) =>
+      this.onChange(value);
+    const handleRefresh = (value: ArrayValue | undefined) =>
+      this.refresh(value);
+
     this.#strategy =
       this.group === 'branch'
-        ? new BranchStrategy(this, nodeFactory)
-        : new TerminalStrategy(this);
+        ? new BranchStrategy(this, handleChange, handleRefresh, nodeFactory)
+        : new TerminalStrategy(this, handleChange, handleRefresh);
 
     this.activateLink();
   }

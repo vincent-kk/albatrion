@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils';
 
+import type { Fn } from '@aileron/declare';
+
 import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
 import {
   NodeEventType,
@@ -18,10 +20,19 @@ type IndexId = `[${number}]`;
 
 export class BranchStrategy implements ArrayNodeStrategy {
   #host: ArrayNode;
+  #handleChange: Fn<[ArrayValue | undefined]>;
+  #handleRefresh: Fn<[ArrayValue | undefined]>;
   #nodeFactory: SchemaNodeFactory;
 
   #locked: boolean = true;
   #dirty: boolean = true;
+
+  set #changed(value: boolean) {
+    this.#dirty = value;
+    if (this.#undefined) this.#undefined = false;
+  }
+
+  #undefined: boolean = false;
 
   #seq: number = 0;
   #ids: IndexId[] = [];
@@ -34,7 +45,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
   > = new Map();
 
   get value() {
-    if (this.#ids.length === 0) return [];
+    if (this.#undefined) return undefined;
     return this.#toArray();
   }
   /**
@@ -45,6 +56,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
   applyValue(input: ArrayValue, option: UnionSetValueOption) {
     if (input === undefined) {
       this.clear();
+      this.#undefined = true;
       this.#publishRequestEmitChange(option);
     } else if (isArray(input)) {
       this.#locked = true;
@@ -69,9 +81,17 @@ export class BranchStrategy implements ArrayNodeStrategy {
     return true;
   }
 
-  constructor(host: ArrayNode, nodeFactory: SchemaNodeFactory) {
+  constructor(
+    host: ArrayNode,
+    handleChange: Fn<[ArrayValue | undefined]>,
+    handleRefresh: Fn<[ArrayValue | undefined]>,
+    nodeFactory: SchemaNodeFactory,
+  ) {
     this.#host = host;
+    this.#handleChange = handleChange;
+    this.#handleRefresh = handleRefresh;
     this.#nodeFactory = nodeFactory;
+
     // NOTE: defaultValue가 배열이고, 배열의 길이가 0보다 큰 경우
     if (host.defaultValue?.length)
       for (const value of host.defaultValue) this.push(value);
@@ -123,7 +143,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     if (this.#host.activated)
       (childNode as AbstractNode).activateLink(this.#host);
 
-    this.#dirty = true;
+    this.#changed = true;
     this.#publishRequestEmitChange();
     this.#publishUpdateChildren();
   }
@@ -151,7 +171,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.#sourceMap.delete(targetId);
     this.#updateChildName();
 
-    this.#dirty = true;
+    this.#changed = true;
     this.#publishRequestEmitChange();
     this.#publishUpdateChildren();
   }
@@ -167,7 +187,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.#ids = [];
     this.#sourceMap.clear();
 
-    this.#dirty = true;
+    this.#changed = true;
     this.#publishRequestEmitChange();
     this.#publishUpdateChildren();
   }
@@ -175,9 +195,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
   #emitChange(option: UnionSetValueOption = SetValueOption.Default) {
     if (this.#locked || !this.#dirty) return;
     const value = this.value;
-    if (option & SetValueOption.EmitChange) this.#host.onChange(value);
+    if (option & SetValueOption.EmitChange) this.#handleChange(value);
     if (option & SetValueOption.Propagate) this.#publishUpdateChildren();
-    if (option & SetValueOption.Refresh) this.#host.refresh(value);
+    if (option & SetValueOption.Refresh) this.#handleRefresh(value);
     if (option & SetValueOption.PublishUpdateEvent)
       this.#host.publish({
         type: NodeEventType.UpdateValue,
@@ -224,7 +244,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     return (data: unknown) => {
       if (!this.#sourceMap.has(id)) return;
       this.#sourceMap.get(id)!.data = data;
-      this.#dirty = true;
+      this.#changed = true;
       this.#publishRequestEmitChange();
     };
   }

@@ -1,5 +1,7 @@
 import { equals } from '@winglet/common-utils';
 
+import type { Fn } from '@aileron/declare';
+
 import {
   NodeEventType,
   SetValueOption,
@@ -13,6 +15,8 @@ import type { ArrayNodeStrategy, IndexId } from '../type';
 
 export class TerminalStrategy implements ArrayNodeStrategy {
   #host: ArrayNode;
+  #handleChange: Fn<[ArrayValue | undefined]>;
+  #handleRefresh: Fn<[ArrayValue | undefined]>;
 
   #seq: number = 0;
   #ids: IndexId[] = [];
@@ -39,9 +43,18 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     return this.#value?.length ?? 0;
   }
 
-  constructor(host: ArrayNode) {
+  constructor(
+    host: ArrayNode,
+    handleChange: Fn<[ArrayValue | undefined]>,
+    handleRefresh: Fn<[ArrayValue | undefined]>,
+  ) {
     this.#host = host;
-    if (host.defaultValue !== undefined) this.#emitChange(host.defaultValue);
+    this.#handleChange = handleChange;
+    this.#handleRefresh = handleRefresh;
+
+    if (host.defaultValue?.length)
+      for (const value of host.defaultValue) this.push(value);
+    while (this.length < (host.jsonSchema.minItems || 0)) this.push();
   }
 
   push(input?: ArrayValue[number]) {
@@ -76,7 +89,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
 
   clear() {
     this.#ids = [];
-    this.#emitChange(undefined);
+    this.#emitChange([]);
   }
 
   #parseValue(input: ArrayValue | undefined) {
@@ -93,8 +106,8 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     if (equals(previous, current)) return;
 
     this.#value = current;
-    if (option & SetValueOption.EmitChange) this.#host.onChange(current);
-    if (option & SetValueOption.Refresh) this.#host.refresh(current);
+    if (option & SetValueOption.EmitChange) this.#handleChange(current);
+    if (option & SetValueOption.Refresh) this.#handleRefresh(current);
     if (option & SetValueOption.PublishUpdateEvent)
       this.#host.publish({
         type: NodeEventType.UpdateValue,
