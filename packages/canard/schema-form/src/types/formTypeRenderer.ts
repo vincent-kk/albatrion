@@ -9,7 +9,6 @@ import type { OverridableFormTypeInputProps } from './formTypeInput';
 
 export interface FormTypeRendererProps extends OverridableFormTypeInputProps {
   isRoot: boolean;
-  isArrayItem: boolean;
   depth: number;
   jsonSchema: SchemaNode['jsonSchema'];
   node: SchemaNode;

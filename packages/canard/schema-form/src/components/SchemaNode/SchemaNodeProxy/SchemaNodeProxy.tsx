@@ -96,7 +96,6 @@ export const SchemaNodeProxy = memo(
             type={node.type}
             jsonSchema={node.jsonSchema}
             isRoot={node.isRoot}
-            isArrayItem={node.isArrayItem}
             depth={node.depth}
             path={node.path}
             name={node.name}
