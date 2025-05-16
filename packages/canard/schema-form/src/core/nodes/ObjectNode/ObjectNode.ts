@@ -217,7 +217,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     const { virtualReferencesMap, virtualReferenceFieldsMap } =
       getVirtualReferencesMap(name, propertyKeys, jsonSchema.virtual);
 
-    const handelChangeFactory = (propertyKey: string) => (input: any) => {
+    const handelChangeFactory = (propertyKey: string) => (input: unknown) => {
       if (!this.#draft) this.#draft = {};
       if (input !== undefined && this.#draft[propertyKey] === input) return;
       this.#draft[propertyKey] = input;

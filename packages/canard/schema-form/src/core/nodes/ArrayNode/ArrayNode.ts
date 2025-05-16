@@ -1,7 +1,5 @@
 import { isArray } from '@winglet/common-utils';
 
-import type { SetStateFn } from '@aileron/declare';
-
 import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
 import type {
   AllowedValue,
@@ -299,8 +297,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @param data - 새로운 값
    * @returns 자기 자신(this)을 반환하여 체이닝 지원
    */
-  #handleChangeFactory(this: ArrayNode, id: IndexId): SetStateFn<AllowedValue> {
-    return (data: AllowedValue) => {
+  #handleChangeFactory(this: ArrayNode, id: IndexId) {
+    return (data: unknown) => {
       if (!this.#sourceMap.has(id)) return;
       this.#sourceMap.get(id)!.data = data;
       this.#dirty = true;
