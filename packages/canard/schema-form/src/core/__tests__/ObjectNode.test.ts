@@ -479,6 +479,7 @@ describe('ObjectNode', () => {
 
     const firstChild = node.find('root.children.0') as ObjectNode;
     expect(firstChild.value).toEqual({
+      children: [],
       id: '4',
       name: 'User 4',
     });
