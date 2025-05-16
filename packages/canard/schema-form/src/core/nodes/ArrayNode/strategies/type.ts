@@ -11,11 +11,11 @@ export interface ArrayNodeStrategy {
     value: ArrayValue | undefined,
     option: UnionSetValueOption,
   ): void;
-  activateLink(): boolean;
-  push(data?: ArrayValue[number]): this;
-  update(id: IndexId | number, data: ArrayValue[number]): this;
-  remove(id: IndexId | number): this;
-  clear(): this;
+  activateLink?(): void;
+  push(data?: ArrayValue[number]): void;
+  update(id: IndexId | number, data: ArrayValue[number]): void;
+  remove(id: IndexId | number): void;
+  clear(): void;
 }
 
 export type IndexId = `[${number}]`;

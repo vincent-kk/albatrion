@@ -34,7 +34,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
   > = new Map();
 
   get value() {
-    if (this.#ids.length === 0) return undefined;
+    if (this.#ids.length === 0) return [];
     return this.#toArray();
   }
   /**

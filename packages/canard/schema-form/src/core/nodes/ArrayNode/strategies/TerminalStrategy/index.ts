@@ -1,0 +1,1 @@
+export { TerminalStrategy } from './TerminalStrategy';

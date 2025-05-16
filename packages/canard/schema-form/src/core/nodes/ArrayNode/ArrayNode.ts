@@ -7,6 +7,7 @@ import {
   type UnionSetValueOption,
 } from '../type';
 import { BranchStrategy } from './strategies/BranchStrategy';
+import { TerminalStrategy } from './strategies/TerminalStrategy';
 import { ArrayNodeStrategy, IndexId } from './strategies/type';
 
 /**
@@ -66,7 +67,10 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns 초기화 완료 여부
    */
   activateLink(this: ArrayNode, actor?: SchemaNode): boolean {
-    if (super.activateLink(actor)) return this.#strategy.activateLink();
+    if (super.activateLink(actor)) {
+      this.#strategy.activateLink?.();
+      return true;
+    }
     return false;
   }
 
@@ -92,7 +96,10 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       ajv,
     });
 
-    this.#strategy = new BranchStrategy(this, nodeFactory);
+    this.#strategy =
+      this.group === 'branch'
+        ? new BranchStrategy(this, nodeFactory)
+        : new TerminalStrategy(this);
 
     this.activateLink();
   }
