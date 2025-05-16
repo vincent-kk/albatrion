@@ -24,6 +24,7 @@ import type {
   BooleanSchema,
   InferValueType,
   JsonSchemaError,
+  JsonSchemaWithRef,
   JsonSchemaWithVirtual,
   NullSchema,
   NumberSchema,
@@ -133,10 +134,14 @@ export interface VirtualNodeConstructorProps<
  * 노드 팩토리 함수에 전달되는 속성 타입입니다.
  * @typeParam Schema - 노드의 JSON Schema 타입
  */
-export type NodeFactoryProps<Schema extends JsonSchemaWithVirtual> =
+export type NodeFactoryProps<Schema extends JsonSchemaWithVirtual> = Omit<
   SchemaNodeConstructorProps<Schema> &
     BranchNodeConstructorProps<Schema> &
-    VirtualNodeConstructorProps<Schema>;
+    VirtualNodeConstructorProps<Schema>,
+  'jsonSchema'
+> & {
+  jsonSchema: JsonSchemaWithRef;
+};
 
 export type NodeListener = Fn<[event: NodeEvent]>;
 

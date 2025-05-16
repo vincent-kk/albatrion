@@ -1,6 +1,6 @@
 import { isTruthy, map, merge } from '@winglet/common-utils';
 
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JsonSchemaWithRef } from '@/schema-form/types';
 
 /**
  * JSON 스키마와 조건을 병합하여 새로운 스키마를 반환합니다.
@@ -9,7 +9,7 @@ import type { JsonSchemaWithVirtual } from '@/schema-form/types';
  * @returns 조건이 반영된 새로운 스키마 또는 조건이 없을 경우 원본 스키마
  */
 export const mergeShowConditions = (
-  jsonSchema: JsonSchemaWithVirtual,
+  jsonSchema: JsonSchemaWithRef,
   conditions: string[] | undefined,
 ) =>
   conditions

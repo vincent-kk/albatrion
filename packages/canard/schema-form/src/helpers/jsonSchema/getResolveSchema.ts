@@ -1,6 +1,10 @@
 import type { Fn } from '@aileron/declare';
 
-import type { JsonSchema, JsonSchemaWithVirtual } from '@/schema-form/types';
+import type {
+  JsonSchema,
+  JsonSchemaWithRef,
+  JsonSchemaWithVirtual,
+} from '@/schema-form/types';
 
 import { getReferenceTable } from './utils/getReferenceTable';
 import { getResolveSchemaScanner } from './utils/getResolveSchemaScanner';
@@ -18,12 +22,12 @@ export const getResolveSchema = (
   const table = getReferenceTable(jsonSchema);
   const scanner = table ? getResolveSchemaScanner(table, maxDepth) : null;
   return scanner
-    ? (schema: JsonSchemaWithVirtual) =>
-        scanner.scan(schema).getValue() || schema
+    ? (schema: JsonSchemaWithRef) =>
+        scanner.scan(schema).getValue() as JsonSchemaWithVirtual
     : null;
 };
 
 export type ResolveSchema = Fn<
-  [schema: JsonSchemaWithVirtual],
+  [schema: JsonSchemaWithRef],
   JsonSchemaWithVirtual
 >;
