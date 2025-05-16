@@ -88,6 +88,7 @@ export type NullSchema<Options extends Dictionary = object> =
 
 type BasicSchema<Type> = {
   FormType?: ComponentType<UnknownFormTypeInputProps>;
+  terminal?: boolean;
   style?: CSSProperties;
   label?: ReactNode;
   options?: {

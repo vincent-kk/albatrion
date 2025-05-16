@@ -12,7 +12,7 @@ export const getNodeGroup = (schema: JsonSchemaWithVirtual) => {
     schema.type === 'integer' ||
     schema.type === 'string' ||
     schema.type === 'null' ||
-    'FormType' in schema
+    schema.terminal === true
   )
     return 'terminal';
   return 'branch';
