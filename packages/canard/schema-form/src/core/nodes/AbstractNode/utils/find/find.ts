@@ -31,7 +31,8 @@ export const find = (
       if (!children?.length) return null;
       let found = false;
       for (const child of children) {
-        if (child.node.name !== segment) continue;
+        if (child.node.propertyKey !== segment) continue;
+        if (child.node.group === 'terminal') return child.node;
         cursor = child.node;
         found = true;
         break;
