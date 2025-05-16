@@ -8,8 +8,8 @@ import type { JsonSchemaError } from './error';
 import type { OverridableFormTypeInputProps } from './formTypeInput';
 
 export interface FormTypeRendererProps extends OverridableFormTypeInputProps {
-  isArrayItem: boolean;
   isRoot: boolean;
+  isArrayItem: boolean;
   depth: number;
   jsonSchema: SchemaNode['jsonSchema'];
   node: SchemaNode;
