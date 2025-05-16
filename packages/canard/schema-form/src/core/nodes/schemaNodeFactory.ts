@@ -48,7 +48,8 @@ export const createSchemaNodeFactory =
     refNodes,
     ajv,
   }: NodeFactoryProps<Schema>) => {
-    const jsonSchema = resolveSchema?.(schema) || schema;
+    const jsonSchema = (resolveSchema?.(schema) ||
+      schema) as JsonSchemaWithVirtual;
     switch (jsonSchema.type) {
       case 'boolean':
         return new BooleanNode({
@@ -132,8 +133,10 @@ export const createSchemaNodeFactory =
           ajv,
         } as VirtualNodeConstructorProps<VirtualSchema>);
     }
+
     throw new SchemaNodeError(
       'UNKNOWN_JSON_SCHEMA',
+      // @ts-expect-error: This line should be unreachable if all variants are handled.
       `Unknown JsonSchema: ${jsonSchema.type}`,
       {
         jsonSchema,
