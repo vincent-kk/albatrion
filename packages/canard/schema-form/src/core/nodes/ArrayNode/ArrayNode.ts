@@ -144,7 +144,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     const values = new Array<AllowedValue>(this.#ids.length);
     for (let i = 0; i < this.#ids.length; i++) {
       const edge = this.#sourceMap.get(this.#ids[i]);
-      if (edge) values[i] = edge.node.value;
+      if (edge) values[i] = edge.data;
     }
     return values;
   }
