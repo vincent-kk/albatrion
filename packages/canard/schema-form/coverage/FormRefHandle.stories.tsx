@@ -152,6 +152,183 @@ export const FormRefHandle = () => {
   );
 };
 
+export const FormTypeInputArrayTerminalRef = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      arr: {
+        type: 'array',
+        FormType: ({ node, onChange, value }: FormTypeInputProps<string[]>) => {
+          return (
+            <div>
+              i am array item: {node.group}
+              <div>{value?.join(',')}</div>
+              <div>
+                <button
+                  onClick={() => onChange((prev) => [...prev, 'NEW ITEM'])}
+                >
+                  onChange
+                </button>
+                <button onClick={() => node.push()}>add</button>
+                <button onClick={() => node.update(1, 'WOW2')}>update</button>
+                <button onClick={() => node.remove(0)}>remove</button>
+                <button onClick={() => node.clear()}>clear</button>
+                <button onClick={() => node.setValue(undefined)}>
+                  remove all
+                </button>
+              </div>
+            </div>
+          );
+        },
+        items: {
+          type: 'string',
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema>>(null);
+
+  return (
+    <div>
+      <button
+        onClick={() =>
+          formHandle.current?.node.find('arr')?.setValue([1, 2, 3])
+        }
+      >
+        set value
+      </button>
+      <button
+        onClick={() =>
+          formHandle.current?.node
+            .find('arr')
+            ?.setValue((prev) => [...(prev || []), 'NEW ITEM'])
+        }
+      >
+        push value
+      </button>
+      <button
+        onClick={() => formHandle.current?.node.find('arr')?.setValue([])}
+      >
+        clear
+      </button>
+      <hr />
+      <StoryLayout jsonSchema={schema} value={value}>
+        <Form ref={formHandle} jsonSchema={schema} onChange={setValue} />
+      </StoryLayout>
+    </div>
+  );
+};
+
+export const FormTypeInputObjectTerminalRef = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      poster: {
+        type: 'object',
+        FormType: ({
+          node,
+          onChange,
+          value,
+          defaultValue,
+        }: FormTypeInputProps<{
+          url: string;
+          format: string;
+          size: {
+            width: number;
+            height: number;
+          };
+        }>) => {
+          return (
+            <div>
+              i am object item: {node.group}
+              <div>
+                <pre>{JSON.stringify(value, null, 2)}</pre>
+              </div>
+              <div>
+                <pre>{JSON.stringify(defaultValue, null, 2)}</pre>
+              </div>
+              <div>
+                <button
+                  onClick={() =>
+                    onChange({
+                      url: 'http://example.com/poster11.jpg',
+                      format: 'jpg',
+                      size: { width: 100, height: 100 },
+                    })
+                  }
+                >
+                  set
+                </button>
+                <button onClick={() => node.setValue(undefined)}>clear</button>
+              </div>
+            </div>
+          );
+        },
+        properties: {
+          url: {
+            type: 'string',
+          },
+          format: {
+            type: 'string',
+          },
+          size: {
+            type: 'object',
+            properties: {
+              width: {
+                type: 'number',
+              },
+              height: {
+                type: 'number',
+              },
+            },
+          },
+        },
+      },
+    },
+  } satisfies JsonSchema;
+  const formHandle = useRef<FormHandle<typeof schema>>(null);
+
+  return (
+    <div>
+      <button
+        onClick={() =>
+          formHandle.current?.node.find('poster')?.setValue({
+            url: 'http://example.com/poster1.jpg',
+            format: 'jpg',
+            size: { width: 100, height: 100 },
+          })
+        }
+      >
+        set value
+      </button>
+      <button
+        onClick={() =>
+          formHandle.current?.node.find('poster')?.setValue((prev) => ({
+            ...prev,
+            url: 'http://example.com/poster2.jpg',
+          }))
+        }
+      >
+        merge value
+      </button>
+      <button
+        onClick={() =>
+          formHandle.current?.node.find('poster')?.setValue(undefined)
+        }
+      >
+        clear
+      </button>
+      <hr />
+      <StoryLayout jsonSchema={schema} value={value}>
+        <Form ref={formHandle} jsonSchema={schema} onChange={setValue} />
+      </StoryLayout>
+    </div>
+  );
+};
+
 export const FormRefHandleWithIfThenElse = () => {
   const [value, setValue] = useState({});
   const schema = {

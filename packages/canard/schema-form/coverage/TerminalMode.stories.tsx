@@ -110,7 +110,9 @@ export const FormTypeInputArrayTerminalWithDefaultValue = () => {
           return (
             <div>
               i am array item: {node.group}
-              <div>{value?.join(',')}</div>
+              <div>
+                <pre>{JSON.stringify(value, null, 2)}</pre>
+              </div>
               <div>
                 <pre>{JSON.stringify(defaultValue, null, 2)}</pre>
               </div>
@@ -136,6 +138,153 @@ export const FormTypeInputArrayTerminalWithDefaultValue = () => {
           default: 'ARRAY ITEM',
         },
         default: ['AAA', 'BBB'],
+        minItems: 3,
+      },
+    },
+  } satisfies JsonSchema;
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form jsonSchema={schema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+export const FormTypeInputArrayTerminalWithDefaultObjectValue = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      arr: {
+        type: 'array',
+        FormType: ({
+          node,
+          onChange,
+          value,
+          defaultValue,
+        }: FormTypeInputProps<{ name: string; age: number }[]>) => {
+          return (
+            <div>
+              i am array item: {node.group}
+              <div>
+                <pre>{JSON.stringify(value, null, 2)}</pre>
+              </div>
+              <div>
+                <pre>{JSON.stringify(defaultValue, null, 2)}</pre>
+              </div>
+              <div>
+                <button
+                  onClick={() =>
+                    onChange((prev) => [...prev, { name: 'Jinny', age: 24 }])
+                  }
+                >
+                  onChange
+                </button>
+                <button onClick={() => node.push()}>add</button>
+                <button
+                  onClick={() => node.update(1, { name: 'Jenny', age: 27 })}
+                >
+                  update
+                </button>
+                <button onClick={() => node.remove(0)}>remove</button>
+                <button onClick={() => node.clear()}>clear</button>
+                <button onClick={() => node.setValue(undefined)}>
+                  remove all
+                </button>
+              </div>
+            </div>
+          );
+        },
+        items: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              default: 'John Doe',
+            },
+            age: {
+              type: 'number',
+              default: 20,
+            },
+          },
+        },
+        minItems: 3,
+      },
+    },
+  } satisfies JsonSchema;
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form jsonSchema={schema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+export const FormTypeInputArrayTerminalWithMixedDefaultObjectValue = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      arr: {
+        type: 'array',
+        FormType: ({
+          node,
+          onChange,
+          value,
+          defaultValue,
+        }: FormTypeInputProps<{ name: string; age: number }[]>) => {
+          return (
+            <div>
+              i am array item: {node.group}
+              <div>
+                <pre>{JSON.stringify(value, null, 2)}</pre>
+              </div>
+              <div>
+                <pre>{JSON.stringify(defaultValue, null, 2)}</pre>
+              </div>
+              <div>
+                <button
+                  onClick={() =>
+                    onChange((prev) => [...prev, { name: 'Jinny', age: 24 }])
+                  }
+                >
+                  onChange
+                </button>
+                <button onClick={() => node.push()}>add</button>
+                <button
+                  onClick={() => node.update(1, { name: 'Jenny', age: 27 })}
+                >
+                  update
+                </button>
+                <button onClick={() => node.remove(0)}>remove</button>
+                <button onClick={() => node.clear()}>clear</button>
+                <button onClick={() => node.setValue(undefined)}>
+                  remove all
+                </button>
+              </div>
+            </div>
+          );
+        },
+        items: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              default: 'John Doe',
+            },
+            age: {
+              type: 'number',
+            },
+            email: {
+              type: 'string',
+              default: 'john.doe@example.com',
+            },
+          },
+          default: {
+            age: 24,
+            email: 'john.doe.24@example.com',
+          },
+        },
         minItems: 3,
       },
     },

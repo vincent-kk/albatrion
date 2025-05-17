@@ -8,7 +8,8 @@ import {
   type UnionSetValueOption,
 } from '@/schema-form/core/nodes/type';
 import { parseArray } from '@/schema-form/core/parsers';
-import type { ArrayValue } from '@/schema-form/types';
+import { getObjectDefaultValue } from '@/schema-form/helpers/defaultValue';
+import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 
 import type { ArrayNode } from '../../ArrayNode';
 import type { ArrayNodeStrategy, IndexId } from '../type';
@@ -23,6 +24,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   #locked: boolean = true;
   #seq: number = 0;
   #ids: IndexId[] = [];
+  #defaultItemValue: AllowedValue;
 
   #value: ArrayValue | undefined = [];
 
@@ -75,9 +77,16 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     this.#handleChange = handleChange;
     this.#handleRefresh = handleRefresh;
 
+    const jsonSchema = host.jsonSchema;
+
+    this.#defaultItemValue =
+      jsonSchema.items.type === 'object'
+        ? getObjectDefaultValue(jsonSchema.items)
+        : jsonSchema.items.default;
+
     if (host.defaultValue?.length)
       for (const value of host.defaultValue) this.push(value);
-    while (this.length < (host.jsonSchema.minItems || 0)) this.push();
+    while (this.length < (jsonSchema.minItems || 0)) this.push();
 
     this.#locked = false;
 
@@ -97,7 +106,8 @@ export class TerminalStrategy implements ArrayNodeStrategy {
       return;
     const id = `[${this.#seq++}]` satisfies IndexId;
     this.#ids.push(id);
-    const data = input ?? this.#host.jsonSchema.items.default ?? undefined;
+
+    const data = input ?? this.#defaultItemValue;
     const value = this.#value === undefined ? [data] : [...this.#value, data];
     this.#emitChange(value);
   }
