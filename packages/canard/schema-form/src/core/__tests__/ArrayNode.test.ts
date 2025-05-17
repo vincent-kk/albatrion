@@ -46,7 +46,7 @@ describe('ArrayNode', () => {
       },
     });
 
-    expect(node?.value?.arr).toBeUndefined();
+    expect(node?.value?.arr).toEqual([]);
     (node?.find('arr') as ArrayNode)?.push();
     await delay();
     expect(node?.value?.arr).toMatchObject(['hello']);
@@ -58,7 +58,7 @@ describe('ArrayNode', () => {
     expect(node?.value?.arr).toMatchObject(['world']);
     (node?.find('arr') as ArrayNode)?.clear();
     await delay();
-    expect(node?.value?.arr).toBeUndefined();
+    expect(node?.value?.arr).toEqual([]);
   });
 
   it('cannot exceed maxItems', async () => {
@@ -78,7 +78,7 @@ describe('ArrayNode', () => {
         },
       },
     });
-    expect(node?.value?.arr).toBeUndefined();
+    expect(node?.value?.arr).toEqual([]);
     Array(MAX_ITEMS + 10)
       .fill(true)
       .forEach(() => {
@@ -263,7 +263,7 @@ describe('ArrayNode', () => {
     });
 
     const arrayNode = node?.find('tags') as ArrayNode;
-    expect(arrayNode.value).toBeUndefined();
+    expect(arrayNode.value).toEqual([]);
 
     arrayNode.setValue(['태그1', '태그2', '태그3']);
     await delay();

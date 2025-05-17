@@ -42,14 +42,30 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     this.#emitChange(input, option);
   }
 
-  /**
-   * 입력값을 문자열로 분석합니다.
-   * @param input - 분석할 값
-   * @returns 분석된 문자열 값
-   */
-  #parseValue(this: StringNode, input: StringValue | undefined) {
-    return parseString(input);
+  constructor({
+    key,
+    name,
+    jsonSchema,
+    defaultValue,
+    onChange,
+    parentNode,
+    validationMode,
+    ajv,
+  }: SchemaNodeConstructorProps<StringSchema>) {
+    super({
+      key,
+      name,
+      jsonSchema,
+      defaultValue,
+      onChange,
+      parentNode,
+      validationMode,
+      ajv,
+    });
+    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
+    this.activateLink();
   }
+
   /**
    * 값 변경을 반영하고 관련 이벤트를 발행합니다.
    * @param input - 설정할 값
@@ -80,27 +96,12 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
       });
   }
 
-  constructor({
-    key,
-    name,
-    jsonSchema,
-    defaultValue,
-    onChange,
-    parentNode,
-    validationMode,
-    ajv,
-  }: SchemaNodeConstructorProps<StringSchema>) {
-    super({
-      key,
-      name,
-      jsonSchema,
-      defaultValue,
-      onChange,
-      parentNode,
-      validationMode,
-      ajv,
-    });
-    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
-    this.activateLink();
+  /**
+   * 입력값을 문자열로 분석합니다.
+   * @param input - 분석할 값
+   * @returns 분석된 문자열 값
+   */
+  #parseValue(this: StringNode, input: StringValue | undefined) {
+    return parseString(input);
   }
 }

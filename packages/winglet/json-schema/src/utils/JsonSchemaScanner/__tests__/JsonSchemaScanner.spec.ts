@@ -224,21 +224,6 @@ describe('JsonSchemaScanner 실제 데이터 테스트', () => {
 
     expect(Array.from(defs.entries())).toEqual([
       [
-        '#/$defs/Dog',
-        {
-          properties: {
-            barkVolume: {
-              type: 'integer',
-            },
-            type: {
-              const: 'dog',
-            },
-          },
-          required: ['type', 'barkVolume'],
-          type: 'object',
-        },
-      ],
-      [
         '#/$defs/Cat',
         {
           properties: {
@@ -250,6 +235,21 @@ describe('JsonSchemaScanner 실제 데이터 테스트', () => {
             },
           },
           required: ['type', 'meowVolume'],
+          type: 'object',
+        },
+      ],
+      [
+        '#/$defs/Dog',
+        {
+          properties: {
+            barkVolume: {
+              type: 'integer',
+            },
+            type: {
+              const: 'dog',
+            },
+          },
+          required: ['type', 'barkVolume'],
           type: 'object',
         },
       ],

@@ -40,6 +40,7 @@ import {
   computeFactory,
   find,
   getFallbackValidator,
+  getNodeGroup,
   getNodeType,
   getPathSegments,
   getSafeEmptyValue,
@@ -53,6 +54,8 @@ export abstract class AbstractNode<
   Schema extends JsonSchemaWithVirtual = JsonSchemaWithVirtual,
   Value extends AllowedValue = any,
 > {
+  /** Node의 그룹 */
+  readonly group: 'branch' | 'terminal';
   /** Node의 타입 */
   readonly type: Exclude<Schema['type'], 'integer'>;
   /** Node의 깊이 */
@@ -63,8 +66,6 @@ export abstract class AbstractNode<
   readonly rootNode: SchemaNode;
   /** 부모 Node */
   readonly parentNode: SchemaNode | null;
-  /** 배열 아이템인지 여부 */
-  readonly isArrayItem: boolean;
   /** Node의 JSON Schema */
   readonly jsonSchema: Schema;
   /** Node의 property key 원본  */
@@ -218,12 +219,13 @@ export abstract class AbstractNode<
     ajv,
   }: SchemaNodeConstructorProps<Schema, Value>) {
     this.type = getNodeType(jsonSchema);
+    this.group = getNodeGroup(jsonSchema);
+
     this.jsonSchema = jsonSchema;
     this.parentNode = parentNode || null;
 
     this.rootNode = (this.parentNode?.rootNode || this) as SchemaNode;
     this.isRoot = !this.parentNode;
-    this.isArrayItem = this.parentNode?.jsonSchema?.type === 'array';
     this.#name = name || '';
     this.propertyKey = this.#name;
 
@@ -359,7 +361,7 @@ export abstract class AbstractNode<
   }
 
   #oneOfIndex: number = -1;
-  protected get oneOfIndex() {
+  get oneOfIndex() {
     return this.#oneOfIndex;
   }
 

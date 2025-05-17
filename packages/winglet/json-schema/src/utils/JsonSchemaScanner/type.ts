@@ -18,6 +18,8 @@ export interface SchemaEntry {
   schema: UnknownSchema;
   /** 현재 노드의 JSON 포인터 경로 */
   path: string;
+  /** 현재 노드에 해당하는 data 포인터 경로 */
+  dataPath: string;
   /** 탐색 깊이 */
   depth: number;
   /** 참조가 있는지 여부 */

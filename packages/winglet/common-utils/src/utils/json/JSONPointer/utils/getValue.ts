@@ -9,11 +9,11 @@ export const getValue = <Input extends Dictionary>(
   const length = segments.length;
   if (length === 0) return input;
 
-  let current: any = input;
+  let cursor: any = input;
   for (let index = 0; index < length; ) {
-    current = current[unescapePointer(segments[index++])];
+    cursor = cursor[unescapePointer(segments[index++])];
     if (index === length) break;
-    if (typeof current !== 'object' || current === null) return undefined;
+    if (typeof cursor !== 'object' || cursor === null) return undefined;
   }
-  return current;
+  return cursor;
 };

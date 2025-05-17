@@ -2,9 +2,8 @@ import { isArray } from '@winglet/common-utils';
 
 import type { Dictionary } from '@aileron/declare';
 
+import type { VirtualReference } from '@/schema-form/core/nodes/ObjectNode/type';
 import { SchemaNodeError } from '@/schema-form/errors';
-
-import type { VirtualReference } from '../../type';
 
 /**
  * 가상 참조 맵을 생성합니다.

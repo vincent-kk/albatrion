@@ -66,26 +66,28 @@ export const RootNodeContextProvider = <
   const { validationMode: externalValidationMode, ajv: externalAjv } =
     useExternalFormContext();
 
-  const rootNode = useMemo(() => {
-    return nodeFromJsonSchema({
+  const rootNode = useMemo(
+    () =>
+      nodeFromJsonSchema({
+        jsonSchema,
+        defaultValue,
+        onChange,
+        validationMode:
+          inputValidationMode ??
+          externalValidationMode ??
+          DEFAULT_VALIDATION_MODE,
+        ajv: inputAjv ?? externalAjv,
+      }),
+    [
       jsonSchema,
       defaultValue,
       onChange,
-      validationMode:
-        inputValidationMode ??
-        externalValidationMode ??
-        DEFAULT_VALIDATION_MODE,
-      ajv: inputAjv ?? externalAjv,
-    });
-  }, [
-    jsonSchema,
-    defaultValue,
-    onChange,
-    inputValidationMode,
-    externalValidationMode,
-    inputAjv,
-    externalAjv,
-  ]);
+      inputValidationMode,
+      externalValidationMode,
+      inputAjv,
+      externalAjv,
+    ],
+  );
 
   useEffect(() => {
     if (!rootNode) return;

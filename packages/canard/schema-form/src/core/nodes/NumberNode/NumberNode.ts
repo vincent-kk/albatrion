@@ -42,14 +42,30 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     this.#emitChange(input, option);
   }
 
-  /**
-   * 입력값을 숫자로 분석합니다.
-   * @param input - 분석할 값
-   * @returns 분석된 숫자 값
-   */
-  #parseValue(this: NumberNode, input: NumberValue | undefined) {
-    return parseNumber(input, this.jsonSchema.type === 'integer');
+  constructor({
+    key,
+    name,
+    jsonSchema,
+    defaultValue,
+    onChange,
+    parentNode,
+    validationMode,
+    ajv,
+  }: SchemaNodeConstructorProps<NumberSchema>) {
+    super({
+      key,
+      name,
+      jsonSchema,
+      defaultValue,
+      onChange,
+      parentNode,
+      validationMode,
+      ajv,
+    });
+    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
+    this.activateLink();
   }
+
   /**
    * 값 변경을 반영하고 관련 이벤트를 발행합니다.
    * @param input - 설정할 값
@@ -80,27 +96,12 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
       });
   }
 
-  constructor({
-    key,
-    name,
-    jsonSchema,
-    defaultValue,
-    onChange,
-    parentNode,
-    validationMode,
-    ajv,
-  }: SchemaNodeConstructorProps<NumberSchema>) {
-    super({
-      key,
-      name,
-      jsonSchema,
-      defaultValue,
-      onChange,
-      parentNode,
-      validationMode,
-      ajv,
-    });
-    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
-    this.activateLink();
+  /**
+   * 입력값을 숫자로 분석합니다.
+   * @param input - 분석할 값
+   * @returns 분석된 숫자 값
+   */
+  #parseValue(this: NumberNode, input: NumberValue | undefined) {
+    return parseNumber(input, this.jsonSchema.type === 'integer');
   }
 }

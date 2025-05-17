@@ -111,7 +111,6 @@ interface FormChildrenProps<
   defaultValue?: Value;
   value?: Value;
   errors?: JsonSchemaError[];
-  isArrayItem?: boolean;
 }
 ```
 

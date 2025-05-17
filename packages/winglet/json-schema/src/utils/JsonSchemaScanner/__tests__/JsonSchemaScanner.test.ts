@@ -30,6 +30,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema,
           path: JSONPointer.Root,
+          dataPath: JSONPointer.Root,
           depth: 0,
         },
         undefined,
@@ -40,6 +41,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema: schema.properties.name,
           path: `${JSONPointer.Root}/properties/name`,
+          dataPath: `${JSONPointer.Root}/name`,
           depth: 1,
         },
         undefined,
@@ -48,6 +50,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema: schema.properties.age,
           path: `${JSONPointer.Root}/properties/age`,
+          dataPath: `${JSONPointer.Root}/age`,
           depth: 1,
         },
         undefined,
@@ -84,6 +87,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema,
           path: JSONPointer.Root,
+          dataPath: JSONPointer.Root,
           depth: 0,
         },
         undefined,
@@ -92,6 +96,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema: schema.properties.user,
           path: `${JSONPointer.Root}/properties/user`,
+          dataPath: `${JSONPointer.Root}/user`,
           depth: 1,
         },
         undefined,
@@ -114,6 +119,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema: { type: 'string' },
           path: '#',
+          dataPath: JSONPointer.Root,
           depth: 0,
         },
         undefined,
@@ -122,6 +128,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema: { type: 'string' },
           path: '#',
+          dataPath: JSONPointer.Root,
           depth: 0,
         },
         undefined,
@@ -265,6 +272,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema: { type: 'string' },
           path: '#',
+          dataPath: JSONPointer.Root,
           depth: 0,
         },
         { user: 'vincent' },
@@ -276,7 +284,6 @@ describe('JsonSchemaScanner', () => {
     it('should handle $ref resolution', () => {
       const visitor = {
         enter: vi.fn(),
-        exit: vi.fn(),
       };
 
       const resolveReference = vi.fn().mockReturnValue({ type: 'string' });
@@ -301,6 +308,7 @@ describe('JsonSchemaScanner', () => {
         {
           depth: 0,
           path: '#',
+          dataPath: JSONPointer.Root,
           schema: {
             properties: {
               ref: {
@@ -316,6 +324,7 @@ describe('JsonSchemaScanner', () => {
         {
           depth: 1,
           path: '#/properties/ref',
+          dataPath: `${JSONPointer.Root}/ref`,
           referencePath: '#/definitions/string',
           referenceResolved: true,
           schema: {
@@ -564,6 +573,7 @@ describe('JsonSchemaScannerAsync', () => {
         {
           schema,
           path: JSONPointer.Root,
+          dataPath: JSONPointer.Root,
           depth: 0,
         },
         undefined,
@@ -572,6 +582,7 @@ describe('JsonSchemaScannerAsync', () => {
         {
           schema: schema.properties.name,
           path: `${JSONPointer.Root}/properties/name`,
+          dataPath: `${JSONPointer.Root}/name`,
           depth: 1,
         },
         undefined,
@@ -580,6 +591,7 @@ describe('JsonSchemaScannerAsync', () => {
         {
           schema: schema.properties.age,
           path: `${JSONPointer.Root}/properties/age`,
+          dataPath: `${JSONPointer.Root}/age`,
           depth: 1,
         },
         undefined,
@@ -617,6 +629,7 @@ describe('JsonSchemaScannerAsync', () => {
         {
           depth: 0,
           path: '#',
+          dataPath: JSONPointer.Root,
           schema: {
             properties: {
               ref: {
@@ -642,6 +655,7 @@ describe('JsonSchemaScannerAsync', () => {
         {
           depth: 1,
           path: '#/properties/ref',
+          dataPath: `${JSONPointer.Root}/ref`,
           referencePath: '#/definitions/string',
           referenceResolved: true,
           schema: { type: 'string' }, // 해결된 스키마

@@ -72,19 +72,6 @@ export const isArrayNode = (input: any): input is ArrayNode =>
 export const isNullNode = (input: any): input is NullNode =>
   isSchemaNode(input) && input.type === 'null';
 
-const BRANCH_NODE_TYPE = new Set<SchemaNode['type']>([
-  'object',
-  'array',
-  'virtual',
-]);
-
-const TERMINAL_NODE_TYPE = new Set<SchemaNode['type']>([
-  'boolean',
-  'number',
-  'string',
-  'null',
-]);
-
 /**
  * 주어진 노드가 하위 노드를 가질 수 있는 브랜치 노드인지 확인합니다.
  * @param node - 확인할 SchemaNode
@@ -92,8 +79,7 @@ const TERMINAL_NODE_TYPE = new Set<SchemaNode['type']>([
  */
 export const isBranchNode = (
   node: SchemaNode,
-): node is ObjectNode | ArrayNode | VirtualNode =>
-  BRANCH_NODE_TYPE.has(node.type);
+): node is ObjectNode | ArrayNode | VirtualNode => node.group === 'branch';
 
 /**
  * 주어진 노드가 하위 노드를 가질 수 없는 터미널 노드인지 확인합니다.
@@ -103,4 +89,4 @@ export const isBranchNode = (
 export const isTerminalNode = (
   node: SchemaNode,
 ): node is BooleanNode | NumberNode | StringNode | NullNode =>
-  TERMINAL_NODE_TYPE.has(node.type);
+  node.group === 'terminal';

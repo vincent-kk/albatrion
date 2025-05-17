@@ -31,6 +31,11 @@ describe('AbstractNode', () => {
                   yearOfBirth: { type: 'number', default: 900 },
                 },
               },
+              terminal: {
+                type: 'object',
+                terminal: true,
+                default: { name: 'Hogwarts' },
+              },
             },
           },
         },
@@ -53,6 +58,9 @@ describe('AbstractNode', () => {
       '$.house.founder.yearOfBirth',
     );
     expect(founderBirthOfYear2?.value).toBe(900);
+
+    const terminal = node?.find('house.terminal.name');
+    expect(terminal?.value).toEqual({ name: 'Hogwarts' });
   });
 
   it('validate', async () => {
@@ -311,10 +319,12 @@ describe('AbstractNode', () => {
         NodeEventType.UpdateValue |
         NodeEventType.UpdateChildren |
         NodeEventType.UpdateComputedProperties,
-      payload: {},
+      payload: {
+        [NodeEventType.UpdateValue]: {},
+      },
       options: {
         [NodeEventType.UpdateValue]: {
-          current: undefined,
+          current: {},
           previous: undefined,
         },
       },

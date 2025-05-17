@@ -16,7 +16,7 @@ import {
  * 여러 노드에 참조를 가지고 그들을 통합하여 작동합니다.
  */
 export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
-  #value: VirtualNodeValue | undefined = undefined;
+  #value: VirtualNodeValue | undefined = [];
   /**
    * 가상 노드의 값을 가져옵니다.
    * @returns 참조되는 모든 노드의 값 배열 또는 undefined
@@ -52,25 +52,6 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
    */
   get children() {
     return this.#children;
-  }
-
-  /**
-   * 값 변경을 참조 노드들에 전파하고 관련 이벤트를 발행합니다.
-   * @param values - 설정할 값
-   * @param option - 설정 옵션
-   */
-  #emitChange(
-    this: VirtualNode,
-    values: VirtualNodeValue | undefined,
-    option: UnionSetValueOption = SetValueOption.Default,
-  ) {
-    if (!values || values.length !== this.#refNodes.length) return;
-    for (let i = 0; i < values.length; i++) {
-      const value = values[i];
-      const node = this.#refNodes[i];
-      if (node.value !== value) node.setValue(value, option);
-    }
-    if (option & SetValueOption.Refresh) this.refresh(values);
   }
 
   constructor({
@@ -128,5 +109,24 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
 
     this.publish({ type: NodeEventType.UpdateChildren });
     this.activateLink();
+  }
+
+  /**
+   * 값 변경을 참조 노드들에 전파하고 관련 이벤트를 발행합니다.
+   * @param values - 설정할 값
+   * @param option - 설정 옵션
+   */
+  #emitChange(
+    this: VirtualNode,
+    values: VirtualNodeValue | undefined,
+    option: UnionSetValueOption = SetValueOption.Default,
+  ) {
+    if (!values || values.length !== this.#refNodes.length) return;
+    for (let i = 0; i < values.length; i++) {
+      const value = values[i];
+      const node = this.#refNodes[i];
+      if (node.value !== value) node.setValue(value, option);
+    }
+    if (option & SetValueOption.Refresh) this.refresh(values);
   }
 }

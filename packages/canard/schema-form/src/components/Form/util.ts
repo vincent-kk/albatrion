@@ -27,7 +27,6 @@ export const createChildren = <
       defaultValue: rootNode?.defaultValue as Value,
       value: rootNode?.value as Value,
       errors: rootNode?.errors || undefined,
-      isArrayItem: rootNode?.isArrayItem,
     });
   }
   return children;

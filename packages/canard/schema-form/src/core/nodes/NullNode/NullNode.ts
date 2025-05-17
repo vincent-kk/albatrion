@@ -41,14 +41,30 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
     this.#emitChange(input, option);
   }
 
-  /**
-   * 입력값을 파싱합니다.
-   * @param input - 파싱할 값
-   * @returns 그대로 반환
-   */
-  #parseValue(this: NullNode, input: NullValue | undefined) {
-    return input;
+  constructor({
+    key,
+    name,
+    jsonSchema,
+    defaultValue,
+    onChange,
+    parentNode,
+    validationMode,
+    ajv,
+  }: SchemaNodeConstructorProps<NullSchema>) {
+    super({
+      key,
+      name,
+      jsonSchema,
+      defaultValue,
+      onChange,
+      parentNode,
+      validationMode,
+      ajv,
+    });
+    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
+    this.activateLink();
   }
+
   /**
    * 값 변경을 반영하고 관련 이벤트를 발행합니다.
    * @param input - 설정할 값
@@ -79,27 +95,12 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
       });
   }
 
-  constructor({
-    key,
-    name,
-    jsonSchema,
-    defaultValue,
-    onChange,
-    parentNode,
-    validationMode,
-    ajv,
-  }: SchemaNodeConstructorProps<NullSchema>) {
-    super({
-      key,
-      name,
-      jsonSchema,
-      defaultValue,
-      onChange,
-      parentNode,
-      validationMode,
-      ajv,
-    });
-    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
-    this.activateLink();
+  /**
+   * 입력값을 파싱합니다.
+   * @param input - 파싱할 값
+   * @returns 그대로 반환
+   */
+  #parseValue(this: NullNode, input: NullValue | undefined) {
+    return input;
   }
 }

@@ -31,6 +31,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.allOf[0],
           path: `${JSONPointer.Root}/allOf/0`,
+          dataPath: JSONPointer.Root,
           depth: 1,
         },
         undefined,
@@ -39,6 +40,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.allOf[1],
           path: `${JSONPointer.Root}/allOf/1`,
+          dataPath: JSONPointer.Root,
           depth: 1,
         },
         undefined,
@@ -49,6 +51,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.anyOf[0],
           path: `${JSONPointer.Root}/anyOf/0`,
+          dataPath: JSONPointer.Root,
           depth: 1,
         },
         undefined,
@@ -57,6 +60,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.anyOf[1],
           path: `${JSONPointer.Root}/anyOf/1`,
+          dataPath: JSONPointer.Root,
           depth: 1,
         },
         undefined,
@@ -67,6 +71,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.oneOf[0],
           path: `${JSONPointer.Root}/oneOf/0`,
+          dataPath: JSONPointer.Root,
           depth: 1,
         },
         undefined,
@@ -75,6 +80,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.oneOf[1],
           path: `${JSONPointer.Root}/oneOf/1`,
+          dataPath: JSONPointer.Root,
           depth: 1,
         },
         undefined,
@@ -102,6 +108,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.if,
           path: `${JSONPointer.Root}/if`,
+          dataPath: JSONPointer.Root,
           depth: 1,
         },
         undefined,
@@ -110,6 +117,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.then,
           path: `${JSONPointer.Root}/then`,
+          dataPath: JSONPointer.Root,
           depth: 1,
         },
         undefined,
@@ -118,6 +126,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.else,
           path: `${JSONPointer.Root}/else`,
+          dataPath: JSONPointer.Root,
           depth: 1,
         },
         undefined,
@@ -148,6 +157,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.definitions.stringType,
           path: `${JSONPointer.Root}/definitions/stringType`,
+          dataPath: JSONPointer.Root,
           depth: 1,
         },
         undefined,
@@ -156,6 +166,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.$defs.numberType,
           path: `${JSONPointer.Root}/$defs/numberType`,
+          dataPath: JSONPointer.Root,
           depth: 1,
         },
         undefined,
@@ -201,6 +212,7 @@ describe('JsonSchemaScannerAsync Advanced Features', () => {
         {
           schema,
           path: JSONPointer.Root,
+          dataPath: JSONPointer.Root,
           depth: 0,
         },
         context,
@@ -252,6 +264,7 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 스펙 테스트', () => {
       {
         schema,
         path: JSONPointer.Root,
+        dataPath: JSONPointer.Root,
         depth: 0,
       },
       undefined,
@@ -274,6 +287,7 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 스펙 테스트', () => {
       {
         schema,
         path: JSONPointer.Root,
+        dataPath: JSONPointer.Root,
         depth: 0,
       },
       undefined,
@@ -322,6 +336,7 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 스펙 테스트', () => {
         referencePath: '#/ref',
         referenceResolved: true,
         path: JSONPointer.Root,
+        dataPath: JSONPointer.Root,
         depth: 0,
       },
       context,
@@ -330,6 +345,7 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 스펙 테스트', () => {
       {
         depth: 0,
         path: '#',
+        dataPath: JSONPointer.Root,
         referencePath: '#/ref',
         referenceResolved: true,
         schema: {

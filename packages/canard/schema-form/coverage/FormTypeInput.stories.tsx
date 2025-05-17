@@ -130,7 +130,9 @@ export const FormTypeMap = () => {
 
   const formTypeMap = useMemo<FormTypeInputMap>(() => {
     return {
-      '$.objectNode': ({ onChange }: FormTypeInputProps<{ test?: string }>) => {
+      '$.objectNode': ({
+        onChange,
+      }: FormTypeInputProps<{ test?: string } | undefined>) => {
         const handleClick = () => {
           onChange({ test: 'wow' });
         };
@@ -206,7 +208,7 @@ export const FormTypeMapWithRegex = () => {
 
   const formTypeMap = useMemo<FormTypeInputMap>(() => {
     return {
-      '_test\\d': ({ onChange }: FormTypeInputProps<string>) => {
+      '_test\\d': ({ onChange }: FormTypeInputProps<string | undefined>) => {
         const handleClick = () => {
           onChange('wow');
         };

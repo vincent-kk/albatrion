@@ -22,6 +22,7 @@ export const setValueByPointer = <Input extends Dictionary>(
   input: Input,
   pointer: string | string[],
   value: any,
+  overwrite: boolean = true,
 ): Dictionary => {
   if (!(isPlainObject(input) || isArray(input)))
     throw new JSONPointerError(
@@ -29,5 +30,5 @@ export const setValueByPointer = <Input extends Dictionary>(
       '`input` must be a plain object or an array.',
       { input },
     );
-  return setValue(input, compilePointer(pointer), value);
+  return setValue(input, compilePointer(pointer), value, overwrite);
 };

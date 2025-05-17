@@ -4,7 +4,8 @@ import type { Fn } from '@aileron/declare';
 
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
-import { ALIAS, JSON_PATH_REGEX } from './regex';
+import { JSON_PATH_REGEX } from './regex';
+import { ALIAS, type ConditionFieldName } from './type';
 
 type GetConditionIndex = Fn<[dependencies: unknown[]], number>;
 
@@ -34,7 +35,7 @@ export const getConditionIndexFactory =
   (
     dependencyPaths: string[],
     fieldName: string,
-    conditionField: string,
+    conditionField: ConditionFieldName,
   ): GetConditionIndex | undefined => {
     // 유효하지 않은 스키마면 undefined 반환
     if (jsonSchema.type !== 'object' || !isArray(jsonSchema[fieldName]))

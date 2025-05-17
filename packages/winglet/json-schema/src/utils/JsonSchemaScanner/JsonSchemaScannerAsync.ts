@@ -100,7 +100,9 @@ export class JsonSchemaScannerAsync<ContextType = void> {
    * @private
    */
   async #run(this: this, schema: UnknownSchema): Promise<void> {
-    const stack: SchemaEntry[] = [{ schema, path: JSONPointer.Root, depth: 0 }];
+    const stack: SchemaEntry[] = [
+      { schema, path: JSONPointer.Root, dataPath: JSONPointer.Root, depth: 0 },
+    ];
     const entryPhase = new WeakMap<SchemaEntry, OperationPhase>();
     const visitedReference = new Set<string>();
 

@@ -10,28 +10,33 @@ export const setValue = <Input extends Dictionary>(
   input: Input,
   segments: string[],
   value: any,
+  overwrite: boolean,
 ): Dictionary => {
   const length = segments.length;
   if (length === 0) return value;
 
-  let current: any = input;
+  let cursor: any = input;
   let part = '';
   for (let index = 0; index < length; ) {
     part = unescapePointer(segments[index++]);
     if (isForbiddenKey(part)) return input;
     const isLastSegment = index === length;
-    if (current[part] === undefined && !isLastSegment) {
+    if (cursor[part] === undefined && !isLastSegment) {
       if (isArrayIndex(segments[index]) || segments[index] === '-')
-        current[part] = [];
-      else current[part] = {};
+        cursor[part] = [];
+      else cursor[part] = {};
     }
-    if (isArray(current) && part === '-') part = current.length.toString();
+    if (isArray(cursor) && part === '-') part = cursor.length.toString();
     if (isLastSegment) break;
-    current = current[part];
+    cursor = cursor[part];
   }
 
-  if (value === undefined) delete current[part];
-  else current[part] = value;
+  if (value === undefined) delete cursor[part];
+  else {
+    if (part in cursor) {
+      if (overwrite) cursor[part] = value;
+    } else cursor[part] = value;
+  }
 
   return input;
 };
