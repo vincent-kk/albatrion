@@ -3,12 +3,14 @@
  * @param jsonSchema - JSON Schema
  * @returns 기본값
  */
-export const getFallbackValue = <
+export const getDefaultValue = <
   Schema extends { type?: string; default?: any },
 >(
   jsonSchema: Schema,
 ) => {
   if (jsonSchema.default !== undefined) return jsonSchema.default;
+  else if (jsonSchema.type === 'array') return [];
   else if (jsonSchema.type === 'virtual') return [];
+  else if (jsonSchema.type === 'object') return {};
   else return undefined;
 };

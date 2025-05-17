@@ -6,7 +6,7 @@ import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import type { ChildNode } from '@/schema-form/core/nodes/ObjectNode/type';
 import type { SchemaNodeFactory } from '@/schema-form/core/nodes/type';
 import { SchemaNodeError } from '@/schema-form/errors';
-import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
+import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
 /**
@@ -69,7 +69,7 @@ export const getOneOfChildrenList = (
         node: nodeFactory({
           name: property,
           jsonSchema: schema,
-          defaultValue: defaultValue?.[property] ?? getFallbackValue(schema),
+          defaultValue: defaultValue?.[property] ?? getDefaultValue(schema),
           onChange: handelChangeFactory(property),
           nodeFactory,
           parentNode,

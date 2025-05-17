@@ -1,29 +1,29 @@
 import { describe, expect, it } from 'vitest';
 
-import { getFallbackValue } from '../getFallbackValue';
+import { getDefaultValue } from '../getDefaultValue';
 
-describe('getFallbackValue', () => {
+describe('getDefaultValue', () => {
   it('should return the default value if it exists', () => {
     expect(
-      getFallbackValue({
+      getDefaultValue({
         type: 'string',
         default: 'test',
       }),
     ).toBe('test');
     expect(
-      getFallbackValue({
+      getDefaultValue({
         type: 'integer',
         default: 1,
       }),
     ).toBe(1);
     expect(
-      getFallbackValue({
+      getDefaultValue({
         type: 'boolean',
         default: true,
       }),
     ).toBe(true);
     expect(
-      getFallbackValue({
+      getDefaultValue({
         type: 'object',
         default: {
           test: 'test',
@@ -33,7 +33,7 @@ describe('getFallbackValue', () => {
       test: 'test',
     });
     expect(
-      getFallbackValue({
+      getDefaultValue({
         type: 'array',
         items: {
           type: 'string',
@@ -43,22 +43,22 @@ describe('getFallbackValue', () => {
     ).toEqual(['test']);
   });
   it('should return an empty object if the type is object', () => {
-    expect(getFallbackValue({ type: 'object' })).toEqual(undefined);
+    expect(getDefaultValue({ type: 'object' })).toEqual({});
   });
   it('should return an empty array if the type is array', () => {
     expect(
-      getFallbackValue({
+      getDefaultValue({
         type: 'array',
         items: {
           type: 'string',
         },
       }),
-    ).toEqual(undefined);
+    ).toEqual([]);
   });
   it('should return undefined if the type is not object, array, or string', () => {
-    expect(getFallbackValue({ type: 'string' })).toBeUndefined();
-    expect(getFallbackValue({ type: 'number' })).toBeUndefined();
-    expect(getFallbackValue({ type: 'boolean' })).toBeUndefined();
-    expect(getFallbackValue({ type: 'integer' })).toBeUndefined();
+    expect(getDefaultValue({ type: 'string' })).toBeUndefined();
+    expect(getDefaultValue({ type: 'number' })).toBeUndefined();
+    expect(getDefaultValue({ type: 'boolean' })).toBeUndefined();
+    expect(getDefaultValue({ type: 'integer' })).toBeUndefined();
   });
 });

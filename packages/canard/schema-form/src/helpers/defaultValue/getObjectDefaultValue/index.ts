@@ -1,0 +1,1 @@
+export { getObjectDefaultValue } from './getObjectDefaultValue';

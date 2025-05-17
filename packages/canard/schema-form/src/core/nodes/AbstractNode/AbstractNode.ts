@@ -15,8 +15,8 @@ import {
   type ValidateFunction,
   ajvHelper,
 } from '@/schema-form/helpers/ajv';
+import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import { transformErrors } from '@/schema-form/helpers/error';
-import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
 import type {
   AllowedValue,
   JsonSchemaError,
@@ -248,7 +248,7 @@ export abstract class AbstractNode<
 
     this.#compute = computeFactory(this.jsonSchema, this.rootNode.jsonSchema);
 
-    this.setDefaultValue(defaultValue ?? getFallbackValue(jsonSchema));
+    this.setDefaultValue(defaultValue ?? getDefaultValue(jsonSchema));
     if (typeof onChange === 'function')
       this.#handleChange = this.isRoot
         ? afterMicrotask(() =>

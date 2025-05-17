@@ -9,10 +9,10 @@ import {
   type UnionSetValueOption,
 } from '@/schema-form/core/nodes/type';
 import { parseObject } from '@/schema-form/core/parsers';
+import { getObjectDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { ObjectValue } from '@/schema-form/types';
 
 import type { ObjectNodeStrategy } from '../type';
-import { getDefaultValue } from './utils';
 
 /**
  * ObjectNode의 값을 시터미널로 관리하는 전략 클래스.
@@ -71,7 +71,7 @@ export class TerminalStrategy implements ObjectNodeStrategy {
     this.#propertyKeys = getObjectKeys(host.jsonSchema.properties);
 
     const defaultValue = this.#parseValue(
-      getDefaultValue(host.jsonSchema, host.defaultValue),
+      getObjectDefaultValue(host.jsonSchema, host.defaultValue),
     );
 
     handleSetDefaultValue(defaultValue);

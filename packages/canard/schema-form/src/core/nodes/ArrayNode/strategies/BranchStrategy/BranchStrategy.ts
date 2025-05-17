@@ -10,7 +10,7 @@ import {
   SetValueOption,
   type UnionSetValueOption,
 } from '@/schema-form/core/nodes/type';
-import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
+import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 
 import type { ArrayNode } from '../../ArrayNode';
@@ -146,7 +146,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     const name = this.#ids.length.toString();
     this.#ids.push(id);
 
-    const defaultValue = data ?? getFallbackValue(this.#host.jsonSchema.items);
+    const defaultValue = data ?? getDefaultValue(this.#host.jsonSchema.items);
     const childNode = this.#nodeFactory({
       key: id,
       name,

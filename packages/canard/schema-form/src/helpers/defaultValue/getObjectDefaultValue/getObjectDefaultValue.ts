@@ -3,7 +3,7 @@ import { JsonSchemaScanner } from '@winglet/json-schema';
 
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
-export const getDefaultValue = (
+export const getObjectDefaultValue = (
   jsonSchema: ObjectSchema,
   inputDefault?: ObjectValue,
 ) => {

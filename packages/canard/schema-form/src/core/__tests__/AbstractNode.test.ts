@@ -325,7 +325,7 @@ describe('AbstractNode', () => {
       options: {
         [NodeEventType.UpdateValue]: {
           current: {},
-          previous: undefined,
+          previous: {},
         },
       },
     });

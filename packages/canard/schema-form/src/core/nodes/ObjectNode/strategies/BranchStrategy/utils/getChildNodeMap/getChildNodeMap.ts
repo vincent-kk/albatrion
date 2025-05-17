@@ -3,7 +3,7 @@ import type { Fn } from '@aileron/declare';
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import type { ChildNode } from '@/schema-form/core/nodes/ObjectNode/type';
 import type { SchemaNodeFactory } from '@/schema-form/core/nodes/type';
-import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
+import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
 import type { FieldConditionMap } from '../getFieldConditionMap';
@@ -43,7 +43,7 @@ export const getChildNodeMap = (
       node: nodeFactory({
         name,
         jsonSchema: mergeShowConditions(schema, conditionsMap?.get(name)),
-        defaultValue: defaultValue?.[name] ?? getFallbackValue(schema),
+        defaultValue: defaultValue?.[name] ?? getDefaultValue(schema),
         onChange: handelChangeFactory(name),
         nodeFactory,
         parentNode,
