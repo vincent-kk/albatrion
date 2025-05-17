@@ -268,7 +268,7 @@ export const FormTypeInputObjectTerminalWithDefaultValue = () => {
   );
 };
 
-export const FormTypeInputObjectTerminalWithDefaultValue2 = () => {
+export const FormTypeInputObjectTerminalWithSubSchemaDefaultValue = () => {
   const [value, setValue] = useState({});
   const schema = {
     type: 'object',
@@ -280,6 +280,7 @@ export const FormTypeInputObjectTerminalWithDefaultValue2 = () => {
           node,
           onChange,
           value,
+          defaultValue,
         }: FormTypeInputProps<{
           url: string;
           format: string;
@@ -293,6 +294,9 @@ export const FormTypeInputObjectTerminalWithDefaultValue2 = () => {
               i am object item
               <div>
                 <pre>{JSON.stringify(value, null, 2)}</pre>
+              </div>
+              <div>
+                <pre>{JSON.stringify(defaultValue, null, 2)}</pre>
               </div>
               <div>
                 <button
@@ -332,6 +336,92 @@ export const FormTypeInputObjectTerminalWithDefaultValue2 = () => {
                 default: 50,
               },
             },
+          },
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form jsonSchema={schema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+export const FormTypeInputObjectTerminalWithMixedDefaultValue = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      poster: {
+        type: 'object',
+        terminal: true,
+        FormType: ({
+          node,
+          onChange,
+          value,
+          defaultValue,
+        }: FormTypeInputProps<{
+          url: string;
+          format: string;
+          size: {
+            width: number;
+            height: number;
+          };
+        }>) => {
+          return (
+            <div>
+              i am object item
+              <div>
+                <pre>{JSON.stringify(value, null, 2)}</pre>
+              </div>
+              <div>
+                <pre>{JSON.stringify(defaultValue, null, 2)}</pre>
+              </div>
+              <div>
+                <button
+                  onClick={() =>
+                    onChange({
+                      url: 'test',
+                      format: 'jpg',
+                      size: { width: 100, height: 100 },
+                    })
+                  }
+                >
+                  set
+                </button>
+                <button onClick={() => node.setValue(undefined)}>clear</button>
+              </div>
+            </div>
+          );
+        },
+        properties: {
+          url: {
+            type: 'string',
+          },
+          format: {
+            type: 'string',
+            default: 'webp',
+          },
+          size: {
+            type: 'object',
+            properties: {
+              width: {
+                type: 'number',
+                default: 50,
+              },
+              height: {
+                type: 'number',
+                default: 50,
+              },
+            },
+          },
+        },
+        default: {
+          url: 'http://example-cdn.com/poster.jpg',
+          size: {
+            width: 300,
           },
         },
       },
