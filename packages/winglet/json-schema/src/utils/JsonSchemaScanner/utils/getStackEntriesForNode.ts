@@ -1,5 +1,7 @@
 import { isArray, isObject } from '@winglet/common-utils';
 
+import type { Dictionary } from '@aileron/declare';
+
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import type { SchemaEntry } from '../type';
@@ -15,27 +17,27 @@ const COMPOSITION_KEYWORDS = ['allOf', 'anyOf', 'oneOf'] as const;
  * @returns 하위 스키마 항목 배열
  */
 export const getStackEntriesForNode = (entry: SchemaEntry): SchemaEntry[] => {
-  const { schema, path, depth } = entry;
+  const { schema, path, dataPath, depth } = entry;
   const entries: SchemaEntry[] = [];
 
   if ($DEFS in schema)
-    handleDefinitionsNode(schema, entries, path, depth, $DEFS);
+    handleDefinitionsNode(schema, entries, path, dataPath, depth, $DEFS);
 
   if (DEFINITIONS in schema)
-    handleDefinitionsNode(schema, entries, path, depth, DEFINITIONS);
+    handleDefinitionsNode(schema, entries, path, dataPath, depth, DEFINITIONS);
 
   if ('additionalProperties' in schema && isObject(schema.additionalProperties))
-    handleAdditionalProperties(schema, entries, path, depth);
+    handleAdditionalProperties(schema, entries, path, dataPath, depth);
 
-  handleConditionalNode(schema, entries, path, depth);
+  handleConditionalNode(schema, entries, path, dataPath, depth);
 
-  handleCompositionNode(schema, entries, path, depth);
+  handleCompositionNode(schema, entries, path, dataPath, depth);
 
   if (schema.type === 'array' && 'items' in schema)
-    handleArrayItems(schema, entries, path, depth);
+    handleArrayItems(schema, entries, path, dataPath, depth);
 
   if (schema.type === 'object' && 'properties' in schema)
-    handleObjectProperties(schema, entries, path, depth);
+    handleObjectProperties(schema, entries, path, dataPath, depth);
 
   return entries;
 };
@@ -51,16 +53,18 @@ const handleDefinitionsNode = (
   schema: UnknownSchema,
   entries: SchemaEntry[],
   path: string,
+  dataPath: string,
   depth: number,
   fieldName: string,
 ) => {
   const definitions = schema[fieldName];
   const keys = Object.keys(definitions);
-  for (let i = keys.length - 1; i >= 0; i--) {
+  for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
     entries.push({
       schema: definitions[key],
       path: `${path}/${fieldName}/${key}`,
+      dataPath,
       depth: depth + 1,
     });
   }
@@ -77,6 +81,7 @@ const handleConditionalNode = (
   schema: UnknownSchema,
   entries: SchemaEntry[],
   path: string,
+  dataPath: string,
   depth: number,
 ) => {
   for (let i = 0; i < CONDITIONAL_KEYWORDS.length; i++) {
@@ -86,6 +91,7 @@ const handleConditionalNode = (
     entries.push({
       schema: conditionalNode,
       path: `${path}/${keyword}`,
+      dataPath,
       depth: depth + 1,
     });
   }
@@ -102,16 +108,18 @@ const handleCompositionNode = (
   schema: UnknownSchema,
   entries: SchemaEntry[],
   path: string,
+  dataPath: string,
   depth: number,
 ) => {
   for (let i = 0; i < COMPOSITION_KEYWORDS.length; i++) {
     const keyword = COMPOSITION_KEYWORDS[i];
     const compositionNode = schema[keyword];
     if (!compositionNode || !isArray(compositionNode)) continue;
-    for (let j = compositionNode.length - 1; j >= 0; j--) {
+    for (let j = 0; j < compositionNode.length; j++) {
       entries.push({
         schema: compositionNode[j],
         path: `${path}/${keyword}/${j}`,
+        dataPath,
         depth: depth + 1,
       });
     }
@@ -129,11 +137,13 @@ const handleAdditionalProperties = (
   schema: UnknownSchema,
   entries: SchemaEntry[],
   path: string,
+  dataPath: string,
   depth: number,
 ) => {
   entries.push({
     schema: schema.additionalProperties,
     path: `${path}/additionalProperties`,
+    dataPath,
     depth: depth + 1,
   });
 };
@@ -149,14 +159,16 @@ const handleArrayItems = (
   schema: UnknownSchema,
   entries: SchemaEntry[],
   path: string,
+  dataPath: string,
   depth: number,
 ) => {
   const items = schema.items;
   if (isArray(items)) {
-    for (let i = items.length - 1; i >= 0; i--) {
+    for (let i = 0; i < items.length; i++) {
       entries.push({
         schema: items[i],
         path: `${path}/items/${i}`,
+        dataPath: `${dataPath}/${i}`,
         depth: depth + 1,
       });
     }
@@ -164,6 +176,7 @@ const handleArrayItems = (
     entries.push({
       schema: items,
       path: `${path}/items`,
+      dataPath,
       depth: depth + 1,
     });
   }
@@ -174,21 +187,24 @@ const handleArrayItems = (
  * @param schema 스키마 객체
  * @param entries 추가할 스택 항목 배열
  * @param path 현재 경로
+ * @param dataPath 현재 데이터 경로
  * @param depth 현재 깊이
  */
 const handleObjectProperties = (
   schema: UnknownSchema,
   entries: SchemaEntry[],
   path: string,
+  dataPath: string,
   depth: number,
 ) => {
-  const properties = schema.properties;
+  const properties = schema.properties as Dictionary;
   const keys = Object.keys(properties);
-  for (let i = keys.length - 1; i >= 0; i--) {
+  for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
     entries.push({
       schema: properties[key],
       path: `${path}/properties/${key}`,
+      dataPath: `${dataPath}/${key}`,
       depth: depth + 1,
     });
   }
