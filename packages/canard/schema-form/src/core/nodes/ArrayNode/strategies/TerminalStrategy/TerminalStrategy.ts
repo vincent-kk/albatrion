@@ -93,7 +93,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   }
 
   #parseValue(input: ArrayValue | undefined) {
-    return parseArray(input);
+    return input !== undefined ? parseArray(input) : undefined;
   }
 
   #emitChange(
@@ -101,7 +101,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
     const previous = this.#value;
-    const current = input !== undefined ? this.#parseValue(input) : undefined;
+    const current = this.#parseValue(input);
 
     if (equals(previous, current)) return;
 
