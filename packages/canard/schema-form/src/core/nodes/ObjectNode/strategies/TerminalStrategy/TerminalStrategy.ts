@@ -1,4 +1,4 @@
-import { equals } from '@winglet/common-utils';
+import { equals, getObjectKeys, sortObjectKeys } from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/declare';
 
@@ -18,6 +18,8 @@ export class TerminalStrategy implements ObjectNodeStrategy {
   #host: ObjectNode;
   #handleChange: Fn<[ObjectValue | undefined]>;
   #handleRefresh: Fn<[ObjectValue | undefined]>;
+
+  readonly #propertyKeys: string[];
 
   #value: ObjectValue | undefined = {};
   get value() {
@@ -42,7 +44,11 @@ export class TerminalStrategy implements ObjectNodeStrategy {
     this.#handleChange = handleChange;
     this.#handleRefresh = handleRefresh;
 
-    const defaultValue = getDefaultValue(host.jsonSchema, host.defaultValue);
+    this.#propertyKeys = getObjectKeys(host.jsonSchema.properties);
+
+    const defaultValue = this.#parseValue(
+      getDefaultValue(host.jsonSchema, host.defaultValue),
+    );
 
     handleSetDefaultValue(defaultValue);
     this.#emitChange(defaultValue);
@@ -74,6 +80,7 @@ export class TerminalStrategy implements ObjectNodeStrategy {
   }
 
   #parseValue(input: ObjectValue | undefined) {
-    return input !== undefined ? parseObject(input) : undefined;
+    if (input === undefined) return undefined;
+    return sortObjectKeys(parseObject(input), this.#propertyKeys, true);
   }
 }

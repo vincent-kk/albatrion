@@ -38,6 +38,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   readonly #oneOfKeySet: Set<string> | undefined;
   readonly #oneOfKeySetList: Array<Set<string>> | undefined;
   readonly #fieldConditionMap: FieldConditionMap | undefined;
+
   #locked: boolean = true;
 
   #propertyChildren: ChildNode[];
