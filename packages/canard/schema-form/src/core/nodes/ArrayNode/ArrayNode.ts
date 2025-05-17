@@ -6,8 +6,12 @@ import type {
   SchemaNode,
   UnionSetValueOption,
 } from '../type';
-import { BranchStrategy, TerminalStrategy } from './strategies';
-import type { ArrayNodeStrategy, IndexId } from './strategies/type';
+import {
+  type ArrayNodeStrategy,
+  BranchStrategy,
+  type IndexId,
+  TerminalStrategy,
+} from './strategies';
 
 /**
  * 배열 스키마를 처리하기 위한 노드 클래스입니다.
