@@ -3,6 +3,7 @@ import { isArray } from '@winglet/common-utils';
 import type { Fn } from '@aileron/declare';
 
 import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
+import type { ArrayNode } from '@/schema-form/core/nodes/ArrayNode';
 import {
   NodeEventType,
   type SchemaNode,
@@ -13,7 +14,6 @@ import {
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 
-import type { ArrayNode } from '../../ArrayNode';
 import type { ArrayNodeStrategy } from '../type';
 
 type IndexId = `[${number}]`;

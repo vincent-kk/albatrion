@@ -2,17 +2,17 @@ import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/declare';
 
-import type { ObjectValue } from '@/schema-form/types';
-
-import type { AbstractNode } from '../../../AbstractNode';
+import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
+import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
+import type { ChildNode } from '@/schema-form/core/nodes/ObjectNode/type';
 import {
   NodeEventType,
   type SchemaNodeFactory,
   SetValueOption,
   type UnionSetValueOption,
-} from '../../../type';
-import type { ObjectNode } from '../../ObjectNode';
-import type { ChildNode } from '../../type';
+} from '@/schema-form/core/nodes/type';
+import type { ObjectValue } from '@/schema-form/types';
+
 import type { ObjectNodeStrategy } from '../type';
 import {
   type FieldConditionMap,

@@ -2,6 +2,7 @@ import { equals } from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/declare';
 
+import type { ArrayNode } from '@/schema-form/core/nodes/ArrayNode';
 import {
   NodeEventType,
   SetValueOption,
@@ -11,7 +12,6 @@ import { parseArray } from '@/schema-form/core/parsers';
 import { getObjectDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 
-import type { ArrayNode } from '../../ArrayNode';
 import type { ArrayNodeStrategy, IndexId } from '../type';
 
 const FIRST_EMIT_CHANGE_OPTION =
