@@ -100,7 +100,12 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
     this.#strategy =
       this.group === 'terminal'
-        ? new TerminalStrategy(this, handleChange, handleRefresh)
+        ? new TerminalStrategy(
+            this,
+            handleChange,
+            handleRefresh,
+            handleSetDefaultValue,
+          )
         : new BranchStrategy(
             this,
             handleChange,

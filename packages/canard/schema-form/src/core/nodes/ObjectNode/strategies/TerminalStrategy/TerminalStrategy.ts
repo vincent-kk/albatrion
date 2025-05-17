@@ -12,6 +12,7 @@ import { parseObject } from '@/schema-form/core/parsers';
 import type { ObjectValue } from '@/schema-form/types';
 
 import type { ObjectNodeStrategy } from '../type';
+import { getDefaultValue } from './utils';
 
 export class TerminalStrategy implements ObjectNodeStrategy {
   #host: ObjectNode;
@@ -35,11 +36,16 @@ export class TerminalStrategy implements ObjectNodeStrategy {
     host: ObjectNode,
     handleChange: Fn<[ObjectValue | undefined]>,
     handleRefresh: Fn<[ObjectValue | undefined]>,
+    handleSetDefaultValue: Fn<[ObjectValue | undefined]>,
   ) {
     this.#host = host;
     this.#handleChange = handleChange;
     this.#handleRefresh = handleRefresh;
-    if (host.defaultValue !== undefined) this.#emitChange(host.defaultValue);
+
+    const defaultValue = getDefaultValue(host.jsonSchema, host.defaultValue);
+
+    handleSetDefaultValue(defaultValue);
+    this.#emitChange(defaultValue);
   }
 
   #emitChange(
