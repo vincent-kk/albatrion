@@ -46,6 +46,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
   #oneOfChildrenList: Array<ChildNode[]> | undefined;
 
   #children: ChildNode[];
+  /**
+   * 객체 노드의 자식 노드들을 가져옵니다.
+   * @returns 자식 노드 목록
+   */
   get children() {
     return this.#children;
   }
@@ -55,21 +59,26 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
   #isolationMode: boolean = false;
 
+  /**
+   * 객체의 현재 값을 가져옵니다.
+   * @returns 객체 노드의 현재 값 또는 undefined
+   */
   get value() {
     return this.#value;
   }
 
+  /**
+   * 입력값을 객체 노드에 적용합니다.
+   * @param input - 설정할 객체 값
+   * @param option - 설정 옵션
+   */
   applyValue(input: ObjectValue, option: UnionSetValueOption) {
     this.#draft = input;
     this.#isolationMode = !!(option & SetValueOption.IsolationMode);
     this.#publishRequestEmitChange(option);
   }
 
-  /**
-   * 노드를 초기화하고 자식 노드를 준비합니다.
-   * @param actor - 준비를 요청한 노드
-   * @returns 초기화 완료 여부
-   */
+  /** 하위 노드에 대해 pub-sub 링크를 활성화합니다. */
   activateLink() {
     for (const child of this.#propertyChildren)
       (child.node as AbstractNode).activateLink(this.#host);
@@ -79,6 +88,15 @@ export class BranchStrategy implements ObjectNodeStrategy {
           (child.node as AbstractNode).activateLink(this.#host);
   }
 
+  /**
+   * BranchStrategy 객체를 초기화합니다.
+   * @param host - 호스트 ObjectNode 객체
+   * @param handleChange - 값 변경 핸들러
+   * @param handleRefresh - 새로고침 핸들러
+   * @param handleSetDefaultValue - 기본값 설정 핸들러
+   * @param handleUpdateComputedProperties - 계산된 속성 업데이트 핸들러
+   * @param nodeFactory - 노드 생성 팩토리
+   */
   constructor(
     host: ObjectNode,
     handleChange: Fn<[ObjectValue | undefined]>,
@@ -164,6 +182,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /**
    * 값 변경을 반영하고 관련 이벤트를 발행합니다.
    * @param option - 설정 옵션
+   * @private
    */
   #emitChange(option: UnionSetValueOption = SetValueOption.Default) {
     if (this.#locked) return;
@@ -204,6 +223,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * 입력값을 파싱하여 객체로 처리합니다.
    * @param input - 파싱할 객체
    * @returns 파싱된 객체
+   * @private
    */
   #parseValue(input: ObjectValue) {
     const value = sortObjectKeys(input, this.#schemaKeys, true);
@@ -215,6 +235,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * 값 변경을 하위 노드로 전파합니다.
    * @param replace - 기존 값 대체 여부
    * @param option - 설정 옵션
+   * @private
    */
   #propagate(replace: boolean, option: UnionSetValueOption) {
     this.#locked = true;
@@ -231,6 +252,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
   }
 
   #previousIndex: number = -1;
+  /**
+   * oneOf 스키마의 자식 노드를 준비합니다.
+   * @private
+   */
   #prepareOneOfChildren() {
     if (!this.#oneOfChildrenList) return;
     this.#host.subscribe(({ type }) => {
@@ -276,11 +301,20 @@ export class BranchStrategy implements ObjectNodeStrategy {
     });
   }
 
+  /**
+   * 자식 노드 변경 이벤트를 발행합니다.
+   * @private
+   */
   #publishChildrenChange() {
     if (this.#locked) return;
     this.#host.publish({ type: NodeEventType.UpdateChildren });
   }
 
+  /**
+   * 값 변경 요청 이벤트를 발행합니다.
+   * @param option - 변경 옵션 (선택 사항)
+   * @private
+   */
   #publishRequestEmitChange(option?: UnionSetValueOption) {
     if (this.#locked) return;
     this.#host.publish({
