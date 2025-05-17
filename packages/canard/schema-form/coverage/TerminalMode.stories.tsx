@@ -14,11 +14,54 @@ export const FormTypeInputArrayTerminal = () => {
     properties: {
       arr: {
         type: 'array',
-        terminal: true,
         FormType: ({ node, onChange, value }: FormTypeInputProps<string[]>) => {
           return (
             <div>
-              i am array item
+              i am array item: {node.group}
+              <div>{value?.join(',')}</div>
+              <div>
+                <button
+                  onClick={() => onChange((prev) => [...prev, 'NEW ITEM'])}
+                >
+                  onChange
+                </button>
+                <button onClick={() => node.push()}>add</button>
+                <button onClick={() => node.update(1, 'WOW2')}>update</button>
+                <button onClick={() => node.remove(0)}>remove</button>
+                <button onClick={() => node.clear()}>clear</button>
+                <button onClick={() => node.setValue(undefined)}>
+                  remove all
+                </button>
+              </div>
+            </div>
+          );
+        },
+        items: {
+          type: 'string',
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form jsonSchema={schema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+export const FormTypeInputArrayNotTerminal = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      arr: {
+        type: 'array',
+        terminal: false,
+        FormType: ({ node, onChange, value }: FormTypeInputProps<string[]>) => {
+          return (
+            <div>
+              i am array item: {node.group}
               <div>{value?.join(',')}</div>
               <div>
                 <button
@@ -58,7 +101,6 @@ export const FormTypeInputArrayTerminalWithDefaultValue = () => {
     properties: {
       arr: {
         type: 'array',
-        terminal: true,
         FormType: ({
           node,
           onChange,
@@ -67,7 +109,7 @@ export const FormTypeInputArrayTerminalWithDefaultValue = () => {
         }: FormTypeInputProps<string[]>) => {
           return (
             <div>
-              i am array item
+              i am array item: {node.group}
               <div>{value?.join(',')}</div>
               <div>
                 <pre>{JSON.stringify(defaultValue, null, 2)}</pre>
@@ -113,7 +155,6 @@ export const FormTypeInputObjectTerminal = () => {
     properties: {
       poster: {
         type: 'object',
-        terminal: true,
         FormType: ({
           node,
           onChange,
@@ -129,7 +170,84 @@ export const FormTypeInputObjectTerminal = () => {
         }>) => {
           return (
             <div>
-              i am object item
+              i am object item: {node.group}
+              <div>
+                <pre>{JSON.stringify(value, null, 2)}</pre>
+              </div>
+              <div>
+                <pre>{JSON.stringify(defaultValue, null, 2)}</pre>
+              </div>
+              <div>
+                <button
+                  onClick={() =>
+                    onChange({
+                      url: 'http://example.com/poster11.jpg',
+                      format: 'jpg',
+                      size: { width: 100, height: 100 },
+                    })
+                  }
+                >
+                  set
+                </button>
+                <button onClick={() => node.setValue(undefined)}>clear</button>
+              </div>
+            </div>
+          );
+        },
+        properties: {
+          url: {
+            type: 'string',
+          },
+          format: {
+            type: 'string',
+          },
+          size: {
+            type: 'object',
+            properties: {
+              width: {
+                type: 'number',
+              },
+              height: {
+                type: 'number',
+              },
+            },
+          },
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form jsonSchema={schema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+export const FormTypeInputObjectNotTerminal = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      poster: {
+        type: 'object',
+        terminal: false,
+        FormType: ({
+          node,
+          onChange,
+          value,
+          defaultValue,
+        }: FormTypeInputProps<{
+          url: string;
+          format: string;
+          size: {
+            width: number;
+            height: number;
+          };
+        }>) => {
+          return (
+            <div>
+              i am object item: {node.group}
               <div>
                 <pre>{JSON.stringify(value, null, 2)}</pre>
               </div>
@@ -190,7 +308,6 @@ export const FormTypeInputObjectTerminalWithDefaultValue = () => {
     properties: {
       poster: {
         type: 'object',
-        terminal: true,
         FormType: ({
           node,
           onChange,
@@ -206,7 +323,7 @@ export const FormTypeInputObjectTerminalWithDefaultValue = () => {
         }>) => {
           return (
             <div>
-              i am object item
+              i am object item: {node.group}
               <div>
                 <pre>{JSON.stringify(value, null, 2)}</pre>
               </div>
@@ -275,7 +392,6 @@ export const FormTypeInputObjectTerminalWithSubSchemaDefaultValue = () => {
     properties: {
       poster: {
         type: 'object',
-        terminal: true,
         FormType: ({
           node,
           onChange,
@@ -291,7 +407,7 @@ export const FormTypeInputObjectTerminalWithSubSchemaDefaultValue = () => {
         }>) => {
           return (
             <div>
-              i am object item
+              i am object item: {node.group}
               <div>
                 <pre>{JSON.stringify(value, null, 2)}</pre>
               </div>
@@ -356,7 +472,6 @@ export const FormTypeInputObjectTerminalWithMixedDefaultValue = () => {
     properties: {
       poster: {
         type: 'object',
-        terminal: true,
         FormType: ({
           node,
           onChange,
@@ -372,7 +487,7 @@ export const FormTypeInputObjectTerminalWithMixedDefaultValue = () => {
         }>) => {
           return (
             <div>
-              i am object item
+              i am object item: {node.group}
               <div>
                 <pre>{JSON.stringify(value, null, 2)}</pre>
               </div>

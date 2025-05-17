@@ -1,3 +1,5 @@
+import { isReactComponent } from '@winglet/react-utils';
+
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 /**
@@ -12,8 +14,14 @@ export const getNodeGroup = (schema: JsonSchemaWithVirtual) => {
     schema.type === 'integer' ||
     schema.type === 'string' ||
     schema.type === 'null' ||
-    schema.terminal === true
+    schema.terminal === true ||
+    isTerminalFormTypeInput(schema)
   )
     return 'terminal';
   return 'branch';
 };
+
+const isTerminalFormTypeInput = (schema: JsonSchemaWithVirtual) =>
+  'FormType' in schema &&
+  isReactComponent(schema.FormType) &&
+  schema.terminal !== false;
