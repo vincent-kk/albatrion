@@ -26,13 +26,12 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
   #locked: boolean = true;
   #dirty: boolean = true;
+  #undefined: boolean = false;
 
-  set #changed(value: boolean) {
-    this.#dirty = value;
+  set #changed(input: boolean) {
+    this.#dirty = input;
     if (this.#undefined) this.#undefined = false;
   }
-
-  #undefined: boolean = false;
 
   #seq: number = 0;
   #ids: IndexId[] = [];
