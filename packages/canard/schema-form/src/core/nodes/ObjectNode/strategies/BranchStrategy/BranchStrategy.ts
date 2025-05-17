@@ -77,6 +77,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
         for (const child of children)
           (child.node as AbstractNode).activateLink(this.#host);
   }
+
   constructor(
     host: ObjectNode,
     handleChange: Fn<[ObjectValue | undefined]>,

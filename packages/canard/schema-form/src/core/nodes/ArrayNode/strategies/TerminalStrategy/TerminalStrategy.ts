@@ -92,10 +92,6 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     this.#emitChange([]);
   }
 
-  #parseValue(input: ArrayValue | undefined) {
-    return input !== undefined ? parseArray(input) : undefined;
-  }
-
   #emitChange(
     input: ArrayValue | undefined,
     option: UnionSetValueOption = SetValueOption.Default,
@@ -119,5 +115,9 @@ export class TerminalStrategy implements ArrayNodeStrategy {
           },
         },
       });
+  }
+
+  #parseValue(input: ArrayValue | undefined) {
+    return input !== undefined ? parseArray(input) : undefined;
   }
 }

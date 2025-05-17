@@ -42,10 +42,6 @@ export class TerminalStrategy implements ObjectNodeStrategy {
     if (host.defaultValue !== undefined) this.#emitChange(host.defaultValue);
   }
 
-  #parseValue(input: ObjectValue | undefined) {
-    return input !== undefined ? parseObject(input) : undefined;
-  }
-
   #emitChange(
     input: ObjectValue | undefined,
     option: UnionSetValueOption = SetValueOption.Default,
@@ -69,5 +65,9 @@ export class TerminalStrategy implements ObjectNodeStrategy {
           },
         },
       });
+  }
+
+  #parseValue(input: ObjectValue | undefined) {
+    return input !== undefined ? parseObject(input) : undefined;
   }
 }
