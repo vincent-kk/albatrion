@@ -105,9 +105,9 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       this.refresh(value);
 
     this.#strategy =
-      this.group === 'branch'
-        ? new BranchStrategy(this, handleChange, handleRefresh, nodeFactory)
-        : new TerminalStrategy(this, handleChange, handleRefresh);
+      this.group === 'terminal'
+        ? new TerminalStrategy(this, handleChange, handleRefresh)
+        : new BranchStrategy(this, handleChange, handleRefresh, nodeFactory);
 
     this.activateLink();
   }
