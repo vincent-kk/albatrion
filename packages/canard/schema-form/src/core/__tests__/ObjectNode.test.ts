@@ -50,7 +50,7 @@ describe('ObjectNode', () => {
     });
 
     const objectNode = node?.find('user') as ObjectNode;
-    expect(objectNode.value).toEqual(undefined);
+    expect(objectNode.value).toEqual({});
 
     objectNode.setValue({ name: 'John', age: 30 });
     await delay();
@@ -119,7 +119,7 @@ describe('ObjectNode', () => {
       options: {
         [NodeEventType.UpdateValue]: {
           current: { name: 'Ron', age: 28 },
-          previous: undefined,
+          previous: {},
         },
       },
     });
@@ -197,6 +197,7 @@ describe('ObjectNode', () => {
       options: {
         [NodeEventType.UpdateValue]: {
           current: { name: 'John' },
+          previous: {},
         },
       },
     });

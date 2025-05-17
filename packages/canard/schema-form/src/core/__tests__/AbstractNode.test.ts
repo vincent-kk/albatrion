@@ -319,10 +319,12 @@ describe('AbstractNode', () => {
         NodeEventType.UpdateValue |
         NodeEventType.UpdateChildren |
         NodeEventType.UpdateComputedProperties,
-      payload: {},
+      payload: {
+        [NodeEventType.UpdateValue]: {},
+      },
       options: {
         [NodeEventType.UpdateValue]: {
-          current: undefined,
+          current: {},
           previous: undefined,
         },
       },
