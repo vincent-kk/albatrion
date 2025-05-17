@@ -46,15 +46,18 @@ export const SchemaNodeAdapterInput = memo(
       [node],
     );
 
-    const feedbackTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+    const requestId =
+      useRef<ReturnType<typeof requestAnimationFrame>>(undefined);
     const handleFocus = useCallback(() => {
-      if (!feedbackTimer.current) return;
-      clearTimeout(feedbackTimer.current);
+      if (requestId.current === undefined) return;
+      cancelAnimationFrame(requestId.current);
+      requestId.current = undefined;
     }, []);
     const handleBlur = useCallback(() => {
       if (node.state[NodeState.Touched]) return;
-      feedbackTimer.current = setTimeout(() => {
-        node.setState({ [NodeState.Touched]: true });
+      requestId.current = requestAnimationFrame(() => {
+        if (!node.state[NodeState.Touched])
+          node.setState({ [NodeState.Touched]: true });
       });
     }, [node]);
 
