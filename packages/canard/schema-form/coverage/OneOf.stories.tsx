@@ -206,16 +206,17 @@ export const ComplexOneOf = () => {
                 type: 'array',
                 items: {
                   type: 'string',
+                  enum: [
+                    'action',
+                    'comedy',
+                    'drama',
+                    'horror',
+                    'romance',
+                    'sci-fi',
+                    'thriller',
+                  ],
+                  default: 'romance',
                 },
-                enum: [
-                  'action',
-                  'comedy',
-                  'drama',
-                  'horror',
-                  'romance',
-                  'sci-fi',
-                  'thriller',
-                ],
               },
               platforms: {
                 type: 'array',
@@ -330,16 +331,17 @@ export const ComplexOneOfSmall = () => {
                 type: 'array',
                 items: {
                   type: 'string',
+                  enum: [
+                    'action',
+                    'comedy',
+                    'drama',
+                    'horror',
+                    'romance',
+                    'sci-fi',
+                    'thriller',
+                  ],
+                  default: 'romance',
                 },
-                enum: [
-                  'action',
-                  'comedy',
-                  'drama',
-                  'horror',
-                  'romance',
-                  'sci-fi',
-                  'thriller',
-                ],
               },
               platforms: {
                 type: 'array',
