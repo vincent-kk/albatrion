@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 
-import { Form, FormHandle, FormTypeInputProps, type JsonSchema } from '../src';
+import { Form, FormHandle, type JsonSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -279,51 +279,5 @@ export const Array = () => {
         <Form jsonSchema={jsonSchema} onChange={setValue} ref={ref} />
       </StoryLayout>
     </div>
-  );
-};
-
-export const FormTypeInputArrayTerminal = () => {
-  const [value, setValue] = useState({});
-  const schema = {
-    type: 'object',
-    properties: {
-      arr: {
-        type: 'array',
-        FormType: ({ node, onChange, value }: FormTypeInputProps<string[]>) => {
-          return (
-            <div>
-              i am array item
-              <div>{value?.join(',')}</div>
-              <div>
-                <button
-                  onClick={() => onChange((prev) => [...prev, 'NEW ITEM'])}
-                >
-                  onChange
-                </button>
-                <button onClick={() => node.push()}>add</button>
-                <button onClick={() => node.update(1, 'WOW2')}>update</button>
-                <button onClick={() => node.remove(0)}>remove</button>
-                <button onClick={() => node.clear()}>clear</button>
-                <button onClick={() => node.setValue(undefined)}>
-                  remove all
-                </button>
-              </div>
-            </div>
-          );
-        },
-        items: {
-          type: 'string',
-          default: 'ARRAY ITEM',
-        },
-        default: ['AAA', 'BBB'],
-        minItems: 3,
-      },
-    },
-  } satisfies JsonSchema;
-
-  return (
-    <StoryLayout jsonSchema={schema} value={value}>
-      <Form jsonSchema={schema} onChange={setValue} />
-    </StoryLayout>
   );
 };
