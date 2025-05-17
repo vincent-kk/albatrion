@@ -6,7 +6,11 @@ import type {
   SchemaNode,
   UnionSetValueOption,
 } from '../type';
-import { BranchStrategy, type ObjectNodeStrategy } from './strategies';
+import {
+  BranchStrategy,
+  type ObjectNodeStrategy,
+  TerminalStrategy,
+} from './strategies';
 
 /**
  * 객체 스키마를 처리하기 위한 노드 클래스입니다.
@@ -94,14 +98,17 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     const handleUpdateComputedProperties = () =>
       this.updateComputedProperties();
 
-    this.#strategy = new BranchStrategy(
-      this,
-      handleChange,
-      handleRefresh,
-      handleSetDefaultValue,
-      handleUpdateComputedProperties,
-      nodeFactory,
-    );
+    this.#strategy =
+      this.group === 'terminal'
+        ? new TerminalStrategy(this, handleChange, handleRefresh)
+        : new BranchStrategy(
+            this,
+            handleChange,
+            handleRefresh,
+            handleSetDefaultValue,
+            handleUpdateComputedProperties,
+            nodeFactory,
+          );
 
     this.activateLink();
   }

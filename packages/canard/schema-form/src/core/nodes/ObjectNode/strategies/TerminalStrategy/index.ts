@@ -1,1 +1,1 @@
-export {};
+export { TerminalStrategy } from './TerminalStrategy';
