@@ -361,7 +361,7 @@ export abstract class AbstractNode<
   }
 
   #oneOfIndex: number = -1;
-  protected get oneOfIndex() {
+  get oneOfIndex() {
     return this.#oneOfIndex;
   }
 

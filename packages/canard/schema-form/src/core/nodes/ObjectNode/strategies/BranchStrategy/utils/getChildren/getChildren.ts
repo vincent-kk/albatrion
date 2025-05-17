@@ -1,10 +1,15 @@
 import { isArray } from '@winglet/common-utils';
 
+import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
+import type {
+  ChildNode,
+  VirtualReference,
+} from '@/schema-form/core/nodes/ObjectNode/type';
+import type {
+  SchemaNode,
+  SchemaNodeFactory,
+} from '@/schema-form/core/nodes/type';
 import type { AllowedValue } from '@/schema-form/types';
-
-import type { SchemaNode, SchemaNodeFactory } from '../../../type';
-import type { ObjectNode } from '../../ObjectNode';
-import type { ChildNode, VirtualReference } from '../../type';
 
 /**
  * 객체 스키마에 정의된 프로퍼티와 가상 참조로부터 자식 노드 목록을 생성합니다.

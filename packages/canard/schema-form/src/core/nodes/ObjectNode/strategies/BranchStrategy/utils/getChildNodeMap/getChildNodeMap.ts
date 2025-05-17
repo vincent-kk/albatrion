@@ -1,11 +1,11 @@
 import type { Fn } from '@aileron/declare';
 
+import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
+import type { ChildNode } from '@/schema-form/core/nodes/ObjectNode/type';
+import type { SchemaNodeFactory } from '@/schema-form/core/nodes/type';
 import { getFallbackValue } from '@/schema-form/helpers/fallbackValue';
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
-import type { SchemaNodeFactory } from '../../../type';
-import type { ObjectNode } from '../../ObjectNode';
-import type { ChildNode } from '../../type';
 import type { FieldConditionMap } from '../getFieldConditionMap';
 import { getConditionsMap } from './utils/getConditionsMap';
 import { mergeShowConditions } from './utils/mergeShowConditions';
