@@ -57,6 +57,31 @@ describe('ObjectNode', () => {
     expect(objectNode.value).toEqual({ name: 'John', age: 30 });
   });
 
+  it('객체 노드의 값이 정상적으로 설정되어야 함: terminal', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          user: {
+            type: 'object',
+            terminal: true,
+            properties: {
+              name: { type: 'string' },
+              age: { type: 'number' },
+            },
+          },
+        },
+      },
+    });
+
+    const objectNode = node?.find('user') as ObjectNode;
+    expect(objectNode.value).toEqual({});
+
+    objectNode.setValue({ name: 'John', age: 30 });
+    await delay();
+    expect(objectNode.value).toEqual({ name: 'John', age: 30 });
+  });
+
   it('객체 노드의 기본값이 정상적으로 설정되어야 함', async () => {
     const node = nodeFromJsonSchema({
       jsonSchema: {
@@ -64,6 +89,29 @@ describe('ObjectNode', () => {
         properties: {
           user: {
             type: 'object',
+            properties: {
+              name: { type: 'string' },
+              age: { type: 'number' },
+            },
+            default: { name: 'Lee', age: 25 },
+          },
+        },
+      },
+    });
+
+    const objectNode = node?.find('user') as ObjectNode;
+    await delay();
+    expect(objectNode.value).toEqual({ name: 'Lee', age: 25 });
+  });
+
+  it('객체 노드의 기본값이 정상적으로 설정되어야 함: terminal', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          user: {
+            type: 'object',
+            terminal: true,
             properties: {
               name: { type: 'string' },
               age: { type: 'number' },
