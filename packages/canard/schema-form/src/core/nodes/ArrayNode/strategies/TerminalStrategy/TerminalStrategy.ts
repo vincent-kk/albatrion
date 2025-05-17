@@ -13,11 +13,14 @@ import type { ArrayValue } from '@/schema-form/types';
 import type { ArrayNode } from '../../ArrayNode';
 import type { ArrayNodeStrategy, IndexId } from '../type';
 
+const FIRST_EMIT_CHANGE_OPTION =
+  SetValueOption.Replace | SetValueOption.Default;
 export class TerminalStrategy implements ArrayNodeStrategy {
   #host: ArrayNode;
   #handleChange: Fn<[ArrayValue | undefined]>;
   #handleRefresh: Fn<[ArrayValue | undefined]>;
 
+  #locked: boolean = true;
   #seq: number = 0;
   #ids: IndexId[] = [];
 
@@ -47,6 +50,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     host: ArrayNode,
     handleChange: Fn<[ArrayValue | undefined]>,
     handleRefresh: Fn<[ArrayValue | undefined]>,
+    handleSetDefaultValue: Fn<[ArrayValue | undefined]>,
   ) {
     this.#host = host;
     this.#handleChange = handleChange;
@@ -55,6 +59,11 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     if (host.defaultValue?.length)
       for (const value of host.defaultValue) this.push(value);
     while (this.length < (host.jsonSchema.minItems || 0)) this.push();
+
+    this.#locked = false;
+
+    this.#emitChange(this.#value, FIRST_EMIT_CHANGE_OPTION);
+    handleSetDefaultValue(this.#value);
   }
 
   push(input?: ArrayValue[number]) {
@@ -98,10 +107,13 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   ) {
     const previous = this.#value;
     const current = this.#parseValue(input);
+    const replace = option & SetValueOption.Replace;
 
-    if (equals(previous, current)) return;
+    if (!replace && equals(previous, current)) return;
 
     this.#value = current;
+
+    if (this.#locked) return;
     if (option & SetValueOption.EmitChange) this.#handleChange(current);
     if (option & SetValueOption.Refresh) this.#handleRefresh(current);
     if (option & SetValueOption.PublishUpdateEvent)

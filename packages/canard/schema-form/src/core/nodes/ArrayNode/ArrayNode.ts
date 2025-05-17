@@ -103,11 +103,24 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       this.onChange(value);
     const handleRefresh = (value: ArrayValue | undefined) =>
       this.refresh(value);
+    const handleSetDefaultValue = (value: ArrayValue | undefined) =>
+      this.setDefaultValue(value);
 
     this.#strategy =
       this.group === 'terminal'
-        ? new TerminalStrategy(this, handleChange, handleRefresh)
-        : new BranchStrategy(this, handleChange, handleRefresh, nodeFactory);
+        ? new TerminalStrategy(
+            this,
+            handleChange,
+            handleRefresh,
+            handleSetDefaultValue,
+          )
+        : new BranchStrategy(
+            this,
+            handleChange,
+            handleRefresh,
+            handleSetDefaultValue,
+            nodeFactory,
+          );
 
     this.activateLink();
   }

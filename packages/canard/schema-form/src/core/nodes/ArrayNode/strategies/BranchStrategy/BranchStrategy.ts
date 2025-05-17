@@ -84,6 +84,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     host: ArrayNode,
     handleChange: Fn<[ArrayValue | undefined]>,
     handleRefresh: Fn<[ArrayValue | undefined]>,
+    handleSetDefaultValue: Fn<[ArrayValue | undefined]>,
     nodeFactory: SchemaNodeFactory,
   ) {
     this.#host = host;
@@ -105,6 +106,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.#locked = false;
 
     this.#emitChange();
+    handleSetDefaultValue(this.value);
     this.#publishUpdateChildren();
   }
 
