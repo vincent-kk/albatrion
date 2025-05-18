@@ -136,7 +136,7 @@ export const WatchWithBranchNode = () => {
         type: 'string',
         formType: 'greeting',
         computed: {
-          watch: ['$.profile.name', '$.profile.age', '$.profile'],
+          watch: ['$.profile'],
         },
       },
     },
@@ -152,9 +152,9 @@ export const WatchWithBranchNode = () => {
           return (
             <>
               <strong>
-                hello '{watchValues[0]}', {watchValues[1]} years old
+                hello '{watchValues[0].name}', {watchValues[0].age} years old
               </strong>
-              <pre>{JSON.stringify(watchValues, null, 2)}</pre>
+              <pre>{JSON.stringify(watchValues[0], null, 2)}</pre>
             </>
           );
         },
