@@ -14,8 +14,8 @@ import { FormTypeInputVirtualDefinition } from './FormTypeInputVirtual';
 export const formTypeDefinitions = [
   FormTypeInputDateFormantDefinition,
   FormTypeInputStringCheckboxDefinition,
-  FormTypeInputStringEnumDefinition,
   FormTypeInputStringRadioDefinition,
+  FormTypeInputStringEnumDefinition,
   FormTypeInputVirtualDefinition,
   FormTypeInputArrayDefinition,
   FormTypeInputObjectDefinition,
