@@ -50,10 +50,10 @@ export const getObservedValuesFactory =
     // 관찰값 계산 함수 동적 생성
     return new Function(
       'dependencies',
-      `const result = [];
-     const indexes = [${watchValueIndexes.join(',')}];
-     for (let i = 0; i < indexes.length; i++)
-       result[result.length] = dependencies[indexes[i]];
-     return result;`,
+      `const indexes = [${watchValueIndexes.join(',')}];
+       const result = new Array(indexes.length);
+       for (let i = 0; i < indexes.length; i++)
+         result[i] = dependencies[indexes[i]];
+       return result;`,
     ) as GetObservedValues;
   };
