@@ -81,7 +81,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     if (previous === current) return;
     this.#value = current;
 
-    if (option & SetValueOption.EmitChange) this.onChange(current);
+    if (option & SetValueOption.EmitChange) this.#handleChange(current);
     if (option & SetValueOption.Refresh) this.refresh(current);
     if (option & SetValueOption.PublishUpdateEvent)
       this.publish({
@@ -103,5 +103,11 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
    */
   #parseValue(this: StringNode, input: StringValue | undefined) {
     return parseString(input);
+  }
+
+  #handleChange(this: StringNode, input: StringValue | undefined) {
+    if (input !== undefined && this.jsonSchema.options?.omitEmpty !== false)
+      this.onChange(input.length > 0 ? input : undefined);
+    else this.onChange(input);
   }
 }

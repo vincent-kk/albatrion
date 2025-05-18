@@ -8,7 +8,7 @@ describe('parseString', () => {
   });
 
   it('빈 문자열을 입력하면 undefined를 반환해야 합니다', () => {
-    expect(parseString('')).toBeUndefined();
+    expect(parseString('')).toBe('');
   });
   it('숫자를 입력하면 문자열로 변환되어야 합니다', () => {
     expect(parseString(123)).toBe('123');
@@ -16,9 +16,9 @@ describe('parseString', () => {
   });
 
   it('문자열이나 숫자가 아닌 값을 입력하면 undefined를 반환해야 합니다', () => {
-    expect(parseString(null)).toBeUndefined();
+    expect(parseString(null)).toBe('');
     expect(parseString(undefined)).toBeUndefined();
-    expect(parseString({})).toBeUndefined();
-    expect(parseString([])).toBeUndefined();
+    expect(parseString({})).toBe('');
+    expect(parseString([])).toBe('');
   });
 });

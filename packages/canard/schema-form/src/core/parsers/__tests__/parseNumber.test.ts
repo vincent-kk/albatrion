@@ -14,12 +14,16 @@ describe('parseNumber', () => {
       expect(parseNumber('-3.14', true)).toBe(-3);
     });
 
-    it('숫자가 아닌 문자열을 입력하면 undefined를 반환해야 합니다', () => {
-      expect(parseNumber('abc', true)).toBeUndefined();
+    it('숫자가 아닌 문자열을 입력하면 NaN를 반환해야 합니다', () => {
+      expect(parseNumber('abc', true)).toBeNaN();
     });
 
-    it('NaN을 입력하면 undefined를 반환해야 합니다', () => {
-      expect(parseNumber(NaN, true)).toBeUndefined();
+    it('NaN을 입력하면 NaN를 반환해야 합니다', () => {
+      expect(parseNumber(NaN, true)).toBeNaN();
+    });
+
+    it('빈 문자열을 입력하면 NaN를 반환해야 합니다', () => {
+      expect(parseNumber('', true)).toBeNaN();
     });
   });
 
@@ -34,12 +38,16 @@ describe('parseNumber', () => {
       expect(parseNumber('-3.14', false)).toBe(-3.14);
     });
 
-    it('숫자가 아닌 문자열을 입력하면 undefined를 반환해야 합니다', () => {
-      expect(parseNumber('abc', false)).toBeUndefined();
+    it('숫자가 아닌 문자열을 입력하면 NaN를 반환해야 합니다', () => {
+      expect(parseNumber('abc', false)).toBeNaN();
     });
 
-    it('NaN을 입력하면 undefined를 반환해야 합니다', () => {
-      expect(parseNumber(NaN, false)).toBeUndefined();
+    it('NaN을 입력하면 NaN를 반환해야 합니다', () => {
+      expect(parseNumber(NaN, false)).toBeNaN();
+    });
+
+    it('빈 문자열을 입력하면 NaN를 반환해야 합니다', () => {
+      expect(parseNumber('', false)).toBeNaN();
     });
   });
 });

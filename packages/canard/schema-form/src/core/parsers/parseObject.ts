@@ -8,5 +8,7 @@ import type { ObjectValue } from '@/schema-form/types';
  * @returns 분석된 배열 또는 배열이 아닌 경우 빈 배열
  * @typeParam T - 배열 요소의 타입
  */
-export const parseObject = (value: unknown): ObjectValue =>
-  isPlainObject(value) ? value : {};
+export const parseObject = (value: unknown): ObjectValue | undefined => {
+  if (value === undefined) return undefined;
+  return isPlainObject(value) ? value : {};
+};

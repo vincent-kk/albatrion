@@ -28,7 +28,7 @@ describe('parseObject', () => {
     // Act
     const result = parseObject(input);
     // Assert
-    expect(result).toEqual({});
+    expect(result).toEqual(undefined);
   });
 
   it('배열을 입력하면 빈 객체를 반환해야 합니다.', () => {

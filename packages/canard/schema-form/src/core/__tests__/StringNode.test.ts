@@ -128,13 +128,13 @@ describe('StringNode', () => {
     // @ts-expect-error
     stringNode.setValue(true);
     await delay();
-    expect(stringNode.value).toBe(undefined);
+    expect(stringNode.value).toBe('');
 
     // null을 문자열로 파싱
     // @ts-expect-error
     stringNode.setValue(null);
     await delay();
-    expect(stringNode.value).toBe(undefined);
+    expect(stringNode.value).toBe('');
   });
 
   it('문자열 노드의 유효성 검사가 정상적으로 동작해야 함', async () => {

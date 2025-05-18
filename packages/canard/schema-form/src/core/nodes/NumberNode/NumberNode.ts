@@ -81,7 +81,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     if (previous === current) return;
     this.#value = current;
 
-    if (option & SetValueOption.EmitChange) this.onChange(current);
+    if (option & SetValueOption.EmitChange) this.#handleChange(current);
     if (option & SetValueOption.Refresh) this.refresh(current);
     if (option & SetValueOption.PublishUpdateEvent)
       this.publish({
@@ -103,5 +103,11 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
    */
   #parseValue(this: NumberNode, input: NumberValue | undefined) {
     return parseNumber(input, this.jsonSchema.type === 'integer');
+  }
+
+  #handleChange(this: NumberNode, input: NumberValue | undefined) {
+    if (input !== undefined && this.jsonSchema.options?.omitEmpty !== false)
+      this.onChange(isNaN(input) ? undefined : input);
+    else this.onChange(input);
   }
 }

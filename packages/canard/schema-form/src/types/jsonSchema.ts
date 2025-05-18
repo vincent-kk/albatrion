@@ -102,6 +102,7 @@ type BasicSchema<Type> = {
   label?: ReactNode;
   options?: {
     alias?: Dictionary<ReactNode>;
+    omitEmpty?: boolean;
     formatter?: Formatter<Type>;
     parser?: Parser<Type>;
     [alt: string]: any;

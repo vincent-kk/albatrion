@@ -151,11 +151,12 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns 생성된 전략: TerminalStrategy | BranchStrategy
    */
   #createStrategy(nodeFactory: SchemaNodeFactory) {
-    const handleChange = (value: ArrayValue | undefined) =>
-      this.onChange(omitEmptyArray(value));
-    const handleRefresh = (value: ArrayValue | undefined) =>
-      this.refresh(value);
-    const handleSetDefaultValue = (value: ArrayValue | undefined) =>
+    const handleChange =
+      this.jsonSchema.options?.omitEmpty === false
+        ? (value?: ArrayValue) => this.onChange(value)
+        : (value?: ArrayValue) => this.onChange(omitEmptyArray(value));
+    const handleRefresh = (value?: ArrayValue) => this.refresh(value);
+    const handleSetDefaultValue = (value?: ArrayValue) =>
       this.setDefaultValue(value);
 
     if (this.group === 'terminal') {

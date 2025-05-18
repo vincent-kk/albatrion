@@ -101,11 +101,12 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * @returns 생성된 전략: TerminalStrategy | BranchStrategy
    */
   #createStrategy(nodeFactory: SchemaNodeFactory) {
-    const handleChange = (value: ObjectValue | undefined) =>
-      this.onChange(omitEmptyObject(value));
-    const handleRefresh = (value: ObjectValue | undefined) =>
-      this.refresh(value);
-    const handleSetDefaultValue = (value: ObjectValue | undefined) =>
+    const handleChange =
+      this.jsonSchema.options?.omitEmpty === false
+        ? (value?: ObjectValue) => this.onChange(value)
+        : (value?: ObjectValue) => this.onChange(omitEmptyObject(value));
+    const handleRefresh = (value?: ObjectValue) => this.refresh(value);
+    const handleSetDefaultValue = (value?: ObjectValue) =>
       this.setDefaultValue(value);
 
     if (this.group === 'terminal') {
