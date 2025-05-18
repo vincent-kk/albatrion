@@ -46,7 +46,7 @@ describe('ArrayNode', () => {
       },
     });
 
-    expect(node?.value?.arr).toEqual([]);
+    expect(node?.value?.arr).toEqual(undefined);
     (node?.find('arr') as ArrayNode)?.push();
     await delay();
     expect(node?.value?.arr).toMatchObject(['hello']);
@@ -58,7 +58,7 @@ describe('ArrayNode', () => {
     expect(node?.value?.arr).toMatchObject(['world']);
     (node?.find('arr') as ArrayNode)?.clear();
     await delay();
-    expect(node?.value?.arr).toEqual([]);
+    expect(node?.value?.arr).toEqual(undefined);
   });
 
   it('cannot exceed maxItems', async () => {
@@ -78,7 +78,7 @@ describe('ArrayNode', () => {
         },
       },
     });
-    expect(node?.value?.arr).toEqual([]);
+    expect(node?.value?.arr).toEqual(undefined);
     Array(MAX_ITEMS + 10)
       .fill(true)
       .forEach(() => {
