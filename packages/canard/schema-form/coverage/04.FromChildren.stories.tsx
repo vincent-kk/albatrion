@@ -107,7 +107,7 @@ export const FunctionalArrayChildren = () => {
         defaultValue={defaultValue.current}
         onChange={setValue}
       >
-        {({ node, defaultValue, value, errors, jsonSchema }) => (
+        {({ node, defaultValue, value, errors }) => (
           <>
             <button
               onClick={() => {
@@ -170,7 +170,7 @@ export const IterableChildren = () => {
         </div>
         <div>
           <Form.Render path=".age">
-            {({ Input, path, node }) => {
+            {({ Input, path }) => {
               return (
                 <div>
                   <label htmlFor={path}>{path}</label>

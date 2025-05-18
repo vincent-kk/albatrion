@@ -57,6 +57,7 @@ export const NormalUsecase = () => {
       content: 'Error will be thrown from Input',
       Input: () => {
         throw new Error('Error from Prompt Input');
+        // eslint-disable-next-line no-unreachable
         return <div>Input</div>;
       },
     });
@@ -238,6 +239,7 @@ export const PreferredFrameUsecase = () => {
       content: 'Error will be thrown from Input',
       Input: () => {
         throw new Error('Error from Prompt Input');
+        // eslint-disable-next-line no-unreachable
         return <div>Input</div>;
       },
     });
