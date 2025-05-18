@@ -17,6 +17,17 @@ export const NullSchema = () => {
       null: {
         type: 'null',
         nullable: true,
+        FormType: ({ value, onChange }) => {
+          return (
+            <div>
+              this is {JSON.stringify(value, null, 2)}
+              <div>
+                <button onClick={() => onChange(undefined)}>unset</button>
+                <button onClick={() => onChange(null)}>set null</button>
+              </div>
+            </div>
+          );
+        },
       },
       defaultNull: {
         type: 'null',

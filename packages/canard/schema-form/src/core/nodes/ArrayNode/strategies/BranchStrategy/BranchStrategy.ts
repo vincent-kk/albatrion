@@ -146,7 +146,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
     const name = this.#ids.length.toString();
     this.#ids.push(id);
 
-    const defaultValue = data ?? getDefaultValue(this.#host.jsonSchema.items);
+    const defaultValue =
+      data !== undefined ? data : getDefaultValue(this.#host.jsonSchema.items);
     const childNode = this.#nodeFactory({
       key: id,
       name,

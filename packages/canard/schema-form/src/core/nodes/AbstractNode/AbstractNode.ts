@@ -248,7 +248,9 @@ export abstract class AbstractNode<
 
     this.#compute = computeFactory(this.jsonSchema, this.rootNode.jsonSchema);
 
-    this.setDefaultValue(defaultValue ?? getDefaultValue(jsonSchema));
+    this.setDefaultValue(
+      defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema),
+    );
     if (typeof onChange === 'function')
       this.#handleChange = this.isRoot
         ? afterMicrotask(() =>
@@ -419,7 +421,11 @@ export abstract class AbstractNode<
     input?: Value | undefined,
   ) {
     const defaultValue = preferLatest
-      ? (input ?? this.value ?? this.#initialValue)
+      ? input !== undefined
+        ? input
+        : this.value !== undefined
+          ? this.value
+          : this.#initialValue
       : this.#initialValue;
     this.#defaultValue = defaultValue;
 

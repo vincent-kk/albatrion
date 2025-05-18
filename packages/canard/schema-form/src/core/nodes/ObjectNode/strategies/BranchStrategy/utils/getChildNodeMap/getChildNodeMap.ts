@@ -38,12 +38,14 @@ export const getChildNodeMap = (
   if (!properties) return childNodeMap;
   for (const name of propertyKeys) {
     const schema = properties[name];
+    const inputDefault = defaultValue?.[name];
     childNodeMap.set(name, {
       isVirtualized: !!virtualReferenceFieldsMap?.get(name)?.length,
       node: nodeFactory({
         name,
         jsonSchema: mergeShowConditions(schema, conditionsMap?.get(name)),
-        defaultValue: defaultValue?.[name] ?? getDefaultValue(schema),
+        defaultValue:
+          inputDefault !== undefined ? inputDefault : getDefaultValue(schema),
         onChange: handelChangeFactory(name),
         nodeFactory,
         parentNode,

@@ -64,12 +64,14 @@ export const getOneOfChildrenList = (
           },
         );
       const schema = properties[property];
+      const inputDefault = defaultValue?.[property];
       childNodes[keyIndex] = {
         index,
         node: nodeFactory({
           name: property,
           jsonSchema: schema,
-          defaultValue: defaultValue?.[property] ?? getDefaultValue(schema),
+          defaultValue:
+            inputDefault !== undefined ? inputDefault : getDefaultValue(schema),
           onChange: handelChangeFactory(property),
           nodeFactory,
           parentNode,
