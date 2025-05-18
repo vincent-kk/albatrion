@@ -4,7 +4,7 @@ import { Form, type FormTypeInputProps, type JsonSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
-  title: 'Form/01. TerminalMode',
+  title: 'Form/02. TerminalMode',
 };
 
 export const FormTypeInputArrayTerminal = () => {

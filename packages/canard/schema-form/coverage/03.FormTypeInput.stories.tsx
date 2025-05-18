@@ -18,7 +18,7 @@ import {
 import StoryLayout from './components/StoryLayout';
 
 export default {
-  title: 'Form/02. FormTypeInput',
+  title: 'Form/03. FormTypeInput',
 };
 
 export const FormTypeInputDefinitions = () => {

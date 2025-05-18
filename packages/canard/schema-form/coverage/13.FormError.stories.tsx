@@ -13,147 +13,7 @@ import {
 import StoryLayout from './components/StoryLayout';
 
 export default {
-  title: 'Form/08. FormError',
-};
-
-export const Errors = () => {
-  const [value, setValue] = useState({});
-  const schema = {
-    type: 'object',
-    properties: {
-      name: { type: 'string', maxLength: 3, default: 'exceed max length' },
-      message: { type: 'string', minLength: 3, default: '1' },
-    },
-  } satisfies JsonSchema;
-
-  const handleChange = (val: any) => {
-    setValue(val);
-  };
-
-  const [errors, setErrors] = useState<JsonSchemaError[]>([
-    {
-      keyword: 'maxLength',
-      dataPath: '.message',
-      instancePath: '/message',
-      schemaPath: '#/properties/message/maxLength',
-      params: {
-        limit: 20,
-      },
-      message: 'should NOT be longer than 20 characters',
-    },
-  ]);
-
-  const [_errors, _setErrors] = useState<JsonSchemaError[]>([]);
-  const refHandle = useRef<FormHandle<typeof schema>>(null);
-
-  const clearErrors = () => {
-    setErrors([]);
-  };
-
-  const setExternalErrors = () => {
-    setErrors([
-      {
-        keyword: 'wrongInput',
-        dataPath: '.name',
-        instancePath: '/name',
-        schemaPath: '#/properties/name/wrongInput',
-        params: {},
-        message: 'wrong input',
-      },
-      {
-        keyword: 'unique',
-        dataPath: '.message',
-        instancePath: '/message',
-        schemaPath: '#/properties/message/unique',
-        params: {},
-        message: 'should be unique',
-      },
-    ]);
-  };
-
-  return (
-    <StoryLayout jsonSchema={schema} value={value} errors={_errors}>
-      <Form
-        ref={refHandle}
-        jsonSchema={schema}
-        onChange={handleChange}
-        onValidate={(errors) => _setErrors(errors || [])}
-        errors={errors}
-        showError={true}
-      />
-      <button onClick={clearErrors}>clear external errors</button>
-      <button onClick={setExternalErrors}>set external errors</button>
-    </StoryLayout>
-  );
-};
-
-export const ValidateOnRequest = () => {
-  const [value, setValue] = useState({});
-  const schema = {
-    type: 'object',
-    properties: {
-      name: { type: 'string', maxLength: 3, default: 'exceed max length' },
-      message: { type: 'string', minLength: 3, default: '1' },
-    },
-  } satisfies JsonSchema;
-
-  const handleChange = (val: any) => {
-    setValue(val);
-  };
-
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
-
-  const refHandle = useRef<FormHandle<typeof schema>>(null);
-
-  const handleValidate = () => {
-    refHandle.current?.validate();
-  };
-
-  return (
-    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
-      <Form
-        ref={refHandle}
-        jsonSchema={schema}
-        onChange={handleChange}
-        onValidate={(errors) => setErrors(errors || [])}
-        showError={true}
-        validationMode={ValidationMode.OnRequest}
-      />
-      <button onClick={handleValidate}>Request Validate</button>
-    </StoryLayout>
-  );
-};
-
-export const NoValidate = () => {
-  const [value, setValue] = useState({});
-  const schema = {
-    type: 'object',
-    properties: {
-      name: { type: 'string', maxLength: 3, default: 'exceed max length' },
-      message: { type: 'string', minLength: 3, default: '1' },
-    },
-  } satisfies JsonSchema;
-
-  const handleChange = (val: any) => {
-    setValue(val);
-  };
-
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
-
-  const refHandle = useRef<FormHandle<typeof schema>>(null);
-
-  return (
-    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
-      <Form
-        ref={refHandle}
-        jsonSchema={schema}
-        onChange={handleChange}
-        onValidate={(errors) => setErrors(errors || [])}
-        showError={true}
-        validationMode={ValidationMode.None}
-      />
-    </StoryLayout>
-  );
+  title: 'Form/13. FormError',
 };
 
 export const DirtyTouched = () => {
@@ -368,5 +228,200 @@ export const DirtyTouched = () => {
         />
       </StoryLayout>
     </div>
+  );
+};
+
+export const NoValidate = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      name: { type: 'string', maxLength: 3, default: 'exceed max length' },
+      message: { type: 'string', minLength: 3, default: '1' },
+    },
+  } satisfies JsonSchema;
+
+  const handleChange = (val: any) => {
+    setValue(val);
+  };
+
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  const refHandle = useRef<FormHandle<typeof schema>>(null);
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <Form
+        ref={refHandle}
+        jsonSchema={schema}
+        onChange={handleChange}
+        onValidate={(errors) => setErrors(errors || [])}
+        showError={true}
+        validationMode={ValidationMode.None}
+      />
+    </StoryLayout>
+  );
+};
+
+export const ValidateOnRequest = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      name: { type: 'string', maxLength: 3, default: 'exceed max length' },
+      message: { type: 'string', minLength: 3, default: '1' },
+    },
+  } satisfies JsonSchema;
+
+  const handleChange = (val: any) => {
+    setValue(val);
+  };
+
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  const refHandle = useRef<FormHandle<typeof schema>>(null);
+
+  const handleValidate = () => {
+    refHandle.current?.validate();
+  };
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <Form
+        ref={refHandle}
+        jsonSchema={schema}
+        onChange={handleChange}
+        onValidate={(errors) => setErrors(errors || [])}
+        showError={true}
+        validationMode={ValidationMode.OnRequest}
+      />
+      <button onClick={handleValidate}>Request Validate</button>
+    </StoryLayout>
+  );
+};
+
+export const ExternalErrors = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      name: { type: 'string', maxLength: 3, default: 'exceed max length' },
+      message: { type: 'string', minLength: 3, default: '1' },
+    },
+  } satisfies JsonSchema;
+
+  const handleChange = (val: any) => {
+    setValue(val);
+  };
+
+  const [errors, setErrors] = useState<JsonSchemaError[]>([
+    {
+      keyword: 'maxLength',
+      dataPath: '.message',
+      instancePath: '/message',
+      schemaPath: '#/properties/message/maxLength',
+      params: {
+        limit: 20,
+      },
+      message: 'should NOT be longer than 20 characters',
+    },
+  ]);
+
+  const [_errors, _setErrors] = useState<JsonSchemaError[]>([]);
+  const refHandle = useRef<FormHandle<typeof schema>>(null);
+
+  const clearErrors = () => {
+    setErrors([]);
+  };
+
+  const setExternalErrors = () => {
+    setErrors([
+      {
+        keyword: 'wrongInput',
+        dataPath: '.name',
+        instancePath: '/name',
+        schemaPath: '#/properties/name/wrongInput',
+        params: {},
+        message: 'wrong input',
+      },
+      {
+        keyword: 'unique',
+        dataPath: '.message',
+        instancePath: '/message',
+        schemaPath: '#/properties/message/unique',
+        params: {},
+        message: 'should be unique',
+      },
+    ]);
+  };
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={_errors}>
+      <Form
+        ref={refHandle}
+        jsonSchema={schema}
+        onChange={handleChange}
+        onValidate={(errors) => _setErrors(errors || [])}
+        errors={errors}
+        showError={true}
+      />
+      <button onClick={clearErrors}>clear external errors</button>
+      <button onClick={setExternalErrors}>set external errors</button>
+    </StoryLayout>
+  );
+};
+
+export const ErrorBoundary = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+      },
+      age: {
+        type: 'number',
+      },
+    },
+  } satisfies JsonSchema;
+
+  const defaultValue = useRef<Record<string, any>>({
+    allowed: false,
+  });
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <Form
+        jsonSchema={jsonSchema}
+        defaultValue={defaultValue.current}
+        onChange={setValue}
+      >
+        <div>
+          <Form.Group
+            path=".name"
+            FormTypeInput={() => {
+              throw new Error('Error accord from Input');
+              // eslint-disable-next-line no-unreachable
+              return <div>Input</div>;
+            }}
+          />
+        </div>
+        <div>
+          <Form.Render path=".age">
+            {({ Input, node }) => {
+              throw new Error('Error accord from Renderer');
+              // eslint-disable-next-line no-unreachable
+              return (
+                <div>
+                  {node.name}
+                  <Input />
+                </div>
+              );
+            }}
+          </Form.Render>
+        </div>
+      </Form>
+    </StoryLayout>
   );
 };
