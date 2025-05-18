@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type { NumberSchema, NumberValue } from '@/schema-form/types';
 
 import { parseNumber } from '../../parsers';
@@ -62,6 +64,12 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
       validationMode,
       ajv,
     });
+
+    this.#handleChange =
+      this.jsonSchema.options?.omitEmpty !== false
+        ? this.#onChangeWithOmitEmpty
+        : this.onChange;
+
     if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
     this.activateLink();
   }
@@ -105,9 +113,10 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     return parseNumber(input, this.jsonSchema.type === 'integer');
   }
 
-  #handleChange(this: NumberNode, input: NumberValue | undefined) {
-    if (input !== undefined && this.jsonSchema.options?.omitEmpty !== false)
-      this.onChange(isNaN(input) ? undefined : input);
+  #onChangeWithOmitEmpty(this: NumberNode, input: NumberValue | undefined) {
+    if (input === undefined || isNaN(input)) this.onChange(undefined);
     else this.onChange(input);
   }
+
+  #handleChange: Fn<[input: NumberValue | undefined]>;
 }

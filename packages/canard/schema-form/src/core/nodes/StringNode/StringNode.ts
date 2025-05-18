@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type { StringSchema, StringValue } from '@/schema-form/types';
 
 import { parseString } from '../../parsers';
@@ -62,6 +64,12 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
       validationMode,
       ajv,
     });
+
+    this.#handleChange =
+      this.jsonSchema.options?.omitEmpty !== false
+        ? this.#onChangeWithOmitEmpty
+        : this.onChange;
+
     if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
     this.activateLink();
   }
@@ -105,9 +113,10 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     return parseString(input);
   }
 
-  #handleChange(this: StringNode, input: StringValue | undefined) {
-    if (input !== undefined && this.jsonSchema.options?.omitEmpty !== false)
-      this.onChange(input.length > 0 ? input : undefined);
+  #onChangeWithOmitEmpty(this: StringNode, input: StringValue | undefined) {
+    if (input === undefined || input.length === 0) this.onChange(undefined);
     else this.onChange(input);
   }
+
+  #handleChange: Fn<[input: StringValue | undefined]>;
 }
