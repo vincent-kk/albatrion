@@ -208,7 +208,7 @@ The selected component will receive the following props:
 ```ts
 interface FormTypeInputProps<
   Value extends AllowedValue = any,
-  Context extends Dictionary = Dictionary,
+  Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
   Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,

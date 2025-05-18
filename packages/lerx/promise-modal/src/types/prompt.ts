@@ -6,7 +6,7 @@ import type { BaseModal, ContentComponentProps, FooterOptions } from './base';
 
 export type PromptFooterRender<
   T,
-  Context extends Dictionary = Dictionary,
+  Context extends Dictionary = object,
 > = (props: {
   value: T | undefined;
   onChange: SetStateFn<T | undefined>;
@@ -16,7 +16,7 @@ export type PromptFooterRender<
   context: Context;
 }) => ReactNode;
 
-export interface PromptInputProps<T, Context extends Dictionary = Dictionary> {
+export interface PromptInputProps<T, Context extends Dictionary = object> {
   value?: T;
   defaultValue?: T;
   onChange: SetStateFn<T | undefined>;
@@ -25,13 +25,13 @@ export interface PromptInputProps<T, Context extends Dictionary = Dictionary> {
   context: Context;
 }
 
-export type PromptContentProps<Context extends Dictionary = Dictionary> =
+export type PromptContentProps<Context extends Dictionary = object> =
   ContentComponentProps<Context>;
 
 export interface PromptModal<
   T = any,
   B = any,
-  Context extends Dictionary = Dictionary,
+  Context extends Dictionary = object,
 > extends BaseModal<T, B> {
   type: 'prompt';
   content?: ReactNode | ComponentType<PromptContentProps<Context>>;

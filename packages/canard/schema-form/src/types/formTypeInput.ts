@@ -23,7 +23,7 @@ import type { AllowedValue } from './value';
  */
 export interface FormTypeInputProps<
   Value extends AllowedValue = any,
-  Context extends Dictionary = Dictionary,
+  Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
   Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
@@ -70,7 +70,7 @@ export interface FormTypeInputProps<
 export type FormTypeInputPropsWithSchema<
   Value extends AllowedValue = any,
   Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
-  Context extends Dictionary = Dictionary,
+  Context extends Dictionary = object,
 > = FormTypeInputProps<Value, Context, any[], Schema>;
 
 /**

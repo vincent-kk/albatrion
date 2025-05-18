@@ -7,7 +7,7 @@ import type { ModalBackground } from './background';
 import type { ConfirmModal } from './confirm';
 import type { PromptModal } from './prompt';
 
-export type Modal<T = any, B = any, Context extends Dictionary = Dictionary> =
+export type Modal<T = any, B = any, Context extends Dictionary = object> =
   | AlertModal<B, Context>
   | ConfirmModal<B, Context>
   | PromptModal<T, B, Context>;
@@ -19,10 +19,7 @@ export type ManagedEntity = {
 
 export type ManagedModal<T = any, B = any> = ManagedEntity & Modal<T, B>;
 
-export type ModalFrameProps<
-  Context extends Dictionary = Dictionary,
-  B = any,
-> = {
+export type ModalFrameProps<Context extends Dictionary = object, B = any> = {
   id: number;
   type: 'alert' | 'confirm' | 'prompt';
   alive: boolean;

@@ -22,15 +22,13 @@ export type ForegroundComponent = ComponentType<
 >;
 export type BackgroundComponent = ComponentType<ModalFrameProps>;
 
-export interface ContentComponentProps<
-  Context extends Dictionary = Dictionary,
-> {
+export interface ContentComponentProps<Context extends Dictionary = object> {
   onConfirm: VoidFunction;
   onCancel: VoidFunction;
   context: Context;
 }
 
-export type WrapperComponentProps<Context extends Dictionary = Dictionary> =
+export type WrapperComponentProps<Context extends Dictionary = object> =
   PropsWithChildren<{
     context: Context;
   }>;
@@ -42,7 +40,7 @@ export interface FooterOptions {
   hideCancel?: boolean;
 }
 
-export type FooterComponentProps<Context extends Dictionary = Dictionary> = {
+export type FooterComponentProps<Context extends Dictionary = object> = {
   confirmLabel?: ReactNode;
   hideConfirm?: boolean;
   cancelLabel?: ReactNode;

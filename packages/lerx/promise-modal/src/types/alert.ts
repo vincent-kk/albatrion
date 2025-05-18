@@ -4,15 +4,17 @@ import type { Dictionary } from '@aileron/declare';
 
 import type { BaseModal, ContentComponentProps, FooterOptions } from './base';
 
-export type AlertFooterRender<Context extends Dictionary = Dictionary> =
-  (props: { onConfirm: VoidFunction; context: Context }) => ReactNode;
+export type AlertFooterRender<Context extends Dictionary = object> = (props: {
+  onConfirm: VoidFunction;
+  context: Context;
+}) => ReactNode;
 
-export type AlertContentProps<Context extends Dictionary = Dictionary> = Pick<
+export type AlertContentProps<Context extends Dictionary = object> = Pick<
   ContentComponentProps<Context>,
   'onConfirm'
 >;
 
-export interface AlertModal<B = any, Context extends Dictionary = Dictionary>
+export interface AlertModal<B = any, Context extends Dictionary = object>
   extends BaseModal<void, B> {
   type: 'alert';
   subtype?: 'info' | 'success' | 'warning' | 'error';
