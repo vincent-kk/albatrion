@@ -4,6 +4,7 @@ import { AbstractNode } from '../AbstractNode';
 import type {
   BranchNodeConstructorProps,
   SchemaNode,
+  SchemaNodeFactory,
   UnionSetValueOption,
 } from '../type';
 import {
@@ -90,32 +91,41 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       ajv,
     });
 
+    this.#strategy = this.#createStrategy(nodeFactory);
+    this.activateLink();
+  }
+
+  /**
+   * 객체 노드의 전략을 생성합니다.
+   * @param nodeFactory - 노드 팩토리
+   * @returns 생성된 전략: TerminalStrategy | BranchStrategy
+   */
+  #createStrategy(nodeFactory: SchemaNodeFactory) {
     const handleChange = (value: ObjectValue | undefined) =>
       this.onChange(omitEmptyObject(value));
     const handleRefresh = (value: ObjectValue | undefined) =>
       this.refresh(value);
     const handleSetDefaultValue = (value: ObjectValue | undefined) =>
       this.setDefaultValue(value);
-    const handleUpdateComputedProperties = () =>
-      this.updateComputedProperties();
 
-    this.#strategy =
-      this.group === 'terminal'
-        ? new TerminalStrategy(
-            this,
-            handleChange,
-            handleRefresh,
-            handleSetDefaultValue,
-          )
-        : new BranchStrategy(
-            this,
-            handleChange,
-            handleRefresh,
-            handleSetDefaultValue,
-            handleUpdateComputedProperties,
-            nodeFactory,
-          );
-
-    this.activateLink();
+    if (this.group === 'terminal') {
+      return new TerminalStrategy(
+        this,
+        handleChange,
+        handleRefresh,
+        handleSetDefaultValue,
+      );
+    } else {
+      const handleUpdateComputedProperties = () =>
+        this.updateComputedProperties();
+      return new BranchStrategy(
+        this,
+        handleChange,
+        handleRefresh,
+        handleSetDefaultValue,
+        handleUpdateComputedProperties,
+        nodeFactory,
+      );
+    }
   }
 }

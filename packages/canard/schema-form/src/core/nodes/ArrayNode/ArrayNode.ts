@@ -4,6 +4,7 @@ import { AbstractNode } from '../AbstractNode';
 import type {
   BranchNodeConstructorProps,
   SchemaNode,
+  SchemaNodeFactory,
   UnionSetValueOption,
 } from '../type';
 import {
@@ -100,29 +101,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       ajv,
     });
 
-    const handleChange = (value: ArrayValue | undefined) =>
-      this.onChange(omitEmptyArray(value));
-    const handleRefresh = (value: ArrayValue | undefined) =>
-      this.refresh(value);
-    const handleSetDefaultValue = (value: ArrayValue | undefined) =>
-      this.setDefaultValue(value);
-
-    this.#strategy =
-      this.group === 'terminal'
-        ? new TerminalStrategy(
-            this,
-            handleChange,
-            handleRefresh,
-            handleSetDefaultValue,
-          )
-        : new BranchStrategy(
-            this,
-            handleChange,
-            handleRefresh,
-            handleSetDefaultValue,
-            nodeFactory,
-          );
-
+    this.#strategy = this.#createStrategy(nodeFactory);
     this.activateLink();
   }
 
@@ -164,5 +143,36 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   clear(this: ArrayNode) {
     this.#strategy.clear();
     return this;
+  }
+
+  /**
+   * 배열 노드의 전략을 생성합니다.
+   * @param nodeFactory - 노드 팩토리
+   * @returns 생성된 전략: TerminalStrategy | BranchStrategy
+   */
+  #createStrategy(nodeFactory: SchemaNodeFactory) {
+    const handleChange = (value: ArrayValue | undefined) =>
+      this.onChange(omitEmptyArray(value));
+    const handleRefresh = (value: ArrayValue | undefined) =>
+      this.refresh(value);
+    const handleSetDefaultValue = (value: ArrayValue | undefined) =>
+      this.setDefaultValue(value);
+
+    if (this.group === 'terminal') {
+      return new TerminalStrategy(
+        this,
+        handleChange,
+        handleRefresh,
+        handleSetDefaultValue,
+      );
+    } else {
+      return new BranchStrategy(
+        this,
+        handleChange,
+        handleRefresh,
+        handleSetDefaultValue,
+        nodeFactory,
+      );
+    }
   }
 }
