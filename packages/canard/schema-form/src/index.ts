@@ -4,12 +4,9 @@ export {
   Form,
   type FormChildrenProps,
   type FormErrorProps,
-  type FormGroupProps,
   type FormHandle,
-  type FormInputProps,
   type FormLabelProps,
   type FormProps,
-  type FormRenderProps,
 } from './components/Form';
 
 export {
@@ -37,21 +34,27 @@ export type {
   FormTypeInputProps,
   FormTypeInputPropsWithNode,
   FormTypeInputPropsWithSchema,
-  FormTypeRendererProps,
   FormTypeTestFn,
   FormTypeTestObject,
   FormatError,
   FormatErrorOptions,
+} from './types';
+
+export type {
   JsonSchemaError,
-  JsonSchema,
+  FormGroupProps,
+  FormInputProps,
+  FormRenderProps,
+  FormTypeRendererProps,
   BooleanSchema,
   NumberSchema,
   StringSchema,
   ArraySchema,
   ObjectSchema,
   NullSchema,
+  JsonSchema,
   InferJsonSchema,
-} from './types';
+} from './types/rolled';
 
 export {
   ExternalFormContextProvider as FormProvider,
