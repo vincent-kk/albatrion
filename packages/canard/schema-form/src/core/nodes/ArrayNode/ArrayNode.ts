@@ -12,6 +12,7 @@ import {
   type IndexId,
   TerminalStrategy,
 } from './strategies';
+import { omitEmptyArray } from './utils';
 
 /**
  * 배열 스키마를 처리하기 위한 노드 클래스입니다.
@@ -100,7 +101,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     });
 
     const handleChange = (value: ArrayValue | undefined) =>
-      this.onChange(value);
+      this.onChange(omitEmptyArray(value));
     const handleRefresh = (value: ArrayValue | undefined) =>
       this.refresh(value);
     const handleSetDefaultValue = (value: ArrayValue | undefined) =>

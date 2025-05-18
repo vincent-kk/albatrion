@@ -11,6 +11,7 @@ import {
   type ObjectNodeStrategy,
   TerminalStrategy,
 } from './strategies';
+import { omitEmptyObject } from './utils';
 
 /**
  * 객체 스키마를 처리하기 위한 노드 클래스입니다.
@@ -90,7 +91,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     });
 
     const handleChange = (value: ObjectValue | undefined) =>
-      this.onChange(value);
+      this.onChange(omitEmptyObject(value));
     const handleRefresh = (value: ObjectValue | undefined) =>
       this.refresh(value);
     const handleSetDefaultValue = (value: ObjectValue | undefined) =>
