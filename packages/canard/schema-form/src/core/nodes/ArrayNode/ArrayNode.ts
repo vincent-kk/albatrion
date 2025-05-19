@@ -88,6 +88,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     nodeFactory,
     parentNode,
     validationMode,
+    required,
     ajv,
   }: BranchNodeConstructorProps<ArraySchema>) {
     super({
@@ -98,6 +99,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       onChange,
       parentNode,
       validationMode,
+      required,
       ajv,
     });
 
