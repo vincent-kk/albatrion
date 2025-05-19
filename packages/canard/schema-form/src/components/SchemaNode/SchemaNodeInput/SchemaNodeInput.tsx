@@ -83,7 +83,6 @@ export const SchemaNodeInput = memo(
           disabled={rootDisabled || node.disabled}
           required={node.required}
           node={node}
-          ChildNodes={ChildNodes}
           name={node.name}
           path={node.path}
           errors={node.errors}
@@ -91,6 +90,7 @@ export const SchemaNodeInput = memo(
           defaultValue={node.defaultValue}
           value={node.value}
           onChange={handleChange}
+          ChildNodes={ChildNodes}
           style={node.jsonSchema.style}
           context={userDefinedContext}
           {...overrideProps}

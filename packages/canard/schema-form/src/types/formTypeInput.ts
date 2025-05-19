@@ -38,8 +38,6 @@ export interface FormTypeInputProps<
   required: boolean;
   /** FormType Component에 할당된 schema node */
   node: Node;
-  /** 이 FormType Component의 하위 FormType Components */
-  ChildNodes: WithKey<ComponentType<ChildFormTypeInputProps>>[];
   /** FormType Component에 할당된 schema node의 이름 */
   name: Node['name'];
   /** FormType Component에 할당된 schema node의 경로 */
@@ -54,6 +52,8 @@ export interface FormTypeInputProps<
   value: Value;
   /** FormType Component의 onChange */
   onChange: SetStateFnWithOptions<Value>;
+  /** 이 FormType Component의 하위 FormType Components */
+  ChildNodes: WithKey<ComponentType<ChildFormTypeInputProps>>[];
   /** FormType Component의 style */
   style: CSSProperties | undefined;
   /** Form에 전달된 UserDefinedContext */
@@ -95,7 +95,6 @@ export interface UnknownFormTypeInputProps {
   disabled: boolean;
   required: boolean;
   node: any;
-  ChildNodes: WithKey<ComponentType<any>>[];
   name: string;
   path: string;
   errors: any[];
@@ -103,6 +102,7 @@ export interface UnknownFormTypeInputProps {
   defaultValue: any;
   value: any;
   onChange: SetStateFnWithOptions<any>;
+  ChildNodes: WithKey<ComponentType<any>>[];
   style: CSSProperties | undefined;
   context: any;
   [alt: string]: any;

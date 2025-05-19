@@ -21,9 +21,9 @@ const Remove = (props: ButtonProps) => (
 
 const FormTypeInputArray = ({
   node,
-  ChildNodes,
   readOnly,
   disabled,
+  ChildNodes,
   style,
 }: FormTypeInputProps<any[]>) => {
   const handleClick = useHandle(() => {
