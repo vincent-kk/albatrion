@@ -93,6 +93,7 @@ export interface UnknownFormTypeInputProps {
   jsonSchema: any;
   readOnly: boolean;
   disabled: boolean;
+  required: boolean;
   node: any;
   childNodes: WithKey<ComponentType<any>>[];
   name: string;
@@ -115,6 +116,7 @@ export interface OverridableFormTypeInputProps {
   name?: string;
   readOnly?: boolean;
   disabled?: boolean;
+  required?: boolean;
   context?: Dictionary;
   style?: CSSProperties;
   className?: string;
