@@ -22,7 +22,7 @@ export interface SchemaNodeAdapterInputProps {
   node: SchemaNode;
   overrideProps: OverridableFormTypeInputProps;
   PreferredFormTypeInput?: ComponentType<FormTypeInputProps>;
-  childNodes: ChildComponent[];
+  NodeProxy: ComponentType<SchemaNodeProxyProps>;
 }
 
 export type ChildComponent = ElementOf<FormTypeInputProps['childNodes']>;

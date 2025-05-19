@@ -8,6 +8,7 @@ import {
 } from '@/schema-form/providers';
 import type { SetStateFnWithOptions } from '@/schema-form/types';
 
+import { useChildNodes } from './hooks/useChildNodes';
 import { useFormTypeInput } from './hooks/useFormTypeInput';
 import type { SchemaNodeAdapterInputProps } from './type';
 
@@ -27,13 +28,15 @@ export const SchemaNodeAdapterInput = memo(
     node,
     overrideProps,
     PreferredFormTypeInput,
-    childNodes,
+    NodeProxy,
   }: SchemaNodeAdapterInputProps) => {
     const FormTypeInputByNode = useFormTypeInput(node);
     const FormTypeInput = useMemo(
       () => PreferredFormTypeInput || FormTypeInputByNode,
       [FormTypeInputByNode, PreferredFormTypeInput],
     );
+
+    const ChildNodes = useChildNodes(node, NodeProxy);
 
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
       (input, option = HANDLE_CHANGE_OPTION) => {
@@ -80,7 +83,7 @@ export const SchemaNodeAdapterInput = memo(
           disabled={rootDisabled || node.disabled}
           required={node.required}
           node={node}
-          childNodes={childNodes}
+          childNodes={ChildNodes}
           name={node.name}
           path={node.path}
           errors={node.errors}
