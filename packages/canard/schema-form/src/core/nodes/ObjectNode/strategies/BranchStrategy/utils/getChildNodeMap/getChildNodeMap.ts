@@ -36,19 +36,22 @@ export const getChildNodeMap = (
   const childNodeMap = new Map<string, ChildNode>();
   const properties = jsonSchema.properties;
   if (!properties) return childNodeMap;
+  const requiredFields = jsonSchema.required;
   for (const name of propertyKeys) {
     const schema = properties[name];
     const inputDefault = defaultValue?.[name];
+    const conditions = conditionsMap?.get(name);
     childNodeMap.set(name, {
       isVirtualized: !!virtualReferenceFieldsMap?.get(name)?.length,
       node: nodeFactory({
         name,
-        jsonSchema: mergeShowConditions(schema, conditionsMap?.get(name)),
+        jsonSchema: mergeShowConditions(schema, conditions),
         defaultValue:
           inputDefault !== undefined ? inputDefault : getDefaultValue(schema),
         onChange: handelChangeFactory(name),
         nodeFactory,
         parentNode,
+        required: requiredFields?.includes(name) || conditions !== undefined,
       }),
     });
   }

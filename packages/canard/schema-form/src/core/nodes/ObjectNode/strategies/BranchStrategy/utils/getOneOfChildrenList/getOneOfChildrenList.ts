@@ -76,12 +76,12 @@ export const getOneOfChildrenList = (
         node: nodeFactory({
           name: property,
           jsonSchema: schema,
-          required: requiredFields?.includes(property),
           defaultValue:
             inputDefault !== undefined ? inputDefault : getDefaultValue(schema),
           onChange: handelChangeFactory(property),
           nodeFactory,
           parentNode,
+          required: requiredFields?.includes(property),
         }),
       };
     }
