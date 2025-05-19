@@ -7,6 +7,7 @@ export const FormGroup = ({
   depth,
   path,
   name,
+  required,
   Input,
   errorMessage,
 }: FormTypeRendererProps) => {
@@ -41,6 +42,11 @@ export const FormGroup = ({
         <Flex gap={10} align="center">
           {node.parentNode?.type !== 'array' && (
             <label htmlFor={path}>
+              {required && (
+                <Typography.Text type="danger" style={{ marginRight: 4 }}>
+                  *
+                </Typography.Text>
+              )}
               <Typography.Text>{name}</Typography.Text>
             </label>
           )}

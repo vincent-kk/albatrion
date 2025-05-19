@@ -7,6 +7,7 @@ export const FormGroup = ({
   depth,
   path,
   name,
+  required,
   Input,
   errorMessage,
 }: FormTypeRendererProps) => {
@@ -27,7 +28,12 @@ export const FormGroup = ({
       <Space direction="vertical" block>
         <div>
           {node.parentNode?.type !== 'array' && (
-            <label htmlFor={path}>{name}</label>
+            <label htmlFor={path}>
+              {required && (
+                <span style={{ marginRight: 4, color: 'red' }}>*</span>
+              )}
+              {name}
+            </label>
           )}
           <Input />
         </div>
