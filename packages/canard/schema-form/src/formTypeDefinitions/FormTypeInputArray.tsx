@@ -11,7 +11,7 @@ const FormTypeInputArray = ({
   node,
   readOnly,
   disabled,
-  ChildNodes,
+  ChildComponents,
   style,
 }: FormTypeInputProps<any[]>) => {
   const handleClick = useCallback(() => {
@@ -25,22 +25,20 @@ const FormTypeInputArray = ({
   );
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 5, ...style }}>
-      {ChildNodes &&
-        map(ChildNodes, (Node, i) => {
-          return (
-            <div key={Node.key} style={{ display: 'flex' }}>
-              <Node />
-              {!readOnly && (
-                <Button
-                  title="remove item"
-                  label="x"
-                  disabled={disabled}
-                  onClick={() => handleRemoveClick(i)}
-                />
-              )}
-            </div>
-          );
-        })}
+      {ChildComponents &&
+        map(ChildComponents, (ChildComponent, i) => (
+          <div key={ChildComponent.key} style={{ display: 'flex' }}>
+            <ChildComponent />
+            {!readOnly && (
+              <Button
+                title="remove item"
+                label="x"
+                disabled={disabled}
+                onClick={() => handleRemoveClick(i)}
+              />
+            )}
+          </div>
+        ))}
       {!readOnly && (
         <label
           style={{

@@ -18,7 +18,7 @@ export interface SchemaNodeInputProps {
   NodeProxy: ComponentType<SchemaNodeProxyProps>;
 }
 
-export type ChildComponent = ElementOf<FormTypeInputProps['ChildNodes']>;
+export type ChildComponent = ElementOf<FormTypeInputProps['ChildComponents']>;
 
 export type NodeChildren = Array<
   ObjectNodeChildNode & {

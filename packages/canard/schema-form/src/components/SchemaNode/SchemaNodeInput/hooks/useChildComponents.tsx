@@ -17,29 +17,27 @@ import { ChildFormTypeInputProps } from '@/schema-form/types';
 import { SchemaNodeProxyProps } from '../../SchemaNodeProxy';
 import { ChildComponent, NodeChildren } from '../type';
 
-export const useChildNodes = (
+export const useChildComponents = (
   node: SchemaNode,
   NodeProxy: ComponentType<SchemaNodeProxyProps>,
 ): ChildComponent[] => {
   const [children, setChildren] = useState<NodeChildren>(node.children);
-  const childComponentBySchemaNodeKey = useRef(
-    new Map<string, ChildComponent>(),
-  );
+  const cache = useRef(new Map<string, ChildComponent>());
   useSchemaNodeSubscribe(node, ({ type }) => {
     if (type & NodeEventType.UpdateChildren) setChildren(node.children);
   });
   useOnUnmount(() => {
-    childComponentBySchemaNodeKey.current.clear();
+    cache.current.clear();
   });
 
   return useMemo(() => {
     if (isTerminalNode(node)) return [];
-    const ChildNodes = [] as ChildComponent[];
+    const ChildComponents = [] as ChildComponent[];
     for (const { node, isVirtualized, index } of children) {
       if (!node?.key || isVirtualized === true) continue;
       const key = index ? `${node.key}:${index}` : node.key;
-      const CachedComponent = childComponentBySchemaNodeKey.current.get(key);
-      if (CachedComponent) ChildNodes.push(CachedComponent);
+      const CachedComponent = cache.current.get(key);
+      if (CachedComponent) ChildComponents.push(CachedComponent);
       else {
         const ChildComponent = ({
           FormTypeRenderer: InputFormTypeRenderer,
@@ -56,10 +54,10 @@ export const useChildNodes = (
           );
         };
         ChildComponent.key = key;
-        childComponentBySchemaNodeKey.current.set(key, ChildComponent);
-        ChildNodes.push(ChildComponent);
+        cache.current.set(key, ChildComponent);
+        ChildComponents.push(ChildComponent);
       }
     }
-    return ChildNodes;
+    return ChildComponents;
   }, [node, children, NodeProxy]);
 };

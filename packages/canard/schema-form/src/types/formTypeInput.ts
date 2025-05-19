@@ -53,7 +53,7 @@ export interface FormTypeInputProps<
   /** FormType Component의 onChange */
   onChange: SetStateFnWithOptions<Value>;
   /** 이 FormType Component의 하위 FormType Components */
-  ChildNodes: WithKey<ComponentType<ChildFormTypeInputProps>>[];
+  ChildComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
   /** FormType Component의 style */
   style: CSSProperties | undefined;
   /** Form에 전달된 UserDefinedContext */
@@ -102,7 +102,7 @@ export interface UnknownFormTypeInputProps {
   defaultValue: any;
   value: any;
   onChange: SetStateFnWithOptions<any>;
-  ChildNodes: WithKey<ComponentType<any>>[];
+  ChildComponents: WithKey<ComponentType<any>>[];
   style: CSSProperties | undefined;
   context: any;
   [alt: string]: any;
