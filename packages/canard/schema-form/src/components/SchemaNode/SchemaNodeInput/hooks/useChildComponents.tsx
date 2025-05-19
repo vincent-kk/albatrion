@@ -22,10 +22,11 @@ export const useChildComponents = (
   NodeProxy: ComponentType<SchemaNodeProxyProps>,
 ): ChildComponent[] => {
   const [children, setChildren] = useState<NodeChildren>(node.children);
-  const cache = useRef(new Map<string, ChildComponent>());
   useSchemaNodeSubscribe(node, ({ type }) => {
     if (type & NodeEventType.UpdateChildren) setChildren(node.children);
   });
+
+  const cache = useRef(new Map<string, ChildComponent>());
   useOnUnmount(() => {
     cache.current.clear();
   });
