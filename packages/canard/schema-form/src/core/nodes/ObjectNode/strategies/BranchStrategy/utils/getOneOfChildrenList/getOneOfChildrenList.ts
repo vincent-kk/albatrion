@@ -56,7 +56,7 @@ export const getOneOfChildrenList = (
 
     const keys = Object.keys(properties);
     const childNodes = new Array<ChildNode>(keys.length);
-    const requiredFields = oneOfSchema.required;
+    const required = oneOfSchema.required;
     for (let keyIndex = 0; keyIndex < keys.length; keyIndex++) {
       const property = keys[keyIndex];
       if (childNodeMap.has(property))
@@ -81,7 +81,7 @@ export const getOneOfChildrenList = (
           onChange: handelChangeFactory(property),
           nodeFactory,
           parentNode,
-          required: requiredFields?.includes(property),
+          required: required?.includes(property),
         }),
       };
     }

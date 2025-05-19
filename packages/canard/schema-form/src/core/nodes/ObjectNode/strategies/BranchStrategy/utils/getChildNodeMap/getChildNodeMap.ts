@@ -36,7 +36,7 @@ export const getChildNodeMap = (
   const childNodeMap = new Map<string, ChildNode>();
   const properties = jsonSchema.properties;
   if (!properties) return childNodeMap;
-  const requiredFields = jsonSchema.required;
+  const required = jsonSchema.required;
   for (const name of propertyKeys) {
     const schema = properties[name];
     const inputDefault = defaultValue?.[name];
@@ -51,7 +51,7 @@ export const getChildNodeMap = (
         onChange: handelChangeFactory(name),
         nodeFactory,
         parentNode,
-        required: requiredFields?.includes(name) || conditions !== undefined,
+        required: required?.includes(name) || conditions !== undefined,
       }),
     });
   }
