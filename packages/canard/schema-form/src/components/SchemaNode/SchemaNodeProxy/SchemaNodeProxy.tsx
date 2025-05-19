@@ -12,7 +12,7 @@ import {
 } from '@/schema-form/providers';
 import type { FormTypeRendererProps } from '@/schema-form/types';
 
-import { SchemaNodeAdapterWrapper } from '../SchemaNodeAdapter';
+import { SchemaNodeInputWrapper } from '../SchemaNodeInput';
 import { useSchemaNodeInputControl } from './hooks/useSchemaNodeInputControl';
 import type { SchemaNodeProxyProps } from './type';
 
@@ -36,7 +36,7 @@ export const SchemaNodeProxy = memo(
 
     const Input = useMemo<FormTypeRendererProps['Input']>(
       () =>
-        SchemaNodeAdapterWrapper(
+        SchemaNodeInputWrapper(
           node,
           overrideProps,
           FormTypeInput,

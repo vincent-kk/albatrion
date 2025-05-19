@@ -15,9 +15,9 @@ import type {
 } from '@/schema-form/types';
 
 import type { SchemaNodeProxyProps } from '../SchemaNodeProxy';
-import { SchemaNodeAdapterInput } from './SchemaNodeAdapterInput';
+import { SchemaNodeInput } from './SchemaNodeInput';
 
-export const SchemaNodeAdapterWrapper = (
+export const SchemaNodeInputWrapper = (
   node: SchemaNode | null,
   overrideFormTypeInputProps: OverridableFormTypeInputProps | undefined,
   OverridePreferredFormTypeInput: ComponentType<FormTypeInputProps> | undefined,
@@ -35,7 +35,7 @@ export const SchemaNodeAdapterWrapper = (
         : undefined,
     );
     return (
-      <SchemaNodeAdapterInput
+      <SchemaNodeInput
         node={node}
         overrideProps={overrideProps}
         PreferredFormTypeInput={PreferredFormTypeInput}

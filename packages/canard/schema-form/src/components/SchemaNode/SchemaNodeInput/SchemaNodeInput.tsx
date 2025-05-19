@@ -10,7 +10,7 @@ import type { SetStateFnWithOptions } from '@/schema-form/types';
 
 import { useChildNodes } from './hooks/useChildNodes';
 import { useFormTypeInput } from './hooks/useFormTypeInput';
-import type { SchemaNodeAdapterInputProps } from './type';
+import type { SchemaNodeInputProps } from './type';
 
 const HANDLE_CHANGE_OPTION =
   SetValueOption.Replace |
@@ -23,13 +23,13 @@ const RERENDERING_EVENT =
   NodeEventType.UpdateError |
   NodeEventType.UpdateComputedProperties;
 
-export const SchemaNodeAdapterInput = memo(
+export const SchemaNodeInput = memo(
   ({
     node,
     overrideProps,
     PreferredFormTypeInput,
     NodeProxy,
-  }: SchemaNodeAdapterInputProps) => {
+  }: SchemaNodeInputProps) => {
     const FormTypeInputByNode = useFormTypeInput(node);
     const FormTypeInput = useMemo(
       () => PreferredFormTypeInput || FormTypeInputByNode,

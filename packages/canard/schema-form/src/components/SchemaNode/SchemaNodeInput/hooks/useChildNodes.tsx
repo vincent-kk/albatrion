@@ -61,5 +61,5 @@ export const useChildNodes = (
       }
     }
     return ChildNodes;
-  }, [NodeProxy, node, children]);
+  }, [node, children, NodeProxy]);
 };
