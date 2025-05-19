@@ -8,14 +8,14 @@ import type {
   FormTypeInputProps,
 } from '@/schema-form/types';
 
-const FormTypeInputObject = ({ childNodes }: FormTypeInputProps<object>) => {
+const FormTypeInputObject = ({ ChildNodes }: FormTypeInputProps<object>) => {
   const children = useMemo(() => {
-    return childNodes
-      ? map(childNodes, (Node, index) => {
+    return ChildNodes
+      ? map(ChildNodes, (Node, index) => {
           return <Node key={Node.key || index} />;
         })
       : null;
-  }, [childNodes]);
+  }, [ChildNodes]);
 
   return <Fragment>{children}</Fragment>;
 };

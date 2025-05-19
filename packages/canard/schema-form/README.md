@@ -222,7 +222,7 @@ interface FormTypeInputProps<
   /** Schema node assigned to the FormType Component */
   node: Node;
   /** Child FormType Components for this FormType Component */
-  childNodes: WithKey<ComponentType<ChildFormTypeInputProps>>[];
+  ChildNodes: WithKey<ComponentType<ChildFormTypeInputProps>>[];
   /** Name of the schema node assigned to the FormType Component */
   name: Node['name'];
   /** Path of the schema node assigned to the FormType Component */

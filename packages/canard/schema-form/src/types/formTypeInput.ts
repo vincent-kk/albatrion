@@ -39,7 +39,7 @@ export interface FormTypeInputProps<
   /** FormType Component에 할당된 schema node */
   node: Node;
   /** 이 FormType Component의 하위 FormType Components */
-  childNodes: WithKey<ComponentType<ChildFormTypeInputProps>>[];
+  ChildNodes: WithKey<ComponentType<ChildFormTypeInputProps>>[];
   /** FormType Component에 할당된 schema node의 이름 */
   name: Node['name'];
   /** FormType Component에 할당된 schema node의 경로 */
@@ -95,7 +95,7 @@ export interface UnknownFormTypeInputProps {
   disabled: boolean;
   required: boolean;
   node: any;
-  childNodes: WithKey<ComponentType<any>>[];
+  ChildNodes: WithKey<ComponentType<any>>[];
   name: string;
   path: string;
   errors: any[];

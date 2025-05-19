@@ -222,7 +222,7 @@ interface FormTypeInputProps<
   /** FormType 컴포넌트에 할당된 스키마 노드 */
   node: Node;
   /** 이 FormType 컴포넌트의 자식 FormType 컴포넌트 */
-  childNodes: WithKey<ComponentType<ChildFormTypeInputProps>>[];
+  ChildNodes: WithKey<ComponentType<ChildFormTypeInputProps>>[];
   /** FormType 컴포넌트에 할당된 스키마 노드의 이름 */
   name: Node['name'];
   /** FormType 컴포넌트에 할당된 스키마 노드의 경로 */

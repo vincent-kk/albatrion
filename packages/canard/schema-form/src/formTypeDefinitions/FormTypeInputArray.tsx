@@ -9,7 +9,7 @@ import type {
 
 const FormTypeInputArray = ({
   node,
-  childNodes,
+  ChildNodes,
   readOnly,
   disabled,
   style,
@@ -25,8 +25,8 @@ const FormTypeInputArray = ({
   );
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 5, ...style }}>
-      {childNodes &&
-        map(childNodes, (Node, i) => {
+      {ChildNodes &&
+        map(ChildNodes, (Node, i) => {
           return (
             <div key={Node.key} style={{ display: 'flex' }}>
               <Node />
