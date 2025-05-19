@@ -1,7 +1,6 @@
 import { memo, useCallback, useMemo, useRef } from 'react';
 
 import { NodeEventType, NodeState, SetValueOption } from '@/schema-form/core';
-import { useFormTypeInput } from '@/schema-form/hooks/useFormTypeInput';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
   useInputControlContext,
@@ -9,6 +8,7 @@ import {
 } from '@/schema-form/providers';
 import type { SetStateFnWithOptions } from '@/schema-form/types';
 
+import { useFormTypeInput } from './hooks/useFormTypeInput';
 import type { SchemaNodeAdapterInputProps } from './type';
 
 const HANDLE_CHANGE_OPTION =
