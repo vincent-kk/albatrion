@@ -221,8 +221,6 @@ interface FormTypeInputProps<
   disabled: boolean;
   /** FormType 컴포넌트에 할당된 스키마 노드 */
   node: Node;
-  /** 이 FormType 컴포넌트의 자식 FormType 컴포넌트 */
-  childNodes: WithKey<ComponentType<ChildFormTypeInputProps>>[];
   /** FormType 컴포넌트에 할당된 스키마 노드의 이름 */
   name: Node['name'];
   /** FormType 컴포넌트에 할당된 스키마 노드의 경로 */
@@ -237,6 +235,8 @@ interface FormTypeInputProps<
   value: Value | undefined;
   /** FormType 컴포넌트의 onChange 핸들러 */
   onChange: SetStateFnWithOptions<Value | undefined>;
+  /** 이 FormType 컴포넌트의 자식 FormType 컴포넌트 */
+  ChildComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
   /** FormType 컴포넌트의 스타일 */
   style: CSSProperties | undefined;
   /** Form에 전달되는 사용자 정의 컨텍스트 */

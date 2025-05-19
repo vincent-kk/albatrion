@@ -21,9 +21,9 @@ const Remove = (props: ButtonProps) => (
 
 const FormTypeInputArray = ({
   node,
-  childNodes,
   readOnly,
   disabled,
+  ChildComponents,
   style,
 }: FormTypeInputProps<any[]>) => {
   const handleClick = useHandle(() => {
@@ -34,10 +34,10 @@ const FormTypeInputArray = ({
   });
   return (
     <div style={style}>
-      {childNodes &&
-        map(childNodes, (Node, i) => (
-          <div key={Node.key} style={{ display: 'flex' }}>
-            <Node />
+      {ChildComponents &&
+        map(ChildComponents, (ChildComponent, i) => (
+          <div key={ChildComponent.key} style={{ display: 'flex' }}>
+            <ChildComponent />
             {!readOnly && (
               <Remove
                 title="remove"

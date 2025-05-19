@@ -6,6 +6,7 @@ export const FormGroupRenderer = ({
   depth,
   path,
   name,
+  required,
   Input,
   errorMessage,
   style,
@@ -44,7 +45,7 @@ export const FormGroupRenderer = ({
       >
         {node.parentNode?.type !== 'array' && (
           <label htmlFor={path} style={{ marginRight: 5 }}>
-            {name}
+            {required && <span style={{ color: 'red' }}>*</span>} {name}
           </label>
         )}
         <Input />

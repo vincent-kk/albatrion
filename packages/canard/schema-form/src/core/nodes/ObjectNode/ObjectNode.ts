@@ -78,6 +78,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     nodeFactory,
     parentNode,
     validationMode,
+    required,
     ajv,
   }: BranchNodeConstructorProps<ObjectSchema>) {
     super({
@@ -88,6 +89,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       onChange,
       parentNode,
       validationMode,
+      required,
       ajv,
     });
 

@@ -41,11 +41,12 @@ export const createSchemaNodeFactory =
     name,
     jsonSchema: schema,
     defaultValue,
-    parentNode,
-    validationMode,
     onChange,
     nodeFactory,
+    parentNode,
     refNodes,
+    validationMode,
+    required,
     ajv,
   }: NodeFactoryProps<Schema>) => {
     const jsonSchema = (resolveSchema?.(schema) ||
@@ -60,6 +61,7 @@ export const createSchemaNodeFactory =
           onChange,
           parentNode,
           validationMode,
+          required,
           ajv,
         } as SchemaNodeConstructorProps<BooleanSchema>);
       case 'number':
@@ -72,12 +74,14 @@ export const createSchemaNodeFactory =
           onChange,
           parentNode,
           validationMode,
+          required,
           ajv,
         } as SchemaNodeConstructorProps<NumberSchema>);
       case 'string':
         return new StringNode({
           key,
           name,
+          required,
           jsonSchema,
           defaultValue,
           onChange,
@@ -95,6 +99,7 @@ export const createSchemaNodeFactory =
           onChange,
           parentNode,
           validationMode,
+          required,
           ajv,
         } as BranchNodeConstructorProps<ArraySchema>);
       case 'object':
@@ -107,6 +112,7 @@ export const createSchemaNodeFactory =
           onChange,
           parentNode,
           validationMode,
+          required,
           ajv,
         } as BranchNodeConstructorProps<ObjectSchema>);
       case 'null':
@@ -118,6 +124,7 @@ export const createSchemaNodeFactory =
           onChange,
           parentNode,
           validationMode,
+          required,
           ajv,
         } as SchemaNodeConstructorProps<NullSchema>);
       case 'virtual':
@@ -130,6 +137,7 @@ export const createSchemaNodeFactory =
           parentNode,
           refNodes,
           validationMode,
+          required,
           ajv,
         } as VirtualNodeConstructorProps<VirtualSchema>);
     }

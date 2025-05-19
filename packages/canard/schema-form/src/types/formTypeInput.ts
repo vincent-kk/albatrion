@@ -34,10 +34,10 @@ export interface FormTypeInputProps<
   readOnly: boolean;
   /** FormType Component의 disabled */
   disabled: boolean;
+  /** FormType Component에 할당된 schema node의 required 여부 */
+  required: boolean;
   /** FormType Component에 할당된 schema node */
   node: Node;
-  /** 이 FormType Component의 하위 FormType Components */
-  childNodes: WithKey<ComponentType<ChildFormTypeInputProps>>[];
   /** FormType Component에 할당된 schema node의 이름 */
   name: Node['name'];
   /** FormType Component에 할당된 schema node의 경로 */
@@ -52,6 +52,8 @@ export interface FormTypeInputProps<
   value: Value;
   /** FormType Component의 onChange */
   onChange: SetStateFnWithOptions<Value>;
+  /** 이 FormType Component의 하위 FormType Components */
+  ChildComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
   /** FormType Component의 style */
   style: CSSProperties | undefined;
   /** Form에 전달된 UserDefinedContext */
@@ -91,8 +93,8 @@ export interface UnknownFormTypeInputProps {
   jsonSchema: any;
   readOnly: boolean;
   disabled: boolean;
+  required: boolean;
   node: any;
-  childNodes: WithKey<ComponentType<any>>[];
   name: string;
   path: string;
   errors: any[];
@@ -100,6 +102,7 @@ export interface UnknownFormTypeInputProps {
   defaultValue: any;
   value: any;
   onChange: SetStateFnWithOptions<any>;
+  ChildComponents: WithKey<ComponentType<any>>[];
   style: CSSProperties | undefined;
   context: any;
   [alt: string]: any;
@@ -113,6 +116,7 @@ export interface OverridableFormTypeInputProps {
   name?: string;
   readOnly?: boolean;
   disabled?: boolean;
+  required?: boolean;
   context?: Dictionary;
   style?: CSSProperties;
   className?: string;

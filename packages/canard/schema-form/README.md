@@ -221,8 +221,6 @@ interface FormTypeInputProps<
   disabled: boolean;
   /** Schema node assigned to the FormType Component */
   node: Node;
-  /** Child FormType Components for this FormType Component */
-  childNodes: WithKey<ComponentType<ChildFormTypeInputProps>>[];
   /** Name of the schema node assigned to the FormType Component */
   name: Node['name'];
   /** Path of the schema node assigned to the FormType Component */
@@ -237,6 +235,8 @@ interface FormTypeInputProps<
   value: Value | undefined;
   /** onChange handler for the FormType Component */
   onChange: SetStateFnWithOptions<Value | undefined>;
+  /** Child FormType Components for this FormType Component */
+  ChildComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
   /** Style for the FormType Component */
   style: CSSProperties | undefined;
   /** UserDefinedContext passed to the Form */

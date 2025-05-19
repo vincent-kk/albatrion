@@ -7,7 +7,11 @@ import type { ChildNode } from '@/schema-form/core/nodes/ObjectNode/type';
 import type { SchemaNodeFactory } from '@/schema-form/core/nodes/type';
 import { SchemaNodeError } from '@/schema-form/errors';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
-import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
+import type {
+  JsonSchema,
+  ObjectSchema,
+  ObjectValue,
+} from '@/schema-form/types';
 
 /**
  * oneOf 스키마에 정의된 프로퍼티에 대한 자식 노드 목록을 생성합니다.
@@ -27,15 +31,15 @@ export const getOneOfChildrenList = (
   handelChangeFactory: Fn<[name: string], (input: any) => void>,
   nodeFactory: SchemaNodeFactory,
 ) => {
-  const oneOfSchema = jsonSchema.oneOf;
-  if (!oneOfSchema || !isArray(oneOfSchema)) return undefined;
+  const oneOfSchemas = jsonSchema.oneOf;
+  if (!oneOfSchemas || !isArray(oneOfSchemas)) return undefined;
 
-  const oneOfNodeList = new Array<ChildNode[]>(oneOfSchema.length);
+  const oneOfNodeList = new Array<ChildNode[]>(oneOfSchemas.length);
 
-  for (let index = 0; index < oneOfSchema.length; index++) {
-    const schema = oneOfSchema[index];
+  for (let index = 0; index < oneOfSchemas.length; index++) {
+    const oneOfSchema = oneOfSchemas[index] as Partial<ObjectSchema>;
 
-    if (schema.type && jsonSchema.type !== schema.type)
+    if (oneOfSchema.type && jsonSchema.type !== oneOfSchema.type)
       throw new SchemaNodeError(
         'ONEOF_TYPE_REDEFINITION',
         `Type cannot be redefined in 'oneOf' schema. It must either be omitted or match the parent schema type.`,
@@ -43,14 +47,16 @@ export const getOneOfChildrenList = (
           jsonSchema,
           path: parentNode.path,
           type: jsonSchema.type,
-          oneOfType: schema.type,
+          oneOfType: oneOfSchema.type,
         },
       );
 
-    const properties = schema.properties;
+    const properties = oneOfSchema.properties;
     if (!isPlainObject(properties)) continue;
+
     const keys = Object.keys(properties);
     const childNodes = new Array<ChildNode>(keys.length);
+    const required = oneOfSchema.required;
     for (let keyIndex = 0; keyIndex < keys.length; keyIndex++) {
       const property = keys[keyIndex];
       if (childNodeMap.has(property))
@@ -63,7 +69,7 @@ export const getOneOfChildrenList = (
             property,
           },
         );
-      const schema = properties[property];
+      const schema = properties[property] as JsonSchema;
       const inputDefault = defaultValue?.[property];
       childNodes[keyIndex] = {
         index,
@@ -75,6 +81,7 @@ export const getOneOfChildrenList = (
           onChange: handelChangeFactory(property),
           nodeFactory,
           parentNode,
+          required: required?.includes(property),
         }),
       };
     }

@@ -1,7 +1,6 @@
 import { memo, useCallback, useMemo, useRef } from 'react';
 
-import { NodeEventType, NodeState, SetValueOption } from '@/schema-form/core';
-import { useFormTypeInput } from '@/schema-form/hooks/useFormTypeInput';
+import { NodeEventType, NodeState } from '@/schema-form/core';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
   useInputControlContext,
@@ -9,31 +8,28 @@ import {
 } from '@/schema-form/providers';
 import type { SetStateFnWithOptions } from '@/schema-form/types';
 
-import type { SchemaNodeAdapterInputProps } from './type';
+import { useChildComponents } from './hooks/useChildComponents';
+import { useFormTypeInput } from './hooks/useFormTypeInput';
+import {
+  HANDLE_CHANGE_OPTION,
+  RERENDERING_EVENT,
+  type SchemaNodeInputProps,
+} from './type';
 
-const HANDLE_CHANGE_OPTION =
-  SetValueOption.Replace |
-  SetValueOption.Propagate |
-  SetValueOption.EmitChange |
-  SetValueOption.PublishUpdateEvent;
-
-const RERENDERING_EVENT =
-  NodeEventType.UpdateValue |
-  NodeEventType.UpdateError |
-  NodeEventType.UpdateComputedProperties;
-
-export const SchemaNodeAdapterInput = memo(
+export const SchemaNodeInput = memo(
   ({
     node,
     overrideProps,
     PreferredFormTypeInput,
-    childNodes,
-  }: SchemaNodeAdapterInputProps) => {
+    NodeProxy,
+  }: SchemaNodeInputProps) => {
     const FormTypeInputByNode = useFormTypeInput(node);
     const FormTypeInput = useMemo(
       () => PreferredFormTypeInput || FormTypeInputByNode,
       [FormTypeInputByNode, PreferredFormTypeInput],
     );
+
+    const ChildComponents = useChildComponents(node, NodeProxy);
 
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
       (input, option = HANDLE_CHANGE_OPTION) => {
@@ -78,8 +74,8 @@ export const SchemaNodeAdapterInput = memo(
           jsonSchema={node.jsonSchema}
           readOnly={rootReadOnly || node.readOnly}
           disabled={rootDisabled || node.disabled}
+          required={node.required}
           node={node}
-          childNodes={childNodes}
           name={node.name}
           path={node.path}
           errors={node.errors}
@@ -87,6 +83,7 @@ export const SchemaNodeAdapterInput = memo(
           defaultValue={node.defaultValue}
           value={node.value}
           onChange={handleChange}
+          ChildComponents={ChildComponents}
           style={node.jsonSchema.style}
           context={userDefinedContext}
           {...overrideProps}

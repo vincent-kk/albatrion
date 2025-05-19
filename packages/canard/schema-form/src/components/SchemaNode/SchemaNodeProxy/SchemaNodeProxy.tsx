@@ -5,7 +5,6 @@ import { useMemorize, withErrorBoundary } from '@winglet/react-utils';
 
 import { NodeEventType, NodeState } from '@/schema-form/core';
 import { useSchemaNode } from '@/schema-form/hooks/useSchemaNode';
-import { useSchemaNodeInputControl } from '@/schema-form/hooks/useSchemaNodeInputControl';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
   useFormTypeRendererContext,
@@ -13,7 +12,8 @@ import {
 } from '@/schema-form/providers';
 import type { FormTypeRendererProps } from '@/schema-form/types';
 
-import { SchemaNodeAdapterWrapper } from '../SchemaNodeAdapter';
+import { SchemaNodeInputWrapper } from '../SchemaNodeInput';
+import { useSchemaNodeInputControl } from './hooks/useSchemaNodeInputControl';
 import type { SchemaNodeProxyProps } from './type';
 
 const RERENDERING_EVENT =
@@ -36,7 +36,7 @@ export const SchemaNodeProxy = memo(
 
     const Input = useMemo<FormTypeRendererProps['Input']>(
       () =>
-        SchemaNodeAdapterWrapper(
+        SchemaNodeInputWrapper(
           node,
           overrideProps,
           FormTypeInput,
@@ -101,6 +101,7 @@ export const SchemaNodeProxy = memo(
             name={node.name}
             value={node.value}
             errors={node.errors}
+            required={node.required}
             Input={Input}
             errorMessage={errorMessage}
             formatError={formatError}

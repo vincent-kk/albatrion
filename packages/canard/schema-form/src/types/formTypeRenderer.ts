@@ -17,6 +17,7 @@ export interface FormTypeRendererProps extends OverridableFormTypeInputProps {
   name: SchemaNode['name'];
   value: SchemaNode['value'];
   errors: SchemaNode['errors'];
+  required: SchemaNode['required'];
   Input: ComponentType<OverridableFormTypeInputProps>;
   errorMessage: ReactNode;
   formatError: FormatError;

@@ -52,6 +52,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     onChange,
     parentNode,
     validationMode,
+    required,
     ajv,
   }: SchemaNodeConstructorProps<StringSchema>) {
     super({
@@ -62,6 +63,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
       onChange,
       parentNode,
       validationMode,
+      required,
       ajv,
     });
 

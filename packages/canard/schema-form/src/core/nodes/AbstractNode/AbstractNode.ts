@@ -70,6 +70,8 @@ export abstract class AbstractNode<
   readonly jsonSchema: Schema;
   /** Node의 property key 원본  */
   readonly propertyKey: string;
+  /** Node의 required 여부 */
+  readonly required: boolean;
 
   /** Node의 이름 */
   #name: string;
@@ -216,6 +218,7 @@ export abstract class AbstractNode<
     onChange,
     parentNode,
     validationMode,
+    required,
     ajv,
   }: SchemaNodeConstructorProps<Schema, Value>) {
     this.type = getNodeType(jsonSchema);
@@ -223,6 +226,7 @@ export abstract class AbstractNode<
 
     this.jsonSchema = jsonSchema;
     this.parentNode = parentNode || null;
+    this.required = required ?? false;
 
     this.rootNode = (this.parentNode?.rootNode || this) as SchemaNode;
     this.isRoot = !this.parentNode;
