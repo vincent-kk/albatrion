@@ -107,6 +107,7 @@ export interface SchemaNodeConstructorProps<
   onChange?: SetStateFn<Value>;
   parentNode?: SchemaNode;
   validationMode?: ValidationMode;
+  required?: boolean;
   ajv?: Ajv;
 }
 
