@@ -1,6 +1,6 @@
 import { memo, useCallback, useMemo, useRef } from 'react';
 
-import { NodeEventType, NodeState, SetValueOption } from '@/schema-form/core';
+import { NodeEventType, NodeState } from '@/schema-form/core';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
   useInputControlContext,
@@ -10,18 +10,11 @@ import type { SetStateFnWithOptions } from '@/schema-form/types';
 
 import { useChildComponents } from './hooks/useChildComponents';
 import { useFormTypeInput } from './hooks/useFormTypeInput';
-import type { SchemaNodeInputProps } from './type';
-
-const HANDLE_CHANGE_OPTION =
-  SetValueOption.Replace |
-  SetValueOption.Propagate |
-  SetValueOption.EmitChange |
-  SetValueOption.PublishUpdateEvent;
-
-const RERENDERING_EVENT =
-  NodeEventType.UpdateValue |
-  NodeEventType.UpdateError |
-  NodeEventType.UpdateComputedProperties;
+import {
+  HANDLE_CHANGE_OPTION,
+  RERENDERING_EVENT,
+  type SchemaNodeInputProps,
+} from './type';
 
 export const SchemaNodeInput = memo(
   ({
