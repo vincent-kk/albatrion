@@ -78,6 +78,7 @@ export const SchemaNodeAdapterInput = memo(
           jsonSchema={node.jsonSchema}
           readOnly={rootReadOnly || node.readOnly}
           disabled={rootDisabled || node.disabled}
+          required={node.required}
           node={node}
           childNodes={childNodes}
           name={node.name}

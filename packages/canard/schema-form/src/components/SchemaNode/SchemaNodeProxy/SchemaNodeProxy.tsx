@@ -101,6 +101,7 @@ export const SchemaNodeProxy = memo(
             name={node.name}
             value={node.value}
             errors={node.errors}
+            required={node.required}
             Input={Input}
             errorMessage={errorMessage}
             formatError={formatError}
