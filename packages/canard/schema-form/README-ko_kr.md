@@ -790,6 +790,12 @@ const CUSTOM_INPUTS = [
 
 ---
 
+## 감사의 말씀
+
+`@canard/schema-form`은 [bluewings/react-genie-form](https://github.com/bluewings/react-genie-form)의 아이디어와 설계에서 많은 영감을 받아 개발되었습니다.
+
+훌륭한 오픈소스를 공유해주신 [bluewings](https://github.com/bluewings) 님께 감사드립니다.
+
 ## 라이선스
 
 이 저장소는 MIT 라이선스 하에 배포됩니다. 자세한 내용은 [`LICENSE`](./LICENSE) 파일을 참조하세요.

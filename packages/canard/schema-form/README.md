@@ -792,6 +792,14 @@ The library is optimized for performance with features like:
 
 ---
 
+## Acknowledgements
+
+`@canard/schema-form` was developed with significant inspiration from the ideas and architecture of [bluewings/react-genie-form](https://github.com/bluewings/react-genie-form).
+
+Special thanks to [bluewings](https://github.com/bluewings) for sharing such a thoughtful and well-crafted open source project.
+
+---
+
 ## License
 
 This repository is licensed under the MIT License. Please refer to the [`LICENSE`](./LICENSE) file for details.
