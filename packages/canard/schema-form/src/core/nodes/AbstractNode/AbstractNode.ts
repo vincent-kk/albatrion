@@ -339,7 +339,7 @@ export abstract class AbstractNode<
     return this.#activated;
   }
 
-  activateLink(this: AbstractNode, actor?: SchemaNode) {
+  activate(this: AbstractNode, actor?: SchemaNode) {
     if (this.#activated || (actor !== this.parentNode && !this.isRoot))
       return false;
     this.#activated = true;

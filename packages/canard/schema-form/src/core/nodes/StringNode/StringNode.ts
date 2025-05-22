@@ -73,7 +73,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
         : this.onChange;
 
     if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
-    this.activateLink();
+    this.activate();
   }
 
   /**

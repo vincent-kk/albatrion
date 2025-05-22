@@ -65,7 +65,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
       ajv,
     });
     if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
-    this.activateLink();
+    this.activate();
   }
 
   /**

@@ -71,9 +71,9 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @param actor - 준비를 요청한 노드
    * @returns 초기화 완료 여부
    */
-  activateLink(this: ArrayNode, actor?: SchemaNode): boolean {
-    if (super.activateLink(actor)) {
-      this.#strategy.activateLink?.();
+  activate(this: ArrayNode, actor?: SchemaNode): boolean {
+    if (super.activate(actor)) {
+      this.#strategy.activate?.();
       return true;
     }
     return false;
@@ -104,7 +104,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     });
 
     this.#strategy = this.#createStrategy(nodeFactory);
-    this.activateLink();
+    this.activate();
   }
 
   /**

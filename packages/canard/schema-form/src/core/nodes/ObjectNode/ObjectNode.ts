@@ -61,9 +61,9 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * @param actor - 준비를 요청한 노드
    * @returns 초기화 완료 여부
    */
-  activateLink(this: ObjectNode, actor?: SchemaNode): boolean {
-    if (super.activateLink(actor)) {
-      this.#strategy.activateLink?.();
+  activate(this: ObjectNode, actor?: SchemaNode): boolean {
+    if (super.activate(actor)) {
+      this.#strategy.activate?.();
       return true;
     }
     return false;
@@ -94,7 +94,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     });
 
     this.#strategy = this.#createStrategy(nodeFactory);
-    this.activateLink();
+    this.activate();
   }
 
   /**

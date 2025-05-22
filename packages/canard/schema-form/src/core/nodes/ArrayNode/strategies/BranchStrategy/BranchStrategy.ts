@@ -87,9 +87,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
   }
 
   /** 하위 노드에 대해 pub-sub 링크를 활성화합니다. */
-  activateLink() {
+  activate() {
     for (const id of this.#ids)
-      (this.#sourceMap.get(id)?.node as AbstractNode).activateLink(this.#host);
+      (this.#sourceMap.get(id)?.node as AbstractNode).activate(this.#host);
   }
 
   /**
@@ -162,8 +162,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
       data: childNode.value,
     });
 
-    if (this.#host.activated)
-      (childNode as AbstractNode).activateLink(this.#host);
+    if (this.#host.activated) (childNode as AbstractNode).activate(this.#host);
 
     this.#changed = true;
     this.#publishRequestEmitChange();

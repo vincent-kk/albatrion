@@ -29,5 +29,5 @@ export interface ObjectNodeStrategy {
     option: UnionSetValueOption,
   ): void;
   /** 하위 노드에 대해 pub-sub 링크를 활성화합니다. */
-  activateLink?(): void;
+  activate?(): void;
 }

@@ -79,13 +79,13 @@ export class BranchStrategy implements ObjectNodeStrategy {
   }
 
   /** 하위 노드에 대해 pub-sub 링크를 활성화합니다. */
-  activateLink() {
+  activate() {
     for (const child of this.#propertyChildren)
-      (child.node as AbstractNode).activateLink(this.#host);
+      (child.node as AbstractNode).activate(this.#host);
     if (this.#oneOfChildrenList)
       for (const children of this.#oneOfChildrenList)
         for (const child of children)
-          (child.node as AbstractNode).activateLink(this.#host);
+          (child.node as AbstractNode).activate(this.#host);
   }
 
   /**

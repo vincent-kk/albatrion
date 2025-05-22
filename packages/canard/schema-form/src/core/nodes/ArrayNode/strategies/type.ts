@@ -51,7 +51,7 @@ export interface ArrayNodeStrategy {
   /** 모든 요소를 삭제하여 배열을 초기화합니다. */
   clear(): void;
   /** 하위 노드에 대해 pub-sub 링크를 활성화합니다. */
-  activateLink?(): void;
+  activate?(): void;
 }
 
 export type IndexId = `[${number}]`;
