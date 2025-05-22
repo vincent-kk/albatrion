@@ -120,6 +120,7 @@ export interface OverridableFormTypeInputProps {
   context?: Dictionary;
   style?: CSSProperties;
   className?: string;
+  [alt: string]: any;
 }
 
 export interface ChildFormTypeInputProps extends OverridableFormTypeInputProps {
