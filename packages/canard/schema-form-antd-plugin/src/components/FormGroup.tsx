@@ -42,12 +42,12 @@ export const FormGroup = ({
         <Flex gap={10} align="center">
           {node.parentNode?.type !== 'array' && (
             <label htmlFor={path}>
+              <Typography.Text>{name}</Typography.Text>
               {required && (
-                <Typography.Text type="danger" style={{ marginRight: 4 }}>
+                <Typography.Text type="danger" style={{ marginLeft: 4 }}>
                   *
                 </Typography.Text>
               )}
-              <Typography.Text>{name}</Typography.Text>
             </label>
           )}
           <Input />

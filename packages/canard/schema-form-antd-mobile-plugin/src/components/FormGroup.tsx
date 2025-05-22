@@ -29,10 +29,10 @@ export const FormGroup = ({
         <div>
           {node.parentNode?.type !== 'array' && (
             <label htmlFor={path}>
-              {required && (
-                <span style={{ marginRight: 4, color: 'red' }}>*</span>
-              )}
               {name}
+              {required && (
+                <span style={{ marginLeft: 4, color: 'red' }}>*</span>
+              )}
             </label>
           )}
           <Input />
