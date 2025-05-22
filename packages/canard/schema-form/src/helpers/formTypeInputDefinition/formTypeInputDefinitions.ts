@@ -26,23 +26,25 @@ export const normalizeFormTypeInputDefinitions = (
         test,
         Component: withErrorBoundary(Component),
       });
-    if (isPlainObject(test))
+    else if (isPlainObject(test)) {
       result.push({
         test: formTypeTestFnFactory(test),
         Component: withErrorBoundary(Component),
       });
+    }
   }
   return result;
 };
 
 const formTypeTestFnFactory = (test: FormTypeTestObject): FormTypeTestFn => {
   return (hint) => {
-    for (const [key, value] of Object.entries(test)) {
-      if (!value) continue;
-      if (isArray(value)) {
-        if (!value.includes(hint[key])) return false;
+    for (const [key, reference] of Object.entries(test)) {
+      if (!reference) continue;
+      const subject = hint[key as keyof typeof hint];
+      if (isArray(reference)) {
+        if (!reference.includes(subject as any)) return false;
       } else {
-        if (value !== hint[key]) return false;
+        if (reference !== subject) return false;
       }
     }
     return true;

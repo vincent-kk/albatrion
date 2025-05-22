@@ -130,25 +130,32 @@ export interface ChildFormTypeInputProps extends OverridableFormTypeInputProps {
 
 export type FormTypeTestFn = Fn<[hint: Hint], boolean>;
 
+type JsonSchemaType = JsonSchemaWithVirtual['type'];
+
 export type FormTypeTestObject = Partial<{
-  type: JsonSchemaWithVirtual['type'] | Array<JsonSchemaWithVirtual['type']>;
+  /** JsonSchema['type'] | Array<JsonSchema['type']> */
+  type: JsonSchemaType | JsonSchemaType[];
+  /** SchemaNode['path'] | Array<SchemaNode['path']> */
+  path: string | string[];
+  /** JsonSchema */
   jsonSchema: JsonSchemaWithVirtual;
-  format:
-    | JsonSchemaWithVirtual['format']
-    | Array<NonNullable<JsonSchemaWithVirtual['format']>>;
-  formType:
-    | JsonSchemaWithVirtual['formType']
-    | Array<NonNullable<JsonSchemaWithVirtual['formType']>>;
-  [alt: string]: any;
+  /** JsonSchema['format'] | Array<JsonSchema['format']> */
+  format: string | string[];
+  /** JsonSchema['formType'] | Array<JsonSchema['formType']> */
+  formType: string | string[];
 }>;
 
 export type Hint = {
+  /** JsonSchema['type'] */
+  type: JsonSchemaType;
+  /** SchemaNode['path'] */
+  path: string;
+  /** JsonSchema */
   jsonSchema: JsonSchemaWithVirtual;
-  type: JsonSchemaWithVirtual['type'];
-  format: JsonSchemaWithVirtual['format'];
-  formType: JsonSchemaWithVirtual['formType'];
-  path: SchemaNode['path'];
-  [alt: string]: any;
+  /** JsonSchema['format'] */
+  format?: string;
+  /** JsonSchema['formType'] */
+  formType?: string;
 };
 
 export type FormTypeInputDefinition<T = unknown> = {
