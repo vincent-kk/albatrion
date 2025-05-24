@@ -17,6 +17,8 @@ import { ChildFormTypeInputProps } from '@/schema-form/types';
 import { SchemaNodeProxyProps } from '../../SchemaNodeProxy';
 import { ChildNodeComponent, NodeChildren } from '../type';
 
+const SEPARATOR = '\x1F';
+
 export const useChildNodeComponents = (
   node: SchemaNode,
   NodeProxy: ComponentType<SchemaNodeProxyProps>,
@@ -36,7 +38,7 @@ export const useChildNodeComponents = (
     const ChildNodeComponents = [] as ChildNodeComponent[];
     for (const { node, isVirtualized, index } of children) {
       if (!node?.key || isVirtualized === true) continue;
-      const key = index ? `${node.key}:${index}` : node.key;
+      const key = index === undefined ? node.key : node.key + SEPARATOR + index;
       const CachedComponent = cache.current.get(key);
       if (CachedComponent) ChildNodeComponents.push(CachedComponent);
       else {
