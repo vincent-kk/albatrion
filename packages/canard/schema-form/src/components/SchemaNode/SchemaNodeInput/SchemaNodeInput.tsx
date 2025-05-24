@@ -8,7 +8,7 @@ import {
 } from '@/schema-form/providers';
 import type { SetStateFnWithOptions } from '@/schema-form/types';
 
-import { useChildComponents } from './hooks/useChildComponents';
+import { useChildNodeComponents } from './hooks/useChildNodeComponents';
 import { useFormTypeInput } from './hooks/useFormTypeInput';
 import {
   HANDLE_CHANGE_OPTION,
@@ -29,7 +29,7 @@ export const SchemaNodeInput = memo(
       [FormTypeInputByNode, PreferredFormTypeInput],
     );
 
-    const ChildComponents = useChildComponents(node, NodeProxy);
+    const ChildNodeComponents = useChildNodeComponents(node, NodeProxy);
 
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
       (input, option = HANDLE_CHANGE_OPTION) => {
@@ -83,7 +83,7 @@ export const SchemaNodeInput = memo(
           defaultValue={node.defaultValue}
           value={node.value}
           onChange={handleChange}
-          ChildComponents={ChildComponents}
+          ChildNodeComponents={ChildNodeComponents}
           style={node.jsonSchema.style}
           context={userDefinedContext}
           {...overrideProps}

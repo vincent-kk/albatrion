@@ -236,7 +236,7 @@ interface FormTypeInputProps<
   /** onChange handler for the FormType Component */
   onChange: SetStateFnWithOptions<Value | undefined>;
   /** Child FormType Components for this FormType Component */
-  ChildComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
+  ChildNodeComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
   /** Style for the FormType Component */
   style: CSSProperties | undefined;
   /** UserDefinedContext passed to the Form */

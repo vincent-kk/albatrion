@@ -15,30 +15,30 @@ import { useSchemaNodeSubscribe } from '@/schema-form/hooks/useSchemaNodeSubscri
 import { ChildFormTypeInputProps } from '@/schema-form/types';
 
 import { SchemaNodeProxyProps } from '../../SchemaNodeProxy';
-import { ChildComponent, NodeChildren } from '../type';
+import { ChildNodeComponent, NodeChildren } from '../type';
 
-export const useChildComponents = (
+export const useChildNodeComponents = (
   node: SchemaNode,
   NodeProxy: ComponentType<SchemaNodeProxyProps>,
-): ChildComponent[] => {
+): ChildNodeComponent[] => {
   const [children, setChildren] = useState<NodeChildren>(node.children);
   useSchemaNodeSubscribe(node, ({ type }) => {
     if (type & NodeEventType.UpdateChildren) setChildren(node.children);
   });
 
-  const cache = useRef(new Map<string, ChildComponent>());
+  const cache = useRef(new Map<string, ChildNodeComponent>());
   useOnUnmount(() => {
     cache.current.clear();
   });
 
   return useMemo(() => {
     if (isTerminalNode(node)) return [];
-    const ChildComponents = [] as ChildComponent[];
+    const ChildNodeComponents = [] as ChildNodeComponent[];
     for (const { node, isVirtualized, index } of children) {
       if (!node?.key || isVirtualized === true) continue;
       const key = index ? `${node.key}:${index}` : node.key;
       const CachedComponent = cache.current.get(key);
-      if (CachedComponent) ChildComponents.push(CachedComponent);
+      if (CachedComponent) ChildNodeComponents.push(CachedComponent);
       else {
         const ChildComponent = ({
           FormTypeRenderer: InputFormTypeRenderer,
@@ -56,9 +56,9 @@ export const useChildComponents = (
         };
         ChildComponent.key = key;
         cache.current.set(key, ChildComponent);
-        ChildComponents.push(ChildComponent);
+        ChildNodeComponents.push(ChildComponent);
       }
     }
-    return ChildComponents;
+    return ChildNodeComponents;
   }, [node, children, NodeProxy]);
 };

@@ -8,13 +8,13 @@ import type {
 } from '@/schema-form/types';
 
 const FormTypeInputVirtual = ({
-  ChildComponents,
+  ChildNodeComponents,
 }: FormTypeInputProps<object>) => {
   return (
     <Fragment>
-      {ChildComponents &&
-        map(ChildComponents, (ChildComponent) => (
-          <ChildComponent key={ChildComponent.key} />
+      {ChildNodeComponents &&
+        map(ChildNodeComponents, (ChildNodeComponent) => (
+          <ChildNodeComponent key={ChildNodeComponent.key} />
         ))}
     </Fragment>
   );

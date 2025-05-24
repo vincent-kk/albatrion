@@ -28,7 +28,7 @@ const FormTypeInputArray = ({
   node,
   readOnly,
   disabled,
-  ChildComponents,
+  ChildNodeComponents,
   style,
 }: FormTypeInputProps<any[]>) => {
   const handleClick = useHandle(() => {
@@ -39,10 +39,10 @@ const FormTypeInputArray = ({
   });
   return (
     <div style={style}>
-      {ChildComponents &&
-        map(ChildComponents, (ChildComponent, i) => (
-          <div key={ChildComponent.key} style={{ display: 'flex' }}>
-            <ChildComponent />
+      {ChildNodeComponents &&
+        map(ChildNodeComponents, (ChildNodeComponent, i) => (
+          <div key={ChildNodeComponent.key} style={{ display: 'flex' }}>
+            <ChildNodeComponent />
             {!readOnly && (
               <Remove
                 disabled={disabled}

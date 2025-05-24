@@ -1,2 +1,2 @@
 export { ObjectNode } from './ObjectNode';
-export type { ChildNode as ObjectNodeChildNode } from './type';
+export type { ChildNode as ChildNodeForObjectNode } from './type';
