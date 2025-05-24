@@ -28,8 +28,7 @@ export const getObservedValuesFactory =
     fieldName: ObservedFieldName,
   ): GetObservedValues | undefined => {
     // `computed.[<fieldName>]` 또는 `&[<fieldName>]` 필드에서 표현식 추출
-    const watch =
-      schema?.computed?.[fieldName] ?? schema?.[`${ALIAS}${fieldName}`];
+    const watch = schema?.computed?.[fieldName] ?? schema?.[ALIAS + fieldName];
 
     // 유효한 watch 값이 없으면 undefined 반환
     if (!watch || !(isString(watch) || isArray(watch))) return;

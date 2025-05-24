@@ -33,7 +33,7 @@ export const checkComputedOptionFactory =
   ): CheckComputedOption | undefined => {
     // `computed.[<fieldName>]` 또는 `&[<fieldName>]` 필드에서 표현식 추출
     const expression =
-      jsonSchema?.computed?.[fieldName] ?? jsonSchema?.[`${ALIAS}${fieldName}`];
+      jsonSchema?.computed?.[fieldName] ?? jsonSchema?.[ALIAS + fieldName];
 
     // 선호되는 조건이 이미 boolean 값과 일치하는지 확인
     const preferredCondition =

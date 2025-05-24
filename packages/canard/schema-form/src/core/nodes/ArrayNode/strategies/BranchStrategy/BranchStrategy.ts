@@ -147,7 +147,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     )
       return;
 
-    const id = `[${this.__seq__++}]` satisfies IndexId;
+    const id = ('[' + this.__seq__++ + ']') as IndexId;
     const name = this.__ids__.length.toString();
     this.__ids__.push(id);
 

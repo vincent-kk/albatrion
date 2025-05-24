@@ -50,7 +50,7 @@ export const getConditionIndexFactory =
       // `computed.[<conditionField>]` 또는 `&[<conditionField>]` 필드에서 표현식 추출
       const condition =
         conditionSchemas[index]?.computed?.[conditionField] ??
-        conditionSchemas[index]?.[`${ALIAS}${conditionField}`];
+        conditionSchemas[index]?.[ALIAS + conditionField];
 
       // 불리언 조건 처리
       if (typeof condition === 'boolean') {

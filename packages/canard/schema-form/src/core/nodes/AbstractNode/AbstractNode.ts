@@ -103,7 +103,7 @@ export abstract class AbstractNode<
   public updatePath(this: AbstractNode) {
     const previous = this.#path;
     const current = this.parentNode?.path
-      ? `${this.parentNode.path}${JSONPath.Child}${this.#name}`
+      ? this.parentNode.path + JSONPath.Child + this.#name
       : JSONPath.Root;
     if (previous === current) return false;
     this.#path = current;
@@ -234,11 +234,11 @@ export abstract class AbstractNode<
     this.propertyKey = this.#name;
 
     this.#path = this.parentNode?.path
-      ? `${this.parentNode.path}${JSONPath.Child}${this.#name}`
+      ? this.parentNode.path + JSONPath.Child + this.#name
       : JSONPath.Root;
 
     this.#key = this.parentNode?.path
-      ? `${this.parentNode.path}${JSONPath.Child}${key ?? this.#name}`
+      ? this.parentNode.path + JSONPath.Child + (key ?? this.#name)
       : JSONPath.Root;
 
     this.depth = this.#path.split(JSONPath.Child).filter(isTruthy).length - 1;

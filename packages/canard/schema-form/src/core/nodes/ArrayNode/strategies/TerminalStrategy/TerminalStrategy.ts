@@ -104,7 +104,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
       this.__host__.jsonSchema.maxItems <= this.length
     )
       return;
-    const id = `[${this.__seq__++}]` satisfies IndexId;
+    const id = ('[' + this.__seq__++ + ']') as IndexId;
     this.__ids__.push(id);
 
     const data = input ?? this.__defaultItemValue__;
