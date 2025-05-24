@@ -120,7 +120,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
     while (this.length < (host.jsonSchema.minItems || 0)) this.push();
 
-    this.__host__.subscribe(({ type, payload }) => {
+    host.subscribe(({ type, payload }) => {
       if (type & NodeEventType.RequestEmitChange)
         this.__emitChange__(payload?.[NodeEventType.RequestEmitChange]);
     });

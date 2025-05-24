@@ -110,7 +110,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__handleRefresh__ = handleRefresh;
     this.__handleUpdateComputedProperties__ = handleUpdateComputedProperties;
 
-    this.__value__ = this.__host__.defaultValue;
+    this.__value__ = host.defaultValue;
     this.__draft__ = {};
 
     const jsonSchema = host.jsonSchema;
@@ -137,15 +137,15 @@ export class BranchStrategy implements ObjectNodeStrategy {
       this.__draft__[propertyKey] = input;
       this.__publishRequestEmitChange__();
     };
-    this.__host__.subscribe(({ type, payload }) => {
+    host.subscribe(({ type, payload }) => {
       if (type & NodeEventType.RequestEmitChange)
         this.__emitChange__(payload?.[NodeEventType.RequestEmitChange]);
     });
     const childNodeMap = getChildNodeMap(
-      this.__host__,
+      host,
       jsonSchema,
       propertyKeys,
-      this.__host__.defaultValue,
+      host.defaultValue,
       this.__fieldConditionMap__,
       virtualReferenceFieldsMap,
       handelChangeFactory,
@@ -153,7 +153,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     );
 
     this.__propertyChildren__ = getChildren(
-      this.__host__,
+      host,
       propertyKeys,
       childNodeMap,
       virtualReferenceFieldsMap,
@@ -162,9 +162,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
     );
 
     this.__oneOfChildrenList__ = getOneOfChildrenList(
-      this.__host__,
+      host,
       jsonSchema,
-      this.__host__.defaultValue,
+      host.defaultValue,
       childNodeMap,
       handelChangeFactory,
       nodeFactory,
