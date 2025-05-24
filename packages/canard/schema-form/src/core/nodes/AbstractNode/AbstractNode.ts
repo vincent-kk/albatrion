@@ -79,7 +79,6 @@ export abstract class AbstractNode<
   public get name() {
     return this.#name;
   }
-
   /**
    * Node의 이름을 설정합니다. 부모만 이름을 바꿔줄 수 있습니다.
    * @param name - 설정할 이름
@@ -97,7 +96,6 @@ export abstract class AbstractNode<
   get path() {
     return this.#path;
   }
-
   /**
    * Node의 경로를 업데이트합니다. 부모 Node의 경로를 참고해서 자신의 경로를 업데이트합니다.
    * @returns 경로가 변경되었는지 여부
@@ -206,8 +204,8 @@ export abstract class AbstractNode<
   }
 
   /** Node의 하위 Node 목록, 하위 Node를 가지지 않는 Node는 빈 배열 반환 */
-  public get children(): { node: SchemaNode }[] {
-    return [];
+  public get children(): { node: SchemaNode }[] | null {
+    return null;
   }
 
   constructor({
@@ -271,7 +269,7 @@ export abstract class AbstractNode<
    * @param path - 찾고자 하는 Node의 경로(예: '.foo[0].bar'), 없으면 자기 자신 반환
    * @returns 찾은 Node, 찾지 못한 경우 null
    */
-  find(this: AbstractNode, path?: string) {
+  public find(this: AbstractNode, path?: string) {
     const pathSegments = path ? getPathSegments(path) : [];
     // @ts-expect-error: find must be used in SchemaNode
     return find(this, pathSegments);
@@ -551,7 +549,7 @@ export abstract class AbstractNode<
   /**
    * 자신의 Error를 초기화합니다. 전달받은 Error는 초기화하지 않습니다.
    */
-  clearErrors(this: AbstractNode) {
+  public clearErrors(this: AbstractNode) {
     this.setErrors([]);
   }
 
@@ -559,7 +557,7 @@ export abstract class AbstractNode<
    * 외부에서 전달받은 Error를 로컬 Error와 병합합니다. rootNode의 경우 internalError도 병합합니다.
    * @param errors - 전달받은 Error 목록
    */
-  setExternalErrors(this: AbstractNode, errors: JsonSchemaError[] = []) {
+  public setExternalErrors(this: AbstractNode, errors: JsonSchemaError[] = []) {
     if (equals(this.#externalErrors, errors, RECURSIVE_ERROR_OMITTED_KEYS))
       return;
 

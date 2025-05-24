@@ -17,7 +17,7 @@ export interface ObjectNodeStrategy {
    * 자식 노드 목록을 가져옵니다.
    * @returns 자식 노드 배열
    */
-  get children(): Array<ChildNode>;
+  get children(): Array<ChildNode> | null;
   /**
    * 입력값을 객체 노드에 적용합니다.
    * @param value - 설정할 객체 값

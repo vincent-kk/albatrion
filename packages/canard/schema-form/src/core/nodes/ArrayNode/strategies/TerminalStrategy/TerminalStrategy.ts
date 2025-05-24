@@ -49,7 +49,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
    * @returns 빈 배열 (Terminal 전략은 자식 노드를 관리하지 않음)
    */
   public get children() {
-    return [];
+    return null;
   }
 
   /**

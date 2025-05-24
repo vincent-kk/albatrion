@@ -23,7 +23,7 @@ export const useChildNodeComponents = (
   node: SchemaNode,
   NodeProxy: ComponentType<SchemaNodeProxyProps>,
 ): ChildNodeComponent[] => {
-  const [children, setChildren] = useState<NodeChildren>(node.children);
+  const [children, setChildren] = useState<NodeChildren | null>(node.children);
   useSchemaNodeSubscribe(node, ({ type }) => {
     if (type & NodeEventType.UpdateChildren) setChildren(node.children);
   });
@@ -34,8 +34,8 @@ export const useChildNodeComponents = (
   });
 
   return useMemo(() => {
-    if (isTerminalNode(node)) return [];
-    const ChildNodeComponents = [] as ChildNodeComponent[];
+    if (isTerminalNode(node) || !children) return [];
+    const ChildNodeComponents: ChildNodeComponent[] = [];
     for (const { node, isVirtualized, index } of children) {
       if (!node?.key || isVirtualized === true) continue;
       const key = index === undefined ? node.key : node.key + SEPARATOR + index;
