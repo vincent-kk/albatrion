@@ -19,36 +19,36 @@ type Batch<Value> = {
  * 비동기적으로 발생하는 이벤트를 모아서 일괄 처리하는 클래스입니다.
  */
 export class EventCascade {
-  #currentBatch: Batch<NodeEvent> | null = null;
+  private __currentBatch__: Batch<NodeEvent> | null = null;
   /**
    * 현재 이벤트 배치를 가져옵니다. 없을 경우 새로 생성합니다.
    * @returns 현재 이벤트 배치
    */
-  get #batch(): Batch<NodeEvent> {
-    const batch = this.#currentBatch;
+  private get __batch__(): Batch<NodeEvent> {
+    const batch = this.__currentBatch__;
     if (batch && !batch.resolved) return batch;
     const nextBatch: Batch<NodeEvent> = { events: [] };
-    this.#currentBatch = nextBatch;
+    this.__currentBatch__ = nextBatch;
     scheduleMicrotask(() => {
       nextBatch.resolved = true;
-      this.#batchHandler(mergeEvents(nextBatch.events));
+      this.__batchHandler__(mergeEvents(nextBatch.events));
     });
     return nextBatch;
   }
-  #batchHandler: Fn<[event: NodeEvent]>;
+  private __batchHandler__: Fn<[event: NodeEvent]>;
   /**
    * EventCascade 인스턴스를 생성합니다.
    * @param batchHandler - 모아진 이벤트를 처리할 함수
    */
   constructor(batchHandler: Fn<[event: NodeEvent]>) {
-    this.#batchHandler = batchHandler;
+    this.__batchHandler__ = batchHandler;
   }
   /**
    * 이벤트를 배치에 추가합니다.
    * @param event - 추가할 이벤트
    */
-  push(event: NodeEvent): void {
-    const batch = this.#batch;
+  public push(event: NodeEvent): void {
+    const batch = this.__batch__;
     batch.events.push(event);
   }
 }

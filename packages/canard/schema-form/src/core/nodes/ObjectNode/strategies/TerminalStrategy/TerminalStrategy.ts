@@ -19,19 +19,19 @@ import type { ObjectNodeStrategy } from '../type';
  * 단순한 객체 타입을 처리하기 위한 구현입니다.
  */
 export class TerminalStrategy implements ObjectNodeStrategy {
-  #host: ObjectNode;
-  #handleChange: Fn<[ObjectValue | undefined]>;
-  #handleRefresh: Fn<[ObjectValue | undefined]>;
+  private __host__: ObjectNode;
+  private __handleChange__: Fn<[ObjectValue | undefined]>;
+  private __handleRefresh__: Fn<[ObjectValue | undefined]>;
 
-  readonly #propertyKeys: string[];
+  private readonly __propertyKeys__: string[];
 
-  #value: ObjectValue | undefined = {};
+  private __value__: ObjectValue | undefined = {};
   /**
    * 객체의 현재 값을 가져옵니다.
    * @returns 객체 노드의 현재 값 또는 undefined
    */
-  get value() {
-    return this.#value;
+  public get value() {
+    return this.__value__;
   }
 
   /**
@@ -39,15 +39,18 @@ export class TerminalStrategy implements ObjectNodeStrategy {
    * @param input - 설정할 객체 값
    * @param option - 설정 옵션
    */
-  applyValue(input: ObjectValue | undefined, option: UnionSetValueOption) {
-    this.#emitChange(input, option);
+  public applyValue(
+    input: ObjectValue | undefined,
+    option: UnionSetValueOption,
+  ) {
+    this.__emitChange__(input, option);
   }
 
   /**
    * 자식 노드 목록을 가져옵니다.
    * @returns 빈 배열 (Terminal 전략은 자식 노드를 관리하지 않음)
    */
-  get children() {
+  public get children() {
     return [];
   }
 
@@ -64,18 +67,18 @@ export class TerminalStrategy implements ObjectNodeStrategy {
     handleRefresh: Fn<[ObjectValue | undefined]>,
     handleSetDefaultValue: Fn<[ObjectValue | undefined]>,
   ) {
-    this.#host = host;
-    this.#handleChange = handleChange;
-    this.#handleRefresh = handleRefresh;
+    this.__host__ = host;
+    this.__handleChange__ = handleChange;
+    this.__handleRefresh__ = handleRefresh;
 
-    this.#propertyKeys = getObjectKeys(host.jsonSchema.properties);
+    this.__propertyKeys__ = getObjectKeys(host.jsonSchema.properties);
 
-    const defaultValue = this.#parseValue(
+    const defaultValue = this.__parseValue__(
       getObjectDefaultValue(host.jsonSchema, host.defaultValue),
     );
 
     handleSetDefaultValue(defaultValue);
-    this.#emitChange(defaultValue);
+    this.__emitChange__(defaultValue);
   }
 
   /**
@@ -84,20 +87,20 @@ export class TerminalStrategy implements ObjectNodeStrategy {
    * @param option - 옵션 설정 (기본값: SetValueOption.Default)
    * @private
    */
-  #emitChange(
+  private __emitChange__(
     input: ObjectValue | undefined,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
-    const previous = this.#value;
-    const current = this.#parseValue(input);
+    const previous = this.__value__;
+    const current = this.__parseValue__(input);
 
     if (equals(previous, current)) return;
 
-    this.#value = current;
-    if (option & SetValueOption.EmitChange) this.#handleChange(current);
-    if (option & SetValueOption.Refresh) this.#handleRefresh(current);
+    this.__value__ = current;
+    if (option & SetValueOption.EmitChange) this.__handleChange__(current);
+    if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
     if (option & SetValueOption.PublishUpdateEvent)
-      this.#host.publish({
+      this.__host__.publish({
         type: NodeEventType.UpdateValue,
         payload: { [NodeEventType.UpdateValue]: current },
         options: {
@@ -115,8 +118,8 @@ export class TerminalStrategy implements ObjectNodeStrategy {
    * @returns 파싱된 객체 값 또는 undefined
    * @private
    */
-  #parseValue(input: ObjectValue | undefined) {
+  private __parseValue__(input: ObjectValue | undefined) {
     if (input === undefined) return undefined;
-    return sortObjectKeys(parseObject(input), this.#propertyKeys, true);
+    return sortObjectKeys(parseObject(input), this.__propertyKeys__, true);
   }
 }

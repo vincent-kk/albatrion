@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type { ArraySchema, ArrayValue } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
@@ -20,20 +22,20 @@ import { omitEmptyArray } from './utils';
  * 배열의 각 요소를 관리하고 추가/삭제/업데이트 기능을 제공합니다.
  */
 export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
-  #strategy: ArrayNodeStrategy;
+  private __strategy__: ArrayNodeStrategy;
 
   /**
    * 배열 노드의 값을 가져옵니다.
    * @returns 배열 값 또는 undefined
    */
-  get value() {
-    return this.#strategy.value;
+  public override get value() {
+    return this.__strategy__.value;
   }
   /**
    * 배열 노드의 값을 설정합니다.
    * @param input - 설정할 배열 값
    */
-  set value(input: ArrayValue | undefined) {
+  public override set value(input: ArrayValue | undefined) {
     this.setValue(input);
   }
   /**
@@ -41,12 +43,12 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @param input - 설정할 배열 값
    * @param option - 설정 옵션
    */
-  protected applyValue(
+  protected override applyValue(
     this: ArrayNode,
     input: ArrayValue,
     option: UnionSetValueOption,
   ) {
-    this.#strategy.applyValue(input, option);
+    this.__strategy__.applyValue(input, option);
   }
 
   /** ArrayNode의 자식 노드들 */
@@ -54,16 +56,16 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * 배열 노드의 자식 노드들을 가져옵니다.
    * @returns 자식 노드 목록
    */
-  get children() {
-    return this.#strategy.children;
+  public override get children() {
+    return this.__strategy__.children;
   }
 
   /**
    * 배열의 현재 길이를 가져옵니다.
    * @returns 배열의 길이
    */
-  get length() {
-    return this.#strategy.length;
+  public get length() {
+    return this.__strategy__.length;
   }
 
   /**
@@ -71,13 +73,15 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @param actor - 준비를 요청한 노드
    * @returns 초기화 완료 여부
    */
-  activate(this: ArrayNode, actor?: SchemaNode): boolean {
+  public override activate(this: ArrayNode, actor?: SchemaNode): boolean {
     if (super.activate(actor)) {
-      this.#strategy.activate?.();
+      this.__strategy__.activate?.();
       return true;
     }
     return false;
   }
+
+  protected override onChange: Fn<[input: ArrayValue | undefined]>;
 
   constructor({
     key,
@@ -102,8 +106,12 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       required,
       ajv,
     });
-
-    this.#strategy = this.#createStrategy(nodeFactory);
+    const handleChange =
+      this.jsonSchema.options?.omitEmpty === false
+        ? (value?: ArrayValue) => super.onChange(value)
+        : (value?: ArrayValue) => super.onChange(omitEmptyArray(value));
+    this.onChange = handleChange;
+    this.__strategy__ = this.__createStrategy__(handleChange, nodeFactory);
     this.activate();
   }
 
@@ -112,8 +120,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @param data - 추가할 값 (생략 가능)
    * @returns 자기 자신(this)을 반환하여 체이닝 지원
    */
-  push(this: ArrayNode, data?: ArrayValue[number]) {
-    this.#strategy.push(data);
+  public push(this: ArrayNode, data?: ArrayValue[number]) {
+    this.__strategy__.push(data);
     return this;
   }
 
@@ -123,8 +131,12 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @param data - 새로운 값
    * @returns 자기 자신(this)을 반환하여 체이닝 지원
    */
-  update(this: ArrayNode, id: IndexId | number, data: ArrayValue[number]) {
-    this.#strategy.update(id, data);
+  public update(
+    this: ArrayNode,
+    id: IndexId | number,
+    data: ArrayValue[number],
+  ) {
+    this.__strategy__.update(id, data);
     return this;
   }
 
@@ -133,8 +145,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @param id - 삭제할 요소의 ID 또는 인덱스
    * @returns 자기 자신(this)을 반환하여 체이닝 지원
    */
-  remove(this: ArrayNode, id: IndexId | number) {
-    this.#strategy.remove(id);
+  public remove(this: ArrayNode, id: IndexId | number) {
+    this.__strategy__.remove(id);
     return this;
   }
 
@@ -142,8 +154,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * 모든 요소를 삭제하여 배열을 초기화합니다.
    * @returns 자기 자신(this)을 반환하여 체이닝 지원
    */
-  clear(this: ArrayNode) {
-    this.#strategy.clear();
+  public clear(this: ArrayNode) {
+    this.__strategy__.clear();
     return this;
   }
 
@@ -152,11 +164,10 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @param nodeFactory - 노드 팩토리
    * @returns 생성된 전략: TerminalStrategy | BranchStrategy
    */
-  #createStrategy(nodeFactory: SchemaNodeFactory) {
-    const handleChange =
-      this.jsonSchema.options?.omitEmpty === false
-        ? (value?: ArrayValue) => this.onChange(value)
-        : (value?: ArrayValue) => this.onChange(omitEmptyArray(value));
+  private __createStrategy__(
+    handleChange: Fn<[input: ArrayValue | undefined]>,
+    nodeFactory: SchemaNodeFactory,
+  ) {
     const handleRefresh = (value?: ArrayValue) => this.refresh(value);
     const handleSetDefaultValue = (value?: ArrayValue) =>
       this.setDefaultValue(value);

@@ -16,19 +16,19 @@ import {
  * 숫자 값(정수 또는 부동소수점)을 관리하고 파싱합니다.
  */
 export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
-  #value: NumberValue | undefined = undefined;
+  private __value__: NumberValue | undefined = undefined;
   /**
    * 숫자 노드의 값을 가져옵니다.
    * @returns 숫자 값 또는 undefined
    */
-  get value() {
-    return this.#value;
+  public override get value() {
+    return this.__value__;
   }
   /**
    * 숫자 노드의 값을 설정합니다.
    * @param input - 설정할 숫자 값
    */
-  set value(input: NumberValue | undefined) {
+  public override set value(input: NumberValue | undefined) {
     this.setValue(input);
   }
   /**
@@ -36,13 +36,15 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
    * @param input - 설정할 숫자 값
    * @param option - 설정 옵션
    */
-  protected applyValue(
+  protected override applyValue(
     this: NumberNode,
     input: NumberValue | undefined,
     option: UnionSetValueOption,
   ) {
-    this.#emitChange(input, option);
+    this.__emitChange__(input, option);
   }
+
+  protected override onChange: Fn<[input: NumberValue | undefined]>;
 
   constructor({
     key,
@@ -67,12 +69,12 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
       ajv,
     });
 
-    this.#handleChange =
+    this.onChange =
       this.jsonSchema.options?.omitEmpty !== false
-        ? this.#onChangeWithOmitEmpty
-        : this.onChange;
+        ? this.__onChangeWithOmitEmpty__
+        : super.onChange;
 
-    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
+    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
     this.activate();
   }
 
@@ -81,17 +83,17 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
    * @param input - 설정할 값
    * @param option - 설정 옵션
    */
-  #emitChange(
+  private __emitChange__(
     this: NumberNode,
     input: NumberValue | undefined,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
-    const previous = this.#value;
-    const current = this.#parseValue(input);
+    const previous = this.__value__;
+    const current = this.__parseValue__(input);
     if (previous === current) return;
-    this.#value = current;
+    this.__value__ = current;
 
-    if (option & SetValueOption.EmitChange) this.#handleChange(current);
+    if (option & SetValueOption.EmitChange) this.onChange(current);
     if (option & SetValueOption.Refresh) this.refresh(current);
     if (option & SetValueOption.PublishUpdateEvent)
       this.publish({
@@ -111,14 +113,15 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
    * @param input - 분석할 값
    * @returns 분석된 숫자 값
    */
-  #parseValue(this: NumberNode, input: NumberValue | undefined) {
+  private __parseValue__(this: NumberNode, input: NumberValue | undefined) {
     return parseNumber(input, this.jsonSchema.type === 'integer');
   }
 
-  #onChangeWithOmitEmpty(this: NumberNode, input: NumberValue | undefined) {
-    if (input === undefined || isNaN(input)) this.onChange(undefined);
-    else this.onChange(input);
+  private __onChangeWithOmitEmpty__(
+    this: NumberNode,
+    input: NumberValue | undefined,
+  ) {
+    if (input === undefined || isNaN(input)) super.onChange(undefined);
+    else super.onChange(input);
   }
-
-  #handleChange: Fn<[input: NumberValue | undefined]>;
 }

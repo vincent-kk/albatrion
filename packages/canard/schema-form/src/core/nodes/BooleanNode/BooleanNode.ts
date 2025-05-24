@@ -14,19 +14,19 @@ import {
  * 부울린 값을 관리하고 파싱합니다.
  */
 export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
-  #value: BooleanValue | undefined = undefined;
+  private __value__: BooleanValue | undefined = undefined;
   /**
    * 부울린 노드의 값을 가져옵니다.
    * @returns 부울린 값 또는 undefined
    */
-  get value() {
-    return this.#value;
+  public override get value() {
+    return this.__value__;
   }
   /**
    * 부울린 노드의 값을 설정합니다.
    * @param input - 설정할 부울린 값
    */
-  set value(input: BooleanValue | undefined) {
+  public override set value(input: BooleanValue | undefined) {
     this.setValue(input);
   }
   /**
@@ -34,12 +34,12 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
    * @param input - 설정할 부울린 값
    * @param option - 설정 옵션
    */
-  protected applyValue(
+  protected override applyValue(
     this: BooleanNode,
     input: BooleanValue | undefined,
     option: UnionSetValueOption,
   ) {
-    this.#emitChange(input, option);
+    this.__emitChange__(input, option);
   }
 
   constructor({
@@ -64,7 +64,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
       required,
       ajv,
     });
-    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
+    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
     this.activate();
   }
 
@@ -73,15 +73,15 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
    * @param input - 설정할 값
    * @param option - 설정 옵션
    */
-  #emitChange(
+  private __emitChange__(
     this: BooleanNode,
     input: BooleanValue | undefined,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
-    const previous = this.#value;
-    const current = this.#parseValue(input);
+    const previous = this.__value__;
+    const current = this.__parseValue__(input);
     if (previous === current) return;
-    this.#value = current;
+    this.__value__ = current;
 
     if (option & SetValueOption.EmitChange) this.onChange(current);
     if (option & SetValueOption.Refresh) this.refresh(current);
@@ -103,7 +103,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
    * @param input - 분석할 값
    * @returns 분석된 부울린 값
    */
-  #parseValue(this: BooleanNode, input: BooleanValue | undefined) {
+  private __parseValue__(this: BooleanNode, input: BooleanValue | undefined) {
     return parseBoolean(input);
   }
 }

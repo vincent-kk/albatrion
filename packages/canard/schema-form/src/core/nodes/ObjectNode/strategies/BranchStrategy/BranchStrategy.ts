@@ -29,42 +29,42 @@ import {
 const RESET_NODE_OPTION = SetValueOption.Replace | SetValueOption.Propagate;
 
 export class BranchStrategy implements ObjectNodeStrategy {
-  #host: ObjectNode;
-  #handleChange: Fn<[ObjectValue | undefined]>;
-  #handleRefresh: Fn<[ObjectValue | undefined]>;
-  #handleUpdateComputedProperties: Fn;
+  private __host__: ObjectNode;
+  private __handleChange__: Fn<[ObjectValue | undefined]>;
+  private __handleRefresh__: Fn<[ObjectValue | undefined]>;
+  private __handleUpdateComputedProperties__: Fn;
 
-  readonly #schemaKeys: string[];
-  readonly #oneOfKeySet: Set<string> | undefined;
-  readonly #oneOfKeySetList: Array<Set<string>> | undefined;
-  readonly #fieldConditionMap: FieldConditionMap | undefined;
+  private readonly __schemaKeys__: string[];
+  private readonly __oneOfKeySet__: Set<string> | undefined;
+  private readonly __oneOfKeySetList__: Array<Set<string>> | undefined;
+  private readonly __fieldConditionMap__: FieldConditionMap | undefined;
 
-  #locked: boolean = true;
+  private __locked__: boolean = true;
 
-  #propertyChildren: ChildNode[];
+  private __propertyChildren__: ChildNode[];
 
-  #oneOfChildrenList: Array<ChildNode[]> | undefined;
+  private __oneOfChildrenList__: Array<ChildNode[]> | undefined;
 
-  #children: ChildNode[];
+  private __children__: ChildNode[];
   /**
    * 객체 노드의 자식 노드들을 가져옵니다.
    * @returns 자식 노드 목록
    */
-  get children() {
-    return this.#children;
+  public get children() {
+    return this.__children__;
   }
 
-  #value: ObjectValue | undefined;
-  #draft: ObjectValue | undefined;
+  private __value__: ObjectValue | undefined;
+  private __draft__: ObjectValue | undefined;
 
-  #isolationMode: boolean = false;
+  private __isolationMode__: boolean = false;
 
   /**
    * 객체의 현재 값을 가져옵니다.
    * @returns 객체 노드의 현재 값 또는 undefined
    */
-  get value() {
-    return this.#value;
+  public get value() {
+    return this.__value__;
   }
 
   /**
@@ -72,20 +72,20 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @param input - 설정할 객체 값
    * @param option - 설정 옵션
    */
-  applyValue(input: ObjectValue, option: UnionSetValueOption) {
-    this.#draft = input;
-    this.#isolationMode = !!(option & SetValueOption.IsolationMode);
-    this.#publishRequestEmitChange(option);
+  public applyValue(input: ObjectValue, option: UnionSetValueOption) {
+    this.__draft__ = input;
+    this.__isolationMode__ = !!(option & SetValueOption.IsolationMode);
+    this.__publishRequestEmitChange__(option);
   }
 
   /** 하위 노드에 대해 pub-sub 링크를 활성화합니다. */
-  activate() {
-    for (const child of this.#propertyChildren)
-      (child.node as AbstractNode).activate(this.#host);
-    if (this.#oneOfChildrenList)
-      for (const children of this.#oneOfChildrenList)
+  public activate() {
+    for (const child of this.__propertyChildren__)
+      (child.node as AbstractNode).activate(this.__host__);
+    if (this.__oneOfChildrenList__)
+      for (const children of this.__oneOfChildrenList__)
         for (const child of children)
-          (child.node as AbstractNode).activate(this.#host);
+          (child.node as AbstractNode).activate(this.__host__);
   }
 
   /**
@@ -105,52 +105,55 @@ export class BranchStrategy implements ObjectNodeStrategy {
     handleUpdateComputedProperties: Fn,
     nodeFactory: SchemaNodeFactory,
   ) {
-    this.#host = host;
-    this.#handleChange = handleChange;
-    this.#handleRefresh = handleRefresh;
-    this.#handleUpdateComputedProperties = handleUpdateComputedProperties;
+    this.__host__ = host;
+    this.__handleChange__ = handleChange;
+    this.__handleRefresh__ = handleRefresh;
+    this.__handleUpdateComputedProperties__ = handleUpdateComputedProperties;
 
-    this.#value = this.#host.defaultValue;
-    this.#draft = {};
+    this.__value__ = this.__host__.defaultValue;
+    this.__draft__ = {};
 
     const jsonSchema = host.jsonSchema;
 
-    this.#fieldConditionMap = getFieldConditionMap(jsonSchema);
+    this.__fieldConditionMap__ = getFieldConditionMap(jsonSchema);
     const properties = jsonSchema.properties;
     const propertyKeys = getObjectKeys(properties);
     const oneOfKeyInfo = getOneOfKeyInfo(jsonSchema);
 
     if (oneOfKeyInfo) {
-      this.#oneOfKeySet = oneOfKeyInfo.oneOfKeySet;
-      this.#oneOfKeySetList = oneOfKeyInfo.oneOfKeySetList;
-      this.#schemaKeys = [...propertyKeys, ...Array.from(this.#oneOfKeySet)];
-    } else this.#schemaKeys = propertyKeys;
+      this.__oneOfKeySet__ = oneOfKeyInfo.oneOfKeySet;
+      this.__oneOfKeySetList__ = oneOfKeyInfo.oneOfKeySetList;
+      this.__schemaKeys__ = [
+        ...propertyKeys,
+        ...Array.from(this.__oneOfKeySet__),
+      ];
+    } else this.__schemaKeys__ = propertyKeys;
 
     const { virtualReferencesMap, virtualReferenceFieldsMap } =
       getVirtualReferencesMap(host.name, propertyKeys, host.jsonSchema.virtual);
     const handelChangeFactory = (propertyKey: string) => (input: unknown) => {
-      if (!this.#draft) this.#draft = {};
-      if (input !== undefined && this.#draft[propertyKey] === input) return;
-      this.#draft[propertyKey] = input;
-      this.#publishRequestEmitChange();
+      if (!this.__draft__) this.__draft__ = {};
+      if (input !== undefined && this.__draft__[propertyKey] === input) return;
+      this.__draft__[propertyKey] = input;
+      this.__publishRequestEmitChange__();
     };
-    this.#host.subscribe(({ type, payload }) => {
+    this.__host__.subscribe(({ type, payload }) => {
       if (type & NodeEventType.RequestEmitChange)
-        this.#emitChange(payload?.[NodeEventType.RequestEmitChange]);
+        this.__emitChange__(payload?.[NodeEventType.RequestEmitChange]);
     });
     const childNodeMap = getChildNodeMap(
-      this.#host,
+      this.__host__,
       jsonSchema,
       propertyKeys,
-      this.#host.defaultValue,
-      this.#fieldConditionMap,
+      this.__host__.defaultValue,
+      this.__fieldConditionMap__,
       virtualReferenceFieldsMap,
       handelChangeFactory,
       nodeFactory,
     );
 
-    this.#propertyChildren = getChildren(
-      this.#host,
+    this.__propertyChildren__ = getChildren(
+      this.__host__,
       propertyKeys,
       childNodeMap,
       virtualReferenceFieldsMap,
@@ -158,25 +161,25 @@ export class BranchStrategy implements ObjectNodeStrategy {
       nodeFactory,
     );
 
-    this.#oneOfChildrenList = getOneOfChildrenList(
-      this.#host,
+    this.__oneOfChildrenList__ = getOneOfChildrenList(
+      this.__host__,
       jsonSchema,
-      this.#host.defaultValue,
+      this.__host__.defaultValue,
       childNodeMap,
       handelChangeFactory,
       nodeFactory,
     );
 
-    this.#children = this.#propertyChildren;
+    this.__children__ = this.__propertyChildren__;
 
-    this.#locked = false;
+    this.__locked__ = false;
 
-    this.#emitChange();
-    this.#publishChildrenChange();
+    this.__emitChange__();
+    this.__publishChildrenChange__();
 
-    handleSetDefaultValue(this.#value);
+    handleSetDefaultValue(this.__value__);
 
-    this.#prepareOneOfChildren();
+    this.__prepareOneOfChildren__();
   }
 
   /**
@@ -184,40 +187,41 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @param option - 설정 옵션
    * @private
    */
-  #emitChange(option: UnionSetValueOption = SetValueOption.Default) {
-    if (this.#locked) return;
+  private __emitChange__(option: UnionSetValueOption = SetValueOption.Default) {
+    if (this.__locked__) return;
 
     const replace = !!(option & SetValueOption.Replace);
-    const previous = this.#value ? { ...this.#value } : undefined;
+    const previous = this.__value__ ? { ...this.__value__ } : undefined;
 
-    if (this.#draft === undefined) {
-      this.#value = undefined;
-    } else if (replace || this.#value === undefined) {
-      this.#value = this.#parseValue(this.#draft);
+    if (this.__draft__ === undefined) {
+      this.__value__ = undefined;
+    } else if (replace || this.__value__ === undefined) {
+      this.__value__ = this.__parseValue__(this.__draft__);
     } else {
-      this.#value = this.#parseValue({
-        ...this.#value,
-        ...this.#draft,
+      this.__value__ = this.__parseValue__({
+        ...this.__value__,
+        ...this.__draft__,
       });
     }
 
-    if (option & SetValueOption.EmitChange) this.#handleChange(this.#value);
-    if (option & SetValueOption.Propagate) this.#propagate(replace, option);
-    if (option & SetValueOption.Refresh) this.#handleRefresh(this.#value);
+    if (option & SetValueOption.EmitChange)
+      this.__handleChange__(this.__value__);
+    if (option & SetValueOption.Propagate) this.__propagate__(replace, option);
+    if (option & SetValueOption.Refresh) this.__handleRefresh__(this.__value__);
     if (option & SetValueOption.IsolationMode)
-      this.#handleUpdateComputedProperties();
+      this.__handleUpdateComputedProperties__();
     if (option & SetValueOption.PublishUpdateEvent)
-      this.#host.publish({
+      this.__host__.publish({
         type: NodeEventType.UpdateValue,
-        payload: { [NodeEventType.UpdateValue]: this.#value },
+        payload: { [NodeEventType.UpdateValue]: this.__value__ },
         options: {
           [NodeEventType.UpdateValue]: {
             previous,
-            current: this.#value,
+            current: this.__value__,
           },
         },
       });
-    this.#draft = {};
+    this.__draft__ = {};
   }
   /**
    * 입력값을 파싱하여 객체로 처리합니다.
@@ -225,10 +229,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @returns 파싱된 객체
    * @private
    */
-  #parseValue(input: ObjectValue) {
-    const value = sortObjectKeys(input, this.#schemaKeys, true);
-    if (this.#isolationMode)
-      return processValueWithCondition(value, this.#fieldConditionMap);
+  private __parseValue__(input: ObjectValue) {
+    const value = sortObjectKeys(input, this.__schemaKeys__, true);
+    if (this.__isolationMode__)
+      return processValueWithCondition(value, this.__fieldConditionMap__);
     return value;
   }
   /**
@@ -237,66 +241,66 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @param option - 설정 옵션
    * @private
    */
-  #propagate(replace: boolean, option: UnionSetValueOption) {
-    this.#locked = true;
-    const target = this.#value || {};
-    const draft = this.#draft || {};
-    for (let i = 0; i < this.#children.length; i++) {
-      const node = this.#children[i].node;
+  private __propagate__(replace: boolean, option: UnionSetValueOption) {
+    this.__locked__ = true;
+    const target = this.__value__ || {};
+    const draft = this.__draft__ || {};
+    for (let i = 0; i < this.__children__.length; i++) {
+      const node = this.__children__[i].node;
       if (node.type === 'virtual') continue;
       const key = node.propertyKey;
       if (replace || (key in draft && key in target))
         node.setValue(target[key], option);
     }
-    this.#locked = false;
+    this.__locked__ = false;
   }
 
-  #previousIndex: number = -1;
+  private __previousIndex__: number = -1;
   /**
    * oneOf 스키마의 자식 노드를 준비합니다.
    * @private
    */
-  #prepareOneOfChildren() {
-    if (!this.#oneOfChildrenList) return;
-    this.#host.subscribe(({ type }) => {
+  private __prepareOneOfChildren__() {
+    if (!this.__oneOfChildrenList__) return;
+    this.__host__.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateComputedProperties) {
-        const current = this.#host.oneOfIndex;
-        const previous = this.#previousIndex;
-        if (!this.#isolationMode && current === previous) return;
+        const current = this.__host__.oneOfIndex;
+        const previous = this.__previousIndex__;
+        if (!this.__isolationMode__ && current === previous) return;
 
         const previousOneOfChildren =
-          previous > -1 ? this.#oneOfChildrenList?.[previous] : undefined;
+          previous > -1 ? this.__oneOfChildrenList__?.[previous] : undefined;
         if (previousOneOfChildren)
           for (const { node } of previousOneOfChildren) node.resetNode(false);
 
         const oneOfChildren =
-          current > -1 ? this.#oneOfChildrenList?.[current] : undefined;
+          current > -1 ? this.__oneOfChildrenList__?.[current] : undefined;
         if (oneOfChildren)
           for (const { node } of oneOfChildren)
             node.resetNode(
-              this.#isolationMode,
-              this.#value?.[node.propertyKey],
+              this.__isolationMode__,
+              this.__value__?.[node.propertyKey],
             );
 
-        this.#children = oneOfChildren
-          ? [...this.#propertyChildren, ...oneOfChildren]
-          : this.#propertyChildren;
+        this.__children__ = oneOfChildren
+          ? [...this.__propertyChildren__, ...oneOfChildren]
+          : this.__propertyChildren__;
 
-        this.#draft = processValueWithOneOfSchema(
-          this.#parseValue({
-            ...(this.#value || {}),
-            ...(this.#draft || {}),
+        this.__draft__ = processValueWithOneOfSchema(
+          this.__parseValue__({
+            ...(this.__value__ || {}),
+            ...(this.__draft__ || {}),
           }),
-          this.#oneOfKeySet,
-          current > -1 ? this.#oneOfKeySetList?.[current] : undefined,
+          this.__oneOfKeySet__,
+          current > -1 ? this.__oneOfKeySetList__?.[current] : undefined,
         );
 
-        this.#emitChange(RESET_NODE_OPTION);
+        this.__emitChange__(RESET_NODE_OPTION);
 
-        this.#handleChange(this.#value);
+        this.__handleChange__(this.__value__);
 
-        this.#publishChildrenChange();
-        this.#previousIndex = current;
+        this.__publishChildrenChange__();
+        this.__previousIndex__ = current;
       }
     });
   }
@@ -305,9 +309,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * 자식 노드 변경 이벤트를 발행합니다.
    * @private
    */
-  #publishChildrenChange() {
-    if (this.#locked) return;
-    this.#host.publish({ type: NodeEventType.UpdateChildren });
+  private __publishChildrenChange__() {
+    if (this.__locked__) return;
+    this.__host__.publish({ type: NodeEventType.UpdateChildren });
   }
 
   /**
@@ -315,9 +319,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @param option - 변경 옵션 (선택 사항)
    * @private
    */
-  #publishRequestEmitChange(option?: UnionSetValueOption) {
-    if (this.#locked) return;
-    this.#host.publish({
+  private __publishRequestEmitChange__(option?: UnionSetValueOption) {
+    if (this.__locked__) return;
+    this.__host__.publish({
       type: NodeEventType.RequestEmitChange,
       payload: { [NodeEventType.RequestEmitChange]: option },
     });

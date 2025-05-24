@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
@@ -19,28 +21,28 @@ import { omitEmptyObject } from './utils';
  * 객체의 프로퍼티를 관리하고 oneOf와 같은 복잡한 스키마를 처리합니다.
  */
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
-  #strategy: ObjectNodeStrategy;
+  private __strategy__: ObjectNodeStrategy;
 
   /**
    * 객체 노드의 자식 노드들을 가져옵니다.
    * @returns 자식 노드 목록
    */
-  get children() {
-    return this.#strategy.children;
+  public override get children() {
+    return this.__strategy__.children;
   }
 
   /**
    * 객체 노드의 값을 가져옵니다.
    * @returns 객체 값 또는 undefined
    */
-  get value() {
-    return this.#strategy.value;
+  public override get value() {
+    return this.__strategy__.value;
   }
   /**
    * 객체 노드의 값을 설정합니다.
    * @param input - 설정할 객체 값
    */
-  set value(input: ObjectValue | undefined) {
+  public override set value(input: ObjectValue | undefined) {
     this.setValue(input);
   }
   /**
@@ -48,12 +50,12 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * @param input - 설정할 객체 값
    * @param option - 설정 옵션
    */
-  protected applyValue(
+  protected override applyValue(
     this: ObjectNode,
     input: ObjectValue,
     option: UnionSetValueOption,
   ) {
-    this.#strategy.applyValue(input, option);
+    this.__strategy__.applyValue(input, option);
   }
 
   /**
@@ -61,13 +63,15 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * @param actor - 준비를 요청한 노드
    * @returns 초기화 완료 여부
    */
-  activate(this: ObjectNode, actor?: SchemaNode): boolean {
+  public override activate(this: ObjectNode, actor?: SchemaNode): boolean {
     if (super.activate(actor)) {
-      this.#strategy.activate?.();
+      this.__strategy__.activate?.();
       return true;
     }
     return false;
   }
+
+  protected override onChange: Fn<[input: ObjectValue | undefined]>;
 
   constructor({
     key,
@@ -92,8 +96,12 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       required,
       ajv,
     });
-
-    this.#strategy = this.#createStrategy(nodeFactory);
+    const handleChange =
+      this.jsonSchema.options?.omitEmpty === false
+        ? (value?: ObjectValue) => super.onChange(value)
+        : (value?: ObjectValue) => super.onChange(omitEmptyObject(value));
+    this.onChange = handleChange;
+    this.__strategy__ = this.__createStrategy__(handleChange, nodeFactory);
     this.activate();
   }
 
@@ -102,11 +110,10 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * @param nodeFactory - 노드 팩토리
    * @returns 생성된 전략: TerminalStrategy | BranchStrategy
    */
-  #createStrategy(nodeFactory: SchemaNodeFactory) {
-    const handleChange =
-      this.jsonSchema.options?.omitEmpty === false
-        ? (value?: ObjectValue) => this.onChange(value)
-        : (value?: ObjectValue) => this.onChange(omitEmptyObject(value));
+  private __createStrategy__(
+    handleChange: Fn<[input: ObjectValue | undefined]>,
+    nodeFactory: SchemaNodeFactory,
+  ) {
     const handleRefresh = (value?: ObjectValue) => this.refresh(value);
     const handleSetDefaultValue = (value?: ObjectValue) =>
       this.setDefaultValue(value);

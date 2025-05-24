@@ -13,19 +13,19 @@ import {
  * null 값을 관리합니다.
  */
 export class NullNode extends AbstractNode<NullSchema, NullValue> {
-  #value: NullValue | undefined;
+  private __value__: NullValue | undefined;
   /**
    * null 노드의 값을 가져옵니다.
    * @returns null 또는 undefined
    */
-  get value() {
-    return this.#value;
+  public override get value() {
+    return this.__value__;
   }
   /**
    * null 노드의 값을 설정합니다.
    * @param input - 설정할 값
    */
-  set value(input: NullValue | undefined) {
+  public override set value(input: NullValue | undefined) {
     this.setValue(input);
   }
   /**
@@ -33,12 +33,12 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
    * @param input - 설정할 값
    * @param option - 설정 옵션
    */
-  protected applyValue(
+  protected override applyValue(
     this: NullNode,
     input: NullValue | undefined,
     option: UnionSetValueOption,
   ) {
-    this.#emitChange(input, option);
+    this.__emitChange__(input, option);
   }
 
   constructor({
@@ -63,7 +63,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
       required,
       ajv,
     });
-    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
+    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
     this.activate();
   }
 
@@ -72,15 +72,15 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
    * @param input - 설정할 값
    * @param option - 설정 옵션
    */
-  #emitChange(
+  private __emitChange__(
     this: NullNode,
     input: NullValue | undefined,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
-    const previous = this.#value;
-    const current = this.#parseValue(input);
+    const previous = this.__value__;
+    const current = this.__parseValue__(input);
     if (previous === current) return;
-    this.#value = current;
+    this.__value__ = current;
 
     if (option & SetValueOption.EmitChange) this.onChange(current);
     if (option & SetValueOption.Refresh) this.refresh(current);
@@ -102,7 +102,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
    * @param input - 파싱할 값
    * @returns 그대로 반환
    */
-  #parseValue(this: NullNode, input: NullValue | undefined) {
+  private __parseValue__(this: NullNode, input: NullValue | undefined) {
     return input;
   }
 }

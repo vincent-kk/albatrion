@@ -16,19 +16,19 @@ import {
  * 여러 노드에 참조를 가지고 그들을 통합하여 작동합니다.
  */
 export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
-  #value: VirtualNodeValue | undefined = [];
+  private __value__: VirtualNodeValue | undefined = [];
   /**
    * 가상 노드의 값을 가져옵니다.
    * @returns 참조되는 모든 노드의 값 배열 또는 undefined
    */
-  get value() {
-    return this.#value;
+  public override get value() {
+    return this.__value__;
   }
   /**
    * 가상 노드의 값을 설정합니다.
    * @param input - 설정할 값
    */
-  set value(input: VirtualNodeValue | undefined) {
+  public override set value(input: VirtualNodeValue | undefined) {
     this.setValue(input);
   }
   /**
@@ -36,22 +36,22 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
    * @param input - 설정할 값
    * @param option - 설정 옵션
    */
-  protected applyValue(
+  protected override applyValue(
     this: VirtualNode,
     input: VirtualNodeValue | undefined,
     option: UnionSetValueOption,
   ) {
-    this.#emitChange(input, option);
+    this.__emitChange__(input, option);
   }
 
-  #refNodes: SchemaNode[] = [];
-  #children: { node: SchemaNode }[];
+  private __refNodes__: SchemaNode[] = [];
+  private __children__: { node: SchemaNode }[];
   /**
    * 가상 노드의 자식 노드들을 가져옵니다.
    * @returns 자식 노드 목록
    */
-  get children() {
-    return this.#children;
+  override get children() {
+    return this.__children__;
   }
 
   constructor({
@@ -78,26 +78,26 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
       ajv,
     });
 
-    this.#refNodes = refNodes || [];
+    this.__refNodes__ = refNodes || [];
 
-    if (this.defaultValue !== undefined) this.#value = this.defaultValue;
+    if (this.defaultValue !== undefined) this.__value__ = this.defaultValue;
 
-    for (let index = 0; index < this.#refNodes.length; index++) {
-      const node = this.#refNodes[index];
+    for (let index = 0; index < this.__refNodes__.length; index++) {
+      const node = this.__refNodes__[index];
       const unsubscribe = node.subscribe(({ type, payload }) => {
         if (type & NodeEventType.UpdateValue) {
           const onChangePayload = payload?.[NodeEventType.UpdateValue];
-          if (this.#value && this.#value[index] !== onChangePayload) {
-            const previous = this.#value;
-            this.#value = [...this.#value];
-            this.#value[index] = onChangePayload;
+          if (this.__value__ && this.__value__[index] !== onChangePayload) {
+            const previous = this.__value__;
+            this.__value__ = [...this.__value__];
+            this.__value__[index] = onChangePayload;
             this.publish({
               type: NodeEventType.UpdateValue,
-              payload: { [NodeEventType.UpdateValue]: this.#value },
+              payload: { [NodeEventType.UpdateValue]: this.__value__ },
               options: {
                 [NodeEventType.UpdateValue]: {
                   previous,
-                  current: this.#value,
+                  current: this.__value__,
                 },
               },
             });
@@ -107,7 +107,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
       this.saveUnsubscribe(unsubscribe);
     }
 
-    this.#children = map(this.#refNodes, (node) => ({ node }));
+    this.__children__ = map(this.__refNodes__, (node) => ({ node }));
 
     this.publish({ type: NodeEventType.UpdateChildren });
     this.activate();
@@ -118,15 +118,15 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
    * @param values - 설정할 값
    * @param option - 설정 옵션
    */
-  #emitChange(
+  private __emitChange__(
     this: VirtualNode,
     values: VirtualNodeValue | undefined,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
-    if (!values || values.length !== this.#refNodes.length) return;
+    if (!values || values.length !== this.__refNodes__.length) return;
     for (let i = 0; i < values.length; i++) {
       const value = values[i];
-      const node = this.#refNodes[i];
+      const node = this.__refNodes__[i];
       if (node.value !== value) node.setValue(value, option);
     }
     if (option & SetValueOption.Refresh) this.refresh(values);

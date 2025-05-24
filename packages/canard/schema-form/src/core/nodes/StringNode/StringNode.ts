@@ -16,19 +16,19 @@ import {
  * 문자열 값을 관리하고 파싱합니다.
  */
 export class StringNode extends AbstractNode<StringSchema, StringValue> {
-  #value: StringValue | undefined = undefined;
+  private __value__: StringValue | undefined = undefined;
   /**
    * 문자열 노드의 값을 가져옵니다.
    * @returns 문자열 값 또는 undefined
    */
-  get value() {
-    return this.#value;
+  public override get value() {
+    return this.__value__;
   }
   /**
    * 문자열 노드의 값을 설정합니다.
    * @param input - 설정할 문자열 값
    */
-  set value(input: StringValue | undefined) {
+  public override set value(input: StringValue | undefined) {
     this.setValue(input);
   }
   /**
@@ -36,13 +36,15 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
    * @param input - 설정할 문자열 값
    * @param option - 설정 옵션
    */
-  protected applyValue(
+  protected override applyValue(
     this: StringNode,
     input: StringValue | undefined,
     option: UnionSetValueOption,
   ) {
-    this.#emitChange(input, option);
+    this.__emitChange__(input, option);
   }
+
+  protected override onChange: Fn<[input: StringValue | undefined]>;
 
   constructor({
     key,
@@ -67,12 +69,12 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
       ajv,
     });
 
-    this.#handleChange =
+    this.onChange =
       this.jsonSchema.options?.omitEmpty !== false
-        ? this.#onChangeWithOmitEmpty
-        : this.onChange;
+        ? this.__onChangeWithOmitEmpty__
+        : super.onChange;
 
-    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
+    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
     this.activate();
   }
 
@@ -81,17 +83,17 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
    * @param input - 설정할 값
    * @param option - 설정 옵션
    */
-  #emitChange(
+  private __emitChange__(
     this: StringNode,
     input: StringValue | undefined,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
-    const previous = this.#value;
-    const current = this.#parseValue(input);
+    const previous = this.__value__;
+    const current = this.__parseValue__(input);
     if (previous === current) return;
-    this.#value = current;
+    this.__value__ = current;
 
-    if (option & SetValueOption.EmitChange) this.#handleChange(current);
+    if (option & SetValueOption.EmitChange) this.onChange(current);
     if (option & SetValueOption.Refresh) this.refresh(current);
     if (option & SetValueOption.PublishUpdateEvent)
       this.publish({
@@ -111,14 +113,15 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
    * @param input - 분석할 값
    * @returns 분석된 문자열 값
    */
-  #parseValue(this: StringNode, input: StringValue | undefined) {
+  private __parseValue__(this: StringNode, input: StringValue | undefined) {
     return parseString(input);
   }
 
-  #onChangeWithOmitEmpty(this: StringNode, input: StringValue | undefined) {
-    if (input === undefined || input.length === 0) this.onChange(undefined);
-    else this.onChange(input);
+  private __onChangeWithOmitEmpty__(
+    this: StringNode,
+    input: StringValue | undefined,
+  ) {
+    if (input === undefined || input.length === 0) super.onChange(undefined);
+    else super.onChange(input);
   }
-
-  #handleChange: Fn<[input: StringValue | undefined]>;
 }

@@ -17,38 +17,38 @@ import type { ArrayNodeStrategy, IndexId } from '../type';
 const FIRST_EMIT_CHANGE_OPTION =
   SetValueOption.Replace | SetValueOption.Default;
 export class TerminalStrategy implements ArrayNodeStrategy {
-  #host: ArrayNode;
-  #handleChange: Fn<[ArrayValue | undefined]>;
-  #handleRefresh: Fn<[ArrayValue | undefined]>;
+  private __host__: ArrayNode;
+  private __handleChange__: Fn<[ArrayValue | undefined]>;
+  private __handleRefresh__: Fn<[ArrayValue | undefined]>;
 
-  #locked: boolean = true;
-  #seq: number = 0;
-  #ids: IndexId[] = [];
-  #defaultItemValue: AllowedValue;
+  private __locked__: boolean = true;
+  private __seq__: number = 0;
+  private __ids__: IndexId[] = [];
+  private __defaultItemValue__: AllowedValue;
 
-  #value: ArrayValue | undefined = [];
+  private __value__: ArrayValue | undefined = [];
 
   /**
    * 배열의 현재 값을 가져옵니다.
    * @returns 배열 노드의 현재 값 또는 undefined
    */
-  get value() {
-    return this.#value;
+  public get value() {
+    return this.__value__;
   }
   /**
    * 입력값을 배열 노드에 적용합니다.
    * @param input - 설정할 배열 값
    * @param option - 설정 옵션
    */
-  applyValue(input: ArrayValue, option: UnionSetValueOption) {
-    this.#emitChange(input, option);
+  public applyValue(input: ArrayValue, option: UnionSetValueOption) {
+    this.__emitChange__(input, option);
   }
 
   /**
    * 자식 노드 목록을 가져옵니다.
    * @returns 빈 배열 (Terminal 전략은 자식 노드를 관리하지 않음)
    */
-  get children() {
+  public get children() {
     return [];
   }
 
@@ -56,8 +56,8 @@ export class TerminalStrategy implements ArrayNodeStrategy {
    * 배열의 현재 길이를 가져옵니다.
    * @returns 배열의 길이 (값이 undefined인 경우 0)
    */
-  get length() {
-    return this.#value?.length ?? 0;
+  public get length() {
+    return this.__value__?.length ?? 0;
   }
 
   /**
@@ -73,13 +73,13 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     handleRefresh: Fn<[ArrayValue | undefined]>,
     handleSetDefaultValue: Fn<[ArrayValue | undefined]>,
   ) {
-    this.#host = host;
-    this.#handleChange = handleChange;
-    this.#handleRefresh = handleRefresh;
+    this.__host__ = host;
+    this.__handleChange__ = handleChange;
+    this.__handleRefresh__ = handleRefresh;
 
     const jsonSchema = host.jsonSchema;
 
-    this.#defaultItemValue =
+    this.__defaultItemValue__ =
       jsonSchema.items.type === 'object'
         ? getObjectDefaultValue(jsonSchema.items)
         : jsonSchema.items.default;
@@ -88,28 +88,29 @@ export class TerminalStrategy implements ArrayNodeStrategy {
       for (const value of host.defaultValue) this.push(value);
     while (this.length < (jsonSchema.minItems || 0)) this.push();
 
-    this.#locked = false;
+    this.__locked__ = false;
 
-    this.#emitChange(this.#value, FIRST_EMIT_CHANGE_OPTION);
-    handleSetDefaultValue(this.#value);
+    this.__emitChange__(this.__value__, FIRST_EMIT_CHANGE_OPTION);
+    handleSetDefaultValue(this.__value__);
   }
 
   /**
    * 배열에 새 요소를 추가합니다.
    * @param input - 추가할 값 (생략 가능)
    */
-  push(input?: ArrayValue[number]) {
+  public push(input?: ArrayValue[number]) {
     if (
-      this.#host.jsonSchema.maxItems &&
-      this.#host.jsonSchema.maxItems <= this.length
+      this.__host__.jsonSchema.maxItems &&
+      this.__host__.jsonSchema.maxItems <= this.length
     )
       return;
-    const id = `[${this.#seq++}]` satisfies IndexId;
-    this.#ids.push(id);
+    const id = `[${this.__seq__++}]` satisfies IndexId;
+    this.__ids__.push(id);
 
-    const data = input ?? this.#defaultItemValue;
-    const value = this.#value === undefined ? [data] : [...this.#value, data];
-    this.#emitChange(value);
+    const data = input ?? this.__defaultItemValue__;
+    const value =
+      this.__value__ === undefined ? [data] : [...this.__value__, data];
+    this.__emitChange__(value);
   }
 
   /**
@@ -117,31 +118,31 @@ export class TerminalStrategy implements ArrayNodeStrategy {
    * @param id - 업데이트할 요소의 ID 또는 인덱스
    * @param data - 새로운 값
    */
-  update(id: IndexId | number, data: ArrayValue[number]) {
-    if (this.#value === undefined) return;
-    const index = typeof id === 'number' ? id : this.#ids.indexOf(id);
-    if (index === -1 || index >= this.#value.length) return;
-    const value = [...this.#value];
+  public update(id: IndexId | number, data: ArrayValue[number]) {
+    if (this.__value__ === undefined) return;
+    const index = typeof id === 'number' ? id : this.__ids__.indexOf(id);
+    if (index === -1 || index >= this.__value__.length) return;
+    const value = [...this.__value__];
     value[index] = data;
-    this.#emitChange(value);
+    this.__emitChange__(value);
   }
 
   /**
    * 특정 요소를 삭제합니다.
    * @param id - 삭제할 요소의 ID 또는 인덱스
    */
-  remove(id: IndexId | number) {
-    if (this.#value === undefined) return;
-    const index = typeof id === 'number' ? id : this.#ids.indexOf(id);
-    if (index === -1 || index >= this.#value.length) return;
-    const value = this.#value.filter((_, i) => i !== index);
-    this.#emitChange(value);
+  public remove(id: IndexId | number) {
+    if (this.__value__ === undefined) return;
+    const index = typeof id === 'number' ? id : this.__ids__.indexOf(id);
+    if (index === -1 || index >= this.__value__.length) return;
+    const value = this.__value__.filter((_, i) => i !== index);
+    this.__emitChange__(value);
   }
 
   /** 모든 요소를 삭제하여 배열을 초기화합니다. */
-  clear() {
-    this.#ids = [];
-    this.#emitChange([]);
+  public clear() {
+    this.__ids__ = [];
+    this.__emitChange__([]);
   }
 
   /**
@@ -150,23 +151,23 @@ export class TerminalStrategy implements ArrayNodeStrategy {
    * @param option - 옵션 설정 (기본값: SetValueOption.Default)
    * @private
    */
-  #emitChange(
+  private __emitChange__(
     input: ArrayValue | undefined,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
-    const previous = this.#value;
-    const current = this.#parseValue(input);
+    const previous = this.__value__;
+    const current = this.__parseValue__(input);
     const replace = option & SetValueOption.Replace;
 
     if (!replace && equals(previous, current)) return;
 
-    this.#value = current;
+    this.__value__ = current;
 
-    if (this.#locked) return;
-    if (option & SetValueOption.EmitChange) this.#handleChange(current);
-    if (option & SetValueOption.Refresh) this.#handleRefresh(current);
+    if (this.__locked__) return;
+    if (option & SetValueOption.EmitChange) this.__handleChange__(current);
+    if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
     if (option & SetValueOption.PublishUpdateEvent)
-      this.#host.publish({
+      this.__host__.publish({
         type: NodeEventType.UpdateValue,
         payload: { [NodeEventType.UpdateValue]: current },
         options: {
@@ -184,7 +185,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
    * @returns 파싱된 배열 값 또는 undefined
    * @private
    */
-  #parseValue(input: ArrayValue | undefined) {
+  private __parseValue__(input: ArrayValue | undefined) {
     return parseArray(input);
   }
 }
