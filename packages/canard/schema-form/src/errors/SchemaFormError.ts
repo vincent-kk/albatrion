@@ -5,9 +5,9 @@ import { BaseError, type ErrorDetails } from '@winglet/common-utils';
  * 폼 처리 과정에서 발생하는 이슈를 처리하기 위해 사용됩니다.
  */
 export class SchemaFormError extends BaseError {
-  private static readonly __group__ = 'SCHEMA_FORM_ERROR';
+  static readonly #group = 'SCHEMA_FORM_ERROR';
   constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super(SchemaFormError.__group__, code, message, details);
+    super(SchemaFormError.#group, code, message, details);
     this.name = 'SchemaFormError';
   }
 }

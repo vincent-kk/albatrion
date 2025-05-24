@@ -5,9 +5,9 @@ import { BaseError, type ErrorDetails } from '@winglet/common-utils';
  * 노드 처리 과정에서 발생하는 이슈를 처리하기 위해 사용됩니다.
  */
 export class SchemaNodeError extends BaseError {
-  private static readonly __group__ = 'SCHEMA_NODE_ERROR';
+  static readonly #group = 'SCHEMA_NODE_ERROR';
   constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super(SchemaNodeError.__group__, code, message, details);
+    super(SchemaNodeError.#group, code, message, details);
     this.name = 'SchemaNodeError';
   }
 }

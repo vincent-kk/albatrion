@@ -5,7 +5,7 @@ import { BaseError, type ErrorDetails } from './BaseError';
  * 타입 검증이나 형변환 과정에서 발생할 수 있음
  */
 export class InvalidTypeError extends BaseError {
-  private static readonly __group__ = 'INVALID_TYPE';
+  static readonly #group = 'INVALID_TYPE';
   /**
    * InvalidTypeError 생성자
    * @param code - 구체적인 오류 코드
@@ -13,7 +13,7 @@ export class InvalidTypeError extends BaseError {
    * @param details - 오류 관련 추가 정보
    */
   constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super(InvalidTypeError.__group__, code, message, details);
+    super(InvalidTypeError.#group, code, message, details);
     this.name = 'InvalidType';
   }
 }

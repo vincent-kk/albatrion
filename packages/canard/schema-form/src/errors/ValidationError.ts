@@ -5,9 +5,9 @@ import { BaseError, type ErrorDetails } from '@winglet/common-utils';
  * 폼 데이터의 유효성 검증 중 발생하는 오류를 처리하기 위해 사용됩니다.
  */
 export class ValidationError extends BaseError {
-  private static readonly __group__ = 'VALIDATION_ERROR';
+  static readonly #group = 'VALIDATION_ERROR';
   constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super(ValidationError.__group__, code, message, details);
+    super(ValidationError.#group, code, message, details);
     this.name = 'ValidationError';
   }
 }

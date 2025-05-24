@@ -5,9 +5,9 @@ import { BaseError, type ErrorDetails } from '@winglet/common-utils';
  * 응용 프로그램에서 처리되지 않은 예외를 캐치하고 표준화하기 위해 사용됩니다.
  */
 export class UnhandledError extends BaseError {
-  private static readonly __group__ = 'UNHANDLED_ERROR';
+  static readonly #group = 'UNHANDLED_ERROR';
   constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super(UnhandledError.__group__, code, message, details);
+    super(UnhandledError.#group, code, message, details);
     this.name = 'UnhandledError';
   }
 }
