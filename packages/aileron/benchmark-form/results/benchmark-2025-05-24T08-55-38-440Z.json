@@ -1,0 +1,166 @@
+{
+  "timestamp": "2025-05-24T08-55-38-440Z",
+  "results": [
+    {
+      "name": "@react-genie-form/next - Form Rendering",
+      "hz": 64.68804218497341,
+      "stats": {
+        "mean": 0.015458807628472225,
+        "deviation": 0.012467724883659728
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.40 - Form Rendering",
+      "hz": 197.07456100640525,
+      "stats": {
+        "mean": 0.005074221629079252,
+        "deviation": 0.0004024662876830584
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.45 - Form Rendering",
+      "hz": 193.97493990743897,
+      "stats": {
+        "mean": 0.005155305115584417,
+        "deviation": 0.00041120904687453767
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.50 - Form Rendering",
+      "hz": 195.91068098722496,
+      "stats": {
+        "mean": 0.005104366923543125,
+        "deviation": 0.0004250037520375955
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.55 - Form Rendering",
+      "hz": 196.67008184869226,
+      "stats": {
+        "mean": 0.005084657465945166,
+        "deviation": 0.0003508686611402894
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.60 - Form Rendering",
+      "hz": 190.64585338365035,
+      "stats": {
+        "mean": 0.0052453278277583525,
+        "deviation": 0.0004457613012490603
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.65 - Form Rendering",
+      "hz": 187.60153346744133,
+      "stats": {
+        "mean": 0.005330446833333334,
+        "deviation": 0.0004956052163620304
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.70 - Form Rendering",
+      "hz": 187.00475792049915,
+      "stats": {
+        "mean": 0.005347457525252525,
+        "deviation": 0.000490533349701892
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.71 - Form Rendering",
+      "hz": 191.02855284823187,
+      "stats": {
+        "mean": 0.005234819533991229,
+        "deviation": 0.0004280530255149148
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.72 - Form Rendering",
+      "hz": 191.7463852669894,
+      "stats": {
+        "mean": 0.005215222172807018,
+        "deviation": 0.0005291086649645118
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.73 - Form Rendering",
+      "hz": 191.0633177962913,
+      "stats": {
+        "mean": 0.005233867031798245,
+        "deviation": 0.0004530964499951774
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.74 - Form Rendering",
+      "hz": 192.52268366222043,
+      "stats": {
+        "mean": 0.005194193125598085,
+        "deviation": 0.0003849629515497964
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.75 - Form Rendering",
+      "hz": 194.87947542426758,
+      "stats": {
+        "mean": 0.0051313767025641015,
+        "deviation": 0.00037991490566356494
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - Form Rendering",
+      "hz": 188.50377623432567,
+      "stats": {
+        "mean": 0.005304933513676235,
+        "deviation": 0.000444424240583313
+      }
+    }
+  ],
+  "chartConfig": {
+    "type": "bar",
+    "data": {
+      "labels": [
+        "@react-genie-form/next - Form Rendering",
+        "@canard/schema-form@0.0.40 - Form Rendering",
+        "@canard/schema-form@0.0.45 - Form Rendering",
+        "@canard/schema-form@0.0.50 - Form Rendering",
+        "@canard/schema-form@0.0.55 - Form Rendering",
+        "@canard/schema-form@0.0.60 - Form Rendering",
+        "@canard/schema-form@0.0.65 - Form Rendering",
+        "@canard/schema-form@0.0.70 - Form Rendering",
+        "@canard/schema-form@0.0.71 - Form Rendering",
+        "@canard/schema-form@0.0.72 - Form Rendering",
+        "@canard/schema-form@0.0.73 - Form Rendering",
+        "@canard/schema-form@0.0.74 - Form Rendering",
+        "@canard/schema-form@0.0.75 - Form Rendering",
+        "@canard/schema-form@latest - Form Rendering"
+      ],
+      "datasets": [
+        {
+          "label": "Operations/sec",
+          "data": [
+            64.68804218497341,
+            197.07456100640525,
+            193.97493990743897,
+            195.91068098722496,
+            196.67008184869226,
+            190.64585338365035,
+            187.60153346744133,
+            187.00475792049915,
+            191.02855284823187,
+            191.7463852669894,
+            191.0633177962913,
+            192.52268366222043,
+            194.87947542426758,
+            188.50377623432567
+          ]
+        }
+      ]
+    },
+    "options": {
+      "scales": {
+        "y": {
+          "beginAtZero": true
+        }
+      }
+    }
+  }
+}

@@ -5,8 +5,15 @@ export const sampleSchemas = [
   {
     type: 'object',
     properties: {
-      name: { type: 'string' },
-      email: { type: 'string', format: 'email' },
+      name: {
+        type: 'string',
+        default: 'John Doe',
+      },
+      email: {
+        type: 'string',
+        format: 'email',
+        default: 'john.doe@example.com',
+      },
     },
     required: ['name', 'email'],
   },
@@ -18,19 +25,23 @@ export const sampleSchemas = [
       personalInfo: {
         type: 'object',
         properties: {
-          firstName: { type: 'string' },
-          lastName: { type: 'string' },
-          age: { type: 'number' },
-          email: { type: 'string', format: 'email' },
+          firstName: { type: 'string', default: 'John' },
+          lastName: { type: 'string', default: 'Doe' },
+          age: { type: 'number', default: 30 },
+          email: {
+            type: 'string',
+            format: 'email',
+            default: 'john.doe@example.com',
+          },
         },
         required: ['firstName', 'lastName', 'email'],
       },
       address: {
         type: 'object',
         properties: {
-          street: { type: 'string' },
-          city: { type: 'string' },
-          country: { type: 'string' },
+          street: { type: 'string', default: '123 Main St' },
+          city: { type: 'string', default: 'Anytown' },
+          country: { type: 'string', default: 'USA' },
         },
         required: ['street', 'city'],
       },
@@ -47,18 +58,26 @@ export const sampleSchemas = [
         items: {
           type: 'object',
           properties: {
-            id: { type: 'string' },
-            name: { type: 'string' },
+            id: { type: 'string', default: '1234567890' },
+            name: { type: 'string', default: 'John Doe' },
             roles: {
               type: 'array',
-              items: { type: 'string', enum: ['admin', 'user', 'guest'] },
+              items: {
+                type: 'string',
+                enum: ['admin', 'user', 'guest'],
+                default: 'user',
+              },
             },
             settings: {
               type: 'object',
               properties: {
-                theme: { type: 'string', enum: ['light', 'dark'] },
-                notifications: { type: 'boolean' },
-                language: { type: 'string' },
+                theme: {
+                  type: 'string',
+                  enum: ['light', 'dark'],
+                  default: 'light',
+                },
+                notifications: { type: 'boolean', default: true },
+                language: { type: 'string', default: 'en' },
               },
             },
           },
@@ -68,9 +87,20 @@ export const sampleSchemas = [
       metadata: {
         type: 'object',
         properties: {
-          created: { type: 'string', format: 'date-time' },
-          modified: { type: 'string', format: 'date-time' },
-          tags: { type: 'array', items: { type: 'string' } },
+          created: {
+            type: 'string',
+            format: 'date-time',
+            default: '2021-01-01',
+          },
+          modified: {
+            type: 'string',
+            format: 'date-time',
+            default: '2021-01-01',
+          },
+          tags: {
+            type: 'array',
+            items: { type: 'string', default: 'tag1' },
+          },
         },
       },
     },
@@ -100,15 +130,18 @@ export const sampleSchemas = [
             id: {
               type: 'string',
               format: 'uuid',
+              default: '123e4567-e89b-12d3-a456-426614174000',
             },
             username: {
               type: 'string',
               pattern: '^[A-Za-z0-9_]{3,30}$',
               description: '3~30자의 영문, 숫자, 언더스코어',
+              default: 'john_doe',
             },
             email: {
               type: 'string',
               format: 'email',
+              default: 'john.doe@example.com',
             },
             roles: {
               type: 'array',
@@ -118,6 +151,7 @@ export const sampleSchemas = [
               items: {
                 type: 'string',
                 enum: ['admin', 'user', 'guest', 'moderator'],
+                default: 'user',
               },
             },
             settings: {
@@ -128,21 +162,23 @@ export const sampleSchemas = [
                 theme: {
                   type: 'string',
                   enum: ['light', 'dark', 'system'],
+                  default: 'light',
                 },
                 notifications: {
                   type: 'object',
                   description: '알림 채널별 허용 여부',
                   additionalProperties: false,
                   properties: {
-                    email: { type: 'boolean' },
-                    sms: { type: 'boolean' },
-                    push: { type: 'boolean' },
+                    email: { type: 'boolean', default: true },
+                    sms: { type: 'boolean', default: true },
+                    push: { type: 'boolean', default: true },
                   },
                 },
                 language: {
                   type: 'string',
                   pattern: '^[a-z]{2}(-[A-Z]{2})?$',
                   description: 'ISO 언어 코드 (예: en, ko-KR)',
+                  default: 'en',
                 },
               },
             },
@@ -152,12 +188,17 @@ export const sampleSchemas = [
               additionalProperties: false,
               required: ['firstName', 'lastName'],
               properties: {
-                firstName: { type: 'string', minLength: 1 },
-                lastName: { type: 'string', minLength: 1 },
-                birthDate: { type: 'string', format: 'date' },
+                firstName: { type: 'string', minLength: 1, default: 'John' },
+                lastName: { type: 'string', minLength: 1, default: 'Doe' },
+                birthDate: {
+                  type: 'string',
+                  format: 'date',
+                  default: '1990-01-01',
+                },
                 gender: {
                   type: 'string',
                   enum: ['male', 'female', 'other'],
+                  default: 'male',
                 },
               },
             },
@@ -174,18 +215,20 @@ export const sampleSchemas = [
                   type: {
                     type: 'string',
                     enum: ['home', 'work', 'other'],
+                    default: 'home',
                   },
-                  line1: { type: 'string' },
-                  line2: { type: 'string' },
-                  city: { type: 'string' },
-                  state: { type: 'string' },
+                  line1: { type: 'string', default: '123 Main St' },
+                  line2: { type: 'string', default: 'Apt 1' },
+                  city: { type: 'string', default: 'Anytown' },
+                  state: { type: 'string', default: 'CA' },
                   postalCode: {
                     type: 'string',
                     pattern: '^[0-9A-Za-z \\-]+$',
+                    default: '12345',
                   },
                   country: {
                     type: 'string',
-                    default: 'KR',
+                    default: 'USA',
                     description: 'ISO 국가 코드',
                   },
                 },
@@ -198,23 +241,26 @@ export const sampleSchemas = [
               items: {
                 type: 'string',
                 format: 'uuid',
+                default: '123e4567-e89b-12d3-a456-426614174000',
               },
             },
             createdAt: {
               type: 'string',
               format: 'date-time',
+              default: '2021-01-01',
             },
             updatedAt: {
               type: 'string',
               format: 'date-time',
+              default: '2021-01-01',
             },
             preferences: {
               type: 'object',
               description: '사용자 선호 설정',
               additionalProperties: false,
               properties: {
-                newsletter: { type: 'boolean' },
-                targetedAds: { type: 'boolean' },
+                newsletter: { type: 'boolean', default: true },
+                targetedAds: { type: 'boolean', default: true },
               },
             },
           },
@@ -226,15 +272,24 @@ export const sampleSchemas = [
         additionalProperties: false,
         required: ['created', 'modified'],
         properties: {
-          created: { type: 'string', format: 'date-time' },
-          modified: { type: 'string', format: 'date-time' },
+          created: {
+            type: 'string',
+            format: 'date-time',
+            default: '2021-01-01',
+          },
+          modified: {
+            type: 'string',
+            format: 'date-time',
+            default: '2021-01-01',
+          },
           version: {
             type: 'string',
             pattern: '^\\d+\\.\\d+\\.\\d+$',
+            default: '1.0.0',
           },
           tags: {
             type: 'array',
-            items: { type: 'string' },
+            items: { type: 'string', default: 'tag1' },
             uniqueItems: true,
           },
         },
@@ -245,10 +300,10 @@ export const sampleSchemas = [
         additionalProperties: false,
         required: ['page', 'pageSize', 'totalItems', 'totalPages'],
         properties: {
-          page: { type: 'integer', minimum: 1 },
-          pageSize: { type: 'integer', minimum: 1 },
-          totalItems: { type: 'integer', minimum: 0 },
-          totalPages: { type: 'integer', minimum: 1 },
+          page: { type: 'integer', minimum: 1, default: 1 },
+          pageSize: { type: 'integer', minimum: 1, default: 10 },
+          totalItems: { type: 'integer', minimum: 0, default: 100 },
+          totalPages: { type: 'integer', minimum: 1, default: 10 },
         },
       },
       links: {
@@ -256,9 +311,21 @@ export const sampleSchemas = [
         description: '관련 리소스 링크',
         additionalProperties: false,
         properties: {
-          self: { type: 'string', format: 'uri' },
-          next: { type: 'string', format: 'uri' },
-          prev: { type: 'string', format: 'uri' },
+          self: {
+            type: 'string',
+            format: 'uri',
+            default: 'https://example.com/self',
+          },
+          next: {
+            type: 'string',
+            format: 'uri',
+            default: 'https://example.com/next',
+          },
+          prev: {
+            type: 'string',
+            format: 'uri',
+            default: 'https://example.com/prev',
+          },
         },
       },
     },
