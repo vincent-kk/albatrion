@@ -86,7 +86,10 @@ export class BranchStrategy implements ArrayNodeStrategy {
     return this.__ids__.length;
   }
 
-  /** 하위 노드에 대해 pub-sub 링크를 활성화합니다. */
+  /**
+   * 모든 자식 노드에게 활성화를 전파합니다.
+   * @internal 내부 구현용 메서드입니다. 직접 호출하지 마세요.
+   */
   public activate() {
     for (const id of this.__ids__)
       (this.__sourceMap__.get(id)?.node as AbstractNode).activate(

@@ -78,7 +78,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__publishRequestEmitChange__(option);
   }
 
-  /** 하위 노드에 대해 pub-sub 링크를 활성화합니다. */
+  /**
+   * 모든 자식 노드에게 활성화를 전파합니다.
+   * @internal 내부 구현용 메서드입니다. 직접 호출하지 마세요.
+   */
   public activate() {
     for (const child of this.__propertyChildren__)
       (child.node as AbstractNode).activate(this.__host__);
@@ -257,7 +260,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
   private __previousIndex__: number = -1;
   /**
-   * oneOf 스키마의 자식 노드를 준비합니다.
+   * oneOf 스키마가 있는 경우, oneOf 인덱스가 변경될 때 자식 노드를 갱신합니다.
    * @private
    */
   private __prepareOneOfChildren__() {

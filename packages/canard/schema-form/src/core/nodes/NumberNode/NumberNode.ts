@@ -117,6 +117,11 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     return parseNumber(input, this.jsonSchema.type === 'integer');
   }
 
+  /**
+   * 빈 값을 제외하고 값 변경을 반영합니다.
+   * @param input - 설정할 값
+   * @internal 내부 구현용 메서드입니다. 직접 호출하지 마세요.
+   */
   private onChangeWithOmitEmpty(
     this: NumberNode,
     input: NumberValue | undefined,

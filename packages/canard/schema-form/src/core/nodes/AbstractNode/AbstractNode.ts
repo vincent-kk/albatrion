@@ -127,7 +127,9 @@ export abstract class AbstractNode<
     return this.#key;
   }
 
+  /** Node의 최초 기본값 */
   #initialValue: Value | undefined;
+  /** Node의 현재 기본값 */
   #defaultValue: Value | undefined;
   /**
    * Node의 기본값
@@ -303,6 +305,11 @@ export abstract class AbstractNode<
     this.#unsubscribes = [];
   }
 
+  /**
+   * Node의 이벤트 리스너/구독 목록을 초기화합니다. 초기화는 자기 자신이나, 부모 Node에서 호출해야 합니다.
+   * @param actor - 초기화를 요청한 Node
+   * @internal 내부 구현용 메서드입니다. 직접 호출하지 마세요.
+   */
   public cleanUp(this: AbstractNode, actor?: SchemaNode) {
     if (actor !== this.parentNode && !this.isRoot) return;
     this.#clearUnsubscribes();
@@ -337,6 +344,12 @@ export abstract class AbstractNode<
     return this.#activated;
   }
 
+  /**
+   * Node를 활성화합니다. 활성화는 자기 자신이나, 부모 Node에서 호출해야 합니다.
+   * @param actor - 활성화를 요청한 Node
+   * @returns 활성화 여부
+   * @internal 내부 구현용 메서드입니다. 직접 호출하지 마세요.
+   */
   public activate(this: AbstractNode, actor?: SchemaNode) {
     if (this.#activated || (actor !== this.parentNode && !this.isRoot))
       return false;
@@ -417,6 +430,12 @@ export abstract class AbstractNode<
       this.#hasPublishedUpdateComputedProperties = true;
     }
   }
+  /**
+   * 현재 Node를 초기값으로 초기화합니다. 초기값은 현재 노드의 초기값이나, 전달받은 값이 있는 경우 전달받은 값을 사용합니다.
+   * @param preferLatest - 최신 값을 사용할지 여부, 최신 값이 있는 경우 최신 값을 사용
+   * @param input - 설정할 값, 전달받은 값이 있는 경우 전달받은 값을 사용
+   * @internal 내부 구현용 메서드입니다. 직접 호출하지 마세요.
+   */
   public resetNode(
     this: AbstractNode,
     preferLatest: boolean,
@@ -535,6 +554,11 @@ export abstract class AbstractNode<
     });
   }
 
+  /**
+   * 외부에서 전달받은 Error를 전체 Error에 병합합니다.
+   * @param errors - 설정할 Error 목록
+   * @returns 병합 결과가 변경되었는지 여부
+   */
   #setGlobalErrors(this: AbstractNode, errors: JsonSchemaError[]) {
     if (equals(this.#globalErrors, errors)) return false;
     this.#globalErrors = errors;

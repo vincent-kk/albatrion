@@ -59,9 +59,10 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   }
 
   /**
-   * 노드를 초기화하고 자식 노드를 준비합니다.
+   * 이 ObjectNode를 활성화하고, 모든 자식 노드에게 활성화를 전파합니다.
    * @param actor - 준비를 요청한 노드
-   * @returns 초기화 완료 여부
+   * @returns 활성화 여부
+   * @internal 내부 구현용 메서드입니다. 직접 호출하지 마세요.
    */
   public override activate(this: ObjectNode, actor?: SchemaNode): boolean {
     if (super.activate(actor)) {
