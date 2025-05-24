@@ -38,31 +38,31 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
   public readonly name: string | null = null;
 
   /** 배치 로더 함수 - 키 집합을 값 집합으로 변환 */
-  private readonly __batchLoader__: BatchLoader<Key, Value>;
+  readonly #batchLoader: BatchLoader<Key, Value>;
   /** 한 배치에서 처리할 최대 키 개수 */
-  private readonly __maxBatchSize__: number;
+  readonly #maxBatchSize: number;
   /** 배치 실행을 스케줄링하는 함수 */
-  private readonly __batchScheduler__: Fn<[task: Fn]>;
+  readonly #batchScheduler: Fn<[task: Fn]>;
   /** 캐시 맵 객체 - 캐싱이 비활성화된 경우 null */
-  private readonly __cacheMap__: MapLike<CacheKey, Promise<Value>> | null;
+  readonly #cacheMap: MapLike<CacheKey, Promise<Value>> | null;
   /** 로더 키를 캐시 키로 변환하는 함수 */
-  private readonly __cacheKeyFn__: Fn<[key: Key], CacheKey>;
+  readonly #cacheKeyFn: Fn<[key: Key], CacheKey>;
 
   /** 현재 처리 중인 배치 */
-  private __currentBatch__: Batch<Key, Value> | null = null;
+  #currentBatch: Batch<Key, Value> | null = null;
 
   /**
    * 현재 배치를 가져오거나 새 배치를 생성하는 getter
    * @returns 현재 사용 가능한 배치 혹은 새로 생성된 배치
    */
-  private get __batch__(): Batch<Key, Value> {
-    const batch = this.__currentBatch__;
-    if (batch && !batch.isResolved && batch.keys.length < this.__maxBatchSize__)
+  get #batch(): Batch<Key, Value> {
+    const batch = this.#currentBatch;
+    if (batch && !batch.isResolved && batch.keys.length < this.#maxBatchSize)
       return batch;
     const nextBatch = createBatch<Key, Value>();
-    this.__currentBatch__ = nextBatch;
-    this.__batchScheduler__(() => {
-      this.__dispatchBatch__(nextBatch);
+    this.#currentBatch = nextBatch;
+    this.#batchScheduler(() => {
+      this.#dispatchBatch(nextBatch);
     });
     return nextBatch;
   }
@@ -77,15 +77,15 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
     options?: DataLoaderOptions<Key, Value, CacheKey>,
   ) {
     // 반드시 비동기 배치 로더 함수가 제공되어야 함
-    this.__batchLoader__ = prepareBatchLoader(batchLoader);
+    this.#batchLoader = prepareBatchLoader(batchLoader);
     // 최대 배치 크기 설정 (기본값: Infinity)
-    this.__maxBatchSize__ = prepareMaxBatchSize(options);
+    this.#maxBatchSize = prepareMaxBatchSize(options);
     // 배치 스케줄러 설정 (기본값: nextTick)
-    this.__batchScheduler__ = prepareBatchScheduler(options?.batchScheduler);
+    this.#batchScheduler = prepareBatchScheduler(options?.batchScheduler);
     // 캐싱 맵 설정 (비활성화된 경우: null)
-    this.__cacheMap__ = prepareCacheMap(options?.cache);
+    this.#cacheMap = prepareCacheMap(options?.cache);
     // 캐시 키 함수 설정 (기본값: 정체성 함수)
-    this.__cacheKeyFn__ = prepareCacheKeyFn(options?.cacheKeyFn);
+    this.#cacheKeyFn = prepareCacheKeyFn(options?.cacheKeyFn);
     // 선택적 이름 설정
     this.name = options?.name ?? null;
   }
@@ -104,9 +104,9 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
         `DataLoader > load's key must be a non-nil value: ${key}`,
         { key },
       );
-    const batch = this.__batch__;
-    const cacheMap = this.__cacheMap__;
-    const cacheKey = cacheMap ? this.__cacheKeyFn__(key) : null;
+    const batch = this.#batch;
+    const cacheMap = this.#cacheMap;
+    const cacheKey = cacheMap ? this.#cacheKeyFn(key) : null;
     if (cacheMap && cacheKey) {
       const cachedPromise = cacheMap.get(cacheKey);
       if (cachedPromise) {
@@ -153,9 +153,9 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
    * @returns 메서드 체이닝을 위한 this 객체
    */
   clear(key: Key): this {
-    const cacheMap = this.__cacheMap__;
+    const cacheMap = this.#cacheMap;
     if (cacheMap) {
-      const cacheKey = this.__cacheKeyFn__(key);
+      const cacheKey = this.#cacheKeyFn(key);
       cacheMap.delete(cacheKey);
     }
     return this;
@@ -166,7 +166,7 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
    * @returns 메서드 체이닝을 위한 this 객체
    */
   clearAll(): this {
-    this.__cacheMap__?.clear();
+    this.#cacheMap?.clear();
     return this;
   }
 
@@ -177,9 +177,9 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
    * @returns 메서드 체이닝을 위한 this 객체
    */
   prime(key: Key, value: Value | Promise<Value> | Error): this {
-    const cacheMap = this.__cacheMap__;
+    const cacheMap = this.#cacheMap;
     if (cacheMap) {
-      const cacheKey = this.__cacheKeyFn__(key);
+      const cacheKey = this.#cacheKeyFn(key);
       if (cacheMap.get(cacheKey) === undefined) {
         let promise: Promise<Value>;
         if (value instanceof Error) {
@@ -200,10 +200,10 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
    * Promise에 전달
    * @param batch - 처리할 배치 객체
    */
-  private __dispatchBatch__(batch: Batch<Key, Value>): void {
+  #dispatchBatch(batch: Batch<Key, Value>): void {
     batch.isResolved = true;
     if (!batch.keys.length) return resolveCacheHits(batch);
-    const batchPromise = this.__stableBatchLoader__(batch.keys);
+    const batchPromise = this.#stableBatchLoader(batch.keys);
     if (batchPromise instanceof Error)
       return failedDispatch(this, batch, batchPromise);
     if (!isFunction(batchPromise?.then))
@@ -248,11 +248,11 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
    * @param keys - 로드할 키 배열
    * @returns 배치 로더의 결과 또는 오류
    */
-  private __stableBatchLoader__(
+  #stableBatchLoader(
     keys: ReadonlyArray<Key>,
   ): ReturnType<BatchLoader<Key, Value>> | Error {
     try {
-      return this.__batchLoader__(keys);
+      return this.#batchLoader(keys);
     } catch (error: any) {
       return error;
     }

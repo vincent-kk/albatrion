@@ -24,7 +24,7 @@ export class ErrorBoundary extends Component<Props, State> {
    * 에러 발생 시 표시할 기본 fallback UI
    * @private
    */
-  private static __fallback__ = (<FallbackMessage />);
+  static #fallback = (<FallbackMessage />);
 
   constructor(props: Props) {
     super(props);
@@ -57,7 +57,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render(): ReactNode {
     if (this.state.hasError)
-      return this.props.fallback || ErrorBoundary.__fallback__;
+      return this.props.fallback || ErrorBoundary.#fallback;
     return this.props.children;
   }
 }
