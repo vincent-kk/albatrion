@@ -21,7 +21,8 @@ export class PromptNode<T, B> extends AbstractNode<T, B> {
   readonly disabled?: (value: T) => boolean;
   readonly returnOnCancel?: boolean;
   readonly footer?: PromptFooterRender<T> | FooterOptions | false;
-  private __value__: T | undefined;
+
+  #value: T | undefined;
 
   constructor({
     id,
@@ -60,20 +61,20 @@ export class PromptNode<T, B> extends AbstractNode<T, B> {
     this.content = content;
     this.Input = Input;
     this.defaultValue = defaultValue;
-    this.__value__ = defaultValue;
+    this.#value = defaultValue;
     this.disabled = disabled;
     this.returnOnCancel = returnOnCancel;
     this.footer = footer;
   }
 
   onChange(value: T) {
-    this.__value__ = value;
+    this.#value = value;
   }
   onConfirm() {
-    this.resolve(this.__value__ ?? null);
+    this.resolve(this.#value ?? null);
   }
   onClose() {
-    if (this.returnOnCancel) this.resolve(this.__value__ ?? null);
+    if (this.returnOnCancel) this.resolve(this.#value ?? null);
     else this.resolve(null);
   }
 }

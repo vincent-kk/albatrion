@@ -27,17 +27,17 @@ export abstract class AbstractNode<T, B> {
   readonly ForegroundComponent?: ForegroundComponent;
   readonly BackgroundComponent?: BackgroundComponent;
 
-  private __alive__: boolean;
+  #alive: boolean;
   get alive() {
-    return this.__alive__;
+    return this.#alive;
   }
-  private __visible__: boolean;
+  #visible: boolean;
   get visible() {
-    return this.__visible__;
+    return this.#visible;
   }
 
-  private __resolve__: (result: T | null) => void;
-  private __listeners__: Set<Fn> = new Set();
+  #resolve: (result: T | null) => void;
+  #listeners: Set<Fn> = new Set();
 
   constructor({
     id,
@@ -65,36 +65,36 @@ export abstract class AbstractNode<T, B> {
     this.ForegroundComponent = ForegroundComponent;
     this.BackgroundComponent = BackgroundComponent;
 
-    this.__alive__ = true;
-    this.__visible__ = true;
-    this.__resolve__ = resolve;
+    this.#alive = true;
+    this.#visible = true;
+    this.#resolve = resolve;
   }
 
   subscribe(listener: Fn) {
-    this.__listeners__.add(listener);
+    this.#listeners.add(listener);
     return () => {
-      this.__listeners__.delete(listener);
+      this.#listeners.delete(listener);
     };
   }
   publish() {
-    for (const listener of this.__listeners__) listener();
+    for (const listener of this.#listeners) listener();
   }
   protected resolve(result: T | null) {
-    this.__resolve__(result);
+    this.#resolve(result);
   }
   onDestroy() {
-    const needPublish = this.__alive__ === true;
-    this.__alive__ = false;
+    const needPublish = this.#alive === true;
+    this.#alive = false;
     if (this.manualDestroy && needPublish) this.publish();
   }
   onShow() {
-    const needPublish = this.__visible__ === false;
-    this.__visible__ = true;
+    const needPublish = this.#visible === false;
+    this.#visible = true;
     if (needPublish) this.publish();
   }
   onHide() {
-    const needPublish = this.__visible__ === true;
-    this.__visible__ = false;
+    const needPublish = this.#visible === true;
+    this.#visible = false;
     if (needPublish) this.publish();
   }
   abstract onClose(): void;

@@ -5,20 +5,20 @@ import type { Fn } from '@aileron/declare';
 import type { Modal } from '@/promise-modal/types';
 
 export class ModalManager {
-  private static __active__ = false;
+  static #active = false;
   static activate() {
-    if (ModalManager.__active__) return false;
-    return (ModalManager.__active__ = true);
+    if (ModalManager.#active) return false;
+    return (ModalManager.#active = true);
   }
 
-  private static __anchor__: HTMLElement | null = null;
+  static #anchor: HTMLElement | null = null;
   static anchor(options?: {
     tag?: string;
     prefix?: string;
     root?: HTMLElement;
   }): HTMLElement {
-    if (ModalManager.__anchor__) {
-      const anchor = document.getElementById(ModalManager.__anchor__.id);
+    if (ModalManager.#anchor) {
+      const anchor = document.getElementById(ModalManager.#anchor.id);
       if (anchor) return anchor;
     }
     const {
@@ -29,35 +29,35 @@ export class ModalManager {
     const node = document.createElement(tag);
     node.setAttribute('id', `${prefix}-${getRandomString(36)}`);
     root.appendChild(node);
-    ModalManager.__anchor__ = node;
+    ModalManager.#anchor = node;
     return node;
   }
 
-  private static __prerenderList__: Modal[] = [];
+  static #prerenderList: Modal[] = [];
   static get prerender() {
-    return ModalManager.__prerenderList__;
+    return ModalManager.#prerenderList;
   }
 
-  private static __openHandler__: Fn<[Modal], void> = (modal: Modal) =>
-    ModalManager.__prerenderList__.push(modal);
+  static #openHandler: Fn<[Modal], void> = (modal: Modal) =>
+    ModalManager.#prerenderList.push(modal);
   static set openHandler(handler: Fn<[Modal], void>) {
-    ModalManager.__openHandler__ = handler;
-    ModalManager.__prerenderList__ = [];
+    ModalManager.#openHandler = handler;
+    ModalManager.#prerenderList = [];
   }
 
   static get unanchored() {
-    return !ModalManager.__anchor__;
+    return !ModalManager.#anchor;
   }
 
   static reset() {
-    ModalManager.__active__ = false;
-    ModalManager.__anchor__ = null;
-    ModalManager.__prerenderList__ = [];
-    ModalManager.__openHandler__ = (modal: Modal) =>
-      ModalManager.__prerenderList__.push(modal);
+    ModalManager.#active = false;
+    ModalManager.#anchor = null;
+    ModalManager.#prerenderList = [];
+    ModalManager.#openHandler = (modal: Modal) =>
+      ModalManager.#prerenderList.push(modal);
   }
 
   static open(modal: Modal) {
-    ModalManager.__openHandler__(modal);
+    ModalManager.#openHandler(modal);
   }
 }
