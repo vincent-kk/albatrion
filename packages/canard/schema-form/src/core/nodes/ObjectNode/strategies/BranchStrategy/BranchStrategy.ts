@@ -4,8 +4,8 @@ import type { Fn } from '@aileron/declare';
 
 import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
-import type { ChildNode } from '@/schema-form/core/nodes/ObjectNode/type';
 import {
+  type ChildNode,
   NodeEventType,
   type SchemaNodeFactory,
   SetValueOption,

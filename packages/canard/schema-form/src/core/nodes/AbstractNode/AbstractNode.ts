@@ -24,6 +24,7 @@ import type {
 } from '@/schema-form/types';
 
 import {
+  type ChildNode,
   type NodeEvent,
   NodeEventType,
   type NodeListener,
@@ -206,7 +207,7 @@ export abstract class AbstractNode<
   }
 
   /** Node의 하위 Node 목록, 하위 Node를 가지지 않는 Node는 빈 배열 반환 */
-  public get children(): { node: SchemaNode }[] | null {
+  public get children(): ChildNode[] | null {
     return null;
   }
 

@@ -4,6 +4,7 @@ import type { VirtualNodeValue, VirtualSchema } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
 import {
+  type ChildNode,
   NodeEventType,
   type SchemaNode,
   SetValueOption,
@@ -45,7 +46,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
   }
 
   #refNodes: SchemaNode[] = [];
-  #children: { node: SchemaNode }[];
+  #children: ChildNode[];
   /**
    * 가상 노드의 자식 노드들을 가져옵니다.
    * @returns 자식 노드 목록

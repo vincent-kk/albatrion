@@ -1,10 +1,12 @@
-import { isArray, isPlainObject } from '@winglet/common-utils';
+import { getRandomString, isArray, isPlainObject } from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/declare';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
-import type { ChildNode } from '@/schema-form/core/nodes/ObjectNode/type';
-import type { SchemaNodeFactory } from '@/schema-form/core/nodes/type';
+import type {
+  ChildNode,
+  SchemaNodeFactory,
+} from '@/schema-form/core/nodes/type';
 import { SchemaNodeError } from '@/schema-form/errors';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type {
@@ -38,6 +40,7 @@ export const getOneOfChildrenList = (
 
   for (let index = 0; index < oneOfSchemas.length; index++) {
     const oneOfSchema = oneOfSchemas[index] as Partial<ObjectSchema>;
+    const salt = getRandomString(32);
 
     if (oneOfSchema.type && jsonSchema.type !== oneOfSchema.type)
       throw new SchemaNodeError(
@@ -72,8 +75,9 @@ export const getOneOfChildrenList = (
       const schema = properties[property] as JsonSchema;
       const inputDefault = defaultValue?.[property];
       childNodes[keyIndex] = {
-        index,
+        salt,
         node: nodeFactory({
+          key: property + '/oneOf/' + index,
           name: property,
           jsonSchema: schema,
           defaultValue:

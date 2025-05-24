@@ -1,7 +1,6 @@
 import type { ObjectValue } from '@/schema-form/types';
 
-import type { UnionSetValueOption } from '../../type';
-import type { ChildNode } from '../type';
+import type { ChildNode, UnionSetValueOption } from '../../type';
 
 /**
  * ObjectNode의 데이터와 작업을 관리하는 전략 인터페이스.

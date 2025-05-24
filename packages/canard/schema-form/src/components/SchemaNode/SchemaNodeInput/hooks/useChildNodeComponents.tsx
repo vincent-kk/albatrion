@@ -1,4 +1,4 @@
-import { ComponentType, useMemo, useRef, useState } from 'react';
+import { type ComponentType, useMemo, useRef, useState } from 'react';
 
 import {
   useMemorize,
@@ -12,10 +12,10 @@ import {
   isTerminalNode,
 } from '@/schema-form/core';
 import { useSchemaNodeSubscribe } from '@/schema-form/hooks/useSchemaNodeSubscribe';
-import { ChildFormTypeInputProps } from '@/schema-form/types';
+import type { ChildFormTypeInputProps } from '@/schema-form/types';
 
-import { SchemaNodeProxyProps } from '../../SchemaNodeProxy';
-import { ChildNodeComponent, NodeChildren } from '../type';
+import type { SchemaNodeProxyProps } from '../../SchemaNodeProxy';
+import type { ChildNodeComponent } from '../type';
 
 const SEPARATOR = '\x1F';
 
@@ -23,7 +23,7 @@ export const useChildNodeComponents = (
   node: SchemaNode,
   NodeProxy: ComponentType<SchemaNodeProxyProps>,
 ): ChildNodeComponent[] => {
-  const [children, setChildren] = useState<NodeChildren | null>(node.children);
+  const [children, setChildren] = useState(node.children);
   useSchemaNodeSubscribe(node, ({ type }) => {
     if (type & NodeEventType.UpdateChildren) setChildren(node.children);
   });
@@ -36,9 +36,9 @@ export const useChildNodeComponents = (
   return useMemo(() => {
     if (isTerminalNode(node) || !children) return [];
     const ChildNodeComponents: ChildNodeComponent[] = [];
-    for (const { node, isVirtualized, index } of children) {
-      if (!node?.key || isVirtualized === true) continue;
-      const key = index === undefined ? node.key : node.key + SEPARATOR + index;
+    for (const { salt, virtual, node } of children) {
+      if (!node?.key || virtual === true) continue;
+      const key = salt === undefined ? node.key : node.key + SEPARATOR + salt;
       const CachedComponent = cache.current.get(key);
       if (CachedComponent) ChildNodeComponents.push(CachedComponent);
       else {

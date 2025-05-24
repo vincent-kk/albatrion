@@ -4,7 +4,6 @@ import type { ElementOf } from '@aileron/declare';
 
 import type { SchemaNode } from '@/schema-form/core';
 import { NodeEventType, SetValueOption } from '@/schema-form/core';
-import type { ChildNodeForObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import type {
   FormTypeInputProps,
   OverridableFormTypeInputProps,
@@ -21,12 +20,6 @@ export interface SchemaNodeInputProps {
 
 export type ChildNodeComponent = ElementOf<
   FormTypeInputProps['ChildNodeComponents']
->;
-
-export type NodeChildren = Array<
-  ChildNodeForObjectNode & {
-    id?: string;
-  }
 >;
 
 /** SchemaNodeInput 컴포넌트에서 onChange를 할때, node setValue default option */

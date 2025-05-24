@@ -1,8 +1,10 @@
 import type { Fn } from '@aileron/declare';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
-import type { ChildNode } from '@/schema-form/core/nodes/ObjectNode/type';
-import type { SchemaNodeFactory } from '@/schema-form/core/nodes/type';
+import type {
+  ChildNode,
+  SchemaNodeFactory,
+} from '@/schema-form/core/nodes/type';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
@@ -42,7 +44,7 @@ export const getChildNodeMap = (
     const inputDefault = defaultValue?.[name];
     const conditions = conditionsMap?.get(name);
     childNodeMap.set(name, {
-      isVirtualized: !!virtualReferenceFieldsMap?.get(name)?.length,
+      virtual: !!virtualReferenceFieldsMap?.get(name)?.length,
       node: nodeFactory({
         name,
         jsonSchema: mergeShowConditions(schema, conditions),

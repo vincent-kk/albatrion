@@ -1,11 +1,9 @@
 import { isArray } from '@winglet/common-utils';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
+import type { VirtualReference } from '@/schema-form/core/nodes/ObjectNode/type';
 import type {
   ChildNode,
-  VirtualReference,
-} from '@/schema-form/core/nodes/ObjectNode/type';
-import type {
   SchemaNode,
   SchemaNodeFactory,
 } from '@/schema-form/core/nodes/type';

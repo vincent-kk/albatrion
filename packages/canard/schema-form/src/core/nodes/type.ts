@@ -74,6 +74,13 @@ export type SchemaNode =
   | VirtualNode
   | NullNode;
 
+export interface ChildNode {
+  id?: string;
+  salt?: string;
+  virtual?: boolean;
+  node: SchemaNode;
+}
+
 export enum ValidationMode {
   /** No validation */
   None = BIT_MASK_NONE,

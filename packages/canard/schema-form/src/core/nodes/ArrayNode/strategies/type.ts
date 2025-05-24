@@ -1,6 +1,6 @@
 import type { ArrayValue } from '@/schema-form/types';
 
-import type { SchemaNode, UnionSetValueOption } from '../../type';
+import type { ChildNode, UnionSetValueOption } from '../../type';
 
 /**
  * ArrayNode의 데이터와 작업을 관리하는 전략 인터페이스.
@@ -21,7 +21,7 @@ export interface ArrayNodeStrategy {
    * 자식 노드 목록을 가져옵니다.
    * @returns ID와 노드 정보를 포함한 배열
    */
-  get children(): { id: string; node: SchemaNode }[] | null;
+  get children(): ChildNode[] | null;
   /**
    * 입력값을 배열 노드에 적용합니다.
    * @param value - 설정할 배열 값
