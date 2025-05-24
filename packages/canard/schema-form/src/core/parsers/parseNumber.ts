@@ -8,6 +8,7 @@ export const parseNumber = (
   value: unknown,
   isInteger: boolean,
 ): number | undefined => {
+  if (value === undefined) return undefined;
   if (typeof value === 'number') {
     if (isNaN(value)) return NaN;
     return isInteger ? ~~value : value;

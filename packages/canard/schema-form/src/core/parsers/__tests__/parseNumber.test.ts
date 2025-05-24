@@ -7,6 +7,7 @@ describe('parseNumber', () => {
     it('숫자를 입력하면 정수로 변환되어야 합니다', () => {
       expect(parseNumber(3.14, true)).toBe(3);
       expect(parseNumber(-3.14, true)).toBe(-3);
+      expect(parseNumber(undefined, true)).toBeUndefined();
     });
 
     it('문자열 숫자를 입력하면 정수로 변환되어야 합니다', () => {
