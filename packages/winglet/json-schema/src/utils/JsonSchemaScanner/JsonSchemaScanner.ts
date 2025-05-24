@@ -31,44 +31,46 @@ interface JsonSchemaScannerProps<ContextType> {
  */
 export class JsonSchemaScanner<ContextType = void> {
   /** Visitor 객체: 스키마 노드 진입/종료 시 실행될 콜백 함수들을 포함합니다. */
-  readonly #visitor: SchemaVisitor<ContextType>;
+  private readonly __visitor__: SchemaVisitor<ContextType>;
   /** 스캔 옵션: 최대 탐색 깊이, 필터링 함수, 참조 해결 함수 등을 포함합니다. */
-  readonly #options: JsonScannerOptions<ContextType>;
+  private readonly __options__: JsonScannerOptions<ContextType>;
   /** `scan` 메서드에 전달된 원본 JSON 스키마. */
-  #originalSchema: UnknownSchema | undefined;
+  private __originalSchema__: UnknownSchema | undefined;
   /** 참조가 해결된 최종 스키마. `getValue` 첫 호출 시 계산됩니다. */
-  #processedSchema: UnknownSchema | undefined;
-  /** `#run` 실행 중 해결되었지만 아직 최종 스키마에 적용되지 않은 참조들의 배열 ([경로, 해결된 스키마]). */
-  #pendingResolves: Array<[path: string, schema: UnknownSchema]> | undefined;
+  private __processedSchema__: UnknownSchema | undefined;
+  /** `__run__` 실행 중 해결되었지만 아직 최종 스키마에 적용되지 않은 참조들의 배열 ([경로, 해결된 스키마]). */
+  private __pendingResolves__:
+    | Array<[path: string, schema: UnknownSchema]>
+    | undefined;
 
   /**
    * JsonSchemaScanner 인스턴스를 생성합니다.
    * @param {JsonSchemaScannerProps<ContextType>} [props] - Scanner 설정 (visitor, options).
    */
   constructor(props?: JsonSchemaScannerProps<ContextType>) {
-    this.#visitor = props?.visitor || {};
-    this.#options = props?.options || {};
+    this.__visitor__ = props?.visitor || {};
+    this.__options__ = props?.options || {};
   }
 
   /**
    * 주어진 JSON 스키마를 스캔하고 내부 상태를 업데이트합니다.
-   * Visitor 훅을 실행하고, 해결된 참조 정보를 수집하여 `#pendingResolvedRefs`에 저장합니다.
+   * Visitor 훅을 실행하고, 해결된 참조 정보를 수집하여 `__pendingResolves__`에 저장합니다.
    *
    * @param {UnknownSchema} schema - 스캔할 JSON 스키마 객체.
    * @returns {this} 현재 JsonSchemaScanner 인스턴스 (메서드 체이닝 가능).
    */
   public scan(this: this, schema: UnknownSchema): this {
-    this.#originalSchema = schema;
-    this.#processedSchema = undefined;
-    this.#pendingResolves = undefined;
-    this.#run(this.#originalSchema);
+    this.__originalSchema__ = schema;
+    this.__processedSchema__ = undefined;
+    this.__pendingResolves__ = undefined;
+    this.__run__(this.__originalSchema__);
     return this;
   }
 
   /**
    * 스캔 및 참조 해결이 완료된 최종 스키마를 반환합니다.
    *
-   * 첫 호출 시: `#pendingResolvedRefs`에 저장된 참조들을 원본 스키마의 깊은 복사본에 적용하여
+   * 첫 호출 시: `__pendingResolves__`에 저장된 참조들을 원본 스키마의 깊은 복사본에 적용하여
    * 최종 스키마를 생성하고 캐시합니다.
    * 두 번째 호출부터: 캐시된 최종 스키마를 반환합니다.
    *
@@ -78,23 +80,23 @@ export class JsonSchemaScanner<ContextType = void> {
   public getValue<Schema extends UnknownSchema>(
     this: this,
   ): Schema | undefined {
-    if (!this.#originalSchema) return undefined;
-    if (this.#processedSchema) return this.#processedSchema as Schema;
-    if (!this.#pendingResolves || this.#pendingResolves.length === 0) {
-      this.#processedSchema = this.#originalSchema;
-      return this.#processedSchema as Schema;
+    if (!this.__originalSchema__) return undefined;
+    if (this.__processedSchema__) return this.__processedSchema__ as Schema;
+    if (!this.__pendingResolves__ || this.__pendingResolves__.length === 0) {
+      this.__processedSchema__ = this.__originalSchema__;
+      return this.__processedSchema__ as Schema;
     }
 
-    this.#processedSchema = clone(this.#originalSchema);
-    for (const [path, resolvedSchema] of this.#pendingResolves) {
-      this.#processedSchema = setValueByPointer(
-        this.#processedSchema,
+    this.__processedSchema__ = clone(this.__originalSchema__);
+    for (const [path, resolvedSchema] of this.__pendingResolves__) {
+      this.__processedSchema__ = setValueByPointer(
+        this.__processedSchema__,
         path,
         resolvedSchema,
       );
     }
-    this.#pendingResolves = undefined;
-    return this.#processedSchema as Schema;
+    this.__pendingResolves__ = undefined;
+    return this.__processedSchema__ as Schema;
   }
 
   /**
@@ -104,7 +106,7 @@ export class JsonSchemaScanner<ContextType = void> {
    * @param {UnknownSchema} schema - 순회를 시작할 스키마 노드.
    * @private
    */
-  #run(this: this, schema: UnknownSchema): void {
+  private __run__(this: this, schema: UnknownSchema): void {
     const stack: SchemaEntry[] = [
       { schema, path: JSONPointer.Root, dataPath: JSONPointer.Root, depth: 0 },
     ];
@@ -118,15 +120,15 @@ export class JsonSchemaScanner<ContextType = void> {
       switch (currentPhase) {
         case OperationPhase.Enter: {
           if (
-            this.#options.filter &&
-            !this.#options.filter(entry, this.#options.context)
+            this.__options__.filter &&
+            !this.__options__.filter(entry, this.__options__.context)
           ) {
             stack.pop();
             entryPhase.delete(entry);
             break;
           }
 
-          this.#visitor.enter?.(entry, this.#options.context);
+          this.__visitor__.enter?.(entry, this.__options__.context);
           entryPhase.set(entry, OperationPhase.Reference);
           break;
         }
@@ -141,16 +143,18 @@ export class JsonSchemaScanner<ContextType = void> {
               break;
             }
             const resolvedReference =
-              this.#options.resolveReference && !isDefinitionSchema(entry.path)
-                ? this.#options.resolveReference(
+              this.__options__.resolveReference &&
+              !isDefinitionSchema(entry.path)
+                ? this.__options__.resolveReference(
                     referencePath,
-                    this.#options.context,
+                    this.__options__.context,
                   )
                 : undefined;
 
             if (resolvedReference) {
-              if (!this.#pendingResolves) this.#pendingResolves = new Array();
-              this.#pendingResolves.push([entry.path, resolvedReference]);
+              if (!this.__pendingResolves__)
+                this.__pendingResolves__ = new Array();
+              this.__pendingResolves__.push([entry.path, resolvedReference]);
 
               entry.schema = resolvedReference;
               entry.referencePath = referencePath;
@@ -171,8 +175,8 @@ export class JsonSchemaScanner<ContextType = void> {
 
         case OperationPhase.ChildEntries: {
           if (
-            this.#options.maxDepth !== undefined &&
-            entry.depth + 1 > this.#options.maxDepth
+            this.__options__.maxDepth !== undefined &&
+            entry.depth + 1 > this.__options__.maxDepth
           ) {
             entryPhase.set(entry, OperationPhase.Exit);
             break;
@@ -191,7 +195,7 @@ export class JsonSchemaScanner<ContextType = void> {
         }
 
         case OperationPhase.Exit: {
-          this.#visitor.exit?.(entry, this.#options.context);
+          this.__visitor__.exit?.(entry, this.__options__.context);
           if (
             entry.referenceResolved &&
             entry.referencePath &&

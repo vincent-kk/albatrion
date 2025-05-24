@@ -18,20 +18,20 @@ interface ExecutionContext<F extends Fn<any[]>> {
  */
 export class FunctionContext<F extends Fn<any[]>> {
   /** 함수 실행 컨텍스트 */
-  #context: ExecutionContext<F>;
+  private __context__: ExecutionContext<F>;
   /** 타이머 ID */
-  #timer: ReturnType<typeof setTimeout> | null = null;
+  private __timer__: ReturnType<typeof setTimeout> | null = null;
   /** 관리 대상 함수 */
-  #function: F;
+  private __function__: F;
   /** 실행 지연 시간 (밀리초) */
-  #delay: number;
+  private __delay__: number;
 
   /**
    * 현재 실행 대기 중인 타이머가 없는지 여부
    * @returns 타이머가 없으면 true, 있으면 false
    */
   get isIdle() {
-    return this.#timer === null;
+    return this.__timer__ === null;
   }
 
   /**
@@ -40,9 +40,9 @@ export class FunctionContext<F extends Fn<any[]>> {
    * @param ms - 실행 지연 시간(밀리초)
    */
   constructor(fn: F, ms: number) {
-    this.#function = fn;
-    this.#delay = ms;
-    this.#context = {
+    this.__function__ = fn;
+    this.__delay__ = ms;
+    this.__context__ = {
       self: undefined,
       args: null,
     };
@@ -52,8 +52,8 @@ export class FunctionContext<F extends Fn<any[]>> {
    * 타이머와 컨텍스트를 초기화
    */
   clear() {
-    this.#clearTimer();
-    this.#clearContext();
+    this.__clearTimer__();
+    this.__clearContext__();
   }
 
   /**
@@ -62,17 +62,17 @@ export class FunctionContext<F extends Fn<any[]>> {
    * @param args - 함수 호출 시 전달할 인자들
    */
   setArguments(self: any, args: Parameters<F>) {
-    this.#context.self = self;
-    this.#context.args = args;
+    this.__context__.self = self;
+    this.__context__.args = args;
   }
 
   /**
    * 현재 컨텍스트로 함수 실행
    */
   execute() {
-    if (this.#context.args === null) return;
-    this.#function.apply(this.#context.self, this.#context.args);
-    this.#clearContext();
+    if (this.__context__.args === null) return;
+    this.__function__.apply(this.__context__.self, this.__context__.args);
+    this.__clearContext__();
   }
 
   /**
@@ -80,13 +80,13 @@ export class FunctionContext<F extends Fn<any[]>> {
    * @param execute - 타이머 완료 시 함수 실행 여부
    */
   schedule(execute?: boolean) {
-    if (this.#timer !== null) clearTimeout(this.#timer);
+    if (this.__timer__ !== null) clearTimeout(this.__timer__);
     const timer = setTimeout(() => {
-      this.#timer = null;
+      this.__timer__ = null;
       if (execute) this.execute();
       this.clear();
-    }, this.#delay);
-    this.#timer = timer;
+    }, this.__delay__);
+    this.__timer__ = timer;
   }
 
   /**
@@ -94,25 +94,25 @@ export class FunctionContext<F extends Fn<any[]>> {
    */
   manualExecute() {
     this.execute();
-    this.#clearTimer();
+    this.__clearTimer__();
   }
 
   /**
    * 함수 실행 컨텍스트 초기화
    * @private
    */
-  #clearContext() {
-    this.#context.self = undefined;
-    this.#context.args = null;
+  private __clearContext__() {
+    this.__context__.self = undefined;
+    this.__context__.args = null;
   }
 
   /**
    * 타이머 취소 및 초기화
    * @private
    */
-  #clearTimer() {
-    if (this.#timer === null) return;
-    clearTimeout(this.#timer);
-    this.#timer = null;
+  private __clearTimer__() {
+    if (this.__timer__ === null) return;
+    clearTimeout(this.__timer__);
+    this.__timer__ = null;
   }
 }

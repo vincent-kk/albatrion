@@ -5,7 +5,7 @@ import { BaseError, type ErrorDetails } from './BaseError';
  * 시간 제한이 있는 비동기 작업에서 사용됨
  */
 export class TimeoutError extends BaseError {
-  static readonly #group = 'TIMEOUT';
+  private static readonly __group__ = 'TIMEOUT';
   /**
    * TimeoutError 생성자
    * @param code - 구체적인 오류 코드
@@ -13,7 +13,7 @@ export class TimeoutError extends BaseError {
    * @param details - 오류 관련 추가 정보
    */
   constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super(TimeoutError.#group, code, message, details);
+    super(TimeoutError.__group__, code, message, details);
     this.name = 'Timeout';
   }
 }

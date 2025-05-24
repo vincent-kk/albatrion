@@ -10,51 +10,51 @@
  */
 export class Murmur3 {
   // Common constants definition
-  static readonly #BYTES_PER_CHUNK = 4; // Bytes per chunk
+  private static readonly __BYTES_PER_CHUNK__ = 4; // Bytes per chunk
 
   // Additional constants for optimization parameters
-  static readonly #CHUNK_UNROLL_SIZE = 4; // Number of chunks to process in one loop unrolling group
-  static readonly #DATAVIEW_CHUNK_SIZE = 8; // Number of chunks to process in DataView optimization
-  static readonly #DATAVIEW_THRESHOLD = 32; // Minimum size in bytes to use DataView optimization
+  private static readonly __CHUNK_UNROLL_SIZE__ = 4; // Number of chunks to process in one loop unrolling group
+  private static readonly __DATAVIEW_CHUNK_SIZE__ = 8; // Number of chunks to process in DataView optimization
+  private static readonly __DATAVIEW_THRESHOLD__ = 32; // Minimum size in bytes to use DataView optimization
 
   // Multiplication constants used in K1 mixing
-  static readonly #M1 = 0x2d51;
-  static readonly #M2 = 0xcc9e0000;
-  static readonly #M3 = 0x3593;
-  static readonly #M4 = 0x1b87;
+  private static readonly __M1__ = 0x2d51;
+  private static readonly __M2__ = 0xcc9e0000;
+  private static readonly __M3__ = 0x3593;
+  private static readonly __M4__ = 0x1b87;
 
   // Constants used in H1 mixing
-  static readonly #H1_ADD = 0xe6546b64;
-  static readonly #H1_MULTIPLY = 5;
+  private static readonly __H1_ADD__ = 0xe6546b64;
+  private static readonly __H1_MULTIPLY__ = 5;
 
   // Finalization multiplication constants
-  static readonly #F1 = 0xca6b;
-  static readonly #F2 = 0x85eb;
-  static readonly #F3 = 0xae35;
-  static readonly #F4 = 0xc2b2;
+  private static readonly __F1__ = 0xca6b;
+  private static readonly __F2__ = 0x85eb;
+  private static readonly __F3__ = 0xae35;
+  private static readonly __F4__ = 0xc2b2;
 
   // Bit rotation constants
-  static readonly #R1 = 15; // For K1 mixing first rotation
-  static readonly #R2 = 17; // For K1 mixing second rotation
-  static readonly #R3 = 13; // For H1 mixing first rotation
-  static readonly #R4 = 19; // For H1 mixing second rotation
-  static readonly #R5 = 16; // For finalization first shift
-  static readonly #R6 = 13; // For finalization second shift
-  static readonly #R7 = 16; // For finalization third shift
+  private static readonly __R1__ = 15; // For K1 mixing first rotation
+  private static readonly __R2__ = 17; // For K1 mixing second rotation
+  private static readonly __R3__ = 13; // For H1 mixing first rotation
+  private static readonly __R4__ = 19; // For H1 mixing second rotation
+  private static readonly __R5__ = 16; // For finalization first shift
+  private static readonly __R6__ = 13; // For finalization second shift
+  private static readonly __R7__ = 16; // For finalization third shift
 
   // Bit mask constants
-  static readonly #MASK_16 = 0xffff; // Lower 16 bits mask
-  static readonly #MASK_16_SHIFT = 0xffff0000; // Upper 16 bits mask
-  static readonly #MASK_8 = 0xff; // Lower 8 bits mask
-  static readonly #MASK_8_SHIFT = 0xff00; // Upper 8 bits mask (within 16 bits)
+  private static readonly __MASK_16__ = 0xffff; // Lower 16 bits mask
+  private static readonly __MASK_16_SHIFT__ = 0xffff0000; // Upper 16 bits mask
+  private static readonly __MASK_8__ = 0xff; // Lower 8 bits mask
+  private static readonly __MASK_8_SHIFT__ = 0xff00; // Upper 8 bits mask (within 16 bits)
 
   // Byte position constants
-  static readonly #BYTE_POS_8 = 8;
-  static readonly #BYTE_POS_16 = 16;
-  static readonly #BYTE_POS_24 = 24;
+  private static readonly __BYTE_POS_8__ = 8;
+  private static readonly __BYTE_POS_16__ = 16;
+  private static readonly __BYTE_POS_24__ = 24;
 
   // Endianness detection static variable
-  static readonly #isLittleEndian =
+  private static readonly __isLittleEndian__ =
     new Uint8Array(new Uint32Array([1]).buffer)[0] === 1;
 
   /**
@@ -63,15 +63,15 @@ export class Murmur3 {
    * @param k1 - The 32-bit value to mix
    * @returns The mixed value
    */
-  static #mixK1(k1: number): number {
+  private static __mixK1__(k1: number): number {
     k1 =
-      ((k1 & Murmur3.#MASK_16) * Murmur3.#M1 +
-        (((k1 >>> 16) * Murmur3.#M2) & Murmur3.#MASK_16_SHIFT)) >>>
+      ((k1 & Murmur3.__MASK_16__) * Murmur3.__M1__ +
+        (((k1 >>> 16) * Murmur3.__M2__) & Murmur3.__MASK_16_SHIFT__)) >>>
       0;
-    k1 = (k1 << Murmur3.#R1) | (k1 >>> Murmur3.#R2);
+    k1 = (k1 << Murmur3.__R1__) | (k1 >>> Murmur3.__R2__);
     k1 =
-      ((k1 & Murmur3.#MASK_16) * Murmur3.#M3 +
-        (((k1 >>> 16) * Murmur3.#M4) & Murmur3.#MASK_16_SHIFT)) >>>
+      ((k1 & Murmur3.__MASK_16__) * Murmur3.__M3__ +
+        (((k1 >>> 16) * Murmur3.__M4__) & Murmur3.__MASK_16_SHIFT__)) >>>
       0;
     return k1;
   }
@@ -83,18 +83,18 @@ export class Murmur3 {
    * @param k1 - Processed block to mix in
    * @returns The updated hash accumulator value
    */
-  static #mixH1(h1: number, k1: number): number {
+  private static __mixH1__(h1: number, k1: number): number {
     h1 ^= k1;
-    h1 = (h1 << Murmur3.#R3) | (h1 >>> Murmur3.#R4);
-    h1 = (h1 * Murmur3.#H1_MULTIPLY + Murmur3.#H1_ADD) >>> 0;
+    h1 = (h1 << Murmur3.__R3__) | (h1 >>> Murmur3.__R4__);
+    h1 = (h1 * Murmur3.__H1_MULTIPLY__ + Murmur3.__H1_ADD__) >>> 0;
     return h1;
   }
 
   // Hash state variables
-  #h1: number = 0; // Hash accumulator
-  #k1: number = 0; // Current block being processed
-  #remainder: number = 0; // Number of bytes remaining from previous hash call (0-3)
-  #length: number = 0; // Total bytes processed
+  private __h1__: number = 0; // Hash accumulator
+  private __k1__: number = 0; // Current block being processed
+  private __remainder__: number = 0; // Number of bytes remaining from previous hash call (0-3)
+  private __length__: number = 0; // Total bytes processed
 
   /**
    * Creates a new Murmur3 hash instance
@@ -116,11 +116,11 @@ export class Murmur3 {
    */
   public hash(input: string | ArrayBuffer | Uint8Array): Murmur3 {
     if (typeof input === 'string') {
-      return this.#processString(input);
+      return this.__processString__(input);
     } else if (input instanceof ArrayBuffer) {
-      return this.#processBytes(new Uint8Array(input));
+      return this.__processBytes__(new Uint8Array(input));
     } else if (input instanceof Uint8Array) {
-      return this.#processBytes(input);
+      return this.__processBytes__(input);
     } else
       throw new TypeError(
         "Murmur3.hash: 'input' must be a string, ArrayBuffer, or Uint8Array",
@@ -134,38 +134,38 @@ export class Murmur3 {
    * @returns This hash instance (for chaining)
    * @private
    */
-  #processString(input: string): Murmur3 {
+  private __processString__(input: string): Murmur3 {
     if (!input || input.length === 0) return this;
 
     // Cache frequently used constants in local variables
-    const BYTES_PER_CHUNK = Murmur3.#BYTES_PER_CHUNK;
-    const BYTE_POS_8 = Murmur3.#BYTE_POS_8;
-    const BYTE_POS_16 = Murmur3.#BYTE_POS_16;
-    const BYTE_POS_24 = Murmur3.#BYTE_POS_24;
-    const MASK_16 = Murmur3.#MASK_16;
-    const MASK_8 = Murmur3.#MASK_8;
-    const MASK_8_SHIFT = Murmur3.#MASK_8_SHIFT;
-    const CHUNK_UNROLL_SIZE = Murmur3.#CHUNK_UNROLL_SIZE;
+    const BYTES_PER_CHUNK = Murmur3.__BYTES_PER_CHUNK__;
+    const BYTE_POS_8 = Murmur3.__BYTE_POS_8__;
+    const BYTE_POS_16 = Murmur3.__BYTE_POS_16__;
+    const BYTE_POS_24 = Murmur3.__BYTE_POS_24__;
+    const MASK_16 = Murmur3.__MASK_16__;
+    const MASK_8 = Murmur3.__MASK_8__;
+    const MASK_8_SHIFT = Murmur3.__MASK_8_SHIFT__;
+    const CHUNK_UNROLL_SIZE = Murmur3.__CHUNK_UNROLL_SIZE__;
 
     const length = input.length;
-    let h1 = this.#h1;
-    let k1 = this.#k1;
+    let h1 = this.__h1__;
+    let k1 = this.__k1__;
     let index = 0;
     let top: number;
 
-    this.#length += length;
+    this.__length__ += length;
 
     // Process remaining bytes from previous hash call
-    if (this.#remainder > 0) {
+    if (this.__remainder__ > 0) {
       // Calculate the number of bytes needed to complete a 4-byte block
-      const needed = BYTES_PER_CHUNK - this.#remainder;
+      const needed = BYTES_PER_CHUNK - this.__remainder__;
       const available = Math.min(needed, length);
 
       // Early return optimization
       if (available <= 0) return this;
 
       // Use switch statement for branch optimization
-      switch (this.#remainder) {
+      switch (this.__remainder__) {
         case 1:
           k1 ^= (input.charCodeAt(index++) & MASK_16) << BYTE_POS_8;
           if (available > 1) {
@@ -193,16 +193,16 @@ export class Murmur3 {
       }
 
       // Process the completed 4-byte block
-      if (this.#remainder + available >= BYTES_PER_CHUNK) {
-        k1 = Murmur3.#mixK1(k1);
-        h1 = Murmur3.#mixH1(h1, k1);
+      if (this.__remainder__ + available >= BYTES_PER_CHUNK) {
+        k1 = Murmur3.__mixK1__(k1);
+        h1 = Murmur3.__mixH1__(h1, k1);
         k1 = 0;
-        this.#remainder = 0;
+        this.__remainder__ = 0;
       } else {
         // Update remainder if a complete block could not be formed
-        this.#remainder += available;
-        this.#k1 = k1;
-        this.#h1 = h1;
+        this.__remainder__ += available;
+        this.__k1__ = k1;
+        this.__h1__ = h1;
         return this;
       }
     }
@@ -226,8 +226,8 @@ export class Murmur3 {
       k1 |=
         ((top & MASK_8) << BYTE_POS_24) | ((top & MASK_8_SHIFT) >> BYTE_POS_8);
       index += BYTES_PER_CHUNK;
-      k1 = Murmur3.#mixK1(k1);
-      h1 = Murmur3.#mixH1(h1, k1);
+      k1 = Murmur3.__mixK1__(k1);
+      h1 = Murmur3.__mixH1__(h1, k1);
 
       // Second chunk
       k1 =
@@ -238,8 +238,8 @@ export class Murmur3 {
       k1 |=
         ((top & MASK_8) << BYTE_POS_24) | ((top & MASK_8_SHIFT) >> BYTE_POS_8);
       index += BYTES_PER_CHUNK;
-      k1 = Murmur3.#mixK1(k1);
-      h1 = Murmur3.#mixH1(h1, k1);
+      k1 = Murmur3.__mixK1__(k1);
+      h1 = Murmur3.__mixH1__(h1, k1);
 
       // Third chunk
       k1 =
@@ -250,8 +250,8 @@ export class Murmur3 {
       k1 |=
         ((top & MASK_8) << BYTE_POS_24) | ((top & MASK_8_SHIFT) >> BYTE_POS_8);
       index += BYTES_PER_CHUNK;
-      k1 = Murmur3.#mixK1(k1);
-      h1 = Murmur3.#mixH1(h1, k1);
+      k1 = Murmur3.__mixK1__(k1);
+      h1 = Murmur3.__mixH1__(h1, k1);
 
       // Fourth chunk
       k1 =
@@ -262,8 +262,8 @@ export class Murmur3 {
       k1 |=
         ((top & MASK_8) << BYTE_POS_24) | ((top & MASK_8_SHIFT) >> BYTE_POS_8);
       index += BYTES_PER_CHUNK;
-      k1 = Murmur3.#mixK1(k1);
-      h1 = Murmur3.#mixH1(h1, k1);
+      k1 = Murmur3.__mixK1__(k1);
+      h1 = Murmur3.__mixH1__(h1, k1);
     }
 
     // Process remaining individual chunks
@@ -276,30 +276,30 @@ export class Murmur3 {
       k1 |=
         ((top & MASK_8) << BYTE_POS_24) | ((top & MASK_8_SHIFT) >> BYTE_POS_8);
       index += BYTES_PER_CHUNK;
-      k1 = Murmur3.#mixK1(k1);
-      h1 = Murmur3.#mixH1(h1, k1);
+      k1 = Murmur3.__mixK1__(k1);
+      h1 = Murmur3.__mixH1__(h1, k1);
     }
 
     // Process remaining 1-3 bytes (will be finalized in result())
-    this.#remainder = remaining % BYTES_PER_CHUNK;
+    this.__remainder__ = remaining % BYTES_PER_CHUNK;
     k1 = 0;
-    if (this.#remainder > 0) {
+    if (this.__remainder__ > 0) {
       // Optimize conditional branches
-      const startIdx = length - this.#remainder;
+      const startIdx = length - this.__remainder__;
       k1 ^= input.charCodeAt(startIdx) & MASK_16;
 
-      if (this.#remainder > 1) {
+      if (this.__remainder__ > 1) {
         k1 ^= (input.charCodeAt(startIdx + 1) & MASK_16) << BYTE_POS_8;
 
-        if (this.#remainder > 2) {
+        if (this.__remainder__ > 2) {
           k1 ^= (input.charCodeAt(startIdx + 2) & MASK_16) << BYTE_POS_16;
         }
       }
     }
 
     // Update hash state
-    this.#h1 = h1;
-    this.#k1 = k1;
+    this.__h1__ = h1;
+    this.__k1__ = k1;
     return this;
   }
 
@@ -310,30 +310,30 @@ export class Murmur3 {
    * @returns This hash instance (for chaining)
    * @private
    */
-  #processBytes(bytes: Uint8Array): Murmur3 {
+  private __processBytes__(bytes: Uint8Array): Murmur3 {
     if (!bytes.length) return this;
 
     // Cache frequently used constants in local variables
-    const BYTES_PER_CHUNK = Murmur3.#BYTES_PER_CHUNK;
-    const BYTE_POS_8 = Murmur3.#BYTE_POS_8;
-    const BYTE_POS_16 = Murmur3.#BYTE_POS_16;
-    const BYTE_POS_24 = Murmur3.#BYTE_POS_24;
-    const CHUNK_UNROLL_SIZE = Murmur3.#CHUNK_UNROLL_SIZE;
-    const DATAVIEW_CHUNK_SIZE = Murmur3.#DATAVIEW_CHUNK_SIZE;
-    const DATAVIEW_THRESHOLD = Murmur3.#DATAVIEW_THRESHOLD;
-    const isLittleEndian = Murmur3.#isLittleEndian;
+    const BYTES_PER_CHUNK = Murmur3.__BYTES_PER_CHUNK__;
+    const BYTE_POS_8 = Murmur3.__BYTE_POS_8__;
+    const BYTE_POS_16 = Murmur3.__BYTE_POS_16__;
+    const BYTE_POS_24 = Murmur3.__BYTE_POS_24__;
+    const CHUNK_UNROLL_SIZE = Murmur3.__CHUNK_UNROLL_SIZE__;
+    const DATAVIEW_CHUNK_SIZE = Murmur3.__DATAVIEW_CHUNK_SIZE__;
+    const DATAVIEW_THRESHOLD = Murmur3.__DATAVIEW_THRESHOLD__;
+    const isLittleEndian = Murmur3.__isLittleEndian__;
 
-    let h1 = this.#h1;
-    let k1 = this.#k1;
+    let h1 = this.__h1__;
+    let k1 = this.__k1__;
     const length = bytes.length;
     let index = 0;
 
-    this.#length += length;
+    this.__length__ += length;
 
     // Process remaining bytes from previous hash call
-    if (this.#remainder > 0) {
+    if (this.__remainder__ > 0) {
       // Calculate the number of bytes needed to complete a 4-byte block
-      const needed = BYTES_PER_CHUNK - this.#remainder;
+      const needed = BYTES_PER_CHUNK - this.__remainder__;
       const available = Math.min(needed, length);
 
       // Early return optimization
@@ -342,7 +342,7 @@ export class Murmur3 {
       }
 
       // Use switch statement for branch optimization
-      switch (this.#remainder) {
+      switch (this.__remainder__) {
         case 1:
           k1 ^= bytes[index++] << BYTE_POS_8;
           if (available > 1) {
@@ -360,16 +360,16 @@ export class Murmur3 {
       }
 
       // Process the completed 4-byte block
-      if (this.#remainder + available >= BYTES_PER_CHUNK) {
-        k1 = Murmur3.#mixK1(k1);
-        h1 = Murmur3.#mixH1(h1, k1);
+      if (this.__remainder__ + available >= BYTES_PER_CHUNK) {
+        k1 = Murmur3.__mixK1__(k1);
+        h1 = Murmur3.__mixH1__(h1, k1);
         k1 = 0;
-        this.#remainder = 0;
+        this.__remainder__ = 0;
       } else {
         // Update remainder if a complete block could not be formed
-        this.#remainder += available;
-        this.#k1 = k1;
-        this.#h1 = h1;
+        this.__remainder__ += available;
+        this.__k1__ = k1;
+        this.__h1__ = h1;
         return this;
       }
     }
@@ -403,8 +403,8 @@ export class Murmur3 {
               (bytes[index + (i + j) * BYTES_PER_CHUNK + 2] << BYTE_POS_16) |
               (bytes[index + (i + j) * BYTES_PER_CHUNK + 3] << BYTE_POS_24);
 
-          k1 = Murmur3.#mixK1(k1);
-          h1 = Murmur3.#mixH1(h1, k1);
+          k1 = Murmur3.__mixK1__(k1);
+          h1 = Murmur3.__mixH1__(h1, k1);
         }
       }
 
@@ -420,8 +420,8 @@ export class Murmur3 {
             (bytes[index + 3] << BYTE_POS_24);
 
         index += BYTES_PER_CHUNK;
-        k1 = Murmur3.#mixK1(k1);
-        h1 = Murmur3.#mixH1(h1, k1);
+        k1 = Murmur3.__mixK1__(k1);
+        h1 = Murmur3.__mixH1__(h1, k1);
       }
     } else {
       // Standard chunk processing (for unaligned or small data)
@@ -437,8 +437,8 @@ export class Murmur3 {
           (bytes[index + 2] << BYTE_POS_16) |
           (bytes[index + 3] << BYTE_POS_24);
         index += BYTES_PER_CHUNK;
-        k1 = Murmur3.#mixK1(k1);
-        h1 = Murmur3.#mixH1(h1, k1);
+        k1 = Murmur3.__mixK1__(k1);
+        h1 = Murmur3.__mixH1__(h1, k1);
 
         // Second chunk
         k1 =
@@ -447,8 +447,8 @@ export class Murmur3 {
           (bytes[index + 2] << BYTE_POS_16) |
           (bytes[index + 3] << BYTE_POS_24);
         index += BYTES_PER_CHUNK;
-        k1 = Murmur3.#mixK1(k1);
-        h1 = Murmur3.#mixH1(h1, k1);
+        k1 = Murmur3.__mixK1__(k1);
+        h1 = Murmur3.__mixH1__(h1, k1);
 
         // Third chunk
         k1 =
@@ -457,8 +457,8 @@ export class Murmur3 {
           (bytes[index + 2] << BYTE_POS_16) |
           (bytes[index + 3] << BYTE_POS_24);
         index += BYTES_PER_CHUNK;
-        k1 = Murmur3.#mixK1(k1);
-        h1 = Murmur3.#mixH1(h1, k1);
+        k1 = Murmur3.__mixK1__(k1);
+        h1 = Murmur3.__mixH1__(h1, k1);
 
         // Fourth chunk
         k1 =
@@ -467,8 +467,8 @@ export class Murmur3 {
           (bytes[index + 2] << BYTE_POS_16) |
           (bytes[index + 3] << BYTE_POS_24);
         index += BYTES_PER_CHUNK;
-        k1 = Murmur3.#mixK1(k1);
-        h1 = Murmur3.#mixH1(h1, k1);
+        k1 = Murmur3.__mixK1__(k1);
+        h1 = Murmur3.__mixH1__(h1, k1);
       }
 
       // Process remaining individual chunks
@@ -479,31 +479,31 @@ export class Murmur3 {
           (bytes[index + 2] << BYTE_POS_16) |
           (bytes[index + 3] << BYTE_POS_24);
         index += BYTES_PER_CHUNK;
-        k1 = Murmur3.#mixK1(k1);
-        h1 = Murmur3.#mixH1(h1, k1);
+        k1 = Murmur3.__mixK1__(k1);
+        h1 = Murmur3.__mixH1__(h1, k1);
       }
     }
 
     // Process remaining 1-3 bytes (will be finalized in result())
-    this.#remainder = remaining % BYTES_PER_CHUNK;
+    this.__remainder__ = remaining % BYTES_PER_CHUNK;
     k1 = 0;
-    if (this.#remainder > 0) {
+    if (this.__remainder__ > 0) {
       // Optimize conditional branches
-      const startIdx = length - this.#remainder;
+      const startIdx = length - this.__remainder__;
       k1 ^= bytes[startIdx];
 
-      if (this.#remainder > 1) {
+      if (this.__remainder__ > 1) {
         k1 ^= bytes[startIdx + 1] << BYTE_POS_8;
 
-        if (this.#remainder > 2) {
+        if (this.__remainder__ > 2) {
           k1 ^= bytes[startIdx + 2] << BYTE_POS_16;
         }
       }
     }
 
     // Update hash state
-    this.#h1 = h1;
-    this.#k1 = k1;
+    this.__h1__ = h1;
+    this.__k1__ = k1;
     return this;
   }
 
@@ -514,28 +514,28 @@ export class Murmur3 {
    */
   public result(): number {
     // Create copies of state variables (preserving original state)
-    let k1 = this.#k1;
-    let h1 = this.#h1;
+    let k1 = this.__k1__;
+    let h1 = this.__h1__;
 
     // Process any remaining bytes
     if (k1 > 0) {
-      k1 = Murmur3.#mixK1(k1);
+      k1 = Murmur3.__mixK1__(k1);
       h1 ^= k1;
     }
 
     // Finalization
-    h1 ^= this.#length;
+    h1 ^= this.__length__;
 
     // Avalanche bits (constant caching)
-    const MASK_16 = Murmur3.#MASK_16;
-    const MASK_16_SHIFT = Murmur3.#MASK_16_SHIFT;
-    const R5 = Murmur3.#R5;
-    const R6 = Murmur3.#R6;
-    const R7 = Murmur3.#R7;
-    const F1 = Murmur3.#F1;
-    const F2 = Murmur3.#F2;
-    const F3 = Murmur3.#F3;
-    const F4 = Murmur3.#F4;
+    const MASK_16 = Murmur3.__MASK_16__;
+    const MASK_16_SHIFT = Murmur3.__MASK_16_SHIFT__;
+    const R5 = Murmur3.__R5__;
+    const R6 = Murmur3.__R6__;
+    const R7 = Murmur3.__R7__;
+    const F1 = Murmur3.__F1__;
+    const F2 = Murmur3.__F2__;
+    const F3 = Murmur3.__F3__;
+    const F4 = Murmur3.__F4__;
 
     h1 ^= h1 >>> R5;
     h1 = ((h1 & MASK_16) * F1 + (((h1 >>> 16) * F2) & MASK_16_SHIFT)) >>> 0;
@@ -558,10 +558,10 @@ export class Murmur3 {
     if (typeof seed !== 'number')
       throw new TypeError("Murmur3.reset: 'seed' must be a number");
 
-    this.#h1 = seed >>> 0;
-    this.#k1 = 0;
-    this.#remainder = 0;
-    this.#length = 0;
+    this.__h1__ = seed >>> 0;
+    this.__k1__ = 0;
+    this.__remainder__ = 0;
+    this.__length__ = 0;
     return this;
   }
 
