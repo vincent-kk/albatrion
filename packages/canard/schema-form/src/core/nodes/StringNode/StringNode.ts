@@ -16,13 +16,13 @@ import {
  * 문자열 값을 관리하고 파싱합니다.
  */
 export class StringNode extends AbstractNode<StringSchema, StringValue> {
-  private __value__: StringValue | undefined = undefined;
+  #value: StringValue | undefined = undefined;
   /**
    * 문자열 노드의 값을 가져옵니다.
    * @returns 문자열 값 또는 undefined
    */
   public override get value() {
-    return this.__value__;
+    return this.#value;
   }
   /**
    * 문자열 노드의 값을 설정합니다.
@@ -41,7 +41,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     input: StringValue | undefined,
     option: UnionSetValueOption,
   ) {
-    this.__emitChange__(input, option);
+    this.#emitChange(input, option);
   }
 
   protected override onChange: Fn<[input: StringValue | undefined]>;
@@ -71,10 +71,10 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
 
     this.onChange =
       this.jsonSchema.options?.omitEmpty !== false
-        ? this.__onChangeWithOmitEmpty__
+        ? this.onChangeWithOmitEmpty
         : super.onChange;
 
-    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
+    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
     this.activate();
   }
 
@@ -83,15 +83,15 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
    * @param input - 설정할 값
    * @param option - 설정 옵션
    */
-  private __emitChange__(
+  #emitChange(
     this: StringNode,
     input: StringValue | undefined,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
-    const previous = this.__value__;
-    const current = this.__parseValue__(input);
+    const previous = this.#value;
+    const current = this.#parseValue(input);
     if (previous === current) return;
-    this.__value__ = current;
+    this.#value = current;
 
     if (option & SetValueOption.EmitChange) this.onChange(current);
     if (option & SetValueOption.Refresh) this.refresh(current);
@@ -113,11 +113,11 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
    * @param input - 분석할 값
    * @returns 분석된 문자열 값
    */
-  private __parseValue__(this: StringNode, input: StringValue | undefined) {
+  #parseValue(this: StringNode, input: StringValue | undefined) {
     return parseString(input);
   }
 
-  private __onChangeWithOmitEmpty__(
+  private onChangeWithOmitEmpty(
     this: StringNode,
     input: StringValue | undefined,
   ) {

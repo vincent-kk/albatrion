@@ -29,40 +29,40 @@ interface RenderKit {
 }
 
 export class PluginManager {
-  static __renderKit__: RenderKit = {
+  static #renderKit: RenderKit = {
     FormGroup: FormGroupRenderer,
     FormLabel: FormLabelRenderer,
     FormInput: FormInputRenderer,
     FormError: FormErrorRenderer,
     formatError: formatError,
   };
-  static __formTypeInputDefinitions__: NormalizedFormTypeInputDefinition[] =
+  static #formTypeInputDefinitions: NormalizedFormTypeInputDefinition[] =
     normalizeFormTypeInputDefinitions(formTypeDefinitions);
 
   static get FormGroup() {
-    return PluginManager.__renderKit__.FormGroup;
+    return PluginManager.#renderKit.FormGroup;
   }
   static get FormLabel() {
-    return PluginManager.__renderKit__.FormLabel;
+    return PluginManager.#renderKit.FormLabel;
   }
   static get FormInput() {
-    return PluginManager.__renderKit__.FormInput;
+    return PluginManager.#renderKit.FormInput;
   }
   static get FormError() {
-    return PluginManager.__renderKit__.FormError;
+    return PluginManager.#renderKit.FormError;
   }
   static get formatError() {
-    return PluginManager.__renderKit__.formatError;
+    return PluginManager.#renderKit.formatError;
   }
   static get formTypeInputDefinitions() {
-    return PluginManager.__formTypeInputDefinitions__;
+    return PluginManager.#formTypeInputDefinitions;
   }
 
   static appendRenderKit(renderKit: Partial<RenderKit> | undefined) {
     if (!renderKit) return;
     const { formatError, ...FromTypes } = renderKit;
-    PluginManager.__renderKit__ = {
-      ...PluginManager.__renderKit__,
+    PluginManager.#renderKit = {
+      ...PluginManager.#renderKit,
       ...remainOnlyReactComponent(FromTypes),
       ...(formatError && { formatError }),
     };
@@ -71,9 +71,9 @@ export class PluginManager {
     formTypeInputDefinitions: FormTypeInputDefinition[] | undefined,
   ) {
     if (!formTypeInputDefinitions) return;
-    PluginManager.__formTypeInputDefinitions__ = [
+    PluginManager.#formTypeInputDefinitions = [
       ...normalizeFormTypeInputDefinitions(formTypeInputDefinitions),
-      ...PluginManager.__formTypeInputDefinitions__,
+      ...PluginManager.#formTypeInputDefinitions,
     ];
   }
 }

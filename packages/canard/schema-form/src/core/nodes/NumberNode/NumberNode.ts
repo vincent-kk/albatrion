@@ -16,13 +16,13 @@ import {
  * 숫자 값(정수 또는 부동소수점)을 관리하고 파싱합니다.
  */
 export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
-  private __value__: NumberValue | undefined = undefined;
+  #value: NumberValue | undefined = undefined;
   /**
    * 숫자 노드의 값을 가져옵니다.
    * @returns 숫자 값 또는 undefined
    */
   public override get value() {
-    return this.__value__;
+    return this.#value;
   }
   /**
    * 숫자 노드의 값을 설정합니다.
@@ -41,7 +41,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     input: NumberValue | undefined,
     option: UnionSetValueOption,
   ) {
-    this.__emitChange__(input, option);
+    this.#emitChange(input, option);
   }
 
   protected override onChange: Fn<[input: NumberValue | undefined]>;
@@ -71,10 +71,10 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
 
     this.onChange =
       this.jsonSchema.options?.omitEmpty !== false
-        ? this.__onChangeWithOmitEmpty__
+        ? this.onChangeWithOmitEmpty
         : super.onChange;
 
-    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
+    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
     this.activate();
   }
 
@@ -83,15 +83,15 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
    * @param input - 설정할 값
    * @param option - 설정 옵션
    */
-  private __emitChange__(
+  #emitChange(
     this: NumberNode,
     input: NumberValue | undefined,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
-    const previous = this.__value__;
-    const current = this.__parseValue__(input);
+    const previous = this.#value;
+    const current = this.#parseValue(input);
     if (previous === current) return;
-    this.__value__ = current;
+    this.#value = current;
 
     if (option & SetValueOption.EmitChange) this.onChange(current);
     if (option & SetValueOption.Refresh) this.refresh(current);
@@ -113,11 +113,11 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
    * @param input - 분석할 값
    * @returns 분석된 숫자 값
    */
-  private __parseValue__(this: NumberNode, input: NumberValue | undefined) {
+  #parseValue(this: NumberNode, input: NumberValue | undefined) {
     return parseNumber(input, this.jsonSchema.type === 'integer');
   }
 
-  private __onChangeWithOmitEmpty__(
+  private onChangeWithOmitEmpty(
     this: NumberNode,
     input: NumberValue | undefined,
   ) {

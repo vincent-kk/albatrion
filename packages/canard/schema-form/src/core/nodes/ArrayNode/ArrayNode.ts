@@ -22,14 +22,14 @@ import { omitEmptyArray } from './utils';
  * 배열의 각 요소를 관리하고 추가/삭제/업데이트 기능을 제공합니다.
  */
 export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
-  private __strategy__: ArrayNodeStrategy;
+  #strategy: ArrayNodeStrategy;
 
   /**
    * 배열 노드의 값을 가져옵니다.
    * @returns 배열 값 또는 undefined
    */
   public override get value() {
-    return this.__strategy__.value;
+    return this.#strategy.value;
   }
   /**
    * 배열 노드의 값을 설정합니다.
@@ -48,7 +48,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     input: ArrayValue,
     option: UnionSetValueOption,
   ) {
-    this.__strategy__.applyValue(input, option);
+    this.#strategy.applyValue(input, option);
   }
 
   /** ArrayNode의 자식 노드들 */
@@ -57,7 +57,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns 자식 노드 목록
    */
   public override get children() {
-    return this.__strategy__.children;
+    return this.#strategy.children;
   }
 
   /**
@@ -65,7 +65,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns 배열의 길이
    */
   public get length() {
-    return this.__strategy__.length;
+    return this.#strategy.length;
   }
 
   /**
@@ -75,7 +75,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    */
   public override activate(this: ArrayNode, actor?: SchemaNode): boolean {
     if (super.activate(actor)) {
-      this.__strategy__.activate?.();
+      this.#strategy.activate?.();
       return true;
     }
     return false;
@@ -111,7 +111,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
         ? (value?: ArrayValue) => super.onChange(value)
         : (value?: ArrayValue) => super.onChange(omitEmptyArray(value));
     this.onChange = handleChange;
-    this.__strategy__ = this.__createStrategy__(handleChange, nodeFactory);
+    this.#strategy = this.#createStrategy(handleChange, nodeFactory);
     this.activate();
   }
 
@@ -121,7 +121,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns 자기 자신(this)을 반환하여 체이닝 지원
    */
   public push(this: ArrayNode, data?: ArrayValue[number]) {
-    this.__strategy__.push(data);
+    this.#strategy.push(data);
     return this;
   }
 
@@ -136,7 +136,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     id: IndexId | number,
     data: ArrayValue[number],
   ) {
-    this.__strategy__.update(id, data);
+    this.#strategy.update(id, data);
     return this;
   }
 
@@ -146,7 +146,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns 자기 자신(this)을 반환하여 체이닝 지원
    */
   public remove(this: ArrayNode, id: IndexId | number) {
-    this.__strategy__.remove(id);
+    this.#strategy.remove(id);
     return this;
   }
 
@@ -155,7 +155,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns 자기 자신(this)을 반환하여 체이닝 지원
    */
   public clear(this: ArrayNode) {
-    this.__strategy__.clear();
+    this.#strategy.clear();
     return this;
   }
 
@@ -164,7 +164,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @param nodeFactory - 노드 팩토리
    * @returns 생성된 전략: TerminalStrategy | BranchStrategy
    */
-  private __createStrategy__(
+  #createStrategy(
     handleChange: Fn<[input: ArrayValue | undefined]>,
     nodeFactory: SchemaNodeFactory,
   ) {

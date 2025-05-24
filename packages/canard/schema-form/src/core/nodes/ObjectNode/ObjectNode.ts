@@ -21,14 +21,14 @@ import { omitEmptyObject } from './utils';
  * 객체의 프로퍼티를 관리하고 oneOf와 같은 복잡한 스키마를 처리합니다.
  */
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
-  private __strategy__: ObjectNodeStrategy;
+  #strategy: ObjectNodeStrategy;
 
   /**
    * 객체 노드의 자식 노드들을 가져옵니다.
    * @returns 자식 노드 목록
    */
   public override get children() {
-    return this.__strategy__.children;
+    return this.#strategy.children;
   }
 
   /**
@@ -36,7 +36,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * @returns 객체 값 또는 undefined
    */
   public override get value() {
-    return this.__strategy__.value;
+    return this.#strategy.value;
   }
   /**
    * 객체 노드의 값을 설정합니다.
@@ -55,7 +55,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     input: ObjectValue,
     option: UnionSetValueOption,
   ) {
-    this.__strategy__.applyValue(input, option);
+    this.#strategy.applyValue(input, option);
   }
 
   /**
@@ -65,13 +65,11 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    */
   public override activate(this: ObjectNode, actor?: SchemaNode): boolean {
     if (super.activate(actor)) {
-      this.__strategy__.activate?.();
+      this.#strategy.activate?.();
       return true;
     }
     return false;
   }
-
-  protected override onChange: Fn<[input: ObjectValue | undefined]>;
 
   constructor({
     key,
@@ -101,7 +99,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         ? (value?: ObjectValue) => super.onChange(value)
         : (value?: ObjectValue) => super.onChange(omitEmptyObject(value));
     this.onChange = handleChange;
-    this.__strategy__ = this.__createStrategy__(handleChange, nodeFactory);
+    this.#strategy = this.#createStrategy(handleChange, nodeFactory);
     this.activate();
   }
 
@@ -110,7 +108,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * @param nodeFactory - 노드 팩토리
    * @returns 생성된 전략: TerminalStrategy | BranchStrategy
    */
-  private __createStrategy__(
+  #createStrategy(
     handleChange: Fn<[input: ObjectValue | undefined]>,
     nodeFactory: SchemaNodeFactory,
   ) {

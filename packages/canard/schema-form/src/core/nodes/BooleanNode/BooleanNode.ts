@@ -14,13 +14,13 @@ import {
  * 부울린 값을 관리하고 파싱합니다.
  */
 export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
-  private __value__: BooleanValue | undefined = undefined;
+  #value: BooleanValue | undefined = undefined;
   /**
    * 부울린 노드의 값을 가져옵니다.
    * @returns 부울린 값 또는 undefined
    */
   public override get value() {
-    return this.__value__;
+    return this.#value;
   }
   /**
    * 부울린 노드의 값을 설정합니다.
@@ -39,7 +39,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
     input: BooleanValue | undefined,
     option: UnionSetValueOption,
   ) {
-    this.__emitChange__(input, option);
+    this.#emitChange(input, option);
   }
 
   constructor({
@@ -64,7 +64,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
       required,
       ajv,
     });
-    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
+    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
     this.activate();
   }
 
@@ -73,15 +73,15 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
    * @param input - 설정할 값
    * @param option - 설정 옵션
    */
-  private __emitChange__(
+  #emitChange(
     this: BooleanNode,
     input: BooleanValue | undefined,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
-    const previous = this.__value__;
-    const current = this.__parseValue__(input);
+    const previous = this.#value;
+    const current = this.#parseValue(input);
     if (previous === current) return;
-    this.__value__ = current;
+    this.#value = current;
 
     if (option & SetValueOption.EmitChange) this.onChange(current);
     if (option & SetValueOption.Refresh) this.refresh(current);
@@ -103,7 +103,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
    * @param input - 분석할 값
    * @returns 분석된 부울린 값
    */
-  private __parseValue__(this: BooleanNode, input: BooleanValue | undefined) {
+  #parseValue(this: BooleanNode, input: BooleanValue | undefined) {
     return parseBoolean(input);
   }
 }
