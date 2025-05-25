@@ -154,6 +154,12 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     this.__emitChange__(value);
   }
 
+  /** Removes the last element from the array. */
+  public pop() {
+    if (this.__value__ === undefined || this.length === 0) return;
+    this.remove(this.length - 1);
+  }
+
   /** Clears all elements to initialize the array. */
   public clear() {
     this.__ids__ = [];

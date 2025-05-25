@@ -135,6 +135,15 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   }
 
   /**
+   * Removes the last element from the array.
+   * @returns Returns itself (this) for method chaining
+   */
+  public pop(this: ArrayNode) {
+    this.#strategy.pop();
+    return this;
+  }
+
+  /**
    * Updates the value of a specific element.
    * @param id - ID or index of the element to update
    * @param data - New value

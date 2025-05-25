@@ -48,6 +48,8 @@ export interface ArrayNodeStrategy {
    * @param id - ID or index of the element to remove
    */
   remove(id: IndexId | number): void;
+  /** Removes the last element from the array. */
+  pop(): void;
   /** Clears all elements to initialize the array. */
   clear(): void;
   /** Activates pub-sub links for child nodes. */

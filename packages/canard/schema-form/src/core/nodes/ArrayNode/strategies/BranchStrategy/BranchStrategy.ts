@@ -224,6 +224,12 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__publishUpdateChildren__();
   }
 
+  /** Removes the last element from the array. */
+  public pop() {
+    if (this.length === 0) return;
+    this.remove(this.length - 1);
+  }
+
   /** Clears all elements to initialize the array. */
   public clear() {
     for (let i = 0; i < this.__ids__.length; i++)
