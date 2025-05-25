@@ -1,5 +1,11 @@
 import { map } from '@/common-utils/utils/array';
 
+/**
+ * Print an error message to the console
+ * @param title - The title of the error
+ * @param message - The message to print
+ * @param options - The options for the error
+ */
 export const printError = (
   title: string,
   message: string[],

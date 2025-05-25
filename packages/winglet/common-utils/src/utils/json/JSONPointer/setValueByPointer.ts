@@ -8,15 +8,15 @@ import { JSONPointerError } from './utils/error';
 import { setValue } from './utils/setValue';
 
 /**
- * JSON 포인터를 사용하여 객체의 특정 위치에 값을 설정하는 함수
- * RFC 6901 규격에 따른 JSON 포인터를 지원함
+ * Function to set a value at a specific location in an object using JSON Pointer
+ * Supports JSON Pointer according to RFC 6901 specification
  *
- * @template Input - 입력 객체 타입
- * @param input - 값을 설정할 대상 객체
- * @param pointer - JSON 포인터 (문자열 또는 문자열 배열)
- * @param value - 설정할 값
- * @returns 변경된 객체
- * @throws {JSONPointerError} 입력이 유효하지 않거나 포인터가 유효하지 않은 경우
+ * @template Input - Input object type
+ * @param input - Target object to set value in
+ * @param pointer - JSON Pointer (string or string array)
+ * @param value - Value to set
+ * @returns Modified object
+ * @throws {JSONPointerError} When input is invalid or pointer is invalid
  */
 export const setValueByPointer = <Input extends Dictionary>(
   input: Input,

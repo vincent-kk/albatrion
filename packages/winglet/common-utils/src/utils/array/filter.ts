@@ -1,9 +1,9 @@
 /**
- * 배열의 각 요소에 콜백 함수를 적용하여 새로운 배열을 만드는 함수
- * @template Type - 입력 배열 요소의 타입
- * @param array - 필터링할 원본 배열
- * @param callback - 각 요소에 적용할 필터링 함수
- * @returns 필터링된 새 배열
+ * Function to apply a callback function to each element of an array to create a new array
+ * @template Type - Type of input array elements
+ * @param array - Source array to filter
+ * @param callback - Filtering function to apply to each element
+ * @returns New filtered array
  */
 export const filter = <Type>(
   array: Type[],

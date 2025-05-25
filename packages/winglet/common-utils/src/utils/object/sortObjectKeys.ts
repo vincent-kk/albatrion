@@ -1,13 +1,13 @@
 import type { Dictionary, Nullish } from '@aileron/declare';
 
 /**
- * 객체의 키를 지정된 순서대로 정렬합니다.
+ * Sorts an object's keys in the specified order.
  *
- * @template Dict - 딕셔너리 타입
- * @param object - 정렬할 객체
- * @param keys - 정렬 순서를 지정하는 키 배열
- * @param omitUndefined - undefined 값을 가진 속성을 제외할지 여부 (선택사항)
- * @returns 정렬된 키를 가진 새로운 객체
+ * @template Dict - Dictionary type
+ * @param object - Object to sort
+ * @param keys - Array of keys specifying the sort order
+ * @param omitUndefined - Whether to exclude properties with undefined values (optional)
+ * @returns New object with sorted keys
  *
  * @example
  * sortObjectKeys({c: 3, a: 1, b: 2}, ['a', 'b', 'c']); // {a: 1, b: 2, c: 3}

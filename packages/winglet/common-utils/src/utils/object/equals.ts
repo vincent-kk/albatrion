@@ -1,19 +1,19 @@
 import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 
 /**
- * 두 값이 깊은 수준까지 동일한지 비교합니다. (최적화 버전)
- * 객체와 배열의 내용을 반복적으로 비교하며, NaN === NaN 도 true로 처리합니다.
+ * Compares two values for deep equality. (Optimized version)
+ * Recursively compares the contents of objects and arrays, and also treats NaN === NaN as true.
  *
- * @param left - 비교할 첫 번째 값
- * @param right - 비교할 두 번째 값
- * @param omit - 비교 시 제외할 속성 키의 집합 또는 배열 (선택사항)
- * @returns 두 값이 동일하면 true, 그렇지 않으면 false
+ * @param left - First value to compare
+ * @param right - Second value to compare
+ * @param omit - Set or array of property keys to exclude from comparison (optional)
+ * @returns true if the two values are equal, false otherwise
  *
  * @example
  * equals({a: 1, b: 2}, {a: 1, b: 2}); // true
  * equals({a: 1, b: NaN}, {a: 1, b: NaN}); // true
  * equals({a: 1, b: 2}, {a: 1, b: 3}); // false
- * equals({a: 1, b: 2, c: 3}, {a: 1, b: 2}, ['c']); // true (c 속성 무시)
+ * equals({a: 1, b: 2, c: 3}, {a: 1, b: 2}, ['c']); // true (ignores 'c' property)
  */
 export const equals = (
   left: unknown,
@@ -25,12 +25,12 @@ export const equals = (
 };
 
 /**
- * 두 값의 깊은 동등성을 재귀적으로 비교합니다.
+ * Recursively compares the deep equality of two values.
  *
- * @param left - 비교할 첫 번째 값
- * @param right - 비교할 두 번째 값
- * @param omits - 비교 시 제외할 속성 키 집합
- * @returns 두 값이 동일하면 true, 그렇지 않으면 false
+ * @param left - First value to compare
+ * @param right - Second value to compare
+ * @param omits - Set of property keys to exclude from comparison
+ * @returns true if the two values are equal, false otherwise
  */
 const equalsRecursive = (
   left: unknown,

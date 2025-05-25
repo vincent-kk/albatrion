@@ -1,15 +1,15 @@
 import { isArray, isPlainObject } from '@/common-utils/utils/filter';
 
 /**
- * 두 객체를 깊은 수준까지 병합합니다.
- * 소스 객체의 속성은 대상 객체의 속성을 덮어씁니다.
- * 두 객체 모두 중첩된 객체나 배열을 가진 경우 재귀적으로 병합합니다.
+ * Deeply merges two objects.
+ * Properties from the source object overwrite properties of the target object.
+ * When both objects have nested objects or arrays, they are merged recursively.
  *
- * @template T - 대상 객체 타입
- * @template S - 소스 객체 타입
- * @param target - 병합 대상 객체
- * @param source - 병합할 소스 객체
- * @returns 병합된 객체
+ * @template T - Target object type
+ * @template S - Source object type
+ * @param target - Target object to merge into
+ * @param source - Source object to merge from
+ * @returns Merged object
  *
  * @example
  * merge({a: 1, b: {c: 2}}, {b: {d: 3}, e: 4}); // {a: 1, b: {c: 2, d: 3}, e: 4}

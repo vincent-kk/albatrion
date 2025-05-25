@@ -1,43 +1,43 @@
 import type { Fn } from '@aileron/declare';
 
 /**
- * 함수 실행 컨텍스트를 저장하는 인터페이스
- * @template F - 함수 타입
+ * Interface for storing function execution context
+ * @template F - Function type
  */
 interface ExecutionContext<F extends Fn<any[]>> {
-  /** 함수 실행 시 사용될 this 컨텍스트 */
+  /** The 'this' context to be used when executing the function */
   self: any;
-  /** 함수 호출 시 전달할 인자들 */
+  /** Arguments to pass when calling the function */
   args: Parameters<F> | null;
 }
 
 /**
- * 함수 실행을 관리하고 스케줄링하는 클래스
- * debounce와 throttle 구현에 사용됨
- * @template F - 관리할 함수 타입
+ * Class that manages and schedules function execution
+ * Used in debounce and throttle implementations
+ * @template F - Type of function to manage
  */
 export class FunctionContext<F extends Fn<any[]>> {
-  /** 함수 실행 컨텍스트 */
+  /** Function execution context */
   #context: ExecutionContext<F>;
-  /** 타이머 ID */
+  /** Timer ID */
   #timer: ReturnType<typeof setTimeout> | null = null;
-  /** 관리 대상 함수 */
+  /** Function to manage */
   #function: F;
-  /** 실행 지연 시간 (밀리초) */
+  /** Execution delay time in milliseconds */
   #delay: number;
 
   /**
-   * 현재 실행 대기 중인 타이머가 없는지 여부
-   * @returns 타이머가 없으면 true, 있으면 false
+   * Whether there is no timer currently waiting for execution
+   * @returns true if there is no timer, false if there is
    */
   get isIdle() {
     return this.#timer === null;
   }
 
   /**
-   * FunctionContext 생성자
-   * @param fn - 관리할 함수
-   * @param ms - 실행 지연 시간(밀리초)
+   * FunctionContext constructor
+   * @param fn - Function to manage
+   * @param ms - Execution delay time in milliseconds
    */
   constructor(fn: F, ms: number) {
     this.#function = fn;
@@ -49,7 +49,7 @@ export class FunctionContext<F extends Fn<any[]>> {
   }
 
   /**
-   * 타이머와 컨텍스트를 초기화
+   * Initialize timer and context
    */
   clear() {
     this.#clearTimer();
@@ -57,9 +57,9 @@ export class FunctionContext<F extends Fn<any[]>> {
   }
 
   /**
-   * 함수 실행 컨텍스트 설정
-   * @param self - 함수 실행 시 사용될 this 컨텍스트
-   * @param args - 함수 호출 시 전달할 인자들
+   * Set function execution context
+   * @param self - The 'this' context to be used when executing the function
+   * @param args - Arguments to pass when calling the function
    */
   setArguments(self: any, args: Parameters<F>) {
     this.#context.self = self;
@@ -67,7 +67,7 @@ export class FunctionContext<F extends Fn<any[]>> {
   }
 
   /**
-   * 현재 컨텍스트로 함수 실행
+   * Execute function with current context
    */
   execute() {
     if (this.#context.args === null) return;
@@ -76,8 +76,8 @@ export class FunctionContext<F extends Fn<any[]>> {
   }
 
   /**
-   * 지정된 시간 후에 함수 실행을 스케줄링
-   * @param execute - 타이머 완료 시 함수 실행 여부
+   * Schedule function execution after specified time
+   * @param execute - Whether to execute function when timer completes
    */
   schedule(execute?: boolean) {
     if (this.#timer !== null) clearTimeout(this.#timer);
@@ -90,7 +90,7 @@ export class FunctionContext<F extends Fn<any[]>> {
   }
 
   /**
-   * 타이머를 취소하고 함수 즉시 실행
+   * Cancel timer and execute function immediately
    */
   manualExecute() {
     this.execute();
@@ -98,7 +98,7 @@ export class FunctionContext<F extends Fn<any[]>> {
   }
 
   /**
-   * 함수 실행 컨텍스트 초기화
+   * Initialize function execution context
    * @private
    */
   #clearContext() {
@@ -107,7 +107,7 @@ export class FunctionContext<F extends Fn<any[]>> {
   }
 
   /**
-   * 타이머 취소 및 초기화
+   * Cancel and initialize timer
    * @private
    */
   #clearTimer() {

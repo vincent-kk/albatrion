@@ -1,10 +1,10 @@
 /**
- * 배열의 각 요소에 콜백 함수를 적용하여 새로운 배열을 만드는 함수
- * @template Type - 입력 배열 요소의 타입
- * @template Result - 결과 배열 요소의 타입
- * @param array - 변환할 원본 배열
- * @param callback - 각 요소에 적용할 변환 함수
- * @returns 변환된 새 배열
+ * Function to create a new array by applying a callback function to each element of an array
+ * @template Type - Type of input array elements
+ * @template Result - Type of result array elements
+ * @param array - Source array to transform
+ * @param callback - Transformation function to apply to each element
+ * @returns New transformed array
  */
 export const map = <Type, Result = Type>(
   array: Type[],

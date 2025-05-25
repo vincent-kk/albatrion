@@ -1,12 +1,12 @@
 /**
- * 배열에서 주어진 인덱스의 요소 또는 요소들을 가져오는 함수
- * 음수 인덱스는 배열 끝에서부터 역순으로 계산됨 (-1은 마지막 요소)
- * @template Type - 배열 요소의 타입
- * @template Indexes - 가져올 인덱스 또는 인덱스들의 배열
- * @template Result - 반환 결과 타입 (단일 인덱스의 경우 Type, 배열 인덱스의 경우 Type[])
- * @param array - 대상 배열
- * @param indexes - 가져올 요소의 인덱스 또는 인덱스 배열
- * @returns 주어진 인덱스의 배열 요소 또는 요소들
+ * Function to get element(s) at given index(es) from an array
+ * Negative indices are calculated in reverse order from the end of the array (-1 is the last element)
+ * @template Type - Type of array elements
+ * @template Indexes - Index or array of indices to retrieve
+ * @template Result - Return result type (Type for single index, Type[] for array indices)
+ * @param array - Target array
+ * @param indexes - Index or array of indices of elements to retrieve
+ * @returns Array element(s) at the given index(es)
  */
 export const at = <
   Type,

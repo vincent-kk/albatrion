@@ -1,12 +1,12 @@
 /**
- * 두 배열을 비교하여 첫 번째 배열에는 있지만 두 번째 배열에는 없는 요소를 반환하는 함수
- * 변환 함수를 사용하여 비교 기준을 정의할 수 있음
- * @template Type1 - 첫 번째 배열 요소의 타입
- * @template Type2 - 두 번째 배열 요소의 타입
- * @param source - 기준이 되는 원본 배열
- * @param exclude - 제외할 요소가 있는 배열
- * @param mapper - 배열 요소를 비교 가능한 값으로 변환하는 함수
- * @returns 첫 번째 배열에만 존재하는 요소들의 배열
+ * Function to compare two arrays and return elements that exist in the first array but not in the second
+ * Uses a transformation function to define comparison criteria
+ * @template Type1 - Type of the first array elements
+ * @template Type2 - Type of the second array elements
+ * @param source - Source array that serves as the base
+ * @param exclude - Array containing elements to exclude
+ * @param mapper - Function to transform array elements into comparable values
+ * @returns Array of elements that exist only in the first array
  */
 import { map } from './map';
 

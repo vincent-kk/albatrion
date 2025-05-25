@@ -1,10 +1,10 @@
 import { isPlainObject } from './isPlainObject';
 
 /**
- * 값이 비어있는 일반 객체인지 확인하는 함수
- * 일반 객체이면서 속성이 없으면 비어있는 일반 객체로 간주
- * @param value - 확인할 값
- * @returns 값이 비어있는 일반 객체이면 true, 아니면 false
+ * Function to check if a value is an empty plain object
+ * Considers it an empty plain object if it's a plain object with no properties
+ * @param value - Value to check
+ * @returns true if the value is an empty plain object, false otherwise
  */
 export const isEmptyPlainObject = (value: unknown): value is object => {
   if (!isPlainObject(value)) return false;

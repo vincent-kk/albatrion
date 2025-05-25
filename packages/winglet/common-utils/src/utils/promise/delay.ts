@@ -5,11 +5,11 @@ export interface DelayOptions {
 }
 
 /**
- * @description 일정 시간 이후 반환되는 Promise를 생성하는 함수
- * @param {number} ms - 지연 시간
- * @param {DelayOptions} options - 옵션
- * @param {AbortSignal} options.signal - promise가 종료되기 전에 abort 시키는 signal
- * @returns {Promise<void>} 지연 후 반환되는 Promise, void 0
+ * @description Function that creates a Promise that resolves after a certain amount of time
+ * @param {number} ms - Delay time
+ * @param {DelayOptions} options - Options
+ * @param {AbortSignal} options.signal - Signal to abort the promise before it completes
+ * @returns {Promise<void>} Promise that resolves after delay, void 0
  */
 export const delay = (ms?: number, options?: DelayOptions): Promise<void> =>
   new Promise((resolve, reject) => {

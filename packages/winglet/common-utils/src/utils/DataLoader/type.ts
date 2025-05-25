@@ -1,73 +1,73 @@
 import type { Fn } from '@aileron/declare';
 
 /**
- * 배치로 데이터를 로드하는 함수 타입
- * @template Key - 로드할 값의 키 타입
- * @template Value - 반환할 값의 타입
+ * Function type that loads data in batches
+ * @template Key - The key type for values to load
+ * @template Value - The type of values to return
  */
 export type BatchLoader<Key, Value> = (
-  /** 로드할 키 배열 */
+  /** Array of keys to load */
   keys: ReadonlyArray<Key>,
-  /** 로드된 값 또는 오류 배열의 Promise */
+  /** Promise of an array of loaded values or errors */
 ) => Promise<ReadonlyArray<Value | Error>>;
 
 /**
- * DataLoader 구성 옵션
- * @template Key - 로드할 키의 타입
- * @template Value - 반환할 값의 타입
- * @template CacheKey - 캐시 키의 타입 (기본값: Key)
+ * DataLoader configuration options
+ * @template Key - The type of keys to load
+ * @template Value - The type of values to return
+ * @template CacheKey - The type of cache keys (default: Key)
  */
 export type DataLoaderOptions<Key, Value, CacheKey = Key> = {
-  /** 로더의 이름 */
+  /** The name of the loader */
   name?: string;
-  /** 캐시 맵 객체 또는 false(비활성화) */
+  /** Cache map object or false (disabled) */
   cache?: MapLike<CacheKey, Promise<Value>> | false;
-  /** 배치 실행 스케줄링 함수 */
+  /** Function for scheduling batch execution */
   batchScheduler?: Fn<[task: Fn]>;
-  /** 로더 키를 캐시 키로 변환하는 함수 */
+  /** Function that converts loader keys to cache keys */
   cacheKeyFn?: Fn<[key: Key], CacheKey>;
 } & (
   | {
-      /** 한 번에 처리할 최대 배치 크기 */
+      /** Maximum batch size to process at once */
       maxBatchSize?: number;
     }
   | {
-      /** 배치 처리 비활성화 옵션 */
+      /** Option to disable batch processing */
       disableBatch: true;
     }
 );
 
 /**
- * Map 인터페이스를 따르는 캐싱 저장소 타입
- * @template Key - 캐시 키 타입
- * @template Value - 캐시 값 타입
+ * Cache storage type that follows the Map interface
+ * @template Key - Cache key type
+ * @template Value - Cache value type
  */
 export type MapLike<Key, Value> = {
-  /** 키에 해당하는 값을 가져오거나 undefined 반환 */
+  /** Gets the value corresponding to the key or returns undefined */
   get(key: Key): Value | undefined;
-  /** 키에 값을 설정 */
+  /** Sets a value for the key */
   set(key: Key, value: Value): any;
-  /** 키와 해당 값을 삭제 */
+  /** Deletes the key and its corresponding value */
   delete(key: Key): any;
-  /** 모든 키-값 삭제 */
+  /** Deletes all key-value pairs */
   clear(): any;
 };
 
 /**
- * 배치 크기만큼 로드 작업을 그룹화하는 타입
- * @template Key - 로드할 키 타입
- * @template Value - 로드될 값 타입
+ * Type that groups load operations by batch size
+ * @template Key - Type of keys to load
+ * @template Value - Type of values to be loaded
  */
 export type Batch<Key, Value> = {
-  /** 배치가 처리되었는지 여부 */
+  /** Whether the batch has been processed */
   isResolved: boolean;
-  /** 로드할 키 배열 */
+  /** Array of keys to load */
   keys: Array<Key>;
-  /** 각 키에 해당하는 Promise의 resolve/reject 함수 */
+  /** Resolve/reject functions of Promise corresponding to each key */
   promises: Array<{
     resolve: Fn<[value: Value]>;
     reject: Fn<[error: Error]>;
   }>;
-  /** 캐시 히트 처리를 위한 콜백 함수 배열 */
+  /** Array of callback functions for cache hit processing */
   cacheHits?: Array<Fn>;
 };

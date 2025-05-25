@@ -1,26 +1,26 @@
 import type { Fn } from '@aileron/declare';
 
-/** 항상 void 0(undefined)를 반환하는 함수 */
+/** Function that always returns void 0 (undefined) */
 export const voidFunction: Fn = () => void 0;
 
-/** 항상 undefined를 명시적으로 반환하는 함수 */
+/** Function that always explicitly returns undefined */
 export const undefinedFunction: Fn<[], undefined> = () => undefined;
 
-/** 항상 null을 반환하는 함수 */
+/** Function that always returns null */
 export const nullFunction: Fn<[], null> = () => null;
 
-/** 항상 false를 반환하는 함수  */
+/** Function that always returns false */
 export const falseFunction: Fn<[], false> = () => false;
 
-/** 항상 true를 반환하는 함수 */
+/** Function that always returns true */
 export const trueFunction: Fn<[], true> = () => true;
 
 /**
- * 입력값을 그대로 반환하는 항등 함수
- * @param value - 반환할 값
- * @returns 입력된 값을 그대로 반환
+ * Identity function that returns the input value as-is
+ * @param value - The value to return
+ * @returns The input value unchanged
  */
 export const identityFunction = <T>(value: T): T => value;
 
-/** 아무 작업도 수행하지 않는 함수 (no operation) */
+/** Function that performs no operation (no-op) */
 export const noopFunction = () => void 0;

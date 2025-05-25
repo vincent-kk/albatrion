@@ -1,10 +1,10 @@
 /**
- * 하나의 배열에서 다른 배열에 존재하는 요소를 제외한 배열을 반환하는 함수
- * 원본 배열에서 제외할 배열에 있는 요소를 제외함
- * @template Type - 배열 요소의 타입
- * @param source - 원본 배열
- * @param exclude - 제외할 요소를 포함한 배열
- * @returns 원본 배열에서 제외 배열의 요소를 제외한 새 배열
+ * Function to return an array excluding elements that exist in another array
+ * Excludes elements from the source array that are present in the exclude array
+ * @template Type - Type of array elements
+ * @param source - Source array
+ * @param exclude - Array containing elements to exclude
+ * @returns New array with elements from source array excluding those in exclude array
  */
 export const difference = <Type>(source: Type[], exclude: Type[]): Type[] => {
   const result: Type[] = [];

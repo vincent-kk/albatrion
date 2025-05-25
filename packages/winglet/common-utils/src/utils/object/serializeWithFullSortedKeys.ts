@@ -1,9 +1,9 @@
 /**
- * 객체를 완전히 펼친 경로와 정렬된 키를 사용하여 직렬화합니다.
- * 중첩된 객체의 모든 경로를 평면화하고 정렬하여 문자열로 변환합니다.
+ * Serializes an object using fully expanded paths and sorted keys.
+ * Flattens all paths of nested objects and sorts them into a string.
  *
- * @param object - 직렬화할 객체
- * @returns 직렬화된 문자열 ('fullpath:value' 형태로 '|'로 구분)
+ * @param object - Object to serialize
+ * @returns Serialized string (in 'fullpath:value' format separated by '|')
  *
  * @example
  * serializeWithFullSortedKeys({a: 1, b: {c: 2}}); // 'a:1|b.c:2'

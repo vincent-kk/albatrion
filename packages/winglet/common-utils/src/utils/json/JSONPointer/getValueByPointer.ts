@@ -8,14 +8,14 @@ import { JSONPointerError } from './utils/error';
 import { getValue } from './utils/getValue';
 
 /**
- * JSON 포인터를 사용하여 객체에서 값을 추출하는 함수
- * RFC 6901 규격에 따른 JSON 포인터를 지원함
+ * Function to extract values from an object using JSON Pointer
+ * Supports JSON Pointer according to RFC 6901 specification
  *
- * @template Input - 입력 객체 타입
- * @param input - 값을 추출할 대상 객체
- * @param pointer - JSON 포인터 (문자열 또는 문자열 배열)
- * @returns 포인터가 가리키는 값
- * @throws {JSONPointerError} 입력이 유효하지 않거나 포인터를 찾을 수 없는 경우
+ * @template Input - Input object type
+ * @param input - Target object to extract value from
+ * @param pointer - JSON Pointer (string or string array)
+ * @returns Value pointed to by the pointer
+ * @throws {JSONPointerError} When input is invalid or pointer cannot be found
  */
 export const getValueByPointer = <Input extends Dictionary>(
   input: Input,

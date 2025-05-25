@@ -1,12 +1,12 @@
 import { isArray, isPlainObject } from '@/common-utils/utils/filter';
 
 /**
- * 객체나 배열에서 undefined 값을 가진 속성을 제거합니다.
- * 중첩된 객체와 배열을 재귀적으로 처리합니다.
+ * Removes properties with undefined values from objects or arrays.
+ * Recursively processes nested objects and arrays.
  *
- * @template Type - 입력 값의 타입
- * @param input - undefined 값을 제거할 객체 또는 배열
- * @returns undefined 값이 제거된 새로운 객체 또는 배열
+ * @template Type - Type of input value
+ * @param input - Object or array to remove undefined values from
+ * @returns New object or array with undefined values removed
  *
  * @example
  * removeUndefined({a: 1, b: undefined, c: {d: undefined, e: 2}}); // {a: 1, c: {e: 2}}

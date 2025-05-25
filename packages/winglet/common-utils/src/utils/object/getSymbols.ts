@@ -1,11 +1,11 @@
 const propertyIsEnumerable = Object.prototype.propertyIsEnumerable;
 
 /**
- * 객체의 열거 가능한(enumerable) Symbol 속성 키들을 배열로 반환합니다.
+ * Returns an array of enumerable Symbol property keys from an object.
  *
- * @template Type - 심볼 속성을 가진 객체 타입
- * @param object - 심볼 속성을 추출할 객체
- * @returns 열거 가능한 심볼 속성 키 배열
+ * @template Type - Object type with symbol properties
+ * @param object - Object to extract symbol properties from
+ * @returns Array of enumerable symbol property keys
  *
  * @example
  * const sym1 = Symbol('sym1');

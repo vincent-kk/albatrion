@@ -1,56 +1,56 @@
-/** 인자 객체의 타입 태그 */
+/** Type tag for Arguments object */
 export const ARGUMENTS_TAG = '[object Arguments]';
-/** ArrayBuffer 객체의 타입 태그 */
+/** Type tag for ArrayBuffer object */
 export const ARRAY_BUFFER_TAG = '[object ArrayBuffer]';
-/** Array 객체의 타입 태그 */
+/** Type tag for Array object */
 export const ARRAY_TAG = '[object Array]';
-/** BigInt64Array 객체의 타입 태그 */
+/** Type tag for BigInt64Array object */
 export const BIG_INT_64_ARRAY_TAG = '[object BigInt64Array]';
-/** BigUint64Array 객체의 타입 태그 */
+/** Type tag for BigUint64Array object */
 export const BIG_UINT_64_ARRAY_TAG = '[object BigUint64Array]';
-/** Boolean 객체의 타입 태그 */
+/** Type tag for Boolean object */
 export const BOOLEAN_TAG = '[object Boolean]';
-/** DataView 객체의 타입 태그 */
+/** Type tag for DataView object */
 export const DATA_VIEW_TAG = '[object DataView]';
-/** Date 객체의 타입 태그 */
+/** Type tag for Date object */
 export const DATE_TAG = '[object Date]';
-/** Error 객체의 타입 태그 */
+/** Type tag for Error object */
 export const ERROR_TAG = '[object Error]';
-/** Float32Array 객체의 타입 태그 */
+/** Type tag for Float32Array object */
 export const FLOAT_32_ARRAY_TAG = '[object Float32Array]';
-/** Float64Array 객체의 타입 태그 */
+/** Type tag for Float64Array object */
 export const FLOAT_64_ARRAY_TAG = '[object Float64Array]';
-/** Function 객체의 타입 태그 */
+/** Type tag for Function object */
 export const FUNCTION_TAG = '[object Function]';
-/** Int16Array 객체의 타입 태그 */
+/** Type tag for Int16Array object */
 export const INT_16_ARRAY_TAG = '[object Int16Array]';
-/** Int32Array 객체의 타입 태그 */
+/** Type tag for Int32Array object */
 export const INT_32_ARRAY_TAG = '[object Int32Array]';
-/** Int8Array 객체의 타입 태그 */
+/** Type tag for Int8Array object */
 export const INT_8_ARRAY_TAG = '[object Int8Array]';
-/** Map 객체의 타입 태그 */
+/** Type tag for Map object */
 export const MAP_TAG = '[object Map]';
-/** null 값의 타입 태그 */
+/** Type tag for null value */
 export const NULL_TAG = '[object Null]';
-/** Number 객체의 타입 태그 */
+/** Type tag for Number object */
 export const NUMBER_TAG = '[object Number]';
-/** 일반 Object 객체의 타입 태그 */
+/** Type tag for plain Object object */
 export const OBJECT_TAG = '[object Object]';
-/** RegExp 객체의 타입 태그 */
+/** Type tag for RegExp object */
 export const REGEXP_TAG = '[object RegExp]';
-/** Set 객체의 타입 태그 */
+/** Type tag for Set object */
 export const SET_TAG = '[object Set]';
-/** String 객체의 타입 태그 */
+/** Type tag for String object */
 export const STRING_TAG = '[object String]';
-/** Symbol 객체의 타입 태그 */
+/** Type tag for Symbol object */
 export const SYMBOL_TAG = '[object Symbol]';
-/** Uint16Array 객체의 타입 태그 */
+/** Type tag for Uint16Array object */
 export const UINT_16_ARRAY_TAG = '[object Uint16Array]';
-/** Uint32Array 객체의 타입 태그 */
+/** Type tag for Uint32Array object */
 export const UINT_32_ARRAY_TAG = '[object Uint32Array]';
-/** Uint8Array 객체의 타입 태그 */
+/** Type tag for Uint8Array object */
 export const UINT_8_ARRAY_TAG = '[object Uint8Array]';
-/** Uint8ClampedArray 객체의 타입 태그 */
+/** Type tag for Uint8ClampedArray object */
 export const UINT_8_CLAMPED_ARRAY_TAG = '[object Uint8ClampedArray]';
-/** undefined 값의 타입 태그 */
+/** Type tag for undefined value */
 export const UNDEFINED_TAG = '[object Undefined]';

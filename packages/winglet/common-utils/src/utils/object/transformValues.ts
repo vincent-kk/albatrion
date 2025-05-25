@@ -1,13 +1,13 @@
 /**
- * 객체의 모든 값을 변환하여 새로운 객체를 만듭니다.
- * 객체의 구조는 유지하면서 값만 변환합니다.
+ * Creates a new object by transforming all values of an object.
+ * Preserves the object structure while only transforming the values.
  *
- * @template Type - 입력 객체 타입
- * @template Key - 객체 키 타입
- * @template Value - 변환된 값 타입
- * @param object - 변환할 객체
- * @param getValue - 각 값을 변환하는 함수
- * @returns 변환된 값을 가진 새로운 객체
+ * @template Type - Input object type
+ * @template Key - Object key type
+ * @template Value - Transformed value type
+ * @param object - Object to transform
+ * @param getValue - Function to transform each value
+ * @returns New object with transformed values
  *
  * @example
  * transformValues({a: 1, b: 2}, (value) => value * 2); // {a: 2, b: 4}

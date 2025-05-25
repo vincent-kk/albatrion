@@ -1,19 +1,19 @@
 /**
- * 두 값이 깊은 수준까지 동일한지 비교합니다. (재귀 최적화 + 안정성 버전)
- * 객체와 배열의 내용을 반복적으로 비교하며, NaN === NaN 도 true로 처리합니다.
- * 순환 참조, Date, RegExp, TypedArray, Symbol 키, 희소 배열 등을 처리합니다.
- * Set과 Map은 현재 참조 동일성만 비교합니다. (추후 값 비교로 확장 가능)
+ * Compares two values for deep equality. (Recursion optimized + stability version)
+ * Recursively compares the contents of objects and arrays, and also treats NaN === NaN as true.
+ * Handles circular references, Date, RegExp, TypedArray, Symbol keys, sparse arrays, etc.
+ * Set and Map currently only compare reference equality. (Can be extended to value comparison later)
  *
- * @param left - 비교할 첫 번째 값
- * @param right - 비교할 두 번째 값
- * @param omit - 비교 시 제외할 속성 키 배열 (선택사항)
- * @returns 두 값이 동일하면 true, 그렇지 않으면 false
+ * @param left - First value to compare
+ * @param right - Second value to compare
+ * @param omit - Array of property keys to exclude from comparison (optional)
+ * @returns true if the two values are equal, false otherwise
  *
  * @example
  * stableEquals({a: 1, b: 2}, {a: 1, b: 2}); // true
  * stableEquals({a: 1, b: NaN}, {a: 1, b: NaN}); // true
  * stableEquals({a: 1, b: 2}, {a: 1, b: 3}); // false
- * stableEquals({a: 1, b: 2, c: 3}, {a: 1, b: 2}, ['c']); // true (c 속성 무시)
+ * stableEquals({a: 1, b: 2, c: 3}, {a: 1, b: 2}, ['c']); // true (ignores 'c' property)
  */
 export const stableEquals = (
   left: unknown,
@@ -26,14 +26,14 @@ export const stableEquals = (
 };
 
 /**
- * 두 값의 깊은 동등성을 재귀적으로 비교합니다.
- * 순환 참조를 처리하고 다양한 데이터 타입을 지원합니다.
+ * Recursively compares the deep equality of two values.
+ * Handles circular references and supports various data types.
  *
- * @param left - 비교할 첫 번째 값
- * @param right - 비교할 두 번째 값
- * @param visited - 이미 방문한 객체 쌍을 추적하는 맵
- * @param omits - 비교 시 제외할 속성 키 집합
- * @returns 두 값이 동일하면 true, 그렇지 않으면 false
+ * @param left - First value to compare
+ * @param right - Second value to compare
+ * @param visited - Map to track already visited object pairs
+ * @param omits - Set of property keys to exclude from comparison
+ * @returns true if the two values are equal, false otherwise
  */
 const stableEqualsRecursive = (
   left: unknown,

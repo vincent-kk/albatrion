@@ -2,11 +2,11 @@ import { getObjectKeys } from './getObjectKeys';
 import { serializeNative } from './serializeNative';
 
 /**
- * 객체를 직렬화된 문자열로 변환합니다.
+ * Converts an object to a serialized string.
  *
- * @param object - 직렬화할 객체
- * @param omits - 직렬화에서 제외할 속성 키 배열 (선택사항)
- * @returns 직렬화된 문자열 ('key:value' 형태로 '|'로 구분)
+ * @param object - Object to serialize
+ * @param omits - Array of property keys to exclude from serialization (optional)
+ * @returns Serialized string (in 'key:value' format separated by '|')
  *
  * @example
  * serializeObject({a: 1, b: 2}); // 'a:1|b:2'

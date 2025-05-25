@@ -34,26 +34,26 @@ import {
  * NOTE: This implementation may differ from the original API and is not guaranteed to be fully compatible.
  */
 export class DataLoader<Key = string, Value = any, CacheKey = Key> {
-  /** DataLoader의 이름 */
+  /** The name of the DataLoader */
   public readonly name: string | null = null;
 
-  /** 배치 로더 함수 - 키 집합을 값 집합으로 변환 */
+  /** The batch loader function that transforms a set of keys to a set of values */
   readonly #batchLoader: BatchLoader<Key, Value>;
-  /** 한 배치에서 처리할 최대 키 개수 */
+  /** The maximum number of keys to process in a single batch */
   readonly #maxBatchSize: number;
-  /** 배치 실행을 스케줄링하는 함수 */
+  /** The function that schedules batch execution */
   readonly #batchScheduler: Fn<[task: Fn]>;
-  /** 캐시 맵 객체 - 캐싱이 비활성화된 경우 null */
+  /** The cache map object, null when caching is disabled */
   readonly #cacheMap: MapLike<CacheKey, Promise<Value>> | null;
-  /** 로더 키를 캐시 키로 변환하는 함수 */
+  /** The function that converts loader keys to cache keys */
   readonly #cacheKeyFn: Fn<[key: Key], CacheKey>;
 
-  /** 현재 처리 중인 배치 */
+  /** The currently processing batch */
   #currentBatch: Batch<Key, Value> | null = null;
 
   /**
-   * 현재 배치를 가져오거나 새 배치를 생성하는 getter
-   * @returns 현재 사용 가능한 배치 혹은 새로 생성된 배치
+   * Getter that retrieves the current batch or creates a new batch
+   * @returns The currently available batch or a newly created batch
    */
   get #batch(): Batch<Key, Value> {
     const batch = this.#currentBatch;
@@ -68,34 +68,34 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
   }
 
   /**
-   * DataLoader 생성자
-   * @param batchLoader - 배치 로딩을 수행하는 함수
-   * @param options - DataLoader 구성 옵션
+   * DataLoader constructor
+   * @param batchLoader - The function that performs batch loading
+   * @param options - DataLoader configuration options
    */
   constructor(
     batchLoader: BatchLoader<Key, Value>,
     options?: DataLoaderOptions<Key, Value, CacheKey>,
   ) {
-    // 반드시 비동기 배치 로더 함수가 제공되어야 함
+    // An asynchronous batch loader function must be provided
     this.#batchLoader = prepareBatchLoader(batchLoader);
-    // 최대 배치 크기 설정 (기본값: Infinity)
+    // Set the maximum batch size (default: Infinity)
     this.#maxBatchSize = prepareMaxBatchSize(options);
-    // 배치 스케줄러 설정 (기본값: nextTick)
+    // Set the batch scheduler (default: nextTick)
     this.#batchScheduler = prepareBatchScheduler(options?.batchScheduler);
-    // 캐싱 맵 설정 (비활성화된 경우: null)
+    // Set the caching map (null when disabled)
     this.#cacheMap = prepareCacheMap(options?.cache);
-    // 캐시 키 함수 설정 (기본값: 정체성 함수)
+    // Set the cache key function (default: identity function)
     this.#cacheKeyFn = prepareCacheKeyFn(options?.cacheKeyFn);
-    // 선택적 이름 설정
+    // Set optional name
     this.name = options?.name ?? null;
   }
 
   /**
-   * 단일 키에 해당하는 값을 로드함
-   * 배치와 캐싱을 활용하여 효율적으로 데이터 로드
-   * @param key - 로드할 값의 키
-   * @returns 로드된 값의 Promise
-   * @throws {InvalidTypeError} 키가 null 또는 undefined인 경우
+   * Loads the value corresponding to a single key
+   * Efficiently loads data using batching and caching
+   * @param key - The key for the value to load
+   * @returns Promise of the loaded value
+   * @throws {InvalidTypeError} When the key is null or undefined
    */
   load(key: Key): Promise<Value> {
     if (isNil(key))
@@ -127,11 +127,11 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
   }
 
   /**
-   * 여러 키에 해당하는 값들을 로드함
-   * 하나의 키가 실패해도 다른 값들은 정상적으로 수집함
-   * @param keys - 로드할 값의 키 배열
-   * @returns 각 키에 해당하는 값 또는 오류의 배열 Promise
-   * @throws {InvalidTypeError} keys가 배열 형태가 아닌 경우
+   * Loads values corresponding to multiple keys
+   * Other values are collected normally even if one key fails
+   * @param keys - Array of keys for values to load
+   * @returns Promise of an array of values or errors corresponding to each key
+   * @throws {InvalidTypeError} When keys is not an array-like object
    */
   loadMany(keys: ReadonlyArray<Key>): Promise<Array<Value | Error>> {
     if (!isArrayLike(keys))
@@ -148,9 +148,9 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
   }
 
   /**
-   * 지정된 키를 캐시에서 삭제
-   * @param key - 캐시에서 삭제할 키
-   * @returns 메서드 체이닝을 위한 this 객체
+   * Removes the specified key from the cache
+   * @param key - The key to remove from the cache
+   * @returns This object for method chaining
    */
   clear(key: Key): this {
     const cacheMap = this.#cacheMap;
@@ -162,8 +162,8 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
   }
 
   /**
-   * 모든 키를 캐시에서 삭제
-   * @returns 메서드 체이닝을 위한 this 객체
+   * Removes all keys from the cache
+   * @returns This object for method chaining
    */
   clearAll(): this {
     this.#cacheMap?.clear();
@@ -171,10 +171,10 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
   }
 
   /**
-   * 주어진 키에 값을 갱신하여 프로그래밍 방식으로 캐싱
-   * @param key - 값을 연결할 키
-   * @param value - 상해할 값, Promise 혹은 오류
-   * @returns 메서드 체이닝을 위한 this 객체
+   * Programmatically caches by updating the value for the given key
+   * @param key - The key to associate with the value
+   * @param value - The value to cache, Promise, or Error
+   * @returns This object for method chaining
    */
   prime(key: Key, value: Value | Promise<Value> | Error): this {
     const cacheMap = this.#cacheMap;
@@ -195,10 +195,10 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
   }
 
   /**
-   * 배치를 처리하는 내부 메서드
-   * 배치 로더를 통해 값을 로드하고 해당 값을 제공된
-   * Promise에 전달
-   * @param batch - 처리할 배치 객체
+   * Internal method that processes batches
+   * Loads values through the batch loader and delivers those values
+   * to the provided Promise
+   * @param batch - The batch object to process
    */
   #dispatchBatch(batch: Batch<Key, Value>): void {
     batch.isResolved = true;
@@ -243,10 +243,10 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
   }
 
   /**
-   * 안정적인 배치 로딩 실행을 위한 래퍼 함수
-   * 배치 로더 실행 중 발생하는 예외를 캐치하여 처리
-   * @param keys - 로드할 키 배열
-   * @returns 배치 로더의 결과 또는 오류
+   * Wrapper function for stable batch loading execution
+   * Catches and handles exceptions that occur during batch loader execution
+   * @param keys - Array of keys to load
+   * @returns The result of the batch loader or an error
    */
   #stableBatchLoader(
     keys: ReadonlyArray<Key>,

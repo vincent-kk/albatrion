@@ -1,7 +1,7 @@
 /**
- * 정규식 패턴이 유효한지 확인하는 함수
- * @param pattern - 확인할 정규식 패턴
- * @returns 정규식 패턴이 유효하면 true, 아니면 false
+ * Function to check if a regex pattern is valid
+ * @param pattern - Regex pattern to check
+ * @returns true if the regex pattern is valid, false otherwise
  */
 export const isValidRegexPattern = (pattern: string): pattern is string => {
   try {

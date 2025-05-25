@@ -1,12 +1,13 @@
 /**
- * 두 배열의 요소들을 동시에 순회하며 콜백 함수를 실행하는 함수
- * 두 배열 길이가 다를 경우 더 긴 배열 기준으로 순회하며, 짧은 배열의 범위를 벗어난 인덱스는 undefined로 전달됨
- * 콜백 함수가 false를 반환하면 순회를 중단함
- * @template Type1 - 첫 번째 배열 요소의 타입
- * @template Type2 - 두 번째 배열 요소의 타입
- * @param array1 - 첫 번째 배열
- * @param array2 - 두 번째 배열
- * @param callback - 각 요소 쌍에 대해 실행할 콜백 함수
+ * Function to iterate over two arrays simultaneously and execute a callback function
+ * When arrays have different lengths, iterates based on the longer array's length,
+ * passing undefined for indices that exceed the shorter array's range
+ * Stops iteration if the callback returns false
+ * @template Type1 - Type of the first array elements
+ * @template Type2 - Type of the second array elements
+ * @param array1 - First array to iterate over
+ * @param array2 - Second array to iterate over
+ * @param callback - Callback function to execute for each element pair
  */
 export const forEachDual = <Type1, Type2>(
   array1: Type1[],

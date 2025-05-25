@@ -1,15 +1,15 @@
 import { map } from './map';
 
 /**
- * 두 배열의 교집합을 반환하는 함수
- * 주어진 매핑 함수를 사용하여 각 배열의 요소를 비교하고,
- * 교집합을 이루는 요소들을 배열로 반환함
- * @template Type1 - 첫 번째 배열의 요소 타입
- * @template Type2 - 두 번째 배열의 요소 타입
- * @param source - 첫 번째 배열
- * @param target - 두 번째 배열
- * @param mapper - 요소를 비교 가능한 값으로 변환하는 함수
- * @returns 두 배열의 교집합을 이루는 요소들의 배열
+ * Function to return the intersection of two arrays
+ * Uses a mapping function to compare elements of each array,
+ * and returns an array of elements that form the intersection
+ * @template Type1 - Type of the first array elements
+ * @template Type2 - Type of the second array elements
+ * @param source - First array
+ * @param target - Second array
+ * @param mapper - Function to transform elements into comparable values
+ * @returns Array of elements that form the intersection of both arrays
  */
 export const intersectionBy = <Type1, Type2>(
   source: Type1[],

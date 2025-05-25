@@ -6,14 +6,14 @@ import { isObject } from '@/common-utils/utils/filter/isObject';
 import { escapePointer } from '@/common-utils/utils/json/JSONPointer/utils/escapePointer';
 
 /**
- * 루트 객체에서 대상 객체까지의 JSON 포인터 경로를 생성합니다.
- * JSON 포인터는 RFC 6901 사양에 따른 문자열 형식입니다.
+ * Generates a JSON Pointer path from the root object to the target object.
+ * JSON Pointer is a string format according to RFC 6901 specification.
  *
- * @template Root - 루트 객체 타입
- * @template Target - 대상 객체 타입
- * @param root - 탐색을 시작할 루트 객체
- * @param target - 찾고자 하는 대상 객체
- * @returns 대상 객체에 대한 JSON 포인터 문자열 또는 찾지 못한 경우 null
+ * @template Root - Root object type
+ * @template Target - Target object type
+ * @param root - Root object to start the search from
+ * @param target - Target object to find
+ * @returns JSON Pointer string to the target object or null if not found
  *
  * @example
  * const obj = { a: { b: [1, 2, { c: 'found' }] } };
@@ -29,11 +29,11 @@ export const getJSONPointer = <Root extends object, Target extends object>(
 };
 
 /**
- * 루트 객체에서 대상 값까지의 경로를 깊이 우선 탐색으로 찾습니다.
+ * Finds the path from the root object to the target value using depth-first search.
  *
- * @param root - 탐색을 시작할 루트 객체
- * @param target - 찾고자 하는 대상 값
- * @returns 대상에 대한 경로 문자열 또는 찾지 못한 경우 null
+ * @param root - Root object to start the search from
+ * @param target - Target value to find
+ * @returns Path string to the target or null if not found
  */
 const getPointer = (
   root: Dictionary | any[],

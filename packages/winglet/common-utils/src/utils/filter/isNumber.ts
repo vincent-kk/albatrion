@@ -1,7 +1,7 @@
 /**
- * 값이 숫자인지 확인하는 함수
- * @param value - 확인할 값
- * @returns 값이 숫자이면 true, 아니면 false
+ * Function to check if a value is a number
+ * @param value - Value to check
+ * @returns true if the value is a number, false otherwise
  */
 export const isNumber = (value?: unknown): value is number =>
   typeof value === 'number';

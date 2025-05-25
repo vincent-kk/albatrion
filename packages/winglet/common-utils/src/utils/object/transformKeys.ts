@@ -1,12 +1,12 @@
 /**
- * 객체의 모든 키를 변환하여 새로운 객체를 만듭니다.
- * 객체의 값은 유지하면서 키만 변환합니다.
+ * Creates a new object by transforming all keys of an object.
+ * Preserves the values of the object while only transforming the keys.
  *
- * @template Type - 입력 객체 타입
- * @template Key - 변환된 키 타입
- * @param object - 변환할 객체
- * @param getKey - 각 키를 변환하는 함수
- * @returns 변환된 키를 가진 새로운 객체
+ * @template Type - Input object type
+ * @template Key - Transformed key type
+ * @param object - Object to transform
+ * @param getKey - Function to transform each key
+ * @returns New object with transformed keys
  *
  * @example
  * transformKeys({a: 1, b: 2}, (_, key) => key + '_new'); // {a_new: 1, b_new: 2}

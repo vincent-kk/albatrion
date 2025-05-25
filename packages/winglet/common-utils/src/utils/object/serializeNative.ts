@@ -1,11 +1,11 @@
 /**
- * 네이티브 JSON.stringify를 사용하여 값을 직렬화합니다.
- * JSON.stringify의 별칭입니다.
+ * Serializes a value using native JSON.stringify.
+ * Alias for JSON.stringify.
  *
- * @param value - 직렬화할 값
- * @param replacer - 직렬화 중 값을 변경하는 함수 또는 포함할 속성 이름 배열 (선택사항)
- * @param space - 서식 지정을 위한 공백 문자열 또는 들여쓰기 수 (선택사항)
- * @returns 직렬화된 JSON 문자열
+ * @param value - Value to serialize
+ * @param replacer - Function to alter values during serialization or array of property names to include (optional)
+ * @param space - String for formatting or number of spaces for indentation (optional)
+ * @returns Serialized JSON string
  *
  * @example
  * serializeNative({a: 1, b: 2}); // '{"a":1,"b":2}'

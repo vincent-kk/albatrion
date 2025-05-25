@@ -1,16 +1,16 @@
 import { BaseError, type ErrorDetails } from './BaseError';
 
 /**
- * 작업이 지정된 시간 내에 완료되지 않았을 때 발생하는 오류
- * 시간 제한이 있는 비동기 작업에서 사용됨
+ * Error thrown when an operation does not complete within the specified time
+ * Used for asynchronous operations with time limits
  */
 export class TimeoutError extends BaseError {
   static readonly #group = 'TIMEOUT';
   /**
-   * TimeoutError 생성자
-   * @param code - 구체적인 오류 코드
-   * @param message - 오류 메시지
-   * @param details - 오류 관련 추가 정보
+   * TimeoutError constructor
+   * @param code - Specific error code
+   * @param message - Error message
+   * @param details - Additional error information
    */
   constructor(code: string, message: string, details: ErrorDetails = {}) {
     super(TimeoutError.#group, code, message, details);
@@ -19,9 +19,9 @@ export class TimeoutError extends BaseError {
 }
 
 /**
- * 주어진 오류가 TimeoutError 인지 확인하는 타입 가드 함수
- * @param error - 확인할 오류 객체
- * @returns error가 TimeoutError 인지 여부
+ * Type guard function to check if the given error is a TimeoutError
+ * @param error - The error object to check
+ * @returns Whether the error is a TimeoutError
  */
 export const isTimeoutError = (error: unknown): error is TimeoutError =>
   error instanceof TimeoutError;

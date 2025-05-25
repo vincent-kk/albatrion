@@ -15,12 +15,12 @@ const { get, set } = weakMapCacheFactory<string>();
 const { increment } = counterFactory();
 
 /**
- * 객체를 안정적으로 직렬화합니다. 동일한 객체는 항상 동일한 문자열로 직렬화됩니다.
- * 순환 참조가 있는 객체도 직렬화할 수 있습니다.
+ * Stably serializes an object. Identical objects are always serialized to the same string.
+ * Can also serialize objects with circular references.
  *
- * @param input - 직렬화할 값
- * @param omit - 직렬화에서 제외할 속성 키의 집합 또는 배열 (선택사항)
- * @returns 직렬화된 문자열
+ * @param input - Value to serialize
+ * @param omit - Set or array of property keys to exclude from serialization (optional)
+ * @returns Serialized string
  *
  * @example
  * stableSerialize({a: 1, b: 2}); // '{b:2|a:1}'
@@ -40,12 +40,12 @@ export const stableSerialize = (
 };
 
 /**
- * 주어진 값을 안정적으로 해시한 문자열을 생성합니다.
+ * Creates a stably hashed string for the given value.
  *
- * @param input - 해시할 값
- * @param omit - 해시에서 제외할 속성 키의 집합
- * @param omitHash - 제외된 키들의 해시 프리픽스
- * @returns 해시된 문자열
+ * @param input - Value to hash
+ * @param omit - Set of property keys to exclude from hashing
+ * @param omitHash - Hash prefix for excluded keys
+ * @returns Hashed string
  */
 const createHash = (
   input: unknown,

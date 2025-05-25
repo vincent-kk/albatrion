@@ -1,22 +1,22 @@
 import type { Dictionary, Fn } from '@aileron/declare';
 
 /**
- * 객체의 키 배열을 반환합니다.
+ * Returns an array of keys from an object.
  *
- * @template Type - 딕셔너리 타입의 객체
- * @param object - 키를 추출할 객체
- * @param omit - 제외할 키의 집합 또는 배열 (선택사항)
- * @param sort - 키 정렬에 사용할 비교 함수 (선택사항)
- * @returns 객체의 키 배열
+ * @template Type - Dictionary type object
+ * @param object - Object to extract keys from
+ * @param omit - Set or array of keys to exclude (optional)
+ * @param sort - Comparison function for sorting keys (optional)
+ * @returns Array of object keys
  *
  * @example
- * // 모든 키 가져오기
+ * // Get all keys
  * getObjectKeys({a: 1, b: 2, c: 3}); // ['a', 'b', 'c']
  *
- * // 특정 키 제외하기
+ * // Exclude specific keys
  * getObjectKeys({a: 1, b: 2, c: 3}, ['b']); // ['a', 'c']
  *
- * // 키 정렬하기
+ * // Sort keys
  * getObjectKeys({c: 3, a: 1, b: 2}, undefined, (a, b) => a.localeCompare(b)); // ['a', 'b', 'c']
  */
 export const getObjectKeys = <Type extends Dictionary>(

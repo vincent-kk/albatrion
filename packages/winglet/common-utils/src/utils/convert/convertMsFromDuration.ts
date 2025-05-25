@@ -2,6 +2,11 @@ import { HOUR, MINUTE, SECOND } from '@/common-utils/constant';
 
 let DURATION_REGEX: RegExp;
 
+/**
+ * Convert a duration string to milliseconds
+ * @param duration - The duration string to convert
+ * @returns The duration in milliseconds
+ */
 export const convertMsFromDuration = (duration: string) => {
   if (!DURATION_REGEX) DURATION_REGEX = /^\s*(\d+)\s*(ms|s|m|h)\s*$/;
   const [, durationString, unit] = duration.match(DURATION_REGEX) || [];

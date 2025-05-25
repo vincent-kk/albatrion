@@ -1,6 +1,6 @@
 /**
- * 값이 null인지 확인하는 함수
- * @param value - 확인할 값
- * @returns 값이 null이면 true, 아니면 false
+ * Function to check if a value is null
+ * @param value - Value to check
+ * @returns true if the value is null, false otherwise
  */
 export const isNull = (value?: unknown): value is null => value === null;

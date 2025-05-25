@@ -1,21 +1,21 @@
 export type ErrorDetails = Record<string, unknown>;
 
 export abstract class BaseError extends Error {
-  /** 에러 그룹 식별자 */
+  /** Error group identifier */
   public readonly group: string;
-  /** 에러 특정 코드 */
+  /** Error specific code */
   public readonly specific: string;
-  /** 전체 에러 코드 (`${group}.${specific}` 형태) */
+  /** Full error code (in the format `${group}.${specific}`) */
   public readonly code: string;
-  /** 에러 관련 추가 정보 */
+  /** Additional error information */
   public readonly details: ErrorDetails;
 
   /**
-   * BaseError 생성자
-   * @param group - 에러 그룹 식별자
-   * @param specific - 에러 특정 코드
-   * @param message - 에러 메시지
-   * @param details - 에러 관련 추가 정보
+   * BaseError constructor
+   * @param group - Error group identifier
+   * @param specific - Error specific code
+   * @param message - Error message
+   * @param details - Additional error information
    */
   constructor(
     group: string,

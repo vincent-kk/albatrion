@@ -1,7 +1,7 @@
 /**
- * 값이 심볼인지 확인하는 함수
- * @param value - 확인할 값
- * @returns 값이 심볼이면 true, 아니면 false
+ * Function to check if a value is a symbol
+ * @param value - Value to check
+ * @returns true if the value is a symbol, false otherwise
  */
 export const isSymbol = (value: unknown): value is symbol =>
   typeof value === 'symbol';

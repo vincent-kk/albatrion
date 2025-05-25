@@ -40,7 +40,7 @@ export const getOneOfChildrenList = (
 
   for (let index = 0; index < oneOfSchemas.length; index++) {
     const oneOfSchema = oneOfSchemas[index] as Partial<ObjectSchema>;
-    const salt = getRandomString(32);
+    const salt = getRandomString();
 
     if (oneOfSchema.type && jsonSchema.type !== oneOfSchema.type)
       throw new SchemaNodeError(

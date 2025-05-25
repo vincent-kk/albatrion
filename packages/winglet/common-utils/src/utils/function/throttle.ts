@@ -4,33 +4,33 @@ import { FunctionContext } from './helpers/FunctionContext';
 import type { ExecutionOptions } from './helpers/type';
 
 /**
- * 스로틀된 함수의 인터페이스
- * @template F - 원본 함수 타입
+ * Interface for a throttled function
+ * @template F - Original function type
  */
 export interface ThrottledFn<F extends Fn<any[]>> {
   /**
-   * 스로틀된 함수 호출
-   * @param args - 원본 함수에 전달할 인자들
+   * Call the throttled function
+   * @param args - Arguments to pass to the original function
    */
   (...args: Parameters<F>): void;
-  /** 스로틀 타이머를 무시하고 즉시 함수 실행 */
+  /** Execute the function immediately, ignoring the throttle timer */
   execute: Fn;
-  /** 예약된 함수 실행을 취소하고 타이머 초기화 */
+  /** Cancel scheduled function execution and reset the timer */
   clear: Fn;
 }
 
 /**
- * 함수 호출 빈도를 제한하는 스로틀 함수를 생성
- * 지정된 시간 내에 여러 번 호출되더라도 첫 번째 호출 이후 특정 간격으로만 함수를 실행
+ * Creates a throttled function that limits the frequency of function calls
+ * Even if called multiple times within a specified time, the function is executed only at specific intervals after the first call
  *
- * @template F - 스로틀할 함수 타입
- * @param fn - 스로틀할 원본 함수
- * @param ms - 스로틀 간격(밀리초)
- * @param options - 스로틀 옵션
- * @param options.signal - 스로틀을 중단할 수 있는 AbortSignal
- * @param options.leading - true일 경우 스로틀 시작 시 함수 즉시 실행 (기본값: true)
- * @param options.trailing - true일 경우 스로틀 종료 시 함수 실행 (기본값: true)
- * @returns 스로틀된 함수
+ * @template F - Type of function to throttle
+ * @param fn - Original function to throttle
+ * @param ms - Throttle interval in milliseconds
+ * @param options - Throttle options
+ * @param options.signal - AbortSignal to stop throttling
+ * @param options.leading - If true, execute function immediately at throttle start (default: true)
+ * @param options.trailing - If true, execute function at throttle end (default: true)
+ * @returns Throttled function
  */
 export const throttle = <F extends Fn<any[]>>(
   fn: F,

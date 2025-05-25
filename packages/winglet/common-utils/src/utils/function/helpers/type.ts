@@ -1,11 +1,11 @@
 /**
- * 함수 실행 제어 옵션
+ * Function execution control options
  */
 export type ExecutionOptions = {
-  /** 함수 실행을 중단할 수 있는 AbortSignal */
+  /** AbortSignal to stop function execution */
   signal?: AbortSignal;
-  /** 시작 시 함수 즉시 실행 여부 */
+  /** Whether to execute function immediately at start */
   leading?: boolean;
-  /** 종료 시 함수 실행 여부 */
+  /** Whether to execute function at end */
   trailing?: boolean;
 };

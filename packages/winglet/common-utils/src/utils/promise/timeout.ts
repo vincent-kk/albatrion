@@ -2,11 +2,11 @@ import { TimeoutError } from '@/common-utils/errors/TimeoutError';
 import { type DelayOptions, delay } from '@/common-utils/utils/promise/delay';
 
 /**
- * @description 일정 시간을 기다린 후, TimeoutError를 발생시키는 함수
- * @param {number} ms - 지연 시간
- * @param {DelayOptions} options - 옵션
- * @param {AbortSignal} options.signal - promise가 종료되기 전에 abort 시키는 signal
- * @returns {Promise<never>} 지연 후 예외를 발생시키는 Promise
+ * @description Function that waits for a certain amount of time and then throws a TimeoutError
+ * @param {number} ms - Delay time
+ * @param {DelayOptions} options - Options
+ * @param {AbortSignal} options.signal - Signal to abort the promise before it completes
+ * @returns {Promise<never>} Promise that throws an exception after delay
  */
 export const timeout = async (
   ms?: number,

@@ -1,9 +1,9 @@
 /**
- * 배열의 각 요소에 콜백 함수를 적용하는 함수
- * 콜백이 false를 반환하면 반복을 중단함
- * @template Type - 배열 요소의 타입
- * @param array - 반복할 배열
- * @param callback - 각 요소에 적용할 콜백 함수. false를 반환하면 반복 중단
+ * Function to apply a callback function to each element of an array
+ * Stops iteration if the callback returns false
+ * @template Type - Type of array elements
+ * @param array - Array to iterate over
+ * @param callback - Callback function to apply to each element. Stops iteration if returns false
  */
 export const forEach = <Type>(
   array: Type[],
