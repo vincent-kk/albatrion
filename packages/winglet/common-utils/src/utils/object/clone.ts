@@ -119,7 +119,6 @@ const replicate = <Type>(
     result.message = value.message;
     result.name = value.name;
     result.stack = value.stack;
-    // @ts-expect-error: The `cause` property is not available on Error prior to ES2022.
     if ('cause' in value) result.cause = replicate(value.cause, cache);
     replicateProperties(result, value, cache);
     return result as Type;
