@@ -3,51 +3,51 @@ import type { Fn } from '@aileron/declare';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 export enum OperationPhase {
-  /** 노드를 처음 방문할 때의 단계 */
+  /** Phase when first visiting a node */
   Enter = 1 << 0,
-  /** 하위 노드를 추가할 단계 */
+  /** Phase for adding child nodes */
   ChildEntries = 1 << 1,
-  /** $ref를 처리할 단계 */
+  /** Phase for processing $ref */
   Reference = 1 << 2,
-  /** 노드 방문을 완료할 단계 */
+  /** Phase when completing node visit */
   Exit = 1 << 3,
 }
 
 export interface SchemaEntry {
-  /** 처리 중인 스키마 노드 */
+  /** The schema node being processed */
   schema: UnknownSchema;
-  /** 현재 노드의 JSON 포인터 경로 */
+  /** JSON pointer path of the current node */
   path: string;
-  /** 현재 노드에 해당하는 data 포인터 경로 */
+  /** Data pointer path corresponding to the current node */
   dataPath: string;
-  /** 탐색 깊이 */
+  /** Traversal depth */
   depth: number;
-  /** 참조가 있는지 여부 */
+  /** Whether there is a reference */
   hasReference?: boolean;
-  /** 처리된 참조 경로 */
+  /** Processed reference path */
   referencePath?: string;
-  /** 참조 해결 여부 */
+  /** Whether reference is resolved */
   referenceResolved?: boolean;
 }
 
 export interface SchemaVisitor<ContextType = void> {
-  /** 노드 처리 시작 시 호출되는 콜백 */
+  /** Callback called when node processing starts */
   enter?: Fn<[entry: SchemaEntry, context?: ContextType]>;
-  /** 노드 처리 종료 시 호출되는 콜백 */
+  /** Callback called when node processing ends */
   exit?: Fn<[entry: SchemaEntry, context?: ContextType]>;
 }
 
 export interface JsonScannerOptions<ContextType = void> {
-  /** 스키마 노드 필터링 함수 */
+  /** Schema node filtering function */
   filter?: Fn<[entry: SchemaEntry, context?: ContextType], boolean>;
-  /** $ref 참조 해결 함수 */
+  /** Function to resolve $ref references */
   resolveReference?: Fn<
     [reference: string, context?: ContextType],
     UnknownSchema | undefined
   >;
-  /** 최대 탐색 깊이 */
+  /** Maximum traversal depth */
   maxDepth?: number;
-  /** 방문자와 필터에 전달되는 컨텍스트 객체 */
+  /** Context object passed to visitors and filters */
   context?: ContextType;
 }
 

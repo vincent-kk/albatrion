@@ -13,7 +13,7 @@ type Dictionary<Value = any> = Record<string, Value>;
 
 export type UnknownSchema = { type?: string; [key: string]: any };
 
-/** 입력된 값을 기반으로 적절한 Schema를 추론 */
+/** Infers the appropriate Schema type based on the input value */
 export type InferJsonSchema<
   Value extends AllowedValue | unknown = any,
   Options extends Dictionary = object,

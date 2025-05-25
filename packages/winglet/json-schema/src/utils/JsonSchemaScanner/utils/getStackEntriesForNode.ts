@@ -11,10 +11,10 @@ const CONDITIONAL_KEYWORDS = ['not', 'if', 'then', 'else'] as const;
 const COMPOSITION_KEYWORDS = ['allOf', 'anyOf', 'oneOf'] as const;
 
 /**
- * 주어진 노드의 하위 노드들을 SchemaEntry 배열로 반환합니다.
- * 스택 기반 순회를 위해 역순으로 스택에 추가될 수 있도록 순서를 맞춥니다.
- * @param entry 하위 노드를 추출할 스키마 항목
- * @returns 하위 스키마 항목 배열
+ * Returns the child nodes of a given node as an array of SchemaEntry.
+ * Orders them properly so they can be added to the stack in reverse order for stack-based traversal.
+ * @param entry The schema entry to extract child nodes from
+ * @returns Array of child schema entries
  */
 export const getStackEntriesForNode = (entry: SchemaEntry): SchemaEntry[] => {
   const { schema, path, dataPath, depth } = entry;
@@ -43,11 +43,13 @@ export const getStackEntriesForNode = (entry: SchemaEntry): SchemaEntry[] => {
 };
 
 /**
- * definitions 노드의 하위 스키마들을 처리하여 스택 항목에 추가합니다.
- * @param schema 스키마 객체
- * @param entries 추가할 스택 항목 배열
- * @param path 현재 경로
- * @param depth 현재 깊이
+ * Processes child schemas of definitions node and adds them to stack entries.
+ * @param schema Schema object
+ * @param entries Array of stack entries to add to
+ * @param path Current path
+ * @param dataPath Current data path
+ * @param depth Current depth
+ * @param fieldName Field name (definitions or $defs)
  */
 const handleDefinitionsNode = (
   schema: UnknownSchema,
@@ -71,11 +73,12 @@ const handleDefinitionsNode = (
 };
 
 /**
- * 조건부 노드(not, if, then, else)의 하위 스키마들을 처리하여 스택 항목에 추가합니다.
- * @param schema 스키마 객체
- * @param entries 추가할 스택 항목 배열
- * @param path 현재 경로
- * @param depth 현재 깊이
+ * Processes child schemas of conditional nodes (not, if, then, else) and adds them to stack entries.
+ * @param schema Schema object
+ * @param entries Array of stack entries to add to
+ * @param path Current path
+ * @param dataPath Current data path
+ * @param depth Current depth
  */
 const handleConditionalNode = (
   schema: UnknownSchema,
@@ -98,11 +101,12 @@ const handleConditionalNode = (
 };
 
 /**
- * 결합 노드(allOf, anyOf, oneOf)의 하위 스키마들을 처리하여 스택 항목에 추가합니다.
- * @param schema 스키마 객체
- * @param entries 추가할 스택 항목 배열
- * @param path 현재 경로
- * @param depth 현재 깊이
+ * Processes child schemas of composition nodes (allOf, anyOf, oneOf) and adds them to stack entries.
+ * @param schema Schema object
+ * @param entries Array of stack entries to add to
+ * @param path Current path
+ * @param dataPath Current data path
+ * @param depth Current depth
  */
 const handleCompositionNode = (
   schema: UnknownSchema,
@@ -127,11 +131,12 @@ const handleCompositionNode = (
 };
 
 /**
- * additionalProperties 노드의 하위 스키마를 처리하여 스택 항목에 추가합니다.
- * @param schema 스키마 객체
- * @param entries 추가할 스택 항목 배열
- * @param path 현재 경로
- * @param depth 현재 깊이
+ * Processes the child schema of additionalProperties node and adds it to stack entries.
+ * @param schema Schema object
+ * @param entries Array of stack entries to add to
+ * @param path Current path
+ * @param dataPath Current data path
+ * @param depth Current depth
  */
 const handleAdditionalProperties = (
   schema: UnknownSchema,
@@ -149,11 +154,12 @@ const handleAdditionalProperties = (
 };
 
 /**
- * 배열 타입 스키마의 items 노드를 처리하여 스택 항목에 추가합니다.
- * @param schema 스키마 객체
- * @param entries 추가할 스택 항목 배열
- * @param path 현재 경로
- * @param depth 현재 깊이
+ * Processes the items node of array type schema and adds it to stack entries.
+ * @param schema Schema object
+ * @param entries Array of stack entries to add to
+ * @param path Current path
+ * @param dataPath Current data path
+ * @param depth Current depth
  */
 const handleArrayItems = (
   schema: UnknownSchema,
@@ -183,12 +189,12 @@ const handleArrayItems = (
 };
 
 /**
- * 객체 타입 스키마의 properties 노드를 처리하여 스택 항목에 추가합니다.
- * @param schema 스키마 객체
- * @param entries 추가할 스택 항목 배열
- * @param path 현재 경로
- * @param dataPath 현재 데이터 경로
- * @param depth 현재 깊이
+ * Processes the properties node of object type schema and adds it to stack entries.
+ * @param schema Schema object
+ * @param entries Array of stack entries to add to
+ * @param path Current path
+ * @param dataPath Current data path
+ * @param depth Current depth
  */
 const handleObjectProperties = (
   schema: UnknownSchema,

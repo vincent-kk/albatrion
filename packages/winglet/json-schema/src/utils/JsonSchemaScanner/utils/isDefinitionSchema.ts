@@ -32,9 +32,9 @@ export const isDefinitionSchema = (path: string): boolean => {
   for (let index = 0; index < length - 1; index++) {
     const segment = segments[index];
     if (segment !== $DEFS && segment !== DEFINITIONS) continue;
-    if (index === length - 1) return false; // 1. 마지막이 $defs 자체 → 정의 아님
-    if (segments[index + 1] === '') return false; // 2. 다음 세그먼트가 빈 문자열이면 → 정의 키 없음
-    if (index > 0 && segments[index - 1] === 'properties') return false; // 3. 바로 앞이 properties이면 → 정의 아님
+    if (index === length - 1) return false; // 1. If last is $defs itself → not a definition
+    if (segments[index + 1] === '') return false; // 2. If next segment is empty string → no definition key
+    if (index > 0 && segments[index - 1] === 'properties') return false; // 3. If immediately preceded by properties → not a definition
     return true;
   }
 
