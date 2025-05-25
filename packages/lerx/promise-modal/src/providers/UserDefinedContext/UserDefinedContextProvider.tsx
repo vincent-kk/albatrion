@@ -5,7 +5,7 @@ import type { Dictionary } from '@aileron/declare';
 import { UserDefinedContext } from './UserDefinedContext';
 
 interface UserDefinedContextProviderProps {
-  /** 사용자 정의 컨텍스트 */
+  /** User defined context */
   context?: Dictionary;
 }
 

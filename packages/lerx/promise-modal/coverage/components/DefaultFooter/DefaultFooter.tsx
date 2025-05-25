@@ -28,7 +28,7 @@ function DefaultFooter({
           size="large"
           color="primary"
         >
-          {confirmLabel || '확인'}
+          {confirmLabel || 'Confirm'}
         </Button>
       )}
       {!hideCancel && typeof onCancel === 'function' && (
@@ -40,7 +40,7 @@ function DefaultFooter({
           color="primary"
           size="large"
         >
-          {cancelLabel || '취소'}
+          {cancelLabel || 'Cancel'}
         </Button>
       )}
     </div>
