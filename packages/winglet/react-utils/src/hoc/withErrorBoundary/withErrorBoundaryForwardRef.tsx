@@ -11,12 +11,13 @@ import type { Dictionary } from '@aileron/declare';
 import { ErrorBoundary } from './ErrorBoundary';
 
 /**
- * ref를 전달하는 컴포넌트를 ErrorBoundary로 감싸는 HOC입니다.
- * @typeParam Props - 컴포넌트 프로퍼티 타입
- * @typeParam Ref - ref로 전달될 타입
- * @param Component - 감싸을 forwardRef 컴포넌트
- * @param fallback - 에러 발생 시 표시할 대체 UI (선택 사항)
- * @returns ref를 전달하면서 ErrorBoundary로 감싸인 컴포넌트
+ * Higher-Order Component (HOC) that wraps a forwardRef component with ErrorBoundary.
+ * Preserves ref forwarding while providing error boundary protection.
+ * @typeParam Props - The component props type
+ * @typeParam Ref - The ref type being forwarded
+ * @param Component - The forwardRef component to wrap
+ * @param fallback - Optional fallback UI to display when an error occurs
+ * @returns A forwardRef component wrapped with ErrorBoundary
  * @example
  * const SafeComponent = withErrorBoundaryForwardRef(MyForwardRefComponent, <ErrorFallback />);
  */

@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 
 /**
- * 입력값을 메모이제이션하여 처음 렌더링 될 때의 값을 계속 유지합니다.
- * useMemo 후크와 비슷하지만, 의존성 배열이 비어있어 처음 값만 유지합니다.
- * @typeParam T - 메모이제이션할 값의 타입
- * @param input - 메모이제이션할 값
- * @returns 메모이제이션된 값
+ * Memoizes the input value and preserves it throughout the component's lifetime.
+ * Similar to useMemo but with an empty dependency array, ensuring the value is computed only once.
+ * Useful for maintaining stable references to objects or expensive computations.
+ * @typeParam T - The type of the value to memoize
+ * @param input - The value to memoize
+ * @returns The memoized value that remains constant across re-renders
  */
 export const useMemorize = <T>(input: T) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps

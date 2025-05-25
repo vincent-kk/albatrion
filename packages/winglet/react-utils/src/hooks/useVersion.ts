@@ -5,13 +5,13 @@ import type { Fn } from '@aileron/declare';
 import { useReference } from './useReference';
 
 /**
- * React 렌더를 유발하는 version과 version을 업데이트하는 함수를 반환합니다.
- * 이는 컴포넌트의 강제 렌더링이 필요한 경우에 유용합니다.
- * @param {Function} callback - updateVersion 호출시에 실행할 callback 함수, optional
- * @returns [version, updateVersion] - 버전 번호와 버전을 업데이트하는 함수
+ * Returns a version number that triggers React re-renders and a function to update it.
+ * Useful for forcing component re-renders when needed.
+ * @param callback - Optional callback function to execute when updateVersion is called
+ * @returns [version, updateVersion] - The version number and a function to update it
  * @example
  * const [version, forceUpdate] = useVersion();
- * // 필요한 시점에 강제 렌더링
+ * // Force re-render when needed
  * const handleRefresh = () => forceUpdate();
  */
 export const useVersion = (callback?: Fn) => {

@@ -5,9 +5,10 @@ import { isFunction } from '@winglet/common-utils';
 import type { Fn } from '@aileron/declare';
 
 /**
- * @description 상수를 반환합니다. 함수인 경우 실행하여 결과를 저장합니다.
- * @param input - 상수 또는 함수
- * @returns 상수 또는 함수의 결과
+ * Returns a constant value. If the input is a function, executes it and stores the result.
+ * The value is computed only once during the component's lifetime.
+ * @param input - A constant value or a function that returns a value
+ * @returns The constant value or the result of the function execution
  */
 export const useConstant: {
   <Return>(input: Fn<[], Return>): Return;

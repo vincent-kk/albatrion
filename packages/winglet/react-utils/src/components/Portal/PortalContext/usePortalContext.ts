@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { PortalContext } from './PortalContext';
 
 /**
- * PortalContext를 반환합니다.
+ * Returns the PortalContext.
  * @returns The portal context
  */
 export const usePortalContext = () => {
@@ -14,7 +14,8 @@ export const usePortalContext = () => {
 };
 
 /**
- * `Portal` 컴포넌트로 연결할 DOM에 반환되는 ref를 연결합니다.
+ * Returns a ref that should be attached to the DOM element where Portal content will be rendered.
+ * This ref connects the Portal components to their designated anchor point.
  * @returns The portal anchor ref
  */
 export const usePortalAnchorRef = () => {

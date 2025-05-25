@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
 /**
- * 현재 웹 브라우저 창의 크기를 반환합니다.
- * 사용자가 브라우저 창의 크기를 조정할 때마다 자동으로 업데이트됩니다.
- * @returns {크기 객체} - width와 height 속성을 포함하는 객체
+ * Returns the current browser window size and automatically updates when the user resizes the window.
+ * Useful for responsive components that need to adapt to window size changes.
+ * @returns An object containing width and height properties of the current window
  * @example
  * const { width, height } = useWindowSize();
  * return <div>Width: {width}, Height: {height}</div>;

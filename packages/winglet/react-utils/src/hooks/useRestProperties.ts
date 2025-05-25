@@ -3,11 +3,12 @@ import { useMemo, useRef } from 'react';
 import type { Dictionary } from '@aileron/declare';
 
 /**
- * 이전 프로퍼티와 현재 프로퍼티를 비교하여 변경이 없으면 이전 객체를 그대로 반환합니다.
- * 이는 불필요한 렌더링을 방지하는 데 유용합니다.
- * @typeParam T - 프로퍼티 객체 타입
- * @param props - 비교할 프로퍼티 객체
- * @returns 이전 프로퍼티와 동일하면 이전 객체, 그렇지 않으면 새 객체
+ * Compares current properties with previous properties and returns the previous object if no changes occurred.
+ * This helps prevent unnecessary re-renders by maintaining object reference stability.
+ * Performs shallow comparison of all properties and their values.
+ * @typeParam T - The type of the properties object
+ * @param props - The properties object to compare
+ * @returns The previous object if identical, otherwise the new object
  */
 export const useRestProperties = <T extends Dictionary>(props: T): T => {
   const propsRef = useRef<T>(props);

@@ -5,19 +5,20 @@ import { isReactComponent, isReactElement } from '../filter';
 type ReactComponent<P> = ReactNode | ComponentType<P>;
 
 /**
- * ReactNode, 컴포넌트 타입 또는 컴포넌트 인스턴스를 적절히 렌더합니다.
- * @typeParam P - 컴포넌트 프로퍼티 타입
- * @param Component - 렌더할 ReactNode 또는 컴포넌트
- * @param props - 컴포넌트에 전달할 프로퍼티
- * @returns 렌더된 ReactNode 또는 null
+ * Appropriately renders ReactNode, component types, or component instances.
+ * Handles different input types and returns the appropriate rendered output.
+ * @typeParam P - The component props type
+ * @param Component - The ReactNode or component to render
+ * @param props - Props to pass to the component
+ * @returns The rendered ReactNode or null
  * @example
- * // ReactElement를 그대로 반환
+ * // Returns ReactElement as-is
  * renderComponent(<div>Content</div>)
  * 
- * // 컴포넌트 타입을 인스턴스화하여 반환
+ * // Instantiates component type and returns it
  * renderComponent(MyComponent, { prop1: 'value1' })
  * 
- * // 유효하지 않은 값은 null 반환
+ * // Returns null for invalid values
  * renderComponent(undefined)
  */
 export const renderComponent = <P extends object>(

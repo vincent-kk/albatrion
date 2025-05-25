@@ -3,9 +3,11 @@ import { useMemo, useRef } from 'react';
 import { equals, getTypeTag, isObject } from '@winglet/common-utils';
 
 /**
- * @description 객체의 스냅샷을 반환합니다.
- * @param object - 객체
- * @returns 객체 스냅샷의 값
+ * Returns a snapshot of the object that only updates when the object actually changes.
+ * Uses deep equality comparison to determine if the object has changed.
+ * @param input - The object to create a snapshot of
+ * @param omit - Properties to omit from the comparison
+ * @returns The current snapshot value of the object
  */
 export const useSnapshot = <Input extends object>(
   input: Input,
@@ -16,9 +18,11 @@ export const useSnapshot = <Input extends object>(
 };
 
 /**
- * @description 객체의 스냅샷의 참조를 반환합니다.
- * @param object - 객체
- * @returns 객체 스냅샷의 참조
+ * Returns a ref containing a snapshot of the object that only updates when the object actually changes.
+ * Uses deep equality comparison to determine if the object has changed.
+ * @param input - The object to create a snapshot of
+ * @param omit - Properties to omit from the comparison
+ * @returns A ref containing the current snapshot of the object
  */
 export const useSnapshotReference = <Input extends object>(
   input: Input,

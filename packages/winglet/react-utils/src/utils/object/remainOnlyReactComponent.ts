@@ -5,18 +5,19 @@ import type { Dictionary } from '@aileron/declare';
 import { isReactComponent } from '../filter';
 
 /**
- * 입력 객체에서 React 컴포넌트만 추출하여 새로운 객체를 만듭니다.
- * @typeParam Input - 입력 객체 타입
- * @typeParam Output - 출력 객체 타입
- * @param dictionary - React 컴포넌트를 포함한 객체
- * @returns React 컴포넌트만 포함한 새 객체
+ * Extracts only React components from an input object and creates a new object.
+ * Filters out non-component values using component type checking.
+ * @typeParam Input - The input object type
+ * @typeParam Output - The output object type
+ * @param dictionary - An object containing React components and other values
+ * @returns A new object containing only React components
  * @example
  * const components = remainOnlyReactComponent({
  *   Button: ButtonComponent,
  *   Icon: IconComponent,
- *   helper: helperFunction, // 컴포넌트가 아니므로 제외됨
+ *   helper: helperFunction, // Not a component, will be excluded
  * });
- * // 결과: { Button: ButtonComponent, Icon: IconComponent }
+ * // Result: { Button: ButtonComponent, Icon: IconComponent }
  */
 export const remainOnlyReactComponent = <
   Input extends Record<string, unknown>,

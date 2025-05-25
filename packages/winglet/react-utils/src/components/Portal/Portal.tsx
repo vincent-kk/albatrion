@@ -3,8 +3,9 @@ import { type PropsWithChildren, memo, useEffect } from 'react';
 import { usePortalContext } from './PortalContext';
 
 /**
- * withPortal 내부에서 Portal 컴포넌트의 자식 컴포넌트는 portalAnchor 하위에 랜더링 됩니다.
- * @param children - portalAnchor 하위에 그려질 컴포넌트
+ * Portal component renders its children under the portalAnchor within a withPortal HOC.
+ * Content passed to this component will be rendered at the location of the Portal.Anchor.
+ * @param children - The components to be rendered under the portalAnchor
  */
 export const Portal = memo(({ children }: PropsWithChildren) => {
   const { register, unregister } = usePortalContext();
