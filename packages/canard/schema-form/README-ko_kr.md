@@ -24,6 +24,31 @@ JSON Schema를 검증에 활용하며, 이 목적으로 [ajv@8](https://ajv.js.o
 yarn add @canard/schema-form
 ```
 
+---
+
+## 호환성 안내
+
+`@canard/schema-form`은 ECMAScript 2022 (ES2022) 문법으로 작성되었습니다.
+
+ES2022보다 낮은 버전의 JavaScript 환경에서 사용하시는 경우, 별도의 트랜스파일 과정이 필요합니다.
+
+**지원 환경:**
+
+- Node.js 16.11.0 이상
+- 최신 브라우저 (Chrome 94+, Firefox 93+, Safari 15+)
+
+**레거시 환경 지원이 필요한 경우:**
+Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환해주세요.
+
+**대상 패키지**
+
+- `@canard/schema-form`
+- `@winglet/common-utils`
+- `@winglet/json-schema`
+- `@winglet/react-utils`
+
+---
+
 ### 인터페이스
 
 #### FormProps
@@ -744,6 +769,8 @@ export const AntdForm = () => {
 };
 ```
 
+---
+
 ## 성능 최적화
 
 이 라이브러리는 다음과 같은 기능으로 성능 최적화가 이루어졌습니다:
@@ -776,6 +803,8 @@ const CUSTOM_INPUTS = [
 <Form jsonSchema={jsonSchema} formTypeInputDefinitions={CUSTOM_INPUTS} />;
 ```
 
+---
+
 ## TypeScript 지원
 
 `@canard/schema-form`은 TypeScript로 구축되었으며 포괄적인 유형 정의를 제공합니다. 주요 유형 유틸리티에는 다음과 같습니다:
@@ -783,10 +812,6 @@ const CUSTOM_INPUTS = [
 - `InferValueType<Schema>`: JSON Schema에서 값 유형을 추론합니다
 - `InferSchemaNode<Schema>`: JSON Schema에서 스키마 노드 유형을 추론합니다
 - `FormHandle<Schema>`: 스키마 특정 메서드를 가진 양식 참조 핸들러의 유형
-
-## 브라우저 지원
-
-`@canard/schema-form`은 모든 현대 브라우저(Chrome, Firefox, Safari, Edge)를 지원하지만 IE11은 지원하지 않습니다.
 
 ---
 

@@ -24,6 +24,31 @@ By defining various `FormTypeInput` components, it offers the flexibility to acc
 yarn add @canard/schema-form
 ```
 
+---
+
+## Compatibility
+
+`@canard/schema-form` is built with ECMAScript 2022 (ES2022) syntax.
+
+If you're using a JavaScript environment that doesn't support ES2022, you'll need to include this package in your transpilation process.
+
+**Supported environments:**
+
+- Node.js 16.11.0 or later
+- Modern browsers (Chrome 94+, Firefox 93+, Safari 15+)
+
+**For legacy environment support:**
+Please use a transpiler like Babel to transform the code for your target environment.
+
+**Target packages**
+
+- `@canard/schema-form`
+- `@winglet/common-utils`
+- `@winglet/json-schema`
+- `@winglet/react-utils`
+
+---
+
 ### Interfaces
 
 #### FormProps
@@ -746,6 +771,8 @@ export const AntdForm = () => {
 };
 ```
 
+---
+
 ## Performance Optimization
 
 The library is optimized for performance with features like:
@@ -778,6 +805,8 @@ The library is optimized for performance with features like:
    <Form jsonSchema={jsonSchema} formTypeInputDefinitions={CUSTOM_INPUTS} />;
    ```
 
+---
+
 ## TypeScript Support
 
 `@canard/schema-form` is built with TypeScript and provides comprehensive type definitions. Key type utilities include:
@@ -785,10 +814,6 @@ The library is optimized for performance with features like:
 - `InferValueType<Schema>`: Infers the value type from a JSON Schema
 - `InferSchemaNode<Schema>`: Infers the schema node type from a JSON Schema
 - `FormHandle<Schema>`: Type for form ref handle with schema-specific methods
-
-## Browser Support
-
-`@canard/schema-form` supports all modern browsers (Chrome, Firefox, Safari, Edge), but IE11 is not support.
 
 ---
 

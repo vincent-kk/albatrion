@@ -33,6 +33,28 @@ npm install @lerx/promise-modal
 
 ---
 
+## 호환성 안내
+
+`@lerx/promise-modal`은 ECMAScript 2022 (ES2022) 문법으로 작성되었습니다.
+
+ES2022보다 낮은 버전의 JavaScript 환경에서 사용하시는 경우, 별도의 트랜스파일 과정이 필요합니다.
+
+**지원 환경:**
+
+- Node.js 16.11.0 이상
+- 최신 브라우저 (Chrome 94+, Firefox 93+, Safari 15+)
+
+**레거시 환경 지원이 필요한 경우:**
+Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환해주세요.
+
+**대상 패키지**
+
+- `@lerx/promise-modal`
+- `@winglet/common-utils`
+- `@winglet/react-utils`
+
+---
+
 ## 사용 방법
 
 ### 1. 모달 제공자 설정
@@ -1185,10 +1207,6 @@ async function promptWithNestedModal() {
   console.log('입력 값:', value);
 }
 ```
-
-## 브라우저 지원
-
-`@lerx/promise-modal`은 모든 현대 브라우저(Chrome, Firefox, Safari, Edge)를 지원하지만 IE11은 지원하지 않습니다.
 
 ---
 

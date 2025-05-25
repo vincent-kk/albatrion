@@ -58,6 +58,20 @@ yarn workspace <package-name> build
 
 ---
 
+## Compatibility
+
+This package is built with ECMAScript 2022 (ES2022) syntax. If you're using a JavaScript environment that doesn't support ES2022, you'll need to include this package in your transpilation process.
+
+**Supported environments:**
+
+- Node.js 16.11.0 or later
+- Modern browsers (Chrome 94+, Firefox 93+, Safari 15+)
+
+**For legacy environment support:**
+Please use a transpiler like Babel to transform the code for your target environment.
+
+---
+
 ## License
 
 This repository is provided under the MIT license. For more details, please refer to the [`LICENSE`](./LICENSE) file.

@@ -23,6 +23,27 @@ yarn add @winglet/json-schema
 
 ---
 
+## 호환성 안내
+
+이 패키지는 ECMAScript 2022 (ES2022) 문법으로 작성되었습니다.
+
+ES2022보다 낮은 버전의 JavaScript 환경에서 사용하시는 경우, 별도의 트랜스파일 과정이 필요합니다.
+
+**지원 환경:**
+
+- Node.js 16.11.0 이상
+- 최신 브라우저 (Chrome 94+, Firefox 93+, Safari 15+)
+
+**레거시 환경 지원이 필요한 경우:**
+Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환해주세요.
+
+**대상 패키지**
+
+- `@winglet/json-schema`
+- `@winglet/common-utils`
+
+---
+
 ## 주요 기능
 
 ### 1. 스키마 탐색 및 유효성 검사
