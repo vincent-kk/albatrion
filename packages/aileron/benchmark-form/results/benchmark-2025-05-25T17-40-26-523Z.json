@@ -1,0 +1,116 @@
+{
+  "timestamp": "2025-05-25T17-40-26-523Z",
+  "results": [
+    {
+      "name": "@react-genie-form/next - Form Rendering",
+      "hz": 54.47566632398822,
+      "stats": {
+        "mean": 0.018356819979999998,
+        "deviation": 0.013355160163538844
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.50 - Form Rendering",
+      "hz": 191.09657277245887,
+      "stats": {
+        "mean": 0.0052329562246556495,
+        "deviation": 0.0006111235594106801
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.55 - Form Rendering",
+      "hz": 188.50814232970248,
+      "stats": {
+        "mean": 0.005304810644470682,
+        "deviation": 0.0006337091680693089
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.60 - Form Rendering",
+      "hz": 184.75880068605025,
+      "stats": {
+        "mean": 0.005412462065605422,
+        "deviation": 0.0004598894703780135
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.65 - Form Rendering",
+      "hz": 184.8750634976542,
+      "stats": {
+        "mean": 0.005409058317985046,
+        "deviation": 0.00037540915367918277
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.70 - Form Rendering",
+      "hz": 183.59769493382186,
+      "stats": {
+        "mean": 0.0054466914759493685,
+        "deviation": 0.0004937224390424435
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.75 - Form Rendering",
+      "hz": 182.9849302830054,
+      "stats": {
+        "mean": 0.005464930901432128,
+        "deviation": 0.000499468292032934
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.0.80 - Form Rendering",
+      "hz": 185.05383282973884,
+      "stats": {
+        "mean": 0.005403832953409092,
+        "deviation": 0.0004245094318729656
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - Form Rendering",
+      "hz": 183.43977303182325,
+      "stats": {
+        "mean": 0.005451380491113666,
+        "deviation": 0.0004737123755897791
+      }
+    }
+  ],
+  "chartConfig": {
+    "type": "bar",
+    "data": {
+      "labels": [
+        "@react-genie-form/next - Form Rendering",
+        "@canard/schema-form@0.0.50 - Form Rendering",
+        "@canard/schema-form@0.0.55 - Form Rendering",
+        "@canard/schema-form@0.0.60 - Form Rendering",
+        "@canard/schema-form@0.0.65 - Form Rendering",
+        "@canard/schema-form@0.0.70 - Form Rendering",
+        "@canard/schema-form@0.0.75 - Form Rendering",
+        "@canard/schema-form@0.0.80 - Form Rendering",
+        "@canard/schema-form@latest - Form Rendering"
+      ],
+      "datasets": [
+        {
+          "label": "Operations/sec",
+          "data": [
+            54.47566632398822,
+            191.09657277245887,
+            188.50814232970248,
+            184.75880068605025,
+            184.8750634976542,
+            183.59769493382186,
+            182.9849302830054,
+            185.05383282973884,
+            183.43977303182325
+          ]
+        }
+      ]
+    },
+    "options": {
+      "scales": {
+        "y": {
+          "beginAtZero": true
+        }
+      }
+    }
+  }
+}
