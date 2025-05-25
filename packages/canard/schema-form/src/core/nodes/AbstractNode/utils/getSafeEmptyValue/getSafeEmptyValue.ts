@@ -1,7 +1,7 @@
 /**
- * @description JSON Schema의 default 속성 또는 타입에 따른 기본값 반환
+ * Returns default value based on JSON Schema's default property or type
  * @param jsonSchema - JSON Schema
- * @returns 기본값
+ * @returns Default value
  */
 export const getSafeEmptyValue = <Schema extends { type?: string }>(
   value: any,

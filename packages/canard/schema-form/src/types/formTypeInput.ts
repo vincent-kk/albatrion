@@ -13,13 +13,13 @@ import type { InferJsonSchema, JsonSchemaWithVirtual } from './jsonSchema';
 import type { AllowedValue } from './value';
 
 /**
- * FormType Input Component가 만족해야 하는 props
+ * Props that FormType Input Component must satisfy
  *
- * - `Value`: FormType Component에 할당된 값의 타입
- * - `Context`: Form에 전달된 UserDefinedContext의 타입
- * - `WatchValues`: JsonSchema에 정의된 watch 속성에 따라 구독하는 값들의 타입
- * - `Schema`: FormType Component에 할당된 schema node의 jsonSchema 타입
- * - `Node`: FormType Component에 할당된 schema node의 타입
+ * - `Value`: Type of value assigned to FormType Component
+ * - `Context`: Type of UserDefinedContext passed to Form
+ * - `WatchValues`: Type of values subscribed according to watch property defined in JsonSchema
+ * - `Schema`: JsonSchema type of schema node assigned to FormType Component
+ * - `Node`: Type of schema node assigned to FormType Component
  */
 export interface FormTypeInputProps<
   Value extends AllowedValue = any,
@@ -28,46 +28,46 @@ export interface FormTypeInputProps<
   Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
-  /** FormType Component의 jsonSchema */
+  /** JsonSchema of FormType Component */
   jsonSchema: Schema;
-  /** FormType Component의 readOnly */
+  /** ReadOnly state of FormType Component */
   readOnly: boolean;
-  /** FormType Component의 disabled */
+  /** Disabled state of FormType Component */
   disabled: boolean;
-  /** FormType Component에 할당된 schema node의 required 여부 */
+  /** Whether the schema node assigned to FormType Component is required */
   required: boolean;
-  /** FormType Component에 할당된 schema node */
+  /** Schema node assigned to FormType Component */
   node: Node;
-  /** FormType Component에 할당된 schema node의 이름 */
+  /** Name of schema node assigned to FormType Component */
   name: Node['name'];
-  /** FormType Component에 할당된 schema node의 경로 */
+  /** Path of schema node assigned to FormType Component */
   path: Node['path'];
-  /** FormType Component에 할당된 schema node의 에러 */
+  /** Errors of schema node assigned to FormType Component */
   errors: Node['errors'];
-  /** JsonSchema에 정의된 `computed.watch`(=`&watch`) 속성에 따라 구독하는 값들 */
+  /** Values subscribed according to `computed.watch`(=`&watch`) property defined in JsonSchema */
   watchValues: WatchValues;
-  /** FormType Component의 defaultValue */
+  /** Default value of FormType Component */
   defaultValue: Value | undefined;
-  /** FormType Component의 value */
+  /** Current value of FormType Component */
   value: Value;
-  /** FormType Component의 onChange */
+  /** onChange handler of FormType Component */
   onChange: SetStateFnWithOptions<Value>;
-  /** 이 FormType Component의 하위 FormType Components */
+  /** Child FormType Components of this FormType Component */
   ChildNodeComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
-  /** FormType Component의 style */
+  /** Style of FormType Component */
   style: CSSProperties | undefined;
-  /** Form에 전달된 UserDefinedContext */
+  /** UserDefinedContext passed to Form */
   context: Context;
-  /** 추가 속성을 자유롭게 정의할 수 있음 */
+  /** Additional properties can be freely defined */
   [alt: string]: any;
 }
 
 /**
- * FormTypeInputPropsWithSchema 가 만족해야 하는 props
+ * Props that FormTypeInputPropsWithSchema must satisfy
  *
- * - `Value`: FormType Component에 할당된 값의 타입
- * - `Schema`: FormType Component에 할당된 schema node의 jsonSchema 타입
- * - `Context`: Form에 전달된 UserDefinedContext의 타입
+ * - `Value`: Type of value assigned to FormType Component
+ * - `Schema`: JsonSchema type of schema node assigned to FormType Component
+ * - `Context`: Type of UserDefinedContext passed to Form
  */
 export type FormTypeInputPropsWithSchema<
   Value extends AllowedValue = any,
@@ -76,11 +76,11 @@ export type FormTypeInputPropsWithSchema<
 > = FormTypeInputProps<Value, Context, any[], Schema>;
 
 /**
- * FormTypeInputPropsWithSchema 가 만족해야 하는 props
+ * Props that FormTypeInputPropsWithSchema must satisfy
  *
- * - `Value`: FormType Component에 할당된 값의 타입
- * - `Schema`: FormType Component에 할당된 schema node의 jsonSchema 타입
- * - `Node`: FormType Component에 할당된 schema node의 타입
+ * - `Value`: Type of value assigned to FormType Component
+ * - `Schema`: JsonSchema type of schema node assigned to FormType Component
+ * - `Node`: Type of schema node assigned to FormType Component
  */
 export type FormTypeInputPropsWithNode<
   Value extends AllowedValue = any,
@@ -88,7 +88,7 @@ export type FormTypeInputPropsWithNode<
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > = FormTypeInputProps<Value, Dictionary, any[], Schema, Node>;
 
-/**  Type 추론이 불필요한 경우에 사용하는 FormTypeInputProps */
+/** FormTypeInputProps to use when type inference is not needed */
 export interface UnknownFormTypeInputProps {
   jsonSchema: any;
   readOnly: boolean;

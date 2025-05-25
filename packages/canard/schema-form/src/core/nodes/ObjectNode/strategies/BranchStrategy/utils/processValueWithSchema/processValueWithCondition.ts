@@ -4,13 +4,13 @@ import type { FieldConditionMap } from '../getFieldConditionMap';
 import { requiredFactory } from './utils/requiredFactory';
 
 /**
- * 주어진 값과 스키마를 기반으로 필요한 데이터를 추출하는 함수
+ * Function to extract necessary data based on given value and schema
  *
- * @param value 원본 객체 값
- * @param schema 객체 스키마 정의
- * @param oneOfIndex oneOf 중 선택된 스키마의 인덱스 (없거나 -1 미만이면 oneOf 필드 모두 제거)
- * @param conditions 필터링에 사용할 조건들 (없으면 필터링하지 않음)
- * @returns 스키마와 조건에 맞게 필터링된 객체 값
+ * @param value Original object value
+ * @param schema Object schema definition
+ * @param oneOfIndex Index of selected schema among oneOf (if none or less than -1, remove all oneOf fields)
+ * @param conditions Conditions to use for filtering (if none, no filtering)
+ * @returns Object value filtered according to schema and conditions
  */
 export const processValueWithCondition = (
   value: ObjectValue | undefined,

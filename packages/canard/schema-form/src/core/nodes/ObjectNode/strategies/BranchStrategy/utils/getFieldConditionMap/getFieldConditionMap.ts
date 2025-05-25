@@ -13,9 +13,9 @@ export type FieldConditionMap = Map<
   | true
 >;
 /**
- * jsonSchema를 필드별로 정제하여, 각 필드가 required가 되는 조건(및 inverse 여부) 배열을 반환합니다.
+ * Refines jsonSchema by field and returns an array of conditions (and inverse status) for each field to become required.
  * @param jsonSchema jsonSchema
- * @returns Map<필드명, Array<{ condition, inverse }>> | true
+ * @returns Map<fieldName, Array<{ condition, inverse }>> | true
  */
 export const getFieldConditionMap = (
   jsonSchema: JsonSchema,
@@ -25,15 +25,15 @@ export const getFieldConditionMap = (
   const fieldConditionMap: FieldConditionMap = new Map();
   for (let i = 0; i < conditions.length; i++) {
     const { condition, required, inverse } = conditions[i];
-    // 1. required 필드 처리 (기존과 동일)
+    // Step 1. Process required fields
     for (let j = 0; j < required.length; j++) {
       const field = required[j];
       const previous = fieldConditionMap.get(field);
-      if (previous === true) continue; // 이미 true면 skip
+      if (previous === true) continue; // If already true, skip
       if (!previous) fieldConditionMap.set(field, [{ condition, inverse }]);
       else previous.push({ condition, inverse });
     }
-    // 2. condition에만 등장하는 필드 처리
+    // Step 2. Process fields that only appear in condition
     for (const key of Object.keys(condition))
       if (!required.includes(key)) fieldConditionMap.set(key, true);
   }

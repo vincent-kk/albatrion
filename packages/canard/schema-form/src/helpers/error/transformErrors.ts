@@ -6,7 +6,7 @@ import type { JsonSchemaError } from '@/schema-form/types';
 let keySeq = 0;
 
 /**
- * @description instancePath를 기반으로 dataPath 생성, JSONPath 형식으로 변환.
+ * Generates `dataPath` based on `instancePath`, converts to JSONPath format.
  * @warning THIS FUNCTION CHANGE INPUT ERRORS
  * @param errors - ajv errors
  * @param useKey - whether to use key(key is number)

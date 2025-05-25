@@ -13,16 +13,16 @@ import { getConditionsMap } from './utils/getConditionsMap';
 import { mergeShowConditions } from './utils/mergeShowConditions';
 
 /**
- * 객체 스키마의 프로퍼티로부터 자식 노드를 생성하여 맵으로 반환합니다.
- * @param parentNode - 부모 오브젝트 노드
- * @param jsonSchema - 오브젝트 JSON 스키마
- * @param propertyKeys - 프로퍼티 키 목록
- * @param defaultValue - 기본값
- * @param fieldConditionMap - 필드 조건 맵
- * @param virtualReferenceFieldsMap - 가상 참조 필드 맵
- * @param handelChangeFactory - 변경 핸들러 팩토리 함수
- * @param nodeFactory - 노드 생성 팩토리 함수
- * @returns 자식 노드 맵
+ * Creates child nodes from object schema properties and returns them as a map.
+ * @param parentNode - Parent object node
+ * @param jsonSchema - Object JSON schema
+ * @param propertyKeys - List of property keys
+ * @param defaultValue - Default value
+ * @param fieldConditionMap - Field condition map
+ * @param virtualReferenceFieldsMap - Virtual reference fields map
+ * @param handelChangeFactory - Change handler factory function
+ * @param nodeFactory - Node creation factory function
+ * @returns Child node map
  */
 export const getChildNodeMap = (
   parentNode: ObjectNode,

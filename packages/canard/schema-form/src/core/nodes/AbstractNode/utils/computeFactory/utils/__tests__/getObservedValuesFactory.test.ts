@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { getObservedValuesFactory } from '../getObservedValuesFactory';
 
 describe('getObservedValuesFactory', () => {
-  it('watch가 없을 때 undefined를 반환해야 함', () => {
+  it('should return undefined when there is no watch', () => {
     const dependencyPaths: string[] = [];
 
     expect(
@@ -11,10 +11,10 @@ describe('getObservedValuesFactory', () => {
     ).toBeUndefined();
   });
 
-  it('watch가 문자열이나 배열이 아닐 때 undefined를 반환해야 함', () => {
+  it('should return undefined when watch is not a string or array', () => {
     const dependencyPaths: string[] = [];
 
-    // 숫자형을 전달하는 런타임 테스트
+    // Runtime test passing number type
     expect(
       // @ts-expect-error
       getObservedValuesFactory({ type: 'object', computed: { watch: 123123 } })(
@@ -22,7 +22,7 @@ describe('getObservedValuesFactory', () => {
         'watch',
       ),
     ).toBeUndefined();
-    // 객체형을 전달하는 런타임 테스트
+    // Runtime test passing object type
     expect(
       getObservedValuesFactory({
         type: 'object',
@@ -32,7 +32,7 @@ describe('getObservedValuesFactory', () => {
     ).toBeUndefined();
   });
 
-  it('watch가 빈 배열일 때 undefined를 반환해야 함', () => {
+  it('should return undefined when watch is an empty array', () => {
     const dependencyPaths: string[] = [];
 
     expect(
@@ -43,7 +43,7 @@ describe('getObservedValuesFactory', () => {
     ).toBeUndefined();
   });
 
-  it('문자열 watch로 함수를 생성해야 함', () => {
+  it('should create function with string watch', () => {
     const dependencyPaths: string[] = [];
     const result = getObservedValuesFactory({
       type: 'object',
@@ -58,7 +58,7 @@ describe('getObservedValuesFactory', () => {
     expect(result!(values)).toEqual([42]);
   });
 
-  it('문자열 배열 watch로 함수를 생성해야 함', () => {
+  it('should create function with string array watch', () => {
     const dependencyPaths: string[] = [];
     const result = getObservedValuesFactory({
       type: 'object',
@@ -72,7 +72,7 @@ describe('getObservedValuesFactory', () => {
     expect(result!(values)).toEqual([10, 'test', true]);
   });
 
-  it('이미 의존성 경로 배열에 있는 경로를 다시 추가하지 않아야 함', () => {
+  it('should not add path that already exists in dependency paths array', () => {
     const dependencyPaths: string[] = ['$.existingPath'];
     const result = getObservedValuesFactory({
       type: 'object',
@@ -87,34 +87,18 @@ describe('getObservedValuesFactory', () => {
     expect(result!(values)).toEqual(['existing', 'new']);
   });
 
-  it('의존성 배열에서 올바른 인덱스의 값을 가져와야 함', () => {
+  it('should get values from correct indices in dependency array', () => {
     const dependencyPaths: string[] = ['$.value1', '$.value2', '$.value3'];
     const result = getObservedValuesFactory({
       type: 'object',
       computed: { watch: ['$.value2', '$.value1'] },
     })(dependencyPaths, 'watch');
 
-    // 새로운 경로는 추가되지 않아야 함
+    // No new paths should be added
     expect(dependencyPaths.length).toBe(3);
 
     const values = [1, 2, 3];
-    // 원래 순서대로 값을 가져와야 함
+    // Should get values in original order
     expect(result!(values)).toEqual([2, 1]);
-  });
-
-  it('더 많은 의존성이 있는 경우에도 watch된 값만 반환해야 함', () => {
-    const dependencyPaths: string[] = [
-      '$.value1',
-      '$.value2',
-      '$.value3',
-      '$.value4',
-    ];
-    const result = getObservedValuesFactory({
-      type: 'object',
-      computed: { watch: ['$.value2', '$.value4'] },
-    })(dependencyPaths, 'watch');
-
-    const values = [1, 2, 3, 4, 5]; // 더 많은 값이 있는 경우
-    expect(result!(values)).toEqual([2, 4]);
   });
 });

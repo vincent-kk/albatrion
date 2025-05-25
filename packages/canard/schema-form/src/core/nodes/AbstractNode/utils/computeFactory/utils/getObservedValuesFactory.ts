@@ -9,35 +9,33 @@ import { ALIAS, type ObservedFieldName } from './type';
 type GetObservedValues = Fn<[dependencies: unknown[]], unknown[]>;
 
 /**
- * JSON 스키마의 특정 필드에 대한 관찰값 계산 함수를 생성합니다.
- *
- * @param schema - JSON 스키마
- * @returns 관찰값 팩토리 함수
+ * Creates a function to calculate observed values for a specific field in a JSON schema.
+ * @param schema - JSON schema
+ * @returns Observed values factory function
  */
 export const getObservedValuesFactory =
   (schema: JsonSchemaWithVirtual) =>
   /**
-   * 주어진 의존성 경로와 필드명으로 관찰값 계산 함수를 반환합니다.
-   *
-   * @param dependencyPaths - 의존성 경로 배열
-   * @param fieldName - 관찰할 필드명
-   * @returns 의존성 배열로부터 관찰값 배열을 반환하는 함수 또는 undefined
+   * Returns an observed values calculation function for the given dependency paths and field name.
+   * @param dependencyPaths - Dependency path array
+   * @param fieldName - Field name to observe
+   * @returns Function that returns observed values array from dependency array, or undefined
    */
   (
     dependencyPaths: string[],
     fieldName: ObservedFieldName,
   ): GetObservedValues | undefined => {
-    // `computed.[<fieldName>]` 또는 `&[<fieldName>]` 필드에서 표현식 추출
+    // Extract expression from `computed.[<fieldName>]` or `&[<fieldName>]` field
     const watch = schema?.computed?.[fieldName] ?? schema?.[ALIAS + fieldName];
 
-    // 유효한 watch 값이 없으면 undefined 반환
+    // Return undefined if no valid watch value exists
     if (!watch || !(isString(watch) || isArray(watch))) return;
 
-    // 단일 watch 값은 배열로 변환하여 처리
+    // Convert single watch value to array for processing
     const watchValues = isArray(watch) ? watch : [watch];
     const watchValueIndexes = [] as number[];
 
-    // 각 watch 경로를 dependencyPaths에 추가하고 인덱스 저장
+    // Add each watch path to dependencyPaths and store indices
     for (let i = 0; i < watchValues.length; i++) {
       const path = watchValues[i];
       if (!dependencyPaths.includes(path)) dependencyPaths.push(path);
@@ -46,7 +44,7 @@ export const getObservedValuesFactory =
 
     if (watchValueIndexes.length === 0) return;
 
-    // 관찰값 계산 함수 동적 생성
+    // Dynamically create observed values calculation function
     return new Function(
       'dependencies',
       `const indexes = [${watchValueIndexes.join(',')}];

@@ -1,7 +1,7 @@
 /**
- * 입력값을 문자열 형식으로 분석합니다.
- * @param value - 분석할 값
- * @returns 분석된 문자열 값 또는 빈 문자열이거나 유효하지 않은 경우 undefined
+ * Parses input value to string format.
+ * @param value - Value to parse
+ * @returns Parsed string value or undefined if empty string or invalid
  */
 export const parseString = (value: unknown): string | undefined => {
   if (value === undefined) return undefined;

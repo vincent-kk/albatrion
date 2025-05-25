@@ -55,35 +55,48 @@ export abstract class AbstractNode<
   Schema extends JsonSchemaWithVirtual = JsonSchemaWithVirtual,
   Value extends AllowedValue = any,
 > {
-  /** Node의 그룹 */
+  /** [readonly] Node group, `branch` or `terminal` */
   public readonly group: 'branch' | 'terminal';
-  /** Node의 타입 */
+
+  /** [readonly] Node type, `array`, `number`, `object`, `string`, `boolean`, `virtual`, `null` */
   public readonly type: Exclude<Schema['type'], 'integer'>;
-  /** Node의 깊이 */
+
+  /** [readonly] Node depth */
   public readonly depth: number;
-  /** 루트 Node인지 여부 */
+
+  /** [readonly] Whether this is the root node */
   public readonly isRoot: boolean;
-  /** 루트 Node */
+
+  /** [readonly] Root node */
   public readonly rootNode: SchemaNode;
-  /** 부모 Node */
+
+  /** [readonly] Parent node */
   public readonly parentNode: SchemaNode | null;
-  /** Node의 JSON Schema */
+
+  /** [readonly] Node's JSON Schema */
   public readonly jsonSchema: Schema;
-  /** Node의 property key 원본  */
+
+  /** [readonly] Original property key of the node */
   public readonly propertyKey: string;
-  /** Node의 required 여부 */
+
+  /** [readonly] Whether the node is required */
   public readonly required: boolean;
 
-  /** Node의 이름 */
+  /** Node name */
   #name: string;
-  /** Node의 이름 */
+
+  /**
+   * [readonly] Node name
+   * @note Basically it is readonly, but can be changed with `setName` by the parent node.
+   * */
   public get name() {
     return this.#name;
   }
+
   /**
-   * Node의 이름을 설정합니다. 부모만 이름을 바꿔줄 수 있습니다.
-   * @param name - 설정할 이름
-   * @param actor - 이름을 설정하는 Node
+   * Sets the node's name. Only the parent can change the name.
+   * @param name - The name to set
+   * @param actor - The node setting the name
    */
   public setName(this: AbstractNode, name: string, actor: SchemaNode) {
     if (actor === this.parentNode || actor === this) {
@@ -92,14 +105,20 @@ export abstract class AbstractNode<
     }
   }
 
+  /** Node path */
   #path: string;
-  /** Node의 경로 */
-  get path() {
+
+  /**
+   * [readonly] Node path.
+   * @note Basically it is readonly, but can be changed with `updatePath` by the parent node.
+   * */
+  public get path() {
     return this.#path;
   }
+
   /**
-   * Node의 경로를 업데이트합니다. 부모 Node의 경로를 참고해서 자신의 경로를 업데이트합니다.
-   * @returns 경로가 변경되었는지 여부
+   * Updates the node's path. Updates its own path by referencing the parent node's path.
+   * @returns Whether the path was changed
    */
   public updatePath(this: AbstractNode) {
     const previous = this.#path;
@@ -121,54 +140,65 @@ export abstract class AbstractNode<
     return true;
   }
 
-  /** Node의 키 */
+  /** Node key */
   #key?: string;
-  /** Node의 키 */
-  get key() {
+
+  /** [readonly] Node key */
+  public get key() {
     return this.#key;
   }
 
-  /** Node의 최초 기본값 */
+  /** Node's initial default value */
   #initialValue: Value | undefined;
-  /** Node의 현재 기본값 */
+
+  /** Node's current default value */
   #defaultValue: Value | undefined;
+
   /**
-   * Node의 기본값
-   *  - set: `setDefaultValue`, 상속 받은 Node에서만 update 가능
-   *  - get: `defaultValue`, 모든 상황에서 읽을 수 있음
+   * Node's default value
+   *  - set: `setDefaultValue`, can only be updated by inherited nodes
+   *  - get: `defaultValue`, can be read in all situations
    */
   public get defaultValue() {
     return this.#defaultValue;
   }
+
   /**
-   * Node의 기본값을 변경, 상속받은 Node에서만 수행 가능
-   * `constructor`에서 사용하기 위한 용도
-   * @param value input value for update defaultValue
+   * Changes the node's default value, can only be performed by inherited nodes
+   * For use in `constructor`
+   * @param value input value for updating defaultValue
    */
   protected setDefaultValue(this: AbstractNode, value: Value | undefined) {
     this.#initialValue = this.#defaultValue = value;
   }
 
   /**
-   *
-   * Node의 기본값을 변경한 후, Refresh event 발행. 상속받은 Node에서만 수행 가능
-   * `constructor` 외부에서 사용하기 위한 용도
-   * @param value input value for update defaultValue
+   * Changes the node's default value and publishes a Refresh event. Can only be performed by inherited nodes
+   * For use outside of `constructor`
+   * @param value input value for updating defaultValue
    */
   protected refresh(this: AbstractNode, value: Value | undefined) {
     this.#defaultValue = value;
     this.publish({ type: NodeEventType.Refresh });
   }
 
-  /** Node의 값 */
+  /**
+   * Gets the node's value
+   * @returns The node's value
+   */
   public abstract get value(): Value | undefined;
+
+  /**
+   * Sets the node's value
+   * @param input - The value to set
+   */
   public abstract set value(input: Value | undefined);
 
   /**
-   * Node의 값 설정, 상속 받은 Node에서 재정의 가능
-   * @param input 설정할 값이나 값을 반환하는 함수
-   * @param options 설정 옵션
-   *   - replace(boolean): 기존 값 덮어쓰기, (default: false, 기존 값과 병합)
+   * Sets the node's value, can be redefined by inherited nodes
+   * @param input The value to set or a function that returns a value
+   * @param options Set options
+   *   - replace(boolean): Overwrite existing value, (default: false, merge with existing value)
    */
   protected abstract applyValue(
     this: AbstractNode,
@@ -177,9 +207,9 @@ export abstract class AbstractNode<
   ): void;
 
   /**
-   * Node의 값을 설정합니다. applyValue로 실제 데이터 반영 전에, input에 대한 전처리 과정을 수행합니다.
-   * @param input - 설정할 값이나 값을 반환하는 함수
-   * @param option - 설정 옵션, 각각을 비트 연산자로 조합 가능
+   * Sets the node's value. Performs preprocessing on the input before reflecting the actual data with applyValue.
+   * @param input - The value to set or a function that returns a value
+   * @param option - Set options, can be combined using bitwise operators
    *   - `Overwrite`(default): `Replace` | `Propagate` | `Refresh`
    *   - `Merge`: `Propagate` | `Refresh`
    *   - `Replace`: Replace the current value
@@ -196,17 +226,22 @@ export abstract class AbstractNode<
     this.applyValue(inputValue, option);
   }
 
+  /**
+   * Function called when the node's value changes
+   * @note For RootNode, the onChange function is called only after all microtasks have been completed.
+   * @param input - The changed value
+   */
   #handleChange: SetStateFn<Value> | undefined;
 
   /**
-   * Node의 값이 변경될 때 호출되는 함수입니다.
-   * @param input - 변경된 값
+   * Function called when the node's value changes.
+   * @param input - The changed value
    */
   protected onChange(this: AbstractNode, input: Value | undefined): void {
     this.#handleChange?.(input);
   }
 
-  /** Node의 하위 Node 목록, 하위 Node를 가지지 않는 Node는 빈 배열 반환 */
+  /** List of child nodes, nodes without child nodes return an `null` */
   public get children(): ChildNode[] | null {
     return null;
   }
@@ -268,9 +303,9 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Node Tree에서 주어진 경로에 해당하는 Node를 찾습니다.
-   * @param path - 찾고자 하는 Node의 경로(예: '.foo[0].bar'), 없으면 자기 자신 반환
-   * @returns 찾은 Node, 찾지 못한 경우 null
+   * Finds the node corresponding to the given path in the node tree.
+   * @param path - Path of the node to find (e.g., '.foo[0].bar'), returns itself if not provided
+   * @returns The found node, null if not found
    */
   public find(this: AbstractNode, path?: string) {
     const pathSegments = path ? getPathSegments(path) : [];
@@ -278,27 +313,28 @@ export abstract class AbstractNode<
     return find(this, pathSegments);
   }
 
-  /** Node의 이벤트 리스너 목록 */
+  /** List of node event listeners */
   #listeners: Set<NodeListener> = new Set();
 
-  /** push 된 event를 모아서 한번에 발행 */
+  /** Collects pushed events and publishes them at once */
   #eventCascade = new EventCascade((event: NodeEvent) => {
     for (const listener of this.#listeners) listener(event);
   });
 
-  /** 다른 node에 대한 unsubscribe 목록 */
+  /** List of unsubscribe functions for other nodes */
   #unsubscribes: Array<Fn> = [];
 
   /**
-   * 이벤트 구독 취소 함수를 저장합니다.
-   * @param unsubscribe - 저장할 구독 취소 함수
+   * Saves an event unsubscribe function.
+   * @param unsubscribe - The unsubscribe function to save
    */
   protected saveUnsubscribe(this: AbstractNode, unsubscribe: Fn) {
     this.#unsubscribes.push(unsubscribe);
   }
 
   /**
-   * 저장된 모든 이벤트 구독을 취소합니다.
+   * Cancels all saved event subscriptions.
+   * @internal Internal implementation method. Do not call directly.
    */
   #clearUnsubscribes(this: AbstractNode) {
     for (let index = 0; index < this.#unsubscribes.length; index++)
@@ -307,9 +343,9 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Node의 이벤트 리스너/구독 목록을 초기화합니다. 초기화는 자기 자신이나, 부모 Node에서 호출해야 합니다.
-   * @param actor - 초기화를 요청한 Node
-   * @internal 내부 구현용 메서드입니다. 직접 호출하지 마세요.
+   * Initializes the node's event listener/subscription list. Initialization must be called by itself or by the parent node.
+   * @param actor - The node requesting initialization
+   * @internal Internal implementation method. Do not call directly.
    */
   public cleanUp(this: AbstractNode, actor?: SchemaNode) {
     if (actor !== this.parentNode && !this.isRoot) return;
@@ -318,9 +354,9 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Node의 이벤트 리스너 등록
-   * @param listener 이벤트 리스너
-   * @returns 이벤트 리스너 제거 함수
+   * Registers a node event listener
+   * @param listener Event listener
+   * @returns Event listener removal function
    */
   public subscribe(this: AbstractNode, listener: NodeListener) {
     this.#listeners.add(listener);
@@ -330,26 +366,29 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Node의 listener에 대해 이벤트 발행
-   * @param event 발행할 이벤트
-   *    - type: 이벤트 타입(NodeEventType 참고)
-   *    - payload: 이벤트에 대한 데이터(MethodPayload 참고)
-   *    - options: 이벤트에 대한 옵션(MethodOptions 참고)
+   * Publishes an event to the node's listeners
+   * @param event Event to publish
+   *    - type: Event type (see NodeEventType)
+   *    - payload: Data for the event (see MethodPayload)
+   *    - options: Options for the event (see MethodOptions)
    */
   public publish(this: AbstractNode, event: NodeEvent) {
     this.#eventCascade.push(event);
   }
 
+  /** Whether the node is activated */
   #activated: boolean = false;
+
+  /** [readonly] Whether the node is activated */
   public get activated() {
     return this.#activated;
   }
 
   /**
-   * Node를 활성화합니다. 활성화는 자기 자신이나, 부모 Node에서 호출해야 합니다.
-   * @param actor - 활성화를 요청한 Node
-   * @returns 활성화 여부
-   * @internal 내부 구현용 메서드입니다. 직접 호출하지 마세요.
+   * Activates the node. Activation must be called by itself or by the parent node.
+   * @param actor - The node requesting activation
+   * @returns Whether activation occurred
+   * @internal Internal implementation method. Do not call directly.
    */
   public activate(this: AbstractNode, actor?: SchemaNode) {
     if (this.#activated || (actor !== this.parentNode && !this.isRoot))
@@ -360,34 +399,64 @@ export abstract class AbstractNode<
     return true;
   }
 
+  /**
+   * Tools for handling computed properties
+   *  - `dependencyPaths`: List of paths to dependencies
+   *  - `visible`: Calculate whether the node is visible
+   *  - `readOnly`: Calculate whether the node is read only
+   *  - `disabled`: Calculate whether the node is disabled
+   *  - `oneOfIndex`: Calculate the index of the oneOf branch
+   *  - `watchValues`: Calculate the list of values to watch
+   */
   #compute: ReturnType<typeof computeFactory>;
+
+  /** List of dependencies for the node */
   #dependencies: any[] = [];
 
+  /** Whether the node is visible */
   #visible: boolean = true;
+
+  /** [readonly] Whether the node is visible */
   public get visible() {
     return this.#visible;
   }
 
+  /** Whether the node is read only */
   #readOnly: boolean = false;
+
+  /** [readonly] Whether the node is read only */
   public get readOnly() {
     return this.#readOnly;
   }
 
+  /** Whether the node is disabled */
   #disabled: boolean = false;
+
+  /** [readonly] Whether the node is disabled */
   public get disabled() {
     return this.#disabled;
   }
 
+  /** Index of the oneOf branch */
   #oneOfIndex: number = -1;
+
+  /** [readonly] Index of the oneOf branch */
   public get oneOfIndex() {
     return this.#oneOfIndex;
   }
 
+  /** List of values to watch */
   #watchValues: ReadonlyArray<any> = [];
+
+  /** [readonly] List of values to watch */
   public get watchValues() {
     return this.#watchValues;
   }
 
+  /**
+   * Prepares dependencies for update computation.
+   * @internal Internal implementation method. Do not call directly.
+   */
   #prepareUpdateDependencies(this: AbstractNode) {
     const dependencyPaths = this.#compute.dependencyPaths;
     if (dependencyPaths.length > 0) {
@@ -417,7 +486,13 @@ export abstract class AbstractNode<
     });
   }
 
+  /** Whether the node has published an UpdateComputedProperties event */
   #hasPublishedUpdateComputedProperties = false;
+
+  /**
+   * Updates the node's computed properties.
+   * @internal Internal implementation method. Do not call directly.
+   */
   protected updateComputedProperties(this: AbstractNode) {
     const previousVisible = this.#visible;
     this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
@@ -431,11 +506,12 @@ export abstract class AbstractNode<
       this.#hasPublishedUpdateComputedProperties = true;
     }
   }
+
   /**
-   * 현재 Node를 초기값으로 초기화합니다. 초기값은 현재 노드의 초기값이나, 전달받은 값이 있는 경우 전달받은 값을 사용합니다.
-   * @param preferLatest - 최신 값을 사용할지 여부, 최신 값이 있는 경우 최신 값을 사용
-   * @param input - 설정할 값, 전달받은 값이 있는 경우 전달받은 값을 사용
-   * @internal 내부 구현용 메서드입니다. 직접 호출하지 마세요.
+   * Resets the current node to its initial value. Uses the current node's initial value, or the provided value if one is given.
+   * @param preferLatest - Whether to use the latest value, uses the latest value if available
+   * @param input - The value to set, uses the provided value if given
+   * @internal Internal implementation method. Do not call directly.
    */
   public resetNode(
     this: AbstractNode,
@@ -458,20 +534,26 @@ export abstract class AbstractNode<
     this.setState();
   }
 
+  /** Node's state flags */
   #state: NodeStateFlags = {};
-  /** Node의 상태 플래그 */
-  get state() {
+
+  /**
+   * [readonly] Node's state flags
+   * @note use `setState` method to set the state
+   * */
+  public get state() {
     return this.#state;
   }
+
   /**
-   * Node의 상태를 설정합니다. 명시적으로 undefined를 전달하지 않으면 기존 상태를 유지합니다.
-   * @param input - 설정할 상태 또는 이전 상태를 기반으로 새 상태를 계산하는 함수
+   * Sets the node's state. Maintains existing state unless explicitly passing undefined.
+   * @param input - The state to set or a function that computes new state based on previous state
    */
   public setState(
     this: AbstractNode,
     input?: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags,
   ) {
-    // 함수로 받은 경우 이전 상태를 기반으로 새 상태 계산
+    // Calculate new state based on previous state if received as function
     const newInput = typeof input === 'function' ? input(this.#state) : input;
     let dirty = false;
     if (newInput === undefined) {
@@ -499,33 +581,34 @@ export abstract class AbstractNode<
   }
 
   /**
-   * 현재 값을 기준으로 유효성 검증을 수행합니다. `ValidationMode.OnRequest` 인 경우에만 동작합니다.
+   * Performs validation based on the current value.
+   * @note Only works when `ValidationMode.OnRequest` is set.
    */
   public validate(this: AbstractNode) {
     this.rootNode.publish({ type: NodeEventType.RequestValidate });
   }
 
-  /** 외부에서 전달받은 Error */
+  /** Errors received from external sources */
   #externalErrors: JsonSchemaError[] = [];
 
-  /** [Root Node Only] Form 내부에서 발생한 Error 전체 */
+  /** [root only] All errors that occurred inside the form */
   #globalErrors: JsonSchemaError[] | undefined;
 
-  /** [Root Node Only] Form 내부에서 발생한 Error 전체의 dataPath 목록 */
+  /** [root only] List of dataPath for all errors that occurred inside the form */
   #errorDataPaths: string[] | undefined;
 
-  /** [Root Node Only] Form 내부에서 발생한 Error 전체와 외부에서 전달받은 Error를 병합한 결과 */
+  /** [root only] Result of merging all errors that occurred inside the form with externally received errors */
   #mergedGlobalErrors: JsonSchemaError[] | undefined;
 
-  /** 자신의 Error */
+  /** Own errors */
   #localErrors: JsonSchemaError[] = [];
 
-  /** 자신의 Error와 외부에서 전달받은 Error를 병합한 결과 */
+  /** Result of merging own errors with externally received errors */
   #mergedLocalErrors: JsonSchemaError[] = [];
 
   /**
-   * Form 내부에서 발생한 Error와 외부에서 전달받은 Error를 병합한 결과를 반환합니다.
-   * @returns 병합된 내부 Error 목록
+   * Returns the merged result of errors that occurred inside the form and externally received errors.
+   * @returns Merged internal error list
    */
   public get globalErrors() {
     return this.isRoot
@@ -534,16 +617,16 @@ export abstract class AbstractNode<
   }
 
   /**
-   * 자신의 Error와 외부에서 전달받은 Error를 병합한 결과를 반환합니다.
-   * @returns 병합된 Error 목록
+   * Returns the merged result of own errors and externally received errors.
+   * @returns Merged error list
    */
   public get errors() {
     return this.#mergedLocalErrors;
   }
 
   /**
-   * 자신의 Error를 업데이트한 후 외부에서 전달받은 Error와 병합합니다.
-   * @param errors - 설정할 Error 목록
+   * Updates own errors and then merges them with externally received errors.
+   * @param errors - List of errors to set
    */
   public setErrors(this: AbstractNode, errors: JsonSchemaError[]) {
     if (equals(this.#localErrors, errors)) return;
@@ -556,9 +639,9 @@ export abstract class AbstractNode<
   }
 
   /**
-   * 외부에서 전달받은 Error를 전체 Error에 병합합니다.
-   * @param errors - 설정할 Error 목록
-   * @returns 병합 결과가 변경되었는지 여부
+   * Merges externally received errors into the global errors.
+   * @param errors - List of errors to set
+   * @returns Whether the merge result changed
    */
   #setGlobalErrors(this: AbstractNode, errors: JsonSchemaError[]) {
     if (equals(this.#globalErrors, errors)) return false;
@@ -572,15 +655,16 @@ export abstract class AbstractNode<
   }
 
   /**
-   * 자신의 Error를 초기화합니다. 전달받은 Error는 초기화하지 않습니다.
+   * Clears own errors.
+   * @note Does not clear externally received errors.
    */
   public clearErrors(this: AbstractNode) {
     this.setErrors([]);
   }
 
   /**
-   * 외부에서 전달받은 Error를 로컬 Error와 병합합니다. rootNode의 경우 internalError도 병합합니다.
-   * @param errors - 전달받은 Error 목록
+   * Merges externally received errors with local errors. For rootNode, also merges internal errors.
+   * @param errors - List of received errors
    */
   public setExternalErrors(this: AbstractNode, errors: JsonSchemaError[] = []) {
     if (equals(this.#externalErrors, errors, RECURSIVE_ERROR_OMITTED_KEYS))
@@ -610,7 +694,8 @@ export abstract class AbstractNode<
   }
 
   /**
-   * 외부에서 전달받은 Error를 초기화합니다. localErrors / internalErrors는 초기화하지 않습니다.
+   * Clears externally received errors.
+   * @note Does not clear localErrors / internalErrors.
    */
   public clearExternalErrors(this: AbstractNode) {
     if (!this.#externalErrors.length) return;
@@ -620,8 +705,8 @@ export abstract class AbstractNode<
   }
 
   /**
-   * 외부에서 전달받은 Error 중 삭제할 Error를 찾아서 삭제합니다.
-   * @param errors - 삭제할 Error 목록
+   * Finds and removes specific errors from the externally received errors.
+   * @param errors - List of errors to remove
    */
   public removeFromExternalErrors(
     this: AbstractNode,
@@ -637,9 +722,13 @@ export abstract class AbstractNode<
       this.setExternalErrors(nextErrors);
   }
 
-  /** Node의 Ajv 검증 함수 */
+  /** Node's Ajv validation function */
   #validator: ValidateFunction | null = null;
-  /** Node의 JsonSchema를 이용해서 검증 수행, rootNode에서만 사용 가능 */
+
+  /**
+   * Performs validation using the node's JsonSchema
+   * @note Only available for rootNode
+   * */
   async #validate(
     this: AbstractNode,
     value: Value | undefined,
@@ -657,20 +746,21 @@ export abstract class AbstractNode<
   }
 
   /**
-   * 자기 자신의 값이 변경될 때 검증 수행, rootNode에서만 동작
+   * Performs validation when own value changes
+   * @note Only works for rootNode
    */
   async #handleValidation(this: AbstractNode) {
     if (!this.isRoot) return;
 
-    // NOTE: 현재 Form 내의 value와 schema를 이용해서 validation 수행
-    //    - getDataWithSchema: 현재 JsonSchema를 기반으로 Value의 데이터를 변환하여 반환
-    //    - filterErrors: errors에서 oneOf 관련 error 필터링
+    // NOTE: Perform validation using current value and schema in the form
+    //    - getDataWithSchema: Transforms and returns value data based on current JsonSchema
+    //    - filterErrors: Filters oneOf-related errors from errors
     const internalErrors = await this.#validate(this.value);
 
-    // 전체 error를 저장, 이전 error와 동일한 경우 setInternalErrors false 반환
+    // Save all errors, return false if same as previous errors
     if (!this.#setGlobalErrors(internalErrors)) return;
 
-    // 얻어진 errors를 dataPath 별로 분류
+    // Classify obtained errors by dataPath
     const errorsByDataPath = new Map<
       JsonSchemaError['dataPath'],
       JsonSchemaError[]
@@ -681,24 +771,24 @@ export abstract class AbstractNode<
       errorsByDataPath.get(error.dataPath)?.push(error);
     }
 
-    // 하위 Node에도 dataPath로 node를 찾아서 error setting
+    // Find nodes by dataPath and set errors for child nodes as well
     for (const [dataPath, errors] of errorsByDataPath.entries())
       this.find(dataPath)?.setErrors(errors);
 
-    // 기존 error에는 포함되어 있으나, 신규 error 목록에 포함되지 않는 error를 가진 node는 clearError
+    // Clear errors for nodes that had errors in previous error list but not in new error list
     const errorDataPaths = Array.from(errorsByDataPath.keys());
     if (this.#errorDataPaths)
       for (const dataPath of this.#errorDataPaths)
         if (!errorDataPaths.includes(dataPath))
           this.find(dataPath)?.clearErrors();
 
-    // error를 가진 dataPath 목록 업데이트
+    // Update list of dataPaths with errors
     this.#errorDataPaths = errorDataPaths;
   }
 
   /**
-   * Ajv를 이용해서 validator 준비, rootNode에서만 사용 가능
-   * @param ajv Ajv 인스턴스, 없는 경우 신규 생성
+   * Prepares validator using Ajv, only available for rootNode
+   * @param ajv Ajv instance, creates new one if not provided
    */
   #prepareValidator(
     this: AbstractNode,

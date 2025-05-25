@@ -29,48 +29,71 @@ import {
 const RESET_NODE_OPTION = SetValueOption.Replace | SetValueOption.Propagate;
 
 export class BranchStrategy implements ObjectNodeStrategy {
+  /** Host ObjectNode instance that this strategy belongs to */
   private __host__: ObjectNode;
+
+  /** Callback function to handle value changes */
   private __handleChange__: Fn<[ObjectValue | undefined]>;
+
+  /** Callback function to handle refresh operations */
   private __handleRefresh__: Fn<[ObjectValue | undefined]>;
+
+  /** Callback function to handle computed properties updates */
   private __handleUpdateComputedProperties__: Fn;
 
+  /** Array of schema property keys in order */
   private readonly __schemaKeys__: string[];
+
+  /** Set of all oneOf schema keys, undefined if no oneOf schema exists */
   private readonly __oneOfKeySet__: Set<string> | undefined;
+
+  /** Array of key sets for each oneOf branch, undefined if no oneOf schema exists */
   private readonly __oneOfKeySetList__: Array<Set<string>> | undefined;
+
+  /** Map of field conditions for conditional schema properties */
   private readonly __fieldConditionMap__: FieldConditionMap | undefined;
 
+  /** Flag indicating whether the strategy is locked to prevent recursive updates */
   private __locked__: boolean = true;
 
+  /** Array of child nodes for regular properties (non-oneOf) */
   private __propertyChildren__: ChildNode[];
 
+  /** Array of child node arrays for each oneOf branch */
   private __oneOfChildrenList__: Array<ChildNode[]> | undefined;
 
+  /** Current active children nodes (combination of property and oneOf children) */
   private __children__: ChildNode[];
   /**
-   * 객체 노드의 자식 노드들을 가져옵니다.
-   * @returns 자식 노드 목록
+   * Gets the child nodes of the object node.
+   * @returns List of child nodes
    */
+
   public get children() {
     return this.__children__;
   }
 
+  /** Current committed value of the object node */
   private __value__: ObjectValue | undefined;
+
+  /** Draft value containing pending changes before commit */
   private __draft__: ObjectValue | undefined;
 
+  /** Flag indicating whether the node is in isolation mode (affects condition processing) */
   private __isolationMode__: boolean = false;
 
   /**
-   * 객체의 현재 값을 가져옵니다.
-   * @returns 객체 노드의 현재 값 또는 undefined
+   * Gets the current value of the object.
+   * @returns Current value of the object node or undefined
    */
   public get value() {
     return this.__value__;
   }
 
   /**
-   * 입력값을 객체 노드에 적용합니다.
-   * @param input - 설정할 객체 값
-   * @param option - 설정 옵션
+   * Applies input value to the object node.
+   * @param input - Object value to set
+   * @param option - Setting options
    */
   public applyValue(input: ObjectValue, option: UnionSetValueOption) {
     this.__draft__ = input;
@@ -79,8 +102,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
   }
 
   /**
-   * 모든 자식 노드에게 활성화를 전파합니다.
-   * @internal 내부 구현용 메서드입니다. 직접 호출하지 마세요.
+   * Propagates activation to all child nodes.
+   * @internal Internal implementation method. Do not call directly.
    */
   public activate() {
     for (const child of this.__propertyChildren__)
@@ -92,13 +115,13 @@ export class BranchStrategy implements ObjectNodeStrategy {
   }
 
   /**
-   * BranchStrategy 객체를 초기화합니다.
-   * @param host - 호스트 ObjectNode 객체
-   * @param handleChange - 값 변경 핸들러
-   * @param handleRefresh - 새로고침 핸들러
-   * @param handleSetDefaultValue - 기본값 설정 핸들러
-   * @param handleUpdateComputedProperties - 계산된 속성 업데이트 핸들러
-   * @param nodeFactory - 노드 생성 팩토리
+   * Initializes the BranchStrategy object.
+   * @param host - Host ObjectNode object
+   * @param handleChange - Value change handler
+   * @param handleRefresh - Refresh handler
+   * @param handleSetDefaultValue - Default value setting handler
+   * @param handleUpdateComputedProperties - Computed properties update handler
+   * @param nodeFactory - Node creation factory
    */
   constructor(
     host: ObjectNode,
@@ -186,8 +209,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
   }
 
   /**
-   * 값 변경을 반영하고 관련 이벤트를 발행합니다.
-   * @param option - 설정 옵션
+   * Reflects value changes and publishes related events.
+   * @param option - Setting options
    * @private
    */
   private __emitChange__(option: UnionSetValueOption = SetValueOption.Default) {
@@ -226,10 +249,11 @@ export class BranchStrategy implements ObjectNodeStrategy {
       });
     this.__draft__ = {};
   }
+
   /**
-   * 입력값을 파싱하여 객체로 처리합니다.
-   * @param input - 파싱할 객체
-   * @returns 파싱된 객체
+   * Parses input value and processes it as an object.
+   * @param input - Object to parse
+   * @returns Parsed object
    * @private
    */
   private __parseValue__(input: ObjectValue) {
@@ -238,10 +262,11 @@ export class BranchStrategy implements ObjectNodeStrategy {
       return processValueWithCondition(value, this.__fieldConditionMap__);
     return value;
   }
+
   /**
-   * 값 변경을 하위 노드로 전파합니다.
-   * @param replace - 기존 값 대체 여부
-   * @param option - 설정 옵션
+   * Propagates value changes to child nodes.
+   * @param replace - Whether to replace existing values
+   * @param option - Setting options
    * @private
    */
   private __propagate__(replace: boolean, option: UnionSetValueOption) {
@@ -258,9 +283,11 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__locked__ = false;
   }
 
+  /** Previously active oneOf index for tracking oneOf branch changes */
   private __previousIndex__: number = -1;
+
   /**
-   * oneOf 스키마가 있는 경우, oneOf 인덱스가 변경될 때 자식 노드를 갱신합니다.
+   * Updates child nodes when oneOf index changes, if oneOf schema exists.
    * @private
    */
   private __prepareOneOfChildren__() {
@@ -309,7 +336,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   }
 
   /**
-   * 자식 노드 변경 이벤트를 발행합니다.
+   * Publishes a child node change event.
    * @private
    */
   private __publishChildrenChange__() {
@@ -318,8 +345,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
   }
 
   /**
-   * 값 변경 요청 이벤트를 발행합니다.
-   * @param option - 변경 옵션 (선택 사항)
+   * Publishes a value change request event.
+   * @param option - Change options (optional)
    * @private
    */
   private __publishRequestEmitChange__(option?: UnionSetValueOption) {

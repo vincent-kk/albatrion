@@ -4,10 +4,10 @@ import { type SchemaNode, isSchemaNode } from '@/schema-form/core';
 import { useRootNodeContext } from '@/schema-form/providers';
 
 /**
- * 스키마 노드를 가져오는 훅입니다.
- * 노드 인스턴스나 경로를 입력받아 해당 노드를 가져옵니다.
- * @param input - 노드 객체나 경로 문자열
- * @returns 찾은 노드 또는 null
+ * Hook for retrieving schema nodes.
+ * Takes a node instance or path and returns the corresponding node.
+ * @param input - Node object or path string
+ * @returns Found node or null
  */
 export const useSchemaNode = (
   input?: SchemaNode | string,

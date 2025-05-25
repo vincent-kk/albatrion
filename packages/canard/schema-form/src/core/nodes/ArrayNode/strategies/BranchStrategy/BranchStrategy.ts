@@ -19,22 +19,40 @@ import type { ArrayNodeStrategy } from '../type';
 type IndexId = `[${number}]`;
 
 export class BranchStrategy implements ArrayNodeStrategy {
+  /** Host ArrayNode instance that this strategy belongs to */
   private __host__: ArrayNode;
+
+  /** Callback function to handle value changes */
   private __handleChange__: Fn<[ArrayValue | undefined]>;
+
+  /** Callback function to handle refresh operations */
   private __handleRefresh__: Fn<[ArrayValue | undefined]>;
+
+  /** Factory function for creating new schema nodes */
   private __nodeFactory__: SchemaNodeFactory;
 
+  /** Flag indicating whether the strategy is locked to prevent recursive updates */
   private __locked__: boolean = true;
+
+  /** Flag indicating whether the array has pending changes that need to be emitted */
   private __dirty__: boolean = true;
+
+  /** Flag indicating whether the array value should be treated as undefined */
   private __undefined__: boolean = false;
 
+  /** Setter for dirty flag that also resets undefined state when changes occur */
   private set __changed__(input: boolean) {
     this.__dirty__ = input;
     if (this.__undefined__) this.__undefined__ = false;
   }
 
+  /** Sequence counter for generating unique IDs for array elements */
   private __seq__: number = 0;
+
+  /** Array of unique IDs for each element in the array, maintaining order */
   private __ids__: IndexId[] = [];
+
+  /** Map storing actual data and corresponding schema nodes for each array element */
   private __sourceMap__: Map<
     IndexId,
     {
@@ -44,17 +62,18 @@ export class BranchStrategy implements ArrayNodeStrategy {
   > = new Map();
 
   /**
-   * 배열의 현재 값을 가져옵니다.
-   * @returns 배열 노드의 현재 값 또는 undefined (비어 있는 경우)
+   * Gets the current value of the array.
+   * @returns Current value of the array node or undefined (if empty)
    */
   public get value() {
     if (this.__undefined__) return undefined;
     return this.__toArray__();
   }
+
   /**
-   * 입력값을 배열 노드에 적용합니다.
-   * @param input - 설정할 배열 값
-   * @param option - 설정 옵션
+   * Applies input value to the array node.
+   * @param input - Array value to set
+   * @param option - Setting options
    */
   public applyValue(input: ArrayValue, option: UnionSetValueOption) {
     if (input === undefined) {
@@ -71,24 +90,24 @@ export class BranchStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * 배열 노드의 자식 노드들을 가져옵니다.
-   * @returns 자식 노드 목록
+   * Gets the child nodes of the array node.
+   * @returns List of child nodes
    */
   public get children() {
     return this.__edges__;
   }
 
   /**
-   * 배열의 현재 길이를 가져옵니다.
-   * @returns 배열의 길이
+   * Gets the current length of the array.
+   * @returns Length of the array
    */
   public get length() {
     return this.__ids__.length;
   }
 
   /**
-   * 모든 자식 노드에게 활성화를 전파합니다.
-   * @internal 내부 구현용 메서드입니다. 직접 호출하지 마세요.
+   * Propagates activation to all child nodes.
+   * @internal Internal implementation method. Do not call directly.
    */
   public activate() {
     for (const id of this.__ids__)
@@ -98,12 +117,12 @@ export class BranchStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * BranchStrategy 객체를 초기화합니다.
-   * @param host - 호스트 ArrayNode 객체
-   * @param handleChange - 값 변경 핸들러
-   * @param handleRefresh - 새로고침 핸들러
-   * @param handleSetDefaultValue - 기본값 설정 핸들러
-   * @param nodeFactory - 노드 생성 팩토리
+   * Initializes the BranchStrategy object.
+   * @param host - Host ArrayNode object
+   * @param handleChange - Value change handler
+   * @param handleRefresh - Refresh handler
+   * @param handleSetDefaultValue - Default value setting handler
+   * @param nodeFactory - Node creation factory
    */
   constructor(
     host: ArrayNode,
@@ -117,7 +136,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__handleRefresh__ = handleRefresh;
     this.__nodeFactory__ = nodeFactory;
 
-    // NOTE: defaultValue가 배열이고, 배열의 길이가 0보다 큰 경우
+    // NOTE: If defaultValue is an array and its length is greater than 0, push each value to the array.
     if (host.defaultValue?.length)
       for (const value of host.defaultValue) this.push(value);
 
@@ -136,9 +155,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * 배열에 새 요소를 추가합니다.
-   * @param data - 추가할 값 (생략 가능)
-   * @returns 자기 자신(this)을 반환하여 체이닝 지원
+   * Adds a new element to the array.
+   * @param data - Value to add (optional)
+   * @returns Returns itself (this) for method chaining
    */
   public push(data?: ArrayValue[number]) {
     if (
@@ -178,10 +197,10 @@ export class BranchStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * 특정 요소의 값을 업데이트합니다.
-   * @param id - 업데이트할 요소의 ID 또는 인덱스
-   * @param data - 새로운 값
-   * @returns 자기 자신(this)을 반환하여 체이닝 지원
+   * Updates the value of a specific element.
+   * @param id - ID or index of the element to update
+   * @param data - New value
+   * @returns Returns itself (this) for method chaining
    */
   public update(id: IndexId | number, data: ArrayValue[number]) {
     const targetId = typeof id === 'number' ? this.__ids__[id] : id;
@@ -189,9 +208,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * 특정 요소를 삭제합니다.
-   * @param id - 삭제할 요소의 ID 또는 인덱스
-   * @returns 자기 자신(this)을 반환하여 체이닝 지원
+   * Removes a specific element.
+   * @param id - ID or index of the element to remove
+   * @returns Returns itself (this) for method chaining
    */
   public remove(id: IndexId | number) {
     const targetId = typeof id === 'number' ? this.__ids__[id] : id;
@@ -205,7 +224,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__publishUpdateChildren__();
   }
 
-  /** 모든 요소를 삭제하여 배열을 초기화합니다. */
+  /** Clears all elements to initialize the array. */
   public clear() {
     for (let i = 0; i < this.__ids__.length; i++)
       this.__sourceMap__.get(this.__ids__[i])?.node.cleanUp(this.__host__);
@@ -219,8 +238,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * 값 변경 이벤트를 발생시킵니다.
-   * @param option - 옵션 설정 (기본값: SetValueOption.Default)
+   * Emits a value change event.
+   * @param option - Option settings (default: SetValueOption.Default)
    * @private
    */
   private __emitChange__(option: UnionSetValueOption = SetValueOption.Default) {
@@ -244,8 +263,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * 자식 노드들의 정보를 가져옵니다.
-   * @returns ID와 노드 정보를 포함한 배열
+   * Gets information about child nodes.
+   * @returns Array containing ID and node information
    * @private
    */
   private get __edges__() {
@@ -262,8 +281,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
     return edges;
   }
   /**
-   * 내부 배열 상태를 객체 배열로 변환합니다.
-   * @returns 배열의 값들을 포함한 배열
+   * Converts internal array state to an object array.
+   * @returns Array containing the values of the array
    * @private
    */
   private __toArray__() {
@@ -276,9 +295,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * 특정 요소의 값 변경을 처리하는 함수를 생성합니다.
-   * @param id - 요소의 ID
-   * @returns 값 변경 함수
+   * Creates a function to handle value changes for a specific element.
+   * @param id - Element ID
+   * @returns Value change function
    * @private
    */
   private __handleChangeFactory__(id: IndexId) {
@@ -291,7 +310,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * 배열 요소의 이름을 갱신합니다.
+   * Updates the names of array elements.
    * @private
    */
   private __updateChildName__() {
@@ -306,7 +325,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * 자식 노드 갱신 이벤트를 발행합니다.
+   * Publishes a child node update event.
    * @private
    */
   private __publishUpdateChildren__() {
@@ -315,8 +334,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * 값 변경 요청 이벤트를 발행합니다.
-   * @param option - 변경 옵션 (선택 사항)
+   * Publishes a value change request event.
+   * @param option - Change options (optional)
    * @private
    */
   private __publishRequestEmitChange__(option?: UnionSetValueOption) {

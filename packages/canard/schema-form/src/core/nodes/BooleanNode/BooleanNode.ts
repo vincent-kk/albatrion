@@ -10,29 +10,33 @@ import {
 } from '../type';
 
 /**
- * 부울린 스키마를 처리하기 위한 노드 클래스입니다.
- * 부울린 값을 관리하고 파싱합니다.
+ * Node class for handling boolean schemas.
+ * Manages and parses boolean values.
  */
 export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
+  /** Current value of the boolean node */
   #value: BooleanValue | undefined = undefined;
+
   /**
-   * 부울린 노드의 값을 가져옵니다.
-   * @returns 부울린 값 또는 undefined
+   * Gets the value of the boolean node.
+   * @returns Boolean value or undefined
    */
   public override get value() {
     return this.#value;
   }
+
   /**
-   * 부울린 노드의 값을 설정합니다.
-   * @param input - 설정할 부울린 값
+   * Sets the value of the boolean node.
+   * @param input - The boolean value to set
    */
   public override set value(input: BooleanValue | undefined) {
     this.setValue(input);
   }
+
   /**
-   * 입력값을 부울린 노드에 적용합니다.
-   * @param input - 설정할 부울린 값
-   * @param option - 설정 옵션
+   * Applies the input value to the boolean node.
+   * @param input - The boolean value to set
+   * @param option - Set value options
    */
   protected override applyValue(
     this: BooleanNode,
@@ -69,9 +73,9 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   }
 
   /**
-   * 값 변경을 반영하고 관련 이벤트를 발행합니다.
-   * @param input - 설정할 값
-   * @param option - 설정 옵션
+   * Reflects value changes and publishes related events.
+   * @param input - The value to set
+   * @param option - Set value options
    */
   #emitChange(
     this: BooleanNode,
@@ -99,9 +103,9 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   }
 
   /**
-   * 입력값을 부울린으로 분석합니다.
-   * @param input - 분석할 값
-   * @returns 분석된 부울린 값
+   * Parses the input value as a boolean.
+   * @param input - The value to parse
+   * @returns Parsed boolean value
    */
   #parseValue(this: BooleanNode, input: BooleanValue | undefined) {
     return parseBoolean(input);

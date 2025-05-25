@@ -1,9 +1,8 @@
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 /**
- * computed 하위에 명시된 필드에 대한 alias
- *
- * 예: computed.if -> &if
+ * Alias for fields specified under computed
+ * @example computed.if -> &if
  */
 export const ALIAS = '&';
 

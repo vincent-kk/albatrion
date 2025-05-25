@@ -5,7 +5,7 @@ import type { Dictionary, RequiredBy } from '@aileron/declare';
 import type { JsonSchema, JsonSchemaWithVirtual } from '@/schema-form/types';
 
 /**
- * 필드의 조건을 평탄화한 형태로 나타내는 인터페이스
+ * Interface representing field conditions in flattened form
  */
 interface FlattenCondition {
   condition: Dictionary<string | string[]>;
@@ -14,9 +14,9 @@ interface FlattenCondition {
 }
 
 /**
- * JSON 스키마의 if-then-else 구조를 평탄화하여 조건 목록을 추출합니다.
- * @param schema - 평탄화할 JSON 스키마
- * @returns 평탄화된 조건 목록 또는 조건이 없을 경우 undefined
+ * Flattens the if-then-else structure of JSON schema to extract condition lists.
+ * @param schema - JSON schema to flatten
+ * @returns Flattened condition list or undefined if no conditions exist
  */
 export const flattenConditions = (
   schema: JsonSchema,
@@ -27,10 +27,10 @@ export const flattenConditions = (
 };
 
 /**
- * 스키마에서 추출한 조건을 배열에 추가합니다.
- * @param schema - 추출할 JSON 스키마
- * @param conditions - 조건을 추가할 배열
- * @param collectedConditions - 수집된 조건들
+ * Adds conditions extracted from schema to the array.
+ * @param schema - JSON schema to extract from
+ * @param conditions - Array to add conditions to
+ * @param collectedConditions - Collected conditions
  */
 const flattenConditionsInto = (
   schema: JsonSchema,
@@ -39,20 +39,20 @@ const flattenConditionsInto = (
 ): void => {
   if (!schema.if || !schema.then) return;
 
-  // if 조건 추출
+  // Extract if conditions
   const ifCondition = schema.if.properties
     ? extractCondition(schema.if.properties)
     : null;
 
   if (ifCondition === null) return;
 
-  // 현재 조건을 수집
+  // Collect current conditions
   for (const [key, value] of Object.entries(ifCondition)) {
     if (!collectedConditions[key]) collectedConditions[key] = [];
     collectedConditions[key].push(value);
   }
 
-  // then 부분 처리
+  // Process then part
   const thenRequired = schema.then?.required;
   if (isArray(thenRequired) && thenRequired.length > 0)
     conditions[conditions.length] = {
@@ -60,22 +60,22 @@ const flattenConditionsInto = (
       required: thenRequired,
     };
 
-  // else 부분 처리
+  // Process else part
   if (schema.else) {
-    // 중첩된 if-then-else 처리 (재귀 호출)
+    // Process nested if-then-else (recursive call)
     if (schema.else.if && schema.else.then) {
       flattenConditionsInto(schema.else, conditions, collectedConditions);
     } else {
       const elseRequired = schema.else.required;
       if (elseRequired?.length) {
-        // 지금까지 수집된 모든 조건을 통합
+        // Merge all collected conditions
         const inverseCondition: Record<string, string | string[]> = {};
 
         for (const [key, values] of Object.entries(collectedConditions)) {
           if (values.length === 1) {
             inverseCondition[key] = values[0];
           } else {
-            // 배열로 병합
+            // Merge arrays
             const merged: string[] = [];
             for (let i = 0; i < values.length; i++) {
               const value = values[i];
@@ -96,9 +96,9 @@ const flattenConditionsInto = (
 };
 
 /**
- * JSON 스키마 if 조건에서 속성들의 값 조건을 추출합니다.
- * @param properties - 스키마 속성들
- * @returns 추출된 조건 객체 또는 조건이 없을 경우 null
+ * Extracts value conditions for properties from JSON schema if conditions.
+ * @param properties - Schema properties
+ * @returns Extracted condition object or null if no conditions exist
  */
 const extractCondition = (
   properties: Record<string, any>,
@@ -129,18 +129,18 @@ const extractCondition = (
 };
 
 /**
- * 스키마가 유효한 enum 속성을 가지는지 확인합니다.
- * @param schema - 확인할 스키마
- * @returns enum 속성을 가지는지 여부
+ * Checks if schema has valid enum property.
+ * @param schema - Schema to check
+ * @returns Whether it has enum property
  */
 const isValidEnum = (
   schema: JsonSchemaWithVirtual,
 ): schema is RequiredBy<JsonSchemaWithVirtual, 'enum'> => !!schema.enum?.length;
 
 /**
- * 스키마가 유효한 const 속성을 가지는지 확인합니다.
- * @param schema - 확인할 스키마
- * @returns const 속성을 가지는지 여부
+ * Checks if schema has valid const property.
+ * @param schema - Schema to check
+ * @returns Whether it has const property
  */
 const isValidConst = (
   schema: JsonSchemaWithVirtual,

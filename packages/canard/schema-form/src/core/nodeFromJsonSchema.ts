@@ -9,9 +9,7 @@ import type { AllowedValue, JsonSchema } from '@/schema-form/types';
 import { createSchemaNodeFactory } from './nodes';
 import type { InferSchemaNode, ValidationMode } from './nodes/type';
 
-/**
- * JSON Schema로부터 Node를 생성하기 위한 속성 인터페이스
- */
+/** Properties interface for creating Node from JSON Schema */
 interface NodeFromSchemaProps<
   Schema extends JsonSchema,
   Value extends AllowedValue,
@@ -24,11 +22,11 @@ interface NodeFromSchemaProps<
 }
 
 /**
- * JSON Schema로부터 SchemaNode를 생성합니다.
- * @typeParam Schema - JSON Schema 타입
- * @typeParam Value - 값의 타입, 기본값은 Schema로부터 추론된 타입
- * @param props - Node 생성을 위한 속성
- * @returns 생성된 SchemaNode
+ * Creates SchemaNode from JSON Schema.
+ * @typeParam Schema - JSON Schema type
+ * @typeParam Value - Value type, defaults to type inferred from Schema
+ * @param props - Properties for Node creation
+ * @returns Created SchemaNode
  */
 export const nodeFromJsonSchema = <
   Schema extends JsonSchema,

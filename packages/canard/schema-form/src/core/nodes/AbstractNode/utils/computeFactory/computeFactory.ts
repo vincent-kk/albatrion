@@ -7,10 +7,10 @@ import {
 } from './utils';
 
 /**
- * 주어진 JSON 스키마로부터 계산된 프로퍼티 관리 함수를 생성합니다.
- * @param jsonSchema - 노드의 JSON 스키마
- * @param rootJsonSchema - 루트 노드의 JSON 스키마
- * @returns 계산된 프로퍼티 함수뤼
+ * Creates computed property management functions from the given JSON schema.
+ * @param jsonSchema - Node's JSON schema
+ * @param rootJsonSchema - Root node's JSON schema
+ * @returns Computed property functions
  */
 export const computeFactory = (
   schema: JsonSchemaWithVirtual,
@@ -21,11 +21,37 @@ export const computeFactory = (
   const getObservedValues = getObservedValuesFactory(schema);
   const dependencyPaths: string[] = [];
   return {
+    /** List of paths to dependencies */
     dependencyPaths,
+    /**
+     * Calculate whether the node is visible
+     * @param dependencies - List of dependencies
+     * @returns Whether the node is visible
+     */
     visible: checkComputedOption(dependencyPaths, 'visible', false),
+    /**
+     * Calculate whether the node is read only
+     * @param dependencies - List of dependencies
+     * @returns Whether the node is read only
+     */
     readOnly: checkComputedOption(dependencyPaths, 'readOnly', true),
+    /**
+     * Calculate whether the node is disabled
+     * @param dependencies - List of dependencies
+     * @returns Whether the node is disabled
+     */
     disabled: checkComputedOption(dependencyPaths, 'disabled', true),
+    /**
+     * Calculate the index of the oneOf branch
+     * @param dependencies - List of dependencies
+     * @returns Index of the oneOf branch
+     */
     oneOfIndex: getConditionIndex(dependencyPaths, 'oneOf', 'if'),
+    /**
+     * Calculate the list of values to watch
+     * @param dependencies - List of dependencies
+     * @returns List of values to watch
+     */
     watchValues: getObservedValues(dependencyPaths, 'watch'),
   };
 };

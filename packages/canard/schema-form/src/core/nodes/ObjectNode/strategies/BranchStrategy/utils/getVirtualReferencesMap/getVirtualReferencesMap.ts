@@ -6,11 +6,11 @@ import type { VirtualReference } from '@/schema-form/core/nodes/ObjectNode/type'
 import { SchemaNodeError } from '@/schema-form/errors';
 
 /**
- * 가상 참조 맵을 생성합니다.
- * @param nodeName - 현재 노드의 이름
- * @param propertyKeys - 프로퍼티 키 목록
- * @param virtualReferences - 가상 참조 정의
- * @returns 가상 참조 맵과 가상 참조 필드 맵
+ * Creates a virtual references map.
+ * @param nodeName - Name of the current node
+ * @param propertyKeys - List of property keys
+ * @param virtualReferences - Virtual reference definitions
+ * @returns Virtual references map and virtual reference fields map
  */
 export const getVirtualReferencesMap = (
   nodeName: string | undefined,
@@ -36,7 +36,7 @@ export const getVirtualReferencesMap = (
           name: nodeName || 'root',
         },
       );
-    // NOTE: virtual field는 모두 properties에 정의되어 있어야 함
+    // NOTE: virtual fields must be defined in properties
     const notFoundFields = value.fields.filter(
       (field) => !propertyKeys.includes(field),
     );

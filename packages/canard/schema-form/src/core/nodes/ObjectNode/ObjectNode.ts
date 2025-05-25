@@ -17,38 +17,46 @@ import {
 import { omitEmptyObject } from './utils';
 
 /**
- * 객체 스키마를 처리하기 위한 노드 클래스입니다.
- * 객체의 프로퍼티를 관리하고 oneOf와 같은 복잡한 스키마를 처리합니다.
+ * A node class for handling object schemas.
+ * Manages object properties and handles complex schemas like oneOf.
  */
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
+  /**
+   * Strategy used by the object node:
+   *  - BranchStrategy: Handles complex child nodes with associated processing logic, including oneOf/if-then-else.
+   *  - TerminalStrategy: Acts as a terminal node for object-type data with no child nodes and simple processing logic.
+   * @internal Internal implementation detail. Do not call directly.
+   */
   #strategy: ObjectNodeStrategy;
 
   /**
-   * 객체 노드의 자식 노드들을 가져옵니다.
-   * @returns 자식 노드 목록
+   * Gets the child nodes of the object node.
+   * @returns List of child nodes
    */
   public override get children() {
     return this.#strategy.children;
   }
 
   /**
-   * 객체 노드의 값을 가져옵니다.
-   * @returns 객체 값 또는 undefined
+   * Gets the value of the object node.
+   * @returns Object value or undefined
    */
   public override get value() {
     return this.#strategy.value;
   }
+
   /**
-   * 객체 노드의 값을 설정합니다.
-   * @param input - 설정할 객체 값
+   * Sets the value of the object node.
+   * @param input - Object value to set
    */
   public override set value(input: ObjectValue | undefined) {
     this.setValue(input);
   }
+
   /**
-   * 입력값을 객체 노드에 적용합니다.
-   * @param input - 설정할 객체 값
-   * @param option - 설정 옵션
+   * Applies input value to the object node.
+   * @param input - Object value to set
+   * @param option - Setting options
    */
   protected override applyValue(
     this: ObjectNode,
@@ -59,10 +67,10 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   }
 
   /**
-   * 이 ObjectNode를 활성화하고, 모든 자식 노드에게 활성화를 전파합니다.
-   * @param actor - 준비를 요청한 노드
-   * @returns 활성화 여부
-   * @internal 내부 구현용 메서드입니다. 직접 호출하지 마세요.
+   * Activates this ObjectNode and propagates activation to all child nodes.
+   * @param actor - The node that requested activation
+   * @returns Whether activation was successful
+   * @internal Internal implementation method. Do not call directly.
    */
   public override activate(this: ObjectNode, actor?: SchemaNode): boolean {
     if (super.activate(actor)) {
@@ -105,9 +113,9 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   }
 
   /**
-   * 객체 노드의 전략을 생성합니다.
-   * @param nodeFactory - 노드 팩토리
-   * @returns 생성된 전략: TerminalStrategy | BranchStrategy
+   * Creates a strategy for the object node.
+   * @param nodeFactory - Node factory
+   * @returns Created strategy: TerminalStrategy | BranchStrategy
    */
   #createStrategy(
     handleChange: Fn<[input: ObjectValue | undefined]>,

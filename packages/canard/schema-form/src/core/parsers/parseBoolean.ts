@@ -1,7 +1,7 @@
 /**
- * 입력값을 부울린 형식으로 분석합니다.
- * @param value - 분석할 값
- * @returns 분석된 부울린 값 또는 값이 undefined인 경우 undefined
+ * Parses input value to boolean format.
+ * @param value - Value to parse
+ * @returns Parsed boolean value or undefined if value is undefined
  */
 export const parseBoolean = (value: unknown): boolean | undefined => {
   if (value === undefined) return undefined;

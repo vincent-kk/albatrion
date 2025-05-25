@@ -12,29 +12,33 @@ import {
 } from '../type';
 
 /**
- * 문자열 스키마를 처리하기 위한 노드 클래스입니다.
- * 문자열 값을 관리하고 파싱합니다.
+ * Node class for handling string schemas.
+ * Manages and parses string values.
  */
 export class StringNode extends AbstractNode<StringSchema, StringValue> {
+  /** Current value of the string node */
   #value: StringValue | undefined = undefined;
+
   /**
-   * 문자열 노드의 값을 가져옵니다.
-   * @returns 문자열 값 또는 undefined
+   * Gets the value of the string node.
+   * @returns String value or undefined
    */
   public override get value() {
     return this.#value;
   }
+
   /**
-   * 문자열 노드의 값을 설정합니다.
-   * @param input - 설정할 문자열 값
+   * Sets the value of the string node.
+   * @param input - The string value to set
    */
   public override set value(input: StringValue | undefined) {
     this.setValue(input);
   }
+
   /**
-   * 입력값을 문자열 노드에 적용합니다.
-   * @param input - 설정할 문자열 값
-   * @param option - 설정 옵션
+   * Applies the input value to the string node.
+   * @param input - The string value to set
+   * @param option - Set value options
    */
   protected override applyValue(
     this: StringNode,
@@ -79,9 +83,9 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
   }
 
   /**
-   * 값 변경을 반영하고 관련 이벤트를 발행합니다.
-   * @param input - 설정할 값
-   * @param option - 설정 옵션
+   * Reflects value changes and publishes related events.
+   * @param input - The value to set
+   * @param option - Set value options
    */
   #emitChange(
     this: StringNode,
@@ -109,18 +113,18 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
   }
 
   /**
-   * 입력값을 문자열로 분석합니다.
-   * @param input - 분석할 값
-   * @returns 분석된 문자열 값
+   * Parses the input value as a string.
+   * @param input - The value to parse
+   * @returns Parsed string value
    */
   #parseValue(this: StringNode, input: StringValue | undefined) {
     return parseString(input);
   }
 
   /**
-   * 빈 값을 제외하고 값 변경을 반영합니다.
-   * @param input - 설정할 값
-   * @internal 내부 구현용 메서드입니다. 직접 호출하지 마세요.
+   * Reflects value changes excluding empty values.
+   * @param input - The value to set
+   * @internal Internal implementation method. Do not call directly.
    */
   private onChangeWithOmitEmpty(
     this: StringNode,

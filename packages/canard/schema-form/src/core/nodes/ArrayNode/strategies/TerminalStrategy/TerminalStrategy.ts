@@ -16,56 +16,71 @@ import type { ArrayNodeStrategy, IndexId } from '../type';
 
 const FIRST_EMIT_CHANGE_OPTION =
   SetValueOption.Replace | SetValueOption.Default;
+
 export class TerminalStrategy implements ArrayNodeStrategy {
+  /** Host ArrayNode instance that this strategy belongs to */
   private __host__: ArrayNode;
+
+  /** Callback function to handle value changes */
   private __handleChange__: Fn<[ArrayValue | undefined]>;
+
+  /** Callback function to handle refresh operations */
   private __handleRefresh__: Fn<[ArrayValue | undefined]>;
 
+  /** Flag indicating whether the strategy is locked to prevent recursive updates */
   private __locked__: boolean = true;
+
+  /** Sequence counter for generating unique IDs for array elements */
   private __seq__: number = 0;
+
+  /** Array of unique IDs for tracking array elements (used for element identification) */
   private __ids__: IndexId[] = [];
+
+  /** Default value to use when creating new array items */
   private __defaultItemValue__: AllowedValue;
 
+  /** Current value of the array node, initialized as empty array */
   private __value__: ArrayValue | undefined = [];
 
   /**
-   * 배열의 현재 값을 가져옵니다.
-   * @returns 배열 노드의 현재 값 또는 undefined
+   * Gets the current value of the array.
+   * @returns Current value of the array node or undefined
    */
   public get value() {
     return this.__value__;
   }
+
   /**
-   * 입력값을 배열 노드에 적용합니다.
-   * @param input - 설정할 배열 값
-   * @param option - 설정 옵션
+   * Applies input value to the array node.
+   * @param input - Array value to set
+   * @param option - Setting options
    */
   public applyValue(input: ArrayValue, option: UnionSetValueOption) {
     this.__emitChange__(input, option);
   }
 
   /**
-   * 자식 노드 목록을 가져옵니다.
-   * @returns 빈 배열 (Terminal 전략은 자식 노드를 관리하지 않음)
+   * Gets the list of child nodes.
+   * @returns Empty array (Terminal strategy does not manage child nodes)
    */
   public get children() {
     return null;
   }
 
   /**
-   * 배열의 현재 길이를 가져옵니다.
-   * @returns 배열의 길이 (값이 undefined인 경우 0)
+   * Gets the current length of the array.
+   * @returns Length of the array (0 if value is undefined)
    */
   public get length() {
     return this.__value__?.length ?? 0;
   }
 
   /**
-   * TerminalStrategy 객체를 초기화합니다.
-   * @param host - 호스트 ArrayNode 객체
-   * @param handleChange - 값 변경 핸들러
-   * @param handleRefresh - 새로고침 핸들러
-   * @param handleSetDefaultValue - 기본값 설정 핸들러
+   * Initializes the TerminalStrategy object.
+   * @param host - Host ArrayNode object
+   * @param handleChange - Value change handler
+   * @param handleRefresh - Refresh handler
+   * @param handleSetDefaultValue - Default value setting handler
    */
   constructor(
     host: ArrayNode,
@@ -95,8 +110,8 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * 배열에 새 요소를 추가합니다.
-   * @param input - 추가할 값 (생략 가능)
+   * Adds a new element to the array.
+   * @param input - Value to add (optional)
    */
   public push(input?: ArrayValue[number]) {
     if (
@@ -114,9 +129,9 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * 특정 요소의 값을 업데이트합니다.
-   * @param id - 업데이트할 요소의 ID 또는 인덱스
-   * @param data - 새로운 값
+   * Updates the value of a specific element.
+   * @param id - ID or index of the element to update
+   * @param data - New value
    */
   public update(id: IndexId | number, data: ArrayValue[number]) {
     if (this.__value__ === undefined) return;
@@ -128,8 +143,8 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * 특정 요소를 삭제합니다.
-   * @param id - 삭제할 요소의 ID 또는 인덱스
+   * Removes a specific element.
+   * @param id - ID or index of the element to remove
    */
   public remove(id: IndexId | number) {
     if (this.__value__ === undefined) return;
@@ -139,16 +154,16 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     this.__emitChange__(value);
   }
 
-  /** 모든 요소를 삭제하여 배열을 초기화합니다. */
+  /** Clears all elements to initialize the array. */
   public clear() {
     this.__ids__ = [];
     this.__emitChange__([]);
   }
 
   /**
-   * 값 변경 이벤트를 발생시킵니다.
-   * @param input - 새로운 배열 값
-   * @param option - 옵션 설정 (기본값: SetValueOption.Default)
+   * Emits a value change event.
+   * @param input - New array value
+   * @param option - Option settings (default: SetValueOption.Default)
    * @private
    */
   private __emitChange__(
@@ -180,9 +195,9 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * 입력 값을 적절한 배열 형식으로 파싱합니다.
-   * @param input - 파싱할 값
-   * @returns 파싱된 배열 값 또는 undefined
+   * Parses input value into appropriate array format.
+   * @param input - Value to parse
+   * @returns Parsed array value or undefined
    * @private
    */
   private __parseValue__(input: ArrayValue | undefined) {

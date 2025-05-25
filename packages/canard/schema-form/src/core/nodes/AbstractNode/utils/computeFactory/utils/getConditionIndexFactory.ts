@@ -10,34 +10,32 @@ import { ALIAS, type ConditionFieldName } from './type';
 type GetConditionIndex = Fn<[dependencies: unknown[]], number>;
 
 /**
- * 단순 동등성 비교를 위한 정규식 패턴
- * dependencies[n] === "value" 형태의 표현식을 매칭합니다.
+ * Regular expression pattern for simple equality comparison
+ * @example Matches expressions in the form dependencies[n] === "value"
  */
 const SIMPLE_EQUALITY_REGEX =
   /^\s*dependencies\[(\d+)\]\s*===\s*(['"])([^'"]+)\2\s*$/;
 
 /**
- * 조건 스키마의 인덱스를 계산하는 함수를 생성합니다.
- *
- * @param jsonSchema - JSON 스키마
- * @returns 조건 인덱스 팩토리 함수
+ * Creates a function to calculate the index of condition schema.
+ * @param jsonSchema - JSON schema
+ * @returns Condition index factory function
  */
 export const getConditionIndexFactory =
   (jsonSchema: JsonSchemaWithVirtual) =>
   /**
-   * 주어진 의존성 경로와 필드명에 대해 조건 인덱스 계산 함수를 반환합니다.
-   *
-   * @param dependencyPaths - 의존성 경로 배열
-   * @param fieldName - 인덱스를 계산할 필드명 (oneOf, anyOf 등)
-   * @param conditionField - 조건이 명시된 필드명 (if, ifNot, ifAny, ifAll)
-   * @returns 조건 인덱스 계산 함수 또는 undefined
+   * Returns a condition index calculation function for the given dependency paths and field name.
+   * @param dependencyPaths - Dependency path array
+   * @param fieldName - Field name to calculate index for (oneOf, anyOf, etc.)
+   * @param conditionField - Field name where condition is specified (if, ifNot, ifAny, ifAll)
+   * @returns Condition index calculation function or undefined
    */
   (
     dependencyPaths: string[],
     fieldName: string,
     conditionField: ConditionFieldName,
   ): GetConditionIndex | undefined => {
-    // 유효하지 않은 스키마면 undefined 반환
+    // Return undefined if schema is invalid
     if (jsonSchema.type !== 'object' || !isArray(jsonSchema[fieldName]))
       return undefined;
 
@@ -45,14 +43,14 @@ export const getConditionIndexFactory =
     const expressions: string[] = [];
     const schemaIndices: number[] = [];
 
-    // 유효한 표현식만 수집하고 원래 스키마 인덱스 유지
+    // Collect only valid expressions and maintain original schema indices
     for (let index = 0; index < conditionSchemas.length; index++) {
-      // `computed.[<conditionField>]` 또는 `&[<conditionField>]` 필드에서 표현식 추출
+      // Extract expression from `computed.[<conditionField>]` or `&[<conditionField>]` field
       const condition =
         conditionSchemas[index]?.computed?.[conditionField] ??
         conditionSchemas[index]?.[ALIAS + conditionField];
 
-      // 불리언 조건 처리
+      // Handle boolean conditions
       if (typeof condition === 'boolean') {
         if (condition === true) {
           expressions.push('true');
@@ -61,11 +59,11 @@ export const getConditionIndexFactory =
         continue;
       }
 
-      // 문자열 조건 처리
+      // Handle string conditions
       const expression = condition?.trim?.();
       if (!expression || typeof expression !== 'string') continue;
 
-      // JSON 경로를 의존성 배열 참조로 변환
+      // Transform JSON paths to dependency array references
       expressions.push(
         expression
           .replace(JSON_PATH_REGEX, (path) => {
@@ -79,7 +77,7 @@ export const getConditionIndexFactory =
 
     if (expressions.length === 0) return undefined;
 
-    // 단순 동등성 비교 최적화를 위한 분석
+    // Analysis for simple equality comparison optimization
     const equalityMap: Record<number, Record<string, number>> = {};
     let isSimpleEquality = true;
 
@@ -89,7 +87,7 @@ export const getConditionIndexFactory =
         break;
       }
 
-      // 단순 동등성 패턴 매칭
+      // Match simple equality pattern
       const matches = expressions[index].match(SIMPLE_EQUALITY_REGEX);
       if (matches) {
         const depIndex = parseInt(matches[1], 10);
@@ -98,19 +96,19 @@ export const getConditionIndexFactory =
         if (!(value in equalityMap[depIndex]))
           equalityMap[depIndex][value] = schemaIndices[index];
       } else {
-        // 복잡한 표현식은 최적화에서 제외
+        // Exclude complex expressions from optimization
         isSimpleEquality = false;
         break;
       }
     }
 
-    // 단순 동등성 최적화: 모든 조건이 단순하고 하나의 dependency만 사용하는 경우
+    // Simple equality optimization: when all conditions are simple and use only one dependency
     const keys = Object.keys(equalityMap);
     if (isSimpleEquality && keys.length === 1) {
       const dependencyIndex = parseInt(keys[0], 10);
       const valueMap = equalityMap[dependencyIndex];
 
-      // 최적화된 단순 동등성 비교 함수 반환
+      // Return optimized simple equality comparison function
       return (dependencies: unknown[]) => {
         const value = dependencies[dependencyIndex];
         return typeof value === 'string' && value in valueMap
@@ -119,7 +117,7 @@ export const getConditionIndexFactory =
       };
     }
 
-    // 일반적인 조건식 처리: Function 생성자를 통한 동적 함수 생성
+    // General conditional expression handling: dynamic function generation through Function constructor
     const lines = new Array<string>(expressions.length);
     for (let index = 0; index < expressions.length; index++)
       lines[index] =

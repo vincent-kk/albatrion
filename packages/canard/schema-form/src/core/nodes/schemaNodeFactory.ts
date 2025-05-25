@@ -27,10 +27,11 @@ import type {
 } from './type';
 
 /**
- * JSON Schema에 맞는 SchemaNode 팩토리 함수를 생성합니다.
- * @typeParam Schema - JSON Schema 타입
- * @param resolveSchema - 스키마 해석 함수, 참조를 해석하기 위해 사용
- * @returns SchemaNode를 생성하는 팩토리 함수
+ * Creates a SchemaNode factory function that matches the JSON Schema type.
+ * @note Before creating SchemaNode, it resolves the references in the JSON Schema.
+ * @typeParam Schema - The JSON Schema type
+ * @param resolveSchema - Schema resolution function used to resolve references
+ * @returns A factory function that creates SchemaNode instances
  */
 export const createSchemaNodeFactory =
   <Schema extends JsonSchemaWithVirtual>(

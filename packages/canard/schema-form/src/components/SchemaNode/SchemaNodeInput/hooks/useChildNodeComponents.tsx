@@ -19,6 +19,12 @@ import type { ChildNodeComponent } from '../type';
 
 const SEPARATOR = '\x1F';
 
+/**
+ * Create child node components for the given SchemaNode
+ * @param node - SchemaNode
+ * @param NodeProxy - SchemaNodeProxy
+ * @returns ChildNodeComponent[]
+ */
 export const useChildNodeComponents = (
   node: SchemaNode,
   NodeProxy: ComponentType<SchemaNodeProxyProps>,

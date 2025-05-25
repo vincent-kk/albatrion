@@ -21,11 +21,11 @@ interface FormTypeRendererContextProviderProps {
   formatError?: FormProps['formatError'];
   /**
    * Error display condition (default: ShowError.DirtyTouched)
-   *   - `true`: 항상 노출
-   *   - `false`: 항상 미노출
-   *   - `ShowError.Dirty`: 값이 변경된 경우 노출
-   *   - `ShowError.Touched`: input에 focus 된 경우 노출
-   *   - `ShowError.DirtyTouched`: Dirty 상태와 Touched 상태가 모두 충족된 경우 노출
+   *   - `true`: Always show errors
+   *   - `false`: Never show errors
+   *   - `ShowError.Dirty`: Show errors when value has changed
+   *   - `ShowError.Touched`: Show errors when input has been focused
+   *   - `ShowError.DirtyTouched`: Show errors when both Dirty and Touched states are met
    */
   showError?: FormProps['showError'];
 }

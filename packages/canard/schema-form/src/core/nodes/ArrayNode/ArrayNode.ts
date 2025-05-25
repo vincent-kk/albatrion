@@ -18,30 +18,38 @@ import {
 import { omitEmptyArray } from './utils';
 
 /**
- * 배열 스키마를 처리하기 위한 노드 클래스입니다.
- * 배열의 각 요소를 관리하고 추가/삭제/업데이트 기능을 제공합니다.
+ * A node class for handling array schemas.
+ * Manages each element of the array and provides push/pop/update/remove/clear functionality.
  */
 export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
+  /**
+   * Strategy used by the array node:
+   *  - BranchStrategy: Handles complex child nodes with associated processing logic.
+   *  - TerminalStrategy: Acts as a terminal node for array-type data with no child nodes and simple processing logic.
+   * @internal Internal implementation detail. Do not call directly.
+   */
   #strategy: ArrayNodeStrategy;
 
   /**
-   * 배열 노드의 값을 가져옵니다.
-   * @returns 배열 값 또는 undefined
+   * Gets the value of the array node.
+   * @returns Array value or undefined
    */
   public override get value() {
     return this.#strategy.value;
   }
+
   /**
-   * 배열 노드의 값을 설정합니다.
-   * @param input - 설정할 배열 값
+   * Sets the value of the array node.
+   * @param input - Array value to set
    */
   public override set value(input: ArrayValue | undefined) {
     this.setValue(input);
   }
+
   /**
-   * 입력값을 배열 노드에 적용합니다.
-   * @param input - 설정할 배열 값
-   * @param option - 설정 옵션
+   * Applies input value to the array node.
+   * @param input - Array value to set
+   * @param option - Setting options
    */
   protected override applyValue(
     this: ArrayNode,
@@ -51,28 +59,28 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     this.#strategy.applyValue(input, option);
   }
 
-  /** ArrayNode의 자식 노드들 */
+  /** Child nodes of ArrayNode */
   /**
-   * 배열 노드의 자식 노드들을 가져옵니다.
-   * @returns 자식 노드 목록
+   * Gets the child nodes of the array node.
+   * @returns List of child nodes
    */
   public override get children() {
     return this.#strategy.children;
   }
 
   /**
-   * 배열의 현재 길이를 가져옵니다.
-   * @returns 배열의 길이
+   * Gets the current length of the array.
+   * @returns Length of the array
    */
   public get length() {
     return this.#strategy.length;
   }
 
   /**
-   * 이 ArrayNode를 활성화하고, 모든 자식 노드에게 활성화를 전파합니다.
-   * @param actor - 준비를 요청한 노드
-   * @returns 활성화 여부
-   * @internal 내부 구현용 메서드입니다. 직접 호출하지 마세요.
+   * Activates this ArrayNode and propagates activation to all child nodes.
+   * @param actor - The node that requested activation
+   * @returns Whether activation was successful
+   * @internal Internal implementation method. Do not call directly.
    */
   public override activate(this: ArrayNode, actor?: SchemaNode): boolean {
     if (super.activate(actor)) {
@@ -117,9 +125,9 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   }
 
   /**
-   * 배열에 새 요소를 추가합니다.
-   * @param data - 추가할 값 (생략 가능)
-   * @returns 자기 자신(this)을 반환하여 체이닝 지원
+   * Adds a new element to the array.
+   * @param data - Value to add (optional)
+   * @returns Returns itself (this) for method chaining
    */
   public push(this: ArrayNode, data?: ArrayValue[number]) {
     this.#strategy.push(data);
@@ -127,10 +135,10 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   }
 
   /**
-   * 특정 요소의 값을 업데이트합니다.
-   * @param id - 업데이트할 요소의 ID 또는 인덱스
-   * @param data - 새로운 값
-   * @returns 자기 자신(this)을 반환하여 체이닝 지원
+   * Updates the value of a specific element.
+   * @param id - ID or index of the element to update
+   * @param data - New value
+   * @returns Returns itself (this) for method chaining
    */
   public update(
     this: ArrayNode,
@@ -142,9 +150,9 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   }
 
   /**
-   * 특정 요소를 삭제합니다.
-   * @param id - 삭제할 요소의 ID 또는 인덱스
-   * @returns 자기 자신(this)을 반환하여 체이닝 지원
+   * Removes a specific element.
+   * @param id - ID or index of the element to remove
+   * @returns Returns itself (this) for method chaining
    */
   public remove(this: ArrayNode, id: IndexId | number) {
     this.#strategy.remove(id);
@@ -152,8 +160,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   }
 
   /**
-   * 모든 요소를 삭제하여 배열을 초기화합니다.
-   * @returns 자기 자신(this)을 반환하여 체이닝 지원
+   * Clears all elements to initialize the array.
+   * @returns Returns itself (this) for method chaining
    */
   public clear(this: ArrayNode) {
     this.#strategy.clear();
@@ -161,9 +169,9 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   }
 
   /**
-   * 배열 노드의 전략을 생성합니다.
-   * @param nodeFactory - 노드 팩토리
-   * @returns 생성된 전략: TerminalStrategy | BranchStrategy
+   * Creates a strategy for the array node.
+   * @param nodeFactory - Node factory
+   * @returns Created strategy: TerminalStrategy | BranchStrategy
    */
   #createStrategy(
     handleChange: Fn<[input: ArrayValue | undefined]>,

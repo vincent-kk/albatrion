@@ -3,29 +3,29 @@ import type { ArrayValue } from '@/schema-form/types';
 import type { ChildNode, UnionSetValueOption } from '../../type';
 
 /**
- * ArrayNode의 데이터와 작업을 관리하는 전략 인터페이스.
- * 배열 타입의 JSON 스키마에 대한 다양한 구현을 제공합니다.
+ * Strategy interface for managing ArrayNode data and operations.
+ * Provides various implementations for array-type JSON schemas.
  */
 export interface ArrayNodeStrategy {
   /**
-   * 배열의 현재 값을 가져옵니다.
-   * @returns 배열 노드의 현재 값 또는 undefined
+   * Gets the current value of the array.
+   * @returns Current value of the array node or undefined
    */
   get value(): ArrayValue | undefined;
   /**
-   * 배열의 현재 길이를 가져옵니다.
-   * @returns 배열의 길이
+   * Gets the current length of the array.
+   * @returns Length of the array
    */
   get length(): number;
   /**
-   * 자식 노드 목록을 가져옵니다.
-   * @returns ID와 노드 정보를 포함한 배열
+   * Gets the list of child nodes.
+   * @returns Array containing ID and node information
    */
   get children(): ChildNode[] | null;
   /**
-   * 입력값을 배열 노드에 적용합니다.
-   * @param value - 설정할 배열 값
-   * @param option - 설정 옵션
+   * Applies input value to the array node.
+   * @param value - Array value to set
+   * @param option - Setting options
    */
   applyValue(
     this: this,
@@ -33,24 +33,24 @@ export interface ArrayNodeStrategy {
     option: UnionSetValueOption,
   ): void;
   /**
-   * 배열에 새 요소를 추가합니다.
-   * @param data - 추가할 값 (생략 가능)
+   * Adds a new element to the array.
+   * @param data - Value to add (optional)
    */
   push(data?: ArrayValue[number]): void;
   /**
-   * 특정 요소의 값을 업데이트합니다.
-   * @param id - 업데이트할 요소의 ID 또는 인덱스
-   * @param data - 새로운 값
+   * Updates the value of a specific element.
+   * @param id - ID or index of the element to update
+   * @param data - New value
    */
   update(id: IndexId | number, data: ArrayValue[number]): void;
   /**
-   * 특정 요소를 삭제합니다.
-   * @param id - 삭제할 요소의 ID 또는 인덱스
+   * Removes a specific element.
+   * @param id - ID or index of the element to remove
    */
   remove(id: IndexId | number): void;
-  /** 모든 요소를 삭제하여 배열을 초기화합니다. */
+  /** Clears all elements to initialize the array. */
   clear(): void;
-  /** 하위 노드에 대해 pub-sub 링크를 활성화합니다. */
+  /** Activates pub-sub links for child nodes. */
   activate?(): void;
 }
 

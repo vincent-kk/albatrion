@@ -36,49 +36,49 @@ export interface FormProps<
   Schema extends JsonSchema = JsonSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  /** 이 SchemaForm 내에서 사용할 JSON Schema */
+  /** JSON Schema to be used within this SchemaForm */
   jsonSchema: Schema;
-  /** 이 SchemaForm의 기본값 */
+  /** Default value for this SchemaForm */
   defaultValue?: Value;
-  /** FormTypeInput 전체에 readOnly 속성 적용 */
+  /** Apply readOnly property to all FormTypeInputs */
   readOnly?: boolean;
-  /** FormTypeInput 전체에 disabled 속성 적용 */
+  /** Apply disabled property to all FormTypeInputs */
   disabled?: boolean;
-  /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
+  /** Function called when the value of this SchemaForm changes */
   onChange?: SetStateFn<Value>;
-  /** 이 SchemaForm의 값이 검증될 때 호출되는 함수 */
+  /** Function called when the value of this SchemaForm is validated */
   onValidate?: Fn<[jsonSchemaError: JsonSchemaError[]]>;
-  /** FormTypeInput 정의 목록 */
+  /** List of FormTypeInput definitions */
   formTypeInputDefinitions?: FormTypeInputDefinition[];
-  /** FormTypeInput 경로 매핑 */
+  /** FormTypeInput path mapping */
   formTypeInputMap?: FormTypeInputMap;
   /** Custom form type renderer component */
   CustomFormTypeRenderer?: ComponentType<FormTypeRendererProps>;
-  /** 최초로 입력되는 유효성 검증 오류, 기본값은 undefined */
+  /** Initial validation errors, default is undefined */
   errors?: JsonSchemaError[];
   /** Custom format error function */
   formatError?: FormTypeRendererProps['formatError'];
   /**
    * Error display condition (default: ShowError.DirtyTouched)
-   *   - `true`: 항상 노출
-   *   - `false`: 항상 미노출
-   *   - `ShowError.Dirty`: 값이 변경된 경우 노출
-   *   - `ShowError.Touched`: input에 focus 된 경우 노출
-   *   - `ShowError.DirtyTouched`: Dirty 상태와 Touched 상태가 모두 충족된 경우 노출
+   *   - `true`: Always show
+   *   - `false`: Never show
+   *   - `ShowError.Dirty`: Show when value has changed
+   *   - `ShowError.Touched`: Show when input has been focused
+   *   - `ShowError.DirtyTouched`: Show when both Dirty and Touched states are met
    */
   showError?: boolean | ShowError;
   /**
    * Execute Validation Mode (default: ValidationMode.OnChange)
-   *  - `ValidationMode.None`: 유효성 검증 비활성화
-   *  - `ValidationMode.OnChange`: 값이 변경될 때 유효성 검증
-   *  - `ValidationMode.OnRequest`: 요청할 때 유효성 검증
+   *  - `ValidationMode.None`: Disable validation
+   *  - `ValidationMode.OnChange`: Validate when value changes
+   *  - `ValidationMode.OnRequest`: Validate on request
    */
   validationMode?: ValidationMode;
-  /** 외부에서 선언된 Ajv 인스턴스, 없으면 내부에서 생성 */
+  /** Externally declared Ajv instance, creates internally if not provided */
   ajv?: Ajv;
-  /** 사용자 정의 컨텍스트 */
+  /** User-defined context */
   context?: Dictionary;
-  /** 하위 컴포넌트 */
+  /** Child components */
   children?:
     | ReactNode
     | Fn<[props: FormChildrenProps<Schema, Value>], ReactNode>;

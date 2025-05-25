@@ -5,10 +5,10 @@ import type { Dictionary } from '@aileron/declare';
 import type { FieldConditionMap } from '../../getFieldConditionMap';
 
 /**
- * 스키마 조건을 분석하여 특정 값에 대해 어떤 속성이 필수인지 결정하는 함수를 반환합니다.
- * @param value 현재 객체 값
- * @param fieldConditionMap 필드별 조건 Map
- * @returns 키를 받아 해당 키가 필수인지 반환하는 함수
+ * Analyzes schema conditions and returns a function that determines which properties are required for a specific value.
+ * @param value Current object value
+ * @param fieldConditionMap Field condition map
+ * @returns Function that takes a key and returns whether that key is required
  */
 export const requiredFactory = (
   value: Dictionary,
@@ -29,7 +29,7 @@ export const requiredFactory = (
         if (isArray(condValue)) matches = condValue.includes(currentValue);
         else matches = condValue === currentValue;
       } else {
-        // 다중 조건 일반 경로
+        // Normal path for multiple conditions
         for (const [condKey, condValue] of Object.entries(condition)) {
           const currentValue = value[condKey];
           if (isArray(condValue)) matches = condValue.includes(currentValue);

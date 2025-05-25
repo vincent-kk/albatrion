@@ -15,29 +15,37 @@ import type { ObjectValue } from '@/schema-form/types';
 import type { ObjectNodeStrategy } from '../type';
 
 /**
- * ObjectNode의 값을 시터미널로 관리하는 전략 클래스.
- * 단순한 객체 타입을 처리하기 위한 구현입니다.
+ * Strategy class for managing ObjectNode values as terminal.
+ * Implementation for handling simple object types.
  */
 export class TerminalStrategy implements ObjectNodeStrategy {
+  /** Host ObjectNode instance that this strategy belongs to */
   private __host__: ObjectNode;
+
+  /** Callback function to handle value changes */
   private __handleChange__: Fn<[ObjectValue | undefined]>;
+
+  /** Callback function to handle refresh operations */
   private __handleRefresh__: Fn<[ObjectValue | undefined]>;
 
+  /** Array of property keys defined in the JSON schema, used for ordering object properties */
   private readonly __propertyKeys__: string[];
 
+  /** Current value of the object node, initialized as empty object */
   private __value__: ObjectValue | undefined = {};
+
   /**
-   * 객체의 현재 값을 가져옵니다.
-   * @returns 객체 노드의 현재 값 또는 undefined
+   * Gets the current value of the object.
+   * @returns Current value of the object node or undefined
    */
   public get value() {
     return this.__value__;
   }
 
   /**
-   * 입력값을 객체 노드에 적용합니다.
-   * @param input - 설정할 객체 값
-   * @param option - 설정 옵션
+   * Applies input value to the object node.
+   * @param input - Object value to set
+   * @param option - Setting options
    */
   public applyValue(
     input: ObjectValue | undefined,
@@ -47,19 +55,19 @@ export class TerminalStrategy implements ObjectNodeStrategy {
   }
 
   /**
-   * 자식 노드 목록을 가져옵니다.
-   * @returns 빈 배열 (Terminal 전략은 자식 노드를 관리하지 않음)
+   * Gets the list of child nodes.
+   * @returns Empty array (Terminal strategy does not manage child nodes)
    */
   public get children() {
     return null;
   }
 
   /**
-   * TerminalStrategy 객체를 초기화합니다.
-   * @param host - 호스트 ObjectNode 객체
-   * @param handleChange - 값 변경 핸들러
-   * @param handleRefresh - 새로고침 핸들러
-   * @param handleSetDefaultValue - 기본값 설정 핸들러
+   * Initializes the TerminalStrategy object.
+   * @param host - Host ObjectNode object
+   * @param handleChange - Value change handler
+   * @param handleRefresh - Refresh handler
+   * @param handleSetDefaultValue - Default value setting handler
    */
   constructor(
     host: ObjectNode,
@@ -82,9 +90,9 @@ export class TerminalStrategy implements ObjectNodeStrategy {
   }
 
   /**
-   * 값 변경 이벤트를 발생시킵니다.
-   * @param input - 새로운 객체 값
-   * @param option - 옵션 설정 (기본값: SetValueOption.Default)
+   * Emits a value change event.
+   * @param input - New object value
+   * @param option - Option settings (default: SetValueOption.Default)
    * @private
    */
   private __emitChange__(
@@ -113,9 +121,9 @@ export class TerminalStrategy implements ObjectNodeStrategy {
   }
 
   /**
-   * 입력 값을 적절한 객체 형식으로 파싱합니다.
-   * @param input - 파싱할 값
-   * @returns 파싱된 객체 값 또는 undefined
+   * Parses input value into appropriate object format.
+   * @param input - Value to parse
+   * @returns Parsed object value or undefined
    * @private
    */
   private __parseValue__(input: ObjectValue | undefined) {

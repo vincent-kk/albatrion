@@ -1,12 +1,12 @@
 import type { ObjectValue } from '@/schema-form/types';
 
 /**
- * value에서 oneOf에 정의된 프로퍼티만 제거(properties의 키만 유지)
- * 아무 곳에도 정의되지 않은 프로퍼티는 그대로 유지
+ * Removes only properties defined in oneOf from value (keeping only properties keys)
+ * Properties not defined anywhere are kept as is
  *
- * @param value 원본 객체 값
- * @param schema 객체 스키마 정의
- * @returns oneOf에 정의된 프로퍼티가 제거된 객체 값
+ * @param value Original object value
+ * @param schema Object schema definition
+ * @returns Object value with oneOf-defined properties removed
  */
 export const processValueWithOneOfSchema = (
   value: ObjectValue | undefined,

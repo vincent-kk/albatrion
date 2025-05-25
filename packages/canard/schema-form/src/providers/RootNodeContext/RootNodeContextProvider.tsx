@@ -26,26 +26,26 @@ interface RootNodeContextProviderProps<
   Schema extends JsonSchema = JsonSchema,
   Value extends AllowedValue = any,
 > {
-  /** 이 SchemaForm 내에서 사용할 JSON Schema */
+  /** JSON Schema to use within this SchemaForm */
   jsonSchema: FormProps<Schema, Value>['jsonSchema'];
-  /** 이 SchemaForm의 기본값 */
+  /** Default value for this SchemaForm */
   defaultValue?: FormProps<Schema, Value>['defaultValue'];
-  /** 최초로 입력되는 유효성 검증 오류, 기본값은 undefined */
+  /** Initial validation errors, defaults to undefined */
   errors?: FormProps<Schema, Value>['errors'];
-  /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
+  /** Function called when the value of this SchemaForm changes */
   onChange: NonNullable<FormProps<Schema, Value>['onChange']>;
-  /** 이 SchemaForm의 값이 검증될 때 호출되는 함수 */
+  /** Function called when this SchemaForm is validated */
   onValidate: NonNullable<FormProps<Schema, Value>['onValidate']>;
-  /** 이 SchemaForm의 루트 노드가 준비되었을 때 호출되는 함수 */
+  /** Function called when the root node of this SchemaForm is ready */
   onReady: Fn<[rootNode: SchemaNode]>;
   /**
    * Execute Validation Mode (default: ValidationMode.OnChange)
-   *  - `ValidationMode.None`: 유효성 검증 비활성화
-   *  - `ValidationMode.OnChange`: 값이 변경될 때 유효성 검증
-   *  - `ValidationMode.OnRequest`: 요청할 때 유효성 검증
+   *  - `ValidationMode.None`: Disable validation
+   *  - `ValidationMode.OnChange`: Validate when value changes
+   *  - `ValidationMode.OnRequest`: Validate on request
    */
   validationMode?: ValidationMode;
-  /** 외부에서 선언된 Ajv 인스턴스, 없으면 내부에서 생성 */
+  /** Ajv instance declared externally, creates internally if not provided */
   ajv?: FormProps<Schema, Value>['ajv'];
 }
 

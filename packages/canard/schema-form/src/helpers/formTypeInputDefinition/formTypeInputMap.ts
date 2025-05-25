@@ -7,9 +7,9 @@ import type { FormTypeInputMap, FormTypeTestFn } from '@/schema-form/types';
 import type { NormalizedFormTypeInputDefinition } from './type';
 
 /**
- * @description 폼 타입 입력 맵을 정규화합니다.
- * @param formTypeInputMap - 폼 타입 입력 맵
- * @returns 정규화된 폼 타입 입력 정의
+ * Normalizes form type input map.
+ * @param formTypeInputMap - Form type input map
+ * @returns Normalized form type input definitions
  */
 export const normalizeFormTypeInputMap = (
   formTypeInputMap?: FormTypeInputMap,

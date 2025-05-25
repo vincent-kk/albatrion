@@ -13,29 +13,33 @@ import {
 } from '../type';
 
 /**
- * 가상 스키마를 처리하기 위한 노드 클래스입니다.
- * 여러 노드에 참조를 가지고 그들을 통합하여 작동합니다.
+ * Node class for handling virtual schemas.
+ * Holds references to multiple nodes and works by integrating them.
  */
 export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
+  /** Current value of the virtual node */
   #value: VirtualNodeValue | undefined = [];
+
   /**
-   * 가상 노드의 값을 가져옵니다.
-   * @returns 참조되는 모든 노드의 값 배열 또는 undefined
+   * Gets the value of the virtual node.
+   * @returns Array of values from all referenced nodes or undefined
    */
   public override get value() {
     return this.#value;
   }
+
   /**
-   * 가상 노드의 값을 설정합니다.
-   * @param input - 설정할 값
+   * Sets the value of the virtual node.
+   * @param input - The value to set
    */
   public override set value(input: VirtualNodeValue | undefined) {
     this.setValue(input);
   }
+
   /**
-   * 입력값을 가상 노드에 적용합니다.
-   * @param input - 설정할 값
-   * @param option - 설정 옵션
+   * Applies the input value to the virtual node.
+   * @param input - The value to set
+   * @param option - Set value options
    */
   protected override applyValue(
     this: VirtualNode,
@@ -45,11 +49,15 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     this.#emitChange(input, option);
   }
 
+  /** List of reference nodes */
   #refNodes: SchemaNode[] = [];
+
+  /** List of child nodes */
   #children: ChildNode[];
+
   /**
-   * 가상 노드의 자식 노드들을 가져옵니다.
-   * @returns 자식 노드 목록
+   * Gets the child nodes of the virtual node.
+   * @returns List of child nodes
    */
   public override get children() {
     return this.#children;
@@ -115,9 +123,9 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
   }
 
   /**
-   * 값 변경을 참조 노드들에 전파하고 관련 이벤트를 발행합니다.
-   * @param values - 설정할 값
-   * @param option - 설정 옵션
+   * Propagates value changes to reference nodes and publishes related events.
+   * @param values - The values to set
+   * @param option - Set value options
    */
   #emitChange(
     this: VirtualNode,

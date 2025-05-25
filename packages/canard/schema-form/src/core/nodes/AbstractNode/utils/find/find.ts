@@ -3,10 +3,10 @@ import { JSONPath } from '@winglet/common-utils';
 import type { SchemaNode } from '@/schema-form/core';
 
 /**
- * AbstractNode 트리에서 주어진 경로에 해당하는 노드를 찾습니다.
- * @param target - 검색을 시작할 루트 노드
- * @param segments - 찾고자 하는 노드의 경로 세그먼트 배열 (예: ["root", "child", "0", "grandchild"])
- * @returns 찾은 노드 또는 null
+ * Finds a node in the AbstractNode tree that matches the given path.
+ * @param target - Root node to start searching from
+ * @param segments - Array of path segments to find (e.g. ["root", "child", "0", "grandchild"])
+ * @returns Found node or null
  */
 export const find = (
   target: SchemaNode,

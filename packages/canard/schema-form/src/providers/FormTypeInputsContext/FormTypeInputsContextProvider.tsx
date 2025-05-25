@@ -9,9 +9,9 @@ import {
 import { FormTypeInputsContext } from './FormTypeInputsContext';
 
 interface FormTypeInputsContextProviderProps {
-  /** FormTypeInput 정의 목록 */
+  /** List of FormTypeInput definitions */
   formTypeInputDefinitions?: FormProps['formTypeInputDefinitions'];
-  /** FormTypeInput 경로 매핑 */
+  /** FormTypeInput path mapping */
   formTypeInputMap?: FormProps['formTypeInputMap'];
 }
 

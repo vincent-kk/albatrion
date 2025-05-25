@@ -3,9 +3,9 @@ import { type PropsWithChildren, useMemo } from 'react';
 import { InputControlContext } from './InputControlContext';
 
 interface InputControlContextProviderProps {
-  /** FormTypeInput 전체에 readOnly 속성 적용 */
+  /** Apply readOnly property to all FormTypeInput components */
   readOnly?: boolean;
-  /** FormTypeInput 전체에 disabled 속성 적용 */
+  /** Apply disabled property to all FormTypeInput components */
   disabled?: boolean;
 }
 

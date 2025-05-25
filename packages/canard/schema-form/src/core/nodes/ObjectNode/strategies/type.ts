@@ -3,30 +3,30 @@ import type { ObjectValue } from '@/schema-form/types';
 import type { ChildNode, UnionSetValueOption } from '../../type';
 
 /**
- * ObjectNode의 데이터와 작업을 관리하는 전략 인터페이스.
- * 객체 타입의 JSON 스키마에 대한 다양한 구현을 제공합니다.
+ * Strategy interface for managing ObjectNode data and operations.
+ * Provides various implementations for object-type JSON schemas.
  */
 export interface ObjectNodeStrategy {
   /**
-   * 객체의 현재 값을 가져옵니다.
-   * @returns 객체 노드의 현재 값 또는 undefined
+   * Gets the current value of the object.
+   * @returns Current value of the object node or undefined
    */
   get value(): ObjectValue | undefined;
   /**
-   * 자식 노드 목록을 가져옵니다.
-   * @returns 자식 노드 배열
+   * Gets the list of child nodes.
+   * @returns Array of child nodes
    */
   get children(): Array<ChildNode> | null;
   /**
-   * 입력값을 객체 노드에 적용합니다.
-   * @param value - 설정할 객체 값
-   * @param option - 설정 옵션
+   * Applies input value to the object node.
+   * @param value - Object value to set
+   * @param option - Setting options
    */
   applyValue(
     this: this,
     value: ObjectValue | undefined,
     option: UnionSetValueOption,
   ): void;
-  /** 하위 노드에 대해 pub-sub 링크를 활성화합니다. */
+  /** Activates pub-sub links for child nodes. */
   activate?(): void;
 }

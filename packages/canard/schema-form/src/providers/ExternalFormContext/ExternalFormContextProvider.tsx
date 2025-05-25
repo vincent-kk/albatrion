@@ -13,35 +13,35 @@ import type {
 import { ExternalFormContext } from './ExternalFormContext';
 
 export interface ExternalFormContextProviderProps {
-  /** 외부에서 선언된 FormTypeInputDefinition 목록 */
+  /** List of FormTypeInputDefinition declared externally */
   formTypeInputDefinitions?: FormTypeInputDefinition[];
-  /** 외부에서 선언된 FormGroupRenderer */
+  /** FormGroupRenderer component declared externally */
   FormGroupRenderer?: ComponentType<FormTypeRendererProps>;
-  /** 외부에서 선언된 FormLabelRenderer */
+  /** FormLabelRenderer component declared externally */
   FormLabelRenderer?: ComponentType<FormTypeRendererProps>;
-  /** 외부에서 선언된 FormInputRenderer */
+  /** FormInputRenderer component declared externally */
   FormInputRenderer?: ComponentType<FormTypeRendererProps>;
-  /** 외부에서 선언된 FormErrorRenderer */
+  /** FormErrorRenderer component declared externally */
   FormErrorRenderer?: ComponentType<FormTypeRendererProps>;
-  /** 외부에서 선언된 FormatError */
+  /** FormatError function declared externally */
   formatError?: FormatError;
   /**
    * Error display condition (default: ShowError.DirtyTouched)
-   *   - `true`: 항상 노출
-   *   - `false`: 항상 미노출
-   *   - `ShowError.Dirty`: 값이 변경된 경우 노출
-   *   - `ShowError.Touched`: input에 focus 된 경우 노출
-   *   - `ShowError.DirtyTouched`: Dirty 상태와 Touched 상태가 모두 충족된 경우 노출
+   *   - `true`: Always show errors
+   *   - `false`: Never show errors
+   *   - `ShowError.Dirty`: Show errors when value has changed
+   *   - `ShowError.Touched`: Show errors when input has been focused
+   *   - `ShowError.DirtyTouched`: Show errors when both Dirty and Touched states are met
    */
   showError?: boolean | ShowError;
   /**
    * Execute Validation Mode (default: ValidationMode.OnChange)
-   *  - `ValidationMode.None`: 유효성 검증 비활성화
-   *  - `ValidationMode.OnChange`: 값이 변경될 때 유효성 검증
-   *  - `ValidationMode.OnRequest`: 요청할 때 유효성 검증
+   *  - `ValidationMode.None`: Disable validation
+   *  - `ValidationMode.OnChange`: Validate when value changes
+   *  - `ValidationMode.OnRequest`: Validate on request
    */
   validationMode?: ValidationMode;
-  /** 외부에서 선언된 Ajv 인스턴스, 없으면 내부에서 생성 */
+  /** Ajv instance declared externally, creates internally if not provided */
   ajv?: Ajv;
 }
 

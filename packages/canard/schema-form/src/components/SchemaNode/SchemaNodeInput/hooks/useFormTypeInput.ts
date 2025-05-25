@@ -15,10 +15,11 @@ import {
 import type { Hint } from '@/schema-form/types';
 
 /**
- * @description 스키마 노드에 대한 폼 타입 입력을 반환합니다.
- *   - FormTypeInputMap에 먼저 정의된 폼 타입 입력을 반환합니다.
- *   - FormTypeInputDefinitions에 정의된 폼 타입 입력을 반환합니다.
- *   - fallback FormTypeInputDefinitions에 정의된 폼 타입 입력을 반환합니다.
+ * Returns form type input for the schema node.
+ *   - Returns form type input defined in InlineFormType.
+ *   - Returns form type input first defined in FormTypeInputMap.
+ *   - Returns form type input defined in FormTypeInputDefinitions.
+ *   - Returns form type input defined in fallback FormTypeInputDefinitions.
  * @param node - SchemaNode
  * @returns FormTypeInput
  */
@@ -28,7 +29,7 @@ export const useFormTypeInput = (node: SchemaNode) => {
   const { fromExternalFormTypeInputDefinitions } = useExternalFormContext();
 
   const FormTypeInput = useMemo(() => {
-    // NOTE: formType이 React Component인 경우, 해당 Component를 반환합니다.
+    // NOTE: If formType is a React Component, return that Component.
     const InlineFormType = node.jsonSchema?.FormType;
     if (InlineFormType) {
       if (isFunctionComponent(InlineFormType))

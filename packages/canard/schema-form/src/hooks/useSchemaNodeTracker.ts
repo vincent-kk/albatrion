@@ -6,7 +6,7 @@ import { BIT_MASK_ALL } from '@/schema-form/app/constants/bitmask';
 import type { NodeEventType, SchemaNode } from '@/schema-form/core';
 
 /**
- * @description SchemaNode의 모든 event마다 tick을 업데이트합니다.
+ * @description Updates tick for every SchemaNode event.
  * @param node - SchemaNode
  * @returns tick: number
  */

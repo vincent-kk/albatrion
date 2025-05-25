@@ -9,29 +9,33 @@ import {
 } from '../type';
 
 /**
- * null 스키마를 처리하기 위한 노드 클래스입니다.
- * null 값을 관리합니다.
+ * Node class for handling null schemas.
+ * Manages null values.
  */
 export class NullNode extends AbstractNode<NullSchema, NullValue> {
+  /** Current value of the null node */
   #value: NullValue | undefined;
+
   /**
-   * null 노드의 값을 가져옵니다.
-   * @returns null 또는 undefined
+   * Gets the value of the null node.
+   * @returns null or undefined
    */
   public override get value() {
     return this.#value;
   }
+
   /**
-   * null 노드의 값을 설정합니다.
-   * @param input - 설정할 값
+   * Sets the value of the null node.
+   * @param input - The value to set
    */
   public override set value(input: NullValue | undefined) {
     this.setValue(input);
   }
+
   /**
-   * 입력값을 null 노드에 적용합니다.
-   * @param input - 설정할 값
-   * @param option - 설정 옵션
+   * Applies the input value to the null node.
+   * @param input - The value to set
+   * @param option - Set value options
    */
   protected override applyValue(
     this: NullNode,
@@ -68,9 +72,9 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
   }
 
   /**
-   * 값 변경을 반영하고 관련 이벤트를 발행합니다.
-   * @param input - 설정할 값
-   * @param option - 설정 옵션
+   * Reflects value changes and publishes related events.
+   * @param input - The value to set
+   * @param option - Set value options
    */
   #emitChange(
     this: NullNode,
@@ -98,9 +102,9 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
   }
 
   /**
-   * 입력값을 파싱합니다.
-   * @param input - 파싱할 값
-   * @returns 그대로 반환
+   * Parses the input value.
+   * @param input - The value to parse
+   * @returns Returns the input as-is
    */
   #parseValue(this: NullNode, input: NullValue | undefined) {
     return input;

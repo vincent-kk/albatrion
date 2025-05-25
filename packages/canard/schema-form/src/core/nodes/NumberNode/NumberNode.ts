@@ -12,29 +12,33 @@ import {
 } from '../type';
 
 /**
- * 숫자 스키마를 처리하기 위한 노드 클래스입니다.
- * 숫자 값(정수 또는 부동소수점)을 관리하고 파싱합니다.
+ * Node class for handling number schemas.
+ * Manages and parses numeric values (integers or floating-point numbers).
  */
 export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
+  /** Current value of the number node */
   #value: NumberValue | undefined = undefined;
+
   /**
-   * 숫자 노드의 값을 가져옵니다.
-   * @returns 숫자 값 또는 undefined
+   * Gets the value of the number node.
+   * @returns Number value or undefined
    */
   public override get value() {
     return this.#value;
   }
+
   /**
-   * 숫자 노드의 값을 설정합니다.
-   * @param input - 설정할 숫자 값
+   * Sets the value of the number node.
+   * @param input - The number value to set
    */
   public override set value(input: NumberValue | undefined) {
     this.setValue(input);
   }
+
   /**
-   * 입력값을 숫자 노드에 적용합니다.
-   * @param input - 설정할 숫자 값
-   * @param option - 설정 옵션
+   * Applies the input value to the number node.
+   * @param input - The number value to set
+   * @param option - Set value options
    */
   protected override applyValue(
     this: NumberNode,
@@ -79,9 +83,9 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   }
 
   /**
-   * 값 변경을 반영하고 관련 이벤트를 발행합니다.
-   * @param input - 설정할 값
-   * @param option - 설정 옵션
+   * Reflects value changes and publishes related events.
+   * @param input - The value to set
+   * @param option - Set value options
    */
   #emitChange(
     this: NumberNode,
@@ -109,18 +113,18 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   }
 
   /**
-   * 입력값을 숫자로 분석합니다.
-   * @param input - 분석할 값
-   * @returns 분석된 숫자 값
+   * Parses the input value as a number.
+   * @param input - The value to parse
+   * @returns Parsed number value
    */
   #parseValue(this: NumberNode, input: NumberValue | undefined) {
     return parseNumber(input, this.jsonSchema.type === 'integer');
   }
 
   /**
-   * 빈 값을 제외하고 값 변경을 반영합니다.
-   * @param input - 설정할 값
-   * @internal 내부 구현용 메서드입니다. 직접 호출하지 마세요.
+   * Reflects value changes excluding empty values.
+   * @param input - The value to set
+   * @internal Internal implementation method. Do not call directly.
    */
   private onChangeWithOmitEmpty(
     this: NumberNode,

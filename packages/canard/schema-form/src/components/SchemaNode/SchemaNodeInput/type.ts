@@ -22,14 +22,14 @@ export type ChildNodeComponent = ElementOf<
   FormTypeInputProps['ChildNodeComponents']
 >;
 
-/** SchemaNodeInput 컴포넌트에서 onChange를 할때, node setValue default option */
+/** Default option for node setValue when onChange is triggered in SchemaNodeInput component */
 export const HANDLE_CHANGE_OPTION =
   SetValueOption.Replace |
   SetValueOption.Propagate |
   SetValueOption.EmitChange |
   SetValueOption.PublishUpdateEvent;
 
-/** SchemaNodeInput 컴포넌트에서 rerendering을 유발하는 node event type */
+/** Node event types that trigger rerendering in SchemaNodeInput component */
 export const RERENDERING_EVENT =
   NodeEventType.UpdateValue |
   NodeEventType.UpdateError |
