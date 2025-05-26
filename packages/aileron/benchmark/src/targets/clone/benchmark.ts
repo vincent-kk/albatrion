@@ -2,8 +2,8 @@ import Benchmark from 'benchmark';
 import { cloneDeep as esToolsClone } from 'es-toolkit';
 
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
+import { clone } from '@/common-utils/utils/object/clone';
 
-import { clone } from './clone';
 import { mixedData } from './data';
 
 const sample = mixedData;

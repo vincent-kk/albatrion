@@ -65,7 +65,7 @@ const handleObjectSchema = (
       if (key in value && (!required || required(key)))
         stack.push({
           value: value[key],
-          schema: properties![key],
+          schema: properties![key] as any,
           result: undefined,
           parent: current.result,
           key,
@@ -92,7 +92,7 @@ const handleArraySchema = (
   if (current.arrayIndex! < current.value.length) {
     stack.push({
       value: current.value[current.arrayIndex!],
-      schema: current.schema.items,
+      schema: current.schema.items as any,
       result: undefined,
       parent: current.result,
       key: current.arrayIndex,

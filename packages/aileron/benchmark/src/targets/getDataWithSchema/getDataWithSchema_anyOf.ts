@@ -4,11 +4,12 @@ import type { Dictionary, RequiredBy } from '@aileron/declare';
 
 import { JsonSchema, ObjectSchema } from '@/json-schema';
 import type { ArrayValue, ObjectValue } from '@/json-schema/types/value';
+
 import {
   type StackItem,
   isArrayStackItem,
   isObjectStackItem,
-} from '@/json-schema/utils/getValueWithSchema/type';
+} from './getDataWithSchema/type';
 
 export const isObjectAnyOfSchema = (
   schema: NonNullable<ObjectSchema['anyOf']>[number],
@@ -58,14 +59,14 @@ const handleObjectSchema = (
   options?: { ignoreAnyOf: boolean },
 ): boolean => {
   if (!current.result) {
-    const omit = getOmit(current.schema, current.value, options);
+    const omit = getOmit(current.schema as any, current.value, options);
     current.result = {};
 
     for (const key in current.schema.properties) {
       if (key in current.value && !omit?.has(key)) {
         stack.push({
           value: current.value[key],
-          schema: current.schema.properties[key],
+          schema: current.schema.properties[key] as any,
           result: undefined,
           parent: current.result,
           key,
@@ -89,7 +90,7 @@ const handleArraySchema = (
   if (current.arrayIndex! < current.value.length) {
     stack.push({
       value: current.value[current.arrayIndex!],
-      schema: current.schema.items,
+      schema: current.schema.items as any,
       result: undefined,
       parent: current.result,
       key: current.arrayIndex,

@@ -56,7 +56,7 @@ export const getDataWithSchema = (
     typeof node.items === 'object' &&
     Array.isArray(data)
   ) {
-    return data.map((e) => getDataWithSchema(e, node.items, options));
+    return data.map((e) => getDataWithSchema(e, node.items as any, options));
   }
   return data;
 };
