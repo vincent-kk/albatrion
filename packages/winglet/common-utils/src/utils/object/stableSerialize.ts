@@ -1,4 +1,4 @@
-import { weakMapCacheFactory } from '@/common-utils/libs/cache';
+import { cacheWeakMapFactory } from '@/common-utils/libs/cacheWeakMapFactory';
 import { counterFactory } from '@/common-utils/libs/counter';
 import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isDate } from '@/common-utils/utils/filter/isDate';
@@ -11,7 +11,7 @@ import { Murmur3 } from '@/common-utils/utils/hash';
 
 import { serializeNative } from './serializeNative';
 
-const { get, set } = weakMapCacheFactory<string>();
+const { get, set } = cacheWeakMapFactory<string>();
 const { increment } = counterFactory();
 
 /**

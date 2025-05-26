@@ -1,4 +1,4 @@
-import { map, weakMapCacheFactory } from '@winglet/common-utils';
+import { cacheWeakMapFactory, map } from '@winglet/common-utils';
 
 import type { Dictionary } from '@aileron/declare';
 
@@ -9,7 +9,7 @@ type OneOfDetail = {
   requiredFields: Array<string>;
 };
 
-const { get, set } = weakMapCacheFactory<OneOfDetail[], JsonSchema>();
+const { get, set } = cacheWeakMapFactory<OneOfDetail[], JsonSchema>();
 
 /**
  * 스키마를 분석하여 특정 값에 대해 어떤 속성을 제외해야 하는지 결정하는 함수를 반환합니다.

@@ -1,4 +1,5 @@
-export * from './cache';
+export * from './cacheMapFactory';
+export * from './cacheWeakMapFactory';
 export * from './counter';
 export * from './getKeys';
 export * from './getTypeTag';
