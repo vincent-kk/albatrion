@@ -103,7 +103,7 @@ export class JsonSchemaScannerAsync<ContextType = void> {
     const stack: SchemaEntry[] = [
       { schema, path: JSONPointer.Root, dataPath: JSONPointer.Root, depth: 0 },
     ];
-    const entryPhase = new WeakMap<SchemaEntry, OperationPhase>();
+    const entryPhase = new Map<SchemaEntry, OperationPhase>();
     const visitedReference = new Set<string>();
 
     while (stack.length > 0) {

@@ -21,7 +21,7 @@ export const stableEquals = (
   omit?: PropertyKey[],
 ): boolean => {
   const omits = omit ? new Set(omit) : null;
-  const visited = new WeakMap<object, Set<object>>();
+  const visited = new Map<object, Set<object>>();
   return stableEqualsRecursive(left, right, visited, omits);
 };
 
@@ -38,7 +38,7 @@ export const stableEquals = (
 const stableEqualsRecursive = (
   left: unknown,
   right: unknown,
-  visited: WeakMap<object, Set<object>>,
+  visited: Map<object, Set<object>>,
   omits: Set<PropertyKey> | null,
 ): boolean => {
   if (left === right || (left !== left && right !== right)) return true;

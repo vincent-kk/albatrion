@@ -31,13 +31,10 @@ export const clone = <Type>(target: Type): Type => replicate(target);
  *
  * @template Type - Type of value to clone
  * @param value - Value to clone
- * @param cache - WeakMap to track already cloned objects (for circular reference handling)
+ * @param cache - Map to track already cloned objects (for circular reference handling)
  * @returns Cloned value
  */
-const replicate = <Type>(
-  value: Type,
-  cache = new WeakMap<object, any>(),
-): Type => {
+const replicate = <Type>(value: Type, cache = new Map<object, any>()): Type => {
   if (isPrimitiveType(value)) return value as Type;
 
   // @ts-expect-error: After passing `isPrimitiveType`, value must be an object.
@@ -140,12 +137,12 @@ const replicate = <Type>(
  *
  * @param target - Target object to copy properties to
  * @param source - Source object to copy properties from
- * @param cache - WeakMap to track already cloned objects
+ * @param cache - Map to track already cloned objects
  */
 const replicateProperties = (
   target: Record<PropertyKey, any>,
   source: Record<PropertyKey, any>,
-  cache?: WeakMap<object, any>,
+  cache?: Map<object, any>,
 ): void => {
   const keys = Object.keys(source);
   if (keys.length > 0)
