@@ -253,7 +253,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /**
    * Parses input value and processes it as an object.
    * @param input - Object to parse
-   * @returns Parsed object
+   * @returns {ObjectValue|undefined} Parsed object
    * @private
    */
   private __parseValue__(input: ObjectValue) {

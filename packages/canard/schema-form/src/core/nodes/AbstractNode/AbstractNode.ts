@@ -781,7 +781,7 @@ export abstract class AbstractNode<
 
   /**
    * Performs validation based on the current value.
-   * @returns {JsonSchemaError[]} Validation errors
+   * @returns {Promise<JsonSchemaError[]>} Validation errors
    */
   public async validate(this: AbstractNode): Promise<JsonSchemaError[]> {
     await this.#handleValidation();

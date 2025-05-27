@@ -123,7 +123,7 @@ export class TerminalStrategy implements ObjectNodeStrategy {
   /**
    * Parses input value into appropriate object format.
    * @param input - Value to parse
-   * @returns Parsed object value or undefined
+   * @returns {ObjectValue|undefined} Parsed object value or undefined
    * @private
    */
   private __parseValue__(input: ObjectValue | undefined) {

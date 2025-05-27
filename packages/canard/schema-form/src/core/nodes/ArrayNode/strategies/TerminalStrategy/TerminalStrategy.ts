@@ -212,7 +212,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   /**
    * Parses input value into appropriate array format.
    * @param input - Value to parse
-   * @returns Parsed array value or undefined
+   * @returns {ArrayValue|undefined} Parsed array value or undefined
    * @private
    */
   private __parseValue__(input: ArrayValue | undefined) {
