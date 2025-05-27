@@ -244,7 +244,7 @@ describe('AbstractNode', () => {
 
     const data = node?.find('data');
     if (data && data.type === 'array') {
-      data.children.forEach((child, index) => {
+      data.children?.forEach((child, index) => {
         expect(child.node.errors).toEqual([
           {
             dataPath: `.data[${index}]`,
@@ -259,7 +259,7 @@ describe('AbstractNode', () => {
       });
       data.setValue([2, 4, 6]);
       await wait();
-      data.children.forEach((child) => {
+      data.children?.forEach((child) => {
         expect(child.node.errors).toEqual([]);
       });
     }
