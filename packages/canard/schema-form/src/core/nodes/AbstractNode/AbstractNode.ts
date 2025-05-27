@@ -8,7 +8,6 @@ import {
 
 import type { Fn, SetStateFn } from '@aileron/declare';
 
-import { BIT_MASK_NONE } from '@/schema-form/app/constants/bitmask';
 import {
   type Ajv,
   type ErrorObject,
@@ -119,6 +118,7 @@ export abstract class AbstractNode<
   /**
    * Updates the node's path. Updates its own path by referencing the parent node's path.
    * @returns Whether the path was changed
+   * @returns {boolean} Whether the path was changed
    */
   public updatePath(this: AbstractNode) {
     const previous = this.#path;
@@ -176,6 +176,7 @@ export abstract class AbstractNode<
    * Changes the node's default value and publishes a Refresh event. Can only be performed by inherited nodes
    * For use outside of `constructor`
    * @param value input value for updating defaultValue
+   * @returns {Promise<void>} A promise that resolves when the refresh is complete
    */
   protected refresh(this: AbstractNode, value: Value | undefined) {
     this.#defaultValue = value;
@@ -305,7 +306,7 @@ export abstract class AbstractNode<
   /**
    * Finds the node corresponding to the given path in the node tree.
    * @param path - Path of the node to find (e.g., '.foo[0].bar'), returns itself if not provided
-   * @returns The found node, null if not found
+   * @returns {SchemaNode|null} The found node, null if not found
    */
   public find(this: AbstractNode, path?: string) {
     const pathSegments = path ? getPathSegments(path) : [];
@@ -387,7 +388,7 @@ export abstract class AbstractNode<
   /**
    * Activates the node. Activation must be called by itself or by the parent node.
    * @param actor - The node requesting activation
-   * @returns Whether activation occurred
+   * @returns {boolean} Whether activation occurred
    * @internal Internal implementation method. Do not call directly.
    */
   public activate(this: AbstractNode, actor?: SchemaNode) {
@@ -580,14 +581,6 @@ export abstract class AbstractNode<
     });
   }
 
-  /**
-   * Performs validation based on the current value.
-   * @note Only works when `ValidationMode.OnRequest` is set.
-   */
-  public validate(this: AbstractNode) {
-    this.rootNode.publish({ type: NodeEventType.RequestValidate });
-  }
-
   /** Errors received from external sources */
   #externalErrors: JsonSchemaError[] = [];
 
@@ -608,7 +601,7 @@ export abstract class AbstractNode<
 
   /**
    * Returns the merged result of errors that occurred inside the form and externally received errors.
-   * @returns Merged internal error list
+   * @returns All of the errors that occurred inside the form and externally received errors
    */
   public get globalErrors() {
     return this.isRoot
@@ -618,7 +611,7 @@ export abstract class AbstractNode<
 
   /**
    * Returns the merged result of own errors and externally received errors.
-   * @returns Merged error list
+   * @returns Local errors and externally received errors
    */
   public get errors() {
     return this.#mergedLocalErrors;
@@ -641,7 +634,7 @@ export abstract class AbstractNode<
   /**
    * Merges externally received errors into the global errors.
    * @param errors - List of errors to set
-   * @returns Whether the merge result changed
+   * @returns {boolean} Whether the merge result changed
    */
   #setGlobalErrors(this: AbstractNode, errors: JsonSchemaError[]) {
     if (equals(this.#globalErrors, errors)) return false;
@@ -787,6 +780,15 @@ export abstract class AbstractNode<
   }
 
   /**
+   * Performs validation based on the current value.
+   * @returns {JsonSchemaError[]} Validation errors
+   */
+  public async validate(this: AbstractNode): Promise<JsonSchemaError[]> {
+    await this.#handleValidation();
+    return this.errors;
+  }
+
+  /**
    * Prepares validator using Ajv, only available for rootNode
    * @param ajv Ajv instance, creates new one if not provided
    */
@@ -804,15 +806,9 @@ export abstract class AbstractNode<
     } catch (error: any) {
       this.#validator = getFallbackValidator(error, this.jsonSchema);
     }
-    const triggers =
-      (validationMode & ValidationMode.OnChange
-        ? NodeEventType.UpdateValue
-        : BIT_MASK_NONE) |
-      (validationMode & ValidationMode.OnRequest
-        ? NodeEventType.RequestValidate
-        : BIT_MASK_NONE);
-    this.subscribe(({ type }) => {
-      if (type & triggers) this.#handleValidation();
-    });
+    if (validationMode & ValidationMode.OnChange)
+      this.subscribe(({ type }) => {
+        if (type & NodeEventType.UpdateValue) this.#handleValidation();
+      });
   }
 }
