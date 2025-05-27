@@ -7,6 +7,7 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: [
+      '@lerx/promise-modal',
       '@winglet/common-utils',
       '@winglet/json-schema',
       '@winglet/react-utils',
