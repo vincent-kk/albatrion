@@ -105,7 +105,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   /**
    * Parses the input value as a boolean.
    * @param input - The value to parse
-   * @returns Parsed boolean value
+   * @returns {BooleanValue} Parsed boolean value
    */
   #parseValue(this: BooleanNode, input: BooleanValue | undefined) {
     return parseBoolean(input);

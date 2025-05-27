@@ -69,7 +69,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   /**
    * Activates this ObjectNode and propagates activation to all child nodes.
    * @param actor - The node that requested activation
-   * @returns Whether activation was successful
+   * @returns {boolean} Whether activation was successful
    * @internal Internal implementation method. Do not call directly.
    */
   public override activate(this: ObjectNode, actor?: SchemaNode): boolean {

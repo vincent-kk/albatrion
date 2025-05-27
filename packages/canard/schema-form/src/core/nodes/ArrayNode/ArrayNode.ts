@@ -79,7 +79,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   /**
    * Activates this ArrayNode and propagates activation to all child nodes.
    * @param actor - The node that requested activation
-   * @returns Whether activation was successful
+   * @returns {boolean} Whether activation was successful
    * @internal Internal implementation method. Do not call directly.
    */
   public override activate(this: ArrayNode, actor?: SchemaNode): boolean {
@@ -127,7 +127,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   /**
    * Adds a new element to the array.
    * @param data - Value to add (optional)
-   * @returns the length of the array after the push operation
+   * @returns {Promise<number> } the length of the array after the push operation
    */
   public push(this: ArrayNode, data?: ArrayValue[number]) {
     return this.#strategy.push(data);
@@ -135,7 +135,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
   /**
    * Removes the last element from the array.
-   * @returns the value of the removed value
+   * @returns {Promise<ArrayValue[number]|undefined>} the value of the removed value
    */
   public pop(this: ArrayNode) {
     return this.#strategy.pop();
@@ -145,7 +145,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * Updates the value of a specific element.
    * @param id - ID or index of the element to update
    * @param data - New value
-   * @returns the value of the updated value
+   * @returns {Promise<ArrayValue[number]|undefined>} the value of the updated value
    */
   public update(
     this: ArrayNode,
@@ -158,7 +158,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   /**
    * Removes a specific element.
    * @param id - ID or index of the element to remove
-   * @returns value of the removed value
+   * @returns {Promise<ArrayValue[number]|undefined>} value of the removed value
    */
   public remove(this: ArrayNode, id: IndexId | number) {
     return this.#strategy.remove(id);
@@ -166,7 +166,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
   /**
    * Clears all elements to initialize the array.
-   * @returns void
+   * @returns {Promise<void>}
    */
   public clear(this: ArrayNode) {
     return this.#strategy.clear();
@@ -175,7 +175,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   /**
    * Creates a strategy for the array node.
    * @param nodeFactory - Node factory
-   * @returns Created strategy: TerminalStrategy | BranchStrategy
+   * @returns {ArrayNodeStrategy} Created strategy: TerminalStrategy | BranchStrategy
    */
   #createStrategy(
     handleChange: Fn<[input: ArrayValue | undefined]>,
