@@ -8,6 +8,7 @@ import {
 
 import type { Fn, SetStateFn } from '@aileron/declare';
 
+import { BIT_MASK_NONE } from '@/schema-form/app/constants/bitmask';
 import {
   type Ajv,
   type ErrorObject,
@@ -781,11 +782,10 @@ export abstract class AbstractNode<
 
   /**
    * Performs validation based on the current value.
-   * @returns {Promise<JsonSchemaError[]>} Validation errors
+   * @note Only works when `ValidationMode.OnRequest` is set.
    */
-  public async validate(this: AbstractNode): Promise<JsonSchemaError[]> {
-    await this.#handleValidation();
-    return this.errors;
+  public validate(this: AbstractNode) {
+    this.rootNode.publish({ type: NodeEventType.RequestValidate });
   }
 
   /**
@@ -806,9 +806,15 @@ export abstract class AbstractNode<
     } catch (error: any) {
       this.#validator = getFallbackValidator(error, this.jsonSchema);
     }
-    if (validationMode & ValidationMode.OnChange)
-      this.subscribe(({ type }) => {
-        if (type & NodeEventType.UpdateValue) this.#handleValidation();
-      });
+    const triggers =
+      (validationMode & ValidationMode.OnChange
+        ? NodeEventType.UpdateValue
+        : BIT_MASK_NONE) |
+      (validationMode & ValidationMode.OnRequest
+        ? NodeEventType.RequestValidate
+        : BIT_MASK_NONE);
+    this.subscribe(({ type }) => {
+      if (type & triggers) this.#handleValidation();
+    });
   }
 }
