@@ -127,54 +127,49 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   /**
    * Adds a new element to the array.
    * @param data - Value to add (optional)
-   * @returns Returns itself (this) for method chaining
+   * @returns the length of the array after the push operation
    */
   public push(this: ArrayNode, data?: ArrayValue[number]) {
-    this.#strategy.push(data);
-    return this;
+    return this.#strategy.push(data);
   }
 
   /**
    * Removes the last element from the array.
-   * @returns Returns itself (this) for method chaining
+   * @returns the value of the removed value
    */
   public pop(this: ArrayNode) {
-    this.#strategy.pop();
-    return this;
+    return this.#strategy.pop();
   }
 
   /**
    * Updates the value of a specific element.
    * @param id - ID or index of the element to update
    * @param data - New value
-   * @returns Returns itself (this) for method chaining
+   * @returns the value of the updated value
    */
   public update(
     this: ArrayNode,
     id: IndexId | number,
     data: ArrayValue[number],
   ) {
-    this.#strategy.update(id, data);
-    return this;
+    return this.#strategy.update(id, data);
   }
 
   /**
    * Removes a specific element.
    * @param id - ID or index of the element to remove
-   * @returns Returns itself (this) for method chaining
+   * @returns value of the removed value
    */
   public remove(this: ArrayNode, id: IndexId | number) {
-    this.#strategy.remove(id);
-    return this;
+    return this.#strategy.remove(id);
   }
 
   /**
    * Clears all elements to initialize the array.
-   * @returns Returns itself (this) for method chaining
+   * @returns void
    */
   public clear(this: ArrayNode) {
-    this.#strategy.clear();
-    return this;
+    return this.#strategy.clear();
   }
 
   /**
