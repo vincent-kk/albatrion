@@ -36,22 +36,25 @@ export interface ArrayNodeStrategy {
    * Adds a new element to the array.
    * @param data - Value to add (optional)
    */
-  push(data?: ArrayValue[number]): void;
+  push(data?: ArrayValue[number]): Promise<number>;
   /**
    * Updates the value of a specific element.
    * @param id - ID or index of the element to update
    * @param data - New value
    */
-  update(id: IndexId | number, data: ArrayValue[number]): void;
+  update(
+    id: IndexId | number,
+    data: ArrayValue[number],
+  ): Promise<ArrayValue[number] | undefined>;
   /**
    * Removes a specific element.
    * @param id - ID or index of the element to remove
    */
-  remove(id: IndexId | number): void;
+  remove(id: IndexId | number): Promise<ArrayValue[number] | undefined>;
   /** Removes the last element from the array. */
-  pop(): void;
+  pop(): Promise<ArrayValue[number] | undefined>;
   /** Clears all elements to initialize the array. */
-  clear(): void;
+  clear(): Promise<void>;
   /** Activates pub-sub links for child nodes. */
   activate?(): void;
 }

@@ -7,6 +7,7 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: [
+      '@canard/schema-form',
       '@winglet/common-utils',
       '@winglet/json-schema',
       '@winglet/react-utils',

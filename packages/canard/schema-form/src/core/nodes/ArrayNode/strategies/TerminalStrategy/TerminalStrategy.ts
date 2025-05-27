@@ -118,7 +118,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
       this.__host__.jsonSchema.maxItems &&
       this.__host__.jsonSchema.maxItems <= this.length
     )
-      return;
+      return Promise.resolve(this.length);
     const id = ('[' + this.__seq__++ + ']') as IndexId;
     this.__ids__.push(id);
 
@@ -126,6 +126,8 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     const value =
       this.__value__ === undefined ? [data] : [...this.__value__, data];
     this.__emitChange__(value);
+
+    return Promise.resolve(this.length);
   }
 
   /**
@@ -134,12 +136,14 @@ export class TerminalStrategy implements ArrayNodeStrategy {
    * @param data - New value
    */
   public update(id: IndexId | number, data: ArrayValue[number]) {
-    if (this.__value__ === undefined) return;
+    if (this.__value__ === undefined) return Promise.resolve(undefined);
     const index = typeof id === 'number' ? id : this.__ids__.indexOf(id);
-    if (index === -1 || index >= this.__value__.length) return;
+    if (index === -1 || index >= this.__value__.length)
+      return Promise.resolve(undefined);
     const value = [...this.__value__];
     value[index] = data;
     this.__emitChange__(value);
+    return Promise.resolve(value[index]);
   }
 
   /**
@@ -147,23 +151,28 @@ export class TerminalStrategy implements ArrayNodeStrategy {
    * @param id - ID or index of the element to remove
    */
   public remove(id: IndexId | number) {
-    if (this.__value__ === undefined) return;
+    if (this.__value__ === undefined) return Promise.resolve(undefined);
     const index = typeof id === 'number' ? id : this.__ids__.indexOf(id);
-    if (index === -1 || index >= this.__value__.length) return;
+    if (index === -1 || index >= this.__value__.length)
+      return Promise.resolve(undefined);
+    const removed = this.__value__[index];
     const value = this.__value__.filter((_, i) => i !== index);
     this.__emitChange__(value);
+    return Promise.resolve(removed);
   }
 
   /** Removes the last element from the array. */
   public pop() {
-    if (this.__value__ === undefined || this.length === 0) return;
-    this.remove(this.length - 1);
+    if (this.__value__ === undefined || this.length === 0)
+      return Promise.resolve(undefined);
+    return this.remove(this.length - 1);
   }
 
   /** Clears all elements to initialize the array. */
   public clear() {
     this.__ids__ = [];
     this.__emitChange__([]);
+    return Promise.resolve(void 0);
   }
 
   /**
@@ -203,7 +212,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   /**
    * Parses input value into appropriate array format.
    * @param input - Value to parse
-   * @returns Parsed array value or undefined
+   * @returns {ArrayValue|undefined} Parsed array value or undefined
    * @private
    */
   private __parseValue__(input: ArrayValue | undefined) {

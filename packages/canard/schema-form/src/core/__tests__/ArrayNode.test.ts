@@ -46,18 +46,20 @@ describe('ArrayNode', () => {
       },
     });
 
+    await delay();
+
     expect(node?.value?.arr).toEqual(undefined);
-    (node?.find('arr') as ArrayNode)?.push();
-    await delay();
+
+    await (node?.find('arr') as ArrayNode)?.push();
     expect(node?.value?.arr).toMatchObject(['hello']);
-    (node?.find('arr') as ArrayNode)?.push('world');
-    await delay();
+
+    await (node?.find('arr') as ArrayNode)?.push('world');
     expect(node?.value?.arr).toMatchObject(['hello', 'world']);
-    (node?.find('arr') as ArrayNode)?.remove(0);
-    await delay();
+
+    await (node?.find('arr') as ArrayNode)?.remove(0);
     expect(node?.value?.arr).toMatchObject(['world']);
-    (node?.find('arr') as ArrayNode)?.clear();
-    await delay();
+
+    await (node?.find('arr') as ArrayNode)?.clear();
     expect(node?.value?.arr).toEqual(undefined);
   });
 
@@ -286,8 +288,9 @@ describe('ArrayNode', () => {
       },
     });
 
-    const arrayNode = node?.find('tags') as ArrayNode;
     await delay();
+
+    const arrayNode = node?.find('tags') as ArrayNode;
     expect(arrayNode.value).toEqual(['기본태그1', '기본태그2']);
   });
 
@@ -305,8 +308,6 @@ describe('ArrayNode', () => {
         },
       },
     });
-
-    await delay(50);
 
     const arrayNode = node?.find('tags') as ArrayNode;
 
@@ -352,16 +353,16 @@ describe('ArrayNode', () => {
       },
     });
 
-    const arrayNode = node?.find('tags') as ArrayNode;
     await delay();
+
+    const arrayNode = node?.find('tags') as ArrayNode;
 
     // 초기값 설정
     arrayNode.setValue(['태그1', '태그2']);
     await delay();
 
     // 아이템 추가
-    arrayNode.push('태그3');
-    await delay();
+    await arrayNode.push('태그3');
 
     // 값 확인
     expect(arrayNode.value).toEqual(['태그1', '태그2', '태그3']);
@@ -382,16 +383,16 @@ describe('ArrayNode', () => {
       },
     });
 
-    const arrayNode = node?.find('tags') as ArrayNode;
     await delay();
+
+    const arrayNode = node?.find('tags') as ArrayNode;
 
     // 초기값 설정
     arrayNode.setValue(['태그1', '태그2', '태그3']);
-    await delay();
 
-    // 아이템 삭제
-    arrayNode.remove(1);
     await delay();
+    // 아이템 삭제
+    await arrayNode.remove(1);
 
     // 값 확인
     expect(arrayNode.value).toEqual(['태그1', '태그3']);
@@ -412,12 +413,12 @@ describe('ArrayNode', () => {
       },
     });
 
-    const arrayNode = node?.find('tags') as ArrayNode;
     await delay();
+
+    const arrayNode = node?.find('tags') as ArrayNode;
 
     // 초기값 설정
     arrayNode.setValue(['태그1', '태그2', '태그3']);
-    await delay();
   });
 
   it('배열 노드의 유효성 검사가 정상적으로 동작해야 함', async () => {
@@ -440,28 +441,33 @@ describe('ArrayNode', () => {
       validationMode: ValidationMode.OnChange,
     });
 
-    const arrayNode = node?.find('numbers') as ArrayNode;
     await delay();
+
+    const arrayNode = node?.find('numbers') as ArrayNode;
 
     // 최소 아이템 수 이하 설정
     arrayNode.setValue([1]);
     await delay();
+
     expect(arrayNode.errors.length).toBeGreaterThan(0);
     expect(arrayNode.errors[0].keyword).toBe('minItems');
 
     // 최대 아이템 수 초과 설정시, 최대 아이템 수만큼만 저장되어야 함
     arrayNode.setValue([1, 2, 3, 4, 5, 6]);
     await delay();
+
     expect(arrayNode.value?.length).toBe(5);
 
     // 유효한 값 설정
     arrayNode.setValue([1, 2, 3]);
     await delay();
+
     expect(arrayNode.errors).toEqual([]);
 
     // Array item에 대한 유효성 오류는 개별 item에 저장됨
     arrayNode.setValue([1, 2, 150]);
     await delay();
+
     expect(arrayNode.errors.length).toBe(0);
   });
 
@@ -482,18 +488,23 @@ describe('ArrayNode', () => {
       validationMode: ValidationMode.OnChange,
     });
 
-    const arrayNode = node?.find('tags') as ArrayNode;
     await delay();
+
+    const arrayNode = node?.find('tags') as ArrayNode;
 
     // 중복 아이템이 있는 값 설정
     arrayNode.setValue(['태그1', '태그2', '태그1']);
+
     await delay();
+
     expect(arrayNode.errors.length).toBeGreaterThan(0);
     expect(arrayNode.errors[0].keyword).toBe('uniqueItems');
 
     // 중복 아이템이 없는 값 설정
     arrayNode.setValue(['태그1', '태그2', '태그3']);
+
     await delay();
+
     expect(arrayNode.errors).toEqual([]);
   });
 
@@ -517,14 +528,16 @@ describe('ArrayNode', () => {
       },
     });
 
-    const arrayNode = node?.find('users') as ArrayNode;
     await delay();
+
+    const arrayNode = node?.find('users') as ArrayNode;
 
     // 복잡한 아이템 값 설정
     arrayNode.setValue([
       { name: '홍길동', age: 30 },
       { name: '김철수', age: 25 },
     ]);
+
     await delay();
 
     // 값 확인
@@ -534,7 +547,7 @@ describe('ArrayNode', () => {
     ]);
 
     // 아이템 노드 확인
-    const itemNodes = arrayNode.children;
+    const itemNodes = arrayNode.children || [];
     expect(itemNodes.length).toBe(2);
     expect(itemNodes[0].node.type).toBe('object');
     expect(itemNodes[1].node.type).toBe('object');

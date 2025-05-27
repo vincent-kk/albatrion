@@ -15,6 +15,7 @@ import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 
 import type { ArrayNodeStrategy } from '../type';
+import { promiseAfterMicrotask } from './utils';
 
 type IndexId = `[${number}]`;
 
@@ -164,7 +165,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
       this.__host__.jsonSchema.maxItems &&
       this.__host__.jsonSchema.maxItems <= this.length
     )
-      return;
+      return promiseAfterMicrotask(this.length);
 
     const id = ('[' + this.__seq__++ + ']') as IndexId;
     const name = this.__ids__.length.toString();
@@ -194,6 +195,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__changed__ = true;
     this.__publishRequestEmitChange__();
     this.__publishUpdateChildren__();
+
+    return promiseAfterMicrotask(this.length);
   }
 
   /**
@@ -204,7 +207,10 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   public update(id: IndexId | number, data: ArrayValue[number]) {
     const targetId = typeof id === 'number' ? this.__ids__[id] : id;
-    this.__sourceMap__.get(targetId)?.node.setValue(data);
+    const node = this.__sourceMap__.get(targetId)?.node;
+    if (!node) return promiseAfterMicrotask(undefined);
+    node.setValue(data);
+    return promiseAfterMicrotask(node.value);
   }
 
   /**
@@ -215,6 +221,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
   public remove(id: IndexId | number) {
     const targetId = typeof id === 'number' ? this.__ids__[id] : id;
 
+    const removed = this.__sourceMap__.get(targetId);
+    if (!removed) return promiseAfterMicrotask(undefined);
+
     this.__ids__ = this.__ids__.filter((id) => id !== targetId);
     this.__sourceMap__.delete(targetId);
     this.__updateChildName__();
@@ -222,12 +231,14 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__changed__ = true;
     this.__publishRequestEmitChange__();
     this.__publishUpdateChildren__();
+
+    return promiseAfterMicrotask(removed.data);
   }
 
   /** Removes the last element from the array. */
   public pop() {
-    if (this.length === 0) return;
-    this.remove(this.length - 1);
+    if (this.length === 0) return promiseAfterMicrotask(undefined);
+    return this.remove(this.length - 1);
   }
 
   /** Clears all elements to initialize the array. */
@@ -241,6 +252,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__changed__ = true;
     this.__publishRequestEmitChange__();
     this.__publishUpdateChildren__();
+
+    return promiseAfterMicrotask(void 0);
   }
 
   /**

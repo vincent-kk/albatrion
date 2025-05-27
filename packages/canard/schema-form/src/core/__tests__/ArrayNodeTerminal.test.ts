@@ -45,15 +45,19 @@ describe('ArrayNode-Terminal', () => {
       },
     });
 
+    await delay();
+
     const booleanNode = node?.find('arr') as ArrayNode;
     expect(booleanNode.value).toEqual([]);
 
     booleanNode.setValue([true, false, true]);
     await delay();
+
     expect(booleanNode.value).toEqual([true, false, true]);
 
     booleanNode.setValue([false, false, false]);
     await delay();
+
     expect(booleanNode.value).toEqual([false, false, false]);
   });
 
@@ -74,8 +78,9 @@ describe('ArrayNode-Terminal', () => {
       },
     });
 
-    const booleanNode = node?.find('arr') as ArrayNode;
     await delay();
+
+    const booleanNode = node?.find('arr') as ArrayNode;
     expect(booleanNode.value).toEqual([true, false, true]);
   });
 
@@ -141,17 +146,20 @@ describe('ArrayNode-Terminal', () => {
       validationMode: ValidationMode.OnChange,
     });
 
-    const booleanNode = node?.find('arr') as ArrayNode;
     await delay();
+
+    const booleanNode = node?.find('arr') as ArrayNode;
 
     // 유효한 값 설정
     booleanNode.setValue([true, false, true]);
     await delay();
+
     expect(booleanNode.errors).toEqual([]);
 
     // 유효한 값 설정
     booleanNode.setValue([false, false, false]);
     await delay();
+
     expect(booleanNode.errors).toEqual([]);
   });
 });
