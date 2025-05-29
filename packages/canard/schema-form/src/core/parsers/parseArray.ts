@@ -8,7 +8,6 @@ import type { ArrayValue } from '@/schema-form/types';
  * @returns Parsed array or empty array if not an array
  * @typeParam T - Type of array elements
  */
-export const parseArray = (value: unknown): ArrayValue | undefined => {
-  if (value === undefined) return undefined;
+export const parseArray = (value: unknown): ArrayValue => {
   return isArray(value) ? value : [];
 };

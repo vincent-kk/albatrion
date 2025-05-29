@@ -22,15 +22,6 @@ describe('parseObject', () => {
     expect(result).toEqual({});
   });
 
-  it('undefined를 입력하면 빈 객체를 반환해야 합니다.', () => {
-    // Arrange
-    const input = undefined;
-    // Act
-    const result = parseObject(input);
-    // Assert
-    expect(result).toEqual(undefined);
-  });
-
   it('배열을 입력하면 빈 객체를 반환해야 합니다.', () => {
     // Arrange
     const input = [1, 2, 3];

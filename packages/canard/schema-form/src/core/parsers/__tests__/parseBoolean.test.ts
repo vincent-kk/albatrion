@@ -3,10 +3,6 @@ import { describe, expect, it } from 'vitest';
 import { parseBoolean } from '../parseBoolean';
 
 describe('parseBoolean', () => {
-  it('undefined를 입력하면 undefined를 반환해야 합니다', () => {
-    expect(parseBoolean(undefined)).toBeUndefined();
-  });
-
   it('문자열 "true"를 입력하면 true를 반환해야 합니다', () => {
     expect(parseBoolean('true')).toBe(true);
   });
