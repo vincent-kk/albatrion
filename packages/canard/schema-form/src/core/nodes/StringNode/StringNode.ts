@@ -118,6 +118,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
    * @returns {StringValue|undefined} Parsed string value
    */
   #parseValue(this: StringNode, input: StringValue | undefined) {
+    if (input === undefined) return undefined;
     return parseString(input);
   }
 

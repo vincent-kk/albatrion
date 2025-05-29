@@ -216,6 +216,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
    * @private
    */
   private __parseValue__(input: ArrayValue | undefined) {
+    if (input === undefined) return undefined;
     return parseArray(input);
   }
 }

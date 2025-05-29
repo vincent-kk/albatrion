@@ -118,6 +118,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
    * @returns {NumberValue|undefined} Parsed number value
    */
   #parseValue(this: NumberNode, input: NumberValue | undefined) {
+    if (input === undefined) return undefined;
     return parseNumber(input, this.jsonSchema.type === 'integer');
   }
 

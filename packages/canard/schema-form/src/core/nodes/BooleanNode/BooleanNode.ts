@@ -108,6 +108,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
    * @returns {BooleanValue|undefined} Parsed boolean value
    */
   #parseValue(this: BooleanNode, input: BooleanValue | undefined) {
+    if (input === undefined) return undefined;
     return parseBoolean(input);
   }
 }
