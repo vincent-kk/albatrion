@@ -13,16 +13,6 @@ export type InferValueType<T extends { type?: string }> = T extends {
   ? VirtualNodeValue
   : BaseInferValueType<T>;
 
-export type Formatter<Value> = (
-  value: Value | undefined,
-  info?: {
-    userTyping: boolean;
-    input: string;
-  },
-) => string;
-
-export type Parser<Value> = (value: string | undefined) => Value;
-
 export type {
   BooleanValue,
   NumberValue,
