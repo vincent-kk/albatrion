@@ -1,6 +1,4 @@
-import { useMemo } from 'react';
-
-import { InputNumber } from 'antd';
+import { InputNumber, type InputNumberProps } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
 import { useHandle } from '@winglet/react-utils';
@@ -18,6 +16,8 @@ interface FormTypeInputNumberProps
     { size?: SizeType }
   > {
   size?: SizeType;
+  formatter?: InputNumberProps<number>['formatter'];
+  parser?: InputNumberProps<number>['parser'];
 }
 
 const FormTypeInputNumber = ({
@@ -29,13 +29,10 @@ const FormTypeInputNumber = ({
   defaultValue,
   onChange,
   context,
+  formatter,
+  parser,
   size,
 }: FormTypeInputNumberProps) => {
-  const { formatter, parser } = useMemo(
-    () => jsonSchema.options || {},
-    [jsonSchema.options],
-  );
-
   const handleChange = useHandle((value: number | null) => {
     if (value === null) onChange(NaN);
     else onChange(value);

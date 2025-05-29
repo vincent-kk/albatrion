@@ -4,11 +4,7 @@
  * @param isInteger - Whether to return integer
  * @returns Parsed number value or undefined if parsing is impossible
  */
-export const parseNumber = (
-  value: unknown,
-  isInteger: boolean,
-): number | undefined => {
-  if (value === undefined) return undefined;
+export const parseNumber = (value: unknown, isInteger: boolean): number => {
   if (typeof value === 'number') {
     if (isNaN(value)) return NaN;
     return isInteger ? ~~value : value;

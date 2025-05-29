@@ -17,7 +17,6 @@ describe('parseString', () => {
 
   it('문자열이나 숫자가 아닌 값을 입력하면 undefined를 반환해야 합니다', () => {
     expect(parseString(null)).toBe('');
-    expect(parseString(undefined)).toBeUndefined();
     expect(parseString({})).toBe('');
     expect(parseString([])).toBe('');
   });

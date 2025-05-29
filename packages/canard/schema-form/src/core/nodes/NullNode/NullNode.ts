@@ -107,6 +107,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
    * @returns {NullValue|undefined} Returns the input as-is
    */
   #parseValue(this: NullNode, input: NullValue | undefined) {
+    if (input === undefined) return undefined;
     return input;
   }
 }

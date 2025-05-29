@@ -10,7 +10,7 @@ describe('parseArray', () => {
 
   it('배열이 아닌 값을 입력하면 빈 배열을 반환해야 합니다', () => {
     expect(parseArray(null)).toEqual([]);
-    expect(parseArray(undefined)).toEqual(undefined);
+    expect(parseArray(undefined)).toEqual([]);
     expect(parseArray('not an array')).toEqual([]);
     expect(parseArray(123)).toEqual([]);
     expect(parseArray({})).toEqual([]);

@@ -18,11 +18,8 @@ import type {
   AllowedValue,
   ArrayValue,
   BooleanValue,
-  Formatter,
-  NullValue,
   NumberValue,
   ObjectValue,
-  Parser,
   StringValue,
   VirtualNodeValue,
 } from './value';
@@ -71,31 +68,31 @@ export type JsonSchemaWithRef<Options extends Dictionary = object> =
   | JsonSchemaWithVirtual<Options>
   | RefSchema;
 
-export type NumberSchema<Options extends Dictionary = object> =
-  BasicSchema<NumberValue> & BaseNumberSchema<Options, JsonSchema<Options>>;
+export type NumberSchema<Options extends Dictionary = object> = BasicSchema &
+  BaseNumberSchema<Options, JsonSchema<Options>>;
 
-export type StringSchema<Options extends Dictionary = object> =
-  BasicSchema<StringValue> & BaseStringSchema<Options, JsonSchema<Options>>;
+export type StringSchema<Options extends Dictionary = object> = BasicSchema &
+  BaseStringSchema<Options, JsonSchema<Options>>;
 
-export type BooleanSchema<Options extends Dictionary = object> =
-  BasicSchema<BooleanValue> & BaseBooleanSchema<Options, JsonSchema<Options>>;
+export type BooleanSchema<Options extends Dictionary = object> = BasicSchema &
+  BaseBooleanSchema<Options, JsonSchema<Options>>;
 
-export type ArraySchema<Options extends Dictionary = object> =
-  BasicSchema<ArrayValue> & BaseArraySchema<Options, JsonSchema<Options>>;
+export type ArraySchema<Options extends Dictionary = object> = BasicSchema &
+  BaseArraySchema<Options, JsonSchema<Options>>;
 
-export type ObjectSchema<Options extends Dictionary = object> =
-  BasicSchema<ObjectValue> & BaseObjectSchema<Options, JsonSchema<Options>>;
+export type ObjectSchema<Options extends Dictionary = object> = BasicSchema &
+  BaseObjectSchema<Options, JsonSchema<Options>>;
 
 export type VirtualSchema<Options extends Dictionary = object> = {
   type: 'virtual';
   fields?: string[];
-} & BasicSchema<VirtualNodeValue> &
+} & BasicSchema &
   BaseBasicSchema<VirtualNodeValue, Options, JsonSchema<Options>>;
 
-export type NullSchema<Options extends Dictionary = object> =
-  BasicSchema<NullValue> & BaseNullSchema<Options, JsonSchema<Options>>;
+export type NullSchema<Options extends Dictionary = object> = BasicSchema &
+  BaseNullSchema<Options, JsonSchema<Options>>;
 
-type BasicSchema<Type> = {
+type BasicSchema = {
   FormType?: ComponentType<UnknownFormTypeInputProps>;
   terminal?: boolean;
   style?: CSSProperties;
@@ -103,8 +100,6 @@ type BasicSchema<Type> = {
   options?: {
     alias?: Dictionary<ReactNode>;
     omitEmpty?: boolean;
-    formatter?: Formatter<Type>;
-    parser?: Parser<Type>;
     [alt: string]: any;
   };
   /** Alias for computed.if */

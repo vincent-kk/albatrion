@@ -1,6 +1,4 @@
-import { useMemo } from 'react';
-
-import { Stepper } from 'antd-mobile';
+import { Stepper, type StepperProps } from 'antd-mobile';
 
 import { useHandle } from '@winglet/react-utils';
 
@@ -10,17 +8,25 @@ import type {
   NumberSchema,
 } from '@canard/schema-form';
 
+type SingleStepperProps = StepperProps extends { stringMode: false }
+  ? StepperProps
+  : never;
+
+interface FormTypeInputNumberProps
+  extends FormTypeInputPropsWithSchema<number, NumberSchema> {
+  formatter?: SingleStepperProps['formatter'];
+  parser?: SingleStepperProps['parser'];
+}
+
 const FormTypeInputNumber = ({
   jsonSchema,
   readOnly,
   disabled,
   defaultValue,
   onChange,
-}: FormTypeInputPropsWithSchema<number, NumberSchema>) => {
-  const { formatter, parser } = useMemo(
-    () => jsonSchema.options || {},
-    [jsonSchema.options],
-  );
+  formatter,
+  parser,
+}: FormTypeInputNumberProps) => {
   const handleChange = useHandle((value: number | null) => {
     if (value === null) onChange(NaN);
     else onChange(value);

@@ -757,14 +757,14 @@ export const ComputedProps = () => {
         type: 'string',
         placeholder: 'enter your name',
         computed: {
-          readOnly: '!@.prepared',
+          readOnly: '!_.prepared',
         },
       },
       age: {
         type: 'number',
         placeholder: 'enter your age',
         computed: {
-          disabled: '@.name===undefined||(@.name).length<5',
+          disabled: '_.name===undefined||(_.name).length<5',
         },
       },
       nationality: {
@@ -772,7 +772,7 @@ export const ComputedProps = () => {
         enum: ['', 'US', 'UK', 'JP', 'KR'],
         placeholder: 'select your nationality',
         computed: {
-          disabled: '@.age===undefined||@.age<10',
+          disabled: '_.age===undefined||_.age<10',
         },
       },
     },
