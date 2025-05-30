@@ -9,7 +9,7 @@ import type {
   ShowError,
 } from '@/schema-form/types';
 
-export interface ExternalFormContextProps {
+export interface ExternalFormContext {
   fromExternalFormTypeInputDefinitions?: NormalizedFormTypeInputDefinition[];
   FormGroupRenderer?: ComponentType<FormTypeRendererProps>;
   FormLabelRenderer?: ComponentType<FormTypeRendererProps>;
@@ -21,6 +21,6 @@ export interface ExternalFormContextProps {
   ajv?: Ajv;
 }
 
-export const ExternalFormContext = createContext<ExternalFormContextProps>(
-  {} as ExternalFormContextProps,
+export const ExternalFormContext = createContext<ExternalFormContext>(
+  {} as ExternalFormContext,
 );

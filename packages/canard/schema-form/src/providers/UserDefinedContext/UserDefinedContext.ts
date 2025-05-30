@@ -2,10 +2,10 @@ import { createContext } from 'react';
 
 import type { Dictionary } from '@aileron/declare';
 
-export interface UserDefinedContextProps {
+export interface UserDefinedContext {
   context: Dictionary;
 }
 
-export const UserDefinedContext = createContext<UserDefinedContextProps>(
-  {} as UserDefinedContextProps,
+export const UserDefinedContext = createContext<UserDefinedContext>(
+  {} as UserDefinedContext,
 );
