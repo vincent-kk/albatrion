@@ -81,7 +81,9 @@ export type ArraySchema<Options extends Dictionary = object> = BasicSchema &
   BaseArraySchema<Options, JsonSchema<Options>>;
 
 export type ObjectSchema<Options extends Dictionary = object> = BasicSchema &
-  BaseObjectSchema<Options, JsonSchema<Options>>;
+  BaseObjectSchema<Options, JsonSchema<Options>> & {
+    propertyKeys?: string[];
+  };
 
 export type VirtualSchema<Options extends Dictionary = object> = {
   type: 'virtual';
