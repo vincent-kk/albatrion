@@ -27,7 +27,7 @@ describe('setValueByPointer', () => {
     expect(testObj.foo.bar.baz).toBe(100);
   });
 
-  it('should create intermediate objects if they dont exist', () => {
+  it('should create intermediate objects if they do not exist', () => {
     setValueByPointer(testObj, '/foo/newPath/deep', 'new value');
     expect(testObj.foo.newPath.deep).toBe('new value');
   });
