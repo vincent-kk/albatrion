@@ -79,10 +79,14 @@ export class TerminalStrategy implements ObjectNodeStrategy {
     this.__handleChange__ = handleChange;
     this.__handleRefresh__ = handleRefresh;
 
-    this.__propertyKeys__ = getObjectKeys(host.jsonSchema.properties);
+    const jsonSchema = host.jsonSchema;
+
+    this.__propertyKeys__ = !jsonSchema.propertyKeys?.length
+      ? getObjectKeys(jsonSchema.properties)
+      : jsonSchema.propertyKeys;
 
     const defaultValue = this.__parseValue__(
-      getObjectDefaultValue(host.jsonSchema, host.defaultValue),
+      getObjectDefaultValue(jsonSchema, host.defaultValue),
     );
 
     handleSetDefaultValue(defaultValue);
