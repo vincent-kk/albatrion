@@ -11,13 +11,13 @@ import { getValue } from './utils/getValue';
  * Function to extract values from an object using JSON Pointer
  * Supports JSON Pointer according to RFC 6901 specification
  *
- * @template Input - Input object type
+ * @template Input - Input object type (Dictionary or Array)
  * @param input - Target object to extract value from
  * @param pointer - JSON Pointer (string or string array)
  * @returns Value pointed to by the pointer
  * @throws {JSONPointerError} When input is invalid or pointer cannot be found
  */
-export const getValueByPointer = <Input extends Dictionary>(
+export const getValueByPointer = <Input extends Dictionary | Array<any>>(
   input: Input,
   pointer: string | string[],
 ): any => {

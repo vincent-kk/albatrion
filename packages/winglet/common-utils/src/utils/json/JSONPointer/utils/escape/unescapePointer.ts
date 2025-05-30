@@ -1,5 +1,4 @@
-const TILDE = '~';
-const CHILD = '/';
+import { CHILD, TILDE } from './constant';
 
 const ESCAPE_PATTERN = /~[01]/g;
 

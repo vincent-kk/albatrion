@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getValueByPointer } from '../getValueByPointer';
+import { getValueByPointer } from '../utils/manipulators';
 
 describe('getValueByPointer', () => {
   const testObj = {

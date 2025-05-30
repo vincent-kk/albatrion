@@ -3,10 +3,10 @@ import type { Dictionary } from '@aileron/declare';
 import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isArrayIndex } from '@/common-utils/utils/filter/isArrayIndex';
 
+import { unescapePointer } from '../../escape/unescapePointer';
 import { isForbiddenKey } from './isForbiddenKey';
-import { unescapePointer } from './unescapePointer';
 
-export const setValue = <Input extends Dictionary>(
+export const setValue = <Input extends Dictionary | Array<any>>(
   input: Input,
   segments: string[],
   value: any,

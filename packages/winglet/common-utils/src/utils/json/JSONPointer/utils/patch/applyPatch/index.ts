@@ -1,0 +1,1 @@
+export { applyPatch } from './applyPatch';

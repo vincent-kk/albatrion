@@ -10,12 +10,12 @@ import { hasOwnProperty } from './hasOwnProperty';
 export const getKeys = <Value>(value: Value) => {
   // For arrays, return indices as strings
   if (Array.isArray(value)) {
-    const keys = new Array(value.length);
-    for (let k = 0; k < keys.length; k++) keys[k] = '' + k;
+    const keys = new Array<string>(value.length);
+    for (let i = 0; i < keys.length; i++) keys[i] = '' + i;
     return keys;
   }
   if (value && typeof value === 'object') return Object.keys(value);
-  const keys = [];
+  const keys: string[] = [];
   for (const key in value)
     if (hasOwnProperty(value, key)) keys[keys.length] = key;
   return keys;
