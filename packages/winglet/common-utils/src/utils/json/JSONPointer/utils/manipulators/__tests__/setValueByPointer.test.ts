@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { setValueByPointer } from '../setValueByPointer';
+import { setValueByPointer } from '../utils/manipulators';
 
 describe('setValueByPointer', () => {
   let testObj: any;
