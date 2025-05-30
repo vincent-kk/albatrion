@@ -21,16 +21,16 @@ type IndexId = `[${number}]`;
 
 export class BranchStrategy implements ArrayNodeStrategy {
   /** Host ArrayNode instance that this strategy belongs to */
-  private __host__: ArrayNode;
+  private readonly __host__: ArrayNode;
 
   /** Callback function to handle value changes */
-  private __handleChange__: Fn<[ArrayValue | undefined]>;
+  private readonly __handleChange__: Fn<[ArrayValue | undefined]>;
 
   /** Callback function to handle refresh operations */
-  private __handleRefresh__: Fn<[ArrayValue | undefined]>;
+  private readonly __handleRefresh__: Fn<[ArrayValue | undefined]>;
 
   /** Factory function for creating new schema nodes */
-  private __nodeFactory__: SchemaNodeFactory;
+  private readonly __nodeFactory__: SchemaNodeFactory;
 
   /** Flag indicating whether the strategy is locked to prevent recursive updates */
   private __locked__: boolean = true;

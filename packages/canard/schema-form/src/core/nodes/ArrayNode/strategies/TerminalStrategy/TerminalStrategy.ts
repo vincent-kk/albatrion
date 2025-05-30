@@ -19,13 +19,16 @@ const FIRST_EMIT_CHANGE_OPTION =
 
 export class TerminalStrategy implements ArrayNodeStrategy {
   /** Host ArrayNode instance that this strategy belongs to */
-  private __host__: ArrayNode;
+  private readonly __host__: ArrayNode;
 
   /** Callback function to handle value changes */
-  private __handleChange__: Fn<[ArrayValue | undefined]>;
+  private readonly __handleChange__: Fn<[ArrayValue | undefined]>;
 
   /** Callback function to handle refresh operations */
-  private __handleRefresh__: Fn<[ArrayValue | undefined]>;
+  private readonly __handleRefresh__: Fn<[ArrayValue | undefined]>;
+
+  /** Default value to use when creating new array items */
+  private readonly __defaultItemValue__: AllowedValue;
 
   /** Flag indicating whether the strategy is locked to prevent recursive updates */
   private __locked__: boolean = true;
@@ -35,9 +38,6 @@ export class TerminalStrategy implements ArrayNodeStrategy {
 
   /** Array of unique IDs for tracking array elements (used for element identification) */
   private __ids__: IndexId[] = [];
-
-  /** Default value to use when creating new array items */
-  private __defaultItemValue__: AllowedValue;
 
   /** Current value of the array node, initialized as empty array */
   private __value__: ArrayValue | undefined = [];
