@@ -1,4 +1,8 @@
-import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils';
+import {
+  getObjectKeys,
+  sortObjectKeys,
+  sortWithReference,
+} from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/declare';
 
@@ -142,17 +146,24 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const jsonSchema = host.jsonSchema;
 
     this.__fieldConditionMap__ = getFieldConditionMap(jsonSchema);
-    const properties = jsonSchema.properties;
-    const propertyKeys = getObjectKeys(properties);
-    const oneOfKeyInfo = getOneOfKeyInfo(jsonSchema);
 
+    const preferredPropertyKeys = jsonSchema.propertyKeys?.length
+      ? jsonSchema.propertyKeys
+      : undefined;
+
+    const propertyKeys = sortWithReference(
+      getObjectKeys(jsonSchema.properties),
+      preferredPropertyKeys,
+    );
+
+    const oneOfKeyInfo = getOneOfKeyInfo(jsonSchema);
     if (oneOfKeyInfo) {
       this.__oneOfKeySet__ = oneOfKeyInfo.oneOfKeySet;
       this.__oneOfKeySetList__ = oneOfKeyInfo.oneOfKeySetList;
-      this.__schemaKeys__ = [
-        ...propertyKeys,
-        ...Array.from(this.__oneOfKeySet__),
-      ];
+      this.__schemaKeys__ = sortWithReference(
+        [...propertyKeys, ...Array.from(this.__oneOfKeySet__)],
+        preferredPropertyKeys,
+      );
     } else this.__schemaKeys__ = propertyKeys;
 
     const { virtualReferencesMap, virtualReferenceFieldsMap } =
@@ -312,9 +323,21 @@ export class BranchStrategy implements ObjectNodeStrategy {
               this.__value__?.[node.propertyKey],
             );
 
-        this.__children__ = oneOfChildren
-          ? [...this.__propertyChildren__, ...oneOfChildren]
-          : this.__propertyChildren__;
+        if (oneOfChildren) {
+          const children: ChildNode[] = [];
+          for (let index = 0; index < this.__schemaKeys__.length; index++) {
+            const key = this.__schemaKeys__[index];
+            const child = this.__propertyChildren__.find(
+              ({ node }) => node.propertyKey === key,
+            );
+            if (child) children.push(child);
+            const oneOfChild = oneOfChildren.find(
+              ({ node }) => node.propertyKey === key,
+            );
+            if (oneOfChild) children.push(oneOfChild);
+          }
+          this.__children__ = children;
+        } else this.__children__ = this.__propertyChildren__;
 
         this.__draft__ = processValueWithOneOfSchema(
           this.__parseValue__({
