@@ -1,5 +1,6 @@
 import {
   Murmur3,
+  cacheWeakMapFactory,
   counterFactory,
   isArray,
   isDate,
@@ -8,10 +9,9 @@ import {
   isPrimitiveObject,
   isRegex,
   isUndefined,
-  weakMapCacheFactory,
 } from '@winglet/common-utils';
 
-const { get, set } = weakMapCacheFactory<string>();
+const { get, set } = cacheWeakMapFactory<string>();
 const { increment } = counterFactory();
 
 export const stableSerialize = (
