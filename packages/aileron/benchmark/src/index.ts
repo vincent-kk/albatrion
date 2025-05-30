@@ -4,6 +4,7 @@ import { run as runCompare } from './targets/compare/benchmark';
 import { run as runCompareFetch } from './targets/compareFetch/benchmark';
 import { run as runCompareJsonSchemaErrors } from './targets/compareJsonSchemaErrors/benchmark';
 import { run as runDeepMerge } from './targets/deepMerge/benchmark';
+import { run as runEscapePointer } from './targets/escapePointer/benchmark';
 import { run as runFind } from './targets/find/benchmark';
 import { run as runGetDataWithSchema } from './targets/getDataWithSchema/benchmark';
 import { run as runGetJsonPaths } from './targets/getJsonPath/benchmark';
@@ -38,6 +39,7 @@ const benchmarks = {
   compare: runCompare,
   compareFetch: runCompareFetch,
   getObjectKeys: runGetObjectKeys,
+  escapePointer: runEscapePointer,
 };
 
 main(benchmarks).catch((error) => {
