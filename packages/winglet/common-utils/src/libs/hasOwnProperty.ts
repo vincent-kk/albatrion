@@ -8,5 +8,7 @@ const __hasOwnProperty__ = Object.prototype.hasOwnProperty;
  * @param key - Property key to check
  * @returns Whether the object directly owns the property
  */
-export const hasOwnProperty = <Value>(value: Value, key: string) =>
-  __hasOwnProperty__.call(value, key);
+export const hasOwnProperty = (
+  value: unknown,
+  key: PropertyKey,
+): key is keyof typeof value => __hasOwnProperty__.call(value, key);
