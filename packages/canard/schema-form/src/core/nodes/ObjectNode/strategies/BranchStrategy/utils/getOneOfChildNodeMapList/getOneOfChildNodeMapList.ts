@@ -25,7 +25,7 @@ import type {
  * @param nodeFactory - Node creation factory function
  * @returns Array of oneOf child node lists or undefined if no oneOf exists
  */
-export const getOneOfChildrenList = (
+export const getOneOfChildNodeMapList = (
   parentNode: ObjectNode,
   jsonSchema: ObjectSchema,
   defaultValue: ObjectValue | undefined,
@@ -36,7 +36,9 @@ export const getOneOfChildrenList = (
   const oneOfSchemas = jsonSchema.oneOf;
   if (!oneOfSchemas || !isArray(oneOfSchemas)) return undefined;
 
-  const oneOfNodeList = new Array<ChildNode[]>(oneOfSchemas.length);
+  const oneOfChildNodeMapList = new Array<Map<string, ChildNode>>(
+    oneOfSchemas.length,
+  );
 
   for (let index = 0; index < oneOfSchemas.length; index++) {
     const oneOfSchema = oneOfSchemas[index] as Partial<ObjectSchema>;
@@ -58,7 +60,7 @@ export const getOneOfChildrenList = (
     if (!isPlainObject(properties)) continue;
 
     const keys = Object.keys(properties);
-    const childNodes = new Array<ChildNode>(keys.length);
+    const oneOfChildNodeMap = new Map<string, ChildNode>();
     const required = oneOfSchema.required;
     for (let keyIndex = 0; keyIndex < keys.length; keyIndex++) {
       const property = keys[keyIndex];
@@ -74,7 +76,7 @@ export const getOneOfChildrenList = (
         );
       const schema = properties[property] as JsonSchema;
       const inputDefault = defaultValue?.[property];
-      childNodes[keyIndex] = {
+      oneOfChildNodeMap.set(property, {
         salt,
         node: nodeFactory({
           key: property + '/oneOf/' + index,
@@ -87,10 +89,10 @@ export const getOneOfChildrenList = (
           parentNode,
           required: required?.includes(property),
         }),
-      };
+      });
     }
-    oneOfNodeList[index] = childNodes;
+    oneOfChildNodeMapList[index] = oneOfChildNodeMap;
   }
 
-  return oneOfNodeList;
+  return oneOfChildNodeMapList;
 };

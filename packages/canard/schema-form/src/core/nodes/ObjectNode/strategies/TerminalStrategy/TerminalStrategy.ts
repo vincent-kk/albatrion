@@ -1,4 +1,9 @@
-import { equals, getObjectKeys, sortObjectKeys } from '@winglet/common-utils';
+import {
+  equals,
+  getObjectKeys,
+  sortObjectKeys,
+  sortWithReference,
+} from '@winglet/common-utils';
 
 import type { Fn } from '@aileron/declare';
 
@@ -20,13 +25,13 @@ import type { ObjectNodeStrategy } from '../type';
  */
 export class TerminalStrategy implements ObjectNodeStrategy {
   /** Host ObjectNode instance that this strategy belongs to */
-  private __host__: ObjectNode;
+  private readonly __host__: ObjectNode;
 
   /** Callback function to handle value changes */
-  private __handleChange__: Fn<[ObjectValue | undefined]>;
+  private readonly __handleChange__: Fn<[ObjectValue | undefined]>;
 
   /** Callback function to handle refresh operations */
-  private __handleRefresh__: Fn<[ObjectValue | undefined]>;
+  private readonly __handleRefresh__: Fn<[ObjectValue | undefined]>;
 
   /** Array of property keys defined in the JSON schema, used for ordering object properties */
   private readonly __propertyKeys__: string[];
@@ -79,10 +84,15 @@ export class TerminalStrategy implements ObjectNodeStrategy {
     this.__handleChange__ = handleChange;
     this.__handleRefresh__ = handleRefresh;
 
-    this.__propertyKeys__ = getObjectKeys(host.jsonSchema.properties);
+    const jsonSchema = host.jsonSchema;
+
+    this.__propertyKeys__ = sortWithReference(
+      getObjectKeys(jsonSchema.properties),
+      jsonSchema.propertyKeys,
+    );
 
     const defaultValue = this.__parseValue__(
-      getObjectDefaultValue(host.jsonSchema, host.defaultValue),
+      getObjectDefaultValue(jsonSchema, host.defaultValue),
     );
 
     handleSetDefaultValue(defaultValue);

@@ -144,6 +144,63 @@ export const OneOfAlias = () => {
   );
 };
 
+export const OneOfAliasWithKeyOrder = () => {
+  const schema = {
+    type: 'object',
+    oneOf: [
+      {
+        '&if': "@.category==='movie'",
+        properties: {
+          date1: {
+            type: 'string',
+            format: 'date',
+            '&visible': '_.title === "wow"',
+          },
+          price1: {
+            type: 'number',
+            minimum: 50,
+          },
+        },
+      },
+      {
+        '&if': "@.category==='game'",
+        properties: {
+          date2: {
+            type: 'string',
+            format: 'date',
+            '&visible': '_.title === "wow"',
+          },
+          price2: { type: 'number' },
+        },
+      },
+    ],
+    properties: {
+      category: {
+        type: 'string',
+        enum: ['game', 'movie'],
+        default: 'game',
+      },
+      title: { type: 'string' },
+    },
+    propertyKeys: ['title', 'price1', 'price2', 'date1', 'date2'],
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema>>(null);
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
+    </StoryLayout>
+  );
+};
+
 export const ComplexOneOf = () => {
   const schema = {
     type: 'object',
