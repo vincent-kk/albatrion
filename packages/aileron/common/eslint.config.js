@@ -47,6 +47,9 @@ export default [
         "error",
         {
           ignoreDeclarationMerge: true,
+          builtinGlobals: false,
+          ignoreTypeDeclarations: false,
+          ignoreNamespaceDeclarations: false,
         },
       ],
       "no-undef": "off", // TypeScript에서는 타입 체크가 이미 수행됨

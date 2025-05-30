@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { setValueByPointer } from '../setValueByPointer';
+import { setValueByPointer } from '../utils/manipulators';
 
 describe('setValueByPointer', () => {
   let testObj: any;
@@ -27,7 +27,7 @@ describe('setValueByPointer', () => {
     expect(testObj.foo.bar.baz).toBe(100);
   });
 
-  it('should create intermediate objects if they dont exist', () => {
+  it('should create intermediate objects if they do not exist', () => {
     setValueByPointer(testObj, '/foo/newPath/deep', 'new value');
     expect(testObj.foo.newPath.deep).toBe('new value');
   });

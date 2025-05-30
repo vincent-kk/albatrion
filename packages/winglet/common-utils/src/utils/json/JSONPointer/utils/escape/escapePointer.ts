@@ -1,5 +1,4 @@
-const TILDE = '~';
-const CHILD = '/';
+import { CHILD, TILDE } from './constant';
 
 export const escapePointer = (path: string): string => {
   if (path.indexOf(CHILD) === -1 && path.indexOf(TILDE) === -1) return path;

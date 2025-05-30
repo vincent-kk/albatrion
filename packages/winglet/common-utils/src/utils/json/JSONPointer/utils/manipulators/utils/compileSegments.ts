@@ -1,9 +1,9 @@
 import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isString } from '@/common-utils/utils/filter/isString';
 
-import { JSONPointer } from '../enum';
+import { JSONPointer } from '../../../enum';
+import { unescapePointer } from '../../escape/unescapePointer';
 import { JSONPointerError } from './error';
-import { unescapePointer } from './unescapePointer';
 
 export const compilePointer = (pointer: string | string[]) => {
   if (isString(pointer)) return handleStringPointer(pointer);

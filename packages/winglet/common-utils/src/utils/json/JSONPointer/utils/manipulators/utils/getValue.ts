@@ -1,6 +1,6 @@
 import type { Dictionary } from '@aileron/declare';
 
-import { unescapePointer } from './unescapePointer';
+import { unescapePointer } from '../../escape/unescapePointer';
 
 export const getValue = <Input extends Dictionary>(
   input: Input,

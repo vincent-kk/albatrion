@@ -3,7 +3,7 @@ import type { Dictionary } from '@aileron/declare';
 import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isObject } from '@/common-utils/utils/filter/isObject';
-import { escapePointer } from '@/common-utils/utils/json/JSONPointer/utils/escapePointer';
+import { escapePointer } from '@/common-utils/utils/json/JSONPointer/utils/escape/escapePointer';
 
 /**
  * Generates a JSON Pointer path from the root object to the target object.

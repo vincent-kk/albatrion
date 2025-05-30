@@ -1,27 +1,27 @@
 import Benchmark from 'benchmark';
-import { cloneDeep as esToolsClone } from 'es-toolkit';
+import { escapePathComponent } from 'fast-json-patch';
+
+import { escapePointer } from '@winglet/common-utils';
 
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
-import { clone } from '@/common-utils/utils/object/clone';
 
-import { data } from './data';
+const path = '~1/2/3/4/5/6/7/8/9/10';
 
-const sample = data;
+const escapePointerRun = () => {
+  escapePointer(path);
+};
+
+const escapePathComponentRun = () => {
+  escapePathComponent(path);
+};
 
 const suite = new Benchmark.Suite();
 
 export const run = () => {
   return new Promise<Ratio>((resolve) => {
     suite
-      .add('JSON clone', function () {
-        JSON.parse(JSON.stringify(sample));
-      })
-      .add('clone', function () {
-        clone(sample);
-      })
-      .add('es-toolkit cloneDeep', function () {
-        esToolsClone(sample);
-      })
+      .add('escapePointer', escapePointerRun)
+      .add('escapePathComponent', escapePathComponentRun)
       .on('cycle', function (event: Benchmark.Event) {
         console.log(String(event.target));
       })

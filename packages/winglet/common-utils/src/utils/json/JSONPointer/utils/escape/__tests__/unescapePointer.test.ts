@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { JSONPointer } from '../../enum';
+import { JSONPointer } from '../../../enum';
 import { unescapePointer } from '../unescapePointer';
 
 describe('unescapePointer', () => {

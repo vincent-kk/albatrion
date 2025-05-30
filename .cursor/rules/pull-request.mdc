@@ -61,3 +61,4 @@ PR 생성을 요청하면 다음 지침을 따라서 마크다운 문서를 생�
   - example: `[Fix/Feat](schema-form): input handling and parser improvements`
   - example: `[Refactor](schema-form): Async strategy methods and dependency optimization`
 - 내용은 한글로 작성
+- 일부 제목 등에서 사용되는 문장의 형태가 MD 링크 형식과 유사하므로 역 따옴표(`)로 묶어서 잘못된 파싱 방지

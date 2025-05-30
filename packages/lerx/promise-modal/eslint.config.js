@@ -47,6 +47,9 @@ export default [
         'error',
         {
           ignoreDeclarationMerge: true,
+          builtinGlobals: false,
+          ignoreTypeDeclarations: false,
+          ignoreNamespaceDeclarations: false,
         },
       ],
       'no-undef': 'off',
