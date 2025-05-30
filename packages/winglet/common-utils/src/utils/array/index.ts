@@ -11,6 +11,7 @@ export { intersection } from './intersection';
 export { intersectionBy } from './intersectionBy';
 export { intersectionWith } from './intersectionWith';
 export { map } from './map';
+export { orderedMerge } from './orderedMerge';
 export { unique } from './unique';
 export { uniqueBy } from './uniqueBy';
 export { uniqueWith } from './uniqueWith';
