@@ -4,9 +4,9 @@ import { cloneDeep as esToolsClone } from 'es-toolkit';
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 import { clone } from '@/common-utils/utils/object/clone';
 
-import { mixedData } from './data';
+import { data } from './data';
 
-const sample = mixedData;
+const sample = data;
 
 const suite = new Benchmark.Suite();
 
