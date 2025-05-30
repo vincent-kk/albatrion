@@ -38,20 +38,19 @@ export const sortWithReference = <Value>(
 
   const unreferencedItems: Value[] = [];
 
-  for (let i = 0; i < source.length; i++) {
-    const item = source[i];
-    const index = referenceMap.get(item);
-    if (index !== undefined) referencedGroups[index].push(item);
-    else unreferencedItems.push(item);
+  for (let index = 0; index < source.length; index++) {
+    const item = source[index];
+    const referenceIndex = referenceMap.get(item);
+    if (referenceIndex === undefined) unreferencedItems.push(item);
+    else referencedGroups[referenceIndex].push(item);
   }
 
   const result: Value[] = [];
-  for (let index = 0; index < referencedGroups.length; index++) {
-    const group = referencedGroups[index];
-    for (let index = 0; index < group.length; index++)
-      result.push(group[index]);
+  for (let groupIndex = 0; groupIndex < referencedGroups.length; groupIndex++) {
+    const group = referencedGroups[groupIndex];
+    for (let itemIndex = 0; itemIndex < group.length; itemIndex++)
+      result.push(group[itemIndex]);
   }
-
   for (let index = 0; index < unreferencedItems.length; index++)
     result.push(unreferencedItems[index]);
 
