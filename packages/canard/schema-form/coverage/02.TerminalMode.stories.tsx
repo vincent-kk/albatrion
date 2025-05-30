@@ -698,3 +698,80 @@ export const FormTypeInputObjectTerminalWithMixedDefaultValue = () => {
     </StoryLayout>
   );
 };
+
+export const FormTypeInputObjectTerminalWithPropertyKeys = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      poster: {
+        type: 'object',
+        FormType: ({
+          node,
+          onChange,
+          value,
+          defaultValue,
+        }: FormTypeInputProps<{
+          url: string;
+          format: string;
+          size: {
+            width: number;
+            height: number;
+          };
+        }>) => {
+          return (
+            <div>
+              i am object item: {node.group}
+              <div>
+                <pre>{JSON.stringify(value, null, 2)}</pre>
+              </div>
+              <div>
+                <pre>{JSON.stringify(defaultValue, null, 2)}</pre>
+              </div>
+              <div>
+                <button
+                  onClick={() =>
+                    onChange({
+                      url: 'http://example.com/poster11.jpg',
+                      format: 'jpg',
+                      size: { width: 100, height: 100 },
+                    })
+                  }
+                >
+                  set
+                </button>
+                <button onClick={() => node.setValue(undefined)}>clear</button>
+              </div>
+            </div>
+          );
+        },
+        propertyKeys: ['format'],
+        properties: {
+          url: {
+            type: 'string',
+          },
+          format: {
+            type: 'string',
+          },
+          size: {
+            type: 'object',
+            properties: {
+              width: {
+                type: 'number',
+              },
+              height: {
+                type: 'number',
+              },
+            },
+          },
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form jsonSchema={schema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
