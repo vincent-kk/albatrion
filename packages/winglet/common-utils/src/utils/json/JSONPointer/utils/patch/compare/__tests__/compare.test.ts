@@ -1065,4 +1065,49 @@ describe('compare', () => {
       expect(result).toEqual([]);
     });
   });
+
+  describe('Options Validation', () => {
+    it('should work with explicit default options', () => {
+      const source = { name: 'John', age: 30 };
+      const target = { name: 'John', age: 31 };
+
+      // Test with explicit defaults
+      const result = compare(source, target, {
+        strict: false,
+        immutable: true,
+      });
+      expect(result).toEqual([
+        {
+          op: Operation.REPLACE,
+          path: '/age',
+          value: 31,
+        },
+      ]);
+    });
+
+    it('should work with partial options', () => {
+      const source = { name: 'John', age: 30 };
+      const target = { name: 'John', age: 31 };
+
+      // Test with only strict option
+      const result1 = compare(source, target, { strict: false });
+      expect(result1).toEqual([
+        {
+          op: Operation.REPLACE,
+          path: '/age',
+          value: 31,
+        },
+      ]);
+
+      // Test with only immutable option
+      const result2 = compare(source, target, { immutable: true });
+      expect(result2).toEqual([
+        {
+          op: Operation.REPLACE,
+          path: '/age',
+          value: 31,
+        },
+      ]);
+    });
+  });
 });
