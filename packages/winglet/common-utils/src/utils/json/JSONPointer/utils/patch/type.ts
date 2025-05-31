@@ -51,7 +51,13 @@ export type Patch =
   | MovePatch
   | CopyPatch;
 
-export type Options = {
+export type CompareOptions = {
   strict?: boolean;
   immutable?: boolean;
+};
+
+export type ApplyPatchOptions = {
+  strict?: boolean;
+  immutable?: boolean;
+  protectPrototype?: boolean;
 };

@@ -1,6 +1,6 @@
 import type { Dictionary } from '@aileron/declare';
 
-import type { Options, Patch } from '../type';
+import type { CompareOptions, Patch } from '../type';
 import { compareRecursive } from './utils/compareRecursive';
 
 /**
@@ -62,7 +62,7 @@ export const compare = <
 >(
   source: Source,
   target: Target,
-  options?: Options,
+  options?: CompareOptions,
 ): Patch[] => {
   const strict = options?.strict ?? false;
   const immutable = options?.immutable ?? true;
