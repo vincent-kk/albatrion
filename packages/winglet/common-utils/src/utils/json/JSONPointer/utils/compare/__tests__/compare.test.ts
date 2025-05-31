@@ -13,42 +13,42 @@ describe('compare', () => {
       expect(result).toEqual([]);
     });
 
-    it('should detect REPLACE operation for changed values', () => {
+    it('should detect REPLACE op for changed values', () => {
       const source = { name: 'John', age: 30 };
       const target = { name: 'John', age: 31 };
 
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REPLACE,
+          op: Operation.REPLACE,
           path: '/age',
           value: 31,
         },
       ]);
     });
 
-    it('should detect ADD operation for new properties', () => {
+    it('should detect ADD op for new properties', () => {
       const source = { name: 'John' };
       const target = { name: 'John', age: 30 };
 
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.ADD,
+          op: Operation.ADD,
           path: '/age',
           value: 30,
         },
       ]);
     });
 
-    it('should detect REMOVE operation for deleted properties', () => {
+    it('should detect REMOVE op for deleted properties', () => {
       const source = { name: 'John', age: 30 };
       const target = { name: 'John' };
 
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REMOVE,
+          op: Operation.REMOVE,
           path: '/age',
         },
       ]);
@@ -62,20 +62,20 @@ describe('compare', () => {
       expect(result).toEqual(
         expect.arrayContaining([
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/name',
             value: 'Jane',
           },
           {
-            operation: Operation.REMOVE,
+            op: Operation.REMOVE,
             path: '/age',
           },
           {
-            operation: Operation.REMOVE,
+            op: Operation.REMOVE,
             path: '/city',
           },
           {
-            operation: Operation.ADD,
+            op: Operation.ADD,
             path: '/country',
             value: 'USA',
           },
@@ -100,7 +100,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REPLACE,
+          op: Operation.REPLACE,
           path: '/1',
           value: 5,
         },
@@ -114,7 +114,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.ADD,
+          op: Operation.ADD,
           path: '/2',
           value: 3,
         },
@@ -128,7 +128,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REMOVE,
+          op: Operation.REMOVE,
           path: '/2',
         },
       ]);
@@ -160,16 +160,16 @@ describe('compare', () => {
       expect(result).toEqual(
         expect.arrayContaining([
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/user/details/age',
             value: 31,
           },
           {
-            operation: Operation.REMOVE,
+            op: Operation.REMOVE,
             path: '/user/details/city',
           },
           {
-            operation: Operation.ADD,
+            op: Operation.ADD,
             path: '/user/details/country',
             value: 'USA',
           },
@@ -195,17 +195,17 @@ describe('compare', () => {
       expect(result).toEqual(
         expect.arrayContaining([
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/items/0/name',
             value: 'Updated Item 1',
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/items/1/id',
             value: 3,
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/items/1/name',
             value: 'Item 3',
           },
@@ -227,12 +227,12 @@ describe('compare', () => {
       expect(result).toEqual(
         expect.arrayContaining([
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/0/1',
             value: 5,
           },
           {
-            operation: Operation.ADD,
+            op: Operation.ADD,
             path: '/1/2',
             value: 6,
           },
@@ -256,7 +256,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.ADD,
+          op: Operation.ADD,
           path: '/name',
           value: 'John',
         },
@@ -270,17 +270,17 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.ADD,
+          op: Operation.ADD,
           path: '/0',
           value: 1,
         },
         {
-          operation: Operation.ADD,
+          op: Operation.ADD,
           path: '/1',
           value: 2,
         },
         {
-          operation: Operation.ADD,
+          op: Operation.ADD,
           path: '/2',
           value: 3,
         },
@@ -294,7 +294,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REPLACE,
+          op: Operation.REPLACE,
           path: '/value',
           value: 'not null',
         },
@@ -308,7 +308,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REPLACE,
+          op: Operation.REPLACE,
           path: '/value',
           value: 'defined',
         },
@@ -322,7 +322,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REPLACE,
+          op: Operation.REPLACE,
           path: '/1',
           value: 2,
         },
@@ -346,7 +346,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REPLACE,
+          op: Operation.REPLACE,
           path: '',
           value: ['John'],
         },
@@ -360,7 +360,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REPLACE,
+          op: Operation.REPLACE,
           path: '',
           value: { name: 'John' },
         },
@@ -374,7 +374,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REPLACE,
+          op: Operation.REPLACE,
           path: '/data',
           value: 'simple string',
         },
@@ -394,7 +394,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REPLACE,
+          op: Operation.REPLACE,
           path: '/age',
           value: 31,
         },
@@ -416,7 +416,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REPLACE,
+          op: Operation.REPLACE,
           path: '/name',
           value: 'Jane',
         },
@@ -436,12 +436,12 @@ describe('compare', () => {
       expect(result).toEqual(
         expect.arrayContaining([
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/key~1with~1slash',
             value: 'newValue1',
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/key~0with~0tilde',
             value: 'newValue2',
           },
@@ -467,7 +467,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REPLACE,
+          op: Operation.REPLACE,
           path: '/key500',
           value: 9999,
         },
@@ -494,7 +494,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REPLACE,
+          op: Operation.REPLACE,
           path: '/nested/nested/nested/nested/nested/nested/nested/nested/nested/nested/value',
           value: 999,
         },
@@ -510,7 +510,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REPLACE,
+          op: Operation.REPLACE,
           path: '/value',
           value: 42,
         },
@@ -525,12 +525,12 @@ describe('compare', () => {
       expect(result).toEqual(
         expect.arrayContaining([
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/positive',
             value: 100,
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/negative',
             value: -100,
           },
@@ -557,12 +557,12 @@ describe('compare', () => {
       expect(result).toEqual(
         expect.arrayContaining([
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/active',
             value: false,
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/visible',
             value: true,
           },
@@ -578,17 +578,17 @@ describe('compare', () => {
       expect(result).toEqual(
         expect.arrayContaining([
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/value1',
             value: 'text',
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/value2',
             value: 1,
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/value3',
             value: true,
           },
@@ -606,27 +606,27 @@ describe('compare', () => {
       expect(result).toEqual(
         expect.arrayContaining([
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/0',
             value: 2,
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/1',
             value: 'updated',
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/2',
             value: false,
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/3',
             value: 'not null',
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/4',
             value: 'defined',
           },
@@ -648,22 +648,22 @@ describe('compare', () => {
       expect(result).toEqual(
         expect.arrayContaining([
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/0/name',
             value: 'Jane',
           },
           {
-            operation: Operation.ADD,
+            op: Operation.ADD,
             path: '/0/email',
             value: 'jane@example.com',
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/1/title',
             value: 'Updated Book',
           },
           {
-            operation: Operation.REMOVE,
+            op: Operation.REMOVE,
             path: '/1/price',
           },
         ]),
@@ -681,7 +681,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REPLACE,
+          op: Operation.REPLACE,
           path: '/callback',
           value: func2,
         },
@@ -739,32 +739,32 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: 'replace',
-          path: '/user/profile/personal/settings/theme',
-          value: 'light',
-        },
-        {
-          operation: 'add',
-          path: '/user/profile/personal/settings/language',
-          value: 'en',
-        },
-        {
-          operation: 'replace',
-          path: '/user/profile/personal/hobbies/1',
-          value: 'coding',
-        },
-        {
-          operation: 'add',
-          path: '/user/profile/personal/hobbies/2',
-          value: 'gaming',
-        },
-        {
-          operation: 'replace',
+          op: 'replace',
           path: '/user/profile/personal/age',
           value: 31,
         },
         {
-          operation: 'add',
+          op: 'replace',
+          path: '/user/profile/personal/hobbies/1',
+          value: 'coding',
+        },
+        {
+          op: 'add',
+          path: '/user/profile/personal/hobbies/2',
+          value: 'gaming',
+        },
+        {
+          op: 'replace',
+          path: '/user/profile/personal/settings/theme',
+          value: 'light',
+        },
+        {
+          op: 'add',
+          path: '/user/profile/personal/settings/language',
+          value: 'en',
+        },
+        {
+          op: 'add',
           path: '/user/profile/personal/social',
           value: {
             twitter: '@john',
@@ -804,46 +804,46 @@ describe('compare', () => {
       expect(result).toEqual(
         expect.arrayContaining([
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/items/0/content',
             value: 'Hello World',
           },
           {
-            operation: Operation.ADD,
+            op: Operation.ADD,
             path: '/items/0/timestamp',
             value: expect.any(Number),
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/items/1/type',
             value: 'video',
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/items/1/url',
             value: 'video.mp4',
           },
           {
-            operation: Operation.REMOVE,
+            op: Operation.REMOVE,
             path: '/items/1/alt',
           },
           {
-            operation: Operation.ADD,
+            op: Operation.ADD,
             path: '/items/1/duration',
             value: 120,
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/items/2/id',
             value: 4,
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/items/2/href',
             value: 'https://newsite.com',
           },
           {
-            operation: Operation.ADD,
+            op: Operation.ADD,
             path: '/items/2/title',
             value: 'New Site',
           },
@@ -896,22 +896,22 @@ describe('compare', () => {
       expect(result).toEqual(
         expect.arrayContaining([
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/data/users/0/name',
             value: 'John Doe',
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/data/users/0/email',
             value: 'john.doe@example.com',
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/data/users/1/active',
             value: true,
           },
           {
-            operation: Operation.ADD,
+            op: Operation.ADD,
             path: '/data/users/2',
             value: {
               id: 3,
@@ -921,17 +921,17 @@ describe('compare', () => {
             },
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/data/pagination/total',
             value: 3,
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/data/pagination/hasNext',
             value: true,
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/timestamp',
             value: '2023-01-01T00:05:00Z',
           },
@@ -975,37 +975,37 @@ describe('compare', () => {
       expect(result).toEqual(
         expect.arrayContaining([
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/formData/name',
             value: 'John Doe',
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/formData/email',
             value: 'john@example.com',
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/formData/preferences/newsletter',
             value: true,
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/formData/preferences/theme',
             value: 'dark',
           },
           {
-            operation: Operation.ADD,
+            op: Operation.ADD,
             path: '/formData/preferences/language',
             value: 'en',
           },
           {
-            operation: Operation.ADD,
+            op: Operation.ADD,
             path: '/formData/errors/email',
             value: 'Invalid email format',
           },
           {
-            operation: Operation.REPLACE,
+            op: Operation.REPLACE,
             path: '/isDirty',
             value: true,
           },
@@ -1022,7 +1022,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REPLACE,
+          op: Operation.REPLACE,
           path: '/bigNumber',
           value: BigInt('9007199254740992'),
         },
@@ -1049,7 +1049,7 @@ describe('compare', () => {
       const result = compare(source, target);
       expect(result).toEqual([
         {
-          operation: Operation.REPLACE,
+          op: Operation.REPLACE,
           path: '/symbol',
           value: symbol2,
         },
