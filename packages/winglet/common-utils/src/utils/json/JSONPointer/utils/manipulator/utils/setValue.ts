@@ -6,7 +6,7 @@ import { isArrayIndex } from '@/common-utils/utils/filter/isArrayIndex';
 import { unescapePointer } from '../../escape/unescapePointer';
 import { isForbiddenKey } from './isForbiddenKey';
 
-export const setValue = <Input extends Dictionary>(
+export const setValue = <Input extends Dictionary | Array<any>>(
   input: Input,
   segments: string[],
   value: any,

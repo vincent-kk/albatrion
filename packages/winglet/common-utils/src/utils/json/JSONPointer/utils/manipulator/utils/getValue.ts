@@ -2,7 +2,7 @@ import type { Dictionary } from '@aileron/declare';
 
 import { unescapePointer } from '../../escape/unescapePointer';
 
-export const getValue = <Input extends Dictionary>(
+export const getValue = <Input extends Dictionary | Array<any>>(
   input: Input,
   segments: string[],
 ): unknown => {

@@ -11,19 +11,19 @@ import { setValue } from './utils/setValue';
  * Function to set a value at a specific location in an object using JSON Pointer
  * Supports JSON Pointer according to RFC 6901 specification
  *
- * @template Input - Input object type
+ * @template Input - Input object type (Dictionary or Array)
  * @param input - Target object to set value in
  * @param pointer - JSON Pointer (string or string array)
  * @param value - Value to set
  * @returns Modified object
  * @throws {JSONPointerError} When input is invalid or pointer is invalid
  */
-export const setValueByPointer = <Input extends Dictionary>(
+export const setValueByPointer = <Input extends Dictionary | Array<any>>(
   input: Input,
   pointer: string | string[],
   value: any,
   overwrite: boolean = true,
-): Dictionary => {
+): Dictionary | Array<any> => {
   if (!(isPlainObject(input) || isArray(input)))
     throw new JSONPointerError(
       'INVALID_INPUT',
