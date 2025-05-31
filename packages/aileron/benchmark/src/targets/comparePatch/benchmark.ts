@@ -6,7 +6,6 @@ import { compare } from '@winglet/common-utils';
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 
 import { value1, value2 } from './data';
-import { compare as compareOrg } from './org';
 
 const values = [value1, value2, value2, { ...value2 }, { ...value2 }, value1];
 
@@ -28,15 +27,6 @@ const compareByJSONPointer = () => {
   }
 };
 
-let prev_org = value1;
-const compareWithOrg = () => {
-  for (const value of values) {
-    if (compareOrg(prev_org, value).length > 0) {
-      prev_org = value;
-    }
-  }
-};
-
 const suite = new Benchmark.Suite();
 
 export const run = () => {
@@ -44,7 +34,6 @@ export const run = () => {
     suite
       .add('compareByJSONPointer', compareByJSONPointer)
       .add('compareByJsonPath', compareByJsonPath)
-      .add('compareWithOrg', compareWithOrg)
       .on('cycle', function (event: Benchmark.Event) {
         console.log(String(event.target));
       })

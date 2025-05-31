@@ -1,8 +1,8 @@
 import { main } from './helpers/cli';
 import { run as runClone } from './targets/clone/benchmark';
 import { run as runCompare } from './targets/compare/benchmark';
-import { run as runCompareFetch } from './targets/compareFetch/benchmark';
 import { run as runCompareJsonSchemaErrors } from './targets/compareJsonSchemaErrors/benchmark';
+import { run as runComparePatch } from './targets/comparePatch/benchmark';
 import { run as runDeepMerge } from './targets/deepMerge/benchmark';
 import { run as runEscapePointer } from './targets/escapePointer/benchmark';
 import { run as runFind } from './targets/find/benchmark';
@@ -37,7 +37,7 @@ const benchmarks = {
   getter: runGetter,
   // fastest: 740379.96, slowest: 84011.72, speedRatio: 8.81:1, timeSaved: 88.65%
   compare: runCompare,
-  compareFetch: runCompareFetch,
+  comparePatch: runComparePatch,
   getObjectKeys: runGetObjectKeys,
   escapePointer: runEscapePointer,
 };
