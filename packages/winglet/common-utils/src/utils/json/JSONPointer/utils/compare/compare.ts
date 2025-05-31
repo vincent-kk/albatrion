@@ -23,11 +23,13 @@ import { compareRecursive } from './utils/compareRecursive';
  * @param source - The source object or array to compare from
  * @param target - The target object or array to compare to
  *
+ * @see https://datatracker.ietf.org/doc/html/rfc6902
+ *
  * @returns An array of Fetch operations representing the differences between source and target.
  *          Each operation contains:
  *          - `op`: The type of change (`add`, `remove`, `replace`, `move`, `copy`, `test`)
  *          - `path`: JSON Pointer path to the changed property
- *          - `value`: The new value (for `add` and `replace` operations)
+ *          - `value`: The new value (for `add`, `replace`, `test` operations)
  *
  * @example
  * ```typescript
@@ -58,8 +60,9 @@ export const compare = <
 >(
   source: Source,
   target: Target,
+  strict = false,
 ): Patch[] => {
   const patches: Patch[] = [];
-  compareRecursive(source, target, patches);
+  compareRecursive(source, target, patches, '', strict);
   return patches;
 };

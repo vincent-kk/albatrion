@@ -38,7 +38,8 @@ export const compareRecursive = <
   source: Source,
   target: Target,
   patches: Patch[],
-  path: string = '',
+  path: string,
+  strict: boolean,
 ) => {
   // @ts-expect-error: when target and source are same reference, it should return immediately
   if (target === source) return;
@@ -56,10 +57,27 @@ export const compareRecursive = <
   const sourceIsArray = isArray(source);
   const targetIsArray = isArray(target);
 
+  // Early type mismatch detection - handle at current level
+  if (sourceIsArray !== targetIsArray) {
+    if (strict) {
+      patches.push({
+        op: Operation.TEST,
+        path: path,
+        value: source,
+      });
+    }
+    patches.push({
+      op: Operation.REPLACE,
+      path: path,
+      value: target,
+    });
+    return; // Early exit - no further processing needed
+  }
+
   let hasRemoved = false;
 
-  // Reverse iteration to maintain BFS key order
-  for (let i = sourceKeys.length - 1; i >= 0; i--) {
+  // Process existing keys in source
+  for (let i = 0; i < sourceKeys.length; i++) {
     const key = sourceKeys[i];
     const sourceValue = source[key as keyof Source];
 
@@ -70,15 +88,23 @@ export const compareRecursive = <
       // Fast path: identical values
       if (sourceValue === targetValue) continue;
 
-      // Handle undefined values in non-array contexts
+      // Handle undefined values in non-array contexts (JSON standard compliance)
       if (
         targetValue === undefined &&
         sourceValue !== undefined &&
         !targetIsArray
       ) {
+        const targetPath = path + JSONPointer.Child + escapePointer(key);
+        if (strict) {
+          patches.push({
+            op: Operation.TEST,
+            path: targetPath,
+            value: cloneObject(sourceValue),
+          });
+        }
         patches.push({
           op: Operation.REMOVE,
-          path: path + JSONPointer.Child + escapePointer(key),
+          path: targetPath,
         });
         hasRemoved = true;
         continue;
@@ -94,33 +120,43 @@ export const compareRecursive = <
           targetValue,
           patches,
           path + JSONPointer.Child + escapePointer(key),
+          strict,
         );
       } else {
-        // Value replacement - most common case (no type checks needed)
+        // Value type change - replace the value
+        const targetPath = path + JSONPointer.Child + escapePointer(key);
+        if (strict) {
+          patches.push({
+            op: Operation.TEST,
+            path: targetPath,
+            value: cloneObject(sourceValue),
+          });
+        }
         patches.push({
           op: Operation.REPLACE,
-          path: path + JSONPointer.Child + escapePointer(key),
+          path: targetPath,
           value: cloneObject(targetValue),
         });
       }
-    } else if (sourceIsArray === targetIsArray) {
-      // Key removal for compatible types
+    } else {
+      // Key removal - exists in source but not in target
+      const targetPath = path + JSONPointer.Child + escapePointer(key);
+      if (strict) {
+        patches.push({
+          op: Operation.TEST,
+          path: targetPath,
+          value: cloneObject(sourceValue),
+        });
+      }
       patches.push({
         op: Operation.REMOVE,
-        path: path + JSONPointer.Child + escapePointer(key),
+        path: targetPath,
       });
       hasRemoved = true;
-    } else {
-      // Type mismatch - replace entire structure
-      patches.push({
-        op: Operation.REPLACE,
-        path: path,
-        value: target,
-      });
     }
   }
 
-  // Early exit optimization
+  // Early exit optimization - no additions needed
   if (!hasRemoved && targetKeys.length === sourceKeys.length) return;
 
   // Process additions (new keys in target)
