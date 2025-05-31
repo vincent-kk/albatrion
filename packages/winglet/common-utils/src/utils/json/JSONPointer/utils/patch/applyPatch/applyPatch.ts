@@ -71,7 +71,7 @@ import { applySinglePatch } from './applySinglePatch';
  * const result = applyPatch(source, patches, { strict: true, immutable: false });
  * ```
  */
-export const applyPatch = <Result extends Dictionary | Array<any>>(
+export const applyPatch = <Result extends Dictionary | Array<any> = any>(
   source: Dictionary | Array<any>,
   patches: Patch[],
   options?: ApplyPatchOptions,
