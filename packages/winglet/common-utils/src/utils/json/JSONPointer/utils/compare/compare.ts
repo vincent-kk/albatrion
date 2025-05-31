@@ -1,6 +1,6 @@
 import type { Dictionary } from '@aileron/declare';
 
-import type { Fetch } from './type';
+import type { Patch } from './type';
 import { compareRecursive } from './utils/compareRecursive';
 
 /**
@@ -25,9 +25,9 @@ import { compareRecursive } from './utils/compareRecursive';
  *
  * @returns An array of Fetch operations representing the differences between source and target.
  *          Each operation contains:
- *          - `operation`: The type of change (ADD, REMOVE, REPLACE)
+ *          - `op`: The type of change (`add`, `remove`, `replace`, `move`, `copy`, `test`)
  *          - `path`: JSON Pointer path to the changed property
- *          - `value`: The new value (for ADD and REPLACE operations)
+ *          - `value`: The new value (for `add` and `replace` operations)
  *
  * @example
  * ```typescript
@@ -37,9 +37,9 @@ import { compareRecursive } from './utils/compareRecursive';
  * const changes = compare(source, target);
  * // Returns:
  * // [
- * //   { operation: "REPLACE", path: "/age", value: 31 },
- * //   { operation: "REMOVE", path: "/city" },
- * //   { operation: "ADD", path: "/country", value: "USA" }
+ * //   { op: "replace", path: "/age", value: 31 },
+ * //   { op: "remove", path: "/city" },
+ * //   { op: "add", path: "/country", value: "USA" }
  * // ]
  * ```
  *
@@ -58,8 +58,8 @@ export const compare = <
 >(
   source: Source,
   target: Target,
-): Fetch[] => {
-  const fetches: Fetch[] = [];
-  compareRecursive(source, target, fetches);
-  return fetches;
+): Patch[] => {
+  const patches: Patch[] = [];
+  compareRecursive(source, target, patches);
+  return patches;
 };

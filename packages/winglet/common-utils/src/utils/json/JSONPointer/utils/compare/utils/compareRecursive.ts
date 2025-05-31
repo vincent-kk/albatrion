@@ -7,7 +7,7 @@ import { isObject } from '@/common-utils/utils/filter/isObject';
 
 import { JSONPointer } from '../../../enum';
 import { escapePointer } from '../../escape/escapePointer';
-import { type Fetch, Operation } from '../type';
+import { Operation, type Patch } from '../type';
 import { cloneObject } from './cloneObject';
 
 /**
@@ -37,7 +37,7 @@ export const compareRecursive = <
 >(
   source: Source,
   target: Target,
-  fetches: Fetch[],
+  patches: Patch[],
   path: string = '',
 ) => {
   // @ts-expect-error: when target and source are same reference, it should return immediately
@@ -76,8 +76,8 @@ export const compareRecursive = <
         sourceValue !== undefined &&
         !targetIsArray
       ) {
-        fetches.push({
-          operation: Operation.REMOVE,
+        patches.push({
+          op: Operation.REMOVE,
           path: path + JSONPointer.Child + escapePointer(key),
         });
         hasRemoved = true;
@@ -92,28 +92,28 @@ export const compareRecursive = <
         compareRecursive(
           sourceValue,
           targetValue,
-          fetches,
+          patches,
           path + JSONPointer.Child + escapePointer(key),
         );
       } else {
         // Value replacement - most common case (no type checks needed)
-        fetches.push({
-          operation: Operation.REPLACE,
+        patches.push({
+          op: Operation.REPLACE,
           path: path + JSONPointer.Child + escapePointer(key),
           value: cloneObject(targetValue),
         });
       }
     } else if (sourceIsArray === targetIsArray) {
       // Key removal for compatible types
-      fetches.push({
-        operation: Operation.REMOVE,
+      patches.push({
+        op: Operation.REMOVE,
         path: path + JSONPointer.Child + escapePointer(key),
       });
       hasRemoved = true;
     } else {
       // Type mismatch - replace entire structure
-      fetches.push({
-        operation: Operation.REPLACE,
+      patches.push({
+        op: Operation.REPLACE,
         path: path,
         value: target,
       });
@@ -131,8 +131,8 @@ export const compareRecursive = <
     // Skip if key exists in source or value is undefined
     if (hasOwnProperty(source, key) || targetValue === undefined) continue;
 
-    fetches.push({
-      operation: Operation.ADD,
+    patches.push({
+      op: Operation.ADD,
       path: path + JSONPointer.Child + escapePointer(key),
       value: cloneObject(targetValue),
     });
