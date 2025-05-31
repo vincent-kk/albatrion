@@ -1,28 +1,52 @@
 export const Operation = {
   ADD: 'add',
-  REMOVE: 'remove',
   REPLACE: 'replace',
+  REMOVE: 'remove',
+  MOVE: 'move',
+  COPY: 'copy',
+  TEST: 'test',
 } as const;
 
 export type Operation = (typeof Operation)[keyof typeof Operation];
 
-interface BaseFetch {
-  operation: Operation;
+interface BasePatch {
+  op: Operation;
   path: string;
 }
 
-export interface AddFetch<Value> extends BaseFetch {
-  operation: typeof Operation.ADD;
+export interface TestPatch<Value> extends BasePatch {
+  op: typeof Operation.TEST;
   value: Value;
 }
 
-export interface UpdateFetch<Value> extends BaseFetch {
-  operation: typeof Operation.REPLACE;
+export interface AddPatch<Value> extends BasePatch {
+  op: typeof Operation.ADD;
   value: Value;
 }
 
-export interface RemoveFetch extends BaseFetch {
-  operation: typeof Operation.REMOVE;
+export interface ReplacePatch<Value> extends BasePatch {
+  op: typeof Operation.REPLACE;
+  value: Value;
 }
 
-export type Fetch = AddFetch<any> | UpdateFetch<any> | RemoveFetch;
+export interface RemovePatch extends BasePatch {
+  op: typeof Operation.REMOVE;
+}
+
+export interface CopyPatch extends BasePatch {
+  op: typeof Operation.COPY;
+  from: string;
+}
+
+export interface MovePatch extends BasePatch {
+  op: typeof Operation.MOVE;
+  from: string;
+}
+
+export type Patch =
+  | TestPatch<any>
+  | AddPatch<any>
+  | ReplacePatch<any>
+  | RemovePatch
+  | MovePatch
+  | CopyPatch;
