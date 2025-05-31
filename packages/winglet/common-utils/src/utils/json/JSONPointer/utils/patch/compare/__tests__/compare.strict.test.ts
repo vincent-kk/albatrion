@@ -9,7 +9,7 @@ describe('compare - strict mode', () => {
       const source = { name: 'John', age: 30 };
       const target = { name: 'John', age: 31 };
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
       expect(result).toEqual([
         {
           op: Operation.TEST,
@@ -28,7 +28,7 @@ describe('compare - strict mode', () => {
       const source = { name: 'John', age: 30 };
       const target = { name: 'John' };
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
       expect(result).toEqual([
         {
           op: Operation.TEST,
@@ -46,7 +46,7 @@ describe('compare - strict mode', () => {
       const source = { name: 'John' };
       const target = { name: 'John', age: 30 };
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
       expect(result).toEqual([
         {
           op: Operation.ADD,
@@ -60,7 +60,7 @@ describe('compare - strict mode', () => {
       const source = { name: 'John', age: 30 };
       const target = { name: 'John', age: 31 };
 
-      const result = compare(source, target, false);
+      const result = compare(source, target, { strict: false });
       expect(result).toEqual([
         {
           op: Operation.REPLACE,
@@ -76,7 +76,7 @@ describe('compare - strict mode', () => {
       const source = { name: 'John', age: 30, city: 'NYC' };
       const target = { name: 'Jane', country: 'USA' };
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
 
       // 정확한 연산 순서와 값 검증 (객체 정의 순서와 일치)
       expect(result).toEqual([
@@ -96,7 +96,7 @@ describe('compare - strict mode', () => {
       const source = [1, 2, 3];
       const target = [1, 5, 3];
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
       expect(result).toEqual([
         {
           op: Operation.TEST,
@@ -115,7 +115,7 @@ describe('compare - strict mode', () => {
       const source = [1, 2, 3];
       const target = [1, 2];
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
       expect(result).toEqual([
         {
           op: Operation.TEST,
@@ -133,7 +133,7 @@ describe('compare - strict mode', () => {
       const source = [1, 2];
       const target = [1, 2, 3];
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
       expect(result).toEqual([
         {
           op: Operation.ADD,
@@ -165,7 +165,7 @@ describe('compare - strict mode', () => {
         },
       };
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
 
       // 정확한 연산 순서와 값 검증 (객체 정의 순서와 일치)
       expect(result).toEqual([
@@ -191,7 +191,7 @@ describe('compare - strict mode', () => {
         ],
       };
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
 
       // 정확한 연산 순서와 값 검증 (객체 정의 순서와 일치)
       expect(result).toEqual([
@@ -214,7 +214,7 @@ describe('compare - strict mode', () => {
       const source = { data: [1, 2, 3] };
       const target = { data: { count: 3 } };
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
 
       // 개선된 로직: 깔끔한 Type mismatch 처리
       expect(result).toEqual([
@@ -227,7 +227,7 @@ describe('compare - strict mode', () => {
       const source = [1, 2, 3];
       const target = { count: 3 };
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
 
       // 개선된 로직: 깔끔한 전체 구조 교체
       expect(result).toEqual([
@@ -254,7 +254,7 @@ describe('compare - strict mode', () => {
         },
       };
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
       expect(result).toEqual([
         {
           op: Operation.TEST,
@@ -275,7 +275,7 @@ describe('compare - strict mode', () => {
       const source = { name: 'John', age: undefined };
       const target = { name: 'John' };
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
       expect(result).toEqual([
         {
           op: Operation.TEST,
@@ -293,7 +293,7 @@ describe('compare - strict mode', () => {
       const source = { name: 'John', data: null };
       const target = { name: 'John', data: 'value' };
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
       expect(result).toEqual([
         {
           op: Operation.TEST,
@@ -312,7 +312,7 @@ describe('compare - strict mode', () => {
       const source = { name: 'John', age: 30 };
       const target = { name: 'John', age: 30 };
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
       expect(result).toEqual([]);
     });
 
@@ -333,7 +333,7 @@ describe('compare - strict mode', () => {
         settings: { theme: 'dark' },
       };
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
 
       // 명확한 기대값 정의 (객체 정의 순서에 맞춤)
       const expectedOperations = [
@@ -377,7 +377,7 @@ describe('compare - strict mode', () => {
         // missingValue is missing (becomes undefined)
       };
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
 
       // 실제 구현 동작에 맞춘 기대값
       expect(result).toEqual([
@@ -418,7 +418,7 @@ describe('compare - strict mode', () => {
       const source = { a: 1, b: 2, c: 3 };
       const target = { a: 10, b: 2, d: 4 };
 
-      const result = compare(source, target, true);
+      const result = compare(source, target, { strict: true });
 
       // 정확한 연산 순서와 값 검증 (객체 정의 순서와 일치)
       expect(result).toEqual([
@@ -447,7 +447,7 @@ describe('compare - strict mode', () => {
           },
         };
 
-        const result = compare(source, target, true);
+        const result = compare(source, target, { strict: true });
 
         expect(result).toEqual([
           { op: Operation.TEST, path: '/user/data', value: [1, 2, 3] },
@@ -473,7 +473,7 @@ describe('compare - strict mode', () => {
           },
         };
 
-        const result = compare(source, target, true);
+        const result = compare(source, target, { strict: true });
 
         expect(result).toEqual([
           {
@@ -515,7 +515,7 @@ describe('compare - strict mode', () => {
           system: { version: '1.0' },
         };
 
-        const result = compare(source, target, true);
+        const result = compare(source, target, { strict: true });
 
         expect(result).toEqual([
           { op: Operation.TEST, path: '/user/profile/age', value: 30 },
@@ -539,7 +539,7 @@ describe('compare - strict mode', () => {
           'stringValue',
         ];
 
-        const result = compare(source, target, true);
+        const result = compare(source, target, { strict: true });
 
         expect(result).toEqual([
           { op: Operation.TEST, path: '/1', value: [1, 2, 3] },
@@ -556,7 +556,7 @@ describe('compare - strict mode', () => {
           null,
         ];
 
-        const result = compare(source, target, true);
+        const result = compare(source, target, { strict: true });
 
         expect(result).toEqual([
           { op: Operation.TEST, path: '/0', value: { type: 'object' } },
@@ -577,7 +577,7 @@ describe('compare - strict mode', () => {
           'newItem', // array size increased
         ];
 
-        const result = compare(source, target, true);
+        const result = compare(source, target, { strict: true });
 
         expect(result).toEqual([
           { op: Operation.TEST, path: '/1', value: [1, 2, 3] },
@@ -598,7 +598,7 @@ describe('compare - strict mode', () => {
           list: [1, 2, 3],
         };
 
-        const result = compare(source, target, true);
+        const result = compare(source, target, { strict: true });
 
         expect(result).toEqual([
           { op: Operation.TEST, path: '/data', value: null },
@@ -622,7 +622,7 @@ describe('compare - strict mode', () => {
           arrayData: null,
         };
 
-        const result = compare(source, target, true);
+        const result = compare(source, target, { strict: true });
 
         expect(result).toEqual([
           {
@@ -646,7 +646,7 @@ describe('compare - strict mode', () => {
         const source = { data: {} };
         const target = { data: { name: 'John', age: 30 } };
 
-        const result = compare(source, target, true);
+        const result = compare(source, target, { strict: true });
 
         // ADD 연산 전에는 TEST 연산이 없는 것이 정상입니다
         expect(result).toEqual([
@@ -659,7 +659,7 @@ describe('compare - strict mode', () => {
         const source = { list: [] };
         const target = { list: [1, 2, 3] };
 
-        const result = compare(source, target, true);
+        const result = compare(source, target, { strict: true });
 
         // ADD 연산 전에는 TEST 연산이 없는 것이 정상입니다
         expect(result).toEqual([
@@ -681,7 +681,7 @@ describe('compare - strict mode', () => {
           emptyStr: null, // '' → null
         };
 
-        const result = compare(source, target, true);
+        const result = compare(source, target, { strict: true });
 
         expect(result).toEqual([
           { op: Operation.TEST, path: '/emptyObj', value: {} },
@@ -723,7 +723,7 @@ describe('compare - strict mode', () => {
           },
         };
 
-        const result = compare(source, target, true);
+        const result = compare(source, target, { strict: true });
 
         expect(result).toEqual([
           {
@@ -749,7 +749,7 @@ describe('compare - strict mode', () => {
           'key~with~tildes': ['item1', 'item2'],
         };
 
-        const result = compare(source, target, true);
+        const result = compare(source, target, { strict: true });
 
         // JSON Pointer escaping: '/' becomes '~1', '~' becomes '~0'
         expect(result).toEqual([
@@ -791,7 +791,7 @@ describe('compare - strict mode', () => {
         const source = { largeObj: sourceObj };
         const target = { largeObj: targetObj };
 
-        const result = compare(source, target, true);
+        const result = compare(source, target, { strict: true });
 
         // Should only have operations for the mismatched property
         expect(result).toEqual([
@@ -818,7 +818,7 @@ describe('compare - strict mode', () => {
         const source = { largeArray: sourceArray };
         const target = { largeArray: targetArray };
 
-        const result = compare(source, target, true);
+        const result = compare(source, target, { strict: true });
 
         expect(result).toEqual([
           { op: Operation.TEST, path: '/largeArray/50', value: 50 },
