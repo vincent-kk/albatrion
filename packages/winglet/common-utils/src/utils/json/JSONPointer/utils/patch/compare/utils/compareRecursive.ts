@@ -4,10 +4,10 @@ import { getKeys } from '@/common-utils/libs/getKeys';
 import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isObject } from '@/common-utils/utils/filter/isObject';
+import { JSONPointer } from '@/common-utils/utils/json/JSONPointer/enum';
+import { escapePointer } from '@/common-utils/utils/json/JSONPointer/utils/escape/escapePointer';
 
-import { JSONPointer } from '../../../enum';
-import { escapePointer } from '../../escape/escapePointer';
-import { Operation, type Patch } from '../type';
+import { Operation, type Patch } from '../../type';
 import { cloneObject } from './cloneObject';
 
 /**

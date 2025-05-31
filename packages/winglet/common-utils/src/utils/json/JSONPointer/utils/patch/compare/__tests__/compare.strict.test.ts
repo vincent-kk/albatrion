@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { Operation } from '../../type';
 import { compare } from '../compare';
-import { Operation } from '../type';
 
 describe('compare - strict mode', () => {
   describe('Basic Operations with TEST', () => {

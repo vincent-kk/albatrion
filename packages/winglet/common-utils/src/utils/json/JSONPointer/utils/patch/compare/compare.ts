@@ -1,6 +1,6 @@
 import type { Dictionary } from '@aileron/declare';
 
-import type { Patch } from './type';
+import type { Patch } from '../type';
 import { compareRecursive } from './utils/compareRecursive';
 
 /**
