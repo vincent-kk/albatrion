@@ -27,12 +27,22 @@ const compareByJSONPointer = () => {
   }
 };
 
+let prev3 = value1;
+const compareByJSONPointerFast = () => {
+  for (const value of values) {
+    if (compare(prev3, value, { immutable: false }).length > 0) {
+      prev3 = value;
+    }
+  }
+};
+
 const suite = new Benchmark.Suite();
 
 export const run = () => {
   return new Promise<Ratio>((resolve) => {
     suite
       .add('compareByJSONPointer', compareByJSONPointer)
+      .add('compareByJSONPointerFast', compareByJSONPointerFast)
       .add('compareByJsonPath', compareByJsonPath)
       .on('cycle', function (event: Benchmark.Event) {
         console.log(String(event.target));
