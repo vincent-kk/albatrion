@@ -8,7 +8,7 @@ import { JSONPointer } from '@/common-utils/utils/json/JSONPointer/enum';
 import { escapePointer } from '@/common-utils/utils/json/JSONPointer/utils/escape/escapePointer';
 
 import { Operation, type Patch } from '../../type';
-import { cloneObject } from './cloneObject';
+import { processValue } from './processValue';
 
 /**
  * Recursively compares two objects/arrays and populates the fetches array with difference operations.
@@ -28,6 +28,8 @@ import { cloneObject } from './cloneObject';
  * @param target - The target object or array being compared
  * @param fetches - The array to populate with difference operations (modified in-place)
  * @param path - The current JSON Pointer path (default: '') used for nested property paths
+ * @param strict - Whether to use strict comparison
+ * @param immutable - Whether to use immutable comparison
  *
  * @internal This function is for internal use by the compare function
  */
@@ -40,6 +42,7 @@ export const compareRecursive = <
   patches: Patch[],
   path: string,
   strict: boolean,
+  immutable: boolean,
 ) => {
   // @ts-expect-error: when target and source are same reference, it should return immediately
   if (target === source) return;
@@ -99,7 +102,7 @@ export const compareRecursive = <
           patches.push({
             op: Operation.TEST,
             path: targetPath,
-            value: cloneObject(sourceValue),
+            value: processValue(sourceValue, immutable),
           });
         }
         patches.push({
@@ -121,6 +124,7 @@ export const compareRecursive = <
           patches,
           path + JSONPointer.Child + escapePointer(key),
           strict,
+          immutable,
         );
       } else {
         // Value type change - replace the value
@@ -129,13 +133,13 @@ export const compareRecursive = <
           patches.push({
             op: Operation.TEST,
             path: targetPath,
-            value: cloneObject(sourceValue),
+            value: processValue(sourceValue, immutable),
           });
         }
         patches.push({
           op: Operation.REPLACE,
           path: targetPath,
-          value: cloneObject(targetValue),
+          value: processValue(targetValue, immutable),
         });
       }
     } else {
@@ -145,7 +149,7 @@ export const compareRecursive = <
         patches.push({
           op: Operation.TEST,
           path: targetPath,
-          value: cloneObject(sourceValue),
+          value: processValue(sourceValue, immutable),
         });
       }
       patches.push({
@@ -170,7 +174,7 @@ export const compareRecursive = <
     patches.push({
       op: Operation.ADD,
       path: path + JSONPointer.Child + escapePointer(key),
-      value: cloneObject(targetValue),
+      value: processValue(targetValue, immutable),
     });
   }
 };

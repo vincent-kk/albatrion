@@ -1,6 +1,6 @@
 import type { Dictionary } from '@aileron/declare';
 
-import type { Patch } from '../type';
+import type { Options, Patch } from '../type';
 import { compareRecursive } from './utils/compareRecursive';
 
 /**
@@ -22,6 +22,8 @@ import { compareRecursive } from './utils/compareRecursive';
  *
  * @param source - The source object or array to compare from
  * @param target - The target object or array to compare to
+ * @param options.strict - Whether to use strict comparison (default: false)
+ * @param options.immutable - Whether to use immutable comparison (default: true)
  *
  * @see https://datatracker.ietf.org/doc/html/rfc6902
  *
@@ -60,9 +62,12 @@ export const compare = <
 >(
   source: Source,
   target: Target,
-  strict = false,
+  options?: Options,
 ): Patch[] => {
+  const strict = options?.strict ?? false;
+  const immutable = options?.immutable ?? true;
+
   const patches: Patch[] = [];
-  compareRecursive(source, target, patches, '', strict);
+  compareRecursive(source, target, patches, '', strict, immutable);
   return patches;
 };

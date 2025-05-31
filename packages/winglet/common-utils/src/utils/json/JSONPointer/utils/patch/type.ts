@@ -50,3 +50,8 @@ export type Patch =
   | RemovePatch
   | MovePatch
   | CopyPatch;
+
+export type Options = {
+  strict?: boolean;
+  immutable?: boolean;
+};
