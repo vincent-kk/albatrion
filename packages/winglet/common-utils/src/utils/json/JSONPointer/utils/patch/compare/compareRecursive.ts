@@ -7,8 +7,8 @@ import { isObject } from '@/common-utils/utils/filter/isObject';
 import { JSONPointer } from '@/common-utils/utils/json/JSONPointer/enum';
 import { escapePointer } from '@/common-utils/utils/json/JSONPointer/utils/escape/escapePointer';
 
-import { Operation, type Patch } from '../../type';
-import { processValue } from './processValue';
+import { Operation, type Patch } from '../type';
+import { processValue } from './utils/processValue';
 
 /**
  * Recursively compares two objects/arrays and populates the fetches array with difference operations.

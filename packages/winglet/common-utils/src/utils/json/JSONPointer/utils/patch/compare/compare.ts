@@ -1,7 +1,7 @@
 import type { Dictionary } from '@aileron/declare';
 
 import type { CompareOptions, Patch } from '../type';
-import { compareRecursive } from './utils/compareRecursive';
+import { compareRecursive } from './compareRecursive';
 
 /**
  * Compares two JSON objects or arrays and returns an array of operations representing the differences.
