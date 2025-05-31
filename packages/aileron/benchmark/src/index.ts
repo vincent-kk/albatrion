@@ -1,4 +1,5 @@
 import { main } from './helpers/cli';
+import { run as runApplyPatch } from './targets/applyPatch/benchmark';
 import { run as runClone } from './targets/clone/benchmark';
 import { run as runCompare } from './targets/compare/benchmark';
 import { run as runCompareJsonSchemaErrors } from './targets/compareJsonSchemaErrors/benchmark';
@@ -40,6 +41,7 @@ const benchmarks = {
   comparePatch: runComparePatch,
   getObjectKeys: runGetObjectKeys,
   escapePointer: runEscapePointer,
+  applyPatch: runApplyPatch,
 };
 
 main(benchmarks).catch((error) => {
