@@ -1,6 +1,5 @@
 export { clone } from './clone';
 export { equals } from './equals';
-export { getJSONPointer } from './getJSONPointer';
 export { getObjectKeys } from './getObjectKeys';
 export { getSymbols } from './getSymbols';
 export { hasUndefined } from './hasUndefined';

@@ -32,6 +32,7 @@ Each package provides individual `README.md` documentation with detailed usage i
 ### `winglet`
 
 - **[`@winglet/common-utils`](./packages/winglet/common-utils/README.md)** - JavaScript utilities
+- **[`@winglet/json`](./packages/winglet/json/README.md)** - JSON utilities
 - **[`@winglet/json-schema`](./packages/winglet/json-schema/README.md)** - JSON Schema utilities
 - **[`@winglet/react-utils`](./packages/winglet/react-utils/README.md)** - React utilities
 

@@ -32,6 +32,7 @@
 ### `winglet`
 
 - **[`@winglet/common-utils`](./packages/winglet/common-utils/README-ko_kr.md)** - JavaScript 유틸리티
+- **[`@winglet/json`](./packages/winglet/json/README-ko_kr.md)** - JSON 유틸리티
 - **[`@winglet/json-schema`](./packages/winglet/json-schema/README-ko_kr.md)** - JSON Schema 유틸리티
 - **[`@winglet/react-utils`](./packages/winglet/react-utils/README-ko_kr.md)** - React 유틸리티
 

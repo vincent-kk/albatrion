@@ -1,0 +1,1 @@
+export { getJSONPointer } from './getJSONPointer';

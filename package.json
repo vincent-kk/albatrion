@@ -22,6 +22,7 @@
     "developmentHelper": "yarn workspace @aileron/development-helper",
     "documents": "yarn workspace @albatrion/documents",
     "jsonSchema": "yarn workspace @winglet/json-schema",
+    "json": "yarn workspace @winglet/json",
     "login:npm": "yarn npm login --publish",
     "major:all": "yarn workspaces foreach --all --topological --no-private run version:major",
     "minor:all": "yarn workspaces foreach --all --topological --no-private run version:minor",

@@ -5,7 +5,6 @@ export * from './DataLoader';
 export * from './filter';
 export * from './function';
 export * from './hash';
-export * from './json';
 export * from './object';
 export * from './promise';
 export * from './scheduler';
