@@ -1,3 +1,10 @@
-const FORBIDDEN_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
+import {
+  CONSTRUCTOR_KEY,
+  PROTOTYPE_ASSESS_KEY,
+  PROTOTYPE_KEY,
+} from '@/common-utils/utils/json/JSONPointer/constants/prototypeKey';
 
-export const isForbiddenKey = (key: string): boolean => FORBIDDEN_KEYS.has(key);
+export const isForbiddenKey = (key: string): boolean =>
+  key === PROTOTYPE_KEY ||
+  key === CONSTRUCTOR_KEY ||
+  key === PROTOTYPE_ASSESS_KEY;

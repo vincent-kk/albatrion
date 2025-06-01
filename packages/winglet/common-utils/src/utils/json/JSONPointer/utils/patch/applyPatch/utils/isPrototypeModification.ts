@@ -1,3 +1,9 @@
+import {
+  CONSTRUCTOR_KEY,
+  PROTOTYPE_ASSESS_KEY,
+  PROTOTYPE_KEY,
+} from '@/common-utils/utils/json/JSONPointer/constants/prototypeKey';
+
 /**
  * Detects potential prototype pollution attempts in JSON Patch paths.
  * Checks for dangerous property names like "__proto__" and "constructor.prototype".
@@ -13,5 +19,5 @@ export const isPrototypeModification = (
   keys: string[],
   index: number,
 ): boolean =>
-  key === '__proto__' ||
-  (key === 'prototype' && index > 0 && keys[index - 1] === 'constructor');
+  key === PROTOTYPE_ASSESS_KEY ||
+  (key === PROTOTYPE_KEY && index > 0 && keys[index - 1] === CONSTRUCTOR_KEY);
