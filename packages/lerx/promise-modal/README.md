@@ -47,12 +47,6 @@ If you're using a JavaScript environment that doesn't support ES2022, you'll nee
 **For legacy environment support:**
 Please use a transpiler like Babel to transform the code for your target environment.
 
-**Target packages**
-
-- `@lerx/promise-modal`
-- `@winglet/common-utils`
-- `@winglet/react-utils`
-
 ---
 
 ## How to Use

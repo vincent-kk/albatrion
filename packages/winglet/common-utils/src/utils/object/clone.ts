@@ -116,6 +116,7 @@ const replicate = <Type>(value: Type, cache = new Map<object, any>()): Type => {
     result.message = value.message;
     result.name = value.name;
     result.stack = value.stack;
+    // @ts-expect-error: The `cause` property is only available in ECMAScript 2022 (ES2022)
     if ('cause' in value) result.cause = replicate(value.cause, cache);
     replicateProperties(result, value, cache);
     return result as Type;

@@ -18,20 +18,20 @@ interface ExecutionContext<F extends Fn<any[]>> {
  */
 export class FunctionContext<F extends Fn<any[]>> {
   /** Function execution context */
-  #context: ExecutionContext<F>;
+  private __context__: ExecutionContext<F>;
   /** Timer ID */
-  #timer: ReturnType<typeof setTimeout> | null = null;
+  private __timer__: ReturnType<typeof setTimeout> | null = null;
   /** Function to manage */
-  #function: F;
+  private __function__: F;
   /** Execution delay time in milliseconds */
-  #delay: number;
+  private __delay__: number;
 
   /**
    * Whether there is no timer currently waiting for execution
    * @returns true if there is no timer, false if there is
    */
-  get isIdle() {
-    return this.#timer === null;
+  public get isIdle() {
+    return this.__timer__ === null;
   }
 
   /**
@@ -40,9 +40,9 @@ export class FunctionContext<F extends Fn<any[]>> {
    * @param ms - Execution delay time in milliseconds
    */
   constructor(fn: F, ms: number) {
-    this.#function = fn;
-    this.#delay = ms;
-    this.#context = {
+    this.__function__ = fn;
+    this.__delay__ = ms;
+    this.__context__ = {
       self: undefined,
       args: null,
     };
@@ -51,9 +51,9 @@ export class FunctionContext<F extends Fn<any[]>> {
   /**
    * Initialize timer and context
    */
-  clear() {
-    this.#clearTimer();
-    this.#clearContext();
+  public clear() {
+    this.__clearTimer__();
+    this.__clearContext__();
   }
 
   /**
@@ -61,58 +61,58 @@ export class FunctionContext<F extends Fn<any[]>> {
    * @param self - The 'this' context to be used when executing the function
    * @param args - Arguments to pass when calling the function
    */
-  setArguments(self: any, args: Parameters<F>) {
-    this.#context.self = self;
-    this.#context.args = args;
+  public setArguments(self: any, args: Parameters<F>) {
+    this.__context__.self = self;
+    this.__context__.args = args;
   }
 
   /**
    * Execute function with current context
    */
-  execute() {
-    if (this.#context.args === null) return;
-    this.#function.apply(this.#context.self, this.#context.args);
-    this.#clearContext();
+  public execute() {
+    if (this.__context__.args === null) return;
+    this.__function__.apply(this.__context__.self, this.__context__.args);
+    this.__clearContext__();
   }
 
   /**
    * Schedule function execution after specified time
    * @param execute - Whether to execute function when timer completes
    */
-  schedule(execute?: boolean) {
-    if (this.#timer !== null) clearTimeout(this.#timer);
+  public schedule(execute?: boolean) {
+    if (this.__timer__ !== null) clearTimeout(this.__timer__);
     const timer = setTimeout(() => {
-      this.#timer = null;
+      this.__timer__ = null;
       if (execute) this.execute();
       this.clear();
-    }, this.#delay);
-    this.#timer = timer;
+    }, this.__delay__);
+    this.__timer__ = timer;
   }
 
   /**
    * Cancel timer and execute function immediately
    */
-  manualExecute() {
+  public manualExecute() {
     this.execute();
-    this.#clearTimer();
+    this.__clearTimer__();
   }
 
   /**
    * Initialize function execution context
    * @private
    */
-  #clearContext() {
-    this.#context.self = undefined;
-    this.#context.args = null;
+  private __clearContext__() {
+    this.__context__.self = undefined;
+    this.__context__.args = null;
   }
 
   /**
    * Cancel and initialize timer
    * @private
    */
-  #clearTimer() {
-    if (this.#timer === null) return;
-    clearTimeout(this.#timer);
-    this.#timer = null;
+  private __clearTimer__() {
+    if (this.__timer__ === null) return;
+    clearTimeout(this.__timer__);
+    this.__timer__ = null;
   }
 }

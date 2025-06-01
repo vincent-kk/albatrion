@@ -6,12 +6,7 @@ export default defineConfig({
     target: 'es2022',
   },
   optimizeDeps: {
-    include: [
-      '@canard/schema-form',
-      '@winglet/common-utils',
-      '@winglet/json-schema',
-      '@winglet/react-utils',
-    ],
+    include: ['@canard/schema-form', '@winglet/json-schema'],
     esbuildOptions: {
       target: 'es2022',
     },

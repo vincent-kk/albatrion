@@ -5,7 +5,7 @@ import { BaseError, type ErrorDetails } from './BaseError';
  * Can be triggered by AbortController or manual cancellation
  */
 export class AbortError extends BaseError {
-  static readonly #group = 'ABORT';
+  static readonly __group__ = 'ABORT';
   /**
    * AbortError constructor
    * @param code - Specific error code
@@ -13,7 +13,7 @@ export class AbortError extends BaseError {
    * @param details - Additional error information
    */
   constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super(AbortError.#group, code, message, details);
+    super(AbortError.__group__, code, message, details);
     this.name = 'Abort';
   }
 }

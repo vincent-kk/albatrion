@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { BaseError } from '../BaseError';
 
 class TestError extends BaseError {
-  static readonly #group = 'TEST';
+  static readonly __group__ = 'TEST';
   constructor(code: string, message: string, details = {}) {
-    super(TestError.#group, code, message, details);
+    super(TestError.__group__, code, message, details);
     this.name = 'TestError';
   }
 }

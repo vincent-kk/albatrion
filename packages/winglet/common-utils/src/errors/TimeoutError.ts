@@ -5,7 +5,7 @@ import { BaseError, type ErrorDetails } from './BaseError';
  * Used for asynchronous operations with time limits
  */
 export class TimeoutError extends BaseError {
-  static readonly #group = 'TIMEOUT';
+  static readonly __group__ = 'TIMEOUT';
   /**
    * TimeoutError constructor
    * @param code - Specific error code
@@ -13,7 +13,7 @@ export class TimeoutError extends BaseError {
    * @param details - Additional error information
    */
   constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super(TimeoutError.#group, code, message, details);
+    super(TimeoutError.__group__, code, message, details);
     this.name = 'Timeout';
   }
 }

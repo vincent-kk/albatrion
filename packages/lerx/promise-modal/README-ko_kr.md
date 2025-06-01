@@ -47,12 +47,6 @@ ES2022보다 낮은 버전의 JavaScript 환경에서 사용하시는 경우, �
 **레거시 환경 지원이 필요한 경우:**
 Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환해주세요.
 
-**대상 패키지**
-
-- `@lerx/promise-modal`
-- `@winglet/common-utils`
-- `@winglet/react-utils`
-
 ---
 
 ## 사용 방법

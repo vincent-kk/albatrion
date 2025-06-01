@@ -1,4 +1,5 @@
-import { isArray, isPlainObject } from '@/common-utils/utils/filter';
+import { isArray } from '@/common-utils/utils/filter/isArray';
+import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
 
 /**
  * Deeply merges two objects.

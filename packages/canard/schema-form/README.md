@@ -43,9 +43,7 @@ Please use a transpiler like Babel to transform the code for your target environ
 **Target packages**
 
 - `@canard/schema-form`
-- `@winglet/common-utils`
 - `@winglet/json-schema`
-- `@winglet/react-utils`
 
 ---
 

@@ -6,12 +6,7 @@ export default defineConfig({
     target: 'es2022',
   },
   optimizeDeps: {
-    include: [
-      '@lerx/promise-modal',
-      '@winglet/common-utils',
-      '@winglet/json-schema',
-      '@winglet/react-utils',
-    ],
+    include: ['@lerx/promise-modal'],
     esbuildOptions: {
       target: 'es2022',
     },

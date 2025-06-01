@@ -5,7 +5,7 @@ import { BaseError, type ErrorDetails } from './BaseError';
  * Can occur during type validation or conversion processes
  */
 export class InvalidTypeError extends BaseError {
-  static readonly #group = 'INVALID_TYPE';
+  static readonly __group__ = 'INVALID_TYPE';
   /**
    * InvalidTypeError constructor
    * @param code - Specific error code
@@ -13,7 +13,7 @@ export class InvalidTypeError extends BaseError {
    * @param details - Additional error information
    */
   constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super(InvalidTypeError.#group, code, message, details);
+    super(InvalidTypeError.__group__, code, message, details);
     this.name = 'InvalidType';
   }
 }
