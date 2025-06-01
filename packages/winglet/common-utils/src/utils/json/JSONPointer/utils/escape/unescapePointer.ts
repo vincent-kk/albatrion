@@ -1,4 +1,4 @@
-import { CHILD, TILDE } from './constant';
+import { CHILD, ESCAPE_CHILD, ESCAPE_TILDE, TILDE } from './constant';
 
 const ESCAPE_PATTERN = /~[01]/g;
 
@@ -8,7 +8,7 @@ export const unescapePointer = (path: string) => {
 };
 
 const replaceEscape = (segment: string) => {
-  if (segment === '~0') return TILDE;
-  if (segment === '~1') return CHILD;
+  if (segment === ESCAPE_TILDE) return TILDE;
+  if (segment === ESCAPE_CHILD) return CHILD;
   return segment;
 };
