@@ -2,8 +2,9 @@ import { clone } from '@winglet/common-utils';
 
 import type { JsonRoot } from '@/json/type';
 
-import type { ApplyPatchOptions, Patch } from '../type';
+import type { Patch } from '../type';
 import { applySinglePatch } from './applySinglePatch';
+import type { ApplyPatchOptions } from './type';
 
 /**
  * Applies an array of JSON Patch operations to a source object or array.

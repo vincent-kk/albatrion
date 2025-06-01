@@ -1,7 +1,8 @@
 import type { JsonRoot } from '@/json/type';
 
-import type { CompareOptions, Patch } from '../type';
+import type { Patch } from '../type';
 import { compareRecursive } from './compareRecursive';
+import type { CompareOptions } from './type';
 
 /**
  * Compares two JSON objects or arrays and returns an array of operations representing the differences.
