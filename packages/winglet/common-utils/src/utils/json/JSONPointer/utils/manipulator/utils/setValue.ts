@@ -6,6 +6,8 @@ import { isArrayIndex } from '@/common-utils/utils/filter/isArrayIndex';
 import { unescapePointer } from '../../escape/unescapePointer';
 import { isForbiddenKey } from './isForbiddenKey';
 
+const ADD_ITEM_ALIAS = '-';
+
 export const setValue = <Input extends Dictionary | Array<any>>(
   input: Input,
   segments: string[],
@@ -22,11 +24,12 @@ export const setValue = <Input extends Dictionary | Array<any>>(
     if (isForbiddenKey(part)) return input;
     const isLastSegment = index === length;
     if (cursor[part] === undefined && !isLastSegment) {
-      if (isArrayIndex(segments[index]) || segments[index] === '-')
+      if (isArrayIndex(segments[index]) || segments[index] === ADD_ITEM_ALIAS)
         cursor[part] = [];
       else cursor[part] = {};
     }
-    if (isArray(cursor) && part === '-') part = cursor.length.toString();
+    if (isArray(cursor) && part === ADD_ITEM_ALIAS)
+      part = cursor.length.toString();
     if (isLastSegment) break;
     cursor = cursor[part];
   }
