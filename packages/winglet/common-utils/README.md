@@ -153,10 +153,12 @@ Please use a transpiler like Babel to transform the code for your target environ
 
 - **[`JSONPath`](./src/utils/json/JSONPath/enum.ts)**: An expression system for querying and manipulating specific values within JSON data.
 - **[`JSONPointer`](./src/utils/json/JSONPointer/enum.ts)**: An implementation of JSON Pointer as defined in RFC 6901, used to reference specific locations within a JSON document.
-  - **[`getValueByPointer`](./src/utils/json/JSONPointer/getValueByPointer.ts)**: Retrieves a value from JSON data based on a JSON Pointer.
-  - **[`setValueByPointer`](./src/utils/json/JSONPointer/setValueByPointer.ts)**: Sets a value in JSON data based on a JSON Pointer.
-  - **[`escapePointer`](./src/utils/json/JSONPointer/utils/escapePointer.ts)**: Escapes a JSON Pointer string.
-  - **[`unescapePointer`](./src/utils/json/JSONPointer/utils/unescapePointer.ts)**: Unescapes a JSON Pointer string.
+  - **[`getValueByPointer`](./src/utils/json/JSONPointer/utils/manipulator/getValueByPointer.ts)**: Retrieves a value from JSON data based on a JSON Pointer.
+  - **[`setValueByPointer`](./src/utils/json/JSONPointer/utils/manipulator/setValueByPointer.ts)**: Sets a value in JSON data based on a JSON Pointer.
+  - **[`escapePointer`](./src/utils/json/JSONPointer/utils/escape/escapePointer.ts)**: Escapes a JSON Pointer string.
+  - **[`unescapePointer`](./src/utils/json/JSONPointer/utils/escape/unescapePointer.ts)**: Unescapes a JSON Pointer string.
+  - **[`compare`](./src/utils/json/JSONPointer/utils/patch/compare/compare.ts)**: Compares two JSON data and returns a JSON Patch representing the differences.
+  - **[`applyPatch`](./src/utils/json/JSONPointer/utils/patch/applyPatch/applyPatch.ts)**: Applies a JSON Patch to a JSON data.
 
 #### Object
 

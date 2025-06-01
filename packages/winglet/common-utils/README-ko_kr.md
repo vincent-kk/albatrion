@@ -153,10 +153,12 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 - **[`JSONPath`](./src/utils/json/JSONPath/enum.ts)**: JSON 데이터 내에서 특정 값을 검색하고 조작하기 위한 표현식 시스템
 - **[`JSONPointer`](./src/utils/json/JSONPointer/enum.ts)**: RFC 6901에 정의된 JSON Pointer 구현으로, JSON 문서 내 특정 위치를 참조하는 문자열을 처리
-  - **[`getValueByPointer`](./src/utils/json/JSONPointer/getValueByPointer.ts)**: JSON Pointer를 기반으로 JSON 데이터에서 값을 가져오는 함수
-  - **[`setValueByPointer`](./src/utils/json/JSONPointer/setValueByPointer.ts)**: JSON Pointer를 기반으로 JSON 데이터에서 값을 설정하는 함수
-  - **[`escapePointer`](./src/utils/json/JSONPointer/utils/escapePointer.ts)**: JSON Pointer를 이스케이프하는 함수
-  - **[`unescapePointer`](./src/utils/json/JSONPointer/utils/unescapePointer.ts)**: JSON Pointer를 이스케이프 해제하는 함수
+  - **[`getValueByPointer`](./src/utils/json/JSONPointer/utils/manipulator/getValueByPointer.ts)**: JSON 데이터에서 특정 위치의 값을 가져오는 함수
+  - **[`setValueByPointer`](./src/utils/json/JSONPointer/utils/manipulator/setValueByPointer.ts)**: JSON 데이터에서 특정 위치의 값을 설정하는 함수
+  - **[`escapePointer`](./src/utils/json/JSONPointer/utils/escape/escapePointer.ts)**: JSON Pointer 문자열을 이스케이프하는 함수
+  - **[`unescapePointer`](./src/utils/json/JSONPointer/utils/escape/unescapePointer.ts)**: JSON Pointer 문자열을 이스케이프 해제하는 함수
+  - **[`compare`](./src/utils/json/JSONPointer/utils/patch/compare/compare.ts)**: 두 JSON 데이터를 비교하여 이들 간의 차이를 JSON Patch로 반환하는 함수
+  - **[`applyPatch`](./src/utils/json/JSONPointer/utils/patch/applyPatch/applyPatch.ts)**: JSON Patch를 해석하여 입력된 JSON 데이터를 변경하는 함수
 
 #### 객체 (Object)
 
