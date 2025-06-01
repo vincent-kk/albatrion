@@ -1,5 +1,7 @@
 import { isArrayIndex } from '@winglet/common-utils';
 
+import type { JsonArray } from '@/json/type';
+
 import { JsonPatchError } from './error';
 
 /**
@@ -12,7 +14,7 @@ import { JsonPatchError } from './error';
  * @throws {JsonPatchError} When the key is not a valid array index
  * @internal
  */
-export const getArrayIndex = (key: string, array: any[]): number => {
+export const getArrayIndex = (key: string, array: JsonArray): number => {
   if (key === '-') return array.length;
   if (isArrayIndex(key)) return ~~key;
   throw new JsonPatchError(

@@ -1,4 +1,5 @@
-import { JSONPath, isArray, isPlainObject } from '@winglet/common-utils';
+import { isArray, isPlainObject } from '@winglet/common-utils';
+import { JSONPath } from '@winglet/json';
 
 /**
  * 중첩된 데이터 구조에서 JSON 경로 목록을 추출합니다.

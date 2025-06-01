@@ -1,9 +1,8 @@
 import { isArray } from '@winglet/common-utils';
 
-import type { Dictionary } from '@aileron/declare';
-
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { unescapePointer } from '@/json/JSONPointer/utils/escape/unescapePointer';
+import type { JsonRoot } from '@/json/type';
 
 import type { Patch } from '../type';
 import { JsonPatchError } from './utils/error';
@@ -91,7 +90,7 @@ import { isPrototypeModification } from './utils/isPrototypeModification';
  * ```
  */
 export const applySinglePatch = (
-  source: Dictionary | Array<any>,
+  source: JsonRoot,
   patch: Patch,
   patchIndex: number,
   strict: boolean,

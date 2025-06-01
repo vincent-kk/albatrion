@@ -5,10 +5,9 @@ import {
   isObject,
 } from '@winglet/common-utils';
 
-import type { Dictionary } from '@aileron/declare';
-
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { escapePointer } from '@/json/JSONPointer/utils/escape/escapePointer';
+import type { JsonRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../type';
 import { processValue } from './utils/processValue';
@@ -37,8 +36,8 @@ import { processValue } from './utils/processValue';
  * @internal This function is for internal use by the compare function
  */
 export const compareRecursive = <
-  Source extends Dictionary | Array<any>,
-  Target extends Dictionary | Array<any>,
+  Source extends JsonRoot,
+  Target extends JsonRoot,
 >(
   source: Source,
   target: Target,
@@ -48,7 +47,7 @@ export const compareRecursive = <
   immutable: boolean,
 ) => {
   // @ts-expect-error: when target and source are same reference, it should return immediately
-  if (target === source) return;
+  if (source === target || (source !== source && target !== target)) return;
 
   if ('toJson' in source && typeof source.toJson === 'function')
     source = source.toJson();
@@ -92,7 +91,11 @@ export const compareRecursive = <
       const targetValue = target[key];
 
       // Fast path: identical values
-      if (sourceValue === targetValue) continue;
+      if (
+        sourceValue === targetValue ||
+        (sourceValue !== sourceValue && targetValue !== targetValue)
+      )
+        continue;
 
       // Handle undefined values in non-array contexts (JSON standard compliance)
       if (

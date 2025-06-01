@@ -1,6 +1,6 @@
 import { clone } from '@winglet/common-utils';
 
-import type { Dictionary } from '@aileron/declare';
+import type { JsonRoot } from '@/json/type';
 
 import type { ApplyPatchOptions, Patch } from '../type';
 import { applySinglePatch } from './applySinglePatch';
@@ -71,8 +71,8 @@ import { applySinglePatch } from './applySinglePatch';
  * const result = applyPatch(source, patches, { strict: true, immutable: false });
  * ```
  */
-export const applyPatch = <Result extends Dictionary | Array<any> = any>(
-  source: Dictionary | Array<any>,
+export const applyPatch = <Result extends JsonRoot = any>(
+  source: JsonRoot,
   patches: Patch[],
   options?: ApplyPatchOptions,
 ): Result => {

@@ -1,4 +1,4 @@
-import { getValueByPointer } from '@winglet/common-utils';
+import { getValueByPointer } from '@winglet/json';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';

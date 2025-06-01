@@ -1,4 +1,4 @@
-import { JSONPointer } from '@winglet/common-utils';
+import { JSONPointer } from '@winglet/json';
 import { describe, expect, it, vi } from 'vitest';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';

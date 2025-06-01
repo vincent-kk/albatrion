@@ -1,4 +1,4 @@
-import { JSONPath, JSONPointer } from '@winglet/common-utils';
+import { JSONPath, JSONPointer } from '@winglet/json';
 
 import type { JsonSchemaError } from '@/schema-form/types';
 

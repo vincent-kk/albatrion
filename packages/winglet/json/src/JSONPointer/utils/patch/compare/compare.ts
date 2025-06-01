@@ -1,4 +1,4 @@
-import type { Dictionary } from '@aileron/declare';
+import type { JsonRoot } from '@/json/type';
 
 import type { CompareOptions, Patch } from '../type';
 import { compareRecursive } from './compareRecursive';
@@ -56,10 +56,7 @@ import { compareRecursive } from './compareRecursive';
  * // Returns operations showing index-based changes
  * ```
  */
-export const compare = <
-  Source extends Dictionary | Array<any>,
-  Target extends Dictionary | Array<any>,
->(
+export const compare = <Source extends JsonRoot, Target extends JsonRoot>(
   source: Source,
   target: Target,
   options?: CompareOptions,

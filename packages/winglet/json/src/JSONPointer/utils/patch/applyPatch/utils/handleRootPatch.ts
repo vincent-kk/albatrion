@@ -1,8 +1,7 @@
 import { equals } from '@winglet/common-utils';
 
-import type { Dictionary } from '@aileron/declare';
-
 import { getValueByPointer } from '@/json/JSONPointer/utils/manipulator/getValueByPointer';
+import type { JsonRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../type';
 import { JsonPatchError } from './error';
@@ -21,7 +20,7 @@ import { isCircularMoveReference } from './isCircularMoveReference';
  * @internal
  */
 export const handleRootPatch = (
-  source: Dictionary | Array<any>,
+  source: JsonRoot,
   patch: Patch,
   patchIndex: number,
   strict: boolean,

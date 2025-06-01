@@ -1,9 +1,8 @@
 import { equals } from '@winglet/common-utils';
 
-import type { Dictionary } from '@aileron/declare';
-
 import { getValueByPointer } from '@/json/JSONPointer/utils/manipulator/getValueByPointer';
 import { setValueByPointer } from '@/json/JSONPointer/utils/manipulator/setValueByPointer';
+import type { JsonArray, JsonRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../type';
 import { JsonPatchError } from './error';
@@ -25,9 +24,9 @@ import { isCircularMoveReference } from './isCircularMoveReference';
  */
 export const handleArray = (
   patch: Patch,
-  array: any[],
+  array: JsonArray,
   index: number,
-  source: Dictionary | Array<any>,
+  source: JsonRoot,
   patchIndex: number,
   strict: boolean,
 ): any => {
