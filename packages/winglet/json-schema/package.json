@@ -39,7 +39,8 @@
     "version:patch": "yarn version patch"
   },
   "dependencies": {
-    "@winglet/common-utils": "workspace:^"
+    "@winglet/common-utils": "workspace:^",
+    "@winglet/json": "workspace:^"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

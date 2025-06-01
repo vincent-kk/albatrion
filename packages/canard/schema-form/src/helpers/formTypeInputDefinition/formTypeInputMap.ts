@@ -1,4 +1,4 @@
-import { JSONPath } from '@winglet/common-utils';
+import { JSONPath } from '@winglet/json';
 import { isReactComponent, withErrorBoundary } from '@winglet/react-utils';
 
 import { SchemaFormError } from '@/schema-form/errors';

@@ -1,4 +1,5 @@
-import { JSONPath, isString, serializeNative } from '@winglet/common-utils';
+import { isString, serializeNative } from '@winglet/common-utils';
+import { JSONPath } from '@winglet/json';
 
 import type { Dictionary } from '@aileron/declare';
 

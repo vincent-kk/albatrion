@@ -1916,6 +1916,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^8.14.0"
     "@typescript-eslint/parser": "npm:^8.14.0"
     "@winglet/common-utils": "workspace:^"
+    "@winglet/json": "workspace:^"
     "@winglet/json-schema": "workspace:^"
     "@winglet/react-utils": "workspace:^"
     ajv: "npm:^8.0.0"
@@ -6906,6 +6907,7 @@ __metadata:
     "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
     "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
     "@winglet/common-utils": "workspace:^"
+    "@winglet/json": "workspace:^"
     eslint: "npm:^8.56.0"
     prettier: "npm:^3.3.3"
     rollup: "npm:^4.27.4"
@@ -6920,7 +6922,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@winglet/json@workspace:packages/winglet/json":
+"@winglet/json@workspace:^, @winglet/json@workspace:packages/winglet/json":
   version: 0.0.0-use.local
   resolution: "@winglet/json@workspace:packages/winglet/json"
   dependencies:

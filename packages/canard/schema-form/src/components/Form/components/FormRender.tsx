@@ -1,6 +1,6 @@
 import type { ComponentType, PropsWithChildren, ReactNode } from 'react';
 
-import { JSONPath } from '@winglet/common-utils';
+import { JSONPath } from '@winglet/json';
 import { useMemorize, useSnapshot } from '@winglet/react-utils';
 
 import type { Dictionary, Fn } from '@aileron/declare';

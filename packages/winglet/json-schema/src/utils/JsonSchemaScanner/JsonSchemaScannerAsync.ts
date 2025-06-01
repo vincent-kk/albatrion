@@ -1,4 +1,5 @@
-import { JSONPointer, clone, setValueByPointer } from '@winglet/common-utils';
+import { clone } from '@winglet/common-utils';
+import { JSONPointer, setValueByPointer } from '@winglet/json';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 

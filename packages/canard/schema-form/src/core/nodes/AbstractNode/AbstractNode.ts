@@ -1,10 +1,10 @@
 import {
-  JSONPath,
   equals,
   isEmptyObject,
   isObject,
   isTruthy,
 } from '@winglet/common-utils';
+import { JSONPath } from '@winglet/json';
 
 import type { Fn, SetStateFn } from '@aileron/declare';
 

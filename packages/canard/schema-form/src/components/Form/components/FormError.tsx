@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-import { JSONPath } from '@winglet/common-utils';
+import { JSONPath } from '@winglet/json';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';

@@ -1,4 +1,5 @@
-import { JSONPath, JSONPointer, isArray } from '@winglet/common-utils';
+import { isArray } from '@winglet/common-utils';
+import { JSONPath, JSONPointer } from '@winglet/json';
 
 import type { ErrorObject } from '@/schema-form/helpers/ajv';
 import type { JsonSchemaError } from '@/schema-form/types';

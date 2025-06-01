@@ -1,4 +1,4 @@
-import { JSONPath } from '@winglet/common-utils';
+import { JSONPath } from '@winglet/json';
 
 /**
  * Regular expression for finding JSON path format

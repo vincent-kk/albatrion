@@ -1,4 +1,4 @@
-import { JSONPath } from '@winglet/common-utils';
+import { JSONPath } from '@winglet/json';
 
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 

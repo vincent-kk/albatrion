@@ -1,10 +1,13 @@
+import { JSONPointer } from '@winglet/json';
+
 export const $DEFS = '$defs';
 export const DEFINITIONS = 'definitions';
 
 export const isDefinitionSchema = (path: string): boolean => {
   if (
     path.length <= 2 ||
-    (path[0] !== '/' && (path[0] !== '#' || path[1] !== '/'))
+    (path[0] !== JSONPointer.Child &&
+      (path[0] !== JSONPointer.Root || path[1] !== JSONPointer.Child))
   )
     return false;
 
