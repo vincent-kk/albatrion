@@ -21,6 +21,7 @@
     "commonUtils": "yarn workspace @winglet/common-utils",
     "developmentHelper": "yarn workspace @aileron/development-helper",
     "documents": "yarn workspace @albatrion/documents",
+    "dataLoader": "yarn workspace @winglet/data-loader",
     "jsonSchema": "yarn workspace @winglet/json-schema",
     "json": "yarn workspace @winglet/json",
     "login:npm": "yarn npm login --publish",

@@ -1,10 +1,12 @@
-import type { Fn } from '@aileron/declare';
+import {
+  InvalidTypeError,
+  isArrayLike,
+  isFunction,
+  isNil,
+  noopFunction,
+} from '@winglet/common-utils';
 
-import { noopFunction } from '@/common-utils/constant';
-import { InvalidTypeError } from '@/common-utils/errors/InvalidTypeError';
-import { isArrayLike } from '@/common-utils/utils/filter/isArrayLike';
-import { isFunction } from '@/common-utils/utils/filter/isFunction';
-import { isNil } from '@/common-utils/utils/filter/isNil';
+import type { Fn } from '@aileron/declare';
 
 import type { Batch, BatchLoader, DataLoaderOptions, MapLike } from './type';
 import {

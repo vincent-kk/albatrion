@@ -1,9 +1,11 @@
-import type { Fn } from '@aileron/declare';
+import {
+  InvalidTypeError,
+  identityFunction,
+  isFunction,
+  scheduleNextTick,
+} from '@winglet/common-utils';
 
-import { identityFunction } from '@/common-utils/constant';
-import { InvalidTypeError } from '@/common-utils/errors/InvalidTypeError';
-import { isFunction } from '@/common-utils/utils/filter/isFunction';
-import { scheduleNextTick } from '@/common-utils/utils/scheduler/scheduleNextTick';
+import type { Fn } from '@aileron/declare';
 
 import type { BatchLoader, MapLike } from '../type';
 

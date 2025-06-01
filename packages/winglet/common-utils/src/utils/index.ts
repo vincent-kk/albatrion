@@ -1,7 +1,6 @@
 export * from './array';
 export * from './console';
 export * from './convert';
-export * from './DataLoader';
 export * from './filter';
 export * from './function';
 export * from './hash';

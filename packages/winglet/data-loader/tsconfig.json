@@ -1,0 +1,26 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "../../",
+    "outDir": "./dist",
+    "paths": {
+      "@/data-loader": [
+        "./winglet/data-loader/src"
+      ],
+      "@/data-loader/*": [
+        "./winglet/data-loader/src/*"
+      ],
+      "@aileron/*": [
+        "./aileron/common/*"
+      ],
+    }
+  },
+  "include": [
+    "src",
+    "src/**/*.tsx?",
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+  ]
+}
