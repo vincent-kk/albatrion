@@ -1,0 +1,1 @@
+export { mergePatch } from './mergePatch';
