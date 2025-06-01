@@ -157,6 +157,30 @@ const result = applyPatch(source, patches);
 // 결과: { name: "John", age: 31, city: "NYC" }
 ```
 
+**[`difference`](./src/JSONPointer/utils/patch/difference/difference.ts)**
+
+```typescript
+import { difference } from '@winglet/json';
+
+const source = { name: 'John', age: 30, city: 'NYC' };
+const target = { name: 'John', age: 31, country: 'USA' };
+
+const mergePatch = difference(source, target);
+// 결과: { age: 31, city: null, country: "USA" }
+```
+
+**[`mergePatch`](./src/JSONPointer/utils/patch/mergePatch/mergePatch.ts)**
+
+```typescript
+import { mergePatch } from '@winglet/json';
+
+const source = { name: 'John', age: 30, temp: 'data' };
+const patch = { age: 31, temp: null, city: 'NYC' };
+
+const result = mergePatch(source, patch);
+// 결과: { name: "John", age: 31, city: "NYC" }
+```
+
 #### 옵션 설정
 
 ##### CompareOptions
@@ -238,6 +262,38 @@ console.log(data); // 원본 데이터 유지
 console.log(result); // 변경된 새로운 객체
 ```
 
+### JSON Merge Patch 사용법
+
+```typescript
+import { difference, mergePatch } from '@winglet/json';
+
+const source = {
+  user: { name: 'Alice', age: 25, role: 'admin', temp: 'data' },
+  settings: { theme: 'dark' },
+};
+
+const target = {
+  user: { name: 'Bob', age: 25, permissions: ['read', 'write'] },
+  settings: { theme: 'light', language: 'ko' },
+};
+
+// 두 객체 간의 차이점을 JSON Merge Patch 형태로 생성
+const patch = difference(source, target);
+console.log(patch);
+// {
+//   user: { name: "Bob", role: null, temp: null, permissions: ["read", "write"] },
+//   settings: { theme: "light", language: "ko" }
+// }
+
+// JSON Merge Patch 적용
+const result = mergePatch(source, patch);
+console.log(result);
+// {
+//   user: { name: "Bob", age: 25, permissions: ["read", "write"] },
+//   settings: { theme: "light", language: "ko" }
+// }
+```
+
 ### 배열 조작
 
 ```typescript
@@ -294,6 +350,7 @@ try {
 
 - [RFC 6901 - JavaScript Object Notation (JSON) Pointer](https://datatracker.ietf.org/doc/html/rfc6901)
 - [RFC 6902 - JavaScript Object Notation (JSON) Patch](https://datatracker.ietf.org/doc/html/rfc6902)
+- [RFC 7386 - JSON Merge Patch](https://datatracker.ietf.org/doc/html/rfc7386)
 - [JSONPath - XPath for JSON](https://goessner.net/articles/JsonPath/)
 
 ---

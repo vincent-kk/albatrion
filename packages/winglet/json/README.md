@@ -40,6 +40,7 @@ pnpm add @winglet/json
 This package is written using ECMAScript 2020 (ES2020) syntax.
 
 **Supported Environments:**
+
 - Node.js 14.0.0 or higher
 - Modern browsers (with ES2020 support)
 
@@ -71,57 +72,66 @@ Provides a complete JSON Pointer implementation that fully complies with RFC 690
 ##### Data Manipulation
 
 **[`getValueByPointer`](./src/JSONPointer/utils/manipulator/getValueByPointer.ts)**
+
 ```typescript
 import { getValueByPointer } from '@winglet/json';
 
 const data = {
   user: {
     profile: {
-      name: "Vincent",
-      age: 30
-    }
-  }
+      name: 'Vincent',
+      age: 30,
+    },
+  },
 };
 
-const name = getValueByPointer(data, "/user/profile/name");
+const name = getValueByPointer(data, '/user/profile/name');
 // Result: "Vincent"
 ```
 
 **[`setValueByPointer`](./src/JSONPointer/utils/manipulator/setValueByPointer.ts)**
+
 ```typescript
 import { setValueByPointer } from '@winglet/json';
 
 const data = { user: { profile: {} } };
-const result = setValueByPointer(data, "/user/profile/email", "vincent@example.com");
+const result = setValueByPointer(
+  data,
+  '/user/profile/email',
+  'vincent@example.com',
+);
 // Result: { user: { profile: { email: "vincent@example.com" } } }
 ```
 
 ##### Escape Handling
 
 **[`escapePointer`](./src/JSONPointer/utils/escape/escapePointer.ts)**
+
 ```typescript
 import { escapePointer } from '@winglet/json';
 
-const escaped = escapePointer("path/with~special");
+const escaped = escapePointer('path/with~special');
 // Result: "path~1with~0special"
 ```
 
 **[`unescapePointer`](./src/JSONPointer/utils/escape/unescapePointer.ts)**
+
 ```typescript
 import { unescapePointer } from '@winglet/json';
 
-const unescaped = unescapePointer("path~1with~0special");
+const unescaped = unescapePointer('path~1with~0special');
 // Result: "path/with~special"
 ```
 
 ##### JSON Patch Operations
 
 **[`compare`](./src/JSONPointer/utils/patch/compare/compare.ts)**
+
 ```typescript
 import { compare } from '@winglet/json';
 
-const source = { name: "John", age: 30, city: "NYC" };
-const target = { name: "John", age: 31, country: "USA" };
+const source = { name: 'John', age: 30, city: 'NYC' };
+const target = { name: 'John', age: 31, country: 'USA' };
 
 const patches = compare(source, target);
 // Result:
@@ -133,34 +143,61 @@ const patches = compare(source, target);
 ```
 
 **[`applyPatch`](./src/JSONPointer/utils/patch/applyPatch/applyPatch.ts)**
+
 ```typescript
 import { applyPatch } from '@winglet/json';
 
-const source = { name: "John", age: 30 };
+const source = { name: 'John', age: 30 };
 const patches = [
-  { op: "replace", path: "/age", value: 31 },
-  { op: "add", path: "/city", value: "NYC" }
+  { op: 'replace', path: '/age', value: 31 },
+  { op: 'add', path: '/city', value: 'NYC' },
 ];
 
 const result = applyPatch(source, patches);
 // Result: { name: "John", age: 31, city: "NYC" }
 ```
 
+**[`difference`](./src/JSONPointer/utils/patch/difference/difference.ts)**
+
+```typescript
+import { difference } from '@winglet/json';
+
+const source = { name: 'John', age: 30, city: 'NYC' };
+const target = { name: 'John', age: 31, country: 'USA' };
+
+const mergePatch = difference(source, target);
+// Result: { age: 31, city: null, country: "USA" }
+```
+
+**[`mergePatch`](./src/JSONPointer/utils/patch/mergePatch/mergePatch.ts)**
+
+```typescript
+import { mergePatch } from '@winglet/json';
+
+const source = { name: 'John', age: 30, temp: 'data' };
+const patch = { age: 31, temp: null, city: 'NYC' };
+
+const result = mergePatch(source, patch);
+// Result: { name: "John", age: 31, city: "NYC" }
+```
+
 #### Configuration Options
 
 ##### CompareOptions
+
 ```typescript
 interface CompareOptions {
-  strict?: boolean;     // Strict comparison mode (default: false)
-  immutable?: boolean;  // Immutable mode (default: true)
+  strict?: boolean; // Strict comparison mode (default: false)
+  immutable?: boolean; // Immutable mode (default: true)
 }
 ```
 
 ##### ApplyPatchOptions
+
 ```typescript
 interface ApplyPatchOptions {
-  strict?: boolean;           // Strict application mode (default: false)
-  immutable?: boolean;        // Immutable mode (default: true)
+  strict?: boolean; // Strict application mode (default: false)
+  immutable?: boolean; // Immutable mode (default: true)
   protectPrototype?: boolean; // Prototype protection (default: true)
 }
 ```
@@ -172,30 +209,30 @@ interface ApplyPatchOptions {
 ### Basic Usage
 
 ```typescript
-import { 
-  getValueByPointer, 
-  setValueByPointer, 
-  compare, 
-  applyPatch 
+import {
+  applyPatch,
+  compare,
+  getValueByPointer,
+  setValueByPointer,
 } from '@winglet/json';
 
 // Complex JSON data
 const data = {
   users: [
-    { id: 1, name: "Alice", preferences: { theme: "dark" } },
-    { id: 2, name: "Bob", preferences: { theme: "light" } }
+    { id: 1, name: 'Alice', preferences: { theme: 'dark' } },
+    { id: 2, name: 'Bob', preferences: { theme: 'light' } },
   ],
   settings: {
-    app: { version: "1.0.0" }
-  }
+    app: { version: '1.0.0' },
+  },
 };
 
 // Value retrieval
-const theme = getValueByPointer(data, "/users/0/preferences/theme");
+const theme = getValueByPointer(data, '/users/0/preferences/theme');
 console.log(theme); // "dark"
 
 // Value setting
-const updated = setValueByPointer(data, "/settings/app/version", "1.1.0");
+const updated = setValueByPointer(data, '/settings/app/version', '1.1.0');
 
 // Change comparison
 const patches = compare(data, updated);
@@ -208,21 +245,53 @@ console.log(patches);
 ```typescript
 import { applyPatch } from '@winglet/json';
 
-const data = { user: { role: "user" } };
+const data = { user: { role: 'user' } };
 const patches = [
-  { op: "add", path: "/user/permissions", value: ["read", "write"] },
-  { op: "replace", path: "/user/role", value: "admin" }
+  { op: 'add', path: '/user/permissions', value: ['read', 'write'] },
+  { op: 'replace', path: '/user/role', value: 'admin' },
 ];
 
 // Safe patch application (prevents prototype pollution)
 const result = applyPatch(data, patches, {
-  immutable: true,          // Preserve original data
-  protectPrototype: true,   // Prevent prototype pollution
-  strict: true             // Strict validation
+  immutable: true, // Preserve original data
+  protectPrototype: true, // Prevent prototype pollution
+  strict: true, // Strict validation
 });
 
-console.log(data);   // Original data preserved
+console.log(data); // Original data preserved
 console.log(result); // New modified object
+```
+
+### JSON Merge Patch Usage
+
+```typescript
+import { difference, mergePatch } from '@winglet/json';
+
+const source = {
+  user: { name: 'Alice', age: 25, role: 'admin', temp: 'data' },
+  settings: { theme: 'dark' },
+};
+
+const target = {
+  user: { name: 'Bob', age: 25, permissions: ['read', 'write'] },
+  settings: { theme: 'light', language: 'en' },
+};
+
+// Generate JSON Merge Patch representing differences between two objects
+const patch = difference(source, target);
+console.log(patch);
+// {
+//   user: { name: "Bob", role: null, temp: null, permissions: ["read", "write"] },
+//   settings: { theme: "light", language: "en" }
+// }
+
+// Apply JSON Merge Patch
+const result = mergePatch(source, patch);
+console.log(result);
+// {
+//   user: { name: "Bob", age: 25, permissions: ["read", "write"] },
+//   settings: { theme: "light", language: "en" }
+// }
 ```
 
 ### Array Manipulation
@@ -231,15 +300,15 @@ console.log(result); // New modified object
 import { getValueByPointer, setValueByPointer } from '@winglet/json';
 
 const data = {
-  items: ["apple", "banana", "cherry"]
+  items: ['apple', 'banana', 'cherry'],
 };
 
 // Array element access
-const secondItem = getValueByPointer(data, "/items/1");
+const secondItem = getValueByPointer(data, '/items/1');
 // Result: "banana"
 
 // Add element to end of array (using RFC 6901 "-" syntax)
-const withNewItem = setValueByPointer(data, "/items/-", "date");
+const withNewItem = setValueByPointer(data, '/items/-', 'date');
 // Result: { items: ["apple", "banana", "cherry", "date"] }
 ```
 
@@ -248,10 +317,10 @@ const withNewItem = setValueByPointer(data, "/items/-", "date");
 ## Error Handling
 
 ```typescript
-import { getValueByPointer, JSONPointerError } from '@winglet/json';
+import { JSONPointerError, getValueByPointer } from '@winglet/json';
 
 try {
-  const value = getValueByPointer({}, "/nonexistent/path");
+  const value = getValueByPointer({}, '/nonexistent/path');
 } catch (error) {
   if (error instanceof JSONPointerError) {
     console.error('JSON Pointer Error:', error.message);
@@ -291,6 +360,7 @@ This repository is provided under the MIT License. See the [`LICENSE`](./LICENSE
 
 - [RFC 6901 - JavaScript Object Notation (JSON) Pointer](https://datatracker.ietf.org/doc/html/rfc6901)
 - [RFC 6902 - JavaScript Object Notation (JSON) Patch](https://datatracker.ietf.org/doc/html/rfc6902)
+- [RFC 7386 - JSON Merge Patch](https://datatracker.ietf.org/doc/html/rfc7386)
 - [JSONPath - XPath for JSON](https://goessner.net/articles/JsonPath/)
 
 ---
