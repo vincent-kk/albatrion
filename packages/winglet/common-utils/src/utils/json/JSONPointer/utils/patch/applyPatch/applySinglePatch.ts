@@ -105,9 +105,7 @@ export const applySinglePatch = (
 
   const segmentsLength = segments.length;
   while (cursor < segmentsLength) {
-    let segment: string | number = segments[cursor];
-
-    if (segment.indexOf('~') !== -1) segment = unescapePointer(segment);
+    let segment: string | number = unescapePointer(segments[cursor]);
 
     if (protectPrototype && isPrototypeModification(segment, segments, cursor))
       throw new JsonPatchError(
