@@ -67,7 +67,7 @@ const FormTypeInputTime = ({
           textField: {
             id: path,
             name,
-            size: size || context?.size || 'medium',
+            size: size || context?.size,
             variant: 'outlined',
             fullWidth: true,
           },

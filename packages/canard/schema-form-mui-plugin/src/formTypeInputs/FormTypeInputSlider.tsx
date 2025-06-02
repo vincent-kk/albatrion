@@ -23,7 +23,6 @@ interface FormTypeInputSliderProps
     { size?: 'small' | 'medium' }
   > {
   size?: 'small' | 'medium';
-  showValue?: boolean;
   showMarks?: boolean;
 }
 
@@ -32,11 +31,10 @@ const FormTypeInputSlider = ({
   name,
   jsonSchema,
   disabled,
-  value,
+  defaultValue,
   onChange,
   context,
   size,
-  showValue = true,
   showMarks = false,
 }: FormTypeInputSliderProps) => {
   const min = jsonSchema.minimum ?? 0;
@@ -56,32 +54,23 @@ const FormTypeInputSlider = ({
     }
   });
 
-  const sliderValue = typeof value === 'number' ? value : min;
-
   return (
     <Box sx={{ px: 2 }}>
-      {showValue && (
-        <Typography variant="body2" color="text.secondary" gutterBottom>
-          Value: {sliderValue}
-        </Typography>
-      )}
-
       <Slider
         id={path}
         name={name}
-        value={sliderValue}
+        defaultValue={typeof defaultValue === 'number' ? defaultValue : min}
         min={min}
         max={max}
         step={step}
         onChange={handleChange}
         onChangeCommitted={handleChangeCommitted}
         disabled={disabled}
-        size={size || context?.size || 'medium'}
+        size={size || context?.size}
         marks={showMarks}
         valueLabelDisplay="auto"
         sx={{ mt: 1 }}
       />
-
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
         <Typography variant="caption" color="text.secondary">
           {min}

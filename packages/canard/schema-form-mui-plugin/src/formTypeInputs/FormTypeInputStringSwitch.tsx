@@ -32,7 +32,7 @@ const FormTypeInputStringSwitch = ({
   name,
   jsonSchema,
   disabled,
-  value,
+  defaultValue,
   onChange,
   context,
   size,
@@ -52,15 +52,13 @@ const FormTypeInputStringSwitch = ({
     };
   }, [jsonSchema.enum, jsonSchema.switchLabels]);
 
-  const isChecked = value === onValue;
-
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onChange(event.target.checked ? onValue : offValue);
     },
   );
 
-  const switchSize = jsonSchema.switchSize || size || context?.size || 'medium';
+  const switchSize = jsonSchema.switchSize || size || context?.size;
 
   return (
     <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
@@ -68,7 +66,7 @@ const FormTypeInputStringSwitch = ({
       <Switch
         id={path}
         name={name}
-        checked={isChecked}
+        defaultChecked={defaultValue === onValue}
         onChange={handleChange}
         disabled={disabled}
         size={switchSize}

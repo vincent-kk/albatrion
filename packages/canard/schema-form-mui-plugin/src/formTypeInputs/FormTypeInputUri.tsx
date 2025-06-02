@@ -92,7 +92,7 @@ const FormTypeInputUri = ({
     onChange(newValue);
   });
 
-  const fieldSize = size || context?.size || 'medium';
+  const fieldSize = size || context?.size;
 
   return (
     <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>

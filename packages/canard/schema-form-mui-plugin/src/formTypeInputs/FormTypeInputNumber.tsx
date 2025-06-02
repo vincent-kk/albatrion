@@ -26,11 +26,12 @@ interface FormTypeInputNumberProps
 const FormTypeInputNumber = ({
   path,
   name,
+  label,
+  required,
   jsonSchema,
   readOnly,
   disabled,
   defaultValue,
-  value,
   onChange,
   context,
   size,
@@ -63,9 +64,10 @@ const FormTypeInputNumber = ({
       type="number"
       variant="outlined"
       fullWidth
-      size={size || context?.size || 'medium'}
+      label={label || name}
+      required={required}
+      size={size || context?.size}
       placeholder={jsonSchema.placeholder}
-      value={value ?? ''}
       defaultValue={defaultValue}
       onChange={handleChange}
       disabled={disabled}

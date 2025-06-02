@@ -1,4 +1,4 @@
-import { Switch } from '@mui/material';
+import { FormControlLabel, Switch } from '@mui/material';
 
 import { useHandle } from '@winglet/react-utils';
 
@@ -28,6 +28,8 @@ interface FormTypeInputBooleanSwitchProps
 const FormTypeInputBooleanSwitch = ({
   path,
   name,
+  label,
+  required,
   jsonSchema,
   disabled,
   value,
@@ -41,17 +43,25 @@ const FormTypeInputBooleanSwitch = ({
     },
   );
 
-  const switchSize = jsonSchema.switchSize || size || context?.size || 'medium';
+  const switchSize = jsonSchema.switchSize || size || context?.size;
   const checked = !!value;
 
   return (
-    <Switch
-      id={path}
-      name={name}
-      checked={checked}
-      onChange={handleChange}
+    <FormControlLabel
+      label={label || name}
+      htmlFor={path}
+      required={required}
       disabled={disabled}
-      size={switchSize}
+      control={
+        <Switch
+          id={path}
+          name={name}
+          checked={checked}
+          onChange={handleChange}
+          disabled={disabled}
+          size={switchSize}
+        />
+      }
     />
   );
 };

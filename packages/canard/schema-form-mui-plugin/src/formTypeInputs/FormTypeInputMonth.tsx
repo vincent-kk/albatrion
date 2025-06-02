@@ -31,20 +31,12 @@ const FormTypeInputMonth = ({
   path,
   name,
   disabled,
-  value,
+  defaultValue,
   onChange,
   context,
   size,
   label,
 }: FormTypeInputMonthProps) => {
-  const monthValue = useMemo(() => {
-    if (!value) return null;
-
-    // YYYY-MM 형식을 dayjs로 파싱
-    const parsed = dayjs(value, 'YYYY-MM', true);
-    return parsed.isValid() ? parsed : null;
-  }, [value]);
-
   const handleChange = useHandle((newValue: Dayjs | null) => {
     if (newValue && newValue.isValid()) {
       onChange(newValue.format('YYYY-MM'));
@@ -56,8 +48,8 @@ const FormTypeInputMonth = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
-        label={label || 'Select month'}
-        value={monthValue}
+        label={label || name}
+        defaultValue={defaultValue ? dayjs(defaultValue) : null}
         onChange={handleChange}
         disabled={disabled}
         views={['year', 'month']}
@@ -67,7 +59,7 @@ const FormTypeInputMonth = ({
           textField: {
             id: path,
             name,
-            size: size || context?.size || 'medium',
+            size: size || context?.size,
             variant: 'outlined',
             fullWidth: true,
           },

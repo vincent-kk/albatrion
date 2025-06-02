@@ -34,7 +34,7 @@ const FormTypeInputDate = ({
   name,
   jsonSchema,
   disabled,
-  value,
+  defaultValue,
   onChange,
   context,
   size,
@@ -46,10 +46,6 @@ const FormTypeInputDate = ({
       maxDate: jsonSchema.maximum ? dayjs(jsonSchema.maximum) : undefined,
     };
   }, [jsonSchema.minimum, jsonSchema.maximum]);
-
-  const dateValue = useMemo(() => {
-    return value ? dayjs(value) : null;
-  }, [value]);
 
   const handleChange = useHandle((newValue: Dayjs | null) => {
     if (newValue && newValue.isValid()) {
@@ -68,8 +64,8 @@ const FormTypeInputDate = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
-        label={label || 'Select date'}
-        value={dateValue}
+        label={label || name}
+        defaultValue={defaultValue ? dayjs(defaultValue) : null}
         onChange={handleChange}
         disabled={disabled}
         minDate={minDate}
@@ -79,7 +75,7 @@ const FormTypeInputDate = ({
           textField: {
             id: path,
             name,
-            size: size || context?.size || 'medium',
+            size: size || context?.size,
             variant: 'outlined',
             fullWidth: true,
           },

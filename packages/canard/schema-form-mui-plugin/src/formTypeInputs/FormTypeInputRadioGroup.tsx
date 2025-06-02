@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
-import { Box, FormControlLabel, Radio, RadioGroup } from '@mui/material';
+import { FormControlLabel, Radio, RadioGroup } from '@mui/material';
 
 import { useHandle } from '@winglet/react-utils';
 
@@ -35,16 +35,16 @@ interface FormTypeInputRadioGroupProps
 const FormTypeInputRadioGroup = ({
   path,
   name,
+  label,
+  required,
   jsonSchema,
   disabled,
-  value,
+  defaultValue,
   onChange,
   context,
   size,
   row = true,
 }: FormTypeInputRadioGroupProps) => {
-  const [selectedValue, setSelectedValue] = useState<string>('');
-
   const options = useMemo(() => {
     const enumValues = jsonSchema.enum || [];
     const radioLabels = jsonSchema.radioLabels || enumValues.map(String);
@@ -56,16 +56,9 @@ const FormTypeInputRadioGroup = ({
     }));
   }, [jsonSchema]);
 
-  // 외부 value가 변경될 때 내부 상태 동기화
-  useEffect(() => {
-    setSelectedValue(value !== undefined ? String(value) : '');
-  }, [value]);
-
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const newValue = event.target.value;
-      setSelectedValue(newValue);
-
       const selectedOption = options.find((opt) => opt.value === newValue);
       if (selectedOption) {
         onChange(selectedOption.originalValue);
@@ -74,29 +67,42 @@ const FormTypeInputRadioGroup = ({
   );
 
   return (
-    <Box>
-      <RadioGroup
-        name={name}
-        value={selectedValue}
-        onChange={handleChange}
-        row={row}
-      >
-        {options.map((option) => (
-          <FormControlLabel
-            key={option.value}
-            value={option.value}
-            disabled={disabled}
-            control={
-              <Radio
-                size={size || context?.size || 'medium'}
-                id={`${path}-${option.value}`}
-              />
-            }
-            label={option.label}
-          />
-        ))}
-      </RadioGroup>
-    </Box>
+    <FormControlLabel
+      label={label || name}
+      htmlFor={path}
+      required={required}
+      disabled={disabled}
+      labelPlacement="start"
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'start',
+        gap: 8,
+      }}
+      control={
+        <RadioGroup
+          name={name}
+          defaultValue={defaultValue}
+          onChange={handleChange}
+          row={row}
+        >
+          {options.map((option) => (
+            <FormControlLabel
+              key={option.value}
+              value={option.value}
+              disabled={disabled}
+              control={
+                <Radio
+                  size={size || context?.size}
+                  id={`${path}-${option.value}`}
+                />
+              }
+              label={option.label}
+            />
+          ))}
+        </RadioGroup>
+      }
+    />
   );
 };
 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { Box, Checkbox, FormControlLabel, FormGroup } from '@mui/material';
+import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 
 import { useHandle } from '@winglet/react-utils';
 
@@ -14,9 +14,11 @@ interface StringCheckboxJsonSchema {
   items: {
     type: 'string';
     enum: string[];
+    options?: {
+      alias?: Record<string, string>;
+    };
   };
   formType: 'checkbox';
-  checkboxLabels?: string[];
 }
 
 interface FormTypeInputStringCheckboxProps
@@ -33,6 +35,8 @@ interface FormTypeInputStringCheckboxProps
 const FormTypeInputStringCheckbox = ({
   path,
   name,
+  label,
+  required,
   jsonSchema,
   disabled,
   value = [],
@@ -45,11 +49,10 @@ const FormTypeInputStringCheckbox = ({
 
   const options = useMemo(() => {
     const enumValues = jsonSchema.items.enum || [];
-    const checkboxLabels = jsonSchema.checkboxLabels || enumValues;
-
-    return enumValues.map((val, index) => ({
-      value: val,
-      label: checkboxLabels[index] || val,
+    const checkboxLabels = jsonSchema.items?.options?.alias;
+    return enumValues.map((value) => ({
+      value,
+      label: checkboxLabels?.[value] || value,
     }));
   }, [jsonSchema]);
 
@@ -73,30 +76,42 @@ const FormTypeInputStringCheckbox = ({
   });
 
   return (
-    <Box>
-      <FormGroup row={row}>
-        {options.map((option) => {
-          const isChecked = checkedValues.includes(option.value);
-
-          return (
-            <FormControlLabel
-              key={option.value}
-              disabled={disabled}
-              control={
-                <Checkbox
-                  id={`${path}-${option.value}`}
-                  name={`${name}[]`}
-                  checked={isChecked}
-                  onChange={() => handleToggle(option.value)}
-                  size={size || context?.size || 'medium'}
-                />
-              }
-              label={option.label}
-            />
-          );
-        })}
-      </FormGroup>
-    </Box>
+    <FormControlLabel
+      label={label || name}
+      htmlFor={path}
+      required={required}
+      disabled={disabled}
+      labelPlacement="start"
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'start',
+        gap: 8,
+      }}
+      control={
+        <FormGroup row={row}>
+          {options.map((option) => {
+            const isChecked = checkedValues.includes(option.value);
+            return (
+              <FormControlLabel
+                key={option.value}
+                disabled={disabled}
+                control={
+                  <Checkbox
+                    id={`${path}-${option.value}`}
+                    name={`${name}[]`}
+                    checked={isChecked}
+                    onChange={() => handleToggle(option.value)}
+                    size={size || context?.size}
+                  />
+                }
+                label={option.label}
+              />
+            );
+          })}
+        </FormGroup>
+      }
+    />
   );
 };
 

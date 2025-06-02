@@ -1,6 +1,6 @@
 import { type ChangeEvent, useMemo } from 'react';
 
-import { TextField } from '@mui/material';
+import { FormControlLabel, TextField } from '@mui/material';
 
 import { useHandle } from '@winglet/react-utils';
 
@@ -28,11 +28,12 @@ interface FormTypeInputStringProps
 const FormTypeInputString = ({
   path,
   name,
+  label,
+  required,
   jsonSchema,
   readOnly,
   disabled,
   defaultValue,
-  value,
   onChange,
   context,
   size,
@@ -54,12 +55,13 @@ const FormTypeInputString = ({
       type={isPassword ? 'password' : 'text'}
       variant="outlined"
       fullWidth
-      size={size || context?.size || 'medium'}
       placeholder={jsonSchema.placeholder}
-      value={value ?? ''}
+      label={label || name}
+      required={required}
+      disabled={disabled}
       defaultValue={defaultValue}
       onChange={handleChange}
-      disabled={disabled}
+      size={size || context?.size}
       slotProps={{
         input: {
           readOnly,

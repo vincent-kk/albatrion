@@ -1,20 +1,16 @@
-import { Box, FormLabel } from '@mui/material';
+import { Box } from '@mui/material';
 
 import type { FormTypeRendererProps } from '@canard/schema-form';
 
 export const FormGroup = ({
   node,
   depth,
-  name,
-  path,
-  required,
   Input,
   errorMessage,
 }: FormTypeRendererProps) => {
   // depth가 0이면 최상위 레벨이므로 Input만 렌더링
   if (depth === 0) return <Input />;
 
-  // object, array, virtual 타입은 fieldset으로 그룹핑
   if (
     node.type === 'object' ||
     node.type === 'array' ||
@@ -32,14 +28,10 @@ export const FormGroup = ({
           padding: 1,
         }}
       >
-        <FormLabel htmlFor={path} required={required}>
-          {name}
-        </FormLabel>
         <Input />
       </Box>
     );
   } else {
-    // 일반 필드는 FormControl로 래핑
     return (
       <Box
         sx={{
@@ -47,12 +39,6 @@ export const FormGroup = ({
           marginLeft: depth * 2, // depth에 따른 들여쓰기
         }}
       >
-        {/* array의 item들은 라벨을 표시하지 않음 */}
-        {node.parentNode?.type !== 'array' && (
-          <FormLabel htmlFor={path} required={required}>
-            {name}
-          </FormLabel>
-        )}
         <Input />
         {errorMessage}
       </Box>

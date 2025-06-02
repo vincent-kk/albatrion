@@ -36,7 +36,6 @@ const FormTypeInputTextarea = ({
   readOnly,
   disabled,
   defaultValue,
-  value,
   onChange,
   context,
   size,
@@ -57,9 +56,8 @@ const FormTypeInputTextarea = ({
       multiline
       variant="outlined"
       fullWidth
-      size={size || context?.size || 'medium'}
+      size={size || context?.size}
       placeholder={jsonSchema.placeholder}
-      value={value ?? ''}
       defaultValue={defaultValue}
       onChange={handleChange}
       disabled={disabled}
