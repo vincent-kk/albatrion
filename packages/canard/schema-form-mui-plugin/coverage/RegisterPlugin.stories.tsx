@@ -142,7 +142,7 @@ export const StringEnum = () => {
       },
       enum: {
         type: 'string',
-        enum: ['', 'g', 'h', 'i'],
+        enum: ['g', 'h', 'i'],
         formType: 'enum',
         placeholder: 'select one of item',
         options: {
@@ -158,7 +158,7 @@ export const StringEnum = () => {
         placeholder: 'select one of item',
         items: {
           type: 'string',
-          enum: ['', 'g', 'h', 'i'],
+          enum: ['g', 'h', 'i'],
           formType: 'enum',
         },
         options: {
