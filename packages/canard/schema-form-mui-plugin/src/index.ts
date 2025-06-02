@@ -1,9 +1,17 @@
-// Basic Components
-export { FormError } from './components/FormError';
-export { FormGroup } from './components/FormGroup';
-export { FormInput } from './components/FormInput';
-export { FormLabel } from './components/FormLabel';
-export { formatError } from './components/formatError';
+import type { SchemaFormPlugin } from '@canard/schema-form';
 
-// FormTypeInputs will be added in future phases
-// export * from './formTypeInputs';
+import { FormError } from './components/FormError';
+import { FormGroup } from './components/FormGroup';
+import { FormInput } from './components/FormInput';
+import { FormLabel } from './components/FormLabel';
+import { formatError } from './components/formatError';
+import { formTypeInputDefinitions } from './formTypeInputs';
+
+export const plugin = {
+  FormGroup,
+  FormLabel,
+  FormInput,
+  FormError,
+  formatError,
+  formTypeInputDefinitions,
+} satisfies SchemaFormPlugin;
