@@ -69,14 +69,16 @@ const FormTypeInputNumber = ({
       defaultValue={defaultValue}
       onChange={handleChange}
       disabled={disabled}
-      InputProps={{
-        readOnly,
-        inputProps: {
-          min: jsonSchema.minimum,
-          max: jsonSchema.maximum,
-          step:
-            jsonSchema.multipleOf ||
-            (jsonSchema.type === 'integer' ? 1 : 'any'),
+      slotProps={{
+        input: {
+          readOnly,
+          inputProps: {
+            min: jsonSchema.minimum,
+            max: jsonSchema.maximum,
+            step:
+              jsonSchema.multipleOf ||
+              (jsonSchema.type === 'integer' ? 1 : 'any'),
+          },
         },
       }}
     />
@@ -85,5 +87,7 @@ const FormTypeInputNumber = ({
 
 export const FormTypeInputNumberDefinition = {
   Component: FormTypeInputNumber,
-  test: ({ type }) => type === 'number' || type === 'integer',
+  test: {
+    type: ['number', 'integer'],
+  },
 } satisfies FormTypeInputDefinition;

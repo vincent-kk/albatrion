@@ -65,8 +65,10 @@ const FormTypeInputTextarea = ({
       disabled={disabled}
       minRows={finalMinRows}
       maxRows={finalMaxRows}
-      InputProps={{
-        readOnly,
+      slotProps={{
+        input: {
+          readOnly,
+        },
       }}
       sx={{
         '& .MuiInputBase-root': {

@@ -1,12 +1,12 @@
-import { Box, FormControl, FormLabel, Typography } from '@mui/material';
+import { Box, FormLabel } from '@mui/material';
 
 import type { FormTypeRendererProps } from '@canard/schema-form';
 
 export const FormGroup = ({
   node,
   depth,
-  path,
   name,
+  path,
   required,
   Input,
   errorMessage,
@@ -32,9 +32,9 @@ export const FormGroup = ({
           padding: 1,
         }}
       >
-        <Typography component="legend" variant="body2" sx={{ px: 1 }}>
+        <FormLabel htmlFor={path} required={required}>
           {name}
-        </Typography>
+        </FormLabel>
         <Input />
       </Box>
     );
@@ -47,16 +47,14 @@ export const FormGroup = ({
           marginLeft: depth * 2, // depth에 따른 들여쓰기
         }}
       >
-        <FormControl fullWidth error={!!errorMessage}>
-          {/* array의 item들은 라벨을 표시하지 않음 */}
-          {node.parentNode?.type !== 'array' && (
-            <FormLabel htmlFor={path} required={required} sx={{ mb: 1 }}>
-              {name}
-            </FormLabel>
-          )}
-          <Input />
-          {errorMessage}
-        </FormControl>
+        {/* array의 item들은 라벨을 표시하지 않음 */}
+        {node.parentNode?.type !== 'array' && (
+          <FormLabel htmlFor={path} required={required}>
+            {name}
+          </FormLabel>
+        )}
+        <Input />
+        {errorMessage}
       </Box>
     );
   }

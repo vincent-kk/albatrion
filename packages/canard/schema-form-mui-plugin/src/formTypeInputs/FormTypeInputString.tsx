@@ -71,5 +71,7 @@ const FormTypeInputString = ({
 
 export const FormTypeInputStringDefinition = {
   Component: FormTypeInputString,
-  test: ({ type }) => type === 'string',
+  test: {
+    type: 'string',
+  },
 } satisfies FormTypeInputDefinition;
