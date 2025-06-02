@@ -1904,8 +1904,9 @@ __metadata:
     "@chromatic-com/storybook": "npm:^3.2.4"
     "@emotion/react": "npm:^11.0.0"
     "@emotion/styled": "npm:^11.0.0"
-    "@mui/icons-material": "npm:>=7.0.0"
-    "@mui/material": "npm:>=7.0.0"
+    "@mui/icons-material": "npm:^7.0.0"
+    "@mui/material": "npm:^7.0.0"
+    "@mui/x-date-pickers": "npm:^8.0.0"
     "@rollup/plugin-commonjs": "npm:^28.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
     "@rollup/plugin-terser": "npm:^0.4.4"
@@ -1947,7 +1948,11 @@ __metadata:
     vite: "npm:^5.4.11"
     vitest: "npm:^2.1.5"
   peerDependencies:
+    "@emotion/react": ">=11.0.0"
+    "@emotion/styled": ">=11.0.0"
+    "@mui/icons-material": ">=7.0.0"
     "@mui/material": ">=7.0.0"
+    "@mui/x-date-pickers": ">=8.0.0"
     dayjs: ">=1"
     react: ">=18 <20"
     react-dom: ">=18 <20"
@@ -4105,7 +4110,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/icons-material@npm:>=7.0.0":
+"@mui/icons-material@npm:^7.0.0":
   version: 7.1.1
   resolution: "@mui/icons-material@npm:7.1.1"
   dependencies:
@@ -4121,7 +4126,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/material@npm:>=7.0.0":
+"@mui/material@npm:^7.0.0":
   version: 7.1.1
   resolution: "@mui/material@npm:7.1.1"
   dependencies:
@@ -4239,7 +4244,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/utils@npm:^7.1.1":
+"@mui/utils@npm:^7.0.2, @mui/utils@npm:^7.1.1":
   version: 7.1.1
   resolution: "@mui/utils@npm:7.1.1"
   dependencies:
@@ -4256,6 +4261,67 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10c0/d2563c4be785a94d55d32df7e51be530bb56a21ffbf4d1ca084c51a8b598ad7ee6d8bb30dd4171691c3b669eea6d8da07280aedd8d96fc539cfd0e0e5b9a48a1
+  languageName: node
+  linkType: hard
+
+"@mui/x-date-pickers@npm:^8.0.0":
+  version: 8.5.0
+  resolution: "@mui/x-date-pickers@npm:8.5.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.27.1"
+    "@mui/utils": "npm:^7.0.2"
+    "@mui/x-internals": "npm:8.5.0"
+    "@types/react-transition-group": "npm:^4.4.12"
+    clsx: "npm:^2.1.1"
+    prop-types: "npm:^15.8.1"
+    react-transition-group: "npm:^4.4.5"
+  peerDependencies:
+    "@emotion/react": ^11.9.0
+    "@emotion/styled": ^11.8.1
+    "@mui/material": ^5.15.14 || ^6.0.0 || ^7.0.0
+    "@mui/system": ^5.15.14 || ^6.0.0 || ^7.0.0
+    date-fns: ^2.25.0 || ^3.2.0 || ^4.0.0
+    date-fns-jalali: ^2.13.0-0 || ^3.2.0-0 || ^4.0.0-0
+    dayjs: ^1.10.7
+    luxon: ^3.0.2
+    moment: ^2.29.4
+    moment-hijri: ^2.1.2 || ^3.0.0
+    moment-jalaali: ^0.7.4 || ^0.8.0 || ^0.9.0 || ^0.10.0
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    "@emotion/react":
+      optional: true
+    "@emotion/styled":
+      optional: true
+    date-fns:
+      optional: true
+    date-fns-jalali:
+      optional: true
+    dayjs:
+      optional: true
+    luxon:
+      optional: true
+    moment:
+      optional: true
+    moment-hijri:
+      optional: true
+    moment-jalaali:
+      optional: true
+  checksum: 10c0/ee7bdeb98d78ae44128c79375d054046d1572ecb7699411544bf339fe810a41f3c624cdd5fb57970db2eec64dd7ae35076578074b8c0df82c560f77f43bc32e1
+  languageName: node
+  linkType: hard
+
+"@mui/x-internals@npm:8.5.0":
+  version: 8.5.0
+  resolution: "@mui/x-internals@npm:8.5.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.27.1"
+    "@mui/utils": "npm:^7.0.2"
+  peerDependencies:
+    "@mui/system": ^5.15.14 || ^6.0.0 || ^7.0.0
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/205f16b6f2f3be38203f0b0c75c89b04d6a54997a0eb4906027e07509edd903a9452edb9dfc877a80d9575a6ff6cfde28ccb0218574b8c8819305b0bba1b92be
   languageName: node
   linkType: hard
 

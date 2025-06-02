@@ -16,6 +16,7 @@
     "antdMobilePlugin": "yarn workspace @canard/schema-form-antd-mobile-plugin",
     "antdPlugin": "yarn workspace @canard/schema-form-antd-plugin",
     "benchmark": "yarn workspace @aileron/benchmark",
+    "muiPlugin": "yarn workspace @canard/schema-form-mui-plugin",
     "benchmark:form": "yarn workspace @aileron/benchmark-form",
     "build:all": "yarn run:all build",
     "commonUtils": "yarn workspace @winglet/common-utils",
