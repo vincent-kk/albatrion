@@ -5,9 +5,9 @@ import type { JsonObject, JsonValue } from '@/json/type';
 import { mergePatchRecursive } from './mergePatchRecursive';
 
 /**
- * Applies JSON Merge Patch (RFC 7386) to source JSON value.
+ * Applies JSON Merge Patch (RFC 7396) to source JSON value.
  *
- * This function implements the JSON Merge Patch specification (RFC 7386) to apply
+ * This function implements the JSON Merge Patch specification (RFC 7396) to apply
  * a patch document to a source value, producing a modified target value. The function
  * follows the standard merge patch semantics:
  *

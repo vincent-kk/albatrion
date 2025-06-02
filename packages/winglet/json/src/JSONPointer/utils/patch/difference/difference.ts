@@ -7,7 +7,7 @@ import { differenceObjectPatch } from './differenceObjectPatch';
 /**
  * Generates a JSON Merge Patch representing the differences between two JSON values.
  *
- * This function implements the JSON Merge Patch specification (RFC 7386) to create a patch
+ * This function implements the JSON Merge Patch specification (RFC 7396) to create a patch
  * that, when applied to the source value, will transform it into the target value. The function
  * intelligently handles different data types and optimization strategies:
  *
