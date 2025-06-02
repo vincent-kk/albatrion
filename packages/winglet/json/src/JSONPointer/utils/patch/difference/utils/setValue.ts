@@ -24,7 +24,7 @@ import type { JsonObject } from '@/json/type';
  * @param value - The value to set at the specified path
  *
  * @see https://datatracker.ietf.org/doc/html/rfc6901 - JSON Pointer specification
- * @see https://datatracker.ietf.org/doc/html/rfc7386 - JSON Merge Patch specification
+ * @see https://datatracker.ietf.org/doc/html/rfc7396 - JSON Merge Patch specification
  *
  * @returns void - The function modifies the source object in-place
  */

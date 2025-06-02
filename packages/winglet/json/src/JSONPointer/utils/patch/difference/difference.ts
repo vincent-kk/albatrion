@@ -25,7 +25,7 @@ import { differenceObjectPatch } from './differenceObjectPatch';
  * @param source - The source JSON value to compare from
  * @param target - The target JSON value to compare to
  *
- * @see https://datatracker.ietf.org/doc/html/rfc7386 - JSON Merge Patch specification
+ * @see https://datatracker.ietf.org/doc/html/rfc7396 - JSON Merge Patch specification
  * @see https://datatracker.ietf.org/doc/html/rfc6901 - JSON Pointer specification (used internally)
  *
  * @returns A JSON Merge Patch that transforms source into target, or `undefined` if no changes are needed.

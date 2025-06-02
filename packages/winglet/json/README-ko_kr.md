@@ -350,7 +350,7 @@ try {
 
 - [RFC 6901 - JavaScript Object Notation (JSON) Pointer](https://datatracker.ietf.org/doc/html/rfc6901)
 - [RFC 6902 - JavaScript Object Notation (JSON) Patch](https://datatracker.ietf.org/doc/html/rfc6902)
-- [RFC 7386 - JSON Merge Patch](https://datatracker.ietf.org/doc/html/rfc7386)
+- [RFC 7386 - JSON Merge Patch](https://datatracker.ietf.org/doc/html/rfc7396)
 - [JSONPath - XPath for JSON](https://goessner.net/articles/JsonPath/)
 
 ---

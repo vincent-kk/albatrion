@@ -30,7 +30,7 @@ import { setValue } from './utils/setValue';
  * @param source - The source object to transform from
  * @param target - The target object to transform to
  *
- * @see https://datatracker.ietf.org/doc/html/rfc7386 - JSON Merge Patch specification
+ * @see https://datatracker.ietf.org/doc/html/rfc7396 - JSON Merge Patch specification
  * @see https://datatracker.ietf.org/doc/html/rfc6901 - JSON Pointer specification
  * @see https://datatracker.ietf.org/doc/html/rfc6902 - JSON Patch specification (used internally by compare())
  *

@@ -2,6 +2,8 @@ import { clone, isPlainObject } from '@winglet/common-utils';
 
 import type { JsonObject, JsonValue } from '@/json/type';
 
+import { mergePatchRecursive } from './mergePatchRecursive';
+
 /**
  * Applies JSON Merge Patch (RFC 7386) to source JSON value.
  *
@@ -9,9 +11,9 @@ import type { JsonObject, JsonValue } from '@/json/type';
  * a patch document to a source value, producing a modified target value. The function
  * follows the standard merge patch semantics:
  *
- * - **Patch is not an object**: Returns the patch value directly (complete replacement)
- * - **Source is not an object**: Treats source as empty object and applies patch
- * - **Object merging**: Recursively merges patch properties into source object
+ * - **Merge patch body is not an object**: Returns the merge patch body value directly (complete replacement)
+ * - **Source is not an object**: Treats source as empty object and applies merge patch body
+ * - **Object merging**: Recursively merges merge patch body properties into source object
  * - **Null values**: Removes corresponding properties from the target object
  * - **Non-null values**: Recursively applies merge patch to nested values
  *
@@ -19,10 +21,13 @@ import type { JsonObject, JsonValue } from '@/json/type';
  * When `immutable` is true (default), the source object is cloned before modification.
  *
  * @param source - The source JSON value to be patched
- * @param patch - The merge patch to apply, or undefined for no changes
- * @param immutable - Whether to preserve the original source (default: true)
+ * @param mergePatchBody - The JSON merge patch document to apply, or undefined for no changes
+ * @param immutable - Whether to preserve the original source object by creating a deep copy.
+ *                    This is an implementation-specific feature not defined in RFC 7396.
+ *                    When true (default), the source is cloned before modification.
+ *                    When false, the source object is modified in place for better performance.
  *
- * @see https://datatracker.ietf.org/doc/html/rfc7386 - JSON Merge Patch specification
+ * @see https://datatracker.ietf.org/doc/html/rfc7396 - JSON Merge Patch specification
  *
  * @returns The result of applying the merge patch to the source value.
  *          Returns the original source if patch is undefined.
@@ -80,14 +85,14 @@ import type { JsonObject, JsonValue } from '@/json/type';
  */
 export const mergePatch = (
   source: JsonValue,
-  patch: JsonValue | undefined,
+  mergePatchBody: JsonValue | undefined,
   immutable: boolean = true,
 ): JsonValue => {
   // If patch is undefined, return source unchanged
-  if (patch === undefined) return source;
+  if (mergePatchBody === undefined) return source;
 
   // If patch is not an object (including null and arrays), return patch (complete replacement)
-  if (!isPlainObject(patch)) return patch;
+  if (!isPlainObject(mergePatchBody)) return mergePatchBody;
 
   // If source is not a plain object, start with an empty object
   const target: JsonObject = isPlainObject(source)
@@ -95,12 +100,8 @@ export const mergePatch = (
       ? clone(source)
       : source
     : {};
+  const patch = immutable ? clone(mergePatchBody) : mergePatchBody;
 
-  for (const key in patch) {
-    const value = patch[key];
-    if (value === null) delete target[key];
-    else target[key] = mergePatch(target[key], value, immutable);
-  }
-
-  return target;
+  // Apply patch for object recursively
+  return mergePatchRecursive(target, patch);
 };
