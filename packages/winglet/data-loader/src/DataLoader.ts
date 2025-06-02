@@ -1,5 +1,4 @@
 import {
-  InvalidTypeError,
   isArrayLike,
   isFunction,
   isNil,
@@ -14,6 +13,7 @@ import {
   failedDispatch,
   resolveCacheHits,
 } from './utils/dispatch';
+import { DataLoaderError } from './utils/error';
 import {
   prepareBatchLoader,
   prepareBatchScheduler,
@@ -97,11 +97,11 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
    * Efficiently loads data using batching and caching
    * @param key - The key for the value to load
    * @returns Promise of the loaded value
-   * @throws {InvalidTypeError} When the key is null or undefined
+   * @throws {DataLoaderError} When the key is null or undefined
    */
   load(key: Key): Promise<Value> {
     if (isNil(key))
-      throw new InvalidTypeError(
+      throw new DataLoaderError(
         'INVALID_KEY',
         `DataLoader > load's key must be a non-nil value: ${key}`,
         { key },
@@ -133,11 +133,11 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
    * Other values are collected normally even if one key fails
    * @param keys - Array of keys for values to load
    * @returns Promise of an array of values or errors corresponding to each key
-   * @throws {InvalidTypeError} When keys is not an array-like object
+   * @throws {DataLoaderError} When keys is not an array-like object
    */
   loadMany(keys: ReadonlyArray<Key>): Promise<Array<Value | Error>> {
     if (!isArrayLike(keys))
-      throw new InvalidTypeError(
+      throw new DataLoaderError(
         'INVALID_KEYS',
         `DataLoader > loadMany's keys must be an array-like object: ${keys}`,
         { keys },
@@ -212,7 +212,7 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
       return failedDispatch(
         this,
         batch,
-        new InvalidTypeError(
+        new DataLoaderError(
           'INVALID_BATCH_LOADER',
           'DataLoader > batchLoader must be a function that returns a Promise<Array<value>>.',
           { batchPromise },
@@ -221,13 +221,13 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
     batchPromise
       .then((values) => {
         if (!isArrayLike(values))
-          throw new InvalidTypeError(
+          throw new DataLoaderError(
             'INVALID_BATCH_LOADER',
             `DataLoader > batchLoader must be a function that returns a Promise<Array<value>>, but it returned a non-array value: ${values}`,
             { values },
           );
         if (values.length !== batch.keys.length)
-          throw new InvalidTypeError(
+          throw new DataLoaderError(
             'INVALID_BATCH_LOADER',
             `DataLoader > batchLoader must be a function that returns a Promise<Array<value>>, but it returned an array with a length of ${values.length} while the batch had a length of ${batch.keys.length}`,
             { values, keys: batch.keys },

@@ -1,5 +1,4 @@
 import {
-  InvalidTypeError,
   identityFunction,
   isFunction,
   scheduleNextTick,
@@ -8,12 +7,13 @@ import {
 import type { Fn } from '@aileron/declare';
 
 import type { BatchLoader, MapLike } from '../type';
+import { DataLoaderError } from './error';
 
 export const prepareBatchLoader = <Key, Value>(
   batchLoader: BatchLoader<Key, Value>,
 ): BatchLoader<Key, Value> => {
   if (!isFunction(batchLoader))
-    throw new InvalidTypeError(
+    throw new DataLoaderError(
       'INVALID_BATCH_LOADER',
       `DataLoader > batchLoader must be a function: ${batchLoader}`,
       { batchLoader },
@@ -26,7 +26,7 @@ export const prepareBatchScheduler = (
 ): Fn<[task: Fn]> => {
   if (batchScheduler === undefined) return scheduleNextTick;
   if (!isFunction(batchScheduler))
-    throw new InvalidTypeError(
+    throw new DataLoaderError(
       'INVALID_BATCH_SCHEDULER',
       `DataLoaderOptions > batchScheduler must be a function: ${batchScheduler}`,
       { batchScheduler },
@@ -42,7 +42,7 @@ export const prepareMaxBatchSize = (options?: {
   const maxBatchSize = options?.maxBatchSize;
   if (maxBatchSize === undefined) return Infinity;
   if (typeof maxBatchSize !== 'number' || maxBatchSize < 1)
-    throw new InvalidTypeError(
+    throw new DataLoaderError(
       'INVALID_MAX_BATCH_SIZE',
       `DataLoaderOptions > maxBatchSize must be a positive integer : ${maxBatchSize}`,
       { maxBatchSize },
@@ -60,7 +60,7 @@ export const prepareCacheMap = <CacheKey, Value>(
       !isFunction(cacheMap[fnName as keyof MapLike<CacheKey, Value>] as any),
   );
   if (missingMethods.length > 0)
-    throw new InvalidTypeError(
+    throw new DataLoaderError(
       'INVALID_CACHE',
       `DataLoaderOptions > cache must additionally implement the following methods: ${missingMethods.join(', ')}`,
       { cacheMap, missingMethods },
@@ -74,7 +74,7 @@ export const prepareCacheKeyFn = <Key, CacheKey>(
   if (cacheKeyFn === undefined)
     return identityFunction as Fn<[key: Key], CacheKey>;
   if (!isFunction(cacheKeyFn))
-    throw new InvalidTypeError(
+    throw new DataLoaderError(
       'INVALID_CACHE_KEY_FN',
       `DataLoaderOptions > cacheKeyFn must be a function: ${cacheKeyFn}`,
       { cacheKeyFn },
