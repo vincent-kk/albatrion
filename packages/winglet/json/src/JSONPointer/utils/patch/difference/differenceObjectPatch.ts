@@ -1,10 +1,12 @@
+import {
+  getValueByPointer,
+  setValueByPointer,
+} from '@/json/JSONPointer/utils/manipulator';
 import { compare } from '@/json/JSONPointer/utils/patch/compare';
 import { Operation, type Patch } from '@/json/JSONPointer/utils/patch/type';
 import type { JsonObject } from '@/json/type';
 
 import { getArrayBasePath } from './utils/getArrayBasePath';
-import { getValue } from './utils/getValue';
-import { setValue } from './utils/setValue';
 
 /**
  * Generates an optimized JSON Merge Patch for transforming one object into another.
@@ -138,7 +140,11 @@ export const differenceObjectPatch = (
     if (arrayPath === null) {
       validPatches.push(patch);
     } else if (!processedArrayPaths.has(arrayPath)) {
-      setValue(mergePatch, arrayPath, getValue(target, arrayPath));
+      setValueByPointer(
+        mergePatch,
+        arrayPath,
+        getValueByPointer(target, arrayPath),
+      );
       processedArrayPaths.add(arrayPath);
     }
   }
@@ -148,9 +154,9 @@ export const differenceObjectPatch = (
     const patch = validPatches[index];
 
     if (patch.op === Operation.ADD || patch.op === Operation.REPLACE) {
-      setValue(mergePatch, patch.path, patch.value);
+      setValueByPointer(mergePatch, patch.path, patch.value);
     } else if (patch.op === Operation.REMOVE) {
-      setValue(mergePatch, patch.path, null);
+      setValueByPointer(mergePatch, patch.path, null);
     }
   }
 

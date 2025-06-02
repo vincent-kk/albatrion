@@ -27,6 +27,14 @@ describe('difference - RFC 7386 JSON Merge Patch 생성기', () => {
       expect(difference(original, target)).toEqual(expectedPatch);
     });
 
+    it('속성 값 변경: {"a/b/c":"b"} -> {"a/b/c":"c"}', () => {
+      const original = { 'a/b/c': 'b' };
+      const target = { 'a/b/c': 'c' };
+      const expectedPatch = { 'a/b/c': 'c' };
+
+      expect(difference(original, target)).toEqual(expectedPatch);
+    });
+
     it('새 속성 추가: {"a":"b"} -> {"a":"b","b":"c"}', () => {
       const original = { a: 'b' };
       const target = { a: 'b', b: 'c' };
