@@ -10,7 +10,7 @@ import { equals, getTypeTag, isObject } from '@winglet/common-utils';
  * @returns The current snapshot value of the object
  */
 export const useSnapshot = <Input extends object>(
-  input: Input,
+  input: Input | undefined,
   omit?: Set<keyof Input> | Array<keyof Input>,
 ) => {
   const snapshotRef = useSnapshotReference(input, omit);
@@ -25,7 +25,7 @@ export const useSnapshot = <Input extends object>(
  * @returns A ref containing the current snapshot of the object
  */
 export const useSnapshotReference = <Input extends object>(
-  input: Input,
+  input: Input | undefined,
   omit?: Set<keyof Input> | Array<keyof Input>,
 ) => {
   const snapshotRef = useRef(input);

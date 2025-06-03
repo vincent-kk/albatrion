@@ -2,6 +2,4 @@ import { useContext } from 'react';
 
 import { FormTypeInputsContext } from './FormTypeInputsContext';
 
-export const useFormTypeInputsContext = () => {
-  return useContext(FormTypeInputsContext);
-};
+export const useFormTypeInputsContext = () => useContext(FormTypeInputsContext);

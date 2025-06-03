@@ -5,8 +5,11 @@ import type { Fn } from '@aileron/declare';
 import type { FormTypeRendererProps } from '@/schema-form/types';
 
 export interface FormTypeRendererContext {
+  /** FormTypeRenderer component declared externally */
   FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  /** FormatError function declared externally */
   formatError?: FormTypeRendererProps['formatError'];
+  /** CheckShowError function declared externally */
   checkShowError: Fn<
     [
       condition: {

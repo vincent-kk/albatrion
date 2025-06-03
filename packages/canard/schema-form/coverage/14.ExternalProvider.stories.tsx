@@ -95,6 +95,54 @@ export const ExternalFormContext = () => {
   );
 };
 
+export const ExternalFormContextWithUserDefinedContext = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      number: {
+        type: 'number',
+        formType: 'external-input1',
+      },
+      objectNode: {
+        type: 'object',
+        properties: {
+          test: { type: 'string' },
+        },
+        formType: 'external-input2',
+      },
+    },
+  } satisfies JsonSchema;
+  const defaultValue = useRef({
+    name: 'ron',
+    number: 10,
+  });
+
+  const handleChange = (val: any) => {
+    setValue(val);
+  };
+
+  return (
+    <FormProvider
+      context={{
+        theme: 'dark',
+      }}
+    >
+      <StoryLayout jsonSchema={schema} value={value}>
+        <Form
+          jsonSchema={schema}
+          defaultValue={defaultValue.current}
+          onChange={handleChange}
+          context={{
+            theme: 'light',
+          }}
+        />
+      </StoryLayout>
+    </FormProvider>
+  );
+};
+
 export const ExternalFormContextConfig = () => {
   const externalFormTypeRenderer = useMemo<
     ComponentType<FormTypeRendererProps>

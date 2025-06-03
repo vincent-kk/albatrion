@@ -5,12 +5,10 @@ import { PluginManager } from '@/schema-form/app/plugin';
 import { FormTypeRendererContext } from './FormTypeRendererContext';
 
 export const useFormTypeRendererContext = () => {
-  const { FormTypeRenderer, formatError, checkShowError } = useContext(
-    FormTypeRendererContext,
-  );
+  const context = useContext(FormTypeRendererContext);
   return {
-    FormTypeRenderer: FormTypeRenderer || PluginManager.FormGroup,
-    formatError: formatError || PluginManager.formatError,
-    checkShowError,
+    FormTypeRenderer: context.FormTypeRenderer || PluginManager.FormGroup,
+    formatError: context.formatError || PluginManager.formatError,
+    checkShowError: context.checkShowError,
   };
 };

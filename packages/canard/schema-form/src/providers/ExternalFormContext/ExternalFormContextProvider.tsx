@@ -1,5 +1,9 @@
 import { type ComponentType, type PropsWithChildren, useMemo } from 'react';
 
+import { useSnapshot } from '@winglet/react-utils';
+
+import type { Dictionary } from '@aileron/declare';
+
 import type { ValidationMode } from '@/schema-form/core';
 import type { Ajv } from '@/schema-form/helpers/ajv';
 import { normalizeFormTypeInputDefinitions } from '@/schema-form/helpers/formTypeInputDefinition';
@@ -41,6 +45,8 @@ export interface ExternalFormContextProviderProps {
    *  - `ValidationMode.OnRequest`: Validate on request
    */
   validationMode?: ValidationMode;
+  /** Global user-defined context, merged with user-defined context */
+  context?: Dictionary;
   /** Ajv instance declared externally, creates internally if not provided */
   ajv?: Ajv;
 }
@@ -54,9 +60,11 @@ export const ExternalFormContextProvider = ({
   formatError,
   showError,
   validationMode,
+  context: inputContext,
   ajv,
   children,
 }: PropsWithChildren<ExternalFormContextProviderProps>) => {
+  const context = useSnapshot(inputContext);
   const value = useMemo(
     () => ({
       fromExternalFormTypeInputDefinitions: formTypeInputDefinitions
@@ -69,6 +77,7 @@ export const ExternalFormContextProvider = ({
       formatError,
       showError,
       validationMode,
+      context,
       ajv,
     }),
     [
@@ -80,6 +89,7 @@ export const ExternalFormContextProvider = ({
       formatError,
       showError,
       validationMode,
+      context,
       ajv,
     ],
   );
