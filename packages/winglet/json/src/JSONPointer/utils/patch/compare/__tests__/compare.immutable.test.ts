@@ -522,7 +522,7 @@ describe('compare - immutable mode', () => {
       );
       if (targetValuePatches.length > 0) {
         // At least one should preserve reference when immutable is false
-        const hasPreservedReference = targetValuePatches.some((patch) => {
+        targetValuePatches.some((patch) => {
           if ('value' in patch) {
             return patch.value === replacementObject.metadata;
           }

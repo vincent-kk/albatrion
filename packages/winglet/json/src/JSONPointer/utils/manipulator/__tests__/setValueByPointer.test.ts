@@ -96,7 +96,7 @@ describe('setValueByPointer', () => {
       empty: {},
       '': { '': 'value' },
     });
-    expect(setValueByPointer(testObj, ['', ''], 'value')).toEqual({
+    expect(setValueByPointer(testObj, ['', '', ''], 'value')).toEqual({
       foo: {
         bar: {
           baz: 42,

@@ -1,3 +1,4 @@
+import { JSONPointer } from '@/json';
 import {
   getValueByPointer,
   setValueByPointer,
@@ -136,14 +137,13 @@ export const differenceObjectPatch = (
   for (let index = 0; index < patchCount; index++) {
     const patch = patches[index];
     const arrayPath = getArrayBasePath(patch.path);
-
-    if (arrayPath === null) {
-      validPatches.push(patch);
-    } else if (!processedArrayPaths.has(arrayPath)) {
+    if (arrayPath === null) validPatches.push(patch);
+    else if (!processedArrayPaths.has(arrayPath)) {
+      const segments = arrayPath.split(JSONPointer.Child);
       setValueByPointer(
         mergePatch,
-        arrayPath,
-        getValueByPointer(target, arrayPath),
+        segments,
+        getValueByPointer(target, segments),
       );
       processedArrayPaths.add(arrayPath);
     }
@@ -152,12 +152,10 @@ export const differenceObjectPatch = (
   // 일반 패치들 처리 (배열과 무관한 패치들만 포함)
   for (let index = 0, length = validPatches.length; index < length; index++) {
     const patch = validPatches[index];
-
-    if (patch.op === Operation.ADD || patch.op === Operation.REPLACE) {
+    if (patch.op === Operation.ADD || patch.op === Operation.REPLACE)
       setValueByPointer(mergePatch, patch.path, patch.value);
-    } else if (patch.op === Operation.REMOVE) {
+    else if (patch.op === Operation.REMOVE)
       setValueByPointer(mergePatch, patch.path, null);
-    }
   }
 
   return mergePatch;

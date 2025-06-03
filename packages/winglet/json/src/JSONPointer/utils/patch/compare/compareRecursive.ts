@@ -65,17 +65,9 @@ export const compareRecursive = <
   // Early type mismatch detection - handle at current level
   if (sourceIsArray !== targetIsArray) {
     if (strict) {
-      patches.push({
-        op: Operation.TEST,
-        path: path,
-        value: source,
-      });
+      patches.push({ op: Operation.TEST, path, value: source });
     }
-    patches.push({
-      op: Operation.REPLACE,
-      path: path,
-      value: target,
-    });
+    patches.push({ op: Operation.REPLACE, path, value: target });
     return; // Early exit - no further processing needed
   }
 
@@ -111,10 +103,7 @@ export const compareRecursive = <
             value: processValue(sourceValue, immutable),
           });
         }
-        patches.push({
-          op: Operation.REMOVE,
-          path: targetPath,
-        });
+        patches.push({ op: Operation.REMOVE, path: targetPath });
         hasRemoved = true;
         continue;
       }
@@ -135,13 +124,12 @@ export const compareRecursive = <
       } else {
         // Value type change - replace the value
         const targetPath = path + JSONPointer.Child + escapePointer(key);
-        if (strict) {
+        if (strict)
           patches.push({
             op: Operation.TEST,
             path: targetPath,
             value: processValue(sourceValue, immutable),
           });
-        }
         patches.push({
           op: Operation.REPLACE,
           path: targetPath,
@@ -151,17 +139,13 @@ export const compareRecursive = <
     } else {
       // Key removal - exists in source but not in target
       const targetPath = path + JSONPointer.Child + escapePointer(key);
-      if (strict) {
+      if (strict)
         patches.push({
           op: Operation.TEST,
           path: targetPath,
           value: processValue(sourceValue, immutable),
         });
-      }
-      patches.push({
-        op: Operation.REMOVE,
-        path: targetPath,
-      });
+      patches.push({ op: Operation.REMOVE, path: targetPath });
       hasRemoved = true;
     }
   }

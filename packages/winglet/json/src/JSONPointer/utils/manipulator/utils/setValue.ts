@@ -2,8 +2,6 @@ import { isArray, isArrayIndex } from '@winglet/common-utils';
 
 import type { Dictionary } from '@aileron/declare';
 
-import { unescapePointer } from '@/json/JSONPointer/utils/escape/unescapePointer';
-
 import { isForbiddenKey } from './isForbiddenKey';
 
 const ADD_ITEM_ALIAS = '-';
@@ -15,30 +13,31 @@ export const setValue = <Input extends Dictionary | Array<any>>(
   overwrite: boolean,
 ): Dictionary => {
   const length = segments.length;
-  if (length === 0) return value;
+  const hasRootPrefix = segments[0] === '' || segments[0] === '#';
+  if (length === 0 || (length === 1 && hasRootPrefix)) return value;
 
   let cursor: any = input;
-  let part = '';
-  for (let index = 0; index < length; ) {
-    part = unescapePointer(segments[index++]);
-    if (isForbiddenKey(part)) return input;
+  let segment = '';
+  for (let index = hasRootPrefix ? 1 : 0; index < length; ) {
+    segment = segments[index++];
+    if (isForbiddenKey(segment)) return input;
     const isLastSegment = index === length;
-    if (cursor[part] === undefined && !isLastSegment) {
+    if (cursor[segment] === undefined && !isLastSegment) {
       if (isArrayIndex(segments[index]) || segments[index] === ADD_ITEM_ALIAS)
-        cursor[part] = [];
-      else cursor[part] = {};
+        cursor[segment] = [];
+      else cursor[segment] = {};
     }
-    if (isArray(cursor) && part === ADD_ITEM_ALIAS)
-      part = cursor.length.toString();
+    if (isArray(cursor) && segment === ADD_ITEM_ALIAS)
+      segment = cursor.length.toString();
     if (isLastSegment) break;
-    cursor = cursor[part];
+    cursor = cursor[segment];
   }
 
-  if (value === undefined) delete cursor[part];
+  if (value === undefined) delete cursor[segment];
   else {
-    if (part in cursor) {
-      if (overwrite) cursor[part] = value;
-    } else cursor[part] = value;
+    if (segment in cursor) {
+      if (overwrite) cursor[segment] = value;
+    } else cursor[segment] = value;
   }
 
   return input;

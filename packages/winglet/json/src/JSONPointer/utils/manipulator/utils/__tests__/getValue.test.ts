@@ -25,6 +25,7 @@ describe('getValue', () => {
         },
       },
     };
+    expect(getValue(input, ['', 'foo', 'bar', 'baz'])).toBe('value');
     expect(getValue(input, ['foo', 'bar', 'baz'])).toBe('value');
   });
 
@@ -34,16 +35,6 @@ describe('getValue', () => {
       arr: ['first', 'second', 'third'],
     };
     expect(getValue(input, ['arr', '1'])).toBe('second');
-  });
-
-  // 이스케이프된 문자 처리 테스트
-  it('should handle escaped characters in property names', () => {
-    const input = {
-      'foo/bar': 'value',
-      'foo~bar': 'escaped',
-    };
-    expect(getValue(input, ['foo~1bar'])).toBe('value'); // /가 ~1로 이스케이프됨
-    expect(getValue(input, ['foo~0bar'])).toBe('escaped'); // ~가 ~0으로 이스케이프됨
   });
 
   // 존재하지 않는 경로 테스트

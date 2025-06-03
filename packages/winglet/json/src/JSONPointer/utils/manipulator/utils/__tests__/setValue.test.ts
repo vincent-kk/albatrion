@@ -10,15 +10,33 @@ describe('setValue', () => {
       expect(obj).toEqual({ foo: 'bar' });
     });
 
+    it('should set value in simple object path', () => {
+      const obj = {};
+      setValue(obj, ['', 'foo'], 'bar', true);
+      expect(obj).toEqual({ foo: 'bar' });
+    });
+
     it('should set value in nested object path', () => {
       const obj = {};
       setValue(obj, ['foo', 'bar'], 'baz', true);
       expect(obj).toEqual({ foo: { bar: 'baz' } });
     });
 
+    it('should set value in nested object path', () => {
+      const obj = {};
+      setValue(obj, ['', 'foo', 'bar'], 'baz', true);
+      expect(obj).toEqual({ foo: { bar: 'baz' } });
+    });
+
     it('should override existing values', () => {
       const obj = { foo: { bar: 'old' } };
       setValue(obj, ['foo', 'bar'], 'new', true);
+      expect(obj).toEqual({ foo: { bar: 'new' } });
+    });
+
+    it('should override existing values', () => {
+      const obj = { foo: { bar: 'old' } };
+      setValue(obj, ['', 'foo', 'bar'], 'new', true);
       expect(obj).toEqual({ foo: { bar: 'new' } });
     });
 

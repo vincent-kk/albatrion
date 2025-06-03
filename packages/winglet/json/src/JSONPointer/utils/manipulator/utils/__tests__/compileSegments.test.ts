@@ -10,17 +10,17 @@ describe('compilePointer', () => {
     });
 
     it('should handle root pointer', () => {
-      expect(compilePointer('#')).toEqual([]);
+      expect(compilePointer('#')).toEqual(['#']);
     });
 
     it('should handle simple paths', () => {
-      expect(compilePointer('/foo')).toEqual(['foo']);
-      expect(compilePointer('/foo/bar')).toEqual(['foo', 'bar']);
+      expect(compilePointer('/foo')).toEqual(['', 'foo']);
+      expect(compilePointer('/foo/bar')).toEqual(['', 'foo', 'bar']);
     });
 
     it('should handle escaped characters', () => {
-      expect(compilePointer('/foo/~0bar')).toEqual(['foo', '~bar']);
-      expect(compilePointer('/foo/~1bar')).toEqual(['foo', '/bar']);
+      expect(compilePointer('/foo/~0bar')).toEqual(['', 'foo', '~bar']);
+      expect(compilePointer('/foo/~1bar')).toEqual(['', 'foo', '/bar']);
     });
 
     it('should throw error for invalid pointer format', () => {
@@ -36,6 +36,14 @@ describe('compilePointer', () => {
 
     it('should handle mixed string and number array', () => {
       expect(compilePointer(['foo', '0', 'bar'])).toEqual(['foo', '0', 'bar']);
+    });
+
+    it('should handle escaped characters in array', () => {
+      expect(compilePointer(['foo', '~0bar', '~1bar'])).toEqual([
+        'foo',
+        '~bar',
+        '/bar',
+      ]);
     });
 
     it('should throw error for invalid array elements', () => {
