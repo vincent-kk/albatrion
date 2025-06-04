@@ -12,8 +12,8 @@ describe('getTrackableHandler', () => {
     vi.useRealTimers();
   });
 
-  describe('기본 기능', () => {
-    it('원본 함수를 정상적으로 실행해야 한다', async () => {
+  describe('basic functionality', () => {
+    it('should execute the original function normally', async () => {
       const mockOrigin = vi.fn().mockResolvedValue('test result');
       const options: TrackableHandlerOptions<[string], { count: number }> = {
         initialState: { count: 0 },
@@ -26,7 +26,7 @@ describe('getTrackableHandler', () => {
       expect(result).toBe('test result');
     });
 
-    it('여러 인자를 가진 함수도 정상적으로 처리해야 한다', async () => {
+    it('should handle functions with multiple arguments', async () => {
       const mockOrigin = vi.fn().mockResolvedValue('complex result');
       const options: TrackableHandlerOptions<
         [string, number, boolean],
@@ -42,7 +42,7 @@ describe('getTrackableHandler', () => {
       expect(result).toBe('complex result');
     });
 
-    it('인자가 없는 함수도 정상적으로 처리해야 한다', async () => {
+    it('should handle functions with no arguments', async () => {
       const mockOrigin = vi.fn().mockResolvedValue('no args result');
       const options: TrackableHandlerOptions<[], { count: number }> = {
         initialState: { count: 0 },
@@ -56,8 +56,8 @@ describe('getTrackableHandler', () => {
     });
   });
 
-  describe('상태 관리', () => {
-    it('초기 상태를 올바르게 설정해야 한다', () => {
+  describe('state management', () => {
+    it('should set initial state correctly', () => {
       const mockOrigin = vi.fn().mockResolvedValue('result');
       const initialState = { count: 5, message: 'hello' };
       const options: TrackableHandlerOptions<[], typeof initialState> = {
@@ -71,7 +71,7 @@ describe('getTrackableHandler', () => {
       expect((handler as any).message).toBe('hello');
     });
 
-    it('상태 업데이트가 정상적으로 동작해야 한다', () => {
+    it('should update state properly', () => {
       const mockOrigin = vi.fn().mockResolvedValue('result');
       const options: TrackableHandlerOptions<
         [],
@@ -95,7 +95,7 @@ describe('getTrackableHandler', () => {
       expect((handler as any).count).toBe(0);
     });
 
-    it('빈 초기 상태도 처리해야 한다', () => {
+    it('should handle empty initial state', () => {
       const mockOrigin = vi.fn().mockResolvedValue('result');
       const options: TrackableHandlerOptions<[], {}> = {
         initialState: {},
@@ -106,7 +106,7 @@ describe('getTrackableHandler', () => {
       expect((handler as any).state).toEqual({});
     });
 
-    it('상태 업데이트 시 이전 상태를 유지해야 한다', async () => {
+    it('should preserve previous state when updating', async () => {
       const mockOrigin = vi.fn().mockResolvedValue('result');
       const options: TrackableHandlerOptions<
         [],
@@ -122,13 +122,13 @@ describe('getTrackableHandler', () => {
 
       expect((handler as any).other).toBe(true);
       await handler();
-      expect((handler as any).other).toBe(true); // 다른 상태는 유지되어야 함
+      expect((handler as any).other).toBe(true); // other state should be preserved
       expect((handler as any).status).toBe('loading');
     });
   });
 
-  describe('구독 기능', () => {
-    it('구독자를 추가하고 상태 변경 시 알림을 보내야 한다', async () => {
+  describe('subscription functionality', () => {
+    it('should add subscribers and notify on state changes', async () => {
       const mockOrigin = vi.fn().mockResolvedValue('result');
       const mockListener = vi.fn();
       const options: TrackableHandlerOptions<[], { count: number }> = {
@@ -147,7 +147,7 @@ describe('getTrackableHandler', () => {
       unsubscribe();
     });
 
-    it('구독 해제가 정상적으로 동작해야 한다', async () => {
+    it('should unsubscribe properly', async () => {
       const mockOrigin = vi.fn().mockResolvedValue('result');
       const mockListener = vi.fn();
       const options: TrackableHandlerOptions<[], { count: number }> = {
@@ -160,14 +160,14 @@ describe('getTrackableHandler', () => {
       const handler = getTrackableHandler(mockOrigin, options);
       const unsubscribe = (handler as any).subscribe(mockListener);
 
-      // 구독 해제 후 호출
+      // Unsubscribe then call
       unsubscribe();
       await handler();
 
       expect(mockListener).not.toHaveBeenCalled();
     });
 
-    it('여러 구독자를 지원해야 한다', async () => {
+    it('should support multiple subscribers', async () => {
       const mockOrigin = vi.fn().mockResolvedValue('result');
       const mockListener1 = vi.fn();
       const mockListener2 = vi.fn();
@@ -188,7 +188,7 @@ describe('getTrackableHandler', () => {
       expect(mockListener2).toHaveBeenCalled();
     });
 
-    it('동일한 구독자를 여러 번 등록해도 한 번만 호출되어야 한다', async () => {
+    it('should call the same subscriber only once even when registered multiple times', async () => {
       const mockOrigin = vi.fn().mockResolvedValue('result');
       const mockListener = vi.fn();
       const options: TrackableHandlerOptions<[], { count: number }> = {
@@ -200,19 +200,19 @@ describe('getTrackableHandler', () => {
 
       const handler = getTrackableHandler(mockOrigin, options);
       (handler as any).subscribe(mockListener);
-      (handler as any).subscribe(mockListener); // 같은 함수 다시 등록
+      (handler as any).subscribe(mockListener); // Register same function again
 
       await handler();
 
       expect(mockListener).toHaveBeenCalledTimes(1);
     });
 
-    it('상태가 변경되지 않으면 구독자가 호출되지 않아야 한다', async () => {
+    it('should not call subscribers when state does not change', async () => {
       const mockOrigin = vi.fn().mockResolvedValue('result');
       const mockListener = vi.fn();
       const options: TrackableHandlerOptions<[], { count: number }> = {
         initialState: { count: 0 },
-        // beforeExecute, afterExecute 없음 - 상태 변경 없음
+        // No beforeExecute, afterExecute - no state changes
       };
 
       const handler = getTrackableHandler(mockOrigin, options);
@@ -224,8 +224,8 @@ describe('getTrackableHandler', () => {
     });
   });
 
-  describe('동시 실행 방지', () => {
-    it('preventConcurrent가 true일 때 동시 실행을 방지해야 한다', async () => {
+  describe('concurrent execution prevention', () => {
+    it('should prevent concurrent execution when preventConcurrent is true', async () => {
       let resolvePromise: (value: string) => void;
       const slowPromise = new Promise<string>((resolve) => {
         resolvePromise = resolve;
@@ -245,15 +245,15 @@ describe('getTrackableHandler', () => {
 
       const handler = getTrackableHandler(mockOrigin, options);
 
-      // 첫 번째 호출 시작
+      // Start first call (not completed yet)
       const firstCall = handler();
 
-      // 두 번째 호출 (동시 실행)
+      // Second call (concurrent execution)
       const secondCall = handler();
 
       expect(mockOrigin).toHaveBeenCalledTimes(1);
 
-      // 첫 번째 호출 완료
+      // Complete first call
       resolvePromise!('first result');
       const firstResult = await firstCall;
       const secondResult = await secondCall;
@@ -262,7 +262,7 @@ describe('getTrackableHandler', () => {
       expect(secondResult).toBeUndefined();
     });
 
-    it('preventConcurrent가 false일 때 동시 실행을 허용해야 한다', async () => {
+    it('should allow concurrent execution when preventConcurrent is false', async () => {
       const mockOrigin = vi.fn().mockResolvedValue('result');
       const options: TrackableHandlerOptions<[], { count: number }> = {
         initialState: { count: 0 },
@@ -277,8 +277,8 @@ describe('getTrackableHandler', () => {
     });
   });
 
-  describe('beforeExecute와 afterExecute 콜백', () => {
-    it('beforeExecute가 함수 실행 전에 호출되어야 한다', async () => {
+  describe('beforeExecute and afterExecute callbacks', () => {
+    it('should call beforeExecute before function execution', async () => {
       const callOrder: string[] = [];
       const mockOrigin = vi.fn().mockImplementation(async () => {
         callOrder.push('origin');
@@ -303,7 +303,7 @@ describe('getTrackableHandler', () => {
       );
     });
 
-    it('afterExecute가 함수 실행 후에 호출되어야 한다', async () => {
+    it('should call afterExecute after function execution', async () => {
       const callOrder: string[] = [];
       const mockOrigin = vi.fn().mockImplementation(async () => {
         callOrder.push('origin');
@@ -328,7 +328,7 @@ describe('getTrackableHandler', () => {
       );
     });
 
-    it('원본 함수에서 에러가 발생해도 afterExecute가 호출되어야 한다', async () => {
+    it('should call afterExecute even when original function throws error', async () => {
       const mockOrigin = vi.fn().mockRejectedValue(new Error('test error'));
       const mockAfterExecute = vi.fn();
       const options: TrackableHandlerOptions<[], { error: string | null }> = {
@@ -342,7 +342,7 @@ describe('getTrackableHandler', () => {
       expect(mockAfterExecute).toHaveBeenCalled();
     });
 
-    it('beforeExecute와 afterExecute 모두 있을 때 올바른 순서로 호출되어야 한다', async () => {
+    it('should call beforeExecute and afterExecute in correct order', async () => {
       const callOrder: string[] = [];
       const mockOrigin = vi.fn().mockImplementation(async () => {
         callOrder.push('origin');
@@ -368,8 +368,8 @@ describe('getTrackableHandler', () => {
     });
   });
 
-  describe('에러 처리', () => {
-    it('원본 함수의 에러를 그대로 전파해야 한다', async () => {
+  describe('error handling', () => {
+    it('should propagate original function errors as-is', async () => {
       const testError = new Error('Original function error');
       const mockOrigin = vi.fn().mockRejectedValue(testError);
       const options: TrackableHandlerOptions<[], { count: number }> = {
@@ -381,7 +381,7 @@ describe('getTrackableHandler', () => {
       await expect(handler()).rejects.toThrow('Original function error');
     });
 
-    it('beforeExecute에서 에러가 발생하면 원본 함수가 실행되지 않아야 한다', async () => {
+    it('should not execute original function when beforeExecute throws error', async () => {
       const mockOrigin = vi.fn().mockResolvedValue('result');
       const options: TrackableHandlerOptions<[], { count: number }> = {
         initialState: { count: 0 },
@@ -396,7 +396,7 @@ describe('getTrackableHandler', () => {
       expect(mockOrigin).not.toHaveBeenCalled();
     });
 
-    it('afterExecute에서 에러가 발생해도 원본 함수의 결과를 반환해야 한다', async () => {
+    it('should throw afterExecute error when it occurs', async () => {
       const mockOrigin = vi.fn().mockResolvedValue('original result');
       const options: TrackableHandlerOptions<[], { count: number }> = {
         initialState: { count: 0 },
@@ -407,13 +407,13 @@ describe('getTrackableHandler', () => {
 
       const handler = getTrackableHandler(mockOrigin, options);
 
-      // afterExecute 에러는 무시되고 원본 결과를 반환해야 함
+      // afterExecute error should be thrown
       await expect(handler()).rejects.toThrow('afterExecute error');
     });
   });
 
-  describe('상태 프로퍼티 접근', () => {
-    it('상태의 각 프로퍼티에 직접 접근할 수 있어야 한다', () => {
+  describe('state property access', () => {
+    it('should allow direct access to each state property', () => {
       const mockOrigin = vi.fn().mockResolvedValue('result');
       const initialState = { count: 10, message: 'test', isActive: true };
       const options: TrackableHandlerOptions<[], typeof initialState> = {
@@ -427,7 +427,7 @@ describe('getTrackableHandler', () => {
       expect((handler as any).isActive).toBe(true);
     });
 
-    it('상태가 업데이트되면 프로퍼티 접근도 업데이트되어야 한다', async () => {
+    it('should update property access when state is updated', async () => {
       const mockOrigin = vi.fn().mockResolvedValue('result');
       const options: TrackableHandlerOptions<
         [],
@@ -450,7 +450,7 @@ describe('getTrackableHandler', () => {
       expect((handler as any).status).toBe('loading');
     });
 
-    it('존재하지 않는 프로퍼티는 undefined를 반환해야 한다', () => {
+    it('should return undefined for non-existent properties', () => {
       const mockOrigin = vi.fn().mockResolvedValue('result');
       const options: TrackableHandlerOptions<[], { count: number }> = {
         initialState: { count: 0 },
@@ -462,8 +462,8 @@ describe('getTrackableHandler', () => {
     });
   });
 
-  describe('복합 시나리오', () => {
-    it('실제 사용 시나리오를 시뮬레이션해야 한다', async () => {
+  describe('complex scenarios', () => {
+    it('should simulate real usage scenario', async () => {
       interface ApiState {
         loading: boolean;
         data: string | null;
@@ -473,9 +473,9 @@ describe('getTrackableHandler', () => {
 
       const mockApiCall = vi
         .fn()
-        .mockResolvedValueOnce('첫 번째 데이터')
-        .mockRejectedValueOnce(new Error('API 에러'))
-        .mockResolvedValueOnce('두 번째 데이터');
+        .mockResolvedValueOnce('first data')
+        .mockRejectedValueOnce(new Error('API error'))
+        .mockResolvedValueOnce('second data');
 
       const options: TrackableHandlerOptions<[string], ApiState> = {
         initialState: {
@@ -503,25 +503,25 @@ describe('getTrackableHandler', () => {
       const listener = vi.fn();
       (apiHandler as any).subscribe(listener);
 
-      // 첫 번째 성공적인 호출
+      // First successful call
       const result1 = await apiHandler('endpoint1');
-      expect(result1).toBe('첫 번째 데이터');
+      expect(result1).toBe('first data');
       expect((apiHandler as any).loading).toBe(false);
       expect((apiHandler as any).requestCount).toBe(1);
       expect(listener).toHaveBeenCalled();
 
-      // 두 번째 실패하는 호출
-      await expect(apiHandler('endpoint2')).rejects.toThrow('API 에러');
+      // Second failing call
+      await expect(apiHandler('endpoint2')).rejects.toThrow('API error');
       expect((apiHandler as any).loading).toBe(false);
       expect((apiHandler as any).requestCount).toBe(2);
 
-      // 세 번째 성공적인 호출
+      // Third successful call
       const result3 = await apiHandler('endpoint3');
-      expect(result3).toBe('두 번째 데이터');
+      expect(result3).toBe('second data');
       expect((apiHandler as any).requestCount).toBe(3);
     });
 
-    it('로딩 상태에서 동시 호출 방지가 작동해야 한다', async () => {
+    it('should prevent concurrent calls based on loading state', async () => {
       let resolveFirst: (value: string) => void;
       const firstPromise = new Promise<string>((resolve) => {
         resolveFirst = resolve;
@@ -530,7 +530,7 @@ describe('getTrackableHandler', () => {
       const mockOrigin = vi
         .fn()
         .mockReturnValueOnce(firstPromise)
-        .mockResolvedValue('후속 호출');
+        .mockResolvedValue('subsequent call');
 
       const options: TrackableHandlerOptions<
         [],
@@ -551,31 +551,31 @@ describe('getTrackableHandler', () => {
 
       const handler = getTrackableHandler(mockOrigin, options);
 
-      // 첫 번째 호출 시작 (아직 완료되지 않음)
+      // Start first call (not completed yet)
       const firstCall = handler();
       expect((handler as any).loading).toBe(true);
 
-      // 로딩 중에 추가 호출들 (무시되어야 함)
+      // Additional calls while loading (should be ignored)
       const secondCall = handler();
       const thirdCall = handler();
 
-      // 첫 번째 호출만 실제로 실행되었어야 함
+      // Only first call should actually execute
       expect(mockOrigin).toHaveBeenCalledTimes(1);
 
-      // 첫 번째 호출 완료
-      resolveFirst!('첫 번째 결과');
+      // Complete first call
+      resolveFirst!('first result');
       const result1 = await firstCall;
       const result2 = await secondCall;
       const result3 = await thirdCall;
 
-      expect(result1).toBe('첫 번째 결과');
+      expect(result1).toBe('first result');
       expect(result2).toBeUndefined();
       expect(result3).toBeUndefined();
       expect((handler as any).loading).toBe(false);
       expect((handler as any).callCount).toBe(1);
     });
 
-    it('메모리 누수 방지를 위해 구독자 정리가 가능해야 한다', async () => {
+    it('should enable subscriber cleanup to prevent memory leaks', async () => {
       const mockOrigin = vi.fn().mockResolvedValue('result');
       const options: TrackableHandlerOptions<[], { count: number }> = {
         initialState: { count: 0 },
@@ -587,25 +587,25 @@ describe('getTrackableHandler', () => {
       const handler = getTrackableHandler(mockOrigin, options);
       const listeners: Array<() => void> = [];
 
-      // 여러 구독자 추가
+      // Add multiple subscribers
       for (let i = 0; i < 100; i++) {
         const unsubscribe = (handler as any).subscribe(() => {});
         listeners.push(unsubscribe);
       }
 
-      // 모든 구독자 제거
+      // Remove all subscribers
       listeners.forEach((unsubscribe) => unsubscribe());
 
-      // 상태 변경해도 아무 일이 일어나지 않아야 함
+      // No events should fire when state changes
       await handler();
 
-      // 테스트 통과만으로도 메모리 누수가 없다는 것을 확인
+      // Test passes just by not causing memory leaks
       expect(true).toBe(true);
     });
   });
 
-  describe('엣지 케이스', () => {
-    it('undefined를 반환하는 함수도 처리해야 한다', async () => {
+  describe('edge cases', () => {
+    it('should handle functions that return undefined', async () => {
       const mockOrigin = vi.fn().mockResolvedValue(undefined);
       const options: TrackableHandlerOptions<[], { count: number }> = {
         initialState: { count: 0 },
@@ -617,7 +617,7 @@ describe('getTrackableHandler', () => {
       expect(result).toBeUndefined();
     });
 
-    it('null을 반환하는 함수도 처리해야 한다', async () => {
+    it('should handle functions that return null', async () => {
       const mockOrigin = vi.fn().mockResolvedValue(null);
       const options: TrackableHandlerOptions<[], { count: number }> = {
         initialState: { count: 0 },
@@ -629,7 +629,7 @@ describe('getTrackableHandler', () => {
       expect(result).toBeNull();
     });
 
-    it('객체를 반환하는 함수도 처리해야 한다', async () => {
+    it('should handle functions that return objects', async () => {
       const mockResult = { id: 1, name: 'test' };
       const mockOrigin = vi.fn().mockResolvedValue(mockResult);
       const options: TrackableHandlerOptions<[], { count: number }> = {
@@ -642,7 +642,7 @@ describe('getTrackableHandler', () => {
       expect(result).toEqual(mockResult);
     });
 
-    it('배열을 반환하는 함수도 처리해야 한다', async () => {
+    it('should handle functions that return arrays', async () => {
       const mockResult = [1, 2, 3];
       const mockOrigin = vi.fn().mockResolvedValue(mockResult);
       const options: TrackableHandlerOptions<[], { count: number }> = {
