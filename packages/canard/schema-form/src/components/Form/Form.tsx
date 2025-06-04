@@ -1,15 +1,18 @@
 import {
+  type FormEvent,
   type ForwardedRef,
   type ReactNode,
   forwardRef,
   memo,
+  useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from 'react';
 
-import { isFunction } from '@winglet/common-utils';
+import { getTrackableHandler, isFunction } from '@winglet/common-utils';
 import {
   useConstant,
   useHandle,
@@ -25,6 +28,7 @@ import {
   NodeEventType,
   type SchemaNode,
 } from '@/schema-form/core';
+import { ValidationError } from '@/schema-form/errors';
 import {
   FormTypeInputsContextProvider,
   FormTypeRendererContextProvider,
@@ -54,6 +58,7 @@ const FormInner = <
     disabled,
     onChange,
     onValidate,
+    onSubmit: onSubmitInput,
     formTypeInputDefinitions,
     formTypeInputMap,
     CustomFormTypeRenderer,
@@ -89,6 +94,35 @@ const FormInner = <
 
   const handleValidate = useHandle(onValidate);
 
+  const onSubmit = useHandle(async () => {
+    if (!ready.current || !rootNode || !isFunction(onSubmitInput)) return;
+    const errors = await rootNode.validate();
+    const value = rootNode.value as Value;
+    if (errors?.length)
+      throw new ValidationError(
+        'SCHEMA_VALIDATION_FAILED',
+        'Form submission rejected due to validation errors, please check the errors and try again',
+        { value, errors, jsonSchema },
+      );
+    await onSubmitInput(value);
+  });
+  const handleSubmit = useMemo(
+    () =>
+      getTrackableHandler(onSubmit, {
+        initialState: { loading: false },
+        beforeExecute: (_, { update }) => update({ loading: true }),
+        afterExecute: (_, { update }) => update({ loading: false }),
+      }),
+    [onSubmit],
+  );
+  const handleFormSubmit = useCallback(
+    async (event?: FormEvent<HTMLFormElement>) => {
+      await handleSubmit();
+      event?.preventDefault();
+    },
+    [handleSubmit],
+  );
+
   const handleReady = useHandle((rootNode: Node) => {
     setRootNode(rootNode);
     ready.current = true;
@@ -115,9 +149,10 @@ const FormInner = <
       reset: update,
       getValue: () => rootNode?.value as Value,
       setValue: (value, options) => rootNode?.setValue(value as any, options),
-      validate: () => rootNode?.validate(),
+      validate: async () => (await rootNode?.validate()) || [],
+      submit: handleSubmit,
     }),
-    [rootNode, update],
+    [rootNode, handleSubmit, update],
   );
 
   return (
@@ -143,7 +178,9 @@ const FormInner = <
               validationMode={validationMode}
               ajv={ajv}
             >
-              {children || <SchemaNodeProxy />}
+              <form onSubmit={handleFormSubmit}>
+                {children || <SchemaNodeProxy />}
+              </form>
             </RootNodeContextProvider>
           </InputControlContextProvider>
         </FormTypeRendererContextProvider>

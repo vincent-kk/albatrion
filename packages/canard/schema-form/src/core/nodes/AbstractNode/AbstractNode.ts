@@ -8,7 +8,6 @@ import { JSONPath } from '@winglet/json';
 
 import type { Fn, SetStateFn } from '@aileron/declare';
 
-import { BIT_MASK_NONE } from '@/schema-form/app/constants/bitmask';
 import {
   type Ajv,
   type ErrorObject,
@@ -604,17 +603,15 @@ export abstract class AbstractNode<
    * Returns the merged result of errors that occurred inside the form and externally received errors.
    * @returns All of the errors that occurred inside the form and externally received errors
    */
-  public get globalErrors() {
-    return this.isRoot
-      ? this.#mergedGlobalErrors
-      : this.rootNode.#mergedGlobalErrors;
+  public get globalErrors(): JsonSchemaError[] | undefined {
+    return this.isRoot ? this.#mergedGlobalErrors : this.rootNode.globalErrors;
   }
 
   /**
    * Returns the merged result of own errors and externally received errors.
    * @returns Local errors and externally received errors
    */
-  public get errors() {
+  public get errors(): JsonSchemaError[] | undefined {
     return this.#mergedLocalErrors;
   }
 
@@ -784,8 +781,10 @@ export abstract class AbstractNode<
    * Performs validation based on the current value.
    * @note Only works when `ValidationMode.OnRequest` is set.
    */
-  public validate(this: AbstractNode) {
-    this.rootNode.publish({ type: NodeEventType.RequestValidate });
+  public async validate(this: AbstractNode) {
+    if (this.isRoot) await this.#handleValidation();
+    else await this.rootNode.validate();
+    return this.globalErrors;
   }
 
   /**
@@ -806,15 +805,9 @@ export abstract class AbstractNode<
     } catch (error: any) {
       this.#validator = getFallbackValidator(error, this.jsonSchema);
     }
-    const triggers =
-      (validationMode & ValidationMode.OnChange
-        ? NodeEventType.UpdateValue
-        : BIT_MASK_NONE) |
-      (validationMode & ValidationMode.OnRequest
-        ? NodeEventType.RequestValidate
-        : BIT_MASK_NONE);
-    this.subscribe(({ type }) => {
-      if (type & triggers) this.#handleValidation();
-    });
+    if (validationMode & ValidationMode.OnChange)
+      this.subscribe(({ type }) => {
+        if (type & NodeEventType.UpdateValue) this.#handleValidation();
+      });
   }
 }
