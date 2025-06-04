@@ -591,10 +591,10 @@ export abstract class AbstractNode<
   #errorDataPaths: string[] | undefined;
 
   /** [root only] Result of merging all errors that occurred inside the form with externally received errors */
-  #mergedGlobalErrors: JsonSchemaError[] | undefined;
+  #mergedGlobalErrors: JsonSchemaError[] = [];
 
   /** Own errors */
-  #localErrors: JsonSchemaError[] = [];
+  #localErrors: JsonSchemaError[] | undefined;
 
   /** Result of merging own errors with externally received errors */
   #mergedLocalErrors: JsonSchemaError[] = [];
@@ -603,7 +603,7 @@ export abstract class AbstractNode<
    * Returns the merged result of errors that occurred inside the form and externally received errors.
    * @returns All of the errors that occurred inside the form and externally received errors
    */
-  public get globalErrors(): JsonSchemaError[] | undefined {
+  public get globalErrors(): JsonSchemaError[] {
     return this.isRoot ? this.#mergedGlobalErrors : this.rootNode.globalErrors;
   }
 
@@ -611,7 +611,7 @@ export abstract class AbstractNode<
    * Returns the merged result of own errors and externally received errors.
    * @returns Local errors and externally received errors
    */
-  public get errors(): JsonSchemaError[] | undefined {
+  public get errors(): JsonSchemaError[] {
     return this.#mergedLocalErrors;
   }
 
@@ -665,7 +665,9 @@ export abstract class AbstractNode<
     for (let index = 0; index < errors.length; index++)
       this.#externalErrors[index] = { ...errors[index], key: index };
 
-    this.#mergedLocalErrors = [...this.#externalErrors, ...this.#localErrors];
+    this.#mergedLocalErrors = this.#localErrors
+      ? [...this.#externalErrors, ...this.#localErrors]
+      : this.#externalErrors;
     this.publish({
       type: NodeEventType.UpdateError,
       payload: { [NodeEventType.UpdateError]: this.#mergedLocalErrors },
@@ -779,7 +781,8 @@ export abstract class AbstractNode<
 
   /**
    * Performs validation based on the current value.
-   * @note Only works when `ValidationMode.OnRequest` is set.
+   * @returns {Promise<JsonSchemaError[]>} List of errors that occurred inside the form
+   * @note If `ValidationMode.None` is set, an empty array is returned.
    */
   public async validate(this: AbstractNode) {
     if (this.isRoot) await this.#handleValidation();
