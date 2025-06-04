@@ -142,8 +142,14 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 #### 함수 (Function)
 
-- **[`debounce`](./src/utils/function/debounce.ts)**: 함수 호출을 지연시키고, 일정 시간 동안 추가 호출이 없을 때만 실행하는 함수
-- **[`throttle`](./src/utils/function/throttle.ts)**: 함수 호출 빈도를 제한하여 일정 시간 간격으로만 실행되도록 하는 함수
+##### 함수 기능 추가 (Enhance)
+
+- **[`getTrackableHandler`](./src/utils/function/enhance/getTrackableHandler/getTrackableHandler.ts)**: 함수 실행 상태를 추적하고 관리할 수 있는 래퍼 함수를 생성하는 유틸리티
+
+##### 실행 빈도 제어 (Rate Limit)
+
+- **[`debounce`](./src/utils/function/rateLimit/debounce.ts)**: 함수 호출을 지연시키고, 일정 시간 동안 추가 호출이 없을 때만 실행하는 함수
+- **[`throttle`](./src/utils/function/rateLimit/throttle.ts)**: 함수 호출 빈도를 제한하여 일정 시간 간격으로만 실행되도록 하는 함수
 
 #### 해시 (Hash)
 
@@ -232,6 +238,38 @@ import { array } from '@winglet/common-utils';
 // 예제 코드:
 const chunks = array.chunk([1, 2, 3, 4, 5, 6], 2);
 console.log(chunks); // [[1, 2], [3, 4], [5, 6]]
+```
+
+### 함수 추적 유틸리티 사용하기
+
+```typescript
+import { getTrackableHandler } from '@winglet/common-utils';
+
+// 비동기 함수 실행 상태를 추적하는 예제
+const fetchUserData = async (userId: string) => {
+  const response = await fetch(`/api/users/${userId}`);
+  return response.json();
+};
+
+const trackableFetchUser = getTrackableHandler(fetchUserData, {
+  preventConcurrent: true, // 동시 실행 방지
+  initialState: { loading: false },
+  beforeExecute: (args, stateManager) => {
+    stateManager.update({ loading: true });
+  },
+  afterExecute: (args, stateManager) => {
+    stateManager.update({ loading: false });
+  },
+});
+
+// 상태 변경 감지
+trackableFetchUser.subscribe(() => {
+  console.log('Current state:', trackableFetchUser.state);
+});
+
+// 함수 실행
+await trackableFetchUser('user123');
+console.log('Loading state:', trackableFetchUser.loading); // false
 ```
 
 ---
