@@ -116,9 +116,9 @@ const FormInner = <
     [onSubmit],
   );
   const handleFormSubmit = useCallback(
-    async (event?: FormEvent<HTMLFormElement>) => {
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
       await handleSubmit();
-      event?.preventDefault();
     },
     [handleSubmit],
   );
