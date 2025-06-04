@@ -85,7 +85,7 @@ export interface FormProps<
 }
 
 export interface FormHandle<
-  Schema extends JsonSchema,
+  Schema extends JsonSchema = JsonSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   node?: InferSchemaNode<Schema>;
