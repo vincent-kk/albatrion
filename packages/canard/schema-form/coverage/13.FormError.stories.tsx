@@ -281,8 +281,9 @@ export const ValidateOnRequest = () => {
 
   const refHandle = useRef<FormHandle<typeof schema>>(null);
 
-  const handleValidate = () => {
-    refHandle.current?.validate();
+  const handleValidate = async () => {
+    const errors = await refHandle.current?.validate();
+    console.log('handleValidate', errors);
   };
 
   return (
