@@ -2,6 +2,8 @@ import type { ComponentType, ReactNode } from 'react';
 
 import type Ajv from 'ajv';
 
+import type { TrackableHandlerFunction } from '@winglet/common-utils';
+
 import type { Dictionary, Fn, SetStateFn } from '@aileron/declare';
 
 import type {
@@ -48,6 +50,8 @@ export interface FormProps<
   onChange?: SetStateFn<Value>;
   /** Function called when the value of this SchemaForm is validated */
   onValidate?: Fn<[jsonSchemaError: JsonSchemaError[]]>;
+  /** Function called when the form is submitted */
+  onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** List of FormTypeInput definitions */
   formTypeInputDefinitions?: FormTypeInputDefinition[];
   /** FormTypeInput path mapping */
@@ -85,7 +89,7 @@ export interface FormProps<
 }
 
 export interface FormHandle<
-  Schema extends JsonSchema,
+  Schema extends JsonSchema = JsonSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   node?: InferSchemaNode<Schema>;
@@ -94,5 +98,6 @@ export interface FormHandle<
   reset: Fn;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
-  validate: Fn;
+  validate: Fn<[], Promise<JsonSchemaError[]>>;
+  submit: TrackableHandlerFunction;
 }

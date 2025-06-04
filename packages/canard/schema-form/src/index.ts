@@ -10,6 +10,15 @@ export {
 } from './components/Form';
 
 export {
+  isSchemaFormError,
+  isSchemaNodeError,
+  isUnhandledError,
+  isValidationError,
+} from './errors';
+
+export { useFormSubmit } from './hooks/useFormSubmit';
+
+export {
   type SchemaNode,
   NodeState,
   ValidationMode,

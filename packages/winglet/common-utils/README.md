@@ -142,8 +142,14 @@ Please use a transpiler like Babel to transform the code for your target environ
 
 #### Function
 
-- **[`debounce`](./src/utils/function/debounce.ts)**: Function to delay execution until a certain time has passed with no additional calls
-- **[`throttle`](./src/utils/function/throttle.ts)**: Function to limit the execution frequency to specified time intervals
+##### Enhance
+
+- **[`getTrackableHandler`](./src/utils/function/enhance/getTrackableHandler/getTrackableHandler.ts)**: Utility to create a wrapper function that can track and manage function execution state
+
+##### Rate Limit
+
+- **[`debounce`](./src/utils/function/rateLimit/debounce.ts)**: Function to delay execution until a certain time has passed with no additional calls
+- **[`throttle`](./src/utils/function/rateLimit/throttle.ts)**: Function to limit the execution frequency to specified time intervals
 
 #### Hash
 
@@ -232,6 +238,38 @@ import { array } from '@winglet/common-utils';
 // Example code:
 const chunks = array.chunk([1, 2, 3, 4, 5, 6], 2);
 console.log(chunks); // [[1, 2], [3, 4], [5, 6]]
+```
+
+### Using Function Tracking Utilities
+
+```typescript
+import { getTrackableHandler } from '@winglet/common-utils';
+
+// Example of tracking async function execution state
+const fetchUserData = async (userId: string) => {
+  const response = await fetch(`/api/users/${userId}`);
+  return response.json();
+};
+
+const trackableFetchUser = getTrackableHandler(fetchUserData, {
+  preventConcurrent: true, // Prevent concurrent execution
+  initialState: { loading: false },
+  beforeExecute: (args, stateManager) => {
+    stateManager.update({ loading: true });
+  },
+  afterExecute: (args, stateManager) => {
+    stateManager.update({ loading: false });
+  },
+});
+
+// Subscribe to state changes
+trackableFetchUser.subscribe(() => {
+  console.log('Current state:', trackableFetchUser.state);
+});
+
+// Execute function
+await trackableFetchUser('user123');
+console.log('Loading state:', trackableFetchUser.loading); // false
 ```
 
 ---

@@ -1,2 +1,2 @@
-export { debounce, type DebouncedFn } from './debounce';
-export { throttle, type ThrottledFn } from './throttle';
+export * from './enhance';
+export * from './rateLimit';

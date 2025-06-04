@@ -68,6 +68,8 @@ interface FormProps<
   onChange?: SetStateFn<Value>;
   /** Function called when this SchemaForm is validated */
   onValidate?: Fn<[jsonSchemaError: JsonSchemaError[]]>;
+  /** Function called when the form is submitted */
+  onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** FormTypeInput definition list */
   formTypeInputDefinitions?: FormTypeInputDefinition[];
   /** FormTypeInput path mapping */
@@ -118,7 +120,8 @@ interface FormHandle<
   reset: Fn;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
-  validate: Fn;
+  validate: Fn<[], Promise<JsonSchemaError[]>>;
+  submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
 }
 ```
 
@@ -687,6 +690,344 @@ export const ConditionalForm = () => {
 };
 ```
 
+### Form Submission Management
+
+`@canard/schema-form` provides various methods to effectively manage form submission state.
+
+#### Using onSubmit
+
+You can define form submission logic using the `onSubmit` prop:
+
+```tsx
+import React, { useState } from 'react';
+
+import { Form, JsonSchemaError, isValidationError } from '@canard/schema-form';
+
+export const FormWithSubmit = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      name: { type: 'string', title: 'Name' },
+      email: { type: 'string', format: 'email', title: 'Email' },
+    },
+    required: ['name', 'email'],
+  };
+
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  const handleSubmit = async (value: any) => {
+    try {
+      // API call or other async operation
+      const response = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(value),
+      });
+
+      if (!response.ok) {
+        throw new Error('Submission failed');
+      }
+
+      console.log('Submission successful!');
+    } catch (error) {
+      console.error('Submission error:', error);
+    }
+  };
+
+  return (
+    <Form
+      jsonSchema={jsonSchema}
+      onSubmit={handleSubmit}
+      onValidate={setErrors}
+      errors={errors}
+    />
+  );
+};
+```
+
+#### Using useFormSubmit Hook
+
+For more complex submission state management, you can use the `useFormSubmit` hook:
+
+```tsx
+import React, { useRef, useState } from 'react';
+
+import {
+  Form,
+  FormHandle,
+  JsonSchemaError,
+  isValidationError,
+  useFormSubmit,
+} from '@canard/schema-form';
+
+export const AdvancedSubmitForm = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      name: { type: 'string', title: 'Name' },
+      email: { type: 'string', format: 'email', title: 'Email' },
+      message: { type: 'string', title: 'Message' },
+    },
+    required: ['name', 'email'],
+  };
+
+  const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  // Async submission handler
+  const handleSubmit = async (value: any) => {
+    // Simulate server request
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    console.log('Submitted data:', value);
+  };
+
+  // Submission state management
+  const { submit, loading } = useFormSubmit(formRef);
+
+  const onSubmitClick = async () => {
+    setErrors([]); // Clear previous errors
+
+    try {
+      await submit();
+      alert('Submission completed!');
+    } catch (error) {
+      if (isValidationError(error)) {
+        console.log('Validation error:', error.details);
+      } else {
+        console.error('Submission error:', error);
+      }
+    }
+  };
+
+  return (
+    <div>
+      <Form
+        ref={formRef}
+        jsonSchema={jsonSchema}
+        onSubmit={handleSubmit}
+        onValidate={setErrors}
+        errors={errors}
+      />
+
+      <button
+        onClick={onSubmitClick}
+        disabled={loading}
+        style={{
+          marginTop: '16px',
+          padding: '8px 16px',
+          backgroundColor: loading ? '#ccc' : '#1890ff',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: loading ? 'not-allowed' : 'pointer',
+        }}
+      >
+        {loading ? 'Submitting...' : 'Submit'}
+      </button>
+
+      {loading && (
+        <div style={{ marginTop: '8px', color: '#666' }}>
+          Processing... Please wait.
+        </div>
+      )}
+    </div>
+  );
+};
+```
+
+#### Submit with Enter Key
+
+You can submit forms by pressing Enter in string input fields:
+
+```tsx
+import React from 'react';
+
+import { Form } from '@canard/schema-form';
+
+export const EnterSubmitForm = () => {
+  const jsonSchema = {
+    type: 'string',
+    title: 'Search Term',
+  };
+
+  const handleSubmit = (value: string) => {
+    console.log('Search term:', value);
+    // Execute search logic
+  };
+
+  return (
+    <Form
+      jsonSchema={jsonSchema}
+      onSubmit={handleSubmit}
+      placeholder="Enter search term and press Enter"
+    />
+  );
+};
+```
+
+#### Handling Submission Errors
+
+How to handle various errors that can occur during submission:
+
+```tsx
+import React, { useRef, useState } from 'react';
+
+import {
+  Form,
+  FormHandle,
+  ValidationMode,
+  isValidationError,
+  useFormSubmit,
+} from '@canard/schema-form';
+
+export const ErrorHandlingForm = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      username: { type: 'string', minLength: 3, title: 'Username' },
+      password: { type: 'string', minLength: 8, title: 'Password' },
+    },
+    required: ['username', 'password'],
+  };
+
+  const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
+  const [submitError, setSubmitError] = useState<string>('');
+
+  const handleSubmit = async (value: any) => {
+    // Simulate server request
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(value),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Login failed.');
+    }
+
+    return response.json();
+  };
+
+  const { submit, loading } = useFormSubmit(formRef);
+
+  const onSubmitClick = async () => {
+    setSubmitError(''); // Clear previous errors
+
+    try {
+      await submit();
+      alert('Login successful!');
+    } catch (error) {
+      if (isValidationError(error)) {
+        // Validation errors are automatically displayed in the form
+        console.log('Validation failed');
+      } else {
+        // Server errors or network errors
+        setSubmitError(error.message || 'An unexpected error occurred.');
+      }
+    }
+  };
+
+  return (
+    <div>
+      <Form
+        ref={formRef}
+        jsonSchema={jsonSchema}
+        onSubmit={handleSubmit}
+        validationMode={ValidationMode.OnRequest}
+      />
+
+      {submitError && (
+        <div
+          style={{
+            color: 'red',
+            marginTop: '8px',
+            padding: '8px',
+            backgroundColor: '#fff2f2',
+            border: '1px solid #ffcccc',
+            borderRadius: '4px',
+          }}
+        >
+          {submitError}
+        </div>
+      )}
+
+      <button
+        onClick={onSubmitClick}
+        disabled={loading}
+        style={{ marginTop: '16px' }}
+      >
+        {loading ? 'Logging in...' : 'Login'}
+      </button>
+    </div>
+  );
+};
+```
+
+---
+
+## Performance Optimization
+
+The library is optimized for performance with features like:
+
+- Lazy rendering for complex forms
+- Memoization of components to prevent unnecessary re-renders
+- Efficient validation using ajv
+- Configurable validation modes to optimize validation timing
+
+### Optimization Tips
+
+1. **ValidationMode Settings**:
+   Configure the `validationMode` property to prevent unnecessary validations.
+
+   ```jsx
+   // Only validate when the user clicks the submit button
+   <Form jsonSchema={jsonSchema} validationMode={ValidationMode.OnRequest} />
+   ```
+
+2. **Caching FormTypeInputs**:
+   Define frequently used custom FormTypeInputs outside components to prevent unnecessary recreation.
+
+   ```jsx
+   // Define once globally
+   const CUSTOM_INPUTS = [
+     { test: { type: ['string'], format: ['email'] }, Component: EmailInput },
+   ];
+
+   // Reuse within component
+   <Form jsonSchema={jsonSchema} formTypeInputDefinitions={CUSTOM_INPUTS} />;
+   ```
+
+---
+
+## TypeScript Support
+
+`@canard/schema-form` is built with TypeScript and provides comprehensive type definitions. Key type utilities include:
+
+- `InferValueType<Schema>`: Infers the value type from a JSON Schema
+- `InferSchemaNode<Schema>`: Infers the schema node type from a JSON Schema
+- `FormHandle<Schema>`: Type for form ref handle with schema-specific methods
+
+---
+
+## Acknowledgements
+
+`@canard/schema-form` was developed with significant inspiration from the ideas and architecture of [bluewings/react-genie-form](https://github.com/bluewings/react-genie-form).
+
+Special thanks to [bluewings](https://github.com/bluewings) for sharing such a thoughtful and well-crafted open source project.
+
+---
+
+## License
+
+This repository is licensed under the MIT License. Please refer to the [`LICENSE`](./LICENSE) file for details.
+
+---
+
+## Contact
+
+For inquiries or suggestions related to the project, please create an issue.
+
 ### Using Form with TypeScript
 
 Leveraging TypeScript for type-safe form development:
@@ -768,67 +1109,3 @@ export const AntdForm = () => {
   return <Form jsonSchema={jsonSchema} />;
 };
 ```
-
----
-
-## Performance Optimization
-
-The library is optimized for performance with features like:
-
-- Lazy rendering for complex forms
-- Memoization of components to prevent unnecessary re-renders
-- Efficient validation using ajv
-- Configurable validation modes to optimize validation timing
-
-### Optimization Tips
-
-1. **ValidationMode Settings**:
-   Configure the `validationMode` property to prevent unnecessary validations.
-
-   ```jsx
-   // Only validate when the user clicks the submit button
-   <Form jsonSchema={jsonSchema} validationMode={ValidationMode.OnRequest} />
-   ```
-
-2. **Caching FormTypeInputs**:
-   Define frequently used custom FormTypeInputs outside components to prevent unnecessary recreation.
-
-   ```jsx
-   // Define once globally
-   const CUSTOM_INPUTS = [
-     { test: { type: ['string'], format: ['email'] }, Component: EmailInput },
-   ];
-
-   // Reuse within component
-   <Form jsonSchema={jsonSchema} formTypeInputDefinitions={CUSTOM_INPUTS} />;
-   ```
-
----
-
-## TypeScript Support
-
-`@canard/schema-form` is built with TypeScript and provides comprehensive type definitions. Key type utilities include:
-
-- `InferValueType<Schema>`: Infers the value type from a JSON Schema
-- `InferSchemaNode<Schema>`: Infers the schema node type from a JSON Schema
-- `FormHandle<Schema>`: Type for form ref handle with schema-specific methods
-
----
-
-## Acknowledgements
-
-`@canard/schema-form` was developed with significant inspiration from the ideas and architecture of [bluewings/react-genie-form](https://github.com/bluewings/react-genie-form).
-
-Special thanks to [bluewings](https://github.com/bluewings) for sharing such a thoughtful and well-crafted open source project.
-
----
-
-## License
-
-This repository is licensed under the MIT License. Please refer to the [`LICENSE`](./LICENSE) file for details.
-
----
-
-## Contact
-
-For inquiries or suggestions related to the project, please create an issue.
