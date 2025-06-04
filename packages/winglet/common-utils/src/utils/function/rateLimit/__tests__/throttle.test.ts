@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { delay } from '../../promise';
+import { delay } from '../../../promise';
 import { throttle } from '../throttle';
 
 describe('throttle', async () => {
