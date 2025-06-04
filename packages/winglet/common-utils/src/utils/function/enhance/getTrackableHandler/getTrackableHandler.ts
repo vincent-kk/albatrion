@@ -116,7 +116,7 @@ export function getTrackableHandler<
    * @internal
    */
   const notify = (): void => {
-    listeners.forEach((fn) => fn());
+    for (const listener of listeners) listener();
   };
 
   /**
