@@ -1,4 +1,4 @@
-import type { ChangeEvent } from 'react';
+import { type ChangeEvent, useMemo } from 'react';
 
 import { useHandle } from '@winglet/react-utils';
 
@@ -21,9 +21,14 @@ const FormTypeInputString = ({
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
   });
+  const type = useMemo(() => {
+    if (jsonSchema?.format === 'password') return 'password';
+    else if (jsonSchema?.format === 'email') return 'email';
+    else return 'text';
+  }, [jsonSchema?.format]);
   return (
     <input
-      type="text"
+      type={type}
       id={path}
       name={name}
       readOnly={readOnly}
