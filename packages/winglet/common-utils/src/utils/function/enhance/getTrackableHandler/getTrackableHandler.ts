@@ -87,7 +87,7 @@ import type {
  * - Subscribers are automatically notified when state is updated.
  * - The `subscribe` and `state` properties of the returned handler are non-enumerable.
  *
- * @throws {Error} Propagates exceptions thrown in `beforeExecute` as-is.
+ * @throws {Error} Propagates exceptions thrown in `beforeExecute`, `afterExecute` as-is.
  * @throws {Error} Propagates exceptions thrown in the original function as-is.
  */
 export function getTrackableHandler<

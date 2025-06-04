@@ -98,7 +98,6 @@ export type TrackableHandlerFunction<
 
   /**
    * Provides read-only access to the current state object.
-   *
    * @readonly
    */
   readonly state: State;
