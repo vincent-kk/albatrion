@@ -1,5 +1,7 @@
 import { type PropsWithChildren, useMemo } from 'react';
 
+import { useMemorize } from '@winglet/react-utils';
+
 import type { FormProps } from '@/schema-form/components/Form';
 import {
   normalizeFormTypeInputDefinitions,
@@ -20,14 +22,20 @@ export const FormTypeInputsContextProvider = ({
   formTypeInputMap,
   children,
 }: PropsWithChildren<FormTypeInputsContextProviderProps>) => {
+  const memoized = useMemorize({
+    formTypeInputDefinitions,
+    formTypeInputMap,
+  });
   const value = useMemo(
     () => ({
       fromFormTypeInputDefinitions: normalizeFormTypeInputDefinitions(
-        formTypeInputDefinitions,
+        memoized.formTypeInputDefinitions,
       ),
-      fromFormTypeInputMap: normalizeFormTypeInputMap(formTypeInputMap),
+      fromFormTypeInputMap: normalizeFormTypeInputMap(
+        memoized.formTypeInputMap,
+      ),
     }),
-    [formTypeInputDefinitions, formTypeInputMap],
+    [memoized],
   );
   return (
     <FormTypeInputsContext.Provider value={value}>

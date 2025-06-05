@@ -1,7 +1,7 @@
 import { type PropsWithChildren, useMemo } from 'react';
 
 import { isFunction } from '@winglet/common-utils';
-import { isReactComponent } from '@winglet/react-utils';
+import { isReactComponent, useMemorize } from '@winglet/react-utils';
 
 import type { FormProps } from '@/schema-form/components/Form';
 import { ShowError } from '@/schema-form/types';
@@ -29,7 +29,7 @@ interface FormTypeRendererContextProviderProps {
 
 export const FormTypeRendererContextProvider = ({
   CustomFormTypeRenderer,
-  formatError: inputFormatError,
+  formatError,
   showError: inputShowError,
   children,
 }: PropsWithChildren<FormTypeRendererContextProviderProps>) => {
@@ -64,12 +64,16 @@ export const FormTypeRendererContextProvider = ({
     };
   }, [inputShowError, externalShowError]);
 
+  const memoized = useMemorize({
+    CustomFormTypeRenderer,
+    formatError,
+  });
   const value = useMemo(() => {
-    const FormTypeRenderer = isReactComponent(CustomFormTypeRenderer)
-      ? CustomFormTypeRenderer
+    const FormTypeRenderer = isReactComponent(memoized.CustomFormTypeRenderer)
+      ? memoized.CustomFormTypeRenderer
       : ExternalFormGroupRenderer;
-    const formatError = isFunction(inputFormatError)
-      ? inputFormatError
+    const formatError = isFunction(memoized.formatError)
+      ? memoized.formatError
       : externalFormatError;
     return {
       FormTypeRenderer,
@@ -77,11 +81,10 @@ export const FormTypeRendererContextProvider = ({
       checkShowError,
     };
   }, [
-    CustomFormTypeRenderer,
     ExternalFormGroupRenderer,
     externalFormatError,
-    inputFormatError,
     checkShowError,
+    memoized,
   ]);
 
   return (
