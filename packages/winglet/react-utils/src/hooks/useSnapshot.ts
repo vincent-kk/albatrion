@@ -9,8 +9,8 @@ import { equals, getTypeTag, isObject } from '@winglet/common-utils';
  * @param omit - Properties to omit from the comparison
  * @returns The current snapshot value of the object
  */
-export const useSnapshot = <Input extends object>(
-  input: Input | undefined,
+export const useSnapshot = <Input extends object | undefined>(
+  input: Input,
   omit?: Set<keyof Input> | Array<keyof Input>,
 ) => {
   const snapshotRef = useSnapshotReference(input, omit);
@@ -24,8 +24,8 @@ export const useSnapshot = <Input extends object>(
  * @param omit - Properties to omit from the comparison
  * @returns A ref containing the current snapshot of the object
  */
-export const useSnapshotReference = <Input extends object>(
-  input: Input | undefined,
+export const useSnapshotReference = <Input extends object | undefined>(
+  input: Input,
   omit?: Set<keyof Input> | Array<keyof Input>,
 ) => {
   const snapshotRef = useRef(input);
