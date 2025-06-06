@@ -13,11 +13,7 @@ export const FormGroup = ({
 }: FormTypeRendererProps) => {
   if (depth === 0) return <Input />;
 
-  if (
-    node.type === 'object' ||
-    node.type === 'array' ||
-    node.type === 'virtual'
-  ) {
+  if (node.group === 'branch') {
     return (
       <fieldset
         style={{

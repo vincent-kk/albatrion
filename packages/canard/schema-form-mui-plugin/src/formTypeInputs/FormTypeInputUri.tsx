@@ -1,16 +1,22 @@
 import {
   type ChangeEvent,
-  useCallback,
+  type ReactNode,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
 
-import { Input, Select } from 'antd';
-import type { SizeType } from 'antd/es/config-provider/SizeContext';
+import {
+  Box,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from '@mui/material';
 
-import { map } from '@winglet/common-utils';
+import { useHandle } from '@winglet/react-utils';
 
 import type {
   FormTypeInputDefinition,
@@ -18,15 +24,25 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-interface StringJsonSchema extends StringSchema {
+import type { MuiContext } from '../type';
+
+interface UriJsonSchema
+  extends StringSchema<{
+    protocols?: string[];
+  }> {
   format?: 'uri';
   formType?: 'uri';
-  options?: {
-    protocols?: string[];
-  };
 }
 
-const DEFAULT_PROTOCOLS = ['http', 'https', 'ftp', 'mailto', 'tel'];
+interface FormTypeInputUriProps
+  extends FormTypeInputPropsWithSchema<string, UriJsonSchema, MuiContext>,
+    MuiContext {
+  label?: ReactNode;
+  protocols?: string[];
+  hideLabel?: boolean;
+}
+
+const DEFAULT_PROTOCOLS = ['http', 'https'];
 
 // 프로토콜 정규화: '://' 또는 ':' 제거하여 순수 프로토콜명으로 변환
 const normalizeProtocol = (protocol: string): string => {
@@ -70,34 +86,35 @@ const parseUri = (uri: string) => {
   return null;
 };
 
-interface FormTypeInputUriProps
-  extends FormTypeInputPropsWithSchema<
-    string,
-    StringJsonSchema,
-    { size?: SizeType }
-  > {
-  size?: SizeType;
-}
-
 const FormTypeInputUri = ({
   path,
   name,
   jsonSchema,
+  required,
   readOnly,
   disabled,
   defaultValue,
   onChange,
   context,
-  size,
+  label: labelProp,
+  size: sizeProp = 'medium',
+  protocols: protocolsProp,
+  hideLabel,
 }: FormTypeInputUriProps) => {
+  const [label, size] = useMemo(() => {
+    if (hideLabel) return [undefined, sizeProp || context.size];
+    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
+  }, [jsonSchema, context, labelProp, name, sizeProp]);
+
   // 프로토콜 배열 정규화 및 준비
   const normalizedProtocols = useMemo(() => {
-    const rawProtocols = jsonSchema.options?.protocols || DEFAULT_PROTOCOLS;
+    const rawProtocols =
+      protocolsProp || jsonSchema.options?.protocols || DEFAULT_PROTOCOLS;
     return rawProtocols.map(normalizeProtocol);
-  }, [jsonSchema]);
+  }, [protocolsProp, jsonSchema]);
 
-  // Input 참조를 위한 ref
-  const inputRef = useRef<any>(null);
+  // TextField 참조를 위한 ref
+  const textFieldRef = useRef<HTMLInputElement>(null);
 
   // 프로토콜만 내부 상태로 관리, URI는 비제어 컴포넌트로 유지
   const [protocol, setProtocol] = useState<string>(normalizedProtocols[0]);
@@ -133,59 +150,63 @@ const FormTypeInputUri = ({
     setProtocol(initialProtocol);
   }, [initialProtocol]);
 
-  const handleProtocolChange = useCallback(
-    (value: string) => {
-      setProtocol(value);
-      // 현재 Input에 입력된 값을 ref로 읽어오기
-      const currentUri = inputRef.current?.input?.value || '';
-      const separator = getProtocolSeparator(value);
-      const newValue = currentUri
-        ? `${value}${separator}${currentUri}`
-        : `${value}${separator}`;
-      onChange(newValue);
-    },
-    [onChange],
-  );
+  const handleProtocolChange = useHandle((event: SelectChangeEvent<string>) => {
+    const newProtocol = event.target.value;
+    setProtocol(newProtocol);
+    // 현재 TextField에 입력된 값을 ref로 읽어오기
+    const currentUri = textFieldRef.current?.value || '';
+    const separator = getProtocolSeparator(newProtocol);
+    const newValue = currentUri
+      ? `${newProtocol}${separator}${currentUri}`
+      : `${newProtocol}${separator}`;
+    onChange(newValue);
+  });
 
-  const handleUriChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      const newUri = event.target.value;
-      const separator = getProtocolSeparator(protocol);
-      const newValue = newUri ? `${protocol}${separator}${newUri}` : '';
-      onChange(newValue);
-    },
-    [protocol, onChange],
-  );
-
-  const ProtocolDropdown = useMemo(() => {
-    return (
-      <Select
-        value={protocol}
-        onChange={handleProtocolChange}
-        disabled={disabled || readOnly}
-      >
-        {map(normalizedProtocols, (prot) => (
-          <Select.Option key={prot} value={prot}>
-            {formatProtocolDisplay(prot)}
-          </Select.Option>
-        ))}
-      </Select>
-    );
-  }, [protocol, normalizedProtocols, disabled, readOnly, handleProtocolChange]);
+  const handleUriChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
+    const newUri = event.target.value;
+    const separator = getProtocolSeparator(protocol);
+    const newValue = newUri ? `${protocol}${separator}${newUri}` : '';
+    onChange(newValue);
+  });
 
   return (
-    <Input
-      ref={inputRef}
-      id={path}
-      name={name}
-      readOnly={readOnly}
-      disabled={disabled}
-      addonBefore={ProtocolDropdown}
-      placeholder={jsonSchema.placeholder}
-      defaultValue={initialUri}
-      onChange={handleUriChange}
-      size={size || context?.size}
-    />
+    <Box>
+      <InputLabel htmlFor={path} required={required}>
+        {label}
+      </InputLabel>
+      <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
+        <Select
+          value={protocol}
+          onChange={handleProtocolChange}
+          disabled={disabled || readOnly}
+          size={size}
+          displayEmpty
+        >
+          {normalizedProtocols.map((prot) => (
+            <MenuItem key={prot} value={prot}>
+              {formatProtocolDisplay(prot)}
+            </MenuItem>
+          ))}
+        </Select>
+        <TextField
+          inputRef={textFieldRef}
+          id={path}
+          name={name}
+          variant="outlined"
+          fullWidth
+          size={size}
+          placeholder={jsonSchema.placeholder}
+          defaultValue={initialUri}
+          onChange={handleUriChange}
+          disabled={disabled}
+          slotProps={{
+            input: {
+              readOnly,
+            },
+          }}
+        />
+      </Box>
+    </Box>
   );
 };
 
