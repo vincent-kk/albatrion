@@ -24,6 +24,7 @@ Each package provides individual `README.md` documentation with detailed usage i
 - **[`@canard/schema-form`](./packages/canard/schema-form/README.md)** - JSON Schema based form utilities
 - **[`@canard/schema-form-antd-plugin`](./packages/canard/schema-form-antd-plugin/README.md)** - Ant Design plugin applicable to `canard/schema-form`
 - **[`@canard/schema-form-antd-mobile-plugin`](./packages/canard/schema-form-antd-mobile-plugin/README.md)** - Ant Design Mobile plugin applicable to `canard/schema-form`
+- **[`@canard/schema-form-mui-plugin`](./packages/canard/schema-form-mui-plugin/README.md)** - MUI plugin applicable to `canard/schema-form`
 
 ### `lerx`
 

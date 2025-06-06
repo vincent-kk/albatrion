@@ -24,6 +24,7 @@
 - **[`@canard/schema-form`](./packages/canard/schema-form/README-ko_kr.md)** - JSON Schema 기반 폼 유틸리티
 - **[`@canard/schema-form-antd-plugin`](./packages/canard/schema-form-antd-plugin/README-ko_kr.md)** - `canard/schema-form`에 적용할 수 있는 Ant Design 플러그인
 - **[`@canard/schema-form-antd-mobile-plugin`](./packages/canard/schema-form-antd-mobile-plugin/README-ko_kr.md)** - `canard/schema-form`에 적용할 수 있는 Ant Design Mobile 플러그인
+- **[`@canard/schema-form-mui-plugin`](./packages/canard/schema-form-mui-plugin/README-ko_kr.md)** - `canard/schema-form`에 적용할 수 있는 MUI 플러그인
 
 ### `lerx`
 
