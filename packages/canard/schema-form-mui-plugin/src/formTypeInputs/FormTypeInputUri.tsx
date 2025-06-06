@@ -97,14 +97,36 @@ const FormTypeInputUri = ({
   onChange,
   context,
   label: labelProp,
-  size: sizeProp = 'medium',
+  size: sizeProp,
+  variant: variantProp,
+  fullWidth: fullWidthProp,
   protocols: protocolsProp,
   hideLabel,
 }: FormTypeInputUriProps) => {
-  const [label, size] = useMemo(() => {
-    if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
-  }, [jsonSchema, context, labelProp, name, sizeProp]);
+  const [label, size, variant, fullWidth] = useMemo(() => {
+    if (hideLabel)
+      return [
+        undefined,
+        sizeProp || context.size,
+        variantProp || context.variant,
+        fullWidthProp ?? context.fullWidth,
+      ];
+    return [
+      labelProp || jsonSchema.label || name,
+      sizeProp || context.size,
+      variantProp || context.variant,
+      fullWidthProp ?? context.fullWidth,
+    ];
+  }, [
+    jsonSchema,
+    context,
+    labelProp,
+    name,
+    sizeProp,
+    variantProp,
+    fullWidthProp,
+    hideLabel,
+  ]);
 
   // 프로토콜 배열 정규화 및 준비
   const normalizedProtocols = useMemo(() => {
@@ -192,8 +214,8 @@ const FormTypeInputUri = ({
           inputRef={textFieldRef}
           id={path}
           name={name}
-          variant="outlined"
-          fullWidth
+          variant={variant}
+          fullWidth={fullWidth}
           size={size}
           placeholder={jsonSchema.placeholder}
           defaultValue={initialUri}

@@ -37,23 +37,39 @@ const FormTypeInputTime = ({
   onChange,
   context,
   label: labelProp,
-  size: sizeProp = 'medium',
+  size: sizeProp,
+  variant: variantProp,
+  fullWidth: fullWidthProp,
   ampm: ampmProp,
   hideLabel,
 }: FormTypeInputTimeProps) => {
-  const [label, size, ampm] = useMemo(() => {
+  const [label, size, variant, fullWidth, ampm] = useMemo(() => {
     if (hideLabel)
       return [
         undefined,
         sizeProp || context.size,
-        ampmProp ?? jsonSchema.ampm ?? false,
+        variantProp || context.variant,
+        fullWidthProp ?? context.fullWidth,
+        ampmProp ?? jsonSchema.ampm,
       ];
     return [
       labelProp || jsonSchema.label || name,
       sizeProp || context.size,
-      ampmProp ?? jsonSchema.ampm ?? false,
+      variantProp || context.variant,
+      fullWidthProp ?? context.fullWidth,
+      ampmProp ?? jsonSchema.ampm,
     ];
-  }, [jsonSchema, context, labelProp, name, sizeProp, ampmProp]);
+  }, [
+    jsonSchema,
+    context,
+    labelProp,
+    name,
+    sizeProp,
+    variantProp,
+    fullWidthProp,
+    ampmProp,
+    hideLabel,
+  ]);
 
   const timeValue = useMemo(() => {
     if (!defaultValue) return null;
@@ -86,8 +102,8 @@ const FormTypeInputTime = ({
             name,
             required,
             size,
-            variant: 'outlined',
-            fullWidth: true,
+            variant,
+            fullWidth,
           },
         }}
       />

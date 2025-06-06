@@ -38,13 +38,35 @@ const FormTypeInputDate = ({
   onChange,
   context,
   label: labelProp,
-  size: sizeProp = 'medium',
+  size: sizeProp,
+  variant: variantProp,
+  fullWidth: fullWidthProp,
   hideLabel,
 }: FormTypeInputDateProps) => {
-  const [label, size] = useMemo(() => {
-    if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
-  }, [jsonSchema, context, labelProp, name, sizeProp]);
+  const [label, size, variant, fullWidth] = useMemo(() => {
+    if (hideLabel)
+      return [
+        undefined,
+        sizeProp || context.size,
+        variantProp || context.variant,
+        fullWidthProp ?? context.fullWidth,
+      ];
+    return [
+      labelProp || jsonSchema.label || name,
+      sizeProp || context.size,
+      variantProp || context.variant,
+      fullWidthProp ?? context.fullWidth,
+    ];
+  }, [
+    jsonSchema,
+    context,
+    labelProp,
+    name,
+    sizeProp,
+    variantProp,
+    fullWidthProp,
+    hideLabel,
+  ]);
 
   const { minDate, maxDate } = useMemo(() => {
     return {
@@ -83,8 +105,8 @@ const FormTypeInputDate = ({
             name,
             required,
             size,
-            variant: 'outlined',
-            fullWidth: true,
+            variant,
+            fullWidth,
           },
         }}
       />

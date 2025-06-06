@@ -39,13 +39,35 @@ const FormTypeInputStringEnum = ({
   onChange,
   context,
   label: labelProp,
-  size: sizeProp = 'medium',
+  size: sizeProp,
+  variant: variantProp,
+  fullWidth: fullWidthProp,
   hideLabel,
 }: FormTypeInputStringEnumProps) => {
-  const [label, size] = useMemo(() => {
-    if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
-  }, [jsonSchema, context, labelProp, name, sizeProp]);
+  const [label, size, variant, fullWidth] = useMemo(() => {
+    if (hideLabel)
+      return [
+        undefined,
+        sizeProp || context.size,
+        variantProp || context.variant,
+        fullWidthProp ?? context.fullWidth,
+      ];
+    return [
+      labelProp || jsonSchema.label || name,
+      sizeProp || context.size,
+      variantProp || context.variant,
+      fullWidthProp ?? context.fullWidth,
+    ];
+  }, [
+    jsonSchema,
+    context,
+    labelProp,
+    name,
+    sizeProp,
+    variantProp,
+    fullWidthProp,
+    hideLabel,
+  ]);
 
   const options = useMemo(
     () =>
@@ -63,7 +85,7 @@ const FormTypeInputStringEnum = ({
   const labelId = useMemo(() => `label-${path}`, [path]);
 
   return (
-    <FormControl fullWidth>
+    <FormControl fullWidth={fullWidth} variant={variant}>
       <InputLabel id={labelId}>{label}</InputLabel>
       <Select
         id={path}

@@ -36,13 +36,35 @@ const FormTypeInputString = ({
   onChange,
   context,
   label: labelProp,
-  size: sizeProp = 'medium',
+  size: sizeProp,
+  variant: variantProp,
+  fullWidth: fullWidthProp,
   hideLabel,
 }: FormTypeInputStringProps) => {
-  const [label, size] = useMemo(() => {
-    if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
-  }, [jsonSchema, context, labelProp, name, sizeProp, hideLabel]);
+  const [label, size, variant, fullWidth] = useMemo(() => {
+    if (hideLabel)
+      return [
+        undefined,
+        sizeProp || context.size,
+        variantProp || context.variant,
+        fullWidthProp ?? context.fullWidth,
+      ];
+    return [
+      labelProp || jsonSchema.label || name,
+      sizeProp || context.size,
+      variantProp || context.variant,
+      fullWidthProp ?? context.fullWidth,
+    ];
+  }, [
+    jsonSchema,
+    context,
+    labelProp,
+    name,
+    sizeProp,
+    variantProp,
+    fullWidthProp,
+    hideLabel,
+  ]);
 
   const isPassword = useMemo(() => {
     return (
@@ -59,8 +81,8 @@ const FormTypeInputString = ({
       id={path}
       name={name}
       type={isPassword ? 'password' : 'text'}
-      variant="outlined"
-      fullWidth
+      variant={variant}
+      fullWidth={fullWidth}
       placeholder={jsonSchema.placeholder}
       label={label}
       required={required}

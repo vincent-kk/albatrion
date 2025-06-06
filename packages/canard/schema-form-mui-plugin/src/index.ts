@@ -15,3 +15,5 @@ export const plugin = {
   formatError,
   formTypeInputDefinitions,
 } satisfies SchemaFormPlugin;
+
+export type { MuiContext } from './type';
