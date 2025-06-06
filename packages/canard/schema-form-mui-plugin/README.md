@@ -14,6 +14,16 @@
 
 ---
 
+## Notice
+
+⚠️ This plugin provides pre-implemented core components commonly needed when using `@canard/schema-form` in Ant Design Mobile environments.
+
+📌 As the plugin's purpose is to enhance development convenience, it does not include every possible component.
+
+💡 If you need FormTypeInput components not included in this plugin, you can freely implement them following the official `@canard/schema-form` guidelines.
+
+---
+
 ## How to use
 
 ```bash
