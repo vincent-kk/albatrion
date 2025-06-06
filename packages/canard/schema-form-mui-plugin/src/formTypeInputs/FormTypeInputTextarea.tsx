@@ -1,4 +1,4 @@
-import { type ChangeEvent } from 'react';
+import { type ChangeEvent, type ReactNode, useMemo } from 'react';
 
 import { TextField } from '@mui/material';
 
@@ -10,6 +10,8 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import type { MuiContext } from '../type';
+
 interface TextareaJsonSchema extends StringSchema {
   format?: 'textarea';
   formType?: 'textarea';
@@ -19,12 +21,9 @@ interface TextareaJsonSchema extends StringSchema {
 }
 
 interface FormTypeInputTextareaProps
-  extends FormTypeInputPropsWithSchema<
-    string,
-    TextareaJsonSchema,
-    { size?: 'small' | 'medium' }
-  > {
-  size?: 'small' | 'medium';
+  extends FormTypeInputPropsWithSchema<string, TextareaJsonSchema, MuiContext>,
+    MuiContext {
+  label?: ReactNode;
   minRows?: number;
   maxRows?: number;
 }
@@ -33,15 +32,24 @@ const FormTypeInputTextarea = ({
   path,
   name,
   jsonSchema,
+  required,
   readOnly,
   disabled,
   defaultValue,
   onChange,
   context,
-  size,
+  label: labelProp,
+  size: sizeProp = 'medium',
   minRows,
   maxRows,
 }: FormTypeInputTextareaProps) => {
+  const [label, size] = useMemo(() => {
+    return [
+      labelProp || jsonSchema.label || name,
+      sizeProp || context.size,
+    ];
+  }, [jsonSchema, context, labelProp, name, sizeProp]);
+
   const handleChange = useHandle((event: ChangeEvent<HTMLTextAreaElement>) => {
     onChange(event.target.value);
   });
@@ -56,7 +64,9 @@ const FormTypeInputTextarea = ({
       multiline
       variant="outlined"
       fullWidth
-      size={size || context?.size}
+      label={label}
+      required={required}
+      size={size}
       placeholder={jsonSchema.placeholder}
       defaultValue={defaultValue}
       onChange={handleChange}

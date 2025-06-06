@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -12,40 +12,49 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import type { MuiContext } from '../type';
+
 interface TimeJsonSchema extends StringSchema {
   format: 'time';
+  ampm?: boolean;
 }
 
 interface FormTypeInputTimeProps
-  extends FormTypeInputPropsWithSchema<
-    string,
-    TimeJsonSchema,
-    { size?: 'small' | 'medium' }
-  > {
-  size?: 'small' | 'medium';
-  label?: string;
+  extends FormTypeInputPropsWithSchema<string, TimeJsonSchema, MuiContext>,
+    MuiContext {
+  label?: ReactNode;
   ampm?: boolean;
 }
 
 const FormTypeInputTime = ({
   path,
   name,
+  jsonSchema,
+  required,
   disabled,
-  value,
+  defaultValue,
   onChange,
   context,
-  size,
-  label,
-  ampm = false,
+  label: labelProp,
+  size: sizeProp = 'medium',
+  ampm: ampmProp,
 }: FormTypeInputTimeProps) => {
+  const [label, size, ampm] = useMemo(() => {
+    return [
+      labelProp || jsonSchema.label || name,
+      sizeProp || context.size,
+      ampmProp ?? jsonSchema.ampm ?? false,
+    ];
+  }, [jsonSchema, context, labelProp, name, sizeProp, ampmProp]);
+
   const timeValue = useMemo(() => {
-    if (!value) return null;
+    if (!defaultValue) return null;
 
     // time 형식이 HH:mm 또는 HH:mm:ss인 경우
     // dayjs에서 파싱하기 위해 오늘 날짜와 결합
     const today = dayjs().format('YYYY-MM-DD');
-    return dayjs(`${today}T${value}`);
-  }, [value]);
+    return dayjs(`${today}T${defaultValue}`);
+  }, [defaultValue]);
 
   const handleChange = useHandle((newValue: Dayjs | null) => {
     if (newValue && newValue.isValid()) {
@@ -58,8 +67,8 @@ const FormTypeInputTime = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <TimePicker
-        label={label || 'Select time'}
-        value={timeValue}
+        label={label}
+        defaultValue={timeValue}
         onChange={handleChange}
         disabled={disabled}
         ampm={ampm}
@@ -67,7 +76,8 @@ const FormTypeInputTime = ({
           textField: {
             id: path,
             name,
-            size: size || context?.size,
+            required,
+            size,
             variant: 'outlined',
             fullWidth: true,
           },

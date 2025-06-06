@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { Stack, Switch, Typography } from '@mui/material';
 
@@ -10,6 +10,8 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import type { MuiContext } from '../type';
+
 interface StringSwitchJsonSchema extends StringSchema {
   formType: 'switch';
   enum: [string, string]; // 정확히 2개의 값만 허용
@@ -18,25 +20,30 @@ interface StringSwitchJsonSchema extends StringSchema {
 }
 
 interface FormTypeInputStringSwitchProps
-  extends FormTypeInputPropsWithSchema<
-    string,
-    StringSwitchJsonSchema,
-    { size?: 'small' | 'medium' }
-  > {
-  size?: 'small' | 'medium';
-  label?: string;
+  extends FormTypeInputPropsWithSchema<string, StringSwitchJsonSchema, MuiContext>,
+    MuiContext {
+  label?: ReactNode;
 }
 
 const FormTypeInputStringSwitch = ({
   path,
   name,
   jsonSchema,
+  required,
   disabled,
   defaultValue,
   onChange,
   context,
-  size,
+  label: labelProp,
+  size: sizeProp = 'medium',
 }: FormTypeInputStringSwitchProps) => {
+  const [label, size] = useMemo(() => {
+    return [
+      labelProp || jsonSchema.label || name,
+      sizeProp || context.size,
+    ];
+  }, [jsonSchema, context, labelProp, name, sizeProp]);
+
   const { offValue, onValue, offLabel, onLabel } = useMemo(() => {
     const [first, second] = jsonSchema.enum;
     const [firstLabel, secondLabel] = jsonSchema.switchLabels || [
@@ -58,7 +65,7 @@ const FormTypeInputStringSwitch = ({
     },
   );
 
-  const switchSize = jsonSchema.switchSize || size || context?.size;
+  const switchSize = jsonSchema.switchSize || size;
 
   return (
     <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>

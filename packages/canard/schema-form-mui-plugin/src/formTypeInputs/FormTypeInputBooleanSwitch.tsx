@@ -1,3 +1,5 @@
+import { type ReactNode, useMemo } from 'react';
+
 import { FormControlLabel, Switch } from '@mui/material';
 
 import { useHandle } from '@winglet/react-utils';
@@ -8,34 +10,36 @@ import type {
   FormTypeInputPropsWithSchema,
 } from '@canard/schema-form';
 
-interface BooleanSwitchJsonSchema extends BooleanSchema {
+import { MuiContext } from '../type';
+
+interface BooleanSwitchJsonSchema
+  extends BooleanSchema<{
+    size?: 'small' | 'medium';
+  }> {
   formType: 'switch';
-  switchSize?: 'small' | 'medium';
-  checkedLabel?: string;
-  uncheckedLabel?: string;
 }
 
 interface FormTypeInputBooleanSwitchProps
   extends FormTypeInputPropsWithSchema<
-    boolean,
-    BooleanSwitchJsonSchema,
-    { size?: 'small' | 'medium' }
-  > {
-  size?: 'small' | 'medium';
-  label?: string;
+      boolean,
+      BooleanSwitchJsonSchema,
+      MuiContext
+    >,
+    MuiContext {
+  label?: ReactNode;
 }
 
 const FormTypeInputBooleanSwitch = ({
   path,
   name,
-  label,
   required,
   jsonSchema,
   disabled,
-  value,
+  defaultValue,
   onChange,
   context,
-  size,
+  label: labelProp,
+  size: sizeProp = 'medium',
 }: FormTypeInputBooleanSwitchProps) => {
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,12 +47,13 @@ const FormTypeInputBooleanSwitch = ({
     },
   );
 
-  const switchSize = jsonSchema.switchSize || size || context?.size;
-  const checked = !!value;
+  const [label, size] = useMemo(() => {
+    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
+  }, [jsonSchema, context, labelProp, name, sizeProp]);
 
   return (
     <FormControlLabel
-      label={label || name}
+      label={label}
       htmlFor={path}
       required={required}
       disabled={disabled}
@@ -56,10 +61,10 @@ const FormTypeInputBooleanSwitch = ({
         <Switch
           id={path}
           name={name}
-          checked={checked}
+          checked={defaultValue}
           onChange={handleChange}
           disabled={disabled}
-          size={switchSize}
+          size={size}
         />
       }
     />

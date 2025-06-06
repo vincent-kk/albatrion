@@ -1,4 +1,4 @@
-import { type ChangeEvent } from 'react';
+import { type ChangeEvent, type ReactNode, useMemo } from 'react';
 
 import { TextField } from '@mui/material';
 
@@ -10,32 +10,38 @@ import type {
   NumberSchema,
 } from '@canard/schema-form';
 
+import type { MuiContext } from '../type';
+
 interface NumberJsonSchema extends NumberSchema {
   placeholder?: string;
 }
 
 interface FormTypeInputNumberProps
-  extends FormTypeInputPropsWithSchema<
-    number,
-    NumberJsonSchema,
-    { size?: 'small' | 'medium' }
-  > {
-  size?: 'small' | 'medium';
+  extends FormTypeInputPropsWithSchema<number, NumberJsonSchema, MuiContext>,
+    MuiContext {
+  label?: ReactNode;
 }
 
 const FormTypeInputNumber = ({
   path,
   name,
-  label,
-  required,
   jsonSchema,
+  required,
   readOnly,
   disabled,
   defaultValue,
   onChange,
   context,
-  size,
+  label: labelProp,
+  size: sizeProp = 'medium',
 }: FormTypeInputNumberProps) => {
+  const [label, size] = useMemo(() => {
+    return [
+      labelProp || jsonSchema.label || name,
+      sizeProp || context.size,
+    ];
+  }, [jsonSchema, context, labelProp, name, sizeProp]);
+
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
 
@@ -64,9 +70,9 @@ const FormTypeInputNumber = ({
       type="number"
       variant="outlined"
       fullWidth
-      label={label || name}
+      label={label}
       required={required}
-      size={size || context?.size}
+      size={size}
       placeholder={jsonSchema.placeholder}
       defaultValue={defaultValue}
       onChange={handleChange}

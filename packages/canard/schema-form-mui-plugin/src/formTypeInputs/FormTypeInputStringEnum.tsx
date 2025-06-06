@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
@@ -10,33 +10,39 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import type { MuiContext } from '../type';
+
 interface StringEnumJsonSchema
   extends StringSchema<{ alias?: Record<string, string> }> {
   enum: string[];
 }
 
 interface FormTypeInputStringEnumProps
-  extends FormTypeInputPropsWithSchema<
-    string,
-    StringEnumJsonSchema,
-    { size?: 'small' | 'medium' }
-  > {
-  size?: 'small' | 'medium';
+  extends FormTypeInputPropsWithSchema<string, StringEnumJsonSchema, MuiContext>,
+    MuiContext {
+  label?: ReactNode;
 }
 
 const FormTypeInputStringEnum = ({
   path,
   name,
-  label,
+  jsonSchema,
   required,
   readOnly,
-  jsonSchema,
   disabled,
   defaultValue,
   onChange,
   context,
-  size,
+  label: labelProp,
+  size: sizeProp = 'medium',
 }: FormTypeInputStringEnumProps) => {
+  const [label, size] = useMemo(() => {
+    return [
+      labelProp || jsonSchema.label || name,
+      sizeProp || context.size,
+    ];
+  }, [jsonSchema, context, labelProp, name, sizeProp]);
+
   const options = useMemo(
     () =>
       jsonSchema.enum.map((value) => ({
@@ -54,18 +60,18 @@ const FormTypeInputStringEnum = ({
 
   return (
     <FormControl fullWidth>
-      <InputLabel id={labelId}>{label || name}</InputLabel>
+      <InputLabel id={labelId}>{label}</InputLabel>
       <Select
         id={path}
         name={name}
         labelId={labelId}
-        label={label || name}
+        label={label}
         required={required}
         readOnly={readOnly}
         defaultValue={defaultValue}
         onChange={handleChange}
         disabled={disabled}
-        size={size || context?.size}
+        size={size}
       >
         {options.map((option) => (
           <MenuItem key={option.value} value={option.value}>

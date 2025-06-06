@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { Checkbox, FormControlLabel } from '@mui/material';
 
@@ -9,26 +9,35 @@ import type {
   FormTypeInputProps,
 } from '@canard/schema-form';
 
-interface FormTypeInputBooleanProps extends FormTypeInputProps<boolean> {
-  label?: string;
-  size?: 'small' | 'medium';
+import type { MuiContext } from '../type';
+
+interface FormTypeInputBooleanProps
+  extends FormTypeInputProps<boolean, MuiContext>,
+    MuiContext {
+  label?: ReactNode;
 }
 
 const FormTypeInputBoolean = ({
   path,
   name,
+  jsonSchema,
   required,
   disabled,
-  value,
+  defaultValue,
   onChange,
-  label,
-  size = 'medium',
+  context,
+  label: labelProp,
+  size: sizeProp = 'medium',
 }: FormTypeInputBooleanProps) => {
-  const [indeterminate, checked] = useMemo(() => {
-    // value가 undefined이거나 boolean이 아닌 경우 indeterminate
-    const isIndeterminate = value !== undefined && typeof value !== 'boolean';
-    return [isIndeterminate, !!value];
-  }, [value]);
+  const [label, size] = useMemo(() => {
+    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
+  }, [jsonSchema, context, labelProp, name, sizeProp]);
+
+  const [indeterminate, defaultChecked] = useMemo(() => {
+    const isIndeterminate =
+      defaultValue !== undefined && typeof defaultValue !== 'boolean';
+    return [isIndeterminate, !!defaultValue];
+  }, [defaultValue]);
 
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +48,7 @@ const FormTypeInputBoolean = ({
   // label이 없는 경우 Checkbox만 렌더링
   return (
     <FormControlLabel
-      label={label || name}
+      label={label}
       htmlFor={path}
       required={required}
       disabled={disabled}
@@ -49,7 +58,7 @@ const FormTypeInputBoolean = ({
           name={name}
           disabled={disabled}
           indeterminate={indeterminate}
-          checked={checked}
+          defaultChecked={defaultChecked}
           onChange={handleChange}
           size={size}
         />

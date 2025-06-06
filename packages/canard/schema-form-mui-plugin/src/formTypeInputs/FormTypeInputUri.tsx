@@ -1,6 +1,20 @@
-import { type ChangeEvent, useEffect, useState } from 'react';
+import {
+  type ChangeEvent,
+  type ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
-import { Box, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import {
+  Box,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from '@mui/material';
 
 import { useHandle } from '@winglet/react-utils';
 
@@ -10,133 +24,183 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-interface UriJsonSchema extends StringSchema {
+import type { MuiContext } from '../type';
+
+interface UriJsonSchema
+  extends StringSchema<{
+    protocols?: string[];
+  }> {
   format?: 'uri';
   formType?: 'uri';
-  protocols?: string[];
-  placeholder?: string;
 }
 
 interface FormTypeInputUriProps
-  extends FormTypeInputPropsWithSchema<
-    string,
-    UriJsonSchema,
-    { size?: 'small' | 'medium' }
-  > {
-  size?: 'small' | 'medium';
+  extends FormTypeInputPropsWithSchema<string, UriJsonSchema, MuiContext>,
+    MuiContext {
+  label?: ReactNode;
   protocols?: string[];
 }
 
-const DEFAULT_PROTOCOLS = ['http', 'https', 'ftp', 'mailto', 'tel'];
+const DEFAULT_PROTOCOLS = ['http', 'https'];
+
+// 프로토콜 정규화: '://' 또는 ':' 제거하여 순수 프로토콜명으로 변환
+const normalizeProtocol = (protocol: string): string => {
+  return protocol.replace(/:\/\/$/, '').replace(/:$/, '');
+};
+
+// 프로토콜별 구분자 결정
+const getProtocolSeparator = (protocol: string): string => {
+  const normalizedProtocol = normalizeProtocol(protocol);
+  // mailto, tel 등은 ':' 사용, 나머지는 '://' 사용
+  return ['mailto', 'tel'].includes(normalizedProtocol) ? ':' : '://';
+};
+
+// 표시용 프로토콜 문자열 생성
+const formatProtocolDisplay = (protocol: string): string => {
+  const normalizedProtocol = normalizeProtocol(protocol);
+  const separator = getProtocolSeparator(normalizedProtocol);
+  return `${normalizedProtocol}${separator}`;
+};
+
+// URI 파싱용 정규식 (mailto: 형태와 http:// 형태 모두 지원)
+const parseUri = (uri: string) => {
+  // mailto:, tel: 등 단일 콜론 형태
+  const singleColonMatch = uri.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):(.*)$/);
+  if (singleColonMatch && ['mailto', 'tel'].includes(singleColonMatch[1])) {
+    return {
+      protocol: singleColonMatch[1],
+      path: singleColonMatch[2],
+    };
+  }
+
+  // http://, https:// 등 더블 콜론 형태
+  const doubleColonMatch = uri.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):\/\/(.*)$/);
+  if (doubleColonMatch) {
+    return {
+      protocol: doubleColonMatch[1],
+      path: doubleColonMatch[2],
+    };
+  }
+
+  return null;
+};
 
 const FormTypeInputUri = ({
   path,
   name,
   jsonSchema,
+  required,
   readOnly,
   disabled,
   defaultValue,
-  value,
   onChange,
   context,
-  size,
-  protocols,
+  label: labelProp,
+  size: sizeProp = 'medium',
+  protocols: protocolsProp,
 }: FormTypeInputUriProps) => {
-  const [protocol, setProtocol] = useState<string>('');
-  const [uri, setUri] = useState<string>('');
+  const [label, size] = useMemo(() => {
+    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
+  }, [jsonSchema, context, labelProp, name, sizeProp]);
 
-  const availableProtocols =
-    protocols || jsonSchema.protocols || DEFAULT_PROTOCOLS;
+  // 프로토콜 배열 정규화 및 준비
+  const normalizedProtocols = useMemo(() => {
+    const rawProtocols =
+      protocolsProp || jsonSchema.options?.protocols || DEFAULT_PROTOCOLS;
+    return rawProtocols.map(normalizeProtocol);
+  }, [protocolsProp, jsonSchema]);
 
-  // 외부 value를 파싱하여 내부 상태로 설정
+  // TextField 참조를 위한 ref
+  const textFieldRef = useRef<HTMLInputElement>(null);
+
+  // 프로토콜만 내부 상태로 관리, URI는 비제어 컴포넌트로 유지
+  const [protocol, setProtocol] = useState<string>(normalizedProtocols[0]);
+
+  // defaultValue에서 초기 프로토콜과 URI 추출
+  const { initialProtocol, initialUri } = useMemo(() => {
+    if (!defaultValue) {
+      return {
+        initialProtocol: normalizedProtocols[0],
+        initialUri: '',
+      };
+    }
+
+    const parsed = parseUri(defaultValue);
+    if (parsed) {
+      const normalizedDetected = normalizeProtocol(parsed.protocol);
+      return {
+        initialProtocol: normalizedProtocols.includes(normalizedDetected)
+          ? normalizedDetected
+          : normalizedProtocols[0],
+        initialUri: parsed.path,
+      };
+    }
+
+    return {
+      initialProtocol: normalizedProtocols[0],
+      initialUri: defaultValue,
+    };
+  }, [defaultValue, normalizedProtocols]);
+
+  // 초기 프로토콜 설정
   useEffect(() => {
-    if (!value) {
-      setProtocol(availableProtocols[0]);
-      setUri('');
-      return;
-    }
+    setProtocol(initialProtocol);
+  }, [initialProtocol]);
 
-    const match = value.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):\/\/(.*)$/);
-    if (match) {
-      const [, detectedProtocol, restUri] = match;
-      setProtocol(
-        availableProtocols.includes(detectedProtocol)
-          ? detectedProtocol
-          : availableProtocols[0],
-      );
-      setUri(restUri);
-    } else {
-      setProtocol(availableProtocols[0]);
-      setUri(value);
-    }
-  }, [value, availableProtocols]);
-
-  // 초기값 설정
-  useEffect(() => {
-    if (!protocol) {
-      setProtocol(availableProtocols[0]);
-    }
-  }, [availableProtocols, protocol]);
-
-  const handleProtocolChange = useHandle((event: any) => {
+  const handleProtocolChange = useHandle((event: SelectChangeEvent<string>) => {
     const newProtocol = event.target.value;
     setProtocol(newProtocol);
-    const newValue = uri ? `${newProtocol}://${uri}` : `${newProtocol}://`;
+    // 현재 TextField에 입력된 값을 ref로 읽어오기
+    const currentUri = textFieldRef.current?.value || '';
+    const separator = getProtocolSeparator(newProtocol);
+    const newValue = currentUri
+      ? `${newProtocol}${separator}${currentUri}`
+      : `${newProtocol}${separator}`;
     onChange(newValue);
   });
 
   const handleUriChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const newUri = event.target.value;
-    setUri(newUri);
-    const newValue = newUri ? `${protocol}://${newUri}` : '';
+    const separator = getProtocolSeparator(protocol);
+    const newValue = newUri ? `${protocol}${separator}${newUri}` : '';
     onChange(newValue);
   });
 
-  const fieldSize = size || context?.size;
-
   return (
-    <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
-      {/* 프로토콜 선택 */}
-      <Box sx={{ minWidth: 100 }}>
-        <InputLabel shrink htmlFor={`${path}-protocol`}>
-          Protocol
-        </InputLabel>
+    <Box>
+      <InputLabel htmlFor={path} required={required}>
+        {label}
+      </InputLabel>
+      <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
         <Select
-          id={`${path}-protocol`}
           value={protocol}
           onChange={handleProtocolChange}
           disabled={disabled || readOnly}
-          size={fieldSize}
+          size={size}
           displayEmpty
         >
-          {availableProtocols.map((prot) => (
+          {normalizedProtocols.map((prot) => (
             <MenuItem key={prot} value={prot}>
-              {prot}://
+              {formatProtocolDisplay(prot)}
             </MenuItem>
           ))}
         </Select>
-      </Box>
-
-      {/* URI 입력 */}
-      <Box sx={{ flex: 1 }}>
-        <InputLabel shrink htmlFor={path}>
-          URI
-        </InputLabel>
         <TextField
+          inputRef={textFieldRef}
           id={path}
           name={name}
           variant="outlined"
           fullWidth
-          size={fieldSize}
+          size={size}
           placeholder={jsonSchema.placeholder}
-          value={uri}
-          defaultValue={
-            defaultValue
-              ? defaultValue.replace(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//, '')
-              : ''
-          }
+          defaultValue={initialUri}
           onChange={handleUriChange}
           disabled={disabled}
+          slotProps={{
+            input: {
+              readOnly,
+            },
+          }}
         />
       </Box>
     </Box>

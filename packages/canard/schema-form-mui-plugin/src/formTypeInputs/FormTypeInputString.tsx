@@ -1,6 +1,6 @@
-import { type ChangeEvent, useMemo } from 'react';
+import { type ChangeEvent, type ReactNode, useMemo } from 'react';
 
-import { FormControlLabel, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 
 import { useHandle } from '@winglet/react-utils';
 
@@ -10,6 +10,8 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import type { MuiContext } from '../type';
+
 interface StringJsonSchema extends StringSchema {
   format?: 'password';
   formType?: 'password';
@@ -17,27 +19,31 @@ interface StringJsonSchema extends StringSchema {
 }
 
 interface FormTypeInputStringProps
-  extends FormTypeInputPropsWithSchema<
-    string,
-    StringJsonSchema,
-    { size?: 'small' | 'medium' }
-  > {
-  size?: 'small' | 'medium';
+  extends FormTypeInputPropsWithSchema<string, StringJsonSchema, MuiContext>,
+    MuiContext {
+  label?: ReactNode;
 }
 
 const FormTypeInputString = ({
   path,
   name,
-  label,
-  required,
   jsonSchema,
+  required,
   readOnly,
   disabled,
   defaultValue,
   onChange,
   context,
-  size,
+  label: labelProp,
+  size: sizeProp = 'medium',
 }: FormTypeInputStringProps) => {
+  const [label, size] = useMemo(() => {
+    return [
+      labelProp || jsonSchema.label || name,
+      sizeProp || context.size,
+    ];
+  }, [jsonSchema, context, labelProp, name, sizeProp]);
+
   const isPassword = useMemo(() => {
     return (
       jsonSchema.format === 'password' || jsonSchema.formType === 'password'
@@ -56,12 +62,12 @@ const FormTypeInputString = ({
       variant="outlined"
       fullWidth
       placeholder={jsonSchema.placeholder}
-      label={label || name}
+      label={label}
       required={required}
       disabled={disabled}
       defaultValue={defaultValue}
       onChange={handleChange}
-      size={size || context?.size}
+      size={size}
       slotProps={{
         input: {
           readOnly,

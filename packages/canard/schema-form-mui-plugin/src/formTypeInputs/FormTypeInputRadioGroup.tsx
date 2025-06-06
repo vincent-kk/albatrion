@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { FormControlLabel, Radio, RadioGroup } from '@mui/material';
 
@@ -10,6 +10,8 @@ import type {
   NumberSchema,
   StringSchema,
 } from '@canard/schema-form';
+
+import type { MuiContext } from '../type';
 
 interface RadioGroupStringJsonSchema extends StringSchema {
   radioLabels?: string[];
@@ -25,26 +27,33 @@ interface FormTypeInputRadioGroupProps
   extends FormTypeInputPropsWithSchema<
     string | number,
     RadioGroupStringJsonSchema | RadioGroupNumberJsonSchema,
-    { size?: 'small' | 'medium' }
-  > {
-  size?: 'small' | 'medium';
+    MuiContext
+  >,
+    MuiContext {
+  label?: ReactNode;
   row?: boolean;
-  label?: string;
 }
 
 const FormTypeInputRadioGroup = ({
   path,
   name,
-  label,
-  required,
   jsonSchema,
+  required,
   disabled,
   defaultValue,
   onChange,
   context,
-  size,
+  label: labelProp,
+  size: sizeProp = 'medium',
   row = true,
 }: FormTypeInputRadioGroupProps) => {
+  const [label, size] = useMemo(() => {
+    return [
+      labelProp || jsonSchema.label || name,
+      sizeProp || context.size,
+    ];
+  }, [jsonSchema, context, labelProp, name, sizeProp]);
+
   const options = useMemo(() => {
     const enumValues = jsonSchema.enum || [];
     const radioLabels = jsonSchema.radioLabels || enumValues.map(String);
@@ -68,7 +77,7 @@ const FormTypeInputRadioGroup = ({
 
   return (
     <FormControlLabel
-      label={label || name}
+      label={label}
       htmlFor={path}
       required={required}
       disabled={disabled}
@@ -93,7 +102,7 @@ const FormTypeInputRadioGroup = ({
               disabled={disabled}
               control={
                 <Radio
-                  size={size || context?.size}
+                  size={size}
                   id={`${path}-${option.value}`}
                 />
               }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 
@@ -8,6 +8,8 @@ import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
 } from '@canard/schema-form';
+
+import type { MuiContext } from '../type';
 
 interface StringCheckboxJsonSchema {
   type: 'array';
@@ -25,27 +27,32 @@ interface FormTypeInputStringCheckboxProps
   extends FormTypeInputPropsWithSchema<
     string[],
     StringCheckboxJsonSchema,
-    { size?: 'small' | 'medium' }
-  > {
-  size?: 'small' | 'medium';
+    MuiContext
+  >,
+    MuiContext {
+  label?: ReactNode;
   row?: boolean;
-  label?: string;
 }
 
 const FormTypeInputStringCheckbox = ({
   path,
   name,
-  label,
-  required,
   jsonSchema,
+  required,
   disabled,
-  value = [],
+  defaultValue = [],
   onChange,
   context,
-  size,
+  label: labelProp,
+  size: sizeProp = 'medium',
   row = true,
 }: FormTypeInputStringCheckboxProps) => {
-  const [checkedValues, setCheckedValues] = useState<string[]>([]);
+  const [label, size] = useMemo(() => {
+    return [
+      labelProp || jsonSchema.label || name,
+      sizeProp || context.size,
+    ];
+  }, [jsonSchema, context, labelProp, name, sizeProp]);
 
   const options = useMemo(() => {
     const enumValues = jsonSchema.items.enum || [];
@@ -56,28 +63,23 @@ const FormTypeInputStringCheckbox = ({
     }));
   }, [jsonSchema]);
 
-  // 외부 value가 변경될 때 내부 상태 동기화
-  useEffect(() => {
-    setCheckedValues(Array.isArray(value) ? value : []);
-  }, [value]);
-
   const handleToggle = useHandle((optionValue: string) => {
-    const isSelected = checkedValues.includes(optionValue);
+    const currentValues = Array.isArray(defaultValue) ? defaultValue : [];
+    const isSelected = currentValues.includes(optionValue);
     let newValues: string[];
 
     if (isSelected) {
-      newValues = checkedValues.filter((val) => val !== optionValue);
+      newValues = currentValues.filter((val) => val !== optionValue);
     } else {
-      newValues = [...checkedValues, optionValue];
+      newValues = [...currentValues, optionValue];
     }
 
-    setCheckedValues(newValues);
     onChange(newValues);
   });
 
   return (
     <FormControlLabel
-      label={label || name}
+      label={label}
       htmlFor={path}
       required={required}
       disabled={disabled}
@@ -91,7 +93,9 @@ const FormTypeInputStringCheckbox = ({
       control={
         <FormGroup row={row}>
           {options.map((option) => {
-            const isChecked = checkedValues.includes(option.value);
+            const isChecked = Array.isArray(defaultValue)
+              ? defaultValue.includes(option.value)
+              : false;
             return (
               <FormControlLabel
                 key={option.value}
@@ -100,9 +104,9 @@ const FormTypeInputStringCheckbox = ({
                   <Checkbox
                     id={`${path}-${option.value}`}
                     name={`${name}[]`}
-                    checked={isChecked}
+                    defaultChecked={isChecked}
                     onChange={() => handleToggle(option.value)}
-                    size={size || context?.size}
+                    size={size}
                   />
                 }
                 label={option.label}

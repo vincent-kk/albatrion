@@ -1,3 +1,5 @@
+import { type ReactNode, useMemo } from 'react';
+
 import { Box, Slider, Typography } from '@mui/material';
 
 import { useHandle } from '@winglet/react-utils';
@@ -8,6 +10,8 @@ import type {
   NumberSchema,
 } from '@canard/schema-form';
 
+import type { MuiContext } from '../type';
+
 interface SliderJsonSchema extends NumberSchema {
   formType: 'slider';
   minimum?: number;
@@ -17,12 +21,9 @@ interface SliderJsonSchema extends NumberSchema {
 }
 
 interface FormTypeInputSliderProps
-  extends FormTypeInputPropsWithSchema<
-    number,
-    SliderJsonSchema,
-    { size?: 'small' | 'medium' }
-  > {
-  size?: 'small' | 'medium';
+  extends FormTypeInputPropsWithSchema<number, SliderJsonSchema, MuiContext>,
+    MuiContext {
+  label?: ReactNode;
   showMarks?: boolean;
 }
 
@@ -30,13 +31,22 @@ const FormTypeInputSlider = ({
   path,
   name,
   jsonSchema,
+  required,
   disabled,
   defaultValue,
   onChange,
   context,
-  size,
+  label: labelProp,
+  size: sizeProp = 'medium',
   showMarks = false,
 }: FormTypeInputSliderProps) => {
+  const [label, size] = useMemo(() => {
+    return [
+      labelProp || jsonSchema.label || name,
+      sizeProp || context.size,
+    ];
+  }, [jsonSchema, context, labelProp, name, sizeProp]);
+
   const min = jsonSchema.minimum ?? 0;
   const max = jsonSchema.maximum ?? 100;
   const step = jsonSchema.multipleOf ?? 1;
@@ -56,6 +66,17 @@ const FormTypeInputSlider = ({
 
   return (
     <Box sx={{ px: 2 }}>
+      {label && (
+        <Typography
+          variant="body2"
+          component="label"
+          htmlFor={path}
+          sx={{ mb: 1, display: 'block' }}
+        >
+          {label}
+          {required && ' *'}
+        </Typography>
+      )}
       <Slider
         id={path}
         name={name}
@@ -66,7 +87,7 @@ const FormTypeInputSlider = ({
         onChange={handleChange}
         onChangeCommitted={handleChangeCommitted}
         disabled={disabled}
-        size={size || context?.size}
+        size={size}
         marks={showMarks}
         valueLabelDisplay="auto"
         sx={{ mt: 1 }}

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -13,30 +13,37 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import type { MuiContext } from '../type';
+
 interface MonthJsonSchema extends StringSchema {
   format: 'month';
 }
 
 interface FormTypeInputMonthProps
-  extends FormTypeInputPropsWithSchema<
-    string,
-    MonthJsonSchema,
-    { size?: 'small' | 'medium' }
-  > {
-  size?: 'small' | 'medium';
-  label?: string;
+  extends FormTypeInputPropsWithSchema<string, MonthJsonSchema, MuiContext>,
+    MuiContext {
+  label?: ReactNode;
 }
 
 const FormTypeInputMonth = ({
   path,
   name,
+  jsonSchema,
+  required,
   disabled,
   defaultValue,
   onChange,
   context,
-  size,
-  label,
+  label: labelProp,
+  size: sizeProp = 'medium',
 }: FormTypeInputMonthProps) => {
+  const [label, size] = useMemo(() => {
+    return [
+      labelProp || jsonSchema.label || name,
+      sizeProp || context.size,
+    ];
+  }, [jsonSchema, context, labelProp, name, sizeProp]);
+
   const handleChange = useHandle((newValue: Dayjs | null) => {
     if (newValue && newValue.isValid()) {
       onChange(newValue.format('YYYY-MM'));
@@ -48,7 +55,7 @@ const FormTypeInputMonth = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
-        label={label || name}
+        label={label}
         defaultValue={defaultValue ? dayjs(defaultValue) : null}
         onChange={handleChange}
         disabled={disabled}
@@ -59,7 +66,8 @@ const FormTypeInputMonth = ({
           textField: {
             id: path,
             name,
-            size: size || context?.size,
+            required,
+            size,
             variant: 'outlined',
             fullWidth: true,
           },
