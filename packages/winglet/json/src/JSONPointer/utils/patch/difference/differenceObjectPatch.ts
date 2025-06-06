@@ -1,8 +1,6 @@
-import { JSONPointer } from '@/json';
-import {
-  getValueByPointer,
-  setValueByPointer,
-} from '@/json/JSONPointer/utils/manipulator';
+import { JSONPointer } from '@/json/JSONPointer/enum';
+import { getValueByPointer } from '@/json/JSONPointer/utils/manipulator/getValueByPointer';
+import { setValueByPointer } from '@/json/JSONPointer/utils/manipulator/setValueByPointer';
 import { compare } from '@/json/JSONPointer/utils/patch/compare';
 import { Operation, type Patch } from '@/json/JSONPointer/utils/patch/type';
 import type { JsonObject } from '@/json/type';
