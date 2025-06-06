@@ -25,6 +25,7 @@ interface FormTypeInputSliderProps
     MuiContext {
   label?: ReactNode;
   showMarks?: boolean;
+  hideLabel?: boolean;
 }
 
 const FormTypeInputSlider = ({
@@ -39,13 +40,12 @@ const FormTypeInputSlider = ({
   label: labelProp,
   size: sizeProp = 'medium',
   showMarks = false,
+  hideLabel,
 }: FormTypeInputSliderProps) => {
   const [label, size] = useMemo(() => {
-    return [
-      labelProp || jsonSchema.label || name,
-      sizeProp || context.size,
-    ];
-  }, [jsonSchema, context, labelProp, name, sizeProp]);
+    if (hideLabel) return [undefined, sizeProp || context.size];
+    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
+  }, [jsonSchema, context, labelProp, name, sizeProp, hideLabel]);
 
   const min = jsonSchema.minimum ?? 0;
   const max = jsonSchema.maximum ?? 100;

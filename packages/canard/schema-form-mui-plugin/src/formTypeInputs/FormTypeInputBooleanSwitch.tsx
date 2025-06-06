@@ -27,6 +27,7 @@ interface FormTypeInputBooleanSwitchProps
     >,
     MuiContext {
   label?: ReactNode;
+  hideLabel?: boolean;
 }
 
 const FormTypeInputBooleanSwitch = ({
@@ -40,6 +41,7 @@ const FormTypeInputBooleanSwitch = ({
   context,
   label: labelProp,
   size: sizeProp = 'medium',
+  hideLabel,
 }: FormTypeInputBooleanSwitchProps) => {
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,8 +50,9 @@ const FormTypeInputBooleanSwitch = ({
   );
 
   const [label, size] = useMemo(() => {
+    if (hideLabel) return [undefined, sizeProp || context.size];
     return [labelProp || jsonSchema.label || name, sizeProp || context.size];
-  }, [jsonSchema, context, labelProp, name, sizeProp]);
+  }, [jsonSchema, context, labelProp, name, sizeProp, hideLabel]);
 
   return (
     <FormControlLabel
@@ -57,11 +60,12 @@ const FormTypeInputBooleanSwitch = ({
       htmlFor={path}
       required={required}
       disabled={disabled}
+      labelPlacement="start"
       control={
         <Switch
           id={path}
           name={name}
-          checked={defaultValue}
+          defaultChecked={defaultValue}
           onChange={handleChange}
           disabled={disabled}
           size={size}

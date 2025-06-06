@@ -25,6 +25,7 @@ interface FormTypeInputDateProps
   extends FormTypeInputPropsWithSchema<string, DateJsonSchema, MuiContext>,
     MuiContext {
   label?: ReactNode;
+  hideLabel?: boolean;
 }
 
 const FormTypeInputDate = ({
@@ -38,12 +39,11 @@ const FormTypeInputDate = ({
   context,
   label: labelProp,
   size: sizeProp = 'medium',
+  hideLabel,
 }: FormTypeInputDateProps) => {
   const [label, size] = useMemo(() => {
-    return [
-      labelProp || jsonSchema.label || name,
-      sizeProp || context.size,
-    ];
+    if (hideLabel) return [undefined, sizeProp || context.size];
+    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
   }, [jsonSchema, context, labelProp, name, sizeProp]);
 
   const { minDate, maxDate } = useMemo(() => {

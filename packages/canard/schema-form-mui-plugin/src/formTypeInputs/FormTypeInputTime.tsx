@@ -24,6 +24,7 @@ interface FormTypeInputTimeProps
     MuiContext {
   label?: ReactNode;
   ampm?: boolean;
+  hideLabel?: boolean;
 }
 
 const FormTypeInputTime = ({
@@ -38,8 +39,15 @@ const FormTypeInputTime = ({
   label: labelProp,
   size: sizeProp = 'medium',
   ampm: ampmProp,
+  hideLabel,
 }: FormTypeInputTimeProps) => {
   const [label, size, ampm] = useMemo(() => {
+    if (hideLabel)
+      return [
+        undefined,
+        sizeProp || context.size,
+        ampmProp ?? jsonSchema.ampm ?? false,
+      ];
     return [
       labelProp || jsonSchema.label || name,
       sizeProp || context.size,

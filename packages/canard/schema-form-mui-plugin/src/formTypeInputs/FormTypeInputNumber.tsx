@@ -20,6 +20,7 @@ interface FormTypeInputNumberProps
   extends FormTypeInputPropsWithSchema<number, NumberJsonSchema, MuiContext>,
     MuiContext {
   label?: ReactNode;
+  hideLabel?: boolean;
 }
 
 const FormTypeInputNumber = ({
@@ -34,12 +35,11 @@ const FormTypeInputNumber = ({
   context,
   label: labelProp,
   size: sizeProp = 'medium',
+  hideLabel,
 }: FormTypeInputNumberProps) => {
   const [label, size] = useMemo(() => {
-    return [
-      labelProp || jsonSchema.label || name,
-      sizeProp || context.size,
-    ];
+    if (hideLabel) return [undefined, sizeProp || context.size];
+    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
   }, [jsonSchema, context, labelProp, name, sizeProp]);
 
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {

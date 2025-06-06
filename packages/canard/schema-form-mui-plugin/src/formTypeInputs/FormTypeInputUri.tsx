@@ -39,6 +39,7 @@ interface FormTypeInputUriProps
     MuiContext {
   label?: ReactNode;
   protocols?: string[];
+  hideLabel?: boolean;
 }
 
 const DEFAULT_PROTOCOLS = ['http', 'https'];
@@ -98,8 +99,10 @@ const FormTypeInputUri = ({
   label: labelProp,
   size: sizeProp = 'medium',
   protocols: protocolsProp,
+  hideLabel,
 }: FormTypeInputUriProps) => {
   const [label, size] = useMemo(() => {
+    if (hideLabel) return [undefined, sizeProp || context.size];
     return [labelProp || jsonSchema.label || name, sizeProp || context.size];
   }, [jsonSchema, context, labelProp, name, sizeProp]);
 

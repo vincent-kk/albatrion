@@ -18,9 +18,14 @@ interface StringEnumJsonSchema
 }
 
 interface FormTypeInputStringEnumProps
-  extends FormTypeInputPropsWithSchema<string, StringEnumJsonSchema, MuiContext>,
+  extends FormTypeInputPropsWithSchema<
+      string,
+      StringEnumJsonSchema,
+      MuiContext
+    >,
     MuiContext {
   label?: ReactNode;
+  hideLabel?: boolean;
 }
 
 const FormTypeInputStringEnum = ({
@@ -35,12 +40,11 @@ const FormTypeInputStringEnum = ({
   context,
   label: labelProp,
   size: sizeProp = 'medium',
+  hideLabel,
 }: FormTypeInputStringEnumProps) => {
   const [label, size] = useMemo(() => {
-    return [
-      labelProp || jsonSchema.label || name,
-      sizeProp || context.size,
-    ];
+    if (hideLabel) return [undefined, sizeProp || context.size];
+    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
   }, [jsonSchema, context, labelProp, name, sizeProp]);
 
   const options = useMemo(

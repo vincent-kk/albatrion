@@ -39,7 +39,7 @@ const FormTypeInputArray = ({
         map(ChildNodeComponents, (ChildNodeComponent, i) => (
           <div key={ChildNodeComponent.key} style={{ display: 'flex' }}>
             <div style={{ flex: 1 }}>
-              <ChildNodeComponent />
+              <ChildNodeComponent hideLabel />
             </div>
             {!readOnly && (
               <Remove

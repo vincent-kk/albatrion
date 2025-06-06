@@ -1,6 +1,6 @@
 import { type ReactNode, useMemo } from 'react';
 
-import { Stack, Switch, Typography } from '@mui/material';
+import { FormControlLabel, Stack, Switch, Typography } from '@mui/material';
 
 import { useHandle } from '@winglet/react-utils';
 
@@ -17,10 +17,15 @@ interface StringSwitchJsonSchema extends StringSchema {
   enum: [string, string]; // 정확히 2개의 값만 허용
   switchSize?: 'small' | 'medium';
   switchLabels?: [string, string];
+  hideLabel?: boolean;
 }
 
 interface FormTypeInputStringSwitchProps
-  extends FormTypeInputPropsWithSchema<string, StringSwitchJsonSchema, MuiContext>,
+  extends FormTypeInputPropsWithSchema<
+      string,
+      StringSwitchJsonSchema,
+      MuiContext
+    >,
     MuiContext {
   label?: ReactNode;
 }
@@ -36,12 +41,11 @@ const FormTypeInputStringSwitch = ({
   context,
   label: labelProp,
   size: sizeProp = 'medium',
+  hideLabel,
 }: FormTypeInputStringSwitchProps) => {
   const [label, size] = useMemo(() => {
-    return [
-      labelProp || jsonSchema.label || name,
-      sizeProp || context.size,
-    ];
+    if (hideLabel) return [undefined, sizeProp || context.size];
+    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
   }, [jsonSchema, context, labelProp, name, sizeProp]);
 
   const { offValue, onValue, offLabel, onLabel } = useMemo(() => {
@@ -68,18 +72,31 @@ const FormTypeInputStringSwitch = ({
   const switchSize = jsonSchema.switchSize || size;
 
   return (
-    <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-      <Typography>{offLabel}</Typography>
-      <Switch
-        id={path}
-        name={name}
-        defaultChecked={defaultValue === onValue}
-        onChange={handleChange}
-        disabled={disabled}
-        size={switchSize}
-      />
-      <Typography>{onLabel}</Typography>
-    </Stack>
+    <FormControlLabel
+      label={label}
+      htmlFor={path}
+      required={required}
+      disabled={disabled}
+      labelPlacement="start"
+      sx={{
+        alignItems: 'center',
+        gap: 1,
+      }}
+      control={
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+          <Typography>{offLabel}</Typography>
+          <Switch
+            id={path}
+            name={name}
+            defaultChecked={defaultValue === onValue}
+            onChange={handleChange}
+            disabled={disabled}
+            size={switchSize}
+          />
+          <Typography>{onLabel}</Typography>
+        </Stack>
+      }
+    />
   );
 };
 

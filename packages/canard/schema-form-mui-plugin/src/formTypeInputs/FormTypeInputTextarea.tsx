@@ -26,6 +26,7 @@ interface FormTypeInputTextareaProps
   label?: ReactNode;
   minRows?: number;
   maxRows?: number;
+  hideLabel?: boolean;
 }
 
 const FormTypeInputTextarea = ({
@@ -42,12 +43,11 @@ const FormTypeInputTextarea = ({
   size: sizeProp = 'medium',
   minRows,
   maxRows,
+  hideLabel,
 }: FormTypeInputTextareaProps) => {
   const [label, size] = useMemo(() => {
-    return [
-      labelProp || jsonSchema.label || name,
-      sizeProp || context.size,
-    ];
+    if (hideLabel) return [undefined, sizeProp || context.size];
+    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
   }, [jsonSchema, context, labelProp, name, sizeProp]);
 
   const handleChange = useHandle((event: ChangeEvent<HTMLTextAreaElement>) => {

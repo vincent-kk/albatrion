@@ -25,13 +25,14 @@ interface RadioGroupNumberJsonSchema extends NumberSchema {
 
 interface FormTypeInputRadioGroupProps
   extends FormTypeInputPropsWithSchema<
-    string | number,
-    RadioGroupStringJsonSchema | RadioGroupNumberJsonSchema,
-    MuiContext
-  >,
+      string | number,
+      RadioGroupStringJsonSchema | RadioGroupNumberJsonSchema,
+      MuiContext
+    >,
     MuiContext {
   label?: ReactNode;
   row?: boolean;
+  hideLabel?: boolean;
 }
 
 const FormTypeInputRadioGroup = ({
@@ -46,13 +47,12 @@ const FormTypeInputRadioGroup = ({
   label: labelProp,
   size: sizeProp = 'medium',
   row = true,
+  hideLabel,
 }: FormTypeInputRadioGroupProps) => {
   const [label, size] = useMemo(() => {
-    return [
-      labelProp || jsonSchema.label || name,
-      sizeProp || context.size,
-    ];
-  }, [jsonSchema, context, labelProp, name, sizeProp]);
+    if (hideLabel) return [undefined, sizeProp || context.size];
+    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
+  }, [jsonSchema, context, labelProp, name, sizeProp, hideLabel]);
 
   const options = useMemo(() => {
     const enumValues = jsonSchema.enum || [];
@@ -100,12 +100,7 @@ const FormTypeInputRadioGroup = ({
               key={option.value}
               value={option.value}
               disabled={disabled}
-              control={
-                <Radio
-                  size={size}
-                  id={`${path}-${option.value}`}
-                />
-              }
+              control={<Radio size={size} id={`${path}-${option.value}`} />}
               label={option.label}
             />
           ))}

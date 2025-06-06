@@ -22,6 +22,7 @@ interface FormTypeInputStringProps
   extends FormTypeInputPropsWithSchema<string, StringJsonSchema, MuiContext>,
     MuiContext {
   label?: ReactNode;
+  hideLabel?: boolean;
 }
 
 const FormTypeInputString = ({
@@ -36,13 +37,12 @@ const FormTypeInputString = ({
   context,
   label: labelProp,
   size: sizeProp = 'medium',
+  hideLabel,
 }: FormTypeInputStringProps) => {
   const [label, size] = useMemo(() => {
-    return [
-      labelProp || jsonSchema.label || name,
-      sizeProp || context.size,
-    ];
-  }, [jsonSchema, context, labelProp, name, sizeProp]);
+    if (hideLabel) return [undefined, sizeProp || context.size];
+    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
+  }, [jsonSchema, context, labelProp, name, sizeProp, hideLabel]);
 
   const isPassword = useMemo(() => {
     return (

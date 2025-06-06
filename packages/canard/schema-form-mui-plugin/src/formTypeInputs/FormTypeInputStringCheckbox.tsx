@@ -5,13 +5,14 @@ import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 import { useHandle } from '@winglet/react-utils';
 
 import type {
+  ArraySchema,
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
 
-interface StringCheckboxJsonSchema {
+interface StringCheckboxJsonSchema extends ArraySchema {
   type: 'array';
   items: {
     type: 'string';
@@ -25,13 +26,14 @@ interface StringCheckboxJsonSchema {
 
 interface FormTypeInputStringCheckboxProps
   extends FormTypeInputPropsWithSchema<
-    string[],
-    StringCheckboxJsonSchema,
-    MuiContext
-  >,
+      string[],
+      StringCheckboxJsonSchema,
+      MuiContext
+    >,
     MuiContext {
   label?: ReactNode;
   row?: boolean;
+  hideLabel?: boolean;
 }
 
 const FormTypeInputStringCheckbox = ({
@@ -46,12 +48,11 @@ const FormTypeInputStringCheckbox = ({
   label: labelProp,
   size: sizeProp = 'medium',
   row = true,
+  hideLabel,
 }: FormTypeInputStringCheckboxProps) => {
   const [label, size] = useMemo(() => {
-    return [
-      labelProp || jsonSchema.label || name,
-      sizeProp || context.size,
-    ];
+    if (hideLabel) return [undefined, sizeProp || context.size];
+    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
   }, [jsonSchema, context, labelProp, name, sizeProp]);
 
   const options = useMemo(() => {

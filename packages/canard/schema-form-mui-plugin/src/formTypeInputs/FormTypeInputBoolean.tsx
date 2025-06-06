@@ -15,6 +15,7 @@ interface FormTypeInputBooleanProps
   extends FormTypeInputProps<boolean, MuiContext>,
     MuiContext {
   label?: ReactNode;
+  hideLabel?: boolean;
 }
 
 const FormTypeInputBoolean = ({
@@ -28,10 +29,12 @@ const FormTypeInputBoolean = ({
   context,
   label: labelProp,
   size: sizeProp = 'medium',
+  hideLabel,
 }: FormTypeInputBooleanProps) => {
   const [label, size] = useMemo(() => {
+    if (hideLabel) return [undefined, sizeProp || context.size];
     return [labelProp || jsonSchema.label || name, sizeProp || context.size];
-  }, [jsonSchema, context, labelProp, name, sizeProp]);
+  }, [jsonSchema, context, labelProp, name, sizeProp, hideLabel]);
 
   const [indeterminate, defaultChecked] = useMemo(() => {
     const isIndeterminate =
