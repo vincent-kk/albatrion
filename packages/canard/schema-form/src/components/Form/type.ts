@@ -98,5 +98,6 @@ export interface FormHandle<
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
   validate: Fn<[], Promise<JsonSchemaError[]>>;
+  showError: Fn<[visible: boolean]>;
   submit: TrackableHandlerFunction;
 }

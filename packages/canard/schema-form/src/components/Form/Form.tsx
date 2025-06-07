@@ -52,33 +52,34 @@ const FormInner = <
   Value extends AllowedValue = InferValueType<Schema>,
 >(
   {
-    jsonSchema: jsonSchemaInput,
-    defaultValue: defaultValueInput,
+    jsonSchema: inputJsonSchema,
+    defaultValue: inputDefaultValue,
     readOnly,
     disabled,
     onChange,
     onValidate,
-    onSubmit: onSubmitInput,
+    onSubmit: inputOnSubmit,
     formTypeInputDefinitions,
     formTypeInputMap,
     CustomFormTypeRenderer,
     errors,
     formatError,
-    showError,
+    showError: inputShowError,
     validationMode,
     validatorFactory,
     context,
-    children: childrenInput,
+    children: inputChildren,
   }: FormProps<Schema, Value>,
   ref: ForwardedRef<FormHandle<Schema, Value>>,
 ) => {
   type Node = InferSchemaNode<Schema>;
-  const jsonSchema = useConstant(jsonSchemaInput);
+  const jsonSchema = useConstant(inputJsonSchema);
   const [rootNode, setRootNode] = useState<Node>();
   const [children, setChildren] = useState<ReactNode>(
-    createChildren(childrenInput, jsonSchema),
+    createChildren(inputChildren, jsonSchema),
   );
-  const defaultValue = useConstant(defaultValueInput);
+  const [showError, setShowError] = useState(inputShowError);
+  const defaultValue = useConstant(inputDefaultValue);
   const ready = useRef(false);
   const [version, update] = useVersion(() => {
     ready.current = false;
@@ -95,7 +96,7 @@ const FormInner = <
   const handleValidate = useHandle(onValidate);
 
   const onSubmit = useHandle(async () => {
-    if (!ready.current || !rootNode || !isFunction(onSubmitInput)) return;
+    if (!ready.current || !rootNode || !isFunction(inputOnSubmit)) return;
     const value = rootNode.value as Value;
     const errors = await rootNode.validate();
     if (errors.length > 0)
@@ -104,7 +105,7 @@ const FormInner = <
         'Form submission rejected due to validation errors, please check the errors and try again',
         { value, errors, jsonSchema },
       );
-    await onSubmitInput(value);
+    await inputOnSubmit(value);
   });
   const handleSubmit = useMemo(() => getTrackableHandler(onSubmit), [onSubmit]);
   const handleFormSubmit = useCallback(
@@ -122,13 +123,13 @@ const FormInner = <
 
   useEffect(() => {
     if (!rootNode) return;
-    setChildren(createChildren(childrenInput, jsonSchema, rootNode));
+    setChildren(createChildren(inputChildren, jsonSchema, rootNode));
     const unsubscribe = rootNode.subscribe(({ type }) => {
       if (type & UPDATE_CHILDREN_MASK)
-        setChildren(createChildren(childrenInput, jsonSchema, rootNode));
+        setChildren(createChildren(inputChildren, jsonSchema, rootNode));
     });
     return unsubscribe;
-  }, [childrenInput, jsonSchema, rootNode]);
+  }, [inputChildren, jsonSchema, rootNode]);
 
   useImperativeHandle(
     ref,
@@ -142,6 +143,8 @@ const FormInner = <
       getValue: () => rootNode?.value as Value,
       setValue: (value, options) => rootNode?.setValue(value as any, options),
       validate: async () => (await rootNode?.validate()) || [],
+      showError: (visible = true) =>
+        visible ? setShowError(true) : setShowError(inputShowError),
       submit: handleSubmit,
     }),
     [rootNode, handleSubmit, update],
