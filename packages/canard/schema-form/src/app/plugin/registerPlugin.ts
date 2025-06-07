@@ -1,13 +1,7 @@
-import type { ComponentType } from 'react';
-
 import { Murmur3, isPlainObject, stableSerialize } from '@winglet/common-utils';
 
+import type { SchemaFormPlugin } from '@/schema-form';
 import { UnhandledError } from '@/schema-form/errors';
-import type {
-  FormTypeInputDefinition,
-  FormTypeRendererProps,
-  FormatError,
-} from '@/schema-form/types';
 
 import { PluginManager } from './PluginManager';
 
@@ -18,9 +12,10 @@ export const registerPlugin = (plugin: SchemaFormPlugin) => {
   const hash = Murmur3.hash(stableSerialize(plugin));
   if (RegisteredPlugin.has(hash)) return;
   try {
-    const { formTypeInputDefinitions, ...renderKit } = plugin;
+    const { formTypeInputDefinitions, validator, ...renderKit } = plugin;
     PluginManager.appendRenderKit(renderKit);
     PluginManager.appendFormTypeInputDefinitions(formTypeInputDefinitions);
+    PluginManager.appendValidator(validator);
   } catch (error) {
     throw new UnhandledError('REGISTER_PLUGIN', 'Failed to register plugin', {
       plugin,
@@ -29,12 +24,3 @@ export const registerPlugin = (plugin: SchemaFormPlugin) => {
   }
   RegisteredPlugin.add(hash);
 };
-
-export interface SchemaFormPlugin {
-  FormGroup?: ComponentType<FormTypeRendererProps>;
-  FormLabel?: ComponentType<FormTypeRendererProps>;
-  FormInput?: ComponentType<FormTypeRendererProps>;
-  FormError?: ComponentType<FormTypeRendererProps>;
-  formatError?: FormatError;
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
-}
