@@ -18,7 +18,124 @@ const packageJson = JSON.parse(
   readFileSync(resolvePath(__dirname, './package.json'), 'utf8'),
 );
 
+// Common plugins configuration
+const getCommonPlugins = (input, outputDir = 'dist') => [
+  peerDepsExternal(),
+  resolve({
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+  }),
+  replace({
+    preventAssignment: true,
+  }),
+  commonjs(),
+  typescript({
+    useTsconfigDeclarationDir: true,
+    tsconfig: './tsconfig.json',
+    clean: true,
+    tsconfigOverride: {
+      compilerOptions: {
+        declaration: true,
+        declarationDir: outputDir,
+        emitDeclarationOnly: false,
+        rootDir: 'src',
+      },
+      include: ['src/**/*'],
+      exclude: [
+        'node_modules',
+        '**/__tests__/**',
+        '**/*.test.ts',
+        '**/*.spec.ts',
+      ],
+    },
+  }),
+  terser({
+    compress: {
+      drop_console: false,
+      drop_debugger: true,
+      dead_code: true,
+      unsafe: true,
+      unsafe_comps: true,
+      unsafe_Function: true,
+      unsafe_math: true,
+      unsafe_symbols: true,
+      unsafe_methods: true,
+      unsafe_proto: true,
+      unsafe_regexp: true,
+      unsafe_undefined: true,
+      unused: true,
+      toplevel: true,
+      passes: 10,
+      pure_getters: true,
+      reduce_vars: true,
+      reduce_funcs: true,
+      hoist_funs: true,
+      hoist_vars: true,
+      if_return: true,
+      join_vars: true,
+      collapse_vars: true,
+      comparisons: true,
+      conditionals: true,
+      evaluate: true,
+      booleans: true,
+      typeofs: true,
+      loops: true,
+      properties: true,
+      sequences: true,
+      side_effects: true,
+      switches: true,
+      arrows: true,
+      arguments: true,
+      keep_fargs: false,
+      ecma: 2020,
+      pure_funcs: ['console.log'],
+    },
+    mangle: {
+      toplevel: true,
+      eval: true,
+      keep_fnames: false,
+      reserved: [],
+      properties: {
+        regex: /^_/,
+      },
+    },
+    format: {
+      comments: false,
+      beautify: false,
+      ascii_only: true,
+      ecma: 2020,
+    },
+    ecma: 2020,
+    module: true,
+    keep_fnames: false,
+    keep_classnames: false,
+    toplevel: true,
+  }),
+];
+
+// Sub-exports configuration
+const subExports = [
+  // Core directories
+  { input: 'src/libs/index.ts', output: 'dist/libs/index' },
+  { input: 'src/errors/index.ts', output: 'dist/errors/index' },
+  { input: 'src/constant/index.ts', output: 'dist/constant/index' },
+
+  // Utils directories
+  { input: 'src/utils/filter/index.ts', output: 'dist/utils/filter/index' },
+  { input: 'src/utils/array/index.ts', output: 'dist/utils/array/index' },
+  { input: 'src/utils/console/index.ts', output: 'dist/utils/console/index' },
+  { input: 'src/utils/convert/index.ts', output: 'dist/utils/convert/index' },
+  { input: 'src/utils/function/index.ts', output: 'dist/utils/function/index' },
+  { input: 'src/utils/hash/index.ts', output: 'dist/utils/hash/index' },
+  { input: 'src/utils/object/index.ts', output: 'dist/utils/object/index' },
+  { input: 'src/utils/promise/index.ts', output: 'dist/utils/promise/index' },
+  {
+    input: 'src/utils/scheduler/index.ts',
+    output: 'dist/utils/scheduler/index',
+  },
+];
+
 export default [
+  // Main entry point
   {
     input: 'src/index.ts',
     output: [
@@ -36,13 +153,7 @@ export default [
       },
     ],
     plugins: [
-      peerDepsExternal(),
-      resolve({
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
-      }),
-      replace({
-        preventAssignment: true,
-      }),
+      ...getCommonPlugins('src/index.ts'),
       copy({
         targets: [
           {
@@ -53,89 +164,6 @@ export default [
         copyOnce: true,
         flatten: true,
       }),
-      commonjs(),
-      typescript({
-        useTsconfigDeclarationDir: true,
-        tsconfig: './tsconfig.json',
-        clean: true,
-        tsconfigOverride: {
-          compilerOptions: {
-            declaration: true,
-            declarationDir: 'dist',
-            emitDeclarationOnly: false,
-            rootDir: 'src',
-          },
-          include: ['src/**/*'],
-          exclude: [
-            'node_modules',
-            '**/__tests__/**',
-            '**/*.test.ts',
-            '**/*.spec.ts',
-          ],
-        },
-      }),
-      terser({
-        compress: {
-          drop_console: false, // Keep console methods for utility functions like printError
-          drop_debugger: true,
-          dead_code: true,
-          unsafe: true,
-          unsafe_comps: true,
-          unsafe_Function: true,
-          unsafe_math: true,
-          unsafe_symbols: true,
-          unsafe_methods: true,
-          unsafe_proto: true,
-          unsafe_regexp: true,
-          unsafe_undefined: true,
-          unused: true,
-          toplevel: true,
-          passes: 10,
-          pure_getters: true,
-          reduce_vars: true,
-          reduce_funcs: true,
-          hoist_funs: true,
-          hoist_vars: true,
-          if_return: true,
-          join_vars: true,
-          collapse_vars: true,
-          comparisons: true,
-          conditionals: true,
-          evaluate: true,
-          booleans: true,
-          typeofs: true,
-          loops: true,
-          properties: true,
-          sequences: true,
-          side_effects: true,
-          switches: true,
-          arrows: true,
-          arguments: true,
-          keep_fargs: false,
-          ecma: 2020,
-          pure_funcs: ['console.log'], // Only remove console.log specifically
-        },
-        mangle: {
-          toplevel: true,
-          eval: true,
-          keep_fnames: false,
-          reserved: [],
-          properties: {
-            regex: /^_/,
-          },
-        },
-        format: {
-          comments: false,
-          beautify: false,
-          ascii_only: true,
-          ecma: 2020,
-        },
-        ecma: 2020,
-        module: true,
-        keep_fnames: false,
-        keep_classnames: false,
-        toplevel: true,
-      }),
       visualizer({
         filename: 'common-utils-stats.html',
         gzipSize: true,
@@ -143,4 +171,27 @@ export default [
     ],
     external: (path) => /node_modules/.test(path),
   },
+  // Sub-exports for tree shaking optimization
+  ...subExports.map(({ input, output }) => ({
+    input,
+    output: [
+      {
+        file: `${output}.cjs.js`,
+        format: 'cjs',
+        exports: 'named',
+        sourcemap: true,
+      },
+      {
+        file: `${output}.esm.js`,
+        format: 'esm',
+        exports: 'named',
+        sourcemap: true,
+      },
+    ],
+    plugins: getCommonPlugins(
+      input,
+      `${output.split('/').slice(0, -1).join('/')}`,
+    ),
+    external: (path) => /node_modules/.test(path) || path.startsWith('@/'),
+  })),
 ];
