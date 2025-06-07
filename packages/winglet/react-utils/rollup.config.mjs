@@ -18,31 +18,141 @@ const packageJson = JSON.parse(
   readFileSync(resolvePath(__dirname, './package.json'), 'utf8'),
 );
 
-export default [
+// Common plugins configuration
+const getCommonPlugins = (input, outputDir = 'dist') => [
+  peerDepsExternal(),
+  resolve({
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+  }),
+  replace({
+    preventAssignment: true,
+  }),
+  commonjs(),
+  typescript({
+    useTsconfigDeclarationDir: true,
+    tsconfig: './tsconfig.json',
+    clean: true,
+    tsconfigOverride: {
+      compilerOptions: {
+        declaration: true,
+        declarationDir: outputDir,
+        emitDeclarationOnly: false,
+        rootDir: 'src',
+      },
+      include: ['src/**/*'],
+      exclude: [
+        'node_modules',
+        '**/__tests__/**',
+        '**/*.test.ts',
+        '**/*.spec.ts',
+      ],
+    },
+  }),
+  terser({
+    compress: {
+      drop_console: false,
+      drop_debugger: true,
+      dead_code: true,
+      unsafe: true,
+      unsafe_comps: true,
+      unsafe_Function: true,
+      unsafe_math: true,
+      unsafe_symbols: true,
+      unsafe_methods: true,
+      unsafe_proto: true,
+      unsafe_regexp: true,
+      unsafe_undefined: true,
+      unused: true,
+      toplevel: true,
+      passes: 10,
+      pure_getters: true,
+      reduce_vars: true,
+      reduce_funcs: true,
+      hoist_funs: true,
+      hoist_vars: true,
+      if_return: true,
+      join_vars: true,
+      collapse_vars: true,
+      comparisons: true,
+      conditionals: true,
+      evaluate: true,
+      booleans: true,
+      typeofs: true,
+      loops: true,
+      properties: true,
+      sequences: true,
+      side_effects: true,
+      switches: true,
+      arrows: true,
+      arguments: true,
+      keep_fargs: false,
+      ecma: 2020,
+    },
+    mangle: {
+      toplevel: true,
+      eval: true,
+      keep_fnames: true,
+      reserved: ['React', 'Component', 'useState', 'useEffect'],
+      properties: {
+        regex: /^_/,
+      },
+    },
+    format: {
+      comments: false,
+      beautify: false,
+      ascii_only: true,
+      ecma: 2020,
+    },
+    ecma: 2020,
+    module: true,
+    keep_fnames: true,
+    keep_classnames: true,
+    toplevel: true,
+  }),
+];
+
+// Sub-exports configuration
+const subExports = [
+  {
+    input: 'src/components/Portal/index.ts',
+    output: 'dist/components/Portal/index',
+  },
+  { input: 'src/hoc/index.ts', output: 'dist/hoc/index' },
+  { input: 'src/hooks/index.ts', output: 'dist/hooks/index' },
+  { input: 'src/utils/filter/index.ts', output: 'dist/utils/filter/index' },
+  { input: 'src/utils/object/index.ts', output: 'dist/utils/object/index' },
+  { input: 'src/utils/render/index.ts', output: 'dist/utils/render/index' },
+];
+
+const baseExternal = (path) => {
+  if (path.startsWith('@aileron')) return false;
+  if (path.startsWith('@winglet') && path !== '@winglet/react-utils')
+    return true;
+  return /node_modules/.test(path);
+};
+
+// Create configurations for all exports (main + sub-exports)
+const configs = [
+  // Main export
   {
     input: 'src/index.ts',
     output: [
       {
         file: packageJson.main,
         format: 'cjs',
-        exports: 'named',
+        exports: 'auto',
         sourcemap: true,
       },
       {
         file: packageJson.module,
         format: 'esm',
-        exports: 'named',
+        exports: 'auto',
         sourcemap: true,
       },
     ],
+    external: baseExternal,
     plugins: [
-      peerDepsExternal(),
-      resolve({
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
-      }),
-      replace({
-        preventAssignment: true,
-      }),
+      ...getCommonPlugins('src/index.ts'),
       copy({
         targets: [
           {
@@ -53,98 +163,33 @@ export default [
         copyOnce: true,
         flatten: true,
       }),
-      commonjs(),
-      typescript({
-        useTsconfigDeclarationDir: true,
-        tsconfig: './tsconfig.json',
-        clean: true,
-        tsconfigOverride: {
-          compilerOptions: {
-            declaration: true,
-            declarationDir: 'dist',
-            emitDeclarationOnly: false,
-            rootDir: 'src',
-          },
-          include: ['src/**/*'],
-          exclude: [
-            'node_modules',
-            '**/__tests__/**',
-            '**/*.test.tsx?',
-            '**/*.spec.tsx?',
-          ],
-        },
-      }),
-      terser({
-        compress: {
-          drop_console: false,
-          drop_debugger: true,
-          dead_code: true,
-          unsafe: true,
-          unsafe_comps: true,
-          unsafe_Function: true,
-          unsafe_math: true,
-          unsafe_symbols: true,
-          unsafe_methods: true,
-          unsafe_proto: true,
-          unsafe_regexp: true,
-          unsafe_undefined: true,
-          unused: true,
-          toplevel: true,
-          passes: 10,
-          pure_getters: true,
-          reduce_vars: true,
-          reduce_funcs: true,
-          hoist_funs: true,
-          hoist_vars: true,
-          if_return: true,
-          join_vars: true,
-          collapse_vars: true,
-          comparisons: true,
-          conditionals: true,
-          evaluate: true,
-          booleans: true,
-          typeofs: true,
-          loops: true,
-          properties: true,
-          sequences: true,
-          side_effects: true,
-          switches: true,
-          arrows: true,
-          arguments: true,
-          keep_fargs: false,
-          ecma: 2022,
-        },
-        mangle: {
-          toplevel: true,
-          eval: true,
-          keep_fnames: true,
-          reserved: ['React', 'Component', 'useState', 'useEffect'],
-          properties: {
-            regex: /^_/,
-          },
-        },
-        format: {
-          comments: false,
-          beautify: false,
-          ascii_only: true,
-          ecma: 2022,
-        },
-        ecma: 2022,
-        module: true,
-        keep_fnames: true,
-        keep_classnames: true,
-        toplevel: true,
-      }),
       visualizer({
         filename: 'react-utils-stats.html',
         gzipSize: true,
       }),
     ],
-    external: (path) => {
-      if (path.startsWith('@aileron')) return false;
-      if (path.startsWith('@winglet') && path !== '@winglet/react-utils')
-        return true;
-      return /node_modules/.test(path);
-    },
   },
+
+  // Sub-exports
+  ...subExports.map(({ input, output }) => ({
+    input,
+    output: [
+      {
+        file: `${output}.cjs`,
+        format: 'cjs',
+        exports: 'auto',
+        sourcemap: true,
+      },
+      {
+        file: `${output}.mjs`,
+        format: 'esm',
+        exports: 'auto',
+        sourcemap: true,
+      },
+    ],
+    external: baseExternal,
+    plugins: getCommonPlugins(input),
+  })),
 ];
+
+export default configs;

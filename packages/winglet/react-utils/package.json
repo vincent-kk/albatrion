@@ -18,6 +18,36 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
+    },
+    "./portal": {
+      "types": "./dist/components/Portal/index.d.ts",
+      "import": "./dist/components/Portal/index.mjs",
+      "require": "./dist/components/Portal/index.cjs"
+    },
+    "./hoc": {
+      "types": "./dist/hoc/index.d.ts",
+      "import": "./dist/hoc/index.mjs",
+      "require": "./dist/hoc/index.cjs"
+    },
+    "./hook": {
+      "types": "./dist/hooks/index.d.ts",
+      "import": "./dist/hooks/index.mjs",
+      "require": "./dist/hooks/index.cjs"
+    },
+    "./filter": {
+      "types": "./dist/utils/filter/index.d.ts",
+      "import": "./dist/utils/filter/index.mjs",
+      "require": "./dist/utils/filter/index.cjs"
+    },
+    "./object": {
+      "types": "./dist/utils/object/index.d.ts",
+      "import": "./dist/utils/object/index.mjs",
+      "require": "./dist/utils/object/index.cjs"
+    },
+    "./render": {
+      "types": "./dist/utils/render/index.d.ts",
+      "import": "./dist/utils/render/index.mjs",
+      "require": "./dist/utils/render/index.cjs"
     }
   },
   "main": "dist/index.cjs",

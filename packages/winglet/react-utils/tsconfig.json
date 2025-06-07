@@ -10,6 +10,24 @@
       "@/react-utils/*": [
         "./winglet/react-utils/src/*"
       ],
+      "@/react-utils/portal": [
+        "./winglet/react-utils/src/components/Portal"
+      ],
+      "@/react-utils/hoc": [
+        "./winglet/react-utils/src/hoc"
+      ],
+      "@/react-utils/hook": [
+        "./winglet/react-utils/src/hooks"
+      ],
+      "@/react-utils/filter": [
+        "./winglet/react-utils/src/utils/filter"
+      ],
+      "@/react-utils/object": [
+        "./winglet/react-utils/src/utils/object"
+      ],
+      "@/react-utils/render": [
+        "./winglet/react-utils/src/utils/render"
+      ],
       "@aileron/*": [
         "./aileron/common/*"
       ],
