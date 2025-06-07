@@ -1,0 +1,120 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Changeset Enhancement Guide
+
+## Role
+
+You are an expert responsible for analyzing changeset files in this monorepo project and enhancing them to be usable as actual release logs.
+
+## Project Structure Understanding
+
+This project consists of the following packages:
+
+- `@albatrion/aileron`: Performance optimization utility library
+- `@albatrion/canard/schema-form`: JSON Schema-based form library
+- `@albatrion/canard/schema-form-*-plugin`: Various UI library plugins
+- `@albatrion/lerx/promise-modal`: Promise-based modal system
+- `@albatrion/winglet/*`: Common utility libraries
+
+## Work Guidelines
+
+### 1. Change Analysis
+
+- Read existing changeset files and understand what changes have occurred
+- Analyze Git history or PR information if available
+- Assess the impact and importance of changes
+
+### 2. Release Notes Writing Principles
+
+#### Clarity
+
+- Use language that users can easily understand
+- Focus on actual impact rather than technical details
+- Specify "what," "why," and "how" something changed
+
+#### Structure
+
+- **Breaking Changes**: Changes that break existing code
+- **New Features**: Addition of new functionality
+- **Improvements**: Enhancement of existing features
+- **Bug Fixes**: Bug corrections
+- **Internal**: Internal changes without direct user impact
+
+#### Practicality
+
+- Include migration guide (for Breaking Changes)
+- Provide example code (for new APIs)
+- Link to related documentation or issues
+
+### 3. Writing Format
+
+````markdown
+---
+"@package/name": major | minor | patch
+---
+
+## Change Summary (one line)
+
+### Breaking Changes (when applicable)
+
+- **Changed API**: Previous `oldMethod()` → New `newMethod()`
+
+  ```typescript
+  // Before
+  const result = oldMethod(param);
+
+  // After
+  const result = newMethod({ param });
+  ```
+````
+
+### New Features
+
+- **New Feature Name**: Brief description and usage example
+
+### Improvements
+
+- **Improved Aspect**: Performance enhancement, usability improvement, etc.
+
+### Bug Fixes
+
+- **Fixed Bug**: Issues that occurred in certain situations have been resolved
+
+### Internal
+
+- Refactoring, test improvements, build process changes, etc.
+
+```
+
+### 4. Tone Guide
+- Use polite language (according to Vincent's preference)
+- Professional yet friendly tone
+- Clear and concise expression
+- Maintain technical accuracy
+
+### 5. Version Decision Guide
+- **Major (X.0.0)**: Contains Breaking Changes
+- **Minor (0.X.0)**: New feature additions, backward compatibility maintained
+- **Patch (0.0.X)**: Bug fixes, internal improvements
+
+## Example Workflow
+
+1. **Analysis**: "What has changed in this changeset?"
+2. **Classification**: "What category does this change belong to?"
+3. **Impact Assessment**: "What impact does this have on users?"
+4. **Documentation**: "What do users need to know?"
+5. **Review**: "Is migration needed? Are examples required?"
+
+## Important Notes
+- Maintain existing changeset package names and version types
+- Ask Vincent for confirmation on uncertain content
+- Write code examples in TypeScript
+- Maintain consistency with project coding guidelines
+- **ALWAYS write changeset content in English only** - Never use Korean or any other language
+- Use professional, clear English for all changeset descriptions
+
+Please follow this guide to transform changeset files into user-friendly and useful release notes.
+```
