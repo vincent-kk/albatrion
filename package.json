@@ -13,8 +13,6 @@
     "packages/**/*"
   ],
   "scripts": {
-    "antdMobilePlugin": "yarn workspace @canard/schema-form-antd-mobile-plugin",
-    "antdPlugin": "yarn workspace @canard/schema-form-antd-plugin",
     "benchmark": "yarn workspace @aileron/benchmark",
     "benchmark:form": "yarn workspace @aileron/benchmark-form",
     "build:all": "yarn run:all build",
@@ -28,12 +26,17 @@
     "json": "yarn workspace @winglet/json",
     "jsonSchema": "yarn workspace @winglet/json-schema",
     "login:npm": "yarn npm login --publish",
-    "muiPlugin": "yarn workspace @canard/schema-form-mui-plugin",
+    "major:all": "yarn workspaces foreach --all --topological --no-private run version:major",
+    "minor:all": "yarn workspaces foreach --all --topological --no-private run version:minor",
+    "patch:all": "yarn workspaces foreach --all --topological --no-private run version:patch",
     "promiseModal": "yarn workspace @lerx/promise-modal",
     "publish:all": "yarn workspaces foreach --all --topological --no-private run publish:npm",
     "reactUtils": "yarn workspace @winglet/react-utils",
     "run:all": "yarn workspaces foreach --all --topological run",
     "schemaForm": "yarn workspace @canard/schema-form",
+    "schemaForm:antd": "yarn workspace @canard/schema-form-antd-plugin",
+    "schemaForm:antdMobile": "yarn workspace @canard/schema-form-antd-mobile-plugin",
+    "schemaForm:mui": "yarn workspace @canard/schema-form-mui-plugin",
     "sort:packages": "npx sort-package-json '**/package.json'"
   },
   "devDependencies": {
