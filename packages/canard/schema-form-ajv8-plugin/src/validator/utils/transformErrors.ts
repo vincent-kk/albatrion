@@ -1,4 +1,5 @@
 import type { JsonSchemaError } from '@canard/schema-form';
+import { isArrayIndex } from '@winglet/common-utils';
 import { JSONPath, JSONPointer } from '@winglet/json';
 import type { ErrorObject } from 'ajv';
 
@@ -13,16 +14,32 @@ export const transformErrors = (errors: ErrorObject[]): JsonSchemaError[] => {
   return result;
 };
 
-const JSON_POINTER_CHILD_PATTERN = new RegExp(`${JSONPointer.Child}`, 'g');
-const INDEX_PATTERN = new RegExp(`${JSONPath.Child}(\\d+)`, 'g');
-
 const transformDataPath = (error: ErrorObject): string => {
-  const dataPath = error.instancePath
-    .replace(JSON_POINTER_CHILD_PATTERN, JSONPath.Child)
-    .replace(INDEX_PATTERN, '[$1]');
+  const instancePath = error.instancePath;
   const hasMissingProperty =
     error.keyword === 'required' && error.params?.missingProperty;
+
+  if (!instancePath)
+    return hasMissingProperty
+      ? JSONPath.Child + error.params.missingProperty
+      : '';
+
+  const parts = [];
+  let segmentStart = 1;
+
+  for (let i = 1; i <= instancePath.length; i++) {
+    if (i === instancePath.length || instancePath[i] === JSONPointer.Child) {
+      if (segmentStart < i) {
+        const segment = instancePath.slice(segmentStart, i);
+        if (isArrayIndex(segment)) parts.push('[' + segment + ']');
+        else parts.push(JSONPath.Child + segment);
+      }
+      segmentStart = i + 1;
+    }
+  }
+
+  const result = parts.join('');
   return hasMissingProperty
-    ? `${dataPath}${JSONPath.Child}${error.params.missingProperty}`
-    : dataPath;
+    ? result + JSONPath.Child + error.params.missingProperty
+    : result;
 };

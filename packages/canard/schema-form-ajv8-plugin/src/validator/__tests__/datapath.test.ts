@@ -215,7 +215,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
     });
 
     it('숫자가 포함된 속성명의 dataPath 처리를 검증한다', async () => {
-      // Arrange - 숫자가 포함된 속성명은 배열 인덱스로 변환됨
+      // Arrange - 숫자가 포함된 속성명은 객체 속성으로 처리됨
       const schema = {
         type: 'object',
         properties: {
@@ -231,7 +231,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       } as any;
       const validator = ajvValidatorPlugin.compile(schema);
 
-      // Act & Assert - 숫자가 포함된 속성명은 배열 인덱스 형태로 변환됨
+      // Act & Assert - 숫자가 포함된 속성명은 객체 속성으로 유지됨
       const result = await validator({
         container: {
           item1: 123, // 타입 에러
@@ -242,15 +242,15 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
 
       expect(result).toHaveLength(3);
 
-      // 숫자가 포함된 속성명은 [숫자] 형태로 변환됨
+      // 객체 속성명은 그대로 유지됨 (배열 인덱스가 아니므로)
       const dataPaths = result!.map((err) => err.dataPath);
-      expect(dataPaths).toContain('.container.ite[1]');
-      expect(dataPaths).toContain('.container.ite[2]');
-      expect(dataPaths).toContain('.container.ite[3]');
+      expect(dataPaths).toContain('.container.item1');
+      expect(dataPaths).toContain('.container.item2');
+      expect(dataPaths).toContain('.container.item3');
     });
 
     it('깊은 중첩 구조에서 숫자 속성명의 dataPath 변환을 검증한다', async () => {
-      // Arrange - 숫자가 포함된 속성명은 배열 인덱스로 변환됨
+      // Arrange - 숫자가 포함된 속성명은 객체 속성으로 처리됨
       const complexSchema = {
         type: 'object',
         properties: {
@@ -284,7 +284,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       } as any;
       const validator = ajvValidatorPlugin.compile(complexSchema);
 
-      // Act & Assert - 숫자가 포함된 속성명은 배열 인덱스로 변환됨
+      // Act & Assert - 깊은 중첩 구조에서도 올바른 속성명 유지
       const deepError = await validator({
         level1: {
           level2: {
@@ -299,7 +299,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(deepError).toHaveLength(1);
       expect(deepError![0]).toMatchObject({
         keyword: 'minLength',
-        dataPath: '.leve[1].leve[2].leve[3].leve[4].finalValue',
+        dataPath: '.level1.level2.level3.level4.finalValue',
       });
 
       // Act & Assert - 중간 레벨 누락
@@ -313,7 +313,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(missingMidLevel).toHaveLength(1);
       expect(missingMidLevel![0]).toMatchObject({
         keyword: 'required',
-        dataPath: '.leve[1].leve[2].level3',
+        dataPath: '.level1.level2.level3',
       });
     });
 

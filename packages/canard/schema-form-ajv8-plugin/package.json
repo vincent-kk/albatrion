@@ -43,6 +43,7 @@
     "version:patch": "yarn version patch"
   },
   "dependencies": {
+    "@winglet/common-utils": "workspace:^",
     "@winglet/json": "workspace:^",
     "ajv": "^8.0.0"
   },
