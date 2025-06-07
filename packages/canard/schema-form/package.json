@@ -76,6 +76,7 @@
     "@types/rollup-plugin-peer-deps-external": "^2.2.5",
     "@typescript-eslint/eslint-plugin": "^8.14.0",
     "@typescript-eslint/parser": "^8.14.0",
+    "ajv": "^8.17.1",
     "dependency-cruiser": "^16.7.0",
     "eslint": "^8.56.0",
     "eslint-plugin-react": "^7.37.2",

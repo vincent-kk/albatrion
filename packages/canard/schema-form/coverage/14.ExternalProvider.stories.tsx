@@ -1,6 +1,8 @@
 import React, { type ComponentType, useMemo, useRef, useState } from 'react';
 
-import Ajv from 'ajv';
+import Ajv, { type ErrorObject } from 'ajv';
+
+import { JSONPath, JSONPointer } from '@winglet/json';
 
 import {
   Form,
@@ -250,7 +252,7 @@ export const ExternalFormContextAjv = () => {
 
   const [errors, setErrors] = useState<JsonSchemaError[]>([]);
 
-  const ajv = useMemo(() => {
+  const validatorFactory = useMemo(() => {
     const ajv = new Ajv({
       allErrors: true,
       strictSchema: false,
@@ -265,7 +267,21 @@ export const ExternalFormContextAjv = () => {
       },
       errors: false,
     });
-    return ajv;
+    return (jsonSchema) => {
+      const validate = ajv.compile({
+        ...jsonSchema,
+        $async: true,
+      });
+      return async (data) => {
+        try {
+          await validate(data);
+          return null;
+        } catch (thrown: any) {
+          if (thrown?.errors) return transformErrors(thrown.errors);
+          throw thrown;
+        }
+      };
+    };
   }, []);
 
   return (
@@ -273,7 +289,7 @@ export const ExternalFormContextAjv = () => {
       FormGroupRenderer={externalFormTypeRenderer}
       showError={false}
       validationMode={ValidationMode.OnRequest}
-      ajv={ajv}
+      validatorFactory={validatorFactory}
     >
       <StoryLayout jsonSchema={schema} value={value} errors={errors}>
         <Form
@@ -285,4 +301,29 @@ export const ExternalFormContextAjv = () => {
       </StoryLayout>
     </FormProvider>
   );
+};
+
+const transformErrors = (errors: ErrorObject[]): JsonSchemaError[] => {
+  if (!Array.isArray(errors)) return [];
+  const result = new Array<JsonSchemaError>(errors.length);
+  for (let index = 0; index < errors.length; index++) {
+    const error = errors[index] as JsonSchemaError & ErrorObject;
+    error.dataPath = transformDataPath(error);
+    result[index] = error;
+  }
+  return result;
+};
+
+const JSON_POINTER_CHILD_PATTERN = new RegExp(`${JSONPointer.Child}`, 'g');
+const INDEX_PATTERN = new RegExp(`${JSONPath.Child}(\\d+)`, 'g');
+
+const transformDataPath = (error: ErrorObject): string => {
+  const dataPath = error.instancePath
+    .replace(JSON_POINTER_CHILD_PATTERN, JSONPath.Child)
+    .replace(INDEX_PATTERN, '[$1]');
+  const hasMissingProperty =
+    error.keyword === 'required' && error.params?.missingProperty;
+  return hasMissingProperty
+    ? `${dataPath}${JSONPath.Child}${error.params.missingProperty}`
+    : dataPath;
 };
