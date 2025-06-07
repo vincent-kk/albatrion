@@ -1,2 +1,6 @@
-export * from './withErrorBoundary';
-export * from './withUploader';
+export {
+  withErrorBoundary,
+  withErrorBoundaryForwardRef,
+} from './withErrorBoundary';
+
+export { withUploader } from './withUploader';

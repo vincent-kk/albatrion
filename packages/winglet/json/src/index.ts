@@ -1,2 +1,4 @@
-export * from './JSONPath';
-export * from './JSONPointer';
+export { JSONPath } from './JSONPath';
+export { JSONPointer } from './JSONPointer';
+
+export * from './JSONPointer/utils';

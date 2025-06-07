@@ -1,7 +1,7 @@
-export * from './applyPatch';
-export * from './compare';
-export * from './difference';
-export * from './mergePatch';
+export { applyPatch, type ApplyPatchOptions } from './applyPatch';
+export { compare, type CompareOptions } from './compare';
+export { difference } from './difference';
+export { mergePatch } from './mergePatch';
 
 export type {
   Patch,
