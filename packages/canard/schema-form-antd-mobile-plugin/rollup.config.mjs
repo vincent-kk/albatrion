@@ -81,11 +81,24 @@ export default [
         compress: {
           drop_console: false,
           dead_code: true,
-          passes: 5,
+          passes: 8,
+          unsafe: true,
+          unsafe_comps: true,
+          pure_getters: true,
+          keep_fargs: false,
+          hoist_funs: true,
+          hoist_vars: true,
+        },
+        mangle: {
+          toplevel: false,
+          keep_fnames: true,
+          keep_classnames: true,
+          reserved: ['React', 'Component', 'useState', 'useEffect'],
         },
         output: {
-          comments: true,
+          comments: false,
         },
+        ecma: 2022,
       }),
       visualizer({
         filename: 'schema-form-antd-mobile-plugin-stats.html',

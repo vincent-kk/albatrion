@@ -79,7 +79,7 @@ export default [
       }),
       terser({
         compress: {
-          drop_console: true,
+          drop_console: false, // Keep console methods for error handling
           drop_debugger: true,
           dead_code: true,
           unsafe: true,
@@ -117,6 +117,7 @@ export default [
           keep_fargs: false,
           booleans_as_integers: true,
           ecma: 2022,
+          pure_funcs: ['console.log'], // Only remove console.log specifically
         },
         mangle: {
           toplevel: true,
