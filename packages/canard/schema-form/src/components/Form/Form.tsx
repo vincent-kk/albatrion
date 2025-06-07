@@ -14,12 +14,8 @@ import {
 
 import { isFunction } from '@winglet/common-utils/filter';
 import { getTrackableHandler } from '@winglet/common-utils/function';
-import {
-  useConstant,
-  useHandle,
-  useVersion,
-  withErrorBoundaryForwardRef,
-} from '@winglet/react-utils';
+import { withErrorBoundaryForwardRef } from '@winglet/react-utils/hoc';
+import { useConstant, useHandle, useVersion } from '@winglet/react-utils/hook';
 
 import type { Fn, Parameter } from '@aileron/declare';
 

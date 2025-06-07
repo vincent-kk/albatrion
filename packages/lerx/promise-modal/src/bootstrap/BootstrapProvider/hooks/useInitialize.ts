@@ -1,7 +1,7 @@
 import { useCallback, useRef } from 'react';
 
 import { printError } from '@winglet/common-utils/console';
-import { useVersion } from '@winglet/react-utils';
+import { useVersion } from '@winglet/react-utils/hook';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 

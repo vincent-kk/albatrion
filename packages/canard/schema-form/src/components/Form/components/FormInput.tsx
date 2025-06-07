@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
 
 import { JSONPath } from '@winglet/json';
-import { useMemorize, useSnapshot } from '@winglet/react-utils';
+import { useMemorize, useSnapshot } from '@winglet/react-utils/hook';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';

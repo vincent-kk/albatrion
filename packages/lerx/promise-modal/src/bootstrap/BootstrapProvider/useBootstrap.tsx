@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 
-import { useOnMount } from '@winglet/react-utils';
+import { useOnMount } from '@winglet/react-utils/hook';
 
 import { usePathname as useDefaultPathname } from '@/promise-modal/hooks/useDefaultPathname';
 

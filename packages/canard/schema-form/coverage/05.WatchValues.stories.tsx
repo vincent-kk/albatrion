@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { useHandle } from '@winglet/react-utils';
+import { useHandle } from '@winglet/react-utils/hook';
 
 import {
   Form,

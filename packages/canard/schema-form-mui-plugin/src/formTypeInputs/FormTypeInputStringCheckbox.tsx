@@ -2,7 +2,7 @@ import { type ReactNode, useMemo } from 'react';
 
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 
-import { useHandle } from '@winglet/react-utils';
+import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   ArraySchema,

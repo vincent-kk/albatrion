@@ -1,6 +1,6 @@
 import { Input } from 'antd-mobile';
 
-import { useHandle } from '@winglet/react-utils';
+import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   FormTypeInputDefinition,

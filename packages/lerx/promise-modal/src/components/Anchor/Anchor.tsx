@@ -1,7 +1,8 @@
 import { memo, useEffect } from 'react';
 
 import { map } from '@winglet/common-utils/array';
-import { useVersion, withErrorBoundary } from '@winglet/react-utils';
+import { withErrorBoundary } from '@winglet/react-utils/hoc';
+import { useVersion } from '@winglet/react-utils/hook';
 
 import { Presenter } from '@/promise-modal/components/Presenter';
 import type { ModalNode } from '@/promise-modal/core';

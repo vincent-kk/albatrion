@@ -1,7 +1,8 @@
 import { Fragment, memo, useMemo } from 'react';
 
 import { isString } from '@winglet/common-utils/filter';
-import { renderComponent, useHandle } from '@winglet/react-utils';
+import { useHandle } from '@winglet/react-utils/hook';
+import { renderComponent } from '@winglet/react-utils/render';
 
 import type { AlertNode } from '@/promise-modal/core';
 import {

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useVersion } from '@winglet/react-utils';
+import { useVersion } from '@winglet/react-utils/hook';
 
 import type { ModalNode } from '@/promise-modal/core';
 

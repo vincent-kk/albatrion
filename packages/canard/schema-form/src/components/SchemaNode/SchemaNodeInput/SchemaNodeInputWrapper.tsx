@@ -1,12 +1,9 @@
 import { type ComponentType, memo } from 'react';
 
 import { nullFunction } from '@winglet/common-utils/constant';
-import {
-  isReactComponent,
-  useMemorize,
-  useRestProperties,
-  withErrorBoundary,
-} from '@winglet/react-utils';
+import { isReactComponent } from '@winglet/react-utils/filter';
+import { withErrorBoundary } from '@winglet/react-utils/hoc';
+import { useMemorize, useRestProperties } from '@winglet/react-utils/hook';
 
 import type { SchemaNode } from '@/schema-form/core';
 import type {

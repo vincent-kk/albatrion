@@ -4,7 +4,7 @@ import {
   useMemorize,
   useOnUnmount,
   useRestProperties,
-} from '@winglet/react-utils';
+} from '@winglet/react-utils/hook';
 
 import {
   NodeEventType,

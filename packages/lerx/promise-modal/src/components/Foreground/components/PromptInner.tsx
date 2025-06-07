@@ -1,11 +1,9 @@
 import { Fragment, memo, useCallback, useMemo, useState } from 'react';
 
 import { isFunction, isString } from '@winglet/common-utils/filter';
-import {
-  renderComponent,
-  useHandle,
-  withErrorBoundary,
-} from '@winglet/react-utils';
+import { withErrorBoundary } from '@winglet/react-utils/hoc';
+import { useHandle } from '@winglet/react-utils/hook';
+import { renderComponent } from '@winglet/react-utils/render';
 
 import type { PromptNode } from '@/promise-modal/core';
 import {

@@ -3,7 +3,7 @@ import { type ReactNode, useMemo } from 'react';
 import { Checkbox } from 'antd';
 
 import { map } from '@winglet/common-utils/array';
-import { useHandle } from '@winglet/react-utils';
+import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   ArraySchema,

@@ -1,6 +1,6 @@
 import { type PropsWithChildren, useMemo } from 'react';
 
-import { useMemorize } from '@winglet/react-utils';
+import { useMemorize } from '@winglet/react-utils/hook';
 
 import type { FormProps } from '@/schema-form/components/Form';
 import {

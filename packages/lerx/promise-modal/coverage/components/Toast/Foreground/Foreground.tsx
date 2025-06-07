@@ -1,6 +1,6 @@
 import React, { type PropsWithChildren, useRef } from 'react';
 
-import { useOnMount } from '@winglet/react-utils';
+import { useOnMount } from '@winglet/react-utils/hook';
 
 import {
   type ModalFrameProps,

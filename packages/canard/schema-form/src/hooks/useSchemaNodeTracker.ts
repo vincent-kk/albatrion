@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useVersion } from '@winglet/react-utils';
+import { useVersion } from '@winglet/react-utils/hook';
 
 import { BIT_MASK_ALL } from '@/schema-form/app/constants/bitmask';
 import type { NodeEventType, SchemaNode } from '@/schema-form/core';

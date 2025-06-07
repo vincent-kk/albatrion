@@ -3,7 +3,7 @@ import { type ReactNode, useMemo } from 'react';
 import { Radio } from 'antd-mobile';
 
 import { map } from '@winglet/common-utils/array';
-import { useHandle } from '@winglet/react-utils';
+import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   FormTypeInputDefinition,

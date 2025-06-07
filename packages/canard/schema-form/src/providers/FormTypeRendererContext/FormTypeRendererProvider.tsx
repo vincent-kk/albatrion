@@ -1,7 +1,8 @@
 import { type PropsWithChildren, useMemo } from 'react';
 
 import { isFunction } from '@winglet/common-utils/filter';
-import { isReactComponent, useMemorize } from '@winglet/react-utils';
+import { isReactComponent } from '@winglet/react-utils/filter';
+import { useMemorize } from '@winglet/react-utils/hook';
 
 import type { FormProps } from '@/schema-form/components/Form';
 import { ShowError } from '@/schema-form/types';

@@ -1,6 +1,6 @@
 import { type ComponentType, type PropsWithChildren, useMemo } from 'react';
 
-import { useMemorize, useSnapshot } from '@winglet/react-utils';
+import { useMemorize, useSnapshot } from '@winglet/react-utils/hook';
 
 import type { Dictionary } from '@aileron/declare';
 
