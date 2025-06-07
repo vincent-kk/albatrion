@@ -35,9 +35,9 @@
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "publish:chain": "yarn build:chain && yarn npm publish --access public",
     "publish:npm": "yarn build && yarn npm publish --access public",
-    "test": "vitest",
     "storybook": "storybook dev -p 6006",
     "storybook:upgrade": "npx storybook@latest upgrade",
+    "test": "vitest",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
     "version:patch": "yarn version patch"
