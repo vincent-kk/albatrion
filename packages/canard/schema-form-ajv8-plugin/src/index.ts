@@ -1,4 +1,4 @@
-import type { SchemaFormPlugin } from 'canard/schema-form/dist';
+import type { SchemaFormPlugin } from '@canard/schema-form';
 
 import { ajvValidatorPlugin } from './validator/validatorPlugin';
 

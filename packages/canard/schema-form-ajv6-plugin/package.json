@@ -46,6 +46,7 @@
     "ajv": "^6.0.0"
   },
   "devDependencies": {
+    "@canard/schema-form": "workspace:^",
     "@chromatic-com/storybook": "^3.2.4",
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",

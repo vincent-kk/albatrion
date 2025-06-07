@@ -1790,6 +1790,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@canard/schema-form-ajv6-plugin@workspace:packages/canard/schema-form-ajv6-plugin"
   dependencies:
+    "@canard/schema-form": "workspace:^"
     "@chromatic-com/storybook": "npm:^3.2.4"
     "@rollup/plugin-commonjs": "npm:^28.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
@@ -1842,6 +1843,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@canard/schema-form-ajv8-plugin@workspace:packages/canard/schema-form-ajv8-plugin"
   dependencies:
+    "@canard/schema-form": "workspace:^"
     "@chromatic-com/storybook": "npm:^3.2.4"
     "@rollup/plugin-commonjs": "npm:^28.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"
@@ -1865,6 +1867,7 @@ __metadata:
     "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
     "@typescript-eslint/eslint-plugin": "npm:^8.14.0"
     "@typescript-eslint/parser": "npm:^8.14.0"
+    "@winglet/common-utils": "workspace:^"
     "@winglet/json": "workspace:^"
     ajv: "npm:^8.0.0"
     dependency-cruiser: "npm:^16.7.0"
