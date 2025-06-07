@@ -5,13 +5,13 @@ import { useMemorize, useSnapshot } from '@winglet/react-utils';
 import type { Dictionary } from '@aileron/declare';
 
 import type { ValidationMode } from '@/schema-form/core';
-import type { Ajv } from '@/schema-form/helpers/ajv';
 import { normalizeFormTypeInputDefinitions } from '@/schema-form/helpers/formTypeInputDefinition';
 import type {
   FormTypeInputDefinition,
   FormTypeRendererProps,
   FormatError,
   ShowError,
+  ValidatorFactory,
 } from '@/schema-form/types';
 
 import { ExternalFormContext } from './ExternalFormContext';
@@ -45,10 +45,10 @@ export interface ExternalFormContextProviderProps {
    *  - `ValidationMode.OnRequest`: Validate on request
    */
   validationMode?: ValidationMode;
+  /** ValidatorFactory declared externally, creates internally if not provided */
+  validatorFactory?: ValidatorFactory;
   /** Global user-defined context, merged with user-defined context */
   context?: Dictionary;
-  /** Ajv instance declared externally, creates internally if not provided */
-  ajv?: Ajv;
 }
 
 export const ExternalFormContextProvider = ({
@@ -60,8 +60,8 @@ export const ExternalFormContextProvider = ({
   formatError,
   showError,
   validationMode,
-  context: contextInput,
-  ajv,
+  context: inputContext,
+  validatorFactory,
   children,
 }: PropsWithChildren<ExternalFormContextProviderProps>) => {
   const memoized = useMemorize({
@@ -72,7 +72,7 @@ export const ExternalFormContextProvider = ({
     FormErrorRenderer,
     formatError,
   });
-  const context = useSnapshot(contextInput);
+  const context = useSnapshot(inputContext);
   const value = useMemo(
     () => ({
       fromExternalFormTypeInputDefinitions: memoized.formTypeInputDefinitions
@@ -85,10 +85,10 @@ export const ExternalFormContextProvider = ({
       formatError: memoized.formatError,
       showError,
       validationMode,
+      validatorFactory,
       context,
-      ajv,
     }),
-    [memoized, showError, validationMode, context, ajv],
+    [memoized, showError, validationMode, context, validatorFactory],
   );
   return (
     <ExternalFormContext.Provider value={value}>

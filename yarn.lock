@@ -1990,7 +1990,6 @@ __metadata:
     "@winglet/json": "workspace:^"
     "@winglet/json-schema": "workspace:^"
     "@winglet/react-utils": "workspace:^"
-    ajv: "npm:^8.0.0"
     dependency-cruiser: "npm:^16.7.0"
     eslint: "npm:^8.56.0"
     eslint-plugin-react: "npm:^7.37.2"
@@ -2013,7 +2012,6 @@ __metadata:
     vite: "npm:^5.4.11"
     vitest: "npm:^2.1.5"
   peerDependencies:
-    ajv: ">=8"
     react: ">=18 <20"
     react-dom: ">=18 <20"
   languageName: unknown

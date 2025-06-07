@@ -17,7 +17,6 @@ import {
   BIT_FLAG_13,
   BIT_MASK_NONE,
 } from '@/schema-form/app/constants/bitmask';
-import type { Ajv } from '@/schema-form/helpers/ajv';
 import type {
   AllowedValue,
   ArraySchema,
@@ -30,6 +29,7 @@ import type {
   NumberSchema,
   ObjectSchema,
   StringSchema,
+  ValidatorFactory,
   VirtualSchema,
 } from '@/schema-form/types';
 
@@ -113,8 +113,8 @@ export interface SchemaNodeConstructorProps<
   onChange?: SetStateFn<Value>;
   parentNode?: SchemaNode;
   validationMode?: ValidationMode;
+  validatorFactory?: ValidatorFactory;
   required?: boolean;
-  ajv?: Ajv;
 }
 
 /**

@@ -45,8 +45,8 @@ interface RootNodeContextProviderProps<
    *  - `ValidationMode.OnRequest`: Validate on request
    */
   validationMode?: ValidationMode;
-  /** Ajv instance declared externally, creates internally if not provided */
-  ajv?: FormProps<Schema, Value>['ajv'];
+  /** ValidatorFactory declared externally, creates internally if not provided */
+  validatorFactory?: FormProps<Schema, Value>['validatorFactory'];
 }
 
 export const RootNodeContextProvider = <
@@ -60,11 +60,13 @@ export const RootNodeContextProvider = <
   onValidate,
   onReady,
   validationMode: inputValidationMode,
-  ajv: inputAjv,
+  validatorFactory: inputValidatorFactory,
   children,
 }: PropsWithChildren<RootNodeContextProviderProps<Schema, Value>>) => {
-  const { validationMode: externalValidationMode, ajv: externalAjv } =
-    useExternalFormContext();
+  const {
+    validationMode: externalValidationMode,
+    validatorFactory: externalValidatorFactory,
+  } = useExternalFormContext();
 
   const rootNode = useMemo(
     () =>
@@ -76,7 +78,7 @@ export const RootNodeContextProvider = <
           inputValidationMode ??
           externalValidationMode ??
           DEFAULT_VALIDATION_MODE,
-        ajv: inputAjv ?? externalAjv,
+        validatorFactory: inputValidatorFactory || externalValidatorFactory,
       }),
     [
       jsonSchema,
@@ -84,8 +86,8 @@ export const RootNodeContextProvider = <
       onChange,
       inputValidationMode,
       externalValidationMode,
-      inputAjv,
-      externalAjv,
+      inputValidatorFactory,
+      externalValidatorFactory,
     ],
   );
 

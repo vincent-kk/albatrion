@@ -54,8 +54,8 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
     onChange,
     parentNode,
     validationMode,
+    validatorFactory,
     required,
-    ajv,
   }: SchemaNodeConstructorProps<BooleanSchema>) {
     super({
       key,
@@ -65,8 +65,8 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
       onChange,
       parentNode,
       validationMode,
+      validatorFactory,
       required,
-      ajv,
     });
     if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
     this.activate();

@@ -58,8 +58,8 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     onChange,
     parentNode,
     validationMode,
+    validatorFactory,
     required,
-    ajv,
   }: SchemaNodeConstructorProps<StringSchema>) {
     super({
       key,
@@ -69,8 +69,8 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
       onChange,
       parentNode,
       validationMode,
+      validatorFactory,
       required,
-      ajv,
     });
 
     this.onChange =

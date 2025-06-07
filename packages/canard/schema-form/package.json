@@ -50,8 +50,7 @@
     "@winglet/common-utils": "workspace:^",
     "@winglet/json": "workspace:^",
     "@winglet/json-schema": "workspace:^",
-    "@winglet/react-utils": "workspace:^",
-    "ajv": "^8.0.0"
+    "@winglet/react-utils": "workspace:^"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.4",
@@ -100,7 +99,6 @@
     "vitest": "^2.1.5"
   },
   "peerDependencies": {
-    "ajv": ">=8",
     "react": ">=18 <20",
     "react-dom": ">=18 <20"
   },

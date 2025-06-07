@@ -66,7 +66,7 @@ const FormInner = <
     formatError,
     showError,
     validationMode,
-    ajv,
+    validatorFactory,
     context,
     children: childrenInput,
   }: FormProps<Schema, Value>,
@@ -168,7 +168,7 @@ const FormInner = <
               onValidate={handleValidate}
               onReady={handleReady}
               validationMode={validationMode}
-              ajv={ajv}
+              validatorFactory={validatorFactory}
             >
               <form onSubmit={handleFormSubmit}>
                 {children || <SchemaNodeProxy />}

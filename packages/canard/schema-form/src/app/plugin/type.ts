@@ -1,5 +1,7 @@
 import type { ComponentType } from 'react';
 
+import type { Fn } from '@aileron/declare';
+
 import type {
   FormTypeInputDefinition,
   FormTypeRendererProps,
@@ -18,5 +20,6 @@ export interface SchemaFormPlugin {
 }
 
 export interface ValidatorPlugin {
+  bind: Fn<[instance: any]>;
   compile: ValidatorFactory;
 }

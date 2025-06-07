@@ -89,8 +89,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     nodeFactory,
     parentNode,
     validationMode,
+    validatorFactory,
     required,
-    ajv,
   }: BranchNodeConstructorProps<ObjectSchema>) {
     super({
       key,
@@ -100,8 +100,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       onChange,
       parentNode,
       validationMode,
+      validatorFactory,
       required,
-      ajv,
     });
     const handleChange =
       this.jsonSchema.options?.omitEmpty === false

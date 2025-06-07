@@ -1,6 +1,6 @@
 import { JSONPath } from '@winglet/json';
 
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import { JsonSchemaError, JsonSchemaWithVirtual } from '@/schema-form/types';
 
 /**
  * Creates a fallback validator to use when a JSON schema compilation error occurs.
@@ -9,28 +9,16 @@ import type { JsonSchemaWithVirtual } from '@/schema-form/types';
  * @param jsonSchema - Original JSON schema
  * @returns Fallback validator function
  */
-export const getFallbackValidator = (
-  error: Error,
-  jsonSchema: JsonSchemaWithVirtual,
-) =>
-  Object.assign(
-    (_: unknown): _ is unknown => {
-      throw {
-        errors: [
-          {
-            keyword: 'jsonSchemaCompileFailed',
-            instancePath: JSONPath.Root,
-            message: error.message,
-            params: {
-              error,
-            },
-          },
-        ],
-      };
-    },
-    {
-      errors: null,
-      schema: jsonSchema,
-      schemaEnv: {} as any,
-    },
-  );
+export const getFallbackValidator =
+  (error: Error, jsonSchema: JsonSchemaWithVirtual) => () =>
+    [
+      {
+        keyword: 'jsonSchemaCompileFailed',
+        dataPath: JSONPath.Root,
+        message: error.message,
+        params: {
+          jsonSchema,
+          error,
+        },
+      },
+    ] satisfies JsonSchemaError[];

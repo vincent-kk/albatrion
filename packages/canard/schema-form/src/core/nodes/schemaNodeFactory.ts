@@ -47,8 +47,8 @@ export const createSchemaNodeFactory =
     parentNode,
     refNodes,
     validationMode,
+    validatorFactory,
     required,
-    ajv,
   }: NodeFactoryProps<Schema>) => {
     const jsonSchema = (resolveSchema?.(schema) ||
       schema) as JsonSchemaWithVirtual;
@@ -62,8 +62,8 @@ export const createSchemaNodeFactory =
           onChange,
           parentNode,
           validationMode,
+          validatorFactory,
           required,
-          ajv,
         } as SchemaNodeConstructorProps<BooleanSchema>);
       case 'number':
       case 'integer':
@@ -75,8 +75,8 @@ export const createSchemaNodeFactory =
           onChange,
           parentNode,
           validationMode,
+          validatorFactory,
           required,
-          ajv,
         } as SchemaNodeConstructorProps<NumberSchema>);
       case 'string':
         return new StringNode({
@@ -87,8 +87,8 @@ export const createSchemaNodeFactory =
           defaultValue,
           onChange,
           parentNode,
+          validatorFactory,
           validationMode,
-          ajv,
         } as SchemaNodeConstructorProps<StringSchema>);
       case 'array':
         return new ArrayNode({
@@ -100,8 +100,8 @@ export const createSchemaNodeFactory =
           onChange,
           parentNode,
           validationMode,
+          validatorFactory,
           required,
-          ajv,
         } as BranchNodeConstructorProps<ArraySchema>);
       case 'object':
         return new ObjectNode({
@@ -113,8 +113,8 @@ export const createSchemaNodeFactory =
           onChange,
           parentNode,
           validationMode,
+          validatorFactory,
           required,
-          ajv,
         } as BranchNodeConstructorProps<ObjectSchema>);
       case 'null':
         return new NullNode({
@@ -125,8 +125,8 @@ export const createSchemaNodeFactory =
           onChange,
           parentNode,
           validationMode,
+          validatorFactory,
           required,
-          ajv,
         } as SchemaNodeConstructorProps<NullSchema>);
       case 'virtual':
         return new VirtualNode({
@@ -138,8 +138,8 @@ export const createSchemaNodeFactory =
           parentNode,
           refNodes,
           validationMode,
+          validatorFactory,
           required,
-          ajv,
         } as VirtualNodeConstructorProps<VirtualSchema>);
     }
 
