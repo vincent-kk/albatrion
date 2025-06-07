@@ -38,6 +38,12 @@ Each package provides individual `README.md` documentation with detailed usage i
 - **[`@winglet/json-schema`](./packages/winglet/json-schema/README.md)** - JSON Schema utilities
 - **[`@winglet/react-utils`](./packages/winglet/react-utils/README.md)** - React utilities
 
+### Aileron (Internal Development Tools)
+
+- `@aileron/benchmark` - Performance benchmarking tools (internal use only)
+- `@aileron/benchmark-form` - Form performance benchmarks (internal use only)
+- `@aileron/development-helper` - Development helper utilities (internal use only)
+
 ---
 
 ## Development Environment Setup
@@ -84,3 +90,103 @@ This repository is provided under the MIT license. For more details, please refe
 ## Contact
 
 If you have any questions or suggestions related to the project, please create an issue.
+
+## 📦 Packages
+
+This monorepo contains the following packages:
+
+### Canard (Schema Form)
+
+- `@canard/schema-form` - Core schema form library
+- `@canard/schema-form-antd-plugin` - Ant Design plugin
+- `@canard/schema-form-antd-mobile-plugin` - Ant Design Mobile plugin
+- `@canard/schema-form-mui-plugin` - Material-UI plugin
+
+### Lerx (Promise Modal)
+
+- `@lerx/promise-modal` - Promise-based modal utility
+
+### Winglet (Utilities)
+
+- `@winglet/common-utils` - Common utility functions
+- `@winglet/data-loader` - Data loading utilities
+- `@winglet/json` - JSON manipulation utilities
+- `@winglet/json-schema` - JSON Schema utilities
+- `@winglet/react-utils` - React utility components and hooks
+
+### Aileron (Internal Development Tools)
+
+- `@aileron/benchmark` - Performance benchmarking tools (internal use only)
+- `@aileron/benchmark-form` - Form performance benchmarks (internal use only)
+- `@aileron/development-helper` - Development helper utilities (internal use only)
+
+## 🚀 Development
+
+### Prerequisites
+
+- Node.js 18+
+- Yarn 4.9.1+
+
+### Installation
+
+```bash
+yarn install
+```
+
+### Building
+
+```bash
+# Build all packages
+yarn build:all
+
+# Build specific package
+yarn workspace @canard/schema-form build
+```
+
+## 📋 Version Management
+
+This project uses [Changesets](https://github.com/changesets/changesets) for version management and publishing.
+
+### Creating a Changeset
+
+When you make changes to any package, create a changeset to document your changes:
+
+```bash
+yarn changeset
+```
+
+This will:
+
+1. Ask which packages have changed
+2. Ask what type of change (major/minor/patch)
+3. Ask for a summary of the changes (write in English)
+4. Generate a changeset file
+
+### Releasing
+
+You can release manually using the following commands:
+
+```bash
+# Update package versions based on changesets
+yarn changeset:version
+
+# Publish packages to npm
+yarn changeset:publish
+```
+
+### Changeset Guidelines
+
+- **patch**: Bug fixes, documentation updates, internal refactoring
+- **minor**: New features, new exports, non-breaking changes
+- **major**: Breaking changes, removed exports, API changes
+
+## 🔧 Scripts
+
+- `yarn build:all` - Build all packages
+- `yarn changeset` - Create a new changeset
+- `yarn changeset:version` - Update versions based on changesets
+- `yarn changeset:publish` - Publish packages to npm
+
+## 📄 License
+
+MIT License - see individual packages for specific license information.

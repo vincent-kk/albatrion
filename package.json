@@ -19,6 +19,9 @@
     "muiPlugin": "yarn workspace @canard/schema-form-mui-plugin",
     "benchmark:form": "yarn workspace @aileron/benchmark-form",
     "build:all": "yarn run:all build",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish",
     "commonUtils": "yarn workspace @winglet/common-utils",
     "dataLoader": "yarn workspace @winglet/data-loader",
     "developmentHelper": "yarn workspace @aileron/development-helper",
@@ -26,9 +29,6 @@
     "json": "yarn workspace @winglet/json",
     "jsonSchema": "yarn workspace @winglet/json-schema",
     "login:npm": "yarn npm login --publish",
-    "major:all": "yarn workspaces foreach --all --topological --no-private run version:major",
-    "minor:all": "yarn workspaces foreach --all --topological --no-private run version:minor",
-    "patch:all": "yarn workspaces foreach --all --topological --no-private run version:patch",
     "promiseModal": "yarn workspace @lerx/promise-modal",
     "publish:all": "yarn workspaces foreach --all --topological --no-private run publish:npm",
     "reactUtils": "yarn workspace @winglet/react-utils",
@@ -36,5 +36,9 @@
     "schemaForm": "yarn workspace @canard/schema-form",
     "sort:packages": "npx sort-package-json '**/package.json'"
   },
-  "packageManager": "yarn@4.9.1"
+  "packageManager": "yarn@4.9.1",
+  "devDependencies": {
+    "@changesets/changelog-github": "^0.5.1",
+    "@changesets/cli": "^2.29.4"
+  }
 }
