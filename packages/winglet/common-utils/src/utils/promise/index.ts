@@ -1,5 +1,5 @@
-export * from './delay';
-export * from './timeout';
-export * from './withTimeout';
-export * from './waitAndExecute';
-export * from './waitAndReturn';
+export { delay } from './delay';
+export { timeout } from './timeout';
+export { withTimeout } from './withTimeout';
+export { waitAndExecute } from './waitAndExecute';
+export { waitAndReturn } from './waitAndReturn';
