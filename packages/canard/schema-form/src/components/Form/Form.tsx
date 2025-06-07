@@ -12,7 +12,8 @@ import {
   useState,
 } from 'react';
 
-import { getTrackableHandler, isFunction } from '@winglet/common-utils';
+import { isFunction } from '@winglet/common-utils/filter';
+import { getTrackableHandler } from '@winglet/common-utils/function';
 import {
   useConstant,
   useHandle,

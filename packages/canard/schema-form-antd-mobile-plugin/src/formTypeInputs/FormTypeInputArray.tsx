@@ -1,6 +1,6 @@
 import { Button, type ButtonProps } from 'antd-mobile';
 
-import { map } from '@winglet/common-utils';
+import { map } from '@winglet/common-utils/array';
 import { useHandle } from '@winglet/react-utils';
 
 import type {

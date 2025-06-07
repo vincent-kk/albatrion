@@ -1,7 +1,7 @@
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { Button, type ButtonProps } from '@mui/material';
 
-import { map } from '@winglet/common-utils';
+import { map } from '@winglet/common-utils/array';
 import { useHandle } from '@winglet/react-utils';
 
 import type {

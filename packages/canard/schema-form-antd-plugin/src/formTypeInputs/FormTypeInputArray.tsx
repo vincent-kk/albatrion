@@ -1,7 +1,7 @@
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, type ButtonProps } from 'antd';
 
-import { map } from '@winglet/common-utils';
+import { map } from '@winglet/common-utils/array';
 import { useHandle } from '@winglet/react-utils';
 
 import type {

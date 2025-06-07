@@ -10,10 +10,10 @@
       "@/common-utils/*": [
         "./winglet/common-utils/src/*"
       ],
-      "@/common-utils/libs": [
-        "./winglet/common-utils/src/libs"
+      "@/common-utils/lib": [
+        "./winglet/common-utils/src/lib"
       ],
-      "@/common-utils/errors": [
+      "@/common-utils/error": [
         "./winglet/common-utils/src/errors"
       ],
       "@/common-utils/constant": [

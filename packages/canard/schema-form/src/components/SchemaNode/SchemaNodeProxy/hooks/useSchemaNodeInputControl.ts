@@ -1,6 +1,6 @@
 import { type RefObject, useLayoutEffect, useRef } from 'react';
 
-import { isFunction } from '@winglet/common-utils';
+import { isFunction } from '@winglet/common-utils/filter';
 import { useVersion } from '@winglet/react-utils';
 
 import { NodeEventType, type SchemaNode } from '@/schema-form/core';

@@ -1,4 +1,4 @@
-import { isArray, isEmptyObject } from '@winglet/common-utils';
+import { isArray, isEmptyObject } from '@winglet/common-utils/filter';
 
 import type { Dictionary, RequiredBy } from '@aileron/declare';
 

@@ -1,6 +1,6 @@
 import { memo, useEffect } from 'react';
 
-import { map } from '@winglet/common-utils';
+import { map } from '@winglet/common-utils/array';
 import { useVersion, withErrorBoundary } from '@winglet/react-utils';
 
 import { Presenter } from '@/promise-modal/components/Presenter';

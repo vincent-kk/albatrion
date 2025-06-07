@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { convertMsFromDuration } from '@winglet/common-utils';
+import { convertMsFromDuration } from '@winglet/common-utils/convert';
 
 import { ConfigurationContext } from './ConfigurationContext';
 

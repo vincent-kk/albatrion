@@ -1,4 +1,5 @@
-import { getRandomString, isArray, isPlainObject } from '@winglet/common-utils';
+import { isArray, isPlainObject } from '@winglet/common-utils/filter';
+import { getRandomString } from '@winglet/common-utils/lib';
 
 import type { Fn } from '@aileron/declare';
 

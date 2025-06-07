@@ -1,4 +1,4 @@
-import { isString } from '@winglet/common-utils';
+import { isString } from '@winglet/common-utils/filter';
 
 import type { Fn } from '@aileron/declare';
 

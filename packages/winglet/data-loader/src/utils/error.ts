@@ -1,4 +1,4 @@
-import { BaseError, type ErrorDetails } from '@winglet/common-utils';
+import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
 /**
  * Error thrown when an error occurs in the DataLoader

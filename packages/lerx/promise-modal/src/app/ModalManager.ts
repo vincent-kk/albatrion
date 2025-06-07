@@ -1,4 +1,4 @@
-import { getRandomString } from '@winglet/common-utils';
+import { getRandomString } from '@winglet/common-utils/lib';
 
 import type { Fn } from '@aileron/declare';
 

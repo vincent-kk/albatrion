@@ -1,4 +1,4 @@
-import { scheduleMicrotask } from '@winglet/common-utils';
+import { scheduleMicrotask } from '@winglet/common-utils/scheduler';
 
 import type { Fn } from '@aileron/declare';
 

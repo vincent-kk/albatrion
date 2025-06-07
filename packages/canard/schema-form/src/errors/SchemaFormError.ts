@@ -1,4 +1,4 @@
-import { BaseError, type ErrorDetails } from '@winglet/common-utils';
+import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
 /**
  * Base error class for schema form-related errors.

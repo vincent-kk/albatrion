@@ -1,4 +1,4 @@
-import { BaseError, type ErrorDetails } from '@winglet/common-utils';
+import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
 export class JSONPointerError extends BaseError {
   constructor(code: string, message: string, details: ErrorDetails = {}) {

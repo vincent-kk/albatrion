@@ -10,7 +10,7 @@ import {
 import { Input, Select } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
-import { map } from '@winglet/common-utils';
+import { map } from '@winglet/common-utils/array';
 
 import type {
   FormTypeInputDefinition,

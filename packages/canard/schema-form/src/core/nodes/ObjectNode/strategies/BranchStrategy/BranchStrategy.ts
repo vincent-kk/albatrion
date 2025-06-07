@@ -1,8 +1,5 @@
-import {
-  getObjectKeys,
-  sortObjectKeys,
-  sortWithReference,
-} from '@winglet/common-utils';
+import { sortWithReference } from '@winglet/common-utils/array';
+import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils/object';
 
 import type { Fn } from '@aileron/declare';
 

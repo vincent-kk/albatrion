@@ -1,4 +1,4 @@
-import { isArrayIndex } from '@winglet/common-utils';
+import { isArrayIndex } from '@winglet/common-utils/filter';
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
 

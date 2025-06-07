@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import { isFunction } from '@winglet/common-utils';
+import { isFunction } from '@winglet/common-utils/filter';
 
 import type { Fn } from '@aileron/declare';
 

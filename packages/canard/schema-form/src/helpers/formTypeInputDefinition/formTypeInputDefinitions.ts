@@ -1,4 +1,8 @@
-import { isArray, isFunction, isPlainObject } from '@winglet/common-utils';
+import {
+  isArray,
+  isFunction,
+  isPlainObject,
+} from '@winglet/common-utils/filter';
 import { isReactComponent, withErrorBoundary } from '@winglet/react-utils';
 
 import type {

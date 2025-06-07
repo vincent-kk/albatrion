@@ -19,12 +19,12 @@
       "import": "./dist/index.esm.js",
       "require": "./dist/index.cjs.js"
     },
-    "./libs": {
+    "./lib": {
       "types": "./dist/libs/index.d.ts",
       "import": "./dist/libs/index.esm.js",
       "require": "./dist/libs/index.cjs.js"
     },
-    "./errors": {
+    "./error": {
       "types": "./dist/errors/index.d.ts",
       "import": "./dist/errors/index.esm.js",
       "require": "./dist/errors/index.cjs.js"

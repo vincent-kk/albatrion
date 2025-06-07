@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 
-import { convertMsFromDuration } from '@winglet/common-utils';
+import { convertMsFromDuration } from '@winglet/common-utils/convert';
 import { useOnMountLayout, useReference } from '@winglet/react-utils';
 
 import type { Fn } from '@aileron/declare';

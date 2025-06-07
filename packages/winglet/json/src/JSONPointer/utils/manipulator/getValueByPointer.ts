@@ -1,4 +1,4 @@
-import { isArray, isPlainObject } from '@winglet/common-utils';
+import { isArray, isPlainObject } from '@winglet/common-utils/filter';
 
 import type { Dictionary } from '@aileron/declare';
 

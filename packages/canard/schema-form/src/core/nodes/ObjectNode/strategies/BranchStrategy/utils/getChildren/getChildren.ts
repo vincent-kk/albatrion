@@ -1,4 +1,4 @@
-import { isArray } from '@winglet/common-utils';
+import { isArray } from '@winglet/common-utils/filter';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import type { VirtualReference } from '@/schema-form/core/nodes/ObjectNode/type';

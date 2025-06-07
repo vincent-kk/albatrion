@@ -1,4 +1,4 @@
-import { clone } from '@winglet/common-utils';
+import { clone } from '@winglet/common-utils/object';
 
 /**
  * Process a value by cloning it if it's an object and immutable is true.

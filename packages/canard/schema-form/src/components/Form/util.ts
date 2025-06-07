@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { isFunction } from '@winglet/common-utils';
+import { isFunction } from '@winglet/common-utils/filter';
 
 import type { InferSchemaNode } from '@/schema-form/core';
 import type {

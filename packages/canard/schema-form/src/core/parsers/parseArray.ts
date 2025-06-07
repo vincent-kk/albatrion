@@ -1,4 +1,4 @@
-import { isArray } from '@winglet/common-utils';
+import { isArray } from '@winglet/common-utils/filter';
 
 import type { ArrayValue } from '@/schema-form/types';
 

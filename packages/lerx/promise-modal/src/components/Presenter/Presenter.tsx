@@ -1,6 +1,6 @@
 import { memo, useRef } from 'react';
 
-import { counterFactory } from '@winglet/common-utils';
+import { counterFactory } from '@winglet/common-utils/lib';
 import { useHandle } from '@winglet/react-utils';
 
 import { Background } from '@/promise-modal/components/Background';

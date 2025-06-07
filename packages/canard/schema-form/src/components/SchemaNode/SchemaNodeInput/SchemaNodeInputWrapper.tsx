@@ -1,6 +1,6 @@
 import { type ComponentType, memo } from 'react';
 
-import { nullFunction } from '@winglet/common-utils';
+import { nullFunction } from '@winglet/common-utils/constant';
 import {
   isReactComponent,
   useMemorize,

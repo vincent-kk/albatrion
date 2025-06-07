@@ -1,6 +1,6 @@
 import { Fragment, memo, useCallback, useMemo, useState } from 'react';
 
-import { isFunction, isString } from '@winglet/common-utils';
+import { isFunction, isString } from '@winglet/common-utils/filter';
 import {
   renderComponent,
   useHandle,

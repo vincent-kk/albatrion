@@ -1,6 +1,6 @@
 import { Fragment, memo, useMemo } from 'react';
 
-import { nullFunction } from '@winglet/common-utils';
+import { nullFunction } from '@winglet/common-utils/constant';
 import { useMemorize, withErrorBoundary } from '@winglet/react-utils';
 
 import { NodeEventType, NodeState } from '@/schema-form/core';

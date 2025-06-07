@@ -1,9 +1,9 @@
+import { sortWithReference } from '@winglet/common-utils/array';
 import {
   equals,
   getObjectKeys,
   sortObjectKeys,
-  sortWithReference,
-} from '@winglet/common-utils';
+} from '@winglet/common-utils/object';
 
 import type { Fn } from '@aileron/declare';
 

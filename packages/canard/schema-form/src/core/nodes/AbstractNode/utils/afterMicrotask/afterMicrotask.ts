@@ -1,4 +1,7 @@
-import { cancelMacrotask, scheduleMacrotask } from '@winglet/common-utils';
+import {
+  cancelMacrotask,
+  scheduleMacrotask,
+} from '@winglet/common-utils/scheduler';
 
 import type { Fn } from '@aileron/declare';
 

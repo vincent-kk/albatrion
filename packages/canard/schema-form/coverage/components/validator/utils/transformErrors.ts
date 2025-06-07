@@ -1,7 +1,8 @@
 import type { JsonSchemaError } from '@canard/schema-form';
-import { isArrayIndex } from '@winglet/common-utils';
-import { JSONPath, JSONPointer } from '@winglet/json';
 import type { ErrorObject } from 'ajv';
+
+import { isArrayIndex } from '@winglet/common-utils/filter';
+import { JSONPath, JSONPointer } from '@winglet/json';
 
 export const transformErrors = (errors: ErrorObject[]): JsonSchemaError[] => {
   if (!Array.isArray(errors)) return [];

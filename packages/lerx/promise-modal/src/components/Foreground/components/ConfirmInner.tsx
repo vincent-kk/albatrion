@@ -1,6 +1,6 @@
 import { Fragment, memo, useMemo } from 'react';
 
-import { isString } from '@winglet/common-utils';
+import { isString } from '@winglet/common-utils/filter';
 import { renderComponent, useHandle } from '@winglet/react-utils';
 
 import type { ConfirmNode } from '@/promise-modal/core';

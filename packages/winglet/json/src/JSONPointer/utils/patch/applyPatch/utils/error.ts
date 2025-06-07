@@ -1,4 +1,4 @@
-import { BaseError, type ErrorDetails } from '@winglet/common-utils';
+import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
 /**
  * Custom error class for JSON Patch operation failures.

@@ -1,9 +1,5 @@
-import {
-  getKeys,
-  hasOwnProperty,
-  isArray,
-  isObject,
-} from '@winglet/common-utils';
+import { isArray, isObject } from '@winglet/common-utils/filter';
+import { getKeys, hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { escapePointer } from '@/json/JSONPointer/utils/escape/escapePointer';
