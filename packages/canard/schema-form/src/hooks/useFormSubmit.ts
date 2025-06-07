@@ -20,15 +20,15 @@ export const useFormSubmit = <
   Schema extends JsonSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 >(
-  ref: RefObject<FormHandle<Schema, Value>>,
+  ref: RefObject<FormHandle<Schema, Value> | null>,
 ) => {
   const [subscribe, getSnapshot] = useMemo(
     () => [
       (onStoreChange: Fn) =>
         ref.current?.submit?.subscribe?.(onStoreChange) || noopFunction,
-      () => ref.current?.submit?.pending,
+      () => ref?.current?.submit?.pending,
     ],
-    [],
+    [ref.current],
   );
   const pending = useSyncExternalStore(subscribe, getSnapshot);
 
@@ -36,7 +36,7 @@ export const useFormSubmit = <
     const handler = ref.current?.submit;
     if (!handler) return Promise.resolve(void 0);
     return handler();
-  }, []);
+  }, [ref.current]);
 
   return useMemo(
     () => ({
