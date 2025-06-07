@@ -44,7 +44,6 @@
     "version:patch": "yarn version patch"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.0.0",
     "@emotion/react": "^11.0.0",
     "@emotion/styled": "^11.0.0",
     "@mui/icons-material": "^7.0.0",
