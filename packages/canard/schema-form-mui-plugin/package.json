@@ -4,7 +4,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/vincent-kk/albatrion.git",
-    "directory": "packages/schema-form-mui-plugin"
+    "directory": "packages/canard/schema-form-mui-plugin"
   },
   "license": "MIT",
   "author": {
