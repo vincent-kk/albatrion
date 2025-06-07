@@ -34,6 +34,7 @@
     "reactUtils": "yarn workspace @winglet/react-utils",
     "run:all": "yarn workspaces foreach --all --topological run",
     "schemaForm": "yarn workspace @canard/schema-form",
+    "schemaForm:ajv6": "yarn workspace @canard/schema-form-ajv6-plugin",
     "schemaForm:ajv8": "yarn workspace @canard/schema-form-ajv8-plugin",
     "schemaForm:antd": "yarn workspace @canard/schema-form-antd-plugin",
     "schemaForm:antdMobile": "yarn workspace @canard/schema-form-antd-mobile-plugin",
