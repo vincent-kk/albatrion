@@ -1,4 +1,4 @@
-import { createValidatorFactory } from '@canard/schema-form-ajv-plugin';
+import { createValidatorFactory } from '@canard/schema-form-ajv8-plugin';
 import Ajv from 'ajv';
 import { describe, expect, it, vi } from 'vitest';
 

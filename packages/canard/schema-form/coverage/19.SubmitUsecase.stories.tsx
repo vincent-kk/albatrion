@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 
-import { plugin } from '@/schema-form-ajv-plugin';
+import { plugin } from '@/schema-form-ajv8-plugin';
 
 import {
   Form,

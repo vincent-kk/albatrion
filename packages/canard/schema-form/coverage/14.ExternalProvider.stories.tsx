@@ -2,7 +2,7 @@ import { type ComponentType, useMemo, useRef, useState } from 'react';
 
 import Ajv from 'ajv';
 
-import { createValidatorFactory } from '@/schema-form-ajv-plugin';
+import { createValidatorFactory } from '@/schema-form-ajv8-plugin';
 
 import {
   Form,

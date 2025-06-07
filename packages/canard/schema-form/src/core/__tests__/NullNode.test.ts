@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { createValidatorFactory } from '@/schema-form-ajv-plugin';
+import { createValidatorFactory } from '@/schema-form-ajv8-plugin';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import { NodeEventType, ValidationMode } from '../nodes';

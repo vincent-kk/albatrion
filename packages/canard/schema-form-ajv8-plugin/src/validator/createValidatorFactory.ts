@@ -15,7 +15,8 @@ export const createValidatorFactory =
         await validate(data);
         return null;
       } catch (thrown: any) {
-        if (thrown?.errors) return transformErrors(thrown.errors);
+        if (Array.isArray(thrown?.errors))
+          return transformErrors(thrown.errors);
         throw thrown;
       }
     };

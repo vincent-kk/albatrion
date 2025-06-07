@@ -1,10 +1,10 @@
 {
-  "name": "@canard/schema-form-ajv-plugin",
+  "name": "@canard/schema-form-ajv8-plugin",
   "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/vincent-kk/albatrion.git",
-    "directory": "packages/canard/schema-form-ajv-plugin"
+    "directory": "packages/canard/schema-form-ajv8-plugin"
   },
   "license": "MIT",
   "author": {
