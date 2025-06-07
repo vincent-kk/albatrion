@@ -1,5 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 
+import { plugin } from '@/schema-form-ajv-plugin';
+
 import {
   Form,
   FormHandle,
@@ -7,9 +9,12 @@ import {
   JsonSchemaError,
   ValidationMode,
   isValidationError,
+  registerPlugin,
   useFormSubmit,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
+
+registerPlugin(plugin);
 
 export default {
   title: 'Form/19. SubmitUsecase',
@@ -72,6 +77,7 @@ export const UseSubmitHandler = () => {
           } catch (e) {
             if (isValidationError(e))
               console.log('Error', e.message, e.details);
+            refHandle.current?.showError(true);
           }
         }}
         disabled={pending}
@@ -161,6 +167,7 @@ export const UseSubmitHandlerWithNoValidation = () => {
           } catch (e) {
             if (isValidationError(e))
               console.log('Error', e.message, e.details);
+            refHandle.current?.showError(true);
           }
         }}
         disabled={pending}
@@ -230,6 +237,7 @@ export const UseSubmitHandlerWithOnRequestValidation = () => {
           } catch (e) {
             if (isValidationError(e))
               console.log('Error', e.message, e.details);
+            refHandle.current?.showError(true);
           }
         }}
         disabled={pending}
