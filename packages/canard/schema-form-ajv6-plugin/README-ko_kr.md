@@ -39,7 +39,7 @@ import Ajv from 'ajv';
 // validator 플러그인을 전역으로 등록
 registerPlugin(ajvValidatorPlugin);
 
-// 커스텀 AJV 인스턴스 생성
+// 커스텀 AJV 인스턴스를 사용하는 경우
 const customAjv = new Ajv({
   allErrors: true,
   verbose: true,

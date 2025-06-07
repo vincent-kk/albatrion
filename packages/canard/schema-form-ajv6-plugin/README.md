@@ -39,6 +39,7 @@ import Ajv from 'ajv';
 // Register the validator plugin globally
 registerPlugin(ajvValidatorPlugin);
 
+// When using a custom AJV instance
 const customAjv = new Ajv({
   allErrors: true,
   verbose: true,
