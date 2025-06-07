@@ -5,9 +5,8 @@ import { BaseError, type ErrorDetails } from '@winglet/common-utils';
  * Used to handle errors that occur during form data validation.
  */
 export class ValidationError extends BaseError {
-  static readonly #group = 'VALIDATION_ERROR';
   constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super(ValidationError.#group, code, message, details);
+    super('VALIDATION_ERROR', code, message, details);
     this.name = 'ValidationError';
   }
 }

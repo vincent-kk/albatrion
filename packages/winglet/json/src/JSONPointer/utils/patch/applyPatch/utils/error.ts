@@ -5,9 +5,8 @@ import { BaseError, type ErrorDetails } from '@winglet/common-utils';
  * Extends BaseError with specific error grouping for patch-related issues.
  */
 export class JsonPatchError extends BaseError {
-  static readonly __group__ = 'JSON_PATCH';
   constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super(JsonPatchError.__group__, code, message, details);
+    super('JSON_PATCH', code, message, details);
     this.name = 'JsonPatch';
   }
 }

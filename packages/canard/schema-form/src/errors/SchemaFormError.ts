@@ -5,9 +5,8 @@ import { BaseError, type ErrorDetails } from '@winglet/common-utils';
  * Used to handle issues that occur during form processing.
  */
 export class SchemaFormError extends BaseError {
-  static readonly #group = 'SCHEMA_FORM_ERROR';
   constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super(SchemaFormError.#group, code, message, details);
+    super('SCHEMA_FORM_ERROR', code, message, details);
     this.name = 'SchemaFormError';
   }
 }

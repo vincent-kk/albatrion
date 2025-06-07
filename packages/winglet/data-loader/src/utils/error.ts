@@ -5,7 +5,6 @@ import { BaseError, type ErrorDetails } from '@winglet/common-utils';
  * Can occur during batching, caching, or other operations
  */
 export class DataLoaderError extends BaseError {
-  static readonly __group__ = 'DATA_LOADER';
   /**
    * DataLoaderError constructor
    * @param code - Specific error code
@@ -13,7 +12,7 @@ export class DataLoaderError extends BaseError {
    * @param details - Additional error information
    */
   constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super(DataLoaderError.__group__, code, message, details);
+    super('DATA_LOADER', code, message, details);
     this.name = 'DataLoader';
   }
 }
