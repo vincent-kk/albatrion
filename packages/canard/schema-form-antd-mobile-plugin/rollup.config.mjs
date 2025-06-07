@@ -82,8 +82,6 @@ export default [
           drop_console: false,
           dead_code: true,
           passes: 8,
-          unsafe: true,
-          unsafe_comps: true,
           pure_getters: true,
           keep_fargs: false,
           hoist_funs: true,
