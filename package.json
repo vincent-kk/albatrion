@@ -13,12 +13,12 @@
     "packages/**/*"
   ],
   "scripts": {
-    "antdMobilePlugin": "yarn workspace @canard/schema-form-antd-mobile-plugin",
-    "antdPlugin": "yarn workspace @canard/schema-form-antd-plugin",
     "benchmark": "yarn workspace @aileron/benchmark",
-    "muiPlugin": "yarn workspace @canard/schema-form-mui-plugin",
     "benchmark:form": "yarn workspace @aileron/benchmark-form",
     "build:all": "yarn run:all build",
+    "changeset": "changeset",
+    "changeset:publish": "changeset publish",
+    "changeset:version": "changeset version",
     "commonUtils": "yarn workspace @winglet/common-utils",
     "dataLoader": "yarn workspace @winglet/data-loader",
     "developmentHelper": "yarn workspace @aileron/development-helper",
@@ -34,7 +34,14 @@
     "reactUtils": "yarn workspace @winglet/react-utils",
     "run:all": "yarn workspaces foreach --all --topological run",
     "schemaForm": "yarn workspace @canard/schema-form",
+    "schemaForm:antd": "yarn workspace @canard/schema-form-antd-plugin",
+    "schemaForm:antdMobile": "yarn workspace @canard/schema-form-antd-mobile-plugin",
+    "schemaForm:mui": "yarn workspace @canard/schema-form-mui-plugin",
     "sort:packages": "npx sort-package-json '**/package.json'"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "^0.5.1",
+    "@changesets/cli": "^2.29.4"
   },
   "packageManager": "yarn@4.9.1"
 }
