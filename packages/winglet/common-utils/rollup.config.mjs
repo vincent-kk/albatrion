@@ -158,13 +158,13 @@ const configs = [
     input,
     output: [
       {
-        file: `${output}.cjs.js`,
+        file: `${output}.cjs`,
         format: 'cjs',
         exports: 'auto',
         sourcemap: true,
       },
       {
-        file: `${output}.esm.js`,
+        file: `${output}.mjs`,
         format: 'esm',
         sourcemap: true,
       },

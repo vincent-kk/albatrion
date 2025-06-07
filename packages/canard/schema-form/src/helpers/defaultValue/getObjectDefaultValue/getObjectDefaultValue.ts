@@ -1,5 +1,5 @@
-import { setValueByPointer } from '@winglet/json';
 import { JsonSchemaScanner } from '@winglet/json-schema';
+import { setValueByPointer } from '@winglet/json/pointer';
 
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 

@@ -1,6 +1,6 @@
 import { isString } from '@winglet/common-utils/filter';
-import { getValueByPointer } from '@winglet/json';
 import { JsonSchemaScanner } from '@winglet/json-schema';
+import { getValueByPointer } from '@winglet/json/pointer';
 
 import type { JsonSchema } from '@/schema-form/types';
 

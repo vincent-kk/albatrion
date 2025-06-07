@@ -16,72 +16,72 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.esm.js",
-      "require": "./dist/index.cjs.js"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     },
     "./lib": {
       "types": "./dist/libs/index.d.ts",
-      "import": "./dist/libs/index.esm.js",
-      "require": "./dist/libs/index.cjs.js"
+      "import": "./dist/libs/index.mjs",
+      "require": "./dist/libs/index.cjs"
     },
     "./error": {
       "types": "./dist/errors/index.d.ts",
-      "import": "./dist/errors/index.esm.js",
-      "require": "./dist/errors/index.cjs.js"
+      "import": "./dist/errors/index.mjs",
+      "require": "./dist/errors/index.cjs"
     },
     "./constant": {
       "types": "./dist/constant/index.d.ts",
-      "import": "./dist/constant/index.esm.js",
-      "require": "./dist/constant/index.cjs.js"
+      "import": "./dist/constant/index.mjs",
+      "require": "./dist/constant/index.cjs"
     },
     "./filter": {
       "types": "./dist/utils/filter/index.d.ts",
-      "import": "./dist/utils/filter/index.esm.js",
-      "require": "./dist/utils/filter/index.cjs.js"
+      "import": "./dist/utils/filter/index.mjs",
+      "require": "./dist/utils/filter/index.cjs"
     },
     "./array": {
       "types": "./dist/utils/array/index.d.ts",
-      "import": "./dist/utils/array/index.esm.js",
-      "require": "./dist/utils/array/index.cjs.js"
+      "import": "./dist/utils/array/index.mjs",
+      "require": "./dist/utils/array/index.cjs"
     },
     "./console": {
       "types": "./dist/utils/console/index.d.ts",
-      "import": "./dist/utils/console/index.esm.js",
-      "require": "./dist/utils/console/index.cjs.js"
+      "import": "./dist/utils/console/index.mjs",
+      "require": "./dist/utils/console/index.cjs"
     },
     "./convert": {
       "types": "./dist/utils/convert/index.d.ts",
-      "import": "./dist/utils/convert/index.esm.js",
-      "require": "./dist/utils/convert/index.cjs.js"
+      "import": "./dist/utils/convert/index.mjs",
+      "require": "./dist/utils/convert/index.cjs"
     },
     "./function": {
       "types": "./dist/utils/function/index.d.ts",
-      "import": "./dist/utils/function/index.esm.js",
-      "require": "./dist/utils/function/index.cjs.js"
+      "import": "./dist/utils/function/index.mjs",
+      "require": "./dist/utils/function/index.cjs"
     },
     "./hash": {
       "types": "./dist/utils/hash/index.d.ts",
-      "import": "./dist/utils/hash/index.esm.js",
-      "require": "./dist/utils/hash/index.cjs.js"
+      "import": "./dist/utils/hash/index.mjs",
+      "require": "./dist/utils/hash/index.cjs"
     },
     "./object": {
       "types": "./dist/utils/object/index.d.ts",
-      "import": "./dist/utils/object/index.esm.js",
-      "require": "./dist/utils/object/index.cjs.js"
+      "import": "./dist/utils/object/index.mjs",
+      "require": "./dist/utils/object/index.cjs"
     },
     "./promise": {
       "types": "./dist/utils/promise/index.d.ts",
-      "import": "./dist/utils/promise/index.esm.js",
-      "require": "./dist/utils/promise/index.cjs.js"
+      "import": "./dist/utils/promise/index.mjs",
+      "require": "./dist/utils/promise/index.cjs"
     },
     "./scheduler": {
       "types": "./dist/utils/scheduler/index.d.ts",
-      "import": "./dist/utils/scheduler/index.esm.js",
-      "require": "./dist/utils/scheduler/index.cjs.js"
+      "import": "./dist/utils/scheduler/index.mjs",
+      "require": "./dist/utils/scheduler/index.cjs"
     }
   },
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist",
