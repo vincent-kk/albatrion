@@ -1,4 +1,8 @@
-export { type SchemaFormPlugin, registerPlugin } from './app/plugin';
+export {
+  type SchemaFormPlugin,
+  type ValidatorPlugin,
+  registerPlugin,
+} from './app/plugin';
 
 export {
   Form,
@@ -47,6 +51,8 @@ export type {
   FormTypeTestObject,
   FormatError,
   FormatErrorOptions,
+  ValidatorFactory,
+  ValidateFunction,
 } from './types';
 
 export type {

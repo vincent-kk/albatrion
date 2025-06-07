@@ -4,8 +4,7 @@ import type {
   FormTypeInputDefinition,
   FormTypeRendererProps,
   FormatError,
-  JsonSchemaError,
-  JsonSchemaWithVirtual,
+  ValidatorFactory,
 } from '@/schema-form/types';
 
 export interface SchemaFormPlugin {
@@ -19,9 +18,5 @@ export interface SchemaFormPlugin {
 }
 
 export interface ValidatorPlugin {
-  createValidator(schema: JsonSchemaWithVirtual): ValidatorInstance;
-}
-
-export interface ValidatorInstance {
-  validate(data: any): Promise<JsonSchemaError[]> | JsonSchemaError[];
+  compile: ValidatorFactory;
 }

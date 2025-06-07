@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import {
   BIT_FLAG_00,
   BIT_FLAG_01,
@@ -5,6 +7,8 @@ import {
   BIT_FLAG_03,
   BIT_FLAG_04,
 } from '@/schema-form/app/constants/bitmask';
+
+import type { JsonSchema } from './jsonSchema';
 
 export enum ShowError {
   /** Always show error */
@@ -18,6 +22,15 @@ export enum ShowError {
   /** Show error when the input's value is updated and touched */
   DirtyTouched = BIT_FLAG_04,
 }
+
+export interface ValidatorFactory {
+  (schema: JsonSchema): ValidateFunction<any>;
+}
+
+export type ValidateFunction<Value = unknown> = Fn<
+  [data: Value],
+  Promise<JsonSchemaError[] | null> | JsonSchemaError[] | null
+>;
 
 export interface JsonSchemaError<Data = unknown> {
   key?: number;
