@@ -4,15 +4,12 @@ import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
 import { readFileSync } from 'fs';
 import { dirname, resolve as resolvePath } from 'path';
-import copy from 'rollup-plugin-copy';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import typescript from 'rollup-plugin-typescript2';
-import { visualizer } from 'rollup-plugin-visualizer';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const packagesRoot = resolvePath(__dirname, '../../');
 
 const packageJson = JSON.parse(
   readFileSync(resolvePath(__dirname, './package.json'), 'utf8'),
@@ -134,64 +131,47 @@ const subExports = [
   },
 ];
 
-export default [
-  // Main entry point
+// Create configurations for all exports (main + sub-exports)
+const configs = [
+  // Main export
   {
     input: 'src/index.ts',
     output: [
       {
         file: packageJson.main,
         format: 'cjs',
-        exports: 'named',
+        exports: 'auto',
         sourcemap: true,
       },
       {
         file: packageJson.module,
         format: 'esm',
-        exports: 'named',
         sourcemap: true,
       },
     ],
-    plugins: [
-      ...getCommonPlugins('src/index.ts'),
-      copy({
-        targets: [
-          {
-            src: resolvePath(packagesRoot, 'aileron/common/**/*.d.ts'),
-            dest: 'dist/@aileron/declare',
-          },
-        ],
-        copyOnce: true,
-        flatten: true,
-      }),
-      visualizer({
-        filename: 'common-utils-stats.html',
-        gzipSize: true,
-      }),
-    ],
-    external: (path) => /node_modules/.test(path),
+    external: [],
+    plugins: getCommonPlugins('src/index.ts'),
   },
-  // Sub-exports for tree shaking optimization
+
+  // Sub-exports
   ...subExports.map(({ input, output }) => ({
     input,
     output: [
       {
         file: `${output}.cjs.js`,
         format: 'cjs',
-        exports: 'named',
+        exports: 'auto',
         sourcemap: true,
       },
       {
         file: `${output}.esm.js`,
         format: 'esm',
-        exports: 'named',
         sourcemap: true,
       },
     ],
-    plugins: getCommonPlugins(
-      input,
-      `${output.split('/').slice(0, -1).join('/')}`,
-    ),
-    external: (path) => /node_modules/.test(path) || path.startsWith('@/'),
+    external: [],
+    plugins: getCommonPlugins(input),
   })),
 ];
+
+export default configs;
