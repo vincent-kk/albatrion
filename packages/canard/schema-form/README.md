@@ -12,7 +12,7 @@
 
 `@canard/schema-form` is a React-based component library that renders forms based on a provided [JSON Schema](https://json-schema.org/).
 
-It utilizes JSON Schema for validation, leveraging [ajv@8](https://ajv.js.org/) for this purpose.
+JSON Schema validation is supported through a plugin system, allowing the use of various validator plugins.
 
 By defining various `FormTypeInput` components, it offers the flexibility to accommodate complex requirements with ease.
 
@@ -22,6 +22,10 @@ By defining various `FormTypeInput` components, it offers the flexibility to acc
 
 ```bash
 yarn add @canard/schema-form
+# Also install a validator plugin
+yarn add @canard/schema-form-ajv8-plugin
+# Or for AJV 6.x
+yarn add @canard/schema-form-ajv6-plugin
 ```
 
 ---
@@ -96,8 +100,8 @@ interface FormProps<
    *  - `ValidationMode.OnRequest`: Validate only when requested
    */
   validationMode?: ValidationMode;
-  /** External Ajv instance, created internally if not provided */
-  ajv?: Ajv;
+  /** Custom ValidatorFactory function */
+  validatorFactory?: ValidatorFactory;
   /** User-defined context */
   context?: Dictionary;
   /** Child components */
@@ -143,7 +147,11 @@ interface FormChildrenProps<
 ### Basic Usage
 
 ```tsx
-import { Form } from '@canard/schema-form';
+import { Form, registerPlugin } from '@canard/schema-form';
+import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+
+// Register validator plugin (once at app startup)
+registerPlugin(ajvValidatorPlugin);
 
 export const App = () => {
   const jsonSchema = {
@@ -177,6 +185,116 @@ export const App = () => {
   );
 };
 ```
+
+---
+
+## Validator System
+
+`@canard/schema-form` provides a plugin-based validation system. Various validator plugins can be used for JSON Schema validation.
+
+### ValidatorFactory
+
+ValidatorFactory is a function that takes a JSON Schema and returns a validation function:
+
+```ts
+interface ValidatorFactory {
+  (schema: JsonSchema): ValidateFunction<any>;
+}
+
+type ValidateFunction<Value = unknown> = Fn<
+  [data: Value],
+  Promise<JsonSchemaError[] | null> | JsonSchemaError[] | null
+>;
+```
+
+### Validator Plugin Usage
+
+#### 1. Basic Plugin Registration
+
+```tsx
+import { registerPlugin } from '@canard/schema-form';
+import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+
+// Register plugin at app startup
+registerPlugin(ajvValidatorPlugin);
+```
+
+#### 2. Custom ValidatorFactory Usage
+
+When you want to use different validation logic for specific Forms:
+
+```tsx
+import { Form, createValidatorFactory } from '@canard/schema-form';
+import Ajv from 'ajv';
+
+export const CustomValidationForm = () => {
+  const validatorFactory = useMemo(() => {
+    // Create custom AJV instance
+    const customAjv = new Ajv({
+      allErrors: true,
+      strictSchema: false,
+      validateFormats: false,
+    });
+
+    // Add custom keywords
+    customAjv.addKeyword({
+      keyword: 'isEven',
+      type: 'number',
+      validate: (schema: boolean, data: number) => {
+        if (schema === false) return true;
+        return data % 2 === 0;
+      },
+      errors: false,
+    });
+
+    // Create ValidatorFactory
+    return createValidatorFactory(customAjv);
+  }, []);
+
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      name: { type: 'string', maxLength: 10 },
+      evenNumber: { type: 'number', isEven: true, maximum: 100 },
+    },
+  };
+
+  return <Form jsonSchema={jsonSchema} validatorFactory={validatorFactory} />;
+};
+```
+
+#### 3. Global ValidatorFactory Setup via FormProvider
+
+When using the same validation logic across multiple Forms:
+
+```tsx
+import { FormProvider, createValidatorFactory } from '@canard/schema-form';
+import Ajv from 'ajv';
+
+export const App = () => {
+  const validatorFactory = useMemo(() => {
+    const customAjv = new Ajv({
+      allErrors: true,
+      strictSchema: false,
+    });
+
+    return createValidatorFactory(customAjv);
+  }, []);
+
+  return (
+    <FormProvider validatorFactory={validatorFactory}>
+      <MyForms />
+    </FormProvider>
+  );
+};
+```
+
+### Available Validator Plugins
+
+- **@canard/schema-form-ajv8-plugin**: AJV 8.x based (latest JSON Schema support)
+- **@canard/schema-form-ajv6-plugin**: AJV 6.x based (legacy environment support)
+
+Please refer to each plugin's README for detailed usage instructions.
 
 ---
 
@@ -972,7 +1090,7 @@ The library is optimized for performance with features like:
 
 - Lazy rendering for complex forms
 - Memoization of components to prevent unnecessary re-renders
-- Efficient validation using ajv
+- Plugin-based efficient validation system
 - Configurable validation modes to optimize validation timing
 
 ### Optimization Tips
