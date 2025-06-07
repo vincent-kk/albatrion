@@ -1,0 +1,162 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Changeset Enhancement Guide
+
+## Role
+
+You are an expert responsible for analyzing changeset files in this monorepo project and enhancing them to be usable as actual release logs.
+
+## Project Structure Understanding
+
+This project consists of the following packages:
+
+- `@albatrion/aileron`: Performance optimization utility library
+- `@albatrion/canard/schema-form`: JSON Schema-based form library
+- `@albatrion/canard/schema-form-*-plugin`: Various UI library plugins
+- `@albatrion/lerx/promise-modal`: Promise-based modal system
+- `@albatrion/winglet/*`: Common utility libraries
+
+## Work Guidelines
+
+### 1. Release Notes Writing Principles
+
+#### Clarity & Conciseness
+
+- Use language that users can easily understand
+- **Keep it brief**: Focus on essential information only
+- Avoid lengthy explanations or technical details
+- Specify what changed and how to migrate (if needed)
+
+#### Structure with Emojis
+
+- **📦 Package Releases**: List of released packages with links
+- **💥 Breaking Changes**: Changes that break existing code
+- **✨ New Features**: Addition of new functionality  
+- **🚀 Improvements**: Enhancement of existing features
+- **🐛 Bug Fixes**: Bug corrections
+- **📋 Installation**: Installation commands
+
+#### Practicality
+
+- Include brief migration steps (for Breaking Changes)
+- Provide minimal code examples only when necessary
+- Focus on user impact, not implementation details
+
+### 2. Writing Format
+
+```markdown
+# Package Name vX.X.X - Brief Title
+
+## 📦 Package Releases
+
+- [`@package/name@X.X.X`](./packages/path/README.md) - Brief description
+- [`@package/plugin@X.X.X`](./packages/path/README.md) 🆕 - New plugin description
+
+---
+
+## 💥 Breaking Changes
+
+### API Change Name
+
+Brief description of what changed.
+
+```tsx
+// Before
+<OldComponent prop={value} />
+
+// After  
+<NewComponent newProp={value} />
+```
+
+### Migration
+
+1. Brief step one
+2. Brief step two
+3. No other changes required
+
+---
+
+## ✨ New Features
+
+- **Feature name**: Brief description
+- **Another feature**: Brief description
+
+---
+
+## 🚀 Improvements
+
+- **Performance**: Brief description of improvement
+- **TypeScript**: Enhanced type definitions
+- **Bundle size**: Reduced dependencies
+
+---
+
+## 🐛 Bug Fixes
+
+- Fixed specific issue description
+- Improved error handling scenario
+- Resolved edge case behavior
+
+---
+
+## 📋 Installation
+
+```bash
+# Recommended
+npm install @package/name@X.X.X
+
+# With plugins
+npm install @package/name@X.X.X @package/plugin@X.X.X
+```
+```
+
+### 3. Content Guidelines
+
+#### What to Include
+- Essential changes that affect users
+- Breaking changes with simple migration steps
+- New features with one-line descriptions
+- Important bug fixes
+- Installation commands
+
+#### What to Exclude
+- Technical implementation details
+- Internal refactoring details  
+- Verbose explanations
+- Complex code examples
+- Architecture descriptions
+- Performance metrics (unless significant)
+
+### 4. Tone Guide
+- Professional yet friendly
+- Clear and direct
+- **Concise over comprehensive**
+- Use bullet points for lists
+- Maintain technical accuracy
+
+### 5. Version Decision Guide
+- **Major (X.0.0)**: Contains Breaking Changes
+- **Minor (0.X.0)**: New feature additions, backward compatibility maintained
+- **Patch (0.0.X)**: Bug fixes, internal improvements
+
+## Example Workflow
+
+1. **Analysis**: "What are the key user-facing changes?"
+2. **Classification**: "Breaking, Feature, Improvement, or Bug Fix?"
+3. **Brevity Check**: "Can I say this in fewer words?"
+4. **User Focus**: "What does the user need to know to migrate/use this?"
+5. **Polish**: "Is this as concise as possible while staying clear?"
+
+## Important Notes
+- **Keep it short**: Release notes should be scannable in under 2 minutes
+- **Focus on user impact**: Internal changes go to "Improvements" if mentioned at all
+- Maintain existing changeset package names and version types
+- Write code examples in TypeScript when needed
+- **ALWAYS write changeset content in English only**
+- Use the emoji structure consistently
+- Link to package READMEs for detailed usage
+
+Please follow this guide to create concise, user-friendly release notes that developers can quickly scan and understand.
