@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { Form, FormHandle, type JsonSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
@@ -271,7 +271,12 @@ export const Array = () => {
   return (
     <div>
       <button
-        onClick={() => ref.current?.node.find('items').setValue(undefined)}
+        onClick={() => {
+          const node = ref.current?.node?.find('items');
+          if (node?.type === 'array') {
+            node.setValue(undefined);
+          }
+        }}
       >
         remove items filed
       </button>

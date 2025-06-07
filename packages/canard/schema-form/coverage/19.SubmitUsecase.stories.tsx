@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import {
   Form,
@@ -43,8 +43,8 @@ export const UseSubmitHandler = () => {
   const [value, setValue] = useState<Record<string, unknown>>();
   const [errors, setErrors] = useState<JsonSchemaError[]>();
 
-  const handleSubmit = useCallback((value: Record<string, unknown>) => {
-    return new Promise((resolve) => {
+  const handleSubmit = useCallback((value?: Record<string, unknown>) => {
+    return new Promise<void>((resolve) => {
       setTimeout(() => {
         console.log('submit', value);
         resolve(void 0);
@@ -52,7 +52,7 @@ export const UseSubmitHandler = () => {
     });
   }, []);
 
-  const refHandle = useRef<FormHandle<typeof jsonSchema>>(null);
+  const refHandle = useRef<FormHandle<typeof jsonSchema, any>>(null);
 
   const { submit, pending } = useFormSubmit(refHandle);
 
@@ -131,8 +131,8 @@ export const UseSubmitHandlerWithNoValidation = () => {
   const [value, setValue] = useState<Record<string, unknown>>();
   const [errors, setErrors] = useState<JsonSchemaError[]>();
 
-  const handleSubmit = useCallback((value: Record<string, unknown>) => {
-    return new Promise((resolve) => {
+  const handleSubmit = useCallback((value?: Record<string, unknown>) => {
+    return new Promise<void>((resolve) => {
       setTimeout(() => {
         console.log('submit', value);
         resolve(void 0);
@@ -140,7 +140,7 @@ export const UseSubmitHandlerWithNoValidation = () => {
     });
   }, []);
 
-  const refHandle = useRef<FormHandle<typeof jsonSchema>>(null);
+  const refHandle = useRef<FormHandle<typeof jsonSchema, any>>(null);
 
   const { submit, pending } = useFormSubmit(refHandle);
 
@@ -200,8 +200,8 @@ export const UseSubmitHandlerWithOnRequestValidation = () => {
   const [value, setValue] = useState<Record<string, unknown>>();
   const [errors, setErrors] = useState<JsonSchemaError[]>();
 
-  const handleSubmit = useCallback((value: Record<string, unknown>) => {
-    return new Promise((resolve) => {
+  const handleSubmit = useCallback((value?: Record<string, unknown>) => {
+    return new Promise<void>((resolve) => {
       setTimeout(() => {
         console.log('submit', value);
         resolve(void 0);
@@ -209,7 +209,7 @@ export const UseSubmitHandlerWithOnRequestValidation = () => {
     });
   }, []);
 
-  const refHandle = useRef<FormHandle<typeof jsonSchema>>(null);
+  const refHandle = useRef<FormHandle<typeof jsonSchema, any>>(null);
 
   const { submit, pending } = useFormSubmit(refHandle);
 

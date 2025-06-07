@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import {
   Form,
@@ -9,7 +9,6 @@ import {
   type JsonSchemaError,
   SetValueOption,
 } from '../src';
-import type { ArrayNode } from '../src/core/nodes/ArrayNode/ArrayNode';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -193,23 +192,32 @@ export const FormTypeInputArrayTerminalRef = () => {
   return (
     <div>
       <button
-        onClick={() =>
-          formHandle.current?.node.find('arr')?.setValue([1, 2, 3])
-        }
+        onClick={() => {
+          const node = formHandle.current?.node?.find('arr');
+          if (node?.type === 'array') {
+            node.setValue([1, 2, 3]);
+          }
+        }}
       >
         set value
       </button>
       <button
-        onClick={() =>
-          formHandle.current?.node
-            .find('arr')
-            ?.setValue((prev) => [...(prev || []), 'NEW ITEM'])
-        }
+        onClick={() => {
+          const node = formHandle.current?.node?.find('arr');
+          if (node?.type === 'array') {
+            node.setValue((prev) => [...(prev || []), 'NEW ITEM']);
+          }
+        }}
       >
         push value
       </button>
       <button
-        onClick={() => formHandle.current?.node.find('arr')?.setValue([])}
+        onClick={() => {
+          const node = formHandle.current?.node?.find('arr');
+          if (node?.type === 'array') {
+            node.setValue([]);
+          }
+        }}
       >
         clear
       </button>
@@ -294,29 +302,35 @@ export const FormTypeInputObjectTerminalRef = () => {
   return (
     <div>
       <button
-        onClick={() =>
-          formHandle.current?.node.find('poster')?.setValue({
-            url: 'http://example.com/poster1.jpg',
-            format: 'jpg',
-            size: { width: 100, height: 100 },
-          })
-        }
+        onClick={() => {
+          const node = formHandle.current?.node?.find('poster');
+          if (node?.type === 'object') {
+            node.setValue({
+              url: 'http://example.com/poster1.jpg',
+              format: 'jpg',
+              size: { width: 100, height: 100 },
+            });
+          }
+        }}
       >
         set value
       </button>
       <button
-        onClick={() =>
-          formHandle.current?.node.find('poster')?.setValue((prev) => ({
-            ...prev,
-            url: 'http://example.com/poster2.jpg',
-          }))
-        }
+        onClick={() => {
+          const node = formHandle.current?.node?.find('poster');
+          if (node?.type === 'object') {
+            node.setValue((prev) => ({
+              ...prev,
+              url: 'http://example.com/poster2.jpg',
+            }));
+          }
+        }}
       >
         merge value
       </button>
       <button
         onClick={() =>
-          formHandle.current?.node.find('poster')?.setValue(undefined)
+          formHandle.current?.node?.find('poster')?.setValue(undefined)
         }
       >
         clear
@@ -559,7 +573,7 @@ export const FormRefHandleWithOneOf = () => {
     },
   } satisfies JsonSchema;
 
-  const formHandle = useRef<FormHandle<typeof schema>>(null);
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
 
   const [value, setValue] = useState<Record<string, unknown>>();
   const [errors, setErrors] = useState<JsonSchemaError[]>([]);
@@ -676,40 +690,49 @@ export const FormRefHandleWithArray = () => {
       </button>
       <button
         onClick={() => {
-          (formHandle.current?.node?.find('users') as ArrayNode)?.setValue([
-            {
-              id: 66,
-              name: 'rin',
-              email: 'rin@example.com',
-            },
-            {
-              id: 77,
-              name: 'momo',
-              email: 'momo@example.com',
-            },
-          ]);
+          const node = formHandle.current?.node?.find('users');
+          if (node?.type === 'array') {
+            node.setValue([
+              {
+                id: 66,
+                name: 'rin',
+                email: 'rin@example.com',
+              },
+              {
+                id: 77,
+                name: 'momo',
+                email: 'momo@example.com',
+              },
+            ]);
+          }
         }}
       >
         set user for array node
       </button>
       <button
         onClick={() => {
-          (formHandle.current?.node?.find('users') as ArrayNode)?.update(0, {
-            id: 4,
-            name: 'rin',
-            email: 'rin@example.com',
-          });
+          const node = formHandle.current?.node?.find('users');
+          if (node?.type === 'array') {
+            node.update(0, {
+              id: 4,
+              name: 'rin',
+              email: 'rin@example.com',
+            });
+          }
         }}
       >
         update user[0]
       </button>
       <button
         onClick={() => {
-          (formHandle.current?.node?.find('users') as ArrayNode)?.push({
-            id: ~~(Math.random() * 100),
-            name: 'random',
-            email: 'random@example.com',
-          });
+          const node = formHandle.current?.node?.find('users');
+          if (node?.type === 'array') {
+            node.push({
+              id: ~~(Math.random() * 100),
+              name: 'random',
+              email: 'random@example.com',
+            });
+          }
         }}
       >
         push new user
@@ -756,49 +779,63 @@ export const FormRefHandleWithVirtualSchema = () => {
     <div>
       <div>
         <button
-          onClick={() =>
-            formHandle.current?.node.find('.startDate').setValue('2025-04-01')
-          }
+          onClick={() => {
+            const node = formHandle.current?.node?.find('.startDate');
+            if (node?.type === 'string') {
+              node.setValue('2025-04-01');
+            }
+          }}
         >
           startDate "2025-04-01"
         </button>
         <button
-          onClick={() =>
-            formHandle.current?.node.find('.startDate').setValue('2025-04-05')
-          }
+          onClick={() => {
+            const node = formHandle.current?.node?.find('.startDate');
+            if (node?.type === 'string') {
+              node.setValue('2025-04-05');
+            }
+          }}
         >
           startDate "2025-04-05"
         </button>
         <button
-          onClick={() =>
-            formHandle.current?.node.find('.endDate').setValue('2025-04-25')
-          }
+          onClick={() => {
+            const node = formHandle.current?.node?.find('.endDate');
+            if (node?.type === 'string') {
+              node.setValue('2025-04-25');
+            }
+          }}
         >
           endDate '2025-04-25'
         </button>
         <button
-          onClick={() =>
-            formHandle.current?.node.find('.endDate').setValue('2025-04-30')
-          }
+          onClick={() => {
+            const node = formHandle.current?.node?.find('.endDate');
+            if (node?.type === 'string') {
+              node.setValue('2025-04-30');
+            }
+          }}
         >
           endDate '2025-04-30'
         </button>
       </div>
       <button
-        onClick={() =>
-          formHandle.current?.node
-            .find('.period')
-            .setValue(['2025-03-13', '2025-04-26'])
-        }
+        onClick={() => {
+          const node = formHandle.current?.node?.find('.period');
+          if (node?.type === 'virtual') {
+            node.setValue(['2025-03-13', '2025-04-26']);
+          }
+        }}
       >
         period ['2025-03-13','2025-04-26']
       </button>
       <button
-        onClick={() =>
-          formHandle.current?.node
-            .find('.period')
-            .setValue(['2025-03-01', '2025-04-01'])
-        }
+        onClick={() => {
+          const node = formHandle.current?.node?.find('.period');
+          if (node?.type === 'virtual') {
+            node.setValue(['2025-03-01', '2025-04-01']);
+          }
+        }}
       >
         period ['2025-03-01','2025-04-01']
       </button>

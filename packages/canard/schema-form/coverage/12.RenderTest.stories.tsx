@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { useRenderCount } from '@aileron/development-helper';
 
@@ -134,7 +134,7 @@ export const InsertInputForm = () => {
                 }}
               >
                 {path}
-                <Input /> {value}
+                <Input /> {value as string}
                 <div>{errorMessage}</div>
               </div>
             );
@@ -149,7 +149,7 @@ export const InsertInputForm = () => {
                 {path}
                 <button
                   onClick={() => {
-                    onChange((prev) => (prev || 0) + 1);
+                    onChange((prev: number) => (prev || 0) + 1);
                   }}
                 >
                   custom input {value}

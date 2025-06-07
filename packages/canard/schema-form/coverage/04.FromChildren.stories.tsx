@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { Form, type JsonSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
@@ -32,7 +32,7 @@ export const FunctionalChildren = () => {
     allowed: false,
   });
 
-  const [value, setValue] = useState<Record<string, unknown>>();
+  const [value, setValue] = useState<Record<string, any>>();
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value}>
@@ -48,11 +48,11 @@ export const FunctionalChildren = () => {
             </div>
             <div>
               <Form.Label path=".name" />
-              {value?.allowed && <Form.Input path=".name" />}
+              {!!value?.allowed && <Form.Input path=".name" />}
             </div>
             <div>
               <Form.Label path=".age" />
-              {value?.name?.length && <Form.Input path=".age" />}
+              {!!value?.name?.length && <Form.Input path=".age" />}
             </div>
             <div>
               <Form.Label path=".gender" />
