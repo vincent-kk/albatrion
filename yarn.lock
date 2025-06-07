@@ -1786,6 +1786,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@canard/schema-form-ajv-plugin@workspace:packages/canard/schema-form-ajv-plugin":
+  version: 0.0.0-use.local
+  resolution: "@canard/schema-form-ajv-plugin@workspace:packages/canard/schema-form-ajv-plugin"
+  dependencies:
+    "@babel/core": "npm:^7.26.0"
+    "@canard/schema-form": "workspace:^"
+    "@rollup/plugin-commonjs": "npm:^28.0.1"
+    "@rollup/plugin-node-resolve": "npm:^15.3.0"
+    "@rollup/plugin-replace": "npm:^6.0.1"
+    "@rollup/plugin-terser": "npm:^0.4.4"
+    "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
+    "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
+    "@winglet/json": "workspace:^"
+    ajv: "npm:^8.0.0"
+    eslint: "npm:^8.56.0"
+    prettier: "npm:^3.3.3"
+    rollup: "npm:^4.27.4"
+    rollup-plugin-copy: "npm:^3.5.0"
+    rollup-plugin-peer-deps-external: "npm:^2.2.4"
+    rollup-plugin-typescript2: "npm:^0.36.0"
+    rollup-plugin-visualizer: "npm:^5.12.0"
+    tsc-alias: "npm:^1.8.10"
+    typescript: "npm:^5.7.2"
+    vite: "npm:^5.4.11"
+    vitest: "npm:^2.1.5"
+  languageName: unknown
+  linkType: soft
+
 "@canard/schema-form-antd-mobile-plugin@workspace:^, @canard/schema-form-antd-mobile-plugin@workspace:packages/canard/schema-form-antd-mobile-plugin":
   version: 0.0.0-use.local
   resolution: "@canard/schema-form-antd-mobile-plugin@workspace:packages/canard/schema-form-antd-mobile-plugin"
