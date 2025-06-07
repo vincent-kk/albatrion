@@ -101,8 +101,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     nodeFactory,
     parentNode,
     validationMode,
+    validatorFactory,
     required,
-    ajv,
   }: BranchNodeConstructorProps<ArraySchema>) {
     super({
       key,
@@ -112,8 +112,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       onChange,
       parentNode,
       validationMode,
+      validatorFactory,
       required,
-      ajv,
     });
     const handleChange =
       this.jsonSchema.options?.omitEmpty === false

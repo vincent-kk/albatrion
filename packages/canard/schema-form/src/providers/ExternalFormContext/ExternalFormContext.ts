@@ -3,12 +3,12 @@ import { type ComponentType, createContext } from 'react';
 import type { Dictionary } from '@aileron/declare';
 
 import type { ValidationMode } from '@/schema-form/core';
-import type { Ajv } from '@/schema-form/helpers/ajv';
 import type { NormalizedFormTypeInputDefinition } from '@/schema-form/helpers/formTypeInputDefinition';
 import type {
   FormTypeRendererProps,
   FormatError,
   ShowError,
+  ValidatorFactory,
 } from '@/schema-form/types';
 
 export interface ExternalFormContext {
@@ -30,8 +30,8 @@ export interface ExternalFormContext {
   validationMode?: ValidationMode;
   /** Global user-defined context, merged with user-defined context */
   context?: Dictionary;
-  /** Ajv instance declared externally, creates internally if not provided */
-  ajv?: Ajv;
+  /** ValidatorFactory externally, creates internally if not provided */
+  validatorFactory?: ValidatorFactory;
 }
 
 export const ExternalFormContext = createContext<ExternalFormContext>(

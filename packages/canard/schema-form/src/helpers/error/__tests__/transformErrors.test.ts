@@ -1,140 +1,372 @@
-import type { ErrorObject } from 'ajv';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
+import type { JsonSchemaError } from '@/schema-form/types';
 
 import { transformErrors } from '../transformErrors';
 
+// 테스트용 모킹 데이터
+const createMockError = (
+  keyword: string,
+  message?: string,
+): JsonSchemaError => ({
+  keyword,
+  dataPath: `/test/${keyword}`,
+  schemaPath: `#/properties/test/${keyword}`,
+  message: message || `Test error for ${keyword}`,
+  params: {},
+});
+
 describe('transformErrors', () => {
-  let errors: ErrorObject[];
+  describe('기본 동작', () => {
+    it('빈 배열을 반환해야 합니다 - 입력이 빈 배열인 경우', () => {
+      // Arrange
+      const errors: JsonSchemaError[] = [];
 
-  beforeEach(() => {
-    errors = [
-      {
-        keyword: 'required',
-        instancePath: '',
-        schemaPath: '#/required',
-        params: { missingProperty: 'name' },
-        message: "should have required property 'name'",
-      },
-      {
-        keyword: 'type',
-        instancePath: '/age/1/koreanAge',
-        schemaPath: '#/properties/age/type',
-        params: { type: 'number' },
-        message: 'should be number',
-      },
-      {
-        keyword: 'minimum',
-        instancePath: '/age',
-        schemaPath: '#/properties/age/minimum',
-        params: { comparison: '>=', limit: 0 },
-        message: 'should be >= 0',
-      },
-      {
-        keyword: 'format',
-        instancePath: '/email',
-        schemaPath: '#/properties/email/format',
-        params: { format: 'email' },
-        message: 'should match format "email"',
-      },
-    ];
+      // Act
+      const result = transformErrors(errors);
+
+      // Assert
+      expect(result).toEqual([]);
+      expect(result).toHaveLength(0);
+    });
+
+    it('입력 에러들을 그대로 반환해야 합니다 - 필터링이나 키 추가 없이', () => {
+      // Arrange
+      const errors: JsonSchemaError[] = [
+        createMockError('required'),
+        createMockError('type'),
+      ];
+
+      // Act
+      const result = transformErrors(errors);
+
+      // Assert
+      expect(result).toHaveLength(2);
+      expect(result[0].keyword).toBe('required');
+      expect(result[1].keyword).toBe('type');
+    });
   });
 
-  it('should transform errors with missing property', () => {
-    const result = transformErrors(errors);
-    expect(result).toEqual([
-      {
-        ...errors[0],
-        key: undefined,
-        instancePath: '',
-        dataPath: '.name',
-      },
-      {
-        ...errors[1],
-        key: undefined,
-        dataPath: '.age[1].koreanAge',
-      },
-      {
-        ...errors[2],
-        key: undefined,
-        dataPath: '.age',
-      },
-      {
-        ...errors[3],
-        key: undefined,
-        dataPath: '.email',
-      },
-    ]);
+  describe('입력 검증', () => {
+    it('빈 배열을 반환해야 합니다 - 입력이 null인 경우', () => {
+      // Act
+      const result = transformErrors(null as any);
+
+      // Assert
+      expect(result).toEqual([]);
+    });
+
+    it('빈 배열을 반환해야 합니다 - 입력이 undefined인 경우', () => {
+      // Act
+      const result = transformErrors(undefined as any);
+
+      // Assert
+      expect(result).toEqual([]);
+    });
+
+    it('빈 배열을 반환해야 합니다 - 입력이 배열이 아닌 경우', () => {
+      // Act
+      const result = transformErrors('not-an-array' as any);
+
+      // Assert
+      expect(result).toEqual([]);
+    });
+
+    it('빈 배열을 반환해야 합니다 - 입력이 객체인 경우', () => {
+      // Act
+      const result = transformErrors({ keyword: 'test' } as any);
+
+      // Assert
+      expect(result).toEqual([]);
+    });
   });
 
-  it('should add keys when useKey is true', () => {
-    const result = transformErrors(errors, undefined, true);
+  describe('omits 파라미터 테스트', () => {
+    it('omits에 포함된 키워드의 에러들을 필터링해야 합니다', () => {
+      // Arrange
+      const errors: JsonSchemaError[] = [
+        createMockError('required'),
+        createMockError('type'),
+        createMockError('pattern'),
+        createMockError('maxLength'),
+      ];
+      const omits = new Set(['required', 'pattern']);
 
-    // key 값은 동적으로 생성되므로 실제 값을 검증하지 않고 존재 여부와 타입만 검증
-    expect(result.length).toBe(4);
-    expect(result[0].key).toBeGreaterThan(0);
-    expect(result[1].key).toBeGreaterThan(0);
-    expect(result[2].key).toBeGreaterThan(0);
-    expect(result[3].key).toBeGreaterThan(0);
+      // Act
+      const result = transformErrors(errors, omits);
 
-    // 나머지 속성들은 정확히 검증
-    expect(result[0].dataPath).toBe('.name');
-    expect(result[0].instancePath).toBe('');
-    expect(result[1].dataPath).toBe('.age[1].koreanAge');
-    expect(result[2].dataPath).toBe('.age');
-    expect(result[3].dataPath).toBe('.email');
+      // Assert
+      expect(result).toHaveLength(2);
+      expect(result[0].keyword).toBe('type');
+      expect(result[1].keyword).toBe('maxLength');
+    });
+
+    it('모든 에러를 필터링해야 합니다 - 모든 키워드가 omits에 포함된 경우', () => {
+      // Arrange
+      const errors: JsonSchemaError[] = [
+        createMockError('required'),
+        createMockError('type'),
+      ];
+      const omits = new Set(['required', 'type']);
+
+      // Act
+      const result = transformErrors(errors, omits);
+
+      // Assert
+      expect(result).toEqual([]);
+      expect(result).toHaveLength(0);
+    });
+
+    it('에러를 필터링하지 않아야 합니다 - omits가 비어있는 경우', () => {
+      // Arrange
+      const errors: JsonSchemaError[] = [
+        createMockError('required'),
+        createMockError('type'),
+      ];
+      const omits = new Set<string>();
+
+      // Act
+      const result = transformErrors(errors, omits);
+
+      // Assert
+      expect(result).toHaveLength(2);
+      expect(result[0].keyword).toBe('required');
+      expect(result[1].keyword).toBe('type');
+    });
+
+    it('에러를 필터링하지 않아야 합니다 - omits가 undefined인 경우', () => {
+      // Arrange
+      const errors: JsonSchemaError[] = [
+        createMockError('required'),
+        createMockError('type'),
+      ];
+
+      // Act
+      const result = transformErrors(errors, undefined);
+
+      // Assert
+      expect(result).toHaveLength(2);
+      expect(result[0].keyword).toBe('required');
+      expect(result[1].keyword).toBe('type');
+    });
   });
 
-  it('should omit errors with specified keywords', () => {
-    const omits = new Set<string>(['type', 'format']);
-    const result = transformErrors(errors, omits);
-    expect(result).toEqual([
-      {
-        ...errors[0],
-        key: undefined,
-        dataPath: '.name',
-        instancePath: '',
-      },
-      {
-        ...errors[2],
-        key: undefined,
-        dataPath: '.age',
-      },
-    ]);
+  describe('key 파라미터 테스트', () => {
+    it('각 에러에 순차적인 키를 추가해야 합니다 - key가 true인 경우', () => {
+      // Arrange
+      const errors: JsonSchemaError[] = [
+        createMockError('required'),
+        createMockError('type'),
+        createMockError('pattern'),
+      ];
+
+      // Act
+      const result = transformErrors(errors, undefined, true);
+
+      // Assert
+      expect(result).toHaveLength(3);
+      expect(result[0].key).toBeDefined();
+      expect(result[1].key).toBeDefined();
+      expect(result[2].key).toBeDefined();
+
+      // 키가 순차적으로 증가하는지 확인
+      expect(result[1].key).toBe(result[0].key! + 1);
+      expect(result[2].key).toBe(result[1].key! + 1);
+    });
+
+    it('에러에 키를 추가하지 않아야 합니다 - key가 false인 경우', () => {
+      // Arrange
+      const errors: JsonSchemaError[] = [
+        createMockError('required'),
+        createMockError('type'),
+      ];
+
+      // Act
+      const result = transformErrors(errors, undefined, false);
+
+      // Assert
+      expect(result).toHaveLength(2);
+      expect(result[0].key).toBeUndefined();
+      expect(result[1].key).toBeUndefined();
+    });
+
+    it('에러에 키를 추가하지 않아야 합니다 - key가 undefined인 경우', () => {
+      // Arrange
+      const errors: JsonSchemaError[] = [
+        createMockError('required'),
+        createMockError('type'),
+      ];
+
+      // Act
+      const result = transformErrors(errors, undefined, undefined);
+
+      // Assert
+      expect(result).toHaveLength(2);
+      expect(result[0].key).toBeUndefined();
+      expect(result[1].key).toBeUndefined();
+    });
+
+    it('전역 시퀀스가 증가해야 합니다 - 여러 호출에서', () => {
+      // Arrange
+      const errors1: JsonSchemaError[] = [createMockError('required')];
+      const errors2: JsonSchemaError[] = [createMockError('type')];
+
+      // Act
+      const result1 = transformErrors(errors1, undefined, true);
+      const result2 = transformErrors(errors2, undefined, true);
+
+      // Assert
+      expect(result1[0].key).toBeDefined();
+      expect(result2[0].key).toBeDefined();
+      expect(result2[0].key).toBeGreaterThan(result1[0].key!);
+    });
   });
 
-  it('should apply both omits and useKey correctly', () => {
-    const omits = new Set<string>(['minimum']);
-    const result = transformErrors(errors, omits, true);
+  describe('복합 시나리오 테스트', () => {
+    it('필터링과 키 추가를 동시에 처리해야 합니다', () => {
+      // Arrange
+      const errors: JsonSchemaError[] = [
+        createMockError('required'),
+        createMockError('type'),
+        createMockError('pattern'),
+        createMockError('maxLength'),
+      ];
+      const omits = new Set(['required', 'pattern']);
 
-    // key 값은 동적으로 생성되므로 실제 값을 검증하지 않고 존재 여부와 타입만 검증
-    expect(result.length).toBe(3);
-    expect(typeof result[0].key).toBe('number');
-    expect(typeof result[1].key).toBe('number');
-    expect(typeof result[2].key).toBe('number');
+      // Act
+      const result = transformErrors(errors, omits, true);
 
-    // dataPath와 keyword 검증
-    expect(result[0].dataPath).toBe('.name');
-    expect(result[0].keyword).toBe('required');
-    expect(result[1].dataPath).toBe('.age[1].koreanAge');
-    expect(result[1].keyword).toBe('type');
-    expect(result[2].dataPath).toBe('.email');
-    expect(result[2].keyword).toBe('format');
+      // Assert
+      expect(result).toHaveLength(2);
+      expect(result[0].keyword).toBe('type');
+      expect(result[1].keyword).toBe('maxLength');
+      expect(result[0].key).toBeDefined();
+      expect(result[1].key).toBeDefined();
+      expect(result[1].key).toBe(result[0].key! + 1);
+    });
+
+    it('필터링 후 빈 배열이 되어도 문제없어야 합니다', () => {
+      // Arrange
+      const errors: JsonSchemaError[] = [
+        createMockError('required'),
+        createMockError('type'),
+      ];
+      const omits = new Set(['required', 'type']);
+
+      // Act
+      const result = transformErrors(errors, omits, true);
+
+      // Assert
+      expect(result).toEqual([]);
+      expect(result).toHaveLength(0);
+    });
   });
 
-  it('should handle empty omits set', () => {
-    const omits = new Set<string>();
-    const result = transformErrors(errors, omits);
-    expect(result.length).toEqual(4);
+  describe('원본 데이터 변경 (mutation) 테스트', () => {
+    it('원본 에러 객체를 변경해야 합니다 - key 추가 시', () => {
+      // Arrange
+      const originalError = createMockError('required');
+      const errors: JsonSchemaError[] = [originalError];
+
+      // 원본에는 key가 없음을 확인
+      expect(originalError.key).toBeUndefined();
+
+      // Act
+      const result = transformErrors(errors, undefined, true);
+
+      // Assert
+      // 원본 객체가 변경되었는지 확인
+      expect(originalError.key).toBeDefined();
+      expect(result[0]).toBe(originalError); // 같은 객체 참조인지 확인
+      expect(result[0].key).toBe(originalError.key);
+    });
+
+    it('원본 에러 객체를 변경하지 않아야 합니다 - key 추가하지 않을 때', () => {
+      // Arrange
+      const originalError = createMockError('required');
+      const errors: JsonSchemaError[] = [originalError];
+
+      // 원본에는 key가 없음을 확인
+      expect(originalError.key).toBeUndefined();
+
+      // Act
+      const result = transformErrors(errors, undefined, false);
+
+      // Assert
+      // 원본 객체의 key가 undefined로 설정되었는지 확인
+      expect(originalError.key).toBeUndefined();
+      expect(result[0]).toBe(originalError); // 같은 객체 참조인지 확인
+    });
   });
 
-  it('should handle empty errors array', () => {
-    const result = transformErrors([]);
-    expect(result).toEqual([]);
+  describe('성능 최적화 테스트', () => {
+    it('대량의 에러를 효율적으로 처리해야 합니다', () => {
+      // Arrange
+      const largeErrorArray: JsonSchemaError[] = Array.from(
+        { length: 1000 },
+        (_, index) => createMockError(`error${index}`),
+      );
+
+      // Act
+      const start = performance.now();
+      const result = transformErrors(largeErrorArray, undefined, true);
+      const end = performance.now();
+
+      // Assert
+      expect(result).toHaveLength(1000);
+      expect(end - start).toBeLessThan(100); // 100ms 이하로 처리되어야 함
+
+      // 모든 에러에 키가 할당되었는지 확인
+      result.forEach((error, index) => {
+        expect(error.key).toBeDefined();
+        if (index > 0) {
+          expect(error.key).toBeGreaterThan(result[index - 1].key!);
+        }
+      });
+    });
   });
 
-  it('should handle non-array input', () => {
-    // @ts-expect-error ajv 에러 타입 확인
-    const result = transformErrors(null);
-    expect(result).toEqual([]);
+  describe('실제 사용 시나리오 테스트', () => {
+    it('실제 JSON Schema 검증 에러를 처리해야 합니다', () => {
+      // Arrange
+      const realWorldErrors: JsonSchemaError[] = [
+        {
+          keyword: 'required',
+          dataPath: '',
+          schemaPath: '#/required',
+          message: "should have required property 'email'",
+          params: { missingProperty: 'email' },
+        },
+        {
+          keyword: 'minLength',
+          dataPath: '.username',
+          schemaPath: '#/properties/username/minLength',
+          message: 'should NOT be shorter than 5 characters',
+          params: { limit: 5 },
+        },
+        {
+          keyword: 'pattern',
+          dataPath: '.phoneNumber',
+          schemaPath: '#/properties/phoneNumber/pattern',
+          message: 'should match pattern "^\\+?[1-9]\\d{1,14}$"',
+          params: { pattern: '^\\+?[1-9]\\d{1,14}$' },
+        },
+      ];
+      const omits = new Set(['pattern']);
+
+      // Act
+      const result = transformErrors(realWorldErrors, omits, true);
+
+      // Assert
+      expect(result).toHaveLength(2);
+      expect(result[0].keyword).toBe('required');
+      expect(result[1].keyword).toBe('minLength');
+      expect(result[0].key).toBeDefined();
+      expect(result[1].key).toBeDefined();
+
+      // 원본 데이터 구조가 보존되는지 확인
+      expect(result[0].message).toBe("should have required property 'email'");
+      expect(result[1].params).toEqual({ limit: 5 });
+    });
   });
 });

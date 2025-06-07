@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Meta, StoryFn } from '@storybook/react';
 
@@ -19,7 +19,7 @@ export default {
   component: Form,
   decorators: [
     (Story, context) => {
-      const [value, setValue] = useState<Record<string, unknown>>({});
+      const [value, setValue] = useState<any>();
       const [errors, setErrors] = useState<JsonSchemaError[]>([]);
       return (
         <StoryLayout
@@ -51,7 +51,7 @@ export const Boolean = Template.bind({});
 Boolean.args = {
   jsonSchema: {
     type: 'boolean',
-    formType: FormTypeInputBooleanDefinition.Component,
+    FormType: FormTypeInputBooleanDefinition.Component,
   },
 };
 
@@ -59,7 +59,7 @@ export const String = Template.bind({});
 String.args = {
   jsonSchema: {
     type: 'string',
-    formType: FormTypeInputStringDefinition.Component,
+    FormType: FormTypeInputStringDefinition.Component,
   },
 };
 
@@ -71,7 +71,7 @@ StringCheckbox.args = {
       type: 'string',
       enum: ['a', 'b', 'c'],
     },
-    formType: FormTypeInputStringCheckboxDefinition.Component,
+    FormType: FormTypeInputStringCheckboxDefinition.Component,
   },
 };
 
@@ -80,7 +80,7 @@ StringRadio.args = {
   jsonSchema: {
     type: 'string',
     enum: ['a', 'b', 'c'],
-    formType: FormTypeInputStringRadioDefinition.Component,
+    FormType: FormTypeInputStringRadioDefinition.Component,
   },
 };
 
@@ -89,7 +89,7 @@ StringEnum.args = {
   jsonSchema: {
     type: 'string',
     enum: ['', 'a', 'b', 'c'],
-    formType: FormTypeInputStringEnumDefinition.Component,
+    FormType: FormTypeInputStringEnumDefinition.Component,
   },
 };
 
@@ -98,7 +98,7 @@ DateTimeFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'datetime-local',
-    formType: FormTypeInputDateFormantDefinition.Component,
+    FormType: FormTypeInputDateFormantDefinition.Component,
   },
 };
 
@@ -107,7 +107,7 @@ TimeFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'time',
-    formType: FormTypeInputDateFormantDefinition.Component,
+    FormType: FormTypeInputDateFormantDefinition.Component,
   },
 };
 
@@ -116,7 +116,7 @@ DateFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'date',
-    formType: FormTypeInputDateFormantDefinition.Component,
+    FormType: FormTypeInputDateFormantDefinition.Component,
   },
 };
 
@@ -125,7 +125,7 @@ WeekFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'week',
-    formType: FormTypeInputDateFormantDefinition.Component,
+    FormType: FormTypeInputDateFormantDefinition.Component,
   },
 };
 
@@ -134,7 +134,7 @@ MonthFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'month',
-    formType: FormTypeInputDateFormantDefinition.Component,
+    FormType: FormTypeInputDateFormantDefinition.Component,
   },
 };
 
@@ -142,7 +142,7 @@ export const Number = Template.bind({});
 Number.args = {
   jsonSchema: {
     type: 'number',
-    formType: FormTypeInputNumberDefinition.Component,
+    FormType: FormTypeInputNumberDefinition.Component,
   },
 };
 
@@ -152,12 +152,12 @@ Array.args = {
     type: 'array',
     items: {
       type: 'string',
-      formType: FormTypeInputStringDefinition.Component,
+      FormType: FormTypeInputStringDefinition.Component,
       default: 'ARRAY_ITEM',
       disabled: true,
     },
     minItems: 3,
-    formType: FormTypeInputArrayDefinition.Component,
+    FormType: FormTypeInputArrayDefinition.Component,
   },
 };
 
@@ -165,19 +165,19 @@ export const Object = Template.bind({});
 Object.args = {
   jsonSchema: {
     type: 'object',
-    formType: FormTypeInputObjectDefinition.Component,
+    FormType: FormTypeInputObjectDefinition.Component,
     properties: {
       a: {
         type: 'boolean',
-        formType: FormTypeInputBooleanDefinition.Component,
+        FormType: FormTypeInputBooleanDefinition.Component,
       },
       b: {
         type: 'string',
-        formType: FormTypeInputStringDefinition.Component,
+        FormType: FormTypeInputStringDefinition.Component,
       },
       c: {
         type: 'number',
-        formType: FormTypeInputNumberDefinition.Component,
+        FormType: FormTypeInputNumberDefinition.Component,
       },
     },
   },

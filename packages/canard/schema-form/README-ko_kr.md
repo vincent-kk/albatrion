@@ -12,7 +12,7 @@
 
 `@canard/schema-form`은 제공된 [JSON Schema](https://json-schema.org/)를 기반으로 양식을 렌더링하는 React 기반 컴포넌트 라이브러리입니다.
 
-JSON Schema를 검증에 활용하며, 이 목적으로 [ajv@8](https://ajv.js.org/)를 사용합니다.
+JSON Schema 검증은 플러그인 시스템을 통해 지원되며, 다양한 validator plugin을 통해 사용할 수 있습니다.
 
 다양한 `FormTypeInput` 컴포넌트를 정의함으로써 복잡한 요구사항을 쉽게 충족시킬 수 있는 유연성을 제공합니다.
 
@@ -22,6 +22,10 @@ JSON Schema를 검증에 활용하며, 이 목적으로 [ajv@8](https://ajv.js.o
 
 ```bash
 yarn add @canard/schema-form
+# Validator plugin도 함께 설치
+yarn add @canard/schema-form-ajv8-plugin
+# 또는 AJV 6.x를 사용하는 경우
+yarn add @canard/schema-form-ajv6-plugin
 ```
 
 ---
@@ -98,8 +102,8 @@ interface FormProps<
    *  - `ValidationMode.OnRequest`: 요청 시에만 유효성 검사
    */
   validationMode?: ValidationMode;
-  /** 외부 Ajv 인스턴스, 제공되지 않으면 내부적으로 생성됨 */
-  ajv?: Ajv;
+  /** 커스텀 Validator Factory 함수 */
+  validatorFactory?: ValidatorFactory;
   /** 사용자 정의 컨텍스트 */
   context?: Dictionary;
   /** 자식 컴포넌트 */
@@ -145,7 +149,11 @@ interface FormChildrenProps<
 ### 기본 사용법
 
 ```tsx
-import { Form } from '@canard/schema-form';
+import { Form, registerPlugin } from '@canard/schema-form';
+import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+
+// Validator plugin 등록 (앱 시작 시 한 번만)
+registerPlugin(ajvValidatorPlugin);
 
 export const App = () => {
   const jsonSchema = {
@@ -179,6 +187,113 @@ export const App = () => {
   );
 };
 ```
+
+---
+
+## Validator 시스템
+
+`@canard/schema-form`은 플러그인 기반의 검증 시스템을 제공합니다. JSON Schema 검증을 위해 다양한 validator plugin을 사용할 수 있습니다.
+
+### ValidatorFactory
+
+ValidatorFactory는 JSON Schema를 받아 검증 함수를 반환하는 함수입니다:
+
+```ts
+interface ValidatorFactory {
+  (schema: JsonSchema): ValidateFunction<any>;
+}
+
+type ValidateFunction<Value = unknown> = Fn<
+  [data: Value],
+  Promise<JsonSchemaError[] | null> | JsonSchemaError[] | null
+>;
+```
+
+### Validator Plugin 사용법
+
+#### 1. 기본적인 플러그인 등록
+
+```tsx
+import { registerPlugin } from '@canard/schema-form';
+import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+
+// 앱 시작 시 플러그인 등록
+registerPlugin(ajvValidatorPlugin);
+```
+
+#### 2. 커스텀 ValidatorFactory 사용
+
+특정 Form에서만 다른 검증 로직을 사용하고 싶은 경우:
+
+```tsx
+import { Form, createValidatorFactory } from '@canard/schema-form';
+import Ajv from 'ajv';
+
+export const CustomValidationForm = () => {
+  const validatorFactory = useMemo(() => {
+    // 커스텀 AJV 인스턴스 생성
+    const customAjv = new Ajv({
+      allErrors: true,
+      strictSchema: false,
+      validateFormats: false,
+    });
+
+    // 커스텀 키워드 추가
+    customAjv.addKeyword({
+      keyword: 'isEven',
+      type: 'number',
+      validate: (schema: boolean, data: number) => {
+        if (schema === false) return true;
+        return data % 2 === 0;
+      },
+      errors: false,
+    });
+    // ValidatorFactory 생성
+    return createValidatorFactory(customAjv);
+  }, []);
+
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      name: { type: 'string', maxLength: 10 },
+      evenNumber: { type: 'number', isEven: true, maximum: 100 },
+    },
+  };
+
+  return <Form jsonSchema={jsonSchema} validatorFactory={validatorFactory} />;
+};
+```
+
+#### 3. FormProvider를 통한 전역 ValidatorFactory 설정
+
+여러 Form에서 동일한 검증 로직을 사용하는 경우:
+
+```tsx
+import { FormProvider, createValidatorFactory } from '@canard/schema-form';
+import Ajv from 'ajv';
+
+export const App = () => {
+  const validatorFactory = useMemo(() => {
+    const customAjv = new Ajv({
+      allErrors: true,
+      strictSchema: false,
+    });
+    return createValidatorFactory(customAjv);
+  }, []);
+  return (
+    <FormProvider validatorFactory={validatorFactory}>
+      <MyForms />
+    </FormProvider>
+  );
+};
+```
+
+### 사용 가능한 Validator Plugin
+
+- **@canard/schema-form-ajv8-plugin**: AJV 8.x 기반 (최신 JSON Schema 지원)
+- **@canard/schema-form-ajv6-plugin**: AJV 6.x 기반 (레거시 환경 지원)
+
+각 플러그인의 자세한 사용법은 해당 플러그인의 README를 참조하세요.
 
 ---
 
@@ -963,7 +1078,7 @@ export const ErrorHandlingForm = () => {
 
 - 복잡한 양식용 지연 렌더링
 - 불필요한 재렌더링을 방지하기 위한 컴포넌트 메모화
-- ajv를 사용한 효율적인 검증
+- 플러그인 기반의 효율적인 검증 시스템
 - 유효성 검사 시점을 최적화하기 위한 구성 가능한 유효성 검사 모드
 
 ### 최적화 팁

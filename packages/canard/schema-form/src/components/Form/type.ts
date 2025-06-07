@@ -1,7 +1,5 @@
 import type { ComponentType, ReactNode } from 'react';
 
-import type Ajv from 'ajv';
-
 import type { TrackableHandlerFunction } from '@winglet/common-utils';
 
 import type { Dictionary, Fn, SetStateFn } from '@aileron/declare';
@@ -21,6 +19,7 @@ import type {
   JsonSchemaError,
   SetStateFnWithOptions,
   ShowError,
+  ValidatorFactory,
 } from '@/schema-form/types';
 
 export interface FormChildrenProps<
@@ -78,8 +77,8 @@ export interface FormProps<
    *  - `ValidationMode.OnRequest`: Validate on request
    */
   validationMode?: ValidationMode;
-  /** Externally declared Ajv instance, creates internally if not provided */
-  ajv?: Ajv;
+  /** Externally declared ValidatorFactory, creates internally if not provided */
+  validatorFactory?: ValidatorFactory;
   /** User-defined context */
   context?: Dictionary;
   /** Child components */
@@ -99,5 +98,6 @@ export interface FormHandle<
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
   validate: Fn<[], Promise<JsonSchemaError[]>>;
+  showError: Fn<[visible: boolean]>;
   submit: TrackableHandlerFunction;
 }

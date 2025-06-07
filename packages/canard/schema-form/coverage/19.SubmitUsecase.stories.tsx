@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import {
   Form,
@@ -7,9 +7,13 @@ import {
   JsonSchemaError,
   ValidationMode,
   isValidationError,
+  registerPlugin,
   useFormSubmit,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
+import { plugin } from './components/validator';
+
+registerPlugin(plugin);
 
 export default {
   title: 'Form/19. SubmitUsecase',
@@ -43,8 +47,8 @@ export const UseSubmitHandler = () => {
   const [value, setValue] = useState<Record<string, unknown>>();
   const [errors, setErrors] = useState<JsonSchemaError[]>();
 
-  const handleSubmit = useCallback((value: Record<string, unknown>) => {
-    return new Promise((resolve) => {
+  const handleSubmit = useCallback((value?: Record<string, unknown>) => {
+    return new Promise<void>((resolve) => {
       setTimeout(() => {
         console.log('submit', value);
         resolve(void 0);
@@ -52,7 +56,7 @@ export const UseSubmitHandler = () => {
     });
   }, []);
 
-  const refHandle = useRef<FormHandle<typeof jsonSchema>>(null);
+  const refHandle = useRef<FormHandle<typeof jsonSchema, any>>(null);
 
   const { submit, pending } = useFormSubmit(refHandle);
 
@@ -72,6 +76,7 @@ export const UseSubmitHandler = () => {
           } catch (e) {
             if (isValidationError(e))
               console.log('Error', e.message, e.details);
+            refHandle.current?.showError(true);
           }
         }}
         disabled={pending}
@@ -131,8 +136,8 @@ export const UseSubmitHandlerWithNoValidation = () => {
   const [value, setValue] = useState<Record<string, unknown>>();
   const [errors, setErrors] = useState<JsonSchemaError[]>();
 
-  const handleSubmit = useCallback((value: Record<string, unknown>) => {
-    return new Promise((resolve) => {
+  const handleSubmit = useCallback((value?: Record<string, unknown>) => {
+    return new Promise<void>((resolve) => {
       setTimeout(() => {
         console.log('submit', value);
         resolve(void 0);
@@ -140,7 +145,7 @@ export const UseSubmitHandlerWithNoValidation = () => {
     });
   }, []);
 
-  const refHandle = useRef<FormHandle<typeof jsonSchema>>(null);
+  const refHandle = useRef<FormHandle<typeof jsonSchema, any>>(null);
 
   const { submit, pending } = useFormSubmit(refHandle);
 
@@ -161,6 +166,7 @@ export const UseSubmitHandlerWithNoValidation = () => {
           } catch (e) {
             if (isValidationError(e))
               console.log('Error', e.message, e.details);
+            refHandle.current?.showError(true);
           }
         }}
         disabled={pending}
@@ -200,8 +206,8 @@ export const UseSubmitHandlerWithOnRequestValidation = () => {
   const [value, setValue] = useState<Record<string, unknown>>();
   const [errors, setErrors] = useState<JsonSchemaError[]>();
 
-  const handleSubmit = useCallback((value: Record<string, unknown>) => {
-    return new Promise((resolve) => {
+  const handleSubmit = useCallback((value?: Record<string, unknown>) => {
+    return new Promise<void>((resolve) => {
       setTimeout(() => {
         console.log('submit', value);
         resolve(void 0);
@@ -209,7 +215,7 @@ export const UseSubmitHandlerWithOnRequestValidation = () => {
     });
   }, []);
 
-  const refHandle = useRef<FormHandle<typeof jsonSchema>>(null);
+  const refHandle = useRef<FormHandle<typeof jsonSchema, any>>(null);
 
   const { submit, pending } = useFormSubmit(refHandle);
 
@@ -230,6 +236,7 @@ export const UseSubmitHandlerWithOnRequestValidation = () => {
           } catch (e) {
             if (isValidationError(e))
               console.log('Error', e.message, e.details);
+            refHandle.current?.showError(true);
           }
         }}
         disabled={pending}

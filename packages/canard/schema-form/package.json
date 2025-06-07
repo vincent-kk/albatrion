@@ -50,8 +50,7 @@
     "@winglet/common-utils": "workspace:^",
     "@winglet/json": "workspace:^",
     "@winglet/json-schema": "workspace:^",
-    "@winglet/react-utils": "workspace:^",
-    "ajv": "^8.0.0"
+    "@winglet/react-utils": "workspace:^"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.4",
@@ -77,6 +76,7 @@
     "@types/rollup-plugin-peer-deps-external": "^2.2.5",
     "@typescript-eslint/eslint-plugin": "^8.14.0",
     "@typescript-eslint/parser": "^8.14.0",
+    "ajv": "^8.17.1",
     "dependency-cruiser": "^16.7.0",
     "eslint": "^8.56.0",
     "eslint-plugin-react": "^7.37.2",
@@ -100,7 +100,6 @@
     "vitest": "^2.1.5"
   },
   "peerDependencies": {
-    "ajv": ">=8",
     "react": ">=18 <20",
     "react-dom": ">=18 <20"
   },

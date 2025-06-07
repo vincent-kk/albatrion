@@ -1,4 +1,4 @@
-import React, { type ComponentType, useMemo, useRef, useState } from 'react';
+import { type ComponentType, useMemo, useRef, useState } from 'react';
 
 import Ajv from 'ajv';
 
@@ -13,6 +13,7 @@ import {
   ValidationMode,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
+import { createValidatorFactory } from './components/validator';
 
 export default {
   title: 'Form/14. ExternalProvider',
@@ -250,7 +251,7 @@ export const ExternalFormContextAjv = () => {
 
   const [errors, setErrors] = useState<JsonSchemaError[]>([]);
 
-  const ajv = useMemo(() => {
+  const validatorFactory = useMemo(() => {
     const ajv = new Ajv({
       allErrors: true,
       strictSchema: false,
@@ -265,15 +266,15 @@ export const ExternalFormContextAjv = () => {
       },
       errors: false,
     });
-    return ajv;
-  }, []);
+    return createValidatorFactory(ajv);
+  }, [schema]);
 
   return (
     <FormProvider
       FormGroupRenderer={externalFormTypeRenderer}
       showError={false}
       validationMode={ValidationMode.OnRequest}
-      ajv={ajv}
+      validatorFactory={validatorFactory}
     >
       <StoryLayout jsonSchema={schema} value={value} errors={errors}>
         <Form

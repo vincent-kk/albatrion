@@ -1,4 +1,3 @@
-import { isBranchNode } from '@/schema-form/core';
 import type { FormTypeRendererProps } from '@/schema-form/types';
 
 export const FormGroupRenderer = ({
@@ -14,7 +13,7 @@ export const FormGroupRenderer = ({
 }: FormTypeRendererProps) => {
   if (depth === 0) return <Input />;
 
-  if (isBranchNode(node)) {
+  if (node.group === 'branch') {
     return (
       <fieldset
         style={{

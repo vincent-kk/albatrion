@@ -225,8 +225,8 @@ describe('VirtualNode', () => {
     await delay();
 
     // 가상 노드의 자식 노드가 정상적으로 생성되었는지 확인
-    expect(virtualNode?.children.length).toBe(2);
-    expect(virtualNode?.children[0].node.type).toBe('string');
-    expect(virtualNode?.children[1].node.type).toBe('string');
+    expect(virtualNode?.children?.length).toBe(2);
+    expect(virtualNode?.children?.[0].node.type).toBe('string');
+    expect(virtualNode?.children?.[1].node.type).toBe('string');
   });
 });

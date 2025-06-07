@@ -1,3 +1,4 @@
+import Ajv from 'ajv';
 import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
@@ -6,6 +7,7 @@ import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import { NodeEventType, ValidationMode } from '../nodes';
 import { StringNode } from '../nodes/StringNode';
+import { createValidatorFactory } from './AbstractNode.test';
 
 describe('StringNode', () => {
   it('문자열 노드가 정상적으로 생성되어야 함', () => {
@@ -138,6 +140,13 @@ describe('StringNode', () => {
   });
 
   it('문자열 노드의 유효성 검사가 정상적으로 동작해야 함', async () => {
+    const validatorFactory = createValidatorFactory(
+      new Ajv({
+        allErrors: true,
+        strictSchema: false,
+        validateFormats: false,
+      }),
+    );
     const node = nodeFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -151,6 +160,7 @@ describe('StringNode', () => {
         },
       },
       validationMode: ValidationMode.OnChange,
+      validatorFactory,
     });
 
     const stringNode = node?.find('email') as StringNode;
@@ -175,6 +185,13 @@ describe('StringNode', () => {
   });
 
   it('문자열 노드의 패턴 검사가 정상적으로 동작해야 함', async () => {
+    const validatorFactory = createValidatorFactory(
+      new Ajv({
+        allErrors: true,
+        strictSchema: false,
+        validateFormats: false,
+      }),
+    );
     const node = nodeFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -186,6 +203,7 @@ describe('StringNode', () => {
         },
       },
       validationMode: ValidationMode.OnChange,
+      validatorFactory,
     });
 
     const stringNode = node?.find('phoneNumber') as StringNode;

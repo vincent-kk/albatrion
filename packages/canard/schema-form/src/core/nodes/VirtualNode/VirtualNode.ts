@@ -72,8 +72,8 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     parentNode,
     refNodes,
     validationMode,
+    validatorFactory,
     required,
-    ajv,
   }: VirtualNodeConstructorProps<VirtualSchema>) {
     super({
       key,
@@ -83,8 +83,8 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
       onChange,
       parentNode,
       validationMode,
+      validatorFactory,
       required,
-      ajv,
     });
 
     this.#refNodes = refNodes || [];

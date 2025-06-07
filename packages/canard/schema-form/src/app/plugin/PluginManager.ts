@@ -20,6 +20,8 @@ import type {
   FormatError,
 } from '@/schema-form/types';
 
+import { ValidatorPlugin } from './type';
+
 interface RenderKit {
   FormGroup: ComponentType<FormTypeRendererProps>;
   FormLabel: ComponentType<FormTypeRendererProps>;
@@ -38,6 +40,7 @@ export class PluginManager {
   };
   static #formTypeInputDefinitions: NormalizedFormTypeInputDefinition[] =
     normalizeFormTypeInputDefinitions(formTypeDefinitions);
+  static #validator: ValidatorPlugin | undefined;
 
   static get FormGroup() {
     return PluginManager.#renderKit.FormGroup;
@@ -57,6 +60,9 @@ export class PluginManager {
   static get formTypeInputDefinitions() {
     return PluginManager.#formTypeInputDefinitions;
   }
+  static get validator() {
+    return PluginManager.#validator;
+  }
 
   static appendRenderKit(renderKit: Partial<RenderKit> | undefined) {
     if (!renderKit) return;
@@ -75,5 +81,9 @@ export class PluginManager {
       ...normalizeFormTypeInputDefinitions(formTypeInputDefinitions),
       ...PluginManager.#formTypeInputDefinitions,
     ];
+  }
+  static appendValidator(validator: ValidatorPlugin | undefined) {
+    if (!validator) return;
+    PluginManager.#validator = validator;
   }
 }

@@ -58,8 +58,8 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     onChange,
     parentNode,
     validationMode,
+    validatorFactory,
     required,
-    ajv,
   }: SchemaNodeConstructorProps<NumberSchema>) {
     super({
       key,
@@ -69,8 +69,8 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
       onChange,
       parentNode,
       validationMode,
+      validatorFactory,
       required,
-      ajv,
     });
 
     this.onChange =

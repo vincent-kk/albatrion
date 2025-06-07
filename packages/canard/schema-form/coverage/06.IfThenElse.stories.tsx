@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import {
   Form,
@@ -72,7 +72,7 @@ export const IfThenElse = () => {
     },
   } satisfies JsonSchema;
 
-  const formHandle = useRef<FormHandle<typeof schema>>(null);
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
 
   const [value, setValue] = useState<Record<string, unknown>>();
   const [errors, setErrors] = useState<JsonSchemaError[]>([]);
@@ -142,7 +142,7 @@ export const IfThenElseConst = () => {
     },
   } satisfies JsonSchema;
 
-  const formHandle = useRef<FormHandle<typeof schema>>(null);
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
 
   const [value, setValue] = useState<Record<string, unknown>>();
   const [errors, setErrors] = useState<JsonSchemaError[]>([]);
@@ -396,7 +396,7 @@ export const IfThenElseComplex2 = () => {
     required: ['type'],
   } satisfies JsonSchema;
 
-  const formHandle = useRef<FormHandle<typeof schema>>(null);
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
 
   const [value, setValue] = useState<Record<string, unknown>>();
   return (

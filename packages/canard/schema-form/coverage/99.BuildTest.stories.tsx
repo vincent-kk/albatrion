@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Form, type JsonSchema } from '@canard/schema-form';
 

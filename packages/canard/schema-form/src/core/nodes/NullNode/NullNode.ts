@@ -53,8 +53,8 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
     onChange,
     parentNode,
     validationMode,
+    validatorFactory,
     required,
-    ajv,
   }: SchemaNodeConstructorProps<NullSchema>) {
     super({
       key,
@@ -64,8 +64,8 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
       onChange,
       parentNode,
       validationMode,
+      validatorFactory,
       required,
-      ajv,
     });
     if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
     this.activate();

@@ -8,18 +8,16 @@ import { JSONPath } from '@winglet/json';
 
 import type { Fn, SetStateFn } from '@aileron/declare';
 
-import {
-  type Ajv,
-  type ErrorObject,
-  type ValidateFunction,
-  ajvHelper,
-} from '@/schema-form/helpers/ajv';
+import { PluginManager } from '@/schema-form/app/plugin';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import { transformErrors } from '@/schema-form/helpers/error';
 import type {
   AllowedValue,
+  JsonSchema,
   JsonSchemaError,
   JsonSchemaWithVirtual,
+  ValidateFunction,
+  ValidatorFactory,
 } from '@/schema-form/types';
 
 import {
@@ -255,8 +253,8 @@ export abstract class AbstractNode<
     onChange,
     parentNode,
     validationMode,
+    validatorFactory,
     required,
-    ajv,
   }: SchemaNodeConstructorProps<Schema, Value>) {
     this.type = getNodeType(jsonSchema);
     this.group = getNodeGroup(jsonSchema);
@@ -300,7 +298,7 @@ export abstract class AbstractNode<
         : onChange;
 
     // NOTE: Special behavior for root node
-    if (this.isRoot) this.#prepareValidator(ajv, validationMode);
+    if (this.isRoot) this.#prepareValidator(validatorFactory, validationMode);
   }
 
   /**
@@ -715,8 +713,8 @@ export abstract class AbstractNode<
       this.setExternalErrors(nextErrors);
   }
 
-  /** Node's Ajv validation function */
-  #validator: ValidateFunction | null = null;
+  /** Node's validator function */
+  #validator: ValidateFunction | undefined;
 
   /**
    * Performs validation using the node's JsonSchema
@@ -727,15 +725,9 @@ export abstract class AbstractNode<
     value: Value | undefined,
   ): Promise<JsonSchemaError[]> {
     if (!this.isRoot || !this.#validator) return [];
-    try {
-      await this.#validator(value);
-    } catch (thrown: any) {
-      return transformErrors(
-        thrown?.errors as ErrorObject[],
-        IGNORE_ERROR_KEYWORDS,
-      );
-    }
-    return [];
+    const errors = await this.#validator(value);
+    if (errors) return transformErrors(errors, IGNORE_ERROR_KEYWORDS);
+    else return [];
   }
 
   /**
@@ -791,20 +783,19 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Prepares validator using Ajv, only available for rootNode
-   * @param ajv Ajv instance, creates new one if not provided
+   * Prepares validator, only available for rootNode
+   * @param validator ValidatorFactory, creates new one if not provided
    */
   #prepareValidator(
     this: AbstractNode,
-    ajv?: Ajv,
+    validatorFactory?: ValidatorFactory,
     validationMode?: ValidationMode,
   ) {
     if (!validationMode) return;
     try {
-      this.#validator = ajvHelper.compile({
-        jsonSchema: this.jsonSchema,
-        ajv,
-      });
+      this.#validator =
+        validatorFactory?.(this.jsonSchema as JsonSchema) ||
+        PluginManager.validator?.compile(this.jsonSchema as JsonSchema);
     } catch (error: any) {
       this.#validator = getFallbackValidator(error, this.jsonSchema);
     }

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Form, FormProvider, type JsonSchema } from '../src';
 import {
   FormErrorRenderer,

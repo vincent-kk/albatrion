@@ -22,8 +22,10 @@
   },
   "include": [
     "src",
-    "src/**/*.tsx?",
-    "coverage/**/*.tsx?"
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "coverage/**/*.ts",
+    "coverage/**/*.tsx",
   ],
   "exclude": [
     "node_modules",

@@ -1,3 +1,4 @@
+import Ajv from 'ajv';
 import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
@@ -6,6 +7,7 @@ import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import { NodeEventType, ValidationMode } from '../nodes';
 import { NumberNode } from '../nodes/NumberNode';
+import { createValidatorFactory } from './AbstractNode.test';
 
 describe('NumberNode', () => {
   it('숫자 노드가 정상적으로 생성되어야 함', () => {
@@ -149,6 +151,13 @@ describe('NumberNode', () => {
   });
 
   it('숫자 노드의 유효성 검사가 정상적으로 동작해야 함', async () => {
+    const validatorFactory = createValidatorFactory(
+      new Ajv({
+        allErrors: true,
+        strictSchema: false,
+        validateFormats: false,
+      }),
+    );
     const node = nodeFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -161,6 +170,7 @@ describe('NumberNode', () => {
         },
       },
       validationMode: ValidationMode.OnChange,
+      validatorFactory,
     });
 
     const numberNode = node?.find('score') as NumberNode;
