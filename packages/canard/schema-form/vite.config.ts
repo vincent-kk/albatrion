@@ -20,6 +20,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@/schema-form': resolve(__dirname, './src'),
+      '@/schema-form-ajv-plugin': resolve(
+        __dirname,
+        '../schema-form-ajv-plugin/src',
+      ),
     },
   },
   test: {

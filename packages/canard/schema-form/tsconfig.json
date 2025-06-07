@@ -15,6 +15,12 @@
       "@/schema-form/*": [
         "./canard/schema-form/src/*"
       ],
+      "@/schema-form-ajv-plugin": [
+        "./canard/schema-form-ajv-plugin/src"
+      ],
+      "@/schema-form-ajv-plugin/*": [
+        "./canard/schema-form-ajv-plugin/src/*"
+      ],
       "@aileron/*": [
         "./aileron/common/*"
       ],
@@ -22,8 +28,11 @@
   },
   "include": [
     "src",
-    "src/**/*.tsx?",
-    "coverage/**/*.tsx?"
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "coverage/**/*.ts",
+    "coverage/**/*.tsx",
+    "../schema-form-ajv-plugin/src/**/*.ts"
   ],
   "exclude": [
     "node_modules",
