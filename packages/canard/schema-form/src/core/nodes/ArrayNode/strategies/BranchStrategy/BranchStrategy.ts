@@ -5,6 +5,7 @@ import type { Fn } from '@aileron/declare';
 import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
 import type { ArrayNode } from '@/schema-form/core/nodes/ArrayNode';
 import {
+  type ChildNode,
   NodeEventType,
   type SchemaNode,
   type SchemaNodeFactory,
@@ -287,9 +288,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @private
    */
   private get __edges__() {
-    const edges = new Array<{ id: IndexId; node: SchemaNode }>(
-      this.__ids__.length,
-    );
+    const edges = new Array<ChildNode>(this.__ids__.length);
     for (let i = 0; i < this.__ids__.length; i++) {
       const id = this.__ids__[i];
       edges[i] = {
