@@ -1,3 +1,5 @@
+import { createValidatorFactory } from '@canard/schema-form-ajv-plugin';
+import Ajv from 'ajv';
 import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
@@ -422,6 +424,13 @@ describe('ArrayNode', () => {
   });
 
   it('배열 노드의 유효성 검사가 정상적으로 동작해야 함', async () => {
+    const validatorFactory = createValidatorFactory(
+      new Ajv({
+        allErrors: true,
+        strictSchema: false,
+        validateFormats: false,
+      }),
+    );
     const node = nodeFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -439,6 +448,7 @@ describe('ArrayNode', () => {
         },
       },
       validationMode: ValidationMode.OnChange,
+      validatorFactory,
     });
 
     await delay();
@@ -472,6 +482,13 @@ describe('ArrayNode', () => {
   });
 
   it('배열 노드의 고유 아이템 검사가 정상적으로 동작해야 함', async () => {
+    const validatorFactory = createValidatorFactory(
+      new Ajv({
+        allErrors: true,
+        strictSchema: false,
+        validateFormats: false,
+      }),
+    );
     const node = nodeFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -486,6 +503,7 @@ describe('ArrayNode', () => {
         },
       },
       validationMode: ValidationMode.OnChange,
+      validatorFactory,
     });
 
     await delay();

@@ -1,6 +1,7 @@
 import Ajv from 'ajv';
 import { describe, expect, it, vi } from 'vitest';
 
+import { createValidatorFactory } from '@/schema-form-ajv-plugin';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import { StringNode } from '../nodes/StringNode';
@@ -64,6 +65,13 @@ describe('AbstractNode', () => {
   });
 
   it('validate', async () => {
+    const validatorFactory = createValidatorFactory(
+      new Ajv({
+        allErrors: true,
+        strictSchema: false,
+        validateFormats: false,
+      }),
+    );
     const node = nodeFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -77,6 +85,7 @@ describe('AbstractNode', () => {
         },
       },
       validationMode: ValidationMode.OnChange,
+      validatorFactory,
     });
     await wait();
 
@@ -106,6 +115,8 @@ describe('AbstractNode', () => {
       },
       errors: true,
     });
+
+    const validatorFactory = createValidatorFactory(ajv);
     const node = nodeFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -118,7 +129,7 @@ describe('AbstractNode', () => {
         },
       },
       validationMode: ValidationMode.OnChange,
-      ajv,
+      validatorFactory,
     });
     const num = node?.find('num');
     await wait();
@@ -203,6 +214,7 @@ describe('AbstractNode', () => {
       errors: true,
     });
 
+    const validatorFactory = createValidatorFactory(ajv);
     const node = nodeFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -230,7 +242,7 @@ describe('AbstractNode', () => {
         data: [3, 5, 7],
       },
       validationMode: ValidationMode.OnChange,
-      ajv,
+      validatorFactory,
     });
     await wait();
 

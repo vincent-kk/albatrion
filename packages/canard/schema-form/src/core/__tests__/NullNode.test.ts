@@ -1,7 +1,9 @@
+import Ajv from 'ajv';
 import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
+import { createValidatorFactory } from '@/schema-form-ajv-plugin';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import { NodeEventType, ValidationMode } from '../nodes';
@@ -135,6 +137,13 @@ describe('NullNode', () => {
   });
 
   it('널 노드의 유효성 검사가 정상적으로 동작해야 함', async () => {
+    const validatorFactory = createValidatorFactory(
+      new Ajv({
+        allErrors: true,
+        strictSchema: false,
+        validateFormats: false,
+      }),
+    );
     const node = nodeFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -146,6 +155,7 @@ describe('NullNode', () => {
         },
       },
       validationMode: ValidationMode.OnChange,
+      validatorFactory,
     });
 
     const nullNode = node?.find('emptyValue') as NullNode;

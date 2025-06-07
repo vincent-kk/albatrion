@@ -1,7 +1,9 @@
+import Ajv from 'ajv';
 import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
+import { createValidatorFactory } from '@/schema-form-ajv-plugin';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 import type { JsonSchema } from '@/schema-form/types';
 
@@ -252,6 +254,13 @@ describe('ObjectNode', () => {
   });
 
   it('객체 노드의 유효성 검사가 정상적으로 동작해야 함', async () => {
+    const validatorFactory = createValidatorFactory(
+      new Ajv({
+        allErrors: true,
+        strictSchema: false,
+        validateFormats: false,
+      }),
+    );
     const node = nodeFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -267,6 +276,7 @@ describe('ObjectNode', () => {
         },
       },
       validationMode: ValidationMode.OnChange,
+      validatorFactory,
     });
 
     await delay();
@@ -332,6 +342,13 @@ describe('ObjectNode', () => {
   });
 
   it('객체 노드의 추가 속성이 허용되지 않아야 함', async () => {
+    const validatorFactory = createValidatorFactory(
+      new Ajv({
+        allErrors: true,
+        strictSchema: false,
+        validateFormats: false,
+      }),
+    );
     const node = nodeFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -347,6 +364,7 @@ describe('ObjectNode', () => {
         },
       },
       validationMode: ValidationMode.OnChange,
+      validatorFactory,
     });
 
     const objectNode = node?.find('user') as ObjectNode;
@@ -362,6 +380,13 @@ describe('ObjectNode', () => {
   });
 
   it('객체 노드의 추가 속성이 허용되지 않아야 함, 객체 내부에 additionalProperties 속성이 있는 경우', async () => {
+    const validatorFactory = createValidatorFactory(
+      new Ajv({
+        allErrors: true,
+        strictSchema: false,
+        validateFormats: false,
+      }),
+    );
     const node = nodeFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -381,6 +406,7 @@ describe('ObjectNode', () => {
         },
       },
       validationMode: ValidationMode.OnChange,
+      validatorFactory,
     });
     await delay();
 
@@ -411,8 +437,8 @@ describe('ObjectNode', () => {
 
     const arrayNode = node?.find('users') as ArrayNode;
     const childNodes = arrayNode.children;
-    expect(childNodes.length).toBe(3);
-    childNodes.forEach(({ node }, index) => {
+    expect(childNodes?.length).toBe(3);
+    childNodes?.forEach(({ node }, index) => {
       expect(node.value).toEqual({
         id: index + 1,
         name: `User ${index + 1}`,
