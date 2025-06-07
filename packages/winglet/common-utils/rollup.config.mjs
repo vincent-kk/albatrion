@@ -51,9 +51,9 @@ const getCommonPlugins = (input, outputDir = 'dist') => [
       drop_debugger: true,
       dead_code: true,
       unused: true,
-      toplevel: true,
-      passes: 10,
-      pure_getters: true,
+      toplevel: false,
+      passes: 7,
+      pure_getters: false,
       reduce_vars: true,
       reduce_funcs: true,
       hoist_funs: true,
@@ -78,13 +78,10 @@ const getCommonPlugins = (input, outputDir = 'dist') => [
       pure_funcs: ['console.log'],
     },
     mangle: {
-      toplevel: true,
+      toplevel: false,
       eval: true,
       keep_fnames: false,
       reserved: [],
-      properties: {
-        regex: /^_/,
-      },
     },
     format: {
       comments: false,
@@ -96,7 +93,7 @@ const getCommonPlugins = (input, outputDir = 'dist') => [
     module: true,
     keep_fnames: false,
     keep_classnames: false,
-    toplevel: true,
+    toplevel: false,
   }),
 ];
 

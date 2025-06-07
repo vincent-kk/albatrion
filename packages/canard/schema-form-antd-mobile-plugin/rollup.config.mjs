@@ -81,8 +81,8 @@ export default [
         compress: {
           drop_console: false,
           dead_code: true,
-          passes: 8,
-          pure_getters: true,
+          passes: 7,
+          pure_getters: false,
           keep_fargs: false,
           hoist_funs: true,
           hoist_vars: true,

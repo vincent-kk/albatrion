@@ -54,9 +54,9 @@ const getCommonPlugins = (input, outputDir = 'dist') => [
       drop_debugger: true,
       dead_code: true,
       unused: true,
-      toplevel: true,
-      passes: 10,
-      pure_getters: true,
+      toplevel: false,
+      passes: 7,
+      pure_getters: false,
       reduce_vars: true,
       reduce_funcs: true,
       hoist_funs: true,
@@ -80,13 +80,10 @@ const getCommonPlugins = (input, outputDir = 'dist') => [
       ecma: 2020,
     },
     mangle: {
-      toplevel: true,
+      toplevel: false,
       eval: true,
       keep_fnames: true,
       reserved: ['React', 'Component', 'useState', 'useEffect'],
-      properties: {
-        regex: /^_/,
-      },
     },
     format: {
       comments: false,
@@ -98,7 +95,7 @@ const getCommonPlugins = (input, outputDir = 'dist') => [
     module: true,
     keep_fnames: true,
     keep_classnames: true,
-    toplevel: true,
+    toplevel: false,
   }),
 ];
 
