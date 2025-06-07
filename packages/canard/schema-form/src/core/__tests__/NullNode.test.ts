@@ -3,11 +3,11 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { createValidatorFactory } from '@/schema-form-ajv8-plugin';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import { NodeEventType, ValidationMode } from '../nodes';
 import { NullNode } from '../nodes/NullNode';
+import { createValidatorFactory } from './AbstractNode.test';
 
 describe('NullNode', () => {
   it('널 노드가 정상적으로 생성되어야 함', () => {

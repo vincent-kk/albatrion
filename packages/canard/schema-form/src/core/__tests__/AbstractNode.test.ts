@@ -1,8 +1,15 @@
-import Ajv from 'ajv';
+import Ajv, { ErrorObject } from 'ajv';
 import { describe, expect, it, vi } from 'vitest';
 
-import { createValidatorFactory } from '@/schema-form-ajv8-plugin';
+import { isArrayIndex } from '@winglet/common-utils';
+import { JSONPath, JSONPointer } from '@winglet/json';
+
 import { nodeFromJsonSchema } from '@/schema-form/core';
+import type {
+  JsonSchema,
+  JsonSchemaError,
+  ValidateFunction,
+} from '@/schema-form/types';
 
 import { StringNode } from '../nodes/StringNode';
 import { NodeEvent, NodeEventType, ValidationMode } from '../nodes/type';
@@ -372,3 +379,63 @@ describe('AbstractNode', () => {
     });
   });
 });
+
+export const createValidatorFactory =
+  (ajv: Ajv) =>
+  (jsonSchema: JsonSchema): ValidateFunction => {
+    const validate = ajv.compile({
+      ...jsonSchema,
+      $async: true,
+    });
+    return async (data) => {
+      try {
+        await validate(data);
+        return null;
+      } catch (thrown: any) {
+        if (Array.isArray(thrown?.errors))
+          return transformErrors(thrown.errors);
+        throw thrown;
+      }
+    };
+  };
+
+const transformErrors = (errors: ErrorObject[]): JsonSchemaError[] => {
+  if (!Array.isArray(errors)) return [];
+  const result = new Array<JsonSchemaError>(errors.length);
+  for (let index = 0; index < errors.length; index++) {
+    const error = errors[index] as JsonSchemaError & ErrorObject;
+    error.dataPath = transformDataPath(error);
+    result[index] = error;
+  }
+  return result;
+};
+
+const transformDataPath = (error: ErrorObject): string => {
+  const instancePath = error.instancePath;
+  const hasMissingProperty =
+    error.keyword === 'required' && error.params?.missingProperty;
+
+  if (!instancePath)
+    return hasMissingProperty
+      ? JSONPath.Child + error.params.missingProperty
+      : '';
+
+  const parts = [];
+  let segmentStart = 1;
+
+  for (let i = 1; i <= instancePath.length; i++) {
+    if (i === instancePath.length || instancePath[i] === JSONPointer.Child) {
+      if (segmentStart < i) {
+        const segment = instancePath.slice(segmentStart, i);
+        if (isArrayIndex(segment)) parts.push('[' + segment + ']');
+        else parts.push(JSONPath.Child + segment);
+      }
+      segmentStart = i + 1;
+    }
+  }
+
+  const result = parts.join('');
+  return hasMissingProperty
+    ? result + JSONPath.Child + error.params.missingProperty
+    : result;
+};

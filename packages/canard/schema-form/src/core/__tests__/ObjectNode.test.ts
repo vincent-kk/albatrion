@@ -3,7 +3,6 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { createValidatorFactory } from '@/schema-form-ajv8-plugin';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 import type { JsonSchema } from '@/schema-form/types';
 
@@ -12,6 +11,7 @@ import { ArrayNode } from '../nodes/ArrayNode';
 import { NumberNode } from '../nodes/NumberNode';
 import { ObjectNode } from '../nodes/ObjectNode';
 import { StringNode } from '../nodes/StringNode';
+import { createValidatorFactory } from './AbstractNode.test';
 
 describe('ObjectNode', () => {
   it('객체 노드가 정상적으로 생성되어야 함', () => {

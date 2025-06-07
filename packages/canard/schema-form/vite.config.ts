@@ -20,10 +20,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@/schema-form': resolve(__dirname, './src'),
-      '@/schema-form-ajv8-plugin': resolve(
-        __dirname,
-        '../schema-form-ajv8-plugin/src',
-      ),
     },
   },
   test: {

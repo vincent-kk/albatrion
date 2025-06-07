@@ -2,8 +2,6 @@ import { type ComponentType, useMemo, useRef, useState } from 'react';
 
 import Ajv from 'ajv';
 
-import { createValidatorFactory } from '@/schema-form-ajv8-plugin';
-
 import {
   Form,
   FormProvider,
@@ -15,6 +13,7 @@ import {
   ValidationMode,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
+import { createValidatorFactory } from './components/validator';
 
 export default {
   title: 'Form/14. ExternalProvider',

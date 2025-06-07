@@ -3,11 +3,11 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
 
-import { createValidatorFactory } from '@/schema-form-ajv8-plugin';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import { NodeEventType, ValidationMode } from '../nodes';
 import { NumberNode } from '../nodes/NumberNode';
+import { createValidatorFactory } from './AbstractNode.test';
 
 describe('NumberNode', () => {
   it('숫자 노드가 정상적으로 생성되어야 함', () => {

@@ -1,7 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
 
-import { plugin } from '@/schema-form-ajv8-plugin';
-
 import {
   Form,
   FormHandle,
@@ -13,6 +11,7 @@ import {
   useFormSubmit,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
+import { plugin } from './components/validator';
 
 registerPlugin(plugin);
 
