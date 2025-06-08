@@ -87,7 +87,6 @@ const defaultSettings: Ajv.Options = {
 The `createValidatorFactory` function provides:
 
 - **Advanced Error Processing**: Enhanced error transformation using `@winglet/common-utils`
-- **JSON Path Integration**: Precise error location tracking with `@winglet/json`
 - **Performance Optimization**: Improved caching and validation speed
 - **Rich Error Context**: Detailed error information for better debugging
 - **Type Safety**: Full TypeScript support with advanced type inference
@@ -120,7 +119,6 @@ Please use a transpiler like Babel to transform the code for your target environ
 
 - @canard/schema-form (peer dependency)
 - @winglet/common-utils (workspace dependency)
-- @winglet/json (workspace dependency)
 - ajv ^8.0.0
 
 **JSON Schema Support:**

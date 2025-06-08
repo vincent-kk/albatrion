@@ -44,7 +44,6 @@
   },
   "dependencies": {
     "@winglet/common-utils": "workspace:^",
-    "@winglet/json": "workspace:^",
     "ajv": "^8.0.0"
   },
   "devDependencies": {

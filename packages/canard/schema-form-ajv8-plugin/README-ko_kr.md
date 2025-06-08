@@ -87,7 +87,6 @@ const defaultSettings: Ajv.Options = {
 `createValidatorFactory` 함수는 다음을 제공합니다:
 
 - **고급 오류 처리**: `@winglet/common-utils`를 사용한 향상된 오류 변환
-- **JSON Path 통합**: `@winglet/json`을 통한 정확한 오류 위치 추적
 - **성능 최적화**: 향상된 캐싱 및 검증 속도
 - **풍부한 오류 컨텍스트**: 더 나은 디버깅을 위한 상세한 오류 정보
 - **타입 안전성**: 고급 타입 추론과 함께 완전한 TypeScript 지원
@@ -120,7 +119,6 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 - @canard/schema-form (peer dependency)
 - @winglet/common-utils (workspace dependency)
-- @winglet/json (workspace dependency)
 - ajv ^8.0.0
 
 **JSON Schema 지원:**
