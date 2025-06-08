@@ -132,10 +132,10 @@ const FormInner = <
     ref,
     () => ({
       node: rootNode,
-      focus: (dataPath: string) =>
-        rootNode?.find(dataPath)?.publish({ type: NodeEventType.Focus }),
-      select: (dataPath: string) =>
-        rootNode?.find(dataPath)?.publish({ type: NodeEventType.Select }),
+      focus: (path: string) =>
+        rootNode?.find(path)?.publish({ type: NodeEventType.Focus }),
+      select: (path: string) =>
+        rootNode?.find(path)?.publish({ type: NodeEventType.Select }),
       reset: update,
       getValue: () => rootNode?.value as Value,
       setValue: (value, options) => rootNode?.setValue(value as any, options),

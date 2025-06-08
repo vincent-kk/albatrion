@@ -92,8 +92,8 @@ export interface FormHandle<
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   node?: InferSchemaNode<Schema>;
-  focus: Fn<[dataPath: SchemaNode['path']]>;
-  select: Fn<[dataPath: SchemaNode['path']]>;
+  focus: Fn<[path: SchemaNode['path']]>;
+  select: Fn<[path: SchemaNode['path']]>;
   reset: Fn;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
