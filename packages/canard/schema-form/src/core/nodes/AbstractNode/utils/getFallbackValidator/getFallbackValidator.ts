@@ -16,9 +16,9 @@ export const getFallbackValidator =
         keyword: 'jsonSchemaCompileFailed',
         dataPath: JSONPath.Root,
         message: error.message,
-        params: {
+        source: error,
+        details: {
           jsonSchema,
-          error,
         },
       },
     ] satisfies JsonSchemaError[];

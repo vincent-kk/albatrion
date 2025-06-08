@@ -12,6 +12,7 @@ import {
   SetValueOption,
   registerPlugin,
 } from '@canard/schema-form';
+import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin';
 
 import { plugin } from '../src';
 import StoryLayout from './components/StoryLayout';
@@ -20,6 +21,7 @@ export default {
   title: 'RegisterPlugin',
 };
 
+registerPlugin(ajv8Plugin);
 registerPlugin(plugin);
 
 export const Common = () => {

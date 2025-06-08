@@ -14,9 +14,9 @@ export interface SchemaFormPlugin {
   FormLabel?: ComponentType<FormTypeRendererProps>;
   FormInput?: ComponentType<FormTypeRendererProps>;
   FormError?: ComponentType<FormTypeRendererProps>;
-  formatError?: FormatError;
   formTypeInputDefinitions?: FormTypeInputDefinition[];
   validator?: ValidatorPlugin;
+  formatError?: FormatError;
 }
 
 export interface ValidatorPlugin {

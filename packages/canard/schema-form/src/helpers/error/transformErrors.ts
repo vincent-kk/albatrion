@@ -20,8 +20,8 @@ export const transformErrors = (
   if (!isArray(errors)) return [];
   const result = new Array<JsonSchemaError>();
   for (let i = 0; i < errors.length; i++) {
-    if (omits?.has(errors[i].keyword)) continue;
     const error = errors[i];
+    if (error.keyword && omits?.has(error.keyword)) continue;
     error.key = key ? ++sequence : undefined;
     result[result.length] = error;
   }

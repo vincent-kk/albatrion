@@ -10,10 +10,10 @@ const createMockError = (
   message?: string,
 ): JsonSchemaError => ({
   keyword,
-  dataPath: `/test/${keyword}`,
-  schemaPath: `#/properties/test/${keyword}`,
+  dataPath: `test.${keyword}`,
   message: message || `Test error for ${keyword}`,
-  params: {},
+  details: {},
+  source: { originalKeyword: keyword },
 });
 
 describe('transformErrors', () => {
@@ -332,24 +332,27 @@ describe('transformErrors', () => {
       const realWorldErrors: JsonSchemaError[] = [
         {
           keyword: 'required',
-          dataPath: '',
-          schemaPath: '#/required',
+          dataPath: 'root',
           message: "should have required property 'email'",
-          params: { missingProperty: 'email' },
+          details: { missingProperty: 'email' },
+          source: { originalKeyword: 'required', missingProperty: 'email' },
         },
         {
           keyword: 'minLength',
-          dataPath: '.username',
-          schemaPath: '#/properties/username/minLength',
+          dataPath: 'username',
           message: 'should NOT be shorter than 5 characters',
-          params: { limit: 5 },
+          details: { limit: 5 },
+          source: { originalKeyword: 'minLength', limit: 5 },
         },
         {
           keyword: 'pattern',
-          dataPath: '.phoneNumber',
-          schemaPath: '#/properties/phoneNumber/pattern',
+          dataPath: 'phoneNumber',
           message: 'should match pattern "^\\+?[1-9]\\d{1,14}$"',
-          params: { pattern: '^\\+?[1-9]\\d{1,14}$' },
+          details: { pattern: '^\\+?[1-9]\\d{1,14}$' },
+          source: {
+            originalKeyword: 'pattern',
+            pattern: '^\\+?[1-9]\\d{1,14}$',
+          },
         },
       ];
       const omits = new Set(['pattern']);
@@ -366,7 +369,7 @@ describe('transformErrors', () => {
 
       // 원본 데이터 구조가 보존되는지 확인
       expect(result[0].message).toBe("should have required property 'email'");
-      expect(result[1].params).toEqual({ limit: 5 });
+      expect(result[1].details).toEqual({ limit: 5 });
     });
   });
 });

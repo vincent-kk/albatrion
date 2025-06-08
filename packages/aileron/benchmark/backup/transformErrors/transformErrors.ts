@@ -1,26 +1,20 @@
 import { JSONPath, JSONPointer } from '@winglet/json';
 
-import type { ErrorObject } from '@/schema-form/helpers/ajv';
-import type { JsonSchemaError } from '@/schema-form/types';
-
 let keySeq = 0;
 
-export const transformErrors = (
-  errors: ErrorObject[],
-  useKey = false,
-): JsonSchemaError[] => {
+export const transformErrors = (errors: any[], useKey = false): any[] => {
   if (!Array.isArray(errors)) return [];
   return errors.map((error) => {
-    (error as unknown as JsonSchemaError).key = useKey ? ++keySeq : undefined;
-    (error as unknown as JsonSchemaError).dataPath = transformDataPath(error);
-    return error as unknown as JsonSchemaError;
+    (error as any).key = useKey ? ++keySeq : undefined;
+    (error as any).dataPath = transformDataPath(error);
+    return error;
   });
 };
 
 const JSON_POINTER_CHILD_PATTERN = new RegExp(`${JSONPointer.Child}`, 'g');
 const INDEX_PATTERN = new RegExp(`(${JSONPath.Child})(\\d+)`, 'g');
 
-const transformDataPath = (error: ErrorObject): string => {
+const transformDataPath = (error: any): string => {
   const dataPath = error.instancePath
     .replace(JSON_POINTER_CHILD_PATTERN, JSONPath.Child)
     .replace(INDEX_PATTERN, '$1[$2]');

@@ -18,7 +18,9 @@ describe('transformDataPath', () => {
     const result = transformDataPath(errors);
 
     expect(result[0].dataPath).toBe('.user.name');
-    expect(result).toBe(errors); // 원본 배열이 수정됨
+    // 새로운 배열이 반환되므로 참조는 다름
+    expect(result).not.toBe(errors);
+    expect(result).toHaveLength(1);
   });
 
   it('should handle required errors at root level (empty dataPath)', () => {
@@ -136,7 +138,9 @@ describe('transformDataPath', () => {
     expect(result[1].dataPath).toBe('.age');
     expect(result[2].dataPath).toBe('.email');
     expect(result[3].dataPath).toBe('');
-    expect(result).toBe(errors); // 원본 배열이 수정됨
+    // 새로운 배열이 반환되므로 참조는 다름
+    expect(result).not.toBe(errors);
+    expect(result).toHaveLength(4);
   });
 
   it('should handle deep nested dataPath with required error', () => {
@@ -162,7 +166,9 @@ describe('transformDataPath', () => {
     const result = transformDataPath(errors);
 
     expect(result).toEqual([]);
-    expect(result).toBe(errors); // 동일한 배열 참조
+    // 빈 배열이라도 새로운 배열이 반환됨
+    expect(result).not.toBe(errors);
+    expect(result).toHaveLength(0);
   });
 
   it('should handle required error without missingProperty param', () => {
