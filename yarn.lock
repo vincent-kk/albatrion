@@ -1899,6 +1899,7 @@ __metadata:
   resolution: "@canard/schema-form-antd-mobile-plugin@workspace:packages/canard/schema-form-antd-mobile-plugin"
   dependencies:
     "@canard/schema-form": "workspace:^"
+    "@canard/schema-form-ajv8-plugin": "workspace:^"
     "@chromatic-com/storybook": "npm:^3.2.6"
     "@rollup/plugin-commonjs": "npm:^28.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.3.0"

@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 
 import type { Meta, StoryFn } from '@storybook/react';
 
-import { Form, type JsonSchemaError } from '@canard/schema-form';
+import {
+  Form,
+  type JsonSchemaError,
+  registerPlugin,
+} from '@canard/schema-form';
+import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin';
 
 import { FormTypeInputArrayDefinition } from '../src/formTypeInputs/FormTypeInputArray';
 import { FormTypeInputBooleanDefinition } from '../src/formTypeInputs/FormTypeInputBoolean';
@@ -14,6 +19,8 @@ import { FormTypeInputStringDefinition } from '../src/formTypeInputs/FormTypeInp
 import { FormTypeInputStringCheckboxDefinition } from '../src/formTypeInputs/FormTypeInputStringCheckbox';
 import { FormTypeInputStringSwitchDefinition } from '../src/formTypeInputs/FormTypeInputStringSwitch';
 import StoryLayout from './components/StoryLayout';
+
+registerPlugin(ajv8Plugin);
 
 export default {
   title: 'FormTypeInput',
