@@ -21,78 +21,120 @@ This project consists of the following packages:
 
 ## Work Guidelines
 
-### 1. Change Analysis
+### 1. Release Notes Writing Principles
 
-- Read existing changeset files and understand what changes have occurred
-- Analyze Git history or PR information if available
-- Assess the impact and importance of changes
-
-### 2. Release Notes Writing Principles
-
-#### Clarity
+#### Clarity & Conciseness
 
 - Use language that users can easily understand
-- Focus on actual impact rather than technical details
-- Specify "what," "why," and "how" something changed
+- **Keep it brief**: Focus on essential information only
+- Avoid lengthy explanations or technical details
+- Specify what changed and how to migrate (if needed)
 
-#### Structure
+#### Structure with Emojis
 
-- **Breaking Changes**: Changes that break existing code
-- **New Features**: Addition of new functionality
-- **Improvements**: Enhancement of existing features
-- **Bug Fixes**: Bug corrections
-- **Internal**: Internal changes without direct user impact
+- **📦 Package Releases**: List of released packages with links
+- **💥 Breaking Changes**: Changes that break existing code
+- **✨ New Features**: Addition of new functionality  
+- **🚀 Improvements**: Enhancement of existing features
+- **🐛 Bug Fixes**: Bug corrections
+- **📋 Installation**: Installation commands
 
 #### Practicality
 
-- Include migration guide (for Breaking Changes)
-- Provide example code (for new APIs)
-- Link to related documentation or issues
+- Include brief migration steps (for Breaking Changes)
+- Provide minimal code examples only when necessary
+- Focus on user impact, not implementation details
 
-### 3. Writing Format
+### 2. Writing Format
 
-````markdown
+```markdown
+# Package Name vX.X.X - Brief Title
+
+## 📦 Package Releases
+
+- @`@package/name@X.X.X` - Brief description
+- @`@package/plugin@X.X.X` 🆕 - New plugin description
+
 ---
-"@package/name": major | minor | patch
----
 
-## Change Summary (one line)
+## 💥 Breaking Changes
 
-### Breaking Changes (when applicable)
+### API Change Name
 
-- **Changed API**: Previous `oldMethod()` → New `newMethod()`
+Brief description of what changed.
 
-  ```typescript
-  // Before
-  const result = oldMethod(param);
+```tsx
+// Before
+<OldComponent prop={value} />
 
-  // After
-  const result = newMethod({ param });
-  ```
-````
-
-### New Features
-
-- **New Feature Name**: Brief description and usage example
-
-### Improvements
-
-- **Improved Aspect**: Performance enhancement, usability improvement, etc.
-
-### Bug Fixes
-
-- **Fixed Bug**: Issues that occurred in certain situations have been resolved
-
-### Internal
-
-- Refactoring, test improvements, build process changes, etc.
-
+// After  
+<NewComponent newProp={value} />
 ```
 
+### Migration
+
+1. Brief step one
+2. Brief step two
+3. No other changes required
+
+---
+
+## ✨ New Features
+
+- **Feature name**: Brief description
+- **Another feature**: Brief description
+
+---
+
+## 🚀 Improvements
+
+- **Performance**: Brief description of improvement
+- **TypeScript**: Enhanced type definitions
+- **Bundle size**: Reduced dependencies
+
+---
+
+## 🐛 Bug Fixes
+
+- Fixed specific issue description
+- Improved error handling scenario
+- Resolved edge case behavior
+
+---
+
+## 📋 Installation
+
+```bash
+# Recommended
+npm install @package/name@X.X.X
+
+# With plugins
+npm install @package/name@X.X.X @package/plugin@X.X.X
+```
+```
+
+### 3. Content Guidelines
+
+#### What to Include
+- Essential changes that affect users
+- Breaking changes with simple migration steps
+- New features with one-line descriptions
+- Important bug fixes
+- Installation commands
+
+#### What to Exclude
+- Technical implementation details
+- Internal refactoring details  
+- Verbose explanations
+- Complex code examples
+- Architecture descriptions
+- Performance metrics (unless significant)
+
 ### 4. Tone Guide
-- Use polite language (according to Vincent's preference)
-- Professional yet friendly tone
-- Clear and concise expression
+- Professional yet friendly
+- Clear and direct
+- **Concise over comprehensive**
+- Use bullet points for lists
 - Maintain technical accuracy
 
 ### 5. Version Decision Guide
@@ -102,19 +144,19 @@ This project consists of the following packages:
 
 ## Example Workflow
 
-1. **Analysis**: "What has changed in this changeset?"
-2. **Classification**: "What category does this change belong to?"
-3. **Impact Assessment**: "What impact does this have on users?"
-4. **Documentation**: "What do users need to know?"
-5. **Review**: "Is migration needed? Are examples required?"
+1. **Analysis**: "What are the key user-facing changes?"
+2. **Classification**: "Breaking, Feature, Improvement, or Bug Fix?"
+3. **Brevity Check**: "Can I say this in fewer words?"
+4. **User Focus**: "What does the user need to know to migrate/use this?"
+5. **Polish**: "Is this as concise as possible while staying clear?"
 
 ## Important Notes
+- **Keep it short**: Release notes should be scannable in under 2 minutes
+- **Focus on user impact**: Internal changes go to "Improvements" if mentioned at all
 - Maintain existing changeset package names and version types
-- Ask Vincent for confirmation on uncertain content
-- Write code examples in TypeScript
-- Maintain consistency with project coding guidelines
-- **ALWAYS write changeset content in English only** - Never use Korean or any other language
-- Use professional, clear English for all changeset descriptions
+- Write code examples in TypeScript when needed
+- **ALWAYS write changeset content in English only**
+- Use the emoji structure consistently
+- Link to package READMEs for detailed usage
 
-Please follow this guide to transform changeset files into user-friendly and useful release notes.
-```
+Please follow this guide to create concise, user-friendly release notes that developers can quickly scan and understand.
