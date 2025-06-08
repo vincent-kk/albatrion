@@ -1,21 +1,13 @@
 import { isArray } from '@winglet/common-utils';
 import { JSONPath } from '@winglet/json';
 
-import type {
-  JsonSchemaError,
-  JsonSchemaWithVirtual,
-} from '@/schema-form/types';
-
 /**
  * @description oneOf 속성을 가진 JSON Schema에 대한 에러 제거
  * @param errors - JSON Schema 에러 배열
  * @param jsonSchema - JSON Schema
  * @returns 필터링된 JSON Schema 에러 배열
  */
-export const filterErrors = (
-  errors: JsonSchemaError[],
-  jsonSchema: JsonSchemaWithVirtual,
-) => {
+export const filterErrors = (errors: any[], jsonSchema: any) => {
   const oneOfRequiredFieldMap = new Map<string, string[]>();
   if (isArray(jsonSchema.oneOf)) {
     for (let i = 0; i < jsonSchema.oneOf.length; i++) {

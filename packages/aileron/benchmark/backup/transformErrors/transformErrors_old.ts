@@ -1,15 +1,10 @@
 import { JSONPath, JSONPointer } from '@winglet/json';
 
-import type { JsonSchemaError } from '@/schema-form/types';
-
 let keySeq = 0;
 
 const JSON_POINTER_CHILD_PATTERN = new RegExp(`${JSONPointer.Child}`, 'g');
 
-export const transformErrors = (
-  errors: JsonSchemaError[],
-  useKey = false,
-): JsonSchemaError[] => {
+export const transformErrors = (errors: any[], useKey = false): any[] => {
   return (Array.isArray(errors) ? errors : []).map((error) => {
     const key = useKey ? ++keySeq : undefined;
     error.dataPath = error.instancePath.replace(

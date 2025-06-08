@@ -47,6 +47,7 @@
     "dist",
     "build",
     "coverage",
+    "backup",
     "scripts",
     "__test__",
     "__tests__",
