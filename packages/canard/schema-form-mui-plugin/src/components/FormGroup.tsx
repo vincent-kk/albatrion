@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, FormHelperText } from '@mui/material';
 
 import type { FormTypeRendererProps } from '@canard/schema-form';
 
@@ -36,7 +36,7 @@ export const FormGroup = ({
         }}
       >
         <Input />
-        {errorMessage}
+        <FormHelperText error>{errorMessage}</FormHelperText>
       </Box>
     );
   }

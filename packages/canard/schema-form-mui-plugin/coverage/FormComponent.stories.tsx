@@ -6,7 +6,6 @@ import { FormError } from '../src/components/FormError';
 import { FormGroup } from '../src/components/FormGroup';
 import { FormInput } from '../src/components/FormInput';
 import { FormLabel } from '../src/components/FormLabel';
-import { formatError } from '../src/components/formatError';
 import { formTypeInputDefinitions } from '../src/formTypeInputs';
 
 export default {
@@ -153,7 +152,6 @@ const bigSchema = {
 export const FormErrorComponent = () => {
   return (
     <FormProvider
-      formatError={formatError}
       FormErrorRenderer={FormError}
       formTypeInputDefinitions={formTypeInputDefinitions}
     >
@@ -167,7 +165,6 @@ export const FormErrorComponent = () => {
 export const FormInputComponent = () => {
   return (
     <FormProvider
-      formatError={formatError}
       FormInputRenderer={FormInput}
       formTypeInputDefinitions={formTypeInputDefinitions}
     >
@@ -195,7 +192,6 @@ export const FormGroupComponent = () => {
   return (
     <FormProvider
       FormGroupRenderer={FormGroup}
-      formatError={formatError}
       formTypeInputDefinitions={formTypeInputDefinitions}
     >
       <Form jsonSchema={bigSchema} showError context={{}} />
