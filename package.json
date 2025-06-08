@@ -39,7 +39,8 @@
     "schemaForm:antd": "yarn workspace @canard/schema-form-antd-plugin",
     "schemaForm:antdMobile": "yarn workspace @canard/schema-form-antd-mobile-plugin",
     "schemaForm:mui": "yarn workspace @canard/schema-form-mui-plugin",
-    "sort:packages": "npx sort-package-json '**/package.json'"
+    "sort:packages": "npx sort-package-json '**/package.json'",
+    "tag:packages": "./scripts/tag-packages.sh"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.1",

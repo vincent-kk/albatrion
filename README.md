@@ -186,10 +186,39 @@ yarn changeset:publish
 
 ## 🔧 Scripts
 
+### Building & Publishing
+
 - `yarn build:all` - Build all packages
 - `yarn changeset` - Create a new changeset
 - `yarn changeset:version` - Update versions based on changesets
 - `yarn changeset:publish` - Publish packages to npm
+
+### Package Tagging
+
+- `yarn tag:packages <commit>` - Create Git tags for all packages based on their versions in a specific commit
+- `yarn tag:packages <commit> --push` - Create tags and automatically push them to remote
+- `yarn tag:packages <commit> -p` - Create tags and automatically push them to remote (short flag)
+
+#### Tagging Examples
+
+```bash
+# Create tags for packages in current commit
+yarn tag:packages HEAD
+
+# Create tags for a specific commit and push to remote
+yarn tag:packages f20ca74baa16456ba9de006c709c61d29a1d1708 --push
+
+# Create tags for packages in an older commit with short flag
+yarn tag:packages dcd9a7826f95ec694bbc7cfc4a79f10af93444ad -p
+```
+
+The tagging script automatically:
+
+- Discovers all packages in the monorepo
+- Creates tags in format `@scope/package@version`
+- Excludes private packages from tagging
+- Checks for existing tags to prevent duplicates
+- Provides interactive confirmation before creating tags
 
 ## 📄 License
 
