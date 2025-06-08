@@ -2011,6 +2011,7 @@ __metadata:
   resolution: "@canard/schema-form-mui-plugin@workspace:packages/canard/schema-form-mui-plugin"
   dependencies:
     "@canard/schema-form": "workspace:^"
+    "@canard/schema-form-ajv8-plugin": "workspace:^"
     "@chromatic-com/storybook": "npm:^3.2.4"
     "@emotion/react": "npm:^11.0.0"
     "@emotion/styled": "npm:^11.0.0"

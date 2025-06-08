@@ -1,6 +1,12 @@
 import React from 'react';
 
-import { Form, FormProvider, type JsonSchema } from '@canard/schema-form';
+import {
+  Form,
+  FormProvider,
+  type JsonSchema,
+  registerPlugin,
+} from '@canard/schema-form';
+import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin';
 
 import { FormError } from '../src/components/FormError';
 import { FormGroup } from '../src/components/FormGroup';
@@ -8,6 +14,7 @@ import { FormInput } from '../src/components/FormInput';
 import { FormLabel } from '../src/components/FormLabel';
 import { formTypeInputDefinitions } from '../src/formTypeInputs';
 
+registerPlugin(ajv8Plugin);
 export default {
   title: 'FormComponent',
 };
