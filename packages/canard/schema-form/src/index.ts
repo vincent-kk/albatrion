@@ -53,10 +53,10 @@ export type {
   FormatErrorOptions,
   ValidatorFactory,
   ValidateFunction,
+  PublicJsonSchemaError as JsonSchemaError,
 } from './types';
 
 export type {
-  JsonSchemaError,
   FormGroupProps,
   FormInputProps,
   FormRenderProps,
