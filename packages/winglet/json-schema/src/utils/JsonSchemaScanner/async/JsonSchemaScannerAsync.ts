@@ -1,39 +1,35 @@
 import { clone } from '@winglet/common-utils/object';
-import {
-  JSONPointer,
-  getValueByPointer,
-  setValueByPointer,
-} from '@winglet/json';
+import { JSONPointer, setValueByPointer } from '@winglet/json';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import {
-  type JsonScannerOptions,
+  type JsonScannerOptionsAsync,
   OperationPhase,
   type SchemaEntry,
   type SchemaVisitor,
-} from './type';
-import { getStackEntriesForNode } from './utils/getStackEntriesForNode';
-import { isDefinitionSchema } from './utils/isDefinitionSchema';
+} from '../type';
+import { getStackEntriesForNode } from '../utils/getStackEntriesForNode';
+import { isDefinitionSchema } from '../utils/isDefinitionSchema';
 
 interface JsonSchemaScannerProps<ContextType> {
   visitor?: SchemaVisitor<ContextType>;
-  options?: JsonScannerOptions<ContextType>;
+  options?: JsonScannerOptionsAsync<ContextType>;
 }
 
 /**
- * @class JsonSchemaScanner
+ * @class JsonSchemaScannerAsync
  * @template ContextType - Context type that can be used in visitors and options.
  *
- * A utility class that traverses JSON schemas using depth-first search (DFS),
- * applies the Visitor pattern, and resolves $ref references.
+ * A utility class that asynchronously traverses JSON schemas using depth-first search (DFS),
+ * applies the Visitor pattern, and asynchronously resolves $ref references.
  * Uses stack-based circular reference detection logic to prevent infinite loops.
  */
-export class JsonSchemaScanner<ContextType = void> {
+export class JsonSchemaScannerAsync<ContextType = void> {
   /** Visitor object: contains callback functions to be executed when entering/exiting schema nodes. */
   readonly #visitor: SchemaVisitor<ContextType>;
   /** Scan options: includes maximum traversal depth, filtering functions, reference resolution functions, etc. */
-  readonly #options: JsonScannerOptions<ContextType>;
+  readonly #options: JsonScannerOptionsAsync<ContextType>;
   /** Original JSON schema passed to the `scan` method. */
   #originalSchema: UnknownSchema | undefined;
   /** Final schema with references resolved. Computed on first call to `getValue`. */
@@ -42,7 +38,7 @@ export class JsonSchemaScanner<ContextType = void> {
   #pendingResolves: Array<[path: string, schema: UnknownSchema]> | undefined;
 
   /**
-   * Creates a JsonSchemaScanner instance.
+   * Creates a JsonSchemaScannerAsync instance.
    * @param {JsonSchemaScannerProps<ContextType>} [props] - Scanner configuration (visitor, options).
    */
   constructor(props?: JsonSchemaScannerProps<ContextType>) {
@@ -51,17 +47,17 @@ export class JsonSchemaScanner<ContextType = void> {
   }
 
   /**
-   * Scans the given JSON schema and updates internal state.
+   * Asynchronously scans the given JSON schema and updates internal state.
    * Executes visitor hooks and collects resolved reference information to store in `#pendingResolvedRefs`.
    *
    * @param {UnknownSchema} schema - The JSON schema object to scan.
-   * @returns {this} The current JsonSchemaScanner instance (allows method chaining).
+   * @returns {Promise<this>} The current JsonSchemaScannerAsync instance (allows method chaining).
    */
-  public scan(this: this, schema: UnknownSchema): this {
+  public async scan(this: this, schema: UnknownSchema): Promise<this> {
     this.#originalSchema = schema;
-    this.#processedSchema = undefined;
+    this.#processedSchema = undefined; // Reset previous results when starting new scan
     this.#pendingResolves = undefined;
-    this.#run(this.#originalSchema);
+    await this.#run(this.#originalSchema);
     return this;
   }
 
@@ -75,14 +71,12 @@ export class JsonSchemaScanner<ContextType = void> {
    * @returns {UnknownSchema | undefined} The processed final schema. Returns undefined if called before scanning.
    * Returns a deep copy of the original schema if references are not resolved.
    */
-  public getValue<Schema extends UnknownSchema>(
-    this: this,
-  ): Schema | undefined {
+  public getValue(this: this): UnknownSchema | undefined {
     if (!this.#originalSchema) return undefined;
-    if (this.#processedSchema) return this.#processedSchema as Schema;
+    if (this.#processedSchema) return this.#processedSchema;
     if (!this.#pendingResolves || this.#pendingResolves.length === 0) {
       this.#processedSchema = this.#originalSchema;
-      return this.#processedSchema as Schema;
+      return this.#processedSchema;
     }
 
     this.#processedSchema = clone(this.#originalSchema);
@@ -93,18 +87,20 @@ export class JsonSchemaScanner<ContextType = void> {
         resolvedSchema,
       );
     }
+
+    // Clear pending map after application (memory release)
     this.#pendingResolves = undefined;
-    return this.#processedSchema as Schema;
+    return this.#processedSchema;
   }
 
   /**
-   * Internal logic that traverses the schema using depth-first search (DFS) and resolves references.
+   * Internal logic that asynchronously traverses the schema using depth-first search (DFS) and resolves references.
    * Uses a state machine (OperationPhase) to manage the processing stages of each node.
    *
    * @param {UnknownSchema} schema - The schema node to start traversal from.
    * @private
    */
-  #run(this: this, schema: UnknownSchema): void {
+  async #run(this: this, schema: UnknownSchema): Promise<void> {
     const stack: SchemaEntry[] = [
       { schema, path: JSONPointer.Root, dataPath: JSONPointer.Root, depth: 0 },
     ];
@@ -119,14 +115,15 @@ export class JsonSchemaScanner<ContextType = void> {
         case OperationPhase.Enter: {
           if (
             this.#options.filter &&
-            !this.#options.filter(entry, this.#options.context)
+            !(await this.#options.filter(entry, this.#options.context))
           ) {
             stack.pop();
             entryPhase.delete(entry);
             break;
           }
 
-          this.#visitor.enter?.(entry, this.#options.context);
+          if (this.#visitor.enter)
+            await this.#visitor.enter(entry, this.#options.context);
           entryPhase.set(entry, OperationPhase.Reference);
           break;
         }
@@ -140,9 +137,10 @@ export class JsonSchemaScanner<ContextType = void> {
               entryPhase.set(entry, OperationPhase.Exit);
               break;
             }
+
             const resolvedReference =
               this.#options.resolveReference && !isDefinitionSchema(entry.path)
-                ? this.#options.resolveReference(
+                ? await this.#options.resolveReference(
                     referencePath,
                     this.#options.context,
                   )
@@ -191,7 +189,9 @@ export class JsonSchemaScanner<ContextType = void> {
         }
 
         case OperationPhase.Exit: {
-          this.#visitor.exit?.(entry, this.#options.context);
+          if (this.#visitor.exit)
+            await this.#visitor.exit(entry, this.#options.context);
+
           if (
             entry.referenceResolved &&
             entry.referencePath &&
@@ -210,29 +210,5 @@ export class JsonSchemaScanner<ContextType = void> {
         }
       }
     }
-  }
-
-  static resolveReference(
-    jsonSchema: UnknownSchema,
-  ): UnknownSchema | undefined {
-    const definitionMap = new Map<string, UnknownSchema>();
-    new JsonSchemaScanner({
-      visitor: {
-        exit: ({ schema, hasReference }) => {
-          if (hasReference && typeof schema.$ref === 'string')
-            definitionMap.set(
-              schema.$ref,
-              getValueByPointer(jsonSchema, schema.$ref),
-            );
-        },
-      },
-    }).scan(jsonSchema);
-    return new JsonSchemaScanner({
-      options: {
-        resolveReference: (path) => definitionMap.get(path),
-      },
-    })
-      .scan(jsonSchema)
-      .getValue();
   }
 }

@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import { JsonSchemaScannerAsync } from '../JsonSchemaScannerAsync';
+import { JsonSchemaScannerAsync } from '../async/JsonSchemaScannerAsync';
 
 describe('JsonSchemaScannerAsync 실제 데이터 테스트', () => {
   afterEach(() => {
