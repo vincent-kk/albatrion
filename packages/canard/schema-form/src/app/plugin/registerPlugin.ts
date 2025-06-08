@@ -12,10 +12,12 @@ export const registerPlugin = (plugin: SchemaFormPlugin) => {
   const hash = Murmur3.hash(stableSerialize(plugin));
   if (RegisteredPlugin.has(hash)) return;
   try {
-    const { formTypeInputDefinitions, validator, ...renderKit } = plugin;
+    const { formTypeInputDefinitions, validator, formatError, ...renderKit } =
+      plugin;
     PluginManager.appendRenderKit(renderKit);
     PluginManager.appendFormTypeInputDefinitions(formTypeInputDefinitions);
     PluginManager.appendValidator(validator);
+    PluginManager.appendFormatError(formatError);
   } catch (error) {
     throw new UnhandledError('REGISTER_PLUGIN', 'Failed to register plugin', {
       plugin,

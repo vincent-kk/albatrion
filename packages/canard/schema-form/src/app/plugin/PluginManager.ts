@@ -27,7 +27,6 @@ interface RenderKit {
   FormLabel: ComponentType<FormTypeRendererProps>;
   FormInput: ComponentType<FormTypeRendererProps>;
   FormError: ComponentType<FormTypeRendererProps>;
-  formatError: FormatError;
 }
 
 export class PluginManager {
@@ -36,11 +35,11 @@ export class PluginManager {
     FormLabel: FormLabelRenderer,
     FormInput: FormInputRenderer,
     FormError: FormErrorRenderer,
-    formatError: formatError,
   };
   static #formTypeInputDefinitions: NormalizedFormTypeInputDefinition[] =
     normalizeFormTypeInputDefinitions(formTypeDefinitions);
   static #validator: ValidatorPlugin | undefined;
+  static #formatError: FormatError = formatError;
 
   static get FormGroup() {
     return PluginManager.#renderKit.FormGroup;
@@ -55,7 +54,7 @@ export class PluginManager {
     return PluginManager.#renderKit.FormError;
   }
   static get formatError() {
-    return PluginManager.#renderKit.formatError;
+    return PluginManager.#formatError;
   }
   static get formTypeInputDefinitions() {
     return PluginManager.#formTypeInputDefinitions;
@@ -66,11 +65,9 @@ export class PluginManager {
 
   static appendRenderKit(renderKit: Partial<RenderKit> | undefined) {
     if (!renderKit) return;
-    const { formatError, ...FromTypes } = renderKit;
     PluginManager.#renderKit = {
       ...PluginManager.#renderKit,
-      ...remainOnlyReactComponent(FromTypes),
-      ...(formatError && { formatError }),
+      ...remainOnlyReactComponent(renderKit),
     };
   }
   static appendFormTypeInputDefinitions(
@@ -85,5 +82,9 @@ export class PluginManager {
   static appendValidator(validator: ValidatorPlugin | undefined) {
     if (!validator) return;
     PluginManager.#validator = validator;
+  }
+  static appendFormatError(formatError: FormatError | undefined) {
+    if (!formatError) return;
+    PluginManager.#formatError = formatError;
   }
 }
