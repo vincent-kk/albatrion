@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
-import { map } from '@winglet/common-utils';
+import { map } from '@winglet/common-utils/array';
 
 import type {
   FormTypeInputDefinition,

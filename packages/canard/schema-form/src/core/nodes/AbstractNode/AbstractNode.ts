@@ -1,9 +1,9 @@
 import {
-  equals,
   isEmptyObject,
   isObject,
   isTruthy,
-} from '@winglet/common-utils';
+} from '@winglet/common-utils/filter';
+import { equals } from '@winglet/common-utils/object';
 import { JSONPath } from '@winglet/json';
 
 import type { Fn, SetStateFn } from '@aileron/declare';

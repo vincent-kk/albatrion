@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 
-import { convertMsFromDuration, isString } from '@winglet/common-utils';
+import { convertMsFromDuration } from '@winglet/common-utils/convert';
+import { isString } from '@winglet/common-utils/filter';
 
 import type { Duration } from '@aileron/declare';
 

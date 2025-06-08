@@ -1,4 +1,4 @@
-import { JsonSchemaScanner } from '@winglet/json-schema';
+import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
 
 import type { JsonSchema } from '@/schema-form/types';
 

@@ -1,4 +1,4 @@
-import { clone } from '@winglet/common-utils';
+import { clone } from '@winglet/common-utils/object';
 
 import type { JsonRoot } from '@/json/type';
 

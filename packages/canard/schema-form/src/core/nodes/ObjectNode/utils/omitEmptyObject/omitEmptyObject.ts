@@ -1,4 +1,4 @@
-import { isEmptyObject } from '@winglet/common-utils';
+import { isEmptyObject } from '@winglet/common-utils/filter';
 
 import type { ObjectValue } from '@/schema-form/types';
 

@@ -3,8 +3,8 @@ import { type ReactNode, useMemo } from 'react';
 import { Checkbox } from 'antd-mobile';
 import type { CheckboxValue } from 'antd-mobile/es/components/checkbox';
 
-import { map } from '@winglet/common-utils';
-import { useHandle } from '@winglet/react-utils';
+import { map } from '@winglet/common-utils/array';
+import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   ArraySchema,

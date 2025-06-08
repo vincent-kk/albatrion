@@ -1,4 +1,5 @@
-import { clone, isPlainObject } from '@winglet/common-utils';
+import { isPlainObject } from '@winglet/common-utils/filter';
+import { clone } from '@winglet/common-utils/object';
 
 import type { JsonObject, JsonValue } from '@/json/type';
 

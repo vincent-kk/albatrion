@@ -1,4 +1,6 @@
-import { isTruthy, map, merge } from '@winglet/common-utils';
+import { map } from '@winglet/common-utils/array';
+import { isTruthy } from '@winglet/common-utils/filter';
+import { merge } from '@winglet/common-utils/object';
 
 import type { JsonSchemaWithRef } from '@/schema-form/types';
 

@@ -16,7 +16,7 @@ import {
   TextField,
 } from '@mui/material';
 
-import { useHandle } from '@winglet/react-utils';
+import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   FormTypeInputDefinition,

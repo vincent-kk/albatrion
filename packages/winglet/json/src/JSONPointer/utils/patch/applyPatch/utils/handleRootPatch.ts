@@ -1,4 +1,4 @@
-import { equals } from '@winglet/common-utils';
+import { equals } from '@winglet/common-utils/object';
 
 import { getValueByPointer } from '@/json/JSONPointer/utils/manipulator/getValueByPointer';
 import type { JsonRoot } from '@/json/type';

@@ -1,4 +1,5 @@
-import { hasOwnProperty, isArray, isObject } from '@winglet/common-utils';
+import { isArray, isObject } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Dictionary } from '@aileron/declare';
 

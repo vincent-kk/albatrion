@@ -16,12 +16,27 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.esm.js",
-      "require": "./dist/index.cjs.js"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./scanner": {
+      "types": "./dist/utils/JsonSchemaScanner/sync/index.d.ts",
+      "import": "./dist/sync.mjs",
+      "require": "./dist/sync.cjs"
+    },
+    "./async-scanner": {
+      "types": "./dist/utils/JsonSchemaScanner/async/index.d.ts",
+      "import": "./dist/async.mjs",
+      "require": "./dist/async.cjs"
+    },
+    "./filter": {
+      "types": "./dist/filter.d.ts",
+      "import": "./dist/filter.mjs",
+      "require": "./dist/filter.cjs"
     }
   },
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist",

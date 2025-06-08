@@ -3,8 +3,8 @@ import { memo, useMemo } from 'react';
 import {
   isFunctionComponent,
   isMemoComponent,
-  withErrorBoundary,
-} from '@winglet/react-utils';
+} from '@winglet/react-utils/filter';
+import { withErrorBoundary } from '@winglet/react-utils/hoc';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import type { SchemaNode } from '@/schema-form/core';

@@ -1,4 +1,4 @@
-import { clone } from '@winglet/common-utils';
+import { clone } from '@winglet/common-utils/object';
 import {
   JSONPointer,
   getValueByPointer,
@@ -12,9 +12,9 @@ import {
   OperationPhase,
   type SchemaEntry,
   type SchemaVisitor,
-} from './type';
-import { getStackEntriesForNode } from './utils/getStackEntriesForNode';
-import { isDefinitionSchema } from './utils/isDefinitionSchema';
+} from '../type';
+import { getStackEntriesForNode } from '../utils/getStackEntriesForNode';
+import { isDefinitionSchema } from '../utils/isDefinitionSchema';
 
 interface JsonSchemaScannerProps<ContextType> {
   visitor?: SchemaVisitor<ContextType>;

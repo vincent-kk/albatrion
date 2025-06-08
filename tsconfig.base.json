@@ -6,7 +6,7 @@
       "DOM"
     ],
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "jsx": "react-jsx",
     // Strict Type-Checking Options
     "strict": true,

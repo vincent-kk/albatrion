@@ -1,8 +1,6 @@
-import {
-  identityFunction,
-  isFunction,
-  scheduleNextTick,
-} from '@winglet/common-utils';
+import { identityFunction } from '@winglet/common-utils/constant';
+import { isFunction } from '@winglet/common-utils/filter';
+import { scheduleNextTick } from '@winglet/common-utils/scheduler';
 
 import type { Fn } from '@aileron/declare';
 

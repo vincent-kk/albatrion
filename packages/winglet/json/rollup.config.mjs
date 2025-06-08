@@ -2,7 +2,6 @@ import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
-import { readFileSync } from 'fs';
 import { dirname, resolve as resolvePath } from 'path';
 import copy from 'rollup-plugin-copy';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
@@ -14,35 +13,93 @@ const __dirname = dirname(__filename);
 
 const packagesRoot = resolvePath(__dirname, '../../');
 
-const packageJson = JSON.parse(
-  readFileSync(resolvePath(__dirname, './package.json'), 'utf8'),
-);
+const basePlugins = [
+  peerDepsExternal(),
+  resolve({
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+  }),
+  replace({
+    preventAssignment: true,
+  }),
+  commonjs(),
+  terser({
+    compress: {
+      drop_console: false,
+      drop_debugger: true,
+      dead_code: true,
+      unused: true,
+      toplevel: false,
+      passes: 7,
+      pure_getters: false,
+      reduce_vars: true,
+      reduce_funcs: true,
+      hoist_funs: true,
+      hoist_vars: true,
+      if_return: true,
+      join_vars: true,
+      collapse_vars: true,
+      comparisons: true,
+      conditionals: true,
+      evaluate: true,
+      booleans: true,
+      typeofs: true,
+      loops: true,
+      properties: true,
+      sequences: true,
+      side_effects: true,
+      switches: true,
+      arrows: true,
+      arguments: true,
+      keep_fargs: false,
+      ecma: 2020,
+      pure_funcs: ['console.log'],
+    },
+    mangle: {
+      toplevel: false,
+      eval: true,
+      keep_fnames: false,
+      reserved: [],
+    },
+    format: {
+      comments: false,
+      beautify: false,
+      ascii_only: true,
+      ecma: 2020,
+    },
+    ecma: 2020,
+    module: true,
+    keep_fnames: false,
+    keep_classnames: false,
+    toplevel: false,
+  }),
+];
+
+const baseExternal = (path) => {
+  if (path.startsWith('@aileron')) return false;
+  if (path.startsWith('@winglet')) return true;
+  return /node_modules/.test(path);
+};
 
 export default [
+  // Main bundle
   {
     input: 'src/index.ts',
     output: [
       {
-        file: packageJson.main,
+        file: 'dist/index.cjs',
         format: 'cjs',
         exports: 'named',
         sourcemap: true,
       },
       {
-        file: packageJson.module,
+        file: 'dist/index.mjs',
         format: 'esm',
         exports: 'named',
         sourcemap: true,
       },
     ],
     plugins: [
-      peerDepsExternal(),
-      resolve({
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
-      }),
-      replace({
-        preventAssignment: true,
-      }),
+      ...basePlugins,
       copy({
         targets: [
           {
@@ -53,7 +110,6 @@ export default [
         copyOnce: true,
         flatten: true,
       }),
-      commonjs(),
       typescript({
         useTsconfigDeclarationDir: true,
         tsconfig: './tsconfig.json',
@@ -74,21 +130,91 @@ export default [
           ],
         },
       }),
-      terser({
-        compress: {
-          drop_console: false,
-          dead_code: true,
-          passes: 5,
-        },
-        output: {
-          comments: true,
+    ],
+    external: baseExternal,
+  },
+  // JSONPath subpath
+  {
+    input: 'src/JSONPath/index.ts',
+    output: [
+      {
+        file: 'dist/JSONPath/index.cjs',
+        format: 'cjs',
+        exports: 'named',
+        sourcemap: true,
+      },
+      {
+        file: 'dist/JSONPath/index.mjs',
+        format: 'esm',
+        exports: 'named',
+        sourcemap: true,
+      },
+    ],
+    plugins: [
+      ...basePlugins,
+      typescript({
+        useTsconfigDeclarationDir: true,
+        tsconfig: './tsconfig.json',
+        clean: false,
+        tsconfigOverride: {
+          compilerOptions: {
+            declaration: true,
+            declarationDir: 'dist/JSONPath',
+            emitDeclarationOnly: false,
+            rootDir: 'src',
+          },
+          include: ['src/JSONPath/**/*', 'src/type.ts'],
+          exclude: [
+            'node_modules',
+            '**/__tests__/**',
+            '**/*.test.tsx?',
+            '**/*.spec.tsx?',
+          ],
         },
       }),
     ],
-    external: (path) => {
-      if (path.startsWith('@aileron')) return false;
-      if (path.startsWith('@winglet')) return true;
-      return /node_modules/.test(path);
-    },
+    external: baseExternal,
+  },
+  // JSONPointer subpath
+  {
+    input: 'src/JSONPointer/index.ts',
+    output: [
+      {
+        file: 'dist/JSONPointer/index.cjs',
+        format: 'cjs',
+        exports: 'named',
+        sourcemap: true,
+      },
+      {
+        file: 'dist/JSONPointer/index.mjs',
+        format: 'esm',
+        exports: 'named',
+        sourcemap: true,
+      },
+    ],
+    plugins: [
+      ...basePlugins,
+      typescript({
+        useTsconfigDeclarationDir: true,
+        tsconfig: './tsconfig.json',
+        clean: false,
+        tsconfigOverride: {
+          compilerOptions: {
+            declaration: true,
+            declarationDir: 'dist/JSONPointer',
+            emitDeclarationOnly: false,
+            rootDir: 'src',
+          },
+          include: ['src/JSONPointer/**/*', 'src/type.ts'],
+          exclude: [
+            'node_modules',
+            '**/__tests__/**',
+            '**/*.test.tsx?',
+            '**/*.spec.tsx?',
+          ],
+        },
+      }),
+    ],
+    external: baseExternal,
   },
 ];

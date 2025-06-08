@@ -9,7 +9,8 @@ import {
 
 import { createPortal } from 'react-dom';
 
-import { getRandomString, map } from '@winglet/common-utils';
+import { map } from '@winglet/common-utils/array';
+import { getRandomString } from '@winglet/common-utils/lib';
 
 import { PortalContext } from './PortalContext';
 

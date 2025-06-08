@@ -1,4 +1,4 @@
-import { isEmptyArray } from '@winglet/common-utils';
+import { isEmptyArray } from '@winglet/common-utils/filter';
 
 import type { ArrayValue } from '@/schema-form/types';
 

@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import { JsonSchemaScanner } from '../JsonSchemaScanner';
-import { JsonSchemaScannerAsync } from '../JsonSchemaScannerAsync';
+import { JsonSchemaScannerAsync } from '../async/JsonSchemaScannerAsync';
+import { JsonSchemaScanner } from '../sync/JsonSchemaScanner';
 
 describe('JsonSchemaScanner Advanced Features', () => {
   describe('복합 키워드 테스트', () => {

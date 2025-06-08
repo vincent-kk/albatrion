@@ -81,11 +81,22 @@ export default [
         compress: {
           drop_console: false,
           dead_code: true,
-          passes: 5,
+          passes: 7,
+          pure_getters: false,
+          keep_fargs: false,
+          hoist_funs: true,
+          hoist_vars: true,
+        },
+        mangle: {
+          toplevel: false,
+          keep_fnames: true,
+          keep_classnames: true,
+          reserved: ['React', 'Component', 'useState', 'useEffect'],
         },
         output: {
-          comments: true,
+          comments: false,
         },
+        ecma: 2022,
       }),
       visualizer({
         filename: 'schema-form-antd-plugin-stats.html',

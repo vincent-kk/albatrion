@@ -1,4 +1,4 @@
-import { isFunction } from '@winglet/common-utils';
+import { isFunction } from '@winglet/common-utils/filter';
 import { JSONPath } from '@winglet/json';
 
 import type { SetStateFn } from '@aileron/declare';

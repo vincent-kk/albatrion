@@ -1,6 +1,6 @@
 import { Murmur3 } from '@winglet/common-utils';
 
-import { type JsonSchemaError } from '@canard/schema-form/src/types';
+import { type JsonSchemaError } from '@/schema-form/types';
 
 export const serializeError = ({ schemaPath, params = {} }: JsonSchemaError) =>
   `${schemaPath}?${Object.entries(params)

@@ -1,7 +1,7 @@
 import { memo, useRef } from 'react';
 
-import { counterFactory } from '@winglet/common-utils';
-import { useHandle } from '@winglet/react-utils';
+import { counterFactory } from '@winglet/common-utils/lib';
+import { useHandle } from '@winglet/react-utils/hook';
 
 import { Background } from '@/promise-modal/components/Background';
 import { Foreground } from '@/promise-modal/components/Foreground';

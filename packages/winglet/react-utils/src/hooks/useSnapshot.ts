@@ -1,6 +1,8 @@
 import { useMemo, useRef } from 'react';
 
-import { equals, getTypeTag, isObject } from '@winglet/common-utils';
+import { isObject } from '@winglet/common-utils/filter';
+import { getTypeTag } from '@winglet/common-utils/lib';
+import { equals } from '@winglet/common-utils/object';
 
 /**
  * Returns a snapshot of the object that only updates when the object actually changes.

@@ -1,6 +1,6 @@
 import { type ChangeEvent, useMemo } from 'react';
 
-import { useHandle } from '@winglet/react-utils';
+import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   FormTypeInputDefinition,

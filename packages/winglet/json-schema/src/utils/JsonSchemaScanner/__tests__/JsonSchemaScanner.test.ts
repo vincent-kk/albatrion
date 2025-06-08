@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import { JsonSchemaScanner } from '../JsonSchemaScanner';
-import { JsonSchemaScannerAsync } from '../JsonSchemaScannerAsync';
+import { JsonSchemaScannerAsync } from '../async/JsonSchemaScannerAsync';
+import { JsonSchemaScanner } from '../sync/JsonSchemaScanner';
 
 describe('JsonSchemaScanner', () => {
   describe('기본 동작 테스트', () => {

@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 import { Select } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
-import { map } from '@winglet/common-utils';
-import { useHandle } from '@winglet/react-utils';
+import { map } from '@winglet/common-utils/array';
+import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   ArraySchema,

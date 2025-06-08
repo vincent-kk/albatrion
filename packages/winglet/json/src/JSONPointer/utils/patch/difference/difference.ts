@@ -1,4 +1,5 @@
-import { equals, isPlainObject, isPrimitiveType } from '@winglet/common-utils';
+import { isPlainObject, isPrimitiveType } from '@winglet/common-utils/filter';
+import { equals } from '@winglet/common-utils/object';
 
 import type { JsonValue } from '@/json/type';
 

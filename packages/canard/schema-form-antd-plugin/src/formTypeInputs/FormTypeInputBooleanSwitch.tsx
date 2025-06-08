@@ -3,7 +3,7 @@ import { type ReactNode, useMemo } from 'react';
 import { Switch } from 'antd';
 import type { SwitchSize } from 'antd/es/switch';
 
-import { useHandle } from '@winglet/react-utils';
+import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   BooleanSchema,

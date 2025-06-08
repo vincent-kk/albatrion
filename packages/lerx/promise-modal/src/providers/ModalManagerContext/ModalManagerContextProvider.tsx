@@ -8,8 +8,8 @@ import {
   useState,
 } from 'react';
 
-import { convertMsFromDuration } from '@winglet/common-utils';
-import { useOnMountLayout, useReference } from '@winglet/react-utils';
+import { convertMsFromDuration } from '@winglet/common-utils/convert';
+import { useOnMountLayout, useReference } from '@winglet/react-utils/hook';
 
 import type { Fn } from '@aileron/declare';
 

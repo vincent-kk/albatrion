@@ -7,7 +7,7 @@ import {
   type JsonSchema,
   registerPlugin,
 } from '@canard/schema-form';
-import { useHandle } from '@winglet/react-utils';
+import { useHandle } from '@winglet/react-utils/hook';
 
 import { plugin } from '../src';
 import StoryLayout from './components/StoryLayout';

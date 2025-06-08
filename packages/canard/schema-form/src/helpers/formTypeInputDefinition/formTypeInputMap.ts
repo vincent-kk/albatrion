@@ -1,5 +1,6 @@
 import { JSONPath } from '@winglet/json';
-import { isReactComponent, withErrorBoundary } from '@winglet/react-utils';
+import { isReactComponent } from '@winglet/react-utils/filter';
+import { withErrorBoundary } from '@winglet/react-utils/hoc';
 
 import { SchemaFormError } from '@/schema-form/errors';
 import type { FormTypeInputMap, FormTypeTestFn } from '@/schema-form/types';

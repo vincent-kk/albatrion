@@ -1,5 +1,10 @@
-import { isArray, isFunction, isPlainObject } from '@winglet/common-utils';
-import { isReactComponent, withErrorBoundary } from '@winglet/react-utils';
+import {
+  isArray,
+  isFunction,
+  isPlainObject,
+} from '@winglet/common-utils/filter';
+import { isReactComponent } from '@winglet/react-utils/filter';
+import { withErrorBoundary } from '@winglet/react-utils/hoc';
 
 import type {
   FormTypeInputDefinition,

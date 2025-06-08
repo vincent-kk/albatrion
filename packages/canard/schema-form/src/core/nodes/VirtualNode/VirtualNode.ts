@@ -1,4 +1,4 @@
-import { map } from '@winglet/common-utils';
+import { map } from '@winglet/common-utils/array';
 
 import type { VirtualNodeValue, VirtualSchema } from '@/schema-form/types';
 

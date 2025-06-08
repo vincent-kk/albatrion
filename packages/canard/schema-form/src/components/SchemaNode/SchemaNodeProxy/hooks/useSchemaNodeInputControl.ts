@@ -1,7 +1,7 @@
 import { type RefObject, useLayoutEffect, useRef } from 'react';
 
-import { isFunction } from '@winglet/common-utils';
-import { useVersion } from '@winglet/react-utils';
+import { isFunction } from '@winglet/common-utils/filter';
+import { useVersion } from '@winglet/react-utils/hook';
 
 import { NodeEventType, type SchemaNode } from '@/schema-form/core';
 

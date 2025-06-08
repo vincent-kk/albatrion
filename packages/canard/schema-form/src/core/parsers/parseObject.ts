@@ -1,4 +1,4 @@
-import { isPlainObject } from '@winglet/common-utils';
+import { isPlainObject } from '@winglet/common-utils/filter';
 
 import type { ObjectValue } from '@/schema-form/types';
 

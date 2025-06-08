@@ -1,4 +1,4 @@
-import { isArray, isString } from '@winglet/common-utils';
+import { isArray, isString } from '@winglet/common-utils/filter';
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { unescapePointer } from '@/json/JSONPointer/utils/escape/unescapePointer';

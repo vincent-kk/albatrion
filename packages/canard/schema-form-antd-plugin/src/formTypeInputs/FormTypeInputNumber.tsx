@@ -1,7 +1,7 @@
 import { InputNumber, type InputNumberProps } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
-import { useHandle } from '@winglet/react-utils';
+import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   FormTypeInputDefinition,

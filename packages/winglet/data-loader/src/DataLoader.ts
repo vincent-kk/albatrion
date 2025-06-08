@@ -1,9 +1,5 @@
-import {
-  isArrayLike,
-  isFunction,
-  isNil,
-  noopFunction,
-} from '@winglet/common-utils';
+import { noopFunction } from '@winglet/common-utils/constant';
+import { isArrayLike, isFunction, isNil } from '@winglet/common-utils/filter';
 
 import type { Fn } from '@aileron/declare';
 

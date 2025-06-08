@@ -4,7 +4,7 @@ import { DatePicker } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 import dayjs, { type Dayjs } from 'dayjs';
 
-import { useHandle } from '@winglet/react-utils';
+import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   FormTypeInputDefinition,

@@ -2,7 +2,7 @@ import { type ReactNode, useMemo } from 'react';
 
 import { Switch } from 'antd-mobile';
 
-import { useHandle } from '@winglet/react-utils';
+import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   FormTypeInputDefinition,

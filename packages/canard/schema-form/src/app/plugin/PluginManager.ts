@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
 
-import { remainOnlyReactComponent } from '@winglet/react-utils';
+import { remainOnlyReactComponent } from '@winglet/react-utils/object';
 
 import {
   FormErrorRenderer,

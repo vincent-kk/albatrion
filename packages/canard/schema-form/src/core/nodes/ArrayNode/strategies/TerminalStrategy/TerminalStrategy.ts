@@ -1,4 +1,4 @@
-import { equals } from '@winglet/common-utils';
+import { equals } from '@winglet/common-utils/object';
 
 import type { Fn } from '@aileron/declare';
 

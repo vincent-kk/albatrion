@@ -1,4 +1,4 @@
-import { isReactComponent } from '@winglet/react-utils';
+import { isReactComponent } from '@winglet/react-utils/filter';
 
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 

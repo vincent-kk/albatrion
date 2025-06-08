@@ -1,1 +1,1 @@
-export * from './Portal';
+export { Portal } from './Portal';
