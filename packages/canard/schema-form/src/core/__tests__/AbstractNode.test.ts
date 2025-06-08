@@ -267,12 +267,11 @@ describe('AbstractNode', () => {
         expect(child.node.errors).toEqual([
           {
             dataPath: `.data[${index}]`,
-            instancePath: `/data/${index}`,
-            key: undefined,
             keyword: 'isEven',
             message: 'must pass "isEven" keyword validation',
-            params: {},
-            schemaPath: '#/properties/data/items/isEven',
+            details: {},
+            source: expect.any(Object),
+            key: undefined,
           },
         ]);
       });
@@ -291,14 +290,13 @@ describe('AbstractNode', () => {
       expect(name.errors).toEqual([
         {
           dataPath: '.name',
-          instancePath: '/name',
-          key: undefined,
           keyword: 'maxLength',
           message: 'must NOT have more than 5 characters',
-          params: {
+          details: {
             limit: 5,
           },
-          schemaPath: '#/properties/name/maxLength',
+          source: expect.any(Object),
+          key: undefined,
         },
       ]);
     }
@@ -403,9 +401,16 @@ const transformErrors = (errors: ErrorObject[]): JsonSchemaError[] => {
   if (!Array.isArray(errors)) return [];
   const result = new Array<JsonSchemaError>(errors.length);
   for (let index = 0; index < errors.length; index++) {
-    const error = errors[index] as JsonSchemaError & ErrorObject;
-    error.dataPath = transformDataPath(error);
-    result[index] = error;
+    const originalError = errors[index];
+    const transformedError: JsonSchemaError = {
+      dataPath: transformDataPath(originalError),
+      keyword: originalError.keyword,
+      message: originalError.message,
+      details: originalError.params || {},
+      source: originalError,
+      key: undefined,
+    };
+    result[index] = transformedError;
   }
   return result;
 };

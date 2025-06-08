@@ -32,6 +32,8 @@ describe('ajvValidatorPlugin', () => {
         keyword: 'type',
         message: 'must be string',
         dataPath: '',
+        details: expect.any(Object),
+        source: expect.any(Object),
       });
     });
   });
@@ -50,7 +52,8 @@ describe('ajvValidatorPlugin', () => {
       expect(numberError![0]).toMatchObject({
         keyword: 'type',
         message: 'must be string',
-        params: { type: 'string' },
+        details: { type: 'string' },
+        source: expect.any(Object),
       });
 
       const booleanError = await validator(true);
@@ -72,7 +75,8 @@ describe('ajvValidatorPlugin', () => {
       expect(stringError![0]).toMatchObject({
         keyword: 'type',
         message: 'must be number',
-        params: { type: 'number' },
+        details: { type: 'number' },
+        source: expect.any(Object),
       });
     });
 
@@ -243,7 +247,8 @@ describe('ajvValidatorPlugin', () => {
         keyword: 'required',
         message: "must have required property 'name'",
         dataPath: '.name',
-        params: { missingProperty: 'name' },
+        details: { missingProperty: 'name' },
+        source: expect.any(Object),
       });
 
       const missingBothError = await validator({});
@@ -275,7 +280,8 @@ describe('ajvValidatorPlugin', () => {
       expect(additionalPropError![0]).toMatchObject({
         keyword: 'additionalProperties',
         message: 'must NOT have additional properties',
-        params: { additionalProperty: 'extra' },
+        details: { additionalProperty: 'extra' },
+        source: expect.any(Object),
       });
     });
 
@@ -458,15 +464,15 @@ describe('ajvValidatorPlugin', () => {
       expect(error).toHaveProperty('keyword');
       expect(error).toHaveProperty('message');
       expect(error).toHaveProperty('dataPath');
-      expect(error).toHaveProperty('instancePath');
-      expect(error).toHaveProperty('schemaPath');
-      expect(error).toHaveProperty('params');
+      expect(error).toHaveProperty('details');
+      expect(error).toHaveProperty('source');
 
       // 타입 확인
       expect(typeof error.keyword).toBe('string');
       expect(typeof error.message).toBe('string');
       expect(typeof error.dataPath).toBe('string');
-      expect(typeof error.params).toBe('object');
+      expect(typeof error.details).toBe('object');
+      expect(typeof error.source).toBe('object');
     });
   });
 

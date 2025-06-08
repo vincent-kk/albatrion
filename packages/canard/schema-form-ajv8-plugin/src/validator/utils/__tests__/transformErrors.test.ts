@@ -43,25 +43,36 @@ describe('transformErrors', () => {
     const result = transformErrors(errors);
     expect(result).toEqual([
       {
-        ...errors[0],
-        key: undefined,
-        instancePath: '',
+        keyword: 'required',
         dataPath: '.name',
+        message: "should have required property 'name'",
+        details: { missingProperty: 'name' },
+        source: errors[0],
+        key: undefined,
       },
       {
-        ...errors[1],
-        key: undefined,
+        keyword: 'type',
         dataPath: '.age[1].koreanAge',
+        message: 'should be number',
+        details: { type: 'number' },
+        source: errors[1],
+        key: undefined,
       },
       {
-        ...errors[2],
-        key: undefined,
+        keyword: 'minimum',
         dataPath: '.age',
+        message: 'should be >= 0',
+        details: { comparison: '>=', limit: 0 },
+        source: errors[2],
+        key: undefined,
       },
       {
-        ...errors[3],
-        key: undefined,
+        keyword: 'format',
         dataPath: '.email',
+        message: 'should match format "email"',
+        details: { format: 'email' },
+        source: errors[3],
+        key: undefined,
       },
     ]);
   });

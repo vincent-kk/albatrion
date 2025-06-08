@@ -23,6 +23,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(nameTypeError![0]).toMatchObject({
         keyword: 'type',
         dataPath: '.name',
+        source: expect.any(Object),
       });
 
       const ageTypeError = await validator({ name: 'John', age: 'not-number' });
@@ -30,6 +31,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(ageTypeError![0]).toMatchObject({
         keyword: 'type',
         dataPath: '.age',
+        source: expect.any(Object),
       });
 
       // Act & Assert - 필수 속성 누락
@@ -38,6 +40,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(missingRequiredError![0]).toMatchObject({
         keyword: 'required',
         dataPath: '.name',
+        source: expect.any(Object),
       });
     });
 
@@ -68,6 +71,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(nestedNameError![0]).toMatchObject({
         keyword: 'type',
         dataPath: '.user.name',
+        source: expect.any(Object),
       });
 
       const nestedAgeError = await validator({
