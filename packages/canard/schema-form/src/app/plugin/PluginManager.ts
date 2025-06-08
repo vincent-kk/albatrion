@@ -8,8 +8,8 @@ import {
   FormInputRenderer,
   FormLabelRenderer,
 } from '@/schema-form/components/FallbackComponents';
-import { formatError } from '@/schema-form/components/utils/formatError';
 import { formTypeDefinitions } from '@/schema-form/formTypeDefinitions';
+import { formatError } from '@/schema-form/helpers/error/formatError';
 import {
   type NormalizedFormTypeInputDefinition,
   normalizeFormTypeInputDefinitions,
