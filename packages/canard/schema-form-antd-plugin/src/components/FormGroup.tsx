@@ -48,7 +48,7 @@ export const FormGroup = ({
           )}
           <Input />
         </Flex>
-        {errorMessage}
+        <Typography.Text type="danger">{errorMessage}</Typography.Text>
       </div>
     );
   }
