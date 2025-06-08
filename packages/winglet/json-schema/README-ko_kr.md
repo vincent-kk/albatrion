@@ -23,6 +23,40 @@ yarn add @winglet/json-schema
 
 ---
 
+## Sub-path Imports
+
+이 패키지는 sub-path import를 지원하여 더 세분화된 가져오기를 가능하게 하고 번들 크기를 최적화합니다. 전체 패키지를 가져오지 않고 특정 모듈을 직접 가져올 수 있습니다:
+
+```typescript
+// 메인 내보내기 (모든 유틸리티 및 타입 정의)
+import { JsonSchemaScanner, isObjectSchema } from '@winglet/json-schema';
+
+// 동기 스키마 스캐너
+import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
+
+// 비동기 스키마 스캐너
+import { JsonSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
+
+// 스키마 타입 검사 유틸리티
+import {
+  isArraySchema,
+  isObjectSchema,
+  isStringSchema,
+  isNumberSchema,
+  isBooleanSchema,
+  isNullSchema
+} from '@winglet/json-schema/filter';
+```
+
+### 사용 가능한 Sub-path
+
+- `@winglet/json-schema` - 메인 내보내기 (모든 유틸리티, 스캐너, 타입 정의)
+- `@winglet/json-schema/scanner` - 동기 JSON Schema 스캐너
+- `@winglet/json-schema/async-scanner` - 비동기 JSON Schema 스캐너
+- `@winglet/json-schema/filter` - 스키마 타입 검사 및 필터링 유틸리티
+
+---
+
 ## 호환성 안내
 
 이 패키지는 ECMAScript 2022 (ES2022) 문법으로 작성되었습니다.

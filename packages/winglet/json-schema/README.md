@@ -23,6 +23,40 @@ yarn add @winglet/json-schema
 
 ---
 
+## Sub-path Imports
+
+This package supports sub-path imports to enable more granular imports and optimize bundle size. You can import specific modules directly without importing the entire package:
+
+```typescript
+// Main exports (all utilities and type definitions)
+import { JsonSchemaScanner, isObjectSchema } from '@winglet/json-schema';
+
+// Synchronous schema scanner
+import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
+
+// Asynchronous schema scanner
+import { JsonSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
+
+// Schema type checking utilities
+import {
+  isArraySchema,
+  isObjectSchema,
+  isStringSchema,
+  isNumberSchema,
+  isBooleanSchema,
+  isNullSchema
+} from '@winglet/json-schema/filter';
+```
+
+### Available Sub-paths
+
+- `@winglet/json-schema` - Main exports (all utilities, scanners, and type definitions)
+- `@winglet/json-schema/scanner` - Synchronous JSON Schema scanner
+- `@winglet/json-schema/async-scanner` - Asynchronous JSON Schema scanner
+- `@winglet/json-schema/filter` - Schema type checking and filtering utilities
+
+---
+
 ## Compatibility
 
 This package is built with ECMAScript 2022 (ES2022) syntax.

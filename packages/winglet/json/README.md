@@ -35,6 +35,38 @@ pnpm add @winglet/json
 
 ---
 
+## Sub-path Imports
+
+This package supports sub-path imports to enable more granular imports and optimize bundle size. You can import specific modules directly without importing the entire package:
+
+```typescript
+// Main exports (all JSONPointer and JSONPath utilities)
+import { getValueByPointer, setValueByPointer } from '@winglet/json';
+
+// JSONPath utilities
+import { JSONPath } from '@winglet/json/path';
+
+// JSONPointer utilities
+import {
+  getValueByPointer,
+  setValueByPointer,
+  escapePointer,
+  unescapePointer,
+  compare,
+  applyPatch,
+  difference,
+  mergePatch
+} from '@winglet/json/pointer';
+```
+
+### Available Sub-paths
+
+- `@winglet/json` - Main exports (all JSONPointer and JSONPath utilities)
+- `@winglet/json/path` - JSONPath constants and utilities
+- `@winglet/json/pointer` - JSONPointer manipulation, escaping, and patch operations
+
+---
+
 ## Compatibility
 
 This package is written using ECMAScript 2020 (ES2020) syntax.

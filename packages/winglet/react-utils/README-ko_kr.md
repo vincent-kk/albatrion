@@ -26,6 +26,39 @@ yarn add @winglet/react-utils
 
 ---
 
+## Sub-path Imports
+
+이 패키지는 sub-path import를 지원하여 더 세분화된 가져오기를 가능하게 하고 번들 크기를 최적화합니다. 전체 패키지를 가져오지 않고 특정 모듈을 직접 가져올 수 있습니다:
+
+```typescript
+// 메인 내보내기
+import { useConstant, useWindowSize } from '@winglet/react-utils';
+// 필터 유틸리티 (React 컴포넌트 타입 검사)
+import { isReactComponent, isReactElement } from '@winglet/react-utils/filter';
+// 고차 컴포넌트
+import { withErrorBoundary, withUploader } from '@winglet/react-utils/hoc';
+// 커스텀 훅
+import { useMemorize, useOnMount } from '@winglet/react-utils/hook';
+// 객체 유틸리티
+import { extractProps, mergeRefs } from '@winglet/react-utils/object';
+// Portal 컴포넌트
+import { Portal } from '@winglet/react-utils/portal';
+// 렌더링 유틸리티
+import { renderComponent } from '@winglet/react-utils/render';
+```
+
+### 사용 가능한 Sub-path
+
+- `@winglet/react-utils` - 메인 내보내기 (훅과 컴포넌트)
+- `@winglet/react-utils/portal` - Portal 컴포넌트 및 유틸리티
+- `@winglet/react-utils/hoc` - 고차 컴포넌트
+- `@winglet/react-utils/hook` - 커스텀 React 훅
+- `@winglet/react-utils/filter` - React 컴포넌트 타입 검사 유틸리티
+- `@winglet/react-utils/object` - React 전용 객체 유틸리티
+- `@winglet/react-utils/render` - 컴포넌트 렌더링 유틸리티
+
+---
+
 ## 호환성 안내
 
 이 패키지는 ECMAScript 2022 (ES2022) 문법으로 작성되었습니다.

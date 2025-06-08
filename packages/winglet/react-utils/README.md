@@ -26,6 +26,39 @@ yarn add @winglet/react-utils
 
 ---
 
+## Sub-path Imports
+
+This package supports sub-path imports to enable more granular imports and optimize bundle size. You can import specific modules directly without importing the entire package:
+
+```typescript
+// Main exports
+import { useConstant, useWindowSize } from '@winglet/react-utils';
+// Filter utilities (React component type checking)
+import { isReactComponent, isReactElement } from '@winglet/react-utils/filter';
+// Higher-order components
+import { withErrorBoundary, withUploader } from '@winglet/react-utils/hoc';
+// Custom hooks
+import { useMemorize, useOnMount } from '@winglet/react-utils/hook';
+// Object utilities
+import { extractProps, mergeRefs } from '@winglet/react-utils/object';
+// Portal components
+import { Portal } from '@winglet/react-utils/portal';
+// Render utilities
+import { renderComponent } from '@winglet/react-utils/render';
+```
+
+### Available Sub-paths
+
+- `@winglet/react-utils` - Main exports (hooks and components)
+- `@winglet/react-utils/portal` - Portal components and utilities
+- `@winglet/react-utils/hoc` - Higher-order components
+- `@winglet/react-utils/hook` - Custom React hooks
+- `@winglet/react-utils/filter` - React component type checking utilities
+- `@winglet/react-utils/object` - React-specific object utilities
+- `@winglet/react-utils/render` - Component rendering utilities
+
+---
+
 ## Compatibility
 
 This package is built with ECMAScript 2022 (ES2022) syntax.

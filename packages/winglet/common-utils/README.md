@@ -25,6 +25,63 @@ yarn add @winglet/common-utils
 
 ---
 
+## Sub-path Imports
+
+This package supports sub-path imports to enable more granular imports and optimize bundle size. You can import specific modules directly without importing the entire package:
+
+```typescript
+// Main exports
+import { someUtility } from '@winglet/common-utils';
+// Array utilities
+import { chunk, intersection, unique } from '@winglet/common-utils/array';
+// Console utilities
+import { printError } from '@winglet/common-utils/console';
+// Constants
+import { TIME_UNITS, TYPE_TAGS } from '@winglet/common-utils/constant';
+// Convert utilities
+import { convertMsFromDuration } from '@winglet/common-utils/convert';
+// Error classes
+import { AbortError, BaseError } from '@winglet/common-utils/error';
+// Filter utilities (type checking)
+import { isArray, isFunction, isObject } from '@winglet/common-utils/filter';
+// Function utilities
+import { debounce, throttle } from '@winglet/common-utils/function';
+// Hash utilities
+import { Murmur3 } from '@winglet/common-utils/hash';
+// Library utilities
+import {
+  mapCacheFactory,
+  weakMapCacheFactory,
+} from '@winglet/common-utils/lib';
+// Object utilities
+import { clone, equals, merge } from '@winglet/common-utils/object';
+// Promise utilities
+import { delay, timeout, withTimeout } from '@winglet/common-utils/promise';
+// Scheduler utilities
+import {
+  scheduleMacrotask,
+  scheduleMicrotask,
+} from '@winglet/common-utils/scheduler';
+```
+
+### Available Sub-paths
+
+- `@winglet/common-utils` - Main exports
+- `@winglet/common-utils/lib` - Core library utilities
+- `@winglet/common-utils/error` - Error classes and utilities
+- `@winglet/common-utils/constant` - Common constants
+- `@winglet/common-utils/array` - Array manipulation utilities
+- `@winglet/common-utils/console` - Console utilities
+- `@winglet/common-utils/convert` - Type conversion utilities
+- `@winglet/common-utils/filter` - Type checking and filtering utilities
+- `@winglet/common-utils/function` - Function utilities (debounce, throttle, etc.)
+- `@winglet/common-utils/hash` - Hash algorithms
+- `@winglet/common-utils/object` - Object manipulation utilities
+- `@winglet/common-utils/promise` - Promise utilities
+- `@winglet/common-utils/scheduler` - Task scheduling utilities
+
+---
+
 ## Compatibility
 
 This package is built with ECMAScript 2022 (ES2022) syntax.

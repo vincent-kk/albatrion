@@ -35,6 +35,38 @@ pnpm add @winglet/json
 
 ---
 
+## Sub-path Imports
+
+이 패키지는 sub-path import를 지원하여 더 세분화된 가져오기를 가능하게 하고 번들 크기를 최적화합니다. 전체 패키지를 가져오지 않고 특정 모듈을 직접 가져올 수 있습니다:
+
+```typescript
+// 메인 내보내기 (모든 JSONPointer 및 JSONPath 유틸리티)
+import { getValueByPointer, setValueByPointer } from '@winglet/json';
+
+// JSONPath 유틸리티
+import { JSONPath } from '@winglet/json/path';
+
+// JSONPointer 유틸리티
+import {
+  getValueByPointer,
+  setValueByPointer,
+  escapePointer,
+  unescapePointer,
+  compare,
+  applyPatch,
+  difference,
+  mergePatch
+} from '@winglet/json/pointer';
+```
+
+### 사용 가능한 Sub-path
+
+- `@winglet/json` - 메인 내보내기 (모든 JSONPointer 및 JSONPath 유틸리티)
+- `@winglet/json/path` - JSONPath 상수 및 유틸리티
+- `@winglet/json/pointer` - JSONPointer 조작, 이스케이핑, 패치 작업
+
+---
+
 ## 호환성 안내
 
 이 패키지는 ECMAScript 2020 (ES2020) 문법으로 작성되었습니다.

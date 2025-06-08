@@ -25,6 +25,63 @@ yarn add @winglet/common-utils
 
 ---
 
+## Sub-path Imports
+
+이 패키지는 sub-path import를 지원하여 더 세분화된 가져오기를 가능하게 하고 번들 크기를 최적화합니다. 전체 패키지를 가져오지 않고 특정 모듈을 직접 가져올 수 있습니다:
+
+```typescript
+// 메인 내보내기
+import { someUtility } from '@winglet/common-utils';
+// 배열 유틸리티
+import { chunk, intersection, unique } from '@winglet/common-utils/array';
+// 콘솔 유틸리티
+import { printError } from '@winglet/common-utils/console';
+// 상수
+import { TIME_UNITS, TYPE_TAGS } from '@winglet/common-utils/constant';
+// 변환 유틸리티
+import { convertMsFromDuration } from '@winglet/common-utils/convert';
+// 에러 클래스
+import { AbortError, BaseError } from '@winglet/common-utils/error';
+// 필터 유틸리티 (타입 검사)
+import { isArray, isFunction, isObject } from '@winglet/common-utils/filter';
+// 함수 유틸리티
+import { debounce, throttle } from '@winglet/common-utils/function';
+// 해시 유틸리티
+import { Murmur3 } from '@winglet/common-utils/hash';
+// 라이브러리 유틸리티
+import {
+  mapCacheFactory,
+  weakMapCacheFactory,
+} from '@winglet/common-utils/lib';
+// 객체 유틸리티
+import { clone, equals, merge } from '@winglet/common-utils/object';
+// Promise 유틸리티
+import { delay, timeout, withTimeout } from '@winglet/common-utils/promise';
+// 스케줄러 유틸리티
+import {
+  scheduleMacrotask,
+  scheduleMicrotask,
+} from '@winglet/common-utils/scheduler';
+```
+
+### 사용 가능한 Sub-path
+
+- `@winglet/common-utils` - 메인 내보내기
+- `@winglet/common-utils/lib` - 핵심 라이브러리 유틸리티
+- `@winglet/common-utils/error` - 에러 클래스 및 유틸리티
+- `@winglet/common-utils/constant` - 공통 상수
+- `@winglet/common-utils/array` - 배열 조작 유틸리티
+- `@winglet/common-utils/console` - 콘솔 유틸리티
+- `@winglet/common-utils/convert` - 타입 변환 유틸리티
+- `@winglet/common-utils/filter` - 타입 검사 및 필터링 유틸리티
+- `@winglet/common-utils/function` - 함수 유틸리티 (debounce, throttle 등)
+- `@winglet/common-utils/hash` - 해시 알고리즘
+- `@winglet/common-utils/object` - 객체 조작 유틸리티
+- `@winglet/common-utils/promise` - Promise 유틸리티
+- `@winglet/common-utils/scheduler` - 작업 스케줄링 유틸리티
+
+---
+
 ## 호환성 안내
 
 이 패키지는 ECMAScript 2022 (ES2022) 문법으로 작성되었습니다.
