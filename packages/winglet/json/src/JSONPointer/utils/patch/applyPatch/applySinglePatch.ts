@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
-import { unescapePointer } from '@/json/JSONPointer/utils/escape/unescapePointer';
+import { unescapeSegment } from '@/json/JSONPointer/utils/escape/unescapeSegment';
 import type { JsonRoot } from '@/json/type';
 
 import type { Patch } from '../type';
@@ -106,7 +106,7 @@ export const applySinglePatch = (
 
   const segmentsLength = segments.length;
   while (cursor < segmentsLength) {
-    let segment: string | number = unescapePointer(segments[cursor]);
+    let segment: string | number = unescapeSegment(segments[cursor]);
 
     if (protectPrototype && isPrototypeModification(segment, segments, cursor))
       throw new JsonPatchError(
