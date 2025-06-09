@@ -422,25 +422,10 @@ const transformDataPath = (error: ErrorObject): string => {
 
   if (!instancePath)
     return hasMissingProperty
-      ? JSONPath.Child + error.params.missingProperty
+      ? JSONPointer.Child + error.params.missingProperty
       : '';
 
-  const parts = [];
-  let segmentStart = 1;
-
-  for (let i = 1; i <= instancePath.length; i++) {
-    if (i === instancePath.length || instancePath[i] === JSONPointer.Child) {
-      if (segmentStart < i) {
-        const segment = instancePath.slice(segmentStart, i);
-        if (isArrayIndex(segment)) parts.push('[' + segment + ']');
-        else parts.push(JSONPath.Child + segment);
-      }
-      segmentStart = i + 1;
-    }
-  }
-
-  const result = parts.join('');
   return hasMissingProperty
-    ? result + JSONPath.Child + error.params.missingProperty
-    : result;
+    ? instancePath + JSONPointer.Child + error.params.missingProperty
+    : instancePath;
 };
