@@ -304,13 +304,17 @@ export abstract class AbstractNode<
 
   /**
    * Finds the node corresponding to the given path in the node tree.
-   * @param path - Path of the node to find (e.g., '.foo[0].bar'), returns itself if not provided
+   * @param path - Path of the node to find (e.g., '/foo/0/bar'), returns itself if not provided
    * @returns {SchemaNode|null} The found node, null if not found
    */
-  public find(this: AbstractNode, path?: string) {
-    const pathSegments = path ? getPathSegments(path) : [];
+  public find(this: AbstractNode, path?: string): SchemaNode | null {
     // @ts-expect-error: find must be used in SchemaNode
-    return find(this, pathSegments);
+    if (path === undefined) return this;
+    const isAbsolutePath =
+      path[0] === JSONPointer.Root || path[0] === JSONPointer.Child;
+    const pathSegments = getPathSegments(path);
+    // @ts-expect-error: find must be used in SchemaNode
+    return find(isAbsolutePath ? this.rootNode : this, pathSegments);
   }
 
   /** List of node event listeners */

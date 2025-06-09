@@ -4,11 +4,11 @@ import { getPathSegments } from './getPathSegments';
 
 describe('getPathSegments', () => {
   it('should return an empty array for an empty path', () => {
-    expect(getPathSegments('')).toEqual([]);
+    expect(getPathSegments('')).toEqual(null);
   });
 
   it('should return an empty array for a path that is only a slash', () => {
-    expect(getPathSegments('/')).toEqual([]);
+    expect(getPathSegments('/')).toEqual(null);
   });
 
   it('should split a simple path into segments', () => {

@@ -9,12 +9,12 @@ import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
  */
 export const find = (
   target: SchemaNode,
-  segments: string[],
+  segments: string[] | null,
 ): SchemaNode | null => {
   if (!target) return null;
-  if (!segments.length) return target;
+  if (!segments?.length) return target;
   const current = target;
-  let cursor = current;
+  let cursor = segments[0] === JSONPointer.Child ? target.rootNode : current;
   for (let i = 0; i < segments.length; i++) {
     const segment = segments[i];
     if (segment === JSONPointer.Root) {

@@ -38,6 +38,7 @@ import {
  */
 export const getPathSegments = (path: string) => {
   const segments = path.split(JSONPointer.Child).filter(isTruthy);
+  if (segments.length === 0) return null;
   for (let index = 0, length = segments.length; index < length; index++)
     segments[index] = unescapeSegment(segments[index]);
   return segments;
