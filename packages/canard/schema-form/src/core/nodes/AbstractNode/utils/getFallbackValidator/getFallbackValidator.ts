@@ -1,5 +1,4 @@
-import { JSONPath } from '@winglet/json';
-
+import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 import { JsonSchemaError, JsonSchemaWithVirtual } from '@/schema-form/types';
 
 /**
@@ -14,7 +13,7 @@ export const getFallbackValidator =
     [
       {
         keyword: 'jsonSchemaCompileFailed',
-        dataPath: JSONPath.Root,
+        dataPath: JSONPointer.Root,
         message: error.message,
         source: error,
         details: {

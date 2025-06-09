@@ -1,8 +1,9 @@
 import { isString } from '@winglet/common-utils/filter';
 import { serializeNative } from '@winglet/common-utils/object';
-import { JSONPath } from '@winglet/json';
 
 import type { Dictionary } from '@aileron/declare';
+
+import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldConditionMap } from '../../getFieldConditionMap';
 
@@ -41,11 +42,11 @@ const getOperations = (
   for (const [key, value] of Object.entries(condition)) {
     if (isString(value))
       operations.push(
-        `${JSONPath.Parent}${JSONPath.Child}${key}${inverse ? '!==' : '==='}${serializeNative(value)}`,
+        `${JSONPointer.Parent}${JSONPointer.Child}${key}${inverse ? '!==' : '==='}${serializeNative(value)}`,
       );
     else
       operations.push(
-        `${inverse ? '!' : ''}${serializeNative(value)}.includes(${JSONPath.Parent}${JSONPath.Child}${key})`,
+        `${inverse ? '!' : ''}${serializeNative(value)}.includes(${JSONPointer.Parent}${JSONPointer.Child}${key})`,
       );
   }
 };

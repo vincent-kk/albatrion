@@ -1,6 +1,5 @@
-import { JSONPath } from '@winglet/json';
-
 import type { SchemaNode } from '@/schema-form/core';
+import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 
 /**
  * Finds a node in the AbstractNode tree that matches the given path.
@@ -18,13 +17,13 @@ export const find = (
   let cursor = current;
   for (let i = 0; i < segments.length; i++) {
     const segment = segments[i];
-    if (segment === JSONPath.Root) {
+    if (segment === JSONPointer.Root) {
       cursor = cursor.rootNode;
       if (!cursor) return null;
-    } else if (segment === JSONPath.Parent) {
+    } else if (segment === JSONPointer.Parent) {
       cursor = cursor.parentNode!;
       if (!cursor) return null;
-    } else if (segment === JSONPath.Current) {
+    } else if (segment === JSONPointer.Current) {
       cursor = current;
     } else {
       const children = cursor.children;

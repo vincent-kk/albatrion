@@ -1,8 +1,8 @@
 import { isFunction } from '@winglet/common-utils/filter';
-import { JSONPath } from '@winglet/json';
 
 import type { SetStateFn } from '@aileron/declare';
 
+import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 import { getResolveSchema } from '@/schema-form/helpers/jsonSchema';
 import type {
   AllowedValue,
@@ -45,7 +45,7 @@ export const nodeFromJsonSchema = <
   const resolveSchema = getResolveSchema(jsonSchema);
   const nodeFactory = createSchemaNodeFactory(resolveSchema);
   return nodeFactory({
-    name: JSONPath.Root,
+    name: JSONPointer.Root,
     jsonSchema,
     defaultValue,
     nodeFactory,

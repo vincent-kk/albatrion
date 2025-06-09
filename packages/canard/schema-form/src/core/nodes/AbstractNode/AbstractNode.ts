@@ -4,13 +4,13 @@ import {
   isTruthy,
 } from '@winglet/common-utils/filter';
 import { equals } from '@winglet/common-utils/object';
-import { JSONPath } from '@winglet/json';
 
 import type { Fn, SetStateFn } from '@aileron/declare';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import { transformErrors } from '@/schema-form/helpers/error';
+import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 import type {
   AllowedValue,
   JsonSchema,
@@ -121,8 +121,8 @@ export abstract class AbstractNode<
   public updatePath(this: AbstractNode) {
     const previous = this.#path;
     const current = this.parentNode?.path
-      ? this.parentNode.path + JSONPath.Child + this.#name
-      : JSONPath.Root;
+      ? this.parentNode.path + JSONPointer.Child + this.#name
+      : JSONPointer.Root;
     if (previous === current) return false;
     this.#path = current;
     this.publish({
@@ -269,14 +269,15 @@ export abstract class AbstractNode<
     this.propertyKey = this.#name;
 
     this.#path = this.parentNode?.path
-      ? this.parentNode.path + JSONPath.Child + this.#name
-      : JSONPath.Root;
+      ? this.parentNode.path + JSONPointer.Child + this.#name
+      : JSONPointer.Root;
 
     this.#key = this.parentNode?.path
-      ? this.parentNode.path + JSONPath.Child + (key ?? this.#name)
-      : JSONPath.Root;
+      ? this.parentNode.path + JSONPointer.Child + (key ?? this.#name)
+      : JSONPointer.Root;
 
-    this.depth = this.#path.split(JSONPath.Child).filter(isTruthy).length - 1;
+    this.depth =
+      this.#path.split(JSONPointer.Child).filter(isTruthy).length - 1;
 
     if (this.parentNode) {
       const unsubscribe = this.parentNode.subscribe(({ type }) => {
