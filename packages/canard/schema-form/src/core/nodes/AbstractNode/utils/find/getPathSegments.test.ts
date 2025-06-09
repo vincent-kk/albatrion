@@ -3,26 +3,59 @@ import { describe, expect, it } from 'vitest';
 import { getPathSegments } from './getPathSegments';
 
 describe('getPathSegments', () => {
-  it('should split path into segments correctly', () => {
-    const path = '.foo[0].bar';
-    const expectedSegments = ['foo', '0', 'bar'];
-    expect(getPathSegments(path)).toEqual(expectedSegments);
+  it('should return an empty array for an empty path', () => {
+    expect(getPathSegments('')).toEqual([]);
   });
 
-  it('should handle paths without leading dot', () => {
-    const path = '.foo[0].bar';
-    const expectedSegments = ['foo', '0', 'bar'];
-    expect(getPathSegments(path)).toEqual(expectedSegments);
+  it('should return an empty array for a path that is only a slash', () => {
+    expect(getPathSegments('/')).toEqual([]);
   });
 
-  it('should handle paths with multiple array indices', () => {
-    const path = '.foo[0].bar[1]';
-    const expectedSegments = ['foo', '0', 'bar', '1'];
-    expect(getPathSegments(path)).toEqual(expectedSegments);
+  it('should split a simple path into segments', () => {
+    const path = '/foo/bar/0';
+    const expected = ['foo', 'bar', '0'];
+    expect(getPathSegments(path)).toEqual(expected);
   });
-  it('should handle paths with multiple array indices', () => {
-    const path = '.foo.[0].bar[1]';
-    const expectedSegments = ['foo', '0', 'bar', '1'];
-    expect(getPathSegments(path)).toEqual(expectedSegments);
+
+  it('should ignore a leading slash', () => {
+    const path = '/foo/bar';
+    const expected = ['foo', 'bar'];
+    expect(getPathSegments(path)).toEqual(expected);
+  });
+
+  it('should ignore a trailing slash', () => {
+    const path = 'foo/bar/';
+    const expected = ['foo', 'bar'];
+    expect(getPathSegments(path)).toEqual(expected);
+  });
+
+  it('should handle consecutive slashes by filtering out empty segments', () => {
+    const path = '/foo//bar';
+    const expected = ['foo', 'bar'];
+    expect(getPathSegments(path)).toEqual(expected);
+  });
+
+  it('should unescape standard RFC 6901 sequences in segments', () => {
+    const path = '/a~1b/c~0d';
+    const expected = ['a/b', 'c~d'];
+    expect(getPathSegments(path)).toEqual(expected);
+  });
+
+  it('should unescape custom sequences in segments', () => {
+    const path = '/e~2f/g~3h/i~4j/k~5l';
+    const expected = ['e..f', 'g.h', 'i*j', 'k#l'];
+    expect(getPathSegments(path)).toEqual(expected);
+  });
+
+  it('should handle a complex path with mixed, escaped, and normal segments', () => {
+    const path = '/~0/path~1to/complex~3value/0/end';
+    const expected = ['~', 'path/to', 'complex.value', '0', 'end'];
+    expect(getPathSegments(path)).toEqual(expected);
+  });
+
+  it('should handle segments that are just numbers (array indices)', () => {
+    const path = '/data/0/items/1';
+    const expected = ['data', '0', 'items', '1'];
+    expect(getPathSegments(path)).toEqual(expected);
   });
 });
