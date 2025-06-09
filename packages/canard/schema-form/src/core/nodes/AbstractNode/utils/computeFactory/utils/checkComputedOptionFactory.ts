@@ -4,7 +4,7 @@ import type { Fn } from '@aileron/declare';
 
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
-import { JSON_PATH_REGEX } from './regex';
+import { JSON_POINTER_REGEX } from './regex';
 import { ALIAS, type ConditionFieldName } from './type';
 
 type CheckComputedOption = Fn<[dependencies: unknown[]], boolean>;
@@ -60,7 +60,7 @@ const createDynamicFunction = (
 
   // Transform JSON paths to dependency array references
   const computedExpression = expression
-    .replace(JSON_PATH_REGEX, (path) => {
+    .replace(JSON_POINTER_REGEX, (path) => {
       if (!dependencyPaths.includes(path)) dependencyPaths.push(path);
       return `dependencies[${dependencyPaths.indexOf(path)}]`;
     })
