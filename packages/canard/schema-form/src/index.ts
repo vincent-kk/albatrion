@@ -23,6 +23,14 @@ export {
 export { useFormSubmit } from './hooks/useFormSubmit';
 
 export {
+  JSONPointer,
+  escapePointer,
+  escapeSegment,
+  unescapePointer,
+  unescapeSegment,
+} from './helpers/jsonPointer';
+
+export {
   type SchemaNode,
   NodeState,
   ValidationMode,
