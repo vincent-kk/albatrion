@@ -1,0 +1,1 @@
+export { JSONPointer } from './enum';
