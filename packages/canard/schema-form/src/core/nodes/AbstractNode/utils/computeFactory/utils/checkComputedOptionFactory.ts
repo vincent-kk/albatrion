@@ -2,9 +2,10 @@ import { isString } from '@winglet/common-utils/filter';
 
 import type { Fn } from '@aileron/declare';
 
+import { JSON_POINTER_REGEX } from '@/schema-form/helpers/jsonPointer';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
-import { JSON_POINTER_REGEX } from './regex';
+import type { PathManager } from './getPathManager';
 import { ALIAS, type ConditionFieldName } from './type';
 
 type CheckComputedOption = Fn<[dependencies: unknown[]], boolean>;
@@ -25,7 +26,7 @@ export const checkComputedOptionFactory =
    * @returns Computed option check function or undefined
    */
   (
-    dependencyPaths: string[],
+    pathManager: PathManager,
     fieldName: ConditionFieldName,
     checkCondition: boolean,
   ): CheckComputedOption | undefined => {
@@ -42,7 +43,7 @@ export const checkComputedOptionFactory =
     // Return fixed function if preferred condition matches, otherwise create dynamic function
     return preferredCondition
       ? () => checkCondition
-      : createDynamicFunction(dependencyPaths, expression);
+      : createDynamicFunction(pathManager, expression);
   };
 
 /**
@@ -52,7 +53,7 @@ export const checkComputedOptionFactory =
  * @returns Function that takes dependency array and returns condition result, or undefined
  */
 const createDynamicFunction = (
-  dependencyPaths: string[],
+  pathManager: PathManager,
   expression: string | boolean | undefined,
 ): CheckComputedOption | undefined => {
   // Cannot process non-string expressions
@@ -61,8 +62,8 @@ const createDynamicFunction = (
   // Transform JSON paths to dependency array references
   const computedExpression = expression
     .replace(JSON_POINTER_REGEX, (path) => {
-      if (!dependencyPaths.includes(path)) dependencyPaths.push(path);
-      return `dependencies[${dependencyPaths.indexOf(path)}]`;
+      pathManager.set(path);
+      return `dependencies[${pathManager.findIndex(path)}]`;
     })
     .trim()
     .replace(/;$/, '');

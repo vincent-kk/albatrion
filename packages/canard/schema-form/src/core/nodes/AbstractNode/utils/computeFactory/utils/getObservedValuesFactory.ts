@@ -4,6 +4,7 @@ import type { Fn } from '@aileron/declare';
 
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
+import type { PathManager } from './getPathManager';
 import { ALIAS, type ObservedFieldName } from './type';
 
 type GetObservedValues = Fn<[dependencies: unknown[]], unknown[]>;
@@ -22,7 +23,7 @@ export const getObservedValuesFactory =
    * @returns Function that returns observed values array from dependency array, or undefined
    */
   (
-    dependencyPaths: string[],
+    pathManager: PathManager,
     fieldName: ObservedFieldName,
   ): GetObservedValues | undefined => {
     // Extract expression from `computed.[<fieldName>]` or `&[<fieldName>]` field
@@ -38,8 +39,8 @@ export const getObservedValuesFactory =
     // Add each watch path to dependencyPaths and store indices
     for (let i = 0; i < watchValues.length; i++) {
       const path = watchValues[i];
-      if (!dependencyPaths.includes(path)) dependencyPaths.push(path);
-      watchValueIndexes.push(dependencyPaths.indexOf(path));
+      pathManager.set(path);
+      watchValueIndexes.push(pathManager.findIndex(path));
     }
 
     if (watchValueIndexes.length === 0) return;
