@@ -17,7 +17,7 @@
       ],
       "@aileron/*": [
         "./aileron/common/*"
-      ],
+      ]
     }
   },
   "include": [
@@ -25,10 +25,10 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "coverage/**/*.ts",
-    "coverage/**/*.tsx",
+    "coverage/**/*.tsx"
   ],
   "exclude": [
     "node_modules",
-    "dist",
+    "dist"
   ]
 }
