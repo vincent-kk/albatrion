@@ -18,26 +18,26 @@ export const OneOf = () => {
     oneOf: [
       {
         computed: {
-          if: "@.category==='game'",
+          if: "./category==='game'",
         },
         properties: {
           date: {
             type: 'string',
             format: 'date',
-            '&visible': '_.title === "wow"',
+            '&visible': '../title === "wow"',
           },
           price: { type: 'number' },
         },
       },
       {
         computed: {
-          if: "@.category==='movie'",
+          if: "./category==='movie'",
         },
         properties: {
           date: {
             type: 'string',
             format: 'date',
-            '&visible': '_.title === "wow"',
+            '&visible': '../title === "wow"',
           },
           price: {
             type: 'number',
@@ -47,13 +47,13 @@ export const OneOf = () => {
       },
       {
         computed: {
-          if: "@.category==='console'",
+          if: "./category==='console'",
         },
         properties: {
           date: {
             type: 'string',
             format: 'date',
-            '&visible': '_.title === "wow"',
+            '&visible': '../title === "wow"',
           },
           price: {
             type: 'number',
@@ -93,12 +93,12 @@ export const OneOfAlias = () => {
     type: 'object',
     oneOf: [
       {
-        '&if': "@.category==='movie'",
+        '&if': "./category==='movie'",
         properties: {
           date1: {
             type: 'string',
             format: 'date',
-            '&visible': '_.title === "wow"',
+            '&visible': '../title === "wow"',
           },
           price1: {
             type: 'number',
@@ -107,12 +107,12 @@ export const OneOfAlias = () => {
         },
       },
       {
-        '&if': "@.category==='game'",
+        '&if': "./category==='game'",
         properties: {
           date2: {
             type: 'string',
             format: 'date',
-            '&visible': '_.title === "wow"',
+            '&visible': '../title === "wow"',
           },
           price2: { type: 'number' },
         },
@@ -149,12 +149,12 @@ export const OneOfAliasWithKeyOrder = () => {
     type: 'object',
     oneOf: [
       {
-        '&if': "@.category==='movie'",
+        '&if': "./category==='movie'",
         properties: {
           date1: {
             type: 'string',
             format: 'date',
-            '&visible': '_.title === "wow"',
+            '&visible': '../title === "wow"',
           },
           price1: {
             type: 'number',
@@ -163,12 +163,12 @@ export const OneOfAliasWithKeyOrder = () => {
         },
       },
       {
-        '&if': "@.category==='game'",
+        '&if': "./category==='game'",
         properties: {
           date2: {
             type: 'string',
             format: 'date',
-            '&visible': '_.title === "wow"',
+            '&visible': '../title === "wow"',
           },
           price2: { type: 'number' },
         },
@@ -215,7 +215,7 @@ export const ComplexOneOf = () => {
         type: 'object',
         oneOf: [
           {
-            '&if': "_.type==='game'",
+            '&if': "../type==='game'",
             properties: {
               stages: {
                 type: 'array',
@@ -257,7 +257,7 @@ export const ComplexOneOf = () => {
             },
           },
           {
-            '&if': "_.type==='movie'",
+            '&if': "../type==='movie'",
             properties: {
               genres: {
                 type: 'array',
@@ -297,13 +297,13 @@ export const ComplexOneOf = () => {
     },
     oneOf: [
       {
-        '&if': "@.type==='game'",
+        '&if': "../type==='game'",
         properties: {
           owner: { type: 'string', placeholder: 'developer of the game' },
         },
       },
       {
-        '&if': "@.type==='movie'",
+        '&if': "../type==='movie'",
         properties: {
           owner: { type: 'string', placeholder: 'director of the movie' },
         },
@@ -341,7 +341,7 @@ export const ComplexOneOfSmall = () => {
         type: 'object',
         oneOf: [
           {
-            '&if': "_.type==='game'",
+            '&if': "../type==='game'",
             properties: {
               stages: {
                 type: 'array',
@@ -383,7 +383,7 @@ export const ComplexOneOfSmall = () => {
             },
           },
           {
-            '&if': "_.type==='movie'",
+            '&if': "../type==='movie'",
             properties: {
               genres: {
                 type: 'array',
@@ -445,12 +445,12 @@ export const ErrorCase1 = () => {
     type: 'object',
     oneOf: [
       {
-        '&if': "@.category==='movie'",
+        '&if': "./category==='movie'",
         properties: {
           category: {
             type: 'string',
             format: 'date',
-            '&visible': '_.title === "wow"',
+            '&visible': '../title === "wow"',
           },
           title: {
             type: 'number',
@@ -459,12 +459,12 @@ export const ErrorCase1 = () => {
         },
       },
       {
-        '&if': "@.category==='game'",
+        '&if': "./category==='game'",
         properties: {
           date2: {
             type: 'string',
             format: 'date',
-            '&visible': '_.title === "wow"',
+            '&visible': '../title === "wow"',
           },
           price2: { type: 'number' },
         },
@@ -501,13 +501,13 @@ export const ErrorCase2 = () => {
     type: 'object',
     oneOf: [
       {
-        '&if': "@.category==='movie'",
+        '&if': "./category==='movie'",
         type: 'object', // 부모와 같은 타입은 허용됨
         properties: {
           date1: {
             type: 'string',
             format: 'date',
-            '&visible': '_.title === "wow"',
+            '&visible': '../title === "wow"',
           },
           price1: {
             type: 'number',
@@ -516,7 +516,7 @@ export const ErrorCase2 = () => {
         },
       },
       {
-        '&if': "@.category==='game'",
+        '&if': "./category==='game'",
         type: 'string', // 부모와 다른 타입은 허용되지 않음
       },
     ],

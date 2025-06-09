@@ -212,10 +212,10 @@ export const CheckNodeState = () => {
       </div>
       <hr />
       <div>
-        <button onClick={() => refHandle.current?.focus('.name')}>
-          focus ".name"
+        <button onClick={() => refHandle.current?.focus('/name')}>
+          focus "/name"
         </button>
-        <button onClick={() => refHandle.current?.select('.name')}>
+        <button onClick={() => refHandle.current?.select('/name')}>
           select ".name"
         </button>
       </div>

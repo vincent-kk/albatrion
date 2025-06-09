@@ -23,7 +23,7 @@ export const ShowFormLabelOnly = () => {
   return (
     <FormProvider FormLabelRenderer={FormLabelRenderer}>
       <Form jsonSchema={jsonSchema}>
-        <Form.Label path="$.username" />
+        <Form.Label path="#/username" />
       </Form>
     </FormProvider>
   );

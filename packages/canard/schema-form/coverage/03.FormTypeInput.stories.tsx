@@ -216,13 +216,13 @@ export const FormTypeMapWithRegex = () => {
           </div>
         );
       },
-      '$.textNode': ({ onChange }: FormTypeInputProps) => {
+      '#/textNode': ({ onChange }: FormTypeInputProps) => {
         const handleClick = () => {
           onChange('wow');
         };
         return <button onClick={handleClick}>text set</button>;
       },
-      '$.arrayNode.#': () => {
+      '#/arrayNode/*': () => {
         return <div>i am array item</div>;
       },
     };
