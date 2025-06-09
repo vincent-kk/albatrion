@@ -1,4 +1,4 @@
-export { escapePointer } from './escapePointer';
 export { escapeSegment } from './escapeSegment';
+export { escapePointer } from './escapePointer';
+export { unescapeSegment } from './unescapeSegment';
 export { unescapePointer } from './unescapePointer';
-export { unescapePointer as unescapeSegment } from './unescapePointer';
