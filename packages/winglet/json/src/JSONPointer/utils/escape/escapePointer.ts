@@ -1,116 +1,138 @@
-import { CHILD, ESCAPE_CHILD, ESCAPE_TILDE, TILDE } from './constant';
+import { JSONPointer } from '@/json/JSONPointer/enum';
+
+import { escapeSegment } from './escapeSegment';
 
 /**
- * Escapes special characters in a JSON Pointer reference token according to RFC 6901.
+ * Escapes a complete JSON Pointer path by escaping each segment individually.
  *
- * This function implements the character escaping mechanism defined in RFC 6901 specification
- * for JSON Pointer reference tokens. Since JSON Pointer uses specific characters (`~` and `/`)
- * as structural elements, these characters must be escaped when they appear as literal content
- * within reference tokens to avoid ambiguity in pointer interpretation.
+ * This function takes a full JSON Pointer path and ensures that all segments
+ * within the path are properly escaped according to RFC 6901 specifications.
+ * It splits the path by the separator character (`/`), escapes each segment
+ * using the `escapeSegment` function, and then rejoins them to form a valid
+ * escaped JSON Pointer.
  *
- * The escaping rules are straightforward and standardized:
- * - **Tilde character (`~`)** → **Escape sequence (`~0`)**
- * - **Forward slash (`/`)** → **Escape sequence (`~1`)**
+ * **Important**: Only special characters **within segments** are escaped.
+ * The path separator (`/`) characters are preserved as-is since they define
+ * the path structure.
  *
- * This escaping is essential for correctly handling object keys or array indices that contain
- * these special characters as literal content. Without proper escaping, a JSON Pointer parser
- * would incorrectly interpret these characters as structural delimiters rather than content.
+ * **Key Features:**
+ * - **Path-level escaping**: Handles complete JSON Pointer paths with multiple segments
+ * - **Segment isolation**: Each path segment is escaped independently
+ * - **RFC 6901 compliance**: Follows official JSON Pointer specification
+ * - **Performance optimized**: Leverages efficient segment-level escaping
+ * - **Structure preservation**: Path separators remain unchanged
  *
- * **Performance Optimization:**
- * The function includes an early exit optimization that checks for the presence of special
- * characters before processing. If neither `~` nor `/` characters are found in the input,
- * the original string is returned immediately without any processing overhead.
+ * **Use Cases:**
+ * - Converting user-provided paths to safe JSON Pointer expressions
+ * - Preparing dynamic paths for JSON Pointer operations
+ * - Sanitizing paths that may contain special characters in segment names
+ * - Building JSON Pointers programmatically from potentially unsafe input
  *
- * **Processing Strategy:**
- * The function uses a character-by-character processing approach with pre-allocated arrays
- * for optimal performance, especially when dealing with longer strings that contain multiple
- * special characters requiring escaping.
+ * @param path - The JSON Pointer path to escape. Should be a valid path structure
+ *               with segments separated by `/` characters. Can start with or without
+ *               a leading `/`. Empty segments and segments with special characters
+ *               are handled correctly.
  *
- * @param path - The reference token string to escape.
- *               Can contain any valid Unicode characters including the special characters
- *               that require escaping according to JSON Pointer specification.
- *               Empty strings and strings without special characters are handled efficiently.
+ * @returns The fully escaped JSON Pointer path where all segments have been
+ *          individually escaped. The path structure (separator characters) is
+ *          preserved while segment content is made safe for JSON Pointer usage.
  *
- * @returns The escaped reference token string with special characters properly encoded.
- *          If no special characters are present, returns the original string unchanged.
- *          The returned string is safe to use as a reference token in JSON Pointer expressions.
- *
- * @see https://datatracker.ietf.org/doc/html/rfc6901#section-3 - JSON Pointer escape sequences
- * @see https://datatracker.ietf.org/doc/html/rfc6901#section-4 - JSON Pointer evaluation
+ * @see {@link escapeSegment} for individual segment escaping logic
+ * @see {@link https://datatracker.ietf.org/doc/html/rfc6901} RFC 6901 - JSON Pointer specification
  *
  * @example
  * ```typescript
- * // Basic character escaping
- * escapePointer('foo~bar');
- * // Returns: "foo~0bar"
+ * // Basic segment escaping (only tildes in segments are escaped)
+ * escapePointer('/users/john~doe/settings');
+ * // Returns: "/users/john~0doe/settings"
  *
- * escapePointer('foo/bar');
- * // Returns: "foo~1bar"
+ * escapePointer('/config/app~name/value');
+ * // Returns: "/config/app~0name/value"
  * ```
  *
  * @example
  * ```typescript
- * // Multiple special characters
- * escapePointer('path~with/both~chars');
- * // Returns: "path~0with~1both~0chars"
+ * // Path separators are NOT escaped (they define structure)
+ * escapePointer('/files/config/database');
+ * // Returns: "/files/config/database" (unchanged - no special chars in segments)
  *
- * escapePointer('~/~/~/');
- * // Returns: "~0~1~0~1~0~1"
+ * escapePointer('/docs/api/endpoints');
+ * // Returns: "/docs/api/endpoints" (unchanged - no special chars in segments)
  * ```
  *
  * @example
  * ```typescript
- * // Edge cases and performance optimization
+ * // Multiple segments with special characters
+ * escapePointer('/app~config/database~host/connection');
+ * // Returns: "/app~0config/database~0host/connection"
+ *
+ * escapePointer('/users/~/profile/~/settings');
+ * // Returns: "/users/~0/profile/~0/settings"
+ * ```
+ *
+ * @example
+ * ```typescript
+ * // Edge cases and various path formats
  * escapePointer('');
- * // Returns: "" (empty string, no processing needed)
+ * // Returns: "" (empty path)
  *
- * escapePointer('normal_key_123');
- * // Returns: "normal_key_123" (no special chars, early exit)
+ * escapePointer('/');
+ * // Returns: "/" (root with empty segment)
  *
- * escapePointer('user@domain.com');
- * // Returns: "user@domain.com" (no special chars, early exit)
+ * escapePointer('segment~name');
+ * // Returns: "segment~0name" (single segment, no leading slash)
+ *
+ * escapePointer('/multiple~tildes~~~in~segment/normal');
+ * // Returns: "/multiple~0tildes~0~0~0in~0segment/normal"
  * ```
  *
  * @example
  * ```typescript
  * // Real-world usage scenarios
- * const objectKey = 'config/database';
- * const escapedKey = escapePointer(objectKey);
- * // escapedKey: "config~1database"
- * // Can now be safely used in JSON Pointer: `/settings/${escapedKey}/host`
+ * const userPath = '/users/jane.doe@company.com/preferences';
+ * const escapedUserPath = escapePointer(userPath);
+ * // Result: "/users/jane.doe@company.com/preferences" (no escaping needed)
  *
- * const fileName = 'backup~2023-12-01.json';
- * const escapedFileName = escapePointer(fileName);
- * // escapedFileName: "backup~02023-12-01.json"
- * // Can now be safely used in JSON Pointer: `/files/${escapedFileName}/size`
+ * const configPath = '/env/production/database~config/host';
+ * const escapedConfigPath = escapePointer(configPath);
+ * // Result: "/env/production/database~0config/host"
+ *
+ * const backupPath = '/uploads/backup~2023/archive';
+ * const escapedBackupPath = escapePointer(backupPath);
+ * // Result: "/uploads/backup~02023/archive"
  * ```
  *
  * @example
  * ```typescript
- * // Integration with JSON Pointer operations
- * const data = {
- *   "files/docs": { size: 1024 },
- *   "config~prod": { database: "localhost" }
+ * // Dynamic path building with user input
+ * const buildUserSettingPath = (userId: string, setting: string) => {
+ *   const rawPath = `/users/${userId}/settings/${setting}`;
+ *   return escapePointer(rawPath);
  * };
  *
- * // These keys need escaping when used in JSON Pointers
- * const escapedFileKey = escapePointer('files/docs');     // "files~1docs"
- * const escapedConfigKey = escapePointer('config~prod');  // "config~0prod"
+ * buildUserSettingPath('user~123', 'theme~dark');
+ * // Returns: "/users/user~0123/settings/theme~0dark"
  *
- * // Now safe to use in JSON Pointer expressions
- * const filePointer = `/${escapedFileKey}/size`;      // "/files~1docs/size"
- * const configPointer = `/${escapedConfigKey}/database`; // "/config~0prod/database"
+ * buildUserSettingPath('normaluser', 'normalsetting');
+ * // Returns: "/users/normaluser/settings/normalsetting"
+ * ```
+ *
+ * @example
+ * ```typescript
+ * // RFC 6901 compliance examples
+ * escapePointer('/foo/bar');
+ * // Returns: "/foo/bar" (no special characters in segments)
+ *
+ * escapePointer('/a~b');
+ * // Returns: "/a~0b" (tilde in segment content)
+ *
+ * escapePointer('/special!@#$%^&*()/chars');
+ * // Returns: "/special!@#$%^&*()/chars" (only tildes need escaping)
  * ```
  */
 export const escapePointer = (path: string): string => {
-  if (path.indexOf(CHILD) === -1 && path.indexOf(TILDE) === -1) return path;
-  const length = path.length;
-  const result: string[] = new Array(length);
-  for (let index = 0; index < length; index++) {
-    const char = path[index];
-    if (char === TILDE) result[index] = ESCAPE_TILDE;
-    else if (char === CHILD) result[index] = ESCAPE_CHILD;
-    else result[index] = char;
-  }
-  return result.join('');
+  const segments = path.split(JSONPointer.Child);
+  for (let index = 0, length = segments.length; index < length; index++)
+    segments[index] = escapeSegment(segments[index]);
+  return segments.join(JSONPointer.Child);
 };
