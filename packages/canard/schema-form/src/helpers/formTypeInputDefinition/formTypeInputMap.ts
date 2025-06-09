@@ -1,8 +1,12 @@
-import { JSONPath } from '@winglet/json';
+import { isArrayIndex } from '@winglet/common-utils/filter';
 import { isReactComponent } from '@winglet/react-utils/filter';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 
 import { SchemaFormError } from '@/schema-form/errors';
+import {
+  INCLUDE_INDEX_REGEX,
+  JSONPointer,
+} from '@/schema-form/helpers/jsonPointer';
 import type { FormTypeInputMap, FormTypeTestFn } from '@/schema-form/types';
 
 import type { NormalizedFormTypeInputDefinition } from './type';
@@ -20,7 +24,7 @@ export const normalizeFormTypeInputMap = (
   const result: NormalizedFormTypeInputDefinition[] = [];
   for (const [path, Component] of Object.entries(formTypeInputMap)) {
     if (!isReactComponent(Component)) continue;
-    if (FILTER_PATH_REGEX.test(path))
+    if (INCLUDE_INDEX_REGEX.test(path))
       result.push({
         test: formTypeTestFnFactory(path),
         Component: withErrorBoundary(Component),
@@ -33,8 +37,6 @@ export const normalizeFormTypeInputMap = (
   }
   return result;
 };
-
-const FILTER_PATH_REGEX = new RegExp(`\\.${JSONPath.Filter}(\\.|$)`);
 
 const pathExactMatchFnFactory = (path: string): FormTypeTestFn => {
   try {
@@ -53,17 +55,15 @@ const pathExactMatchFnFactory = (path: string): FormTypeTestFn => {
   }
 };
 
-const NUMBER_REGEX = /^[0-9]+$/;
 const formTypeTestFnFactory = (path: string): FormTypeTestFn => {
-  const segments = path.split(JSONPath.Child);
+  const segments = path.split(JSONPointer.Child);
   return (hint) => {
-    const hintSegments = hint.path.split(JSONPath.Child);
+    const hintSegments = hint.path.split(JSONPointer.Child);
     if (segments.length !== hintSegments.length) return false;
-    return segments.every((segment, i) => {
-      if (segment === JSONPath.Filter) {
-        return NUMBER_REGEX.test(hintSegments[i]);
-      }
-      return segment === hintSegments[i];
-    });
+    return segments.every((segment, i) =>
+      segment === JSONPointer.Index
+        ? isArrayIndex(hintSegments[i])
+        : segment === hintSegments[i],
+    );
   };
 };

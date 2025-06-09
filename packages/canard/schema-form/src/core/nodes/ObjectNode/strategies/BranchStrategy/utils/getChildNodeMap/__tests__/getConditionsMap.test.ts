@@ -42,7 +42,7 @@ describe('getConditionsMap', () => {
 
     expect(result).toBeInstanceOf(Map);
     expect(result?.size).toBe(1);
-    expect(result?.get('taxId')).toEqual(['_.type==="company"']);
+    expect(result?.get('taxId')).toEqual(['../type==="company"']);
   });
 
   it('should correctly parse if-then-else conditions with array values', () => {
@@ -79,9 +79,9 @@ describe('getConditionsMap', () => {
     expect(result).toBeInstanceOf(Map);
     expect(result?.size).toBe(2);
     expect(result?.get('state')).toEqual([
-      '["USA","Mexico"].includes(_.country)',
+      '["USA","Mexico"].includes(../country)',
     ]);
-    expect(result?.get('province')).toEqual(['_.country==="Canada"']);
+    expect(result?.get('province')).toEqual(['../country==="Canada"']);
   });
 
   it('should handle inverse conditions correctly', () => {
@@ -110,8 +110,8 @@ describe('getConditionsMap', () => {
 
     expect(result).toBeInstanceOf(Map);
     expect(result?.size).toBe(2);
-    expect(result?.get('companyName')).toEqual(['_.isEmployed==="yes"']);
-    expect(result?.get('reasonUnemployed')).toEqual(['_.isEmployed!=="yes"']);
+    expect(result?.get('companyName')).toEqual(['../isEmployed==="yes"']);
+    expect(result?.get('reasonUnemployed')).toEqual(['../isEmployed!=="yes"']);
   });
 
   it('should combine multiple conditions for the same field', () => {
@@ -153,13 +153,13 @@ describe('getConditionsMap', () => {
     expect(result).toBeInstanceOf(Map);
     expect(result?.size).toBe(2);
     const adminPanelConditions = result?.get('adminPanel');
-    expect(adminPanelConditions).toContain('_.userType==="admin"');
-    expect(adminPanelConditions).toContain('_.userType==="user"');
-    expect(adminPanelConditions).toContain('_.status==="active"');
+    expect(adminPanelConditions).toContain('../userType==="admin"');
+    expect(adminPanelConditions).toContain('../userType==="user"');
+    expect(adminPanelConditions).toContain('../status==="active"');
     const noneConditions = result?.get('none');
     expect(noneConditions).toEqual([
-      '!["admin","user"].includes(_.userType)',
-      '_.status!=="active"',
+      '!["admin","user"].includes(../userType)',
+      '../status!=="active"',
     ]);
   });
 });
