@@ -240,14 +240,14 @@ export const OneOf = () => {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '_.title === "wow"',
+          visible: '../title === "wow"',
         },
       },
       releaseDate: {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '_.title === "wow"',
+          visible: '../title === "wow"',
         },
       },
       numOfPlayers: { type: 'number' },
@@ -312,7 +312,7 @@ export const ComplexOneOf = () => {
                 type: 'string',
                 enum: ['male', 'female', 'other'],
                 computed: {
-                  visible: '_.age >= 18',
+                  visible: '../age >= 18',
                 },
               },
               preferences: {
@@ -445,19 +445,19 @@ export const FunctionalChildren = () => {
         }: FormChildrenProps<typeof jsonSchema, typeof data>) => (
           <>
             <div>
-              {!defaultValue?.allowed && <Form.Input path=".allowed" />}
+              {!defaultValue?.allowed && <Form.Input path="/allowed" />}
             </div>
             <div>
-              <Form.Label path=".name" />
-              {value?.allowed && <Form.Input path=".name" />}
+              <Form.Label path="/name" />
+              {value?.allowed && <Form.Input path="/name" />}
             </div>
             <div>
-              <Form.Label path=".age" />
-              {value?.name?.length && <Form.Input path=".age" />}
+              <Form.Label path="/age" />
+              {value?.name?.length && <Form.Input path="/age" />}
             </div>
             <div>
-              <Form.Label path=".gender" />
-              {typeof value?.age === 'number' && <Form.Input path=".gender" />}
+              <Form.Label path="/gender" />
+              {typeof value?.age === 'number' && <Form.Input path="/gender" />}
             </div>
           </>
         )}
@@ -502,14 +502,14 @@ export const IterableChildren = () => {
         onChange={setValue}
       >
         <div>
-          <Form.Input path=".allowed" />
+          <Form.Input path="/allowed" />
         </div>
         <div>
-          <Form.Label path=".name" />
-          <Form.Input path=".name" />
+          <Form.Label path="/name" />
+          <Form.Input path="/name" />
         </div>
         <div>
-          <Form.Render path=".age">
+          <Form.Render path="/age">
             {({ Input, path }) => {
               return (
                 <div>
@@ -521,11 +521,11 @@ export const IterableChildren = () => {
           </Form.Render>
         </div>
         <div>
-          <Form.Group path=".gender" />
+          <Form.Group path="/gender" />
         </div>
         <div>
           name error:
-          <Form.Error path=".name" style={{ display: 'inline' }} />
+          <Form.Error path="/name" style={{ display: 'inline' }} />
         </div>
       </Form>
     </StoryLayout>
@@ -547,7 +547,7 @@ export const Watch = () => {
         type: 'string',
         formType: 'greeting',
         computed: {
-          watch: ['$.profile.name', '$.profile.age', '$.profile'],
+          watch: ['#/profile/name', '#/profile/age', '#/profile'],
         },
       },
     },
@@ -652,7 +652,7 @@ export const FormRefHandle = () => {
 
   const formTypeMap = useMemo<FormTypeInputMap>(() => {
     return {
-      '$.objectNode': ({ onChange }: FormTypeInputProps<{ test?: string }>) => {
+      '#/objectNode': ({ onChange }: FormTypeInputProps<{ test?: string }>) => {
         const handleClick = () => {
           onChange({ test: 'wow' });
         };
@@ -666,13 +666,13 @@ export const FormRefHandle = () => {
           </div>
         );
       },
-      '$.textNode': ({ onChange }: FormTypeInputProps) => {
+      '#/textNode': ({ onChange }: FormTypeInputProps) => {
         const handleClick = () => {
           onChange('wow');
         };
         return <button onClick={handleClick}>text set</button>;
       },
-      '$.arrayNode.#': () => {
+      '#/arrayNode/*': () => {
         return <div>i am array item</div>;
       },
     };
@@ -759,14 +759,14 @@ export const ComputedProps = () => {
         type: 'string',
         placeholder: 'enter your name',
         computed: {
-          readOnly: '!_.prepared',
+          readOnly: '!../prepared',
         },
       },
       age: {
         type: 'number',
         placeholder: 'enter your age',
         computed: {
-          disabled: '_.name===undefined||(_.name).length<5',
+          disabled: '../name===undefined||(../name).length<5',
         },
       },
       nationality: {
@@ -774,7 +774,7 @@ export const ComputedProps = () => {
         enum: ['', 'US', 'UK', 'JP', 'KR'],
         placeholder: 'select your nationality',
         computed: {
-          disabled: '_.age===undefined||_.age<10',
+          disabled: '../age===undefined||../age<10',
         },
       },
     },
