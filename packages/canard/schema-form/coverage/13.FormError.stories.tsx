@@ -394,7 +394,7 @@ export const ErrorBoundary = () => {
       >
         <div>
           <Form.Group
-            path=".name"
+            path="/name"
             FormTypeInput={() => {
               throw new Error('Error accord from Input');
               // eslint-disable-next-line no-unreachable
@@ -403,7 +403,7 @@ export const ErrorBoundary = () => {
           />
         </div>
         <div>
-          <Form.Render path=".age">
+          <Form.Render path="/age">
             {({ Input, node }) => {
               throw new Error('Error accord from Renderer');
               // eslint-disable-next-line no-unreachable

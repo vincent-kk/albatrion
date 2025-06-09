@@ -780,7 +780,7 @@ export const FormRefHandleWithVirtualSchema = () => {
       <div>
         <button
           onClick={() => {
-            const node = formHandle.current?.node?.find('.startDate');
+            const node = formHandle.current?.node?.find('/startDate');
             if (node?.type === 'string') {
               node.setValue('2025-04-01');
             }
@@ -790,7 +790,7 @@ export const FormRefHandleWithVirtualSchema = () => {
         </button>
         <button
           onClick={() => {
-            const node = formHandle.current?.node?.find('.startDate');
+            const node = formHandle.current?.node?.find('/startDate');
             if (node?.type === 'string') {
               node.setValue('2025-04-05');
             }
@@ -800,7 +800,7 @@ export const FormRefHandleWithVirtualSchema = () => {
         </button>
         <button
           onClick={() => {
-            const node = formHandle.current?.node?.find('.endDate');
+            const node = formHandle.current?.node?.find('/endDate');
             if (node?.type === 'string') {
               node.setValue('2025-04-25');
             }
@@ -810,7 +810,7 @@ export const FormRefHandleWithVirtualSchema = () => {
         </button>
         <button
           onClick={() => {
-            const node = formHandle.current?.node?.find('.endDate');
+            const node = formHandle.current?.node?.find('/endDate');
             if (node?.type === 'string') {
               node.setValue('2025-04-30');
             }
@@ -821,7 +821,7 @@ export const FormRefHandleWithVirtualSchema = () => {
       </div>
       <button
         onClick={() => {
-          const node = formHandle.current?.node?.find('.period');
+          const node = formHandle.current?.node?.find('/period');
           if (node?.type === 'virtual') {
             node.setValue(['2025-03-13', '2025-04-26']);
           }
@@ -831,7 +831,7 @@ export const FormRefHandleWithVirtualSchema = () => {
       </button>
       <button
         onClick={() => {
-          const node = formHandle.current?.node?.find('.period');
+          const node = formHandle.current?.node?.find('/period');
           if (node?.type === 'virtual') {
             node.setValue(['2025-03-01', '2025-04-01']);
           }
