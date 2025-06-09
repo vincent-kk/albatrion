@@ -1,24 +1,25 @@
 import { describe, expect, it } from 'vitest';
 
 import { getObservedValuesFactory } from '../getObservedValuesFactory';
+import { getPathManager } from '../getPathManager';
 
 describe('getObservedValuesFactory', () => {
   it('should return undefined when there is no watch', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
 
     expect(
-      getObservedValuesFactory({ type: 'object' })(dependencyPaths, 'watch'),
+      getObservedValuesFactory({ type: 'object' })(pathManager, 'watch'),
     ).toBeUndefined();
   });
 
   it('should return undefined when watch is not a string or array', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
 
     // Runtime test passing number type
     expect(
       // @ts-expect-error
       getObservedValuesFactory({ type: 'object', computed: { watch: 123123 } })(
-        dependencyPaths,
+        pathManager,
         'watch',
       ),
     ).toBeUndefined();
@@ -28,29 +29,29 @@ describe('getObservedValuesFactory', () => {
         type: 'object',
         // @ts-expect-error
         computed: { watch: { value: 'value' } },
-      })(dependencyPaths, 'watch' as any),
+      })(pathManager, 'watch' as any),
     ).toBeUndefined();
   });
 
   it('should return undefined when watch is an empty array', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
 
     expect(
       getObservedValuesFactory({ type: 'object', computed: { watch: [] } })(
-        dependencyPaths,
+        pathManager,
         'watch',
       ),
     ).toBeUndefined();
   });
 
   it('should create function with string watch', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const result = getObservedValuesFactory({
       type: 'object',
-      computed: { watch: '$.value' },
-    })(dependencyPaths, 'watch');
+      computed: { watch: '/value' },
+    })(pathManager, 'watch');
 
-    expect(dependencyPaths).toContain('$.value');
+    expect(pathManager.get()).toContain('/value');
     expect(result).toBeDefined();
     expect(typeof result).toBe('function');
 
@@ -59,13 +60,13 @@ describe('getObservedValuesFactory', () => {
   });
 
   it('should create function with string array watch', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const result = getObservedValuesFactory({
       type: 'object',
-      computed: { watch: ['$.value1', '$.value2', '$.value3'] },
-    })(dependencyPaths, 'watch');
+      computed: { watch: ['/value1', '/value2', '/value3'] },
+    })(pathManager, 'watch');
 
-    expect(dependencyPaths).toEqual(['$.value1', '$.value2', '$.value3']);
+    expect(pathManager.get()).toEqual(['/value1', '/value2', '/value3']);
     expect(result).toBeDefined();
 
     const values = [10, 'test', true];
@@ -73,29 +74,33 @@ describe('getObservedValuesFactory', () => {
   });
 
   it('should not add path that already exists in dependency paths array', () => {
-    const dependencyPaths: string[] = ['$.existingPath'];
+    const pathManager = getPathManager();
+    pathManager.set('/existingPath');
     const result = getObservedValuesFactory({
       type: 'object',
-      computed: { watch: ['$.existingPath', '$.newPath'] },
-    })(dependencyPaths, 'watch');
+      computed: { watch: ['/existingPath', '/newPath'] },
+    })(pathManager, 'watch');
 
-    expect(dependencyPaths).toContain('$.existingPath');
-    expect(dependencyPaths).toContain('$.newPath');
-    expect(dependencyPaths.length).toBe(2);
+    expect(pathManager.get()).toContain('/existingPath');
+    expect(pathManager.get()).toContain('/newPath');
+    expect(pathManager.get().length).toBe(2);
 
     const values = ['existing', 'new'];
     expect(result!(values)).toEqual(['existing', 'new']);
   });
 
   it('should get values from correct indices in dependency array', () => {
-    const dependencyPaths: string[] = ['$.value1', '$.value2', '$.value3'];
+    const pathManager = getPathManager();
+    ['/value1', '/value2', '/value3'].forEach((path) => {
+      pathManager.set(path);
+    });
     const result = getObservedValuesFactory({
       type: 'object',
-      computed: { watch: ['$.value2', '$.value1'] },
-    })(dependencyPaths, 'watch');
+      computed: { watch: ['/value2', '/value1'] },
+    })(pathManager, 'watch');
 
     // No new paths should be added
-    expect(dependencyPaths.length).toBe(3);
+    expect(pathManager.get().length).toBe(3);
 
     const values = [1, 2, 3];
     // Should get values in original order

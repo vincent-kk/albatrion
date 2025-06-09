@@ -3,16 +3,17 @@ import { describe, expect, it } from 'vitest';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import { checkComputedOptionFactory } from '../checkComputedOptionFactory';
+import { getPathManager } from '../getPathManager';
 
 describe('checkComputedOptionFactory', () => {
   it('preferredCondition이 true일 때 항상 checkCondition을 반환', () => {
     const jsonSchema: JsonSchemaWithVirtual = { type: 'object', visible: true };
     const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const fieldName = 'visible';
     const checkCondition = true;
     const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
-      dependencyPaths,
+      pathManager,
       fieldName,
       checkCondition,
     );
@@ -26,11 +27,11 @@ describe('checkComputedOptionFactory', () => {
       type: 'object',
       visible: false,
     };
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const fieldName = 'visible';
     const checkCondition = false;
     const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
-      dependencyPaths,
+      pathManager,
       fieldName,
       checkCondition,
     );
@@ -41,14 +42,14 @@ describe('checkComputedOptionFactory', () => {
   it('computed string expression이 있을 때 동적으로 평가', () => {
     const jsonSchema: JsonSchemaWithVirtual = {
       type: 'object',
-      computed: { visible: '$.value > 10' },
+      computed: { visible: '/value > 10' },
     };
     const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const fieldName = 'visible';
     const checkCondition = true;
     const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
-      dependencyPaths,
+      pathManager,
       fieldName,
       checkCondition,
     );
@@ -56,40 +57,40 @@ describe('checkComputedOptionFactory', () => {
     // dependencies[0]이 11이면 true, 5면 false
     expect(fn && fn([11])).toBe(true);
     expect(fn && fn([5])).toBe(false);
-    expect(dependencyPaths).toContain('$.value');
+    expect(pathManager.get()).toContain('/value');
   });
 
   it('computed가 undefined이고 &필드가 string일 때 동적으로 평가', () => {
     const jsonSchema: JsonSchemaWithVirtual = {
       type: 'object',
-      '&visible': '$.count === 3',
+      '&visible': '#/count === 3',
     };
     const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const fieldName = 'visible';
     const checkCondition = true;
     const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
-      dependencyPaths,
+      pathManager,
       fieldName,
       checkCondition,
     );
     expect(fn).toBeDefined();
     expect(fn && fn([3])).toBe(true);
     expect(fn && fn([2])).toBe(false);
-    expect(dependencyPaths).toContain('$.count');
+    expect(pathManager.get()).toContain('/count');
   });
 
   it('computed string이 세미콜론으로 끝나도 정상 동작', () => {
     const jsonSchema: JsonSchemaWithVirtual = {
       type: 'object',
-      computed: { visible: '$.value === 1;' },
+      computed: { visible: '#/value === 1;' },
     };
     const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const fieldName = 'visible';
     const checkCondition = true;
     const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
-      dependencyPaths,
+      pathManager,
       fieldName,
       checkCondition,
     );
@@ -104,11 +105,11 @@ describe('checkComputedOptionFactory', () => {
       computed: { visible: '' },
     };
     const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const fieldName = 'visible';
     const checkCondition = true;
     const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
-      dependencyPaths,
+      pathManager,
       fieldName,
       checkCondition,
     );
@@ -121,11 +122,11 @@ describe('checkComputedOptionFactory', () => {
       computed: { visible: false },
     };
     const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const fieldName = 'visible';
     const checkCondition = true;
     const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
-      dependencyPaths,
+      pathManager,
       fieldName,
       checkCondition,
     );
@@ -135,14 +136,14 @@ describe('checkComputedOptionFactory', () => {
   it('expression이 여러 dependencyPaths를 동적으로 추가', () => {
     const jsonSchema: JsonSchemaWithVirtual = {
       type: 'object',
-      computed: { visible: '$.a > 1 && $.b < 5' },
+      computed: { visible: '#/a > 1 && #/b < 5' },
     };
     const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const fieldName = 'visible';
     const checkCondition = true;
     const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
-      dependencyPaths,
+      pathManager,
       fieldName,
       checkCondition,
     );
@@ -150,8 +151,8 @@ describe('checkComputedOptionFactory', () => {
     expect(fn && fn([2, 4])).toBe(true);
     expect(fn && fn([0, 4])).toBe(false);
     expect(fn && fn([2, 6])).toBe(false);
-    expect(dependencyPaths).toContain('$.a');
-    expect(dependencyPaths).toContain('$.b');
+    expect(pathManager.get()).toContain('/a');
+    expect(pathManager.get()).toContain('/b');
   });
 
   it('preferredCondition이 false일 때 항상 false 반환', () => {
@@ -160,11 +161,11 @@ describe('checkComputedOptionFactory', () => {
       visible: false,
     };
     const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const fieldName = 'visible';
     const checkCondition = false;
     const fn = checkComputedOptionFactory(jsonSchema, rootJsonSchema)(
-      dependencyPaths,
+      pathManager,
       fieldName,
       checkCondition,
     );
