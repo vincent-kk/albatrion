@@ -1,10 +1,4 @@
-import React, {
-  ChangeEvent,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { ChangeEvent, useCallback, useMemo, useRef, useState } from 'react';
 
 import {
   Form,
@@ -57,7 +51,7 @@ export const FormTypeInputDefinitions = () => {
     return [
       {
         test: (hint) => {
-          return hint.path === '$.objectNode';
+          return hint.path === '#/objectNode';
         },
         Component: ({ onChange }: FormTypeInputProps<{ test?: string }>) => {
           const handleClick = () => {
@@ -135,7 +129,7 @@ export const FormTypeMap = () => {
 
   const formTypeMap = useMemo<FormTypeInputMap>(() => {
     return {
-      '$.objectNode': ({
+      '#/objectNode': ({
         onChange,
       }: FormTypeInputProps<{ test?: string } | undefined>) => {
         const handleClick = () => {
@@ -155,13 +149,13 @@ export const FormTypeMap = () => {
           </div>
         );
       },
-      '$.textNode': ({ onChange }: FormTypeInputProps) => {
+      '#/textNode': ({ onChange }: FormTypeInputProps) => {
         const handleClick = () => {
           onChange('wow');
         };
         return <button onClick={handleClick}>text set</button>;
       },
-      '$.arrayNode.#': () => {
+      '#/arrayNode/*': () => {
         return <div>i am array item</div>;
       },
     };
@@ -227,13 +221,13 @@ export const FormTypeMapWithRegex = () => {
           </div>
         );
       },
-      '$.textNode': ({ onChange }: FormTypeInputProps) => {
+      '#/textNode': ({ onChange }: FormTypeInputProps) => {
         const handleClick = () => {
           onChange('wow');
         };
         return <button onClick={handleClick}>text set</button>;
       },
-      '$.arrayNode.#': () => {
+      '#/arrayNode/*': () => {
         return <div>i am array item</div>;
       },
     };

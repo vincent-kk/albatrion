@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import {
   Form,
@@ -217,11 +217,11 @@ export const CheckNodeState = () => {
       </div>
       <hr />
       <div>
-        <button onClick={() => refHandle.current?.focus('.name')}>
-          focus ".name"
+        <button onClick={() => refHandle.current?.focus('/name')}>
+          focus "/name"
         </button>
-        <button onClick={() => refHandle.current?.select('.name')}>
-          select ".name"
+        <button onClick={() => refHandle.current?.select('/name')}>
+          select "/name"
         </button>
       </div>
       <hr />

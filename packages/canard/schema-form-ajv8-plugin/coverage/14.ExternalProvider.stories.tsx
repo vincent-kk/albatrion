@@ -1,4 +1,4 @@
-import React, { type ComponentType, useMemo, useRef, useState } from 'react';
+import { type ComponentType, useMemo, useRef, useState } from 'react';
 
 import {
   Form,
@@ -18,11 +18,10 @@ import StoryLayout from './components/StoryLayout';
 
 const ajv = new Ajv({
   allErrors: true,
-  strictSchema: false,
-  validateFormats: false,
+  verbose: true,
+  format: false,
 });
-ajv.addKeyword({
-  keyword: 'isEven',
+ajv.addKeyword('isEven', {
   type: 'number',
   validate: (schema: boolean, data: number) => {
     if (schema === false) return true; // schema가 false면 검사 무시

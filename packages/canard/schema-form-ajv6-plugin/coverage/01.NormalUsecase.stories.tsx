@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import {
   Form,
@@ -234,7 +234,7 @@ export const Array = () => {
           type: 'object',
           oneOf: [
             {
-              '&if': '$.type==="real world"',
+              '&if': '#/type==="real world"',
               properties: {
                 name: {
                   type: 'string',
@@ -251,7 +251,7 @@ export const Array = () => {
               },
             },
             {
-              '&if': '$.type==="internet"',
+              '&if': '#/type==="internet"',
               properties: {
                 ip: {
                   type: 'string',
@@ -281,7 +281,7 @@ export const Array = () => {
     <div>
       <button
         onClick={() => {
-          const node = ref.current?.node?.find('items');
+          const node = ref.current?.node?.find('#/items');
           if (node?.type === 'array') {
             node.setValue(undefined);
           }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Form, type JsonSchema, registerPlugin } from '@canard/schema-form';
 
@@ -22,21 +22,21 @@ export const Common = () => {
         type: 'string',
         placeholder: 'enter your name',
         computed: {
-          readOnly: '!_.prepared',
+          readOnly: '!../prepared',
         },
       },
       age: {
         type: 'number',
         placeholder: 'enter your age',
         computed: {
-          disabled: '_.name===undefined||(_.name).length<5',
+          disabled: '../name===undefined||(../name).length<5',
         },
       },
       nationality: {
         type: 'string',
         enum: ['', 'US', 'UK', 'JP', 'KR'],
         computed: {
-          disabled: '_.age===undefined||_.age<10',
+          disabled: '../age===undefined||../age<10',
         },
       },
     },
@@ -70,7 +70,7 @@ export const GlobalReadOnly = () => {
         type: 'string',
         enum: ['', 'US', 'UK', 'JP', 'KR'],
         computed: {
-          disabled: '_.age===undefined||_.age<10',
+          disabled: '../age===undefined||../age<10',
         },
       },
     },
@@ -104,7 +104,7 @@ export const GlobalDisabled = () => {
         type: 'string',
         enum: ['', 'US', 'UK', 'JP', 'KR'],
         computed: {
-          disabled: '_.age===undefined||_.age<10',
+          disabled: '../age===undefined||../age<10',
         },
       },
     },

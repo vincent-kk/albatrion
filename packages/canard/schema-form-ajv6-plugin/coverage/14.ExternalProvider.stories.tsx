@@ -1,4 +1,4 @@
-import React, { type ComponentType, useMemo, useRef, useState } from 'react';
+import { type ComponentType, useMemo, useRef, useState } from 'react';
 
 import {
   Form,
