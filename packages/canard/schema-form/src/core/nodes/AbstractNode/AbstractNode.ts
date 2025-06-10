@@ -11,7 +11,11 @@ import type { Fn, SetStateFn } from '@aileron/declare';
 import { PluginManager } from '@/schema-form/app/plugin';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import { transformErrors } from '@/schema-form/helpers/error';
-import { JSONPointer, isAbsolutePath } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer,
+  isAbsolutePath,
+  joinSegment,
+} from '@/schema-form/helpers/jsonPointer';
 import type {
   AllowedValue,
   JsonSchema,
@@ -125,11 +129,7 @@ export abstract class AbstractNode<
   public updatePath(this: AbstractNode) {
     const previous = this.#path;
     const parentPath = this.parentNode?.path;
-    const current = parentPath
-      ? parentPath === JSONPointer.Separator
-        ? parentPath + this.escapedKey
-        : parentPath + JSONPointer.Separator + this.escapedKey
-      : JSONPointer.Separator;
+    const current = joinSegment(parentPath, this.escapedKey);
     if (previous === current) return false;
     this.#path = current;
     this.publish({
@@ -276,19 +276,8 @@ export abstract class AbstractNode<
     this.propertyKey = this.#name;
     this.escapedKey = escapeSegment(this.propertyKey);
 
-    const parentPath = this.parentNode?.path;
-
-    this.#path = parentPath
-      ? parentPath === JSONPointer.Separator
-        ? parentPath + this.escapedKey
-        : parentPath + JSONPointer.Separator + this.escapedKey
-      : JSONPointer.Separator;
-
-    this.#key = parentPath
-      ? parentPath === JSONPointer.Separator
-        ? parentPath + (key ?? this.escapedKey)
-        : parentPath + JSONPointer.Separator + (key ?? this.escapedKey)
-      : JSONPointer.Separator;
+    this.#key = joinSegment(this.parentNode?.path, key ?? this.escapedKey);
+    this.#path = joinSegment(this.parentNode?.path, this.escapedKey);
 
     this.depth = this.#path
       .split(JSONPointer.Separator)
