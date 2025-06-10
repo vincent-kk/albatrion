@@ -127,9 +127,12 @@ export abstract class AbstractNode<
    */
   public updatePath(this: AbstractNode) {
     const previous = this.#path;
-    const current = this.parentNode?.path
-      ? this.parentNode.path + JSONPointer.Separator + this.escapedKey
-      : JSONPointer.Fragment;
+    const parentPath = this.parentNode?.path;
+    const current = parentPath
+      ? parentPath === JSONPointer.Separator
+        ? parentPath + this.escapedKey
+        : parentPath + JSONPointer.Separator + this.escapedKey
+      : JSONPointer.Separator;
     if (previous === current) return false;
     this.#path = current;
     this.publish({
@@ -276,13 +279,19 @@ export abstract class AbstractNode<
     this.propertyKey = this.#name;
     this.escapedKey = escapeSegment(this.propertyKey);
 
-    this.#path = this.parentNode?.path
-      ? this.parentNode.path + JSONPointer.Separator + this.escapedKey
-      : JSONPointer.Fragment;
+    const parentPath = this.parentNode?.path;
 
-    this.#key = this.parentNode?.path
-      ? this.parentNode.path + JSONPointer.Separator + (key ?? this.escapedKey)
-      : JSONPointer.Fragment;
+    this.#path = parentPath
+      ? parentPath === JSONPointer.Separator
+        ? parentPath + this.escapedKey
+        : parentPath + JSONPointer.Separator + this.escapedKey
+      : JSONPointer.Separator;
+
+    this.#key = parentPath
+      ? parentPath === JSONPointer.Separator
+        ? parentPath + (key ?? this.escapedKey)
+        : parentPath + JSONPointer.Separator + (key ?? this.escapedKey)
+      : JSONPointer.Separator;
 
     this.depth =
       this.#path.split(JSONPointer.Separator).filter(isTruthy).length - 1;

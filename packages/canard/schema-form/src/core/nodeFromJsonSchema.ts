@@ -45,7 +45,7 @@ export const nodeFromJsonSchema = <
   const resolveSchema = getResolveSchema(jsonSchema);
   const nodeFactory = createSchemaNodeFactory(resolveSchema);
   return nodeFactory({
-    name: JSONPointer.Fragment,
+    name: JSONPointer.Separator,
     jsonSchema,
     defaultValue,
     nodeFactory,
