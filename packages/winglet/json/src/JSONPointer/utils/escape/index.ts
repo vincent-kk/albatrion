@@ -1,4 +1,3 @@
 export { escapeSegment } from './escapeSegment';
-export { escapePointer } from './escapePointer';
-export { unescapeSegment } from './unescapeSegment';
-export { unescapePointer } from './unescapePointer';
+export { escapePath } from './escapePath';
+export { unescapePath, unescapePath as unescapeSegment } from './unescapePath';

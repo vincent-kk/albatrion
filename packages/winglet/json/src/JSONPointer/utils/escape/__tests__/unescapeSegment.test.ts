@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { unescapeSegment } from '../unescapeSegment';
+import { unescapePath as unescapeSegment } from '../unescapePath';
 
 describe('unescapeSegment', () => {
   it('should return the original segment if no tilde is present', () => {

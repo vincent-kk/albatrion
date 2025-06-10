@@ -43,46 +43,46 @@ import { escapeSegment } from './escapeSegment';
  * @example
  * ```typescript
  * // Basic segment escaping (only tildes in segments are escaped)
- * escapePointer('/users/john~doe/settings');
+ * escapePath('/users/john~doe/settings');
  * // Returns: "/users/john~0doe/settings"
  *
- * escapePointer('/config/app~name/value');
+ * escapePath('/config/app~name/value');
  * // Returns: "/config/app~0name/value"
  * ```
  *
  * @example
  * ```typescript
  * // Path separators are NOT escaped (they define structure)
- * escapePointer('/files/config/database');
+ * escapePath('/files/config/database');
  * // Returns: "/files/config/database" (unchanged - no special chars in segments)
  *
- * escapePointer('/docs/api/endpoints');
+ * escapePath('/docs/api/endpoints');
  * // Returns: "/docs/api/endpoints" (unchanged - no special chars in segments)
  * ```
  *
  * @example
  * ```typescript
  * // Multiple segments with special characters
- * escapePointer('/app~config/database~host/connection');
+ * escapePath('/app~config/database~host/connection');
  * // Returns: "/app~0config/database~0host/connection"
  *
- * escapePointer('/users/~/profile/~/settings');
+ * escapePath('/users/~/profile/~/settings');
  * // Returns: "/users/~0/profile/~0/settings"
  * ```
  *
  * @example
  * ```typescript
  * // Edge cases and various path formats
- * escapePointer('');
+ * escapePath('');
  * // Returns: "" (empty path)
  *
- * escapePointer('/');
+ * escapePath('/');
  * // Returns: "/" (root with empty segment)
  *
- * escapePointer('segment~name');
+ * escapePath('segment~name');
  * // Returns: "segment~0name" (single segment, no leading slash)
  *
- * escapePointer('/multiple~tildes~~~in~segment/normal');
+ * escapePath('/multiple~tildes~~~in~segment/normal');
  * // Returns: "/multiple~0tildes~0~0~0in~0segment/normal"
  * ```
  *
@@ -90,15 +90,15 @@ import { escapeSegment } from './escapeSegment';
  * ```typescript
  * // Real-world usage scenarios
  * const userPath = '/users/jane.doe@company.com/preferences';
- * const escapedUserPath = escapePointer(userPath);
+ * const escapedUserPath = escapePath(userPath);
  * // Result: "/users/jane.doe@company.com/preferences" (no escaping needed)
  *
  * const configPath = '/env/production/database~config/host';
- * const escapedConfigPath = escapePointer(configPath);
+ * const escapedConfigPath = escapePath(configPath);
  * // Result: "/env/production/database~0config/host"
  *
  * const backupPath = '/uploads/backup~2023/archive';
- * const escapedBackupPath = escapePointer(backupPath);
+ * const escapedBackupPath = escapePath(backupPath);
  * // Result: "/uploads/backup~02023/archive"
  * ```
  *
@@ -107,7 +107,7 @@ import { escapeSegment } from './escapeSegment';
  * // Dynamic path building with user input
  * const buildUserSettingPath = (userId: string, setting: string) => {
  *   const rawPath = `/users/${userId}/settings/${setting}`;
- *   return escapePointer(rawPath);
+ *   return escapePath(rawPath);
  * };
  *
  * buildUserSettingPath('user~123', 'theme~dark');
@@ -120,19 +120,23 @@ import { escapeSegment } from './escapeSegment';
  * @example
  * ```typescript
  * // RFC 6901 compliance examples
- * escapePointer('/foo/bar');
+ * escapePath('/foo/bar');
  * // Returns: "/foo/bar" (no special characters in segments)
  *
- * escapePointer('/a~b');
+ * escapePath('/a~b');
  * // Returns: "/a~0b" (tilde in segment content)
  *
- * escapePointer('/special!@#$%^&*()/chars');
+ * escapePath('/special!@#$%^&*()/chars');
  * // Returns: "/special!@#$%^&*()/chars" (only tildes need escaping)
  * ```
  */
-export const escapePointer = (path: string): string => {
+export const escapePath = (path: string): string => {
   const segments = path.split(JSONPointer.Child);
-  for (let index = 0, length = segments.length; index < length; index++)
-    segments[index] = escapeSegment(segments[index]);
-  return segments.join(JSONPointer.Child);
+  const length = segments.length;
+  if (length === 0) return '';
+  if (length === 1) return escapeSegment(segments[0]);
+  let result = escapeSegment(segments[0]);
+  for (let index = 1; index < length; index++)
+    result += JSONPointer.Child + escapeSegment(segments[index]);
+  return result;
 };

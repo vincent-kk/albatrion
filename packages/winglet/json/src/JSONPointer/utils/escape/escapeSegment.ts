@@ -41,33 +41,33 @@ import { CHILD, ESCAPE_CHILD, ESCAPE_TILDE, TILDE } from './constant';
  * @example
  * ```typescript
  * // Basic character escaping
- * escapePointer('foo~bar');
+ * escapePath('foo~bar');
  * // Returns: "foo~0bar"
  *
- * escapePointer('foo/bar');
+ * escapePath('foo/bar');
  * // Returns: "foo~1bar"
  * ```
  *
  * @example
  * ```typescript
  * // Multiple special characters
- * escapePointer('path~with/both~chars');
+ * escapePath('path~with/both~chars');
  * // Returns: "path~0with~1both~0chars"
  *
- * escapePointer('~/~/~/');
+ * escapePath('~/~/~/');
  * // Returns: "~0~1~0~1~0~1"
  * ```
  *
  * @example
  * ```typescript
  * // Edge cases and performance optimization
- * escapePointer('');
+ * escapePath('');
  * // Returns: "" (empty string, no processing needed)
  *
- * escapePointer('normal_key_123');
+ * escapePath('normal_key_123');
  * // Returns: "normal_key_123" (no special chars, early exit)
  *
- * escapePointer('user@domain.com');
+ * escapePath('user@domain.com');
  * // Returns: "user@domain.com" (no special chars, early exit)
  * ```
  *
@@ -75,12 +75,12 @@ import { CHILD, ESCAPE_CHILD, ESCAPE_TILDE, TILDE } from './constant';
  * ```typescript
  * // Real-world usage scenarios
  * const objectKey = 'config/database';
- * const escapedKey = escapePointer(objectKey);
+ * const escapedKey = escapePath(objectKey);
  * // escapedKey: "config~1database"
  * // Can now be safely used in JSON Pointer: `/settings/${escapedKey}/host`
  *
  * const fileName = 'backup~2023-12-01.json';
- * const escapedFileName = escapePointer(fileName);
+ * const escapedFileName = escapePath(fileName);
  * // escapedFileName: "backup~02023-12-01.json"
  * // Can now be safely used in JSON Pointer: `/files/${escapedFileName}/size`
  * ```
@@ -94,23 +94,23 @@ import { CHILD, ESCAPE_CHILD, ESCAPE_TILDE, TILDE } from './constant';
  * };
  *
  * // These keys need escaping when used in JSON Pointers
- * const escapedFileKey = escapePointer('files/docs');     // "files~1docs"
- * const escapedConfigKey = escapePointer('config~prod');  // "config~0prod"
+ * const escapedFileKey = escapePath('files/docs');     // "files~1docs"
+ * const escapedConfigKey = escapePath('config~prod');  // "config~0prod"
  *
  * // Now safe to use in JSON Pointer expressions
  * const filePointer = `/${escapedFileKey}/size`;      // "/files~1docs/size"
  * const configPointer = `/${escapedConfigKey}/database`; // "/config~0prod/database"
  * ```
  */
-export const escapeSegment = (path: string): string => {
-  if (path.indexOf(CHILD) === -1 && path.indexOf(TILDE) === -1) return path;
-  const length = path.length;
-  const result: string[] = new Array(length);
-  for (let index = 0; index < length; index++) {
-    const char = path[index];
-    if (char === TILDE) result[index] = ESCAPE_TILDE;
-    else if (char === CHILD) result[index] = ESCAPE_CHILD;
-    else result[index] = char;
+export const escapeSegment = (segment: string): string => {
+  if (segment.indexOf(CHILD) === -1 && segment.indexOf(TILDE) === -1)
+    return segment;
+  let result = '';
+  for (let index = 0, length = segment.length; index < length; index++) {
+    const character = segment[index];
+    if (character === TILDE) result += ESCAPE_TILDE;
+    else if (character === CHILD) result += ESCAPE_CHILD;
+    else result += character;
   }
-  return result.join('');
+  return result;
 };
