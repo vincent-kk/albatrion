@@ -106,7 +106,12 @@ export class JsonSchemaScanner<ContextType = void> {
    */
   #run(this: this, schema: UnknownSchema): void {
     const stack: SchemaEntry[] = [
-      { schema, path: JSONPointer.Root, dataPath: JSONPointer.Root, depth: 0 },
+      {
+        schema,
+        path: JSONPointer.Fragment,
+        dataPath: JSONPointer.Fragment,
+        depth: 0,
+      },
     ];
     const entryPhase = new Map<SchemaEntry, OperationPhase>();
     const visitedReference = new Set<string>();

@@ -31,7 +31,7 @@ describe('ajvValidatorPlugin', () => {
       expect(result![0]).toMatchObject({
         keyword: 'type',
         message: 'must be string',
-        dataPath: '',
+        dataPath: '/',
         details: expect.any(Object),
         source: expect.any(Object),
       });
@@ -246,7 +246,7 @@ describe('ajvValidatorPlugin', () => {
       expect(missingNameError![0]).toMatchObject({
         keyword: 'required',
         message: "must have required property 'name'",
-        dataPath: '.name',
+        dataPath: '/name',
         details: { missingProperty: 'name' },
         source: expect.any(Object),
       });
@@ -304,7 +304,7 @@ describe('ajvValidatorPlugin', () => {
       expect(nameTypeError![0]).toMatchObject({
         keyword: 'type',
         message: 'must be string',
-        dataPath: '.name',
+        dataPath: '/name',
       });
     });
   });
@@ -341,13 +341,13 @@ describe('ajvValidatorPlugin', () => {
 
       // 각 에러의 dataPath 확인
       const minLengthError = result!.find((err) => err.keyword === 'minLength');
-      expect(minLengthError!.dataPath).toBe('.name');
+      expect(minLengthError!.dataPath).toBe('/name');
 
       const minimumError = result!.find((err) => err.keyword === 'minimum');
-      expect(minimumError!.dataPath).toBe('.age');
+      expect(minimumError!.dataPath).toBe('/age');
 
       const requiredError = result!.find((err) => err.keyword === 'required');
-      expect(requiredError!.dataPath).toBe('.email');
+      expect(requiredError!.dataPath).toBe('/email');
     });
 
     it('중첩된 객체의 검증 에러를 반환한다', async () => {
@@ -394,7 +394,7 @@ describe('ajvValidatorPlugin', () => {
       expect(missingNestedError).toHaveLength(1);
       expect(missingNestedError![0]).toMatchObject({
         keyword: 'required',
-        dataPath: '.user.profile.name',
+        dataPath: '/user/profile/name',
       });
 
       // 여러 레벨의 필수 필드 누락
@@ -402,7 +402,7 @@ describe('ajvValidatorPlugin', () => {
       expect(missingMultipleLevelsError).toHaveLength(1);
       expect(missingMultipleLevelsError![0]).toMatchObject({
         keyword: 'required',
-        dataPath: '.user',
+        dataPath: '/user',
       });
     });
   });

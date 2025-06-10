@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   Form,
@@ -33,7 +33,7 @@ export const Watch = () => {
         type: 'string',
         formType: 'greeting',
         computed: {
-          watch: ['$.profile.name', '$.profile.age', '$.profile'],
+          watch: ['/profile/name', '/profile/age', '/profile'],
         },
       },
     },
@@ -140,7 +140,7 @@ export const WatchWithBranchNode = () => {
         type: 'string',
         formType: 'greeting',
         computed: {
-          watch: ['$.profile'],
+          watch: ['/profile'],
         },
       },
     },

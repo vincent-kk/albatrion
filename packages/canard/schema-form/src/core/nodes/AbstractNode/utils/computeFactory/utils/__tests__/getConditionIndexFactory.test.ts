@@ -1,70 +1,67 @@
 import { describe, expect, it } from 'vitest';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import { getConditionIndexFactory } from '../getConditionIndexFactory';
+import { getPathManager } from '../getPathManager';
 
 describe('getConditionIndexFactory', () => {
   it('유효하지 않은 스키마에 대해 undefined를 반환해야 함', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
 
     // type이 object가 아닌 경우
-    const schema1 = { type: 'string' } as JsonSchema;
+    const schema1 = { type: 'string' } as JsonSchemaWithVirtual;
     expect(
-      getConditionIndexFactory(schema1)(dependencyPaths, 'oneOf', 'if'),
+      getConditionIndexFactory(schema1)(pathManager, 'oneOf', 'if'),
     ).toBeUndefined();
 
     // oneOf가 배열이 아닌 경우
     const schema2 = {
       type: 'object',
       oneOf: 'invalid',
-    } as unknown as JsonSchema;
+    } as unknown as JsonSchemaWithVirtual;
     expect(
-      getConditionIndexFactory(schema2)(dependencyPaths, 'oneOf', 'if'),
+      getConditionIndexFactory(schema2)(pathManager, 'oneOf', 'if'),
     ).toBeUndefined();
 
     // oneOf가 없는 경우
-    const schema3 = { type: 'object' } as JsonSchema;
+    const schema3 = { type: 'object' } as JsonSchemaWithVirtual;
     expect(
-      getConditionIndexFactory(schema3)(dependencyPaths, 'oneOf', 'if'),
+      getConditionIndexFactory(schema3)(pathManager, 'oneOf', 'if'),
     ).toBeUndefined();
   });
 
   it('유효한 표현식이 없는 경우 undefined를 반환해야 함', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const schema = {
       type: 'object',
       oneOf: [{}, { computed: {} }, { computed: { if: false } }],
-    } as unknown as JsonSchema;
+    } as unknown as JsonSchemaWithVirtual;
 
     expect(
-      getConditionIndexFactory(schema)(dependencyPaths, 'oneOf', 'if'),
+      getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if'),
     ).toBeUndefined();
   });
 
   it('단순 동등성 비교에 대해 최적화된 함수를 생성해야 함', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const schema = {
       type: 'object',
       oneOf: [
-        { computed: { if: '$.value === "option1"' } },
-        { computed: { if: '$.value === "option2"' } },
-        { computed: { if: '$.value === "option3"' } },
-        { computed: { if: '$.value === "option3"' } },
-        { computed: { if: '$.value === "option2"' } },
-        { computed: { if: '$.value === "option2"' } },
-        { computed: { if: '$.value === "option2"' } },
-        { computed: { if: '$.value === "option3"' } },
+        { computed: { if: '/value === "option1"' } },
+        { computed: { if: '/value === "option2"' } },
+        { computed: { if: '/value === "option3"' } },
+        { computed: { if: '/value === "option3"' } },
+        { computed: { if: '/value === "option2"' } },
+        { computed: { if: '/value === "option2"' } },
+        { computed: { if: '/value === "option2"' } },
+        { computed: { if: '/value === "option3"' } },
       ],
-    } as unknown as JsonSchema;
+    } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(
-      dependencyPaths,
-      'oneOf',
-      'if',
-    );
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
 
-    expect(dependencyPaths).toContain('$.value');
+    expect(pathManager.get()).toContain('/value');
     expect(result).toBeDefined();
 
     // 각 옵션에 대한 결과 확인
@@ -75,24 +72,20 @@ describe('getConditionIndexFactory', () => {
   });
 
   it('복잡한 조건에 대해 일반 평가 함수를 생성해야 함', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const schema = {
       type: 'object',
       oneOf: [
-        { computed: { if: '_.value === "option1"' } },
-        { computed: { if: '_.value === "option2"' } },
-        { computed: { if: '_.count > 10' } },
+        { computed: { if: '../value === "option1"' } },
+        { computed: { if: '../value === "option2"' } },
+        { computed: { if: '../count > 10' } },
       ],
-    } as unknown as JsonSchema;
+    } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(
-      dependencyPaths,
-      'oneOf',
-      'if',
-    );
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
 
-    expect(dependencyPaths).toContain('_.value');
-    expect(dependencyPaths).toContain('_.count');
+    expect(pathManager.get()).toContain('../value');
+    expect(pathManager.get()).toContain('../count');
     expect(result).toBeDefined();
 
     // 단순 동등성 비교
@@ -107,26 +100,22 @@ describe('getConditionIndexFactory', () => {
   });
 
   it('다양한 종류의 조건을 올바르게 처리해야 함', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const schema = {
       type: 'object',
       oneOf: [
-        { '&if': '$.type === "string" && $.length > 0' },
-        { computed: { if: '$.age >= 18' } },
-        { computed: { if: '($.value).includes("test")' } },
+        { '&if': '/type === "string" && /length > 0' },
+        { computed: { if: '/age >= 18' } },
+        { computed: { if: '(/value).includes("test")' } },
       ],
-    } as unknown as JsonSchema;
+    } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(
-      dependencyPaths,
-      'oneOf',
-      'if',
-    );
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
 
-    expect(dependencyPaths).toContain('$.type');
-    expect(dependencyPaths).toContain('$.length');
-    expect(dependencyPaths).toContain('$.age');
-    expect(dependencyPaths).toContain('$.value');
+    expect(pathManager.get()).toContain('/type');
+    expect(pathManager.get()).toContain('/length');
+    expect(pathManager.get()).toContain('/age');
+    expect(pathManager.get()).toContain('/value');
     expect(result).toBeDefined();
 
     // 첫 번째 조건
@@ -143,23 +132,19 @@ describe('getConditionIndexFactory', () => {
   });
 
   it('동일한 필드에 대한 여러 조건을 처리해야 함', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const schema = {
       type: 'object',
       oneOf: [
-        { type: 'object', computed: { if: '$.age < 18' } },
-        { type: 'object', computed: { if: '$.age >= 18 && $.age < 65' } },
-        { type: 'object', computed: { if: '$.age >= 65' } },
+        { type: 'object', computed: { if: '/age < 18' } },
+        { type: 'object', computed: { if: '#/age >= 18 && #/age < 65' } },
+        { type: 'object', computed: { if: '/age >= 65' } },
       ],
-    } as unknown as JsonSchema;
+    } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(
-      dependencyPaths,
-      'oneOf',
-      'if',
-    );
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
 
-    expect(dependencyPaths).toContain('$.age');
+    expect(pathManager.get()).toContain('/age');
     expect(result).toBeDefined();
 
     expect(result!([10])).toBe(0); // 미성년자
@@ -168,23 +153,19 @@ describe('getConditionIndexFactory', () => {
   });
 
   it('null 및 undefined 표현식을 올바르게 처리해야 함', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const schema = {
       type: 'object',
       oneOf: [
         { type: 'object', computed: { if: null } },
-        { type: 'object', computed: { if: '$.value === "valid"' } },
+        { type: 'object', computed: { if: '#/value === "valid"' } },
         { type: 'object', '&if': undefined },
       ],
-    } as unknown as JsonSchema;
+    } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(
-      dependencyPaths,
-      'oneOf',
-      'if',
-    );
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
 
-    expect(dependencyPaths).toContain('$.value');
+    expect(pathManager.get()).toContain('/value');
     expect(result).toBeDefined();
 
     expect(result!(['valid'])).toBe(1);
@@ -192,23 +173,19 @@ describe('getConditionIndexFactory', () => {
   });
 
   it('세미콜론이 포함된 표현식을 올바르게 처리해야 함', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const schema = {
       type: 'object',
-      oneOf: [{ type: 'object', computed: { if: '$.value === "option1";' } }],
-    } as unknown as JsonSchema;
+      oneOf: [{ type: 'object', computed: { if: '/value === "option1";' } }],
+    } as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(
-      dependencyPaths,
-      'oneOf',
-      'if',
-    );
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
 
     expect(result!(['option1'])).toBe(0);
   });
 
   it('boolean 타입 조건을 올바르게 처리해야 함', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const schema = {
       type: 'object',
       oneOf: [
@@ -216,13 +193,9 @@ describe('getConditionIndexFactory', () => {
         { type: 'object', computed: { if: true } },
         { type: 'object', computed: { if: '$.value === "option"' } },
       ],
-    } as unknown as JsonSchema;
+    } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(
-      dependencyPaths,
-      'oneOf',
-      'if',
-    );
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
 
     expect(result).toBeDefined();
     // true 조건은 항상 매칭되어야 함 (인덱스 1)
@@ -236,21 +209,17 @@ describe('getConditionIndexFactory', () => {
   });
 
   it('여러 true 조건이 있는 경우 첫 번째 true 조건이 선택되어야 함', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const schema = {
       type: 'object',
       oneOf: [
-        { type: 'object', computed: { if: '$.value === "option"' } },
+        { type: 'object', computed: { if: '#/value === "option"' } },
         { type: 'object', computed: { if: true } },
         { type: 'object', computed: { if: true } },
       ],
-    } as unknown as JsonSchema;
+    } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(
-      dependencyPaths,
-      'oneOf',
-      'if',
-    );
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
 
     expect(result).toBeDefined();
     // 구체적인 조건이 우선
@@ -261,7 +230,7 @@ describe('getConditionIndexFactory', () => {
   });
 
   it('모든 조건이 false인 경우 아무 것도 선택되지 않아야 함', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const schema = {
       type: 'object',
       oneOf: [
@@ -269,33 +238,25 @@ describe('getConditionIndexFactory', () => {
         { type: 'object', computed: { if: false } },
         { type: 'object', computed: { if: false } },
       ],
-    } as unknown as JsonSchema;
+    } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(
-      dependencyPaths,
-      'oneOf',
-      'if',
-    );
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
 
     // 유효한 표현식이 없으므로 undefined 반환
     expect(result).toBeUndefined();
   });
 
   it('조건이 false와 표현식 혼합인 경우 올바르게 처리해야 함', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const schema = {
       type: 'object',
       oneOf: [
         { type: 'object', computed: { if: false } },
-        { type: 'object', computed: { if: '$.value === "test"' } },
+        { type: 'object', computed: { if: '#/value === "test"' } },
       ],
-    } as unknown as JsonSchema;
+    } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(
-      dependencyPaths,
-      'oneOf',
-      'if',
-    );
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
 
     expect(result).toBeDefined();
     expect(result!(['test'])).toBe(1);
@@ -303,21 +264,17 @@ describe('getConditionIndexFactory', () => {
   });
 
   it('&if 속성에서도 boolean 타입을 올바르게 처리해야 함', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const schema = {
       type: 'object',
       oneOf: [
         { type: 'object', '&if': false },
         { type: 'object', '&if': true },
-        { type: 'object', '&if': '$.value === "option"' },
+        { type: 'object', '&if': '/value === "option"' },
       ],
-    } as unknown as JsonSchema;
+    } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(
-      dependencyPaths,
-      'oneOf',
-      'if',
-    );
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
 
     expect(result).toBeDefined();
     // true 조건은 항상 매칭되어야 함 (인덱스 1)
@@ -328,7 +285,7 @@ describe('getConditionIndexFactory', () => {
   });
 
   it('computed.if와 &if를 혼합해서 사용할 때 올바르게 처리해야 함', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const schema = {
       type: 'object',
       oneOf: [
@@ -337,13 +294,9 @@ describe('getConditionIndexFactory', () => {
         { type: 'object', computed: { if: '$.value === "test"' } },
         { type: 'object', '&if': '$.value === "option"' },
       ],
-    } as unknown as JsonSchema;
+    } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(
-      dependencyPaths,
-      'oneOf',
-      'if',
-    );
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
 
     expect(result).toBeDefined();
     // 구체적인 조건이 우선
@@ -355,7 +308,7 @@ describe('getConditionIndexFactory', () => {
   });
 
   it('비어있는 표현식을 올바르게 처리해야 함', () => {
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const schema = {
       type: 'object',
       oneOf: [
@@ -363,13 +316,9 @@ describe('getConditionIndexFactory', () => {
         { type: 'object', '&if': '' },
         { type: 'object', computed: { if: true } },
       ],
-    } as unknown as JsonSchema;
+    } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(
-      dependencyPaths,
-      'oneOf',
-      'if',
-    );
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
 
     expect(result).toBeDefined();
     // 빈 문자열은 유효하지 않으므로 무시되고, true 조건(인덱스 2)이 선택됨
@@ -380,30 +329,30 @@ describe('getConditionIndexFactory', () => {
 describe('getConditionIndexFactory custom test', () => {
   // 기본 케이스: 단순 동등성 비교 (최적화된 경로)
   it('단순 동등성 비교: 문자열 일치 케이스를 올바르게 처리해야 함', () => {
-    const schema: JsonSchema = {
+    const schema: JsonSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
           type: 'object',
-          '&if': '@.root.type === "foo"',
+          '&if': './root/type === "foo"',
           properties: { foo: { type: 'string' } },
         },
         {
           type: 'object',
-          '&if': '@.root.type === "bar"',
+          '&if': './root/type === "bar"',
           properties: { bar: { type: 'string' } },
         },
         {
           type: 'object',
-          '&if': '@.root.type === "baz"',
+          '&if': './root/type === "baz"',
           properties: { baz: { type: 'string' } },
         },
       ],
     };
 
-    const dependencyPaths: string[] = ['@.root.type'];
+    const pathManager = getPathManager();
     const getOneOfIndex = getConditionIndexFactory(schema)(
-      dependencyPaths,
+      pathManager,
       'oneOf',
       'if',
     );
@@ -415,30 +364,30 @@ describe('getConditionIndexFactory custom test', () => {
     expect(getOneOfIndex!(['unknown'])).toBe(-1);
 
     // 의존성 경로가 정확히 추출되었는지 확인
-    expect(dependencyPaths).toEqual(['@.root.type']);
+    expect(pathManager.get()).toEqual(['./root/type']);
   });
 
   // 복잡한 조건 케이스 (일반 경로)
   it('복잡한 조건: 논리 연산자를 포함한 조건을 처리해야 함', () => {
-    const schema: JsonSchema = {
+    const schema: JsonSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
           type: 'object',
-          '&if': '@.root.age > 18 && @.root.type === "adult"',
+          '&if': './root/age > 18 && ./root/type === "adult"',
           properties: { adult: { type: 'string' } },
         },
         {
           type: 'object',
-          '&if': '@.root.age <= 18 || @.root.type === "child"',
+          '&if': './root/age <= 18 || ./root/type === "child"',
           properties: { child: { type: 'string' } },
         },
       ],
     };
 
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const getOneOfIndex = getConditionIndexFactory(schema)(
-      dependencyPaths,
+      pathManager,
       'oneOf',
       'if',
     );
@@ -449,23 +398,23 @@ describe('getConditionIndexFactory custom test', () => {
     expect(getOneOfIndex!([30, 'child'])).toBe(1);
 
     // 의존성 경로가 정확히 추출되었는지 확인
-    expect(dependencyPaths).toContain('@.root.age');
-    expect(dependencyPaths).toContain('@.root.type');
+    expect(pathManager.get()).toContain('./root/age');
+    expect(pathManager.get()).toContain('./root/type');
   });
 
   // oneOf 스키마가 혼합된 형태의 조건을 가진 케이스
   it('혼합된 형태의 조건을 가진 oneOf 스키마를 처리해야 함', () => {
-    const schema: JsonSchema = {
+    const schema: JsonSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
           type: 'object',
-          computed: { if: '@.root.type === "simple"' },
+          computed: { if: './root/type === "simple"' },
           properties: { simple: { type: 'string' } },
         },
         {
           type: 'object',
-          computed: { if: '@.root.age > 18 && @.root.role === "admin"' },
+          computed: { if: './root/age > 18 && ./root/role === "admin"' },
           properties: { complex: { type: 'string' } },
         },
         {
@@ -476,9 +425,9 @@ describe('getConditionIndexFactory custom test', () => {
       ],
     };
 
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const getOneOfIndex = getConditionIndexFactory(schema)(
-      dependencyPaths,
+      pathManager,
       'oneOf',
       'if',
     );
@@ -493,13 +442,13 @@ describe('getConditionIndexFactory custom test', () => {
   // 잘못된 입력 처리 (오류 가능성)
   it('잘못된 스키마 입력을 안전하게 처리해야 함', () => {
     // type이 object가 아닌 경우
-    let schema: JsonSchema = {
+    let schema: JsonSchemaWithVirtual = {
       type: 'string',
       oneOf: [],
     };
-    let dependencyPaths: string[] = [];
+    let pathManager = getPathManager();
     let getOneOfIndex = getConditionIndexFactory(schema)(
-      dependencyPaths,
+      pathManager,
       'oneOf',
       'if',
     );
@@ -510,9 +459,9 @@ describe('getConditionIndexFactory custom test', () => {
       type: 'object',
       oneOf: 'invalid' as any,
     };
-    dependencyPaths = [];
+    pathManager = getPathManager();
     getOneOfIndex = getConditionIndexFactory(schema)(
-      dependencyPaths,
+      pathManager,
       'oneOf',
       'if',
     );
@@ -523,9 +472,9 @@ describe('getConditionIndexFactory custom test', () => {
       type: 'object',
       oneOf: [],
     };
-    dependencyPaths = [];
+    pathManager = getPathManager();
     getOneOfIndex = getConditionIndexFactory(schema)(
-      dependencyPaths,
+      pathManager,
       'oneOf',
       'if',
     );
@@ -534,12 +483,12 @@ describe('getConditionIndexFactory custom test', () => {
 
   // 경계 케이스 (null 값, 빈 표현식 등)
   it('경계 케이스와 비정상적인 값을 처리해야 함', () => {
-    const schema: JsonSchema = {
+    const schema: JsonSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
           type: 'object',
-          '&if': '@.root.value === null', // null 비교
+          '&if': './root/value === null', // null 비교
           properties: { nullable: { type: 'string' } },
         },
         {
@@ -550,15 +499,15 @@ describe('getConditionIndexFactory custom test', () => {
         null as any,
         {
           type: 'object',
-          '&if': '@.root.value === undefined', // undefined 비교
+          '&if': './root/value === undefined', // undefined 비교
           properties: { undefinable: { type: 'string' } },
         },
       ],
     };
 
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const getOneOfIndex = getConditionIndexFactory(schema)(
-      dependencyPaths,
+      pathManager,
       'oneOf',
       'if',
     );
@@ -571,30 +520,30 @@ describe('getConditionIndexFactory custom test', () => {
 
   // 정규식 패턴 매칭 테스트
   it('정규식 패턴이 다양한 표현식을 올바르게 매칭해야 함', () => {
-    const schema: JsonSchema = {
+    const schema: JsonSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
           type: 'object',
-          '&if': '@.root.value === "따옴표가 있는 문자열"',
+          '&if': './root/value === "따옴표가 있는 문자열"',
           properties: { quote: { type: 'string' } },
         },
         {
           type: 'object',
-          '&if': '@.root.value === "123"', // 숫자 문자열
+          '&if': './root/value === "123"', // 숫자 문자열
           properties: { number: { type: 'string' } },
         },
         {
           type: 'object',
-          '&if': '@.root.value === "특수문자!@#$%^&*()"', // 특수문자
+          '&if': './root/value === "특수문자!@#$%^&*()"', // 특수문자
           properties: { special: { type: 'string' } },
         },
       ],
     };
 
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const getOneOfIndex = getConditionIndexFactory(schema)(
-      dependencyPaths,
+      pathManager,
       'oneOf',
       'if',
     );
@@ -607,25 +556,25 @@ describe('getConditionIndexFactory custom test', () => {
 
   // 중첩 속성 경로 테스트
   it('중첩된 속성 경로를 올바르게 처리해야 함', () => {
-    const schema: JsonSchema = {
+    const schema: JsonSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
           type: 'object',
-          '&if': '@.root.user.profile.type === "personal"',
+          '&if': './root/user/profile/type === "personal"',
           properties: { personal: { type: 'string' } },
         },
         {
           type: 'object',
-          '&if': '@.root.user.profile.type === "business"',
+          '&if': './root/user/profile/type === "business"',
           properties: { business: { type: 'string' } },
         },
       ],
     };
 
-    const dependencyPaths: string[] = [];
+    const pathManager = getPathManager();
     const getOneOfIndex = getConditionIndexFactory(schema)(
-      dependencyPaths,
+      pathManager,
       'oneOf',
       'if',
     );
@@ -636,35 +585,35 @@ describe('getConditionIndexFactory custom test', () => {
     expect(getOneOfIndex!(dependencies)).toBe(0);
 
     // 의존성 경로가 정확히 추출되었는지 확인
-    expect(dependencyPaths).toContain('@.root.user.profile.type');
+    expect(pathManager.get()).toContain('./root/user/profile/type');
   });
 
   // 여러 개의 의존성 경로를 사용하는 케이스
   it('여러 의존성 경로를 사용하는 케이스를 처리해야 함', () => {
-    const schema: JsonSchema = {
+    const schema: JsonSchemaWithVirtual = {
       type: 'object',
       oneOf: [
         {
           type: 'object',
-          '&if': '@.rootPath1 === "value1" && @.rootPath2 === "value2"',
+          '&if': './rootPath1 === "value1" && ./rootPath2 === "value2"',
           properties: { both: { type: 'string' } },
         },
         {
           type: 'object',
-          '&if': '@.rootPath1 === "value1" || @.rootPath3 === "value3"',
+          '&if': './rootPath1 === "value1" || ./rootPath3 === "value3"',
           properties: { either: { type: 'string' } },
         },
       ],
     };
 
+    const pathManager = getPathManager();
+
     // 미리 정의된 의존성 경로 배열
-    const dependencyPaths: string[] = [
-      '@.rootPath1',
-      '@.rootPath2',
-      '@.rootPath3',
-    ];
+    ['./rootPath1', './rootPath2', './rootPath3'].forEach((path) => {
+      pathManager.set(path);
+    });
     const getOneOfIndex = getConditionIndexFactory(schema)(
-      dependencyPaths,
+      pathManager,
       'oneOf',
       'if',
     );

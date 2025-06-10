@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
-import { unescapePointer } from '@/json/JSONPointer/utils/escape/unescapePointer';
+import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 import type { JsonRoot } from '@/json/type';
 
 import type { Patch } from '../type';
@@ -97,7 +97,7 @@ export const applySinglePatch = (
   protectPrototype: boolean,
 ): any => {
   // 루트 패치 처리
-  if (patch.path === '' || patch.path === JSONPointer.Root)
+  if (patch.path === '' || patch.path === JSONPointer.Fragment)
     return handleRootPatch(source, patch, patchIndex, strict);
 
   const segments = patch.path.split('/');
@@ -106,7 +106,7 @@ export const applySinglePatch = (
 
   const segmentsLength = segments.length;
   while (cursor < segmentsLength) {
-    let segment: string | number = unescapePointer(segments[cursor]);
+    let segment: string | number = unescapePath(segments[cursor]);
 
     if (protectPrototype && isPrototypeModification(segment, segments, cursor))
       throw new JsonPatchError(

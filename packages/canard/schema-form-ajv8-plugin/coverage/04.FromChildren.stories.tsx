@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { Form, type JsonSchema, registerPlugin } from '@canard/schema-form';
 
@@ -48,19 +48,19 @@ export const FunctionalChildren = () => {
         {({ defaultValue, value, errors }) => (
           <>
             <div>
-              {!defaultValue?.allowed && <Form.Input path=".allowed" />}
+              {!defaultValue?.allowed && <Form.Input path="#/allowed" />}
             </div>
             <div>
-              <Form.Label path=".name" />
-              {!!value?.allowed && <Form.Input path=".name" />}
+              <Form.Label path="#/name" />
+              {!!value?.allowed && <Form.Input path="#/name" />}
             </div>
             <div>
-              <Form.Label path=".age" />
-              {!!value?.name?.length && <Form.Input path=".age" />}
+              <Form.Label path="#/age" />
+              {!!value?.name?.length && <Form.Input path="#/age" />}
             </div>
             <div>
-              <Form.Label path=".gender" />
-              {typeof value?.age === 'number' && <Form.Input path=".gender" />}
+              <Form.Label path="#/gender" />
+              {typeof value?.age === 'number' && <Form.Input path="#/gender" />}
             </div>
             {defaultValue && <div>{JSON.stringify(defaultValue, null, 2)}</div>}
             {value && <div>{JSON.stringify(value, null, 2)}</div>}
@@ -166,14 +166,14 @@ export const IterableChildren = () => {
         onChange={setValue}
       >
         <div>
-          <Form.Input path=".allowed" />
+          <Form.Input path="#/allowed" />
         </div>
         <div>
-          <Form.Label path=".name" />
-          <Form.Input path=".name" />
+          <Form.Label path="#/name" />
+          <Form.Input path="#/name" />
         </div>
         <div>
-          <Form.Render path=".age">
+          <Form.Render path="#/age">
             {({ Input, path }) => {
               return (
                 <div>
@@ -185,11 +185,11 @@ export const IterableChildren = () => {
           </Form.Render>
         </div>
         <div>
-          <Form.Group path=".gender" />
+          <Form.Group path="#/gender" />
         </div>
         <div>
           name error:
-          <Form.Error path=".name" style={{ display: 'inline' }} />
+          <Form.Error path="#/name" style={{ display: 'inline' }} />
         </div>
       </Form>
     </StoryLayout>
@@ -231,17 +231,17 @@ export const FormWithSeparatedChildren = () => {
         onChange={setValue}
       >
         <div>
-          <Form.Label path=".allowed" style={{ color: 'red' }} />
-          <Form.Input path=".allowed" style={{ color: 'blue' }} />
-          <Form.Error path=".allowed" style={{ color: 'green' }} />
+          <Form.Label path="#/allowed" style={{ color: 'red' }} />
+          <Form.Input path="#/allowed" style={{ color: 'blue' }} />
+          <Form.Error path="#/allowed" style={{ color: 'green' }} />
         </div>
         <div>
-          <Form.Label path=".name" style={{ color: 'red' }} />
-          <Form.Input path=".name" style={{ color: 'blue' }} />
-          <Form.Error path=".name" style={{ color: 'green' }} />
+          <Form.Label path="#/name" style={{ color: 'red' }} />
+          <Form.Input path="#/name" style={{ color: 'blue' }} />
+          <Form.Error path="#/name" style={{ color: 'green' }} />
         </div>
         <div>
-          <Form.Render path=".age" style={{ color: 'orange' }}>
+          <Form.Render path="#/age" style={{ color: 'orange' }}>
             {({ Input, path, style }) => {
               return (
                 <div style={style}>
@@ -253,7 +253,7 @@ export const FormWithSeparatedChildren = () => {
           </Form.Render>
         </div>
         <div>
-          <Form.Group path=".gender" style={{ color: 'purple' }} />
+          <Form.Group path="#/gender" style={{ color: 'purple' }} />
         </div>
       </Form>
     </StoryLayout>

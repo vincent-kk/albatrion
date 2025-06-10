@@ -15,6 +15,7 @@ import { FormLabel } from '../src/components/FormLabel';
 import { formTypeInputDefinitions } from '../src/formTypeInputs';
 
 registerPlugin(ajv8Plugin);
+
 export default {
   title: 'FormComponent',
 };
@@ -75,7 +76,7 @@ const bigSchema = {
               type: 'string',
               enum: ['male', 'female', 'other'],
               computed: {
-                visible: '_.age >= 18',
+                visible: '../age >= 18',
               },
               placeholder: 'Select gender',
             },

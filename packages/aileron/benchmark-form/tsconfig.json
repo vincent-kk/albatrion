@@ -19,7 +19,7 @@
       ],
       "@aileron/*": [
         "./aileron/common/*"
-      ],
+      ]
     }
   },
   "include": [

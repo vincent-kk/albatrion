@@ -48,15 +48,15 @@
       ],
       "@aileron/*": [
         "./aileron/common/*"
-      ],
+      ]
     }
   },
   "include": [
     "src",
-    "src/**/*.tsx?",
+    "src/**/*.tsx?"
   ],
   "exclude": [
     "node_modules",
-    "dist",
+    "dist"
   ]
 }

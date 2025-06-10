@@ -126,7 +126,7 @@ export default [
           arrows: true,
           arguments: true,
           keep_fargs: false,
-          booleans_as_integers: true,
+          booleans_as_integers: false,
           ecma: 2022,
         },
         mangle: {

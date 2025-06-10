@@ -1,10 +1,18 @@
 import type { JsonSchemaError } from '@canard/schema-form';
-import { isArrayIndex } from '@winglet/common-utils/filter';
 import type { ErrorObject } from 'ajv';
 
-const JSON_PATH_SEPARATOR = '.';
 const JSON_POINTER_SEPARATOR = '/';
 
+/**
+ * Transforms AJV8 error objects to schema-form error format.
+ *
+ * AJV8 already uses JSONPointer format for instancePath, so minimal
+ * transformation is needed. This function mainly handles the required
+ * keyword errors by appending the missing property to the dataPath.
+ *
+ * @param errors - Array of AJV8 error objects
+ * @returns Array of transformed JsonSchemaError objects
+ */
 export const transformErrors = (errors: ErrorObject[]): JsonSchemaError[] => {
   if (!Array.isArray(errors)) return [];
   const result = new Array<JsonSchemaError>(errors.length);
@@ -21,35 +29,24 @@ export const transformErrors = (errors: ErrorObject[]): JsonSchemaError[] => {
   return result;
 };
 
+/**
+ * Transforms the dataPath for a single AJV8 error.
+ *
+ * For 'required' keyword errors, appends the missing property name to the instancePath.
+ * For other errors, returns the instancePath as-is (already in JSONPointer format).
+ *
+ * @param error - AJV8 error object
+ * @returns Transformed dataPath in JSONPointer format
+ */
 const transformDataPath = (error: ErrorObject): string => {
   const instancePath = error.instancePath;
   const hasMissingProperty =
     error.keyword === 'required' && error.params?.missingProperty;
-
   if (!instancePath)
     return hasMissingProperty
-      ? JSON_PATH_SEPARATOR + error.params.missingProperty
-      : '';
-
-  const parts = [];
-  let segmentStart = 1;
-
-  for (let i = 1; i <= instancePath.length; i++) {
-    if (
-      i === instancePath.length ||
-      instancePath[i] === JSON_POINTER_SEPARATOR
-    ) {
-      if (segmentStart < i) {
-        const segment = instancePath.slice(segmentStart, i);
-        if (isArrayIndex(segment)) parts.push('[' + segment + ']');
-        else parts.push(JSON_PATH_SEPARATOR + segment);
-      }
-      segmentStart = i + 1;
-    }
-  }
-
-  const result = parts.join('');
+      ? JSON_POINTER_SEPARATOR + error.params.missingProperty
+      : JSON_POINTER_SEPARATOR;
   return hasMissingProperty
-    ? result + JSON_PATH_SEPARATOR + error.params.missingProperty
-    : result;
+    ? instancePath + JSON_POINTER_SEPARATOR + error.params.missingProperty
+    : instancePath;
 };

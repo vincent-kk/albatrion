@@ -421,8 +421,8 @@ When a form is rendered, the input component for each JSON Schema node is determ
    <Form
      jsonSchema={jsonSchema}
      formTypeInputMap={{
-       'user.email': EmailInput,
-       'user.profile.avatar': AvatarUploader,
+       '/user/email': EmailInput,
+       '/user/profile/avatar': AvatarUploader,
      }}
    />
    ```
@@ -480,7 +480,7 @@ export const CustomizedForm = () => {
 
   // Path-based mapping (even higher priority)
   const formInputMap = {
-    'user.address.postalCode': PostalCodeInput,
+    '/user/address/postalCode': PostalCodeInput,
   };
 
   // Direct component assignment in JSON Schema (highest priority)
@@ -524,6 +524,225 @@ This powerful system allows developers to have fine-grained control over every a
 
 ---
 
+## JSONPointer Path System
+
+`@canard/schema-form` uses JSONPointer (RFC 6901) for referencing fields within the form schema. This provides a standardized way to address specific nodes in the JSON Schema structure.
+
+### Standard JSONPointer
+
+JSONPointer follows the RFC 6901 specification:
+
+- `/` - Path separator
+- `#` - Fragment identifier (can be used as root pointer)
+- Empty string or `#` represents the root
+
+```tsx
+// Examples of standard JSONPointer usage
+<Form.Render path="/user/name" />        // Access user.name
+<Form.Render path="/user/address/0" />   // Access first item in user.address array
+<Form.Render path="#/user/email" />      // Using fragment identifier
+```
+
+### Extended JSONPointer
+
+**Important Notice**: To better support complex form scenarios, `@canard/schema-form` implements **extended JSONPointer syntax** that goes beyond the official RFC 6901 specification. These extensions are necessary to provide enhanced functionality for form navigation and manipulation.
+
+**Usage Context**: Extended JSONPointer syntax is available in specific contexts:
+
+- `FormTypeInputMap` keys (with wildcard `*`)
+- `computed`(`&`) properties (with relative paths `..`, `.`)
+- Programmatic node navigation with `node.find()` method
+
+**Note**: Extended syntax is **NOT** supported in `<Form.Render path="..." />` components and `node.find()` method, which only accept standard JSONPointer paths.
+
+The following extensions are supported:
+
+#### Parent Navigation (`..`)
+
+Navigate to the parent node, primarily used in computed properties:
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    user: {
+      type: 'object',
+      properties: {
+        type: { type: 'string', enum: ['admin', 'user'] },
+        permissions: {
+          type: 'array',
+          computed: {
+            watch: '../type', // Watch parent's type field
+            visible: "../type === 'admin'", // Show only for admin
+          },
+        },
+      },
+    },
+  },
+};
+
+// Programmatic navigation
+const userNode = node.find('user');
+const typeNode = userNode.find('../type'); // Navigate to sibling
+```
+
+#### Current Node (`.`)
+
+Reference the current node:
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    settings: {
+      type: 'object',
+      computed: {
+        watch: '.', // Watch current node
+        // Other computed logic
+      },
+    },
+  },
+};
+
+// Programmatic navigation
+const currentNode = node.find('.'); // Reference current node
+```
+
+#### Array Index Wildcard (`*`)
+
+Operate on all items in an array, primarily used in FormTypeInputMap:
+
+```tsx
+const formInputMap = {
+  '/users/*/name': CustomNameInput, // All user names
+  '/settings/*/enabled': ToggleInput, // All enabled settings
+  '/data/*/status': StatusBadge, // All status fields
+};
+```
+
+### Practical Usage Examples
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    user: {
+      type: 'object',
+      properties: {
+        role: { type: 'string', enum: ['admin', 'user', 'guest'] },
+        profile: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            email: { type: 'string' },
+            adminSettings: {
+              type: 'object',
+              computed: {
+                watch: '../role',  // Watch sibling field
+                visible: "../role === 'admin'"  // Show only for admin
+              },
+              properties: {
+                permissions: { type: 'array' }
+              }
+            }
+          }
+        },
+        addresses: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              type: { type: 'string', enum: ['home', 'work'] },
+              street: { type: 'string' },
+              city: { type: 'string' },
+              isDefault: {
+                type: 'boolean',
+                computed: {
+                  watch: '../type',  // Watch sibling type
+                  visible: "../type === 'home'"  // Show only for home addresses
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+};
+
+// FormTypeInputMap with wildcard
+const formInputMap = {
+  '/user/profile/name': CustomNameInput,
+  '/user/addresses/*/street': AddressInput,      // All address streets
+  '/user/addresses/*/isDefault': ToggleInput,    // All isDefault fields
+};
+
+// Standard Form.Render (no extended syntax)
+<Form.Render path="/user/profile/name" />           // ✅ Standard path
+<Form.Render path="/user/addresses/0/street" />     // ✅ Standard path
+
+// ❌ These would NOT work in Form.Render:
+// <Form.Render path="/user/profile/.." />           // Extended syntax not supported
+// <Form.Render path="/user/addresses/*/city" />     // Extended syntax not supported
+```
+
+### Escape and Unescape
+
+JSONPointer requires special characters to be escaped according to RFC 6901:
+
+- `~0` represents `~`
+- `~1` represents `/`
+
+**Implementation Note**: `@canard/schema-form` supports any escape/unescape implementation that follows the official RFC 6901 specification. You can use any compliant library or implementation for handling special characters in field names.
+
+```tsx
+// Field name with special characters: "field/with~special"
+<Form.Render path="/field~1with~0special" />
+```
+
+### FormTypeInputMap with Extended Paths
+
+When using `FormTypeInputMap`, you can use wildcard syntax for array elements:
+
+```tsx
+const formInputMap = {
+  '/user/email': EmailInput, // Standard path
+  '/user/profile/avatar': AvatarUploader, // Nested path
+  '/settings/*/enabled': ToggleInput, // ✅ Wildcard for arrays
+  '/users/*/permissions': PermissionSelector, // ✅ All user permissions
+  '/data/*/status': StatusBadge, // ✅ All status fields
+};
+
+<Form jsonSchema={jsonSchema} formTypeInputMap={formInputMap} />;
+```
+
+### Programmatic Node Navigation
+
+```tsx
+export const AdvancedForm = () => {
+  return (
+    <Form jsonSchema={jsonSchema}>
+      {({ node }) => {
+        // Using extended syntax in node.find()
+        const userRole = node?.find('/user/role');
+        const parentNode = node?.find('../'); // ✅ Parent navigation
+
+        return (
+          <div>
+            <Form.Render path="/user/role" /> {/* Standard path */}
+            <Form.Render path="/user/profile" />
+          </div>
+        );
+      }}
+    </Form>
+  );
+};
+```
+
+**Note**: The extended JSONPointer syntax (`..`, `.`, `*`) is a deliberate extension to the RFC 6901 specification, implemented to provide enhanced form manipulation capabilities. While these extensions deviate from the standard, they are essential for supporting complex form interactions and navigation patterns commonly required in real-world applications.
+
+---
+
 ## Advanced Usage
 
 ### Custom Form Layout
@@ -559,7 +778,7 @@ export const CustomLayoutForm = () => {
       <div className="custom-form-layout">
         <div className="section">
           <h3>Personal Information</h3>
-          <Form.Render path=".personalInfo.name">
+          <Form.Render path="/personalInfo/name">
             {({ Input, path, node }) => (
               <div className="form-field">
                 <label htmlFor={path}>{node.jsonSchema.title}</label>
@@ -568,7 +787,7 @@ export const CustomLayoutForm = () => {
             )}
           </Form.Render>
 
-          <Form.Render path=".personalInfo.age">
+          <Form.Render path="/personalInfo/age">
             {({ Input, path, node }) => (
               <div className="form-field">
                 <label htmlFor={path}>{node.jsonSchema.title}</label>
@@ -580,7 +799,7 @@ export const CustomLayoutForm = () => {
 
         <div className="section">
           <h3>Contact Information</h3>
-          <Form.Render path=".contactInfo.email">
+          <Form.Render path="/contactInfo/email">
             {({ Input, path, node }) => (
               <div className="form-field">
                 <label htmlFor={path}>{node.jsonSchema.title}</label>
@@ -589,7 +808,7 @@ export const CustomLayoutForm = () => {
             )}
           </Form.Render>
 
-          <Form.Render path=".contactInfo.phone">
+          <Form.Render path="/contactInfo/phone">
             {({ Input, path, node }) => (
               <div className="form-field">
                 <label htmlFor={path}>{node.jsonSchema.title}</label>
@@ -636,13 +855,13 @@ export const ArrayForm = () => {
         <div className="array-form">
           <h3>Users</h3>
 
-          {node && isArrayNode(node.find('users')) && (
-            <button onClick={() => node.find('users').push()} type="button">
+          {node && isArrayNode(node.find('/users')) && (
+            <button onClick={() => node.find('/users').push()} type="button">
               Add User
             </button>
           )}
 
-          <Form.Render path=".users">{({ Input }) => <Input />}</Form.Render>
+          <Form.Render path="/users">{({ Input }) => <Input />}</Form.Render>
         </div>
       )}
     </Form>
@@ -788,17 +1007,17 @@ export const ConditionalForm = () => {
         type: 'number',
         title: 'Annual Salary',
         computed: {
-          watch: 'employmentType',
-          visible: "employmentType === 'fulltime'",
+          watch: '../employmentType',
+          visible: "../employmentType === 'fulltime'",
         },
       },
       hourlyRate: {
         type: 'number',
         title: 'Hourly Rate',
         computed: {
-          watch: 'employmentType',
+          watch: '../employmentType',
           visible:
-            "employmentType === 'parttime' || employmentType === 'contractor'",
+            "../employmentType === 'parttime' || ../employmentType === 'contractor'",
         },
       },
     },
@@ -1197,33 +1416,10 @@ registerPlugin(AntdPlugin);
 
 export const AntdForm = () => {
   const jsonSchema = {
-    type: 'object',
-    properties: {
-      name: {
-        type: 'string',
-        title: 'Name',
-        computed: {
-          // Ant Design specific options
-          size: 'large',
-          placeholder: 'Enter your name',
-        },
-      },
-      tags: {
-        type: 'array',
-        title: 'Tags',
-        items: {
-          type: 'string',
-        },
-        // Use Ant Design Select component
-        FormType: 'antd.select',
-        computed: {
-          mode: 'tags',
-          placeholder: 'Enter tags',
-        },
-      },
-    },
+    // ...
   };
 
+  // It will automatically select the appropriate component based on the plugin's matching conditions.
   return <Form jsonSchema={jsonSchema} />;
 };
 ```

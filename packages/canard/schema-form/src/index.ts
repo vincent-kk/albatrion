@@ -22,6 +22,8 @@ export {
 
 export { useFormSubmit } from './hooks/useFormSubmit';
 
+export { JSONPointer } from './helpers/jsonPointer';
+
 export {
   type SchemaNode,
   NodeState,

@@ -137,7 +137,7 @@ export const differenceObjectPatch = (
     const arrayPath = getArrayBasePath(patch.path);
     if (arrayPath === null) validPatches.push(patch);
     else if (!processedArrayPaths.has(arrayPath)) {
-      const segments = arrayPath.split(JSONPointer.Child);
+      const segments = arrayPath.split(JSONPointer.Separator);
       setValueByPointer(
         mergePatch,
         segments,

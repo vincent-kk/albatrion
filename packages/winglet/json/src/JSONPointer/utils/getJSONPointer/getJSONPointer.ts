@@ -3,7 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Dictionary } from '@aileron/declare';
 
-import { escapePointer } from '@/json/JSONPointer/utils/escape/escapePointer';
+import { escapeSegment } from '@/json/JSONPointer/utils/escape/escapeSegment';
 
 /**
  * Generates a JSON Pointer path from the root object to the target object.
@@ -46,7 +46,7 @@ const getPointer = (
       if (isArray(currentNode)) {
         for (let index = 0; index < currentNode.length; index++) {
           const value = currentNode[index];
-          const segments = escapePointer('' + index);
+          const segments = escapeSegment('' + index);
           const path = currentPath ? `${currentPath}/${segments}` : segments;
           if (value === target) return path;
           if (isObject(value)) stack[stack.length] = [value, path] as const;
@@ -55,7 +55,7 @@ const getPointer = (
         for (const key in currentNode) {
           if (!hasOwnProperty(currentNode, key)) continue;
           const value = currentNode[key];
-          const segments = escapePointer(key);
+          const segments = escapeSegment(key);
           const path = currentPath ? `${currentPath}/${segments}` : segments;
           if (value === target) return path;
           if (isObject(value)) stack[stack.length] = [value, path] as const;

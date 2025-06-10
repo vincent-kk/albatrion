@@ -48,7 +48,7 @@ describe('createValidatorFactory', () => {
     expect(Array.isArray(result)).toBe(true);
     expect(result![0]).toMatchObject({
       keyword: 'required',
-      dataPath: '.name', // transformDataPath 적용됨
+      dataPath: '/name', // transformDataPath 적용됨
     });
   });
 
@@ -68,7 +68,7 @@ describe('createValidatorFactory', () => {
     expect(result).not.toBeNull();
     expect(result![0]).toMatchObject({
       keyword: 'type',
-      dataPath: '.age',
+      dataPath: '/age',
     });
   });
 
@@ -100,7 +100,7 @@ describe('createValidatorFactory', () => {
     expect(result).not.toBeNull();
     expect(result![0]).toMatchObject({
       keyword: 'required',
-      dataPath: '.user.profile.name',
+      dataPath: '/user/profile/name',
     });
   });
 
@@ -128,7 +128,7 @@ describe('createValidatorFactory', () => {
     expect(result).not.toBeNull();
     expect(result![0]).toMatchObject({
       keyword: 'required',
-      dataPath: '.items[0].id',
+      dataPath: '/items/0/id',
     });
   });
 
@@ -231,7 +231,7 @@ describe('ajvValidatorPlugin', () => {
     expect(invalidResult).not.toBeNull();
     expect(invalidResult![0]).toMatchObject({
       keyword: 'required',
-      dataPath: '.name',
+      dataPath: '/name',
     });
   });
 
@@ -313,9 +313,9 @@ describe('ajvValidatorPlugin', () => {
     expect(result!.length).toBeGreaterThan(1);
 
     const dataPaths = result!.map((err) => err.dataPath);
-    expect(dataPaths).toContain('.user.personal.name');
-    expect(dataPaths).toContain('.user.personal.age');
-    expect(dataPaths).toContain('.user.contact.email');
+    expect(dataPaths).toContain('/user/personal/name');
+    expect(dataPaths).toContain('/user/personal/age');
+    expect(dataPaths).toContain('/user/contact/email');
   });
 
   it('should handle array validation with plugin', async () => {
@@ -349,7 +349,7 @@ describe('ajvValidatorPlugin', () => {
     expect(result!.length).toBe(2);
 
     const dataPaths = result!.map((err) => err.dataPath);
-    expect(dataPaths).toContain('.users[1].name');
-    expect(dataPaths).toContain('.users[2].age');
+    expect(dataPaths).toContain('/users/1/name');
+    expect(dataPaths).toContain('/users/2/age');
   });
 });

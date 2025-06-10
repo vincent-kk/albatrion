@@ -1,4 +1,5 @@
 import { isArray, isObject } from '@winglet/common-utils/filter';
+import { JSONPointer, escapeSegment } from '@winglet/json/pointer';
 
 import type { Dictionary } from '@aileron/declare';
 
@@ -9,6 +10,8 @@ import { $DEFS, DEFINITIONS } from './isDefinitionSchema';
 
 const CONDITIONAL_KEYWORDS = ['not', 'if', 'then', 'else'] as const;
 const COMPOSITION_KEYWORDS = ['allOf', 'anyOf', 'oneOf'] as const;
+
+const Separator = JSONPointer.Separator;
 
 /**
  * Returns the child nodes of a given node as an array of SchemaEntry.
@@ -61,11 +64,11 @@ const handleDefinitionsNode = (
 ) => {
   const definitions = schema[fieldName];
   const keys = Object.keys(definitions);
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
+  for (let index = 0; index < keys.length; index++) {
+    const key = keys[index];
     entries.push({
       schema: definitions[key],
-      path: `${path}/${fieldName}/${key}`,
+      path: path + Separator + fieldName + Separator + key,
       dataPath,
       depth: depth + 1,
     });
@@ -93,7 +96,7 @@ const handleConditionalNode = (
     if (!conditionalNode || typeof conditionalNode !== 'object') continue;
     entries.push({
       schema: conditionalNode,
-      path: `${path}/${keyword}`,
+      path: path + Separator + keyword,
       dataPath,
       depth: depth + 1,
     });
@@ -115,14 +118,14 @@ const handleCompositionNode = (
   dataPath: string,
   depth: number,
 ) => {
-  for (let i = 0; i < COMPOSITION_KEYWORDS.length; i++) {
-    const keyword = COMPOSITION_KEYWORDS[i];
+  for (let index = 0; index < COMPOSITION_KEYWORDS.length; index++) {
+    const keyword = COMPOSITION_KEYWORDS[index];
     const compositionNode = schema[keyword];
     if (!compositionNode || !isArray(compositionNode)) continue;
-    for (let j = 0; j < compositionNode.length; j++) {
+    for (let nodeIndex = 0; nodeIndex < compositionNode.length; nodeIndex++) {
       entries.push({
-        schema: compositionNode[j],
-        path: `${path}/${keyword}/${j}`,
+        schema: compositionNode[nodeIndex],
+        path: path + Separator + keyword + Separator + nodeIndex,
         dataPath,
         depth: depth + 1,
       });
@@ -147,7 +150,7 @@ const handleAdditionalProperties = (
 ) => {
   entries.push({
     schema: schema.additionalProperties,
-    path: `${path}/additionalProperties`,
+    path: path + Separator + 'additionalProperties',
     dataPath,
     depth: depth + 1,
   });
@@ -170,18 +173,18 @@ const handleArrayItems = (
 ) => {
   const items = schema.items;
   if (isArray(items)) {
-    for (let i = 0; i < items.length; i++) {
+    for (let index = 0; index < items.length; index++) {
       entries.push({
-        schema: items[i],
-        path: `${path}/items/${i}`,
-        dataPath: `${dataPath}/${i}`,
+        schema: items[index],
+        path: path + Separator + 'items' + Separator + index,
+        dataPath: dataPath + Separator + index,
         depth: depth + 1,
       });
     }
   } else {
     entries.push({
       schema: items,
-      path: `${path}/items`,
+      path: path + Separator + 'items',
       dataPath,
       depth: depth + 1,
     });
@@ -205,12 +208,13 @@ const handleObjectProperties = (
 ) => {
   const properties = schema.properties as Dictionary;
   const keys = Object.keys(properties);
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
+  for (let index = 0; index < keys.length; index++) {
+    const key = keys[index];
+    const escapedKey = escapeSegment(key);
     entries.push({
       schema: properties[key],
-      path: `${path}/properties/${key}`,
-      dataPath: `${dataPath}/${key}`,
+      path: path + Separator + 'properties' + Separator + escapedKey,
+      dataPath: dataPath + Separator + escapedKey,
       depth: depth + 1,
     });
   }

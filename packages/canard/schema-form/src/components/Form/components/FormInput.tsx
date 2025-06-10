@@ -1,6 +1,5 @@
 import type { ComponentType } from 'react';
 
-import { JSONPath } from '@winglet/json';
 import { useMemorize, useSnapshot } from '@winglet/react-utils/hook';
 
 import { PluginManager } from '@/schema-form/app/plugin';
@@ -26,7 +25,7 @@ export const FormInput = ({
   const overrideProps = useSnapshot(restProps);
   return (
     <SchemaNodeProxy
-      path={path ?? JSONPath.Root}
+      path={path}
       FormTypeInput={FormTypeInput}
       FormTypeRenderer={FormInputRenderer || PluginManager.FormInput}
       overrideProps={overrideProps}

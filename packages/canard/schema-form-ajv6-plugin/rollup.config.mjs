@@ -68,6 +68,7 @@ export default [
           include: ['src/**/*'],
           exclude: [
             'node_modules',
+            'coverage',
             '**/__tests__/**',
             '**/*.test.tsx?',
             '**/*.spec.tsx?',
@@ -103,7 +104,7 @@ export default [
           arrows: true,
           arguments: true,
           keep_fargs: false,
-          booleans_as_integers: true,
+          booleans_as_integers: false,
           ecma: 2022,
           pure_funcs: ['console.log'], // Only remove console.log specifically
         },

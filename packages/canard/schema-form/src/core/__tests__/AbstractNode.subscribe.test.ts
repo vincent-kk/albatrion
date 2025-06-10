@@ -188,7 +188,7 @@ describe('SchemaNode computed properties', () => {
             type: 'string',
             format: 'date',
             computed: {
-              visible: '_.title === "wow"',
+              visible: '../title === "wow"',
             },
           },
         },
@@ -198,7 +198,7 @@ describe('SchemaNode computed properties', () => {
 
       await delay();
 
-      const openingDateNode = node.find('.openingDate');
+      const openingDateNode = node.find('/openingDate');
 
       expect(openingDateNode?.visible).toBe(false); // 초기값은 true
 
@@ -224,7 +224,7 @@ describe('SchemaNode computed properties', () => {
               name: {
                 type: 'string',
                 computed: {
-                  readOnly: '$.isAdmin===false',
+                  readOnly: '#/isAdmin===false',
                 },
               },
             },
@@ -233,7 +233,7 @@ describe('SchemaNode computed properties', () => {
       } satisfies JsonSchema;
 
       const node = nodeFromJsonSchema({ jsonSchema: schema });
-      const nameNode = node.find('.userInfo.name');
+      const nameNode = node.find('./userInfo/name');
 
       expect(nameNode?.readOnly).toBe(false); // 초기값은 false
 
@@ -256,14 +256,14 @@ describe('SchemaNode computed properties', () => {
           submitButton: {
             type: 'string',
             computed: {
-              disabled: '$.isLoading === true',
+              disabled: '#/isLoading === true',
             },
           },
         },
       } satisfies JsonSchema;
 
       const node = nodeFromJsonSchema({ jsonSchema: schema });
-      const buttonNode = node.find('.submitButton');
+      const buttonNode = node.find('./submitButton');
 
       expect(buttonNode?.disabled).toBe(false); // 초기값은 false
 
@@ -293,14 +293,14 @@ describe('SchemaNode computed properties', () => {
             type: 'string',
             formType: 'greeting',
             computed: {
-              watch: ['$.profile.name', '$.profile.age', '$.profile'],
+              watch: ['/profile/name', '#/profile/age', '#/profile'],
             },
           },
         },
       } satisfies JsonSchema;
 
       const node = nodeFromJsonSchema({ jsonSchema: schema });
-      const greetingNode = node.find('.greeting');
+      const greetingNode = node.find('./greeting');
 
       await delay();
 
@@ -340,14 +340,14 @@ describe('SchemaNode computed properties', () => {
           description: {
             type: 'string',
             computed: {
-              visible: '@.title === "test"',
+              visible: './title === "test"',
             },
           },
         },
       } satisfies JsonSchema;
 
       const node = nodeFromJsonSchema({ jsonSchema: schema });
-      const descriptionNode = node.find('.description');
+      const descriptionNode = node.find('./description');
       const listener = vi.fn();
 
       descriptionNode?.subscribe(listener);

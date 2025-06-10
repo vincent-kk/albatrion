@@ -1,7 +1,7 @@
 import { isArray, isString } from '@winglet/common-utils/filter';
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
-import { unescapePointer } from '@/json/JSONPointer/utils/escape/unescapePointer';
+import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 
 import { JSONPointerError } from './error';
 
@@ -17,11 +17,11 @@ export const compilePointer = (pointer: string | string[]) => {
 
 const handleStringPointer = (pointer: string) => {
   if (pointer.length === 0) return [];
-  const parts = pointer.split(JSONPointer.Child);
-  if (parts[0] !== '' && parts[0] !== JSONPointer.Root)
+  const parts = pointer.split(JSONPointer.Separator);
+  if (parts[0] !== '' && parts[0] !== JSONPointer.Fragment)
     throw new JSONPointerError(
       'INVALID_POINTER_TYPE',
-      `JSON pointer must start with ${JSONPointer.Root} or ${JSONPointer.Child}.`,
+      `JSON pointer must start with ${JSONPointer.Fragment} or ${JSONPointer.Separator}.`,
       { pointer },
     );
   return handleArrayPointer(parts);
@@ -36,7 +36,7 @@ const handleArrayPointer = (segments: string[]) => {
         'JSON pointer must be of type string or number array.',
         { pointer: segments },
       );
-    else segments[index] = unescapePointer(segment);
+    else segments[index] = unescapePath(segment);
   }
   return segments;
 };

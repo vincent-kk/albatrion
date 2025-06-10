@@ -1,6 +1,5 @@
 import type { ComponentType, PropsWithChildren } from 'react';
 
-import { JSONPath } from '@winglet/json';
 import { useMemorize, useSnapshot } from '@winglet/react-utils/hook';
 
 import type { Dictionary } from '@aileron/declare';
@@ -32,7 +31,7 @@ export const FormGroup = ({
   const overrideProps = useSnapshot(restProps);
   return (
     <SchemaNodeProxy
-      path={path ?? JSONPath.Root}
+      path={path}
       FormTypeInput={FormTypeInput}
       FormTypeRenderer={FormTypeRenderer}
       overrideProps={overrideProps}
