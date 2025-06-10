@@ -14,10 +14,10 @@ export const find = (
   if (!target) return null;
   if (!segments?.length) return target;
   const current = target;
-  let cursor = segments[0] === JSONPointer.Child ? target.rootNode : current;
+  let cursor = current;
   for (let i = 0; i < segments.length; i++) {
     const segment = segments[i];
-    if (segment === JSONPointer.Root) {
+    if (segment === JSONPointer.Fragment) {
       cursor = cursor.rootNode;
       if (!cursor) return null;
     } else if (segment === JSONPointer.Parent) {

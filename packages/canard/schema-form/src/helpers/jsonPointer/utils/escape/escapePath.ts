@@ -22,12 +22,12 @@ import { escapeSegment } from './escapeSegment';
  * @see {@link https://datatracker.ietf.org/doc/html/rfc6901} RFC 6901 - JSON Pointer specification
  */
 export const escapePath = (path: string): string => {
-  const segments = path.split(JSONPointer.Child);
+  const segments = path.split(JSONPointer.Separator);
   const length = segments.length;
   if (length === 0) return '';
   if (length === 1) return escapeSegment(segments[0]);
   let result = escapeSegment(segments[0]);
   for (let index = 1; index < length; index++)
-    result += JSONPointer.Child + escapeSegment(segments[index]);
+    result += JSONPointer.Separator + escapeSegment(segments[index]);
   return result;
 };

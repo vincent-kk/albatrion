@@ -2,7 +2,6 @@ import type { CSSProperties } from 'react';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
-import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 import { useExternalFormContext } from '@/schema-form/providers';
 
 export interface FormLabelProps {
@@ -16,7 +15,7 @@ export const FormLabel = ({ path, style, className }: FormLabelProps) => {
   return (
     <label style={style} className={className} htmlFor={path}>
       <SchemaNodeProxy
-        path={path ?? JSONPointer.Root}
+        path={path}
         FormTypeRenderer={FormLabelRenderer || PluginManager.FormLabel}
       />
     </label>

@@ -85,14 +85,14 @@ describe('unescapePath', () => {
   });
 
   it('should correctly unescapePath ~1 to forward slash', () => {
-    expect(unescapePath('~1')).toBe(JSONPointer.Child);
-    expect(unescapePath('path~1end')).toBe(`path${JSONPointer.Child}end`);
+    expect(unescapePath('~1')).toBe(JSONPointer.Separator);
+    expect(unescapePath('path~1end')).toBe(`path${JSONPointer.Separator}end`);
   });
 
   it('should handle multiple escape sequences', () => {
-    expect(unescapePath('~0~1')).toBe(`${'~'}${JSONPointer.Child}`);
+    expect(unescapePath('~0~1')).toBe(`${'~'}${JSONPointer.Separator}`);
     expect(unescapePath('path~0middle~1end')).toBe(
-      `path${'~'}middle${JSONPointer.Child}end`,
+      `path${'~'}middle${JSONPointer.Separator}end`,
     );
   });
 });

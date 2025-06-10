@@ -5,7 +5,6 @@ import { useMemorize, useSnapshot } from '@winglet/react-utils/hook';
 import type { Dictionary, Fn } from '@aileron/declare';
 
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
-import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 import type {
   FormTypeInputProps,
   FormTypeRendererProps,
@@ -32,7 +31,7 @@ export const FormRender = ({
   const overrideProps = useSnapshot(restProps);
   return (
     <SchemaNodeProxy
-      path={path ?? JSONPointer.Root}
+      path={path}
       FormTypeInput={FormTypeInput}
       FormTypeRenderer={FormTypeRenderer}
       overrideProps={overrideProps}

@@ -13,11 +13,11 @@ export const getPathManager = (): PathManager => {
   return {
     get: () => paths,
     set: (path: string) => {
-      if (path[0] === JSONPointer.Root) path = path.slice(1);
+      if (path[0] === JSONPointer.Fragment) path = path.slice(1);
       if (!paths.includes(path)) paths.push(path);
     },
     findIndex: (path: string) => {
-      if (path[0] === JSONPointer.Root) path = path.slice(1);
+      if (path[0] === JSONPointer.Fragment) path = path.slice(1);
       return paths.indexOf(path);
     },
   };

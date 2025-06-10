@@ -56,9 +56,10 @@ const pathExactMatchFnFactory = (path: string): FormTypeTestFn => {
 };
 
 const formTypeTestFnFactory = (path: string): FormTypeTestFn => {
-  const segments = path.split(JSONPointer.Child);
+  const segments = path.split(JSONPointer.Separator);
+
   return (hint) => {
-    const hintSegments = hint.path.split(JSONPointer.Child);
+    const hintSegments = hint.path.split(JSONPointer.Separator);
     if (segments.length !== hintSegments.length) return false;
     return segments.every((segment, i) =>
       segment === JSONPointer.Index

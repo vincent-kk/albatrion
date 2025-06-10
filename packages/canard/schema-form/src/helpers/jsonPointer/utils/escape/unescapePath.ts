@@ -50,11 +50,11 @@ export const unescapePath = (segment: string): string => {
     if (character === TILDE && index + 1 < length) {
       const next = segment[++index];
       if (next === ESCAPE_TILDE_VALUE) result += TILDE;
-      else if (next === ESCAPE_CHILD_VALUE) result += JSONPointer.Child;
+      else if (next === ESCAPE_FRAGMENT_VALUE) result += JSONPointer.Fragment;
+      else if (next === ESCAPE_SEPARATOR_VALUE) result += JSONPointer.Separator;
       else if (next === ESCAPE_PARENT_VALUE) result += JSONPointer.Parent;
       else if (next === ESCAPE_CURRENT_VALUE) result += JSONPointer.Current;
       else if (next === ESCAPE_INDEX_VALUE) result += JSONPointer.Index;
-      else if (next === ESCAPE_ROOT_VALUE) result += JSONPointer.Root;
       else result += character + next;
     } else result += character;
   }
@@ -63,8 +63,8 @@ export const unescapePath = (segment: string): string => {
 };
 
 const ESCAPE_TILDE_VALUE = '0';
-const ESCAPE_CHILD_VALUE = '1';
+const ESCAPE_SEPARATOR_VALUE = '1';
 const ESCAPE_PARENT_VALUE = '2';
 const ESCAPE_CURRENT_VALUE = '3';
 const ESCAPE_INDEX_VALUE = '4';
-const ESCAPE_ROOT_VALUE = '5';
+const ESCAPE_FRAGMENT_VALUE = '5';

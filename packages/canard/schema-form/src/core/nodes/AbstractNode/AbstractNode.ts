@@ -128,8 +128,8 @@ export abstract class AbstractNode<
   public updatePath(this: AbstractNode) {
     const previous = this.#path;
     const current = this.parentNode?.path
-      ? this.parentNode.path + JSONPointer.Child + this.escapedKey
-      : JSONPointer.Root;
+      ? this.parentNode.path + JSONPointer.Separator + this.escapedKey
+      : JSONPointer.Fragment;
     if (previous === current) return false;
     this.#path = current;
     this.publish({
@@ -277,15 +277,15 @@ export abstract class AbstractNode<
     this.escapedKey = escapeSegment(this.propertyKey);
 
     this.#path = this.parentNode?.path
-      ? this.parentNode.path + JSONPointer.Child + this.escapedKey
-      : JSONPointer.Root;
+      ? this.parentNode.path + JSONPointer.Separator + this.escapedKey
+      : JSONPointer.Fragment;
 
     this.#key = this.parentNode?.path
-      ? this.parentNode.path + JSONPointer.Child + (key ?? this.escapedKey)
-      : JSONPointer.Root;
+      ? this.parentNode.path + JSONPointer.Separator + (key ?? this.escapedKey)
+      : JSONPointer.Fragment;
 
     this.depth =
-      this.#path.split(JSONPointer.Child).filter(isTruthy).length - 1;
+      this.#path.split(JSONPointer.Separator).filter(isTruthy).length - 1;
 
     if (this.parentNode) {
       const unsubscribe = this.parentNode.subscribe(({ type }) => {

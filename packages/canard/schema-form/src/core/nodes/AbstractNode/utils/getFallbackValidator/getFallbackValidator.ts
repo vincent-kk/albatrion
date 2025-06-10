@@ -13,7 +13,7 @@ export const getFallbackValidator =
     [
       {
         keyword: 'jsonSchemaCompileFailed',
-        dataPath: JSONPointer.Root,
+        dataPath: JSONPointer.Fragment,
         message: error.message,
         source: error,
         details: {

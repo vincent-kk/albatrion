@@ -4,7 +4,6 @@ import { useMemorize, useSnapshot } from '@winglet/react-utils/hook';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
-import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 import { useExternalFormContext } from '@/schema-form/providers';
 import type {
   FormTypeInputProps,
@@ -26,7 +25,7 @@ export const FormInput = ({
   const overrideProps = useSnapshot(restProps);
   return (
     <SchemaNodeProxy
-      path={path ?? JSONPointer.Root}
+      path={path}
       FormTypeInput={FormTypeInput}
       FormTypeRenderer={FormInputRenderer || PluginManager.FormInput}
       overrideProps={overrideProps}

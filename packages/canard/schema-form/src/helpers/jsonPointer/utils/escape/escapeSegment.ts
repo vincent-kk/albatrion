@@ -1,10 +1,10 @@
 import { JSONPointer } from '../../enum';
 import {
-  ESCAPE_CHILD,
   ESCAPE_CURRENT,
+  ESCAPE_FRAGMENT,
   ESCAPE_INDEX,
   ESCAPE_PARENT,
-  ESCAPE_ROOT,
+  ESCAPE_SEPARATOR,
   ESCAPE_TILDE,
   TILDE,
 } from './constant';
@@ -54,10 +54,10 @@ export const escapeSegment = (segment: string): string => {
       result += ESCAPE_PARENT;
       index++;
     } else if (character === TILDE) result += ESCAPE_TILDE;
-    else if (character === JSONPointer.Child) result += ESCAPE_CHILD;
+    else if (character === JSONPointer.Fragment) result += ESCAPE_FRAGMENT;
+    else if (character === JSONPointer.Separator) result += ESCAPE_SEPARATOR;
     else if (character === JSONPointer.Current) result += ESCAPE_CURRENT;
     else if (character === JSONPointer.Index) result += ESCAPE_INDEX;
-    else if (character === JSONPointer.Root) result += ESCAPE_ROOT;
     else result += character;
   }
   return result;
@@ -88,10 +88,10 @@ const isSafeSegment = (segment: string): boolean => {
     const character = segment[index];
     if (
       character === TILDE ||
-      character === JSONPointer.Child ||
+      character === JSONPointer.Fragment ||
+      character === JSONPointer.Separator ||
       character === JSONPointer.Current ||
-      character === JSONPointer.Index ||
-      character === JSONPointer.Root
+      character === JSONPointer.Index
     )
       return false;
   }
