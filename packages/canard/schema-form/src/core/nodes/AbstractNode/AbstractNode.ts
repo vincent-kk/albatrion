@@ -10,7 +10,7 @@ import type { Fn, SetStateFn } from '@aileron/declare';
 import { PluginManager } from '@/schema-form/app/plugin';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import { transformErrors } from '@/schema-form/helpers/error';
-import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
+import { JSONPointer, escapeSegment } from '@/schema-form/helpers/jsonPointer';
 import type {
   AllowedValue,
   JsonSchema,
@@ -76,6 +76,9 @@ export abstract class AbstractNode<
   /** [readonly] Original property key of the node */
   public readonly propertyKey: string;
 
+  /** [readonly] Node's escaped key(it can be same as propertyKey if not escape needed) */
+  public readonly escapedKey: string;
+
   /** [readonly] Whether the node is required */
   public readonly required: boolean;
 
@@ -121,7 +124,7 @@ export abstract class AbstractNode<
   public updatePath(this: AbstractNode) {
     const previous = this.#path;
     const current = this.parentNode?.path
-      ? this.parentNode.path + JSONPointer.Child + this.#name
+      ? this.parentNode.path + JSONPointer.Child + this.escapedKey
       : JSONPointer.Root;
     if (previous === current) return false;
     this.#path = current;
@@ -267,13 +270,14 @@ export abstract class AbstractNode<
     this.isRoot = !this.parentNode;
     this.#name = name || '';
     this.propertyKey = this.#name;
+    this.escapedKey = escapeSegment(this.propertyKey);
 
     this.#path = this.parentNode?.path
-      ? this.parentNode.path + JSONPointer.Child + this.#name
+      ? this.parentNode.path + JSONPointer.Child + this.escapedKey
       : JSONPointer.Root;
 
     this.#key = this.parentNode?.path
-      ? this.parentNode.path + JSONPointer.Child + (key ?? this.#name)
+      ? this.parentNode.path + JSONPointer.Child + (key ?? this.escapedKey)
       : JSONPointer.Root;
 
     this.depth =
