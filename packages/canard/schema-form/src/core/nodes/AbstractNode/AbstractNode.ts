@@ -308,13 +308,14 @@ export abstract class AbstractNode<
    * @returns {SchemaNode|null} The found node, null if not found
    */
   public find(this: AbstractNode, path?: string): SchemaNode | null {
-    // @ts-expect-error: find must be used in SchemaNode
-    if (path === undefined) return this;
+    if (path === undefined) return this as SchemaNode;
     const isAbsolutePath =
       path[0] === JSONPointer.Root || path[0] === JSONPointer.Child;
-    const pathSegments = getPathSegments(path);
-    // @ts-expect-error: find must be used in SchemaNode
-    return find(isAbsolutePath ? this.rootNode : this, pathSegments);
+    if (isAbsolutePath && path.length === 1) return this.rootNode;
+    return find(
+      isAbsolutePath ? this.rootNode : (this as SchemaNode),
+      getPathSegments(path),
+    );
   }
 
   /** List of node event listeners */
