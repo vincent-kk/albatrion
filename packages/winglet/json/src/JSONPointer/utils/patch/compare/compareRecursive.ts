@@ -2,7 +2,7 @@ import { isArray, isObject } from '@winglet/common-utils/filter';
 import { getKeys, hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
-import { escapePointer } from '@/json/JSONPointer/utils/escape/escapePointer';
+import { escapeSegment } from '@/json/JSONPointer/utils/escape/escapeSegment';
 import type { JsonRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../type';
@@ -91,7 +91,7 @@ export const compareRecursive = <
         sourceValue !== undefined &&
         !targetIsArray
       ) {
-        const targetPath = path + JSONPointer.Child + escapePointer(key);
+        const targetPath = path + JSONPointer.Separator + escapeSegment(key);
         if (strict) {
           patches.push({
             op: Operation.TEST,
@@ -113,13 +113,13 @@ export const compareRecursive = <
           sourceValue,
           targetValue,
           patches,
-          path + JSONPointer.Child + escapePointer(key),
+          path + JSONPointer.Separator + escapeSegment(key),
           strict,
           immutable,
         );
       } else {
         // Value type change - replace the value
-        const targetPath = path + JSONPointer.Child + escapePointer(key);
+        const targetPath = path + JSONPointer.Separator + escapeSegment(key);
         if (strict)
           patches.push({
             op: Operation.TEST,
@@ -134,7 +134,7 @@ export const compareRecursive = <
       }
     } else {
       // Key removal - exists in source but not in target
-      const targetPath = path + JSONPointer.Child + escapePointer(key);
+      const targetPath = path + JSONPointer.Separator + escapeSegment(key);
       if (strict)
         patches.push({
           op: Operation.TEST,
@@ -159,7 +159,7 @@ export const compareRecursive = <
 
     patches.push({
       op: Operation.ADD,
-      path: path + JSONPointer.Child + escapePointer(key),
+      path: path + JSONPointer.Separator + escapeSegment(key),
       value: processValue(targetValue, immutable),
     });
   }

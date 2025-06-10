@@ -1,4 +1,3 @@
-import { createValidatorFactory } from '@canard/schema-form-ajv8-plugin';
 import Ajv from 'ajv';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -9,6 +8,7 @@ import { JsonSchema } from '@/schema-form/types';
 
 import { NodeEventType, ValidationMode } from '../nodes';
 import { ArrayNode } from '../nodes/ArrayNode';
+import { createValidatorFactory } from './AbstractNode.test';
 
 describe('ArrayNode', () => {
   it('automatically add items up to minItems', () => {
@@ -52,16 +52,16 @@ describe('ArrayNode', () => {
 
     expect(node?.value?.arr).toEqual(undefined);
 
-    await (node?.find('arr') as ArrayNode)?.push();
+    await (node?.find('/arr') as ArrayNode)?.push();
     expect(node?.value?.arr).toMatchObject(['hello']);
 
-    await (node?.find('arr') as ArrayNode)?.push('world');
+    await (node?.find('/arr') as ArrayNode)?.push('world');
     expect(node?.value?.arr).toMatchObject(['hello', 'world']);
 
-    await (node?.find('arr') as ArrayNode)?.remove(0);
+    await (node?.find('/arr') as ArrayNode)?.remove(0);
     expect(node?.value?.arr).toMatchObject(['world']);
 
-    await (node?.find('arr') as ArrayNode)?.clear();
+    await (node?.find('/arr') as ArrayNode)?.clear();
     expect(node?.value?.arr).toEqual(undefined);
   });
 
@@ -109,13 +109,13 @@ describe('ArrayNode', () => {
         tags: ['harry', 'ron'],
       },
     });
-    expect(node?.find('$.tags')?.value).toMatchObject(['harry', 'ron']);
+    expect(node?.find('#/tags')?.value).toMatchObject(['harry', 'ron']);
 
-    const found = node?.find('$.tags');
+    const found = node?.find('/tags');
     if (found?.type === 'array') {
       found.setValue(['Hermione', 'ron', 'harry']);
     }
-    expect(node?.find('$.tags')?.value).toMatchObject([
+    expect(node?.find('#/tags')?.value).toMatchObject([
       'Hermione',
       'ron',
       'harry',
@@ -311,7 +311,7 @@ describe('ArrayNode', () => {
       },
     });
 
-    const arrayNode = node?.find('tags') as ArrayNode;
+    const arrayNode = node?.find('/tags') as ArrayNode;
 
     // 이벤트 리스너 등록
     const mockListener = vi.fn();
@@ -357,7 +357,7 @@ describe('ArrayNode', () => {
 
     await delay();
 
-    const arrayNode = node?.find('tags') as ArrayNode;
+    const arrayNode = node?.find('/tags') as ArrayNode;
 
     // 초기값 설정
     arrayNode.setValue(['태그1', '태그2']);
@@ -453,7 +453,7 @@ describe('ArrayNode', () => {
 
     await delay();
 
-    const arrayNode = node?.find('numbers') as ArrayNode;
+    const arrayNode = node?.find('/numbers') as ArrayNode;
 
     // 최소 아이템 수 이하 설정
     arrayNode.setValue([1]);

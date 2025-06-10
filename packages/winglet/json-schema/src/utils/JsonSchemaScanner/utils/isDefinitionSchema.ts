@@ -6,8 +6,8 @@ export const DEFINITIONS = 'definitions';
 export const isDefinitionSchema = (path: string): boolean => {
   if (
     path.length <= 2 ||
-    (path[0] !== JSONPointer.Child &&
-      (path[0] !== JSONPointer.Root || path[1] !== JSONPointer.Child))
+    (path[0] !== JSONPointer.Separator &&
+      (path[0] !== JSONPointer.Fragment || path[1] !== JSONPointer.Separator))
   )
     return false;
 

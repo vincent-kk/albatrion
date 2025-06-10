@@ -140,8 +140,8 @@ describe('VirtualNode', () => {
       },
     });
 
-    const virtualNode = node?.find('period');
-    const startDateNode = node?.find('startDate') as StringNode;
+    const virtualNode = node?.find('/period');
+    const startDateNode = node?.find('/startDate') as StringNode;
 
     // 이벤트 리스너 등록
     const mockListener = vi.fn();
@@ -192,7 +192,7 @@ describe('VirtualNode', () => {
       },
     });
 
-    const virtualNode = node?.find('period');
+    const virtualNode = node?.find('/period');
     await delay();
 
     // 가상 노드의 기본값이 정상적으로 설정되었는지 확인
@@ -221,7 +221,7 @@ describe('VirtualNode', () => {
       },
     });
 
-    const virtualNode = node?.find('period');
+    const virtualNode = node?.find('/period');
     await delay();
 
     // 가상 노드의 자식 노드가 정상적으로 생성되었는지 확인

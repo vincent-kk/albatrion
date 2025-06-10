@@ -1,8 +1,7 @@
 import Ajv, { ErrorObject } from 'ajv';
 import { describe, expect, it, vi } from 'vitest';
 
-import { isArrayIndex } from '@winglet/common-utils';
-import { JSONPath, JSONPointer } from '@winglet/json';
+import { JSONPointer } from '@winglet/json';
 
 import { nodeFromJsonSchema } from '@/schema-form/core';
 import type {
@@ -51,23 +50,23 @@ describe('AbstractNode', () => {
       validationMode: ValidationMode.OnChange,
     });
 
-    const founder = node?.find('house.founder');
+    const founder = node?.find('/house/founder');
     const founderName = founder?.find('name');
     expect(founder?.value).toEqual({
       name: 'Godric Gryffindor',
       yearOfBirth: 900,
     });
-    expect(node?.find('house.founder.name')).toBe(founderName);
+    expect(node?.find('#/house/founder/name')).toBe(founderName);
     // find a relative node
-    const founderBirthOfYear1 = founderName?.find('_.yearOfBirth');
+    const founderBirthOfYear1 = founderName?.find('../yearOfBirth');
     expect(founderBirthOfYear1?.value).toBe(900);
     // find a absolute node
     const founderBirthOfYear2 = founderName?.find(
-      '$.house.founder.yearOfBirth',
+      '#/house/founder/yearOfBirth',
     );
     expect(founderBirthOfYear2?.value).toBe(900);
 
-    const terminal = node?.find('house.terminal.name');
+    const terminal = node?.find('/house/terminal/name');
     expect(terminal?.value).toEqual({ name: 'Hogwarts' });
   });
 
@@ -253,7 +252,7 @@ describe('AbstractNode', () => {
     });
     await wait();
 
-    const index = node?.find('index');
+    const index = node?.find('/index');
     if (index && index.type === 'number') {
       expect(index.errors?.[0]?.keyword).toBe('isEven');
       index.setValue(2);
@@ -261,12 +260,12 @@ describe('AbstractNode', () => {
       expect(index.errors).toEqual([]);
     }
 
-    const data = node?.find('data');
+    const data = node?.find('/data');
     if (data && data.type === 'array') {
       data.children?.forEach((child, index) => {
         expect(child.node.errors).toEqual([
           {
-            dataPath: `.data[${index}]`,
+            dataPath: `/data/${index}`,
             keyword: 'isEven',
             message: 'must pass "isEven" keyword validation',
             details: {},
@@ -289,7 +288,7 @@ describe('AbstractNode', () => {
       await wait();
       expect(name.errors).toEqual([
         {
-          dataPath: '.name',
+          dataPath: '/name',
           keyword: 'maxLength',
           message: 'must NOT have more than 5 characters',
           details: {
@@ -422,25 +421,10 @@ const transformDataPath = (error: ErrorObject): string => {
 
   if (!instancePath)
     return hasMissingProperty
-      ? JSONPath.Child + error.params.missingProperty
+      ? JSONPointer.Separator + error.params.missingProperty
       : '';
 
-  const parts = [];
-  let segmentStart = 1;
-
-  for (let i = 1; i <= instancePath.length; i++) {
-    if (i === instancePath.length || instancePath[i] === JSONPointer.Child) {
-      if (segmentStart < i) {
-        const segment = instancePath.slice(segmentStart, i);
-        if (isArrayIndex(segment)) parts.push('[' + segment + ']');
-        else parts.push(JSONPath.Child + segment);
-      }
-      segmentStart = i + 1;
-    }
-  }
-
-  const result = parts.join('');
   return hasMissingProperty
-    ? result + JSONPath.Child + error.params.missingProperty
-    : result;
+    ? instancePath + JSONPointer.Separator + error.params.missingProperty
+    : instancePath;
 };

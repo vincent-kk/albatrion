@@ -420,8 +420,8 @@ const jsonSchema = {
    <Form
      jsonSchema={jsonSchema}
      formTypeInputMap={{
-       'user.email': EmailInput,
-       'user.profile.avatar': AvatarUploader,
+       '/user/email': EmailInput,
+       '/user/profile/avatar': AvatarUploader,
      }}
    />
    ```
@@ -477,7 +477,7 @@ export const CustomizedForm = () => {
 
   // 경로 기반 매핑 (더 높은 우선순위)
   const formInputMap = {
-    'user.address.postalCode': PostalCodeInput,
+    '/user/address/postalCode': PostalCodeInput,
   };
 
   // JSON 스키마 내 직접 컴포넌트 할당 (가장 높은 우선순위)
@@ -521,6 +521,225 @@ export const CustomizedForm = () => {
 
 ---
 
+## JSONPointer 경로 시스템
+
+`@canard/schema-form`은 폼 스키마 내의 필드를 참조하기 위해 JSONPointer (RFC 6901)를 사용합니다. 이는 JSON Schema 구조의 특정 노드를 주소 지정하는 표준화된 방법을 제공합니다.
+
+### 표준 JSONPointer
+
+JSONPointer는 RFC 6901 사양을 따릅니다:
+
+- `/` - 경로 구분자
+- `#` - 프래그먼트 식별자 (루트 포인터로 사용 가능)
+- 빈 문자열 또는 `#`는 루트를 나타냄
+
+```tsx
+// 표준 JSONPointer 사용 예시
+<Form.Render path="/user/name" />        // user.name 접근
+<Form.Render path="/user/address/0" />   // user.address 배열의 첫 번째 항목 접근
+<Form.Render path="#/user/email" />      // 프래그먼트 식별자 사용
+```
+
+### 확장 JSONPointer
+
+**중요 공지**: 복잡한 폼 시나리오를 더 잘 지원하기 위해, `@canard/schema-form`은 공식 RFC 6901 사양을 벗어나는 **확장 JSONPointer 문법**을 구현합니다. 이러한 확장은 폼 탐색 및 조작을 위한 향상된 기능을 제공하기 위해 부득이하게 필요한 확장입니다.
+
+**사용 컨텍스트**: 확장 JSONPointer 문법은 특정 컨텍스트에서만 사용할 수 있습니다:
+
+- `FormTypeInputMap` 키 (와일드카드 `*` 사용)
+- `computed`(`&`) 속성 (상대 경로 `..`, `.` 사용)
+- `node.find()` 메서드를 통한 프로그래밍적 노드 탐색
+
+**주의**: 확장 문법은 `<Form.Render path="..." />` 컴포넌트와 `node.find()` 메서드에서는 **지원되지 않으며**, 표준 JSONPointer 경로만 허용됩니다.
+
+다음 확장 기능들이 지원됩니다:
+
+#### 부모 탐색 (`..`)
+
+부모 노드로 탐색, 주로 computed 속성에서 사용:
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    user: {
+      type: 'object',
+      properties: {
+        type: { type: 'string', enum: ['admin', 'user'] },
+        permissions: {
+          type: 'array',
+          computed: {
+            watch: '../type', // 부모의 type 필드 감시
+            visible: "../type === 'admin'", // admin일 때만 표시
+          },
+        },
+      },
+    },
+  },
+};
+
+// 프로그래밍적 탐색
+const userNode = node.find('user');
+const typeNode = userNode.find('../type'); // 형제 노드로 탐색
+```
+
+#### 현재 노드 (`.`)
+
+현재 노드 참조:
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    settings: {
+      type: 'object',
+      computed: {
+        watch: '.', // 현재 노드 감시
+        // 기타 computed 로직
+      },
+    },
+  },
+};
+
+// 프로그래밍적 탐색
+const currentNode = node.find('.'); // 현재 노드 참조
+```
+
+#### 배열 인덱스 와일드카드 (`*`)
+
+배열의 모든 항목에 대해 작업, 주로 FormTypeInputMap에서 사용:
+
+```tsx
+const formInputMap = {
+  '/users/*/name': CustomNameInput, // 모든 사용자 이름
+  '/settings/*/enabled': ToggleInput, // 모든 활성화 설정
+  '/data/*/status': StatusBadge, // 모든 상태 필드
+};
+```
+
+### 실제 사용 예시
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    user: {
+      type: 'object',
+      properties: {
+        role: { type: 'string', enum: ['admin', 'user', 'guest'] },
+        profile: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            email: { type: 'string' },
+            adminSettings: {
+              type: 'object',
+              computed: {
+                watch: '../role',  // 형제 필드 감시
+                visible: "../role === 'admin'"  // admin일 때만 표시
+              },
+              properties: {
+                permissions: { type: 'array' }
+              }
+            }
+          }
+        },
+        addresses: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              type: { type: 'string', enum: ['home', 'work'] },
+              street: { type: 'string' },
+              city: { type: 'string' },
+              isDefault: {
+                type: 'boolean',
+                computed: {
+                  watch: '../type',  // 형제 type 감시
+                  visible: "../type === 'home'"  // 집 주소일 때만 표시
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+};
+
+// 와일드카드를 사용한 FormTypeInputMap
+const formInputMap = {
+  '/user/profile/name': CustomNameInput,
+  '/user/addresses/*/street': AddressInput,      // 모든 주소의 거리
+  '/user/addresses/*/isDefault': ToggleInput,    // 모든 isDefault 필드
+};
+
+// 표준 Form.Render (확장 문법 없음)
+<Form.Render path="/user/profile/name" />           // ✅ 표준 경로
+<Form.Render path="/user/addresses/0/street" />     // ✅ 표준 경로
+
+// ❌ Form.Render에서 작동하지 않는 예시:
+// <Form.Render path="/user/profile/.." />           // 확장 문법 지원 안 됨
+// <Form.Render path="/user/addresses/*/city" />     // 확장 문법 지원 안 됨
+```
+
+### 이스케이프 및 언이스케이프
+
+JSONPointer는 RFC 6901에 따라 특수 문자를 이스케이프해야 합니다:
+
+- `~0`는 `~`를 나타냄
+- `~1`는 `/`를 나타냄
+
+**구현 참고사항**: `@canard/schema-form`은 공식 RFC 6901 사양을 따르는 모든 이스케이프/언이스케이프 구현을 지원합니다. 필드 이름의 특수 문자 처리를 위해 호환되는 라이브러리나 구현체를 사용할 수 있습니다.
+
+```tsx
+// 특수 문자가 포함된 필드 이름: "field/with~special"
+<Form.Render path="/field~1with~0special" />
+```
+
+### 확장 경로를 사용한 FormTypeInputMap
+
+`FormTypeInputMap`을 사용할 때, 배열 요소에 대해 와일드카드 문법을 사용할 수 있습니다:
+
+```tsx
+const formInputMap = {
+  '/user/email': EmailInput, // 표준 경로
+  '/user/profile/avatar': AvatarUploader, // 중첩 경로
+  '/settings/*/enabled': ToggleInput, // ✅ 배열용 와일드카드
+  '/users/*/permissions': PermissionSelector, // ✅ 모든 사용자 권한
+  '/data/*/status': StatusBadge, // ✅ 모든 상태 필드
+};
+
+<Form jsonSchema={jsonSchema} formTypeInputMap={formInputMap} />;
+```
+
+### 프로그래밍적 노드 탐색
+
+```tsx
+export const AdvancedForm = () => {
+  return (
+    <Form jsonSchema={jsonSchema}>
+      {({ node }) => {
+        // node.find()에서 확장 문법 사용
+        const userRole = node?.find('/user/role');
+        const parentNode = node?.find('..'); // ✅ 부모 탐색
+
+        return (
+          <div>
+            <Form.Render path="/user/role" /> {/* 표준 경로 */}
+            <Form.Render path="/user/profile" />
+          </div>
+        );
+      }}
+    </Form>
+  );
+};
+```
+
+**참고**: 확장 JSONPointer 문법 (`..`, `.`, `*`)은 RFC 6901 사양에 대한 의도적인 확장으로, 향상된 폼 조작 기능을 제공하기 위해 구현되었습니다. 이러한 확장은 표준에서 벗어나지만, 실제 애플리케이션에서 일반적으로 요구되는 복잡한 폼 상호작용 및 탐색 패턴을 지원하는 데 필수적입니다.
+
+---
+
 ## 고급 사용법
 
 ### 사용자 정의 양식 레이아웃
@@ -556,7 +775,7 @@ export const CustomLayoutForm = () => {
       <div className="custom-form-layout">
         <div className="section">
           <h3>개인 정보</h3>
-          <Form.Render path=".personalInfo.name">
+          <Form.Render path="/personalInfo/name">
             {({ Input, path, node }) => (
               <div className="form-field">
                 <label htmlFor={path}>{node.jsonSchema.title}</label>
@@ -565,7 +784,7 @@ export const CustomLayoutForm = () => {
             )}
           </Form.Render>
 
-          <Form.Render path=".personalInfo.age">
+          <Form.Render path="/personalInfo/age">
             {({ Input, path, node }) => (
               <div className="form-field">
                 <label htmlFor={path}>{node.jsonSchema.title}</label>
@@ -577,7 +796,7 @@ export const CustomLayoutForm = () => {
 
         <div className="section">
           <h3>연락처 정보</h3>
-          <Form.Render path=".contactInfo.email">
+          <Form.Render path="/contactInfo/email">
             {({ Input, path, node }) => (
               <div className="form-field">
                 <label htmlFor={path}>{node.jsonSchema.title}</label>
@@ -586,7 +805,7 @@ export const CustomLayoutForm = () => {
             )}
           </Form.Render>
 
-          <Form.Render path=".contactInfo.phone">
+          <Form.Render path="/contactInfo/phone">
             {({ Input, path, node }) => (
               <div className="form-field">
                 <label htmlFor={path}>{node.jsonSchema.title}</label>
@@ -633,13 +852,13 @@ export const ArrayForm = () => {
         <div className="array-form">
           <h3>사용자</h3>
 
-          {node && isArrayNode(node.find('users')) && (
-            <button onClick={() => node.find('users').push()} type="button">
+          {node && isArrayNode(node.find('/users')) && (
+            <button onClick={() => node.find('/users').push()} type="button">
               사용자 추가
             </button>
           )}
 
-          <Form.Render path=".users">{({ Input }) => <Input />}</Form.Render>
+          <Form.Render path="/users">{({ Input }) => <Input />}</Form.Render>
         </div>
       )}
     </Form>
@@ -785,17 +1004,17 @@ export const ConditionalForm = () => {
         type: 'number',
         title: '연봉',
         computed: {
-          watch: 'employmentType',
-          visible: "employmentType === 'fulltime'",
+          watch: '../employmentType',
+          visible: "../employmentType === 'fulltime'",
         },
       },
       hourlyRate: {
         type: 'number',
         title: '시간당 급여',
         computed: {
-          watch: 'employmentType',
+          watch: '../employmentType',
           visible:
-            "employmentType === 'parttime' || employmentType === 'contractor'",
+            "../employmentType === 'parttime' || ../employmentType === 'contractor'",
         },
       },
     },
@@ -1183,33 +1402,9 @@ registerPlugin(AntdPlugin);
 
 export const AntdForm = () => {
   const jsonSchema = {
-    type: 'object',
-    properties: {
-      name: {
-        type: 'string',
-        title: '이름',
-        computed: {
-          // Ant Design 특정 옵션
-          size: 'large',
-          placeholder: '이름을 입력하세요',
-        },
-      },
-      tags: {
-        type: 'array',
-        title: '태그',
-        items: {
-          type: 'string',
-        },
-        // Ant Design Select 컴포넌트 사용
-        FormType: 'antd.select',
-        computed: {
-          mode: 'tags',
-          placeholder: '태그를 입력하세요',
-        },
-      },
-    },
+    //...
   };
-
+  // 플러그인에 지정된 matching 조건에 따라 컴포넌트가 자동으로 선택됩니다.
   return <Form jsonSchema={jsonSchema} />;
 };
 ```

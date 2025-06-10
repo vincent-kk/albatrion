@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import {
   Form,
@@ -215,11 +215,11 @@ export const DirtyTouched = () => {
       </div>
       <hr />
       <div>
-        <button onClick={() => refHandle.current?.focus('.name')}>
-          focus ".name"
+        <button onClick={() => refHandle.current?.focus('#/name')}>
+          focus "#/name"
         </button>
-        <button onClick={() => refHandle.current?.select('.name')}>
-          select ".name"
+        <button onClick={() => refHandle.current?.select('#/name')}>
+          select "#/name"
         </button>
       </div>
       <hr />
@@ -323,10 +323,8 @@ export const ExternalErrors = () => {
   const [errors, setErrors] = useState<JsonSchemaError[]>([
     {
       keyword: 'maxLength',
-      dataPath: '.message',
-      instancePath: '/message',
-      schemaPath: '#/properties/message/maxLength',
-      params: {
+      dataPath: '/message',
+      details: {
         limit: 20,
       },
       message: 'should NOT be longer than 20 characters',
@@ -344,18 +342,14 @@ export const ExternalErrors = () => {
     setErrors([
       {
         keyword: 'wrongInput',
-        dataPath: '.name',
-        instancePath: '/name',
-        schemaPath: '#/properties/name/wrongInput',
-        params: {},
+        dataPath: '/name',
+        details: {},
         message: 'wrong input',
       },
       {
         keyword: 'unique',
-        dataPath: '.message',
-        instancePath: '/message',
-        schemaPath: '#/properties/message/unique',
-        params: {},
+        dataPath: '/message',
+        details: {},
         message: 'should be unique',
       },
     ]);
@@ -405,7 +399,7 @@ export const ErrorBoundary = () => {
       >
         <div>
           <Form.Group
-            path=".name"
+            path="#/name"
             FormTypeInput={() => {
               throw new Error('Error accord from Input');
               // eslint-disable-next-line no-unreachable
@@ -414,7 +408,7 @@ export const ErrorBoundary = () => {
           />
         </div>
         <div>
-          <Form.Render path=".age">
+          <Form.Render path="#/age">
             {({ Input, node }) => {
               throw new Error('Error accord from Renderer');
               // eslint-disable-next-line no-unreachable

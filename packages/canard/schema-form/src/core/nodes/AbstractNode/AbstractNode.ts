@@ -4,13 +4,18 @@ import {
   isTruthy,
 } from '@winglet/common-utils/filter';
 import { equals } from '@winglet/common-utils/object';
-import { JSONPath } from '@winglet/json';
+import { escapeSegment } from '@winglet/json/pointer';
 
 import type { Fn, SetStateFn } from '@aileron/declare';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import { transformErrors } from '@/schema-form/helpers/error';
+import {
+  JSONPointer,
+  isAbsolutePath,
+  joinSegment,
+} from '@/schema-form/helpers/jsonPointer';
 import type {
   AllowedValue,
   JsonSchema,
@@ -76,6 +81,9 @@ export abstract class AbstractNode<
   /** [readonly] Original property key of the node */
   public readonly propertyKey: string;
 
+  /** [readonly] Node's escaped key(it can be same as propertyKey if not escape needed) */
+  public readonly escapedKey: string;
+
   /** [readonly] Whether the node is required */
   public readonly required: boolean;
 
@@ -120,9 +128,8 @@ export abstract class AbstractNode<
    */
   public updatePath(this: AbstractNode) {
     const previous = this.#path;
-    const current = this.parentNode?.path
-      ? this.parentNode.path + JSONPath.Child + this.#name
-      : JSONPath.Root;
+    const parentPath = this.parentNode?.path;
+    const current = joinSegment(parentPath, this.escapedKey);
     if (previous === current) return false;
     this.#path = current;
     this.publish({
@@ -267,16 +274,14 @@ export abstract class AbstractNode<
     this.isRoot = !this.parentNode;
     this.#name = name || '';
     this.propertyKey = this.#name;
+    this.escapedKey = escapeSegment(this.propertyKey);
 
-    this.#path = this.parentNode?.path
-      ? this.parentNode.path + JSONPath.Child + this.#name
-      : JSONPath.Root;
+    this.#key = joinSegment(this.parentNode?.path, key ?? this.escapedKey);
+    this.#path = joinSegment(this.parentNode?.path, this.escapedKey);
 
-    this.#key = this.parentNode?.path
-      ? this.parentNode.path + JSONPath.Child + (key ?? this.#name)
-      : JSONPath.Root;
-
-    this.depth = this.#path.split(JSONPath.Child).filter(isTruthy).length - 1;
+    this.depth = this.#path
+      .split(JSONPointer.Separator)
+      .filter(isTruthy).length;
 
     if (this.parentNode) {
       const unsubscribe = this.parentNode.subscribe(({ type }) => {
@@ -303,13 +308,17 @@ export abstract class AbstractNode<
 
   /**
    * Finds the node corresponding to the given path in the node tree.
-   * @param path - Path of the node to find (e.g., '.foo[0].bar'), returns itself if not provided
+   * @param path - Path of the node to find (e.g., '/foo/0/bar'), returns itself if not provided
    * @returns {SchemaNode|null} The found node, null if not found
    */
-  public find(this: AbstractNode, path?: string) {
-    const pathSegments = path ? getPathSegments(path) : [];
-    // @ts-expect-error: find must be used in SchemaNode
-    return find(this, pathSegments);
+  public find(this: AbstractNode, path?: string): SchemaNode | null {
+    if (path === undefined) return this as SchemaNode;
+    const isAbsolute = isAbsolutePath(path);
+    if (isAbsolute && path.length === 1) return this.rootNode;
+    return find(
+      isAbsolute ? this.rootNode : (this as SchemaNode),
+      getPathSegments(path),
+    );
   }
 
   /** List of node event listeners */

@@ -50,8 +50,8 @@ import { JSONPath } from '@winglet/json/path';
 import {
   getValueByPointer,
   setValueByPointer,
-  escapePointer,
-  unescapePointer,
+  escapePath,
+  unescapePath,
   compare,
   applyPatch,
   difference,
@@ -137,21 +137,21 @@ const result = setValueByPointer(
 
 ##### Escape Handling
 
-**[`escapePointer`](./src/JSONPointer/utils/escape/escapePointer.ts)**
+**[`escapePath`](./src/JSONPointer/utils/escape/escapePath.ts)**
 
 ```typescript
-import { escapePointer } from '@winglet/json';
+import { escapePath } from '@winglet/json';
 
-const escaped = escapePointer('path/with~special');
+const escaped = escapePath('path/with~special');
 // Result: "path~1with~0special"
 ```
 
-**[`unescapePointer`](./src/JSONPointer/utils/escape/unescapePointer.ts)**
+**[`unescapePath`](./src/JSONPointer/utils/escape/unescapePath.ts)**
 
 ```typescript
-import { unescapePointer } from '@winglet/json';
+import { unescapePath } from '@winglet/json';
 
-const unescaped = unescapePointer('path~1with~0special');
+const unescaped = unescapePath('path~1with~0special');
 // Result: "path/with~special"
 ```
 

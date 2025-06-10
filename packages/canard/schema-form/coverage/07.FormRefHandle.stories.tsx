@@ -39,7 +39,7 @@ export const FormRefHandle = () => {
 
   const formTypeMap = useMemo<FormTypeInputMap>(() => {
     return {
-      '$.objectNode': ({ onChange }: FormTypeInputProps<{ test?: string }>) => {
+      '#/objectNode': ({ onChange }: FormTypeInputProps<{ test?: string }>) => {
         const handleClick = () => {
           onChange({ test: 'wow' });
         };
@@ -53,13 +53,13 @@ export const FormRefHandle = () => {
           </div>
         );
       },
-      '$.textNode': ({ onChange }: FormTypeInputProps) => {
+      '/textNode': ({ onChange }: FormTypeInputProps) => {
         const handleClick = () => {
           onChange('wow');
         };
         return <button onClick={handleClick}>text set</button>;
       },
-      '$.arrayNode.#': () => {
+      '#/arrayNode/*': () => {
         return <div>i am array item</div>;
       },
     };
@@ -359,14 +359,14 @@ export const FormRefHandleWithIfThenElse = () => {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '_.title === "wow"',
+          visible: '../title === "wow"',
         },
       },
       releaseDate: {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '_.title === "wow"',
+          visible: '../title === "wow"',
         },
       },
       numOfPlayers: { type: 'number' },
@@ -557,7 +557,7 @@ export const FormRefHandleWithOneOf = () => {
     oneOf: [
       {
         computed: {
-          if: "@.category==='game'",
+          if: "#/category==='game'",
         },
         properties: {
           price: { type: 'number' },
@@ -780,7 +780,7 @@ export const FormRefHandleWithVirtualSchema = () => {
       <div>
         <button
           onClick={() => {
-            const node = formHandle.current?.node?.find('.startDate');
+            const node = formHandle.current?.node?.find('/startDate');
             if (node?.type === 'string') {
               node.setValue('2025-04-01');
             }
@@ -790,7 +790,7 @@ export const FormRefHandleWithVirtualSchema = () => {
         </button>
         <button
           onClick={() => {
-            const node = formHandle.current?.node?.find('.startDate');
+            const node = formHandle.current?.node?.find('/startDate');
             if (node?.type === 'string') {
               node.setValue('2025-04-05');
             }
@@ -800,7 +800,7 @@ export const FormRefHandleWithVirtualSchema = () => {
         </button>
         <button
           onClick={() => {
-            const node = formHandle.current?.node?.find('.endDate');
+            const node = formHandle.current?.node?.find('/endDate');
             if (node?.type === 'string') {
               node.setValue('2025-04-25');
             }
@@ -810,7 +810,7 @@ export const FormRefHandleWithVirtualSchema = () => {
         </button>
         <button
           onClick={() => {
-            const node = formHandle.current?.node?.find('.endDate');
+            const node = formHandle.current?.node?.find('/endDate');
             if (node?.type === 'string') {
               node.setValue('2025-04-30');
             }
@@ -821,7 +821,7 @@ export const FormRefHandleWithVirtualSchema = () => {
       </div>
       <button
         onClick={() => {
-          const node = formHandle.current?.node?.find('.period');
+          const node = formHandle.current?.node?.find('/period');
           if (node?.type === 'virtual') {
             node.setValue(['2025-03-13', '2025-04-26']);
           }
@@ -831,7 +831,7 @@ export const FormRefHandleWithVirtualSchema = () => {
       </button>
       <button
         onClick={() => {
-          const node = formHandle.current?.node?.find('.period');
+          const node = formHandle.current?.node?.find('/period');
           if (node?.type === 'virtual') {
             node.setValue(['2025-03-01', '2025-04-01']);
           }
@@ -876,7 +876,7 @@ export const FormRefHandleWithGetData = () => {
 
   const formTypeMap = useMemo<FormTypeInputMap>(() => {
     return {
-      '$.objectNode': ({ onChange }: FormTypeInputProps<{ test?: string }>) => {
+      '#/objectNode': ({ onChange }: FormTypeInputProps<{ test?: string }>) => {
         const handleClick = () => {
           onChange({ test: 'wow' });
         };
@@ -890,13 +890,13 @@ export const FormRefHandleWithGetData = () => {
           </div>
         );
       },
-      '$.textNode': ({ onChange }: FormTypeInputProps) => {
+      '/textNode': ({ onChange }: FormTypeInputProps) => {
         const handleClick = () => {
           onChange('wow');
         };
         return <button onClick={handleClick}>text set</button>;
       },
-      '$.arrayNode.#': () => {
+      '#/arrayNode/*': () => {
         return <div>i am array item</div>;
       },
     };

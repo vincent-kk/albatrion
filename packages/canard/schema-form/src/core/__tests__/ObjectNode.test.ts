@@ -191,9 +191,9 @@ describe('ObjectNode', () => {
       },
     });
 
-    const objectNode = node?.find('user') as ObjectNode;
-    const nameNode = objectNode.find('name');
-    const ageNode = objectNode.find('age');
+    const objectNode = node?.find('/user') as ObjectNode;
+    const nameNode = objectNode.find('./name');
+    const ageNode = objectNode.find('./age');
 
     expect(nameNode).toBeDefined();
     expect(ageNode).toBeDefined();
@@ -226,8 +226,8 @@ describe('ObjectNode', () => {
     });
     await delay();
 
-    const objectNode = node?.find('user') as ObjectNode;
-    const nameNode = objectNode.find('name');
+    const objectNode = node?.find('/user') as ObjectNode;
+    const nameNode = objectNode.find('./name');
 
     // 이벤트 리스너 등록
     const mockListener = vi.fn();
@@ -280,9 +280,9 @@ describe('ObjectNode', () => {
     });
 
     await delay();
-    const objectNode = node?.find('user') as ObjectNode;
-    const userNameNode = objectNode.find('$.user.name') as StringNode;
-    const userAgeNode = objectNode.find('$.user.age') as NumberNode;
+    const objectNode = node?.find('/user') as ObjectNode;
+    const userNameNode = objectNode.find('#/user/name') as StringNode;
+    const userAgeNode = objectNode.find('#/user/age') as NumberNode;
 
     // 필수 속성이 없는 경우, 필수 속성 누락 여부는 개별 항목에게 에러가 전달됨
     objectNode.setValue({ name: 'J' });
@@ -367,7 +367,7 @@ describe('ObjectNode', () => {
       validatorFactory,
     });
 
-    const objectNode = node?.find('user') as ObjectNode;
+    const objectNode = node?.find('/user') as ObjectNode;
     await delay();
 
     // 추가 속성이 있는 값 설정
@@ -435,7 +435,7 @@ describe('ObjectNode', () => {
 
     await delay();
 
-    const arrayNode = node?.find('users') as ArrayNode;
+    const arrayNode = node?.find('/users') as ArrayNode;
     const childNodes = arrayNode.children;
     expect(childNodes?.length).toBe(3);
     childNodes?.forEach(({ node }, index) => {
@@ -465,7 +465,7 @@ describe('ObjectNode', () => {
       validationMode: ValidationMode.OnChange,
     });
 
-    const objectNode = node?.find('user') as ObjectNode;
+    const objectNode = node?.find('/user') as ObjectNode;
     await delay();
 
     // 추가 속성이 있는 값 설정
@@ -517,10 +517,10 @@ describe('ObjectNode', () => {
     });
     await delay();
 
-    const root = node.find('root') as ObjectNode;
+    const root = node.find('/root') as ObjectNode;
     expect(root.jsonSchema).toEqual(jsonSchema.$defs.TreeNode);
 
-    const children = node.find('root.children') as ArrayNode;
+    const children = node.find('#/root/children') as ArrayNode;
 
     expect(children.jsonSchema).toEqual({
       type: 'array',
@@ -552,7 +552,7 @@ describe('ObjectNode', () => {
     });
     await delay();
 
-    const firstChild = node.find('root.children.0') as ObjectNode;
+    const firstChild = node.find('#/root/children/0') as ObjectNode;
     expect(firstChild.value).toEqual({
       id: '4',
       name: 'User 4',
@@ -565,12 +565,12 @@ describe('ObjectNode', () => {
       type: 'object',
       oneOf: [
         {
-          '&if': "@.category==='movie'",
+          '&if': "../category==='movie'",
           properties: {
             category: {
               type: 'string',
               format: 'date',
-              '&visible': '_.title === "wow"',
+              '&visible': '../title === "wow"',
             },
             title: {
               type: 'number',
@@ -579,12 +579,12 @@ describe('ObjectNode', () => {
           },
         },
         {
-          '&if': "@.category==='game'",
+          '&if': "../category==='game'",
           properties: {
             date2: {
               type: 'string',
               format: 'date',
-              '&visible': '_.title === "wow"',
+              '&visible': '../title === "wow"',
             },
             price2: { type: 'number' },
           },
@@ -614,13 +614,13 @@ describe('ObjectNode', () => {
       type: 'object',
       oneOf: [
         {
-          '&if': "@.category==='movie'",
+          '&if': "./category==='movie'",
           type: 'object', // 부모와 같은 타입은 허용됨
           properties: {
             date1: {
               type: 'string',
               format: 'date',
-              '&visible': '_.title === "wow"',
+              '&visible': '../title === "wow"',
             },
             price1: {
               type: 'number',
@@ -629,7 +629,7 @@ describe('ObjectNode', () => {
           },
         },
         {
-          '&if': "@.category==='game'",
+          '&if': "./category==='game'",
           type: 'string', // 부모와 다른 타입은 허용되지 않음
         },
       ],

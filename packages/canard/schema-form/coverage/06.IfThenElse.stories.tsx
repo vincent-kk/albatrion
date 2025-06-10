@@ -27,14 +27,14 @@ export const IfThenElse = () => {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '_.title === "wow"',
+          visible: '../title === "wow"',
         },
       },
       releaseDate: {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '_.title === "wow"',
+          visible: '../title === "wow"',
         },
         default: '2025-01-01',
       },
@@ -102,12 +102,12 @@ export const IfThenElseConst = () => {
       openingDate: {
         type: 'string',
         format: 'date',
-        '&visible': '_.title === "wow"',
+        '&visible': '../title === "wow"',
       },
       releaseDate: {
         type: 'string',
         format: 'date',
-        '&visible': '_.title === "wow"',
+        '&visible': '../title === "wow"',
       },
       numOfPlayers: { type: 'number' },
       price: {
@@ -245,7 +245,7 @@ export const IfThenElseComplex1 = () => {
                 type: 'string',
                 enum: ['male', 'female', 'other'],
                 computed: {
-                  visible: '_.age >= 18',
+                  visible: '../age >= 18',
                 },
               },
               preferences: {
@@ -364,7 +364,7 @@ export const IfThenElseComplex2 = () => {
         type: 'string',
         enum: ['male', 'female', 'other'],
         computed: {
-          visible: '_.age >= 18',
+          visible: '../age >= 18',
         },
       },
       preferences: {

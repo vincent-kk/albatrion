@@ -4,6 +4,7 @@ import {
   checkComputedOptionFactory,
   getConditionIndexFactory,
   getObservedValuesFactory,
+  getPathManager,
 } from './utils';
 
 /**
@@ -19,39 +20,39 @@ export const computeFactory = (
   const checkComputedOption = checkComputedOptionFactory(schema, rootSchema);
   const getConditionIndex = getConditionIndexFactory(schema);
   const getObservedValues = getObservedValuesFactory(schema);
-  const dependencyPaths: string[] = [];
+  const pathManager = getPathManager();
   return {
     /** List of paths to dependencies */
-    dependencyPaths,
+    dependencyPaths: pathManager.get(),
     /**
      * Calculate whether the node is visible
      * @param dependencies - List of dependencies
      * @returns Whether the node is visible
      */
-    visible: checkComputedOption(dependencyPaths, 'visible', false),
+    visible: checkComputedOption(pathManager, 'visible', false),
     /**
      * Calculate whether the node is read only
      * @param dependencies - List of dependencies
      * @returns Whether the node is read only
      */
-    readOnly: checkComputedOption(dependencyPaths, 'readOnly', true),
+    readOnly: checkComputedOption(pathManager, 'readOnly', true),
     /**
      * Calculate whether the node is disabled
      * @param dependencies - List of dependencies
      * @returns Whether the node is disabled
      */
-    disabled: checkComputedOption(dependencyPaths, 'disabled', true),
+    disabled: checkComputedOption(pathManager, 'disabled', true),
     /**
      * Calculate the index of the oneOf branch
      * @param dependencies - List of dependencies
      * @returns Index of the oneOf branch
      */
-    oneOfIndex: getConditionIndex(dependencyPaths, 'oneOf', 'if'),
+    oneOfIndex: getConditionIndex(pathManager, 'oneOf', 'if'),
     /**
      * Calculate the list of values to watch
      * @param dependencies - List of dependencies
      * @returns List of values to watch
      */
-    watchValues: getObservedValues(dependencyPaths, 'watch'),
+    watchValues: getObservedValues(pathManager, 'watch'),
   };
 };

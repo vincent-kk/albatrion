@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import {
   Form,
@@ -54,13 +54,13 @@ export const FunctionalChildren = () => {
         <div>
           INPUT
           <Form.Input
-            path=".allowed"
+            path="./allowed"
             style={{ color: 'red' }}
             context={{ a: 1 }}
           />
         </div>
         <div>
-          <Form.Render path=".name">
+          <Form.Render path="#/name">
             {({ Input, node }) => {
               return (
                 <div>
@@ -72,12 +72,12 @@ export const FunctionalChildren = () => {
           </Form.Render>
         </div>
         <div>
-          <Form.Label path=".age" />
-          <Form.Input path=".age" />
+          <Form.Label path="#/age" />
+          <Form.Input path="#/age" />
         </div>
         <div>
-          <Form.Label path=".gender" />
-          <Form.Input path=".gender" />
+          <Form.Label path="#/gender" />
+          <Form.Input path="#/gender" />
         </div>
       </Form>
     </StoryLayout>
@@ -133,8 +133,8 @@ export const InsertInputForm = () => {
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value}>
       <Form jsonSchema={jsonSchema} onChange={setValue}>
-        <Form.Input path=".name" />
-        <Form.Render path=".password">
+        <Form.Input path="#/name" />
+        <Form.Render path="#/password">
           {({ path, Input, value, errorMessage }: FormTypeRendererProps) => {
             return (
               <div
@@ -150,7 +150,7 @@ export const InsertInputForm = () => {
           }}
         </Form.Render>
         <Form.Input
-          path=".age"
+          path="#/age"
           FormTypeInput={({ path, onChange, value }) => {
             const RenderCount = useRenderCount('FormTypeInput');
             return (
@@ -158,7 +158,7 @@ export const InsertInputForm = () => {
                 {path}
                 <button
                   onClick={() => {
-                    onChange((prev) => (prev || 0) + 1);
+                    onChange((prev: number) => (prev || 0) + 1);
                   }}
                 >
                   custom input {value}
@@ -169,7 +169,7 @@ export const InsertInputForm = () => {
           }}
         />
         <Form.Input
-          path=".phone"
+          path="#/phone"
           readOnly={!!value?.age}
           disabled={value?.phone === '12345'}
         />

@@ -23,7 +23,7 @@ export const ShowFormLabelOnly = () => {
   return (
     <FormProvider FormLabelRenderer={FormLabelRenderer}>
       <Form jsonSchema={jsonSchema}>
-        <Form.Label path="$.username" />
+        <Form.Label path="#/username" />
       </Form>
     </FormProvider>
   );
@@ -33,7 +33,7 @@ export const ShowFormErrorOnly = () => {
   return (
     <FormProvider FormErrorRenderer={FormErrorRenderer}>
       <Form jsonSchema={jsonSchema} showError={true}>
-        <Form.Error path="username" />
+        <Form.Error path="#/username" />
       </Form>
     </FormProvider>
   );
@@ -44,8 +44,8 @@ export const ShowFormInputOnly = () => {
     <FormProvider FormInputRenderer={FormInputRenderer}>
       <Form jsonSchema={jsonSchema} showError={true}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <Form.Input path="username" />
-          <Form.Error path="username" />
+          <Form.Input path="#/username" />
+          <Form.Error path="#/username" />
         </div>
       </Form>
     </FormProvider>
