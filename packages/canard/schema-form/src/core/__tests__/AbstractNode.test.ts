@@ -421,10 +421,10 @@ const transformDataPath = (error: ErrorObject): string => {
 
   if (!instancePath)
     return hasMissingProperty
-      ? JSONPointer.Child + error.params.missingProperty
+      ? JSONPointer.Separator + error.params.missingProperty
       : '';
 
   return hasMissingProperty
-    ? instancePath + JSONPointer.Child + error.params.missingProperty
+    ? instancePath + JSONPointer.Separator + error.params.missingProperty
     : instancePath;
 };
