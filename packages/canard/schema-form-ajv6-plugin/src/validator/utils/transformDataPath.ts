@@ -10,29 +10,27 @@ import type { ErrorObject } from 'ajv';
 const convertJsonPathToJsonPointer = (jsonPath: string): string => {
   if (!jsonPath) return '';
 
-  const result: string[] = ['/'];
+  let result = '/';
   let index = 0;
-
   while (index < jsonPath.length) {
     const character = jsonPath[index];
     if (character === '.') {
-      result[result.length] = '/';
+      result += '/';
       index++;
     } else if (character === '[') {
       index++;
-      result[result.length] = '/';
+      result += '/';
       while (index < jsonPath.length && jsonPath[index] !== ']') {
-        result[result.length] = jsonPath[index];
+        result += jsonPath[index];
         index++;
       }
       if (index < jsonPath.length && jsonPath[index] === ']') index++;
     } else {
-      result[result.length] = character;
+      result += character;
       index++;
     }
   }
-
-  return result.join('');
+  return result;
 };
 
 export const transformDataPath = (errors: ErrorObject[]): JsonSchemaError[] => {
