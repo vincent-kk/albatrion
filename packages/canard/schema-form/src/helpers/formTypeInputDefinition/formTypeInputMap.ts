@@ -6,6 +6,7 @@ import { SchemaFormError } from '@/schema-form/errors';
 import {
   INCLUDE_INDEX_REGEX,
   JSONPointer,
+  stripFragment,
 } from '@/schema-form/helpers/jsonPointer';
 import type { FormTypeInputMap, FormTypeTestFn } from '@/schema-form/types';
 
@@ -38,8 +39,9 @@ export const normalizeFormTypeInputMap = (
   return result;
 };
 
-const pathExactMatchFnFactory = (path: string): FormTypeTestFn => {
+const pathExactMatchFnFactory = (inputPath: string): FormTypeTestFn => {
   try {
+    const path = stripFragment(inputPath);
     const regex = new RegExp(path);
     return (hint) => {
       if (hint.path === path) return true;
@@ -49,15 +51,14 @@ const pathExactMatchFnFactory = (path: string): FormTypeTestFn => {
   } catch (error) {
     throw new SchemaFormError(
       'FORM_TYPE_INPUT_MAP',
-      `FormTypeInputMap contains an invalid key pattern.: ${path}`,
-      { path, error },
+      `FormTypeInputMap contains an invalid key pattern.: ${inputPath}`,
+      { path: inputPath, error },
     );
   }
 };
 
 const formTypeTestFnFactory = (path: string): FormTypeTestFn => {
-  const segments = path.split(JSONPointer.Separator);
-
+  const segments = stripFragment(path).split(JSONPointer.Separator);
   return (hint) => {
     const hintSegments = hint.path.split(JSONPointer.Separator);
     if (segments.length !== hintSegments.length) return false;

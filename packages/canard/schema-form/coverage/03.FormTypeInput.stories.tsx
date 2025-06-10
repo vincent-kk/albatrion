@@ -172,6 +172,81 @@ export const FormTypeMap = () => {
   );
 };
 
+export const FormTypeMapWithEscapedPath = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      'object/Node': {
+        type: 'object',
+        properties: {
+          test: { type: 'string' },
+        },
+      },
+      textNode: {
+        type: 'string',
+      },
+      'array~Node': {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+        minItems: 5,
+      },
+    },
+  } satisfies JsonSchema;
+
+  const formTypeMap = useMemo<FormTypeInputMap>(() => {
+    return {
+      '/object~1Node': ({
+        onChange,
+      }: FormTypeInputProps<{ test?: string } | undefined>) => {
+        const handleClick = () => {
+          onChange({ test: 'wow' });
+        };
+        const handleUnsetClick = () => {
+          onChange({}, SetValueOption.Overwrite);
+        };
+        const removeClick = () => {
+          onChange(undefined, SetValueOption.Overwrite);
+        };
+        return (
+          <div>
+            <button onClick={handleClick}>object set</button>
+            <button onClick={handleUnsetClick}>object unset</button>
+            <button onClick={removeClick}>object remove</button>
+          </div>
+        );
+      },
+      '/textNode': ({ onChange }: FormTypeInputProps) => {
+        const handleClick = () => {
+          onChange('wow');
+        };
+        return <button onClick={handleClick}>text set</button>;
+      },
+      '#/array~0Node/*': () => {
+        return <div>i am array item</div>;
+      },
+    };
+  }, []);
+
+  const handleChange = (val: any) => {
+    setValue(val);
+  };
+  const refHandle = useRef<FormHandle<typeof schema>>(null);
+  return (
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form
+        ref={refHandle}
+        jsonSchema={schema}
+        formTypeInputMap={formTypeMap}
+        onChange={handleChange}
+      />
+    </StoryLayout>
+  );
+};
+
 export const FormTypeMapWithRegex = () => {
   const [value, setValue] = useState({});
   const schema = {
