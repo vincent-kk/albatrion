@@ -1,10 +1,10 @@
-import { describe, it, expect } from 'vitest';
 import type { ErrorObject } from 'ajv';
+import { describe, expect, it } from 'vitest';
 
 import { transformDataPath } from '../transformDataPath';
 
 describe('transformDataPath', () => {
-  describe('JSONPath to JSONPointer 변환', () => {
+  describe('AJV dataPath to JSONPointer 변환', () => {
     it('빈 문자열을 올바르게 처리해야 한다', () => {
       const errors: ErrorObject[] = [
         {
@@ -17,7 +17,7 @@ describe('transformDataPath', () => {
       ];
 
       const result = transformDataPath(errors);
-      expect(result[0].dataPath).toBe('');
+      expect(result[0].dataPath).toBe('/');
     });
 
     it('단순한 속성 경로를 변환해야 한다', () => {
@@ -38,7 +38,8 @@ describe('transformDataPath', () => {
     it('중첩된 속성 경로를 변환해야 한다', () => {
       const errors: ErrorObject[] = [
         {
-          schemaPath: '#/properties/user/properties/profile/properties/name/type',
+          schemaPath:
+            '#/properties/user/properties/profile/properties/name/type',
           keyword: 'type',
           params: {},
           message: 'should be string',
@@ -83,7 +84,8 @@ describe('transformDataPath', () => {
     it('복잡한 중첩 구조를 올바르게 변환해야 한다', () => {
       const errors: ErrorObject[] = [
         {
-          schemaPath: '#/properties/data/properties/items/items/properties/metadata/properties/tags/items/type',
+          schemaPath:
+            '#/properties/data/properties/items/items/properties/metadata/properties/tags/items/type',
           keyword: 'type',
           params: {},
           message: 'should be string',
@@ -160,7 +162,8 @@ describe('transformDataPath', () => {
     it('복잡한 중첩 구조에서 required 속성을 올바르게 처리해야 한다', () => {
       const errors: ErrorObject[] = [
         {
-          schemaPath: '#/properties/data/properties/items/items/properties/metadata/required',
+          schemaPath:
+            '#/properties/data/properties/items/items/properties/metadata/required',
           keyword: 'required',
           params: { missingProperty: 'version' },
           message: "must have required property 'version'",
@@ -265,7 +268,7 @@ describe('transformDataPath', () => {
       ];
 
       const result = transformDataPath(errors);
-      
+
       expect(result).toHaveLength(3);
       expect(result[0].dataPath).toBe('/name');
       expect(result[1].dataPath).toBe('/age');
@@ -292,7 +295,7 @@ describe('transformDataPath', () => {
       ];
 
       const result = transformDataPath(errors);
-      expect(result[0].dataPath).toBe('');
+      expect(result[0].dataPath).toBe('/');
     });
 
     it('params가 없는 required 에러를 처리해야 한다', () => {
@@ -343,7 +346,7 @@ describe('transformDataPath', () => {
       expect(result).toHaveLength(1000);
       expect(result[0].dataPath).toBe('/items/0/field0');
       expect(result[999].dataPath).toBe('/items/999/field999');
-      
+
       // 성능 확인 (1000개 에러 처리가 10ms 이내에 완료되어야 함)
       expect(endTime - startTime).toBeLessThan(10);
     });

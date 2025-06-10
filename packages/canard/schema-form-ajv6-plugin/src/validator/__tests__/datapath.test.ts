@@ -22,14 +22,14 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(nameTypeError).toHaveLength(1);
       expect(nameTypeError![0]).toMatchObject({
         keyword: 'type',
-        dataPath: '.name',
+        dataPath: '/name',
       });
 
       const ageTypeError = await validator({ name: 'John', age: 'not-number' });
       expect(ageTypeError).toHaveLength(1);
       expect(ageTypeError![0]).toMatchObject({
         keyword: 'type',
-        dataPath: '.age',
+        dataPath: '/age',
       });
 
       // Act & Assert - 필수 속성 누락
@@ -37,7 +37,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(missingRequiredError).toHaveLength(1);
       expect(missingRequiredError![0]).toMatchObject({
         keyword: 'required',
-        dataPath: '.name',
+        dataPath: '/name',
       });
     });
 
@@ -67,7 +67,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(nestedNameError).toHaveLength(1);
       expect(nestedNameError![0]).toMatchObject({
         keyword: 'type',
-        dataPath: '.user.name',
+        dataPath: '/user/name',
       });
 
       const nestedAgeError = await validator({
@@ -76,7 +76,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(nestedAgeError).toHaveLength(1);
       expect(nestedAgeError![0]).toMatchObject({
         keyword: 'type',
-        dataPath: '.user.age',
+        dataPath: '/user/age',
       });
 
       // Act & Assert - 중첩된 필수 속성 누락
@@ -86,7 +86,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(nestedMissingError).toHaveLength(1);
       expect(nestedMissingError![0]).toMatchObject({
         keyword: 'required',
-        dataPath: '.user.name',
+        dataPath: '/user/name',
       });
 
       // Act & Assert - 루트 레벨 필수 속성 누락
@@ -94,7 +94,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(rootMissingError).toHaveLength(1);
       expect(rootMissingError![0]).toMatchObject({
         keyword: 'required',
-        dataPath: '.user',
+        dataPath: '/user',
       });
     });
 
@@ -127,7 +127,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(arrayItemError).toHaveLength(1);
       expect(arrayItemError![0]).toMatchObject({
         keyword: 'type',
-        dataPath: '.users[0].name',
+        dataPath: '/users/0/name',
       });
 
       // Act & Assert - 배열 여러 요소의 에러
@@ -140,11 +140,11 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(multipleArrayErrors).toHaveLength(2);
       expect(multipleArrayErrors![0]).toMatchObject({
         keyword: 'type',
-        dataPath: '.users[0].age',
+        dataPath: '/users/0/age',
       });
       expect(multipleArrayErrors![1]).toMatchObject({
         keyword: 'required',
-        dataPath: '.users[1].name',
+        dataPath: '/users/1/name',
       });
     });
 
@@ -200,16 +200,16 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       );
 
       // 각 에러의 dataPath 검증
-      expect(errorsByDataPath['.personal.name']).toMatchObject({
+      expect(errorsByDataPath['/personal/name']).toMatchObject({
         keyword: 'minLength',
       });
-      expect(errorsByDataPath['.personal.age']).toMatchObject({
+      expect(errorsByDataPath['/personal/age']).toMatchObject({
         keyword: 'minimum',
       });
-      expect(errorsByDataPath['.work.company']).toMatchObject({
+      expect(errorsByDataPath['/work/company']).toMatchObject({
         keyword: 'required',
       });
-      expect(errorsByDataPath['.work.salary']).toMatchObject({
+      expect(errorsByDataPath['/work/salary']).toMatchObject({
         keyword: 'minimum',
       });
     });
@@ -244,9 +244,9 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
 
       // 숫자가 포함된 속성명은 [숫자] 형태로 변환됨
       const dataPaths = result!.map((err) => err.dataPath);
-      expect(dataPaths).toContain('.container.item1');
-      expect(dataPaths).toContain('.container.item2');
-      expect(dataPaths).toContain('.container.item3');
+      expect(dataPaths).toContain('/container/item1');
+      expect(dataPaths).toContain('/container/item2');
+      expect(dataPaths).toContain('/container/item3');
     });
 
     it('깊은 중첩 구조에서 숫자 속성명의 dataPath 변환을 검증한다', async () => {
@@ -299,7 +299,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(deepError).toHaveLength(1);
       expect(deepError![0]).toMatchObject({
         keyword: 'minLength',
-        dataPath: '.level1.level2.level3.level4.finalValue',
+        dataPath: '/level1/level2/level3/level4/finalValue',
       });
 
       // Act & Assert - 중간 레벨 누락
@@ -313,7 +313,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(missingMidLevel).toHaveLength(1);
       expect(missingMidLevel![0]).toMatchObject({
         keyword: 'required',
-        dataPath: '.level1.level2.level3',
+        dataPath: '/level1/level2/level3',
       });
     });
 
@@ -338,7 +338,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(result).toHaveLength(1);
       expect(result![0]).toMatchObject({
         keyword: 'additionalProperties',
-        dataPath: '', // additionalProperties 에러는 루트 레벨
+        dataPath: '/', // additionalProperties 에러는 루트 레벨
       });
     });
 
@@ -398,9 +398,9 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
 
       const errorPaths = complexError!.map((err) => err.dataPath);
       expect(errorPaths).toContain(
-        '.departments[0].employees[0].info.firstName',
+        '/departments/0/employees/0/info/firstName',
       );
-      expect(errorPaths).toContain('.departments[0].employees[0].info.email');
+      expect(errorPaths).toContain('/departments/0/employees/0/info/email');
 
       // Act & Assert - 필수 필드 누락
       const missingFieldError = await validator({
@@ -421,7 +421,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(missingFieldError).toHaveLength(1);
       expect(missingFieldError![0]).toMatchObject({
         keyword: 'required',
-        dataPath: '.departments[0].employees[0].info.firstName',
+        dataPath: '/departments/0/employees/0/info/firstName',
       });
     });
 
@@ -469,7 +469,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       });
       expect(patternError![0]).toMatchObject({
         keyword: 'pattern',
-        dataPath: '.profile.username',
+        dataPath: '/profile/username',
       });
 
       // Act & Assert - enum 위반
@@ -481,7 +481,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       });
       expect(enumError![0]).toMatchObject({
         keyword: 'enum',
-        dataPath: '.profile.role',
+        dataPath: '/profile/role',
       });
 
       // Act & Assert - const 위반
@@ -493,7 +493,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       });
       expect(constError![0]).toMatchObject({
         keyword: 'const',
-        dataPath: '.profile.status',
+        dataPath: '/profile/status',
       });
 
       // Act & Assert - minimum 위반
@@ -505,7 +505,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       });
       expect(minimumError![0]).toMatchObject({
         keyword: 'minimum',
-        dataPath: '.profile.age',
+        dataPath: '/profile/age',
       });
 
       // Act & Assert - multipleOf 위반
@@ -517,7 +517,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       });
       expect(multipleOfError![0]).toMatchObject({
         keyword: 'multipleOf',
-        dataPath: '.profile.age',
+        dataPath: '/profile/age',
       });
 
       // Act & Assert - additionalProperties 위반
@@ -529,7 +529,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       });
       expect(additionalPropsError![0]).toMatchObject({
         keyword: 'additionalProperties',
-        dataPath: '.profile',
+        dataPath: '/profile',
       });
     });
   });

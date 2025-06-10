@@ -1,36 +1,42 @@
 import type { JsonSchemaError } from '@canard/schema-form';
 import type { ErrorObject } from 'ajv';
 
-/**
- * JSONPath 형태의 dataPath를 JSONPointer 형태로 변환합니다.
- *
- * @param jsonPath - 변환할 JSONPath 문자열 (예: "data.users[0].name")
- * @returns JSONPointer 형태의 문자열 (예: "/data/users/0/name")
- */
-const convertJsonPathToJsonPointer = (jsonPath: string): string => {
-  if (!jsonPath) return '';
+const JSON_PATH_SEPARATOR = '.';
+const JSON_POINTER_SEPARATOR = '/';
 
-  let result = '/';
+/**
+ * Converts AJV dataPath format to JSONPointer format.
+ *
+ * @param ajvDataPath - AJV dataPath string to convert (e.g., "data.users[0].name")
+ * @returns JSONPointer format string (e.g., "/data/users/0/name")
+ */
+const convertJsonPathToJsonPointer = (ajvDataPath: string): string => {
+  if (!ajvDataPath) return JSON_POINTER_SEPARATOR;
   let index = 0;
-  while (index < jsonPath.length) {
-    const character = jsonPath[index];
-    if (character === '.') {
-      result += '/';
+  let result = '';
+  while (index < ajvDataPath.length) {
+    const character = ajvDataPath[index];
+    if (character === JSON_PATH_SEPARATOR) {
+      result += JSON_POINTER_SEPARATOR;
       index++;
     } else if (character === '[') {
       index++;
-      result += '/';
-      while (index < jsonPath.length && jsonPath[index] !== ']') {
-        result += jsonPath[index];
+      result += JSON_POINTER_SEPARATOR;
+      while (index < ajvDataPath.length && ajvDataPath[index] !== ']') {
+        result += ajvDataPath[index];
         index++;
       }
-      if (index < jsonPath.length && jsonPath[index] === ']') index++;
+      if (index < ajvDataPath.length && ajvDataPath[index] === ']') {
+        index++;
+      }
     } else {
       result += character;
       index++;
     }
   }
-  return result;
+  return result[0] === JSON_POINTER_SEPARATOR
+    ? result
+    : JSON_POINTER_SEPARATOR + result;
 };
 
 export const transformDataPath = (errors: ErrorObject[]): JsonSchemaError[] => {
@@ -52,9 +58,15 @@ export const transformDataPath = (errors: ErrorObject[]): JsonSchemaError[] => {
       'missingProperty' in ajvError.params
     ) {
       const convertedDataPath = convertJsonPathToJsonPointer(dataPath);
-      result[i].dataPath = convertedDataPath
-        ? convertedDataPath + '/' + ajvError.params.missingProperty
-        : '/' + ajvError.params.missingProperty;
+      result[i].dataPath =
+        convertedDataPath === JSON_POINTER_SEPARATOR ||
+        convertedDataPath.endsWith(JSON_POINTER_SEPARATOR)
+          ? convertedDataPath +
+            JSON_POINTER_SEPARATOR +
+            ajvError.params.missingProperty
+          : convertedDataPath +
+            JSON_POINTER_SEPARATOR +
+            ajvError.params.missingProperty;
     }
   }
   return result;
