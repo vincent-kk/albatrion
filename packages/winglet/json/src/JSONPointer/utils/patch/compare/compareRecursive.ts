@@ -91,7 +91,7 @@ export const compareRecursive = <
         sourceValue !== undefined &&
         !targetIsArray
       ) {
-        const targetPath = path + JSONPointer.Child + escapeSegment(key);
+        const targetPath = path + JSONPointer.Separator + escapeSegment(key);
         if (strict) {
           patches.push({
             op: Operation.TEST,
@@ -113,13 +113,13 @@ export const compareRecursive = <
           sourceValue,
           targetValue,
           patches,
-          path + JSONPointer.Child + escapeSegment(key),
+          path + JSONPointer.Separator + escapeSegment(key),
           strict,
           immutable,
         );
       } else {
         // Value type change - replace the value
-        const targetPath = path + JSONPointer.Child + escapeSegment(key);
+        const targetPath = path + JSONPointer.Separator + escapeSegment(key);
         if (strict)
           patches.push({
             op: Operation.TEST,
@@ -134,7 +134,7 @@ export const compareRecursive = <
       }
     } else {
       // Key removal - exists in source but not in target
-      const targetPath = path + JSONPointer.Child + escapeSegment(key);
+      const targetPath = path + JSONPointer.Separator + escapeSegment(key);
       if (strict)
         patches.push({
           op: Operation.TEST,
@@ -159,7 +159,7 @@ export const compareRecursive = <
 
     patches.push({
       op: Operation.ADD,
-      path: path + JSONPointer.Child + escapeSegment(key),
+      path: path + JSONPointer.Separator + escapeSegment(key),
       value: processValue(targetValue, immutable),
     });
   }

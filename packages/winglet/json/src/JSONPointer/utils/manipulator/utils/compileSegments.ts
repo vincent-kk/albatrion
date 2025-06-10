@@ -17,11 +17,11 @@ export const compilePointer = (pointer: string | string[]) => {
 
 const handleStringPointer = (pointer: string) => {
   if (pointer.length === 0) return [];
-  const parts = pointer.split(JSONPointer.Child);
-  if (parts[0] !== '' && parts[0] !== JSONPointer.Root)
+  const parts = pointer.split(JSONPointer.Separator);
+  if (parts[0] !== '' && parts[0] !== JSONPointer.Fragment)
     throw new JSONPointerError(
       'INVALID_POINTER_TYPE',
-      `JSON pointer must start with ${JSONPointer.Root} or ${JSONPointer.Child}.`,
+      `JSON pointer must start with ${JSONPointer.Fragment} or ${JSONPointer.Separator}.`,
       { pointer },
     );
   return handleArrayPointer(parts);

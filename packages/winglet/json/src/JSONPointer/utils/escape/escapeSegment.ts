@@ -1,4 +1,4 @@
-import { CHILD, ESCAPE_CHILD, ESCAPE_TILDE, TILDE } from './constant';
+import { ESCAPE_SEPARATOR, ESCAPE_TILDE, SEPARATOR, TILDE } from './constant';
 
 /**
  * Escapes special characters in a JSON Pointer reference token according to RFC 6901.
@@ -103,13 +103,13 @@ import { CHILD, ESCAPE_CHILD, ESCAPE_TILDE, TILDE } from './constant';
  * ```
  */
 export const escapeSegment = (segment: string): string => {
-  if (segment.indexOf(CHILD) === -1 && segment.indexOf(TILDE) === -1)
+  if (segment.indexOf(SEPARATOR) === -1 && segment.indexOf(TILDE) === -1)
     return segment;
   let result = '';
   for (let index = 0, length = segment.length; index < length; index++) {
     const character = segment[index];
     if (character === TILDE) result += ESCAPE_TILDE;
-    else if (character === CHILD) result += ESCAPE_CHILD;
+    else if (character === SEPARATOR) result += ESCAPE_SEPARATOR;
     else result += character;
   }
   return result;

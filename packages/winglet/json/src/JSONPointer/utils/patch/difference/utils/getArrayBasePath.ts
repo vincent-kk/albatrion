@@ -33,7 +33,7 @@ export const getArrayBasePath = (path: string): string | null => {
   let lastSlash = -1;
   let segmentStart = 1;
   for (let i = 1; i < path.length; i++) {
-    if (path[i] === JSONPointer.Child) {
+    if (path[i] === JSONPointer.Separator) {
       const segment = path.slice(segmentStart, i);
       if (isArrayIndex(segment))
         return lastSlash !== -1 ? path.slice(0, lastSlash) : '';

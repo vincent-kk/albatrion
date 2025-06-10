@@ -97,7 +97,7 @@ export const applySinglePatch = (
   protectPrototype: boolean,
 ): any => {
   // 루트 패치 처리
-  if (patch.path === '' || patch.path === JSONPointer.Root)
+  if (patch.path === '' || patch.path === JSONPointer.Fragment)
     return handleRootPatch(source, patch, patchIndex, strict);
 
   const segments = patch.path.split('/');

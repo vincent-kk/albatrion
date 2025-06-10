@@ -1,4 +1,4 @@
-import { CHILD, TILDE } from './constant';
+import { SEPARATOR, TILDE } from './constant';
 
 /**
  * Unescapes JSON Pointer escape sequences in a reference token according to RFC 6901.
@@ -135,7 +135,7 @@ export const unescapePath = (segment: string): string => {
     if (current === TILDE && index + 1 < length) {
       const next = segment[++index];
       if (next === ESCAPE_TILDE_VALUE) result += TILDE;
-      else if (next === ESCAPE_CHILD_VALUE) result += CHILD;
+      else if (next === ESCAPE_SEPARATOR_VALUE) result += SEPARATOR;
       else result += current + next;
     } else result += current;
   }
@@ -143,4 +143,4 @@ export const unescapePath = (segment: string): string => {
 };
 
 const ESCAPE_TILDE_VALUE = '0';
-const ESCAPE_CHILD_VALUE = '1';
+const ESCAPE_SEPARATOR_VALUE = '1';
