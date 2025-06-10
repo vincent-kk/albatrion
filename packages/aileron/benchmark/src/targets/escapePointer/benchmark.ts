@@ -1,14 +1,14 @@
 import Benchmark from 'benchmark';
 import { escapePathComponent } from 'fast-json-patch';
 
-import { escapePointer } from '@winglet/common-utils';
+import { escapePath } from '@winglet/json';
 
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 
 const path = '~1/2/3/4/5/6/7/8/9/10';
 
 const escapePointerRun = () => {
-  escapePointer(path);
+  escapePath(path);
 };
 
 const escapePathComponentRun = () => {

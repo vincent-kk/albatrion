@@ -1,7 +1,7 @@
 import { isArray, isString } from '@winglet/common-utils/filter';
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
-import { unescapeSegment } from '@/json/JSONPointer/utils/escape/unescapeSegment';
+import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 
 import { JSONPointerError } from './error';
 
@@ -36,7 +36,7 @@ const handleArrayPointer = (segments: string[]) => {
         'JSON pointer must be of type string or number array.',
         { pointer: segments },
       );
-    else segments[index] = unescapeSegment(segment);
+    else segments[index] = unescapePath(segment);
   }
   return segments;
 };
