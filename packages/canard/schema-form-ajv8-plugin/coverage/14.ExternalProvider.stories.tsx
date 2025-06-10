@@ -18,16 +18,17 @@ import StoryLayout from './components/StoryLayout';
 
 const ajv = new Ajv({
   allErrors: true,
-  verbose: true,
-  format: false,
+  strictSchema: false,
+  validateFormats: false,
 });
-ajv.addKeyword('isEven', {
+ajv.addKeyword({
+  keyword: 'isEven',
   type: 'number',
-  validate: (schema: boolean, data: number) => {
-    if (schema === false) return true; // schema가 false면 검사 무시
-    return data % 2 === 0; // 짝수 여부 검사
+  errors: false, // 오류 메시지를 직접 정의하지 않음
+  validate: function (schema: boolean, data: number): boolean {
+    if (schema === false) return true;
+    return data % 2 === 0;
   },
-  errors: false,
 });
 
 plugin.validator.bind(ajv);

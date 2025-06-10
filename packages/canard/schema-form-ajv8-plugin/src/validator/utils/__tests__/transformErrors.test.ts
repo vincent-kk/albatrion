@@ -508,7 +508,7 @@ describe('transformErrors', () => {
       ];
 
       const result = transformErrors(errors);
-      expect(result[0].dataPath).toBe('');
+      expect(result[0].dataPath).toBe('/');
     });
 
     it('params가 없는 required 에러를 처리해야 한다', () => {
