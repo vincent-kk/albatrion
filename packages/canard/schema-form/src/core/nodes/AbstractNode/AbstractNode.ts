@@ -10,7 +10,11 @@ import type { Fn, SetStateFn } from '@aileron/declare';
 import { PluginManager } from '@/schema-form/app/plugin';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import { transformErrors } from '@/schema-form/helpers/error';
-import { JSONPointer, escapeSegment } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer,
+  escapeSegment,
+  isAbsolutePath,
+} from '@/schema-form/helpers/jsonPointer';
 import type {
   AllowedValue,
   JsonSchema,
@@ -313,11 +317,10 @@ export abstract class AbstractNode<
    */
   public find(this: AbstractNode, path?: string): SchemaNode | null {
     if (path === undefined) return this as SchemaNode;
-    const isAbsolutePath =
-      path[0] === JSONPointer.Root || path[0] === JSONPointer.Child;
-    if (isAbsolutePath && path.length === 1) return this.rootNode;
+    const isAbsolute = isAbsolutePath(path);
+    if (isAbsolute && path.length === 1) return this.rootNode;
     return find(
-      isAbsolutePath ? this.rootNode : (this as SchemaNode),
+      isAbsolute ? this.rootNode : (this as SchemaNode),
       getPathSegments(path),
     );
   }
