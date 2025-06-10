@@ -25,12 +25,12 @@ describe('JsonSchemaScanner', () => {
       const scanner = new JsonSchemaScanner({ visitor });
       scanner.scan(schema);
 
-      // Root object visit
+      // Fragment object visit
       expect(visitor.enter).toHaveBeenCalledWith(
         {
           schema,
-          path: JSONPointer.Root,
-          dataPath: JSONPointer.Root,
+          path: JSONPointer.Fragment,
+          dataPath: JSONPointer.Fragment,
           depth: 0,
         },
         undefined,
@@ -40,8 +40,8 @@ describe('JsonSchemaScanner', () => {
       expect(visitor.enter).toHaveBeenCalledWith(
         {
           schema: schema.properties.name,
-          path: `${JSONPointer.Root}/properties/name`,
-          dataPath: `${JSONPointer.Root}/name`,
+          path: `${JSONPointer.Fragment}/properties/name`,
+          dataPath: `${JSONPointer.Fragment}/name`,
           depth: 1,
         },
         undefined,
@@ -49,8 +49,8 @@ describe('JsonSchemaScanner', () => {
       expect(visitor.enter).toHaveBeenCalledWith(
         {
           schema: schema.properties.age,
-          path: `${JSONPointer.Root}/properties/age`,
-          dataPath: `${JSONPointer.Root}/age`,
+          path: `${JSONPointer.Fragment}/properties/age`,
+          dataPath: `${JSONPointer.Fragment}/age`,
           depth: 1,
         },
         undefined,
@@ -86,8 +86,8 @@ describe('JsonSchemaScanner', () => {
       expect(visitor.enter).toHaveBeenCalledWith(
         {
           schema,
-          path: JSONPointer.Root,
-          dataPath: JSONPointer.Root,
+          path: JSONPointer.Fragment,
+          dataPath: JSONPointer.Fragment,
           depth: 0,
         },
         undefined,
@@ -95,8 +95,8 @@ describe('JsonSchemaScanner', () => {
       expect(visitor.enter).toHaveBeenCalledWith(
         {
           schema: schema.properties.user,
-          path: `${JSONPointer.Root}/properties/user`,
-          dataPath: `${JSONPointer.Root}/user`,
+          path: `${JSONPointer.Fragment}/properties/user`,
+          dataPath: `${JSONPointer.Fragment}/user`,
           depth: 1,
         },
         undefined,
@@ -119,7 +119,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema: { type: 'string' },
           path: '#',
-          dataPath: JSONPointer.Root,
+          dataPath: JSONPointer.Fragment,
           depth: 0,
         },
         undefined,
@@ -128,7 +128,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema: { type: 'string' },
           path: '#',
-          dataPath: JSONPointer.Root,
+          dataPath: JSONPointer.Fragment,
           depth: 0,
         },
         undefined,
@@ -272,7 +272,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema: { type: 'string' },
           path: '#',
-          dataPath: JSONPointer.Root,
+          dataPath: JSONPointer.Fragment,
           depth: 0,
         },
         { user: 'vincent' },
@@ -308,7 +308,7 @@ describe('JsonSchemaScanner', () => {
         {
           depth: 0,
           path: '#',
-          dataPath: JSONPointer.Root,
+          dataPath: JSONPointer.Fragment,
           schema: {
             properties: {
               ref: {
@@ -324,7 +324,7 @@ describe('JsonSchemaScanner', () => {
         {
           depth: 1,
           path: '#/properties/ref',
-          dataPath: `${JSONPointer.Root}/ref`,
+          dataPath: `${JSONPointer.Fragment}/ref`,
           referencePath: '#/definitions/string',
           referenceResolved: true,
           schema: {
@@ -498,24 +498,24 @@ describe('JsonSchemaScanner', () => {
       expect(schemaMap.size).toBe(2);
       expect(
         schemaMap.has(
-          `${JSONPointer.Root}/properties/user/properties/primaryContact`,
+          `${JSONPointer.Fragment}/properties/user/properties/primaryContact`,
         ),
       ).toBe(true);
       expect(
         schemaMap.has(
-          `${JSONPointer.Root}/properties/user/properties/secondaryContact`,
+          `${JSONPointer.Fragment}/properties/user/properties/secondaryContact`,
         ),
       ).toBe(true);
       expect(
         schemaMap.get(
-          `${JSONPointer.Root}/properties/user/properties/primaryContact`,
+          `${JSONPointer.Fragment}/properties/user/properties/primaryContact`,
         ),
       ).toEqual({
         $ref: '#/$defs/email',
       });
       expect(
         schemaMap.get(
-          `${JSONPointer.Root}/properties/user/properties/secondaryContact`,
+          `${JSONPointer.Fragment}/properties/user/properties/secondaryContact`,
         ),
       ).toEqual({
         $ref: '#/$defs/phone',
@@ -572,8 +572,8 @@ describe('JsonSchemaScannerAsync', () => {
       expect(visitor.enter).toHaveBeenCalledWith(
         {
           schema,
-          path: JSONPointer.Root,
-          dataPath: JSONPointer.Root,
+          path: JSONPointer.Fragment,
+          dataPath: JSONPointer.Fragment,
           depth: 0,
         },
         undefined,
@@ -581,8 +581,8 @@ describe('JsonSchemaScannerAsync', () => {
       expect(visitor.enter).toHaveBeenCalledWith(
         {
           schema: schema.properties.name,
-          path: `${JSONPointer.Root}/properties/name`,
-          dataPath: `${JSONPointer.Root}/name`,
+          path: `${JSONPointer.Fragment}/properties/name`,
+          dataPath: `${JSONPointer.Fragment}/name`,
           depth: 1,
         },
         undefined,
@@ -590,8 +590,8 @@ describe('JsonSchemaScannerAsync', () => {
       expect(visitor.enter).toHaveBeenCalledWith(
         {
           schema: schema.properties.age,
-          path: `${JSONPointer.Root}/properties/age`,
-          dataPath: `${JSONPointer.Root}/age`,
+          path: `${JSONPointer.Fragment}/properties/age`,
+          dataPath: `${JSONPointer.Fragment}/age`,
           depth: 1,
         },
         undefined,
@@ -629,7 +629,7 @@ describe('JsonSchemaScannerAsync', () => {
         {
           depth: 0,
           path: '#',
-          dataPath: JSONPointer.Root,
+          dataPath: JSONPointer.Fragment,
           schema: {
             properties: {
               ref: {
@@ -655,7 +655,7 @@ describe('JsonSchemaScannerAsync', () => {
         {
           depth: 1,
           path: '#/properties/ref',
-          dataPath: `${JSONPointer.Root}/ref`,
+          dataPath: `${JSONPointer.Fragment}/ref`,
           referencePath: '#/definitions/string',
           referenceResolved: true,
           schema: { type: 'string' }, // 해결된 스키마
