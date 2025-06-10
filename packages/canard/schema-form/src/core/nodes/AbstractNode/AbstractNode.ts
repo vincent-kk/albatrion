@@ -4,17 +4,14 @@ import {
   isTruthy,
 } from '@winglet/common-utils/filter';
 import { equals } from '@winglet/common-utils/object';
+import { escapeSegment } from '@winglet/json/pointer';
 
 import type { Fn, SetStateFn } from '@aileron/declare';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import { transformErrors } from '@/schema-form/helpers/error';
-import {
-  JSONPointer,
-  escapeSegment,
-  isAbsolutePath,
-} from '@/schema-form/helpers/jsonPointer';
+import { JSONPointer, isAbsolutePath } from '@/schema-form/helpers/jsonPointer';
 import type {
   AllowedValue,
   JsonSchema,
@@ -293,8 +290,9 @@ export abstract class AbstractNode<
         : parentPath + JSONPointer.Separator + (key ?? this.escapedKey)
       : JSONPointer.Separator;
 
-    this.depth =
-      this.#path.split(JSONPointer.Separator).filter(isTruthy).length - 1;
+    this.depth = this.#path
+      .split(JSONPointer.Separator)
+      .filter(isTruthy).length;
 
     if (this.parentNode) {
       const unsubscribe = this.parentNode.subscribe(({ type }) => {

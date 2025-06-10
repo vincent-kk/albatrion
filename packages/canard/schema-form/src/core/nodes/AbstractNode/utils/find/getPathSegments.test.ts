@@ -41,18 +41,6 @@ describe('getPathSegments', () => {
     expect(getPathSegments(path)).toEqual(expected);
   });
 
-  it('should unescape custom sequences in segments', () => {
-    const path = '/e~2f/g~3h/i~4j/k~5l';
-    const expected = ['e..f', 'g.h', 'i*j', 'k#l'];
-    expect(getPathSegments(path)).toEqual(expected);
-  });
-
-  it('should handle a complex path with mixed, escaped, and normal segments', () => {
-    const path = '/~0/path~1to/complex~3value/0/end';
-    const expected = ['~', 'path/to', 'complex.value', '0', 'end'];
-    expect(getPathSegments(path)).toEqual(expected);
-  });
-
   it('should handle segments that are just numbers (array indices)', () => {
     const path = '/data/0/items/1';
     const expected = ['data', '0', 'items', '1'];

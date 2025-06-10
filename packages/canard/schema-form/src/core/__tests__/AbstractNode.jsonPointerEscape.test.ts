@@ -11,12 +11,6 @@ import type { JsonSchema } from '@/schema-form/types';
  * RFC 6901 표준에 따르면:
  * - `~` → `~0`로 이스케이프
  * - `/` → `~1`로 이스케이프
- *
- * 추가적으로 canard에서는:
- * - `..` → `~2`로 이스케이프
- * - `.` → `~3`로 이스케이프
- * - `*` → `~4`로 이스케이프
- * - `#` → `~5`로 이스케이프
  */
 describe('AbstractNode - JSON Pointer Escape', () => {
   describe('RFC 6901 표준 이스케이프 문자 (~, /)', () => {
@@ -151,8 +145,8 @@ describe('AbstractNode - JSON Pointer Escape', () => {
     });
   });
 
-  describe('확장 이스케이프 문자 (.., ., *, #)', () => {
-    it('점(.) 문자가 포함된 프로퍼티 키가 정상적으로 이스케이프되어야 함', async () => {
+  describe('확장 문자는 이스케이프되지 않음 (.., ., *, #)', () => {
+    it('점(.) 문자가 포함된 프로퍼티 키는 이스케이프되지 않아야 함', async () => {
       const schema = {
         type: 'object',
         properties: {
@@ -175,18 +169,18 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       const node = nodeFromJsonSchema({ jsonSchema: schema });
       await delay();
 
-      const userNameNode = node.find('user~3name');
+      const userNameNode = node.find('user.name');
       expect(userNameNode?.propertyKey).toBe('user.name');
-      expect(userNameNode?.escapedKey).toBe('user~3name');
-      expect(userNameNode?.path).toBe('/user~3name');
+      expect(userNameNode?.escapedKey).toBe('user.name');
+      expect(userNameNode?.path).toBe('/user.name');
 
-      const appVersionNode = node.find('config~3settings/app~3version');
+      const appVersionNode = node.find('config.settings/app.version');
       expect(appVersionNode?.propertyKey).toBe('app.version');
-      expect(appVersionNode?.escapedKey).toBe('app~3version');
-      expect(appVersionNode?.path).toBe('/config~3settings/app~3version');
+      expect(appVersionNode?.escapedKey).toBe('app.version');
+      expect(appVersionNode?.path).toBe('/config.settings/app.version');
     });
 
-    it('더블 점(..) 문자가 포함된 프로퍼티 키가 정상적으로 이스케이프되어야 함', async () => {
+    it('더블 점(..) 문자가 포함된 프로퍼티 키는 이스케이프되지 않아야 함', async () => {
       const schema = {
         type: 'object',
         properties: {
@@ -209,18 +203,18 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       const node = nodeFromJsonSchema({ jsonSchema: schema });
       await delay();
 
-      const parentDirNode = node.find('parent~2dir');
+      const parentDirNode = node.find('parent..dir');
       expect(parentDirNode?.propertyKey).toBe('parent..dir');
-      expect(parentDirNode?.escapedKey).toBe('parent~2dir');
-      expect(parentDirNode?.path).toBe('/parent~2dir');
+      expect(parentDirNode?.escapedKey).toBe('parent..dir');
+      expect(parentDirNode?.path).toBe('/parent..dir');
 
-      const dataStoreNode = node.find('config~2backup/data~2store');
+      const dataStoreNode = node.find('config..backup/data..store');
       expect(dataStoreNode?.propertyKey).toBe('data..store');
-      expect(dataStoreNode?.escapedKey).toBe('data~2store');
-      expect(dataStoreNode?.path).toBe('/config~2backup/data~2store');
+      expect(dataStoreNode?.escapedKey).toBe('data..store');
+      expect(dataStoreNode?.path).toBe('/config..backup/data..store');
     });
 
-    it('별표(*) 문자가 포함된 프로퍼티 키가 정상적으로 이스케이프되어야 함', async () => {
+    it('별표(*) 문자가 포함된 프로퍼티 키는 이스케이프되지 않아야 함', async () => {
       const schema = {
         type: 'object',
         properties: {
@@ -243,18 +237,18 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       const node = nodeFromJsonSchema({ jsonSchema: schema });
       await delay();
 
-      const wildcardNode = node.find('wildcard~4key');
+      const wildcardNode = node.find('wildcard*key');
       expect(wildcardNode?.propertyKey).toBe('wildcard*key');
-      expect(wildcardNode?.escapedKey).toBe('wildcard~4key');
-      expect(wildcardNode?.path).toBe('/wildcard~4key');
+      expect(wildcardNode?.escapedKey).toBe('wildcard*key');
+      expect(wildcardNode?.path).toBe('/wildcard*key');
 
-      const logEntriesNode = node.find('data~4files/log~4entries');
+      const logEntriesNode = node.find('data*files/log*entries');
       expect(logEntriesNode?.propertyKey).toBe('log*entries');
-      expect(logEntriesNode?.escapedKey).toBe('log~4entries');
-      expect(logEntriesNode?.path).toBe('/data~4files/log~4entries');
+      expect(logEntriesNode?.escapedKey).toBe('log*entries');
+      expect(logEntriesNode?.path).toBe('/data*files/log*entries');
     });
 
-    it('해시(#) 문자가 포함된 프로퍼티 키가 정상적으로 이스케이프되어야 함', async () => {
+    it('해시(#) 문자가 포함된 프로퍼티 키는 이스케이프되지 않아야 함', async () => {
       const schema = {
         type: 'object',
         properties: {
@@ -277,26 +271,26 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       const node = nodeFromJsonSchema({ jsonSchema: schema });
       await delay();
 
-      const fragmentNode = node.find('fragment~5key');
+      const fragmentNode = node.find('fragment#key');
       expect(fragmentNode?.propertyKey).toBe('fragment#key');
-      expect(fragmentNode?.escapedKey).toBe('fragment~5key');
-      expect(fragmentNode?.path).toBe('/fragment~5key');
+      expect(fragmentNode?.escapedKey).toBe('fragment#key');
+      expect(fragmentNode?.path).toBe('/fragment#key');
 
-      const envSettingsNode = node.find('config~5vars/env~5settings');
+      const envSettingsNode = node.find('config#vars/env#settings');
       expect(envSettingsNode?.propertyKey).toBe('env#settings');
-      expect(envSettingsNode?.escapedKey).toBe('env~5settings');
-      expect(envSettingsNode?.path).toBe('/config~5vars/env~5settings');
+      expect(envSettingsNode?.escapedKey).toBe('env#settings');
+      expect(envSettingsNode?.path).toBe('/config#vars/env#settings');
     });
   });
 
-  describe('복합 이스케이프 케이스', () => {
-    it('모든 특수 문자가 포함된 프로퍼티 키가 정상적으로 이스케이프되어야 함', async () => {
+  describe('RFC 6901 표준 이스케이프만 적용되는 복합 케이스', () => {
+    it('틸드와 슬래시만 이스케이프되고 다른 특수 문자는 그대로 유지되어야 함', async () => {
       const schema = {
         type: 'object',
         properties: {
           'complex~/..*#key': {
             type: 'string',
-            default: 'all special chars',
+            default: 'mixed special chars',
           },
           'another#.*~/complex': {
             type: 'object',
@@ -313,32 +307,32 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       const node = nodeFromJsonSchema({ jsonSchema: schema });
       await delay();
 
-      // 모든 특수 문자가 포함된 키 검증
-      const complexNode = node.find('complex~0~1~2~4~5key');
+      // 틸드와 슬래시만 이스케이프되고 나머지는 그대로
+      const complexNode = node.find('complex~0~1..*#key');
       expect(complexNode?.propertyKey).toBe('complex~/..*#key');
-      expect(complexNode?.escapedKey).toBe('complex~0~1~2~4~5key');
-      expect(complexNode?.path).toBe('/complex~0~1~2~4~5key');
-      expect(complexNode?.value).toBe('all special chars');
+      expect(complexNode?.escapedKey).toBe('complex~0~1..*#key');
+      expect(complexNode?.path).toBe('/complex~0~1..*#key');
+      expect(complexNode?.value).toBe('mixed special chars');
 
       // 다른 순서의 특수 문자 검증
-      const anotherNode = node.find('another~5~3~4~0~1complex');
+      const anotherNode = node.find('another#.*~0~1complex');
       expect(anotherNode?.propertyKey).toBe('another#.*~/complex');
-      expect(anotherNode?.escapedKey).toBe('another~5~3~4~0~1complex');
-      expect(anotherNode?.path).toBe('/another~5~3~4~0~1complex');
+      expect(anotherNode?.escapedKey).toBe('another#.*~0~1complex');
+      expect(anotherNode?.path).toBe('/another#.*~0~1complex');
 
       // 중첩된 복합 키 검증
       const nestedNode = node.find(
-        'another~5~3~4~0~1complex/nested~0~1~2~1~4~5prop',
+        'another#.*~0~1complex/nested~0~1..~1*#prop',
       );
       expect(nestedNode?.propertyKey).toBe('nested~/../*#prop');
-      expect(nestedNode?.escapedKey).toBe('nested~0~1~2~1~4~5prop');
+      expect(nestedNode?.escapedKey).toBe('nested~0~1..~1*#prop');
       expect(nestedNode?.path).toBe(
-        '/another~5~3~4~0~1complex/nested~0~1~2~1~4~5prop',
+        '/another#.*~0~1complex/nested~0~1..~1*#prop',
       );
       expect(nestedNode?.value).toBe('deeply nested');
     });
 
-    it('연속된 특수 문자가 정상적으로 이스케이프되어야 함', async () => {
+    it('연속된 RFC 6901 표준 문자만 이스케이프되어야 함', async () => {
       const schema = {
         type: 'object',
         properties: {
@@ -374,19 +368,20 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       const doubleSlashNode = node.find('~1~1path');
       expect(doubleSlashNode?.escapedKey).toBe('~1~1path');
 
-      const tripleDotsNode = node.find('~2~3dots');
-      expect(tripleDotsNode?.escapedKey).toBe('~2~3dots'); // .. -> ~2, . -> ~3
+      // 확장 문자들은 이스케이프되지 않음
+      const tripleDotsNode = node.find('...dots');
+      expect(tripleDotsNode?.escapedKey).toBe('...dots');
 
-      const doubleStarsNode = node.find('~4~4stars');
-      expect(doubleStarsNode?.escapedKey).toBe('~4~4stars');
+      const doubleStarsNode = node.find('**stars');
+      expect(doubleStarsNode?.escapedKey).toBe('**stars');
 
-      const doubleHashNode = node.find('~5~5hash');
-      expect(doubleHashNode?.escapedKey).toBe('~5~5hash');
+      const doubleHashNode = node.find('##hash');
+      expect(doubleHashNode?.escapedKey).toBe('##hash');
     });
   });
 
   describe('배열과 객체에서의 이스케이프', () => {
-    it('배열 아이템이 특수 문자 프로퍼티를 가져도 정상적으로 작동해야 함', async () => {
+    it('배열 아이템이 특수 문자 프로퍼티를 가져도 RFC 6901 표준만 이스케이프되어야 함', async () => {
       const schema = {
         type: 'object',
         properties: {
@@ -400,6 +395,9 @@ describe('AbstractNode - JSON Pointer Escape', () => {
                 },
                 'item/value': {
                   type: 'number',
+                },
+                'item.id': {
+                  type: 'string',
                 },
               },
             },
@@ -416,8 +414,8 @@ describe('AbstractNode - JSON Pointer Escape', () => {
 
       // @ts-expect-error - setValue는 테스트를 위해 any 타입으로 설정
       arrayNode?.setValue([
-        { 'item~name': 'first', 'item/value': 1 },
-        { 'item~name': 'second', 'item/value': 2 },
+        { 'item~name': 'first', 'item/value': 1, 'item.id': 'id1' },
+        { 'item~name': 'second', 'item/value': 2, 'item.id': 'id2' },
       ]);
       await delay();
 
@@ -430,12 +428,17 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       expect(firstItemValueNode?.path).toBe('/items~0array/0/item~1value');
       expect(firstItemValueNode?.value).toBe(1);
 
+      // 점은 이스케이프되지 않음
+      const firstItemIdNode = node.find('items~0array/0/item.id');
+      expect(firstItemIdNode?.path).toBe('/items~0array/0/item.id');
+      expect(firstItemIdNode?.value).toBe('id1');
+
       const secondItemNameNode = node.find('items~0array/1/item~0name');
       expect(secondItemNameNode?.path).toBe('/items~0array/1/item~0name');
       expect(secondItemNameNode?.value).toBe('second');
     });
 
-    it('중첩된 객체에서 특수 문자 프로퍼티가 정상적으로 작동해야 함', async () => {
+    it('중첩된 객체에서 RFC 6901 표준 문자만 이스케이프되어야 함', async () => {
       const schema = {
         type: 'object',
         properties: {
@@ -464,12 +467,12 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       const node = nodeFromJsonSchema({ jsonSchema: schema });
       await delay();
 
-      // 깊게 중첩된 특수 문자 프로퍼티 검증
+      // 깊게 중첩된 특수 문자 프로퍼티 검증 (RFC 6901만 이스케이프)
       const deeplyNestedNode = node.find(
-        'level1~0prop/level2~1prop/level3~3prop/level4~4prop',
+        'level1~0prop/level2~1prop/level3.prop/level4*prop',
       );
       expect(deeplyNestedNode?.path).toBe(
-        '/level1~0prop/level2~1prop/level3~3prop/level4~4prop',
+        '/level1~0prop/level2~1prop/level3.prop/level4*prop',
       );
       expect(deeplyNestedNode?.value).toBe('deeply nested value');
 
@@ -480,18 +483,18 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       const level2Node = node.find('level1~0prop/level2~1prop');
       expect(level2Node?.escapedKey).toBe('level2~1prop');
 
-      const level3Node = node.find('level1~0prop/level2~1prop/level3~3prop');
-      expect(level3Node?.escapedKey).toBe('level3~3prop');
+      const level3Node = node.find('level1~0prop/level2~1prop/level3.prop');
+      expect(level3Node?.escapedKey).toBe('level3.prop');
 
       const level4Node = node.find(
-        'level1~0prop/level2~1prop/level3~3prop/level4~4prop',
+        'level1~0prop/level2~1prop/level3.prop/level4*prop',
       );
-      expect(level4Node?.escapedKey).toBe('level4~4prop');
+      expect(level4Node?.escapedKey).toBe('level4*prop');
     });
   });
 
   describe('find 메서드를 통한 노드 검색', () => {
-    it('이스케이프된 경로로 노드를 찾을 수 있어야 함', async () => {
+    it('RFC 6901 표준 이스케이프된 경로로 노드를 찾을 수 있어야 함', async () => {
       const schema = {
         type: 'object',
         properties: {
@@ -514,27 +517,27 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       const node = nodeFromJsonSchema({ jsonSchema: schema });
       await delay();
 
-      // 이스케이프된 경로로 검색
+      // RFC 6901 표준 이스케이프된 경로로 검색
       const userNameNode1 = node.find('user~0name');
       expect(userNameNode1?.value).toBe('John');
 
-      const themeNode1 = node.find('config~1settings/theme~3mode');
+      const themeNode1 = node.find('config~1settings/theme.mode');
       expect(themeNode1?.value).toBe('dark');
 
       // 절대 경로로 검색
       const userNameNode2 = node.find('/user~0name');
       expect(userNameNode2?.value).toBe('John');
 
-      const themeNode2 = node.find('/config~1settings/theme~3mode');
+      const themeNode2 = node.find('/config~1settings/theme.mode');
       expect(themeNode2?.value).toBe('dark');
 
       // 상대 경로로 검색
       const configNode = node.find('config~1settings');
-      const themeNode3 = configNode?.find('./theme~3mode');
+      const themeNode3 = configNode?.find('./theme.mode');
       expect(themeNode3?.value).toBe('dark');
     });
 
-    it('존재하지 않는 이스케이프 경로로 검색 시 null을 반환해야 함', async () => {
+    it('존재하지 않는 경로로 검색 시 null을 반환해야 함', async () => {
       const schema = {
         type: 'object',
         properties: {
@@ -548,12 +551,12 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       const node = nodeFromJsonSchema({ jsonSchema: schema });
       await delay();
 
-      // 존재하지 않는 특수 문자 경로
+      // 존재하지 않는 경로
       expect(node.find('user~0name')).toBeNull();
       expect(node.find('config~1settings')).toBeNull();
-      expect(node.find('theme~3mode')).toBeNull();
-      expect(node.find('wildcard~4key')).toBeNull();
-      expect(node.find('fragment~5key')).toBeNull();
+      expect(node.find('theme.mode')).toBeNull();
+      expect(node.find('wildcard*key')).toBeNull();
+      expect(node.find('fragment#key')).toBeNull();
     });
   });
 
@@ -604,7 +607,7 @@ describe('AbstractNode - JSON Pointer Escape', () => {
   });
 
   describe('실제 사용 사례', () => {
-    it('파일 경로 같은 실제 키 이름이 정상적으로 처리되어야 함', async () => {
+    it('파일 경로 같은 실제 키 이름에서 RFC 6901 표준만 이스케이프되어야 함', async () => {
       const schema = {
         type: 'object',
         properties: {
@@ -640,32 +643,32 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       const node = nodeFromJsonSchema({ jsonSchema: schema });
       await delay();
 
-      // 파일 경로 스타일 키 검증
-      const configDbNode = node.find('config~1database~3json');
-      expect(configDbNode?.escapedKey).toBe('config~1database~3json');
-      expect(configDbNode?.path).toBe('/config~1database~3json');
+      // 파일 경로 스타일 키 검증 (슬래시만 이스케이프, 점은 그대로)
+      const configDbNode = node.find('config~1database.json');
+      expect(configDbNode?.escapedKey).toBe('config~1database.json');
+      expect(configDbNode?.path).toBe('/config~1database.json');
 
-      const hostProdNode = node.find('config~1database~3json/host~0production');
+      const hostProdNode = node.find('config~1database.json/host~0production');
       expect(hostProdNode?.escapedKey).toBe('host~0production');
       expect(hostProdNode?.path).toBe(
-        '/config~1database~3json/host~0production',
+        '/config~1database.json/host~0production',
       );
       expect(hostProdNode?.value).toBe('prod.db.com');
 
-      const logNode = node.find('logs~1app~3log');
-      expect(logNode?.escapedKey).toBe('logs~1app~3log');
+      const logNode = node.find('logs~1app.log');
+      expect(logNode?.escapedKey).toBe('logs~1app.log');
       expect(logNode?.value).toBe('log content');
 
       const backupNode = node.find('backup~02024-01-01');
       expect(backupNode?.escapedKey).toBe('backup~02024-01-01');
 
-      const sizeNode = node.find('backup~02024-01-01/size~3bytes');
-      expect(sizeNode?.escapedKey).toBe('size~3bytes');
-      expect(sizeNode?.path).toBe('/backup~02024-01-01/size~3bytes');
+      const sizeNode = node.find('backup~02024-01-01/size.bytes');
+      expect(sizeNode?.escapedKey).toBe('size.bytes');
+      expect(sizeNode?.path).toBe('/backup~02024-01-01/size.bytes');
       expect(sizeNode?.value).toBe(1024);
     });
 
-    it('URL 쿼리 파라미터 같은 복잡한 키가 정상적으로 처리되어야 함', async () => {
+    it('URL 쿼리 파라미터 같은 복잡한 키에서 RFC 6901 표준만 이스케이프되어야 함', async () => {
       const schema = {
         type: 'object',
         properties: {
@@ -693,7 +696,7 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       const node = nodeFromJsonSchema({ jsonSchema: schema });
       await delay();
 
-      // 복잡한 URL 스타일 키 검증
+      // 복잡한 URL 스타일 키 검증 (슬래시만 이스케이프)
       const apiNode = node.find('api~1v1~1users?filter=active&sort=name');
       expect(apiNode?.propertyKey).toBe('api/v1/users?filter=active&sort=name');
       expect(apiNode?.escapedKey).toBe(
@@ -707,12 +710,12 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       expect(cacheKeyNode?.value).toBe('users_active_sorted');
 
       const headersNode = node.find(
-        'api~1v1~1users?filter=active&sort=name/response~3headers',
+        'api~1v1~1users?filter=active&sort=name/response.headers',
       );
-      expect(headersNode?.escapedKey).toBe('response~3headers');
+      expect(headersNode?.escapedKey).toBe('response.headers');
 
       const contentTypeNode = node.find(
-        'api~1v1~1users?filter=active&sort=name/response~3headers/content-type',
+        'api~1v1~1users?filter=active&sort=name/response.headers/content-type',
       );
       expect(contentTypeNode?.escapedKey).toBe('content-type');
       expect(contentTypeNode?.value).toBe('application/json');
