@@ -24,9 +24,9 @@ export { useFormSubmit } from './hooks/useFormSubmit';
 
 export {
   JSONPointer,
-  escapePointer,
+  escapePath,
   escapeSegment,
-  unescapePointer,
+  unescapePath,
   unescapeSegment,
 } from './helpers/jsonPointer';
 

@@ -44,27 +44,23 @@ import {
 export const escapeSegment = (segment: string): string => {
   if (isSafeSegment(segment)) return segment;
   const length = segment.length;
-  const result: string[] = [];
+  let result = '';
   for (let index = 0; index < length; index++) {
     const character = segment[index];
     if (
       character === JSONPointer.Current &&
       segment[index + 1] === JSONPointer.Current
     ) {
-      result[result.length] = ESCAPE_PARENT;
+      result += ESCAPE_PARENT;
       index++;
-    } else if (character === TILDE) result[result.length] = ESCAPE_TILDE;
-    else if (character === JSONPointer.Child)
-      result[result.length] = ESCAPE_CHILD;
-    else if (character === JSONPointer.Current)
-      result[result.length] = ESCAPE_CURRENT;
-    else if (character === JSONPointer.Index)
-      result[result.length] = ESCAPE_INDEX;
-    else if (character === JSONPointer.Root)
-      result[result.length] = ESCAPE_ROOT;
-    else result[result.length] = character;
+    } else if (character === TILDE) result += ESCAPE_TILDE;
+    else if (character === JSONPointer.Child) result += ESCAPE_CHILD;
+    else if (character === JSONPointer.Current) result += ESCAPE_CURRENT;
+    else if (character === JSONPointer.Index) result += ESCAPE_INDEX;
+    else if (character === JSONPointer.Root) result += ESCAPE_ROOT;
+    else result += character;
   }
-  return result.join('');
+  return result;
 };
 
 /**

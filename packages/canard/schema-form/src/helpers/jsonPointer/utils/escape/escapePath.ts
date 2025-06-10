@@ -10,9 +10,9 @@ import { escapeSegment } from './escapeSegment';
  *
  * @example
  * ```typescript
- * escapePointer('/user/name.first')     // '/user/name~3first'
- * escapePointer('/items/\*\/value')       // '/items/~4/value'
- * escapePointer('/parent/../sibling')   // '/parent/~2/sibling'
+ * escapePath('/user/name.first')     // '/user/name~3first'
+ * escapePath('/items/\*\/value')       // '/items/~4/value'
+ * escapePath('/parent/../sibling')   // '/parent/~2/sibling'
  * ```
  *
  * @param path - The JSON Pointer path to escape. Should start with `/` for valid JSON Pointer.
@@ -21,9 +21,13 @@ import { escapeSegment } from './escapeSegment';
  * @see {@link escapeSegment} for individual segment escaping logic
  * @see {@link https://datatracker.ietf.org/doc/html/rfc6901} RFC 6901 - JSON Pointer specification
  */
-export const escapePointer = (path: string): string => {
+export const escapePath = (path: string): string => {
   const segments = path.split(JSONPointer.Child);
-  for (let index = 0, length = segments.length; index < length; index++)
-    segments[index] = escapeSegment(segments[index]);
-  return segments.join(JSONPointer.Child);
+  const length = segments.length;
+  if (length === 0) return '';
+  if (length === 1) return escapeSegment(segments[0]);
+  let result = escapeSegment(segments[0]);
+  for (let index = 1; index < length; index++)
+    result += JSONPointer.Child + escapeSegment(segments[index]);
+  return result;
 };
