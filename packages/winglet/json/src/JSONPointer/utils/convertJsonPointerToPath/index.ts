@@ -1,0 +1,1 @@
+export { convertJsonPointerToPath } from './convertJsonPointerToPath';
