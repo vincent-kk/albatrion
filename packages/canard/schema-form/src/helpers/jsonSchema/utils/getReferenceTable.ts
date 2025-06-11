@@ -10,10 +10,7 @@ export const getReferenceTable = (jsonSchema: JsonSchema) => {
     visitor: {
       exit: ({ schema, hasReference }) => {
         if (hasReference && isString(schema.$ref))
-          referenceTable.set(
-            schema.$ref,
-            getValue(jsonSchema, schema.$ref),
-          );
+          referenceTable.set(schema.$ref, getValue(jsonSchema, schema.$ref));
       },
     },
   }).scan(jsonSchema);
