@@ -1,6 +1,6 @@
 import { equals } from '@winglet/common-utils/object';
 
-import { getValueByPointer } from '@/json/JSONPointer/utils/manipulator/getValueByPointer';
+import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
 import type { JsonRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../type';
@@ -42,7 +42,7 @@ export const handleRootPatch = (
             path: patch.path,
           },
         );
-      return getValueByPointer(source, patch.from);
+      return getValue(source, patch.from);
     case Operation.COPY:
       if (isCircularMoveReference(patch.from, patch.path))
         throw new JsonPatchError(
@@ -56,7 +56,7 @@ export const handleRootPatch = (
             path: patch.path,
           },
         );
-      return getValueByPointer(source, patch.from);
+      return getValue(source, patch.from);
     case Operation.TEST:
       if (!strict || equals(source, patch.value)) return source;
       throw new JsonPatchError(

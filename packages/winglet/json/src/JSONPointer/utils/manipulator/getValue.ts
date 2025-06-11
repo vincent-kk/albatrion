@@ -4,7 +4,7 @@ import type { Dictionary } from '@aileron/declare';
 
 import { compilePointer } from './utils/compileSegments';
 import { JSONPointerError } from './utils/error';
-import { getValue } from './utils/getValue';
+import { getValueByPointer } from './utils/getValueByPointer';
 
 /**
  * Extracts a value from a JSON document using JSON Pointer notation.
@@ -55,10 +55,10 @@ import { getValue } from './utils/getValue';
  *   }
  * };
  *
- * getValueByPointer(obj, '/foo/bar');
+ * getValue(obj, '/foo/bar');
  * // Returns: "baz"
  *
- * getValueByPointer(obj, ['foo', 'bar']);
+ * getValue(obj, ['foo', 'bar']);
  * // Returns: "baz"
  * ```
  *
@@ -72,10 +72,10 @@ import { getValue } from './utils/getValue';
  *   ]
  * };
  *
- * getValueByPointer(data, '/users/0/name');
+ * getValue(data, '/users/0/name');
  * // Returns: "Alice"
  *
- * getValueByPointer(data, '/users/1/age');
+ * getValue(data, '/users/1/age');
  * // Returns: 25
  * ```
  *
@@ -84,10 +84,10 @@ import { getValue } from './utils/getValue';
  * // Root document access
  * const document = { title: "Document", content: "..." };
  *
- * getValueByPointer(document, '');
+ * getValue(document, '');
  * // Returns: { title: "Document", content: "..." }
  *
- * getValueByPointer(document, []);
+ * getValue(document, []);
  * // Returns: { title: "Document", content: "..." }
  * ```
  *
@@ -99,10 +99,10 @@ import { getValue } from './utils/getValue';
  *   "foo~bar": "value2"
  * };
  *
- * getValueByPointer(obj, '/foo~1bar');  // ~1 represents /
+ * getValue(obj, '/foo~1bar');  // ~1 represents /
  * // Returns: "value1"
  *
- * getValueByPointer(obj, '/foo~0bar');  // ~0 represents ~
+ * getValue(obj, '/foo~0bar');  // ~0 represents ~
  * // Returns: "value2"
  * ```
  *
@@ -120,19 +120,21 @@ import { getValue } from './utils/getValue';
  *   }
  * };
  *
- * getValueByPointer(complex, '/api/v1/endpoints/0/methods/1');
+ * getValue(complex, '/api/v1/endpoints/0/methods/1');
  * // Returns: "POST"
  * ```
  */
-export const getValueByPointer = <Input extends Dictionary | Array<any>>(
-  input: Input,
+export const getValue = <
+  Output extends Dictionary | Array<any> = Dictionary | Array<any>,
+>(
+  input: Dictionary | Array<any>,
   pointer: string | string[],
-): any => {
+): Output => {
   if (!(isPlainObject(input) || isArray(input)))
     throw new JSONPointerError(
       'INVALID_INPUT',
       '`input` must be a plain object or an array.',
       { input },
     );
-  return getValue(input, compilePointer(pointer));
+  return getValueByPointer(input, compilePointer(pointer)) as Output;
 };

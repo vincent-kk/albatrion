@@ -4,7 +4,7 @@ import type { Dictionary } from '@aileron/declare';
 
 import { compilePointer } from './utils/compileSegments';
 import { JSONPointerError } from './utils/error';
-import { setValue } from './utils/setValue';
+import { setValueByPointer } from './utils/setValueByPointer';
 
 /**
  * Sets a value at a specific location in a JSON document using JSON Pointer notation.
@@ -73,10 +73,10 @@ import { setValue } from './utils/setValue';
  *   }
  * };
  *
- * setValueByPointer(obj, '/foo/bar', 'qux');
+ * setValue(obj, '/foo/bar', 'qux');
  * // Returns: { foo: { bar: 'qux' } }
  *
- * setValueByPointer(obj, ['foo', 'newProp'], 'value');
+ * setValue(obj, ['foo', 'newProp'], 'value');
  * // Returns: { foo: { bar: 'qux', newProp: 'value' } }
  * ```
  *
@@ -89,10 +89,10 @@ import { setValue } from './utils/setValue';
  *   ]
  * };
  *
- * setValueByPointer(data, '/users/0/age', 31);
+ * setValue(data, '/users/0/age', 31);
  * // Returns: { users: [{ name: "Alice", age: 31 }] }
  *
- * setValueByPointer(data, '/users/1', { name: "Bob", age: 25 });
+ * setValue(data, '/users/1', { name: "Bob", age: 25 });
  * // Returns: { users: [{ name: "Alice", age: 31 }, { name: "Bob", age: 25 }] }
  * ```
  *
@@ -101,10 +101,10 @@ import { setValue } from './utils/setValue';
  * // Automatic path creation
  * const obj = {};
  *
- * setValueByPointer(obj, '/nested/deep/property', 'value');
+ * setValue(obj, '/nested/deep/property', 'value');
  * // Returns: { nested: { deep: { property: 'value' } } }
  *
- * setValueByPointer(obj, '/array/0/item', 'first');
+ * setValue(obj, '/array/0/item', 'first');
  * // Returns: {
  * //   nested: { deep: { property: 'value' } },
  * //   array: [{ item: 'first' }]
@@ -116,13 +116,13 @@ import { setValue } from './utils/setValue';
  * // Overwrite control
  * const obj = { existing: "original", other: "data" };
  *
- * setValueByPointer(obj, '/existing', 'modified', true);
+ * setValue(obj, '/existing', 'modified', true);
  * // Returns: { existing: "modified", other: "data" }
  *
- * setValueByPointer(obj, '/existing', 'ignored', false);
+ * setValue(obj, '/existing', 'ignored', false);
  * // Returns: { existing: "modified", other: "data" } (unchanged)
  *
- * setValueByPointer(obj, '/new', 'value', false);
+ * setValue(obj, '/new', 'value', false);
  * // Returns: { existing: "modified", other: "data", new: "value" }
  * ```
  *
@@ -131,10 +131,10 @@ import { setValue } from './utils/setValue';
  * // Escaped character handling
  * const obj = {};
  *
- * setValueByPointer(obj, '/foo~1bar', 'slash');  // ~1 represents /
+ * setValue(obj, '/foo~1bar', 'slash');  // ~1 represents /
  * // Returns: { "foo/bar": "slash" }
  *
- * setValueByPointer(obj, '/foo~0bar', 'tilde');  // ~0 represents ~
+ * setValue(obj, '/foo~0bar', 'tilde');  // ~0 represents ~
  * // Returns: { "foo/bar": "slash", "foo~bar": "tilde" }
  * ```
  *
@@ -143,21 +143,28 @@ import { setValue } from './utils/setValue';
  * // Root replacement
  * const obj = { old: "data" };
  *
- * setValueByPointer(obj, '', { completely: "new" });
+ * setValue(obj, '', { completely: "new" });
  * // Returns: { completely: "new" }
  * ```
  */
-export const setValueByPointer = <Input extends Dictionary | Array<any>>(
-  input: Input,
+export const setValue = <
+  Output extends Dictionary | Array<any> = Dictionary | Array<any>,
+>(
+  input: Dictionary | Array<any>,
   pointer: string | string[],
   value: any,
   overwrite: boolean = true,
-): Dictionary | Array<any> => {
+): Output => {
   if (!(isPlainObject(input) || isArray(input)))
     throw new JSONPointerError(
       'INVALID_INPUT',
       '`input` must be a plain object or an array.',
       { input },
     );
-  return setValue(input, compilePointer(pointer), value, overwrite);
+  return setValueByPointer(
+    input,
+    compilePointer(pointer),
+    value,
+    overwrite,
+  ) as Output;
 };
