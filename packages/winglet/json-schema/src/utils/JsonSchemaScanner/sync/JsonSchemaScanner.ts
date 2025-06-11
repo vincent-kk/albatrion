@@ -1,9 +1,5 @@
 import { clone } from '@winglet/common-utils/object';
-import {
-  JSONPointer,
-  getValueByPointer,
-  setValueByPointer,
-} from '@winglet/json';
+import { JSONPointer, getValue, setValue } from '@winglet/json';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
@@ -87,7 +83,7 @@ export class JsonSchemaScanner<ContextType = void> {
 
     this.#processedSchema = clone(this.#originalSchema);
     for (const [path, resolvedSchema] of this.#pendingResolves) {
-      this.#processedSchema = setValueByPointer(
+      this.#processedSchema = setValue(
         this.#processedSchema,
         path,
         resolvedSchema,
@@ -225,10 +221,7 @@ export class JsonSchemaScanner<ContextType = void> {
       visitor: {
         exit: ({ schema, hasReference }) => {
           if (hasReference && typeof schema.$ref === 'string')
-            definitionMap.set(
-              schema.$ref,
-              getValueByPointer(jsonSchema, schema.$ref),
-            );
+            definitionMap.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
     }).scan(jsonSchema);

@@ -1,4 +1,4 @@
-import { JSONPointer, getValueByPointer } from '@winglet/json';
+import { JSONPointer, getValue } from '@winglet/json';
 import { describe, expect, it, vi } from 'vitest';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
@@ -366,10 +366,7 @@ describe('JsonSchemaScanner', () => {
       const visitor = {
         enter: vi.fn(({ schema }: { schema: UnknownSchema }) => {
           if ('$ref' in schema) {
-            schemaMap.set(
-              schema.$ref,
-              getValueByPointer(jsonSchema, schema.$ref),
-            );
+            schemaMap.set(schema.$ref, getValue(jsonSchema, schema.$ref));
           }
         }),
         exit: vi.fn(),

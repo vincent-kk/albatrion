@@ -1,5 +1,5 @@
 import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
-import { setValueByPointer } from '@winglet/json/pointer';
+import { setValue } from '@winglet/json/pointer';
 
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
@@ -12,7 +12,7 @@ export const getObjectDefaultValue = (
     visitor: {
       enter: ({ schema, dataPath }) => {
         if ('default' in schema)
-          setValueByPointer(defaultValue, dataPath, schema.default, false);
+          setValue(defaultValue, dataPath, schema.default, false);
       },
     },
   }).scan(jsonSchema);
