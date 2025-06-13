@@ -1,5 +1,4 @@
-import { useMemo } from 'react';
-import { Fragment } from 'react/jsx-runtime';
+import { Fragment, useMemo } from 'react';
 
 import { map } from '@winglet/common-utils/array';
 
