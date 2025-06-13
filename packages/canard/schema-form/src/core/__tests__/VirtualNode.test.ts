@@ -5,8 +5,8 @@ import { delay } from '@winglet/common-utils';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import { NodeEventType } from '../nodes';
-import { StringNode } from '../nodes/StringNode';
-import { VirtualNode } from '../nodes/VirtualNode';
+import type { StringNode } from '../nodes/StringNode';
+import type { VirtualNode } from '../nodes/VirtualNode';
 
 describe('VirtualNode', () => {
   it('가상 노드가 정상적으로 생성되어야 함', async () => {

@@ -15,36 +15,43 @@
   "type": "module",
   "exports": {
     ".": {
+      "source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
     "./portal": {
+      "source": "./src/components/Portal/index.ts",
       "types": "./dist/components/Portal/index.d.ts",
       "import": "./dist/components/Portal/index.mjs",
       "require": "./dist/components/Portal/index.cjs"
     },
     "./hoc": {
+      "source": "./src/hoc/index.ts",
       "types": "./dist/hoc/index.d.ts",
       "import": "./dist/hoc/index.mjs",
       "require": "./dist/hoc/index.cjs"
     },
     "./hook": {
+      "source": "./src/hooks/index.ts",
       "types": "./dist/hooks/index.d.ts",
       "import": "./dist/hooks/index.mjs",
       "require": "./dist/hooks/index.cjs"
     },
     "./filter": {
+      "source": "./src/utils/filter/index.ts",
       "types": "./dist/utils/filter/index.d.ts",
       "import": "./dist/utils/filter/index.mjs",
       "require": "./dist/utils/filter/index.cjs"
     },
     "./object": {
+      "source": "./src/utils/object/index.ts",
       "types": "./dist/utils/object/index.d.ts",
       "import": "./dist/utils/object/index.mjs",
       "require": "./dist/utils/object/index.cjs"
     },
     "./render": {
+      "source": "./src/utils/render/index.ts",
       "types": "./dist/utils/render/index.d.ts",
       "import": "./dist/utils/render/index.mjs",
       "require": "./dist/utils/render/index.cjs"
@@ -58,10 +65,8 @@
     "README.md"
   ],
   "scripts": {
-    "build": "yarn clean && rollup -c && tsc-alias",
-    "build:chain": "yarn clean && yarn workspaces foreach --recursive --topological run build",
-    "clean": "rm -rf dist",
-    "publish:chain": "yarn build:chain && yarn npm publish --access public",
+    "build": "rollup -c && yarn build:types",
+    "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.declarations.json",
     "publish:npm": "yarn build && yarn npm publish --access public",
     "test": "vitest",
     "version:major": "yarn version major",
@@ -72,24 +77,13 @@
     "@winglet/common-utils": "workspace:^"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.0",
-    "@rollup/plugin-commonjs": "^28.0.1",
-    "@rollup/plugin-node-resolve": "^15.3.0",
-    "@rollup/plugin-replace": "^6.0.1",
-    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.2",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@types/rollup-plugin-peer-deps-external": "^2.2.5",
-    "@typescript-eslint/eslint-plugin": "^8.14.0",
-    "@typescript-eslint/parser": "^8.14.0",
-    "eslint": "^8.56.0",
-    "eslint-plugin-react": "^7.37.2",
-    "eslint-plugin-react-hooks": "^5.0.0",
-    "eslint-plugin-react-refresh": "^0.4.14",
     "jsdom": "^25.0.1",
     "prettier": "^3.5.3",
     "react": "^19.0.0",
@@ -97,7 +91,6 @@
     "rollup": "^4.42.0",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-typescript2": "^0.36.0",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.7.2",
     "vite": "^6.3.5",

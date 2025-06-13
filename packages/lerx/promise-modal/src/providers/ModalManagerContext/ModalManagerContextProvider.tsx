@@ -15,7 +15,7 @@ import type { Fn } from '@aileron/declare';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import { type ModalNode, nodeFactory } from '@/promise-modal/core';
-import { useConfigurationOptions } from '@/promise-modal/providers';
+import { useConfigurationOptions } from '@/promise-modal/providers/ConfigurationContext';
 import type { Modal } from '@/promise-modal/types';
 
 import { ModalManagerContext } from './ModalManagerContext';

@@ -1,15 +1,16 @@
-import { Murmur3, isPlainObject, stableSerialize } from '@winglet/common-utils';
+import { isPlainObject } from '@winglet/common-utils/filter';
+import { stableSerialize } from '@winglet/common-utils/object';
 
 import type { SchemaFormPlugin } from '@/schema-form';
 import { UnhandledError } from '@/schema-form/errors';
 
 import { PluginManager } from './PluginManager';
 
-const RegisteredPlugin = new Set<number>();
+const RegisteredPlugin = new Set<string>();
 
 export const registerPlugin = (plugin: SchemaFormPlugin) => {
   if (!isPlainObject(plugin)) return;
-  const hash = Murmur3.hash(stableSerialize(plugin));
+  const hash = stableSerialize(plugin);
   if (RegisteredPlugin.has(hash)) return;
   try {
     const { formTypeInputDefinitions, validator, formatError, ...renderKit } =

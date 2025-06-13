@@ -28,7 +28,7 @@ export const useFormSubmit = <
         ref.current?.submit?.subscribe?.(onStoreChange) || noopFunction,
       () => ref?.current?.submit?.pending,
     ],
-    [ref.current],
+    [ref],
   );
   const pending = useSyncExternalStore(subscribe, getSnapshot);
 
@@ -36,7 +36,7 @@ export const useFormSubmit = <
     const handler = ref.current?.submit;
     if (!handler) return Promise.resolve(void 0);
     return handler();
-  }, [ref.current]);
+  }, [ref]);
 
   return useMemo(
     () => ({

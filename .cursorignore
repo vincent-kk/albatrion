@@ -4,7 +4,6 @@ node_modules/
 
 # 빌드 및 출력 폴더 (예: dist, build)
 dist/
-build/
 
 # 환경 설정 파일
 .env

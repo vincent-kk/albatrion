@@ -10,7 +10,7 @@ import type {
   FormTypeInputPropsWithSchema,
 } from '@canard/schema-form';
 
-import { MuiContext } from '../type';
+import type { MuiContext } from '../type';
 
 interface BooleanSwitchJsonSchema
   extends BooleanSchema<{

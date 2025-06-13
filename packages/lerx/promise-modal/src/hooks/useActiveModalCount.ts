@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import type { Fn } from '@aileron/declare';
 
 import type { ModalNode } from '@/promise-modal/core';
-import { useModalManagerContext } from '@/promise-modal/providers';
+import { useModalManagerContext } from '@/promise-modal/providers/ModalManagerContext/useModalManagerContext';
 
 const defaultValidate = (modal?: ModalNode) => modal?.visible;
 

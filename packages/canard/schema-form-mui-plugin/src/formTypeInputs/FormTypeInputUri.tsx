@@ -7,12 +7,13 @@ import {
   useState,
 } from 'react';
 
+import type {
+  SelectChangeEvent} from '@mui/material';
 import {
   Box,
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
   TextField,
 } from '@mui/material';
 

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { JsonSchema } from '@/schema-form/types';
+import type { JsonSchema } from '@/schema-form/types';
 
 import { getFieldConditionMap } from '../getFieldConditionMap';
 import { getOneOfKeyInfo } from '../getOneOfKeyInfo';

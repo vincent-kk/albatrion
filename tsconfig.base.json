@@ -7,6 +7,8 @@
     ],
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "emitDeclarationOnly": true,
+    "skipLibCheck": true,
     "jsx": "react-jsx",
     // Strict Type-Checking Options
     "strict": true,
@@ -17,6 +19,7 @@
     "noImplicitThis": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "noEmit": true,
     // Module Resolution Options
     "esModuleInterop": true,
     "resolveJsonModule": true,
@@ -37,6 +40,10 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ],
   "exclude": [
     "node_modules",
     "packages/**/node_modules",

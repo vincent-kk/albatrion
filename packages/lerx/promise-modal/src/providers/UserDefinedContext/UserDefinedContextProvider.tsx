@@ -1,4 +1,4 @@
-import { PropsWithChildren, useMemo } from 'react';
+import { type PropsWithChildren, useMemo } from 'react';
 
 import type { Dictionary } from '@aileron/declare';
 

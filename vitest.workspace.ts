@@ -10,6 +10,4 @@ export default defineWorkspace([
   "./packages/canard/schema-form-ajv6-plugin/vite.config.ts",
   "./packages/canard/schema-form-ajv8-plugin/vite.config.ts",
   "./packages/canard/schema-form/vite.config.ts",
-  "./packages/aileron/benchmark-form/vite.config.ts",
-  "./packages/aileron/benchmark/vite.config.ts",
 ]);

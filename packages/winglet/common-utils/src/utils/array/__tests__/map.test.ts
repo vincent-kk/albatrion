@@ -16,7 +16,7 @@ describe('map', () => {
     const array = [1, 2, 3];
     const callback = vi
       .fn()
-      .mockImplementation((item: number, index: number, arr: number[]) => {
+      .mockImplementation((item: number, index: number, _: number[]) => {
         return item + index;
       });
 

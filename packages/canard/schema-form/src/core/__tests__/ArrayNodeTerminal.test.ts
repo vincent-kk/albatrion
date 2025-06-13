@@ -5,7 +5,7 @@ import { delay } from '@winglet/common-utils';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import { NodeEventType, ValidationMode } from '../nodes';
-import { ArrayNode } from '../nodes/ArrayNode';
+import type { ArrayNode } from '../nodes/ArrayNode';
 
 describe('ArrayNode-Terminal', () => {
   it('불리언 노드가 정상적으로 생성되어야 함', () => {

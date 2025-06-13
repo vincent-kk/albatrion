@@ -1,6 +1,6 @@
 import { type ComponentType, memo } from 'react';
 
-import { PortalContextProvider } from './PortalContext';
+import { PortalContextProvider } from './context/PortalContextProvider';
 
 /**
  * Higher-Order Component (HOC) that wraps a component with Portal context provider.
