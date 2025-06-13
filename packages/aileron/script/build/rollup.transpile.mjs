@@ -5,17 +5,15 @@ import { fileURLToPath } from 'node:url';
 import copy from 'rollup-plugin-copy';
 
 import { createClearDir } from './utils/createClearDir.mjs';
-import {
-  applyDefaultBuildOptions,
-  validateBuildOptions,
-} from './utils/validateBuildOptions.mjs';
+import { validateBuildOptions } from './utils/validateBuildOptions.mjs';
 
 export { getEntrypoints } from './utils/getEntrypoints.mjs';
 
 const baseExternal = (path) => {
+  // 내부 패키지는 번들에 포함
   if (path.startsWith('@aileron')) return false;
-  if (path.startsWith('@winglet') && path !== '@winglet/react-utils')
-    return true;
+  // 다른 외부 라이브러리들은 external로 처리
+  if (path.startsWith('@winglet')) return true;
   return /node_modules/.test(path);
 };
 
@@ -45,9 +43,6 @@ const createLibBuildOptions = (callerUrl) => async (options) => {
   // 입력 검증
   validateBuildOptions(options);
 
-  // 기본값 적용
-  const normalizedOptions = applyDefaultBuildOptions(options);
-
   const {
     entrypoints,
     extension,
@@ -59,7 +54,7 @@ const createLibBuildOptions = (callerUrl) => async (options) => {
     tsconfig,
     tsconfigCompilerOptions,
     analyze = false,
-  } = normalizedOptions;
+  } = options;
 
   const callerDir = dirname(fileURLToPath(callerUrl));
   const packagesRoot = resolve(callerDir, '../../');

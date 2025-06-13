@@ -57,21 +57,6 @@ export const validateBuildOptions = (options) => {
 };
 
 /**
- * 빌드 옵션에 기본값을 적용합니다.
- * @type {(options: any) => any}
- */
-export const applyDefaultBuildOptions = (options) => ({
-  sourcemap: false,
-  external: () => false,
-  plugins: {
-    beforeTransform: [],
-    afterTransform: [],
-    afterBuild: [],
-  },
-  ...options,
-});
-
-/**
  * 번들 빌드 옵션의 유효성을 검증합니다.
  * @type {(options: {
  *   entry?: string;

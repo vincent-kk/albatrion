@@ -10,11 +10,11 @@ const packageJson = createRequire(import.meta.url)('./package.json');
 
 const { libBuildOptions, clearDir } = getLibBuildOptions(import.meta.url);
 
-export default () => {
+export default async () => {
   clearDir('dist');
   const entrypoints = getEntrypoints(packageJson);
   return [
-    libBuildOptions({
+    await libBuildOptions({
       format: 'esm',
       extension: 'mjs',
       entrypoints,
@@ -27,7 +27,7 @@ export default () => {
         beforeTransform: [peerDepsExternal()],
       },
     }),
-    libBuildOptions({
+    await libBuildOptions({
       format: 'cjs',
       extension: 'cjs',
       entrypoints,
