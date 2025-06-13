@@ -1,0 +1,1 @@
+export { getJSONPath } from './getJSONPath';
