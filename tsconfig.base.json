@@ -5,6 +5,54 @@
       "ES2020",
       "DOM"
     ],
+    "baseUrl": "../../",
+    "paths": {
+      "@/common-utils": [
+        "./winglet/common-utils/src"
+      ],
+      "@/common-utils/*": [
+        "./winglet/common-utils/src/*"
+      ],
+      "@/data-loader": [
+        "./winglet/data-loader/src"
+      ],
+      "@/data-loader/*": [
+        "./winglet/data-loader/src/*"
+      ],
+      "@/json": [
+        "./winglet/json/src"
+      ],
+      "@/json/*": [
+        "./winglet/json/src/*"
+      ],
+      "@/json-schema": [
+        "./winglet/json-schema/src"
+      ],
+      "@/json-schema/*": [
+        "./winglet/json-schema/src/*"
+      ],
+      "@/react-utils": [
+        "./winglet/react-utils/src"
+      ],
+      "@/react-utils/*": [
+        "./winglet/react-utils/src/*"
+      ],
+      "@/promise-modal": [
+        "./lerx/promise-modal/src"
+      ],
+      "@/promise-modal/*": [
+        "./lerx/promise-modal/src/*"
+      ],
+      "@/schema-form": [
+        "./canard/schema-form/src"
+      ],
+      "@/schema-form/*": [
+        "./canard/schema-form/src/*"
+      ],
+      "@aileron/*": [
+        "./aileron/common/*"
+      ]
+    },
     "module": "ESNext",
     "moduleResolution": "bundler",
     "emitDeclarationOnly": true,
@@ -40,6 +88,12 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
+  "include": [
+    "packages/**/src",
+    "packages/**/src/**/*.tsx?",
+    "packages/**/coverage/**/*.ts",
+    "packages/**/coverage/**/*.tsx"
+  ],
   "exclude": [
     "node_modules",
     "packages/**/node_modules",
