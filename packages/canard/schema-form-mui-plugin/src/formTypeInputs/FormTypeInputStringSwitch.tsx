@@ -46,7 +46,7 @@ const FormTypeInputStringSwitch = ({
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
     return [labelProp || jsonSchema.label || name, sizeProp || context.size];
-  }, [jsonSchema, context, labelProp, name, sizeProp]);
+  }, [hideLabel, sizeProp, context.size, labelProp, jsonSchema, name]);
 
   const { offValue, onValue, offLabel, onLabel } = useMemo(() => {
     const [first, second] = jsonSchema.enum;

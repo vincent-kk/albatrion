@@ -6,7 +6,7 @@ import { delay } from '@winglet/common-utils';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import { NodeEventType, ValidationMode } from '../nodes';
-import { NullNode } from '../nodes/NullNode';
+import type { NullNode } from '../nodes/NullNode';
 import { createValidatorFactory } from './AbstractNode.test';
 
 describe('NullNode', () => {

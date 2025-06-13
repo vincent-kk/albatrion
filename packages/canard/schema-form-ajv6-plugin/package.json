@@ -30,10 +30,10 @@
   ],
   "scripts": {
     "build": "rollup -c && yarn build:types",
-    "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.declarations.json",
     "build-storybook": "storybook build",
-    "lint": "eslint ./src",
+    "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.declarations.json",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
+    "lint": "eslint ./src",
     "publish:npm": "yarn build && yarn npm publish --access public",
     "storybook": "storybook dev -p 6006",
     "storybook:upgrade": "npx storybook@latest upgrade",

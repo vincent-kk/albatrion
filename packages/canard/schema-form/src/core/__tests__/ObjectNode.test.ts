@@ -7,10 +7,10 @@ import { nodeFromJsonSchema } from '@/schema-form/core';
 import type { JsonSchema } from '@/schema-form/types';
 
 import { NodeEventType, ValidationMode } from '../nodes';
-import { ArrayNode } from '../nodes/ArrayNode';
-import { NumberNode } from '../nodes/NumberNode';
-import { ObjectNode } from '../nodes/ObjectNode';
-import { StringNode } from '../nodes/StringNode';
+import type { ArrayNode } from '../nodes/ArrayNode';
+import type { NumberNode } from '../nodes/NumberNode';
+import type { ObjectNode } from '../nodes/ObjectNode';
+import type { StringNode } from '../nodes/StringNode';
 import { createValidatorFactory } from './AbstractNode.test';
 
 describe('ObjectNode', () => {
