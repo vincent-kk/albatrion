@@ -15,6 +15,7 @@
   "type": "module",
   "exports": {
     ".": {
+      "source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
@@ -28,12 +29,11 @@
     "README.md"
   ],
   "scripts": {
-    "build": "yarn clean && rollup -c && tsc-alias",
+    "build": "rollup -c && yarn build:types",
+    "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.declarations.json",
     "build-storybook": "storybook build",
-    "build:chain": "yarn clean && yarn workspaces foreach --recursive --topological run build",
-    "clean": "rm -rf dist",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
-    "publish:chain": "yarn build:chain && yarn npm publish --access public",
+    "lint": "eslint ./src",
     "publish:npm": "yarn build && yarn npm publish --access public",
     "storybook": "storybook dev -p 6006",
     "storybook:upgrade": "npx storybook@latest upgrade",
@@ -53,6 +53,7 @@
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-replace": "^6.0.1",
     "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.2",
     "@size-limit/preset-app": "^11.1.6",
     "@size-limit/preset-big-lib": "^11.1.6",
     "@size-limit/preset-small-lib": "^11.1.6",
@@ -77,7 +78,6 @@
     "rollup": "^4.42.0",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-typescript2": "^0.36.0",
     "rollup-plugin-visualizer": "^5.12.0",
     "size-limit": "^11.2.0",
     "storybook": "^8.6.14",
