@@ -15,41 +15,49 @@
   "type": "module",
   "exports": {
     ".": {
+      "source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
     "./path": {
+      "source": "./src/JSONPath/index.ts",
       "types": "./dist/JSONPath/index.d.ts",
       "import": "./dist/JSONPath/index.mjs",
       "require": "./dist/JSONPath/index.cjs"
     },
     "./path-common": {
+      "source": "./src/JSONPath/utils/common.ts",
       "types": "./dist/JSONPath/utils/common.d.ts",
       "import": "./dist/JSONPath/utils/common.mjs",
       "require": "./dist/JSONPath/utils/common.cjs"
     },
     "./pointer": {
+      "source": "./src/JSONPointer/index.ts",
       "types": "./dist/JSONPointer/index.d.ts",
       "import": "./dist/JSONPointer/index.mjs",
       "require": "./dist/JSONPointer/index.cjs"
     },
     "./pointer-common": {
+      "source": "./src/JSONPointer/utils/common.ts",
       "types": "./dist/JSONPointer/utils/common.d.ts",
       "import": "./dist/JSONPointer/utils/common.mjs",
       "require": "./dist/JSONPointer/utils/common.cjs"
     },
     "./pointer-escape": {
+      "source": "./src/JSONPointer/utils/escape/index.ts",
       "types": "./dist/JSONPointer/utils/escape/index.d.ts",
       "import": "./dist/JSONPointer/utils/escape/index.mjs",
       "require": "./dist/JSONPointer/utils/escape/index.cjs"
     },
     "./pointer-manipulator": {
+      "source": "./src/JSONPointer/utils/manipulator/index.ts",
       "types": "./dist/JSONPointer/utils/manipulator/index.d.ts",
       "import": "./dist/JSONPointer/utils/manipulator/index.mjs",
       "require": "./dist/JSONPointer/utils/manipulator/index.cjs"
     },
     "./pointer-patch": {
+      "source": "./src/JSONPointer/utils/patch/index.ts",
       "types": "./dist/JSONPointer/utils/patch/index.d.ts",
       "import": "./dist/JSONPointer/utils/patch/index.mjs",
       "require": "./dist/JSONPointer/utils/patch/index.cjs"
@@ -63,11 +71,9 @@
     "README.md"
   ],
   "scripts": {
-    "build": "yarn clean && yarn build:types && rollup -c",
-    "build:chain": "yarn clean && yarn workspaces foreach --recursive --topological run build",
-    "build:types": "tsc -p tsconfig.declarations.json",
-    "clean": "rm -rf dist",
-    "publish:chain": "yarn build:chain && yarn npm publish --access public",
+    "build": "rollup -c && yarn build:types",
+    "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.declarations.json",
+    "lint": "eslint ./src",
     "publish:npm": "yarn build && yarn npm publish --access public",
     "test": "vitest",
     "version:major": "yarn version major",
@@ -78,22 +84,11 @@
     "@winglet/common-utils": "workspace:^"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.0",
-    "@babel/preset-env": "^7.26.0",
-    "@babel/preset-typescript": "^7.26.0",
-    "@rollup/plugin-alias": "^5.1.1",
-    "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-commonjs": "^28.0.1",
-    "@rollup/plugin-node-resolve": "^15.3.0",
-    "@rollup/plugin-replace": "^6.0.1",
-    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.2",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
-    "@types/rollup-plugin-peer-deps-external": "^2.2.5",
     "prettier": "^3.5.3",
     "rollup": "^4.42.0",
     "rollup-plugin-copy": "^3.5.0",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-visualizer": "^5.12.0",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.7.2",
     "vite": "^6.3.5",
