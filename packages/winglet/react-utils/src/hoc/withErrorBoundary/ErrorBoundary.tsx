@@ -12,6 +12,9 @@ interface State {
   error?: Error;
 }
 
+/** Default fallback UI to display when an error occurs */
+const FALLBACK = <FallbackMessage />;
+
 /**
  * Error boundary component that catches JavaScript errors during component rendering and displays fallback UI.
  * Prevents the entire application from crashing when errors occur in child components.
@@ -21,12 +24,6 @@ interface State {
  * </ErrorBoundary>
  */
 export class ErrorBoundary extends Component<Props, State> {
-  /**
-   * Default fallback UI to display when an error occurs
-   * @private
-   */
-  static #fallback = (<FallbackMessage />);
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -57,8 +54,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   render(): ReactNode {
-    if (this.state.hasError)
-      return this.props.fallback || ErrorBoundary.#fallback;
+    if (this.state.hasError) return this.props.fallback || FALLBACK;
     return this.props.children;
   }
 }

@@ -18,7 +18,4 @@ export const usePortalContext = () => {
  * This ref connects the Portal components to their designated anchor point.
  * @returns The portal anchor ref
  */
-export const usePortalAnchorRef = () => {
-  const { portalAnchorRef } = usePortalContext();
-  return portalAnchorRef;
-};
+export const usePortalAnchorRef = () => usePortalContext().portalAnchorRef;

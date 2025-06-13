@@ -1,6 +1,6 @@
 import { type PropsWithChildren, memo, useEffect } from 'react';
 
-import { usePortalContext } from './PortalContext';
+import { usePortalContext } from './context/usePortalContext';
 
 /**
  * Portal component renders its children under the portalAnchor within a withPortal HOC.
