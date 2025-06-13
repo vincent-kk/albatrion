@@ -1,4 +1,4 @@
-import { JSONPointer } from '@winglet/json';
+import { JSONPointer } from '@winglet/json/pointer';
 
 export const $DEFS = '$defs';
 export const DEFINITIONS = 'definitions';

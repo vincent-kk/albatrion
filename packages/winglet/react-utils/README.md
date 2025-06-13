@@ -49,13 +49,15 @@ import { renderComponent } from '@winglet/react-utils/render';
 
 ### Available Sub-paths
 
+Based on the package.json exports configuration:
+
 - `@winglet/react-utils` - Main exports (hooks and components)
-- `@winglet/react-utils/portal` - Portal components and utilities
-- `@winglet/react-utils/hoc` - Higher-order components
-- `@winglet/react-utils/hook` - Custom React hooks
-- `@winglet/react-utils/filter` - React component type checking utilities
-- `@winglet/react-utils/object` - React-specific object utilities
-- `@winglet/react-utils/render` - Component rendering utilities
+- `@winglet/react-utils/hook` - Custom React hooks (useConstant, useWindowSize, useOnMount, etc.)
+- `@winglet/react-utils/hoc` - Higher-order components (withErrorBoundary, withUploader)
+- `@winglet/react-utils/portal` - Portal component and utilities (Portal component)
+- `@winglet/react-utils/filter` - React component type checking utilities (isReactComponent, isReactElement, etc.)
+- `@winglet/react-utils/object` - React-specific object utilities (extractProps, mergeRefs)
+- `@winglet/react-utils/render` - Component rendering utilities (renderComponent)
 
 ---
 

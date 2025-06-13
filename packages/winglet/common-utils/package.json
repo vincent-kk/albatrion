@@ -89,9 +89,8 @@
   ],
   "scripts": {
     "build": "yarn clean && rollup -c && tsc-alias",
-    "build:chain": "yarn clean && yarn workspaces foreach --recursive --topological run build",
+    "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.json",
     "clean": "rm -rf dist",
-    "publish:chain": "yarn build:chain && yarn npm publish --access public",
     "publish:npm": "yarn build && yarn npm publish --access public",
     "test": "vitest",
     "version:major": "yarn version major",
@@ -113,7 +112,7 @@
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-typescript2": "^0.36.0",
     "rollup-plugin-visualizer": "^5.12.0",
-    "tsc-alias": "^1.8.10",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.7.2",
     "vite": "^6.3.5",
     "vitest": "2.1.9"

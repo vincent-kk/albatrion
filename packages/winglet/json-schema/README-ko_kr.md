@@ -50,10 +50,12 @@ import {
 
 ### 사용 가능한 Sub-path
 
+package.json의 exports 설정을 기반으로 합니다:
+
 - `@winglet/json-schema` - 메인 내보내기 (모든 유틸리티, 스캐너, 타입 정의)
-- `@winglet/json-schema/scanner` - 동기 JSON Schema 스캐너
-- `@winglet/json-schema/async-scanner` - 비동기 JSON Schema 스캐너
-- `@winglet/json-schema/filter` - 스키마 타입 검사 및 필터링 유틸리티
+- `@winglet/json-schema/scanner` - 동기 JSON Schema 스캐너 (JsonSchemaScanner)
+- `@winglet/json-schema/async-scanner` - 비동기 JSON Schema 스캐너 (JsonSchemaScannerAsync)
+- `@winglet/json-schema/filter` - 스키마 타입 검사 및 필터링 유틸리티 (isArraySchema, isObjectSchema 등)
 
 ---
 

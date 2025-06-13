@@ -1,7 +1,7 @@
 import Ajv, { ErrorObject } from 'ajv';
 import { describe, expect, it, vi } from 'vitest';
 
-import { JSONPointer } from '@winglet/json';
+import { JSONPointer } from '@winglet/json/pointer';
 
 import { nodeFromJsonSchema } from '@/schema-form/core';
 import type {

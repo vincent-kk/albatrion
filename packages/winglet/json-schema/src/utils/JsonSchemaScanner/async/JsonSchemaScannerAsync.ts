@@ -1,5 +1,5 @@
 import { clone } from '@winglet/common-utils/object';
-import { JSONPointer, setValueByPointer } from '@winglet/json';
+import { JSONPointer, setValue } from '@winglet/json/pointer';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
@@ -81,7 +81,7 @@ export class JsonSchemaScannerAsync<ContextType = void> {
 
     this.#processedSchema = clone(this.#originalSchema);
     for (const [path, resolvedSchema] of this.#pendingResolves) {
-      this.#processedSchema = setValueByPointer(
+      this.#processedSchema = setValue(
         this.#processedSchema,
         path,
         resolvedSchema,

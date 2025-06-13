@@ -21,18 +21,18 @@
     },
     "./scanner": {
       "types": "./dist/utils/JsonSchemaScanner/sync/index.d.ts",
-      "import": "./dist/sync.mjs",
-      "require": "./dist/sync.cjs"
+      "import": "./dist/utils/JsonSchemaScanner/sync/index.mjs",
+      "require": "./dist/utils/JsonSchemaScanner/sync/index.cjs"
     },
     "./async-scanner": {
       "types": "./dist/utils/JsonSchemaScanner/async/index.d.ts",
-      "import": "./dist/async.mjs",
-      "require": "./dist/async.cjs"
+      "import": "./dist/utils/JsonSchemaScanner/async/index.mjs",
+      "require": "./dist/utils/JsonSchemaScanner/async/index.cjs"
     },
     "./filter": {
-      "types": "./dist/filter.d.ts",
-      "import": "./dist/filter.mjs",
-      "require": "./dist/filter.cjs"
+      "types": "./dist/filters/index.d.ts",
+      "import": "./dist/filters/index.mjs",
+      "require": "./dist/filters/index.cjs"
     }
   },
   "main": "dist/index.cjs",
@@ -72,7 +72,7 @@
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-typescript2": "^0.36.0",
     "rollup-plugin-visualizer": "^5.12.0",
-    "tsc-alias": "^1.8.10",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.7.2",
     "vite": "^6.3.5",
     "vitest": "2.1.9"

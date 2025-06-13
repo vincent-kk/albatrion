@@ -1,6 +1,6 @@
 import { JSONPointer } from '@/json/JSONPointer/enum';
-import { getValueByPointer } from '@/json/JSONPointer/utils/manipulator/getValueByPointer';
-import { setValueByPointer } from '@/json/JSONPointer/utils/manipulator/setValueByPointer';
+import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
+import { setValue } from '@/json/JSONPointer/utils/manipulator/setValue';
 import { compare } from '@/json/JSONPointer/utils/patch/compare';
 import { Operation, type Patch } from '@/json/JSONPointer/utils/patch/type';
 import type { JsonObject } from '@/json/type';
@@ -138,11 +138,7 @@ export const differenceObjectPatch = (
     if (arrayPath === null) validPatches.push(patch);
     else if (!processedArrayPaths.has(arrayPath)) {
       const segments = arrayPath.split(JSONPointer.Separator);
-      setValueByPointer(
-        mergePatch,
-        segments,
-        getValueByPointer(target, segments),
-      );
+      setValue(mergePatch, segments, getValue(target, segments));
       processedArrayPaths.add(arrayPath);
     }
   }
@@ -151,9 +147,9 @@ export const differenceObjectPatch = (
   for (let index = 0, length = validPatches.length; index < length; index++) {
     const patch = validPatches[index];
     if (patch.op === Operation.ADD || patch.op === Operation.REPLACE)
-      setValueByPointer(mergePatch, patch.path, patch.value);
+      setValue(mergePatch, patch.path, patch.value);
     else if (patch.op === Operation.REMOVE)
-      setValueByPointer(mergePatch, patch.path, null);
+      setValue(mergePatch, patch.path, null);
   }
 
   return mergePatch;

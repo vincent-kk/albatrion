@@ -49,13 +49,15 @@ import { renderComponent } from '@winglet/react-utils/render';
 
 ### 사용 가능한 Sub-path
 
+package.json의 exports 설정을 기반으로 합니다:
+
 - `@winglet/react-utils` - 메인 내보내기 (훅과 컴포넌트)
-- `@winglet/react-utils/portal` - Portal 컴포넌트 및 유틸리티
-- `@winglet/react-utils/hoc` - 고차 컴포넌트
-- `@winglet/react-utils/hook` - 커스텀 React 훅
-- `@winglet/react-utils/filter` - React 컴포넌트 타입 검사 유틸리티
-- `@winglet/react-utils/object` - React 전용 객체 유틸리티
-- `@winglet/react-utils/render` - 컴포넌트 렌더링 유틸리티
+- `@winglet/react-utils/hook` - 커스텀 React 훅 (useConstant, useWindowSize, useOnMount 등)
+- `@winglet/react-utils/hoc` - 고차 컴포넌트 (withErrorBoundary, withUploader)
+- `@winglet/react-utils/portal` - Portal 컴포넌트 및 유틸리티 (Portal 컴포넌트)
+- `@winglet/react-utils/filter` - React 컴포넌트 타입 검사 유틸리티 (isReactComponent, isReactElement 등)
+- `@winglet/react-utils/object` - React 전용 객체 유틸리티 (extractProps, mergeRefs)
+- `@winglet/react-utils/render` - 컴포넌트 렌더링 유틸리티 (renderComponent)
 
 ---
 
