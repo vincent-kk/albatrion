@@ -4,30 +4,30 @@ import Ajv, { type Options } from 'ajv';
 import { createValidatorFactory } from './createValidatorFactory';
 
 /**
- * Default AJV6 settings optimized for schema-form validation.
+ * Default AJV7 settings optimized for schema-form validation.
  *
  * - allErrors: true - Collect all validation errors, not just the first one
- * - verbose: true - Include additional error information
- * - format: false - Disable format validation for better performance
+ * - strict: false - Disable strict mode for better compatibility with existing schemas
+ * - validateFormats: false - Disable format validation for better performance
  */
 const defaultSettings: Options = {
   allErrors: true,
-  verbose: true,
-  format: false,
+  strict: false,
+  validateFormats: false,
 };
 
 let ajvInstance: Ajv | null = null;
 
 /**
- * AJV6 validator plugin for schema-form.
+ * AJV7 validator plugin for schema-form.
  *
- * This plugin provides JSON Schema validation using AJV version 6.x.
- * It automatically converts AJV6's JSONPath format error dataPaths to
- * JSONPointer format for consistency with the schema-form library.
+ * This plugin provides JSON Schema validation using AJV version 7.x.
+ * AJV7 uses JSONPointer format for error instancePaths by default,
+ * which provides better consistency with the schema-form library.
  *
  * @example
  * ```typescript
- * import { ajvValidatorPlugin } from '@canard/schema-form-ajv6-plugin';
+ * import { ajvValidatorPlugin } from '@canard/schema-form-ajv7-plugin';
  *
  * // Use with custom AJV instance
  * const customAjv = new Ajv({ allErrors: false });

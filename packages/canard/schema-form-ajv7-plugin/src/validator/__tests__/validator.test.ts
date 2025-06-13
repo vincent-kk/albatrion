@@ -10,7 +10,7 @@ describe('createValidatorFactory', () => {
   let ajv: Ajv;
 
   beforeEach(() => {
-    ajv = new Ajv({ allErrors: true, verbose: true });
+    ajv = new Ajv({ allErrors: true, strict: false });
   });
 
   it('should create a validator factory that returns null for valid data', async () => {
@@ -312,7 +312,7 @@ describe('ajvValidatorPlugin', () => {
     expect(result).not.toBeNull();
     expect(result!.length).toBeGreaterThan(1);
 
-    const dataPaths = result!.map((err) => err.dataPath);
+    const dataPaths = result!.map((err) => err.path);
     expect(dataPaths).toContain('/user/personal/name');
     expect(dataPaths).toContain('/user/personal/age');
     expect(dataPaths).toContain('/user/contact/email');
@@ -348,7 +348,7 @@ describe('ajvValidatorPlugin', () => {
     expect(result).not.toBeNull();
     expect(result!.length).toBe(2);
 
-    const dataPaths = result!.map((err) => err.dataPath);
+    const dataPaths = result!.map((err) => err.path);
     expect(dataPaths).toContain('/users/1/name');
     expect(dataPaths).toContain('/users/2/age');
   });

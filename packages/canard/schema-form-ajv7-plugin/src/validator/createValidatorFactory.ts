@@ -4,12 +4,13 @@ import type Ajv from 'ajv';
 import { transformDataPath } from './utils/transformDataPath';
 
 /**
- * Creates a validator factory function that transforms AJV6 error dataPaths.
+ * Creates a validator factory function that transforms AJV7 error dataPaths.
  *
- * This factory function creates validators that automatically convert AJV6's JSONPath format
- * error dataPaths to JSONPointer format for consistency with the schema-form library.
+ * This factory function creates validators that handle AJV7's dataPath format.
+ * AJV7 uses JSONPointer format by default, but we still need to handle
+ * required field errors specially to append the missing property name.
  *
- * @param ajv - The AJV instance to use for validation
+ * @param ajv - The AJV7 instance to use for validation
  * @returns A factory function that creates validators for given JSON schemas
  */
 export const createValidatorFactory =

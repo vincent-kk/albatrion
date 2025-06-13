@@ -42,7 +42,7 @@ registerPlugin(ajvValidatorPlugin);
 // 커스텀 AJV 인스턴스를 사용하는 경우
 const customAjv = new Ajv({
   allErrors: true,
-  verbose: true,
+  strict: false,
 });
 ajvValidatorPlugin.bind(customAjv);
 registerPlugin(ajvValidatorPlugin);
@@ -75,8 +75,8 @@ registerPlugin(ajvValidatorPlugin);
 ```typescript
 const defaultSettings: Ajv.Options = {
   allErrors: true, // 첫 번째 오류뿐만 아니라 모든 검증 오류 수집
-  verbose: true, // 오류에 스키마 및 데이터 정보 포함
-  format: false, // 포맷 검증 비활성화 (필요시 활성화 가능)
+  strict: false, // 기존 스키마와의 호환성을 위해 strict 모드 비활성화
+  validateFormats: false, // 성능 향상을 위해 포맷 검증 비활성화
 };
 ```
 
@@ -93,13 +93,13 @@ const defaultSettings: Ajv.Options = {
 
 ## 호환성
 
-`@canard/schema-form-ajv7-plugin`은 ECMAScript 2020 (ES2020) 문법으로 구축되었으며 AJV 6.x를 지원합니다.
+`@canard/schema-form-ajv7-plugin`은 ECMAScript 2020 (ES2020) 문법으로 구축되었으며 AJV 7.x를 지원합니다.
 
 **지원 환경:**
 
 - Node.js 14.17.0 이상
 - 최신 브라우저 (Chrome 91+, Firefox 90+, Safari 14+)
-- AJV 6.0.0 이상
+- AJV 7.0.0 이상
 
 **레거시 환경 지원이 필요한 경우:**
 Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환해주세요.
@@ -107,13 +107,13 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 **의존성 요구사항:**
 
 - @canard/schema-form (peer dependency)
-- ajv ^6.0.0
+- ajv ^7.0.0
 
 **JSON Schema 지원:**
 
-- Draft-04
 - Draft-06
 - Draft-07
+- Draft 2019-09 (부분 지원)
 
 ---
 

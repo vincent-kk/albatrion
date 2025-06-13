@@ -9,24 +9,24 @@ export const transformDataPath = (errors: ErrorObject[]): JsonSchemaError[] => {
   for (let i = 0; i < errors.length; i++) {
     const ajvError = errors[i];
     const dataPath = ajvError.dataPath || '';
-    let convertedDataPath = convertJsonPathToPointer(dataPath);
+    let convertedPath = convertJsonPathToPointer(dataPath);
     if (
       ajvError.keyword === 'required' &&
       ajvError.params &&
       'missingProperty' in ajvError.params
     ) {
       const missingProperty = ajvError.params.missingProperty;
-      if (convertedDataPath === JSON_POINTER_SEPARATOR) {
+      if (convertedPath === JSON_POINTER_SEPARATOR) {
         // Root level: "/" + "propertyName" = "/propertyName"
-        convertedDataPath = JSON_POINTER_SEPARATOR + missingProperty;
+        convertedPath = JSON_POINTER_SEPARATOR + missingProperty;
       } else {
         // Nested level: "/path" + "/" + "propertyName" = "/path/propertyName"
-        convertedDataPath =
-          convertedDataPath + JSON_POINTER_SEPARATOR + missingProperty;
+        convertedPath =
+          convertedPath + JSON_POINTER_SEPARATOR + missingProperty;
       }
     }
     result[i] = {
-      dataPath: convertedDataPath,
+      path: convertedPath,
       keyword: ajvError.keyword,
       message: ajvError.message,
       details: ajvError.params,

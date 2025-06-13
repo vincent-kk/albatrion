@@ -193,7 +193,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
 
       const errorsByDataPath = result!.reduce(
         (acc, error) => {
-          acc[error.dataPath] = error;
+          acc[error.path] = error;
           return acc;
         },
         {} as Record<string, any>,
@@ -243,7 +243,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(result).toHaveLength(3);
 
       // 숫자가 포함된 속성명은 [숫자] 형태로 변환됨
-      const dataPaths = result!.map((err) => err.dataPath);
+      const dataPaths = result!.map((err) => err.path);
       expect(dataPaths).toContain('/container/item1');
       expect(dataPaths).toContain('/container/item2');
       expect(dataPaths).toContain('/container/item3');
@@ -396,10 +396,8 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       });
       expect(complexError).toHaveLength(2);
 
-      const errorPaths = complexError!.map((err) => err.dataPath);
-      expect(errorPaths).toContain(
-        '/departments/0/employees/0/info/firstName',
-      );
+      const errorPaths = complexError!.map((err) => err.path);
+      expect(errorPaths).toContain('/departments/0/employees/0/info/firstName');
       expect(errorPaths).toContain('/departments/0/employees/0/info/email');
 
       // Act & Assert - 필수 필드 누락

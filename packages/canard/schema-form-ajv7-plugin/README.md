@@ -42,7 +42,7 @@ registerPlugin(ajvValidatorPlugin);
 // When using a custom AJV instance
 const customAjv = new Ajv({
   allErrors: true,
-  verbose: true,
+  strict: false,
 });
 ajvValidatorPlugin.bind(customAjv);
 registerPlugin(ajvValidatorPlugin);
@@ -75,8 +75,8 @@ When no custom AJV instance is provided, the plugin uses these default settings:
 ```typescript
 const defaultSettings: Ajv.Options = {
   allErrors: true, // Collect all validation errors, not just the first one
-  verbose: true, // Include schema and data information in errors
-  format: false, // Disable format validation (can be enabled if needed)
+  strict: false, // Disable strict mode for better compatibility with existing schemas
+  validateFormats: false, // Disable format validation for better performance
 };
 ```
 
@@ -99,7 +99,7 @@ The `createValidatorFactory` function provides:
 
 - Node.js 14.17.0 or later
 - Modern browsers (Chrome 91+, Firefox 90+, Safari 14+)
-- AJV 6.0.0 or later
+- AJV 7.0.0 or later
 
 **For legacy environment support:**
 Please use a transpiler like Babel to transform the code for your target environment.
@@ -107,13 +107,13 @@ Please use a transpiler like Babel to transform the code for your target environ
 **Dependency requirements:**
 
 - @canard/schema-form (peer dependency)
-- ajv ^6.0.0
+- ajv ^7.0.0
 
 **JSON Schema Support:**
 
-- Draft-04
 - Draft-06
 - Draft-07
+- Draft 2019-09 (partial support)
 
 ---
 

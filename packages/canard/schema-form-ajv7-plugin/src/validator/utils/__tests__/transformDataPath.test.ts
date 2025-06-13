@@ -4,20 +4,20 @@ import { describe, expect, it } from 'vitest';
 import { transformDataPath } from '../transformDataPath';
 
 describe('transformDataPath', () => {
-  describe('AJV dataPath to JSONPointer 변환', () => {
+  describe('AJV7 dataPath JSONPointer 처리', () => {
     it('빈 문자열을 올바르게 처리해야 한다', () => {
       const errors: ErrorObject[] = [
         {
           schemaPath: '#/required',
           keyword: 'type',
           params: {},
-          message: 'should be string',
+          message: 'must be string',
           dataPath: '',
-        },
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
-      expect(result[0].dataPath).toBe('/');
+      expect(result[0].path).toBe('/');
     });
 
     it('단순한 속성 경로를 변환해야 한다', () => {
@@ -26,13 +26,13 @@ describe('transformDataPath', () => {
           schemaPath: '#/properties/name/type',
           keyword: 'type',
           params: {},
-          message: 'should be string',
-          dataPath: 'name',
-        },
+          message: 'must be string',
+          dataPath: '.name',
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
-      expect(result[0].dataPath).toBe('/name');
+      expect(result[0].path).toBe('/name');
     });
 
     it('중첩된 속성 경로를 변환해야 한다', () => {
@@ -42,13 +42,13 @@ describe('transformDataPath', () => {
             '#/properties/user/properties/profile/properties/name/type',
           keyword: 'type',
           params: {},
-          message: 'should be string',
-          dataPath: 'user.profile.name',
-        },
+          message: 'must be string',
+          dataPath: '.user.profile.name',
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
-      expect(result[0].dataPath).toBe('/user/profile/name');
+      expect(result[0].path).toBe('/user/profile/name');
     });
 
     it('배열 인덱스를 올바르게 변환해야 한다', () => {
@@ -57,13 +57,13 @@ describe('transformDataPath', () => {
           schemaPath: '#/properties/users/items/properties/name/type',
           keyword: 'type',
           params: {},
-          message: 'should be string',
-          dataPath: 'users[0].name',
-        },
+          message: 'must be string',
+          dataPath: '.users[0].name',
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
-      expect(result[0].dataPath).toBe('/users/0/name');
+      expect(result[0].path).toBe('/users/0/name');
     });
 
     it('다중 배열 인덱스를 올바르게 변환해야 한다', () => {
@@ -72,13 +72,13 @@ describe('transformDataPath', () => {
           schemaPath: '#/properties/matrix/items/items/type',
           keyword: 'type',
           params: {},
-          message: 'should be number',
-          dataPath: 'matrix[1][2]',
-        },
+          message: 'must be number',
+          dataPath: '.matrix[1][2]',
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
-      expect(result[0].dataPath).toBe('/matrix/1/2');
+      expect(result[0].path).toBe('/matrix/1/2');
     });
 
     it('복잡한 중첩 구조를 올바르게 변환해야 한다', () => {
@@ -88,13 +88,13 @@ describe('transformDataPath', () => {
             '#/properties/data/properties/items/items/properties/metadata/properties/tags/items/type',
           keyword: 'type',
           params: {},
-          message: 'should be string',
-          dataPath: 'data.items[0].metadata.tags[1]',
-        },
+          message: 'must be string',
+          dataPath: '.data.items[0].metadata.tags[1]',
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
-      expect(result[0].dataPath).toBe('/data/items/0/metadata/tags/1');
+      expect(result[0].path).toBe('/data/items/0/metadata/tags/1');
     });
 
     it('큰 배열 인덱스를 올바르게 처리해야 한다', () => {
@@ -103,13 +103,13 @@ describe('transformDataPath', () => {
           schemaPath: '#/properties/items/items/type',
           keyword: 'type',
           params: {},
-          message: 'should be string',
-          dataPath: 'items[999]',
-        },
+          message: 'must be string',
+          dataPath: '.items[999]',
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
-      expect(result[0].dataPath).toBe('/items/999');
+      expect(result[0].path).toBe('/items/999');
     });
   });
 
@@ -122,11 +122,11 @@ describe('transformDataPath', () => {
           params: { missingProperty: 'name' },
           message: "must have required property 'name'",
           dataPath: '',
-        },
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
-      expect(result[0].dataPath).toBe('/name');
+      expect(result[0].path).toBe('/name');
     });
 
     it('중첩된 객체에서 required 속성을 올바르게 처리해야 한다', () => {
@@ -136,12 +136,12 @@ describe('transformDataPath', () => {
           keyword: 'required',
           params: { missingProperty: 'email' },
           message: "must have required property 'email'",
-          dataPath: 'user',
-        },
+          dataPath: '.user',
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
-      expect(result[0].dataPath).toBe('/user/email');
+      expect(result[0].path).toBe('/user/email');
     });
 
     it('배열 요소에서 required 속성을 올바르게 처리해야 한다', () => {
@@ -151,12 +151,12 @@ describe('transformDataPath', () => {
           keyword: 'required',
           params: { missingProperty: 'id' },
           message: "must have required property 'id'",
-          dataPath: 'users[0]',
-        },
+          dataPath: '.users[0]',
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
-      expect(result[0].dataPath).toBe('/users/0/id');
+      expect(result[0].path).toBe('/users/0/id');
     });
 
     it('복잡한 중첩 구조에서 required 속성을 올바르게 처리해야 한다', () => {
@@ -167,12 +167,12 @@ describe('transformDataPath', () => {
           keyword: 'required',
           params: { missingProperty: 'version' },
           message: "must have required property 'version'",
-          dataPath: 'data.items[0].metadata',
-        },
+          dataPath: '.data.items[0].metadata',
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
-      expect(result[0].dataPath).toBe('/data/items/0/metadata/version');
+      expect(result[0].path).toBe('/data/items/0/metadata/version');
     });
   });
 
@@ -183,16 +183,16 @@ describe('transformDataPath', () => {
           schemaPath: '#/properties/age/type',
           keyword: 'type',
           params: { type: 'number' },
-          message: 'should be number',
-          dataPath: 'age',
-        },
+          message: 'must be number',
+          dataPath: '.age',
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
       expect(result[0]).toEqual({
         dataPath: '/age',
         keyword: 'type',
-        message: 'should be number',
+        message: 'must be number',
         details: { type: 'number' },
         source: errors[0],
       });
@@ -204,16 +204,16 @@ describe('transformDataPath', () => {
           schemaPath: '#/properties/email/format',
           keyword: 'format',
           params: { format: 'email' },
-          message: 'should match format "email"',
-          dataPath: 'email',
-        },
+          message: 'must match format "email"',
+          dataPath: '/email',
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
       expect(result[0]).toEqual({
         dataPath: '/email',
         keyword: 'format',
-        message: 'should match format "email"',
+        message: 'must match format "email"',
         details: { format: 'email' },
         source: errors[0],
       });
@@ -225,16 +225,16 @@ describe('transformDataPath', () => {
           schemaPath: '#/properties/score/minimum',
           keyword: 'minimum',
           params: { limit: 0 },
-          message: 'should be >= 0',
-          dataPath: 'score',
-        },
+          message: 'must be >= 0',
+          dataPath: '/score',
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
       expect(result[0]).toEqual({
         dataPath: '/score',
         keyword: 'minimum',
-        message: 'should be >= 0',
+        message: 'must be >= 0',
         details: { limit: 0 },
         source: errors[0],
       });
@@ -250,29 +250,29 @@ describe('transformDataPath', () => {
           params: { missingProperty: 'name' },
           message: "must have required property 'name'",
           dataPath: '',
-        },
+        } as ErrorObject,
         {
           schemaPath: '#/properties/age/type',
           keyword: 'type',
           params: { type: 'number' },
-          message: 'should be number',
-          dataPath: 'age',
-        },
+          message: 'must be number',
+          dataPath: '/age',
+        } as ErrorObject,
         {
           schemaPath: '#/properties/users/items/required',
           keyword: 'required',
           params: { missingProperty: 'id' },
           message: "must have required property 'id'",
-          dataPath: 'users[0]',
-        },
+          dataPath: '/users/0',
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
 
       expect(result).toHaveLength(3);
-      expect(result[0].dataPath).toBe('/name');
-      expect(result[1].dataPath).toBe('/age');
-      expect(result[2].dataPath).toBe('/users/0/id');
+      expect(result[0].path).toBe('/name');
+      expect(result[1].path).toBe('/age');
+      expect(result[2].path).toBe('/users/0/id');
     });
   });
 
@@ -289,13 +289,13 @@ describe('transformDataPath', () => {
           schemaPath: '#/type',
           keyword: 'type',
           params: {},
-          message: 'should be object',
+          message: 'must be object',
           dataPath: undefined as any,
-        },
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
-      expect(result[0].dataPath).toBe('/');
+      expect(result[0].path).toBe('/');
     });
 
     it('params가 없는 required 에러를 처리해야 한다', () => {
@@ -305,12 +305,12 @@ describe('transformDataPath', () => {
           keyword: 'required',
           params: {},
           message: 'must have required property',
-          dataPath: 'user',
-        },
+          dataPath: '/user',
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
-      expect(result[0].dataPath).toBe('/user');
+      expect(result[0].path).toBe('/user');
     });
 
     it('missingProperty가 없는 required 에러를 처리해야 한다', () => {
@@ -320,32 +320,36 @@ describe('transformDataPath', () => {
           keyword: 'required',
           params: { otherParam: 'value' },
           message: 'must have required property',
-          dataPath: 'user',
-        },
+          dataPath: '/user',
+        } as ErrorObject,
       ];
 
       const result = transformDataPath(errors);
-      expect(result[0].dataPath).toBe('/user');
+      expect(result[0].path).toBe('/user');
     });
   });
 
   describe('성능 테스트', () => {
     it('대량의 에러를 효율적으로 처리해야 한다', () => {
-      const errors: ErrorObject[] = Array.from({ length: 1000 }, (_, i) => ({
-        schemaPath: `#/properties/items/items/properties/field${i}/type`,
-        keyword: 'type',
-        params: { type: 'string' },
-        message: 'should be string',
-        dataPath: `items[${i}].field${i}`,
-      }));
+      const errors: ErrorObject[] = Array.from(
+        { length: 1000 },
+        (_, i) =>
+          ({
+            schemaPath: `#/properties/items/items/properties/field${i}/type`,
+            keyword: 'type',
+            params: { type: 'string' },
+            message: 'must be string',
+            dataPath: `/items/${i}/field${i}`,
+          }) as ErrorObject,
+      );
 
       const startTime = performance.now();
       const result = transformDataPath(errors);
       const endTime = performance.now();
 
       expect(result).toHaveLength(1000);
-      expect(result[0].dataPath).toBe('/items/0/field0');
-      expect(result[999].dataPath).toBe('/items/999/field999');
+      expect(result[0].path).toBe('/items/0/field0');
+      expect(result[999].path).toBe('/items/999/field999');
 
       // 성능 확인 (1000개 에러 처리가 10ms 이내에 완료되어야 함)
       expect(endTime - startTime).toBeLessThan(10);
