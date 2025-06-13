@@ -1835,6 +1835,52 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@canard/schema-form-ajv7-plugin@workspace:packages/canard/schema-form-ajv7-plugin":
+  version: 0.0.0-use.local
+  resolution: "@canard/schema-form-ajv7-plugin@workspace:packages/canard/schema-form-ajv7-plugin"
+  dependencies:
+    "@canard/schema-form": "workspace:^"
+    "@chromatic-com/storybook": "npm:^3.2.4"
+    "@rollup/plugin-commonjs": "npm:^28.0.1"
+    "@rollup/plugin-node-resolve": "npm:^15.3.0"
+    "@rollup/plugin-replace": "npm:^6.0.1"
+    "@rollup/plugin-terser": "npm:^0.4.4"
+    "@rollup/plugin-typescript": "npm:^12.1.2"
+    "@size-limit/preset-app": "npm:^11.1.6"
+    "@size-limit/preset-big-lib": "npm:^11.1.6"
+    "@size-limit/preset-small-lib": "npm:^11.1.6"
+    "@storybook/addon-essentials": "npm:^8.6.14"
+    "@storybook/addon-interactions": "npm:^8.6.14"
+    "@storybook/blocks": "npm:^8.6.14"
+    "@storybook/react": "npm:^8.6.14"
+    "@storybook/react-vite": "npm:^8.6.14"
+    "@storybook/test": "npm:^8.6.14"
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@testing-library/react": "npm:^16.0.1"
+    "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
+    "@types/react": "npm:^19.0.0"
+    "@types/react-dom": "npm:^19.0.0"
+    "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
+    ajv: "npm:^7.0.0"
+    dependency-cruiser: "npm:^16.7.0"
+    jsdom: "npm:^25.0.1"
+    prettier: "npm:^3.5.3"
+    react: "npm:^19.0.0"
+    react-dom: "npm:^19.0.0"
+    rollup: "npm:^4.42.0"
+    rollup-plugin-copy: "npm:^3.5.0"
+    rollup-plugin-peer-deps-external: "npm:^2.2.4"
+    rollup-plugin-visualizer: "npm:^5.12.0"
+    size-limit: "npm:^11.2.0"
+    storybook: "npm:^8.6.14"
+    tsc-alias: "npm:^1.8.16"
+    typescript: "npm:^5.7.2"
+    vite: "npm:^6.3.5"
+    vitest: "npm:2.1.9"
+  languageName: unknown
+  linkType: soft
+
 "@canard/schema-form-ajv8-plugin@workspace:^, @canard/schema-form-ajv8-plugin@workspace:packages/canard/schema-form-ajv8-plugin":
   version: 0.0.0-use.local
   resolution: "@canard/schema-form-ajv8-plugin@workspace:packages/canard/schema-form-ajv8-plugin"
@@ -8259,6 +8305,18 @@ __metadata:
     json-schema-traverse: "npm:^0.4.1"
     uri-js: "npm:^4.2.2"
   checksum: 10c0/41e23642cbe545889245b9d2a45854ebba51cda6c778ebced9649420d9205f2efb39cb43dbc41e358409223b1ea43303ae4839db682c848b891e4811da1a5a71
+  languageName: node
+  linkType: hard
+
+"ajv@npm:^7.0.0":
+  version: 7.2.4
+  resolution: "ajv@npm:7.2.4"
+  dependencies:
+    fast-deep-equal: "npm:^3.1.1"
+    json-schema-traverse: "npm:^1.0.0"
+    require-from-string: "npm:^2.0.2"
+    uri-js: "npm:^4.2.2"
+  checksum: 10c0/420b72d7f6af89c7e63e00856b894e16a8a2ea107b2b2a76ff36d8dd05f6d708ab120a8c7cc627983ad1f75c6990363eda7c68f45943635f084de62353ca1c56
   languageName: node
   linkType: hard
 
