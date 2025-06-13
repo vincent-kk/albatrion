@@ -4,10 +4,10 @@ import { describe, expect, it, vi } from 'vitest';
 import { delay } from '@winglet/common-utils';
 
 import { nodeFromJsonSchema } from '@/schema-form/core';
-import { JsonSchema } from '@/schema-form/types';
+import type { JsonSchema } from '@/schema-form/types';
 
 import { NodeEventType, ValidationMode } from '../nodes';
-import { ArrayNode } from '../nodes/ArrayNode';
+import type { ArrayNode } from '../nodes/ArrayNode';
 import { createValidatorFactory } from './AbstractNode.test';
 
 describe('ArrayNode', () => {

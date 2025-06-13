@@ -113,7 +113,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   public activate() {
     for (const id of this.__ids__)
-      (this.__sourceMap__.get(id)?.node as AbstractNode).activate(
+      (this.__sourceMap__.get(id)?.node as AbstractNode)?.activate(
         this.__host__,
       );
   }

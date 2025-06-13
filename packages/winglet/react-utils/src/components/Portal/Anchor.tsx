@@ -1,6 +1,6 @@
 import { type HTMLAttributes, memo } from 'react';
 
-import { usePortalAnchorRef } from './PortalContext';
+import { usePortalAnchorRef } from './context/usePortalContext';
 
 /**
  * Anchor component that specifies where Portal content will be rendered.

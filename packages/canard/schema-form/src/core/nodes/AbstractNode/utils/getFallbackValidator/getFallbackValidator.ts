@@ -1,5 +1,5 @@
 import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
-import { JsonSchemaError, JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { JsonSchemaError, JsonSchemaWithVirtual } from '@/schema-form/types';
 
 /**
  * Creates a fallback validator to use when a JSON schema compilation error occurs.

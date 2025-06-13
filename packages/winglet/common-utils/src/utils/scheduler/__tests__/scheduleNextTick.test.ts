@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { delay } from '@/common-utils/utils';
+import { delay } from '@/common-utils/utils/promise';
 
 import { scheduleNextTick } from '../scheduleNextTick';
 

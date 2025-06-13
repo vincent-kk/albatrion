@@ -15,6 +15,7 @@
   "type": "module",
   "exports": {
     ".": {
+      "source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
@@ -28,10 +29,9 @@
     "README.md"
   ],
   "scripts": {
-    "build": "yarn clean && rollup -c && tsc-alias",
-    "build:chain": "yarn clean && yarn workspaces foreach --recursive --topological run build",
-    "clean": "rm -rf dist",
-    "publish:chain": "yarn build:chain && yarn npm publish --access public",
+    "build": "rollup -c && yarn build:types",
+    "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.declarations.json",
+    "lint": "eslint ./src",
     "publish:npm": "yarn build && yarn npm publish --access public",
     "test": "vitest",
     "version:major": "yarn version major",
@@ -42,19 +42,14 @@
     "@winglet/common-utils": "workspace:^"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.0",
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",
-    "@rollup/plugin-replace": "^6.0.1",
     "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.2",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
-    "@types/rollup-plugin-peer-deps-external": "^2.2.5",
-    "eslint": "^8.56.0",
     "prettier": "^3.5.3",
     "rollup": "^4.42.0",
     "rollup-plugin-copy": "^3.5.0",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-typescript2": "^0.36.0",
     "rollup-plugin-visualizer": "^5.12.0",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.7.2",

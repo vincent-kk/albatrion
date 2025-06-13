@@ -8,13 +8,16 @@
     "declarationDir": "dist",
     "declarationMap": false,
     "composite": false,
-    "noEmit": false
+    "noEmit": false,
   },
   "exclude": [
     "node_modules",
     "dist",
     "**/__tests__/**",
+    "**/coverage/**",
     "**/*.test.tsx?",
-    "**/*.spec.tsx?"
+    "**/*.spec.tsx?",
+    "**/*.story.tsx?",
+    "**/*.stories.tsx?"
   ]
 }

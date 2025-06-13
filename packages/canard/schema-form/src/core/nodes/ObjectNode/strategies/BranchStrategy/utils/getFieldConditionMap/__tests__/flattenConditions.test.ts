@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { JsonSchema } from '@/schema-form/types';
+import type { JsonSchema } from '@/schema-form/types';
 
 import { flattenConditions } from '../utils/flattenConditions';
 

@@ -1,4 +1,4 @@
-import Ajv, { ErrorObject } from 'ajv';
+import Ajv, { type ErrorObject } from 'ajv';
 import { describe, expect, it, vi } from 'vitest';
 
 import { JSONPointer } from '@winglet/json/pointer';
@@ -10,8 +10,8 @@ import type {
   ValidateFunction,
 } from '@/schema-form/types';
 
-import { StringNode } from '../nodes/StringNode';
-import { NodeEvent, NodeEventType, ValidationMode } from '../nodes/type';
+import type { StringNode } from '../nodes/StringNode';
+import { type NodeEvent, NodeEventType, ValidationMode } from '../nodes/type';
 
 const wait = (delay = 0) => {
   return new Promise((resolve) => {

@@ -1,7 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { delay } from '@/common-utils/utils/promise';
-
 import { getTrackableHandler } from '../getTrackableHandler';
 import type { TrackableHandlerOptions } from '../type';
 
