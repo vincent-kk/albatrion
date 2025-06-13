@@ -1,4 +1,4 @@
-import { type ChangeEvent, type ReactNode, useMemo } from 'react';
+import { type ChangeEvent, Fragment, type ReactNode, useMemo } from 'react';
 
 import { map } from '@winglet/common-utils/array';
 import { useHandle } from '@winglet/react-utils/hook';
@@ -57,7 +57,7 @@ const FormTypeInputStringRadio = ({
   });
 
   return (
-    <>
+    <Fragment>
       {map(radioOptions, ({ value, label }) => (
         <label key={value} style={style} className={className}>
           <input
@@ -73,7 +73,7 @@ const FormTypeInputStringRadio = ({
           {label}
         </label>
       ))}
-    </>
+    </Fragment>
   );
 };
 

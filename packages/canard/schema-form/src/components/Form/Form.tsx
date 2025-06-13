@@ -144,7 +144,7 @@ const FormInner = <
         visible ? setShowError(true) : setShowError(inputShowError),
       submit: handleSubmit,
     }),
-    [rootNode, handleSubmit, update],
+    [rootNode, handleSubmit, update, inputShowError],
   );
 
   return (
