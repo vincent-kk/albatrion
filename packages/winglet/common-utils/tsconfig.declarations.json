@@ -8,7 +8,7 @@
     "declarationDir": "dist",
     "declarationMap": false,
     "composite": false,
-    "noEmit": false
+    "noEmit": false,
   },
   "exclude": [
     "node_modules",
