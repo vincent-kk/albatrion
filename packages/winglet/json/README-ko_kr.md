@@ -61,9 +61,16 @@ import {
 
 ### 사용 가능한 Sub-path
 
+package.json의 exports 설정을 기반으로 합니다:
+
 - `@winglet/json` - 메인 내보내기 (모든 JSONPointer 및 JSONPath 유틸리티)
 - `@winglet/json/path` - JSONPath 상수 및 유틸리티
-- `@winglet/json/pointer` - JSONPointer 조작, 이스케이핑, 패치 작업
+- `@winglet/json/path-common` - JSONPath 일반 유틸리티
+- `@winglet/json/pointer` - JSONPointer 핵심 유틸리티
+- `@winglet/json/pointer-common` - JSONPointer 일반 유틸리티
+- `@winglet/json/pointer-escape` - JSONPointer 이스케이프 유틸리티 (escapePath, unescapePath)
+- `@winglet/json/pointer-manipulator` - JSONPointer 조작 함수 (getValue, setValue)
+- `@winglet/json/pointer-patch` - JSONPointer 패치 작업 (compare, applyPatch, difference, mergePatch)
 
 ---
 

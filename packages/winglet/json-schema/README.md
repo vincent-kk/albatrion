@@ -50,10 +50,12 @@ import {
 
 ### Available Sub-paths
 
+Based on the package.json exports configuration:
+
 - `@winglet/json-schema` - Main exports (all utilities, scanners, and type definitions)
-- `@winglet/json-schema/scanner` - Synchronous JSON Schema scanner
-- `@winglet/json-schema/async-scanner` - Asynchronous JSON Schema scanner
-- `@winglet/json-schema/filter` - Schema type checking and filtering utilities
+- `@winglet/json-schema/scanner` - Synchronous JSON Schema scanner (JsonSchemaScanner)
+- `@winglet/json-schema/async-scanner` - Asynchronous JSON Schema scanner (JsonSchemaScannerAsync)
+- `@winglet/json-schema/filter` - Schema type checking and filtering utilities (isArraySchema, isObjectSchema, etc.)
 
 ---
 

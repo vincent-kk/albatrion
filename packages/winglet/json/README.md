@@ -61,9 +61,16 @@ import {
 
 ### Available Sub-paths
 
+Based on the package.json exports configuration:
+
 - `@winglet/json` - Main exports (all JSONPointer and JSONPath utilities)
 - `@winglet/json/path` - JSONPath constants and utilities
-- `@winglet/json/pointer` - JSONPointer manipulation, escaping, and patch operations
+- `@winglet/json/path-common` - JSONPath common utilities
+- `@winglet/json/pointer` - JSONPointer core utilities
+- `@winglet/json/pointer-common` - JSONPointer common utilities
+- `@winglet/json/pointer-escape` - JSONPointer escaping utilities (escapePath, unescapePath)
+- `@winglet/json/pointer-manipulator` - JSONPointer manipulation functions (getValue, setValue)
+- `@winglet/json/pointer-patch` - JSONPointer patch operations (compare, applyPatch, difference, mergePatch)
 
 ---
 

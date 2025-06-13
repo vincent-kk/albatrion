@@ -66,19 +66,21 @@ import {
 
 ### Available Sub-paths
 
-- `@winglet/common-utils` - Main exports
-- `@winglet/common-utils/lib` - Core library utilities
-- `@winglet/common-utils/error` - Error classes and utilities
-- `@winglet/common-utils/constant` - Common constants
-- `@winglet/common-utils/array` - Array manipulation utilities
-- `@winglet/common-utils/console` - Console utilities
-- `@winglet/common-utils/convert` - Type conversion utilities
-- `@winglet/common-utils/filter` - Type checking and filtering utilities
-- `@winglet/common-utils/function` - Function utilities (debounce, throttle, etc.)
-- `@winglet/common-utils/hash` - Hash algorithms
-- `@winglet/common-utils/object` - Object manipulation utilities
-- `@winglet/common-utils/promise` - Promise utilities
-- `@winglet/common-utils/scheduler` - Task scheduling utilities
+Based on the package.json exports configuration:
+
+- `@winglet/common-utils` - Main exports (all utilities)
+- `@winglet/common-utils/lib` - Core library utilities (cache, counter, scheduler)
+- `@winglet/common-utils/error` - Error classes and utilities (BaseError, AbortError, etc.)
+- `@winglet/common-utils/constant` - Common constants (time, type tags, units)
+- `@winglet/common-utils/filter` - Type checking and filtering utilities (isArray, isObject, etc.)
+- `@winglet/common-utils/array` - Array manipulation utilities (chunk, unique, difference, etc.)
+- `@winglet/common-utils/console` - Console utilities (printError)
+- `@winglet/common-utils/convert` - Type conversion utilities (convertMsFromDuration)
+- `@winglet/common-utils/function` - Function utilities (debounce, throttle, getTrackableHandler)
+- `@winglet/common-utils/hash` - Hash algorithms (Murmur3)
+- `@winglet/common-utils/object` - Object manipulation utilities (clone, merge, equals, etc.)
+- `@winglet/common-utils/promise` - Promise utilities (delay, timeout, withTimeout, etc.)
+- `@winglet/common-utils/scheduler` - Task scheduling utilities (scheduleMacrotask, scheduleMicrotask, etc.)
 
 ---
 
