@@ -89,9 +89,8 @@
   ],
   "scripts": {
     "build": "yarn clean && rollup -c && tsc-alias",
-    "build:chain": "yarn clean && yarn workspaces foreach --recursive --topological run build",
+    "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.json",
     "clean": "rm -rf dist",
-    "publish:chain": "yarn build:chain && yarn npm publish --access public",
     "publish:npm": "yarn build && yarn npm publish --access public",
     "test": "vitest",
     "version:major": "yarn version major",
