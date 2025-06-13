@@ -23,6 +23,8 @@
     "dataLoader": "yarn workspace @winglet/data-loader",
     "developmentHelper": "yarn workspace @aileron/development-helper",
     "documents": "yarn workspace @albatrion/documents",
+    "import-test": "./scripts/test-package-import.sh",
+    "import-test:winglet": "./scripts/test-winglet-import.sh",
     "json": "yarn workspace @winglet/json",
     "jsonSchema": "yarn workspace @winglet/json-schema",
     "login:npm": "yarn npm login --publish",

@@ -12,6 +12,11 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Function to strip ANSI color codes for clean output
+strip_colors() {
+    sed -e 's/\x1b\[[0-9;]*m//g' -e 's/\[[0-9;]*m//g'
+}
+
 # Print colored output
 print_info() {
     echo -e "${BLUE}ℹ️  $1${NC}"
