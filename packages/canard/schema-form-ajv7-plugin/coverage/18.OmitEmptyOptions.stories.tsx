@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react';
 
+import type {
+  FormHandle} from '@canard/schema-form';
 import {
   Form,
-  FormHandle,
   type JsonSchema,
   registerPlugin,
 } from '@canard/schema-form';

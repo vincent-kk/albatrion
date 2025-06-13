@@ -1,12 +1,13 @@
 import { type ComponentType, useMemo, useRef, useState } from 'react';
 
+import type {
+  JsonSchemaError} from '@canard/schema-form';
 import {
   Form,
   FormProvider,
   type FormTypeInputDefinition,
   type FormTypeRendererProps,
   type JsonSchema,
-  JsonSchemaError,
   NodeState,
   ValidationMode,
   registerPlugin,

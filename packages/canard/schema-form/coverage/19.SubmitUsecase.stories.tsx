@@ -1,10 +1,11 @@
 import { useCallback, useRef, useState } from 'react';
 
+import type {
+  FormHandle,
+  JsonSchemaError} from '../src';
 import {
   Form,
-  FormHandle,
   type JsonSchema,
-  JsonSchemaError,
   ValidationMode,
   isValidationError,
   registerPlugin,

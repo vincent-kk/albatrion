@@ -6,9 +6,9 @@ import React, {
   useState,
 } from 'react';
 
+import type { ModalProviderHandle } from '../src';
 import {
   ModalProvider,
-  ModalProviderHandle,
   alert,
   confirm,
   prompt,
@@ -62,6 +62,8 @@ export const NormalUsecase = () => {
       content: 'Error will be thrown from Input',
       Input: () => {
         throw new Error('Error from Prompt Input');
+
+        // eslint-disable-next-line no-unreachable
         return <div>Input</div>;
       },
     });
@@ -191,6 +193,8 @@ export const ModalInitializeHookUsecase = () => {
       content: 'Error will be thrown from Input',
       Input: () => {
         throw new Error('Error from Prompt Input');
+
+        // eslint-disable-next-line no-unreachable
         return <div>Input</div>;
       },
     });

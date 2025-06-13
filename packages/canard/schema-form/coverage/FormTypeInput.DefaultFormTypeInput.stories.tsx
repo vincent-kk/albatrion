@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Meta, StoryFn } from '@storybook/react';
+import type { Meta, StoryFn } from '@storybook/react';
 
 import { Form, type JsonSchemaError } from '../src';
 import { FormTypeInputArrayDefinition } from '../src/formTypeDefinitions/FormTypeInputArray';

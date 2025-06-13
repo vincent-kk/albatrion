@@ -5,7 +5,8 @@ import React, {
   useRef,
 } from 'react';
 
-import { ModalFrameProps, useModalDuration } from '../../../src';
+import type { ModalFrameProps} from '../../../src';
+import { useModalDuration } from '../../../src';
 // @ts-expect-error css module
 import styles from './Background.module.css';
 

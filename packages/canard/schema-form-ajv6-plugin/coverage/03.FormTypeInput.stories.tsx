@@ -1,4 +1,5 @@
-import { ChangeEvent, useCallback, useMemo, useRef, useState } from 'react';
+import type { ChangeEvent} from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 import {
   Form,

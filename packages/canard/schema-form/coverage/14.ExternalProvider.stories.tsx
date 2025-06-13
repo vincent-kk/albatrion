@@ -2,13 +2,13 @@ import { type ComponentType, useMemo, useRef, useState } from 'react';
 
 import Ajv from 'ajv';
 
+import type { JsonSchemaError } from '../src';
 import {
   Form,
   FormProvider,
   type FormTypeInputDefinition,
   type FormTypeRendererProps,
   type JsonSchema,
-  JsonSchemaError,
   NodeState,
   ValidationMode,
 } from '../src';
@@ -267,7 +267,7 @@ export const ExternalFormContextAjv = () => {
       errors: false,
     });
     return createValidatorFactory(ajv);
-  }, [schema]);
+  }, []);
 
   return (
     <FormProvider

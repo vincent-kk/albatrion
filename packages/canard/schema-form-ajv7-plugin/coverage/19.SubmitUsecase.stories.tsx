@@ -1,10 +1,11 @@
 import { useCallback, useRef, useState } from 'react';
 
+import type {
+  FormHandle,
+  JsonSchemaError} from '@canard/schema-form';
 import {
   Form,
-  FormHandle,
   type JsonSchema,
-  JsonSchemaError,
   ValidationMode,
   isValidationError,
   registerPlugin,

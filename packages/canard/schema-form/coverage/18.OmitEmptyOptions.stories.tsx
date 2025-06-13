@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 
-import { Form, FormHandle, type JsonSchema } from '../src';
+import type { FormHandle} from '../src';
+import { Form, type JsonSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
