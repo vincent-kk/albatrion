@@ -13,6 +13,9 @@
  * ```
  */
 export const convertJsonPathToPointer = (dataPath: string): string => {
+  if (dataPath[0] === '/' || (dataPath[0] === '#' && dataPath[1] === '/'))
+    return dataPath;
+
   // Handle empty input - return root pointer
   if (!dataPath) return JSON_POINTER_SEPARATOR;
 
