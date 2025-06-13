@@ -4,6 +4,10 @@ import { fileURLToPath } from 'node:url';
 import copy from 'rollup-plugin-copy';
 
 import { createClearDir } from './utils/createClearDir.mjs';
+import {
+  applyDefaultBuildOptions,
+  validateBuildOptions,
+} from './utils/validateBuildOptions.mjs';
 
 export { getEntrypoints } from './utils/getEntrypoints.mjs';
 
@@ -35,9 +39,14 @@ export const getLibBuildOptions = (callerUrl) => ({
   clearDir: createClearDir(callerUrl),
 });
 
-const createLibBuildOptions =
-  (callerUrl) =>
-  ({
+const createLibBuildOptions = (callerUrl) => (options) => {
+  // 입력 검증
+  validateBuildOptions(options);
+
+  // 기본값 적용
+  const normalizedOptions = applyDefaultBuildOptions(options);
+
+  const {
     entrypoints,
     extension,
     format,
@@ -47,64 +56,69 @@ const createLibBuildOptions =
     external,
     tsconfig,
     tsconfigCompilerOptions,
-  }) => {
-    const callerDir = dirname(fileURLToPath(callerUrl));
-    const packagesRoot = resolve(callerDir, '../../');
+  } = normalizedOptions;
 
-    return {
-      input: mapInputs(callerDir, entrypoints),
-      plugins: [
-        ...(plugins?.beforeTransform || []),
-        tsPlugin({
-          tsconfig: tsconfig || join(callerDir, 'tsconfig.json'),
-          compilerOptions: {
-            declarationMap: false,
-            declaration: false,
-            composite: false,
-            ...tsconfigCompilerOptions,
-            sourceMap: sourcemap,
-            inlineSources: sourcemap || undefined,
-            removeComments: !sourcemap,
+  const callerDir = dirname(fileURLToPath(callerUrl));
+  const packagesRoot = resolve(callerDir, '../../');
+
+  return {
+    input: mapInputs(callerDir, entrypoints),
+    plugins: [
+      ...(plugins?.beforeTransform || []),
+      tsPlugin({
+        tsconfig: tsconfig || join(callerDir, 'tsconfig.json'),
+        compilerOptions: {
+          declarationMap: false,
+          declaration: false,
+          composite: false,
+          ...tsconfigCompilerOptions,
+          sourceMap: sourcemap,
+          inlineSources: sourcemap || undefined,
+          removeComments: !sourcemap,
+        },
+        include: ['src/**/*'],
+        exclude: [
+          'node_modules',
+          '**/__tests__/**',
+          '**/coverage/**',
+          '**/*.test.tsx?',
+          '**/*.spec.tsx?',
+          '**/*.story.tsx?',
+          '**/*.stories.tsx?',
+        ],
+      }),
+      ...(plugins?.afterTransform || []),
+      copy({
+        targets: [
+          {
+            src: resolve(packagesRoot, 'aileron/common/**/*.d.ts'),
+            dest: `${outDir}/@aileron/declare`,
           },
-          include: ['src/**/*'],
-          exclude: [
-            'node_modules',
-            '**/__tests__/**',
-            '**/coverage/**',
-            '**/*.test.tsx?',
-            '**/*.spec.tsx?',
-            '**/*.story.tsx?',
-            '**/*.stories.tsx?',
-          ],
-        }),
-        ...(plugins?.afterTransform || []),
-        copy({
-          targets: [
-            {
-              src: resolve(packagesRoot, 'aileron/common/**/*.d.ts'),
-              dest: `${outDir}/@aileron/declare`,
-            },
-          ],
-          copyOnce: true,
-          flatten: true,
-        }),
-        ...(plugins?.afterBuild || []),
-      ],
-      external: external || baseExternal,
-      output: {
-        format,
-        dir: outDir,
-        ...fileNames(extension),
-        preserveModules: true,
-        preserveModulesRoot: 'src',
-        sourcemap,
-        hoistTransitiveImports: false,
-      },
-    };
+        ],
+        copyOnce: true,
+        flatten: true,
+      }),
+      ...(plugins?.afterBuild || []),
+    ],
+    external: external || baseExternal,
+    output: {
+      format,
+      dir: outDir,
+      ...fileNames(extension),
+      preserveModules: true,
+      preserveModulesRoot: 'src',
+      sourcemap,
+      hoistTransitiveImports: false,
+    },
   };
+};
 
 /** @type {(srcFiles: string[]) => Record<string, string>} */
 const mapInputs = (dirName, srcFiles) => {
+  if (!srcFiles || srcFiles.length === 0) {
+    throw new Error('No source files provided');
+  }
+
   return Object.fromEntries(
     srcFiles.map((file) => [
       file.replace(/^(\.\/)?src\//, '').replace(/\.[cm]?(js|ts)$/, ''),
