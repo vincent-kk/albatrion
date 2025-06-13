@@ -8893,20 +8893,11 @@ __metadata:
   resolution: "@winglet/common-utils@workspace:packages/winglet/common-utils"
   dependencies:
     "@babel/core": "npm:^7.26.0"
-    "@rollup/plugin-commonjs": "npm:^28.0.1"
-    "@rollup/plugin-node-resolve": "npm:^15.3.0"
-    "@rollup/plugin-replace": "npm:^6.0.1"
-    "@rollup/plugin-terser": "npm:^0.4.4"
     "@rollup/plugin-typescript": "npm:^12.1.2"
     "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
-    "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
     prettier: "npm:^3.5.3"
     rollup: "npm:^4.42.0"
     rollup-plugin-copy: "npm:^3.5.0"
-    rollup-plugin-dts: "npm:^6.2.1"
-    rollup-plugin-peer-deps-external: "npm:^2.2.4"
-    rollup-plugin-typescript2: "npm:^0.36.0"
-    rollup-plugin-visualizer: "npm:^5.12.0"
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
     vite: "npm:^6.3.5"
@@ -16314,7 +16305,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"magic-string@npm:^0.30.0, magic-string@npm:^0.30.12, magic-string@npm:^0.30.17, magic-string@npm:^0.30.3":
+"magic-string@npm:^0.30.0, magic-string@npm:^0.30.12, magic-string@npm:^0.30.3":
   version: 0.30.17
   resolution: "magic-string@npm:0.30.17"
   dependencies:
@@ -21189,22 +21180,6 @@ __metadata:
     globby: "npm:10.0.1"
     is-plain-object: "npm:^3.0.0"
   checksum: 10c0/163a27756fa2dd1cf50e5b05c82c530fce05c58f11d4f400797e3c6ff3fc6787426f781d71749e15d90fa98917fe5b8caf70d88e08a574fe52574c835ba15e84
-  languageName: node
-  linkType: hard
-
-"rollup-plugin-dts@npm:^6.2.1":
-  version: 6.2.1
-  resolution: "rollup-plugin-dts@npm:6.2.1"
-  dependencies:
-    "@babel/code-frame": "npm:^7.26.2"
-    magic-string: "npm:^0.30.17"
-  peerDependencies:
-    rollup: ^3.29.4 || ^4
-    typescript: ^4.5 || ^5.0
-  dependenciesMeta:
-    "@babel/code-frame":
-      optional: true
-  checksum: 10c0/f21c8726470851a40e6ca68ae580261cee8bc6275775291b9c0fdf93b868ed54f12b11c8c0dddce2c14f5691d6032b6647d094835ab9b6789226efa60e1aa71e
   languageName: node
   linkType: hard
 

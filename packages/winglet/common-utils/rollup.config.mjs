@@ -1,165 +1,139 @@
-import commonjs from '@rollup/plugin-commonjs';
-import resolve from '@rollup/plugin-node-resolve';
-import replace from '@rollup/plugin-replace';
-import terser from '@rollup/plugin-terser';
-import { readFileSync } from 'fs';
-import { dirname, resolve as resolvePath } from 'path';
-import peerDepsExternal from 'rollup-plugin-peer-deps-external';
-import typescript from 'rollup-plugin-typescript2';
-import { fileURLToPath } from 'url';
+import tsPlugin from '@rollup/plugin-typescript';
+import fs from 'node:fs';
+import { createRequire } from 'node:module';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import copy from 'rollup-plugin-copy';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const packagesRoot = resolve(__dirname, '../../');
+/**
+ * @type {{
+ *   exports: Record<string, string>;
+ *   publishConfig: { browser: string };
+ * }}
+ */
+const packageJson = createRequire(import.meta.url)('./package.json');
 
-const packageJson = JSON.parse(
-  readFileSync(resolvePath(__dirname, './package.json'), 'utf8'),
-);
+const baseExternal = (path) => {
+  if (path.startsWith('@aileron')) return false;
+  if (path.startsWith('@winglet') && path !== '@winglet/react-utils')
+    return true;
+  return /node_modules/.test(path);
+};
+export default () => {
+  clearDir('dist');
+  const entrypoints = Object.values(packageJson.exports).filter(
+    (f) => /^(\.\/)?src\//.test(f) && f.endsWith('.ts'),
+  );
 
-// Common plugins configuration
-const getCommonPlugins = (input, outputDir = 'dist') => [
-  peerDepsExternal(),
-  resolve({
-    extensions: ['.js', '.jsx', '.ts', '.tsx'],
-  }),
-  replace({
-    preventAssignment: true,
-  }),
-  commonjs(),
-  typescript({
-    useTsconfigDeclarationDir: true,
-    tsconfig: './tsconfig.json',
-    clean: true,
-    tsconfigOverride: {
-      compilerOptions: {
-        declaration: true,
-        declarationDir: outputDir,
-        emitDeclarationOnly: false,
-        rootDir: 'src',
-      },
-      include: ['src/**/*'],
-      exclude: [
-        'node_modules',
-        '**/__tests__/**',
-        '**/*.test.ts',
-        '**/*.spec.ts',
-      ],
-    },
-  }),
-  terser({
-    compress: {
-      drop_console: false,
-      drop_debugger: true,
-      dead_code: true,
-      unused: true,
-      toplevel: false,
-      passes: 7,
-      pure_getters: false,
-      reduce_vars: true,
-      reduce_funcs: true,
-      hoist_funs: true,
-      hoist_vars: true,
-      if_return: true,
-      join_vars: true,
-      collapse_vars: true,
-      comparisons: true,
-      conditionals: true,
-      evaluate: true,
-      booleans: true,
-      typeofs: true,
-      loops: true,
-      properties: true,
-      sequences: true,
-      side_effects: true,
-      switches: true,
-      arrows: true,
-      arguments: true,
-      keep_fargs: false,
-      ecma: 2020,
-      pure_funcs: ['console.log'],
-    },
-    mangle: {
-      toplevel: false,
-      eval: true,
-      keep_fnames: false,
-      reserved: [],
-    },
-    format: {
-      comments: false,
-      beautify: false,
-      ascii_only: true,
-      ecma: 2020,
-    },
-    ecma: 2020,
-    module: true,
-    keep_fnames: false,
-    keep_classnames: false,
-    toplevel: false,
-  }),
-];
+  return [
+    libBuildOptions({
+      format: 'esm',
+      extension: 'mjs',
+      entrypoints,
+      outDir: 'dist',
+      sourcemap: false,
+    }),
+    libBuildOptions({
+      format: 'cjs',
+      extension: 'cjs',
+      entrypoints,
+      outDir: 'dist',
+      sourcemap: false,
+    }),
+  ];
+};
 
-// Sub-exports configuration
-const subExports = [
-  // Core directories
-  { input: 'src/libs/index.ts', output: 'dist/libs/index' },
-  { input: 'src/errors/index.ts', output: 'dist/errors/index' },
-  { input: 'src/constant/index.ts', output: 'dist/constant/index' },
-
-  // Utils directories
-  { input: 'src/utils/filter/index.ts', output: 'dist/utils/filter/index' },
-  { input: 'src/utils/array/index.ts', output: 'dist/utils/array/index' },
-  { input: 'src/utils/console/index.ts', output: 'dist/utils/console/index' },
-  { input: 'src/utils/convert/index.ts', output: 'dist/utils/convert/index' },
-  { input: 'src/utils/function/index.ts', output: 'dist/utils/function/index' },
-  { input: 'src/utils/hash/index.ts', output: 'dist/utils/hash/index' },
-  { input: 'src/utils/object/index.ts', output: 'dist/utils/object/index' },
-  { input: 'src/utils/promise/index.ts', output: 'dist/utils/promise/index' },
-  {
-    input: 'src/utils/scheduler/index.ts',
-    output: 'dist/utils/scheduler/index',
-  },
-];
-
-// Create configurations for all exports (main + sub-exports)
-const configs = [
-  // Main export
-  {
-    input: 'src/index.ts',
-    output: [
-      {
-        file: packageJson.main,
-        format: 'cjs',
-        exports: 'auto',
-        sourcemap: true,
-      },
-      {
-        file: packageJson.module,
-        format: 'esm',
-        sourcemap: true,
-      },
+/**
+ * @type {(options: {
+ *   entrypoints: string[];
+ *   format: 'esm' | 'cjs';
+ *   extension: 'js' | 'cjs' | 'mjs';
+ *   outDir: string;
+ *   sourcemap: boolean;
+ * }) => import('rollup').RollupOptions}
+ */
+function libBuildOptions({
+  entrypoints,
+  extension,
+  format,
+  outDir,
+  sourcemap,
+}) {
+  return {
+    input: mapInputs(entrypoints),
+    plugins: [
+      tsPlugin({
+        tsconfig: join(__dirname, 'tsconfig.json'),
+        compilerOptions: {
+          sourceMap: sourcemap,
+          inlineSources: sourcemap || undefined,
+          removeComments: !sourcemap,
+          declarationMap: false,
+          declaration: false,
+          composite: false,
+        },
+        include: ['src/**/*'],
+        exclude: [
+          'node_modules',
+          'coverage',
+          '**/__tests__/**',
+          '**/*.test.ts',
+          '**/*.spec.ts',
+        ],
+      }),
+      copy({
+        targets: [
+          {
+            src: resolve(packagesRoot, 'aileron/common/**/*.d.ts'),
+            dest: 'dist/@aileron/declare',
+          },
+        ],
+        copyOnce: true,
+        flatten: true,
+      }),
     ],
-    external: [],
-    plugins: getCommonPlugins('src/index.ts'),
-  },
+    external: baseExternal,
+    output: {
+      format,
+      dir: outDir,
+      ...fileNames(extension),
+      // Using preserveModules disables bundling and the creation of chunks,
+      // leading to a result that is a mirror of the input module graph.
+      preserveModules: true,
+      preserveModulesRoot: 'src',
+      sourcemap,
+      // Hoisting transitive imports adds bare imports in modules,
+      // which can make imports by JS runtimes slightly faster,
+      // but makes the generated code harder to follow.
+      hoistTransitiveImports: false,
+    },
+  };
+}
 
-  // Sub-exports
-  ...subExports.map(({ input, output }) => ({
-    input,
-    output: [
-      {
-        file: `${output}.cjs`,
-        format: 'cjs',
-        exports: 'auto',
-        sourcemap: true,
-      },
-      {
-        file: `${output}.mjs`,
-        format: 'esm',
-        sourcemap: true,
-      },
-    ],
-    external: [],
-    plugins: getCommonPlugins(input),
-  })),
-];
+/** @type {(srcFiles: string[]) => Record<string, string>} */
+function mapInputs(srcFiles) {
+  return Object.fromEntries(
+    srcFiles.map((file) => [
+      file.replace(/^(\.\/)?src\//, '').replace(/\.[cm]?(js|ts)$/, ''),
+      join(__dirname, file),
+    ]),
+  );
+}
 
-export default configs;
+function fileNames(extension = 'js') {
+  return {
+    entryFileNames: `[name].${extension}`,
+    chunkFileNames: `chunk/[name]-[hash:6].${extension}`,
+  };
+}
+
+/** @type {(dir: string) => void} */
+function clearDir(dir) {
+  const dirPath = join(__dirname, dir);
+  if (dir && fs.existsSync(dirPath)) {
+    fs.rmSync(dirPath, { recursive: true, force: true });
+    console.log(`cleared: ${dir}`);
+  }
+}

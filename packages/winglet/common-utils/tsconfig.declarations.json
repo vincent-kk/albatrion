@@ -14,7 +14,10 @@
     "node_modules",
     "dist",
     "**/__tests__/**",
+    "**/coverage/**",
     "**/*.test.tsx?",
-    "**/*.spec.tsx?"
+    "**/*.spec.tsx?",
+    "**/*.story.tsx?",
+    "**/*.stories.tsx?"
   ]
 }

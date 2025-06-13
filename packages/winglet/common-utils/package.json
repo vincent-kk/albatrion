@@ -15,66 +15,79 @@
   "type": "module",
   "exports": {
     ".": {
+      "source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
     "./lib": {
+      "source": "./src/libs/index.ts",
       "types": "./dist/libs/index.d.ts",
       "import": "./dist/libs/index.mjs",
       "require": "./dist/libs/index.cjs"
     },
     "./error": {
+      "source": "./src/errors/index.ts",
       "types": "./dist/errors/index.d.ts",
       "import": "./dist/errors/index.mjs",
       "require": "./dist/errors/index.cjs"
     },
     "./constant": {
+      "source": "./src/constant/index.ts",
       "types": "./dist/constant/index.d.ts",
       "import": "./dist/constant/index.mjs",
       "require": "./dist/constant/index.cjs"
     },
     "./filter": {
+      "source": "./src/utils/filter/index.ts",
       "types": "./dist/utils/filter/index.d.ts",
       "import": "./dist/utils/filter/index.mjs",
       "require": "./dist/utils/filter/index.cjs"
     },
     "./array": {
+      "source": "./src/utils/array/index.ts",
       "types": "./dist/utils/array/index.d.ts",
       "import": "./dist/utils/array/index.mjs",
       "require": "./dist/utils/array/index.cjs"
     },
     "./console": {
+      "source": "./src/utils/console/index.ts",
       "types": "./dist/utils/console/index.d.ts",
       "import": "./dist/utils/console/index.mjs",
       "require": "./dist/utils/console/index.cjs"
     },
     "./convert": {
+      "source": "./src/utils/convert/index.ts",
       "types": "./dist/utils/convert/index.d.ts",
       "import": "./dist/utils/convert/index.mjs",
       "require": "./dist/utils/convert/index.cjs"
     },
     "./function": {
+      "source": "./src/utils/function/index.ts",
       "types": "./dist/utils/function/index.d.ts",
       "import": "./dist/utils/function/index.mjs",
       "require": "./dist/utils/function/index.cjs"
     },
     "./hash": {
+      "source": "./src/utils/hash/index.ts",
       "types": "./dist/utils/hash/index.d.ts",
       "import": "./dist/utils/hash/index.mjs",
       "require": "./dist/utils/hash/index.cjs"
     },
     "./object": {
+      "source": "./src/utils/object/index.ts",
       "types": "./dist/utils/object/index.d.ts",
       "import": "./dist/utils/object/index.mjs",
       "require": "./dist/utils/object/index.cjs"
     },
     "./promise": {
+      "source": "./src/utils/promise/index.ts",
       "types": "./dist/utils/promise/index.d.ts",
       "import": "./dist/utils/promise/index.mjs",
       "require": "./dist/utils/promise/index.cjs"
     },
     "./scheduler": {
+      "source": "./src/utils/scheduler/index.ts",
       "types": "./dist/utils/scheduler/index.d.ts",
       "import": "./dist/utils/scheduler/index.mjs",
       "require": "./dist/utils/scheduler/index.cjs"
@@ -88,9 +101,8 @@
     "README.md"
   ],
   "scripts": {
-    "build": "yarn clean && rollup -c && tsc-alias",
-    "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.json",
-    "clean": "rm -rf dist",
+    "build": "rollup -c && yarn build:types",
+    "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.declarations.json",
     "publish:npm": "yarn build && yarn npm publish --access public",
     "lint": "eslint ./src",
     "test": "vitest",
@@ -100,18 +112,11 @@
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
-    "@rollup/plugin-commonjs": "^28.0.1",
-    "@rollup/plugin-node-resolve": "^15.3.0",
-    "@rollup/plugin-replace": "^6.0.1",
-    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.2",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
-    "@types/rollup-plugin-peer-deps-external": "^2.2.5",
     "prettier": "^3.5.3",
     "rollup": "^4.42.0",
     "rollup-plugin-copy": "^3.5.0",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-typescript2": "^0.36.0",
-    "rollup-plugin-visualizer": "^5.12.0",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.7.2",
     "vite": "^6.3.5",
