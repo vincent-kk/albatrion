@@ -1,7 +1,7 @@
 import type { JsonSchema, ValidateFunction } from '@canard/schema-form';
 import type Ajv from 'ajv';
 
-import { transformDataPath } from './utils/transformDataPath';
+import { transformErrors } from './utils/transformErrors';
 
 /**
  * Creates a validator factory function that transforms AJV7 error dataPaths.
@@ -26,7 +26,7 @@ export const createValidatorFactory =
         return null;
       } catch (thrown: any) {
         if (Array.isArray(thrown?.errors))
-          return transformDataPath(thrown.errors);
+          return transformErrors(thrown.errors);
         throw thrown;
       }
     };

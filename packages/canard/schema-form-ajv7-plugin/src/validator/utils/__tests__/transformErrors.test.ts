@@ -1,9 +1,9 @@
 import type { ErrorObject } from 'ajv';
 import { describe, expect, it } from 'vitest';
 
-import { transformDataPath } from '../transformDataPath';
+import { transformErrors } from '../transformErrors';
 
-describe('transformDataPath', () => {
+describe('transformErrors', () => {
   describe('AJV7 dataPath JSONPointer 처리', () => {
     it('빈 문자열을 올바르게 처리해야 한다', () => {
       const errors: ErrorObject[] = [
@@ -16,8 +16,8 @@ describe('transformDataPath', () => {
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
-      expect(result[0].path).toBe('/');
+      const result = transformErrors(errors);
+      expect(result[0].dataPath).toBe('/');
     });
 
     it('단순한 속성 경로를 변환해야 한다', () => {
@@ -26,13 +26,13 @@ describe('transformDataPath', () => {
           schemaPath: '#/properties/name/type',
           keyword: 'type',
           params: {},
-          message: 'must be string',
-          dataPath: '.name',
+          message: 'should be string',
+          dataPath: '/name',
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
-      expect(result[0].path).toBe('/name');
+      const result = transformErrors(errors);
+      expect(result[0].dataPath).toBe('/name');
     });
 
     it('중첩된 속성 경로를 변환해야 한다', () => {
@@ -42,43 +42,43 @@ describe('transformDataPath', () => {
             '#/properties/user/properties/profile/properties/name/type',
           keyword: 'type',
           params: {},
-          message: 'must be string',
-          dataPath: '.user.profile.name',
+          message: 'should be string',
+          dataPath: '/user/profile/name',
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
-      expect(result[0].path).toBe('/user/profile/name');
+      const result = transformErrors(errors);
+      expect(result[0].dataPath).toBe('/user/profile/name');
     });
 
     it('배열 인덱스를 올바르게 변환해야 한다', () => {
       const errors: ErrorObject[] = [
         {
-          schemaPath: '#/properties/users/items/properties/name/type',
+          schemaPath: '#/items/properties/name/type',
           keyword: 'type',
           params: {},
-          message: 'must be string',
-          dataPath: '.users[0].name',
+          message: 'should be string',
+          dataPath: '/0/name',
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
-      expect(result[0].path).toBe('/users/0/name');
+      const result = transformErrors(errors);
+      expect(result[0].dataPath).toBe('/0/name');
     });
 
     it('다중 배열 인덱스를 올바르게 변환해야 한다', () => {
       const errors: ErrorObject[] = [
         {
-          schemaPath: '#/properties/matrix/items/items/type',
+          schemaPath: '#/items/items/type',
           keyword: 'type',
           params: {},
-          message: 'must be number',
-          dataPath: '.matrix[1][2]',
+          message: 'should be number',
+          dataPath: '/1/2',
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
-      expect(result[0].path).toBe('/matrix/1/2');
+      const result = transformErrors(errors);
+      expect(result[0].dataPath).toBe('/1/2');
     });
 
     it('복잡한 중첩 구조를 올바르게 변환해야 한다', () => {
@@ -88,28 +88,28 @@ describe('transformDataPath', () => {
             '#/properties/data/properties/items/items/properties/metadata/properties/tags/items/type',
           keyword: 'type',
           params: {},
-          message: 'must be string',
-          dataPath: '.data.items[0].metadata.tags[1]',
+          message: 'should be string',
+          dataPath: '/data/items/0/metadata/tags/1',
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
-      expect(result[0].path).toBe('/data/items/0/metadata/tags/1');
+      const result = transformErrors(errors);
+      expect(result[0].dataPath).toBe('/data/items/0/metadata/tags/1');
     });
 
     it('큰 배열 인덱스를 올바르게 처리해야 한다', () => {
       const errors: ErrorObject[] = [
         {
-          schemaPath: '#/properties/items/items/type',
+          schemaPath: '#/items/type',
           keyword: 'type',
           params: {},
-          message: 'must be string',
-          dataPath: '.items[999]',
+          message: 'should be string',
+          dataPath: '/999',
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
-      expect(result[0].path).toBe('/items/999');
+      const result = transformErrors(errors);
+      expect(result[0].dataPath).toBe('/999');
     });
   });
 
@@ -120,13 +120,13 @@ describe('transformDataPath', () => {
           schemaPath: '#/required',
           keyword: 'required',
           params: { missingProperty: 'name' },
-          message: "must have required property 'name'",
+          message: "should have required property 'name'",
           dataPath: '',
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
-      expect(result[0].path).toBe('/name');
+      const result = transformErrors(errors);
+      expect(result[0].dataPath).toBe('/name');
     });
 
     it('중첩된 객체에서 required 속성을 올바르게 처리해야 한다', () => {
@@ -135,28 +135,28 @@ describe('transformDataPath', () => {
           schemaPath: '#/properties/user/required',
           keyword: 'required',
           params: { missingProperty: 'email' },
-          message: "must have required property 'email'",
-          dataPath: '.user',
+          message: "should have required property 'email'",
+          dataPath: '/user',
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
-      expect(result[0].path).toBe('/user/email');
+      const result = transformErrors(errors);
+      expect(result[0].dataPath).toBe('/user/email');
     });
 
     it('배열 요소에서 required 속성을 올바르게 처리해야 한다', () => {
       const errors: ErrorObject[] = [
         {
-          schemaPath: '#/properties/users/items/required',
+          schemaPath: '#/items/required',
           keyword: 'required',
           params: { missingProperty: 'id' },
-          message: "must have required property 'id'",
-          dataPath: '.users[0]',
+          message: "should have required property 'id'",
+          dataPath: '/0',
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
-      expect(result[0].path).toBe('/users/0/id');
+      const result = transformErrors(errors);
+      expect(result[0].dataPath).toBe('/0/id');
     });
 
     it('복잡한 중첩 구조에서 required 속성을 올바르게 처리해야 한다', () => {
@@ -166,13 +166,13 @@ describe('transformDataPath', () => {
             '#/properties/data/properties/items/items/properties/metadata/required',
           keyword: 'required',
           params: { missingProperty: 'version' },
-          message: "must have required property 'version'",
-          dataPath: '.data.items[0].metadata',
+          message: "should have required property 'version'",
+          dataPath: '/data/items/0/metadata',
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
-      expect(result[0].path).toBe('/data/items/0/metadata/version');
+      const result = transformErrors(errors);
+      expect(result[0].dataPath).toBe('/data/items/0/metadata/version');
     });
   });
 
@@ -183,16 +183,16 @@ describe('transformDataPath', () => {
           schemaPath: '#/properties/age/type',
           keyword: 'type',
           params: { type: 'number' },
-          message: 'must be number',
-          dataPath: '.age',
+          message: 'should be number',
+          dataPath: '/age',
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
+      const result = transformErrors(errors);
       expect(result[0]).toEqual({
         dataPath: '/age',
         keyword: 'type',
-        message: 'must be number',
+        message: 'should be number',
         details: { type: 'number' },
         source: errors[0],
       });
@@ -204,16 +204,16 @@ describe('transformDataPath', () => {
           schemaPath: '#/properties/email/format',
           keyword: 'format',
           params: { format: 'email' },
-          message: 'must match format "email"',
+          message: 'should match format "email"',
           dataPath: '/email',
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
+      const result = transformErrors(errors);
       expect(result[0]).toEqual({
         dataPath: '/email',
         keyword: 'format',
-        message: 'must match format "email"',
+        message: 'should match format "email"',
         details: { format: 'email' },
         source: errors[0],
       });
@@ -225,16 +225,16 @@ describe('transformDataPath', () => {
           schemaPath: '#/properties/score/minimum',
           keyword: 'minimum',
           params: { limit: 0 },
-          message: 'must be >= 0',
+          message: 'should be >= 0',
           dataPath: '/score',
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
+      const result = transformErrors(errors);
       expect(result[0]).toEqual({
         dataPath: '/score',
         keyword: 'minimum',
-        message: 'must be >= 0',
+        message: 'should be >= 0',
         details: { limit: 0 },
         source: errors[0],
       });
@@ -248,38 +248,38 @@ describe('transformDataPath', () => {
           schemaPath: '#/required',
           keyword: 'required',
           params: { missingProperty: 'name' },
-          message: "must have required property 'name'",
+          message: "should have required property 'name'",
           dataPath: '',
         } as ErrorObject,
         {
           schemaPath: '#/properties/age/type',
           keyword: 'type',
           params: { type: 'number' },
-          message: 'must be number',
+          message: 'should be number',
           dataPath: '/age',
         } as ErrorObject,
         {
-          schemaPath: '#/properties/users/items/required',
+          schemaPath: '#/items/required',
           keyword: 'required',
           params: { missingProperty: 'id' },
-          message: "must have required property 'id'",
-          dataPath: '/users/0',
+          message: "should have required property 'id'",
+          dataPath: '/0',
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
+      const result = transformErrors(errors);
 
       expect(result).toHaveLength(3);
-      expect(result[0].path).toBe('/name');
-      expect(result[1].path).toBe('/age');
-      expect(result[2].path).toBe('/users/0/id');
+      expect(result[0].dataPath).toBe('/name');
+      expect(result[1].dataPath).toBe('/age');
+      expect(result[2].dataPath).toBe('/0/id');
     });
   });
 
   describe('엣지 케이스', () => {
     it('빈 배열을 처리해야 한다', () => {
       const errors: ErrorObject[] = [];
-      const result = transformDataPath(errors);
+      const result = transformErrors(errors);
       expect(result).toEqual([]);
     });
 
@@ -289,13 +289,13 @@ describe('transformDataPath', () => {
           schemaPath: '#/type',
           keyword: 'type',
           params: {},
-          message: 'must be object',
+          message: 'should be object',
           dataPath: undefined as any,
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
-      expect(result[0].path).toBe('/');
+      const result = transformErrors(errors);
+      expect(result[0].dataPath).toBe('/');
     });
 
     it('params가 없는 required 에러를 처리해야 한다', () => {
@@ -304,13 +304,13 @@ describe('transformDataPath', () => {
           schemaPath: '#/required',
           keyword: 'required',
           params: {},
-          message: 'must have required property',
+          message: 'should have required property',
           dataPath: '/user',
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
-      expect(result[0].path).toBe('/user');
+      const result = transformErrors(errors);
+      expect(result[0].dataPath).toBe('/user');
     });
 
     it('missingProperty가 없는 required 에러를 처리해야 한다', () => {
@@ -319,13 +319,13 @@ describe('transformDataPath', () => {
           schemaPath: '#/required',
           keyword: 'required',
           params: { otherParam: 'value' },
-          message: 'must have required property',
+          message: 'should have required property',
           dataPath: '/user',
         } as ErrorObject,
       ];
 
-      const result = transformDataPath(errors);
-      expect(result[0].path).toBe('/user');
+      const result = transformErrors(errors);
+      expect(result[0].dataPath).toBe('/user');
     });
   });
 
@@ -335,21 +335,21 @@ describe('transformDataPath', () => {
         { length: 1000 },
         (_, i) =>
           ({
-            schemaPath: `#/properties/items/items/properties/field${i}/type`,
+            schemaPath: `#/items/properties/field${i}/type`,
             keyword: 'type',
             params: { type: 'string' },
-            message: 'must be string',
-            dataPath: `/items/${i}/field${i}`,
+            message: 'should be string',
+            dataPath: `/${i}/field${i}`,
           }) as ErrorObject,
       );
 
       const startTime = performance.now();
-      const result = transformDataPath(errors);
+      const result = transformErrors(errors);
       const endTime = performance.now();
 
       expect(result).toHaveLength(1000);
-      expect(result[0].path).toBe('/items/0/field0');
-      expect(result[999].path).toBe('/items/999/field999');
+      expect(result[0].dataPath).toBe('/0/field0');
+      expect(result[999].dataPath).toBe('/999/field999');
 
       // 성능 확인 (1000개 에러 처리가 10ms 이내에 완료되어야 함)
       expect(endTime - startTime).toBeLessThan(10);

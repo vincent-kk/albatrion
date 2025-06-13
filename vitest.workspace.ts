@@ -8,6 +8,7 @@ export default defineWorkspace([
   "./packages/winglet/react-utils/vite.config.ts",
   "./packages/canard/schema-form-antd-plugin/vite.config.ts",
   "./packages/canard/schema-form-ajv6-plugin/vite.config.ts",
+  "./packages/canard/schema-form-ajv7-plugin/vite.config.ts",
   "./packages/canard/schema-form-ajv8-plugin/vite.config.ts",
   "./packages/canard/schema-form/vite.config.ts",
 ]);
