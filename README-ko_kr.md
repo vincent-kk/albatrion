@@ -23,6 +23,7 @@
 
 - **[`@canard/schema-form`](./packages/canard/schema-form/README-ko_kr.md)** - JSON Schema 기반 폼 유틸리티
 - **[`@canard/schema-form-ajv6-plugin`](./packages/canard/schema-form-ajv6-plugin/README-ko_kr.md)** - `canard/schema-form`용 AJV 6.x 검증 플러그인
+- **[`@canard/schema-form-ajv7-plugin`](./packages/canard/schema-form-ajv7-plugin/README-ko_kr.md)** - `canard/schema-form`용 AJV 7.x 검증 플러그인
 - **[`@canard/schema-form-ajv8-plugin`](./packages/canard/schema-form-ajv8-plugin/README-ko_kr.md)** - `canard/schema-form`용 AJV 8.x 검증 플러그인
 - **[`@canard/schema-form-antd-plugin`](./packages/canard/schema-form-antd-plugin/README-ko_kr.md)** - `canard/schema-form`에 적용할 수 있는 Ant Design 플러그인
 - **[`@canard/schema-form-antd-mobile-plugin`](./packages/canard/schema-form-antd-mobile-plugin/README-ko_kr.md)** - `canard/schema-form`에 적용할 수 있는 Ant Design Mobile 플러그인

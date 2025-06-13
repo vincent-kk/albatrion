@@ -23,6 +23,7 @@ Each package provides individual `README.md` documentation with detailed usage i
 
 - **[`@canard/schema-form`](./packages/canard/schema-form/README.md)** - JSON Schema based form utilities
 - **[`@canard/schema-form-ajv6-plugin`](./packages/canard/schema-form-ajv6-plugin/README.md)** - AJV 6.x validation plugin for `canard/schema-form`
+- **[`@canard/schema-form-ajv7-plugin`](./packages/canard/schema-form-ajv7-plugin/README.md)** - AJV 7.x validation plugin for `canard/schema-form`
 - **[`@canard/schema-form-ajv8-plugin`](./packages/canard/schema-form-ajv8-plugin/README.md)** - AJV 8.x validation plugin for `canard/schema-form`
 - **[`@canard/schema-form-antd-plugin`](./packages/canard/schema-form-antd-plugin/README.md)** - Ant Design plugin applicable to `canard/schema-form`
 - **[`@canard/schema-form-antd-mobile-plugin`](./packages/canard/schema-form-antd-mobile-plugin/README.md)** - Ant Design Mobile plugin applicable to `canard/schema-form`

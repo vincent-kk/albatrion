@@ -19,6 +19,13 @@ export const convertJsonPointerToPath = (jsonPointer: string): string => {
   if (!jsonPointer || jsonPointer === JSON_POINTER_SEPARATOR)
     return JSON_PATH_SEPARATOR;
 
+  if (
+    jsonPointer[0] === '.' ||
+    ((jsonPointer[0] === '@' || jsonPointer[0] === '$') &&
+      jsonPointer[1] === '.')
+  )
+    return jsonPointer;
+
   const length = jsonPointer.length;
   let result = JSON_PATH_SEPARATOR; // Always start with '.'
   let start = 1; // Start after initial '/'
