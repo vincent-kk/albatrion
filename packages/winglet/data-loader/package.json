@@ -15,10 +15,10 @@
   "type": "module",
   "exports": {
     ".": {
+      "source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "source": "./src/index.ts"
+      "require": "./dist/index.cjs"
     }
   },
   "main": "dist/index.cjs",
@@ -45,6 +45,7 @@
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.2",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "prettier": "^3.5.3",
     "rollup": "^4.42.0",
