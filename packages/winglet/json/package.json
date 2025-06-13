@@ -24,10 +24,35 @@
       "import": "./dist/JSONPath/index.mjs",
       "require": "./dist/JSONPath/index.cjs"
     },
+    "./path-common": {
+      "types": "./dist/JSONPath/utils/common.d.ts",
+      "import": "./dist/JSONPath/utils/common.mjs",
+      "require": "./dist/JSONPath/utils/common.cjs"
+    },
     "./pointer": {
       "types": "./dist/JSONPointer/index.d.ts",
       "import": "./dist/JSONPointer/index.mjs",
       "require": "./dist/JSONPointer/index.cjs"
+    },
+    "./pointer-common": {
+      "types": "./dist/JSONPointer/utils/common.d.ts",
+      "import": "./dist/JSONPointer/utils/common.mjs",
+      "require": "./dist/JSONPointer/utils/common.cjs"
+    },
+    "./pointer-escape": {
+      "types": "./dist/JSONPointer/utils/escape/index.d.ts",
+      "import": "./dist/JSONPointer/utils/escape/index.mjs",
+      "require": "./dist/JSONPointer/utils/escape/index.cjs"
+    },
+    "./pointer-manipulator": {
+      "types": "./dist/JSONPointer/utils/manipulator/index.d.ts",
+      "import": "./dist/JSONPointer/utils/manipulator/index.mjs",
+      "require": "./dist/JSONPointer/utils/manipulator/index.cjs"
+    },
+    "./pointer-patch": {
+      "types": "./dist/JSONPointer/utils/patch/index.d.ts",
+      "import": "./dist/JSONPointer/utils/patch/index.mjs",
+      "require": "./dist/JSONPointer/utils/patch/index.cjs"
     }
   },
   "main": "dist/index.cjs",
@@ -38,8 +63,9 @@
     "README.md"
   ],
   "scripts": {
-    "build": "yarn clean && rollup -c && tsc-alias",
+    "build": "yarn clean && yarn build:types && rollup -c",
     "build:chain": "yarn clean && yarn workspaces foreach --recursive --topological run build",
+    "build:types": "tsc -p tsconfig.declarations.json",
     "clean": "rm -rf dist",
     "publish:chain": "yarn build:chain && yarn npm publish --access public",
     "publish:npm": "yarn build && yarn npm publish --access public",
@@ -53,6 +79,10 @@
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-typescript": "^7.26.0",
+    "@rollup/plugin-alias": "^5.1.1",
+    "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-replace": "^6.0.1",
@@ -64,9 +94,8 @@
     "rollup": "^4.42.0",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-typescript2": "^0.36.0",
     "rollup-plugin-visualizer": "^5.12.0",
-    "tsc-alias": "^1.8.10",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.7.2",
     "vite": "^6.3.5",
     "vitest": "2.1.9"

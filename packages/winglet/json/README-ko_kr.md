@@ -41,15 +41,15 @@ pnpm add @winglet/json
 
 ```typescript
 // 메인 내보내기 (모든 JSONPointer 및 JSONPath 유틸리티)
-import { getValueByPointer, setValueByPointer } from '@winglet/json';
+import { getValue, setValue } from '@winglet/json';
 
 // JSONPath 유틸리티
 import { JSONPath } from '@winglet/json/path';
 
 // JSONPointer 유틸리티
 import {
-  getValueByPointer,
-  setValueByPointer,
+  getValue,
+  setValue,
   escapePath,
   unescapePath,
   compare,
@@ -61,9 +61,16 @@ import {
 
 ### 사용 가능한 Sub-path
 
+package.json의 exports 설정을 기반으로 합니다:
+
 - `@winglet/json` - 메인 내보내기 (모든 JSONPointer 및 JSONPath 유틸리티)
 - `@winglet/json/path` - JSONPath 상수 및 유틸리티
-- `@winglet/json/pointer` - JSONPointer 조작, 이스케이핑, 패치 작업
+- `@winglet/json/path-common` - JSONPath 일반 유틸리티
+- `@winglet/json/pointer` - JSONPointer 핵심 유틸리티
+- `@winglet/json/pointer-common` - JSONPointer 일반 유틸리티
+- `@winglet/json/pointer-escape` - JSONPointer 이스케이프 유틸리티 (escapePath, unescapePath)
+- `@winglet/json/pointer-manipulator` - JSONPointer 조작 함수 (getValue, setValue)
+- `@winglet/json/pointer-patch` - JSONPointer 패치 작업 (compare, applyPatch, difference, mergePatch)
 
 ---
 
@@ -103,10 +110,10 @@ RFC 6901을 완전히 준수하는 JSON Pointer 구현을 제공합니다.
 
 ##### 데이터 조작
 
-**[`getValueByPointer`](./src/JSONPointer/utils/manipulator/getValueByPointer.ts)**
+**[`getValue`](./src/JSONPointer/utils/manipulator/getValue.ts)**
 
 ```typescript
-import { getValueByPointer } from '@winglet/json';
+import { getValue } from '@winglet/json';
 
 const data = {
   user: {
@@ -117,21 +124,17 @@ const data = {
   },
 };
 
-const name = getValueByPointer(data, '/user/profile/name');
+const name = getValue(data, '/user/profile/name');
 // 결과: "Vincent"
 ```
 
-**[`setValueByPointer`](./src/JSONPointer/utils/manipulator/setValueByPointer.ts)**
+**[`setValue`](./src/JSONPointer/utils/manipulator/setValue.ts)**
 
 ```typescript
-import { setValueByPointer } from '@winglet/json';
+import { setValue } from '@winglet/json';
 
 const data = { user: { profile: {} } };
-const result = setValueByPointer(
-  data,
-  '/user/profile/email',
-  'vincent@example.com',
-);
+const result = setValue(data, '/user/profile/email', 'vincent@example.com');
 // 결과: { user: { profile: { email: "vincent@example.com" } } }
 ```
 
@@ -241,12 +244,7 @@ interface ApplyPatchOptions {
 ### 기본 사용법
 
 ```typescript
-import {
-  applyPatch,
-  compare,
-  getValueByPointer,
-  setValueByPointer,
-} from '@winglet/json';
+import { applyPatch, compare, getValue, setValue } from '@winglet/json';
 
 // 복잡한 JSON 데이터
 const data = {
@@ -260,11 +258,11 @@ const data = {
 };
 
 // 값 조회
-const theme = getValueByPointer(data, '/users/0/preferences/theme');
+const theme = getValue(data, '/users/0/preferences/theme');
 console.log(theme); // "dark"
 
 // 값 설정
-const updated = setValueByPointer(data, '/settings/app/version', '1.1.0');
+const updated = setValue(data, '/settings/app/version', '1.1.0');
 
 // 변경사항 비교
 const patches = compare(data, updated);
@@ -329,18 +327,18 @@ console.log(result);
 ### 배열 조작
 
 ```typescript
-import { getValueByPointer, setValueByPointer } from '@winglet/json';
+import { getValue, setValue } from '@winglet/json';
 
 const data = {
   items: ['apple', 'banana', 'cherry'],
 };
 
 // 배열 요소 접근
-const secondItem = getValueByPointer(data, '/items/1');
+const secondItem = getValue(data, '/items/1');
 // 결과: "banana"
 
 // 배열 끝에 요소 추가 (RFC 6901의 "-" 사용)
-const withNewItem = setValueByPointer(data, '/items/-', 'date');
+const withNewItem = setValue(data, '/items/-', 'date');
 // 결과: { items: ["apple", "banana", "cherry", "date"] }
 ```
 
@@ -349,10 +347,10 @@ const withNewItem = setValueByPointer(data, '/items/-', 'date');
 ## 오류 처리
 
 ```typescript
-import { JSONPointerError, getValueByPointer } from '@winglet/json';
+import { JSONPointerError, getValue } from '@winglet/json';
 
 try {
-  const value = getValueByPointer({}, '/nonexistent/path');
+  const value = getValue({}, '/nonexistent/path');
 } catch (error) {
   if (error instanceof JSONPointerError) {
     console.error('JSON Pointer 오류:', error.message);

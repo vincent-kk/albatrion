@@ -6,7 +6,7 @@ import { isForbiddenKey } from './isForbiddenKey';
 
 const ADD_ITEM_ALIAS = '-';
 
-export const setValue = <Input extends Dictionary | Array<any>>(
+export const setValueByPointer = <Input extends Dictionary | Array<any>>(
   input: Input,
   segments: string[],
   value: any,

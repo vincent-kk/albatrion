@@ -24,7 +24,7 @@
     "isolatedModules": true,
     // Emit Options
     "declaration": true,
-    "declarationMap": true,
+    "declarationMap": false,
     "sourceMap": true,
     "removeComments": true,
     // Project References

@@ -1,4 +1,4 @@
-import { getValueByPointer } from '@winglet/json';
+import { getValue } from '@winglet/json/pointer';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
@@ -16,7 +16,7 @@ describe('JsonSchemaScannerAsync 실제 데이터 테스트', () => {
       visitor: {
         exit: ({ schema, hasReference }) => {
           if (hasReference && typeof schema.$ref === 'string')
-            defs.set(schema.$ref, getValueByPointer(jsonSchema, schema.$ref));
+            defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
     });
@@ -59,7 +59,7 @@ describe('JsonSchemaScannerAsync 실제 데이터 테스트', () => {
       visitor: {
         exit: ({ schema, hasReference }) => {
           if (hasReference && typeof schema.$ref === 'string')
-            defs.set(schema.$ref, getValueByPointer(jsonSchema, schema.$ref));
+            defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
     });
@@ -151,7 +151,7 @@ describe('JsonSchemaScannerAsync 실제 데이터 테스트', () => {
       visitor: {
         exit: ({ schema, hasReference }) => {
           if (hasReference && typeof schema.$ref === 'string')
-            defs.set(schema.$ref, getValueByPointer(jsonSchema, schema.$ref));
+            defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
     });
@@ -216,7 +216,7 @@ describe('JsonSchemaScannerAsync 실제 데이터 테스트', () => {
       visitor: {
         exit: ({ schema, hasReference }) => {
           if (hasReference && typeof schema.$ref === 'string')
-            defs.set(schema.$ref, getValueByPointer(jsonSchema, schema.$ref));
+            defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
     });
@@ -332,7 +332,7 @@ describe('JsonSchemaScannerAsync 실제 데이터 테스트', () => {
       visitor: {
         exit: ({ schema, hasReference }) => {
           if (hasReference && typeof schema.$ref === 'string')
-            defs.set(schema.$ref, getValueByPointer(jsonSchema, schema.$ref));
+            defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
     });
@@ -417,7 +417,7 @@ describe('JsonSchemaScannerAsync 실제 데이터 테스트', () => {
       visitor: {
         exit: ({ schema, hasReference }) => {
           if (hasReference && typeof schema.$ref === 'string')
-            defs.set(schema.$ref, getValueByPointer(jsonSchema, schema.$ref));
+            defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
     });
@@ -487,7 +487,7 @@ describe('JsonSchemaScannerAsync 실제 데이터 테스트', () => {
       visitor: {
         exit: ({ schema, hasReference }) => {
           if (hasReference && typeof schema.$ref === 'string')
-            defs.set(schema.$ref, getValueByPointer(jsonSchema, schema.$ref));
+            defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
     });

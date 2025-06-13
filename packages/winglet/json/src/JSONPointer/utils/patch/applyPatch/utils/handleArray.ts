@@ -1,7 +1,7 @@
 import { equals } from '@winglet/common-utils/object';
 
-import { getValueByPointer } from '@/json/JSONPointer/utils/manipulator/getValueByPointer';
-import { setValueByPointer } from '@/json/JSONPointer/utils/manipulator/setValueByPointer';
+import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
+import { setValue } from '@/json/JSONPointer/utils/manipulator/setValue';
 import type { JsonArray, JsonRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../type';
@@ -137,8 +137,8 @@ export const handleArray = (
           },
         );
       }
-      array[index] = getValueByPointer(source, patch.from);
-      setValueByPointer(source, patch.from, undefined);
+      array[index] = getValue(source, patch.from);
+      setValue(source, patch.from, undefined);
       return source;
     case Operation.COPY:
       if (isCircularMoveReference(patch.from, patch.path))
@@ -167,7 +167,7 @@ export const handleArray = (
           },
         );
       }
-      array[index] = getValueByPointer(source, patch.from);
+      array[index] = getValue(source, patch.from);
       return source;
     default:
       throw new JsonPatchError(

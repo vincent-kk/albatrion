@@ -1,6 +1,6 @@
 import type { Dictionary } from '@aileron/declare';
 
-export const getValue = <Input extends Dictionary | Array<any>>(
+export const getValueByPointer = <Input extends Dictionary | Array<any>>(
   input: Input,
   segments: string[],
 ): unknown => {

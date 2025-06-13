@@ -66,19 +66,21 @@ import {
 
 ### 사용 가능한 Sub-path
 
-- `@winglet/common-utils` - 메인 내보내기
-- `@winglet/common-utils/lib` - 핵심 라이브러리 유틸리티
-- `@winglet/common-utils/error` - 에러 클래스 및 유틸리티
-- `@winglet/common-utils/constant` - 공통 상수
-- `@winglet/common-utils/array` - 배열 조작 유틸리티
-- `@winglet/common-utils/console` - 콘솔 유틸리티
-- `@winglet/common-utils/convert` - 타입 변환 유틸리티
-- `@winglet/common-utils/filter` - 타입 검사 및 필터링 유틸리티
-- `@winglet/common-utils/function` - 함수 유틸리티 (debounce, throttle 등)
-- `@winglet/common-utils/hash` - 해시 알고리즘
-- `@winglet/common-utils/object` - 객체 조작 유틸리티
-- `@winglet/common-utils/promise` - Promise 유틸리티
-- `@winglet/common-utils/scheduler` - 작업 스케줄링 유틸리티
+package.json의 exports 설정을 기반으로 합니다:
+
+- `@winglet/common-utils` - 메인 내보내기 (모든 유틸리티)
+- `@winglet/common-utils/lib` - 핵심 라이브러리 유틸리티 (캐시, 카운터, 스케줄러)
+- `@winglet/common-utils/error` - 에러 클래스 및 유틸리티 (BaseError, AbortError 등)
+- `@winglet/common-utils/constant` - 공통 상수 (시간, 타입 태그, 단위)
+- `@winglet/common-utils/filter` - 타입 검사 및 필터링 유틸리티 (isArray, isObject 등)
+- `@winglet/common-utils/array` - 배열 조작 유틸리티 (chunk, unique, difference 등)
+- `@winglet/common-utils/console` - 콘솔 유틸리티 (printError)
+- `@winglet/common-utils/convert` - 타입 변환 유틸리티 (convertMsFromDuration)
+- `@winglet/common-utils/function` - 함수 유틸리티 (debounce, throttle, getTrackableHandler)
+- `@winglet/common-utils/hash` - 해시 알고리즘 (Murmur3)
+- `@winglet/common-utils/object` - 객체 조작 유틸리티 (clone, merge, equals 등)
+- `@winglet/common-utils/promise` - Promise 유틸리티 (delay, timeout, withTimeout 등)
+- `@winglet/common-utils/scheduler` - 작업 스케줄링 유틸리티 (scheduleMacrotask, scheduleMicrotask 등)
 
 ---
 

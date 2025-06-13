@@ -11,18 +11,6 @@
       "@/json/*": [
         "./winglet/json/src/*"
       ],
-      "@winglet/json": [
-        "./winglet/json/src"
-      ],
-      "@winglet/json/*": [
-        "./winglet/json/src/*"
-      ],
-      "@winglet/json/path": [
-        "./winglet/json/src/JSONPath"
-      ],
-      "@winglet/json/pointer": [
-        "./winglet/json/src/JSONPointer"
-      ],
       "@aileron/*": [
         "./aileron/common/*"
       ]

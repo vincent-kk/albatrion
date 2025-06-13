@@ -15,15 +15,6 @@
       "@/json-schema/*": [
         "./winglet/json-schema/src/*"
       ],
-      "@/json-schema/scanner": [
-        "./winglet/json-schema/src/utils/JsonSchemaScanner/sync"
-      ],
-      "@/json-schema/async-scanner": [
-        "./winglet/json-schema/src/utils/JsonSchemaScanner/async"
-      ],
-      "@/json-schema/filter": [
-        "./winglet/json-schema/src/filter"
-      ],
       "@aileron/*": [
         "./aileron/common/*"
       ]

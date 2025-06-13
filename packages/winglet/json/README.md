@@ -41,15 +41,15 @@ This package supports sub-path imports to enable more granular imports and optim
 
 ```typescript
 // Main exports (all JSONPointer and JSONPath utilities)
-import { getValueByPointer, setValueByPointer } from '@winglet/json';
+import { getValue, setValue } from '@winglet/json';
 
 // JSONPath utilities
 import { JSONPath } from '@winglet/json/path';
 
 // JSONPointer utilities
 import {
-  getValueByPointer,
-  setValueByPointer,
+  getValue,
+  setValue,
   escapePath,
   unescapePath,
   compare,
@@ -61,9 +61,16 @@ import {
 
 ### Available Sub-paths
 
+Based on the package.json exports configuration:
+
 - `@winglet/json` - Main exports (all JSONPointer and JSONPath utilities)
 - `@winglet/json/path` - JSONPath constants and utilities
-- `@winglet/json/pointer` - JSONPointer manipulation, escaping, and patch operations
+- `@winglet/json/path-common` - JSONPath common utilities
+- `@winglet/json/pointer` - JSONPointer core utilities
+- `@winglet/json/pointer-common` - JSONPointer common utilities
+- `@winglet/json/pointer-escape` - JSONPointer escaping utilities (escapePath, unescapePath)
+- `@winglet/json/pointer-manipulator` - JSONPointer manipulation functions (getValue, setValue)
+- `@winglet/json/pointer-patch` - JSONPointer patch operations (compare, applyPatch, difference, mergePatch)
 
 ---
 
@@ -103,10 +110,10 @@ Provides a complete JSON Pointer implementation that fully complies with RFC 690
 
 ##### Data Manipulation
 
-**[`getValueByPointer`](./src/JSONPointer/utils/manipulator/getValueByPointer.ts)**
+**[`getValue`](./src/JSONPointer/utils/manipulator/getValue.ts)**
 
 ```typescript
-import { getValueByPointer } from '@winglet/json';
+import { getValue } from '@winglet/json';
 
 const data = {
   user: {
@@ -117,21 +124,17 @@ const data = {
   },
 };
 
-const name = getValueByPointer(data, '/user/profile/name');
+const name = getValue(data, '/user/profile/name');
 // Result: "Vincent"
 ```
 
-**[`setValueByPointer`](./src/JSONPointer/utils/manipulator/setValueByPointer.ts)**
+**[`setValue`](./src/JSONPointer/utils/manipulator/setValue.ts)**
 
 ```typescript
-import { setValueByPointer } from '@winglet/json';
+import { setValue } from '@winglet/json';
 
 const data = { user: { profile: {} } };
-const result = setValueByPointer(
-  data,
-  '/user/profile/email',
-  'vincent@example.com',
-);
+const result = setValue(data, '/user/profile/email', 'vincent@example.com');
 // Result: { user: { profile: { email: "vincent@example.com" } } }
 ```
 
@@ -241,12 +244,7 @@ interface ApplyPatchOptions {
 ### Basic Usage
 
 ```typescript
-import {
-  applyPatch,
-  compare,
-  getValueByPointer,
-  setValueByPointer,
-} from '@winglet/json';
+import { applyPatch, compare, getValue, setValue } from '@winglet/json';
 
 // Complex JSON data
 const data = {
@@ -260,11 +258,11 @@ const data = {
 };
 
 // Value retrieval
-const theme = getValueByPointer(data, '/users/0/preferences/theme');
+const theme = getValue(data, '/users/0/preferences/theme');
 console.log(theme); // "dark"
 
 // Value setting
-const updated = setValueByPointer(data, '/settings/app/version', '1.1.0');
+const updated = setValue(data, '/settings/app/version', '1.1.0');
 
 // Change comparison
 const patches = compare(data, updated);
@@ -329,18 +327,18 @@ console.log(result);
 ### Array Manipulation
 
 ```typescript
-import { getValueByPointer, setValueByPointer } from '@winglet/json';
+import { getValue, setValue } from '@winglet/json';
 
 const data = {
   items: ['apple', 'banana', 'cherry'],
 };
 
 // Array element access
-const secondItem = getValueByPointer(data, '/items/1');
+const secondItem = getValue(data, '/items/1');
 // Result: "banana"
 
 // Add element to end of array (using RFC 6901 "-" syntax)
-const withNewItem = setValueByPointer(data, '/items/-', 'date');
+const withNewItem = setValue(data, '/items/-', 'date');
 // Result: { items: ["apple", "banana", "cherry", "date"] }
 ```
 
@@ -349,10 +347,10 @@ const withNewItem = setValueByPointer(data, '/items/-', 'date');
 ## Error Handling
 
 ```typescript
-import { JSONPointerError, getValueByPointer } from '@winglet/json';
+import { JSONPointerError, getValue } from '@winglet/json';
 
 try {
-  const value = getValueByPointer({}, '/nonexistent/path');
+  const value = getValue({}, '/nonexistent/path');
 } catch (error) {
   if (error instanceof JSONPointerError) {
     console.error('JSON Pointer Error:', error.message);

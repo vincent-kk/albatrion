@@ -10,42 +10,6 @@
       "@/common-utils/*": [
         "./winglet/common-utils/src/*"
       ],
-      "@/common-utils/lib": [
-        "./winglet/common-utils/src/lib"
-      ],
-      "@/common-utils/error": [
-        "./winglet/common-utils/src/errors"
-      ],
-      "@/common-utils/constant": [
-        "./winglet/common-utils/src/constant"
-      ],
-      "@/common-utils/filter": [
-        "./winglet/common-utils/src/utils/filter"
-      ],
-      "@/common-utils/array": [
-        "./winglet/common-utils/src/utils/array"
-      ],
-      "@/common-utils/console": [
-        "./winglet/common-utils/src/utils/console"
-      ],
-      "@/common-utils/convert": [
-        "./winglet/common-utils/src/utils/convert"
-      ],
-      "@/common-utils/function": [
-        "./winglet/common-utils/src/utils/function"
-      ],
-      "@/common-utils/hash": [
-        "./winglet/common-utils/src/utils/hash"
-      ],
-      "@/common-utils/object": [
-        "./winglet/common-utils/src/utils/object"
-      ],
-      "@/common-utils/promise": [
-        "./winglet/common-utils/src/utils/promise"
-      ],
-      "@/common-utils/scheduler": [
-        "./winglet/common-utils/src/utils/scheduler"
-      ],
       "@aileron/*": [
         "./aileron/common/*"
       ]
