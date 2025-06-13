@@ -20,7 +20,7 @@ import type {
   FormatError,
 } from '@/schema-form/types';
 
-import { ValidatorPlugin } from './type';
+import type { ValidatorPlugin } from './type';
 
 interface RenderKit {
   FormGroup: ComponentType<FormTypeRendererProps>;
