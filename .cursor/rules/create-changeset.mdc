@@ -158,5 +158,6 @@ npm install @package/name@X.X.X @package/plugin@X.X.X
 - **ALWAYS write changeset content in English only**
 - Use the emoji structure consistently
 - Link to package READMEs for detailed usage
+- After create changeset, make Markdonw file in root(./release-node-yyyyMMdd.md)
 
 Please follow this guide to create concise, user-friendly release notes that developers can quickly scan and understand.
