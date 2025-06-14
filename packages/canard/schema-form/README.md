@@ -24,6 +24,8 @@ By defining various `FormTypeInput` components, it offers the flexibility to acc
 yarn add @canard/schema-form
 # Also install a validator plugin
 yarn add @canard/schema-form-ajv8-plugin
+# Or for AJV 7.x
+yarn add @canard/schema-form-ajv7-plugin
 # Or for AJV 6.x
 yarn add @canard/schema-form-ajv6-plugin
 ```
@@ -291,8 +293,9 @@ export const App = () => {
 
 ### Available Validator Plugins
 
-- **@canard/schema-form-ajv8-plugin**: AJV 8.x based (latest JSON Schema support)
-- **@canard/schema-form-ajv6-plugin**: AJV 6.x based (legacy environment support)
+- [**@canard/schema-form-ajv8-plugin**](../schema-form-ajv8-plugin/README.md): AJV 8.x based (latest JSON Schema support)
+- [**@canard/schema-form-ajv7-plugin**](../schema-form-ajv7-plugin/README.md): AJV 7.x based (legacy environment support)
+- [**@canard/schema-form-ajv6-plugin**](../schema-form-ajv6-plugin/README.md): AJV 6.x based (legacy environment support)
 
 Please refer to each plugin's README for detailed usage instructions.
 
@@ -521,6 +524,85 @@ export const CustomizedForm = () => {
 ```
 
 This powerful system allows developers to have fine-grained control over every aspect of their forms while minimizing code duplication.
+
+---
+
+## Plugin System
+
+`@canard/schema-form` provides a plugin system that allows developers to extend the library and add custom functionality.
+
+### Plugin Registration
+
+```tsx
+import { registerPlugin } from '@canard/schema-form';
+import { plugin as AjvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as AntdPlugin } from '@canard/schema-form-antd-plugin';
+
+registerPlugin(AntdPlugin);
+registerPlugin(AjvValidatorPlugin);
+```
+
+### Available Plugins
+
+#### UI Plugins
+
+- [**@canard/schema-form-antd-plugin**](../schema-form-antd-plugin/README.md): Ant Design based basic components
+- [**@canard/schema-form-antd-mobile-plugin**](../schema-form-antd-mobile-plugin/README.md): Ant Design Mobile based basic components
+- [**@canard/schema-form-mui-plugin**](../schema-form-mui-plugin/README.md): MUI based basic components
+
+#### Validator Plugins
+
+- [**@canard/schema-form-ajv8-plugin**](../schema-form-ajv8-plugin/README.md): AJV 8.x based (latest JSON Schema support)
+- [**@canard/schema-form-ajv7-plugin**](../schema-form-ajv7-plugin/README.md): AJV 7.x based (legacy environment support)
+- [**@canard/schema-form-ajv6-plugin**](../schema-form-ajv6-plugin/README.md): AJV 6.x based (legacy environment support)
+
+## Custom Plugin System
+
+`@canard/schema-form` provides a plugin system that allows developers to write and register custom plugins.
+
+### Plugin Type Structure
+
+```ts
+export interface SchemaFormPlugin {
+  /** Form.Group Component */
+  FormGroup?: ComponentType<FormTypeRendererProps>;
+  /** Form.Label Component */
+  FormLabel?: ComponentType<FormTypeRendererProps>;
+  /** Form.Input Component */
+  FormInput?: ComponentType<FormTypeRendererProps>;
+  /** Form.Error Component */
+  FormError?: ComponentType<FormTypeRendererProps>;
+  /** FormTypeInputDefinition */
+  formTypeInputDefinitions?: FormTypeInputDefinition[];
+  /** Validator Plugin */
+  validator?: ValidatorPlugin;
+  /** Formatting Error Function */
+  formatError?: FormatError;
+}
+
+export interface ValidatorPlugin {
+  /** Inject Custom Validator Instance */
+  bind: Fn<[instance: any]>;
+  /** Validator Factory Function */
+  compile: ValidatorFactory;
+}
+
+export interface ValidatorFactory {
+  (schema: JsonSchema): ValidateFunction<any>;
+}
+```
+
+### Plugin Registration Rules
+
+If multiple plugins are registered for the same property, the following priority rules apply:
+
+| Property                                           | Allowed Count      | Priority Rule                                    |
+| -------------------------------------------------- | ------------------ | ------------------------------------------------ |
+| `FormGroup`, `FormLabel`, `FormInput`, `FormError` | One only           | The last registered component is applied.        |
+| `formTypeInputDefinitions`                         | Multiple mergeable | Merged, and the last registered item is applied. |
+| `validator`, `formatError`                         | One only           | The last registered item is applied.             |
+
+This structure provides consistent priority and extensibility even when using multiple plugins.
 
 ---
 

@@ -24,6 +24,8 @@ JSON Schema 검증은 플러그인 시스템을 통해 지원되며, 다양한 v
 yarn add @canard/schema-form
 # Validator plugin도 함께 설치
 yarn add @canard/schema-form-ajv8-plugin
+# 또는 AJV 7.x를 사용하는 경우
+yarn add @canard/schema-form-ajv7-plugin
 # 또는 AJV 6.x를 사용하는 경우
 yarn add @canard/schema-form-ajv6-plugin
 ```
@@ -290,8 +292,9 @@ export const App = () => {
 
 ### 사용 가능한 Validator Plugin
 
-- **@canard/schema-form-ajv8-plugin**: AJV 8.x 기반 (최신 JSON Schema 지원)
-- **@canard/schema-form-ajv6-plugin**: AJV 6.x 기반 (레거시 환경 지원)
+- [**@canard/schema-form-ajv8-plugin**](../schema-form-ajv8-plugin/README-ko_kr.md): AJV 8.x 기반 (최신 JSON Schema 지원)
+- [**@canard/schema-form-ajv7-plugin**](../schema-form-ajv7-plugin/README-ko_kr.md): AJV 7.x 기반 (레거시 환경 지원)
+- [**@canard/schema-form-ajv6-plugin**](../schema-form-ajv6-plugin/README-ko_kr.md): AJV 6.x 기반 (레거시 환경 지원)
 
 각 플러그인의 자세한 사용법은 해당 플러그인의 README를 참조하세요.
 
@@ -518,6 +521,85 @@ export const CustomizedForm = () => {
 ```
 
 이 강력한 시스템은 개발자가 양식의 모든 측면에 대해 세밀한 제어를 유지하면서 코드 중복을 최소화할 수 있도록 합니다.
+
+---
+
+## Plugin System
+
+`@canard/schema-form`은 개발자가 라이브러리를 확장하고 사용자 정의 기능을 추가할 수 있는 플러그인 시스템을 제공합니다.
+
+### Plugin Registration
+
+```tsx
+import { registerPlugin } from '@canard/schema-form';
+import { plugin as AjvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as AntdPlugin } from '@canard/schema-form-antd-plugin';
+
+registerPlugin(AntdPlugin);
+registerPlugin(AjvValidatorPlugin);
+```
+
+### 사용 가능한 플러그인
+
+#### UI Plugins
+
+- [**@canard/schema-form-antd-plugin**](../schema-form-antd-plugin/README-ko_kr.md): Ant Design 기반 기초 컴포넌트 제공
+- [**@canard/schema-form-antd-mobile-plugin**](../schema-form-antd-mobile-plugin/README-ko_kr.md): Ant Design Mobile 기반 기초 컴포넌트 제공
+- [**@canard/schema-form-mui-plugin**](../schema-form-mui-plugin/README-ko_kr.md): MUI 기반 기초 컴포넌트 제공
+
+#### Validator Plugins
+
+- [**@canard/schema-form-ajv8-plugin**](../schema-form-ajv8-plugin/README-ko_kr.md): AJV 8.x 기반 (최신 JSON Schema 지원)
+- [**@canard/schema-form-ajv7-plugin**](../schema-form-ajv7-plugin/README-ko_kr.md): AJV 7.x 기반 (레거시 환경 지원)
+- [**@canard/schema-form-ajv6-plugin**](../schema-form-ajv6-plugin/README-ko_kr.md): AJV 6.x 기반 (레거시 환경 지원)
+
+## 커스텀 플러그인 시스템
+
+`@canard/schema-form`은 개발자가 사용자 정의 플러그인을 작성하고 등록할 수 있는 플러그인 시스템을 제공합니다.
+
+### 플러그인 타입 구조
+
+```ts
+export interface SchemaFormPlugin {
+  /** Form.Group 컴포넌트 */
+  FormGroup?: ComponentType<FormTypeRendererProps>;
+  /** Form.Label 컴포넌트 */
+  FormLabel?: ComponentType<FormTypeRendererProps>;
+  /** Form.Input 컴포넌트 */
+  FormInput?: ComponentType<FormTypeRendererProps>;
+  /** Form.Error 컴포넌트 */
+  FormError?: ComponentType<FormTypeRendererProps>;
+  /** 사용자 정의 입력 타입 정의 */
+  formTypeInputDefinitions?: FormTypeInputDefinition[];
+  /** 사용자 정의 유효성 검사기 플러그인 */
+  validator?: ValidatorPlugin;
+  /** 에러 메시지 포매팅 함수 */
+  formatError?: FormatError;
+}
+
+export interface ValidatorPlugin {
+  /** 외부 Validator 인스턴스 주입 */
+  bind: Fn<[instance: any]>;
+  /** 스키마 기반 Validator 생성 함수 */
+  compile: ValidatorFactory;
+}
+
+export interface ValidatorFactory {
+  (schema: JsonSchema): ValidateFunction<any>;
+}
+```
+
+### 플러그인 등록 규칙
+
+동일한 속성에 대해 여러 개의 플러그인이 등록된 경우, 다음과 같은 우선순위 규칙이 적용됩니다.
+
+| 속성                                               | 허용 개수         | 우선순위 규칙                                     |
+| -------------------------------------------------- | ----------------- | ------------------------------------------------- |
+| `FormGroup`, `FormLabel`, `FormInput`, `FormError` | 하나만 허용       | 마지막에 등록한 컴포넌트가 적용됩니다.            |
+| `formTypeInputDefinitions`                         | 여러 개 병합 가능 | 병합되며, 마지막에 등록한 항목이 우선 적용됩니다. |
+| `validator`, `formatError`                         | 하나만 허용       | 마지막에 등록한 항목이 적용됩니다.                |
+
+이 구조는 다양한 플러그인을 조합해 사용하는 경우에도 일관된 우선순위와 확장성을 제공합니다.
 
 ---
 
