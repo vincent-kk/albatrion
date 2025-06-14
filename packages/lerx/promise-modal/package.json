@@ -31,11 +31,12 @@
   "scripts": {
     "build": "rollup -c && yarn build:types",
     "build-storybook": "storybook build",
+    "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.declarations.json",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "make-dependency-graph": "npx depcruise src --config .dependency-cruiser.js --output-type dot > dependency-graph.dot && dot -Tpng dependency-graph.dot -o dependency-graph.png",
-    "publish:npm": "yarn build && yarn npm publish --access public",
+    "publish:npm": "yarn npm publish --access public",
     "size-limit": "size-limit",
     "start": "yarn build && yarn storybook",
     "storybook": "storybook dev -p 6006",

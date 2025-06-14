@@ -72,9 +72,10 @@
   ],
   "scripts": {
     "build": "rollup -c && yarn build:types",
+    "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.declarations.json",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
-    "publish:npm": "yarn build && yarn npm publish --access public",
+    "publish:npm": "yarn npm publish --access public",
     "test": "vitest",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
