@@ -1,6 +1,22 @@
 {
   "name": "@canard/schema-form-mui-plugin",
   "version": "0.2.0",
+  "description": "Material-UI (MUI) components plugin for @canard/schema-form providing pre-built form inputs with modern MUI styling and MUI X integration",
+  "keywords": [
+    "@canard/schema-form",
+    "schema-form",
+    "canard-form",
+    "react",
+    "json-schema",
+    "form",
+    "material-ui",
+    "mui",
+    "plugin",
+    "typescript",
+    "material-design",
+    "mui-x",
+    "form-components"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/vincent-kk/albatrion.git",

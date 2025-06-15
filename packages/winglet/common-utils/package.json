@@ -1,6 +1,24 @@
 {
   "name": "@winglet/common-utils",
   "version": "0.2.0",
+  "description": "Comprehensive utility library providing commonly used functions for JavaScript/TypeScript projects including array processing, object manipulation, Promise handling, and type checking",
+  "keywords": [
+    "typescript",
+    "javascript",
+    "utilities",
+    "array",
+    "object",
+    "promise",
+    "type-checking",
+    "filter",
+    "cache",
+    "hash",
+    "scheduler",
+    "debounce",
+    "throttle",
+    "dataloader",
+    "functional-programming"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/vincent-kk/albatrion.git",

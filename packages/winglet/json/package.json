@@ -1,6 +1,19 @@
 {
   "name": "@winglet/json",
   "version": "0.2.0",
+  "description": "TypeScript library for safe and efficient JSON data manipulation with RFC 6901 (JSON Pointer) and RFC 6902 (JSON Patch) compliance, featuring prototype pollution protection and immutable operations",
+  "keywords": [
+    "typescript",
+    "json",
+    "json-pointer",
+    "json-patch",
+    "rfc-6901",
+    "rfc-6902",
+    "json-path",
+    "data-manipulation",
+    "utilities",
+    "standards-compliant"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/vincent-kk/albatrion.git",

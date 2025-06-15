@@ -1,6 +1,21 @@
 {
   "name": "@canard/schema-form-antd-plugin",
   "version": "0.2.0",
+  "description": "Ant Design components plugin for @canard/schema-form providing pre-built form inputs with advanced components like date pickers, sliders, and file uploads",
+  "keywords": [
+    "@canard/schema-form",
+    "schema-form",
+    "canard-form",
+    "react",
+    "json-schema",
+    "form",
+    "antd",
+    "ant-design",
+    "plugin",
+    "typescript",
+    "form-components",
+    "ui-library"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/vincent-kk/albatrion.git",

@@ -1,6 +1,24 @@
 {
   "name": "@lerx/promise-modal",
   "version": "0.2.0",
+  "description": "Universal React modal utility that can be used outside React components with promise-based results for alert, confirm, and prompt modals",
+  "keywords": [
+    "react",
+    "modal",
+    "promise",
+    "alert",
+    "confirm",
+    "prompt",
+    "typescript",
+    "utility",
+    "ui-components",
+    "dialog",
+    "popup",
+    "toast",
+    "notification",
+    "modal-utility",
+    "imperative-ui"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/vincent-kk/albatrion.git",

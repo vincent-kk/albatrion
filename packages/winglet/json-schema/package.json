@@ -1,6 +1,16 @@
 {
   "name": "@winglet/json-schema",
   "version": "0.2.0",
+  "description": "Powerful utility library for JSON Schema manipulation featuring schema traversal, validation, reference resolution, and filtering with TypeScript support and visitor pattern implementation",
+  "keywords": [
+    "typescript",
+    "json-schema",
+    "schema-traversal",
+    "reference-resolution",
+    "type-checking",
+    "schema-filtering",
+    "utilities"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/vincent-kk/albatrion.git",

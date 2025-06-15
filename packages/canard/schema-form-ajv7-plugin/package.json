@@ -1,6 +1,21 @@
 {
   "name": "@canard/schema-form-ajv7-plugin",
   "version": "0.2.0",
+  "description": "AJV 7.x validator plugin for @canard/schema-form providing JSON Schema validation with Draft-07 and Draft 2019-09 support",
+  "keywords": [
+    "@canard/schema-form",
+    "schema-form",
+    "plugin",
+    "react",
+    "json-schema",
+    "validation",
+    "validator",
+    "ajv",
+    "ajv7",
+    "canard-form",
+    "typescript",
+    "form-validation"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/vincent-kk/albatrion.git",

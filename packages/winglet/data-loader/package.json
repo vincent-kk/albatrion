@@ -1,6 +1,22 @@
 {
   "name": "@winglet/data-loader",
   "version": "0.2.0",
+  "description": "Batching and caching utility for asynchronous data fetching inspired by GraphQL DataLoader, providing efficient request batching and built-in cache system with TypeScript support",
+  "keywords": [
+    "typescript",
+    "dataloader",
+    "batching",
+    "caching",
+    "async",
+    "data-fetching",
+    "performance",
+    "optimization",
+    "batch-loading",
+    "cache-system",
+    "promise",
+    "utilities",
+    "n+1-problem"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/vincent-kk/albatrion.git",

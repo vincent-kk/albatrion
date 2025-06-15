@@ -1,6 +1,22 @@
 {
   "name": "@canard/schema-form-antd-mobile-plugin",
   "version": "0.2.0",
+  "description": "Ant Design Mobile components plugin for @canard/schema-form providing mobile-optimized form inputs for React Native and mobile web",
+  "keywords": [
+    "@canard/schema-form",
+    "schema-form",
+    "canard-form",
+    "react",
+    "json-schema",
+    "form",
+    "antd-mobile",
+    "ant-design-mobile",
+    "mobile",
+    "plugin",
+    "typescript",
+    "mobile-ui",
+    "responsive"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/vincent-kk/albatrion.git",
