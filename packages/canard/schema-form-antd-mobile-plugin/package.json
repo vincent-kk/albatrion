@@ -3,19 +3,19 @@
   "version": "0.2.1",
   "description": "Ant Design Mobile components plugin for @canard/schema-form providing mobile-optimized form inputs for React Native and mobile web",
   "keywords": [
+    "react",
     "@canard/schema-form",
     "schema-form",
     "canard-form",
-    "react",
     "json-schema",
     "form",
+    "plugin",
     "antd-mobile",
     "ant-design-mobile",
     "mobile",
-    "plugin",
-    "typescript",
     "mobile-ui",
-    "responsive"
+    "responsive",
+    "typescript"
   ],
   "repository": {
     "type": "git",

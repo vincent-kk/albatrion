@@ -4,14 +4,16 @@
   "description": "React-based component library that renders forms based on JSON Schema with plugin system support for validators and UI components",
   "keywords": [
     "react",
+    "@canard/schema-form",
+    "schema-form",
+    "canard-form",
     "json-schema",
     "form",
     "form-builder",
-    "schema-form",
-    "typescript",
+    "form-generator",
     "validation",
     "ui-components",
-    "form-generator"
+    "typescript"
   ],
   "repository": {
     "type": "git",
