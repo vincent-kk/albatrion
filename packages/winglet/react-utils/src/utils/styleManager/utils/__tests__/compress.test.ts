@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { compress } from '../utils/compress';
+import { compressCss } from '../compressCss';
 
-describe('compress', () => {
+describe('compressCss', () => {
   it('빈 문자열에 대해 빈 문자열을 반환해야 합니다', () => {
-    const result = compress('');
+    const result = compressCss('');
     expect(result).toBe('');
   });
 
@@ -15,7 +15,7 @@ describe('compress', () => {
         background: blue;
       }
     `;
-    const result = compress(input);
+    const result = compressCss(input);
     expect(result).toBe('.class{color:red;background:blue}');
   });
 
@@ -30,7 +30,7 @@ describe('compress', () => {
         padding:   5px;
       }
     `;
-    const result = compress(input);
+    const result = compressCss(input);
     expect(result).toBe(
       '.class1{color:red;margin:10px 20px}.class2{padding:5px}',
     );
@@ -45,7 +45,7 @@ describe('compress', () => {
       }
       /* 또 다른 주석 */
     `;
-    const result = compress(input);
+    const result = compressCss(input);
     expect(result).toBe('.class{color:red;background:blue}');
   });
 
@@ -63,7 +63,7 @@ describe('compress', () => {
         background: blue;
       }
     `;
-    const result = compress(input);
+    const result = compressCss(input);
     expect(result).toBe('.class{color:red;background:blue}');
   });
 
@@ -74,7 +74,7 @@ describe('compress', () => {
         background: blue;
       }
     `;
-    const result = compress(input);
+    const result = compressCss(input);
     expect(result).toBe('.class{color:red;background:blue}');
   });
 
@@ -88,7 +88,7 @@ describe('compress', () => {
         margin: 10px;
       }
     `;
-    const result = compress(input);
+    const result = compressCss(input);
     expect(result).toBe(
       '.parent{color:red}.parent .child{background:blue;margin:10px}',
     );
@@ -104,7 +104,7 @@ describe('compress', () => {
         margin: 0;
       }
     `;
-    const result = compress(input);
+    const result = compressCss(input);
     expect(result).toBe(
       '.class1 .class2>.class3{color:red}.class4+.class5{margin:0}',
     );
@@ -118,7 +118,7 @@ describe('compress', () => {
         }
       }
     `;
-    const result = compress(input);
+    const result = compressCss(input);
     expect(result).toBe(
       '@media screen and (max-width:768px){.class{display:none}}',
     );
@@ -135,7 +135,7 @@ describe('compress', () => {
         }
       }
     `;
-    const result = compress(input);
+    const result = compressCss(input);
     expect(result).toBe('@keyframes fadeIn{0%{opacity:0}100%{opacity:1}}');
   });
 
@@ -155,7 +155,8 @@ describe('compress', () => {
         }
       }
     `;
-    const result = compress(input);
+    const result = compressCss(input);
+    // 현재 출력 : ('.container{width:100%;max-width:1200px;margin:0 auto}@media (max-width:768px){.container{padding:0 16px;}}');
     expect(result).toBe(
       '.container{width:100%;max-width:1200px;margin:0 auto}@media (max-width:768px){.container{padding:0 16px}}',
     );

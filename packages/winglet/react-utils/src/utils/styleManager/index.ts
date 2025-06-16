@@ -1,4 +1,6 @@
 export { destroyScope } from './destroyScope';
+export { styleManagerFactory } from './styleManagerFactory';
+
 export { dataCondition } from './utils/dataCondition';
 export { dataAttributes } from './utils/dataAttributes';
-export { styleManagerFactory } from './styleManagerFactory';
+export { compressCss } from './utils/compressCss';
