@@ -1,5 +1,6 @@
 import { getRandomString } from '@winglet/common-utils/lib';
 import {
+  compressCss,
   destroyScope,
   styleManagerFactory,
 } from '@winglet/react-utils/style-manager';
@@ -55,11 +56,11 @@ export class ModalManager {
   static #styleManager = styleManagerFactory(ModalManager.#scope);
   static #styleSheetDefinition = new Map<string, string>();
   static defineStyleSheet(styleId: string, css: string) {
-    ModalManager.#styleSheetDefinition.set(styleId, css);
+    ModalManager.#styleSheetDefinition.set(styleId, compressCss(css));
   }
   static applyStyleSheet() {
     for (const [styleId, css] of ModalManager.#styleSheetDefinition)
-      ModalManager.#styleManager(styleId, css);
+      ModalManager.#styleManager(styleId, css, true);
   }
 
   static reset() {
