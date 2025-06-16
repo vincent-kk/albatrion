@@ -58,6 +58,7 @@ Based on the package.json exports configuration:
 - `@winglet/react-utils/filter` - React component type checking utilities (isReactComponent, isReactElement, etc.)
 - `@winglet/react-utils/object` - React-specific object utilities (extractProps, mergeRefs)
 - `@winglet/react-utils/render` - Component rendering utilities (renderComponent)
+- `@winglet/react-utils/style-manager` - Style management utilities (styleManagerFactory, destroyScope)
 
 ---
 
@@ -135,6 +136,14 @@ Various utility functions for working with React components.
 #### Rendering Utilities
 
 - [`renderComponent`](./src/utils/render/renderComponent.tsx) - Appropriately renders various types of components.
+
+#### Style Management
+
+- [`styleManagerFactory`](./src/utils/styleManager/styleManagerFactory.ts) - Creates a style manager factory function.
+- [`destroyScope`](./src/utils/styleManager/destroyScope.ts) - Destroys a style scope.
+- [`dataCondition`](./src/utils/styleManager/utils/dataCondition.ts) - Converts a boolean condition to a React-compatible attribute value. (truthy -> true, falsy -> undefined)
+- [`dataAttributes`](./src/utils/styleManager/utils/dataAttributes.ts) - Creates data attributes from a record of boolean values. (truthy -> true, falsy -> undefined)
+- [`compressCss`](./src/utils/styleManager/utils/compressCss.ts) - Compresses CSS string.
 
 ---
 

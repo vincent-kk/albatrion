@@ -38,7 +38,7 @@ export const BootstrapProvider = forwardRef<
       [useExternalPathname],
     );
 
-    const { anchorRef, handleInitialize } = useInitialize();
+    const { anchorRef, handleInitialize, handleReset } = useInitialize();
 
     useImperativeHandle(
       handleRef,
@@ -57,6 +57,7 @@ export const BootstrapProvider = forwardRef<
       if (handleRef === null) handleInitialize();
       return () => {
         if (anchorRef.current) anchorRef.current.remove();
+        handleReset();
       };
     });
 

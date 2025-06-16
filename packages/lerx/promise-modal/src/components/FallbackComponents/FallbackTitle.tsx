@@ -1,7 +1,5 @@
 import type { PropsWithChildren } from 'react';
 
-import { fallback } from './classNames.emotion';
-
 export const FallbackTitle = ({ children }: PropsWithChildren) => {
-  return <h2 className={fallback}>{children}</h2>;
+  return <h2 style={{ margin: 'unset' }}>{children}</h2>;
 };

@@ -8,8 +8,6 @@ import {
 import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
 import type { ModalFrameProps } from '@/promise-modal/types';
 
-import { frame } from './classNames.emotion';
-
 const MAX_MODAL_COUNT = 5;
 const MAX_MODAL_LEVEL = 3;
 
@@ -31,12 +29,19 @@ export const FallbackForegroundFrame = forwardRef(
     return (
       <div
         ref={ref}
-        className={frame}
         onClick={onChangeOrder}
         style={{
           marginBottom: `calc(25vh + ${level}px)`,
           marginLeft: `${level}px`,
           transform: `translate(${offset}px, ${offset}px)`,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'white',
+          padding: '20px 80px',
+          gap: '10px',
+          border: '1px solid black',
         }}
       >
         {children}

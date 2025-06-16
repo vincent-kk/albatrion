@@ -14,6 +14,7 @@ export const useInitialize = () => {
     (root?: HTMLElement) => {
       if (permitted.current) {
         anchorRef.current = ModalManager.anchor({ root });
+        ModalManager.applyStyleSheet();
         update();
       } else
         printError(
@@ -30,8 +31,13 @@ export const useInitialize = () => {
     [update],
   );
 
+  const handleReset = useCallback(() => {
+    ModalManager.reset();
+  }, []);
+
   return {
     anchorRef,
     handleInitialize,
+    handleReset,
   } as const;
 };

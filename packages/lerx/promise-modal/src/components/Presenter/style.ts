@@ -1,6 +1,5 @@
-import { css } from '@emotion/css';
-
-export const presenter = css`
+export const style = `
+[data-presenter] {
   position: fixed;
   inset: 0;
   pointer-events: none;
