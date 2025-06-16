@@ -4,8 +4,6 @@ import React, {
   forwardRef,
 } from 'react';
 
-import { css } from '@emotion/css';
-
 import { type ModalFrameProps } from '../../src';
 
 export const FallbackForegroundFrame = forwardRef(
@@ -14,20 +12,22 @@ export const FallbackForegroundFrame = forwardRef(
     ref: ForwardedRef<HTMLDivElement>,
   ) => {
     return (
-      <div ref={ref} className={frame} onClick={onChangeOrder}>
+      <div
+        ref={ref}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'white',
+          padding: '20px 80px',
+          gap: '10px',
+          border: '1px solid black',
+        }}
+        onClick={onChangeOrder}
+      >
         {children}
       </div>
     );
   },
 );
-
-const frame = css`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: white;
-  padding: 20px 80px;
-  gap: 10px;
-  border: 1px solid black;
-`;
