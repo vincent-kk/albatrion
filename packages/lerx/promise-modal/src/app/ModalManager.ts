@@ -1,4 +1,8 @@
 import { getRandomString } from '@winglet/common-utils/lib';
+import {
+  destroyScope,
+  styleManagerFactory,
+} from '@winglet/react-utils/style-manager';
 
 import type { Fn } from '@aileron/declare';
 
@@ -12,15 +16,13 @@ export class ModalManager {
   }
 
   static #anchor: HTMLElement | null = null;
+  static #scope: string = `promise-modal-${getRandomString(36)}`;
   static anchor(options?: {
     tag?: string;
     prefix?: string;
     root?: HTMLElement;
   }): HTMLElement {
-    if (ModalManager.#anchor) {
-      const anchor = document.getElementById(ModalManager.#anchor.id);
-      if (anchor) return anchor;
-    }
+    if (ModalManager.#anchor) return ModalManager.#anchor;
     const {
       tag = 'div',
       prefix = 'promise-modal',
@@ -28,6 +30,7 @@ export class ModalManager {
     } = options || {};
     const node = document.createElement(tag);
     node.setAttribute('id', `${prefix}-${getRandomString(36)}`);
+    node.setAttribute('data-scope', ModalManager.#scope);
     root.appendChild(node);
     ModalManager.#anchor = node;
     return node;
@@ -49,12 +52,23 @@ export class ModalManager {
     return !ModalManager.#anchor;
   }
 
+  static #styleManager = styleManagerFactory(ModalManager.#scope);
+  static #styleSheetDefinition = new Map<string, string>();
+  static defineStyleSheet(styleId: string, css: string) {
+    ModalManager.#styleSheetDefinition.set(styleId, css);
+  }
+  static applyStyleSheet() {
+    for (const [styleId, css] of ModalManager.#styleSheetDefinition)
+      ModalManager.#styleManager(styleId, css);
+  }
+
   static reset() {
     ModalManager.#active = false;
     ModalManager.#anchor = null;
     ModalManager.#prerenderList = [];
     ModalManager.#openHandler = (modal: Modal) =>
       ModalManager.#prerenderList.push(modal);
+    destroyScope(ModalManager.#scope);
   }
 
   static open(modal: Modal) {

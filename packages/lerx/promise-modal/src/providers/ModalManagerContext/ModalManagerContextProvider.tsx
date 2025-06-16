@@ -92,9 +92,6 @@ export const ModalManagerContextProvider = memo(
           return [...aliveIds, modal.id];
         });
       };
-      return () => {
-        ModalManager.reset();
-      };
     });
 
     useLayoutEffect(() => {
