@@ -1,22 +1,23 @@
-import { css } from '@emotion/css';
-
-export const background = css`
+export const style = `
+[data-background] {
   display: none;
   position: fixed;
   inset: 0;
   z-index: -999;
   pointer-events: none;
-  > * {
-    pointer-events: none;
-  }
-`;
+}
 
-export const active = css`
+[data-background] > * {
+  pointer-events: none;
+}
+
+[data-background][data-active] {
   pointer-events: all;
-`;
+}
 
-export const visible = css`
+[data-background][data-visible] {
   display: flex;
   align-items: center;
   justify-content: center;
+}
 `;

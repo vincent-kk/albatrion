@@ -65,7 +65,6 @@
     "version:patch": "yarn version patch"
   },
   "dependencies": {
-    "@emotion/css": "^11.0.0",
     "@winglet/common-utils": "workspace:^",
     "@winglet/react-utils": "workspace:^"
   },

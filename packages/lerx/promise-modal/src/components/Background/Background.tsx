@@ -1,7 +1,8 @@
 import { type MouseEvent, useCallback, useMemo } from 'react';
 
-import { cx } from '@emotion/css';
+import { dataCondition } from '@winglet/react-utils/style-manager';
 
+import { ModalManager } from '@/promise-modal/app/ModalManager';
 import {
   useConfigurationContext,
   useModal,
@@ -9,7 +10,9 @@ import {
 } from '@/promise-modal/providers';
 import type { ModalLayerProps } from '@/promise-modal/types';
 
-import { active, background, visible } from './classNames.emotion';
+import { style } from './style';
+
+ModalManager.defineStyleSheet('background', style);
 
 export const BackgroundFrame = ({
   modalId,
@@ -36,10 +39,11 @@ export const BackgroundFrame = ({
 
   return (
     <div
-      className={cx(background, {
-        [visible]: modal.manualDestroy ? modal.alive : modal.visible,
-        [active]: modal.closeOnBackdropClick && modal.visible,
-      })}
+      data-background
+      data-active={dataCondition(modal.closeOnBackdropClick && modal.visible)}
+      data-visible={dataCondition(
+        modal.manualDestroy ? modal.alive : modal.visible,
+      )}
       onClick={handleClose}
     >
       {Background && (

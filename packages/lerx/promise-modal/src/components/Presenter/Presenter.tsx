@@ -3,13 +3,16 @@ import { memo, useRef } from 'react';
 import { counterFactory } from '@winglet/common-utils/lib';
 import { useHandle } from '@winglet/react-utils/hook';
 
+import { ModalManager } from '@/promise-modal/app/ModalManager';
 import { Background } from '@/promise-modal/components/Background';
 import { Foreground } from '@/promise-modal/components/Foreground';
 import { useSubscribeModal } from '@/promise-modal/hooks/useSubscribeModal';
 import { useModal } from '@/promise-modal/providers';
 import type { ModalIdProps } from '@/promise-modal/types';
 
-import { presenter } from './classNames.emotion';
+import { style } from './style';
+
+ModalManager.defineStyleSheet('presenter', style);
 
 const { increment } = counterFactory(1);
 
@@ -23,7 +26,7 @@ export const Presenter = memo(({ modalId }: ModalIdProps) => {
     }
   });
   return (
-    <div ref={ref} className={presenter}>
+    <div ref={ref} data-presenter>
       <Background modalId={modalId} onChangeOrder={handleChangeOrder} />
       <Foreground modalId={modalId} onChangeOrder={handleChangeOrder} />
     </div>

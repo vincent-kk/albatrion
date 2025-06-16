@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 
-import { cx } from '@emotion/css';
+import { dataCondition } from '@winglet/react-utils/style-manager';
 
+import { ModalManager } from '@/promise-modal/app/ModalManager';
 import {
   useConfigurationContext,
   useModal,
@@ -9,8 +10,10 @@ import {
 } from '@/promise-modal/providers';
 import type { ModalLayerProps } from '@/promise-modal/types';
 
-import { active, foreground, visible } from './classNames.emotion';
 import { AlertInner, ConfirmInner, PromptInner } from './components';
+import { style } from './style';
+
+ModalManager.defineStyleSheet('foreground', style);
 
 export const ForegroundFrame = ({
   modalId,
@@ -30,10 +33,11 @@ export const ForegroundFrame = ({
 
   return (
     <div
-      className={cx(foreground, {
-        [visible]: modal.manualDestroy ? modal.alive : modal.visible,
-        [active]: modal.visible,
-      })}
+      data-foreground
+      data-active={dataCondition(modal.visible)}
+      data-visible={dataCondition(
+        modal.manualDestroy ? modal.alive : modal.visible,
+      )}
     >
       <Foreground
         id={modal.id}
