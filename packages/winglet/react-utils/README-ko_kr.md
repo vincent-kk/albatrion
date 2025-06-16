@@ -58,6 +58,7 @@ package.json의 exports 설정을 기반으로 합니다:
 - `@winglet/react-utils/filter` - React 컴포넌트 타입 검사 유틸리티 (isReactComponent, isReactElement 등)
 - `@winglet/react-utils/object` - React 전용 객체 유틸리티 (extractProps, mergeRefs)
 - `@winglet/react-utils/render` - 컴포넌트 렌더링 유틸리티 (renderComponent)
+- `@winglet/react-utils/style-manager` - 스타일 관리 유틸리티 (styleManagerFactory, destroyScope)
 
 ---
 
@@ -135,6 +136,11 @@ React 컴포넌트 작업을 위한 다양한 유틸리티 함수를 제공합�
 #### 렌더링 유틸리티
 
 - [`renderComponent`](./src/utils/render/renderComponent.tsx) - 다양한 타입의 컴포넌트를 적절히 렌더링합니다.
+
+#### 스타일 관리
+
+- [`styleManagerFactory`](./src/utils/styleManager/styleManagerFactory.ts) - 스타일 관리 유틸리티를 생성합니다.
+- [`destroyScope`](./src/utils/styleManager/destroyScope.ts) - 정의한 스타일을 제거합니다.
 
 ---
 
