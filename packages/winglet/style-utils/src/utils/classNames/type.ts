@@ -13,6 +13,18 @@ export type ClassValue =
   | ClassArray
   | ClassObject;
 
+/**
+ * Configuration options for class name processing.
+ *
+ * @example
+ * ```typescript
+ * const options: ClassNamesOptions = {
+ *   removeDuplicates: true,    // 'btn btn btn-primary' → 'btn btn-primary'
+ *   normalizeWhitespace: true, // 'btn   primary' → 'btn primary'
+ *   filterEmpty: true          // ['btn', '', 'primary'] → 'btn primary'
+ * };
+ * ```
+ */
 export type ClassNamesOptions = {
   /** Remove duplicate classes @default true */
   removeDuplicates?: boolean;
