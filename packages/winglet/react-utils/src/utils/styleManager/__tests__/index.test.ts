@@ -1,8 +1,8 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 // 모든 export를 모킹
-vi.mock('../getStyleBuilder', () => ({
-  getStyleBuilder: vi.fn(),
+vi.mock('../styleManagerFactory', () => ({
+  styleManagerFactory: vi.fn(),
 }));
 
 vi.mock('../destroyScope', () => ({
@@ -20,8 +20,8 @@ vi.mock('../utils/dataAttributes', () => ({
 describe('styleManager index exports', () => {
   it('모든 필요한 함수들을 export해야 합니다', async () => {
     const exports = await import('../index');
-    
-    expect(exports).toHaveProperty('getStyleBuilder');
+
+    expect(exports).toHaveProperty('styleManagerFactory');
     expect(exports).toHaveProperty('destroyScope');
     expect(exports).toHaveProperty('dataCondition');
     expect(exports).toHaveProperty('dataAttributes');
@@ -29,8 +29,8 @@ describe('styleManager index exports', () => {
 
   it('export된 함수들이 실제 함수여야 합니다', async () => {
     const exports = await import('../index');
-    
-    expect(typeof exports.getStyleBuilder).toBe('function');
+
+    expect(typeof exports.styleManagerFactory).toBe('function');
     expect(typeof exports.destroyScope).toBe('function');
     expect(typeof exports.dataCondition).toBe('function');
     expect(typeof exports.dataAttributes).toBe('function');
@@ -43,9 +43,15 @@ describe('styleManager index exports', () => {
 
   it('예상되지 않은 export가 없어야 합니다', async () => {
     const exports = await import('../index');
-    const expectedExports = ['getStyleBuilder', 'destroyScope', 'dataCondition', 'dataAttributes'];
+    const expectedExports = [
+      'compressCss',
+      'dataAttributes',
+      'dataCondition',
+      'destroyScope',
+      'styleManagerFactory',
+    ];
     const actualExports = Object.keys(exports);
-    
+
     expect(actualExports.sort()).toEqual(expectedExports.sort());
   });
 });
