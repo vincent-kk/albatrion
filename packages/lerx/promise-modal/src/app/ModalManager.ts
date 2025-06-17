@@ -1,9 +1,9 @@
 import { getRandomString } from '@winglet/common-utils/lib';
+import { compressCss } from '@winglet/style-utils/compressCss';
 import {
-  compressCss,
   destroyScope,
   styleManagerFactory,
-} from '@winglet/react-utils/style-manager';
+} from '@winglet/style-utils/styleManager';
 
 import type { Fn } from '@aileron/declare';
 

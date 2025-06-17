@@ -4428,6 +4428,7 @@ __metadata:
     "@types/rollup-plugin-peer-deps-external": "npm:^2.2.5"
     "@winglet/common-utils": "workspace:^"
     "@winglet/react-utils": "workspace:^"
+    "@winglet/style-utils": "workspace:^"
     antd: "npm:^5.22.5"
     dependency-cruiser: "npm:^16.7.0"
     jsdom: "npm:^25.0.1"
@@ -8072,7 +8073,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@winglet/style-utils@workspace:packages/winglet/style-utils":
+"@winglet/style-utils@workspace:^, @winglet/style-utils@workspace:packages/winglet/style-utils":
   version: 0.0.0-use.local
   resolution: "@winglet/style-utils@workspace:packages/winglet/style-utils"
   dependencies:
