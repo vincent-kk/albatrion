@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { StyleManager } from './StyleManager';
+import { StyleManager } from '../StyleManager';
 
 // CSSStyleSheet 모킹 (JSDOM은 이를 지원하지 않음)
 const mockCSSStyleSheet = () => {

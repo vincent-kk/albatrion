@@ -34,6 +34,7 @@
     "promiseModal": "yarn workspace @lerx/promise-modal",
     "publish:all": "yarn workspaces foreach --all --topological-dev --no-private run publish:npm",
     "reactUtils": "yarn workspace @winglet/react-utils",
+    "styleUtils": "yarn workspace @winglet/style-utils",
     "run:all": "yarn workspaces foreach --all --topological-dev run",
     "schemaForm": "yarn workspace @canard/schema-form",
     "schemaForm:ajv6": "yarn workspace @canard/schema-form-ajv6-plugin",
