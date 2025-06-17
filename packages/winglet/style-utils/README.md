@@ -33,7 +33,7 @@ This package supports sub-path imports to enable more granular imports and optim
 
 ```typescript
 // Main exports
-import { classNames, cx, compressCss, StyleManager } from '@winglet/style-utils';
+import { classNames, cx, compressCss, styleManagerFactory, destroyScope } from '@winglet/style-utils';
 
 // ClassNames utilities
 import { classNames, cx } from '@winglet/style-utils/classNames';
@@ -42,7 +42,7 @@ import { classNames, cx } from '@winglet/style-utils/classNames';
 import { compressCss } from '@winglet/style-utils/compressCss';
 
 // Style management utilities
-import { destroyScope, styleManagerFactory } from '@winglet/style-utils/styleManager';
+import { styleManagerFactory, destroyScope } from '@winglet/style-utils/styleManager';
 ```
 
 ### Available Sub-paths
@@ -94,15 +94,13 @@ High-performance CSS compression utility that removes unnecessary whitespace, co
 
 #### **[`styleManagerFactory`](./src/utils/styleManager/styleManagerFactory.ts)**
 
-Factory function to create and manage StyleManager instances with consistent configuration.
+Factory function that creates a scoped CSS management system for efficient style injection and cleanup. Returns a curried function that allows you to add CSS styles to a specific scope with automatic scoping, and provides cleanup functions to remove specific styles.
 
-StyleManager is a scoped CSS management system that provides efficient style injection and cleanup.
-
-It supports both regular DOM and Shadow DOM environments with automatic scoping to prevent style conflicts.
+Supports both regular DOM and Shadow DOM environments with automatic scoping to prevent style conflicts. All style updates are batched using requestAnimationFrame for optimal performance.
 
 #### **[`destroyScope`](./src/utils/styleManager/destroyScope.ts)**
 
-A scoped CSS management system that provides efficient style injection and cleanup.
+Utility function that completely destroys a specific style scope and removes all associated styles from the DOM. This function performs complete cleanup including canceling pending animation frames, removing stylesheets, and clearing all cached styles for the scope.
 
 ---
 
@@ -178,16 +176,16 @@ console.log(
 );
 ```
 
-### Using StyleManager for Scoped CSS
+### Using styleManagerFactory for Scoped CSS
 
 ```typescript
-import { StyleManager } from '@winglet/style-utils';
+import { styleManagerFactory, destroyScope } from '@winglet/style-utils';
 
-// Get a scoped style manager
-const manager = StyleManager.get('my-component');
+// Create a style manager for a specific component scope
+const addStyle = styleManagerFactory('my-component');
 
-// Add component-specific styles
-manager.add(
+// Add component-specific styles and get cleanup function
+const removeButtonStyles = addStyle(
   'button-styles',
   `
   .btn {
@@ -207,52 +205,55 @@ manager.add(
     background: #6c757d;
     cursor: not-allowed;
   }
-`,
+`
 );
 
 // The CSS will be automatically scoped as:
-// [data-scope="my-component"] .btn { ... }
-// [data-scope="my-component"] .btn:hover { ... }
-// [data-scope="my-component"] .btn:disabled { ... }
+// .my-component .btn { ... }
+// .my-component .btn:hover { ... }
+// .my-component .btn:disabled { ... }
 
 // Apply the scope to your HTML element
 const componentElement = document.getElementById('my-component');
-componentElement.dataset.scope = 'my-component';
+componentElement.className += ' my-component';
 
 // Add more styles dynamically
-manager.add(
+const removeLayoutStyles = addStyle(
   'layout-styles',
   `
   .container {
     display: flex;
     gap: 1rem;
   }
-`,
+`
 );
 
 // Remove specific styles
-manager.remove('layout-styles');
+removeLayoutStyles();
+// or
+removeButtonStyles();
 
 // Clean up everything when component unmounts
-manager.destroy();
+destroyScope('my-component');
 ```
 
-### Using StyleManager with Shadow DOM
+### Using styleManagerFactory with Shadow DOM
 
 ```typescript
-import { StyleManager } from '@winglet/style-utils';
+import { styleManagerFactory, destroyScope } from '@winglet/style-utils';
 
 // Create a custom element with Shadow DOM
 class MyCustomElement extends HTMLElement {
   private shadowRoot: ShadowRoot;
-  private styleManager: StyleManager;
+  private addStyle: (styleId: string, css: string) => () => void;
+  private cleanupFunctions: Array<() => void> = [];
 
   constructor() {
     super();
     this.shadowRoot = this.attachShadow({ mode: 'open' });
 
-    // Create a StyleManager for this shadow root
-    this.styleManager = StyleManager.get('custom-element', {
+    // Create a style manager for this shadow root
+    this.addStyle = styleManagerFactory('custom-element', {
       shadowRoot: this.shadowRoot,
     });
 
@@ -261,17 +262,17 @@ class MyCustomElement extends HTMLElement {
   }
 
   private setupStyles() {
-    this.styleManager.add(
+    const removeHostStyles = this.addStyle(
       'host-styles',
       `
       :host {
         display: block;
         font-family: Arial, sans-serif;
       }
-    `,
+    `
     );
 
-    this.styleManager.add(
+    const removeComponentStyles = this.addStyle(
       'component-styles',
       `
       .header {
@@ -283,8 +284,11 @@ class MyCustomElement extends HTMLElement {
       .content {
         padding: 1rem;
       }
-    `,
+    `
     );
+
+    // Store cleanup functions for later use
+    this.cleanupFunctions.push(removeHostStyles, removeComponentStyles);
   }
 
   private render() {
@@ -300,7 +304,7 @@ class MyCustomElement extends HTMLElement {
 
   disconnectedCallback() {
     // Clean up styles when element is removed
-    this.styleManager.destroy();
+    destroyScope('custom-element');
   }
 }
 
@@ -310,13 +314,14 @@ customElements.define('my-custom-element', MyCustomElement);
 ### Dynamic Theme Management
 
 ```typescript
-import { StyleManager } from '@winglet/style-utils';
+import { styleManagerFactory, destroyScope } from '@winglet/style-utils';
 
 class ThemeManager {
-  private styleManager: StyleManager;
+  private addStyle: (styleId: string, css: string) => () => void;
+  private customStyles = new Map<string, () => void>();
 
   constructor() {
-    this.styleManager = StyleManager.get('theme');
+    this.addStyle = styleManagerFactory('theme');
   }
 
   applyTheme(theme: 'light' | 'dark') {
@@ -333,7 +338,11 @@ class ThemeManager {
             primary: '#0d6efd',
           };
 
-    this.styleManager.add(
+    // Remove previous theme if exists
+    this.customStyles.get('theme-colors')?.();
+
+    // Add new theme
+    const removeTheme = this.addStyle(
       'theme-colors',
       `
       :root {
@@ -347,16 +356,31 @@ class ThemeManager {
         color: var(--color-text);
         transition: background-color 0.3s, color 0.3s;
       }
-    `,
+    `
     );
+
+    this.customStyles.set('theme-colors', removeTheme);
   }
 
   addCustomStyles(id: string, css: string) {
-    this.styleManager.add(id, css);
+    // Remove existing style if present
+    this.customStyles.get(id)?.();
+    
+    const removeStyle = this.addStyle(id, css);
+    this.customStyles.set(id, removeStyle);
   }
 
   removeCustomStyles(id: string) {
-    this.styleManager.remove(id);
+    const removeStyle = this.customStyles.get(id);
+    if (removeStyle) {
+      removeStyle();
+      this.customStyles.delete(id);
+    }
+  }
+
+  destroy() {
+    destroyScope('theme');
+    this.customStyles.clear();
   }
 }
 
@@ -364,14 +388,14 @@ class ThemeManager {
 const themeManager = new ThemeManager();
 themeManager.applyTheme('dark');
 
-// Add scope to body element
-document.body.dataset.scope = 'theme';
+// Add scope class to body element
+document.body.className += ' theme';
 ```
 
 ### Performance Optimization Examples
 
 ```typescript
-import { StyleManager, compressCss } from '@winglet/style-utils';
+import { styleManagerFactory, compressCss } from '@winglet/style-utils';
 
 // Pre-compress CSS for production
 const productionCSS = compressCss(`
@@ -384,17 +408,22 @@ const productionCSS = compressCss(`
 `);
 
 // Use compressed CSS to skip compression step
-const manager = StyleManager.get('optimized-component');
-manager.add('styles', productionCSS, true); // true = already compressed
+const addOptimizedStyle = styleManagerFactory('optimized-component');
+addOptimizedStyle('styles', productionCSS, true); // true = already compressed
 
 // Batch style updates for better performance
-const manager2 = StyleManager.get('batch-component');
+const addBatchStyle = styleManagerFactory('batch-component');
 
 // All these updates will be batched into a single DOM update
-manager2.add('style1', '.class1 { color: red; }');
-manager2.add('style2', '.class2 { color: blue; }');
-manager2.add('style3', '.class3 { color: green; }');
+const cleanupFns = [
+  addBatchStyle('style1', '.class1 { color: red; }'),
+  addBatchStyle('style2', '.class2 { color: blue; }'),
+  addBatchStyle('style3', '.class3 { color: green; }')
+];
 // DOM update happens in next animation frame
+
+// Later cleanup if needed
+cleanupFns.forEach(cleanup => cleanup());
 ```
 
 ---
@@ -436,32 +465,74 @@ Compresses CSS by removing unnecessary whitespace and comments.
 
 ### Style Management
 
-#### `StyleManager.get(scopeId: string, config?: StyleManagerConfig): StyleManager`
+#### `styleManagerFactory(scopeId: string, config?: StyleManagerConfig): (styleId: string, css: string, compressed?: boolean) => () => void`
 
-Gets or creates a StyleManager instance for the specified scope.
+Creates a style manager factory for a specific scope that can add scoped CSS styles.
+
+The returned function automatically scopes CSS selectors with the provided scopeId (e.g., `.scopeId .selector`) and provides efficient style injection with batched DOM updates using requestAnimationFrame.
 
 **Parameters:**
 
 - `scopeId`: Unique identifier for the style scope
 - `config`: Optional configuration object
+  - `shadowRoot`: ShadowRoot instance for Shadow DOM support (optional)
 
-#### `StyleManager.prototype.add(id: string, css: string, compressed?: boolean): void`
+**Returns:** A function that accepts `(styleId, cssString, compressed?)` and returns a cleanup function
 
-Adds or updates a CSS style in the scope.
+**Example:**
+```typescript
+// Create a style manager for a component
+const addStyle = styleManagerFactory('my-component');
+
+// Add styles and get cleanup function
+const removeButtonStyle = addStyle('button-style', `
+  .btn {
+    background: blue;
+    color: white;
+  }
+`);
+
+// Later, remove the specific style
+removeButtonStyle();
+
+// For Shadow DOM
+const addShadowStyle = styleManagerFactory('shadow-scope', {
+  shadowRoot: myElement.shadowRoot
+});
+```
+
+#### `destroyScope(scopeId: string): void`
+
+Destroys a specific style scope and removes all associated styles from the DOM.
+
+This function performs complete cleanup including:
+- Canceling any pending animation frames
+- Removing the scope's stylesheet from `document.adoptedStyleSheets` (modern browsers)
+- Removing the scope's style element from the DOM (fallback browsers)
+- Clearing all cached styles for the scope
+- Removing the scope instance from the internal registry
 
 **Parameters:**
 
-- `id`: Unique identifier for the style
-- `css`: CSS string to add
-- `compressed`: Skip compression if true (default: false)
+- `scopeId`: The unique identifier of the scope to destroy
 
-#### `StyleManager.prototype.remove(id: string): void`
+**Example:**
+```typescript
+// Create and use styles
+const addStyle = styleManagerFactory('temp-scope');
+addStyle('style1', '.class { color: red; }');
 
-Removes a specific CSS style from the scope.
+// Later, destroy the entire scope
+destroyScope('temp-scope'); // Removes all styles for this scope
+```
 
-#### `StyleManager.prototype.destroy(): void`
+#### `StyleManagerConfig`
 
-Destroys the StyleManager instance and removes all associated styles.
+Configuration interface for styleManagerFactory.
+
+**Properties:**
+
+- `shadowRoot?: ShadowRoot` - Optional ShadowRoot for Shadow DOM style injection
 
 ---
 
@@ -485,7 +556,7 @@ yarn styleUtils test
 
 ## License
 
-This project is licensed under the MIT License. See the \*\*[`LICENSE`](./LICENSE) file for details.
+This project is licensed under the MIT License. See the [`LICENSE`](./LICENSE) file for details.
 
 ---
 

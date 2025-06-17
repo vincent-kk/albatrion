@@ -364,6 +364,182 @@ class ThemeManager {
 const themeManager = new ThemeManager();
 themeManager.applyTheme('dark');
 
+// body 요소에 스코프 클래스 추가
+document.body.className += ' theme';
+```
+
+### 성능 최적화 예제
+
+```typescript
+import { styleManagerFactory, compressCss } from '@winglet/style-utils';
+
+// 프로덕션을 위한 CSS 사전 압축
+const productionCSS = compressCss(`
+  .component {
+    /* 개발용 주석과 포맷팅 */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+`);
+
+// 압축된 CSS를 사용하여 압축 단계 건너뛰기
+const addOptimizedStyle = styleManagerFactory('optimized-component');
+addOptimizedStyle('styles', productionCSS, true); // true = 이미 압축됨
+
+// 더 나은 성능을 위한 스타일 업데이트 배치
+const addBatchStyle = styleManagerFactory('batch-component');
+
+// 이 모든 업데이트는 단일 DOM 업데이트로 배치됩니다
+const cleanupFns = [
+  addBatchStyle('style1', '.class1 { color: red; }'),
+  addBatchStyle('style2', '.class2 { color: blue; }'),
+  addBatchStyle('style3', '.class3 { color: green; }')
+];
+// DOM 업데이트는 다음 애니메이션 프레임에서 발생
+
+// 나중에 필요한 경우 정리
+cleanupFns.forEach(cleanup => cleanup());
+```
+
+---
+
+## API 참조
+
+### ClassNames
+
+#### `classNames(classes: ClassValue[], options?: ClassNamesOptions): string`
+
+여러 클래스 값을 공백으로 구분된 단일 문자열로 결합합니다.
+
+**매개변수:**
+
+- `classes`: 처리할 클래스 값들의 배열
+- `options`: 처리를 위한 구성 옵션
+
+**옵션:**
+
+- `removeDuplicates`: 중복 클래스 제거 (기본값: true)
+- `normalizeWhitespace`: 공백 정규화 (기본값: true)
+- `filterEmpty`: 빈 문자열 제거 (기본값: true)
+
+#### `cx(...args: ClassValue[]): string`
+
+성능 최적화된 기본값을 가진 classNames의 편리한 가변 인수 버전입니다.
+
+### CSS 압축
+
+#### `compressCss(css: string): string`
+
+불필요한 공백과 주석을 제거하여 CSS를 압축합니다.
+
+**매개변수:**
+
+- `css`: 압축할 CSS 문자열
+
+**반환값:** 압축된 CSS 문자열
+
+### 스타일 관리
+
+#### `styleManagerFactory(scopeId: string, config?: StyleManagerConfig): (styleId: string, css: string, compressed?: boolean) => () => void`
+
+특정 스코프에 대한 스코프 CSS 스타일을 추가할 수 있는 스타일 매니저 팩토리를 생성합니다.
+
+반환된 함수는 제공된 scopeId로 CSS 선택자를 자동으로 스코핑하고(예: `.scopeId .selector`), requestAnimationFrame을 사용한 배치 DOM 업데이트로 효율적인 스타일 주입을 제공합니다.
+
+**매개변수:**
+
+- `scopeId`: 스타일 스코프의 고유 식별자
+- `config`: 선택적 구성 객체
+  - `shadowRoot`: Shadow DOM 지원을 위한 ShadowRoot 인스턴스 (선택사항)
+
+**반환값:** `(styleId, cssString, compressed?)`를 받고 정리 함수를 반환하는 함수
+
+**예제:**
+```typescript
+// 컴포넌트용 스타일 매니저 생성
+const addStyle = styleManagerFactory('my-component');
+
+// 스타일 추가 및 정리 함수 받기
+const removeButtonStyle = addStyle('button-style', `
+  .btn {
+    background: blue;
+    color: white;
+  }
+`);
+
+// 나중에 특정 스타일 제거
+removeButtonStyle();
+
+// Shadow DOM 사용 시
+const addShadowStyle = styleManagerFactory('shadow-scope', {
+  shadowRoot: myElement.shadowRoot
+});
+```
+
+#### `destroyScope(scopeId: string): void`
+
+특정 스타일 스코프를 파괴하고 DOM에서 모든 관련 스타일을 제거합니다.
+
+이 함수는 다음을 포함한 완전한 정리를 수행합니다:
+- 보류 중인 애니메이션 프레임 취소
+- `document.adoptedStyleSheets`에서 스코프의 스타일시트 제거 (모던 브라우저)
+- DOM에서 스코프의 스타일 요소 제거 (폴백 브라우저)
+- 스코프의 모든 캐시된 스타일 정리
+- 내부 레지스트리에서 스코프 인스턴스 제거
+
+**매개변수:**
+
+- `scopeId`: 파괴할 스코프의 고유 식별자
+
+**예제:**
+```typescript
+// 스타일 생성 및 사용
+const addStyle = styleManagerFactory('temp-scope');
+addStyle('style1', '.class { color: red; }');
+
+// 나중에 전체 스코프 파괴
+destroyScope('temp-scope'); // 이 스코프의 모든 스타일 제거
+```
+
+#### `StyleManagerConfig`
+
+styleManagerFactory를 위한 구성 인터페이스입니다.
+
+**속성:**
+
+- `shadowRoot?: ShadowRoot` - Shadow DOM 스타일 주입을 위한 선택적 ShadowRoot
+
+---
+
+## 개발 환경 설정
+
+```bash
+# 저장소 클론
+dir=your-albatrion && git clone https://github.com/vincent-kk/albatrion.git "$dir" && cd "$dir"
+
+# 의존성 설치
+nvm use && yarn install && yarn run:all build
+
+# 개발 빌드
+yarn styleUtils build
+
+# 테스트 실행
+yarn styleUtils test
+```
+
+---
+
+## 라이선스
+
+이 프로젝트는 MIT 라이선스 하에 제공됩니다. 자세한 내용은 [`LICENSE`](./LICENSE) 파일을 참조하세요.
+
+---
+
+## 연락처
+
+이 프로젝트에 관한 질문이나 제안이 있으시면 이슈를 생성해 주세요.plyTheme('dark');
+
 // body 요소에 스코프 추가
 document.body.dataset.scope = 'theme';
 ```
@@ -485,7 +661,7 @@ yarn styleUtils test
 
 ## 라이선스
 
-이 프로젝트는 MIT 라이선스 하에 제공됩니다. 자세한 내용은 \*\*[`LICENSE`](./LICENSE) 파일을 참조하세요.
+이 프로젝트는 MIT 라이선스 하에 제공됩니다. 자세한 내용은 [`LICENSE`](./LICENSE) 파일을 참조하세요.
 
 ---
 
