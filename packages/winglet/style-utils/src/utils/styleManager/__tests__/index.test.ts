@@ -23,8 +23,6 @@ describe('styleManager index exports', () => {
 
     expect(exports).toHaveProperty('styleManagerFactory');
     expect(exports).toHaveProperty('destroyScope');
-    expect(exports).toHaveProperty('dataCondition');
-    expect(exports).toHaveProperty('dataAttributes');
   });
 
   it('export된 함수들이 실제 함수여야 합니다', async () => {
@@ -32,8 +30,6 @@ describe('styleManager index exports', () => {
 
     expect(typeof exports.styleManagerFactory).toBe('function');
     expect(typeof exports.destroyScope).toBe('function');
-    expect(typeof exports.dataCondition).toBe('function');
-    expect(typeof exports.dataAttributes).toBe('function');
   });
 
   it('올바른 모듈에서 함수들을 import해야 합니다', async () => {
@@ -43,13 +39,7 @@ describe('styleManager index exports', () => {
 
   it('예상되지 않은 export가 없어야 합니다', async () => {
     const exports = await import('../index');
-    const expectedExports = [
-      'compressCss',
-      'dataAttributes',
-      'dataCondition',
-      'destroyScope',
-      'styleManagerFactory',
-    ];
+    const expectedExports = ['destroyScope', 'styleManagerFactory'];
     const actualExports = Object.keys(exports);
 
     expect(actualExports.sort()).toEqual(expectedExports.sort());

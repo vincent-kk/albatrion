@@ -1,6 +1,7 @@
 import { getRandomString } from '@winglet/common-utils/lib';
 
-import { compressCss } from '../utils/compressCss';
+import { compressCss } from '@/style-utils/utils/compressCss/compressCss';
+
 import type { StyleManagerConfig, StyleRoot } from './type';
 
 /**
