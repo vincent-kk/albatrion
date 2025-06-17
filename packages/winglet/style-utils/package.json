@@ -1,14 +1,18 @@
 {
   "name": "@winglet/style-utils",
   "version": "0.1.0",
-  "description": "TypeScript library for safe and efficient JSON data manipulation with RFC 6901 (JSON Pointer) and RFC 6902 (JSON Patch) compliance, featuring prototype pollution protection and immutable operations",
+  "description": "Comprehensive CSS and style management utilities including className manipulation, CSS compression, and universal style manager for TypeScript projects",
   "keywords": [
     "typescript",
-    "style",
     "css",
+    "style",
     "classnames",
+    "css-compression",
+    "style-manager",
     "utilities",
-    "standards-compliant"
+    "css-utils",
+    "style-utilities",
+    "frontend"
   ],
   "repository": {
     "type": "git",
