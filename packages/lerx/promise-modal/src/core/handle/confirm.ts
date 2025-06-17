@@ -11,6 +11,7 @@ import type {
 } from '@/promise-modal/types';
 
 interface ConfirmProps<B> {
+  group?: string;
   subtype?: 'info' | 'success' | 'warning' | 'error';
   title?: ReactNode;
   subtitle?: ReactNode;
@@ -25,6 +26,7 @@ interface ConfirmProps<B> {
 }
 
 export const confirm = <B = any>({
+  group,
   subtype,
   title,
   subtitle,

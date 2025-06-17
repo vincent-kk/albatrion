@@ -12,11 +12,12 @@ import type {
 } from '@/promise-modal/types';
 
 interface PromptProps<T, B = any> {
+  group?: string;
   title?: ReactNode;
   subtitle?: ReactNode;
   content?: ReactNode | ComponentType<PromptContentProps>;
-  Input: (props: PromptInputProps<T>) => ReactNode;
   defaultValue?: T;
+  Input: (props: PromptInputProps<T>) => ReactNode;
   disabled?: (value: T) => boolean;
   returnOnCancel?: boolean;
   background?: ModalBackground<B>;
@@ -29,10 +30,11 @@ interface PromptProps<T, B = any> {
 }
 
 export const prompt = <T, B = any>({
-  defaultValue,
+  group,
   title,
   subtitle,
   content,
+  defaultValue,
   Input,
   disabled,
   returnOnCancel,

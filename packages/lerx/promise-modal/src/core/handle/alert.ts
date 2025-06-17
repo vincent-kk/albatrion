@@ -11,6 +11,7 @@ import type {
 } from '@/promise-modal/types';
 
 interface AlertProps<B> {
+  group?: string;
   subtype?: 'info' | 'success' | 'warning' | 'error';
   title?: ReactNode;
   subtitle?: ReactNode;
@@ -28,6 +29,7 @@ interface AlertProps<B> {
 }
 
 export const alert = <B = any>({
+  group,
   subtype,
   title,
   subtitle,
