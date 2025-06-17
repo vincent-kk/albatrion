@@ -20,6 +20,7 @@ export class ConfirmNode<B> extends AbstractNode<boolean, B> {
 
   constructor({
     id,
+    group,
     initiator,
     type,
     subtype,
@@ -37,6 +38,7 @@ export class ConfirmNode<B> extends AbstractNode<boolean, B> {
   }: ConfirmNodeProps<B>) {
     super({
       id,
+      group,
       initiator,
       title,
       subtitle,

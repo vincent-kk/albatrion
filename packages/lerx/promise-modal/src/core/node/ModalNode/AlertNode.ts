@@ -23,6 +23,7 @@ export class AlertNode<B> extends AbstractNode<null, B> {
 
   constructor({
     id,
+    group,
     initiator,
     type,
     subtype,
@@ -40,6 +41,7 @@ export class AlertNode<B> extends AbstractNode<null, B> {
   }: AlertNodeProps<B>) {
     super({
       id,
+      group,
       initiator,
       title,
       subtitle,

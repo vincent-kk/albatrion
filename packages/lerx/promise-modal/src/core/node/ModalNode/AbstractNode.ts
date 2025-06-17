@@ -14,6 +14,7 @@ type AbstractNodeProps<T, B> = BaseModal<T, B> & ManagedEntity;
 
 export abstract class AbstractNode<T, B> {
   readonly id: number;
+  readonly group?: string;
   readonly initiator: string;
 
   readonly title?: ReactNode;
@@ -42,6 +43,7 @@ export abstract class AbstractNode<T, B> {
   constructor({
     id,
     initiator,
+    group,
     title,
     subtitle,
     background,
@@ -53,6 +55,7 @@ export abstract class AbstractNode<T, B> {
     BackgroundComponent,
   }: AbstractNodeProps<T, B>) {
     this.id = id;
+    this.group = group;
     this.initiator = initiator;
     this.title = title;
     this.subtitle = subtitle;

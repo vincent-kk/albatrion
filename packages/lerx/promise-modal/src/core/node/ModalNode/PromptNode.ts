@@ -26,6 +26,7 @@ export class PromptNode<T, B> extends AbstractNode<T, B> {
 
   constructor({
     id,
+    group,
     initiator,
     type,
     title,
@@ -46,6 +47,7 @@ export class PromptNode<T, B> extends AbstractNode<T, B> {
   }: PromptNodeProps<T, B>) {
     super({
       id,
+      group,
       initiator,
       title,
       subtitle,
