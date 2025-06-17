@@ -29,6 +29,18 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
+    "./classNames": {
+      "source": "./src/utils/classNames/index.ts",
+      "types": "./dist/utils/classNames/index.d.ts",
+      "import": "./dist/utils/classNames/index.mjs",
+      "require": "./dist/utils/classNames/index.cjs"
+    },
+    "./compressCss": {
+      "source": "./src/utils/compressCss/index.ts",
+      "types": "./dist/utils/compressCss/index.d.ts",
+      "import": "./dist/utils/compressCss/index.mjs",
+      "require": "./dist/utils/compressCss/index.cjs"
+    },
     "./styleManager": {
       "source": "./src/utils/styleManager/index.ts",
       "types": "./dist/utils/styleManager/index.d.ts",
