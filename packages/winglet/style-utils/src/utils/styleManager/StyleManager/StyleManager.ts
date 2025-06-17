@@ -9,7 +9,7 @@ import type { StyleManagerConfig, StyleRoot } from './type';
  * It supports both regular DOM and Shadow DOM environments.
  *
  * StyleManager allows you to:
- * - Create isolated CSS scopes using data attributes
+ * - Create isolated CSS scopes using class-based selectors
  * - Add/remove styles dynamically with automatic DOM updates
  * - Batch style updates using requestAnimationFrame for optimal performance
  * - Support both modern CSSStyleSheet API and fallback style element injection
@@ -18,7 +18,7 @@ import type { StyleManagerConfig, StyleRoot } from './type';
  * - Work within Shadow DOM boundaries
  *
  * Each StyleManager instance manages styles for a specific scope, identified by a unique scopeId.
- * Styles are automatically prefixed with `[data-scope="{scopeId}"]` to ensure isolation.
+ * Styles are automatically prefixed with `className=".${scopeId}"` to ensure isolation.
  *
  * @example
  * ```typescript
@@ -38,8 +38,8 @@ import type { StyleManagerConfig, StyleRoot } from './type';
  * `);
  *
  * // The CSS will be applied as:
- * // [data-scope="my-component"] .btn { ... }
- * // [data-scope="my-component"] .btn:hover { ... }
+ * // .my-component .btn { ... }
+ * // .my-component .btn:hover { ... }
  *
  * // Remove specific styles
  * manager.remove('button-style');
@@ -68,7 +68,7 @@ export class StyleManager {
   private __sheet__: CSSStyleSheet | null = null;
   private __dirty__ = false;
   private __frameId__ = 0;
-  private __scopePrefix__: string;
+  private __scope__: string;
   private __root__: StyleRoot;
   private __isShadowDOM__: boolean;
   private __instanceKey__: string;
@@ -78,10 +78,10 @@ export class StyleManager {
     instanceKey: string,
     config?: StyleManagerConfig,
   ) {
-    // 스코프 접두사를 미리 계산하여 반복 계산 방지
-    this.__scopePrefix__ = `[data-scope="${scopeId}"]`;
+    // Pre-calculate the scope prefix
+    this.__scope__ = scopeId;
 
-    // Shadow DOM 여부를 미리 계산하여 런타임 체크 최소화
+    // Pre-calculate the shadow DOM status
     this.__root__ = config?.shadowRoot || document;
     this.__isShadowDOM__ = !!config?.shadowRoot;
 
@@ -115,10 +115,10 @@ export class StyleManager {
     scopeId: string,
     config?: StyleManagerConfig,
   ): StyleManager {
-    // Shadow DOM을 위한 고유 키 생성 로직 최적화
+    // Optimize the unique key creation logic for Shadow DOM
     let instanceKey: string;
     if (config?.shadowRoot) {
-      // Symbol을 사용하여 더 안전한 프로퍼티 접근
+      // Use Symbol for more secure property access
       const shadowRoot = config.shadowRoot as any;
       if (!shadowRoot[this.__SHADOW_ID_KEY__])
         shadowRoot[this.__SHADOW_ID_KEY__] = getRandomString(36);
@@ -155,7 +155,7 @@ export class StyleManager {
    * `);
    *
    * // CSS will be applied as:
-   * // [data-scope="my-component"] .btn { background: blue; color: white; }
+   * // .my-component .btn { background: blue; color: white; }
    * ```
    *
    * @example
@@ -234,7 +234,7 @@ export class StyleManager {
       this.__frameId__ = 0;
     }
 
-    // 2. CSSStyleSheet 정리 (modern browsers)
+    // 2. Clean up CSSStyleSheet (modern browsers)
     if (this.__sheet__ && 'adoptedStyleSheets' in this.__root__) {
       const sheets = this.__root__.adoptedStyleSheets;
       const targetSheet = this.__sheet__;
@@ -284,12 +284,12 @@ export class StyleManager {
     // If it's Shadow DOM, no need to scope
     if (this.__isShadowDOM__) return css;
 
-    const scope = this.__scopePrefix__;
+    const scope = '.' + this.__scope__;
     let result = '';
     let currentIndex = 0;
     const cssLength = css.length;
 
-    // CSS 파싱 최적화: indexOf 대신 더 효율적인 방법 사용
+    // Optimize CSS parsing: use more efficient methods instead of indexOf
     while (currentIndex < cssLength) {
       const ruleEnd = css.indexOf('}', currentIndex);
       if (ruleEnd === -1) break;
@@ -344,7 +344,7 @@ export class StyleManager {
     ) {
       if (!this.__sheet__) {
         this.__sheet__ = new CSSStyleSheet();
-        // spread operator 대신 직접 배열 생성으로 성능 개선
+        // Improve performance by directly creating an array instead of using spread operator
         const currentSheets = this.__root__.adoptedStyleSheets;
         const newSheets = new Array(currentSheets.length + 1);
         for (let i = 0; i < currentSheets.length; i++)
@@ -363,7 +363,7 @@ export class StyleManager {
     } else {
       if (!this.__element__) {
         this.__element__ = document.createElement('style');
-        this.__element__.dataset.scope = this.scopeId;
+        this.__element__.className = this.__scope__;
         // If it's Shadow DOM, append to shadowRoot directly
         if (this.__isShadowDOM__) this.__root__.appendChild(this.__element__);
         else document.head.appendChild(this.__element__);
