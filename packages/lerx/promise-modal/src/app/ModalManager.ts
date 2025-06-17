@@ -1,3 +1,4 @@
+import { polynomialHash } from '@winglet/common-utils/hash';
 import { getRandomString } from '@winglet/common-utils/lib';
 import { compressCss } from '@winglet/style-utils/compressCss';
 import {
@@ -18,6 +19,7 @@ export class ModalManager {
 
   static #anchor: HTMLElement | null = null;
   static #scope: string = `promise-modal-${getRandomString(36)}`;
+  static #scopeHash: string = polynomialHash(ModalManager.#scope);
   static anchor(options?: {
     tag?: string;
     prefix?: string;
@@ -30,8 +32,8 @@ export class ModalManager {
       root = document.body,
     } = options || {};
     const node = document.createElement(tag);
-    node.setAttribute('id', `${prefix}-${getRandomString(36)}`);
-    node.setAttribute('data-scope', ModalManager.#scope);
+    node.id = `${prefix}-${getRandomString(36)}`;
+    node.className = ModalManager.#scope;
     root.appendChild(node);
     ModalManager.#anchor = node;
     return node;
@@ -61,6 +63,10 @@ export class ModalManager {
   static applyStyleSheet() {
     for (const [styleId, css] of ModalManager.#styleSheetDefinition)
       ModalManager.#styleManager(styleId, css, true);
+  }
+
+  static getHashedClassNames(styleId: string) {
+    return `${styleId}-${ModalManager.#scopeHash}`;
   }
 
   static reset() {
