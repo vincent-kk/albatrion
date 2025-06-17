@@ -46,6 +46,7 @@ export const alert = <B = any>({
     try {
       ModalManager.open({
         type: 'alert',
+        group,
         subtype,
         resolve: () => resolve(),
         title,

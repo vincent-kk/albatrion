@@ -50,6 +50,7 @@ export const prompt = <T, B = any>({
     try {
       ModalManager.open({
         type: 'prompt',
+        group,
         resolve: (result) => resolve(result as T),
         title,
         subtitle,

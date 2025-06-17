@@ -43,6 +43,7 @@ export const confirm = <B = any>({
     try {
       ModalManager.open({
         type: 'confirm',
+        group,
         subtype,
         resolve: (result) => resolve(result ?? false),
         title,

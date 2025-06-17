@@ -6,6 +6,7 @@ import type { ModalBackground } from './background';
 import type { ModalFrameProps } from './modal';
 
 export interface BaseModal<T, B> {
+  group?: string;
   title?: ReactNode;
   subtitle?: ReactNode;
   background?: ModalBackground<B>;
