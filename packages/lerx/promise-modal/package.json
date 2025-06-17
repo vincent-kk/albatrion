@@ -1,6 +1,6 @@
 {
   "name": "@lerx/promise-modal",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Universal React modal utility that can be used outside React components with promise-based results for alert, confirm, and prompt modals",
   "keywords": [
     "react",
