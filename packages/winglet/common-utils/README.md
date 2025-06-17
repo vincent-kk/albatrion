@@ -213,6 +213,7 @@ Please use a transpiler like Babel to transform the code for your target environ
 #### Hash
 
 - **[`Murmur3`](./src/utils/hash/murmur3.ts)**: Class implementing the Murmur3 hash algorithm for generating hashes from strings or byte arrays
+- **[`polynomialHash`](./src/utils/hash/polynomialHash.ts)**: Function to convert a string to a base36 hash using a 31-based polynomial rolling hash algorithm
 
 #### Object
 
