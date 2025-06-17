@@ -8,13 +8,14 @@ import { useModalManagerContext } from '@/promise-modal/providers/ModalManagerCo
 const defaultValidate = (modal?: ModalNode) => modal?.visible;
 
 export const useActiveModalCount = (
-  validate: Fn<[ModalNode?], boolean | undefined> = defaultValidate,
+  validate: Fn<[node?: ModalNode], boolean | undefined> = defaultValidate,
   refreshKey: string | number = 0,
 ) => {
   const { modalIds, getModalNode } = useModalManagerContext();
   return useMemo(() => {
     let count = 0;
-    for (const id of modalIds) {
+    for (let index = 0; index < modalIds.length; index++) {
+      const id = modalIds[index];
       if (validate(getModalNode(id))) count++;
     }
     return count;
