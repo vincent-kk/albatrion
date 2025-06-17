@@ -13,7 +13,7 @@
   transition-property: transform, opacity;
   transition-timing-function: ease-out;
 
-  pointer-events: none;
+  pointer-events: none !important;
   background-color: transparent;
 }
 

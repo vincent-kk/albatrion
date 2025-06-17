@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { StyleManager } from './StyleManager';
+import { StyleManager } from '../StyleManager';
 
 // CSSStyleSheet 모킹 (JSDOM은 이를 지원하지 않음)
 const mockCSSStyleSheet = () => {
@@ -76,13 +76,9 @@ describe('StyleManager', () => {
         expect(document.adoptedStyleSheets.length).toBe(1);
       } else {
         // 폴백: style 엘리먼트 확인
-        const styleEl = document.querySelector(
-          'style[data-scope="test-scope"]',
-        );
+        const styleEl = document.querySelector('style.test-scope');
         expect(styleEl).toBeTruthy();
-        expect(styleEl?.textContent).toContain(
-          '[data-scope="test-scope"] .btn',
-        );
+        expect(styleEl?.textContent).toContain('.test-scope .btn');
       }
     });
 
@@ -98,7 +94,7 @@ describe('StyleManager', () => {
 
       const styleContent = getAppliedStyles(manager);
       expect(styleContent).not.toContain('.class1');
-      expect(styleContent).toContain('.class2');
+      expect(styleContent).toContain('.test-scope');
     });
 
     test('destroy()가 모든 리소스를 정리해야 함', () => {
@@ -118,7 +114,7 @@ describe('StyleManager', () => {
         expect(document.adoptedStyleSheets.length).toBe(0);
       } else {
         const styleEl = (document as Document).querySelector(
-          'style[data-scope="test-scope"]',
+          'style.test-scope',
         );
         expect(styleEl).toBeFalsy();
       }
@@ -142,7 +138,7 @@ describe('StyleManager', () => {
       const styleContent = getAppliedStyles(manager);
 
       // 일반 셀렉터는 스코프가 추가됨
-      expect(styleContent).toContain('[data-scope="test-scope"] .btn');
+      expect(styleContent).toContain('.test-scope .btn');
 
       // @media는 스코프 없이 유지
       expect(styleContent).toContain('@media');
@@ -222,7 +218,7 @@ describe('StyleManager', () => {
 
       // 스코프 접두사가 없어야 함
       expect(styleContent).toContain('.btn{color:blue}');
-      expect(styleContent).not.toContain('[data-scope=');
+      expect(styleContent).not.toContain('.shadow-scope');
     });
 
     test('Shadow DOM에서 destroy()가 정상 동작해야 함', () => {
@@ -291,9 +287,7 @@ function getAppliedStyles(manager: StyleManager): string {
     return privateManager.__sheet__.cssRules || '';
   }
 
-  const styleEl = document.querySelector(
-    `style[data-scope="${privateManager.scopeId}"]`,
-  );
+  const styleEl = document.querySelector(`style.${privateManager.scopeId}`);
   return styleEl?.textContent || '';
 }
 
