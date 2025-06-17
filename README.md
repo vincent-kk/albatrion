@@ -40,12 +40,7 @@ Each package provides individual `README.md` documentation with detailed usage i
 - **[`@winglet/json`](./packages/winglet/json/README.md)** - JSON utilities
 - **[`@winglet/json-schema`](./packages/winglet/json-schema/README.md)** - JSON Schema utilities
 - **[`@winglet/react-utils`](./packages/winglet/react-utils/README.md)** - React utilities
-
-### Aileron (Internal Development Tools)
-
-- `@aileron/benchmark` - Performance benchmarking tools (internal use only)
-- `@aileron/benchmark-form` - Form performance benchmarks (internal use only)
-- `@aileron/development-helper` - Development helper utilities (internal use only)
+- **[`@winglet/style-utils`](./packages/winglet/style-utils/README.md)** - CSS and style management utilities
 
 ---
 
@@ -72,12 +67,16 @@ yarn workspace <package-name> build
 
 ## Compatibility
 
-This package is built with ECMAScript 2022 (ES2022) syntax. If you're using a JavaScript environment that doesn't support ES2022, you'll need to include this package in your transpilation process.
+This package is built with ECMAScript 2020 (ES2020) syntax.
+
+If you're using a JavaScript environment that doesn't support ES2020, you'll need to include this package in your transpilation process.
+
+(Some packages are built with ECMAScript 2022 (ES2022) syntax.)
 
 **Supported environments:**
 
-- Node.js 16.11.0 or later
-- Modern browsers (Chrome 94+, Firefox 93+, Safari 15+)
+- Node.js 14.0.0 or later
+- Modern browsers (ES2020 support)
 
 **For legacy environment support:**
 Please use a transpiler like Babel to transform the code for your target environment.
@@ -118,12 +117,7 @@ This monorepo contains the following packages:
 - `@winglet/json` - JSON manipulation utilities
 - `@winglet/json-schema` - JSON Schema utilities
 - `@winglet/react-utils` - React utility components and hooks
-
-### Aileron (Internal Development Tools)
-
-- `@aileron/benchmark` - Performance benchmarking tools (internal use only)
-- `@aileron/benchmark-form` - Form performance benchmarks (internal use only)
-- `@aileron/development-helper` - Development helper utilities (internal use only)
+- `@winglet/style-utils` - CSS and style management utilities
 
 ## 🚀 Development
 

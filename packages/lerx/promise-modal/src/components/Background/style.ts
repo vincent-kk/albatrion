@@ -1,5 +1,11 @@
-export const style = `
-[data-background] {
+import { ModalManager } from '@/promise-modal/app/ModalManager';
+
+export const background = ModalManager.getHashedClassNames('background');
+export const active = ModalManager.getHashedClassNames('background-active');
+export const visible = ModalManager.getHashedClassNames('background-visible');
+
+const style = `
+.${background} {
   display: none;
   position: fixed;
   inset: 0;
@@ -7,17 +13,19 @@ export const style = `
   pointer-events: none;
 }
 
-[data-background] > * {
+.${background} > * {
   pointer-events: none;
 }
 
-[data-background][data-active] {
+.${background}.${active} {
   pointer-events: all;
 }
 
-[data-background][data-visible] {
+.${background}.${visible} {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 `;
+
+ModalManager.defineStyleSheet('background', style);

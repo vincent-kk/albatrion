@@ -11,8 +11,8 @@ import { StyleManager, type StyleManagerConfig } from './StyleManager';
  * - Automatically batch style updates using requestAnimationFrame for optimal performance
  * - Handle both modern CSSStyleSheet API and fallback style element injection
  *
- * The returned function adds CSS styles that are automatically scoped with `[data-scope="{scopeId}"]`
- * selector prefix, ensuring styles only apply to elements within that scope.
+ * The returned function adds CSS styles that are automatically scoped with `className=".${scopeId}"`,
+ * ensuring styles only apply to elements within that scope.
  *
  * @param scopeId - The unique identifier for the style scope
  * @returns A function that accepts (styleId, cssString) and returns a cleanup function
@@ -32,7 +32,7 @@ import { StyleManager, type StyleManagerConfig } from './StyleManager';
  * `);
  *
  * // The CSS will be scoped as:
- * // [data-scope="header-component"] .btn-primary { ... }
+ * // .header-component .btn-primary { ... }
  *
  * // Later, remove the specific style
  * removeButtonStyle();

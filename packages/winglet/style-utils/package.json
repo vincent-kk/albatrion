@@ -1,0 +1,91 @@
+{
+  "name": "@winglet/style-utils",
+  "version": "0.2.0",
+  "description": "Comprehensive CSS and style management utilities including className manipulation, CSS compression, and universal style manager for TypeScript projects",
+  "keywords": [
+    "typescript",
+    "css",
+    "style",
+    "classnames",
+    "css-compression",
+    "style-manager",
+    "utilities",
+    "css-utils",
+    "style-utilities",
+    "frontend"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vincent-kk/albatrion.git",
+    "directory": "packages/winglet/style-utils"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Vincent K. Kelvin",
+    "email": "lunox273@gmail.com"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./classNames": {
+      "source": "./src/utils/classNames/index.ts",
+      "types": "./dist/utils/classNames/index.d.ts",
+      "import": "./dist/utils/classNames/index.mjs",
+      "require": "./dist/utils/classNames/index.cjs"
+    },
+    "./compressCss": {
+      "source": "./src/utils/compressCss/index.ts",
+      "types": "./dist/utils/compressCss/index.d.ts",
+      "import": "./dist/utils/compressCss/index.mjs",
+      "require": "./dist/utils/compressCss/index.cjs"
+    },
+    "./styleManager": {
+      "source": "./src/utils/styleManager/index.ts",
+      "types": "./dist/utils/styleManager/index.d.ts",
+      "import": "./dist/utils/styleManager/index.mjs",
+      "require": "./dist/utils/styleManager/index.cjs"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rollup -c && yarn build:types",
+    "build:publish:npm": "yarn build && yarn publish:npm",
+    "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.declarations.json",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "publish:npm": "yarn npm publish --access public",
+    "test": "vitest",
+    "version:major": "yarn version major",
+    "version:minor": "yarn version minor",
+    "version:patch": "yarn version patch"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "jsdom": "^25.0.1",
+    "prettier": "^3.5.3",
+    "rollup": "^4.42.0",
+    "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.7.2",
+    "vite": "^6.3.5",
+    "vitest": "2.1.9"
+  }
+}

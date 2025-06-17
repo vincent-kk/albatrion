@@ -1,5 +1,11 @@
-export const style = `
-[data-foreground] {
+import { ModalManager } from '@/promise-modal/app/ModalManager';
+
+export const foreground = ModalManager.getHashedClassNames('foreground');
+export const active = ModalManager.getHashedClassNames('foreground-active');
+export const visible = ModalManager.getHashedClassNames('foreground-visible');
+
+const style = `
+.${foreground} {
   pointer-events: none;
   display: none;
   position: fixed;
@@ -7,13 +13,15 @@ export const style = `
   z-index: 1;
 }
 
-[data-foreground][data-active] > * {
+.${foreground}.${active} > * {
   pointer-events: all;
 }
 
-[data-foreground][data-visible] {
+.${foreground}.${visible} {
   display: flex !important;
   justify-content: center;
   align-items: center;
 }
 `;
+
+ModalManager.defineStyleSheet('foreground', style);

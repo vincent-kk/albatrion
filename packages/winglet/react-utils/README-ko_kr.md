@@ -58,20 +58,17 @@ package.json의 exports 설정을 기반으로 합니다:
 - `@winglet/react-utils/filter` - React 컴포넌트 타입 검사 유틸리티 (isReactComponent, isReactElement 등)
 - `@winglet/react-utils/object` - React 전용 객체 유틸리티 (extractProps, mergeRefs)
 - `@winglet/react-utils/render` - 컴포넌트 렌더링 유틸리티 (renderComponent)
-- `@winglet/react-utils/style-manager` - 스타일 관리 유틸리티 (styleManagerFactory, destroyScope)
 
 ---
 
 ## 호환성 안내
 
-이 패키지는 ECMAScript 2022 (ES2022) 문법으로 작성되었습니다.
-
-ES2022보다 낮은 버전의 JavaScript 환경에서 사용하시는 경우, 별도의 트랜스파일 과정이 필요합니다.
+이 패키지는 ECMAScript 2020 (ES2020) 문법으로 작성되었습니다.
 
 **지원 환경:**
 
-- Node.js 16.11.0 이상
-- 최신 브라우저 (Chrome 94+, Firefox 93+, Safari 15+)
+- Node.js 14.0.0 이상
+- 모던 브라우저 (ES2020 지원)
 
 **레거시 환경 지원이 필요한 경우:**
 Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환해주세요.
@@ -136,14 +133,6 @@ React 컴포넌트 작업을 위한 다양한 유틸리티 함수를 제공합�
 #### 렌더링 유틸리티
 
 - [`renderComponent`](./src/utils/render/renderComponent.tsx) - 다양한 타입의 컴포넌트를 적절히 렌더링합니다.
-
-#### 스타일 관리
-
-- [`styleManagerFactory`](./src/utils/styleManager/styleManagerFactory.ts) - 스타일 관리 유틸리티를 생성합니다.
-- [`destroyScope`](./src/utils/styleManager/destroyScope.ts) - 정의한 스타일을 제거합니다.
-- [`dataCondition`](./src/utils/styleManager/utils/dataCondition.ts) - 불리언 조건을 React 호환 가능한 속성 값으로 변환합니다. (truthy -> true, falsy -> undefined)
-- [`dataAttributes`](./src/utils/styleManager/utils/dataAttributes.ts) - 불리언 값의 레코드에서 데이터 속성을 생성합니다. (truthy -> true, falsy -> undefined)
-- [`compressCss`](./src/utils/styleManager/utils/compressCss.ts) - CSS 문자열을 압축합니다.
 
 ---
 

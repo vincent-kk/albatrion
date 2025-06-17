@@ -70,12 +70,6 @@
       "types": "./dist/utils/render/index.d.ts",
       "import": "./dist/utils/render/index.mjs",
       "require": "./dist/utils/render/index.cjs"
-    },
-    "./style-manager": {
-      "source": "./src/utils/styleManager/index.ts",
-      "types": "./dist/utils/styleManager/index.d.ts",
-      "import": "./dist/utils/styleManager/index.mjs",
-      "require": "./dist/utils/styleManager/index.cjs"
     }
   },
   "main": "dist/index.cjs",

@@ -58,28 +58,20 @@ Based on the package.json exports configuration:
 - `@winglet/react-utils/filter` - React component type checking utilities (isReactComponent, isReactElement, etc.)
 - `@winglet/react-utils/object` - React-specific object utilities (extractProps, mergeRefs)
 - `@winglet/react-utils/render` - Component rendering utilities (renderComponent)
-- `@winglet/react-utils/style-manager` - Style management utilities (styleManagerFactory, destroyScope)
 
 ---
 
 ## Compatibility
 
-This package is built with ECMAScript 2022 (ES2022) syntax.
+This package is written using ECMAScript 2020 (ES2020) syntax.
 
-If you're using a JavaScript environment that doesn't support ES2022, you'll need to include this package in your transpilation process.
+**Supported Environments:**
 
-**Supported environments:**
+- Node.js 14.0.0 or higher
+- Modern browsers (with ES2020 support)
 
-- Node.js 16.11.0 or later
-- Modern browsers (Chrome 94+, Firefox 93+, Safari 15+)
-
-**For legacy environment support:**
-Please use a transpiler like Babel to transform the code for your target environment.
-
-**Target packages**
-
-- `@winglet/react-utils`
-- `@winglet/common-utils`
+**For Legacy Environment Support:**
+Use transpilers like Babel to convert the code to match your target environment.
 
 ---
 
@@ -136,14 +128,6 @@ Various utility functions for working with React components.
 #### Rendering Utilities
 
 - [`renderComponent`](./src/utils/render/renderComponent.tsx) - Appropriately renders various types of components.
-
-#### Style Management
-
-- [`styleManagerFactory`](./src/utils/styleManager/styleManagerFactory.ts) - Creates a style manager factory function.
-- [`destroyScope`](./src/utils/styleManager/destroyScope.ts) - Destroys a style scope.
-- [`dataCondition`](./src/utils/styleManager/utils/dataCondition.ts) - Converts a boolean condition to a React-compatible attribute value. (truthy -> true, falsy -> undefined)
-- [`dataAttributes`](./src/utils/styleManager/utils/dataAttributes.ts) - Creates data attributes from a record of boolean values. (truthy -> true, falsy -> undefined)
-- [`compressCss`](./src/utils/styleManager/utils/compressCss.ts) - Compresses CSS string.
 
 ---
 

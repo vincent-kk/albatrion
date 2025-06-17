@@ -4,7 +4,6 @@ import { map } from '@winglet/common-utils/array';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 import { useVersion } from '@winglet/react-utils/hook';
 
-import { ModalManager } from '@/promise-modal/app/ModalManager';
 import { Presenter } from '@/promise-modal/components/Presenter';
 import type { ModalNode } from '@/promise-modal/core';
 import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
@@ -13,9 +12,7 @@ import {
   useModalManagerContext,
 } from '@/promise-modal/providers';
 
-import { style } from './style';
-
-ModalManager.defineStyleSheet('anchor', style);
+import { anchor } from './style';
 
 const AnchorInner = () => {
   const [version, update] = useVersion();
@@ -30,7 +27,7 @@ const AnchorInner = () => {
   const dimmed = useActiveModalCount(validateDimmable, version);
   return (
     <div
-      data-anchor
+      className={anchor}
       style={{
         transitionDuration: options.duration,
         backgroundColor: dimmed ? options.backdrop : 'transparent',

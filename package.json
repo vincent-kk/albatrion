@@ -43,6 +43,7 @@
     "schemaForm:antdMobile": "yarn workspace @canard/schema-form-antd-mobile-plugin",
     "schemaForm:mui": "yarn workspace @canard/schema-form-mui-plugin",
     "sort:packages": "npx sort-package-json '**/package.json'",
+    "styleUtils": "yarn workspace @winglet/style-utils",
     "tag:packages": "./scripts/tag-packages.sh"
   },
   "devDependencies": {
