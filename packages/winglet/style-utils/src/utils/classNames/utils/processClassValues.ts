@@ -29,16 +29,16 @@
  *
  * @internal This is an internal utility function
  */
-import type { ClassObject, ClassValue } from '../type';
+import type { ClassValue } from '../type';
 
 export const processClassValues = (
   args: ClassValue[],
   removeDuplicates: boolean,
 ): string => {
-  const seenClasses: string[] = [];
+  const processedClasses: string[] = [];
   let result = '';
   for (let i = 0; i < args.length; i++)
-    result = processValue(args[i], result, seenClasses, removeDuplicates);
+    result = processValue(args[i], result, processedClasses, removeDuplicates);
   return result;
 };
 
@@ -51,7 +51,7 @@ export const processClassValues = (
  *
  * @param value - The ClassValue to process
  * @param result - Current accumulated result string
- * @param seenClasses - Array tracking seen classes for duplicate detection
+ * @param processedClasses - Array tracking seen classes for duplicate detection
  * @param removeDuplicates - Whether to check for and skip duplicates
  * @returns Updated result string with the processed value
  *
@@ -75,101 +75,75 @@ export const processClassValues = (
 const processValue = (
   value: ClassValue,
   result: string,
-  seenClasses: string[],
+  processedClasses: string[],
   removeDuplicates: boolean,
 ): string => {
   if (!value && value !== 0) return result;
-  const typeTag = typeof value;
-  if (typeTag === 'string') {
-    const string = value as string;
-    let currentClass = '';
-    let currentResult = result;
-    for (let i = 0; i < string.length; i++) {
-      const char = string.charCodeAt(i);
-      if (char === 32 || char === 9 || char === 10 || char === 13) {
-        if (currentClass) {
-          currentResult = addClassToResult(
-            currentClass,
-            currentResult,
-            seenClasses,
-            removeDuplicates,
-          );
-          currentClass = '';
-        }
-      } else currentClass += string[i];
-    }
-    if (currentClass)
-      currentResult = addClassToResult(
-        currentClass,
-        currentResult,
-        seenClasses,
-        removeDuplicates,
-      );
-    return currentResult;
-  } else if (typeTag === 'number')
-    return addClassToResult('' + value, result, seenClasses, removeDuplicates);
-  else if (typeTag === 'object') {
-    let currentResult = result;
-    if (Array.isArray(value))
-      for (let i = 0; i < value.length; i++)
-        currentResult = processValue(
-          value[i],
-          currentResult,
-          seenClasses,
-          removeDuplicates,
-        );
-    else {
-      const obj = value as ClassObject;
-      for (const key in obj)
-        if (obj[key])
-          currentResult = addClassToResult(
-            key,
-            currentResult,
-            seenClasses,
-            removeDuplicates,
-          );
-    }
-    return currentResult;
-  }
-  return result;
-};
 
-/**
- * Adds a class to the result string with optional duplicate checking.
- *
- * Efficiently handles duplicate detection using Array.indexOf which is faster
- * than Set for small arrays (< 100 items) commonly found in class processing.
- * Optimizes string concatenation to avoid unnecessary space prepending.
- *
- * @param value - The class name to add
- * @param result - Current result string
- * @param seenClasses - Array of previously seen classes
- * @param removeDuplicates - Whether to check for duplicates
- * @returns Updated result string
- *
- * @example
- * ```typescript
- * // First class
- * addClassToResult('btn', '', [], false); // → 'btn'
- *
- * // Additional class
- * addClassToResult('primary', 'btn', [], false); // → 'btn primary'
- *
- * // Duplicate handling
- * addClassToResult('btn', 'btn primary', ['btn', 'primary'], true); // → 'btn primary'
- * ```
- *
- * @internal This is an internal utility function
- */
-const addClassToResult = (
-  value: string,
-  result: string,
-  seenClasses: string[],
-  removeDuplicates: boolean,
-): string => {
-  if (!removeDuplicates || seenClasses.indexOf(value) === -1) {
-    if (removeDuplicates) seenClasses.push(value);
-    return result ? result + ' ' + value : value;
+  switch (typeof value) {
+    case 'string': {
+      let currentClass = '';
+      let currentResult = result;
+      for (let i = 0; i < value.length; i++) {
+        const char = value.charCodeAt(i);
+        // Check for whitespace characters (space, tab, newline, carriage return)
+        if (char === 32 || char === 9 || char === 10 || char === 13) {
+          if (
+            currentClass &&
+            (!removeDuplicates || processedClasses.indexOf(currentClass) === -1)
+          ) {
+            if (removeDuplicates) processedClasses.push(currentClass);
+            currentResult = currentResult
+              ? currentResult + ' ' + currentClass
+              : currentClass;
+            currentClass = '';
+          }
+        } else currentClass += value[i];
+      }
+      if (
+        currentClass &&
+        (!removeDuplicates || processedClasses.indexOf(currentClass) === -1)
+      ) {
+        if (removeDuplicates) processedClasses.push(currentClass);
+        currentResult = currentResult
+          ? currentResult + ' ' + currentClass
+          : currentClass;
+      }
+      return currentResult;
+    }
+    case 'number': {
+      const numberValue = '' + value;
+      if (!removeDuplicates || processedClasses.indexOf(numberValue) === -1) {
+        if (removeDuplicates) processedClasses.push(numberValue);
+        return result ? result + ' ' + numberValue : numberValue;
+      }
+      return result;
+    }
+    case 'object': {
+      let currentResult = result;
+      if (Array.isArray(value)) {
+        for (let i = 0; i < value.length; i++) {
+          currentResult = processValue(
+            value[i],
+            currentResult,
+            processedClasses,
+            removeDuplicates,
+          );
+        }
+      } else {
+        for (const key in value) {
+          if (
+            value[key] &&
+            (!removeDuplicates || processedClasses.indexOf(key) === -1)
+          ) {
+            if (removeDuplicates) processedClasses.push(key);
+            currentResult = currentResult ? currentResult + ' ' + key : key;
+          }
+        }
+      }
+      return currentResult;
+    }
+    default:
+      return result;
   }
-  return result;
 };
