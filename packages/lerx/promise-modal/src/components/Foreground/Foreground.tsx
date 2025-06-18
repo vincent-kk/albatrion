@@ -18,7 +18,6 @@ export const ForegroundFrame = ({
 }: ModalLayerProps) => {
   const { ForegroundComponent } = useConfigurationContext();
   const { context: userDefinedContext } = useUserDefinedContext();
-
   const { modal, onChange, onConfirm, onClose, onDestroy } = useModal(modalId);
 
   const Foreground = useMemo(
@@ -26,21 +25,15 @@ export const ForegroundFrame = ({
     [ForegroundComponent, modal],
   );
 
-  const className = useMemo(
-    () =>
-      modal
-        ? cx(foreground, {
-            [active]: modal.visible,
-            [visible]: modal.manualDestroy ? modal.alive : modal.visible,
-          })
-        : undefined,
-    [modal],
-  );
-
   if (!modal) return null;
 
   return (
-    <div className={className}>
+    <div
+      className={cx(foreground, {
+        [active]: modal.visible,
+        [visible]: modal.manualDestroy ? modal.alive : modal.visible,
+      })}
+    >
       <Foreground
         id={modal.id}
         type={modal.type}

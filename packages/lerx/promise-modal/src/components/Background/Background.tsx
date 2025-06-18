@@ -32,21 +32,16 @@ export const BackgroundFrame = ({
     [BackgroundComponent, modal],
   );
 
-  const className = useMemo(
-    () =>
-      modal
-        ? cx(background, {
-            [active]: modal.closeOnBackdropClick && modal.visible,
-            [visible]: modal.manualDestroy ? modal.alive : modal.visible,
-          })
-        : undefined,
-    [modal],
-  );
-
   if (!modal) return null;
 
   return (
-    <div className={className} onClick={handleClose}>
+    <div
+      className={cx(background, {
+        [active]: modal.closeOnBackdropClick && modal.visible,
+        [visible]: modal.manualDestroy ? modal.alive : modal.visible,
+      })}
+      onClick={handleClose}
+    >
       {Background && (
         <Background
           id={modal.id}
