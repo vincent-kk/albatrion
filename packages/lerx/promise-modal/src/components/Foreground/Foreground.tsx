@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { cx } from '@winglet/style-utils';
+import { cx } from '@winglet/style-utils/classNames';
 
 import {
   useConfigurationContext,
@@ -26,15 +26,21 @@ export const ForegroundFrame = ({
     [ForegroundComponent, modal],
   );
 
+  const className = useMemo(
+    () =>
+      modal
+        ? cx(foreground, {
+            [active]: modal.visible,
+            [visible]: modal.manualDestroy ? modal.alive : modal.visible,
+          })
+        : undefined,
+    [modal],
+  );
+
   if (!modal) return null;
 
   return (
-    <div
-      className={cx(foreground, {
-        [active]: modal.visible,
-        [visible]: modal.manualDestroy ? modal.alive : modal.visible,
-      })}
-    >
+    <div className={className}>
       <Foreground
         id={modal.id}
         type={modal.type}
