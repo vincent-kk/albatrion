@@ -1,4 +1,5 @@
 export { useConstant } from './useConstant';
+export { useDebounce } from './useDebounce';
 export { useEffectUntil } from './useEffectUntil';
 export { useLayoutEffectUntil } from './useLayoutEffectUntil';
 export { useHandle } from './useHandle';
@@ -8,5 +9,6 @@ export { useOnUnmount, useOnUnmountLayout } from './useOnUnmount';
 export { useReference } from './useReference';
 export { useRestProperties } from './useRestProperties';
 export { useSnapshot, useSnapshotReference } from './useSnapshot';
+export { useTimeout } from './useTimeout';
 export { useVersion } from './useVersion';
 export { useWindowSize } from './useWindowSize';

@@ -106,6 +106,8 @@ React 기능을 확장하는 다양한 커스텀 훅을 제공합니다.
 - [`useWindowSize`](./src/hooks/useWindowSize.ts) - 브라우저 창의 크기를 추적합니다.
 - [`useHandle`](./src/hooks/useHandle.ts) - 함수 핸들러를 관리합니다.
 - [`useRestProperties`](./src/hooks/useRestProperties.ts) - 객체에서 특정 속성을 제외한 나머지를 관리합니다.
+- [`useDebounce`](./src/hooks/useDebounce.ts) - 의존성 배열이 변경될때, 지정된 시간 내에서 한 번만 함수를 실행합니다.
+- [`useTimeout`](./src/hooks/useTimeout.ts) - 지정된 시간 만큼 지연 후 실행되는 함수와 제어 함수를 반환합니다.
 
 ### 컴포넌트
 
