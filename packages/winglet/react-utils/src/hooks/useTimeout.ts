@@ -36,7 +36,10 @@ type UseTimeoutReturn = {
  * // Cancel the timeout if needed
  * cancel();
  */
-export const useTimeout = (callback: Fn, timeout: number): UseTimeoutReturn => {
+export const useTimeout = (
+  callback: Fn,
+  timeout: number = 0,
+): UseTimeoutReturn => {
   const idleRef = useRef<boolean>(true);
   const timerIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const callbackRef = useRef(callback);

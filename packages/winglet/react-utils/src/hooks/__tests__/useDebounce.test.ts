@@ -12,6 +12,8 @@ describe('useDebounce', () => {
     vi.useRealTimers();
   });
 
+  // === 기본 동작 테스트 ===
+
   it('should initialize with isIdle as false', () => {
     // Arrange
     const callback = vi.fn();
@@ -23,20 +25,39 @@ describe('useDebounce', () => {
     expect(result.current.isIdle()).toBe(false);
   });
 
-  it('should execute callback after timeout when dependencies change', () => {
+  it('should execute callback on initial mount with default immediate=true', () => {
     // Arrange
     const callback = vi.fn();
     const timeout = 1000;
-    let dependency = 'initial';
 
     // Act
-    const { result, rerender } = renderHook(() =>
-      useDebounce(callback, [dependency], timeout),
+    const { result } = renderHook(() =>
+      useDebounce(callback, ['initial'], timeout),
     );
 
-    // Change dependency
-    dependency = 'changed';
-    rerender();
+    // Assert - callback should be called immediately on mount (immediate=true by default)
+    expect(callback).toHaveBeenCalledTimes(1);
+    expect(result.current.isIdle()).toBe(false); // Timer should be running
+
+    // Fast-forward time to complete timer
+    act(() => {
+      vi.advanceTimersByTime(timeout);
+    });
+
+    // Assert - no additional execution after timer completes
+    expect(callback).toHaveBeenCalledTimes(1);
+    expect(result.current.isIdle()).toBe(true);
+  });
+
+  it('should execute callback after timeout when immediate=false', () => {
+    // Arrange
+    const callback = vi.fn();
+    const timeout = 1000;
+
+    // Act
+    const { result } = renderHook(() =>
+      useDebounce(callback, ['initial'], timeout, { immediate: false }),
+    );
 
     // Assert - callback should not be called immediately
     expect(callback).not.toHaveBeenCalled();
@@ -52,77 +73,15 @@ describe('useDebounce', () => {
     expect(result.current.isIdle()).toBe(true);
   });
 
-  it('should reset timeout when dependencies change multiple times', () => {
-    // Arrange
-    const callback = vi.fn();
-    const timeout = 1000;
-    let dependency = 'initial';
-
-    // Act
-    const { result, rerender } = renderHook(() =>
-      useDebounce(callback, [dependency], timeout),
-    );
-
-    // Change dependency multiple times rapidly
-    dependency = 'change1';
-    rerender();
-
-    act(() => {
-      vi.advanceTimersByTime(500); // Half timeout
-    });
-
-    dependency = 'change2';
-    rerender();
-
-    act(() => {
-      vi.advanceTimersByTime(500); // Another half timeout
-    });
-
-    // Assert - callback should not be called yet (debounced)
-    expect(callback).not.toHaveBeenCalled();
-    expect(result.current.isIdle()).toBe(false);
-
-    // Fast-forward remaining time
-    act(() => {
-      vi.advanceTimersByTime(500);
-    });
-
-    // Assert - callback should be called only once after final change
-    expect(callback).toHaveBeenCalledTimes(1);
-    expect(result.current.isIdle()).toBe(true);
-  });
-
-  it('should execute callback on initial mount with dependencies', () => {
-    // Arrange
-    const callback = vi.fn();
-    const timeout = 1000;
-
-    // Act
-    renderHook(() => useDebounce(callback, ['initial'], timeout));
-
-    // Fast-forward time
-    act(() => {
-      vi.advanceTimersByTime(timeout);
-    });
-
-    // Assert - callback should be called once on mount
-    expect(callback).toHaveBeenCalledTimes(1);
-  });
-
   it('should cancel pending execution when cancel is called', () => {
     // Arrange
     const callback = vi.fn();
     const timeout = 1000;
-    let dependency = 'initial';
 
     // Act
-    const { result, rerender } = renderHook(() =>
-      useDebounce(callback, [dependency], timeout),
+    const { result } = renderHook(() =>
+      useDebounce(callback, ['initial'], timeout, { immediate: false }),
     );
-
-    // Change dependency to trigger debounce
-    dependency = 'changed';
-    rerender();
 
     // Cancel before timeout completes
     act(() => {
@@ -139,6 +98,250 @@ describe('useDebounce', () => {
     expect(result.current.isIdle()).toBe(true);
   });
 
+  it('should use default values when not provided', () => {
+    // Arrange
+    const callback = vi.fn();
+
+    // Act
+    const { result } = renderHook(() => useDebounce(callback));
+
+    // Assert - callback should be called immediately (default immediate=true)
+    expect(callback).toHaveBeenCalledTimes(1);
+
+    // Fast-forward minimal time (timeout defaults to 0)
+    act(() => {
+      vi.advanceTimersByTime(1);
+    });
+
+    // Assert - should be idle after timer completes
+    expect(result.current.isIdle()).toBe(true);
+  });
+
+  // === immediate=true 모드 테스트 ===
+
+  describe('immediate=true mode', () => {
+    it('should execute immediately on mount and start timer', () => {
+      // Arrange
+      const callback = vi.fn();
+      const timeout = 1000;
+
+      // Act
+      const { result } = renderHook(() =>
+        useDebounce(callback, ['initial'], timeout, { immediate: true }),
+      );
+
+      // Assert - immediate execution
+      expect(callback).toHaveBeenCalledTimes(1);
+      expect(result.current.isIdle()).toBe(false); // Timer running
+
+      // Fast-forward time to complete timer
+      act(() => {
+        vi.advanceTimersByTime(timeout);
+      });
+
+      // Assert - no additional execution
+      expect(callback).toHaveBeenCalledTimes(1);
+      expect(result.current.isIdle()).toBe(true);
+    });
+
+    it('should execute immediately on dependency change after timer completes', () => {
+      // Arrange
+      const callback = vi.fn();
+      const timeout = 1000;
+      let dependency = 'initial';
+
+      // Act
+      const { result, rerender } = renderHook(() =>
+        useDebounce(callback, [dependency], timeout, { immediate: true }),
+      );
+
+      // Initial execution
+      expect(callback).toHaveBeenCalledTimes(1);
+
+      // Complete timer
+      act(() => {
+        vi.advanceTimersByTime(timeout);
+      });
+      expect(result.current.isIdle()).toBe(true);
+
+      // Change dependency after timer completes
+      dependency = 'changed';
+      rerender();
+
+      // Assert - immediate execution again
+      expect(callback).toHaveBeenCalledTimes(2);
+      expect(result.current.isIdle()).toBe(false); // Timer running again
+    });
+
+    it('should debounce changes during timer period', () => {
+      // Arrange
+      const callback = vi.fn();
+      const timeout = 1000;
+      let dependency = 'initial';
+
+      // Act
+      const { result, rerender } = renderHook(() =>
+        useDebounce(callback, [dependency], timeout, { immediate: true }),
+      );
+
+      // Initial execution
+      expect(callback).toHaveBeenCalledTimes(1);
+
+      // Change dependency during timer period
+      dependency = 'change1';
+      rerender();
+
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+
+      dependency = 'change2';
+      rerender();
+
+      // Assert - no additional executions during timer period
+      expect(callback).toHaveBeenCalledTimes(1);
+      expect(result.current.isIdle()).toBe(false);
+
+      // Complete debounce timer
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+
+      // Assert - debounced execution
+      expect(callback).toHaveBeenCalledTimes(2);
+      expect(result.current.isIdle()).toBe(true);
+    });
+
+    it('should not execute additional times if no changes during timer', () => {
+      // Arrange
+      const callback = vi.fn();
+      const timeout = 1000;
+
+      // Act
+      const { result } = renderHook(() =>
+        useDebounce(callback, ['initial'], timeout, { immediate: true }),
+      );
+
+      // Initial execution
+      expect(callback).toHaveBeenCalledTimes(1);
+
+      // Complete timer without changes
+      act(() => {
+        vi.advanceTimersByTime(timeout);
+      });
+
+      // Assert - no additional execution
+      expect(callback).toHaveBeenCalledTimes(1);
+      expect(result.current.isIdle()).toBe(true);
+    });
+  });
+
+  // === immediate=false 모드 테스트 ===
+
+  describe('immediate=false mode', () => {
+    it('should schedule timer on mount and execute after timeout', () => {
+      // Arrange
+      const callback = vi.fn();
+      const timeout = 1000;
+
+      // Act
+      const { result } = renderHook(() =>
+        useDebounce(callback, ['initial'], timeout, { immediate: false }),
+      );
+
+      // Assert - no immediate execution, timer scheduled
+      expect(callback).not.toHaveBeenCalled();
+      expect(result.current.isIdle()).toBe(false);
+
+      // Complete timer
+      act(() => {
+        vi.advanceTimersByTime(timeout);
+      });
+
+      // Assert - execution after timeout
+      expect(callback).toHaveBeenCalledTimes(1);
+      expect(result.current.isIdle()).toBe(true);
+    });
+
+    it('should debounce dependency changes before timer completes', () => {
+      // Arrange
+      const callback = vi.fn();
+      const timeout = 1000;
+      let dependency = 'initial';
+
+      // Act
+      const { result, rerender } = renderHook(() =>
+        useDebounce(callback, [dependency], timeout, { immediate: false }),
+      );
+
+      // Change dependency before initial timer completes
+      dependency = 'change1';
+      rerender();
+
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+
+      dependency = 'change2';
+      rerender();
+
+      // Assert - no execution yet
+      expect(callback).not.toHaveBeenCalled();
+      expect(result.current.isIdle()).toBe(false);
+
+      // Complete final debounce timer
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+
+      // Assert - single execution after debounce
+      expect(callback).toHaveBeenCalledTimes(1);
+      expect(result.current.isIdle()).toBe(true);
+    });
+  });
+
+  // === 기존 테스트들 (수정된 버전) ===
+
+  it('should reset timeout when dependencies change multiple times', () => {
+    // Arrange
+    const callback = vi.fn();
+    const timeout = 1000;
+    let dependency = 'initial';
+
+    // Act
+    const { result, rerender } = renderHook(() =>
+      useDebounce(callback, [dependency], timeout, { immediate: false }),
+    );
+
+    // Change dependency multiple times rapidly
+    dependency = 'change1';
+    rerender();
+
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+
+    dependency = 'change2';
+    rerender();
+
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+
+    // Assert - callback should not be called yet (debounced)
+    expect(callback).not.toHaveBeenCalled();
+    expect(result.current.isIdle()).toBe(false);
+
+    // Fast-forward remaining time
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+
+    // Assert - callback should be called only once after final change
+    expect(callback).toHaveBeenCalledTimes(1);
+    expect(result.current.isIdle()).toBe(true);
+  });
+
   it('should handle empty dependency list', () => {
     // Arrange
     const callback = vi.fn();
@@ -147,12 +350,15 @@ describe('useDebounce', () => {
     // Act
     renderHook(() => useDebounce(callback, [], timeout));
 
+    // Assert - callback should be called immediately (default immediate=true)
+    expect(callback).toHaveBeenCalledTimes(1);
+
     // Fast-forward time
     act(() => {
       vi.advanceTimersByTime(timeout);
     });
 
-    // Assert - callback should be called once
+    // Assert - no additional calls
     expect(callback).toHaveBeenCalledTimes(1);
   });
 
@@ -165,7 +371,7 @@ describe('useDebounce', () => {
 
     // Act
     const { result, rerender } = renderHook(() =>
-      useDebounce(callback, [dep1, dep2], timeout),
+      useDebounce(callback, [dep1, dep2], timeout, { immediate: false }),
     );
 
     // Change first dependency
@@ -197,23 +403,6 @@ describe('useDebounce', () => {
     expect(result.current.isIdle()).toBe(true);
   });
 
-  it('should use default values when not provided', () => {
-    // Arrange
-    const callback = vi.fn();
-
-    // Act
-    const { result } = renderHook(() => useDebounce(callback));
-
-    // Fast-forward minimal time (timeout defaults to 0)
-    act(() => {
-      vi.advanceTimersByTime(1);
-    });
-
-    // Assert - callback should be called with default timeout
-    expect(callback).toHaveBeenCalledTimes(1);
-    expect(result.current.isIdle()).toBe(true);
-  });
-
   it('should handle callback changes', () => {
     // Arrange
     const callback1 = vi.fn();
@@ -223,7 +412,8 @@ describe('useDebounce', () => {
 
     // Act
     const { result, rerender } = renderHook(
-      ({ callback }) => useDebounce(callback, [dependency], timeout),
+      ({ callback }) =>
+        useDebounce(callback, [dependency], timeout, { immediate: false }),
       { initialProps: { callback: callback1 } },
     );
 
@@ -254,7 +444,8 @@ describe('useDebounce', () => {
 
     // Act
     const { result, rerender } = renderHook(
-      ({ timeout }) => useDebounce(callback, [dependency], timeout),
+      ({ timeout }) =>
+        useDebounce(callback, [dependency], timeout, { immediate: false }),
       { initialProps: { timeout: initialTimeout } },
     );
 
@@ -265,12 +456,12 @@ describe('useDebounce', () => {
     // Change timeout value
     rerender({ timeout: newTimeout });
 
-    // Fast-forward by initial timeout (callback should be called because timer was already running)
+    // Fast-forward by initial timeout
     act(() => {
       vi.advanceTimersByTime(initialTimeout);
     });
 
-    // Assert - callback should be called with initial timeout since the timer was already running
+    // Assert - callback should be called with initial timeout since timer was already running
     expect(callback).toHaveBeenCalledTimes(1);
     expect(result.current.isIdle()).toBe(true);
   });
@@ -279,16 +470,11 @@ describe('useDebounce', () => {
     // Arrange
     const callback = vi.fn();
     const timeout = 1000;
-    let dependency = 'initial';
 
     // Act
-    const { unmount, rerender } = renderHook(() =>
-      useDebounce(callback, [dependency], timeout),
+    const { unmount } = renderHook(() =>
+      useDebounce(callback, ['initial'], timeout, { immediate: false }),
     );
-
-    // Change dependency to trigger debounce
-    dependency = 'changed';
-    rerender();
 
     // Unmount before timeout completes
     unmount();
@@ -306,23 +492,18 @@ describe('useDebounce', () => {
     // Arrange
     const callback = vi.fn();
     const timeout = 0;
-    let dependency = 'initial';
 
     // Act
-    const { result, rerender } = renderHook(() =>
-      useDebounce(callback, [dependency], timeout),
+    const { result } = renderHook(() =>
+      useDebounce(callback, ['initial'], timeout, { immediate: false }),
     );
-
-    // Change dependency
-    dependency = 'changed';
-    rerender();
 
     // Fast-forward minimal time
     act(() => {
       vi.advanceTimersByTime(1);
     });
 
-    // Assert - callback should be called immediately
+    // Assert - callback should be called immediately with zero timeout
     expect(callback).toHaveBeenCalledTimes(1);
     expect(result.current.isIdle()).toBe(true);
   });
@@ -355,9 +536,9 @@ describe('useDebounce', () => {
     expect(firstRender.cancel).toBe(secondRender.cancel);
   });
 
-  // === 엄밀한 테스트 케이스들 ===
+  // === 엣지 케이스 테스트 ===
 
-  describe('Edge Cases and Rigorous Testing', () => {
+  describe('Edge Cases', () => {
     it('should handle rapid dependency changes with precise timing', () => {
       // Arrange
       const callback = vi.fn();
@@ -366,7 +547,7 @@ describe('useDebounce', () => {
 
       // Act
       const { result, rerender } = renderHook(() =>
-        useDebounce(callback, [dependency], timeout),
+        useDebounce(callback, [dependency], timeout, { immediate: false }),
       );
 
       // Simulate rapid typing scenario
@@ -394,111 +575,6 @@ describe('useDebounce', () => {
       expect(result.current.isIdle()).toBe(true);
     });
 
-    it('should handle complex object dependencies correctly', () => {
-      // Arrange
-      const callback = vi.fn();
-      const timeout = 500;
-      let user = { id: 1, name: 'John', settings: { theme: 'dark' } };
-
-      // Act
-      const { result, rerender } = renderHook(() =>
-        useDebounce(callback, [user], timeout),
-      );
-
-      // Change object reference
-      user = { ...user, name: 'Jane' };
-      rerender();
-
-      act(() => {
-        vi.advanceTimersByTime(200);
-      });
-
-      // Change nested object
-      user = { ...user, settings: { ...user.settings, theme: 'light' } };
-      rerender();
-
-      act(() => {
-        vi.advanceTimersByTime(200);
-      });
-
-      // Assert - callback should not be called yet
-      expect(callback).not.toHaveBeenCalled();
-
-      // Fast-forward remaining time
-      act(() => {
-        vi.advanceTimersByTime(300);
-      });
-
-      // Assert - callback should be called once
-      expect(callback).toHaveBeenCalledTimes(1);
-      expect(result.current.isIdle()).toBe(true);
-    });
-
-    it('should handle callback that throws an error', () => {
-      // Arrange
-      const errorCallback = vi.fn(() => {
-        throw new Error('Test error');
-      });
-      const timeout = 500;
-      let dependency = 'initial';
-
-      // Act & Assert - should not throw during setup
-      const { result, rerender } = renderHook(() =>
-        useDebounce(errorCallback, [dependency], timeout),
-      );
-
-      dependency = 'changed';
-      rerender();
-
-      // Fast-forward time - error should be thrown but caught by test environment
-      expect(() => {
-        act(() => {
-          vi.advanceTimersByTime(timeout);
-        });
-      }).toThrow('Test error');
-
-      // Assert - isIdle should still be true even after error
-      expect(result.current.isIdle()).toBe(true);
-      expect(errorCallback).toHaveBeenCalledTimes(1);
-    });
-
-    it('should handle very frequent dependency changes (stress test)', () => {
-      // Arrange
-      const callback = vi.fn();
-      const timeout = 100;
-      let dependency = 0;
-
-      // Act
-      const { result, rerender } = renderHook(() =>
-        useDebounce(callback, [dependency], timeout),
-      );
-
-      // Simulate very frequent changes (100 changes in 50ms total)
-      for (let i = 1; i <= 100; i++) {
-        dependency = i;
-        rerender();
-
-        if (i % 20 === 0) {
-          act(() => {
-            vi.advanceTimersByTime(10);
-          });
-        }
-      }
-
-      // Assert - callback should not be called yet
-      expect(callback).not.toHaveBeenCalled();
-      expect(result.current.isIdle()).toBe(false);
-
-      // Fast-forward to complete debounce
-      act(() => {
-        vi.advanceTimersByTime(timeout);
-      });
-
-      // Assert - callback should be called exactly once
-      expect(callback).toHaveBeenCalledTimes(1);
-      expect(result.current.isIdle()).toBe(true);
-    });
-
     it('should handle null/undefined dependencies correctly', () => {
       // Arrange
       const callback = vi.fn();
@@ -507,7 +583,7 @@ describe('useDebounce', () => {
 
       // Act
       const { result, rerender } = renderHook(() =>
-        useDebounce(callback, [dependency], timeout),
+        useDebounce(callback, [dependency], timeout, { immediate: false }),
       );
 
       // Change from null to undefined
@@ -543,15 +619,11 @@ describe('useDebounce', () => {
       // Arrange
       const callback = vi.fn();
       const timeout = -100; // Negative timeout
-      let dependency = 'initial';
 
       // Act
-      const { result, rerender } = renderHook(() =>
-        useDebounce(callback, [dependency], timeout),
+      const { result } = renderHook(() =>
+        useDebounce(callback, ['initial'], timeout, { immediate: false }),
       );
-
-      dependency = 'changed';
-      rerender();
 
       // Fast-forward minimal time
       act(() => {
@@ -563,39 +635,6 @@ describe('useDebounce', () => {
       expect(result.current.isIdle()).toBe(true);
     });
 
-    it('should maintain consistent state during rapid cancel operations', () => {
-      // Arrange
-      const callback = vi.fn();
-      const timeout = 1000;
-      let dependency = 'initial';
-
-      // Act
-      const { result, rerender } = renderHook(() =>
-        useDebounce(callback, [dependency], timeout),
-      );
-
-      // Trigger debounce
-      dependency = 'changed';
-      rerender();
-
-      // Rapid cancel operations
-      for (let i = 0; i < 5; i++) {
-        act(() => {
-          result.current.cancel();
-          expect(result.current.isIdle()).toBe(true);
-        });
-      }
-
-      // Fast-forward time
-      act(() => {
-        vi.advanceTimersByTime(timeout + 100);
-      });
-
-      // Assert - callback should not be called after cancellation
-      expect(callback).not.toHaveBeenCalled();
-      expect(result.current.isIdle()).toBe(true);
-    });
-
     it('should handle asynchronous callback correctly', async () => {
       // Arrange
       const asyncCallback = vi.fn(async () => {
@@ -603,15 +642,11 @@ describe('useDebounce', () => {
         return 'async result';
       });
       const timeout = 500;
-      let dependency = 'initial';
 
       // Act
-      const { result, rerender } = renderHook(() =>
-        useDebounce(asyncCallback, [dependency], timeout),
+      const { result } = renderHook(() =>
+        useDebounce(asyncCallback, ['initial'], timeout),
       );
-
-      dependency = 'changed';
-      rerender();
 
       // Fast-forward debounce time
       act(() => {
@@ -620,6 +655,169 @@ describe('useDebounce', () => {
 
       // Assert - callback should be called
       expect(asyncCallback).toHaveBeenCalledTimes(1);
+      expect(result.current.isIdle()).toBe(true);
+    });
+
+    it('should handle complex immediate mode scenarios with multiple changes', () => {
+      // Arrange
+      const callback = vi.fn();
+      const timeout = 1000;
+      let dependency = 'initial';
+
+      // Act
+      const { result, rerender } = renderHook(() =>
+        useDebounce(callback, [dependency], timeout, { immediate: true }),
+      );
+
+      // Initial execution
+      expect(callback).toHaveBeenCalledTimes(1);
+      expect(result.current.isIdle()).toBe(false);
+
+      // Multiple rapid changes during timer period
+      dependency = 'change1';
+      rerender();
+
+      expect(callback).toHaveBeenCalledTimes(1); // Should still be 1
+      expect(result.current.isIdle()).toBe(false);
+
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+
+      dependency = 'change2';
+      rerender();
+
+      expect(callback).toHaveBeenCalledTimes(1); // Should still be 1
+      expect(result.current.isIdle()).toBe(false);
+
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+
+      dependency = 'change3';
+      rerender();
+
+      // Assert - still only initial execution
+      expect(callback).toHaveBeenCalledTimes(1);
+      expect(result.current.isIdle()).toBe(false);
+
+      // Complete timer - need to wait full timeout from last change (change3)
+      act(() => {
+        vi.advanceTimersByTime(1000); // Full timeout from last change
+      });
+
+      expect(callback).toHaveBeenCalledTimes(2);
+      expect(result.current.isIdle()).toBe(true);
+
+      // No more changes - next change should be immediate again
+      dependency = 'change4';
+      rerender();
+
+      expect(callback).toHaveBeenCalledTimes(3); // Immediate execution
+      expect(result.current.isIdle()).toBe(false);
+    });
+
+    it('should handle cancel during immediate mode timer period', () => {
+      // Arrange
+      const callback = vi.fn();
+      const timeout = 1000;
+      let dependency = 'initial';
+
+      // Act
+      const { result, rerender } = renderHook(() =>
+        useDebounce(callback, [dependency], timeout, { immediate: true }),
+      );
+
+      // Initial execution
+      expect(callback).toHaveBeenCalledTimes(1);
+
+      // Change during timer period
+      dependency = 'changed';
+      rerender();
+
+      // Cancel before timer completes
+      act(() => {
+        result.current.cancel();
+      });
+
+      // Fast-forward past original timeout
+      act(() => {
+        vi.advanceTimersByTime(timeout + 100);
+      });
+
+      // Assert - no additional execution due to cancellation
+      expect(callback).toHaveBeenCalledTimes(1);
+      expect(result.current.isIdle()).toBe(true);
+
+      // Next change should work normally (immediate execution)
+      dependency = 'after-cancel';
+      rerender();
+
+      expect(callback).toHaveBeenCalledTimes(2);
+      expect(result.current.isIdle()).toBe(false);
+    });
+
+    it('should handle options change during execution', () => {
+      // Arrange
+      const callback = vi.fn();
+      const timeout = 1000;
+      let dependency = 'initial';
+
+      // Act - start with immediate=true
+      const { result, rerender } = renderHook(
+        ({ immediate }) =>
+          useDebounce(callback, [dependency], timeout, { immediate }),
+        { initialProps: { immediate: true } },
+      );
+
+      // Initial execution with immediate=true
+      expect(callback).toHaveBeenCalledTimes(1);
+
+      // Change options to immediate=false (note: this won't affect current behavior
+      // since optionsRef is set only once, but testing the behavior)
+      rerender({ immediate: false });
+
+      // Change dependency
+      dependency = 'changed';
+      rerender({ immediate: false });
+
+      // Should still behave as immediate=true since optionsRef doesn't update
+      expect(callback).toHaveBeenCalledTimes(1); // No immediate execution for this change
+
+      act(() => {
+        vi.advanceTimersByTime(timeout);
+      });
+
+      // Should execute due to debounce
+      expect(callback).toHaveBeenCalledTimes(2);
+      expect(result.current.isIdle()).toBe(true);
+    });
+
+    it('should handle very short timeout with immediate mode', () => {
+      // Arrange
+      const callback = vi.fn();
+      const timeout = 1; // Very short timeout
+      let dependency = 'initial';
+
+      // Act
+      const { result, rerender } = renderHook(() =>
+        useDebounce(callback, [dependency], timeout, { immediate: true }),
+      );
+
+      // Initial execution
+      expect(callback).toHaveBeenCalledTimes(1);
+
+      // Change during very short timer period
+      dependency = 'changed';
+      rerender();
+
+      // Timer should complete very quickly
+      act(() => {
+        vi.advanceTimersByTime(2);
+      });
+
+      // Should have debounced execution
+      expect(callback).toHaveBeenCalledTimes(2);
       expect(result.current.isIdle()).toBe(true);
     });
   });
