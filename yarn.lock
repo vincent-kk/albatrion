@@ -55,6 +55,7 @@ __metadata:
     "@types/benchmark": "npm:^2"
     "@types/inquirer": "npm:^8.2.6"
     benchmark: "npm:^2.1.4"
+    clsx: "npm:^2.1.1"
     es-toolkit: "npm:^1.27.0"
     fast-json-patch: "npm:^3.1.1"
     inquirer: "npm:^8.2.6"

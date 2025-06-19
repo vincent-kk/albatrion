@@ -4,6 +4,7 @@ import { run as runClone } from './targets/clone/benchmark';
 import { run as runCompare } from './targets/compare/benchmark';
 import { run as runCompareJsonSchemaErrors } from './targets/compareJsonSchemaErrors/benchmark';
 import { run as runComparePatch } from './targets/comparePatch/benchmark';
+import { run as runCx } from './targets/cx/benchmark';
 import { run as runDeepMerge } from './targets/deepMerge/benchmark';
 import { run as runEscapePointer } from './targets/escapePointer/benchmark';
 import { run as runFind } from './targets/find/benchmark';
@@ -36,6 +37,7 @@ const benchmarks = {
   getObjectKeys: runGetObjectKeys,
   escapePointer: runEscapePointer,
   applyPatch: runApplyPatch,
+  cx: runCx,
 };
 
 main(benchmarks).catch((error) => {
