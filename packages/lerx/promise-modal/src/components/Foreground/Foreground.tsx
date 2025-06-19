@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { cx } from '@winglet/style-utils/classNames';
+import { cxLite } from '@winglet/style-utils/util';
 
 import {
   useConfigurationContext,
@@ -29,10 +29,11 @@ export const ForegroundFrame = ({
 
   return (
     <div
-      className={cx(foreground, {
-        [active]: modal.visible,
-        [visible]: modal.manualDestroy ? modal.alive : modal.visible,
-      })}
+      className={cxLite(
+        foreground,
+        modal.visible && active,
+        (modal.manualDestroy ? modal.alive : modal.visible) && visible,
+      )}
     >
       <Foreground
         id={modal.id}

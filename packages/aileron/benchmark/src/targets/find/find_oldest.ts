@@ -1,4 +1,4 @@
-import { JSONPath } from '@winglet/common-utils';
+import { JSONPath } from '@winglet/json/path';
 
 import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
 

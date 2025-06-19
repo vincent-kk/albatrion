@@ -33,16 +33,13 @@ This package supports sub-path imports to enable more granular imports and optim
 
 ```typescript
 // Main exports
-import { classNames, cx, compressCss, styleManagerFactory, destroyScope } from '@winglet/style-utils';
-
-// ClassNames utilities
-import { classNames, cx } from '@winglet/style-utils/classNames';
-
-// CSS compression utility
-import { compressCss } from '@winglet/style-utils/compressCss';
+import { cx, cxLite, compressCss, styleManagerFactory, destroyScope } from '@winglet/style-utils';
 
 // Style management utilities
-import { styleManagerFactory, destroyScope } from '@winglet/style-utils/styleManager';
+import { styleManagerFactory, destroyScope } from '@winglet/style-utils/style-manager';
+
+// All utilities (including className utilities and CSS compression)
+import { cx, cxLite, compressCss } from '@winglet/style-utils/util';
 ```
 
 ### Available Sub-paths
@@ -50,9 +47,8 @@ import { styleManagerFactory, destroyScope } from '@winglet/style-utils/styleMan
 Based on the package.json exports configuration:
 
 - `@winglet/style-utils` - Main exports (all utilities)
-- `@winglet/style-utils/classNames` - Class name manipulation utilities (classNames, cx)
-- `@winglet/style-utils/compressCss` - CSS compression utility
-- `@winglet/style-utils/styleManager` - Scoped style management utilities
+- `@winglet/style-utils/style-manager` - Scoped style management utilities (styleManagerFactory, destroyScope)
+- `@winglet/style-utils/util` - Utility functions (cx, cxLite, compressCss)
 
 ---
 
@@ -74,33 +70,47 @@ Use transpilers like Babel to convert the code to match your target environment.
 
 ### ClassNames Management
 
-#### **[`classNames`](./src/utils/classNames/classNames.ts)**
+#### **[`cx`](./src/utils/cx/cx.ts)**
 
-Main class names utility function with explicit interface. Combines multiple class values into a single space-separated string with configurable options for duplicate removal, whitespace normalization, and empty value filtering.
+Concatenates CSS class names conditionally, similar to clsx/classnames but more lightweight.
 
-#### **[`cx`](./src/utils/classNames/cx.ts)**
+Accepts various input types including strings, numbers, arrays, and objects.
 
-Convenient class names utility with variadic arguments. A lightweight wrapper around classNames that accepts variadic arguments for maximum convenience.
+Filters out falsy values and handles nested structures recursively.
 
-(no duplicate check, no whitespace minimization, default empty value filtering)
+#### **[`cxLite`](./src/utils/cx/cxLite.ts)**
+
+Lightweight version of the cx function that concatenates CSS class names.
+
+Only handles simple truthy/falsy filtering without object or array processing.
+
+Provides better performance for basic use cases where complex input types are not needed.
 
 ### CSS Compression
 
 #### **[`compressCss`](./src/utils/compressCss/compressCss.ts)**
 
-High-performance CSS compression utility that removes unnecessary whitespace, comments, and redundant semicolons. Uses a single-pass approach optimized for performance and memory usage.
+High-performance CSS compression utility that removes unnecessary whitespace, comments, and redundant semicolons.
+
+Uses a single-pass approach optimized for performance and memory usage.
 
 ### Style Management
 
 #### **[`styleManagerFactory`](./src/utils/styleManager/styleManagerFactory.ts)**
 
-Factory function that creates a scoped CSS management system for efficient style injection and cleanup. Returns a curried function that allows you to add CSS styles to a specific scope with automatic scoping, and provides cleanup functions to remove specific styles.
+Factory function that creates a scoped CSS management system for efficient style injection and cleanup.
 
-Supports both regular DOM and Shadow DOM environments with automatic scoping to prevent style conflicts. All style updates are batched using requestAnimationFrame for optimal performance.
+Returns a curried function that allows you to add CSS styles to a specific scope with automatic scoping, and provides cleanup functions to remove specific styles.
+
+Supports both regular DOM and Shadow DOM environments with automatic scoping to prevent style conflicts.
+
+All style updates are batched using requestAnimationFrame for optimal performance.
 
 #### **[`destroyScope`](./src/utils/styleManager/destroyScope.ts)**
 
-Utility function that completely destroys a specific style scope and removes all associated styles from the DOM. This function performs complete cleanup including canceling pending animation frames, removing stylesheets, and clearing all cached styles for the scope.
+Utility function that completely destroys a specific style scope and removes all associated styles from the DOM.
+
+This function performs complete cleanup including canceling pending animation frames, removing stylesheets, and clearing all cached styles for the scope.
 
 ---
 
@@ -109,15 +119,19 @@ Utility function that completely destroys a specific style scope and removes all
 ### Using ClassNames Utilities
 
 ```typescript
-import { classNames, cx } from '@winglet/style-utils';
+import { cx, cxLite } from '@winglet/style-utils';
 
-// Using classNames with array syntax
-const classes = classNames(['btn', 'btn-primary', { 'btn-active': isActive }]);
+// Using cx with various input types
+const classes = cx('btn', 'btn-primary', { 'btn-active': isActive });
 console.log(classes); // → 'btn btn-primary btn-active'
 
-// Using cx with variadic arguments (more convenient)
-const classes2 = cx('btn', 'btn-primary', isActive && 'btn-active');
-console.log(classes2); // → 'btn btn-primary btn-active'
+// Using cx with arrays and objects
+const classes2 = cx(['btn', 'btn-primary'], { 'btn-disabled': disabled });
+console.log(classes2); // → 'btn btn-primary' (if disabled is false)
+
+// Using cxLite for simple cases (better performance)
+const classes3 = cxLite('btn', 'btn-primary', isActive && 'btn-active');
+console.log(classes3); // → 'btn btn-primary btn-active'
 
 // With conditional classes
 const buttonClasses = cx(
@@ -179,7 +193,7 @@ console.log(
 ### Using styleManagerFactory for Scoped CSS
 
 ```typescript
-import { styleManagerFactory, destroyScope } from '@winglet/style-utils';
+import { destroyScope, styleManagerFactory } from '@winglet/style-utils';
 
 // Create a style manager for a specific component scope
 const addStyle = styleManagerFactory('my-component');
@@ -205,7 +219,7 @@ const removeButtonStyles = addStyle(
     background: #6c757d;
     cursor: not-allowed;
   }
-`
+`,
 );
 
 // The CSS will be automatically scoped as:
@@ -225,7 +239,7 @@ const removeLayoutStyles = addStyle(
     display: flex;
     gap: 1rem;
   }
-`
+`,
 );
 
 // Remove specific styles
@@ -240,7 +254,7 @@ destroyScope('my-component');
 ### Using styleManagerFactory with Shadow DOM
 
 ```typescript
-import { styleManagerFactory, destroyScope } from '@winglet/style-utils';
+import { destroyScope, styleManagerFactory } from '@winglet/style-utils';
 
 // Create a custom element with Shadow DOM
 class MyCustomElement extends HTMLElement {
@@ -269,7 +283,7 @@ class MyCustomElement extends HTMLElement {
         display: block;
         font-family: Arial, sans-serif;
       }
-    `
+    `,
     );
 
     const removeComponentStyles = this.addStyle(
@@ -284,7 +298,7 @@ class MyCustomElement extends HTMLElement {
       .content {
         padding: 1rem;
       }
-    `
+    `,
     );
 
     // Store cleanup functions for later use
@@ -314,7 +328,7 @@ customElements.define('my-custom-element', MyCustomElement);
 ### Dynamic Theme Management
 
 ```typescript
-import { styleManagerFactory, destroyScope } from '@winglet/style-utils';
+import { destroyScope, styleManagerFactory } from '@winglet/style-utils';
 
 class ThemeManager {
   private addStyle: (styleId: string, css: string) => () => void;
@@ -356,7 +370,7 @@ class ThemeManager {
         color: var(--color-text);
         transition: background-color 0.3s, color 0.3s;
       }
-    `
+    `,
     );
 
     this.customStyles.set('theme-colors', removeTheme);
@@ -365,7 +379,7 @@ class ThemeManager {
   addCustomStyles(id: string, css: string) {
     // Remove existing style if present
     this.customStyles.get(id)?.();
-    
+
     const removeStyle = this.addStyle(id, css);
     this.customStyles.set(id, removeStyle);
   }
@@ -395,7 +409,7 @@ document.body.className += ' theme';
 ### Performance Optimization Examples
 
 ```typescript
-import { styleManagerFactory, compressCss } from '@winglet/style-utils';
+import { compressCss, styleManagerFactory } from '@winglet/style-utils';
 
 // Pre-compress CSS for production
 const productionCSS = compressCss(`
@@ -418,12 +432,12 @@ const addBatchStyle = styleManagerFactory('batch-component');
 const cleanupFns = [
   addBatchStyle('style1', '.class1 { color: red; }'),
   addBatchStyle('style2', '.class2 { color: blue; }'),
-  addBatchStyle('style3', '.class3 { color: green; }')
+  addBatchStyle('style3', '.class3 { color: green; }'),
 ];
 // DOM update happens in next animation frame
 
 // Later cleanup if needed
-cleanupFns.forEach(cleanup => cleanup());
+cleanupFns.forEach((cleanup) => cleanup());
 ```
 
 ---
@@ -432,24 +446,25 @@ cleanupFns.forEach(cleanup => cleanup());
 
 ### ClassNames
 
-#### `classNames(classes: ClassValue[], options?: ClassNamesOptions): string`
+#### `cx(...args: ClassValue[]): string`
 
-Combines multiple class values into a single space-separated string.
+Conditionally concatenates multiple class values into a single space-separated string.
 
 **Parameters:**
 
-- `classes`: Array of class values to process
-- `options`: Configuration options for processing
+- `args`: Variable number of class value arguments (strings, numbers, arrays, objects)
 
-**Options:**
+**Returns:** Concatenated class name string
 
-- `removeDuplicates`: Remove duplicate classes (default: true)
-- `normalizeWhitespace`: Normalize whitespace (default: true)
-- `filterEmpty`: Remove empty strings (default: true)
+#### `cxLite(...args: ClassValue[]): string`
 
-#### `cx(...args: ClassValue[]): string`
+Lightweight version of the cx function that performs simple truthy/falsy filtering only.
 
-Convenient variadic version of classNames with performance-optimized defaults.
+**Parameters:**
+
+- `args`: Variable number of class value arguments (primarily strings and numbers)
+
+**Returns:** Concatenated class name string
 
 ### CSS Compression
 
@@ -480,24 +495,28 @@ The returned function automatically scopes CSS selectors with the provided scope
 **Returns:** A function that accepts `(styleId, cssString, compressed?)` and returns a cleanup function
 
 **Example:**
+
 ```typescript
 // Create a style manager for a component
 const addStyle = styleManagerFactory('my-component');
 
 // Add styles and get cleanup function
-const removeButtonStyle = addStyle('button-style', `
+const removeButtonStyle = addStyle(
+  'button-style',
+  `
   .btn {
     background: blue;
     color: white;
   }
-`);
+`,
+);
 
 // Later, remove the specific style
 removeButtonStyle();
 
 // For Shadow DOM
 const addShadowStyle = styleManagerFactory('shadow-scope', {
-  shadowRoot: myElement.shadowRoot
+  shadowRoot: myElement.shadowRoot,
 });
 ```
 
@@ -506,6 +525,7 @@ const addShadowStyle = styleManagerFactory('shadow-scope', {
 Destroys a specific style scope and removes all associated styles from the DOM.
 
 This function performs complete cleanup including:
+
 - Canceling any pending animation frames
 - Removing the scope's stylesheet from `document.adoptedStyleSheets` (modern browsers)
 - Removing the scope's style element from the DOM (fallback browsers)
@@ -517,6 +537,7 @@ This function performs complete cleanup including:
 - `scopeId`: The unique identifier of the scope to destroy
 
 **Example:**
+
 ```typescript
 // Create and use styles
 const addStyle = styleManagerFactory('temp-scope');

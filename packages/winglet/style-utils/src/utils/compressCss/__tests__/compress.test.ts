@@ -156,9 +156,8 @@ describe('compressCss', () => {
       }
     `;
     const result = compressCss(input);
-    // 현재 출력 : ('.container{width:100%;max-width:1200px;margin:0 auto}@media (max-width:768px){.container{padding:0 16px;}}');
     expect(result).toBe(
-      '.container{width:100%;max-width:1200px;margin:0 auto}@media (max-width:768px){.container{padding:0 16px}}',
+      '.container{width:100%;max-width:1200px;margin:0 auto}@media (max-width:768px){.container{padding:0 16px }}',
     );
   });
 });

@@ -1,4 +1,4 @@
-import { JSONPath } from '@winglet/common-utils';
+import { JSONPath } from '@winglet/json/path';
 
 import type { SchemaNode } from '@/schema-form/core';
 

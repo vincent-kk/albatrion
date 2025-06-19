@@ -1,10 +1,10 @@
 import { polynomialHash } from '@winglet/common-utils/hash';
 import { getRandomString } from '@winglet/common-utils/lib';
-import { compressCss } from '@winglet/style-utils/compressCss';
 import {
   destroyScope,
   styleManagerFactory,
-} from '@winglet/style-utils/styleManager';
+} from '@winglet/style-utils/style-manager';
+import { compressCss } from '@winglet/style-utils/util';
 
 import type { Fn } from '@aileron/declare';
 

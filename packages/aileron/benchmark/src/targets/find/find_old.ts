@@ -1,6 +1,6 @@
-import { JSONPath } from '@winglet/common-utils';
+import { JSONPath } from '@winglet/json/path';
 
-import { SchemaNode } from '@/schema-form/core/nodes/type';
+import type { SchemaNode } from '@/schema-form/core/nodes/type';
 
 export const find = (target: SchemaNode, path: string[]): SchemaNode | null => {
   const [currPath, ...rest] = path;
