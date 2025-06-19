@@ -1,51 +1,27 @@
-/**
- * Compresses a CSS string by removing unnecessary whitespace and comments.
- *
- * This function is optimized for performance and memory usage.
- * It uses a single-pass approach to compress the CSS string.
- *
- * @example
- * ```typescript
- * const compressed = compressCss('.container { color: red; }');
- * // Returns: '.container{color:red}'
- * ```
- *
- * @param css - CSS string to compress
- * @returns Compressed CSS string
- */
 export const compressCss = (css: string): string => {
-  const length = css.length;
-  if (length === 0) return '';
+  if (css.length === 0) return '';
 
-  // Pre-allocate buffer - worst case is same size as input
-  const output = new Uint16Array(length);
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+
+  const buffer = encoder.encode(css);
+  const length = buffer.length;
+  const output = new Uint8Array(length);
+
   let outputIndex = 0;
   let cursor = 0;
   let inComment = false;
-  let lastNonWhitespace = 0;
-  let needsSpace = false;
+  let lastByte = 0;
+  let byte: number;
 
   while (cursor < length) {
-    const charCode = css.charCodeAt(cursor);
+    byte = buffer[cursor];
 
-    // Handle comments
-    if (!inComment) {
-      // Check for comment start: '/*'
+    if (inComment) {
       if (
-        charCode === 47 &&
+        byte === ASTERISK &&
         cursor + 1 < length &&
-        css.charCodeAt(cursor + 1) === 42
-      ) {
-        inComment = true;
-        cursor += 2;
-        continue;
-      }
-    } else {
-      // Check for comment end: '*/'
-      if (
-        charCode === 42 &&
-        cursor + 1 < length &&
-        css.charCodeAt(cursor + 1) === 47
+        buffer[cursor + 1] === SLASH
       ) {
         inComment = false;
         cursor += 2;
@@ -53,131 +29,128 @@ export const compressCss = (css: string): string => {
       }
       cursor++;
       continue;
+    } else {
+      if (
+        byte === SLASH &&
+        cursor + 1 < length &&
+        buffer[cursor + 1] === ASTERISK
+      ) {
+        inComment = true;
+        cursor += 2;
+        continue;
+      }
     }
 
-    // Handle whitespace
-    // space(32), tab(9), newline(10), carriage return(13)
-    if (
-      charCode === 32 ||
-      charCode === 9 ||
-      charCode === 10 ||
-      charCode === 13
-    ) {
-      // Skip consecutive whitespace
+    if (byte === SPACE || byte === TAB || byte === LF || byte === CR) {
       while (++cursor < length) {
-        const nextCode = css.charCodeAt(cursor);
+        const nextByte = buffer[cursor];
         if (
-          nextCode !== 32 &&
-          nextCode !== 9 &&
-          nextCode !== 10 &&
-          nextCode !== 13
+          nextByte !== SPACE &&
+          nextByte !== TAB &&
+          nextByte !== LF &&
+          nextByte !== CR
         )
           break;
       }
-
-      // Determine if we need to keep a space
       if (outputIndex > 0 && cursor < length) {
-        const prevCode = lastNonWhitespace;
-        const nextCode = css.charCodeAt(cursor);
+        const prevByte = lastByte;
+        const nextByte = buffer[cursor];
+        const noSpaceAfter =
+          prevByte === LBRACE ||
+          prevByte === RBRACE ||
+          prevByte === SEMICOLON ||
+          prevByte === COLON ||
+          prevByte === COMMA ||
+          prevByte === GT ||
+          prevByte === PLUS ||
+          prevByte === TILDE ||
+          prevByte === L_PAREN;
 
-        // Rules for keeping space:
-        // 1. Not after special chars: { } ; : , > + ~
-        if (
-          prevCode === 123 ||
-          prevCode === 125 ||
-          prevCode === 59 ||
-          prevCode === 58 ||
-          prevCode === 44 ||
-          prevCode === 62 ||
-          prevCode === 43 ||
-          prevCode === 126
-        )
-          needsSpace = false;
-        // 2. Not before special chars
-        else if (
-          nextCode === 123 ||
-          nextCode === 125 ||
-          nextCode === 59 ||
-          nextCode === 58 ||
-          nextCode === 44 ||
-          nextCode === 62 ||
-          nextCode === 43 ||
-          nextCode === 126
-        )
-          needsSpace = false;
-        // 3. Not after ) unless before (
-        else if (prevCode === 41 && nextCode !== 40) needsSpace = false;
-        // 4. Keep space between letter and (
-        else if (
-          nextCode === 40 &&
-          ((prevCode >= 65 && prevCode <= 90) ||
-            (prevCode >= 97 && prevCode <= 122))
-        )
-          needsSpace = true;
-        else needsSpace = true;
+        const noSpaceBefore =
+          nextByte === LBRACE ||
+          nextByte === RBRACE ||
+          nextByte === SEMICOLON ||
+          nextByte === COLON ||
+          nextByte === COMMA ||
+          nextByte === GT ||
+          nextByte === PLUS ||
+          nextByte === TILDE ||
+          nextByte === R_PAREN;
 
-        if (needsSpace) output[outputIndex++] = 32; // space
+        const needsSpaceForFunction =
+          nextByte === L_PAREN &&
+          ((prevByte >= 65 && prevByte <= 90) ||
+            (prevByte >= 97 && prevByte <= 122));
+
+        if ((!noSpaceAfter && !noSpaceBefore) || needsSpaceForFunction) {
+          output[outputIndex++] = SPACE;
+          lastByte = SPACE;
+        }
       }
       continue;
     }
 
-    // Handle semicolons
-    if (charCode === 59) {
-      // Skip duplicate semicolons
-      let j = cursor + 1;
-      while (j < length && css.charCodeAt(j) === 59) j++;
-
-      // Check if semicolon is before } (with possible whitespace in between)
-      let k = j;
-      while (k < length) {
-        const nextCode = css.charCodeAt(k);
-        if (
-          nextCode === 32 ||
-          nextCode === 9 ||
-          nextCode === 10 ||
-          nextCode === 13
+    if (byte === SEMICOLON) {
+      let index = cursor + 1;
+      while (index < length && buffer[index] === SEMICOLON) index++;
+      let head = index;
+      let foundNonWhitespace = false;
+      while (head < length && !foundNonWhitespace) {
+        while (
+          head < length &&
+          (buffer[head] === SPACE ||
+            buffer[head] === TAB ||
+            buffer[head] === LF ||
+            buffer[head] === CR)
         )
-          k++;
-        else break;
+          head++;
+        if (
+          head < length - 1 &&
+          buffer[head] === SLASH &&
+          buffer[head + 1] === ASTERISK
+        ) {
+          head += 2;
+          while (head < length - 1) {
+            if (buffer[head] === ASTERISK && buffer[head + 1] === SLASH) {
+              head += 2;
+              break;
+            }
+            head++;
+          }
+        } else foundNonWhitespace = true;
       }
-
-      // Skip semicolon if followed by }
-      if (k < length && css.charCodeAt(k) === 125) {
-        cursor = j;
+      if (head < length && buffer[head] === RBRACE) {
+        cursor = index;
         continue;
       }
-
-      output[outputIndex++] = 59;
-      lastNonWhitespace = 59;
-      cursor = j;
+      output[outputIndex++] = SEMICOLON;
+      lastByte = SEMICOLON;
+      cursor = index;
       continue;
     }
-
-    // Regular character
-    output[outputIndex++] = charCode;
-    lastNonWhitespace = charCode;
+    output[outputIndex++] = byte;
+    lastByte = byte;
     cursor++;
   }
 
-  // Convert back to string, trimming trailing whitespace
-  while (outputIndex > 0 && output[outputIndex - 1] === 32) outputIndex--;
+  while (outputIndex > 0 && output[outputIndex - 1] === SPACE) outputIndex--;
 
-  // Post-process to remove semicolons before closing braces
-  // This handles cases where semicolons were added before we knew a } was coming
-  let finalOutputIndex = 0;
-  for (let i = 0; i < outputIndex; i++) {
-    const charCode = output[i];
-    if (charCode === 59) {
-      let j = i + 1;
-      while (j < outputIndex && output[j] === 32) j++;
-      if (j < outputIndex && output[j] === 125) continue;
-    }
-    output[finalOutputIndex++] = charCode;
-  }
-
-  // Build result string from buffer
-  let result = '';
-  for (let j = 0; j < finalOutputIndex; j++)
-    result += String.fromCharCode(output[j]);
-  return result;
+  return decoder.decode(output.subarray(0, outputIndex));
 };
+
+const SPACE = 32,
+  TAB = 9,
+  LF = 10,
+  CR = 13,
+  SLASH = 47,
+  ASTERISK = 42,
+  SEMICOLON = 59,
+  LBRACE = 123,
+  RBRACE = 125,
+  COLON = 58,
+  COMMA = 44,
+  GT = 62,
+  PLUS = 43,
+  TILDE = 126,
+  L_PAREN = 40,
+  R_PAREN = 41;
