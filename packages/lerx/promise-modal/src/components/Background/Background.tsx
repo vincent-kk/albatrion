@@ -1,6 +1,6 @@
 import { type MouseEvent, useCallback, useMemo } from 'react';
 
-import { cx } from '@winglet/style-utils/classNames';
+import { cxLite } from '@winglet/style-utils/util';
 
 import {
   useConfigurationContext,
@@ -36,10 +36,11 @@ export const BackgroundFrame = ({
 
   return (
     <div
-      className={cx(background, {
-        [active]: modal.closeOnBackdropClick && modal.visible,
-        [visible]: modal.manualDestroy ? modal.alive : modal.visible,
-      })}
+      className={cxLite(
+        background,
+        modal.closeOnBackdropClick && modal.visible && active,
+        (modal.manualDestroy ? modal.alive : modal.visible) && visible,
+      )}
       onClick={handleClose}
     >
       {Background && (
