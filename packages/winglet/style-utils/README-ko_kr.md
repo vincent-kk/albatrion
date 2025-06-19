@@ -11,7 +11,9 @@
 
 `@winglet/style-utils`는 자바스크립트/타입스크립트 프로젝트를 위한 포괄적인 CSS 및 스타일 관리 유틸리티 패키지입니다.
 
-이 라이브러리는 className 조작, CSS 압축, 스코프 CSS 기능을 갖춘 범용 스타일 관리를 위한 강력한 도구들을 제공합니다. 프레임워크에 무관하게 설계되었으며, Shadow DOM을 포함한 모든 웹 환경에서 사용할 수 있습니다.
+이 라이브러리는 className 조작, CSS 압축, 스코프 CSS 기능을 갖춘 범용 스타일 관리를 위한 강력한 도구들을 제공합니다.
+
+프레임워크에 무관하게 설계되었으며, Shadow DOM을 포함한 모든 웹 환경에서 사용할 수 있습니다.
 
 ---
 
@@ -33,16 +35,13 @@ yarn add @winglet/style-utils
 
 ```typescript
 // 메인 내보내기
-import { classNames, cx, compressCss, StyleManager } from '@winglet/style-utils';
-
-// 클래스명 유틸리티
-import { classNames, cx } from '@winglet/style-utils/classNames';
-
-// CSS 압축 유틸리티
-import { compressCss } from '@winglet/style-utils/compressCss';
+import { cx, cxLite, compressCss, styleManagerFactory, destroyScope } from '@winglet/style-utils';
 
 // 스타일 관리 유틸리티
-import { destroyScope, styleManagerFactory } from '@winglet/style-utils/styleManager';
+import { styleManagerFactory, destroyScope } from '@winglet/style-utils/style-manager';
+
+// 모든 유틸리티 (클래스명 유틸리티 및 CSS 압축 포함)
+import { cx, cxLite, compressCss } from '@winglet/style-utils/util';
 ```
 
 ### 사용 가능한 Sub-path
@@ -50,9 +49,8 @@ import { destroyScope, styleManagerFactory } from '@winglet/style-utils/styleMan
 package.json의 exports 설정을 기반으로 합니다:
 
 - `@winglet/style-utils` - 메인 내보내기 (모든 유틸리티)
-- `@winglet/style-utils/classNames` - 클래스명 조작 유틸리티 (classNames, cx)
-- `@winglet/style-utils/compressCss` - CSS 압축 유틸리티
-- `@winglet/style-utils/styleManager` - 스코프 스타일 관리 유틸리티
+- `@winglet/style-utils/style-manager` - 스코프 스타일 관리 유틸리티 (styleManagerFactory, destroyScope)
+- `@winglet/style-utils/util` - 유틸리티 함수들 (cx, cxLite, compressCss)
 
 ---
 
@@ -74,21 +72,29 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 ### 클래스명 관리
 
-#### **[`classNames`](./src/utils/classNames/classNames.ts)**
+#### **[`cx`](./src/utils/cx/cx.ts)**
 
-명시적 인터페이스를 가진 메인 클래스명 유틸리티 함수입니다. 여러 클래스 값을 공백으로 구분된 단일 문자열로 결합하며, 중복 제거, 공백 정규화, 빈 값 필터링을 위한 구성 가능한 옵션을 제공합니다.
+clsx/classnames와 유사하지만 더 가볍고 빠른 CSS 클래스명을 조건부로 연결하는 함수입니다.
 
-#### **[`cx`](./src/utils/classNames/cx.ts)**
+문자열, 숫자, 배열, 객체를 포함한 다양한 입력 타입을 받아들입니다.
 
-가변 인수를 사용하는 편리한 클래스명 유틸리티입니다. 최대한의 편의성을 위해 가변 인수를 받는 classNames의 경량 래퍼입니다.
+falsy 값을 필터링하고 중첩된 구조를 재귀적으로 처리합니다.
 
-(중복검사 x, 공백 최소화 x, 빈 값 필터링 o)
+#### **[`cxLite`](./src/utils/cx/cxLite.ts)**
+
+CSS 클래스명을 연결하는 cx 함수의 경량 버전입니다.
+
+객체나 배열 처리 없이 간단한 truthy/falsy 필터링만 처리합니다.
+
+복잡한 입력 타입이 필요하지 않은 기본 사용 사례에서 더 나은 성능을 제공합니다.
 
 ### CSS 압축
 
 #### **[`compressCss`](./src/utils/compressCss/compressCss.ts)**
 
-불필요한 공백, 주석, 중복 세미콜론을 제거하는 고성능 CSS 압축 유틸리티입니다. 성능과 메모리 사용량에 최적화된 단일 패스 방식을 사용합니다.
+불필요한 공백, 주석, 중복 세미콜론을 제거하는 고성능 CSS 압축 유틸리티입니다.
+
+성능과 메모리 사용량에 최적화된 단일 패스 방식을 사용합니다.
 
 ### 스타일 관리
 
@@ -111,15 +117,19 @@ StyleManager는 효율적인 스타일 주입과 정리를 제공하는 스코�
 ### 클래스명 유틸리티 사용하기
 
 ```typescript
-import { classNames, cx } from '@winglet/style-utils';
+import { cx, cxLite } from '@winglet/style-utils';
 
-// 배열 문법으로 classNames 사용
-const classes = classNames(['btn', 'btn-primary', { 'btn-active': isActive }]);
+// 다양한 입력 타입으로 cx 사용
+const classes = cx('btn', 'btn-primary', { 'btn-active': isActive });
 console.log(classes); // → 'btn btn-primary btn-active'
 
-// 가변 인수로 cx 사용 (더 편리함)
-const classes2 = cx('btn', 'btn-primary', isActive && 'btn-active');
-console.log(classes2); // → 'btn btn-primary btn-active'
+// 배열과 객체로 cx 사용
+const classes2 = cx(['btn', 'btn-primary'], { 'btn-disabled': disabled });
+console.log(classes2); // → 'btn btn-primary' (disabled가 false인 경우)
+
+// 간단한 경우에 cxLite 사용 (더 나은 성능)
+const classes3 = cxLite('btn', 'btn-primary', isActive && 'btn-active');
+console.log(classes3); // → 'btn btn-primary btn-active'
 
 // 조건부 클래스와 함께 사용
 const buttonClasses = cx(
@@ -371,7 +381,7 @@ document.body.className += ' theme';
 ### 성능 최적화 예제
 
 ```typescript
-import { styleManagerFactory, compressCss } from '@winglet/style-utils';
+import { compressCss, styleManagerFactory } from '@winglet/style-utils';
 
 // 프로덕션을 위한 CSS 사전 압축
 const productionCSS = compressCss(`
@@ -394,38 +404,39 @@ const addBatchStyle = styleManagerFactory('batch-component');
 const cleanupFns = [
   addBatchStyle('style1', '.class1 { color: red; }'),
   addBatchStyle('style2', '.class2 { color: blue; }'),
-  addBatchStyle('style3', '.class3 { color: green; }')
+  addBatchStyle('style3', '.class3 { color: green; }'),
 ];
 // DOM 업데이트는 다음 애니메이션 프레임에서 발생
 
 // 나중에 필요한 경우 정리
-cleanupFns.forEach(cleanup => cleanup());
+cleanupFns.forEach((cleanup) => cleanup());
 ```
 
 ---
 
 ## API 참조
 
-### ClassNames
-
-#### `classNames(classes: ClassValue[], options?: ClassNamesOptions): string`
-
-여러 클래스 값을 공백으로 구분된 단일 문자열로 결합합니다.
-
-**매개변수:**
-
-- `classes`: 처리할 클래스 값들의 배열
-- `options`: 처리를 위한 구성 옵션
-
-**옵션:**
-
-- `removeDuplicates`: 중복 클래스 제거 (기본값: true)
-- `normalizeWhitespace`: 공백 정규화 (기본값: true)
-- `filterEmpty`: 빈 문자열 제거 (기본값: true)
+### CX
 
 #### `cx(...args: ClassValue[]): string`
 
-성능 최적화된 기본값을 가진 classNames의 편리한 가변 인수 버전입니다.
+여러 클래스 값을 조건부로 연결하여 공백으로 구분된 단일 문자열로 결합합니다.
+
+**매개변수:**
+
+- `args`: 처리할 클래스 값들의 가변 인수 (문자열, 숫자, 배열, 객체)
+
+**반환값:** 연결된 클래스명 문자열
+
+#### `cxLite(...args: ClassValue[]): string`
+
+cx 함수의 경량 버전으로 간단한 truthy/falsy 필터링만 수행합니다.
+
+**매개변수:**
+
+- `args`: 처리할 클래스 값들의 가변 인수 (주로 문자열과 숫자)
+
+**반환값:** 연결된 클래스명 문자열
 
 ### CSS 압축
 
@@ -456,24 +467,28 @@ cleanupFns.forEach(cleanup => cleanup());
 **반환값:** `(styleId, cssString, compressed?)`를 받고 정리 함수를 반환하는 함수
 
 **예제:**
+
 ```typescript
 // 컴포넌트용 스타일 매니저 생성
 const addStyle = styleManagerFactory('my-component');
 
 // 스타일 추가 및 정리 함수 받기
-const removeButtonStyle = addStyle('button-style', `
+const removeButtonStyle = addStyle(
+  'button-style',
+  `
   .btn {
     background: blue;
     color: white;
   }
-`);
+`,
+);
 
 // 나중에 특정 스타일 제거
 removeButtonStyle();
 
 // Shadow DOM 사용 시
 const addShadowStyle = styleManagerFactory('shadow-scope', {
-  shadowRoot: myElement.shadowRoot
+  shadowRoot: myElement.shadowRoot,
 });
 ```
 
@@ -482,6 +497,7 @@ const addShadowStyle = styleManagerFactory('shadow-scope', {
 특정 스타일 스코프를 파괴하고 DOM에서 모든 관련 스타일을 제거합니다.
 
 이 함수는 다음을 포함한 완전한 정리를 수행합니다:
+
 - 보류 중인 애니메이션 프레임 취소
 - `document.adoptedStyleSheets`에서 스코프의 스타일시트 제거 (모던 브라우저)
 - DOM에서 스코프의 스타일 요소 제거 (폴백 브라우저)
@@ -493,6 +509,7 @@ const addShadowStyle = styleManagerFactory('shadow-scope', {
 - `scopeId`: 파괴할 스코프의 고유 식별자
 
 **예제:**
+
 ```typescript
 // 스타일 생성 및 사용
 const addStyle = styleManagerFactory('temp-scope');
@@ -509,135 +526,6 @@ styleManagerFactory를 위한 구성 인터페이스입니다.
 **속성:**
 
 - `shadowRoot?: ShadowRoot` - Shadow DOM 스타일 주입을 위한 선택적 ShadowRoot
-
----
-
-## 개발 환경 설정
-
-```bash
-# 저장소 클론
-dir=your-albatrion && git clone https://github.com/vincent-kk/albatrion.git "$dir" && cd "$dir"
-
-# 의존성 설치
-nvm use && yarn install && yarn run:all build
-
-# 개발 빌드
-yarn styleUtils build
-
-# 테스트 실행
-yarn styleUtils test
-```
-
----
-
-## 라이선스
-
-이 프로젝트는 MIT 라이선스 하에 제공됩니다. 자세한 내용은 [`LICENSE`](./LICENSE) 파일을 참조하세요.
-
----
-
-## 연락처
-
-이 프로젝트에 관한 질문이나 제안이 있으시면 이슈를 생성해 주세요.plyTheme('dark');
-
-// body 요소에 스코프 추가
-document.body.dataset.scope = 'theme';
-```
-
-### 성능 최적화 예제
-
-```typescript
-import { StyleManager, compressCss } from '@winglet/style-utils';
-
-// 프로덕션을 위한 CSS 사전 압축
-const productionCSS = compressCss(`
-  .component {
-    /* 개발용 주석과 포맷팅 */
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-`);
-
-// 압축된 CSS를 사용하여 압축 단계 건너뛰기
-const manager = StyleManager.get('optimized-component');
-manager.add('styles', productionCSS, true); // true = 이미 압축됨
-
-// 더 나은 성능을 위한 스타일 업데이트 배치
-const manager2 = StyleManager.get('batch-component');
-
-// 이 모든 업데이트는 단일 DOM 업데이트로 배치됩니다
-manager2.add('style1', '.class1 { color: red; }');
-manager2.add('style2', '.class2 { color: blue; }');
-manager2.add('style3', '.class3 { color: green; }');
-// DOM 업데이트는 다음 애니메이션 프레임에서 발생
-```
-
----
-
-## API 참조
-
-### ClassNames
-
-#### `classNames(classes: ClassValue[], options?: ClassNamesOptions): string`
-
-여러 클래스 값을 공백으로 구분된 단일 문자열로 결합합니다.
-
-**매개변수:**
-
-- `classes`: 처리할 클래스 값들의 배열
-- `options`: 처리를 위한 구성 옵션
-
-**옵션:**
-
-- `removeDuplicates`: 중복 클래스 제거 (기본값: true)
-- `normalizeWhitespace`: 공백 정규화 (기본값: true)
-- `filterEmpty`: 빈 문자열 제거 (기본값: true)
-
-#### `cx(...args: ClassValue[]): string`
-
-성능 최적화된 기본값을 가진 classNames의 편리한 가변 인수 버전입니다.
-
-### CSS 압축
-
-#### `compressCss(css: string): string`
-
-불필요한 공백과 주석을 제거하여 CSS를 압축합니다.
-
-**매개변수:**
-
-- `css`: 압축할 CSS 문자열
-
-**반환값:** 압축된 CSS 문자열
-
-### 스타일 관리
-
-#### `StyleManager.get(scopeId: string, config?: StyleManagerConfig): StyleManager`
-
-지정된 스코프에 대한 StyleManager 인스턴스를 가져오거나 생성합니다.
-
-**매개변수:**
-
-- `scopeId`: 스타일 스코프의 고유 식별자
-- `config`: 선택적 구성 객체
-
-#### `StyleManager.prototype.add(id: string, css: string, compressed?: boolean): void`
-
-스코프에 CSS 스타일을 추가하거나 업데이트합니다.
-
-**매개변수:**
-
-- `id`: 스타일의 고유 식별자
-- `css`: 추가할 CSS 문자열
-- `compressed`: true이면 압축 건너뛰기 (기본값: false)
-
-#### `StyleManager.prototype.remove(id: string): void`
-
-스코프에서 특정 CSS 스타일을 제거합니다.
-
-#### `StyleManager.prototype.destroy(): void`
-
-StyleManager 인스턴스를 파괴하고 모든 관련 스타일을 제거합니다.
 
 ---
 
