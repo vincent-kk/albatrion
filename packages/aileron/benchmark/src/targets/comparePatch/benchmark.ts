@@ -1,7 +1,7 @@
 import Benchmark from 'benchmark';
 import jsonPath from 'fast-json-patch';
 
-import { compare } from '@winglet/common-utils';
+import { compare } from '@winglet/json/pointer-patch';
 
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 
