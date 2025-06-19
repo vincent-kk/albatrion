@@ -1,3 +1,45 @@
+/**
+ * Compresses CSS by removing unnecessary whitespace, comments, and redundant semicolons.
+ * Uses byte-level processing for optimal performance while preserving CSS functionality.
+ * Prioritizes speed over perfect compression - some trailing spaces may remain.
+ *
+ * @param css - The CSS string to compress
+ * @returns A compressed CSS string with minimal whitespace and no comments
+ *
+ * @note This function prioritizes performance over perfect compression.
+ * Some trailing spaces may remain in certain contexts (e.g., media queries)
+ * to avoid expensive post-processing operations.
+ *
+ * @example
+ * ```typescript
+ * Basic CSS compression:
+ * compressCss('.class { color: red; background: blue; }')
+ * // Returns: '.class{color:red;background:blue}'
+ *
+ * Comment removal:
+ * compressCss('.class { color: red; /* inline comment *\/ background: blue; }')
+ * // Returns: '.class{color:red;background:blue}'
+ *
+ * Multiple whitespace handling:
+ * compressCss('.class1   { color  :   red  ; margin :  10px   20px  ; }')
+ * // Returns: '.class1{color:red;margin:10px 20px}'
+ *
+ * CSS selectors with combinators:
+ * compressCss('.class1   .class2   >   .class3 { color: red; }')
+ * // Returns: '.class1 .class2>.class3{color:red}'
+ *
+ * Media queries (may have trailing spaces for performance):
+ * compressCss('@media (max-width: 768px) { .container { padding: 0 16px; } }')
+ * // Returns: '@media (max-width:768px){.container{padding:0 16px }}' (note trailing space)
+ *
+ * Complex CSS with comments:
+ * compressCss('.container { width: 100%; /* comment *\/ margin: 0 auto; }')
+ * // Returns: '.container{width:100%;margin:0 auto}'
+ *
+ * Empty input:
+ * compressCss('') // Returns: ''
+ *```
+ */
 export const compressCss = (css: string): string => {
   if (css.length === 0) return '';
 
@@ -138,19 +180,23 @@ export const compressCss = (css: string): string => {
   return decoder.decode(output.subarray(0, outputIndex));
 };
 
-const SPACE = 32,
-  TAB = 9,
-  LF = 10,
-  CR = 13,
-  SLASH = 47,
-  ASTERISK = 42,
-  SEMICOLON = 59,
-  LBRACE = 123,
-  RBRACE = 125,
-  COLON = 58,
-  COMMA = 44,
-  GT = 62,
-  PLUS = 43,
-  TILDE = 126,
-  L_PAREN = 40,
-  R_PAREN = 41;
+/**
+ * ASCII byte constants for CSS compression processing.
+ * Used for byte-level parsing and whitespace/symbol detection.
+ */
+const SPACE = 32, // ' ' - Space character
+  TAB = 9, // '\t' - Tab character
+  LF = 10, // '\n' - Line feed (newline)
+  CR = 13, // '\r' - Carriage return
+  SLASH = 47, // '/' - Forward slash (for comments)
+  ASTERISK = 42, // '*' - Asterisk (for comments)
+  SEMICOLON = 59, // ';' - Semicolon
+  LBRACE = 123, // '{' - Left brace
+  RBRACE = 125, // '}' - Right brace
+  COLON = 58, // ':' - Colon
+  COMMA = 44, // ',' - Comma
+  GT = 62, // '>' - Greater than (CSS child combinator)
+  PLUS = 43, // '+' - Plus (CSS adjacent sibling combinator)
+  TILDE = 126, // '~' - Tilde (CSS general sibling combinator)
+  L_PAREN = 40, // '(' - Left parenthesis
+  R_PAREN = 41; // ')' - Right parenthesis
