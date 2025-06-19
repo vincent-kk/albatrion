@@ -33,23 +33,17 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
-    "./classNames": {
-      "source": "./src/utils/classNames/index.ts",
-      "types": "./dist/utils/classNames/index.d.ts",
-      "import": "./dist/utils/classNames/index.mjs",
-      "require": "./dist/utils/classNames/index.cjs"
+    "./style-manager": {
+      "source": "./src/styleManager/index.ts",
+      "types": "./dist/styleManager/index.d.ts",
+      "import": "./dist/styleManager/index.mjs",
+      "require": "./dist/styleManager/index.cjs"
     },
-    "./compressCss": {
-      "source": "./src/utils/compressCss/index.ts",
-      "types": "./dist/utils/compressCss/index.d.ts",
-      "import": "./dist/utils/compressCss/index.mjs",
-      "require": "./dist/utils/compressCss/index.cjs"
-    },
-    "./styleManager": {
-      "source": "./src/utils/styleManager/index.ts",
-      "types": "./dist/utils/styleManager/index.d.ts",
-      "import": "./dist/utils/styleManager/index.mjs",
-      "require": "./dist/utils/styleManager/index.cjs"
+    "./util": {
+      "source": "./src/utils/index.ts",
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.mjs",
+      "require": "./dist/utils/index.cjs"
     }
   },
   "main": "dist/index.cjs",
