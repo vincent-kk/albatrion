@@ -8,7 +8,8 @@ import { PluginManager } from './PluginManager';
 
 const RegisteredPlugin = new Set<string>();
 
-export const registerPlugin = (plugin: SchemaFormPlugin) => {
+export const registerPlugin = (plugin: SchemaFormPlugin | null) => {
+  if (plugin === null) PluginManager.reset();
   if (!isPlainObject(plugin)) return;
   const hash = stableSerialize(plugin);
   if (RegisteredPlugin.has(hash)) return;
