@@ -14,10 +14,9 @@ export const useHandle = <P extends Array<any>, R>(
   const handelRef = useReference(handler);
   return useCallback(
     (...args: P) => {
-      if (typeof handelRef.current !== 'function') {
-        return null as never;
-      }
-      return handelRef.current(...args);
+      if (typeof handelRef.current === 'function')
+        return handelRef.current(...args);
+      return null as never;
     },
     [handelRef],
   );
