@@ -15,7 +15,7 @@ import {
 import { isFunction } from '@winglet/common-utils/filter';
 import { getTrackableHandler } from '@winglet/common-utils/function';
 import { withErrorBoundaryForwardRef } from '@winglet/react-utils/hoc';
-import { useConstant, useHandle, useVersion } from '@winglet/react-utils/hook';
+import { useHandle, useMemorize, useVersion } from '@winglet/react-utils/hook';
 
 import type { Fn, Parameter } from '@aileron/declare';
 
@@ -70,17 +70,19 @@ const FormInner = <
   ref: ForwardedRef<FormHandle<Schema, Value>>,
 ) => {
   type Node = InferSchemaNode<Schema>;
-  const jsonSchema = useConstant(inputJsonSchema);
+  const ready = useRef(false);
+  const [version, update] = useVersion(() => {
+    ready.current = false;
+  });
+
+  const jsonSchema = useMemorize(inputJsonSchema, [version]);
+  const defaultValue = useMemorize(inputDefaultValue, [version]);
+
   const [rootNode, setRootNode] = useState<Node>();
   const [children, setChildren] = useState<ReactNode>(
     createChildren(inputChildren, jsonSchema),
   );
   const [showError, setShowError] = useState(inputShowError);
-  const defaultValue = useConstant(inputDefaultValue);
-  const ready = useRef(false);
-  const [version, update] = useVersion(() => {
-    ready.current = false;
-  });
 
   const handleChange = useHandle((input: Parameter<typeof onChange>) => {
     if (!ready.current || !isFunction(onChange)) return;
