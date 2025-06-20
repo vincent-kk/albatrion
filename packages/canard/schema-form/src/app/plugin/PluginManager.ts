@@ -29,17 +29,24 @@ interface RenderKit {
   FormError: ComponentType<FormTypeRendererProps>;
 }
 
+const defaultRenderKit = {
+  FormGroup: FormGroupRenderer,
+  FormLabel: FormLabelRenderer,
+  FormInput: FormInputRenderer,
+  FormError: FormErrorRenderer,
+} as const;
+
+const defaultFormTypeInputDefinitions =
+  normalizeFormTypeInputDefinitions(formTypeDefinitions);
+
+const defaultFormatError = formatError;
+
 export class PluginManager {
-  static #renderKit: RenderKit = {
-    FormGroup: FormGroupRenderer,
-    FormLabel: FormLabelRenderer,
-    FormInput: FormInputRenderer,
-    FormError: FormErrorRenderer,
-  };
+  static #renderKit: RenderKit = defaultRenderKit;
   static #formTypeInputDefinitions: NormalizedFormTypeInputDefinition[] =
-    normalizeFormTypeInputDefinitions(formTypeDefinitions);
+    defaultFormTypeInputDefinitions;
   static #validator: ValidatorPlugin | undefined;
-  static #formatError: FormatError = formatError;
+  static #formatError: FormatError = defaultFormatError;
 
   static get FormGroup() {
     return PluginManager.#renderKit.FormGroup;
@@ -61,6 +68,13 @@ export class PluginManager {
   }
   static get validator() {
     return PluginManager.#validator;
+  }
+
+  static reset() {
+    PluginManager.#renderKit = defaultRenderKit;
+    PluginManager.#formTypeInputDefinitions = defaultFormTypeInputDefinitions;
+    PluginManager.#validator = undefined;
+    PluginManager.#formatError = defaultFormatError;
   }
 
   static appendRenderKit(renderKit: Partial<RenderKit> | undefined) {

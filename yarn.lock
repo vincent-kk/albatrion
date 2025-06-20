@@ -89,6 +89,7 @@ __metadata:
     rollup: "npm:^4.42.0"
     rollup-plugin-copy: "npm:^3.5.0"
     rollup-plugin-peer-deps-external: "npm:^2.2.4"
+    tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
     vite: "npm:^6.3.5"
     vitest: "npm:2.1.9"
