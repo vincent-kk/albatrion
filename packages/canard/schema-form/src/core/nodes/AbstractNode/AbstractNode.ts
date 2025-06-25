@@ -381,7 +381,7 @@ export abstract class AbstractNode<
    *    - options: Options for the event (see MethodOptions)
    */
   public publish(this: AbstractNode, event: NodeEvent) {
-    this.#eventCascade.push(event);
+    this.#eventCascade.schedule(event);
   }
 
   /** Whether the node is activated */

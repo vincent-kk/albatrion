@@ -18,7 +18,7 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.push({
+    eventWindow.schedule({
       type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: {
@@ -43,7 +43,7 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.push({
+    eventWindow.schedule({
       type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: {
@@ -52,7 +52,7 @@ describe('EventCascade', () => {
         },
       },
     });
-    eventWindow.push({
+    eventWindow.schedule({
       type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: {
@@ -82,7 +82,7 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.push({
+    eventWindow.schedule({
       type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: {
@@ -108,7 +108,7 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.push({
+    eventWindow.schedule({
       type: NodeEventType.Focus,
       payload: {},
       options: {},
@@ -132,7 +132,7 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.push({
+    eventWindow.schedule({
       type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: {
@@ -141,10 +141,10 @@ describe('EventCascade', () => {
         },
       },
     });
-    eventWindow.push({
+    eventWindow.schedule({
       type: NodeEventType.Focus,
     });
-    eventWindow.push({
+    eventWindow.schedule({
       type: NodeEventType.Select,
     });
   });
@@ -163,7 +163,7 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.push({
+    eventWindow.schedule({
       type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: {
@@ -172,7 +172,7 @@ describe('EventCascade', () => {
         },
       },
     });
-    eventWindow.push({
+    eventWindow.schedule({
       type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: {
@@ -202,7 +202,7 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.push({
+    eventWindow.schedule({
       type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: {
@@ -217,7 +217,7 @@ describe('EventCascade', () => {
         },
       },
     });
-    eventWindow.push({
+    eventWindow.schedule({
       type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: {
@@ -258,7 +258,7 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.push({
+    eventWindow.schedule({
       type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: {
@@ -273,7 +273,7 @@ describe('EventCascade', () => {
         },
       },
     });
-    eventWindow.push({
+    eventWindow.schedule({
       type: NodeEventType.UpdatePath,
       payload: {
         [NodeEventType.UpdatePath]: 'new.path',
@@ -306,7 +306,7 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.push({
+    eventWindow.schedule({
       type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: {
@@ -321,7 +321,7 @@ describe('EventCascade', () => {
         },
       },
     });
-    eventWindow.push({
+    eventWindow.schedule({
       type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: {

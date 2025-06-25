@@ -22,10 +22,10 @@ type Batch<Value> = {
 export class EventCascade {
   private __currentBatch__: Batch<NodeEvent> | null = null;
   /**
-   * Gets the current event batch. If there is no batch, create a new one.
+   * Acquires the current event batch. If there is no batch, create a new one.
    * @returns Current event batch
    */
-  private get __batch__(): Batch<NodeEvent> {
+  private __acquireBatch__(): Batch<NodeEvent> {
     const batch = this.__currentBatch__;
     if (batch && !batch.resolved) return batch;
     const nextBatch: Batch<NodeEvent> = { events: [] };
@@ -48,8 +48,8 @@ export class EventCascade {
    * Adds an event to the batch.
    * @param event - Event to add
    */
-  public push(event: NodeEvent): void {
-    const batch = this.__batch__;
+  public schedule(event: NodeEvent): void {
+    const batch = this.__acquireBatch__();
     batch.events.push(event);
   }
 }

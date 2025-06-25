@@ -50,10 +50,10 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
   #currentBatch: Batch<Key, Value> | null = null;
 
   /**
-   * Getter that retrieves the current batch or creates a new batch
+   * Acquires the current batch or creates a new batch
    * @returns The currently available batch or a newly created batch
    */
-  get #batch(): Batch<Key, Value> {
+  #acquireBatch(): Batch<Key, Value> {
     const batch = this.#currentBatch;
     if (batch && !batch.isResolved && batch.keys.length < this.#maxBatchSize)
       return batch;
@@ -102,7 +102,7 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
         `DataLoader > load's key must be a non-nil value: ${key}`,
         { key },
       );
-    const batch = this.#batch;
+    const batch = this.#acquireBatch();
     const cacheMap = this.#cacheMap;
     const cacheKey = cacheMap ? this.#cacheKeyFn(key) : null;
     if (cacheMap && cacheKey) {
