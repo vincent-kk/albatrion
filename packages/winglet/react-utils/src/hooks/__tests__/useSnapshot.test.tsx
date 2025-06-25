@@ -1,7 +1,8 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { useSnapshot, useSnapshotReference } from '../useSnapshot';
+import { useSnapshot } from '../useSnapshot';
+import { useSnapshotReference } from '../useSnapshotReference';
 
 describe('useSnapshot', () => {
   it('객체의 스냅샷을 반환해야 합니다', () => {

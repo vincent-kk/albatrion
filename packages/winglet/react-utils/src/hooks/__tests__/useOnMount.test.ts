@@ -1,7 +1,8 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { useOnMount, useOnMountLayout } from '../useOnMount';
+import { useOnMount } from '../useOnMount';
+import { useOnMountLayout } from '../useOnMountLayout';
 
 describe('useOnMount', () => {
   it('마운트 시에만 핸들러를 실행해야 합니다', () => {

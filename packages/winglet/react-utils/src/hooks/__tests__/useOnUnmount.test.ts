@@ -1,7 +1,8 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { useOnUnmount, useOnUnmountLayout } from '../useOnUnmount';
+import { useOnUnmount } from '../useOnUnmount';
+import { useOnUnmountLayout } from '../useOnUnmountLayout';
 
 describe('useOnUnmount', () => {
   it('언마운트 시에만 핸들러를 실행해야 합니다', () => {
