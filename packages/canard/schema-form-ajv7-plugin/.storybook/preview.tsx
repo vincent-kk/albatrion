@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type { Preview } from '@storybook/react';
+import type { Preview } from '@storybook/react-vite';
 
 import {
   LOCAL_STORAGE_THEME_KEY,

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import type { Meta, StoryFn } from '@storybook/react';
+import type { Meta, StoryFn } from '@storybook/react-vite';
 
 import { Form, type JsonSchemaError } from '../src';
 import { FormTypeInputArrayDefinition } from '../src/formTypeDefinitions/FormTypeInputArray';
