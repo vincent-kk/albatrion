@@ -1,11 +1,10 @@
 import { type ComponentType, createContext } from 'react';
 
-import type { Color, Duration } from '@aileron/declare';
-
 import type {
   BackgroundComponent,
   FooterComponentProps,
   ForegroundComponent,
+  ModalOptions,
   WrapperComponentProps,
 } from '@/promise-modal/types';
 
@@ -16,12 +15,7 @@ export interface ConfigurationContextProps {
   SubtitleComponent: ComponentType<WrapperComponentProps>;
   ContentComponent: ComponentType<WrapperComponentProps>;
   FooterComponent: ComponentType<FooterComponentProps>;
-  options: {
-    duration: Duration;
-    backdrop: Color;
-    manualDestroy: boolean;
-    closeOnBackdropClick: boolean;
-  };
+  options: Required<ModalOptions>;
 }
 
 export const ConfigurationContext = createContext<ConfigurationContextProps>(

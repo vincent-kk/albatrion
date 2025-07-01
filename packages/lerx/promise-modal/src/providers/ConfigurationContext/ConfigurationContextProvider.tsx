@@ -7,8 +7,6 @@ import {
 
 import { useMemorize, useSnapshot } from '@winglet/react-utils/hook';
 
-import type { Color, Duration } from '@aileron/declare';
-
 import {
   DEFAULT_ANIMATION_DURATION,
   DEFAULT_BACKDROP_COLOR,
@@ -23,6 +21,7 @@ import {
 import type {
   FooterComponentProps,
   ModalFrameProps,
+  ModalOptions,
   WrapperComponentProps,
 } from '@/promise-modal/types';
 
@@ -33,7 +32,7 @@ const DEFAULT_OPTIONS = {
   backdrop: DEFAULT_BACKDROP_COLOR,
   closeOnBackdropClick: true,
   manualDestroy: false,
-};
+} satisfies Required<ModalOptions>;
 
 export interface ConfigurationContextProviderProps {
   BackgroundComponent?: ComponentType<ModalFrameProps>;
@@ -42,16 +41,7 @@ export interface ConfigurationContextProviderProps {
   SubtitleComponent?: ComponentType<WrapperComponentProps>;
   ContentComponent?: ComponentType<WrapperComponentProps>;
   FooterComponent?: ComponentType<FooterComponentProps>;
-  options?: {
-    /** Modal transition time(ms, s) */
-    duration?: Duration;
-    /** Modal backdrop color */
-    backdrop?: Color;
-    /** Whether to destroy the modal manually */
-    manualDestroy?: boolean;
-    /** Whether to close the modal when the backdrop is clicked */
-    closeOnBackdropClick?: boolean;
-  };
+  options?: ModalOptions;
 }
 
 export const ConfigurationContextProvider = memo(

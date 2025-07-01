@@ -19,6 +19,7 @@ export { useModalAnimation } from './hooks/useModalAnimation';
 export { alert, confirm, prompt } from './core';
 
 export type {
+  ModalOptions,
   ModalFrameProps,
   FooterComponentProps,
   ModalBackground,
