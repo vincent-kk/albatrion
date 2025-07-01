@@ -21,26 +21,26 @@
 
 ### `canard`
 
-- **[`@canard/schema-form`](./packages/canard/schema-form/README.md)** - JSON Schema 기반 폼 유틸리티
-- **[`@canard/schema-form-ajv6-plugin`](./packages/canard/schema-form-ajv6-plugin/README.md)** - `canard/schema-form`용 AJV 6.x 검증 플러그인
-- **[`@canard/schema-form-ajv7-plugin`](./packages/canard/schema-form-ajv7-plugin/README.md)** - `canard/schema-form`용 AJV 7.x 검증 플러그인
-- **[`@canard/schema-form-ajv8-plugin`](./packages/canard/schema-form-ajv8-plugin/README.md)** - `canard/schema-form`용 AJV 8.x 검증 플러그인
-- **[`@canard/schema-form-antd-plugin`](./packages/canard/schema-form-antd-plugin/README.md)** - `canard/schema-form`에 적용할 수 있는 Ant Design 플러그인
-- **[`@canard/schema-form-antd-mobile-plugin`](./packages/canard/schema-form-antd-mobile-plugin/README.md)** - `canard/schema-form`에 적용할 수 있는 Ant Design Mobile 플러그인
-- **[`@canard/schema-form-mui-plugin`](./packages/canard/schema-form-mui-plugin/README.md)** - `canard/schema-form`에 적용할 수 있는 MUI 플러그인
+- **[`@canard/schema-form`](./packages/canard/schema-form/README-ko_kr.md)** - JSON Schema 기반 폼 유틸리티
+- **[`@canard/schema-form-ajv6-plugin`](./packages/canard/schema-form-ajv6-plugin/README-ko_kr.md)** - `canard/schema-form`용 AJV 6.x 검증 플러그인
+- **[`@canard/schema-form-ajv7-plugin`](./packages/canard/schema-form-ajv7-plugin/README-ko_kr.md)** - `canard/schema-form`용 AJV 7.x 검증 플러그인
+- **[`@canard/schema-form-ajv8-plugin`](./packages/canard/schema-form-ajv8-plugin/README-ko_kr.md)** - `canard/schema-form`용 AJV 8.x 검증 플러그인
+- **[`@canard/schema-form-antd-plugin`](./packages/canard/schema-form-antd-plugin/README-ko_kr.md)** - `canard/schema-form`에 적용할 수 있는 Ant Design 플러그인
+- **[`@canard/schema-form-antd-mobile-plugin`](./packages/canard/schema-form-antd-mobile-plugin/README-ko_kr.md)** - `canard/schema-form`에 적용할 수 있는 Ant Design Mobile 플러그인
+- **[`@canard/schema-form-mui-plugin`](./packages/canard/schema-form-mui-plugin/README-ko_kr.md)** - `canard/schema-form`에 적용할 수 있는 MUI 플러그인
 
 ### `lerx`
 
-- **[`@lerx/promise-modal`](./packages/lerx/promise-modal/README.md)** - Promise 기반 모달 유틸리티
+- **[`@lerx/promise-modal`](./packages/lerx/promise-modal/README-ko_kr.md)** - Promise 기반 모달 유틸리티
 
 ### `winglet`
 
-- **[`@winglet/common-utils`](./packages/winglet/common-utils/README.md)** - JavaScript 유틸리티
-- **[`@winglet/data-loader`](./packages/winglet/data-loader/README.md)** - 데이터 로더 유틸리티
-- **[`@winglet/json`](./packages/winglet/json/README.md)** - JSON 유틸리티
-- **[`@winglet/json-schema`](./packages/winglet/json-schema/README.md)** - JSON Schema 유틸리티
-- **[`@winglet/react-utils`](./packages/winglet/react-utils/README.md)** - React 유틸리티
-- **[`@winglet/style-utils`](./packages/winglet/style-utils/README.md)** - CSS 및 스타일 관리 유틸리티
+- **[`@winglet/common-utils`](./packages/winglet/common-utils/README-ko_kr.md)** - JavaScript 유틸리티
+- **[`@winglet/data-loader`](./packages/winglet/data-loader/README-ko_kr.md)** - 데이터 로더 유틸리티
+- **[`@winglet/json`](./packages/winglet/json/README-ko_kr.md)** - JSON 유틸리티
+- **[`@winglet/json-schema`](./packages/winglet/json-schema/README-ko_kr.md)** - JSON Schema 유틸리티
+- **[`@winglet/react-utils`](./packages/winglet/react-utils/README-ko_kr.md)** - React 유틸리티
+- **[`@winglet/style-utils`](./packages/winglet/style-utils/README-ko_kr.md)** - CSS 및 스타일 관리 유틸리티
 
 ---
 
