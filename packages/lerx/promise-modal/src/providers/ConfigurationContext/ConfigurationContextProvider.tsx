@@ -5,6 +5,8 @@ import {
   useMemo,
 } from 'react';
 
+import { useMemorize, useSnapshot } from '@winglet/react-utils/hook';
+
 import type { Color, Duration } from '@aileron/declare';
 
 import {
@@ -25,6 +27,13 @@ import type {
 } from '@/promise-modal/types';
 
 import { ConfigurationContext } from './ConfigurationContext';
+
+const DEFAULT_OPTIONS = {
+  duration: DEFAULT_ANIMATION_DURATION,
+  backdrop: DEFAULT_BACKDROP_COLOR,
+  closeOnBackdropClick: true,
+  manualDestroy: false,
+};
 
 export interface ConfigurationContextProviderProps {
   BackgroundComponent?: ComponentType<ModalFrameProps>;
@@ -53,34 +62,33 @@ export const ConfigurationContextProvider = memo(
     SubtitleComponent,
     ContentComponent,
     FooterComponent,
-    options,
+    options: inputOptions,
     children,
   }: PropsWithChildren<ConfigurationContextProviderProps>) => {
+    const memoized = useMemorize({
+      BackgroundComponent,
+      ForegroundComponent: ForegroundComponent || FallbackForegroundFrame,
+      TitleComponent: TitleComponent || FallbackTitle,
+      SubtitleComponent: SubtitleComponent || FallbackSubtitle,
+      ContentComponent: memo(ContentComponent || FallbackContent),
+      FooterComponent: memo(FooterComponent || FallbackFooter),
+    });
+    const options = useSnapshot(inputOptions);
+
     const value = useMemo(
       () => ({
-        BackgroundComponent,
-        ForegroundComponent: ForegroundComponent || FallbackForegroundFrame,
-        TitleComponent: TitleComponent || FallbackTitle,
-        SubtitleComponent: SubtitleComponent || FallbackSubtitle,
-        ContentComponent: memo(ContentComponent || FallbackContent),
-        FooterComponent: memo(FooterComponent || FallbackFooter),
+        ForegroundComponent: memoized.ForegroundComponent,
+        BackgroundComponent: memoized.BackgroundComponent,
+        TitleComponent: memoized.TitleComponent,
+        SubtitleComponent: memoized.SubtitleComponent,
+        ContentComponent: memoized.ContentComponent,
+        FooterComponent: memoized.FooterComponent,
         options: {
-          duration: DEFAULT_ANIMATION_DURATION,
-          backdrop: DEFAULT_BACKDROP_COLOR,
-          closeOnBackdropClick: true,
-          manualDestroy: false,
+          ...DEFAULT_OPTIONS,
           ...options,
         } satisfies ConfigurationContextProviderProps['options'],
       }),
-      [
-        ForegroundComponent,
-        BackgroundComponent,
-        ContentComponent,
-        FooterComponent,
-        SubtitleComponent,
-        TitleComponent,
-        options,
-      ],
+      [memoized, options],
     );
     return (
       <ConfigurationContext.Provider value={value}>
