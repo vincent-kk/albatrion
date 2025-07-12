@@ -2,8 +2,13 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Dictionary } from '@aileron/declare';
 
-import type { VirtualReference } from '@/schema-form/core/nodes/ObjectNode/type';
 import { SchemaNodeError } from '@/schema-form/errors';
+
+import type {
+  VirtualReference,
+  VirtualReferenceFieldsMap,
+  VirtualReferencesMap,
+} from './type';
 
 /**
  * Creates a virtual references map.
@@ -16,8 +21,11 @@ export const getVirtualReferencesMap = (
   nodeName: string | undefined,
   propertyKeys: string[],
   virtualReferences: Dictionary<VirtualReference> | undefined,
-) => {
-  if (!virtualReferences) return {};
+): {
+  virtualReferencesMap?: VirtualReferencesMap;
+  virtualReferenceFieldsMap?: VirtualReferenceFieldsMap;
+} => {
+  if (!virtualReferences) return {} as const;
 
   const virtualReferenceFieldsMap = new Map<
     string,
@@ -60,5 +68,5 @@ export const getVirtualReferencesMap = (
   return {
     virtualReferencesMap,
     virtualReferenceFieldsMap,
-  };
+  } as const;
 };

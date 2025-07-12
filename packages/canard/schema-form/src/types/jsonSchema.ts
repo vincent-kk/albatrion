@@ -83,10 +83,7 @@ export type ArraySchema<Options extends Dictionary = object> = BasicSchema &
 export type ObjectSchema<Options extends Dictionary = object> = BasicSchema &
   BaseObjectSchema<Options, JsonSchema<Options>> & {
     propertyKeys?: string[];
-    virtual?: Dictionary<{
-      formType?: string;
-      fields: string[];
-    }>;
+    virtual?: Dictionary<{ fields: string[] } & BasicSchema>;
   };
 
 export type VirtualSchema<Options extends Dictionary = object> = {
@@ -99,8 +96,8 @@ export type NullSchema<Options extends Dictionary = object> = BasicSchema &
   BaseNullSchema<Options, JsonSchema<Options>>;
 
 type BasicSchema = {
-  formType?: string;
   FormType?: ComponentType<UnknownFormTypeInputProps>;
+  formType?: string;
   terminal?: boolean;
   style?: CSSProperties;
   label?: ReactNode;

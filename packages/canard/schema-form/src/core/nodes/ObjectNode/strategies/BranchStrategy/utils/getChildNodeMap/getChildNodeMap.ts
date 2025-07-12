@@ -1,3 +1,5 @@
+import { unique } from '@winglet/common-utils/array';
+
 import type { Fn } from '@aileron/declare';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
@@ -8,9 +10,12 @@ import type {
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
-import type { FieldConditionMap } from '../getFieldConditionMap';
-import { getConditionsMap } from './utils/getConditionsMap';
-import { mergeShowConditions } from './utils/mergeShowConditions';
+import type {
+  VirtualReference,
+  VirtualReferenceFieldsMap,
+  VirtualReferencesMap,
+} from '../getVirtualReferencesMap';
+import { mergeShowConditions } from '../mergeShowConditions';
 
 /**
  * Creates child nodes from object schema properties and returns them as a map.
@@ -18,7 +23,7 @@ import { mergeShowConditions } from './utils/mergeShowConditions';
  * @param jsonSchema - Object JSON schema
  * @param propertyKeys - List of property keys
  * @param defaultValue - Default value
- * @param fieldConditionMap - Field condition map
+ * @param conditionsMap - Conditions map for each field
  * @param virtualReferenceFieldsMap - Virtual reference fields map
  * @param handelChangeFactory - Change handler factory function
  * @param nodeFactory - Node creation factory function
@@ -29,12 +34,12 @@ export const getChildNodeMap = (
   jsonSchema: ObjectSchema,
   propertyKeys: string[],
   defaultValue: ObjectValue | undefined,
-  fieldConditionMap: FieldConditionMap | undefined,
-  virtualReferenceFieldsMap: Map<string, string[]> | undefined,
+  conditionsMap: Map<string, string[]> | undefined,
+  virtualReferencesMap: VirtualReferencesMap | undefined,
+  virtualReferenceFieldsMap: VirtualReferenceFieldsMap | undefined,
   handelChangeFactory: Fn<[name: string], (input: any) => void>,
   nodeFactory: SchemaNodeFactory,
 ) => {
-  const conditionsMap = getConditionsMap(fieldConditionMap);
   const childNodeMap = new Map<string, ChildNode>();
   const properties = jsonSchema.properties;
   if (!properties) return childNodeMap;
@@ -43,11 +48,21 @@ export const getChildNodeMap = (
     const schema = properties[name];
     const inputDefault = defaultValue?.[name];
     const conditions = conditionsMap?.get(name);
+    const virtualReferenceFields = virtualReferenceFieldsMap?.get(name);
+    const virtualReferenceConditions = getVirtualReferenceConditions(
+      virtualReferenceFields,
+      virtualReferencesMap,
+    );
+    const mergedConditions =
+      conditions && virtualReferenceConditions
+        ? unique([...conditions, ...virtualReferenceConditions])
+        : conditions || virtualReferenceConditions;
+
     childNodeMap.set(name, {
-      virtual: !!virtualReferenceFieldsMap?.get(name)?.length,
+      virtual: !!virtualReferenceFields?.length,
       node: nodeFactory({
         name,
-        jsonSchema: mergeShowConditions(schema, conditions),
+        jsonSchema: mergeShowConditions(schema, mergedConditions),
         defaultValue:
           inputDefault !== undefined ? inputDefault : getDefaultValue(schema),
         onChange: handelChangeFactory(name),
@@ -58,4 +73,21 @@ export const getChildNodeMap = (
     });
   }
   return childNodeMap;
+};
+
+const getVirtualReferenceConditions = (
+  virtualReferenceFields: VirtualReference['fields'] | undefined,
+  virtualReferencesMap: VirtualReferencesMap | undefined,
+) => {
+  if (!virtualReferenceFields || !virtualReferencesMap) return undefined;
+  const conditions: string[] = [];
+  for (let i = 0; i < virtualReferenceFields.length; i++) {
+    const virtualReferenceField = virtualReferenceFields[i];
+    const virtualReference = virtualReferencesMap.get(virtualReferenceField);
+    if (!virtualReference) continue;
+    const condition =
+      virtualReference.computed?.visible ?? virtualReference['&visible'];
+    if (condition !== undefined) conditions.push('' + condition);
+  }
+  return conditions.length ? conditions : undefined;
 };

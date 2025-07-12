@@ -5,7 +5,7 @@ import type { Dictionary } from '@aileron/declare';
 
 import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 
-import type { FieldConditionMap } from '../../getFieldConditionMap';
+import type { FieldConditionMap } from '../getFieldConditionMap';
 
 /**
  * Creates executable code lists by field based on FieldConditionMap.

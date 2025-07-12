@@ -1,7 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
-import type { VirtualReference } from '@/schema-form/core/nodes/ObjectNode/type';
 import type {
   ChildNode,
   SchemaNode,
@@ -9,11 +8,19 @@ import type {
 } from '@/schema-form/core/nodes/type';
 import type { AllowedValue } from '@/schema-form/types';
 
+import type {
+  VirtualReference,
+  VirtualReferenceFieldsMap,
+  VirtualReferencesMap,
+} from '../getVirtualReferencesMap';
+import { mergeShowConditions } from '../mergeShowConditions';
+
 /**
  * Creates a list of child nodes from properties and virtual references defined in the object schema.
  * @param parentNode - Parent object node
  * @param propertyKeys - List of property keys
  * @param childNodeMap - Child node map
+ * @param conditionsMap - Conditions map for each field
  * @param virtualReferenceFieldsMap - Virtual reference fields map
  * @param virtualReferencesMap - Virtual references map
  * @param nodeFactory - Node creation factory function
@@ -23,8 +30,9 @@ export const getChildren = (
   parentNode: ObjectNode,
   propertyKeys: string[],
   childNodeMap: Map<string, ChildNode>,
-  virtualReferenceFieldsMap: Map<string, string[]> | undefined,
-  virtualReferencesMap: Map<string, VirtualReference> | undefined,
+  conditionsMap: Map<string, string[]> | undefined,
+  virtualReferencesMap: VirtualReferencesMap | undefined,
+  virtualReferenceFieldsMap: VirtualReferenceFieldsMap | undefined,
   nodeFactory: SchemaNodeFactory,
 ) => {
   const children: ChildNode[] = [];
@@ -38,6 +46,7 @@ export const getChildren = (
       for (const fieldName of virtualReferenceFields) {
         if (virtualReferencesMap.has(fieldName)) {
           const reference = virtualReferencesMap.get(fieldName)!;
+          const conditions = conditionsMap?.get(fieldName);
           const { refNodes, defaultValue } = getRefNodes(
             reference,
             childNodeMap,
@@ -45,10 +54,10 @@ export const getChildren = (
           children.push({
             node: nodeFactory({
               name: fieldName,
-              jsonSchema: {
-                type: 'virtual',
-                ...reference,
-              },
+              jsonSchema: mergeShowConditions(
+                { type: 'virtual', ...reference },
+                conditions,
+              ),
               defaultValue,
               parentNode,
               nodeFactory,

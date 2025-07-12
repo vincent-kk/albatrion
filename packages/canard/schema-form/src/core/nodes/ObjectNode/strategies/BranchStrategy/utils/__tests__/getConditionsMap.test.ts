@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import type { ObjectSchema } from '@/schema-form/types';
 
-import { getFieldConditionMap } from '../../getFieldConditionMap';
-import { getConditionsMap } from '../utils/getConditionsMap';
+import { getConditionsMap } from '../getConditionsMap';
+import { getFieldConditionMap } from '../getFieldConditionMap';
 
 describe('getConditionsMap', () => {
   it('should return undefined if schema has no if or then condition', () => {

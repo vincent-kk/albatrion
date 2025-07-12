@@ -19,6 +19,7 @@ import {
   type FieldConditionMap,
   getChildNodeMap,
   getChildren,
+  getConditionsMap,
   getFieldConditionMap,
   getOneOfChildNodeMapList,
   getOneOfKeyInfo,
@@ -145,8 +146,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
     const jsonSchema = host.jsonSchema;
 
-    this.__fieldConditionMap__ = getFieldConditionMap(jsonSchema);
-
     const propertyKeys = sortWithReference(
       getObjectKeys(jsonSchema.properties),
       jsonSchema.propertyKeys,
@@ -162,8 +161,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
       );
     } else this.__schemaKeys__ = propertyKeys;
 
-    const { virtualReferencesMap, virtualReferenceFieldsMap } =
-      getVirtualReferencesMap(host.name, propertyKeys, host.jsonSchema.virtual);
     const handelChangeFactory = (propertyKey: string) => (input: unknown) => {
       if (!this.__draft__) this.__draft__ = {};
       if (input !== undefined && this.__draft__[propertyKey] === input) return;
@@ -175,12 +172,23 @@ export class BranchStrategy implements ObjectNodeStrategy {
         this.__emitChange__(payload?.[NodeEventType.RequestEmitChange]);
     });
 
+    const { virtualReferencesMap, virtualReferenceFieldsMap } =
+      getVirtualReferencesMap(host.name, propertyKeys, host.jsonSchema.virtual);
+
+    this.__fieldConditionMap__ = getFieldConditionMap(
+      jsonSchema,
+      virtualReferencesMap,
+    );
+
+    const conditionsMap = getConditionsMap(this.__fieldConditionMap__);
+
     this.__childNodeMap__ = getChildNodeMap(
       host,
       jsonSchema,
       propertyKeys,
       host.defaultValue,
-      this.__fieldConditionMap__,
+      conditionsMap,
+      virtualReferencesMap,
       virtualReferenceFieldsMap,
       handelChangeFactory,
       nodeFactory,
@@ -190,8 +198,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
       host,
       propertyKeys,
       this.__childNodeMap__,
-      virtualReferenceFieldsMap,
+      conditionsMap,
       virtualReferencesMap,
+      virtualReferenceFieldsMap,
       nodeFactory,
     );
 

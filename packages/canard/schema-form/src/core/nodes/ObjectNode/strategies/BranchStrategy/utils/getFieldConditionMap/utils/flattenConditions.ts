@@ -4,6 +4,8 @@ import type { Dictionary, RequiredBy } from '@aileron/declare';
 
 import type { JsonSchema, JsonSchemaWithVirtual } from '@/schema-form/types';
 
+import type { VirtualReferencesMap } from '../../getVirtualReferencesMap';
+
 /**
  * Interface representing field conditions in flattened form
  */
@@ -20,9 +22,10 @@ interface FlattenCondition {
  */
 export const flattenConditions = (
   schema: JsonSchema,
+  virtualReferencesMap: VirtualReferencesMap | undefined,
 ): FlattenCondition[] | undefined => {
   const conditions: FlattenCondition[] = [];
-  flattenConditionsInto(schema, conditions);
+  flattenConditionsInto(conditions, schema, virtualReferencesMap);
   return conditions.length > 0 ? conditions : undefined;
 };
 
@@ -33,8 +36,9 @@ export const flattenConditions = (
  * @param collectedConditions - Collected conditions
  */
 const flattenConditionsInto = (
-  schema: JsonSchema,
   conditions: FlattenCondition[],
+  schema: JsonSchema,
+  virtualReferencesMap: VirtualReferencesMap | undefined,
   collectedConditions: Dictionary<Array<string | string[]>> = {},
 ): void => {
   if (!schema.if || !schema.then) return;
@@ -52,20 +56,24 @@ const flattenConditionsInto = (
     collectedConditions[key].push(value);
   }
 
-  // Process then part
   const thenRequired = schema.then?.required;
-  if (isArray(thenRequired) && thenRequired.length > 0)
+  if (thenRequired?.length)
     conditions[conditions.length] = {
       condition: ifCondition,
-      required: thenRequired,
+      required: convertVirtualFields(thenRequired, virtualReferencesMap),
     };
 
   // Process else part
   if (schema.else) {
     // Process nested if-then-else (recursive call)
-    if (schema.else.if && schema.else.then) {
-      flattenConditionsInto(schema.else, conditions, collectedConditions);
-    } else {
+    if (schema.else.if && schema.else.then)
+      flattenConditionsInto(
+        conditions,
+        schema.else,
+        virtualReferencesMap,
+        collectedConditions,
+      );
+    else {
       const elseRequired = schema.else.required;
       if (elseRequired?.length) {
         // Merge all collected conditions
@@ -87,7 +95,7 @@ const flattenConditionsInto = (
         }
         conditions[conditions.length] = {
           condition: inverseCondition,
-          required: elseRequired,
+          required: convertVirtualFields(elseRequired, virtualReferencesMap),
           inverse: true,
         };
       }
@@ -146,3 +154,23 @@ const isValidConst = (
   schema: JsonSchemaWithVirtual,
 ): schema is RequiredBy<JsonSchemaWithVirtual, 'const'> =>
   schema.const !== undefined;
+
+/**
+ * Converts virtual fields to their actual fields.
+ * @param fields - Fields to convert
+ * @param virtualSchemaMap - Virtual schema map
+ * @returns Converted fields
+ */
+const convertVirtualFields = (
+  fields: string[],
+  virtualReferencesMap: VirtualReferencesMap | undefined,
+): string[] => {
+  if (!virtualReferencesMap) return fields;
+  const convertedFields = fields;
+  for (const field of fields) {
+    if (!virtualReferencesMap.has(field)) continue;
+    const virtualReference = virtualReferencesMap.get(field);
+    if (virtualReference) convertedFields.push(...virtualReference.fields);
+  }
+  return convertedFields;
+};
