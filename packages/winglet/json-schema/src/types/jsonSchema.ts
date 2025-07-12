@@ -102,10 +102,6 @@ export interface ObjectSchema<
   minProperties?: number;
   maxProperties?: number;
   required?: string[];
-  virtual?: Dictionary<{
-    formType?: string;
-    fields: string[];
-  }>;
 }
 
 export interface NullSchema<
@@ -148,12 +144,10 @@ export interface BasicSchema<
 }
 
 interface CustomOptions<Options extends Dictionary> {
-  formType?: string;
   format?: string;
   visible?: boolean;
   readOnly?: boolean;
   disabled?: boolean;
-  placeholder?: string;
   options?: Options;
   [alt: string]: any;
 }
