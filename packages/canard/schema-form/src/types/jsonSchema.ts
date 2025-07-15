@@ -102,6 +102,7 @@ type BasicSchema = {
   style?: CSSProperties;
   label?: ReactNode;
   placeholder?: string;
+  errorMessages?: Dictionary;
   options?: {
     alias?: Dictionary<ReactNode>;
     omitEmpty?: boolean;
