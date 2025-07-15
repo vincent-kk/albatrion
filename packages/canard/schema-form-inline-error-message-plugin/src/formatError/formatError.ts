@@ -10,6 +10,7 @@ export const formatError: FormatError = (error, node) => {
     for (const [key, value] of Object.entries(details))
       message = message.replace(`{${key}}`, '' + value);
   }
-  message = message.replace('{value}', '' + node.value);
+  const value = node.value;
+  message = message.replace('{value}', '' + value);
   return message;
 };
