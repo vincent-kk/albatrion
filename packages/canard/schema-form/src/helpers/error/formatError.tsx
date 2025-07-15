@@ -25,8 +25,8 @@ const getErrorMessage = (
   const errorMessage = errorMessages[keyword] || errorMessages.default;
   if (typeof errorMessage === 'string') return errorMessage;
   if (errorMessage && typeof errorMessage === 'object' && 'locale' in context) {
-    const localErrorMessage = errorMessage[context.locale];
-    if (typeof localErrorMessage === 'string') return localErrorMessage;
+    const localeErrorMessage = errorMessage[context.locale];
+    if (typeof localeErrorMessage === 'string') return localeErrorMessage;
   }
   return null;
 };
