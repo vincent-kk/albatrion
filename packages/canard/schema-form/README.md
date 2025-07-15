@@ -299,6 +299,120 @@ export const App = () => {
 
 Please refer to each plugin's README for detailed usage instructions.
 
+### Error Message Formatting
+
+📌 `@canard/schema-form` provides a feature to customize validation messages.
+
+📌 This feature does not include validation functionality. To use validation features, you must use one of the following plugins or implement your own validator:
+
+- [@canard/schema-form-ajv6-plugin](../schema-form-ajv6-plugin/README.md)
+- [@canard/schema-form-ajv7-plugin](../schema-form-ajv7-plugin/README.md)
+- [@canard/schema-form-ajv8-plugin](../schema-form-ajv8-plugin/README.md)
+
+📌 If you need additional message formats, you can write a `formatError` function directly and apply it.
+
+📌 Validation messages must follow the following rules:
+
+- Validation messages must be defined in the `errorMessages` property of the jsonSchema.
+- Validation messages must be defined in the `{[keyword]:errorMessage}` format.
+- If you define the `default` key, it will be used as the default value when the keyword does not match.
+- Each validation message (errorMessage) can be replaced with dynamic values using the following expressions:
+
+  - `{key}`: key is replaced with the value corresponding to the key in `error.details`.
+  - `{value}`: value is replaced with the value currently entered in the input.
+
+#### Basic Usage
+
+```ts
+const schema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      minLength: 3,
+      maxLength: 10,
+      errorMessages: {
+        minLength:
+          'Name must be at least {limit} characters long. Current value: {value}',
+        maxLength:
+          'Name must be no more than {limit} characters long. Current value: {value}',
+        required: 'Name is a required field.',
+      },
+    },
+  },
+  required: ['name'],
+};
+
+// AJV8 error example
+const error = {
+  dataPath: '/name',
+  keyword: 'minLength',
+  message: 'must NOT have fewer than 3 characters',
+  details: {
+    limit: 3,
+  },
+};
+
+// Current value
+const value = 'AB';
+
+// Replacement error message
+// "Name must be at least 3 characters long. Current value: AB"
+```
+
+#### Multilingual Support
+
+```ts
+const schema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      minLength: 3,
+      maxLength: 10,
+      errorMessages: {
+        minLength: {
+          ko_KR: '이름은 최소 {limit} 글자 이상이어야 합니다. 현재 값: {value}',
+          en_US:
+            'Name must be at least {limit} characters long. Current value: {value}',
+        },
+        maxLength: {
+          ko_KR: '이름은 최대 {limit} 글자 이하여야 합니다. 현재 값: {value}',
+          en_US:
+            'Name must be at most {limit} characters long. Current value: {value}',
+        },
+        required: {
+          ko_KR: '이름은 필수 입력 항목입니다.',
+          en_US: 'Name is a required field.',
+        },
+      },
+    },
+  },
+  required: ['name'],
+};
+
+// AJV8 error example
+const error = {
+  dataPath: '/name',
+  keyword: 'minLength',
+  message: 'must NOT have fewer than 3 characters',
+  details: {
+    limit: 3,
+  },
+};
+
+// Form context
+const context = {
+  locale: 'en_US',
+};
+
+// Current value
+const value = 'AB';
+
+// Replacement error message
+// "Name must be at least 3 characters long. Current value: AB"
+```
+
 ---
 
 ## FormTypeInput System

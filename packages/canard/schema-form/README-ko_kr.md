@@ -290,13 +290,118 @@ export const App = () => {
 };
 ```
 
-### 사용 가능한 Validator Plugin
+### 오류 메시지 형식 지정
 
-- [**@canard/schema-form-ajv8-plugin**](../schema-form-ajv8-plugin/README-ko_kr.md): AJV 8.x 기반 (최신 JSON Schema 지원)
-- [**@canard/schema-form-ajv7-plugin**](../schema-form-ajv7-plugin/README-ko_kr.md): AJV 7.x 기반 (레거시 환경 지원)
-- [**@canard/schema-form-ajv6-plugin**](../schema-form-ajv6-plugin/README-ko_kr.md): AJV 6.x 기반 (레거시 환경 지원)
+📌 `@canard/schema-form`은 유효성 검증 메시지를 커스텀 할 수 있는 기능을 제공합니다.
 
-각 플러그인의 자세한 사용법은 해당 플러그인의 README를 참조하세요.
+📌 이 기능은 유효성 검증 기능을 포함하지 않습니다. 유효성 검증 기능을 사용하려면 다음 플러그인 중 하나를 사용하거나, 직접 구현한 유효성 검증기를 적용해야 합니다.
+
+- [@canard/schema-form-ajv6-plugin](../schema-form-ajv6-plugin/README-ko_kr.md)
+- [@canard/schema-form-ajv7-plugin](../schema-form-ajv7-plugin/README-ko_kr.md)
+- [@canard/schema-form-ajv8-plugin](../schema-form-ajv8-plugin/README-ko_kr.md)
+
+📌 만약 추가적인 메시지 형식이 필요하다면, `formatError` 함수를 직접 작성하여 적용할 수 있습니다.
+
+📌 유효성 검증 메시지는 다음 규칙을 따르도록 정의해야 합니다:
+
+- 유효성 검증 메시지는 jsonSchema의 `errorMessages` 속성에 정의해야 합니다.
+- 유효성 검증 메시지는 `{[keyword]:errorMessage}` 형태로 정의해야 합니다.
+- `default` 키를 정의하면 keyword가 매칭되지 않는 경우 기본값으로 사용됩니다.
+- 각각의 에러 메시지(errorMessage)는 다음과 같은 표현을 통해 동적으로 값을 치환할 수 있습니다
+
+  - `{key}`: key는 `error.details`의 키에 해당하는 값으로 치환됩니다.
+  - `{value}`: value는 현재 해당 input에 입력된 값으로 치환됩니다
+
+#### 기본 사용법
+
+```ts
+const schema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      minLength: 3,
+      maxLength: 10,
+      errorMessages: {
+        minLength:
+          '이름은 최소 {limit} 글자 이상이어야 합니다. 현재 값: {value}',
+        maxLength: '이름은 최대 {limit} 글자 이하여야 합니다. 현재 값: {value}',
+        required: '이름은 필수 입력 항목입니다.',
+      },
+    },
+  },
+  required: ['name'],
+};
+
+// AJV8 error example
+const error = {
+  dataPath: '/name',
+  keyword: 'minLength',
+  message: 'must NOT have fewer than 3 characters',
+  details: {
+    limit: 3,
+  },
+};
+
+// 현재 값
+const value = 'AB';
+
+// 치환 결과
+// "이름은 최소 3 글자 이상이어야 합니다. 현재 값: AB"
+```
+
+#### 다국어 지원
+
+```ts
+const schema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      minLength: 3,
+      maxLength: 10,
+      errorMessages: {
+        minLength: {
+          ko_KR: '이름은 최소 {limit} 글자 이상이어야 합니다. 현재 값: {value}',
+          en_US:
+            'Name must be at least {limit} characters long. Current value: {value}',
+        },
+        maxLength: {
+          ko_KR: '이름은 최대 {limit} 글자 이하여야 합니다. 현재 값: {value}',
+          en_US:
+            'Name must be at most {limit} characters long. Current value: {value}',
+        },
+        required: {
+          ko_KR: '이름은 필수 입력 항목입니다.',
+          en_US: 'Name is a required field.',
+        },
+      },
+    },
+  },
+  required: ['name'],
+};
+
+// AJV8 error example
+const error = {
+  dataPath: '/name',
+  keyword: 'minLength',
+  message: 'must NOT have fewer than 3 characters',
+  details: {
+    limit: 3,
+  },
+};
+
+// Form context
+const context = {
+  locale: 'ko_KR',
+};
+
+// 현재 값
+const value = 'AB';
+
+// 치환 결과
+// "이름은 최소 3 글자 이상이어야 합니다. 현재 값: AB"
+```
 
 ---
 

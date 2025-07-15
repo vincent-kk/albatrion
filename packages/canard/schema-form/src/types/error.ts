@@ -45,7 +45,7 @@ export type ValidateFunction<Value = unknown> = Fn<
  * ```typescript
  * // AJV error transformation
  * const ajvError: JsonSchemaError<AjvErrorObject> = {
- *   dataPath: 'user.email',
+ *   dataPath: '/user/email',
  *   keyword: 'format',
  *   message: 'Invalid email format',
  *   source: originalAjvError
@@ -53,7 +53,7 @@ export type ValidateFunction<Value = unknown> = Fn<
  *
  * // Joi error transformation
  * const joiError: JsonSchemaError<ValidationError> = {
- *   dataPath: 'user.age',
+ *   dataPath: '/user/age',
  *   keyword: 'minimum',
  *   message: 'Age must be at least 18',
  *   source: originalJoiError
@@ -63,8 +63,9 @@ export type ValidateFunction<Value = unknown> = Fn<
 export interface PublicJsonSchemaError<SourceError = unknown> {
   /**
    * JSON Path to the data property that failed validation.
-   * @note Uses dot notation for nested objects and bracket notation for arrays.
-   * @example 'user.profile.email' or '$.items[0].name'
+   * @note Use JSON Pointer notation for nested objects and arrays
+   * @see https://datatracker.ietf.org/doc/html/rfc6901
+   * @example '/user/profile/email' or '/items/0/name'
    */
   dataPath: string;
 

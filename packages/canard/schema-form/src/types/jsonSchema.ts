@@ -95,14 +95,17 @@ export type VirtualSchema<Options extends Dictionary = object> = {
 export type NullSchema<Options extends Dictionary = object> = BasicSchema &
   BaseNullSchema<Options, JsonSchema<Options>>;
 
-type BasicSchema = {
+export type BasicSchema = {
   FormType?: ComponentType<UnknownFormTypeInputProps>;
   formType?: string;
   terminal?: boolean;
   style?: CSSProperties;
   label?: ReactNode;
   placeholder?: string;
-  errorMessages?: Dictionary;
+  errorMessages?: {
+    [key: string]: string | Dictionary<string> | undefined;
+    default?: string | Dictionary<string>;
+  };
   options?: {
     alias?: Dictionary<ReactNode>;
     omitEmpty?: boolean;
