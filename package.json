@@ -41,6 +41,7 @@
     "schemaForm:ajv8": "yarn workspace @canard/schema-form-ajv8-plugin",
     "schemaForm:antd": "yarn workspace @canard/schema-form-antd-plugin",
     "schemaForm:antdMobile": "yarn workspace @canard/schema-form-antd-mobile-plugin",
+    "schemaForm:inlineValidationMessage": "yarn workspace @canard/schema-form-inline-validation-message-plugin",
     "schemaForm:mui": "yarn workspace @canard/schema-form-mui-plugin",
     "sort:packages": "npx sort-package-json '**/package.json'",
     "styleUtils": "yarn workspace @winglet/style-utils",
