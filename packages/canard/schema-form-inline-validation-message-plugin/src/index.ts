@@ -1,3 +1,5 @@
 import type { SchemaFormPlugin } from '@canard/schema-form';
 
-export const plugin = {} satisfies SchemaFormPlugin;
+import { formatError } from './formatError';
+
+export const plugin = { formatError } satisfies SchemaFormPlugin;
