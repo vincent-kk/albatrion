@@ -1,3 +1,3 @@
-import type { JsonSchemaError } from '@/schema-form/types';
+import type { FormatError } from '@/schema-form/types';
 
-export const formatError = (error: JsonSchemaError) => error.message;
+export const formatError: FormatError = (error) => error.message;
