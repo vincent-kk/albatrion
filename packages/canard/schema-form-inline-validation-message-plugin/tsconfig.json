@@ -1,0 +1,21 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "../../",
+    "outDir": "./dist",
+    "paths": {
+      "@aileron/*": [
+        "./aileron/common/*"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "src/**/*.tsx?",
+    "coverage"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
