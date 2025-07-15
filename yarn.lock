@@ -1987,9 +1987,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@canard/schema-form-inline-validation-message-plugin@workspace:packages/canard/schema-form-inline-validation-message-plugin":
+"@canard/schema-form-inline-error-message-plugin@workspace:packages/canard/schema-form-inline-error-message-plugin":
   version: 0.0.0-use.local
-  resolution: "@canard/schema-form-inline-validation-message-plugin@workspace:packages/canard/schema-form-inline-validation-message-plugin"
+  resolution: "@canard/schema-form-inline-error-message-plugin@workspace:packages/canard/schema-form-inline-error-message-plugin"
   dependencies:
     "@canard/schema-form": "workspace:^"
     "@canard/schema-form-ajv8-plugin": "workspace:^"

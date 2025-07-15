@@ -1,4 +1,4 @@
-# @canard/schema-form-inline-validation-message-plugin
+# @canard/schema-form-inline-error-message-plugin
 
 [![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
 [![Javascript](https://img.shields.io/badge/javascript-✔-yellow.svg)]()
@@ -9,7 +9,7 @@
 
 ## Overview
 
-`@canard/schema-form-inline-validation-message-plugin` is a plugin for `@canard/schema-form` that supports custom validation message definition methods.
+`@canard/schema-form-inline-error-message-plugin` is a plugin for `@canard/schema-form` that supports custom validation message definition methods.
 
 ---
 
@@ -27,18 +27,18 @@
 ## Usage
 
 ```bash
-yarn add @canard/schema-form @canard/schema-form-inline-validation-message-plugin
+yarn add @canard/schema-form @canard/schema-form-inline-error-message-plugin
 ```
 
 ```tsx
 import { SchemaForm, registerPlugin } from '@canard/schema-form';
 import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin';
-import { plugin as inlineValidationMessagePlugin } from '@canard/schema-form-inline-validation-message-plugin';
+import { plugin as inlineErrorMessagePlugin } from '@canard/schema-form-inline-error-message-plugin';
 
 // Validator is required to generate validation errors
 registerPlugin(ajv8Plugin);
 // Register validator plugin globally
-registerPlugin(inlineValidationMessagePlugin);
+registerPlugin(inlineErrorMessagePlugin);
 
 // Supports custom validation message definition methods
 // Example:

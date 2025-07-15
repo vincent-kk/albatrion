@@ -1,4 +1,4 @@
-# @canard/schema-form-inline-validation-message-plugin
+# @canard/schema-form-inline-error-message-plugin
 
 [![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
 [![Javascript](https://img.shields.io/badge/javascript-✔-yellow.svg)]()
@@ -9,7 +9,7 @@
 
 ## 개요
 
-`@canard/schema-form-inline-validation-message-plugin`은 커스텀 검증 메시지 정의 방식을 지원하는 `@canard/schema-form`용 플러그인입니다.
+`@canard/schema-form-inline-error-message-plugin`은 커스텀 검증 메시지 정의 방식을 지원하는 `@canard/schema-form`용 플러그인입니다.
 
 ---
 
@@ -27,18 +27,18 @@
 ## 사용 방법
 
 ```bash
-yarn add @canard/schema-form @canard/schema-form-inline-validation-message-plugin
+yarn add @canard/schema-form @canard/schema-form-inline-error-message-plugin
 ```
 
 ```tsx
 import { SchemaForm, registerPlugin } from '@canard/schema-form';
 import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin';
-import { plugin as inlineValidationMessagePlugin } from '@canard/schema-form-inline-validation-message-plugin';
+import { plugin as inlineErrorMessagePlugin } from '@canard/schema-form-inline-error-message-plugin';
 
 // validator를 사용해야 유효성 검증 에러가 발생합니다.
 registerPlugin(ajv8Plugin);
 // validator 플러그인을 전역으로 등록
-registerPlugin(inlineValidationMessagePlugin);
+registerPlugin(inlineErrorMessagePlugin);
 
 // 커스텀 검증 메시지 정의 방식을 지원합니다.
 // 예시:

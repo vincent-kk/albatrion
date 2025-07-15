@@ -1,7 +1,7 @@
 {
-  "name": "@canard/schema-form-inline-validation-message-plugin",
+  "name": "@canard/schema-form-inline-error-message-plugin",
   "version": "0.2.0",
-  "description": "Inline validation message plugin for @canard/schema-form",
+  "description": "Inline error message plugin for @canard/schema-form",
   "keywords": [
     "react",
     "@canard/schema-form",
@@ -13,12 +13,13 @@
     "validator",
     "typescript",
     "form-validation",
+    "custom-error-message",
     "custom-validation-message"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/vincent-kk/albatrion.git",
-    "directory": "packages/canard/schema-form-inline-validation-message-plugin"
+    "directory": "packages/canard/schema-form-inline-error-message-plugin"
   },
   "license": "MIT",
   "author": {
