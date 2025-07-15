@@ -42,13 +42,6 @@ export interface FormTypeRendererProps extends OverridableFormTypeInputProps {
 }
 
 export type FormatError = Fn<
-  [error: JsonSchemaError, options?: FormatErrorOptions],
+  [error: JsonSchemaError, node: SchemaNode, context: Dictionary],
   ReactNode
 >;
-
-export type FormatErrorOptions = {
-  className?: string;
-  style?: CSSProperties;
-  context?: Dictionary;
-  [alt: string]: any;
-};

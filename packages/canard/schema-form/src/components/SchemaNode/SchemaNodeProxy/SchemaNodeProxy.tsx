@@ -78,12 +78,12 @@ export const SchemaNodeProxy = memo(
       const errors = node?.errors;
       if (!errors) return null;
       for (const error of errors) {
-        const message = formatError(error);
-        if (message) return message;
+        const message = formatError(error, node, userDefinedContext);
+        if (message !== null) return message;
       }
       return null;
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [node, refresh, formatError]);
+    }, [node, refresh, userDefinedContext, formatError]);
 
     const [version, formElementRef] = useSchemaNodeInputControl(node);
 
