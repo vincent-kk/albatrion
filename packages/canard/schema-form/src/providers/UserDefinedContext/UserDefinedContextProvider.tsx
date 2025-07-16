@@ -25,7 +25,7 @@ export const UserDefinedContextProvider = ({
         ...(context || {}),
       },
     }),
-    [context, external.context],
+    [external.context, context],
   );
   return (
     <UserDefinedContext.Provider value={contextValue}>

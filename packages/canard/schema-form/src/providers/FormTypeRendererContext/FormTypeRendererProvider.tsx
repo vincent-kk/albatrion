@@ -82,10 +82,10 @@ export const FormTypeRendererContextProvider = ({
       checkShowError,
     };
   }, [
+    memoized,
+    checkShowError,
     ExternalFormGroupRenderer,
     externalFormatError,
-    checkShowError,
-    memoized,
   ]);
 
   return (

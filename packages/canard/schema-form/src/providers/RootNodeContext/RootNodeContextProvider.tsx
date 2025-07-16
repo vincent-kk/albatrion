@@ -127,7 +127,7 @@ export const RootNodeContextProvider = <
       rootNode.find(path)?.setExternalErrors(currentErrorDictionary[path]);
 
     lastErrorDictionary.current = currentErrorDictionary;
-  }, [errors, rootNode]);
+  }, [rootNode, errors]);
 
   return (
     <RootNodeContext.Provider value={rootNode}>

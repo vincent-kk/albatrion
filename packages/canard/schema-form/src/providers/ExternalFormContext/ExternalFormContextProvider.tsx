@@ -88,7 +88,7 @@ export const ExternalFormContextProvider = ({
       validatorFactory,
       context,
     }),
-    [memoized, showError, validationMode, context, validatorFactory],
+    [memoized, showError, validationMode, validatorFactory, context],
   );
   return (
     <ExternalFormContext.Provider value={value}>
