@@ -5,6 +5,6 @@
  */
 export const parseString = (value: unknown): string => {
   if (typeof value === 'string') return value;
-  if (typeof value === 'number') return value.toString();
+  if (typeof value === 'number') return '' + value;
   return '';
 };
