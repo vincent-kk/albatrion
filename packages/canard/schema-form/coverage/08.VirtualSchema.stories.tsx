@@ -1,6 +1,12 @@
 import { useState } from 'react';
 
-import { Form, type JsonSchema, type JsonSchemaError } from '../src';
+import {
+  Form,
+  type FormTypeInputProps,
+  type JsonSchema,
+  type JsonSchemaError,
+  SetValueOption,
+} from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -161,6 +167,81 @@ export const VirtualSchemaControlWithIfElse = () => {
       },
       then: {
         required: ['virtualField_B'],
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>({});
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
+      <Form
+        jsonSchema={jsonSchema}
+        defaultValue={{}}
+        onChange={setValue}
+        onValidate={setErrors}
+      />
+    </StoryLayout>
+  );
+};
+
+export const VirtualSchemaInline = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      startDate: {
+        type: 'string',
+        format: 'date',
+      },
+      endDate: {
+        type: 'string',
+        format: 'date',
+      },
+    },
+    virtual: {
+      period: {
+        FormType: ({
+          defaultValue,
+          onChange,
+        }: FormTypeInputProps<string[] | undefined>) => {
+          return (
+            <div>
+              <div>
+                <button
+                  onClick={() =>
+                    onChange(
+                      ['2025-01-01', '2026-01-01'],
+                      SetValueOption.Overwrite,
+                    )
+                  }
+                >
+                  Set [2025-01-01, 2026-01-01]
+                </button>
+                <button
+                  onClick={() => onChange(undefined, SetValueOption.Overwrite)}
+                >
+                  Clear
+                </button>
+              </div>
+              <input
+                type="date"
+                defaultValue={defaultValue?.[0]}
+                onChange={(e) =>
+                  onChange((prev) => [e.target.value, prev?.[1] || ''])
+                }
+              />
+              <input
+                type="date"
+                defaultValue={defaultValue?.[1]}
+                onChange={(e) =>
+                  onChange((prev) => [prev?.[0] || '', e.target.value])
+                }
+              />
+            </div>
+          );
+        },
+        fields: ['startDate', 'endDate'],
       },
     },
   } satisfies JsonSchema;

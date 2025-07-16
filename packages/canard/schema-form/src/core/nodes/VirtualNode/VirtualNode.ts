@@ -132,12 +132,18 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     values: VirtualNodeValue | undefined,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
-    if (!values || values.length !== this.#refNodes.length) return;
+    const refNodesLength = this.#refNodes.length;
+    if (values !== undefined && values.length !== refNodesLength) return;
     const refNodes = this.#refNodes;
-    for (let i = 0; i < values.length; i++) {
-      const value = values[i];
-      const node = refNodes[i];
-      if (node.value !== value) node.setValue(value, option);
+    if (values === undefined) {
+      for (let i = 0; i < refNodesLength; i++)
+        refNodes[i].setValue(undefined, option);
+    } else {
+      for (let i = 0; i < refNodesLength; i++) {
+        const node = refNodes[i];
+        const value = values[i];
+        if (node.value !== value) node.setValue(value, option);
+      }
     }
     if (option & SetValueOption.Refresh) this.refresh(values);
   }
