@@ -10,6 +10,7 @@ import {
   nodeFromJsonSchema,
 } from '@/schema-form/core';
 import { transformErrors } from '@/schema-form/helpers/error';
+import { preprocessSchema } from '@/schema-form/helpers/jsonSchema/preprocessSchema';
 import type {
   AllowedValue,
   JsonSchema,
@@ -53,7 +54,7 @@ export const RootNodeContextProvider = <
   Value extends AllowedValue,
   Schema extends JsonSchema,
 >({
-  jsonSchema,
+  jsonSchema: inputJsonSchema,
   defaultValue,
   errors,
   onChange,
@@ -67,6 +68,11 @@ export const RootNodeContextProvider = <
     validationMode: externalValidationMode,
     validatorFactory: externalValidatorFactory,
   } = useExternalFormContext();
+
+  const jsonSchema = useMemo(
+    () => preprocessSchema(inputJsonSchema),
+    [inputJsonSchema],
+  );
 
   const rootNode = useMemo(
     () =>
