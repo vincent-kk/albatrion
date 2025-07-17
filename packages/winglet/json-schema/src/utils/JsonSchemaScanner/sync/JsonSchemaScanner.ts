@@ -35,7 +35,7 @@ export class JsonSchemaScanner<ContextType = void> {
   /** Final schema with references resolved. Computed on first call to `getValue`. */
   #processedSchema: UnknownSchema | undefined;
   /** Array of references resolved during `#run` execution but not yet applied to the final schema ([path, resolved schema]). */
-  #pendingResolves: Array<[path: string, schema: UnknownSchema]> | undefined;
+  #pendingResolves: Array<[path: string, schema: UnknownSchema]> = [];
 
   /**
    * Creates a JsonSchemaScanner instance.
@@ -56,7 +56,7 @@ export class JsonSchemaScanner<ContextType = void> {
   public scan(this: this, schema: UnknownSchema): this {
     this.#originalSchema = schema;
     this.#processedSchema = undefined;
-    this.#pendingResolves = undefined;
+    this.#pendingResolves = [];
     this.#run(this.#originalSchema);
     return this;
   }
@@ -76,21 +76,20 @@ export class JsonSchemaScanner<ContextType = void> {
   ): Schema | undefined {
     if (!this.#originalSchema) return undefined;
     if (this.#processedSchema) return this.#processedSchema as Schema;
-    if (!this.#pendingResolves || this.#pendingResolves.length === 0) {
+    const pendingResolves = this.#pendingResolves;
+    const pendingResolvesLength = pendingResolves.length;
+    if (pendingResolvesLength === 0) {
       this.#processedSchema = this.#originalSchema;
       return this.#processedSchema as Schema;
     }
-
-    this.#processedSchema = clone(this.#originalSchema);
-    for (const [path, resolvedSchema] of this.#pendingResolves) {
-      this.#processedSchema = setValue(
-        this.#processedSchema,
-        path,
-        resolvedSchema,
-      );
+    let processedSchema = clone(this.#originalSchema);
+    for (let index = 0; index < pendingResolvesLength; index++) {
+      const [path, resolvedSchema] = pendingResolves[index];
+      processedSchema = setValue(processedSchema, path, resolvedSchema);
     }
-    this.#pendingResolves = undefined;
-    return this.#processedSchema as Schema;
+    this.#pendingResolves = [];
+    this.#processedSchema = processedSchema;
+    return processedSchema as Schema;
   }
 
   /**
@@ -111,6 +110,14 @@ export class JsonSchemaScanner<ContextType = void> {
     ];
     const entryPhase = new Map<SchemaEntry, OperationPhase>();
     const visitedReference = new Set<string>();
+    const pendingResolves = this.#pendingResolves;
+
+    const context = this.#options.context;
+    const maxDepth = this.#options.maxDepth;
+    const resolveReference = this.#options.resolveReference;
+    const filter = this.#options.filter;
+    const enter = this.#visitor.enter;
+    const exit = this.#visitor.exit;
 
     while (stack.length > 0) {
       const entry = stack[stack.length - 1];
@@ -118,16 +125,13 @@ export class JsonSchemaScanner<ContextType = void> {
 
       switch (currentPhase) {
         case OperationPhase.Enter: {
-          if (
-            this.#options.filter &&
-            !this.#options.filter(entry, this.#options.context)
-          ) {
+          if (filter && !filter(entry, context)) {
             stack.pop();
             entryPhase.delete(entry);
             break;
           }
 
-          this.#visitor.enter?.(entry, this.#options.context);
+          enter?.(entry, context);
           entryPhase.set(entry, OperationPhase.Reference);
           break;
         }
@@ -142,16 +146,12 @@ export class JsonSchemaScanner<ContextType = void> {
               break;
             }
             const resolvedReference =
-              this.#options.resolveReference && !isDefinitionSchema(entry.path)
-                ? this.#options.resolveReference(
-                    referencePath,
-                    this.#options.context,
-                  )
+              resolveReference && !isDefinitionSchema(entry.path)
+                ? resolveReference(referencePath, context)
                 : undefined;
 
             if (resolvedReference) {
-              if (!this.#pendingResolves) this.#pendingResolves = new Array();
-              this.#pendingResolves.push([entry.path, resolvedReference]);
+              pendingResolves.push([entry.path, resolvedReference]);
 
               entry.schema = resolvedReference;
               entry.referencePath = referencePath;
@@ -171,10 +171,7 @@ export class JsonSchemaScanner<ContextType = void> {
         }
 
         case OperationPhase.ChildEntries: {
-          if (
-            this.#options.maxDepth !== undefined &&
-            entry.depth + 1 > this.#options.maxDepth
-          ) {
+          if (maxDepth !== undefined && entry.depth + 1 > maxDepth) {
             entryPhase.set(entry, OperationPhase.Exit);
             break;
           }
@@ -192,7 +189,7 @@ export class JsonSchemaScanner<ContextType = void> {
         }
 
         case OperationPhase.Exit: {
-          this.#visitor.exit?.(entry, this.#options.context);
+          exit?.(entry, context);
           if (
             entry.referenceResolved &&
             entry.referencePath &&
