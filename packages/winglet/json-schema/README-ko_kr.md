@@ -146,6 +146,10 @@ const scanner = new JsonSchemaScanner({
       // 특정 조건에 따라 노드 필터링
       return true;
     },
+    mutate: (entry, context) => {
+      // 특정 조건에 따라 스키마 변경
+      return entry.schema;
+    },
   },
 });
 

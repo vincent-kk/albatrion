@@ -146,6 +146,10 @@ const scanner = new JsonSchemaScanner({
       // Filter nodes based on specific conditions
       return true;
     },
+    mutate: (entry, context) => {
+      // Mutate schema based on specific conditions
+      return entry.schema;
+    },
   },
 });
 
