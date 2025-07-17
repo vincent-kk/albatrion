@@ -114,8 +114,9 @@ export class JsonSchemaScanner<ContextType = void> {
 
     const context = this.#options.context;
     const maxDepth = this.#options.maxDepth;
-    const resolveReference = this.#options.resolveReference;
     const filter = this.#options.filter;
+    const mutate = this.#options.mutate;
+    const resolveReference = this.#options.resolveReference;
     const enter = this.#visitor.enter;
     const exit = this.#visitor.exit;
 
@@ -129,6 +130,12 @@ export class JsonSchemaScanner<ContextType = void> {
             stack.pop();
             entryPhase.delete(entry);
             break;
+          }
+
+          const mutatedSchema = mutate?.(entry, context);
+          if (mutatedSchema) {
+            entry.schema = mutatedSchema;
+            pendingResolves.push([entry.path, mutatedSchema]);
           }
 
           enter?.(entry, context);
