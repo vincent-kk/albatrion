@@ -175,10 +175,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const { virtualReferencesMap, virtualReferenceFieldsMap } =
       getVirtualReferencesMap(host.name, propertyKeys, host.jsonSchema.virtual);
 
-    this.__fieldConditionMap__ = getFieldConditionMap(
-      jsonSchema,
-      virtualReferencesMap,
-    );
+    this.__fieldConditionMap__ = getFieldConditionMap(jsonSchema);
 
     const conditionsMap = getConditionsMap(this.__fieldConditionMap__);
 

@@ -2,7 +2,6 @@ import type { Dictionary } from '@aileron/declare';
 
 import type { JsonSchema } from '@/schema-form/types';
 
-import type { VirtualReferencesMap } from '../getVirtualReferencesMap';
 import { flattenConditions } from './utils/flattenConditions';
 
 export type FieldConditionMap = Map<
@@ -20,9 +19,8 @@ export type FieldConditionMap = Map<
  */
 export const getFieldConditionMap = (
   jsonSchema: JsonSchema,
-  virtualReferencesMap: VirtualReferencesMap | undefined,
 ): FieldConditionMap | undefined => {
-  const conditions = flattenConditions(jsonSchema, virtualReferencesMap);
+  const conditions = flattenConditions(jsonSchema);
   if (!conditions) return undefined;
   const fieldConditionMap: FieldConditionMap = new Map();
   for (let i = 0; i < conditions.length; i++) {

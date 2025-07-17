@@ -217,8 +217,6 @@ describe('flattenConditions', () => {
     expect(flattenConditions(schema)).toEqual(expected);
   });
 
-  // 새로운 테스트 케이스들
-
   it('should handle if-then without else', () => {
     const schema = {
       type: 'object',
@@ -538,5 +536,333 @@ describe('flattenConditions', () => {
       },
     ];
     expect(flattenConditions(schema)).toEqual(expected);
+  });
+
+  describe('Virtual Fields', () => {
+    it('should include virtualRequired fields in then block', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          userType: { type: 'string' },
+          email: { type: 'string' },
+          phone: { type: 'string' },
+        },
+        if: {
+          properties: {
+            userType: { const: 'premium' },
+          },
+        },
+        then: {
+          required: ['email'],
+          virtualRequired: ['phone'],
+        },
+        else: {
+          required: ['email'],
+        },
+      } satisfies JsonSchema;
+
+      const expected = [
+        {
+          condition: { userType: 'premium' },
+          required: ['email', 'phone'],
+        },
+        {
+          condition: { userType: 'premium' },
+          required: ['email'],
+          inverse: true,
+        },
+      ];
+      expect(flattenConditions(schema)).toEqual(expected);
+    });
+
+    it('should include virtualRequired fields in else block', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          status: { type: 'string' },
+          basic: { type: 'string' },
+          advanced: { type: 'string' },
+          extra: { type: 'string' },
+        },
+        if: {
+          properties: {
+            status: { const: 'active' },
+          },
+        },
+        then: {
+          required: ['basic'],
+        },
+        else: {
+          required: ['advanced'],
+          virtualRequired: ['extra'],
+        },
+      } satisfies JsonSchema;
+
+      const expected = [
+        {
+          condition: { status: 'active' },
+          required: ['basic'],
+        },
+        {
+          condition: { status: 'active' },
+          required: ['advanced', 'extra'],
+          inverse: true,
+        },
+      ];
+      expect(flattenConditions(schema)).toEqual(expected);
+    });
+
+    it('should include virtualRequired fields in both then and else blocks', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          mode: { type: 'string' },
+          field1: { type: 'string' },
+          field2: { type: 'string' },
+          virtual1: { type: 'string' },
+          virtual2: { type: 'string' },
+        },
+        if: {
+          properties: {
+            mode: { const: 'development' },
+          },
+        },
+        then: {
+          required: ['field1'],
+          virtualRequired: ['virtual1'],
+        },
+        else: {
+          required: ['field2'],
+          virtualRequired: ['virtual2'],
+        },
+      } satisfies JsonSchema;
+
+      const expected = [
+        {
+          condition: { mode: 'development' },
+          required: ['field1', 'virtual1'],
+        },
+        {
+          condition: { mode: 'development' },
+          required: ['field2', 'virtual2'],
+          inverse: true,
+        },
+      ];
+      expect(flattenConditions(schema)).toEqual(expected);
+    });
+
+    it('should handle multiple virtualRequired fields', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          category: { type: 'string' },
+          name: { type: 'string' },
+          desc: { type: 'string' },
+          meta1: { type: 'string' },
+          meta2: { type: 'string' },
+          meta3: { type: 'string' },
+        },
+        if: {
+          properties: {
+            category: { const: 'advanced' },
+          },
+        },
+        then: {
+          required: ['name', 'desc'],
+          virtualRequired: ['meta1', 'meta2', 'meta3'],
+        },
+        else: {
+          required: ['name'],
+        },
+      } satisfies JsonSchema;
+
+      const expected = [
+        {
+          condition: { category: 'advanced' },
+          required: ['name', 'desc', 'meta1', 'meta2', 'meta3'],
+        },
+        {
+          condition: { category: 'advanced' },
+          required: ['name'],
+          inverse: true,
+        },
+      ];
+      expect(flattenConditions(schema)).toEqual(expected);
+    });
+
+    it('should handle virtualRequired fields without required fields', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          feature: { type: 'string' },
+          virtual1: { type: 'string' },
+          virtual2: { type: 'string' },
+          fallback: { type: 'string' },
+        },
+        if: {
+          properties: {
+            feature: { const: 'enabled' },
+          },
+        },
+        then: {
+          virtualRequired: ['virtual1', 'virtual2'],
+        },
+        else: {
+          required: ['fallback'],
+        },
+      } satisfies JsonSchema;
+
+      const expected = [
+        {
+          condition: { feature: 'enabled' },
+          required: ['fallback'],
+          inverse: true,
+        },
+      ];
+      expect(flattenConditions(schema)).toEqual(expected);
+    });
+
+    it('should handle nested if-then-else with virtualRequired fields', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          level: { type: 'number' },
+          basic: { type: 'string' },
+          intermediate: { type: 'string' },
+          advanced: { type: 'string' },
+          virtual1: { type: 'string' },
+          virtual2: { type: 'string' },
+        },
+        if: {
+          properties: {
+            level: { const: 1 },
+          },
+        },
+        then: {
+          required: ['basic'],
+          virtualRequired: ['virtual1'],
+        },
+        else: {
+          if: {
+            properties: {
+              level: { const: 2 },
+            },
+          },
+          then: {
+            required: ['intermediate'],
+          },
+          else: {
+            required: ['advanced'],
+            virtualRequired: ['virtual2'],
+          },
+        },
+      } satisfies JsonSchema;
+
+      const expected = [
+        {
+          condition: { level: '1' },
+          required: ['basic', 'virtual1'],
+        },
+        {
+          condition: { level: '2' },
+          required: ['intermediate'],
+        },
+        {
+          condition: { level: ['1', '2'] },
+          required: ['advanced', 'virtual2'],
+          inverse: true,
+        },
+      ];
+      expect(flattenConditions(schema)).toEqual(expected);
+    });
+
+    it('should handle empty virtualRequired arrays', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          type: { type: 'string' },
+          field1: { type: 'string' },
+          field2: { type: 'string' },
+        },
+        if: {
+          properties: {
+            type: { const: 'simple' },
+          },
+        },
+        then: {
+          required: ['field1'],
+          virtualRequired: [],
+        },
+        else: {
+          required: ['field2'],
+          virtualRequired: [],
+        },
+      } satisfies JsonSchema;
+
+      const expected = [
+        {
+          condition: { type: 'simple' },
+          required: ['field1'],
+        },
+        {
+          condition: { type: 'simple' },
+          required: ['field2'],
+          inverse: true,
+        },
+      ];
+      expect(flattenConditions(schema)).toEqual(expected);
+    });
+
+    it('should handle virtualRequired fields only in nested else block', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          priority: { type: 'string' },
+          high: { type: 'string' },
+          medium: { type: 'string' },
+          low: { type: 'string' },
+          extra: { type: 'string' },
+        },
+        if: {
+          properties: {
+            priority: { const: 'high' },
+          },
+        },
+        then: {
+          required: ['high'],
+        },
+        else: {
+          if: {
+            properties: {
+              priority: { const: 'medium' },
+            },
+          },
+          then: {
+            required: ['medium'],
+          },
+          else: {
+            required: ['low'],
+            virtualRequired: ['extra'],
+          },
+        },
+      } satisfies JsonSchema;
+
+      const expected = [
+        {
+          condition: { priority: 'high' },
+          required: ['high'],
+        },
+        {
+          condition: { priority: 'medium' },
+          required: ['medium'],
+        },
+        {
+          condition: { priority: ['high', 'medium'] },
+          required: ['low', 'extra'],
+          inverse: true,
+        },
+      ];
+      expect(flattenConditions(schema)).toEqual(expected);
+    });
   });
 });

@@ -12,6 +12,7 @@ import { run as runFind } from './targets/find/benchmark';
 import { run as runGetJsonPaths } from './targets/getJsonPath/benchmark';
 import { run as runGetObjectKeys } from './targets/getObjectKeys/benchmark';
 import { run as runGetter } from './targets/getter/benchmark';
+import { run as runPreprocessSchema } from './targets/preprocessSchema/benchmark';
 import { run as runSortObjectKeys } from './targets/sortObjectKeys/benchmark';
 import { run as runStringifyObject } from './targets/stringifyObject/benchmark';
 
@@ -40,6 +41,7 @@ const benchmarks = {
   applyPatch: runApplyPatch,
   cx: runCx,
   compressCss: runCompressCss,
+  preprocessSchema: runPreprocessSchema,
 };
 
 main(benchmarks).catch((error) => {
