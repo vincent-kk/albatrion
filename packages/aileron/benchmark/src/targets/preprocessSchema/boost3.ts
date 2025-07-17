@@ -10,7 +10,8 @@ export const transformConditionalSchema = (
   if (schema.required?.length) {
     const result = transformRequiredWithVirtual(schema.required, virtual);
     transformed.required = result.required;
-    result.virtualKeys.length && (transformed.virtual = result.virtualKeys);
+    result.virtualRequired.length &&
+      (transformed.virtual = result.virtualRequired);
   }
   schema.then &&
     (transformed.then = transformConditionalSchema(schema.then, virtual));
@@ -22,17 +23,17 @@ export const transformConditionalSchema = (
 const transformRequiredWithVirtual = (
   required: string[],
   virtual: Dictionary<{ fields: string[] }>,
-): { required: string[]; virtualKeys: string[] } => {
+): { required: string[]; virtualRequired: string[] } => {
   const requiredKeys: string[] = [];
-  const virtualKeys: string[] = [];
+  const virtualRequired: string[] = [];
   for (let i = 0, len = required.length; i < len; i++) {
     const key = required[i];
     const fields = virtual[key]?.fields;
     if (fields) {
       for (let j = 0, l = fields.length; j < l; j++)
         requiredKeys.push(fields[j]);
-      virtualKeys.push(key);
+      virtualRequired.push(key);
     } else requiredKeys.push(key);
   }
-  return { required: requiredKeys, virtualKeys };
+  return { required: requiredKeys, virtualRequired };
 };

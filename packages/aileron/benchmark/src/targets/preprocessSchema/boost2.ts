@@ -16,7 +16,8 @@ export const transformConditionalSchema = (
   if (schema.required?.length) {
     const result = transformRequiredWithVirtual(schema.required, virtual);
     transformed.required = result.required;
-    if (result.virtualKeys.length) transformed.virtual = result.virtualKeys;
+    if (result.virtualRequired.length)
+      transformed.virtual = result.virtualRequired;
   }
 
   // then/else 재귀 처리 - 삼항 연산자로 간소화
@@ -34,9 +35,9 @@ export const transformConditionalSchema = (
 const transformRequiredWithVirtual = (
   required: string[],
   virtual: Dictionary<{ fields: string[] }>,
-): { required: string[]; virtualKeys: string[] } => {
+): { required: string[]; virtualRequired: string[] } => {
   const newRequired: string[] = [];
-  const virtualKeys: string[] = [];
+  const virtualRequired: string[] = [];
 
   // 단일 패스로 처리
   for (let i = 0; i < required.length; i++) {
@@ -46,11 +47,11 @@ const transformRequiredWithVirtual = (
     if (vEntry) {
       // spread보다 push가 V8에서 더 빠름
       newRequired.push(...vEntry.fields);
-      virtualKeys.push(key);
+      virtualRequired.push(key);
     } else {
       newRequired.push(key);
     }
   }
 
-  return { required: newRequired, virtualKeys };
+  return { required: newRequired, virtualRequired };
 };

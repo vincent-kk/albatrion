@@ -3,24 +3,24 @@ import type { Dictionary } from '@aileron/declare';
 const transformRequiredWithVirtual = (
   required: string[] | undefined,
   virtual: Dictionary<{ fields: string[] }>,
-): { required: string[]; virtualKeys: string[] } => {
-  if (!required) return { required: [], virtualKeys: [] };
+): { required: string[]; virtualRequired: string[] } => {
+  if (!required) return { required: [], virtualRequired: [] };
 
   const newRequired: string[] = [];
-  const virtualKeys: string[] = [];
+  const virtualRequired: string[] = [];
 
   for (const key of required) {
     if (virtual[key]) {
       // virtual 키인 경우: virtual[key].fields의 모든 필드를 required에 추가
       newRequired.push(...virtual[key].fields);
-      virtualKeys.push(key);
+      virtualRequired.push(key);
     } else {
       // 일반 키인 경우: 그대로 유지
       newRequired.push(key);
     }
   }
 
-  return { required: newRequired, virtualKeys };
+  return { required: newRequired, virtualRequired };
 };
 
 export const transformConditionalSchema = (
@@ -33,16 +33,14 @@ export const transformConditionalSchema = (
 
   // required 배열이 있는 경우 변환
   if (schema.required && Array.isArray(schema.required)) {
-    const { required: newRequired, virtualKeys } = transformRequiredWithVirtual(
-      schema.required,
-      virtual,
-    );
+    const { required: newRequired, virtualRequired } =
+      transformRequiredWithVirtual(schema.required, virtual);
 
     transformed.required = newRequired;
 
     // virtual 키가 있는 경우 virtual 프로퍼티에 추가
-    if (virtualKeys.length > 0) {
-      transformed.virtual = virtualKeys;
+    if (virtualRequired.length > 0) {
+      transformed.virtual = virtualRequired;
     }
   }
 

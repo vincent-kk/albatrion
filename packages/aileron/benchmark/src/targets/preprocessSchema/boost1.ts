@@ -13,12 +13,10 @@ export const transformConditionalSchema = (
   const hasElse = schema.else !== undefined;
 
   if (hasRequired) {
-    const { required: newRequired, virtualKeys } = transformRequiredWithVirtual(
-      schema.required,
-      virtual,
-    );
+    const { required: newRequired, virtualRequired } =
+      transformRequiredWithVirtual(schema.required, virtual);
     transformed.required = newRequired;
-    if (virtualKeys.length > 0) transformed.virtual = virtualKeys;
+    if (virtualRequired.length > 0) transformed.virtual = virtualRequired;
   }
   if (hasThen)
     transformed.then = schema.then
@@ -34,12 +32,12 @@ export const transformConditionalSchema = (
 const transformRequiredWithVirtual = (
   required: string[] | undefined,
   virtual: Dictionary<{ fields: string[] }>,
-): { required: string[]; virtualKeys: string[] } => {
-  if (!required?.length) return { required: [], virtualKeys: [] };
+): { required: string[]; virtualRequired: string[] } => {
+  if (!required?.length) return { required: [], virtualRequired: [] };
 
   const requiredLength = required.length;
   const requiredKeys: string[] = [];
-  const virtualKeys: string[] = [];
+  const virtualRequired: string[] = [];
 
   let estimatedSize = 0;
 
@@ -59,11 +57,11 @@ const transformRequiredWithVirtual = (
       const fieldsLength = fields.length;
       for (let j = 0; j < fieldsLength; j++)
         requiredKeys[newRequiredIndex++] = fields[j];
-      virtualKeys[virtualKeys.length] = key;
+      virtualRequired[virtualRequired.length] = key;
     } else requiredKeys[newRequiredIndex++] = key;
   }
 
   if (newRequiredIndex < estimatedSize) requiredKeys.length = newRequiredIndex;
 
-  return { required: requiredKeys, virtualKeys };
+  return { required: requiredKeys, virtualRequired };
 };

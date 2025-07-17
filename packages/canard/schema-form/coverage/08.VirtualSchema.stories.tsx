@@ -237,9 +237,9 @@ export const VirtualSchemaControlWithIfElse2 = () => {
     },
     then: {
       required: ['virtualFiled_A1'],
-      // NOTE: virtualKeys is not for external use, this is for internal use only
+      // NOTE: virtualRequired is not for external use, this is for internal use only
       // Just for testing purpose
-      virtualKeys: ['virtualField_A'],
+      virtualRequired: ['virtualField_A'],
     },
     else: {
       if: {
@@ -251,9 +251,9 @@ export const VirtualSchemaControlWithIfElse2 = () => {
       },
       then: {
         required: ['virtualField_B1'],
-        // NOTE: virtualKeys is not for external use, this is for internal use only
+        // NOTE: virtualRequired is not for external use, this is for internal use only
         // Just for testing purpose
-        virtualKeys: ['virtualField_B'],
+        virtualRequired: ['virtualField_B'],
       },
     },
   } satisfies JsonSchema;
