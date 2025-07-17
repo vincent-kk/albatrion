@@ -11,7 +11,9 @@ const scanner = new JsonSchemaScanner({
   options: {
     mutate: ({ schema }) => {
       if (schema.type !== 'object') return;
-      if (!('virtual' in schema) || !('if' in schema)) return;
+      if (!('virtual' in schema)) return;
+      if ('required' in schema)
+        schema = transformCondition(schema as JsonSchema, schema.virtual);
       if (schema.then)
         schema.then = transformCondition(schema.then, schema.virtual);
       if (schema.else)

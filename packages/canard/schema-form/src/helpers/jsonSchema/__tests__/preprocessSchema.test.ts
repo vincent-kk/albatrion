@@ -115,7 +115,7 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
       },
       then: {
         required: ['virtualFiled_A1', 'virtualFiled_A2'],
-        virtualKeys: ['virtualField_A'],
+        virtualRequired: ['virtualField_A'],
       },
       else: {
         if: {
@@ -127,9 +127,98 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
         },
         then: {
           required: ['virtualField_B1', 'virtualField_B2'],
-          virtualKeys: ['virtualField_B'],
+          virtualRequired: ['virtualField_B'],
         },
       },
+    } as JsonSchema;
+
+    const result = preprocessSchema(originalSchema);
+
+    expect(result).toEqual(trueResult);
+  });
+
+  it('should handle normal schema', () => {
+    const originalSchema = {
+      type: 'object',
+      properties: {
+        control: {
+          type: 'string',
+          enum: ['A', 'B', 'C'],
+          default: 'A',
+        },
+        alwaysVisible: {
+          type: 'string',
+        },
+        virtualFiled_A1: {
+          type: 'string',
+          format: 'date',
+          default: '2025-01-01',
+        },
+        virtualFiled_A2: {
+          type: 'string',
+          format: 'date',
+        },
+        virtualField_B1: {
+          type: 'string',
+          format: 'week',
+          default: '2025-W28',
+        },
+        virtualField_B2: {
+          type: 'string',
+          format: 'week',
+        },
+      },
+      virtual: {
+        virtualField_A: {
+          fields: ['virtualFiled_A1', 'virtualFiled_A2'],
+        },
+        virtualField_B: {
+          fields: ['virtualField_B1', 'virtualField_B2'],
+        },
+      },
+      required: ['control', 'virtualField_A'],
+    } as JsonSchema;
+
+    const trueResult = {
+      type: 'object',
+      properties: {
+        control: {
+          type: 'string',
+          enum: ['A', 'B', 'C'],
+          default: 'A',
+        },
+        alwaysVisible: {
+          type: 'string',
+        },
+        virtualFiled_A1: {
+          type: 'string',
+          format: 'date',
+          default: '2025-01-01',
+        },
+        virtualFiled_A2: {
+          type: 'string',
+          format: 'date',
+        },
+        virtualField_B1: {
+          type: 'string',
+          format: 'week',
+          default: '2025-W28',
+        },
+        virtualField_B2: {
+          type: 'string',
+          format: 'week',
+        },
+      },
+      virtual: {
+        virtualField_A: {
+          fields: ['virtualFiled_A1', 'virtualFiled_A2'],
+        },
+        virtualField_B: {
+          fields: ['virtualField_B1', 'virtualField_B2'],
+        },
+      },
+      required: ['control', 'virtualFiled_A1', 'virtualFiled_A2'],
+      virtualRequired: ['virtualField_A'],
     } as JsonSchema;
 
     const result = preprocessSchema(originalSchema);
@@ -192,15 +281,15 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
     const result = preprocessSchema(originalSchema) as any;
 
     expect(result.then.then.required).toEqual(['field1', 'field2']);
-    expect(result.then.then.virtualKeys).toEqual(['devGroup']);
+    expect(result.then.then.virtualRequired).toEqual(['devGroup']);
     expect(result.then.else.required).toEqual(['field1', 'field2', 'field3']);
-    expect(result.then.else.virtualKeys).toEqual(['devGroup']);
+    expect(result.then.else.virtualRequired).toEqual(['devGroup']);
     expect(result.else.then.required).toEqual(['field3']);
-    expect(result.else.then.virtualKeys).toEqual(['stagingGroup']);
+    expect(result.else.then.virtualRequired).toEqual(['stagingGroup']);
     expect(result.else.else.then.required).toEqual(['field4', 'field5']);
-    expect(result.else.else.then.virtualKeys).toEqual(['prodGroup']);
+    expect(result.else.else.then.virtualRequired).toEqual(['prodGroup']);
     expect(result.else.else.else.required).toEqual(['field1']);
-    expect(result.else.else.else.virtualKeys).toBeUndefined();
+    expect(result.else.else.else.virtualRequired).toBeUndefined();
   });
 
   it('should handle mixed virtual and non-virtual fields in required', () => {
@@ -234,7 +323,7 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
       'address1',
       'address2',
     ]);
-    expect(result.then.virtualKeys).toEqual(['contactInfo', 'addressInfo']);
+    expect(result.then.virtualRequired).toEqual(['contactInfo', 'addressInfo']);
   });
 
   it('should handle schemas without virtual property', () => {
@@ -268,7 +357,8 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
       virtual: {
         group1: { fields: ['field1', 'field2'] },
       },
-      required: ['group1'],
+      required: ['field1', 'field2'],
+      virtualRequired: ['group1'],
     };
 
     const result = preprocessSchema(originalSchema);
@@ -297,7 +387,7 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
     const result = preprocessSchema(originalSchema) as any;
 
     expect(result.then.required).toEqual(['field1']);
-    expect(result.then.virtualKeys).toEqual(['emptyGroup']);
+    expect(result.then.virtualRequired).toEqual(['emptyGroup']);
   });
 
   it('should handle non-existent virtual keys in required', () => {
@@ -326,7 +416,7 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
       'field2',
       'field1',
     ]);
-    expect(result.then.virtualKeys).toEqual(['existingGroup']);
+    expect(result.then.virtualRequired).toEqual(['existingGroup']);
   });
 
   it('should handle schemas without required arrays', () => {
@@ -356,7 +446,7 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
     expect(result.then).toEqual({ additionalProperties: false });
     // else에는 required가 있으므로 변환됨
     expect(result.else.required).toEqual(['field1']);
-    expect(result.else.virtualKeys).toEqual(['group1']);
+    expect(result.else.virtualRequired).toEqual(['group1']);
   });
 
   it('should handle complex nested structures with multiple virtual transformations', () => {
@@ -413,11 +503,14 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
       'adminField1',
       'adminField2',
     ]);
-    expect(result.then.then.virtualKeys).toEqual(['basicInfo', 'adminInfo']);
+    expect(result.then.then.virtualRequired).toEqual([
+      'basicInfo',
+      'adminInfo',
+    ]);
 
     // admin + read
     expect(result.then.else.required).toEqual(['name', 'email']);
-    expect(result.then.else.virtualKeys).toEqual(['basicInfo']);
+    expect(result.then.else.virtualRequired).toEqual(['basicInfo']);
 
     // user + write
     expect(result.else.then.required).toEqual([
@@ -426,10 +519,10 @@ describe('JsonSchemaScanner - Virtual Schema Test', () => {
       'userField1',
       'userField2',
     ]);
-    expect(result.else.then.virtualKeys).toEqual(['basicInfo', 'userInfo']);
+    expect(result.else.then.virtualRequired).toEqual(['basicInfo', 'userInfo']);
 
     // user + read
     expect(result.else.else.required).toEqual(['name', 'email']);
-    expect(result.else.else.virtualKeys).toEqual(['basicInfo']);
+    expect(result.else.else.virtualRequired).toEqual(['basicInfo']);
   });
 });
