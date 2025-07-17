@@ -539,7 +539,7 @@ describe('flattenConditions', () => {
   });
 
   describe('Virtual Fields', () => {
-    it('should include virtualKeys fields in then block', () => {
+    it('should include virtualRequired fields in then block', () => {
       const schema = {
         type: 'object',
         properties: {
@@ -554,7 +554,7 @@ describe('flattenConditions', () => {
         },
         then: {
           required: ['email'],
-          virtualKeys: ['phone'],
+          virtualRequired: ['phone'],
         },
         else: {
           required: ['email'],
@@ -575,7 +575,7 @@ describe('flattenConditions', () => {
       expect(flattenConditions(schema)).toEqual(expected);
     });
 
-    it('should include virtualKeys fields in else block', () => {
+    it('should include virtualRequired fields in else block', () => {
       const schema = {
         type: 'object',
         properties: {
@@ -594,7 +594,7 @@ describe('flattenConditions', () => {
         },
         else: {
           required: ['advanced'],
-          virtualKeys: ['extra'],
+          virtualRequired: ['extra'],
         },
       } satisfies JsonSchema;
 
@@ -612,7 +612,7 @@ describe('flattenConditions', () => {
       expect(flattenConditions(schema)).toEqual(expected);
     });
 
-    it('should include virtualKeys fields in both then and else blocks', () => {
+    it('should include virtualRequired fields in both then and else blocks', () => {
       const schema = {
         type: 'object',
         properties: {
@@ -629,11 +629,11 @@ describe('flattenConditions', () => {
         },
         then: {
           required: ['field1'],
-          virtualKeys: ['virtual1'],
+          virtualRequired: ['virtual1'],
         },
         else: {
           required: ['field2'],
-          virtualKeys: ['virtual2'],
+          virtualRequired: ['virtual2'],
         },
       } satisfies JsonSchema;
 
@@ -651,7 +651,7 @@ describe('flattenConditions', () => {
       expect(flattenConditions(schema)).toEqual(expected);
     });
 
-    it('should handle multiple virtualKeys fields', () => {
+    it('should handle multiple virtualRequired fields', () => {
       const schema = {
         type: 'object',
         properties: {
@@ -669,7 +669,7 @@ describe('flattenConditions', () => {
         },
         then: {
           required: ['name', 'desc'],
-          virtualKeys: ['meta1', 'meta2', 'meta3'],
+          virtualRequired: ['meta1', 'meta2', 'meta3'],
         },
         else: {
           required: ['name'],
@@ -690,7 +690,7 @@ describe('flattenConditions', () => {
       expect(flattenConditions(schema)).toEqual(expected);
     });
 
-    it('should handle virtualKeys fields without required fields', () => {
+    it('should handle virtualRequired fields without required fields', () => {
       const schema = {
         type: 'object',
         properties: {
@@ -705,7 +705,7 @@ describe('flattenConditions', () => {
           },
         },
         then: {
-          virtualKeys: ['virtual1', 'virtual2'],
+          virtualRequired: ['virtual1', 'virtual2'],
         },
         else: {
           required: ['fallback'],
@@ -722,7 +722,7 @@ describe('flattenConditions', () => {
       expect(flattenConditions(schema)).toEqual(expected);
     });
 
-    it('should handle nested if-then-else with virtualKeys fields', () => {
+    it('should handle nested if-then-else with virtualRequired fields', () => {
       const schema = {
         type: 'object',
         properties: {
@@ -740,7 +740,7 @@ describe('flattenConditions', () => {
         },
         then: {
           required: ['basic'],
-          virtualKeys: ['virtual1'],
+          virtualRequired: ['virtual1'],
         },
         else: {
           if: {
@@ -753,7 +753,7 @@ describe('flattenConditions', () => {
           },
           else: {
             required: ['advanced'],
-            virtualKeys: ['virtual2'],
+            virtualRequired: ['virtual2'],
           },
         },
       } satisfies JsonSchema;
@@ -776,7 +776,7 @@ describe('flattenConditions', () => {
       expect(flattenConditions(schema)).toEqual(expected);
     });
 
-    it('should handle empty virtualKeys arrays', () => {
+    it('should handle empty virtualRequired arrays', () => {
       const schema = {
         type: 'object',
         properties: {
@@ -791,11 +791,11 @@ describe('flattenConditions', () => {
         },
         then: {
           required: ['field1'],
-          virtualKeys: [],
+          virtualRequired: [],
         },
         else: {
           required: ['field2'],
-          virtualKeys: [],
+          virtualRequired: [],
         },
       } satisfies JsonSchema;
 
@@ -813,7 +813,7 @@ describe('flattenConditions', () => {
       expect(flattenConditions(schema)).toEqual(expected);
     });
 
-    it('should handle virtualKeys fields only in nested else block', () => {
+    it('should handle virtualRequired fields only in nested else block', () => {
       const schema = {
         type: 'object',
         properties: {
@@ -842,7 +842,7 @@ describe('flattenConditions', () => {
           },
           else: {
             required: ['low'],
-            virtualKeys: ['extra'],
+            virtualRequired: ['extra'],
           },
         },
       } satisfies JsonSchema;
