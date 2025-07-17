@@ -3,7 +3,7 @@ import { isFunction } from '@winglet/common-utils/filter';
 import type { SetStateFn } from '@aileron/declare';
 
 import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
-import { getResolveSchema } from '@/schema-form/helpers/jsonSchema';
+import { getResolveSchema } from '@/schema-form/helpers/jsonSchema/getResolveSchema';
 import type {
   AllowedValue,
   JsonSchema,
