@@ -4,8 +4,6 @@ import type { Dictionary, RequiredBy } from '@aileron/declare';
 
 import type { JsonSchema, JsonSchemaWithVirtual } from '@/schema-form/types';
 
-import type { VirtualReferencesMap } from '../../getVirtualReferencesMap';
-
 /**
  * Interface representing field conditions in flattened form
  */
@@ -22,10 +20,9 @@ interface FlattenCondition {
  */
 export const flattenConditions = (
   schema: JsonSchema,
-  virtualReferencesMap: VirtualReferencesMap | undefined,
 ): FlattenCondition[] | undefined => {
   const conditions: FlattenCondition[] = [];
-  flattenConditionsInto(conditions, schema, virtualReferencesMap);
+  flattenConditionsInto(schema, conditions);
   return conditions.length > 0 ? conditions : undefined;
 };
 
@@ -36,9 +33,8 @@ export const flattenConditions = (
  * @param collectedConditions - Collected conditions
  */
 const flattenConditionsInto = (
-  conditions: FlattenCondition[],
   schema: JsonSchema,
-  virtualReferencesMap: VirtualReferencesMap | undefined,
+  conditions: FlattenCondition[],
   collectedConditions: Dictionary<Array<string | string[]>> = {},
 ): void => {
   if (!schema.if || !schema.then) return;
@@ -56,29 +52,27 @@ const flattenConditionsInto = (
     collectedConditions[key].push(value);
   }
 
-  const thenRequired = schema.then?.required;
-  if (thenRequired?.length)
+  const thenRequired = schema.then?.required as string[];
+  if (thenRequired?.length) {
+    const thenVirtualKeys = schema.then.virtualKeys as string[];
     conditions[conditions.length] = {
       condition: ifCondition,
-      required: convertVirtualFields(thenRequired, virtualReferencesMap),
+      required: thenVirtualKeys?.length
+        ? [...thenRequired, ...thenVirtualKeys]
+        : thenRequired,
     };
+  }
 
   // Process else part
   if (schema.else) {
     // Process nested if-then-else (recursive call)
     if (schema.else.if && schema.else.then)
-      flattenConditionsInto(
-        conditions,
-        schema.else,
-        virtualReferencesMap,
-        collectedConditions,
-      );
+      flattenConditionsInto(schema.else, conditions, collectedConditions);
     else {
       const elseRequired = schema.else.required;
       if (elseRequired?.length) {
         // Merge all collected conditions
         const inverseCondition: Record<string, string | string[]> = {};
-
         for (const [key, values] of Object.entries(collectedConditions)) {
           if (values.length === 1) {
             inverseCondition[key] = values[0];
@@ -93,9 +87,12 @@ const flattenConditionsInto = (
             inverseCondition[key] = merged;
           }
         }
+        const elseVirtualKeys = schema.else.virtualKeys as string[];
         conditions[conditions.length] = {
           condition: inverseCondition,
-          required: convertVirtualFields(elseRequired, virtualReferencesMap),
+          required: elseVirtualKeys?.length
+            ? [...elseRequired, ...elseVirtualKeys]
+            : elseRequired,
           inverse: true,
         };
       }
@@ -155,22 +152,22 @@ const isValidConst = (
 ): schema is RequiredBy<JsonSchemaWithVirtual, 'const'> =>
   schema.const !== undefined;
 
-/**
- * Converts virtual fields to their actual fields.
- * @param fields - Fields to convert
- * @param virtualSchemaMap - Virtual schema map
- * @returns Converted fields
- */
-const convertVirtualFields = (
-  fields: string[],
-  virtualReferencesMap: VirtualReferencesMap | undefined,
-): string[] => {
-  if (!virtualReferencesMap) return fields;
-  const convertedFields = fields;
-  for (const field of fields) {
-    if (!virtualReferencesMap.has(field)) continue;
-    const virtualReference = virtualReferencesMap.get(field);
-    if (virtualReference) convertedFields.push(...virtualReference.fields);
-  }
-  return convertedFields;
-};
+// /**
+//  * Converts virtual fields to their actual fields.
+//  * @param fields - Fields to convert
+//  * @param virtualSchemaMap - Virtual schema map
+//  * @returns Converted fields
+//  */
+// const convertVirtualFields = (
+//   fields: string[],
+//   virtualReferencesMap: VirtualReferencesMap | undefined,
+// ): string[] => {
+//   if (!virtualReferencesMap) return fields;
+//   const convertedFields = fields;
+//   for (const field of fields) {
+//     if (!virtualReferencesMap.has(field)) continue;
+//     const virtualReference = virtualReferencesMap.get(field);
+//     if (virtualReference) convertedFields.push(...virtualReference.fields);
+//   }
+//   return convertedFields;
+// };
