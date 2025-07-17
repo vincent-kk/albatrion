@@ -8,6 +8,7 @@ import {
   SetValueOption,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
+import { plugin } from './components/validator';
 
 export default {
   title: 'Form/08. VirtualSchema',
@@ -103,6 +104,7 @@ export const VirtualSchemaControlWithVisible = () => {
         defaultValue={{}}
         onChange={setValue}
         onValidate={setErrors}
+        validatorFactory={plugin.validator.compile}
       />
     </StoryLayout>
   );
@@ -181,6 +183,7 @@ export const VirtualSchemaControlWithIfElse = () => {
         defaultValue={{}}
         onChange={setValue}
         onValidate={setErrors}
+        validatorFactory={plugin.validator.compile}
       />
     </StoryLayout>
   );
