@@ -40,6 +40,11 @@ export interface SchemaVisitor<ContextType = void> {
 export interface JsonScannerOptions<ContextType = void> {
   /** Schema node filtering function */
   filter?: Fn<[entry: SchemaEntry, context?: ContextType], boolean>;
+  /** Function to mutate schema */
+  mutate?: Fn<
+    [entry: SchemaEntry, context?: ContextType],
+    UnknownSchema | void
+  >;
   /** Function to resolve $ref references */
   resolveReference?: Fn<
     [reference: string, context?: ContextType],

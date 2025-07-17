@@ -35,7 +35,7 @@ export class JsonSchemaScannerAsync<ContextType = void> {
   /** Final schema with references resolved. Computed on first call to `getValue`. */
   #processedSchema: UnknownSchema | undefined;
   /** Array of references resolved during `#run` execution but not yet applied to the final schema ([path, resolved schema]). */
-  #pendingResolves: Array<[path: string, schema: UnknownSchema]> | undefined;
+  #pendingResolves: Array<[path: string, schema: UnknownSchema]> = [];
 
   /**
    * Creates a JsonSchemaScannerAsync instance.
@@ -56,7 +56,7 @@ export class JsonSchemaScannerAsync<ContextType = void> {
   public async scan(this: this, schema: UnknownSchema): Promise<this> {
     this.#originalSchema = schema;
     this.#processedSchema = undefined; // Reset previous results when starting new scan
-    this.#pendingResolves = undefined;
+    this.#pendingResolves = [];
     await this.#run(this.#originalSchema);
     return this;
   }
@@ -71,26 +71,25 @@ export class JsonSchemaScannerAsync<ContextType = void> {
    * @returns {UnknownSchema | undefined} The processed final schema. Returns undefined if called before scanning.
    * Returns a deep copy of the original schema if references are not resolved.
    */
-  public getValue(this: this): UnknownSchema | undefined {
+  public getValue<Schema extends UnknownSchema>(
+    this: this,
+  ): Schema | undefined {
     if (!this.#originalSchema) return undefined;
-    if (this.#processedSchema) return this.#processedSchema;
-    if (!this.#pendingResolves || this.#pendingResolves.length === 0) {
+    if (this.#processedSchema) return this.#processedSchema as Schema;
+    const pendingResolves = this.#pendingResolves;
+    const pendingResolvesLength = pendingResolves.length;
+    if (pendingResolvesLength === 0) {
       this.#processedSchema = this.#originalSchema;
-      return this.#processedSchema;
+      return this.#processedSchema as Schema;
     }
-
-    this.#processedSchema = clone(this.#originalSchema);
-    for (const [path, resolvedSchema] of this.#pendingResolves) {
-      this.#processedSchema = setValue(
-        this.#processedSchema,
-        path,
-        resolvedSchema,
-      );
+    let processedSchema = clone(this.#originalSchema);
+    for (let index = 0; index < pendingResolvesLength; index++) {
+      const [path, resolvedSchema] = pendingResolves[index];
+      processedSchema = setValue(processedSchema, path, resolvedSchema);
     }
-
-    // Clear pending map after application (memory release)
-    this.#pendingResolves = undefined;
-    return this.#processedSchema;
+    this.#pendingResolves = [];
+    this.#processedSchema = processedSchema;
+    return processedSchema as Schema;
   }
 
   /**
@@ -111,6 +110,15 @@ export class JsonSchemaScannerAsync<ContextType = void> {
     ];
     const entryPhase = new Map<SchemaEntry, OperationPhase>();
     const visitedReference = new Set<string>();
+    const pendingResolves = this.#pendingResolves;
+
+    const context = this.#options.context;
+    const maxDepth = this.#options.maxDepth;
+    const filter = this.#options.filter;
+    const mutate = this.#options.mutate;
+    const resolveReference = this.#options.resolveReference;
+    const enter = this.#visitor.enter;
+    const exit = this.#visitor.exit;
 
     while (stack.length > 0) {
       const entry = stack[stack.length - 1];
@@ -118,17 +126,19 @@ export class JsonSchemaScannerAsync<ContextType = void> {
 
       switch (currentPhase) {
         case OperationPhase.Enter: {
-          if (
-            this.#options.filter &&
-            !(await this.#options.filter(entry, this.#options.context))
-          ) {
+          if (filter && !(await filter(entry, context))) {
             stack.pop();
             entryPhase.delete(entry);
             break;
           }
 
-          if (this.#visitor.enter)
-            await this.#visitor.enter(entry, this.#options.context);
+          const mutatedSchema = mutate?.(entry, context);
+          if (mutatedSchema) {
+            entry.schema = mutatedSchema;
+            pendingResolves.push([entry.path, mutatedSchema]);
+          }
+
+          await enter?.(entry, context);
           entryPhase.set(entry, OperationPhase.Reference);
           break;
         }
@@ -144,16 +154,12 @@ export class JsonSchemaScannerAsync<ContextType = void> {
             }
 
             const resolvedReference =
-              this.#options.resolveReference && !isDefinitionSchema(entry.path)
-                ? await this.#options.resolveReference(
-                    referencePath,
-                    this.#options.context,
-                  )
+              resolveReference && !isDefinitionSchema(entry.path)
+                ? await resolveReference(referencePath, context)
                 : undefined;
 
             if (resolvedReference) {
-              if (!this.#pendingResolves) this.#pendingResolves = new Array();
-              this.#pendingResolves.push([entry.path, resolvedReference]);
+              pendingResolves.push([entry.path, resolvedReference]);
 
               entry.schema = resolvedReference;
               entry.referencePath = referencePath;
@@ -173,10 +179,7 @@ export class JsonSchemaScannerAsync<ContextType = void> {
         }
 
         case OperationPhase.ChildEntries: {
-          if (
-            this.#options.maxDepth !== undefined &&
-            entry.depth + 1 > this.#options.maxDepth
-          ) {
+          if (maxDepth !== undefined && entry.depth + 1 > maxDepth) {
             entryPhase.set(entry, OperationPhase.Exit);
             break;
           }
@@ -194,9 +197,7 @@ export class JsonSchemaScannerAsync<ContextType = void> {
         }
 
         case OperationPhase.Exit: {
-          if (this.#visitor.exit)
-            await this.#visitor.exit(entry, this.#options.context);
-
+          await exit?.(entry, context);
           if (
             entry.referenceResolved &&
             entry.referencePath &&
