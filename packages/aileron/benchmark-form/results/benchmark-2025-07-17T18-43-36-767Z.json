@@ -1,0 +1,96 @@
+{
+  "timestamp": "2025-07-17T18-43-36-767Z",
+  "results": [
+    {
+      "name": "@react-genie-form/next - Form Rendering",
+      "hz": 58.43454432827415,
+      "stats": {
+        "mean": 0.017113165020714294,
+        "deviation": 0.011643028468968673
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.1.0 - Form Rendering",
+      "hz": 190.5011313792634,
+      "stats": {
+        "mean": 0.0052493126563596506,
+        "deviation": 0.0004046325875229349
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.2.0 - Form Rendering",
+      "hz": 194.65191205214512,
+      "stats": {
+        "mean": 0.005137375684920634,
+        "deviation": 0.0004033062306584224
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.2.5 - Form Rendering",
+      "hz": 193.64453427113435,
+      "stats": {
+        "mean": 0.005164101345612134,
+        "deviation": 0.000377695749611875
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.2.6 - Form Rendering",
+      "hz": 194.67740381570005,
+      "stats": {
+        "mean": 0.005136702978362574,
+        "deviation": 0.00034186721986736936
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.2.7 - Form Rendering",
+      "hz": 193.41470331850326,
+      "stats": {
+        "mean": 0.0051702377474025975,
+        "deviation": 0.0004120202340039463
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - Form Rendering",
+      "hz": 194.96150505511076,
+      "stats": {
+        "mean": 0.005129217686934274,
+        "deviation": 0.00042549738445158265
+      }
+    }
+  ],
+  "chartConfig": {
+    "type": "bar",
+    "data": {
+      "labels": [
+        "@react-genie-form/next - Form Rendering",
+        "@canard/schema-form@0.1.0 - Form Rendering",
+        "@canard/schema-form@0.2.0 - Form Rendering",
+        "@canard/schema-form@0.2.5 - Form Rendering",
+        "@canard/schema-form@0.2.6 - Form Rendering",
+        "@canard/schema-form@0.2.7 - Form Rendering",
+        "@canard/schema-form@latest - Form Rendering"
+      ],
+      "datasets": [
+        {
+          "label": "Operations/sec",
+          "data": [
+            58.43454432827415,
+            190.5011313792634,
+            194.65191205214512,
+            193.64453427113435,
+            194.67740381570005,
+            193.41470331850326,
+            194.96150505511076
+          ]
+        }
+      ]
+    },
+    "options": {
+      "scales": {
+        "y": {
+          "beginAtZero": true
+        }
+      }
+    }
+  }
+}
