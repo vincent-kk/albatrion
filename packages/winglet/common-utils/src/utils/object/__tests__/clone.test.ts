@@ -172,6 +172,211 @@ describe('clone', () => {
       expect(cloned.self).toBe(cloned);
     });
   });
+
+  describe('Function cloning', () => {
+    it('should return the same function reference for standalone functions', () => {
+      const originalFunc = function () {
+        return 'test';
+      };
+      const clonedFunc = clone(originalFunc);
+
+      expect(clonedFunc).toBe(originalFunc);
+      expect(clonedFunc()).toBe('test');
+    });
+
+    it('should return the same arrow function reference', () => {
+      const originalFunc = () => 'arrow function test';
+      const clonedFunc = clone(originalFunc);
+
+      expect(clonedFunc).toBe(originalFunc);
+      expect(clonedFunc()).toBe('arrow function test');
+    });
+
+    it('should clone objects with function properties', () => {
+      const original = {
+        name: 'test',
+        method: function () {
+          return 'method result';
+        },
+        arrowMethod: () => 'arrow method result',
+        data: { nested: true },
+      };
+      const cloned = clone(original);
+
+      expect(cloned).toEqual(original);
+      expect(cloned).not.toBe(original);
+      expect(cloned.data).not.toBe(original.data);
+      // 함수는 같은 참조여야 함
+      expect(cloned.method).toBe(original.method);
+      expect(cloned.arrowMethod).toBe(original.arrowMethod);
+      // 함수 실행 결과 확인
+      expect(cloned.method()).toBe('method result');
+      expect(cloned.arrowMethod()).toBe('arrow method result');
+    });
+
+    it('should clone arrays containing functions', () => {
+      const func1 = () => 'function 1';
+      const func2 = function () {
+        return 'function 2';
+      };
+      const original = [1, func1, { data: 'test' }, func2];
+      const cloned = clone(original);
+
+      expect(cloned).toEqual(original);
+      expect(cloned).not.toBe(original);
+      // 객체는 다른 참조여야 함
+      expect(cloned[2]).not.toBe(original[2]);
+      // 함수는 같은 참조여야 함
+      expect(cloned[1]).toBe(original[1]);
+      expect(cloned[3]).toBe(original[3]);
+      // 함수 실행 결과 확인
+      expect((cloned[1] as () => string)()).toBe('function 1');
+      expect((cloned[3] as () => string)()).toBe('function 2');
+    });
+
+    it('should handle functions with closures', () => {
+      let counter = 0;
+      const createCounter = () => {
+        return () => ++counter;
+      };
+
+      const original = {
+        increment: createCounter(),
+        data: { value: 42 },
+      };
+      const cloned = clone(original);
+
+      expect(cloned).toEqual(original);
+      expect(cloned).not.toBe(original);
+      expect(cloned.data).not.toBe(original.data);
+      expect(cloned.increment).toBe(original.increment);
+
+      // 클로저 동작 확인
+      expect(cloned.increment()).toBe(1);
+      expect(original.increment()).toBe(2);
+      expect(counter).toBe(2);
+    });
+
+    it('should handle class methods', () => {
+      class TestClass {
+        name: string;
+        data: { nested: boolean };
+
+        constructor(name: string) {
+          this.name = name;
+          this.data = { nested: true };
+        }
+
+        getName() {
+          return this.name;
+        }
+
+        setName(newName: string) {
+          this.name = newName;
+        }
+      }
+
+      const original = new TestClass('original');
+      const cloned = clone(original);
+
+      expect(cloned).toEqual(original);
+      expect(cloned).not.toBe(original);
+      expect(cloned.data).not.toBe(original.data);
+
+      // 메소드는 같은 참조여야 함 (프로토타입에서 상속)
+      expect(cloned.getName).toBe(original.getName);
+      expect(cloned.setName).toBe(original.setName);
+
+      // 메소드 실행 확인
+      expect(cloned.getName()).toBe('original');
+
+      // 독립적으로 수정 가능한지 확인
+      cloned.setName('cloned');
+      expect(cloned.getName()).toBe('cloned');
+      expect(original.getName()).toBe('original');
+    });
+
+    it('should handle bound functions', () => {
+      const obj = {
+        value: 'test',
+        getValue: function () {
+          return this.value;
+        },
+      };
+
+      const boundFunction = obj.getValue.bind(obj);
+      const original = {
+        boundFunc: boundFunction,
+        data: { test: true },
+      };
+      const cloned = clone(original);
+
+      expect(cloned).toEqual(original);
+      expect(cloned).not.toBe(original);
+      expect(cloned.data).not.toBe(original.data);
+      expect(cloned.boundFunc).toBe(original.boundFunc);
+
+      // 바인딩된 함수 실행 확인
+      expect(cloned.boundFunc()).toBe('test');
+      expect(original.boundFunc()).toBe('test');
+    });
+
+    it('should handle nested objects with mixed data types including functions', () => {
+      const helperFunc = (x: number) => x * 2;
+
+      const original = {
+        level1: {
+          level2: {
+            data: [1, 2, 3],
+            process: helperFunc,
+            nested: {
+              date: new Date('2024-01-01'),
+              map: new Map([['key', 'value']]),
+              callback: () => 'nested callback',
+            },
+          },
+        },
+        utils: {
+          helper: helperFunc,
+          formatter: (str: string) => str.toUpperCase(),
+        },
+      };
+
+      const cloned = clone(original);
+
+      expect(cloned).toEqual(original);
+      expect(cloned).not.toBe(original);
+
+      // 중첩된 객체들은 다른 참조여야 함
+      expect(cloned.level1).not.toBe(original.level1);
+      expect(cloned.level1.level2).not.toBe(original.level1.level2);
+      expect(cloned.level1.level2.data).not.toBe(original.level1.level2.data);
+      expect(cloned.level1.level2.nested).not.toBe(
+        original.level1.level2.nested,
+      );
+      expect(cloned.level1.level2.nested.date).not.toBe(
+        original.level1.level2.nested.date,
+      );
+      expect(cloned.level1.level2.nested.map).not.toBe(
+        original.level1.level2.nested.map,
+      );
+      expect(cloned.utils).not.toBe(original.utils);
+
+      // 함수들은 같은 참조여야 함
+      expect(cloned.level1.level2.process).toBe(original.level1.level2.process);
+      expect(cloned.level1.level2.nested.callback).toBe(
+        original.level1.level2.nested.callback,
+      );
+      expect(cloned.utils.helper).toBe(original.utils.helper);
+      expect(cloned.utils.formatter).toBe(original.utils.formatter);
+
+      // 함수 실행 확인
+      expect(cloned.level1.level2.process(5)).toBe(10);
+      expect(cloned.level1.level2.nested.callback()).toBe('nested callback');
+      expect(cloned.utils.helper(3)).toBe(6);
+      expect(cloned.utils.formatter('hello')).toBe('HELLO');
+    });
+  });
 });
 
 const mixedData = {
