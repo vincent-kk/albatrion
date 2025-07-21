@@ -228,7 +228,11 @@ registerPlugin(ajvValidatorPlugin);
 특정 Form에서만 다른 검증 로직을 사용하고 싶은 경우:
 
 ```tsx
-import { Form, createValidatorFactory } from '@canard/schema-form';
+import { Form } from '@canard/schema-form';
+// createValidatorFactory 가 ajv8.x 기반인 경우, ajv 역시 8.x 버전을 사용해야 합니다.
+// 만약 ajv7.x를 사용하고 싶다면, @canard/schema-form-ajv7-plugin을 사용하세요.
+// 또는 ajv6.x인 경우 @canard/schema-form-ajv6-plugin을 사용하세요.
+import { createValidatorFactory } from '@canard/schema-form-ajv8-plugin';
 import Ajv from 'ajv';
 
 export const CustomValidationForm = () => {
@@ -271,7 +275,11 @@ export const CustomValidationForm = () => {
 여러 Form에서 동일한 검증 로직을 사용하는 경우:
 
 ```tsx
-import { FormProvider, createValidatorFactory } from '@canard/schema-form';
+import { FormProvider } from '@canard/schema-form';
+// createValidatorFactory 가 ajv8.x 기반인 경우, ajv 역시 8.x 버전을 사용해야 합니다.
+// 만약 ajv7.x를 사용하고 싶다면, @canard/schema-form-ajv7-plugin을 사용하세요.
+// 또는 ajv6.x인 경우 @canard/schema-form-ajv6-plugin을 사용하세요.
+import { createValidatorFactory } from '@canard/schema-form-ajv8-plugin';
 import Ajv from 'ajv';
 
 export const App = () => {

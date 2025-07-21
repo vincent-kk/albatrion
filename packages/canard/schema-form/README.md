@@ -226,7 +226,11 @@ registerPlugin(ajvValidatorPlugin);
 When you want to use different validation logic for specific Forms:
 
 ```tsx
-import { Form, createValidatorFactory } from '@canard/schema-form';
+import { Form } from '@canard/schema-form';
+// The version of ajv must be 8.x because the plugin is based on ajv8.x
+// If you want to use ajv7.x, you can use @canard/schema-form-ajv7-plugin
+// Or if you want to use ajv6.x, you can use @canard/schema-form-ajv6-plugin
+import { createValidatorFactory } from '@canard/schema-form-ajv8-plugin';
 import Ajv from 'ajv';
 
 export const CustomValidationForm = () => {
@@ -270,7 +274,11 @@ export const CustomValidationForm = () => {
 When using the same validation logic across multiple Forms:
 
 ```tsx
-import { FormProvider, createValidatorFactory } from '@canard/schema-form';
+import { FormProvider } from '@canard/schema-form';
+// The version of ajv must be 8.x because the plugin is based on ajv8.x
+// If you want to use ajv7.x, you can use @canard/schema-form-ajv7-plugin
+// Or if you want to use ajv6.x, you can use @canard/schema-form-ajv6-plugin
+import { createValidatorFactory } from '@canard/schema-form-ajv8-plugin';
 import Ajv from 'ajv';
 
 export const App = () => {
