@@ -2037,7 +2037,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@canard/schema-form@workspace:^, @canard/schema-form@workspace:packages/canard/schema-form, @canard/schema-form_0.2.8@npm:@canard/schema-form@0.2.8":
+"@canard/schema-form@workspace:^, @canard/schema-form@workspace:packages/canard/schema-form":
   version: 0.0.0-use.local
   resolution: "@canard/schema-form@workspace:packages/canard/schema-form"
   dependencies:
@@ -2158,6 +2158,21 @@ __metadata:
     react: ">=18 <20"
     react-dom: ">=18 <20"
   checksum: 10c0/828ce814d90162045e8cbfd8c012c416163c17def043cbf857baf6fe526a1959bded415371327da51a4af57b5512bfff57681c80a7a8b8ba34dfca69fb751d4f
+  languageName: node
+  linkType: hard
+
+"@canard/schema-form_0.2.8@npm:@canard/schema-form@0.2.8":
+  version: 0.2.8
+  resolution: "@canard/schema-form@npm:0.2.8"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.2.2"
+    "@winglet/json": "npm:^0.2.1"
+    "@winglet/json-schema": "npm:^0.2.3"
+    "@winglet/react-utils": "npm:^0.2.6"
+  peerDependencies:
+    react: ">=18 <20"
+    react-dom: ">=18 <20"
+  checksum: 10c0/4f3aae05be433b04c15b61ca7c7c6bfa035957174ec89b7c9132c252cf09535263d849d4f17a09475ecae6a3128f40a17474371c3636eadcce0ee24cbfab7a61
   languageName: node
   linkType: hard
 
@@ -7430,7 +7445,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@winglet/json-schema@npm:^0.2.0, @winglet/json-schema@npm:^0.2.2, @winglet/json-schema@workspace:^, @winglet/json-schema@workspace:packages/winglet/json-schema":
+"@winglet/json-schema@npm:^0.2.0, @winglet/json-schema@npm:^0.2.2, @winglet/json-schema@npm:^0.2.3, @winglet/json-schema@workspace:^, @winglet/json-schema@workspace:packages/winglet/json-schema":
   version: 0.0.0-use.local
   resolution: "@winglet/json-schema@workspace:packages/winglet/json-schema"
   dependencies:
