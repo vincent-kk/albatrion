@@ -84,8 +84,8 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 ### 1. 스키마 탐색 및 유효성 검사
 
-- **[`JsonSchemaScanner`](./src/utils/JsonSchemaScanner/JsonSchemaScanner.ts)**: JSON 스키마를 깊이 우선 탐색(DFS) 방식으로 순회하며 방문자(Visitor) 패턴을 적용하고 $ref 참조를 해결하는 클래스
-- **[`JsonSchemaScannerAsync`](./src/utils/JsonSchemaScanner/JsonSchemaScannerAsync.ts)**: 비동기 작업을 지원하는 JsonSchemaScanner 확장 클래스
+- **[`JsonSchemaScanner`](./src/utils/JsonSchemaScanner/sync/JsonSchemaScanner.ts)**: JSON 스키마를 깊이 우선 탐색(DFS) 방식으로 순회하며 방문자(Visitor) 패턴을 적용하고 $ref 참조를 해결하는 클래스
+- **[`JsonSchemaScannerAsync`](./src/utils/JsonSchemaScanner/async/JsonSchemaScannerAsync.ts)**: 비동기 작업을 지원하는 JsonSchemaScanner 확장 클래스
 
 ### 2. 타입 검증 및 필터링
 
@@ -96,11 +96,7 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 - **[`isBooleanSchema`](./src/filter.ts)**: 스키마가 불리언 타입인지 확인
 - **[`isNullSchema`](./src/filter.ts)**: 스키마가 null 타입인지 확인
 
-### 3. 스키마 기반 데이터 처리
-
-- **[`getValueWithSchema`](./src/utils/getValueWithSchema/getValueWithSchema.ts)**: 주어진 값과 스키마를 기반으로 필요한 데이터를 추출
-
-### 4. JSON Schema 타입 정의
+### 3. JSON Schema 타입 정의
 
 - 다양한 JSON Schema 타입 정의 ([`ObjectSchema`](./src/types/jsonSchema.ts), [`ArraySchema`](./src/types/jsonSchema.ts), [`StringSchema`](./src/types/jsonSchema.ts) 등)
 - 스키마에서 값 타입을 추론하는 유틸리티 타입 ([`InferValueType`](./src/types/value.ts))
@@ -187,33 +183,6 @@ if (isObjectSchema(schema)) {
 }
 ```
 
-### 스키마를 기반으로 데이터 추출하기
-
-```typescript
-import { getValueWithSchema } from '@winglet/json-schema';
-
-const schema = {
-  type: 'object',
-  properties: {
-    name: { type: 'string' },
-    age: { type: 'number' },
-  },
-  required: ['name'],
-  oneOf: [{}], // oneOf가 있어야 작동합니다
-};
-
-const data = {
-  name: 'John Doe',
-  age: 30,
-  extra: 'This will be filtered out',
-};
-
-const result = getValueWithSchema(data, schema);
-console.log(result); // { name: 'John Doe', age: 30 }
-```
-
----
-
 ## 개발 환경 설정
 
 ```bash
@@ -273,15 +242,6 @@ function isObjectSchema(schema: UnknownSchema): schema is ObjectSchema;
 function isStringSchema(schema: UnknownSchema): schema is StringSchema;
 function isBooleanSchema(schema: UnknownSchema): schema is BooleanSchema;
 function isNullSchema(schema: UnknownSchema): schema is NullSchema;
-```
-
-#### 값 추출 함수
-
-```typescript
-function getValueWithSchema<Value>(
-  value: Value | undefined,
-  schema: JsonSchema,
-): Value | undefined;
 ```
 
 ### 주요 타입 정의

@@ -84,8 +84,8 @@ Please use a transpiler like Babel to transform the code for your target environ
 
 ### 1. Schema Traversal and Validation
 
-- **[`JsonSchemaScanner`](./src/utils/JsonSchemaScanner/JsonSchemaScanner.ts)**: A class that traverses JSON schema using depth-first search (DFS) approach, implements the Visitor pattern, and resolves $ref references
-- **[`JsonSchemaScannerAsync`](./src/utils/JsonSchemaScanner/JsonSchemaScannerAsync.ts)**: An extension of JsonSchemaScanner that supports asynchronous operations
+- **[`JsonSchemaScanner`](./src/utils/JsonSchemaScanner/sync/JsonSchemaScanner.ts)**: A class that traverses JSON schema using depth-first search (DFS) approach, implements the Visitor pattern, and resolves $ref references
+- **[`JsonSchemaScannerAsync`](./src/utils/JsonSchemaScanner/async/JsonSchemaScannerAsync.ts)**: An extension of JsonSchemaScanner that supports asynchronous operations
 
 ### 2. Type Validation and Filtering
 
@@ -96,11 +96,7 @@ Please use a transpiler like Babel to transform the code for your target environ
 - **[`isBooleanSchema`](./src/filter.ts)**: Check if a schema is a boolean type
 - **[`isNullSchema`](./src/filter.ts)**: Check if a schema is a null type
 
-### 3. Schema-based Data Processing
-
-- **[`getValueWithSchema`](./src/utils/getValueWithSchema/getValueWithSchema.ts)**: Extract necessary data based on given value and schema
-
-### 4. JSON Schema Type Definitions
+### 3. JSON Schema Type Definitions
 
 - Various JSON Schema type definitions ([`ObjectSchema`](./src/types/jsonSchema.ts), [`ArraySchema`](./src/types/jsonSchema.ts), [`StringSchema`](./src/types/jsonSchema.ts), etc.)
 - Utility types for inferring value types from schemas ([`InferValueType`](./src/types/value.ts))
@@ -187,33 +183,6 @@ if (isObjectSchema(schema)) {
 }
 ```
 
-### Extracting Data Based on Schema
-
-```typescript
-import { getValueWithSchema } from '@winglet/json-schema';
-
-const schema = {
-  type: 'object',
-  properties: {
-    name: { type: 'string' },
-    age: { type: 'number' },
-  },
-  required: ['name'],
-  oneOf: [{}], // oneOf is required for this to work
-};
-
-const data = {
-  name: 'John Doe',
-  age: 30,
-  extra: 'This will be filtered out',
-};
-
-const result = getValueWithSchema(data, schema);
-console.log(result); // { name: 'John Doe', age: 30 }
-```
-
----
-
 ## Development Environment Setup
 
 ```bash
@@ -273,15 +242,6 @@ function isObjectSchema(schema: UnknownSchema): schema is ObjectSchema;
 function isStringSchema(schema: UnknownSchema): schema is StringSchema;
 function isBooleanSchema(schema: UnknownSchema): schema is BooleanSchema;
 function isNullSchema(schema: UnknownSchema): schema is NullSchema;
-```
-
-#### Value Extraction Function
-
-```typescript
-function getValueWithSchema<Value>(
-  value: Value | undefined,
-  schema: JsonSchema,
-): Value | undefined;
 ```
 
 ### Main Type Definitions
