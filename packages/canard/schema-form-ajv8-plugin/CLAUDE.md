@@ -1,0 +1,144 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+This is an AJV 8.x validator plugin for `@canard/schema-form` that provides JSON Schema validation with Draft 2020-12, Draft 2019-09, and backward compatibility support. The plugin acts as a bridge between the schema-form library and AJV 8.x validation engine, offering enhanced performance and support for the latest JSON Schema specifications.
+
+## Key Architecture
+
+### Core Components
+
+- **ValidatorPlugin Interface**: Main plugin entry point implementing `bind()` and `compile()` methods
+- **AJV Instance Management**: Singleton pattern for managing AJV instances with lazy initialization
+- **Error Transformation Layer**: Converts AJV errors to schema-form compatible format
+- **Async Validation**: All validators compiled with `$async: true` for consistent API
+- **Enhanced Validator Factory**: Leverages `@winglet/common-utils` for improved error processing
+
+### Plugin Structure
+
+```
+src/
+├── index.ts                           # Main export (plugin object)
+├── validator/
+│   ├── validatorPlugin.ts            # Core plugin implementation
+│   ├── createValidatorFactory.ts     # Validator factory function
+│   └── utils/
+│       └── transformErrors.ts        # AJV error transformation
+```
+
+### Error Handling Architecture
+
+The plugin transforms AJV 8.x errors (which use JSONPointer format by default) to schema-form format:
+- Handles `required` field errors by appending missing property names
+- Preserves JSONPointer format for dataPath consistency
+- Maintains error source references for debugging
+- Enhanced error context with rich debugging information
+
+## Development Commands
+
+### Building
+```bash
+yarn build              # Build both ESM and CJS bundles + type declarations
+yarn build:types        # Generate TypeScript declarations only
+```
+
+### Testing
+```bash
+yarn test              # Run all tests with Vitest
+yarn test --watch      # Run tests in watch mode
+```
+
+### Code Quality
+```bash
+yarn lint              # ESLint check
+yarn format            # Format code with Prettier
+```
+
+### Storybook (Development)
+```bash
+yarn storybook         # Run Storybook dev server on port 6006
+yarn build-storybook   # Build static Storybook
+```
+
+### Publishing
+```bash
+yarn version:patch     # Bump patch version
+yarn version:minor     # Bump minor version
+yarn version:major     # Bump major version
+yarn build:publish:npm # Build and publish to npm
+```
+
+## Testing Strategy
+
+### Unit Tests
+- Located in `src/validator/__tests__/`
+- Focus on validator factory creation and error transformation
+- Test complex nested object and array validation scenarios
+- Verify AJV instance binding and default configuration
+- Test files include: `validator.test.ts`, `datapath.test.ts`, `transformErrors.test.ts`
+
+### Integration Tests (Storybook)
+- Located in `coverage/` directory
+- 19 comprehensive story files covering different use cases
+- Test real-world form scenarios with the plugin
+- Examples include: normal use, terminal mode, virtual schemas, oneOf validation, form submission
+
+## Key Configuration
+
+### Default AJV 8.x Settings
+```typescript
+{
+  allErrors: true,          // Collect all validation errors
+  strictSchema: false,      // Allow additional schema properties for flexibility
+  validateFormats: false    // Disabled for better performance
+}
+```
+
+### Build Configuration
+- **Target**: ES2022 (both TypeScript and Vite)
+- **Formats**: ESM (.mjs) and CJS (.cjs) bundles
+- **External Dependencies**: AJV 8.x, peer dependency on @canard/schema-form
+- **Bundle Tool**: Rollup with custom build configuration from `aileron/script/build/rollup.bundle.mjs`
+
+## Plugin Integration Pattern
+
+The plugin follows the schema-form plugin architecture:
+1. **Registration**: `registerPlugin(plugin)` - Global registration
+2. **Binding**: Optional custom AJV instance via `plugin.validator.bind(ajv)`
+3. **Compilation**: Schema validation via `plugin.validator.compile(schema)`
+4. **Validation**: Async validation with standardized error format
+
+## Important Implementation Details
+
+### AJV 8.x Specific Features
+- Uses JSONPointer format for error paths by default
+- Supports latest JSON Schema specifications (Draft 2020-12, Draft 2019-09)
+- Enhanced performance compared to AJV 7.x and 6.x
+- Stricter mode disabled by default for better compatibility
+- Format validation disabled by default for performance optimization
+
+### Error Transformation Logic
+- Required field errors: Appends missing property to dataPath using JSON_POINTER_SEPARATOR
+- Other errors: Uses instancePath as-is (already JSONPointer format)
+- Preserves original AJV error object as `source` property
+- Enhanced error processing using `@winglet/common-utils`
+
+### Async Validation Pattern
+All validators are compiled with `$async: true` to maintain consistency with the schema-form library's expectation of async validation functions.
+
+## AJV 8.x Migration Notes
+
+### Key Differences from AJV 7.x Plugin
+- Updated default configuration for AJV 8.x compatibility
+- `strict: false` changed to `strictSchema: false`
+- Enhanced JSON Schema Draft 2020-12 support
+- Improved performance characteristics
+- Better TypeScript integration
+
+### Custom AJV Instance Configuration
+When providing a custom AJV instance, consider these AJV 8.x options:
+- `strict: false` - Disable strict mode for compatibility
+- `validateFormats: true` - Enable format validation (disabled by default in this plugin)
+- `unevaluatedProperties: false` - Control new Draft 2020-12 keywords
