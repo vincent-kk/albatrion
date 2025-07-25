@@ -20,8 +20,6 @@ export {
   isValidationError,
 } from './errors';
 
-export { useFormSubmit } from './hooks/useFormSubmit';
-
 export { JSONPointer } from './helpers/jsonPointer';
 
 export {
@@ -71,6 +69,9 @@ export type {
   JsonSchema,
   InferJsonSchema,
 } from './types/rolled';
+
+export { useFormSubmit } from './hooks/useFormSubmit';
+export { useVirtualNodeError } from './hooks/useVirtualNodeError';
 
 export {
   ExternalFormContextProvider as FormProvider,

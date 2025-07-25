@@ -1,7 +1,12 @@
 import { useCallback, useState } from 'react';
 
 import type { FormatError, JsonSchemaError } from '../src';
-import { Form, type JsonSchema, registerPlugin } from '../src';
+import {
+  Form,
+  type JsonSchema,
+  registerPlugin,
+  useVirtualNodeError,
+} from '../src';
 import StoryLayout from './components/StoryLayout';
 import { plugin } from './components/validator';
 
@@ -280,6 +285,153 @@ export const UseDefaultErrorFormatterDefaultKey = () => {
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
       <Form
+        jsonSchema={jsonSchema}
+        onChange={setValue}
+        onValidate={setErrors}
+      />
+    </StoryLayout>
+  );
+};
+
+export const UseVirtualNodeError = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+        minLength: 3,
+        maxLength: 10,
+      },
+      email: {
+        type: 'string',
+        format: 'email',
+        pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
+      },
+      zipCode: {
+        type: 'string',
+        pattern: '^[0-9]{5}$',
+      },
+      city: {
+        type: 'string',
+        minLength: 2,
+      },
+      roadAddress: {
+        type: 'string',
+        minLength: 2,
+      },
+    },
+    virtual: {
+      address: {
+        fields: ['zipCode', 'city', 'roadAddress'],
+      },
+    },
+    required: ['name', 'email', 'address'],
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
+      <Form
+        showError
+        jsonSchema={jsonSchema}
+        onChange={setValue}
+        onValidate={setErrors}
+      />
+    </StoryLayout>
+  );
+};
+
+export const UseVirtualNodeErrorWithVirtualNodeHook = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+        minLength: 3,
+        maxLength: 10,
+      },
+      email: {
+        type: 'string',
+        format: 'email',
+        pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
+      },
+      zipCode: {
+        type: 'string',
+        pattern: '^[0-9]{5}$',
+      },
+      city: {
+        type: 'string',
+        minLength: 2,
+      },
+      roadAddress: {
+        type: 'string',
+        minLength: 2,
+      },
+    },
+    virtual: {
+      address: {
+        fields: ['zipCode', 'city', 'roadAddress'],
+        FormType: ({ node, value, onChange }) => {
+          const { errorMatrix, errorMessages } = useVirtualNodeError(node);
+          return (
+            <div>
+              <div>
+                <div>
+                  <label>Zip Code</label>
+                  <input
+                    type="text"
+                    value={value?.[0]}
+                    onChange={(e) =>
+                      onChange([e.target.value, value?.[1], value?.[2]])
+                    }
+                  />
+                </div>
+                <div>
+                  <label>City</label>
+                  <input
+                    type="text"
+                    value={value?.[1]}
+                    onChange={(e) =>
+                      onChange([value?.[0], e.target.value, value?.[2]])
+                    }
+                  />
+                </div>
+                <div>
+                  <label>Road Address</label>
+                  <input
+                    type="text"
+                    value={value?.[2]}
+                    onChange={(e) =>
+                      onChange([value?.[0], value?.[1], e.target.value])
+                    }
+                  />
+                </div>
+              </div>
+              <div>
+                <div>
+                  {errorMessages.map((error, index) => (
+                    <div key={index}>{error || ''}</div>
+                  ))}
+                </div>
+                <pre>{JSON.stringify(errorMatrix, null, 2)}</pre>{' '}
+              </div>
+            </div>
+          );
+        },
+      },
+    },
+    required: ['name', 'email', 'address'],
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
+      <Form
+        showError
         jsonSchema={jsonSchema}
         onChange={setValue}
         onValidate={setErrors}
