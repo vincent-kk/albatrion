@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useMemo, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 
 import { isTruthy } from '@winglet/common-utils';
 
@@ -32,10 +32,11 @@ import type { JsonSchemaError } from '@/schema-form/types';
  * @returns {ReactNode[]} errorMessages - Formatted error messages for each child field
  */
 export const useVirtualNodeError = (node: SchemaNode) => {
-  const rendererContext = useFormTypeRendererContext();
-  const userDefinedContext = useUserDefinedContext();
+  const { formatError } = useFormTypeRendererContext();
+  const { context } = useUserDefinedContext();
 
   const [errorMatrix, setErrorMatrix] = useState<JsonSchemaError[][]>([]);
+  const [errorMessages, setErrorMessages] = useState<ReactNode[]>([]);
   useEffect(() => {
     if (node.type !== 'virtual') return;
     const children = node.children;
@@ -44,10 +45,18 @@ export const useVirtualNodeError = (node: SchemaNode) => {
       const childNode = children[i].node;
       unsubscribes[i] = childNode.subscribe(({ type, payload }) => {
         if (type & NodeEventType.UpdateError) {
-          const error = payload?.[NodeEventType.UpdateError];
+          const errors = payload?.[NodeEventType.UpdateError];
+          const firstError = errors?.find(isTruthy);
           setErrorMatrix((prev) => {
             const newErrors = [...prev];
-            newErrors[i] = error || [];
+            newErrors[i] = errors || [];
+            return newErrors;
+          });
+          setErrorMessages((prev) => {
+            const newErrors = [...prev];
+            newErrors[i] = firstError
+              ? formatError(firstError, childNode, context)
+              : null;
             return newErrors;
           });
         }
@@ -56,18 +65,7 @@ export const useVirtualNodeError = (node: SchemaNode) => {
     return () => {
       for (const unsubscribe of unsubscribes) unsubscribe();
     };
-  }, [node]);
-
-  const errorMessages = useMemo<ReactNode[]>(() => {
-    const formatError = rendererContext.formatError;
-    const context = userDefinedContext.context;
-    const errorMessages = new Array(errorMatrix.length);
-    for (let i = 0; i < errorMatrix.length; i++) {
-      const error = errorMatrix[i].find(isTruthy);
-      errorMessages[i] = error ? formatError(error, node, context) : null;
-    }
-    return errorMessages;
-  }, [errorMatrix, rendererContext, userDefinedContext, node]);
+  }, [node, formatError, context]);
 
   return { errorMatrix, errorMessages };
 };

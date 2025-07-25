@@ -301,23 +301,40 @@ export const UseVirtualNodeError = () => {
         type: 'string',
         minLength: 3,
         maxLength: 10,
+        errorMessages: {
+          required: 'name is required',
+        },
       },
       email: {
         type: 'string',
         format: 'email',
         pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
+        errorMessages: {
+          pattern: 'email must be a valid email address',
+          required: 'email is required',
+        },
       },
       zipCode: {
         type: 'string',
         pattern: '^[0-9]{5}$',
+        errorMessages: {
+          required: 'zipCode is required',
+          pattern: 'zipCode must be a valid zip code',
+        },
       },
       city: {
         type: 'string',
         minLength: 2,
+        errorMessages: {
+          required: 'city is required',
+        },
       },
       roadAddress: {
         type: 'string',
         minLength: 2,
+        errorMessages: {
+          required: 'roadAddress is required',
+        },
       },
     },
     virtual: {
@@ -351,23 +368,42 @@ export const UseVirtualNodeErrorWithVirtualNodeHook = () => {
         type: 'string',
         minLength: 3,
         maxLength: 10,
+        errorMessages: {
+          required: 'name is required',
+        },
       },
       email: {
         type: 'string',
         format: 'email',
         pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
+        errorMessages: {
+          pattern: 'email must be a valid email address',
+          required: 'email is required',
+        },
       },
       zipCode: {
         type: 'string',
         pattern: '^[0-9]{5}$',
+        errorMessages: {
+          required: 'zipCode is required',
+          pattern: 'zipCode must be a valid zip code',
+        },
       },
       city: {
         type: 'string',
         minLength: 2,
+        errorMessages: {
+          required: 'city is required',
+          minLength: 'city must be at least {limit} characters',
+        },
       },
       roadAddress: {
         type: 'string',
         minLength: 2,
+        errorMessages: {
+          required: 'roadAddress is required',
+          minLength: 'roadAddress must be at least {limit} characters',
+        },
       },
     },
     virtual: {
