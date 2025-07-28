@@ -1,5 +1,5 @@
 import { SchemaNodeError } from '@/schema-form/errors';
-import type { ResolveSchema } from '@/schema-form/helpers/jsonSchema/getResolveSchema';
+import type { ResolveSchema } from '@/schema-form/helpers/jsonSchema';
 import type {
   ArraySchema,
   BooleanSchema,

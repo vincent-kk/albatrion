@@ -5,7 +5,7 @@ import {
   useMemo,
 } from 'react';
 
-import { useMemorize, useSnapshot } from '@winglet/react-utils/hook';
+import { useConstant, useSnapshot } from '@winglet/react-utils/hook';
 
 import {
   DEFAULT_ANIMATION_DURATION,
@@ -55,7 +55,7 @@ export const ConfigurationContextProvider = memo(
     options: inputOptions,
     children,
   }: PropsWithChildren<ConfigurationContextProviderProps>) => {
-    const memoized = useMemorize({
+    const constant = useConstant({
       BackgroundComponent,
       ForegroundComponent: ForegroundComponent || FallbackForegroundFrame,
       TitleComponent: TitleComponent || FallbackTitle,
@@ -67,18 +67,18 @@ export const ConfigurationContextProvider = memo(
 
     const value = useMemo(
       () => ({
-        ForegroundComponent: memoized.ForegroundComponent,
-        BackgroundComponent: memoized.BackgroundComponent,
-        TitleComponent: memoized.TitleComponent,
-        SubtitleComponent: memoized.SubtitleComponent,
-        ContentComponent: memoized.ContentComponent,
-        FooterComponent: memoized.FooterComponent,
+        ForegroundComponent: constant.ForegroundComponent,
+        BackgroundComponent: constant.BackgroundComponent,
+        TitleComponent: constant.TitleComponent,
+        SubtitleComponent: constant.SubtitleComponent,
+        ContentComponent: constant.ContentComponent,
+        FooterComponent: constant.FooterComponent,
         options: {
           ...DEFAULT_OPTIONS,
           ...options,
         } satisfies ConfigurationContextProviderProps['options'],
       }),
-      [memoized, options],
+      [constant, options],
     );
     return (
       <ConfigurationContext.Provider value={value}>

@@ -26,6 +26,7 @@ import {
   type SchemaNode,
 } from '@/schema-form/core';
 import { ValidationError } from '@/schema-form/errors';
+import { preprocessSchema } from '@/schema-form/helpers/jsonSchema';
 import {
   FormTypeInputsContextProvider,
   FormTypeRendererContextProvider,
@@ -75,7 +76,10 @@ const FormInner = <
     ready.current = false;
   });
 
-  const jsonSchema = useMemorize(inputJsonSchema, [version]);
+  const jsonSchema = useMemorize(
+    () => preprocessSchema(inputJsonSchema),
+    [version],
+  );
   const defaultValue = useMemorize(inputDefaultValue, [version]);
 
   const [rootNode, setRootNode] = useState<Node>();

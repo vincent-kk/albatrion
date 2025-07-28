@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
 
-import { useMemorize, useSnapshot } from '@winglet/react-utils/hook';
+import { useConstant, useSnapshot } from '@winglet/react-utils/hook';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
@@ -21,14 +21,14 @@ export const FormInput = ({
   ...restProps
 }: FormInputProps) => {
   const { FormInputRenderer } = useExternalFormContext();
-  const FormTypeInput = useMemorize(InputFormTypeInput);
   const overrideProps = useSnapshot(restProps);
+  const FormTypeInput = useConstant(InputFormTypeInput);
   return (
     <SchemaNodeProxy
       path={path}
+      overrideProps={overrideProps}
       FormTypeInput={FormTypeInput}
       FormTypeRenderer={FormInputRenderer || PluginManager.FormInput}
-      overrideProps={overrideProps}
     />
   );
 };

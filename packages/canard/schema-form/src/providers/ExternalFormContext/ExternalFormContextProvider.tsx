@@ -1,6 +1,6 @@
 import { type ComponentType, type PropsWithChildren, useMemo } from 'react';
 
-import { useMemorize, useSnapshot } from '@winglet/react-utils/hook';
+import { useConstant, useSnapshot } from '@winglet/react-utils/hook';
 
 import type { Dictionary } from '@aileron/declare';
 
@@ -64,7 +64,7 @@ export const ExternalFormContextProvider = ({
   validatorFactory,
   children,
 }: PropsWithChildren<ExternalFormContextProviderProps>) => {
-  const memoized = useMemorize({
+  const constant = useConstant({
     formTypeInputDefinitions,
     FormGroupRenderer,
     FormLabelRenderer,
@@ -75,20 +75,20 @@ export const ExternalFormContextProvider = ({
   const context = useSnapshot(inputContext);
   const value = useMemo(
     () => ({
-      fromExternalFormTypeInputDefinitions: memoized.formTypeInputDefinitions
-        ? normalizeFormTypeInputDefinitions(memoized.formTypeInputDefinitions)
+      fromExternalFormTypeInputDefinitions: constant.formTypeInputDefinitions
+        ? normalizeFormTypeInputDefinitions(constant.formTypeInputDefinitions)
         : undefined,
-      FormGroupRenderer: memoized.FormGroupRenderer,
-      FormLabelRenderer: memoized.FormLabelRenderer,
-      FormInputRenderer: memoized.FormInputRenderer,
-      FormErrorRenderer: memoized.FormErrorRenderer,
-      formatError: memoized.formatError,
+      FormGroupRenderer: constant.FormGroupRenderer,
+      FormLabelRenderer: constant.FormLabelRenderer,
+      FormInputRenderer: constant.FormInputRenderer,
+      FormErrorRenderer: constant.FormErrorRenderer,
+      formatError: constant.formatError,
       showError,
       validationMode,
       validatorFactory,
       context,
     }),
-    [memoized, showError, validationMode, validatorFactory, context],
+    [constant, showError, validationMode, validatorFactory, context],
   );
   return (
     <ExternalFormContext.Provider value={value}>

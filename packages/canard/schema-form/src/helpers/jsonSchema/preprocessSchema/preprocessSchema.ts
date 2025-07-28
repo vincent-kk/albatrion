@@ -4,8 +4,9 @@ import type { JsonSchema } from '@/schema-form/types';
 
 import { transformCondition } from './utils/transformCondition';
 
-export const preprocessSchema = (schema: JsonSchema): JsonSchema =>
-  scanner.scan(schema).getValue<JsonSchema>() || schema;
+export const preprocessSchema = <Schema extends JsonSchema>(
+  schema: Schema,
+): Schema => scanner.scan(schema).getValue<Schema>() || schema;
 
 const scanner = new JsonSchemaScanner({
   options: {

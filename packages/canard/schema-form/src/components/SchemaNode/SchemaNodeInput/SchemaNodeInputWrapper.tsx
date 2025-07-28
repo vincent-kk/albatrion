@@ -3,7 +3,7 @@ import { type ComponentType, memo } from 'react';
 import { nullFunction } from '@winglet/common-utils/constant';
 import { isReactComponent } from '@winglet/react-utils/filter';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
-import { useMemorize, useRestProperties } from '@winglet/react-utils/hook';
+import { useConstant, useRestProperties } from '@winglet/react-utils/hook';
 
 import type { SchemaNode } from '@/schema-form/core';
 import type {
@@ -26,7 +26,7 @@ export const SchemaNodeInputWrapper = (
       ...overrideFormTypeInputProps,
       ...preferredOverrideProps,
     });
-    const PreferredFormTypeInput = useMemorize(
+    const PreferredFormTypeInput = useConstant(
       isReactComponent(OverridePreferredFormTypeInput)
         ? memo(withErrorBoundary(OverridePreferredFormTypeInput))
         : undefined,

@@ -2,7 +2,7 @@ import { type PropsWithChildren, useMemo } from 'react';
 
 import { isFunction } from '@winglet/common-utils/filter';
 import { isReactComponent } from '@winglet/react-utils/filter';
-import { useMemorize } from '@winglet/react-utils/hook';
+import { useConstant } from '@winglet/react-utils/hook';
 
 import type { FormProps } from '@/schema-form/components/Form';
 import { ShowError } from '@/schema-form/types';
@@ -65,16 +65,16 @@ export const FormTypeRendererContextProvider = ({
     };
   }, [inputShowError, externalShowError]);
 
-  const memoized = useMemorize({
+  const constant = useConstant({
     CustomFormTypeRenderer,
     formatError,
   });
   const value = useMemo(() => {
-    const FormTypeRenderer = isReactComponent(memoized.CustomFormTypeRenderer)
-      ? memoized.CustomFormTypeRenderer
+    const FormTypeRenderer = isReactComponent(constant.CustomFormTypeRenderer)
+      ? constant.CustomFormTypeRenderer
       : ExternalFormGroupRenderer;
-    const formatError = isFunction(memoized.formatError)
-      ? memoized.formatError
+    const formatError = isFunction(constant.formatError)
+      ? constant.formatError
       : externalFormatError;
     return {
       FormTypeRenderer,
@@ -82,7 +82,7 @@ export const FormTypeRendererContextProvider = ({
       checkShowError,
     };
   }, [
-    memoized,
+    constant,
     checkShowError,
     ExternalFormGroupRenderer,
     externalFormatError,

@@ -397,9 +397,7 @@ describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
       expect(complexError).toHaveLength(2);
 
       const errorPaths = complexError!.map((err) => err.dataPath);
-      expect(errorPaths).toContain(
-        '/departments/0/employees/0/info/firstName',
-      );
+      expect(errorPaths).toContain('/departments/0/employees/0/info/firstName');
       expect(errorPaths).toContain('/departments/0/employees/0/info/email');
 
       // Act & Assert - 필수 필드 누락

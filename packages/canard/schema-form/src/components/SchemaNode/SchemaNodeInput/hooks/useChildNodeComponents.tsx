@@ -1,7 +1,7 @@
 import { type ComponentType, useMemo, useRef, useState } from 'react';
 
 import {
-  useMemorize,
+  useConstant,
   useOnUnmount,
   useRestProperties,
 } from '@winglet/react-utils/hook';
@@ -52,7 +52,7 @@ export const useChildNodeComponents = (
           FormTypeRenderer: InputFormTypeRenderer,
           ...restProps
         }: ChildFormTypeInputProps) => {
-          const FormTypeRenderer = useMemorize(InputFormTypeRenderer);
+          const FormTypeRenderer = useConstant(InputFormTypeRenderer);
           const overrideProps = useRestProperties(restProps);
           return (
             <NodeProxy

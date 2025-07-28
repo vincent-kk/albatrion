@@ -1,6 +1,6 @@
 import type { ComponentType, PropsWithChildren } from 'react';
 
-import { useMemorize, useSnapshot } from '@winglet/react-utils/hook';
+import { useConstant, useSnapshot } from '@winglet/react-utils/hook';
 
 import type { Dictionary } from '@aileron/declare';
 
@@ -20,22 +20,24 @@ export type FormGroupProps = {
 
 export const FormGroup = ({
   path,
-  FormTypeInput: InputFormTypeInput,
-  FormTypeRenderer: InputFormTypeRenderer,
-  Wrapper: InputWrapper,
+  FormTypeInput,
+  FormTypeRenderer,
+  Wrapper,
   ...restProps
 }: FormGroupProps) => {
-  const FormTypeInput = useMemorize(InputFormTypeInput);
-  const FormTypeRenderer = useMemorize(InputFormTypeRenderer);
-  const Wrapper = useMemorize(InputWrapper);
   const overrideProps = useSnapshot(restProps);
+  const constant = useConstant({
+    FormTypeInput,
+    FormTypeRenderer,
+    Wrapper,
+  });
   return (
     <SchemaNodeProxy
       path={path}
-      FormTypeInput={FormTypeInput}
-      FormTypeRenderer={FormTypeRenderer}
       overrideProps={overrideProps}
-      Wrapper={Wrapper}
+      FormTypeInput={constant.FormTypeInput}
+      FormTypeRenderer={constant.FormTypeRenderer}
+      Wrapper={constant.Wrapper}
     />
   );
 };

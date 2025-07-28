@@ -19,19 +19,19 @@ import type {
 /**
  * Hook for handling form submission with pending state management.
  * Provides a submit function and pending state synchronized with the form's internal submit handler.
- * 
+ *
  * @example
  * ```typescript
  * const formRef = useRef<FormHandle<typeof schema>>(null);
  * const { submit, pending } = useFormSubmit(formRef);
- * 
+ *
  * // In component
  * <Form ref={formRef} jsonSchema={schema} onSubmit={handleSubmit} />
  * <button onClick={submit} disabled={pending}>
  *   {pending ? 'Submitting...' : 'Submit'}
  * </button>
  * ```
- * 
+ *
  * @param ref - React ref to FormHandle instance
  * @returns Object containing submit function and pending state
  * @returns {Function} submit - Async function that triggers form submission
