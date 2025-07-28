@@ -15,7 +15,7 @@ export type { Anchor, BasePortal, withPortal };
  *
  * **Compound Object Pattern (Recommended for convenience):**
  * ```typescript
- * import { Portal } from '@/react-utils';
+ * import { Portal } from '@winglet/react-utils/portal';
  *
  * const App = Portal.with(() => (
  *   <div>
