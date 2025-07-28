@@ -89,10 +89,11 @@ React 기능을 확장하는 다양한 커스텀 훅을 제공합니다.
 #### 상태 관리 및 참조
 
 - [`useConstant`](./src/hooks/useConstant.ts) - 컴포넌트 생명주기 동안 변하지 않는 상수 값을 제공합니다.
-- [`useMemorize`](./src/hooks/useMemorize.ts) - useMemo와 유사하지만 더 직관적인 사용법을 제공합니다.
+- [`useMemorize`](./src/hooks/useMemorize.ts) - 특정 의존성 배열이 변경될때만 재계산되는 값을 제공합니다.
 - [`useReference`](./src/hooks/useReference.ts) - 참조 객체를 관리합니다.
 - [`useSnapshot`](./src/hooks/useSnapshot.ts) - 값의 스냅샷을 생성하고 관리합니다.
 - [`useVersion`](./src/hooks/useVersion.ts) - 컴포넌트의 버전 상태를 관리합니다.
+- [`useTruthyConstant`](./src/hooks/useTruthyConstant.ts) - 참조 값이 참인 상수 값을 관리합니다.
 
 #### 생명주기 관리
 

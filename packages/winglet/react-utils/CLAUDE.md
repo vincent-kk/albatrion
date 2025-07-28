@@ -82,11 +82,12 @@ The library is organized into modular exports supporting sub-path imports:
 
 ```typescript
 // Internal imports (same package)
-import { usePortalContext } from './context/usePortalContext';
 import { isFunction } from '@winglet/common-utils/filter';
 
 // Cross-package imports
 import type { Fn } from '@aileron/declare';
+
+import { usePortalContext } from './context/usePortalContext';
 ```
 
 ### Testing Strategy
@@ -107,23 +108,28 @@ import type { Fn } from '@aileron/declare';
 ## Key Components & Hooks
 
 ### Portal System
+
 - `withPortal()`: HOC that wraps components with portal context
 - `Portal.Anchor`: Defines where portal content renders
 - `Portal`: Renders children at the anchor location
 - `PortalContext`: Context-based state management for portals
 
 ### Error Boundaries
+
 - `withErrorBoundary()`: HOC for error boundary wrapping
 - `ErrorBoundary`: Class component handling React errors
 - `FallbackMessage`: Default error UI component
 
 ### Notable Hooks
+
 - `useConstant()`: Memoizes expensive computations or factory functions
 - `useWindowSize()`: Tracks browser window dimensions
 - `useMemorize()`: Enhanced memoization with intuitive API
 - `useEffectUntil()` / `useLayoutEffectUntil()`: Conditional effect hooks
+- `useTruthyConstant()`: Manages constant values that are truthy.
 
 ### Utility Functions
+
 - `isReactComponent()`, `isReactElement()`: Type checking utilities
 - `renderComponent()`: Safely renders various component types
 - `remainOnlyReactComponent()`: Filters object properties to React components
@@ -138,6 +144,7 @@ import type { Fn } from '@aileron/declare';
 ## Testing
 
 Run the test suite with coverage:
+
 ```bash
 yarn test --coverage
 ```

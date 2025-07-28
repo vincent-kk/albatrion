@@ -13,5 +13,6 @@ export { useRestProperties } from './useRestProperties';
 export { useSnapshot } from './useSnapshot';
 export { useSnapshotReference } from './useSnapshotReference';
 export { useTimeout } from './useTimeout';
+export { useTruthyConstant } from './useTruthyConstant';
 export { useVersion } from './useVersion';
 export { useWindowSize } from './useWindowSize';
