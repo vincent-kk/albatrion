@@ -9,32 +9,104 @@ type UseTimeoutReturn = {
 };
 
 /**
- * Manages a timeout that executes a callback function after a specified delay.
- * Provides manual control functions for scheduling and canceling timeouts.
- * Does not automatically start the timeout on mount - you must call schedule() manually.
- * @param callback - The function to execute after the timeout
- * @param timeout - The delay in milliseconds before executing the callback
- * @returns An object containing timeout control functions
- * @returns {Function} returns.isIdle - Function that returns whether the timeout scheduler is idle (no pending execution)
- * @returns {Function} returns.schedule - Function to schedule/reschedule the timeout
- * @returns {Function} returns.cancel - Function to cancel the timeout
- * @example
- * const { isIdle, schedule, cancel } = useTimeout(() => {
- *   console.log('Timeout executed!');
- * }, 1000);
+ * Provides imperative control over setTimeout with React-friendly state management.
  *
- * // Start the timeout when needed
- * const handleClick = () => {
- *   schedule();
+ * This hook creates a managed timeout system that integrates seamlessly with React's
+ * lifecycle. Unlike raw setTimeout, it provides state tracking, automatic cleanup,
+ * and safe callback updates without recreating timers.
+ *
+ * ### Key Features
+ * - **Manual Control**: Explicitly schedule, reschedule, or cancel timeouts
+ * - **State Tracking**: Check if a timeout is pending with `isIdle()`
+ * - **Safe Updates**: Callback updates don't affect running timers
+ * - **Auto-cleanup**: Prevents memory leaks on unmount
+ * - **Reschedule Support**: Calling schedule() resets existing timers
+ *
+ * ### Use Cases
+ * - **Delayed Actions**: Show notifications, hide tooltips, or auto-save
+ * - **Debouncing**: Implement custom debounce logic with full control
+ * - **Timeout Sequences**: Chain multiple timeouts with state awareness
+ * - **Conditional Delays**: Execute actions based on timeout state
+ * - **Loading States**: Auto-hide loading indicators after delay
+ *
+ * @example
+ * ```typescript
+ * // Auto-dismiss notification
+ * const Notification = ({ message, duration = 3000 }) => {
+ *   const { schedule, cancel } = useTimeout(() => {
+ *     setVisible(false);
+ *   }, duration);
+ *
+ *   useEffect(() => {
+ *     schedule();
+ *     return cancel; // Cleanup on unmount
+ *   }, [schedule, cancel]);
+ *
+ *   return (
+ *     <div onMouseEnter={cancel} onMouseLeave={schedule}>
+ *       {message}
+ *     </div>
+ *   );
  * };
  *
- * // Check if scheduler is idle
- * if (isIdle()) {
- *   console.log('No pending execution');
- * }
+ * // Loading state with timeout
+ * const DataFetcher = () => {
+ *   const [showSkeleton, setShowSkeleton] = useState(false);
+ *   const { isIdle, schedule, cancel } = useTimeout(
+ *     () => setShowSkeleton(true),
+ *     200 // Show skeleton after 200ms
+ *   );
  *
- * // Cancel the timeout if needed
- * cancel();
+ *   const fetchData = async () => {
+ *     schedule(); // Start skeleton timer
+ *     try {
+ *       const data = await api.getData();
+ *       if (!isIdle()) {
+ *         cancel(); // Cancel if data loads quickly
+ *       }
+ *       setData(data);
+ *     } catch (error) {
+ *       cancel();
+ *       setError(error);
+ *     }
+ *   };
+ * };
+ *
+ * // Sequential timeouts
+ * const AnimationSequence = () => {
+ *   const [stage, setStage] = useState(0);
+ *
+ *   const stage1Timeout = useTimeout(() => setStage(1), 1000);
+ *   const stage2Timeout = useTimeout(() => setStage(2), 1000);
+ *   const stage3Timeout = useTimeout(() => setStage(3), 1000);
+ *
+ *   useEffect(() => {
+ *     if (stage === 0) stage1Timeout.schedule();
+ *     else if (stage === 1) stage2Timeout.schedule();
+ *     else if (stage === 2) stage3Timeout.schedule();
+ *   }, [stage]);
+ * };
+ *
+ * // Conditional execution based on state
+ * const { isIdle, schedule, cancel } = useTimeout(() => {
+ *   if (hasUnsavedChanges) {
+ *     saveDocument();
+ *   }
+ * }, 5000);
+ *
+ * // Reschedule on user activity
+ * const handleUserInput = () => {
+ *   cancel();
+ *   schedule(); // Reset 5-second timer
+ * };
+ * ```
+ *
+ * @param callback - The function to execute after the timeout. Can be updated without affecting running timers
+ * @param timeout - The delay in milliseconds before executing the callback (default: 0)
+ * @returns {Object} Control object with three methods:
+ * @returns {Function} returns.isIdle - Returns true if no timeout is pending
+ * @returns {Function} returns.schedule - Schedules or reschedules the timeout
+ * @returns {Function} returns.cancel - Cancels any pending timeout
  */
 export const useTimeout = (
   callback: Fn,

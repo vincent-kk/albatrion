@@ -1,38 +1,53 @@
 import { useMemo } from 'react';
 
 /**
- * Memoizes the input value and preserves it throughout the component's lifetime.
+ * Creates a constant value that persists throughout the component's entire lifecycle.
  *
- * This hook is a specialized version of useMemo with an empty dependency array,
- * ensuring the value is computed only once during the component's initial render
- * and remains constant across all subsequent re-renders.
+ * This hook ensures that the provided value is computed only once during the component's
+ * initial render and remains unchanged across all subsequent re-renders. It's a specialized
+ * version of `useMemo` with an empty dependency array, guaranteeing referential stability.
  *
- * Unlike useMemorize, this hook doesn't accept dependencies and always maintains
- * the same reference/value throughout the component's lifetime. It's particularly
- * useful for:
- * - Creating stable references to objects or arrays
- * - Expensive computations that should only run once
- * - Default values that should remain constant
- * - Avoiding unnecessary re-creations of complex data structures
+ * ### Use Cases
+ * - **Stable Object/Array References**: Prevent unnecessary re-renders in child components
+ *   that depend on object or array props
+ * - **Expensive Initial Computations**: Compute complex values only once per component instance
+ * - **Default Configuration Objects**: Create immutable default settings that won't trigger effects
+ * - **Event Handler References**: Maintain stable function references without useCallback overhead
+ *
+ * ### Key Differences from Related Hooks
+ * - Unlike `useMemo`, this hook never recomputes the value
+ * - Unlike `useMemorize`, it doesn't accept dependencies
+ * - Unlike `useRef`, it doesn't provide a mutable container
  *
  * @example
  * ```typescript
- * // Memoize an object to maintain stable reference
- * const defaultConfig = useConstant({ theme: 'light', locale: 'en' });
+ * // Stable object reference for React.memo optimization
+ * const EmptyState = React.memo(({ config }) => { ... });
+ * const Parent = () => {
+ *   const defaultConfig = useConstant({ showIcon: true, message: 'No data' });
+ *   return <EmptyState config={defaultConfig} />; // Never re-renders due to config
+ * };
  *
- * // Memoize expensive computation result
- * const expensiveResult = useConstant(heavyComputation());
+ * // Expensive computation that runs only once
+ * const expensiveData = useConstant(() => {
+ *   return Array.from({ length: 10000 }, (_, i) =>
+ *     calculateComplexValue(i)
+ *   );
+ * });
  *
- * // Memoize function reference
- * const stableHandler = useConstant(() => console.log('handler'));
+ * // Stable callback without useCallback
+ * const logHandler = useConstant(() => (value: string) => {
+ *   console.log('[Component]:', value);
+ * });
  *
- * // Memoize array to prevent re-renders
- * const options = useConstant(['option1', 'option2', 'option3']);
+ * // Default values for hooks or effects
+ * const defaultFilters = useConstant({ status: 'active', page: 1 });
+ * const [filters, setFilters] = useState(defaultFilters);
  * ```
  *
- * @typeParam Type - The type of the value to memoize
- * @param input - The value to memoize (computed only once)
- * @returns The memoized value that remains constant across all re-renders
+ * @typeParam Type - The type of the value to be kept constant
+ * @param input - The value to memoize. If a function is passed, it's stored as-is, not executed
+ * @returns The memoized value that remains constant throughout the component lifecycle
  */
 export const useConstant = <Type>(input: Type) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -5,31 +5,56 @@ import { isFunction } from '@winglet/common-utils/filter';
 import type { Fn } from '@aileron/declare';
 
 /**
- * Memoizes the input value or function result with optional dependency array.
+ * Memoizes a value or function result with dependency-based recomputation control.
  *
- * This hook provides two overloads:
- * 1. Direct value memoization: `useMemorize(value, deps?)`
- * 2. Function result memoization: `useMemorize(() => computeValue(), deps?)`
+ * This hook provides two distinct behaviors based on input type:
+ * 1. **Value Memoization**: Direct value caching with dependency tracking
+ * 2. **Function Result Memoization**: Lazy computation with dependency-based recomputation
  *
- * When no dependencies are provided (or empty array), the value/function is computed only once.
- * When dependencies are provided, the value/function is recomputed when dependencies change.
+ * ### Key Differences from Related Hooks
+ * - **vs useMemo**: Provides function overloading and cleaner API for both patterns
+ * - **vs useConstant**: Supports dependencies and recomputation (useConstant is always constant)
+ * - **vs useCallback**: Returns computed values, not functions
+ *
+ * ### Performance Benefits
+ * - Prevents expensive object recreation when dependencies haven't changed
+ * - Enables complex computations to run only when necessary
+ * - Maintains referential stability for React.memo optimizations
  *
  * @example
  * ```typescript
- * // Memoize a value with dependencies
- * const memoizedConfig = useMemorize({ theme, locale }, [theme, locale]);
+ * // Direct value memoization with dependencies
+ * const config = useMemorize({ theme, locale, apiUrl }, [theme, locale, apiUrl]);
+ * // Only creates new object when theme, locale, or apiUrl changes
  *
- * // Memoize expensive computation
- * const expensiveResult = useMemorize(() => heavyComputation(data), [data]);
+ * // Expensive computation with dependencies  
+ * const processedData = useMemorize(() => {
+ *   console.log('Processing...'); // Only logs when data changes
+ *   return data.map(item => expensiveTransform(item));
+ * }, [data]);
  *
- * // Memoize once (no dependencies)
- * const stableRef = useMemorize(() => createExpensiveObject());
+ * // One-time computation (empty dependencies)
+ * const expensiveConstant = useMemorize(() => generateLargeDataset());
+ * // Computed only once, never recalculated
+ *
+ * // Context value optimization
+ * const contextValue = useMemorize({
+ *   user,
+ *   settings,
+ *   actions: { login, logout }
+ * }, [user, settings]);
+ * // Prevents context consumers from re-rendering unnecessarily
+ *
+ * // Conditional memoization
+ * const result = useMemorize(() => {
+ *   return isEnabled ? expensiveComputation(data) : fallbackValue;
+ * }, [isEnabled, data]);
  * ```
  *
- * @typeParam Type - The type of the value to memoize
- * @typeParam Return - The return type when using function input
- * @param input - The value to memoize or a function that returns the value
- * @param dependencies - Optional dependency array. Defaults to empty array (compute once)
+ * @typeParam Type - The type of the value to memoize (direct value overload)
+ * @typeParam Return - The return type when using function input (function overload)
+ * @param input - The value to memoize or a function that computes the value
+ * @param dependencies - Dependency array. When changed, triggers recomputation (defaults to empty array)
  * @returns The memoized value that remains stable until dependencies change
  */
 export const useMemorize: {
