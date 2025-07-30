@@ -138,19 +138,19 @@ const FormInner = <
     ref,
     () =>
       ({
-      node: rootNode,
-      focus: (path: string) =>
-        rootNode?.find(path)?.publish({ type: NodeEventType.Focus }),
-      select: (path: string) =>
-        rootNode?.find(path)?.publish({ type: NodeEventType.Select }),
-      reset: update,
-      getValue: () => rootNode?.value as Value,
-      setValue: (value, options) => rootNode?.setValue(value as any, options),
-      getErrors: () => rootNode?.globalErrors || [],
-      validate: async () => (await rootNode?.validate()) || [],
-      showError: (visible = true) =>
-        visible ? setShowError(true) : setShowError(inputShowError),
-      submit: handleSubmit,
+        node: rootNode,
+        focus: (path: string) =>
+          rootNode?.find(path)?.publish({ type: NodeEventType.Focus }),
+        select: (path: string) =>
+          rootNode?.find(path)?.publish({ type: NodeEventType.Select }),
+        reset: update,
+        getValue: () => rootNode?.value as Value,
+        setValue: (value, options) => rootNode?.setValue(value as any, options),
+        getErrors: () => rootNode?.globalErrors || [],
+        validate: async () => (await rootNode?.validate()) || [],
+        showError: (visible = true) =>
+          visible ? setShowError(true) : setShowError(inputShowError),
+        submit: handleSubmit,
       }) satisfies FormHandle<Schema, Value>,
     [rootNode, handleSubmit, update, inputShowError],
   );
@@ -189,6 +189,108 @@ const FormInner = <
   );
 };
 
+/**
+ * Schema-driven form component that generates and manages forms based on JSON Schema.
+ *
+ * @typeParam Schema - The JSON Schema type that defines form structure
+ * @typeParam Value - The inferred value type from the schema
+ *
+ * @example
+ * Basic usage with automatic field generation:
+ * ```tsx
+ * const schema = {
+ *   type: 'object',
+ *   properties: {
+ *     username: { type: 'string', minLength: 3 },
+ *     email: { type: 'string', format: 'email' },
+ *     age: { type: 'number', minimum: 18 }
+ *   },
+ *   required: ['username', 'email']
+ * };
+ *
+ * function MyForm() {
+ *   const [value, setValue] = useState({});
+ *   const formRef = useRef<FormHandle>();
+ *
+ *   const handleSubmit = async (data) => {
+ *     await api.saveUser(data);
+ *   };
+ *
+ *   return (
+ *     <Form
+ *       ref={formRef}
+ *       jsonSchema={schema}
+ *       onChange={setValue}
+ *       onSubmit={handleSubmit}
+ *       showError={ShowError.Touched}
+ *     />
+ *   );
+ * }
+ * ```
+ *
+ * @example
+ * Custom layout with composition:
+ * ```tsx
+ * <Form jsonSchema={schema} defaultValue={initialData}>
+ *   <div className="form-section">
+ *     <h3>Account Information</h3>
+ *     <Form.Group path="/username" />
+ *     <Form.Group path="/email" />
+ *   </div>
+ *   <div className="form-section">
+ *     <h3>Personal Details</h3>
+ *     <Form.Label path="/age" className="required" />
+ *     <Form.Input path="/age" min={18} max={100} />
+ *     <Form.Error path="/age" className="error-text" />
+ *   </div>
+ * </Form>
+ * ```
+ *
+ * @example
+ * Dynamic form with conditional fields:
+ * ```tsx
+ * <Form jsonSchema={schema}>
+ *   {({ value, errors, node }) => (
+ *     <>
+ *       <Form.Input path="/accountType" />
+ *       {value?.accountType === 'business' && (
+ *         <>
+ *           <Form.Input path="/companyName" />
+ *           <Form.Input path="/taxId" />
+ *         </>
+ *       )}
+ *       <button
+ *         onClick={() => node?.validate()}
+ *         disabled={errors?.length > 0}
+ *       >
+ *         Submit
+ *       </button>
+ *     </>
+ *   )}
+ * </Form>
+ * ```
+ *
+ * @example
+ * Using ref for imperative actions:
+ * ```tsx
+ * const formRef = useRef<FormHandle>();
+ *
+ * // Focus specific field
+ * formRef.current?.focus('/email');
+ *
+ * // Validate programmatically
+ * const errors = await formRef.current?.validate();
+ *
+ * // Set value with options
+ * formRef.current?.setValue(
+ *   { email: 'new@email.com' },
+ *   { merge: true, validate: true }
+ * );
+ *
+ * // Submit form programmatically
+ * await formRef.current?.submit();
+ * ```
+ */
 export const Form = memo(
   withErrorBoundaryForwardRef(forwardRef(FormInner)),
 ) as <

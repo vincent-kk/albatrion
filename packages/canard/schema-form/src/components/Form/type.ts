@@ -71,7 +71,7 @@ export interface FormProps<
    */
   showError?: boolean | ShowError;
   /**
-   * Execute Validation Mode (default: ValidationMode.OnChange)
+   * Execute Validation Mode (default: ValidationMode.OnChange | ValidationMode.OnRequest)
    *  - `ValidationMode.None`: Disable validation
    *  - `ValidationMode.OnChange`: Validate when value changes
    *  - `ValidationMode.OnRequest`: Validate on request

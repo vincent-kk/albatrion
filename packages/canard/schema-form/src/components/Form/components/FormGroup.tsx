@@ -18,6 +18,81 @@ export type FormGroupProps = {
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
 } & OverridableFormTypeInputProps;
 
+/**
+ * Renders a complete form field group with customizable input and renderer components.
+ *
+ * Combines FormTypeInput and FormTypeRenderer to create a cohesive field experience,
+ * typically including label, input, error messages, and any additional UI elements.
+ * Allows overriding default components for specialized field types.
+ *
+ * @example
+ * Basic field group with default rendering:
+ * ```tsx
+ * <Form jsonSchema={schema}>
+ *   <Form.Group path="/email" />
+ *   <Form.Group path="/password" />
+ *   <Form.Group path="/rememberMe" />
+ * </Form>
+ * ```
+ *
+ * @example
+ * Custom wrapper for layout:
+ * ```tsx
+ * const FieldWrapper = ({ children, ...props }) => (
+ *   <div className="form-field" data-field={props.path}>
+ *     {children}
+ *   </div>
+ * );
+ *
+ * <Form.Group
+ *   path="/username"
+ *   Wrapper={FieldWrapper}
+ *   placeholder="Enter username"
+ *   autoComplete="username"
+ * />
+ * ```
+ *
+ * @example
+ * Override with custom input component:
+ * ```tsx
+ * const DatePicker = ({ value, onChange, jsonSchema, ...props }) => (
+ *   <ReactDatePicker
+ *     selected={value}
+ *     onChange={onChange}
+ *     minDate={jsonSchema.minimum}
+ *     maxDate={jsonSchema.maximum}
+ *     {...props}
+ *   />
+ * );
+ *
+ * <Form.Group
+ *   path="/birthDate"
+ *   FormTypeInput={DatePicker}
+ *   dateFormat="yyyy-MM-dd"
+ *   showYearDropdown
+ * />
+ * ```
+ *
+ * @example
+ * Custom renderer for complex fields:
+ * ```tsx
+ * const AddressRenderer = (props) => (
+ *   <div className="address-group">
+ *     <h4>{props.jsonSchema.title || 'Address'}</h4>
+ *     <Form.Input path={`${props.path}/street`} />
+ *     <div className="row">
+ *       <Form.Input path={`${props.path}/city`} />
+ *       <Form.Input path={`${props.path}/zipCode`} />
+ *     </div>
+ *   </div>
+ * );
+ *
+ * <Form.Group
+ *   path="/address"
+ *   FormTypeRenderer={AddressRenderer}
+ * />
+ * ```
+ */
 export const FormGroup = ({
   path,
   FormTypeInput,
