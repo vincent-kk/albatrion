@@ -1,12 +1,7 @@
 import { useRef, useState } from 'react';
 
-import type {
-  FormHandle} from '@canard/schema-form';
-import {
-  Form,
-  type JsonSchema,
-  registerPlugin,
-} from '@canard/schema-form';
+import type { FormHandle } from '@canard/schema-form';
+import { Form, type JsonSchema, registerPlugin } from '@canard/schema-form';
 
 import { plugin } from '../src';
 import StoryLayout from './components/StoryLayout';
