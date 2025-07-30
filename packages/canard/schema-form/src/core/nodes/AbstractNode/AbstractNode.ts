@@ -765,16 +765,22 @@ export abstract class AbstractNode<
       errorsByDataPath.get(error.dataPath)?.push(error);
     }
 
+    const errorDataPaths = Array.from(errorsByDataPath.keys());
+
     // Find nodes by dataPath and set errors for child nodes as well
-    for (const [dataPath, errors] of errorsByDataPath.entries())
-      this.find(dataPath)?.setErrors(errors);
+    for (let i = 0, l = errorDataPaths.length; i < l; i++) {
+      const dataPath = errorDataPaths[i];
+      const errors = errorsByDataPath.get(dataPath);
+      if (errors) this.find(dataPath)?.setErrors(errors);
+    }
 
     // Clear errors for nodes that had errors in previous error list but not in new error list
-    const errorDataPaths = Array.from(errorsByDataPath.keys());
     if (this.#errorDataPaths)
-      for (const dataPath of this.#errorDataPaths)
+      for (let i = 0, l = this.#errorDataPaths.length; i < l; i++) {
+        const dataPath = this.#errorDataPaths[i];
         if (!errorDataPaths.includes(dataPath))
           this.find(dataPath)?.clearErrors();
+      }
 
     // Update list of dataPaths with errors
     this.#errorDataPaths = errorDataPaths;
