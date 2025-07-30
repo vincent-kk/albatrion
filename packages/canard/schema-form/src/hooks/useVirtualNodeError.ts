@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { isTruthy } from '@winglet/common-utils';
 
@@ -28,10 +28,17 @@ import type { JsonSchemaError } from '@/schema-form/types';
  *
  * @param node - Virtual SchemaNode instance (must be virtual node)
  * @returns Object containing error information
- * @returns {JsonSchemaError[][]} errorMatrix - array of errors for each child field
+ * @returns {ReactNode} errorMessage - First error message found in errorMessages
  * @returns {ReactNode[]} errorMessages - Formatted error messages for each child field
+ * @returns {JsonSchemaError[][]} errorMatrix - array of errors for each child field
  */
-export const useVirtualNodeError = (node: SchemaNode) => {
+export const useVirtualNodeError = (
+  node: SchemaNode,
+): {
+  errorMessage: ReactNode;
+  errorMessages: ReactNode[];
+  errorMatrix: JsonSchemaError[][];
+} => {
   const { formatError } = useFormTypeRendererContext();
   const { context } = useUserDefinedContext();
 
@@ -67,5 +74,10 @@ export const useVirtualNodeError = (node: SchemaNode) => {
     };
   }, [node, formatError, context]);
 
-  return { errorMatrix, errorMessages };
+  const errorMessage = useMemo<ReactNode>(
+    () => errorMessages.find(isTruthy),
+    [errorMessages],
+  );
+
+  return { errorMessage, errorMessages, errorMatrix };
 };
