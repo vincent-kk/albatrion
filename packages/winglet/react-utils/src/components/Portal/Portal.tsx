@@ -34,11 +34,11 @@ import { usePortalContext } from './context/usePortalContext';
  * // Basic modal usage
  * const ModalExample = Portal.with(() => {
  *   const [showModal, setShowModal] = useState(false);
- *   
+ *
  *   return (
  *     <div className="app">
  *       <button onClick={() => setShowModal(true)}>Open Modal</button>
- *       
+ *
  *       {showModal && (
  *         <Portal>
  *           <div className="modal-backdrop">
@@ -50,7 +50,7 @@ import { usePortalContext } from './context/usePortalContext';
  *           </div>
  *         </Portal>
  *       )}
- *       
+ *
  *       <Portal.Anchor /> // Modal content appears here
  *     </div>
  *   );
@@ -59,22 +59,22 @@ import { usePortalContext } from './context/usePortalContext';
  * // Tooltip system
  * const TooltipExample = Portal.with(() => {
  *   const [tooltip, setTooltip] = useState(null);
- *   
+ *
  *   return (
  *     <div className="container">
- *       <button 
+ *       <button
  *         onMouseEnter={() => setTooltip('Helpful tooltip text')}
  *         onMouseLeave={() => setTooltip(null)}
  *       >
  *         Hover me
  *       </button>
- *       
+ *
  *       {tooltip && (
  *         <Portal>
  *           <div className="tooltip">{tooltip}</div>
  *         </Portal>
  *       )}
- *       
+ *
  *       <Portal.Anchor className="tooltip-container" />
  *     </div>
  *   );
@@ -86,9 +86,9 @@ import { usePortalContext } from './context/usePortalContext';
  *     <div>
  *       <Portal><span>First portal content</span></Portal>
  *       <Portal><span>Second portal content</span></Portal>
- *       
+ *
  *       <div>Regular content here</div>
- *       
+ *
  *       <Portal.Anchor /> // Both portal contents render here
  *     </div>
  *   );

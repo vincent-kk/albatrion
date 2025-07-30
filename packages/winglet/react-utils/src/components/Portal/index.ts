@@ -1,3 +1,5 @@
+import type { PropsWithChildren } from 'react';
+
 import { Anchor } from './Anchor';
 import { Portal as BasePortal } from './Portal';
 import { withPortal } from './withPortal';
@@ -19,7 +21,9 @@ export type { Anchor, BasePortal, withPortal };
  *
  * const App = Portal.with(() => (
  *   <div>
- *     <Portal><ModalContent /></Portal>
+ *     <Portal>
+ *       <Header /> // Header is rendered at Portal.Anchor location
+ *     </Portal>
  *     <Portal.Anchor />
  *   </div>
  * ));
@@ -67,4 +71,8 @@ export const Portal = Object.assign(BasePortal, {
    * @returns Div element that serves as portal mounting point
    */
   Anchor,
-});
+}) as {
+  (props: PropsWithChildren): null;
+  with: typeof withPortal;
+  Anchor: typeof Anchor;
+};
