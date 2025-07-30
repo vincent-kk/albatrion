@@ -770,8 +770,7 @@ export abstract class AbstractNode<
     // Find nodes by dataPath and set errors for child nodes as well
     for (let i = 0, l = errorDataPaths.length; i < l; i++) {
       const dataPath = errorDataPaths[i];
-      const errors = errorsByDataPath.get(dataPath);
-      if (errors) this.find(dataPath)?.setErrors(errors);
+      this.find(dataPath)?.setErrors(errorsByDataPath.get(dataPath)!);
     }
 
     // Clear errors for nodes that had errors in previous error list but not in new error list
