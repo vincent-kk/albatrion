@@ -11,10 +11,10 @@ export {
   type BootstrapProviderProps as ModalProviderProps,
 } from './bootstrap';
 
-export { useSubscribeModal } from './hooks/useSubscribeModal';
-export { useDestroyAfter } from './hooks/useDestroyAfter';
 export { useActiveModalCount } from './hooks/useActiveModalCount';
+export { useDestroyAfter } from './hooks/useDestroyAfter';
 export { useModalAnimation } from './hooks/useModalAnimation';
+export { useSubscribeModal } from './hooks/useSubscribeModal';
 
 export { alert, confirm, prompt } from './core';
 
