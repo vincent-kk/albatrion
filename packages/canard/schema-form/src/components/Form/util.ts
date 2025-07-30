@@ -26,7 +26,7 @@ export const createChildren = <
       node: rootNode,
       defaultValue: rootNode?.defaultValue as Value,
       value: rootNode?.value as Value,
-      errors: rootNode?.errors || undefined,
+      errors: rootNode?.globalErrors || undefined,
     });
   }
   return children;

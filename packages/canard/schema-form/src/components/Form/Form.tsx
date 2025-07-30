@@ -136,7 +136,8 @@ const FormInner = <
 
   useImperativeHandle(
     ref,
-    () => ({
+    () =>
+      ({
       node: rootNode,
       focus: (path: string) =>
         rootNode?.find(path)?.publish({ type: NodeEventType.Focus }),
@@ -145,11 +146,12 @@ const FormInner = <
       reset: update,
       getValue: () => rootNode?.value as Value,
       setValue: (value, options) => rootNode?.setValue(value as any, options),
+      getErrors: () => rootNode?.globalErrors || [],
       validate: async () => (await rootNode?.validate()) || [],
       showError: (visible = true) =>
         visible ? setShowError(true) : setShowError(inputShowError),
       submit: handleSubmit,
-    }),
+      }) satisfies FormHandle<Schema, Value>,
     [rootNode, handleSubmit, update, inputShowError],
   );
 
