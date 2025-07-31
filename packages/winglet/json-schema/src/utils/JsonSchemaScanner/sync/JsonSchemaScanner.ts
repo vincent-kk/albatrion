@@ -18,12 +18,174 @@ interface JsonSchemaScannerProps<ContextType> {
 }
 
 /**
- * @class JsonSchemaScanner
- * @template ContextType - Context type that can be used in visitors and options.
+ * A powerful JSON Schema traversal engine that implements depth-first search (DFS)
+ * with the Visitor pattern for comprehensive schema analysis and transformation.
  *
- * A utility class that traverses JSON schemas using depth-first search (DFS),
- * applies the Visitor pattern, and resolves $ref references.
- * Uses stack-based circular reference detection logic to prevent infinite loops.
+ * Provides sophisticated features including $ref reference resolution, circular
+ * reference detection, schema mutation, filtering, and depth-limited traversal.
+ * The scanner processes schemas in phases (Enter → Reference → ChildEntries → Exit)
+ * and maintains internal state for efficient processing and result caching.
+ *
+ * @template ContextType - Custom context type passed to visitors and processors
+ *
+ * @example
+ * Basic schema traversal with visitor pattern:
+ * ```typescript
+ * import { JsonSchemaScanner } from '@winglet/json-schema';
+ *
+ * const schema = {
+ *   type: 'object',
+ *   properties: {
+ *     name: { type: 'string', minLength: 1 },
+ *     age: { type: 'number', minimum: 0 },
+ *     address: {
+ *       $ref: '#/definitions/Address'
+ *     }
+ *   },
+ *   definitions: {
+ *     Address: {
+ *       type: 'object',
+ *       properties: {
+ *         street: { type: 'string' },
+ *         city: { type: 'string' }
+ *       }
+ *     }
+ *   }
+ * };
+ *
+ * const scanner = new JsonSchemaScanner({
+ *   visitor: {
+ *     enter: (entry) => {
+ *       console.log(`Entering: ${entry.path} (${entry.schema.type})`);
+ *     },
+ *     exit: (entry) => {
+ *       console.log(`Exiting: ${entry.path}`);
+ *     }
+ *   },
+ *   options: {
+ *     maxDepth: 10
+ *   }
+ * });
+ *
+ * const processedSchema = scanner.scan(schema).getValue();
+ * ```
+ *
+ * @example
+ * Schema transformation with mutation:
+ * ```typescript
+ * const transformScanner = new JsonSchemaScanner({
+ *   options: {
+ *     mutate: (entry) => {
+ *       // Add default titles to string fields
+ *       if (entry.schema.type === 'string' && !entry.schema.title) {
+ *         return {
+ *           ...entry.schema,
+ *           title: `Field at ${entry.dataPath}`
+ *         };
+ *       }
+ *     }
+ *   }
+ * });
+ *
+ * const enhancedSchema = transformScanner.scan(originalSchema).getValue();
+ * ```
+ *
+ * @example
+ * Reference resolution with custom resolver:
+ * ```typescript
+ * const definitions = {
+ *   '/schemas/user.json': { type: 'object', properties: { id: { type: 'string' } } },
+ *   '/schemas/address.json': { type: 'object', properties: { city: { type: 'string' } } }
+ * };
+ *
+ * const resolverScanner = new JsonSchemaScanner({
+ *   options: {
+ *     resolveReference: (refPath) => {
+ *       return definitions[refPath];
+ *     },
+ *     context: { resolveCount: 0 }
+ *   },
+ *   visitor: {
+ *     enter: (entry, context) => {
+ *       if (entry.referenceResolved) {
+ *         context.resolveCount++;
+ *       }
+ *     }
+ *   }
+ * });
+ *
+ * const resolvedSchema = resolverScanner.scan(schemaWithRefs).getValue();
+ * ```
+ *
+ * @example
+ * Conditional processing with filtering:
+ * ```typescript
+ * interface AnalysisContext {
+ *   stringFieldCount: number;
+ *   objectFieldCount: number;
+ * }
+ *
+ * const analysisScanner = new JsonSchemaScanner<AnalysisContext>({
+ *   options: {
+ *     filter: (entry) => {
+ *       // Only process non-definition schemas
+ *       return !entry.path.includes('/definitions/');
+ *     },
+ *     context: { stringFieldCount: 0, objectFieldCount: 0 }
+ *   },
+ *   visitor: {
+ *     enter: (entry, context) => {
+ *       if (entry.schema.type === 'string') context.stringFieldCount++;
+ *       if (entry.schema.type === 'object') context.objectFieldCount++;
+ *     }
+ *   }
+ * });
+ *
+ * analysisScanner.scan(complexSchema);
+ * const stats = analysisScanner.options.context;
+ * console.log(`Found ${stats.stringFieldCount} string fields, ${stats.objectFieldCount} objects`);
+ * ```
+ *
+ * @example
+ * Built-in reference resolution utility:
+ * ```typescript
+ * const schemaWithInternalRefs = {
+ *   type: 'object',
+ *   properties: {
+ *     user: { $ref: '#/definitions/User' },
+ *     admin: { $ref: '#/definitions/User' }
+ *   },
+ *   definitions: {
+ *     User: { type: 'object', properties: { name: { type: 'string' } } }
+ *   }
+ * };
+ *
+ * // Automatically resolve all internal references
+ * const fullyResolvedSchema = JsonSchemaScanner.resolveReference(schemaWithInternalRefs);
+ * ```
+ *
+ * @remarks
+ * **Processing Phases:**
+ * 1. **Enter**: Initial node processing, filtering, and mutation
+ * 2. **Reference**: $ref resolution and circular reference detection  
+ * 3. **ChildEntries**: Depth checking and child node discovery
+ * 4. **Exit**: Final processing and cleanup
+ *
+ * **Key Features:**
+ * - **Circular Reference Detection**: Prevents infinite loops when schemas reference each other
+ * - **Lazy Reference Resolution**: References are resolved only when encountered
+ * - **Schema Mutation**: Transform schemas during traversal
+ * - **Filtering**: Skip unwanted schema nodes
+ * - **Depth Limiting**: Control traversal depth for performance
+ * - **Result Caching**: Processed schemas are cached for efficiency
+ *
+ * **Performance Considerations:**
+ * - Uses stack-based traversal (not recursion) to handle deep schemas
+ * - Implements copy-on-write for mutations to minimize memory usage
+ * - Caches resolved references to avoid redundant processing
+ *
+ * This scanner is ideal for complex schema analysis, transformation,
+ * documentation generation, form building, and validation preprocessing.
  */
 export class JsonSchemaScanner<ContextType = void> {
   /** Visitor object: contains callback functions to be executed when entering/exiting schema nodes. */
