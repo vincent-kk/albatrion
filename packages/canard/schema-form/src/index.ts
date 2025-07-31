@@ -71,7 +71,7 @@ export type {
 } from './types/rolled';
 
 export { useFormSubmit } from './hooks/useFormSubmit';
-export { useVirtualNodeError } from './hooks/useVirtualNodeError';
+export { useChildNodeErrors } from './hooks/useChildNodeErrors';
 
 export {
   ExternalFormContextProvider as FormProvider,
