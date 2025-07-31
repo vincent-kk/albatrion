@@ -20,7 +20,7 @@ import type { ModalNode } from '@/promise-modal/core';
  * function ModalContent({ modalId }) {
  *   const { modal } = useModal(modalId);
  *   const version = useSubscribeModal(modal);
- *   
+ *
  *   // Component re-renders whenever modal state changes
  *   return (
  *     <div>
@@ -37,17 +37,17 @@ import type { ModalNode } from '@/promise-modal/core';
  * function ModalLogger({ modalId }) {
  *   const { modal } = useModal(modalId);
  *   const version = useSubscribeModal(modal);
- *   
+ *
  *   useEffect(() => {
  *     if (version === 0) return; // Skip initial render
- *     
+ *
  *     console.log('Modal state changed:', {
  *       visible: modal?.visible,
  *       alive: modal?.alive,
  *       type: modal?.type,
  *     });
  *   }, [version, modal]);
- *   
+ *
  *   return null;
  * }
  * ```
@@ -59,7 +59,7 @@ import type { ModalNode } from '@/promise-modal/core';
  *   const { modal } = useModal(modalId);
  *   const version = useSubscribeModal(modal);
  *   const [shouldRender, setShouldRender] = useState(false);
- *   
+ *
  *   useEffect(() => {
  *     if (modal?.visible) {
  *       setShouldRender(true);
@@ -68,9 +68,9 @@ import type { ModalNode } from '@/promise-modal/core';
  *       setTimeout(() => setShouldRender(false), 300);
  *     }
  *   }, [version, modal]);
- *   
+ *
  *   if (!shouldRender) return null;
- *   
+ *
  *   return (
  *     <div className={modal?.visible ? 'fade-in' : 'fade-out'}>
  *       {children}
@@ -86,24 +86,24 @@ import type { ModalNode } from '@/promise-modal/core';
  *   const { modal } = useModal(modalId);
  *   const version = useSubscribeModal(modal);
  *   const [history, setHistory] = useState([]);
- *   
+ *
  *   useEffect(() => {
  *     if (!modal) return;
- *     
+ *
  *     setHistory(prev => [...prev, {
  *       timestamp: Date.now(),
  *       visible: modal.visible,
  *       value: modal.value,
  *     }]);
  *   }, [version]); // Only depend on version, not modal
- *   
+ *
  *   return (
  *     <div>
  *       <h4>Modal State History</h4>
  *       {history.map((entry, i) => (
  *         <div key={i}>
- *           {new Date(entry.timestamp).toLocaleTimeString()}: 
- *           {entry.visible ? 'Shown' : 'Hidden'} 
+ *           {new Date(entry.timestamp).toLocaleTimeString()}:
+ *           {entry.visible ? 'Shown' : 'Hidden'}
  *           (value: {JSON.stringify(entry.value)})
  *         </div>
  *       ))}

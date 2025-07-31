@@ -14,10 +14,10 @@ type ReactComponent<P> = ReactNode | ComponentType<P>;
  * @example
  * // Returns ReactElement as-is
  * renderComponent(<div>Content</div>)
- * 
+ *
  * // Instantiates component type and returns it
  * renderComponent(MyComponent, { prop1: 'value1' })
- * 
+ *
  * // Returns null for invalid values
  * renderComponent(undefined)
  */

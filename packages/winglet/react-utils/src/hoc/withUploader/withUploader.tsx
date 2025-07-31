@@ -58,7 +58,7 @@ interface UploaderProps {
  *   console.log('Selected file:', file.name, file.size);
  *   // Process file...
  * };
- * 
+ *
  * <UploadButton onChange={handleFileUpload}>
  *   Choose File
  * </UploadButton>
@@ -69,8 +69,8 @@ interface UploaderProps {
  *     {children}
  *   </div>
  * ));
- * 
- * <ImageUploader 
+ *
+ * <ImageUploader
  *   acceptFormat={['.jpg', '.jpeg', '.png', '.gif']}
  *   onChange={(file) => setSelectedImage(file)}
  * >

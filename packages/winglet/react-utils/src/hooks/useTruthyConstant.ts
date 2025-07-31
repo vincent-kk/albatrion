@@ -45,7 +45,7 @@ import type { Fn } from '@aileron/declare';
  *     console.log('Heavy computation running...'); // Always logs on mount
  *     return processLargeDataset(rawData);
  *   });
- *   
+ *
  *   return (
  *     <div>
  *       <button onClick={() => console.log(heavyData)}>Use Data</button>
@@ -59,7 +59,7 @@ import type { Fn } from '@aileron/declare';
  *     console.log('Heavy computation running...'); // Only logs when button clicked
  *     return processLargeDataset(rawData);
  *   });
- *   
+ *
  *   return (
  *     <div>
  *       <button onClick={() => console.log(heavyData)}>Use Data</button>
@@ -84,7 +84,7 @@ import type { Fn } from '@aileron/declare';
  * const MediaPlayer = ({ videoUrl, autoplay }) => {
  *   const videoProcessor = useTruthyConstant(() => {
  *     if (!videoUrl) return null;
- *     
+ *
  *     console.log('Initializing video processor...');
  *     return new VideoProcessor({
  *       codec: 'h264',
@@ -128,13 +128,13 @@ import type { Fn } from '@aileron/declare';
  * const useWorkerPool = (poolSize = 4) => {
  *   return useTruthyConstant(() => {
  *     console.log(`Creating worker pool with ${poolSize} workers...`);
- *     
- *     const workers = Array.from({ length: poolSize }, () => 
+ *
+ *     const workers = Array.from({ length: poolSize }, () =>
  *       new Worker('/heavy-computation-worker.js')
  *     );
- *     
+ *
  *     let taskIndex = 0;
- *     
+ *
  *     return {
  *       workers,
  *       execute: (task: any) => {
@@ -156,21 +156,21 @@ import type { Fn } from '@aileron/declare';
  * const Canvas3D = ({ enabled, width, height }) => {
  *   const webglContext = useTruthyConstant(() => {
  *     if (!enabled) return null;
- *     
+ *
  *     console.log('Initializing WebGL context...');
  *     const canvas = document.createElement('canvas');
  *     canvas.width = width;
  *     canvas.height = height;
- *     
+ *
  *     const gl = canvas.getContext('webgl2');
  *     if (!gl) {
  *       throw new Error('WebGL2 not supported in this browser');
  *     }
- *     
+ *
  *     // Setup WebGL state
  *     gl.enable(gl.DEPTH_TEST);
  *     gl.enable(gl.CULL_FACE);
- *     
+ *
  *     return {
  *       canvas,
  *       gl,
@@ -206,7 +206,7 @@ import type { Fn } from '@aileron/declare';
  * const useDatabasePool = () => {
  *   return useTruthyConstant(() => {
  *     console.log('Establishing database connection pool...');
- *     
+ *
  *     return new DatabasePool({
  *       host: process.env.DB_HOST,
  *       port: process.env.DB_PORT,
@@ -227,7 +227,7 @@ import type { Fn } from '@aileron/declare';
  * const AdvancedChart = ({ data, options }) => {
  *   const chartLibrary = useTruthyConstant(() => {
  *     console.log('Loading chart library...');
- *     
+ *
  *     // Heavy chart library with plugins
  *     return {
  *       core: new ChartCore(),
@@ -249,7 +249,7 @@ import type { Fn } from '@aileron/declare';
  *         options,
  *         plugins: Object.values(chartLibrary.plugins)
  *       });
- *       
+ *
  *       return chart;
  *     }
  *   };

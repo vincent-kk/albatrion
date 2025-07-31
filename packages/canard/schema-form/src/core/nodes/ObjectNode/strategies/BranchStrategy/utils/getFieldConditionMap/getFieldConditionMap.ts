@@ -23,10 +23,10 @@ export const getFieldConditionMap = (
   const conditions = flattenConditions(jsonSchema);
   if (!conditions) return undefined;
   const fieldConditionMap: FieldConditionMap = new Map();
-  for (let i = 0; i < conditions.length; i++) {
+  for (let i = 0, il = conditions.length; i < il; i++) {
     const { condition, required, inverse } = conditions[i];
     // Step 1. Process required fields
-    for (let j = 0; j < required.length; j++) {
+    for (let j = 0, jl = required.length; j < jl; j++) {
       const field = required[j];
       const previous = fieldConditionMap.get(field);
       if (previous === true) continue; // If already true, skip

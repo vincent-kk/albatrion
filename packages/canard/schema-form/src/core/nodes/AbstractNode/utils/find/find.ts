@@ -15,7 +15,7 @@ export const find = (
   if (!segments?.length) return target;
   const current = target;
   let cursor = current;
-  for (let i = 0; i < segments.length; i++) {
+  for (let i = 0, l = segments.length; i < l; i++) {
     const segment = segments[i];
     if (segment === JSONPointer.Fragment) {
       cursor = cursor.rootNode;

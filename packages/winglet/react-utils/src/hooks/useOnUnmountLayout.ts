@@ -66,7 +66,7 @@ import type { Fn } from '@aileron/declare';
  *     position: body.style.position,
  *     touchAction: body.style.touchAction,
  *   };
- *   
+ *
  *   body.style.overflow = 'hidden';
  *   body.style.position = 'fixed';
  *   body.style.touchAction = 'none';
@@ -124,7 +124,7 @@ import type { Fn } from '@aileron/declare';
  *     // Synchronously release WebGL resources
  *     const extension = gl.getExtension('WEBGL_lose_context');
  *     extension?.loseContext();
- *     
+ *
  *     // Clear canvas immediately
  *     if (canvasRef.current) {
  *       canvasRef.current.width = 1;

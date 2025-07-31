@@ -345,8 +345,8 @@ export abstract class AbstractNode<
    * @internal Internal implementation method. Do not call directly.
    */
   #clearUnsubscribes(this: AbstractNode) {
-    for (let index = 0; index < this.#unsubscribes.length; index++)
-      this.#unsubscribes[index]();
+    for (let i = 0, l = this.#unsubscribes.length; i < l; i++)
+      this.#unsubscribes[i]();
     this.#unsubscribes = [];
   }
 
@@ -469,17 +469,17 @@ export abstract class AbstractNode<
     const dependencyPaths = this.#compute.dependencyPaths;
     if (dependencyPaths.length > 0) {
       this.#dependencies = new Array(dependencyPaths.length);
-      for (let index = 0; index < dependencyPaths.length; index++) {
-        const dependencyPath = dependencyPaths[index];
+      for (let i = 0, l = dependencyPaths.length; i < l; i++) {
+        const dependencyPath = dependencyPaths[i];
         const targetNode = this.find(dependencyPath);
         if (!targetNode) continue;
-        this.#dependencies[index] = targetNode.value;
+        this.#dependencies[i] = targetNode.value;
         const unsubscribe = targetNode.subscribe(({ type, payload }) => {
           if (type & NodeEventType.UpdateValue) {
             if (
-              this.#dependencies[index] !== payload?.[NodeEventType.UpdateValue]
+              this.#dependencies[i] !== payload?.[NodeEventType.UpdateValue]
             ) {
-              this.#dependencies[index] = payload?.[NodeEventType.UpdateValue];
+              this.#dependencies[i] = payload?.[NodeEventType.UpdateValue];
               this.updateComputedProperties();
             }
           }
@@ -669,8 +669,8 @@ export abstract class AbstractNode<
       return;
 
     this.#externalErrors = new Array<JsonSchemaError>(errors.length);
-    for (let index = 0; index < errors.length; index++)
-      this.#externalErrors[index] = { ...errors[index], key: index };
+    for (let i = 0, l = errors.length; i < l; i++)
+      this.#externalErrors[i] = { ...errors[i], key: i };
 
     this.#mergedLocalErrors = this.#localErrors
       ? [...this.#externalErrors, ...this.#localErrors]

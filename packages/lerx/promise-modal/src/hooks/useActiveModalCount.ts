@@ -177,8 +177,8 @@ export const useActiveModalCount = (
   const { modalIds, getModalNode } = useModalManagerContext();
   return useMemo(() => {
     let count = 0;
-    for (let index = 0; index < modalIds.length; index++) {
-      const id = modalIds[index];
+    for (let i = 0, l = modalIds.length; i < l; i++) {
+      const id = modalIds[i];
       if (validate(getModalNode(id))) count++;
     }
     return count;

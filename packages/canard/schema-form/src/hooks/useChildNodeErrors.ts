@@ -13,14 +13,14 @@ import { useSchemaNodeSubscribe } from './useSchemaNodeSubscribe';
 
 /**
  * Manages error states of child nodes in a branch schema node.
- * 
+ *
  * This hook subscribes to error updates from all child nodes and provides both
  * raw error data and formatted error messages. It automatically handles:
  * - Real-time error state synchronization with child nodes
  * - Dynamic updates when children are added/removed
  * - Error message formatting using the current form renderer context
  * - Cleanup of subscriptions when the component unmounts
- * 
+ *
  * The hook is designed for branch nodes (containers) that need to display
  * validation errors from their child fields in aggregate or individually.
  *
@@ -29,7 +29,7 @@ import { useSchemaNodeSubscribe } from './useSchemaNodeSubscribe';
  * // Basic usage in a form container component
  * const FormTypeObjectInput = ({ node }: FormTypeInputProps) => {
  *   const { errorMessage, errorMessages, errorMatrix } = useChildNodeErrors(node);
- *   
+ *
  *   return (
  *     <div>
  *       {node.children?.map((child, index) => (
@@ -46,7 +46,7 @@ import { useSchemaNodeSubscribe } from './useSchemaNodeSubscribe';
  *     </div>
  *   );
  * };
- * 
+ *
  * // Usage with disabled state
  * const ConditionalFormSection = ({ node, isDisabled }) => {
  *   const { errorMessages } = useChildNodeErrors(node, isDisabled);
@@ -58,7 +58,7 @@ import { useSchemaNodeSubscribe } from './useSchemaNodeSubscribe';
  *                Must be a branch node (not a leaf node).
  * @param disabled - Optional flag to disable error tracking. When true,
  *                   all error states are cleared and no new subscriptions are made.
- * 
+ *
  * @returns Object containing comprehensive error information:
  * @returns {ReactNode} errorMessage - The first non-null error message from errorMessages.
  *                                    Useful for displaying a single summary error.
@@ -113,7 +113,7 @@ export const useChildNodeErrors = (
     if (!childrenLength) return;
 
     const unsubscribes = new Array(childrenLength);
-    
+
     // Create subscription for each child node
     for (let i = 0; i < childrenLength; i++) {
       const childNode = children[i].node;
@@ -121,14 +121,14 @@ export const useChildNodeErrors = (
         if (type & NodeEventType.UpdateError) {
           const errors = payload?.[NodeEventType.UpdateError];
           const firstError = errors?.find(isTruthy);
-          
+
           // Update raw error matrix
           setErrorMatrix((prev) => {
             const newErrors = [...prev];
             newErrors[i] = errors || [];
             return newErrors;
           });
-          
+
           // Update formatted error messages
           setErrorMessages((prev) => {
             const newErrors = [...prev];

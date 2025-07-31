@@ -27,7 +27,7 @@ import type { Fn } from '@aileron/declare';
  * const config = useMemorize({ theme, locale, apiUrl }, [theme, locale, apiUrl]);
  * // Only creates new object when theme, locale, or apiUrl changes
  *
- * // Expensive computation with dependencies  
+ * // Expensive computation with dependencies
  * const processedData = useMemorize(() => {
  *   console.log('Processing...'); // Only logs when data changes
  *   return data.map(item => expensiveTransform(item));

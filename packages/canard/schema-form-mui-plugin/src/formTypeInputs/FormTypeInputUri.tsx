@@ -7,15 +7,8 @@ import {
   useState,
 } from 'react';
 
-import type {
-  SelectChangeEvent} from '@mui/material';
-import {
-  Box,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from '@mui/material';
+import type { SelectChangeEvent } from '@mui/material';
+import { Box, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 
 import { useHandle } from '@winglet/react-utils/hook';
 

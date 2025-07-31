@@ -6,9 +6,9 @@ import { JSONPointer } from '@winglet/json/pointer';
 export const transformErrors = (errors: ErrorObject[]): JsonSchemaError[] => {
   if (!Array.isArray(errors)) return [];
   const result = new Array<JsonSchemaError>(errors.length);
-  for (let index = 0; index < errors.length; index++) {
-    const ajvError = errors[index];
-    result[index] = {
+  for (let i = 0, l = errors.length; i < l; i++) {
+    const ajvError = errors[i];
+    result[i] = {
       dataPath: transformDataPath(ajvError),
       keyword: ajvError.keyword,
       message: ajvError.message,

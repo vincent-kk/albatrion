@@ -32,12 +32,12 @@ export const isDefinitionSchema = (path: string): boolean => {
   const length = segments.length;
   if (length < 2) return false;
 
-  for (let index = 0; index < length - 1; index++) {
-    const segment = segments[index];
+  for (let i = 0, l = length - 1; i < l; i++) {
+    const segment = segments[i];
     if (segment !== $DEFS && segment !== DEFINITIONS) continue;
-    if (index === length - 1) return false; // 1. If last is $defs itself → not a definition
-    if (segments[index + 1] === '') return false; // 2. If next segment is empty string → no definition key
-    if (index > 0 && segments[index - 1] === 'properties') return false; // 3. If immediately preceded by properties → not a definition
+    if (i === length - 1) return false; // 1. If last is $defs itself → not a definition
+    if (segments[i + 1] === '') return false; // 2. If next segment is empty string → no definition key
+    if (i > 0 && segments[i - 1] === 'properties') return false; // 3. If immediately preceded by properties → not a definition
     return true;
   }
 

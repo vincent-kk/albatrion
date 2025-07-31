@@ -183,7 +183,7 @@ const RegisteredPlugin = new Set<string>();
  * - **formTypeInputDefinitions**: Prepended to list (first match wins), allowing overrides
  * - **validator**: Last one wins (complete replacement)
  * - **formatError**: Last one wins (complete replacement)
- * 
+ *
  * ### Important Notes
  * - Plugins are applied globally and affect all forms in the application
  * - Plugins are deduplicated by content hash to prevent duplicate registrations

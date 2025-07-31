@@ -1,12 +1,29 @@
 const __hasOwnProperty__ = Object.prototype.hasOwnProperty;
 
 /**
- * Function to check if an object directly owns a property
- * Returns true only for directly defined properties, not inherited ones
- * @template Value - Type of the target value
- * @param value - Object or value to check
- * @param key - Property key to check
- * @returns Whether the object directly owns the property
+ * Safely checks if an object has its own (non-inherited) property.
+ *
+ * Uses Object.prototype.hasOwnProperty.call() to avoid prototype pollution
+ * and ensure accurate own-property detection, even for objects without
+ * Object.prototype in their prototype chain.
+ *
+ * @param value - Object or value to inspect
+ * @param key - Property key to check for ownership
+ * @returns Type-safe boolean indicating direct property ownership
+ *
+ * @example
+ * Own property detection:
+ * ```typescript
+ * import { hasOwnProperty } from '@winglet/common-utils';
+ *
+ * const obj = { name: 'John', age: 30 };
+ * console.log(hasOwnProperty(obj, 'name')); // true
+ * console.log(hasOwnProperty(obj, 'toString')); // false (inherited)
+ *
+ * const nullObj = Object.create(null);
+ * nullObj.prop = 'value';
+ * console.log(hasOwnProperty(nullObj, 'prop')); // true (safe even without prototype)
+ * ```
  */
 export const hasOwnProperty = (
   value: unknown,

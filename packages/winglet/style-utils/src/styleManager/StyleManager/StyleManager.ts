@@ -239,7 +239,7 @@ export class StyleManager {
       let foundIndex = -1;
 
       // More efficient array search and removal
-      for (let i = 0; i < sheets.length; i++) {
+      for (let i = 0, l = sheets.length; i < l; i++) {
         if (sheets[i] === targetSheet) {
           foundIndex = i;
           break;
@@ -249,8 +249,8 @@ export class StyleManager {
       if (foundIndex !== -1) {
         // Use splice instead of creating a new array (more efficient)
         const newSheets = new Array(sheets.length - 1);
-        for (let i = 0; i < foundIndex; i++) newSheets[i] = sheets[i];
-        for (let i = foundIndex + 1; i < sheets.length; i++)
+        for (let i = 0, l = foundIndex; i < l; i++) newSheets[i] = sheets[i];
+        for (let i = foundIndex + 1, l = sheets.length; i < l; i++)
           newSheets[i - 1] = sheets[i];
         this.__root__.adoptedStyleSheets = newSheets;
       }
@@ -345,7 +345,7 @@ export class StyleManager {
         // Improve performance by directly creating an array instead of using spread operator
         const currentSheets = this.__root__.adoptedStyleSheets;
         const newSheets = new Array(currentSheets.length + 1);
-        for (let i = 0; i < currentSheets.length; i++)
+        for (let i = 0, l = currentSheets.length; i < l; i++)
           newSheets[i] = currentSheets[i];
         newSheets[currentSheets.length] = this.__sheet__;
         this.__root__.adoptedStyleSheets = newSheets;

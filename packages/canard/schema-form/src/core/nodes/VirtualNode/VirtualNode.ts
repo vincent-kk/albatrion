@@ -91,15 +91,15 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
 
     if (this.defaultValue !== undefined) this.#value = this.defaultValue;
 
-    for (let index = 0; index < this.#refNodes.length; index++) {
-      const node = this.#refNodes[index];
+    for (let i = 0, l = this.#refNodes.length; i < l; i++) {
+      const node = this.#refNodes[i];
       const unsubscribe = node.subscribe(({ type, payload }) => {
         if (type & NodeEventType.UpdateValue) {
           const onChangePayload = payload?.[NodeEventType.UpdateValue];
-          if (this.#value && this.#value[index] !== onChangePayload) {
+          if (this.#value && this.#value[i] !== onChangePayload) {
             const previous = this.#value;
             this.#value = [...this.#value];
-            this.#value[index] = onChangePayload;
+            this.#value[i] = onChangePayload;
             this.publish({
               type: NodeEventType.UpdateValue,
               payload: { [NodeEventType.UpdateValue]: this.#value },

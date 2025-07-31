@@ -20,7 +20,7 @@ export const getConditionsMap = (
   for (const [field, conditions] of fieldConditionMap.entries()) {
     if (conditions === true) continue;
     const operations: string[] = [];
-    for (let i = 0; i < conditions.length; i++)
+    for (let i = 0, l = conditions.length; i < l; i++)
       getOperations(conditions[i].condition, conditions[i].inverse, operations);
 
     oneOfConditionsMap.set(field, operations);

@@ -52,7 +52,7 @@ import { ErrorBoundary } from './ErrorBoundary';
  * // Usage - ref forwarding still works
  * const FormComponent = () => {
  *   const inputRef = useRef<HTMLInputElement>(null);
- *   
+ *
  *   const focusInput = () => {
  *     inputRef.current?.focus(); // This still works!
  *   };

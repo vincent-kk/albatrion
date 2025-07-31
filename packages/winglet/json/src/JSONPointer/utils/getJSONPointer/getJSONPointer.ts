@@ -44,9 +44,9 @@ const getPointer = (
     const [currentNode, currentPath] = stack.pop()!;
     if (isObject(currentNode)) {
       if (isArray(currentNode)) {
-        for (let index = 0; index < currentNode.length; index++) {
-          const value = currentNode[index];
-          const segments = escapeSegment('' + index);
+        for (let i = 0, l = currentNode.length; i < l; i++) {
+          const value = currentNode[i];
+          const segments = escapeSegment('' + i);
           const path = currentPath ? `${currentPath}/${segments}` : segments;
           if (value === target) return path;
           if (isObject(value)) stack[stack.length] = [value, path] as const;

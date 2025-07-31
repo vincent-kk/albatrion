@@ -28,15 +28,15 @@ const handleStringPointer = (pointer: string) => {
 };
 
 const handleArrayPointer = (segments: string[]) => {
-  for (let index = 0; index < segments.length; index++) {
-    const segment = segments[index];
+  for (let i = 0, l = segments.length; i < l; i++) {
+    const segment = segments[i];
     if (typeof segment !== 'string' && typeof segment !== 'number')
       throw new JSONPointerError(
         'INVALID_POINTER_TYPE',
         'JSON pointer must be of type string or number array.',
         { pointer: segments },
       );
-    else segments[index] = unescapePath(segment);
+    else segments[i] = unescapePath(segment);
   }
   return segments;
 };

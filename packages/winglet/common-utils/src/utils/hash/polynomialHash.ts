@@ -14,7 +14,7 @@
  */
 export const polynomialHash = (target: string, length = 7): string => {
   let hash = 0;
-  for (let index = 0; index < target.length; index++)
-    hash = (hash * 31 + target.charCodeAt(index)) | 0;
+  for (let i = 0, l = target.length; i < l; i++)
+    hash = (hash * 31 + target.charCodeAt(i)) | 0;
   return (hash >>> 0).toString(36).padStart(length, '0').slice(0, length);
 };

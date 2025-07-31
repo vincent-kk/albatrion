@@ -287,7 +287,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__locked__ = true;
     const target = this.__value__ || {};
     const draft = this.__draft__ || {};
-    for (let i = 0; i < this.__children__.length; i++) {
+    for (let i = 0, l = this.__children__.length; i < l; i++) {
       const node = this.__children__[i].node;
       if (node.type === 'virtual') continue;
       const key = node.propertyKey;
@@ -331,8 +331,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
         if (oneOfChildNodeMap) {
           const children: ChildNode[] = [];
-          for (let index = 0; index < this.__schemaKeys__.length; index++) {
-            const key = this.__schemaKeys__[index];
+          for (let i = 0, l = this.__schemaKeys__.length; i < l; i++) {
+            const key = this.__schemaKeys__[i];
             const childNode =
               this.__childNodeMap__?.get(key) || oneOfChildNodeMap?.get(key);
             if (childNode) children.push(childNode);

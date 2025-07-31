@@ -24,11 +24,11 @@ const transformVirtualFields = (
 ): { required: string[]; virtualRequired: string[] } => {
   const requiredKeys: string[] = [];
   const virtualRequiredKeys: string[] = [];
-  for (let i = 0, len = required.length; i < len; i++) {
+  for (let i = 0, il = required.length; i < il; i++) {
     const key = required[i];
     const fields = virtual[key]?.fields;
     if (fields) {
-      for (let j = 0, l = fields.length; j < l; j++)
+      for (let j = 0, jl = fields.length; j < jl; j++)
         requiredKeys.indexOf(fields[j]) === -1 && requiredKeys.push(fields[j]);
       virtualRequiredKeys.indexOf(key) === -1 && virtualRequiredKeys.push(key);
     } else requiredKeys.indexOf(key) === -1 && requiredKeys.push(key);

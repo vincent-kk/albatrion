@@ -65,9 +65,9 @@ const getJSONPathSegments = (
     if (isObject(currentNode)) {
       if (isArray(currentNode)) {
         // 배열의 경우 인덱스를 [index] 형식으로 처리
-        for (let index = 0; index < currentNode.length; index++) {
-          const value = currentNode[index];
-          const segment = `${BRACKET_OPEN}${index}${BRACKET_CLOSE}`;
+        for (let i = 0, l = currentNode.length; i < l; i++) {
+          const value = currentNode[i];
+          const segment = `${BRACKET_OPEN}${i}${BRACKET_CLOSE}`;
           const path = currentPath + segment;
 
           if (value === target) return path;

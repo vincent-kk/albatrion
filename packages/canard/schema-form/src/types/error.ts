@@ -37,12 +37,12 @@ export enum ShowError {
  * Using AJV8 validator factory:
  * ```typescript
  * import Ajv from 'ajv';
- * 
+ *
  * const ajv = new Ajv({ allErrors: true });
- * 
+ *
  * const validatorFactory: ValidatorFactory = (jsonSchema) => {
  *   const validate = ajv.compile(jsonSchema);
- *   
+ *
  *   return (value) => {
  *     validate(value);
  *     return validate.errors?.map(err => ({
@@ -60,15 +60,15 @@ export enum ShowError {
  * Using async validation with AJV8 (from schema-form-ajv8-plugin):
  * ```typescript
  * import Ajv from 'ajv';
- * 
+ *
  * const ajv = new Ajv({ allErrors: true });
- * 
+ *
  * const validatorFactory: ValidatorFactory = (jsonSchema) => {
  *   const validate = ajv.compile({
  *     ...jsonSchema,
  *     $async: true,
  *   });
- *   
+ *
  *   return async (data) => {
  *     try {
  *       await validate(data);
@@ -76,7 +76,7 @@ export enum ShowError {
  *     } catch (thrown) {
  *       if (Array.isArray(thrown?.errors)) {
  *         return thrown.errors.map(err => ({
- *           dataPath: err.keyword === 'required' 
+ *           dataPath: err.keyword === 'required'
  *             ? err.instancePath + '/' + err.params.missingProperty
  *             : err.instancePath,
  *           keyword: err.keyword,
@@ -97,7 +97,7 @@ export enum ShowError {
  * const asyncValidatorFactory: ValidatorFactory = (jsonSchema) => {
  *   return async (value) => {
  *     const errors: JsonSchemaError[] = [];
- *     
+ *
  *     // Custom validation logic
  *     if (jsonSchema.type === 'string' && jsonSchema.format === 'email') {
  *       const isValid = await checkEmailExists(value);
@@ -110,7 +110,7 @@ export enum ShowError {
  *         });
  *       }
  *     }
- *     
+ *
  *     return errors.length > 0 ? errors : null;
  *   };
  * };
@@ -145,7 +145,7 @@ export interface ValidatorFactory {
  *   }
  *   return null;
  * };
- * 
+ *
  * const errors = validateString(123);
  * // errors = [{ dataPath: '', keyword: 'type', ... }]
  * ```
@@ -163,7 +163,7 @@ export interface ValidatorFactory {
  *       details: { pattern: '^[a-zA-Z0-9_]+$' },
  *     }];
  *   }
- *   
+ *
  *   // Check availability
  *   const isAvailable = await checkUsernameAvailability(username);
  *   if (!isAvailable) {
@@ -174,7 +174,7 @@ export interface ValidatorFactory {
  *       details: { value: username },
  *     }];
  *   }
- *   
+ *
  *   return null;
  * };
  * ```
@@ -184,7 +184,7 @@ export interface ValidatorFactory {
  * ```typescript
  * const validateUser: ValidateFunction = (data) => {
  *   const errors: JsonSchemaError[] = [];
- *   
+ *
  *   if (!data.email) {
  *     errors.push({
  *       dataPath: '/email',
@@ -192,7 +192,7 @@ export interface ValidatorFactory {
  *       message: 'Email is required',
  *     });
  *   }
- *   
+ *
  *   if (data.age && data.age < 18) {
  *     errors.push({
  *       dataPath: '/age',
@@ -201,7 +201,7 @@ export interface ValidatorFactory {
  *       details: { minimum: 18, actual: data.age },
  *     });
  *   }
- *   
+ *
  *   return errors.length > 0 ? errors : null;
  * };
  * ```

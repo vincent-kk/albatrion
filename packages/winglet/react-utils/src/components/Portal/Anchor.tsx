@@ -41,7 +41,7 @@ import { usePortalAnchorRef } from './context/usePortalContext';
  *           <div className="overlay">This appears at the anchor</div>
  *         </Portal>
  *       </main>
- *       
+ *
  *       <Portal.Anchor className="portal-root" />
  *     </div>
  *   );
@@ -56,12 +56,12 @@ import { usePortalAnchorRef } from './context/usePortalContext';
  *           <div className="tooltip">Sidebar tooltip</div>
  *         </Portal>
  *       </div>
- *       
+ *
  *       <div className="main-content">
  *         Content here...
  *       </div>
- *       
- *       <Portal.Anchor 
+ *
+ *       <Portal.Anchor
  *         className="tooltip-anchor"
  *         style={{
  *           position: 'absolute',
@@ -83,7 +83,7 @@ import { usePortalAnchorRef } from './context/usePortalContext';
  *           <div className="modal">Light themed modal</div>
  *         </Portal>
  *       </div>
- *       
+ *
  *       <div className="dark-theme">
  *         <Portal.Anchor className="modal-container" />
  *       </div>
@@ -102,11 +102,11 @@ import { usePortalAnchorRef } from './context/usePortalContext';
  *           </div>
  *         </Portal>
  *       </nav>
- *       
+ *
  *       <main>Main content</main>
- *       
- *       <Portal.Anchor 
- *         role="region" 
+ *
+ *       <Portal.Anchor
+ *         role="region"
  *         aria-label="Modal container"
  *         className="modal-region"
  *       />

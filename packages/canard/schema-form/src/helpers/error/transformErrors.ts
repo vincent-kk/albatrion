@@ -19,7 +19,7 @@ export const transformErrors = (
 ): JsonSchemaError[] => {
   if (!isArray(errors)) return [];
   const result = new Array<JsonSchemaError>();
-  for (let i = 0; i < errors.length; i++) {
+  for (let i = 0, l = errors.length; i < l; i++) {
     const error = errors[i];
     if (error.keyword && omits?.has(error.keyword)) continue;
     error.key = key ? ++sequence : undefined;

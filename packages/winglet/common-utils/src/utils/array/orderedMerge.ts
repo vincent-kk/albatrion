@@ -54,11 +54,11 @@ const mergeWithLinearSearch = (
   let resultIndex = 0;
 
   // Phase 1: Add preferredKeys with deduplication
-  for (let i = 0; i < preferred.length; i++) {
+  for (let i = 0, il = preferred.length; i < il; i++) {
     const key = preferred[i];
     // Check for duplicates in already added keys
     let isDuplicate = false;
-    for (let j = 0; j < resultIndex; j++) {
+    for (let j = 0, jl = resultIndex; j < jl; j++) {
       if (result[j] === key) {
         isDuplicate = true;
         break;
@@ -68,11 +68,11 @@ const mergeWithLinearSearch = (
   }
 
   // Phase 2: Add remaining keys with deduplication
-  for (let i = 0; i < source.length; i++) {
+  for (let i = 0, il = source.length; i < il; i++) {
     const key = source[i];
     // Check if key already exists in result
     let alreadyExists = false;
-    for (let j = 0; j < resultIndex; j++) {
+    for (let j = 0, jl = resultIndex; j < jl; j++) {
       if (result[j] === key) {
         alreadyExists = true;
         break;
@@ -102,7 +102,7 @@ const mergeWithSetOptimization = (
   let resultIndex = 0;
 
   // Phase 1: Process preferredKeys first to ensure priority
-  for (let i = 0; i < preferred.length; i++) {
+  for (let i = 0, l = preferred.length; i < l; i++) {
     const key = preferred[i];
     if (visited.has(key)) continue;
     result[resultIndex++] = key;
@@ -110,7 +110,7 @@ const mergeWithSetOptimization = (
   }
 
   // Phase 2: Process remaining keys while excluding already added keys
-  for (let i = 0; i < source.length; i++) {
+  for (let i = 0, l = source.length; i < l; i++) {
     const key = source[i];
     if (visited.has(key)) continue;
     result[resultIndex++] = key;
