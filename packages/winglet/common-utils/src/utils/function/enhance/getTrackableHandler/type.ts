@@ -1,17 +1,56 @@
 import type { Dictionary, Fn } from '@aileron/declare';
 
 /**
- * Interface for state management.
+ * Interface for state management with enhanced type safety.
  *
- * Provides read-only access to state and update functionality.
+ * Provides read-only access to state and update functionality with
+ * compile-time guarantees about state object structure and update safety.
+ * Ensures that state updates maintain type consistency and prevent
+ * accidental corruption of state shape.
  *
- * @template State - Type of the state object to manage
+ * @template State - Type of the state object to manage (must extend Dictionary)
  *
  * @example
+ * Basic state management with type safety:
  * ```typescript
- * const stateManager: StateManager<{ count: number }> = {
- *   get state() { return { count: 0 }; },
- *   update: (updater) => { // state update logic }
+ * interface UserState {
+ *   loading: boolean;
+ *   user: User | null;
+ *   error: string | null;
+ * }
+ *
+ * const stateManager: StateManager<UserState> = {
+ *   get state() { return { loading: false, user: null, error: null }; },
+ *   update: (updater) => {
+ *     // Type-safe updates - only Partial<UserState> allowed
+ *     if (typeof updater === 'function') {
+ *       const newState = updater(currentState);
+ *       // newState must be Partial<UserState>
+ *     } else {
+ *       // updater must be Partial<UserState>
+ *     }
+ *   }
+ * };
+ * ```
+ *
+ * @example
+ * Real-world API state management:
+ * ```typescript
+ * interface ApiState {
+ *   data: ApiResponse | null;
+ *   loading: boolean;
+ *   error: string | null;
+ *   requestCount: number;
+ * }
+ *
+ * // StateManager enforces type safety
+ * const apiStateManager: StateManager<ApiState> = {
+ *   get state() { return currentApiState; },
+ *   update: (updater) => {
+ *     // Compile-time error if updater doesn't match Partial<ApiState>
+ *     // updater({ loading: true, invalidProp: 'error' }); // ❌ TypeScript error
+ *     // updater({ loading: true, requestCount: 5 }); // ✅ Valid
+ *   }
  * };
  * ```
  */
