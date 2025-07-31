@@ -1,6 +1,6 @@
 {
   "name": "@winglet/common-utils",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Comprehensive utility library providing commonly used functions for JavaScript/TypeScript projects including array processing, object manipulation, Promise handling, and type checking",
   "keywords": [
     "typescript",
