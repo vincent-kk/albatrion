@@ -38,7 +38,7 @@
  *   email_address: 'alice@example.com'
  * };
  *
- * const camelCase = transformKeys(snakeCase, (_, key) => 
+ * const camelCase = transformKeys(snakeCase, (_, key) =>
  *   key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
  * );
  * console.log(camelCase);
@@ -72,9 +72,9 @@
  * // { debug_boolean: true, timeout_number: 5000, retries_number: 3, enabled_boolean: false }
  *
  * // Prefix based on value
- * const prefixed = transformKeys(config, (value, key) => 
- *   value === true ? `enabled_${key}` : 
- *   value === false ? `disabled_${key}` : 
+ * const prefixed = transformKeys(config, (value, key) =>
+ *   value === true ? `enabled_${key}` :
+ *   value === false ? `disabled_${key}` :
  *   `config_${key}`
  * );
  * console.log(prefixed);
@@ -98,7 +98,7 @@
  *   // Convert snake_case to camelCase
  *   return key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
  * });
- * 
+ *
  * console.log(frontendFormat);
  * // {
  * //   userId: 123,
@@ -124,16 +124,16 @@
  *
  * const columnMapping = {
  *   id: 'id',
- *   usr_nm: 'username', 
+ *   usr_nm: 'username',
  *   eml_addr: 'email',
  *   crt_dt: 'createdDate',
  *   updt_dt: 'updatedDate'
  * };
  *
- * const domainModel = transformKeys(dbRecord, (_, key) => 
+ * const domainModel = transformKeys(dbRecord, (_, key) =>
  *   columnMapping[key] || key
  * );
- * 
+ *
  * console.log(domainModel);
  * // {
  * //   id: 1,
@@ -160,7 +160,7 @@
  *   const rolePrefix = obj.role === 'admin' ? 'admin_' : 'user_';
  *   return key === 'role' ? key : `${rolePrefix}${key}`;
  * });
- * 
+ *
  * console.log(roleBasedKeys);
  * // {
  * //   admin_name: 'John',
@@ -191,7 +191,7 @@
  *   }
  *   return clean;
  * });
- * 
+ *
  * console.log(sanitized);
  * // {
  * //   user_name: 'John',
@@ -226,14 +226,14 @@
  * const obj = { a: 1, b: 2 };
  * const result = transformKeys(obj, (_, key) => key.toUpperCase());
  * // Result type: Record<string, number> (loses specific key info)
- * 
+ *
  * // Workaround: Explicit typing
  * const betterResult = transformKeys(obj, (_, key) => key.toUpperCase()) as Record<'A' | 'B', number>;
- * 
+ *
  * // Limitation: Dynamic key generation
  * const dynamic = transformKeys(obj, (_, key) => Math.random() > 0.5 ? key : 'default');
  * // TypeScript can't track conditional key logic
- * 
+ *
  * // Limitation: Non-string key return
  * const symbolKeys = transformKeys(obj, () => Symbol('key'));
  * // Works at runtime but type checking may be limited
@@ -263,7 +263,7 @@ export const transformKeys = <
 ): Record<Key, Type[keyof Type]> => {
   const result = {} as Record<Key, Type[keyof Type]>;
   const keys = Object.keys(object) as Array<keyof Type>;
-  for (let i = 0; i < keys.length; i++) {
+  for (let i = 0, l = keys.length; i < l; i++) {
     const key = keys[i];
     const value = object[key];
     result[getKey(value, key, object)] = value;

@@ -45,17 +45,17 @@ export const getConditionIndexFactory =
     const schemaIndices: number[] = [];
 
     // Collect only valid expressions and maintain original schema indices
-    for (let index = 0; index < conditionSchemas.length; index++) {
+    for (let i = 0, l = conditionSchemas.length; i < l; i++) {
       // Extract expression from `computed.[<conditionField>]` or `&[<conditionField>]` field
       const condition =
-        conditionSchemas[index]?.computed?.[conditionField] ??
-        conditionSchemas[index]?.[ALIAS + conditionField];
+        conditionSchemas[i]?.computed?.[conditionField] ??
+        conditionSchemas[i]?.[ALIAS + conditionField];
 
       // Handle boolean conditions
       if (typeof condition === 'boolean') {
         if (condition === true) {
           expressions.push('true');
-          schemaIndices.push(index);
+          schemaIndices.push(i);
         }
         continue;
       }
@@ -73,7 +73,7 @@ export const getConditionIndexFactory =
           })
           .replace(/;$/, ''),
       );
-      schemaIndices.push(index);
+      schemaIndices.push(i);
     }
 
     if (expressions.length === 0) return undefined;
@@ -82,20 +82,20 @@ export const getConditionIndexFactory =
     const equalityMap: Record<number, Record<string, number>> = {};
     let isSimpleEquality = true;
 
-    for (let index = 0; index < expressions.length; index++) {
-      if (expressions[index] === 'true') {
+    for (let i = 0, l = expressions.length; i < l; i++) {
+      if (expressions[i] === 'true') {
         isSimpleEquality = false;
         break;
       }
 
       // Match simple equality pattern
-      const matches = expressions[index].match(SIMPLE_EQUALITY_REGEX);
+      const matches = expressions[i].match(SIMPLE_EQUALITY_REGEX);
       if (matches) {
         const depIndex = parseInt(matches[1], 10);
         const value = matches[3];
         if (!equalityMap[depIndex]) equalityMap[depIndex] = {};
         if (!(value in equalityMap[depIndex]))
-          equalityMap[depIndex][value] = schemaIndices[index];
+          equalityMap[depIndex][value] = schemaIndices[i];
       } else {
         // Exclude complex expressions from optimization
         isSimpleEquality = false;
@@ -120,9 +120,8 @@ export const getConditionIndexFactory =
 
     // General conditional expression handling: dynamic function generation through Function constructor
     const lines = new Array<string>(expressions.length);
-    for (let index = 0; index < expressions.length; index++)
-      lines[index] =
-        `if(${expressions[index]}) return ${schemaIndices[index]};`;
+    for (let i = 0, l = expressions.length; i < l; i++)
+      lines[i] = `if(${expressions[i]}) return ${schemaIndices[i]};`;
 
     return new Function(
       'dependencies',

@@ -81,10 +81,10 @@ export const chunk = <Type>(array: Type[], size: number): Type[][] => {
   if (!isInteger(size) || size < 1) return [array];
   const chunkCount = Math.ceil(array.length / size);
   const result: Type[][] = new Array(chunkCount);
-  for (let index = 0; index < chunkCount; index++) {
-    const start = index * size;
+  for (let i = 0; i < chunkCount; i++) {
+    const start = i * size;
     const end = start + size;
-    result[index] = array.slice(start, end);
+    result[i] = array.slice(start, end);
   }
   return result;
 };

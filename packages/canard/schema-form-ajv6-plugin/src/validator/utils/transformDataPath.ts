@@ -6,7 +6,7 @@ const JSON_POINTER_SEPARATOR = '/';
 
 export const transformDataPath = (errors: ErrorObject[]): JsonSchemaError[] => {
   const result = new Array<JsonSchemaError>(errors.length);
-  for (let i = 0; i < errors.length; i++) {
+  for (let i = 0, l = errors.length; i < l; i++) {
     const ajvError = errors[i];
     const dataPath = ajvError.dataPath || '';
     let convertedDataPath = convertJsonPathToPointer(dataPath);

@@ -136,7 +136,7 @@ export const escapePath = (path: string): string => {
   if (length === 0) return '';
   if (length === 1) return escapeSegment(segments[0]);
   let result = escapeSegment(segments[0]);
-  for (let index = 1; index < length; index++)
-    result += JSONPointer.Separator + escapeSegment(segments[index]);
+  for (let i = 1; i < length; i++)
+    result += JSONPointer.Separator + escapeSegment(segments[i]);
   return result;
 };

@@ -34,7 +34,7 @@ const { increment } = counterFactory();
  * // Objects with different property order produce identical strings
  * const obj1 = { name: 'John', age: 30, city: 'NYC' };
  * const obj2 = { city: 'NYC', age: 30, name: 'John' }; // Different order
- * 
+ *
  * console.log(stableSerialize(obj1)); // '{age:30|city:NYC|name:John}'
  * console.log(stableSerialize(obj2)); // '{age:30|city:NYC|name:John}' (identical)
  * console.log(stableSerialize(obj1) === stableSerialize(obj2)); // true
@@ -76,7 +76,7 @@ const { increment } = counterFactory();
  *     profile: { settings: { lang: 'en', theme: 'dark' }, name: 'Alice' } // Different order
  *   }
  * };
- * 
+ *
  * console.log(stableSerialize(reordered) === serialized); // true
  * ```
  *
@@ -97,7 +97,7 @@ const { increment } = counterFactory();
  * const another: any = { name: 'parent', id: 1 };
  * another.self = another;
  * another.child = { name: 'child', parent: another };
- * 
+ *
  * console.log(stableSerialize(another) === serialized); // true (structurally identical)
  * ```
  *
@@ -143,10 +143,10 @@ const { increment } = counterFactory();
  *
  * const params1 = { userId: 123, includeProfile: true, sort: 'name' };
  * const params2 = { sort: 'name', userId: 123, includeProfile: true }; // Different order
- * 
+ *
  * const key1 = generateCacheKey('users', params1);
  * const key2 = generateCacheKey('users', params2);
- * 
+ *
  * console.log(key1 === key2); // true (identical cache keys)
  * console.log(key1); // 'api:users:{includeProfile:true|sort:name|userId:123}:{}'
  * ```
@@ -175,7 +175,7 @@ const { increment } = counterFactory();
  *
  * const fingerprint1 = createConfigFingerprint(config1);
  * const fingerprint2 = createConfigFingerprint(config2);
- * 
+ *
  * console.log(fingerprint1 === fingerprint2); // true (same configuration)
  * ```
  *
@@ -277,7 +277,7 @@ const { increment } = counterFactory();
  *
  * **Performance Optimizations:**
  * - **Caching**: Uses WeakMap to cache results for repeated objects
- * - **Incremental IDs**: Efficient unique identifier generation via `increment()` 
+ * - **Incremental IDs**: Efficient unique identifier generation via `increment()`
  * - **Hash-based Exclusion**: Murmur3 hash of omit keys converted to base36 for prefixes
  * - **Memory Efficient**: Automatic cache cleanup for garbage-collected objects
  * - **Early Cache Hit**: Returns cached result immediately if found with matching omit hash
@@ -351,9 +351,9 @@ const createHash = (
 
     if (isArray(input)) {
       const segments = [];
-      for (let index = 0; index < input.length; index++) {
-        segments[segments.length] = createHash(input[index], omit, omitHash);
-      }
+      for (let i = 0, l = input.length; i < l; i++)
+        segments[segments.length] = createHash(input[i], omit, omitHash);
+
       result = `${omitHash}[${segments.join(',')}]`;
     } else if (isPlainObject(input)) {
       const segments = [];

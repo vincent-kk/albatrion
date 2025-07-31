@@ -81,7 +81,7 @@ const getVirtualReferenceConditions = (
 ) => {
   if (!virtualReferenceFields || !virtualReferencesMap) return undefined;
   const conditions: string[] = [];
-  for (let i = 0; i < virtualReferenceFields.length; i++) {
+  for (let i = 0, l = virtualReferenceFields.length; i < l; i++) {
     const virtualReferenceField = virtualReferenceFields[i];
     const virtualReference = virtualReferencesMap.get(virtualReferenceField);
     if (!virtualReference) continue;

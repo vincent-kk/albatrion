@@ -251,11 +251,11 @@ export const hasUndefined = (value: any): boolean => {
     if (current === null || typeof current !== 'object') continue;
 
     if (Array.isArray(current)) {
-      for (let i = 0, len = current.length; i < len; i++)
+      for (let i = 0, l = current.length; i < l; i++)
         stack[stack.length] = current[i];
     } else {
       const keys = getKeys(current);
-      for (let i = 0, len = keys.length; i < len; i++)
+      for (let i = 0, l = keys.length; i < l; i++)
         stack[stack.length] = current[keys[i]];
     }
   }

@@ -39,7 +39,7 @@
  * ];
  *
  * // Remove duplicates based on first and last name only
- * const uniquePeople = uniqueWith(people, (a, b) => 
+ * const uniquePeople = uniqueWith(people, (a, b) =>
  *   a.firstName === b.firstName && a.lastName === b.lastName
  * );
  * console.log(uniquePeople);
@@ -56,7 +56,7 @@
  * const measurements = [1.0, 1.05, 2.0, 1.98, 3.0, 2.95, 4.0];
  * const tolerance = 0.1;
  *
- * const uniqueMeasurements = uniqueWith(measurements, (a, b) => 
+ * const uniqueMeasurements = uniqueWith(measurements, (a, b) =>
  *   Math.abs(a - b) < tolerance
  * );
  * console.log(uniqueMeasurements); // [1.0, 2.0, 3.0, 4.0]
@@ -74,7 +74,7 @@
  * ];
  *
  * // Remove events on the same day (ignoring time)
- * const uniqueByDate = uniqueWith(events, (a, b) => 
+ * const uniqueByDate = uniqueWith(events, (a, b) =>
  *   a.date.toDateString() === b.date.toDateString()
  * );
  * console.log(uniqueByDate);
@@ -95,7 +95,7 @@
  *   [4, 5, 6]  // Duplicate
  * ];
  *
- * const uniqueCoordinates = uniqueWith(coordinates, (a, b) => 
+ * const uniqueCoordinates = uniqueWith(coordinates, (a, b) =>
  *   a.length === b.length && a.every((val, idx) => val === b[idx])
  * );
  * console.log(uniqueCoordinates); // [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
@@ -120,7 +120,7 @@
  * ];
  *
  * // Remove products with identical specifications
- * const uniqueBySpecs = uniqueWith(products, (a, b) => 
+ * const uniqueBySpecs = uniqueWith(products, (a, b) =>
  *   a.specs.cpu === b.specs.cpu && a.specs.ram === b.specs.ram
  * );
  * console.log(uniqueBySpecs);
@@ -162,7 +162,7 @@
  * Version comparison with semantic versioning:
  * ```typescript
  * const versions = ['1.0.0', '1.0.1', '1.0.0', '2.0.0', '1.0.1', '1.1.0'];
- * 
+ *
  * const parseVersion = (version: string) => version.split('.').map(Number);
  * const compareVersions = (a: string, b: string) => {
  *   const [aMajor, aMinor, aPatch] = parseVersion(a);
@@ -192,7 +192,7 @@
  * ];
  *
  * // Remove tasks with same title and priority (ignore assignee)
- * const uniqueTasks = uniqueWith(tasks, (a, b) => 
+ * const uniqueTasks = uniqueWith(tasks, (a, b) =>
  *   a.title === b.title && a.priority === b.priority
  * );
  * console.log(uniqueTasks);
@@ -225,10 +225,10 @@ export const uniqueWith = <Type>(
   isEqual: (item1: Type, item2: Type) => boolean,
 ): Type[] => {
   const result: Type[] = [];
-  for (let i = 0; i < source.length; i++) {
+  for (let i = 0, il = source.length; i < il; i++) {
     const item = source[i];
     let isDuplicate = false;
-    for (let j = 0; j < result.length; j++)
+    for (let j = 0, jl = result.length; j < jl; j++)
       if (isEqual(item, result[j])) {
         isDuplicate = true;
         break;

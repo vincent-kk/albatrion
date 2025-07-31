@@ -81,7 +81,7 @@ const propertyIsEnumerable = Object.prototype.propertyIsEnumerable;
  *
  * const instance = new DataModel({ name: 'Test', value: 42 });
  * const symbols = getSymbols(instance);
- * 
+ *
  * console.log(symbols); // [Symbol(version), Symbol(type), Symbol(metadata)]
  *
  * // Access symbol properties
@@ -138,7 +138,7 @@ const propertyIsEnumerable = Object.prototype.propertyIsEnumerable;
  * }
  *
  * const iterable = new CustomIterable(['a', 'b', 'c']);
- * 
+ *
  * // getSymbols will find enumerable symbols (Symbol.toStringTag if enumerable)
  * console.log(getSymbols(iterable)); // May include Symbol.toStringTag
  * console.log(Object.getOwnPropertySymbols(iterable)); // [Symbol.iterator, Symbol.toStringTag]
@@ -202,7 +202,7 @@ export const getSymbols = <Type extends object>(
 ): Array<symbol> => {
   const symbols = Object.getOwnPropertySymbols(object);
   const result: Array<symbol> = [];
-  for (let i = 0; i < symbols.length; i++) {
+  for (let i = 0, l = symbols.length; i < l; i++) {
     const symbol = symbols[i];
     if (propertyIsEnumerable.call(object, symbol))
       result[result.length] = symbol;

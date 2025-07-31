@@ -41,7 +41,7 @@
  * Group by computed value:
  * ```typescript
  * const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
- * 
+ *
  * // Group by even/odd
  * const byEvenOdd = groupBy(numbers, n => n % 2 === 0 ? 'even' : 'odd');
  * console.log(byEvenOdd);
@@ -127,7 +127,7 @@ export const groupBy = <Type, Key extends PropertyKey>(
   getKey: (item: Type) => Key,
 ): Record<Key, Type[]> => {
   const result = {} as Record<Key, Type[]>;
-  for (let i = 0; i < array.length; i++) {
+  for (let i = 0, l = array.length; i < l; i++) {
     const item = array[i];
     const key = getKey(item);
     if (key in result) result[key].push(item);

@@ -62,9 +62,9 @@ const formTypeTestFnFactory = (path: string): FormTypeTestFn => {
   return (hint) => {
     const hintSegments = hint.path.split(JSONPointer.Separator);
     if (segments.length !== hintSegments.length) return false;
-    for (let index = 0; index < segments.length; index++) {
-      const segment = segments[index];
-      const hintSegment = hintSegments[index];
+    for (let i = 0, l = segments.length; i < l; i++) {
+      const segment = segments[i];
+      const hintSegment = hintSegments[i];
       if (segment === JSONPointer.Index) {
         if (!isArrayIndex(hintSegment)) return false;
       } else if (segment !== hintSegment) return false;

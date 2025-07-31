@@ -132,8 +132,8 @@ export const differenceObjectPatch = (
   const validPatches: Array<Patch> = [];
 
   // 단일 패스: 배열 패치와 일반 패치 분리 및 배열 패치 즉시 처리
-  for (let index = 0; index < patchCount; index++) {
-    const patch = patches[index];
+  for (let i = 0; i < patchCount; i++) {
+    const patch = patches[i];
     const arrayPath = getArrayBasePath(patch.path);
     if (arrayPath === null) validPatches.push(patch);
     else if (!processedArrayPaths.has(arrayPath)) {
@@ -144,8 +144,8 @@ export const differenceObjectPatch = (
   }
 
   // 일반 패치들 처리 (배열과 무관한 패치들만 포함)
-  for (let index = 0, length = validPatches.length; index < length; index++) {
-    const patch = validPatches[index];
+  for (let i = 0, l = validPatches.length; i < l; i++) {
+    const patch = validPatches[i];
     if (patch.op === Operation.ADD || patch.op === Operation.REPLACE)
       setValue(mergePatch, patch.path, patch.value);
     else if (patch.op === Operation.REMOVE)

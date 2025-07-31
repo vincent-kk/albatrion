@@ -17,7 +17,7 @@
  *
  * const array1 = [1, 2, 3, 4, 5];
  * const array2 = [3, 4, 5, 6, 7];
- * 
+ *
  * console.log(intersection(array1, array2)); // [3, 4, 5]
  * ```
  *
@@ -26,7 +26,7 @@
  * ```typescript
  * const fruits1 = ['apple', 'banana', 'orange', 'grape'];
  * const fruits2 = ['banana', 'grape', 'kiwi', 'mango'];
- * 
+ *
  * console.log(intersection(fruits1, fruits2)); // ['banana', 'grape']
  * ```
  *
@@ -35,7 +35,7 @@
  * ```typescript
  * const activeUserIds = [1, 2, 3, 4, 5, 6];
  * const premiumUserIds = [3, 4, 5, 7, 8, 9];
- * 
+ *
  * const activePremiumUsers = intersection(activeUserIds, premiumUserIds);
  * console.log(activePremiumUsers); // [3, 4, 5]
  * ```
@@ -45,7 +45,7 @@
  * ```typescript
  * const source = [1, 2, 2, 3, 4, 4, 5];
  * const target = [2, 4, 6];
- * 
+ *
  * console.log(intersection(source, target)); // [2, 2, 4, 4]
  * // Note: Duplicates from source are preserved if they exist in target
  * ```
@@ -55,7 +55,7 @@
  * ```typescript
  * const words1 = ['Hello', 'World', 'hello', 'world'];
  * const words2 = ['Hello', 'world', 'Test'];
- * 
+ *
  * console.log(intersection(words1, words2)); // ['Hello', 'world']
  * // Case-sensitive: 'hello' and 'World' don't match
  * ```
@@ -65,7 +65,7 @@
  * ```typescript
  * const currentUsers = ['alice', 'bob', 'charlie', 'diana'];
  * const invitedUsers = ['bob', 'charlie', 'eve', 'frank'];
- * 
+ *
  * const alreadyRegistered = intersection(currentUsers, invitedUsers);
  * console.log(alreadyRegistered); // ['bob', 'charlie']
  * console.log(`${alreadyRegistered.length} invited users are already registered`);
@@ -78,10 +78,10 @@
  * console.log(intersection([], [1, 2, 3])); // []
  * console.log(intersection([1, 2, 3], [])); // []
  * console.log(intersection([], [])); // []
- * 
+ *
  * // No common elements
  * console.log(intersection([1, 2, 3], [4, 5, 6])); // []
- * 
+ *
  * // All elements in common
  * console.log(intersection([1, 2, 3], [1, 2, 3])); // [1, 2, 3]
  * ```
@@ -91,7 +91,7 @@
  * ```typescript
  * const mixed1 = [1, '2', 3, '4', 5];
  * const mixed2 = ['2', 3, '4', 6];
- * 
+ *
  * console.log(intersection(mixed1, mixed2)); // ['2', 3, '4']
  * // Note: Uses strict equality (===) for comparison
  * ```
@@ -101,7 +101,7 @@
  * ```typescript
  * const userPermissions = ['read', 'write', 'delete', 'admin'];
  * const requiredPermissions = ['read', 'write', 'execute'];
- * 
+ *
  * const grantedPermissions = intersection(userPermissions, requiredPermissions);
  * console.log(`User has ${grantedPermissions.length} of ${requiredPermissions.length} required permissions`);
  * console.log('Granted:', grantedPermissions); // ['read', 'write']
@@ -126,7 +126,7 @@
 export const intersection = <Type>(source: Type[], target: Type[]): Type[] => {
   const result: Type[] = [];
   const targetSet = new Set(target);
-  for (let i = 0; i < source.length; i++) {
+  for (let i = 0, l = source.length; i < l; i++) {
     const item = source[i];
     if (targetSet.has(item)) result[result.length] = item;
   }

@@ -64,8 +64,8 @@ const handleDefinitionsNode = (
 ) => {
   const definitions = schema[fieldName];
   const keys = Object.keys(definitions);
-  for (let index = 0; index < keys.length; index++) {
-    const key = keys[index];
+  for (let i = 0, l = keys.length; i < l; i++) {
+    const key = keys[i];
     entries.push({
       schema: definitions[key],
       path: path + Separator + fieldName + Separator + key,
@@ -90,7 +90,7 @@ const handleConditionalNode = (
   dataPath: string,
   depth: number,
 ) => {
-  for (let i = 0; i < CONDITIONAL_KEYWORDS.length; i++) {
+  for (let i = 0, l = CONDITIONAL_KEYWORDS.length; i < l; i++) {
     const keyword = CONDITIONAL_KEYWORDS[i];
     const conditionalNode = schema[keyword];
     if (!conditionalNode || typeof conditionalNode !== 'object') continue;
@@ -118,14 +118,14 @@ const handleCompositionNode = (
   dataPath: string,
   depth: number,
 ) => {
-  for (let index = 0; index < COMPOSITION_KEYWORDS.length; index++) {
-    const keyword = COMPOSITION_KEYWORDS[index];
+  for (let i = 0, il = COMPOSITION_KEYWORDS.length; i < il; i++) {
+    const keyword = COMPOSITION_KEYWORDS[i];
     const compositionNode = schema[keyword];
     if (!compositionNode || !isArray(compositionNode)) continue;
-    for (let nodeIndex = 0; nodeIndex < compositionNode.length; nodeIndex++) {
+    for (let j = 0, jl = compositionNode.length; j < jl; j++) {
       entries.push({
-        schema: compositionNode[nodeIndex],
-        path: path + Separator + keyword + Separator + nodeIndex,
+        schema: compositionNode[j],
+        path: path + Separator + keyword + Separator + j,
         dataPath,
         depth: depth + 1,
       });
@@ -173,11 +173,11 @@ const handleArrayItems = (
 ) => {
   const items = schema.items;
   if (isArray(items)) {
-    for (let index = 0; index < items.length; index++) {
+    for (let i = 0, l = items.length; i < l; i++) {
       entries.push({
-        schema: items[index],
-        path: path + Separator + 'items' + Separator + index,
-        dataPath: dataPath + Separator + index,
+        schema: items[i],
+        path: path + Separator + 'items' + Separator + i,
+        dataPath: dataPath + Separator + i,
         depth: depth + 1,
       });
     }
@@ -208,8 +208,8 @@ const handleObjectProperties = (
 ) => {
   const properties = schema.properties as Dictionary;
   const keys = Object.keys(properties);
-  for (let index = 0; index < keys.length; index++) {
-    const key = keys[index];
+  for (let i = 0, l = keys.length; i < l; i++) {
+    const key = keys[i];
     const escapedKey = escapeSegment(key);
     entries.push({
       schema: properties[key],

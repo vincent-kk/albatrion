@@ -37,7 +37,7 @@ export const getObservedValuesFactory =
     const watchValueIndexes = [] as number[];
 
     // Add each watch path to dependencyPaths and store indices
-    for (let i = 0; i < watchValues.length; i++) {
+    for (let i = 0, l = watchValues.length; i < l; i++) {
       const path = watchValues[i];
       pathManager.set(path);
       watchValueIndexes.push(pathManager.findIndex(path));
@@ -50,7 +50,7 @@ export const getObservedValuesFactory =
       'dependencies',
       `const indexes = [${watchValueIndexes.join(',')}];
        const result = new Array(indexes.length);
-       for (let i = 0; i < indexes.length; i++)
+       for (let i = 0, l = indexes.length; i < l; i++)
          result[i] = dependencies[indexes[i]];
        return result;`,
     ) as GetObservedValues;

@@ -126,7 +126,7 @@
  * const rowSums = map(matrix, row => row.reduce((sum, val) => sum + val, 0));
  * console.log(rowSums); // [6, 15, 24]
  *
- * const flattened = map(matrix, (row, rowIndex) => 
+ * const flattened = map(matrix, (row, rowIndex) =>
  *   map(row, (val, colIndex) => ({ value: val, row: rowIndex, col: colIndex }))
  * );
  * ```
@@ -152,7 +152,7 @@
  * Error handling in transformation:
  * ```typescript
  * const jsonStrings = ['{"name": "Alice"}', 'invalid json', '{"name": "Bob"}'];
- * 
+ *
  * const parsed = map(jsonStrings, (jsonStr, index) => {
  *   try {
  *     return { success: true, data: JSON.parse(jsonStr), index };
@@ -190,7 +190,7 @@ export const map = <Type, Result = Type>(
   callback: (item: Type, index: number, array: Type[]) => Result,
 ): Result[] => {
   const result = new Array<Result>(array.length);
-  for (let index = 0; index < array.length; index++)
-    result[index] = callback(array[index], index, array);
+  for (let i = 0, l = array.length; i < l; i++)
+    result[i] = callback(array[i], i, array);
   return result;
 };

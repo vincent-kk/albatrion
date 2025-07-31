@@ -26,7 +26,7 @@ import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
  *   phone: '+1234567890',
  *   address: undefined
  * };
- * 
+ *
  * const cleanUser = removeUndefined(dirtyUser);
  * console.log(cleanUser); // { id: 1, name: 'John', phone: '+1234567890' }
  *
@@ -121,7 +121,7 @@ import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
  * @example
  * API data sanitization:
  * ```typescript
- * // Clean API response data before sending to client  
+ * // Clean API response data before sending to client
  * interface ApiUser {
  *   id: number;
  *   name: string;
@@ -294,7 +294,7 @@ import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
 export const removeUndefined = <Type>(input: Type): Type => {
   if (isArray(input)) {
     const result = [] as typeof input;
-    for (let i = 0; i < input.length; i++) {
+    for (let i = 0, l = input.length; i < l; i++) {
       const item = removeUndefined(input[i]);
       if (item !== undefined) result[result.length] = item;
     }
@@ -303,7 +303,7 @@ export const removeUndefined = <Type>(input: Type): Type => {
   if (isPlainObject(input)) {
     const result = {} as typeof input;
     const keys = Object.keys(input) as Array<keyof Type>;
-    for (let i = 0; i < keys.length; i++) {
+    for (let i = 0, l = keys.length; i < l; i++) {
       const key = keys[i];
       const value = removeUndefined(input[key] as object);
       if (value !== undefined) (result as any)[key] = value;

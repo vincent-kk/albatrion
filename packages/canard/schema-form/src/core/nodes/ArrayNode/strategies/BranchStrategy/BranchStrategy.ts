@@ -244,7 +244,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
   /** Clears all elements to initialize the array. */
   public clear() {
-    for (let i = 0; i < this.__ids__.length; i++)
+    for (let i = 0, l = this.__ids__.length; i < l; i++)
       this.__sourceMap__.get(this.__ids__[i])?.node.cleanUp(this.__host__);
 
     this.__ids__ = [];
@@ -289,7 +289,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   private get __edges__() {
     const edges = new Array<ChildNode>(this.__ids__.length);
-    for (let i = 0; i < this.__ids__.length; i++) {
+    for (let i = 0, l = this.__ids__.length; i < l; i++) {
       const id = this.__ids__[i];
       edges[i] = {
         id,
@@ -305,7 +305,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   private __toArray__() {
     const values = new Array<AllowedValue>(this.__ids__.length);
-    for (let i = 0; i < this.__ids__.length; i++) {
+    for (let i = 0, l = this.__ids__.length; i < l; i++) {
       const edge = this.__sourceMap__.get(this.__ids__[i]);
       if (edge) values[i] = edge.data;
     }
@@ -332,11 +332,11 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @private
    */
   private __updateChildName__() {
-    for (let index = 0; index < this.__ids__.length; index++) {
-      const id = this.__ids__[index];
+    for (let i = 0, l = this.__ids__.length; i < l; i++) {
+      const id = this.__ids__[i];
       if (this.__sourceMap__.has(id)) {
         const node = this.__sourceMap__.get(id)!.node;
-        const name = index.toString();
+        const name = i.toString();
         if (node.name !== name) node.setName(name, this.__host__);
       }
     }

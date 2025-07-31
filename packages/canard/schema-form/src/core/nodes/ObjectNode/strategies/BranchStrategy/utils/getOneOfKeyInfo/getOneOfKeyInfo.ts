@@ -20,13 +20,13 @@ export const getOneOfKeyInfo = (
   const length = schema.oneOf.length;
   const oneOfKeySet = new Set<string>();
   const oneOfKeySetList = new Array<Set<string>>(length);
-  for (let index = 0; index < length; index++) {
-    const oneOfItem = schema.oneOf[index];
+  for (let i = 0; i < length; i++) {
+    const oneOfItem = schema.oneOf[i];
     if (oneOfItem?.properties) {
       const oneOfItemProperties = Object.keys(oneOfItem.properties);
-      oneOfKeySetList[index] = new Set(oneOfItemProperties);
-      for (let i = 0; i < oneOfItemProperties.length; i++)
-        oneOfKeySet.add(oneOfItemProperties[i]);
+      oneOfKeySetList[i] = new Set(oneOfItemProperties);
+      for (let j = 0, jl = oneOfItemProperties.length; j < jl; j++)
+        oneOfKeySet.add(oneOfItemProperties[j]);
     }
   }
   return { oneOfKeySet, oneOfKeySetList };

@@ -18,12 +18,12 @@ export const setValueByPointer = <Input extends Dictionary | Array<any>>(
 
   let cursor: any = input;
   let segment = '';
-  for (let index = hasRootPrefix ? 1 : 0; index < length; ) {
-    segment = segments[index++];
+  for (let i = hasRootPrefix ? 1 : 0; i < length; ) {
+    segment = segments[i++];
     if (isForbiddenKey(segment)) return input;
-    const isLastSegment = index === length;
+    const isLastSegment = i === length;
     if (cursor[segment] === undefined && !isLastSegment) {
-      if (isArrayIndex(segments[index]) || segments[index] === ADD_ITEM_ALIAS)
+      if (isArrayIndex(segments[i]) || segments[i] === ADD_ITEM_ALIAS)
         cursor[segment] = [];
       else cursor[segment] = {};
     }

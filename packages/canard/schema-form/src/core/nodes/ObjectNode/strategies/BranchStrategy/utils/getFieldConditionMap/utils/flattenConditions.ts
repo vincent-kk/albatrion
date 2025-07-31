@@ -69,10 +69,10 @@ const flattenConditionsInto = (
             inverseCondition[key] = values[0];
           } else {
             const merged: string[] = [];
-            for (let i = 0; i < values.length; i++) {
+            for (let i = 0, il = values.length; i < il; i++) {
               const value = values[i];
               if (isArray(value)) {
-                for (let j = 0, l = value.length; j < l; j++)
+                for (let j = 0, jl = value.length; j < jl; j++)
                   merged.push(value[j]);
               } else merged.push(value);
             }
@@ -102,7 +102,7 @@ const extractCondition = (
 ): Record<string, string | string[]> | null => {
   const condition: Dictionary<string | string[]> = {};
   const propertyEntries = Object.entries(properties);
-  for (let i = 0; i < propertyEntries.length; i++) {
+  for (let i = 0, il = propertyEntries.length; i < il; i++) {
     const [propName, propSchema] = propertyEntries[i];
     if (!propSchema || typeof propSchema !== 'object') continue;
     if (isValidConst(propSchema)) {
@@ -113,7 +113,7 @@ const extractCondition = (
         condition[propName] = '' + enumValues[0];
       } else {
         const stringArray: string[] = [];
-        for (let j = 0; j < enumValues.length; j++)
+        for (let j = 0, jl = enumValues.length; j < jl; j++)
           stringArray.push('' + enumValues[j]);
         condition[propName] = stringArray;
       }

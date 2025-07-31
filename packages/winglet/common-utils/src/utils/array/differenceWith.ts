@@ -32,8 +32,8 @@
  *
  * // Compare by name only, ignoring price differences
  * const result = differenceWith(
- *   products, 
- *   discontinued, 
+ *   products,
+ *   discontinued,
  *   (a, b) => a.name === b.name
  * );
  * console.log(result); // [{ id: 2, name: 'iPad', ... }, { id: 3, name: 'MacBook', ... }]
@@ -46,8 +46,8 @@
  * const toRemove = ['apple', 'BANANA'];
  *
  * const result = differenceWith(
- *   originalList, 
- *   toRemove, 
+ *   originalList,
+ *   toRemove,
  *   (a, b) => a.toLowerCase() === b.toLowerCase()
  * );
  * console.log(result); // ['Orange', 'Grape']
@@ -75,8 +75,8 @@
  *
  * // Compare by first and last name only
  * const result = differenceWith(
- *   allPeople, 
- *   duplicates, 
+ *   allPeople,
+ *   duplicates,
  *   (a, b) => a.firstName === b.firstName && a.lastName === b.lastName
  * );
  * console.log(result); // [{ firstName: 'Jane', ... }, { firstName: 'Bob', ... }]
@@ -89,8 +89,8 @@
  * const targets = [1.1, 5.0]; // Close approximations
  *
  * const result = differenceWith(
- *   measurements, 
- *   targets, 
+ *   measurements,
+ *   targets,
  *   (a, b) => Math.abs(a - b) < 0.2 // Within 0.2 tolerance
  * );
  * console.log(result); // [2.5, 3.7, 4.9]
@@ -103,8 +103,8 @@
  * const toExclude = [[1, 2], [5, 6]];
  *
  * const result = differenceWith(
- *   coordinates, 
- *   toExclude, 
+ *   coordinates,
+ *   toExclude,
  *   (a, b) => a[0] === b[0] && a[1] === b[1]
  * );
  * console.log(result); // [[3, 4], [7, 8]]
@@ -125,8 +125,8 @@
  *
  * // Compare by date only, ignore event names
  * const result = differenceWith(
- *   events, 
- *   conflicts, 
+ *   events,
+ *   conflicts,
  *   (a, b) => a.date.getTime() === b.date.getTime()
  * );
  * console.log(result); // [{ name: 'Conference', ... }, { name: 'Workshop', ... }]
@@ -151,10 +151,10 @@ export const differenceWith = <Type1, Type2>(
   isEqual: (source: Type1, exclude: Type2) => boolean,
 ): Type1[] => {
   const result: Type1[] = [];
-  for (let i = 0; i < source.length; i++) {
+  for (let i = 0, il = source.length; i < il; i++) {
     const item = source[i];
     let isFound = false;
-    for (let j = 0; j < exclude.length; j++)
+    for (let j = 0, jl = exclude.length; j < jl; j++)
       if (isEqual(item, exclude[j])) {
         isFound = true;
         break;

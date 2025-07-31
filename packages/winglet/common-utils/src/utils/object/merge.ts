@@ -245,10 +245,10 @@ import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
  * const circular2: any = { name: 'obj2' };
  * circular1.ref = circular2;
  * circular2.ref = circular1;
- * 
+ *
  * // This would crash:
  * // merge(circular1, circular2); // RangeError: Maximum call stack size exceeded
- * 
+ *
  * // Safe alternatives:
  * const safe1 = { name: 'obj1', data: 'value1' };
  * const safe2 = { name: 'obj2', data: 'value2' };
@@ -260,18 +260,18 @@ import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
  * // Type incompatibility scenarios
  * const target = { value: { nested: 'object' } };
  * const source = { value: 'primitive' }; // Incompatible type
- * 
+ *
  * merge(target, source);
  * // Result: { value: 'primitive' } - source replaces target
- * 
+ *
  * // Property descriptor conflicts
  * const frozen = {};
- * Object.defineProperty(frozen, 'key', { 
- *   value: 'immutable', 
- *   writable: false, 
- *   configurable: false 
+ * Object.defineProperty(frozen, 'key', {
+ *   value: 'immutable',
+ *   writable: false,
+ *   configurable: false
  * });
- * 
+ *
  * try {
  *   merge(frozen, { key: 'new value' });
  * } catch (error) {
@@ -316,7 +316,7 @@ export const merge = <
   source: Source,
 ): Target & Source => {
   const keys = Object.keys(source) as Array<keyof Source>;
-  for (let i = 0; i < keys.length; i++) {
+  for (let i = 0, l = keys.length; i < l; i++) {
     const key = keys[i];
     const sourceValue = source[key];
     const targetValue = target[key];

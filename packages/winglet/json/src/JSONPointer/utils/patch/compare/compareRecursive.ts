@@ -70,7 +70,7 @@ export const compareRecursive = <
   let hasRemoved = false;
 
   // Process existing keys in source
-  for (let i = 0; i < sourceKeys.length; i++) {
+  for (let i = 0, l = sourceKeys.length; i < l; i++) {
     const key = sourceKeys[i];
     const sourceValue = source[key as keyof Source];
 
@@ -150,7 +150,7 @@ export const compareRecursive = <
   if (!hasRemoved && targetKeys.length === sourceKeys.length) return;
 
   // Process additions (new keys in target)
-  for (let i = 0; i < targetKeys.length; i++) {
+  for (let i = 0, l = targetKeys.length; i < l; i++) {
     const key = targetKeys[i];
     const targetValue = target[key as keyof Target];
 

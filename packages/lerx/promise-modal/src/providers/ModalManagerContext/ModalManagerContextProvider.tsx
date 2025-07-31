@@ -83,8 +83,8 @@ export const ModalManagerContextProvider = memo(
         modalDictionary.current.set(modal.id, modal);
         setModalIds((ids) => {
           const aliveIds: number[] = [];
-          for (let index = 0; index < ids.length; index++) {
-            const id = ids[index];
+          for (let i = 0, l = ids.length; i < l; i++) {
+            const id = ids[i];
             const destroyed = !modalDictionary.current.get(id)?.alive;
             if (destroyed) modalDictionary.current.delete(id);
             else aliveIds.push(id);

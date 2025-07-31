@@ -209,9 +209,9 @@ export const intersectionWith = <Type1, Type2>(
   isEqual: (source: Type1, target: Type2) => boolean,
 ): Type1[] => {
   const result: Type1[] = [];
-  for (let i = 0; i < source.length; i++) {
+  for (let i = 0, il = source.length; i < il; i++) {
     const item = source[i];
-    for (let j = 0; j < target.length; j++) {
+    for (let j = 0, jl = target.length; j < jl; j++) {
       if (isEqual(item, target[j])) {
         result[result.length] = item;
         break;

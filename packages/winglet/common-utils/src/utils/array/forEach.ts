@@ -26,7 +26,7 @@
  * Early termination:
  * ```typescript
  * const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
- * 
+ *
  * forEach(numbers, (num, index) => {
  *   console.log(`Processing: ${num}`);
  *   if (num === 5) {
@@ -101,10 +101,10 @@
  *     console.log(`Skipping out-of-stock item: ${product.name}`);
  *     return; // Continue to next item
  *   }
- *   
+ *
  *   totalValue += product.price;
  *   console.log(`Added ${product.name} (${product.price}) - Running total: ${totalValue}`);
- *   
+ *
  *   // Stop if total exceeds budget
  *   if (totalValue > 1000) {
  *     console.log('Budget exceeded, stopping calculation');
@@ -120,7 +120,7 @@
  *
  * forEach(items, (item, index, array) => {
  *   console.log(`Item: ${item}, Index: ${index}, Array length: ${array.length}`);
- *   
+ *
  *   // Stop at middle element
  *   if (index >= Math.floor(array.length / 2)) {
  *     console.log('Reached middle, stopping');
@@ -152,6 +152,6 @@ export const forEach = <Type>(
   array: Type[],
   callback: (item: Type, index: number, array: Type[]) => boolean | void,
 ) => {
-  for (let index = 0; index < array.length; index++)
-    if (callback(array[index], index, array) === false) break;
+  for (let i = 0, l = array.length; i < l; i++)
+    if (callback(array[i], i, array) === false) break;
 };

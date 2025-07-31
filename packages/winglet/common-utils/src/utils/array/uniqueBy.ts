@@ -150,7 +150,7 @@
  * Numeric transformation:
  * ```typescript
  * const numbers = [1.1, 1.9, 2.1, 2.8, 3.2, 3.7];
- * 
+ *
  * // Remove duplicates by integer part
  * const uniqueByFloor = uniqueBy(numbers, num => Math.floor(num));
  * console.log(uniqueByFloor); // [1.1, 2.1, 3.2]
@@ -164,7 +164,7 @@
  * String transformation:
  * ```typescript
  * const names = ['Alice', 'ALICE', 'Bob', 'bob', 'Charlie', 'charlie'];
- * 
+ *
  * // Case-insensitive deduplication
  * const uniqueByLowerCase = uniqueBy(names, name => name.toLowerCase());
  * console.log(uniqueByLowerCase); // ['Alice', 'Bob', 'Charlie']
@@ -193,7 +193,7 @@
  *
  * // Remove duplicate customer-product combinations
  * const uniqueCustomerProduct = uniqueBy(
- *   orders, 
+ *   orders,
  *   order => `${order.customerId}-${order.productId}`
  * );
  * console.log(uniqueCustomerProduct);
@@ -225,7 +225,7 @@ export const uniqueBy = <Type, SubType>(
   mapper: (item: Type) => SubType,
 ): Type[] => {
   const map = new Map<SubType, Type>();
-  for (let i = 0; i < source.length; i++) {
+  for (let i = 0, l = source.length; i < l; i++) {
     const item = source[i];
     const key = mapper(item);
     if (!map.has(key)) map.set(key, item);

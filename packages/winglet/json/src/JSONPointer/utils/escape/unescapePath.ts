@@ -129,11 +129,10 @@ import { SEPARATOR, TILDE } from './constant';
 export const unescapePath = (segment: string): string => {
   if (segment.indexOf(TILDE) === -1) return segment;
   let result = '';
-  const length = segment.length;
-  for (let index = 0; index < length; index++) {
-    const current = segment[index];
-    if (current === TILDE && index + 1 < length) {
-      const next = segment[++index];
+  for (let i = 0, l = segment.length; i < l; i++) {
+    const current = segment[i];
+    if (current === TILDE && i + 1 < l) {
+      const next = segment[++i];
       if (next === ESCAPE_TILDE_VALUE) result += TILDE;
       else if (next === ESCAPE_SEPARATOR_VALUE) result += SEPARATOR;
       else result += current + next;

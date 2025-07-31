@@ -197,7 +197,7 @@
  * // Large nested structures
  * const createLargeStructure = (depth: number, breadth: number) => {
  *   const obj: any = {};
- *   
+ *
  *   for (let i = 0; i < breadth; i++) {
  *     if (depth > 0) {
  *       obj[`branch_${i}`] = createLargeStructure(depth - 1, breadth);
@@ -205,7 +205,7 @@
  *       obj[`leaf_${i}`] = `value_${i}`;
  *     }
  *   }
- *   
+ *
  *   return obj;
  * };
  *
@@ -351,8 +351,8 @@ const stableEqualsRecursive = (
       right.byteOffset,
       right.byteLength,
     );
-    for (let index = 0; index < left.byteLength; index++)
-      if (viewLeft.getUint8(index) !== viewRight.getUint8(index)) return false;
+    for (let i = 0, l = left.byteLength; i < l; i++)
+      if (viewLeft.getUint8(i) !== viewRight.getUint8(i)) return false;
     return true;
   }
 
@@ -363,12 +363,12 @@ const stableEqualsRecursive = (
   if (leftIsArray && rightIsArray) {
     const length = left.length;
     if (length !== right.length) return false;
-    for (let index = 0; index < length; index++) {
-      const leftHasIndex = index in left;
-      const rightHasIndex = index in right;
+    for (let i = 0; i < length; i++) {
+      const leftHasIndex = i in left;
+      const rightHasIndex = i in right;
       if (leftHasIndex !== rightHasIndex) return false;
       if (leftHasIndex)
-        if (!stableEqualsRecursive(left[index], right[index], visited, omits))
+        if (!stableEqualsRecursive(left[i], right[i], visited, omits))
           return false;
     }
     return true;
@@ -377,8 +377,8 @@ const stableEqualsRecursive = (
   const leftKeys = Reflect.ownKeys(left);
 
   if (leftKeys.length !== Reflect.ownKeys(right).length) return false;
-  for (let index = 0; index < leftKeys.length; index++) {
-    const key = leftKeys[index];
+  for (let i = 0, l = leftKeys.length; i < l; i++) {
+    const key = leftKeys[i];
     if (omits?.has(key)) continue;
     if (!Reflect.has(right, key)) return false;
     if (

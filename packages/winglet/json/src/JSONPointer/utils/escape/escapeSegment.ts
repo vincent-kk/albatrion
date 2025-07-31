@@ -106,8 +106,8 @@ export const escapeSegment = (segment: string): string => {
   if (segment.indexOf(SEPARATOR) === -1 && segment.indexOf(TILDE) === -1)
     return segment;
   let result = '';
-  for (let index = 0, length = segment.length; index < length; index++) {
-    const character = segment[index];
+  for (let i = 0, l = segment.length; i < l; i++) {
+    const character = segment[i];
     if (character === TILDE) result += ESCAPE_TILDE;
     else if (character === SEPARATOR) result += ESCAPE_SEPARATOR;
     else result += character;

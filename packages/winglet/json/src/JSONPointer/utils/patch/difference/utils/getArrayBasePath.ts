@@ -32,7 +32,7 @@ import { JSONPointer } from '@/json/JSONPointer/enum';
 export const getArrayBasePath = (path: string): string | null => {
   let lastSlash = -1;
   let segmentStart = 1;
-  for (let i = 1; i < path.length; i++) {
+  for (let i = 1, l = path.length; i < l; i++) {
     if (path[i] === JSONPointer.Separator) {
       const segment = path.slice(segmentStart, i);
       if (isArrayIndex(segment))

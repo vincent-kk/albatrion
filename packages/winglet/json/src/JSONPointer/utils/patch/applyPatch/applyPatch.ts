@@ -82,7 +82,7 @@ export const applyPatch = <Result extends JsonRoot = any>(
   const protectPrototype = options?.protectPrototype ?? true;
 
   let result: any = immutable ? clone(source) : source;
-  for (let i = 0; i < patches.length; i++)
+  for (let i = 0, l = patches.length; i < l; i++)
     result = applySinglePatch(result, patches[i], i, strict, protectPrototype);
   return result as Result;
 };

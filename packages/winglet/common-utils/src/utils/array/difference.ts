@@ -17,8 +17,8 @@
  *
  * const fruits = ['apple', 'banana', 'orange', 'grape'];
  * const toRemove = ['banana', 'grape'];
- * 
- * console.log(difference(fruits, toRemove)); 
+ *
+ * console.log(difference(fruits, toRemove));
  * // ['apple', 'orange']
  * ```
  *
@@ -27,8 +27,8 @@
  * ```typescript
  * const numbers = [1, 2, 3, 4, 5, 6];
  * const evens = [2, 4, 6];
- * 
- * console.log(difference(numbers, evens)); 
+ *
+ * console.log(difference(numbers, evens));
  * // [1, 3, 5]
  * ```
  *
@@ -37,8 +37,8 @@
  * ```typescript
  * const source = [1, 2, 2, 3, 4, 4, 5];
  * const exclude = [2, 4];
- * 
- * console.log(difference(source, exclude)); 
+ *
+ * console.log(difference(source, exclude));
  * // [1, 3, 5] (duplicates in source are preserved, but excluded elements are removed)
  * ```
  *
@@ -47,13 +47,13 @@
  * ```typescript
  * // Empty source array
  * console.log(difference([], [1, 2, 3])); // []
- * 
+ *
  * // Empty exclude array
  * console.log(difference([1, 2, 3], [])); // [1, 2, 3]
- * 
+ *
  * // No common elements
  * console.log(difference([1, 2, 3], [4, 5, 6])); // [1, 2, 3]
- * 
+ *
  * // All elements excluded
  * console.log(difference([1, 2, 3], [1, 2, 3, 4, 5])); // []
  * ```
@@ -63,8 +63,8 @@
  * ```typescript
  * const words = ['Hello', 'World', 'hello', 'world'];
  * const exclude = ['Hello', 'World'];
- * 
- * console.log(difference(words, exclude)); 
+ *
+ * console.log(difference(words, exclude));
  * // ['hello', 'world'] (case-sensitive comparison)
  * ```
  *
@@ -84,7 +84,7 @@
 export const difference = <Type>(source: Type[], exclude: Type[]): Type[] => {
   const result: Type[] = [];
   const excludeSet = new Set(exclude);
-  for (let i = 0; i < source.length; i++) {
+  for (let i = 0, l = source.length; i < l; i++) {
     const item = source[i];
     if (!excludeSet.has(item)) result[result.length] = item;
   }

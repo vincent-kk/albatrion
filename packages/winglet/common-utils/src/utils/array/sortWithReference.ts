@@ -29,30 +29,28 @@ export const sortWithReference = <Value>(
   if (!reference) return source;
 
   const referenceMap = new Map<Value, number>();
-  for (let index = 0; index < reference.length; index++)
-    referenceMap.set(reference[index], index);
+  for (let i = 0, l = reference.length; i < l; i++)
+    referenceMap.set(reference[i], i);
 
   const referencedGroups: Value[][] = new Array(reference.length);
-  for (let index = 0; index < reference.length; index++)
-    referencedGroups[index] = [];
+  for (let i = 0, l = reference.length; i < l; i++) referencedGroups[i] = [];
 
   const unreferencedItems: Value[] = [];
 
-  for (let index = 0; index < source.length; index++) {
-    const item = source[index];
+  for (let i = 0, l = source.length; i < l; i++) {
+    const item = source[i];
     const referenceIndex = referenceMap.get(item);
     if (referenceIndex === undefined) unreferencedItems.push(item);
     else referencedGroups[referenceIndex].push(item);
   }
 
   const result: Value[] = [];
-  for (let groupIndex = 0; groupIndex < referencedGroups.length; groupIndex++) {
-    const group = referencedGroups[groupIndex];
-    for (let itemIndex = 0; itemIndex < group.length; itemIndex++)
-      result.push(group[itemIndex]);
+  for (let i = 0, il = referencedGroups.length; i < il; i++) {
+    const group = referencedGroups[i];
+    for (let j = 0, jl = group.length; j < jl; j++) result.push(group[j]);
   }
-  for (let index = 0; index < unreferencedItems.length; index++)
-    result.push(unreferencedItems[index]);
+  for (let i = 0, l = unreferencedItems.length; i < l; i++)
+    result.push(unreferencedItems[i]);
 
   return result;
 };

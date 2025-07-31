@@ -34,7 +34,7 @@ import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 export const getPathSegments = (path: string) => {
   const segments = path.split(JSONPointer.Separator).filter(isTruthy);
   if (segments.length === 0) return null;
-  for (let index = 0, length = segments.length; index < length; index++)
-    segments[index] = unescapeSegment(segments[index]);
+  for (let i = 0, l = segments.length; i < l; i++)
+    segments[i] = unescapeSegment(segments[i]);
   return segments;
 };

@@ -64,7 +64,7 @@ interface JsonSchemaScannerProps<ContextType> {
  *   }
  * });
  *
- * const resolvedSchema = await asyncScanner.scan(schemaWithRemoteRefs).then(scanner => 
+ * const resolvedSchema = await asyncScanner.scan(schemaWithRemoteRefs).then(scanner =>
  *   scanner.getValue()
  * );
  * ```
@@ -102,7 +102,7 @@ interface JsonSchemaScannerProps<ContextType> {
  *   visitor: {
  *     enter: async (entry, context) => {
  *       context.validatedPaths.push(entry.path);
- *       
+ *
  *       // Async validation against external service
  *       if (entry.schema.type === 'object') {
  *         const validationResult = await validateSchemaStructure(entry.schema);
@@ -135,15 +135,15 @@ interface JsonSchemaScannerProps<ContextType> {
  *   options: {
  *     resolveReference: async (serviceRef) => {
  *       const [, , serviceName] = serviceRef.split('/');
- *       
+ *
  *       // Async service discovery and schema fetching
  *       const serviceEndpoint = await discoverService(serviceName);
  *       const schemaResponse = await fetch(`${serviceEndpoint}/api/schema`);
  *       const schema = await schemaResponse.json();
- *       
+ *
  *       // Cache for performance
  *       await cacheSchema(serviceRef, schema);
- *       
+ *
  *       return schema;
  *     },
  *     context: { resolvedServices: new Set<string>() }
@@ -171,13 +171,13 @@ interface JsonSchemaScannerProps<ContextType> {
  *       // Batch reference resolution for performance
  *       if (!context.pendingRefs) context.pendingRefs = [];
  *       context.pendingRefs.push(refPath);
- *       
+ *
  *       if (context.pendingRefs.length >= 10) {
  *         const resolvedBatch = await resolveBatchedReferences(context.pendingRefs);
  *         context.pendingRefs = [];
  *         return resolvedBatch[refPath];
  *       }
- *       
+ *
  *       // Handle single reference
  *       return await resolveSingleReference(refPath);
  *     }
@@ -275,8 +275,8 @@ export class JsonSchemaScannerAsync<ContextType = void> {
       return this.#processedSchema as Schema;
     }
     let processedSchema = clone(this.#originalSchema);
-    for (let index = 0; index < pendingResolvesLength; index++) {
-      const [path, resolvedSchema] = pendingResolves[index];
+    for (let i = 0; i < pendingResolvesLength; i++) {
+      const [path, resolvedSchema] = pendingResolves[i];
       processedSchema = setValue(processedSchema, path, resolvedSchema);
     }
     this.#pendingResolves = [];

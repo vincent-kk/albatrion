@@ -61,7 +61,7 @@
  *
  * const processed = transformValues(userForm, (value, key) => {
  *   const trimmed = value.trim();
- *   
+ *
  *   switch (key) {
  *     case 'firstName':
  *     case 'lastName':
@@ -76,11 +76,11 @@
  *       return trimmed;
  *   }
  * });
- * 
+ *
  * console.log(processed);
  * // {
  * //   firstName: 'Alice',
- * //   lastName: 'Smith', 
+ * //   lastName: 'Smith',
  * //   email: 'alice.smith@example.com',
  * //   age: 25,
  * //   phone: '12345678900'
@@ -115,7 +115,7 @@
  *       return value;
  *   }
  * });
- * 
+ *
  * console.log(calculated);
  * // {
  * //   name: 'Laptop',
@@ -156,7 +156,7 @@
  *       return value;
  *   }
  * });
- * 
+ *
  * console.log(sanitized);
  * // {
  * //   username: 'johndoe123',
@@ -204,7 +204,7 @@
  *       return value;
  *   }
  * });
- * 
+ *
  * console.log(processed);
  * // {
  * //   id: 123,
@@ -245,7 +245,7 @@
  *       return value;
  *   }
  * });
- * 
+ *
  * console.log(config);
  * // {
  * //   PORT: 3000,
@@ -305,7 +305,7 @@ export const transformValues = <
 ): Record<Key, Value> => {
   const result = {} as Record<Key, Value>;
   const keys = Object.keys(object);
-  for (let i = 0; i < keys.length; i++) {
+  for (let i = 0, l = keys.length; i < l; i++) {
     const key = keys[i] as Key;
     const value = object[key];
     result[key] = getValue(value, key, object);

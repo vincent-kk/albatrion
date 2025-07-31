@@ -179,33 +179,33 @@ import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
  * function compareObjects(obj1: any, obj2: any): boolean {
  *   return equals(obj1, obj2);
  * }
- * 
+ *
  * // Conditional logic based on equality
  * function processUserData(current: User, updated: User) {
  *   if (equals(current, updated, ['lastModified', 'version'])) {
  *     console.log('No meaningful changes detected');
  *     return current;
  *   }
- *   
+ *
  *   console.log('User data has changed');
  *   return { ...current, ...updated, lastModified: new Date() };
  * }
- * 
+ *
  * // Form validation
  * function isFormValid(formData: FormData, expectedStructure: FormData): boolean {
  *   return equals(formData, expectedStructure, ['timestamp', 'sessionId']);
  * }
- * 
+ *
  * // Note: For type narrowing, you need manual type assertions
  * function validateApiResponse(response: unknown) {
  *   const expectedStructure = { status: 'success', data: {} };
- *   
+ *
  *   if (equals(expectedStructure, response, ['data'])) {
  *     // Manual type assertion needed since equals() returns boolean
  *     const validResponse = response as { status: 'success'; data: any };
  *     return validResponse;
  *   }
- *   
+ *
  *   throw new Error('Invalid API response structure');
  * }
  * ```
@@ -287,8 +287,8 @@ const equalsRecursive = (
   if (leftIsArray && rightIsArray) {
     const length = left.length;
     if (length !== right.length) return false;
-    for (let index = 0; index < length; index++)
-      if (!equalsRecursive(left[index], right[index], omits)) return false;
+    for (let i = 0; i < length; i++)
+      if (!equalsRecursive(left[i], right[i], omits)) return false;
     return true;
   }
 
@@ -297,8 +297,8 @@ const equalsRecursive = (
 
   if (length !== Object.keys(right).length) return false;
 
-  for (let index = 0; index < length; index++) {
-    const key = keys[index];
+  for (let i = 0; i < length; i++) {
+    const key = keys[i];
     if (omits?.has(key)) continue;
     if (
       !hasOwnProperty(right, key) ||

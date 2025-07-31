@@ -167,7 +167,7 @@ interface JsonSchemaScannerProps<ContextType> {
  * @remarks
  * **Processing Phases:**
  * 1. **Enter**: Initial node processing, filtering, and mutation
- * 2. **Reference**: $ref resolution and circular reference detection  
+ * 2. **Reference**: $ref resolution and circular reference detection
  * 3. **ChildEntries**: Depth checking and child node discovery
  * 4. **Exit**: Final processing and cleanup
  *
@@ -245,8 +245,8 @@ export class JsonSchemaScanner<ContextType = void> {
       return this.#processedSchema as Schema;
     }
     let processedSchema = clone(this.#originalSchema);
-    for (let index = 0; index < pendingResolvesLength; index++) {
-      const [path, resolvedSchema] = pendingResolves[index];
+    for (let i = 0; i < pendingResolvesLength; i++) {
+      const [path, resolvedSchema] = pendingResolves[i];
       processedSchema = setValue(processedSchema, path, resolvedSchema);
     }
     this.#pendingResolves = [];

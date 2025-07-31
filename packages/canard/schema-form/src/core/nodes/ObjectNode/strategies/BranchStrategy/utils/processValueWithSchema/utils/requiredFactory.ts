@@ -18,7 +18,7 @@ export const requiredFactory = (
     const conditions = fieldConditionMap.get(key);
     if (!conditions) return false;
     if (conditions === true) return true;
-    for (let i = 0; i < conditions.length; i++) {
+    for (let i = 0, l = conditions.length; i < l; i++) {
       const { condition, inverse } = conditions[i];
       let matches = true;
       const condKeys = Object.keys(condition);

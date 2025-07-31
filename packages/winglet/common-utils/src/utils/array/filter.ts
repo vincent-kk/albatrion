@@ -57,7 +57,7 @@
  * console.log(everyOther); // ['a', 'c', 'e']
  *
  * // Filter based on array context
- * const duplicatesRemoved = filter(items, (item, index, array) => 
+ * const duplicatesRemoved = filter(items, (item, index, array) =>
  *   array.indexOf(item) === index
  * );
  * ```
@@ -94,9 +94,9 @@
  * ];
  *
  * // Filter expensive electronics in stock
- * const expensiveElectronics = filter(products, product => 
- *   product.category === 'Electronics' && 
- *   product.price > 500 && 
+ * const expensiveElectronics = filter(products, product =>
+ *   product.category === 'Electronics' &&
+ *   product.price > 500 &&
  *   product.inStock
  * );
  * console.log(expensiveElectronics); // [{ name: 'Laptop', ... }]
@@ -112,8 +112,8 @@
  * ];
  *
  * // Filter engineers with JavaScript skills
- * const jsEngineers = filter(employees, emp => 
- *   emp.department.name === 'Engineering' && 
+ * const jsEngineers = filter(employees, emp =>
+ *   emp.department.name === 'Engineering' &&
  *   emp.skills.includes('JavaScript')
  * );
  * console.log(jsEngineers); // [{ name: 'John', ... }]
@@ -138,8 +138,7 @@ export const filter = <Type>(
   callback: (item: Type, index: number, array: Type[]) => boolean,
 ): Type[] => {
   const result = new Array<Type>();
-  for (let index = 0; index < array.length; index++)
-    if (callback(array[index], index, array))
-      result[result.length] = array[index];
+  for (let i = 0, l = array.length; i < l; i++)
+    if (callback(array[i], i, array)) result[result.length] = array[i];
   return result;
 };

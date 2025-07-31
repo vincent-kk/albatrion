@@ -156,7 +156,7 @@ import { getSymbols } from './getSymbols';
  *
  * **Performance Benchmarks** (Node.js v18, typical hardware):
  * - Small objects (< 100 props): ~0.1ms
- * - Medium objects (< 1000 props): ~2ms  
+ * - Medium objects (< 1000 props): ~2ms
  * - Large objects (< 10000 props): ~25ms
  * - With circular references: +15% overhead
  * - vs JSON.parse(JSON.stringify): ~3x slower but handles more types
@@ -194,7 +194,7 @@ const replicate = <Type>(value: Type, cache = new Map<object, any>()): Type => {
   if (isArray(value)) {
     const result = new Array(value.length);
     cache.set(value, result);
-    for (let i = 0; i < value.length; i++)
+    for (let i = 0, l = value.length; i < l; i++)
       if (i in value) result[i] = replicate(value[i], cache);
     // @ts-expect-error: The `index` property is only available in the result of a RegExp match.
     if ('index' in value) result.index = value.index;
@@ -298,7 +298,7 @@ const replicateProperties = (
 ): void => {
   const keys = Object.keys(source);
   if (keys.length > 0)
-    for (let i = 0; i < keys.length; i++) {
+    for (let i = 0, l = keys.length; i < l; i++) {
       const key = keys[i];
       const descriptor = Object.getOwnPropertyDescriptor(target, key);
       if (descriptor == null || descriptor.writable)
@@ -306,7 +306,7 @@ const replicateProperties = (
     }
   const symbols = getSymbols(source);
   if (symbols.length > 0)
-    for (let i = 0; i < symbols.length; i++) {
+    for (let i = 0, l = symbols.length; i < l; i++) {
       const key = symbols[i];
       const descriptor = Object.getOwnPropertyDescriptor(target, key);
       if (descriptor == null || descriptor.writable)

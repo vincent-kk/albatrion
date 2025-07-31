@@ -60,8 +60,8 @@ import type { Dictionary, Nullish } from '@aileron/declare';
  *
  * // Order with undefined values included
  * const withUndefined = sortObjectKeys(
- *   incompleteData, 
- *   ['id', 'name', 'email', 'phone'], 
+ *   incompleteData,
+ *   ['id', 'name', 'email', 'phone'],
  *   false
  * );
  * console.log(withUndefined);
@@ -69,8 +69,8 @@ import type { Dictionary, Nullish } from '@aileron/declare';
  *
  * // Order with undefined values filtered out
  * const filtered = sortObjectKeys(
- *   incompleteData, 
- *   ['id', 'name', 'email', 'phone'], 
+ *   incompleteData,
+ *   ['id', 'name', 'email', 'phone'],
  *   true
  * );
  * console.log(filtered);
@@ -117,12 +117,12 @@ import type { Dictionary, Nullish } from '@aileron/declare';
  *   'firstName', 'lastName', 'email', 'phone',
  *   'city', 'zipCode', 'country', 'newsletter'
  * ];
- * 
+ *
  * const orderedForm = sortObjectKeys(formData, fieldOrder, true);
  * console.log(orderedForm);
  * // {
  * //   firstName: 'John',
- * //   lastName: 'Doe', 
+ * //   lastName: 'Doe',
  * //   email: 'john@example.com',
  * //   city: 'New York',
  * //   zipCode: '10001',
@@ -185,7 +185,7 @@ import type { Dictionary, Nullish } from '@aileron/declare';
  * // Standard API response order
  * const apiOrder = ['success', 'data', 'pagination', 'timestamp', 'errors'];
  * const prepared = sortObjectKeys(responseData, apiOrder, true);
- * 
+ *
  * console.log(JSON.stringify(prepared, null, 2));
  * // {
  * //   "success": true,
@@ -240,15 +240,15 @@ export const sortObjectKeys = <Dict extends Dictionary>(
 ): Dict => {
   if (!object) return {} as Dict;
   const result: Dictionary = {};
-  for (let index = 0; index < keys.length; index++) {
-    const key = keys[index];
+  for (let i = 0, l = keys.length; i < l; i++) {
+    const key = keys[i];
     if (!(key in object) || (omitUndefined && object[key] === undefined))
       continue;
     result[key] = object[key];
   }
   const objectKeys = Object.keys(object);
-  for (let index = 0; index < objectKeys.length; index++) {
-    const key = objectKeys[index];
+  for (let i = 0, l = objectKeys.length; i < l; i++) {
+    const key = objectKeys[i];
     if (key in result || (omitUndefined && object[key] === undefined)) continue;
     result[key] = object[key];
   }

@@ -8,9 +8,9 @@ export const getValueByPointer = <Input extends Dictionary | Array<any>>(
   const hasRootPrefix = segments[0] === '' || segments[0] === '#';
   if (length === 0 || (length === 1 && hasRootPrefix)) return input;
   let cursor: any = input;
-  for (let index = hasRootPrefix ? 1 : 0; index < length; ) {
-    cursor = cursor[segments[index++]];
-    if (index === length) break;
+  for (let i = hasRootPrefix ? 1 : 0; i < length; ) {
+    cursor = cursor[segments[i++]];
+    if (i === length) break;
     if (typeof cursor !== 'object' || cursor === null) return undefined;
   }
   return cursor;

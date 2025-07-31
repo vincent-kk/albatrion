@@ -59,7 +59,7 @@ import type { Dictionary, Fn } from '@aileron/declare';
  * ```typescript
  * const unorderedData = {
  *   zebra: 'last',
- *   apple: 'first', 
+ *   apple: 'first',
  *   banana: 'middle',
  *   cherry: 'second'
  * };
@@ -82,7 +82,7 @@ import type { Dictionary, Fn } from '@aileron/declare';
  * ```typescript
  * const database = {
  *   users_table: 'user data',
- *   orders_table: 'order data', 
+ *   orders_table: 'order data',
  *   products_table: 'product data',
  *   temp_cache: 'temporary',
  *   debug_log: 'debug info',
@@ -155,7 +155,7 @@ import type { Dictionary, Fn } from '@aileron/declare';
  * - Preserves type information through generic constraints
  *
  * **Filtering Behavior:**
- * - **Array Omit**: Converted to Set internally for better lookup performance  
+ * - **Array Omit**: Converted to Set internally for better lookup performance
  * - **Set Omit**: Used directly for O(1) membership testing
  * - **Empty Omit**: No filtering applied, all keys returned
  * - **Complete Omit**: Returns empty array if all keys excluded
@@ -168,7 +168,7 @@ import type { Dictionary, Fn } from '@aileron/declare';
  *
  * **Use Cases:**
  * - Object transformation and mapping operations
- * - API response filtering and sanitization  
+ * - API response filtering and sanitization
  * - Configuration management and validation
  * - Dynamic form field generation
  * - Object serialization with selective fields
@@ -185,7 +185,7 @@ export const getObjectKeys = <Type extends Dictionary>(
   if (omit) {
     const omits = omit instanceof Set ? omit : new Set(omit);
     const filteredKeys: Array<keyof Type> = [];
-    for (let i = 0; i < keys.length; i++) {
+    for (let i = 0, l = keys.length; i < l; i++) {
       const key = keys[i];
       if (!omits.has(key)) filteredKeys[filteredKeys.length] = key;
     }

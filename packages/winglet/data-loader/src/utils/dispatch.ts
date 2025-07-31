@@ -19,7 +19,7 @@ export const failedDispatch = <E extends Error>(
   error: E,
 ) => {
   resolveCacheHits(batch);
-  for (let i = 0; i < batch.keys.length; i++) {
+  for (let i = 0, l = batch.keys.length; i < l; i++) {
     loader.clear(batch.keys[i]);
     batch.promises[i].reject(error);
   }
