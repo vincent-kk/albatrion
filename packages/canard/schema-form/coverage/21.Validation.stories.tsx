@@ -410,7 +410,13 @@ export const UseVirtualNodeErrorWithChildNodeErrorsHook = () => {
       address: {
         fields: ['zipCode', 'city', 'roadAddress'],
         FormType: ({ node, value, onChange }) => {
-          const { errorMatrix, errorMessages } = useChildNodeErrors(node);
+          const {
+            showError,
+            showErrors,
+            errorMessage,
+            errorMessages,
+            errorMatrix,
+          } = useChildNodeErrors(node);
           return (
             <div>
               <div>
@@ -447,9 +453,32 @@ export const UseVirtualNodeErrorWithChildNodeErrorsHook = () => {
               </div>
               <div>
                 <div>
-                  {errorMessages.map((error: any, index: number) => (
-                    <div key={index}>{error || ''}</div>
+                  <strong>Error Display (showErrors & errorMessages):</strong>
+                  <div>
+                    Field Virtual:{' '}
+                    {showError && errorMessage ? (
+                      <span style={{ color: 'red' }}>{errorMessage}</span>
+                    ) : (
+                      <span style={{ color: 'gray' }}>No error to show</span>
+                    )}
+                  </div>
+                  {showErrors.map((show, index) => (
+                    <div key={index}>
+                      Field {index + 1}:{' '}
+                      {show && errorMessages[index] ? (
+                        <span style={{ color: 'red' }}>
+                          {errorMessages[index]}
+                        </span>
+                      ) : (
+                        <span style={{ color: 'gray' }}>No error to show</span>
+                      )}
+                    </div>
                   ))}
+                </div>
+                <div style={{ marginTop: '10px' }}>
+                  <strong>showError:</strong> {showError ? 'true' : 'false'} |
+                  <strong> showErrors:</strong> [
+                  {showErrors.map((s) => (s ? 'T' : 'F')).join(', ')}]
                 </div>
                 <pre>{JSON.stringify(errorMatrix, null, 2)}</pre>{' '}
               </div>
@@ -467,7 +496,6 @@ export const UseVirtualNodeErrorWithChildNodeErrorsHook = () => {
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
       <Form
-        showError
         jsonSchema={jsonSchema}
         onChange={setValue}
         onValidate={setErrors}
@@ -518,8 +546,13 @@ export const UseChildNodeErrorsWithDisabled = () => {
         fields: ['age', 'phone'],
         FormType: ({ node, value, onChange }) => {
           const [isDisabled, setIsDisabled] = useState(false);
-          const { errorMatrix, errorMessages, errorMessage } =
-            useChildNodeErrors(node, isDisabled);
+          const {
+            errorMatrix,
+            errorMessages,
+            errorMessage,
+            showError,
+            showErrors,
+          } = useChildNodeErrors(node, isDisabled);
 
           const handleFieldChange = (index: number, newValue: any) => {
             const newValues = [...(value || [])];
@@ -554,11 +587,17 @@ export const UseChildNodeErrorsWithDisabled = () => {
                     }
                     placeholder="Enter age (minimum 18)"
                   />
-                  <span
-                    style={{ color: 'red', fontSize: '12px', display: 'block' }}
-                  >
-                    {errorMessages[0]}
-                  </span>
+                  {showErrors[0] && errorMessages[0] && (
+                    <span
+                      style={{
+                        color: 'red',
+                        fontSize: '12px',
+                        display: 'block',
+                      }}
+                    >
+                      {errorMessages[0]}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <label>Phone (XXX-XXXX-XXXX format)</label>
@@ -568,11 +607,17 @@ export const UseChildNodeErrorsWithDisabled = () => {
                     onChange={(e) => handleFieldChange(1, e.target.value)}
                     placeholder="Enter phone in XXX-XXXX-XXXX format"
                   />
-                  <span
-                    style={{ color: 'red', fontSize: '12px', display: 'block' }}
-                  >
-                    {errorMessages[1]}
-                  </span>
+                  {showErrors[1] && errorMessages[1] && (
+                    <span
+                      style={{
+                        color: 'red',
+                        fontSize: '12px',
+                        display: 'block',
+                      }}
+                    >
+                      {errorMessages[1]}
+                    </span>
+                  )}
                 </div>
               </div>
               <div
@@ -586,7 +631,15 @@ export const UseChildNodeErrorsWithDisabled = () => {
                   Error Information (disabled: {isDisabled ? 'true' : 'false'})
                 </h5>
                 <div>
-                  <strong>First Error:</strong> {errorMessage || 'No errors'}
+                  <strong>First Error (showError && errorMessage):</strong>{' '}
+                  {showError && errorMessage
+                    ? errorMessage
+                    : 'No errors to show'}
+                </div>
+                <div>
+                  <strong>showError:</strong> {showError ? 'true' : 'false'} |
+                  <strong> showErrors:</strong> [
+                  {showErrors.map((s) => (s ? 'T' : 'F')).join(', ')}]
                 </div>
                 <div>
                   <strong>Error Messages:</strong>
@@ -620,7 +673,6 @@ export const UseChildNodeErrorsWithDisabled = () => {
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
       <Form
-        showError
         jsonSchema={jsonSchema}
         onChange={setValue}
         onValidate={setErrors}
@@ -672,8 +724,13 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
       directChildrenGroup: {
         fields: ['field1', 'field2', 'field3', 'field4'],
         FormType: ({ node, value, onChange }) => {
-          const { errorMatrix, errorMessages, errorMessage } =
-            useChildNodeErrors(node);
+          const {
+            errorMatrix,
+            errorMessages,
+            errorMessage,
+            showError,
+            showErrors,
+          } = useChildNodeErrors(node);
 
           const handleFieldChange = (index: number, newValue: any) => {
             const newValues = [...(value || [])];
@@ -700,15 +757,17 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
                       onChange={(e) => handleFieldChange(0, e.target.value)}
                       placeholder="Enter at least 2 characters"
                     />
-                    <span
-                      style={{
-                        color: 'red',
-                        fontSize: '12px',
-                        display: 'block',
-                      }}
-                    >
-                      {errorMessages[0]}
-                    </span>
+                    {showErrors[0] && errorMessages[0] && (
+                      <span
+                        style={{
+                          color: 'red',
+                          fontSize: '12px',
+                          display: 'block',
+                        }}
+                      >
+                        {errorMessages[0]}
+                      </span>
+                    )}
                   </div>
                   <div>
                     <label>Field 2 (uppercase start)</label>
@@ -718,15 +777,17 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
                       onChange={(e) => handleFieldChange(1, e.target.value)}
                       placeholder="Must start with uppercase"
                     />
-                    <span
-                      style={{
-                        color: 'red',
-                        fontSize: '12px',
-                        display: 'block',
-                      }}
-                    >
-                      {errorMessages[1]}
-                    </span>
+                    {showErrors[1] && errorMessages[1] && (
+                      <span
+                        style={{
+                          color: 'red',
+                          fontSize: '12px',
+                          display: 'block',
+                        }}
+                      >
+                        {errorMessages[1]}
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -745,15 +806,17 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
                       }
                       placeholder="Enter number 0-100"
                     />
-                    <span
-                      style={{
-                        color: 'red',
-                        fontSize: '12px',
-                        display: 'block',
-                      }}
-                    >
-                      {errorMessages[2]}
-                    </span>
+                    {showErrors[2] && errorMessages[2] && (
+                      <span
+                        style={{
+                          color: 'red',
+                          fontSize: '12px',
+                          display: 'block',
+                        }}
+                      >
+                        {errorMessages[2]}
+                      </span>
+                    )}
                   </div>
                   <div>
                     <label>Field 4 (max 10 chars)</label>
@@ -763,15 +826,17 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
                       onChange={(e) => handleFieldChange(3, e.target.value)}
                       placeholder="Max 10 characters"
                     />
-                    <span
-                      style={{
-                        color: 'red',
-                        fontSize: '12px',
-                        display: 'block',
-                      }}
-                    >
-                      {errorMessages[3]}
-                    </span>
+                    {showErrors[3] && errorMessages[3] && (
+                      <span
+                        style={{
+                          color: 'red',
+                          fontSize: '12px',
+                          display: 'block',
+                        }}
+                      >
+                        {errorMessages[3]}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -785,7 +850,15 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
               >
                 <h5>Direct Children Error Information</h5>
                 <div>
-                  <strong>First Error:</strong> {errorMessage || 'No errors'}
+                  <strong>showError:</strong> {showError ? 'true' : 'false'} |
+                  <strong> showErrors:</strong> [
+                  {showErrors.map((s) => (s ? 'T' : 'F')).join(', ')}]
+                </div>
+                <div>
+                  <strong>First Error (showError && errorMessage):</strong>{' '}
+                  {showError && errorMessage
+                    ? errorMessage
+                    : 'No errors to show'}
                 </div>
                 <div>
                   <strong>Field Errors:</strong>
@@ -816,7 +889,6 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
       <Form
-        showError
         jsonSchema={jsonSchema}
         onChange={setValue}
         onValidate={setErrors}
@@ -838,8 +910,13 @@ export const UseChildNodeErrorsWithEmptyChildren = () => {
       emptyGroup: {
         fields: ['emptySection'],
         FormType: ({ node, value: _value, onChange: _onChange }) => {
-          const { errorMatrix, errorMessages, errorMessage } =
-            useChildNodeErrors(node);
+          const {
+            errorMatrix,
+            errorMessages,
+            errorMessage,
+            showError,
+            showErrors,
+          } = useChildNodeErrors(node);
 
           return (
             <div>
@@ -857,7 +934,15 @@ export const UseChildNodeErrorsWithEmptyChildren = () => {
               >
                 <h5>Error Information for Empty Children</h5>
                 <div>
-                  <strong>First Error:</strong> {errorMessage || 'No errors'}
+                  <strong>showError:</strong> {showError ? 'true' : 'false'} |
+                  <strong> showErrors:</strong> [
+                  {showErrors.map((s) => (s ? 'T' : 'F')).join(', ')}]
+                </div>
+                <div>
+                  <strong>First Error (showError && errorMessage):</strong>{' '}
+                  {showError && errorMessage
+                    ? errorMessage
+                    : 'No errors to show'}
                 </div>
                 <div>
                   <strong>Error Messages Count:</strong> {errorMessages.length}
@@ -881,7 +966,6 @@ export const UseChildNodeErrorsWithEmptyChildren = () => {
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
       <Form
-        showError
         jsonSchema={jsonSchema}
         onChange={setValue}
         onValidate={setErrors}
@@ -923,8 +1007,13 @@ export const UseChildNodeErrorsRealTimeUpdate = () => {
       dynamicGroup: {
         fields: ['dynamicField1', 'dynamicField2', 'dynamicField3'],
         FormType: ({ node, value, onChange }) => {
-          const { errorMatrix, errorMessages, errorMessage } =
-            useChildNodeErrors(node);
+          const {
+            errorMatrix,
+            errorMessages,
+            errorMessage,
+            showError,
+            showErrors,
+          } = useChildNodeErrors(node);
           const [updateCount, setUpdateCount] = useState(0);
 
           const handleChange = (index: number, newValue: unknown) => {
@@ -946,9 +1035,11 @@ export const UseChildNodeErrorsRealTimeUpdate = () => {
                     onChange={(e) => handleChange(0, e.target.value)}
                     placeholder="Enter at least 5 characters"
                   />
-                  <span style={{ color: 'red', marginLeft: '10px' }}>
-                    {errorMessages[0]}
-                  </span>
+                  {showErrors[0] && errorMessages[0] && (
+                    <span style={{ color: 'red', marginLeft: '10px' }}>
+                      {errorMessages[0]}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <label>Dynamic Field 2 (numbers only)</label>
@@ -958,9 +1049,11 @@ export const UseChildNodeErrorsRealTimeUpdate = () => {
                     onChange={(e) => handleChange(1, e.target.value)}
                     placeholder="Enter numbers only"
                   />
-                  <span style={{ color: 'red', marginLeft: '10px' }}>
-                    {errorMessages[1]}
-                  </span>
+                  {showErrors[1] && errorMessages[1] && (
+                    <span style={{ color: 'red', marginLeft: '10px' }}>
+                      {errorMessages[1]}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <label>Dynamic Field 3 (max 100)</label>
@@ -972,9 +1065,11 @@ export const UseChildNodeErrorsRealTimeUpdate = () => {
                     }
                     placeholder="Enter number ≤ 100"
                   />
-                  <span style={{ color: 'red', marginLeft: '10px' }}>
-                    {errorMessages[2]}
-                  </span>
+                  {showErrors[2] && errorMessages[2] && (
+                    <span style={{ color: 'red', marginLeft: '10px' }}>
+                      {errorMessages[2]}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -987,11 +1082,29 @@ export const UseChildNodeErrorsRealTimeUpdate = () => {
               >
                 <h5>Real-time Error Monitoring</h5>
                 <div>
-                  <strong>First Error:</strong>
-                  <span style={{ color: 'red', marginLeft: '5px' }}>
-                    {errorMessage || 'No errors'}
+                  <strong>Show Error (Global):</strong>{' '}
+                  <span style={{ color: showError ? 'red' : 'green' }}>
+                    {showError ? 'true' : 'false'}
                   </span>
                 </div>
+                <div>
+                  <strong>Show Errors (Individual):</strong> [
+                  {showErrors.map((show, i) => (
+                    <span key={i} style={{ color: show ? 'red' : 'green' }}>
+                      {show ? 'true' : 'false'}
+                      {i < showErrors.length - 1 ? ', ' : ''}
+                    </span>
+                  ))}
+                  ]
+                </div>
+                {showError && errorMessage && (
+                  <div>
+                    <strong>First Error:</strong>
+                    <span style={{ color: 'red', marginLeft: '5px' }}>
+                      {errorMessage}
+                    </span>
+                  </div>
+                )}
                 <div>
                   <strong>Live Error Count:</strong>{' '}
                   {errorMessages.filter((msg: any) => msg).length} /{' '}
@@ -1024,7 +1137,6 @@ export const UseChildNodeErrorsRealTimeUpdate = () => {
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
       <Form
-        showError
         jsonSchema={jsonSchema}
         onChange={setValue}
         onValidate={setErrors}
