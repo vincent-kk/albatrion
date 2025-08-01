@@ -365,6 +365,29 @@ export const VirtualSchemaInline = () => {
                 >
                   Set [2025-01-01, 2026-01-01]
                 </button>
+                {/* @ts-expect-error */}
+                <button onClick={() => onChange(100, SetValueOption.Overwrite)}>
+                  Invalid value: 100
+                </button>
+                <button
+                  //@ts-expect-error
+                  onClick={() => onChange('hello', SetValueOption.Overwrite)}
+                >
+                  Invalid value: hello
+                </button>
+                <button
+                  // @ts-expect-error
+                  onClick={() => onChange(null, SetValueOption.Overwrite)}
+                >
+                  Invalid value: null
+                </button>
+                {/* @ts-expect-error */}
+                <button onClick={() => onChange({}, SetValueOption.Overwrite)}>
+                  Invalid value: {'{}'}
+                </button>
+                <button onClick={() => onChange([], SetValueOption.Overwrite)}>
+                  Invalid value: {'[]'}
+                </button>
                 <button
                   onClick={() => onChange(undefined, SetValueOption.Overwrite)}
                 >

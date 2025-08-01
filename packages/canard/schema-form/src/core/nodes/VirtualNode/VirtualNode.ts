@@ -1,5 +1,7 @@
 import { map } from '@winglet/common-utils/array';
+import { isArray } from '@winglet/common-utils/filter';
 
+import { SchemaNodeError } from '@/schema-form/errors';
 import type { VirtualNodeValue, VirtualSchema } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
@@ -133,7 +135,20 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
     const refNodesLength = this.#refNodes.length;
-    if (values !== undefined && values.length !== refNodesLength) return;
+    if (values !== undefined && values?.length !== refNodesLength)
+      throw new SchemaNodeError(
+        'INVALID_VIRTUAL_NODE_VALUES',
+        `Expected ${refNodesLength}-element array for virtual node, but received ${
+          isArray(values)
+            ? `${values.length}-element array`
+            : (values === null && 'null') || typeof values
+        }`,
+        {
+          expectedValuesLength: refNodesLength,
+          actualValuesLength: values?.length,
+          providedValues: values,
+        },
+      );
     const refNodes = this.#refNodes;
     if (values === undefined) {
       for (let i = 0; i < refNodesLength; i++)
