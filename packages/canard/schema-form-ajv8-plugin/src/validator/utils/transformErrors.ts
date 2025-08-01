@@ -40,13 +40,14 @@ export const transformErrors = (errors: ErrorObject[]): JsonSchemaError[] => {
  */
 const transformDataPath = (error: ErrorObject): string => {
   const instancePath = error.instancePath;
-  const hasMissingProperty =
-    error.keyword === 'required' && error.params?.missingProperty;
-  if (!instancePath)
+  const missingProperty = error.params?.missingProperty;
+  const hasMissingProperty = error.keyword === 'required' && missingProperty;
+  if (instancePath)
     return hasMissingProperty
-      ? JSON_POINTER_SEPARATOR + error.params.missingProperty
+      ? instancePath + JSON_POINTER_SEPARATOR + missingProperty
+      : instancePath;
+  else
+    return hasMissingProperty
+      ? JSON_POINTER_SEPARATOR + missingProperty
       : JSON_POINTER_SEPARATOR;
-  return hasMissingProperty
-    ? instancePath + JSON_POINTER_SEPARATOR + error.params.missingProperty
-    : instancePath;
 };
