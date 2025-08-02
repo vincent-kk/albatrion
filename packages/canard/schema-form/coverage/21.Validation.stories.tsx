@@ -68,9 +68,9 @@ export const InlineErrorMessage = () => {
     const schema = node.jsonSchema;
     const options = schema.errorMessages;
     if (!options || !error.keyword) return error.message;
-    let errorMessage = options[error.keyword];
-    if (typeof errorMessage === 'string') {
-      let message = errorMessage;
+    let formattedError = options[error.keyword];
+    if (typeof formattedError === 'string') {
+      let message = formattedError;
       if (error.details) {
         Object.entries(error.details).forEach(([key, value]) => {
           message = message.replace(`{${key}}`, '' + value);
@@ -411,10 +411,11 @@ export const UseVirtualNodeErrorWithChildNodeErrorsHook = () => {
         fields: ['zipCode', 'city', 'roadAddress'],
         FormType: ({ node, value, onChange }) => {
           const {
+            errorMessage,
             showError,
             showErrors,
-            errorMessage,
-            errorMessages,
+            formattedError,
+            formattedErrors,
             errorMatrix,
           } = useChildNodeErrors(node);
           return (
@@ -455,9 +456,17 @@ export const UseVirtualNodeErrorWithChildNodeErrorsHook = () => {
                 <div>
                   <strong>Error Display (showErrors & errorMessages):</strong>
                   <div>
-                    Field Virtual:{' '}
-                    {showError && errorMessage ? (
+                    errorMessage:{' '}
+                    {errorMessage ? (
                       <span style={{ color: 'red' }}>{errorMessage}</span>
+                    ) : (
+                      <span style={{ color: 'gray' }}>No error to show</span>
+                    )}
+                  </div>
+                  <div>
+                    Field Virtual:{' '}
+                    {formattedError ? (
+                      <span style={{ color: 'red' }}>{formattedError}</span>
                     ) : (
                       <span style={{ color: 'gray' }}>No error to show</span>
                     )}
@@ -465,9 +474,9 @@ export const UseVirtualNodeErrorWithChildNodeErrorsHook = () => {
                   {showErrors.map((show, index) => (
                     <div key={index}>
                       Field {index + 1}:{' '}
-                      {show && errorMessages[index] ? (
+                      {show && formattedErrors[index] ? (
                         <span style={{ color: 'red' }}>
-                          {errorMessages[index]}
+                          {formattedErrors[index]}
                         </span>
                       ) : (
                         <span style={{ color: 'gray' }}>No error to show</span>
@@ -548,10 +557,11 @@ export const UseChildNodeErrorsWithDisabled = () => {
           const [isDisabled, setIsDisabled] = useState(false);
           const {
             errorMatrix,
-            errorMessages,
-            errorMessage,
+            formattedErrors,
+            formattedError,
             showError,
             showErrors,
+            errorMessage,
           } = useChildNodeErrors(node, isDisabled);
 
           const handleFieldChange = (index: number, newValue: any) => {
@@ -587,7 +597,7 @@ export const UseChildNodeErrorsWithDisabled = () => {
                     }
                     placeholder="Enter age (minimum 18)"
                   />
-                  {showErrors[0] && errorMessages[0] && (
+                  {showErrors[0] && formattedErrors[0] && (
                     <span
                       style={{
                         color: 'red',
@@ -595,7 +605,7 @@ export const UseChildNodeErrorsWithDisabled = () => {
                         display: 'block',
                       }}
                     >
-                      {errorMessages[0]}
+                      {formattedErrors[0]}
                     </span>
                   )}
                 </div>
@@ -607,7 +617,7 @@ export const UseChildNodeErrorsWithDisabled = () => {
                     onChange={(e) => handleFieldChange(1, e.target.value)}
                     placeholder="Enter phone in XXX-XXXX-XXXX format"
                   />
-                  {showErrors[1] && errorMessages[1] && (
+                  {showErrors[1] && formattedErrors[1] && (
                     <span
                       style={{
                         color: 'red',
@@ -615,7 +625,7 @@ export const UseChildNodeErrorsWithDisabled = () => {
                         display: 'block',
                       }}
                     >
-                      {errorMessages[1]}
+                      {formattedErrors[1]}
                     </span>
                   )}
                 </div>
@@ -631,10 +641,12 @@ export const UseChildNodeErrorsWithDisabled = () => {
                   Error Information (disabled: {isDisabled ? 'true' : 'false'})
                 </h5>
                 <div>
-                  <strong>First Error (showError && errorMessage):</strong>{' '}
-                  {showError && errorMessage
-                    ? errorMessage
-                    : 'No errors to show'}
+                  <strong>errorMessage:</strong>{' '}
+                  {errorMessage ? errorMessage : 'No error to show'}
+                </div>
+                <div>
+                  <strong>First Error (showError && formattedError):</strong>{' '}
+                  {formattedError ? formattedError : 'No error to show'}
                 </div>
                 <div>
                   <strong>showError:</strong> {showError ? 'true' : 'false'} |
@@ -643,7 +655,7 @@ export const UseChildNodeErrorsWithDisabled = () => {
                 </div>
                 <div>
                   <strong>Error Messages:</strong>
-                  {errorMessages.map((error: any, index: number) => (
+                  {formattedErrors.map((error: any, index: number) => (
                     <div key={index}>
                       [{index}]: {error || 'No error'}
                     </div>
@@ -726,10 +738,11 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
         FormType: ({ node, value, onChange }) => {
           const {
             errorMatrix,
-            errorMessages,
-            errorMessage,
+            formattedErrors,
+            formattedError,
             showError,
             showErrors,
+            errorMessage,
           } = useChildNodeErrors(node);
 
           const handleFieldChange = (index: number, newValue: any) => {
@@ -757,7 +770,7 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
                       onChange={(e) => handleFieldChange(0, e.target.value)}
                       placeholder="Enter at least 2 characters"
                     />
-                    {showErrors[0] && errorMessages[0] && (
+                    {showErrors[0] && formattedErrors[0] && (
                       <span
                         style={{
                           color: 'red',
@@ -765,7 +778,7 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
                           display: 'block',
                         }}
                       >
-                        {errorMessages[0]}
+                        {formattedErrors[0]}
                       </span>
                     )}
                   </div>
@@ -777,7 +790,7 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
                       onChange={(e) => handleFieldChange(1, e.target.value)}
                       placeholder="Must start with uppercase"
                     />
-                    {showErrors[1] && errorMessages[1] && (
+                    {showErrors[1] && formattedErrors[1] && (
                       <span
                         style={{
                           color: 'red',
@@ -785,7 +798,7 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
                           display: 'block',
                         }}
                       >
-                        {errorMessages[1]}
+                        {formattedErrors[1]}
                       </span>
                     )}
                   </div>
@@ -806,7 +819,7 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
                       }
                       placeholder="Enter number 0-100"
                     />
-                    {showErrors[2] && errorMessages[2] && (
+                    {showErrors[2] && formattedErrors[2] && (
                       <span
                         style={{
                           color: 'red',
@@ -814,7 +827,7 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
                           display: 'block',
                         }}
                       >
-                        {errorMessages[2]}
+                        {formattedErrors[2]}
                       </span>
                     )}
                   </div>
@@ -826,7 +839,7 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
                       onChange={(e) => handleFieldChange(3, e.target.value)}
                       placeholder="Max 10 characters"
                     />
-                    {showErrors[3] && errorMessages[3] && (
+                    {showErrors[3] && formattedErrors[3] && (
                       <span
                         style={{
                           color: 'red',
@@ -834,7 +847,7 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
                           display: 'block',
                         }}
                       >
-                        {errorMessages[3]}
+                        {formattedErrors[3]}
                       </span>
                     )}
                   </div>
@@ -855,14 +868,16 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
                   {showErrors.map((s) => (s ? 'T' : 'F')).join(', ')}]
                 </div>
                 <div>
-                  <strong>First Error (showError && errorMessage):</strong>{' '}
-                  {showError && errorMessage
-                    ? errorMessage
-                    : 'No errors to show'}
+                  <strong>First Error (showError && formattedError):</strong>{' '}
+                  {formattedError ? formattedError : 'No errors to show'}
+                </div>
+                <div>
+                  <strong>errorMessage:</strong>{' '}
+                  {errorMessage ? errorMessage : 'No error to show'}
                 </div>
                 <div>
                   <strong>Field Errors:</strong>
-                  {errorMessages.map((error: any, index: number) => (
+                  {formattedErrors.map((error: any, index: number) => (
                     <div key={index}>
                       Field {index + 1}: {error || 'No error'}
                     </div>
@@ -912,10 +927,11 @@ export const UseChildNodeErrorsWithEmptyChildren = () => {
         FormType: ({ node, value: _value, onChange: _onChange }) => {
           const {
             errorMatrix,
-            errorMessages,
-            errorMessage,
+            formattedErrors,
+            formattedError,
             showError,
             showErrors,
+            errorMessage,
           } = useChildNodeErrors(node);
 
           return (
@@ -939,13 +955,16 @@ export const UseChildNodeErrorsWithEmptyChildren = () => {
                   {showErrors.map((s) => (s ? 'T' : 'F')).join(', ')}]
                 </div>
                 <div>
-                  <strong>First Error (showError && errorMessage):</strong>{' '}
-                  {showError && errorMessage
-                    ? errorMessage
-                    : 'No errors to show'}
+                  <strong>First Error (showError && formattedError):</strong>{' '}
+                  {formattedError ? formattedError : 'No errors to show'}
                 </div>
                 <div>
-                  <strong>Error Messages Count:</strong> {errorMessages.length}
+                  <strong>errorMessage:</strong>{' '}
+                  {errorMessage ? errorMessage : 'No error to show'}
+                </div>
+                <div>
+                  <strong>Error Messages Count:</strong>{' '}
+                  {formattedErrors.length}
                 </div>
                 <div>
                   <strong>Error Matrix:</strong>
@@ -1009,10 +1028,11 @@ export const UseChildNodeErrorsRealTimeUpdate = () => {
         FormType: ({ node, value, onChange }) => {
           const {
             errorMatrix,
-            errorMessages,
-            errorMessage,
+            formattedErrors,
+            formattedError,
             showError,
             showErrors,
+            errorMessage,
           } = useChildNodeErrors(node);
           const [updateCount, setUpdateCount] = useState(0);
 
@@ -1035,9 +1055,9 @@ export const UseChildNodeErrorsRealTimeUpdate = () => {
                     onChange={(e) => handleChange(0, e.target.value)}
                     placeholder="Enter at least 5 characters"
                   />
-                  {showErrors[0] && errorMessages[0] && (
+                  {showErrors[0] && formattedErrors[0] && (
                     <span style={{ color: 'red', marginLeft: '10px' }}>
-                      {errorMessages[0]}
+                      {formattedErrors[0]}
                     </span>
                   )}
                 </div>
@@ -1049,9 +1069,9 @@ export const UseChildNodeErrorsRealTimeUpdate = () => {
                     onChange={(e) => handleChange(1, e.target.value)}
                     placeholder="Enter numbers only"
                   />
-                  {showErrors[1] && errorMessages[1] && (
+                  {showErrors[1] && formattedErrors[1] && (
                     <span style={{ color: 'red', marginLeft: '10px' }}>
-                      {errorMessages[1]}
+                      {formattedErrors[1]}
                     </span>
                   )}
                 </div>
@@ -1065,9 +1085,9 @@ export const UseChildNodeErrorsRealTimeUpdate = () => {
                     }
                     placeholder="Enter number ≤ 100"
                   />
-                  {showErrors[2] && errorMessages[2] && (
+                  {showErrors[2] && formattedErrors[2] && (
                     <span style={{ color: 'red', marginLeft: '10px' }}>
-                      {errorMessages[2]}
+                      {formattedErrors[2]}
                     </span>
                   )}
                 </div>
@@ -1097,9 +1117,17 @@ export const UseChildNodeErrorsRealTimeUpdate = () => {
                   ))}
                   ]
                 </div>
-                {showError && errorMessage && (
+                {formattedError && (
                   <div>
                     <strong>First Error:</strong>
+                    <span style={{ color: 'red', marginLeft: '5px' }}>
+                      {formattedError}
+                    </span>
+                  </div>
+                )}
+                {errorMessage && (
+                  <div>
+                    <strong>errorMessage:</strong>
                     <span style={{ color: 'red', marginLeft: '5px' }}>
                       {errorMessage}
                     </span>
@@ -1107,8 +1135,8 @@ export const UseChildNodeErrorsRealTimeUpdate = () => {
                 )}
                 <div>
                   <strong>Live Error Count:</strong>{' '}
-                  {errorMessages.filter((msg: any) => msg).length} /{' '}
-                  {errorMessages.length}
+                  {formattedErrors.filter((msg: any) => msg).length} /{' '}
+                  {formattedErrors.length}
                 </div>
                 <div>
                   <strong>Error Matrix (Live):</strong>

@@ -1,6 +1,6 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
-import type { FormatError, JsonSchemaError } from '../src';
+import type { JsonSchemaError } from '../src';
 import {
   Form,
   type JsonSchema,
@@ -51,10 +51,11 @@ export const ShowErrorAndShowErrorsStateTest = () => {
         FormType: ({ node, value, onChange }) => {
           const {
             errorMatrix,
-            errorMessages,
-            errorMessage,
+            formattedErrors,
+            formattedError,
             showError,
             showErrors,
+            errorMessage,
           } = useChildNodeErrors(node);
 
           const handleFieldChange = (index: number, newValue: any) => {
@@ -110,14 +111,14 @@ export const ShowErrorAndShowErrorsStateTest = () => {
                     style={{
                       padding: '8px',
                       border:
-                        showErrors[0] && errorMessages[0]
+                        showErrors[0] && formattedErrors[0]
                           ? '2px solid red'
                           : '1px solid #ccc',
                       borderRadius: '4px',
                       width: '300px',
                     }}
                   />
-                  {showErrors[0] && errorMessages[0] && (
+                  {showErrors[0] && formattedErrors[0] && (
                     <div
                       style={{
                         color: 'red',
@@ -125,7 +126,7 @@ export const ShowErrorAndShowErrorsStateTest = () => {
                         marginTop: '3px',
                       }}
                     >
-                      ❌ {errorMessages[0]}
+                      ❌ {formattedErrors[0]}
                     </div>
                   )}
                 </div>
@@ -156,14 +157,14 @@ export const ShowErrorAndShowErrorsStateTest = () => {
                     style={{
                       padding: '8px',
                       border:
-                        showErrors[1] && errorMessages[1]
+                        showErrors[1] && formattedErrors[1]
                           ? '2px solid red'
                           : '1px solid #ccc',
                       borderRadius: '4px',
                       width: '300px',
                     }}
                   />
-                  {showErrors[1] && errorMessages[1] && (
+                  {showErrors[1] && formattedErrors[1] && (
                     <div
                       style={{
                         color: 'red',
@@ -171,7 +172,7 @@ export const ShowErrorAndShowErrorsStateTest = () => {
                         marginTop: '3px',
                       }}
                     >
-                      ❌ {errorMessages[1]}
+                      ❌ {formattedErrors[1]}
                     </div>
                   )}
                 </div>
@@ -207,14 +208,14 @@ export const ShowErrorAndShowErrorsStateTest = () => {
                     style={{
                       padding: '8px',
                       border:
-                        showErrors[2] && errorMessages[2]
+                        showErrors[2] && formattedErrors[2]
                           ? '2px solid red'
                           : '1px solid #ccc',
                       borderRadius: '4px',
                       width: '300px',
                     }}
                   />
-                  {showErrors[2] && errorMessages[2] && (
+                  {showErrors[2] && formattedErrors[2] && (
                     <div
                       style={{
                         color: 'red',
@@ -222,14 +223,14 @@ export const ShowErrorAndShowErrorsStateTest = () => {
                         marginTop: '3px',
                       }}
                     >
-                      ❌ {errorMessages[2]}
+                      ❌ {formattedErrors[2]}
                     </div>
                   )}
                 </div>
               </div>
 
               {/* Global Error Display */}
-              {showError && errorMessage && (
+              {formattedError && (
                 <div
                   style={{
                     backgroundColor: '#ffebee',
@@ -240,6 +241,22 @@ export const ShowErrorAndShowErrorsStateTest = () => {
                   }}
                 >
                   <strong>🚨 Global Error Message:</strong>
+                  <span style={{ color: 'red', marginLeft: '5px' }}>
+                    {formattedError}
+                  </span>
+                </div>
+              )}
+              {errorMessage && (
+                <div
+                  style={{
+                    backgroundColor: '#ffebee',
+                    border: '1px solid #f44336',
+                    borderRadius: '4px',
+                    padding: '10px',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <strong>🚨 errorMessage:</strong>
                   <span style={{ color: 'red', marginLeft: '5px' }}>
                     {errorMessage}
                   </span>
@@ -309,15 +326,16 @@ export const ShowErrorAndShowErrorsStateTest = () => {
                   <div>
                     <div style={{ marginBottom: '10px' }}>
                       <strong>Error Count:</strong>{' '}
-                      {errorMessages.filter((msg: any) => msg).length} /{' '}
-                      {errorMessages.length}
+                      {formattedErrors.filter((msg: any) => msg).length} /{' '}
+                      {formattedErrors.length}
                     </div>
 
                     <div style={{ marginBottom: '10px' }}>
                       <strong>Visible Error Count:</strong>{' '}
                       {
-                        showErrors.filter((show, i) => show && errorMessages[i])
-                          .length
+                        showErrors.filter(
+                          (show, i) => show && formattedErrors[i],
+                        ).length
                       }
                     </div>
                   </div>
@@ -338,7 +356,7 @@ export const ShowErrorAndShowErrorsStateTest = () => {
                           borderRadius: '3px',
                         }}
                       >
-                        {JSON.stringify(errorMessages, null, 2)}
+                        {JSON.stringify(formattedErrors, null, 2)}
                       </pre>
                     </div>
                     <div>
@@ -373,7 +391,6 @@ export const ShowErrorAndShowErrorsStateTest = () => {
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
       <Form
-        showError
         jsonSchema={jsonSchema}
         onChange={setValue}
         onValidate={setErrors}
@@ -411,11 +428,11 @@ export const ConditionalErrorDisplayTest = () => {
             useState(true);
           const [showGlobalError, setShowGlobalError] = useState(true);
           const {
-            errorMatrix,
-            errorMessages,
-            errorMessage,
+            formattedErrors,
+            formattedError,
             showError,
             showErrors,
+            errorMessage,
           } = useChildNodeErrors(node);
 
           const handleFieldChange = (index: number, newValue: any) => {
@@ -444,7 +461,7 @@ export const ConditionalErrorDisplayTest = () => {
                   }}
                 >
                   이 테스트는 조건부 에러 표시 로직을 확인합니다. showError &
-                  errorMessage 조건과 showErrors[i] & errorMessages[i] 조건을
+                  formattedError 조건과 showErrors[i] & errorMessages[i] 조건을
                   테스트할 수 있습니다.
                 </p>
 
@@ -455,7 +472,7 @@ export const ConditionalErrorDisplayTest = () => {
                       checked={showGlobalError}
                       onChange={(e) => setShowGlobalError(e.target.checked)}
                     />
-                    Show Global Error (showError && errorMessage)
+                    Show Global Error (showError && formattedError)
                   </label>
                   <label>
                     <input
@@ -493,7 +510,7 @@ export const ConditionalErrorDisplayTest = () => {
                       border:
                         showIndividualErrors &&
                         showErrors[0] &&
-                        errorMessages[0]
+                        formattedErrors[0]
                           ? '2px solid red'
                           : '1px solid #ccc',
                       borderRadius: '4px',
@@ -502,7 +519,7 @@ export const ConditionalErrorDisplayTest = () => {
                   />
                   {showIndividualErrors &&
                     showErrors[0] &&
-                    errorMessages[0] && (
+                    formattedErrors[0] && (
                       <div
                         style={{
                           color: 'red',
@@ -510,7 +527,7 @@ export const ConditionalErrorDisplayTest = () => {
                           marginTop: '3px',
                         }}
                       >
-                        ❌ Individual Error: {errorMessages[0]}
+                        ❌ Individual Error: {formattedErrors[0]}
                       </div>
                     )}
                 </div>
@@ -535,7 +552,7 @@ export const ConditionalErrorDisplayTest = () => {
                       border:
                         showIndividualErrors &&
                         showErrors[1] &&
-                        errorMessages[1]
+                        formattedErrors[1]
                           ? '2px solid red'
                           : '1px solid #ccc',
                       borderRadius: '4px',
@@ -544,7 +561,7 @@ export const ConditionalErrorDisplayTest = () => {
                   />
                   {showIndividualErrors &&
                     showErrors[1] &&
-                    errorMessages[1] && (
+                    formattedErrors[1] && (
                       <div
                         style={{
                           color: 'red',
@@ -552,14 +569,14 @@ export const ConditionalErrorDisplayTest = () => {
                           marginTop: '3px',
                         }}
                       >
-                        ❌ Individual Error: {errorMessages[1]}
+                        ❌ Individual Error: {formattedErrors[1]}
                       </div>
                     )}
                 </div>
               </div>
 
               {/* Conditional Global Error Display */}
-              {showGlobalError && showError && errorMessage && (
+              {showGlobalError && showError && formattedError && (
                 <div
                   style={{
                     backgroundColor: '#fff3cd',
@@ -569,7 +586,26 @@ export const ConditionalErrorDisplayTest = () => {
                     marginBottom: '20px',
                   }}
                 >
-                  <strong>🌐 Global Error (showError && errorMessage):</strong>
+                  <strong>
+                    🌐 Global Error (showError && formattedError):
+                  </strong>
+                  <span style={{ color: '#856404', marginLeft: '5px' }}>
+                    {formattedError}
+                  </span>
+                </div>
+              )}
+              {/* Conditional Global Error Display */}
+              {showGlobalError && errorMessage && (
+                <div
+                  style={{
+                    backgroundColor: '#fff3cd',
+                    border: '1px solid #ffc107',
+                    borderRadius: '4px',
+                    padding: '10px',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <strong>🌐 Global Error ( errorMessage):</strong>
                   <span style={{ color: '#856404', marginLeft: '5px' }}>
                     {errorMessage}
                   </span>
@@ -612,8 +648,10 @@ export const ConditionalErrorDisplayTest = () => {
                             <code>{showErrors[i]?.toString() || 'false'}</code>
                           </div>
                           <div>
-                            errorMessages[{i}]:{' '}
-                            <code>{errorMessages[i] ? 'exists' : 'null'}</code>
+                            formattedErrors[{i}]:{' '}
+                            <code>
+                              {formattedErrors[i] ? 'exists' : 'null'}
+                            </code>
                           </div>
                           <div
                             style={{
@@ -621,7 +659,7 @@ export const ConditionalErrorDisplayTest = () => {
                               color:
                                 showIndividualErrors &&
                                 showErrors[i] &&
-                                errorMessages[i]
+                                formattedErrors[i]
                                   ? 'green'
                                   : 'red',
                             }}
@@ -629,7 +667,7 @@ export const ConditionalErrorDisplayTest = () => {
                             Result:{' '}
                             {showIndividualErrors &&
                             showErrors[i] &&
-                            errorMessages[i]
+                            formattedErrors[i]
                               ? 'SHOW'
                               : 'HIDE'}
                           </div>
@@ -649,22 +687,32 @@ export const ConditionalErrorDisplayTest = () => {
                         showError: <code>{showError.toString()}</code>
                       </div>
                       <div>
-                        errorMessage:{' '}
-                        <code>{errorMessage ? 'exists' : 'null'}</code>
+                        formattedError:{' '}
+                        <code>{formattedError ? 'exists' : 'null'}</code>
                       </div>
                       <div
                         style={{
                           fontWeight: 'bold',
                           color:
-                            showGlobalError && showError && errorMessage
+                            showGlobalError && showError && formattedError
                               ? 'green'
                               : 'red',
                         }}
                       >
                         Result:{' '}
-                        {showGlobalError && showError && errorMessage
+                        {showGlobalError && showError && formattedError
                           ? 'SHOW'
                           : 'HIDE'}
+                      </div>
+                      <div
+                        style={{
+                          fontWeight: 'bold',
+                          color:
+                            showGlobalError && errorMessage ? 'green' : 'red',
+                        }}
+                      >
+                        errorMessage Result:{' '}
+                        {showGlobalError && errorMessage ? 'SHOW' : 'HIDE'}
                       </div>
                     </div>
                   </div>
@@ -684,7 +732,6 @@ export const ConditionalErrorDisplayTest = () => {
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
       <Form
-        showError
         jsonSchema={jsonSchema}
         onChange={setValue}
         onValidate={setErrors}
@@ -728,10 +775,11 @@ export const AdvancedErrorDisplayPatterns = () => {
         FormType: ({ node, value, onChange }) => {
           const {
             errorMatrix,
-            errorMessages,
-            errorMessage,
+            formattedErrors,
+            formattedError,
             showError,
             showErrors,
+            errorMessage,
           } = useChildNodeErrors(node);
 
           const handleFieldChange = (index: number, newValue: any) => {
@@ -740,9 +788,9 @@ export const AdvancedErrorDisplayPatterns = () => {
             onChange(newValues);
           };
 
-          const hasAnyErrors = errorMessages.some((msg) => msg);
+          const hasAnyErrors = formattedErrors.some((msg) => msg);
           const visibleErrorCount = showErrors.filter(
-            (show, i) => show && errorMessages[i],
+            (show, i) => show && formattedErrors[i],
           ).length;
 
           return (
@@ -785,7 +833,7 @@ export const AdvancedErrorDisplayPatterns = () => {
                 </div>
                 <div style={{ fontSize: '12px', color: '#666' }}>
                   Visible Errors: {visibleErrorCount} /{' '}
-                  {errorMessages.filter((msg) => msg).length}
+                  {formattedErrors.filter((msg) => msg).length}
                 </div>
               </div>
 
@@ -811,7 +859,7 @@ export const AdvancedErrorDisplayPatterns = () => {
                     style={{
                       padding: '12px',
                       border:
-                        showErrors[0] && errorMessages[0]
+                        showErrors[0] && formattedErrors[0]
                           ? '2px solid #f44336'
                           : '1px solid #ddd',
                       borderRadius: '6px',
@@ -820,7 +868,7 @@ export const AdvancedErrorDisplayPatterns = () => {
                       fontSize: '14px',
                     }}
                   />
-                  {showErrors[0] && errorMessages[0] && (
+                  {showErrors[0] && formattedErrors[0] && (
                     <div
                       style={{
                         color: '#f44336',
@@ -831,7 +879,7 @@ export const AdvancedErrorDisplayPatterns = () => {
                       }}
                     >
                       <span style={{ marginRight: '5px' }}>⚠️</span>
-                      {errorMessages[0]}
+                      {formattedErrors[0]}
                     </div>
                   )}
                 </div>
@@ -855,7 +903,7 @@ export const AdvancedErrorDisplayPatterns = () => {
                     style={{
                       padding: '12px',
                       border:
-                        showErrors[1] && errorMessages[1]
+                        showErrors[1] && formattedErrors[1]
                           ? '2px solid #f44336'
                           : '1px solid #ddd',
                       borderRadius: '6px',
@@ -864,7 +912,7 @@ export const AdvancedErrorDisplayPatterns = () => {
                       fontSize: '14px',
                     }}
                   />
-                  {showErrors[1] && errorMessages[1] && (
+                  {showErrors[1] && formattedErrors[1] && (
                     <div
                       style={{
                         color: '#f44336',
@@ -875,7 +923,7 @@ export const AdvancedErrorDisplayPatterns = () => {
                       }}
                     >
                       <span style={{ marginRight: '5px' }}>⚠️</span>
-                      {errorMessages[1]}
+                      {formattedErrors[1]}
                     </div>
                   )}
                 </div>
@@ -899,7 +947,7 @@ export const AdvancedErrorDisplayPatterns = () => {
                     style={{
                       padding: '12px',
                       border:
-                        showErrors[2] && errorMessages[2]
+                        showErrors[2] && formattedErrors[2]
                           ? '2px solid #f44336'
                           : '1px solid #ddd',
                       borderRadius: '6px',
@@ -908,7 +956,7 @@ export const AdvancedErrorDisplayPatterns = () => {
                       fontSize: '14px',
                     }}
                   />
-                  {showErrors[2] && errorMessages[2] && (
+                  {showErrors[2] && formattedErrors[2] && (
                     <div
                       style={{
                         color: '#f44336',
@@ -919,14 +967,14 @@ export const AdvancedErrorDisplayPatterns = () => {
                       }}
                     >
                       <span style={{ marginRight: '5px' }}>⚠️</span>
-                      {errorMessages[2]}
+                      {formattedErrors[2]}
                     </div>
                   )}
                 </div>
               </div>
 
               {/* Global Error Message */}
-              {showError && errorMessage && (
+              {showError && formattedError && (
                 <div
                   style={{
                     backgroundColor: '#ffebee',
@@ -943,6 +991,31 @@ export const AdvancedErrorDisplayPatterns = () => {
                   </span>
                   <div>
                     <strong>Form Validation Error:</strong>
+                    <div style={{ marginTop: '2px', fontSize: '14px' }}>
+                      {formattedError}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Global Error Message */}
+              {errorMessage && (
+                <div
+                  style={{
+                    backgroundColor: '#ffebee',
+                    border: '1px solid #f44336',
+                    borderRadius: '6px',
+                    padding: '12px',
+                    marginBottom: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span style={{ marginRight: '8px', fontSize: '16px' }}>
+                    🚫
+                  </span>
+                  <div>
+                    <strong>Form Validation Error(errorMessage):</strong>
                     <div style={{ marginTop: '2px', fontSize: '14px' }}>
                       {errorMessage}
                     </div>
@@ -1013,12 +1086,12 @@ export const AdvancedErrorDisplayPatterns = () => {
                     <div>
                       <h6>Error Counts:</h6>
                       <div>
-                        Total Fields: <strong>{errorMessages.length}</strong>
+                        Total Fields: <strong>{formattedErrors.length}</strong>
                       </div>
                       <div>
                         With Errors:{' '}
                         <strong>
-                          {errorMessages.filter((msg) => msg).length}
+                          {formattedErrors.filter((msg) => msg).length}
                         </strong>
                       </div>
                       <div>
@@ -1052,7 +1125,7 @@ export const AdvancedErrorDisplayPatterns = () => {
                       }}
                     >
                       {JSON.stringify(
-                        { errorMessages, errorMatrix, showErrors, showError },
+                        { formattedErrors, errorMatrix, showErrors, showError },
                         null,
                         2,
                       )}
@@ -1074,7 +1147,6 @@ export const AdvancedErrorDisplayPatterns = () => {
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
       <Form
-        showError
         jsonSchema={jsonSchema}
         onChange={setValue}
         onValidate={setErrors}

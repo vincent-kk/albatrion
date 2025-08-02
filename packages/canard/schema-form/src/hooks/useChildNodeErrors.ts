@@ -30,21 +30,22 @@ import { useSchemaNodeSubscribe } from './useSchemaNodeSubscribe';
  * ```typescript
  * // Basic usage in a form container component
  * const FormTypeObjectInput = ({ node }: FormTypeInputProps) => {
- *   const { errorMessage, errorMessages, errorMatrix, showError, showErrors } = useChildNodeErrors(node);
+ *   const { errorMessage,showError, formattedError,showErrors, formattedErrors, errorMatrix } = useChildNodeErrors(node);
  *
  *   return (
  *     <div>
  *       {node.children?.map((child, index) => (
  *         <div key={child.key}>
  *           <ChildComponent node={child.node} />
- *           {showErrors[index] && errorMessages[index] && (
- *             <span className="error">{errorMessages[index]}</span>
+ *           {showErrors[index] && formattedErrors[index] && (
+ *             <span className="error">{formattedErrors[index]}</span>
  *           )}
  *         </div>
  *       ))}
- *       {showError && errorMessage && (
- *         <div className="summary-error">{errorMessage}</div>
+ *       {showError && formattedError && (
+ *         <div className="summary-error">{formattedError}</div>
  *       )}
+ *       {errorMessage && <div className="summary-error">{errorMessage}</div>}
  *     </div>
  *   );
  * };
@@ -62,11 +63,13 @@ import { useSchemaNodeSubscribe } from './useSchemaNodeSubscribe';
  *                   all error states are cleared and no new subscriptions are made.
  *
  * @returns Object containing comprehensive error information:
+ * @returns {ReactNode} errorMessage - The first non-null and visible error message from formattedErrors.
+ *                                    Useful for displaying a single summary error.
  * @returns {boolean} showError - Whether any error should be shown.
  * @returns {boolean[]} showErrors - Array of booleans indicating if each child should show an error.
- * @returns {ReactNode} errorMessage - The first non-null error message from errorMessages.
+ * @returns {ReactNode} formattedError - The first non-null error message from formattedErrors.
  *                                    Useful for displaying a single summary error.
- * @returns {ReactNode[]} errorMessages - Array of formatted error messages for each child,
+ * @returns {ReactNode[]} formattedErrors - Array of formatted error messages for each child,
  *                                       indexed by child position. Null entries indicate no error.
  * @returns {JsonSchemaError[][]} errorMatrix - 2D array of raw error objects for each child.
  *                                             Useful for custom error processing or debugging.
@@ -75,10 +78,11 @@ export const useChildNodeErrors = (
   node: SchemaNode,
   disabled?: boolean,
 ): {
-  showError: boolean;
-  showErrors: boolean[];
   errorMessage: ReactNode;
-  errorMessages: ReactNode[];
+  showError: boolean;
+  formattedError: ReactNode;
+  showErrors: boolean[];
+  formattedErrors: ReactNode[];
   errorMatrix: JsonSchemaError[][];
 } => {
   const { formatError, checkShowError } = useFormTypeRendererContext();
@@ -90,7 +94,7 @@ export const useChildNodeErrors = (
   const [errorMatrix, setErrorMatrix] = useState<JsonSchemaError[][]>(() =>
     new Array(children?.length || 0).fill(null).map(() => []),
   );
-  const [errorMessages, setErrorMessages] = useState<ReactNode[]>(() =>
+  const [formattedErrors, setFormattedErrors] = useState<ReactNode[]>(() =>
     new Array(children?.length || 0).fill(null),
   );
 
@@ -105,7 +109,7 @@ export const useChildNodeErrors = (
       const length = children?.length || 0;
       setChildren(children);
       setErrorMatrix(new Array(length).fill(null).map(() => []));
-      setErrorMessages(new Array(length).fill(null));
+      setFormattedErrors(new Array(length).fill(null));
     }
     if (type & NodeEventType.UpdateState) {
       const {
@@ -123,7 +127,7 @@ export const useChildNodeErrors = (
     if (!disabled) return;
     const length = children?.length || 0;
     setErrorMatrix(new Array(length).fill(null).map(() => []));
-    setErrorMessages(new Array(length).fill(null));
+    setFormattedErrors(new Array(length).fill(null));
   }, [disabled, children]);
 
   // Subscribe to error updates from all child nodes
@@ -149,13 +153,13 @@ export const useChildNodeErrors = (
             return newErrors;
           });
 
-          setErrorMessages((prev) => {
+          setFormattedErrors((prev) => {
             if (prev[i] === firstError) return prev;
-            const newErrors = [...prev];
-            newErrors[i] = firstError
+            const formattedError = [...prev];
+            formattedError[i] = firstError
               ? formatError(firstError, node, context)
               : null;
-            return newErrors;
+            return formattedError;
           });
         }
         if (type & NodeEventType.UpdateState) {
@@ -176,9 +180,9 @@ export const useChildNodeErrors = (
   }, [node, disabled, children, formatError, context, update]);
 
   // Memoized computation of the first available error message
-  const errorMessage = useMemo<ReactNode>(
-    () => errorMessages.find(isTruthy),
-    [errorMessages],
+  const formattedError = useMemo<ReactNode>(
+    () => formattedErrors.find(isTruthy),
+    [formattedErrors],
   );
 
   const showErrors = useMemo(
@@ -200,11 +204,17 @@ export const useChildNodeErrors = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [node, version, showErrors, checkShowError]);
 
+  const errorMessage = useMemo<ReactNode>(
+    () => showError && formattedError,
+    [showError, formattedError],
+  );
+
   return {
-    showError,
     errorMessage,
+    showError,
+    formattedError,
     showErrors,
-    errorMessages,
+    formattedErrors,
     errorMatrix,
   };
 };
