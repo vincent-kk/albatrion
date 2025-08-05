@@ -1,11 +1,11 @@
-import { useMemo } from 'react';
+import { useRef } from 'react';
 
 /**
  * Creates a constant value that persists throughout the component's entire lifecycle.
  *
- * This hook ensures that the provided value is computed only once during the component's
- * initial render and remains unchanged across all subsequent re-renders. It's a specialized
- * version of `useMemo` with an empty dependency array, guaranteeing referential stability.
+ * This hook ensures that the provided value is initialized only once during the component's
+ * initial render and remains unchanged across all subsequent re-renders. It uses `useRef`
+ * internally to guarantee referential stability.
  *
  * ### Use Cases
  * - **Stable Object/Array References**: Prevent unnecessary re-renders in child components
@@ -17,7 +17,7 @@ import { useMemo } from 'react';
  * ### Key Differences from Related Hooks
  * - Unlike `useMemo`, this hook never recomputes the value
  * - Unlike `useMemorize`, it doesn't accept dependencies
- * - Unlike `useRef`, it doesn't provide a mutable container
+ * - Unlike standard `useRef` usage, it's specifically designed for immutable values
  *
  * @example
  * ```typescript
@@ -46,10 +46,10 @@ import { useMemo } from 'react';
  * ```
  *
  * @typeParam Type - The type of the value to be kept constant
- * @param input - The value to memoize. If a function is passed, it's stored as-is, not executed
- * @returns The memoized value that remains constant throughout the component lifecycle
+ * @param input - The value to store as constant. If a function is passed, it's stored as-is, not executed
+ * @returns The constant value that remains unchanged throughout the component lifecycle
  */
 export const useConstant = <Type>(input: Type) => {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useMemo(() => input, []);
+  const constantRef = useRef(input);
+  return constantRef.current;
 };
