@@ -161,7 +161,7 @@ describe('ObjectNode', () => {
     expect(mockListener).toHaveBeenCalledWith({
       type:
         NodeEventType.UpdateValue |
-        NodeEventType.Refresh |
+        NodeEventType.RequestRefresh |
         NodeEventType.UpdateComputedProperties,
       payload: {
         [NodeEventType.UpdateValue]: { name: 'Ron', age: 28 },

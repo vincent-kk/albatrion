@@ -185,7 +185,7 @@ export abstract class AbstractNode<
    */
   protected refresh(this: AbstractNode, value: Value | undefined) {
     this.#defaultValue = value;
-    this.publish({ type: NodeEventType.Refresh });
+    this.publish({ type: NodeEventType.RequestRefresh });
   }
 
   /**

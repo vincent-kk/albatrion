@@ -102,14 +102,14 @@ describe('EventCascade', () => {
   it('should handle empty events', () => {
     const eventWindow = new EventCascade((event) => {
       expect(event).toEqual({
-        type: NodeEventType.Focus,
+        type: NodeEventType.RequestFocus,
         payload: {},
         options: {},
       });
     });
 
     eventWindow.schedule({
-      type: NodeEventType.Focus,
+      type: NodeEventType.RequestFocus,
       payload: {},
       options: {},
     });
@@ -120,8 +120,8 @@ describe('EventCascade', () => {
       expect(event).toEqual({
         type:
           NodeEventType.UpdateValue |
-          NodeEventType.Focus |
-          NodeEventType.Select,
+          NodeEventType.RequestFocus |
+          NodeEventType.RequestSelect,
         payload: {
           [NodeEventType.UpdateValue]: {
             previous: 2,
@@ -142,10 +142,10 @@ describe('EventCascade', () => {
       },
     });
     eventWindow.schedule({
-      type: NodeEventType.Focus,
+      type: NodeEventType.RequestFocus,
     });
     eventWindow.schedule({
-      type: NodeEventType.Select,
+      type: NodeEventType.RequestSelect,
     });
   });
 

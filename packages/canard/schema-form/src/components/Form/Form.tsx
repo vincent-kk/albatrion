@@ -43,7 +43,8 @@ import type {
 import type { FormHandle, FormProps } from './type';
 import { createChildren } from './util';
 
-const UPDATE_CHILDREN_MASK = NodeEventType.Redraw | NodeEventType.UpdateError;
+const UPDATE_CHILDREN_MASK =
+  NodeEventType.RequestRedraw | NodeEventType.UpdateError;
 
 const FormInner = <
   Schema extends JsonSchema,
@@ -140,9 +141,9 @@ const FormInner = <
       ({
         node: rootNode,
         focus: (path: string) =>
-          rootNode?.find(path)?.publish({ type: NodeEventType.Focus }),
+          rootNode?.find(path)?.publish({ type: NodeEventType.RequestFocus }),
         select: (path: string) =>
-          rootNode?.find(path)?.publish({ type: NodeEventType.Select }),
+          rootNode?.find(path)?.publish({ type: NodeEventType.RequestSelect }),
         reset: update,
         getValue: () => rootNode?.value as Value,
         setValue: (value, options) => rootNode?.setValue(value as any, options),

@@ -326,7 +326,7 @@ describe('ArrayNode', () => {
     expect(mockListener).toHaveBeenCalledWith({
       type:
         NodeEventType.UpdateValue |
-        NodeEventType.Refresh |
+        NodeEventType.RequestRefresh |
         NodeEventType.UpdateChildren,
       payload: {
         [NodeEventType.UpdateValue]: ['새태그1', '새태그2'],
