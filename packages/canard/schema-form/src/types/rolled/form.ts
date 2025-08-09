@@ -5,9 +5,16 @@ import type {
   FormInputProps as BaseFormInputProps,
   FormRenderProps as BaseFormRenderProps,
 } from '@/schema-form/components/Form';
+import type { AllowedValue } from '@/schema-form/types';
 
-type FormGroupProps = Roll<BaseFormGroupProps>;
-type FormInputProps = Roll<BaseFormInputProps>;
-type FormRenderProps = Roll<BaseFormRenderProps>;
+type FormGroupProps<Value extends AllowedValue> = Roll<
+  BaseFormGroupProps<Value>
+>;
+type FormInputProps<Value extends AllowedValue> = Roll<
+  BaseFormInputProps<Value>
+>;
+type FormRenderProps<Value extends AllowedValue> = Roll<
+  BaseFormRenderProps<Value>
+>;
 
 export type { FormGroupProps, FormInputProps, FormRenderProps };
