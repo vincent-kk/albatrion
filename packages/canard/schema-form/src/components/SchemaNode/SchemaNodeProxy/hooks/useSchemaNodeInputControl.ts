@@ -19,7 +19,7 @@ export const useSchemaNodeInputControl = <Node extends SchemaNode>(
   useLayoutEffect(() => {
     if (node === null) return;
     const unsubscribe = node.subscribe(({ type }) => {
-      if (type & NodeEventType.RequestRedraw) update();
+      if (type & NodeEventType.RequestRefresh) update();
       if (type & NodeEventType.RequestFocus) getInputElement(ref)?.focus?.();
       if (type & NodeEventType.RequestSelect) {
         const element = getInputElement(ref);

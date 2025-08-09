@@ -16,7 +16,6 @@ import {
   BIT_FLAG_12,
   BIT_FLAG_13,
   BIT_FLAG_14,
-  BIT_FLAG_15,
   BIT_MASK_NONE,
 } from '@/schema-form/app/constants/bitmask';
 import type {
@@ -207,14 +206,12 @@ export enum NodeEventType {
   RequestFocus = BIT_FLAG_10,
   /** Request selection on the input element. */
   RequestSelect = BIT_FLAG_11,
-  /** Request a redraw of the input element. */
-  RequestRedraw = BIT_FLAG_12,
   /** Request a refresh of the input element. */
-  RequestRefresh = BIT_FLAG_13,
+  RequestRefresh = BIT_FLAG_12,
   /** Request to emit a value change with a specific strategy. */
-  RequestEmitChange = BIT_FLAG_14,
+  RequestEmitChange = BIT_FLAG_13,
   /** Request validation to run for this node. */
-  RequestValidate = BIT_FLAG_15,
+  RequestValidate = BIT_FLAG_14,
 }
 
 export enum PublicNodeEventType {
@@ -251,7 +248,6 @@ export type NodeEventPayload = {
   [NodeEventType.Blurred]: void;
   [NodeEventType.RequestFocus]: void;
   [NodeEventType.RequestSelect]: void;
-  [NodeEventType.RequestRedraw]: void;
   [NodeEventType.RequestRefresh]: void;
   [NodeEventType.RequestEmitChange]: UnionSetValueOption;
   [NodeEventType.RequestValidate]: void;
@@ -281,7 +277,6 @@ export type NodeEventOptions = {
   [NodeEventType.Blurred]: void;
   [NodeEventType.RequestFocus]: void;
   [NodeEventType.RequestSelect]: void;
-  [NodeEventType.RequestRedraw]: void;
   [NodeEventType.RequestRefresh]: void;
   [NodeEventType.RequestEmitChange]: void;
   [NodeEventType.RequestValidate]: void;
