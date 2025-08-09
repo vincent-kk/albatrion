@@ -45,11 +45,14 @@ export const SchemaNodeInput = memo(
     const requestId =
       useRef<ReturnType<typeof requestAnimationFrame>>(undefined);
     const handleFocus = useCallback(() => {
+      node.publish({ type: NodeEventType.Focused });
       if (requestId.current === undefined) return;
       cancelAnimationFrame(requestId.current);
       requestId.current = undefined;
-    }, []);
+    }, [node]);
+
     const handleBlur = useCallback(() => {
+      node.publish({ type: NodeEventType.Blurred });
       if (node.state[NodeState.Touched]) return;
       requestId.current = requestAnimationFrame(() => {
         if (!node.state[NodeState.Touched])
@@ -63,7 +66,7 @@ export const SchemaNodeInput = memo(
 
     useSchemaNodeTracker(node, RERENDERING_EVENT);
 
-    const version = useSchemaNodeTracker(node, NodeEventType.Refresh);
+    const version = useSchemaNodeTracker(node, NodeEventType.RequestRefresh);
 
     if (!FormTypeInput) return null;
 
