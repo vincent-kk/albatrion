@@ -1,8 +1,9 @@
-import { memo, useCallback, useMemo, useRef } from 'react';
+import { memo, useCallback, useMemo, useRef, useState } from 'react';
 
 import { useConstant } from '@winglet/react-utils/hook';
 
 import { NodeEventType, NodeState } from '@/schema-form/core';
+import { useSchemaNodeSubscribe } from '@/schema-form/hooks/useSchemaNodeSubscribe';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
   useInputControlContext,
@@ -12,6 +13,7 @@ import type { SetStateFnWithOptions } from '@/schema-form/types';
 
 import { useChildNodeComponents } from './hooks/useChildNodeComponents';
 import { useFormTypeInput } from './hooks/useFormTypeInput';
+import { useFormTypeInputControl } from './hooks/useFormTypeInputControl';
 import {
   HANDLE_CHANGE_OPTION,
   RERENDERING_EVENT,
@@ -33,18 +35,26 @@ export const SchemaNodeInput = memo(
       () => MemorizedFormTypeInput || FormTypeInputByNode,
       [MemorizedFormTypeInput, FormTypeInputByNode],
     );
-
     const ChildNodeComponents = useChildNodeComponents(node, NodeProxy);
+    const containerRef = useRef<HTMLSpanElement>(null);
+
+    const sync = useMemo(() => node.group === 'terminal', [node.group]);
+    const [value, setValue] = useState(sync ? node.value : undefined);
+    useSchemaNodeSubscribe(sync ? node : null, ({ type, payload }) => {
+      if (type === NodeEventType.UpdateValue)
+        setValue(payload?.[NodeEventType.UpdateValue]);
+    });
 
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
       (input, option = HANDLE_CHANGE_OPTION) => {
         if (node.readOnly || node.disabled) return;
         node.setValue(input, option);
+        if (sync) setValue(node.value);
         node.clearExternalErrors();
         if (!node.state[NodeState.Dirty])
           node.setState({ [NodeState.Dirty]: true });
       },
-      [node],
+      [node, sync],
     );
 
     const requestId =
@@ -69,14 +79,13 @@ export const SchemaNodeInput = memo(
     const { readOnly: rootReadOnly, disabled: rootDisabled } =
       useInputControlContext();
 
+    const version = useFormTypeInputControl(node, containerRef);
     useSchemaNodeTracker(node, RERENDERING_EVENT);
-
-    const version = useSchemaNodeTracker(node, NodeEventType.RequestRefresh);
 
     if (!FormTypeInput) return null;
 
     return (
-      <span onFocus={handleFocus} onBlur={handleBlur}>
+      <span ref={containerRef} onFocus={handleFocus} onBlur={handleBlur}>
         <FormTypeInput
           key={version}
           jsonSchema={node.jsonSchema}
@@ -89,7 +98,7 @@ export const SchemaNodeInput = memo(
           errors={node.errors}
           watchValues={node.watchValues}
           defaultValue={node.defaultValue}
-          value={node.value}
+          value={sync ? value : node.value}
           onChange={handleChange}
           ChildNodeComponents={ChildNodeComponents}
           style={node.jsonSchema.style}
