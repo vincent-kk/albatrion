@@ -97,6 +97,8 @@ export type NullSchema<Options extends Dictionary = object> = BasicSchema &
 
 export type BasicSchema = {
   FormType?: ComponentType<UnknownFormTypeInputProps>;
+  FormTypeInputProps?: Dictionary;
+  FormTypeRendererProps?: Dictionary;
   formType?: string;
   terminal?: boolean;
   style?: CSSProperties;

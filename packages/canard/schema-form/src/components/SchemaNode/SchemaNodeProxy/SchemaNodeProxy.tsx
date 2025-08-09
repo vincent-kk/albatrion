@@ -107,6 +107,7 @@ export const SchemaNodeProxy = memo(
             errorMessage={errorMessage}
             formatError={formatError}
             context={userDefinedContext}
+            {...node.jsonSchema.FormTypeRendererProps}
             {...overrideProps}
           />
         </span>

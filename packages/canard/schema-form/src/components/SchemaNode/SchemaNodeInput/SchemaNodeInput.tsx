@@ -86,6 +86,7 @@ export const SchemaNodeInput = memo(
           ChildNodeComponents={ChildNodeComponents}
           style={node.jsonSchema.style}
           context={userDefinedContext}
+          {...node.jsonSchema.FormTypeInputProps}
           {...overrideProps}
         />
       </span>
