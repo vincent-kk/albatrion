@@ -6,13 +6,14 @@ import { PluginManager } from '@/schema-form/app/plugin';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import { useExternalFormContext } from '@/schema-form/providers';
 import type {
+  AllowedValue,
   FormTypeInputProps,
   OverridableFormTypeInputProps,
 } from '@/schema-form/types';
 
-export type FormInputProps = {
+export type FormInputProps<Value extends AllowedValue> = {
   path?: string;
-  FormTypeInput?: ComponentType<FormTypeInputProps>;
+  FormTypeInput?: ComponentType<FormTypeInputProps<Value>>;
 } & OverridableFormTypeInputProps;
 
 /**
@@ -76,14 +77,16 @@ export type FormInputProps = {
  * </div>
  * ```
  */
-export const FormInput = ({
+export const FormInput = <Value extends AllowedValue>({
   path,
   FormTypeInput: InputFormTypeInput,
   ...restProps
-}: FormInputProps) => {
+}: FormInputProps<Value>) => {
   const { FormInputRenderer } = useExternalFormContext();
   const overrideProps = useSnapshot(restProps);
-  const FormTypeInput = useConstant(InputFormTypeInput);
+  const FormTypeInput = useConstant(
+    InputFormTypeInput as ComponentType<FormTypeInputProps>,
+  );
   return (
     <SchemaNodeProxy
       path={path}

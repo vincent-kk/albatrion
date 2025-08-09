@@ -91,7 +91,7 @@ describe('StringNode', () => {
     expect(mockListener).toHaveBeenCalledWith({
       type:
         NodeEventType.Activated |
-        NodeEventType.Refresh |
+        NodeEventType.RequestRefresh |
         NodeEventType.UpdateValue |
         NodeEventType.UpdateComputedProperties,
       payload: {

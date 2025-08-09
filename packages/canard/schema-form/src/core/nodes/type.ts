@@ -15,6 +15,7 @@ import {
   BIT_FLAG_11,
   BIT_FLAG_12,
   BIT_FLAG_13,
+  BIT_FLAG_14,
   BIT_MASK_NONE,
 } from '@/schema-form/app/constants/bitmask';
 import type {
@@ -42,8 +43,9 @@ import type { StringNode } from './StringNode';
 import type { VirtualNode } from './VirtualNode';
 
 /**
- * Infers the corresponding SchemaNode type from JSON Schema type.
- * @typeParam Schema - JSON Schema type used as the basis for inference
+ * Compile-time utility that maps a JSON Schema to its concrete `SchemaNode` implementation.
+ * Falls back to the broad `SchemaNode` union when the schema type cannot be narrowed.
+ * @typeParam Schema - JSON Schema used as the basis for node inference
  */
 export type InferSchemaNode<Schema extends JsonSchemaWithVirtual | unknown> =
   Schema extends ArraySchema
@@ -62,7 +64,7 @@ export type InferSchemaNode<Schema extends JsonSchemaWithVirtual | unknown> =
                 ? NullNode
                 : SchemaNode;
 
-/** Union type that combines all schema node types. */
+/** Discriminated union of all concrete schema node implementations. */
 export type SchemaNode =
   | ArrayNode
   | NumberNode
@@ -72,7 +74,10 @@ export type SchemaNode =
   | VirtualNode
   | NullNode;
 
-/** Union type that combines all possible child node of SchemaNode. */
+/**
+ * Represents a child entry inside a branch node (e.g., `ObjectNode`, `ArrayNode`).
+ * Optional metadata assists with identity and rendering strategies for children.
+ */
 export interface ChildNode {
   id?: string;
   salt?: string;
@@ -81,16 +86,17 @@ export interface ChildNode {
 }
 
 export enum ValidationMode {
-  /** No validation */
+  /** Disable validation for this node. */
   None = BIT_MASK_NONE,
-  /** Validate on value change */
+  /** Run validation on every value mutation (e.g., on input change). */
   OnChange = BIT_FLAG_00,
-  /** Validate on request */
+  /** Defer validation until explicitly requested by the caller. */
   OnRequest = BIT_FLAG_01,
 }
 
 /**
- * Factory function type that creates SchemaNode.
+ * Factory signature used to produce a concrete `SchemaNode` from factory props.
+ * Typically used by branch nodes to instantiate children, resolving `$ref` and virtual nodes as needed.
  * @typeParam Schema - JSON Schema type of the node to be created
  */
 export type SchemaNodeFactory<
@@ -98,9 +104,18 @@ export type SchemaNodeFactory<
 > = Fn<[props: NodeFactoryProps<Schema>], SchemaNode>;
 
 /**
- * SchemaNode constructor properties interface.
+ * Constructor properties shared by all concrete `SchemaNode` implementations.
  * @typeParam Schema - Node's JSON Schema type
- * @typeParam Value - Node's value type
+ * @typeParam Value - Node's value type inferred from the schema
+ * @property key - Optional stable key for list rendering and reconciliation
+ * @property name - Optional human-readable identifier for diagnostics/UI
+ * @property jsonSchema - The JSON Schema definition backing this node
+ * @property defaultValue - Initial value applied before user interaction
+ * @property onChange - Callback invoked when the node's value changes
+ * @property parentNode - Parent in the node graph; undefined for the root
+ * @property validationMode - Validation strategy for this node
+ * @property validatorFactory - Provides validators compatible with the schema
+ * @property required - Indicates whether the value is required by its parent
  */
 export interface SchemaNodeConstructorProps<
   Schema extends JsonSchemaWithVirtual,
@@ -118,8 +133,9 @@ export interface SchemaNodeConstructorProps<
 }
 
 /**
- * Constructor properties interface for branch nodes that can have child nodes.
+ * Additional constructor properties for branch nodes that can own children.
  * @typeParam Schema - Node's JSON Schema type
+ * @property nodeFactory - Factory used to construct child nodes
  */
 export interface BranchNodeConstructorProps<
   Schema extends JsonSchemaWithVirtual,
@@ -128,8 +144,9 @@ export interface BranchNodeConstructorProps<
 }
 
 /**
- * Constructor properties interface for virtual nodes.
+ * Additional constructor properties for virtual nodes.
  * @typeParam Schema - Node's JSON Schema type
+ * @property refNodes - External nodes referenced by this virtual node
  */
 export interface VirtualNodeConstructorProps<
   Schema extends JsonSchemaWithVirtual,
@@ -138,7 +155,8 @@ export interface VirtualNodeConstructorProps<
 }
 
 /**
- * Property type passed to node factory functions.
+ * Props supplied to a `SchemaNodeFactory` call.
+ * Combines constructor options while replacing `jsonSchema` with a `$ref`-capable schema.
  * @typeParam Schema - Node's JSON Schema type
  */
 export type NodeFactoryProps<Schema extends JsonSchemaWithVirtual> = Omit<
@@ -150,8 +168,13 @@ export type NodeFactoryProps<Schema extends JsonSchemaWithVirtual> = Omit<
   jsonSchema: JsonSchemaWithRef;
 };
 
+/** Callback signature invoked when a `NodeEvent` is published by a node. */
 export type NodeListener = Fn<[event: NodeEvent]>;
 
+/**
+ * Describes a node-level event, including its discriminated `type`,
+ * an optional typed `payload`, and optional `options` metadata.
+ */
 export type NodeEvent = {
   type: UnionNodeEventType;
   payload?: Partial<NodeEventPayload>;
@@ -159,57 +182,61 @@ export type NodeEvent = {
 };
 
 export enum NodeEventType {
-  /** The node has been activated */
+  /** Node becomes the active target within the form graph. */
   Activated = BIT_FLAG_00,
-  /** The node has been focused */
-  Focus = BIT_FLAG_01,
-  /** The node has been selected */
-  Select = BIT_FLAG_02,
-  /** The node has been redrawn */
-  Redraw = BIT_FLAG_03,
-  /** The node has been refreshed */
-  Refresh = BIT_FLAG_04,
-  /** The node's path has been updated */
-  UpdatePath = BIT_FLAG_05,
-  /** The node's value has been updated */
-  UpdateValue = BIT_FLAG_06,
-  /** The node's state has been updated */
-  UpdateState = BIT_FLAG_07,
-  /** The node's error has been updated */
-  UpdateError = BIT_FLAG_08,
-  /** The node's internal error has been updated */
-  UpdateGlobalError = BIT_FLAG_09,
-  /** The node's children have been updated */
-  UpdateChildren = BIT_FLAG_10,
-  /** The node's computed properties have been updated */
-  UpdateComputedProperties = BIT_FLAG_11,
-  /** The node's value has been updated */
-  RequestEmitChange = BIT_FLAG_12,
-  /** The node's validation has been requested */
-  RequestValidate = BIT_FLAG_13,
+  /** Node's absolute path within the form graph has changed. */
+  UpdatePath = BIT_FLAG_01,
+  /** Node's value has changed. */
+  UpdateValue = BIT_FLAG_02,
+  /** Node's UI state flags have changed. */
+  UpdateState = BIT_FLAG_03,
+  /** Node's validation errors have changed. */
+  UpdateError = BIT_FLAG_04,
+  /** Node's global/aggregate errors have changed. */
+  UpdateGlobalError = BIT_FLAG_05,
+  /** Children collection has changed (add/remove/reorder). */
+  UpdateChildren = BIT_FLAG_06,
+  /** Derived/computed properties have changed. */
+  UpdateComputedProperties = BIT_FLAG_07,
+  /** Input element associated with the node receives focus. */
+  Focused = BIT_FLAG_08,
+  /** Input element loses focus. */
+  Blurred = BIT_FLAG_09,
+  /** Request the input element to receive focus. */
+  RequestFocus = BIT_FLAG_10,
+  /** Request selection on the input element. */
+  RequestSelect = BIT_FLAG_11,
+  /** Request a refresh of the input element. */
+  RequestRefresh = BIT_FLAG_12,
+  /** Request to emit a value change with a specific strategy. */
+  RequestEmitChange = BIT_FLAG_13,
+  /** Request validation to run for this node. */
+  RequestValidate = BIT_FLAG_14,
 }
 
 export enum PublicNodeEventType {
-  /** The node has been focused */
-  Focus = NodeEventType.Focus,
-  /** The node has been selected */
-  Select = NodeEventType.Select,
-  /** The node's value has been updated */
+  /** Public notification that the node's value has changed. */
   UpdateValue = NodeEventType.UpdateValue,
-  /** The node's state has been updated */
+  /** Public notification that the node's state flags changed. */
   UpdateState = NodeEventType.UpdateState,
-  /** The node's error has been updated */
+  /** Public notification that the node's validation errors changed. */
   UpdateError = NodeEventType.UpdateError,
+  /** Public request to focus the node's input. */
+  RequestFocus = NodeEventType.RequestFocus,
+  /** Public request to select the node's input. */
+  RequestSelect = NodeEventType.RequestSelect,
 }
 
+/** Union of internal and public node event types. */
 export type UnionNodeEventType = NodeEventType | PublicNodeEventType;
 
+/**
+ * Mapping from `NodeEventType` to the expected payload type for each event.
+ * Events that do not carry additional data use `void`.
+ */
 export type NodeEventPayload = {
   [NodeEventType.Activated]: void;
-  [NodeEventType.Focus]: void;
-  [NodeEventType.Select]: void;
-  [NodeEventType.Redraw]: void;
-  [NodeEventType.Refresh]: void;
+
   [NodeEventType.UpdatePath]: string;
   [NodeEventType.UpdateValue]: any;
   [NodeEventType.UpdateState]: NodeStateFlags;
@@ -217,16 +244,22 @@ export type NodeEventPayload = {
   [NodeEventType.UpdateGlobalError]: JsonSchemaError[];
   [NodeEventType.UpdateChildren]: void;
   [NodeEventType.UpdateComputedProperties]: void;
+  [NodeEventType.Focused]: void;
+  [NodeEventType.Blurred]: void;
+  [NodeEventType.RequestFocus]: void;
+  [NodeEventType.RequestSelect]: void;
+  [NodeEventType.RequestRefresh]: void;
   [NodeEventType.RequestEmitChange]: UnionSetValueOption;
   [NodeEventType.RequestValidate]: void;
 };
 
+/**
+ * Optional metadata accompanying an event publication.
+ * Enables consumers to access previous/current values or auxiliary context.
+ */
 export type NodeEventOptions = {
   [NodeEventType.Activated]: void;
-  [NodeEventType.Focus]: void;
-  [NodeEventType.Select]: void;
-  [NodeEventType.Redraw]: void;
-  [NodeEventType.Refresh]: void;
+
   [NodeEventType.UpdatePath]: {
     previous: string;
     current: string;
@@ -240,19 +273,25 @@ export type NodeEventOptions = {
   [NodeEventType.UpdateGlobalError]: void;
   [NodeEventType.UpdateChildren]: void;
   [NodeEventType.UpdateComputedProperties]: void;
+  [NodeEventType.Focused]: void;
+  [NodeEventType.Blurred]: void;
+  [NodeEventType.RequestFocus]: void;
+  [NodeEventType.RequestSelect]: void;
+  [NodeEventType.RequestRefresh]: void;
   [NodeEventType.RequestEmitChange]: void;
   [NodeEventType.RequestValidate]: void;
 };
 
 export enum NodeState {
-  /** The node has been modified */
+  /** Value diverged from its initial/default state. */
   Dirty = BIT_FLAG_00,
-  /** The node has been touched */
+  /** Node interacted with (e.g., focused/blurred) at least once. */
   Touched = BIT_FLAG_01,
-  /** Show error message */
+  /** UI should display validation messages for this node. */
   ShowError = BIT_FLAG_02,
 }
 
+/** Typed bag of boolean-like UI state flags carried by a node. */
 export type NodeStateFlags = {
   [NodeState.Dirty]?: boolean;
   [NodeState.Touched]?: boolean;
@@ -288,4 +327,5 @@ export enum PublicSetValueOption {
   Overwrite = SetValueOption.Overwrite,
 }
 
+/** Union of internal and public `SetValueOption` flags. */
 export type UnionSetValueOption = SetValueOption | PublicSetValueOption;

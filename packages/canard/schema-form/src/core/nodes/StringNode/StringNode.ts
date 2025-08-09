@@ -79,6 +79,11 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
         : super.onChange;
 
     if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
+    if (this.jsonSchema.options?.trim)
+      this.subscribe(({ type }) => {
+        if (type === NodeEventType.Blurred)
+          this.#emitChange(this.#value?.trim());
+      });
     this.activate();
   }
 

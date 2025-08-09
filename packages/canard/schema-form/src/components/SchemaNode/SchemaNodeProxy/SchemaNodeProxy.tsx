@@ -14,7 +14,6 @@ import {
 import type { FormTypeRendererProps } from '@/schema-form/types';
 
 import { SchemaNodeInputWrapper } from '../SchemaNodeInput';
-import { useSchemaNodeInputControl } from './hooks/useSchemaNodeInputControl';
 import type { SchemaNodeProxyProps } from './type';
 
 const RERENDERING_EVENT =
@@ -85,13 +84,13 @@ export const SchemaNodeProxy = memo(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [node, refresh, userDefinedContext, formatError]);
 
-    const [version, formElementRef] = useSchemaNodeInputControl(node);
+    const version = useSchemaNodeTracker(node, NodeEventType.RequestRefresh);
 
     if (!node?.visible) return null;
 
     return (
       <Wrapper key={version}>
-        <span ref={formElementRef} data-json-path={node.path}>
+        <span data-json-path={node.path}>
           <FormTypeRenderer
             node={node}
             type={node.type}

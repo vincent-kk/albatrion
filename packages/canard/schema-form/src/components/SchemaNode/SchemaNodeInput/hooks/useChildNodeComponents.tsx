@@ -6,6 +6,7 @@ import {
   useRestProperties,
 } from '@winglet/react-utils/hook';
 
+import type { SchemaNodeProxyProps } from '@/schema-form/components/SchemaNode/SchemaNodeProxy';
 import {
   NodeEventType,
   type SchemaNode,
@@ -14,10 +15,7 @@ import {
 import { useSchemaNodeSubscribe } from '@/schema-form/hooks/useSchemaNodeSubscribe';
 import type { ChildFormTypeInputProps } from '@/schema-form/types';
 
-import type { SchemaNodeProxyProps } from '../../SchemaNodeProxy';
 import type { ChildNodeComponent } from '../type';
-
-const SEPARATOR = '\x1F';
 
 /**
  * Create child node components for the given SchemaNode
@@ -35,9 +33,7 @@ export const useChildNodeComponents = (
   });
 
   const cache = useRef(new Map<string, ChildNodeComponent>());
-  useOnUnmount(() => {
-    cache.current.clear();
-  });
+  useOnUnmount(() => cache.current.clear());
 
   return useMemo(() => {
     if (isTerminalNode(node) || !children) return [];
@@ -70,3 +66,5 @@ export const useChildNodeComponents = (
     return ChildNodeComponents;
   }, [node, children, NodeProxy]);
 };
+
+const SEPARATOR = '\x1F';

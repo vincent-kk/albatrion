@@ -72,7 +72,11 @@ export type NumberSchema<Options extends Dictionary = object> = BasicSchema &
   BaseNumberSchema<Options, JsonSchema<Options>>;
 
 export type StringSchema<Options extends Dictionary = object> = BasicSchema &
-  BaseStringSchema<Options, JsonSchema<Options>>;
+  BaseStringSchema<Options, JsonSchema<Options>> & {
+    options?: {
+      trim?: boolean;
+    };
+  };
 
 export type BooleanSchema<Options extends Dictionary = object> = BasicSchema &
   BaseBooleanSchema<Options, JsonSchema<Options>>;

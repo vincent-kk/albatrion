@@ -6,14 +6,15 @@ import type { Dictionary } from '@aileron/declare';
 
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import type {
+  AllowedValue,
   FormTypeInputProps,
   FormTypeRendererProps,
   OverridableFormTypeInputProps,
 } from '@/schema-form/types';
 
-export type FormGroupProps = {
+export type FormGroupProps<Value extends AllowedValue> = {
   path?: string;
-  FormTypeInput?: ComponentType<FormTypeInputProps>;
+  FormTypeInput?: ComponentType<FormTypeInputProps<Value>>;
   FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
 } & OverridableFormTypeInputProps;
@@ -93,16 +94,16 @@ export type FormGroupProps = {
  * />
  * ```
  */
-export const FormGroup = ({
+export const FormGroup = <Value extends AllowedValue = AllowedValue>({
   path,
   FormTypeInput,
   FormTypeRenderer,
   Wrapper,
   ...restProps
-}: FormGroupProps) => {
+}: FormGroupProps<Value>) => {
   const overrideProps = useSnapshot(restProps);
   const constant = useConstant({
-    FormTypeInput,
+    FormTypeInput: FormTypeInput as ComponentType<FormTypeInputProps>,
     FormTypeRenderer,
     Wrapper,
   });
