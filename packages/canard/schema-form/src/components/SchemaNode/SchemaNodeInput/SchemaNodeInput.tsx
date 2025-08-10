@@ -16,7 +16,8 @@ import { useFormTypeInput } from './hooks/useFormTypeInput';
 import { useFormTypeInputControl } from './hooks/useFormTypeInputControl';
 import {
   HANDLE_CHANGE_OPTION,
-  RERENDERING_EVENT,
+  PREEMPTIVE_RERENDERING_EVENTS,
+  REACTIVE_RERENDERING_EVENTS,
   type SchemaNodeInputProps,
 } from './type';
 
@@ -39,10 +40,13 @@ export const SchemaNodeInput = memo(
     const containerRef = useRef<HTMLSpanElement>(null);
 
     const sync = useMemo(() => node.group === 'terminal', [node.group]);
+
     const [value, setValue] = useState(sync ? node.value : undefined);
     useSchemaNodeSubscribe(sync ? node : null, ({ type, payload }) => {
-      if (type === NodeEventType.UpdateValue)
-        setValue(payload?.[NodeEventType.UpdateValue]);
+      if (type === NodeEventType.UpdateValue) {
+        const currentValue = payload?.[NodeEventType.UpdateValue];
+        if (currentValue !== value) setValue(currentValue);
+      }
     });
 
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
@@ -80,7 +84,10 @@ export const SchemaNodeInput = memo(
       useInputControlContext();
 
     const version = useFormTypeInputControl(node, containerRef);
-    useSchemaNodeTracker(node, RERENDERING_EVENT);
+    useSchemaNodeTracker(
+      node,
+      sync ? PREEMPTIVE_RERENDERING_EVENTS : REACTIVE_RERENDERING_EVENTS,
+    );
 
     if (!FormTypeInput) return null;
 
