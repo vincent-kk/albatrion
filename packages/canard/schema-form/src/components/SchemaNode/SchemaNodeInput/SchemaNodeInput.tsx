@@ -1,7 +1,5 @@
 import { memo, useCallback, useMemo, useRef, useState } from 'react';
 
-import { useConstant } from '@winglet/react-utils/hook';
-
 import { NodeEventType, NodeState } from '@/schema-form/core';
 import { useSchemaNodeSubscribe } from '@/schema-form/hooks/useSchemaNodeSubscribe';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
@@ -28,13 +26,13 @@ export const SchemaNodeInput = memo(
     PreferredFormTypeInput,
     NodeProxy,
   }: SchemaNodeInputProps) => {
-    const FormTypeInputByNode = useFormTypeInput(node);
-    const MemorizedFormTypeInput = useConstant(
-      PreferredFormTypeInput ? memo(PreferredFormTypeInput) : null,
+    const FormTypeInputByNode = useFormTypeInput(
+      node,
+      PreferredFormTypeInput !== null,
     );
     const FormTypeInput = useMemo(
-      () => MemorizedFormTypeInput || FormTypeInputByNode,
-      [MemorizedFormTypeInput, FormTypeInputByNode],
+      () => PreferredFormTypeInput || FormTypeInputByNode,
+      [PreferredFormTypeInput, FormTypeInputByNode],
     );
     const ChildNodeComponents = useChildNodeComponents(node, NodeProxy);
     const containerRef = useRef<HTMLSpanElement>(null);

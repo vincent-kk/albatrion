@@ -1,9 +1,6 @@
 import { memo, useMemo } from 'react';
 
-import {
-  isFunctionComponent,
-  isMemoComponent,
-} from '@winglet/react-utils/filter';
+import { isMemoComponent, isReactComponent } from '@winglet/react-utils/filter';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 
 import { PluginManager } from '@/schema-form/app/plugin';
@@ -21,22 +18,22 @@ import type { Hint } from '@/schema-form/types';
  *   - Returns form type input defined in FormTypeInputDefinitions.
  *   - Returns form type input defined in fallback FormTypeInputDefinitions.
  * @param node - SchemaNode
+ * @param disabled - Whether searching form type input is disabled
  * @returns FormTypeInput
  */
-export const useFormTypeInput = (node: SchemaNode) => {
+export const useFormTypeInput = (node: SchemaNode, disabled: boolean) => {
   const { fromFormTypeInputMap, fromFormTypeInputDefinitions } =
     useFormTypeInputsContext();
   const { fromExternalFormTypeInputDefinitions } = useExternalFormContext();
 
   const FormTypeInput = useMemo(() => {
+    if (disabled) return null;
     // NOTE: If formType is a React Component, return that Component.
     const InlineFormType = node.jsonSchema?.FormType;
-    if (InlineFormType) {
-      if (isFunctionComponent(InlineFormType))
-        return memo(withErrorBoundary(InlineFormType));
+    if (InlineFormType && isReactComponent(InlineFormType))
       if (isMemoComponent(InlineFormType))
         return withErrorBoundary(InlineFormType);
-    }
+      else return memo(withErrorBoundary(InlineFormType));
 
     const hint = getHint(node);
 
@@ -61,6 +58,7 @@ export const useFormTypeInput = (node: SchemaNode) => {
     return null;
   }, [
     node,
+    disabled,
     fromFormTypeInputMap,
     fromFormTypeInputDefinitions,
     fromExternalFormTypeInputDefinitions,
