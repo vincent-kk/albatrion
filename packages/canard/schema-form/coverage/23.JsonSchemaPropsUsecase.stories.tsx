@@ -119,7 +119,7 @@ export const InputProps_Basic = () => {
       name: {
         type: 'string',
         // Provide custom input at schema level
-        FormType: FancyInput,
+        FormTypeInput: FancyInput,
         // Pass extra props to the input via jsonSchema.FormTypeInputProps
         FormTypeInputProps: {
           prefix: '👤',
@@ -148,7 +148,7 @@ export const Combined_InputAndRendererProps_MultiFields = () => {
     properties: {
       email: {
         type: 'string',
-        FormType: FancyInput,
+        FormTypeInput: FancyInput,
         FormTypeInputProps: {
           prefix: '📧',
           placeholder: 'example@domain.com',
@@ -160,7 +160,7 @@ export const Combined_InputAndRendererProps_MultiFields = () => {
       },
       age: {
         type: 'number',
-        FormType: FancyInput as unknown as FormTypeInputProps<number>['Input'],
+        FormTypeInput: FancyInput as unknown as FormTypeInputProps<number>['Input'],
         FormTypeInputProps: {
           prefix: '🔢',
           placeholder: '나이',

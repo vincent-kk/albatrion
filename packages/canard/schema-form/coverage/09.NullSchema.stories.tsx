@@ -17,7 +17,7 @@ export const NullSchema = () => {
       null: {
         type: 'null',
         nullable: true,
-        FormType: ({ value, onChange }) => {
+        FormTypeInput: ({ value, onChange }) => {
           return (
             <div>
               this is {JSON.stringify(value, null, 2)}

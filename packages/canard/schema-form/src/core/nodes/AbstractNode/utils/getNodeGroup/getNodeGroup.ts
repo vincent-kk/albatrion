@@ -15,13 +15,20 @@ export const getNodeGroup = (schema: JsonSchemaWithVirtual) => {
     schema.type === 'string' ||
     schema.type === 'null' ||
     schema.terminal === true ||
-    isTerminalFormTypeInput(schema)
+    isTerminalFormTypeInput(schema) ||
+    isTerminalFormType(schema)
   )
     return 'terminal';
   return 'branch';
 };
 
 const isTerminalFormTypeInput = (schema: JsonSchemaWithVirtual) =>
+  'FormTypeInput' in schema &&
+  isReactComponent(schema.FormTypeInput) &&
+  schema.terminal !== false;
+
+/** @deprecated Use isTerminalFormTypeInput instead, this function will be removed in v0.4.0 */
+const isTerminalFormType = (schema: JsonSchemaWithVirtual) =>
   'FormType' in schema &&
   isReactComponent(schema.FormType) &&
   schema.terminal !== false;

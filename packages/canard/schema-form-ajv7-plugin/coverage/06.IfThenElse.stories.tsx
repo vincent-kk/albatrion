@@ -171,7 +171,7 @@ export const AdditionalProperties = () => {
         type: 'array',
         items: {
           type: 'object',
-          FormType: ({ onChange }) => {
+          FormTypeInput: ({ onChange }) => {
             return (
               <div>
                 <button

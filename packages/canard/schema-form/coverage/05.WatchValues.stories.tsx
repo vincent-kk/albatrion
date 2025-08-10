@@ -73,7 +73,7 @@ export const WatchWithBranchNode = () => {
     properties: {
       profile: {
         type: 'object',
-        FormType: ({
+        FormTypeInput: ({
           defaultValue,
           onChange,
         }: FormTypeInputProps<{

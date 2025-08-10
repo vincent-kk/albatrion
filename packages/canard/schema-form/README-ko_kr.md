@@ -472,31 +472,31 @@ interface FormTypeInputProps<
   Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
-  /** FormType 컴포넌트의 JSON 스키마 */
+  /** FormTypeInput 컴포넌트의 JSON 스키마 */
   jsonSchema: Schema;
-  /** FormType 컴포넌트의 읽기 전용 상태 */
+  /** FormTypeInput 컴포넌트의 읽기 전용 상태 */
   readOnly: boolean;
-  /** FormType 컴포넌트의 비활성화 상태 */
+  /** FormTypeInput 컴포넌트의 비활성화 상태 */
   disabled: boolean;
-  /** FormType 컴포넌트에 할당된 스키마 노드 */
+  /** FormTypeInput 컴포넌트에 할당된 스키마 노드 */
   node: Node;
-  /** FormType 컴포넌트에 할당된 스키마 노드의 이름 */
+  /** FormTypeInput 컴포넌트에 할당된 스키마 노드의 이름 */
   name: Node['name'];
-  /** FormType 컴포넌트에 할당된 스키마 노드의 경로 */
+  /** FormTypeInput 컴포넌트에 할당된 스키마 노드의 경로 */
   path: Node['path'];
-  /** FormType 컴포넌트에 할당된 스키마 노드의 오류 */
+  /** FormTypeInput 컴포넌트에 할당된 스키마 노드의 오류 */
   errors: Node['errors'];
   /** JsonSchema에서 정의된 `computed.watch`(=`&watch`) 속성에 따라 모니터링되는 값 */
   watchValues: WatchValues;
-  /** FormType 컴포넌트의 기본값 */
+  /** FormTypeInput 컴포넌트의 기본값 */
   defaultValue: Value | undefined;
-  /** FormType 컴포넌트의 값 */
+  /** FormTypeInput 컴포넌트의 값 */
   value: Value | undefined;
-  /** FormType 컴포넌트의 onChange 핸들러 */
+  /** FormTypeInput 컴포넌트의 onChange 핸들러 */
   onChange: SetStateFnWithOptions<Value | undefined>;
-  /** 이 FormType 컴포넌트의 자식 FormType 컴포넌트 */
+  /** 이 FormTypeInput 컴포넌트의 자식 FormTypeInput 컴포넌트 */
   ChildNodeComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
-  /** FormType 컴포넌트의 스타일 */
+  /** FormTypeInput 컴포넌트의 스타일 */
   style: CSSProperties | undefined;
   /** Form에 전달되는 사용자 정의 컨텍스트 */
   context: Context;
@@ -521,12 +521,12 @@ type FormTypeInputMap = {
 
 폼이 렌더링될 때 각 JSON 스키마 노드의 입력 컴포넌트는 다음과 같은 우선순위에 따라 결정됩니다:
 
-1. **직접 할당된 FormType**: JSON 스키마 객체의 `FormType` 속성을 통해 컴포넌트가 직접 할당된 경우
+1. **직접 할당된 FormTypeInput**: JSON 스키마 객체의 `FormTypeInput` 속성을 통해 컴포넌트가 직접 할당된 경우
 
 ```js
 const jsonSchema = {
   type: 'string',
-  FormType: CustomTextInput, // 가장 높은 우선순위
+  FormTypeInput: CustomTextInput, // 가장 높은 우선순위
 };
 ```
 
@@ -612,7 +612,7 @@ export const CustomizedForm = () => {
               postalCode: { type: 'string' }, // PostalCodeInput 사용 (경로 매핑)
               country: {
                 type: 'string',
-                FormType: CountrySelector, // 직접 할당된 컴포넌트 사용 (최우선순위)
+                FormTypeInput: CountrySelector, // 직접 할당된 컴포넌트 사용 (최우선순위)
               },
             },
           },

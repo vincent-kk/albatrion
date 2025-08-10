@@ -42,6 +42,7 @@ yarn publish:npm        # Publish to npm with public access
 ## Architecture Overview
 
 ### Core Node System
+
 The library implements a node-based architecture for managing form state:
 
 - **AbstractNode** (`src/core/nodes/AbstractNode/`) - Base class for all nodes
@@ -51,15 +52,18 @@ The library implements a node-based architecture for managing form state:
 ### Key Architectural Patterns
 
 1. **Strategy Pattern**: Array and Object nodes use different strategies:
+
    - `BranchStrategy` - For complex nested structures
    - `TerminalStrategy` - For simple, non-nested structures
 
 2. **Plugin System** (`src/app/plugin/`):
+
    - Validator plugins for JSON Schema validation
    - UI component plugins for form rendering
    - FormTypeInput plugins for custom input components
 
 3. **Context Providers** (`src/providers/`):
+
    - `RootNodeContext` - Provides root node access
    - `FormTypeInputsContext` - Manages form input definitions
    - `FormTypeRendererContext` - Manages form rendering components
@@ -76,7 +80,8 @@ The library implements a node-based architecture for managing form state:
 The library uses a powerful FormTypeInput system for component selection:
 
 1. **Priority Order** (highest to lowest):
-   - Direct `FormType` property in JSON Schema
+
+   - Direct `FormTypeInput` property in JSON Schema
    - `formTypeInputMap` path mapping
    - Form-level `formTypeInputDefinitions`
    - FormProvider `formTypeInputDefinitions`
@@ -87,6 +92,7 @@ The library uses a powerful FormTypeInput system for component selection:
 ### JSONPointer Extensions
 
 Standard JSONPointer (RFC 6901) with custom extensions:
+
 - `..` - Parent navigation (computed properties only)
 - `.` - Current node reference
 - `*` - Array wildcard (FormTypeInputMap only)
@@ -110,7 +116,7 @@ Standard JSONPointer (RFC 6901) with custom extensions:
 ## Key Dependencies
 
 - **React 18-19**: Core UI framework (peer dependency)
-- **@winglet/***: Internal workspace packages for utilities
+- **@winglet/\***: Internal workspace packages for utilities
   - `@winglet/common-utils`: Common utility functions
   - `@winglet/json`: JSON pointer utilities
   - `@winglet/json-schema`: JSON Schema processing
@@ -123,6 +129,7 @@ Standard JSONPointer (RFC 6901) with custom extensions:
 ## Build Output
 
 The library produces multiple formats:
+
 - CommonJS (`dist/index.cjs`)
 - ES Modules (`dist/index.mjs`)
 - TypeScript declarations (`dist/index.d.ts`)
@@ -145,6 +152,7 @@ Size limits are enforced: 20KB for both CJS and ESM builds.
 ## Important Hooks and Utilities
 
 ### Core Hooks
+
 - `useSchemaNode`: Primary hook for accessing schema node functionality
 - `useSchemaNodeSubscribe`: Subscribe to node state changes
 - `useSchemaNodeTracker`: Track node state across renders
@@ -152,12 +160,14 @@ Size limits are enforced: 20KB for both CJS and ESM builds.
 - `useVirtualNodeError`: Manage error states for virtual nodes
 
 ### Key Type Utilities
+
 - `InferValueType<Schema>`: Extract TypeScript type from JSON Schema
 - `InferSchemaNode<Schema>`: Extract node type from JSON Schema
 - `FormHandle<Schema, Value>`: Type-safe form reference handle
 - `FormTypeInputProps`: Props interface for custom input components
 
 ### Node Type Guards
+
 - `isArrayNode(node)`: Check if node is an ArrayNode
 - `isObjectNode(node)`: Check if node is an ObjectNode
 - `isVirtualNode(node)`: Check if node is a VirtualNode
@@ -165,7 +175,9 @@ Size limits are enforced: 20KB for both CJS and ESM builds.
 ## Common Patterns
 
 ### Plugin Registration
+
 Always register plugins before rendering forms:
+
 ```typescript
 import { registerPlugin } from '@canard/schema-form';
 import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
@@ -174,10 +186,13 @@ registerPlugin(ajvValidatorPlugin);
 ```
 
 ### Custom FormTypeInput Components
+
 FormTypeInput components receive standardized props including `node`, `value`, `onChange`, `errors`, and `watchValues` for computed properties.
 
 ### Node Navigation
+
 Use JSONPointer paths with `node.find()` for programmatic node access. Extended syntax (`..`, `.`, `*`) available in specific contexts only.
 
 ### Error Management
+
 Errors propagate through the node tree. Use `transformErrors` utility for custom error processing and the built-in `errorMessages` JSON Schema property for localized messages.

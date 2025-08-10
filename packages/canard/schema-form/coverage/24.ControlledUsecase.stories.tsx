@@ -181,7 +181,7 @@ export const FocusAndSelect_SingleControlled = () => {
   );
 };
 
-// Focus / Select - Multiple inputs within a single FormType (Controlled)
+// Focus / Select - Multiple inputs within a single FormTypeInput (Controlled)
 export const FocusAndSelect_MultiInputControlled = () => {
   const jsonSchema = {
     type: 'object',
@@ -255,7 +255,7 @@ export const CaretPreservation_WithFormatter = () => {
   );
 };
 
-// Multiple inputs inside one FormType - caret stability when switching
+// Multiple inputs inside one FormTypeInput - caret stability when switching
 export const MultiInput_CaretStability_Switching = () => {
   const jsonSchema = {
     type: 'object',
@@ -280,7 +280,7 @@ export const MultiInput_CaretStability_Switching = () => {
   );
 };
 
-// Focus / Select - Button only FormType (focus should work, select is attempted)
+// Focus / Select - Button only FormTypeInput (focus should work, select is attempted)
 export const FocusAndSelect_ButtonOnlyControlled = () => {
   const jsonSchema = {
     type: 'object',
@@ -314,7 +314,7 @@ export const FocusAndSelect_ButtonOnlyControlled = () => {
   );
 };
 
-// Focus / Select - Mixed (input + button in one FormType)
+// Focus / Select - Mixed (input + button in one FormTypeInput)
 export const FocusAndSelect_MixedControlled = () => {
   const jsonSchema = {
     type: 'object',
@@ -518,7 +518,7 @@ const UncontrolledInput = ({
   );
 };
 
-// ----- Custom FormType Inputs for stories -----
+// ----- Custom FormTypeInput Inputs for stories -----
 
 const PhoneControlledInput = ({
   value,

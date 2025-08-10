@@ -409,7 +409,7 @@ export const UseVirtualNodeErrorWithChildNodeErrorsHook = () => {
     virtual: {
       address: {
         fields: ['zipCode', 'city', 'roadAddress'],
-        FormType: ({ node, value, onChange }) => {
+        FormTypeInput: ({ node, value, onChange }) => {
           const {
             errorMessage,
             showError,
@@ -553,7 +553,7 @@ export const UseChildNodeErrorsWithDisabled = () => {
     virtual: {
       personalInfoGroup: {
         fields: ['age', 'phone'],
-        FormType: ({ node, value, onChange }) => {
+        FormTypeInput: ({ node, value, onChange }) => {
           const [isDisabled, setIsDisabled] = useState(false);
           const {
             errorMatrix,
@@ -735,7 +735,7 @@ export const UseChildNodeErrorsWithDirectChildren = () => {
     virtual: {
       directChildrenGroup: {
         fields: ['field1', 'field2', 'field3', 'field4'],
-        FormType: ({ node, value, onChange }) => {
+        FormTypeInput: ({ node, value, onChange }) => {
           const {
             errorMatrix,
             formattedErrors,
@@ -924,7 +924,7 @@ export const UseChildNodeErrorsWithEmptyChildren = () => {
     virtual: {
       emptyGroup: {
         fields: ['emptySection'],
-        FormType: ({ node, value: _value, onChange: _onChange }) => {
+        FormTypeInput: ({ node, value: _value, onChange: _onChange }) => {
           const {
             errorMatrix,
             formattedErrors,
@@ -1025,7 +1025,7 @@ export const UseChildNodeErrorsRealTimeUpdate = () => {
     virtual: {
       dynamicGroup: {
         fields: ['dynamicField1', 'dynamicField2', 'dynamicField3'],
-        FormType: ({ node, value, onChange }) => {
+        FormTypeInput: ({ node, value, onChange }) => {
           const {
             errorMatrix,
             formattedErrors,

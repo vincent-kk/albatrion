@@ -158,7 +158,7 @@ export const FormTypeInputArrayTerminalRef = () => {
     properties: {
       arr: {
         type: 'array',
-        FormType: ({ node, onChange, value }: FormTypeInputProps<string[]>) => {
+        FormTypeInput: ({ node, onChange, value }: FormTypeInputProps<string[]>) => {
           return (
             <div>
               i am array item: {node.group}
@@ -236,7 +236,7 @@ export const FormTypeInputObjectTerminalRef = () => {
     properties: {
       poster: {
         type: 'object',
-        FormType: ({
+        FormTypeInput: ({
           node,
           onChange,
           value,

@@ -48,7 +48,7 @@ export const ShowErrorAndShowErrorsStateTest = () => {
     virtual: {
       showErrorStateGroup: {
         fields: ['testField1', 'testField2', 'testField3'],
-        FormType: ({ node, value, onChange }) => {
+        FormTypeInput: ({ node, value, onChange }) => {
           const {
             errorMatrix,
             formattedErrors,
@@ -423,7 +423,7 @@ export const ConditionalErrorDisplayTest = () => {
     virtual: {
       conditionalGroup: {
         fields: ['conditionalField1', 'conditionalField2'],
-        FormType: ({ node, value, onChange }) => {
+        FormTypeInput: ({ node, value, onChange }) => {
           const [showIndividualErrors, setShowIndividualErrors] =
             useState(true);
           const [showGlobalError, setShowGlobalError] = useState(true);
@@ -772,7 +772,7 @@ export const AdvancedErrorDisplayPatterns = () => {
     virtual: {
       registrationForm: {
         fields: ['email', 'password', 'confirmPassword'],
-        FormType: ({ node, value, onChange }) => {
+        FormTypeInput: ({ node, value, onChange }) => {
           const {
             errorMatrix,
             formattedErrors,

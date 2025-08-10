@@ -482,31 +482,31 @@ interface FormTypeInputProps<
   Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
-  /** JSON Schema for the FormType Component */
+  /** JSON Schema for the FormTypeInput Component */
   jsonSchema: Schema;
-  /** readOnly state for the FormType Component */
+  /** readOnly state for the FormTypeInput Component */
   readOnly: boolean;
-  /** disabled state for the FormType Component */
+  /** disabled state for the FormTypeInput Component */
   disabled: boolean;
-  /** Schema node assigned to the FormType Component */
+  /** Schema node assigned to the FormTypeInput Component */
   node: Node;
-  /** Name of the schema node assigned to the FormType Component */
+  /** Name of the schema node assigned to the FormTypeInput Component */
   name: Node['name'];
-  /** Path of the schema node assigned to the FormType Component */
+  /** Path of the schema node assigned to the FormTypeInput Component */
   path: Node['path'];
-  /** Errors of the schema node assigned to the FormType Component */
+  /** Errors of the schema node assigned to the FormTypeInput Component */
   errors: Node['errors'];
   /** Values being watched according to the `computed.watch`(=`&watch`) property defined in JsonSchema */
   watchValues: WatchValues;
-  /** Default value for the FormType Component */
+  /** Default value for the FormTypeInput Component */
   defaultValue: Value | undefined;
-  /** Value for the FormType Component */
+  /** Value for the FormTypeInput Component */
   value: Value | undefined;
-  /** onChange handler for the FormType Component */
+  /** onChange handler for the FormTypeInput Component */
   onChange: SetStateFnWithOptions<Value | undefined>;
-  /** Child FormType Components for this FormType Component */
+  /** Child FormTypeInput Components for this FormTypeInput Component */
   ChildNodeComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
-  /** Style for the FormType Component */
+  /** Style for the FormTypeInput Component */
   style: CSSProperties | undefined;
   /** UserDefinedContext passed to the Form */
   context: Context;
@@ -531,12 +531,12 @@ This allows explicit assignment of components to specific paths in your JSON Sch
 
 When a form is rendered, the input component for each JSON Schema node is determined with the following priority:
 
-1. **Directly assigned FormType**: When a component is directly assigned via the `FormType` property in the JSON Schema object
+1. **Directly assigned FormTypeInput**: When a component is directly assigned via the `FormTypeInput` property in the JSON Schema object
 
    ```js
    const jsonSchema = {
      type: 'string',
-     FormType: CustomTextInput, // Highest priority
+     FormTypeInput: CustomTextInput, // Highest priority
    };
    ```
 
@@ -624,7 +624,7 @@ export const CustomizedForm = () => {
               postalCode: { type: 'string' }, // Will use PostalCodeInput (path mapping)
               country: {
                 type: 'string',
-                FormType: CountrySelector, // Will use directly assigned component (top priority)
+                FormTypeInput: CountrySelector, // Will use directly assigned component (top priority)
               },
             },
           },

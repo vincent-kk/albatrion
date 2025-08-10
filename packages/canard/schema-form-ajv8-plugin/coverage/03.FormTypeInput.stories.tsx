@@ -298,14 +298,14 @@ export const FormTypeComponentInJsonSchema = () => {
       },
       nameCustom: {
         type: 'string',
-        FormType: CustomFormTypeStringInput,
+        FormTypeInput: CustomFormTypeStringInput,
       },
       age: {
         type: 'number',
       },
       ageCustom: {
         type: 'number',
-        FormType: CustomFormTypeNumberInput,
+        FormTypeInput: CustomFormTypeNumberInput,
       },
     },
   } satisfies JsonSchema;

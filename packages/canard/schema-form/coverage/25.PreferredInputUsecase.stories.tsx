@@ -157,7 +157,7 @@ export const JsonSchema_FormType_FunctionAndClass = () => {
       funcField: {
         type: 'string',
         // memo 케이스: 이미 memo 된 컴포넌트를 넣었을 때 재래핑 여부는 내부 훅에서 분기 처리됨
-        FormType: React.memo(FunctionalStringInput),
+        FormTypeInput: React.memo(FunctionalStringInput),
         FormTypeInputProps: {
           placeholder: '함수형 입력 (jsonSchema)',
           maxLength: 20,
@@ -168,7 +168,7 @@ export const JsonSchema_FormType_FunctionAndClass = () => {
       classField: {
         type: 'string',
         // 일반 클래스 컴포넌트 (memo 아님)
-        FormType: ClassStringInput,
+        FormTypeInput: ClassStringInput,
         FormTypeInputProps: {
           placeholder: '클래스 입력 (jsonSchema)',
           maxLength: 16,

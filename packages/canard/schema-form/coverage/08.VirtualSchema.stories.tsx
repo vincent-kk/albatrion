@@ -348,7 +348,7 @@ export const VirtualSchemaInline = () => {
     },
     virtual: {
       period: {
-        FormType: ({
+        FormTypeInput: ({
           defaultValue,
           onChange,
         }: FormTypeInputProps<string[] | undefined>) => {
@@ -461,7 +461,7 @@ export const VirtualSchemaInlineWithIfElse = () => {
     },
     virtual: {
       period: {
-        FormType: ({
+        FormTypeInput: ({
           defaultValue,
           onChange,
         }: FormTypeInputProps<string[] | undefined>) => {

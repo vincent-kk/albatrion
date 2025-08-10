@@ -9,42 +9,52 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 ### Build and Development
+
 - `yarn build` - Build the library (Rollup + TypeScript declarations)
 - `yarn build:types` - Generate TypeScript declaration files only
 - `yarn build:publish:npm` - Build and publish to NPM
 - `yarn start` - Build and start Storybook
 
 ### Testing and Quality
+
 - `yarn test` - Run tests with Vitest
 - `yarn lint` - ESLint with TypeScript support
 - `yarn format` - Format code with Prettier
 
 ### Storybook
+
 - `yarn storybook` - Start Storybook development server on port 6006
 - `yarn build-storybook` - Build Storybook for production
 
 ### Versioning
+
 - `yarn version:patch/minor/major` - Version bumping with semantic versioning
 
 ## Architecture Overview
 
 ### Plugin System Architecture
+
 The plugin exports a `SchemaFormPlugin` object containing:
+
 - **FormGroup**: Mobile-optimized container component using antd-mobile's Space component
 - **FormLabel**: Label rendering component
-- **FormInput**: Input wrapper component  
+- **FormInput**: Input wrapper component
 - **FormError**: Error display component
 - **formTypeInputDefinitions**: Array of 10 mobile-specific form input type definitions
 
 ### FormTypeInput Component Pattern
+
 Each FormTypeInput component follows a consistent pattern:
+
 1. **Component**: React component implementing the mobile input using antd-mobile components
 2. **Definition**: Object with `Component` and `test` properties
 3. **Test conditions**: JSON Schema matching criteria to determine when to use the component
 
 ### Component Priority System
+
 Components are selected in this order:
-1. In-line component (FormType property in schema)
+
+1. In-line component (FormTypeInput property in schema)
 2. FormTypeInputMap (explicitly mapped components)
 3. FormTypeInputDefinition (automatic selection via test conditions)
 4. Provider FormTypeInputDefinition
@@ -56,6 +66,7 @@ The plugin's components are prioritized in the specific order defined in `formTy
 ### Core Components Structure
 
 **Base Components** (`src/components/`):
+
 - `FormGroup.tsx` - Mobile-optimized container using antd-mobile Space component
 - `FormLabel.tsx` - Label rendering with required field indicators
 - `FormInput.tsx` - Input wrapper component
@@ -63,6 +74,7 @@ The plugin's components are prioritized in the specific order defined in `formTy
 
 **FormTypeInputs** (`src/formTypeInputs/`):
 Contains 10 specialized mobile input components:
+
 - `FormTypeInputBooleanSwitch.tsx` - Switch for boolean values with custom labels
 - `FormTypeInputStringCheckbox.tsx` - Checkbox groups for string arrays
 - `FormTypeInputStringSwitch.tsx` - Switch toggle between two string values
@@ -75,6 +87,7 @@ Contains 10 specialized mobile input components:
 - `FormTypeInputBoolean.tsx` - Checkbox for boolean values with indeterminate state
 
 ### Mobile-Specific Features
+
 - **Touch-optimized components**: All inputs are designed for mobile interaction
 - **Switch components**: Preferred over checkboxes for better mobile UX
 - **Slider inputs**: Touch-friendly numeric input with range support
@@ -82,7 +95,9 @@ Contains 10 specialized mobile input components:
 - **Custom labeling**: Support for context-based and schema-based custom labels
 
 ### Monorepo Context
+
 This package depends on other packages in the monorepo:
+
 - `@canard/schema-form` - Core form system (peer dependency)
 - `@winglet/common-utils` - Common utilities
 - `@winglet/react-utils` - React-specific utilities (especially `useHandle` hook)
@@ -92,7 +107,9 @@ This package depends on other packages in the monorepo:
 ## Key Implementation Details
 
 ### Schema-to-Component Mapping
+
 Components are selected based on JSON Schema properties:
+
 - `type` - Base type (string, number, integer, boolean, array)
 - `format` - Specific format (slider, textarea, password)
 - `formType` - Custom form type hint (switch, radio, radiogroup, checkbox)
@@ -100,24 +117,30 @@ Components are selected based on JSON Schema properties:
 - `items.type` - For array validation (checkbox groups, range sliders)
 
 ### Mobile UX Patterns
+
 - **Switch over checkbox**: Boolean inputs prefer Switch component when `formType: "switch"`
 - **Slider for numeric input**: When `format: "slider"` is specified
 - **Range sliders**: Supported for array types with numeric items
 - **Touch-friendly sizing**: Components optimized for finger interaction
 
 ### Context Support
+
 Components support additional context for customization:
+
 - `checkboxLabels` - Custom labels for switch states
 - Size and styling contexts from the form system
 
 ### State Management
+
 Uses the parent `@canard/schema-form` system's state management:
+
 - Node-based architecture for form state
 - Subscription-based updates
 - JSON Pointer path-based field identification
 - Mobile-optimized change handlers using `useHandle` hook
 
 ### TypeScript Integration
+
 - Full TypeScript support with strict typing
 - Declaration files generated automatically
 - Extends base schema types with mobile-component-specific properties
@@ -126,6 +149,7 @@ Uses the parent `@canard/schema-form` system's state management:
 ## Development Guidelines
 
 ### Adding New FormTypeInput Components
+
 1. Create component file in `src/formTypeInputs/`
 2. Export both Component and Definition
 3. Add to `formTypeInputDefinitions` array in proper priority order
@@ -133,9 +157,11 @@ Uses the parent `@canard/schema-form` system's state management:
 5. Ensure mobile-first design and touch optimization
 
 ### Testing Approach
+
 Uses Vitest with jsdom environment for component testing. Coverage stories are available in the `coverage/` directory for visual testing via Storybook.
 
 ### Build System
+
 - **Rollup** for bundling (ESM + CJS outputs)
 - **TypeScript** for declaration file generation
 - **Peer dependencies** externalized (React, antd-mobile, dayjs)
@@ -143,7 +169,9 @@ Uses Vitest with jsdom environment for component testing. Coverage stories are a
 - Uses shared build configuration from `../../aileron/script/build/rollup.bundle.mjs`
 
 ### Integration with Parent Schema System
+
 Components receive standardized props from the parent system including:
+
 - `path` - JSON Pointer path for the field
 - `jsonSchema` - The relevant JSON Schema with mobile-specific extensions
 - `onChange` - Change handler optimized for mobile events

@@ -100,7 +100,9 @@ export type NullSchema<Options extends Dictionary = object> = BasicSchema &
   BaseNullSchema<Options, JsonSchema<Options>>;
 
 export type BasicSchema = {
+  /** @deprecated Use FormTypeInput instead, this field will be removed in v0.4.0 */
   FormType?: ComponentType<UnknownFormTypeInputProps>;
+  FormTypeInput?: ComponentType<UnknownFormTypeInputProps>;
   FormTypeInputProps?: Dictionary;
   FormTypeRendererProps?: Dictionary;
   formType?: string;

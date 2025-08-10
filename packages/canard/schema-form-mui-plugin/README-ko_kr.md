@@ -140,7 +140,7 @@ registerPlugin(plugin);
 
 컴포넌트 선택은 다음 우선순위에 따라 결정됩니다:
 
-1. **In-line 컴포넌트**: 스키마에 `FormType` 속성으로 지정된 컴포넌트
+1. **In-line 컴포넌트**: 스키마에 `FormTypeInput` 속성으로 지정된 컴포넌트
 2. **FormTypeInputMap**: Path에 대해 명시적으로 매핑된 컴포넌트
 3. **FormTypeInputDefinition**: 각 컴포넌트의 `test` 조건을 통한 자동 선택
 4. **Provider FormTypeInputDefinition**: 상위 Provider에서 제공된 컴포넌트 정의

@@ -1,11 +1,8 @@
 ---
-description: 
-globs: 
 alwaysApply: false
 ---
 
 # Schema Form Plugin 개발을 위한 프롬프트
-
 
 ## 프롬프트 템플릿
 
@@ -30,11 +27,13 @@ alwaysApply: false
 ### 1. 성능 최적화 우선 정책
 
 **비제어 컴포넌트 우선 사용**
+
 - `value` + `onChange` 대신 `defaultValue` + `onChange` 패턴 사용
 - 불필요한 props 전파로 인한 리렌더링 방지
 - 예외: 실시간 validation이나 조건부 렌더링이 필요한 경우에만 제어 컴포넌트 사용
 
 **최적화 훅 활용**
+
 ```tsx
 // 권장 패턴
 const handleChange = useHandle((event) => onChange(event.target.value));
@@ -54,33 +53,33 @@ export interface FormTypeInputProps<
   Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
-  /** JsonSchema of FormType Component */
+  /** JsonSchema of FormTypeInput Component */
   jsonSchema: Schema;
-  /** ReadOnly state of FormType Component */
+  /** ReadOnly state of FormTypeInput Component */
   readOnly: boolean;
-  /** Disabled state of FormType Component */
+  /** Disabled state of FormTypeInput Component */
   disabled: boolean;
-  /** Whether the schema node assigned to FormType Component is required */
+  /** Whether the schema node assigned to FormTypeInput Component is required */
   required: boolean;
-  /** Schema node assigned to FormType Component */
+  /** Schema node assigned to FormTypeInput Component */
   node: Node;
-  /** Name of schema node assigned to FormType Component */
-  name: Node['name'];
-  /** Path of schema node assigned to FormType Component */
-  path: Node['path'];
-  /** Errors of schema node assigned to FormType Component */
-  errors: Node['errors'];
+  /** Name of schema node assigned to FormTypeInput Component */
+  name: Node["name"];
+  /** Path of schema node assigned to FormTypeInput Component */
+  path: Node["path"];
+  /** Errors of schema node assigned to FormTypeInput Component */
+  errors: Node["errors"];
   /** Values subscribed according to `computed.watch`(=`&watch`) property defined in JsonSchema */
   watchValues: WatchValues;
-  /** Default value of FormType Component */
+  /** Default value of FormTypeInput Component */
   defaultValue: Value | undefined;
-  /** Current value of FormType Component */
+  /** Current value of FormTypeInput Component */
   value: Value;
-  /** onChange handler of FormType Component */
+  /** onChange handler of FormTypeInput Component */
   onChange: SetStateFnWithOptions<Value>;
-  /** Child FormType Components of this FormType Component */
+  /** Child FormTypeInput Components of this FormTypeInput Component */
   ChildNodeComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
-  /** Style of FormType Component */
+  /** Style of FormTypeInput Component */
   style: CSSProperties | undefined;
   /** UserDefinedContext passed to Form */
   context: Context;
@@ -90,35 +89,35 @@ export interface FormTypeInputProps<
 
 // FormTypeRendererProps 완전한 구조
 export interface FormTypeRendererProps extends OverridableFormTypeInputProps {
-  /** Whether the schema node assigned to FormType Renderer Component is the root node */
+  /** Whether the schema node assigned to FormTypeInput Renderer Component is the root node */
   isRoot: boolean;
-  /** Depth of the schema node assigned to FormType Renderer Component */
+  /** Depth of the schema node assigned to FormTypeInput Renderer Component */
   depth: number;
-  /** JsonSchema of the schema node assigned to FormType Renderer Component */
-  jsonSchema: SchemaNode['jsonSchema'];
-  /** Schema node assigned to FormType Renderer Component */
+  /** JsonSchema of the schema node assigned to FormTypeInput Renderer Component */
+  jsonSchema: SchemaNode["jsonSchema"];
+  /** Schema node assigned to FormTypeInput Renderer Component */
   node: SchemaNode;
-  /** Type of the schema node assigned to FormType Renderer Component */
-  type: SchemaNode['type'];
-  /** Path of the schema node assigned to FormType Renderer Component */
-  path: SchemaNode['path'];
-  /** Name of the schema node assigned to FormType Renderer Component */
-  name: SchemaNode['name'];
-  /** Value of the schema node assigned to FormType Renderer Component */
-  value: SchemaNode['value'];
-  /** Errors of the schema node assigned to FormType Renderer Component */
-  errors: SchemaNode['errors'];
-  /** Whether the schema node assigned to FormType Renderer Component is required */
-  required: SchemaNode['required'];
-  /** Input component of the schema node assigned to FormType Renderer Component */
+  /** Type of the schema node assigned to FormTypeInput Renderer Component */
+  type: SchemaNode["type"];
+  /** Path of the schema node assigned to FormTypeInput Renderer Component */
+  path: SchemaNode["path"];
+  /** Name of the schema node assigned to FormTypeInput Renderer Component */
+  name: SchemaNode["name"];
+  /** Value of the schema node assigned to FormTypeInput Renderer Component */
+  value: SchemaNode["value"];
+  /** Errors of the schema node assigned to FormTypeInput Renderer Component */
+  errors: SchemaNode["errors"];
+  /** Whether the schema node assigned to FormTypeInput Renderer Component is required */
+  required: SchemaNode["required"];
+  /** Input component of the schema node assigned to FormTypeInput Renderer Component */
   Input: ComponentType<OverridableFormTypeInputProps>;
-  /** Error message of the schema node assigned to FormType Renderer Component */
+  /** Error message of the schema node assigned to FormTypeInput Renderer Component */
   errorMessage: ReactNode;
-  /** Function to format error message of the schema node assigned to FormType Renderer Component */
+  /** Function to format error message of the schema node assigned to FormTypeInput Renderer Component */
   formatError: FormatError;
-  /** User defined context of the schema node assigned to FormType Renderer Component */
+  /** User defined context of the schema node assigned to FormTypeInput Renderer Component */
   context: Dictionary;
-  /** Additional props of the schema node assigned to FormType Renderer Component */
+  /** Additional props of the schema node assigned to FormTypeInput Renderer Component */
   [alt: string]: any;
 }
 
@@ -165,6 +164,7 @@ export type SetStateFnWithOptions<S = unknown> = (
 ```
 
 **UI 라이브러리별 Context 타입 정의**
+
 ```tsx
 interface [LibraryName]Context {
   size?: 'small' | 'medium' | 'large';
@@ -314,16 +314,17 @@ export const FormTypeInputTextareaDefinition = {
 ### 3. 실제 구현 패턴 준수
 
 **플러그인 구조 (SchemaFormPlugin 타입)**
+
 ```tsx
 // src/index.ts
-import type { SchemaFormPlugin } from '@canard/schema-form';
+import type { SchemaFormPlugin } from "@canard/schema-form";
 
-import { FormError } from './components/FormError';
-import { FormGroup } from './components/FormGroup';
-import { FormInput } from './components/FormInput';
-import { FormLabel } from './components/FormLabel';
-import { formatError } from './components/formatError';
-import { formTypeInputDefinitions } from './formTypeInputs';
+import { FormError } from "./components/FormError";
+import { FormGroup } from "./components/FormGroup";
+import { FormInput } from "./components/FormInput";
+import { FormLabel } from "./components/FormLabel";
+import { formatError } from "./components/formatError";
+import { formTypeInputDefinitions } from "./formTypeInputs";
 
 export const plugin = {
   FormGroup,
@@ -346,6 +347,7 @@ export interface SchemaFormPlugin {
 ```
 
 **FormTypeInputDefinitions 통합 (우선순위 순서 중요)**
+
 ```tsx
 // src/formTypeInputs/index.ts
 import type { FormTypeInputDefinition } from '@canard/schema-form';
@@ -363,6 +365,7 @@ export const formTypeInputDefinitions: FormTypeInputDefinition[] = [
 ```
 
 **실제 컴포넌트 구현 패턴 (FormTypeInputTime 참조)**
+
 ```tsx
 // FormTypeInputPropsWithSchema 사용
 interface FormTypeInput[ComponentName]Props
@@ -460,6 +463,7 @@ export const FormTypeInput[ComponentName]Definition = {
 ### 4. 의존성 관리 규칙
 
 **package.json 설정 가이드**
+
 ```json
 {
   "name": "@canard/schema-form-{UI_LIBRARY_NAME}-plugin",
@@ -480,6 +484,7 @@ export const FormTypeInput[ComponentName]Definition = {
 ```
 
 **의존성 규칙**:
+
 1. **dependencies**: 적용된 라이브러리의 최신 메이저 버전을 모두 포함 (`^5.0.0` 형태)
 2. **peerDependencies**: 해당 의존성 이상으로 설정 (`>=5.0.0` 형태)
 3. **@winglet, @canard 내부 패키지**: `"*"` 또는 workspace 설정으로 처리
@@ -492,6 +497,7 @@ export const FormTypeInput[ComponentName]Definition = {
 모든 플러그인은 다음 5개 기본 컴포넌트를 구현해야 합니다:
 
 #### FormGroup
+
 - **조건**: `FormTypeRendererProps`를 받아 필드 그룹 래퍼 렌더링
 - **요구사항**:
   - `depth` 기반 스타일링 (들여쓰기, 시각적 구분)
@@ -499,6 +505,7 @@ export const FormTypeInput[ComponentName]Definition = {
   - 접근성 지원 (fieldset, legend 등)
 
 #### FormLabel
+
 - **조건**: `name`, `path`, `required` 정보로 라벨 생성
 - **요구사항**:
   - `htmlFor` 연결 구현
@@ -506,14 +513,17 @@ export const FormTypeInput[ComponentName]Definition = {
   - 라벨 우선순위: `jsonSchema.label` > `jsonSchema.title` > `name`
 
 #### FormInput
+
 - **조건**: `Input` 컴포넌트를 래핑하여 렌더링
 - **요구사항**: 단순 패스스루 래퍼 (추가 로직 없음)
 
 #### FormError
+
 - **조건**: `errorMessage`를 UI에 표시
 - **요구사항**: 라이브러리의 에러 표시 컨벤션 준수
 
 #### formatError
+
 - **조건**: `JsonSchemaError` 객체를 ReactNode로 변환
 - **요구사항**:
   - 다국어 지원 고려
@@ -524,6 +534,7 @@ export const FormTypeInput[ComponentName]Definition = {
 각 FormTypeInput은 다음 조건을 만족해야 합니다:
 
 #### 공통 조건
+
 - **타입 준수**: `FormTypeInputProps<ValueType, Context>` 확장
 - **test 함수**: 정확한 매핑 조건 구현
 - **비제어 우선**: `defaultValue` 패턴 우선 사용
@@ -537,47 +548,57 @@ export const FormTypeInput[ComponentName]Definition = {
 **권장 순서**: 특수 조건 (format + formType) → 중간 조건 (format 또는 formType) → 일반 조건 (type만)
 
 **FormTypeInputString**
+
 - **타입**: `FormTypeInputPropsWithSchema<string, StringSchema, Context>`
 - **매핑 조건**: `{ type: 'string' }` (가장 일반적인 조건이므로 **마지막 순서**에 배치)
 - **특수 처리**: `format === 'password'` 시 패스워드 입력 모드
 - **구현 패턴**: 기본 TextField, format별 type 변경
 
 **FormTypeInputNumber**
+
 - **타입**: `FormTypeInputPropsWithSchema<number, NumberSchema, Context>`
 - **매핑 조건**: `{ type: ['number', 'integer'] }` (일반적인 조건이므로 **뒤쪽 순서**에 배치)
 - **특수 처리**: 숫자 검증, min/max/step 지원
 
 **FormTypeInputBoolean**
+
 - **타입**: `FormTypeInputPropsWithSchema<boolean, BooleanSchema, Context>`
 - **매핑 조건**: `{ type: 'boolean' }` (일반적인 조건이므로 **뒤쪽 순서**에 배치)
 - **특수 처리**: indeterminate 상태 지원
 
 **FormTypeInputStringEnum**
+
 - **타입**: `FormTypeInputPropsWithSchema<string | string[], EnumSchema, Context>`
 - **매핑 조건**: 함수 형태 (복합 조건)
   ```tsx
   test: ({ type, jsonSchema }: Hint) =>
-    (type === 'string' && jsonSchema.enum && jsonSchema.enum.length > 0) ||
-    (type === 'array' && jsonSchema.items?.type === 'string' && jsonSchema.items?.enum)
+    (type === "string" && jsonSchema.enum && jsonSchema.enum.length > 0) ||
+    (type === "array" &&
+      jsonSchema.items?.type === "string" &&
+      jsonSchema.items?.enum);
   ```
 - **순서**: 중간 (string 타입이지만 enum 조건 추가)
 
 **FormTypeInputTextarea**
+
 - **타입**: `FormTypeInputPropsWithSchema<string, StringSchema, Context>`
 - **매핑 조건**: `{ type: 'string', format: 'textarea' }` 또는 `{ type: 'string', formType: 'textarea' }`
 - **순서**: **앞쪽** (string 타입 + 추가 조건)
 
 **FormTypeInputPassword** (예시)
+
 - **타입**: `FormTypeInputPropsWithSchema<string, StringSchema, Context>`
 - **매핑 조건**: `{ type: 'string', format: 'password' }`
 - **순서**: **앞쪽** (string 타입 + format 조건)
 
 **FormTypeInputSlider**
+
 - **타입**: `FormTypeInputPropsWithSchema<number, NumberSchema, Context>`
 - **매핑 조건**: `{ type: ['number', 'integer'], formType: 'slider' }`
 - **순서**: **앞쪽** (number 타입 + formType 조건)
 
 **FormTypeInputArray** ⚠️
+
 - **타입**: `FormTypeInputPropsWithSchema<any[], ArraySchema, Context>`
 - **매핑 조건**: `{ type: 'array' }`
 - **순서**: 중간 (구조 컴포넌트로 특별 처리)
@@ -592,11 +613,11 @@ export const FormTypeInput[ComponentName]Definition = {
 
 다음 매핑 표를 작성하여 구현 가능성을 먼저 평가하세요:
 
-| Schema Form 요구사항 | [UI_LIBRARY] 컴포넌트 | 호환성 | 구현 방식 | 우선순위 |
-|---------------------|---------------------|-------|----------|----------|
-| 체크박스 (boolean) | [Library]Checkbox | ✅ 직접 | defaultChecked 사용 | 1 |
-| 숫자 입력 | [Library]NumberInput | ⚠️ 커스텀 | 숫자 검증 추가 | 2 |
-| 날짜 선택 | [Library]DatePicker | ❌ 없음 | Fallback 사용 | - |
+| Schema Form 요구사항 | [UI_LIBRARY] 컴포넌트 | 호환성    | 구현 방식           | 우선순위 |
+| -------------------- | --------------------- | --------- | ------------------- | -------- |
+| 체크박스 (boolean)   | [Library]Checkbox     | ✅ 직접   | defaultChecked 사용 | 1        |
+| 숫자 입력            | [Library]NumberInput  | ⚠️ 커스텀 | 숫자 검증 추가      | 2        |
+| 날짜 선택            | [Library]DatePicker   | ❌ 없음   | Fallback 사용       | -        |
 
 ### 2. 프로젝트 구조 예시
 
@@ -638,16 +659,19 @@ src/
 ## 개발 절차
 
 ### Phase 1: 설계 및 검증 (1-2일)
+
 1. UI 라이브러리 컴포넌트 매핑 분석
 2. Context 타입 및 인터페이스 설계
 3. 구현 우선순위 결정
 
 ### Phase 2: 기본 인프라 (2-3일)
+
 1. 프로젝트 설정 및 의존성 설치
 2. 타입 정의 및 기본 렌더러 구현
 3. 빌드 및 테스트 환경 구성
 
 ### Phase 3: 핵심 컴포넌트 (3-5일)
+
 1. **Priority 1**: String, Number, Boolean 입력 (일반 조건, 배열 **뒤쪽**에 배치)
 2. **Priority 2**: 특수 format/formType 컴포넌트 (배열 **앞쪽**에 배치)
    - Textarea, Password, Date, Time 등
@@ -655,12 +679,14 @@ src/
 4. **Priority 4**: Enum, Radio, Checkbox 등 선택 컴포넌트
 
 ### Phase 4: 고급 기능 및 문서화 (2-3일)
+
 1. Slider, Switch 등 고급 입력 컴포넌트
 2. **README.md 및 README-ko_kr.md 작성** (MUI plugin 형식 준수)
 3. package.json 의존성 설정
 4. 타입 정의 완성도 검증
 
 ### Phase 5: 최적화 및 검증 (1-2일)
+
 1. 성능 최적화 적용 확인
 2. 컴포넌트 순서 및 우선순위 검증
 3. canard-form 통합 테스트
@@ -680,3 +706,4 @@ src/
 
 [위의 모든 가이드라인과 체크리스트 포함]
 
+```

@@ -13,13 +13,13 @@ import type { InferJsonSchema, JsonSchemaWithVirtual } from './jsonSchema';
 import type { AllowedValue } from './value';
 
 /**
- * Props that FormType Input Component must satisfy
+ * Props that FormTypeInput Input Component must satisfy
  *
- * - `Value`: Type of value assigned to FormType Component
+ * - `Value`: Type of value assigned to FormTypeInput Component
  * - `Context`: Type of UserDefinedContext passed to Form
  * - `WatchValues`: Type of values subscribed according to watch property defined in JsonSchema
- * - `Schema`: JsonSchema type of schema node assigned to FormType Component
- * - `Node`: Type of schema node assigned to FormType Component
+ * - `Schema`: JsonSchema type of schema node assigned to FormTypeInput Component
+ * - `Node`: Type of schema node assigned to FormTypeInput Component
  */
 export interface FormTypeInputProps<
   Value extends AllowedValue = any,
@@ -28,33 +28,33 @@ export interface FormTypeInputProps<
   Schema extends JsonSchemaWithVirtual = InferJsonSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
-  /** JsonSchema of FormType Component */
+  /** JsonSchema of FormTypeInput Component */
   jsonSchema: Schema;
-  /** ReadOnly state of FormType Component */
+  /** ReadOnly state of FormTypeInput Component */
   readOnly: boolean;
-  /** Disabled state of FormType Component */
+  /** Disabled state of FormTypeInput Component */
   disabled: boolean;
-  /** Whether the schema node assigned to FormType Component is required */
+  /** Whether the schema node assigned to FormTypeInput Component is required */
   required: boolean;
-  /** Schema node assigned to FormType Component */
+  /** Schema node assigned to FormTypeInput Component */
   node: Node;
-  /** Name of schema node assigned to FormType Component */
+  /** Name of schema node assigned to FormTypeInput Component */
   name: Node['name'];
-  /** Path of schema node assigned to FormType Component */
+  /** Path of schema node assigned to FormTypeInput Component */
   path: Node['path'];
-  /** Errors of schema node assigned to FormType Component */
+  /** Errors of schema node assigned to FormTypeInput Component */
   errors: Node['errors'];
   /** Values subscribed according to `computed.watch`(=`&watch`) property defined in JsonSchema */
   watchValues: WatchValues;
-  /** Default value of FormType Component */
+  /** Default value of FormTypeInput Component */
   defaultValue: Value | undefined;
-  /** Current value of FormType Component */
+  /** Current value of FormTypeInput Component */
   value: Value;
-  /** onChange handler of FormType Component */
+  /** onChange handler of FormTypeInput Component */
   onChange: SetStateFnWithOptions<Value>;
-  /** Child FormType Components of this FormType Component */
+  /** Child FormTypeInput Components of this FormTypeInput Component */
   ChildNodeComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
-  /** Style of FormType Component */
+  /** Style of FormTypeInput Component */
   style: CSSProperties | undefined;
   /** UserDefinedContext passed to Form */
   context: Context;
@@ -65,8 +65,8 @@ export interface FormTypeInputProps<
 /**
  * Props that FormTypeInputPropsWithSchema must satisfy
  *
- * - `Value`: Type of value assigned to FormType Component
- * - `Schema`: JsonSchema type of schema node assigned to FormType Component
+ * - `Value`: Type of value assigned to FormTypeInput Component
+ * - `Schema`: JsonSchema type of schema node assigned to FormTypeInput Component
  * - `Context`: Type of UserDefinedContext passed to Form
  */
 export type FormTypeInputPropsWithSchema<
@@ -78,9 +78,9 @@ export type FormTypeInputPropsWithSchema<
 /**
  * Props that FormTypeInputPropsWithSchema must satisfy
  *
- * - `Value`: Type of value assigned to FormType Component
- * - `Schema`: JsonSchema type of schema node assigned to FormType Component
- * - `Node`: Type of schema node assigned to FormType Component
+ * - `Value`: Type of value assigned to FormTypeInput Component
+ * - `Schema`: JsonSchema type of schema node assigned to FormTypeInput Component
+ * - `Node`: Type of schema node assigned to FormTypeInput Component
  */
 export type FormTypeInputPropsWithNode<
   Value extends AllowedValue = any,

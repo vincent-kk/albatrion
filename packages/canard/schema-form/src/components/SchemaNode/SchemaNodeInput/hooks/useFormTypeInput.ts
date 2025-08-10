@@ -29,11 +29,12 @@ export const useFormTypeInput = (node: SchemaNode, disabled: boolean) => {
   const FormTypeInput = useMemo(() => {
     if (disabled) return null;
     // NOTE: If formType is a React Component, return that Component.
-    const InlineFormType = node.jsonSchema?.FormType;
-    if (InlineFormType && isReactComponent(InlineFormType))
-      if (isMemoComponent(InlineFormType))
-        return withErrorBoundary(InlineFormType);
-      else return memo(withErrorBoundary(InlineFormType));
+    const InlineFormTypeInput =
+      node.jsonSchema?.FormTypeInput || node.jsonSchema?.FormType;
+    if (InlineFormTypeInput && isReactComponent(InlineFormTypeInput))
+      if (isMemoComponent(InlineFormTypeInput))
+        return withErrorBoundary(InlineFormTypeInput);
+      else return memo(withErrorBoundary(InlineFormTypeInput));
 
     const hint = getHint(node);
 

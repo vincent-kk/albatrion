@@ -51,7 +51,7 @@ export const Boolean = Template.bind({});
 Boolean.args = {
   jsonSchema: {
     type: 'boolean',
-    FormType: FormTypeInputBooleanDefinition.Component,
+    FormTypeInput: FormTypeInputBooleanDefinition.Component,
   },
 };
 
@@ -59,7 +59,7 @@ export const String = Template.bind({});
 String.args = {
   jsonSchema: {
     type: 'string',
-    FormType: FormTypeInputStringDefinition.Component,
+    FormTypeInput: FormTypeInputStringDefinition.Component,
   },
 };
 
@@ -71,7 +71,7 @@ StringCheckbox.args = {
       type: 'string',
       enum: ['a', 'b', 'c'],
     },
-    FormType: FormTypeInputStringCheckboxDefinition.Component,
+    FormTypeInput: FormTypeInputStringCheckboxDefinition.Component,
   },
 };
 
@@ -80,7 +80,7 @@ StringRadio.args = {
   jsonSchema: {
     type: 'string',
     enum: ['a', 'b', 'c'],
-    FormType: FormTypeInputStringRadioDefinition.Component,
+    FormTypeInput: FormTypeInputStringRadioDefinition.Component,
   },
 };
 
@@ -89,7 +89,7 @@ StringEnum.args = {
   jsonSchema: {
     type: 'string',
     enum: ['', 'a', 'b', 'c'],
-    FormType: FormTypeInputStringEnumDefinition.Component,
+    FormTypeInput: FormTypeInputStringEnumDefinition.Component,
   },
 };
 
@@ -98,7 +98,7 @@ DateTimeFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'datetime-local',
-    FormType: FormTypeInputDateFormantDefinition.Component,
+    FormTypeInput: FormTypeInputDateFormantDefinition.Component,
   },
 };
 
@@ -107,7 +107,7 @@ TimeFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'time',
-    FormType: FormTypeInputDateFormantDefinition.Component,
+    FormTypeInput: FormTypeInputDateFormantDefinition.Component,
   },
 };
 
@@ -116,7 +116,7 @@ DateFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'date',
-    FormType: FormTypeInputDateFormantDefinition.Component,
+    FormTypeInput: FormTypeInputDateFormantDefinition.Component,
   },
 };
 
@@ -125,7 +125,7 @@ WeekFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'week',
-    FormType: FormTypeInputDateFormantDefinition.Component,
+    FormTypeInput: FormTypeInputDateFormantDefinition.Component,
   },
 };
 
@@ -134,7 +134,7 @@ MonthFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'month',
-    FormType: FormTypeInputDateFormantDefinition.Component,
+    FormTypeInput: FormTypeInputDateFormantDefinition.Component,
   },
 };
 
@@ -142,7 +142,7 @@ export const Number = Template.bind({});
 Number.args = {
   jsonSchema: {
     type: 'number',
-    FormType: FormTypeInputNumberDefinition.Component,
+    FormTypeInput: FormTypeInputNumberDefinition.Component,
   },
 };
 
@@ -152,12 +152,12 @@ Array.args = {
     type: 'array',
     items: {
       type: 'string',
-      FormType: FormTypeInputStringDefinition.Component,
+      FormTypeInput: FormTypeInputStringDefinition.Component,
       default: 'ARRAY_ITEM',
       disabled: true,
     },
     minItems: 3,
-    FormType: FormTypeInputArrayDefinition.Component,
+    FormTypeInput: FormTypeInputArrayDefinition.Component,
   },
 };
 
@@ -165,19 +165,19 @@ export const Object = Template.bind({});
 Object.args = {
   jsonSchema: {
     type: 'object',
-    FormType: FormTypeInputObjectDefinition.Component,
+    FormTypeInput: FormTypeInputObjectDefinition.Component,
     properties: {
       a: {
         type: 'boolean',
-        FormType: FormTypeInputBooleanDefinition.Component,
+        FormTypeInput: FormTypeInputBooleanDefinition.Component,
       },
       b: {
         type: 'string',
-        FormType: FormTypeInputStringDefinition.Component,
+        FormTypeInput: FormTypeInputStringDefinition.Component,
       },
       c: {
         type: 'number',
-        FormType: FormTypeInputNumberDefinition.Component,
+        FormTypeInput: FormTypeInputNumberDefinition.Component,
       },
     },
   },

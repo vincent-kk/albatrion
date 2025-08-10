@@ -14,7 +14,7 @@ export const FormTypeInputArrayTerminal = () => {
     properties: {
       arr: {
         type: 'array',
-        FormType: ({ node, onChange, value }: FormTypeInputProps<string[]>) => {
+        FormTypeInput: ({ node, onChange, value }: FormTypeInputProps<string[]>) => {
           return (
             <div>
               i am array item: {node.group}
@@ -58,7 +58,7 @@ export const FormTypeInputArrayNotTerminal = () => {
       arr: {
         type: 'array',
         terminal: false,
-        FormType: ({ node, onChange, value }: FormTypeInputProps<string[]>) => {
+        FormTypeInput: ({ node, onChange, value }: FormTypeInputProps<string[]>) => {
           return (
             <div>
               i am array item: {node.group}
@@ -101,7 +101,7 @@ export const FormTypeInputArrayTerminalWithDefaultValue = () => {
     properties: {
       arr: {
         type: 'array',
-        FormType: ({
+        FormTypeInput: ({
           node,
           onChange,
           value,
@@ -157,7 +157,7 @@ export const FormTypeInputArrayTerminalWithDefaultObjectValue = () => {
     properties: {
       arr: {
         type: 'array',
-        FormType: ({
+        FormTypeInput: ({
           node,
           onChange,
           value,
@@ -227,7 +227,7 @@ export const FormTypeInputArrayTerminalWithMixedDefaultObjectValue = () => {
     properties: {
       arr: {
         type: 'array',
-        FormType: ({
+        FormTypeInput: ({
           node,
           onChange,
           value,
@@ -304,7 +304,7 @@ export const FormTypeInputObjectTerminal = () => {
     properties: {
       poster: {
         type: 'object',
-        FormType: ({
+        FormTypeInput: ({
           node,
           onChange,
           value,
@@ -381,7 +381,7 @@ export const FormTypeInputObjectNotTerminal = () => {
       poster: {
         type: 'object',
         terminal: false,
-        FormType: ({
+        FormTypeInput: ({
           node,
           onChange,
           value,
@@ -457,7 +457,7 @@ export const FormTypeInputObjectTerminalWithDefaultValue = () => {
     properties: {
       poster: {
         type: 'object',
-        FormType: ({
+        FormTypeInput: ({
           node,
           onChange,
           value,
@@ -541,7 +541,7 @@ export const FormTypeInputObjectTerminalWithSubSchemaDefaultValue = () => {
     properties: {
       poster: {
         type: 'object',
-        FormType: ({
+        FormTypeInput: ({
           node,
           onChange,
           value,
@@ -621,7 +621,7 @@ export const FormTypeInputObjectTerminalWithMixedDefaultValue = () => {
     properties: {
       poster: {
         type: 'object',
-        FormType: ({
+        FormTypeInput: ({
           node,
           onChange,
           value,
@@ -706,7 +706,7 @@ export const FormTypeInputObjectTerminalWithPropertyKeys = () => {
     properties: {
       poster: {
         type: 'object',
-        FormType: ({
+        FormTypeInput: ({
           node,
           onChange,
           value,

@@ -112,7 +112,7 @@ This plugin provides the following Ant Design Mobile components:
 
 Component selection is determined by the following priority order:
 
-1. **In-line component**: Component specified as `FormType` property in the schema
+1. **In-line component**: Component specified as `FormTypeInput` property in the schema
 2. **FormTypeInputMap**: Component explicitly mapped to a path
 3. **FormTypeInputDefinition**: Automatic selection through each component's `test` condition
 4. **Provider FormTypeInputDefinition**: Component definitions provided by parent Provider
