@@ -1,0 +1,96 @@
+{
+  "timestamp": "2025-08-10T10-14-57-190Z",
+  "results": [
+    {
+      "name": "@react-genie-form/next - Form Rendering",
+      "hz": 58.611046862687516,
+      "stats": {
+        "mean": 0.017061630077053132,
+        "deviation": 0.01117405014273875
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.1.0 - Form Rendering",
+      "hz": 191.39319529413007,
+      "stats": {
+        "mean": 0.0052248461522533,
+        "deviation": 0.0003527871678748789
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.2.12 - Form Rendering",
+      "hz": 194.405822022169,
+      "stats": {
+        "mean": 0.00514387886946084,
+        "deviation": 0.000387158223191838
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.3.0 - Form Rendering",
+      "hz": 192.89573628575496,
+      "stats": {
+        "mean": 0.005184147764254385,
+        "deviation": 0.00038412896090197156
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.3.5 - Form Rendering",
+      "hz": 191.88859074927112,
+      "stats": {
+        "mean": 0.00521135725732979,
+        "deviation": 0.0004708826244194948
+      }
+    },
+    {
+      "name": "@canard/schema-form@0.4.0 - Form Rendering",
+      "hz": 193.55115181175677,
+      "stats": {
+        "mean": 0.005166592865190367,
+        "deviation": 0.000382518062094683
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - Form Rendering",
+      "hz": 190.39243160456633,
+      "stats": {
+        "mean": 0.005252309619517545,
+        "deviation": 0.0008280275266990308
+      }
+    }
+  ],
+  "chartConfig": {
+    "type": "bar",
+    "data": {
+      "labels": [
+        "@react-genie-form/next - Form Rendering",
+        "@canard/schema-form@0.1.0 - Form Rendering",
+        "@canard/schema-form@0.2.12 - Form Rendering",
+        "@canard/schema-form@0.3.0 - Form Rendering",
+        "@canard/schema-form@0.3.5 - Form Rendering",
+        "@canard/schema-form@0.4.0 - Form Rendering",
+        "@canard/schema-form@latest - Form Rendering"
+      ],
+      "datasets": [
+        {
+          "label": "Operations/sec",
+          "data": [
+            58.611046862687516,
+            191.39319529413007,
+            194.405822022169,
+            192.89573628575496,
+            191.88859074927112,
+            193.55115181175677,
+            190.39243160456633
+          ]
+        }
+      ]
+    },
+    "options": {
+      "scales": {
+        "y": {
+          "beginAtZero": true
+        }
+      }
+    }
+  }
+}

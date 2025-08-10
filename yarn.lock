@@ -21,6 +21,7 @@ __metadata:
     "@canard/schema-form_0.2.12": "npm:@canard/schema-form@0.2.12"
     "@canard/schema-form_0.3.0": "npm:@canard/schema-form@0.3.0"
     "@canard/schema-form_0.3.5": "npm:@canard/schema-form@0.3.5"
+    "@canard/schema-form_0.4.0": "npm:@canard/schema-form@0.4.0"
     "@react-genie-form/next": "npm:^0.2.46"
     "@testing-library/react": "npm:^14.2.1"
     "@types/benchmark": "npm:^2.1.5"
@@ -2027,7 +2028,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@canard/schema-form@workspace:^, @canard/schema-form@workspace:packages/canard/schema-form":
+"@canard/schema-form@workspace:^, @canard/schema-form@workspace:packages/canard/schema-form, @canard/schema-form_0.4.0@npm:@canard/schema-form@0.4.0":
   version: 0.0.0-use.local
   resolution: "@canard/schema-form@workspace:packages/canard/schema-form"
   dependencies:
