@@ -1,6 +1,6 @@
 {
   "name": "@winglet/style-utils",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Comprehensive CSS and style management utilities including className manipulation, CSS compression, and universal style manager for TypeScript projects",
   "keywords": [
     "typescript",

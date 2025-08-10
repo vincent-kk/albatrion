@@ -1,6 +1,6 @@
 {
   "name": "@canard/schema-form-antd-plugin",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Ant Design components plugin for @canard/schema-form providing pre-built form inputs with advanced components like date pickers, sliders, and file uploads",
   "keywords": [
     "react",
