@@ -5,7 +5,7 @@ import { useSchemaNodeSubscribe } from '@/schema-form/hooks/useSchemaNodeSubscri
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
   useInputControlContext,
-  useUserDefinedContext,
+  useWorkspaceContext,
 } from '@/schema-form/providers';
 import type { SetStateFnWithOptions } from '@/schema-form/types';
 
@@ -77,7 +77,7 @@ export const SchemaNodeInput = memo(
       });
     }, [node]);
 
-    const { context: userDefinedContext } = useUserDefinedContext();
+    const { context } = useWorkspaceContext();
     const { readOnly: rootReadOnly, disabled: rootDisabled } =
       useInputControlContext();
 
@@ -107,7 +107,7 @@ export const SchemaNodeInput = memo(
           onChange={handleChange}
           ChildNodeComponents={ChildNodeComponents}
           style={node.jsonSchema.style}
-          context={userDefinedContext}
+          context={context}
           {...node.jsonSchema.FormTypeInputProps}
           {...overrideProps}
         />

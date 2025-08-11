@@ -6,7 +6,7 @@ import type { FormProps } from '@/schema-form/components/Form';
 import type { FileMap } from '@/schema-form/types';
 
 import { useExternalFormContext } from '../ExternalFormContext';
-import { UserDefinedContext } from './UserDefinedContext';
+import { WorkspaceContext } from './WorkspaceContext';
 
 interface UserDefinedContextProviderProps {
   /** User-defined context, merged with global user-defined context */
@@ -15,7 +15,7 @@ interface UserDefinedContextProviderProps {
   fileMap: FileMap;
 }
 
-export const UserDefinedContextProvider = ({
+export const WorkspaceContextProvider = ({
   context: inputContext,
   fileMap,
   children,
@@ -33,8 +33,8 @@ export const UserDefinedContextProvider = ({
     [external.context, context, fileMap],
   );
   return (
-    <UserDefinedContext.Provider value={contextValue}>
+    <WorkspaceContext.Provider value={contextValue}>
       {children}
-    </UserDefinedContext.Provider>
+    </WorkspaceContext.Provider>
   );
 };

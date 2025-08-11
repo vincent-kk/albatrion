@@ -32,7 +32,7 @@ import {
   FormTypeRendererContextProvider,
   InputControlContextProvider,
   RootNodeContextProvider,
-  UserDefinedContextProvider,
+  WorkspaceContextProvider,
 } from '@/schema-form/providers';
 import type {
   AllowedValue,
@@ -161,7 +161,7 @@ const FormInner = <
   );
 
   return (
-    <UserDefinedContextProvider context={context} fileMap={fileMapRef.current}>
+    <WorkspaceContextProvider context={context} fileMap={fileMapRef.current}>
       <FormTypeInputsContextProvider
         formTypeInputDefinitions={formTypeInputDefinitions}
         formTypeInputMap={formTypeInputMap}
@@ -190,7 +190,7 @@ const FormInner = <
           </InputControlContextProvider>
         </FormTypeRendererContextProvider>
       </FormTypeInputsContextProvider>
-    </UserDefinedContextProvider>
+    </WorkspaceContextProvider>
   );
 };
 

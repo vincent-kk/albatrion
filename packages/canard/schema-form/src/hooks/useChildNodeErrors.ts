@@ -7,7 +7,7 @@ import { useVersion } from '@winglet/react-utils/hook';
 import { NodeEventType, NodeState, type SchemaNode } from '@/schema-form/core';
 import {
   useFormTypeRendererContext,
-  useUserDefinedContext,
+  useWorkspaceContext,
 } from '@/schema-form/providers';
 import type { JsonSchemaError } from '@/schema-form/types';
 
@@ -86,7 +86,7 @@ export const useChildNodeErrors = (
   errorMatrix: JsonSchemaError[][];
 } => {
   const { formatError, checkShowError } = useFormTypeRendererContext();
-  const { context } = useUserDefinedContext();
+  const { context } = useWorkspaceContext();
 
   // Track current children and subscribe to structural changes
   const [children, setChildren] = useState(node.children);
