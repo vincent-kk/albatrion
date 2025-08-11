@@ -1,11 +1,13 @@
 import { memo, useCallback, useMemo, useRef, useState } from 'react';
 
+import { useOnUnmount } from '@winglet/react-utils/hook';
+
 import { NodeEventType, NodeState } from '@/schema-form/core';
 import { useSchemaNodeSubscribe } from '@/schema-form/hooks/useSchemaNodeSubscribe';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
   useInputControlContext,
-  useUserDefinedContext,
+  useWorkspaceContext,
 } from '@/schema-form/providers';
 import type { SetStateFnWithOptions } from '@/schema-form/types';
 
@@ -37,6 +39,10 @@ export const SchemaNodeInput = memo(
     const ChildNodeComponents = useChildNodeComponents(node, NodeProxy);
     const containerRef = useRef<HTMLSpanElement>(null);
 
+    const { attachedFileMap, context } = useWorkspaceContext();
+    const { readOnly: rootReadOnly, disabled: rootDisabled } =
+      useInputControlContext();
+
     const sync = useMemo(() => node.group === 'terminal', [node.group]);
 
     const [value, setValue] = useState(sync ? node.value : undefined);
@@ -59,6 +65,14 @@ export const SchemaNodeInput = memo(
       [node, sync],
     );
 
+    const handleFileAttach = useCallback(
+      (file: File | File[] | undefined) => {
+        if (file) attachedFileMap.set(node.path, file);
+        else attachedFileMap.delete(node.path);
+      },
+      [attachedFileMap, node.path],
+    );
+
     const requestId =
       useRef<ReturnType<typeof requestAnimationFrame>>(undefined);
     const handleFocus = useCallback(() => {
@@ -77,9 +91,11 @@ export const SchemaNodeInput = memo(
       });
     }, [node]);
 
-    const { context: userDefinedContext } = useUserDefinedContext();
-    const { readOnly: rootReadOnly, disabled: rootDisabled } =
-      useInputControlContext();
+    useOnUnmount(() => {
+      attachedFileMap.delete(node.path);
+      if (requestId.current === undefined) return;
+      cancelAnimationFrame(requestId.current);
+    });
 
     const version = useFormTypeInputControl(node, containerRef);
     useSchemaNodeTracker(
@@ -105,9 +121,10 @@ export const SchemaNodeInput = memo(
           defaultValue={node.defaultValue}
           value={sync ? value : node.value}
           onChange={handleChange}
+          onFileAttach={handleFileAttach}
           ChildNodeComponents={ChildNodeComponents}
           style={node.jsonSchema.style}
-          context={userDefinedContext}
+          context={context}
           {...node.jsonSchema.FormTypeInputProps}
           {...overrideProps}
         />

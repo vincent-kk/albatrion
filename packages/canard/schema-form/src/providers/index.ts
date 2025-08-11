@@ -22,6 +22,6 @@ export {
 export { RootNodeContextProvider, useRootNodeContext } from './RootNodeContext';
 
 export {
-  UserDefinedContextProvider,
-  useUserDefinedContext,
-} from './UserDefinedContext';
+  WorkspaceContextProvider,
+  useWorkspaceContext,
+} from './WorkspaceContext';

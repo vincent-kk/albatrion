@@ -9,7 +9,7 @@ import { useSchemaNode } from '@/schema-form/hooks/useSchemaNode';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
   useFormTypeRendererContext,
-  useUserDefinedContext,
+  useWorkspaceContext,
 } from '@/schema-form/providers';
 import type { FormTypeRendererProps } from '@/schema-form/types';
 
@@ -57,7 +57,7 @@ export const SchemaNodeProxy = memo(
 
     const Wrapper = useConstant(InputWrapper || Fragment);
 
-    const { context: userDefinedContext } = useUserDefinedContext();
+    const { context } = useWorkspaceContext();
 
     const formatError = useMemo(() => {
       const state = node?.state || {};
@@ -77,12 +77,12 @@ export const SchemaNodeProxy = memo(
       const errors = node?.errors;
       if (!errors) return null;
       for (const error of errors) {
-        const message = formatError(error, node, userDefinedContext);
+        const message = formatError(error, node, context);
         if (message !== null) return message;
       }
       return null;
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [node, refresh, userDefinedContext, formatError]);
+    }, [node, refresh, context, formatError]);
 
     const version = useSchemaNodeTracker(node, NodeEventType.RequestRefresh);
 
@@ -105,7 +105,7 @@ export const SchemaNodeProxy = memo(
             Input={Input}
             errorMessage={errorMessage}
             formatError={formatError}
-            context={userDefinedContext}
+            context={context}
             {...node.jsonSchema.FormTypeRendererProps}
             {...overrideProps}
           />
