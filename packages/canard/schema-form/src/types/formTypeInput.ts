@@ -171,3 +171,5 @@ export type SetStateFnWithOptions<S = unknown> = (
   value: S | ((prevState: S) => S),
   options?: PublicSetValueOption,
 ) => void;
+
+export type FileMap = Map<SchemaNode['path'], File | File[]>;

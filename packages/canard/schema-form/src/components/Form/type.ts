@@ -11,6 +11,7 @@ import type {
 } from '@/schema-form/core';
 import type {
   AllowedValue,
+  FileMap,
   FormTypeInputDefinition,
   FormTypeInputMap,
   FormTypeRendererProps,
@@ -98,6 +99,7 @@ export interface FormHandle<
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
   getErrors: Fn<[], JsonSchemaError[]>;
+  getFileMap: Fn<[], FileMap>;
   validate: Fn<[], Promise<JsonSchemaError[]>>;
   showError: Fn<[visible: boolean]>;
   submit: TrackableHandlerFunction;

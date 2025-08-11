@@ -3,6 +3,7 @@ import { type PropsWithChildren, useMemo } from 'react';
 import { useSnapshot } from '@winglet/react-utils/hook';
 
 import type { FormProps } from '@/schema-form/components/Form';
+import type { FileMap } from '@/schema-form/types';
 
 import { useExternalFormContext } from '../ExternalFormContext';
 import { UserDefinedContext } from './UserDefinedContext';
@@ -10,10 +11,13 @@ import { UserDefinedContext } from './UserDefinedContext';
 interface UserDefinedContextProviderProps {
   /** User-defined context, merged with global user-defined context */
   context: FormProps['context'];
+  /** File map, used to store files for each input */
+  fileMap: FileMap;
 }
 
 export const UserDefinedContextProvider = ({
   context: inputContext,
+  fileMap,
   children,
 }: PropsWithChildren<UserDefinedContextProviderProps>) => {
   const external = useExternalFormContext();
@@ -24,8 +28,9 @@ export const UserDefinedContextProvider = ({
         ...(external.context || {}),
         ...(context || {}),
       },
+      fileMap,
     }),
-    [external.context, context],
+    [external.context, context, fileMap],
   );
   return (
     <UserDefinedContext.Provider value={contextValue}>

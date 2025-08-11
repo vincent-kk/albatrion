@@ -36,6 +36,7 @@ import {
 } from '@/schema-form/providers';
 import type {
   AllowedValue,
+  FileMap,
   InferValueType,
   JsonSchema,
 } from '@/schema-form/types';
@@ -73,8 +74,10 @@ const FormInner = <
 ) => {
   type Node = InferSchemaNode<Schema>;
   const ready = useRef(false);
+  const fileMapRef = useRef<FileMap>(new Map());
   const [version, update] = useVersion(() => {
     ready.current = false;
+    fileMapRef.current.clear();
   });
 
   const jsonSchema = useMemorize(
@@ -148,6 +151,7 @@ const FormInner = <
         getValue: () => rootNode?.value as Value,
         setValue: (value, options) => rootNode?.setValue(value as any, options),
         getErrors: () => rootNode?.globalErrors || [],
+        getFileMap: () => fileMapRef.current,
         validate: async () => (await rootNode?.validate()) || [],
         showError: (visible = true) =>
           visible ? setShowError(true) : setShowError(inputShowError),
@@ -157,7 +161,7 @@ const FormInner = <
   );
 
   return (
-    <UserDefinedContextProvider context={context}>
+    <UserDefinedContextProvider context={context} fileMap={fileMapRef.current}>
       <FormTypeInputsContextProvider
         formTypeInputDefinitions={formTypeInputDefinitions}
         formTypeInputMap={formTypeInputMap}
