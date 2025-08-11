@@ -1,5 +1,7 @@
 import { memo, useCallback, useMemo, useRef, useState } from 'react';
 
+import { useOnUnmount } from '@winglet/react-utils/hook';
+
 import { NodeEventType, NodeState } from '@/schema-form/core';
 import { useSchemaNodeSubscribe } from '@/schema-form/hooks/useSchemaNodeSubscribe';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
@@ -39,6 +41,10 @@ export const SchemaNodeInput = memo(
 
     const sync = useMemo(() => node.group === 'terminal', [node.group]);
 
+    const { context, fileMap } = useWorkspaceContext();
+    const { readOnly: rootReadOnly, disabled: rootDisabled } =
+      useInputControlContext();
+
     const [value, setValue] = useState(sync ? node.value : undefined);
     useSchemaNodeSubscribe(sync ? node : null, ({ type, payload }) => {
       if (type === NodeEventType.UpdateValue) {
@@ -59,6 +65,15 @@ export const SchemaNodeInput = memo(
       [node, sync],
     );
 
+    useOnUnmount(() => fileMap.delete(node.path));
+    const handleFileChange = useCallback(
+      (file: File | File[] | undefined) => {
+        if (file) fileMap.set(node.path, file);
+        else fileMap.delete(node.path);
+      },
+      [fileMap, node.path],
+    );
+
     const requestId =
       useRef<ReturnType<typeof requestAnimationFrame>>(undefined);
     const handleFocus = useCallback(() => {
@@ -76,10 +91,6 @@ export const SchemaNodeInput = memo(
           node.setState({ [NodeState.Touched]: true });
       });
     }, [node]);
-
-    const { context } = useWorkspaceContext();
-    const { readOnly: rootReadOnly, disabled: rootDisabled } =
-      useInputControlContext();
 
     const version = useFormTypeInputControl(node, containerRef);
     useSchemaNodeTracker(
@@ -105,6 +116,7 @@ export const SchemaNodeInput = memo(
           defaultValue={node.defaultValue}
           value={sync ? value : node.value}
           onChange={handleChange}
+          onFileChange={handleFileChange}
           ChildNodeComponents={ChildNodeComponents}
           style={node.jsonSchema.style}
           context={context}

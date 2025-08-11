@@ -52,6 +52,8 @@ export interface FormTypeInputProps<
   value: Value;
   /** onChange handler of FormTypeInput Component */
   onChange: SetStateFnWithOptions<Value>;
+  /** onFileChange handler of FormTypeInput Component */
+  onFileChange: Fn<[file: File | File[] | undefined]>;
   /** Child FormTypeInput Components of this FormTypeInput Component */
   ChildNodeComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
   /** Style of FormTypeInput Component */
@@ -102,6 +104,7 @@ export interface UnknownFormTypeInputProps {
   defaultValue: any;
   value: any;
   onChange: SetStateFnWithOptions<any>;
+  onFileChange: Fn<[file: File | File[] | undefined]>;
   ChildNodeComponents: WithKey<ComponentType<any>>[];
   style: CSSProperties | undefined;
   context: any;
@@ -167,9 +170,8 @@ export type FormTypeInputMap<T = unknown> = {
   [path: string]: ComponentType<InferFormTypeInputProps<T>>;
 };
 
-export type SetStateFnWithOptions<S = unknown> = (
-  value: S | ((prevState: S) => S),
-  options?: PublicSetValueOption,
-) => void;
+export type SetStateFnWithOptions<S = unknown> = Fn<
+  [value: S | ((prevState: S) => S), options?: PublicSetValueOption]
+>;
 
 export type FileMap = Map<SchemaNode['path'], File | File[]>;
