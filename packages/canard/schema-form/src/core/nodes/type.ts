@@ -79,7 +79,7 @@ export type SchemaNode =
  * Optional metadata assists with identity and rendering strategies for children.
  */
 export interface ChildNode {
-  id?: string;
+  key?: string;
   salt?: string;
   virtual?: boolean;
   node: SchemaNode;

@@ -283,7 +283,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
   /**
    * Gets information about child nodes.
-   * @returns Array containing ID and node information
+   * @returns Array containing key and node information
    * @private
    */
   private get __edges__() {
@@ -291,7 +291,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     for (let i = 0, l = this.__keys__.length; i < l; i++) {
       const key = this.__keys__[i];
       edges[i] = {
-        id: key,
+        key: key,
         node: this.__sourceMap__.get(key)!.node,
       };
     }

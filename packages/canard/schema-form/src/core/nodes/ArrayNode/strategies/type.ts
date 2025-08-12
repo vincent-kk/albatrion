@@ -19,7 +19,7 @@ export interface ArrayNodeStrategy {
   get length(): number;
   /**
    * Gets the list of child nodes.
-   * @returns Array containing ID and node information
+   * @returns Array containing key and node information
    */
   get children(): ChildNode[] | null;
   /**
