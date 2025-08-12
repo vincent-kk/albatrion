@@ -26,12 +26,12 @@ import type { ArrayNode } from './ArrayNode';
  *         <ArrayItem key={child.key}>
  *           <FormField node={child.node} />
  *           {canRemove && (
- *             <RemoveButton onClick={() => node.removeItem(index)} />
+ *             <RemoveButton onClick={() => node.remove(index)} />
  *           )}
  *         </ArrayItem>
  *       ))}
  *       {canAdd && (
- *         <AddButton onClick={() => node.addItem()}>
+ *         <AddButton onClick={() => node.push()}>
  *           Add Item
  *         </AddButton>
  *       )}
