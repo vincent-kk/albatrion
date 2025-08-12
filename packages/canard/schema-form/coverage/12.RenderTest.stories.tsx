@@ -152,7 +152,7 @@ export const InsertInputForm = () => {
                     onChange((prev: number) => (prev || 0) + 1);
                   }}
                 >
-                  custom input {value}
+                  custom input {JSON.stringify(value)}
                 </button>
                 {RenderCount}
               </div>

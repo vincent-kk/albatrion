@@ -276,8 +276,8 @@ export abstract class AbstractNode<
     this.propertyKey = this.#name;
     this.escapedKey = escapeSegment(this.propertyKey);
 
-    this.#key = joinSegment(this.parentNode?.path, key ?? this.escapedKey);
     this.#path = joinSegment(this.parentNode?.path, this.escapedKey);
+    this.#key = key ? joinSegment(this.parentNode?.path, key) : this.#path;
 
     this.depth = this.#path
       .split(JSONPointer.Separator)

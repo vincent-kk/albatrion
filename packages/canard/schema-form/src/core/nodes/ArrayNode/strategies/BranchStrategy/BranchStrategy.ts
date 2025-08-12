@@ -18,7 +18,7 @@ import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 import type { ArrayNodeStrategy } from '../type';
 import { promiseAfterMicrotask } from './utils';
 
-type IndexId = `[${number}]`;
+type ChildSegmentKey = `${number}#${number}`;
 
 export class BranchStrategy implements ArrayNodeStrategy {
   /** Host ArrayNode instance that this strategy belongs to */
@@ -48,15 +48,15 @@ export class BranchStrategy implements ArrayNodeStrategy {
     if (this.__undefined__) this.__undefined__ = false;
   }
 
-  /** Sequence counter for generating unique IDs for array elements */
-  private __seq__: number = 0;
+  /** Revision counter for generating unique keys for array elements */
+  private __revision__: number = 0;
 
-  /** Array of unique IDs for each element in the array, maintaining order */
-  private __ids__: IndexId[] = [];
+  /** Array of unique keys for each element in the array, maintaining order */
+  private __keys__: ChildSegmentKey[] = [];
 
   /** Map storing actual data and corresponding schema nodes for each array element */
   private __sourceMap__: Map<
-    IndexId,
+    ChildSegmentKey,
     {
       data: any;
       node: SchemaNode;
@@ -104,7 +104,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @returns Length of the array
    */
   public get length() {
-    return this.__ids__.length;
+    return this.__keys__.length;
   }
 
   /**
@@ -112,8 +112,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @internal Internal implementation method. Do not call directly.
    */
   public activate() {
-    for (const id of this.__ids__)
-      (this.__sourceMap__.get(id)?.node as AbstractNode)?.activate(
+    for (const key of this.__keys__)
+      (this.__sourceMap__.get(key)?.node as AbstractNode)?.activate(
         this.__host__,
       );
   }
@@ -168,24 +168,24 @@ export class BranchStrategy implements ArrayNodeStrategy {
     )
       return promiseAfterMicrotask(this.length);
 
-    const id = ('[' + this.__seq__++ + ']') as IndexId;
-    const name = this.__ids__.length.toString();
-    this.__ids__.push(id);
+    const index = '' + this.__keys__.length;
+    const key = (index + '#' + this.__revision__++) as ChildSegmentKey;
+    this.__keys__.push(key);
 
     const defaultValue =
       data !== undefined
         ? data
         : getDefaultValue(this.__host__.jsonSchema.items);
     const childNode = this.__nodeFactory__({
-      key: id,
-      name,
+      key: key,
+      name: index,
       jsonSchema: this.__host__.jsonSchema.items,
       parentNode: this.__host__,
       defaultValue,
-      onChange: this.__handleChangeFactory__(id),
+      onChange: this.__handleChangeFactory__(key),
       nodeFactory: this.__nodeFactory__,
     });
-    this.__sourceMap__.set(id, {
+    this.__sourceMap__.set(key, {
       node: childNode,
       data: childNode.value,
     });
@@ -202,13 +202,12 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
   /**
    * Updates the value of a specific element.
-   * @param id - ID or index of the element to update
+   * @param index - Index of the element to update
    * @param data - New value
    * @returns Returns itself (this) for method chaining
    */
-  public update(id: IndexId | number, data: ArrayValue[number]) {
-    const targetId = typeof id === 'number' ? this.__ids__[id] : id;
-    const node = this.__sourceMap__.get(targetId)?.node;
+  public update(index: number, data: ArrayValue[number]) {
+    const node = this.__sourceMap__.get(this.__keys__[index])?.node;
     if (!node) return promiseAfterMicrotask(undefined);
     node.setValue(data);
     return promiseAfterMicrotask(node.value);
@@ -216,16 +215,16 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
   /**
    * Removes a specific element.
-   * @param id - ID or index of the element to remove
+   * @param index - Index of the element to remove
    * @returns Returns itself (this) for method chaining
    */
-  public remove(id: IndexId | number) {
-    const targetId = typeof id === 'number' ? this.__ids__[id] : id;
+  public remove(index: number) {
+    const targetId = this.__keys__[index];
 
     const removed = this.__sourceMap__.get(targetId);
     if (!removed) return promiseAfterMicrotask(undefined);
 
-    this.__ids__ = this.__ids__.filter((id) => id !== targetId);
+    this.__keys__ = this.__keys__.filter((key) => key !== targetId);
     this.__sourceMap__.delete(targetId);
     this.__updateChildName__();
 
@@ -244,10 +243,10 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
   /** Clears all elements to initialize the array. */
   public clear() {
-    for (let i = 0, l = this.__ids__.length; i < l; i++)
-      this.__sourceMap__.get(this.__ids__[i])?.node.cleanUp(this.__host__);
+    for (let i = 0, l = this.__keys__.length; i < l; i++)
+      this.__sourceMap__.get(this.__keys__[i])?.node.cleanUp(this.__host__);
 
-    this.__ids__ = [];
+    this.__keys__ = [];
     this.__sourceMap__.clear();
 
     this.__changed__ = true;
@@ -284,16 +283,16 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
   /**
    * Gets information about child nodes.
-   * @returns Array containing ID and node information
+   * @returns Array containing key and node information
    * @private
    */
   private get __edges__() {
-    const edges = new Array<ChildNode>(this.__ids__.length);
-    for (let i = 0, l = this.__ids__.length; i < l; i++) {
-      const id = this.__ids__[i];
+    const edges = new Array<ChildNode>(this.__keys__.length);
+    for (let i = 0, l = this.__keys__.length; i < l; i++) {
+      const key = this.__keys__[i];
       edges[i] = {
-        id,
-        node: this.__sourceMap__.get(id)!.node,
+        key: key,
+        node: this.__sourceMap__.get(key)!.node,
       };
     }
     return edges;
@@ -304,9 +303,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @private
    */
   private __toArray__() {
-    const values = new Array<AllowedValue>(this.__ids__.length);
-    for (let i = 0, l = this.__ids__.length; i < l; i++) {
-      const edge = this.__sourceMap__.get(this.__ids__[i]);
+    const values = new Array<AllowedValue>(this.__keys__.length);
+    for (let i = 0, l = this.__keys__.length; i < l; i++) {
+      const edge = this.__sourceMap__.get(this.__keys__[i]);
       if (edge) values[i] = edge.data;
     }
     return values;
@@ -314,14 +313,14 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
   /**
    * Creates a function to handle value changes for a specific element.
-   * @param id - Element ID
+   * @param key - Child node Key
    * @returns Value change function
    * @private
    */
-  private __handleChangeFactory__(id: IndexId) {
+  private __handleChangeFactory__(key: ChildSegmentKey) {
     return (data: unknown) => {
-      if (!this.__sourceMap__.has(id)) return;
-      this.__sourceMap__.get(id)!.data = data;
+      if (!this.__sourceMap__.has(key)) return;
+      this.__sourceMap__.get(key)!.data = data;
       this.__changed__ = true;
       this.__publishRequestEmitChange__();
     };
@@ -332,10 +331,10 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @private
    */
   private __updateChildName__() {
-    for (let i = 0, l = this.__ids__.length; i < l; i++) {
-      const id = this.__ids__[i];
-      if (this.__sourceMap__.has(id)) {
-        const node = this.__sourceMap__.get(id)!.node;
+    for (let i = 0, l = this.__keys__.length; i < l; i++) {
+      const key = this.__keys__[i];
+      if (this.__sourceMap__.has(key)) {
+        const node = this.__sourceMap__.get(key)!.node;
         const name = i.toString();
         if (node.name !== name) node.setName(name, this.__host__);
       }

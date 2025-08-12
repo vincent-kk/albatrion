@@ -12,7 +12,6 @@ import type {
 import {
   type ArrayNodeStrategy,
   BranchStrategy,
-  type IndexId,
   TerminalStrategy,
 } from './strategies';
 import { omitEmptyArray } from './utils';
@@ -143,25 +142,21 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
   /**
    * Updates the value of a specific element.
-   * @param id - ID or index of the element to update
+   * @param index - Index of the element to update
    * @param data - New value
    * @returns {Promise<ArrayValue[number]|undefined>} the value of the updated value
    */
-  public update(
-    this: ArrayNode,
-    id: IndexId | number,
-    data: ArrayValue[number],
-  ) {
-    return this.#strategy.update(id, data);
+  public update(this: ArrayNode, index: number, data: ArrayValue[number]) {
+    return this.#strategy.update(index, data);
   }
 
   /**
    * Removes a specific element.
-   * @param id - ID or index of the element to remove
+   * @param index - Index of the element to remove
    * @returns {Promise<ArrayValue[number]|undefined>} value of the removed value
    */
-  public remove(this: ArrayNode, id: IndexId | number) {
-    return this.#strategy.remove(id);
+  public remove(this: ArrayNode, index: number) {
+    return this.#strategy.remove(index);
   }
 
   /**

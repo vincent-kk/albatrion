@@ -12,7 +12,7 @@ import { parseArray } from '@/schema-form/core/parsers';
 import { getObjectDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 
-import type { ArrayNodeStrategy, IndexId } from '../type';
+import type { ArrayNodeStrategy } from '../type';
 
 const FIRST_EMIT_CHANGE_OPTION =
   SetValueOption.Replace | SetValueOption.Default;
@@ -32,12 +32,6 @@ export class TerminalStrategy implements ArrayNodeStrategy {
 
   /** Flag indicating whether the strategy is locked to prevent recursive updates */
   private __locked__: boolean = true;
-
-  /** Sequence counter for generating unique IDs for array elements */
-  private __seq__: number = 0;
-
-  /** Array of unique IDs for tracking array elements (used for element identification) */
-  private __ids__: IndexId[] = [];
 
   /** Current value of the array node, initialized as empty array */
   private __value__: ArrayValue | undefined = [];
@@ -119,26 +113,21 @@ export class TerminalStrategy implements ArrayNodeStrategy {
       this.__host__.jsonSchema.maxItems <= this.length
     )
       return Promise.resolve(this.length);
-    const id = ('[' + this.__seq__++ + ']') as IndexId;
-    this.__ids__.push(id);
-
     const data = input ?? this.__defaultItemValue__;
     const value =
       this.__value__ === undefined ? [data] : [...this.__value__, data];
     this.__emitChange__(value);
-
     return Promise.resolve(this.length);
   }
 
   /**
    * Updates the value of a specific element.
-   * @param id - ID or index of the element to update
+   * @param index - Index of the element to update
    * @param data - New value
    */
-  public update(id: IndexId | number, data: ArrayValue[number]) {
+  public update(index: number, data: ArrayValue[number]) {
     if (this.__value__ === undefined) return Promise.resolve(undefined);
-    const index = typeof id === 'number' ? id : this.__ids__.indexOf(id);
-    if (index === -1 || index >= this.__value__.length)
+    if (index < 0 || index >= this.__value__.length)
       return Promise.resolve(undefined);
     const value = [...this.__value__];
     value[index] = data;
@@ -148,12 +137,11 @@ export class TerminalStrategy implements ArrayNodeStrategy {
 
   /**
    * Removes a specific element.
-   * @param id - ID or index of the element to remove
+   * @param index - Index of the element to remove
    */
-  public remove(id: IndexId | number) {
+  public remove(index: number) {
     if (this.__value__ === undefined) return Promise.resolve(undefined);
-    const index = typeof id === 'number' ? id : this.__ids__.indexOf(id);
-    if (index === -1 || index >= this.__value__.length)
+    if (index < 0 || index >= this.__value__.length)
       return Promise.resolve(undefined);
     const removed = this.__value__[index];
     const value = this.__value__.filter((_, i) => i !== index);
@@ -170,7 +158,6 @@ export class TerminalStrategy implements ArrayNodeStrategy {
 
   /** Clears all elements to initialize the array. */
   public clear() {
-    this.__ids__ = [];
     this.__emitChange__([]);
     return Promise.resolve(void 0);
   }

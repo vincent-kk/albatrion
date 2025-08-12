@@ -15,7 +15,7 @@ export const find = (
   if (!segments?.length) return target;
   const current = target;
   let cursor = current;
-  for (let i = 0, l = segments.length; i < l; i++) {
+  for (let i = 0, il = segments.length; i < il; i++) {
     const segment = segments[i];
     if (segment === JSONPointer.Fragment) {
       cursor = cursor.rootNode;
@@ -29,10 +29,11 @@ export const find = (
       const children = cursor.children;
       if (!children?.length) return null;
       let found = false;
-      for (const child of children) {
-        if (child.node.propertyKey !== segment) continue;
-        if (child.node.group === 'terminal') return child.node;
-        cursor = child.node;
+      for (let j = 0, jl = children.length; j < jl; j++) {
+        const childNode = children[j].node;
+        if (childNode.propertyKey !== segment) continue;
+        if (childNode.group === 'terminal') return childNode;
+        cursor = childNode;
         found = true;
         break;
       }
