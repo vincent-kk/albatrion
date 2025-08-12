@@ -2028,7 +2028,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@canard/schema-form@workspace:^, @canard/schema-form@workspace:packages/canard/schema-form, @canard/schema-form_0.4.0@npm:@canard/schema-form@0.4.0":
+"@canard/schema-form@workspace:^, @canard/schema-form@workspace:packages/canard/schema-form":
   version: 0.0.0-use.local
   resolution: "@canard/schema-form@workspace:packages/canard/schema-form"
   dependencies:
@@ -2133,6 +2133,21 @@ __metadata:
     react: ">=18 <20"
     react-dom: ">=18 <20"
   checksum: 10c0/ccb9ffaaa7f70f4fe0195652b6f0d2848ac3ed7c787d4bbbfbb8b93672bf923d66b920d9f72674279b42c1edf2cb7afab9b34f5b4e6de90330588a83e2474768
+  languageName: node
+  linkType: hard
+
+"@canard/schema-form_0.4.0@npm:@canard/schema-form@0.4.0":
+  version: 0.4.0
+  resolution: "@canard/schema-form@npm:0.4.0"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.4.0"
+    "@winglet/json": "npm:^0.4.0"
+    "@winglet/json-schema": "npm:^0.4.0"
+    "@winglet/react-utils": "npm:^0.4.0"
+  peerDependencies:
+    react: ">=18 <20"
+    react-dom: ">=18 <20"
+  checksum: 10c0/660f84d994ce20d9b1b487733e4788fa9c806a7eee280938fd0a9460bdaea5c44df2cd171a62fd133f79a29cda5c6e01abb583c45e2f6e614a70448c614cbe32
   languageName: node
   linkType: hard
 
@@ -7389,7 +7404,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@winglet/common-utils@workspace:^, @winglet/common-utils@workspace:packages/winglet/common-utils":
+"@winglet/common-utils@npm:^0.4.0, @winglet/common-utils@workspace:^, @winglet/common-utils@workspace:packages/winglet/common-utils":
   version: 0.0.0-use.local
   resolution: "@winglet/common-utils@workspace:packages/winglet/common-utils"
   dependencies:
@@ -7455,7 +7470,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@winglet/json-schema@workspace:^, @winglet/json-schema@workspace:packages/winglet/json-schema":
+"@winglet/json-schema@npm:^0.4.0, @winglet/json-schema@workspace:^, @winglet/json-schema@workspace:packages/winglet/json-schema":
   version: 0.0.0-use.local
   resolution: "@winglet/json-schema@workspace:packages/winglet/json-schema"
   dependencies:
@@ -7499,7 +7514,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@winglet/json@workspace:^, @winglet/json@workspace:packages/winglet/json":
+"@winglet/json@npm:^0.4.0, @winglet/json@workspace:^, @winglet/json@workspace:packages/winglet/json":
   version: 0.0.0-use.local
   resolution: "@winglet/json@workspace:packages/winglet/json"
   dependencies:
@@ -7551,7 +7566,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@winglet/react-utils@workspace:^, @winglet/react-utils@workspace:packages/winglet/react-utils":
+"@winglet/react-utils@npm:^0.4.0, @winglet/react-utils@workspace:^, @winglet/react-utils@workspace:packages/winglet/react-utils":
   version: 0.0.0-use.local
   resolution: "@winglet/react-utils@workspace:packages/winglet/react-utils"
   dependencies:
