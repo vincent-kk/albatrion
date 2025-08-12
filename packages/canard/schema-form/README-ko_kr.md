@@ -128,9 +128,20 @@ interface FormHandle<
   reset: Fn;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
+  /** 폼 전역 오류를 반환합니다 */
+  getErrors: Fn<[], JsonSchemaError[]>;
+  /** onFileAttach로 첨부된 파일 맵을 반환합니다 */
+  getAttachedFileMap: Fn<[], AttachedFileMap>;
   validate: Fn<[], Promise<JsonSchemaError[]>>;
   submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
 }
+```
+
+#### AttachedFileMap
+
+```ts
+// JSONPointer 경로(예: "/attachment" 또는 "/items/0/file")를 키로, File 또는 File[]를 값으로 보관합니다.
+type AttachedFileMap = Map<string, File | File[]>;
 ```
 
 #### FormChildrenProps
@@ -494,6 +505,8 @@ interface FormTypeInputProps<
   value: Value | undefined;
   /** FormTypeInput 컴포넌트의 onChange 핸들러 */
   onChange: SetStateFnWithOptions<Value | undefined>;
+  /** 파일(들)을 폼의 파일 저장소에 첨부/해제합니다 */
+  onFileAttach: Fn<[file: File | File[] | undefined]>;
   /** 이 FormTypeInput 컴포넌트의 자식 FormTypeInput 컴포넌트 */
   ChildNodeComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
   /** FormTypeInput 컴포넌트의 스타일 */
@@ -504,6 +517,143 @@ interface FormTypeInputProps<
   [alt: string]: any;
 }
 ```
+
+### 파일 관리 시스템 (onFileAttach)
+
+`@canard/schema-form`은 파일 자체는 별도의 저장소에 보관하고, 스키마 값에는 메타데이터(파일명, 크기 등)만 저장하는 방식을 지원합니다. 이를 위해 `FormTypeInput`에서 `onFileAttach`를 호출하여 파일을 첨부하고, 제출 시 `FormHandle.getAttachedFileMap()`으로 실제 파일을 추출해 API로 전송합니다.
+
+- **저장 위치**: `getAttachedFileMap()`은 `Map<string, File | File[]>`을 반환합니다. 키는 해당 입력의 표준 JSONPointer 경로(`node.path`)입니다. 이때 키는 RFC 6901의 표준 JSONPointer만 사용하며, 확장 문법(`..`, `.`, `*`)은 사용하지 않습니다.
+- **자동 정리(cleanup)**:
+  - 폼이 재구성되거나(unmount 포함) 입력 노드가 제거되면 해당 경로의 파일은 자동으로 제거됩니다.
+  - 조건부 스키마(`if/then/else`, `oneOf`)로 필드가 사라질 때도 파일이 정리됩니다.
+
+#### 단일/다중 파일 FormTypeInput 예시
+
+```tsx
+const FileFormTypeInput = ({
+  onFileAttach,
+  onChange,
+  readOnly,
+  disabled,
+  value,
+  jsonSchema,
+}: FormTypeInputProps<any>) => {
+  const multiple: boolean = jsonSchema?.FormTypeInputProps?.multiple ?? false;
+  const accept: string | undefined = jsonSchema?.FormTypeInputProps?.accept;
+
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    const fileList = Array.from(e.target.files || []);
+    if (fileList.length === 0) {
+      onFileAttach(undefined);
+      onChange(undefined);
+      return;
+    }
+    if (multiple) {
+      onFileAttach(fileList);
+      onChange(
+        fileList.map((f) => ({
+          name: f.name,
+          size: f.size,
+          type: f.type,
+          lastModified: f.lastModified,
+        })),
+      );
+    } else {
+      const file = fileList[0];
+      onFileAttach(file);
+      onChange({
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: file.lastModified,
+      });
+    }
+  };
+
+  return (
+    <div>
+      <input
+        type="file"
+        multiple={multiple}
+        accept={accept}
+        disabled={readOnly || disabled}
+        onChange={handleChange}
+      />
+      <pre>{JSON.stringify(value, null, 2)}</pre>
+    </div>
+  );
+};
+```
+
+#### API로 파일 업로드하기 (FormData)
+
+```tsx
+import React, { useRef } from 'react';
+
+import { Form, type FormHandle, ValidationMode } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    title: { type: 'string' },
+    attachment: {
+      type: 'object',
+      FormTypeInput: FileFormTypeInput,
+      FormTypeInputProps: { multiple: false, accept: '*/*' },
+      properties: {
+        name: { type: 'string' },
+        size: { type: 'number' },
+        type: { type: 'string' },
+        lastModified: { type: 'number' },
+      },
+    },
+  },
+} as const;
+
+export const UploadForm = () => {
+  const ref = useRef<FormHandle<typeof schema>>(null);
+
+  const handleSubmit = async () => {
+    const form = ref.current;
+    if (!form) return;
+
+    // 1) 스키마 값(JSON)과 2) 첨부 파일들을 함께 보냅니다.
+    const values = form.getValue();
+    const files = form.getAttachedFileMap(); // AttachedFileMap
+
+    const body = new FormData();
+    body.append(
+      'json',
+      new Blob([JSON.stringify(values)], { type: 'application/json' }),
+    );
+
+    for (const [path, fileOrList] of files.entries()) {
+      if (Array.isArray(fileOrList)) {
+        // 배열 파일의 키는 JSONPointer 표준에 따라 "/0", "/1" 처럼 사용합니다 (대괄호 [] 사용 안 함)
+        fileOrList.forEach((file, idx) => body.append(`${path}/${idx}`, file));
+      } else {
+        body.append(path, fileOrList);
+      }
+    }
+
+    await fetch('/api/upload', { method: 'POST', body });
+  };
+
+  return (
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      validationMode={ValidationMode.OnRequest}
+      onSubmit={handleSubmit}
+    />
+  );
+};
+```
+
+권장 사항:
+
+- 배열 파일의 FormData 키는 표준 JSONPointer 방식(예: "/0", "/1")을 사용하시고, 대괄호 `[]` 표기는 사용하지 마십시오.
+- 대용량 파일은 업로드 진행 상태/취소, 청크 업로드 등 추가 전략을 적용하십시오.
 
 ### FormTypeInputMap
 

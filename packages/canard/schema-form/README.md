@@ -126,9 +126,18 @@ interface FormHandle<
   reset: Fn;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
+  getErrors: Fn<[], JsonSchemaError[]>;
+  getAttachedFileMap: Fn<[], AttachedFileMap>;
   validate: Fn<[], Promise<JsonSchemaError[]>>;
   submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
 }
+```
+
+#### AttachedFileMap
+
+```ts
+// Stores File or File[] by JSONPointer path key (e.g., "/attachment" or "/items/0/file").
+type AttachedFileMap = Map<string, File | File[]>;
 ```
 
 #### FormChildrenProps
@@ -504,6 +513,8 @@ interface FormTypeInputProps<
   value: Value | undefined;
   /** onChange handler for the FormTypeInput Component */
   onChange: SetStateFnWithOptions<Value | undefined>;
+  /** Attach or detach file(s) to the form's file store */
+  onFileAttach: Fn<[file: File | File[] | undefined]>;
   /** Child FormTypeInput Components for this FormTypeInput Component */
   ChildNodeComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
   /** Style for the FormTypeInput Component */
@@ -514,6 +525,143 @@ interface FormTypeInputProps<
   [alt: string]: any;
 }
 ```
+
+### File Management (onFileAttach)
+
+`@canard/schema-form` keeps the actual File objects in a dedicated store and writes only file metadata (name, size, type, lastModified) into the schema value. Use `onFileAttach` in your `FormTypeInput` to attach files, and then call `FormHandle.getAttachedFileMap()` on submit to send files to your API.
+
+- **Storage**: `getAttachedFileMap()` returns `Map<string, File | File[]>` where the key is the input's standard JSONPointer path (`node.path`). Keys must be standard RFC 6901 JSONPointer only; extended syntax (`..`, `.`, `*`) is not used for keys.
+- **Automatic cleanup**:
+  - When the form is re-initialized or a node is removed (including unmount), files at that path are deleted.
+  - Conditional schemas (e.g., `if/then/else`, `oneOf`) that remove fields also trigger file cleanup.
+
+#### Single/Multiple File FormTypeInput example
+
+```tsx
+const FileFormTypeInput = ({
+  onFileAttach,
+  onChange,
+  readOnly,
+  disabled,
+  value,
+  jsonSchema,
+}: FormTypeInputProps<any>) => {
+  const multiple: boolean = jsonSchema?.FormTypeInputProps?.multiple ?? false;
+  const accept: string | undefined = jsonSchema?.FormTypeInputProps?.accept;
+
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    const fileList = Array.from(e.target.files || []);
+    if (fileList.length === 0) {
+      onFileAttach(undefined);
+      onChange(undefined);
+      return;
+    }
+    if (multiple) {
+      onFileAttach(fileList);
+      onChange(
+        fileList.map((f) => ({
+          name: f.name,
+          size: f.size,
+          type: f.type,
+          lastModified: f.lastModified,
+        })),
+      );
+    } else {
+      const file = fileList[0];
+      onFileAttach(file);
+      onChange({
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: file.lastModified,
+      });
+    }
+  };
+
+  return (
+    <div>
+      <input
+        type="file"
+        multiple={multiple}
+        accept={accept}
+        disabled={readOnly || disabled}
+        onChange={handleChange}
+      />
+      <pre>{JSON.stringify(value, null, 2)}</pre>
+    </div>
+  );
+};
+```
+
+#### Sending files to API (FormData)
+
+```tsx
+import React, { useRef } from 'react';
+
+import { Form, type FormHandle, ValidationMode } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    title: { type: 'string' },
+    attachment: {
+      type: 'object',
+      FormTypeInput: FileFormTypeInput,
+      FormTypeInputProps: { multiple: false, accept: '*/*' },
+      properties: {
+        name: { type: 'string' },
+        size: { type: 'number' },
+        type: { type: 'string' },
+        lastModified: { type: 'number' },
+      },
+    },
+  },
+} as const;
+
+export const UploadForm = () => {
+  const ref = useRef<FormHandle<typeof schema>>(null);
+
+  const handleSubmit = async () => {
+    const form = ref.current;
+    if (!form) return;
+
+    // Send schema value (JSON) together with attached files
+    const values = form.getValue();
+    const files = form.getAttachedFileMap(); // AttachedFileMap
+
+    const body = new FormData();
+    body.append(
+      'json',
+      new Blob([JSON.stringify(values)], { type: 'application/json' }),
+    );
+
+    for (const [path, fileOrList] of files.entries()) {
+      if (Array.isArray(fileOrList)) {
+        // Use standard JSONPointer for array keys: "/0", "/1" (do not use brackets [])
+        fileOrList.forEach((file, idx) => body.append(`${path}/${idx}`, file));
+      } else {
+        body.append(path, fileOrList);
+      }
+    }
+
+    await fetch('/api/upload', { method: 'POST', body });
+  };
+
+  return (
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      validationMode={ValidationMode.OnRequest}
+      onSubmit={handleSubmit}
+    />
+  );
+};
+```
+
+Recommendations:
+
+- Use standard JSONPointer-style keys (e.g., "/0", "/1") for array files; do not use bracket notation `[]`.
+- For large files, consider progress/abort handling and chunked uploads.
 
 ### FormTypeInputMap
 
