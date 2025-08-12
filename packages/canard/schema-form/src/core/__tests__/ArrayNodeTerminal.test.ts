@@ -162,4 +162,58 @@ describe('ArrayNode-Terminal', () => {
 
     expect(booleanNode.errors).toEqual([]);
   });
+
+  it('터미널 배열에서 잘못된 인덱스로 remove 호출 시 값을 변경하지 않고 undefined를 반환해야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          arr: {
+            type: 'array',
+            terminal: true,
+            items: { type: 'boolean' },
+          },
+        },
+      },
+    });
+
+    const booleanNode = node?.find('arr') as ArrayNode;
+    booleanNode.setValue([true, false]);
+    await delay();
+
+    const invalidIndices = [-1, 2, 100];
+    for (const idx of invalidIndices) {
+      const removed = await booleanNode.remove(idx);
+      await delay();
+      expect(removed).toBeUndefined();
+      expect(booleanNode.value).toEqual([true, false]);
+    }
+  });
+
+  it('터미널 배열에서 잘못된 인덱스로 update 호출 시 값을 변경하지 않고 undefined를 반환해야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          arr: {
+            type: 'array',
+            terminal: true,
+            items: { type: 'boolean' },
+          },
+        },
+      },
+    });
+
+    const booleanNode = node?.find('arr') as ArrayNode;
+    booleanNode.setValue([true, false]);
+    await delay();
+
+    const invalidIndices = [-1, 2, 100];
+    for (const idx of invalidIndices) {
+      const updated = await booleanNode.update(idx, true);
+      await delay();
+      expect(updated).toBeUndefined();
+      expect(booleanNode.value).toEqual([true, false]);
+    }
+  });
 });

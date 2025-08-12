@@ -576,4 +576,56 @@ describe('ArrayNode', () => {
     expect(firstItemNameNode?.value).toBe('홍길동');
     expect(firstItemAgeNode?.value).toBe(30);
   });
+
+  it('잘못된 인덱스로 remove 호출 시 값을 변경하지 않고 undefined를 반환해야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          tags: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+        },
+      },
+    });
+
+    const arrayNode = node?.find('tags') as ArrayNode;
+    arrayNode.setValue(['태그1', '태그2']);
+    await delay();
+
+    const invalidIndices = [-1, 2, 100];
+    for (const idx of invalidIndices) {
+      const removed = await arrayNode.remove(idx);
+      await delay();
+      expect(removed).toBeUndefined();
+      expect(arrayNode.value).toEqual(['태그1', '태그2']);
+    }
+  });
+
+  it('잘못된 인덱스로 update 호출 시 값을 변경하지 않고 undefined를 반환해야 함', async () => {
+    const node = nodeFromJsonSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          tags: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+        },
+      },
+    });
+
+    const arrayNode = node?.find('tags') as ArrayNode;
+    arrayNode.setValue(['태그1', '태그2']);
+    await delay();
+
+    const invalidIndices = [-1, 2, 100];
+    for (const idx of invalidIndices) {
+      const updated = await arrayNode.update(idx, '변경값');
+      await delay();
+      expect(updated).toBeUndefined();
+      expect(arrayNode.value).toEqual(['태그1', '태그2']);
+    }
+  });
 });
