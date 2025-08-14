@@ -1,4 +1,13 @@
 export {
+  MessageChannelScheduler,
+  type SchedulerOptions,
+  setImmediate,
+  clearImmediate,
+  getPendingCount,
+  destroyGlobalScheduler,
+} from './MessageChannelScheduler';
+
+export {
   cancelMacrotask,
   scheduleMacrotask,
   scheduleCancelableMacrotask,

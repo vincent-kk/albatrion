@@ -44,7 +44,8 @@ import type { Fn } from '@aileron/declare';
  * - **Nested Microtasks**: New microtasks scheduled during execution are processed immediately
  */
 const getScheduleMicrotask = (): Fn<[task: Fn]> => {
-  if (typeof queueMicrotask === 'function') return queueMicrotask;
+  if (typeof globalThis.queueMicrotask === 'function')
+    return globalThis.queueMicrotask.bind(globalThis);
   const resolve = Promise.resolve();
   return (task: Fn) => resolve.then(task);
 };
