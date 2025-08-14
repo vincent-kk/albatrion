@@ -13,7 +13,7 @@ import type {
 import type { StringNode } from '../nodes/StringNode';
 import { type NodeEvent, NodeEventType, ValidationMode } from '../nodes/type';
 
-const wait = (delay = 0) => {
+const wait = (delay = 5) => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(true);
