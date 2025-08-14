@@ -61,5 +61,9 @@
     "prettier": "^3.5.3",
     "tsx": "^4.20.2"
   },
-  "packageManager": "yarn@4.9.1"
+  "resolutions": {
+    "glob": "^10.4.5",
+    "rimraf": "^5.0.10"
+  },
+  "packageManager": "yarn@4.9.2"
 }
