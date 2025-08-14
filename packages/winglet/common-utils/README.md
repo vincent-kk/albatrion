@@ -242,6 +242,11 @@ Use transpilers like Babel to convert the code to match your target environment.
 
 #### Scheduler
 
+- **[`MessageChannelScheduler`](./src/utils/scheduler/MessageChannelScheduler/MessageChannelScheduler.ts)**: Scheduler class that uses MessageChannel to control macro tasks in a fine-grained manner
+  - **[`setImmediate`](./src/utils/scheduler/MessageChannelScheduler/handler.ts)**: Function to schedule a macro task using MessageChannelScheduler
+  - **[`clearImmediate`](./src/utils/scheduler/MessageChannelScheduler/handler.ts)**: Function to cancel a scheduled macro task using MessageChannelScheduler
+  - **[`getPendingCount`](./src/utils/scheduler/MessageChannelScheduler/handler.ts)**: Function to get the number of pending macro tasks using MessageChannelScheduler
+  - **[`destroyGlobalScheduler`](./src/utils/scheduler/MessageChannelScheduler/handler.ts)**: Function to destroy the global MessageChannelScheduler
 - **[`scheduleMacrotask`](./src/utils/scheduler/scheduleMacrotask.ts)**: Function to schedule a task in the macrotask queue
 - **[`cancelMacrotask`](./src/utils/scheduler/scheduleMacrotask.ts)**: Function to cancel a scheduled macrotask
 - **[`scheduleCancelableMacrotask`](./src/utils/scheduler/scheduleMacrotask.ts)**: Function to schedule a cancelable macrotask
