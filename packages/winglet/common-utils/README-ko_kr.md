@@ -242,6 +242,11 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 #### 스케줄러 (Scheduler)
 
+- **[`MessageChannelScheduler`](./src/utils/scheduler/MessageChannelScheduler/MessageChannelScheduler.ts)**: 메시지 채널을 사용하여 매크로태스크를 정교하게 제어하는 클래스
+  - **[`setImmediate`](./src/utils/scheduler/MessageChannelScheduler/handler.ts)**: MessageChannelScheduler 기반으로 매크로태스크를 예약하는 함수
+  - **[`clearImmediate`](./src/utils/scheduler/MessageChannelScheduler/handler.ts)**: MessageChannelScheduler 기반으로 예약된 매크로태스크를 취소하는 함수
+  - **[`getPendingCount`](./src/utils/scheduler/MessageChannelScheduler/handler.ts)**: MessageChannelScheduler 기반으로 대기 중인 매크로태스크의 개수를 반환하는 함수
+  - **[`destroyGlobalScheduler`](./src/utils/scheduler/MessageChannelScheduler/handler.ts)**: MessageChannelScheduler 기반으로 전역 스케줄러를 종료하는 함수
 - **[`scheduleMacrotask`](./src/utils/scheduler/scheduleMacrotask.ts)**: 매크로태스크 큐에 작업을 예약하는 함수
 - **[`cancelMacrotask`](./src/utils/scheduler/scheduleMacrotask.ts)**: 예약된 매크로태스크를 취소하는 함수
 - **[`scheduleCancelableMacrotask`](./src/utils/scheduler/scheduleMacrotask.ts)**: 취소 가능한 매크로태스크를 예약하는 함수
