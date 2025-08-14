@@ -53,23 +53,14 @@ import type { Fn } from '@aileron/declare';
  * - No exceptions thrown during environment detection
  */
 const getScheduleNextTick = (): Fn<[task: Fn]> => {
-  try {
-    if (typeof process?.nextTick === 'function') {
-      const resolve = Promise.resolve();
-      return (task: Fn) => {
-        resolve.then(() => process.nextTick(task));
-      };
-    }
-  } catch {
-    // NOTE: In a Browser environment, accessing `process` may throw an error.
+  if (typeof globalThis.process?.nextTick === 'function') {
+    const resolve = Promise.resolve();
+    const nextTick = globalThis.process.nextTick.bind(globalThis.process);
+    return (task: Fn) => resolve.then(() => nextTick(task));
   }
-  if (typeof setImmediate === 'function')
-    return (task: Fn) => {
-      setImmediate(task);
-    };
-  return (task: Fn) => {
-    setTimeout(task, 0);
-  };
+  if (typeof globalThis.setImmediate === 'function')
+    return globalThis.setImmediate.bind(globalThis);
+  return globalThis.setTimeout.bind(globalThis);
 };
 
 /**
