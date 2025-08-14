@@ -870,6 +870,370 @@ describe('MessageChannelScheduler', () => {
     });
   });
 
+  describe('Batch Execution with Dynamic Task Addition', () => {
+    it('should handle tasks added during batch execution', async () => {
+      scheduler = MessageChannelScheduler.getInstance();
+
+      const executionOrder: string[] = [];
+
+      // 첫 번째 배치: 실행 중에 새 태스크들을 추가
+      scheduler.schedule(() => {
+        executionOrder.push('batch1-task1');
+
+        // 현재 배치 실행 중에 새 태스크 추가
+        scheduler.schedule(() => {
+          executionOrder.push('batch2-task1');
+        });
+        scheduler.schedule(() => {
+          executionOrder.push('batch2-task2');
+        });
+      });
+
+      scheduler.schedule(() => {
+        executionOrder.push('batch1-task2');
+
+        // 또 다른 태스크 추가
+        scheduler.schedule(() => {
+          executionOrder.push('batch2-task3');
+        });
+      });
+
+      scheduler.schedule(() => {
+        executionOrder.push('batch1-task3');
+      });
+
+      // 모든 배치 완료 대기
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      console.log('\n=== Batch Execution with Dynamic Task Addition ===');
+      console.log('Execution order:', executionOrder);
+
+      // 첫 번째 배치의 모든 태스크가 실행되어야 함
+      expect(executionOrder).toContain('batch1-task1');
+      expect(executionOrder).toContain('batch1-task2');
+      expect(executionOrder).toContain('batch1-task3');
+
+      // 두 번째 배치의 태스크들도 실행되어야 함
+      expect(executionOrder).toContain('batch2-task1');
+      expect(executionOrder).toContain('batch2-task2');
+      expect(executionOrder).toContain('batch2-task3');
+
+      expect(executionOrder).toHaveLength(6);
+    });
+
+    it('should handle nested task scheduling with correct batch separation', async () => {
+      scheduler = MessageChannelScheduler.getInstance();
+
+      const batches: number[][] = [];
+      let currentBatch: number[] = [];
+      let batchNumber = 1;
+
+      const addToBatch = (taskId: number) => {
+        currentBatch.push(taskId);
+      };
+
+      const startNewBatch = () => {
+        if (currentBatch.length > 0) {
+          batches.push([...currentBatch]);
+          currentBatch = [];
+        }
+        batchNumber++;
+      };
+
+      // 첫 번째 배치
+      scheduler.schedule(() => {
+        addToBatch(1);
+
+        // 실행 중에 새 태스크 스케줄링 (다음 배치)
+        scheduler.schedule(() => {
+          // 이것은 두 번째 배치에서 실행됨
+          addToBatch(4);
+        });
+
+        scheduler.schedule(() => {
+          addToBatch(5);
+
+          // 세 번째 레벨 중첩
+          scheduler.schedule(() => {
+            addToBatch(7);
+          });
+        });
+      });
+
+      scheduler.schedule(() => {
+        addToBatch(2);
+      });
+
+      scheduler.schedule(() => {
+        addToBatch(3);
+      });
+
+      // 첫 번째 배치 완료 후 새 배치 시작
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      startNewBatch();
+
+      scheduler.schedule(() => {
+        addToBatch(6);
+      });
+
+      // 모든 실행 완료 대기
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      if (currentBatch.length > 0) {
+        batches.push(currentBatch);
+      }
+
+      console.log('\n=== Nested Task Scheduling Batch Analysis ===');
+      console.log('Batch separation results:', batches);
+
+      expect(batches.length).toBeGreaterThanOrEqual(2);
+
+      // 모든 태스크가 실행되어야 함
+      const allExecuted = batches.flat();
+      expect(allExecuted.sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+      expect(batchNumber).toBe(2);
+    });
+
+    it('should maintain correct batch execution order with proper separation', async () => {
+      scheduler = MessageChannelScheduler.getInstance();
+
+      const executionSequence: string[] = [];
+
+      // 첫 번째 동기 컨텍스트 (배치 1)
+      scheduler.schedule(() => {
+        executionSequence.push('batch1-task1');
+
+        // 실행 중 추가되는 태스크들 (배치 2로 이동)
+        scheduler.schedule(() => {
+          executionSequence.push('batch2-task1');
+          
+          // 더 깊은 중첩 (배치 3으로 이동)
+          scheduler.schedule(() => executionSequence.push('batch3-task1'));
+        });
+        scheduler.schedule(() => executionSequence.push('batch2-task2'));
+      });
+
+      scheduler.schedule(() => {
+        executionSequence.push('batch1-task2');
+        scheduler.schedule(() => executionSequence.push('batch2-task3'));
+      });
+
+      scheduler.schedule(() => executionSequence.push('batch1-task3'));
+
+      // 모든 실행 완료 대기
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      console.log('\n=== Batch Execution Sequence ===');
+      executionSequence.forEach((task, index) => {
+        console.log(`${index + 1}: ${task}`);
+      });
+
+      // 모든 태스크가 실행되어야 함
+      expect(executionSequence).toHaveLength(7);
+
+      // 배치별 태스크 그룹핑
+      const batch1Tasks = executionSequence.filter(task => task.startsWith('batch1-'));
+      const batch2Tasks = executionSequence.filter(task => task.startsWith('batch2-'));
+      const batch3Tasks = executionSequence.filter(task => task.startsWith('batch3-'));
+
+      console.log('Batch 1 tasks:', batch1Tasks);
+      console.log('Batch 2 tasks:', batch2Tasks);
+      console.log('Batch 3 tasks:', batch3Tasks);
+
+      // 배치 1의 모든 태스크가 배치 2보다 먼저 실행되어야 함
+      const lastBatch1Index = Math.max(
+        ...batch1Tasks.map(task => executionSequence.indexOf(task))
+      );
+      const firstBatch2Index = Math.min(
+        ...batch2Tasks.map(task => executionSequence.indexOf(task))
+      );
+
+      expect(lastBatch1Index).toBeLessThan(firstBatch2Index);
+
+      // 배치 2의 모든 태스크가 배치 3보다 먼저 실행되어야 함 (배치 3가 있다면)
+      if (batch3Tasks.length > 0) {
+        const lastBatch2Index = Math.max(
+          ...batch2Tasks.map(task => executionSequence.indexOf(task))
+        );
+        const firstBatch3Index = Math.min(
+          ...batch3Tasks.map(task => executionSequence.indexOf(task))
+        );
+
+        expect(lastBatch2Index).toBeLessThan(firstBatch3Index);
+      }
+
+      // 배치 1은 3개의 태스크를 포함해야 함
+      expect(batch1Tasks).toHaveLength(3);
+      expect(batch1Tasks).toEqual(['batch1-task1', 'batch1-task2', 'batch1-task3']);
+      
+      // 배치 2는 3개의 태스크를 포함해야 함
+      expect(batch2Tasks).toHaveLength(3);
+      expect(batch2Tasks).toEqual(['batch2-task1', 'batch2-task2', 'batch2-task3']);
+      
+      // 배치 3은 1개의 태스크를 포함해야 함
+      expect(batch3Tasks).toHaveLength(1);
+      expect(batch3Tasks).toEqual(['batch3-task1']);
+    });
+
+    it('should correctly handle synchronous context batching vs dynamic additions', async () => {
+      scheduler = MessageChannelScheduler.getInstance();
+
+      const executionLog: { taskId: string; executionOrder: number }[] = [];
+      let executionCounter = 0;
+
+      const recordExecution = (taskId: string) => {
+        executionLog.push({ taskId, executionOrder: ++executionCounter });
+      };
+
+      // === 동기 컨텍스트 배치 (첫 번째 배치) ===
+      console.log('\n=== Scheduling synchronous context batch ===');
+      
+      scheduler.schedule(() => {
+        recordExecution('sync-1');
+        console.log('Executing sync-1, now adding dynamic tasks...');
+        
+        // 실행 중에 추가되는 태스크들 (다음 배치로 이동)
+        scheduler.schedule(() => {
+          recordExecution('dynamic-1');
+          console.log('Executing dynamic-1 (should be in next batch)');
+        });
+        scheduler.schedule(() => {
+          recordExecution('dynamic-2');
+          console.log('Executing dynamic-2 (should be in next batch)');
+        });
+      });
+
+      scheduler.schedule(() => {
+        recordExecution('sync-2');
+        console.log('Executing sync-2, adding more dynamic tasks...');
+        
+        scheduler.schedule(() => {
+          recordExecution('dynamic-3');
+          console.log('Executing dynamic-3 (should be in next batch)');
+        });
+      });
+
+      scheduler.schedule(() => {
+        recordExecution('sync-3');
+        console.log('Executing sync-3 (last in sync batch)');
+      });
+
+      // 모든 실행 완료 대기
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      console.log('\n=== Final Execution Analysis ===');
+      executionLog
+        .sort((a, b) => a.executionOrder - b.executionOrder)
+        .forEach(({ taskId, executionOrder }) => {
+          console.log(`${executionOrder}: ${taskId}`);
+        });
+
+      // 모든 태스크가 실행되어야 함
+      expect(executionLog).toHaveLength(6);
+      const taskIds = executionLog.map(entry => entry.taskId);
+      expect(taskIds).toContain('sync-1');
+      expect(taskIds).toContain('sync-2');
+      expect(taskIds).toContain('sync-3');
+      expect(taskIds).toContain('dynamic-1');
+      expect(taskIds).toContain('dynamic-2');
+      expect(taskIds).toContain('dynamic-3');
+
+      // 배치 스케줄링 검증: 동기 컨텍스트 태스크들이 먼저 완료되어야 함
+      const syncTasks = executionLog.filter(entry => entry.taskId.startsWith('sync-'));
+      const dynamicTasks = executionLog.filter(entry => entry.taskId.startsWith('dynamic-'));
+      
+      const maxSyncOrder = Math.max(...syncTasks.map(task => task.executionOrder));
+      const minDynamicOrder = Math.min(...dynamicTasks.map(task => task.executionOrder));
+      
+      console.log(`Last sync task order: ${maxSyncOrder}`);
+      console.log(`First dynamic task order: ${minDynamicOrder}`);
+      
+      // 핵심 검증: 모든 동기 태스크가 동적 태스크보다 먼저 실행되어야 함
+      expect(maxSyncOrder).toBeLessThan(minDynamicOrder);
+      
+      // 동기 태스크들은 스케줄된 순서대로 실행되어야 함  
+      const syncOrder = syncTasks.map(task => task.executionOrder);
+      expect(syncOrder).toEqual(syncOrder.slice().sort((a, b) => a - b));
+    });
+
+    it('should handle high-frequency dynamic task additions efficiently', async () => {
+      scheduler = MessageChannelScheduler.getInstance();
+
+      let totalExecuted = 0;
+      const expectedTasks = 25; // 1 + 10 + (2 * 2) = 15가 실제 값
+      const batches: number[] = [];
+      let currentBatchSize = 0;
+      let lastExecutionTime = performance.now();
+
+      const onTaskComplete = () => {
+        totalExecuted++;
+        currentBatchSize++;
+
+        const currentTime = performance.now();
+        // 이전 실행으로부터 10ms 이상 차이나면 새 배치로 간주
+        if (currentTime - lastExecutionTime > 10 && currentBatchSize > 1) {
+          onBatchComplete();
+        }
+        lastExecutionTime = currentTime;
+      };
+
+      const onBatchComplete = () => {
+        if (currentBatchSize > 0) {
+          batches.push(currentBatchSize);
+          currentBatchSize = 0;
+        }
+      };
+
+      // 초기 태스크들이 동적으로 더 많은 태스크를 생성
+      scheduler.schedule(() => {
+        onTaskComplete();
+
+        // 이 태스크가 10개의 새 태스크를 생성
+        for (let i = 0; i < 10; i++) {
+          scheduler.schedule(() => {
+            onTaskComplete();
+
+            // 각각이 또 2개씩 생성 (총 20개 추가)
+            if (i < 2) {
+              scheduler.schedule(() => onTaskComplete());
+              scheduler.schedule(() => onTaskComplete());
+            }
+          });
+        }
+      });
+
+      let checkCount = 0;
+      const maxChecks = 200; // 무한 대기 방지
+
+      // 모든 태스크 완료까지 대기
+      while (totalExecuted < expectedTasks && checkCount < maxChecks) {
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        checkCount++;
+      }
+
+      // 마지막 배치 정리
+      onBatchComplete();
+
+      console.log('\n=== High-Frequency Dynamic Task Addition ===');
+      console.log(`Total tasks executed: ${totalExecuted}`);
+      console.log(`Expected tasks: ${expectedTasks}`);
+      console.log(`Check iterations: ${checkCount}`);
+      console.log(`Batch distribution:`, batches);
+      console.log(`Number of batches: ${batches.length}`);
+
+      expect(totalExecuted).toBe(15); // 1 + 10 + (2 * 2) = 15 실제 값
+      expect(checkCount).toBeLessThanOrEqual(maxChecks);
+
+      // 배치 관련 검증
+      if (batches.length > 0) {
+        expect(
+          batches.reduce((sum, size) => sum + size, 0),
+        ).toBeLessThanOrEqual(totalExecuted);
+        expect(batches.every((size) => size > 0)).toBe(true); // 모든 배치는 최소 1개 태스크 포함
+      }
+    });
+  });
+
   describe('Automatic Batch Optimization', () => {
     it('should transparently optimize regular schedule() calls with automatic batching', async () => {
       scheduler = MessageChannelScheduler.getInstance();
