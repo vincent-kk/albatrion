@@ -48,7 +48,7 @@ type SchedulerFunctions<Id = any> = {
  *
  * @remarks
  * **Why setImmediate and setTimeout:**
- * - **Browser Rendering Safety**: Both APIs schedule tasks as macrotasks, allowing the browser 
+ * - **Browser Rendering Safety**: Both APIs schedule tasks as macrotasks, allowing the browser
  *   to perform rendering updates between executions
  * - **Non-blocking**: Prevents long-running JavaScript from freezing the UI
  * - **Predictable Timing**: Executes after microtasks but allows rendering frames
