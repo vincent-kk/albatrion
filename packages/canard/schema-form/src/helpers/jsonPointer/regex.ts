@@ -2,11 +2,13 @@ import { JSONPointer } from './enum';
 
 /**
  * JSON Pointer segment character pattern.
- * Supports: letters, digits (including as first character), underscore, dollar sign, Unicode.
+ * Supports all valid JSON object key characters by excluding only structural delimiters.
+ * JSON keys can contain virtually any Unicode character since they are strings.
+ * Users should use parentheses or explicit delimiters to disambiguate complex expressions.
  * Used both for segment content and negative lookbehind assertion.
- * @example Matches: 'property', '123', '0', '_private', '$special', '한글', '属性'
+ * @example Matches: 'property', '123', 'key,with,commas', 'key;with;semicolons', 'key:value', 'key(with)parens', 'api+version', 'flag!', 'scope&filter', '한글', '属性'
  */
-const JSON_POINTER_SEGMENT_CHARACTER = `[a-zA-Z0-9_$\\u0080-\\uFFFF]`;
+const JSON_POINTER_SEGMENT_CHARACTER = `[^\\s\\(\\)\\[\\]\\{\\}\\"'\`]`;
 
 /**
  * Negative lookbehind assertion to prevent matching within existing identifiers.

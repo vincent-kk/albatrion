@@ -129,8 +129,8 @@ describe('JSON_POINTER_REGEX', () => {
     });
 
     test('부분 매칭 구조들', () => {
-      expect(testRegexStandalone('##/property')).toBe(true);
-      expect(testRegexStandalone('...../property')).toBe(true);
+      expect(testRegexStandalone('##/property')).toBe(false);
+      expect(testRegexStandalone('...../property')).toBe(false);
       expect(testRegexStandalone('#//property')).toBe(true);
     });
   });
@@ -173,12 +173,12 @@ describe('JSON_POINTER_REGEX', () => {
 
     test('특수 문자로 인한 부분 매칭', () => {
       // 대시, 언더스코어, 공백 등이 있으면 그 앞까지만 매칭됨
-      expect(extractMatches('#/prop-with-dash')).toEqual(['#/prop']);
+      expect(extractMatches('#/prop-with-dash')).toEqual(['#/prop-with-dash']);
       expect(extractMatches('#/prop_with_underscore')).toEqual([
         '#/prop_with_underscore',
       ]);
       expect(extractMatches('#/prop with space')).toEqual(['#/prop']);
-      expect(extractMatches('#/prop.with.dot')).toEqual(['#/prop']);
+      expect(extractMatches('#/prop.with.dot')).toEqual(['#/prop.with.dot']);
     });
 
     test('한글 경로 추출', () => {
@@ -203,7 +203,7 @@ describe('JSON_POINTER_REGEX', () => {
       ).toEqual(['#/사용자/이름', '../나이', './주소/지역']);
 
       // 영문과 한글 혼합 추출
-      expect(extractMatches('user: #/user/이름, age: ../나이')).toEqual([
+      expect(extractMatches('user: (#/user/이름), age: (../나이)')).toEqual([
         '#/user/이름',
         '../나이',
       ]);
@@ -325,11 +325,11 @@ describe('JSON_POINTER_REGEX', () => {
       );
 
       const result2 = testDepsMatch(
-        '#/name !== null && #/name !== "" && #/name.length > 2',
+        '#/name !== null && #/name !== "" && (#/name).length > 2',
       );
       expect(result2.pathManager).toEqual(['#/name']);
       expect(result2.computedExpression).toBe(
-        'dependencies[0] !== null && dependencies[0] !== "" && dependencies[0].length > 2',
+        'dependencies[0] !== null && dependencies[0] !== "" && (dependencies[0]).length > 2',
       );
     });
 

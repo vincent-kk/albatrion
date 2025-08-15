@@ -110,9 +110,9 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
           paths: ['./flag', '../backup', '#/default'],
         },
         {
-          input: '!../disabled && (../../role === "admin" || ../superuser)',
+          input: '!(../disabled) && ((../../role) === "admin" || (../superuser))',
           expected:
-            '!dependencies[0] && (dependencies[1] === "admin" || dependencies[2])',
+            '!(dependencies[0]) && ((dependencies[1]) === "admin" || (dependencies[2]))',
           paths: ['../disabled', '../../role', '../superuser'],
         },
       ];
@@ -180,23 +180,23 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
     test('메서드 호출', () => {
       const cases = [
         {
-          input: '../items.length > 0',
-          expected: 'dependencies[0].length > 0',
+          input: '(../items).length > 0',
+          expected: '(dependencies[0]).length > 0',
           paths: ['../items'],
         },
         {
-          input: '../../name.toLowerCase() === "admin"',
-          expected: 'dependencies[0].toLowerCase() === "admin"',
+          input: '(../../name).toLowerCase() === "admin"',
+          expected: '(dependencies[0]).toLowerCase() === "admin"',
           paths: ['../../name'],
         },
         {
-          input: '../email.includes("@")',
-          expected: 'dependencies[0].includes("@")',
+          input: '(../email).includes("@")',
+          expected: '(dependencies[0]).includes("@")',
           paths: ['../email'],
         },
         {
-          input: 'Math.max(../value1, ../value2)',
-          expected: 'Math.max(dependencies[0], dependencies[1])',
+          input: 'Math.max((../value1), (../value2))',
+          expected: 'Math.max((dependencies[0]), (dependencies[1]))',
           paths: ['../value1', '../value2'],
         },
       ];
@@ -249,15 +249,15 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
           ],
         },
         {
-          input: 'typeof ../value === "string" && ../value.length >= 3',
+          input: 'typeof ../value === "string" && (../value).length >= 3',
           expected:
-            'typeof dependencies[0] === "string" && dependencies[0].length >= 3',
+            'typeof dependencies[0] === "string" && (dependencies[0]).length >= 3',
           paths: ['../value'],
         },
         {
-          input: '../array.filter(item => item > ../threshold).length',
+          input: '(../array).filter(item => item > ../threshold).length',
           expected:
-            'dependencies[0].filter(item => item > dependencies[1]).length',
+            '(dependencies[0]).filter(item => item > dependencies[1]).length',
           paths: ['../array', '../threshold'],
         },
       ];
@@ -272,8 +272,8 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
     test('함수 표현식 내 경로', () => {
       const cases = [
         {
-          input: 'function check() { return ../isValid; }',
-          expected: 'function check() { return dependencies[0]; }',
+          input: 'function check() { return (../isValid); }',
+          expected: 'function check() { return (dependencies[0]); }',
           paths: ['../isValid'],
         },
         {
@@ -282,8 +282,8 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
           paths: ['../value'],
         },
         {
-          input: '../items.map(x => x + ../offset)',
-          expected: 'dependencies[0].map(x => x + dependencies[1])',
+          input: '(../items).map(x => x + ../offset)',
+          expected: '(dependencies[0]).map(x => x + dependencies[1])',
           paths: ['../items', '../offset'],
         },
       ];
@@ -315,8 +315,8 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
           paths: ['../c'],
         },
         {
-          input: 'func(../arg1, ../arg2)',
-          expected: 'func(dependencies[0], dependencies[1])',
+          input: 'func((../arg1), (../arg2))',
+          expected: 'func((dependencies[0]), (dependencies[1]))',
           paths: ['../arg1', '../arg2'],
         },
       ];
@@ -362,58 +362,58 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
     test('연산자들', () => {
       const cases = [
         {
-          input: '../a+../b',
-          expected: 'dependencies[0]+dependencies[1]',
+          input: '(../a)+(../b)',
+          expected: '(dependencies[0])+(dependencies[1])',
           paths: ['../a', '../b'],
         },
         {
-          input: '../a-../b',
-          expected: 'dependencies[0]-dependencies[1]',
+          input: '(../a)-(../b)',
+          expected: '(dependencies[0])-(dependencies[1])',
           paths: ['../a', '../b'],
         },
         {
-          input: '../a*../b',
-          expected: 'dependencies[0]*dependencies[1]',
+          input: '(../a)*(../b)',
+          expected: '(dependencies[0])*(dependencies[1])',
           paths: ['../a', '../b'],
         },
         {
-          input: '../a/../../b', // 슬래시가 경로 일부가 아닌 나누기 연산자로 해석되는지 확인
-          expected: 'dependencies[0]/dependencies[1]',
+          input: '(../a)/(../../b)', // 슬래시가 경로 일부가 아닌 나누기 연산자로 해석되는지 확인
+          expected: '(dependencies[0])/(dependencies[1])',
           paths: ['../a', '../../b'],
         },
         {
-          input: '../a%../b',
-          expected: 'dependencies[0]%dependencies[1]',
+          input: '(../a)%(../b)',
+          expected: '(dependencies[0])%(dependencies[1])',
           paths: ['../a', '../b'],
         },
         {
-          input: '../a=../b',
-          expected: 'dependencies[0]=dependencies[1]',
+          input: '(../a)=(../b)',
+          expected: '(dependencies[0])=(dependencies[1])',
           paths: ['../a', '../b'],
         },
         {
-          input: '../a!../b',
-          expected: 'dependencies[0]!dependencies[1]',
+          input: '(../a)!(../b)',
+          expected: '(dependencies[0])!(dependencies[1])',
           paths: ['../a', '../b'],
         },
         {
-          input: '../a&../b',
-          expected: 'dependencies[0]&dependencies[1]',
+          input: '(../a)&(../b)',
+          expected: '(dependencies[0])&(dependencies[1])',
           paths: ['../a', '../b'],
         },
         {
-          input: '../a|../b',
-          expected: 'dependencies[0]|dependencies[1]',
+          input: '(../a)|(../b)',
+          expected: '(dependencies[0])|(dependencies[1])',
           paths: ['../a', '../b'],
         },
         {
-          input: '../a<../b',
-          expected: 'dependencies[0]<dependencies[1]',
+          input: '(../a)<(../b)',
+          expected: '(dependencies[0])<(dependencies[1])',
           paths: ['../a', '../b'],
         },
         {
-          input: '../a>../b',
-          expected: 'dependencies[0]>dependencies[1]',
+          input: '(../a)>(../b)',
+          expected: '(dependencies[0])>(dependencies[1])',
           paths: ['../a', '../b'],
         },
       ];
@@ -428,43 +428,43 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
     test('특수 문자들', () => {
       const cases = [
         {
-          input: '../a;../b',
-          expected: 'dependencies[0];dependencies[1]',
+          input: '(../a);(../b)',
+          expected: '(dependencies[0]);(dependencies[1])',
           paths: ['../a', '../b'],
         },
         {
-          input: '../a,../b',
-          expected: 'dependencies[0],dependencies[1]',
+          input: '(../a),(../b)',
+          expected: '(dependencies[0]),(dependencies[1])',
           paths: ['../a', '../b'],
         },
         {
-          input: '../a.method()', // 점은 메서드 접근자
-          expected: 'dependencies[0].method()',
+          input: '(../a).method()', // 점은 메서드 접근자
+          expected: '(dependencies[0]).method()',
           paths: ['../a'],
         },
         {
-          input: '../a:../b',
-          expected: 'dependencies[0]:dependencies[1]',
+          input: '(../a):(../b)',
+          expected: '(dependencies[0]):(dependencies[1])',
           paths: ['../a', '../b'],
         },
         {
-          input: '../a?../b',
-          expected: 'dependencies[0]?dependencies[1]',
+          input: '(../a)?(../b)',
+          expected: '(dependencies[0])?(dependencies[1])',
           paths: ['../a', '../b'],
         },
         {
-          input: '../a"text"../b', // 따옴표
-          expected: 'dependencies[0]"text"dependencies[1]',
+          input: '(../a)"text"(../b)', // 따옴표
+          expected: '(dependencies[0])"text"(dependencies[1])',
           paths: ['../a', '../b'],
         },
         {
-          input: "../a'text'../b", // 작은 따옴표
-          expected: "dependencies[0]'text'dependencies[1]",
+          input: "(../a)'text'(../b)", // 작은 따옴표
+          expected: "(dependencies[0])'text'(dependencies[1])",
           paths: ['../a', '../b'],
         },
         {
-          input: '../a`template`../b', // 백틱
-          expected: 'dependencies[0]`template`dependencies[1]',
+          input: '(../a)`template`(../b)', // 백틱
+          expected: '(dependencies[0])`template`(dependencies[1])',
           paths: ['../a', '../b'],
         },
       ];
@@ -591,13 +591,13 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
     test('세미콜론 처리', () => {
       const cases = [
         {
-          input: '../value;',
-          expected: 'dependencies[0]', // 끝의 세미콜론은 제거됨
+          input: '(../value);',
+          expected: '(dependencies[0])', // 괄호 유지, 끝의 세미콜론은 제거됨
           paths: ['../value'],
         },
         {
-          input: '../a; ../b',
-          expected: 'dependencies[0]; dependencies[1]', // 중간 세미콜론은 유지
+          input: '(../a); (../b)',
+          expected: '(dependencies[0]); (dependencies[1])', // 중간 세미콜론은 유지
           paths: ['../a', '../b'],
         },
       ];
@@ -669,8 +669,8 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
           paths: ['../value'],
         },
         {
-          input: '../a*../b', // 곱셈 연산자는 문제 없음
-          expected: 'dependencies[0]*dependencies[1]',
+          input: '(../a)*(../b)', // 곱셈 연산자는 문제 없음
+          expected: '(dependencies[0])*(dependencies[1])',
           paths: ['../a', '../b'],
         },
       ];
@@ -718,8 +718,8 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
         (../../userType === "premium" || ../subscriptionLevel >= 2) &&
         ../age >= 18 &&
         ../age <= 120 &&
-        (../email.includes("@") && ../email.length > 5) &&
-        (!../country || ../country === "US" || #/allowedCountries.includes(../country))
+        ((../email).includes("@") && (../email).length > 5) &&
+        (!../country || ../country === "US" || (#/allowedCountries).includes(../country))
       `;
 
       const result = transformExpression(validationRule);
@@ -754,10 +754,10 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
 
     test('조건부 필드 표시 로직', () => {
       const displayLogic = `
-        ../showAdvanced && 
-        (../../role === "admin" || 
-         (../permissions.includes("edit") && ../permissions.includes("view"))) &&
-        !#/config/maintenanceMode
+        (../showAdvanced) && 
+        ((../../role) === "admin" || 
+         ((../permissions).includes("edit") && (../permissions).includes("view"))) &&
+        !(#/config/maintenanceMode)
       `;
 
       const result = transformExpression(displayLogic);

@@ -224,7 +224,7 @@ describe('SchemaNode computed properties', () => {
               name: {
                 type: 'string',
                 computed: {
-                  readOnly: '#/isAdmin===false',
+                  readOnly: '(#/isAdmin)===false',
                 },
               },
             },

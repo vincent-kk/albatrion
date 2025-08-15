@@ -58,10 +58,10 @@ describe('Extended JSON_POINTER_REGEX - 연속된 path를 하나로 인식', () 
       expect(extractMatches('../123invalid')).toEqual(['../123invalid']);
 
       // 하이픈이 있는 경우 - 하이픈 앞까지만
-      expect(extractMatches('../my-var')).toEqual(['../my']);
+      expect(extractMatches('../my-var')).toEqual(['../my-var']);
 
       // 특수문자가 있는 경우
-      expect(extractMatches('../var@test')).toEqual(['../var']);
+      expect(extractMatches('../var@test')).toEqual(['../var@test']);
 
       // 공백이 있는 경우
       expect(extractMatches('../my var')).toEqual(['../my']);

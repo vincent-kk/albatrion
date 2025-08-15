@@ -565,7 +565,7 @@ describe('ObjectNode', () => {
       type: 'object',
       oneOf: [
         {
-          '&if': "../category==='movie'",
+          '&if': "(../category)==='movie'",
           properties: {
             category: {
               type: 'string',
@@ -579,7 +579,7 @@ describe('ObjectNode', () => {
           },
         },
         {
-          '&if': "../category==='game'",
+          '&if': "(../category)==='game'",
           properties: {
             date2: {
               type: 'string',
@@ -609,12 +609,12 @@ describe('ObjectNode', () => {
     );
   });
 
-  it('oneOf schema는 properties 속성을 재정의할 수 없음', async () => {
+  it('oneOf schema는 properties 속성을 재정의할 수 없음, 단, 부모와 동일한 타입은 허용됨', async () => {
     const jsonSchema = {
       type: 'object',
       oneOf: [
         {
-          '&if': "./category==='movie'",
+          '&if': "(./category)==='movie'",
           type: 'object', // 부모와 같은 타입은 허용됨
           properties: {
             date1: {
@@ -629,7 +629,7 @@ describe('ObjectNode', () => {
           },
         },
         {
-          '&if': "./category==='game'",
+          '&if': "(./category)==='game'",
           type: 'string', // 부모와 다른 타입은 허용되지 않음
         },
       ],
@@ -650,5 +650,244 @@ describe('ObjectNode', () => {
     ).toThrowError(
       "Type cannot be redefined in 'oneOf' schema. It must either be omitted or match the parent schema type.",
     );
+  });
+
+  describe('극단적인 키를 사용한 ObjectNode 기능 테스트', () => {
+    it('극단적인 키로 객체 노드의 값이 정상적으로 설정되어야 함', async () => {
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            '🚀user@email.com': {
+              type: 'object',
+              properties: {
+                '사용자이름-Japanese日本語': { type: 'string' },
+                'age:$number': { type: 'number' },
+              },
+            },
+          },
+        },
+      });
+
+      const objectNode = node?.find('🚀user@email.com') as ObjectNode;
+      expect(objectNode.value).toEqual({});
+
+      objectNode.setValue({
+        '사용자이름-Japanese日本語': 'John',
+        'age:$number': 30,
+      });
+      await delay();
+      expect(objectNode.value).toEqual({
+        '사용자이름-Japanese日本語': 'John',
+        'age:$number': 30,
+      });
+    });
+
+    it('극단적인 키로 객체 노드의 기본값이 정상적으로 설정되어야 함', async () => {
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            'api/v2/users/:id': {
+              type: 'object',
+              properties: {
+                中文键名: { type: 'string' },
+                '550e8400-e29b-41d4-a716-446655440000': { type: 'number' },
+              },
+              default: {
+                中文键名: 'Lee',
+                '550e8400-e29b-41d4-a716-446655440000': 25,
+              },
+            },
+          },
+        },
+      });
+
+      const objectNode = node?.find('/api~1v2~1users~1:id') as ObjectNode;
+      await delay();
+      expect(objectNode.value).toEqual({
+        中文键名: 'Lee',
+        '550e8400-e29b-41d4-a716-446655440000': 25,
+      });
+    });
+
+    it('극단적인 키로 객체 노드의 자식 노드 값이 정상적으로 설정되어야 함', async () => {
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            mixed混合język: {
+              type: 'object',
+              properties: {
+                'C:\\Users\\Documents': { type: 'string' },
+                '~/.config/settings.json': { type: 'number' },
+              },
+            },
+          },
+        },
+      });
+
+      const objectNode = node?.find('/mixed混合język') as ObjectNode;
+      const nameNode = objectNode.find('C:\\Users\\Documents');
+      const ageNode = objectNode.find('~0~1.config~1settings.json');
+
+      expect(nameNode).toBeDefined();
+      expect(ageNode).toBeDefined();
+
+      // @ts-expect-error
+      nameNode?.setValue('John');
+      // @ts-expect-error
+      ageNode?.setValue(30);
+      await delay();
+
+      expect(objectNode.value).toEqual({
+        'C:\\Users\\Documents': 'John',
+        '~/.config/settings.json': 30,
+      });
+    });
+
+    it('극단적인 키로 객체 노드의 유효성 검사가 정상적으로 동작해야 함', async () => {
+      const validatorFactory = createValidatorFactory(
+        new Ajv({
+          allErrors: true,
+          strictSchema: false,
+          validateFormats: false,
+        }),
+      );
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            'user사용자@domain.com': {
+              type: 'object',
+              properties: {
+                '👨‍👩‍👧‍👦family': { type: 'string', minLength: 2 },
+                'v1.2.3-beta+build': {
+                  type: 'number',
+                  minimum: 0,
+                  maximum: 120,
+                },
+              },
+              required: ['👨‍👩‍👧‍👦family', 'v1.2.3-beta+build'],
+            },
+          },
+        },
+        validationMode: ValidationMode.OnChange,
+        validatorFactory,
+      });
+
+      await delay();
+      const objectNode = node?.find('/user사용자@domain.com') as ObjectNode;
+      const userNameNode = objectNode.find(
+        '#/user사용자@domain.com/👨‍👩‍👧‍👦family',
+      ) as StringNode;
+      const userAgeNode = objectNode.find(
+        '#/user사용자@domain.com/v1.2.3-beta+build',
+      ) as NumberNode;
+
+      objectNode.setValue({ '👨‍👩‍👧‍👦family': 'J' });
+      await delay();
+      expect(userAgeNode.errors.length).toBeGreaterThan(0);
+      expect(userAgeNode.errors.map(({ keyword }) => keyword)).toEqual([
+        'required',
+      ]);
+
+      objectNode.setValue({ '👨‍👩‍👧‍👦family': 'John', 'v1.2.3-beta+build': 30 });
+      await delay();
+      expect(objectNode.errors).toEqual([]);
+
+      objectNode.setValue({ '👨‍👩‍👧‍👦family': '홍', 'v1.2.3-beta+build': 150 });
+      await delay();
+      expect(userNameNode.errors.length).toBeGreaterThan(0);
+      expect(userNameNode.errors.map(({ keyword }) => keyword)).toEqual([
+        'minLength',
+      ]);
+      expect(userAgeNode.errors.length).toBeGreaterThan(0);
+      expect(userAgeNode.errors.map(({ keyword }) => keyword)).toEqual([
+        'maximum',
+      ]);
+    });
+
+    it('극단적인 키로 객체 노드의 추가 속성이 허용되어야 함', async () => {
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            'hello世界🌍': {
+              type: 'object',
+              properties: {
+                'api.v1.endpoint': { type: 'string' },
+                'kebab-case-key': { type: 'number' },
+              },
+              additionalProperties: true,
+            },
+          },
+        },
+      });
+
+      const objectNode = node?.find('hello世界🌍') as ObjectNode;
+      await delay();
+
+      objectNode.setValue({
+        'api.v1.endpoint': 'John',
+        'kebab-case-key': 30,
+        'email@example.com': 'hong@example.com',
+      });
+      await delay();
+      expect(objectNode.errors).toEqual([]);
+      expect(objectNode.value).toEqual({
+        'api.v1.endpoint': 'John',
+        'kebab-case-key': 30,
+        'email@example.com': 'hong@example.com',
+      });
+    });
+
+    it('극단적인 키로 객체 노드의 이벤트가 정상적으로 발생해야 함', async () => {
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            'endpoint/api/v2:users:POST': {
+              type: 'object',
+              properties: {
+                'ünicøde-näme': { type: 'string' },
+                пользователь: { type: 'number' },
+              },
+            },
+          },
+        },
+      });
+
+      await delay();
+
+      const objectNode = node?.find(
+        'endpoint~1api~1v2:users:POST',
+      ) as ObjectNode;
+
+      const mockListener = vi.fn();
+      objectNode.subscribe(mockListener);
+
+      objectNode.setValue({ 'ünicøde-näme': 'Ron', пользователь: 28 });
+      await delay();
+
+      expect(mockListener).toHaveBeenCalledWith({
+        type:
+          NodeEventType.UpdateValue |
+          NodeEventType.RequestRefresh |
+          NodeEventType.UpdateComputedProperties,
+        payload: {
+          [NodeEventType.UpdateValue]: {
+            'ünicøde-näme': 'Ron',
+            пользователь: 28,
+          },
+        },
+        options: {
+          [NodeEventType.UpdateValue]: {
+            current: { 'ünicøde-näme': 'Ron', пользователь: 28 },
+            previous: {},
+          },
+        },
+      });
+    });
   });
 });

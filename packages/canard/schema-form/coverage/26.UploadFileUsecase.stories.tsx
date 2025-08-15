@@ -251,7 +251,7 @@ export const OneOfFileCleanup = () => {
     type: 'object',
     oneOf: [
       {
-        '&if': "./category==='movie'",
+        '&if': "./category === 'movie'",
         properties: {
           trailer: {
             type: 'object',
@@ -267,7 +267,7 @@ export const OneOfFileCleanup = () => {
         },
       },
       {
-        '&if': "./category==='game'",
+        '&if': "./category === 'game'",
         properties: {
           manual: { type: 'string', default: 'text-only, no file input' },
         },

@@ -158,7 +158,11 @@ export const FormTypeInputArrayTerminalRef = () => {
     properties: {
       arr: {
         type: 'array',
-        FormTypeInput: ({ node, onChange, value }: FormTypeInputProps<string[]>) => {
+        FormTypeInput: ({
+          node,
+          onChange,
+          value,
+        }: FormTypeInputProps<string[]>) => {
           return (
             <div>
               i am array item: {node.group}
@@ -557,7 +561,7 @@ export const FormRefHandleWithOneOf = () => {
     oneOf: [
       {
         computed: {
-          if: "#/category==='game'",
+          if: "#/category === 'game'",
         },
         properties: {
           price: { type: 'number' },

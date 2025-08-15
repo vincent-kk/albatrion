@@ -18,7 +18,7 @@ export const OneOf = () => {
     oneOf: [
       {
         computed: {
-          if: "./category==='game'",
+          if: "./category === 'game'",
         },
         properties: {
           date: {
@@ -31,7 +31,7 @@ export const OneOf = () => {
       },
       {
         computed: {
-          if: "./category==='movie'",
+          if: "./category === 'movie'",
         },
         properties: {
           date: {
@@ -47,7 +47,7 @@ export const OneOf = () => {
       },
       {
         computed: {
-          if: "./category==='console'",
+          if: "./category === 'console'",
         },
         properties: {
           date: {
@@ -93,7 +93,7 @@ export const OneOfAlias = () => {
     type: 'object',
     oneOf: [
       {
-        '&if': "./category==='movie'",
+        '&if': "./category === 'movie'",
         properties: {
           date1: {
             type: 'string',
@@ -107,7 +107,7 @@ export const OneOfAlias = () => {
         },
       },
       {
-        '&if': "./category==='game'",
+        '&if': "./category === 'game'",
         properties: {
           date2: {
             type: 'string',
@@ -149,7 +149,7 @@ export const OneOfAliasWithKeyOrder = () => {
     type: 'object',
     oneOf: [
       {
-        '&if': "./category==='movie'",
+        '&if': "./category === 'movie'",
         properties: {
           date1: {
             type: 'string',
@@ -163,7 +163,7 @@ export const OneOfAliasWithKeyOrder = () => {
         },
       },
       {
-        '&if': "./category==='game'",
+        '&if': "./category === 'game'",
         properties: {
           date2: {
             type: 'string',
@@ -215,7 +215,7 @@ export const ComplexOneOf = () => {
         type: 'object',
         oneOf: [
           {
-            '&if': "../type==='game'",
+            '&if': "../type === 'game'",
             properties: {
               stages: {
                 type: 'array',
@@ -257,7 +257,7 @@ export const ComplexOneOf = () => {
             },
           },
           {
-            '&if': "../type==='movie'",
+            '&if': "../type === 'movie'",
             properties: {
               genres: {
                 type: 'array',
@@ -297,13 +297,13 @@ export const ComplexOneOf = () => {
     },
     oneOf: [
       {
-        '&if': "../type==='game'",
+        '&if': "../type === 'game'",
         properties: {
           owner: { type: 'string', placeholder: 'developer of the game' },
         },
       },
       {
-        '&if': "../type==='movie'",
+        '&if': "../type === 'movie'",
         properties: {
           owner: { type: 'string', placeholder: 'director of the movie' },
         },
@@ -341,7 +341,7 @@ export const ComplexOneOfSmall = () => {
         type: 'object',
         oneOf: [
           {
-            '&if': "../type==='game'",
+            '&if': "../type === 'game'",
             properties: {
               stages: {
                 type: 'array',
@@ -383,7 +383,7 @@ export const ComplexOneOfSmall = () => {
             },
           },
           {
-            '&if': "../type==='movie'",
+            '&if': "../type === 'movie'",
             properties: {
               genres: {
                 type: 'array',
@@ -445,7 +445,7 @@ export const ErrorCase1 = () => {
     type: 'object',
     oneOf: [
       {
-        '&if': "./category==='movie'",
+        '&if': "./category === 'movie'",
         properties: {
           category: {
             type: 'string',
@@ -459,7 +459,7 @@ export const ErrorCase1 = () => {
         },
       },
       {
-        '&if': "./category==='game'",
+        '&if': "./category === 'game'",
         properties: {
           date2: {
             type: 'string',
@@ -501,7 +501,7 @@ export const ErrorCase2 = () => {
     type: 'object',
     oneOf: [
       {
-        '&if': "./category==='movie'",
+        '&if': "./category === 'movie'",
         type: 'object', // 부모와 같은 타입은 허용됨
         properties: {
           date1: {
@@ -516,7 +516,7 @@ export const ErrorCase2 = () => {
         },
       },
       {
-        '&if': "./category==='game'",
+        '&if': "./category === 'game'",
         type: 'string', // 부모와 다른 타입은 허용되지 않음
       },
     ],

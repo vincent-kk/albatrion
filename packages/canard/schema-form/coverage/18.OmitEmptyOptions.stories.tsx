@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 
-import type { FormHandle} from '../src';
+import type { FormHandle } from '../src';
 import { Form, type JsonSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
@@ -138,7 +138,7 @@ export const Array = () => {
           type: 'object',
           oneOf: [
             {
-              '&if': '/type==="real world"',
+              '&if': '/type === "real world"',
               properties: {
                 name: {
                   type: 'string',
@@ -164,7 +164,7 @@ export const Array = () => {
               },
             },
             {
-              '&if': '/type==="internet"',
+              '&if': '/type === "internet"',
               properties: {
                 ip: {
                   type: 'string',

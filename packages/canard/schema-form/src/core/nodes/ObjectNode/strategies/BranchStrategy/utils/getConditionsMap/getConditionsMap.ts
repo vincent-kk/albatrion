@@ -42,11 +42,11 @@ const getOperations = (
   for (const [key, value] of Object.entries(condition)) {
     if (isString(value))
       operations.push(
-        `${JSONPointer.Parent}${JSONPointer.Separator}${key}${inverse ? '!==' : '==='}${serializeNative(value)}`,
+        `(${JSONPointer.Parent}${JSONPointer.Separator}${key})${inverse ? '!==' : '==='}${serializeNative(value)}`,
       );
     else
       operations.push(
-        `${inverse ? '!' : ''}${serializeNative(value)}.includes(${JSONPointer.Parent}${JSONPointer.Separator}${key})`,
+        `${inverse ? '!' : ''}${serializeNative(value)}.includes((${JSONPointer.Parent}${JSONPointer.Separator}${key}))`,
       );
   }
 };
