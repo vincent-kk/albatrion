@@ -88,7 +88,8 @@ describe('JSON_POINTER_REGEX', () => {
       expect(testRegexStandalone('#/')).toBe(true);
       expect(testRegexStandalone('../')).toBe(true);
       expect(testRegexStandalone('./')).toBe(true);
-      expect(testRegexStandalone('/')).toBe(true);
+      expect(testRegexStandalone('(/)')).toBe(true);
+      expect(testRegexStandalone('/')).toBe(false);
     });
 
     test('특수 문자가 포함된 property names', () => {
@@ -103,6 +104,28 @@ describe('JSON_POINTER_REGEX', () => {
       expect(testRegexStandalone('#/한글속성')).toBe(true);
       expect(testRegexStandalone('#/属性')).toBe(true);
       expect(testRegexStandalone('#/свойство')).toBe(true);
+    });
+
+    test('한글 경로 패턴들', () => {
+      // 기본 한글 패턴들
+      expect(testRegexStandalone('#/사용자')).toBe(true);
+      expect(testRegexStandalone('../나이')).toBe(true);
+      expect(testRegexStandalone('./이름')).toBe(true);
+      expect(testRegexStandalone('/주소')).toBe(true);
+
+      // 복합 한글 경로들
+      expect(testRegexStandalone('#/사용자/정보')).toBe(true);
+      expect(testRegexStandalone('../사용자/나이')).toBe(true);
+      expect(testRegexStandalone('./개인정보/이름')).toBe(true);
+      expect(testRegexStandalone('/회원/주소/상세주소')).toBe(true);
+
+      // 숫자와 한글 혼합
+      expect(testRegexStandalone('#/사용자/0/이름')).toBe(true);
+      expect(testRegexStandalone('/회원목록/123/개인정보')).toBe(true);
+
+      // 영문과 한글 혼합
+      expect(testRegexStandalone('#/user/이름')).toBe(true);
+      expect(testRegexStandalone('./data/사용자정보')).toBe(true);
     });
 
     test('부분 매칭 구조들', () => {
@@ -151,9 +174,56 @@ describe('JSON_POINTER_REGEX', () => {
     test('특수 문자로 인한 부분 매칭', () => {
       // 대시, 언더스코어, 공백 등이 있으면 그 앞까지만 매칭됨
       expect(extractMatches('#/prop-with-dash')).toEqual(['#/prop']);
-      expect(extractMatches('#/prop_with_underscore')).toEqual(['#/prop']);
+      expect(extractMatches('#/prop_with_underscore')).toEqual([
+        '#/prop_with_underscore',
+      ]);
       expect(extractMatches('#/prop with space')).toEqual(['#/prop']);
       expect(extractMatches('#/prop.with.dot')).toEqual(['#/prop']);
+    });
+
+    test('한글 경로 추출', () => {
+      // 단일 한글 경로 추출 (한글은 단어 경계가 모호하므로 연속된 문자까지 매칭됨)
+      expect(extractMatches('조건: (/사용자/이름)이 있으면')).toEqual([
+        '/사용자/이름',
+      ]);
+      expect(extractMatches('나이 확인: ../나이 > 18')).toEqual(['../나이']);
+      expect(extractMatches('현재 상태: ./상태 === "활성"')).toEqual([
+        './상태',
+      ]);
+
+      // 정확한 경계를 가진 한글 경로들
+      expect(extractMatches('조건: /사용자/이름 && test')).toEqual([
+        '/사용자/이름',
+      ]);
+      expect(extractMatches('나이: ../나이 > 18')).toEqual(['../나이']);
+
+      // 복수 한글 경로 추출
+      expect(
+        extractMatches('#/사용자/이름 && ../나이 >= 20 && ./주소/지역'),
+      ).toEqual(['#/사용자/이름', '../나이', './주소/지역']);
+
+      // 영문과 한글 혼합 추출
+      expect(extractMatches('user: #/user/이름, age: ../나이')).toEqual([
+        '#/user/이름',
+        '../나이',
+      ]);
+
+      // 숫자와 한글 혼합 추출
+      expect(extractMatches('첫 번째 회원: /회원목록/0/이름')).toEqual([
+        '/회원목록/0/이름',
+      ]);
+
+      // 괄호 안의 한글 경로
+      expect(extractMatches('조건 (../나이 >= 18)')).toEqual(['../나이']);
+      expect(extractMatches('사용자 정보 (#/개인정보/이름)')).toEqual([
+        '#/개인정보/이름',
+      ]);
+
+      // 실제 사용 시나리오 - JavaScript 표현식에서 추출
+      expect(extractMatches('../사용자나이 >= 18')).toEqual(['../사용자나이']);
+      expect(extractMatches('#/개인정보데이터 !== null')).toEqual([
+        '#/개인정보데이터',
+      ]);
     });
   });
 
@@ -349,6 +419,44 @@ describe('JSON_POINTER_REGEX', () => {
       expect(businessLogic.computedExpression).toBe(
         'dependencies[0] === "premium" || (dependencies[0] === "regular" && dependencies[1] >= 21)',
       );
+    });
+
+    test('한글 경로를 사용한 동적 함수 생성', () => {
+      // 기본 한글 패턴
+      const result1 = testDepsMatch('../나이 >= 18');
+      expect(result1.pathManager).toEqual(['../나이']);
+      expect(result1.computedExpression).toBe('dependencies[0] >= 18');
+
+      const result2 = testDepsMatch('#/사용자/이름 === "홍길동"');
+      expect(result2.pathManager).toEqual(['#/사용자/이름']);
+      expect(result2.computedExpression).toBe('dependencies[0] === "홍길동"');
+
+      // 복합 한글 조건식
+      const result3 = testDepsMatch(
+        '../나이 >= 18 && #/개인정보/성별 === "남성" && ./주소/지역 === "서울"',
+      );
+      expect(result3.pathManager).toEqual([
+        '../나이',
+        '#/개인정보/성별',
+        './주소/지역',
+      ]);
+      expect(result3.computedExpression).toBe(
+        'dependencies[0] >= 18 && dependencies[1] === "남성" && dependencies[2] === "서울"',
+      );
+
+      // 영문과 한글 혼합
+      const result4 = testDepsMatch(
+        '#/user/이름 !== null && ../data/나이 > 20',
+      );
+      expect(result4.pathManager).toEqual(['#/user/이름', '../data/나이']);
+      expect(result4.computedExpression).toBe(
+        'dependencies[0] !== null && dependencies[1] > 20',
+      );
+
+      // 숫자 인덱스와 한글 혼합
+      const result5 = testDepsMatch('#/회원목록/0/이름 === "김철수"');
+      expect(result5.pathManager).toEqual(['#/회원목록/0/이름']);
+      expect(result5.computedExpression).toBe('dependencies[0] === "김철수"');
     });
   });
 });
