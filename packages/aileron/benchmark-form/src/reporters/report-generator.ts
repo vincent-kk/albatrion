@@ -1,4 +1,4 @@
-import { Suite } from 'benchmark';
+import type { Suite } from 'benchmark';
 import fs from 'fs/promises';
 import path from 'path';
 

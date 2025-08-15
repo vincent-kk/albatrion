@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>배치 처리 손익분기점 벤치마크</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        .section {
+            margin: 25px 0;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background-color: #fdfdfe;
+        }
+        .section h3 {
+            color: #495057;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .input-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #495057;
+        }
+        .input-group input, .input-group select {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .input-group small {
+            color: #6c757d;
+            margin-top: 4px;
+            font-size: 12px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        button:disabled {
+            background: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .status {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .status.running {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .status.completed {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .results-table th {
+            background: linear-gradient(135deg, #495057, #6c757d);
+            color: white;
+            font-weight: 600;
+            padding: 12px 8px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+        .results-table td {
+            padding: 10px 8px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+        .results-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .results-table tbody tr:hover {
+            background-color: #e9ecef;
+        }
+        .highlight {
+            background-color: #d1ecf1 !important;
+            font-weight: 600;
+        }
+        .summary {
+            background: linear-gradient(135deg, #e3f2fd, #f0f8ff);
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            margin-top: 25px;
+            border-radius: 0 8px 8px 0;
+        }
+        .summary h4 {
+            color: #1976d2;
+            margin-top: 0;
+        }
+        .chart-container {
+            margin-top: 20px;
+            height: 300px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 10px;
+            background: white;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0,123,255,.3);
+            border-radius: 50%;
+            border-top-color: #007bff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 배치 처리 손익분기점 벤치마크</h1>
+        
+        <div class="section">
+            <h3>📋 테스트 설정</h3>
+            <div class="controls">
+                <div class="input-group">
+                    <label>작업 복잡도</label>
+                    <select id="complexity">
+                        <option value="light">가벼운 작업 (~0.01ms)</option>
+                        <option value="medium" selected>중간 작업 (~0.1ms)</option>
+                        <option value="heavy">무거운 작업 (~0.5ms)</option>
+                        <option value="very-heavy">매우 무거운 작업 (~2ms)</option>
+                        <option value="custom">사용자 정의</option>
+                    </select>
+                    <small>작업의 복잡도를 선택하세요</small>
+                </div>
+                
+                <div class="input-group" id="custom-loops" style="display: none;">
+                    <label>반복 횟수</label>
+                    <input type="number" id="custom-loop-count" value="1000" min="10" max="100000">
+                    <small>사용자 정의 작업의 반복 횟수</small>
+                </div>
+                
+                <div class="input-group">
+                    <label>배치 처리 방식</label>
+                    <select id="batch-method">
+                        <option value="microtask" selected>Microtask (Promise)</option>
+                        <option value="setTimeout">setTimeout 0</option>
+                        <option value="both">둘 다 비교</option>
+                    </select>
+                    <small>비교할 비동기 처리 방식</small>
+                </div>
+                
+                <div class="input-group">
+                    <label>테스트 반복 횟수</label>
+                    <input type="number" id="test-iterations" value="5" min="1" max="20">
+                    <small>정확한 측정을 위한 반복 횟수</small>
+                </div>
+                
+                <div class="input-group">
+                    <label>최대 배치 크기</label>
+                    <input type="number" id="max-batch-size" value="50" min="5" max="200">
+                    <small>테스트할 최대 배치 크기</small>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-primary" onclick="runSingleTest()">단일 테스트 실행</button>
+                <button class="btn-primary" onclick="runFullAnalysis()">전체 분석 실행</button>
+                <button class="btn-secondary" onclick="clearResults()">결과 초기화</button>
+            </div>
+        </div>
+
+        <div id="status" class="status" style="display: none;"></div>
+
+        <div class="section">
+            <h3>📊 테스트 결과</h3>
+            <div id="single-work-info" style="display: none;">
+                <strong>단일 작업 시간:</strong> <span id="single-time"></span>ms
+                <strong style="margin-left: 20px;">예상 손익분기점:</strong> <span id="estimated-breakeven"></span>개
+            </div>
+            
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>배치 크기</th>
+                        <th>동기 실행 (ms)</th>
+                        <th id="async-header">Microtask (ms)</th>
+                        <th>오버헤드 (ms)</th>
+                        <th>성능 비율</th>
+                        <th>결과</th>
+                    </tr>
+                </thead>
+                <tbody id="results-tbody">
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #6c757d; padding: 40px;">
+                            테스트를 실행하여 손익분기점을 확인하세요
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="summary" class="summary" style="display: none;">
+            <h4>📈 분석 결과</h4>
+            <div id="summary-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // 작업 함수들
+        const workFunctions = {
+            light: () => Math.random() * 100 + Math.sin(Date.now()),
+            
+            medium: () => {
+                let sum = 0;
+                for (let i = 0; i < 100; i++) {
+                    sum += Math.sin(i) * Math.cos(i);
+                }
+                return sum;
+            },
+            
+            heavy: () => {
+                let sum = 0;
+                for (let i = 0; i < 1000; i++) {
+                    sum += Math.sin(i) * Math.cos(i) * Math.tan(i * 0.1);
+                }
+                return sum;
+            },
+            
+            'very-heavy': () => {
+                let sum = 0;
+                for (let i = 0; i < 5000; i++) {
+                    sum += Math.sin(i) * Math.cos(i) * Math.tan(i * 0.1) * Math.log(i + 1);
+                }
+                return sum;
+            },
+            
+            custom: () => {
+                const loops = parseInt(document.getElementById('custom-loop-count').value);
+                let sum = 0;
+                for (let i = 0; i < loops; i++) {
+                    sum += Math.sin(i) * Math.cos(i);
+                }
+                return sum;
+            }
+        };
+
+        let currentResults = [];
+
+        // UI 업데이트 함수들
+        function showStatus(message, type = 'running') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = type === 'running' ? 
+                `<span class="loading"></span> ${message}` : message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.style.display = 'block';
+        }
+
+        function hideStatus() {
+            document.getElementById('status').style.display = 'none';
+        }
+
+        function updateAsyncHeader() {
+            const method = document.getElementById('batch-method').value;
+            const header = document.getElementById('async-header');
+            
+            if (method === 'microtask') {
+                header.textContent = 'Microtask (ms)';
+            } else if (method === 'setTimeout') {
+                header.textContent = 'setTimeout (ms)';
+            } else {
+                header.textContent = '비동기 처리 (ms)';
+            }
+        }
+
+        // 복잡도 변경 이벤트
+        document.getElementById('complexity').addEventListener('change', function() {
+            const customLoops = document.getElementById('custom-loops');
+            customLoops.style.display = this.value === 'custom' ? 'block' : 'none';
+        });
+
+        document.getElementById('batch-method').addEventListener('change', updateAsyncHeader);
+
+        // 측정 함수들
+        function measureSingleWork(workFunction, iterations = 100) {
+            const start = performance.now();
+            for (let i = 0; i < iterations; i++) {
+                workFunction();
+            }
+            const end = performance.now();
+            return (end - start) / iterations;
+        }
+
+        async function measureBatch(workFunction, batchSize, method = 'microtask') {
+            if (method === 'microtask') {
+                return new Promise((resolve) => {
+                    const start = performance.now();
+                    Promise.resolve().then(() => {
+                        for (let i = 0; i < batchSize; i++) {
+                            workFunction();
+                        }
+                        const end = performance.now();
+                        resolve(end - start);
+                    });
+                });
+            } else {
+                return new Promise((resolve) => {
+                    const start = performance.now();
+                    setTimeout(() => {
+                        for (let i = 0; i < batchSize; i++) {
+                            workFunction();
+                        }
+                        const end = performance.now();
+                        resolve(end - start);
+                    }, 0);
+                });
+            }
+        }
+
+        function measureSync(workFunction, batchSize) {
+            const start = performance.now();
+            for (let i = 0; i < batchSize; i++) {
+                workFunction();
+            }
+            const end = performance.now();
+            return end - start;
+        }
+
+        // 결과 표시 함수
+        function addResult(batchSize, syncTime, asyncTime, overhead, ratio, isOptimal) {
+            const tbody = document.getElementById('results-tbody');
+            
+            if (tbody.children.length === 1 && tbody.children[0].children.length === 1) {
+                tbody.innerHTML = '';
+            }
+
+            const row = document.createElement('tr');
+            if (isOptimal) {
+                row.className = 'highlight';
+            }
+            
+            const resultText = ratio < 1 ? '🎯 배치 유리' : 
+                              ratio < 1.1 ? '⚖️ 거의 동일' : '❌ 동기 유리';
+            
+            row.innerHTML = `
+                <td>${batchSize}</td>
+                <td>${syncTime.toFixed(4)}</td>
+                <td>${asyncTime.toFixed(4)}</td>
+                <td>${overhead > 0 ? '+' : ''}${overhead.toFixed(4)}</td>
+                <td>${ratio.toFixed(2)}배</td>
+                <td>${resultText}</td>
+            `;
+            
+            tbody.appendChild(row);
+        }
+
+        function updateSummary(results, singleWorkTime) {
+            const summary = document.getElementById('summary');
+            const content = document.getElementById('summary-content');
+            
+            const optimalResults = results.filter(r => r.ratio < 1);
+            const breakEvenPoint = results.find(r => Math.abs(r.ratio - 1) < 0.05);
+            
+            let analysis = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">';
+            
+            // 손익분기점 분석
+            analysis += '<div><h5>🎯 손익분기점 분석</h5>';
+            if (optimalResults.length > 0) {
+                const firstOptimal = optimalResults[0];
+                analysis += `<p><strong>${firstOptimal.batchSize}개부터 배치 처리가 유리합니다!</strong></p>`;
+                analysis += `<p>최적 성능: ${firstOptimal.batchSize}개 배치에서 ${((1 - firstOptimal.ratio) * 100).toFixed(1)}% 성능 향상</p>`;
+            } else if (breakEvenPoint) {
+                analysis += `<p><strong>${breakEvenPoint.batchSize}개 근처에서 성능이 비슷합니다</strong></p>`;
+            } else {
+                analysis += '<p><strong>테스트 범위에서는 동기 처리가 계속 유리합니다</strong></p>';
+                const minRatio = Math.min(...results.map(r => r.ratio));
+                const minResult = results.find(r => r.ratio === minRatio);
+                analysis += `<p>가장 좋은 결과: ${minResult.batchSize}개에서 ${minResult.ratio.toFixed(2)}배</p>`;
+            }
+            analysis += '</div>';
+            
+            // 오버헤드 분석
+            const avgOverhead = results.reduce((sum, r) => sum + r.overhead, 0) / results.length;
+            analysis += '<div><h5>⚡ 오버헤드 분석</h5>';
+            analysis += `<p>평균 오버헤드: <strong>${avgOverhead.toFixed(4)}ms</strong></p>`;
+            analysis += `<p>단일 작업 시간: <strong>${singleWorkTime.toFixed(4)}ms</strong></p>`;
+            analysis += `<p>이론적 손익분기점: <strong>${Math.ceil(avgOverhead / singleWorkTime)}개</strong></p>`;
+            analysis += '</div>';
+            
+            analysis += '</div>';
+            
+            // 추천사항
+            analysis += '<div style="margin-top: 15px; padding: 15px; background: #e8f4fd; border-radius: 6px;">';
+            analysis += '<h5 style="color: #1976d2; margin-top: 0;">💡 권장사항</h5>';
+            
+            if (optimalResults.length > 0) {
+                analysis += `<p>✅ <strong>${optimalResults[0].batchSize}개 이상의 작업</strong>은 배치 처리를 고려하세요</p>`;
+                analysis += '<p>✅ UI 응답성이 중요하다면 더 작은 단위로도 배치 처리 고려</p>';
+            } else {
+                analysis += '<p>⚠️ 이 수준의 작업은 동기 처리가 더 효율적입니다</p>';
+                analysis += '<p>💡 하지만 UI 블로킹 방지를 위해서는 여전히 배치 처리가 필요할 수 있습니다</p>';
+            }
+            
+            analysis += '</div>';
+            
+            content.innerHTML = analysis;
+            summary.style.display = 'block';
+        }
+
+        // 테스트 실행 함수들
+        async function runSingleTest() {
+            const complexity = document.getElementById('complexity').value;
+            const method = document.getElementById('batch-method').value;
+            const workFunction = workFunctions[complexity];
+            
+            showStatus('단일 작업 시간 측정 중...');
+            
+            try {
+                await new Promise(resolve => setTimeout(resolve, 100)); // UI 업데이트 대기
+                
+                const singleTime = measureSingleWork(workFunction, 1000);
+                
+                document.getElementById('single-work-info').style.display = 'block';
+                document.getElementById('single-time').textContent = singleTime.toFixed(6);
+                
+                // 간단한 손익분기점 추정 (오버헤드를 0.1ms로 가정)
+                const estimatedBreakeven = Math.ceil(0.1 / singleTime);
+                document.getElementById('estimated-breakeven').textContent = estimatedBreakeven;
+                
+                showStatus('단일 작업 시간 측정 완료!', 'completed');
+                setTimeout(hideStatus, 2000);
+                
+            } catch (error) {
+                showStatus('측정 중 오류가 발생했습니다: ' + error.message, 'error');
+            }
+        }
+
+        async function runFullAnalysis() {
+            const complexity = document.getElementById('complexity').value;
+            const method = document.getElementById('batch-method').value;
+            const testIterations = parseInt(document.getElementById('test-iterations').value);
+            const maxBatchSize = parseInt(document.getElementById('max-batch-size').value);
+            const workFunction = workFunctions[complexity];
+            
+            showStatus('전체 분석 시작...');
+            currentResults = [];
+            
+            // 결과 테이블 초기화
+            document.getElementById('results-tbody').innerHTML = '';
+            document.getElementById('summary').style.display = 'none';
+            
+            try {
+                // 단일 작업 시간 측정
+                showStatus('단일 작업 시간 측정 중...');
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                const singleTime = measureSingleWork(workFunction, 1000);
+                document.getElementById('single-work-info').style.display = 'block';
+                document.getElementById('single-time').textContent = singleTime.toFixed(6);
+                
+                // 배치 크기별 테스트
+                const batchSizes = [1, 2, 3, 5, 8, 10, 15, 20, 25, 30, 40, 50]
+                    .filter(size => size <= maxBatchSize);
+                
+                for (let i = 0; i < batchSizes.length; i++) {
+                    const batchSize = batchSizes[i];
+                    showStatus(`배치 크기 ${batchSize} 테스트 중... (${i + 1}/${batchSizes.length})`);
+                    await new Promise(resolve => setTimeout(resolve, 50));
+                    
+                    let syncTimes = [];
+                    let asyncTimes = [];
+                    
+                    // 여러 번 측정하여 평균내기
+                    for (let j = 0; j < testIterations; j++) {
+                        const syncTime = measureSync(workFunction, batchSize);
+                        syncTimes.push(syncTime);
+                        
+                        const asyncTime = await measureBatch(workFunction, batchSize, method);
+                        asyncTimes.push(asyncTime);
+                        
+                        await new Promise(resolve => setTimeout(resolve, 10)); // 브라우저 휴식
+                    }
+                    
+                    // 평균 계산
+                    const avgSync = syncTimes.reduce((sum, time) => sum + time, 0) / syncTimes.length;
+                    const avgAsync = asyncTimes.reduce((sum, time) => sum + time, 0) / asyncTimes.length;
+                    const overhead = avgAsync - avgSync;
+                    const ratio = avgAsync / avgSync;
+                    
+                    const result = {
+                        batchSize,
+                        syncTime: avgSync,
+                        asyncTime: avgAsync,
+                        overhead,
+                        ratio
+                    };
+                    
+                    currentResults.push(result);
+                    addResult(batchSize, avgSync, avgAsync, overhead, ratio, ratio < 1);
+                }
+                
+                // 분석 결과 업데이트
+                updateSummary(currentResults, singleTime);
+                
+                showStatus('전체 분석 완료!', 'completed');
+                setTimeout(hideStatus, 3000);
+                
+            } catch (error) {
+                showStatus('분석 중 오류가 발생했습니다: ' + error.message, 'error');
+            }
+        }
+
+        function clearResults() {
+            document.getElementById('results-tbody').innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; color: #6c757d; padding: 40px;">
+                        테스트를 실행하여 손익분기점을 확인하세요
+                    </td>
+                </tr>
+            `;
+            document.getElementById('summary').style.display = 'none';
+            document.getElementById('single-work-info').style.display = 'none';
+            currentResults = [];
+            hideStatus();
+        }
+
+        // 초기화
+        updateAsyncHeader();
+    </script>
+</body>
+</html>
