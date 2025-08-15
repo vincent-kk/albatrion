@@ -1,9 +1,9 @@
-// import GenieFormCore from '@react-genie-form/core';
-import { Form } from '@react-genie-form/next';
 import { JSDOM } from 'jsdom';
 import { createRoot } from 'react-dom/client';
 
-import { sampleSchemas } from '../fixtures/schemas';
+import { Form as GenieForm } from '@react-genie-form/next';
+
+import { sampleSchemas } from '../../fixtures/schemas';
 
 // JSDOM 환경 설정
 const dom = new JSDOM('<!DOCTYPE html><div id="root"></div>');
@@ -22,10 +22,11 @@ export async function runGenieFormRenderingBenchmark() {
   try {
     // 다양한 크기의 스키마로 테스트
     for (const schema of sampleSchemas) {
-      // JSX 문법으로 Form 컴포넌트 렌더링
+      // JSX 문법으로 GenieForm 컴포넌트 렌더링
       root.render(
-        <Form schema={schema} onChange={() => {}} onValidate={() => {}} />,
+        <GenieForm schema={schema} onValidate={() => {}} onChange={() => {}} />,
       );
+
       // 렌더링이 완료될 때까지 대기
       await new Promise((resolve) => setTimeout(resolve, 0));
     }

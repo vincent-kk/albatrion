@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 
 import type { Form as SchemaForm } from '@canard/schema-form';
 
-import { sampleSchemas } from '../fixtures/schemas';
+import { sampleSchemas } from '../../fixtures/schemas';
 
 // JSDOM 환경 설정
 const dom = new JSDOM('<!DOCTYPE html><div id="root"></div>');

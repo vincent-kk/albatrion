@@ -1,0 +1,151 @@
+
+import { JSDOM } from 'jsdom';
+import { createRoot } from 'react-dom/client';
+
+import type { JsonSchema, Form as SchemaForm } from '@canard/schema-form';
+
+// JSDOM 환경 설정
+const dom = new JSDOM('<!DOCTYPE html><div id="root"></div>', {
+  url: 'http://localhost',
+  pretendToBeVisual: true,
+  resources: 'usable'
+});
+(global as any).document = dom.window.document;
+(global as any).window = dom.window;
+(global as any).navigator = dom.window.navigator;
+(global as any).Element = dom.window.Element;
+(global as any).HTMLElement = dom.window.HTMLElement;
+(global as any).HTMLInputElement = dom.window.HTMLInputElement;
+(global as any).HTMLFormElement = dom.window.HTMLFormElement;
+(global as any).Event = dom.window.Event;
+(global as any).MouseEvent = dom.window.MouseEvent;
+(global as any).KeyboardEvent = dom.window.KeyboardEvent;
+
+// Vincent님의 @canard/schema-form 문법에 맞게 수정
+const oneOfSchema = {
+  type: 'object',
+  properties: {
+    type: {
+      type: 'string',
+      enum: ['personal', 'business', 'other'],
+      default: 'personal',
+    },
+  },
+  oneOf: [
+    {
+      '&if': "./type==='personal'",
+      properties: {
+        personalData: {
+          type: 'object',
+          properties: {
+            hobby: { type: 'string', default: 'reading' },
+            favoriteColor: { type: 'string', default: 'blue' },
+            petName: { type: 'string', default: 'fluffy' },
+          },
+        },
+      },
+    },
+    {
+      '&if': "./type==='business'",
+      properties: {
+        businessData: {
+          type: 'object',
+          properties: {
+            company: { type: 'string', default: 'Acme Corp' },
+            position: { type: 'string', default: 'Developer' },
+            department: { type: 'string', default: 'Engineering' },
+          },
+        },
+      },
+    },
+    {
+      '&if': "./type==='other'",
+      properties: {
+        otherData: {
+          type: 'object',
+          properties: {
+            description: { type: 'string', default: 'Other description' },
+            category: { type: 'string', default: 'misc' },
+          },
+        },
+      },
+    },
+  ],
+} satisfies JsonSchema;
+
+export async function runOneOfBenchmark(SchemaFormModule: {
+  Form: typeof SchemaForm;
+}) {
+  const { Form } = SchemaFormModule;
+
+  const container = document.createElement('div');
+  document.body.appendChild(container);
+  const root = createRoot(container);
+
+  try {
+    let changeCount = 0;
+    const switchingTimes: number[] = [];
+
+    // 폼 렌더링
+    root.render(
+      <Form
+        jsonSchema={oneOfSchema}
+        onValidate={() => {}}
+        onChange={() => {
+          changeCount++;
+        }}
+      />,
+    );
+    
+    // 렌더링 완료 대기
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // oneOf 전환 테스트 (personal → business → other → personal)
+    const switchSequence = ['business', 'other', 'personal'];
+
+    for (const switchTo of switchSequence) {
+      const startTime = performance.now();
+
+      // 타입 변경으로 oneOf 전환 트리거
+      const typeSelect =
+        container.querySelector('select') ||
+        container.querySelector(`input[value="${switchTo}"]`);
+
+      if (typeSelect) {
+        if (typeSelect.tagName === 'SELECT') {
+          (typeSelect as HTMLSelectElement).value = switchTo;
+          typeSelect.dispatchEvent(
+            new dom.window.Event('change', { bubbles: true }),
+          );
+        } else {
+          (typeSelect as unknown as HTMLInputElement).checked = true;
+          typeSelect.dispatchEvent(
+            new dom.window.Event('change', { bubbles: true }),
+          );
+        }
+
+        // oneOf 전환 완료까지 대기 (Vincent님 말씀대로 3회 이벤트 발행)
+        await new Promise((resolve) => setTimeout(resolve, 5));
+      }
+
+      const endTime = performance.now();
+      switchingTimes.push(endTime - startTime);
+    }
+
+    const avgSwitchingTime =
+      switchingTimes.reduce((a, b) => a + b, 0) / switchingTimes.length;
+
+    return {
+      switchingTimes,
+      avgSwitchingTime,
+      totalSwitches: switchingTimes.length,
+      changeCount,
+      // Vincent님 아키텍처 특화 메트릭
+      eventMultiplier: changeCount / switchingTimes.length, // 실제 이벤트 발행 배수
+      efficiencyScore: switchingTimes.length / avgSwitchingTime, // 전환 효율성
+    };
+  } finally {
+    root.unmount();
+    container.remove();
+  }
+}
