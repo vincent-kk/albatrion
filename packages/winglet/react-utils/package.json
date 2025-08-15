@@ -95,23 +95,10 @@
     "@winglet/common-utils": "workspace:^"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^12.1.2",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.1.0",
-    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "jsdom": "^25.0.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "rollup": "^4.42.0",
-    "rollup-plugin-copy": "^3.5.0",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
-    "tsc-alias": "^1.8.16",
-    "typescript": "^5.7.2",
-    "vite": "^6.3.5",
-    "vitest": "2.1.9"
+    "react-dom": "^19.0.0"
   },
   "peerDependencies": {
     "react": ">=16 <20",

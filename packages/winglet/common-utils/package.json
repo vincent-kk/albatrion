@@ -129,16 +129,5 @@
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
     "version:patch": "yarn version patch"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.26.0",
-    "@rollup/plugin-typescript": "^12.1.2",
-    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
-    "rollup": "^4.42.0",
-    "rollup-plugin-copy": "^3.5.0",
-    "tsc-alias": "^1.8.16",
-    "typescript": "^5.7.2",
-    "vite": "^6.3.5",
-    "vitest": "2.1.9"
   }
 }
