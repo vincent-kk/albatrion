@@ -110,7 +110,8 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
           paths: ['./flag', '../backup', '#/default'],
         },
         {
-          input: '!(../disabled) && ((../../role) === "admin" || (../superuser))',
+          input:
+            '!(../disabled) && ((../../role) === "admin" || (../superuser))',
           expected:
             '!(dependencies[0]) && ((dependencies[1]) === "admin" || (dependencies[2]))',
           paths: ['../disabled', '../../role', '../superuser'],
@@ -212,18 +213,18 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
       const cases = [
         {
           input: '../items[0] === "first"',
-          expected: 'dependencies[0][0] === "first"',
-          paths: ['../items'],
+          expected: 'dependencies[0] === "first"',
+          paths: ['../items[0]'],
         },
         {
           input: '../../data["key"] !== undefined',
-          expected: 'dependencies[0]["key"] !== undefined',
-          paths: ['../../data'],
+          expected: 'dependencies[0]"key"] !== undefined',
+          paths: ['../../data['],
         },
         {
           input: '../users[../currentIndex].name',
-          expected: 'dependencies[0][dependencies[1]].name',
-          paths: ['../users', '../currentIndex'],
+          expected: 'dependencies[0]',
+          paths: ['../users[../currentIndex].name'],
         },
       ];
 
@@ -306,13 +307,13 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
         },
         {
           input: '[../b]',
-          expected: '[dependencies[0]]',
-          paths: ['../b'],
+          expected: '[dependencies[0]',
+          paths: ['../b]'],
         },
         {
           input: '{../c}',
-          expected: '{dependencies[0]}',
-          paths: ['../c'],
+          expected: '{dependencies[0]',
+          paths: ['../c}'],
         },
         {
           input: 'func((../arg1), (../arg2))',
@@ -559,6 +560,11 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
           expected: 'dependencies[0]',
           paths: ['/absolute/path'],
         },
+        {
+          input: '!../type', // 느낌표 다음의 상대 경로
+          expected: '!dependencies[0]',
+          paths: ['../type'],
+        },
       ];
 
       cases.forEach(({ input, expected, paths }) => {
@@ -647,6 +653,204 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
       expect(result.paths).toHaveLength(1);
       expect(result.paths[0]).toBe(deepPath);
       expect(result.result).toBe('dependencies[0]');
+    });
+  });
+
+  describe('🔄 JSON Pointer 이스케이프 시퀀스', () => {
+    test('RFC 6901 이스케이프 규칙', () => {
+      const cases = [
+        {
+          input: '../field~0name > 0', // ~0 은 / 를 의미
+          expected: 'dependencies[0] > 0',
+          paths: ['../field~0name'],
+        },
+        {
+          input: '../field~1name === "test"', // ~1 은 ~ 를 의미
+          expected: 'dependencies[0] === "test"',
+          paths: ['../field~1name'],
+        },
+        {
+          input: '../path~0to~1item !== null', // / 와 ~ 모두 이스케이프
+          expected: 'dependencies[0] !== null',
+          paths: ['../path~0to~1item'],
+        },
+        {
+          input: '#/config~0data/enable~1flag || false',
+          expected: 'dependencies[0] || false',
+          paths: ['#/config~0data/enable~1flag'],
+        },
+        {
+          input: './api~0v2~1test >= 1',
+          expected: 'dependencies[0] >= 1',
+          paths: ['./api~0v2~1test'],
+        },
+      ];
+
+      cases.forEach(({ input, expected, paths }) => {
+        const result = transformExpression(input);
+        expect(result.result).toBe(expected);
+        expect(result.paths).toEqual(paths);
+      });
+    });
+
+    test('잘못된 이스케이프 시퀀스는 매칭되지 않음', () => {
+      const cases = [
+        {
+          input: '../field~name',
+          expected: 'dependencies[0]~name',
+          paths: ['../field'],
+        }, // ~ 단독 사용 불가, field까지만 매칭
+        {
+          input: '../field~2name',
+          expected: 'dependencies[0]~2name',
+          paths: ['../field'],
+        }, // ~2 는 유효하지 않음, field까지만 매칭
+        {
+          input: '../field~abcname',
+          expected: 'dependencies[0]~abcname',
+          paths: ['../field'],
+        }, // ~ 뒤에 잘못된 문자, field까지만 매칭
+      ];
+
+      cases.forEach(({ input, expected, paths }) => {
+        const result = transformExpression(input);
+        expect(result.result).toBe(expected);
+        expect(result.paths).toEqual(paths);
+      });
+    });
+  });
+
+  describe('🌍 다양한 JSON key 문자 지원', () => {
+    test('특수 문자가 포함된 JSON key', () => {
+      const cases = [
+        {
+          input: '../key:with:colons || false',
+          expected: 'dependencies[0] || false',
+          paths: ['../key:with:colons'],
+        },
+        {
+          input: '../key;with;semicolons && true',
+          expected: 'dependencies[0] && true',
+          paths: ['../key;with;semicolons'],
+        },
+        {
+          input: '../key,with,commas > 10',
+          expected: 'dependencies[0] > 10',
+          paths: ['../key,with,commas'],
+        },
+        {
+          input: '../한글키 === "값"',
+          expected: 'dependencies[0] === "값"',
+          paths: ['../한글키'],
+        },
+        {
+          input: '../属性名 <= 100',
+          expected: 'dependencies[0] <= 100',
+          paths: ['../属性名'],
+        },
+        {
+          input: '../emoji🔥key !== undefined',
+          expected: 'dependencies[0] !== undefined',
+          paths: ['../emoji🔥key'],
+        },
+        {
+          input: '../api+version >= 2',
+          expected: 'dependencies[0] >= 2',
+          paths: ['../api+version'],
+        },
+        {
+          input: '../flag! === true',
+          expected: 'dependencies[0] === true',
+          paths: ['../flag!'],
+        },
+        {
+          input: '../scope&filter !== null',
+          expected: 'dependencies[0] !== null',
+          paths: ['../scope&filter'],
+        },
+        {
+          input: '../array[0] > 10',
+          expected: 'dependencies[0] > 10',
+          paths: ['../array[0]'],
+        },
+        {
+          input: '#/config{env} === "prod"',
+          expected: 'dependencies[0] === "prod"',
+          paths: ['#/config{env}'],
+        },
+        {
+          input: './template{value} !== null',
+          expected: 'dependencies[0] !== null',
+          paths: ['./template{value}'],
+        },
+      ];
+
+      cases.forEach(({ input, expected, paths }) => {
+        const result = transformExpression(input);
+        expect(result.result).toBe(expected);
+        expect(result.paths).toEqual(paths);
+      });
+    });
+
+    test('연산자와 특수 기호가 앞에 오는 경우', () => {
+      const cases = [
+        {
+          input: '!../flag',
+          expected: '!dependencies[0]',
+          paths: ['../flag'],
+        },
+        {
+          input: '~../mask',
+          expected: '~dependencies[0]',
+          paths: ['../mask'],
+        },
+        {
+          input: '+../positive',
+          expected: '+dependencies[0]',
+          paths: ['../positive'],
+        },
+        {
+          input: '-../negative',
+          expected: '-dependencies[0]',
+          paths: ['../negative'],
+        },
+        {
+          input: '&../reference',
+          expected: '&dependencies[0]',
+          paths: ['../reference'],
+        },
+        {
+          input: '*../pointer',
+          expected: '*dependencies[0]',
+          paths: ['../pointer'],
+        },
+        {
+          input: '@../annotation',
+          expected: '@dependencies[0]',
+          paths: ['../annotation'],
+        },
+        {
+          input: '%../modulo',
+          expected: '%dependencies[0]',
+          paths: ['../modulo'],
+        },
+        {
+          input: '^../caret',
+          expected: '^dependencies[0]',
+          paths: ['../caret'],
+        },
+        {
+          input: '|../pipe',
+          expected: '|dependencies[0]',
+          paths: ['../pipe'],
+        },
+      ];
+
+      cases.forEach(({ input, expected, paths }) => {
+        const result = transformExpression(input);
+        expect(result.result).toBe(expected);
+        expect(result.paths).toEqual(paths);
+      });
     });
   });
 

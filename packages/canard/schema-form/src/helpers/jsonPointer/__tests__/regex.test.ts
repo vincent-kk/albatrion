@@ -131,7 +131,7 @@ describe('JSON_POINTER_REGEX', () => {
     test('부분 매칭 구조들', () => {
       expect(testRegexStandalone('##/property')).toBe(false);
       expect(testRegexStandalone('...../property')).toBe(false);
-      expect(testRegexStandalone('#//property')).toBe(true);
+      expect(testRegexStandalone('#//property')).toBe(false);
     });
   });
 

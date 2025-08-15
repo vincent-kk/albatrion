@@ -1,26 +1,24 @@
 import { JSONPointer } from './enum';
 
 /**
- * JSON Pointer segment character pattern.
- * Supports all valid JSON object key characters by excluding only structural delimiters.
- * JSON keys can contain virtually any Unicode character since they are strings.
- * Users should use parentheses or explicit delimiters to disambiguate complex expressions.
- * Used both for segment content and negative lookbehind assertion.
- * @example Matches: 'property', '123', 'key,with,commas', 'key;with;semicolons', 'key:value', 'key(with)parens', 'api+version', 'flag!', 'scope&filter', '한글', '属性'
- */
-const JSON_POINTER_SEGMENT_CHARACTER = `[^\\s\\(\\)\\[\\]\\{\\}\\"'\`]`;
-
-/**
  * Negative lookbehind assertion to prevent matching within existing identifiers.
- * Ensures JSON Pointer patterns are only matched when not preceded by identifier characters.
+ * Allows paths to start after operators and punctuation while preventing matches within variable names.
+ * More permissive than original to support patterns like !../type.
+ * Also prevents multiple consecutive prefix characters like ##/ or .../ and consecutive slashes like #//property.
  */
-const NOT_PRECEDED_BY_IDENTIFIER_CHARACTER = `(?<!${JSON_POINTER_SEGMENT_CHARACTER})`;
+const NOT_PRECEDED_BY_IDENTIFIER_CHARACTER = `(?<![a-zA-Z0-9_#./])`;
 
 /**
  * Single JSON Pointer path segment pattern.
- * @example 'property', '123', 'field1', '_private', '$special', '한글'
+ * Combines regular characters with proper JSON Pointer escape sequences per RFC 6901.
+ * - Regular characters: all except whitespace, parentheses, quotes, and special JSON Pointer characters
+ * - Escape sequences: ~0 (represents /) and ~1 (represents ~)
+ * - Invalid sequences like ~2, ~a, or lone ~ will cause the entire segment to fail matching
+ * - Includes brackets [], braces {}, and dots (.) as they are valid JSON key characters
+ * - Use parentheses () to explicitly delimit paths from JavaScript expressions when needed
+ * @example 'property', '123', 'field~0name' (contains escaped /), 'field~1name' (contains escaped ~), 'config{env}', 'array[0]', 'api.v1.endpoint', '한글'
  */
-const SINGLE_PATH_SEGMENT = `${JSON_POINTER_SEGMENT_CHARACTER}+`;
+const SINGLE_PATH_SEGMENT = `(?:[^\\s\\(\\)\\"'\`/~]|~[01])+`;
 
 /**
  * Multi-level path pattern with segments separated by forward slashes.
@@ -30,8 +28,9 @@ const MULTI_LEVEL_PATH_PATTERN = `${SINGLE_PATH_SEGMENT}(?:\\${JSONPointer.Separ
 
 /**
  * Optional path pattern (may or may not exist after a prefix).
+ * Uses negative lookahead to prevent matching when followed by another slash.
  */
-const OPTIONAL_PATH_PATTERN = `(?:${MULTI_LEVEL_PATH_PATTERN})?`;
+const OPTIONAL_PATH_PATTERN = `(?:${MULTI_LEVEL_PATH_PATTERN})?(?!\\${JSONPointer.Separator})`;
 
 /**
  * Parent directory references pattern (one or more '../' sequences).
