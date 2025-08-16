@@ -86,7 +86,7 @@ export async function runGenieComputedPropertiesBenchmark() {
         );
 
         // computed properties 재계산 완료까지 대기
-        await new Promise((resolve) => setTimeout(resolve, 2));
+        await new Promise((resolve) => setTimeout(resolve));
       }
 
       const endTime = performance.now();

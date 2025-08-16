@@ -1,7 +1,6 @@
+import { Form as GenieForm } from '@react-genie-form/next';
 import { JSDOM } from 'jsdom';
 import { createRoot } from 'react-dom/client';
-
-import { Form as GenieForm } from '@react-genie-form/next';
 
 import { sampleSchemas } from '../../fixtures/schemas';
 
@@ -9,7 +8,7 @@ import { sampleSchemas } from '../../fixtures/schemas';
 const dom = new JSDOM('<!DOCTYPE html><div id="root"></div>', {
   url: 'http://localhost',
   pretendToBeVisual: true,
-  resources: 'usable'
+  resources: 'usable',
 });
 (global as any).document = dom.window.document;
 (global as any).window = dom.window;
@@ -33,17 +32,17 @@ export async function runGenieInteractionBenchmark() {
 
     // 폼 렌더링
     root.render(
-      <GenieForm 
-        schema={schema} 
-        onValidate={() => {}} 
+      <GenieForm
+        schema={schema}
+        onValidate={() => {}}
         onChange={() => {
           changeCount++;
-        }} 
-      />
+        }}
+      />,
     );
-    
+
     // 렌더링 완료 대기
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     // 사용자 입력 시뮬레이션
     const inputs = container.querySelectorAll('input');
@@ -54,21 +53,21 @@ export async function runGenieInteractionBenchmark() {
       const input = inputs[i] as HTMLInputElement;
       input.value = `test-value-${i}`;
       input.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
-      
+
       // microtask가 처리될 시간 대기
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve));
     }
 
     const endTime = performance.now();
-    const avgInteractionTime = (endTime - startTime) / Math.min(inputs.length, 10);
+    const avgInteractionTime =
+      (endTime - startTime) / Math.min(inputs.length, 10);
 
     return {
       totalTime: endTime - startTime,
       avgInteractionTime,
       changeCount,
-      inputCount: Math.min(inputs.length, 10)
+      inputCount: Math.min(inputs.length, 10),
     };
-
   } finally {
     root.unmount();
     container.remove();

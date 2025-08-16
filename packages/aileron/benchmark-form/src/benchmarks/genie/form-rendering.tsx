@@ -1,7 +1,6 @@
+import { Form as GenieForm } from '@react-genie-form/next';
 import { JSDOM } from 'jsdom';
 import { createRoot } from 'react-dom/client';
-
-import { Form as GenieForm } from '@react-genie-form/next';
 
 import { sampleSchemas } from '../../fixtures/schemas';
 
@@ -28,7 +27,7 @@ export async function runGenieFormRenderingBenchmark() {
       );
 
       // 렌더링이 완료될 때까지 대기
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve));
     }
   } finally {
     // 정리

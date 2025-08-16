@@ -1,4 +1,3 @@
-
 import { JSDOM } from 'jsdom';
 import { createRoot } from 'react-dom/client';
 
@@ -8,7 +7,7 @@ import type { JsonSchema, Form as SchemaForm } from '@canard/schema-form';
 const dom = new JSDOM('<!DOCTYPE html><div id="root"></div>', {
   url: 'http://localhost',
   pretendToBeVisual: true,
-  resources: 'usable'
+  resources: 'usable',
 });
 (global as any).document = dom.window.document;
 (global as any).window = dom.window;
@@ -33,7 +32,7 @@ const oneOfSchema = {
   },
   oneOf: [
     {
-      '&if': "./type==='personal'",
+      '&if': "./type === 'personal'",
       properties: {
         personalData: {
           type: 'object',
@@ -46,7 +45,7 @@ const oneOfSchema = {
       },
     },
     {
-      '&if': "./type==='business'",
+      '&if': "./type === 'business'",
       properties: {
         businessData: {
           type: 'object',
@@ -59,7 +58,7 @@ const oneOfSchema = {
       },
     },
     {
-      '&if': "./type==='other'",
+      '&if': "./type === 'other'",
       properties: {
         otherData: {
           type: 'object',
@@ -96,9 +95,9 @@ export async function runOneOfBenchmark(SchemaFormModule: {
         }}
       />,
     );
-    
+
     // 렌더링 완료 대기
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     // oneOf 전환 테스트 (personal → business → other → personal)
     const switchSequence = ['business', 'other', 'personal'];
@@ -112,20 +111,59 @@ export async function runOneOfBenchmark(SchemaFormModule: {
         container.querySelector(`input[value="${switchTo}"]`);
 
       if (typeSelect) {
-        if (typeSelect.tagName === 'SELECT') {
-          (typeSelect as HTMLSelectElement).value = switchTo;
-          typeSelect.dispatchEvent(
-            new dom.window.Event('change', { bubbles: true }),
-          );
+        // React props에서 onChange 핸들러 직접 호출
+        const reactPropsKey = Object.getOwnPropertyNames(typeSelect).find(
+          (prop) => prop.startsWith('__reactProps$'),
+        );
+
+        if (reactPropsKey) {
+          const reactProps = (typeSelect as any)[reactPropsKey];
+
+          if (typeSelect.tagName === 'SELECT') {
+            (typeSelect as HTMLSelectElement).value = switchTo;
+          } else {
+            (typeSelect as unknown as HTMLInputElement).checked = true;
+          }
+
+          // React onChange 호출
+          if (reactProps.onChange) {
+            const syntheticEvent = {
+              target: typeSelect,
+              currentTarget: typeSelect,
+              type: 'change',
+              bubbles: true,
+              cancelable: true,
+              preventDefault: () => {},
+              stopPropagation: () => {},
+              nativeEvent: new dom.window.Event('change'),
+            };
+
+            try {
+              await reactProps.onChange(syntheticEvent);
+            } catch {
+              // fallback to DOM event
+              typeSelect.dispatchEvent(
+                new dom.window.Event('change', { bubbles: true }),
+              );
+            }
+          }
         } else {
-          (typeSelect as unknown as HTMLInputElement).checked = true;
-          typeSelect.dispatchEvent(
-            new dom.window.Event('change', { bubbles: true }),
-          );
+          // fallback for when React props are not found
+          if (typeSelect.tagName === 'SELECT') {
+            (typeSelect as HTMLSelectElement).value = switchTo;
+            typeSelect.dispatchEvent(
+              new dom.window.Event('change', { bubbles: true }),
+            );
+          } else {
+            (typeSelect as unknown as HTMLInputElement).checked = true;
+            typeSelect.dispatchEvent(
+              new dom.window.Event('change', { bubbles: true }),
+            );
+          }
         }
 
         // oneOf 전환 완료까지 대기 (Vincent님 말씀대로 3회 이벤트 발행)
-        await new Promise((resolve) => setTimeout(resolve, 5));
+        await new Promise((resolve) => setTimeout(resolve));
       }
 
       const endTime = performance.now();

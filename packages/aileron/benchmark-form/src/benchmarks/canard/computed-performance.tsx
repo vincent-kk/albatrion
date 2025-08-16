@@ -87,13 +87,49 @@ export async function runComputedPropertiesBenchmark(SchemaFormModule: {
       ) as HTMLInputElement;
 
       if (triggerInput) {
-        triggerInput.value = triggerValue;
-        triggerInput.dispatchEvent(
-          new dom.window.Event('change', { bubbles: true }),
+        // React props에서 onChange 핸들러 직접 호출
+        const reactPropsKey = Object.getOwnPropertyNames(triggerInput).find(
+          (prop) => prop.startsWith('__reactProps$'),
         );
 
+        if (reactPropsKey) {
+          const reactProps = (triggerInput as any)[reactPropsKey];
+
+          // 값 변경
+          triggerInput.value = triggerValue;
+
+          // React onChange 호출
+          if (reactProps.onChange) {
+            const syntheticEvent = {
+              target: triggerInput,
+              currentTarget: triggerInput,
+              type: 'change',
+              bubbles: true,
+              cancelable: true,
+              preventDefault: () => {},
+              stopPropagation: () => {},
+              nativeEvent: new dom.window.Event('change'),
+            };
+
+            try {
+              await reactProps.onChange(syntheticEvent);
+            } catch {
+              // fallback to DOM event
+              triggerInput.dispatchEvent(
+                new dom.window.Event('change', { bubbles: true }),
+              );
+            }
+          }
+        } else {
+          // fallback for when React props are not found
+          triggerInput.value = triggerValue;
+          triggerInput.dispatchEvent(
+            new dom.window.Event('change', { bubbles: true }),
+          );
+        }
+
         // computed properties 재계산 완료까지 대기
-        await new Promise((resolve) => setTimeout(resolve, 2));
+        await new Promise((resolve) => setTimeout(resolve));
       }
 
       const endTime = performance.now();

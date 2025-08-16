@@ -1,4 +1,3 @@
-
 import { JSDOM } from 'jsdom';
 import { createRoot } from 'react-dom/client';
 
@@ -8,7 +7,7 @@ import type { JsonSchema, Form as SchemaForm } from '@canard/schema-form';
 const dom = new JSDOM('<!DOCTYPE html><div id="root"></div>', {
   url: 'http://localhost',
   pretendToBeVisual: true,
-  resources: 'usable'
+  resources: 'usable',
 });
 (global as any).document = dom.window.document;
 (global as any).window = dom.window;
@@ -101,9 +100,9 @@ export async function runIfThenElseBenchmark(SchemaFormModule: {
         }}
       />,
     );
-    
+
     // 렌더링 완료 대기
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     // if-then-else 전환 테스트 (game → movie → book → game)
     const switchSequence = ['movie', 'book', 'game'];
@@ -117,20 +116,59 @@ export async function runIfThenElseBenchmark(SchemaFormModule: {
         container.querySelector(`input[value="${switchTo}"]`);
 
       if (categorySelect) {
-        if (categorySelect.tagName === 'SELECT') {
-          (categorySelect as HTMLSelectElement).value = switchTo;
-          categorySelect.dispatchEvent(
-            new dom.window.Event('change', { bubbles: true }),
-          );
+        // React props에서 onChange 핸들러 직접 호출
+        const reactPropsKey = Object.getOwnPropertyNames(categorySelect).find(
+          (prop) => prop.startsWith('__reactProps$'),
+        );
+
+        if (reactPropsKey) {
+          const reactProps = (categorySelect as any)[reactPropsKey];
+
+          if (categorySelect.tagName === 'SELECT') {
+            (categorySelect as HTMLSelectElement).value = switchTo;
+          } else {
+            (categorySelect as unknown as HTMLInputElement).checked = true;
+          }
+
+          // React onChange 호출
+          if (reactProps.onChange) {
+            const syntheticEvent = {
+              target: categorySelect,
+              currentTarget: categorySelect,
+              type: 'change',
+              bubbles: true,
+              cancelable: true,
+              preventDefault: () => {},
+              stopPropagation: () => {},
+              nativeEvent: new dom.window.Event('change'),
+            };
+
+            try {
+              await reactProps.onChange(syntheticEvent);
+            } catch {
+              // fallback to DOM event
+              categorySelect.dispatchEvent(
+                new dom.window.Event('change', { bubbles: true }),
+              );
+            }
+          }
         } else {
-          (categorySelect as unknown as HTMLInputElement).checked = true;
-          categorySelect.dispatchEvent(
-            new dom.window.Event('change', { bubbles: true }),
-          );
+          // fallback for when React props are not found
+          if (categorySelect.tagName === 'SELECT') {
+            (categorySelect as HTMLSelectElement).value = switchTo;
+            categorySelect.dispatchEvent(
+              new dom.window.Event('change', { bubbles: true }),
+            );
+          } else {
+            (categorySelect as unknown as HTMLInputElement).checked = true;
+            categorySelect.dispatchEvent(
+              new dom.window.Event('change', { bubbles: true }),
+            );
+          }
         }
 
         // if-then-else 전환 완료까지 대기 (Vincent님 말씀대로 2회 이벤트 발행)
-        await new Promise((resolve) => setTimeout(resolve, 3));
+        await new Promise((resolve) => setTimeout(resolve));
       }
 
       const endTime = performance.now();
