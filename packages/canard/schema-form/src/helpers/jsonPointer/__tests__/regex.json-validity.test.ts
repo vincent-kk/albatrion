@@ -406,16 +406,16 @@ describe('JSON 키 유효성 및 표현식 파싱 테스트', () => {
       expect(paths3).toEqual(['#/key_with_space']);
     });
 
-    test('따옴표 처리 - 구조적 구분자', () => {
-      // 따옴표는 구조적 구분자
+    test('따옴표 처리 - 키의 일부', () => {
+      // 따옴표는 이제 키의 일부로 처리됨
       const expr1 = '"#/path1""#/path2"';
       const { paths: paths1 } = transformExpression(expr1);
-      expect(paths1).toEqual(['#/path1', '#/path2']);
+      expect(paths1).toEqual(['#/path1""#/path2"']);
 
-      // 백틱도 구조적 구분자
+      // 백틱도 키의 일부로 처리됨
       const expr2 = '`#/path1``#/path2`';
       const { paths: paths2 } = transformExpression(expr2);
-      expect(paths2).toEqual(['#/path1', '#/path2']);
+      expect(paths2).toEqual(['#/path1``#/path2`']);
     });
   });
 });

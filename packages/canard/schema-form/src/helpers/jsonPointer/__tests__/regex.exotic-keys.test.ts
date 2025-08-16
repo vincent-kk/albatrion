@@ -346,14 +346,12 @@ describe('JSON_POINTER_REGEX - 특이한 JSON 키 지원', () => {
         '../key1}{../key2}',
       ]);
 
-      // 따옴표는 여전히 경계로 작동
+      // 따옴표도 이제 키의 일부로 처리됨
       expect(extractMatches('"#/path1""#/path2"')).toEqual([
-        '#/path1',
-        '#/path2',
+        '#/path1""#/path2"',
       ]);
       expect(extractMatches("'../key1''../key2'")).toEqual([
-        '../key1',
-        '../key2',
+        "../key1''../key2'",
       ]);
 
       // 소괄호는 여전히 경계로 작동 (명시적 구분용)

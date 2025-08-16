@@ -11,14 +11,14 @@ const NOT_PRECEDED_BY_IDENTIFIER_CHARACTER = `(?<![a-zA-Z0-9_#./])`;
 /**
  * Single JSON Pointer path segment pattern.
  * Combines regular characters with proper JSON Pointer escape sequences per RFC 6901.
- * - Regular characters: all except whitespace, parentheses, quotes, and special JSON Pointer characters
+ * - Regular characters: all except whitespace, parentheses, and special JSON Pointer characters (/, ~)
  * - Escape sequences: ~0 (represents /) and ~1 (represents ~)
  * - Invalid sequences like ~2, ~a, or lone ~ will cause the entire segment to fail matching
- * - Includes brackets [], braces {}, and dots (.) as they are valid JSON key characters
+ * - Quotes (", ', `) are treated as part of the key, not delimiters
  * - Use parentheses () to explicitly delimit paths from JavaScript expressions when needed
- * @example 'property', '123', 'field~0name' (contains escaped /), 'field~1name' (contains escaped ~), 'config{env}', 'array[0]', 'api.v1.endpoint', '한글'
+ * @example 'property', '123', 'field~0name' (contains escaped /), 'field~1name' (contains escaped ~), 'config{env}', 'array[0]', 'api.v1.endpoint', '한글', '"quoted"key', "'single'quote", '`backtick`'
  */
-const SINGLE_PATH_SEGMENT = `(?:[^\\s\\(\\)\\"'\`/~]|~[01])+`;
+const SINGLE_PATH_SEGMENT = `(?:[^\\s\\(\\)/~]|~[01])+`;
 
 /**
  * Multi-level path pattern with segments separated by forward slashes.

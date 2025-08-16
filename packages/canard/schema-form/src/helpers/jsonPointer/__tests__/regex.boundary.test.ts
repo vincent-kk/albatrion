@@ -218,8 +218,8 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
         },
         {
           input: '../../data["key"] !== undefined',
-          expected: 'dependencies[0]"key"] !== undefined',
-          paths: ['../../data['],
+          expected: 'dependencies[0] !== undefined',
+          paths: ['../../data["key"]'],
         },
         {
           input: '../users[../currentIndex].name',
