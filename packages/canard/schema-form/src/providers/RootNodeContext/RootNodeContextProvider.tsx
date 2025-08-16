@@ -91,8 +91,10 @@ export const RootNodeContextProvider = <
     ],
   );
 
+  const activated = useRef(false);
   useEffect(() => {
-    if (!rootNode) return;
+    if (activated.current) return;
+    if (rootNode && !activated.current) activated.current = true;
     const unsubscribe = rootNode.subscribe(({ type, payload }) => {
       if (type & NodeEventType.UpdateGlobalError)
         onValidate(payload?.[NodeEventType.UpdateGlobalError] || []);
