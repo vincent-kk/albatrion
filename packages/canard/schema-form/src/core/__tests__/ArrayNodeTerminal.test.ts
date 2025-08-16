@@ -10,6 +10,7 @@ import type { ArrayNode } from '../nodes/ArrayNode';
 describe('ArrayNode-Terminal', () => {
   it('불리언 노드가 정상적으로 생성되어야 함', () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -31,6 +32,7 @@ describe('ArrayNode-Terminal', () => {
 
   it('불리언 노드의 값이 정상적으로 설정되어야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -63,6 +65,7 @@ describe('ArrayNode-Terminal', () => {
 
   it('불리언 노드의 기본값이 정상적으로 설정되어야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -86,6 +89,7 @@ describe('ArrayNode-Terminal', () => {
 
   it('불리언 노드의 이벤트가 정상적으로 발생해야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -131,6 +135,7 @@ describe('ArrayNode-Terminal', () => {
 
   it('불리언 노드의 유효성 검사가 정상적으로 동작해야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -165,6 +170,7 @@ describe('ArrayNode-Terminal', () => {
 
   it('터미널 배열에서 잘못된 인덱스로 remove 호출 시 값을 변경하지 않고 undefined를 반환해야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -192,6 +198,7 @@ describe('ArrayNode-Terminal', () => {
 
   it('터미널 배열에서 잘못된 인덱스로 update 호출 시 값을 변경하지 않고 undefined를 반환해야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {

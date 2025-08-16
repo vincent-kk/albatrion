@@ -12,6 +12,7 @@ import { createValidatorFactory } from './AbstractNode.test';
 describe('StringNode', () => {
   it('문자열 노드가 정상적으로 생성되어야 함', () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -29,6 +30,7 @@ describe('StringNode', () => {
 
   it('문자열 노드의 값이 정상적으로 설정되어야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -49,6 +51,7 @@ describe('StringNode', () => {
 
   it('문자열 노드의 기본값이 정상적으로 설정되어야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -67,6 +70,7 @@ describe('StringNode', () => {
 
   it('문자열 노드의 이벤트가 정상적으로 발생해야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -108,6 +112,7 @@ describe('StringNode', () => {
 
   it('문자열 노드의 값이 정상적으로 파싱되어야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -148,6 +153,7 @@ describe('StringNode', () => {
       }),
     );
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -193,6 +199,7 @@ describe('StringNode', () => {
       }),
     );
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {

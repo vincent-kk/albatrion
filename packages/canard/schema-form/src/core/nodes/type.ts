@@ -125,7 +125,7 @@ export interface SchemaNodeConstructorProps<
   name?: string;
   jsonSchema: Schema;
   defaultValue?: Value;
-  onChange?: Fn<[value: Value]>;
+  onChange: Fn<[value: Value]>;
   parentNode?: SchemaNode;
   validationMode?: ValidationMode;
   validatorFactory?: ValidatorFactory;

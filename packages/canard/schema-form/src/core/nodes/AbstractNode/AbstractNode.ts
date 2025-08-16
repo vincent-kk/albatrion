@@ -237,14 +237,14 @@ export abstract class AbstractNode<
    * @note For RootNode, the onChange function is called only after all microtasks have been completed.
    * @param input - The changed value
    */
-  #handleChange: Fn<[value: Value]> | undefined;
+  #handleChange: Fn<[value: Value]>;
 
   /**
    * Function called when the node's value changes.
    * @param input - The changed value
    */
   protected onChange(this: AbstractNode, input: Value | undefined): void {
-    this.#handleChange?.(input);
+    this.#handleChange(input);
   }
 
   /** List of child nodes, nodes without child nodes return an `null` */
@@ -295,12 +295,11 @@ export abstract class AbstractNode<
     this.setDefaultValue(
       defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema),
     );
-    if (typeof onChange === 'function')
-      this.#handleChange = this.isRoot
-        ? afterMicrotask(() =>
-            onChange(getSafeEmptyValue(this.value, this.jsonSchema)),
-          )
-        : onChange;
+    this.#handleChange = this.isRoot
+      ? afterMicrotask(() =>
+          onChange(getSafeEmptyValue(this.value, this.jsonSchema)),
+        )
+      : onChange;
 
     // NOTE: Special behavior for root node
     if (this.isRoot) this.#prepareValidator(validatorFactory, validationMode);

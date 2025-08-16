@@ -16,6 +16,7 @@ import { createValidatorFactory } from './AbstractNode.test';
 describe('ObjectNode', () => {
   it('객체 노드가 정상적으로 생성되어야 함', () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -37,6 +38,7 @@ describe('ObjectNode', () => {
 
   it('객체 노드의 값이 정상적으로 설정되어야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -61,6 +63,7 @@ describe('ObjectNode', () => {
 
   it('객체 노드의 값이 정상적으로 설정되어야 함: terminal', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -86,6 +89,7 @@ describe('ObjectNode', () => {
 
   it('객체 노드의 기본값이 정상적으로 설정되어야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -108,6 +112,7 @@ describe('ObjectNode', () => {
 
   it('객체 노드의 기본값이 정상적으로 설정되어야 함: terminal', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -131,6 +136,7 @@ describe('ObjectNode', () => {
 
   it('객체 노드의 이벤트가 정상적으로 발생해야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -177,6 +183,7 @@ describe('ObjectNode', () => {
 
   it('객체 노드의 자식 노드 값이 정상적으로 설정되어야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -211,6 +218,7 @@ describe('ObjectNode', () => {
 
   it('객체 노드의 자식 노드 이벤트가 정상적으로 발생해야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -262,6 +270,7 @@ describe('ObjectNode', () => {
       }),
     );
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -312,6 +321,7 @@ describe('ObjectNode', () => {
 
   it('객체 노드의 추가 속성이 허용되어야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -350,6 +360,7 @@ describe('ObjectNode', () => {
       }),
     );
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -388,6 +399,7 @@ describe('ObjectNode', () => {
       }),
     );
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -454,6 +466,7 @@ describe('ObjectNode', () => {
 
   it('객체 노드의 추가 속성 제한이 없으면 추가 속성이 허용되어야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -514,6 +527,7 @@ describe('ObjectNode', () => {
 
     const node = nodeFromJsonSchema({
       jsonSchema,
+      onChange: () => {},
     });
     await delay();
 
@@ -603,6 +617,7 @@ describe('ObjectNode', () => {
     expect(() =>
       nodeFromJsonSchema({
         jsonSchema,
+        onChange: () => {},
       }),
     ).toThrowError(
       "Property 'category' defined in 'oneOf' schema cannot redefine a property already defined in the parent schema.",
@@ -646,6 +661,7 @@ describe('ObjectNode', () => {
     expect(() =>
       nodeFromJsonSchema({
         jsonSchema,
+        onChange: () => {},
       }),
     ).toThrowError(
       "Type cannot be redefined in 'oneOf' schema. It must either be omitted or match the parent schema type.",
@@ -655,6 +671,7 @@ describe('ObjectNode', () => {
   describe('극단적인 키를 사용한 ObjectNode 기능 테스트', () => {
     it('극단적인 키로 객체 노드의 값이 정상적으로 설정되어야 함', async () => {
       const node = nodeFromJsonSchema({
+        onChange: () => {},
         jsonSchema: {
           type: 'object',
           properties: {
@@ -685,6 +702,7 @@ describe('ObjectNode', () => {
 
     it('극단적인 키로 객체 노드의 기본값이 정상적으로 설정되어야 함', async () => {
       const node = nodeFromJsonSchema({
+        onChange: () => {},
         jsonSchema: {
           type: 'object',
           properties: {
@@ -713,6 +731,7 @@ describe('ObjectNode', () => {
 
     it('극단적인 키로 객체 노드의 자식 노드 값이 정상적으로 설정되어야 함', async () => {
       const node = nodeFromJsonSchema({
+        onChange: () => {},
         jsonSchema: {
           type: 'object',
           properties: {
@@ -755,6 +774,7 @@ describe('ObjectNode', () => {
         }),
       );
       const node = nodeFromJsonSchema({
+        onChange: () => {},
         jsonSchema: {
           type: 'object',
           properties: {
@@ -810,6 +830,7 @@ describe('ObjectNode', () => {
 
     it('극단적인 키로 객체 노드의 추가 속성이 허용되어야 함', async () => {
       const node = nodeFromJsonSchema({
+        onChange: () => {},
         jsonSchema: {
           type: 'object',
           properties: {
@@ -844,6 +865,7 @@ describe('ObjectNode', () => {
 
     it('극단적인 키로 객체 노드의 이벤트가 정상적으로 발생해야 함', async () => {
       const node = nodeFromJsonSchema({
+        onChange: () => {},
         jsonSchema: {
           type: 'object',
           properties: {

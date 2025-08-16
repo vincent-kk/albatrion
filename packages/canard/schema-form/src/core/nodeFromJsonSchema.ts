@@ -1,5 +1,3 @@
-import { isFunction } from '@winglet/common-utils/filter';
-
 import type { Fn } from '@aileron/declare';
 
 import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
@@ -20,7 +18,7 @@ interface NodeFromSchemaProps<
 > {
   jsonSchema: Schema;
   defaultValue?: Value;
-  onChange?: Fn<[value: Value]>;
+  onChange: Fn<[value: Value]>;
   validationMode?: ValidationMode;
   validatorFactory?: ValidatorFactory;
 }
@@ -49,7 +47,7 @@ export const nodeFromJsonSchema = <
     jsonSchema,
     defaultValue,
     nodeFactory,
-    onChange: isFunction(onChange) ? (onChange as Fn<[unknown]>) : undefined,
+    onChange: onChange as Fn<[unknown]>,
     validationMode,
     validatorFactory,
   }) as InferSchemaNode<Schema>;

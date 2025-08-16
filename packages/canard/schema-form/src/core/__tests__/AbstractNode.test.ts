@@ -47,6 +47,7 @@ describe('AbstractNode', () => {
           },
         },
       },
+      onChange: () => {},
       validationMode: ValidationMode.OnChange,
     });
 
@@ -90,6 +91,7 @@ describe('AbstractNode', () => {
           },
         },
       },
+      onChange: () => {},
       validationMode: ValidationMode.OnChange,
       validatorFactory,
     });
@@ -134,6 +136,7 @@ describe('AbstractNode', () => {
           },
         },
       },
+      onChange: () => {},
       validationMode: ValidationMode.OnChange,
       validatorFactory,
     });
@@ -157,6 +160,7 @@ describe('AbstractNode', () => {
           },
         },
       },
+      onChange: () => {},
     });
     const name = node?.find('name');
     if (name) {
@@ -247,6 +251,7 @@ describe('AbstractNode', () => {
       defaultValue: {
         data: [3, 5, 7],
       },
+      onChange: () => {},
       validationMode: ValidationMode.OnChange,
       validatorFactory,
     });
@@ -320,6 +325,7 @@ describe('AbstractNode', () => {
           },
         },
       },
+      onChange: () => {},
     });
     let externalEvent: NodeEvent | undefined;
     node.subscribe((event) => {

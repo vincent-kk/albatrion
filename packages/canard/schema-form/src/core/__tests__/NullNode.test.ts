@@ -12,6 +12,7 @@ import { createValidatorFactory } from './AbstractNode.test';
 describe('NullNode', () => {
   it('널 노드가 정상적으로 생성되어야 함', () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -30,6 +31,7 @@ describe('NullNode', () => {
 
   it('널 노드의 값이 정상적으로 설정되어야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -51,6 +53,7 @@ describe('NullNode', () => {
 
   it('널 노드의 기본값이 정상적으로 설정되어야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -70,6 +73,7 @@ describe('NullNode', () => {
 
   it('널 노드의 이벤트가 정상적으로 발생해야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -112,6 +116,7 @@ describe('NullNode', () => {
 
   it('널 노드의 값이 정상적으로 파싱되어야 함', async () => {
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {
@@ -145,6 +150,7 @@ describe('NullNode', () => {
       }),
     );
     const node = nodeFromJsonSchema({
+      onChange: () => {},
       jsonSchema: {
         type: 'object',
         properties: {

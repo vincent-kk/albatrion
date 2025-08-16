@@ -1,3 +1,4 @@
+import { NOOP_FUNCTION } from '@winglet/common-utils';
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
@@ -59,6 +60,7 @@ export const getChildren = (
                 conditions,
               ),
               defaultValue,
+              onChange: NOOP_FUNCTION,
               parentNode,
               nodeFactory,
               refNodes,
