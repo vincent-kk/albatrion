@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { JSON_POINTER_REGEX } from '../regex';
+import { JSON_POINTER_PATH_REGEX } from '../regex';
 
 /**
  * 특이한 키들이 실제로 JSON에서 유효한지,
@@ -26,7 +26,7 @@ describe('JSON 키 유효성 및 표현식 파싱 테스트', () => {
     expression: string,
   ): { result: string; paths: string[] } => {
     const paths: string[] = [];
-    const result = expression.replace(JSON_POINTER_REGEX, (path) => {
+    const result = expression.replace(JSON_POINTER_PATH_REGEX, (path) => {
       if (!paths.includes(path)) paths.push(path);
       return `dependencies[${paths.indexOf(path)}]`;
     });

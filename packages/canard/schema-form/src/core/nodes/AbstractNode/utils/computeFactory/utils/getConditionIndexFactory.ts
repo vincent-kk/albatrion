@@ -2,10 +2,10 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Fn } from '@aileron/declare';
 
-import { JSON_POINTER_REGEX } from '@/schema-form/helpers/jsonPointer';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import type { PathManager } from './getPathManager';
+import { JSON_POINTER_PATH_REGEX } from './regex';
 import { ALIAS, type ConditionFieldName } from './type';
 
 type GetConditionIndex = Fn<[dependencies: unknown[]], number>;
@@ -67,7 +67,7 @@ export const getConditionIndexFactory =
       // Transform JSON paths to dependency array references
       expressions.push(
         expression
-          .replace(JSON_POINTER_REGEX, (path) => {
+          .replace(JSON_POINTER_PATH_REGEX, (path) => {
             pathManager.set(path);
             return `dependencies[${pathManager.findIndex(path)}]`;
           })

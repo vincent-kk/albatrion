@@ -3,13 +3,10 @@ import { isReactComponent } from '@winglet/react-utils/filter';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 
 import { SchemaFormError } from '@/schema-form/errors';
-import {
-  INCLUDE_INDEX_REGEX,
-  JSONPointer,
-  stripFragment,
-} from '@/schema-form/helpers/jsonPointer';
+import { JSONPointer, stripFragment } from '@/schema-form/helpers/jsonPointer';
 import type { FormTypeInputMap, FormTypeTestFn } from '@/schema-form/types';
 
+import { INCLUDE_INDEX_REGEX } from './regex';
 import type { NormalizedFormTypeInputDefinition } from './type';
 
 /**

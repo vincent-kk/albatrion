@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { JSON_POINTER_REGEX } from '../regex';
+import { JSON_POINTER_PATH_REGEX } from '../regex';
 
 /**
  * JSON에서 가능한 극단적이고 특이한 키들에 대한 테스트
@@ -12,10 +12,10 @@ import { JSON_POINTER_REGEX } from '../regex';
 describe('JSON_POINTER_REGEX - 특이한 JSON 키 지원', () => {
   // 헬퍼 함수: 매칭된 결과 추출
   const extractMatches = (input: string): string[] => {
-    JSON_POINTER_REGEX.lastIndex = 0;
+    JSON_POINTER_PATH_REGEX.lastIndex = 0;
     const matches: string[] = [];
     let match;
-    while ((match = JSON_POINTER_REGEX.exec(input)) !== null) {
+    while ((match = JSON_POINTER_PATH_REGEX.exec(input)) !== null) {
       matches.push(match[0]);
     }
     return matches;

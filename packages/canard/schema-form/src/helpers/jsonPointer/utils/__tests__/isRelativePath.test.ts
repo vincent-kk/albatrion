@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { isRelativePath } from '../../../../../../../canard/schema-form/src/helpers/jsonPointer/utils/isRelativePath';
+import { isRelativePath } from '../isRelativePath';
 
 describe('isRelativePath', () => {
   describe('relative paths', () => {

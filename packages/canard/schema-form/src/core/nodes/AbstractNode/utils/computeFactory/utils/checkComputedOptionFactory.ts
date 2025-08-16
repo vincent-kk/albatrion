@@ -2,10 +2,10 @@ import { isString } from '@winglet/common-utils/filter';
 
 import type { Fn } from '@aileron/declare';
 
-import { JSON_POINTER_REGEX } from '@/schema-form/helpers/jsonPointer';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import type { PathManager } from './getPathManager';
+import { JSON_POINTER_PATH_REGEX } from './regex';
 import { ALIAS, type ConditionFieldName } from './type';
 
 type CheckComputedOption = Fn<[dependencies: unknown[]], boolean>;
@@ -61,7 +61,7 @@ const createDynamicFunction = (
 
   // Transform JSON paths to dependency array references
   const computedExpression = expression
-    .replace(JSON_POINTER_REGEX, (path) => {
+    .replace(JSON_POINTER_PATH_REGEX, (path) => {
       pathManager.set(path);
       return `dependencies[${pathManager.findIndex(path)}]`;
     })

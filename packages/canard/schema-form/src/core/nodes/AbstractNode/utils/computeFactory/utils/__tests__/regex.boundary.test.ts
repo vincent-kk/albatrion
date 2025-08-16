@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { JSON_POINTER_REGEX } from '../regex';
+import { JSON_POINTER_PATH_REGEX } from '../regex';
 
 /**
  * JSON Pointer Path Expression Boundary Test
@@ -47,7 +47,7 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
   ): { result: string; paths: string[] } => {
     const pathManager = new PathManager();
     const computedExpression = expression
-      .replace(JSON_POINTER_REGEX, (path) => {
+      .replace(JSON_POINTER_PATH_REGEX, (path) => {
         pathManager.set(path);
         return `dependencies[${pathManager.findIndex(path)}]`;
       })

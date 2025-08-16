@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { isAbsolutePath } from '../../../../../../../canard/schema-form/src/helpers/jsonPointer/utils/isAbsolutePath';
+import { isAbsolutePath } from '../isAbsolutePath';
 
 describe('isAbsolutePath', () => {
   describe('absolute paths', () => {

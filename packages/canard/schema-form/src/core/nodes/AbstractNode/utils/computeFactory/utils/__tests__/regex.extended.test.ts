@@ -1,14 +1,14 @@
 import { describe, expect, test } from 'vitest';
 
-import { JSON_POINTER_REGEX } from '../regex';
+import { JSON_POINTER_PATH_REGEX } from '../regex';
 
 describe('Extended JSON_POINTER_REGEX - 연속된 path를 하나로 인식', () => {
   // 헬퍼 함수: 매칭된 결과 추출
   const extractMatches = (input: string): string[] => {
-    JSON_POINTER_REGEX.lastIndex = 0;
+    JSON_POINTER_PATH_REGEX.lastIndex = 0;
     const matches: string[] = [];
     let match;
-    while ((match = JSON_POINTER_REGEX.exec(input)) !== null) {
+    while ((match = JSON_POINTER_PATH_REGEX.exec(input)) !== null) {
       matches.push(match[0]);
     }
     return matches;
@@ -116,8 +116,8 @@ describe('Extended JSON_POINTER_REGEX - 연속된 path를 하나로 인식', () 
     test('경로를 dependencies 배열로 변환', () => {
       const transform = (input: string) => {
         const pathManager: string[] = [];
-        JSON_POINTER_REGEX.lastIndex = 0;
-        return input.replace(JSON_POINTER_REGEX, (path) => {
+        JSON_POINTER_PATH_REGEX.lastIndex = 0;
+        return input.replace(JSON_POINTER_PATH_REGEX, (path) => {
           if (!pathManager.includes(path)) pathManager.push(path);
           return `dependencies[${pathManager.indexOf(path)}]`;
         });
