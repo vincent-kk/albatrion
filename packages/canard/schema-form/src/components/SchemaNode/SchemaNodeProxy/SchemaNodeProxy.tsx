@@ -76,8 +76,8 @@ export const SchemaNodeProxy = memo(
     const errorMessage = useMemo(() => {
       const errors = node?.errors;
       if (!errors) return null;
-      for (const error of errors) {
-        const message = formatError(error, node, context);
+      for (let i = 0, length = errors.length; i < length; i++) {
+        const message = formatError(errors[i], node, context);
         if (message !== null) return message;
       }
       return null;
