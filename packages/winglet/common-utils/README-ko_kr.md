@@ -105,6 +105,7 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 - 시간 관련 상수 ([time.ts](./src/constant/time.ts))
 - 타입 태그 상수 ([typeTag.ts](./src/constant/typeTag.ts))
 - 단위 변환 상수 ([unit.ts](./src/constant/unit.ts))
+- 함수 상수 ([function.ts](./src/constant/function.ts))
 
 ### 오류 처리 (Errors)
 

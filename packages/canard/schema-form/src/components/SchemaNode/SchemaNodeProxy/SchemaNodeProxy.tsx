@@ -1,6 +1,6 @@
 import { Fragment, memo, useMemo } from 'react';
 
-import { nullFunction } from '@winglet/common-utils/constant';
+import { NULL_FUNCTION } from '@winglet/common-utils/constant';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 import { useConstant } from '@winglet/react-utils/hook';
 
@@ -69,7 +69,7 @@ export const SchemaNodeProxy = memo(
         })
       )
         return contextFormatError;
-      else return nullFunction;
+      else return NULL_FUNCTION;
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [node, refresh, checkShowError, contextFormatError]);
 

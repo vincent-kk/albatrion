@@ -105,6 +105,7 @@ Use transpilers like Babel to convert the code to match your target environment.
 - Time-related constants ([time.ts](./src/constant/time.ts))
 - Type tag constants ([typeTag.ts](./src/constant/typeTag.ts))
 - Unit conversion constants ([unit.ts](./src/constant/unit.ts))
+- Function constants ([function.ts](./src/constant/function.ts))
 
 ### Error Handling
 

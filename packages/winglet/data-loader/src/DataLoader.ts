@@ -1,4 +1,4 @@
-import { noopFunction } from '@winglet/common-utils/constant';
+import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import { isArrayLike, isFunction, isNil } from '@winglet/common-utils/filter';
 
 import type { Fn } from '@aileron/declare';
@@ -771,7 +771,7 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
         let promise: Promise<Value>;
         if (value instanceof Error) {
           promise = Promise.reject(value);
-          promise.catch(noopFunction);
+          promise.catch(NOOP_FUNCTION);
         } else {
           promise = Promise.resolve(value);
         }

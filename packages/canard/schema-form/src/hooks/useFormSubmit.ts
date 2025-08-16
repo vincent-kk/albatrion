@@ -5,7 +5,7 @@ import {
   useSyncExternalStore,
 } from 'react';
 
-import { noopFunction } from '@winglet/common-utils/constant';
+import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 
 import type { Fn } from '@aileron/declare';
 
@@ -46,7 +46,7 @@ export const useFormSubmit = <
   const [subscribe, getSnapshot] = useMemo(
     () => [
       (onStoreChange: Fn) =>
-        ref.current?.submit?.subscribe?.(onStoreChange) || noopFunction,
+        ref.current?.submit?.subscribe?.(onStoreChange) || NOOP_FUNCTION,
       () => ref?.current?.submit?.pending,
     ],
     [ref],

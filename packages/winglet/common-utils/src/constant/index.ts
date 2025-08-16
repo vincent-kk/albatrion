@@ -1,10 +1,10 @@
 export {
-  voidFunction,
-  nullFunction,
-  falseFunction,
-  trueFunction,
-  identityFunction,
-  noopFunction,
+  VOID_FUNCTION,
+  NULL_FUNCTION,
+  FALSE_FUNCTION,
+  TRUE_FUNCTION,
+  IDENTITY_FUNCTION,
+  NOOP_FUNCTION,
 } from './function';
 export { MILLISECOND, SECOND, MINUTE, HOUR, DAY } from './time';
 

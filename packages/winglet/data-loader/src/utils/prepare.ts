@@ -1,4 +1,4 @@
-import { identityFunction } from '@winglet/common-utils/constant';
+import { IDENTITY_FUNCTION } from '@winglet/common-utils/constant';
 import { isFunction } from '@winglet/common-utils/filter';
 import { scheduleNextTick } from '@winglet/common-utils/scheduler';
 
@@ -70,7 +70,7 @@ export const prepareCacheKeyFn = <Key, CacheKey>(
   cacheKeyFn?: Fn<[key: Key], CacheKey>,
 ): Fn<[key: Key], CacheKey> => {
   if (cacheKeyFn === undefined)
-    return identityFunction as Fn<[key: Key], CacheKey>;
+    return IDENTITY_FUNCTION as Fn<[key: Key], CacheKey>;
   if (!isFunction(cacheKeyFn))
     throw new DataLoaderError(
       'INVALID_CACHE_KEY_FN',

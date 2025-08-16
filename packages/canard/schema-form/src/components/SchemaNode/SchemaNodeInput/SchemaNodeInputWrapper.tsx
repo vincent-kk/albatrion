@@ -1,6 +1,6 @@
 import { type ComponentType, memo } from 'react';
 
-import { nullFunction } from '@winglet/common-utils/constant';
+import { NULL_FUNCTION } from '@winglet/common-utils/constant';
 import { isMemoComponent, isReactComponent } from '@winglet/react-utils/filter';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 import { useConstant, useRestProperties } from '@winglet/react-utils/hook';
@@ -20,7 +20,7 @@ export const SchemaNodeInputWrapper = (
   OverridePreferredFormTypeInput: ComponentType<FormTypeInputProps> | undefined,
   NodeProxy: ComponentType<SchemaNodeProxyProps>,
 ) => {
-  if (!node) return nullFunction;
+  if (!node) return NULL_FUNCTION;
   return (preferredOverrideProps: OverridableFormTypeInputProps) => {
     const overrideProps = useRestProperties({
       ...overrideFormTypeInputProps,
