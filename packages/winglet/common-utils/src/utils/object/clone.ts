@@ -1,3 +1,4 @@
+import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isArrayBuffer } from '@/common-utils/utils/filter/isArrayBuffer';
 import { isBlob } from '@/common-utils/utils/filter/isBlob';
@@ -262,10 +263,10 @@ const replicate = <Type>(value: Type, cache = new Map<object, any>()): Type => {
   }
 
   if (value instanceof Error) {
-    const result = new (value.constructor as { new (...args: any[]): Error })();
+    type ErrorConstructor = new (...args: any[]) => Error;
+    const result = new (value.constructor as ErrorConstructor)(value.message);
     cache.set(value, result);
-    result.message = value.message;
-    result.name = value.name;
+    if (hasOwnProperty(value, 'name')) result.name = value.name;
     result.stack = value.stack;
     // @ts-expect-error: The `cause` property is only available in ECMAScript 2022 (ES2022)
     if ('cause' in value) result.cause = replicate(value.cause, cache);
