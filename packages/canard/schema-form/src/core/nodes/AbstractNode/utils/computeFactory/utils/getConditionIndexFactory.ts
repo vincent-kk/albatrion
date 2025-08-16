@@ -92,7 +92,7 @@ export const getConditionIndexFactory =
       // Match simple equality pattern
       const matches = expressions[i].match(SIMPLE_EQUALITY_REGEX);
       if (matches) {
-        const depIndex = parseInt(matches[1], 10);
+        const depIndex = Number(matches[1]);
         const value = matches[3];
         if (!equalityMap[depIndex]) equalityMap[depIndex] = {};
         if (!(value in equalityMap[depIndex]))
@@ -107,10 +107,8 @@ export const getConditionIndexFactory =
     // Simple equality optimization: when all conditions are simple and use only one dependency
     const keys = Object.keys(equalityMap);
     if (isSimpleEquality && keys.length === 1) {
-      const dependencyIndex = parseInt(keys[0], 10);
+      const dependencyIndex = Number(keys[0]);
       const valueMap = equalityMap[dependencyIndex];
-
-      // Return optimized simple equality comparison function
       return (dependencies: unknown[]) => {
         const value = dependencies[dependencyIndex];
         return typeof value === 'string' && value in valueMap

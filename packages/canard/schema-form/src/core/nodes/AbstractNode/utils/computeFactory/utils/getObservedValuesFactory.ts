@@ -47,7 +47,6 @@ export const getObservedValuesFactory =
     if (watchValueIndexes.length === 0) return;
 
     try {
-      // Dynamically create observed values calculation function
       return new Function(
         'dependencies',
         `const indexes = [${watchValueIndexes.join(',')}];

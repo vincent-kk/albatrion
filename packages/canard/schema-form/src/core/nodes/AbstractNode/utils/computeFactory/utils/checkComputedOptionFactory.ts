@@ -74,7 +74,6 @@ const createDynamicFunction = (
   if (computedExpression.length === 0) return;
 
   try {
-    // Create dynamic condition check function
     return new Function(
       'dependencies',
       `return !!(${computedExpression})`,
