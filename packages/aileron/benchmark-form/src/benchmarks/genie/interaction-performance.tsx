@@ -54,8 +54,8 @@ export async function runGenieInteractionBenchmark() {
       input.value = `test-value-${i}`;
       input.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
 
-      // microtask가 처리될 시간 대기
-      await new Promise((resolve) => setTimeout(resolve));
+      // React state 업데이트와 리렌더링 완료 대기
+      await new Promise((resolve) => setTimeout(resolve, 16));
     }
 
     const endTime = performance.now();

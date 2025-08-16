@@ -85,8 +85,8 @@ export async function runGenieComputedPropertiesBenchmark() {
           new dom.window.Event('change', { bubbles: true }),
         );
 
-        // computed properties 재계산 완료까지 대기
-        await new Promise((resolve) => setTimeout(resolve));
+        // computed properties 재계산 완료까지 대기 (React batching 고려)
+        await new Promise((resolve) => setTimeout(resolve, 16));
       }
 
       const endTime = performance.now();

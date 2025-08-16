@@ -1,0 +1,126 @@
+{
+  "timestamp": "2025-08-16T12-49-39-967Z",
+  "results": [
+    {
+      "name": "@react-genie-form/next - Form Rendering",
+      "hz": 60.539517513012996,
+      "stats": {
+        "mean": 0.016518136269999997,
+        "deviation": 0.011212209735019013
+      }
+    },
+    {
+      "name": "@react-genie-form/next - User Interaction",
+      "hz": 4.394831370399763,
+      "stats": {
+        "mean": 0.22754001592307688,
+        "deviation": 0.0030573994034520107
+      }
+    },
+    {
+      "name": "@react-genie-form/next - IfThenElse Logic",
+      "hz": 8.224233207348325,
+      "stats": {
+        "mean": 0.12159188276744186,
+        "deviation": 0.0020392820626623526
+      }
+    },
+    {
+      "name": "@react-genie-form/next - Computed Properties",
+      "hz": 5.2311106863418235,
+      "stats": {
+        "mean": 0.19116399173333332,
+        "deviation": 0.002678177355667521
+      }
+    },
+    {
+      "name": "@react-genie-form/next - Memory Usage",
+      "hz": 4.725969988090266,
+      "stats": {
+        "mean": 0.2115967732592592,
+        "deviation": 0.014091015330837871
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - Form Rendering",
+      "hz": 195.44766201668702,
+      "stats": {
+        "mean": 0.005116459259126986,
+        "deviation": 0.00045795689345713584
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - User Interaction",
+      "hz": 4.412079670225187,
+      "stats": {
+        "mean": 0.22665048565384616,
+        "deviation": 0.003082615764645162
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - IfThenElse Logic",
+      "hz": 6.398523782903487,
+      "stats": {
+        "mean": 0.15628604877142857,
+        "deviation": 0.0021495229833051366
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - Computed Properties",
+      "hz": 5.224781268594458,
+      "stats": {
+        "mean": 0.1913955721,
+        "deviation": 0.0027976257957748347
+      }
+    },
+    {
+      "name": "@canard/schema-form@latest - Memory Usage",
+      "hz": 4.744429100794775,
+      "stats": {
+        "mean": 0.21077351537037037,
+        "deviation": 0.0013651166929505773
+      }
+    }
+  ],
+  "chartConfig": {
+    "type": "bar",
+    "data": {
+      "labels": [
+        "@react-genie-form/next - Form Rendering",
+        "@react-genie-form/next - User Interaction",
+        "@react-genie-form/next - IfThenElse Logic",
+        "@react-genie-form/next - Computed Properties",
+        "@react-genie-form/next - Memory Usage",
+        "@canard/schema-form@latest - Form Rendering",
+        "@canard/schema-form@latest - User Interaction",
+        "@canard/schema-form@latest - IfThenElse Logic",
+        "@canard/schema-form@latest - Computed Properties",
+        "@canard/schema-form@latest - Memory Usage"
+      ],
+      "datasets": [
+        {
+          "label": "Operations/sec",
+          "data": [
+            60.539517513012996,
+            4.394831370399763,
+            8.224233207348325,
+            5.2311106863418235,
+            4.725969988090266,
+            195.44766201668702,
+            4.412079670225187,
+            6.398523782903487,
+            5.224781268594458,
+            4.744429100794775
+          ]
+        }
+      ]
+    },
+    "options": {
+      "scales": {
+        "y": {
+          "beginAtZero": true
+        }
+      }
+    }
+  }
+}

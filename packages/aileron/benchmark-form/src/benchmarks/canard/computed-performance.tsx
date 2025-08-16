@@ -128,8 +128,8 @@ export async function runComputedPropertiesBenchmark(SchemaFormModule: {
           );
         }
 
-        // computed properties 재계산 완료까지 대기
-        await new Promise((resolve) => setTimeout(resolve));
+        // computed properties 재계산 완료까지 대기 (React batching 고려)
+        await new Promise((resolve) => setTimeout(resolve, 16));
       }
 
       const endTime = performance.now();

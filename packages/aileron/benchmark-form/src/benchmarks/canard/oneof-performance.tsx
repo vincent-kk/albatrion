@@ -162,8 +162,8 @@ export async function runOneOfBenchmark(SchemaFormModule: {
           }
         }
 
-        // oneOf 전환 완료까지 대기 (Vincent님 말씀대로 3회 이벤트 발행)
-        await new Promise((resolve) => setTimeout(resolve));
+        // oneOf 전환 완료까지 대기 (React batching과 3회 이벤트 발행 고려)
+        await new Promise((resolve) => setTimeout(resolve, 16));
       }
 
       const endTime = performance.now();
