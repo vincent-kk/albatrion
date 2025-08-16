@@ -2,6 +2,7 @@ import { isString } from '@winglet/common-utils/filter';
 
 import type { Fn } from '@aileron/declare';
 
+import { SchemaNodeError } from '@/schema-form/errors';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import type { PathManager } from './getPathManager';
@@ -43,7 +44,7 @@ export const checkComputedOptionFactory =
     // Return fixed function if preferred condition matches, otherwise create dynamic function
     return preferredCondition
       ? () => checkCondition
-      : createDynamicFunction(pathManager, expression);
+      : createDynamicFunction(pathManager, fieldName, expression);
   };
 
 /**
@@ -54,6 +55,7 @@ export const checkComputedOptionFactory =
  */
 const createDynamicFunction = (
   pathManager: PathManager,
+  fieldName: ConditionFieldName,
   expression: string | boolean | undefined,
 ): CheckComputedOption | undefined => {
   // Cannot process non-string expressions
@@ -71,9 +73,17 @@ const createDynamicFunction = (
   // Cannot create function if expression is empty after transformation
   if (computedExpression.length === 0) return;
 
-  // Create dynamic condition check function
-  return new Function(
-    'dependencies',
-    `return !!(${computedExpression})`,
-  ) as CheckComputedOption;
+  try {
+    // Create dynamic condition check function
+    return new Function(
+      'dependencies',
+      `return !!(${computedExpression})`,
+    ) as CheckComputedOption;
+  } catch (error) {
+    throw new SchemaNodeError(
+      'COMPUTED_OPTION',
+      `Failed to create dynamic function: ${fieldName} -> '${expression}'`,
+      { fieldName, expression, computedExpression, error },
+    );
+  }
 };

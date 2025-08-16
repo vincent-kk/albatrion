@@ -2,6 +2,7 @@ import { isArray, isString } from '@winglet/common-utils/filter';
 
 import type { Fn } from '@aileron/declare';
 
+import { SchemaNodeError } from '@/schema-form/errors';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import type { PathManager } from './getPathManager';
@@ -45,13 +46,21 @@ export const getObservedValuesFactory =
 
     if (watchValueIndexes.length === 0) return;
 
-    // Dynamically create observed values calculation function
-    return new Function(
-      'dependencies',
-      `const indexes = [${watchValueIndexes.join(',')}];
-       const result = new Array(indexes.length);
-       for (let i = 0, l = indexes.length; i < l; i++)
-         result[i] = dependencies[indexes[i]];
-       return result;`,
-    ) as GetObservedValues;
+    try {
+      // Dynamically create observed values calculation function
+      return new Function(
+        'dependencies',
+        `const indexes = [${watchValueIndexes.join(',')}];
+         const result = new Array(indexes.length);
+         for (let i = 0, l = indexes.length; i < l; i++)
+           result[i] = dependencies[indexes[i]];
+         return result;`,
+      ) as GetObservedValues;
+    } catch (error) {
+      throw new SchemaNodeError(
+        'OBSERVED_VALUES',
+        `Failed to create dynamic function: ${fieldName} -> '${JSON.stringify(watch)}'`,
+        { fieldName, watch, watchValueIndexes, error },
+      );
+    }
   };

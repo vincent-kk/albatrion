@@ -2,6 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Fn } from '@aileron/declare';
 
+import { SchemaNodeError } from '@/schema-form/errors';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import type { PathManager } from './getPathManager';
@@ -123,10 +124,16 @@ export const getConditionIndexFactory =
     for (let i = 0, l = expressions.length; i < l; i++)
       lines[i] = `if(${expressions[i]}) return ${schemaIndices[i]};`;
 
-    return new Function(
-      'dependencies',
-      `${lines.join('\n')}
-    return -1;
-  `,
-    ) as GetConditionIndex;
+    try {
+      return new Function(
+        'dependencies',
+        `${lines.join('\n')}\nreturn -1;`,
+      ) as GetConditionIndex;
+    } catch (error) {
+      throw new SchemaNodeError(
+        'CONDITION_INDEX',
+        `Failed to create dynamic function: ${fieldName} -> '${expressions.join(', ')}'`,
+        { fieldName, expressions, lines, error },
+      );
+    }
   };
