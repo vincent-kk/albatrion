@@ -6,7 +6,7 @@ import {
 import { equals } from '@winglet/common-utils/object';
 import { escapeSegment } from '@winglet/json/pointer';
 
-import type { Fn, SetStateFn } from '@aileron/declare';
+import type { Fn } from '@aileron/declare';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
@@ -237,7 +237,7 @@ export abstract class AbstractNode<
    * @note For RootNode, the onChange function is called only after all microtasks have been completed.
    * @param input - The changed value
    */
-  #handleChange: SetStateFn<Value> | undefined;
+  #handleChange: Fn<[value: Value]> | undefined;
 
   /**
    * Function called when the node's value changes.

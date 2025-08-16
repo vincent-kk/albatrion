@@ -2,7 +2,7 @@ import type { ComponentType, ReactNode } from 'react';
 
 import type { TrackableHandlerFunction } from '@winglet/common-utils';
 
-import type { Dictionary, Fn, SetStateFn } from '@aileron/declare';
+import type { Dictionary, Fn } from '@aileron/declare';
 
 import type {
   InferSchemaNode,
@@ -47,7 +47,7 @@ export interface FormProps<
   /** Apply disabled property to all FormTypeInputs */
   disabled?: boolean;
   /** Function called when the value of this SchemaForm changes */
-  onChange?: SetStateFn<Value>;
+  onChange?: Fn<[value: Value]>;
   /** Function called when the value of this SchemaForm is validated */
   onValidate?: Fn<[jsonSchemaError: JsonSchemaError[]]>;
   /** Function called when the form is submitted */

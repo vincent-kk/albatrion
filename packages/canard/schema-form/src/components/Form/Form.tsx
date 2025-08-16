@@ -12,7 +12,6 @@ import {
   useState,
 } from 'react';
 
-import { isFunction } from '@winglet/common-utils/filter';
 import { getTrackableHandler } from '@winglet/common-utils/function';
 import { withErrorBoundaryForwardRef } from '@winglet/react-utils/hoc';
 import { useHandle, useMemorize, useVersion } from '@winglet/react-utils/hook';
@@ -93,17 +92,14 @@ const FormInner = <
   const [showError, setShowError] = useState(inputShowError);
 
   const handleChange = useHandle((input: Parameter<typeof onChange>) => {
-    if (!ready.current || !isFunction(onChange)) return;
-    if (isFunction(input)) {
-      const prevValue = (rootNode?.value || defaultValue) as Value;
-      onChange(input(prevValue));
-    } else onChange(input);
+    if (!ready.current) return;
+    onChange?.(input);
   });
 
   const handleValidate = useHandle(onValidate);
 
   const onSubmit = useHandle(async () => {
-    if (!ready.current || !rootNode || !isFunction(inputOnSubmit)) return;
+    if (!ready.current || !rootNode || inputOnSubmit === undefined) return;
     const value = rootNode.value as Value;
     const errors = await rootNode.validate();
     if (errors.length > 0)

@@ -1,4 +1,4 @@
-import type { Fn, SetStateFn } from '@aileron/declare';
+import type { Fn } from '@aileron/declare';
 
 import {
   BIT_FLAG_00,
@@ -125,7 +125,7 @@ export interface SchemaNodeConstructorProps<
   name?: string;
   jsonSchema: Schema;
   defaultValue?: Value;
-  onChange?: SetStateFn<Value>;
+  onChange?: Fn<[value: Value]>;
   parentNode?: SchemaNode;
   validationMode?: ValidationMode;
   validatorFactory?: ValidatorFactory;
