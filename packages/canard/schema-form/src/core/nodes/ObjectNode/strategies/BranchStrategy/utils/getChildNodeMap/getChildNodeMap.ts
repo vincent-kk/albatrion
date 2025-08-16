@@ -5,6 +5,7 @@ import type { Fn } from '@aileron/declare';
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import type {
   ChildNode,
+  HandleChange,
   SchemaNodeFactory,
 } from '@/schema-form/core/nodes/type';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
@@ -37,7 +38,7 @@ export const getChildNodeMap = (
   conditionsMap: Map<string, string[]> | undefined,
   virtualReferencesMap: VirtualReferencesMap | undefined,
   virtualReferenceFieldsMap: VirtualReferenceFieldsMap | undefined,
-  handelChangeFactory: Fn<[name: string], (input: any) => void>,
+  handelChangeFactory: Fn<[name: string], HandleChange>,
   nodeFactory: SchemaNodeFactory,
 ) => {
   const childNodeMap = new Map<string, ChildNode>();

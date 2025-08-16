@@ -6,6 +6,7 @@ import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
 import type { ArrayNode } from '@/schema-form/core/nodes/ArrayNode';
 import {
   type ChildNode,
+  type HandleChange,
   NodeEventType,
   type SchemaNode,
   type SchemaNodeFactory,
@@ -25,7 +26,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
   private readonly __host__: ArrayNode;
 
   /** Callback function to handle value changes */
-  private readonly __handleChange__: Fn<[ArrayValue | undefined]>;
+  private readonly __handleChange__: HandleChange<ArrayValue | undefined>;
 
   /** Callback function to handle refresh operations */
   private readonly __handleRefresh__: Fn<[ArrayValue | undefined]>;
@@ -35,6 +36,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
   /** Flag indicating whether the strategy is locked to prevent recursive updates */
   private __locked__: boolean = true;
+
+  /** Flag indicating whether the strategy is in batch mode */
+  private __batched__: boolean = true;
 
   /** Flag indicating whether the array has pending changes that need to be emitted */
   private __dirty__: boolean = true;
@@ -79,15 +83,16 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   public applyValue(input: ArrayValue, option: UnionSetValueOption) {
     if (input === undefined) {
+      this.__locked__ = true;
       this.clear();
       this.__undefined__ = true;
-      this.__publishRequestEmitChange__(option);
+      this.__emitChange__(option);
     } else if (isArray(input)) {
       this.__locked__ = true;
       this.clear();
       for (const value of input) this.push(value);
       this.__locked__ = false;
-      this.__publishRequestEmitChange__(option);
+      this.__emitChange__(option);
     }
   }
 
@@ -128,7 +133,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   constructor(
     host: ArrayNode,
-    handleChange: Fn<[ArrayValue | undefined]>,
+    handleChange: HandleChange<ArrayValue | undefined>,
     handleRefresh: Fn<[ArrayValue | undefined]>,
     handleSetDefaultValue: Fn<[ArrayValue | undefined]>,
     nodeFactory: SchemaNodeFactory,
@@ -145,8 +150,10 @@ export class BranchStrategy implements ArrayNodeStrategy {
     while (this.length < (host.jsonSchema.minItems || 0)) this.push();
 
     host.subscribe(({ type, payload }) => {
-      if (type & NodeEventType.RequestEmitChange)
-        this.__emitChange__(payload?.[NodeEventType.RequestEmitChange]);
+      if (type & NodeEventType.RequestEmitChange) {
+        this.__handleEmitChange__(payload?.[NodeEventType.RequestEmitChange]);
+        this.__batched__ = false;
+      }
     });
 
     this.__locked__ = false;
@@ -167,6 +174,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
       this.__host__.jsonSchema.maxItems <= this.length
     )
       return promiseAfterMicrotask(this.length);
+
+    this.__batched__ = true;
 
     const index = '' + this.__keys__.length;
     const key = (index + '#' + this.__revision__++) as ChildSegmentKey;
@@ -194,7 +203,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
       (childNode as AbstractNode).activate(this.__host__);
 
     this.__changed__ = true;
-    this.__publishRequestEmitChange__();
+    this.__emitChange__();
     this.__publishUpdateChildren__();
 
     return promiseAfterMicrotask(this.length);
@@ -209,6 +218,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
   public update(index: number, data: ArrayValue[number]) {
     const node = this.__sourceMap__.get(this.__keys__[index])?.node;
     if (!node) return promiseAfterMicrotask(undefined);
+
+    this.__batched__ = true;
+
     node.setValue(data);
     return promiseAfterMicrotask(node.value);
   }
@@ -219,8 +231,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @returns Returns itself (this) for method chaining
    */
   public remove(index: number) {
-    const targetId = this.__keys__[index];
+    this.__batched__ = true;
 
+    const targetId = this.__keys__[index];
     const removed = this.__sourceMap__.get(targetId);
     if (!removed) return promiseAfterMicrotask(undefined);
 
@@ -229,7 +242,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__updateChildName__();
 
     this.__changed__ = true;
-    this.__publishRequestEmitChange__();
+    this.__emitChange__();
     this.__publishUpdateChildren__();
 
     return promiseAfterMicrotask(removed.data);
@@ -243,6 +256,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
   /** Clears all elements to initialize the array. */
   public clear() {
+    this.__batched__ = true;
+
     for (let i = 0, l = this.__keys__.length; i < l; i++)
       this.__sourceMap__.get(this.__keys__[i])?.node.cleanUp(this.__host__);
 
@@ -250,10 +265,25 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__sourceMap__.clear();
 
     this.__changed__ = true;
-    this.__publishRequestEmitChange__();
+    this.__emitChange__();
     this.__publishUpdateChildren__();
 
     return promiseAfterMicrotask(void 0);
+  }
+
+  /**
+   * Publishes a value change request event.
+   * @param option - Change options (optional)
+   * @private
+   */
+  private __emitChange__(option?: UnionSetValueOption) {
+    if (this.__locked__) return;
+    if (this.__batched__)
+      this.__host__.publish({
+        type: NodeEventType.RequestEmitChange,
+        payload: { [NodeEventType.RequestEmitChange]: option },
+      });
+    else this.__handleEmitChange__(option);
   }
 
   /**
@@ -261,10 +291,14 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @param option - Option settings (default: SetValueOption.Default)
    * @private
    */
-  private __emitChange__(option: UnionSetValueOption = SetValueOption.Default) {
+  private __handleEmitChange__(
+    option: UnionSetValueOption = SetValueOption.Default,
+  ) {
     if (this.__locked__ || !this.__dirty__) return;
     const value = this.value;
-    if (option & SetValueOption.EmitChange) this.__handleChange__(value);
+
+    if (option & SetValueOption.EmitChange)
+      this.__handleChange__(value, !!(option & SetValueOption.Batch));
     if (option & SetValueOption.Propagate) this.__publishUpdateChildren__();
     if (option & SetValueOption.Refresh) this.__handleRefresh__(value);
     if (option & SetValueOption.PublishUpdateEvent)
@@ -317,12 +351,13 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @returns Value change function
    * @private
    */
-  private __handleChangeFactory__(key: ChildSegmentKey) {
-    return (data: unknown) => {
+  private __handleChangeFactory__(key: ChildSegmentKey): HandleChange {
+    return (data, batch) => {
       if (!this.__sourceMap__.has(key)) return;
       this.__sourceMap__.get(key)!.data = data;
       this.__changed__ = true;
-      this.__publishRequestEmitChange__();
+      if (batch) this.__batched__ = true;
+      this.__emitChange__();
     };
   }
 
@@ -348,18 +383,5 @@ export class BranchStrategy implements ArrayNodeStrategy {
   private __publishUpdateChildren__() {
     if (this.__locked__) return;
     this.__host__.publish({ type: NodeEventType.UpdateChildren });
-  }
-
-  /**
-   * Publishes a value change request event.
-   * @param option - Change options (optional)
-   * @private
-   */
-  private __publishRequestEmitChange__(option?: UnionSetValueOption) {
-    if (this.__locked__) return;
-    this.__host__.publish({
-      type: NodeEventType.RequestEmitChange,
-      payload: { [NodeEventType.RequestEmitChange]: option },
-    });
   }
 }

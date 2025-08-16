@@ -297,13 +297,13 @@ export const ComplexOneOf = () => {
     },
     oneOf: [
       {
-        '&if': "../type === 'game'",
+        '&if': "./type === 'game'",
         properties: {
           owner: { type: 'string', placeholder: 'developer of the game' },
         },
       },
       {
-        '&if': "../type === 'movie'",
+        '&if': "./type === 'movie'",
         properties: {
           owner: { type: 'string', placeholder: 'director of the movie' },
         },

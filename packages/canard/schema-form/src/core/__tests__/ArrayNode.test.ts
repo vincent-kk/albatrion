@@ -10,8 +10,10 @@ import { NodeEventType, ValidationMode } from '../nodes';
 import type { ArrayNode } from '../nodes/ArrayNode';
 import { createValidatorFactory } from './AbstractNode.test';
 
+const wait = () => new Promise((resolve) => setTimeout(resolve, 5));
+
 describe('ArrayNode', () => {
-  it('automatically add items up to minItems', () => {
+  it('automatically add items up to minItems', async () => {
     const MIN_ITEMS = 5;
     const node = nodeFromJsonSchema({
       onChange: () => {},
@@ -30,7 +32,9 @@ describe('ArrayNode', () => {
       },
     });
 
-    expect(node?.value?.arr.length).toBe(MIN_ITEMS);
+    await wait();
+
+    expect(node?.value?.arr?.length).toBe(MIN_ITEMS);
   });
 
   it('add / remove / clear items', async () => {
@@ -190,7 +194,7 @@ describe('ArrayNode', () => {
     });
   });
 
-  it('ArrayNode with default in schema', () => {
+  it('ArrayNode with default in schema', async () => {
     const jsonSchema = {
       type: 'object',
       properties: {
@@ -217,6 +221,8 @@ describe('ArrayNode', () => {
       jsonSchema,
       onChange: () => {},
     });
+
+    await wait();
 
     expect(node.value).toEqual({
       array: [0, 0],

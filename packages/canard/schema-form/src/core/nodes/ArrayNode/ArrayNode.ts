@@ -1,10 +1,9 @@
-import type { Fn } from '@aileron/declare';
-
 import type { ArraySchema, ArrayValue } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
 import type {
   BranchNodeConstructorProps,
+  HandleChange,
   SchemaNode,
   SchemaNodeFactory,
   UnionSetValueOption,
@@ -89,7 +88,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     return false;
   }
 
-  protected override onChange: Fn<[input: ArrayValue | undefined]>;
+  protected override onChange: HandleChange<ArrayValue | undefined>;
 
   constructor({
     key,
@@ -114,10 +113,10 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       validatorFactory,
       required,
     });
-    const handleChange =
+    const handleChange: HandleChange<ArrayValue | undefined> =
       this.jsonSchema.options?.omitEmpty === false
-        ? (value?: ArrayValue) => super.onChange(value)
-        : (value?: ArrayValue) => super.onChange(omitEmptyArray(value));
+        ? (value, batch) => super.onChange(value, batch)
+        : (value, batch) => super.onChange(omitEmptyArray(value), batch);
     this.onChange = handleChange;
     this.#strategy = this.#createStrategy(handleChange, nodeFactory);
     this.activate();
@@ -173,7 +172,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns {ArrayNodeStrategy} Created strategy: TerminalStrategy | BranchStrategy
    */
   #createStrategy(
-    handleChange: Fn<[input: ArrayValue | undefined]>,
+    handleChange: HandleChange<ArrayValue | undefined>,
     nodeFactory: SchemaNodeFactory,
   ) {
     const handleRefresh = (value?: ArrayValue) => this.refresh(value);
