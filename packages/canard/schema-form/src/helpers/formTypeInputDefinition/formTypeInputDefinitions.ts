@@ -44,8 +44,7 @@ export const normalizeFormTypeInputDefinitions = (
 const formTypeTestFnFactory = (test: FormTypeTestObject): FormTypeTestFn => {
   return (hint) => {
     for (const [key, reference] of Object.entries(test)) {
-      if (!reference) continue;
-      const subject = hint[key as keyof typeof hint];
+      const subject = hint[key as keyof FormTypeTestObject];
       if (isArray(reference)) {
         if (!reference.includes(subject as any)) return false;
       } else {

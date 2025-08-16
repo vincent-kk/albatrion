@@ -57,9 +57,8 @@ const FormTypeInputDateFormant = ({
 
 export const FormTypeInputDateFormantDefinition = {
   Component: FormTypeInputDateFormant,
-  test: ({ jsonSchema }) =>
-    jsonSchema.type === 'string' &&
-    ['month', 'week', 'date', 'time', 'datetime-local'].includes(
-      jsonSchema.format!,
-    ),
+  test: {
+    type: 'string',
+    format: ['month', 'week', 'date', 'time', 'datetime-local'],
+  },
 } satisfies FormTypeInputDefinition;

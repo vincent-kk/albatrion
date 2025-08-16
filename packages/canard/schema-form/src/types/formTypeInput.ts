@@ -134,18 +134,17 @@ export interface ChildFormTypeInputProps extends OverridableFormTypeInputProps {
 export type FormTypeTestFn = Fn<[hint: Hint], boolean>;
 
 type JsonSchemaType = JsonSchemaWithVirtual['type'];
+type OptionalString = string | undefined;
 
 export type FormTypeTestObject = Partial<{
   /** JsonSchema['type'] | Array<JsonSchema['type']> */
   type: JsonSchemaType | JsonSchemaType[];
   /** SchemaNode['path'] | Array<SchemaNode['path']> */
   path: string | string[];
-  /** JsonSchema */
-  jsonSchema: JsonSchemaWithVirtual;
-  /** JsonSchema['format'] | Array<JsonSchema['format']> */
-  format: string | string[];
-  /** JsonSchema['formType'] | Array<JsonSchema['formType']> */
-  formType: string | string[];
+  /** JsonSchema['format'] | Array<JsonSchema['format']> | undefined */
+  format: OptionalString | OptionalString[];
+  /** JsonSchema['formType'] | Array<JsonSchema['formType']> | undefined */
+  formType: OptionalString | OptionalString[];
 }>;
 
 export type Hint = {
