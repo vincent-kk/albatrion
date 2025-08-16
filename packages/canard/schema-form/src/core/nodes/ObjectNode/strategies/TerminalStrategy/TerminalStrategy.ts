@@ -9,6 +9,7 @@ import type { Fn } from '@aileron/declare';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import {
+  type HandleChange,
   NodeEventType,
   SetValueOption,
   type UnionSetValueOption,
@@ -28,7 +29,7 @@ export class TerminalStrategy implements ObjectNodeStrategy {
   private readonly __host__: ObjectNode;
 
   /** Callback function to handle value changes */
-  private readonly __handleChange__: Fn<[ObjectValue | undefined]>;
+  private readonly __handleChange__: HandleChange<ObjectValue | undefined>;
 
   /** Callback function to handle refresh operations */
   private readonly __handleRefresh__: Fn<[ObjectValue | undefined]>;
@@ -76,7 +77,7 @@ export class TerminalStrategy implements ObjectNodeStrategy {
    */
   constructor(
     host: ObjectNode,
-    handleChange: Fn<[ObjectValue | undefined]>,
+    handleChange: HandleChange<ObjectValue | undefined>,
     handleRefresh: Fn<[ObjectValue | undefined]>,
     handleSetDefaultValue: Fn<[ObjectValue | undefined]>,
   ) {
@@ -111,11 +112,11 @@ export class TerminalStrategy implements ObjectNodeStrategy {
   ) {
     const previous = this.__value__;
     const current = this.__parseValue__(input);
-
     if (equals(previous, current)) return;
-
     this.__value__ = current;
-    if (option & SetValueOption.EmitChange) this.__handleChange__(current);
+
+    if (option & SetValueOption.EmitChange)
+      this.__handleChange__(current, !!(option & SetValueOption.Batch));
     if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
     if (option & SetValueOption.PublishUpdateEvent)
       this.__host__.publish({

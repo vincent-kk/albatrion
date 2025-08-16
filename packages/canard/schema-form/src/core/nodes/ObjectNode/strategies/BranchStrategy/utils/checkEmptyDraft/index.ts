@@ -1,0 +1,1 @@
+export { checkEmptyDraft } from './checkEmptyDraft';

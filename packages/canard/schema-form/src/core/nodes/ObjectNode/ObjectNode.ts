@@ -1,10 +1,9 @@
-import type { Fn } from '@aileron/declare';
-
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
 import type {
   BranchNodeConstructorProps,
+  HandleChange,
   SchemaNode,
   SchemaNodeFactory,
   UnionSetValueOption,
@@ -103,10 +102,10 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       validatorFactory,
       required,
     });
-    const handleChange =
+    const handleChange: HandleChange<ObjectValue | undefined> =
       this.jsonSchema.options?.omitEmpty === false
-        ? (value?: ObjectValue) => super.onChange(value)
-        : (value?: ObjectValue) => super.onChange(omitEmptyObject(value));
+        ? (value, batch) => super.onChange(value, batch)
+        : (value, batch) => super.onChange(omitEmptyObject(value), batch);
     this.onChange = handleChange;
     this.#strategy = this.#createStrategy(handleChange, nodeFactory);
     this.activate();
@@ -118,7 +117,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * @returns Created strategy: TerminalStrategy | BranchStrategy
    */
   #createStrategy(
-    handleChange: Fn<[input: ObjectValue | undefined]>,
+    handleChange: HandleChange<ObjectValue | undefined>,
     nodeFactory: SchemaNodeFactory,
   ) {
     const handleRefresh = (value?: ObjectValue) => this.refresh(value);

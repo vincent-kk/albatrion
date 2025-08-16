@@ -4,6 +4,7 @@ import type { Fn } from '@aileron/declare';
 
 import type { ArrayNode } from '@/schema-form/core/nodes/ArrayNode';
 import {
+  type HandleChange,
   NodeEventType,
   SetValueOption,
   type UnionSetValueOption,
@@ -22,7 +23,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   private readonly __host__: ArrayNode;
 
   /** Callback function to handle value changes */
-  private readonly __handleChange__: Fn<[ArrayValue | undefined]>;
+  private readonly __handleChange__: HandleChange<ArrayValue | undefined>;
 
   /** Callback function to handle refresh operations */
   private readonly __handleRefresh__: Fn<[ArrayValue | undefined]>;
@@ -78,7 +79,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
    */
   constructor(
     host: ArrayNode,
-    handleChange: Fn<[ArrayValue | undefined]>,
+    handleChange: HandleChange<ArrayValue | undefined>,
     handleRefresh: Fn<[ArrayValue | undefined]>,
     handleSetDefaultValue: Fn<[ArrayValue | undefined]>,
   ) {
@@ -175,13 +176,12 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     const previous = this.__value__;
     const current = this.__parseValue__(input);
     const replace = option & SetValueOption.Replace;
-
     if (!replace && equals(previous, current)) return;
-
     this.__value__ = current;
 
     if (this.__locked__) return;
-    if (option & SetValueOption.EmitChange) this.__handleChange__(current);
+    if (option & SetValueOption.EmitChange)
+      this.__handleChange__(current, !!(option & SetValueOption.Batch));
     if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
     if (option & SetValueOption.PublishUpdateEvent)
       this.__host__.publish({

@@ -1,10 +1,9 @@
-import type { Fn } from '@aileron/declare';
-
 import type { StringSchema, StringValue } from '@/schema-form/types';
 
 import { parseString } from '../../parsers';
 import { AbstractNode } from '../AbstractNode';
 import {
+  type HandleChange,
   NodeEventType,
   type SchemaNodeConstructorProps,
   SetValueOption,
@@ -48,7 +47,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     this.#emitChange(input, option);
   }
 
-  protected override onChange: Fn<[input: StringValue | undefined]>;
+  protected override onChange: HandleChange<StringValue | undefined>;
 
   constructor({
     key,
@@ -102,7 +101,8 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     if (previous === current) return;
     this.#value = current;
 
-    if (option & SetValueOption.EmitChange) this.onChange(current);
+    if (option & SetValueOption.EmitChange)
+      this.onChange(current, !!(option & SetValueOption.Batch));
     if (option & SetValueOption.Refresh) this.refresh(current);
     if (option & SetValueOption.PublishUpdateEvent)
       this.publish({
@@ -130,13 +130,16 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
   /**
    * Reflects value changes excluding empty values.
    * @param input - The value to set
+   * @param batch - Optional flag indicating whether the change should be batched
    * @internal Internal implementation method. Do not call directly.
    */
   private onChangeWithOmitEmpty(
     this: StringNode,
     input: StringValue | undefined,
+    batch?: boolean,
   ) {
-    if (input === undefined || input.length === 0) super.onChange(undefined);
-    else super.onChange(input);
+    if (input === undefined || input.length === 0)
+      super.onChange(undefined, batch);
+    else super.onChange(input, batch);
   }
 }

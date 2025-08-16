@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { describe, expect, test } from 'vitest';
 
 import type {
@@ -10,10 +11,14 @@ import type {
 import { normalizeFormTypeInputDefinitions } from '../formTypeInputDefinitions';
 
 // 테스트용 React 컴포넌트들
-const TestStringComponent = () => React.createElement('input', { type: 'text' });
-const TestNumberComponent = () => React.createElement('input', { type: 'number' });
-const TestEmailComponent = () => React.createElement('input', { type: 'email' });
-const TestPasswordComponent = () => React.createElement('input', { type: 'password' });
+const TestStringComponent = () =>
+  React.createElement('input', { type: 'text' });
+const TestNumberComponent = () =>
+  React.createElement('input', { type: 'number' });
+const TestEmailComponent = () =>
+  React.createElement('input', { type: 'email' });
+const TestPasswordComponent = () =>
+  React.createElement('input', { type: 'password' });
 const TestTextareaComponent = () => React.createElement('textarea');
 const TestSelectComponent = () => React.createElement('select');
 
@@ -130,7 +135,7 @@ describe('formTypeTestFnFactory (formTypeTestObject를 통한 간접 테스트)'
       ];
 
       const normalized = normalizeFormTypeInputDefinitions(definitions);
-      
+
       // string 타입 테스트
       const stringHint = createTestHint({ type: 'string' });
       expect(normalized[0].test(stringHint)).toBe(true);
@@ -144,7 +149,10 @@ describe('formTypeTestFnFactory (formTypeTestObject를 통한 간접 테스트)'
 
     test('배열 형태의 type 값 매칭', () => {
       const definitions: FormTypeInputDefinition[] = [
-        { test: { type: ['string', 'number'] }, Component: TestStringComponent },
+        {
+          test: { type: ['string', 'number'] },
+          Component: TestStringComponent,
+        },
       ];
 
       const normalized = normalizeFormTypeInputDefinitions(definitions);
@@ -153,7 +161,7 @@ describe('formTypeTestFnFactory (formTypeTestObject를 통한 간접 테스트)'
       // 배열에 포함된 타입들
       expect(testFn(createTestHint({ type: 'string' }))).toBe(true);
       expect(testFn(createTestHint({ type: 'number' }))).toBe(true);
-      
+
       // 배열에 포함되지 않은 타입
       expect(testFn(createTestHint({ type: 'boolean' }))).toBe(false);
     });
@@ -181,7 +189,10 @@ describe('formTypeTestFnFactory (formTypeTestObject를 통한 간접 테스트)'
 
     test('배열 형태의 format 값 매칭', () => {
       const definitions: FormTypeInputDefinition[] = [
-        { test: { format: ['email', 'password'] }, Component: TestStringComponent },
+        {
+          test: { format: ['email', 'password'] },
+          Component: TestStringComponent,
+        },
       ];
 
       const normalized = normalizeFormTypeInputDefinitions(definitions);
@@ -202,7 +213,7 @@ describe('formTypeTestFnFactory (formTypeTestObject를 통한 간접 테스트)'
 
       // format이 undefined인 경우
       expect(testFn(createTestHint({ format: undefined }))).toBe(true);
-      
+
       // format이 다른 값인 경우
       expect(testFn(createTestHint({ format: 'email' }))).toBe(false);
     });
@@ -217,7 +228,7 @@ describe('formTypeTestFnFactory (formTypeTestObject를 통한 간접 테스트)'
 
       const hintWithoutFormat = createTestHint();
       delete (hintWithoutFormat as any).format;
-      
+
       expect(testFn(hintWithoutFormat)).toBe(true);
     });
   });
@@ -242,7 +253,10 @@ describe('formTypeTestFnFactory (formTypeTestObject를 통한 간접 테스트)'
 
     test('배열 형태의 path 값 매칭', () => {
       const definitions: FormTypeInputDefinition[] = [
-        { test: { path: ['/user/name', '/user/email'] }, Component: TestStringComponent },
+        {
+          test: { path: ['/user/name', '/user/email'] },
+          Component: TestStringComponent,
+        },
       ];
 
       const normalized = normalizeFormTypeInputDefinitions(definitions);
@@ -274,7 +288,10 @@ describe('formTypeTestFnFactory (formTypeTestObject를 통한 간접 테스트)'
 
     test('배열 형태의 formType 값 매칭', () => {
       const definitions: FormTypeInputDefinition[] = [
-        { test: { formType: ['textarea', 'select'] }, Component: TestStringComponent },
+        {
+          test: { formType: ['textarea', 'select'] },
+          Component: TestStringComponent,
+        },
       ];
 
       const normalized = normalizeFormTypeInputDefinitions(definitions);
@@ -351,38 +368,60 @@ describe('formTypeTestFnFactory (formTypeTestObject를 통한 간접 테스트)'
       const testFn = normalized[0].test;
 
       // 유효한 조합들
-      expect(testFn(createTestHint({
-        type: 'string',
-        format: 'email',
-        path: '/user/email',
-      }))).toBe(true);
+      expect(
+        testFn(
+          createTestHint({
+            type: 'string',
+            format: 'email',
+            path: '/user/email',
+          }),
+        ),
+      ).toBe(true);
 
-      expect(testFn(createTestHint({
-        type: 'number',
-        format: 'email',
-        path: '/admin/email',
-      }))).toBe(true);
+      expect(
+        testFn(
+          createTestHint({
+            type: 'number',
+            format: 'email',
+            path: '/admin/email',
+          }),
+        ),
+      ).toBe(true);
 
       // 잘못된 조합
-      expect(testFn(createTestHint({
-        type: 'string',
-        format: 'password', // format이 맞지 않음
-        path: '/user/email',
-      }))).toBe(false);
+      expect(
+        testFn(
+          createTestHint({
+            type: 'string',
+            format: 'password', // format이 맞지 않음
+            path: '/user/email',
+          }),
+        ),
+      ).toBe(false);
 
-      expect(testFn(createTestHint({
-        type: 'boolean', // type이 배열에 없음
-        format: 'email',
-        path: '/user/email',
-      }))).toBe(false);
+      expect(
+        testFn(
+          createTestHint({
+            type: 'boolean', // type이 배열에 없음
+            format: 'email',
+            path: '/user/email',
+          }),
+        ),
+      ).toBe(false);
     });
   });
 
   describe('type + formType 조합 테스트', () => {
     test('type이 string이면서 formType이 undefined인 경우', () => {
       const definitions: FormTypeInputDefinition[] = [
-        { test: { type: 'string', formType: undefined }, Component: TestStringComponent },
-        { test: { type: 'string', formType: 'textarea' }, Component: TestTextareaComponent },
+        {
+          test: { type: 'string', formType: undefined },
+          Component: TestStringComponent,
+        },
+        {
+          test: { type: 'string', formType: 'textarea' },
+          Component: TestTextareaComponent,
+        },
         { test: { type: 'string' }, Component: TestEmailComponent },
       ];
 
@@ -420,8 +459,14 @@ describe('formTypeTestFnFactory (formTypeTestObject를 통한 간접 테스트)'
   describe('실제 사용 사례 시나리오', () => {
     test('이메일 입력 필드 선택', () => {
       const definitions: FormTypeInputDefinition[] = [
-        { test: { type: 'string', format: 'email' }, Component: TestEmailComponent },
-        { test: { type: 'string', format: 'password' }, Component: TestPasswordComponent },
+        {
+          test: { type: 'string', format: 'email' },
+          Component: TestEmailComponent,
+        },
+        {
+          test: { type: 'string', format: 'password' },
+          Component: TestPasswordComponent,
+        },
         { test: { type: 'string' }, Component: TestStringComponent },
       ];
 
@@ -462,7 +507,10 @@ describe('formTypeTestFnFactory (formTypeTestObject를 통한 간접 테스트)'
     test('커스텀 formType 컴포넌트 선택', () => {
       const definitions: FormTypeInputDefinition[] = [
         { test: { formType: 'custom-select' }, Component: TestSelectComponent },
-        { test: { type: 'string', formType: undefined }, Component: TestStringComponent },
+        {
+          test: { type: 'string', formType: undefined },
+          Component: TestStringComponent,
+        },
       ];
 
       const normalized = normalizeFormTypeInputDefinitions(definitions);
@@ -493,7 +541,10 @@ describe('formTypeTestFnFactory (formTypeTestObject를 통한 간접 테스트)'
 
     test('배열에 undefined가 있는 조건', () => {
       const definitions: FormTypeInputDefinition[] = [
-        { test: { format: [undefined, 'email'] as any }, Component: TestStringComponent },
+        {
+          test: { format: [undefined, 'email'] as any },
+          Component: TestStringComponent,
+        },
       ];
 
       const normalized = normalizeFormTypeInputDefinitions(definitions);
@@ -506,28 +557,55 @@ describe('formTypeTestFnFactory (formTypeTestObject를 통한 간접 테스트)'
 
     test('다양한 타입의 undefined 배열 조건', () => {
       const definitions: FormTypeInputDefinition[] = [
-        { test: { type: ['string', undefined] as any }, Component: TestStringComponent },
-        { test: { formType: [undefined, 'select', 'textarea'] as any }, Component: TestSelectComponent },
-        { test: { path: ['/user/name', undefined] as any }, Component: TestStringComponent },
+        {
+          test: { type: ['string', undefined] as any },
+          Component: TestStringComponent,
+        },
+        {
+          test: { formType: [undefined, 'select', 'textarea'] as any },
+          Component: TestSelectComponent,
+        },
+        {
+          test: { path: ['/user/name', undefined] as any },
+          Component: TestStringComponent,
+        },
       ];
 
       const normalized = normalizeFormTypeInputDefinitions(definitions);
 
       // type 테스트
       expect(normalized[0].test(createTestHint({ type: 'string' }))).toBe(true);
-      expect(normalized[0].test(createTestHint({ type: undefined as any }))).toBe(true);
-      expect(normalized[0].test(createTestHint({ type: 'number' }))).toBe(false);
+      expect(
+        normalized[0].test(createTestHint({ type: undefined as any })),
+      ).toBe(true);
+      expect(normalized[0].test(createTestHint({ type: 'number' }))).toBe(
+        false,
+      );
 
       // formType 테스트
-      expect(normalized[1].test(createTestHint({ formType: undefined }))).toBe(true);
-      expect(normalized[1].test(createTestHint({ formType: 'select' }))).toBe(true);
-      expect(normalized[1].test(createTestHint({ formType: 'textarea' }))).toBe(true);
-      expect(normalized[1].test(createTestHint({ formType: 'input' }))).toBe(false);
+      expect(normalized[1].test(createTestHint({ formType: undefined }))).toBe(
+        true,
+      );
+      expect(normalized[1].test(createTestHint({ formType: 'select' }))).toBe(
+        true,
+      );
+      expect(normalized[1].test(createTestHint({ formType: 'textarea' }))).toBe(
+        true,
+      );
+      expect(normalized[1].test(createTestHint({ formType: 'input' }))).toBe(
+        false,
+      );
 
-      // path 테스트  
-      expect(normalized[2].test(createTestHint({ path: '/user/name' }))).toBe(true);
-      expect(normalized[2].test(createTestHint({ path: undefined as any }))).toBe(true);
-      expect(normalized[2].test(createTestHint({ path: '/user/age' }))).toBe(false);
+      // path 테스트
+      expect(normalized[2].test(createTestHint({ path: '/user/name' }))).toBe(
+        true,
+      );
+      expect(
+        normalized[2].test(createTestHint({ path: undefined as any })),
+      ).toBe(true);
+      expect(normalized[2].test(createTestHint({ path: '/user/age' }))).toBe(
+        false,
+      );
     });
 
     test('빈 객체 테스트 조건', () => {

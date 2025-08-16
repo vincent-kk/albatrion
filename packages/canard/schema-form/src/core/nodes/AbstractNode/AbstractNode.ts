@@ -27,6 +27,7 @@ import type {
 
 import {
   type ChildNode,
+  type HandleChange,
   type NodeEvent,
   NodeEventType,
   type NodeListener,
@@ -236,15 +237,21 @@ export abstract class AbstractNode<
    * Function called when the node's value changes
    * @note For RootNode, the onChange function is called only after all microtasks have been completed.
    * @param input - The changed value
+   * @param batch - Optional flag indicating whether the change should be batched
    */
-  #handleChange: Fn<[value: Value]>;
+  #handleChange: HandleChange<Value>;
 
   /**
    * Function called when the node's value changes.
    * @param input - The changed value
+   * @param batch - Optional flag indicating whether the change should be batched
    */
-  protected onChange(this: AbstractNode, input: Value | undefined): void {
-    this.#handleChange(input);
+  protected onChange(
+    this: AbstractNode,
+    input: Value | undefined,
+    batch?: boolean,
+  ): void {
+    this.#handleChange(input, batch);
   }
 
   /** List of child nodes, nodes without child nodes return an `null` */
@@ -536,7 +543,7 @@ export abstract class AbstractNode<
 
     const value = this.#visible ? defaultValue : undefined;
     this.setValue(value, RESET_NODE_OPTION);
-    this.onChange(value);
+    this.onChange(value, true);
 
     this.setState();
   }

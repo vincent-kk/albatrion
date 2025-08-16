@@ -195,7 +195,10 @@ describe('SchemaNode computed properties', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
 
       await delay();
 
@@ -233,7 +236,10 @@ describe('SchemaNode computed properties', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       const nameNode = node.find('./userInfo/name');
 
       expect(nameNode?.readOnly).toBe(false); // 초기값은 false
@@ -263,7 +269,10 @@ describe('SchemaNode computed properties', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       const buttonNode = node.find('./submitButton');
 
       expect(buttonNode?.disabled).toBe(false); // 초기값은 false
@@ -300,7 +309,10 @@ describe('SchemaNode computed properties', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       const greetingNode = node.find('./greeting');
 
       await delay();
@@ -347,7 +359,10 @@ describe('SchemaNode computed properties', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       const descriptionNode = node.find('./description');
       const listener = vi.fn();
 

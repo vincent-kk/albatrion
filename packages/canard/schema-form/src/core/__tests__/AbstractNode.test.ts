@@ -22,7 +22,7 @@ const wait = (delay = 5) => {
 };
 
 describe('AbstractNode', () => {
-  it('node.find', () => {
+  it('node.find', async () => {
     const node = nodeFromJsonSchema({
       jsonSchema: {
         type: 'object',
@@ -50,6 +50,8 @@ describe('AbstractNode', () => {
       onChange: () => {},
       validationMode: ValidationMode.OnChange,
     });
+
+    await wait();
 
     const founder = node?.find('/house/founder');
     const founderName = founder?.find('name');
@@ -327,20 +329,26 @@ describe('AbstractNode', () => {
       },
       onChange: () => {},
     });
-    let externalEvent: NodeEvent | undefined;
+    let externalEvent: NodeEvent[] = [];
     node.subscribe((event) => {
-      externalEvent = event;
+      externalEvent.push(event);
     });
 
     await wait();
 
     // 최초로 node tree를 만들때 발생하는 이벤트
-    expect(externalEvent).toEqual({
+    expect(externalEvent[0]).toEqual({
       type:
         NodeEventType.Activated |
-        NodeEventType.UpdateValue |
         NodeEventType.UpdateChildren |
-        NodeEventType.UpdateComputedProperties,
+        NodeEventType.UpdateComputedProperties |
+        NodeEventType.RequestEmitChange,
+      payload: {},
+      options: {},
+    });
+
+    expect(externalEvent[1]).toEqual({
+      type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: {},
       },
@@ -352,11 +360,11 @@ describe('AbstractNode', () => {
       },
     });
 
-    node?.find('period')?.subscribe((event) => {
-      externalEvent = event;
-    });
+    externalEvent = [];
 
-    await wait();
+    node?.find('period')?.subscribe((event) => {
+      externalEvent.push(event);
+    });
 
     const endDate = node?.find('endDate');
 
@@ -364,15 +372,25 @@ describe('AbstractNode', () => {
 
     await wait();
 
-    expect(externalEvent).toEqual({
+    expect(externalEvent[0]).toEqual({
+      type: NodeEventType.RequestEmitChange,
+      payload: {},
+      options: {},
+    });
+
+    expect(externalEvent[1]).toEqual({
       type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.UpdateValue]: [undefined, '2021-01-02'],
+        [NodeEventType.UpdateValue]: {
+          endDate: '2021-01-02',
+        },
       },
       options: {
         [NodeEventType.UpdateValue]: {
-          current: [undefined, '2021-01-02'],
-          previous: [undefined, undefined],
+          current: {
+            endDate: '2021-01-02',
+          },
+          previous: {},
         },
       },
     });

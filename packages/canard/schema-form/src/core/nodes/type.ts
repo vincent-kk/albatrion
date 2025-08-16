@@ -103,6 +103,8 @@ export type SchemaNodeFactory<
   Schema extends JsonSchemaWithVirtual = JsonSchemaWithVirtual,
 > = Fn<[props: NodeFactoryProps<Schema>], SchemaNode>;
 
+export type HandleChange<Value = any> = Fn<[value: Value, batch?: boolean]>;
+
 /**
  * Constructor properties shared by all concrete `SchemaNode` implementations.
  * @typeParam Schema - Node's JSON Schema type
@@ -125,7 +127,7 @@ export interface SchemaNodeConstructorProps<
   name?: string;
   jsonSchema: Schema;
   defaultValue?: Value;
-  onChange: Fn<[value: Value]>;
+  onChange: HandleChange<Value>;
   parentNode?: SchemaNode;
   validationMode?: ValidationMode;
   validatorFactory?: ValidatorFactory;
@@ -308,14 +310,16 @@ export enum SetValueOption {
   Propagate = BIT_FLAG_02,
   /** Propagate the update to child nodes */
   Refresh = BIT_FLAG_03,
+  /** Update the value with batch mode */
+  Batch = BIT_FLAG_04,
   /** Ignore node tree update cycle */
-  IsolationMode = BIT_FLAG_04,
+  Isolate = BIT_FLAG_05,
   /** Trigger a refresh to update the FormTypeInput */
-  PublishUpdateEvent = BIT_FLAG_05,
+  PublishUpdateEvent = BIT_FLAG_06,
   /** Default SetValue option */
   Default = EmitChange | PublishUpdateEvent,
   /** Both propagate to children and trigger a refresh */
-  Merge = IsolationMode | Propagate | Refresh | Default,
+  Merge = Propagate | Refresh | Batch | Isolate | Default,
   /** Replace the value and propagate the update with refresh */
   Overwrite = Replace | Merge,
 }

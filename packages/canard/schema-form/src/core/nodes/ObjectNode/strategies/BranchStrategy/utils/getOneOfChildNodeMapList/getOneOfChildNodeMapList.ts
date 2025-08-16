@@ -6,6 +6,7 @@ import type { Fn } from '@aileron/declare';
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import type {
   ChildNode,
+  HandleChange,
   SchemaNodeFactory,
 } from '@/schema-form/core/nodes/type';
 import { SchemaNodeError } from '@/schema-form/errors';
@@ -31,7 +32,7 @@ export const getOneOfChildNodeMapList = (
   jsonSchema: ObjectSchema,
   defaultValue: ObjectValue | undefined,
   childNodeMap: Map<string, ChildNode>,
-  handelChangeFactory: Fn<[name: string], (input: any) => void>,
+  handelChangeFactory: Fn<[name: string], HandleChange>,
   nodeFactory: SchemaNodeFactory,
 ) => {
   const oneOfSchemas = jsonSchema.oneOf;

@@ -1,10 +1,9 @@
-import type { Fn } from '@aileron/declare';
-
 import type { NumberSchema, NumberValue } from '@/schema-form/types';
 
 import { parseNumber } from '../../parsers';
 import { AbstractNode } from '../AbstractNode';
 import {
+  type HandleChange,
   NodeEventType,
   type SchemaNodeConstructorProps,
   SetValueOption,
@@ -48,7 +47,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     this.#emitChange(input, option);
   }
 
-  protected override onChange: Fn<[input: NumberValue | undefined]>;
+  protected override onChange: HandleChange<NumberValue | undefined>;
 
   constructor({
     key,
@@ -97,7 +96,8 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     if (previous === current) return;
     this.#value = current;
 
-    if (option & SetValueOption.EmitChange) this.onChange(current);
+    if (option & SetValueOption.EmitChange)
+      this.onChange(current, !!(option & SetValueOption.Batch));
     if (option & SetValueOption.Refresh) this.refresh(current);
     if (option & SetValueOption.PublishUpdateEvent)
       this.publish({
@@ -125,13 +125,15 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   /**
    * Reflects value changes excluding empty values.
    * @param input - The value to set
+   * @param batch - Optional flag indicating whether the change should be batched
    * @internal Internal implementation method. Do not call directly.
    */
   private onChangeWithOmitEmpty(
     this: NumberNode,
     input: NumberValue | undefined,
+    batch?: boolean,
   ) {
-    if (input === undefined || isNaN(input)) super.onChange(undefined);
-    else super.onChange(input);
+    if (input === undefined || isNaN(input)) super.onChange(undefined, batch);
+    else super.onChange(input, batch);
   }
 }

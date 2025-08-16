@@ -34,7 +34,10 @@ describe('AbstractNode - JSON Pointer Escape', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       await delay();
 
       // 프로퍼티 키와 이스케이프된 키 검증
@@ -78,7 +81,10 @@ describe('AbstractNode - JSON Pointer Escape', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       await delay();
 
       // 슬래시 문자 이스케이프 검증
@@ -122,7 +128,10 @@ describe('AbstractNode - JSON Pointer Escape', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       await delay();
 
       // 혼합 문자 이스케이프 검증
@@ -166,7 +175,10 @@ describe('AbstractNode - JSON Pointer Escape', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       await delay();
 
       const userNameNode = node.find('user.name');
@@ -200,7 +212,10 @@ describe('AbstractNode - JSON Pointer Escape', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       await delay();
 
       const parentDirNode = node.find('parent..dir');
@@ -234,7 +249,10 @@ describe('AbstractNode - JSON Pointer Escape', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       await delay();
 
       const wildcardNode = node.find('wildcard*key');
@@ -268,7 +286,10 @@ describe('AbstractNode - JSON Pointer Escape', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       await delay();
 
       const fragmentNode = node.find('fragment#key');
@@ -304,7 +325,10 @@ describe('AbstractNode - JSON Pointer Escape', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       await delay();
 
       // 틸드와 슬래시만 이스케이프되고 나머지는 그대로
@@ -359,7 +383,10 @@ describe('AbstractNode - JSON Pointer Escape', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       await delay();
 
       const doubleTildeNode = node.find('~0~0key');
@@ -405,7 +432,10 @@ describe('AbstractNode - JSON Pointer Escape', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       await delay();
 
       // 배열 노드 생성 및 아이템 추가
@@ -464,7 +494,10 @@ describe('AbstractNode - JSON Pointer Escape', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       await delay();
 
       // 깊게 중첩된 특수 문자 프로퍼티 검증 (RFC 6901만 이스케이프)
@@ -514,7 +547,10 @@ describe('AbstractNode - JSON Pointer Escape', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       await delay();
 
       // RFC 6901 표준 이스케이프된 경로로 검색
@@ -548,7 +584,10 @@ describe('AbstractNode - JSON Pointer Escape', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       await delay();
 
       // 존재하지 않는 경로
@@ -585,7 +624,10 @@ describe('AbstractNode - JSON Pointer Escape', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       await delay();
 
       // 일반 프로퍼티 키는 이스케이프되지 않음
@@ -640,7 +682,10 @@ describe('AbstractNode - JSON Pointer Escape', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       await delay();
 
       // 파일 경로 스타일 키 검증 (슬래시만 이스케이프, 점은 그대로)
@@ -693,7 +738,10 @@ describe('AbstractNode - JSON Pointer Escape', () => {
         },
       } satisfies JsonSchema;
 
-      const node = nodeFromJsonSchema({ jsonSchema: schema, onChange: () => {} });
+      const node = nodeFromJsonSchema({
+        jsonSchema: schema,
+        onChange: () => {},
+      });
       await delay();
 
       // 복잡한 URL 스타일 키 검증 (슬래시만 이스케이프)
