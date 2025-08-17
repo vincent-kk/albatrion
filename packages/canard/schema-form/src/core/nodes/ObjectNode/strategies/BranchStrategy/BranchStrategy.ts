@@ -89,7 +89,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
    *
    * Batch mode is automatically enabled for:
    * - Programmatic API calls (setValue on nodes)
-   * - Child node propagation when parent is batching
+   * - Child node onChange requests for batch updates
    * - Form initialization and bulk updates
    *
    * Batch mode is disabled after:
@@ -189,15 +189,12 @@ export class BranchStrategy implements ObjectNodeStrategy {
           return;
         this.__draft__[propertyKey] = input;
         if (this.__locked__) return;
-        // Enable batch mode if child nodes request batch updates
         if (batch) this.__batched__ = true;
         this.__emitChange__();
       };
     host.subscribe(({ type, payload }) => {
       if (type & NodeEventType.RequestEmitChange) {
         this.__handleEmitChange__(payload?.[NodeEventType.RequestEmitChange]);
-        // Reset batch mode after processing the batch cycle
-        // Next change will determine its own batch mode based on source
         this.__batched__ = false;
       }
     });
