@@ -8,7 +8,7 @@ import type { JsonSchema } from '@/schema-form/types';
 
 import { NodeEventType, ValidationMode } from '../nodes';
 import type { ArrayNode } from '../nodes/ArrayNode';
-import { createValidatorFactory } from './AbstractNode.test';
+import { createValidatorFactory } from './utils/createValidatorFactory';
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 5));
 

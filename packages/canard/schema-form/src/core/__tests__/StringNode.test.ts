@@ -7,7 +7,7 @@ import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import { NodeEventType, ValidationMode } from '../nodes';
 import type { StringNode } from '../nodes/StringNode';
-import { createValidatorFactory } from './AbstractNode.test';
+import { createValidatorFactory } from './utils/createValidatorFactory';
 
 describe('StringNode', () => {
   it('문자열 노드가 정상적으로 생성되어야 함', () => {

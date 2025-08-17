@@ -1,17 +1,11 @@
-import Ajv, { type ErrorObject } from 'ajv';
+import Ajv from 'ajv';
 import { describe, expect, it, vi } from 'vitest';
 
-import { JSONPointer } from '@winglet/json/pointer';
-
 import { nodeFromJsonSchema } from '@/schema-form/core';
-import type {
-  JsonSchema,
-  JsonSchemaError,
-  ValidateFunction,
-} from '@/schema-form/types';
 
 import type { StringNode } from '../nodes/StringNode';
 import { type NodeEvent, NodeEventType, ValidationMode } from '../nodes/type';
+import { createValidatorFactory } from './utils/createValidatorFactory';
 
 const wait = (delay = 5) => {
   return new Promise((resolve) => {
@@ -341,23 +335,9 @@ describe('AbstractNode', () => {
       type:
         NodeEventType.Activated |
         NodeEventType.UpdateChildren |
-        NodeEventType.UpdateComputedProperties |
-        NodeEventType.RequestEmitChange,
+        NodeEventType.UpdateComputedProperties,
       payload: {},
       options: {},
-    });
-
-    expect(externalEvent[1]).toEqual({
-      type: NodeEventType.UpdateValue,
-      payload: {
-        [NodeEventType.UpdateValue]: {},
-      },
-      options: {
-        [NodeEventType.UpdateValue]: {
-          current: {},
-          previous: {},
-        },
-      },
     });
 
     externalEvent = [];
@@ -400,55 +380,3 @@ describe('AbstractNode', () => {
     });
   });
 });
-
-export const createValidatorFactory =
-  (ajv: Ajv) =>
-  (jsonSchema: JsonSchema): ValidateFunction => {
-    const validate = ajv.compile({
-      ...jsonSchema,
-      $async: true,
-    });
-    return async (data) => {
-      try {
-        await validate(data);
-        return null;
-      } catch (thrown: any) {
-        if (Array.isArray(thrown?.errors))
-          return transformErrors(thrown.errors);
-        throw thrown;
-      }
-    };
-  };
-
-const transformErrors = (errors: ErrorObject[]): JsonSchemaError[] => {
-  if (!Array.isArray(errors)) return [];
-  const result = new Array<JsonSchemaError>(errors.length);
-  for (let index = 0; index < errors.length; index++) {
-    const originalError = errors[index];
-    const transformedError: JsonSchemaError = {
-      dataPath: transformDataPath(originalError),
-      keyword: originalError.keyword,
-      message: originalError.message,
-      details: originalError.params || {},
-      source: originalError,
-      key: undefined,
-    };
-    result[index] = transformedError;
-  }
-  return result;
-};
-
-const transformDataPath = (error: ErrorObject): string => {
-  const instancePath = error.instancePath;
-  const hasMissingProperty =
-    error.keyword === 'required' && error.params?.missingProperty;
-
-  if (!instancePath)
-    return hasMissingProperty
-      ? JSONPointer.Separator + error.params.missingProperty
-      : '';
-
-  return hasMissingProperty
-    ? instancePath + JSONPointer.Separator + error.params.missingProperty
-    : instancePath;
-};

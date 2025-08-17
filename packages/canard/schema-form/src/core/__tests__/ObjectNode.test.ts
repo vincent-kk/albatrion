@@ -11,7 +11,7 @@ import type { ArrayNode } from '../nodes/ArrayNode';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
-import { createValidatorFactory } from './AbstractNode.test';
+import { createValidatorFactory } from './utils/createValidatorFactory';
 
 describe('ObjectNode', () => {
   it('객체 노드가 정상적으로 생성되어야 함', () => {
