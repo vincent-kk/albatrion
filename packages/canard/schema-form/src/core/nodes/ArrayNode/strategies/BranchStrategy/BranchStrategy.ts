@@ -37,23 +37,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
   /** Flag indicating whether the strategy is locked to prevent recursive updates */
   private __locked__: boolean = true;
 
-  /**
-   * Flag indicating whether the strategy is in batch mode.
-   *
-   * Batch mode behavior:
-   * - true: Changes are queued via RequestEmitChange event for batch processing
-   * - false: Changes are emitted immediately for synchronous updates
-   *
-   * Batch mode is automatically enabled for:
-   * - Programmatic API calls (push, pop, update, remove, clear, setValue on nodes)
-   * - Child node onChange requests for batch updates
-   * - Form initialization and bulk updates
-   *
-   * Batch mode is disabled after:
-   * - RequestEmitChange event is processed (one batch cycle complete)
-   * - User input through UI components (requires immediate feedback)
-   */
-  private __batched__: boolean = true;
+  /** Flag indicating whether the strategy is already processing a batch */
+  private __batched__: boolean = false;
 
   /** Flag indicating whether the array has pending changes that need to be emitted */
   private __dirty__: boolean = true;
@@ -172,7 +157,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
     this.__locked__ = false;
 
-    this.__emitChange__();
+    this.__handleEmitChange__();
     handleSetDefaultValue(this.value);
     this.__publishUpdateChildren__();
   }
@@ -189,7 +174,6 @@ export class BranchStrategy implements ArrayNodeStrategy {
     )
       return promiseAfterMicrotask(this.length);
 
-    this.__batched__ = true;
     const index = '' + this.__keys__.length;
     const key = (index + '#' + this.__revision__++) as ChildSegmentKey;
     this.__keys__.push(key);
@@ -231,8 +215,6 @@ export class BranchStrategy implements ArrayNodeStrategy {
   public update(index: number, data: ArrayValue[number]) {
     const node = this.__sourceMap__.get(this.__keys__[index])?.node;
     if (!node) return promiseAfterMicrotask(undefined);
-
-    this.__batched__ = true;
     node.setValue(data);
     return promiseAfterMicrotask(node.value);
   }
@@ -247,7 +229,6 @@ export class BranchStrategy implements ArrayNodeStrategy {
     const removed = this.__sourceMap__.get(targetId);
     if (!removed) return promiseAfterMicrotask(undefined);
 
-    this.__batched__ = true;
     this.__keys__ = this.__keys__.filter((key) => key !== targetId);
     this.__sourceMap__.delete(targetId);
     this.__updateChildName__();
@@ -267,7 +248,6 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
   /** Clears all elements to initialize the array. */
   public clear() {
-    this.__batched__ = true;
     for (let i = 0, l = this.__keys__.length; i < l; i++)
       this.__sourceMap__.get(this.__keys__[i])?.node.cleanUp(this.__host__);
     this.__keys__ = [];
@@ -288,13 +268,17 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @param option - Change options (optional)
    * @private
    */
-  private __emitChange__(option?: UnionSetValueOption) {
-    if (this.__batched__)
+  private __emitChange__(
+    option: UnionSetValueOption = SetValueOption.BatchDefault,
+  ) {
+    if (option & SetValueOption.Batch) {
+      if (this.__batched__) return;
+      this.__batched__ = true;
       this.__host__.publish({
         type: NodeEventType.RequestEmitChange,
         payload: { [NodeEventType.RequestEmitChange]: option },
       });
-    else this.__handleEmitChange__(option);
+    } else this.__handleEmitChange__(option);
   }
 
   /**
@@ -369,8 +353,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
       source.data = input;
       this.__changed__ = true;
       if (this.__locked__) return;
-      if (batch) this.__batched__ = true;
-      this.__emitChange__();
+      this.__emitChange__(
+        batch ? SetValueOption.BatchDefault : SetValueOption.Default,
+      );
     };
   }
 

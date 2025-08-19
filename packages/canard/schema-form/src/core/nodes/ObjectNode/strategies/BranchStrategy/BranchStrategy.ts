@@ -80,23 +80,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /** Flag indicating whether the node is in isolation mode (affects condition processing) */
   private __isolated__: boolean = false;
 
-  /**
-   * Flag indicating whether the strategy is in batch mode.
-   *
-   * Batch mode behavior:
-   * - true: Changes are queued via RequestEmitChange event for batch processing
-   * - false: Changes are emitted immediately for synchronous updates
-   *
-   * Batch mode is automatically enabled for:
-   * - Programmatic API calls (setValue on nodes)
-   * - Child node onChange requests for batch updates
-   * - Form initialization and bulk updates
-   *
-   * Batch mode is disabled after:
-   * - RequestEmitChange event is processed (one batch cycle complete)
-   * - User input through UI components (requires immediate feedback)
-   */
-  private __batched__: boolean = true;
+  /** Flag indicating whether the strategy is already processing a batch */
+  private __batched__: boolean = false;
 
   /** Flag indicating whether the strategy is locked to prevent recursive updates */
   private __locked__: boolean = true;
@@ -189,8 +174,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
           return;
         this.__draft__[propertyKey] = input;
         if (this.__locked__) return;
-        if (batch) this.__batched__ = true;
-        this.__emitChange__();
+        this.__emitChange__(
+          batch ? SetValueOption.BatchDefault : SetValueOption.Default,
+        );
       };
     host.subscribe(({ type, payload }) => {
       if (type & NodeEventType.RequestEmitChange) {
@@ -258,13 +244,17 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @param option - Change options (optional)
    * @private
    */
-  private __emitChange__(option?: UnionSetValueOption) {
-    if (this.__batched__)
+  private __emitChange__(
+    option: UnionSetValueOption = SetValueOption.BatchDefault,
+  ) {
+    if (option & SetValueOption.Batch) {
+      if (this.__batched__) return;
+      this.__batched__ = true;
       this.__host__.publish({
         type: NodeEventType.RequestEmitChange,
         payload: { [NodeEventType.RequestEmitChange]: option },
       });
-    else this.__handleEmitChange__(option);
+    } else this.__handleEmitChange__(option);
   }
 
   /**

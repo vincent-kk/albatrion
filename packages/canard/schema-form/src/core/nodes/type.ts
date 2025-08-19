@@ -318,8 +318,10 @@ export enum SetValueOption {
   PublishUpdateEvent = BIT_FLAG_06,
   /** Default SetValue option */
   Default = EmitChange | PublishUpdateEvent,
+  /** Default SetValue option with batch mode */
+  BatchDefault = Batch | Default,
   /** Both propagate to children and trigger a refresh */
-  Merge = Propagate | Refresh | Batch | Isolate | Default,
+  Merge = Propagate | Refresh | Isolate | BatchDefault,
   /** Replace the value and propagate the update with refresh */
   Overwrite = Replace | Merge,
 }
