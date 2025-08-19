@@ -364,8 +364,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   private __handleChangeFactory__(key: ChildSegmentKey): HandleChange {
     return (input, batch) => {
-      if (!this.__sourceMap__.has(key)) return;
-      this.__sourceMap__.get(key)!.data = input;
+      const source = this.__sourceMap__.get(key);
+      if (!source || source.data === input) return;
+      source.data = input;
       this.__changed__ = true;
       if (this.__locked__) return;
       if (batch) this.__batched__ = true;
