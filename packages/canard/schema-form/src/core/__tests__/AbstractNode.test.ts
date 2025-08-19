@@ -4,7 +4,12 @@ import { describe, expect, it, vi } from 'vitest';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import type { StringNode } from '../nodes/StringNode';
-import { type NodeEvent, NodeEventType, ValidationMode } from '../nodes/type';
+import {
+  type NodeEvent,
+  NodeEventType,
+  SetValueOption,
+  ValidationMode,
+} from '../nodes/type';
 import { createValidatorFactory } from './utils/createValidatorFactory';
 
 const wait = (delay = 5) => {
@@ -354,7 +359,9 @@ describe('AbstractNode', () => {
 
     expect(externalEvent[0]).toEqual({
       type: NodeEventType.RequestEmitChange,
-      payload: {},
+      payload: {
+        [NodeEventType.RequestEmitChange]: SetValueOption.BatchDefault,
+      },
       options: {},
     });
 

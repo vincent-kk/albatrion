@@ -40,18 +40,6 @@ export class BranchStrategy implements ArrayNodeStrategy {
   /** Flag indicating whether the strategy is already processing a batch */
   private __batched__: boolean = false;
 
-  /** Flag indicating whether the array has pending changes that need to be emitted */
-  private __dirty__: boolean = true;
-
-  /** Flag indicating whether the array value should be treated as undefined */
-  private __undefined__: boolean = false;
-
-  /** Setter for dirty flag that also resets undefined state when changes occur */
-  private set __changed__(input: boolean) {
-    this.__dirty__ = input;
-    if (this.__undefined__) this.__undefined__ = false;
-  }
-
   /** Revision counter for generating unique keys for array elements */
   private __revision__: number = 0;
 
@@ -67,13 +55,27 @@ export class BranchStrategy implements ArrayNodeStrategy {
     }
   > = new Map();
 
+  /** Flag indicating whether the array value is not changed */
+  private __idle__: boolean = false;
+
+  /** Flag indicating whether the array edges are expired */
+  private __expired__: boolean = true;
+
+  /** Expire the array node's value and edges */
+  private __expire__() {
+    this.__idle__ = false;
+    this.__expired__ = true;
+  }
+
+  /** Current value of the array node */
+  private __value__: ArrayValue = [];
+
   /**
    * Gets the current value of the array.
    * @returns Current value of the array node or undefined (if empty)
    */
   public get value() {
-    if (this.__undefined__) return undefined;
-    return this.__toArray__();
+    return this.__value__;
   }
 
   /**
@@ -83,24 +85,31 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   public applyValue(input: ArrayValue, option: UnionSetValueOption) {
     if (input === undefined) {
-      this.clear();
-      this.__undefined__ = true;
-      this.__emitChange__(option);
+      this.__locked__ = true;
+      this.clear(option);
+      this.__locked__ = false;
+      this.__emitChange__(option, true);
     } else if (isArray(input)) {
       this.__locked__ = true;
-      this.clear();
-      for (const value of input) this.push(value);
+      this.clear(option);
+      for (const value of input) this.push(value, option);
       this.__locked__ = false;
-      this.__emitChange__(option);
+      this.__emitChange__(option, true);
     }
   }
+
+  private __children__: ChildNode[] = [];
 
   /**
    * Gets the child nodes of the array node.
    * @returns List of child nodes
    */
   public get children() {
-    return this.__edges__;
+    if (this.__expired__) {
+      this.__children__ = this.__edges__;
+      this.__expired__ = false;
+    }
+    return this.__children__;
   }
 
   /**
@@ -148,15 +157,17 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
     while (this.length < (host.jsonSchema.minItems || 0)) this.push();
 
-    host.subscribe(({ type, payload }) => {
+    host.subscribe(({ type, payload, options }) => {
       if (type & NodeEventType.RequestEmitChange) {
-        this.__handleEmitChange__(payload?.[NodeEventType.RequestEmitChange]);
+        this.__handleEmitChange__(
+          payload?.[NodeEventType.RequestEmitChange],
+          options?.[NodeEventType.RequestEmitChange],
+        );
         this.__batched__ = false;
       }
     });
 
     this.__locked__ = false;
-
     this.__handleEmitChange__();
     handleSetDefaultValue(this.value);
     this.__publishUpdateChildren__();
@@ -167,7 +178,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @param data - Value to add (optional)
    * @returns Returns itself (this) for method chaining
    */
-  public push(data?: ArrayValue[number]) {
+  public push(data?: ArrayValue[number], option?: UnionSetValueOption) {
     if (
       this.__host__.jsonSchema.maxItems &&
       this.__host__.jsonSchema.maxItems <= this.length
@@ -199,10 +210,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
     if (this.__host__.activated)
       (childNode as AbstractNode).activate(this.__host__);
 
-    this.__changed__ = true;
-    this.__handleEmitChange__();
-    this.__publishUpdateChildren__();
-
+    this.__expire__();
+    this.__emitChange__(option, true);
     return promiseAfterMicrotask(this.length);
   }
 
@@ -212,10 +221,14 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @param data - New value
    * @returns Returns itself (this) for method chaining
    */
-  public update(index: number, data: ArrayValue[number]) {
+  public update(
+    index: number,
+    data: ArrayValue[number],
+    option?: UnionSetValueOption,
+  ) {
     const node = this.__sourceMap__.get(this.__keys__[index])?.node;
     if (!node) return promiseAfterMicrotask(undefined);
-    node.setValue(data);
+    node.setValue(data, option);
     return promiseAfterMicrotask(node.value);
   }
 
@@ -224,7 +237,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @param index - Index of the element to remove
    * @returns Returns itself (this) for method chaining
    */
-  public remove(index: number) {
+  public remove(index: number, option?: UnionSetValueOption) {
     const targetId = this.__keys__[index];
     const removed = this.__sourceMap__.get(targetId);
     if (!removed) return promiseAfterMicrotask(undefined);
@@ -233,10 +246,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__sourceMap__.delete(targetId);
     this.__updateChildName__();
 
-    this.__changed__ = true;
-    this.__emitChange__();
-    this.__publishUpdateChildren__();
-
+    this.__expire__();
+    this.__emitChange__(option, true);
     return promiseAfterMicrotask(removed.data);
   }
 
@@ -247,15 +258,14 @@ export class BranchStrategy implements ArrayNodeStrategy {
   }
 
   /** Clears all elements to initialize the array. */
-  public clear() {
+  public clear(option?: UnionSetValueOption) {
     for (let i = 0, l = this.__keys__.length; i < l; i++)
       this.__sourceMap__.get(this.__keys__[i])?.node.cleanUp(this.__host__);
+
     this.__keys__ = [];
     this.__sourceMap__.clear();
-    this.__changed__ = true;
-    this.__emitChange__();
-    this.__publishUpdateChildren__();
-
+    this.__expire__();
+    this.__emitChange__(option, true);
     return promiseAfterMicrotask(void 0);
   }
 
@@ -270,15 +280,21 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   private __emitChange__(
     option: UnionSetValueOption = SetValueOption.BatchDefault,
+    updateChildren: boolean = false,
   ) {
     if (option & SetValueOption.Batch) {
       if (this.__batched__) return;
       this.__batched__ = true;
       this.__host__.publish({
         type: NodeEventType.RequestEmitChange,
-        payload: { [NodeEventType.RequestEmitChange]: option },
+        payload: {
+          [NodeEventType.RequestEmitChange]: option,
+        },
+        options: {
+          [NodeEventType.RequestEmitChange]: updateChildren,
+        },
       });
-    } else this.__handleEmitChange__(option);
+    } else this.__handleEmitChange__(option, updateChildren);
   }
 
   /**
@@ -288,26 +304,30 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   private __handleEmitChange__(
     option: UnionSetValueOption = SetValueOption.Default,
+    updateChildren: boolean = false,
   ) {
-    if (this.__locked__ || !this.__dirty__) return;
-    const value = this.value;
+    if (this.__locked__ || this.__idle__) return;
+
+    const previous = [...this.__value__];
+    this.__value__ = this.__toArray__();
 
     if (option & SetValueOption.EmitChange)
-      this.__handleChange__(value, !!(option & SetValueOption.Batch));
-    if (option & SetValueOption.Propagate) this.__publishUpdateChildren__();
-    if (option & SetValueOption.Refresh) this.__handleRefresh__(value);
+      this.__handleChange__(this.__value__, !!(option & SetValueOption.Batch));
+    if (option & SetValueOption.Refresh) this.__handleRefresh__(this.__value__);
     if (option & SetValueOption.PublishUpdateEvent)
       this.__host__.publish({
         type: NodeEventType.UpdateValue,
-        payload: { [NodeEventType.UpdateValue]: value },
+        payload: { [NodeEventType.UpdateValue]: this.__value__ },
         options: {
           [NodeEventType.UpdateValue]: {
-            previous: undefined,
-            current: value,
+            previous,
+            current: this.__value__,
           },
         },
       });
-    this.__dirty__ = false;
+
+    this.__idle__ = true;
+    if (updateChildren) this.__publishUpdateChildren__();
   }
 
   /**
@@ -351,7 +371,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
       const source = this.__sourceMap__.get(key);
       if (!source || source.data === input) return;
       source.data = input;
-      this.__changed__ = true;
+      this.__idle__ = false;
       if (this.__locked__) return;
       this.__emitChange__(
         batch ? SetValueOption.BatchDefault : SetValueOption.Default,
@@ -368,7 +388,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
       const key = this.__keys__[i];
       if (this.__sourceMap__.has(key)) {
         const node = this.__sourceMap__.get(key)!.node;
-        const name = i.toString();
+        const name = '' + i;
         if (node.name !== name) node.setName(name, this.__host__);
       }
     }

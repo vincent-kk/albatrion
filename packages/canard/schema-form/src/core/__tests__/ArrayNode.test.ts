@@ -99,7 +99,7 @@ describe('ArrayNode', () => {
     expect(node?.value?.arr.length).toBe(MAX_ITEMS);
   });
 
-  it('array.getValue', () => {
+  it('array.getValue', async () => {
     const node = nodeFromJsonSchema({
       onChange: () => {},
       jsonSchema: {
@@ -123,6 +123,7 @@ describe('ArrayNode', () => {
     if (found?.type === 'array') {
       found.setValue(['Hermione', 'ron', 'harry']);
     }
+    await delay();
     expect(node?.find('#/tags')?.value).toMatchObject([
       'Hermione',
       'ron',
@@ -349,7 +350,7 @@ describe('ArrayNode', () => {
       },
       options: {
         [NodeEventType.UpdateValue]: {
-          previous: undefined,
+          previous: [],
           current: ['새태그1', '새태그2'],
         },
       },

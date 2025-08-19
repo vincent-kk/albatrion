@@ -238,7 +238,6 @@ export type UnionNodeEventType = NodeEventType | PublicNodeEventType;
  */
 export type NodeEventPayload = {
   [NodeEventType.Activated]: void;
-
   [NodeEventType.UpdatePath]: string;
   [NodeEventType.UpdateValue]: any;
   [NodeEventType.UpdateState]: NodeStateFlags;
@@ -261,7 +260,6 @@ export type NodeEventPayload = {
  */
 export type NodeEventOptions = {
   [NodeEventType.Activated]: void;
-
   [NodeEventType.UpdatePath]: {
     previous: string;
     current: string;
@@ -280,7 +278,7 @@ export type NodeEventOptions = {
   [NodeEventType.RequestFocus]: void;
   [NodeEventType.RequestSelect]: void;
   [NodeEventType.RequestRefresh]: void;
-  [NodeEventType.RequestEmitChange]: void;
+  [NodeEventType.RequestEmitChange]: boolean | undefined;
   [NodeEventType.RequestValidate]: void;
 };
 

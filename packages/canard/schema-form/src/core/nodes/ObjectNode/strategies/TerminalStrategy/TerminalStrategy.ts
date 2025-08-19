@@ -112,7 +112,8 @@ export class TerminalStrategy implements ObjectNodeStrategy {
   ) {
     const previous = this.__value__;
     const current = this.__parseValue__(input);
-    if (equals(previous, current)) return;
+    const replace = option & SetValueOption.Replace;
+    if (!replace && equals(previous, current)) return;
     this.__value__ = current;
 
     if (option & SetValueOption.EmitChange)

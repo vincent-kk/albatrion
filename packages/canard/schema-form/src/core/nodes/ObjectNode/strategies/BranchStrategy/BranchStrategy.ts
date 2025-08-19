@@ -267,8 +267,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
   ) {
     if (this.__locked__) return;
 
-    const replace = !!(option & SetValueOption.Replace);
     const previous = this.__value__ ? { ...this.__value__ } : undefined;
+    const replace = !!(option & SetValueOption.Replace);
     if (this.__draft__ === undefined) {
       this.__value__ = undefined;
     } else if (replace || this.__value__ === undefined) {
@@ -298,6 +298,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
           },
         },
       });
+
     this.__draft__ = {};
   }
 
