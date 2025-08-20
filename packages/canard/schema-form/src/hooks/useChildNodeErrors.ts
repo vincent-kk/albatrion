@@ -1,4 +1,11 @@
-import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type ReactNode,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { map } from '@winglet/common-utils/array';
 import { isTruthy } from '@winglet/common-utils/filter';
@@ -131,7 +138,7 @@ export const useChildNodeErrors = (
   }, [disabled, children]);
 
   // Subscribe to error updates from all child nodes
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (disabled) return;
     const childrenLength = children?.length;
     if (!childrenLength) return;

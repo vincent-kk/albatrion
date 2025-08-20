@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -14,7 +14,7 @@ export const useSchemaNodeSubscribe = <Node extends SchemaNode>(
   listener: NodeListener,
 ) => {
   const handleListener = useHandle(listener);
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (node === null) return;
     const unsubscribe = node.subscribe(handleListener);
     return unsubscribe;

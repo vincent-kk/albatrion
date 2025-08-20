@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 
 import { useVersion } from '@winglet/react-utils/hook';
 
@@ -15,7 +15,7 @@ export const useSchemaNodeTracker = <Node extends SchemaNode>(
   tracking: NodeEventType = BIT_MASK_ALL,
 ) => {
   const [version, update] = useVersion();
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (node === null) return;
     const unsubscribe = node.subscribe(({ type }) => {
       if (type & tracking) update();
