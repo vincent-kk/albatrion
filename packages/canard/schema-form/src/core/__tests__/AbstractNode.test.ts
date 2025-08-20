@@ -196,22 +196,21 @@ describe('AbstractNode', () => {
     });
     await wait();
     node.setValue({ status: 'active', age: 10 });
-    expect(onChange).toHaveBeenCalledWith({}, true);
     await wait();
-    expect(onChange).toHaveBeenCalledWith({ status: 'active', age: 10 }, true);
+    expect(onChange).toHaveBeenCalledWith({ status: 'active', age: 10 });
 
     node.setValue((prev) => ({ ...prev, age: 20 }));
     await wait();
-    expect(onChange).toHaveBeenCalledWith({ status: 'active', age: 20 }, true);
+    expect(onChange).toHaveBeenCalledWith({ status: 'active', age: 20 });
 
     node.setValue({ status: 'inactive', age: 10 });
     await wait();
-    expect(onChange).toHaveBeenCalledWith({ status: 'inactive' }, true);
+    expect(onChange).toHaveBeenCalledWith({ status: 'inactive' });
 
     // @ts-expect-error applyValue는 모든 노드에서 동일한 타입을 받기 때문에 타입 오류 발생
     node.applyValue({ status: 'inactive', age: 20 });
     await wait();
-    expect(onChange).toHaveBeenCalledWith({ status: 'inactive' }, true);
+    expect(onChange).toHaveBeenCalledWith({ status: 'inactive' });
   });
 
   it('child node error sending', async () => {
