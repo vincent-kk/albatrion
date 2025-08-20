@@ -120,8 +120,9 @@ const FormInner = <
   );
 
   const handleReady = useHandle((rootNode: Node) => {
-    setRootNode(rootNode);
     ready.current = true;
+    setRootNode(rootNode);
+    handleChange(rootNode.value as Value);
   }) as Fn<[SchemaNode], void>;
 
   useEffect(() => {

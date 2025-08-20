@@ -228,9 +228,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__locked__ = false;
 
     this.__handleEmitChange__();
-    this.__publishChildrenChange__();
-
     handleSetDefaultValue(this.__value__);
+    this.__publishChildrenChange__();
 
     this.__prepareOneOfChildren__();
   }

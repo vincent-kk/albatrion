@@ -40,7 +40,6 @@ import {
 } from '../type';
 import {
   EventCascade,
-  afterMicrotask,
   computeFactory,
   find,
   getFallbackValidator,
@@ -251,7 +250,9 @@ export abstract class AbstractNode<
     input: Value | undefined,
     batch?: boolean,
   ): void {
-    this.#handleChange(input, batch);
+    if (this.isRoot)
+      this.#handleChange(getSafeEmptyValue(input, this.jsonSchema), batch);
+    else this.#handleChange(input, batch);
   }
 
   /** List of child nodes, nodes without child nodes return an `null` */
@@ -302,11 +303,7 @@ export abstract class AbstractNode<
     this.setDefaultValue(
       defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema),
     );
-    this.#handleChange = this.isRoot
-      ? afterMicrotask(() =>
-          onChange(getSafeEmptyValue(this.value, this.jsonSchema)),
-        )
-      : onChange;
+    this.#handleChange = onChange;
 
     // NOTE: Special behavior for root node
     if (this.isRoot) this.#prepareValidator(validatorFactory, validationMode);
