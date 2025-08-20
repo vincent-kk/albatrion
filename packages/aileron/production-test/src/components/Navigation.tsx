@@ -1,0 +1,60 @@
+import { NavLink } from "react-router-dom";
+
+const Navigation = () => {
+  return (
+    <nav className="nav">
+      <ul>
+        <li>
+          <NavLink
+            to="/"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Home
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/components"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Component Test
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/canard-form"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Canard Form
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/forms"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Form Test
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/api"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            API Test
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/about"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            About
+          </NavLink>
+        </li>
+      </ul>
+    </nav>
+  );
+};
+
+export default Navigation;

@@ -15,6 +15,7 @@
   "scripts": {
     "benchmark": "yarn workspace @aileron/benchmark",
     "benchmark:form": "yarn workspace @aileron/benchmark-form",
+    "testbed:production": "yarn workspace @aileron/production-testbed",
     "build:all": "yarn run:all build",
     "changeset": "changeset",
     "changeset:publish": "yarn run:all && changeset publish",
