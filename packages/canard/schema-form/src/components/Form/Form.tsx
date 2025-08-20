@@ -13,6 +13,7 @@ import {
 } from 'react';
 
 import { getTrackableHandler } from '@winglet/common-utils/function';
+import { clone } from '@winglet/common-utils/object';
 import { withErrorBoundaryForwardRef } from '@winglet/react-utils/hoc';
 import { useHandle, useMemorize, useVersion } from '@winglet/react-utils/hook';
 
@@ -80,7 +81,7 @@ const FormInner = <
   });
 
   const jsonSchema = useMemorize(
-    () => preprocessSchema(inputJsonSchema),
+    () => preprocessSchema(clone(inputJsonSchema)),
     [version],
   );
   const defaultValue = useMemorize(inputDefaultValue, [version]);
