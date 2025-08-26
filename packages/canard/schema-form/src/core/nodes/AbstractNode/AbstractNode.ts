@@ -766,21 +766,22 @@ export abstract class AbstractNode<
       JsonSchemaError[]
     >();
     for (const error of internalErrors) {
-      if (!errorsByDataPath.has(error.dataPath))
-        errorsByDataPath.set(error.dataPath, []);
-      errorsByDataPath.get(error.dataPath)?.push(error);
+      const errors = errorsByDataPath.get(error.dataPath);
+      if (errors) errors.push(error);
+      else errorsByDataPath.set(error.dataPath, [error]);
     }
-
-    // Find nodes by dataPath and set errors for child nodes as well
-    for (const [dataPath, errors] of errorsByDataPath.entries())
-      this.find(dataPath)?.setErrors(errors);
 
     // Clear errors for nodes that had errors in previous error list but not in new error list
     const errorDataPaths = Array.from(errorsByDataPath.keys());
     if (this.#errorDataPaths)
-      for (const dataPath of this.#errorDataPaths)
-        if (!errorDataPaths.includes(dataPath))
-          this.find(dataPath)?.clearErrors();
+      for (const dataPath of this.#errorDataPaths) {
+        if (errorDataPaths.includes(dataPath)) continue;
+        this.find(dataPath)?.clearErrors();
+      }
+
+    // Find nodes by dataPath and set errors for child nodes as well
+    for (const [dataPath, errors] of errorsByDataPath.entries())
+      this.find(dataPath)?.setErrors(errors);
 
     // Update list of dataPaths with errors
     this.#errorDataPaths = errorDataPaths;
