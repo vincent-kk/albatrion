@@ -49,6 +49,55 @@ export const VirtualSchema = () => {
   );
 };
 
+export const VirtualSchemaForNormalInput = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+      },
+      age: {
+        type: 'number',
+      },
+    },
+    virtual: {
+      user: {
+        fields: ['name', 'age'],
+        FormTypeInput: ({ value, onChange }) => {
+          return (
+            <div>
+              <input
+                type="text"
+                value={value?.[0]}
+                onChange={(e) => onChange([e.target.value, value?.[1]])}
+              />
+              <input
+                type="number"
+                value={value?.[1]}
+                onChange={(e) => onChange([value?.[0], e.target.value])}
+              />
+            </div>
+          );
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>({});
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
+      <Form
+        jsonSchema={jsonSchema}
+        defaultValue={{}}
+        onChange={setValue}
+        onValidate={setErrors}
+      />
+    </StoryLayout>
+  );
+};
+
 export const VirtualSchemaRequired = () => {
   const jsonSchema = {
     type: 'object',
