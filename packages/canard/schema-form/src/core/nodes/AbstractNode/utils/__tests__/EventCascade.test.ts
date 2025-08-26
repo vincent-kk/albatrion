@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { NodeEventType } from '../../../type';
-import { EventCascade } from './EventCascade';
+import { EventCascade } from '../EventCascade';
 
 describe('EventCascade', () => {
   it('should batch events and emit merged event', () => {

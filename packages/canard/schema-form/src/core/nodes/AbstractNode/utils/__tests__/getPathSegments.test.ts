@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getPathSegments } from './getPathSegments';
+import { getPathSegments } from '../find/getPathSegments';
 
 describe('getPathSegments', () => {
   it('should return an empty array for an empty path', () => {
