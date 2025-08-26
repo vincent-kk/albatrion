@@ -58,7 +58,6 @@
     "size-limit": "size-limit",
     "start": "yarn build && yarn storybook",
     "storybook": "storybook dev -p 6006",
-    "storybook:upgrade": "npx storybook@latest upgrade --yes",
     "test": "yarn build:chain && vitest",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",

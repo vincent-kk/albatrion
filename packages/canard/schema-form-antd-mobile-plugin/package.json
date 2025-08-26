@@ -53,7 +53,6 @@
     "publish:npm": "yarn npm publish --access public",
     "start": "yarn build && yarn storybook",
     "storybook": "storybook dev -p 6006",
-    "storybook:upgrade": "npx storybook@latest upgrade --yes",
     "test": "vitest",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",

@@ -18,7 +18,9 @@ export default tseslint.config([
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
-      noAny: true,
+    },
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
 ]);

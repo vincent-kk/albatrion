@@ -122,12 +122,7 @@ describe('cxLite', () => {
       };
 
       expect(
-        cxLite(
-          styles.button,
-          styles.primary,
-          styles.large,
-          true && styles.active,
-        ),
+        cxLite(styles.button, styles.primary, styles.large, styles.active),
       ).toBe('button_abc123 primary_def456 large_ghi789 active_jkl012');
     });
   });
