@@ -319,10 +319,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
         type: NodeEventType.UpdateValue,
         payload: { [NodeEventType.UpdateValue]: this.__value__ },
         options: {
-          [NodeEventType.UpdateValue]: {
-            previous,
-            current: this.__value__,
-          },
+          [NodeEventType.UpdateValue]: { previous, current: this.__value__ },
         },
       });
 

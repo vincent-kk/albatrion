@@ -109,10 +109,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
         type: NodeEventType.UpdateValue,
         payload: { [NodeEventType.UpdateValue]: current },
         options: {
-          [NodeEventType.UpdateValue]: {
-            previous,
-            current,
-          },
+          [NodeEventType.UpdateValue]: { previous, current },
         },
       });
   }

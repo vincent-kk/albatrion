@@ -104,10 +104,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
         type: NodeEventType.UpdateValue,
         payload: { [NodeEventType.UpdateValue]: current },
         options: {
-          [NodeEventType.UpdateValue]: {
-            previous,
-            current,
-          },
+          [NodeEventType.UpdateValue]: { previous, current },
         },
       });
   }

@@ -124,10 +124,7 @@ export class TerminalStrategy implements ObjectNodeStrategy {
         type: NodeEventType.UpdateValue,
         payload: { [NodeEventType.UpdateValue]: current },
         options: {
-          [NodeEventType.UpdateValue]: {
-            previous,
-            current,
-          },
+          [NodeEventType.UpdateValue]: { previous, current },
         },
       });
   }
