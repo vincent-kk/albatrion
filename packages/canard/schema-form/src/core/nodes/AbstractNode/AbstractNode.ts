@@ -58,8 +58,8 @@ export abstract class AbstractNode<
   Schema extends JsonSchemaWithVirtual = JsonSchemaWithVirtual,
   Value extends AllowedValue = any,
 > {
-  /** [readonly] Node group, `branch`, `terminal` or `virtual` */
-  public readonly group: 'branch' | 'terminal' | 'virtual';
+  /** [readonly] Node group, `branch` or `terminal` */
+  public readonly group: 'branch' | 'terminal';
 
   /** [readonly] Node type, `array`, `number`, `object`, `string`, `boolean`, `virtual`, `null` */
   public readonly type: Exclude<Schema['type'], 'integer'>;

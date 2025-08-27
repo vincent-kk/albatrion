@@ -5,15 +5,18 @@ import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 /**
  * Returns the node group based on the schema.
  * @param schema - JSON schema
- * @returns Node group: `branch` | `terminal` | `virtual`
+ * @returns Node group: `branch` | `terminal`
  */
 export const getNodeGroup = (
   schema: JsonSchemaWithVirtual,
-): 'branch' | 'terminal' | 'virtual' => {
-  if (schema.type === 'virtual') return 'virtual';
+): 'branch' | 'terminal' => {
   if (typeof schema.terminal === 'boolean')
     return schema.terminal ? 'terminal' : 'branch';
-  if (schema.type === 'array' || schema.type === 'object')
+  if (
+    schema.type === 'array' ||
+    schema.type === 'object' ||
+    schema.type === 'virtual'
+  )
     return isTerminalFormTypeInput(schema) ? 'terminal' : 'branch';
   return 'terminal';
 };

@@ -22,7 +22,7 @@ describe('getNodeGroup', () => {
     };
 
     const result = getNodeGroup(schema);
-    expect(result).toBe('virtual');
+    expect(result).toBe('branch');
   });
 
   it('should return terminal when terminal property is true', () => {

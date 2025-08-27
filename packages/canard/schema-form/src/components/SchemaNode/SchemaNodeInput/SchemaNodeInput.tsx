@@ -47,7 +47,7 @@ export const SchemaNodeInput = memo(
 
     const [value, setValue] = useState(sync ? node.value : undefined);
     useSchemaNodeSubscribe(sync ? node : null, ({ type, payload }) => {
-      if (type === NodeEventType.UpdateValue) {
+      if (type & NodeEventType.UpdateValue) {
         const currentValue = payload?.[NodeEventType.UpdateValue];
         if (currentValue !== value) setValue(currentValue);
       }
