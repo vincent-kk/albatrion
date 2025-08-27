@@ -20,7 +20,7 @@ import {
  */
 export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
   /** Current value of the virtual node */
-  #value: VirtualNodeValue | undefined = [];
+  #value: VirtualNodeValue = [];
 
   /**
    * Gets the value of the virtual node.
@@ -97,22 +97,18 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
       const node = this.#refNodes[i];
       const unsubscribe = node.subscribe(({ type, payload }) => {
         if (type & NodeEventType.UpdateValue) {
-          const onChangePayload = payload?.[NodeEventType.UpdateValue];
-          if (this.#value && this.#value[i] !== onChangePayload) {
-            const previous = this.#value;
-            this.#value = [...this.#value];
-            this.#value[i] = onChangePayload;
-            this.publish({
-              type: NodeEventType.UpdateValue,
-              payload: { [NodeEventType.UpdateValue]: this.#value },
-              options: {
-                [NodeEventType.UpdateValue]: {
-                  previous,
-                  current: this.#value,
-                },
-              },
-            });
-          }
+          const value = payload?.[NodeEventType.UpdateValue];
+          if (this.#value[i] === value) return;
+          const previous = this.#value;
+          this.#value = [...this.#value];
+          this.#value[i] = value;
+          this.publish({
+            type: NodeEventType.UpdateValue,
+            payload: { [NodeEventType.UpdateValue]: this.#value },
+            options: {
+              [NodeEventType.UpdateValue]: { previous, current: this.#value },
+            },
+          });
         }
       });
       this.saveUnsubscribe(unsubscribe);
@@ -149,17 +145,32 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
           providedValues: values,
         },
       );
+
     const refNodes = this.#refNodes;
+    const previous = this.#value;
+    this.#value = [...this.#value];
     if (values === undefined) {
-      for (let i = 0; i < refNodesLength; i++)
+      for (let i = 0; i < refNodesLength; i++) {
         refNodes[i].setValue(undefined, option);
+        this.#value[i] = undefined;
+      }
     } else {
       for (let i = 0; i < refNodesLength; i++) {
         const node = refNodes[i];
         const value = values[i];
-        if (node.value !== value) node.setValue(value, option);
+        if (node.value === value) continue;
+        node.setValue(value, option);
+        this.#value[i] = node.value;
       }
     }
     if (option & SetValueOption.Refresh) this.refresh(values);
+    if (option & SetValueOption.PublishUpdateEvent)
+      this.publish({
+        type: NodeEventType.UpdateValue,
+        payload: { [NodeEventType.UpdateValue]: this.#value },
+        options: {
+          [NodeEventType.UpdateValue]: { previous, current: this.#value },
+        },
+      });
   }
 }
