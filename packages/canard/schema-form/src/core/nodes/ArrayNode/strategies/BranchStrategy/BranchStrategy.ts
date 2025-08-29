@@ -49,10 +49,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
   /** Map storing actual data and corresponding schema nodes for each array element */
   private __sourceMap__: Map<
     ChildSegmentKey,
-    {
-      data: any;
-      node: SchemaNode;
-    }
+    { data: AllowedValue; node: SchemaNode }
   > = new Map();
 
   /** Flag indicating whether the array value is not changed */
@@ -202,10 +199,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
       onChange: this.__handleChangeFactory__(key),
       nodeFactory: this.__nodeFactory__,
     });
-    this.__sourceMap__.set(key, {
-      node: childNode,
-      data: childNode.value,
-    });
+    this.__sourceMap__.set(key, { node: childNode, data: childNode.value });
 
     if (this.__host__.activated)
       (childNode as AbstractNode).activate(this.__host__);
@@ -336,10 +330,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     const edges = new Array<ChildNode>(this.__keys__.length);
     for (let i = 0, l = this.__keys__.length; i < l; i++) {
       const key = this.__keys__[i];
-      edges[i] = {
-        key: key,
-        node: this.__sourceMap__.get(key)!.node,
-      };
+      edges[i] = { key: key, node: this.__sourceMap__.get(key)!.node };
     }
     return edges;
   }
