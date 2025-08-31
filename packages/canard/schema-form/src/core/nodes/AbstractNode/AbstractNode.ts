@@ -85,8 +85,11 @@ export abstract class AbstractNode<
   /** [readonly] Node's escaped key(it can be same as propertyKey if not escape needed) */
   public readonly escapedKey: string;
 
-  /** [readonly] Whether the node is required */
+  /** [readonly] Whether the node value is required */
   public readonly required: boolean;
+
+  /** [readonly] Whether the node value is nullable */
+  public readonly nullable: boolean;
 
   /** Node name */
   #name: string;
@@ -276,6 +279,7 @@ export abstract class AbstractNode<
     this.jsonSchema = jsonSchema;
     this.parentNode = parentNode || null;
     this.required = required ?? false;
+    this.nullable = jsonSchema.nullable || false;
 
     this.rootNode = (this.parentNode?.rootNode || this) as SchemaNode;
     this.isRoot = !this.parentNode;
