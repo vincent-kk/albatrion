@@ -16,8 +16,7 @@ export const requiredFactory = (
 ): ((key: string) => boolean) => {
   return (key: string): boolean => {
     const conditions = fieldConditionMap.get(key);
-    if (!conditions) return false;
-    if (conditions === true) return true;
+    if (conditions === undefined || conditions === true) return true;
     for (let i = 0, l = conditions.length; i < l; i++) {
       const { condition, inverse } = conditions[i];
       let matches = true;

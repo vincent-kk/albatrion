@@ -174,6 +174,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
           return;
         this.__draft__[propertyKey] = input;
         if (this.__locked__) return;
+        this.__isolated__ = false;
         this.__emitChange__(
           batch ? SetValueOption.BatchDefault : SetValueOption.Default,
         );
