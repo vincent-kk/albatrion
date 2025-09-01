@@ -1,3 +1,5 @@
+import type { Nullable } from '@aileron/declare';
+
 import type {
   AllowedValue,
   ArrayValue,
@@ -132,15 +134,9 @@ export interface BasicSchema<
   anyOf?: Partial<Schema>[];
   oneOf?: Partial<Schema>[];
   nullable?: boolean;
-  const?: Type;
-  default?: Type;
-  enum?: Type extends string | number | boolean
-    ? Type[]
-    : Type extends Array<infer Element>
-      ? Element
-      : Type extends object
-        ? ObjectValue
-        : never;
+  const?: Nullable<Type>;
+  default?: Nullable<Type>;
+  enum?: Nullable<Type>[];
 }
 
 interface CustomOptions<Options extends Dictionary> {
