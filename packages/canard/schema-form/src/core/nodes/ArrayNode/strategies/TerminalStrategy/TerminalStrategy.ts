@@ -35,7 +35,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   private __locked__: boolean = true;
 
   /** Current value of the array node, initialized as empty array */
-  private __value__: ArrayValue | Nullish = undefined;
+  private __value__: ArrayValue | Nullish = [];
 
   /**
    * Gets the current value of the array.

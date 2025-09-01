@@ -147,7 +147,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__handleUpdateComputedProperties__ = handleUpdateComputedProperties;
 
     this.__value__ = host.defaultValue;
-    this.__draft__ = host.defaultValue == null ? host.defaultValue : {};
+    this.__draft__ = host.defaultValue === null ? null : {};
 
     const jsonSchema = host.jsonSchema;
 

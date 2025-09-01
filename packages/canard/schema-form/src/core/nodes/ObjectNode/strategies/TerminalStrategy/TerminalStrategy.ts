@@ -38,7 +38,7 @@ export class TerminalStrategy implements ObjectNodeStrategy {
   private readonly __propertyKeys__: string[];
 
   /** Current value of the object node, initialized as empty object */
-  private __value__: ObjectValue | Nullish = undefined;
+  private __value__: ObjectValue | Nullish;
 
   /**
    * Gets the current value of the object.

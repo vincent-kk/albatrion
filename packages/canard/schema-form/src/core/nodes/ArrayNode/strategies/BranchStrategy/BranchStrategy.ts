@@ -153,7 +153,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__handleRefresh__ = handleRefresh;
     this.__nodeFactory__ = nodeFactory;
 
-    if (host.defaultValue == null) this.__nullish__ = host.defaultValue;
+    if (host.defaultValue === null) this.__nullish__ = null;
 
     // NOTE: If defaultValue is an array and its length is greater than 0, push each value to the array.
     if (host.defaultValue?.length)
