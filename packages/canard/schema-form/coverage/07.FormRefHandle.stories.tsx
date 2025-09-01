@@ -389,7 +389,7 @@ export const FormRefHandleWithIfThenElse = () => {
       },
     },
     then: {
-      required: ['title', 'openingDate', 'price'],
+      required: ['openingDate', 'price'],
     },
     else: {
       if: {
@@ -400,10 +400,7 @@ export const FormRefHandleWithIfThenElse = () => {
         },
       },
       then: {
-        required: ['title', 'releaseDate', 'numOfPlayers'],
-      },
-      else: {
-        required: ['title'],
+        required: ['releaseDate', 'numOfPlayers'],
       },
     },
   } satisfies JsonSchema;
