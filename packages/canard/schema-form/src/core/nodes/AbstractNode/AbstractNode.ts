@@ -539,16 +539,16 @@ export abstract class AbstractNode<
     const defaultValue = preferLatest
       ? input !== undefined
         ? input
-        : this.value !== undefined
-          ? this.value
+        : this.defaultValue !== undefined
+          ? this.#defaultValue
           : this.#initialValue
       : this.#initialValue;
     this.#defaultValue = defaultValue;
 
     const value = this.#visible ? defaultValue : undefined;
+
     this.setValue(value, RESET_NODE_OPTION);
     this.onChange(value, true);
-
     this.setState();
   }
 
