@@ -1,6 +1,6 @@
 import { unique } from '@winglet/common-utils/array';
 
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullish } from '@aileron/declare';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import type {
@@ -34,7 +34,7 @@ export const getChildNodeMap = (
   parentNode: ObjectNode,
   jsonSchema: ObjectSchema,
   propertyKeys: string[],
-  defaultValue: ObjectValue | undefined,
+  defaultValue: ObjectValue | Nullish,
   conditionsMap: Map<string, string[]> | undefined,
   virtualReferencesMap: VirtualReferencesMap | undefined,
   virtualReferenceFieldsMap: VirtualReferenceFieldsMap | undefined,

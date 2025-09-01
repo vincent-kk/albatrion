@@ -1,7 +1,7 @@
 import { sortWithReference } from '@winglet/common-utils/array';
 import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils/object';
 
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullish } from '@aileron/declare';
 
 import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
@@ -37,10 +37,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
   private readonly __host__: ObjectNode;
 
   /** Callback function to handle value changes */
-  private readonly __handleChange__: HandleChange<ObjectValue | undefined>;
+  private readonly __handleChange__: HandleChange<ObjectValue | Nullish>;
 
   /** Callback function to handle refresh operations */
-  private readonly __handleRefresh__: Fn<[ObjectValue | undefined]>;
+  private readonly __handleRefresh__: Fn<[ObjectValue | Nullish]>;
 
   /** Callback function to handle computed properties updates */
   private readonly __handleUpdateComputedProperties__: Fn;
@@ -87,10 +87,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
   private __locked__: boolean = true;
 
   /** Current committed value of the object node */
-  private __value__: ObjectValue | undefined;
+  private __value__: ObjectValue | Nullish;
 
   /** Draft value containing pending changes before commit */
-  private __draft__: ObjectValue | undefined;
+  private __draft__: ObjectValue | Nullish;
 
   /**
    * Gets the current value of the object.
@@ -105,7 +105,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @param input - Object value to set
    * @param option - Setting options
    */
-  public applyValue(input: ObjectValue, option: UnionSetValueOption) {
+  public applyValue(input: ObjectValue | Nullish, option: UnionSetValueOption) {
     this.__draft__ = input;
     this.__isolated__ = !!(option & SetValueOption.Isolate);
     this.__emitChange__(option);
@@ -135,9 +135,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
    */
   constructor(
     host: ObjectNode,
-    handleChange: HandleChange<ObjectValue | undefined>,
-    handleRefresh: Fn<[ObjectValue | undefined]>,
-    handleSetDefaultValue: Fn<[ObjectValue | undefined]>,
+    handleChange: HandleChange<ObjectValue | Nullish>,
+    handleRefresh: Fn<[ObjectValue | Nullish]>,
+    handleSetDefaultValue: Fn<[ObjectValue | Nullish]>,
     handleUpdateComputedProperties: Fn,
     nodeFactory: SchemaNodeFactory,
   ) {
@@ -147,7 +147,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__handleUpdateComputedProperties__ = handleUpdateComputedProperties;
 
     this.__value__ = host.defaultValue;
-    this.__draft__ = {};
+    this.__draft__ = host.defaultValue == null ? host.defaultValue : {};
 
     const jsonSchema = host.jsonSchema;
 
@@ -170,8 +170,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       (propertyKey: string): HandleChange =>
       (input, batch) => {
         if (!this.__draft__) this.__draft__ = {};
-        if (input !== undefined && this.__draft__[propertyKey] === input)
-          return;
+        if (input != undefined && this.__draft__[propertyKey] === input) return;
         this.__draft__[propertyKey] = input;
         if (this.__locked__) return;
         this.__emitChange__(
@@ -266,11 +265,13 @@ export class BranchStrategy implements ObjectNodeStrategy {
   ) {
     if (this.__locked__) return;
 
-    const previous = this.__value__ ? { ...this.__value__ } : undefined;
+    const previous = this.__value__ ? { ...this.__value__ } : this.__value__;
     const replace = !!(option & SetValueOption.Replace);
     if (this.__draft__ === undefined) {
       this.__value__ = undefined;
-    } else if (replace || this.__value__ === undefined) {
+    } else if (this.__draft__ === null) {
+      this.__value__ = this.__host__.nullable ? null : {};
+    } else if (replace || this.__value__ == null) {
       this.__value__ = this.__parseValue__(this.__draft__);
     } else {
       if (checkEmptyDraft(this.__draft__)) return;
@@ -301,7 +302,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /**
    * Parses input value and processes it as an object.
    * @param input - Object to parse
-   * @returns {ObjectValue|undefined} Parsed object
+   * @returns {ObjectValue} Parsed object
    * @private
    */
   private __parseValue__(input: ObjectValue) {

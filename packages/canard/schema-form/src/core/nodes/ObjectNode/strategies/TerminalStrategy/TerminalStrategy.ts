@@ -5,7 +5,7 @@ import {
   sortObjectKeys,
 } from '@winglet/common-utils/object';
 
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullish } from '@aileron/declare';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import {
@@ -29,20 +29,20 @@ export class TerminalStrategy implements ObjectNodeStrategy {
   private readonly __host__: ObjectNode;
 
   /** Callback function to handle value changes */
-  private readonly __handleChange__: HandleChange<ObjectValue | undefined>;
+  private readonly __handleChange__: HandleChange<ObjectValue | Nullish>;
 
   /** Callback function to handle refresh operations */
-  private readonly __handleRefresh__: Fn<[ObjectValue | undefined]>;
+  private readonly __handleRefresh__: Fn<[ObjectValue | Nullish]>;
 
   /** Array of property keys defined in the JSON schema, used for ordering object properties */
   private readonly __propertyKeys__: string[];
 
   /** Current value of the object node, initialized as empty object */
-  private __value__: ObjectValue | undefined = {};
+  private __value__: ObjectValue | Nullish = undefined;
 
   /**
    * Gets the current value of the object.
-   * @returns Current value of the object node or undefined
+   * @returns Current value of the object node or undefined (if empty) or null (if nullable)
    */
   public get value() {
     return this.__value__;
@@ -53,10 +53,7 @@ export class TerminalStrategy implements ObjectNodeStrategy {
    * @param input - Object value to set
    * @param option - Setting options
    */
-  public applyValue(
-    input: ObjectValue | undefined,
-    option: UnionSetValueOption,
-  ) {
+  public applyValue(input: ObjectValue | Nullish, option: UnionSetValueOption) {
     this.__emitChange__(input, option);
   }
 
@@ -77,9 +74,9 @@ export class TerminalStrategy implements ObjectNodeStrategy {
    */
   constructor(
     host: ObjectNode,
-    handleChange: HandleChange<ObjectValue | undefined>,
-    handleRefresh: Fn<[ObjectValue | undefined]>,
-    handleSetDefaultValue: Fn<[ObjectValue | undefined]>,
+    handleChange: HandleChange<ObjectValue | Nullish>,
+    handleRefresh: Fn<[ObjectValue | Nullish]>,
+    handleSetDefaultValue: Fn<[ObjectValue | Nullish]>,
   ) {
     this.__host__ = host;
     this.__handleChange__ = handleChange;
@@ -107,10 +104,10 @@ export class TerminalStrategy implements ObjectNodeStrategy {
    * @private
    */
   private __emitChange__(
-    input: ObjectValue | undefined,
+    input: ObjectValue | Nullish,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
-    const previous = this.__value__;
+    const previous = this.__value__ ? { ...this.__value__ } : this.__value__;
     const current = this.__parseValue__(input);
     const replace = option & SetValueOption.Replace;
     if (!replace && equals(previous, current)) return;
@@ -135,8 +132,9 @@ export class TerminalStrategy implements ObjectNodeStrategy {
    * @returns {ObjectValue|undefined} Parsed object value or undefined
    * @private
    */
-  private __parseValue__(input: ObjectValue | undefined) {
+  private __parseValue__(input: ObjectValue | Nullish) {
     if (input === undefined) return undefined;
+    if (input === null && this.__host__.nullable) return null;
     return sortObjectKeys(parseObject(input), this.__propertyKeys__, true);
   }
 }

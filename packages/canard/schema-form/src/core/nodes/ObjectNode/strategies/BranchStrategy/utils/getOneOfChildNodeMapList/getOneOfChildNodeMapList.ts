@@ -1,7 +1,7 @@
 import { isArray, isPlainObject } from '@winglet/common-utils/filter';
 import { getRandomString } from '@winglet/common-utils/lib';
 
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullish } from '@aileron/declare';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import type {
@@ -30,7 +30,7 @@ import type {
 export const getOneOfChildNodeMapList = (
   parentNode: ObjectNode,
   jsonSchema: ObjectSchema,
-  defaultValue: ObjectValue | undefined,
+  defaultValue: ObjectValue | Nullish,
   childNodeMap: Map<string, ChildNode>,
   handelChangeFactory: Fn<[name: string], HandleChange>,
   nodeFactory: SchemaNodeFactory,
