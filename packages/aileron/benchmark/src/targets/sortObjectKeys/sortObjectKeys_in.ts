@@ -1,7 +1,7 @@
 import type { Dictionary, Nullish } from '@aileron/declare';
 
 export const sortObjectKeys = <Dict extends Dictionary>(
-  object: Nullish<Dict>,
+  object: Dict | Nullish,
   keys: string[],
   omitUndefined?: boolean,
 ): Dict => {

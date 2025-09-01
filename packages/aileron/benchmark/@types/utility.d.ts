@@ -1,37 +1,43 @@
-declare type Nullish<T> = T | null | undefined;
+export type Nullish = null | undefined;
 
-/** T에서 key in K를 추출하고, 이를 Required로 설정 */
-declare type PickRequired<T, K extends keyof T> = Required<Pick<T, K>>;
+export type Nullable<T> = T | null;
 
-/** T에서 key in K를 추출하고, 이를 Partial로 설정 */
-declare type PickPartial<T, K extends keyof T> = Partial<Pick<T, K>>;
+export type Optional<T> = T | undefined;
 
-/** T에서 key in K를 제거하고, 나머지를 Required로 설정 */
-declare type OmitRequired<T, K extends keyof T> = Required<Omit<T, K>>;
+/** Extract keys K from T and make them required */
+export type PickRequired<T, K extends keyof T> = Required<Pick<T, K>>;
 
-/** T에서 key in K를 제거하고, 나머지를 Partial로 설정 */
-declare type OmitPartial<T, K extends keyof T> = Partial<Omit<T, K>>;
+/** Extract keys K from T and make them partial */
+export type PickPartial<T, K extends keyof T> = Partial<Pick<T, K>>;
 
-/** T에서 key in K는 Required로 설정하고, 나머지는 Partial로 설정 */
-declare type PickAndPartial<T, K extends keyof T> = PickRequired<T, K> &
+/** Omit keys K from T and make the rest required */
+export type OmitRequired<T, K extends keyof T> = Required<Omit<T, K>>;
+
+/** Omit keys K from T and make the rest partial */
+export type OmitPartial<T, K extends keyof T> = Partial<Omit<T, K>>;
+
+/** Make keys K required and the rest partial in T */
+export type PickAndPartial<T, K extends keyof T> = PickRequired<T, K> &
   OmitPartial<T, K>;
 
-/** T에서 K를 Required로 설정하고, 나머지는 유지 */
-declare type RequiredBy<T, K extends keyof T> = PickRequired<T, K> & T;
+/** Make keys K required in T while keeping the rest unchanged */
+export type RequiredBy<T, K extends keyof T> = PickRequired<T, K> & T;
 
-/** T에서 K를 Partial로 설정하고, 나머지는 유지 */
-declare type PartialBy<T, K extends keyof T> = PickPartial<T, K> & Omit<T, K>;
+/** Make keys K partial in T while keeping the rest unchanged */
+export type PartialBy<T, K extends keyof T> = PickPartial<T, K> & Omit<T, K>;
 
-declare type Roll<T> = { [K in keyof T]: T[K] };
+export type Roll<T> = { [K in keyof T]: T[K] };
 
-type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
+export type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
 
-type ExpandRecursively<T> = T extends object
+export type ExpandRecursively<T> = T extends object
   ? T extends infer O
     ? { [K in keyof O]: ExpandRecursively<O[K]> }
     : never
   : T;
 
-declare type WithKey<T> = T & { key: string };
+export type WithKey<T> = T & { key: string };
 
-declare type ElementOf<T extends any[]> = T[number];
+export type ElementOf<T extends any[]> = T[number];
+
+export type Params<T extends Array<string>> = Record<T[number], string>;
