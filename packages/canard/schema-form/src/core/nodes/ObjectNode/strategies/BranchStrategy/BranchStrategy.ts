@@ -170,7 +170,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
       (propertyKey: string): HandleChange =>
       (input, batch) => {
         if (!this.__draft__) this.__draft__ = {};
-        if (input != undefined && this.__draft__[propertyKey] === input) return;
+        if (input !== undefined && this.__draft__[propertyKey] === input)
+          return;
         this.__draft__[propertyKey] = input;
         if (this.__locked__) return;
         this.__emitChange__(
@@ -322,12 +323,13 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__locked__ = true;
     const target = this.__value__ || {};
     const draft = this.__draft__ || {};
+    const nullify = this.__draft__ === null;
     for (let i = 0, l = this.__children__.length; i < l; i++) {
       const node = this.__children__[i].node;
       if (node.type === 'virtual') continue;
       const key = node.propertyKey;
       if (replace || (key in draft && key in target))
-        node.setValue(target[key], option);
+        node.setValue(nullify ? null : target[key], option);
     }
     this.__locked__ = false;
   }
