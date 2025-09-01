@@ -93,6 +93,7 @@ export type ObjectSchema<Options extends Dictionary = object> = BasicSchema &
 export type VirtualSchema<Options extends Dictionary = object> = {
   type: 'virtual';
   fields?: string[];
+  nullable?: never;
 } & BasicSchema &
   BaseBasicSchema<VirtualNodeValue, Options, JsonSchema<Options>>;
 

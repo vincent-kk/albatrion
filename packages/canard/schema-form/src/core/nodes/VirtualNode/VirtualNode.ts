@@ -91,7 +91,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
 
     this.#refNodes = refNodes || [];
 
-    if (this.defaultValue !== undefined) this.#value = this.defaultValue;
+    if (this.defaultValue != null) this.#value = this.defaultValue;
 
     for (let i = 0, l = this.#refNodes.length; i < l; i++) {
       const node = this.#refNodes[i];
