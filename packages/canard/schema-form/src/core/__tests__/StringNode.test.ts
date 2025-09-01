@@ -138,7 +138,6 @@ describe('StringNode', () => {
     expect(stringNode.value).toBe('');
 
     // null을 문자열로 파싱
-    // @ts-expect-error
     stringNode.setValue(null);
     await delay();
     expect(stringNode.value).toBe('');
