@@ -50,7 +50,7 @@ describe('ArrayNode-Terminal', () => {
     await delay();
 
     const booleanNode = node?.find('arr') as ArrayNode;
-    expect(booleanNode.value).toEqual([]);
+    expect(booleanNode.value).toEqual(undefined);
 
     booleanNode.setValue([true, false, true]);
     await delay();
@@ -126,7 +126,7 @@ describe('ArrayNode-Terminal', () => {
       },
       options: {
         [NodeEventType.UpdateValue]: {
-          previous: [],
+          previous: undefined,
           current: [true, false, true],
         },
       },

@@ -1,3 +1,5 @@
+import type { Nullish } from '@aileron/declare';
+
 import type { ArraySchema, ArrayValue } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
@@ -30,7 +32,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
   /**
    * Gets the value of the array node.
-   * @returns Array value or undefined
+   * @returns Array value or undefined (if empty) or null (if nullable)
    */
   public override get value() {
     return this.#strategy.value;
@@ -40,7 +42,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * Sets the value of the array node.
    * @param input - Array value to set
    */
-  public override set value(input: ArrayValue | undefined) {
+  public override set value(input: ArrayValue | Nullish) {
     this.setValue(input);
   }
 
@@ -51,7 +53,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    */
   protected override applyValue(
     this: ArrayNode,
-    input: ArrayValue,
+    input: ArrayValue | Nullish,
     option: UnionSetValueOption,
   ) {
     this.#strategy.applyValue(input, option);
@@ -88,7 +90,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     return false;
   }
 
-  protected override onChange: HandleChange<ArrayValue | undefined>;
+  protected override onChange: HandleChange<ArrayValue | Nullish>;
 
   constructor({
     key,
@@ -113,7 +115,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       validatorFactory,
       required,
     });
-    const handleChange: HandleChange<ArrayValue | undefined> =
+    const handleChange: HandleChange<ArrayValue | Nullish> =
       this.jsonSchema.options?.omitEmpty === false
         ? (value, batch) => super.onChange(value, batch)
         : (value, batch) => super.onChange(omitEmptyArray(value), batch);
@@ -172,11 +174,11 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns {ArrayNodeStrategy} Created strategy: TerminalStrategy | BranchStrategy
    */
   #createStrategy(
-    handleChange: HandleChange<ArrayValue | undefined>,
+    handleChange: HandleChange<ArrayValue | Nullish>,
     nodeFactory: SchemaNodeFactory,
   ) {
-    const handleRefresh = (value?: ArrayValue) => this.refresh(value);
-    const handleSetDefaultValue = (value?: ArrayValue) =>
+    const handleRefresh = (value: ArrayValue | Nullish) => this.refresh(value);
+    const handleSetDefaultValue = (value: ArrayValue | Nullish) =>
       this.setDefaultValue(value);
 
     if (this.group === 'terminal') {

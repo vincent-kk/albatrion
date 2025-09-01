@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullish } from '@aileron/declare';
 
 import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
 import type { ArrayNode } from '@/schema-form/core/nodes/ArrayNode';
@@ -26,10 +26,10 @@ export class BranchStrategy implements ArrayNodeStrategy {
   private readonly __host__: ArrayNode;
 
   /** Callback function to handle value changes */
-  private readonly __handleChange__: HandleChange<ArrayValue | undefined>;
+  private readonly __handleChange__: HandleChange<ArrayValue | Nullish>;
 
   /** Callback function to handle refresh operations */
-  private readonly __handleRefresh__: Fn<[ArrayValue | undefined]>;
+  private readonly __handleRefresh__: Fn<[ArrayValue | Nullish]>;
 
   /** Factory function for creating new schema nodes */
   private readonly __nodeFactory__: SchemaNodeFactory;
@@ -55,12 +55,15 @@ export class BranchStrategy implements ArrayNodeStrategy {
   /** Flag indicating whether the array value is not changed */
   private __idle__: boolean = false;
 
+  private __nullish__: Nullish | false = false;
+
   /** Flag indicating whether the array edges are expired */
   private __expired__: boolean = true;
 
   /** Expire the array node's value and edges */
   private __expire__() {
     this.__idle__ = false;
+    this.__nullish__ = false;
     this.__expired__ = true;
   }
 
@@ -69,10 +72,11 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
   /**
    * Gets the current value of the array.
-   * @returns Current value of the array node or undefined (if empty)
+   * @returns Current value of the array node or undefined (if empty) or null (if nullable)
    */
   public get value() {
-    return this.__value__;
+    if (this.__nullish__ == null) return this.__nullish__;
+    else return this.__value__;
   }
 
   /**
@@ -80,11 +84,12 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @param input - Array value to set
    * @param option - Setting options
    */
-  public applyValue(input: ArrayValue, option: UnionSetValueOption) {
-    if (input === undefined) {
+  public applyValue(input: ArrayValue | Nullish, option: UnionSetValueOption) {
+    if (input == null) {
       this.__locked__ = true;
       this.clear(option);
       this.__locked__ = false;
+      this.__nullish__ = input;
       this.__emitChange__(option, true);
     } else if (isArray(input)) {
       this.__locked__ = true;
@@ -138,15 +143,17 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   constructor(
     host: ArrayNode,
-    handleChange: HandleChange<ArrayValue | undefined>,
-    handleRefresh: Fn<[ArrayValue | undefined]>,
-    handleSetDefaultValue: Fn<[ArrayValue | undefined]>,
+    handleChange: HandleChange<ArrayValue | Nullish>,
+    handleRefresh: Fn<[ArrayValue | Nullish]>,
+    handleSetDefaultValue: Fn<[ArrayValue | Nullish]>,
     nodeFactory: SchemaNodeFactory,
   ) {
     this.__host__ = host;
     this.__handleChange__ = handleChange;
     this.__handleRefresh__ = handleRefresh;
     this.__nodeFactory__ = nodeFactory;
+
+    if (host.defaultValue == null) this.__nullish__ = host.defaultValue;
 
     // NOTE: If defaultValue is an array and its length is greater than 0, push each value to the array.
     if (host.defaultValue?.length)
@@ -221,7 +228,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     option?: UnionSetValueOption,
   ) {
     const node = this.__sourceMap__.get(this.__keys__[index])?.node;
-    if (!node) return promiseAfterMicrotask(undefined);
+    if (!node) return promiseAfterMicrotask(void 0);
     node.setValue(data, option);
     return promiseAfterMicrotask(node.value);
   }
@@ -234,7 +241,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
   public remove(index: number, option?: UnionSetValueOption) {
     const targetId = this.__keys__[index];
     const removed = this.__sourceMap__.get(targetId);
-    if (!removed) return promiseAfterMicrotask(undefined);
+    if (!removed) return promiseAfterMicrotask(void 0);
 
     this.__keys__ = this.__keys__.filter((key) => key !== targetId);
     this.__sourceMap__.delete(targetId);
@@ -247,7 +254,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
   /** Removes the last element from the array. */
   public pop() {
-    if (this.length === 0) return promiseAfterMicrotask(undefined);
+    if (this.length === 0) return promiseAfterMicrotask(void 0);
     return this.remove(this.length - 1);
   }
 
@@ -304,16 +311,17 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
     const previous = [...this.__value__];
     this.__value__ = this.__toArray__();
+    const current = this.value;
 
     if (option & SetValueOption.EmitChange)
-      this.__handleChange__(this.__value__, !!(option & SetValueOption.Batch));
-    if (option & SetValueOption.Refresh) this.__handleRefresh__(this.__value__);
+      this.__handleChange__(current, !!(option & SetValueOption.Batch));
+    if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
     if (option & SetValueOption.PublishUpdateEvent)
       this.__host__.publish({
         type: NodeEventType.UpdateValue,
-        payload: { [NodeEventType.UpdateValue]: this.__value__ },
+        payload: { [NodeEventType.UpdateValue]: current },
         options: {
-          [NodeEventType.UpdateValue]: { previous, current: this.__value__ },
+          [NodeEventType.UpdateValue]: { previous, current },
         },
       });
 
@@ -360,6 +368,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
       if (!source || source.data === input) return;
       source.data = input;
       this.__idle__ = false;
+      this.__nullish__ = false;
       if (this.__locked__) return;
       this.__emitChange__(
         batch ? SetValueOption.BatchDefault : SetValueOption.Default,
