@@ -6,7 +6,7 @@ import {
 import { equals } from '@winglet/common-utils/object';
 import { escapeSegment } from '@winglet/json/pointer';
 
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullish } from '@aileron/declare';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
@@ -158,10 +158,10 @@ export abstract class AbstractNode<
   }
 
   /** Node's initial default value */
-  #initialValue: Value | undefined;
+  #initialValue: Value | Nullish;
 
   /** Node's current default value */
-  #defaultValue: Value | undefined;
+  #defaultValue: Value | Nullish;
 
   /**
    * Node's default value
@@ -177,7 +177,7 @@ export abstract class AbstractNode<
    * For use in `constructor`
    * @param value input value for updating defaultValue
    */
-  protected setDefaultValue(this: AbstractNode, value: Value | undefined) {
+  protected setDefaultValue(this: AbstractNode, value: Value | Nullish) {
     this.#initialValue = this.#defaultValue = value;
   }
 
@@ -187,7 +187,7 @@ export abstract class AbstractNode<
    * @param value input value for updating defaultValue
    * @returns {Promise<void>} A promise that resolves when the refresh is complete
    */
-  protected refresh(this: AbstractNode, value: Value | undefined) {
+  protected refresh(this: AbstractNode, value: Value | Nullish) {
     this.#defaultValue = value;
     this.publish({ type: NodeEventType.RequestRefresh });
   }
@@ -196,13 +196,13 @@ export abstract class AbstractNode<
    * Gets the node's value
    * @returns The node's value
    */
-  public abstract get value(): Value | undefined;
+  public abstract get value(): Value | Nullish;
 
   /**
    * Sets the node's value
    * @param input - The value to set
    */
-  public abstract set value(input: Value | undefined);
+  public abstract set value(input: Value | Nullish);
 
   /**
    * Sets the node's value, can be redefined by inherited nodes
@@ -212,7 +212,7 @@ export abstract class AbstractNode<
    */
   protected abstract applyValue(
     this: AbstractNode,
-    input: Value | undefined,
+    input: Value | Nullish,
     option: UnionSetValueOption,
   ): void;
 
@@ -229,7 +229,7 @@ export abstract class AbstractNode<
    */
   public setValue(
     this: AbstractNode,
-    input: Value | undefined | ((prev: Value | undefined) => Value | undefined),
+    input: Value | Nullish | Fn<[prev: Value | Nullish], Value | Nullish>,
     option: UnionSetValueOption = SetValueOption.Overwrite,
   ): void {
     const inputValue = typeof input === 'function' ? input(this.value) : input;
@@ -251,7 +251,7 @@ export abstract class AbstractNode<
    */
   protected onChange(
     this: AbstractNode,
-    input: Value | undefined,
+    input: Value | Nullish,
     batch?: boolean,
   ): void {
     this.#handleChange(input, batch);
@@ -534,7 +534,7 @@ export abstract class AbstractNode<
   public resetNode(
     this: AbstractNode,
     preferLatest: boolean,
-    input?: Value | undefined,
+    input?: Value | Nullish,
   ) {
     const defaultValue = preferLatest
       ? input !== undefined
@@ -572,14 +572,14 @@ export abstract class AbstractNode<
     input?: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags,
   ) {
     // Calculate new state based on previous state if received as function
-    const newInput = typeof input === 'function' ? input(this.#state) : input;
+    const state = typeof input === 'function' ? input(this.#state) : input;
     let dirty = false;
-    if (newInput === undefined) {
+    if (state === undefined) {
       if (isEmptyObject(this.#state)) return;
       this.#state = Object.create(null);
       dirty = true;
-    } else if (isObject(newInput)) {
-      for (const [key, value] of Object.entries(newInput)) {
+    } else if (isObject(state)) {
+      for (const [key, value] of Object.entries(state)) {
         if (value === undefined) {
           if (key in this.#state) {
             delete this.#state[key];
@@ -741,7 +741,7 @@ export abstract class AbstractNode<
    * */
   async #validate(
     this: AbstractNode,
-    value: Value | undefined,
+    value: Value | Nullish,
   ): Promise<JsonSchemaError[]> {
     if (!this.isRoot || !this.#validator) return [];
     const errors = await this.#validator(value);
