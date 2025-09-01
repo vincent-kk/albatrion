@@ -5,7 +5,7 @@ import type { Dictionary, RequiredBy } from '@aileron/declare';
 import type { JsonSchema, JsonSchemaWithVirtual } from '@/schema-form/types';
 
 interface FlattenCondition {
-  condition: Dictionary<string | string[]>;
+  condition: Dictionary<any | any[]>;
   required: string[];
   inverse?: boolean;
 }
@@ -99,24 +99,17 @@ const flattenConditionsInto = (
  */
 const extractCondition = (
   properties: Record<string, any>,
-): Record<string, string | string[]> | null => {
-  const condition: Dictionary<string | string[]> = {};
+): Record<string, any | any[]> | null => {
+  const condition: Dictionary<any | any[]> = {};
   const propertyEntries = Object.entries(properties);
   for (let i = 0, il = propertyEntries.length; i < il; i++) {
     const [propName, propSchema] = propertyEntries[i];
     if (!propSchema || typeof propSchema !== 'object') continue;
-    if (isValidConst(propSchema)) {
-      condition[propName] = '' + propSchema.const;
-    } else if (isValidEnum(propSchema)) {
+    if (isValidConst(propSchema)) condition[propName] = propSchema.const;
+    else if (isValidEnum(propSchema)) {
       const enumValues = propSchema.enum;
-      if (enumValues.length === 1) {
-        condition[propName] = '' + enumValues[0];
-      } else {
-        const stringArray: string[] = [];
-        for (let j = 0, jl = enumValues.length; j < jl; j++)
-          stringArray.push('' + enumValues[j]);
-        condition[propName] = stringArray;
-      }
+      if (enumValues.length === 1) condition[propName] = enumValues[0];
+      else condition[propName] = enumValues;
     }
   }
   return isEmptyObject(condition) ? null : condition;

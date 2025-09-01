@@ -7,7 +7,7 @@ import { flattenConditions } from './utils/flattenConditions';
 export type FieldConditionMap = Map<
   string,
   | Array<{
-      condition: Dictionary<string | string[]>;
+      condition: Dictionary<any | any[]>;
       inverse?: boolean;
     }>
   | true

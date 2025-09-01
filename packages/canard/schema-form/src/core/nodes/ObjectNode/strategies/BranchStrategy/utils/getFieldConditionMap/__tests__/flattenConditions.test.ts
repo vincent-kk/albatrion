@@ -304,11 +304,11 @@ describe('flattenConditions', () => {
 
     const expected = [
       {
-        condition: { num: '123', bool: 'true' },
+        condition: { num: 123, bool: true },
         required: ['output'],
       },
       {
-        condition: { num: '123', bool: 'true' },
+        condition: { num: 123, bool: true },
         required: ['str'],
         inverse: true,
       },
@@ -372,23 +372,23 @@ describe('flattenConditions', () => {
 
     const expected = [
       {
-        condition: { level: '1' },
+        condition: { level: 1 },
         required: ['option1'],
       },
       {
-        condition: { level: '2' },
+        condition: { level: 2 },
         required: ['option2'],
       },
       {
-        condition: { level: '3' },
+        condition: { level: 3 },
         required: ['option3'],
       },
       {
-        condition: { level: '4' },
+        condition: { level: 4 },
         required: ['option4'],
       },
       {
-        condition: { level: ['1', '2', '3', '4'] },
+        condition: { level: [1, 2, 3, 4] },
         required: ['option5'],
         inverse: true,
       },
@@ -526,11 +526,11 @@ describe('flattenConditions', () => {
 
     const expected = [
       {
-        condition: { isEnabled: 'true', hasValue: 'false' },
+        condition: { isEnabled: true, hasValue: false },
         required: ['fallback'],
       },
       {
-        condition: { isEnabled: 'true', hasValue: 'false' },
+        condition: { isEnabled: true, hasValue: false },
         required: ['value'],
         inverse: true,
       },
@@ -760,15 +760,15 @@ describe('flattenConditions', () => {
 
       const expected = [
         {
-          condition: { level: '1' },
+          condition: { level: 1 },
           required: ['basic', 'virtual1'],
         },
         {
-          condition: { level: '2' },
+          condition: { level: 2 },
           required: ['intermediate'],
         },
         {
-          condition: { level: ['1', '2'] },
+          condition: { level: [1, 2] },
           required: ['advanced', 'virtual2'],
           inverse: true,
         },
