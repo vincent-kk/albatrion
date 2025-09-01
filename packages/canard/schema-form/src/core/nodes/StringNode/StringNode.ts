@@ -1,3 +1,5 @@
+import type { Nullish } from '@aileron/declare';
+
 import type { StringSchema, StringValue } from '@/schema-form/types';
 
 import { parseString } from '../../parsers';
@@ -16,7 +18,7 @@ import {
  */
 export class StringNode extends AbstractNode<StringSchema, StringValue> {
   /** Current value of the string node */
-  #value: StringValue | undefined = undefined;
+  #value: StringValue | Nullish = undefined;
 
   /**
    * Gets the value of the string node.
@@ -30,7 +32,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
    * Sets the value of the string node.
    * @param input - The string value to set
    */
-  public override set value(input: StringValue | undefined) {
+  public override set value(input: StringValue | Nullish) {
     this.setValue(input);
   }
 
@@ -41,13 +43,13 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
    */
   protected override applyValue(
     this: StringNode,
-    input: StringValue | undefined,
+    input: StringValue | Nullish,
     option: UnionSetValueOption,
   ) {
     this.#emitChange(input, option);
   }
 
-  protected override onChange: HandleChange<StringValue | undefined>;
+  protected override onChange: HandleChange<StringValue | Nullish>;
 
   constructor({
     key,
@@ -93,7 +95,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
    */
   #emitChange(
     this: StringNode,
-    input: StringValue | undefined,
+    input: StringValue | Nullish,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
     const previous = this.#value;
@@ -117,10 +119,11 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
   /**
    * Parses the input value as a string.
    * @param input - The value to parse
-   * @returns {StringValue|undefined} Parsed string value
+   * @returns {StringValue|null|undefined} Parsed string value
    */
-  #parseValue(this: StringNode, input: StringValue | undefined) {
+  #parseValue(this: StringNode, input: StringValue | Nullish) {
     if (input === undefined) return undefined;
+    if (input === null && this.nullable) return null;
     return parseString(input);
   }
 
@@ -132,10 +135,11 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
    */
   private onChangeWithOmitEmpty(
     this: StringNode,
-    input: StringValue | undefined,
+    input: StringValue | Nullish,
     batch?: boolean,
   ) {
-    if (input === undefined || input.length === 0)
+    if (input === null) super.onChange(null, batch);
+    else if (input === undefined || input.length === 0)
       super.onChange(undefined, batch);
     else super.onChange(input, batch);
   }
