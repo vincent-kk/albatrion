@@ -1,13 +1,14 @@
-import type { Dictionary } from '@aileron/declare';
-
 import type { JsonSchema } from '@/schema-form/types';
 
-import { flattenConditions } from './utils/flattenConditions';
+import {
+  type FlattenCondition,
+  flattenConditions,
+} from './utils/flattenConditions';
 
 export type FieldConditionMap = Map<
   string,
   | Array<{
-      condition: Dictionary<any | any[]>;
+      condition: FlattenCondition['condition'];
       inverse?: boolean;
     }>
   | true

@@ -2,10 +2,14 @@ import { isArray, isEmptyObject } from '@winglet/common-utils/filter';
 
 import type { Dictionary, RequiredBy } from '@aileron/declare';
 
-import type { JsonSchema, JsonSchemaWithVirtual } from '@/schema-form/types';
+import type {
+  AllowedValue,
+  JsonSchema,
+  JsonSchemaWithVirtual,
+} from '@/schema-form/types';
 
-interface FlattenCondition {
-  condition: Dictionary<any | any[]>;
+export interface FlattenCondition {
+  condition: Dictionary<AllowedValue | AllowedValue[]>;
   required: string[];
   inverse?: boolean;
 }
@@ -32,7 +36,7 @@ export const flattenConditions = (
 const flattenConditionsInto = (
   schema: JsonSchema,
   conditions: FlattenCondition[],
-  collectedConditions: Dictionary<Array<string | string[]>> = {},
+  collectedConditions: Dictionary<Array<AllowedValue | AllowedValue[]>> = {},
 ): void => {
   if (!schema.if || !schema.then) return;
 
@@ -63,12 +67,12 @@ const flattenConditionsInto = (
     else {
       const elseRequired = schema.else.required;
       if (elseRequired?.length) {
-        const inverseCondition: Record<string, string | string[]> = {};
+        const inverseCondition: FlattenCondition['condition'] = {};
         for (const [key, values] of Object.entries(collectedConditions)) {
           if (values.length === 1) {
             inverseCondition[key] = values[0];
           } else {
-            const merged: string[] = [];
+            const merged: AllowedValue[] = [];
             for (let i = 0, il = values.length; i < il; i++) {
               const value = values[i];
               if (isArray(value)) {
@@ -99,8 +103,8 @@ const flattenConditionsInto = (
  */
 const extractCondition = (
   properties: Record<string, any>,
-): Record<string, any | any[]> | null => {
-  const condition: Dictionary<any | any[]> = {};
+): FlattenCondition['condition'] | null => {
+  const condition: FlattenCondition['condition'] = {};
   const propertyEntries = Object.entries(properties);
   for (let i = 0, il = propertyEntries.length; i < il; i++) {
     const [propName, propSchema] = propertyEntries[i];

@@ -1,11 +1,12 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { serializeNative } from '@winglet/common-utils/object';
 
-import type { Dictionary } from '@aileron/declare';
-
 import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 
-import type { FieldConditionMap } from '../getFieldConditionMap';
+import type {
+  FieldConditionMap,
+  FlattenCondition,
+} from '../getFieldConditionMap';
 
 export type ConditionsMap = Map<string, string[]>;
 
@@ -39,7 +40,7 @@ export const getConditionsMap = (
  * @param operations - Array to store results
  */
 const getOperations = (
-  condition: Dictionary<any | any[]>,
+  condition: FlattenCondition['condition'],
   inverse: boolean | undefined,
 ) => {
   const operations: string[] = [];
