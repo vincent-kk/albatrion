@@ -106,7 +106,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   public applyValue(input: ObjectValue | Nullish, option: UnionSetValueOption) {
     this.__draft__ = input;
     this.__isolated__ = !!(option & SetValueOption.Isolate);
-    this.__emitChange__(option, false);
+    this.__emitChange__(option);
   }
 
   /**
