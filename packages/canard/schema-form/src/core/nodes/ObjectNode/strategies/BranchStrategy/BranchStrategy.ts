@@ -373,8 +373,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
         const previous = this.__previousIndex__;
         const isolation = this.__isolated__;
 
-        if (isolation) this.__isolated__ = false;
         if (!isolation && current === previous) return;
+        if (isolation) this.__isolated__ = false;
 
         this.__locked__ = true;
         const previousOneOfChildNodeMap =
