@@ -25,17 +25,17 @@ describe('StringNode nullable functionality', () => {
     });
 
     const stringNode = node?.find('name') as StringNode;
-    
+
     // null 값 설정
     stringNode.setValue(null);
     await delay();
     expect(stringNode.value).toBeNull();
-    
+
     // 문자열 값 설정
     stringNode.setValue('test');
     await delay();
     expect(stringNode.value).toBe('test');
-    
+
     // null로 다시 변경
     stringNode.setValue(null);
     await delay();
@@ -58,11 +58,11 @@ describe('StringNode nullable functionality', () => {
     });
 
     const stringNode = node?.find('name') as StringNode;
-    
+
     // null 값 설정 시도
     stringNode.setValue(null);
     await delay();
-    
+
     // null 대신 빈 문자열로 변환됨
     expect(stringNode.value).toEqual('');
   });
@@ -89,7 +89,7 @@ describe('StringNode nullable functionality', () => {
 
   it('nullable 문자열 노드의 onChange 이벤트가 정상적으로 전파되어야 함', async () => {
     const mockOnChange = vi.fn();
-    
+
     const node = nodeFromJsonSchema({
       onChange: mockOnChange,
       jsonSchema: {
@@ -104,23 +104,23 @@ describe('StringNode nullable functionality', () => {
     });
 
     const stringNode = node?.find('data') as StringNode;
-    
+
     // null로 변경
     stringNode.setValue(null);
     await delay();
-    
+
     expect(mockOnChange).toHaveBeenCalledWith({ data: null });
-    
+
     // 문자열로 변경
     stringNode.setValue('test');
     await delay();
-    
+
     expect(mockOnChange).toHaveBeenCalledWith({ data: 'test' });
-    
+
     // 다시 null로 변경
     stringNode.setValue(null);
     await delay();
-    
+
     expect(mockOnChange).toHaveBeenCalledWith({ data: null });
   });
 
@@ -132,7 +132,7 @@ describe('StringNode nullable functionality', () => {
         validateFormats: false,
       }),
     );
-    
+
     const node = nodeFromJsonSchema({
       onChange: () => {},
       jsonSchema: {
@@ -150,17 +150,17 @@ describe('StringNode nullable functionality', () => {
     });
 
     const emailNode = node?.find('email') as StringNode;
-    
+
     // null은 유효해야 함
     emailNode.setValue(null);
     await delay();
     expect(emailNode.errors).toEqual([]);
-    
+
     // 유효한 이메일
     emailNode.setValue('test@example.com');
     await delay();
     expect(emailNode.errors).toEqual([]);
-    
+
     // 다시 null로 설정하면 오류가 없어야 함
     emailNode.setValue(null);
     await delay();
@@ -175,7 +175,7 @@ describe('StringNode nullable functionality', () => {
         validateFormats: false,
       }),
     );
-    
+
     const node = nodeFromJsonSchema({
       onChange: () => {},
       jsonSchema: {
@@ -193,19 +193,19 @@ describe('StringNode nullable functionality', () => {
     });
 
     const statusNode = node?.find('status') as StringNode;
-    
+
     // null 값 허용
     statusNode.setValue(null);
     await delay();
     expect(statusNode.errors).toEqual([]);
     expect(statusNode.value).toBeNull();
-    
+
     // enum 값 허용
     statusNode.setValue('active');
     await delay();
     expect(statusNode.errors).toEqual([]);
     expect(statusNode.value).toBe('active');
-    
+
     // enum에 없는 값 거부
     statusNode.setValue('unknown');
     await delay();
@@ -260,11 +260,11 @@ describe('StringNode nullable functionality', () => {
     });
 
     const stringNode = node?.find('strictField') as StringNode;
-    
+
     // null 설정 시도
     stringNode.setValue(null);
     await delay();
-    
+
     // null이 빈 문자열로 변환됨
     expect(stringNode.value).toEqual('');
   });
@@ -286,7 +286,7 @@ describe('StringNode nullable functionality', () => {
 
     const commentNode = node?.find('comment') as StringNode;
     await delay();
-    
+
     // 초기 상태 확인 (속성이 있는 경우에만)
     if ('isDirty' in commentNode) {
       expect(commentNode.isDirty).toBe(false);
@@ -294,22 +294,22 @@ describe('StringNode nullable functionality', () => {
     if ('isTouched' in commentNode) {
       expect(commentNode.isTouched).toBe(false);
     }
-    
+
     // null로 변경
     commentNode.setValue(null);
     await delay();
-    
+
     if ('isDirty' in commentNode) {
       expect(commentNode.isDirty).toBe(true);
     }
     if ('isTouched' in commentNode) {
       expect(commentNode.isTouched).toBe(true);
     }
-    
+
     // 기본값으로 복원
     commentNode.setValue('default comment');
     await delay();
-    
+
     if ('isDirty' in commentNode) {
       expect(commentNode.isDirty).toBe(false);
     }
