@@ -1441,3 +1441,75 @@ export const FormRefWithNullHandling = () => {
     </div>
   );
 };
+
+export const ConditionalSchema = () => {
+  const schema = {
+    type: 'object',
+    properties: {
+      category: {
+        type: 'string',
+        enum: ['game', 'movie'],
+        default: 'game',
+      },
+      title: { type: 'string' },
+      openingDate: {
+        type: 'string',
+        format: 'date',
+        '&visible': '../category === "game"',
+      },
+      releaseDate: {
+        type: 'string',
+        format: 'date',
+        '&visible': '../category === "movie"',
+      },
+      numOfPlayers: { type: 'number' },
+      price: {
+        type: 'number',
+        minimum: 50,
+      },
+    },
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue({
+            category: 'movie',
+            title: 'ABC',
+            openingDate: '1999-01-01',
+            releaseDate: '2020-02-01',
+            numOfPlayers: 10,
+            price: 100,
+          })
+        }
+      >
+        Set Movie
+      </button>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue({
+            category: 'game',
+            title: 'DEF',
+            openingDate: '2030-02-01',
+            releaseDate: '2030-03-01',
+            numOfPlayers: 20,
+            price: 200,
+          })
+        }
+      >
+        Set Game
+      </button>
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
+    </StoryLayout>
+  );
+};
