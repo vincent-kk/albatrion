@@ -52,7 +52,8 @@ import {
 
 const IGNORE_ERROR_KEYWORDS = new Set(['oneOf']);
 const RECURSIVE_ERROR_OMITTED_KEYS = new Set(['key']);
-const RESET_NODE_OPTION = SetValueOption.Replace | SetValueOption.Propagate;
+const RESET_NODE_OPTION =
+  SetValueOption.Replace | SetValueOption.Propagate | SetValueOption.Refresh;
 
 export abstract class AbstractNode<
   Schema extends JsonSchemaWithVirtual = JsonSchemaWithVirtual,
@@ -254,6 +255,7 @@ export abstract class AbstractNode<
     input: Value | Nullish,
     batch?: boolean,
   ): void {
+    if (!this.#visible && input !== undefined) return;
     this.#handleChange(input, batch);
   }
 
@@ -539,8 +541,8 @@ export abstract class AbstractNode<
     const defaultValue = preferLatest
       ? input !== undefined
         ? input
-        : this.defaultValue !== undefined
-          ? this.#defaultValue
+        : this.value !== undefined
+          ? this.value
           : this.#initialValue
       : this.#initialValue;
     this.#defaultValue = defaultValue;
