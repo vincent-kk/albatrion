@@ -171,12 +171,11 @@ export class BranchStrategy implements ObjectNodeStrategy {
     } else this.__schemaKeys__ = propertyKeys;
 
     const handelChangeFactory =
-      (propertyKey: string): HandleChange =>
+      (key: string): HandleChange =>
       (input, batch) => {
         if (!this.__draft__) this.__draft__ = {};
-        if (input !== undefined && this.__draft__[propertyKey] === input)
-          return;
-        this.__draft__[propertyKey] = input;
+        if (input !== undefined && this.__draft__[key] === input) return;
+        this.__draft__[key] = input;
         if (this.__isolated__ && !this.__oneOfChildNodeMapList__)
           this.__isolated__ = false;
         this.__emitChange__(SetValueOption.Default, batch);
