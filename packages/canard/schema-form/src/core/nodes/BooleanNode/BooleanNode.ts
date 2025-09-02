@@ -84,9 +84,9 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
     input: BooleanValue | Nullish,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
+    const replace = option & SetValueOption.Replace;
     const previous = this.#value;
     const current = this.#parseValue(input);
-    const replace = option & SetValueOption.Replace;
 
     if (!replace && previous === current) return;
     this.#value = current;

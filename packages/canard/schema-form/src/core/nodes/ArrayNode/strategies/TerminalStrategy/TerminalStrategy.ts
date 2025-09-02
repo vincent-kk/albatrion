@@ -172,9 +172,9 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     input: ArrayValue | Nullish,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
+    const replace = option & SetValueOption.Replace;
     const previous = this.__value__ ? [...this.__value__] : this.__value__;
     const current = this.__parseValue__(input);
-    const replace = option & SetValueOption.Replace;
 
     if (!replace && equals(previous, current)) return;
     this.__value__ = current;

@@ -267,34 +267,30 @@ export class BranchStrategy implements ObjectNodeStrategy {
   ) {
     if (this.__locked__) return;
 
-    const previous = this.__value__ ? { ...this.__value__ } : this.__value__;
     const replace = !!(option & SetValueOption.Replace);
-    if (this.__draft__ === undefined) {
-      this.__value__ = undefined;
-    } else if (this.__draft__ === null) {
-      this.__value__ = this.__host__.nullable ? null : {};
-    } else if (replace || this.__value__ == null) {
-      this.__value__ = this.__parseValue__(this.__draft__);
-    } else {
-      if (checkEmptyDraft(this.__draft__)) return;
-      this.__value__ = this.__parseValue__({
-        ...this.__value__,
-        ...this.__draft__,
-      });
-    }
+    const previous = this.__value__ ? { ...this.__value__ } : this.__value__;
+    const current = this.__parseValue__(
+      this.__value__,
+      this.__draft__,
+      this.__host__.nullable,
+      replace,
+    );
+
+    if (current === false) return;
+    this.__value__ = current;
 
     if (option & SetValueOption.EmitChange)
-      this.__handleChange__(this.__value__, !!(option & SetValueOption.Batch));
+      this.__handleChange__(current, !!(option & SetValueOption.Batch));
     if (option & SetValueOption.Propagate) this.__propagate__(replace, option);
-    if (option & SetValueOption.Refresh) this.__handleRefresh__(this.__value__);
+    if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
     if (option & SetValueOption.Isolate)
       this.__handleUpdateComputedProperties__();
     if (option & SetValueOption.PublishUpdateEvent)
       this.__host__.publish({
         type: NodeEventType.UpdateValue,
-        payload: { [NodeEventType.UpdateValue]: this.__value__ },
+        payload: { [NodeEventType.UpdateValue]: current },
         options: {
-          [NodeEventType.UpdateValue]: { previous, current: this.__value__ },
+          [NodeEventType.UpdateValue]: { previous, current },
         },
       });
 
@@ -303,11 +299,33 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
   /**
    * Parses input value and processes it as an object.
+   * @param base - Base object to parse
+   * @param draft - Draft object to parse
+   * @param nullable - Whether the object is nullable
+   * @param replace - Whether to replace the existing value
+   * @returns {ObjectValue} Processed object
+   * @private
+   */
+  private __parseValue__(
+    base: ObjectValue | Nullish,
+    draft: ObjectValue | Nullish,
+    nullable: boolean,
+    replace: boolean,
+  ) {
+    if (draft === undefined) return undefined;
+    if (draft === null) return nullable ? null : {};
+    if (replace || base == null) return this.__processValue__(draft);
+    if (checkEmptyDraft(draft)) return false;
+    return this.__processValue__({ ...base, ...draft });
+  }
+
+  /**
+   * Processes input value and processes it as an object.
    * @param input - Object to parse
    * @returns {ObjectValue} Parsed object
    * @private
    */
-  private __parseValue__(input: ObjectValue) {
+  private __processValue__(input: ObjectValue) {
     const value = sortObjectKeys(input, this.__schemaKeys__, true);
     if (this.__isolated__)
       return processValueWithCondition(value, this.__fieldConditionMap__);
@@ -381,7 +399,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
         this.__locked__ = false;
 
         this.__draft__ = processValueWithOneOfSchema(
-          this.__parseValue__({
+          this.__processValue__({
             ...(this.__value__ || {}),
             ...(this.__draft__ || {}),
           }),

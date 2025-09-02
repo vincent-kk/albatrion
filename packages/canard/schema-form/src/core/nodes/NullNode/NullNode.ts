@@ -81,9 +81,9 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
     input: NullValue | undefined,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
+    const replace = option & SetValueOption.Replace;
     const previous = this.#value;
     const current = this.#parseValue(input);
-    const replace = option & SetValueOption.Replace;
 
     if (!replace && previous === current) return;
     this.#value = current;
