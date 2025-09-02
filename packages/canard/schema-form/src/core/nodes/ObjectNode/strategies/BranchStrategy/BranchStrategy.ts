@@ -30,8 +30,6 @@ import {
   processValueWithOneOfSchema,
 } from './utils';
 
-const RESET_NODE_OPTION = SetValueOption.Replace | SetValueOption.Propagate;
-
 export class BranchStrategy implements ObjectNodeStrategy {
   /** Host ObjectNode instance that this strategy belongs to */
   private readonly __host__: ObjectNode;
@@ -116,12 +114,18 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @internal Internal implementation method. Do not call directly.
    */
   public activate() {
-    for (const child of this.__propertyChildren__)
+    let enabled = false;
+    for (const child of this.__propertyChildren__) {
       (child.node as AbstractNode).activate(this.__host__);
+      if (!enabled && child.node.computeEnabled) enabled = true;
+    }
     if (this.__oneOfChildNodeMapList__)
       for (const childNodeMap of this.__oneOfChildNodeMapList__)
-        for (const childNode of childNodeMap.values())
-          (childNode.node as AbstractNode).activate(this.__host__);
+        for (const child of childNodeMap.values()) {
+          (child.node as AbstractNode).activate(this.__host__);
+          if (!enabled && child.node.computeEnabled) enabled = true;
+        }
+    if (enabled) this.__prepareProcessComputedProperties__();
   }
 
   /**
@@ -414,10 +418,31 @@ export class BranchStrategy implements ObjectNodeStrategy {
           this.__draft__[node.propertyKey] = undefined;
         }
 
-        this.__emitChange__(RESET_NODE_OPTION);
-        this.__handleChange__(this.__value__, true);
+        this.__emitChange__(SetValueOption.ResetNode);
         this.__publishChildrenChange__();
         this.__previousIndex__ = current;
+      }
+    });
+  }
+
+  /**
+   * Prepares the process computed properties.
+   * Excludes values of invisible child elements from the computed value.
+   * @private
+   */
+  private __prepareProcessComputedProperties__() {
+    this.__host__.subscribe(({ type }) => {
+      if (type & NodeEventType.UpdateValue) {
+        let processed = false;
+        for (let i = 0, l = this.__children__.length; i < l; i++) {
+          const node = this.__children__[i].node;
+          if (node.type === 'virtual') continue;
+          if (node.visible) continue;
+          if (!this.__draft__) this.__draft__ = {};
+          this.__draft__[node.propertyKey] = undefined;
+          processed = true;
+        }
+        if (processed) this.__emitChange__(SetValueOption.BatchedEmitChange);
       }
     });
   }

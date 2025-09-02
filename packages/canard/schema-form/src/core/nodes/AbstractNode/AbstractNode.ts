@@ -52,8 +52,6 @@ import {
 
 const IGNORE_ERROR_KEYWORDS = new Set(['oneOf']);
 const RECURSIVE_ERROR_OMITTED_KEYS = new Set(['key']);
-const RESET_NODE_OPTION =
-  SetValueOption.Replace | SetValueOption.Propagate | SetValueOption.Refresh;
 
 export abstract class AbstractNode<
   Schema extends JsonSchemaWithVirtual = JsonSchemaWithVirtual,
@@ -559,8 +557,7 @@ export abstract class AbstractNode<
     this.#defaultValue = defaultValue;
     const value = this.#visible ? defaultValue : undefined;
 
-    this.setValue(value, RESET_NODE_OPTION);
-    this.onChange(value, true);
+    this.setValue(value, SetValueOption.ResetNode);
     this.setState();
   }
 
