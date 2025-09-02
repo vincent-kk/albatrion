@@ -103,8 +103,5 @@ const FormTypeInputStringSwitch = ({
 export const FormTypeInputStringSwitchDefinition = {
   Component: FormTypeInputStringSwitch,
   test: ({ type, formType, jsonSchema }) =>
-    type === 'string' &&
-    formType === 'switch' &&
-    jsonSchema.enum &&
-    jsonSchema.enum.length === 2,
+    type === 'string' && formType === 'switch' && jsonSchema.enum?.length === 2,
 } satisfies FormTypeInputDefinition;

@@ -136,7 +136,7 @@ export interface BasicSchema<
   nullable?: boolean;
   const?: Nullable<Type>;
   default?: Nullable<Type>;
-  enum?: Nullable<Type>[];
+  enum?: Type[];
 }
 
 interface CustomOptions<Options extends Dictionary> {
