@@ -173,4 +173,4 @@ export type SetStateFnWithOptions<S = unknown> = Fn<
   [value: S | ((prevState: S) => S), options?: PublicSetValueOption]
 >;
 
-export type AttachedFileMap = Map<SchemaNode['path'], File[]>;
+export type AttachedFileMap = Map<SchemaNode['path'], File | File[]>;
