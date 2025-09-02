@@ -282,11 +282,11 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   private __emitChange__(
     option: UnionSetValueOption = SetValueOption.BatchDefault,
-    batch: boolean = true,
+    accumulate: boolean = true,
     updateChildren: boolean = true,
   ) {
     if (this.__locked__) return;
-    if (batch) {
+    if (accumulate) {
       if (this.__batched__) return;
       this.__batched__ = true;
       this.__host__.publish({

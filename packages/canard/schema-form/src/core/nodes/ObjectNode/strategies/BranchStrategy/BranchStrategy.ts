@@ -245,9 +245,12 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @param option - Change options (optional)
    * @private
    */
-  private __emitChange__(option: UnionSetValueOption, batch: boolean = false) {
+  private __emitChange__(
+    option: UnionSetValueOption,
+    accumulate: boolean = false,
+  ) {
     if (this.__locked__) return;
-    if (batch) {
+    if (accumulate) {
       if (this.__batched__) return;
       this.__batched__ = true;
       this.__host__.publish({
