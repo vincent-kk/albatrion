@@ -1,4 +1,8 @@
-export type Nullish<T> = T | null | undefined;
+export type Nullish = null | undefined;
+
+export type Nullable<T> = T | null;
+
+export type Optional<T> = T | undefined;
 
 /** Extract keys K from T and make them required */
 export type PickRequired<T, K extends keyof T> = Required<Pick<T, K>>;

@@ -7,6 +7,8 @@ import ApiTest from "./pages/ApiTest";
 import About from "./pages/About";
 import "./App.css";
 import CanardForm from "./pages/CanardForm";
+import CanardFormNullable from "./pages/CanardForm.nullable";
+import CanardFormComputed from "./pages/CanardForm.computed";
 
 function App() {
   return (
@@ -17,6 +19,14 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/components" element={<ComponentTest />} />
           <Route path="/canard-form" element={<CanardForm />} />
+          <Route
+            path="/canard-form-nullable"
+            element={<CanardFormNullable />}
+          />
+          <Route
+            path="/canard-form-computed"
+            element={<CanardFormComputed />}
+          />
           <Route path="/forms" element={<FormTest />} />
           <Route path="/api" element={<ApiTest />} />
           <Route path="/about" element={<About />} />

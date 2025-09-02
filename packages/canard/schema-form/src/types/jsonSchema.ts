@@ -11,7 +11,7 @@ import type {
   RefSchema,
 } from '@winglet/json-schema';
 
-import type { Dictionary } from '@aileron/declare';
+import type { Dictionary, Nullish } from '@aileron/declare';
 
 import type { UnknownFormTypeInputProps } from './formTypeInput';
 import type {
@@ -32,17 +32,17 @@ export const isVirtualSchema = (schema: {
 export type InferJsonSchema<
   Value extends AllowedValue | unknown = any,
   Options extends Dictionary = object,
-> = Value extends NumberValue | undefined
+> = [Value] extends [NumberValue | Nullish]
   ? NumberSchema<Options>
-  : Value extends StringValue | undefined
+  : [Value] extends [StringValue | Nullish]
     ? StringSchema<Options>
-    : Value extends BooleanValue | undefined
+    : [Value] extends [BooleanValue | Nullish]
       ? BooleanSchema<Options>
-      : Value extends ArrayValue | undefined
+      : [Value] extends [ArrayValue | Nullish]
         ? ArraySchema<Options>
-        : Value extends ObjectValue | undefined
+        : [Value] extends [ObjectValue | Nullish]
           ? ObjectSchema<Options>
-          : Value extends null | undefined
+          : [Value] extends [Nullish]
             ? NullSchema<Options>
             : JsonSchemaWithVirtual<Options>;
 
@@ -87,12 +87,13 @@ export type ArraySchema<Options extends Dictionary = object> = BasicSchema &
 export type ObjectSchema<Options extends Dictionary = object> = BasicSchema &
   BaseObjectSchema<Options, JsonSchema<Options>> & {
     propertyKeys?: string[];
-    virtual?: Dictionary<{ fields: string[] } & BasicSchema>;
+    virtual?: Dictionary<{ fields: string[]; nullable?: never } & BasicSchema>;
   };
 
 export type VirtualSchema<Options extends Dictionary = object> = {
   type: 'virtual';
   fields?: string[];
+  nullable?: never;
 } & BasicSchema &
   BaseBasicSchema<VirtualNodeValue, Options, JsonSchema<Options>>;
 

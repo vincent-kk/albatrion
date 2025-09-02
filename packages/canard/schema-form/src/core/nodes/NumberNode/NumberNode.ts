@@ -1,3 +1,5 @@
+import type { Nullish } from '@aileron/declare';
+
 import type { NumberSchema, NumberValue } from '@/schema-form/types';
 
 import { parseNumber } from '../../parsers';
@@ -16,7 +18,7 @@ import {
  */
 export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   /** Current value of the number node */
-  #value: NumberValue | undefined = undefined;
+  #value: NumberValue | Nullish = undefined;
 
   /**
    * Gets the value of the number node.
@@ -30,7 +32,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
    * Sets the value of the number node.
    * @param input - The number value to set
    */
-  public override set value(input: NumberValue | undefined) {
+  public override set value(input: NumberValue | Nullish) {
     this.setValue(input);
   }
 
@@ -41,13 +43,13 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
    */
   protected override applyValue(
     this: NumberNode,
-    input: NumberValue | undefined,
+    input: NumberValue | Nullish,
     option: UnionSetValueOption,
   ) {
     this.#emitChange(input, option);
   }
 
-  protected override onChange: HandleChange<NumberValue | undefined>;
+  protected override onChange: HandleChange<NumberValue | Nullish>;
 
   constructor({
     key,
@@ -88,12 +90,14 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
    */
   #emitChange(
     this: NumberNode,
-    input: NumberValue | undefined,
+    input: NumberValue | Nullish,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
+    const replace = option & SetValueOption.Replace;
     const previous = this.#value;
     const current = this.#parseValue(input);
-    if (previous === current) return;
+
+    if (!replace && previous === current) return;
     this.#value = current;
 
     if (option & SetValueOption.EmitChange)
@@ -112,10 +116,11 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   /**
    * Parses the input value as a number.
    * @param input - The value to parse
-   * @returns {NumberValue|undefined} Parsed number value
+   * @returns {NumberValue|null|undefined} Parsed number value
    */
-  #parseValue(this: NumberNode, input: NumberValue | undefined) {
+  #parseValue(this: NumberNode, input: NumberValue | Nullish) {
     if (input === undefined) return undefined;
+    if (input === null && this.nullable) return null;
     return parseNumber(input, this.jsonSchema.type === 'integer');
   }
 
@@ -127,10 +132,12 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
    */
   private onChangeWithOmitEmpty(
     this: NumberNode,
-    input: NumberValue | undefined,
+    input: NumberValue | Nullish,
     batch?: boolean,
   ) {
-    if (input === undefined || isNaN(input)) super.onChange(undefined, batch);
+    if (input === null) super.onChange(null, batch);
+    else if (input === undefined || isNaN(input))
+      super.onChange(undefined, batch);
     else super.onChange(input, batch);
   }
 }

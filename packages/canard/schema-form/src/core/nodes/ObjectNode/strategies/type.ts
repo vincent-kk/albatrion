@@ -1,3 +1,5 @@
+import type { Nullish } from '@aileron/declare';
+
 import type { ObjectValue } from '@/schema-form/types';
 
 import type { ChildNode, UnionSetValueOption } from '../../type';
@@ -11,7 +13,7 @@ export interface ObjectNodeStrategy {
    * Gets the current value of the object.
    * @returns Current value of the object node or undefined
    */
-  get value(): ObjectValue | undefined;
+  get value(): ObjectValue | Nullish;
   /**
    * Gets the list of child nodes.
    * @returns Array of child nodes
@@ -24,7 +26,7 @@ export interface ObjectNodeStrategy {
    */
   applyValue(
     this: this,
-    value: ObjectValue | undefined,
+    value: ObjectValue | Nullish,
     option: UnionSetValueOption,
   ): void;
   /** Activates pub-sub links for child nodes. */

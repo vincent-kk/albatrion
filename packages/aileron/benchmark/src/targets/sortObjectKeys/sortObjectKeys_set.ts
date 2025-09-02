@@ -13,7 +13,7 @@ import { hasOwnProperty } from '@/common-utils/libs';
  * @returns A new object with sorted keys, or an empty object if the input is nullish.
  */
 export const sortObjectKeys = <Dict extends Dictionary>(
-  object: Nullish<Dict>,
+  object: Dict | Nullish,
   keys: string[],
   omitUndefined?: boolean,
 ): Dict => {

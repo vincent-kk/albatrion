@@ -1,3 +1,5 @@
+import type { Nullish } from '@aileron/declare';
+
 import type { ArrayValue } from '@/schema-form/types';
 
 import type { ChildNode, UnionSetValueOption } from '../../type';
@@ -11,7 +13,7 @@ export interface ArrayNodeStrategy {
    * Gets the current value of the array.
    * @returns Current value of the array node or undefined
    */
-  get value(): ArrayValue | undefined;
+  get value(): ArrayValue | Nullish;
   /**
    * Gets the current length of the array.
    * @returns Length of the array
@@ -29,7 +31,7 @@ export interface ArrayNodeStrategy {
    */
   applyValue(
     this: this,
-    value: ArrayValue | undefined,
+    value: ArrayValue | Nullish,
     option: UnionSetValueOption,
   ): void;
   /**

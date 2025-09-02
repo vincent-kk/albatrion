@@ -154,14 +154,15 @@ describe('getConditionsMap', () => {
 
     expect(result).toBeInstanceOf(Map);
     expect(result?.size).toBe(2);
+
     const adminPanelConditions = result?.get('adminPanel');
     expect(adminPanelConditions).toContain('(../userType)==="admin"');
-    expect(adminPanelConditions).toContain('(../userType)==="user"');
-    expect(adminPanelConditions).toContain('(../status)==="active"');
+    expect(adminPanelConditions).toContain(
+      '((../userType)==="user")&&((../status)==="active")',
+    );
     const noneConditions = result?.get('none');
     expect(noneConditions).toEqual([
-      '!["admin","user"].includes((../userType))',
-      '(../status)!=="active"',
+      '(!["admin","user"].includes((../userType)))&&((../status)!=="active")',
     ]);
   });
 });

@@ -1,3 +1,5 @@
+import type { Nullish } from '@aileron/declare';
+
 import type { BooleanSchema, BooleanValue } from '@/schema-form/types';
 
 import { parseBoolean } from '../../parsers';
@@ -15,7 +17,7 @@ import {
  */
 export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   /** Current value of the boolean node */
-  #value: BooleanValue | undefined = undefined;
+  #value: BooleanValue | Nullish = undefined;
 
   /**
    * Gets the value of the boolean node.
@@ -29,7 +31,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
    * Sets the value of the boolean node.
    * @param input - The boolean value to set
    */
-  public override set value(input: BooleanValue | undefined) {
+  public override set value(input: BooleanValue | Nullish) {
     this.setValue(input);
   }
 
@@ -40,7 +42,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
    */
   protected override applyValue(
     this: BooleanNode,
-    input: BooleanValue | undefined,
+    input: BooleanValue | Nullish,
     option: UnionSetValueOption,
   ) {
     this.#emitChange(input, option);
@@ -79,12 +81,14 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
    */
   #emitChange(
     this: BooleanNode,
-    input: BooleanValue | undefined,
+    input: BooleanValue | Nullish,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
+    const replace = option & SetValueOption.Replace;
     const previous = this.#value;
     const current = this.#parseValue(input);
-    if (previous === current) return;
+
+    if (!replace && previous === current) return;
     this.#value = current;
 
     if (option & SetValueOption.EmitChange)
@@ -103,10 +107,11 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   /**
    * Parses the input value as a boolean.
    * @param input - The value to parse
-   * @returns {BooleanValue|undefined} Parsed boolean value
+   * @returns {BooleanValue|null|undefined} Parsed boolean value
    */
-  #parseValue(this: BooleanNode, input: BooleanValue | undefined) {
+  #parseValue(this: BooleanNode, input: BooleanValue | Nullish) {
     if (input === undefined) return undefined;
+    if (input === null && this.nullable) return null;
     return parseBoolean(input);
   }
 }

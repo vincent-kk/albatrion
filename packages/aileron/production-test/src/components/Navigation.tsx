@@ -30,6 +30,22 @@ const Navigation = () => {
         </li>
         <li>
           <NavLink
+            to="/canard-form-nullable"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Canard Form Nullable
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/canard-form-computed"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Canard Form Computed
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
             to="/forms"
             className={({ isActive }) => (isActive ? "active" : "")}
           >

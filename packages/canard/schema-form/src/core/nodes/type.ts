@@ -314,6 +314,10 @@ export enum SetValueOption {
   Isolate = BIT_FLAG_05,
   /** Trigger a refresh to update the FormTypeInput */
   PublishUpdateEvent = BIT_FLAG_06,
+  /** Update the value and trigger onChange with batch mode */
+  BatchedEmitChange = EmitChange | Batch,
+  /** Reset the node to its initial value */
+  ResetNode = Replace | Propagate | Refresh | BatchedEmitChange,
   /** Default SetValue option */
   Default = EmitChange | PublishUpdateEvent,
   /** Default SetValue option with batch mode */

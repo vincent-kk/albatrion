@@ -85,7 +85,7 @@ export const FormTypeInputRadioGroupDefinition = {
     return (
       (type === 'string' || type === 'number' || type === 'integer') &&
       (formType === 'radio' || formType === 'radiogroup') &&
-      jsonSchema.enum?.length
+      !!jsonSchema.enum?.length
     );
   },
 } satisfies FormTypeInputDefinition;

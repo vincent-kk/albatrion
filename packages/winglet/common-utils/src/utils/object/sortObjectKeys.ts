@@ -234,7 +234,7 @@ import type { Dictionary, Nullish } from '@aileron/declare';
  * - Original object structure is not preserved if circular references exist
  */
 export const sortObjectKeys = <Dict extends Dictionary>(
-  object: Nullish<Dict>,
+  object: Dict | Nullish,
   keys: string[],
   omitUndefined?: boolean,
 ): Dict => {

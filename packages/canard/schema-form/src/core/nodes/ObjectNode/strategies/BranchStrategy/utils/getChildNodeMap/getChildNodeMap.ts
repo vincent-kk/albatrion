@@ -1,6 +1,6 @@
 import { unique } from '@winglet/common-utils/array';
 
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullish } from '@aileron/declare';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import type {
@@ -11,6 +11,7 @@ import type {
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
+import type { ConditionsMap } from '../getConditionsMap';
 import type {
   VirtualReference,
   VirtualReferenceFieldsMap,
@@ -34,8 +35,8 @@ export const getChildNodeMap = (
   parentNode: ObjectNode,
   jsonSchema: ObjectSchema,
   propertyKeys: string[],
-  defaultValue: ObjectValue | undefined,
-  conditionsMap: Map<string, string[]> | undefined,
+  defaultValue: ObjectValue | Nullish,
+  conditionsMap: ConditionsMap | undefined,
   virtualReferencesMap: VirtualReferencesMap | undefined,
   virtualReferenceFieldsMap: VirtualReferenceFieldsMap | undefined,
   handelChangeFactory: Fn<[name: string], HandleChange>,

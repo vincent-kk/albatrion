@@ -375,9 +375,19 @@ describe('SchemaNode computed properties', () => {
       expect(listener).toHaveBeenCalledWith(
         expect.objectContaining({
           type:
-            NodeEventType.Activated | NodeEventType.UpdateComputedProperties,
-          options: {},
-          payload: {},
+            NodeEventType.Activated |
+            NodeEventType.UpdateValue |
+            NodeEventType.UpdateComputedProperties |
+            NodeEventType.RequestRefresh,
+          options: {
+            [NodeEventType.UpdateValue]: {
+              previous: undefined,
+              current: undefined,
+            },
+          },
+          payload: {
+            [NodeEventType.UpdateValue]: undefined,
+          },
         }),
       );
     });

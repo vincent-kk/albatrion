@@ -112,5 +112,5 @@ const FormTypeInputStringEnum = ({
 export const FormTypeInputStringEnumDefinition = {
   Component: FormTypeInputStringEnum,
   test: ({ type, jsonSchema }) =>
-    type === 'string' && jsonSchema.enum && jsonSchema.enum.length > 0,
+    type === 'string' && !!jsonSchema.enum?.length,
 } satisfies FormTypeInputDefinition;

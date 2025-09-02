@@ -1,7 +1,7 @@
 import { sortWithReference } from '@winglet/common-utils/array';
 import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils/object';
 
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullish } from '@aileron/declare';
 
 import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
@@ -30,17 +30,15 @@ import {
   processValueWithOneOfSchema,
 } from './utils';
 
-const RESET_NODE_OPTION = SetValueOption.Replace | SetValueOption.Propagate;
-
 export class BranchStrategy implements ObjectNodeStrategy {
   /** Host ObjectNode instance that this strategy belongs to */
   private readonly __host__: ObjectNode;
 
   /** Callback function to handle value changes */
-  private readonly __handleChange__: HandleChange<ObjectValue | undefined>;
+  private readonly __handleChange__: HandleChange<ObjectValue | Nullish>;
 
   /** Callback function to handle refresh operations */
-  private readonly __handleRefresh__: Fn<[ObjectValue | undefined]>;
+  private readonly __handleRefresh__: Fn<[ObjectValue | Nullish]>;
 
   /** Callback function to handle computed properties updates */
   private readonly __handleUpdateComputedProperties__: Fn;
@@ -87,10 +85,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
   private __locked__: boolean = true;
 
   /** Current committed value of the object node */
-  private __value__: ObjectValue | undefined;
+  private __value__: ObjectValue | Nullish;
 
   /** Draft value containing pending changes before commit */
-  private __draft__: ObjectValue | undefined;
+  private __draft__: ObjectValue | Nullish;
 
   /**
    * Gets the current value of the object.
@@ -105,7 +103,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @param input - Object value to set
    * @param option - Setting options
    */
-  public applyValue(input: ObjectValue, option: UnionSetValueOption) {
+  public applyValue(input: ObjectValue | Nullish, option: UnionSetValueOption) {
     this.__draft__ = input;
     this.__isolated__ = !!(option & SetValueOption.Isolate);
     this.__emitChange__(option);
@@ -116,12 +114,18 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @internal Internal implementation method. Do not call directly.
    */
   public activate() {
-    for (const child of this.__propertyChildren__)
+    let enabled = false;
+    for (const child of this.__propertyChildren__) {
       (child.node as AbstractNode).activate(this.__host__);
+      if (!enabled && child.node.computeEnabled) enabled = true;
+    }
     if (this.__oneOfChildNodeMapList__)
       for (const childNodeMap of this.__oneOfChildNodeMapList__)
-        for (const childNode of childNodeMap.values())
-          (childNode.node as AbstractNode).activate(this.__host__);
+        for (const child of childNodeMap.values()) {
+          (child.node as AbstractNode).activate(this.__host__);
+          if (!enabled && child.node.computeEnabled) enabled = true;
+        }
+    if (enabled) this.__prepareProcessComputedProperties__();
   }
 
   /**
@@ -135,9 +139,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
    */
   constructor(
     host: ObjectNode,
-    handleChange: HandleChange<ObjectValue | undefined>,
-    handleRefresh: Fn<[ObjectValue | undefined]>,
-    handleSetDefaultValue: Fn<[ObjectValue | undefined]>,
+    handleChange: HandleChange<ObjectValue | Nullish>,
+    handleRefresh: Fn<[ObjectValue | Nullish]>,
+    handleSetDefaultValue: Fn<[ObjectValue | Nullish]>,
     handleUpdateComputedProperties: Fn,
     nodeFactory: SchemaNodeFactory,
   ) {
@@ -147,7 +151,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__handleUpdateComputedProperties__ = handleUpdateComputedProperties;
 
     this.__value__ = host.defaultValue;
-    this.__draft__ = {};
+    this.__draft__ = host.defaultValue === null ? null : {};
 
     const jsonSchema = host.jsonSchema;
 
@@ -167,16 +171,14 @@ export class BranchStrategy implements ObjectNodeStrategy {
     } else this.__schemaKeys__ = propertyKeys;
 
     const handelChangeFactory =
-      (propertyKey: string): HandleChange =>
+      (key: string): HandleChange =>
       (input, batch) => {
         if (!this.__draft__) this.__draft__ = {};
-        if (input !== undefined && this.__draft__[propertyKey] === input)
-          return;
-        this.__draft__[propertyKey] = input;
-        if (this.__locked__) return;
-        this.__emitChange__(
-          batch ? SetValueOption.BatchDefault : SetValueOption.Default,
-        );
+        if (input !== undefined && this.__draft__[key] === input) return;
+        this.__draft__[key] = input;
+        if (this.__isolated__ && !this.__oneOfChildNodeMapList__)
+          this.__isolated__ = false;
+        this.__emitChange__(SetValueOption.Default, batch);
       };
     host.subscribe(({ type, payload }) => {
       if (type & NodeEventType.RequestEmitChange) {
@@ -227,7 +229,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
     this.__locked__ = false;
 
-    this.__handleEmitChange__();
+    this.__emitChange__(SetValueOption.Default);
     handleSetDefaultValue(this.__value__);
     this.__publishChildrenChange__();
 
@@ -244,9 +246,11 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @private
    */
   private __emitChange__(
-    option: UnionSetValueOption = SetValueOption.BatchDefault,
+    option: UnionSetValueOption,
+    accumulate: boolean = false,
   ) {
-    if (option & SetValueOption.Batch) {
+    if (this.__locked__) return;
+    if (accumulate) {
       if (this.__batched__) return;
       this.__batched__ = true;
       this.__host__.publish({
@@ -266,32 +270,30 @@ export class BranchStrategy implements ObjectNodeStrategy {
   ) {
     if (this.__locked__) return;
 
-    const previous = this.__value__ ? { ...this.__value__ } : undefined;
     const replace = !!(option & SetValueOption.Replace);
-    if (this.__draft__ === undefined) {
-      this.__value__ = undefined;
-    } else if (replace || this.__value__ === undefined) {
-      this.__value__ = this.__parseValue__(this.__draft__);
-    } else {
-      if (checkEmptyDraft(this.__draft__)) return;
-      this.__value__ = this.__parseValue__({
-        ...this.__value__,
-        ...this.__draft__,
-      });
-    }
+    const previous = this.__value__ ? { ...this.__value__ } : this.__value__;
+    const current = this.__parseValue__(
+      this.__value__,
+      this.__draft__,
+      this.__host__.nullable,
+      replace,
+    );
+
+    if (current === false) return;
+    this.__value__ = current;
 
     if (option & SetValueOption.EmitChange)
-      this.__handleChange__(this.__value__, !!(option & SetValueOption.Batch));
+      this.__handleChange__(current, !!(option & SetValueOption.Batch));
     if (option & SetValueOption.Propagate) this.__propagate__(replace, option);
-    if (option & SetValueOption.Refresh) this.__handleRefresh__(this.__value__);
+    if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
     if (option & SetValueOption.Isolate)
       this.__handleUpdateComputedProperties__();
     if (option & SetValueOption.PublishUpdateEvent)
       this.__host__.publish({
         type: NodeEventType.UpdateValue,
-        payload: { [NodeEventType.UpdateValue]: this.__value__ },
+        payload: { [NodeEventType.UpdateValue]: current },
         options: {
-          [NodeEventType.UpdateValue]: { previous, current: this.__value__ },
+          [NodeEventType.UpdateValue]: { previous, current },
         },
       });
 
@@ -300,11 +302,33 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
   /**
    * Parses input value and processes it as an object.
-   * @param input - Object to parse
-   * @returns {ObjectValue|undefined} Parsed object
+   * @param base - Base object to parse
+   * @param draft - Draft object to parse
+   * @param nullable - Whether the object is nullable
+   * @param replace - Whether to replace the existing value
+   * @returns {ObjectValue} Processed object
    * @private
    */
-  private __parseValue__(input: ObjectValue) {
+  private __parseValue__(
+    base: ObjectValue | Nullish,
+    draft: ObjectValue | Nullish,
+    nullable: boolean,
+    replace: boolean,
+  ) {
+    if (draft === undefined) return undefined;
+    if (draft === null) return nullable ? null : {};
+    if (replace || base == null) return this.__processValue__(draft);
+    if (checkEmptyDraft(draft)) return false;
+    return this.__processValue__({ ...base, ...draft });
+  }
+
+  /**
+   * Processes input value and processes it as an object.
+   * @param input - Object to parse
+   * @returns {ObjectValue} Parsed object
+   * @private
+   */
+  private __processValue__(input: ObjectValue) {
     const value = sortObjectKeys(input, this.__schemaKeys__, true);
     if (this.__isolated__)
       return processValueWithCondition(value, this.__fieldConditionMap__);
@@ -321,12 +345,13 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__locked__ = true;
     const target = this.__value__ || {};
     const draft = this.__draft__ || {};
+    const nullify = this.__draft__ === null;
     for (let i = 0, l = this.__children__.length; i < l; i++) {
       const node = this.__children__[i].node;
       if (node.type === 'virtual') continue;
       const key = node.propertyKey;
-      if (replace || (key in draft && key in target))
-        node.setValue(target[key], option);
+      if (replace || nullify || (key in draft && key in target))
+        node.setValue(nullify ? null : target[key], option);
     }
     this.__locked__ = false;
   }
@@ -342,34 +367,36 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (!this.__oneOfChildNodeMapList__) return;
     this.__host__.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateComputedProperties) {
+        if (!this.__oneOfChildNodeMapList__) return;
+
         const current = this.__host__.oneOfIndex;
         const previous = this.__previousIndex__;
-        if (!this.__isolated__ && current === previous) return;
+        const isolation = this.__isolated__;
+
+        if (!isolation && current === previous) return;
+        if (isolation) this.__isolated__ = false;
 
         this.__locked__ = true;
         const previousOneOfChildNodeMap =
-          previous > -1
-            ? this.__oneOfChildNodeMapList__?.[previous]
-            : undefined;
+          previous > -1 ? this.__oneOfChildNodeMapList__[previous] : undefined;
         if (previousOneOfChildNodeMap)
-          for (const childNode of previousOneOfChildNodeMap.values())
-            childNode.node.resetNode(false);
+          for (const child of previousOneOfChildNodeMap.values())
+            child.node.resetNode(false);
 
         const oneOfChildNodeMap =
-          current > -1 ? this.__oneOfChildNodeMapList__?.[current] : undefined;
+          current > -1 ? this.__oneOfChildNodeMapList__[current] : undefined;
         if (oneOfChildNodeMap)
-          for (const childNode of oneOfChildNodeMap.values())
-            childNode.node.resetNode(
-              this.__isolated__,
-              this.__value__?.[childNode.node.propertyKey],
-            );
+          for (const child of oneOfChildNodeMap.values()) {
+            const node = child.node;
+            node.resetNode(isolation, this.__value__?.[node.propertyKey]);
+          }
 
         if (oneOfChildNodeMap) {
           const children: ChildNode[] = [];
           for (let i = 0, l = this.__schemaKeys__.length; i < l; i++) {
             const key = this.__schemaKeys__[i];
             const childNode =
-              this.__childNodeMap__?.get(key) || oneOfChildNodeMap?.get(key);
+              this.__childNodeMap__.get(key) || oneOfChildNodeMap.get(key);
             if (childNode) children.push(childNode);
           }
           this.__children__ = children;
@@ -377,20 +404,51 @@ export class BranchStrategy implements ObjectNodeStrategy {
         this.__locked__ = false;
 
         this.__draft__ = processValueWithOneOfSchema(
-          this.__parseValue__({
+          this.__processValue__({
             ...(this.__value__ || {}),
             ...(this.__draft__ || {}),
           }),
           this.__oneOfKeySet__,
           current > -1 ? this.__oneOfKeySetList__?.[current] : undefined,
         );
+        this.__processComputedProperties__();
 
-        this.__handleEmitChange__(RESET_NODE_OPTION);
-        this.__handleChange__(this.__value__, true);
+        this.__emitChange__(SetValueOption.ResetNode);
         this.__publishChildrenChange__();
         this.__previousIndex__ = current;
       }
     });
+  }
+
+  /**
+   * Prepares the process computed properties.
+   * @private
+   */
+  private __prepareProcessComputedProperties__() {
+    this.__host__.subscribe(({ type }) => {
+      if (type & NodeEventType.UpdateValue) {
+        if (this.__processComputedProperties__()) return;
+        this.__emitChange__(SetValueOption.BatchedEmitChange);
+      }
+    });
+  }
+
+  /**
+   * Excludes values of invisible child elements from the computed value.
+   * @returns Whether the computed properties were processed
+   * @private
+   */
+  private __processComputedProperties__() {
+    let noop = true;
+    for (let i = 0, l = this.__children__.length; i < l; i++) {
+      const node = this.__children__[i].node;
+      if (node.type === 'virtual') continue;
+      if (node.visible) continue;
+      if (!this.__draft__) this.__draft__ = {};
+      this.__draft__[node.propertyKey] = undefined;
+      if (noop) noop = false;
+    }
+    return noop;
   }
 
   /**

@@ -1,3 +1,5 @@
+import type { Nullish } from '@aileron/declare';
+
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
@@ -38,7 +40,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
 
   /**
    * Gets the value of the object node.
-   * @returns Object value or undefined
+   * @returns Object value or undefined (if empty) or null (if nullable)
    */
   public override get value() {
     return this.#strategy.value;
@@ -48,7 +50,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * Sets the value of the object node.
    * @param input - Object value to set
    */
-  public override set value(input: ObjectValue | undefined) {
+  public override set value(input: ObjectValue | Nullish) {
     this.setValue(input);
   }
 
@@ -59,7 +61,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    */
   protected override applyValue(
     this: ObjectNode,
-    input: ObjectValue,
+    input: ObjectValue | Nullish,
     option: UnionSetValueOption,
   ) {
     this.#strategy.applyValue(input, option);
@@ -102,7 +104,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       validatorFactory,
       required,
     });
-    const handleChange: HandleChange<ObjectValue | undefined> =
+    const handleChange: HandleChange<ObjectValue | Nullish> =
       this.jsonSchema.options?.omitEmpty === false
         ? (value, batch) => super.onChange(value, batch)
         : (value, batch) => super.onChange(omitEmptyObject(value), batch);
@@ -117,11 +119,11 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * @returns Created strategy: TerminalStrategy | BranchStrategy
    */
   #createStrategy(
-    handleChange: HandleChange<ObjectValue | undefined>,
+    handleChange: HandleChange<ObjectValue | Nullish>,
     nodeFactory: SchemaNodeFactory,
   ) {
-    const handleRefresh = (value?: ObjectValue) => this.refresh(value);
-    const handleSetDefaultValue = (value?: ObjectValue) =>
+    const handleRefresh = (value: ObjectValue | Nullish) => this.refresh(value);
+    const handleSetDefaultValue = (value: ObjectValue | Nullish) =>
       this.setDefaultValue(value);
 
     if (this.group === 'terminal') {

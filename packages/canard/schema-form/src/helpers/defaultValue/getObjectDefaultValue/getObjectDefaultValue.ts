@@ -1,11 +1,13 @@
 import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
 import { setValue } from '@winglet/json/pointer';
 
+import type { Nullish } from '@aileron/declare';
+
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
 export const getObjectDefaultValue = (
   jsonSchema: ObjectSchema,
-  inputDefault?: ObjectValue,
+  inputDefault?: ObjectValue | Nullish,
 ) => {
   const defaultValue: ObjectValue = inputDefault || jsonSchema.default || {};
   new JsonSchemaScanner({

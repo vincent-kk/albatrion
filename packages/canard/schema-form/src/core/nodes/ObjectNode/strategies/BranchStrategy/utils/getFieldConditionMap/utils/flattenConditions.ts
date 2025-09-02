@@ -2,10 +2,14 @@ import { isArray, isEmptyObject } from '@winglet/common-utils/filter';
 
 import type { Dictionary, RequiredBy } from '@aileron/declare';
 
-import type { JsonSchema, JsonSchemaWithVirtual } from '@/schema-form/types';
+import type {
+  AllowedValue,
+  JsonSchema,
+  JsonSchemaWithVirtual,
+} from '@/schema-form/types';
 
-interface FlattenCondition {
-  condition: Dictionary<string | string[]>;
+export interface FlattenCondition {
+  condition: Dictionary<AllowedValue | AllowedValue[]>;
   required: string[];
   inverse?: boolean;
 }
@@ -32,21 +36,17 @@ export const flattenConditions = (
 const flattenConditionsInto = (
   schema: JsonSchema,
   conditions: FlattenCondition[],
-  collectedConditions: Dictionary<Array<string | string[]>> = {},
+  collectedConditions: Dictionary<Array<AllowedValue | AllowedValue[]>> = {},
 ): void => {
   if (!schema.if || !schema.then) return;
-
   const ifCondition = schema.if.properties
     ? extractCondition(schema.if.properties)
     : null;
-
   if (ifCondition === null) return;
-
   for (const [key, value] of Object.entries(ifCondition)) {
     if (!collectedConditions[key]) collectedConditions[key] = [];
     collectedConditions[key].push(value);
   }
-
   const thenRequired = schema.then?.required as string[];
   if (thenRequired?.length) {
     const thenVirtualRequired = schema.then.virtualRequired as string[];
@@ -63,12 +63,12 @@ const flattenConditionsInto = (
     else {
       const elseRequired = schema.else.required;
       if (elseRequired?.length) {
-        const inverseCondition: Record<string, string | string[]> = {};
+        const inverseCondition: FlattenCondition['condition'] = {};
         for (const [key, values] of Object.entries(collectedConditions)) {
           if (values.length === 1) {
             inverseCondition[key] = values[0];
           } else {
-            const merged: string[] = [];
+            const merged: AllowedValue[] = [];
             for (let i = 0, il = values.length; i < il; i++) {
               const value = values[i];
               if (isArray(value)) {
@@ -99,24 +99,17 @@ const flattenConditionsInto = (
  */
 const extractCondition = (
   properties: Record<string, any>,
-): Record<string, string | string[]> | null => {
-  const condition: Dictionary<string | string[]> = {};
+): FlattenCondition['condition'] | null => {
+  const condition: FlattenCondition['condition'] = {};
   const propertyEntries = Object.entries(properties);
   for (let i = 0, il = propertyEntries.length; i < il; i++) {
     const [propName, propSchema] = propertyEntries[i];
     if (!propSchema || typeof propSchema !== 'object') continue;
-    if (isValidConst(propSchema)) {
-      condition[propName] = '' + propSchema.const;
-    } else if (isValidEnum(propSchema)) {
+    if (isValidConst(propSchema)) condition[propName] = propSchema.const;
+    else if (isValidEnum(propSchema)) {
       const enumValues = propSchema.enum;
-      if (enumValues.length === 1) {
-        condition[propName] = '' + enumValues[0];
-      } else {
-        const stringArray: string[] = [];
-        for (let j = 0, jl = enumValues.length; j < jl; j++)
-          stringArray.push('' + enumValues[j]);
-        condition[propName] = stringArray;
-      }
+      if (enumValues.length === 1) condition[propName] = enumValues[0];
+      else condition[propName] = enumValues;
     }
   }
   return isEmptyObject(condition) ? null : condition;

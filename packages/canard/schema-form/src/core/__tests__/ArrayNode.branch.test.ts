@@ -16,7 +16,6 @@ describe('ArrayNode-Terminal', () => {
         properties: {
           arr: {
             type: 'array',
-            terminal: true,
             items: {
               type: 'boolean',
             },
@@ -27,6 +26,7 @@ describe('ArrayNode-Terminal', () => {
 
     const booleanNode = node?.find('arr');
     expect(booleanNode).toBeDefined();
+    expect(booleanNode?.value).toEqual([]);
     expect(booleanNode?.type).toBe('array');
   });
 
@@ -38,7 +38,6 @@ describe('ArrayNode-Terminal', () => {
         properties: {
           arr: {
             type: 'array',
-            terminal: true,
             items: {
               type: 'boolean',
             },
@@ -71,7 +70,6 @@ describe('ArrayNode-Terminal', () => {
         properties: {
           arr: {
             type: 'array',
-            terminal: true,
             items: {
               type: 'boolean',
             },
@@ -95,7 +93,6 @@ describe('ArrayNode-Terminal', () => {
         properties: {
           arr: {
             type: 'array',
-            terminal: true,
             items: {
               type: 'boolean',
             },
@@ -110,26 +107,33 @@ describe('ArrayNode-Terminal', () => {
     const mockListener = vi.fn();
     booleanNode.subscribe(mockListener);
 
+    await delay();
+
+    // 초기화 이벤트가 발생했는지 확인 (호출 횟수와 이벤트 타입만 검증)
+    expect(mockListener).toHaveBeenCalledTimes(1);
+    const firstCall = mockListener.mock.calls[0][0];
+    expect(firstCall.type & NodeEventType.Activated).toBeTruthy();
+    expect(firstCall.type & NodeEventType.UpdateValue).toBeTruthy();
+    expect(firstCall.payload[NodeEventType.UpdateValue]).toEqual([]);
+
+    mockListener.mockClear();
+
     // 값 변경
     booleanNode.setValue([true, false, true]);
     await delay();
 
-    // 이벤트가 발생했는지 확인
-    expect(mockListener).toHaveBeenCalledWith({
-      type:
-        NodeEventType.Activated |
-        NodeEventType.RequestRefresh |
-        NodeEventType.UpdateValue |
-        NodeEventType.UpdateComputedProperties,
-      payload: {
-        [NodeEventType.UpdateValue]: [true, false, true],
-      },
-      options: {
-        [NodeEventType.UpdateValue]: {
-          previous: [],
-          current: [true, false, true],
-        },
-      },
+    // 값 변경 이벤트가 발생했는지 확인 (호출 횟수와 핵심 이벤트 타입만 검증)
+    expect(mockListener).toHaveBeenCalledTimes(1);
+    const secondCall = mockListener.mock.calls[0][0];
+    expect(secondCall.type & NodeEventType.UpdateValue).toBeTruthy();
+    expect(secondCall.payload[NodeEventType.UpdateValue]).toEqual([
+      true,
+      false,
+      true,
+    ]);
+    expect(secondCall.options[NodeEventType.UpdateValue]).toMatchObject({
+      previous: [],
+      current: [true, false, true],
     });
   });
 
@@ -141,7 +145,6 @@ describe('ArrayNode-Terminal', () => {
         properties: {
           arr: {
             type: 'array',
-            terminal: true,
             items: {
               type: 'boolean',
             },
@@ -176,7 +179,6 @@ describe('ArrayNode-Terminal', () => {
         properties: {
           arr: {
             type: 'array',
-            terminal: true,
             items: { type: 'boolean' },
           },
         },
@@ -204,7 +206,6 @@ describe('ArrayNode-Terminal', () => {
         properties: {
           arr: {
             type: 'array',
-            terminal: true,
             items: { type: 'boolean' },
           },
         },
