@@ -108,7 +108,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   public applyValue(input: ObjectValue | Nullish, option: UnionSetValueOption) {
     this.__draft__ = input;
     this.__isolated__ = !!(option & SetValueOption.Isolate);
-    this.__emitChange__(option);
+    this.__emitChange__(option, false);
   }
 
   /**
@@ -175,9 +175,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
         this.__draft__[propertyKey] = input;
         if (this.__locked__) return;
         this.__isolated__ = false;
-        this.__emitChange__(
-          batch ? SetValueOption.BatchDefault : SetValueOption.Default,
-        );
+        this.__emitChange__(SetValueOption.Default, batch);
       };
     host.subscribe(({ type, payload }) => {
       if (type & NodeEventType.RequestEmitChange) {
@@ -228,7 +226,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
     this.__locked__ = false;
 
-    this.__handleEmitChange__();
+    this.__emitChange__(SetValueOption.Default);
     handleSetDefaultValue(this.__value__);
     this.__publishChildrenChange__();
 
@@ -244,10 +242,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @param option - Change options (optional)
    * @private
    */
-  private __emitChange__(
-    option: UnionSetValueOption = SetValueOption.BatchDefault,
-  ) {
-    if (option & SetValueOption.Batch) {
+  private __emitChange__(option: UnionSetValueOption, batch: boolean = false) {
+    if (batch) {
       if (this.__batched__) return;
       this.__batched__ = true;
       this.__host__.publish({
@@ -407,7 +403,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
           current > -1 ? this.__oneOfKeySetList__?.[current] : undefined,
         );
 
-        this.__handleEmitChange__(RESET_NODE_OPTION);
+        this.__emitChange__(RESET_NODE_OPTION);
         this.__handleChange__(this.__value__, true);
         this.__publishChildrenChange__();
         this.__previousIndex__ = current;

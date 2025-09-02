@@ -90,13 +90,13 @@ export class BranchStrategy implements ArrayNodeStrategy {
       this.clear(option);
       this.__locked__ = false;
       this.__nullish__ = input;
-      this.__emitChange__(option, true);
+      this.__emitChange__(option, false);
     } else if (isArray(input)) {
       this.__locked__ = true;
       this.clear(option);
       for (const value of input) this.push(value, option);
       this.__locked__ = false;
-      this.__emitChange__(option, true);
+      this.__emitChange__(option, false);
     }
   }
 
@@ -172,7 +172,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     });
 
     this.__locked__ = false;
-    this.__handleEmitChange__();
+    this.__emitChange__(SetValueOption.Default, false);
     handleSetDefaultValue(this.value);
     this.__publishUpdateChildren__();
   }
@@ -212,7 +212,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
       (childNode as AbstractNode).activate(this.__host__);
 
     this.__expire__();
-    this.__emitChange__(option, true);
+    this.__emitChange__(option);
     return promiseAfterMicrotask(this.length);
   }
 
@@ -248,7 +248,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__updateChildName__();
 
     this.__expire__();
-    this.__emitChange__(option, true);
+    this.__emitChange__(option);
     return promiseAfterMicrotask(removed.data);
   }
 
@@ -266,7 +266,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__keys__ = [];
     this.__sourceMap__.clear();
     this.__expire__();
-    this.__emitChange__(option, true);
+    this.__emitChange__(option);
     return promiseAfterMicrotask(void 0);
   }
 
@@ -281,9 +281,10 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   private __emitChange__(
     option: UnionSetValueOption = SetValueOption.BatchDefault,
-    updateChildren: boolean = false,
+    batch: boolean = true,
+    updateChildren: boolean = true,
   ) {
-    if (option & SetValueOption.Batch) {
+    if (batch) {
       if (this.__batched__) return;
       this.__batched__ = true;
       this.__host__.publish({
@@ -370,9 +371,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
       this.__idle__ = false;
       this.__nullish__ = false;
       if (this.__locked__) return;
-      this.__emitChange__(
-        batch ? SetValueOption.BatchDefault : SetValueOption.Default,
-      );
+      this.__emitChange__(SetValueOption.Default, batch, false);
     };
   }
 
