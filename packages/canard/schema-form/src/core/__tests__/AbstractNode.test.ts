@@ -360,7 +360,7 @@ describe('AbstractNode', () => {
     expect(externalEvent[0]).toEqual({
       type: NodeEventType.RequestEmitChange,
       payload: {
-        [NodeEventType.RequestEmitChange]: SetValueOption.BatchDefault,
+        [NodeEventType.RequestEmitChange]: SetValueOption.Default,
       },
       options: {},
     });

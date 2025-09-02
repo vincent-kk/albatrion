@@ -123,8 +123,8 @@ describe('ArrayNode-Terminal', () => {
     await delay();
 
     // 값 변경 이벤트가 발생했는지 확인 (호출 횟수와 핵심 이벤트 타입만 검증)
-    expect(mockListener).toHaveBeenCalledTimes(2);
-    const secondCall = mockListener.mock.calls[1][0];
+    expect(mockListener).toHaveBeenCalledTimes(1);
+    const secondCall = mockListener.mock.calls[0][0];
     expect(secondCall.type & NodeEventType.UpdateValue).toBeTruthy();
     expect(secondCall.payload[NodeEventType.UpdateValue]).toEqual([
       true,
