@@ -89,7 +89,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
       this.__locked__ = true;
       this.clear(option);
       this.__locked__ = false;
-      this.__nullish__ = input;
+      this.__nullish__ =
+        input === null ? (this.__host__.nullable ? input : false) : undefined;
       this.__emitChange__(option, false);
     } else if (isArray(input)) {
       this.__locked__ = true;
