@@ -173,7 +173,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
         if (input !== undefined && this.__draft__[propertyKey] === input)
           return;
         this.__draft__[propertyKey] = input;
-        if (this.__locked__) return;
         if (this.__isolated__ && !this.__oneOfChildNodeMapList__)
           this.__isolated__ = false;
         this.__emitChange__(SetValueOption.Default, batch);
@@ -244,6 +243,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @private
    */
   private __emitChange__(option: UnionSetValueOption, batch: boolean = false) {
+    if (this.__locked__) return;
     if (batch) {
       if (this.__batched__) return;
       this.__batched__ = true;

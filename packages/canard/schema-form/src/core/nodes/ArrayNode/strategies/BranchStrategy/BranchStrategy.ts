@@ -284,6 +284,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     batch: boolean = true,
     updateChildren: boolean = true,
   ) {
+    if (this.__locked__) return;
     if (batch) {
       if (this.__batched__) return;
       this.__batched__ = true;
@@ -370,7 +371,6 @@ export class BranchStrategy implements ArrayNodeStrategy {
       source.data = input;
       this.__idle__ = false;
       this.__nullish__ = false;
-      if (this.__locked__) return;
       this.__emitChange__(SetValueOption.Default, batch, false);
     };
   }
