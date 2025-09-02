@@ -39,18 +39,14 @@ const flattenConditionsInto = (
   collectedConditions: Dictionary<Array<AllowedValue | AllowedValue[]>> = {},
 ): void => {
   if (!schema.if || !schema.then) return;
-
   const ifCondition = schema.if.properties
     ? extractCondition(schema.if.properties)
     : null;
-
   if (ifCondition === null) return;
-
   for (const [key, value] of Object.entries(ifCondition)) {
     if (!collectedConditions[key]) collectedConditions[key] = [];
     collectedConditions[key].push(value);
   }
-
   const thenRequired = schema.then?.required as string[];
   if (thenRequired?.length) {
     const thenVirtualRequired = schema.then.virtualRequired as string[];

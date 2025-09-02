@@ -26,7 +26,6 @@ export const getFieldConditionMap = (
   const fieldConditionMap: FieldConditionMap = new Map();
   for (let i = 0, il = conditions.length; i < il; i++) {
     const { condition, required, inverse } = conditions[i];
-    // Step 1. Process required fields
     for (let j = 0, jl = required.length; j < jl; j++) {
       const field = required[j];
       const previous = fieldConditionMap.get(field);
@@ -34,7 +33,6 @@ export const getFieldConditionMap = (
       if (!previous) fieldConditionMap.set(field, [{ condition, inverse }]);
       else previous.push({ condition, inverse });
     }
-    // Step 2. Process fields that only appear in condition
     for (const key of Object.keys(condition))
       if (!required.includes(key)) fieldConditionMap.set(key, true);
   }
