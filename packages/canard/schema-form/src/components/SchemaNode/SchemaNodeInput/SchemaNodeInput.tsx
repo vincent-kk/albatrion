@@ -1,5 +1,6 @@
 import { memo, useCallback, useMemo, useRef, useState } from 'react';
 
+import { isArray } from '@winglet/common-utils/filter';
 import { useOnUnmount } from '@winglet/react-utils/hook';
 
 import { NodeEventType, NodeState } from '@/schema-form/core';
@@ -67,7 +68,7 @@ export const SchemaNodeInput = memo(
 
     const handleFileAttach = useCallback(
       (file: File | File[] | undefined) => {
-        if (file) attachedFileMap.set(node.path, file);
+        if (file) attachedFileMap.set(node.path, isArray(file) ? file : [file]);
         else attachedFileMap.delete(node.path);
       },
       [attachedFileMap, node.path],
