@@ -253,7 +253,6 @@ export abstract class AbstractNode<
     input: Value | Nullish,
     batch?: boolean,
   ): void {
-    if (!this.#visible && input !== undefined) return;
     this.#handleChange(input, batch);
   }
 
