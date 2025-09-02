@@ -433,6 +433,14 @@ export abstract class AbstractNode<
   /** List of dependencies for the node */
   #dependencies: any[] = [];
 
+  /** Whether the node has computed properties */
+  #computeEnabled: boolean = false;
+
+  /** [readonly] Whether the node has computed properties */
+  public get computeEnabled() {
+    return this.#computeEnabled;
+  }
+
   /** Whether the node is visible */
   #visible: boolean = true;
 
@@ -479,7 +487,8 @@ export abstract class AbstractNode<
    */
   #prepareUpdateDependencies(this: AbstractNode) {
     const dependencyPaths = this.#compute.dependencyPaths;
-    if (dependencyPaths.length > 0) {
+    const computeEnabled = dependencyPaths.length > 0;
+    if (computeEnabled) {
       this.#dependencies = new Array(dependencyPaths.length);
       for (let i = 0, l = dependencyPaths.length; i < l; i++) {
         const dependencyPath = dependencyPaths[i];
@@ -500,10 +509,12 @@ export abstract class AbstractNode<
       }
     }
     this.updateComputedProperties();
-    this.subscribe(({ type }) => {
-      if (type & NodeEventType.UpdateComputedProperties)
-        this.#hasPublishedUpdateComputedProperties = false;
-    });
+    this.#computeEnabled = computeEnabled;
+    if (computeEnabled)
+      this.subscribe(({ type }) => {
+        if (type & NodeEventType.UpdateComputedProperties)
+          this.#hasPublishedUpdateComputedProperties = false;
+      });
   }
 
   /** Whether the node has published an UpdateComputedProperties event */
