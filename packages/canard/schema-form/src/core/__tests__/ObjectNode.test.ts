@@ -6,7 +6,7 @@ import { delay } from '@winglet/common-utils';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 import type { JsonSchema } from '@/schema-form/types';
 
-import { NodeEventType, ValidationMode } from '../nodes';
+import { NodeEventType, SetValueOption, ValidationMode } from '../nodes';
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
@@ -144,7 +144,10 @@ describe('ObjectNode', () => {
             type: 'object',
             properties: {
               name: { type: 'string' },
-              age: { type: 'number' },
+              age: {
+                type: 'number',
+                computed: { visible: '../name === "Ron"' },
+              },
             },
           },
         },
@@ -168,9 +171,10 @@ describe('ObjectNode', () => {
       type:
         NodeEventType.UpdateValue |
         NodeEventType.RequestRefresh |
-        NodeEventType.UpdateComputedProperties,
+        NodeEventType.RequestEmitChange,
       payload: {
         [NodeEventType.UpdateValue]: { name: 'Ron', age: 28 },
+        [NodeEventType.RequestEmitChange]: SetValueOption.Default,
       },
       options: {
         [NodeEventType.UpdateValue]: {
@@ -893,10 +897,7 @@ describe('ObjectNode', () => {
       await delay();
 
       expect(mockListener).toHaveBeenCalledWith({
-        type:
-          NodeEventType.UpdateValue |
-          NodeEventType.RequestRefresh |
-          NodeEventType.UpdateComputedProperties,
+        type: NodeEventType.UpdateValue | NodeEventType.RequestRefresh,
         payload: {
           [NodeEventType.UpdateValue]: {
             'ünicøde-näme': 'Ron',
