@@ -174,7 +174,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
           return;
         this.__draft__[propertyKey] = input;
         if (this.__locked__) return;
-        this.__isolated__ = false;
+        if (this.__isolated__ && !this.__oneOfChildNodeMapList__)
+          this.__isolated__ = false;
         this.__emitChange__(SetValueOption.Default, batch);
       };
     host.subscribe(({ type, payload }) => {
@@ -360,34 +361,36 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (!this.__oneOfChildNodeMapList__) return;
     this.__host__.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateComputedProperties) {
+        if (!this.__oneOfChildNodeMapList__) return;
+
         const current = this.__host__.oneOfIndex;
         const previous = this.__previousIndex__;
-        if (!this.__isolated__ && current === previous) return;
+        const isolation = this.__isolated__;
+
+        if (isolation) this.__isolated__ = false;
+        if (!isolation && current === previous) return;
 
         this.__locked__ = true;
         const previousOneOfChildNodeMap =
-          previous > -1
-            ? this.__oneOfChildNodeMapList__?.[previous]
-            : undefined;
+          previous > -1 ? this.__oneOfChildNodeMapList__[previous] : undefined;
         if (previousOneOfChildNodeMap)
-          for (const childNode of previousOneOfChildNodeMap.values())
-            childNode.node.resetNode(false);
+          for (const child of previousOneOfChildNodeMap.values())
+            child.node.resetNode(false);
 
         const oneOfChildNodeMap =
-          current > -1 ? this.__oneOfChildNodeMapList__?.[current] : undefined;
+          current > -1 ? this.__oneOfChildNodeMapList__[current] : undefined;
         if (oneOfChildNodeMap)
-          for (const childNode of oneOfChildNodeMap.values())
-            childNode.node.resetNode(
-              this.__isolated__,
-              this.__value__?.[childNode.node.propertyKey],
-            );
+          for (const child of oneOfChildNodeMap.values()) {
+            const node = child.node;
+            node.resetNode(isolation, this.__value__?.[node.propertyKey]);
+          }
 
         if (oneOfChildNodeMap) {
           const children: ChildNode[] = [];
           for (let i = 0, l = this.__schemaKeys__.length; i < l; i++) {
             const key = this.__schemaKeys__[i];
             const childNode =
-              this.__childNodeMap__?.get(key) || oneOfChildNodeMap?.get(key);
+              this.__childNodeMap__.get(key) || oneOfChildNodeMap.get(key);
             if (childNode) children.push(childNode);
           }
           this.__children__ = children;
