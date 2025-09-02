@@ -344,7 +344,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       const node = this.__children__[i].node;
       if (node.type === 'virtual') continue;
       const key = node.propertyKey;
-      if (replace || (key in draft && key in target))
+      if (replace || nullify || (key in draft && key in target))
         node.setValue(nullify ? null : target[key], option);
     }
     this.__locked__ = false;
