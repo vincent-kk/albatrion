@@ -7,6 +7,8 @@ import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldConditionMap } from '../getFieldConditionMap';
 
+export type ConditionsMap = Map<string, string[]>;
+
 /**
  * Creates executable code lists by field based on FieldConditionMap.
  * @param fieldConditionMap - Field condition map
@@ -14,14 +16,17 @@ import type { FieldConditionMap } from '../getFieldConditionMap';
  */
 export const getConditionsMap = (
   fieldConditionMap: FieldConditionMap | undefined,
-): Map<string, string[]> | undefined => {
+): ConditionsMap | undefined => {
   if (!fieldConditionMap) return undefined;
-  const oneOfConditionsMap: Map<string, string[]> = new Map();
+  const oneOfConditionsMap: ConditionsMap = new Map();
   for (const [field, conditions] of fieldConditionMap.entries()) {
     if (conditions === true) continue;
     const operations: string[] = [];
-    for (let i = 0, l = conditions.length; i < l; i++)
-      getOperations(conditions[i].condition, conditions[i].inverse, operations);
+    for (let i = 0, l = conditions.length; i < l; i++) {
+      const source = conditions[i];
+      const operation = getOperations(source.condition, source.inverse);
+      if (operation) operations.push(operation);
+    }
     oneOfConditionsMap.set(field, operations);
   }
   return oneOfConditionsMap;
@@ -36,8 +41,8 @@ export const getConditionsMap = (
 const getOperations = (
   condition: Dictionary<any | any[]>,
   inverse: boolean | undefined,
-  operations: string[],
 ) => {
+  const operations: string[] = [];
   for (const [key, value] of Object.entries(condition)) {
     if (isArray(value)) {
       operations.push(
@@ -54,4 +59,7 @@ const getOperations = (
         );
     }
   }
+  if (operations.length === 0) return null;
+  if (operations.length === 1) return operations[0];
+  return operations.map((operation) => '(' + operation + ')').join('&&');
 };

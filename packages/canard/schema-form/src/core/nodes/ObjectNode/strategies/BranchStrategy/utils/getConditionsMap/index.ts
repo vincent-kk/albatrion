@@ -1,1 +1,1 @@
-export { getConditionsMap } from './getConditionsMap';
+export { getConditionsMap, type ConditionsMap } from './getConditionsMap';

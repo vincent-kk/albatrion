@@ -11,6 +11,7 @@ import type {
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
+import type { ConditionsMap } from '../getConditionsMap';
 import type {
   VirtualReference,
   VirtualReferenceFieldsMap,
@@ -35,7 +36,7 @@ export const getChildNodeMap = (
   jsonSchema: ObjectSchema,
   propertyKeys: string[],
   defaultValue: ObjectValue | Nullish,
-  conditionsMap: Map<string, string[]> | undefined,
+  conditionsMap: ConditionsMap | undefined,
   virtualReferencesMap: VirtualReferencesMap | undefined,
   virtualReferenceFieldsMap: VirtualReferenceFieldsMap | undefined,
   handelChangeFactory: Fn<[name: string], HandleChange>,

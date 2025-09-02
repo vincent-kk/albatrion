@@ -9,6 +9,7 @@ import type {
 } from '@/schema-form/core/nodes/type';
 import type { AllowedValue } from '@/schema-form/types';
 
+import type { ConditionsMap } from '../getConditionsMap';
 import type {
   VirtualReference,
   VirtualReferenceFieldsMap,
@@ -31,7 +32,7 @@ export const getChildren = (
   parentNode: ObjectNode,
   propertyKeys: string[],
   childNodeMap: Map<string, ChildNode>,
-  conditionsMap: Map<string, string[]> | undefined,
+  conditionsMap: ConditionsMap | undefined,
   virtualReferencesMap: VirtualReferencesMap | undefined,
   virtualReferenceFieldsMap: VirtualReferenceFieldsMap | undefined,
   nodeFactory: SchemaNodeFactory,

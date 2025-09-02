@@ -13,20 +13,21 @@ import type { JsonSchemaWithRef } from '@/schema-form/types';
 export const mergeShowConditions = (
   jsonSchema: JsonSchemaWithRef,
   conditions: string[] | undefined,
-) =>
-  conditions
-    ? merge(jsonSchema, {
-        computed: {
-          visible: combineConditions(
-            [
-              jsonSchema.computed?.visible ?? jsonSchema['&visible'],
-              combineConditions(conditions || [], '||'),
-            ],
-            '&&',
-          ),
-        },
-      })
-    : jsonSchema;
+) => {
+  if (conditions) {
+    const visible: string | boolean | undefined =
+      jsonSchema.computed?.visible ?? jsonSchema['&visible'];
+    if (typeof visible === 'boolean') return jsonSchema;
+    return merge(jsonSchema, {
+      computed: {
+        visible: combineConditions(
+          [visible, combineConditions(conditions, '||')],
+          '&&',
+        ),
+      },
+    });
+  } else return jsonSchema;
+};
 
 /**
  * Function to combine multiple conditions with a specified operator.
