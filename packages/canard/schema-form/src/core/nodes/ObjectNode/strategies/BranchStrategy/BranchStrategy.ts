@@ -406,6 +406,14 @@ export class BranchStrategy implements ObjectNodeStrategy {
           current > -1 ? this.__oneOfKeySetList__?.[current] : undefined,
         );
 
+        for (let i = 0, l = this.__children__.length; i < l; i++) {
+          const node = this.__children__[i].node;
+          if (node.type === 'virtual') continue;
+          if (node.visible) continue;
+          if (!this.__draft__) this.__draft__ = {};
+          this.__draft__[node.propertyKey] = undefined;
+        }
+
         this.__emitChange__(RESET_NODE_OPTION);
         this.__handleChange__(this.__value__, true);
         this.__publishChildrenChange__();
