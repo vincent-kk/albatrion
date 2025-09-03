@@ -11,10 +11,10 @@ import type { Fn } from '@aileron/declare';
 import type { Modal } from '@/promise-modal/types';
 
 export class ModalManager {
-  static #active = false;
-  static activate() {
-    if (ModalManager.#active) return false;
-    return (ModalManager.#active = true);
+  static #initialized = false;
+  static initialize() {
+    if (ModalManager.#initialized) return false;
+    return (ModalManager.#initialized = true);
   }
 
   static #anchor: HTMLElement | null = null;
@@ -70,7 +70,7 @@ export class ModalManager {
   }
 
   static reset() {
-    ModalManager.#active = false;
+    ModalManager.#initialized = false;
     ModalManager.#anchor = null;
     ModalManager.#prerenderList = [];
     ModalManager.#openHandler = (modal: Modal) =>

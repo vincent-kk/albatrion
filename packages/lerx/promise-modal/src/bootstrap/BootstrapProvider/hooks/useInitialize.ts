@@ -6,7 +6,7 @@ import { useVersion } from '@winglet/react-utils/hook';
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 
 export const useInitialize = () => {
-  const permitted = useRef(ModalManager.activate());
+  const permitted = useRef(ModalManager.initialize());
   const anchorRef = useRef<HTMLElement | null>(null);
   const [, update] = useVersion();
 
