@@ -184,7 +184,7 @@ describe('StringNode nullable functionality', () => {
           status: {
             type: 'string',
             nullable: true,
-            enum: ['active', 'inactive', 'pending'],
+            enum: ['active', 'inactive', 'pending', null],
           },
         },
       },
