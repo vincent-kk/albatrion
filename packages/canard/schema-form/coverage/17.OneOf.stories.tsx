@@ -24,7 +24,7 @@ export const OneOf = () => {
           date: {
             type: 'string',
             format: 'date',
-            '&visible': '../title === "wow"',
+            '&active': '../title === "wow"',
           },
           price: { type: 'number' },
         },
@@ -37,7 +37,7 @@ export const OneOf = () => {
           date: {
             type: 'string',
             format: 'date',
-            '&visible': '../title === "wow"',
+            '&active': '../title === "wow"',
           },
           price: {
             type: 'number',
@@ -53,7 +53,7 @@ export const OneOf = () => {
           date: {
             type: 'string',
             format: 'date',
-            '&visible': '../title === "wow"',
+            '&active': '../title === "wow"',
           },
           price: {
             type: 'number',
@@ -98,7 +98,7 @@ export const OneOfAlias = () => {
           date1: {
             type: 'string',
             format: 'date',
-            '&visible': '../title === "wow"',
+            '&active': '../title === "wow"',
           },
           price1: {
             type: 'number',
@@ -112,7 +112,7 @@ export const OneOfAlias = () => {
           date2: {
             type: 'string',
             format: 'date',
-            '&visible': '../title === "wow"',
+            '&active': '../title === "wow"',
           },
           price2: { type: 'number' },
         },
@@ -154,7 +154,7 @@ export const OneOfAliasWithKeyOrder = () => {
           date1: {
             type: 'string',
             format: 'date',
-            '&visible': '../title === "wow"',
+            '&active': '../title === "wow"',
           },
           price1: {
             type: 'number',
@@ -168,7 +168,7 @@ export const OneOfAliasWithKeyOrder = () => {
           date2: {
             type: 'string',
             format: 'date',
-            '&visible': '../title === "wow"',
+            '&active': '../title === "wow"',
           },
           price2: { type: 'number' },
         },
@@ -450,7 +450,7 @@ export const ErrorCase1 = () => {
           category: {
             type: 'string',
             format: 'date',
-            '&visible': '../title === "wow"',
+            '&active': '../title === "wow"',
           },
           title: {
             type: 'number',
@@ -464,7 +464,7 @@ export const ErrorCase1 = () => {
           date2: {
             type: 'string',
             format: 'date',
-            '&visible': '../title === "wow"',
+            '&active': '../title === "wow"',
           },
           price2: { type: 'number' },
         },
@@ -507,7 +507,7 @@ export const ErrorCase2 = () => {
           date1: {
             type: 'string',
             format: 'date',
-            '&visible': '../title === "wow"',
+            '&active': '../title === "wow"',
           },
           price1: {
             type: 'number',

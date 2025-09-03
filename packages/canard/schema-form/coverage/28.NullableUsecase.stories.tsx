@@ -283,7 +283,6 @@ export const FormRefWithCustomNullableInputs = () => {
       '#/customString': ({
         onChange,
         value,
-        defaultValue,
       }: FormTypeInputProps<string | null | undefined>) => {
         return (
           <div
@@ -788,7 +787,7 @@ export const FormRefWithDeepConditionalAndOneOf = () => {
         title: 'Personal Information',
         nullable: true,
         computed: {
-          visible: "#/userType === 'individual'",
+          active: "#/userType === 'individual'",
         },
         properties: {
           firstName: { type: 'string', nullable: true },
@@ -803,7 +802,7 @@ export const FormRefWithDeepConditionalAndOneOf = () => {
         title: 'Premium Features',
         nullable: true,
         computed: {
-          visible: "#/userType === 'individual' && #/accountTier === 'premium'",
+          active: "#/userType === 'individual' && #/accountTier === 'premium'",
         },
         properties: {
           prioritySupport: { type: 'boolean', nullable: true },
@@ -817,7 +816,7 @@ export const FormRefWithDeepConditionalAndOneOf = () => {
         title: 'Extended Data',
         nullable: true,
         computed: {
-          visible:
+          active:
             "#/userType === 'individual' && #/accountTier === 'premium' && #/dataSelection === 'extended'",
         },
         properties: {
@@ -843,7 +842,7 @@ export const FormRefWithDeepConditionalAndOneOf = () => {
         title: 'Basic Data',
         nullable: true,
         computed: {
-          visible:
+          active:
             "#/userType === 'individual' && #/accountTier === 'premium' && #/dataSelection !== 'extended'",
         },
         properties: {
@@ -857,7 +856,7 @@ export const FormRefWithDeepConditionalAndOneOf = () => {
         title: 'Free Features',
         nullable: true,
         computed: {
-          visible: "#/userType === 'individual' && #/accountTier === 'free'",
+          active: "#/userType === 'individual' && #/accountTier === 'free'",
         },
         properties: {
           adsEnabled: { type: 'boolean', default: true },
@@ -871,7 +870,7 @@ export const FormRefWithDeepConditionalAndOneOf = () => {
         title: 'Company Information',
         nullable: true,
         computed: {
-          visible: "#/userType === 'company'",
+          active: "#/userType === 'company'",
         },
         properties: {
           companyName: { type: 'string', nullable: true },
@@ -886,7 +885,7 @@ export const FormRefWithDeepConditionalAndOneOf = () => {
         title: 'Enterprise Features',
         nullable: true,
         computed: {
-          visible: "#/userType === 'company' && #/accountTier === 'enterprise'",
+          active: "#/userType === 'company' && #/accountTier === 'enterprise'",
         },
         properties: {
           dedicatedManager: { type: 'boolean', nullable: true },
@@ -911,7 +910,7 @@ export const FormRefWithDeepConditionalAndOneOf = () => {
         title: 'Business Features',
         nullable: true,
         computed: {
-          visible: "#/userType === 'company' && #/accountTier === 'premium'",
+          active: "#/userType === 'company' && #/accountTier === 'premium'",
         },
         properties: {
           apiAccess: { type: 'boolean', nullable: true },
@@ -925,7 +924,7 @@ export const FormRefWithDeepConditionalAndOneOf = () => {
         title: 'Trial Features',
         nullable: true,
         computed: {
-          visible: "#/userType === 'company' && #/accountTier === 'free'",
+          active: "#/userType === 'company' && #/accountTier === 'free'",
         },
         properties: {
           trialDaysLeft: { type: 'number', nullable: true },
@@ -939,7 +938,7 @@ export const FormRefWithDeepConditionalAndOneOf = () => {
         title: 'Basic Information',
         nullable: true,
         computed: {
-          visible: "#/userType === 'none'",
+          active: "#/userType === 'none'",
         },
         properties: {
           email: { type: 'string', format: 'email', nullable: true },
@@ -1455,12 +1454,12 @@ export const ConditionalSchema = () => {
       openingDate: {
         type: 'string',
         format: 'date',
-        '&visible': '../category === "game"',
+        '&active': '../category === "game"',
       },
       releaseDate: {
         type: 'string',
         format: 'date',
-        '&visible': '../category === "movie"',
+        '&active': '../category === "movie"',
       },
       numOfPlayers: { type: 'number' },
       price: {

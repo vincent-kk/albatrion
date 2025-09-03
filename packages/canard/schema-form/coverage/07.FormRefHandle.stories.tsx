@@ -365,14 +365,14 @@ export const FormRefHandleWithIfThenElse = () => {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '../title === "wow"',
+          active: '../title === "wow"',
         },
       },
       releaseDate: {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '../title === "wow"',
+          active: '../title === "wow"',
         },
       },
       numOfPlayers: { type: 'number' },
