@@ -16,7 +16,7 @@ describe('find', () => {
       group: 'terminal',
       parentNode: null,
       rootNode: null,
-      children: null,
+      subnodes: null,
     };
 
     mockChildNode1 = {
@@ -24,7 +24,7 @@ describe('find', () => {
       group: 'branch',
       parentNode: null,
       rootNode: null,
-      children: [{ node: mockGrandchildNode }],
+      subnodes: [{ node: mockGrandchildNode }],
     };
 
     mockChildNode2 = {
@@ -32,7 +32,7 @@ describe('find', () => {
       group: 'terminal',
       parentNode: null,
       rootNode: null,
-      children: null,
+      subnodes: null,
     };
 
     mockRootNode = {
@@ -40,7 +40,7 @@ describe('find', () => {
       group: 'branch',
       parentNode: null,
       rootNode: null,
-      children: [{ node: mockChildNode1 }, { node: mockChildNode2 }],
+      subnodes: [{ node: mockChildNode1 }, { node: mockChildNode2 }],
     };
 
     // Set up relationships
@@ -122,7 +122,7 @@ describe('find', () => {
       group: 'terminal',
       rootNode: null,
       parentNode: null,
-      children: null,
+      subnodes: null,
     };
 
     const result = find(nodeWithoutRoot, ['#']);
@@ -144,27 +144,27 @@ describe('find', () => {
     const result = find(mockRootNode, ['child2']);
     expect(result).toBe(mockChildNode2);
 
-    // But if we try to access children of terminal node, it returns null
+    // But if we try to access subnodes of terminal node, it returns null
     const nestedResult = find(mockRootNode, ['child2', 'nonexistent']);
     expect(nestedResult).toEqual(nestedResult);
   });
 
-  it('should return null for node without children', () => {
+  it('should return null for node without subnodes', () => {
     const emptyNode = {
       propertyKey: 'empty',
       group: 'branch',
-      children: null,
+      subnodes: null,
     } as SchemaNode;
 
     const result = find(emptyNode, ['child']);
     expect(result).toBeNull();
   });
 
-  it('should return null for node with empty children array', () => {
+  it('should return null for node with empty subnodes array', () => {
     const emptyChildrenNode = {
       propertyKey: 'empty',
       group: 'branch',
-      children: [],
+      subnodes: [],
     } as unknown as SchemaNode;
 
     const result = find(emptyChildrenNode, ['child']);
@@ -177,13 +177,13 @@ describe('find', () => {
       group: 'terminal',
       parentNode: mockRootNode,
       rootNode: mockRootNode,
-      children: null,
+      subnodes: null,
     };
 
     const parentWithArray: any = {
       propertyKey: 'array',
       group: 'branch',
-      children: [{ node: arrayNode }],
+      subnodes: [{ node: arrayNode }],
     };
 
     const result = find(parentWithArray, ['0']);
@@ -199,19 +199,19 @@ describe('find', () => {
     const level3 = {
       propertyKey: 'level3',
       group: 'branch',
-      children: [{ node: level4 }],
+      subnodes: [{ node: level4 }],
     } as SchemaNode;
 
     const level2 = {
       propertyKey: 'level2',
       group: 'branch',
-      children: [{ node: level3 }],
+      subnodes: [{ node: level3 }],
     } as SchemaNode;
 
     const level1 = {
       propertyKey: 'level1',
       group: 'branch',
-      children: [{ node: level2 }],
+      subnodes: [{ node: level2 }],
     } as SchemaNode;
 
     const result = find(level1, ['level2', 'level3', 'level4']);

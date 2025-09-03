@@ -31,14 +31,6 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   #strategy: ObjectNodeStrategy;
 
   /**
-   * Gets the child nodes of the object node.
-   * @returns List of child nodes
-   */
-  public override get children() {
-    return this.#strategy.children;
-  }
-
-  /**
    * Gets the value of the object node.
    * @returns Object value or undefined (if empty) or null (if nullable)
    */
@@ -65,6 +57,22 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     option: UnionSetValueOption,
   ) {
     this.#strategy.applyValue(input, option);
+  }
+
+  /**
+   * Gets the child nodes of the object node.
+   * @returns List of child nodes
+   */
+  public override get children() {
+    return this.#strategy.children;
+  }
+
+  /**
+   * Gets the list of subnodes of the object node.
+   * @returns List of subnodes
+   */
+  public override get subnodes() {
+    return this.#strategy.subnodes;
   }
 
   /**

@@ -261,6 +261,11 @@ export abstract class AbstractNode<
     return null;
   }
 
+  /** List of subnodes, nodes without subnodes return an `null` */
+  public get subnodes(): ChildNode[] | null {
+    return this.children;
+  }
+
   constructor({
     key,
     name,

@@ -20,6 +20,11 @@ export interface ObjectNodeStrategy {
    */
   get children(): Array<ChildNode> | null;
   /**
+   * Gets the list of subnodes.
+   * @returns Array of subnodes
+   */
+  get subnodes(): Array<ChildNode> | null;
+  /**
    * Applies input value to the object node.
    * @param value - Object value to set
    * @param option - Setting options
