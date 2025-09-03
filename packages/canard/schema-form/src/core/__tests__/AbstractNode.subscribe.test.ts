@@ -375,7 +375,7 @@ describe('SchemaNode computed properties', () => {
       expect(listener).toHaveBeenCalledWith(
         expect.objectContaining({
           type:
-            NodeEventType.Activated |
+            NodeEventType.Initialized |
             NodeEventType.UpdateValue |
             NodeEventType.UpdateComputedProperties |
             NodeEventType.RequestRefresh,

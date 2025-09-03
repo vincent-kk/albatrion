@@ -13,16 +13,16 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-interface StringJsonSchema extends StringSchema {
+type StringJsonSchema = StringSchema & {
   enum?: string[];
   options?: {
     alias?: { [label: string]: string };
   };
-}
+};
 
-interface ArrayJsonSchema extends ArraySchema {
+type ArrayJsonSchema = ArraySchema & {
   items: StringJsonSchema;
-}
+};
 
 interface FormTypeInputStringEnumProps
   extends FormTypeInputPropsWithSchema<
@@ -55,8 +55,8 @@ const FormTypeInputStringEnum = ({
   const Options = useMemo(() => {
     return schema.enum
       ? map(schema.enum, (value, index) => (
-          <Select.Option key={index + value} value={value}>
-            {alias?.[value] || value}
+          <Select.Option key={index + '' + value} value={value}>
+            {alias?.['' + value] || value}
           </Select.Option>
         ))
       : [];

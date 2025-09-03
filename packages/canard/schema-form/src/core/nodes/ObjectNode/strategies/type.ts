@@ -20,6 +20,11 @@ export interface ObjectNodeStrategy {
    */
   get children(): Array<ChildNode> | null;
   /**
+   * Gets the list of subnodes.
+   * @returns Array of subnodes
+   */
+  get subnodes(): Array<ChildNode> | null;
+  /**
    * Applies input value to the object node.
    * @param value - Object value to set
    * @param option - Setting options
@@ -29,6 +34,6 @@ export interface ObjectNodeStrategy {
     value: ObjectValue | Nullish,
     option: UnionSetValueOption,
   ): void;
-  /** Activates pub-sub links for child nodes. */
-  activate?(): void;
+  /** Initializes pub-sub links for child nodes. */
+  initialize?(): void;
 }

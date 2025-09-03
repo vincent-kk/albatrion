@@ -12,19 +12,13 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-interface StringJsonSchema extends StringSchema {
-  enum?: string[];
-  options?: {
-    alias?: { [label: string]: ReactNode };
-  };
-}
+type StringJsonSchema = StringSchema<{
+  alias?: { [label: string]: ReactNode };
+}>;
 
-interface NumberJsonSchema extends NumberSchema {
-  enum?: number[];
-  options?: {
-    alias?: { [label: string]: ReactNode };
-  };
-}
+type NumberJsonSchema = NumberSchema<{
+  alias?: { [label: string]: ReactNode };
+}>;
 
 const FormTypeInputRadioGroup = ({
   jsonSchema,
@@ -34,7 +28,7 @@ const FormTypeInputRadioGroup = ({
   context,
   style,
 }: FormTypeInputPropsWithSchema<
-  string | number,
+  string | number | null,
   StringJsonSchema | NumberJsonSchema,
   {
     radioLabels?: {
@@ -45,14 +39,20 @@ const FormTypeInputRadioGroup = ({
   const options = useMemo(() => {
     const alias = context.radioLabels || jsonSchema.options?.alias || {};
     return jsonSchema.enum
-      ? map(jsonSchema.enum, (value: string | number) => ({
-          label: alias[value] || value,
-          value,
+      ? map(jsonSchema.enum, (value: string | number | null) => ({
+          label: alias['' + value] || '' + value,
+          value: '' + value,
+          originalValue: value,
         }))
       : [];
   }, [context, jsonSchema]);
 
-  const handleChange = useHandle(onChange);
+  const handleChange = useHandle((value: string | number) => {
+    const selectedOption = options.find((opt) => opt.value === value);
+    if (selectedOption) {
+      onChange(selectedOption.originalValue);
+    }
+  });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row', gap: 8, ...style }}>

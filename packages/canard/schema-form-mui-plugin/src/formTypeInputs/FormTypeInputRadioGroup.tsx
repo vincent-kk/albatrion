@@ -13,27 +13,26 @@ import type {
 
 import type { MuiContext } from '../type';
 
-interface RadioGroupStringJsonSchema extends StringSchema {
+type RadioGroupStringJsonSchema = StringSchema & {
   radioLabels?: string[];
   formType: 'radio';
-}
+};
 
-interface RadioGroupNumberJsonSchema extends NumberSchema {
+type RadioGroupNumberJsonSchema = NumberSchema & {
   radioLabels?: string[];
   formType: 'radio';
-}
+};
 
-interface FormTypeInputRadioGroupProps
-  extends FormTypeInputPropsWithSchema<
-      string | number,
-      RadioGroupStringJsonSchema | RadioGroupNumberJsonSchema,
-      MuiContext
-    >,
-    MuiContext {
+type FormTypeInputRadioGroupProps = {
   label?: ReactNode;
   row?: boolean;
   hideLabel?: boolean;
-}
+} & MuiContext &
+  FormTypeInputPropsWithSchema<
+    string | number | null,
+    RadioGroupStringJsonSchema | RadioGroupNumberJsonSchema,
+    MuiContext
+  >;
 
 const FormTypeInputRadioGroup = ({
   path,
@@ -56,12 +55,13 @@ const FormTypeInputRadioGroup = ({
 
   const options = useMemo(() => {
     const enumValues = jsonSchema.enum || [];
-    const radioLabels = jsonSchema.radioLabels || enumValues.map(String);
+    const radioLabels =
+      jsonSchema.radioLabels || enumValues.map((value) => '' + value);
 
     return enumValues.map((val, index) => ({
-      value: String(val),
+      value: '' + val,
       originalValue: val,
-      label: radioLabels[index] || String(val),
+      label: radioLabels[index] || '' + val,
     }));
   }, [jsonSchema]);
 

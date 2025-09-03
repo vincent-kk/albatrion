@@ -165,7 +165,7 @@ export const ReadOnly = () => {
       },
       nationality: {
         type: 'string',
-        visible: false,
+        active: false,
       },
     },
   } satisfies JsonSchema;
@@ -192,14 +192,14 @@ export const IfThenElse = () => {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '../title === "wow"',
+          active: '../title === "wow"',
         },
       },
       releaseDate: {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '../title === "wow"',
+          active: '../title === "wow"',
         },
         default: '2025-01-01',
       },

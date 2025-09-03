@@ -192,12 +192,12 @@ export const VirtualSchemaControlWithVisible = () => {
       virtualField_A: {
         fields: ['virtualFiled_A1', 'virtualFiled_A2'],
         computed: {
-          visible: '../control === "A"',
+          active: '../control === "A"',
         },
       },
       virtualField_B: {
         fields: ['virtualField_B1', 'virtualField_B2'],
-        '&visible': '../control === "B"',
+        '&active': '../control === "B"',
       },
     },
   } satisfies JsonSchema;

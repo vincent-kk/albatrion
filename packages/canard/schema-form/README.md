@@ -334,7 +334,6 @@ Please refer to each plugin's README for detailed usage instructions.
 - Validation messages must be defined in the `{[keyword]:errorMessage}` format.
 - If you define the `default` key, it will be used as the default value when the keyword does not match.
 - Each validation message (errorMessage) can be replaced with dynamic values using the following expressions:
-
   - `{key}`: key is replaced with the value corresponding to the key in `error.details`.
   - `{value}`: value is replaced with the value currently entered in the input.
 
@@ -925,7 +924,7 @@ const jsonSchema = {
           type: 'array',
           computed: {
             watch: '../type', // Watch parent's type field
-            visible: "../type === 'admin'", // Show only for admin
+            active: "../type === 'admin'", // Show only for admin
           },
         },
       },
@@ -991,7 +990,7 @@ const jsonSchema = {
               type: 'object',
               computed: {
                 watch: '../role',  // Watch sibling field
-                visible: "../role === 'admin'"  // Show only for admin
+                active: "../role === 'admin'"  // Show only for admin
               },
               properties: {
                 permissions: { type: 'array' }
@@ -1011,7 +1010,7 @@ const jsonSchema = {
                 type: 'boolean',
                 computed: {
                   watch: '../type',  // Watch sibling type
-                  visible: "../type === 'home'"  // Show only for home addresses
+                  active: "../type === 'home'"  // Show only for home addresses
                 }
               }
             }
@@ -1339,7 +1338,27 @@ export const FormWithCustomInput = () => {
 
 ### Conditional Fields with Watch
 
-Using the `watch` property to create dynamic form logic:
+#### Types of Conditional Properties
+
+- `watch`: Subscribe to another node's value changes (passed as watchValues prop)
+- `active`: Determines if a node should be activated. Inactive nodes are not displayed and their values are removed from the form data
+- `visible`: Determines if a node should be displayed. Hidden inputs retain their values but are not visible
+- `readOnly`: Determines if a node should be read-only. Read-only inputs cannot be modified
+- `disabled`: Determines if a node should be disabled. Disabled inputs cannot be modified
+- `if` + `oneOf`: Display the schema definition that satisfies the if condition among oneOf definitions (ObjectNode only)
+
+#### Priority System
+
+The `active`, `visible`, `readOnly`, and `disabled` properties follow this priority order:
+
+1. Root jsonSchema property (boolean)
+2. Shortcut property (`jsonSchema[{fieldName}]`, boolean)
+3. Computed property (`jsonSchema.computed[{fieldName}]`, boolean | string)
+4. Alias computed property (`jsonSchema['&{fieldName}']`, boolean | string)
+
+Higher priority values override lower priority values when multiple are defined.
+
+#### Basic Example
 
 ```tsx
 import React from 'react';
@@ -1354,25 +1373,97 @@ export const ConditionalForm = () => {
         type: 'string',
         enum: ['fulltime', 'parttime', 'contractor'],
         title: 'Employment Type',
+        default: 'fulltime',
       },
-      salary: {
-        type: 'number',
-        title: 'Annual Salary',
+      commonField: {
+        type: 'string',
+        title: 'Common Field',
         computed: {
           watch: '../employmentType',
-          visible: "../employmentType === 'fulltime'",
-        },
-      },
-      hourlyRate: {
-        type: 'number',
-        title: 'Hourly Rate',
-        computed: {
-          watch: '../employmentType',
-          visible:
-            "../employmentType === 'parttime' || ../employmentType === 'contractor'",
+          active: '../employmentType !== null',
+          visible: '../employmentType !== null',
         },
       },
     },
+    oneOf: [
+      {
+        computed: {
+          if: "./employmentType === 'fulltime'",
+        },
+        properties: {
+          salary: {
+            type: 'number',
+            title: 'Annual Salary',
+          },
+          bonus: {
+            type: 'number',
+            title: 'Bonus',
+          },
+          benefits: {
+            type: 'object',
+            title: 'Benefits',
+            properties: {
+              healthInsurance: {
+                type: 'boolean',
+                title: 'Health Insurance',
+              },
+              pension: {
+                type: 'boolean',
+                title: 'Pension',
+              },
+            },
+          },
+          probationPeriod: {
+            type: 'number',
+            title: 'Probation Period (months)',
+            minimum: 0,
+            maximum: 12,
+          },
+        },
+      },
+      {
+        computed: {
+          if: "./employmentType === 'parttime'",
+        },
+        properties: {
+          hourlyRate: {
+            type: 'number',
+            title: 'Hourly Rate',
+          },
+          workingHours: {
+            type: 'number',
+            title: 'Weekly Working Hours',
+            minimum: 1,
+            maximum: 40,
+          },
+        },
+      },
+      {
+        computed: {
+          if: "./employmentType === 'contractor'",
+        },
+        properties: {
+          hourlyRate: {
+            type: 'number',
+            title: 'Hourly Rate',
+          },
+          contractType: {
+            type: 'string',
+            enum: ['hourly', 'project', 'temporary'],
+            title: 'Contract Type',
+          },
+          workingHours: {
+            type: 'number',
+            title: 'Weekly Working Hours',
+            minimum: 1,
+            maximum: 168,
+            computed: {
+              active: '../contractType === "hourly"',
+            },
+          },
+        },
+      },
+    ],
   };
 
   return <Form jsonSchema={jsonSchema} />;

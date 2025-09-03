@@ -64,17 +64,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /** Map of property keys to child nodes */
   private readonly __childNodeMap__: Map<string, ChildNode>;
 
-  /** Current active children nodes (combination of property and oneOf children) */
-  private __children__: ChildNode[];
-  /**
-   * Gets the child nodes of the object node.
-   * @returns List of child nodes
-   */
-
-  public get children() {
-    return this.__children__;
-  }
-
   /** Flag indicating whether the node is in isolation mode (affects condition processing) */
   private __isolated__: boolean = false;
 
@@ -109,22 +98,39 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__emitChange__(option);
   }
 
+  /** Current active children nodes (combination of property and oneOf children) */
+  private __children__: ChildNode[];
+
+  /**
+   * Gets the child nodes of the object node.
+   * @returns List of child nodes
+   */
+  public get children() {
+    return this.__children__;
+  }
+
+  /** Array of child nodes for regular properties and oneOf properties */
+  private readonly __subnodes__: ChildNode[];
+
+  /**
+   * Gets all of the child nodes of the object node.
+   * @returns List of child nodes
+   */
+  public get subnodes() {
+    return this.__subnodes__;
+  }
+
   /**
    * Propagates activation to all child nodes.
    * @internal Internal implementation method. Do not call directly.
    */
-  public activate() {
+  public initialize() {
     let enabled = false;
-    for (const child of this.__propertyChildren__) {
-      (child.node as AbstractNode).activate(this.__host__);
-      if (!enabled && child.node.computeEnabled) enabled = true;
+    for (let i = 0, l = this.__subnodes__.length; i < l; i++) {
+      const childNode = this.__subnodes__[i].node;
+      (childNode as AbstractNode).initialize(this.__host__);
+      if (!enabled && childNode.computeEnabled) enabled = true;
     }
-    if (this.__oneOfChildNodeMapList__)
-      for (const childNodeMap of this.__oneOfChildNodeMapList__)
-        for (const child of childNodeMap.values()) {
-          (child.node as AbstractNode).activate(this.__host__);
-          if (!enabled && child.node.computeEnabled) enabled = true;
-        }
     if (enabled) this.__prepareProcessComputedProperties__();
   }
 
@@ -226,6 +232,13 @@ export class BranchStrategy implements ObjectNodeStrategy {
     );
 
     this.__children__ = this.__propertyChildren__;
+
+    if (this.__oneOfChildNodeMapList__) {
+      const subnodes = [...this.__propertyChildren__];
+      for (const childNodeMap of this.__oneOfChildNodeMapList__)
+        for (const child of childNodeMap.values()) subnodes.push(child);
+      this.__subnodes__ = subnodes;
+    } else this.__subnodes__ = this.__propertyChildren__;
 
     this.__locked__ = false;
 
@@ -450,7 +463,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     for (let i = 0, l = this.__children__.length; i < l; i++) {
       const node = this.__children__[i].node;
       if (node.type === 'virtual') continue;
-      if (node.visible) continue;
+      if (node.active) continue;
       const key = node.propertyKey;
       if (source[key] === undefined) continue;
       this.__draft__[key] = undefined;

@@ -85,7 +85,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
         if (type === NodeEventType.Blurred)
           this.#emitChange(this.#value?.trim());
       });
-    this.activate();
+    this.initialize();
   }
 
   /**

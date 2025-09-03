@@ -25,23 +25,29 @@ export const computeFactory = (
     /** List of paths to dependencies */
     dependencyPaths: pathManager.get(),
     /**
+     * Calculate whether the node is active
+     * @param dependencies - List of dependencies
+     * @returns Whether the node is active
+     */
+    active: checkComputedOption(pathManager, 'active'),
+    /**
      * Calculate whether the node is visible
      * @param dependencies - List of dependencies
      * @returns Whether the node is visible
      */
-    visible: checkComputedOption(pathManager, 'visible', false),
+    visible: checkComputedOption(pathManager, 'visible'),
     /**
      * Calculate whether the node is read only
      * @param dependencies - List of dependencies
      * @returns Whether the node is read only
      */
-    readOnly: checkComputedOption(pathManager, 'readOnly', true),
+    readOnly: checkComputedOption(pathManager, 'readOnly'),
     /**
      * Calculate whether the node is disabled
      * @param dependencies - List of dependencies
      * @returns Whether the node is disabled
      */
-    disabled: checkComputedOption(pathManager, 'disabled', true),
+    disabled: checkComputedOption(pathManager, 'disabled'),
     /**
      * Calculate the index of the oneOf branch
      * @param dependencies - List of dependencies

@@ -82,9 +82,9 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns {boolean} Whether activation was successful
    * @internal Internal implementation method. Do not call directly.
    */
-  public override activate(this: ArrayNode, actor?: SchemaNode): boolean {
-    if (super.activate(actor)) {
-      this.#strategy.activate?.();
+  public override initialize(this: ArrayNode, actor?: SchemaNode): boolean {
+    if (super.initialize(actor)) {
+      this.#strategy.initialize?.();
       return true;
     }
     return false;
@@ -121,7 +121,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
         : (value, batch) => super.onChange(omitEmptyArray(value), batch);
     this.onChange = handleChange;
     this.#strategy = this.#createStrategy(handleChange, nodeFactory);
-    this.activate();
+    this.initialize();
   }
 
   /**

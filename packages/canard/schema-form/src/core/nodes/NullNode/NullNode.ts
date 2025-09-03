@@ -68,7 +68,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
       required,
     });
     if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
-    this.activate();
+    this.initialize();
   }
 
   /**

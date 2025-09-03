@@ -76,7 +76,7 @@ const bigSchema = {
               type: 'string',
               enum: ['male', 'female', 'other'],
               computed: {
-                visible: '../age >= 18',
+                active: '../age >= 18',
               },
               placeholder: 'Select gender',
             },

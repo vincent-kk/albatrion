@@ -36,7 +36,7 @@ const schema = {
       title: "Personal Information",
       nullable: true,
       computed: {
-        visible: "#/userType === 'individual'",
+        active: "#/userType === 'individual'",
       },
       properties: {
         firstName: { type: "string", nullable: true },
@@ -51,7 +51,7 @@ const schema = {
       title: "Premium Features",
       nullable: true,
       computed: {
-        visible: "#/userType === 'individual' && #/accountTier === 'premium'",
+        active: "#/userType === 'individual' && #/accountTier === 'premium'",
       },
       properties: {
         prioritySupport: { type: "boolean", nullable: true },
@@ -65,7 +65,7 @@ const schema = {
       title: "Extended Data",
       nullable: true,
       computed: {
-        visible:
+        active:
           "#/userType === 'individual' && #/accountTier === 'premium' && #/dataSelection === 'extended'",
       },
       properties: {
@@ -91,7 +91,7 @@ const schema = {
       title: "Basic Data",
       nullable: true,
       computed: {
-        visible:
+        active:
           "#/userType === 'individual' && #/accountTier === 'premium' && #/dataSelection !== 'extended'",
       },
       properties: {
@@ -105,7 +105,7 @@ const schema = {
       title: "Free Features",
       nullable: true,
       computed: {
-        visible: "#/userType === 'individual' && #/accountTier === 'free'",
+        active: "#/userType === 'individual' && #/accountTier === 'free'",
       },
       properties: {
         adsEnabled: { type: "boolean", default: true },
@@ -119,7 +119,7 @@ const schema = {
       title: "Company Information",
       nullable: true,
       computed: {
-        visible: "#/userType === 'company'",
+        active: "#/userType === 'company'",
       },
       properties: {
         companyName: { type: "string", nullable: true },
@@ -134,7 +134,7 @@ const schema = {
       title: "Enterprise Features",
       nullable: true,
       computed: {
-        visible: "#/userType === 'company' && #/accountTier === 'enterprise'",
+        active: "#/userType === 'company' && #/accountTier === 'enterprise'",
       },
       properties: {
         dedicatedManager: { type: "boolean", nullable: true },
@@ -159,7 +159,7 @@ const schema = {
       title: "Business Features",
       nullable: true,
       computed: {
-        visible: "#/userType === 'company' && #/accountTier === 'premium'",
+        active: "#/userType === 'company' && #/accountTier === 'premium'",
       },
       properties: {
         apiAccess: { type: "boolean", nullable: true },
@@ -173,7 +173,7 @@ const schema = {
       title: "Trial Features",
       nullable: true,
       computed: {
-        visible: "#/userType === 'company' && #/accountTier === 'free'",
+        active: "#/userType === 'company' && #/accountTier === 'free'",
       },
       properties: {
         trialDaysLeft: { type: "number", nullable: true },
@@ -187,7 +187,7 @@ const schema = {
       title: "Basic Information",
       nullable: true,
       computed: {
-        visible: "#/userType === 'none'",
+        active: "#/userType === 'none'",
       },
       properties: {
         email: { type: "string", format: "email", nullable: true },

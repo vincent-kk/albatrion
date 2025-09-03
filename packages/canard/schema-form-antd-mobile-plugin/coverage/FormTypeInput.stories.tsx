@@ -111,7 +111,8 @@ export const StringRadio = Template.bind({});
 StringRadio.args = {
   jsonSchema: {
     type: 'string',
-    enum: ['a', 'b', 'c'],
+    enum: [null, 'a', 'b', 'c'],
+    nullable: true,
     FormTypeInput: FormTypeInputRadioGroupDefinition.Component,
     options: {
       alias: {

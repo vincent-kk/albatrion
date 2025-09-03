@@ -12,13 +12,13 @@ import type {
 
 import type { MuiContext } from '../type';
 
-interface StringSwitchJsonSchema extends StringSchema {
+type StringSwitchJsonSchema = StringSchema & {
   formType: 'switch';
   enum: [string, string]; // 정확히 2개의 값만 허용
   switchSize?: 'small' | 'medium';
   switchLabels?: [string, string];
   hideLabel?: boolean;
-}
+};
 
 interface FormTypeInputStringSwitchProps
   extends FormTypeInputPropsWithSchema<

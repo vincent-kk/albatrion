@@ -80,7 +80,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
         : super.onChange;
 
     if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
-    this.activate();
+    this.initialize();
   }
 
   /**

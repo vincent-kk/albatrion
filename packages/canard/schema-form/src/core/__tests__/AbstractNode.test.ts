@@ -338,7 +338,7 @@ describe('AbstractNode', () => {
     // 최초로 node tree를 만들때 발생하는 이벤트
     expect(externalEvent[0]).toEqual({
       type:
-        NodeEventType.Activated |
+        NodeEventType.Initialized |
         NodeEventType.UpdateChildren |
         NodeEventType.UpdateComputedProperties,
       payload: {},
@@ -378,6 +378,7 @@ describe('AbstractNode', () => {
             endDate: '2021-01-02',
           },
           previous: {},
+          settled: true,
         },
       },
     });

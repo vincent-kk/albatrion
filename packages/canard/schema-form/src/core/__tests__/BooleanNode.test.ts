@@ -96,7 +96,7 @@ describe('BooleanNode', () => {
     // 이벤트가 발생했는지 확인
     expect(mockListener).toHaveBeenCalledWith({
       type:
-        NodeEventType.Activated |
+        NodeEventType.Initialized |
         NodeEventType.RequestRefresh |
         NodeEventType.UpdateValue |
         NodeEventType.UpdateComputedProperties,

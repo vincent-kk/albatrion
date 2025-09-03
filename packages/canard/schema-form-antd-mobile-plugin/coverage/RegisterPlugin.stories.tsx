@@ -240,14 +240,14 @@ export const OneOf = () => {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '../title === "wow"',
+          active: '../title === "wow"',
         },
       },
       releaseDate: {
         type: 'string',
         format: 'date',
         computed: {
-          visible: '../title === "wow"',
+          active: '../title === "wow"',
         },
       },
       numOfPlayers: { type: 'number' },
@@ -312,7 +312,7 @@ export const ComplexOneOf = () => {
                 type: 'string',
                 enum: ['male', 'female', 'other'],
                 computed: {
-                  visible: '../age >= 18',
+                  active: '../age >= 18',
                 },
               },
               preferences: {

@@ -11,10 +11,10 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-interface TextareaSchema extends StringSchema {
+type TextareaSchema = StringSchema & {
   minRows?: number;
   maxRows?: number;
-}
+};
 
 interface FormTypeInputTextareaProps
   extends FormTypeInputPropsWithSchema<

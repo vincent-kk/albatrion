@@ -165,7 +165,7 @@ export const ReadOnly = () => {
       },
       nationality: {
         type: 'string',
-        visible: false,
+        active: false,
       },
     },
   } satisfies JsonSchema;

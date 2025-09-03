@@ -12,13 +12,13 @@ import type {
 
 import type { MuiContext } from '../type';
 
-interface SliderJsonSchema extends NumberSchema {
+type SliderJsonSchema = NumberSchema & {
   formType: 'slider';
   minimum?: number;
   maximum?: number;
   multipleOf?: number;
   lazy?: boolean; // onChange vs onChangeCommitted 선택
-}
+};
 
 interface FormTypeInputSliderProps
   extends FormTypeInputPropsWithSchema<number, SliderJsonSchema, MuiContext>,

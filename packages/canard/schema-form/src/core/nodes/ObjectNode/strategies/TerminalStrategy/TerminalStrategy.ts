@@ -66,6 +66,14 @@ export class TerminalStrategy implements ObjectNodeStrategy {
   }
 
   /**
+   * Gets the list of subnodes.
+   * @returns Empty array (Terminal strategy does not manage subnodes)
+   */
+  public get subnodes() {
+    return null;
+  }
+
+  /**
    * Initializes the TerminalStrategy object.
    * @param host - Host ObjectNode object
    * @param handleChange - Value change handler

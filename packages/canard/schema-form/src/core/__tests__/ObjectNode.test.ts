@@ -168,18 +168,15 @@ describe('ObjectNode', () => {
 
     // 이벤트가 발생했는지 확인
     expect(mockListener).toHaveBeenCalledWith({
-      type:
-        NodeEventType.UpdateValue |
-        NodeEventType.RequestRefresh |
-        NodeEventType.RequestEmitChange,
+      type: NodeEventType.UpdateValue | NodeEventType.RequestRefresh,
       payload: {
         [NodeEventType.UpdateValue]: { name: 'Ron', age: 28 },
-        [NodeEventType.RequestEmitChange]: SetValueOption.Default,
       },
       options: {
         [NodeEventType.UpdateValue]: {
           current: { name: 'Ron', age: 28 },
           previous: {},
+          settled: false,
         },
       },
     });
@@ -260,6 +257,7 @@ describe('ObjectNode', () => {
         [NodeEventType.UpdateValue]: {
           current: { name: 'John' },
           previous: {},
+          settled: true,
         },
       },
     });
@@ -908,6 +906,7 @@ describe('ObjectNode', () => {
           [NodeEventType.UpdateValue]: {
             current: { 'ünicøde-näme': 'Ron', пользователь: 28 },
             previous: {},
+            settled: false,
           },
         },
       });

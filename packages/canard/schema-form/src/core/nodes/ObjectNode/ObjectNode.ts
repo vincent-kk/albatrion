@@ -31,14 +31,6 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   #strategy: ObjectNodeStrategy;
 
   /**
-   * Gets the child nodes of the object node.
-   * @returns List of child nodes
-   */
-  public override get children() {
-    return this.#strategy.children;
-  }
-
-  /**
    * Gets the value of the object node.
    * @returns Object value or undefined (if empty) or null (if nullable)
    */
@@ -68,14 +60,30 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   }
 
   /**
+   * Gets the child nodes of the object node.
+   * @returns List of child nodes
+   */
+  public override get children() {
+    return this.#strategy.children;
+  }
+
+  /**
+   * Gets the list of subnodes of the object node.
+   * @returns List of subnodes
+   */
+  public override get subnodes() {
+    return this.#strategy.subnodes;
+  }
+
+  /**
    * Activates this ObjectNode and propagates activation to all child nodes.
    * @param actor - The node that requested activation
    * @returns {boolean} Whether activation was successful
    * @internal Internal implementation method. Do not call directly.
    */
-  public override activate(this: ObjectNode, actor?: SchemaNode): boolean {
-    if (super.activate(actor)) {
-      this.#strategy.activate?.();
+  public override initialize(this: ObjectNode, actor?: SchemaNode): boolean {
+    if (super.initialize(actor)) {
+      this.#strategy.initialize?.();
       return true;
     }
     return false;
@@ -110,7 +118,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         : (value, batch) => super.onChange(omitEmptyObject(value), batch);
     this.onChange = handleChange;
     this.#strategy = this.#createStrategy(handleChange, nodeFactory);
-    this.activate();
+    this.initialize();
   }
 
   /**

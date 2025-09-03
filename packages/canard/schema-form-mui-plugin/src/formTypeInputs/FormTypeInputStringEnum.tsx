@@ -12,10 +12,9 @@ import type {
 
 import type { MuiContext } from '../type';
 
-interface StringEnumJsonSchema
-  extends StringSchema<{ alias?: Record<string, string> }> {
+type StringEnumJsonSchema = StringSchema<{ alias?: Record<string, string> }> & {
   enum: string[];
-}
+};
 
 interface FormTypeInputStringEnumProps
   extends FormTypeInputPropsWithSchema<

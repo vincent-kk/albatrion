@@ -184,8 +184,8 @@ export type NodeEvent = {
 };
 
 export enum NodeEventType {
-  /** Node becomes the active target within the form graph. */
-  Activated = BIT_FLAG_00,
+  /** Node becomes the initialized target within the form graph. */
+  Initialized = BIT_FLAG_00,
   /** Node's absolute path within the form graph has changed. */
   UpdatePath = BIT_FLAG_01,
   /** Node's value has changed. */
@@ -237,7 +237,7 @@ export type UnionNodeEventType = NodeEventType | PublicNodeEventType;
  * Events that do not carry additional data use `void`.
  */
 export type NodeEventPayload = {
-  [NodeEventType.Activated]: void;
+  [NodeEventType.Initialized]: void;
   [NodeEventType.UpdatePath]: string;
   [NodeEventType.UpdateValue]: any;
   [NodeEventType.UpdateState]: NodeStateFlags;
@@ -259,7 +259,7 @@ export type NodeEventPayload = {
  * Enables consumers to access previous/current values or auxiliary context.
  */
 export type NodeEventOptions = {
-  [NodeEventType.Activated]: void;
+  [NodeEventType.Initialized]: void;
   [NodeEventType.UpdatePath]: {
     previous: string;
     current: string;

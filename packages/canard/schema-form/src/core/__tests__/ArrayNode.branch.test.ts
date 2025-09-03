@@ -112,7 +112,7 @@ describe('ArrayNode-Terminal', () => {
     // 초기화 이벤트가 발생했는지 확인 (호출 횟수와 이벤트 타입만 검증)
     expect(mockListener).toHaveBeenCalledTimes(1);
     const firstCall = mockListener.mock.calls[0][0];
-    expect(firstCall.type & NodeEventType.Activated).toBeTruthy();
+    expect(firstCall.type & NodeEventType.Initialized).toBeTruthy();
     expect(firstCall.type & NodeEventType.UpdateValue).toBeTruthy();
     expect(firstCall.payload[NodeEventType.UpdateValue]).toEqual([]);
 

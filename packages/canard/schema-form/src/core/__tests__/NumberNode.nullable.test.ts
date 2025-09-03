@@ -222,6 +222,7 @@ describe('NumberNode nullable functionality', () => {
             type: 'number',
             nullable: true,
             enum: [1, 2, 3, null],
+            default: null,
           },
         },
       },

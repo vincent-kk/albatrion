@@ -261,6 +261,11 @@ export abstract class AbstractNode<
     return null;
   }
 
+  /** List of subnodes, nodes without subnodes return an `null` */
+  public get subnodes(): ChildNode[] | null {
+    return this.children;
+  }
+
   constructor({
     key,
     name,
@@ -393,33 +398,35 @@ export abstract class AbstractNode<
     this.#eventCascade.schedule(event);
   }
 
-  /** Whether the node is activated */
-  #activated: boolean = false;
+  /** Whether the node is initialized */
+  #initialized: boolean = false;
 
-  /** [readonly] Whether the node is activated */
-  public get activated() {
-    return this.#activated;
+  /** [readonly] Whether the node is initialized */
+  public get initialized() {
+    return this.#initialized;
   }
 
   /**
-   * Activates the node. Activation must be called by itself or by the parent node.
-   * @param actor - The node requesting activation
-   * @returns {boolean} Whether activation occurred
+   * Initializes the node. Initialization must be called by itself or by the parent node.
+   * @param actor - The node requesting initialization
+   * @returns {boolean} Whether initialization occurred
    * @internal Internal implementation method. Do not call directly.
    */
-  public activate(this: AbstractNode, actor?: SchemaNode) {
-    if (this.#activated || (actor !== this.parentNode && !this.isRoot))
+  public initialize(this: AbstractNode, actor?: SchemaNode) {
+    if (this.#initialized || (actor !== this.parentNode && !this.isRoot))
       return false;
-    this.#activated = true;
+    this.#initialized = true;
     this.#prepareUpdateDependencies();
-    this.publish({ type: NodeEventType.Activated });
+    this.publish({ type: NodeEventType.Initialized });
     return true;
   }
 
   /**
    * Tools for handling computed properties
    *  - `dependencyPaths`: List of paths to dependencies
+   *  - `active`: Calculate whether the node is active
    *  - `visible`: Calculate whether the node is visible
+   *  - `enabled`: Calculate whether the node is both active and visible
    *  - `readOnly`: Calculate whether the node is read only
    *  - `disabled`: Calculate whether the node is disabled
    *  - `oneOfIndex`: Calculate the index of the oneOf branch
@@ -438,12 +445,25 @@ export abstract class AbstractNode<
     return this.#computeEnabled;
   }
 
+  /** Whether the node is active */
+  #active: boolean = true;
+
+  /** [readonly] Whether the node is active */
+  public get active() {
+    return this.#active;
+  }
+
   /** Whether the node is visible */
   #visible: boolean = true;
 
   /** [readonly] Whether the node is visible */
   public get visible() {
     return this.#visible;
+  }
+
+  /** [readonly] Whether the node is both active and visible */
+  public get enabled() {
+    return this.#active && this.#visible;
   }
 
   /** Whether the node is read only */
@@ -522,13 +542,14 @@ export abstract class AbstractNode<
    * @internal Internal implementation method. Do not call directly.
    */
   protected updateComputedProperties(this: AbstractNode) {
-    const previousVisible = this.#visible;
+    const previous = this.#active;
+    this.#active = this.#compute.active?.(this.#dependencies) ?? true;
     this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
     this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
     this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
-    if (previousVisible !== this.#visible) this.resetNode(true);
+    if (previous !== this.#active) this.resetNode(true);
     if (!this.#hasPublishedUpdateComputedProperties) {
       this.publish({ type: NodeEventType.UpdateComputedProperties });
       this.#hasPublishedUpdateComputedProperties = true;
@@ -554,7 +575,7 @@ export abstract class AbstractNode<
           : this.#initialValue
       : this.#initialValue;
     this.#defaultValue = defaultValue;
-    const value = this.#visible ? defaultValue : undefined;
+    const value = this.#active ? defaultValue : undefined;
 
     this.setValue(value, SetValueOption.ResetNode);
     this.setState();

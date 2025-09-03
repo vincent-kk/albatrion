@@ -10,14 +10,14 @@ import type {
   FormTypeInputPropsWithSchema,
 } from '@canard/schema-form';
 
-interface BooleanSwitchSchema extends BooleanSchema {
+type BooleanSwitchSchema = BooleanSchema & {
   options?: {
     alias?: {
       checked?: ReactNode;
       unchecked?: ReactNode;
     };
   };
-}
+};
 
 const FormTypeInputBooleanSwitch = ({
   path,

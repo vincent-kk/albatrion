@@ -3,17 +3,17 @@ import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 
 /**
  * Finds a node in the AbstractNode tree that matches the given path.
- * @param target - Root node to start searching from
+ * @param source - Root node to start searching from
  * @param segments - Array of path segments to find (e.g. ["root", "child", "0", "grandchild"])
  * @returns Found node or null
  */
 export const find = (
-  target: SchemaNode,
+  source: SchemaNode,
   segments: string[] | null,
 ): SchemaNode | null => {
-  if (!target) return null;
-  if (!segments?.length) return target;
-  const current = target;
+  if (!source) return null;
+  if (!segments?.length) return source;
+  const current = source;
   let cursor = current;
   for (let i = 0, il = segments.length; i < il; i++) {
     const segment = segments[i];
@@ -26,14 +26,15 @@ export const find = (
     } else if (segment === JSONPointer.Current) {
       cursor = current;
     } else {
-      const children = cursor.children;
-      if (!children?.length) return null;
+      if (cursor.group === 'terminal') return null;
+      const subnodes = cursor.subnodes;
+      if (!subnodes?.length) return null;
       let found = false;
-      for (let j = 0, jl = children.length; j < jl; j++) {
-        const childNode = children[j].node;
-        if (childNode.propertyKey !== segment) continue;
-        if (childNode.group === 'terminal') return childNode;
-        cursor = childNode;
+      for (let j = 0, jl = subnodes.length; j < jl; j++) {
+        const node = subnodes[j].node;
+        if (node.propertyKey !== segment) continue;
+        if (node.group === 'terminal') return node;
+        cursor = node;
         found = true;
         break;
       }
