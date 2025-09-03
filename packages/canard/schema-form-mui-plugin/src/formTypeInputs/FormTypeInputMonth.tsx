@@ -15,9 +15,9 @@ import type {
 
 import type { MuiContext } from '../type';
 
-interface MonthJsonSchema extends StringSchema {
+type MonthJsonSchema = StringSchema & {
   format: 'month';
-}
+};
 
 interface FormTypeInputMonthProps
   extends FormTypeInputPropsWithSchema<string, MonthJsonSchema, MuiContext>,

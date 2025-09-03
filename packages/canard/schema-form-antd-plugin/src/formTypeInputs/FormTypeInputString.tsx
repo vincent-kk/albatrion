@@ -11,10 +11,10 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-interface StringJsonSchema extends StringSchema {
+type StringJsonSchema = StringSchema & {
   format?: 'password';
   formType?: 'password';
-}
+};
 
 interface FormTypeInputStringProps
   extends FormTypeInputPropsWithSchema<

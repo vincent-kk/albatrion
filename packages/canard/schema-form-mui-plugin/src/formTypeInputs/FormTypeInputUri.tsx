@@ -20,13 +20,9 @@ import type {
 
 import type { MuiContext } from '../type';
 
-interface UriJsonSchema
-  extends StringSchema<{
-    protocols?: string[];
-  }> {
-  format?: 'uri';
-  formType?: 'uri';
-}
+type UriJsonSchema = StringSchema<{
+  protocols?: string[];
+}> & { format?: 'uri'; formType?: 'uri' };
 
 interface FormTypeInputUriProps
   extends FormTypeInputPropsWithSchema<string, UriJsonSchema, MuiContext>,

@@ -13,23 +13,17 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-interface StringJsonSchema extends StringSchema {
-  enum?: string[];
-  options?: {
-    alias?: { [label: string]: ReactNode };
-  };
-}
+type StringJsonSchema = StringSchema<{
+  alias?: { [label: string]: ReactNode };
+}>;
 
-interface NumberJsonSchema extends NumberSchema {
-  enum?: number[];
-  options?: {
-    alias?: { [label: string]: ReactNode };
-  };
-}
+type NumberJsonSchema = NumberSchema<{
+  alias?: { [label: string]: ReactNode };
+}>;
 
 interface FormTypeInputRadioGroupProps
   extends FormTypeInputPropsWithSchema<
-    string | number,
+    string | number | null,
     StringJsonSchema | NumberJsonSchema,
     { size?: SizeType; radioLabels?: { [label: string]: ReactNode } }
   > {
@@ -49,8 +43,8 @@ const FormTypeInputRadioGroup = ({
   const options = useMemo(() => {
     const alias = context.radioLabels || jsonSchema.options?.alias || {};
     return jsonSchema.enum
-      ? map(jsonSchema.enum, (value: string | number) => ({
-          label: alias[value] || value,
+      ? map(jsonSchema.enum, (value: string | number | null) => ({
+          label: alias['' + value] || '' + value,
           value,
         }))
       : [];

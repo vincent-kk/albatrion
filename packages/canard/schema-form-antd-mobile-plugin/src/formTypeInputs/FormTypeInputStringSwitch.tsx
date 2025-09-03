@@ -10,12 +10,12 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-interface StringSwitchSchema extends StringSchema {
+type StringSwitchSchema = StringSchema & {
   enum?: [string, string];
   options?: {
     alias?: { [label: string]: ReactNode };
   };
-}
+};
 
 const FormTypeInputStringSwitch = ({
   path,

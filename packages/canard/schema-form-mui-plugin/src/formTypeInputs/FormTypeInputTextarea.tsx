@@ -12,13 +12,13 @@ import type {
 
 import type { MuiContext } from '../type';
 
-interface TextareaJsonSchema extends StringSchema {
+type TextareaJsonSchema = StringSchema & {
   format?: 'textarea';
   formType?: 'textarea';
   placeholder?: string;
   minRows?: number;
   maxRows?: number;
-}
+};
 
 interface FormTypeInputTextareaProps
   extends FormTypeInputPropsWithSchema<string, TextareaJsonSchema, MuiContext>,

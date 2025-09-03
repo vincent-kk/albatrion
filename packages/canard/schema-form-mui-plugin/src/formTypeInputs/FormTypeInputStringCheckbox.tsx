@@ -12,7 +12,7 @@ import type {
 
 import type { MuiContext } from '../type';
 
-interface StringCheckboxJsonSchema extends ArraySchema {
+type StringCheckboxJsonSchema = ArraySchema & {
   type: 'array';
   items: {
     type: 'string';
@@ -20,9 +20,10 @@ interface StringCheckboxJsonSchema extends ArraySchema {
     options?: {
       alias?: Record<string, string>;
     };
+    nullable: false;
   };
   formType: 'checkbox';
-}
+};
 
 interface FormTypeInputStringCheckboxProps
   extends FormTypeInputPropsWithSchema<

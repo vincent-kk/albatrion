@@ -17,9 +17,9 @@ import type { Parameter } from '@aileron/declare';
 
 const DATE_FORMAT = 'YYYY-MM';
 
-interface MonthRangeSchema extends ArraySchema {
+type MonthRangeSchema = ArraySchema & {
   items: StringSchema;
-}
+};
 
 type RangeValueType<T> = Parameter<
   (typeof DatePicker<T>)['RangePicker']

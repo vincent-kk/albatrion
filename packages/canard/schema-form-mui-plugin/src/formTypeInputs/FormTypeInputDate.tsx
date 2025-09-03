@@ -15,11 +15,11 @@ import type {
 
 import type { MuiContext } from '../type';
 
-interface DateJsonSchema extends StringSchema {
+type DateJsonSchema = StringSchema & {
   format: 'date';
   minimum?: string; // date string
   maximum?: string; // date string
-}
+};
 
 interface FormTypeInputDateProps
   extends FormTypeInputPropsWithSchema<string, DateJsonSchema, MuiContext>,

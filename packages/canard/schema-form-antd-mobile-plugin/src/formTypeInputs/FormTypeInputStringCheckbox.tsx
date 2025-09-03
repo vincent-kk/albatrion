@@ -13,16 +13,16 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-interface StringJsonSchema extends StringSchema {
+type StringJsonSchema = StringSchema & {
   enum?: string[];
   options?: {
     alias?: { [label: string]: ReactNode };
   };
-}
+};
 
-interface ArrayJsonSchema extends ArraySchema {
+type ArrayJsonSchema = ArraySchema & {
   items: StringJsonSchema;
-}
+};
 
 const FormTypeInputStringCheckbox = ({
   jsonSchema,

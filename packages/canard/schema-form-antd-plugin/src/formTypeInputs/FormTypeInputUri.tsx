@@ -18,13 +18,13 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-interface StringJsonSchema extends StringSchema {
+type StringJsonSchema = StringSchema & {
   format?: 'uri';
   formType?: 'uri';
   options?: {
     protocols?: string[];
   };
-}
+};
 
 const DEFAULT_PROTOCOLS = ['http', 'https', 'ftp', 'mailto', 'tel'];
 
