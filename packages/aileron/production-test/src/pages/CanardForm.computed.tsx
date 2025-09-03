@@ -14,12 +14,12 @@ const schema = {
     openingDate: {
       type: "string",
       format: "date",
-      "&visible": '../category === "game"',
+      "&active": '../category === "game"',
     },
     releaseDate: {
       type: "string",
       format: "date",
-      "&visible": '../category === "movie"',
+      "&active": '../category === "movie"',
     },
     numOfPlayers: { type: "number" },
     price: {
