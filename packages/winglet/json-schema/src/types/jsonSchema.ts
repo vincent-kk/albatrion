@@ -1,4 +1,4 @@
-import type { Nullable } from '@aileron/declare';
+import type { Dictionary, Nullable } from '@aileron/declare';
 
 import type {
   AllowedValue,
@@ -10,8 +10,6 @@ import type {
 } from './value';
 
 // REF: https://github.com/ajv-validator/ajv/blob/master/lib/types/json-schema.ts
-
-type Dictionary<Value = any> = Record<string, Value>;
 
 export type UnknownSchema = { type?: string; [key: string]: any };
 
@@ -136,11 +134,12 @@ export interface BasicSchema<
   nullable?: boolean;
   const?: Nullable<Type>;
   default?: Nullable<Type>;
-  enum?: Type[];
+  enum?: Nullable<Type>[];
 }
 
 interface CustomOptions<Options extends Dictionary> {
   format?: string;
+  active?: boolean;
   visible?: boolean;
   readOnly?: boolean;
   disabled?: boolean;

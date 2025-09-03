@@ -11,13 +11,14 @@ import type {
   RefSchema,
 } from '@winglet/json-schema';
 
-import type { Dictionary, Nullish } from '@aileron/declare';
+import type { Dictionary, Nullable, Nullish } from '@aileron/declare';
 
 import type { UnknownFormTypeInputProps } from './formTypeInput';
 import type {
   AllowedValue,
   ArrayValue,
   BooleanValue,
+  NullValue,
   NumberValue,
   ObjectValue,
   StringValue,
@@ -68,39 +69,41 @@ export type JsonSchemaWithRef<Options extends Dictionary = object> =
   | JsonSchemaWithVirtual<Options>
   | RefSchema;
 
-export type NumberSchema<Options extends Dictionary = object> = BasicSchema &
-  BaseNumberSchema<Options, JsonSchema<Options>>;
+export type NumberSchema<Options extends Dictionary = object> =
+  BasicSchema<NumberValue> & BaseNumberSchema<Options, JsonSchema<Options>>;
 
-export type StringSchema<Options extends Dictionary = object> = BasicSchema &
-  BaseStringSchema<Options, JsonSchema<Options>> & {
-    options?: {
-      trim?: boolean;
+export type StringSchema<Options extends Dictionary = object> =
+  BasicSchema<StringValue> &
+    BaseStringSchema<Options, JsonSchema<Options>> & {
+      options?: { trim?: boolean };
     };
-  };
 
-export type BooleanSchema<Options extends Dictionary = object> = BasicSchema &
-  BaseBooleanSchema<Options, JsonSchema<Options>>;
+export type BooleanSchema<Options extends Dictionary = object> =
+  BasicSchema<BooleanValue> & BaseBooleanSchema<Options, JsonSchema<Options>>;
 
-export type ArraySchema<Options extends Dictionary = object> = BasicSchema &
-  BaseArraySchema<Options, JsonSchema<Options>>;
+export type ArraySchema<Options extends Dictionary = object> =
+  BasicSchema<ArrayValue> & BaseArraySchema<Options, JsonSchema<Options>>;
 
-export type ObjectSchema<Options extends Dictionary = object> = BasicSchema &
-  BaseObjectSchema<Options, JsonSchema<Options>> & {
-    propertyKeys?: string[];
-    virtual?: Dictionary<{ fields: string[]; nullable?: never } & BasicSchema>;
-  };
+export type ObjectSchema<Options extends Dictionary = object> =
+  BasicSchema<ObjectValue> &
+    BaseObjectSchema<Options, JsonSchema<Options>> & {
+      propertyKeys?: string[];
+      virtual?: Dictionary<
+        { fields: string[]; nullable?: never } & BasicSchema
+      >;
+    };
 
 export type VirtualSchema<Options extends Dictionary = object> = {
   type: 'virtual';
   fields?: string[];
   nullable?: never;
-} & BasicSchema &
+} & BasicSchema<VirtualNodeValue> &
   BaseBasicSchema<VirtualNodeValue, Options, JsonSchema<Options>>;
 
-export type NullSchema<Options extends Dictionary = object> = BasicSchema &
-  BaseNullSchema<Options, JsonSchema<Options>>;
+export type NullSchema<Options extends Dictionary = object> =
+  BasicSchema<NullValue> & BaseNullSchema<Options, JsonSchema<Options>>;
 
-export type BasicSchema = {
+export type BasicSchema<Value extends AllowedValue = any> = {
   FormTypeInput?: ComponentType<UnknownFormTypeInputProps>;
   FormTypeInputProps?: Dictionary;
   FormTypeRendererProps?: Dictionary;
@@ -139,4 +142,18 @@ export type BasicSchema = {
     disabled?: boolean | string;
   };
   [alt: string]: any;
-};
+} & NullableSchema<Value>;
+
+type NullableSchema<Value extends AllowedValue> =
+  | {
+      nullable: true;
+      enum?: Nullable<Value>[];
+      default?: Nullable<Value>;
+      const?: Nullable<Value>;
+    }
+  | {
+      nullable?: false;
+      enum?: Value[];
+      default?: Value;
+      const?: Value;
+    };
