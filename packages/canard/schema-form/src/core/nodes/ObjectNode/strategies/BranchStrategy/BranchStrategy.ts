@@ -293,7 +293,11 @@ export class BranchStrategy implements ObjectNodeStrategy {
         type: NodeEventType.UpdateValue,
         payload: { [NodeEventType.UpdateValue]: current },
         options: {
-          [NodeEventType.UpdateValue]: { previous, current },
+          [NodeEventType.UpdateValue]: {
+            previous,
+            current,
+            settled: !(option & SetValueOption.Isolate),
+          },
         },
       });
 
@@ -411,7 +415,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
           this.__oneOfKeySet__,
           current > -1 ? this.__oneOfKeySetList__?.[current] : undefined,
         );
-        this.__processComputedProperties__();
+        this.__processComputedProperties__(this.__draft__);
 
         this.__emitChange__(SetValueOption.ResetNode);
         this.__publishChildrenChange__();
@@ -425,9 +429,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @private
    */
   private __prepareProcessComputedProperties__() {
-    this.__host__.subscribe(({ type }) => {
+    this.__host__.subscribe(({ type, options }) => {
       if (type & NodeEventType.UpdateValue) {
-        if (this.__processComputedProperties__()) return;
+        if (options?.[NodeEventType.UpdateValue]?.settled) return;
+        if (this.__processComputedProperties__(this.__value__)) return;
         this.__emitChange__(SetValueOption.BatchedEmitChange);
       }
     });
@@ -435,17 +440,20 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
   /**
    * Excludes values of invisible child elements from the computed value.
+   * @param source - Source object to check
    * @returns Whether the computed properties were processed
    * @private
    */
-  private __processComputedProperties__() {
+  private __processComputedProperties__(source: ObjectValue | Nullish) {
+    if (!source || !this.__draft__) return false;
     let noop = true;
     for (let i = 0, l = this.__children__.length; i < l; i++) {
       const node = this.__children__[i].node;
       if (node.type === 'virtual') continue;
       if (node.visible) continue;
-      if (!this.__draft__) this.__draft__ = {};
-      this.__draft__[node.propertyKey] = undefined;
+      const key = node.propertyKey;
+      if (source[key] === undefined) continue;
+      this.__draft__[key] = undefined;
       if (noop) noop = false;
     }
     return noop;

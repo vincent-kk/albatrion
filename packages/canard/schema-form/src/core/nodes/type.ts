@@ -267,6 +267,7 @@ export type NodeEventOptions = {
   [NodeEventType.UpdateValue]: {
     previous: any;
     current: any;
+    settled?: boolean;
   };
   [NodeEventType.UpdateState]: void;
   [NodeEventType.UpdateError]: void;
