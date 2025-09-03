@@ -1328,7 +1328,27 @@ export const FormWithCustomInput = () => {
 
 ### 조건부 필드와 Watch
 
-`watch` 속성을 사용하여 동적 양식 논리 생성:
+#### 종류
+
+- `watch`: 다른 Node의 값을 구독할 수 있습니다. (watchValues 속성으로 전달됨)
+- `active`: 해당 Node가 활성화될지 여부를 결정합니다. 활성화 되지 않은 Node의 Input은 표시되지 않으며 그 값은 제거됩니다.
+- `visible`: 해당 Node가 표시될지 여부를 결정합니다. Input의 표시 여부를 결정합니다.
+- `readOnly`: 해당 Node가 읽기 전용일지 여부를 결정합니다. readOnly 상태인 경우 Input에서 값을 수정할 수 없습니다.
+- `disabled`: 해당 Node가 비활성화될 때 표시될지 여부를 결정합니다. disabled 상태인 경우 Input에서 값을 수정할 수 없습니다.
+- `if` + `oneOf`: oneOf 정의 중 if 조건을 만족하는 정의를 표시합니다. ObjectNode 에서만 사용할 수 있습니다.
+
+#### 우선순위
+
+`active`, `visible`, `readOnly`, `disabled` 속성은 다음과 같은 우선순위를 가집니다.
+
+1. root jsonSchema 의 속성 (boolean)
+2. shortcut 속성 (`jsonSchema[{fieldName}]`, boolean)
+3. computed 속성 (`jsonSchema.computed[{fieldName}]`, boolean | string)
+4. alias computed (`jsonSchema['&{fieldName}']`, boolean | string)
+
+위 우선순위 중 상위 우선순위에 정의한 값을 우선 적용합니다.
+
+#### 기본 예제
 
 ```tsx
 import React from 'react';
@@ -1343,26 +1363,98 @@ export const ConditionalForm = () => {
         type: 'string',
         enum: ['fulltime', 'parttime', 'contractor'],
         title: '고용 유형',
+        default: 'fulltime',
       },
-      salary: {
-        type: 'number',
-        title: '연봉',
+      commonField: {
+        type: 'string',
+        title: '공통 필드',
         computed: {
           watch: '../employmentType',
-          active: "../employmentType === 'fulltime'",
-        },
-      },
-      hourlyRate: {
-        type: 'number',
-        title: '시간당 급여',
-        computed: {
-          watch: '../employmentType',
-          active:
-            "../employmentType === 'parttime' || ../employmentType === 'contractor'",
+          active: '../employmentType !== null',
+          visible: '../employmentType !== null',
         },
       },
     },
-  };
+    oneOf: [
+      {
+        computed: {
+          if: "./employmentType === 'fulltime'",
+        },
+        properties: {
+          salary: {
+            type: 'number',
+            title: '연봉',
+          },
+          bonus: {
+            type: 'number',
+            title: '보너스',
+          },
+          benefits: {
+            type: 'object',
+            title: '복리후생',
+            properties: {
+              healthInsurance: {
+                type: 'boolean',
+                title: '건강보험',
+              },
+              pension: {
+                type: 'boolean',
+                title: '연금',
+              },
+            },
+          },
+          probationPeriod: {
+            type: 'number',
+            title: '수습기간 (개월)',
+            minimum: 0,
+            maximum: 12,
+          },
+        },
+      },
+      {
+        computed: {
+          if: "./employmentType === 'parttime'",
+        },
+        properties: {
+          hourlyRate: {
+            type: 'number',
+            title: '시간당 급여',
+          },
+          workingHours: {
+            type: 'number',
+            title: '주당 근무시간',
+            minimum: 1,
+            maximum: 40,
+          },
+        },
+      },
+      {
+        computed: {
+          if: "./employmentType === 'contractor'",
+        },
+        properties: {
+          hourlyRate: {
+            type: 'number',
+            title: '시간당 급여',
+          },
+          contractType: {
+            type: 'string',
+            enum: ['hourly', 'project', 'temporary'],
+            title: '계약 유형',
+          },
+          workingHours: {
+            type: 'number',
+            title: '주당 근무시간',
+            minimum: 1,
+            maximum: 168,
+            computed: {
+              active: '../contractType === "hourly"',
+            },
+          },
+        },
+      },
+    ],
+  } satisfies JsonSchema;
 
   return <Form jsonSchema={jsonSchema} />;
 };
