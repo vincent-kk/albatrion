@@ -113,16 +113,16 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * Propagates activation to all child nodes.
    * @internal Internal implementation method. Do not call directly.
    */
-  public activate() {
+  public initialize() {
     let enabled = false;
     for (const child of this.__propertyChildren__) {
-      (child.node as AbstractNode).activate(this.__host__);
+      (child.node as AbstractNode).initialize(this.__host__);
       if (!enabled && child.node.computeEnabled) enabled = true;
     }
     if (this.__oneOfChildNodeMapList__)
       for (const childNodeMap of this.__oneOfChildNodeMapList__)
         for (const child of childNodeMap.values()) {
-          (child.node as AbstractNode).activate(this.__host__);
+          (child.node as AbstractNode).initialize(this.__host__);
           if (!enabled && child.node.computeEnabled) enabled = true;
         }
     if (enabled) this.__prepareProcessComputedProperties__();

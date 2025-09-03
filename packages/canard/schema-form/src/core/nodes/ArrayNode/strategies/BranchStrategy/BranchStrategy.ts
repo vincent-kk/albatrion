@@ -127,9 +127,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * Propagates activation to all child nodes.
    * @internal Internal implementation method. Do not call directly.
    */
-  public activate() {
+  public initialize() {
     for (const key of this.__keys__)
-      (this.__sourceMap__.get(key)?.node as AbstractNode)?.activate(
+      (this.__sourceMap__.get(key)?.node as AbstractNode)?.initialize(
         this.__host__,
       );
   }
@@ -209,8 +209,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
     });
     this.__sourceMap__.set(key, { node: childNode, data: childNode.value });
 
-    if (this.__host__.activated)
-      (childNode as AbstractNode).activate(this.__host__);
+    if (this.__host__.initialized)
+      (childNode as AbstractNode).initialize(this.__host__);
 
     this.__expire__();
     this.__emitChange__(option);

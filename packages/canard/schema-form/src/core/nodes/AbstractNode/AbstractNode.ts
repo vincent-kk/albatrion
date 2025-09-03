@@ -393,26 +393,26 @@ export abstract class AbstractNode<
     this.#eventCascade.schedule(event);
   }
 
-  /** Whether the node is activated */
-  #activated: boolean = false;
+  /** Whether the node is initialized */
+  #initialized: boolean = false;
 
-  /** [readonly] Whether the node is activated */
-  public get activated() {
-    return this.#activated;
+  /** [readonly] Whether the node is initialized */
+  public get initialized() {
+    return this.#initialized;
   }
 
   /**
-   * Activates the node. Activation must be called by itself or by the parent node.
-   * @param actor - The node requesting activation
-   * @returns {boolean} Whether activation occurred
+   * Initializes the node. Initialization must be called by itself or by the parent node.
+   * @param actor - The node requesting initialization
+   * @returns {boolean} Whether initialization occurred
    * @internal Internal implementation method. Do not call directly.
    */
-  public activate(this: AbstractNode, actor?: SchemaNode) {
-    if (this.#activated || (actor !== this.parentNode && !this.isRoot))
+  public initialize(this: AbstractNode, actor?: SchemaNode) {
+    if (this.#initialized || (actor !== this.parentNode && !this.isRoot))
       return false;
-    this.#activated = true;
+    this.#initialized = true;
     this.#prepareUpdateDependencies();
-    this.publish({ type: NodeEventType.Activated });
+    this.publish({ type: NodeEventType.Initialized });
     return true;
   }
 

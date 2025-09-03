@@ -29,6 +29,6 @@ export interface ObjectNodeStrategy {
     value: ObjectValue | Nullish,
     option: UnionSetValueOption,
   ): void;
-  /** Activates pub-sub links for child nodes. */
-  activate?(): void;
+  /** Initializes pub-sub links for child nodes. */
+  initialize?(): void;
 }

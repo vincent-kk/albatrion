@@ -73,9 +73,9 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * @returns {boolean} Whether activation was successful
    * @internal Internal implementation method. Do not call directly.
    */
-  public override activate(this: ObjectNode, actor?: SchemaNode): boolean {
-    if (super.activate(actor)) {
-      this.#strategy.activate?.();
+  public override initialize(this: ObjectNode, actor?: SchemaNode): boolean {
+    if (super.initialize(actor)) {
+      this.#strategy.initialize?.();
       return true;
     }
     return false;
@@ -110,7 +110,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         : (value, batch) => super.onChange(omitEmptyObject(value), batch);
     this.onChange = handleChange;
     this.#strategy = this.#createStrategy(handleChange, nodeFactory);
-    this.activate();
+    this.initialize();
   }
 
   /**

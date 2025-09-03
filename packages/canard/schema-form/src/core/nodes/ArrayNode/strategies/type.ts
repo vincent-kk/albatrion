@@ -57,6 +57,6 @@ export interface ArrayNodeStrategy {
   pop(): Promise<ArrayValue[number] | undefined>;
   /** Clears all elements to initialize the array. */
   clear(): Promise<void>;
-  /** Activates pub-sub links for child nodes. */
-  activate?(): void;
+  /** Initializes pub-sub links for child nodes. */
+  initialize?(): void;
 }
