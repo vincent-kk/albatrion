@@ -334,7 +334,6 @@ Please refer to each plugin's README for detailed usage instructions.
 - Validation messages must be defined in the `{[keyword]:errorMessage}` format.
 - If you define the `default` key, it will be used as the default value when the keyword does not match.
 - Each validation message (errorMessage) can be replaced with dynamic values using the following expressions:
-
   - `{key}`: key is replaced with the value corresponding to the key in `error.details`.
   - `{value}`: value is replaced with the value currently entered in the input.
 
@@ -925,7 +924,7 @@ const jsonSchema = {
           type: 'array',
           computed: {
             watch: '../type', // Watch parent's type field
-            visible: "../type === 'admin'", // Show only for admin
+            active: "../type === 'admin'", // Show only for admin
           },
         },
       },
@@ -991,7 +990,7 @@ const jsonSchema = {
               type: 'object',
               computed: {
                 watch: '../role',  // Watch sibling field
-                visible: "../role === 'admin'"  // Show only for admin
+                active: "../role === 'admin'"  // Show only for admin
               },
               properties: {
                 permissions: { type: 'array' }
@@ -1011,7 +1010,7 @@ const jsonSchema = {
                 type: 'boolean',
                 computed: {
                   watch: '../type',  // Watch sibling type
-                  visible: "../type === 'home'"  // Show only for home addresses
+                  active: "../type === 'home'"  // Show only for home addresses
                 }
               }
             }
@@ -1360,7 +1359,7 @@ export const ConditionalForm = () => {
         title: 'Annual Salary',
         computed: {
           watch: '../employmentType',
-          visible: "../employmentType === 'fulltime'",
+          active: "../employmentType === 'fulltime'",
         },
       },
       hourlyRate: {
@@ -1368,7 +1367,7 @@ export const ConditionalForm = () => {
         title: 'Hourly Rate',
         computed: {
           watch: '../employmentType',
-          visible:
+          active:
             "../employmentType === 'parttime' || ../employmentType === 'contractor'",
         },
       },

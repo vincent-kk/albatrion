@@ -327,7 +327,6 @@ export const App = () => {
 - 유효성 검증 메시지는 `{[keyword]:errorMessage}` 형태로 정의해야 합니다.
 - `default` 키를 정의하면 keyword가 매칭되지 않는 경우 기본값으로 사용됩니다.
 - 각각의 에러 메시지(errorMessage)는 다음과 같은 표현을 통해 동적으로 값을 치환할 수 있습니다
-
   - `{key}`: key는 `error.details`의 키에 해당하는 값으로 치환됩니다.
   - `{value}`: value는 현재 해당 input에 입력된 값으로 치환됩니다
 
@@ -915,7 +914,7 @@ const jsonSchema = {
           type: 'array',
           computed: {
             watch: '../type', // 부모의 type 필드 감시
-            visible: "../type === 'admin'", // admin일 때만 표시
+            active: "../type === 'admin'", // admin일 때만 표시
           },
         },
       },
@@ -981,7 +980,7 @@ const jsonSchema = {
               type: 'object',
               computed: {
                 watch: '../role',  // 형제 필드 감시
-                visible: "../role === 'admin'"  // admin일 때만 표시
+                active: "../role === 'admin'"  // admin일 때만 표시
               },
               properties: {
                 permissions: { type: 'array' }
@@ -1001,7 +1000,7 @@ const jsonSchema = {
                 type: 'boolean',
                 computed: {
                   watch: '../type',  // 형제 type 감시
-                  visible: "../type === 'home'"  // 집 주소일 때만 표시
+                  active: "../type === 'home'"  // 집 주소일 때만 표시
                 }
               }
             }
@@ -1350,7 +1349,7 @@ export const ConditionalForm = () => {
         title: '연봉',
         computed: {
           watch: '../employmentType',
-          visible: "../employmentType === 'fulltime'",
+          active: "../employmentType === 'fulltime'",
         },
       },
       hourlyRate: {
@@ -1358,7 +1357,7 @@ export const ConditionalForm = () => {
         title: '시간당 급여',
         computed: {
           watch: '../employmentType',
-          visible:
+          active:
             "../employmentType === 'parttime' || ../employmentType === 'contractor'",
         },
       },
