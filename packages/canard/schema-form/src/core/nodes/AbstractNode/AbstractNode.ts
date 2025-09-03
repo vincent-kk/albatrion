@@ -419,7 +419,9 @@ export abstract class AbstractNode<
   /**
    * Tools for handling computed properties
    *  - `dependencyPaths`: List of paths to dependencies
+   *  - `active`: Calculate whether the node is active
    *  - `visible`: Calculate whether the node is visible
+   *  - `enabled`: Calculate whether the node is both active and visible
    *  - `readOnly`: Calculate whether the node is read only
    *  - `disabled`: Calculate whether the node is disabled
    *  - `oneOfIndex`: Calculate the index of the oneOf branch
@@ -438,12 +440,25 @@ export abstract class AbstractNode<
     return this.#computeEnabled;
   }
 
+  /** Whether the node is active */
+  #active: boolean = true;
+
+  /** [readonly] Whether the node is active */
+  public get active() {
+    return this.#active;
+  }
+
   /** Whether the node is visible */
   #visible: boolean = true;
 
   /** [readonly] Whether the node is visible */
   public get visible() {
     return this.#visible;
+  }
+
+  /** [readonly] Whether the node is both active and visible */
+  public get enabled() {
+    return this.#active && this.#visible;
   }
 
   /** Whether the node is read only */
@@ -522,13 +537,14 @@ export abstract class AbstractNode<
    * @internal Internal implementation method. Do not call directly.
    */
   protected updateComputedProperties(this: AbstractNode) {
-    const previousVisible = this.#visible;
+    const previous = this.#active;
+    this.#active = this.#compute.active?.(this.#dependencies) ?? true;
     this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
     this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
     this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
-    if (previousVisible !== this.#visible) this.resetNode(true);
+    if (previous !== this.#active) this.resetNode(true);
     if (!this.#hasPublishedUpdateComputedProperties) {
       this.publish({ type: NodeEventType.UpdateComputedProperties });
       this.#hasPublishedUpdateComputedProperties = true;
@@ -554,7 +570,7 @@ export abstract class AbstractNode<
           : this.#initialValue
       : this.#initialValue;
     this.#defaultValue = defaultValue;
-    const value = this.#visible ? defaultValue : undefined;
+    const value = this.#active ? defaultValue : undefined;
 
     this.setValue(value, SetValueOption.ResetNode);
     this.setState();

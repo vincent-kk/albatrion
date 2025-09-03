@@ -86,7 +86,7 @@ export const SchemaNodeProxy = memo(
 
     const version = useSchemaNodeTracker(node, NodeEventType.RequestRefresh);
 
-    if (!node?.visible) return null;
+    if (!node?.enabled) return null;
 
     return (
       <Wrapper key={version}>

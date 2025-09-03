@@ -88,7 +88,7 @@ const getVirtualReferenceConditions = (
     const virtualReference = virtualReferencesMap.get(virtualReferenceField);
     if (!virtualReference) continue;
     const condition =
-      virtualReference.computed?.visible ?? virtualReference['&visible'];
+      virtualReference.computed?.active ?? virtualReference['&active'];
     if (condition !== undefined) conditions.push('' + condition);
   }
   return conditions.length ? conditions : undefined;

@@ -122,6 +122,8 @@ export type BasicSchema = {
   '&if'?: boolean | string;
   /** Alias for computed.watch */
   '&watch'?: string | string[];
+  /** Alias for computed.active */
+  '&active'?: boolean | string;
   /** Alias for computed.visible */
   '&visible'?: boolean | string;
   /** Alias for computed.readOnly */
@@ -131,6 +133,7 @@ export type BasicSchema = {
   computed?: {
     if?: boolean | string;
     watch?: string | string[];
+    active?: boolean | string;
     visible?: boolean | string;
     readOnly?: boolean | string;
     disabled?: boolean | string;

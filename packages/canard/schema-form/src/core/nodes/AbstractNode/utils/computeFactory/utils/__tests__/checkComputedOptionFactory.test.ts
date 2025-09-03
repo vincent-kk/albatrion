@@ -130,7 +130,7 @@ describe('checkComputedOptionFactory', () => {
       fieldName,
       checkCondition,
     );
-    expect(fn).toBeUndefined();
+    expect(fn?.([])).toBe(false);
   });
 
   it('expression이 여러 dependencyPaths를 동적으로 추가', () => {

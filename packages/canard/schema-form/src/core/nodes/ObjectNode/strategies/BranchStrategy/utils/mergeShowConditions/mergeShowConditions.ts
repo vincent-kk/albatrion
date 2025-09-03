@@ -15,13 +15,13 @@ export const mergeShowConditions = (
   conditions: string[] | undefined,
 ) => {
   if (conditions) {
-    const visible: string | boolean | undefined =
-      jsonSchema.computed?.visible ?? jsonSchema['&visible'];
-    if (typeof visible === 'boolean') return jsonSchema;
+    const active: string | boolean | undefined =
+      jsonSchema.computed?.active ?? jsonSchema['&active'];
+    if (typeof active === 'boolean') return jsonSchema;
     return merge(jsonSchema, {
       computed: {
-        visible: combineConditions(
-          [visible, combineConditions(conditions, '||')],
+        active: combineConditions(
+          [active, combineConditions(conditions, '||')],
           '&&',
         ),
       },

@@ -25,6 +25,12 @@ export const computeFactory = (
     /** List of paths to dependencies */
     dependencyPaths: pathManager.get(),
     /**
+     * Calculate whether the node is active
+     * @param dependencies - List of dependencies
+     * @returns Whether the node is active
+     */
+    active: checkComputedOption(pathManager, 'active', false),
+    /**
      * Calculate whether the node is visible
      * @param dependencies - List of dependencies
      * @returns Whether the node is visible

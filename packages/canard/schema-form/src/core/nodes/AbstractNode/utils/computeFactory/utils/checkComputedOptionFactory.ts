@@ -1,5 +1,3 @@
-import { isString } from '@winglet/common-utils/filter';
-
 import type { Fn } from '@aileron/declare';
 
 import { SchemaNodeError } from '@/schema-form/errors';
@@ -23,27 +21,24 @@ export const checkComputedOptionFactory =
    * Returns a condition check function for the given dependency paths and field name.
    * @param dependencyPaths - Dependency path array
    * @param fieldName - Field name to check
-   * @param checkCondition - Condition value to check
+   * @param threshold - Value that causes the function to return immediately without computation when matched
    * @returns Computed option check function or undefined
    */
   (
     pathManager: PathManager,
     fieldName: ConditionFieldName,
-    checkCondition: boolean,
+    threshold: boolean,
   ): CheckComputedOption | undefined => {
-    // Extract expression from `computed.[<fieldName>]` or `&[<fieldName>]` field
-    const expression =
+    const expression: string | boolean | undefined =
       jsonSchema?.computed?.[fieldName] ?? jsonSchema?.[ALIAS + fieldName];
-
-    // Check if preferred condition already matches boolean value
-    const preferredCondition =
-      rootJsonSchema[fieldName] === checkCondition ||
-      jsonSchema[fieldName] === checkCondition ||
-      expression === checkCondition;
+    if (typeof expression === 'boolean') return () => expression;
 
     // Return fixed function if preferred condition matches, otherwise create dynamic function
+    const preferredCondition =
+      rootJsonSchema[fieldName] === threshold ||
+      jsonSchema[fieldName] === threshold;
     return preferredCondition
-      ? () => checkCondition
+      ? () => threshold
       : createDynamicFunction(pathManager, fieldName, expression);
   };
 
@@ -59,7 +54,7 @@ const createDynamicFunction = (
   expression: string | boolean | undefined,
 ): CheckComputedOption | undefined => {
   // Cannot process non-string expressions
-  if (!isString(expression)) return;
+  if (typeof expression !== 'string') return;
 
   // Transform JSON paths to dependency array references
   const computedExpression = expression
