@@ -21,25 +21,19 @@ export const checkComputedOptionFactory =
    * Returns a condition check function for the given dependency paths and field name.
    * @param dependencyPaths - Dependency path array
    * @param fieldName - Field name to check
-   * @param threshold - Value that causes the function to return immediately without computation when matched
    * @returns Computed option check function or undefined
    */
   (
     pathManager: PathManager,
     fieldName: ConditionFieldName,
-    threshold: boolean,
   ): CheckComputedOption | undefined => {
     const expression: string | boolean | undefined =
-      jsonSchema?.computed?.[fieldName] ?? jsonSchema?.[ALIAS + fieldName];
+      rootJsonSchema[fieldName] ??
+      jsonSchema[fieldName] ??
+      jsonSchema.computed?.[fieldName] ??
+      jsonSchema[ALIAS + fieldName];
     if (typeof expression === 'boolean') return () => expression;
-
-    // Return fixed function if preferred condition matches, otherwise create dynamic function
-    const preferredCondition =
-      rootJsonSchema[fieldName] === threshold ||
-      jsonSchema[fieldName] === threshold;
-    return preferredCondition
-      ? () => threshold
-      : createDynamicFunction(pathManager, fieldName, expression);
+    return createDynamicFunction(pathManager, fieldName, expression);
   };
 
 /**
@@ -51,7 +45,7 @@ export const checkComputedOptionFactory =
 const createDynamicFunction = (
   pathManager: PathManager,
   fieldName: ConditionFieldName,
-  expression: string | boolean | undefined,
+  expression: string | undefined,
 ): CheckComputedOption | undefined => {
   // Cannot process non-string expressions
   if (typeof expression !== 'string') return;
