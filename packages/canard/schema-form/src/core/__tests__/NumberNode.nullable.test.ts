@@ -221,7 +221,7 @@ describe('NumberNode nullable functionality', () => {
           priority: {
             type: 'number',
             nullable: true,
-            enum: [1, 2, 3, null],
+            enum: [1, 2, 3],
           },
         },
       },

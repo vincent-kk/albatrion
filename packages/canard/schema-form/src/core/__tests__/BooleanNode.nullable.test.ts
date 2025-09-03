@@ -234,7 +234,7 @@ describe('BooleanNode nullable functionality', () => {
           status: {
             type: 'boolean',
             nullable: true,
-            enum: [true, false, null],
+            enum: [true, false],
           },
         },
       },

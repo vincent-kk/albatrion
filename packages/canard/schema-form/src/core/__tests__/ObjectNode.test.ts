@@ -180,6 +180,7 @@ describe('ObjectNode', () => {
         [NodeEventType.UpdateValue]: {
           current: { name: 'Ron', age: 28 },
           previous: {},
+          settled: false,
         },
       },
     });
@@ -260,6 +261,7 @@ describe('ObjectNode', () => {
         [NodeEventType.UpdateValue]: {
           current: { name: 'John' },
           previous: {},
+          settled: true,
         },
       },
     });
@@ -908,6 +910,7 @@ describe('ObjectNode', () => {
           [NodeEventType.UpdateValue]: {
             current: { 'ünicøde-näme': 'Ron', пользователь: 28 },
             previous: {},
+            settled: false,
           },
         },
       });

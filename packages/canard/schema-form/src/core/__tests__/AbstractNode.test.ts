@@ -378,6 +378,7 @@ describe('AbstractNode', () => {
             endDate: '2021-01-02',
           },
           previous: {},
+          settled: true,
         },
       },
     });

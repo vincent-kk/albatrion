@@ -125,14 +125,12 @@ describe('StringNode', () => {
 
     const stringNode = node?.find('name') as StringNode;
 
-    // 숫자를 문자열로 파싱
-    // @ts-expect-error
+    // @ts-expect-error 숫자를 문자열로 파싱
     stringNode.setValue(123);
     await delay();
     expect(stringNode.value).toBe('123');
 
-    // 불리언을 문자열로 파싱
-    // @ts-expect-error
+    // @ts-expect-error 불리언을 문자열로 파싱
     stringNode.setValue(true);
     await delay();
     expect(stringNode.value).toBe('');
