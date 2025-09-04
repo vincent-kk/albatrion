@@ -1,6 +1,6 @@
 {
   "name": "@winglet/json",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "description": "TypeScript library for safe and efficient JSON data manipulation with RFC 6901 (JSON Pointer) and RFC 6902 (JSON Patch) compliance, featuring prototype pollution protection and immutable operations",
   "keywords": [
     "typescript",

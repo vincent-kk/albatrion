@@ -1,6 +1,6 @@
 {
   "name": "@canard/schema-form",
-  "version": "0.4.16",
+  "version": "0.5.0",
   "description": "React-based component library that renders forms based on JSON Schema with plugin system support for validators and UI components",
   "keywords": [
     "react",
