@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import type { SchemaNode } from '@/schema-form/core';
 
-import { find } from '../find';
+import { traversal } from '../traversal';
 
 describe('find', () => {
   let mockRootNode: any;
@@ -54,47 +54,47 @@ describe('find', () => {
   });
 
   it('should return null for null target', () => {
-    const result = find(null as any, ['child1']);
+    const result = traversal(null as any, ['child1']);
     expect(result).toBeNull();
   });
 
   it('should return target for null segments', () => {
-    const result = find(mockRootNode, null);
+    const result = traversal(mockRootNode, null);
     expect(result).toBe(mockRootNode);
   });
 
   it('should return target for empty segments', () => {
-    const result = find(mockRootNode, []);
+    const result = traversal(mockRootNode, []);
     expect(result).toBe(mockRootNode);
   });
 
   it('should find direct child node', () => {
-    const result = find(mockRootNode, ['child1']);
+    const result = traversal(mockRootNode, ['child1']);
     expect(result).toBe(mockChildNode1);
   });
 
   it('should find terminal child node', () => {
-    const result = find(mockRootNode, ['child2']);
+    const result = traversal(mockRootNode, ['child2']);
     expect(result).toBe(mockChildNode2);
   });
 
   it('should find nested grandchild node', () => {
-    const result = find(mockRootNode, ['child1', 'grandchild']);
+    const result = traversal(mockRootNode, ['child1', 'grandchild']);
     expect(result).toBe(mockGrandchildNode);
   });
 
   it('should return null for non-existent path', () => {
-    const result = find(mockRootNode, ['nonexistent']);
+    const result = traversal(mockRootNode, ['nonexistent']);
     expect(result).toBeNull();
   });
 
   it('should return null for partial non-existent path', () => {
-    const result = find(mockRootNode, ['child1', 'nonexistent']);
+    const result = traversal(mockRootNode, ['child1', 'nonexistent']);
     expect(result).toBeNull();
   });
 
   it('should handle # (Fragment) to navigate to root', () => {
-    const result = find(mockChildNode1, ['#', 'child2']);
+    const result = traversal(mockChildNode1, ['#', 'child2']);
     expect(result).toBe(mockChildNode2);
   });
 
@@ -102,17 +102,17 @@ describe('find', () => {
     // Navigate from grandchild up to its parent (child1), then to child2
     // But child2 is a sibling of child1, not a child of child1
     // So the correct path would be: .. (to child1) then .. (to root) then child2
-    const result = find(mockGrandchildNode, ['..', '..', 'child2']);
+    const result = traversal(mockGrandchildNode, ['..', '..', 'child2']);
     expect(result).toBe(mockChildNode2);
   });
 
   it('should handle . (Current) to stay at current node', () => {
-    const result = find(mockChildNode1, ['.', 'grandchild']);
+    const result = traversal(mockChildNode1, ['.', 'grandchild']);
     expect(result).toBe(mockGrandchildNode);
   });
 
   it('should return null when parent navigation fails', () => {
-    const result = find(mockRootNode, ['..']);
+    const result = traversal(mockRootNode, ['..']);
     expect(result).toBeNull();
   });
 
@@ -125,12 +125,12 @@ describe('find', () => {
       subnodes: null,
     };
 
-    const result = find(nodeWithoutRoot, ['#']);
+    const result = traversal(nodeWithoutRoot, ['#']);
     expect(result).toBeNull();
   });
 
   it('should handle complex navigation with special segments', () => {
-    const result = find(mockGrandchildNode, [
+    const result = traversal(mockGrandchildNode, [
       '..',
       '..',
       'child1',
@@ -141,11 +141,11 @@ describe('find', () => {
 
   it('should return terminal node immediately when found', () => {
     // When we find a terminal node, we return it immediately without traversing further
-    const result = find(mockRootNode, ['child2']);
+    const result = traversal(mockRootNode, ['child2']);
     expect(result).toBe(mockChildNode2);
 
     // But if we try to access subnodes of terminal node, it returns null
-    const nestedResult = find(mockRootNode, ['child2', 'nonexistent']);
+    const nestedResult = traversal(mockRootNode, ['child2', 'nonexistent']);
     expect(nestedResult).toEqual(nestedResult);
   });
 
@@ -156,7 +156,7 @@ describe('find', () => {
       subnodes: null,
     } as SchemaNode;
 
-    const result = find(emptyNode, ['child']);
+    const result = traversal(emptyNode, ['child']);
     expect(result).toBeNull();
   });
 
@@ -167,7 +167,7 @@ describe('find', () => {
       subnodes: [],
     } as unknown as SchemaNode;
 
-    const result = find(emptyChildrenNode, ['child']);
+    const result = traversal(emptyChildrenNode, ['child']);
     expect(result).toBeNull();
   });
 
@@ -186,7 +186,7 @@ describe('find', () => {
       subnodes: [{ node: arrayNode }],
     };
 
-    const result = find(parentWithArray, ['0']);
+    const result = traversal(parentWithArray, ['0']);
     expect(result).toBe(arrayNode);
   });
 
@@ -214,7 +214,7 @@ describe('find', () => {
       subnodes: [{ node: level2 }],
     } as SchemaNode;
 
-    const result = find(level1, ['level2', 'level3', 'level4']);
+    const result = traversal(level1, ['level2', 'level3', 'level4']);
     expect(result).toBe(level4);
   });
 
@@ -222,7 +222,7 @@ describe('find', () => {
     // From grandchild, go to root (#), then child1, stay at current (.), then grandchild
     // But the '.' means current at the time it's evaluated, which would be child1
     // So the path is: root -> child1 -> child1 (stays) -> grandchild
-    const result = find(mockGrandchildNode, ['#', 'child1', 'grandchild']);
+    const result = traversal(mockGrandchildNode, ['#', 'child1', 'grandchild']);
     expect(result).toBe(mockGrandchildNode);
   });
 });

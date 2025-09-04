@@ -1,3 +1,3 @@
-export { find } from './find';
+export { traversal } from './traversal';
 
 export { getPathSegments } from './getPathSegments';

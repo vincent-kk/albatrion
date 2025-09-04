@@ -42,12 +42,12 @@ import {
   EventCascade,
   afterMicrotask,
   computeFactory,
-  find,
   getFallbackValidator,
   getNodeGroup,
   getNodeType,
   getPathSegments,
   getSafeEmptyValue,
+  traversal,
 } from './utils';
 
 const IGNORE_ERROR_KEYWORDS = new Set(['oneOf']);
@@ -334,7 +334,7 @@ export abstract class AbstractNode<
     if (path === undefined) return this as SchemaNode;
     const useRootNode = isAbsolutePath(path);
     if (useRootNode && path.length === 1) return this.rootNode;
-    return find(
+    return traversal(
       useRootNode ? this.rootNode : (this as SchemaNode),
       getPathSegments(path),
     );

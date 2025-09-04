@@ -2,9 +2,9 @@ import Benchmark from 'benchmark';
 
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 import {
-  find,
   getPathSegments,
-} from '@/schema-form/core/nodes/AbstractNode/utils/find';
+  traversal,
+} from '@/schema-form/core/nodes/AbstractNode/utils/traversal';
 
 import { node, targetPath } from './data';
 import { find as find_for } from './find_for';
@@ -20,20 +20,20 @@ const findNode_Oldest = () => {
 
 const findNode_Old = () => {
   const segments = getPathSegments(targetPath);
-  return find_old(node, segments);
+  return find_old(node, segments || []);
 };
 
 const findNode_Ref = () => {
   const segments = getPathSegments(targetPath);
-  return find(node, segments);
+  return traversal(node, segments);
 };
 const findNode_ForOf = () => {
   const segments = getPathSegments(targetPath);
-  return find_forOf(node, segments);
+  return find_forOf(node, segments || []);
 };
 const findNode_For = () => {
   const segments = getPathSegments(targetPath);
-  return find_for(node, segments);
+  return find_for(node, segments || []);
 };
 
 export const run = () => {
