@@ -19,8 +19,10 @@
   },
   "dependencies": {
     "@canard/schema-form": "workspace:^",
-    "@canard/schema-form_0.4.5": "npm:@canard/schema-form@0.4.0",
+    "@canard/schema-form_0.4.10": "npm:@canard/schema-form@0.4.10",
+    "@canard/schema-form_0.4.14": "npm:@canard/schema-form@0.4.14",
     "@canard/schema-form_0.4.6": "npm:@canard/schema-form@0.4.6",
+    "@canard/schema-form_0.5.0": "npm:@canard/schema-form@0.5.0",
     "@react-genie-form/next": "^0.2.46",
     "benchmark": "^2.1.4",
     "d3": "^7.8.5",
