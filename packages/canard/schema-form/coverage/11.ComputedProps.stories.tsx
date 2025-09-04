@@ -32,7 +32,7 @@ export const Common = () => {
         type: 'string',
         enum: ['', 'US', 'UK', 'JP', 'KR'],
         computed: {
-          disabled: '../age===undefined||../age<10',
+          disabled: '(../age)===undefined||(../age)<10',
         },
       },
     },
@@ -66,7 +66,7 @@ export const GlobalReadOnly = () => {
         type: 'string',
         enum: ['', 'US', 'UK', 'JP', 'KR'],
         computed: {
-          disabled: '../age===undefined||../age<10',
+          disabled: '(../age)===undefined||(../age)<10',
         },
       },
     },
@@ -100,7 +100,7 @@ export const GlobalDisabled = () => {
         type: 'string',
         enum: ['', 'US', 'UK', 'JP', 'KR'],
         computed: {
-          disabled: '../age===undefined||../age<10',
+          disabled: '(../age)===undefined||(../age)<10',
         },
       },
     },
