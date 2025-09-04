@@ -125,6 +125,7 @@ export interface SchemaNodeConstructorProps<
 > {
   key?: string;
   name?: string;
+  scope?: number;
   jsonSchema: Schema;
   defaultValue?: Value;
   onChange: HandleChange<Value>;

@@ -13,8 +13,8 @@ export const find = (
 ): SchemaNode | null => {
   if (!source) return null;
   if (!segments?.length) return source;
-  const current = source;
-  let cursor = current;
+
+  let cursor = source;
   for (let i = 0, il = segments.length; i < il; i++) {
     const segment = segments[i];
     if (segment === JSONPointer.Fragment) {
@@ -24,22 +24,42 @@ export const find = (
       cursor = cursor.parentNode!;
       if (!cursor) return null;
     } else if (segment === JSONPointer.Current) {
-      cursor = current;
+      cursor = source;
     } else {
       if (cursor.group === 'terminal') return null;
       const subnodes = cursor.subnodes;
       if (!subnodes?.length) return null;
-      let found = false;
+      let tentative = true;
+      let fallback: SchemaNode | null = null;
       for (let j = 0, jl = subnodes.length; j < jl; j++) {
         const node = subnodes[j].node;
         if (node.propertyKey !== segment) continue;
-        if (node.group === 'terminal') return node;
+        fallback = node;
+        if (next(source, node)) continue;
         cursor = node;
-        found = true;
+        tentative = false;
         break;
       }
-      if (!found) return null;
+      if (tentative)
+        if (fallback) cursor = fallback;
+        else return null;
+      if (cursor.group === 'terminal') return cursor;
     }
   }
   return cursor;
 };
+
+/**
+ * Check if target node should be skipped
+ * @note This function returns `true` if ALL of the following conditions are met:
+ *  - Target node has a scope (not undefined)
+ *  - Target node's scope differs from its parent's oneOfIndex
+ *  - Either source and target nodes have different namespaces OR different parent nodes
+ * @param source - Source node (assumed to have a scope)
+ * @param target - Target node to evaluate
+ * @returns `true` if the target node should be skipped, `false` otherwise
+ */
+const next = (source: SchemaNode, target: SchemaNode) =>
+  target.scope !== undefined &&
+  target.scope !== target.parentNode?.oneOfIndex &&
+  (source.scope !== target.scope || source.parentNode !== target.parentNode);

@@ -57,13 +57,13 @@ export abstract class AbstractNode<
   Schema extends JsonSchemaWithVirtual = JsonSchemaWithVirtual,
   Value extends AllowedValue = any,
 > {
-  /** [readonly] Node group, `branch` or `terminal` */
+  /** [readonly] Node's group, `branch` or `terminal` */
   public readonly group: 'branch' | 'terminal';
 
-  /** [readonly] Node type, `array`, `number`, `object`, `string`, `boolean`, `virtual`, `null` */
+  /** [readonly] Node's type, `array`, `number`, `object`, `string`, `boolean`, `virtual`, `null` */
   public readonly type: Exclude<Schema['type'], 'integer'>;
 
-  /** [readonly] Node depth */
+  /** [readonly] Node's depth */
   public readonly depth: number;
 
   /** [readonly] Whether this is the root node */
@@ -72,11 +72,14 @@ export abstract class AbstractNode<
   /** [readonly] Root node */
   public readonly rootNode: SchemaNode;
 
-  /** [readonly] Parent node */
+  /** [readonly] Node's parent node */
   public readonly parentNode: SchemaNode | null;
 
   /** [readonly] Node's JSON Schema */
   public readonly jsonSchema: Schema;
+
+  /** [readonly] Node's scope */
+  public readonly scope: number | undefined;
 
   /** [readonly] Original property key of the node */
   public readonly propertyKey: string;
@@ -90,11 +93,11 @@ export abstract class AbstractNode<
   /** [readonly] Whether the node value is nullable */
   public readonly nullable: boolean;
 
-  /** Node name */
+  /** Node's name */
   #name: string;
 
   /**
-   * [readonly] Node name
+   * [readonly] Node's name
    * @note Basically it is readonly, but can be changed with `setName` by the parent node.
    * */
   public get name() {
@@ -113,11 +116,11 @@ export abstract class AbstractNode<
     }
   }
 
-  /** Node path */
+  /** Node's path */
   #path: string;
 
   /**
-   * [readonly] Node path.
+   * [readonly] Node's path.
    * @note Basically it is readonly, but can be changed with `updatePath` by the parent node.
    * */
   public get path() {
@@ -148,10 +151,10 @@ export abstract class AbstractNode<
     return true;
   }
 
-  /** Node key */
+  /** Node's key */
   #key?: string;
 
-  /** [readonly] Node key */
+  /** [readonly] Node's key */
   public get key() {
     return this.#key;
   }
@@ -269,6 +272,7 @@ export abstract class AbstractNode<
   constructor({
     key,
     name,
+    scope,
     jsonSchema,
     defaultValue,
     onChange,
@@ -280,6 +284,7 @@ export abstract class AbstractNode<
     this.type = getNodeType(jsonSchema);
     this.group = getNodeGroup(jsonSchema);
 
+    this.scope = scope;
     this.jsonSchema = jsonSchema;
     this.parentNode = parentNode || null;
     this.required = required ?? false;

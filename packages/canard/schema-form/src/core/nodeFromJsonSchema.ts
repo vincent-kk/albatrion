@@ -1,6 +1,5 @@
 import type { Fn } from '@aileron/declare';
 
-import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 import { getResolveSchema } from '@/schema-form/helpers/jsonSchema';
 import type {
   AllowedValue,
@@ -43,7 +42,6 @@ export const nodeFromJsonSchema = <
   const resolveSchema = getResolveSchema(jsonSchema);
   const nodeFactory = createSchemaNodeFactory(resolveSchema);
   return nodeFactory({
-    name: JSONPointer.Separator,
     jsonSchema,
     defaultValue,
     nodeFactory,

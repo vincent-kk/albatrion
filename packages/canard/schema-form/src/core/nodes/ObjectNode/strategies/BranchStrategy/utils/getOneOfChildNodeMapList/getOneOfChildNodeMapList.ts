@@ -38,12 +38,10 @@ export const getOneOfChildNodeMapList = (
   const oneOfSchemas = jsonSchema.oneOf;
   if (!oneOfSchemas || !isArray(oneOfSchemas)) return undefined;
 
-  const oneOfChildNodeMapList = new Array<Map<string, ChildNode>>(
-    oneOfSchemas.length,
-  );
-
-  for (let i = 0, il = oneOfSchemas.length; i < il; i++) {
-    const oneOfSchema = oneOfSchemas[i] as Partial<ObjectSchema>;
+  const oneOfLength = oneOfSchemas.length;
+  const oneOfChildNodeMapList = new Array<Map<string, ChildNode>>(oneOfLength);
+  for (let oneOfIndex = 0; oneOfIndex < oneOfLength; oneOfIndex++) {
+    const oneOfSchema = oneOfSchemas[oneOfIndex] as Partial<ObjectSchema>;
     const salt = getRandomString();
 
     if (oneOfSchema.type && jsonSchema.type !== oneOfSchema.type)
@@ -64,8 +62,8 @@ export const getOneOfChildNodeMapList = (
     const keys = Object.keys(properties);
     const oneOfChildNodeMap = new Map<string, ChildNode>();
     const required = oneOfSchema.required;
-    for (let j = 0, jl = keys.length; j < jl; j++) {
-      const property = keys[j];
+    for (let i = 0, l = keys.length; i < l; i++) {
+      const property = keys[i];
       if (childNodeMap.has(property))
         throw new SchemaNodeError(
           'ONEOF_PROPERTY_REDEFINITION',
@@ -81,8 +79,9 @@ export const getOneOfChildNodeMapList = (
       oneOfChildNodeMap.set(property, {
         salt,
         node: nodeFactory({
-          key: property + '/oneOf/' + i,
+          key: property + '#oneOf/' + oneOfIndex,
           name: property,
+          scope: oneOfIndex,
           jsonSchema: schema,
           defaultValue:
             inputDefault !== undefined ? inputDefault : getDefaultValue(schema),
@@ -93,7 +92,7 @@ export const getOneOfChildNodeMapList = (
         }),
       });
     }
-    oneOfChildNodeMapList[i] = oneOfChildNodeMap;
+    oneOfChildNodeMapList[oneOfIndex] = oneOfChildNodeMap;
   }
 
   return oneOfChildNodeMapList;

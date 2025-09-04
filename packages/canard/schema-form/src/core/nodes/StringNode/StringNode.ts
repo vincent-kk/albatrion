@@ -54,6 +54,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
   constructor({
     key,
     name,
+    scope,
     jsonSchema,
     defaultValue,
     onChange,
@@ -65,6 +66,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     super({
       key,
       name,
+      scope,
       jsonSchema,
       defaultValue,
       onChange,

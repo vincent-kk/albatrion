@@ -51,6 +51,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   constructor({
     key,
     name,
+    scope,
     jsonSchema,
     defaultValue,
     onChange,
@@ -62,6 +63,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
     super({
       key,
       name,
+      scope,
       jsonSchema,
       defaultValue,
       onChange,

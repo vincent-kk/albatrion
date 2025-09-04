@@ -95,6 +95,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   constructor({
     key,
     name,
+    scope,
     jsonSchema,
     defaultValue,
     onChange,
@@ -107,6 +108,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     super({
       key,
       name,
+      scope,
       jsonSchema,
       defaultValue,
       onChange,
