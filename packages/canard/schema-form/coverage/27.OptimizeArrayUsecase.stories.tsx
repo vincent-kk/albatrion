@@ -161,10 +161,10 @@ export const FormTypeInputArrayTerminal = () => {
                   setInputValue([]);
                   const vs = [];
                   for (let i = 0; i < BENCHMARK_COUNT; i++) {
-                    const v = await node.push(i * 10);
+                    const v = node.push(i * 10);
                     vs.push(v);
                   }
-                  setInputValue(vs);
+                  setInputValue(await Promise.all(vs));
                 }}
               >
                 benchmark
@@ -222,10 +222,10 @@ export const FormTypeInputArrayNotTerminal = () => {
                   setInputValue([]);
                   const vs = [];
                   for (let i = 0; i < BENCHMARK_COUNT; i++) {
-                    const v = await node.push(i * 10);
+                    const v = node.push(i * 10);
                     vs.push(v);
                   }
-                  setInputValue(vs);
+                  setInputValue(await Promise.all(vs));
                 }}
               >
                 benchmark
