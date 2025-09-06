@@ -18,15 +18,13 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.schedule({
-      type: NodeEventType.UpdateValue,
-      payload: {
-        [NodeEventType.UpdateValue]: {
-          previous: 2,
-          current: 1,
-        },
+    eventWindow.schedule([
+      NodeEventType.UpdateValue,
+      {
+        previous: 2,
+        current: 1,
       },
-    });
+    ]);
   });
 
   it('should merge multiple events of same type', () => {
@@ -43,24 +41,20 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.schedule({
-      type: NodeEventType.UpdateValue,
-      payload: {
-        [NodeEventType.UpdateValue]: {
-          previous: 2,
-          current: 1,
-        },
+    eventWindow.schedule([
+      NodeEventType.UpdateValue,
+      {
+        previous: 2,
+        current: 1,
       },
-    });
-    eventWindow.schedule({
-      type: NodeEventType.UpdateValue,
-      payload: {
-        [NodeEventType.UpdateValue]: {
-          previous: 3,
-          current: 2,
-        },
+    ]);
+    eventWindow.schedule([
+      NodeEventType.UpdateValue,
+      {
+        previous: 3,
+        current: 2,
       },
-    });
+    ]);
   });
 
   it('should handle events with options', () => {
@@ -82,21 +76,17 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.schedule({
-      type: NodeEventType.UpdateValue,
-      payload: {
-        [NodeEventType.UpdateValue]: {
-          previous: 2,
-          current: 1,
-        },
+    eventWindow.schedule([
+      NodeEventType.UpdateValue,
+      {
+        previous: 2,
+        current: 1,
       },
-      options: {
-        [NodeEventType.UpdateValue]: {
-          previous: 2,
-          current: 1,
-        },
+      {
+        previous: 2,
+        current: 1,
       },
-    });
+    ]);
   });
 
   it('should handle empty events', () => {
@@ -108,11 +98,7 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.schedule({
-      type: NodeEventType.RequestFocus,
-      payload: {},
-      options: {},
-    });
+    eventWindow.schedule([NodeEventType.RequestFocus]);
   });
 
   it('should handle multiple event types', () => {
@@ -132,21 +118,15 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.schedule({
-      type: NodeEventType.UpdateValue,
-      payload: {
-        [NodeEventType.UpdateValue]: {
-          previous: 2,
-          current: 1,
-        },
+    eventWindow.schedule([
+      NodeEventType.UpdateValue,
+      {
+        previous: 2,
+        current: 1,
       },
-    });
-    eventWindow.schedule({
-      type: NodeEventType.RequestFocus,
-    });
-    eventWindow.schedule({
-      type: NodeEventType.RequestSelect,
-    });
+    ]);
+    eventWindow.schedule([NodeEventType.RequestFocus]);
+    eventWindow.schedule([NodeEventType.RequestSelect]);
   });
 
   it('should handle events with different payloads for same type', () => {
@@ -163,24 +143,20 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.schedule({
-      type: NodeEventType.UpdateValue,
-      payload: {
-        [NodeEventType.UpdateValue]: {
-          previous: 2,
-          current: 1,
-        },
+    eventWindow.schedule([
+      NodeEventType.UpdateValue,
+      {
+        previous: 2,
+        current: 1,
       },
-    });
-    eventWindow.schedule({
-      type: NodeEventType.UpdateValue,
-      payload: {
-        [NodeEventType.UpdateValue]: {
-          previous: 3,
-          current: 2,
-        },
+    ]);
+    eventWindow.schedule([
+      NodeEventType.UpdateValue,
+      {
+        previous: 3,
+        current: 2,
       },
-    });
+    ]);
   });
 
   it('should merge options for same event type', () => {
@@ -202,36 +178,28 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.schedule({
-      type: NodeEventType.UpdateValue,
-      payload: {
-        [NodeEventType.UpdateValue]: {
-          previous: 2,
-          current: 1,
-        },
+    eventWindow.schedule([
+      NodeEventType.UpdateValue,
+      {
+        previous: 2,
+        current: 1,
       },
-      options: {
-        [NodeEventType.UpdateValue]: {
-          previous: 2,
-          current: 1,
-        },
+      {
+        previous: 2,
+        current: 1,
       },
-    });
-    eventWindow.schedule({
-      type: NodeEventType.UpdateValue,
-      payload: {
-        [NodeEventType.UpdateValue]: {
-          previous: 3,
-          current: 2,
-        },
+    ]);
+    eventWindow.schedule([
+      NodeEventType.UpdateValue,
+      {
+        previous: 3,
+        current: 2,
       },
-      options: {
-        [NodeEventType.UpdateValue]: {
-          previous: 3,
-          current: 2,
-        },
+      {
+        previous: 3,
+        current: 2,
       },
-    });
+    ]);
   });
 
   it('should handle options for different event types', () => {
@@ -258,33 +226,25 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.schedule({
-      type: NodeEventType.UpdateValue,
-      payload: {
-        [NodeEventType.UpdateValue]: {
-          previous: 2,
-          current: 1,
-        },
+    eventWindow.schedule([
+      NodeEventType.UpdateValue,
+      {
+        previous: 2,
+        current: 1,
       },
-      options: {
-        [NodeEventType.UpdateValue]: {
-          previous: 2,
-          current: 1,
-        },
+      {
+        previous: 2,
+        current: 1,
       },
-    });
-    eventWindow.schedule({
-      type: NodeEventType.UpdatePath,
-      payload: {
-        [NodeEventType.UpdatePath]: 'new.path',
+    ]);
+    eventWindow.schedule([
+      NodeEventType.UpdatePath,
+      'new.path',
+      {
+        previous: 'old.path',
+        current: 'new.path',
       },
-      options: {
-        [NodeEventType.UpdatePath]: {
-          previous: 'old.path',
-          current: 'new.path',
-        },
-      },
-    });
+    ]);
   });
 
   it('should handle events with additional options', () => {
@@ -306,35 +266,27 @@ describe('EventCascade', () => {
       });
     });
 
-    eventWindow.schedule({
-      type: NodeEventType.UpdateValue,
-      payload: {
-        [NodeEventType.UpdateValue]: {
-          previous: 2,
-          current: 1,
-        },
+    eventWindow.schedule([
+      NodeEventType.UpdateValue,
+      {
+        previous: 2,
+        current: 1,
       },
-      options: {
-        [NodeEventType.UpdateValue]: {
-          previous: 2,
-          current: 1,
-        },
+      {
+        previous: 2,
+        current: 1,
       },
-    });
-    eventWindow.schedule({
-      type: NodeEventType.UpdateValue,
-      payload: {
-        [NodeEventType.UpdateValue]: {
-          previous: 2,
-          current: 1,
-        },
+    ]);
+    eventWindow.schedule([
+      NodeEventType.UpdateValue,
+      {
+        previous: 2,
+        current: 1,
       },
-      options: {
-        [NodeEventType.UpdateValue]: {
-          previous: 2,
-          current: 1,
-        },
+      {
+        previous: 2,
+        current: 1,
       },
-    });
+    ]);
   });
 });

@@ -6,7 +6,7 @@ import { delay } from '@winglet/common-utils';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 import type { JsonSchema } from '@/schema-form/types';
 
-import { NodeEventType, SetValueOption, ValidationMode } from '../nodes';
+import { NodeEventType, ValidationMode } from '../nodes';
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';

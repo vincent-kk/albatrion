@@ -4,7 +4,11 @@ import type { Fn } from '@aileron/declare';
 
 import { BIT_MASK_NONE } from '@/schema-form/app/constants/bitmask';
 
-import type { NodeEvent, NodeEventType } from '../../../type';
+import type {
+  NodeEventCollection,
+  NodeEventEntity,
+  NodeEventType,
+} from '../../../type';
 
 /**
  * Event batch data structure
@@ -12,7 +16,7 @@ import type { NodeEvent, NodeEventType } from '../../../type';
  */
 type Batch<Value> = {
   resolved?: boolean;
-  events: Array<Value>;
+  eventEntities: Array<Value>;
 };
 
 /**
@@ -20,57 +24,63 @@ type Batch<Value> = {
  * to prevent recursive event triggering and improve performance.
  */
 export class EventCascade {
-  private __currentBatch__: Batch<NodeEvent> | null = null;
-  /**
-   * Acquires the current event batch. If there is no batch, create a new one.
-   * @returns Current event batch
-   */
-  private __acquireBatch__(): Batch<NodeEvent> {
-    const batch = this.__currentBatch__;
-    if (batch && !batch.resolved) return batch;
-    const nextBatch: Batch<NodeEvent> = { events: [] };
-    this.__currentBatch__ = nextBatch;
-    scheduleMicrotask(() => {
-      nextBatch.resolved = true;
-      this.__batchHandler__(mergeEvents(nextBatch.events));
-    });
-    return nextBatch;
-  }
-  private __batchHandler__: Fn<[event: NodeEvent]>;
+  private __currentBatch__: Batch<NodeEventEntity> | null = null;
+  private __batchHandler__: Fn<[eventCollection: NodeEventCollection]>;
+
   /**
    * Creates an EventCascade instance.
    * @param batchHandler - Function to handle collected events
    */
-  constructor(batchHandler: Fn<[event: NodeEvent]>) {
+  constructor(batchHandler: Fn<[eventCollection: NodeEventCollection]>) {
     this.__batchHandler__ = batchHandler;
   }
+
   /**
    * Adds an event to the batch.
-   * @param event - Event to add
+   * @param eventEntity - Event to add
    */
-  public schedule(event: NodeEvent): void {
+  public schedule<Type extends NodeEventType>(
+    eventEntity: NodeEventEntity<Type>,
+  ): void {
     const batch = this.__acquireBatch__();
-    batch.events.push(event);
+    batch.eventEntities.push(eventEntity);
+  }
+
+  /**
+   * Acquires the current event batch. If there is no batch, create a new one.
+   * @returns Current event batch
+   */
+  private __acquireBatch__(): Batch<NodeEventEntity> {
+    const batch = this.__currentBatch__;
+    if (batch && !batch.resolved) return batch;
+    const nextBatch: Batch<NodeEventEntity> = { eventEntities: [] };
+    this.__currentBatch__ = nextBatch;
+    scheduleMicrotask(() => {
+      nextBatch.resolved = true;
+      this.__batchHandler__(mergeEvents(nextBatch.eventEntities));
+    });
+    return nextBatch;
   }
 }
 
 /**
  * Merges an array of events into a single event.
- * @param events - Array of events to merge
+ * @param eventEntities - Array of events to merge
  * @returns Merged event
  */
-const mergeEvents = (events: ReadonlyArray<NodeEvent>) => {
-  const merged: Required<NodeEvent> = {
+const mergeEvents = (eventEntities: ReadonlyArray<NodeEventEntity>) => {
+  const merged: Required<NodeEventCollection> = {
     type: BIT_MASK_NONE as NodeEventType,
     payload: {},
     options: {},
   };
-  for (const { type, payload, options } of events) {
-    merged.type |= type;
-    if (payload?.[type] !== undefined)
-      (merged.payload[type] as (typeof payload)[typeof type]) = payload[type];
-    if (options?.[type] !== undefined)
-      (merged.options[type] as (typeof options)[typeof type]) = options[type];
+  for (let i = 0, l = eventEntities.length; i < l; i++) {
+    const eventEntity = eventEntities[i];
+    merged.type |= eventEntity[0];
+    if (eventEntity[1] !== undefined)
+      (merged.payload[eventEntity[0]] as NodeEventEntity[1]) = eventEntity[1];
+    if (eventEntity[2] !== undefined)
+      (merged.options[eventEntity[0]] as NodeEventEntity[2]) = eventEntity[2];
   }
   return merged;
 };

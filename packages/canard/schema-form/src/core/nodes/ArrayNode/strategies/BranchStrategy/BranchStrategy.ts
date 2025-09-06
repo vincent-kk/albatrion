@@ -289,15 +289,11 @@ export class BranchStrategy implements ArrayNodeStrategy {
     if (batched) {
       if (this.__batched__) return;
       this.__batched__ = true;
-      this.__host__.publish({
-        type: NodeEventType.RequestEmitChange,
-        payload: {
-          [NodeEventType.RequestEmitChange]: option,
-        },
-        options: {
-          [NodeEventType.RequestEmitChange]: updateChildren,
-        },
-      });
+      this.__host__.publish(
+        NodeEventType.RequestEmitChange,
+        option,
+        updateChildren,
+      );
     } else this.__handleEmitChange__(option, updateChildren);
   }
 
@@ -320,12 +316,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
       this.__handleChange__(current, !!(option & SetValueOption.Batch));
     if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
     if (option & SetValueOption.PublishUpdateEvent)
-      this.__host__.publish({
-        type: NodeEventType.UpdateValue,
-        payload: { [NodeEventType.UpdateValue]: current },
-        options: {
-          [NodeEventType.UpdateValue]: { previous, current },
-        },
+      this.__host__.publish(NodeEventType.UpdateValue, current, {
+        previous,
+        current,
       });
 
     this.__idle__ = true;
@@ -397,6 +390,6 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   private __publishUpdateChildren__() {
     if (this.__locked__) return;
-    this.__host__.publish({ type: NodeEventType.UpdateChildren });
+    this.__host__.publish(NodeEventType.UpdateChildren);
   }
 }

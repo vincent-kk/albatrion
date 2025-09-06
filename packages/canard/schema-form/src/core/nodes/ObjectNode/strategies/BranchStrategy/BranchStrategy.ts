@@ -266,10 +266,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (batched) {
       if (this.__batched__) return;
       this.__batched__ = true;
-      this.__host__.publish({
-        type: NodeEventType.RequestEmitChange,
-        payload: { [NodeEventType.RequestEmitChange]: option },
-      });
+      this.__host__.publish(NodeEventType.RequestEmitChange, option);
     } else this.__handleEmitChange__(option);
   }
 
@@ -302,16 +299,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (option & SetValueOption.Isolate)
       this.__handleUpdateComputedProperties__();
     if (option & SetValueOption.PublishUpdateEvent)
-      this.__host__.publish({
-        type: NodeEventType.UpdateValue,
-        payload: { [NodeEventType.UpdateValue]: current },
-        options: {
-          [NodeEventType.UpdateValue]: {
-            previous,
-            current,
-            settled: !(option & SetValueOption.Isolate),
-          },
-        },
+      this.__host__.publish(NodeEventType.UpdateValue, current, {
+        previous,
+        current,
+        settled: !(option & SetValueOption.Isolate),
       });
 
     this.__draft__ = {};
@@ -478,6 +469,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
    */
   private __publishChildrenChange__() {
     if (this.__locked__) return;
-    this.__host__.publish({ type: NodeEventType.UpdateChildren });
+    this.__host__.publish(NodeEventType.UpdateChildren);
   }
 }

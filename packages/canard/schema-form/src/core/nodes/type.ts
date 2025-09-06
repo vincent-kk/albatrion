@@ -172,13 +172,15 @@ export type NodeFactoryProps<Schema extends JsonSchemaWithVirtual> = Omit<
 };
 
 /** Callback signature invoked when a `NodeEvent` is published by a node. */
-export type NodeListener = Fn<[event: NodeEvent]>;
+export type NodeListener = Fn<[event: NodeEventCollection]>;
 
-/**
- * Describes a node-level event, including its discriminated `type`,
- * an optional typed `payload`, and optional `options` metadata.
- */
-export type NodeEvent = {
+export type NodeEventEntity<Type extends NodeEventType = NodeEventType> = [
+  type: Type,
+  payload?: NodeEventPayload[Type],
+  options?: NodeEventOptions[Type],
+];
+
+export type NodeEventCollection = {
   type: UnionNodeEventType;
   payload?: Partial<NodeEventPayload>;
   options?: Partial<NodeEventOptions>;
@@ -280,7 +282,7 @@ export type NodeEventOptions = {
   [NodeEventType.RequestFocus]: void;
   [NodeEventType.RequestSelect]: void;
   [NodeEventType.RequestRefresh]: void;
-  [NodeEventType.RequestEmitChange]: boolean | undefined;
+  [NodeEventType.RequestEmitChange]: boolean;
   [NodeEventType.RequestValidate]: void;
 };
 

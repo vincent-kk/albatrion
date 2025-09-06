@@ -106,13 +106,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
       this.onChange(current, !!(option & SetValueOption.Batch));
     if (option & SetValueOption.Refresh) this.refresh(current);
     if (option & SetValueOption.PublishUpdateEvent)
-      this.publish({
-        type: NodeEventType.UpdateValue,
-        payload: { [NodeEventType.UpdateValue]: current },
-        options: {
-          [NodeEventType.UpdateValue]: { previous, current },
-        },
-      });
+      this.publish(NodeEventType.UpdateValue, current, { previous, current });
   }
 
   /**

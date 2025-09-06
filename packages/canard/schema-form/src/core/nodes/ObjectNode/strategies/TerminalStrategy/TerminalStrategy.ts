@@ -126,12 +126,9 @@ export class TerminalStrategy implements ObjectNodeStrategy {
       this.__handleChange__(current, !!(option & SetValueOption.Batch));
     if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
     if (option & SetValueOption.PublishUpdateEvent)
-      this.__host__.publish({
-        type: NodeEventType.UpdateValue,
-        payload: { [NodeEventType.UpdateValue]: current },
-        options: {
-          [NodeEventType.UpdateValue]: { previous, current },
-        },
+      this.__host__.publish(NodeEventType.UpdateValue, current, {
+        previous,
+        current,
       });
   }
 

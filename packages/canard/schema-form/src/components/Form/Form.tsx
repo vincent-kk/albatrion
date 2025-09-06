@@ -142,9 +142,9 @@ const FormInner = <
       ({
         node: rootNode,
         focus: (path: string) =>
-          rootNode?.find(path)?.publish({ type: NodeEventType.RequestFocus }),
+          rootNode?.find(path)?.publish(NodeEventType.RequestFocus),
         select: (path: string) =>
-          rootNode?.find(path)?.publish({ type: NodeEventType.RequestSelect }),
+          rootNode?.find(path)?.publish(NodeEventType.RequestSelect),
         reset: update,
         getValue: () => rootNode?.value as Value,
         setValue: (value, options) => rootNode?.setValue(value as any, options),

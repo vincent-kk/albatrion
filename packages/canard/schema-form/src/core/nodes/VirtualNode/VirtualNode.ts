@@ -104,12 +104,9 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
           const previous = this.#value;
           this.#value = [...this.#value];
           this.#value[i] = value;
-          this.publish({
-            type: NodeEventType.UpdateValue,
-            payload: { [NodeEventType.UpdateValue]: this.#value },
-            options: {
-              [NodeEventType.UpdateValue]: { previous, current: this.#value },
-            },
+          this.publish(NodeEventType.UpdateValue, this.#value, {
+            previous,
+            current: this.#value,
           });
         }
       });
@@ -118,7 +115,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
 
     this.#children = map(this.#refNodes, (node) => ({ node }));
 
-    this.publish({ type: NodeEventType.UpdateChildren });
+    this.publish(NodeEventType.UpdateChildren);
     this.initialize();
   }
 
@@ -167,12 +164,9 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     }
     if (option & SetValueOption.Refresh) this.refresh(values);
     if (option & SetValueOption.PublishUpdateEvent)
-      this.publish({
-        type: NodeEventType.UpdateValue,
-        payload: { [NodeEventType.UpdateValue]: this.#value },
-        options: {
-          [NodeEventType.UpdateValue]: { previous, current: this.#value },
-        },
+      this.publish(NodeEventType.UpdateValue, this.#value, {
+        previous,
+        current: this.#value,
       });
   }
 }

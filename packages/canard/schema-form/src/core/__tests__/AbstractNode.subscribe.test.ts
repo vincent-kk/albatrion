@@ -52,7 +52,7 @@ describe('AbstractNode', () => {
       node.subscribe(mockListener);
 
       // publish 호출 시 리스너가 실행되는지 확인
-      node.publish({ type: NodeEventType.UpdateValue });
+      node.publish(NodeEventType.UpdateValue);
 
       // microtask가 실행될 때까지 대기
       await delay();
@@ -65,7 +65,7 @@ describe('AbstractNode', () => {
       });
 
       // 두 번째 publish 호출 시에도 리스너가 실행되어야 함
-      node.publish({ type: NodeEventType.UpdateValue });
+      node.publish(NodeEventType.UpdateValue);
 
       // microtask가 실행될 때까지 대기
       await delay();
@@ -80,7 +80,7 @@ describe('AbstractNode', () => {
       const unsubscribe = node.subscribe(mockListener);
 
       // 초기 상태에서 publish 호출 시 리스너가 실행되어야 함
-      node.publish({ type: NodeEventType.UpdateValue });
+      node.publish(NodeEventType.UpdateValue);
 
       // microtask가 실행될 때까지 대기
       await delay();
@@ -91,7 +91,7 @@ describe('AbstractNode', () => {
       unsubscribe();
 
       // unsubscribe 후 publish 호출 시 리스너가 실행되지 않아야 함
-      node.publish({ type: NodeEventType.UpdateValue });
+      node.publish(NodeEventType.UpdateValue);
 
       // microtask가 실행될 때까지 대기
       await delay();
@@ -110,7 +110,7 @@ describe('AbstractNode', () => {
       node.subscribe(mockListener3);
 
       // 초기 상태에서 모든 리스너가 호출되어야 함
-      node.publish({ type: NodeEventType.UpdateValue });
+      node.publish(NodeEventType.UpdateValue);
 
       // microtask가 실행될 때까지 대기
       await delay();
@@ -123,7 +123,7 @@ describe('AbstractNode', () => {
       unsubscribe2();
 
       // unsubscribe 후 publish 시 나머지 리스너들만 실행되어야 함
-      node.publish({ type: NodeEventType.UpdateValue });
+      node.publish(NodeEventType.UpdateValue);
 
       // microtask가 실행될 때까지 대기
       await delay();
@@ -142,7 +142,7 @@ describe('AbstractNode', () => {
       expect(() => unsubscribe()).not.toThrow();
 
       // unsubscribe 후 publish가 정상적으로 동작해야 함
-      node.publish({ type: NodeEventType.UpdateValue });
+      node.publish(NodeEventType.UpdateValue);
 
       // microtask가 실행될 때까지 대기
       await delay();
@@ -154,15 +154,10 @@ describe('AbstractNode', () => {
       const mockListener = vi.fn();
       node.subscribe(mockListener);
 
-      const event = {
-        type: NodeEventType.UpdateValue,
-        payload: { [NodeEventType.UpdateValue]: 'new' },
-        options: {
-          [NodeEventType.UpdateValue]: { previous: 'old', current: 'new' },
-        },
-      };
-
-      node.publish(event);
+      node.publish(NodeEventType.UpdateValue, 'new', {
+        previous: 'old',
+        current: 'new',
+      });
 
       // microtask가 실행될 때까지 대기
       await delay();

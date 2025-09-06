@@ -28,7 +28,9 @@ import type {
 import {
   type ChildNode,
   type HandleChange,
-  type NodeEvent,
+  type NodeEventCollection,
+  type NodeEventOptions,
+  type NodeEventPayload,
   NodeEventType,
   type NodeListener,
   type NodeStateFlags,
@@ -138,16 +140,7 @@ export abstract class AbstractNode<
     const current = joinSegment(parentPath, this.escapedKey);
     if (previous === current) return false;
     this.#path = current;
-    this.publish({
-      type: NodeEventType.UpdatePath,
-      payload: { [NodeEventType.UpdatePath]: current },
-      options: {
-        [NodeEventType.UpdatePath]: {
-          previous,
-          current,
-        },
-      },
-    });
+    this.publish(NodeEventType.UpdatePath, current, { previous, current });
     return true;
   }
 
@@ -191,7 +184,7 @@ export abstract class AbstractNode<
    */
   protected refresh(this: AbstractNode, value: Value | Nullish) {
     this.#defaultValue = value;
-    this.publish({ type: NodeEventType.RequestRefresh });
+    this.publish(NodeEventType.RequestRefresh);
   }
 
   /**
@@ -344,8 +337,8 @@ export abstract class AbstractNode<
   #listeners: Set<NodeListener> = new Set();
 
   /** Collects pushed events and publishes them at once */
-  #eventCascade = new EventCascade((event: NodeEvent) => {
-    for (const listener of this.#listeners) listener(event);
+  #eventCascade = new EventCascade((eventCollection: NodeEventCollection) => {
+    for (const listener of this.#listeners) listener(eventCollection);
   });
 
   /** List of unsubscribe functions for other nodes */
@@ -399,8 +392,13 @@ export abstract class AbstractNode<
    *    - payload: Data for the event (see MethodPayload)
    *    - options: Options for the event (see MethodOptions)
    */
-  public publish(this: AbstractNode, event: NodeEvent) {
-    this.#eventCascade.schedule(event);
+  public publish<Type extends NodeEventType>(
+    this: AbstractNode,
+    type: Type,
+    payload?: NodeEventPayload[Type],
+    options?: NodeEventOptions[Type],
+  ) {
+    this.#eventCascade.schedule([type, payload, options]);
   }
 
   /** Whether the node is initialized */
@@ -422,7 +420,7 @@ export abstract class AbstractNode<
       return false;
     this.#initialized = true;
     this.#prepareUpdateDependencies();
-    this.publish({ type: NodeEventType.Initialized });
+    this.publish(NodeEventType.Initialized);
     return true;
   }
 
@@ -556,7 +554,7 @@ export abstract class AbstractNode<
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
     if (previous !== this.#active) this.resetNode(true);
     if (!this.#hasPublishedUpdateComputedProperties) {
-      this.publish({ type: NodeEventType.UpdateComputedProperties });
+      this.publish(NodeEventType.UpdateComputedProperties);
       this.#hasPublishedUpdateComputedProperties = true;
     }
   }
@@ -626,10 +624,7 @@ export abstract class AbstractNode<
       }
     }
     if (!dirty) return;
-    this.publish({
-      type: NodeEventType.UpdateState,
-      payload: { [NodeEventType.UpdateState]: this.#state },
-    });
+    this.publish(NodeEventType.UpdateState, this.#state);
   }
 
   /** Errors received from external sources */
@@ -674,10 +669,7 @@ export abstract class AbstractNode<
     if (equals(this.#localErrors, errors)) return;
     this.#localErrors = errors;
     this.#mergedLocalErrors = [...this.#externalErrors, ...this.#localErrors];
-    this.publish({
-      type: NodeEventType.UpdateError,
-      payload: { [NodeEventType.UpdateError]: this.#mergedLocalErrors },
-    });
+    this.publish(NodeEventType.UpdateError, this.#mergedLocalErrors);
   }
 
   /**
@@ -689,10 +681,7 @@ export abstract class AbstractNode<
     if (equals(this.#globalErrors, errors)) return false;
     this.#globalErrors = errors;
     this.#mergedGlobalErrors = [...this.#externalErrors, ...this.#globalErrors];
-    this.publish({
-      type: NodeEventType.UpdateGlobalError,
-      payload: { [NodeEventType.UpdateGlobalError]: this.#mergedGlobalErrors },
-    });
+    this.publish(NodeEventType.UpdateGlobalError, this.#mergedGlobalErrors);
     return true;
   }
 
@@ -719,21 +708,13 @@ export abstract class AbstractNode<
     this.#mergedLocalErrors = this.#localErrors
       ? [...this.#externalErrors, ...this.#localErrors]
       : this.#externalErrors;
-    this.publish({
-      type: NodeEventType.UpdateError,
-      payload: { [NodeEventType.UpdateError]: this.#mergedLocalErrors },
-    });
+    this.publish(NodeEventType.UpdateError, this.#mergedLocalErrors);
 
     if (this.isRoot) {
       this.#mergedGlobalErrors = this.#globalErrors
         ? [...this.#externalErrors, ...this.#globalErrors]
         : this.#externalErrors;
-      this.publish({
-        type: NodeEventType.UpdateGlobalError,
-        payload: {
-          [NodeEventType.UpdateGlobalError]: this.#mergedGlobalErrors,
-        },
-      });
+      this.publish(NodeEventType.UpdateGlobalError, this.#mergedGlobalErrors);
     }
   }
 

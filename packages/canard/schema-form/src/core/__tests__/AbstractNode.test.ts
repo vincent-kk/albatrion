@@ -5,7 +5,7 @@ import { nodeFromJsonSchema } from '@/schema-form/core';
 
 import type { StringNode } from '../nodes/StringNode';
 import {
-  type NodeEvent,
+  type NodeEventCollection,
   NodeEventType,
   SetValueOption,
   ValidationMode,
@@ -328,7 +328,7 @@ describe('AbstractNode', () => {
       },
       onChange: () => {},
     });
-    let externalEvent: NodeEvent[] = [];
+    let externalEvent: NodeEventCollection[] = [];
     node.subscribe((event) => {
       externalEvent.push(event);
     });
