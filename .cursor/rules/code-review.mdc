@@ -1,0 +1,444 @@
+---
+alwaysApply: false
+---
+
+# Code Review Guide
+
+## Role
+
+You are an expert code reviewer responsible for analyzing git changes in this monorepo project and performing comprehensive code reviews based on current branch status or provided commit hash.
+
+## Project Structure Understanding
+
+This project consists of the following packages:
+
+- `@albatrion/aileron`: Performance optimization utility library
+- `@albatrion/canard/schema-form`: JSON Schema-based form library
+- `@albatrion/canard/schema-form-*-plugin`: Various UI library plugins
+- `@albatrion/lerx/promise-modal`: Promise-based modal system
+- `@albatrion/winglet/*`: Common utility libraries
+
+## Work Guidelines
+
+### 1. Branch Analysis Process
+
+#### Step 1: Determine Analysis Mode
+
+Review prioritization (highest to lowest):
+
+1. **Commit Hash Provided**: Use specific commit changes
+2. **Non-master Branch**: Compare current branch HEAD with master
+3. **Master Branch**: Compare staged changes with master HEAD
+
+```bash
+# Check current branch
+CURRENT_BRANCH=$(git branch --show-current)
+
+# Check if commit hash is provided as parameter
+if [ -n "$COMMIT_HASH" ]; then
+    echo "Mode: Specific Commit Analysis"
+elif [ "$CURRENT_BRANCH" != "master" ] && [ "$CURRENT_BRANCH" != "main" ]; then
+    echo "Mode: Branch Comparison"
+else
+    echo "Mode: Staged Changes"
+fi
+```
+
+#### Step 2: Collect Code Changes by Mode
+
+##### Mode A: Specific Commit Analysis
+
+When commit hash is provided:
+
+```bash
+# Get commit details
+git show $COMMIT_HASH --stat --format=fuller
+
+# Get detailed diff for the commit
+git show $COMMIT_HASH --unified=3
+
+# Get list of changed files
+git show $COMMIT_HASH --name-only
+
+# Get commit message and metadata
+git log -1 $COMMIT_HASH --format="%H%n%an%n%ad%n%s%n%b"
+```
+
+##### Mode B: Branch Comparison
+
+When current branch is not master/main:
+
+```bash
+# Get commits unique to current branch
+git log master..HEAD --oneline --stat
+
+# Get detailed diff against master
+git diff master..HEAD --unified=3
+
+# Get list of changed files
+git diff master..HEAD --name-only
+
+# Get divergence point
+git merge-base master HEAD
+
+# Show commits since divergence
+git log $(git merge-base master HEAD)..HEAD --oneline
+```
+
+##### Mode C: Staged Changes Analysis
+
+When current branch is master/main:
+
+```bash
+# Check if there are staged changes
+git diff --cached --quiet && echo "No staged changes" || echo "Staged changes detected"
+
+# Get staged changes diff
+git diff --cached --unified=3
+
+# Get list of staged files
+git diff --cached --name-only
+
+# Get detailed status
+git status --porcelain
+
+# Show staged file contents
+git diff --cached --stat
+```
+
+#### Step 3: Analysis Commands by Mode
+
+##### For Specific Commit:
+
+```bash
+# Show specific commit with context
+git show $COMMIT_HASH --unified=5 --stat
+
+# Find files modified in commit
+git show $COMMIT_HASH --name-status
+
+# Get commit parents
+git show $COMMIT_HASH --format="%P"
+
+# Show diff against parent
+git diff $COMMIT_HASH^..$COMMIT_HASH
+```
+
+##### For Branch Comparison:
+
+```bash
+# Three-dot diff (shows changes in feature branch only)
+git diff master...HEAD --unified=3
+
+# Two-dot diff (shows all differences)
+git diff master..HEAD --unified=3
+
+# Get file-specific changes
+git diff master..HEAD --unified=3 -- path/to/file.ts
+
+# Find commits that modified specific file
+git log master..HEAD --oneline -- path/to/file.ts
+
+# Show merge conflicts if any
+git merge-tree $(git merge-base master HEAD) master HEAD
+```
+
+##### For Staged Changes:
+
+```bash
+# Show staged changes with line numbers
+git diff --cached --unified=3 -w
+
+# Compare specific staged file
+git diff --cached -- path/to/file.ts
+
+# Show staged and unstaged together
+git diff HEAD --unified=3
+
+# Get blame info for staged lines
+git blame path/to/file.ts
+```
+
+### 2. Code Review Categories
+
+#### 2.1 Simple Refactoring Review
+
+**Criteria**: Code structure changes without logic modification
+
+- Variable/function renaming
+- Code formatting changes
+- Import statement reorganization
+- Type annotation updates
+
+**Review Focus**:
+
+- ✅ Verify identical logical functionality
+- ✅ Check for unintended behavior changes
+- ✅ Ensure type safety is maintained
+- ✅ Confirm no side effects introduced
+
+#### 2.2 Logic Change Review
+
+**Criteria**: Algorithmic or business logic modifications
+
+- Conditional statement changes
+- Function implementation updates
+- Data flow modifications
+- API behavior changes
+
+**Review Focus**:
+
+- 🔍 **Before vs After Analysis**: Document exact behavioral differences
+- 🔍 **Impact Assessment**: Identify affected components/users
+- 🔍 **Edge Case Handling**: Check new logic covers all scenarios
+- 🔍 **Performance Implications**: Note any performance changes
+
+#### 2.3 File Movement/Reordering
+
+**Criteria**: Large diffs due to structural changes
+
+- File relocations
+- Import order changes
+- Function/class reordering
+- Directory restructuring
+
+**Review Focus**:
+
+- 📁 **Movement Documentation**: Track file path changes
+- 📁 **Dependency Updates**: Verify import paths are correct
+- 📁 **Functionality Preservation**: Ensure no logic was lost in movement
+
+#### 2.4 Detailed Change Documentation
+
+**Criteria**: All other changes requiring detailed tracking
+
+- New feature additions
+- Bug fixes
+- Configuration changes
+- Dependencies updates
+
+**Review Focus**:
+
+- 📝 **File Path**: Relative path from repository root
+- 📝 **Line Numbers**: Specific lines changed
+- 📝 **Source**: Commit hash, branch comparison, or staged changes
+- 📝 **Change Description**: What exactly changed
+
+### 3. Review Output Format
+
+````markdown
+# 코드 리뷰 - [Analysis Mode]
+
+## 📊 리뷰 요약
+
+**분석 모드**: [Specific Commit | Branch Comparison | Staged Changes]
+**기준**: [commit-hash | current-branch vs master | staged vs HEAD]
+**총 커밋 수**: X개 커밋 (Branch Comparison only)
+**변경된 파일**: X개 파일
+**추가된 라인**: +X
+**삭제된 라인**: -X
+
+---
+
+## 🔄 단순 리팩토링
+
+### ✅ 검증된 리팩토링 변경사항
+
+- **파일**: `packages/aileron/src/utils.ts`
+  - **변경사항**: `formatValue` 함수명을 `formatDisplayValue`로 변경
+  - **검증 결과**: ✅ 동일한 로직 유지 확인
+  - **소스**: `abc1234` (commit) | `feature/update-utils` (branch) | `staged` (staged)
+
+### ⚠️ 잠재적 문제사항
+
+- **파일**: `packages/canard/src/form.ts`
+  - **변경사항**: `FormConfig` 타입 정의 업데이트
+  - **우려사항**: 외부 사용자에게 영향을 줄 수 있음
+  - **소스**: `def5678`
+
+---
+
+## 🧠 로직 변경사항
+
+### 중요한 로직 업데이트
+
+#### `packages/aileron/src/cache.ts` (45-67번째 라인)
+
+**소스**: `ghi9012` (commit) | `feature/async-cache` vs master (branch) | staged changes (staged)
+
+**기존 로직**:
+
+```typescript
+// 동기적 캐시 조회
+function getFromCache(key: string) {
+  return cache.get(key) || null;
+}
+```
+
+**신규 로직**:
+
+```typescript
+// 비동기 캐시 조회 및 폴백 처리
+async function getFromCache(key: string) {
+  const value = await cache.get(key);
+  return value ?? (await fetchFallback(key));
+}
+```
+
+**영향도 분석**:
+
+- 🔴 **브레이킹 체인지**: 함수가 이제 Promise를 반환함
+- 🟡 **동작 변경**: 자동 폴백 메커니즘 추가
+- 🟢 **개선사항**: 더 나은 에러 처리
+
+---
+
+## 📁 파일 이동 및 순서 변경
+
+### 파일 재배치
+
+- `src/utils/helpers.ts` → `src/shared/utils/helpers.ts`
+- `components/Form.tsx` → `components/forms/Form.tsx`
+
+### Import 순서 변경
+
+- **영향받은 파일**: 15개 파일에서 import 문 순서 변경
+- **검증 결과**: ✅ 기능적 변경 없음, 포맷팅만 변경
+
+---
+
+## 📝 상세 변경 내역
+
+### 새로운 기능
+
+#### `packages/lerx/src/modal-queue.ts` (1-89번째 라인)
+
+**소스**: `mno7890`
+
+- **추가사항**: 새로운 모달 큐잉 시스템
+- **목적**: 여러 모달 동시 처리
+- **API**: `ModalQueue` 클래스와 `useModalQueue` 훅 내보내기
+
+### 버그 수정
+
+#### `packages/aileron/src/performance.ts` (78번째 라인)
+
+**소스**: `stu5678`
+
+- **수정사항**: 성능 모니터링에서 메모리 누수 수정
+- **변경사항**: `destroy()` 메소드에 적절한 정리 작업 추가
+- **심각도**: 위험 - 프로덕션 안정성에 영향
+
+---
+
+## 🎯 리뷰 권장사항
+
+### 높은 우선순위
+
+1. **브레이킹 체인지**: 비동기 캐시 구현 영향 검토
+2. **메모리 누수 수정**: 적절한 정리 구현 검증
+3. **타입 안전성**: TypeScript 엄격 모드 호환성 확인
+
+### 보통 우선순위
+
+1. **파일 이동**: 하드코딩된 경로 참조 업데이트
+2. **Import 해결**: 새로운 구조에서 모듈 해결 확인
+
+---
+
+## 📋 테스트 권장사항
+
+### 필수 테스트
+
+- [ ] 변경된 API의 타입 안전성
+- [ ] 브레이킹 체인지 영향도
+- [ ] 메모리 누수 방지 확인
+
+### 권장 테스트
+
+- [ ] 이동된 파일의 import 해결
+- [ ] TypeScript 컴파일 성공
+- [ ] 기존 기능 회귀 테스트
+
+---
+
+**리뷰 날짜**: YYYY-MM-DD
+**분석 모드**: [Specific Commit | Branch Comparison | Staged Changes]
+**리뷰어**: 자동화된 코드 리뷰 시스템
+````
+
+### 4. Analysis Workflow
+
+1. **Mode Detection**: Determine analysis mode (commit/branch/staged)
+2. **Change Collection**: Gather changes based on mode
+3. **Change Categorization**: Sort changes into review categories
+4. **Logic Analysis**: Deep dive into behavioral changes
+5. **Impact Assessment**: Evaluate change implications
+6. **Documentation**: Create comprehensive review document
+7. **File Output**: Save as `./review.md`
+
+### 5. Git Analysis Commands Reference by Mode
+
+#### Commit Hash Analysis
+
+```bash
+# Basic commit analysis
+git show $COMMIT_HASH --stat --format=fuller
+git show $COMMIT_HASH --name-status
+
+# Detailed file analysis
+git show $COMMIT_HASH --unified=5 -- path/to/file.ts
+
+# Find related commits
+git log --grep="related-keyword" --oneline
+```
+
+#### Branch Comparison Analysis
+
+```bash
+# Branch difference analysis
+git diff master...HEAD --stat
+git log master..HEAD --oneline --graph
+
+# File-specific branch analysis
+git log master..HEAD --oneline -- path/to/file.ts
+git diff master...HEAD -- path/to/file.ts
+
+# Find merge conflicts
+git merge-tree $(git merge-base master HEAD) master HEAD
+```
+
+#### Staged Changes Analysis
+
+```bash
+# Staged changes analysis
+git diff --cached --stat
+git diff --cached --name-status
+
+# Individual file analysis
+git diff --cached --unified=5 -- path/to/file.ts
+
+# Combined staged and unstaged
+git diff HEAD --unified=5
+```
+
+### 6. Important Guidelines
+
+- **Mode-Aware Analysis**: Adapt analysis approach based on detection mode
+- **TypeScript Focus**: Pay special attention to type safety and interface changes
+- **Context Preservation**: Maintain proper context for each analysis mode
+- **Traceability**: Include source information (commit hash, branch, or staged status)
+- **Korean Output**: Final review.md must be written in Korean
+
+### ⚠️ CRITICAL OUTPUT REQUIREMENT
+
+- **🇰🇷 OUTPUT LANGUAGE**: The final review.md file content MUST be written in Korean
+- **📝 KOREAN ONLY**: All sections, descriptions, and analysis in the output must use Korean
+- **🔤 TECHNICAL TERMS**: Use Korean translations or explanations for technical terms in output
+- **⚡ NON-NEGOTIABLE**: This applies only to the generated review.md content, not this guide
+
+### 7. File Output
+
+Create review file: `./review.md`
+
+The review should be comprehensive yet focused on actionable insights for the development team, adapting its approach based on the detected analysis mode.
