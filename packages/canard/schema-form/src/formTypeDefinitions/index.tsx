@@ -2,7 +2,7 @@ import type { FormTypeInputDefinition } from '@/schema-form/types';
 
 import { FormTypeInputArrayDefinition } from './FormTypeInputArray';
 import { FormTypeInputBooleanDefinition } from './FormTypeInputBoolean';
-import { FormTypeInputDateFormantDefinition } from './FormTypeInputDateFormant';
+import { FormTypeInputDateFormatDefinition } from './FormTypeInputDateFormat';
 import { FormTypeInputNumberDefinition } from './FormTypeInputNumber';
 import { FormTypeInputObjectDefinition } from './FormTypeInputObject';
 import { FormTypeInputStringDefinition } from './FormTypeInputString';
@@ -12,7 +12,7 @@ import { FormTypeInputStringRadioDefinition } from './FormTypeInputStringRadio';
 import { FormTypeInputVirtualDefinition } from './FormTypeInputVirtual';
 
 export const formTypeDefinitions = [
-  FormTypeInputDateFormantDefinition,
+  FormTypeInputDateFormatDefinition,
   FormTypeInputStringCheckboxDefinition,
   FormTypeInputStringRadioDefinition,
   FormTypeInputStringEnumDefinition,

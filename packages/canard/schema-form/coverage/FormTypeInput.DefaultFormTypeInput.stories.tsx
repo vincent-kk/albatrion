@@ -5,7 +5,7 @@ import type { Meta, StoryFn } from '@storybook/react-vite';
 import { Form, type JsonSchemaError } from '../src';
 import { FormTypeInputArrayDefinition } from '../src/formTypeDefinitions/FormTypeInputArray';
 import { FormTypeInputBooleanDefinition } from '../src/formTypeDefinitions/FormTypeInputBoolean';
-import { FormTypeInputDateFormantDefinition } from '../src/formTypeDefinitions/FormTypeInputDateFormant';
+import { FormTypeInputDateFormatDefinition } from '../src/formTypeDefinitions/FormTypeInputDateFormat';
 import { FormTypeInputNumberDefinition } from '../src/formTypeDefinitions/FormTypeInputNumber';
 import { FormTypeInputObjectDefinition } from '../src/formTypeDefinitions/FormTypeInputObject';
 import { FormTypeInputStringDefinition } from '../src/formTypeDefinitions/FormTypeInputString';
@@ -98,7 +98,7 @@ DateTimeFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'datetime-local',
-    FormTypeInput: FormTypeInputDateFormantDefinition.Component,
+    FormTypeInput: FormTypeInputDateFormatDefinition.Component,
   },
 };
 
@@ -107,7 +107,7 @@ TimeFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'time',
-    FormTypeInput: FormTypeInputDateFormantDefinition.Component,
+    FormTypeInput: FormTypeInputDateFormatDefinition.Component,
   },
 };
 
@@ -116,7 +116,7 @@ DateFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'date',
-    FormTypeInput: FormTypeInputDateFormantDefinition.Component,
+    FormTypeInput: FormTypeInputDateFormatDefinition.Component,
   },
 };
 
@@ -125,7 +125,7 @@ WeekFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'week',
-    FormTypeInput: FormTypeInputDateFormantDefinition.Component,
+    FormTypeInput: FormTypeInputDateFormatDefinition.Component,
   },
 };
 
@@ -134,7 +134,7 @@ MonthFormat.args = {
   jsonSchema: {
     type: 'string',
     format: 'month',
-    FormTypeInput: FormTypeInputDateFormantDefinition.Component,
+    FormTypeInput: FormTypeInputDateFormatDefinition.Component,
   },
 };
 

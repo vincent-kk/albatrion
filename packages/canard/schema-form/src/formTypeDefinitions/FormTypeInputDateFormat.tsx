@@ -16,7 +16,7 @@ type DateFormatJsonSchema = {
   };
 };
 
-const FormTypeInputDateFormant = ({
+const FormTypeInputDateFormat = ({
   path,
   name,
   jsonSchema,
@@ -55,8 +55,8 @@ const FormTypeInputDateFormant = ({
   );
 };
 
-export const FormTypeInputDateFormantDefinition = {
-  Component: FormTypeInputDateFormant,
+export const FormTypeInputDateFormatDefinition = {
+  Component: FormTypeInputDateFormat,
   test: {
     type: 'string',
     format: ['month', 'week', 'date', 'time', 'datetime-local'],
