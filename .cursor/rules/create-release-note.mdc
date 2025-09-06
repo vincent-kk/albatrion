@@ -1,0 +1,234 @@
+---
+description: Create release note for the changeset file
+alwaysApply: false
+---
+
+# Create Release Note Guide
+
+## Role
+
+You are an expert responsible for analyzing git changes in this monorepo project and creating release notes based on commits since the latest tag.
+
+## Project Structure Understanding
+
+This project consists of the following packages:
+
+- `@albatrion/aileron`: Performance optimization utility library
+- `@albatrion/canard/schema-form`: JSON Schema-based form library
+- `@albatrion/canard/schema-form-*-plugin`: Various UI library plugins
+- `@albatrion/lerx/promise-modal`: Promise-based modal system
+- `@albatrion/winglet/*`: Common utility libraries
+
+## Work Guidelines
+
+### 1. Git Tag Analysis Process
+
+#### Step 1: Find Latest Tag
+
+1. Search for the most recent tag with pattern `albatrion-yyMMdd`
+2. If no tag found, analyze from the beginning of the repository
+3. Use `git tag --list "albatrion-*" --sort=-version:refname | head -1` pattern
+
+#### Step 2: Collect Changes
+
+1. Gather all commits from the latest tag to HEAD
+2. Use `git log <latest-tag>..HEAD --oneline --name-only` pattern
+3. Focus on file changes in package directories
+
+#### Step 3: Package Version Detection
+
+1. Scan `package.json` files for version changes
+2. Compare versions between tag and current state
+3. Identify which packages have version bumps
+4. Determine version type (major/minor/patch) from changes
+
+#### Step 4: Categorize Changes
+
+1. **Breaking Changes**: Major version bumps, API changes
+2. **New Features**: Minor version bumps, new functionality
+3. **Improvements**: Refactoring, performance enhancements
+4. **Bug Fixes**: Patch version bumps, error corrections
+
+### 2. Release Notes Writing Principles
+
+#### Clarity & Conciseness
+
+- Use language that users can easily understand
+- **Keep it brief**: Focus on essential information only
+- Avoid lengthy explanations or technical details
+- Specify what changed and how to migrate (if needed)
+
+#### Structure with Emojis
+
+- **📦 Package Releases**: List of released packages with version changes
+- **💥 Breaking Changes**: Changes that break existing code
+- **✨ New Features**: Addition of new functionality
+- **🚀 Improvements**: Enhancement of existing features
+- **🐛 Bug Fixes**: Bug corrections
+- **📋 Installation**: Installation commands
+
+#### Practicality
+
+- Include brief migration steps (for Breaking Changes)
+- Provide minimal code examples only when necessary
+- Focus on user impact, not implementation details
+
+### 3. Writing Format
+
+````markdown
+# [albatrion-yyMMdd] Brief Summary of Key Changes
+
+## 📦 Package Releases
+
+- `@package/name@X.X.X` - Brief description (from vX.X.X)
+- `@package/plugin@X.X.X` 🆕 - New plugin description
+
+---
+
+## 💥 Breaking Changes
+
+### API Change Name
+
+Brief description of what changed.
+
+```tsx
+// Before
+<OldComponent prop={value} />
+
+// After
+<NewComponent newProp={value} />
+```
+````
+
+### Migration
+
+1. Brief step one
+2. Brief step two
+3. No other changes required
+
+---
+
+## ✨ New Features
+
+- **Feature name**: Brief description
+- **Another feature**: Brief description
+
+---
+
+## 🚀 Improvements
+
+- **Performance**: Brief description of improvement
+- **TypeScript**: Enhanced type definitions
+- **Bundle size**: Reduced dependencies
+
+---
+
+## 🐛 Bug Fixes
+
+- Fixed specific issue description
+- Improved error handling scenario
+- Resolved edge case behavior
+
+---
+
+## 📋 Installation
+
+```bash
+# Recommended
+npm install @package/name@X.X.X
+
+# With plugins
+npm install @package/name@X.X.X @package/plugin@X.X.X
+```
+
+````
+
+### 4. Git Analysis Commands Reference
+
+```bash
+# Find latest albatrion tag
+git tag --list "albatrion-*" --sort=-version:refname | head -1
+
+# Get commits since tag
+git log albatrion-20240101..HEAD --oneline
+
+# Get changed files since tag
+git diff --name-only albatrion-20240101..HEAD
+
+# Compare package.json versions
+git show albatrion-20240101:packages/package-name/package.json
+git show HEAD:packages/package-name/package.json
+
+# Get commit messages for specific paths
+git log albatrion-20240101..HEAD --oneline -- packages/specific-package/
+````
+
+### 5. Content Guidelines
+
+#### What to Include
+
+- Packages with version changes
+- Essential changes that affect users
+- Breaking changes with simple migration steps
+- New features with one-line descriptions
+- Important bug fixes
+- Installation commands
+
+#### What to Exclude
+
+- Technical implementation details
+- Internal refactoring details (unless performance impact)
+- Verbose explanations
+- Complex code examples
+- Architecture descriptions
+- Performance metrics (unless significant)
+
+### 6. Version Analysis Guide
+
+- **Major (X.0.0)**: Breaking changes in API, removed features
+- **Minor (0.X.0)**: New feature additions, backward compatibility maintained
+- **Patch (0.0.X)**: Bug fixes, internal improvements
+
+### 7. Title and File Output
+
+#### Title Format
+
+- Pattern: `[albatrion-yyMMdd] Brief Summary of Key Changes`
+- Examples:
+  - `[albatrion-250817] Enhanced Performance with Batch Processing`
+  - `[albatrion-250903] New Schema Form Plugins and TypeScript Improvements`
+  - `[albatrion-250915] Critical Bug Fixes and API Stabilization`
+  - `[albatrion-251201] Major API Redesign with Breaking Changes`
+
+#### Summary Guidelines
+
+- Focus on the most impactful change
+- Use action words (Enhanced, Added, Fixed, Improved, etc.)
+- Keep it under 8 words when possible
+- Prioritize: Breaking Changes > New Features > Major Improvements > Bug Fixes
+
+Create release notes file with name pattern: `./release-notes-yyMMdd.md`
+
+## Example Workflow
+
+1. **Tag Analysis**: "What's the latest albatrion-\* tag?"
+2. **Commit Analysis**: "What commits happened since that tag?"
+3. **Version Detection**: "Which packages had version changes?"
+4. **Change Classification**: "Breaking, Feature, Improvement, or Bug Fix?"
+5. **Title Creation**: "What's the most impactful change for the title?"
+6. **User Impact**: "What does the user need to know?"
+7. **Brevity Check**: "Can I say this in fewer words?"
+8. **File Creation**: "Save as release-notes-yyMMdd.md"
+
+## Important Notes
+
+- **Keep it short**: Release notes should be scannable in under 2 minutes
+- **Focus on user impact**: Internal changes go to "Improvements" if mentioned at all
+- Extract version changes from actual package.json diffs
+- Write code examples in TypeScript when needed
+- **ALWAYS write release note content in English only**
+- Use the emoji structure consistently
+- Link to package READMEs for detailed usage
+- Save output as `./release-notes-yyMMdd.md` where yyMMdd is today's date
+
+Please follow this guide to create concise, user-friendly release notes based on git history analysis that developers can quickly scan and understand.
