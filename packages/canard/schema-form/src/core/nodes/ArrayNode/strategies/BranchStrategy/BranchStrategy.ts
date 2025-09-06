@@ -282,11 +282,11 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   private __emitChange__(
     option: UnionSetValueOption = SetValueOption.BatchDefault,
-    accumulate: boolean = true,
+    batched: boolean = true,
     updateChildren: boolean = true,
   ) {
     if (this.__locked__) return;
-    if (accumulate) {
+    if (batched) {
       if (this.__batched__) return;
       this.__batched__ = true;
       this.__host__.publish({
@@ -366,13 +366,13 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @private
    */
   private __handleChangeFactory__(key: ChildSegmentKey): HandleChange {
-    return (input, batch) => {
+    return (input, batched) => {
       const source = this.__sourceMap__.get(key);
       if (!source || source.data === input) return;
       source.data = input;
       this.__idle__ = false;
       this.__nullish__ = false;
-      this.__emitChange__(SetValueOption.Default, batch, false);
+      this.__emitChange__(SetValueOption.Default, batched, false);
     };
   }
 

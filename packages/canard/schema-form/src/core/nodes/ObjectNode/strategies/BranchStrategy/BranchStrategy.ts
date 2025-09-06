@@ -177,14 +177,14 @@ export class BranchStrategy implements ObjectNodeStrategy {
     } else this.__schemaKeys__ = propertyKeys;
 
     const handelChangeFactory =
-      (key: string): HandleChange =>
-      (input, batch) => {
+      (property: string): HandleChange =>
+      (input, batched) => {
         if (!this.__draft__) this.__draft__ = {};
-        if (input !== undefined && this.__draft__[key] === input) return;
-        this.__draft__[key] = input;
+        if (input !== undefined && this.__draft__[property] === input) return;
+        this.__draft__[property] = input;
         if (this.__isolated__ && !this.__oneOfChildNodeMapList__)
           this.__isolated__ = false;
-        this.__emitChange__(SetValueOption.Default, batch);
+        this.__emitChange__(SetValueOption.Default, batched);
       };
     host.subscribe(({ type, payload }) => {
       if (type & NodeEventType.RequestEmitChange) {
@@ -260,10 +260,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
    */
   private __emitChange__(
     option: UnionSetValueOption,
-    accumulate: boolean = false,
+    batched: boolean = false,
   ) {
     if (this.__locked__) return;
-    if (accumulate) {
+    if (batched) {
       if (this.__batched__) return;
       this.__batched__ = true;
       this.__host__.publish({
