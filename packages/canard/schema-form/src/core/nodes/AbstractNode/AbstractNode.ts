@@ -603,28 +603,28 @@ export abstract class AbstractNode<
     this: AbstractNode,
     input?: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags,
   ) {
-    // Calculate new state based on previous state if received as function
-    const state = typeof input === 'function' ? input(this.#state) : input;
-    let dirty = false;
-    if (state === undefined) {
-      if (isEmptyObject(this.#state)) return;
-      this.#state = Object.create(null);
-      dirty = true;
-    } else if (isObject(state)) {
-      for (const [key, value] of Object.entries(state)) {
-        if (value === undefined) {
-          if (key in this.#state) {
-            delete this.#state[key];
-            dirty = true;
+    const state: NodeStateFlags = { ...this.#state };
+    const inputState = typeof input === 'function' ? input(state) : input;
+    let changed = false;
+    if (inputState === undefined) {
+      if (isEmptyObject(state)) return;
+      this.#state = {};
+      changed = true;
+    } else if (isObject(inputState)) {
+      for (const entry of Object.entries(inputState)) {
+        if (entry[1] === undefined) {
+          if (entry[0] in state) {
+            delete state[entry[0]];
+            changed = true;
           }
-        } else if (this.#state[key] !== value) {
-          this.#state[key] = value;
-          dirty = true;
+        } else if (state[entry[0]] !== entry[1]) {
+          state[entry[0]] = entry[1];
+          changed = true;
         }
       }
+      this.#state = state;
     }
-    if (!dirty) return;
-    this.publish(NodeEventType.UpdateState, this.#state);
+    if (changed) this.publish(NodeEventType.UpdateState, this.#state);
   }
 
   /** Errors received from external sources */

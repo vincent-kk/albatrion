@@ -171,6 +171,8 @@ describe('AbstractNode', () => {
       expect(name.state).toEqual({ isTouched: true, isDirty: true });
       name.setState({ isDirty: undefined });
       expect(name.state).toEqual({ isTouched: true });
+      name.setState(undefined);
+      expect(name.state).toEqual({});
     }
   });
 
