@@ -1,73 +1,101 @@
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
-import {
-  Form,
-  type FormHandle,
-  type JsonSchema,
-  type JsonSchemaError,
-} from '../src';
-import StoryLayout from './components/StoryLayout';
+import type { JsonSchema } from '@winglet/json-schema';
+
+import { Form, type FormHandle } from '@canard/schema-form';
+import { registerPlugin } from '@canard/schema-form';
+
+import { plugin } from '../src';
+
+registerPlugin(plugin);
 
 export default {
-  title: 'Form/09. NullSchema',
+  title: 'AntdPlugin/NullHandling',
 };
 
-export const NullSchema = () => {
-  const jsonSchema = {
-    type: 'object',
-    properties: {
-      string: {
-        type: 'string',
-      },
-      null: {
-        type: 'null',
-        nullable: true,
-        FormTypeInput: ({ value, onChange }) => {
-          return (
-            <div>
-              this is {JSON.stringify(value, null, 2)}
-              <div>
-                <button onClick={() => onChange(undefined)}>unset</button>
-                <button onClick={() => onChange(null)}>set null</button>
-              </div>
-            </div>
-          );
-        },
-      },
-      defaultNull: {
-        type: 'null',
-        nullable: true,
-        default: null,
-      },
-    },
-  } satisfies JsonSchema;
+const StoryLayout = ({ children, value }: any) => (
+  <div style={{ display: 'flex', gap: 10 }}>
+    <fieldset style={{ flex: 1 }}>
+      <legend>Form</legend>
+      {children}
+    </fieldset>
+    <fieldset style={{ flex: 1 }}>
+      <legend>Value</legend>
+      <pre>{JSON.stringify(value, null, 2)}</pre>
+    </fieldset>
+  </div>
+);
 
-  const [value, setValue] = useState<Record<string, unknown>>({});
-  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
-
-  return (
-    <StoryLayout jsonSchema={jsonSchema} errors={errors} value={value}>
-      <Form
-        jsonSchema={jsonSchema}
-        defaultValue={{ null: null }}
-        onChange={setValue}
-        onValidate={setErrors}
-      />
-    </StoryLayout>
-  );
-};
-
-export const StringEnumWithNull = () => {
+export const NumberInputWithNull = () => {
   const [value, setValue] = useState<any>({});
   const formRef = useRef<FormHandle>(null);
 
   const jsonSchema = {
     type: 'object',
     properties: {
-      enumWithNull: {
+      nullableNumber: {
+        type: 'number',
+        nullable: true,
+        placeholder: 'null 값 허용 (빈 입력 시 null)',
+      },
+      numberWithDefault: {
+        type: 'number',
+        nullable: true,
+        default: null,
+        placeholder: '기본값이 null인 숫자',
+      },
+    },
+  } satisfies JsonSchema;
+
+  return (
+    <div>
+      <div style={{ marginBottom: 10 }}>
+        <button
+          onClick={() =>
+            formRef.current?.setValue({
+              nullableNumber: null,
+              numberWithDefault: null,
+            })
+          }
+        >
+          Set all to null
+        </button>
+        <button
+          onClick={() =>
+            formRef.current?.setValue({
+              nullableNumber: 42,
+              numberWithDefault: 10,
+            })
+          }
+          style={{ marginLeft: 5 }}
+        >
+          Set to numbers
+        </button>
+        <button
+          onClick={() => console.log('Current value:', value)}
+          style={{ marginLeft: 5 }}
+        >
+          Log to console
+        </button>
+      </div>
+      <StoryLayout jsonSchema={jsonSchema} value={value}>
+        <Form ref={formRef} jsonSchema={jsonSchema} onChange={setValue} />
+      </StoryLayout>
+    </div>
+  );
+};
+
+export const RadioGroupWithNull = () => {
+  const [value, setValue] = useState<any>({});
+  const formRef = useRef<FormHandle>(null);
+
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      radioWithNull: {
         type: 'string',
         enum: [null, 'option1', 'option2', 'option3'],
-        formType: 'enum',
+        formType: 'radio',
         nullable: true,
         options: {
           alias: {
@@ -78,16 +106,17 @@ export const StringEnumWithNull = () => {
           },
         },
       },
-      radioWithNull: {
+      radioMixedTypes: {
         type: 'string',
-        enum: [null, 'yes', 'no'],
+        enum: [null, 'zero', 'one', 'text'],
         formType: 'radio',
         nullable: true,
         options: {
           alias: {
-            null: '미정',
-            yes: '예',
-            no: '아니오',
+            null: 'null 값',
+            zero: '숫자 0',
+            one: '숫자 1',
+            text: '텍스트',
           },
         },
       },
@@ -100,8 +129,8 @@ export const StringEnumWithNull = () => {
         <button
           onClick={() =>
             formRef.current?.setValue({
-              enumWithNull: null,
               radioWithNull: null,
+              radioMixedTypes: null,
             })
           }
         >
@@ -110,8 +139,8 @@ export const StringEnumWithNull = () => {
         <button
           onClick={() =>
             formRef.current?.setValue({
-              enumWithNull: 'option1',
-              radioWithNull: 'yes',
+              radioWithNull: 'option1',
+              radioMixedTypes: 'text',
             })
           }
           style={{ marginLeft: 5 }}
@@ -119,10 +148,10 @@ export const StringEnumWithNull = () => {
           Set to values
         </button>
         <button
-          onClick={() => formRef.current?.setValue({})}
+          onClick={() => console.log('Current value:', value)}
           style={{ marginLeft: 5 }}
         >
-          Clear all
+          Log to console
         </button>
       </div>
       <StoryLayout jsonSchema={jsonSchema} value={value}>
@@ -156,6 +185,24 @@ export const StringCheckboxWithNull = () => {
         },
         formType: 'checkbox',
       },
+      checkboxMixed: {
+        type: 'array',
+        items: {
+          type: 'string',
+          enum: [null, '', 'filled', 'num123'],
+          nullable: true,
+          options: {
+            alias: {
+              null: 'null 값',
+              '': '빈 문자열',
+              filled: '채워진 값',
+              num123: '숫자 123',
+            },
+          },
+        },
+        formType: 'checkbox',
+        default: [null],
+      },
     },
   } satisfies JsonSchema;
 
@@ -164,7 +211,10 @@ export const StringCheckboxWithNull = () => {
       <div style={{ marginBottom: 10 }}>
         <button
           onClick={() =>
-            formRef.current?.setValue({ checkboxWithNull: [null] })
+            formRef.current?.setValue({
+              checkboxWithNull: [null],
+              checkboxMixed: [null],
+            })
           }
         >
           Select only null
@@ -172,18 +222,19 @@ export const StringCheckboxWithNull = () => {
         <button
           onClick={() =>
             formRef.current?.setValue({
-              checkboxWithNull: [null, 'item1', 'item2'],
+              checkboxWithNull: [null, 'item1'],
+              checkboxMixed: ['', 'filled'],
             })
           }
           style={{ marginLeft: 5 }}
         >
-          Select null + items
+          Mixed selection
         </button>
         <button
-          onClick={() => formRef.current?.setValue({ checkboxWithNull: [] })}
+          onClick={() => console.log('Current value:', value)}
           style={{ marginLeft: 5 }}
         >
-          Clear selection
+          Log to console
         </button>
       </div>
       <StoryLayout jsonSchema={jsonSchema} value={value}>
@@ -193,24 +244,45 @@ export const StringCheckboxWithNull = () => {
   );
 };
 
-export const NumberWithNull = () => {
+export const StringEnumWithNull = () => {
   const [value, setValue] = useState<any>({});
   const formRef = useRef<FormHandle>(null);
 
   const jsonSchema = {
     type: 'object',
     properties: {
-      nullableNumber: {
-        type: 'number',
+      selectWithNull: {
+        type: 'string',
+        enum: [null, 'value1', 'value2', 'value3'],
+        formType: 'select',
         nullable: true,
-        placeholder: 'null 값 허용',
+        placeholder: '값을 선택하세요',
+        options: {
+          alias: {
+            null: '선택 안함 (null)',
+            value1: '값 1',
+            value2: '값 2',
+            value3: '값 3',
+          },
+        },
       },
-      nullableSlider: {
-        type: 'number',
-        nullable: true,
-        minimum: 0,
-        maximum: 100,
-        formType: 'slider',
+      selectMultipleWithNull: {
+        type: 'array',
+        items: {
+          type: 'string',
+          enum: [null, 'a', 'b', 'c'],
+          nullable: true,
+          options: {
+            alias: {
+              null: 'null 포함',
+              a: 'A',
+              b: 'B',
+              c: 'C',
+            },
+          },
+        },
+        formType: 'select',
+        placeholder: '여러 개 선택 (null 포함 가능)',
       },
     },
   } satisfies JsonSchema;
@@ -221,8 +293,8 @@ export const NumberWithNull = () => {
         <button
           onClick={() =>
             formRef.current?.setValue({
-              nullableNumber: null,
-              nullableSlider: null,
+              selectWithNull: null,
+              selectMultipleWithNull: [null],
             })
           }
         >
@@ -231,21 +303,19 @@ export const NumberWithNull = () => {
         <button
           onClick={() =>
             formRef.current?.setValue({
-              nullableNumber: 42,
-              nullableSlider: 50,
+              selectWithNull: 'value1',
+              selectMultipleWithNull: ['a', 'b'],
             })
           }
           style={{ marginLeft: 5 }}
         >
-          Set to numbers
+          Set to values
         </button>
         <button
-          onClick={() =>
-            formRef.current?.setValue({ nullableNumber: 0, nullableSlider: 0 })
-          }
+          onClick={() => console.log('Current value:', value)}
           style={{ marginLeft: 5 }}
         >
-          Set to zero
+          Log to console
         </button>
       </div>
       <StoryLayout jsonSchema={jsonSchema} value={value}>
@@ -262,7 +332,7 @@ export const StringSwitchWithNull = () => {
   const jsonSchema = {
     type: 'object',
     properties: {
-      switchWithNull: {
+      switchNullOff: {
         type: 'string',
         enum: ['on', null],
         formType: 'switch',
@@ -270,7 +340,20 @@ export const StringSwitchWithNull = () => {
         options: {
           alias: {
             on: '켜짐',
-            null: '꺼짐',
+            null: '꺼짐 (null)',
+          },
+        },
+      },
+      switchNullOn: {
+        type: 'string',
+        enum: [null, 'off'],
+        formType: 'switch',
+        nullable: true,
+        default: null,
+        options: {
+          alias: {
+            null: '켜짐 (null)',
+            off: '꺼짐',
           },
         },
       },
@@ -294,112 +377,25 @@ export const StringSwitchWithNull = () => {
         <button
           onClick={() =>
             formRef.current?.setValue({
-              switchWithNull: 'on',
+              switchNullOff: 'on',
+              switchNullOn: null,
               switchBothNull: null,
             })
           }
         >
-          Set first ON
+          Toggle switches
         </button>
         <button
           onClick={() =>
             formRef.current?.setValue({
-              switchWithNull: null,
+              switchNullOff: null,
+              switchNullOn: 'off',
               switchBothNull: null,
             })
           }
           style={{ marginLeft: 5 }}
         >
-          Set both null
-        </button>
-      </div>
-      <StoryLayout jsonSchema={jsonSchema} value={value}>
-        <Form ref={formRef} jsonSchema={jsonSchema} onChange={setValue} />
-      </StoryLayout>
-    </div>
-  );
-};
-
-export const MixedNullScenarios = () => {
-  const [value, setValue] = useState<any>({});
-  const formRef = useRef<FormHandle>(null);
-
-  const jsonSchema = {
-    type: 'object',
-    properties: {
-      selectWithEmptyAndNull: {
-        type: 'string',
-        enum: ['', null, 'value1', 'value2'],
-        formType: 'enum',
-        nullable: true,
-        options: {
-          alias: {
-            '': '빈 문자열',
-            null: 'null 값',
-            value1: '값 1',
-            value2: '값 2',
-          },
-        },
-      },
-      radioGroupMixed: {
-        type: 'string',
-        enum: [null, 'zero', 'one', 'text'],
-        formType: 'radio',
-        nullable: true,
-        options: {
-          alias: {
-            null: 'null',
-            zero: '숫자 0',
-            one: '숫자 1',
-            text: '텍스트',
-          },
-        },
-      },
-      checkboxArrayMixed: {
-        type: 'array',
-        items: {
-          type: 'string',
-          enum: [null, '', 'filled', 'num123'],
-          nullable: true,
-          options: {
-            alias: {
-              null: 'null 값',
-              '': '빈 문자열',
-              filled: '채워진 값',
-              num123: '숫자 123',
-            },
-          },
-        },
-        formType: 'checkbox',
-      },
-    },
-  } satisfies JsonSchema;
-
-  return (
-    <div>
-      <div style={{ marginBottom: 10 }}>
-        <button
-          onClick={() =>
-            formRef.current?.setValue({
-              selectWithEmptyAndNull: null,
-              radioGroupMixed: null,
-              checkboxArrayMixed: [null, ''],
-            })
-          }
-        >
-          Set null and empty
-        </button>
-        <button
-          onClick={() =>
-            formRef.current?.setValue({
-              selectWithEmptyAndNull: '',
-              radioGroupMixed: 'zero',
-              checkboxArrayMixed: ['filled', 'num123'],
-            })
-          }
-          style={{ marginLeft: 5 }}
-        >
-          Set various values
+          Reverse toggle
         </button>
         <button
           onClick={() => console.log('Current value:', value)}
@@ -415,57 +411,59 @@ export const MixedNullScenarios = () => {
   );
 };
 
-export const DefaultValuesWithNull = () => {
+export const ComplexNullScenarios = () => {
   const [value, setValue] = useState<any>({});
   const formRef = useRef<FormHandle>(null);
 
   const jsonSchema = {
     type: 'object',
     properties: {
-      enumDefaultNull: {
+      mixedEnum: {
         type: 'string',
-        enum: [null, 'a', 'b', 'c'],
-        default: null,
-        formType: 'enum',
+        enum: ['', null, 'value', 'zero', 'false'],
+        formType: 'select',
         nullable: true,
+        placeholder: '다양한 값들',
         options: {
           alias: {
-            null: '기본값 (null)',
-            a: 'A 옵션',
-            b: 'B 옵션',
-            c: 'C 옵션',
+            '': '빈 문자열',
+            null: 'null',
+            value: '일반 값',
+            zero: '숫자 0',
+            false: 'false 문자열',
           },
         },
       },
-      radioDefaultNull: {
+      radioGroupDefault: {
         type: 'string',
-        enum: [null, 'left', 'right'],
+        enum: [null, 'yes', 'no', 'maybe'],
         default: null,
         formType: 'radio',
         nullable: true,
         options: {
           alias: {
-            null: '중립',
-            left: '왼쪽',
-            right: '오른쪽',
+            null: '미정 (기본값)',
+            yes: '예',
+            no: '아니오',
+            maybe: '아마도',
           },
         },
       },
-      checkboxDefaultWithNull: {
+      checkboxArrayDefaults: {
         type: 'array',
         items: {
           type: 'string',
-          enum: [null, 'x', 'y', 'z'],
+          enum: [null, 'red', 'green', 'blue'],
           nullable: true,
         },
-        default: [null, 'x'],
+        default: [null, 'red'],
         formType: 'checkbox',
         options: {
           alias: {
-            null: 'null 포함',
-            x: 'X',
-            y: 'Y',
-            z: 'Z',
+            null: '무색 (null)',
+            red: '빨강',
+            green: '초록',
+            blue: '파랑',
           },
         },
       },
@@ -475,32 +473,34 @@ export const DefaultValuesWithNull = () => {
   return (
     <div>
       <div style={{ marginBottom: 10 }}>
-        <button onClick={() => formRef.current?.reset()}>
-          Reset to defaults
-        </button>
         <button
           onClick={() =>
             formRef.current?.setValue({
-              enumDefaultNull: 'a',
-              radioDefaultNull: 'left',
-              checkboxDefaultWithNull: ['x', 'y', 'z'],
+              mixedEnum: null,
+              radioGroupDefault: null,
+              checkboxArrayDefaults: [null],
             })
           }
-          style={{ marginLeft: 5 }}
-        >
-          Set all non-null
-        </button>
-        <button
-          onClick={() =>
-            formRef.current?.setValue({
-              enumDefaultNull: null,
-              radioDefaultNull: null,
-              checkboxDefaultWithNull: [null],
-            })
-          }
-          style={{ marginLeft: 5 }}
         >
           Set all to null
+        </button>
+        <button
+          onClick={() =>
+            formRef.current?.setValue({
+              mixedEnum: '',
+              radioGroupDefault: 'yes',
+              checkboxArrayDefaults: ['red', 'green', 'blue'],
+            })
+          }
+          style={{ marginLeft: 5 }}
+        >
+          Set mixed values
+        </button>
+        <button
+          onClick={() => console.log('Current value:', value)}
+          style={{ marginLeft: 5 }}
+        >
+          Log to console
         </button>
       </div>
       <StoryLayout jsonSchema={jsonSchema} value={value}>
@@ -509,9 +509,8 @@ export const DefaultValuesWithNull = () => {
           jsonSchema={jsonSchema}
           onChange={setValue}
           defaultValue={{
-            enumDefaultNull: null,
-            radioDefaultNull: null,
-            checkboxDefaultWithNull: [null, 'x'],
+            radioGroupDefault: null,
+            checkboxArrayDefaults: [null, 'red'],
           }}
         />
       </StoryLayout>
