@@ -67,7 +67,7 @@ export const traversal = (
       for (let j = 0, jl = subnodes.length; j < jl; j++) {
         const node = subnodes[j].node;
         if (node.propertyKey !== segment) continue;
-        fallback = node;
+        if (fallback === null) fallback = node;
         if (next(source, node)) continue;
         cursor = node;
         tentative = false;

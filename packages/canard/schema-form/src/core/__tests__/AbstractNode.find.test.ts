@@ -633,4 +633,94 @@ describe('Namespace with oneOf functionality', () => {
     expect(levelFromProd.value).not.toBe(1); // Should be 5 now (prod value)
     expect(levelFromProd.value).toBe(5);
   });
+  it('should handle relative path navigation with parent references across namespaces', async () => {
+    const jsonSchema = {
+      type: 'object',
+      properties: {
+        global: { type: 'string', default: 'global-value' },
+        context: {
+          type: 'object',
+          properties: {
+            mode: {
+              type: 'string',
+              enum: [null, 'dev', 'prod', 'test'],
+              nullable: true,
+              default: null,
+            },
+          },
+          oneOf: [
+            {
+              '&if': "(./mode) === 'dev'",
+              properties: {
+                debug: {
+                  type: 'boolean',
+                  default: true,
+                  computed: {
+                    visible: '../../global === "global-value"',
+                  },
+                },
+                settings: {
+                  type: 'object',
+                  properties: {
+                    level: { type: 'number', default: 1 },
+                    data: {
+                      type: 'string',
+                      default: '../../../global + "-dev"',
+                    },
+                  },
+                },
+              },
+            },
+            {
+              '&if': "(./mode) === 'prod'",
+              properties: {
+                debug: { type: 'boolean', default: false },
+                settings: {
+                  type: 'object',
+                  properties: {
+                    level: { type: 'number', default: 5 },
+                    data: {
+                      type: 'string',
+                      default: '../../../global + "-prod"',
+                    },
+                  },
+                },
+              },
+            },
+            {
+              '&if': "(./mode) === 'test'",
+              properties: {
+                debug: { type: 'boolean', default: false },
+                settings: {
+                  type: 'object',
+                  properties: {
+                    level: { type: 'number', default: 5 },
+                    data: {
+                      type: 'string',
+                      default: '../../../global + "-test"',
+                    },
+                  },
+                },
+              },
+            },
+          ],
+        },
+      },
+    } satisfies JsonSchema;
+
+    const node = nodeFromJsonSchema({
+      jsonSchema,
+      onChange: () => {},
+    }) as ObjectNode;
+
+    await delay();
+
+    expect(node.find('context/debug')?.key).toBe('/context/debug#oneOf/0');
+    expect(node.find('context/settings')?.key).toBe(
+      '/context/settings#oneOf/0',
+    );
+    expect(node.find('context/settings/data')?.value).toBe(
+      '../../../global + "-dev"',
+    );
+  });
 });
