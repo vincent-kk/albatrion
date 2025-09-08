@@ -18,7 +18,7 @@ import type { ObjectValue } from '@/schema-form/types';
 import type { ObjectNodeStrategy } from '../type';
 import {
   type FieldConditionMap,
-  checkEmptyDraft,
+  checkEmptyRecord,
   getChildNodeMap,
   getChildren,
   getConditionsMap,
@@ -326,7 +326,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (draft === undefined) return undefined;
     if (draft === null) return nullable ? null : {};
     if (replace || base == null) return this.__processValue__(draft);
-    if (checkEmptyDraft(draft)) return false;
+    if (checkEmptyRecord(draft)) return false;
     return this.__processValue__({ ...base, ...draft });
   }
 

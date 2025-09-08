@@ -1,1 +1,0 @@
-export { checkEmptyDraft } from './checkEmptyDraft';

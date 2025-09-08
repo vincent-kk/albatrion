@@ -1,0 +1,1 @@
+export { checkEmptyRecord } from './checkEmptyRecord';
