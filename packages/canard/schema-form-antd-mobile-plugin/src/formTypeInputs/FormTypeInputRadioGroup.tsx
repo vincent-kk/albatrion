@@ -39,26 +39,30 @@ const FormTypeInputRadioGroup = ({
   const options = useMemo(() => {
     const alias = context.radioLabels || jsonSchema.options?.alias || {};
     return jsonSchema.enum
-      ? map(jsonSchema.enum, (value: string | number | null) => ({
-          label: alias['' + value] || '' + value,
-          value: '' + value,
-          originalValue: value,
-        }))
+      ? map(jsonSchema.enum, (rawValue: string | number | null) => {
+          const value = '' + rawValue;
+          return {
+            value,
+            rawValue,
+            label: alias[value] || value,
+          };
+        })
       : [];
   }, [context, jsonSchema]);
 
   const handleChange = useHandle((value: string | number) => {
     const selectedOption = options.find((opt) => opt.value === value);
-    if (selectedOption) {
-      onChange(selectedOption.originalValue);
-    }
+    if (selectedOption === undefined) return;
+    onChange(selectedOption.rawValue);
   });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row', gap: 8, ...style }}>
       <Radio.Group
         disabled={disabled}
-        defaultValue={defaultValue}
+        defaultValue={
+          options.find((option) => option.rawValue === defaultValue)?.value
+        }
         onChange={handleChange}
       >
         {map(options, (option) => (

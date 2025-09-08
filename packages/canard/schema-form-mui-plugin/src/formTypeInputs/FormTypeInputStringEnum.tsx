@@ -12,13 +12,11 @@ import type {
 
 import type { MuiContext } from '../type';
 
-type StringEnumJsonSchema = StringSchema<{ alias?: Record<string, string> }> & {
-  enum: string[];
-};
+type StringEnumJsonSchema = StringSchema<{ alias?: Record<string, string> }>;
 
 interface FormTypeInputStringEnumProps
   extends FormTypeInputPropsWithSchema<
-      string,
+      string | null,
       StringEnumJsonSchema,
       MuiContext
     >,
@@ -70,18 +68,32 @@ const FormTypeInputStringEnum = ({
 
   const options = useMemo(
     () =>
-      jsonSchema.enum.map((value) => ({
-        value,
-        label: jsonSchema.options?.alias?.[value] || value,
-      })),
+      jsonSchema.enum?.map((rawValue) => {
+        const value = '' + rawValue;
+        return {
+          value,
+          rawValue,
+          label: jsonSchema.options?.alias?.[value] || value,
+        };
+      }) || [],
     [jsonSchema],
   );
 
   const handleChange = useHandle((event: any) => {
-    onChange(event.target.value);
+    const rawValue = options.find(
+      (option) => option.value === event.target.value,
+    )?.rawValue;
+    if (rawValue === undefined) return;
+    onChange(rawValue);
   });
 
   const labelId = useMemo(() => `label-${path}`, [path]);
+
+  const stringifiedDefaultValue = useMemo(() => {
+    if (defaultValue === undefined) return undefined;
+    if (defaultValue === null) return '' + null;
+    return defaultValue;
+  }, [defaultValue]);
 
   return (
     <FormControl fullWidth={fullWidth} variant={variant}>
@@ -93,7 +105,7 @@ const FormTypeInputStringEnum = ({
         label={label}
         required={required}
         readOnly={readOnly}
-        defaultValue={defaultValue}
+        defaultValue={stringifiedDefaultValue}
         onChange={handleChange}
         disabled={disabled}
         size={size}

@@ -11,7 +11,7 @@ import type {
 } from '@canard/schema-form';
 
 type StringSwitchSchema = StringSchema & {
-  enum?: [string, string];
+  enum?: [string | null, string | null];
   options?: {
     alias?: { [label: string]: ReactNode };
   };
@@ -25,7 +25,7 @@ const FormTypeInputStringSwitch = ({
   onChange,
   context,
 }: FormTypeInputPropsWithSchema<
-  string,
+  string | null,
   StringSwitchSchema,
   {
     switchLabels?: { [label: string]: ReactNode };
@@ -33,12 +33,15 @@ const FormTypeInputStringSwitch = ({
 >) => {
   const [checked, unchecked] = useMemo(() => {
     const [checked, unchecked] = jsonSchema.enum || [];
-    return [checked || 'on', unchecked || 'off'];
+    return [
+      checked !== undefined ? checked : 'on',
+      unchecked !== undefined ? unchecked : 'off',
+    ];
   }, [jsonSchema]);
 
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
     const alias = context.switchLabels || jsonSchema.options?.alias || {};
-    return [alias[checked] || checked, alias[unchecked] || unchecked];
+    return [alias['' + checked] || checked, alias['' + unchecked] || unchecked];
   }, [checked, unchecked, context, jsonSchema]);
 
   const handleChange = useHandle((input: boolean) => {

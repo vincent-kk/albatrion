@@ -13,7 +13,7 @@ type SingleStepperProps = StepperProps extends { stringMode: false }
   : never;
 
 interface FormTypeInputNumberProps
-  extends FormTypeInputPropsWithSchema<number, NumberSchema> {
+  extends FormTypeInputPropsWithSchema<number | null, NumberSchema> {
   formatter?: SingleStepperProps['formatter'];
   parser?: SingleStepperProps['parser'];
 }
@@ -28,8 +28,7 @@ const FormTypeInputNumber = ({
   parser,
 }: FormTypeInputNumberProps) => {
   const handleChange = useHandle((value: number | null) => {
-    if (value === null) onChange(NaN);
-    else onChange(value);
+    onChange(value);
   });
   return (
     <Stepper
@@ -40,7 +39,7 @@ const FormTypeInputNumber = ({
       step={jsonSchema.multipleOf}
       formatter={formatter}
       parser={parser}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue != null ? defaultValue : undefined}
       onChange={handleChange}
     />
   );

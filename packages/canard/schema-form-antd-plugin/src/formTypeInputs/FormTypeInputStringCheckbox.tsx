@@ -12,14 +12,13 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-type StringJsonSchema = StringSchema & {
-  enum?: string[];
-  options?: {
-    alias?: { [label: string]: ReactNode };
-  };
-};
+type StringJsonSchema = StringSchema<{
+  alias?: { [label: string]: ReactNode };
+}>;
 
-type ArrayJsonSchema = ArraySchema & {
+type ArrayJsonSchema = ArraySchema<{
+  alias?: { [label: string]: ReactNode };
+}> & {
   items: StringJsonSchema;
 };
 
@@ -31,7 +30,7 @@ const FormTypeInputStringCheckbox = ({
   onChange,
   context,
 }: FormTypeInputPropsWithSchema<
-  Array<string>,
+  Array<string | null>,
   ArrayJsonSchema,
   { checkboxLabels?: { [label: string]: ReactNode } }
 >) => {
@@ -42,14 +41,28 @@ const FormTypeInputStringCheckbox = ({
       jsonSchema.options?.alias ||
       {};
     return jsonSchema.items?.enum
-      ? map(jsonSchema.items.enum, (value: string) => ({
-          label: alias[value] || value,
-          value,
-        }))
+      ? map(jsonSchema.items.enum, (rawValue: string | null) => {
+          const value = '' + rawValue;
+          return {
+            value,
+            rawValue,
+            label: alias[value] || value,
+          };
+        })
       : [];
   }, [context, jsonSchema]);
 
-  const handleChange = useHandle(onChange);
+  const handleChange = useHandle((value: string[]) => {
+    const convertedValues = value
+      .map((v) => options.find((opt) => opt.value === v)?.rawValue)
+      .filter((v) => v !== undefined);
+    onChange(convertedValues);
+  });
+
+  const stringifiedDefaultValue = useMemo(() => {
+    if (defaultValue === undefined) return undefined;
+    return defaultValue.map((v) => '' + v);
+  }, [defaultValue]);
 
   return (
     <Checkbox.Group
@@ -57,7 +70,7 @@ const FormTypeInputStringCheckbox = ({
       style={{ display: 'flex' }}
       options={options}
       disabled={disabled}
-      defaultValue={defaultValue}
+      defaultValue={stringifiedDefaultValue}
       onChange={handleChange}
     />
   );

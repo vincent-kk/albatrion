@@ -11,7 +11,7 @@ import type {
 
 interface FormTypeInputNumberProps
   extends FormTypeInputPropsWithSchema<
-    number,
+    number | null,
     NumberSchema,
     { size?: SizeType }
   > {
@@ -34,8 +34,7 @@ const FormTypeInputNumber = ({
   size,
 }: FormTypeInputNumberProps) => {
   const handleChange = useHandle((value: number | null) => {
-    if (value === null) onChange(NaN);
-    else onChange(value);
+    onChange(value);
   });
   return (
     <InputNumber
@@ -49,7 +48,7 @@ const FormTypeInputNumber = ({
       step={jsonSchema.multipleOf}
       formatter={formatter}
       parser={parser}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue != null ? defaultValue : undefined}
       onChange={handleChange}
       size={size || context?.size}
     />

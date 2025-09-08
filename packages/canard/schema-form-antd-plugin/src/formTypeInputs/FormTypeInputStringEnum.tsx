@@ -13,20 +13,19 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-type StringJsonSchema = StringSchema & {
-  enum?: string[];
-  options?: {
-    alias?: { [label: string]: string };
-  };
-};
+type StringJsonSchema = StringSchema<{
+  alias?: { [label: string]: string };
+}>;
 
-type ArrayJsonSchema = ArraySchema & {
+type ArrayJsonSchema = ArraySchema<{
+  alias?: { [label: string]: string };
+}> & {
   items: StringJsonSchema;
 };
 
 interface FormTypeInputStringEnumProps
   extends FormTypeInputPropsWithSchema<
-    string | Array<string>,
+    (string | null) | Array<string | null>,
     StringJsonSchema | ArrayJsonSchema,
     { size?: SizeType; enumLabels?: { [label: string]: string } }
   > {
@@ -52,26 +51,53 @@ const FormTypeInputStringEnum = ({
     else return [jsonSchema, alias, undefined] as const;
   }, [context, jsonSchema]);
 
-  const Options = useMemo(() => {
+  const options = useMemo(() => {
     return schema.enum
-      ? map(schema.enum, (value, index) => (
-          <Select.Option key={index + '' + value} value={value}>
-            {alias?.['' + value] || value}
-          </Select.Option>
-        ))
+      ? map(schema.enum, (rawValue) => {
+          const value = '' + rawValue;
+          return { value, rawValue, label: alias?.['' + value] || value };
+        })
       : [];
   }, [alias, schema]);
 
+  const Options = useMemo(() => {
+    return map(options, ({ value, label }, index) => {
+      return (
+        <Select.Option key={index + value} value={value}>
+          {label}
+        </Select.Option>
+      );
+    });
+  }, [options]);
+
   const handleChange = useHandle((value: string | string[]) => {
-    onChange(value);
+    if (Array.isArray(value)) {
+      const rawValues = value
+        .map((v) => options.find((option) => option.value === v)?.rawValue)
+        .filter((v) => v !== undefined);
+      return onChange(rawValues);
+    } else {
+      const rawValue = options.find(
+        (option) => option.value === value,
+      )?.rawValue;
+      if (rawValue === undefined) return;
+      onChange(rawValue);
+    }
   });
+
+  const stringifiedDefaultValue = useMemo(() => {
+    if (defaultValue === undefined) return undefined;
+    if (Array.isArray(defaultValue)) return defaultValue.map((v) => '' + v);
+    else return '' + defaultValue;
+  }, [defaultValue]);
+
   return (
     <Select
       id={path}
       mode={mode}
       placeholder={jsonSchema.placeholder}
       disabled={disabled}
-      defaultValue={defaultValue}
+      defaultValue={stringifiedDefaultValue}
       onChange={handleChange}
       style={{ width: '100%' }}
       size={size || context?.size}

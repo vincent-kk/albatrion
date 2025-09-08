@@ -13,14 +13,13 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-type StringJsonSchema = StringSchema & {
-  enum?: string[];
-  options?: {
-    alias?: { [label: string]: ReactNode };
-  };
-};
+type StringJsonSchema = StringSchema<{
+  alias?: { [label: string]: ReactNode };
+}>;
 
-type ArrayJsonSchema = ArraySchema & {
+type ArrayJsonSchema = ArraySchema<{
+  alias?: { [label: string]: ReactNode };
+}> & {
   items: StringJsonSchema;
 };
 
@@ -31,7 +30,7 @@ const FormTypeInputStringCheckbox = ({
   onChange,
   context,
 }: FormTypeInputPropsWithSchema<
-  Array<string>,
+  Array<string | null>,
   ArrayJsonSchema,
   { checkboxLabels?: { [label: string]: ReactNode } }
 >) => {
@@ -42,22 +41,35 @@ const FormTypeInputStringCheckbox = ({
       jsonSchema.options?.alias ||
       {};
     return jsonSchema.items?.enum
-      ? map(jsonSchema.items.enum, (value: string) => ({
-          label: alias[value] || value,
-          value,
-        }))
+      ? map(jsonSchema.items.enum, (rawValue: string | null) => {
+          const value = '' + rawValue;
+          return {
+            value,
+            rawValue,
+            label: alias[value] || value,
+          };
+        })
       : [];
   }, [context, jsonSchema]);
 
   const handleChange = useHandle((value: CheckboxValue[]) => {
-    onChange(map(value, (v) => v.toString()));
+    const convertedValues = map(value, (v) => {
+      const option = options.find((opt) => opt.value === v.toString());
+      return option ? option.rawValue : v.toString();
+    });
+    onChange(convertedValues);
   });
+
+  const stringifiedDefaultValue = useMemo(() => {
+    if (defaultValue === undefined) return undefined;
+    return map(defaultValue, (v) => '' + v);
+  }, [defaultValue]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
       <Checkbox.Group
         disabled={disabled}
-        defaultValue={defaultValue}
+        defaultValue={stringifiedDefaultValue}
         onChange={handleChange}
       >
         {map(options, (option) => (
