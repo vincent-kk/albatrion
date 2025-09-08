@@ -1,4 +1,3 @@
-import { isString } from '@winglet/common-utils/filter';
 import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
 import { getValue } from '@winglet/json/pointer';
 
@@ -9,7 +8,7 @@ export const getReferenceTable = (jsonSchema: JsonSchema) => {
   new JsonSchemaScanner({
     visitor: {
       exit: ({ schema, hasReference }) => {
-        if (hasReference && isString(schema.$ref))
+        if (hasReference && typeof schema.$ref === 'string')
           referenceTable.set(schema.$ref, getValue(jsonSchema, schema.$ref));
       },
     },
