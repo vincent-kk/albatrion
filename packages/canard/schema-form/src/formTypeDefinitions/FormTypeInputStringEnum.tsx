@@ -6,15 +6,8 @@ import { useHandle } from '@winglet/react-utils/hook';
 import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
+  StringSchema,
 } from '@/schema-form/types';
-
-type StringEnumJsonSchema = {
-  type: 'string';
-  enum?: string[];
-  options?: {
-    alias?: { [label: string]: ReactNode };
-  };
-};
 
 type EnumLabelsContext = {
   enumLabels?: {
@@ -34,33 +27,48 @@ const FormTypeInputStringEnum = ({
   style,
   className,
 }: FormTypeInputPropsWithSchema<
-  string,
-  StringEnumJsonSchema,
+  string | null,
+  StringSchema<{ alias?: { [label: string]: ReactNode } }>,
   EnumLabelsContext
 >) => {
   const enumOptions = useMemo(
     () =>
       jsonSchema.enum
-        ? map(jsonSchema.enum, (value) => ({
-            value,
-            label:
-              context.enumLabels?.[value] ||
-              jsonSchema.options?.alias?.[value] ||
+        ? map(jsonSchema.enum, (rawValue) => {
+            const value = '' + rawValue;
+            return {
               value,
-          }))
+              rawValue,
+              label:
+                context.enumLabels?.[value] ||
+                jsonSchema.options?.alias?.[value] ||
+                value,
+            };
+          })
         : [],
     [context, jsonSchema],
   );
+
   const handleChange = useHandle((event: ChangeEvent<HTMLSelectElement>) => {
-    onChange(event.target.value);
+    const rawValue = enumOptions.find(
+      (option) => option.value === event.target.value,
+    )?.rawValue;
+    if (rawValue === undefined) return;
+    onChange(rawValue);
   });
+
+  const stringifiedDefaultValue = useMemo(() => {
+    if (defaultValue === undefined) return undefined;
+    if (defaultValue === null) return '' + null;
+    return defaultValue;
+  }, [defaultValue]);
 
   return (
     <select
       id={path}
       name={name}
       disabled={disabled || readOnly}
-      defaultValue={defaultValue}
+      defaultValue={stringifiedDefaultValue}
       onChange={handleChange}
       style={style}
       className={className}

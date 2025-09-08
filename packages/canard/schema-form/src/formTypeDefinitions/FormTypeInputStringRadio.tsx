@@ -6,15 +6,8 @@ import { useHandle } from '@winglet/react-utils/hook';
 import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
+  StringSchema,
 } from '@/schema-form/types';
-
-type StringRadioJsonSchema = {
-  type: 'string';
-  enum?: string[];
-  options?: {
-    alias?: { [label: string]: ReactNode };
-  };
-};
 
 type RadioLabelsContext = {
   radioLabels?: {
@@ -34,31 +27,39 @@ const FormTypeInputStringRadio = ({
   style,
   className,
 }: FormTypeInputPropsWithSchema<
-  string,
-  StringRadioJsonSchema,
+  string | null,
+  StringSchema<{ alias?: { [label: string]: ReactNode } }>,
   RadioLabelsContext
 >) => {
   const radioOptions = useMemo(
     () =>
       jsonSchema.enum
-        ? map(jsonSchema.enum, (value: string | number) => ({
-            value,
-            label:
-              context.radioLabels?.[value] ||
-              jsonSchema.options?.alias?.[value] ||
+        ? map(jsonSchema.enum, (rawValue: string | null) => {
+            const value = '' + rawValue;
+            return {
               value,
-          }))
+              rawValue,
+              label:
+                context.radioLabels?.[value] ||
+                jsonSchema.options?.alias?.[value] ||
+                value,
+            };
+          })
         : [],
     [context, jsonSchema],
   );
 
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value);
+    const rawValue = radioOptions.find(
+      (option) => option.value === event.target.value,
+    )?.rawValue;
+    if (rawValue === undefined) return;
+    onChange(rawValue);
   });
 
   return (
     <Fragment>
-      {map(radioOptions, ({ value, label }) => (
+      {map(radioOptions, ({ value, rawValue, label }) => (
         <label key={value} style={style} className={className}>
           <input
             type="radio"
@@ -67,7 +68,7 @@ const FormTypeInputStringRadio = ({
             readOnly={readOnly}
             disabled={disabled}
             value={value}
-            defaultChecked={value === defaultValue}
+            defaultChecked={rawValue === defaultValue}
             onChange={handleChange}
           />
           {label}

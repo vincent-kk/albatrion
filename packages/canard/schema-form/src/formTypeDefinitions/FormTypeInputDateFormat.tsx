@@ -5,16 +5,12 @@ import { useHandle } from '@winglet/react-utils/hook';
 import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
+  StringSchema,
 } from '@/schema-form/types';
 
 type DateFormatJsonSchema = {
-  type: 'string';
   format: 'month' | 'week' | 'date' | 'date-time' | 'time';
-  options?: {
-    minimum?: string;
-    maximum?: string;
-  };
-};
+} & StringSchema<{ minimum?: string; maximum?: string }>;
 
 const FormTypeInputDateFormat = ({
   path,
