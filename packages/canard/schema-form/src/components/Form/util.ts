@@ -1,7 +1,5 @@
 import type { ReactNode } from 'react';
 
-import { isFunction } from '@winglet/common-utils/filter';
-
 import type { InferSchemaNode } from '@/schema-form/core';
 import type {
   AllowedValue,
@@ -20,14 +18,12 @@ export const createChildren = <
   rootNode?: InferSchemaNode<Schema>,
 ): ReactNode => {
   if (!children) return null;
-  if (isFunction(children)) {
-    return children({
-      jsonSchema,
-      node: rootNode,
-      defaultValue: rootNode?.defaultValue as Value,
-      value: rootNode?.value as Value,
-      errors: rootNode?.globalErrors || undefined,
-    });
-  }
-  return children;
+  if (typeof children !== 'function') return children;
+  return children({
+    jsonSchema,
+    node: rootNode,
+    defaultValue: rootNode?.defaultValue as Value,
+    value: rootNode?.value as Value,
+    errors: rootNode?.globalErrors || undefined,
+  });
 };
