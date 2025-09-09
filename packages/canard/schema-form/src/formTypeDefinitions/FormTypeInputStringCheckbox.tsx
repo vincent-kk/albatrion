@@ -54,7 +54,6 @@ const FormTypeInputStringCheckbox = ({
         : [],
     [context, jsonSchema],
   );
-
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = event.target;
     const rawValue = checkboxOptions.find(
@@ -65,7 +64,6 @@ const FormTypeInputStringCheckbox = ({
     else
       onChange((prev) => prev?.filter((option) => option !== rawValue) || []);
   });
-
   return (
     <div>
       {map(checkboxOptions, ({ value, rawValue, label }) => (

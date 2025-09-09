@@ -1,4 +1,4 @@
-import type { ChangeEvent } from 'react';
+import { type ChangeEvent } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -17,7 +17,7 @@ const FormTypeInputNumber = ({
   onChange,
   style,
   className,
-}: FormTypeInputProps<number>) => {
+}: FormTypeInputProps<number | null>) => {
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.valueAsNumber);
   });
@@ -30,7 +30,7 @@ const FormTypeInputNumber = ({
       readOnly={readOnly}
       disabled={disabled}
       placeholder={jsonSchema?.placeholder}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
       style={style}
       className={className}

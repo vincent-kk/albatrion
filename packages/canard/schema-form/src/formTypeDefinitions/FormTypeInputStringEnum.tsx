@@ -48,7 +48,11 @@ const FormTypeInputStringEnum = ({
         : [],
     [context, jsonSchema],
   );
-
+  const initialValue = useMemo(() => {
+    if (defaultValue === undefined) return undefined;
+    if (defaultValue === null) return '' + null;
+    return defaultValue;
+  }, [defaultValue]);
   const handleChange = useHandle((event: ChangeEvent<HTMLSelectElement>) => {
     const rawValue = enumOptions.find(
       (option) => option.value === event.target.value,
@@ -56,19 +60,12 @@ const FormTypeInputStringEnum = ({
     if (rawValue === undefined) return;
     onChange(rawValue);
   });
-
-  const stringifiedDefaultValue = useMemo(() => {
-    if (defaultValue === undefined) return undefined;
-    if (defaultValue === null) return '' + null;
-    return defaultValue;
-  }, [defaultValue]);
-
   return (
     <select
       id={path}
       name={name}
       disabled={disabled || readOnly}
-      defaultValue={stringifiedDefaultValue}
+      defaultValue={initialValue}
       onChange={handleChange}
       style={style}
       className={className}

@@ -22,10 +22,7 @@ const FormTypeInputDateFormat = ({
   onChange,
   style,
   className,
-}: FormTypeInputPropsWithSchema<string, DateFormatJsonSchema>) => {
-  const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value);
-  });
+}: FormTypeInputPropsWithSchema<string | null, DateFormatJsonSchema>) => {
   const { type, max, min } = useMemo(
     () => ({
       type: jsonSchema.format,
@@ -34,6 +31,9 @@ const FormTypeInputDateFormat = ({
     }),
     [jsonSchema],
   );
+  const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
+    onChange(event.target.value);
+  });
   return (
     <input
       type={type}
@@ -43,7 +43,7 @@ const FormTypeInputDateFormat = ({
       disabled={disabled}
       max={max}
       min={min}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
       style={style}
       className={className}

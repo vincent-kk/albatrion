@@ -48,7 +48,6 @@ const FormTypeInputStringRadio = ({
         : [],
     [context, jsonSchema],
   );
-
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const rawValue = radioOptions.find(
       (option) => option.value === event.target.value,
@@ -56,7 +55,6 @@ const FormTypeInputStringRadio = ({
     if (rawValue === undefined) return;
     onChange(rawValue);
   });
-
   return (
     <Fragment>
       {map(radioOptions, ({ value, rawValue, label }) => (

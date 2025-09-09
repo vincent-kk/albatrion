@@ -16,7 +16,7 @@ const FormTypeInputBoolean = ({
   onChange,
   style,
   className,
-}: FormTypeInputProps<boolean>) => {
+}: FormTypeInputProps<boolean | null>) => {
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.checked);
   });
@@ -26,7 +26,7 @@ const FormTypeInputBoolean = ({
       id={path}
       name={name}
       disabled={disabled || readOnly}
-      defaultChecked={!!defaultValue}
+      defaultChecked={defaultValue ?? undefined}
       onChange={handleChange}
       style={style}
       className={className}

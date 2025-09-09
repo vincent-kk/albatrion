@@ -17,15 +17,15 @@ const FormTypeInputString = ({
   onChange,
   style,
   className,
-}: FormTypeInputProps<string>) => {
-  const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value);
-  });
+}: FormTypeInputProps<string | null>) => {
   const type = useMemo(() => {
     if (jsonSchema?.format === 'password') return 'password';
     else if (jsonSchema?.format === 'email') return 'email';
     else return 'text';
   }, [jsonSchema?.format]);
+  const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
+    onChange(event.target.value);
+  });
   return (
     <input
       type={type}
@@ -34,7 +34,7 @@ const FormTypeInputString = ({
       readOnly={readOnly}
       disabled={disabled}
       placeholder={jsonSchema?.placeholder}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
       style={style}
       className={className}
