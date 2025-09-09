@@ -21,7 +21,11 @@ type SliderJsonSchema = NumberSchema & {
 };
 
 interface FormTypeInputSliderProps
-  extends FormTypeInputPropsWithSchema<number, SliderJsonSchema, MuiContext>,
+  extends FormTypeInputPropsWithSchema<
+      number | null,
+      SliderJsonSchema,
+      MuiContext
+    >,
     MuiContext {
   label?: ReactNode;
   showMarks?: boolean;

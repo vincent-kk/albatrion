@@ -19,7 +19,11 @@ type StringJsonSchema = StringSchema & {
 };
 
 interface FormTypeInputStringProps
-  extends FormTypeInputPropsWithSchema<string, StringJsonSchema, MuiContext>,
+  extends FormTypeInputPropsWithSchema<
+      string | null,
+      StringJsonSchema,
+      MuiContext
+    >,
     MuiContext {
   label?: ReactNode;
   hideLabel?: boolean;
@@ -87,7 +91,7 @@ const FormTypeInputString = ({
       label={label}
       required={required}
       disabled={disabled}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
       size={size}
       slotProps={{

@@ -89,7 +89,7 @@ const FormTypeInputStringEnum = ({
 
   const labelId = useMemo(() => `label-${path}`, [path]);
 
-  const stringifiedDefaultValue = useMemo(() => {
+  const initialValue = useMemo(() => {
     if (defaultValue === undefined) return undefined;
     if (defaultValue === null) return '' + null;
     return defaultValue;
@@ -105,7 +105,7 @@ const FormTypeInputStringEnum = ({
         label={label}
         required={required}
         readOnly={readOnly}
-        defaultValue={stringifiedDefaultValue}
+        defaultValue={initialValue}
         onChange={handleChange}
         disabled={disabled}
         size={size}

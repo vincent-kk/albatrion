@@ -21,7 +21,11 @@ type TextareaJsonSchema = StringSchema & {
 };
 
 interface FormTypeInputTextareaProps
-  extends FormTypeInputPropsWithSchema<string, TextareaJsonSchema, MuiContext>,
+  extends FormTypeInputPropsWithSchema<
+      string | null,
+      TextareaJsonSchema,
+      MuiContext
+    >,
     MuiContext {
   label?: ReactNode;
   minRows?: number;

@@ -91,7 +91,7 @@ const FormTypeInputRadioGroup = ({
       control={
         <RadioGroup
           name={name}
-          defaultValue={defaultValue}
+          defaultValue={defaultValue ?? undefined}
           onChange={handleChange}
           row={row}
         >

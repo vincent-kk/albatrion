@@ -20,7 +20,7 @@ type BooleanSwitchJsonSchema = BooleanSchema<{
 
 interface FormTypeInputBooleanSwitchProps
   extends FormTypeInputPropsWithSchema<
-      boolean,
+      boolean | null,
       BooleanSwitchJsonSchema,
       MuiContext
     >,
@@ -64,7 +64,7 @@ const FormTypeInputBooleanSwitch = ({
         <Switch
           id={path}
           name={name}
-          defaultChecked={defaultValue}
+          defaultChecked={defaultValue === true}
           onChange={handleChange}
           disabled={disabled}
           size={size}

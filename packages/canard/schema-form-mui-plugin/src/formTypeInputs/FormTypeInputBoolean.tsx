@@ -12,7 +12,7 @@ import type {
 import type { MuiContext } from '../type';
 
 interface FormTypeInputBooleanProps
-  extends FormTypeInputProps<boolean, MuiContext>,
+  extends FormTypeInputProps<boolean | null, MuiContext>,
     MuiContext {
   label?: ReactNode;
   hideLabel?: boolean;

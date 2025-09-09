@@ -17,7 +17,11 @@ type NumberJsonSchema = NumberSchema & {
 };
 
 interface FormTypeInputNumberProps
-  extends FormTypeInputPropsWithSchema<number, NumberJsonSchema, MuiContext>,
+  extends FormTypeInputPropsWithSchema<
+      number | null,
+      NumberJsonSchema,
+      MuiContext
+    >,
     MuiContext {
   label?: ReactNode;
   hideLabel?: boolean;
@@ -96,7 +100,7 @@ const FormTypeInputNumber = ({
       required={required}
       size={size}
       placeholder={jsonSchema.placeholder}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
       disabled={disabled}
       slotProps={{

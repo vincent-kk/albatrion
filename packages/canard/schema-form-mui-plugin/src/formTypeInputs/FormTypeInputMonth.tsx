@@ -20,7 +20,11 @@ type MonthJsonSchema = StringSchema & {
 };
 
 interface FormTypeInputMonthProps
-  extends FormTypeInputPropsWithSchema<string, MonthJsonSchema, MuiContext>,
+  extends FormTypeInputPropsWithSchema<
+      string | null,
+      MonthJsonSchema,
+      MuiContext
+    >,
     MuiContext {
   label?: ReactNode;
   hideLabel?: boolean;

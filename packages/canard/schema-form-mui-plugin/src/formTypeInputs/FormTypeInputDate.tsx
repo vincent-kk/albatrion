@@ -22,7 +22,11 @@ type DateJsonSchema = StringSchema & {
 };
 
 interface FormTypeInputDateProps
-  extends FormTypeInputPropsWithSchema<string, DateJsonSchema, MuiContext>,
+  extends FormTypeInputPropsWithSchema<
+      string | null,
+      DateJsonSchema,
+      MuiContext
+    >,
     MuiContext {
   label?: ReactNode;
   hideLabel?: boolean;

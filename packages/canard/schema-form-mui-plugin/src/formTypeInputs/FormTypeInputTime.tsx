@@ -20,7 +20,11 @@ type TimeJsonSchema = StringSchema & {
 };
 
 interface FormTypeInputTimeProps
-  extends FormTypeInputPropsWithSchema<string, TimeJsonSchema, MuiContext>,
+  extends FormTypeInputPropsWithSchema<
+      string | null,
+      TimeJsonSchema,
+      MuiContext
+    >,
     MuiContext {
   label?: ReactNode;
   ampm?: boolean;

@@ -25,7 +25,11 @@ type UriJsonSchema = StringSchema<{
 }> & { format?: 'uri'; formType?: 'uri' };
 
 interface FormTypeInputUriProps
-  extends FormTypeInputPropsWithSchema<string, UriJsonSchema, MuiContext>,
+  extends FormTypeInputPropsWithSchema<
+      string | null,
+      UriJsonSchema,
+      MuiContext
+    >,
     MuiContext {
   label?: ReactNode;
   protocols?: string[];
