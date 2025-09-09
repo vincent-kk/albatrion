@@ -40,7 +40,7 @@ const FormTypeInputTextarea = ({
       readOnly={readOnly}
       autoSize={autoSize}
       placeholder={jsonSchema.placeholder}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
     />
   );

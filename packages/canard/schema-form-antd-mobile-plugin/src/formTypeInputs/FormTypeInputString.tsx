@@ -21,7 +21,7 @@ const FormTypeInputString = ({
   disabled,
   defaultValue,
   onChange,
-}: FormTypeInputPropsWithSchema<string, StringJsonSchema>) => {
+}: FormTypeInputPropsWithSchema<string | null, StringJsonSchema>) => {
   const type = jsonSchema.format === 'password' ? 'password' : 'text';
   const handleChange = useHandle(onChange);
   return (
@@ -32,7 +32,7 @@ const FormTypeInputString = ({
       readOnly={readOnly}
       disabled={disabled}
       placeholder={jsonSchema.placeholder}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
     />
   );

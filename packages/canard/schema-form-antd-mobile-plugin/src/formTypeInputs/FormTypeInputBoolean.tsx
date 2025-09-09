@@ -14,9 +14,12 @@ const FormTypeInputBoolean = ({
   disabled,
   value,
   onChange,
-}: FormTypeInputProps<boolean>) => {
+}: FormTypeInputProps<boolean | null>) => {
   const [indeterminate, checked] = useMemo(
-    () => [value !== undefined && typeof value !== 'boolean', !!value],
+    () => [
+      value !== undefined && typeof value !== 'boolean',
+      value ?? undefined,
+    ],
     [value],
   );
   const handleChange = useHandle(onChange);

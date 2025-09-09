@@ -44,7 +44,7 @@ const FormTypeInputSlider = ({
       step={step}
       range={range}
       marks={marks}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue ?? undefined}
       {...changeHandler}
     />
   );

@@ -50,6 +50,11 @@ const FormTypeInputRadioGroup = ({
       : [];
   }, [context, jsonSchema]);
 
+  const initialValue = useMemo(
+    () => options.find((option) => option.rawValue === defaultValue)?.value,
+    [defaultValue, options],
+  );
+
   const handleChange = useHandle((value: string | number) => {
     const selectedOption = options.find((opt) => opt.value === value);
     if (selectedOption === undefined) return;
@@ -60,9 +65,7 @@ const FormTypeInputRadioGroup = ({
     <div style={{ display: 'flex', flexDirection: 'row', gap: 8, ...style }}>
       <Radio.Group
         disabled={disabled}
-        defaultValue={
-          options.find((option) => option.rawValue === defaultValue)?.value
-        }
+        defaultValue={initialValue}
         onChange={handleChange}
       >
         {map(options, (option) => (

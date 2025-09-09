@@ -27,7 +27,7 @@ const FormTypeInputBooleanSwitch = ({
   onChange,
   context,
 }: FormTypeInputPropsWithSchema<
-  boolean,
+  boolean | null,
   BooleanSwitchSchema,
   {
     checkboxLabels?: {
@@ -47,7 +47,7 @@ const FormTypeInputBooleanSwitch = ({
     <Switch
       key={path}
       disabled={disabled}
-      checked={value}
+      checked={value ?? undefined}
       checkedText={checkedLabel}
       uncheckedText={uncheckedLabel}
       onChange={handleChange}

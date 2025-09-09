@@ -52,6 +52,11 @@ const FormTypeInputStringCheckbox = ({
       : [];
   }, [context, jsonSchema]);
 
+  const initialValue = useMemo(() => {
+    if (defaultValue === undefined) return undefined;
+    return map(defaultValue, (v) => '' + v);
+  }, [defaultValue]);
+
   const handleChange = useHandle((value: CheckboxValue[]) => {
     const convertedValues = map(value, (v) => {
       const option = options.find((opt) => opt.value === v.toString());
@@ -60,16 +65,11 @@ const FormTypeInputStringCheckbox = ({
     onChange(convertedValues);
   });
 
-  const stringifiedDefaultValue = useMemo(() => {
-    if (defaultValue === undefined) return undefined;
-    return map(defaultValue, (v) => '' + v);
-  }, [defaultValue]);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
       <Checkbox.Group
         disabled={disabled}
-        defaultValue={stringifiedDefaultValue}
+        defaultValue={initialValue}
         onChange={handleChange}
       >
         {map(options, (option) => (
