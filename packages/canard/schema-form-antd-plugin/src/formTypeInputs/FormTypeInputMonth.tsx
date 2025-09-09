@@ -16,7 +16,7 @@ const DATA_FORMAT = 'YYYY-MM';
 
 interface FormTypeInputMonthProps
   extends FormTypeInputPropsWithSchema<
-    string,
+    string | null,
     StringSchema,
     { size?: SizeType }
   > {

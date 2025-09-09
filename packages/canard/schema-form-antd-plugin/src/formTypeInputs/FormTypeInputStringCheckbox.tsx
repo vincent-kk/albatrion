@@ -30,7 +30,7 @@ const FormTypeInputStringCheckbox = ({
   onChange,
   context,
 }: FormTypeInputPropsWithSchema<
-  Array<string | null>,
+  Array<string | null> | null,
   ArrayJsonSchema,
   { checkboxLabels?: { [label: string]: ReactNode } }
 >) => {
@@ -59,8 +59,8 @@ const FormTypeInputStringCheckbox = ({
     onChange(convertedValues);
   });
 
-  const stringifiedDefaultValue = useMemo(() => {
-    if (defaultValue === undefined) return undefined;
+  const initialValue = useMemo(() => {
+    if (defaultValue == null) return undefined;
     return defaultValue.map((v) => '' + v);
   }, [defaultValue]);
 
@@ -70,7 +70,7 @@ const FormTypeInputStringCheckbox = ({
       style={{ display: 'flex' }}
       options={options}
       disabled={disabled}
-      defaultValue={stringifiedDefaultValue}
+      defaultValue={initialValue}
       onChange={handleChange}
     />
   );

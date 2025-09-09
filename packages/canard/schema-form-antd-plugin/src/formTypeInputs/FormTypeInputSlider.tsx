@@ -14,7 +14,7 @@ const FormTypeInputSlider = ({
   disabled,
   defaultValue,
   onChange,
-}: FormTypeInputPropsWithSchema<number, NumberSchema>) => {
+}: FormTypeInputPropsWithSchema<number | null, NumberSchema>) => {
   const handleChange = useCallback(
     (value: number | null) => {
       if (value === null) onChange(NaN);
@@ -41,7 +41,7 @@ const FormTypeInputSlider = ({
       min={min}
       max={max}
       step={step}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue ?? undefined}
       {...changeHandler}
     />
   );

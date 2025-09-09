@@ -29,7 +29,7 @@ type OnChangeRangeValueType<T> = RangeValueType<T> | null;
 
 interface FormTypeInputTimeRangeProps
   extends FormTypeInputPropsWithSchema<
-    [string, string],
+    [string | null, string | null] | null,
     DateRangeSchema,
     { size?: SizeType }
   > {
@@ -47,11 +47,6 @@ const FormTypeInputTimeRange = ({
   context,
   size,
 }: FormTypeInputTimeRangeProps) => {
-  const handleChange = useHandle((range: OnChangeRangeValueType<Dayjs>) => {
-    const [start, end] = range || [];
-    if (!start || !end) return;
-    onChange([start.format(DATE_FORMAT), end.format(DATE_FORMAT)]);
-  });
   const initialValue = useMemo<RangeValueType<Dayjs>>(
     () =>
       defaultValue?.length === 2
@@ -62,6 +57,7 @@ const FormTypeInputTimeRange = ({
         : undefined,
     [defaultValue],
   );
+
   const disabledDate = useMemo(() => {
     const { minimum, maximum } = jsonSchema.options || {};
     return (date: Dayjs | null) => {
@@ -74,6 +70,12 @@ const FormTypeInputTimeRange = ({
       return false;
     };
   }, [jsonSchema?.options]);
+
+  const handleChange = useHandle((range: OnChangeRangeValueType<Dayjs>) => {
+    const [start, end] = range || [];
+    if (!start || !end) return;
+    onChange([start.format(DATE_FORMAT), end.format(DATE_FORMAT)]);
+  });
 
   return (
     <DatePicker.RangePicker

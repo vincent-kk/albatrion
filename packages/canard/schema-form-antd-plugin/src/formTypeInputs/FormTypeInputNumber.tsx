@@ -48,7 +48,7 @@ const FormTypeInputNumber = ({
       step={jsonSchema.multipleOf}
       formatter={formatter}
       parser={parser}
-      defaultValue={defaultValue != null ? defaultValue : undefined}
+      defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
       size={size || context?.size}
     />

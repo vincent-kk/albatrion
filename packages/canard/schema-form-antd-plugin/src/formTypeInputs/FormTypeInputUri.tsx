@@ -18,12 +18,11 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-type StringJsonSchema = StringSchema & {
+type StringJsonSchema = StringSchema<{
+  protocols?: string[];
+}> & {
   format?: 'uri';
   formType?: 'uri';
-  options?: {
-    protocols?: string[];
-  };
 };
 
 const DEFAULT_PROTOCOLS = ['http', 'https', 'ftp', 'mailto', 'tel'];
@@ -72,7 +71,7 @@ const parseUri = (uri: string) => {
 
 interface FormTypeInputUriProps
   extends FormTypeInputPropsWithSchema<
-    string,
+    string | null,
     StringJsonSchema,
     { size?: SizeType }
   > {

@@ -18,7 +18,7 @@ type StringJsonSchema = StringSchema & {
 
 interface FormTypeInputStringProps
   extends FormTypeInputPropsWithSchema<
-    string,
+    string | null,
     StringJsonSchema,
     { size?: SizeType }
   > {
@@ -41,6 +41,7 @@ const FormTypeInputString = ({
       return Input.Password;
     else return Input;
   }, [jsonSchema]);
+
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
   });
@@ -51,7 +52,7 @@ const FormTypeInputString = ({
       readOnly={readOnly}
       disabled={disabled}
       placeholder={jsonSchema.placeholder}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
       size={size || context?.size}
     />

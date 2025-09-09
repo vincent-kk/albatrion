@@ -14,7 +14,7 @@ import type {
 const DATE_FORMAT = 'HH:mm:00Z';
 
 interface FormTypeInputTimeProps
-  extends FormTypeInputProps<string, { size?: SizeType }> {
+  extends FormTypeInputProps<string | null, { size?: SizeType }> {
   size?: SizeType;
 }
 

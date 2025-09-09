@@ -70,6 +70,12 @@ const FormTypeInputStringEnum = ({
     });
   }, [options]);
 
+  const initialValue = useMemo(() => {
+    if (defaultValue === undefined) return undefined;
+    if (Array.isArray(defaultValue)) return defaultValue.map((v) => '' + v);
+    else return '' + defaultValue;
+  }, [defaultValue]);
+
   const handleChange = useHandle((value: string | string[]) => {
     if (Array.isArray(value)) {
       const rawValues = value
@@ -85,19 +91,13 @@ const FormTypeInputStringEnum = ({
     }
   });
 
-  const stringifiedDefaultValue = useMemo(() => {
-    if (defaultValue === undefined) return undefined;
-    if (Array.isArray(defaultValue)) return defaultValue.map((v) => '' + v);
-    else return '' + defaultValue;
-  }, [defaultValue]);
-
   return (
     <Select
       id={path}
       mode={mode}
       placeholder={jsonSchema.placeholder}
       disabled={disabled}
-      defaultValue={stringifiedDefaultValue}
+      defaultValue={initialValue}
       onChange={handleChange}
       style={{ width: '100%' }}
       size={size || context?.size}

@@ -29,7 +29,7 @@ type OnChangeRangeValueType<T> = RangeValueType<T> | null;
 
 interface FormTypeInputDateRangeProps
   extends FormTypeInputPropsWithSchema<
-    [string, string],
+    [string | null, string | null] | null,
     DateRangeSchema,
     { size?: SizeType }
   > {

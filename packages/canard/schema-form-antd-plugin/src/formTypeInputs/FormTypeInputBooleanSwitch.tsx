@@ -22,7 +22,7 @@ type BooleanSwitchSchema = BooleanSchema & {
 
 interface FormTypeInputBooleanSwitchProps
   extends FormTypeInputPropsWithSchema<
-    boolean,
+    boolean | null,
     BooleanSwitchSchema,
     {
       switchSize?: SwitchSize;
@@ -57,7 +57,7 @@ const FormTypeInputBooleanSwitch = ({
     <Switch
       key={path}
       disabled={disabled}
-      checked={value}
+      checked={value ?? undefined}
       checkedChildren={checkedLabel}
       unCheckedChildren={uncheckedLabel}
       onChange={handleChange}
