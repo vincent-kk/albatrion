@@ -88,7 +88,7 @@ const FormTypeInputTime = ({
     if (newValue && newValue.isValid()) {
       onChange(newValue.format('HH:mm:ss'));
     } else {
-      onChange('');
+      onChange(null);
     }
   });
 

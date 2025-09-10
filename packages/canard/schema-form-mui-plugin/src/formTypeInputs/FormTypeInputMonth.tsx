@@ -74,7 +74,7 @@ const FormTypeInputMonth = ({
     if (newValue && newValue.isValid()) {
       onChange(newValue.format('YYYY-MM'));
     } else {
-      onChange('');
+      onChange(null);
     }
   });
 

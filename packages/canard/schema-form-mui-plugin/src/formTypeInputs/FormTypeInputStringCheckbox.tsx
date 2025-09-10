@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 
@@ -59,14 +59,20 @@ const FormTypeInputStringCheckbox = ({
   const options = useMemo(() => {
     const enumValues = jsonSchema.items.enum || [];
     const checkboxLabels = jsonSchema.items?.options?.alias;
-    return enumValues.map((value) => ({
-      value,
-      label: checkboxLabels?.[value] || value,
-    }));
+    return enumValues.map((rawValue) => {
+      const value = '' + rawValue;
+      return {
+        value,
+        rawValue,
+        label: checkboxLabels?.[value] || value,
+      };
+    });
   }, [jsonSchema]);
 
+  const [value, setValue] = useState<string[]>(defaultValue.map((v) => '' + v));
+
   const handleToggle = useHandle((optionValue: string) => {
-    const currentValues = Array.isArray(defaultValue) ? defaultValue : [];
+    const currentValues = value;
     const isSelected = currentValues.includes(optionValue);
     let newValues: string[];
 
@@ -95,9 +101,7 @@ const FormTypeInputStringCheckbox = ({
       control={
         <FormGroup row={row}>
           {options.map((option) => {
-            const isChecked = Array.isArray(defaultValue)
-              ? defaultValue.includes(option.value)
-              : false;
+            const isChecked = value.includes(option.value);
             return (
               <FormControlLabel
                 key={option.value}

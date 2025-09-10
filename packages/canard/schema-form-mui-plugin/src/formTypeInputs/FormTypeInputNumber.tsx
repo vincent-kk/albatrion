@@ -71,9 +71,9 @@ const FormTypeInputNumber = ({
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
 
-    // 빈 문자열인 경우 undefined로 처리
+    // 빈 문자열인 경우 null로 처리
     if (inputValue === '') {
-      onChange(NaN);
+      onChange(null);
       return;
     }
 

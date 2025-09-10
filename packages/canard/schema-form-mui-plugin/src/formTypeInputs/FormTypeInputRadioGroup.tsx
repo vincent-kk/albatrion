@@ -13,12 +13,16 @@ import type {
 
 import type { MuiContext } from '../type';
 
-type RadioGroupStringJsonSchema = StringSchema & {
+type RadioGroupStringJsonSchema = StringSchema<{
+  alias?: { [label: string]: ReactNode };
+}> & {
   radioLabels?: string[];
   formType: 'radio';
 };
 
-type RadioGroupNumberJsonSchema = NumberSchema & {
+type RadioGroupNumberJsonSchema = NumberSchema<{
+  alias?: { [label: string]: ReactNode };
+}> & {
   radioLabels?: string[];
   formType: 'radio';
 };
@@ -55,22 +59,30 @@ const FormTypeInputRadioGroup = ({
 
   const options = useMemo(() => {
     const enumValues = jsonSchema.enum || [];
-    const radioLabels =
-      jsonSchema.radioLabels || enumValues.map((value) => '' + value);
+    const radioLabels = jsonSchema.radioLabels;
+    const alias = jsonSchema.options?.alias || {};
 
-    return enumValues.map((val, index) => ({
-      value: '' + val,
-      originalValue: val,
-      label: radioLabels[index] || '' + val,
-    }));
+    return enumValues.map((rawValue, index) => {
+      const value = '' + rawValue;
+      return {
+        value,
+        rawValue,
+        label: radioLabels?.[index] || alias[value] || value,
+      };
+    });
   }, [jsonSchema]);
+
+  const initialValue = useMemo(
+    () => options.find((option) => option.rawValue === defaultValue)?.value,
+    [defaultValue, options],
+  );
 
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const newValue = event.target.value;
       const selectedOption = options.find((opt) => opt.value === newValue);
       if (selectedOption) {
-        onChange(selectedOption.originalValue);
+        onChange(selectedOption.rawValue);
       }
     },
   );
@@ -91,7 +103,7 @@ const FormTypeInputRadioGroup = ({
       control={
         <RadioGroup
           name={name}
-          defaultValue={defaultValue ?? undefined}
+          defaultValue={initialValue}
           onChange={handleChange}
           row={row}
         >

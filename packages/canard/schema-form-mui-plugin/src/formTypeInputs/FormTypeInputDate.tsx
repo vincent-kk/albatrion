@@ -83,7 +83,7 @@ const FormTypeInputDate = ({
     if (newValue && newValue.isValid()) {
       onChange(newValue.format('YYYY-MM-DD'));
     } else {
-      onChange('');
+      onChange(null);
     }
   });
 
