@@ -82,6 +82,7 @@ const FormTypeInputStringCheckbox = ({
       newValues = [...currentValues, optionValue];
     }
 
+    setValue(newValues);
     onChange(newValues);
   });
 
@@ -110,7 +111,7 @@ const FormTypeInputStringCheckbox = ({
                   <Checkbox
                     id={`${path}-${option.value}`}
                     name={`${name}[]`}
-                    defaultChecked={isChecked}
+                    checked={isChecked}
                     onChange={() => handleToggle(option.value)}
                     size={size}
                   />
