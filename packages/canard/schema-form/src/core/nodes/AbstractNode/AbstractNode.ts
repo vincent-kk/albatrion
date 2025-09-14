@@ -530,15 +530,7 @@ export abstract class AbstractNode<
     }
     this.updateComputedProperties();
     this.#computeEnabled = computeEnabled;
-    if (computeEnabled)
-      this.subscribe(({ type }) => {
-        if (type & NodeEventType.UpdateComputedProperties)
-          this.#hasPublishedUpdateComputedProperties = false;
-      });
   }
-
-  /** Whether the node has published an UpdateComputedProperties event */
-  #hasPublishedUpdateComputedProperties = false;
 
   /**
    * Updates the node's computed properties.
@@ -553,10 +545,7 @@ export abstract class AbstractNode<
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
     if (previous !== this.#active) this.resetNode(true);
-    if (!this.#hasPublishedUpdateComputedProperties) {
-      this.publish(NodeEventType.UpdateComputedProperties);
-      this.#hasPublishedUpdateComputedProperties = true;
-    }
+    this.publish(NodeEventType.UpdateComputedProperties);
   }
 
   /**
