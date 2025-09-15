@@ -55,7 +55,7 @@ const FormTypeInputArray = ({
             label="+"
             disabled={disabled}
             onClick={handleClick}
-            style={{ fontSize: '1rem' }}
+            fontSize="1rem"
           />
         </label>
       )}
@@ -63,41 +63,57 @@ const FormTypeInputArray = ({
   );
 };
 
-function Button({
+const Button = ({
   title,
   label,
   disabled,
   onClick,
+  size = '1.3rem',
+  fontSize = '0.8rem',
   style,
 }: {
   title: string;
   label: string;
   disabled?: boolean;
   onClick: () => void;
+  size?: CSSProperties['width'];
+  fontSize?: CSSProperties['fontSize'];
   style?: CSSProperties;
-}) {
+}) => {
   return (
     <button
       title={title}
       onClick={onClick}
       disabled={disabled}
       style={{
-        width: '1.3rem',
-        height: '1.3rem',
-        fontSize: '0.8rem',
-        fontWeight: 'normal',
+        position: 'relative',
+        width: size,
+        height: size,
+        padding: 0,
         border: 'none',
         cursor: 'pointer',
         borderRadius: '50%',
-        paddingInline: 'unset',
-        paddingBlock: 'unset',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         ...style,
       }}
     >
-      {label}
+      <span
+        style={{
+          fontSize,
+          lineHeight: 1,
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
+      >
+        {label}
+      </span>
     </button>
   );
-}
+};
 
 export const FormTypeInputArrayDefinition = {
   Component: FormTypeInputArray,
