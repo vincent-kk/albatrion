@@ -83,12 +83,6 @@ export abstract class AbstractNode<
   /** [readonly] Node's scope */
   public readonly scope: number | undefined;
 
-  /** [readonly] Original property key of the node */
-  public readonly propertyKey: string;
-
-  /** [readonly] Node's escaped key(it can be same as propertyKey if not escape needed) */
-  public readonly escapedKey: string;
-
   /** [readonly] Whether the node value is required */
   public readonly required: boolean;
 
@@ -137,7 +131,7 @@ export abstract class AbstractNode<
   public updatePath(this: AbstractNode) {
     const previous = this.#path;
     const parentPath = this.parentNode?.path;
-    const current = joinSegment(parentPath, this.escapedKey);
+    const current = joinSegment(parentPath, escapeSegment(this.#name));
     if (previous === current) return false;
     this.#path = current;
     this.publish(NodeEventType.UpdatePath, current, { previous, current });
@@ -286,10 +280,8 @@ export abstract class AbstractNode<
     this.rootNode = (this.parentNode?.rootNode || this) as SchemaNode;
     this.isRoot = !this.parentNode;
     this.#name = name || '';
-    this.propertyKey = this.#name;
-    this.escapedKey = escapeSegment(this.propertyKey);
 
-    this.#path = joinSegment(this.parentNode?.path, this.escapedKey);
+    this.#path = joinSegment(this.parentNode?.path, escapeSegment(this.#name));
     this.#key = key ? joinSegment(this.parentNode?.path, key) : this.#path;
 
     this.depth = this.#path

@@ -357,9 +357,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
     for (let i = 0, l = this.__children__.length; i < l; i++) {
       const node = this.__children__[i].node;
       if (node.type === 'virtual') continue;
-      const key = node.propertyKey;
-      if (replace || nullify || (key in draft && key in target))
-        node.setValue(nullify ? null : target[key], option);
+      const name = node.name;
+      if (replace || nullify || (name in draft && name in target))
+        node.setValue(nullify ? null : target[name], option);
     }
     this.__locked__ = false;
   }
@@ -396,7 +396,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
         if (oneOfChildNodeMap)
           for (const child of oneOfChildNodeMap.values()) {
             const node = child.node;
-            node.resetNode(isolation, this.__value__?.[node.propertyKey]);
+            node.resetNode(isolation, this.__value__?.[node.name]);
           }
 
         if (oneOfChildNodeMap) {
@@ -455,9 +455,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
       const node = this.__children__[i].node;
       if (node.type === 'virtual') continue;
       if (node.active) continue;
-      const key = node.propertyKey;
-      if (source[key] === undefined) continue;
-      this.__draft__[key] = undefined;
+      const name = node.name;
+      if (source[name] === undefined) continue;
+      this.__draft__[name] = undefined;
       if (noop) noop = false;
     }
     return noop;

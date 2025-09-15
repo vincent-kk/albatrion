@@ -17,7 +17,7 @@ import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
  * - `JSONPointer.Fragment` - Navigate to root node (`#`)
  * - `JSONPointer.Parent` - Navigate to parent node (`..`)
  * - `JSONPointer.Current` - Reset cursor to source node (`.`)
- * - Regular segments - Match against node propertyKey
+ * - Regular segments - Match against node's name
  *
  * **Traversal Behavior:**
  * - Stops traversal at terminal nodes (leaf nodes with no subnodes)
@@ -66,7 +66,7 @@ export const traversal = (
       let fallback: SchemaNode | null = null;
       for (let j = 0, jl = subnodes.length; j < jl; j++) {
         const node = subnodes[j].node;
-        if (node.propertyKey !== segment) continue;
+        if (node.name !== segment) continue;
         if (fallback === null) fallback = node;
         if (next(source, node)) continue;
         cursor = node;
