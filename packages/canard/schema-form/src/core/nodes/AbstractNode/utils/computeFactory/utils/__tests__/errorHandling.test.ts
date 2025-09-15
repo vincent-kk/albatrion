@@ -23,7 +23,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const pathManager = getPathManager();
 
       expect(() => {
-        factory(pathManager, 'if', true);
+        factory(pathManager, 'if');
       }).toThrow(SchemaNodeError);
     });
 
@@ -41,7 +41,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const pathManager = getPathManager();
 
       try {
-        factory(pathManager, 'if', true);
+        factory(pathManager, 'if');
         expect.fail('Should have thrown SchemaNodeError');
       } catch (error) {
         expect(error).toBeInstanceOf(SchemaNodeError);
@@ -76,7 +76,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const pathManager = getPathManager();
 
       expect(() => {
-        factory(pathManager, 'if', true);
+        factory(pathManager, 'if');
       }).toThrow(SchemaNodeError);
     });
 
@@ -93,7 +93,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const pathManager = getPathManager();
 
       expect(() => {
-        factory(pathManager, 'if', true);
+        factory(pathManager, 'if');
       }).toThrow(SchemaNodeError);
     });
   });
@@ -311,7 +311,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const pathManager = getPathManager();
 
       try {
-        factory(pathManager, 'if', true);
+        factory(pathManager, 'if');
         expect.fail('Should have thrown SchemaNodeError');
       } catch (error) {
         expect(error).toBeInstanceOf(SchemaNodeError);
@@ -365,7 +365,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
         const pathManager = getPathManager();
 
         expect(() => {
-          factory(pathManager, 'if', true);
+          factory(pathManager, 'if');
         }, `Expression "${invalidExpression}" should throw error`).toThrow(
           SchemaNodeError,
         );
@@ -397,7 +397,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
         const pathManager = getPathManager();
 
         expect(() => {
-          const result = factory(pathManager, 'if', true);
+          const result = factory(pathManager, 'if');
           expect(result).toBeDefined();
           expect(typeof result).toBe('function');
         }, `Expression "${validExpression}" should not throw error`).not.toThrow();
@@ -419,7 +419,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const pathManager = getPathManager();
 
       try {
-        factory(pathManager, 'if', true);
+        factory(pathManager, 'if');
         expect.fail('Should have thrown SchemaNodeError');
       } catch (error) {
         console.log('\n=== Error Output Sample ===');
