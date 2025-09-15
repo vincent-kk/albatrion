@@ -1,8 +1,4 @@
-import {
-  isEmptyObject,
-  isObject,
-  isTruthy,
-} from '@winglet/common-utils/filter';
+import { isEmptyObject, isObject } from '@winglet/common-utils/filter';
 import { equals } from '@winglet/common-utils/object';
 import { escapeSegment } from '@winglet/json/pointer';
 
@@ -11,11 +7,7 @@ import type { Fn, Nullish } from '@aileron/declare';
 import { PluginManager } from '@/schema-form/app/plugin';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import { transformErrors } from '@/schema-form/helpers/error';
-import {
-  JSONPointer,
-  isAbsolutePath,
-  joinSegment,
-} from '@/schema-form/helpers/jsonPointer';
+import { isAbsolutePath, joinSegment } from '@/schema-form/helpers/jsonPointer';
 import type {
   AllowedValue,
   JsonSchema,
@@ -106,10 +98,9 @@ export abstract class AbstractNode<
    * @param actor - The node setting the name
    */
   public setName(this: AbstractNode, name: string, actor: SchemaNode) {
-    if (actor === this.parentNode || actor === this) {
-      this.#name = name;
-      this.updatePath();
-    }
+    if (actor !== this.parentNode && actor !== this) return;
+    this.#name = name;
+    this.updatePath();
   }
 
   /** Node's path */
@@ -283,10 +274,7 @@ export abstract class AbstractNode<
 
     this.#path = joinSegment(this.parentNode?.path, escapeSegment(this.#name));
     this.#key = key ? joinSegment(this.parentNode?.path, key) : this.#path;
-
-    this.depth = this.#path
-      .split(JSONPointer.Separator)
-      .filter(isTruthy).length;
+    this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
 
     if (this.parentNode) {
       const unsubscribe = this.parentNode.subscribe(({ type }) => {
