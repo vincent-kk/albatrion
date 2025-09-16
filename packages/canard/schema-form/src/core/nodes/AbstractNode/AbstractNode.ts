@@ -92,6 +92,17 @@ export abstract class AbstractNode<
     return this.#name;
   }
 
+  /** Node's escaped name, it can be same as `name` */
+  #escapedName: string;
+
+  /**
+   * [readonly] Node's escaped name, it can be same as `name`
+   * @note Basically it is readonly, but can be changed with `setName` by the parent node.
+   * */
+  public get escapedName() {
+    return this.#escapedName;
+  }
+
   /**
    * Sets the node's name. Only the parent can change the name.
    * @param name - The name to set
@@ -100,6 +111,7 @@ export abstract class AbstractNode<
   public setName(this: AbstractNode, name: string, actor: SchemaNode) {
     if (actor !== this.parentNode && actor !== this) return;
     this.#name = name;
+    this.#escapedName = escapeSegment(name);
     this.updatePath();
   }
 
@@ -122,7 +134,7 @@ export abstract class AbstractNode<
   public updatePath(this: AbstractNode) {
     const previous = this.#path;
     const parentPath = this.parentNode?.path;
-    const current = joinSegment(parentPath, escapeSegment(this.#name));
+    const current = joinSegment(parentPath, this.#escapedName);
     if (previous === current) return false;
     this.#path = current;
     this.publish(NodeEventType.UpdatePath, current, { previous, current });
@@ -271,8 +283,9 @@ export abstract class AbstractNode<
     this.rootNode = (this.parentNode?.rootNode || this) as SchemaNode;
     this.isRoot = !this.parentNode;
     this.#name = name || '';
+    this.#escapedName = escapeSegment(this.#name);
 
-    this.#path = joinSegment(this.parentNode?.path, escapeSegment(this.#name));
+    this.#path = joinSegment(this.parentNode?.path, this.#escapedName);
     this.#key = key ? joinSegment(this.parentNode?.path, key) : this.#path;
     this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
 

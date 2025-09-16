@@ -35,9 +35,9 @@ describe('getPathSegments', () => {
     expect(getPathSegments(path)).toEqual(expected);
   });
 
-  it('should unescape standard RFC 6901 sequences in segments', () => {
+  it('getPathSegments will not unescape escaped characters', () => {
     const path = '/a~1b/c~0d';
-    const expected = ['a/b', 'c~d'];
+    const expected = ['a~1b', 'c~0d'];
     expect(getPathSegments(path)).toEqual(expected);
   });
 

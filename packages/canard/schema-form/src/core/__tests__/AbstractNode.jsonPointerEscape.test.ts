@@ -44,16 +44,19 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       const userNameNode = node.find('user~0name');
       expect(userNameNode).toBeDefined();
       expect(userNameNode?.name).toBe('user~name');
+      expect(userNameNode?.escapedName).toBe('user~0name');
       expect(userNameNode?.path).toBe('/user~0name');
       expect(userNameNode?.value).toBe('John Doe');
 
       // 중첩된 객체의 틸드 문자 검증
       const configNode = node.find('config~0settings');
       expect(configNode?.name).toBe('config~settings');
+      expect(configNode?.escapedName).toBe('config~0settings');
       expect(configNode?.path).toBe('/config~0settings');
 
       const themeNode = node.find('config~0settings/theme~0mode');
       expect(themeNode?.name).toBe('theme~mode');
+      expect(themeNode?.escapedName).toBe('theme~0mode');
       expect(themeNode?.path).toBe('/config~0settings/theme~0mode');
       expect(themeNode?.value).toBe('dark');
     });
@@ -88,16 +91,19 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       const userNameNode = node.find('user~1name');
       expect(userNameNode).toBeDefined();
       expect(userNameNode?.name).toBe('user/name');
+      expect(userNameNode?.escapedName).toBe('user~1name');
       expect(userNameNode?.path).toBe('/user~1name');
       expect(userNameNode?.value).toBe('Jane Smith');
 
       // 중첩된 객체의 슬래시 문자 검증
       const configNode = node.find('config~1database');
       expect(configNode?.name).toBe('config/database');
+      expect(configNode?.escapedName).toBe('config~1database');
       expect(configNode?.path).toBe('/config~1database');
 
       const hostPortNode = node.find('config~1database/host~1port');
       expect(hostPortNode?.name).toBe('host/port');
+      expect(hostPortNode?.escapedName).toBe('host~1port');
       expect(hostPortNode?.path).toBe('/config~1database/host~1port');
       expect(hostPortNode?.value).toBe('localhost:5432');
     });
@@ -131,15 +137,18 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       // 혼합 문자 이스케이프 검증
       const userSettingsNode = node.find('user~0~1settings');
       expect(userSettingsNode?.name).toBe('user~/settings');
+      expect(userSettingsNode?.escapedName).toBe('user~0~1settings');
       expect(userSettingsNode?.path).toBe('/user~0~1settings');
       expect(userSettingsNode?.value).toBe('mixed chars');
 
       const configNode = node.find('config~1~0database');
       expect(configNode?.name).toBe('config/~database');
+      expect(configNode?.escapedName).toBe('config~1~0database');
       expect(configNode?.path).toBe('/config~1~0database');
 
       const hostPortNode = node.find('config~1~0database/~0host~1port~0');
       expect(hostPortNode?.name).toBe('~host/port~');
+      expect(hostPortNode?.escapedName).toBe('~0host~1port~0');
       expect(hostPortNode?.path).toBe('/config~1~0database/~0host~1port~0');
       expect(hostPortNode?.value).toBe('complex key');
     });
@@ -174,10 +183,12 @@ describe('AbstractNode - JSON Pointer Escape', () => {
 
       const userNameNode = node.find('user.name');
       expect(userNameNode?.name).toBe('user.name');
+      expect(userNameNode?.escapedName).toBe('user.name');
       expect(userNameNode?.path).toBe('/user.name');
 
       const appVersionNode = node.find('config.settings/app.version');
       expect(appVersionNode?.name).toBe('app.version');
+      expect(appVersionNode?.escapedName).toBe('app.version');
       expect(appVersionNode?.path).toBe('/config.settings/app.version');
     });
 
@@ -209,10 +220,12 @@ describe('AbstractNode - JSON Pointer Escape', () => {
 
       const parentDirNode = node.find('parent..dir');
       expect(parentDirNode?.name).toBe('parent..dir');
+      expect(parentDirNode?.escapedName).toBe('parent..dir');
       expect(parentDirNode?.path).toBe('/parent..dir');
 
       const dataStoreNode = node.find('config..backup/data..store');
       expect(dataStoreNode?.name).toBe('data..store');
+      expect(dataStoreNode?.escapedName).toBe('data..store');
       expect(dataStoreNode?.path).toBe('/config..backup/data..store');
     });
 
@@ -244,10 +257,12 @@ describe('AbstractNode - JSON Pointer Escape', () => {
 
       const wildcardNode = node.find('wildcard*key');
       expect(wildcardNode?.name).toBe('wildcard*key');
+      expect(wildcardNode?.escapedName).toBe('wildcard*key');
       expect(wildcardNode?.path).toBe('/wildcard*key');
 
       const logEntriesNode = node.find('data*files/log*entries');
       expect(logEntriesNode?.name).toBe('log*entries');
+      expect(logEntriesNode?.escapedName).toBe('log*entries');
       expect(logEntriesNode?.path).toBe('/data*files/log*entries');
     });
 
@@ -279,10 +294,12 @@ describe('AbstractNode - JSON Pointer Escape', () => {
 
       const fragmentNode = node.find('fragment#key');
       expect(fragmentNode?.name).toBe('fragment#key');
+      expect(fragmentNode?.escapedName).toBe('fragment#key');
       expect(fragmentNode?.path).toBe('/fragment#key');
 
       const envSettingsNode = node.find('config#vars/env#settings');
       expect(envSettingsNode?.name).toBe('env#settings');
+      expect(envSettingsNode?.escapedName).toBe('env#settings');
       expect(envSettingsNode?.path).toBe('/config#vars/env#settings');
     });
   });
@@ -317,12 +334,14 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       // 틸드와 슬래시만 이스케이프되고 나머지는 그대로
       const complexNode = node.find('complex~0~1..*#key');
       expect(complexNode?.name).toBe('complex~/..*#key');
+      expect(complexNode?.escapedName).toBe('complex~0~1..*#key');
       expect(complexNode?.path).toBe('/complex~0~1..*#key');
       expect(complexNode?.value).toBe('mixed special chars');
 
       // 다른 순서의 특수 문자 검증
       const anotherNode = node.find('another#.*~0~1complex');
       expect(anotherNode?.name).toBe('another#.*~/complex');
+      expect(anotherNode?.escapedName).toBe('another#.*~0~1complex');
       expect(anotherNode?.path).toBe('/another#.*~0~1complex');
 
       // 중첩된 복합 키 검증
@@ -330,6 +349,7 @@ describe('AbstractNode - JSON Pointer Escape', () => {
         'another#.*~0~1complex/nested~0~1..~1*#prop',
       );
       expect(nestedNode?.name).toBe('nested~/../*#prop');
+      expect(nestedNode?.escapedName).toBe('nested~0~1..~1*#prop');
       expect(nestedNode?.path).toBe(
         '/another#.*~0~1complex/nested~0~1..~1*#prop',
       );
@@ -371,19 +391,24 @@ describe('AbstractNode - JSON Pointer Escape', () => {
 
       const doubleTildeNode = node.find('~0~0key');
       expect(doubleTildeNode?.name).toBe('~~key');
+      expect(doubleTildeNode?.escapedName).toBe('~0~0key');
 
       const doubleSlashNode = node.find('~1~1path');
       expect(doubleSlashNode?.name).toBe('//path');
+      expect(doubleSlashNode?.escapedName).toBe('~1~1path');
 
       // 확장 문자들은 이스케이프되지 않음
       const tripleDotsNode = node.find('...dots');
       expect(tripleDotsNode?.name).toBe('...dots');
+      expect(tripleDotsNode?.escapedName).toBe('...dots');
 
       const doubleStarsNode = node.find('**stars');
       expect(doubleStarsNode?.name).toBe('**stars');
+      expect(doubleStarsNode?.escapedName).toBe('**stars');
 
       const doubleHashNode = node.find('##hash');
       expect(doubleHashNode?.name).toBe('##hash');
+      expect(doubleHashNode?.escapedName).toBe('##hash');
     });
   });
 
@@ -492,12 +517,15 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       // 각 레벨의 이스케이프 검증
       const level1Node = node.find('level1~0prop');
       expect(level1Node?.name).toBe('level1~prop');
+      expect(level1Node?.escapedName).toBe('level1~0prop');
 
       const level2Node = node.find('level1~0prop/level2~1prop');
       expect(level2Node?.name).toBe('level2/prop');
+      expect(level2Node?.escapedName).toBe('level2~1prop');
 
       const level3Node = node.find('level1~0prop/level2~1prop/level3.prop');
       expect(level3Node?.name).toBe('level3.prop');
+      expect(level3Node?.escapedName).toBe('level3.prop');
 
       const level4Node = node.find(
         'level1~0prop/level2~1prop/level3.prop/level4*prop',
@@ -613,14 +641,17 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       // 일반 프로퍼티 키는 이스케이프되지 않음
       const userNameNode = node.find('userName');
       expect(userNameNode?.name).toBe('userName');
+      expect(userNameNode?.escapedName).toBe('userName');
       expect(userNameNode?.path).toBe('/userName');
 
       const userAgeNode = node.find('userAge');
       expect(userAgeNode?.name).toBe('userAge');
+      expect(userAgeNode?.escapedName).toBe('userAge');
       expect(userAgeNode?.path).toBe('/userAge');
 
       const themeNode = node.find('settings/theme');
       expect(themeNode?.name).toBe('theme');
+      expect(themeNode?.escapedName).toBe('theme');
       expect(themeNode?.path).toBe('/settings/theme');
     });
   });
@@ -668,10 +699,12 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       // 파일 경로 스타일 키 검증 (슬래시만 이스케이프, 점은 그대로)
       const configDbNode = node.find('config~1database.json');
       expect(configDbNode?.name).toBe('config/database.json');
+      expect(configDbNode?.escapedName).toBe('config~1database.json');
       expect(configDbNode?.path).toBe('/config~1database.json');
 
       const hostProdNode = node.find('config~1database.json/host~0production');
       expect(hostProdNode?.name).toBe('host~production');
+      expect(hostProdNode?.escapedName).toBe('host~0production');
       expect(hostProdNode?.path).toBe(
         '/config~1database.json/host~0production',
       );
@@ -679,13 +712,16 @@ describe('AbstractNode - JSON Pointer Escape', () => {
 
       const logNode = node.find('logs~1app.log');
       expect(logNode?.name).toBe('logs/app.log');
+      expect(logNode?.escapedName).toBe('logs~1app.log');
       expect(logNode?.value).toBe('log content');
 
       const backupNode = node.find('backup~02024-01-01');
       expect(backupNode?.name).toBe('backup~2024-01-01');
+      expect(backupNode?.escapedName).toBe('backup~02024-01-01');
 
       const sizeNode = node.find('backup~02024-01-01/size.bytes');
       expect(sizeNode?.name).toBe('size.bytes');
+      expect(sizeNode?.escapedName).toBe('size.bytes');
       expect(sizeNode?.path).toBe('/backup~02024-01-01/size.bytes');
       expect(sizeNode?.value).toBe(1024);
     });
@@ -724,22 +760,27 @@ describe('AbstractNode - JSON Pointer Escape', () => {
       // 복잡한 URL 스타일 키 검증 (슬래시만 이스케이프)
       const apiNode = node.find('api~1v1~1users?filter=active&sort=name');
       expect(apiNode?.name).toBe('api/v1/users?filter=active&sort=name');
+      expect(apiNode?.escapedName).toBe(
+        'api~1v1~1users?filter=active&sort=name',
+      );
 
       const cacheKeyNode = node.find(
         'api~1v1~1users?filter=active&sort=name/cache~0key',
       );
       expect(cacheKeyNode?.name).toBe('cache~key');
+      expect(cacheKeyNode?.escapedName).toBe('cache~0key');
       expect(cacheKeyNode?.value).toBe('users_active_sorted');
 
       const headersNode = node.find(
         'api~1v1~1users?filter=active&sort=name/response.headers',
       );
       expect(headersNode?.name).toBe('response.headers');
-
+      expect(headersNode?.escapedName).toBe('response.headers');
       const contentTypeNode = node.find(
         'api~1v1~1users?filter=active&sort=name/response.headers/content-type',
       );
       expect(contentTypeNode?.name).toBe('content-type');
+      expect(contentTypeNode?.escapedName).toBe('content-type');
       expect(contentTypeNode?.value).toBe('application/json');
     });
   });

@@ -12,7 +12,7 @@ describe('find', () => {
 
   beforeEach(() => {
     mockGrandchildNode = {
-      name: 'grandchild',
+      escapedName: 'grandchild',
       group: 'terminal',
       parentNode: null,
       rootNode: null,
@@ -20,7 +20,7 @@ describe('find', () => {
     };
 
     mockChildNode1 = {
-      name: 'child1',
+      escapedName: 'child1',
       group: 'branch',
       parentNode: null,
       rootNode: null,
@@ -28,7 +28,7 @@ describe('find', () => {
     };
 
     mockChildNode2 = {
-      name: 'child2',
+      escapedName: 'child2',
       group: 'terminal',
       parentNode: null,
       rootNode: null,
@@ -36,7 +36,7 @@ describe('find', () => {
     };
 
     mockRootNode = {
-      name: 'root',
+      escapedName: 'root',
       group: 'branch',
       parentNode: null,
       rootNode: null,
@@ -118,7 +118,7 @@ describe('find', () => {
 
   it('should return null when root navigation fails', () => {
     const nodeWithoutRoot: any = {
-      name: 'orphan',
+      escapedName: 'orphan',
       group: 'terminal',
       rootNode: null,
       parentNode: null,
@@ -151,7 +151,7 @@ describe('find', () => {
 
   it('should return null for node without subnodes', () => {
     const emptyNode = {
-      name: 'empty',
+      escapedName: 'empty',
       group: 'branch',
       subnodes: null,
     } as SchemaNode;
@@ -162,7 +162,7 @@ describe('find', () => {
 
   it('should return null for node with empty subnodes array', () => {
     const emptyChildrenNode = {
-      name: 'empty',
+      escapedName: 'empty',
       group: 'branch',
       subnodes: [],
     } as unknown as SchemaNode;
@@ -173,7 +173,7 @@ describe('find', () => {
 
   it('should handle array-like property keys', () => {
     const arrayNode: any = {
-      name: '0',
+      escapedName: '0',
       group: 'terminal',
       parentNode: mockRootNode,
       rootNode: mockRootNode,
@@ -181,7 +181,7 @@ describe('find', () => {
     };
 
     const parentWithArray: any = {
-      name: 'array',
+      escapedName: 'array',
       group: 'branch',
       subnodes: [{ node: arrayNode }],
     };
@@ -192,24 +192,24 @@ describe('find', () => {
 
   it('should handle deeply nested structures', () => {
     const level4 = {
-      name: 'level4',
+      escapedName: 'level4',
       group: 'terminal',
     } as SchemaNode;
 
     const level3 = {
-      name: 'level3',
+      escapedName: 'level3',
       group: 'branch',
       subnodes: [{ node: level4 }],
     } as SchemaNode;
 
     const level2 = {
-      name: 'level2',
+      escapedName: 'level2',
       group: 'branch',
       subnodes: [{ node: level3 }],
     } as SchemaNode;
 
     const level1 = {
-      name: 'level1',
+      escapedName: 'level1',
       group: 'branch',
       subnodes: [{ node: level2 }],
     } as SchemaNode;

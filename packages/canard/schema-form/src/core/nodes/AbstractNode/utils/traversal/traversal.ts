@@ -66,7 +66,7 @@ export const traversal = (
       let fallback: SchemaNode | null = null;
       for (let j = 0, jl = subnodes.length; j < jl; j++) {
         const node = subnodes[j].node;
-        if (node.name !== segment) continue;
+        if (node.escapedName !== segment) continue;
         if (fallback === null) fallback = node;
         if (next(source, node)) continue;
         cursor = node;
