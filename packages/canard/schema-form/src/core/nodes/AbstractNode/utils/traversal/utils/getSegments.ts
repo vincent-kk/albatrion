@@ -12,25 +12,22 @@ import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
  * @example
  * ```typescript
  * // Standard path
- * getPathSegments('/foo/bar')            // ['foo', 'bar']
+ * getSegments('/foo/bar')            // ['foo', 'bar']
  *
  * // Path with escaped characters, it will be returned as is
- * getPathSegments('/a~1b/c~0d')          // ['a~1b', 'c~0d']
+ * getSegments('/a~1b/c~0d')          // ['a~1b', 'c~0d']
  *
  * // Handles leading/trailing/consecutive slashes
- * getPathSegments('foo/bar/')            // ['foo', 'bar']
- * getPathSegments('/foo//bar')           // ['foo', 'bar']
+ * getSegments('foo/bar/')            // ['foo', 'bar']
+ * getSegments('/foo//bar')           // ['foo', 'bar']
  *
  * // Empty or root path
- * getPathSegments('')                    // null
- * getPathSegments('/')                   // null
+ * getSegments('')                    // []
+ * getSegments('/')                   // []
  * ```
  *
- * @param path - The JSON Pointer path string to parse.
+ * @param pointer - The JSON Pointer path string to parse.
  * @returns An array of path segments.(no unescape)
  */
-export const getPathSegments = (path: string) => {
-  const segments = path.split(JSONPointer.Separator).filter(isTruthy);
-  if (segments.length === 0) return null;
-  return segments;
-};
+export const getSegments = (pointer: string) =>
+  pointer.split(JSONPointer.Separator).filter(isTruthy);

@@ -39,7 +39,6 @@ import {
   getFallbackValidator,
   getNodeGroup,
   getNodeType,
-  getPathSegments,
   getSafeEmptyValue,
   traversal,
 } from './utils';
@@ -312,18 +311,15 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Finds the node corresponding to the given path in the node tree.
-   * @param path - Path of the node to find (e.g., '/foo/0/bar'), returns itself if not provided
+   * Finds the node corresponding to the given pointer in the node tree.
+   * @param pointer - JSON Pointer of the node to find (e.g., '/foo/0/bar'), returns itself if not provided
    * @returns {SchemaNode|null} The found node, null if not found
    */
-  public find(this: AbstractNode, path?: string): SchemaNode | null {
-    if (path === undefined) return this as SchemaNode;
-    const useRootNode = isAbsolutePath(path);
-    if (useRootNode && path.length === 1) return this.rootNode;
-    return traversal(
-      useRootNode ? this.rootNode : (this as SchemaNode),
-      getPathSegments(path),
-    );
+  public find(this: AbstractNode, pointer?: string): SchemaNode | null {
+    if (pointer === undefined) return this as SchemaNode;
+    const absolute = isAbsolutePath(pointer);
+    if (absolute && pointer.length === 1) return this.rootNode;
+    return traversal(absolute ? this.rootNode : (this as SchemaNode), pointer);
   }
 
   /** List of node event listeners */

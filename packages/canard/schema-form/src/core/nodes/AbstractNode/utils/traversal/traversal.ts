@@ -1,6 +1,9 @@
 import type { SchemaNode } from '@/schema-form/core';
 import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 
+import { detectsCandidate } from './utils/detectsCandidate';
+import { getSegments } from './utils/getSegments';
+
 /**
  * Traverses the schema node tree to find a node that matches the given path segments.
  *
@@ -42,10 +45,12 @@ import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
  */
 export const traversal = (
   source: SchemaNode,
-  segments: string[] | null,
+  pointer: string | string[] | null,
 ): SchemaNode | null => {
   if (!source) return null;
-  if (!segments?.length) return source;
+  if (pointer === null) return source;
+  const segments = typeof pointer === 'string' ? getSegments(pointer) : pointer;
+  if (segments.length === 0) return source;
 
   let cursor = source;
   for (let i = 0, il = segments.length; i < il; i++) {
@@ -68,10 +73,11 @@ export const traversal = (
         const node = subnodes[j].node;
         if (node.escapedName !== segment) continue;
         if (fallback === null) fallback = node;
-        if (next(source, node)) continue;
-        cursor = node;
-        tentative = false;
-        break;
+        if (detectsCandidate(source, node)) {
+          tentative = false;
+          cursor = node;
+          break;
+        }
       }
       if (tentative)
         if (fallback) cursor = fallback;
@@ -81,44 +87,3 @@ export const traversal = (
   }
   return cursor;
 };
-
-/**
- * Determines if a target node should be skipped during traversal based on scope mismatch.
- *
- * This function implements the core scope resolution logic for oneOf scenarios.
- * A scope represents a oneOf branch index, and nodes in different scopes should
- * be isolated from each other to prevent incorrect cross-branch references.
- *
- * **Skip Logic:** Returns `true` (skip node) if ALL conditions are met:
- * 1. Target node has a defined scope (is part of a oneOf branch)
- * 2. Target node's scope differs from its parent's current oneOfIndex
- * 3. Source and target are in different scopes OR have different parent nodes
- *
- * **Why Skip?** This prevents traversal from crossing oneOf boundaries inappropriately.
- * For example, if we're in oneOf branch 0 but find a node from branch 1, we should
- * skip it unless we're explicitly navigating to that branch.
- *
- * **Fallback Strategy:** When all matching nodes are skipped, the traversal function
- * uses the first found node as a fallback to ensure traversal doesn't fail completely.
- *
- * @param source - Source node being traversed from (provides scope context)
- * @param target - Target node being evaluated for skipping
- * @returns `true` if target should be skipped, `false` if target is valid for traversal
- *
- * @example
- * ```ts
- * // Given a oneOf with two branches:
- * // Branch 0 (scope: 0): { name: string }
- * // Branch 1 (scope: 1): { name: number }
- *
- * // If source is in scope 0 and target is in scope 1:
- * next(sourceNode, targetNode) // returns true (skip)
- *
- * // If both source and target are in scope 0:
- * next(sourceNode, targetNode) // returns false (don't skip)
- * ```
- */
-const next = (source: SchemaNode, target: SchemaNode) =>
-  target.scope !== undefined &&
-  target.scope !== target.parentNode?.oneOfIndex &&
-  (source.scope !== target.scope || source.parentNode !== target.parentNode);
