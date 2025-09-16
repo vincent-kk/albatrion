@@ -97,7 +97,7 @@
     "tsc-alias": "^1.8.16",
     "tsx": "^4.20.2",
     "typescript": "^5.7.2",
-    "vite": "^6.3.5",
+    "vite": "^7.1.5",
     "vitest": "^3.2.4"
   },
   "packageManager": "yarn@4.9.2"
