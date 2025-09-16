@@ -227,6 +227,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       jsonSchema,
       host.defaultValue,
       this.__childNodeMap__,
+      this.__oneOfKeySetList__,
       handelChangeFactory,
       nodeFactory,
     );

@@ -22,11 +22,17 @@ export const getOneOfKeyInfo = (
   const oneOfKeySetList = new Array<Set<string>>(length);
   for (let i = 0; i < length; i++) {
     const oneOfItem = schema.oneOf[i];
-    if (oneOfItem?.properties) {
-      const oneOfItemProperties = Object.keys(oneOfItem.properties);
-      oneOfKeySetList[i] = new Set(oneOfItemProperties);
-      for (let j = 0, jl = oneOfItemProperties.length; j < jl; j++)
-        oneOfKeySet.add(oneOfItemProperties[j]);
+    const oneOfProperties = oneOfItem?.properties as ObjectSchema['properties'];
+    if (oneOfProperties) {
+      const oneOfItemProperties = Object.keys(oneOfProperties);
+      oneOfKeySetList[i] = new Set();
+      for (let j = 0, jl = oneOfItemProperties.length; j < jl; j++) {
+        const key = oneOfItemProperties[j];
+        const schema = oneOfProperties[key];
+        if (schema.type === undefined && schema.$ref === undefined) continue;
+        oneOfKeySet.add(key);
+        oneOfKeySetList[i].add(key);
+      }
     }
   }
   return { oneOfKeySet, oneOfKeySetList };

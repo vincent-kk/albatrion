@@ -32,6 +32,7 @@ export const getOneOfChildNodeMapList = (
   jsonSchema: ObjectSchema,
   defaultValue: ObjectValue | Nullish,
   childNodeMap: Map<string, ChildNode>,
+  oneOfKeySetList: Set<string>[] | undefined,
   handelChangeFactory: Fn<[name: string], HandleChange>,
   nodeFactory: SchemaNodeFactory,
 ) => {
@@ -64,6 +65,9 @@ export const getOneOfChildNodeMapList = (
     const required = oneOfSchema.required;
     for (let i = 0, l = keys.length; i < l; i++) {
       const property = keys[i];
+
+      if (oneOfKeySetList && !oneOfKeySetList[oneOfIndex].has(property))
+        continue;
       if (childNodeMap.has(property))
         throw new SchemaNodeError(
           'ONEOF_PROPERTY_REDEFINITION',
@@ -74,6 +78,7 @@ export const getOneOfChildNodeMapList = (
             property,
           },
         );
+
       const schema = properties[property] as JsonSchema;
       const inputDefault = defaultValue?.[property];
       oneOfChildNodeMap.set(property, {
