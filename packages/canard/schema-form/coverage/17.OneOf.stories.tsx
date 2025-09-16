@@ -5,8 +5,12 @@ import {
   type FormHandle,
   type JsonSchema,
   type JsonSchemaError,
+  registerPlugin,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
+import { plugin as validatorPlugin } from './components/validator';
+
+registerPlugin(validatorPlugin);
 
 export default {
   title: 'Form/17. OneOf',
@@ -176,6 +180,9 @@ export const OneOfWithComputed = () => {
           if: "./employmentType === 'full_time'",
         },
         properties: {
+          employmentType: {
+            const: 'full_time',
+          },
           salary: {
             type: 'number',
             title: 'Annual Salary',
@@ -211,6 +218,9 @@ export const OneOfWithComputed = () => {
           if: "./employmentType === 'part_time'",
         },
         properties: {
+          employmentType: {
+            const: 'part_time',
+          },
           contractType: {
             type: 'string',
             enum: ['hourly_rate', 'fixed_term', 'seasonal'],
@@ -230,6 +240,9 @@ export const OneOfWithComputed = () => {
           if: "./employmentType === 'contractor'",
         },
         properties: {
+          employmentType: {
+            const: 'contractor',
+          },
           contractType: {
             type: 'string',
             enum: ['hourly_rate', 'project_based', 'retainer'],
@@ -239,7 +252,7 @@ export const OneOfWithComputed = () => {
           workingHours: {
             type: 'number',
             title: 'Weekly Working Hours',
-            minimum: 1,
+            minimum: 41,
             maximum: 168,
             computed: {
               active: '../contractType === "hourly_rate"',
