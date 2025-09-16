@@ -15,7 +15,6 @@ import {
   BIT_FLAG_11,
   BIT_FLAG_12,
   BIT_FLAG_13,
-  BIT_FLAG_14,
   BIT_MASK_NONE,
 } from '@/schema-form/app/constants/bitmask';
 import type {
@@ -215,8 +214,6 @@ export enum NodeEventType {
   RequestRefresh = BIT_FLAG_12,
   /** Request to emit a value change with a specific strategy. */
   RequestEmitChange = BIT_FLAG_13,
-  /** Request validation to run for this node. */
-  RequestValidate = BIT_FLAG_14,
 }
 
 export enum PublicNodeEventType {
@@ -254,7 +251,6 @@ export type NodeEventPayload = {
   [NodeEventType.RequestSelect]: void;
   [NodeEventType.RequestRefresh]: void;
   [NodeEventType.RequestEmitChange]: UnionSetValueOption;
-  [NodeEventType.RequestValidate]: void;
 };
 
 /**
@@ -283,7 +279,6 @@ export type NodeEventOptions = {
   [NodeEventType.RequestSelect]: void;
   [NodeEventType.RequestRefresh]: void;
   [NodeEventType.RequestEmitChange]: boolean;
-  [NodeEventType.RequestValidate]: void;
 };
 
 export enum NodeState {
