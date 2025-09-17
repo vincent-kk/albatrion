@@ -191,6 +191,7 @@ describe('transformErrors', () => {
       const result = transformErrors(errors);
       expect(result[0]).toEqual({
         dataPath: '/age',
+        schemaPath: '#/properties/age/type',
         keyword: 'type',
         message: 'should be number',
         details: { type: 'number' },
@@ -212,6 +213,7 @@ describe('transformErrors', () => {
       const result = transformErrors(errors);
       expect(result[0]).toEqual({
         dataPath: '/email',
+        schemaPath: '#/properties/email/format',
         keyword: 'format',
         message: 'should match format "email"',
         details: { format: 'email' },
@@ -233,6 +235,7 @@ describe('transformErrors', () => {
       const result = transformErrors(errors);
       expect(result[0]).toEqual({
         dataPath: '/score',
+        schemaPath: '#/properties/score/minimum',
         keyword: 'minimum',
         message: 'should be >= 0',
         details: { limit: 0 },

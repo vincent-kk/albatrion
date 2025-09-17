@@ -10,6 +10,7 @@ export const transformErrors = (errors: ErrorObject[]): JsonSchemaError[] => {
     const ajvError = errors[i];
     result[i] = {
       dataPath: transformDataPath(ajvError),
+      schemaPath: ajvError.schemaPath,
       keyword: ajvError.keyword,
       message: ajvError.message,
       details: ajvError.params,

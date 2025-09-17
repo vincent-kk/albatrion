@@ -46,6 +46,7 @@ describe('transformErrors', () => {
         {
           keyword: 'required',
           dataPath: '/name',
+          schemaPath: '#/required',
           message: "should have required property 'name'",
           details: { missingProperty: 'name' },
           source: errors[0],
@@ -53,6 +54,7 @@ describe('transformErrors', () => {
         {
           keyword: 'type',
           dataPath: '/age/1/koreanAge',
+          schemaPath: '#/properties/age/type',
           message: 'should be number',
           details: { type: 'number' },
           source: errors[1],
@@ -60,6 +62,7 @@ describe('transformErrors', () => {
         {
           keyword: 'minimum',
           dataPath: '/age',
+          schemaPath: '#/properties/age/minimum',
           message: 'should be >= 0',
           details: { comparison: '>=', limit: 0 },
           source: errors[2],
@@ -67,6 +70,7 @@ describe('transformErrors', () => {
         {
           keyword: 'format',
           dataPath: '/email',
+          schemaPath: '#/properties/email/format',
           message: 'should match format "email"',
           details: { format: 'email' },
           source: errors[3],
@@ -228,6 +232,7 @@ describe('transformErrors', () => {
       const result = transformErrors(errors);
       expect(result[0]).toEqual({
         dataPath: '/age',
+        schemaPath: '#/properties/age/type',
         keyword: 'type',
         message: 'should be number',
         details: { type: 'number' },
@@ -249,6 +254,7 @@ describe('transformErrors', () => {
       const result = transformErrors(errors);
       expect(result[0]).toEqual({
         dataPath: '/email',
+        schemaPath: '#/properties/email/format',
         keyword: 'format',
         message: 'should match format "email"',
         details: { format: 'email' },
@@ -270,6 +276,7 @@ describe('transformErrors', () => {
       const result = transformErrors(errors);
       expect(result[0]).toEqual({
         dataPath: '/score',
+        schemaPath: '#/properties/score/minimum',
         keyword: 'minimum',
         message: 'should be >= 0',
         details: { limit: 0 },
@@ -291,6 +298,7 @@ describe('transformErrors', () => {
       const result = transformErrors(errors);
       expect(result[0]).toEqual({
         dataPath: '/score',
+        schemaPath: '#/properties/score/maximum',
         keyword: 'maximum',
         message: 'should be <= 100',
         details: { limit: 100 },
@@ -312,6 +320,7 @@ describe('transformErrors', () => {
       const result = transformErrors(errors);
       expect(result[0]).toEqual({
         dataPath: '/phone',
+        schemaPath: '#/properties/phone/pattern',
         keyword: 'pattern',
         message: 'should match pattern "^\\d{3}-\\d{4}-\\d{4}$"',
         details: { pattern: '^\\d{3}-\\d{4}-\\d{4}$' },
@@ -333,6 +342,7 @@ describe('transformErrors', () => {
       const result = transformErrors(errors);
       expect(result[0]).toEqual({
         dataPath: '/status',
+        schemaPath: '#/properties/status/enum',
         keyword: 'enum',
         message: 'should be equal to one of the allowed values',
         details: { allowedValues: ['active', 'inactive', 'pending'] },
@@ -356,6 +366,7 @@ describe('transformErrors', () => {
       const result = transformErrors(errors);
       expect(result[0]).toEqual({
         dataPath: '/tags',
+        schemaPath: '#/properties/tags/minItems',
         keyword: 'minItems',
         message: 'should NOT have fewer than 1 items',
         details: { limit: 1 },
@@ -377,6 +388,7 @@ describe('transformErrors', () => {
       const result = transformErrors(errors);
       expect(result[0]).toEqual({
         dataPath: '/tags',
+        schemaPath: '#/properties/tags/maxItems',
         keyword: 'maxItems',
         message: 'should NOT have more than 10 items',
         details: { limit: 10 },
@@ -399,6 +411,7 @@ describe('transformErrors', () => {
       const result = transformErrors(errors);
       expect(result[0]).toEqual({
         dataPath: '/tags',
+        schemaPath: '#/properties/tags/uniqueItems',
         keyword: 'uniqueItems',
         message:
           'should NOT have duplicate items (items ## 1 and 3 are identical)',
@@ -423,6 +436,7 @@ describe('transformErrors', () => {
       const result = transformErrors(errors);
       expect(result[0]).toEqual({
         dataPath: '/password',
+        schemaPath: '#/properties/password/minLength',
         keyword: 'minLength',
         message: 'should NOT be shorter than 8 characters',
         details: { limit: 8 },
@@ -444,6 +458,7 @@ describe('transformErrors', () => {
       const result = transformErrors(errors);
       expect(result[0]).toEqual({
         dataPath: '/description',
+        schemaPath: '#/properties/description/maxLength',
         keyword: 'maxLength',
         message: 'should NOT be longer than 500 characters',
         details: { limit: 500 },
