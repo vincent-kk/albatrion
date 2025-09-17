@@ -300,14 +300,17 @@ export abstract class AbstractNode<
     this.setDefaultValue(
       defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema),
     );
-    this.#handleChange = this.isRoot
-      ? afterMicrotask(() =>
-          onChange(getSafeEmptyValue(this.value, this.jsonSchema)),
-        )
-      : onChange;
 
-    // NOTE: Special behavior for root node
-    if (this.isRoot) this.#prepareValidator(validatorFactory, validationMode);
+    if (this.isRoot) {
+      const validateOnChange = validationMode
+        ? (validationMode & ValidationMode.OnChange) > 0
+        : false;
+      this.#handleChange = afterMicrotask(() => {
+        if (validateOnChange) this.#handleValidation();
+        onChange(getSafeEmptyValue(this.value, this.jsonSchema));
+      });
+      this.#prepareValidator(validatorFactory, validationMode);
+    } else this.#handleChange = onChange;
   }
 
   /**
@@ -558,7 +561,7 @@ export abstract class AbstractNode<
     this.#defaultValue = defaultValue;
     const value = this.#active ? defaultValue : undefined;
 
-    this.setValue(value, SetValueOption.ResetNode);
+    this.setValue(value, SetValueOption.HardReset);
     this.setState();
   }
 
@@ -812,9 +815,5 @@ export abstract class AbstractNode<
     } catch (error: any) {
       this.#validator = getFallbackValidator(error, this.jsonSchema);
     }
-    if (validationMode & ValidationMode.OnChange)
-      this.subscribe(({ type }) => {
-        if (type & NodeEventType.UpdateValue) this.#handleValidation();
-      });
   }
 }

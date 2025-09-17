@@ -227,6 +227,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       jsonSchema,
       host.defaultValue,
       this.__childNodeMap__,
+      this.__oneOfKeySetList__,
       handelChangeFactory,
       nodeFactory,
     );
@@ -421,7 +422,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
         );
         this.__processComputedProperties__(this.__draft__);
 
-        this.__emitChange__(SetValueOption.ResetNode);
+        this.__emitChange__(SetValueOption.SoftReset);
         this.__publishChildrenChange__();
         this.__previousIndex__ = current;
       }

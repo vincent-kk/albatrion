@@ -10,4 +10,9 @@ type ComputedFieldName = keyof NonNullable<JsonSchemaWithVirtual['computed']>;
 
 export type ObservedFieldName = Extract<ComputedFieldName, 'watch'>;
 
-export type ConditionFieldName = Exclude<ComputedFieldName, ObservedFieldName>;
+export type ConditionIndexName = Extract<ComputedFieldName, 'if'>;
+
+export type ConditionFieldName = Exclude<
+  ComputedFieldName,
+  ObservedFieldName | ConditionIndexName
+>;

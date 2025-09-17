@@ -1,7 +1,6 @@
-import { map } from '@winglet/common-utils/array';
-import { isTruthy } from '@winglet/common-utils/filter';
 import { merge } from '@winglet/common-utils/object';
 
+import { combineConditions } from '@/schema-form/helpers/dynamicExpression';
 import type { JsonSchemaWithRef } from '@/schema-form/types';
 
 /**
@@ -18,28 +17,15 @@ export const mergeShowConditions = (
     const active: string | boolean | undefined =
       jsonSchema.computed?.active ?? jsonSchema['&active'];
     if (typeof active === 'boolean') return jsonSchema;
+    const expression = combineConditions([
+      active,
+      combineConditions(conditions, '||'),
+    ]);
+    if (expression === null) return jsonSchema;
     return merge(jsonSchema, {
       computed: {
-        active: combineConditions(
-          [active, combineConditions(conditions, '||')],
-          '&&',
-        ),
+        active: expression,
       },
     });
   } else return jsonSchema;
-};
-
-/**
- * Function to combine multiple conditions with a specified operator.
- * @param conditions - Conditions to combine
- * @param operator - Operator to use ('&&' or '||')
- * @returns Combined condition expression
- */
-const combineConditions = (
-  conditions: (string | boolean | undefined)[],
-  operator: string,
-) => {
-  const filtered = conditions.filter(isTruthy);
-  if (filtered.length === 1) return filtered[0];
-  return map(filtered, (item) => '(' + item + ')').join(operator);
 };

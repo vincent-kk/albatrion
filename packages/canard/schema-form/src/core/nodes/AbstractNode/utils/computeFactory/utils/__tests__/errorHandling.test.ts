@@ -14,7 +14,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const jsonSchema: JsonSchemaWithVirtual = {
         type: 'object',
         computed: {
-          if: 'dependencies[0] === "value" &&', // 잘못된 문법 (끝에 &&)
+          active: 'dependencies[0] === "value" &&', // 잘못된 문법 (끝에 &&)
         },
       };
       const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
@@ -23,7 +23,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const pathManager = getPathManager();
 
       expect(() => {
-        factory(pathManager, 'if');
+        factory(pathManager, 'active');
       }).toThrow(SchemaNodeError);
     });
 
@@ -32,7 +32,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const jsonSchema: JsonSchemaWithVirtual = {
         type: 'object',
         computed: {
-          if: invalidExpression,
+          active: invalidExpression,
         },
       };
       const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
@@ -41,7 +41,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const pathManager = getPathManager();
 
       try {
-        factory(pathManager, 'if');
+        factory(pathManager, 'active');
         expect.fail('Should have thrown SchemaNodeError');
       } catch (error) {
         expect(error).toBeInstanceOf(SchemaNodeError);
@@ -52,10 +52,10 @@ describe('Error Handling in Dynamic Function Creation', () => {
           'Failed to create dynamic function',
         );
         expect((error as SchemaNodeError).message).toContain(
-          `if -> '${invalidExpression}'`,
+          `active -> '${invalidExpression}'`,
         );
         expect((error as SchemaNodeError).details).toMatchObject({
-          fieldName: 'if',
+          fieldName: 'active',
           expression: invalidExpression,
           computedExpression: expect.stringContaining('dependencies[0]'),
           error: expect.any(Error),
@@ -67,7 +67,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const jsonSchema: JsonSchemaWithVirtual = {
         type: 'object',
         computed: {
-          if: 'dependencies[0] === "test" && (dependencies[1] === "value"', // 닫히지 않은 괄호
+          active: 'dependencies[0] === "test" && (dependencies[1] === "value"', // 닫히지 않은 괄호
         },
       };
       const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
@@ -76,7 +76,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const pathManager = getPathManager();
 
       expect(() => {
-        factory(pathManager, 'if');
+        factory(pathManager, 'active');
       }).toThrow(SchemaNodeError);
     });
 
@@ -84,7 +84,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const jsonSchema: JsonSchemaWithVirtual = {
         type: 'object',
         computed: {
-          if: 'dependencies[0] === "test" }}}', // 잘못된 닫는 괄호
+          active: 'dependencies[0] === "test" }}}', // 잘못된 닫는 괄호
         },
       };
       const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
@@ -93,7 +93,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const pathManager = getPathManager();
 
       expect(() => {
-        factory(pathManager, 'if');
+        factory(pathManager, 'active');
       }).toThrow(SchemaNodeError);
     });
   });
@@ -302,7 +302,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const jsonSchema = {
         type: 'object',
         computed: {
-          if: 'dependencies[0] === "test" { malformed expression',
+          active: 'dependencies[0] === "test" { malformed expression',
         },
       } satisfies JsonSchemaWithVirtual;
       const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
@@ -311,7 +311,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const pathManager = getPathManager();
 
       try {
-        factory(pathManager, 'if');
+        factory(pathManager, 'active');
         expect.fail('Should have thrown SchemaNodeError');
       } catch (error) {
         expect(error).toBeInstanceOf(SchemaNodeError);
@@ -326,7 +326,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
           'Failed to create dynamic function',
         );
         expect(schemaError.message).toContain(
-          `if -> '${jsonSchema.computed.if}'`,
+          `active -> '${jsonSchema.computed.active}'`,
         );
         expect(schemaError.message).toContain(
           'dependencies[0] === "test" { malformed expression',
@@ -337,7 +337,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
         expect(schemaError.details).toHaveProperty('expression');
         expect(schemaError.details).toHaveProperty('computedExpression');
         expect(schemaError.details).toHaveProperty('error');
-        expect(schemaError.details.fieldName).toBe('if');
+        expect(schemaError.details.fieldName).toBe('active');
         expect(schemaError.details.error).toBeInstanceOf(Error);
       }
     });
@@ -356,7 +356,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
         const jsonSchema: JsonSchemaWithVirtual = {
           type: 'object',
           computed: {
-            if: invalidExpression,
+            active: invalidExpression,
           },
         };
         const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
@@ -365,7 +365,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
         const pathManager = getPathManager();
 
         expect(() => {
-          factory(pathManager, 'if');
+          factory(pathManager, 'active');
         }, `Expression "${invalidExpression}" should throw error`).toThrow(
           SchemaNodeError,
         );
@@ -388,7 +388,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
         const jsonSchema: JsonSchemaWithVirtual = {
           type: 'object',
           computed: {
-            if: validExpression,
+            active: validExpression,
           },
         };
         const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
@@ -397,7 +397,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
         const pathManager = getPathManager();
 
         expect(() => {
-          const result = factory(pathManager, 'if');
+          const result = factory(pathManager, 'active');
           expect(result).toBeDefined();
           expect(typeof result).toBe('function');
         }, `Expression "${validExpression}" should not throw error`).not.toThrow();
@@ -410,7 +410,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const jsonSchema: JsonSchemaWithVirtual = {
         type: 'object',
         computed: {
-          if: 'dependencies[0] === "test" { invalid syntax',
+          active: 'dependencies[0] === "test" { invalid syntax',
         },
       };
       const rootJsonSchema: JsonSchemaWithVirtual = { type: 'object' };
@@ -419,7 +419,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       const pathManager = getPathManager();
 
       try {
-        factory(pathManager, 'if');
+        factory(pathManager, 'active');
         expect.fail('Should have thrown SchemaNodeError');
       } catch (error) {
         console.log('\n=== Error Output Sample ===');

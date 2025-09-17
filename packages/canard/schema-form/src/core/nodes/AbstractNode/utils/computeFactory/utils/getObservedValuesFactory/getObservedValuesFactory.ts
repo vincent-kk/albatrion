@@ -5,8 +5,8 @@ import type { Fn } from '@aileron/declare';
 import { SchemaNodeError } from '@/schema-form/errors';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
-import type { PathManager } from './getPathManager';
-import { ALIAS, type ObservedFieldName } from './type';
+import type { PathManager } from '../getPathManager';
+import { ALIAS, type ObservedFieldName } from '../type';
 
 type GetObservedValues = Fn<[dependencies: unknown[]], unknown[]>;
 
