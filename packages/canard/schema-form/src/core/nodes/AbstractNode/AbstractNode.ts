@@ -40,6 +40,7 @@ import {
   getNodeGroup,
   getNodeType,
   getSafeEmptyValue,
+  getScopedSegment,
   matchesSchemaPath,
   traversal,
 } from './utils';
@@ -72,6 +73,9 @@ export abstract class AbstractNode<
   /** [readonly] Node's JSON Schema */
   public readonly jsonSchema: Schema;
 
+  /** [readonly] Node's scope */
+  public readonly scope: string | undefined;
+
   /** [readonly] Node's variant */
   public readonly variant: number | undefined;
 
@@ -80,9 +84,6 @@ export abstract class AbstractNode<
 
   /** [readonly] Whether the node value is nullable */
   public readonly nullable: boolean;
-
-  /** Node's scope */
-  readonly #scope: string | undefined;
 
   /** Node's name */
   #name: string;
@@ -150,9 +151,12 @@ export abstract class AbstractNode<
     const current = joinSegment(parentNode?.path, this.#escapedName);
     if (previous === current) return false;
     this.#path = current;
-    this.#schemaPath = this.#scope
-      ? joinSegment(parentNode?.schemaPath, this.#scope + this.#escapedName)
-      : joinSegment(parentNode?.schemaPath, this.#escapedName);
+    this.#schemaPath = this.scope
+      ? joinSegment(
+          this.parentNode?.schemaPath,
+          getScopedSegment(this.#escapedName, this.scope, this.variant),
+        )
+      : joinSegment(this.parentNode?.schemaPath, this.#escapedName);
     this.publish(NodeEventType.UpdatePath, current, { previous, current });
     return true;
   }
@@ -282,6 +286,7 @@ export abstract class AbstractNode<
     this.type = getNodeType(jsonSchema);
     this.group = getNodeGroup(jsonSchema);
 
+    this.scope = scope;
     this.variant = variant;
     this.jsonSchema = jsonSchema;
     this.parentNode = parentNode || null;
@@ -293,10 +298,12 @@ export abstract class AbstractNode<
     this.#name = name || '';
     this.#escapedName = escapeSegment(this.#name);
 
-    this.#scope = scope;
     this.#path = joinSegment(this.parentNode?.path, this.#escapedName);
     this.#schemaPath = scope
-      ? joinSegment(this.parentNode?.schemaPath, scope + this.#escapedName)
+      ? joinSegment(
+          this.parentNode?.schemaPath,
+          getScopedSegment(this.#escapedName, scope, variant),
+        )
       : joinSegment(this.parentNode?.schemaPath, this.#escapedName);
     this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
 
@@ -796,7 +803,7 @@ export abstract class AbstractNode<
       const childNode = this.find(dataPath);
       if (childNode === null) continue;
       childNode.setErrors(
-        childNode.variant !== undefined
+        childNode.scope !== undefined
           ? errors.filter(
               (error) =>
                 error.schemaPath === undefined ||
