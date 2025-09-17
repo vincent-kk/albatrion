@@ -80,6 +80,9 @@ export abstract class AbstractNode<
   /** [readonly] Whether the node value is nullable */
   public readonly nullable: boolean;
 
+  /** Node's scope */
+  readonly #scope: string | undefined;
+
   /** Node's name */
   #name: string;
 
@@ -114,15 +117,25 @@ export abstract class AbstractNode<
     this.updatePath();
   }
 
-  /** Node's path */
+  /** Node's data path */
   #path: string;
 
   /**
-   * [readonly] Node's path.
+   * [readonly] Node's data path.
    * @note Basically it is readonly, but can be changed with `updatePath` by the parent node.
    * */
   public get path() {
     return this.#path;
+  }
+
+  /** Node's schema path */
+  #schemaPath: string;
+
+  /** [readonly] Node's schema path
+   * @note Basically it is readonly, but can be changed with `updatePath` by the parent node.
+   */
+  public get schemaPath() {
+    return this.#schemaPath;
   }
 
   /**
@@ -132,20 +145,15 @@ export abstract class AbstractNode<
    */
   public updatePath(this: AbstractNode) {
     const previous = this.#path;
-    const parentPath = this.parentNode?.path;
-    const current = joinSegment(parentPath, this.#escapedName);
+    const parentNode = this.parentNode;
+    const current = joinSegment(parentNode?.path, this.#escapedName);
     if (previous === current) return false;
     this.#path = current;
+    this.#schemaPath = this.#scope
+      ? joinSegment(parentNode?.schemaPath, this.#scope + this.#escapedName)
+      : joinSegment(parentNode?.schemaPath, this.#escapedName);
     this.publish(NodeEventType.UpdatePath, current, { previous, current });
     return true;
-  }
-
-  /** Node's key */
-  #key?: string;
-
-  /** [readonly] Node's key */
-  public get key() {
-    return this.#key;
   }
 
   /** Node's initial default value */
@@ -284,10 +292,11 @@ export abstract class AbstractNode<
     this.#name = name || '';
     this.#escapedName = escapeSegment(this.#name);
 
+    this.#scope = scope;
     this.#path = joinSegment(this.parentNode?.path, this.#escapedName);
-    this.#key = scope
-      ? joinSegment(this.parentNode?.key, scope + this.#escapedName)
-      : joinSegment(this.parentNode?.key, this.#escapedName);
+    this.#schemaPath = scope
+      ? joinSegment(this.parentNode?.schemaPath, scope + this.#escapedName)
+      : joinSegment(this.parentNode?.schemaPath, this.#escapedName);
     this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
 
     if (this.parentNode) {

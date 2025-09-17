@@ -12,8 +12,8 @@ const FormTypeInputObject = ({
 }: FormTypeInputProps<object>) => {
   const children = useMemo(() => {
     return ChildNodeComponents
-      ? map(ChildNodeComponents, (ChildNodeComponent, index) => (
-          <ChildNodeComponent key={ChildNodeComponent.key || index} />
+      ? map(ChildNodeComponents, (ChildNodeComponent) => (
+          <ChildNodeComponent key={ChildNodeComponent.key} />
         ))
       : null;
   }, [ChildNodeComponents]);
