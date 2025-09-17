@@ -3,11 +3,14 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { Fn } from '@aileron/declare';
 
 import { SchemaNodeError } from '@/schema-form/errors';
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type {
+  JsonSchemaWithVirtual,
+  PartialJsonSchema,
+} from '@/schema-form/types';
 
 import type { PathManager } from '../getPathManager';
 import { JSON_POINTER_PATH_REGEX } from '../regex';
-import { ALIAS, type ConditionFieldName } from '../type';
+import { ALIAS, type ConditionIndexName } from '../type';
 
 type GetConditionIndex = Fn<[dependencies: unknown[]], number>;
 
@@ -35,46 +38,47 @@ export const getConditionIndexFactory =
   (
     pathManager: PathManager,
     fieldName: string,
-    conditionField: ConditionFieldName,
+    conditionField: ConditionIndexName,
   ): GetConditionIndex | undefined => {
-    // Return undefined if schema is invalid
-    if (jsonSchema.type !== 'object' || !isArray(jsonSchema[fieldName]))
-      return undefined;
+    // Conditional Index is only available for object schemas(oneOf, anyOf, etc.)
+    if (jsonSchema.type !== 'object') return undefined;
 
-    const conditionSchemas = jsonSchema[fieldName];
+    const conditionSchemas: PartialJsonSchema[] = jsonSchema[fieldName];
+    if (!isArray(conditionSchemas)) return undefined;
+
     const expressions: string[] = [];
     const schemaIndices: number[] = [];
 
     // Collect only valid expressions and maintain original schema indices
     for (let i = 0, l = conditionSchemas.length; i < l; i++) {
-      // Extract expression from `computed.[<conditionField>]` or `&[<conditionField>]` field
-      const condition =
-        conditionSchemas[i]?.computed?.[conditionField] ??
-        conditionSchemas[i]?.[ALIAS + conditionField];
+      const oneOfSchema = conditionSchemas[i];
 
-      // Handle boolean conditions
-      if (typeof condition === 'boolean') {
-        if (condition === true) {
-          expressions.push('true');
+      // Extract condition from `computed.[<conditionField>]` or `&[<conditionField>]` field
+      const condition: boolean | string | undefined =
+        oneOfSchema.computed?.[conditionField] ??
+        oneOfSchema[ALIAS + conditionField];
+
+      switch (typeof condition) {
+        case 'boolean':
+          if (condition === true) {
+            expressions.push('true');
+            schemaIndices.push(i);
+          }
+          break;
+        case 'string': {
+          const expression = condition.trim();
+          expressions.push(
+            expression
+              .replace(JSON_POINTER_PATH_REGEX, (path) => {
+                pathManager.set(path);
+                return `dependencies[${pathManager.findIndex(path)}]`;
+              })
+              .replace(/;$/, ''),
+          );
           schemaIndices.push(i);
+          break;
         }
-        continue;
       }
-
-      // Handle string conditions
-      const expression = condition?.trim?.();
-      if (!expression || typeof expression !== 'string') continue;
-
-      // Transform JSON paths to dependency array references
-      expressions.push(
-        expression
-          .replace(JSON_POINTER_PATH_REGEX, (path) => {
-            pathManager.set(path);
-            return `dependencies[${pathManager.findIndex(path)}]`;
-          })
-          .replace(/;$/, ''),
-      );
-      schemaIndices.push(i);
     }
 
     if (expressions.length === 0) return undefined;

@@ -69,6 +69,10 @@ export type JsonSchemaWithRef<Options extends Dictionary = object> =
   | JsonSchemaWithVirtual<Options>
   | RefSchema;
 
+export type PartialJsonSchema<Options extends Dictionary = object> = Partial<
+  JsonSchemaWithVirtual<Options>
+>;
+
 export type NumberSchema<Options extends Dictionary = object> =
   BasicSchema<NumberValue> & BaseNumberSchema<Options, JsonSchema<Options>>;
 
