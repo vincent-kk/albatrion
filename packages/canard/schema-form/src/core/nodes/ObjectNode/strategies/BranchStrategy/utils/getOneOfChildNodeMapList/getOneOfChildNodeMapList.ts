@@ -69,7 +69,7 @@ export const getOneOfChildNodeMapList = (
       if (childNodeMap.has(property))
         throw new SchemaNodeError(
           'ONEOF_PROPERTY_REDEFINITION',
-          `Property '${property}' defined in 'oneOf' schema cannot redefine a property already defined in the parent schema.`,
+          `Property '${property}' defined in 'oneOf' schema cannot redefine a property already defined in the current schema.`,
           {
             jsonSchema,
             path: parentNode.path,
