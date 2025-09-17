@@ -157,6 +157,11 @@ export abstract class AbstractNode<
           getScopedSegment(this.#escapedName, this.scope, this.variant),
         )
       : joinSegment(this.parentNode?.schemaPath, this.#escapedName);
+
+    const subnodes = this.subnodes;
+    if (subnodes?.length)
+      for (const subnode of subnodes) subnode.node.updatePath();
+
     this.publish(NodeEventType.UpdatePath, current, { previous, current });
     return true;
   }
@@ -306,13 +311,6 @@ export abstract class AbstractNode<
         )
       : joinSegment(this.parentNode?.schemaPath, this.#escapedName);
     this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
-
-    if (this.parentNode) {
-      const unsubscribe = this.parentNode.subscribe(({ type }) => {
-        if (type & NodeEventType.UpdatePath) this.updatePath();
-      });
-      this.saveUnsubscribe(unsubscribe);
-    }
 
     this.#compute = computeFactory(this.jsonSchema, this.rootNode.jsonSchema);
 
