@@ -19,7 +19,7 @@ import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 import type { ArrayNodeStrategy } from '../type';
 import { promiseAfterMicrotask } from './utils';
 
-type ChildSegmentKey = `${number}#${number}`;
+type ChildSegmentKey = `#${number}`;
 
 export class BranchStrategy implements ArrayNodeStrategy {
   /** Host ArrayNode instance that this strategy belongs to */
@@ -191,7 +191,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
       return promiseAfterMicrotask(this.length);
 
     const index = '' + this.__keys__.length;
-    const key = (index + '#' + this.__revision__++) as ChildSegmentKey;
+    const key = ('#' + this.__revision__++) as ChildSegmentKey;
     this.__keys__.push(key);
 
     const defaultValue =
@@ -199,7 +199,6 @@ export class BranchStrategy implements ArrayNodeStrategy {
         ? data
         : getDefaultValue(this.__host__.jsonSchema.items);
     const childNode = this.__nodeFactory__({
-      key: key,
       name: index,
       jsonSchema: this.__host__.jsonSchema.items,
       parentNode: this.__host__,
@@ -334,7 +333,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     const edges = new Array<ChildNode>(this.__keys__.length);
     for (let i = 0, l = this.__keys__.length; i < l; i++) {
       const key = this.__keys__[i];
-      edges[i] = { node: this.__sourceMap__.get(key)!.node };
+      edges[i] = { nonce: key, node: this.__sourceMap__.get(key)!.node };
     }
     return edges;
   }

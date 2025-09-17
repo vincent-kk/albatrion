@@ -285,7 +285,9 @@ export abstract class AbstractNode<
     this.#escapedName = escapeSegment(this.#name);
 
     this.#path = joinSegment(this.parentNode?.path, this.#escapedName);
-    this.#key = key ? joinSegment(this.parentNode?.path, key) : this.#path;
+    this.#key = key
+      ? joinSegment(this.parentNode?.key, key + this.#escapedName)
+      : joinSegment(this.parentNode?.key, this.#escapedName);
     this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
 
     if (this.parentNode) {

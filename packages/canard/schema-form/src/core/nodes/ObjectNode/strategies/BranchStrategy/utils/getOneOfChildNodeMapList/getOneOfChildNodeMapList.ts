@@ -81,7 +81,7 @@ export const getOneOfChildNodeMapList = (
       const inputDefault = defaultValue?.[property];
       oneOfChildNodeMap.set(property, {
         node: nodeFactory({
-          key: property + '#oneOf/' + oneOfIndex,
+          key: 'oneOf/' + oneOfIndex + '/properties/',
           name: property,
           scope: oneOfIndex,
           jsonSchema: schema,

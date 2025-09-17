@@ -38,9 +38,10 @@ export const useChildNodeComponents = (
   return useMemo(() => {
     if (isTerminalNode(node) || !children) return [];
     const ChildNodeComponents: ChildNodeComponent[] = [];
-    for (const { virtual, node } of children) {
-      if (!node?.key || virtual === true) continue;
-      const key = node.key;
+    for (const child of children) {
+      const node = child.node;
+      if (!node?.key || child.virtual === true) continue;
+      const key = child.nonce ? node.key + child.nonce : node.key;
       const CachedComponent = cache.current.get(key);
       if (CachedComponent) ChildNodeComponents.push(CachedComponent);
       else {
