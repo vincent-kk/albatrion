@@ -561,7 +561,7 @@ export abstract class AbstractNode<
     this.#defaultValue = defaultValue;
     const value = this.#active ? defaultValue : undefined;
 
-    this.setValue(value, SetValueOption.ResetNode);
+    this.setValue(value, SetValueOption.HardReset);
     this.setState();
   }
 
