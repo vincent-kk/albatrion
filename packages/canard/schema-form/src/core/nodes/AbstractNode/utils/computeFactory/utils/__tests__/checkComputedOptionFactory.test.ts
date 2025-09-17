@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import { checkComputedOptionFactory } from '../checkComputedOptionFactory';
-import { getPathManager } from '../getPathManager/getPathManager';
+import { getPathManager } from '../getPathManager';
 
 describe('checkComputedOptionFactory', () => {
   it('preferredCondition이 true일 때 항상 checkCondition을 반환', () => {
