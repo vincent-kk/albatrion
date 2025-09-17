@@ -40,6 +40,7 @@ import {
   getNodeGroup,
   getNodeType,
   getSafeEmptyValue,
+  matchesSchemaPath,
   traversal,
 } from './utils';
 
@@ -791,8 +792,19 @@ export abstract class AbstractNode<
       }
 
     // Find nodes by dataPath and set errors for child nodes as well
-    for (const [dataPath, errors] of errorsByDataPath.entries())
-      this.find(dataPath)?.setErrors(errors);
+    for (const [dataPath, errors] of errorsByDataPath.entries()) {
+      const childNode = this.find(dataPath);
+      if (childNode === null) continue;
+      childNode.setErrors(
+        childNode.variant !== undefined
+          ? errors.filter(
+              (error) =>
+                error.schemaPath === undefined ||
+                matchesSchemaPath(error.schemaPath, childNode.schemaPath),
+            )
+          : errors,
+      );
+    }
 
     // Update list of dataPaths with errors
     this.#errorDataPaths = errorDataPaths;
