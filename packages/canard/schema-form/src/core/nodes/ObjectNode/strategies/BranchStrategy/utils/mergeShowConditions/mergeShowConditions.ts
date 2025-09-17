@@ -17,12 +17,14 @@ export const mergeShowConditions = (
     const active: string | boolean | undefined =
       jsonSchema.computed?.active ?? jsonSchema['&active'];
     if (typeof active === 'boolean') return jsonSchema;
+    const expression = combineConditions([
+      active,
+      combineConditions(conditions, '||'),
+    ]);
+    if (expression === null) return jsonSchema;
     return merge(jsonSchema, {
       computed: {
-        active: combineConditions(
-          [active, combineConditions(conditions, '||')],
-          '&&',
-        ),
+        active: expression,
       },
     });
   } else return jsonSchema;

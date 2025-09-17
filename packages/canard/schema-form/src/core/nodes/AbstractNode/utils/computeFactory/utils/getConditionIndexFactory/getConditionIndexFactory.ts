@@ -69,13 +69,11 @@ export const getConditionIndexFactory =
         continue;
       }
 
-      const conditionExpression =
-        typeof condition === 'string' ? condition.trim() : null;
-      const fieldExpression = getExpressionFromSchema(oneOfSchema);
-      const expression =
-        conditionExpression && fieldExpression
-          ? combineConditions([conditionExpression, fieldExpression], '&&')
-          : conditionExpression || fieldExpression;
+      const expression = combineConditions([
+        typeof condition === 'string' ? condition.trim() : null,
+        getExpressionFromSchema(oneOfSchema),
+      ]);
+
       if (expression === null) continue;
       expressions.push(
         expression
