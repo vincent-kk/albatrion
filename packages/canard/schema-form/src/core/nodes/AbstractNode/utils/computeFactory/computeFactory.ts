@@ -1,11 +1,9 @@
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
-import {
-  checkComputedOptionFactory,
-  getConditionIndexFactory,
-  getObservedValuesFactory,
-  getPathManager,
-} from './utils';
+import { checkComputedOptionFactory } from './utils/checkComputedOptionFactory';
+import { getConditionIndexFactory } from './utils/getConditionIndexFactory';
+import { getObservedValuesFactory } from './utils/getObservedValuesFactory';
+import { getPathManager } from './utils/getPathManager';
 
 /**
  * Creates computed property management functions from the given JSON schema.

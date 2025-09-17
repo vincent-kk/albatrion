@@ -5,9 +5,9 @@ import type { Fn } from '@aileron/declare';
 import { SchemaNodeError } from '@/schema-form/errors';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
-import type { PathManager } from './getPathManager';
-import { JSON_POINTER_PATH_REGEX } from './regex';
-import { ALIAS, type ConditionFieldName } from './type';
+import type { PathManager } from '../getPathManager';
+import { JSON_POINTER_PATH_REGEX } from '../regex';
+import { ALIAS, type ConditionFieldName } from '../type';
 
 type GetConditionIndex = Fn<[dependencies: unknown[]], number>;
 

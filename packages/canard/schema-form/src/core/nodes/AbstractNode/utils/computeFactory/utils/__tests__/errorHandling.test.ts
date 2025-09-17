@@ -6,7 +6,7 @@ import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 import { checkComputedOptionFactory } from '../checkComputedOptionFactory';
 import { getConditionIndexFactory } from '../getConditionIndexFactory';
 import { getObservedValuesFactory } from '../getObservedValuesFactory';
-import { getPathManager } from '../getPathManager';
+import { getPathManager } from '../getPathManager/getPathManager';
 
 describe('Error Handling in Dynamic Function Creation', () => {
   describe('checkComputedOptionFactory', () => {
