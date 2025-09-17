@@ -38,9 +38,9 @@ export const useChildNodeComponents = (
   return useMemo(() => {
     if (isTerminalNode(node) || !children) return [];
     const ChildNodeComponents: ChildNodeComponent[] = [];
-    for (const { salt, virtual, node } of children) {
+    for (const { virtual, node } of children) {
       if (!node?.key || virtual === true) continue;
-      const key = salt === undefined ? node.key : node.key + SEPARATOR + salt;
+      const key = node.key;
       const CachedComponent = cache.current.get(key);
       if (CachedComponent) ChildNodeComponents.push(CachedComponent);
       else {
@@ -66,5 +66,3 @@ export const useChildNodeComponents = (
     return ChildNodeComponents;
   }, [node, children, NodeProxy]);
 };
-
-const SEPARATOR = '\x1F';

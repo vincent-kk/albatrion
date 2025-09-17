@@ -1,5 +1,4 @@
 import { isArray, isPlainObject } from '@winglet/common-utils/filter';
-import { getRandomString } from '@winglet/common-utils/lib';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
@@ -43,7 +42,6 @@ export const getOneOfChildNodeMapList = (
   const oneOfChildNodeMapList = new Array<Map<string, ChildNode>>(oneOfLength);
   for (let oneOfIndex = 0; oneOfIndex < oneOfLength; oneOfIndex++) {
     const oneOfSchema = oneOfSchemas[oneOfIndex] as Partial<ObjectSchema>;
-    const salt = getRandomString();
 
     if (oneOfSchema.type && jsonSchema.type !== oneOfSchema.type)
       throw new SchemaNodeError(
@@ -82,7 +80,6 @@ export const getOneOfChildNodeMapList = (
       const schema = properties[property] as JsonSchema;
       const inputDefault = defaultValue?.[property];
       oneOfChildNodeMap.set(property, {
-        salt,
         node: nodeFactory({
           key: property + '#oneOf/' + oneOfIndex,
           name: property,

@@ -334,7 +334,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     const edges = new Array<ChildNode>(this.__keys__.length);
     for (let i = 0, l = this.__keys__.length; i < l; i++) {
       const key = this.__keys__[i];
-      edges[i] = { key: key, node: this.__sourceMap__.get(key)!.node };
+      edges[i] = { node: this.__sourceMap__.get(key)!.node };
     }
     return edges;
   }
