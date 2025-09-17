@@ -628,3 +628,393 @@ describe('getConditionIndexFactory custom test', () => {
     expect(getOneOfIndex!(['other', 'other', 'other'])).toBe(-1);
   });
 });
+
+describe('getConditionIndexFactory with schema property conditions', () => {
+  it('스키마 properties의 const 값과 조건을 결합해야 함', () => {
+    const pathManager = getPathManager();
+    const schema: JsonSchemaWithVirtual = {
+      type: 'object',
+      oneOf: [
+        {
+          '&if': './status === "active"',
+          properties: {
+            type: { const: 'premium' },
+            plan: { type: 'string' },
+          },
+        },
+        {
+          '&if': './status === "active"',
+          properties: {
+            type: { const: 'basic' },
+            plan: { type: 'string' },
+          },
+        },
+      ],
+    };
+
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    expect(result).toBeDefined();
+
+    // status가 active이고 type이 premium일 때만 첫 번째 스키마가 선택됨
+    expect(result!(['active', 'premium'])).toBe(0);
+    // status가 active이고 type이 basic일 때만 두 번째 스키마가 선택됨
+    expect(result!(['active', 'basic'])).toBe(1);
+    // status가 active가 아니면 어느 스키마도 선택되지 않음
+    expect(result!(['inactive', 'premium'])).toBe(-1);
+    expect(result!(['inactive', 'basic'])).toBe(-1);
+    // type이 매칭되지 않으면 어느 스키마도 선택되지 않음
+    expect(result!(['active', 'standard'])).toBe(-1);
+
+    expect(pathManager.get()).toContain('./status');
+    expect(pathManager.get()).toContain('./type');
+  });
+
+  it('스키마 properties의 enum 값과 조건을 결합해야 함', () => {
+    const pathManager = getPathManager();
+    const schema: JsonSchemaWithVirtual = {
+      type: 'object',
+      oneOf: [
+        {
+          computed: { if: './enabled === true' },
+          properties: {
+            role: { enum: ['admin', 'moderator'] },
+            permissions: { type: 'array' },
+          },
+        },
+        {
+          computed: { if: './enabled === true' },
+          properties: {
+            role: { enum: ['user'] },
+            settings: { type: 'object' },
+          },
+        },
+      ],
+    };
+
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    expect(result).toBeDefined();
+
+    // enabled가 true이고 role이 admin 또는 moderator일 때
+    expect(result!([true, 'admin'])).toBe(0);
+    expect(result!([true, 'moderator'])).toBe(0);
+    // enabled가 true이고 role이 user일 때
+    expect(result!([true, 'user'])).toBe(1);
+    // enabled가 false면 어느 스키마도 선택되지 않음
+    expect(result!([false, 'admin'])).toBe(-1);
+    expect(result!([false, 'user'])).toBe(-1);
+    // role이 매칭되지 않으면 어느 스키마도 선택되지 않음
+    expect(result!([true, 'guest'])).toBe(-1);
+
+    expect(pathManager.get()).toContain('./enabled');
+    expect(pathManager.get()).toContain('./role');
+  });
+
+  it('조건 없이 스키마 properties만으로 조건을 생성해야 함', () => {
+    const pathManager = getPathManager();
+    const schema: JsonSchemaWithVirtual = {
+      type: 'object',
+      oneOf: [
+        {
+          properties: {
+            category: { const: 'electronics' },
+            brand: { const: 'apple' },
+            products: { type: 'array' },
+          },
+        },
+        {
+          properties: {
+            category: { const: 'electronics' },
+            brand: { const: 'samsung' },
+            products: { type: 'array' },
+          },
+        },
+        {
+          properties: {
+            category: { const: 'clothing' },
+            size: { enum: ['S', 'M', 'L'] },
+            items: { type: 'array' },
+          },
+        },
+      ],
+    };
+
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    expect(result).toBeDefined();
+
+    // electronics + apple
+    expect(result!(['electronics', 'apple'])).toBe(0);
+    // electronics + samsung
+    expect(result!(['electronics', 'samsung'])).toBe(1);
+    // clothing + size
+    expect(result!(['clothing', undefined, 'M'])).toBe(2);
+    expect(result!(['clothing', undefined, 'L'])).toBe(2);
+    // 매칭되지 않는 경우
+    expect(result!(['electronics', 'sony'])).toBe(-1);
+    expect(result!(['furniture', undefined, undefined])).toBe(-1);
+
+    expect(pathManager.get()).toContain('./category');
+    expect(pathManager.get()).toContain('./brand');
+    expect(pathManager.get()).toContain('./size');
+  });
+
+  it('boolean const 값을 포함한 복합 조건을 처리해야 함', () => {
+    const pathManager = getPathManager();
+    const schema: JsonSchemaWithVirtual = {
+      type: 'object',
+      oneOf: [
+        {
+          '&if': './mode === "advanced"',
+          properties: {
+            isEnabled: { const: true },
+            isPublic: { const: false },
+            settings: { type: 'object' },
+          },
+        },
+        {
+          '&if': './mode === "basic"',
+          properties: {
+            isEnabled: { const: true },
+            configuration: { type: 'object' },
+          },
+        },
+      ],
+    };
+
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    expect(result).toBeDefined();
+
+    // mode가 advanced이고 isEnabled=true, isPublic=false일 때
+    expect(result!(['advanced', true, false])).toBe(0);
+    // mode가 advanced지만 다른 조건이 맞지 않을 때
+    expect(result!(['advanced', false, false])).toBe(-1);
+    expect(result!(['advanced', true, true])).toBe(-1);
+    // mode가 basic이고 isEnabled=true일 때
+    expect(result!(['basic', true])).toBe(1);
+    // mode가 basic이지만 isEnabled가 false일 때
+    expect(result!(['basic', false])).toBe(-1);
+
+    expect(pathManager.get()).toContain('./mode');
+    expect(pathManager.get()).toContain('./isEnabled');
+    expect(pathManager.get()).toContain('./isPublic');
+  });
+
+  it('단일 값 enum을 const처럼 처리해야 함', () => {
+    const pathManager = getPathManager();
+    const schema: JsonSchemaWithVirtual = {
+      type: 'object',
+      oneOf: [
+        {
+          computed: { if: './version > 2' },
+          properties: {
+            format: { enum: ['json'] },
+            schema: { type: 'object' },
+          },
+        },
+        {
+          computed: { if: './version <= 2' },
+          properties: {
+            format: { enum: ['xml'] },
+            schema: { type: 'object' },
+          },
+        },
+      ],
+    };
+
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    expect(result).toBeDefined();
+
+    // version > 2이고 format이 json일 때
+    expect(result!([3, 'json'])).toBe(0);
+    expect(result!([3, 'xml'])).toBe(-1);
+    // version <= 2이고 format이 xml일 때
+    expect(result!([2, 'xml'])).toBe(1);
+    expect(result!([1, 'xml'])).toBe(1);
+    expect(result!([2, 'json'])).toBe(-1);
+
+    expect(pathManager.get()).toContain('./version');
+    expect(pathManager.get()).toContain('./format');
+  });
+
+  it('null 값을 포함한 const 조건을 처리해야 함', () => {
+    const pathManager = getPathManager();
+    const schema: JsonSchemaWithVirtual = {
+      type: 'object',
+      oneOf: [
+        {
+          '&if': './hasData === true',
+          properties: {
+            value: { const: null },
+            fallback: { type: 'string' },
+          },
+        },
+        {
+          '&if': './hasData === false',
+          properties: {
+            value: { const: 'default' },
+            fallback: { type: 'string' },
+          },
+        },
+      ],
+    };
+
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    expect(result).toBeDefined();
+
+    // hasData가 true이고 value가 null일 때
+    expect(result!([true, null])).toBe(0);
+    expect(result!([true, 'default'])).toBe(-1);
+    // hasData가 false이고 value가 'default'일 때
+    expect(result!([false, 'default'])).toBe(1);
+    expect(result!([false, null])).toBe(-1);
+
+    expect(pathManager.get()).toContain('./hasData');
+    expect(pathManager.get()).toContain('./value');
+  });
+
+  it('type과 $ref가 있는 속성은 무시하고 const/enum만 처리해야 함', () => {
+    const pathManager = getPathManager();
+    const schema: JsonSchemaWithVirtual = {
+      type: 'object',
+      oneOf: [
+        {
+          '&if': './level === "pro"',
+          properties: {
+            // type이 있으므로 무시됨
+            name: { type: 'string' },
+            // $ref가 있으므로 무시됨
+            config: { $ref: '#/definitions/config' },
+            // const는 처리됨
+            tier: { const: 'gold' },
+            // enum은 처리됨
+            features: { enum: ['advanced', 'premium'] },
+          },
+        },
+        {
+          '&if': './level === "free"',
+          properties: {
+            tier: { const: 'bronze' },
+            features: { enum: ['basic'] },
+          },
+        },
+      ],
+    };
+
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    expect(result).toBeDefined();
+
+    // level이 pro이고 tier가 gold, features가 advanced 또는 premium일 때
+    expect(result!(['pro', 'gold', 'advanced'])).toBe(0);
+    expect(result!(['pro', 'gold', 'premium'])).toBe(0);
+    expect(result!(['pro', 'silver', 'advanced'])).toBe(-1);
+    // level이 free이고 tier가 bronze, features가 basic일 때
+    expect(result!(['free', 'bronze', 'basic'])).toBe(1);
+    expect(result!(['free', 'bronze', 'advanced'])).toBe(-1);
+
+    expect(pathManager.get()).toContain('./level');
+    expect(pathManager.get()).toContain('./tier');
+    expect(pathManager.get()).toContain('./features');
+  });
+
+  it('빈 enum 배열은 무시해야 함', () => {
+    const pathManager = getPathManager();
+    const schema: JsonSchemaWithVirtual = {
+      type: 'object',
+      oneOf: [
+        {
+          '&if': './active === true',
+          properties: {
+            options: { enum: [] }, // 빈 배열은 무시됨
+            status: { const: 'ready' },
+          },
+        },
+      ],
+    };
+
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    expect(result).toBeDefined();
+
+    // active가 true이고 status가 ready일 때 (options는 무시됨)
+    expect(result!([true, 'ready'])).toBe(0);
+    expect(result!([true, 'notready'])).toBe(-1);
+    expect(result!([false, 'ready'])).toBe(-1);
+
+    expect(pathManager.get()).toContain('./active');
+    expect(pathManager.get()).toContain('./status');
+    expect(pathManager.get()).not.toContain('./options');
+  });
+
+  it('mixed type enum 값들을 올바르게 처리해야 함', () => {
+    const pathManager = getPathManager();
+    const schema: JsonSchemaWithVirtual = {
+      type: 'object',
+      oneOf: [
+        {
+          computed: { if: './type === "mixed"' },
+          properties: {
+            value: { enum: ['text', 123, true, null] },
+            data: { type: 'string' },
+          },
+        },
+        {
+          computed: { if: './type === "simple"' },
+          properties: {
+            value: { const: false },
+            data: { type: 'string' },
+          },
+        },
+      ],
+    };
+
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    expect(result).toBeDefined();
+
+    // type이 mixed이고 value가 enum에 포함될 때
+    expect(result!(['mixed', 'text'])).toBe(0);
+    expect(result!(['mixed', 123])).toBe(0);
+    expect(result!(['mixed', true])).toBe(0);
+    expect(result!(['mixed', null])).toBe(0);
+    expect(result!(['mixed', false])).toBe(-1); // false는 enum에 없음
+    // type이 simple이고 value가 false일 때
+    expect(result!(['simple', false])).toBe(1);
+    expect(result!(['simple', true])).toBe(-1);
+
+    expect(pathManager.get()).toContain('./type');
+    expect(pathManager.get()).toContain('./value');
+  });
+
+  it('조건이 없고 properties만 있을 때 올바르게 처리해야 함', () => {
+    const pathManager = getPathManager();
+    const schema: JsonSchemaWithVirtual = {
+      type: 'object',
+      oneOf: [
+        {
+          properties: {
+            field1: { const: 'value1' },
+            field2: { enum: ['a', 'b'] },
+          },
+        },
+        {
+          properties: {
+            field1: { const: 'value2' },
+            field3: { const: 100 },
+          },
+        },
+      ],
+    };
+
+    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    expect(result).toBeDefined();
+
+    // field1=value1이고 field2가 a 또는 b일 때
+    expect(result!(['value1', 'a'])).toBe(0);
+    expect(result!(['value1', 'b'])).toBe(0);
+    expect(result!(['value1', 'c'])).toBe(-1);
+    // field1=value2이고 field3이 100일 때
+    expect(result!(['value2', undefined, 100])).toBe(1);
+    expect(result!(['value2', undefined, 200])).toBe(-1);
+
+    expect(pathManager.get()).toContain('./field1');
+    expect(pathManager.get()).toContain('./field2');
+    expect(pathManager.get()).toContain('./field3');
+  });
+});

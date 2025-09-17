@@ -3,6 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { Fn } from '@aileron/declare';
 
 import { SchemaNodeError } from '@/schema-form/errors';
+import { combineConditions } from '@/schema-form/helpers/dynamicExpression';
 import type {
   JsonSchemaWithVirtual,
   PartialJsonSchema,
@@ -11,6 +12,7 @@ import type {
 import type { PathManager } from '../getPathManager';
 import { JSON_POINTER_PATH_REGEX } from '../regex';
 import { ALIAS, type ConditionIndexName } from '../type';
+import { getExpressionFromSchema } from './utils/getExpressionFromSchema';
 
 type GetConditionIndex = Fn<[dependencies: unknown[]], number>;
 
@@ -52,33 +54,38 @@ export const getConditionIndexFactory =
     // Collect only valid expressions and maintain original schema indices
     for (let i = 0, l = conditionSchemas.length; i < l; i++) {
       const oneOfSchema = conditionSchemas[i];
+      if (!oneOfSchema) continue;
 
       // Extract condition from `computed.[<conditionField>]` or `&[<conditionField>]` field
       const condition: boolean | string | undefined =
         oneOfSchema.computed?.[conditionField] ??
         oneOfSchema[ALIAS + conditionField];
 
-      switch (typeof condition) {
-        case 'boolean':
-          if (condition === true) {
-            expressions.push('true');
-            schemaIndices.push(i);
-          }
-          break;
-        case 'string': {
-          const expression = condition.trim();
-          expressions.push(
-            expression
-              .replace(JSON_POINTER_PATH_REGEX, (path) => {
-                pathManager.set(path);
-                return `dependencies[${pathManager.findIndex(path)}]`;
-              })
-              .replace(/;$/, ''),
-          );
+      if (typeof condition === 'boolean') {
+        if (condition === true) {
+          expressions.push('true');
           schemaIndices.push(i);
-          break;
         }
+        continue;
       }
+
+      const conditionExpression =
+        typeof condition === 'string' ? condition.trim() : null;
+      const fieldExpression = getExpressionFromSchema(oneOfSchema);
+      const expression =
+        conditionExpression && fieldExpression
+          ? combineConditions([conditionExpression, fieldExpression], '&&')
+          : conditionExpression || fieldExpression;
+      if (expression === null) continue;
+      expressions.push(
+        expression
+          .replace(JSON_POINTER_PATH_REGEX, (path) => {
+            pathManager.set(path);
+            return `dependencies[${pathManager.findIndex(path)}]`;
+          })
+          .replace(/;$/, ''),
+      );
+      schemaIndices.push(i);
     }
 
     if (expressions.length === 0) return undefined;
