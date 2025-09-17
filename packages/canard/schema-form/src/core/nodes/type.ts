@@ -78,8 +78,7 @@ export type SchemaNode =
  * Optional metadata assists with identity and rendering strategies for children.
  */
 export interface ChildNode {
-  key?: string;
-  salt?: string;
+  nonce?: string;
   virtual?: boolean;
   node: SchemaNode;
 }
@@ -108,8 +107,9 @@ export type HandleChange<Value = any> = Fn<[value: Value, batch?: boolean]>;
  * Constructor properties shared by all concrete `SchemaNode` implementations.
  * @typeParam Schema - Node's JSON Schema type
  * @typeParam Value - Node's value type inferred from the schema
- * @property key - Optional stable key for list rendering and reconciliation
  * @property name - Optional human-readable identifier for diagnostics/UI
+ * @property scope - Optional stable key for list rendering and reconciliation
+ * @property variant - Optional variant identifier for list rendering and reconciliation
  * @property jsonSchema - The JSON Schema definition backing this node
  * @property defaultValue - Initial value applied before user interaction
  * @property onChange - Callback invoked when the node's value changes
@@ -122,9 +122,9 @@ export interface SchemaNodeConstructorProps<
   Schema extends JsonSchemaWithVirtual,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  key?: string;
   name?: string;
-  scope?: number;
+  scope?: string;
+  variant?: number;
   jsonSchema: Schema;
   defaultValue?: Value;
   onChange: HandleChange<Value>;

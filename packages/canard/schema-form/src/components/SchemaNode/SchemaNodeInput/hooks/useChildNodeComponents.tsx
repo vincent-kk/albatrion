@@ -38,9 +38,10 @@ export const useChildNodeComponents = (
   return useMemo(() => {
     if (isTerminalNode(node) || !children) return [];
     const ChildNodeComponents: ChildNodeComponent[] = [];
-    for (const { salt, virtual, node } of children) {
-      if (!node?.key || virtual === true) continue;
-      const key = salt === undefined ? node.key : node.key + SEPARATOR + salt;
+    for (const child of children) {
+      const node = child.node;
+      if (!node?.schemaPath || child.virtual === true) continue;
+      const key = child.nonce ? node.schemaPath + child.nonce : node.schemaPath;
       const CachedComponent = cache.current.get(key);
       if (CachedComponent) ChildNodeComponents.push(CachedComponent);
       else {
@@ -66,5 +67,3 @@ export const useChildNodeComponents = (
     return ChildNodeComponents;
   }, [node, children, NodeProxy]);
 };
-
-const SEPARATOR = '\x1F';

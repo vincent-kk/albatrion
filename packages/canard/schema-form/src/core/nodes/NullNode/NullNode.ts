@@ -46,9 +46,9 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
   }
 
   constructor({
-    key,
     name,
     scope,
+    variant,
     jsonSchema,
     defaultValue,
     onChange,
@@ -58,9 +58,9 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
     required,
   }: SchemaNodeConstructorProps<NullSchema>) {
     super({
-      key,
       name,
       scope,
+      variant,
       jsonSchema,
       defaultValue,
       onChange,

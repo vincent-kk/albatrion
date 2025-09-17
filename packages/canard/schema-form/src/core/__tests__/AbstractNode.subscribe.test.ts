@@ -17,7 +17,7 @@ class TestNode extends AbstractNode<JsonSchemaWithVirtual, AllowedValue> {
   constructor() {
     super({
       jsonSchema: { type: 'string' },
-      key: 'test',
+      scope: 'test',
       name: 'test',
       onChange: () => {},
     });

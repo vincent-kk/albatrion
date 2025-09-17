@@ -41,7 +41,7 @@ import type { ObjectNode } from './ObjectNode';
  *   }
  *
  *   // Check if property already exists
- *   const existing = node.children?.find(child => child.key === propertyName);
+ *   const existing = node.children?.find(child => child.name === propertyName);
  *   if (existing) {
  *     console.warn(`Property ${propertyName} already exists`);
  *     return;

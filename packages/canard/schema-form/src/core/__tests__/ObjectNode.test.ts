@@ -625,7 +625,7 @@ describe('ObjectNode', () => {
         onChange: () => {},
       }),
     ).toThrowError(
-      "Property 'category' defined in 'oneOf' schema cannot redefine a property already defined in the parent schema.",
+      "Property 'category' defined in 'oneOf' schema cannot redefine a property already defined in the current schema.",
     );
   });
 

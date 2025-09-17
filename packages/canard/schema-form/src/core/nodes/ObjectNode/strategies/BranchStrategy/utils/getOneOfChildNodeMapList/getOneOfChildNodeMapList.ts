@@ -1,5 +1,4 @@
 import { isArray, isPlainObject } from '@winglet/common-utils/filter';
-import { getRandomString } from '@winglet/common-utils/lib';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
@@ -43,7 +42,6 @@ export const getOneOfChildNodeMapList = (
   const oneOfChildNodeMapList = new Array<Map<string, ChildNode>>(oneOfLength);
   for (let oneOfIndex = 0; oneOfIndex < oneOfLength; oneOfIndex++) {
     const oneOfSchema = oneOfSchemas[oneOfIndex] as Partial<ObjectSchema>;
-    const salt = getRandomString();
 
     if (oneOfSchema.type && jsonSchema.type !== oneOfSchema.type)
       throw new SchemaNodeError(
@@ -71,7 +69,7 @@ export const getOneOfChildNodeMapList = (
       if (childNodeMap.has(property))
         throw new SchemaNodeError(
           'ONEOF_PROPERTY_REDEFINITION',
-          `Property '${property}' defined in 'oneOf' schema cannot redefine a property already defined in the parent schema.`,
+          `Property '${property}' defined in 'oneOf' schema cannot redefine a property already defined in the current schema.`,
           {
             jsonSchema,
             path: parentNode.path,
@@ -82,11 +80,10 @@ export const getOneOfChildNodeMapList = (
       const schema = properties[property] as JsonSchema;
       const inputDefault = defaultValue?.[property];
       oneOfChildNodeMap.set(property, {
-        salt,
         node: nodeFactory({
-          key: property + '#oneOf/' + oneOfIndex,
           name: property,
-          scope: oneOfIndex,
+          scope: 'oneOf/' + oneOfIndex + '/properties/',
+          variant: oneOfIndex,
           jsonSchema: schema,
           defaultValue:
             inputDefault !== undefined ? inputDefault : getDefaultValue(schema),

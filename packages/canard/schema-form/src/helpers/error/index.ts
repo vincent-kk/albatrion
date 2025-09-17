@@ -1,2 +1,2 @@
-export { transformErrors } from './transformErrors';
-export { formatError } from './formatError';
+export * from './transformErrors';
+export * from './formatError';

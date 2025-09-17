@@ -52,9 +52,9 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
   protected override onChange: HandleChange<StringValue | Nullish>;
 
   constructor({
-    key,
     name,
     scope,
+    variant,
     jsonSchema,
     defaultValue,
     onChange,
@@ -64,9 +64,9 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     required,
   }: SchemaNodeConstructorProps<StringSchema>) {
     super({
-      key,
       name,
       scope,
+      variant,
       jsonSchema,
       defaultValue,
       onChange,

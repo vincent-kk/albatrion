@@ -40,6 +40,7 @@ import {
   getNodeGroup,
   getNodeType,
   getSafeEmptyValue,
+  matchesSchemaPath,
   traversal,
 } from './utils';
 
@@ -71,14 +72,17 @@ export abstract class AbstractNode<
   /** [readonly] Node's JSON Schema */
   public readonly jsonSchema: Schema;
 
-  /** [readonly] Node's scope */
-  public readonly scope: number | undefined;
+  /** [readonly] Node's variant */
+  public readonly variant: number | undefined;
 
   /** [readonly] Whether the node value is required */
   public readonly required: boolean;
 
   /** [readonly] Whether the node value is nullable */
   public readonly nullable: boolean;
+
+  /** Node's scope */
+  readonly #scope: string | undefined;
 
   /** Node's name */
   #name: string;
@@ -114,15 +118,25 @@ export abstract class AbstractNode<
     this.updatePath();
   }
 
-  /** Node's path */
+  /** Node's data path */
   #path: string;
 
   /**
-   * [readonly] Node's path.
+   * [readonly] Node's data path.
    * @note Basically it is readonly, but can be changed with `updatePath` by the parent node.
    * */
   public get path() {
     return this.#path;
+  }
+
+  /** Node's schema path */
+  #schemaPath: string;
+
+  /** [readonly] Node's schema path
+   * @note Basically it is readonly, but can be changed with `updatePath` by the parent node.
+   */
+  public get schemaPath() {
+    return this.#schemaPath;
   }
 
   /**
@@ -132,20 +146,15 @@ export abstract class AbstractNode<
    */
   public updatePath(this: AbstractNode) {
     const previous = this.#path;
-    const parentPath = this.parentNode?.path;
-    const current = joinSegment(parentPath, this.#escapedName);
+    const parentNode = this.parentNode;
+    const current = joinSegment(parentNode?.path, this.#escapedName);
     if (previous === current) return false;
     this.#path = current;
+    this.#schemaPath = this.#scope
+      ? joinSegment(parentNode?.schemaPath, this.#scope + this.#escapedName)
+      : joinSegment(parentNode?.schemaPath, this.#escapedName);
     this.publish(NodeEventType.UpdatePath, current, { previous, current });
     return true;
-  }
-
-  /** Node's key */
-  #key?: string;
-
-  /** [readonly] Node's key */
-  public get key() {
-    return this.#key;
   }
 
   /** Node's initial default value */
@@ -259,9 +268,9 @@ export abstract class AbstractNode<
   }
 
   constructor({
-    key,
     name,
     scope,
+    variant,
     jsonSchema,
     defaultValue,
     onChange,
@@ -273,7 +282,7 @@ export abstract class AbstractNode<
     this.type = getNodeType(jsonSchema);
     this.group = getNodeGroup(jsonSchema);
 
-    this.scope = scope;
+    this.variant = variant;
     this.jsonSchema = jsonSchema;
     this.parentNode = parentNode || null;
     this.required = required ?? false;
@@ -284,8 +293,11 @@ export abstract class AbstractNode<
     this.#name = name || '';
     this.#escapedName = escapeSegment(this.#name);
 
+    this.#scope = scope;
     this.#path = joinSegment(this.parentNode?.path, this.#escapedName);
-    this.#key = key ? joinSegment(this.parentNode?.path, key) : this.#path;
+    this.#schemaPath = scope
+      ? joinSegment(this.parentNode?.schemaPath, scope + this.#escapedName)
+      : joinSegment(this.parentNode?.schemaPath, this.#escapedName);
     this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
 
     if (this.parentNode) {
@@ -780,8 +792,19 @@ export abstract class AbstractNode<
       }
 
     // Find nodes by dataPath and set errors for child nodes as well
-    for (const [dataPath, errors] of errorsByDataPath.entries())
-      this.find(dataPath)?.setErrors(errors);
+    for (const [dataPath, errors] of errorsByDataPath.entries()) {
+      const childNode = this.find(dataPath);
+      if (childNode === null) continue;
+      childNode.setErrors(
+        childNode.variant !== undefined
+          ? errors.filter(
+              (error) =>
+                error.schemaPath === undefined ||
+                matchesSchemaPath(error.schemaPath, childNode.schemaPath),
+            )
+          : errors,
+      );
+    }
 
     // Update list of dataPaths with errors
     this.#errorDataPaths = errorDataPaths;

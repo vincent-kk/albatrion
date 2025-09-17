@@ -241,12 +241,20 @@ export type ValidateFunction<Value = unknown> = Fn<
  */
 export interface PublicJsonSchemaError<SourceError = unknown> {
   /**
-   * JSON Path to the data property that failed validation.
+   * JSON Pointer to the data property that failed validation.
    * @note Use JSON Pointer notation for nested objects and arrays
    * @see https://datatracker.ietf.org/doc/html/rfc6901
    * @example '/user/profile/email' or '/items/0/name'
    */
   dataPath: string;
+
+  /**
+   * JSON Pointer to the schema definition that triggered the validation error.
+   * @note Useful for identifying which schema rule/constraint was violated
+   * @see https://datatracker.ietf.org/doc/html/rfc6901
+   * @example '/properties/user/properties/email/format' | '/items/properties/price/minimum'
+   */
+  schemaPath?: string;
 
   /**
    * Validation rule/keyword that failed.
@@ -281,7 +289,7 @@ export interface PublicJsonSchemaError<SourceError = unknown> {
 }
 
 /**
- * JsonSchemaError extends PublicJsonSchemaError and adds a key property.
+ * JsonSchemaError extends PublicJsonSchemaError and adds `key` property.
  * @internal
  */
 export interface JsonSchemaError extends PublicJsonSchemaError {

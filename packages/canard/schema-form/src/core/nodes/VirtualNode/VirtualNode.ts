@@ -66,9 +66,9 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
   }
 
   constructor({
-    key,
     name,
     scope,
+    variant,
     jsonSchema,
     defaultValue,
     onChange,
@@ -79,9 +79,9 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     required,
   }: VirtualNodeConstructorProps<VirtualSchema>) {
     super({
-      key,
       name,
       scope,
+      variant,
       jsonSchema,
       defaultValue,
       onChange,

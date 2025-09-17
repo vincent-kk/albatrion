@@ -248,7 +248,7 @@ export const isBranchNode = (
  *     const obj: Record<string, any> = {};
  *     for (const child of node.children) {
  *       if (child.node.value !== undefined) {
- *         obj[child.key] = extractFormValues(child.node);
+ *         obj[child.name] = extractFormValues(child.node);
  *       }
  *     }
  *     return obj;

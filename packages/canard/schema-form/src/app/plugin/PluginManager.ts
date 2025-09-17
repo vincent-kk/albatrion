@@ -9,7 +9,7 @@ import {
   FormLabelRenderer,
 } from '@/schema-form/components/FallbackComponents';
 import { formTypeDefinitions } from '@/schema-form/formTypeDefinitions';
-import { formatError } from '@/schema-form/helpers/error/formatError';
+import { formatError } from '@/schema-form/helpers/error';
 import {
   type NormalizedFormTypeInputDefinition,
   normalizeFormTypeInputDefinitions,
