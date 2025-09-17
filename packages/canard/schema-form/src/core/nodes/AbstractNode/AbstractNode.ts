@@ -259,8 +259,8 @@ export abstract class AbstractNode<
   }
 
   constructor({
-    key,
     name,
+    scope,
     variant,
     jsonSchema,
     defaultValue,
@@ -285,8 +285,8 @@ export abstract class AbstractNode<
     this.#escapedName = escapeSegment(this.#name);
 
     this.#path = joinSegment(this.parentNode?.path, this.#escapedName);
-    this.#key = key
-      ? joinSegment(this.parentNode?.key, key + this.#escapedName)
+    this.#key = scope
+      ? joinSegment(this.parentNode?.key, scope + this.#escapedName)
       : joinSegment(this.parentNode?.key, this.#escapedName);
     this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
 

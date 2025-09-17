@@ -90,8 +90,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   }
 
   constructor({
-    key,
     name,
+    scope,
     variant,
     jsonSchema,
     defaultValue,
@@ -103,8 +103,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     required,
   }: BranchNodeConstructorProps<ObjectSchema>) {
     super({
-      key,
       name,
+      scope,
       variant,
       jsonSchema,
       defaultValue,

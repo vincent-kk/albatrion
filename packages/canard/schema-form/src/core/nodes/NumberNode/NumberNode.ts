@@ -52,8 +52,8 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   protected override onChange: HandleChange<NumberValue | Nullish>;
 
   constructor({
-    key,
     name,
+    scope,
     variant,
     jsonSchema,
     defaultValue,
@@ -64,8 +64,8 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     required,
   }: SchemaNodeConstructorProps<NumberSchema>) {
     super({
-      key,
       name,
+      scope,
       variant,
       jsonSchema,
       defaultValue,

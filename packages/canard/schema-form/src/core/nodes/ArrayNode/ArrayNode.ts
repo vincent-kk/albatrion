@@ -93,8 +93,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   protected override onChange: HandleChange<ArrayValue | Nullish>;
 
   constructor({
-    key,
     name,
+    scope,
     variant,
     jsonSchema,
     defaultValue,
@@ -106,8 +106,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     required,
   }: BranchNodeConstructorProps<ArraySchema>) {
     super({
-      key,
       name,
+      scope,
       variant,
       jsonSchema,
       defaultValue,
