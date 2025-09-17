@@ -3,12 +3,11 @@ import { scheduleMicrotask } from '@winglet/common-utils/scheduler';
 import type { Fn } from '@aileron/declare';
 
 import { BIT_MASK_NONE } from '@/schema-form/app/constants/bitmask';
-
 import type {
   NodeEventCollection,
   NodeEventEntity,
   NodeEventType,
-} from '../../../type';
+} from '@/schema-form/core/nodes/type';
 
 /**
  * Event batch data structure
