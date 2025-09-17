@@ -148,7 +148,231 @@ export const OneOfAlias = () => {
   );
 };
 
-export const OneOfWithComputed = () => {
+export const OneOfWithConstFieldCondition = () => {
+  const schema = {
+    type: 'object',
+    propertyKeys: [
+      'employmentType',
+      'commonField',
+      'contractType',
+      'workingHours',
+    ],
+    properties: {
+      employmentType: {
+        type: 'string',
+        enum: ['full_time', 'part_time', 'contractor'],
+        title: 'Employment Type',
+        default: 'contractor',
+      },
+      commonField: {
+        type: 'string',
+        title: 'Common Field',
+        computed: {
+          watch: '../employmentType',
+          active: '../employmentType !== null',
+          visible: '../employmentType !== null',
+        },
+      },
+    },
+
+    oneOf: [
+      {
+        properties: {
+          employmentType: {
+            const: 'full_time',
+          },
+          salary: {
+            type: 'number',
+            title: 'Annual Salary',
+          },
+          bonus: {
+            type: 'number',
+            title: 'Annual Bonus',
+          },
+          benefits: {
+            type: 'object',
+            title: 'Employee Benefits',
+            properties: {
+              healthInsurance: {
+                type: 'boolean',
+                title: 'Health Insurance',
+              },
+              pension: {
+                type: 'boolean',
+                title: 'Retirement Plan',
+              },
+            },
+          },
+          probationPeriod: {
+            type: 'number',
+            title: 'Probation Period (Months)',
+            minimum: 0,
+            maximum: 12,
+          },
+        },
+      },
+      {
+        properties: {
+          employmentType: {
+            const: 'part_time',
+          },
+          contractType: {
+            type: 'string',
+            enum: ['hourly_rate', 'fixed_term', 'seasonal'],
+            title: 'Contract Type',
+            default: 'fixed_term',
+          },
+          workingHours: {
+            type: 'number',
+            title: 'Weekly Working Hours',
+            minimum: 1,
+            maximum: 40,
+          },
+        },
+      },
+      {
+        properties: {
+          employmentType: {
+            const: 'contractor',
+          },
+          contractType: {
+            type: 'string',
+            enum: ['hourly_rate', 'project_based', 'retainer'],
+            title: 'Contract Type',
+            default: 'hourly_rate',
+          },
+          workingHours: {
+            type: 'number',
+            title: 'Weekly Working Hours',
+            minimum: 41,
+            maximum: 168,
+            computed: {
+              active: '../contractType === "hourly_rate"',
+            },
+          },
+        },
+      },
+    ],
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
+    </StoryLayout>
+  );
+};
+
+export const OneOfWithEnumFieldCondition = () => {
+  const schema = {
+    type: 'object',
+    propertyKeys: [
+      'employmentType',
+      'commonField',
+      'contractType',
+      'workingHours',
+    ],
+    properties: {
+      employmentType: {
+        type: 'string',
+        enum: ['full_time', 'part_time', 'contractor'],
+        title: 'Employment Type',
+        default: 'contractor',
+      },
+      commonField: {
+        type: 'string',
+        title: 'Common Field',
+        computed: {
+          watch: '../employmentType',
+          active: '../employmentType !== null',
+          visible: '../employmentType !== null',
+        },
+      },
+    },
+    oneOf: [
+      {
+        properties: {
+          employmentType: {
+            const: 'full_time',
+          },
+          salary: {
+            type: 'number',
+            title: 'Annual Salary',
+          },
+          bonus: {
+            type: 'number',
+            title: 'Annual Bonus',
+          },
+          benefits: {
+            type: 'object',
+            title: 'Employee Benefits',
+            properties: {
+              healthInsurance: {
+                type: 'boolean',
+                title: 'Health Insurance',
+              },
+              pension: {
+                type: 'boolean',
+                title: 'Retirement Plan',
+              },
+            },
+          },
+          probationPeriod: {
+            type: 'number',
+            title: 'Probation Period (Months)',
+            minimum: 0,
+            maximum: 12,
+          },
+        },
+      },
+      {
+        properties: {
+          employmentType: {
+            enum: ['part_time', 'contractor'],
+          },
+          contractType: {
+            type: 'string',
+            enum: ['hourly_rate', 'fixed_term', 'seasonal'],
+            title: 'Contract Type',
+            default: 'fixed_term',
+          },
+          workingHours: {
+            type: 'number',
+            title: 'Weekly Working Hours',
+            '&active': '../contractType === "fixed_term"',
+            minimum: 1,
+            maximum: 40,
+          },
+        },
+      },
+    ],
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
+    </StoryLayout>
+  );
+};
+
+export const OneOfWithConditionalExpression = () => {
   const schema = {
     type: 'object',
     propertyKeys: [
@@ -178,6 +402,128 @@ export const OneOfWithComputed = () => {
       {
         computed: {
           if: "./employmentType === 'full_time'",
+        },
+        properties: {
+          salary: {
+            type: 'number',
+            title: 'Annual Salary',
+          },
+          bonus: {
+            type: 'number',
+            title: 'Annual Bonus',
+          },
+          benefits: {
+            type: 'object',
+            title: 'Employee Benefits',
+            properties: {
+              healthInsurance: {
+                type: 'boolean',
+                title: 'Health Insurance',
+              },
+              pension: {
+                type: 'boolean',
+                title: 'Retirement Plan',
+              },
+            },
+          },
+          probationPeriod: {
+            type: 'number',
+            title: 'Probation Period (Months)',
+            minimum: 0,
+            maximum: 12,
+          },
+        },
+      },
+      {
+        computed: {
+          if: "./employmentType === 'part_time'",
+        },
+        properties: {
+          contractType: {
+            type: 'string',
+            enum: ['hourly_rate', 'fixed_term', 'seasonal'],
+            title: 'Contract Type',
+            default: 'fixed_term',
+          },
+          workingHours: {
+            type: 'number',
+            title: 'Weekly Working Hours',
+            minimum: 1,
+            maximum: 40,
+          },
+        },
+      },
+      {
+        computed: {
+          if: "./employmentType === 'contractor'",
+        },
+        properties: {
+          contractType: {
+            type: 'string',
+            enum: ['hourly_rate', 'project_based', 'retainer'],
+            title: 'Contract Type',
+            default: 'hourly_rate',
+          },
+          workingHours: {
+            type: 'number',
+            title: 'Weekly Working Hours',
+            minimum: 41,
+            maximum: 168,
+            computed: {
+              active: '../contractType === "hourly_rate"',
+            },
+          },
+        },
+      },
+    ],
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
+    </StoryLayout>
+  );
+};
+
+export const OneOfWithConditionalExpressionAndFieldCondition = () => {
+  const schema = {
+    type: 'object',
+    propertyKeys: [
+      'employmentType',
+      'commonField',
+      'contractType',
+      'workingHours',
+    ],
+    properties: {
+      employmentType: {
+        type: 'string',
+        enum: ['full_time', 'part_time', 'contractor'],
+        title: 'Employment Type',
+        default: 'contractor',
+      },
+      commonField: {
+        type: 'string',
+        title: 'Common Field',
+        computed: {
+          watch: '../employmentType',
+          active: '../employmentType !== null',
+          visible: '../employmentType !== null',
+        },
+      },
+    },
+    oneOf: [
+      {
+        computed: {
+          if: "./commonField === 'wow1'",
         },
         properties: {
           employmentType: {
@@ -215,7 +561,7 @@ export const OneOfWithComputed = () => {
       },
       {
         computed: {
-          if: "./employmentType === 'part_time'",
+          if: "./commonField === 'wow2'",
         },
         properties: {
           employmentType: {
@@ -237,7 +583,7 @@ export const OneOfWithComputed = () => {
       },
       {
         computed: {
-          if: "./employmentType === 'contractor'",
+          if: "./commonField === 'wow3'",
         },
         properties: {
           employmentType: {
