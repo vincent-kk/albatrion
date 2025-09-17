@@ -83,7 +83,7 @@ export const getOneOfChildNodeMapList = (
         node: nodeFactory({
           key: 'oneOf/' + oneOfIndex + '/properties/',
           name: property,
-          scope: oneOfIndex,
+          variant: oneOfIndex,
           jsonSchema: schema,
           defaultValue:
             inputDefault !== undefined ? inputDefault : getDefaultValue(schema),

@@ -109,6 +109,7 @@ export type HandleChange<Value = any> = Fn<[value: Value, batch?: boolean]>;
  * @typeParam Value - Node's value type inferred from the schema
  * @property key - Optional stable key for list rendering and reconciliation
  * @property name - Optional human-readable identifier for diagnostics/UI
+ * @property variant - Optional variant identifier for list rendering and reconciliation
  * @property jsonSchema - The JSON Schema definition backing this node
  * @property defaultValue - Initial value applied before user interaction
  * @property onChange - Callback invoked when the node's value changes
@@ -123,7 +124,7 @@ export interface SchemaNodeConstructorProps<
 > {
   key?: string;
   name?: string;
-  scope?: number;
+  variant?: number;
   jsonSchema: Schema;
   defaultValue?: Value;
   onChange: HandleChange<Value>;

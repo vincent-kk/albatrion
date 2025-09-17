@@ -92,7 +92,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   constructor({
     key,
     name,
-    scope,
+    variant,
     jsonSchema,
     defaultValue,
     onChange,
@@ -105,7 +105,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     super({
       key,
       name,
-      scope,
+      variant,
       jsonSchema,
       defaultValue,
       onChange,

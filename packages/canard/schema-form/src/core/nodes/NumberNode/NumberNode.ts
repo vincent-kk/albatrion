@@ -54,7 +54,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   constructor({
     key,
     name,
-    scope,
+    variant,
     jsonSchema,
     defaultValue,
     onChange,
@@ -66,7 +66,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     super({
       key,
       name,
-      scope,
+      variant,
       jsonSchema,
       defaultValue,
       onChange,

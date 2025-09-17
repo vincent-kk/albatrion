@@ -7,13 +7,13 @@ import { getSegments } from './utils/getSegments';
 /**
  * Traverses the schema node tree to find a node that matches the given path segments.
  *
- * This function implements scope-aware traversal for oneOf scenarios where multiple nodes
- * can share the same propertyKey but exist in different scopes (oneOf branches).
+ * This function implements variant-aware traversal for oneOf scenarios where multiple nodes
+ * can share the same propertyKey but exist in different variants (oneOf branches).
  *
  * **Scope Resolution Logic:**
- * - When multiple child nodes match the same propertyKey, scope filtering is applied
- * - The `next` function determines if a node should be skipped based on scope mismatch
- * - Priority is given to nodes where `next(source, node)` returns `false` (scope match)
+ * - When multiple child nodes match the same propertyKey, variant filtering is applied
+ * - The `next` function determines if a node should be skipped based on variant mismatch
+ * - Priority is given to nodes where `next(source, node)` returns `false` (variant match)
  * - If all matching nodes return `true` from `next`, the first found node is used as fallback
  *
  * **Special Path Segments:**
@@ -25,9 +25,9 @@ import { getSegments } from './utils/getSegments';
  * **Traversal Behavior:**
  * - Stops traversal at terminal nodes (leaf nodes with no subnodes)
  * - Returns null if path cannot be resolved
- * - Uses tentative matching with fallback for scope conflicts
+ * - Uses tentative matching with fallback for variant conflicts
  *
- * @param source - The starting node for traversal (used for scope comparison)
+ * @param source - The starting node for traversal (used for variant comparison)
  * @param segments - Array of path segments to traverse (e.g. ["user", "address", "0", "street"])
  * @returns The found node or null if path is invalid or node doesn't exist
  *

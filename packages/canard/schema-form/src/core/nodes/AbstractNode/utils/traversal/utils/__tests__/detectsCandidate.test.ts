@@ -8,12 +8,12 @@ describe('detectsCandidate', () => {
   // Helper function to create a mock SchemaNode
   const createMockNode = (
     options: {
-      scope?: number;
+      variant?: number;
       parentNode?: SchemaNode;
     } = {},
   ): SchemaNode => {
     return {
-      scope: options.scope,
+      variant: options.variant,
       parentNode: options.parentNode,
       // Other required properties for SchemaNode (minimal mock)
       escapedName: 'mock',
@@ -27,7 +27,7 @@ describe('detectsCandidate', () => {
   const createMockParent = (oneOfIndex?: number): SchemaNode => {
     return {
       oneOfIndex: oneOfIndex,
-      scope: undefined,
+      variant: undefined,
       parentNode: undefined,
       escapedName: 'parent',
       group: 'branch',
@@ -36,20 +36,20 @@ describe('detectsCandidate', () => {
     } as any;
   };
 
-  describe('when target node has undefined scope', () => {
+  describe('when target node has undefined variant', () => {
     it('should return true (valid candidate)', () => {
-      const source = createMockNode({ scope: 0 });
-      const target = createMockNode({ scope: undefined });
+      const source = createMockNode({ variant: 0 });
+      const target = createMockNode({ variant: undefined });
 
       const result = detectsCandidate(source, target);
 
       expect(result).toBe(true);
     });
 
-    it('should return true even when source has scope', () => {
+    it('should return true even when source has variant', () => {
       const parentNode = createMockParent();
-      const source = createMockNode({ scope: 1, parentNode });
-      const target = createMockNode({ scope: undefined, parentNode });
+      const source = createMockNode({ variant: 1, parentNode });
+      const target = createMockNode({ variant: undefined, parentNode });
 
       const result = detectsCandidate(source, target);
 
@@ -57,21 +57,21 @@ describe('detectsCandidate', () => {
     });
   });
 
-  describe('when target scope matches parent oneOfIndex', () => {
-    it('should return true (valid candidate) when scopes match parent oneOfIndex', () => {
+  describe('when target variant matches parent oneOfIndex', () => {
+    it('should return true (valid candidate) when variants match parent oneOfIndex', () => {
       const parentNode = createMockParent(0);
-      const source = createMockNode({ scope: 0, parentNode });
-      const target = createMockNode({ scope: 0, parentNode });
+      const source = createMockNode({ variant: 0, parentNode });
+      const target = createMockNode({ variant: 0, parentNode });
 
       const result = detectsCandidate(source, target);
 
       expect(result).toBe(true);
     });
 
-    it('should return true when target scope is 1 and parent oneOfIndex is 1', () => {
+    it('should return true when target variant is 1 and parent oneOfIndex is 1', () => {
       const parentNode = createMockParent(1);
-      const source = createMockNode({ scope: 1, parentNode });
-      const target = createMockNode({ scope: 1, parentNode });
+      const source = createMockNode({ variant: 1, parentNode });
+      const target = createMockNode({ variant: 1, parentNode });
 
       const result = detectsCandidate(source, target);
 
@@ -79,39 +79,39 @@ describe('detectsCandidate', () => {
     });
   });
 
-  describe('when target scope differs from parent oneOfIndex', () => {
-    describe('and source and target are in same scope with same parent', () => {
+  describe('when target variant differs from parent oneOfIndex', () => {
+    describe('and source and target are in same variant with same parent', () => {
       it('should return true (valid candidate)', () => {
-        const parentNode = createMockParent(1); // oneOfIndex different from scope
-        const source = createMockNode({ scope: 0, parentNode });
-        const target = createMockNode({ scope: 0, parentNode });
+        const parentNode = createMockParent(1); // oneOfIndex different from variant
+        const source = createMockNode({ variant: 0, parentNode });
+        const target = createMockNode({ variant: 0, parentNode });
 
         const result = detectsCandidate(source, target);
 
-        // target.scope (0) !== undefined ✓ (false)
-        // target.scope (0) === target.parentNode?.oneOfIndex (1) ✗ (false)
-        // source.scope (0) === target.scope (0) && source.parentNode === target.parentNode
+        // target.variant (0) !== undefined ✓ (false)
+        // target.variant (0) === target.parentNode?.oneOfIndex (1) ✗ (false)
+        // source.variant (0) === target.variant (0) && source.parentNode === target.parentNode
         // -> true && true = true ✓
         // Result: false || false || true = true
         expect(result).toBe(true);
       });
     });
 
-    describe('and source and target are in different scopes', () => {
-      it('should return false (invalid candidate) when scopes differ', () => {
+    describe('and source and target are in different variants', () => {
+      it('should return false (invalid candidate) when variants differ', () => {
         const parentNode = createMockParent(0);
-        const source = createMockNode({ scope: 0, parentNode });
-        const target = createMockNode({ scope: 1, parentNode });
+        const source = createMockNode({ variant: 0, parentNode });
+        const target = createMockNode({ variant: 1, parentNode });
 
         const result = detectsCandidate(source, target);
 
         expect(result).toBe(false);
       });
 
-      it('should return false when source scope is 1 and target scope is 2', () => {
+      it('should return false when source variant is 1 and target variant is 2', () => {
         const parentNode = createMockParent(0);
-        const source = createMockNode({ scope: 1, parentNode });
-        const target = createMockNode({ scope: 2, parentNode });
+        const source = createMockNode({ variant: 1, parentNode });
+        const target = createMockNode({ variant: 2, parentNode });
 
         const result = detectsCandidate(source, target);
 
@@ -124,20 +124,20 @@ describe('detectsCandidate', () => {
         const sourceParent = createMockParent(1);
         const targetParent = createMockParent(1);
 
-        const source = createMockNode({ scope: 0, parentNode: sourceParent });
-        const target = createMockNode({ scope: 0, parentNode: targetParent });
+        const source = createMockNode({ variant: 0, parentNode: sourceParent });
+        const target = createMockNode({ variant: 0, parentNode: targetParent });
 
         const result = detectsCandidate(source, target);
 
         expect(result).toBe(false);
       });
 
-      it('should return false even when scopes are the same but parents differ', () => {
+      it('should return false even when variants are the same but parents differ', () => {
         const sourceParent = createMockParent(0);
         const targetParent = createMockParent(0);
 
-        const source = createMockNode({ scope: 1, parentNode: sourceParent });
-        const target = createMockNode({ scope: 1, parentNode: targetParent });
+        const source = createMockNode({ variant: 1, parentNode: sourceParent });
+        const target = createMockNode({ variant: 1, parentNode: targetParent });
 
         const result = detectsCandidate(source, target);
 
@@ -148,68 +148,68 @@ describe('detectsCandidate', () => {
 
   describe('edge cases', () => {
     it('should handle target with no parent node', () => {
-      const source = createMockNode({ scope: 0 });
+      const source = createMockNode({ variant: 0 });
       const target = createMockNode({
-        scope: 1,
+        variant: 1,
         parentNode: undefined,
       });
 
       const result = detectsCandidate(source, target);
 
       // Since target.parentNode is null, target.parentNode?.oneOfIndex is undefined
-      // target.scope (1) !== undefined, so first condition is false
-      // target.scope (1) !== undefined, so second condition is false
-      // Different scopes (0 vs 1) makes the last condition false
+      // target.variant (1) !== undefined, so first condition is false
+      // target.variant (1) !== undefined, so second condition is false
+      // Different variants (0 vs 1) makes the last condition false
       expect(result).toBe(false);
     });
 
     it('should handle source with no parent node', () => {
       const targetParent = createMockParent(0);
-      const source = createMockNode({ scope: 0, parentNode: undefined });
-      const target = createMockNode({ scope: 1, parentNode: targetParent });
+      const source = createMockNode({ variant: 0, parentNode: undefined });
+      const target = createMockNode({ variant: 1, parentNode: targetParent });
 
       const result = detectsCandidate(source, target);
 
-      // target.scope (1) !== target.parentNode?.oneOfIndex (0), so second condition is false
-      // Different scopes (0 vs 1) makes the last condition false
+      // target.variant (1) !== target.parentNode?.oneOfIndex (0), so second condition is false
+      // Different variants (0 vs 1) makes the last condition false
       expect(result).toBe(false);
     });
 
     it('should handle both nodes with no parent', () => {
-      const source = createMockNode({ scope: 0, parentNode: undefined });
+      const source = createMockNode({ variant: 0, parentNode: undefined });
       const target = createMockNode({
-        scope: 1,
+        variant: 1,
         parentNode: undefined,
       });
 
       const result = detectsCandidate(source, target);
 
-      // target.scope (1) !== undefined (target.parentNode?.oneOfIndex), so second condition is false
-      // Different scopes and different parents (both null) makes the last condition false
+      // target.variant (1) !== undefined (target.parentNode?.oneOfIndex), so second condition is false
+      // Different variants and different parents (both null) makes the last condition false
       expect(result).toBe(false);
     });
 
-    it('should handle scope 0 correctly', () => {
+    it('should handle variant 0 correctly', () => {
       const parentNode = createMockParent(1);
-      const source = createMockNode({ scope: 0, parentNode });
-      const target = createMockNode({ scope: 0, parentNode });
+      const source = createMockNode({ variant: 0, parentNode });
+      const target = createMockNode({ variant: 0, parentNode });
 
       const result = detectsCandidate(source, target);
 
-      // target.scope (0) !== target.parentNode?.oneOfIndex (1), so second condition is false
-      // Same scopes and same parent makes the last condition true
+      // target.variant (0) !== target.parentNode?.oneOfIndex (1), so second condition is false
+      // Same variants and same parent makes the last condition true
       expect(result).toBe(true);
     });
 
     it('should handle undefined oneOfIndex on parent', () => {
       const parentNode = createMockParent(undefined);
-      const source = createMockNode({ scope: 0, parentNode });
-      const target = createMockNode({ scope: 1, parentNode });
+      const source = createMockNode({ variant: 0, parentNode });
+      const target = createMockNode({ variant: 1, parentNode });
 
       const result = detectsCandidate(source, target);
 
-      // target.scope (1) !== undefined (target.parentNode?.oneOfIndex), so second condition is false
-      // Different scopes makes the last condition false
+      // target.variant (1) !== undefined (target.parentNode?.oneOfIndex), so second condition is false
+      // Different variants makes the last condition false
       expect(result).toBe(false);
     });
   });
@@ -220,17 +220,17 @@ describe('detectsCandidate', () => {
       const parentNode = createMockParent(0); // Currently active branch is 0
 
       // Source is in branch 0 (currently active)
-      const source = createMockNode({ scope: 0, parentNode });
+      const source = createMockNode({ variant: 0, parentNode });
 
       // Target is in branch 1, but parent's current oneOfIndex is 0
-      const target = createMockNode({ scope: 1, parentNode });
+      const target = createMockNode({ variant: 1, parentNode });
 
       const result = detectsCandidate(source, target);
 
       // Should not be a valid candidate because:
-      // 1. target.scope (1) is defined (first condition false)
-      // 2. target.scope (1) !== target.parentNode?.oneOfIndex (0) (second condition false)
-      // 3. source.scope (0) !== target.scope (1) - different scopes (third condition false)
+      // 1. target.variant (1) is defined (first condition false)
+      // 2. target.variant (1) !== target.parentNode?.oneOfIndex (0) (second condition false)
+      // 3. source.variant (0) !== target.variant (1) - different variants (third condition false)
       expect(result).toBe(false);
     });
 
@@ -238,12 +238,12 @@ describe('detectsCandidate', () => {
       const parentNode = createMockParent(0); // Currently active branch is 0
 
       // Both source and target are in the currently active branch (0)
-      const source = createMockNode({ scope: 0, parentNode });
-      const target = createMockNode({ scope: 0, parentNode });
+      const source = createMockNode({ variant: 0, parentNode });
+      const target = createMockNode({ variant: 0, parentNode });
 
       const result = detectsCandidate(source, target);
 
-      // Should be a valid candidate because target.scope matches parent's oneOfIndex
+      // Should be a valid candidate because target.variant matches parent's oneOfIndex
       expect(result).toBe(true);
     });
 
@@ -251,17 +251,17 @@ describe('detectsCandidate', () => {
       const parentNode = createMockParent(1); // Currently active branch is 1
 
       // Source is in branch 1
-      const source = createMockNode({ scope: 1, parentNode });
+      const source = createMockNode({ variant: 1, parentNode });
 
       // Target is in branch 0, and parent's oneOfIndex is now 1
-      const target = createMockNode({ scope: 0, parentNode });
+      const target = createMockNode({ variant: 0, parentNode });
 
       const result = detectsCandidate(source, target);
 
       // Should not be a valid candidate because:
-      // 1. target.scope (0) is defined (first condition false)
-      // 2. target.scope (0) !== target.parentNode?.oneOfIndex (1) (second condition false)
-      // 3. source.scope (1) !== target.scope (0) - different scopes (third condition false)
+      // 1. target.variant (0) is defined (first condition false)
+      // 2. target.variant (0) !== target.parentNode?.oneOfIndex (1) (second condition false)
+      // 3. source.variant (1) !== target.variant (0) - different variants (third condition false)
       expect(result).toBe(false);
     });
   });

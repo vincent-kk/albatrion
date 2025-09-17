@@ -71,8 +71,8 @@ export abstract class AbstractNode<
   /** [readonly] Node's JSON Schema */
   public readonly jsonSchema: Schema;
 
-  /** [readonly] Node's scope */
-  public readonly scope: number | undefined;
+  /** [readonly] Node's variant */
+  public readonly variant: number | undefined;
 
   /** [readonly] Whether the node value is required */
   public readonly required: boolean;
@@ -261,7 +261,7 @@ export abstract class AbstractNode<
   constructor({
     key,
     name,
-    scope,
+    variant,
     jsonSchema,
     defaultValue,
     onChange,
@@ -273,7 +273,7 @@ export abstract class AbstractNode<
     this.type = getNodeType(jsonSchema);
     this.group = getNodeGroup(jsonSchema);
 
-    this.scope = scope;
+    this.variant = variant;
     this.jsonSchema = jsonSchema;
     this.parentNode = parentNode || null;
     this.required = required ?? false;
