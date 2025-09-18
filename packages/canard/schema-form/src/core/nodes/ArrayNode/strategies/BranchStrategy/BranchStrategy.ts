@@ -200,6 +200,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
         : getDefaultValue(this.__host__.jsonSchema.items);
     const childNode = this.__nodeFactory__({
       name: index,
+      scope: 'items',
       jsonSchema: this.__host__.jsonSchema.items,
       parentNode: this.__host__,
       defaultValue,

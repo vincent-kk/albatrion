@@ -163,15 +163,19 @@ describe('AbstractNode - setName and updatePath', () => {
       const containerNode = node.find('/container');
       const itemNode = node.find('/container/item');
 
-      // schemaPath follows the same structure as path for regular objects
-      expect(containerNode?.schemaPath).toBe('/container');
-      expect(itemNode?.schemaPath).toBe('/container/item');
+      // schemaPath follows JSON Schema pointer format with /properties prefix
+      expect(containerNode?.schemaPath).toBe('/properties/container');
+      expect(itemNode?.schemaPath).toBe(
+        '/properties/container/properties/item',
+      );
 
       containerNode?.setName('newContainer', node);
-      expect(containerNode?.schemaPath).toBe('/newContainer');
+      expect(containerNode?.schemaPath).toBe('/properties/newContainer');
 
       // Child schemaPath is immediately updated synchronously
-      expect(itemNode?.schemaPath).toBe('/newContainer/item');
+      expect(itemNode?.schemaPath).toBe(
+        '/properties/newContainer/properties/item',
+      );
     });
 
     it('should handle array node paths correctly', () => {
@@ -193,14 +197,15 @@ describe('AbstractNode - setName and updatePath', () => {
       }) as ObjectNode;
 
       const arrayNode = node.find('/items') as ArrayNode;
+      expect(arrayNode?.schemaPath).toBe('/properties/items');
       const firstItem = arrayNode?.find('/items/0');
       const secondItem = arrayNode?.find('/items/1');
 
       expect(firstItem?.path).toBe('/items/0');
       expect(secondItem?.path).toBe('/items/1');
-      // Array items have indexed schemaPath
-      expect(firstItem?.schemaPath).toBe('/items/0');
-      expect(secondItem?.schemaPath).toBe('/items/1');
+      // Array items have items-based schemaPath
+      expect(firstItem?.schemaPath).toBe('/properties/items/items');
+      expect(secondItem?.schemaPath).toBe('/properties/items/items');
     });
 
     it('should emit UpdatePath event when path changes', async () => {
@@ -327,14 +332,16 @@ describe('AbstractNode - setName and updatePath', () => {
       const deepField = node.find('/level1/level2/level3/deepField');
 
       expect(deepField?.path).toBe('/level1/level2/level3/deepField');
-      expect(deepField?.schemaPath).toBe('/level1/level2/level3/deepField');
+      expect(deepField?.schemaPath).toBe(
+        '/properties/level1/properties/level2/properties/level3/properties/deepField',
+      );
 
       level1?.setName('renamedLevel1', node);
 
       // Deep nested paths are immediately updated synchronously
       expect(deepField?.path).toBe('/renamedLevel1/level2/level3/deepField');
       expect(deepField?.schemaPath).toBe(
-        '/renamedLevel1/level2/level3/deepField',
+        '/properties/renamedLevel1/properties/level2/properties/level3/properties/deepField',
       );
     });
 
@@ -381,13 +388,17 @@ describe('AbstractNode - setName and updatePath', () => {
       const streetField = firstAddress?.find('/users/0/addresses/0/street');
 
       expect(streetField?.path).toBe('/users/0/addresses/0/street');
-      expect(streetField?.schemaPath).toBe('/users/0/addresses/0/street');
+      expect(streetField?.schemaPath).toBe(
+        '/properties/users/items/properties/addresses/items/properties/street',
+      );
 
       usersArray?.setName('members', node);
 
       // Complex nested paths are immediately updated synchronously
       expect(streetField?.path).toBe('/members/0/addresses/0/street');
-      expect(streetField?.schemaPath).toBe('/members/0/addresses/0/street');
+      expect(streetField?.schemaPath).toBe(
+        '/properties/members/items/properties/addresses/items/properties/street',
+      );
     });
   });
 
@@ -415,21 +426,25 @@ describe('AbstractNode - setName and updatePath', () => {
       expect(specialNode?.name).toBe('special~key/name');
       expect(specialNode?.escapedName).toBe('special~0key~1name');
       expect(specialNode?.path).toBe('/special~0key~1name');
-      expect(specialNode?.schemaPath).toBe('/special~0key~1name');
+      expect(specialNode?.schemaPath).toBe('/properties/special~0key~1name');
 
       expect(subField?.path).toBe('/special~0key~1name/subField');
-      expect(subField?.schemaPath).toBe('/special~0key~1name/subField');
+      expect(subField?.schemaPath).toBe(
+        '/properties/special~0key~1name/properties/subField',
+      );
 
       specialNode?.setName('normal_name', node);
 
       expect(specialNode?.name).toBe('normal_name');
       expect(specialNode?.escapedName).toBe('normal_name');
       expect(specialNode?.path).toBe('/normal_name');
-      expect(specialNode?.schemaPath).toBe('/normal_name');
+      expect(specialNode?.schemaPath).toBe('/properties/normal_name');
 
       // Child paths are immediately updated synchronously
       expect(subField?.path).toBe('/normal_name/subField');
-      expect(subField?.schemaPath).toBe('/normal_name/subField');
+      expect(subField?.schemaPath).toBe(
+        '/properties/normal_name/properties/subField',
+      );
     });
 
     it('should handle circular parent-child path updates', async () => {

@@ -64,6 +64,7 @@ export const getChildNodeMap = (
       virtual: !!virtualReferenceFields?.length,
       node: nodeFactory({
         name,
+        scope: 'properties',
         jsonSchema: mergeShowConditions(schema, mergedConditions),
         defaultValue:
           inputDefault !== undefined ? inputDefault : getDefaultValue(schema),

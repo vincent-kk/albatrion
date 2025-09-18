@@ -56,6 +56,7 @@ export const getChildren = (
           children.push({
             node: nodeFactory({
               name: fieldName,
+              scope: 'properties',
               jsonSchema: mergeShowConditions(
                 { type: 'virtual', ...reference },
                 conditions,

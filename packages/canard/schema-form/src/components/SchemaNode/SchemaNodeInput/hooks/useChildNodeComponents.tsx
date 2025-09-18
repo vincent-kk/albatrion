@@ -41,7 +41,9 @@ export const useChildNodeComponents = (
     for (const child of children) {
       const node = child.node;
       if (!node?.schemaPath || child.virtual === true) continue;
-      const key = child.nonce ? node.schemaPath + child.nonce : node.schemaPath;
+      const key = child.nonce
+        ? node.schemaPath + child.nonce + '=' + node.name
+        : node.schemaPath + '=' + node.name;
       const CachedComponent = cache.current.get(key);
       if (CachedComponent) ChildNodeComponents.push(CachedComponent);
       else {

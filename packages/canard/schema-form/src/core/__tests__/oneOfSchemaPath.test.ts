@@ -39,8 +39,8 @@ describe('oneOf schemaPath assignment', () => {
       // Base properties should have simple schemaPath
       const nameNode = node.find('/name');
       const ageNode = node.find('/age');
-      expect(nameNode?.schemaPath).toBe('/name');
-      expect(ageNode?.schemaPath).toBe('/age');
+      expect(nameNode?.schemaPath).toBe('/properties/name');
+      expect(ageNode?.schemaPath).toBe('/properties/age');
 
       // oneOf properties should have oneOf-prefixed schemaPath
       const addressNode = node.find('/address');
@@ -83,7 +83,7 @@ describe('oneOf schemaPath assignment', () => {
       const usernameNode = node.find('/username');
       const permissionsNode = node.find('/permissions');
 
-      expect(typeNode?.schemaPath).toBe('/type');
+      expect(typeNode?.schemaPath).toBe('/properties/type');
       expect(usernameNode?.schemaPath).toBe('/oneOf/0/properties/username');
       expect(permissionsNode?.schemaPath).toBe(
         '/oneOf/1/properties/permissions',
@@ -124,7 +124,7 @@ describe('oneOf schemaPath assignment', () => {
       const estimatedTimeNode = node.find('/estimatedTime');
       const completedAtNode = node.find('/completedAt');
 
-      expect(statusNode?.schemaPath).toBe('/status');
+      expect(statusNode?.schemaPath).toBe('/properties/status');
       expect(estimatedTimeNode?.schemaPath).toBe(
         '/oneOf/0/properties/estimatedTime',
       );
@@ -188,8 +188,8 @@ describe('oneOf schemaPath assignment', () => {
       // Base properties should have normal paths
       const idNode = userNode.find('id');
       const nameNode = profileNode.find('name');
-      expect(idNode?.schemaPath).toBe('/user/id');
-      expect(nameNode?.schemaPath).toBe('/user/profile/name');
+      expect(idNode?.schemaPath).toBe('/properties/user/properties/id');
+      expect(nameNode?.schemaPath).toBe('/properties/user/properties/profile/properties/name');
 
       // oneOf properties should have nested oneOf paths
       const typeNode = profileNode.find('type');
@@ -199,12 +199,12 @@ describe('oneOf schemaPath assignment', () => {
 
       // type is a const discriminator, so it might be null or have special handling
       expect(typeNode).toBeNull();
-      expect(bioNode?.schemaPath).toBe('/user/profile/oneOf/0/properties/bio');
+      expect(bioNode?.schemaPath).toBe('/properties/user/properties/profile/oneOf/0/properties/bio');
       expect(companyNode?.schemaPath).toBe(
-        '/user/profile/oneOf/1/properties/company',
+        '/properties/user/properties/profile/oneOf/1/properties/company',
       );
       expect(positionNode?.schemaPath).toBe(
-        '/user/profile/oneOf/1/properties/position',
+        '/properties/user/properties/profile/oneOf/1/properties/position',
       );
     });
 
@@ -259,7 +259,7 @@ describe('oneOf schemaPath assignment', () => {
       expect(itemsNode).toBeDefined();
 
       // Array node should have normal path
-      expect(itemsNode?.schemaPath).toBe('/items');
+      expect(itemsNode?.schemaPath).toBe('/properties/items');
 
       // Array items should be accessible (array node implementation varies)
       // The schemaPath for array item nodes would depend on how array children are implemented
@@ -333,7 +333,7 @@ describe('oneOf schemaPath assignment', () => {
 
       // Base property
       const categoryNode = dataNode.find('category');
-      expect(categoryNode?.schemaPath).toBe('/data/category');
+      expect(categoryNode?.schemaPath).toBe('/properties/data/properties/category');
 
       // First level oneOf content
       const contentNode = dataNode.find('content');
@@ -349,19 +349,19 @@ describe('oneOf schemaPath assignment', () => {
 
       // These should have double-nested oneOf paths
       expect(formatNode?.schemaPath).toBe(
-        '/data/oneOf/0/properties/content/format',
+        '/properties/data/oneOf/0/properties/content/properties/format',
       );
       expect(widthNode?.schemaPath).toBe(
-        '/data/oneOf/0/properties/content/oneOf/0/properties/width',
+        '/properties/data/oneOf/0/properties/content/oneOf/0/properties/width',
       );
       expect(heightNode?.schemaPath).toBe(
-        '/data/oneOf/0/properties/content/oneOf/0/properties/height',
+        '/properties/data/oneOf/0/properties/content/oneOf/0/properties/height',
       );
       expect(durationNode?.schemaPath).toBe(
-        '/data/oneOf/0/properties/content/oneOf/1/properties/duration',
+        '/properties/data/oneOf/0/properties/content/oneOf/1/properties/duration',
       );
       expect(framerateNode?.schemaPath).toBe(
-        '/data/oneOf/0/properties/content/oneOf/1/properties/framerate',
+        '/properties/data/oneOf/0/properties/content/oneOf/1/properties/framerate',
       );
 
       // Note: The oneOf system selects the first matching branch (media in this case)
@@ -411,7 +411,7 @@ describe('oneOf schemaPath assignment', () => {
       const baseNode = node.find('/base');
       const extraNode = node.find('/extra');
 
-      expect(baseNode?.schemaPath).toBe('/base');
+      expect(baseNode?.schemaPath).toBe('/properties/base');
       expect(extraNode?.schemaPath).toBe('/oneOf/1/properties/extra');
     });
 
@@ -562,8 +562,8 @@ describe('oneOf schemaPath assignment', () => {
       // Base properties
       const kindNode = node.find('/kind');
       const versionNode = node.find('/version');
-      expect(kindNode?.schemaPath).toBe('/kind');
-      expect(versionNode?.schemaPath).toBe('/version');
+      expect(kindNode?.schemaPath).toBe('/properties/kind');
+      expect(versionNode?.schemaPath).toBe('/properties/version');
 
       // oneOf variant properties
       const titleNode = node.find('/title');
@@ -646,9 +646,9 @@ describe('oneOf schemaPath assignment', () => {
       console.log('nameNode0 schemaPath:', nameNode0?.schemaPath);
       console.log('emailNode0 schemaPath:', emailNode0?.schemaPath);
 
-      expect(typeNode0?.schemaPath).toBe('/0/type');
-      expect(nameNode0?.schemaPath).toBe('/0/oneOf/0/properties/name');
-      expect(emailNode0?.schemaPath).toBe('/0/oneOf/0/properties/email');
+      expect(typeNode0?.schemaPath).toBe('/items/properties/type');
+      expect(nameNode0?.schemaPath).toBe('/items/oneOf/0/properties/name');
+      expect(emailNode0?.schemaPath).toBe('/items/oneOf/0/properties/email');
 
       // Test second item (admin type)
       const typeNode1 = item1.find('type');
@@ -659,9 +659,9 @@ describe('oneOf schemaPath assignment', () => {
       console.log('nameNode1 schemaPath:', nameNode1?.schemaPath);
       console.log('permissionsNode1 schemaPath:', permissionsNode1?.schemaPath);
 
-      expect(typeNode1?.schemaPath).toBe('/1/type');
-      expect(nameNode1?.schemaPath).toBe('/1/oneOf/1/properties/name');
-      expect(permissionsNode1?.schemaPath).toBe('/1/oneOf/1/properties/permissions');
+      expect(typeNode1?.schemaPath).toBe('/items/properties/type');
+      expect(nameNode1?.schemaPath).toBe('/items/oneOf/1/properties/name');
+      expect(permissionsNode1?.schemaPath).toBe('/items/oneOf/1/properties/permissions');
     });
 
     it('should handle complex array with nested oneOf objects', () => {
@@ -734,8 +734,8 @@ describe('oneOf schemaPath assignment', () => {
       console.log('Array item idNode schemaPath:', idNode?.schemaPath);
       console.log('Array item dataNode schemaPath:', dataNode?.schemaPath);
 
-      expect(idNode?.schemaPath).toBe('/0/id');
-      expect(dataNode?.schemaPath).toBe('/0/data');
+      expect(idNode?.schemaPath).toBe('/items/properties/id');
+      expect(dataNode?.schemaPath).toBe('/items/properties/data');
 
       expect(isObjectNode(dataNode)).toBe(true);
       if (!isObjectNode(dataNode)) return;
@@ -746,8 +746,8 @@ describe('oneOf schemaPath assignment', () => {
       console.log('categoryNode schemaPath:', categoryNode?.schemaPath);
       console.log('detailsNode schemaPath:', detailsNode?.schemaPath);
 
-      expect(categoryNode?.schemaPath).toBe('/0/data/category');
-      expect(detailsNode?.schemaPath).toBe('/0/data/oneOf/0/properties/details');
+      expect(categoryNode?.schemaPath).toBe('/items/properties/data/properties/category');
+      expect(detailsNode?.schemaPath).toBe('/items/properties/data/oneOf/0/properties/details');
 
       expect(isObjectNode(detailsNode)).toBe(true);
       if (!isObjectNode(detailsNode)) return;
@@ -758,8 +758,8 @@ describe('oneOf schemaPath assignment', () => {
       console.log('nameNode in details schemaPath:', nameNode?.schemaPath);
       console.log('priceNode in details schemaPath:', priceNode?.schemaPath);
 
-      expect(nameNode?.schemaPath).toBe('/0/data/oneOf/0/properties/details/name');
-      expect(priceNode?.schemaPath).toBe('/0/data/oneOf/0/properties/details/price');
+      expect(nameNode?.schemaPath).toBe('/items/properties/data/oneOf/0/properties/details/properties/name');
+      expect(priceNode?.schemaPath).toBe('/items/properties/data/oneOf/0/properties/details/properties/price');
     });
 
     it('should handle array with oneOf at items level with different types', () => {
@@ -809,17 +809,17 @@ describe('oneOf schemaPath assignment', () => {
       console.log('item1 type:', item1?.type);
       console.log('item1 schemaPath:', item1?.schemaPath);
 
-      // Array items with oneOf should have index-based paths
-      expect(item0?.schemaPath).toBe('/0');
-      expect(item1?.schemaPath).toBe('/1');
+      // Array items with oneOf should have items-based paths
+      expect(item0?.schemaPath).toBe('/items');
+      expect(item1?.schemaPath).toBe('/items');
 
       if (isObjectNode(item0)) {
         const typeNode0 = item0.find('type');
         const contentNode = item0.find('content');
         console.log('typeNode0 schemaPath:', typeNode0?.schemaPath);
         console.log('contentNode schemaPath:', contentNode?.schemaPath);
-        expect(typeNode0?.schemaPath).toBe('/0/type');
-        expect(contentNode?.schemaPath).toBe('/0/oneOf/0/properties/content');
+        expect(typeNode0?.schemaPath).toBe('/items/properties/type');
+        expect(contentNode?.schemaPath).toBe('/items/oneOf/0/properties/content');
       }
 
       if (isObjectNode(item1)) {
@@ -827,8 +827,8 @@ describe('oneOf schemaPath assignment', () => {
         const valueNode = item1.find('value');
         console.log('typeNode1 schemaPath:', typeNode1?.schemaPath);
         console.log('valueNode schemaPath:', valueNode?.schemaPath);
-        expect(typeNode1?.schemaPath).toBe('/1/type');
-        expect(valueNode?.schemaPath).toBe('/1/oneOf/1/properties/value');
+        expect(typeNode1?.schemaPath).toBe('/items/properties/type');
+        expect(valueNode?.schemaPath).toBe('/items/oneOf/1/properties/value');
       }
     });
   });
