@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { ENHANCED_KEY } from '@/schema-form/app/constants/internal';
 import type { JsonSchema } from '@/schema-form/types';
 
 import { preprocessSchema } from '../preprocessSchema/preprocessSchema';
@@ -21,13 +22,13 @@ describe('JsonSchemaScanner - OneOf Schema Test', () => {
       oneOf: [
         {
           properties: {
-            __oneOfIndex__: { const: 0 },
+            [ENHANCED_KEY]: { const: 0 },
             a: { type: 'string' },
           },
         },
         {
           properties: {
-            __oneOfIndex__: { const: 1 },
+            [ENHANCED_KEY]: { const: 1 },
             b: { type: 'number' },
           },
         },

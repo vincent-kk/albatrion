@@ -1,5 +1,6 @@
 import { merge } from '@winglet/common-utils/object';
 
+import { ENHANCED_KEY } from '@/schema-form/app/constants/internal';
 import type { JsonSchema } from '@/schema-form/types';
 
 export const processOneOfSchema = (
@@ -8,7 +9,7 @@ export const processOneOfSchema = (
 ) =>
   merge(schema, {
     properties: {
-      __oneOfIndex__: {
+      [ENHANCED_KEY]: {
         const: variant,
       },
     },
