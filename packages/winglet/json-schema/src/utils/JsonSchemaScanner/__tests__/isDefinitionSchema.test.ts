@@ -1,10 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
-import {
-  $DEFS,
-  DEFINITIONS,
-  isDefinitionSchema,
-} from '../utils/isDefinitionSchema';
+import { $DEFS, DEFINITIONS } from '../type';
+import { isDefinitionSchema } from '../utils/isDefinitionSchema';
 
 describe('isDefinitionSchema', () => {
   // 유효한 케이스 - $defs 경로

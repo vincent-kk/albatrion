@@ -5,13 +5,15 @@ import type { Dictionary } from '@aileron/declare';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import type { SchemaEntry } from '../type';
-import { $DEFS, DEFINITIONS } from './isDefinitionSchema';
+import type { DefinitionKeyword, SchemaEntry } from '../type';
+import {
+  $DEFS,
+  COMPOSITION_KEYWORDS,
+  CONDITIONAL_KEYWORDS,
+  DEFINITIONS,
+} from '../type';
 
-const CONDITIONAL_KEYWORDS = ['not', 'if', 'then', 'else'] as const;
-const COMPOSITION_KEYWORDS = ['allOf', 'anyOf', 'oneOf'] as const;
-
-const Separator = JSONPointer.Separator;
+const $S = JSONPointer.Separator;
 
 /**
  * Returns the child nodes of a given node as an array of SchemaEntry.
@@ -60,7 +62,7 @@ const handleDefinitionsNode = (
   path: string,
   dataPath: string,
   depth: number,
-  fieldName: string,
+  fieldName: DefinitionKeyword,
 ) => {
   const definitions = schema[fieldName];
   const keys = Object.keys(definitions);
@@ -68,7 +70,9 @@ const handleDefinitionsNode = (
     const key = keys[i];
     entries.push({
       schema: definitions[key],
-      path: path + Separator + fieldName + Separator + key,
+      path: path + $S + fieldName + $S + key,
+      keyword: fieldName,
+      variant: key,
       dataPath,
       depth: depth + 1,
     });
@@ -96,7 +100,8 @@ const handleConditionalNode = (
     if (!conditionalNode || typeof conditionalNode !== 'object') continue;
     entries.push({
       schema: conditionalNode,
-      path: path + Separator + keyword,
+      path: path + $S + keyword,
+      keyword,
       dataPath,
       depth: depth + 1,
     });
@@ -125,7 +130,9 @@ const handleCompositionNode = (
     for (let j = 0, jl = compositionNode.length; j < jl; j++) {
       entries.push({
         schema: compositionNode[j],
-        path: path + Separator + keyword + Separator + j,
+        path: path + $S + keyword + $S + j,
+        keyword,
+        variant: j,
         dataPath,
         depth: depth + 1,
       });
@@ -150,7 +157,8 @@ const handleAdditionalProperties = (
 ) => {
   entries.push({
     schema: schema.additionalProperties,
-    path: path + Separator + 'additionalProperties',
+    path: path + $S + 'additionalProperties',
+    keyword: 'additionalProperties',
     dataPath,
     depth: depth + 1,
   });
@@ -176,15 +184,18 @@ const handleArrayItems = (
     for (let i = 0, l = items.length; i < l; i++) {
       entries.push({
         schema: items[i],
-        path: path + Separator + 'items' + Separator + i,
-        dataPath: dataPath + Separator + i,
+        path: path + $S + 'items' + $S + i,
+        keyword: 'items',
+        variant: i,
+        dataPath: dataPath + $S + i,
         depth: depth + 1,
       });
     }
   } else {
     entries.push({
       schema: items,
-      path: path + Separator + 'items',
+      path: path + $S + 'items',
+      keyword: 'items',
       dataPath,
       depth: depth + 1,
     });
@@ -213,8 +224,10 @@ const handleObjectProperties = (
     const escapedKey = escapeSegment(key);
     entries.push({
       schema: properties[key],
-      path: path + Separator + 'properties' + Separator + escapedKey,
-      dataPath: dataPath + Separator + escapedKey,
+      path: path + $S + 'properties' + $S + escapedKey,
+      keyword: 'properties',
+      variant: key,
+      dataPath: dataPath + $S + escapedKey,
       depth: depth + 1,
     });
   }

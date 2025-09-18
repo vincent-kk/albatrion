@@ -43,6 +43,8 @@ describe('JsonSchemaScanner', () => {
           path: `${JSONPointer.Fragment}/properties/name`,
           dataPath: `${JSONPointer.Fragment}/name`,
           depth: 1,
+          keyword: 'properties',
+          variant: 'name',
         },
         undefined,
       );
@@ -52,6 +54,8 @@ describe('JsonSchemaScanner', () => {
           path: `${JSONPointer.Fragment}/properties/age`,
           dataPath: `${JSONPointer.Fragment}/age`,
           depth: 1,
+          keyword: 'properties',
+          variant: 'age',
         },
         undefined,
       );
@@ -98,6 +102,8 @@ describe('JsonSchemaScanner', () => {
           path: `${JSONPointer.Fragment}/properties/user`,
           dataPath: `${JSONPointer.Fragment}/user`,
           depth: 1,
+          keyword: 'properties',
+          variant: 'user',
         },
         undefined,
       );
@@ -327,6 +333,8 @@ describe('JsonSchemaScanner', () => {
           dataPath: `${JSONPointer.Fragment}/ref`,
           referencePath: '#/definitions/string',
           referenceResolved: true,
+          keyword: 'properties',
+          variant: 'ref',
           schema: {
             type: 'string',
           },
@@ -581,6 +589,8 @@ describe('JsonSchemaScannerAsync', () => {
           path: `${JSONPointer.Fragment}/properties/name`,
           dataPath: `${JSONPointer.Fragment}/name`,
           depth: 1,
+          keyword: 'properties',
+          variant: 'name',
         },
         undefined,
       );
@@ -590,6 +600,8 @@ describe('JsonSchemaScannerAsync', () => {
           path: `${JSONPointer.Fragment}/properties/age`,
           dataPath: `${JSONPointer.Fragment}/age`,
           depth: 1,
+          keyword: 'properties',
+          variant: 'age',
         },
         undefined,
       );
@@ -655,6 +667,8 @@ describe('JsonSchemaScannerAsync', () => {
           dataPath: `${JSONPointer.Fragment}/ref`,
           referencePath: '#/definitions/string',
           referenceResolved: true,
+          keyword: 'properties',
+          variant: 'ref',
           schema: { type: 'string' }, // 해결된 스키마
         },
         undefined,

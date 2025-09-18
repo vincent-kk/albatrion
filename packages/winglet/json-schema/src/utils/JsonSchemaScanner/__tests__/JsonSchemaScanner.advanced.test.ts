@@ -33,6 +33,8 @@ describe('JsonSchemaScanner Advanced Features', () => {
           path: `${JSONPointer.Fragment}/allOf/0`,
           dataPath: JSONPointer.Fragment,
           depth: 1,
+          keyword: 'allOf',
+          variant: 0,
         },
         undefined,
       );
@@ -42,6 +44,8 @@ describe('JsonSchemaScanner Advanced Features', () => {
           path: `${JSONPointer.Fragment}/allOf/1`,
           dataPath: JSONPointer.Fragment,
           depth: 1,
+          keyword: 'allOf',
+          variant: 1,
         },
         undefined,
       );
@@ -53,6 +57,8 @@ describe('JsonSchemaScanner Advanced Features', () => {
           path: `${JSONPointer.Fragment}/anyOf/0`,
           dataPath: JSONPointer.Fragment,
           depth: 1,
+          keyword: 'anyOf',
+          variant: 0,
         },
         undefined,
       );
@@ -62,6 +68,8 @@ describe('JsonSchemaScanner Advanced Features', () => {
           path: `${JSONPointer.Fragment}/anyOf/1`,
           dataPath: JSONPointer.Fragment,
           depth: 1,
+          keyword: 'anyOf',
+          variant: 1,
         },
         undefined,
       );
@@ -73,6 +81,8 @@ describe('JsonSchemaScanner Advanced Features', () => {
           path: `${JSONPointer.Fragment}/oneOf/0`,
           dataPath: JSONPointer.Fragment,
           depth: 1,
+          keyword: 'oneOf',
+          variant: 0,
         },
         undefined,
       );
@@ -82,6 +92,8 @@ describe('JsonSchemaScanner Advanced Features', () => {
           path: `${JSONPointer.Fragment}/oneOf/1`,
           dataPath: JSONPointer.Fragment,
           depth: 1,
+          keyword: 'oneOf',
+          variant: 1,
         },
         undefined,
       );
@@ -110,6 +122,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
           path: `${JSONPointer.Fragment}/if`,
           dataPath: JSONPointer.Fragment,
           depth: 1,
+          keyword: 'if',
         },
         undefined,
       );
@@ -119,6 +132,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
           path: `${JSONPointer.Fragment}/then`,
           dataPath: JSONPointer.Fragment,
           depth: 1,
+          keyword: 'then',
         },
         undefined,
       );
@@ -128,6 +142,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
           path: `${JSONPointer.Fragment}/else`,
           dataPath: JSONPointer.Fragment,
           depth: 1,
+          keyword: 'else',
         },
         undefined,
       );
@@ -159,6 +174,8 @@ describe('JsonSchemaScanner Advanced Features', () => {
           path: `${JSONPointer.Fragment}/definitions/stringType`,
           dataPath: JSONPointer.Fragment,
           depth: 1,
+          keyword: 'definitions',
+          variant: 'stringType',
         },
         undefined,
       );
@@ -168,6 +185,8 @@ describe('JsonSchemaScanner Advanced Features', () => {
           path: `${JSONPointer.Fragment}/$defs/numberType`,
           dataPath: JSONPointer.Fragment,
           depth: 1,
+          keyword: '$defs',
+          variant: 'numberType',
         },
         undefined,
       );

@@ -1,7 +1,6 @@
 import { JSONPointer } from '@winglet/json/pointer';
 
-export const $DEFS = '$defs';
-export const DEFINITIONS = 'definitions';
+import { $DEFS, DEFINITIONS } from '../type';
 
 export const isDefinitionSchema = (path: string): boolean => {
   if (

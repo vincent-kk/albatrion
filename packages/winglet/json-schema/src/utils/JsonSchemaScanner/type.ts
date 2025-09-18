@@ -2,6 +2,20 @@ import type { Fn } from '@aileron/declare';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
+export const $DEFS = '$defs';
+export const DEFINITIONS = 'definitions';
+
+export const CONDITIONAL_KEYWORDS = ['not', 'if', 'then', 'else'] as const;
+export const COMPOSITION_KEYWORDS = ['allOf', 'anyOf', 'oneOf'] as const;
+
+export type DefinitionKeyword = typeof $DEFS | typeof DEFINITIONS;
+export type ConditionalKeyword = (typeof CONDITIONAL_KEYWORDS)[number];
+export type CompositionKeyword = (typeof COMPOSITION_KEYWORDS)[number];
+
+export type PropertiesKeyword = 'properties';
+export type AdditionalPropertiesKeyword = 'additionalProperties';
+export type ItemsKeyword = 'items';
+
 export enum OperationPhase {
   /** Phase when first visiting a node */
   Enter = 1 << 0,
@@ -13,7 +27,7 @@ export enum OperationPhase {
   Exit = 1 << 3,
 }
 
-export interface SchemaEntry {
+export type SchemaEntry = {
   /** The schema node being processed */
   schema: UnknownSchema;
   /** JSON pointer path of the current node */
@@ -28,7 +42,24 @@ export interface SchemaEntry {
   referencePath?: string;
   /** Whether reference is resolved */
   referenceResolved?: boolean;
-}
+} & (
+  | {
+      keyword: CompositionKeyword;
+      variant: number;
+    }
+  | {
+      keyword: ItemsKeyword;
+      variant?: number;
+    }
+  | {
+      keyword: DefinitionKeyword | PropertiesKeyword;
+      variant: string;
+    }
+  | {
+      keyword: ConditionalKeyword | AdditionalPropertiesKeyword;
+    }
+  | { keyword?: never }
+);
 
 export interface SchemaVisitor<ContextType = void> {
   /** Callback called when node processing starts */
