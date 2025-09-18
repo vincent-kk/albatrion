@@ -2,6 +2,7 @@ import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
 
 import type { JsonSchema } from '@/schema-form/types';
 
+import { processOneOfSchema } from './utils/processOneOfSchema';
 import { processVirtualSchema } from './utils/processVirtualSchema';
 
 export const preprocessSchema = <Schema extends JsonSchema>(
@@ -12,9 +13,18 @@ const scanner = new JsonSchemaScanner({
   options: {
     mutate: (entry) => {
       let schema = entry.schema as Partial<JsonSchema>;
-      const processedVirtual = processVirtualSchema(schema);
-      if (processedVirtual) return processedVirtual;
-      return;
+      let idle = false;
+      if (schema.type === 'object') {
+        const processed = processVirtualSchema(schema);
+        schema = processed || schema;
+        idle = processed === null;
+      }
+      if (entry.keyword === 'oneOf') {
+        schema = processOneOfSchema(schema, entry.variant);
+        idle = false;
+      }
+      if (idle) return;
+      return schema;
     },
   },
 });
