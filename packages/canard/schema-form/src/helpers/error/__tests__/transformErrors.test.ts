@@ -81,75 +81,7 @@ describe('transformErrors', () => {
     });
   });
 
-  describe('omits 파라미터 테스트', () => {
-    it('omits에 포함된 키워드의 에러들을 필터링해야 합니다', () => {
-      // Arrange
-      const errors: JsonSchemaError[] = [
-        createMockError('required'),
-        createMockError('type'),
-        createMockError('pattern'),
-        createMockError('maxLength'),
-      ];
-      const omits = new Set(['required', 'pattern']);
-
-      // Act
-      const result = transformErrors(errors, omits);
-
-      // Assert
-      expect(result).toHaveLength(2);
-      expect(result[0].keyword).toBe('type');
-      expect(result[1].keyword).toBe('maxLength');
-    });
-
-    it('모든 에러를 필터링해야 합니다 - 모든 키워드가 omits에 포함된 경우', () => {
-      // Arrange
-      const errors: JsonSchemaError[] = [
-        createMockError('required'),
-        createMockError('type'),
-      ];
-      const omits = new Set(['required', 'type']);
-
-      // Act
-      const result = transformErrors(errors, omits);
-
-      // Assert
-      expect(result).toEqual([]);
-      expect(result).toHaveLength(0);
-    });
-
-    it('에러를 필터링하지 않아야 합니다 - omits가 비어있는 경우', () => {
-      // Arrange
-      const errors: JsonSchemaError[] = [
-        createMockError('required'),
-        createMockError('type'),
-      ];
-      const omits = new Set<string>();
-
-      // Act
-      const result = transformErrors(errors, omits);
-
-      // Assert
-      expect(result).toHaveLength(2);
-      expect(result[0].keyword).toBe('required');
-      expect(result[1].keyword).toBe('type');
-    });
-
-    it('에러를 필터링하지 않아야 합니다 - omits가 undefined인 경우', () => {
-      // Arrange
-      const errors: JsonSchemaError[] = [
-        createMockError('required'),
-        createMockError('type'),
-      ];
-
-      // Act
-      const result = transformErrors(errors, undefined);
-
-      // Assert
-      expect(result).toHaveLength(2);
-      expect(result[0].keyword).toBe('required');
-      expect(result[1].keyword).toBe('type');
-    });
-  });
+  // omits 파라미터가 제거되어 이 테스트 섹션은 더 이상 필요하지 않습니다
 
   describe('key 파라미터 테스트', () => {
     it('각 에러에 순차적인 키를 추가해야 합니다 - key가 true인 경우', () => {
@@ -161,7 +93,7 @@ describe('transformErrors', () => {
       ];
 
       // Act
-      const result = transformErrors(errors, undefined, true);
+      const result = transformErrors(errors, true);
 
       // Assert
       expect(result).toHaveLength(3);
@@ -182,7 +114,7 @@ describe('transformErrors', () => {
       ];
 
       // Act
-      const result = transformErrors(errors, undefined, false);
+      const result = transformErrors(errors, false);
 
       // Assert
       expect(result).toHaveLength(2);
@@ -198,7 +130,7 @@ describe('transformErrors', () => {
       ];
 
       // Act
-      const result = transformErrors(errors, undefined, undefined);
+      const result = transformErrors(errors, undefined);
 
       // Assert
       expect(result).toHaveLength(2);
@@ -212,8 +144,8 @@ describe('transformErrors', () => {
       const errors2: JsonSchemaError[] = [createMockError('type')];
 
       // Act
-      const result1 = transformErrors(errors1, undefined, true);
-      const result2 = transformErrors(errors2, undefined, true);
+      const result1 = transformErrors(errors1, true);
+      const result2 = transformErrors(errors2, true);
 
       // Assert
       expect(result1[0].key).toBeDefined();
@@ -222,45 +154,7 @@ describe('transformErrors', () => {
     });
   });
 
-  describe('복합 시나리오 테스트', () => {
-    it('필터링과 키 추가를 동시에 처리해야 합니다', () => {
-      // Arrange
-      const errors: JsonSchemaError[] = [
-        createMockError('required'),
-        createMockError('type'),
-        createMockError('pattern'),
-        createMockError('maxLength'),
-      ];
-      const omits = new Set(['required', 'pattern']);
-
-      // Act
-      const result = transformErrors(errors, omits, true);
-
-      // Assert
-      expect(result).toHaveLength(2);
-      expect(result[0].keyword).toBe('type');
-      expect(result[1].keyword).toBe('maxLength');
-      expect(result[0].key).toBeDefined();
-      expect(result[1].key).toBeDefined();
-      expect(result[1].key).toBe(result[0].key! + 1);
-    });
-
-    it('필터링 후 빈 배열이 되어도 문제없어야 합니다', () => {
-      // Arrange
-      const errors: JsonSchemaError[] = [
-        createMockError('required'),
-        createMockError('type'),
-      ];
-      const omits = new Set(['required', 'type']);
-
-      // Act
-      const result = transformErrors(errors, omits, true);
-
-      // Assert
-      expect(result).toEqual([]);
-      expect(result).toHaveLength(0);
-    });
-  });
+  // omits 파라미터가 제거되어 복합 시나리오 테스트는 더 이상 필요하지 않습니다
 
   describe('원본 데이터 변경 (mutation) 테스트', () => {
     it('원본 에러 객체를 변경해야 합니다 - key 추가 시', () => {
@@ -272,7 +166,7 @@ describe('transformErrors', () => {
       expect(originalError.key).toBeUndefined();
 
       // Act
-      const result = transformErrors(errors, undefined, true);
+      const result = transformErrors(errors, true);
 
       // Assert
       // 원본 객체가 변경되었는지 확인
@@ -290,7 +184,7 @@ describe('transformErrors', () => {
       expect(originalError.key).toBeUndefined();
 
       // Act
-      const result = transformErrors(errors, undefined, false);
+      const result = transformErrors(errors, false);
 
       // Assert
       // 원본 객체의 key가 undefined로 설정되었는지 확인
@@ -309,7 +203,7 @@ describe('transformErrors', () => {
 
       // Act
       const start = performance.now();
-      const result = transformErrors(largeErrorArray, undefined, true);
+      const result = transformErrors(largeErrorArray, true);
       const end = performance.now();
 
       // Assert
@@ -355,17 +249,18 @@ describe('transformErrors', () => {
           },
         },
       ];
-      const omits = new Set(['pattern']);
 
       // Act
-      const result = transformErrors(realWorldErrors, omits, true);
+      const result = transformErrors(realWorldErrors, true);
 
       // Assert
-      expect(result).toHaveLength(2);
+      expect(result).toHaveLength(3);  // pattern 에러가 더 이상 필터링되지 않음
       expect(result[0].keyword).toBe('required');
       expect(result[1].keyword).toBe('minLength');
+      expect(result[2].keyword).toBe('pattern');  // pattern 에러도 포함됨
       expect(result[0].key).toBeDefined();
       expect(result[1].key).toBeDefined();
+      expect(result[2].key).toBeDefined();
 
       // 원본 데이터 구조가 보존되는지 확인
       expect(result[0].message).toBe("should have required property 'email'");

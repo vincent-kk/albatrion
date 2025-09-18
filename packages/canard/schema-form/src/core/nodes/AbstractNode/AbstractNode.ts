@@ -45,7 +45,6 @@ import {
   traversal,
 } from './utils';
 
-const IGNORE_ERROR_KEYWORDS = new Set(['oneOf']);
 const RECURSIVE_ERROR_OMITTED_KEYS = new Set(['key']);
 
 export abstract class AbstractNode<
@@ -759,7 +758,7 @@ export abstract class AbstractNode<
   ): Promise<JsonSchemaError[]> {
     if (!this.isRoot || !this.#validator) return [];
     const errors = await this.#validator(value);
-    if (errors) return transformErrors(errors, IGNORE_ERROR_KEYWORDS);
+    if (errors) return transformErrors(errors);
     else return [];
   }
 

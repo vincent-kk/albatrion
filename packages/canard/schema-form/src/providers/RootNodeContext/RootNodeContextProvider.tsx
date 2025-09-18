@@ -108,7 +108,7 @@ export const RootNodeContextProvider = <
   useEffect(() => {
     if (!rootNode || !errors) return;
 
-    const transformedErrors = transformErrors(errors, undefined, true);
+    const transformedErrors = transformErrors(errors, true);
     const currentErrorDictionary: Record<string, JsonSchemaError[]> = {};
 
     for (const error of transformedErrors) {
