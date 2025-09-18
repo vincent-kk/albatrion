@@ -425,7 +425,7 @@ export const UseVirtualNodeErrorWithChildNodeErrorsHook = () => {
                   <label>Zip Code</label>
                   <input
                     type="text"
-                    value={value?.[0]}
+                    value={value?.[0] || ''}
                     onChange={(e) =>
                       onChange([e.target.value, value?.[1], value?.[2]])
                     }
@@ -435,7 +435,7 @@ export const UseVirtualNodeErrorWithChildNodeErrorsHook = () => {
                   <label>City</label>
                   <input
                     type="text"
-                    value={value?.[1]}
+                    value={value?.[1] || ''}
                     onChange={(e) =>
                       onChange([value?.[0], e.target.value, value?.[2]])
                     }
@@ -445,7 +445,7 @@ export const UseVirtualNodeErrorWithChildNodeErrorsHook = () => {
                   <label>Road Address</label>
                   <input
                     type="text"
-                    value={value?.[2]}
+                    value={value?.[2] || ''}
                     onChange={(e) =>
                       onChange([value?.[0], value?.[1], e.target.value])
                     }
