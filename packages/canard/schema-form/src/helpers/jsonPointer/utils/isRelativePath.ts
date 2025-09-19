@@ -1,3 +1,5 @@
+import { JSONPointer } from '../enum';
+
 /**
  * Checks if a JSON Pointer path is a relative path.
  * @param path - The JSON Pointer path to check.
@@ -16,5 +18,8 @@
  * isRelativePath('../../foo/bar/baz/qux/quux/corge') // true
  */
 export const isRelativePath = (pointer: string): boolean =>
-  (pointer[0] === '.' && pointer[1] === '/') ||
-  (pointer[0] === '.' && pointer[1] === '.' && pointer[2] === '/');
+  (pointer[0] === $C && pointer[1] === $S) ||
+  (pointer[0] === $C && pointer[1] === $C && pointer[2] === $S);
+
+const $S = JSONPointer.Separator;
+const $C = JSONPointer.Current;

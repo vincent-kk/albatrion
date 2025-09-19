@@ -1,3 +1,5 @@
+import { JSONPointer } from '../enum';
+
 /**
  * Checks if a JSON Pointer path is an absolute path.
  * @param path - The JSON Pointer path to check.
@@ -14,4 +16,7 @@
  * isAbsolutePath('../../foo/bar/baz') // false
  */
 export const isAbsolutePath = (pointer: string): boolean =>
-  pointer[0] === '/' || (pointer[0] === '#' && pointer[1] === '/');
+  pointer[0] === $S || (pointer[0] === $F && pointer[1] === $S);
+
+const $F = JSONPointer.Fragment;
+const $S = JSONPointer.Separator;

@@ -137,7 +137,7 @@ export const VirtualSchemaRequired = () => {
         fields: ['virtualField_B1', 'virtualField_B2'],
       },
     },
-    // NOTE: 'virtualField_A'->['virtualFiled_A1', 'virtualFiled_A2'], 'virtualFiled_A1' will be duplicated
+    // 'virtualField_A'->['virtualFiled_A1', 'virtualFiled_A2'], 'virtualFiled_A1' will be duplicated
     required: ['control', 'virtualField_A', 'virtualFiled_A1'],
   } satisfies JsonSchema;
 
@@ -345,7 +345,7 @@ export const VirtualSchemaControlWithIfElse2 = () => {
     },
     then: {
       required: ['virtualFiled_A1'],
-      // NOTE: virtualRequired is not for external use, this is for internal use only
+      // virtualRequired is not for external use, this is for internal use only
       // Just for testing purpose
       virtualRequired: ['virtualField_A'],
     },
@@ -359,7 +359,7 @@ export const VirtualSchemaControlWithIfElse2 = () => {
       },
       then: {
         required: ['virtualField_B1'],
-        // NOTE: virtualRequired is not for external use, this is for internal use only
+        // virtualRequired is not for external use, this is for internal use only
         // Just for testing purpose
         virtualRequired: ['virtualField_B'],
       },

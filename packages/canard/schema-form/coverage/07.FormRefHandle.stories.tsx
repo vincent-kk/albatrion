@@ -10,8 +10,12 @@ import {
   type JsonSchema,
   type JsonSchemaError,
   SetValueOption,
+  registerPlugin,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
+import { plugin as validatorPlugin } from './components/validator';
+
+registerPlugin(validatorPlugin);
 
 export default {
   title: 'Form/07. FormRefHandle',

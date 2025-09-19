@@ -54,7 +54,7 @@ export const PromptInner = memo(
     );
 
     const handleConfirm = useCallback(() => {
-      // NOTE: wait for the next tick to ensure the value is updated
+      // Wait for the next tick to ensure the value is updated
       requestAnimationFrame(onConfirm);
     }, [onConfirm]);
 

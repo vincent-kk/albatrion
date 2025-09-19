@@ -26,9 +26,9 @@ export const useFormTypeInput = (node: SchemaNode, disabled: boolean) => {
     useFormTypeInputsContext();
   const { fromExternalFormTypeInputDefinitions } = useExternalFormContext();
 
-  const FormTypeInput = useMemo(() => {
+  return useMemo(() => {
     if (disabled) return null;
-    // NOTE: If FormTypeInput is a React Component, return that Component.
+    // If FormTypeInput is a React Component, return that Component.
     const InlineFormTypeInput = node.jsonSchema?.FormTypeInput;
     if (InlineFormTypeInput && isReactComponent(InlineFormTypeInput))
       if (isMemoComponent(InlineFormTypeInput))
@@ -37,20 +37,20 @@ export const useFormTypeInput = (node: SchemaNode, disabled: boolean) => {
 
     const hint = getHint(node);
 
-    // NOTE: FormTypeInputMap has higher priority than FormTypeInputDefinitions
+    // FormTypeInputMap has higher priority than FormTypeInputDefinitions
     for (const { test, Component } of fromFormTypeInputMap)
       if (test(hint)) return memo(Component);
 
-    // NOTE: FormTypeInputDefinitions has lower priority than FormTypeInputMap
+    // FormTypeInputDefinitions has lower priority than FormTypeInputMap
     for (const { test, Component } of fromFormTypeInputDefinitions)
       if (test(hint)) return memo(Component);
 
-    // NOTE: ExternalFormTypeInputDefinitions has lowest priority, it run only if it exists
+    // ExternalFormTypeInputDefinitions has lowest priority, it run only if it exists
     if (fromExternalFormTypeInputDefinitions)
       for (const { test, Component } of fromExternalFormTypeInputDefinitions)
         if (test(hint)) return memo(Component);
 
-    // NOTE: fallback FormTypeInputDefinitions has lowest priority
+    // Fallback FormTypeInputDefinitions has lowest priority
     const fallbackDefinitions = PluginManager.formTypeInputDefinitions;
     for (const { test, Component } of fallbackDefinitions)
       if (test(hint)) return memo(Component);
@@ -63,7 +63,6 @@ export const useFormTypeInput = (node: SchemaNode, disabled: boolean) => {
     fromFormTypeInputDefinitions,
     fromExternalFormTypeInputDefinitions,
   ]);
-  return FormTypeInput;
 };
 
 const getHint = (node: SchemaNode): Hint => ({

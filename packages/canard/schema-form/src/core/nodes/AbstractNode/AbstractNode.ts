@@ -1,11 +1,14 @@
 import { isEmptyObject, isObject } from '@winglet/common-utils/filter';
-import { equals } from '@winglet/common-utils/object';
-import { escapeSegment } from '@winglet/json/pointer';
+import { cloneLite, equals, merge } from '@winglet/common-utils/object';
+import { escapeSegment, setValue } from '@winglet/json/pointer';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
 import { PluginManager } from '@/schema-form/app/plugin';
-import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
+import {
+  getDefaultValue,
+  getEmptyValue,
+} from '@/schema-form/helpers/defaultValue';
 import { transformErrors } from '@/schema-form/helpers/error';
 import { isAbsolutePath, joinSegment } from '@/schema-form/helpers/jsonPointer';
 import type {
@@ -45,7 +48,6 @@ import {
   traversal,
 } from './utils';
 
-const IGNORE_ERROR_KEYWORDS = new Set(['oneOf']);
 const RECURSIVE_ERROR_OMITTED_KEYS = new Set(['key']);
 
 export abstract class AbstractNode<
@@ -746,6 +748,29 @@ export abstract class AbstractNode<
       this.setExternalErrors(nextErrors);
   }
 
+  /** [root only] Enhancement value, `undefined` if not enabled */
+  #enhancer: Value | undefined;
+
+  /** [root only] Enhanced value for validation, `value` if not enabled */
+  get #enhancedValue(): Value | Nullish {
+    const value = this.value;
+    if (this.group === 'terminal' || value == null) return value;
+    const enhancer = this.#enhancer;
+    if (enhancer === undefined || isEmptyObject(enhancer)) return value;
+    return merge(cloneLite(enhancer), value);
+  }
+
+  /**
+   * Adjusts an enhancer value
+   * @param pointer - The path to adjust the enhancement value
+   * @param value - The enhancement value to adjust
+   * @internal Internal implementation method. Do not call directly.
+   * */
+  public adjustEnhancer(this: AbstractNode, pointer: string, value: any) {
+    if (this.isRoot) setValue(this.#enhancer, pointer, value);
+    else this.rootNode.adjustEnhancer(pointer, value);
+  }
+
   /** Node's validator function */
   #validator: ValidateFunction | undefined;
 
@@ -759,7 +784,7 @@ export abstract class AbstractNode<
   ): Promise<JsonSchemaError[]> {
     if (!this.isRoot || !this.#validator) return [];
     const errors = await this.#validator(value);
-    if (errors) return transformErrors(errors, IGNORE_ERROR_KEYWORDS);
+    if (errors) return transformErrors(errors);
     else return [];
   }
 
@@ -770,15 +795,10 @@ export abstract class AbstractNode<
   async #handleValidation(this: AbstractNode) {
     if (!this.isRoot) return;
 
-    // NOTE: Perform validation using current value and schema in the form
-    //    - getDataWithSchema: Transforms and returns value data based on current JsonSchema
-    //    - filterErrors: Filters oneOf-related errors from errors
-    const internalErrors = await this.#validate(this.value);
+    const internalErrors = await this.#validate(this.#enhancedValue);
 
-    // Save all errors, return false if same as previous errors
     if (!this.#setGlobalErrors(internalErrors)) return;
 
-    // Classify obtained errors by dataPath
     const errorsByDataPath = new Map<
       JsonSchemaError['dataPath'],
       JsonSchemaError[]
@@ -789,7 +809,6 @@ export abstract class AbstractNode<
       else errorsByDataPath.set(error.dataPath, [error]);
     }
 
-    // Clear errors for nodes that had errors in previous error list but not in new error list
     const errorDataPaths = Array.from(errorsByDataPath.keys());
     if (this.#errorDataPaths)
       for (const dataPath of this.#errorDataPaths) {
@@ -797,7 +816,6 @@ export abstract class AbstractNode<
         this.find(dataPath)?.clearErrors();
       }
 
-    // Find nodes by dataPath and set errors for child nodes as well
     for (const [dataPath, errors] of errorsByDataPath.entries()) {
       const childNode = this.find(dataPath);
       if (childNode === null) continue;
@@ -811,8 +829,6 @@ export abstract class AbstractNode<
           : errors,
       );
     }
-
-    // Update list of dataPaths with errors
     this.#errorDataPaths = errorDataPaths;
   }
 
@@ -825,6 +841,12 @@ export abstract class AbstractNode<
     if (this.isRoot) await this.#handleValidation();
     else await this.rootNode.validate();
     return this.globalErrors;
+  }
+
+  public get validation(): boolean {
+    return this.isRoot
+      ? this.#validator !== undefined
+      : this.rootNode.validation;
   }
 
   /**
@@ -841,6 +863,7 @@ export abstract class AbstractNode<
       this.#validator =
         validatorFactory?.(this.jsonSchema as JsonSchema) ||
         PluginManager.validator?.compile(this.jsonSchema as JsonSchema);
+      if (this.validation) this.#enhancer = getEmptyValue(this.type);
     } catch (error: any) {
       this.#validator = getFallbackValidator(error, this.jsonSchema);
     }

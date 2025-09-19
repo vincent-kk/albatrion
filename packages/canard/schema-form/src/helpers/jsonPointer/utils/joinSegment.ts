@@ -1,3 +1,5 @@
+import { JSONPointer } from '../enum';
+
 /**
  * Joins a segment to a path.
  * @param path - The path to join the segment to.
@@ -6,4 +8,6 @@
  * @returns The path with the segment joined.
  */
 export const joinSegment = (path: string | undefined, segment: string) =>
-  path ? (path === '/' ? path + segment : path + '/' + segment) : '/';
+  path ? (path === $S ? path + segment : path + $S + segment) : $S;
+
+const $S = JSONPointer.Separator;

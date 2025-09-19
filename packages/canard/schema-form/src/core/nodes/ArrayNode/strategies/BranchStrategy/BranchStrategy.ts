@@ -156,7 +156,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
     if (host.defaultValue === null) this.__nullish__ = null;
 
-    // NOTE: If defaultValue is an array and its length is greater than 0, push each value to the array.
+    // If defaultValue is an array and its length is greater than 0, push each value to the array.
     if (host.defaultValue?.length)
       for (const value of host.defaultValue) this.push(value);
 

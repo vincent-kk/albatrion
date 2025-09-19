@@ -384,7 +384,7 @@ export const OneOfWithConditionalExpression = () => {
     properties: {
       employmentType: {
         type: 'string',
-        enum: ['full_time', 'part_time', 'contractor'],
+        enum: ['full_time', 'part_time', 'contractor', 'none'],
         title: 'Employment Type',
         default: 'contractor',
       },
@@ -481,6 +481,260 @@ export const OneOfWithConditionalExpression = () => {
   const formHandle = useRef<FormHandle<typeof schema, any>>(null);
 
   const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
+    </StoryLayout>
+  );
+};
+
+export const OneOfWithConditionalExpressionInArray = () => {
+  const schema = {
+    type: 'array',
+    items: {
+      type: 'object',
+      propertyKeys: [
+        'employmentType',
+        'commonField',
+        'contractType',
+        'workingHours',
+      ],
+      properties: {
+        employmentType: {
+          type: 'string',
+          enum: ['full_time', 'part_time', 'contractor'],
+          title: 'Employment Type',
+          default: 'contractor',
+        },
+        commonField: {
+          type: 'string',
+          title: 'Common Field',
+          computed: {
+            watch: '../employmentType',
+            active: '../employmentType !== null',
+            visible: '../employmentType !== null',
+          },
+        },
+      },
+      oneOf: [
+        {
+          computed: {
+            if: "./employmentType === 'full_time'",
+          },
+          properties: {
+            salary: {
+              type: 'number',
+              title: 'Annual Salary',
+            },
+            bonus: {
+              type: 'number',
+              title: 'Annual Bonus',
+            },
+            benefits: {
+              type: 'object',
+              title: 'Employee Benefits',
+              properties: {
+                healthInsurance: {
+                  type: 'boolean',
+                  title: 'Health Insurance',
+                },
+                pension: {
+                  type: 'boolean',
+                  title: 'Retirement Plan',
+                },
+              },
+            },
+            probationPeriod: {
+              type: 'number',
+              title: 'Probation Period (Months)',
+              minimum: 0,
+              maximum: 12,
+            },
+          },
+        },
+        {
+          computed: {
+            if: "./employmentType === 'part_time'",
+          },
+          properties: {
+            contractType: {
+              type: 'string',
+              enum: ['hourly_rate', 'fixed_term', 'seasonal'],
+              title: 'Contract Type',
+              default: 'fixed_term',
+            },
+            workingHours: {
+              type: 'number',
+              title: 'Weekly Working Hours',
+              minimum: 1,
+              maximum: 40,
+            },
+          },
+        },
+        {
+          computed: {
+            if: "./employmentType === 'contractor'",
+          },
+          properties: {
+            contractType: {
+              type: 'string',
+              enum: ['hourly_rate', 'project_based', 'retainer'],
+              title: 'Contract Type',
+              default: 'hourly_rate',
+            },
+            workingHours: {
+              type: 'number',
+              title: 'Weekly Working Hours',
+              minimum: 41,
+              maximum: 168,
+              computed: {
+                active: '../contractType === "hourly_rate"',
+              },
+            },
+          },
+        },
+      ],
+    },
+    minItems: 3,
+    maxItems: 3,
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
+
+  const [value, setValue] = useState<any[]>([]);
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
+    </StoryLayout>
+  );
+};
+
+export const OneOfWithConditionalExpressionInObject = () => {
+  const schema = {
+    type: 'object',
+    properties: {
+      oneOf: {
+        type: 'object',
+        propertyKeys: [
+          'employmentType',
+          'commonField',
+          'contractType',
+          'workingHours',
+        ],
+        properties: {
+          employmentType: {
+            type: 'string',
+            enum: ['full_time', 'part_time', 'contractor'],
+            title: 'Employment Type',
+            default: 'contractor',
+          },
+          commonField: {
+            type: 'string',
+            title: 'Common Field',
+            computed: {
+              watch: '../employmentType',
+              active: '../employmentType !== null',
+              visible: '../employmentType !== null',
+            },
+          },
+        },
+        oneOf: [
+          {
+            computed: {
+              if: "./employmentType === 'full_time'",
+            },
+            properties: {
+              salary: {
+                type: 'number',
+                title: 'Annual Salary',
+              },
+              bonus: {
+                type: 'number',
+                title: 'Annual Bonus',
+              },
+              benefits: {
+                type: 'object',
+                title: 'Employee Benefits',
+                properties: {
+                  healthInsurance: {
+                    type: 'boolean',
+                    title: 'Health Insurance',
+                  },
+                  pension: {
+                    type: 'boolean',
+                    title: 'Retirement Plan',
+                  },
+                },
+              },
+              probationPeriod: {
+                type: 'number',
+                title: 'Probation Period (Months)',
+                minimum: 0,
+                maximum: 12,
+              },
+            },
+          },
+          {
+            computed: {
+              if: "./employmentType === 'part_time'",
+            },
+            properties: {
+              contractType: {
+                type: 'string',
+                enum: ['hourly_rate', 'fixed_term', 'seasonal'],
+                title: 'Contract Type',
+                default: 'fixed_term',
+              },
+              workingHours: {
+                type: 'number',
+                title: 'Weekly Working Hours',
+                minimum: 1,
+                maximum: 40,
+              },
+            },
+          },
+          {
+            computed: {
+              if: "./employmentType === 'contractor'",
+            },
+            properties: {
+              contractType: {
+                type: 'string',
+                enum: ['hourly_rate', 'project_based', 'retainer'],
+                title: 'Contract Type',
+                default: 'hourly_rate',
+              },
+              workingHours: {
+                type: 'number',
+                title: 'Weekly Working Hours',
+                minimum: 41,
+                maximum: 168,
+                computed: {
+                  active: '../contractType === "hourly_rate"',
+                },
+              },
+            },
+          },
+        ],
+      },
+    },
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
+
+  const [value, setValue] = useState<any[]>([]);
   const [errors, setErrors] = useState<JsonSchemaError[]>([]);
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
@@ -918,6 +1172,83 @@ export const ComplexOneOfSmall = () => {
         onValidate={(errors) => setErrors(errors || [])}
       />
     </StoryLayout>
+  );
+};
+
+export const Array = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      type: {
+        type: 'string',
+        enum: ['real world', 'internet'],
+        default: 'real world',
+      },
+      items: {
+        type: 'array',
+        items: {
+          type: 'object',
+          oneOf: [
+            {
+              '&if': '(/type)==="real world"',
+              properties: {
+                name: {
+                  type: 'string',
+                  default: 'John Doe',
+                },
+                age: {
+                  type: 'number',
+                  default: 30,
+                },
+                nationality: {
+                  type: 'string',
+                  default: 'United States',
+                },
+              },
+            },
+            {
+              '&if': '(/type)==="internet"',
+              properties: {
+                ip: {
+                  type: 'string',
+                  default: '192.168.0.1',
+                },
+                port: {
+                  type: 'number',
+                  default: 80,
+                },
+                domainName: {
+                  type: 'string',
+                  default: 'example.com',
+                },
+              },
+            },
+          ],
+        },
+        minItems: 3,
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>[]>([]);
+  const ref = useRef<FormHandle<typeof jsonSchema, typeof value>>(null);
+
+  return (
+    <div>
+      <button
+        onClick={() => {
+          const node = ref.current?.node?.find('/items');
+          if (node?.type === 'array') {
+            node.setValue(undefined);
+          }
+        }}
+      >
+        remove items filed
+      </button>
+      <StoryLayout jsonSchema={jsonSchema} value={value}>
+        <Form jsonSchema={jsonSchema} onChange={setValue} ref={ref} />
+      </StoryLayout>
+    </div>
   );
 };
 

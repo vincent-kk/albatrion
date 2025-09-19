@@ -1,0 +1,3 @@
+import { END_OF_TEXT, START_OF_TEXT, UNIT_SEPARATOR } from './control';
+
+export const ENHANCED_KEY = START_OF_TEXT + UNIT_SEPARATOR + END_OF_TEXT;
