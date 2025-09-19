@@ -1,11 +1,14 @@
-import { isEmptyObject, isObject } from '@winglet/common-utils/filter';
-import { equals } from '@winglet/common-utils/object';
-import { escapeSegment } from '@winglet/json/pointer';
+import { isEmpty, isEmptyObject, isObject } from '@winglet/common-utils/filter';
+import { clone, equals, merge } from '@winglet/common-utils/object';
+import { escapeSegment, setValue } from '@winglet/json/pointer';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
 import { PluginManager } from '@/schema-form/app/plugin';
-import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
+import {
+  getDefaultValue,
+  getEmptyValue,
+} from '@/schema-form/helpers/defaultValue';
 import { transformErrors } from '@/schema-form/helpers/error';
 import { isAbsolutePath, joinSegment } from '@/schema-form/helpers/jsonPointer';
 import type {
@@ -745,6 +748,29 @@ export abstract class AbstractNode<
       this.setExternalErrors(nextErrors);
   }
 
+  /** [root only] Enhancement value, `undefined` if not enabled */
+  #enhancer: Value | undefined;
+
+  /** [root only] Enhanced value for validation, `value` if not enabled */
+  get #enhancedValue(): Value | Nullish {
+    const value = this.value;
+    if (this.group === 'terminal' || value == null) return value;
+    const enhancer = this.#enhancer;
+    if (enhancer === undefined || isEmpty(enhancer)) return value;
+    return merge(clone(enhancer), value);
+  }
+
+  /**
+   * Adjusts an enhancer value
+   * @param pointer - The path to adjust the enhancement value
+   * @param value - The enhancement value to adjust
+   * @internal Internal implementation method. Do not call directly.
+   * */
+  public adjustEnhancer(this: AbstractNode, pointer: string, value: any) {
+    if (this.isRoot) setValue(this.#enhancer, pointer, value);
+    else this.rootNode.adjustEnhancer(pointer, value);
+  }
+
   /** Node's validator function */
   #validator: ValidateFunction | undefined;
 
@@ -772,7 +798,7 @@ export abstract class AbstractNode<
     // NOTE: Perform validation using current value and schema in the form
     //    - getDataWithSchema: Transforms and returns value data based on current JsonSchema
     //    - filterErrors: Filters oneOf-related errors from errors
-    const internalErrors = await this.#validate(this.value);
+    const internalErrors = await this.#validate(this.#enhancedValue);
 
     // Save all errors, return false if same as previous errors
     if (!this.#setGlobalErrors(internalErrors)) return;
@@ -826,6 +852,12 @@ export abstract class AbstractNode<
     return this.globalErrors;
   }
 
+  public get validation(): boolean {
+    return this.isRoot
+      ? this.#validator !== undefined
+      : this.rootNode.validation;
+  }
+
   /**
    * Prepares validator, only available for rootNode
    * @param validator ValidatorFactory, creates new one if not provided
@@ -840,6 +872,7 @@ export abstract class AbstractNode<
       this.#validator =
         validatorFactory?.(this.jsonSchema as JsonSchema) ||
         PluginManager.validator?.compile(this.jsonSchema as JsonSchema);
+      if (this.validation) this.#enhancer = getEmptyValue(this.type);
     } catch (error: any) {
       this.#validator = getFallbackValidator(error, this.jsonSchema);
     }
