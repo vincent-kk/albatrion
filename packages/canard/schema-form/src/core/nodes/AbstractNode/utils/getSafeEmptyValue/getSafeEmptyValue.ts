@@ -1,3 +1,5 @@
+import { getEmptyValue } from '@/schema-form/helpers/defaultValue';
+
 /**
  * Returns default value based on JSON Schema's default property or type
  * @param jsonSchema - JSON Schema
@@ -8,7 +10,5 @@ export const getSafeEmptyValue = <Schema extends { type?: string }>(
   jsonSchema: Schema,
 ) => {
   if (value !== undefined) return value;
-  else if (jsonSchema.type === 'array') return [];
-  else if (jsonSchema.type === 'object') return {};
-  else return undefined;
+  return getEmptyValue(jsonSchema.type);
 };

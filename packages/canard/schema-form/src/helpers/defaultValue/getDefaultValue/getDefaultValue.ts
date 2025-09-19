@@ -1,3 +1,5 @@
+import { getEmptyValue } from '../getEmptyValue';
+
 /**
  * Returns default value from JSON Schema's default property or based on type
  * @param jsonSchema - JSON Schema
@@ -9,8 +11,6 @@ export const getDefaultValue = <
   jsonSchema: Schema,
 ) => {
   if (jsonSchema.default !== undefined) return jsonSchema.default;
-  else if (jsonSchema.type === 'array') return [];
-  else if (jsonSchema.type === 'virtual') return [];
-  else if (jsonSchema.type === 'object') return {};
-  else return undefined;
+  if (jsonSchema.type === 'virtual') return [];
+  return getEmptyValue(jsonSchema.type);
 };
