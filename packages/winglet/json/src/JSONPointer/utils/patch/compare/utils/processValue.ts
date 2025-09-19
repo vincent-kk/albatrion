@@ -1,4 +1,4 @@
-import { clone } from '@winglet/common-utils/object';
+import { cloneLite } from '@winglet/common-utils/object';
 
 /**
  * Process a value by cloning it if it's an object and immutable is true.
@@ -13,5 +13,5 @@ export const processValue = <Value>(
   immutable: boolean,
 ): Value => {
   if (value === undefined) return null as Value;
-  return immutable && typeof value === 'object' ? clone(value) : value;
+  return immutable && typeof value === 'object' ? cloneLite(value) : value;
 };

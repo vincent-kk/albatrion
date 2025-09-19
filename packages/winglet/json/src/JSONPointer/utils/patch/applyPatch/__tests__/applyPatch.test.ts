@@ -427,6 +427,10 @@ describe('applyPatch', () => {
       expect(() => {
         applyPatch(source, patches, { protectPrototype: false });
       }).not.toThrow();
+
+      // Cleanup: 테스트 후 프로토타입 속성 제거
+      // @ts-expect-error: Intentionally accessing prototype for cleanup
+      delete Object.prototype.custom;
     });
   });
 
