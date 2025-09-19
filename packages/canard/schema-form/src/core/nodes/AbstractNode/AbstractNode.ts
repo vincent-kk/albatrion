@@ -795,15 +795,10 @@ export abstract class AbstractNode<
   async #handleValidation(this: AbstractNode) {
     if (!this.isRoot) return;
 
-    // NOTE: Perform validation using current value and schema in the form
-    //    - getDataWithSchema: Transforms and returns value data based on current JsonSchema
-    //    - filterErrors: Filters oneOf-related errors from errors
     const internalErrors = await this.#validate(this.#enhancedValue);
 
-    // Save all errors, return false if same as previous errors
     if (!this.#setGlobalErrors(internalErrors)) return;
 
-    // Classify obtained errors by dataPath
     const errorsByDataPath = new Map<
       JsonSchemaError['dataPath'],
       JsonSchemaError[]
@@ -814,7 +809,6 @@ export abstract class AbstractNode<
       else errorsByDataPath.set(error.dataPath, [error]);
     }
 
-    // Clear errors for nodes that had errors in previous error list but not in new error list
     const errorDataPaths = Array.from(errorsByDataPath.keys());
     if (this.#errorDataPaths)
       for (const dataPath of this.#errorDataPaths) {
@@ -822,7 +816,6 @@ export abstract class AbstractNode<
         this.find(dataPath)?.clearErrors();
       }
 
-    // Find nodes by dataPath and set errors for child nodes as well
     for (const [dataPath, errors] of errorsByDataPath.entries()) {
       const childNode = this.find(dataPath);
       if (childNode === null) continue;
@@ -836,8 +829,6 @@ export abstract class AbstractNode<
           : errors,
       );
     }
-
-    // Update list of dataPaths with errors
     this.#errorDataPaths = errorDataPaths;
   }
 

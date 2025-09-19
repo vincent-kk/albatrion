@@ -44,7 +44,7 @@ export const getVirtualReferencesMap = (
           name: nodeName || 'root',
         },
       );
-    // NOTE: virtual fields must be defined in properties
+    // Virtual fields must be defined in properties
     const notFoundFields = value.fields.filter(
       (field) => !propertyKeys.includes(field),
     );
