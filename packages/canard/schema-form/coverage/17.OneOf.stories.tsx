@@ -1175,6 +1175,83 @@ export const ComplexOneOfSmall = () => {
   );
 };
 
+export const Array = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      type: {
+        type: 'string',
+        enum: ['real world', 'internet'],
+        default: 'real world',
+      },
+      items: {
+        type: 'array',
+        items: {
+          type: 'object',
+          oneOf: [
+            {
+              '&if': '(/type)==="real world"',
+              properties: {
+                name: {
+                  type: 'string',
+                  default: 'John Doe',
+                },
+                age: {
+                  type: 'number',
+                  default: 30,
+                },
+                nationality: {
+                  type: 'string',
+                  default: 'United States',
+                },
+              },
+            },
+            {
+              '&if': '(/type)==="internet"',
+              properties: {
+                ip: {
+                  type: 'string',
+                  default: '192.168.0.1',
+                },
+                port: {
+                  type: 'number',
+                  default: 80,
+                },
+                domainName: {
+                  type: 'string',
+                  default: 'example.com',
+                },
+              },
+            },
+          ],
+        },
+        minItems: 3,
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>[]>([]);
+  const ref = useRef<FormHandle<typeof jsonSchema, typeof value>>(null);
+
+  return (
+    <div>
+      <button
+        onClick={() => {
+          const node = ref.current?.node?.find('/items');
+          if (node?.type === 'array') {
+            node.setValue(undefined);
+          }
+        }}
+      >
+        remove items filed
+      </button>
+      <StoryLayout jsonSchema={jsonSchema} value={value}>
+        <Form jsonSchema={jsonSchema} onChange={setValue} ref={ref} />
+      </StoryLayout>
+    </div>
+  );
+};
+
 export const ErrorCase1 = () => {
   const schema = {
     type: 'object',

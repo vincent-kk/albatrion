@@ -5,8 +5,12 @@ import {
   type FormHandle,
   type JsonSchema,
   type JsonSchemaError,
+  registerPlugin,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
+import { plugin } from './components/validator';
+
+registerPlugin(plugin);
 
 export default {
   title: 'Form/06. IfThenElse',
