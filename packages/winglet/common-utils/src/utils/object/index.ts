@@ -8,6 +8,7 @@ export { removeUndefined } from './removeUndefined';
 export { serializeNative } from './serializeNative';
 export { serializeObject } from './serializeObject';
 export { serializeWithFullSortedKeys } from './serializeWithFullSortedKeys';
+export { shallowClone } from './shallowClone';
 export { stableEquals } from './stableEquals';
 export { stableSerialize } from './stableSerialize';
 export { sortObjectKeys } from './sortObjectKeys';
