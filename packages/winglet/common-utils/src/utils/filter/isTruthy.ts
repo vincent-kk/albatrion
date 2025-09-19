@@ -1,3 +1,5 @@
+import type { Falsy } from './isFalsy';
+
 /**
  * Determines whether a value is truthy with enhanced type safety.
  *
@@ -272,16 +274,3 @@
  * - Use `!!value` for direct truthy conversion
  */
 export const isTruthy = <T>(value: T): value is Exclude<T, Falsy> => !!value;
-
-/**
- * Union type representing all falsy values in JavaScript.
- *
- * Includes all six falsy values:
- * - false (boolean false)
- * - null (null value)
- * - undefined (undefined value)
- * - '' (empty string)
- * - 0 (number zero)
- * - NaN (Not a Number) - Note: NaN is of type number but falsy
- */
-export type Falsy = false | null | undefined | '' | 0 | typeof NaN;

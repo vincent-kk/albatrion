@@ -8,10 +8,12 @@ export { isBuffer } from './isBuffer';
 export { isCloneable } from './isCloneable';
 export { isDataView } from './isDataView';
 export { isDate } from './isDate';
+export { isEmpty } from './isEmpty';
 export { isEmptyArray } from './isEmptyArray';
 export { isEmptyObject } from './isEmptyObject';
 export { isEmptyPlainObject } from './isEmptyPlainObject';
 export { isError } from './isError';
+export { isFalsy } from './isFalsy';
 export { isFile } from './isFile';
 export { isFunction } from './isFunction';
 export { isInteger } from './isInteger';
@@ -39,4 +41,4 @@ export { isWeakSet } from './isWeakSet';
 
 export type { TypedArray } from './isTypedArray';
 export type { PrimitiveType } from './isPrimitiveType';
-export type { Falsy } from './isTruthy';
+export type { Falsy } from './isFalsy';
