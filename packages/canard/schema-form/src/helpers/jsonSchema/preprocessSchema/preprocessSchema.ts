@@ -13,7 +13,7 @@ const scanner = new JsonSchemaScanner({
   options: {
     mutate: (entry) => {
       let schema = entry.schema as Partial<JsonSchema>;
-      let idle = false;
+      let idle = true;
       if (schema.type === 'object') {
         const processed = processVirtualSchema(schema);
         schema = processed || schema;
