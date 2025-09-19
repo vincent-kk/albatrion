@@ -156,5 +156,5 @@ import { isArray } from './isArray';
  * - Use `isEmptyObject()` for empty object detection
  * - Use `isTruthy()` for general emptiness checks
  */
-export const isEmptyArray = (value: unknown): value is any[] =>
+export const isEmptyArray = (value: unknown): boolean =>
   isArray(value) && value.length === 0;

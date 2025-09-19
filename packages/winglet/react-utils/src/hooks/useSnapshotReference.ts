@@ -1,7 +1,6 @@
 import { useMemo, useRef } from 'react';
 
-import { isObject } from '@winglet/common-utils/filter';
-import { getTypeTag } from '@winglet/common-utils/lib';
+import { getTypeTag, hasOwnProperty } from '@winglet/common-utils/lib';
 import { equals } from '@winglet/common-utils/object';
 
 /**
@@ -234,8 +233,8 @@ export const useSnapshotReference = <Input extends object | undefined>(
 
 const isEmpty = (value: unknown): boolean => {
   if (!value) return true;
-  else if (isObject(value)) {
-    for (const _ in value) return false;
+  else if (typeof value === 'object') {
+    for (const key in value) if (hasOwnProperty(value, key)) return false;
     return true;
   } else return false;
 };

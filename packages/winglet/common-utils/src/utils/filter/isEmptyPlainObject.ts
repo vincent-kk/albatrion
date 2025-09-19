@@ -1,3 +1,5 @@
+import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
+
 import { isPlainObject } from './isPlainObject';
 
 /**
@@ -189,8 +191,8 @@ import { isPlainObject } from './isPlainObject';
  * - Use `isPlainObject()` for plain object validation without emptiness check
  * - Use `Object.keys(obj).length === 0` for alternative emptiness check
  */
-export const isEmptyPlainObject = (value: unknown): value is object => {
+export const isEmptyPlainObject = (value: unknown): boolean => {
   if (!isPlainObject(value)) return false;
-  for (const _ in value) return false;
+  for (const key in value) if (hasOwnProperty(value, key)) return false;
   return true;
 };

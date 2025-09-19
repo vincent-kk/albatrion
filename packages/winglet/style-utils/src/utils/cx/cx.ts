@@ -69,14 +69,19 @@ const getSegment = (input: ClassValue): string => {
     result = '';
   if (typeof input === 'string' || typeof input === 'number')
     return result + input;
-  else if (typeof input === 'object' && input) {
+  else if (input != null && typeof input === 'object') {
     if (Array.isArray(input)) {
       for (key = 0; key < input.length; key++)
         if ((cursor = input[key]) && (cursor = getSegment(cursor)))
           result = result ? result + ' ' + cursor : cursor;
     } else {
-      for (cursor in input)
-        if (input[cursor]) result = result ? result + ' ' + cursor : cursor;
+      const keys = Object.keys(input);
+      const length = keys.length;
+      if (length > 0)
+        for (let i = 0; i < length; i++) {
+          const key = keys[i];
+          if (input[key]) result = result ? result + ' ' + key : key;
+        }
     }
   }
   return result;

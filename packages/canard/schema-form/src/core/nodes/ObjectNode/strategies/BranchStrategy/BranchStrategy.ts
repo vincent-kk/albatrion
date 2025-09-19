@@ -1,4 +1,5 @@
 import { sortWithReference } from '@winglet/common-utils/array';
+import { isEmptyObject } from '@winglet/common-utils/filter';
 import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils/object';
 
 import type { Fn, Nullish } from '@aileron/declare';
@@ -18,7 +19,6 @@ import type { ObjectValue } from '@/schema-form/types';
 import type { ObjectNodeStrategy } from '../type';
 import {
   type FieldConditionMap,
-  checkEmptyRecord,
   getChildNodeMap,
   getChildren,
   getConditionsMap,
@@ -327,7 +327,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (draft === undefined) return undefined;
     if (draft === null) return nullable ? null : {};
     if (replace || base == null) return this.__processValue__(draft);
-    if (checkEmptyRecord(draft)) return false;
+    if (isEmptyObject(draft)) return false;
     return this.__processValue__({ ...base, ...draft });
   }
 

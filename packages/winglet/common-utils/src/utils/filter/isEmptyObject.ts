@@ -1,4 +1,4 @@
-import { isObject } from './isObject';
+import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 
 /**
  * Determines whether a value is an empty object with enhanced type safety.
@@ -160,8 +160,9 @@ import { isObject } from './isObject';
  *
  * **Performance:** Optimized for common use cases with acceptable edge case trade-offs.
  */
-export const isEmptyObject = (value: unknown): value is object => {
-  if (!isObject(value)) return false;
-  for (const _ in value) return false;
+export const isEmptyObject = (value: unknown): boolean => {
+  if (value == null) return false;
+  if (typeof value !== 'object') return false;
+  for (const key in value) if (hasOwnProperty(value, key)) return false;
   return true;
 };

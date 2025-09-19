@@ -1,4 +1,3 @@
-export * from './checkEmptyRecord';
 export * from './getChildNodeMap';
 export * from './getChildren';
 export * from './getConditionsMap';
