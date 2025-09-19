@@ -14,16 +14,19 @@ export interface ObjectNodeStrategy {
    * @returns Current value of the object node or undefined
    */
   get value(): ObjectValue | Nullish;
+
   /**
    * Gets the list of child nodes.
    * @returns Array of child nodes
    */
   get children(): Array<ChildNode> | null;
+
   /**
    * Gets the list of subnodes.
    * @returns Array of subnodes
    */
   get subnodes(): Array<ChildNode> | null;
+
   /**
    * Applies input value to the object node.
    * @param value - Object value to set
@@ -34,6 +37,7 @@ export interface ObjectNodeStrategy {
     value: ObjectValue | Nullish,
     option: UnionSetValueOption,
   ): void;
+
   /** Initializes pub-sub links for child nodes. */
   initialize?(): void;
 }

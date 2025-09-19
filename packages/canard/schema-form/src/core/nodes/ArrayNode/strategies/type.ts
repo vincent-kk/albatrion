@@ -14,16 +14,19 @@ export interface ArrayNodeStrategy {
    * @returns Current value of the array node or undefined
    */
   get value(): ArrayValue | Nullish;
+
   /**
    * Gets the current length of the array.
    * @returns Length of the array
    */
   get length(): number;
+
   /**
    * Gets the list of child nodes.
    * @returns Array containing key and node information
    */
   get children(): ChildNode[] | null;
+
   /**
    * Applies input value to the array node.
    * @param value - Array value to set
@@ -34,11 +37,13 @@ export interface ArrayNodeStrategy {
     value: ArrayValue | Nullish,
     option: UnionSetValueOption,
   ): void;
+
   /**
    * Adds a new element to the array.
    * @param data - Value to add (optional)
    */
   push(data?: ArrayValue[number]): Promise<number>;
+
   /**
    * Updates the value of a specific element.
    * @param index - Index of the element to update
@@ -48,15 +53,19 @@ export interface ArrayNodeStrategy {
     index: number,
     data: ArrayValue[number],
   ): Promise<ArrayValue[number] | undefined>;
+
   /**
    * Removes a specific element.
    * @param index - Index of the element to remove
    */
   remove(index: number): Promise<ArrayValue[number] | undefined>;
+
   /** Removes the last element from the array. */
   pop(): Promise<ArrayValue[number] | undefined>;
+
   /** Clears all elements to initialize the array. */
   clear(): Promise<void>;
+
   /** Initializes pub-sub links for child nodes. */
   initialize?(): void;
 }
