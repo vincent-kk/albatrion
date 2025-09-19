@@ -3,6 +3,7 @@ import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils/object';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
+import { ENHANCED_KEY } from '@/schema-form/app/constants/internal';
 import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import {
@@ -13,6 +14,7 @@ import {
   SetValueOption,
   type UnionSetValueOption,
 } from '@/schema-form/core/nodes/type';
+import { joinSegment } from '@/schema-form/helpers/jsonPointer';
 import type { ObjectValue } from '@/schema-form/types';
 
 import type { ObjectNodeStrategy } from '../type';
@@ -378,7 +380,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
       if (type & NodeEventType.UpdateComputedProperties) {
         if (!this.__oneOfChildNodeMapList__) return;
 
-        const current = this.__host__.oneOfIndex;
+        const host = this.__host__;
+        const current = host.oneOfIndex;
         const previous = this.__previousIndex__;
         const isolation = this.__isolated__;
 
@@ -413,14 +416,14 @@ export class BranchStrategy implements ObjectNodeStrategy {
         this.__locked__ = false;
 
         this.__draft__ = processValueWithOneOfSchema(
-          this.__processValue__({
-            ...(this.__value__ || {}),
-            ...(this.__draft__ || {}),
-          }),
+          this.__processValue__({ ...this.__value__, ...this.__draft__ }),
           this.__oneOfKeySet__,
           current > -1 ? this.__oneOfKeySetList__?.[current] : undefined,
         );
         this.__processComputedProperties__(this.__draft__);
+
+        if (host.validation)
+          host.adjustEnhancer(joinSegment(host.path, ENHANCED_KEY), current);
 
         this.__emitChange__(SetValueOption.SoftReset);
         this.__publishChildrenChange__();
