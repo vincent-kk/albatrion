@@ -84,16 +84,16 @@ import { mergePatchRecursive } from './mergePatchRecursive';
  * console.log(result); // { data: "modified", new: "value" }
  * ```
  */
-export const mergePatch = (
+export const mergePatch = <Type extends JsonValue>(
   source: JsonValue,
   mergePatchBody: JsonValue | undefined,
   immutable: boolean = true,
-): JsonValue => {
+): Type => {
   // If patch is undefined, return source unchanged
-  if (mergePatchBody === undefined) return source;
+  if (mergePatchBody === undefined) return source as Type;
 
   // If patch is not an object (including null and arrays), return patch (complete replacement)
-  if (!isPlainObject(mergePatchBody)) return mergePatchBody;
+  if (!isPlainObject(mergePatchBody)) return mergePatchBody as Type;
 
   // If source is not a plain object, start with an empty object
   const target: JsonObject = isPlainObject(source)
@@ -104,5 +104,5 @@ export const mergePatch = (
   const patch = immutable ? clone(mergePatchBody) : mergePatchBody;
 
   // Apply patch for object recursively
-  return mergePatchRecursive(target, patch);
+  return mergePatchRecursive(target, patch) as Type;
 };
