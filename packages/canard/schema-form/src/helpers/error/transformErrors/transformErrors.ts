@@ -18,8 +18,7 @@ export const transformErrors = (
   const result = new Array<JsonSchemaError>();
   for (let i = 0, l = errors.length; i < l; i++) {
     const error = errors[i];
-    const dataPath = error.dataPath;
-    if (dataPath.indexOf(ENHANCED_KEY) !== -1) continue;
+    if (error.dataPath.indexOf(ENHANCED_KEY) !== -1) continue;
     error.key = key ? ++sequence : undefined;
     result[result.length] = error;
   }
