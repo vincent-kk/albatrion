@@ -43,7 +43,13 @@ import { convertMsFromDuration } from '@winglet/common-utils/convert';
 // Error classes
 import { AbortError, BaseError } from '@winglet/common-utils/error';
 // Filter utilities (type checking)
-import { isArray, isFunction, isObject } from '@winglet/common-utils/filter';
+import {
+  isArray,
+  isEmpty,
+  isFalsy,
+  isFunction,
+  isObject,
+} from '@winglet/common-utils/filter';
 // Function utilities
 import { debounce, throttle } from '@winglet/common-utils/function';
 // Hash utilities
@@ -54,7 +60,13 @@ import {
   weakMapCacheFactory,
 } from '@winglet/common-utils/lib';
 // Object utilities
-import { clone, equals, merge } from '@winglet/common-utils/object';
+import {
+  clone,
+  cloneLite,
+  equals,
+  merge,
+  shallowClone,
+} from '@winglet/common-utils/object';
 // Promise utilities
 import { delay, timeout, withTimeout } from '@winglet/common-utils/promise';
 // Scheduler utilities
@@ -72,13 +84,13 @@ Based on the package.json exports configuration:
 - `@winglet/common-utils/lib` - Core library utilities (cache, counter, scheduler)
 - `@winglet/common-utils/error` - Error classes and utilities (BaseError, AbortError, etc.)
 - `@winglet/common-utils/constant` - Common constants (time, type tags, units)
-- `@winglet/common-utils/filter` - Type checking and filtering utilities (isArray, isObject, etc.)
+- `@winglet/common-utils/filter` - Type checking and filtering utilities (isArray, isObject, isFalsy, etc.)
 - `@winglet/common-utils/array` - Array manipulation utilities (chunk, unique, difference, etc.)
 - `@winglet/common-utils/console` - Console utilities (printError)
 - `@winglet/common-utils/convert` - Type conversion utilities (convertMsFromDuration)
 - `@winglet/common-utils/function` - Function utilities (debounce, throttle, getTrackableHandler)
 - `@winglet/common-utils/hash` - Hash algorithms (Murmur3)
-- `@winglet/common-utils/object` - Object manipulation utilities (clone, merge, equals, etc.)
+- `@winglet/common-utils/object` - Object manipulation utilities (clone, cloneLite, merge, equals, etc.)
 - `@winglet/common-utils/promise` - Promise utilities (delay, timeout, withTimeout, etc.)
 - `@winglet/common-utils/scheduler` - Task scheduling utilities (scheduleMacrotask, scheduleMicrotask, etc.)
 
@@ -172,6 +184,7 @@ Use transpilers like Babel to convert the code to match your target environment.
 - **[`isEmptyArray`](./src/utils/filter/isEmptyArray.ts)**: Function to check if an array is empty
 - **[`isEmptyObject`](./src/utils/filter/isEmptyObject.ts)**: Function to check if an object is empty
 - **[`isEmptyPlainObject`](./src/utils/filter/isEmptyPlainObject.ts)**: Function to check if a plain object is empty
+- **[`isEmpty`](./src/utils/filter/isEmpty.ts)**: Function to comprehensively check if a value is empty (null, undefined, empty string, empty array, empty object, etc.)
 - **[`isError`](./src/utils/filter/isError.ts)**: Function to check if a value is an Error object
 - **[`isFile`](./src/utils/filter/isFile.ts)**: Function to check if a value is a File object
 - **[`isFunction`](./src/utils/filter/isFunction.ts)**: Function to check if a value is a function
@@ -192,6 +205,7 @@ Use transpilers like Babel to convert the code to match your target environment.
 - **[`isString`](./src/utils/filter/isString.ts)**: Function to check if a value is a string
 - **[`isSymbol`](./src/utils/filter/isSymbol.ts)**: Function to check if a value is a Symbol
 - **[`isTruthy`](./src/utils/filter/isTruthy.ts)**: Function to check if a value is truthy
+- **[`isFalsy`](./src/utils/filter/isFalsy.ts)**: Function to reliably detect falsy values with TypeScript type guard support
 - **[`isTypedArray`](./src/utils/filter/isTypedArray.ts)**: Function to check if a value is a TypedArray
 - **[`isUndefined`](./src/utils/filter/isUndefined.ts)**: Function to check if a value is undefined
 - **[`isValidRegexPattern`](./src/utils/filter/isValidRegexPattern.ts)**: Function to check if a string is a valid regex pattern
@@ -217,6 +231,7 @@ Use transpilers like Babel to convert the code to match your target environment.
 #### Object
 
 - **[`clone`](./src/utils/object/clone.ts)**: Function to create a deep copy of an object
+- **[`cloneLite`](./src/utils/object/cloneLite.ts)**: Function to create high-performance deep clones of simple data structures (primitives, plain objects, and arrays)
 - **[`equals`](./src/utils/object/equals.ts)**: Function to compare the equality of two objects
 - **[`getJSONPointer`](./src/utils/object/getJSONPointer.ts)**: Function to get a value from an object using a JSON Pointer
 - **[`getObjectKeys`](./src/utils/object/getObjectKeys.ts)**: Function to return all keys of an object as an array
@@ -227,6 +242,7 @@ Use transpilers like Babel to convert the code to match your target environment.
 - **[`serializeNative`](./src/utils/object/serializeNative.ts)**: Function to serialize basic JavaScript objects to JSON strings
 - **[`serializeObject`](./src/utils/object/serializeObject.ts)**: Function to serialize objects to JSON strings
 - **[`serializeWithFullSortedKeys`](./src/utils/object/serializeWithFullSortedKeys.ts)**: Function to serialize objects to JSON strings with sorted keys
+- **[`shallowClone`](./src/utils/object/shallowClone.ts)**: Function to create shallow copies of arrays and plain objects, preserving references for nested structures
 - **[`sortObjectKeys`](./src/utils/object/sortObjectKeys.ts)**: Function to sort an object's keys alphabetically
 - **[`stableEquals`](./src/utils/object/stableEquals.ts)**: Function to compare the equality of two objects in a stable way
 - **[`stableSerialize`](./src/utils/object/stableSerialize.ts)**: Function to serialize objects in a stable way

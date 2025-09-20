@@ -43,7 +43,12 @@ import { convertMsFromDuration } from '@winglet/common-utils/convert';
 // 에러 클래스
 import { AbortError, BaseError } from '@winglet/common-utils/error';
 // 필터 유틸리티 (타입 검사)
-import { isArray, isFunction, isObject } from '@winglet/common-utils/filter';
+import {
+  isArray,
+  isFalsy,
+  isFunction,
+  isObject,
+} from '@winglet/common-utils/filter';
 // 함수 유틸리티
 import { debounce, throttle } from '@winglet/common-utils/function';
 // 해시 유틸리티
@@ -54,7 +59,7 @@ import {
   weakMapCacheFactory,
 } from '@winglet/common-utils/lib';
 // 객체 유틸리티
-import { clone, equals, merge } from '@winglet/common-utils/object';
+import { clone, cloneLite, equals, merge } from '@winglet/common-utils/object';
 // Promise 유틸리티
 import { delay, timeout, withTimeout } from '@winglet/common-utils/promise';
 // 스케줄러 유틸리티
@@ -72,13 +77,13 @@ package.json의 exports 설정을 기반으로 합니다:
 - `@winglet/common-utils/lib` - 핵심 라이브러리 유틸리티 (캐시, 카운터, 스케줄러)
 - `@winglet/common-utils/error` - 에러 클래스 및 유틸리티 (BaseError, AbortError 등)
 - `@winglet/common-utils/constant` - 공통 상수 (시간, 타입 태그, 단위)
-- `@winglet/common-utils/filter` - 타입 검사 및 필터링 유틸리티 (isArray, isObject 등)
+- `@winglet/common-utils/filter` - 타입 검사 및 필터링 유틸리티 (isArray, isObject, isFalsy 등)
 - `@winglet/common-utils/array` - 배열 조작 유틸리티 (chunk, unique, difference 등)
 - `@winglet/common-utils/console` - 콘솔 유틸리티 (printError)
 - `@winglet/common-utils/convert` - 타입 변환 유틸리티 (convertMsFromDuration)
 - `@winglet/common-utils/function` - 함수 유틸리티 (debounce, throttle, getTrackableHandler)
 - `@winglet/common-utils/hash` - 해시 알고리즘 (Murmur3)
-- `@winglet/common-utils/object` - 객체 조작 유틸리티 (clone, merge, equals 등)
+- `@winglet/common-utils/object` - 객체 조작 유틸리티 (clone, cloneLite, merge, equals 등)
 - `@winglet/common-utils/promise` - Promise 유틸리티 (delay, timeout, withTimeout 등)
 - `@winglet/common-utils/scheduler` - 작업 스케줄링 유틸리티 (scheduleMacrotask, scheduleMicrotask 등)
 
@@ -172,6 +177,7 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 - **[`isEmptyArray`](./src/utils/filter/isEmptyArray.ts)**: 배열이 비어있는지 확인하는 함수
 - **[`isEmptyObject`](./src/utils/filter/isEmptyObject.ts)**: 객체가 비어있는지 확인하는 함수
 - **[`isEmptyPlainObject`](./src/utils/filter/isEmptyPlainObject.ts)**: 일반 객체가 비어있는지 확인하는 함수
+- **[`isEmpty`](./src/utils/filter/isEmpty.ts)**: 값이 비어있는지 포괄적으로 확인하는 함수 (null, undefined, 빈 문자열, 빈 배열, 빈 객체 등)
 - **[`isError`](./src/utils/filter/isError.ts)**: 값이 Error 객체인지 확인하는 함수
 - **[`isFile`](./src/utils/filter/isFile.ts)**: 값이 File 객체인지 확인하는 함수
 - **[`isFunction`](./src/utils/filter/isFunction.ts)**: 값이 함수인지 확인하는 함수
@@ -192,6 +198,7 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 - **[`isString`](./src/utils/filter/isString.ts)**: 값이 문자열인지 확인하는 함수
 - **[`isSymbol`](./src/utils/filter/isSymbol.ts)**: 값이 Symbol인지 확인하는 함수
 - **[`isTruthy`](./src/utils/filter/isTruthy.ts)**: 값이 truthy인지 확인하는 함수
+- **[`isFalsy`](./src/utils/filter/isFalsy.ts)**: falsy 값을 안전하게 감지하는 함수 (TypeScript 타입 가드 지원)
 - **[`isTypedArray`](./src/utils/filter/isTypedArray.ts)**: 값이 TypedArray인지 확인하는 함수
 - **[`isUndefined`](./src/utils/filter/isUndefined.ts)**: 값이 undefined인지 확인하는 함수
 - **[`isValidRegexPattern`](./src/utils/filter/isValidRegexPattern.ts)**: 문자열이 유효한 정규 표현식 패턴인지 확인하는 함수
@@ -217,6 +224,7 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 #### 객체 (Object)
 
 - **[`clone`](./src/utils/object/clone.ts)**: 객체의 깊은 복사본을 생성하는 함수
+- **[`cloneLite`](./src/utils/object/cloneLite.ts)**: 단순 데이터 구조(원시값, 일반 객체, 배열)의 고성능 깊은 복사를 생성하는 함수
 - **[`equals`](./src/utils/object/equals.ts)**: 두 객체의 동등성을 비교하는 함수
 - **[`getJSONPointer`](./src/utils/object/getJSONPointer.ts)**: 객체에서 JSON Pointer를 사용하여 값을 가져오는 함수
 - **[`getObjectKeys`](./src/utils/object/getObjectKeys.ts)**: 객체의 모든 키를 배열로 반환하는 함수
@@ -227,6 +235,7 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 - **[`serializeNative`](./src/utils/object/serializeNative.ts)**: 기본 JavaScript 객체를 JSON 문자열로 직렬화하는 함수
 - **[`serializeObject`](./src/utils/object/serializeObject.ts)**: 객체를 JSON 문자열로 직렬화하는 함수
 - **[`serializeWithFullSortedKeys`](./src/utils/object/serializeWithFullSortedKeys.ts)**: 객체를 정렬된 키와 함께 JSON 문자열로 직렬화하는 함수
+- **[`shallowClone`](./src/utils/object/shallowClone.ts)**: 배열과 일반 객체의 얕은 복사본을 생성하는 함수 (중첩 구조의 참조는 유지)
 - **[`sortObjectKeys`](./src/utils/object/sortObjectKeys.ts)**: 객체의 키를 알파벳 순으로 정렬하는 함수
 - **[`stableEquals`](./src/utils/object/stableEquals.ts)**: 안정적인 방식으로 두 객체의 동등성을 비교하는 함수
 - **[`stableSerialize`](./src/utils/object/stableSerialize.ts)**: 객체를 안정적인 방식으로 직렬화하는 함수
