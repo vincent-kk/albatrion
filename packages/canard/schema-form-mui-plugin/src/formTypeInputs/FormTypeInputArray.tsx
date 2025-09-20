@@ -36,20 +36,23 @@ const FormTypeInputArray = ({
   return (
     <div style={style}>
       {ChildNodeComponents &&
-        map(ChildNodeComponents, (ChildNodeComponent, i) => (
-          <div key={ChildNodeComponent.key} style={{ display: 'flex' }}>
-            <div style={{ flex: 1 }}>
-              <ChildNodeComponent hideLabel />
+        map(ChildNodeComponents, (ChildNodeComponent, i) => {
+          const key = ChildNodeComponent.key;
+          return (
+            <div key={key} style={{ display: 'flex' }}>
+              <div style={{ flex: 1 }}>
+                <ChildNodeComponent key={key} hideLabel />
+              </div>
+              {!readOnly && (
+                <Remove
+                  title="remove"
+                  disabled={disabled}
+                  onClick={() => handleRemoveClick(i)}
+                />
+              )}
             </div>
-            {!readOnly && (
-              <Remove
-                title="remove"
-                disabled={disabled}
-                onClick={() => handleRemoveClick(i)}
-              />
-            )}
-          </div>
-        ))}
+          );
+        })}
       {!readOnly && (
         <div style={{ marginLeft: 20 }}>
           <Add title="add" disabled={disabled} onClick={handleClick} />
