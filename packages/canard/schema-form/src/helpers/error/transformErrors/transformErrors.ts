@@ -19,11 +19,7 @@ export const transformErrors = (
   for (let i = 0, l = errors.length; i < l; i++) {
     const error = errors[i];
     const dataPath = error.dataPath;
-    if (
-      dataPath.indexOf(ENHANCED_KEY) ===
-      dataPath.length - ENHANCED_KEY_LENGTH
-    )
-      continue;
+    if (dataPath.indexOf(ENHANCED_KEY) !== -1) continue;
     error.key = key ? ++sequence : undefined;
     result[result.length] = error;
   }
@@ -31,4 +27,3 @@ export const transformErrors = (
 };
 
 let sequence = 0;
-const ENHANCED_KEY_LENGTH = ENHANCED_KEY.length;
