@@ -840,6 +840,26 @@ export const FormRefHandleWithVirtualSchema = () => {
         onClick={() => {
           const node = formHandle.current?.node?.find('/period');
           if (node?.type === 'virtual') {
+            node.setValue([undefined, '2025-04-26']);
+          }
+        }}
+      >
+        period [undefined,'2025-04-26']
+      </button>
+      <button
+        onClick={() => {
+          const node = formHandle.current?.node?.find('/endDate');
+          if (node?.type === 'string') {
+            node.setValue(undefined);
+          }
+        }}
+      >
+        remove endDate
+      </button>
+      <button
+        onClick={() => {
+          const node = formHandle.current?.node?.find('/period');
+          if (node?.type === 'virtual') {
             node.setValue(['2025-03-01', '2025-04-01']);
           }
         }}
