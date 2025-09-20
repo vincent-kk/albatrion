@@ -91,7 +91,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
     this.#value = current;
 
     if (option & SetValueOption.EmitChange)
-      this.onChange(current, !!(option & SetValueOption.Batch));
+      this.onChange(current, (option & SetValueOption.Batch) > 0);
     if (option & SetValueOption.Refresh) this.refresh(current);
     if (option & SetValueOption.PublishUpdateEvent)
       this.publish(NodeEventType.UpdateValue, current, { previous, current });

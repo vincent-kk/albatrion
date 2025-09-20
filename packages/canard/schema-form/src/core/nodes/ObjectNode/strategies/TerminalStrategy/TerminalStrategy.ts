@@ -123,7 +123,7 @@ export class TerminalStrategy implements ObjectNodeStrategy {
     this.__value__ = current;
 
     if (option & SetValueOption.EmitChange)
-      this.__handleChange__(current, !!(option & SetValueOption.Batch));
+      this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
     if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
     if (option & SetValueOption.PublishUpdateEvent)
       this.__host__.publish(NodeEventType.UpdateValue, current, {

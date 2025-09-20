@@ -96,7 +96,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
    */
   public applyValue(input: ObjectValue | Nullish, option: UnionSetValueOption) {
     this.__draft__ = input;
-    this.__isolated__ = !!(option & SetValueOption.Isolate);
+    this.__isolated__ = (option & SetValueOption.Isolate) > 0;
     this.__emitChange__(option);
   }
 
@@ -283,7 +283,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   ) {
     if (this.__locked__) return;
 
-    const replace = !!(option & SetValueOption.Replace);
+    const replace = (option & SetValueOption.Replace) > 0;
     const previous = this.__value__ ? { ...this.__value__ } : this.__value__;
     const current = this.__parseValue__(
       this.__value__,
@@ -296,7 +296,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__value__ = current;
 
     if (option & SetValueOption.EmitChange)
-      this.__handleChange__(current, !!(option & SetValueOption.Batch));
+      this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
     if (option & SetValueOption.Propagate) this.__propagate__(replace, option);
     if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
     if (option & SetValueOption.Isolate)
@@ -305,7 +305,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       this.__host__.publish(NodeEventType.UpdateValue, current, {
         previous,
         current,
-        settled: !(option & SetValueOption.Isolate),
+        settled: (option & SetValueOption.Isolate) === 0,
       });
 
     this.__draft__ = {};
