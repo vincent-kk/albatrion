@@ -100,13 +100,14 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
       const unsubscribe = node.subscribe(({ type, payload }) => {
         if (type & NodeEventType.UpdateValue) {
           const value = payload?.[NodeEventType.UpdateValue];
-          if (this.#value[i] === value) return;
           const previous = this.#value;
-          this.#value = [...this.#value];
-          this.#value[i] = value;
-          this.publish(NodeEventType.UpdateValue, this.#value, {
+          if (previous[i] === value) return;
+          const current = [...previous];
+          current[i] = value;
+          this.#value = current;
+          this.publish(NodeEventType.UpdateValue, current, {
             previous,
-            current: this.#value,
+            current,
           });
         }
       });
@@ -147,26 +148,23 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
 
     const refNodes = this.#refNodes;
     const previous = this.#value;
-    this.#value = [...this.#value];
-    if (values === undefined) {
+    const current = [...previous];
+    if (values === undefined)
       for (let i = 0; i < refNodesLength; i++) {
         refNodes[i].setValue(undefined, option);
-        this.#value[i] = undefined;
+        current[i] = undefined;
       }
-    } else {
+    else
       for (let i = 0; i < refNodesLength; i++) {
         const node = refNodes[i];
         const value = values[i];
         if (node.value === value) continue;
         node.setValue(value, option);
-        this.#value[i] = node.value;
+        current[i] = node.value;
       }
-    }
+    this.#value = current;
     if (option & SetValueOption.Refresh) this.refresh(values);
     if (option & SetValueOption.PublishUpdateEvent)
-      this.publish(NodeEventType.UpdateValue, this.#value, {
-        previous,
-        current: this.#value,
-      });
+      this.publish(NodeEventType.UpdateValue, current, { previous, current });
   }
 }

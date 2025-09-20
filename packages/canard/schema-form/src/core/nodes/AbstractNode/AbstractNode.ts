@@ -306,8 +306,9 @@ export abstract class AbstractNode<
     this.required = required ?? false;
     this.nullable = jsonSchema.nullable || false;
 
-    this.rootNode = (parentNode?.rootNode || this) as SchemaNode;
     this.isRoot = !parentNode;
+    this.rootNode = (parentNode?.rootNode || this) as SchemaNode;
+
     this.#name = name || '';
     this.#escapedName = escapeSegment(this.#name);
 
@@ -530,7 +531,7 @@ export abstract class AbstractNode<
       for (let i = 0, l = dependencyPaths.length; i < l; i++) {
         const dependencyPath = dependencyPaths[i];
         const targetNode = this.find(dependencyPath);
-        if (!targetNode) continue;
+        if (targetNode === null) continue;
         this.#dependencies[i] = targetNode.value;
         const unsubscribe = targetNode.subscribe(({ type, payload }) => {
           if (type & NodeEventType.UpdateValue) {
@@ -633,23 +634,23 @@ export abstract class AbstractNode<
     if (changed) this.publish(NodeEventType.UpdateState, this.#state);
   }
 
-  /** Errors received from external sources */
-  #externalErrors: JsonSchemaError[] = [];
+  /** [root only] List of dataPath for all errors that occurred inside the form */
+  #errorDataPaths: string[] | undefined;
 
   /** [root only] All errors that occurred inside the form */
   #globalErrors: JsonSchemaError[] | undefined;
 
-  /** [root only] List of dataPath for all errors that occurred inside the form */
-  #errorDataPaths: string[] | undefined;
+  /** Own errors received from root node */
+  #localErrors: JsonSchemaError[] | undefined;
 
   /** [root only] Result of merging all errors that occurred inside the form with externally received errors */
   #mergedGlobalErrors: JsonSchemaError[] = [];
 
-  /** Own errors */
-  #localErrors: JsonSchemaError[] | undefined;
-
-  /** Result of merging own errors with externally received errors */
+  /** Result of merging own errors received from root node with externally received errors */
   #mergedLocalErrors: JsonSchemaError[] = [];
+
+  /** Errors received from external sources (e.g. server errors) */
+  #externalErrors: JsonSchemaError[] = [];
 
   /**
    * Returns the merged result of errors that occurred inside the form and externally received errors.
@@ -668,17 +669,6 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Updates own errors and then merges them with externally received errors.
-   * @param errors - List of errors to set
-   */
-  public setErrors(this: AbstractNode, errors: JsonSchemaError[]) {
-    if (equals(this.#localErrors, errors)) return;
-    this.#localErrors = errors;
-    this.#mergedLocalErrors = [...this.#externalErrors, ...this.#localErrors];
-    this.publish(NodeEventType.UpdateError, this.#mergedLocalErrors);
-  }
-
-  /**
    * Merges externally received errors into the global errors.
    * @param errors - List of errors to set
    * @returns {boolean} Whether the merge result changed
@@ -689,6 +679,17 @@ export abstract class AbstractNode<
     this.#mergedGlobalErrors = [...this.#externalErrors, ...this.#globalErrors];
     this.publish(NodeEventType.UpdateGlobalError, this.#mergedGlobalErrors);
     return true;
+  }
+
+  /**
+   * Updates own errors and then merges them with externally received errors.
+   * @param errors - List of errors to set
+   */
+  public setErrors(this: AbstractNode, errors: JsonSchemaError[]) {
+    if (equals(this.#localErrors, errors)) return;
+    this.#localErrors = errors;
+    this.#mergedLocalErrors = [...this.#externalErrors, ...this.#localErrors];
+    this.publish(NodeEventType.UpdateError, this.#mergedLocalErrors);
   }
 
   /**
@@ -729,7 +730,7 @@ export abstract class AbstractNode<
    * @note Does not clear localErrors / internalErrors.
    */
   public clearExternalErrors(this: AbstractNode) {
-    if (!this.#externalErrors.length) return;
+    if (this.#externalErrors.length === 0) return;
     if (!this.isRoot)
       this.rootNode.removeFromExternalErrors(this.#externalErrors);
     this.setExternalErrors([]);
@@ -802,7 +803,7 @@ export abstract class AbstractNode<
 
     const internalErrors = await this.#validate(this.#enhancedValue);
 
-    if (!this.#setGlobalErrors(internalErrors)) return;
+    if (this.#setGlobalErrors(internalErrors) === false) return;
 
     const errorsByDataPath = new Map<
       JsonSchemaError['dataPath'],
