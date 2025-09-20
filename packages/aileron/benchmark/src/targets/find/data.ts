@@ -112,6 +112,7 @@ const schema = {
 
 export const node = nodeFromJsonSchema({
   jsonSchema: schema,
+  onChange: () => {},
 });
 
 export const targetPath = '$.user.profile.preferences.notifications';

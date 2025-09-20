@@ -3,6 +3,7 @@ import { cloneDeep as esToolsClone } from 'es-toolkit';
 
 import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
 import { clone } from '@/common-utils/utils/object/clone';
+import { cloneLite } from '@/common-utils/utils/object/cloneLite';
 
 import { data } from './data';
 
@@ -18,6 +19,9 @@ export const run = () => {
       })
       .add('clone', function () {
         clone(sample);
+      })
+      .add('cloneLite', function () {
+        cloneLite(sample);
       })
       .add('es-toolkit cloneDeep', function () {
         esToolsClone(sample);
