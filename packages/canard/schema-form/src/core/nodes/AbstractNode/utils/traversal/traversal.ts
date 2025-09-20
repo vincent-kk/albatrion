@@ -55,13 +55,13 @@ export const traversal = (
   let cursor = source;
   for (let i = 0, il = segments.length; i < il; i++) {
     const segment = segments[i];
-    if (segment === JSONPointer.Fragment) {
+    if (segment === $F) {
       cursor = cursor.rootNode;
       if (!cursor) return null;
-    } else if (segment === JSONPointer.Parent) {
+    } else if (segment === $P) {
       cursor = cursor.parentNode!;
       if (!cursor) return null;
-    } else if (segment === JSONPointer.Current) {
+    } else if (segment === $C) {
       cursor = source;
     } else {
       if (cursor.group === 'terminal') return null;
@@ -87,3 +87,7 @@ export const traversal = (
   }
   return cursor;
 };
+
+const $F = JSONPointer.Fragment;
+const $P = JSONPointer.Parent;
+const $C = JSONPointer.Current;
