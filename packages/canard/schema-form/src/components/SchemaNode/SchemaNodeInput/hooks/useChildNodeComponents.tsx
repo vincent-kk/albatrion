@@ -36,7 +36,7 @@ export const useChildNodeComponents = (
   useOnUnmount(() => cache.current.clear());
 
   return useMemo(() => {
-    if (isTerminalNode(node) || !children) return [];
+    if (isTerminalNode(node) || children === null) return [];
     const ChildNodeComponents: ChildNodeComponent[] = [];
     for (const child of children) {
       const node = child.node;

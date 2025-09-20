@@ -27,10 +27,8 @@ export const useFormTypeInputControl = <Node extends SchemaNode>(
     if (!node) return;
     const unsubscribe = node.subscribe(({ type }) => {
       if (type & NodeEventType.RequestRefresh) update();
-      if (type & NodeEventType.RequestFocus) {
-        const element = queryElement(containerRef.current);
-        if (element) element.focus();
-      }
+      if (type & NodeEventType.RequestFocus)
+        queryElement(containerRef.current)?.focus();
       if (type & NodeEventType.RequestSelect) {
         const element = queryElement(containerRef.current) as SelectableElement;
         if (element && typeof element.select === 'function') element.select();
