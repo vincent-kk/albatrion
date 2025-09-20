@@ -7,7 +7,7 @@ import {
   type ConditionDictionary,
   convertExpression,
 } from '@/schema-form/helpers/dynamicExpression';
-import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 import type { PartialJsonSchema } from '@/schema-form/types';
 
 export const getExpressionFromSchema = (schema: PartialJsonSchema) => {
@@ -23,5 +23,5 @@ export const getExpressionFromSchema = (schema: PartialJsonSchema) => {
       else if (subSchema.enum.length > 1) condition[key] = subSchema.enum;
     }
   }
-  return convertExpression(condition, false, JSONPointer.Current);
+  return convertExpression(condition, false, $.Current);
 };

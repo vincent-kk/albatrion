@@ -1,4 +1,4 @@
-import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 /**
  * Checks if a JSON schema path matches a target path with proper boundary validation.
@@ -31,11 +31,8 @@ import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
  * - Early termination on mismatch for optimal performance
  */
 export const matchesSchemaPath = (source: string, target: string): boolean => {
-  const start = source[0] === FRAGMENT ? 1 : 0;
+  const start = source[0] === $.Fragment ? 1 : 0;
   if (source.indexOf(target, start) !== start) return false;
   const endCode = source[start + target.length];
-  return endCode === SEPARATOR || endCode === undefined;
+  return endCode === $.Separator || endCode === undefined;
 };
-
-const FRAGMENT = JSONPointer.Fragment;
-const SEPARATOR = JSONPointer.Separator;

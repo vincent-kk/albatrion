@@ -3,7 +3,10 @@ import { isReactComponent } from '@winglet/react-utils/filter';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 
 import { SchemaFormError } from '@/schema-form/errors';
-import { JSONPointer, stripFragment } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  stripFragment,
+} from '@/schema-form/helpers/jsonPointer';
 import type { FormTypeInputMap, FormTypeTestFn } from '@/schema-form/types';
 
 import { INCLUDE_INDEX_REGEX } from './regex';
@@ -55,14 +58,14 @@ const pathExactMatchFnFactory = (inputPath: string): FormTypeTestFn => {
 };
 
 const formTypeTestFnFactory = (path: string): FormTypeTestFn => {
-  const segments = stripFragment(path).split(JSONPointer.Separator);
+  const segments = stripFragment(path).split($.Separator);
   return (hint) => {
-    const hintSegments = hint.path.split(JSONPointer.Separator);
+    const hintSegments = hint.path.split($.Separator);
     if (segments.length !== hintSegments.length) return false;
     for (let i = 0, l = segments.length; i < l; i++) {
       const segment = segments[i];
       const hintSegment = hintSegments[i];
-      if (segment === JSONPointer.Index) {
+      if (segment === $.Index) {
         if (!isArrayIndex(hintSegment)) return false;
       } else if (segment !== hintSegment) return false;
     }

@@ -1,5 +1,5 @@
 import type { SchemaNode } from '@/schema-form/core';
-import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import { detectsCandidate } from './utils/detectsCandidate';
 import { getSegments } from './utils/getSegments';
@@ -55,13 +55,13 @@ export const traversal = (
   let cursor = source;
   for (let i = 0, il = segments.length; i < il; i++) {
     const segment = segments[i];
-    if (segment === $F) {
+    if (segment === $.Fragment) {
       cursor = cursor.rootNode;
       if (!cursor) return null;
-    } else if (segment === $P) {
+    } else if (segment === $.Parent) {
       cursor = cursor.parentNode!;
       if (!cursor) return null;
-    } else if (segment === $C) {
+    } else if (segment === $.Current) {
       cursor = source;
     } else {
       if (cursor.group === 'terminal') return null;
@@ -87,7 +87,3 @@ export const traversal = (
   }
   return cursor;
 };
-
-const $F = JSONPointer.Fragment;
-const $P = JSONPointer.Parent;
-const $C = JSONPointer.Current;

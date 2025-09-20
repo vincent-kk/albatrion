@@ -1,5 +1,5 @@
 import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
-import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 /**
  * Generates a JSON Schema path segment for a node based on its scope and context.
@@ -48,24 +48,23 @@ export const getScopedSegment = (
   variant?: number,
 ) => {
   if (!scope) return name;
-  const index = variant !== undefined ? $S + variant : '';
+  const index = variant !== undefined ? $.Separator + variant : '';
 
   if (scope === 'oneOf' || scope === 'anyOf' || scope === 'allOf') {
     switch (parentType) {
       case 'object':
-        return scope + index + $S + 'properties' + $S + name;
+        return scope + index + $.Separator + 'properties' + $.Separator + name;
       case 'array':
-        return scope + index + $S + 'items';
+        return scope + index + $.Separator + 'items';
       default:
-        return scope + index + $S + name;
+        return scope + index + $.Separator + name;
     }
   }
 
-  if (scope === 'properties') return 'properties' + $S + name;
+  if (scope === 'properties') return 'properties' + $.Separator + name;
   if (scope === 'items') return 'items' + index;
 
-  if (variant !== undefined) return scope + $S + variant + $S + name;
-  return scope + $S + name;
+  if (variant !== undefined)
+    return scope + $.Separator + variant + $.Separator + name;
+  return scope + $.Separator + name;
 };
-
-const $S = JSONPointer.Separator;

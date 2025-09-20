@@ -1,4 +1,4 @@
-import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 /**
  * Negative lookbehind assertion to prevent matching within existing identifiers.
@@ -24,24 +24,24 @@ const SINGLE_PATH_SEGMENT = `(?:[^\\s\\(\\)/~]|~[01])+`;
  * Multi-level path pattern with segments separated by forward slashes.
  * @example 'property', '123', 'property/subProperty', 'users/0/name'
  */
-const MULTI_LEVEL_PATH_PATTERN = `${SINGLE_PATH_SEGMENT}(?:\\${JSONPointer.Separator}${SINGLE_PATH_SEGMENT})*`;
+const MULTI_LEVEL_PATH_PATTERN = `${SINGLE_PATH_SEGMENT}(?:\\${$.Separator}${SINGLE_PATH_SEGMENT})*`;
 
 /**
  * Optional path pattern (may or may not exist after a prefix).
  * Uses negative lookahead to prevent matching when followed by another slash.
  */
-const OPTIONAL_PATH_PATTERN = `(?:${MULTI_LEVEL_PATH_PATTERN})?(?!\\${JSONPointer.Separator})`;
+const OPTIONAL_PATH_PATTERN = `(?:${MULTI_LEVEL_PATH_PATTERN})?(?!\\${$.Separator})`;
 
 /**
  * Parent directory references pattern (one or more '../' sequences).
  * @example '../', '../../', '../../../'
  */
-const MULTIPLE_PARENT_DIRECTORY_REFERENCES = `(?:\\${JSONPointer.Parent}\\${JSONPointer.Separator})+`;
+const MULTIPLE_PARENT_DIRECTORY_REFERENCES = `(?:\\${$.Parent}\\${$.Separator})+`;
 
 /**
  * Single-character prefix pattern for fragment (#) or current directory (.).
  */
-const SINGLE_CHARACTER_PREFIX_PATTERN = `(?:\\${JSONPointer.Fragment}|\\${JSONPointer.Current})`;
+const SINGLE_CHARACTER_PREFIX_PATTERN = `(?:\\${$.Fragment}|\\${$.Current})`;
 
 /**
  * Regular expression for matching JSON Pointer paths in text.
@@ -76,16 +76,16 @@ export const JSON_POINTER_PATH_REGEX = new RegExp(
     `|` +
     // Pattern 2: Single-character prefix (# or .) followed by separator and optional path
     // Matches: '#/', '#/property', './', './property'
-    `${SINGLE_CHARACTER_PREFIX_PATTERN}\\${JSONPointer.Separator}${OPTIONAL_PATH_PATTERN}` +
+    `${SINGLE_CHARACTER_PREFIX_PATTERN}\\${$.Separator}${OPTIONAL_PATH_PATTERN}` +
     `|` +
     // Pattern 3: Absolute path - forward slash followed by required path
     // Matches: '/property', '/nested/path', '/123' (including numeric segments)
     // Does not match: '/' (treated as division operator)
-    `\\${JSONPointer.Separator}${MULTI_LEVEL_PATH_PATTERN}` +
+    `\\${$.Separator}${MULTI_LEVEL_PATH_PATTERN}` +
     `|` +
     // Pattern 4: Parenthesized root slash - slash wrapped in parentheses
     // Matches: '(/)' (treated as root path reference)
-    `\\(\\${JSONPointer.Separator}\\)` +
+    `\\(\\${$.Separator}\\)` +
     `)`,
   'g',
 );

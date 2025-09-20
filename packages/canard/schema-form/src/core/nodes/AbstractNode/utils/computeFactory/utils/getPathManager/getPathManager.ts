@@ -1,6 +1,6 @@
 import type { Fn } from '@aileron/declare';
 
-import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 export interface PathManager {
   get: Fn<[], string[]>;
@@ -13,11 +13,11 @@ export const getPathManager = (): PathManager => {
   return {
     get: () => paths,
     set: (path: string) => {
-      if (path[0] === JSONPointer.Fragment) path = path.slice(1);
+      if (path[0] === $.Fragment) path = path.slice(1);
       if (!paths.includes(path)) paths.push(path);
     },
     findIndex: (path: string) => {
-      if (path[0] === JSONPointer.Fragment) path = path.slice(1);
+      if (path[0] === $.Fragment) path = path.slice(1);
       return paths.indexOf(path);
     },
   };

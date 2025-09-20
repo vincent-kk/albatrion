@@ -1,4 +1,4 @@
-import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 /**
  * Regular expression for validating JSON Pointer paths containing wildcard index patterns.
@@ -19,5 +19,5 @@ import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
  * (Note: `*` represents the asterisk wildcard character)
  */
 export const INCLUDE_INDEX_REGEX = new RegExp(
-  `^(\\${JSONPointer.Fragment})?\\${JSONPointer.Separator}(?:.*\\${JSONPointer.Separator})?\\${JSONPointer.Index}(?:\\${JSONPointer.Separator}.*)?(?<!\\${JSONPointer.Separator})$`,
+  `^(\\${$.Fragment})?\\${$.Separator}(?:.*\\${$.Separator})?\\${$.Index}(?:\\${$.Separator}.*)?(?<!\\${$.Separator})$`,
 );

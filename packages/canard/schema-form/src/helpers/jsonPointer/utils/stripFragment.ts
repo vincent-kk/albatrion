@@ -1,4 +1,4 @@
-import { JSONPointer } from '../enum';
+import { JSONPointer as $ } from '../enum';
 
 /**
  * Strips the fragment from the path.
@@ -7,7 +7,4 @@ import { JSONPointer } from '../enum';
  * @returns The path without the fragment.
  */
 export const stripFragment = (path: string): string =>
-  path[0] === $F ? (path[1] ? path.slice(1) : $S) : path;
-
-const $F = JSONPointer.Fragment;
-const $S = JSONPointer.Separator;
+  path[0] === $.Fragment ? (path[1] ? path.slice(1) : $.Separator) : path;

@@ -1,7 +1,7 @@
 import type { JsonSchemaError } from '@canard/schema-form';
 import type { ErrorObject } from 'ajv';
 
-import { JSONPointer } from '@winglet/json/pointer';
+import { JSONPointer as $ } from '@winglet/json/pointer';
 
 export const transformErrors = (errors: ErrorObject[]): JsonSchemaError[] => {
   if (!Array.isArray(errors)) return [];
@@ -26,11 +26,9 @@ const transformDataPath = (error: ErrorObject): string => {
     error.keyword === 'required' && error.params?.missingProperty;
 
   if (!instancePath)
-    return hasMissingProperty
-      ? JSONPointer.Separator + error.params.missingProperty
-      : '';
+    return hasMissingProperty ? $.Separator + error.params.missingProperty : '';
 
   return hasMissingProperty
-    ? instancePath + JSONPointer.Separator + error.params.missingProperty
+    ? instancePath + $.Separator + error.params.missingProperty
     : instancePath;
 };

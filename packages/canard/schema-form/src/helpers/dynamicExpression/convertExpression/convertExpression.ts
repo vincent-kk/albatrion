@@ -3,7 +3,7 @@ import { serializeNative } from '@winglet/common-utils/object';
 
 import type { Dictionary } from '@aileron/declare';
 
-import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 import type { AllowedValue } from '@/schema-form/types';
 
 export type ConditionDictionary = Dictionary<AllowedValue | AllowedValue[]>;
@@ -17,22 +17,22 @@ export type ConditionDictionary = Dictionary<AllowedValue | AllowedValue[]>;
 export const convertExpression = (
   condition: ConditionDictionary,
   inverse: boolean = false,
-  source: string = JSONPointer.Parent,
+  source: string = $.Parent,
 ) => {
   const operations: string[] = [];
   for (const [key, value] of Object.entries(condition)) {
     if (isArray(value)) {
       operations.push(
-        `${inverse ? '!' : ''}${serializeNative(value)}.includes((${source}${SEPARATOR}${key}))`,
+        `${inverse ? '!' : ''}${serializeNative(value)}.includes((${source}${$.Separator}${key}))`,
       );
     } else {
       if (typeof value === 'boolean')
         operations.push(
-          `(${source}${SEPARATOR}${key})${inverse ? '!==' : '==='}${value}`,
+          `(${source}${$.Separator}${key})${inverse ? '!==' : '==='}${value}`,
         );
       else
         operations.push(
-          `(${source}${SEPARATOR}${key})${inverse ? '!==' : '==='}${serializeNative(value)}`,
+          `(${source}${$.Separator}${key})${inverse ? '!==' : '==='}${serializeNative(value)}`,
         );
     }
   }
@@ -40,5 +40,3 @@ export const convertExpression = (
   if (operations.length === 1) return operations[0];
   return operations.map((operation) => '(' + operation + ')').join('&&');
 };
-
-const SEPARATOR = JSONPointer.Separator;

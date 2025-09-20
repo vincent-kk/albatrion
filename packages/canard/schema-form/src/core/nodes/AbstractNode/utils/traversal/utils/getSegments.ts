@@ -1,6 +1,6 @@
 import { isTruthy } from '@winglet/common-utils/filter';
 
-import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 /**
  * Parses a JSON Pointer path string into an array of segments.
@@ -30,4 +30,4 @@ import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
  * @returns An array of path segments.(no unescape)
  */
 export const getSegments = (pointer: string) =>
-  pointer.split(JSONPointer.Separator).filter(isTruthy);
+  pointer.split($.Separator).filter(isTruthy);
