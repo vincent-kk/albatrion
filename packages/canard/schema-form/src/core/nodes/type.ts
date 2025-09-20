@@ -16,7 +16,7 @@ import {
   BIT_FLAG_12,
   BIT_FLAG_13,
   BIT_MASK_NONE,
-} from '@/schema-form/app/constants/bitmask';
+} from '@/schema-form/app/constants';
 import type {
   AllowedValue,
   ArraySchema,

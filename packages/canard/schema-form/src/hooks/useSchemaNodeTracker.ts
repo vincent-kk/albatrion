@@ -2,7 +2,7 @@ import { useLayoutEffect } from 'react';
 
 import { useVersion } from '@winglet/react-utils/hook';
 
-import { BIT_MASK_ALL } from '@/schema-form/app/constants/bitmask';
+import { BIT_MASK_ALL } from '@/schema-form/app/constants';
 import type { NodeEventType, SchemaNode } from '@/schema-form/core';
 
 /**

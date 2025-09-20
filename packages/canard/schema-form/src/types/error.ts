@@ -6,7 +6,7 @@ import {
   BIT_FLAG_02,
   BIT_FLAG_03,
   BIT_FLAG_04,
-} from '@/schema-form/app/constants/bitmask';
+} from '@/schema-form/app/constants';
 
 import type { JsonSchema } from './jsonSchema';
 

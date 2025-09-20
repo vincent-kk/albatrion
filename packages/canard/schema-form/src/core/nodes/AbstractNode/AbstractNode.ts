@@ -4,6 +4,7 @@ import { escapeSegment, setValue } from '@winglet/json/pointer';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
+import { UNIT_SEPARATOR } from '@/schema-form/app/constants';
 import { PluginManager } from '@/schema-form/app/plugin';
 import {
   getDefaultValue,
@@ -140,6 +141,10 @@ export abstract class AbstractNode<
    */
   public get schemaPath() {
     return this.#schemaPath;
+  }
+
+  public get key() {
+    return this.#schemaPath + UNIT_SEPARATOR + this.#path;
   }
 
   /**

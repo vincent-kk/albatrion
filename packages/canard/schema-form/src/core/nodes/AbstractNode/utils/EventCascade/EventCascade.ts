@@ -2,7 +2,7 @@ import { scheduleMicrotask } from '@winglet/common-utils/scheduler';
 
 import type { Fn } from '@aileron/declare';
 
-import { BIT_MASK_NONE } from '@/schema-form/app/constants/bitmask';
+import { BIT_MASK_NONE } from '@/schema-form/app/constants';
 import type {
   NodeEventCollection,
   NodeEventEntity,

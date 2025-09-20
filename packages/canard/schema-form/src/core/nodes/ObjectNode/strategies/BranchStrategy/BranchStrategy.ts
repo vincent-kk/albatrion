@@ -4,7 +4,7 @@ import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils/object';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
-import { ENHANCED_KEY } from '@/schema-form/app/constants/internal';
+import { ENHANCED_KEY } from '@/schema-form/app/constants';
 import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import {

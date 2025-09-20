@@ -2,7 +2,7 @@ import { isArray, isPlainObject } from '@winglet/common-utils/filter';
 
 import type { Dictionary } from '@aileron/declare';
 
-import { ENHANCED_KEY } from '@/schema-form/app/constants/internal';
+import { ENHANCED_KEY } from '@/schema-form/app/constants';
 import {
   type ConditionDictionary,
   convertExpression,

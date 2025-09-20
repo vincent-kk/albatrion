@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { ENHANCED_KEY } from '@/schema-form/app/constants/internal';
+import { ENHANCED_KEY } from '@/schema-form/app/constants';
 import type { JsonSchemaError } from '@/schema-form/types';
 
 /**
