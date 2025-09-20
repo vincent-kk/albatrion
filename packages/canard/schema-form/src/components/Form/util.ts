@@ -17,7 +17,7 @@ export const createChildren = <
   jsonSchema: Schema,
   rootNode?: InferSchemaNode<Schema>,
 ): ReactNode => {
-  if (!children) return null;
+  if (children == null) return null;
   if (typeof children !== 'function') return children;
   return children({
     jsonSchema,
