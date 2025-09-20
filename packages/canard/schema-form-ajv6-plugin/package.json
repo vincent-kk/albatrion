@@ -1,6 +1,6 @@
 {
   "name": "@canard/schema-form-ajv6-plugin",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "AJV 6.x validator plugin for @canard/schema-form providing JSON Schema validation with legacy Draft-04, Draft-06, and Draft-07 support",
   "keywords": [
     "react",
