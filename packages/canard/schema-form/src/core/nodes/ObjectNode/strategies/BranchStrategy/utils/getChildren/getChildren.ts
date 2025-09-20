@@ -1,4 +1,4 @@
-import { NOOP_FUNCTION } from '@winglet/common-utils';
+import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';

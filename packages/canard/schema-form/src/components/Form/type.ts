@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode } from 'react';
 
-import type { TrackableHandlerFunction } from '@winglet/common-utils';
+import type { TrackableHandlerFunction } from '@winglet/common-utils/function';
 
 import type { Dictionary, Fn } from '@aileron/declare';
 
