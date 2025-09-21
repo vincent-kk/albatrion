@@ -316,7 +316,7 @@ export class JsonSchemaScanner<ContextType = void> {
             }
             const resolvedReference =
               resolveReference && !isDefinitionSchema(entry.path)
-                ? resolveReference(referencePath, context)
+                ? resolveReference(referencePath, entry, context)
                 : undefined;
 
             if (resolvedReference) {

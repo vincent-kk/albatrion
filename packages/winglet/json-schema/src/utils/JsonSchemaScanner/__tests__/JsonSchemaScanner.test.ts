@@ -308,6 +308,18 @@ describe('JsonSchemaScanner', () => {
 
       expect(resolveReference).toHaveBeenCalledWith(
         '#/definitions/string',
+        {
+          dataPath: '#/ref',
+          depth: 1,
+          keyword: 'properties',
+          path: '#/properties/ref',
+          referencePath: '#/definitions/string',
+          referenceResolved: true,
+          schema: {
+            type: 'string',
+          },
+          variant: 'ref',
+        },
         undefined,
       );
       expect(visitor.enter).toHaveBeenCalledWith(
@@ -631,6 +643,18 @@ describe('JsonSchemaScannerAsync', () => {
 
       expect(resolveReference).toHaveBeenCalledWith(
         '#/definitions/string',
+        {
+          dataPath: '#/ref',
+          depth: 1,
+          keyword: 'properties',
+          path: '#/properties/ref',
+          referencePath: '#/definitions/string',
+          referenceResolved: true,
+          schema: {
+            type: 'string',
+          },
+          variant: 'ref',
+        },
         undefined,
       );
       // 루트 객체 방문 확인
@@ -697,6 +721,17 @@ describe('JsonSchemaScannerAsync', () => {
 
       expect(resolveReference).toHaveBeenCalledWith(
         '#/definitions/nonexistent',
+        {
+          dataPath: '#/ref',
+          depth: 1,
+          hasReference: true,
+          keyword: 'properties',
+          path: '#/properties/ref',
+          schema: {
+            $ref: '#/definitions/nonexistent',
+          },
+          variant: 'ref',
+        },
         undefined,
       );
       // Should not visit undefined reference

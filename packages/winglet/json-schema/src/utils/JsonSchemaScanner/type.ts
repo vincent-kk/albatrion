@@ -78,7 +78,7 @@ export interface JsonScannerOptions<ContextType = void> {
   >;
   /** Function to resolve $ref references */
   resolveReference?: Fn<
-    [reference: string, context?: ContextType],
+    [reference: string, entry: SchemaEntry, context?: ContextType],
     UnknownSchema | undefined
   >;
   /** Maximum traversal depth */
@@ -90,7 +90,7 @@ export interface JsonScannerOptions<ContextType = void> {
 export interface JsonScannerOptionsAsync<ContextType = void>
   extends JsonScannerOptions<ContextType> {
   resolveReference?: Fn<
-    [reference: string, context?: ContextType],
+    [reference: string, entry: SchemaEntry, context?: ContextType],
     UnknownSchema | Promise<UnknownSchema | undefined> | undefined
   >;
 }

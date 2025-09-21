@@ -347,7 +347,7 @@ export class JsonSchemaScannerAsync<ContextType = void> {
 
             const resolvedReference =
               resolveReference && !isDefinitionSchema(entry.path)
-                ? await resolveReference(referencePath, context)
+                ? await resolveReference(referencePath, entry, context)
                 : undefined;
 
             if (resolvedReference) {
