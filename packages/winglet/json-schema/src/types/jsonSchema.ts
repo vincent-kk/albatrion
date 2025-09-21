@@ -82,8 +82,8 @@ export interface ArraySchema<
   maxItems?: number;
   minContains?: number;
   maxContains?: number;
-  uniqueItems?: true;
-  additionalItems?: never;
+  uniqueItems?: boolean;
+  additionalItems?: Partial<Schema> | boolean;
 }
 
 export interface ObjectSchema<
@@ -91,11 +91,11 @@ export interface ObjectSchema<
   Schema extends UnknownSchema = JsonSchema,
 > extends BasicSchema<ObjectValue, Options, Schema> {
   type: 'object';
-  additionalProperties?: boolean | Schema;
-  unevaluatedProperties?: boolean | Schema;
+  additionalProperties?: boolean | Partial<Schema>;
+  unevaluatedProperties?: boolean | Partial<Schema>;
   properties?: Dictionary<Schema>;
   patternProperties?: Dictionary<Schema>;
-  propertyNames?: Schema['type'] extends 'string' ? Partial<Schema> : never;
+  propertyNames?: Partial<StringSchema>;
   dependencies?: Dictionary<Partial<Schema> | string[]>;
   dependentRequired?: Dictionary<string[]>;
   dependentSchemas?: Dictionary<Partial<Schema>>;
