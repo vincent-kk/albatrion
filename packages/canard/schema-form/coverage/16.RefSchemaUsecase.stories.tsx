@@ -294,6 +294,7 @@ export const DirectSubSchemaRef = () => {
     title: 'Direct SubSchema Reference',
     type: 'object',
     properties: {
+      type: { type: 'string', enum: ['user', 'admin'], default: 'user' },
       user: {
         type: 'object',
         properties: {
@@ -320,6 +321,19 @@ export const DirectSubSchemaRef = () => {
       },
       userSettings: {
         $ref: '#/properties/user/properties/settings',
+      },
+      oneOf: {
+        type: 'object',
+        oneOf: [
+          {
+            '&if': "../type === 'user'",
+            $ref: '#/properties/user/properties/profile',
+          },
+          {
+            '&if': "../type === 'admin'",
+            $ref: '#/properties/user/properties/settings',
+          },
+        ],
       },
     },
   } satisfies JsonSchema;
