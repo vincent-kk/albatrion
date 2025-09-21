@@ -1,0 +1,1 @@
+export { resolveReference } from './resolveReference';

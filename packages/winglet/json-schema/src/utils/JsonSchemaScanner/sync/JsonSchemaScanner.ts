@@ -1,5 +1,5 @@
 import { clone } from '@winglet/common-utils/object';
-import { JSONPointer, getValue, setValue } from '@winglet/json/pointer';
+import { JSONPointer, setValue } from '@winglet/json/pointer';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
@@ -377,26 +377,5 @@ export class JsonSchemaScanner<ContextType = void> {
         }
       }
     }
-  }
-
-  static resolveReference(
-    jsonSchema: UnknownSchema,
-  ): UnknownSchema | undefined {
-    const definitionMap = new Map<string, UnknownSchema>();
-    new JsonSchemaScanner({
-      visitor: {
-        exit: ({ schema, hasReference }) => {
-          if (hasReference && typeof schema.$ref === 'string')
-            definitionMap.set(schema.$ref, getValue(jsonSchema, schema.$ref));
-        },
-      },
-    }).scan(jsonSchema);
-    return new JsonSchemaScanner({
-      options: {
-        resolveReference: (path) => definitionMap.get(path),
-      },
-    })
-      .scan(jsonSchema)
-      .getValue();
   }
 }
