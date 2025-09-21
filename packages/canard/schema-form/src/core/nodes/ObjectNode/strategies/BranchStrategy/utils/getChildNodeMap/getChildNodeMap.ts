@@ -46,11 +46,12 @@ export const getChildNodeMap = (
   const properties = jsonSchema.properties;
   if (!properties) return childNodeMap;
   const required = jsonSchema.required;
-  for (const name of propertyKeys) {
-    const schema = properties[name];
-    const inputDefault = defaultValue?.[name];
-    const conditions = conditionsMap?.get(name);
-    const virtualReferenceFields = virtualReferenceFieldsMap?.get(name);
+  for (let i = 0, l = propertyKeys.length; i < l; i++) {
+    const propertyKey = propertyKeys[i];
+    const schema = properties[propertyKey];
+    const inputDefault = defaultValue?.[propertyKey];
+    const conditions = conditionsMap?.get(propertyKey);
+    const virtualReferenceFields = virtualReferenceFieldsMap?.get(propertyKey);
     const virtualReferenceConditions = getVirtualReferenceConditions(
       virtualReferenceFields,
       virtualReferencesMap,
@@ -60,18 +61,18 @@ export const getChildNodeMap = (
         ? unique([...conditions, ...virtualReferenceConditions])
         : conditions || virtualReferenceConditions;
 
-    childNodeMap.set(name, {
+    childNodeMap.set(propertyKey, {
       virtual: !!virtualReferenceFields?.length,
       node: nodeFactory({
-        name,
+        name: propertyKey,
         scope: 'properties',
         jsonSchema: mergeShowConditions(schema, mergedConditions),
         defaultValue:
           inputDefault !== undefined ? inputDefault : getDefaultValue(schema),
-        onChange: handelChangeFactory(name),
+        onChange: handelChangeFactory(propertyKey),
         nodeFactory,
         parentNode,
-        required: required?.includes(name) || conditions !== undefined,
+        required: required?.includes(propertyKey) || conditions !== undefined,
       }),
     });
   }
