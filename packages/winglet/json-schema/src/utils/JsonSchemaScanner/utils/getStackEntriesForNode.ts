@@ -38,10 +38,10 @@ export const getStackEntriesForNode = (entry: SchemaEntry): SchemaEntry[] => {
 
   handleCompositionNode(schema, entries, path, dataPath, depth);
 
-  if (schema.type === 'array' && 'items' in schema)
+  if ('items' in schema)
     handleArrayItems(schema, entries, path, dataPath, depth);
 
-  if (schema.type === 'object' && 'properties' in schema)
+  if ('properties' in schema)
     handleObjectProperties(schema, entries, path, dataPath, depth);
 
   return entries;

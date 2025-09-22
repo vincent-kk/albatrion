@@ -350,7 +350,6 @@ export class JsonSchemaScanner<ContextType = void> {
           if (childEntries.length > 0) {
             for (let i = childEntries.length - 1; i >= 0; i--) {
               const child = childEntries[i];
-              entryPhase.set(child, OperationPhase.Enter);
               stack.push(child);
             }
           }
