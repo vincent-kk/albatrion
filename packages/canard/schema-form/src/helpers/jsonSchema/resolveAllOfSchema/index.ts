@@ -1,0 +1,1 @@
+export { resolveAllOfSchema } from './resolveAllOfSchema';

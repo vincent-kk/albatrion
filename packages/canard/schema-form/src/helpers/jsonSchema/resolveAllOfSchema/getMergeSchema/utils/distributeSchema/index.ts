@@ -1,0 +1,1 @@
+export { distributeSchema } from './distributeSchema';
