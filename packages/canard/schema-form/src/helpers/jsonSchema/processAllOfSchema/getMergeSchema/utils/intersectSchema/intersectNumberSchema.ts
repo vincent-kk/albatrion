@@ -17,6 +17,7 @@ export const intersectNumberSchema = (
   processFirstWinFields(base, source);
   processOverwriteFields(base, source);
 
+  const typeResult = source.type === 'integer' ? 'integer' : undefined;
   const enumResult = intersectEnum(base.enum, source.enum);
   const constResult = intersectConst(base.const, source.const);
   const requiredResult = unionRequired(base.required, source.required);
@@ -39,6 +40,7 @@ export const intersectNumberSchema = (
     'Invalid number constraints: exclusiveMinimum',
   );
 
+  if (typeResult !== undefined) base.type = typeResult;
   if (enumResult !== undefined) base.enum = enumResult;
   if (constResult !== undefined) base.const = constResult;
   if (requiredResult !== undefined) base.required = requiredResult;

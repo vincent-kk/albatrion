@@ -411,8 +411,167 @@ describe('processAllOfSchema', () => {
 
       // 실제로는 타입이 다른 경우 에러가 발생할 수 있지만,
       // 기본 스키마에서 allOf 항목으로 유효하지 않은 타입이 대신 무시되는 경우가 있음
+      expect(() => processAllOfSchema(schema)).toThrow(
+        'Type cannot be redefined in allOf schema. It must either be omitted or match the parent schema type.',
+      );
+    });
+
+    test('allOf 항목에 type이 undefined인 경우 정상 처리', () => {
+      const schema: StringSchema = {
+        type: 'string',
+        minLength: 1,
+        allOf: [
+          {
+            type: undefined, // type이 undefined
+            maxLength: 50,
+            pattern: '^[a-z]+$',
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema) as StringSchema;
+
+      expect(result).toEqual({
+        type: 'string',
+        minLength: 1,
+        maxLength: 50,
+        pattern: '^[a-z]+$',
+      });
+    });
+
+    test('allOf 항목에 type이 없는 경우 정상 처리', () => {
+      const schema: NumberSchema = {
+        type: 'number',
+        minimum: 0,
+        allOf: [
+          {
+            // type 속성 없음
+            maximum: 100,
+            multipleOf: 5,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema) as NumberSchema;
+
+      expect(result).toEqual({
+        type: 'number',
+        minimum: 0,
+        maximum: 100,
+        multipleOf: 5,
+      });
+    });
+
+    test('allOf 항목의 type이 base와 동일한 경우 정상 처리', () => {
+      const schema: ObjectSchema = {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+        },
+        allOf: [
+          {
+            type: 'object', // 동일한 type
+            properties: {
+              email: { type: 'string', format: 'email' },
+            },
+            required: ['email'],
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema) as ObjectSchema;
+
+      expect(result).toEqual({
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          email: { type: 'string', format: 'email' },
+        },
+        required: ['email'],
+      });
+    });
+
+    test('여러 allOf 항목 중 하나라도 type이 다르면 에러', () => {
+      const schema: ArraySchema = {
+        type: 'array',
+        items: { type: 'string' },
+        allOf: [
+          {
+            type: 'array', // 동일한 type
+            minItems: 1,
+          },
+          {
+            // type 없음 - OK
+            maxItems: 10,
+          },
+          {
+            type: 'object', // 다른 type - 에러!
+            properties: {},
+          },
+        ],
+      };
+
+      expect(() => processAllOfSchema(schema)).toThrow(
+        'Type cannot be redefined in allOf schema',
+      );
+    });
+
+    test('각 타입별 충돌 검증', () => {
+      // string -> number
+      expect(() =>
+        processAllOfSchema({
+          type: 'string',
+          allOf: [{ type: 'number' }],
+        }),
+      ).toThrow('Type cannot be redefined');
+
+      // number -> boolean
+      expect(() =>
+        processAllOfSchema({
+          type: 'number',
+          allOf: [{ type: 'boolean' }],
+        }),
+      ).toThrow('Type cannot be redefined');
+
+      // boolean -> null
+      expect(() =>
+        processAllOfSchema({
+          type: 'boolean',
+          allOf: [{ type: 'null' }],
+        }),
+      ).toThrow('Type cannot be redefined');
+
+      // array -> object
+      expect(() =>
+        processAllOfSchema({
+          type: 'array',
+          items: { type: 'string' }, // array type requires items property
+          allOf: [{ type: 'object' }],
+        } as ArraySchema),
+      ).toThrow('Type cannot be redefined');
+
+      // object -> string
+      expect(() =>
+        processAllOfSchema({
+          type: 'object',
+          allOf: [{ type: 'string' }],
+        }),
+      ).toThrow('Type cannot be redefined');
+    });
+
+    test('integer와 number 타입 병합, integer 타입 우선', () => {
+      const schema: NumberSchema = {
+        type: 'integer',
+        minimum: 0,
+        allOf: [
+          {
+            type: 'number',
+            maximum: 100,
+          },
+        ],
+      };
       const result = processAllOfSchema(schema);
-      expect(result).toHaveProperty('type', 'string');
+      expect(result.type).toBe('integer');
     });
 
     test('const 충돌 시 에러 발생', () => {

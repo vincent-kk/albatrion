@@ -92,6 +92,35 @@ describe('intersectNumberSchema', () => {
   });
 
   describe('공통 필드 처리', () => {
+    describe('type 처리', () => {
+      test('integer와 number 타입 처리', () => {
+        const base: NumberSchema = { type: 'number' };
+        const source: Partial<NumberSchema> = { type: 'integer' };
+
+        const result = intersectNumberSchema(base, source);
+
+        expect(result.type).toBe('integer');
+      });
+
+      test('number와 integer 타입 처리', () => {
+        const base: NumberSchema = { type: 'integer' };
+        const source: Partial<NumberSchema> = { type: 'number' };
+
+        const result = intersectNumberSchema(base, source);
+
+        expect(result.type).toBe('integer');
+      });
+
+      test('type이 없으면 base 타입 유지', () => {
+        const base: NumberSchema = { type: 'number' };
+        const source: Partial<NumberSchema> = {};
+
+        const result = intersectNumberSchema(base, source);
+
+        expect(result.type).toBe('number');
+      });
+    });
+
     describe('First-Win 필드들', () => {
       const firstWinFields = [
         'title',
