@@ -95,7 +95,7 @@ export interface ObjectSchema<
   unevaluatedProperties?: boolean | Partial<Schema>;
   properties?: Dictionary<Schema>;
   patternProperties?: Dictionary<Schema>;
-  propertyNames?: Partial<StringSchema>;
+  propertyNames?: Partial<Extract<Schema, { type: 'string' }>>;
   dependencies?: Dictionary<Partial<Schema> | string[]>;
   dependentRequired?: Dictionary<string[]>;
   dependentSchemas?: Dictionary<Partial<Schema>>;
