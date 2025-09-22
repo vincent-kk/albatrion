@@ -9,12 +9,11 @@ import { EXCLUDE_FIELDS } from './constants';
 export function processOverwriteFields<T extends JsonSchema>(
   base: T,
   source: Partial<T>,
-): Partial<T> {
+) {
   const entries = Object.entries(source);
   for (let i = 0, l = entries.length; i < l; i++) {
     const [key, value] = entries[i];
     if (EXCLUDE_FIELDS.has(key) || value === undefined) continue;
     base[key as keyof T] = value;
   }
-  return base;
 }

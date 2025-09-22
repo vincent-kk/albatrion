@@ -14,14 +14,12 @@ export const intersectNumberSchema = (
   base: NumberSchema,
   source: Partial<NumberSchema>,
 ): NumberSchema => {
-  const firstWinFields = processFirstWinFields(base, source);
-
-  const overwriteFields = processOverwriteFields(base, source);
+  processFirstWinFields(base, source);
+  processOverwriteFields(base, source);
 
   const enumResult = intersectEnum(base.enum, source.enum);
   const constResult = intersectConst(base.const, source.const);
   const requiredResult = unionRequired(base.required, source.required);
-
   const minimum = intersectMinimum(base.minimum, source.minimum);
   const maximum = intersectMaximum(base.maximum, source.maximum);
   const exclusiveMinimum = intersectMinimum(
@@ -41,22 +39,14 @@ export const intersectNumberSchema = (
     'Invalid number constraints: exclusiveMinimum',
   );
 
-  const result = {
-    type: base.type,
-    ...overwriteFields,
-    ...firstWinFields,
-  } as NumberSchema;
+  if (enumResult !== undefined) base.enum = enumResult;
+  if (constResult !== undefined) base.const = constResult;
+  if (requiredResult !== undefined) base.required = requiredResult;
+  if (minimum !== undefined) base.minimum = minimum;
+  if (maximum !== undefined) base.maximum = maximum;
+  if (exclusiveMinimum !== undefined) base.exclusiveMinimum = exclusiveMinimum;
+  if (exclusiveMaximum !== undefined) base.exclusiveMaximum = exclusiveMaximum;
+  if (multipleOf !== undefined) base.multipleOf = multipleOf;
 
-  if (enumResult !== undefined) result.enum = enumResult;
-  if (constResult !== undefined) result.const = constResult;
-  if (requiredResult !== undefined) result.required = requiredResult;
-  if (minimum !== undefined) result.minimum = minimum;
-  if (maximum !== undefined) result.maximum = maximum;
-  if (exclusiveMinimum !== undefined)
-    result.exclusiveMinimum = exclusiveMinimum;
-  if (exclusiveMaximum !== undefined)
-    result.exclusiveMaximum = exclusiveMaximum;
-  if (multipleOf !== undefined) result.multipleOf = multipleOf;
-
-  return result;
+  return base;
 };

@@ -10,22 +10,16 @@ export const intersectBooleanSchema = (
   base: BooleanSchema,
   source: Partial<BooleanSchema>,
 ): BooleanSchema => {
-  const firstWinFields = processFirstWinFields(base, source);
-  const overwriteFields = processOverwriteFields(base, source);
+  processFirstWinFields(base, source);
+  processOverwriteFields(base, source);
 
   const enumResult = intersectEnum(base.enum, source.enum);
   const constResult = intersectConst(base.const, source.const);
   const requiredResult = unionRequired(base.required, source.required);
 
-  const result = {
-    type: 'boolean',
-    ...overwriteFields,
-    ...firstWinFields,
-  } as BooleanSchema;
+  if (enumResult !== undefined) base.enum = enumResult;
+  if (constResult !== undefined) base.const = constResult;
+  if (requiredResult !== undefined) base.required = requiredResult;
 
-  if (enumResult !== undefined) result.enum = enumResult;
-  if (constResult !== undefined) result.const = constResult;
-  if (requiredResult !== undefined) result.required = requiredResult;
-
-  return result;
+  return base;
 };

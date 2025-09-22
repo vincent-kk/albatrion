@@ -14,30 +14,24 @@ export const intersectStringSchema = (
   base: StringSchema,
   source: Partial<StringSchema>,
 ): StringSchema => {
-  const firstWinFields = processFirstWinFields(base, source);
-  const overwriteFields = processOverwriteFields(base, source);
+  processFirstWinFields(base, source);
+  processOverwriteFields(base, source);
+
   const enumResult = intersectEnum(base.enum, source.enum);
   const constResult = intersectConst(base.const, source.const);
   const requiredResult = unionRequired(base.required, source.required);
-
   const pattern = intersectPattern(base.pattern, source.pattern);
   const minLength = intersectMinimum(base.minLength, source.minLength);
   const maxLength = intersectMaximum(base.maxLength, source.maxLength);
 
   validateRange(minLength, maxLength, 'Invalid string constraints: minLength');
 
-  const result = {
-    type: 'string',
-    ...overwriteFields,
-    ...firstWinFields,
-  } as StringSchema;
+  if (enumResult !== undefined) base.enum = enumResult;
+  if (constResult !== undefined) base.const = constResult;
+  if (requiredResult !== undefined) base.required = requiredResult;
+  if (pattern !== undefined) base.pattern = pattern;
+  if (minLength !== undefined) base.minLength = minLength;
+  if (maxLength !== undefined) base.maxLength = maxLength;
 
-  if (enumResult !== undefined) result.enum = enumResult;
-  if (constResult !== undefined) result.const = constResult;
-  if (requiredResult !== undefined) result.required = requiredResult;
-  if (pattern !== undefined) result.pattern = pattern;
-  if (minLength !== undefined) result.minLength = minLength;
-  if (maxLength !== undefined) result.maxLength = maxLength;
-
-  return result;
+  return base;
 };

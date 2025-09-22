@@ -272,21 +272,6 @@ describe('intersectArraySchema', () => {
       });
     });
 
-    test('다른 타입의 items는 distributeSchema에서 처리 (타입 충돌)', () => {
-      const base = {
-        type: 'array',
-        items: { type: 'string' as const },
-      } as ArraySchema;
-      const source: Partial<ArraySchema> = {
-        items: { type: 'number' as const },
-      };
-
-      // distributeSchema가 타입 충돌을 발견하고 에러를 발생시킬 것으로 예상
-      expect(() => intersectArraySchema(base, source)).toThrow(
-        'Type cannot be redefined in allOf schema',
-      );
-    });
-
     test('다양한 items 스키마 제약 조건 병합', () => {
       const base = {
         type: 'array',

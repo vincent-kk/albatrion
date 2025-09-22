@@ -15,12 +15,12 @@ export const intersectObjectSchema = (
   base: ObjectSchema,
   source: Partial<ObjectSchema>,
 ): ObjectSchema => {
-  const firstWinFields = processFirstWinFields(base, source);
-  const overwriteFields = processOverwriteFields(base, source);
+  processFirstWinFields(base, source);
+  processOverwriteFields(base, source);
+
   const enumResult = intersectEnum(base.enum, source.enum);
   const constResult = intersectConst(base.const, source.const);
   const requiredResult = unionRequired(base.required, source.required);
-
   const propertyNames =
     base.propertyNames && source.propertyNames
       ? intersectStringSchema(
@@ -43,12 +43,6 @@ export const intersectObjectSchema = (
     'Invalid object constraints: minProperties',
   );
 
-  base = {
-    type: 'object',
-    ...overwriteFields,
-    ...firstWinFields,
-  } as ObjectSchema;
-
   if (enumResult !== undefined) base.enum = enumResult;
   if (constResult !== undefined) base.const = constResult;
   if (requiredResult !== undefined) base.required = requiredResult;
@@ -64,7 +58,7 @@ export const intersectObjectSchema = (
       for (let i = 0, l = sourceProperties.length; i < l; i++) {
         const [key, value] = sourceProperties[i];
         if (properties[key] === undefined) properties[key] = value;
-        else properties[key] = distributeSubSchema(properties[key], value);
+        else distributeSubSchema(properties[key], value);
       }
     }
   return base;
