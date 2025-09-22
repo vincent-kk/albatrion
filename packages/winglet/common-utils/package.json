@@ -92,6 +92,12 @@
       "import": "./dist/utils/hash/index.mjs",
       "require": "./dist/utils/hash/index.cjs"
     },
+    "./math": {
+      "source": "./src/utils/math/index.ts",
+      "types": "./dist/utils/math/index.d.ts",
+      "import": "./dist/utils/math/index.mjs",
+      "require": "./dist/utils/math/index.cjs"
+    },
     "./object": {
       "source": "./src/utils/object/index.ts",
       "types": "./dist/utils/object/index.d.ts",
