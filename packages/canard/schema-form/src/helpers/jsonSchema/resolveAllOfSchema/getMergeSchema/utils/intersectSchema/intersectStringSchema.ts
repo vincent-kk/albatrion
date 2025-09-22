@@ -1,8 +1,8 @@
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { StringSchema } from '@/schema-form/types';
 
 export const intersectStringSchema = (
-  base: JsonSchemaWithVirtual,
-  source: Partial<JsonSchemaWithVirtual>,
+  base: StringSchema,
+  source: Partial<StringSchema>,
 ) => {
   return base;
 };

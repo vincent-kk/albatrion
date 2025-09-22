@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import {
@@ -9,21 +11,28 @@ import {
   intersectStringSchema,
 } from './utils/intersectSchema';
 
-export const getMergeSchema = (type: JsonSchemaWithVirtual['type']) => {
+type MergeSchema = Fn<
+  [base: JsonSchemaWithVirtual, source: Partial<JsonSchemaWithVirtual>],
+  JsonSchemaWithVirtual
+>;
+
+export const getMergeSchema = (
+  type: JsonSchemaWithVirtual['type'],
+): MergeSchema | null => {
   switch (type) {
     case 'array':
-      return intersectArraySchema;
+      return intersectArraySchema as MergeSchema;
     case 'boolean':
-      return intersectBooleanSchema;
+      return intersectBooleanSchema as MergeSchema;
     case 'null':
-      return intersectNullSchema;
+      return intersectNullSchema as MergeSchema;
     case 'number':
     case 'integer':
-      return intersectNumberSchema;
+      return intersectNumberSchema as MergeSchema;
     case 'object':
-      return intersectObjectSchema;
+      return intersectObjectSchema as MergeSchema;
     case 'string':
-      return intersectStringSchema;
+      return intersectStringSchema as MergeSchema;
   }
   return null;
 };
