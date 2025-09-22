@@ -3,7 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { JsonSchemaError } from '@/schema-form/errors';
 import type { JsonSchema } from '@/schema-form/types';
 
-export const distributeSchema = <Schema extends JsonSchema>(
+export const distributeSubSchema = <Schema extends JsonSchema>(
   base: Schema,
   source: Partial<JsonSchema>,
 ): Schema => {

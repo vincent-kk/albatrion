@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { ENHANCED_KEY } from '@/schema-form/app/constants/internal';
 import type { JsonSchema } from '@/schema-form/types';
 
-import { preprocessSchema } from '../preprocessSchema/preprocessSchema';
+import { preprocessSchema } from '../preprocessSchema';
 
 describe('JsonSchemaScanner - OneOf Schema Test', () => {
   it('should handle oneOf schema', () => {

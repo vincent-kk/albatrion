@@ -184,10 +184,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @returns Returns itself (this) for method chaining
    */
   public push(data?: ArrayValue[number], option?: UnionSetValueOption) {
-    if (
-      this.__host__.jsonSchema.maxItems &&
-      this.__host__.jsonSchema.maxItems <= this.length
-    )
+    const host = this.__host__;
+    if (host.jsonSchema.maxItems && host.jsonSchema.maxItems <= this.length)
       return promiseAfterMicrotask(this.length);
 
     const index = '' + this.__keys__.length;
@@ -195,22 +193,19 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__keys__.push(key);
 
     const defaultValue =
-      data !== undefined
-        ? data
-        : getDefaultValue(this.__host__.jsonSchema.items);
+      data !== undefined ? data : getDefaultValue(host.jsonSchema.items);
     const childNode = this.__nodeFactory__({
       name: index,
       scope: 'items',
-      jsonSchema: this.__host__.jsonSchema.items,
-      parentNode: this.__host__,
+      jsonSchema: host.jsonSchema.items,
+      parentNode: host,
       defaultValue,
       onChange: this.__handleChangeFactory__(key),
       nodeFactory: this.__nodeFactory__,
     });
     this.__sourceMap__.set(key, { node: childNode, data: childNode.value });
 
-    if (this.__host__.initialized)
-      (childNode as AbstractNode).initialize(this.__host__);
+    if (host.initialized) (childNode as AbstractNode).initialize(host);
 
     this.__expire__();
     this.__emitChange__(option);

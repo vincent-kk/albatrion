@@ -1,8 +1,12 @@
 import { JsonSchemaError } from '@/schema-form/errors';
-import type { ResolveSchema } from '@/schema-form/helpers/jsonSchema';
+import {
+  type ResolveSchema,
+  processAllOfSchema,
+} from '@/schema-form/helpers/jsonSchema';
 import type {
   ArraySchema,
   BooleanSchema,
+  JsonSchema,
   JsonSchemaWithVirtual,
   NullSchema,
   NumberSchema,
@@ -87,6 +91,9 @@ const resolveReferences = <Schema extends JsonSchemaWithVirtual>(
   if (resolveSchema)
     nodeFactoryProps.jsonSchema =
       resolveSchema(nodeFactoryProps.jsonSchema) || nodeFactoryProps.jsonSchema;
+  nodeFactoryProps.jsonSchema = processAllOfSchema(
+    nodeFactoryProps.jsonSchema as JsonSchema,
+  );
   return nodeFactoryProps as UnionSchemaNodeConstructorProps;
 };
 
