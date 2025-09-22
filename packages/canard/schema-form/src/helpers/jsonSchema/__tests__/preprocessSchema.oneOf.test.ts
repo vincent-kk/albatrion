@@ -333,12 +333,14 @@ describe('JsonSchemaScanner - OneOf Schema Test', () => {
                   oneOf: [
                     {
                       properties: {
+                        [ENHANCED_KEY]: { const: 0 },
                         type: { const: 'credit' },
                         creditLimit: { type: 'number' },
                       },
                     },
                     {
                       properties: {
+                        [ENHANCED_KEY]: { const: 1 },
                         type: { const: 'debit' },
                         balance: { type: 'number' },
                       },
