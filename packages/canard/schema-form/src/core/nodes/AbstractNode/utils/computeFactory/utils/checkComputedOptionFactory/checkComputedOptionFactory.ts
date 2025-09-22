@@ -1,6 +1,6 @@
 import type { Fn } from '@aileron/declare';
 
-import { SchemaNodeError } from '@/schema-form/errors';
+import { JsonSchemaError } from '@/schema-form/errors';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import type { PathManager } from '../getPathManager';
@@ -68,7 +68,7 @@ const createDynamicFunction = (
       `return !!(${computedExpression})`,
     ) as CheckComputedOption;
   } catch (error) {
-    throw new SchemaNodeError(
+    throw new JsonSchemaError(
       'COMPUTED_OPTION',
       `Failed to create dynamic function: ${fieldName} -> '${expression}'`,
       { fieldName, expression, computedExpression, error },

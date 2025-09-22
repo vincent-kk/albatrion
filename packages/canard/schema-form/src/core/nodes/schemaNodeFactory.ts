@@ -1,4 +1,4 @@
-import { SchemaNodeError } from '@/schema-form/errors';
+import { JsonSchemaError } from '@/schema-form/errors';
 import type { ResolveSchema } from '@/schema-form/helpers/jsonSchema';
 import type {
   ArraySchema,
@@ -70,7 +70,7 @@ export const createSchemaNodeFactory =
           constructorProps as VirtualNodeConstructorProps<VirtualSchema>,
         );
     }
-    throw new SchemaNodeError(
+    throw new JsonSchemaError(
       'UNKNOWN_JSON_SCHEMA',
       // @ts-expect-error: This line should be unreachable if all variants are handled.
       `Unknown JsonSchema: ${constructorProps.jsonSchema.type}`,

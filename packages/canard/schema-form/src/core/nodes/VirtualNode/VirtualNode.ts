@@ -1,7 +1,7 @@
 import { map } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 
-import { SchemaNodeError } from '@/schema-form/errors';
+import { JsonSchemaError } from '@/schema-form/errors';
 import type { VirtualNodeValue, VirtualSchema } from '@/schema-form/types';
 
 import { AbstractNode } from '../AbstractNode';
@@ -132,7 +132,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
   ) {
     const refNodesLength = this.#refNodes.length;
     if (values !== undefined && values?.length !== refNodesLength)
-      throw new SchemaNodeError(
+      throw new JsonSchemaError(
         'INVALID_VIRTUAL_NODE_VALUES',
         `Expected ${refNodesLength}-element array for virtual node, but received ${
           isArray(values)

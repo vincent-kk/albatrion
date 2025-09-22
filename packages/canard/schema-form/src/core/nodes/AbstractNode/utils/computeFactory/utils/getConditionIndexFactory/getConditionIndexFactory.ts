@@ -2,7 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Fn } from '@aileron/declare';
 
-import { SchemaNodeError } from '@/schema-form/errors';
+import { JsonSchemaError } from '@/schema-form/errors';
 import { combineConditions } from '@/schema-form/helpers/dynamicExpression';
 import type {
   JsonSchemaWithVirtual,
@@ -137,7 +137,7 @@ export const getConditionIndexFactory =
         `${lines.join('\n')}\nreturn -1;`,
       ) as GetConditionIndex;
     } catch (error) {
-      throw new SchemaNodeError(
+      throw new JsonSchemaError(
         'CONDITION_INDEX',
         `Failed to create dynamic function: ${fieldName} -> '${expressions.join(', ')}'`,
         { fieldName, expressions, lines, error },

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { SchemaNodeError } from '@/schema-form/errors';
+import { JsonSchemaError } from '@/schema-form/errors';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import { checkComputedOptionFactory } from '../checkComputedOptionFactory';
@@ -24,7 +24,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
 
       expect(() => {
         factory(pathManager, 'active');
-      }).toThrow(SchemaNodeError);
+      }).toThrow(JsonSchemaError);
     });
 
     test('should throw SchemaNodeError with detailed context for syntax errors', () => {
@@ -44,17 +44,17 @@ describe('Error Handling in Dynamic Function Creation', () => {
         factory(pathManager, 'active');
         expect.fail('Should have thrown SchemaNodeError');
       } catch (error) {
-        expect(error).toBeInstanceOf(SchemaNodeError);
-        expect((error as SchemaNodeError).code).toBe(
-          'SCHEMA_NODE_ERROR.COMPUTED_OPTION',
+        expect(error).toBeInstanceOf(JsonSchemaError);
+        expect((error as JsonSchemaError).code).toBe(
+          'JSON_SCHEMA_ERROR.COMPUTED_OPTION',
         );
-        expect((error as SchemaNodeError).message).toContain(
+        expect((error as JsonSchemaError).message).toContain(
           'Failed to create dynamic function',
         );
-        expect((error as SchemaNodeError).message).toContain(
+        expect((error as JsonSchemaError).message).toContain(
           `active -> '${invalidExpression}'`,
         );
-        expect((error as SchemaNodeError).details).toMatchObject({
+        expect((error as JsonSchemaError).details).toMatchObject({
           fieldName: 'active',
           expression: invalidExpression,
           computedExpression: expect.stringContaining('dependencies[0]'),
@@ -77,7 +77,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
 
       expect(() => {
         factory(pathManager, 'active');
-      }).toThrow(SchemaNodeError);
+      }).toThrow(JsonSchemaError);
     });
 
     test('should throw SchemaNodeError for malformed expressions', () => {
@@ -94,7 +94,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
 
       expect(() => {
         factory(pathManager, 'active');
-      }).toThrow(SchemaNodeError);
+      }).toThrow(JsonSchemaError);
     });
   });
 
@@ -123,7 +123,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
 
       expect(() => {
         factory(pathManager, 'oneOf', 'if');
-      }).toThrow(SchemaNodeError);
+      }).toThrow(JsonSchemaError);
     });
 
     test('should throw SchemaNodeError with context for condition index creation failure', () => {
@@ -147,17 +147,17 @@ describe('Error Handling in Dynamic Function Creation', () => {
         factory(pathManager, 'oneOf', 'if');
         expect.fail('Should have thrown SchemaNodeError');
       } catch (error) {
-        expect(error).toBeInstanceOf(SchemaNodeError);
-        expect((error as SchemaNodeError).code).toBe(
-          'SCHEMA_NODE_ERROR.CONDITION_INDEX',
+        expect(error).toBeInstanceOf(JsonSchemaError);
+        expect((error as JsonSchemaError).code).toBe(
+          'JSON_SCHEMA_ERROR.CONDITION_INDEX',
         );
-        expect((error as SchemaNodeError).message).toContain(
+        expect((error as JsonSchemaError).message).toContain(
           'Failed to create dynamic function',
         );
-        expect((error as SchemaNodeError).message).toContain(
+        expect((error as JsonSchemaError).message).toContain(
           `oneOf -> '${invalidExpression}'`,
         );
-        expect((error as SchemaNodeError).details).toMatchObject({
+        expect((error as JsonSchemaError).details).toMatchObject({
           fieldName: 'oneOf',
           expressions: expect.arrayContaining([
             expect.stringContaining('dependencies[0]'),
@@ -198,7 +198,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
 
       expect(() => {
         factory(pathManager, 'oneOf', 'if');
-      }).toThrow(SchemaNodeError);
+      }).toThrow(JsonSchemaError);
     });
 
     test('should throw SchemaNodeError for unmatched brackets', () => {
@@ -219,7 +219,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
 
       expect(() => {
         factory(pathManager, 'oneOf', 'if');
-      }).toThrow(SchemaNodeError);
+      }).toThrow(JsonSchemaError);
     });
   });
 
@@ -269,21 +269,21 @@ describe('Error Handling in Dynamic Function Creation', () => {
           factory(pathManager, 'watch');
           expect.fail('Should have thrown SchemaNodeError');
         } catch (error) {
-          expect(error).toBeInstanceOf(SchemaNodeError);
-          expect((error as SchemaNodeError).code).toBe(
-            'SCHEMA_NODE_ERROR.OBSERVED_VALUES',
+          expect(error).toBeInstanceOf(JsonSchemaError);
+          expect((error as JsonSchemaError).code).toBe(
+            'JSON_SCHEMA_ERROR.OBSERVED_VALUES',
           );
-          expect((error as SchemaNodeError).message).toContain(
+          expect((error as JsonSchemaError).message).toContain(
             'Failed to create dynamic function',
           );
-          expect((error as SchemaNodeError).message).toContain(
+          expect((error as JsonSchemaError).message).toContain(
             `watch -> '["/test"]'`,
           );
           console.log(
-            (error as SchemaNodeError).message,
-            (error as SchemaNodeError).details,
+            (error as JsonSchemaError).message,
+            (error as JsonSchemaError).details,
           );
-          expect((error as SchemaNodeError).details).toMatchObject({
+          expect((error as JsonSchemaError).details).toMatchObject({
             fieldName: 'watch',
             watch: ['/test'],
             watchValueIndexes: expect.any(Array),
@@ -314,12 +314,12 @@ describe('Error Handling in Dynamic Function Creation', () => {
         factory(pathManager, 'active');
         expect.fail('Should have thrown SchemaNodeError');
       } catch (error) {
-        expect(error).toBeInstanceOf(SchemaNodeError);
+        expect(error).toBeInstanceOf(JsonSchemaError);
 
-        const schemaError = error as SchemaNodeError;
+        const schemaError = error as JsonSchemaError;
 
         // 에러 코드 확인
-        expect(schemaError.code).toBe('SCHEMA_NODE_ERROR.COMPUTED_OPTION');
+        expect(schemaError.code).toBe('JSON_SCHEMA_ERROR.COMPUTED_OPTION');
 
         // 메시지에 유용한 정보 포함 확인
         expect(schemaError.message).toContain(
@@ -367,7 +367,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
         expect(() => {
           factory(pathManager, 'active');
         }, `Expression "${invalidExpression}" should throw error`).toThrow(
-          SchemaNodeError,
+          JsonSchemaError,
         );
       }
     });
@@ -423,15 +423,15 @@ describe('Error Handling in Dynamic Function Creation', () => {
         expect.fail('Should have thrown SchemaNodeError');
       } catch (error) {
         console.log('\n=== Error Output Sample ===');
-        console.log('Code:', (error as SchemaNodeError).code);
-        console.log('Message:', (error as SchemaNodeError).message);
+        console.log('Code:', (error as JsonSchemaError).code);
+        console.log('Message:', (error as JsonSchemaError).message);
         console.log(
           'Details:',
-          JSON.stringify((error as SchemaNodeError).details, null, 2),
+          JSON.stringify((error as JsonSchemaError).details, null, 2),
         );
         console.log('========================\n');
 
-        expect(error).toBeInstanceOf(SchemaNodeError);
+        expect(error).toBeInstanceOf(JsonSchemaError);
       }
     });
 
@@ -462,19 +462,19 @@ describe('Error Handling in Dynamic Function Creation', () => {
         expect.fail('Should have thrown SchemaNodeError');
       } catch (error) {
         console.log('\n=== Condition Index Error Output ===');
-        console.log('Code:', (error as SchemaNodeError).code);
-        console.log('Message:', (error as SchemaNodeError).message);
+        console.log('Code:', (error as JsonSchemaError).code);
+        console.log('Message:', (error as JsonSchemaError).message);
         console.log(
           'Details fieldName:',
-          (error as SchemaNodeError).details.fieldName,
+          (error as JsonSchemaError).details.fieldName,
         );
         console.log(
           'Details expressions:',
-          (error as SchemaNodeError).details.expressions,
+          (error as JsonSchemaError).details.expressions,
         );
         console.log('================================\n');
 
-        expect(error).toBeInstanceOf(SchemaNodeError);
+        expect(error).toBeInstanceOf(JsonSchemaError);
       }
     });
 
@@ -502,19 +502,19 @@ describe('Error Handling in Dynamic Function Creation', () => {
           expect.fail('Should have thrown SchemaNodeError');
         } catch (error) {
           console.log('\n=== Observed Values Error Output ===');
-          console.log('Code:', (error as SchemaNodeError).code);
-          console.log('Message:', (error as SchemaNodeError).message);
+          console.log('Code:', (error as JsonSchemaError).code);
+          console.log('Message:', (error as JsonSchemaError).message);
           console.log(
             'Details fieldName:',
-            (error as SchemaNodeError).details.fieldName,
+            (error as JsonSchemaError).details.fieldName,
           );
           console.log(
             'Details watch:',
-            (error as SchemaNodeError).details.watch,
+            (error as JsonSchemaError).details.watch,
           );
           console.log('===============================\n');
 
-          expect(error).toBeInstanceOf(SchemaNodeError);
+          expect(error).toBeInstanceOf(JsonSchemaError);
         }
       } finally {
         globalThis.Function = originalFunction;

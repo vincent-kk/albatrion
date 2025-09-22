@@ -1,7 +1,7 @@
 import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
 /**
- * Error class for schema node tree construction errors.
+ * Error class for json schema errors.
  *
  * Thrown during the process of building the schema node tree from JSON Schema definitions.
  * These errors indicate structural issues or invalid configurations in the schema.
@@ -21,18 +21,18 @@ import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
  * - nodeKey/nodeValue: Node information for virtual field errors
  * - notFoundFields: List of missing fields for virtual field validation
  */
-export class SchemaNodeError extends BaseError {
+export class JsonSchemaError extends BaseError {
   constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super('SCHEMA_NODE_ERROR', code, message, details);
-    this.name = 'SchemaNodeError';
+    super('JSON_SCHEMA_ERROR', code, message, details);
+    this.name = 'JsonSchemaError';
   }
 }
 
 /**
- * Type guard to check if an error is a SchemaNodeError instance.
+ * Type guard to check if an error is a JsonSchemaError instance.
  *
  * @param error - Error object to check
- * @returns Whether the error is a SchemaNodeError instance
+ * @returns Whether the error is a JsonSchemaError instance
  */
-export const isSchemaNodeError = (error: unknown): error is SchemaNodeError =>
-  error instanceof SchemaNodeError;
+export const isJsonSchemaError = (error: unknown): error is JsonSchemaError =>
+  error instanceof JsonSchemaError;

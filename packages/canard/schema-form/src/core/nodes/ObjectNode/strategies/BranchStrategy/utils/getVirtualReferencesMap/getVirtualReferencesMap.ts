@@ -2,7 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Dictionary } from '@aileron/declare';
 
-import { SchemaNodeError } from '@/schema-form/errors';
+import { JsonSchemaError } from '@/schema-form/errors';
 
 import type {
   VirtualReference,
@@ -35,7 +35,7 @@ export const getVirtualReferencesMap = (
 
   for (const [key, value] of Object.entries(virtualReferences)) {
     if (!isArray(value.fields))
-      throw new SchemaNodeError(
+      throw new JsonSchemaError(
         'VIRTUAL_FIELDS_NOT_VALID',
         `'virtual.fields' is must be an array.`,
         {
@@ -49,7 +49,7 @@ export const getVirtualReferencesMap = (
       (field) => !propertyKeys.includes(field),
     );
     if (notFoundFields.length)
-      throw new SchemaNodeError(
+      throw new JsonSchemaError(
         'VIRTUAL_FIELDS_NOT_IN_PROPERTIES',
         `virtual fields are not found on properties`,
         {
