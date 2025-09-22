@@ -1,5 +1,6 @@
-import type { ObjectSchema } from '@/schema-form/types';
+import type { ObjectSchema, StringSchema } from '@/schema-form/types';
 
+import { intersectStringSchema } from './intersectStringSchema';
 import { distributeSubSchema } from './utils/distributeSubSchema';
 import { intersectConst } from './utils/intersectConst';
 import { intersectEnum } from './utils/intersectEnum';
@@ -20,6 +21,13 @@ export const intersectObjectSchema = (
   const constResult = intersectConst(base.const, source.const);
   const requiredResult = unionRequired(base.required, source.required);
 
+  const propertyNames =
+    base.propertyNames && source.propertyNames
+      ? intersectStringSchema(
+          base.propertyNames as StringSchema,
+          source.propertyNames as StringSchema,
+        )
+      : base.propertyNames || source.propertyNames;
   const minProperties = intersectMinimum(
     base.minProperties,
     source.minProperties,
@@ -44,6 +52,7 @@ export const intersectObjectSchema = (
   if (enumResult !== undefined) base.enum = enumResult;
   if (constResult !== undefined) base.const = constResult;
   if (requiredResult !== undefined) base.required = requiredResult;
+  if (propertyNames !== undefined) base.propertyNames = propertyNames;
   if (minProperties !== undefined) base.minProperties = minProperties;
   if (maxProperties !== undefined) base.maxProperties = maxProperties;
 

@@ -77,6 +77,129 @@ describe('intersectObjectSchema', () => {
     });
   });
 
+  describe('PropertyNames 병합 (intersectStringSchema 사용)', () => {
+    test('base에만 propertyNames가 있는 경우', () => {
+      const base: ObjectSchema = {
+        type: 'object',
+        propertyNames: {
+          type: 'string',
+          pattern: '^[a-zA-Z_][a-zA-Z0-9_]*$',
+        },
+      };
+      const source: Partial<ObjectSchema> = {};
+
+      const result = intersectObjectSchema(base, source);
+
+      expect(result.propertyNames).toEqual({
+        type: 'string',
+        pattern: '^[a-zA-Z_][a-zA-Z0-9_]*$',
+      });
+    });
+
+    test('source에만 propertyNames가 있는 경우', () => {
+      const base: ObjectSchema = { type: 'object' };
+      const source: Partial<ObjectSchema> = {
+        propertyNames: {
+          type: 'string',
+          minLength: 1,
+          maxLength: 50,
+        },
+      };
+
+      const result = intersectObjectSchema(base, source);
+
+      expect(result.propertyNames).toEqual({
+        type: 'string',
+        minLength: 1,
+        maxLength: 50,
+      });
+    });
+
+    test('둘 다 propertyNames가 있는 경우 - intersectStringSchema로 병합', () => {
+      const base: ObjectSchema = {
+        type: 'object',
+        propertyNames: {
+          type: 'string',
+          minLength: 1,
+          pattern: '^[a-zA-Z]',
+        },
+      };
+      const source: Partial<ObjectSchema> = {
+        propertyNames: {
+          type: 'string',
+          maxLength: 20,
+          pattern: '[a-zA-Z0-9_]+$',
+        },
+      };
+
+      const result = intersectObjectSchema(base, source);
+
+      // intersectStringSchema의 결과: 패턴은 lookahead assertion으로 결합, 제약은 더 제한적인 값으로 병합
+      expect(result.propertyNames).toEqual({
+        type: 'string',
+        minLength: 1,
+        maxLength: 20,
+        pattern: '(?=^[a-zA-Z])(?=[a-zA-Z0-9_]+$)',
+      });
+    });
+
+    test('propertyNames 병합 시 문자열 제약 충돌', () => {
+      const base: ObjectSchema = {
+        type: 'object',
+        propertyNames: {
+          type: 'string',
+          minLength: 10,
+        },
+      };
+      const source: Partial<ObjectSchema> = {
+        propertyNames: {
+          type: 'string',
+          maxLength: 5,
+        },
+      };
+
+      expect(() => intersectObjectSchema(base, source)).toThrow(
+        'Invalid string constraints: minLength (10 > 5)',
+      );
+    });
+
+    test('propertyNames와 properties가 함께 있는 복합 시나리오', () => {
+      const base: ObjectSchema = {
+        type: 'object',
+        propertyNames: {
+          type: 'string',
+          pattern: '^[a-z]+$',
+        },
+        properties: {
+          name: { type: 'string' as const },
+        },
+      };
+      const source: Partial<ObjectSchema> = {
+        propertyNames: {
+          type: 'string',
+          minLength: 2,
+          maxLength: 10,
+        },
+        properties: {
+          age: { type: 'number' as const },
+        },
+      };
+
+      const result = intersectObjectSchema(base, source);
+
+      expect(result.propertyNames).toEqual({
+        type: 'string',
+        pattern: '^[a-z]+$',
+        minLength: 2,
+        maxLength: 10,
+      });
+      expect(result.properties).toEqual({
+        name: { type: 'string' },
+        age: { type: 'number' },
+      });
+    });
+  });
+
   describe('공통 필드 처리', () => {
     describe('First-Win 필드들', () => {
       const firstWinFields = [
@@ -327,8 +450,9 @@ describe('intersectObjectSchema', () => {
 
       const result = intersectObjectSchema(base, source);
 
-      expect(result.properties).toEqual({
-        field: { type: 'string' },
+      expect(result).toEqual({
+        type: 'object',
+        properties: { field: { type: 'string' as const } },
       });
     });
   });
