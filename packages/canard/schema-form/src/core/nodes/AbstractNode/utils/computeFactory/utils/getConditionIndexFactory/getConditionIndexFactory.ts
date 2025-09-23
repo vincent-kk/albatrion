@@ -1,4 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Fn } from '@aileron/declare';
 
@@ -104,7 +105,7 @@ export const getConditionIndexFactory =
         const depIndex = Number(matches[1]);
         const value = matches[3];
         if (!equalityMap[depIndex]) equalityMap[depIndex] = {};
-        if (!(value in equalityMap[depIndex]))
+        if (!hasOwnProperty(equalityMap[depIndex], value))
           equalityMap[depIndex][value] = schemaIndices[i];
       } else {
         // Exclude complex expressions from optimization
@@ -120,7 +121,7 @@ export const getConditionIndexFactory =
       const valueMap = equalityMap[dependencyIndex];
       return (dependencies: unknown[]) => {
         const value = dependencies[dependencyIndex];
-        return typeof value === 'string' && value in valueMap
+        return typeof value === 'string' && hasOwnProperty(valueMap, value)
           ? valueMap[value]
           : -1;
       };

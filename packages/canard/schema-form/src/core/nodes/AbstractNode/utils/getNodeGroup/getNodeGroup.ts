@@ -1,3 +1,4 @@
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { isReactComponent } from '@winglet/react-utils/filter';
 
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
@@ -22,4 +23,5 @@ export const getNodeGroup = (
 };
 
 const isTerminalFormTypeInput = (schema: JsonSchemaWithVirtual) =>
-  'FormTypeInput' in schema && isReactComponent(schema.FormTypeInput);
+  hasOwnProperty(schema, 'FormTypeInput') &&
+  isReactComponent(schema.FormTypeInput);

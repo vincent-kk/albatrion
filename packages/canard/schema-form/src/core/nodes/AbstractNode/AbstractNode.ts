@@ -1,4 +1,5 @@
 import { isEmptyObject, isObject } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { cloneLite, equals, merge } from '@winglet/common-utils/object';
 import { escapeSegment, setValue } from '@winglet/json/pointer';
 
@@ -620,7 +621,7 @@ export abstract class AbstractNode<
     } else if (isObject(inputState)) {
       for (const entry of Object.entries(inputState)) {
         if (entry[1] === undefined) {
-          if (entry[0] in state) {
+          if (hasOwnProperty(state, entry[0])) {
             delete state[entry[0]];
             changed = true;
           }

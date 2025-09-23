@@ -1,3 +1,4 @@
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
 import { setValue } from '@winglet/json/pointer';
 
@@ -13,7 +14,7 @@ export const getObjectDefaultValue = (
   new JsonSchemaScanner({
     visitor: {
       enter: ({ schema, dataPath }) => {
-        if ('default' in schema)
+        if (hasOwnProperty(schema, 'default'))
           setValue(defaultValue, dataPath, schema.default, false);
       },
     },

@@ -1,4 +1,5 @@
 import { isArray, isPlainObject } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Dictionary } from '@aileron/declare';
 
@@ -17,8 +18,8 @@ export const getExpressionFromSchema = (schema: PartialJsonSchema) => {
   for (const [key, subSchema] of Object.entries(properties)) {
     if (key === ENHANCED_KEY) continue;
     if (subSchema.type !== undefined || subSchema.$ref !== undefined) continue;
-    if ('const' in subSchema) condition[key] = subSchema.const;
-    else if ('enum' in subSchema && isArray(subSchema.enum)) {
+    if (hasOwnProperty(subSchema, 'const')) condition[key] = subSchema.const;
+    else if (hasOwnProperty(subSchema, 'enum') && isArray(subSchema.enum)) {
       if (subSchema.enum.length === 1) condition[key] = subSchema.enum[0];
       else if (subSchema.enum.length > 1) condition[key] = subSchema.enum;
     }
