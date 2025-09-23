@@ -18,7 +18,7 @@ export const intersectObjectSchema = (
   processFirstWinFields(base, source);
   processOverwriteFields(base, source);
 
-  const enumResult = intersectEnum(base.enum, source.enum);
+  const enumResult = intersectEnum(base.enum, source.enum, true);
   const constResult = intersectConst(base.const, source.const);
   const requiredResult = unionRequired(base.required, source.required);
   const propertyNames =
