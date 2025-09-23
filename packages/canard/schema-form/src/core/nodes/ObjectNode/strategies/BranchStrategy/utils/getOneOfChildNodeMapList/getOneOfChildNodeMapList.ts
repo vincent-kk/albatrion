@@ -8,7 +8,7 @@ import type {
   HandleChange,
   SchemaNodeFactory,
 } from '@/schema-form/core/nodes/type';
-import { SchemaNodeError } from '@/schema-form/errors';
+import { JsonSchemaError } from '@/schema-form/errors';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type {
   JsonSchema,
@@ -44,7 +44,7 @@ export const getOneOfChildNodeMapList = (
     const oneOfSchema = oneOfSchemas[oneOfIndex] as Partial<ObjectSchema>;
 
     if (oneOfSchema.type && jsonSchema.type !== oneOfSchema.type)
-      throw new SchemaNodeError(
+      throw new JsonSchemaError(
         'ONEOF_TYPE_REDEFINITION',
         `Type cannot be redefined in 'oneOf' schema. It must either be omitted or match the parent schema type.`,
         {
@@ -67,7 +67,7 @@ export const getOneOfChildNodeMapList = (
       if (oneOfKeySetList && !oneOfKeySetList[oneOfIndex].has(property))
         continue;
       if (childNodeMap.has(property))
-        throw new SchemaNodeError(
+        throw new JsonSchemaError(
           'ONEOF_PROPERTY_REDEFINITION',
           `Property '${property}' defined in 'oneOf' schema cannot redefine a property already defined in the current schema.`,
           {

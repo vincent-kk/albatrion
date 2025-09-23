@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { ENHANCED_KEY } from '@/schema-form/app/constants/internal';
 import type { JsonSchema } from '@/schema-form/types';
 
-import { preprocessSchema } from '../preprocessSchema/preprocessSchema';
+import { preprocessSchema } from '../preprocessSchema';
 
 describe('JsonSchemaScanner - OneOf Schema Test', () => {
   it('should handle oneOf schema', () => {
@@ -333,12 +333,14 @@ describe('JsonSchemaScanner - OneOf Schema Test', () => {
                   oneOf: [
                     {
                       properties: {
+                        [ENHANCED_KEY]: { const: 0 },
                         type: { const: 'credit' },
                         creditLimit: { type: 'number' },
                       },
                     },
                     {
                       properties: {
+                        [ENHANCED_KEY]: { const: 1 },
                         type: { const: 'debit' },
                         balance: { type: 'number' },
                       },

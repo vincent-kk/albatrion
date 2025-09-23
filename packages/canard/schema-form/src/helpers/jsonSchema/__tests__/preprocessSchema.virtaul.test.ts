@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { JsonSchema } from '@/schema-form/types';
 
-import { preprocessSchema } from '../preprocessSchema/preprocessSchema';
+import { preprocessSchema } from '../preprocessSchema';
 
 describe('JsonSchemaScanner - Virtual Schema Test', () => {
   it('should handle multiple mutations on same schema', () => {

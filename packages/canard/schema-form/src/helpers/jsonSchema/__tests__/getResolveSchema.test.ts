@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { JsonSchema, JsonSchemaWithRef } from '@/schema-form/types';
 
-import { getResolveSchema } from '../getResolveSchema/getResolveSchema';
+import { getResolveSchema } from '../getResolveSchema';
 
 describe('getResolveSchema', () => {
   describe('when schema has no references', () => {

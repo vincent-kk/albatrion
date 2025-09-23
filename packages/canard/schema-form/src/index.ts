@@ -15,7 +15,7 @@ export {
 
 export {
   isSchemaFormError,
-  isSchemaNodeError,
+  isJsonSchemaError,
   isUnhandledError,
   isValidationError,
 } from './errors';

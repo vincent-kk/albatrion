@@ -17,7 +17,7 @@ const scanner = new JsonSchemaScanner({
       if (schema.type === 'object') {
         const processed = processVirtualSchema(schema);
         schema = processed || schema;
-        idle = processed === null;
+        if (idle) idle = processed === null;
       }
       if (entry.keyword === 'oneOf') {
         schema = processOneOfSchema(schema, entry.variant);

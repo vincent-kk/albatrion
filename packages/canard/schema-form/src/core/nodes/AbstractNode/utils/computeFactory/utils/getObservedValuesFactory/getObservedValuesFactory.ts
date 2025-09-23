@@ -2,7 +2,7 @@ import { isArray, isString } from '@winglet/common-utils/filter';
 
 import type { Fn } from '@aileron/declare';
 
-import { SchemaNodeError } from '@/schema-form/errors';
+import { JsonSchemaError } from '@/schema-form/errors';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import type { PathManager } from '../getPathManager';
@@ -56,7 +56,7 @@ export const getObservedValuesFactory =
          return result;`,
       ) as GetObservedValues;
     } catch (error) {
-      throw new SchemaNodeError(
+      throw new JsonSchemaError(
         'OBSERVED_VALUES',
         `Failed to create dynamic function: ${fieldName} -> '${JSON.stringify(watch)}'`,
         { fieldName, watch, watchValueIndexes, error },
