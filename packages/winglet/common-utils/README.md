@@ -90,6 +90,7 @@ Based on the package.json exports configuration:
 - `@winglet/common-utils/convert` - Type conversion utilities (convertMsFromDuration)
 - `@winglet/common-utils/function` - Function utilities (debounce, throttle, getTrackableHandler)
 - `@winglet/common-utils/hash` - Hash algorithms (Murmur3)
+- `@winglet/common-utils/math` - Math utilities (gcd, lcm, abs, minLite, maxLite, clamp, etc.)
 - `@winglet/common-utils/object` - Object manipulation utilities (clone, cloneLite, merge, equals, etc.)
 - `@winglet/common-utils/promise` - Promise utilities (delay, timeout, withTimeout, etc.)
 - `@winglet/common-utils/scheduler` - Task scheduling utilities (scheduleMacrotask, scheduleMicrotask, etc.)
@@ -227,6 +228,33 @@ Use transpilers like Babel to convert the code to match your target environment.
 
 - **[`Murmur3`](./src/utils/hash/murmur3.ts)**: Class implementing the Murmur3 hash algorithm for generating hashes from strings or byte arrays
 - **[`polynomialHash`](./src/utils/hash/polynomialHash.ts)**: Function to convert a string to a base36 hash using a 31-based polynomial rolling hash algorithm
+
+#### Math
+
+- **[`abs`](./src/utils/math/abs.ts)**: Function to calculate the absolute value of a number with enhanced type safety
+- **[`clamp`](./src/utils/math/clamp.ts)**: Function to restrict a number to be within a specified range
+- **[`combination`](./src/utils/math/combination.ts)**: Function to calculate the number of combinations (n choose r) using efficient iterative method
+- **[`digitSum`](./src/utils/math/digitSum.ts)**: Function to calculate the sum of all digits in an integer
+- **[`factorial`](./src/utils/math/factorial.ts)**: Function to calculate the factorial of a non-negative integer with intelligent caching
+- **[`fibonacci`](./src/utils/math/fibonacci.ts)**: Function to calculate the nth Fibonacci number with optimized iterative algorithm and caching
+- **[`fromBase`](./src/utils/math/fromBase.ts)**: Function to convert a string representation of a number in any base (2-36) to decimal
+- **[`gcd`](./src/utils/math/gcd.ts)**: Function to calculate the greatest common divisor (GCD) of two numbers using Euclidean algorithm
+- **[`inRange`](./src/utils/math/inRange.ts)**: Function to check if a number falls within a specified range (inclusive)
+- **[`isEven`](./src/utils/math/isEven.ts)**: Function to determine if a number is even using modulo operation
+- **[`isOdd`](./src/utils/math/isOdd.ts)**: Function to determine if a number is odd with proper handling for negative numbers
+- **[`isPrime`](./src/utils/math/isPrime.ts)**: Function to determine if a number is prime using optimized trial division algorithm
+- **[`lcm`](./src/utils/math/lcm.ts)**: Function to calculate the least common multiple (LCM) of two numbers with precision handling
+- **[`max`](./src/utils/math/max.ts)**: Function to find the maximum value in an array of numbers using optimized iteration
+- **[`maxLite`](./src/utils/math/maxLite.ts)**: Function to return the larger of two numbers using simple comparison
+- **[`mean`](./src/utils/math/mean.ts)**: Function to calculate the arithmetic mean (average) of an array of numbers
+- **[`median`](./src/utils/math/median.ts)**: Function to calculate the median (middle value) of an array of numbers
+- **[`min`](./src/utils/math/min.ts)**: Function to find the minimum value in an array of numbers using optimized iteration
+- **[`minLite`](./src/utils/math/minLite.ts)**: Function to return the smaller of two numbers using simple comparison
+- **[`permutation`](./src/utils/math/permutation.ts)**: Function to calculate the number of permutations (n permute r) using iterative method
+- **[`range`](./src/utils/math/range.ts)**: Function to calculate the range (difference between maximum and minimum) of an array of numbers
+- **[`round`](./src/utils/math/round.ts)**: Function to round a number to a specified number of decimal places
+- **[`sum`](./src/utils/math/sum.ts)**: Function to calculate the sum of all numbers in an array using optimized iteration
+- **[`toBase`](./src/utils/math/toBase.ts)**: Function to convert a decimal integer to its string representation in any base (2-36)
 
 #### Object
 

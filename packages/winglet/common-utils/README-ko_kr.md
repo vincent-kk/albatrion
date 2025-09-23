@@ -83,6 +83,7 @@ package.json의 exports 설정을 기반으로 합니다:
 - `@winglet/common-utils/convert` - 타입 변환 유틸리티 (convertMsFromDuration)
 - `@winglet/common-utils/function` - 함수 유틸리티 (debounce, throttle, getTrackableHandler)
 - `@winglet/common-utils/hash` - 해시 알고리즘 (Murmur3)
+- `@winglet/common-utils/math` - 수학 유틸리티 (gcd, lcm, abs, minLite, maxLite, clamp 등)
 - `@winglet/common-utils/object` - 객체 조작 유틸리티 (clone, cloneLite, merge, equals 등)
 - `@winglet/common-utils/promise` - Promise 유틸리티 (delay, timeout, withTimeout 등)
 - `@winglet/common-utils/scheduler` - 작업 스케줄링 유틸리티 (scheduleMacrotask, scheduleMicrotask 등)
@@ -220,6 +221,33 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 - **[`Murmur3`](./src/utils/hash/murmur3.ts)**: Murmur3 해시 알고리즘을 구현한 클래스로, 문자열 또는 바이트 배열의 해시를 생성
 - **[`polynomialHash`](./src/utils/hash/polynomialHash.ts)**: 31-based polynomial rolling hash 알고리즘을 구현한 함수로, 문자열을 base36 해시로 변환하는 함수
+
+#### 수학 (Math)
+
+- **[`abs`](./src/utils/math/abs.ts)**: 향상된 타입 안전성을 제공하는 숫자의 절댓값을 계산하는 함수
+- **[`clamp`](./src/utils/math/clamp.ts)**: 숫자를 지정된 범위 내로 제한하는 함수
+- **[`combination`](./src/utils/math/combination.ts)**: 효율적인 반복 방법을 사용하여 조합의 수(n choose r)를 계산하는 함수
+- **[`digitSum`](./src/utils/math/digitSum.ts)**: 정수의 모든 자릿수의 합을 계산하는 함수
+- **[`factorial`](./src/utils/math/factorial.ts)**: 지능적인 캐싱을 통해 음이 아닌 정수의 팩토리얼을 계산하는 함수
+- **[`fibonacci`](./src/utils/math/fibonacci.ts)**: 최적화된 반복 알고리즘과 캐싱을 사용하여 n번째 피보나치 수를 계산하는 함수
+- **[`fromBase`](./src/utils/math/fromBase.ts)**: 임의의 진법(2-36)으로 표현된 숫자 문자열을 10진수로 변환하는 함수
+- **[`gcd`](./src/utils/math/gcd.ts)**: 유클리드 호제법을 사용하여 두 수의 최대공약수(GCD)를 계산하는 함수
+- **[`inRange`](./src/utils/math/inRange.ts)**: 숫자가 지정된 범위(포함) 내에 있는지 확인하는 함수
+- **[`isEven`](./src/utils/math/isEven.ts)**: 모듈로 연산을 사용하여 숫자가 짝수인지 판단하는 함수
+- **[`isOdd`](./src/utils/math/isOdd.ts)**: 음수에 대한 적절한 처리로 숫자가 홀수인지 판단하는 함수
+- **[`isPrime`](./src/utils/math/isPrime.ts)**: 최적화된 시행착오 나눗셈 알고리즘을 사용하여 숫자가 소수인지 판단하는 함수
+- **[`lcm`](./src/utils/math/lcm.ts)**: 정밀도 처리를 통해 두 수의 최소공배수(LCM)를 계산하는 함수
+- **[`max`](./src/utils/math/max.ts)**: 최적화된 반복을 사용하여 숫자 배열에서 최댓값을 찾는 함수
+- **[`maxLite`](./src/utils/math/maxLite.ts)**: 간단한 비교를 사용하여 두 숫자 중 더 큰 값을 반환하는 함수
+- **[`mean`](./src/utils/math/mean.ts)**: 숫자 배열의 산술 평균(평균값)을 계산하는 함수
+- **[`median`](./src/utils/math/median.ts)**: 숫자 배열의 중간값(중앙값)을 계산하는 함수
+- **[`min`](./src/utils/math/min.ts)**: 최적화된 반복을 사용하여 숫자 배열에서 최솟값을 찾는 함수
+- **[`minLite`](./src/utils/math/minLite.ts)**: 간단한 비교를 사용하여 두 숫자 중 더 작은 값을 반환하는 함수
+- **[`permutation`](./src/utils/math/permutation.ts)**: 반복 방법을 사용하여 순열의 수(n permute r)를 계산하는 함수
+- **[`range`](./src/utils/math/range.ts)**: 숫자 배열의 범위(최댓값과 최솟값의 차이)를 계산하는 함수
+- **[`round`](./src/utils/math/round.ts)**: 숫자를 지정된 소수점 자리수로 반올림하는 함수
+- **[`sum`](./src/utils/math/sum.ts)**: 최적화된 반복을 사용하여 배열의 모든 숫자의 합을 계산하는 함수
+- **[`toBase`](./src/utils/math/toBase.ts)**: 10진 정수를 임의의 진법(2-36)으로 표현된 문자열로 변환하는 함수
 
 #### 객체 (Object)
 
