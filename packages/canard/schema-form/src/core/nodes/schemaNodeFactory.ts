@@ -7,6 +7,7 @@ import type {
   ArraySchema,
   BooleanSchema,
   JsonSchema,
+  JsonSchemaWithRef,
   JsonSchemaWithVirtual,
   NullSchema,
   NumberSchema,
@@ -42,59 +43,66 @@ export const createSchemaNodeFactory =
     resolveSchema: ResolveSchema | null,
   ): SchemaNodeFactory<Schema> =>
   (props: NodeFactoryProps<Schema>) => {
-    const constructorProps = resolveReferences(props, resolveSchema);
-    switch (constructorProps.jsonSchema.type) {
+    const nodeProps = resolveReferences(props, resolveSchema);
+    switch (nodeProps.jsonSchema.type) {
       case 'boolean':
         return new BooleanNode(
-          constructorProps as SchemaNodeConstructorProps<BooleanSchema>,
+          nodeProps as SchemaNodeConstructorProps<BooleanSchema>,
         );
       case 'number':
       case 'integer':
         return new NumberNode(
-          constructorProps as SchemaNodeConstructorProps<NumberSchema>,
+          nodeProps as SchemaNodeConstructorProps<NumberSchema>,
         );
       case 'string':
         return new StringNode(
-          constructorProps as SchemaNodeConstructorProps<StringSchema>,
+          nodeProps as SchemaNodeConstructorProps<StringSchema>,
         );
       case 'array':
+        nodeProps.jsonSchema.items = processSchema(
+          nodeProps.jsonSchema.items,
+          resolveSchema,
+        );
         return new ArrayNode(
-          constructorProps as BranchNodeConstructorProps<ArraySchema>,
+          nodeProps as BranchNodeConstructorProps<ArraySchema>,
         );
       case 'object':
         return new ObjectNode(
-          constructorProps as BranchNodeConstructorProps<ObjectSchema>,
+          nodeProps as BranchNodeConstructorProps<ObjectSchema>,
         );
       case 'null':
         return new NullNode(
-          constructorProps as SchemaNodeConstructorProps<NullSchema>,
+          nodeProps as SchemaNodeConstructorProps<NullSchema>,
         );
       case 'virtual':
         return new VirtualNode(
-          constructorProps as VirtualNodeConstructorProps<VirtualSchema>,
+          nodeProps as VirtualNodeConstructorProps<VirtualSchema>,
         );
     }
     throw new JsonSchemaError(
       'UNKNOWN_JSON_SCHEMA',
       // @ts-expect-error: This line should be unreachable if all variants are handled.
-      `Unknown JsonSchema: ${constructorProps.jsonSchema.type}`,
+      `Unknown JsonSchema: ${nodeProps.jsonSchema.type}`,
       {
-        jsonSchema: constructorProps.jsonSchema,
+        jsonSchema: nodeProps.jsonSchema,
       },
     );
   };
 
-const resolveReferences = <Schema extends JsonSchemaWithVirtual>(
-  nodeFactoryProps: NodeFactoryProps<Schema>,
-  resolveSchema: ResolveSchema | null,
+const processSchema = (
+  schema: JsonSchemaWithRef,
+  resolve: ResolveSchema | null,
 ) => {
-  if (resolveSchema)
-    nodeFactoryProps.jsonSchema =
-      resolveSchema(nodeFactoryProps.jsonSchema) || nodeFactoryProps.jsonSchema;
-  nodeFactoryProps.jsonSchema = processAllOfSchema(
-    nodeFactoryProps.jsonSchema as JsonSchema,
-  );
-  return nodeFactoryProps as UnionSchemaNodeConstructorProps;
+  if (resolve) schema = resolve(schema) || schema;
+  return processAllOfSchema(schema as JsonSchema);
+};
+
+const resolveReferences = <Schema extends JsonSchemaWithVirtual>(
+  nodeProps: NodeFactoryProps<Schema>,
+  resolve: ResolveSchema | null,
+) => {
+  nodeProps.jsonSchema = processSchema(nodeProps.jsonSchema, resolve);
+  return nodeProps as UnionSchemaNodeConstructorProps;
 };
 
 type UnionSchemaNodeConstructorProps =
