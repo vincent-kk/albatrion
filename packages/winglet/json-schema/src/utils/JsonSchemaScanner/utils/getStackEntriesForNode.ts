@@ -1,5 +1,6 @@
 import { isArray, isObject } from '@winglet/common-utils/filter';
-import { JSONPointer, escapeSegment } from '@winglet/json/pointer';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+import { JSONPointer as $, escapeSegment } from '@winglet/json/pointer';
 
 import type { Dictionary } from '@aileron/declare';
 
@@ -8,12 +9,13 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 import type { DefinitionKeyword, SchemaEntry } from '../type';
 import {
   $DEFS,
+  ADDITIONAL_PROPERTIES,
   COMPOSITION_KEYWORDS,
   CONDITIONAL_KEYWORDS,
   DEFINITIONS,
+  ITEMS,
+  PROPERTIES,
 } from '../type';
-
-const $S = JSONPointer.Separator;
 
 /**
  * Returns the child nodes of a given node as an array of SchemaEntry.
@@ -25,23 +27,26 @@ export const getStackEntriesForNode = (entry: SchemaEntry): SchemaEntry[] => {
   const { schema, path, dataPath, depth } = entry;
   const entries: SchemaEntry[] = [];
 
-  if ($DEFS in schema)
+  if (hasOwnProperty(schema, $DEFS))
     handleDefinitionsNode(schema, entries, path, dataPath, depth, $DEFS);
 
-  if (DEFINITIONS in schema)
+  if (hasOwnProperty(schema, DEFINITIONS))
     handleDefinitionsNode(schema, entries, path, dataPath, depth, DEFINITIONS);
 
-  if ('additionalProperties' in schema && isObject(schema.additionalProperties))
+  if (
+    hasOwnProperty(schema, ADDITIONAL_PROPERTIES) &&
+    isObject(schema.additionalProperties)
+  )
     handleAdditionalProperties(schema, entries, path, dataPath, depth);
 
   handleConditionalNode(schema, entries, path, dataPath, depth);
 
   handleCompositionNode(schema, entries, path, dataPath, depth);
 
-  if ('items' in schema)
+  if (hasOwnProperty(schema, ITEMS))
     handleArrayItems(schema, entries, path, dataPath, depth);
 
-  if ('properties' in schema)
+  if (hasOwnProperty(schema, PROPERTIES))
     handleObjectProperties(schema, entries, path, dataPath, depth);
 
   return entries;
@@ -70,7 +75,7 @@ const handleDefinitionsNode = (
     const key = keys[i];
     entries.push({
       schema: definitions[key],
-      path: path + $S + fieldName + $S + key,
+      path: path + $.Separator + fieldName + $.Separator + key,
       keyword: fieldName,
       variant: key,
       dataPath,
@@ -100,7 +105,7 @@ const handleConditionalNode = (
     if (!conditionalNode || typeof conditionalNode !== 'object') continue;
     entries.push({
       schema: conditionalNode,
-      path: path + $S + keyword,
+      path: path + $.Separator + keyword,
       keyword,
       dataPath,
       depth: depth + 1,
@@ -130,7 +135,7 @@ const handleCompositionNode = (
     for (let j = 0, jl = compositionNode.length; j < jl; j++) {
       entries.push({
         schema: compositionNode[j],
-        path: path + $S + keyword + $S + j,
+        path: path + $.Separator + keyword + $.Separator + j,
         keyword,
         variant: j,
         dataPath,
@@ -157,8 +162,8 @@ const handleAdditionalProperties = (
 ) => {
   entries.push({
     schema: schema.additionalProperties,
-    path: path + $S + 'additionalProperties',
-    keyword: 'additionalProperties',
+    path: path + $.Separator + ADDITIONAL_PROPERTIES,
+    keyword: ADDITIONAL_PROPERTIES,
     dataPath,
     depth: depth + 1,
   });
@@ -184,18 +189,18 @@ const handleArrayItems = (
     for (let i = 0, l = items.length; i < l; i++) {
       entries.push({
         schema: items[i],
-        path: path + $S + 'items' + $S + i,
-        keyword: 'items',
+        path: path + $.Separator + ITEMS + $.Separator + i,
+        keyword: ITEMS,
         variant: i,
-        dataPath: dataPath + $S + i,
+        dataPath: dataPath + $.Separator + i,
         depth: depth + 1,
       });
     }
   } else {
     entries.push({
       schema: items,
-      path: path + $S + 'items',
-      keyword: 'items',
+      path: path + $.Separator + ITEMS,
+      keyword: ITEMS,
       dataPath,
       depth: depth + 1,
     });
@@ -224,10 +229,10 @@ const handleObjectProperties = (
     const escapedKey = escapeSegment(key);
     entries.push({
       schema: properties[key],
-      path: path + $S + 'properties' + $S + escapedKey,
-      keyword: 'properties',
+      path: path + $.Separator + PROPERTIES + $.Separator + escapedKey,
+      keyword: PROPERTIES,
       variant: key,
-      dataPath: dataPath + $S + escapedKey,
+      dataPath: dataPath + $.Separator + escapedKey,
       depth: depth + 1,
     });
   }
