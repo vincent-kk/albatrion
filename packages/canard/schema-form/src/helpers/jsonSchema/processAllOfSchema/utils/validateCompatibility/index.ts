@@ -1,0 +1,1 @@
+export { validateCompatibility } from './validateCompatibility';
