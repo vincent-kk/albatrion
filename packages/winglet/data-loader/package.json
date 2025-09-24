@@ -1,6 +1,6 @@
 {
   "name": "@winglet/data-loader",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Batching and caching utility for asynchronous data fetching inspired by GraphQL DataLoader, providing efficient request batching and built-in cache system with TypeScript support",
   "keywords": [
     "typescript",

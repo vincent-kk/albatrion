@@ -1,6 +1,6 @@
 {
   "name": "@canard/schema-form-antd-mobile-plugin",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "description": "Ant Design Mobile components plugin for @canard/schema-form providing mobile-optimized form inputs for React Native and mobile web",
   "keywords": [
     "react",
