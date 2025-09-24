@@ -1,3 +1,4 @@
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { equals } from '@winglet/common-utils/object';
 
 import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
@@ -36,7 +37,7 @@ export const handleObject = (
       object[key] = patch.value;
       return source;
     case Operation.REMOVE:
-      if (!(key in object)) {
+      if (!hasOwnProperty(object, key)) {
         throw new JsonPatchError(
           'PATCH_OBJECT_PROPERTY_NOT_FOUND',
           `Cannot remove property '${key}' - property does not exist on object`,
@@ -52,7 +53,7 @@ export const handleObject = (
       delete object[key];
       return source;
     case Operation.TEST:
-      if (!(key in object)) {
+      if (!hasOwnProperty(object, key)) {
         throw new JsonPatchError(
           'PATCH_OBJECT_PROPERTY_NOT_FOUND',
           `Cannot test property '${key}' - property does not exist on object`,

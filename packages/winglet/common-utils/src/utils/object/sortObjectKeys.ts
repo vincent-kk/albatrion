@@ -1,5 +1,7 @@
 import type { Dictionary, Nullish } from '@aileron/declare';
 
+import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
+
 /**
  * Reorders object properties according to a specified key sequence with optional filtering.
  *
@@ -242,14 +244,21 @@ export const sortObjectKeys = <Dict extends Dictionary>(
   const result: Dictionary = {};
   for (let i = 0, l = keys.length; i < l; i++) {
     const key = keys[i];
-    if (!(key in object) || (omitUndefined && object[key] === undefined))
+    if (
+      hasOwnProperty(object, key) === false ||
+      (omitUndefined && object[key] === undefined)
+    )
       continue;
     result[key] = object[key];
   }
   const objectKeys = Object.keys(object);
   for (let i = 0, l = objectKeys.length; i < l; i++) {
     const key = objectKeys[i];
-    if (key in result || (omitUndefined && object[key] === undefined)) continue;
+    if (
+      hasOwnProperty(result, key) ||
+      (omitUndefined && object[key] === undefined)
+    )
+      continue;
     result[key] = object[key];
   }
   return result as Dict;

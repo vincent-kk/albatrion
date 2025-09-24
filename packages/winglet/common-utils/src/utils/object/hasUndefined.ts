@@ -1,4 +1,4 @@
-import { getKeys } from '@/common-utils/libs';
+import { getKeys } from '@/common-utils/libs/getKeys';
 
 /**
  * Performs deep traversal to detect undefined values at any nesting level.

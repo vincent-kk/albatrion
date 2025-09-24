@@ -26,7 +26,11 @@ export const remainOnlyReactComponent = <
   dictionary: Input,
 ): Output => {
   const result: Dictionary<ComponentType> = {};
-  for (const [key, value] of Object.entries(dictionary))
-    if (isReactComponent(value)) result[key] = value;
+  const keys = Object.keys(dictionary);
+  for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
+    const value = dictionary[k];
+    if (isReactComponent(value)) result[k] = value;
+  }
+
   return result as Output;
 };

@@ -1,4 +1,5 @@
 import { isArray, isArrayIndex } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Dictionary } from '@aileron/declare';
 
@@ -35,7 +36,7 @@ export const setValueByPointer = <Input extends Dictionary | Array<any>>(
 
   if (value === undefined) delete cursor[segment];
   else {
-    if (segment in cursor) {
+    if (hasOwnProperty(cursor, segment)) {
       if (overwrite) cursor[segment] = value;
     } else cursor[segment] = value;
   }

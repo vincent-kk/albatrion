@@ -1,4 +1,5 @@
 import { isPlainObject } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { JsonObject } from '@/json/type';
 
@@ -25,6 +26,7 @@ export const mergePatchRecursive = (
   if (patch === undefined) return source;
   if (!isPlainObject(patch)) return patch;
   for (const key in patch) {
+    if (!hasOwnProperty(patch, key)) continue;
     const value = patch[key];
     if (value === null) delete source[key];
     else source[key] = mergePatchRecursive(source[key], value);

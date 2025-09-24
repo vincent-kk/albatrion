@@ -130,8 +130,8 @@ export const groupBy = <Type, Key extends PropertyKey>(
   for (let i = 0, l = array.length; i < l; i++) {
     const item = array[i];
     const key = getKey(item);
-    if (key in result) result[key].push(item);
-    else result[key] = [item];
+    if (result[key] === undefined) result[key] = [item];
+    else result[key].push(item);
   }
   return result;
 };
