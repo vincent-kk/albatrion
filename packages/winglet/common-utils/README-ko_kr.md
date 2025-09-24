@@ -253,12 +253,17 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 - **[`clone`](./src/utils/object/clone.ts)**: 객체의 깊은 복사본을 생성하는 함수
 - **[`cloneLite`](./src/utils/object/cloneLite.ts)**: 단순 데이터 구조(원시값, 일반 객체, 배열)의 고성능 깊은 복사를 생성하는 함수
+- **[`countKey`](./src/utils/object/countKey.ts)**: 상속된 속성을 포함한 모든 열거 가능한 속성을 세는 함수
+- **[`countObjectKey`](./src/utils/object/countObjectKey.ts)**: 객체의 자체 열거 가능한 속성만 세는 함수
 - **[`equals`](./src/utils/object/equals.ts)**: 두 객체의 동등성을 비교하는 함수
+- **[`getEmptyObject`](./src/utils/object/getEmptyObject.ts)**: 프로토타입 체인이 없는 진정한 빈 객체를 생성하는 함수
+- **[`getFirstKey`](./src/utils/object/getFirstKey.ts)**: 객체에서 첫 번째 열거 가능한 속성 키를 가져오는 함수
 - **[`getJSONPointer`](./src/utils/object/getJSONPointer.ts)**: 객체에서 JSON Pointer를 사용하여 값을 가져오는 함수
 - **[`getObjectKeys`](./src/utils/object/getObjectKeys.ts)**: 객체의 모든 키를 배열로 반환하는 함수
 - **[`getSymbols`](./src/utils/object/getSymbols.ts)**: 객체의 모든 심볼 속성을 배열로 반환하는 함수
 - **[`hasUndefined`](./src/utils/object/hasUndefined.ts)**: 객체에 undefined 값이 있는지 확인하는 함수
 - **[`merge`](./src/utils/object/merge.ts)**: 여러 객체를 병합하는 함수
+- **[`removePrototype`](./src/utils/object/removePrototype.ts)**: 기존 객체에서 프로토타입 체인을 제거하는 함수
 - **[`removeUndefined`](./src/utils/object/removeUndefined.ts)**: 객체에서 undefined 값을 가진 속성을 제거하는 함수
 - **[`serializeNative`](./src/utils/object/serializeNative.ts)**: 기본 JavaScript 객체를 JSON 문자열로 직렬화하는 함수
 - **[`serializeObject`](./src/utils/object/serializeObject.ts)**: 객체를 JSON 문자열로 직렬화하는 함수

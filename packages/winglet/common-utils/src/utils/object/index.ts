@@ -1,10 +1,15 @@
 export { clone } from './clone';
 export { cloneLite } from './cloneLite';
+export { countKey } from './countKey';
+export { countObjectKey } from './countObjectKey';
 export { equals } from './equals';
+export { getEmptyObject } from './getEmptyObject';
+export { getFirstKey } from './getFirstKey';
 export { getObjectKeys } from './getObjectKeys';
 export { getSymbols } from './getSymbols';
 export { hasUndefined } from './hasUndefined';
 export { merge } from './merge';
+export { removePrototype } from './removePrototype';
 export { removeUndefined } from './removeUndefined';
 export { serializeNative } from './serializeNative';
 export { serializeObject } from './serializeObject';
