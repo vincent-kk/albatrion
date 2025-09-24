@@ -14,12 +14,13 @@ export const processValueWithOneOfSchema = (
   allowedKeySet?: Set<string>,
 ): ObjectValue | undefined => {
   if (value == null || oneOfKeySet === undefined) return value;
-  const result: ObjectValue = {};
   const keys = Object.keys(value);
-  for (let i = 0, l = keys.length; i < l; i++) {
-    const key = keys[i];
-    if (oneOfKeySet.has(key) && !allowedKeySet?.has(key)) continue;
-    result[key] = value[key];
+  if (keys.length === 0) return value;
+
+  const result: ObjectValue = {};
+  for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
+    if (oneOfKeySet.has(k) && !allowedKeySet?.has(k)) continue;
+    result[k] = value[k];
   }
   return result;
 };

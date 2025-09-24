@@ -18,15 +18,14 @@ export const processValueWithCondition = (
 ): ObjectValue | undefined => {
   if (value == null || !fieldConditionMap) return value;
 
-  const inputKeys = Object.keys(value);
-  if (!inputKeys.length) return value;
+  const keys = Object.keys(value);
+  if (keys.length === 0) return value;
 
   const isRequired = requiredFactory(value, fieldConditionMap);
   const filteredValue: ObjectValue = {};
-  for (let i = 0, l = inputKeys.length; i < l; i++) {
-    const key = inputKeys[i];
-    if (!isRequired(key)) continue;
-    filteredValue[key] = value[key];
+  for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
+    if (!isRequired(k)) continue;
+    filteredValue[k] = value[k];
   }
   return filteredValue;
 };

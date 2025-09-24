@@ -1,7 +1,11 @@
 import { isArray } from '@winglet/common-utils/filter';
-import { hasOwnProperty } from '@winglet/common-utils/lib';
+import {
+  countKey,
+  getEmptyObject,
+  getFirstKey,
+} from '@winglet/common-utils/object';
 
-import type { Fn } from '@aileron/declare';
+import type { Dictionary, Fn } from '@aileron/declare';
 
 import { JsonSchemaError } from '@/schema-form/errors';
 import { combineConditions } from '@/schema-form/helpers/dynamicExpression';
@@ -90,7 +94,7 @@ export const getConditionIndexFactory =
     if (expressions.length === 0) return undefined;
 
     // Analysis for simple equality comparison optimization
-    const equalityMap: Record<number, Record<string, number>> = {};
+    const equalityDictionary: Dictionary<Dictionary<number>> = getEmptyObject();
     let isSimpleEquality = true;
 
     for (let i = 0, l = expressions.length; i < l; i++) {
@@ -102,11 +106,12 @@ export const getConditionIndexFactory =
       // Match simple equality pattern
       const matches = expressions[i].match(SIMPLE_EQUALITY_REGEX);
       if (matches) {
-        const depIndex = Number(matches[1]);
+        const depIndex = matches[1];
         const value = matches[3];
-        if (!equalityMap[depIndex]) equalityMap[depIndex] = {};
-        if (!hasOwnProperty(equalityMap[depIndex], value))
-          equalityMap[depIndex][value] = schemaIndices[i];
+        if (equalityDictionary[depIndex] === undefined)
+          equalityDictionary[depIndex] = getEmptyObject();
+        if (value in equalityDictionary[depIndex]) continue;
+        equalityDictionary[depIndex][value] = schemaIndices[i];
       } else {
         // Exclude complex expressions from optimization
         isSimpleEquality = false;
@@ -115,13 +120,12 @@ export const getConditionIndexFactory =
     }
 
     // Simple equality optimization: when all conditions are simple and use only one dependency
-    const keys = Object.keys(equalityMap);
-    if (isSimpleEquality && keys.length === 1) {
-      const dependencyIndex = Number(keys[0]);
-      const valueMap = equalityMap[dependencyIndex];
+    if (isSimpleEquality && countKey(equalityDictionary) === 1) {
+      const dependencyIndex = Number(getFirstKey(equalityDictionary));
+      const valueMap = equalityDictionary[dependencyIndex];
       return (dependencies: unknown[]) => {
         const value = dependencies[dependencyIndex];
-        return typeof value === 'string' && hasOwnProperty(valueMap, value)
+        return typeof value === 'string' && value in valueMap
           ? valueMap[value]
           : -1;
       };

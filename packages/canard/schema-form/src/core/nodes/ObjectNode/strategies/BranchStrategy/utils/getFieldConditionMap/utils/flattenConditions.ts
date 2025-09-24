@@ -66,7 +66,8 @@ const flattenConditionsInto = (
     else {
       const elseRequired = schema.else.required;
       if (elseRequired?.length) {
-        const inverseCondition: FlattenCondition['condition'] = {};
+        const inverseCondition: FlattenCondition['condition'] =
+          getEmptyObject();
         for (const key in accumulator) {
           const values = accumulator[key];
           if (values.length === 1) {

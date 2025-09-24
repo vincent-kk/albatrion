@@ -1,5 +1,3 @@
-import { hasOwnProperty } from '@winglet/common-utils/lib';
-
 import type { Dictionary } from '@aileron/declare';
 
 import type { BasicSchema } from '@/schema-form/types';
@@ -16,7 +14,7 @@ export const getErrorMessage = (
   if (
     errorMessage &&
     typeof errorMessage === 'object' &&
-    hasOwnProperty(context, 'locale')
+    context.locale !== undefined
   ) {
     const localeErrorMessage = errorMessage[context.locale];
     if (typeof localeErrorMessage === 'string') return localeErrorMessage;

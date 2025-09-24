@@ -1,6 +1,10 @@
 import { sortWithReference } from '@winglet/common-utils/array';
 import { isEmptyObject } from '@winglet/common-utils/filter';
-import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils/object';
+import {
+  getObjectKeys,
+  removePrototype,
+  sortObjectKeys,
+} from '@winglet/common-utils/object';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
@@ -354,8 +358,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
    */
   private __propagate__(replace: boolean, option: UnionSetValueOption) {
     this.__locked__ = true;
-    const target = this.__value__ || {};
-    const draft = this.__draft__ || {};
+    const target = removePrototype(this.__value__ || {});
+    const draft = removePrototype(this.__draft__ || {});
     const nullify = this.__draft__ === null;
     for (let i = 0, l = this.__children__.length; i < l; i++) {
       const node = this.__children__[i].node;

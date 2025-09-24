@@ -615,8 +615,9 @@ export abstract class AbstractNode<
     this: AbstractNode,
     input?: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags,
   ) {
-    const state: NodeStateFlags = Object.assign(getEmptyObject(), this.#state);
-    const inputState = typeof input === 'function' ? input(state) : input;
+    const state = this.#state;
+    const inputState =
+      typeof input === 'function' ? input({ ...state }) : input;
     let changed = false;
     if (inputState === undefined) {
       if (isEmptyObject(state)) return;
