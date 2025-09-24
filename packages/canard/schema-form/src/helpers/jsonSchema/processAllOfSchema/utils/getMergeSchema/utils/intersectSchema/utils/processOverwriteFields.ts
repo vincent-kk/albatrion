@@ -10,10 +10,10 @@ export function processOverwriteFields<T extends JsonSchema>(
   base: T,
   source: Partial<T>,
 ) {
-  const entries = Object.entries(source);
-  for (let i = 0, l = entries.length; i < l; i++) {
-    const [key, value] = entries[i];
-    if (EXCLUDE_FIELDS.has(key) || value === undefined) continue;
-    base[key as keyof T] = value;
+  const keys = Object.keys(source);
+  for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
+    const value = source[k];
+    if (EXCLUDE_FIELDS.has(k) || value === undefined) continue;
+    base[k as keyof T] = value;
   }
 }

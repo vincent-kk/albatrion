@@ -6,9 +6,11 @@ export const replacePattern = (
   value: any,
 ): string => {
   let message = errorMessage;
-  if (details && typeof details === 'object')
-    for (const [key, value] of Object.entries(details))
-      message = message.replace('{' + key + '}', '' + value);
+  if (details && typeof details === 'object') {
+    const keys = Object.keys(details);
+    for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i])
+      message = message.replace('{' + k + '}', '' + details[k]);
+  }
   message = message.replace('{value}', '' + value);
   return message;
 };

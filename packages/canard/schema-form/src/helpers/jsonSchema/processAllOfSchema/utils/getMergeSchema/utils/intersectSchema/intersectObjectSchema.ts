@@ -1,7 +1,7 @@
 import type { ObjectSchema, StringSchema } from '@/schema-form/types';
 
 import { intersectStringSchema } from './intersectStringSchema';
-import { distributeSubSchema } from './utils/distributeSubSchema';
+import { distributeAllOfProperties } from './utils/distributeSubSchema';
 import { intersectConst } from './utils/intersectConst';
 import { intersectEnum } from './utils/intersectEnum';
 import { intersectMaximum } from './utils/intersectMaximum';
@@ -17,6 +17,7 @@ export const intersectObjectSchema = (
 ): ObjectSchema => {
   processFirstWinFields(base, source);
   processOverwriteFields(base, source);
+  distributeAllOfProperties(base, source);
 
   const enumResult = intersectEnum(base.enum, source.enum, true);
   const constResult = intersectConst(base.const, source.const);
@@ -50,16 +51,5 @@ export const intersectObjectSchema = (
   if (minProperties !== undefined) base.minProperties = minProperties;
   if (maxProperties !== undefined) base.maxProperties = maxProperties;
 
-  if (source.properties !== undefined)
-    if (base.properties === undefined) base.properties = source.properties;
-    else {
-      const properties = base.properties;
-      const sourceProperties = Object.entries(source.properties);
-      for (let i = 0, l = sourceProperties.length; i < l; i++) {
-        const [key, value] = sourceProperties[i];
-        if (properties[key] === undefined) properties[key] = value;
-        else distributeSubSchema(properties[key], value);
-      }
-    }
   return base;
 };

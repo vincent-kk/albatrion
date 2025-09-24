@@ -14,7 +14,7 @@ export const getConditionsMap = (
 ): ConditionsMap | undefined => {
   if (!fieldConditionMap) return undefined;
   const oneOfConditionsMap: ConditionsMap = new Map();
-  for (const [field, conditions] of fieldConditionMap.entries()) {
+  for (const [field, conditions] of fieldConditionMap) {
     if (conditions === true) continue;
     const operations: string[] = [];
     for (let i = 0, l = conditions.length; i < l; i++) {

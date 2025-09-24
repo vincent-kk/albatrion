@@ -21,18 +21,19 @@ export const normalizeFormTypeInputMap = (
   formTypeInputMap?: FormTypeInputMap,
 ): NormalizedFormTypeInputDefinition[] => {
   if (!formTypeInputMap) return [];
-
   const result: NormalizedFormTypeInputDefinition[] = [];
-  for (const [path, Component] of Object.entries(formTypeInputMap)) {
+  const keys = Object.keys(formTypeInputMap);
+  for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
+    const Component = formTypeInputMap[k];
     if (!isReactComponent(Component)) continue;
-    if (INCLUDE_INDEX_REGEX.test(path))
+    if (INCLUDE_INDEX_REGEX.test(k))
       result.push({
-        test: formTypeTestFnFactory(path),
+        test: formTypeTestFnFactory(k),
         Component: withErrorBoundary(Component),
       });
     else
       result.push({
-        test: pathExactMatchFnFactory(path),
+        test: pathExactMatchFnFactory(k),
         Component: withErrorBoundary(Component),
       });
   }

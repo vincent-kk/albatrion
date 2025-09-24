@@ -18,25 +18,25 @@ export const requiredFactory = (
     const conditions = fieldConditionMap.get(key);
     if (conditions === undefined || conditions === true) return true;
     for (let i = 0, l = conditions.length; i < l; i++) {
-      const { condition, inverse } = conditions[i];
+      const condition = conditions[i].condition;
       let matches = true;
-      const condKeys = Object.keys(condition);
-      if (condKeys.length === 1) {
-        const condKey = condKeys[0];
-        const condValue = condition[condKey];
-        const currentValue = value[condKey];
+      const keys = Object.keys(condition);
+      if (keys.length === 1) {
+        const condValue = condition[keys[0]];
+        const currentValue = value[keys[0]];
         if (isArray(condValue)) matches = condValue.includes(currentValue);
         else matches = condValue === currentValue;
       } else {
         // Normal path for multiple conditions
-        for (const [condKey, condValue] of Object.entries(condition)) {
-          const currentValue = value[condKey];
+        for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
+          const condValue = condition[k];
+          const currentValue = value[k];
           if (isArray(condValue)) matches = condValue.includes(currentValue);
           else matches = condValue === currentValue;
           if (!matches) break;
         }
       }
-      if (inverse) matches = !matches;
+      if (conditions[i].inverse) matches = !matches;
       if (matches) return true;
     }
     return false;

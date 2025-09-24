@@ -1,6 +1,6 @@
 import type { ArraySchema } from '@/schema-form/types';
 
-import { distributeSubSchema } from './utils/distributeSubSchema';
+import { distributeAllOfItems } from './utils/distributeSubSchema';
 import { intersectBooleanOr } from './utils/intersectBooleanOr';
 import { intersectConst } from './utils/intersectConst';
 import { intersectEnum } from './utils/intersectEnum';
@@ -17,6 +17,7 @@ export const intersectArraySchema = (
 ): ArraySchema => {
   processFirstWinFields(base, source);
   processOverwriteFields(base, source);
+  distributeAllOfItems(base, source);
 
   const enumResult = intersectEnum(base.enum, source.enum, true);
   const constResult = intersectConst(base.const, source.const);
@@ -43,8 +44,5 @@ export const intersectArraySchema = (
   if (maxContains !== undefined) base.maxContains = maxContains;
   if (uniqueItems !== undefined) base.uniqueItems = uniqueItems;
 
-  if (source.items !== undefined)
-    if (base.items === undefined) base.items = source.items;
-    else distributeSubSchema(base.items, source.items);
   return base;
 };

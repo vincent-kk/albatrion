@@ -33,13 +33,15 @@ export const getVirtualReferencesMap = (
   >();
   const virtualReferencesMap = new Map<string, VirtualReference>();
 
-  for (const [key, value] of Object.entries(virtualReferences)) {
+  const keys = Object.keys(virtualReferences);
+  for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
+    const value = virtualReferences[k];
     if (!isArray(value.fields))
       throw new JsonSchemaError(
         'VIRTUAL_FIELDS_NOT_VALID',
         `'virtual.fields' is must be an array.`,
         {
-          nodeKey: key,
+          nodeKey: k,
           nodeValue: value,
           name: nodeName || 'root',
         },
@@ -53,17 +55,17 @@ export const getVirtualReferencesMap = (
         'VIRTUAL_FIELDS_NOT_IN_PROPERTIES',
         `virtual fields are not found on properties`,
         {
-          nodeKey: key,
+          nodeKey: k,
           nodeValue: value,
           notFoundFields,
         },
       );
     for (const field of value.fields) {
       const virtualReferenceFields = virtualReferenceFieldsMap.get(field) || [];
-      virtualReferenceFields.push(key);
+      virtualReferenceFields.push(k);
       virtualReferenceFieldsMap.set(field, virtualReferenceFields);
     }
-    virtualReferencesMap.set(key, value);
+    virtualReferencesMap.set(k, value);
   }
   return {
     virtualReferencesMap,

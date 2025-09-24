@@ -1,6 +1,10 @@
 import { isEmptyObject, isObject } from '@winglet/common-utils/filter';
-import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { cloneLite, equals, merge } from '@winglet/common-utils/object';
+import {
+  cloneLite,
+  equals,
+  getEmptyObject,
+  merge,
+} from '@winglet/common-utils/object';
 import { escapeSegment, setValue } from '@winglet/json/pointer';
 
 import type { Fn, Nullish } from '@aileron/declare';
@@ -593,7 +597,7 @@ export abstract class AbstractNode<
   }
 
   /** Node's state flags */
-  #state: NodeStateFlags = {};
+  #state: NodeStateFlags = getEmptyObject();
 
   /**
    * [readonly] Node's state flags
@@ -611,22 +615,24 @@ export abstract class AbstractNode<
     this: AbstractNode,
     input?: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags,
   ) {
-    const state: NodeStateFlags = { ...this.#state };
+    const state: NodeStateFlags = Object.assign(getEmptyObject(), this.#state);
     const inputState = typeof input === 'function' ? input(state) : input;
     let changed = false;
     if (inputState === undefined) {
       if (isEmptyObject(state)) return;
-      this.#state = {};
+      this.#state = getEmptyObject();
       changed = true;
     } else if (isObject(inputState)) {
-      for (const entry of Object.entries(inputState)) {
-        if (entry[1] === undefined) {
-          if (hasOwnProperty(state, entry[0])) {
-            delete state[entry[0]];
+      const keys = Object.keys(inputState);
+      for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
+        const value = inputState[k];
+        if (value === undefined) {
+          if (k in state) {
+            delete state[k];
             changed = true;
           }
-        } else if (state[entry[0]] !== entry[1]) {
-          state[entry[0]] = entry[1];
+        } else if (state[k] !== value) {
+          state[k] = value;
           changed = true;
         }
       }
@@ -823,7 +829,7 @@ export abstract class AbstractNode<
         this.find(dataPath)?.clearErrors();
       }
 
-    for (const [dataPath, errors] of errorsByDataPath.entries()) {
+    for (const [dataPath, errors] of errorsByDataPath) {
       const childNode = this.find(dataPath);
       if (childNode === null) continue;
       childNode.setErrors(

@@ -20,7 +20,8 @@ export const convertExpression = (
   source: string = $.Parent,
 ) => {
   const operations: string[] = [];
-  for (const [key, value] of Object.entries(condition)) {
+  for (const key in condition) {
+    const value = condition[key];
     if (isArray(value)) {
       operations.push(
         `${inverse ? '!' : ''}${serializeNative(value)}.includes((${source}${$.Separator}${key}))`,
