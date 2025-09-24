@@ -1,3 +1,5 @@
+import type { Dictionary } from '@aileron/declare';
+
 import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
 
@@ -11,6 +13,7 @@ import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
  *
  * @template Type - Type of the value to clone
  * @param target - The value to create a lightweight clone of
+ * @param maxDepth - Optional maximum depth to clone (objects beyond this depth are returned as references)
  * @returns A new deep clone with identical structure and values
  *
  * @example
@@ -72,6 +75,36 @@ import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
  * const clonedData = cloneLite(data);
  * console.log(clonedData[2] !== data[2]); // true (different reference)
  * console.log(clonedData[4].nested !== data[4].nested); // true
+ * ```
+ *
+ * @example
+ * Using maxDepth to limit cloning depth for performance:
+ * ```typescript
+ * const deepStructure = {
+ *   config: {
+ *     database: {
+ *       connection: {
+ *         pool: {
+ *           settings: {
+ *             max: 100,
+ *             min: 10,
+ *             timeout: 30000
+ *           }
+ *         }
+ *       }
+ *     }
+ *   }
+ * };
+ *
+ * // Clone only first 3 levels for better performance
+ * const partialClone = cloneLite(deepStructure, 3);
+ * console.log(partialClone.config !== deepStructure.config); // true (cloned)
+ * console.log(partialClone.config.database !== deepStructure.config.database); // true (cloned)
+ * console.log(partialClone.config.database.connection !== deepStructure.config.database.connection); // true (cloned)
+ * console.log(partialClone.config.database.connection.pool === deepStructure.config.database.connection.pool); // true (reference)
+ *
+ * // Useful for creating shallow snapshots of deep structures
+ * const snapshot = cloneLite(complexState, 2); // Only clone top 2 levels
  * ```
  *
  * @example
@@ -164,7 +197,8 @@ import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
  *   : clone(data);      // Full support for complex data
  * ```
  */
-export const cloneLite = <Type>(target: Type): Type => replicate(target);
+export const cloneLite = <Type>(target: Type, maxDepth?: number): Type =>
+  replicate(target, maxDepth, 0);
 
 /**
  * Recursively clones a value using minimal type checking for maximum performance.
@@ -173,23 +207,31 @@ export const cloneLite = <Type>(target: Type): Type => replicate(target);
  * @param value - Value to clone
  * @returns Cloned value
  */
-const replicate = <Type>(value: Type): Type => {
+const replicate = <Type>(
+  value: Type,
+  limit: number | undefined,
+  depth: number,
+): Type => {
+  if (limit !== undefined && depth >= limit) return value as Type;
+  depth = depth + 1;
+
   if (isArray(value)) {
     const result = new Array(value.length);
     for (let i = 0, l = value.length; i < l; i++)
-      if (i in value) result[i] = replicate(value[i]);
+      if (i in value) result[i] = replicate(value[i], limit, depth);
     return result as Type;
   }
 
   if (isPlainObject(value)) {
-    const result = {} as Record<PropertyKey, any>;
+    const result: Dictionary = {};
     const keys = Object.keys(value);
     const length = keys.length;
-    if (length > 0)
+    if (length > 0) {
       for (let i = 0; i < length; i++) {
         const key = keys[i];
-        result[key] = replicate(value[key]);
+        result[key] = replicate(value[key], limit, depth);
       }
+    }
     return result as Type;
   }
 

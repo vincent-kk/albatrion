@@ -20,6 +20,7 @@ import { getSymbols } from './getSymbols';
  *
  * @template Type - Type of the value to clone
  * @param target - The value to create a deep clone of
+ * @param maxDepth - Optional maximum depth to clone (objects beyond this depth are returned as references)
  * @returns A new deep clone with identical structure and values
  *
  * @example
@@ -96,6 +97,33 @@ import { getSymbols } from './getSymbols';
  * const clonedBuffer = clone(buffer);
  * const clonedView = new DataView(clonedBuffer);
  * console.log(clonedView.getInt32(0)); // 42
+ * ```
+ *
+ * @example
+ * Using maxDepth to limit cloning depth:
+ * ```typescript
+ * const deep = {
+ *   level1: {
+ *     level2: {
+ *       level3: {
+ *         level4: {
+ *           data: 'very deep',
+ *           largeArray: new Array(10000).fill(0)
+ *         }
+ *       }
+ *     }
+ *   }
+ * };
+ *
+ * // Clone only 2 levels deep (improves performance for deep structures)
+ * const shallowClone = clone(deep, 2);
+ * console.log(shallowClone.level1 !== deep.level1); // true (cloned)
+ * console.log(shallowClone.level1.level2 !== deep.level1.level2); // true (cloned)
+ * console.log(shallowClone.level1.level2.level3 === deep.level1.level2.level3); // true (reference)
+ *
+ * // Changes to deep levels don't affect the original
+ * shallowClone.level1.level2.level3 = { modified: true };
+ * console.log(deep.level1.level2.level3.level4.data); // 'very deep' (unchanged)
  * ```
  *
  * @example
@@ -176,7 +204,8 @@ import { getSymbols } from './getSymbols';
  * - **Security**: Be cautious with user-provided objects (prototype pollution)
  * - **Testing**: Verify behavior with your specific object types
  */
-export const clone = <Type>(target: Type): Type => replicate(target);
+export const clone = <Type>(target: Type, maxDepth?: number): Type =>
+  replicate(target, maxDepth, 0, new Map<object, any>());
 
 /**
  * Recursively clones a value.
@@ -186,17 +215,26 @@ export const clone = <Type>(target: Type): Type => replicate(target);
  * @param cache - Map to track already cloned objects (for circular reference handling)
  * @returns Cloned value
  */
-const replicate = <Type>(value: Type, cache = new Map<object, any>()): Type => {
+const replicate = <Type>(
+  value: Type,
+  limit: number | undefined,
+  depth: number,
+  cache: Map<object, any>,
+): Type => {
+  if (limit !== undefined && depth >= limit) return value as Type;
+
   if (isPrimitiveType(value)) return value as Type;
 
   // @ts-expect-error: After passing `isPrimitiveType`, value must be an object.
   if (cache.has(value)) return cache.get(value) as Type;
 
+  depth = depth + 1;
+
   if (isArray(value)) {
     const result = new Array(value.length);
     cache.set(value, result);
     for (let i = 0, l = value.length; i < l; i++)
-      if (i in value) result[i] = replicate(value[i], cache);
+      if (i in value) result[i] = replicate(value[i], limit, depth, cache);
     // @ts-expect-error: The `index` property is only available in the result of a RegExp match.
     if ('index' in value) result.index = value.index;
     // @ts-expect-error: The `input` property is only available in the result of a RegExp match.
@@ -215,15 +253,18 @@ const replicate = <Type>(value: Type, cache = new Map<object, any>()): Type => {
   if (value instanceof Map) {
     const result = new Map();
     cache.set(value, result);
-    for (const [k, v] of value)
-      result.set(replicate(k, cache), replicate(v, cache));
+    for (const entry of value)
+      result.set(
+        replicate(entry[0], limit, depth, cache),
+        replicate(entry[1], limit, depth, cache),
+      );
     return result as Type;
   }
 
   if (value instanceof Set) {
     const result = new Set();
     cache.set(value, result);
-    for (const v of value) result.add(replicate(v, cache));
+    for (const key of value) result.add(replicate(key, limit, depth, cache));
     return result as Type;
   }
 
@@ -241,7 +282,7 @@ const replicate = <Type>(value: Type, cache = new Map<object, any>()): Type => {
       value.byteLength,
     );
     cache.set(value, result);
-    replicateProperties(result, value, cache);
+    replicateProperties(result, value, limit, depth, cache);
     return result as Type;
   }
 
@@ -251,14 +292,14 @@ const replicate = <Type>(value: Type, cache = new Map<object, any>()): Type => {
       lastModified: value.lastModified,
     });
     cache.set(value, result);
-    replicateProperties(result, value, cache);
+    replicateProperties(result, value, limit, depth, cache);
     return result as Type;
   }
 
   if (isBlob(value)) {
     const result = new Blob([value], { type: value.type });
     cache.set(value, result);
-    replicateProperties(result, value, cache);
+    replicateProperties(result, value, limit, depth, cache);
     return result as Type;
   }
 
@@ -268,17 +309,18 @@ const replicate = <Type>(value: Type, cache = new Map<object, any>()): Type => {
     cache.set(value, result);
     if (hasOwnProperty(value, 'name')) result.name = value.name;
     result.stack = value.stack;
-    // @ts-expect-error: The `cause` property is only available in ECMAScript 2022 (ES2022)
-    if ('cause' in value) result.cause = replicate(value.cause, cache);
-    replicateProperties(result, value, cache);
+    if ('cause' in value)
+      // @ts-expect-error: The `cause` property is only available in ECMAScript 2022 (ES2022)
+      result.cause = replicate(value.cause, limit, depth, cache);
+    replicateProperties(result, value, limit, depth, cache);
     return result as Type;
   }
 
   if (typeof value === 'object' && isCloneable(value)) {
-    const result = Object.create(Object.getPrototypeOf(value));
+    const result = Object.create(getPrototypeOf(value));
     // `isCloneable` will not allow a nullish object to be passed.
     cache.set(value!, result);
-    replicateProperties(result, value!, cache);
+    replicateProperties(result, value!, limit, depth, cache);
     return result as Type;
   }
 
@@ -295,22 +337,27 @@ const replicate = <Type>(value: Type, cache = new Map<object, any>()): Type => {
 const replicateProperties = (
   target: Record<PropertyKey, any>,
   source: Record<PropertyKey, any>,
-  cache?: Map<object, any>,
+  limit: number | undefined,
+  depth: number,
+  cache: Map<object, any>,
 ): void => {
   const keys = Object.keys(source);
   if (keys.length > 0)
     for (let i = 0, l = keys.length; i < l; i++) {
       const key = keys[i];
-      const descriptor = Object.getOwnPropertyDescriptor(target, key);
+      const descriptor = getOwnPropertyDescriptor(target, key);
       if (descriptor == null || descriptor.writable)
-        target[key] = replicate(source[key], cache);
+        target[key] = replicate(source[key], limit, depth, cache);
     }
   const symbols = getSymbols(source);
   if (symbols.length > 0)
     for (let i = 0, l = symbols.length; i < l; i++) {
       const key = symbols[i];
-      const descriptor = Object.getOwnPropertyDescriptor(target, key);
+      const descriptor = getOwnPropertyDescriptor(target, key);
       if (descriptor == null || descriptor.writable)
-        target[key] = replicate(source[key], cache);
+        target[key] = replicate(source[key], limit, depth, cache);
     }
 };
+
+const getPrototypeOf = Object.getPrototypeOf;
+const getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;

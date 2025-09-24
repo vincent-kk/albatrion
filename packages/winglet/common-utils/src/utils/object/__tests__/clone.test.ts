@@ -173,6 +173,168 @@ describe('clone', () => {
     });
   });
 
+  describe('maxDepth parameter', () => {
+    it('should limit cloning depth when maxDepth is specified', () => {
+      const original = {
+        level1: {
+          level2: {
+            level3: {
+              level4: {
+                level5: 'deep value',
+              },
+              array: [1, [2, [3, [4, [5]]]]],
+            },
+          },
+        },
+      };
+
+      // maxDepth = 0: returns reference
+      const depth0 = clone(original, 0);
+      expect(depth0).toBe(original);
+
+      // maxDepth = 1: clones only first level
+      const depth1 = clone(original, 1);
+      expect(depth1).not.toBe(original);
+      expect(depth1.level1).toBe(original.level1); // reference from depth 2
+
+      // maxDepth = 2: clones two levels
+      const depth2 = clone(original, 2);
+      expect(depth2).not.toBe(original);
+      expect(depth2.level1).not.toBe(original.level1);
+      expect(depth2.level1.level2).toBe(original.level1.level2); // reference from depth 3
+
+      // maxDepth = 3: clones three levels
+      const depth3 = clone(original, 3);
+      expect(depth3).not.toBe(original);
+      expect(depth3.level1).not.toBe(original.level1);
+      expect(depth3.level1.level2).not.toBe(original.level1.level2);
+      expect(depth3.level1.level2.level3).toBe(original.level1.level2.level3); // reference from depth 4
+    });
+
+    it('should apply maxDepth to arrays', () => {
+      const original = [1, [2, [3, [4, [5]]]]];
+
+      const depth1 = clone(original, 1);
+      expect(depth1).not.toBe(original);
+      expect(depth1[1]).toBe(original[1]); // reference from depth 2
+
+      const depth2 = clone(original, 2);
+      expect(depth2).not.toBe(original);
+      expect(depth2[1]).not.toBe(original[1]);
+      expect((depth2[1] as any[])[1]).toBe((original[1] as any[])[1]); // reference from depth 3
+    });
+
+    it('should apply maxDepth to Map and Set', () => {
+      const innerObj = { deep: { value: 42 } };
+      const originalMap = new Map([['key', innerObj]]);
+      const originalSet = new Set([innerObj]);
+
+      // Map with maxDepth = 2
+      const clonedMap = clone(originalMap, 2);
+      expect(clonedMap).not.toBe(originalMap);
+      const mapValue = clonedMap.get('key');
+      expect(mapValue).not.toBe(innerObj);
+      expect(mapValue?.deep).toStrictEqual(innerObj?.deep); // reference from depth 3
+
+      // Set with maxDepth = 2
+      const clonedSet = clone(originalSet, 2);
+      expect(clonedSet).not.toBe(originalSet);
+      const [setValue] = clonedSet;
+      expect(setValue).not.toBe(innerObj);
+      expect(setValue.deep).toBe(innerObj.deep); // reference from depth 3
+    });
+
+    it('should handle maxDepth with circular references', () => {
+      const original: any = {
+        level1: {
+          level2: {
+            level3: {},
+          },
+        },
+      };
+      original.level1.level2.level3.circular = original;
+
+      // With maxDepth = 3, the circular reference at depth 4 becomes a reference
+      const cloned = clone(original, 3);
+      expect(cloned).not.toBe(original);
+      expect(cloned.level1).not.toBe(original.level1);
+      expect(cloned.level1.level2).not.toBe(original.level1.level2);
+      expect(cloned.level1.level2.level3).toBe(original.level1.level2.level3); // reference from depth 4
+      expect(cloned.level1.level2.level3.circular).toBe(original); // reference preserved
+    });
+
+    it('should work without maxDepth parameter (backward compatibility)', () => {
+      const original = {
+        level1: {
+          level2: {
+            level3: {
+              level4: 'deep',
+            },
+          },
+        },
+      };
+
+      const cloned = clone(original);
+      expect(cloned).not.toBe(original);
+      expect(cloned.level1).not.toBe(original.level1);
+      expect(cloned.level1.level2).not.toBe(original.level1.level2);
+      expect(cloned.level1.level2.level3).not.toBe(
+        original.level1.level2.level3,
+      );
+      expect(cloned.level1.level2.level3.level4).toBe('deep');
+    });
+
+    it('should handle TypedArrays with maxDepth', () => {
+      const original = {
+        level1: {
+          data: new Int32Array([1, 2, 3]),
+        },
+      };
+
+      // maxDepth = 1: TypedArray becomes reference
+      const depth1 = clone(original, 1);
+      expect(depth1).not.toBe(original);
+      expect(depth1.level1).toBe(original.level1);
+
+      // maxDepth = 2: level1 is cloned, but data (at depth 2) becomes reference
+      const depth2 = clone(original, 2);
+      expect(depth2).not.toBe(original);
+      expect(depth2.level1).not.toBe(original.level1);
+      expect(depth2.level1.data).toBe(original.level1.data); // reference at depth 2
+
+      // maxDepth = 3: TypedArray is cloned
+      const depth3 = clone(original, 3);
+      expect(depth3).not.toBe(original);
+      expect(depth3.level1).not.toBe(original.level1);
+      expect(depth3.level1.data).not.toBe(original.level1.data);
+      expect(depth3.level1.data.buffer).not.toBe(original.level1.data.buffer);
+    });
+
+    it('should preserve reference equality when using maxDepth', () => {
+      const sharedObj = { shared: true };
+      const original = {
+        level1: {
+          ref1: sharedObj,
+          level2: {
+            ref2: sharedObj,
+          },
+        },
+      };
+
+      // With maxDepth = 2, ref1 at depth 2 becomes reference, level2 also becomes reference
+      const cloned = clone(original, 2);
+      expect(cloned.level1.ref1).toBe(sharedObj); // reference at depth 2
+      expect(cloned.level1.level2).toBe(original.level1.level2); // reference at depth 2
+      expect(cloned.level1.level2.ref2).toBe(sharedObj); // preserved as reference
+
+      // With maxDepth = 3, everything is cloned
+      const deepCloned = clone(original, 3);
+      expect(deepCloned.level1.ref1).not.toBe(sharedObj); // cloned at depth 2
+      expect(deepCloned.level1.level2).not.toBe(original.level1.level2); // cloned at depth 2
+      expect(deepCloned.level1.level2.ref2).toBe(sharedObj); // reference at depth 3
+    });
+  });
+
   describe('Function cloning', () => {
     it('should return the same function reference for standalone functions', () => {
       const originalFunc = function () {

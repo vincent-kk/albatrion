@@ -77,16 +77,20 @@ describe('cloneLite', () => {
           level2: {
             level3: {
               value: 'deep',
-              array: [1, 2, 3]
-            }
-          }
-        }
+              array: [1, 2, 3],
+            },
+          },
+        },
       };
       const cloned = cloneLite(original);
 
       expect(cloned).toEqual(original);
-      expect(cloned.level1.level2.level3).not.toBe(original.level1.level2.level3);
-      expect(cloned.level1.level2.level3.array).not.toBe(original.level1.level2.level3.array);
+      expect(cloned.level1.level2.level3).not.toBe(
+        original.level1.level2.level3,
+      );
+      expect(cloned.level1.level2.level3.array).not.toBe(
+        original.level1.level2.level3.array,
+      );
     });
   });
 
@@ -156,19 +160,24 @@ describe('cloneLite', () => {
           str: 'hello',
           bool: true,
           nil: null,
-          undef: undefined
+          undef: undefined,
         },
-        arrays: [[1, 2], [3, 4]],
+        arrays: [
+          [1, 2],
+          [3, 4],
+        ],
         objects: { nested: { value: 'deep' } },
         unsupported: {
           date,
           regex,
           fn,
-          map: new Map([['key', 'value']])
-        }
+          map: new Map([['key', 'value']]),
+        },
       };
 
       const cloned = cloneLite(original);
+
+      expect(cloned).toEqual(original);
 
       // Supported types should be cloned
       expect(cloned).not.toBe(original);
@@ -192,8 +201,8 @@ describe('cloneLite', () => {
           id: i,
           name: `user_${i}`,
           active: i % 2 === 0,
-          scores: [Math.random() * 100, Math.random() * 100]
-        }))
+          scores: [Math.random() * 100, Math.random() * 100],
+        })),
       };
 
       const start = performance.now();
@@ -208,12 +217,134 @@ describe('cloneLite', () => {
     });
   });
 
+  describe('maxDepth parameter', () => {
+    it('should limit cloning depth for arrays and objects', () => {
+      const original = {
+        level1: {
+          level2: {
+            level3: {
+              level4: 'deep value',
+            },
+            array: [1, [2, [3]]],
+          },
+        },
+      };
+
+      // maxDepth = 0: returns reference
+      const depth0 = cloneLite(original, 0);
+      expect(depth0).toBe(original);
+
+      // maxDepth = 1: clones only first level
+      const depth1 = cloneLite(original, 1);
+      expect(depth1).not.toBe(original);
+      expect(depth1.level1).toBe(original.level1);
+
+      // maxDepth = 2: clones two levels
+      const depth2 = cloneLite(original, 2);
+      expect(depth2).not.toBe(original);
+      expect(depth2.level1).not.toBe(original.level1);
+      expect(depth2.level1.level2).toBe(original.level1.level2);
+
+      // maxDepth = 3: clones three levels
+      const depth3 = cloneLite(original, 3);
+      expect(depth3).not.toBe(original);
+      expect(depth3.level1).not.toBe(original.level1);
+      expect(depth3.level1.level2).not.toBe(original.level1.level2);
+      expect(depth3.level1.level2.level3).toBe(original.level1.level2.level3);
+    });
+
+    it('should handle nested arrays with maxDepth', () => {
+      const original = [1, [2, [3, [4]]]];
+
+      const depth1 = cloneLite(original, 1);
+      expect(depth1).not.toBe(original);
+      expect(depth1[1]).toBe(original[1]);
+
+      const depth2 = cloneLite(original, 2);
+      expect(depth2).not.toBe(original);
+      expect(depth2[1]).not.toBe(original[1]);
+      expect((depth2[1] as any[])[1]).toBe((original[1] as any[])[1]);
+    });
+
+    it('should return unsupported types as-is regardless of maxDepth', () => {
+      const date = new Date();
+      const map = new Map();
+      const original = {
+        level1: {
+          date,
+          map,
+          level2: {
+            regex: /test/,
+          },
+        },
+      };
+
+      const cloned = cloneLite(original, 2);
+      expect(cloned).not.toBe(original);
+      expect(cloned.level1).not.toBe(original.level1);
+      expect(cloned.level1.level2).toBe(original.level1.level2); // stopped at depth 2
+      // Unsupported types are always returned as-is
+      expect(cloned.level1.date).toBe(date);
+      expect(cloned.level1.map).toBe(map);
+    });
+
+    it('should work without maxDepth parameter (backward compatibility)', () => {
+      const original = {
+        level1: {
+          level2: {
+            level3: {
+              value: 'deep',
+            },
+          },
+        },
+      };
+
+      const cloned = cloneLite(original);
+      expect(cloned).not.toBe(original);
+      expect(cloned.level1).not.toBe(original.level1);
+      expect(cloned.level1.level2).not.toBe(original.level1.level2);
+      expect(cloned.level1.level2.level3).not.toBe(
+        original.level1.level2.level3,
+      );
+      expect(cloned.level1.level2.level3.value).toBe('deep');
+    });
+
+    it('should efficiently handle large structures with limited depth', () => {
+      const createDeepStructure = (depth: number): any => {
+        if (depth === 0) return { value: 'leaf' };
+        return {
+          left: createDeepStructure(depth - 1),
+          right: createDeepStructure(depth - 1),
+          data: Array(10)
+            .fill(0)
+            .map((_, i) => i),
+        };
+      };
+
+      const original = createDeepStructure(10); // Very deep structure
+
+      // Clone only top 3 levels
+      const start = performance.now();
+      const cloned = cloneLite(original, 3);
+      const end = performance.now();
+
+      // Should be very fast since we limit depth
+      expect(end - start).toBeLessThan(5);
+
+      // Verify structure
+      expect(cloned).not.toBe(original);
+      expect(cloned.left).not.toBe(original.left);
+      expect(cloned.left.left).not.toBe(original.left.left);
+      expect(cloned.left.left.left).toBe(original.left.left.left); // reference from depth 4
+    });
+  });
+
   describe('Edge cases', () => {
     it('should not copy symbol properties', () => {
       const sym = Symbol('test');
       const original = {
         regular: 'value',
-        [sym]: 'symbol value'
+        [sym]: 'symbol value',
       };
 
       const cloned = cloneLite(original);
