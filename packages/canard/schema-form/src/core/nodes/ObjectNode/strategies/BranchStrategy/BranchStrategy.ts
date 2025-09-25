@@ -61,6 +61,15 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /** Array of child node arrays for each oneOf branch */
   private readonly __oneOfChildNodeMapList__?: Map<string, ChildNode>[];
 
+  /** Set of all anyOf schema keys, undefined if no anyOf schema exists */
+  private readonly __anyOfKeySet__?: Set<string>;
+
+  /** Array of key sets for each anyOf branch, undefined if no anyOf schema exists */
+  private readonly __anyOfKeySetList__?: Set<string>[];
+
+  /** Array of child node arrays for each anyOf branch */
+  private readonly __anyOfChildNodeMapList__?: Map<string, ChildNode>[];
+
   /** Array of child nodes for regular properties (non-oneOf) */
   private readonly __propertyChildren__: ChildNode[];
 
@@ -176,8 +185,21 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (oneOfKeyInfo) {
       this.__oneOfKeySet__ = oneOfKeyInfo.unionKeySet;
       this.__oneOfKeySetList__ = oneOfKeyInfo.schemaKeySets;
+    }
+
+    const anyOfKeyInfo = getCompositionKeyInfo('anyOf', jsonSchema);
+    if (anyOfKeyInfo) {
+      this.__anyOfKeySet__ = anyOfKeyInfo.unionKeySet;
+      this.__anyOfKeySetList__ = anyOfKeyInfo.schemaKeySets;
+    }
+
+    if (this.__oneOfKeySet__ || this.__anyOfKeySet__) {
       this.__schemaKeys__ = sortWithReference(
-        [...propertyKeys, ...Array.from(this.__oneOfKeySet__)],
+        [
+          ...propertyKeys,
+          ...(this.__oneOfKeySet__ ? Array.from(this.__oneOfKeySet__) : []),
+          ...(this.__anyOfKeySet__ ? Array.from(this.__anyOfKeySet__) : []),
+        ],
         jsonSchema.propertyKeys,
       );
     } else this.__schemaKeys__ = propertyKeys;
@@ -239,14 +261,27 @@ export class BranchStrategy implements ObjectNodeStrategy {
       nodeFactory,
     );
 
+    this.__anyOfChildNodeMapList__ = getCompositionNodeMapList(
+      host,
+      'anyOf',
+      jsonSchema,
+      host.defaultValue,
+      this.__childNodeMap__,
+      this.__anyOfKeySetList__,
+      handelChangeFactory,
+      nodeFactory,
+    );
+
     this.__children__ = this.__propertyChildren__;
 
-    if (this.__oneOfChildNodeMapList__) {
-      const subnodes = [...this.__propertyChildren__];
+    const subnodes = [...this.__propertyChildren__];
+    if (this.__oneOfChildNodeMapList__)
       for (const childNodeMap of this.__oneOfChildNodeMapList__)
         for (const child of childNodeMap.values()) subnodes.push(child);
-      this.__subnodes__ = subnodes;
-    } else this.__subnodes__ = this.__propertyChildren__;
+    if (this.__anyOfChildNodeMapList__)
+      for (const childNodeMap of this.__anyOfChildNodeMapList__)
+        for (const child of childNodeMap.values()) subnodes.push(child);
+    this.__subnodes__ = subnodes;
 
     this.__locked__ = false;
 
@@ -254,7 +289,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     handleSetDefaultValue(this.__value__);
     this.__publishChildrenChange__();
 
-    this.__prepareOneOfChildren__();
+    this.__prepareCompositionChildren__();
   }
 
   /**
@@ -379,7 +414,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * Updates child nodes when oneOf index changes, if oneOf schema exists.
    * @private
    */
-  private __prepareOneOfChildren__() {
+  private __prepareCompositionChildren__() {
     if (!this.__oneOfChildNodeMapList__) return;
     this.__host__.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateComputedProperties) {
