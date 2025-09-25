@@ -1,4 +1,7 @@
-import { sortWithReference } from '@winglet/common-utils/array';
+import {
+  primitiveArrayEqual,
+  sortWithReference,
+} from '@winglet/common-utils/array';
 import { isEmptyObject } from '@winglet/common-utils/filter';
 import {
   getObjectKeys,
@@ -411,7 +414,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   private __oneOfIndex__: number = -1;
 
   /** Previously active anyOf index for tracking anyOf branch changes */
-  private __anyOfIndices__: number[] | null = null;
+  private __anyOfIndices__: number[] = [];
 
   /**
    * Updates child nodes when oneOf index changes, if oneOf schema exists.
@@ -422,12 +425,14 @@ export class BranchStrategy implements ObjectNodeStrategy {
       return;
     this.__host__.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateComputedProperties) {
-        const oneOfChildNodeMap = this.__processOneOfChildren__();
+        const isolation = this.__isolated__;
+        const oneOfChildNodeMap = this.__processOneOfChildren__(isolation);
+        const anyOfChildNodeMaps = this.__processAnyOfChildren__(isolation);
 
-        if (oneOfChildNodeMap === null) return;
+        if (oneOfChildNodeMap === null && anyOfChildNodeMaps === null) return;
+        if (isolation) this.__isolated__ = false;
 
-        this.__processChildren__(oneOfChildNodeMap);
-
+        this.__processChildren__(oneOfChildNodeMap, anyOfChildNodeMaps);
         this.__processCompositionValue__();
       }
     });
@@ -437,16 +442,14 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * Updates child nodes when oneOf index changes, if oneOf schema exists.
    * @private
    */
-  private __processOneOfChildren__() {
+  private __processOneOfChildren__(isolation: boolean) {
     if (!this.__oneOfChildNodeMapList__) return null;
     const host = this.__host__;
     const current = host.oneOfIndex;
     const previous = this.__oneOfIndex__;
 
-    const isolation = this.__isolated__;
-
     if (!isolation && current === previous) return null;
-    if (isolation) this.__isolated__ = false;
+
     this.__oneOfIndex__ = current;
 
     this.__locked__ = true;
@@ -468,11 +471,45 @@ export class BranchStrategy implements ObjectNodeStrategy {
     return oneOfChildNodeMap;
   }
 
-  private __processAnyOfChildren__() {}
+  private __processAnyOfChildren__(isolation: boolean) {
+    if (!this.__anyOfChildNodeMapList__) return null;
+    const host = this.__host__;
+    const current = host.anyOfIndices;
+    const previous = this.__anyOfIndices__;
+
+    if (!isolation && primitiveArrayEqual(current, previous)) return null;
+
+    this.__anyOfIndices__ = current;
+
+    this.__locked__ = true;
+    if (previous.length > 0) {
+      for (let i = 0, l = previous.length; i < l; i++) {
+        const anyOfChildNodeMap = this.__anyOfChildNodeMapList__[previous[i]];
+        for (const child of anyOfChildNodeMap.values())
+          child.node.resetNode(false);
+      }
+    }
+    if (current.length === 0) {
+      this.__locked__ = false;
+      return undefined;
+    }
+    const anyOfChildNodeMaps = new Array(current.length);
+    for (let i = 0, l = current.length; i < l; i++) {
+      const anyOfChildNodeMap = this.__anyOfChildNodeMapList__[current[i]];
+      for (const child of anyOfChildNodeMap.values()) {
+        const node = child.node;
+        node.resetNode(isolation, this.__value__?.[node.name]);
+      }
+      anyOfChildNodeMaps[i] = anyOfChildNodeMap;
+    }
+    this.__locked__ = false;
+
+    return anyOfChildNodeMaps;
+  }
 
   private __processChildren__(
-    oneOfChildNodeMap?: Map<string, ChildNode>,
-    anyOfChildNodeMaps?: Map<string, ChildNode>[],
+    oneOfChildNodeMap: Map<string, ChildNode> | Nullish,
+    anyOfChildNodeMaps: Map<string, ChildNode>[] | Nullish,
   ) {
     if (!oneOfChildNodeMap && !anyOfChildNodeMaps)
       this.__children__ = this.__propertyChildren__;
