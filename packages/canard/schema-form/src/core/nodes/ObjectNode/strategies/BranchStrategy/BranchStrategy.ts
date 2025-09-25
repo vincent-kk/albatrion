@@ -27,10 +27,10 @@ import {
   type FieldConditionMap,
   getChildNodeMap,
   getChildren,
+  getCompositionKeyInfo,
   getConditionsMap,
   getFieldConditionMap,
   getOneOfChildNodeMapList,
-  getOneOfKeyInfo,
   getVirtualReferencesMap,
   processValueWithCondition,
   processValueWithOneOfSchema,
@@ -172,10 +172,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
       jsonSchema.propertyKeys,
     );
 
-    const oneOfKeyInfo = getOneOfKeyInfo(jsonSchema);
+    const oneOfKeyInfo = getCompositionKeyInfo(jsonSchema, 'oneOf');
     if (oneOfKeyInfo) {
-      this.__oneOfKeySet__ = oneOfKeyInfo.oneOfKeySet;
-      this.__oneOfKeySetList__ = oneOfKeyInfo.oneOfKeySetList;
+      this.__oneOfKeySet__ = oneOfKeyInfo.unionKeySet;
+      this.__oneOfKeySetList__ = oneOfKeyInfo.schemaKeySets;
       this.__schemaKeys__ = sortWithReference(
         [...propertyKeys, ...Array.from(this.__oneOfKeySet__)],
         jsonSchema.propertyKeys,
