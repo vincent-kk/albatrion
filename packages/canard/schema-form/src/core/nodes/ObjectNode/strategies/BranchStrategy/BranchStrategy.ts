@@ -28,9 +28,9 @@ import {
   getChildNodeMap,
   getChildren,
   getCompositionKeyInfo,
+  getCompositionNodeMapList,
   getConditionsMap,
   getFieldConditionMap,
-  getOneOfChildNodeMapList,
   getVirtualReferencesMap,
   processValueWithCondition,
   processValueWithOneOfSchema,
@@ -172,7 +172,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       jsonSchema.propertyKeys,
     );
 
-    const oneOfKeyInfo = getCompositionKeyInfo(jsonSchema, 'oneOf');
+    const oneOfKeyInfo = getCompositionKeyInfo('oneOf', jsonSchema);
     if (oneOfKeyInfo) {
       this.__oneOfKeySet__ = oneOfKeyInfo.unionKeySet;
       this.__oneOfKeySetList__ = oneOfKeyInfo.schemaKeySets;
@@ -228,8 +228,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
       nodeFactory,
     );
 
-    this.__oneOfChildNodeMapList__ = getOneOfChildNodeMapList(
+    this.__oneOfChildNodeMapList__ = getCompositionNodeMapList(
       host,
+      'oneOf',
       jsonSchema,
       host.defaultValue,
       this.__childNodeMap__,
