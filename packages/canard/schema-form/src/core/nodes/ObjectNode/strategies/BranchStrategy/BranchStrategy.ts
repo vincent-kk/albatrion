@@ -213,7 +213,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
         if (!this.__draft__) this.__draft__ = {};
         if (input !== undefined && this.__draft__[property] === input) return;
         this.__draft__[property] = input;
-        if (this.__isolated__ && !this.__oneOfChildNodeMapList__)
+        if (this.__isolated__ && !this.__isPristine__)
           this.__isolated__ = false;
         this.__emitChange__(SetValueOption.Default, batched);
       };
@@ -418,13 +418,19 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /** Previously active anyOf index for tracking anyOf branch changes */
   private __anyOfIndices__: number[] = [];
 
+  private get __isPristine__() {
+    return (
+      this.__oneOfChildNodeMapList__ === undefined ||
+      this.__anyOfChildNodeMapList__ === undefined
+    );
+  }
+
   /**
    * Updates child nodes when oneOf index changes, if oneOf schema exists.
    * @private
    */
   private __prepareCompositionChildren__() {
-    if (!this.__oneOfChildNodeMapList__ && !this.__anyOfChildNodeMapList__)
-      return;
+    if (!this.__isPristine__) return;
     this.__host__.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateComputedProperties) {
         const isolation = this.__isolated__;
@@ -445,7 +451,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @private
    */
   private __processOneOfChildren__(isolation: boolean) {
-    if (!this.__oneOfChildNodeMapList__) return null;
+    if (this.__oneOfChildNodeMapList__ === undefined) return null;
     const host = this.__host__;
     const current = host.oneOfIndex;
     const previous = this.__oneOfIndex__;
@@ -474,7 +480,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   }
 
   private __processAnyOfChildren__(isolation: boolean) {
-    if (!this.__anyOfChildNodeMapList__) return null;
+    if (this.__anyOfChildNodeMapList__ === undefined) return null;
     const host = this.__host__;
     const current = host.anyOfIndices;
     const previous = this.__anyOfIndices__;
@@ -513,7 +519,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     oneOfChildNodeMap: Map<string, ChildNode> | Nullish,
     anyOfChildNodeMaps: Map<string, ChildNode>[] | Nullish,
   ) {
-    if (!oneOfChildNodeMap && !anyOfChildNodeMaps)
+    if (oneOfChildNodeMap == null && anyOfChildNodeMaps == null)
       this.__children__ = this.__propertyChildren__;
     else {
       const children: ChildNode[] = [];
@@ -559,11 +565,12 @@ export class BranchStrategy implements ObjectNodeStrategy {
       this.__anyOfKeySet__?.has(key) &&
       this.__anyOfKeySetList__ !== undefined
     )
-      if (this.__anyOfIndices__ !== null)
-        return this.__anyOfIndices__.some((index) =>
-          this.__anyOfKeySetList__?.[index].has(key),
-        );
-      else return false;
+      if (this.__anyOfIndices__.length > 0) {
+        for (let i = 0, l = this.__anyOfIndices__.length; i < l; i++)
+          if (this.__anyOfKeySetList__[this.__anyOfIndices__[i]].has(key))
+            return true;
+        return false;
+      } else return false;
     return true;
   }
 
