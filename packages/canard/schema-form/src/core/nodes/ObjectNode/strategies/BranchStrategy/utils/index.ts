@@ -1,6 +1,7 @@
 export * from './getChildNodeMap';
 export * from './getChildren';
 export * from './getCompositionKeyInfo';
+export * from './getCompositionNodeMapList';
 export * from './getConditionsMap';
 export * from './getOneOfChildNodeMapList';
 export * from './getFieldConditionMap';
