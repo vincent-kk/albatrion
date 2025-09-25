@@ -1357,3 +1357,198 @@ export const ErrorCase2 = () => {
     </StoryLayout>
   );
 };
+
+export const ComplexNestedOneOf = () => {
+  const schema = {
+    type: 'object',
+    properties: {
+      productType: {
+        type: 'string',
+        enum: ['physical', 'digital', 'service'],
+        default: 'physical',
+      },
+      product: {
+        type: 'object',
+        oneOf: [
+          {
+            computed: {
+              if: "../productType === 'physical'",
+            },
+            properties: {
+              name: { type: 'string' },
+              weight: { type: 'number', minimum: 0 },
+              dimensions: {
+                type: 'object',
+                properties: {
+                  length: { type: 'number', minimum: 0 },
+                  width: { type: 'number', minimum: 0 },
+                  height: { type: 'number', minimum: 0 },
+                },
+              },
+              shipping: {
+                type: 'object',
+                properties: {
+                  method: {
+                    type: 'string',
+                    enum: ['standard', 'express'],
+                    default: 'standard',
+                  },
+                },
+                oneOf: [
+                  {
+                    computed: {
+                      if: "./method === 'standard'",
+                    },
+                    properties: {
+                      cost: { type: 'number', minimum: 0 },
+                      days: { type: 'number', minimum: 1, maximum: 30 },
+                    },
+                  },
+                  {
+                    computed: {
+                      if: "./method === 'express'",
+                    },
+                    properties: {
+                      cost: { type: 'number', minimum: 10 },
+                      hours: { type: 'number', minimum: 1, maximum: 72 },
+                    },
+                  },
+                ],
+              },
+            },
+            required: ['name', 'weight'],
+          },
+          {
+            computed: {
+              if: "../productType === 'digital'",
+            },
+            properties: {
+              name: { type: 'string' },
+              fileSize: { type: 'number', minimum: 0 },
+              format: { type: 'string' },
+              downloadLink: { type: 'string', format: 'uri' },
+            },
+            required: ['name', 'fileSize', 'format'],
+          },
+          {
+            computed: {
+              if: "../productType === 'service'",
+            },
+            properties: {
+              name: { type: 'string' },
+              duration: { type: 'number', minimum: 0 },
+              durationUnit: {
+                type: 'string',
+                enum: ['hours', 'days', 'months'],
+              },
+              availability: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                  enum: [
+                    'monday',
+                    'tuesday',
+                    'wednesday',
+                    'thursday',
+                    'friday',
+                    'saturday',
+                    'sunday',
+                  ],
+                },
+              },
+            },
+            required: ['name', 'duration', 'durationUnit'],
+          },
+        ],
+      },
+    },
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  const [injectedValue, setInjectedValue] = useState<string>('');
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
+      <div style={{ marginTop: 20 }}>
+        <h4>Value Injection via RefHandle</h4>
+        <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
+          <input
+            type="text"
+            value={injectedValue}
+            onChange={(e) => setInjectedValue(e.target.value)}
+            placeholder="Enter product name"
+          />
+          <button
+            onClick={() => {
+              const currentValue = formHandle.current?.getValue() || {};
+              formHandle.current?.setValue({
+                ...currentValue,
+                product: {
+                  ...currentValue.product,
+                  name: injectedValue,
+                },
+              });
+            }}
+          >
+            Inject Name
+          </button>
+        </div>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <button
+            onClick={() => {
+              formHandle.current?.setValue({
+                productType: 'physical',
+                product: {
+                  name: 'Laptop',
+                  weight: 2.5,
+                  dimensions: { length: 35, width: 25, height: 2 },
+                  shipping: { method: 'express', cost: 25, hours: 24 },
+                },
+              });
+            }}
+          >
+            Physical Product
+          </button>
+          <button
+            onClick={() => {
+              formHandle.current?.setValue({
+                productType: 'digital',
+                product: {
+                  name: 'Software License',
+                  fileSize: 1024,
+                  format: 'exe',
+                  downloadLink: 'https://example.com/download',
+                },
+              });
+            }}
+          >
+            Digital Product
+          </button>
+          <button
+            onClick={() => {
+              formHandle.current?.setValue({
+                productType: 'service',
+                product: {
+                  name: 'Consulting',
+                  duration: 2,
+                  durationUnit: 'hours',
+                  availability: ['monday', 'wednesday', 'friday'],
+                },
+              });
+            }}
+          >
+            Service Product
+          </button>
+        </div>
+      </div>
+    </StoryLayout>
+  );
+};
