@@ -157,6 +157,7 @@ Use transpilers like Babel to convert the code to match your target environment.
 - **[`unique`](./src/utils/array/unique.ts)**: Function to remove duplicate elements from an array
 - **[`uniqueBy`](./src/utils/array/uniqueBy.ts)**: Function to return unique elements based on results processed by an iterator function
 - **[`uniqueWith`](./src/utils/array/uniqueWith.ts)**: Function to return unique elements using a comparator function
+- **[`primitiveArrayEqual`](./src/utils/array/primitiveArrayEqual.ts)**: Function to compare two arrays for primitive value equality
 
 #### Console
 
