@@ -516,6 +516,14 @@ export abstract class AbstractNode<
     return this.#oneOfIndex;
   }
 
+  /** Index of the anyOf branch */
+  #anyOfIndex: number[] | null = null;
+
+  /** [readonly] Index of the anyOf branch */
+  public get anyOfIndex() {
+    return this.#anyOfIndex;
+  }
+
   /** List of values to watch */
   #watchValues: ReadonlyArray<any> = [];
 
@@ -567,6 +575,7 @@ export abstract class AbstractNode<
     this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
+    this.#anyOfIndex = this.#compute.anyOfIndices?.(this.#dependencies) ?? null;
     if (previous !== this.#active) this.resetNode(true);
     this.publish(NodeEventType.UpdateComputedProperties);
   }
