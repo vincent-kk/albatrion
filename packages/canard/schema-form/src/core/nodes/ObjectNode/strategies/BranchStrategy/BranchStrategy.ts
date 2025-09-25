@@ -260,6 +260,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       host.defaultValue,
       this.__childNodeMap__,
       this.__oneOfKeySetList__,
+      this.__anyOfKeySet__,
       handelChangeFactory,
       nodeFactory,
     );
@@ -271,6 +272,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       host.defaultValue,
       this.__childNodeMap__,
       this.__anyOfKeySetList__,
+      this.__oneOfKeySet__,
       handelChangeFactory,
       nodeFactory,
     );

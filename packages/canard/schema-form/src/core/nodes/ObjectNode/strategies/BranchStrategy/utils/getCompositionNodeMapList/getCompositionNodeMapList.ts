@@ -23,6 +23,7 @@ export const getCompositionNodeMapList = (
   defaultValue: ObjectValue | Nullish,
   childNodeMap: Map<string, ChildNode>,
   keySetList: Set<string>[] | undefined,
+  excludeKeySet: Set<string> | undefined,
   handelChangeFactory: Fn<[name: string], HandleChange>,
   nodeFactory: SchemaNodeFactory,
 ) => {
@@ -56,7 +57,7 @@ export const getCompositionNodeMapList = (
     const required = schema.required;
     for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
       if (keySetList && !keySetList[index].has(k)) continue;
-      if (propertyKeySet?.has(k))
+      if (excludeKeySet?.has(k) || propertyKeySet?.has(k))
         throw new JsonSchemaError(
           'COMPOSITION_PROPERTY_EXCLUSIVENESS_REDEFINITION',
           `Property '${k}' defined in '${scope}' schema cannot redefine a property already defined in the current schema.`,
