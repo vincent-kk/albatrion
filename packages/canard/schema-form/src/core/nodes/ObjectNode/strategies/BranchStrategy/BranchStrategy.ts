@@ -215,8 +215,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
         if (!this.__draft__) this.__draft__ = {};
         if (input !== undefined && this.__draft__[property] === input) return;
         this.__draft__[property] = input;
-        if (this.__isolated__ && !this.__isPristine__)
-          this.__isolated__ = false;
+        if (this.__isolated__ && this.__isPristine__) this.__isolated__ = false;
         this.__emitChange__(SetValueOption.Default, batched);
       };
     host.subscribe(({ type, payload }) => {
@@ -423,9 +422,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /** Function to validate composition value */
   private __validateAllowedKey__: Fn<[key: string], boolean> | undefined;
 
+  /** Whether the object node has no oneOf and anyOf schema */
   private get __isPristine__() {
     return (
-      this.__oneOfChildNodeMapList__ === undefined ||
+      this.__oneOfChildNodeMapList__ === undefined &&
       this.__anyOfChildNodeMapList__ === undefined
     );
   }
@@ -435,7 +435,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @private
    */
   private __prepareCompositionChildren__() {
-    if (!this.__isPristine__) return;
+    if (this.__isPristine__) return;
     this.__validateAllowedKey__ = this.__createAllowedKeyValidator__();
     this.__host__.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateComputedProperties) {
@@ -478,13 +478,13 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (oneOfChildNodeMap)
       for (const child of oneOfChildNodeMap.values()) {
         const node = child.node;
-        const alternate =
+        const alternatedNode =
           previousOneOfChildNodeMap?.get(node.name)?.node || false;
         node.resetNode(
           isolation ||
-            (alternate &&
+            (alternatedNode &&
               isTerminalType(node.type) &&
-              node.type === alternate.type),
+              node.type === alternatedNode.type),
           true,
           this.__value__?.[node.name],
         );
