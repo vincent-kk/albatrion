@@ -418,6 +418,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /** Previously active anyOf index for tracking anyOf branch changes */
   private __anyOfIndices__: number[] = [];
 
+  /** Function to validate composition value */
+  private __validateAllowedKey__: Fn<[key: string], boolean> | undefined;
+
   private get __isPristine__() {
     return (
       this.__oneOfChildNodeMapList__ === undefined ||
@@ -431,6 +434,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
    */
   private __prepareCompositionChildren__() {
     if (!this.__isPristine__) return;
+    this.__validateAllowedKey__ = this.__createAllowedKeyValidator__();
     this.__host__.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateComputedProperties) {
         const isolation = this.__isolated__;
@@ -539,7 +543,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   private __processCompositionValue__() {
     this.__draft__ = processValueWithValidate(
       this.__processValue__({ ...this.__value__, ...this.__draft__ }),
-      this.__validateCompositionValue__.bind(this),
+      this.__validateAllowedKey__,
     );
 
     this.__processComputedProperties__(this.__draft__);
@@ -553,25 +557,27 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__emitChange__(SetValueOption.SoftReset);
   }
 
-  private __validateCompositionValue__(key: string) {
-    if (
-      this.__oneOfKeySet__?.has(key) &&
-      this.__oneOfKeySetList__ !== undefined
-    )
-      if (this.__oneOfIndex__ > -1)
-        return this.__oneOfKeySetList__[this.__oneOfIndex__].has(key);
-      else return false;
-    if (
-      this.__anyOfKeySet__?.has(key) &&
-      this.__anyOfKeySetList__ !== undefined
-    )
-      if (this.__anyOfIndices__.length > 0) {
-        for (let i = 0, l = this.__anyOfIndices__.length; i < l; i++)
-          if (this.__anyOfKeySetList__[this.__anyOfIndices__[i]].has(key))
-            return true;
-        return false;
-      } else return false;
-    return true;
+  private __createAllowedKeyValidator__() {
+    return (key: string) => {
+      if (
+        this.__oneOfKeySet__?.has(key) &&
+        this.__oneOfKeySetList__ !== undefined
+      )
+        if (this.__oneOfIndex__ > -1)
+          return this.__oneOfKeySetList__[this.__oneOfIndex__].has(key);
+        else return false;
+      if (
+        this.__anyOfKeySet__?.has(key) &&
+        this.__anyOfKeySetList__ !== undefined
+      )
+        if (this.__anyOfIndices__.length > 0) {
+          for (let i = 0, l = this.__anyOfIndices__.length; i < l; i++)
+            if (this.__anyOfKeySetList__[this.__anyOfIndices__[i]].has(key))
+              return true;
+          return false;
+        } else return false;
+      return true;
+    };
   }
 
   /**
