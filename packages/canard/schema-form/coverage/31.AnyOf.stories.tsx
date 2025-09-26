@@ -728,3 +728,344 @@ export const MixedAnyOfWithAllOf = () => {
     </StoryLayout>
   );
 };
+
+export const AnyOfValuePreservationDemo = () => {
+  const schema = {
+    type: 'object',
+    properties: {
+      enableFeatureA: {
+        type: 'boolean',
+        default: true,
+        title: 'Enable Feature A',
+      },
+      enableFeatureB: {
+        type: 'boolean',
+        default: false,
+        title: 'Enable Feature B',
+      },
+      enableFeatureC: {
+        type: 'boolean',
+        default: false,
+        title: 'Enable Feature C',
+      },
+    },
+    anyOf: [
+      {
+        computed: {
+          if: './enableFeatureA === true',
+        },
+        properties: {
+          featureAConfig: {
+            type: 'object',
+            title: 'Feature A Configuration',
+            properties: {
+              settingA1: {
+                type: 'string',
+                title: 'A1 Setting',
+                default: 'default A1',
+              },
+              settingA2: { type: 'number', title: 'A2 Setting', default: 100 },
+              settingA3: {
+                type: 'boolean',
+                title: 'A3 Setting',
+                default: false,
+              },
+            },
+          },
+        },
+      },
+      {
+        computed: {
+          if: './enableFeatureB === true',
+        },
+        properties: {
+          featureBConfig: {
+            type: 'object',
+            title: 'Feature B Configuration',
+            properties: {
+              settingB1: { type: 'string', title: 'B1 Setting' },
+              settingB2: { type: 'number', title: 'B2 Setting', default: 50 },
+              settingB3: {
+                type: 'boolean',
+                title: 'B3 Setting',
+                default: true,
+              },
+            },
+          },
+        },
+      },
+      {
+        computed: {
+          if: './enableFeatureC === true',
+        },
+        properties: {
+          featureCConfig: {
+            type: 'object',
+            title: 'Feature C Configuration',
+            properties: {
+              settingC1: {
+                type: 'string',
+                title: 'C1 Setting',
+                default: 'C default',
+              },
+              settingC2: {
+                type: 'array',
+                title: 'C2 Items',
+                items: { type: 'string' },
+              },
+            },
+          },
+        },
+      },
+    ],
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <div
+        style={{
+          marginBottom: 20,
+          padding: 15,
+          border: '1px solid #ccc',
+          borderRadius: 5,
+          backgroundColor: '#f9f9f9',
+        }}
+      >
+        <h4 style={{ margin: '0 0 10px 0', color: '#666' }}>
+          AnyOf Value Preservation Demo
+        </h4>
+        <p style={{ margin: '0 0 10px 0', fontSize: 14, color: '#666' }}>
+          This demo shows how values are preserved when anyOf conditions change.
+          Values in currently active anyOf indices (__anyOfIndices__) are
+          preserved, while others are reset.
+        </p>
+        <ul style={{ margin: 0, fontSize: 14, color: '#666', paddingLeft: 20 }}>
+          <li>Enable Feature A and set some values</li>
+          <li>Enable Feature B - Feature A values should be preserved</li>
+          <li>Disable Feature A - Feature A values should be cleared</li>
+          <li>
+            Re-enable Feature A - Feature A values should reset to defaults
+          </li>
+        </ul>
+      </div>
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
+      <div
+        style={{ marginTop: 20, display: 'flex', flexWrap: 'wrap', gap: 10 }}
+      >
+        <button
+          onClick={() => {
+            formHandle.current?.setValue({
+              enableFeatureA: true,
+              enableFeatureB: false,
+              enableFeatureC: false,
+              featureAConfig: {
+                settingA1: 'Custom A1',
+                settingA2: 200,
+                settingA3: true,
+              },
+            });
+          }}
+        >
+          Set Feature A Only
+        </button>
+        <button
+          onClick={() => {
+            const current = formHandle.current?.getValue() || {};
+            formHandle.current?.setValue({
+              ...current,
+              enableFeatureB: true,
+              featureBConfig: {
+                settingB1: 'Custom B1',
+                settingB2: 75,
+                settingB3: false,
+              },
+            });
+          }}
+        >
+          Enable Feature B (preserve A)
+        </button>
+        <button
+          onClick={() => {
+            const current = formHandle.current?.getValue() || {};
+            formHandle.current?.setValue({
+              ...current,
+              enableFeatureC: true,
+              featureCConfig: {
+                settingC1: 'Custom C1',
+                settingC2: ['item1', 'item2'],
+              },
+            });
+          }}
+        >
+          Enable Feature C
+        </button>
+        <button
+          onClick={() => {
+            const current = formHandle.current?.getValue() || {};
+            formHandle.current?.setValue({
+              ...current,
+              enableFeatureA: false,
+            });
+          }}
+        >
+          Disable Feature A
+        </button>
+        <button
+          onClick={() => {
+            const current = formHandle.current?.getValue() || {};
+            formHandle.current?.setValue({
+              ...current,
+              enableFeatureB: false,
+            });
+          }}
+        >
+          Disable Feature B
+        </button>
+        <button
+          onClick={() => {
+            const current = formHandle.current?.getValue() || {};
+            formHandle.current?.setValue({
+              ...current,
+              enableFeatureC: false,
+            });
+          }}
+        >
+          Disable Feature C
+        </button>
+        <button
+          onClick={() => {
+            formHandle.current?.setValue({
+              enableFeatureA: true,
+              enableFeatureB: true,
+              enableFeatureC: true,
+            });
+          }}
+        >
+          Enable All Features
+        </button>
+        <button
+          onClick={() => {
+            formHandle.current?.setValue({
+              enableFeatureA: false,
+              enableFeatureB: false,
+              enableFeatureC: false,
+            });
+          }}
+        >
+          Disable All Features
+        </button>
+        <button onClick={() => formHandle.current?.reset()}>Reset Form</button>
+        <button
+          onClick={() => {
+            console.log(
+              'Current Value:',
+              JSON.stringify(formHandle.current?.getValue(), null, 2),
+            );
+            const node = formHandle.current?.node;
+            console.log('Current anyOf indices:', node?.anyOfIndices);
+          }}
+        >
+          Log State & AnyOf Indices
+        </button>
+      </div>
+    </StoryLayout>
+  );
+};
+
+export const SimpleAnyOfValuePreservation = () => {
+  const schema = {
+    type: 'object',
+    properties: {
+      showA: { type: 'boolean', default: true, title: 'Show Section A' },
+      showB: { type: 'boolean', default: false, title: 'Show Section B' },
+    },
+    anyOf: [
+      {
+        computed: { if: './showA === true' },
+        properties: {
+          valueA: { type: 'string', title: 'Value A' },
+        },
+      },
+      {
+        computed: { if: './showB === true' },
+        properties: {
+          valueB: { type: 'number', title: 'Value B' },
+        },
+      },
+    ],
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <div
+        style={{
+          marginBottom: 15,
+          padding: 10,
+          backgroundColor: '#f0f8ff',
+          borderRadius: 5,
+        }}
+      >
+        <h4 style={{ margin: '0 0 5px 0' }}>AnyOf Value Preservation Test</h4>
+        <p style={{ margin: 0, fontSize: 12 }}>
+          ✅ Values preserved when anyOf condition remains active
+          <br />❌ Values cleared when anyOf condition becomes inactive
+        </p>
+      </div>
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
+      <div style={{ marginTop: 10, display: 'flex', gap: 10 }}>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({
+              showA: true,
+              showB: false,
+              valueA: 'Test A',
+            })
+          }
+        >
+          Enable A Only
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({
+              showA: true,
+              showB: true,
+              valueA: 'Test A',
+              valueB: 123,
+            })
+          }
+        >
+          Enable Both
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({
+              showA: false,
+              showB: true,
+              valueB: 456,
+            })
+          }
+        >
+          Enable B Only
+        </button>
+      </div>
+    </StoryLayout>
+  );
+};

@@ -61,6 +61,7 @@ export const OneOf = () => {
           },
           price: {
             type: 'number',
+            default: 100,
             minimum: 50,
           },
         },
@@ -91,6 +92,7 @@ export const OneOf = () => {
     </StoryLayout>
   );
 };
+
 
 export const OneOfAlias = () => {
   const schema = {
@@ -147,6 +149,7 @@ export const OneOfAlias = () => {
     </StoryLayout>
   );
 };
+
 
 export const OneOfWithConstFieldCondition = () => {
   const schema = {
@@ -271,6 +274,7 @@ export const OneOfWithConstFieldCondition = () => {
   );
 };
 
+
 export const OneOfWithEnumFieldCondition = () => {
   const schema = {
     type: 'object',
@@ -371,6 +375,7 @@ export const OneOfWithEnumFieldCondition = () => {
     </StoryLayout>
   );
 };
+
 
 export const OneOfWithConditionalExpression = () => {
   const schema = {
@@ -493,6 +498,7 @@ export const OneOfWithConditionalExpression = () => {
     </StoryLayout>
   );
 };
+
 
 export const OneOfWithConditionalExpressionInArray = () => {
   const schema = {
@@ -621,6 +627,7 @@ export const OneOfWithConditionalExpressionInArray = () => {
   );
 };
 
+
 export const OneOfWithConditionalExpressionInObject = () => {
   const schema = {
     type: 'object',
@@ -747,6 +754,7 @@ export const OneOfWithConditionalExpressionInObject = () => {
     </StoryLayout>
   );
 };
+
 
 export const OneOfWithConditionalExpressionAndFieldCondition = () => {
   const schema = {
@@ -879,6 +887,7 @@ export const OneOfWithConditionalExpressionAndFieldCondition = () => {
   );
 };
 
+
 export const OneOfAliasWithKeyOrder = () => {
   const schema = {
     type: 'object',
@@ -935,6 +944,7 @@ export const OneOfAliasWithKeyOrder = () => {
     </StoryLayout>
   );
 };
+
 
 export const ComplexOneOf = () => {
   const schema = {
@@ -1063,6 +1073,7 @@ export const ComplexOneOf = () => {
   );
 };
 
+
 export const ComplexOneOfSmall = () => {
   const schema = {
     type: 'object',
@@ -1174,6 +1185,7 @@ export const ComplexOneOfSmall = () => {
     </StoryLayout>
   );
 };
+
 
 export const Array = () => {
   const jsonSchema = {
@@ -1308,6 +1320,7 @@ export const ErrorCase1 = () => {
   );
 };
 
+
 export const ErrorCase2 = () => {
   const schema = {
     type: 'object',
@@ -1357,6 +1370,7 @@ export const ErrorCase2 = () => {
     </StoryLayout>
   );
 };
+
 
 export const ComplexNestedOneOf = () => {
   const schema = {
@@ -1552,3 +1566,291 @@ export const ComplexNestedOneOf = () => {
     </StoryLayout>
   );
 };
+
+
+export const OneOfPrimitiveValuePreservationDemo = () => {
+  const schema = {
+    type: 'object',
+    properties: {
+      mode: {
+        type: 'string',
+        enum: ['text', 'number', 'mixed'],
+        default: 'text',
+        title: 'Data Mode',
+      },
+    },
+    oneOf: [
+      {
+        computed: {
+          if: "./mode === 'text'",
+        },
+        properties: {
+          textValue: {
+            type: 'string',
+            title: 'Text Value',
+            default: 'default text',
+          },
+          label: { type: 'string', title: 'Label' },
+          isActive: { type: 'boolean', title: 'Active', default: true },
+          count: { type: 'number', title: 'Count', default: 0 },
+        },
+      },
+      {
+        computed: {
+          if: "./mode === 'number'",
+        },
+        properties: {
+          numberValue: { type: 'number', title: 'Number Value', default: 42 },
+          label: { type: 'string', title: 'Label' }, // Same name, same type
+          isActive: { type: 'boolean', title: 'Active' }, // Same name, same type
+          count: { type: 'string', title: 'Count (as text)' }, // Same name, different type!
+          precision: { type: 'number', title: 'Precision', default: 2 },
+        },
+      },
+      {
+        computed: {
+          if: "./mode === 'mixed'",
+        },
+        properties: {
+          textValue: { type: 'number', title: 'Text as Number' }, // Same name, different type!
+          numberValue: { type: 'string', title: 'Number as Text' }, // Same name, different type!
+          label: { type: 'string', title: 'Label' }, // Same name, same type
+          isActive: { type: 'boolean', title: 'Active', default: false },
+          customData: { type: 'string', title: 'Custom Data' },
+        },
+      },
+    ],
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <div
+        style={{
+          marginBottom: 20,
+          padding: 15,
+          border: '1px solid #ccc',
+          borderRadius: 5,
+          backgroundColor: '#f9f9f9',
+        }}
+      >
+        <h4 style={{ margin: '0 0 10px 0', color: '#666' }}>
+          OneOf Primitive Value Preservation Demo
+        </h4>
+        <p style={{ margin: '0 0 10px 0', fontSize: 14, color: '#666' }}>
+          This demo shows how primitive values are preserved when switching
+          between oneOf branches. Values are preserved only if the field has the
+          same name and the same primitive type.
+        </p>
+        <ul style={{ margin: 0, fontSize: 14, color: '#666', paddingLeft: 20 }}>
+          <li>
+            <strong>Same name + same type</strong>: Value is preserved
+          </li>
+          <li>
+            <strong>Same name + different type</strong>: Value is reset
+          </li>
+          <li>
+            <strong>Default values</strong>: Take precedence over preserved
+            values
+          </li>
+          <li>
+            <strong>Missing fields</strong>: Values are cleared when switching
+            branches
+          </li>
+        </ul>
+      </div>
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
+      <div
+        style={{ marginTop: 20, display: 'flex', flexWrap: 'wrap', gap: 10 }}
+      >
+        <button
+          onClick={() => {
+            formHandle.current?.setValue({
+              mode: 'text',
+              textValue: 'Custom Text',
+              label: 'Text Label',
+              isActive: false,
+              count: 5,
+            });
+          }}
+        >
+          Set Text Mode Values
+        </button>
+        <button
+          onClick={() => {
+            const current = formHandle.current?.getValue() || {};
+            formHandle.current?.setValue({
+              ...current,
+              mode: 'number',
+            });
+          }}
+        >
+          Switch to Number Mode
+        </button>
+        <button
+          onClick={() => {
+            const current = formHandle.current?.getValue() || {};
+            formHandle.current?.setValue({
+              ...current,
+              mode: 'mixed',
+            });
+          }}
+        >
+          Switch to Mixed Mode
+        </button>
+        <button
+          onClick={() => {
+            const current = formHandle.current?.getValue() || {};
+            formHandle.current?.setValue({
+              ...current,
+              mode: 'text',
+            });
+          }}
+        >
+          Back to Text Mode
+        </button>
+        <button
+          onClick={() => {
+            formHandle.current?.setValue({
+              mode: 'number',
+              numberValue: 999,
+              label: 'Number Label',
+              isActive: true,
+              count: 'One Hundred',
+              precision: 4,
+            });
+          }}
+        >
+          Set Number Mode Values
+        </button>
+        <button
+          onClick={() => {
+            formHandle.current?.setValue({
+              mode: 'mixed',
+              textValue: 123,
+              numberValue: 'Mixed Number',
+              label: 'Mixed Label',
+              isActive: true,
+              customData: 'Some custom data',
+            });
+          }}
+        >
+          Set Mixed Mode Values
+        </button>
+        <button onClick={() => formHandle.current?.reset()}>Reset Form</button>
+        <button
+          onClick={() => {
+            console.log(
+              'Current Value:',
+              JSON.stringify(formHandle.current?.getValue(), null, 2),
+            );
+          }}
+        >
+          Log Current State
+        </button>
+      </div>
+      <div
+        style={{
+          marginTop: 15,
+          padding: 10,
+          backgroundColor: '#f0f8ff',
+          border: '1px solid #cce7ff',
+          borderRadius: 5,
+        }}
+      >
+        <h5 style={{ margin: '0 0 5px 0', color: '#0066cc' }}>
+          Test Scenario:
+        </h5>
+        <ol style={{ margin: 0, fontSize: 13, color: '#333', paddingLeft: 20 }}>
+          <li>Click "Set Text Mode Values" to set initial values</li>
+          <li>
+            Click "Switch to Number Mode" - observe which values are preserved:
+            <ul>
+              <li>"label" (string): ✅ Preserved (same type)</li>
+              <li>"isActive" (boolean): ✅ Preserved (same type)</li>
+              <li>"count": ❌ Reset (number → string, different type)</li>
+              <li>"textValue": ❌ Cleared (not in number schema)</li>
+            </ul>
+          </li>
+          <li>Click "Switch to Mixed Mode" - see type compatibility logic</li>
+          <li>
+            Experiment with different combinations to see preservation behavior
+          </li>
+        </ol>
+      </div>
+    </StoryLayout>
+  );
+};
+
+export const SimpleOneOfTypePreservation = () => {
+  const schema = {
+    type: 'object',
+    properties: {
+      mode: {
+        type: 'string',
+        enum: ['text', 'number'],
+        default: 'text',
+        title: 'Field Mode',
+      },
+    },
+    oneOf: [
+      {
+        computed: { if: "./mode === 'text'" },
+        properties: {
+          name: { type: 'string', title: 'Name (string)' }, // Same name, same type
+          value: { type: 'string', title: 'Text Value', default: 'default text' }, // Different name
+        },
+      },
+      {
+        computed: { if: "./mode === 'number'" },
+        properties: {
+          name: { type: 'string', title: 'Name (string)' }, // Same name, same type
+          value: { type: 'number', title: 'Number Value', default: 42 }, // Same name, different type!
+        },
+      },
+    ],
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <div style={{ marginBottom: 15, padding: 10, backgroundColor: '#fff3cd', borderRadius: 5 }}>
+        <h4 style={{ margin: '0 0 5px 0' }}>OneOf Type Preservation Test</h4>
+        <p style={{ margin: 0, fontSize: 12 }}>
+          ✅ <strong>name</strong> (string→string): Value preserved<br/>
+          ❌ <strong>value</strong> (string→number): Value reset, default used
+        </p>
+      </div>
+      <Form jsonSchema={schema} onChange={setValue} onValidate={setErrors} ref={formHandle} />
+      <div style={{ marginTop: 10, display: 'flex', gap: 10 }}>
+        <button onClick={() => formHandle.current?.setValue({ mode: 'text', name: 'John', value: 'custom text' })}>
+          Set Text Mode
+        </button>
+        <button onClick={() => {
+          const current = formHandle.current?.getValue() || {};
+          formHandle.current?.setValue({ ...current, mode: 'number' });
+        }}>
+          Switch to Number
+        </button>
+        <button onClick={() => {
+          const current = formHandle.current?.getValue() || {};
+          formHandle.current?.setValue({ ...current, mode: 'text' });
+        }}>
+          Switch to Text
+        </button>
+      </div>
+    </StoryLayout>
+  );
+};
+
