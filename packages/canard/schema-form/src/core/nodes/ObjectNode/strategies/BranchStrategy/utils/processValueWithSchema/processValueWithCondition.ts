@@ -17,10 +17,8 @@ export const processValueWithCondition = (
   fieldConditionMap: FieldConditionMap | undefined,
 ): ObjectValue | undefined => {
   if (value == null || !fieldConditionMap) return value;
-
   const keys = Object.keys(value);
   if (keys.length === 0) return value;
-
   const isRequired = requiredFactory(value, fieldConditionMap);
   const filteredValue: ObjectValue = {};
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {

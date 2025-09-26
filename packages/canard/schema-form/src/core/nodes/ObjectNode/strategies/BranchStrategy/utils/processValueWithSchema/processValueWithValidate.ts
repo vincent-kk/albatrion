@@ -14,10 +14,8 @@ export const processValueWithValidate = (
   validate?: Fn<[key: string], boolean>,
 ): ObjectValue | undefined => {
   if (value == null || validate === undefined) return value;
-
   const keys = Object.keys(value);
   if (keys.length === 0) return value;
-
   const result: ObjectValue = {};
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i])
     if (validate(k)) result[k] = value[k];
