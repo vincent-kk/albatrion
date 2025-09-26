@@ -9,7 +9,7 @@ import type {
 } from '@/schema-form/types';
 
 import type { PathManager } from '../getPathManager';
-import { type ConditionIndexName } from '../type';
+import type { ConditionIndexName } from '../type';
 import { extractConditionInfo } from './utils/extractConditionInfo';
 
 type GetConditionIndices = Fn<[dependencies: unknown[]], number[]>;
