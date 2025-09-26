@@ -49,7 +49,6 @@ export const getConditionIndicesFactory =
     fieldName: string,
     conditionField: ConditionIndexName,
   ): GetConditionIndices | undefined => {
-    // Conditional Index is only available for object schemas(oneOf, anyOf, etc.)
     if (jsonSchema.type !== 'object') return undefined;
 
     const conditionSchemas: PartialJsonSchema[] = jsonSchema[fieldName];
@@ -61,11 +60,12 @@ export const getConditionIndicesFactory =
       pathManager,
     );
 
-    if (expressions.length === 0) return undefined;
+    const length = expressions.length;
+    if (length === 0) return undefined;
 
-    const lines = new Array<string>(expressions.length);
-    for (let i = 0, l = expressions.length; i < l; i++)
-      lines[i] = `if(${expressions[i]}) indices.push(${schemaIndices[i]});`;
+    const lines = new Array<string>(length);
+    for (let i = 0, exp = expressions[0]; i < length; i++, exp = expressions[i])
+      lines[i] = `if(${exp}) indices[indices.length] = ${schemaIndices[i]};`;
 
     try {
       return new Function(
