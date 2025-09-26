@@ -186,4 +186,5 @@ import type { Dictionary } from '@aileron/declare';
  * @see {@link countObjectKey} for counting properties in null prototype objects
  * @see {@link hasOwnProperty} from libs for safe property checking
  */
-export const getEmptyObject = (): Dictionary => Object.create(null);
+export const getEmptyObject = <Value = any>(): Dictionary<Value> =>
+  Object.create(null);

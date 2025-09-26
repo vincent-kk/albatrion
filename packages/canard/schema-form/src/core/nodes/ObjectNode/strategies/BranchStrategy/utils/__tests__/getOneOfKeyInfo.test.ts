@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import type { ObjectSchema } from '@/schema-form/types';
 
-import { getOneOfKeyInfo } from '../getOneOfKeyInfo/getOneOfKeyInfo';
+import { getCompositionKeyInfo } from '../getCompositionKeyInfo';
 
-describe('getOneOfKeyInfo', () => {
+describe('getCompositionKeyInfo', () => {
   // Basic functionality test
   it('should correctly extract key information from schema with oneOf properties', () => {
     const schema: ObjectSchema = {
@@ -28,29 +28,29 @@ describe('getOneOfKeyInfo', () => {
       ],
     };
 
-    const result = getOneOfKeyInfo(schema);
+    const result = getCompositionKeyInfo('oneOf', schema);
 
     expect(result).toBeDefined();
-    expect(result?.oneOfKeySet).toBeInstanceOf(Set);
-    expect(result?.oneOfKeySetList).toBeInstanceOf(Array);
-    expect(result?.oneOfKeySetList.length).toBe(2);
+    expect(result?.unionKeySet).toBeInstanceOf(Set);
+    expect(result?.schemaKeySets).toBeInstanceOf(Array);
+    expect(result?.schemaKeySets.length).toBe(2);
 
     // oneOfKeySet should contain all keys from oneOf properties
-    expect(result?.oneOfKeySet.has('age')).toBe(true);
-    expect(result?.oneOfKeySet.has('address')).toBe(true);
-    expect(result?.oneOfKeySet.has('email')).toBe(true);
-    expect(result?.oneOfKeySet.has('phone')).toBe(true);
-    expect(result?.oneOfKeySet.size).toBe(4);
+    expect(result?.unionKeySet.has('age')).toBe(true);
+    expect(result?.unionKeySet.has('address')).toBe(true);
+    expect(result?.unionKeySet.has('email')).toBe(true);
+    expect(result?.unionKeySet.has('phone')).toBe(true);
+    expect(result?.unionKeySet.size).toBe(4);
 
     // oneOfKeySetList[0] should contain keys from first oneOf item
-    expect(result?.oneOfKeySetList[0].has('age')).toBe(true);
-    expect(result?.oneOfKeySetList[0].has('address')).toBe(true);
-    expect(result?.oneOfKeySetList[0].size).toBe(2);
+    expect(result?.schemaKeySets[0].has('age')).toBe(true);
+    expect(result?.schemaKeySets[0].has('address')).toBe(true);
+    expect(result?.schemaKeySets[0].size).toBe(2);
 
     // oneOfKeySetList[1] should contain keys from second oneOf item
-    expect(result?.oneOfKeySetList[1].has('email')).toBe(true);
-    expect(result?.oneOfKeySetList[1].has('phone')).toBe(true);
-    expect(result?.oneOfKeySetList[1].size).toBe(2);
+    expect(result?.schemaKeySets[1].has('email')).toBe(true);
+    expect(result?.schemaKeySets[1].has('phone')).toBe(true);
+    expect(result?.schemaKeySets[1].size).toBe(2);
   });
 
   // When oneOf array is empty
@@ -63,7 +63,7 @@ describe('getOneOfKeyInfo', () => {
       oneOf: [],
     };
 
-    const result = getOneOfKeyInfo(schema);
+    const result = getCompositionKeyInfo('oneOf', schema);
     expect(result).toBeUndefined();
   });
 
@@ -76,7 +76,7 @@ describe('getOneOfKeyInfo', () => {
       },
     };
 
-    const result = getOneOfKeyInfo(schema);
+    const result = getCompositionKeyInfo('oneOf', schema);
     expect(result).toBeUndefined();
   });
 
@@ -99,18 +99,18 @@ describe('getOneOfKeyInfo', () => {
       ],
     };
 
-    const result = getOneOfKeyInfo(schema);
+    const result = getCompositionKeyInfo('oneOf', schema);
 
     expect(result).toBeDefined();
-    expect(result?.oneOfKeySet.size).toBe(1);
-    expect(result?.oneOfKeySet.has('email')).toBe(true);
+    expect(result?.unionKeySet.size).toBe(1);
+    expect(result?.unionKeySet.has('email')).toBe(true);
 
     // First item should be an empty Set since it has no properties
-    expect(result?.oneOfKeySetList[0]).toBeUndefined();
+    expect(result?.schemaKeySets[0]).toBeUndefined();
 
     // Second item should have email property
-    expect(result?.oneOfKeySetList[1].has('email')).toBe(true);
-    expect(result?.oneOfKeySetList[1].size).toBe(1);
+    expect(result?.schemaKeySets[1].has('email')).toBe(true);
+    expect(result?.schemaKeySets[1].size).toBe(1);
   });
 
   // When oneOf items have duplicate keys
@@ -136,23 +136,23 @@ describe('getOneOfKeyInfo', () => {
       ],
     };
 
-    const result = getOneOfKeyInfo(schema);
+    const result = getCompositionKeyInfo('oneOf', schema);
 
     expect(result).toBeDefined();
     // Duplicate 'shared' key should be counted only once in oneOfKeySet
-    expect(result?.oneOfKeySet.size).toBe(3);
-    expect(result?.oneOfKeySet.has('age')).toBe(true);
-    expect(result?.oneOfKeySet.has('email')).toBe(true);
-    expect(result?.oneOfKeySet.has('shared')).toBe(true);
+    expect(result?.unionKeySet.size).toBe(3);
+    expect(result?.unionKeySet.has('age')).toBe(true);
+    expect(result?.unionKeySet.has('email')).toBe(true);
+    expect(result?.unionKeySet.has('shared')).toBe(true);
 
     // Each oneOfKeySetList item should have its own keys
-    expect(result?.oneOfKeySetList[0].has('age')).toBe(true);
-    expect(result?.oneOfKeySetList[0].has('shared')).toBe(true);
-    expect(result?.oneOfKeySetList[0].size).toBe(2);
+    expect(result?.schemaKeySets[0].has('age')).toBe(true);
+    expect(result?.schemaKeySets[0].has('shared')).toBe(true);
+    expect(result?.schemaKeySets[0].size).toBe(2);
 
-    expect(result?.oneOfKeySetList[1].has('email')).toBe(true);
-    expect(result?.oneOfKeySetList[1].has('shared')).toBe(true);
-    expect(result?.oneOfKeySetList[1].size).toBe(2);
+    expect(result?.schemaKeySets[1].has('email')).toBe(true);
+    expect(result?.schemaKeySets[1].has('shared')).toBe(true);
+    expect(result?.schemaKeySets[1].size).toBe(2);
   });
 
   // Complex schema test
@@ -188,31 +188,31 @@ describe('getOneOfKeyInfo', () => {
       ],
     };
 
-    const result = getOneOfKeyInfo(schema);
+    const result = getCompositionKeyInfo('oneOf', schema);
 
     expect(result).toBeDefined();
-    expect(result?.oneOfKeySet.size).toBe(7); // type, age, address, employees, location, members, purpose
-    expect(result?.oneOfKeySetList.length).toBe(3);
+    expect(result?.unionKeySet.size).toBe(7); // type, age, address, employees, location, members, purpose
+    expect(result?.schemaKeySets.length).toBe(3);
 
     // All types share the 'type' property
-    expect(result?.oneOfKeySet.has('type')).toBe(true);
+    expect(result?.unionKeySet.has('type')).toBe(true);
 
     // person type
-    expect(result?.oneOfKeySetList[0].has('type')).toBe(true);
-    expect(result?.oneOfKeySetList[0].has('age')).toBe(true);
-    expect(result?.oneOfKeySetList[0].has('address')).toBe(true);
-    expect(result?.oneOfKeySetList[0].size).toBe(3);
+    expect(result?.schemaKeySets[0].has('type')).toBe(true);
+    expect(result?.schemaKeySets[0].has('age')).toBe(true);
+    expect(result?.schemaKeySets[0].has('address')).toBe(true);
+    expect(result?.schemaKeySets[0].size).toBe(3);
 
     // company type
-    expect(result?.oneOfKeySetList[1].has('type')).toBe(true);
-    expect(result?.oneOfKeySetList[1].has('employees')).toBe(true);
-    expect(result?.oneOfKeySetList[1].has('location')).toBe(true);
-    expect(result?.oneOfKeySetList[1].size).toBe(3);
+    expect(result?.schemaKeySets[1].has('type')).toBe(true);
+    expect(result?.schemaKeySets[1].has('employees')).toBe(true);
+    expect(result?.schemaKeySets[1].has('location')).toBe(true);
+    expect(result?.schemaKeySets[1].size).toBe(3);
 
     // organization type
-    expect(result?.oneOfKeySetList[2].has('type')).toBe(true);
-    expect(result?.oneOfKeySetList[2].has('members')).toBe(true);
-    expect(result?.oneOfKeySetList[2].has('purpose')).toBe(true);
-    expect(result?.oneOfKeySetList[2].size).toBe(3);
+    expect(result?.schemaKeySets[2].has('type')).toBe(true);
+    expect(result?.schemaKeySets[2].has('members')).toBe(true);
+    expect(result?.schemaKeySets[2].has('purpose')).toBe(true);
+    expect(result?.schemaKeySets[2].size).toBe(3);
   });
 });

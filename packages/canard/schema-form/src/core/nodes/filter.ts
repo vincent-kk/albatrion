@@ -109,40 +109,6 @@ export const isSchemaNode = (input: any): input is SchemaNode =>
  * }
  * ```
  *
- * @example
- * Form section collapsing:
- * ```typescript
- * function CollapsibleFormSection({ node }: { node: SchemaNode }) {
- *   const [collapsed, setCollapsed] = useState(false);
- *
- *   if (!isBranchNode(node)) {
- *     // Terminal nodes can't be collapsed
- *     return <FormField node={node} />;
- *   }
- *
- *   const childCount = node.children?.length || 0;
- *   const hasErrors = node.children?.some(child => child.node.error?.length > 0);
- *
- *   return (
- *     <Section className={hasErrors ? 'has-errors' : ''}>
- *       <SectionHeader onClick={() => setCollapsed(!collapsed)}>
- *         <ChevronIcon rotated={!collapsed} />
- *         {node.jsonSchema.title || node.path}
- *         <Badge>{childCount} fields</Badge>
- *       </SectionHeader>
- *
- *       {!collapsed && (
- *         <SectionContent>
- *           {node.children?.map(child => (
- *             <FormField key={child.key} node={child.node} />
- *           ))}
- *         </SectionContent>
- *       )}
- *     </Section>
- *   );
- * }
- * ```
- *
  * @remarks
  * Branch nodes share common characteristics:
  * - Can have child nodes

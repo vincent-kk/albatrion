@@ -84,9 +84,7 @@
 export const difference = <Type>(source: Type[], exclude: Type[]): Type[] => {
   const result: Type[] = [];
   const excludeSet = new Set(exclude);
-  for (let i = 0, l = source.length; i < l; i++) {
-    const item = source[i];
-    if (!excludeSet.has(item)) result[result.length] = item;
-  }
+  for (let i = 0, e = source[0], l = source.length; i < l; i++, e = source[i])
+    if (!excludeSet.has(e)) result[result.length] = e;
   return result;
 };

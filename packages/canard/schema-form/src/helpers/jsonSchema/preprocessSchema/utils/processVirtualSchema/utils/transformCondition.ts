@@ -2,6 +2,14 @@ import type { Dictionary } from '@aileron/declare';
 
 import type { JsonSchema } from '@/schema-form/types';
 
+/**
+ * Transforms a schema condition by processing virtual field mappings in required arrays
+ * and recursively applying transformations to nested then/else conditions.
+ *
+ * @param schema - The partial JSON Schema to transform
+ * @param virtual - Dictionary mapping virtual field names to their constituent fields
+ * @returns The transformed schema with virtual field mappings applied
+ */
 export const transformCondition = (
   schema: Partial<JsonSchema>,
   virtual: Dictionary<{ fields: string[] }>,
@@ -18,6 +26,14 @@ export const transformCondition = (
   return transformed;
 };
 
+/**
+ * Transforms required field arrays by expanding virtual fields into their constituent fields
+ * and separating them into actual required fields and virtual required field tracking.
+ *
+ * @param required - Array of required field names that may include virtual fields
+ * @param virtual - Dictionary mapping virtual field names to their constituent fields
+ * @returns Object containing expanded required fields and virtual required field names
+ */
 const transformVirtualFields = (
   required: string[],
   virtual: Dictionary<{ fields: string[] }>,

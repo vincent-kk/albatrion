@@ -189,13 +189,12 @@ export const intersectionBy = <Type1, Type2>(
   mapper: (item: Type1 | Type2) => unknown,
 ): Type1[] => {
   const targetSet = new Set<unknown>();
-  for (let i = 0, l = target.length; i < l; i++)
-    targetSet.add(mapper(target[i]));
+  for (let i = 0, e = target[0], l = target.length; i < l; i++, e = target[i])
+    targetSet.add(mapper(e));
 
   const result: Type1[] = [];
-  for (let i = 0, l = source.length; i < l; i++) {
-    const item = source[i];
-    if (targetSet.has(mapper(item))) result[result.length] = item;
+  for (let i = 0, e = source[0], l = source.length; i < l; i++, e = source[i]) {
+    if (targetSet.has(mapper(e))) result[result.length] = e;
   }
   return result;
 };

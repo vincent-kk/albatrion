@@ -1,4 +1,8 @@
-import { sortWithReference } from '@winglet/common-utils/array';
+import {
+  differenceLite,
+  primitiveArrayEqual,
+  sortWithReference,
+} from '@winglet/common-utils/array';
 import { isEmptyObject } from '@winglet/common-utils/filter';
 import {
   getObjectKeys,
@@ -20,6 +24,7 @@ import {
   type UnionSetValueOption,
 } from '@/schema-form/core/nodes/type';
 import { joinSegment } from '@/schema-form/helpers/jsonPointer';
+import { isTerminalType } from '@/schema-form/helpers/jsonSchema';
 import type { ObjectValue } from '@/schema-form/types';
 
 import type { ObjectNodeStrategy } from '../type';
@@ -27,13 +32,13 @@ import {
   type FieldConditionMap,
   getChildNodeMap,
   getChildren,
+  getCompositionKeyInfo,
+  getCompositionNodeMapList,
   getConditionsMap,
   getFieldConditionMap,
-  getOneOfChildNodeMapList,
-  getOneOfKeyInfo,
   getVirtualReferencesMap,
   processValueWithCondition,
-  processValueWithOneOfSchema,
+  processValueWithValidate,
 } from './utils';
 
 export class BranchStrategy implements ObjectNodeStrategy {
@@ -60,6 +65,15 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
   /** Array of child node arrays for each oneOf branch */
   private readonly __oneOfChildNodeMapList__?: Map<string, ChildNode>[];
+
+  /** Set of all anyOf schema keys, undefined if no anyOf schema exists */
+  private readonly __anyOfKeySet__?: Set<string>;
+
+  /** Array of key sets for each anyOf branch, undefined if no anyOf schema exists */
+  private readonly __anyOfKeySetList__?: Set<string>[];
+
+  /** Array of child node arrays for each anyOf branch */
+  private readonly __anyOfChildNodeMapList__?: Map<string, ChildNode>[];
 
   /** Array of child nodes for regular properties (non-oneOf) */
   private readonly __propertyChildren__: ChildNode[];
@@ -172,12 +186,25 @@ export class BranchStrategy implements ObjectNodeStrategy {
       jsonSchema.propertyKeys,
     );
 
-    const oneOfKeyInfo = getOneOfKeyInfo(jsonSchema);
+    const oneOfKeyInfo = getCompositionKeyInfo('oneOf', jsonSchema);
     if (oneOfKeyInfo) {
-      this.__oneOfKeySet__ = oneOfKeyInfo.oneOfKeySet;
-      this.__oneOfKeySetList__ = oneOfKeyInfo.oneOfKeySetList;
+      this.__oneOfKeySet__ = oneOfKeyInfo.unionKeySet;
+      this.__oneOfKeySetList__ = oneOfKeyInfo.schemaKeySets;
+    }
+
+    const anyOfKeyInfo = getCompositionKeyInfo('anyOf', jsonSchema);
+    if (anyOfKeyInfo) {
+      this.__anyOfKeySet__ = anyOfKeyInfo.unionKeySet;
+      this.__anyOfKeySetList__ = anyOfKeyInfo.schemaKeySets;
+    }
+
+    if (this.__oneOfKeySet__ || this.__anyOfKeySet__) {
       this.__schemaKeys__ = sortWithReference(
-        [...propertyKeys, ...Array.from(this.__oneOfKeySet__)],
+        [
+          ...propertyKeys,
+          ...(this.__oneOfKeySet__ ? Array.from(this.__oneOfKeySet__) : []),
+          ...(this.__anyOfKeySet__ ? Array.from(this.__anyOfKeySet__) : []),
+        ],
         jsonSchema.propertyKeys,
       );
     } else this.__schemaKeys__ = propertyKeys;
@@ -188,8 +215,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
         if (!this.__draft__) this.__draft__ = {};
         if (input !== undefined && this.__draft__[property] === input) return;
         this.__draft__[property] = input;
-        if (this.__isolated__ && !this.__oneOfChildNodeMapList__)
-          this.__isolated__ = false;
+        if (this.__isolated__ && this.__isPristine__) this.__isolated__ = false;
         this.__emitChange__(SetValueOption.Default, batched);
       };
     host.subscribe(({ type, payload }) => {
@@ -228,24 +254,40 @@ export class BranchStrategy implements ObjectNodeStrategy {
       nodeFactory,
     );
 
-    this.__oneOfChildNodeMapList__ = getOneOfChildNodeMapList(
+    this.__oneOfChildNodeMapList__ = getCompositionNodeMapList(
       host,
+      'oneOf',
       jsonSchema,
       host.defaultValue,
       this.__childNodeMap__,
       this.__oneOfKeySetList__,
+      this.__anyOfKeySet__,
+      handelChangeFactory,
+      nodeFactory,
+    );
+
+    this.__anyOfChildNodeMapList__ = getCompositionNodeMapList(
+      host,
+      'anyOf',
+      jsonSchema,
+      host.defaultValue,
+      this.__childNodeMap__,
+      this.__anyOfKeySetList__,
+      this.__oneOfKeySet__,
       handelChangeFactory,
       nodeFactory,
     );
 
     this.__children__ = this.__propertyChildren__;
 
-    if (this.__oneOfChildNodeMapList__) {
-      const subnodes = [...this.__propertyChildren__];
+    const subnodes = [...this.__propertyChildren__];
+    if (this.__oneOfChildNodeMapList__)
       for (const childNodeMap of this.__oneOfChildNodeMapList__)
         for (const child of childNodeMap.values()) subnodes.push(child);
-      this.__subnodes__ = subnodes;
-    } else this.__subnodes__ = this.__propertyChildren__;
+    if (this.__anyOfChildNodeMapList__)
+      for (const childNodeMap of this.__anyOfChildNodeMapList__)
+        for (const child of childNodeMap.values()) subnodes.push(child);
+    this.__subnodes__ = subnodes;
 
     this.__locked__ = false;
 
@@ -253,7 +295,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     handleSetDefaultValue(this.__value__);
     this.__publishChildrenChange__();
 
-    this.__prepareOneOfChildren__();
+    this.__prepareCompositionChildren__();
   }
 
   /**
@@ -372,68 +414,209 @@ export class BranchStrategy implements ObjectNodeStrategy {
   }
 
   /** Previously active oneOf index for tracking oneOf branch changes */
-  private __previousIndex__: number = -1;
+  private __oneOfIndex__: number = -1;
+
+  /** Previously active anyOf index for tracking anyOf branch changes */
+  private __anyOfIndices__: number[] = [];
+
+  /** Function to validate composition value */
+  private __validateAllowedKey__: Fn<[key: string], boolean> | undefined;
+
+  /** Whether the object node has no oneOf and anyOf schema */
+  private get __isPristine__() {
+    return (
+      this.__oneOfChildNodeMapList__ === undefined &&
+      this.__anyOfChildNodeMapList__ === undefined
+    );
+  }
 
   /**
    * Updates child nodes when oneOf index changes, if oneOf schema exists.
    * @private
    */
-  private __prepareOneOfChildren__() {
-    if (!this.__oneOfChildNodeMapList__) return;
+  private __prepareCompositionChildren__() {
+    if (this.__isPristine__) return;
+    this.__validateAllowedKey__ = this.__createAllowedKeyValidator__();
     this.__host__.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateComputedProperties) {
-        if (!this.__oneOfChildNodeMapList__) return;
-
-        const host = this.__host__;
-        const current = host.oneOfIndex;
-        const previous = this.__previousIndex__;
         const isolation = this.__isolated__;
+        const oneOfChildNodeMap = this.__processOneOfChildren__(isolation);
+        const anyOfChildNodeMaps = this.__processAnyOfChildren__(isolation);
 
-        if (!isolation && current === previous) return;
+        if (oneOfChildNodeMap === null && anyOfChildNodeMaps === null) return;
         if (isolation) this.__isolated__ = false;
 
-        this.__locked__ = true;
-        const previousOneOfChildNodeMap =
-          previous > -1 ? this.__oneOfChildNodeMapList__[previous] : undefined;
-        if (previousOneOfChildNodeMap)
-          for (const child of previousOneOfChildNodeMap.values())
-            child.node.resetNode(false);
-
-        const oneOfChildNodeMap =
-          current > -1 ? this.__oneOfChildNodeMapList__[current] : undefined;
-        if (oneOfChildNodeMap)
-          for (const child of oneOfChildNodeMap.values()) {
-            const node = child.node;
-            node.resetNode(isolation, this.__value__?.[node.name]);
-          }
-
-        if (oneOfChildNodeMap) {
-          const children: ChildNode[] = [];
-          for (let i = 0, l = this.__schemaKeys__.length; i < l; i++) {
-            const key = this.__schemaKeys__[i];
-            const childNode =
-              this.__childNodeMap__.get(key) || oneOfChildNodeMap.get(key);
-            if (childNode) children.push(childNode);
-          }
-          this.__children__ = children;
-        } else this.__children__ = this.__propertyChildren__;
-        this.__locked__ = false;
-
-        this.__draft__ = processValueWithOneOfSchema(
-          this.__processValue__({ ...this.__value__, ...this.__draft__ }),
-          this.__oneOfKeySet__,
-          current > -1 ? this.__oneOfKeySetList__?.[current] : undefined,
-        );
-        this.__processComputedProperties__(this.__draft__);
-
-        if (host.validation)
-          host.adjustEnhancer(joinSegment(host.path, ENHANCED_KEY), current);
-
-        this.__emitChange__(SetValueOption.SoftReset);
-        this.__publishChildrenChange__();
-        this.__previousIndex__ = current;
+        this.__processChildren__(oneOfChildNodeMap, anyOfChildNodeMaps);
+        this.__processCompositionValue__();
       }
     });
+  }
+
+  /**
+   * Updates child nodes when oneOf index changes, if oneOf schema exists.
+   * @private
+   */
+  private __processOneOfChildren__(isolation: boolean) {
+    if (this.__oneOfChildNodeMapList__ === undefined) return null;
+    const host = this.__host__;
+    const current = host.oneOfIndex;
+    const previous = this.__oneOfIndex__;
+
+    if (!isolation && current === previous) return null;
+
+    this.__oneOfIndex__ = current;
+
+    this.__locked__ = true;
+    const previousOneOfChildNodeMap =
+      previous > -1 ? this.__oneOfChildNodeMapList__[previous] : undefined;
+    if (previousOneOfChildNodeMap)
+      for (const child of previousOneOfChildNodeMap.values())
+        child.node.resetNode(false);
+
+    const oneOfChildNodeMap =
+      current > -1 ? this.__oneOfChildNodeMapList__[current] : undefined;
+    if (oneOfChildNodeMap)
+      for (const child of oneOfChildNodeMap.values()) {
+        const node = child.node;
+        const alternatedNode =
+          previousOneOfChildNodeMap?.get(node.name)?.node || false;
+        node.resetNode(
+          isolation ||
+            (alternatedNode &&
+              isTerminalType(node.type) &&
+              node.type === alternatedNode.type),
+          true,
+          this.__value__?.[node.name],
+        );
+      }
+    this.__locked__ = false;
+
+    return oneOfChildNodeMap;
+  }
+
+  /**
+   * Updates child nodes when anyOf indices change, if anyOf schema exists.
+   * @param isolation - Whether the operation is in isolation mode
+   * @returns Array of active anyOf child node maps, null if no change needed, or undefined if no active anyOf branches
+   * @private
+   */
+  private __processAnyOfChildren__(isolation: boolean) {
+    if (this.__anyOfChildNodeMapList__ === undefined) return null;
+    const host = this.__host__;
+    const current = host.anyOfIndices;
+    const previous = this.__anyOfIndices__;
+
+    if (!isolation && primitiveArrayEqual(current, previous)) return null;
+
+    this.__anyOfIndices__ = current;
+
+    this.__locked__ = true;
+    const previousExclusive = differenceLite(previous, current);
+    if (previousExclusive.length > 0) {
+      for (let i = 0, l = previousExclusive.length; i < l; i++) {
+        const anyOfChildNodeMap =
+          this.__anyOfChildNodeMapList__[previousExclusive[i]];
+        for (const child of anyOfChildNodeMap.values())
+          child.node.resetNode(false);
+      }
+    }
+    if (current.length === 0) {
+      this.__locked__ = false;
+      return undefined;
+    }
+    const currentExclusive = differenceLite(current, previous);
+    const anyOfChildNodeMaps = new Array(current.length);
+    for (let i = 0, l = current.length; i < l; i++) {
+      const anyOfIndex = current[i];
+      const anyOfChildNodeMap = this.__anyOfChildNodeMapList__[anyOfIndex];
+      anyOfChildNodeMaps[i] = anyOfChildNodeMap;
+      if (currentExclusive.indexOf(anyOfIndex) === -1) continue;
+      for (const child of anyOfChildNodeMap.values()) {
+        const node = child.node;
+        node.resetNode(isolation, false, this.__value__?.[node.name]);
+      }
+    }
+    this.__locked__ = false;
+
+    return anyOfChildNodeMaps;
+  }
+
+  /**
+   * Updates the active children array based on current oneOf and anyOf selections.
+   * @param oneOfChildNodeMap - Active oneOf child node map (null if no oneOf or none selected)
+   * @param anyOfChildNodeMaps - Array of active anyOf child node maps (null if no anyOf or none selected)
+   * @private
+   */
+  private __processChildren__(
+    oneOfChildNodeMap: Map<string, ChildNode> | Nullish,
+    anyOfChildNodeMaps: Map<string, ChildNode>[] | Nullish,
+  ) {
+    if (oneOfChildNodeMap == null && anyOfChildNodeMaps == null)
+      this.__children__ = this.__propertyChildren__;
+    else {
+      const children: ChildNode[] = [];
+      for (let i = 0, l = this.__schemaKeys__.length; i < l; i++) {
+        const key = this.__schemaKeys__[i];
+        const childNode =
+          this.__childNodeMap__.get(key) ||
+          oneOfChildNodeMap?.get(key) ||
+          anyOfChildNodeMaps?.find((map) => map.has(key))?.get(key);
+        if (childNode) children.push(childNode);
+      }
+      this.__children__ = children;
+    }
+    this.__publishChildrenChange__();
+  }
+
+  /**
+   * Processes and validates the object value according to active composition branches.
+   * Filters out properties that are not allowed by current oneOf/anyOf selections.
+   * @private
+   */
+  private __processCompositionValue__() {
+    this.__draft__ = processValueWithValidate(
+      this.__processValue__({ ...this.__value__, ...this.__draft__ }),
+      this.__validateAllowedKey__,
+    );
+
+    this.__processComputedProperties__(this.__draft__);
+
+    if (this.__host__.validation)
+      this.__host__.adjustEnhancer(
+        joinSegment(this.__host__.path, ENHANCED_KEY),
+        this.__oneOfIndex__,
+      );
+
+    this.__emitChange__(SetValueOption.SoftReset);
+  }
+
+  /**
+   * Creates a validator function that determines whether a property key is allowed
+   * based on the current oneOf and anyOf selections.
+   * @returns Function that validates if a property key should be included in the object value
+   * @private
+   */
+  private __createAllowedKeyValidator__() {
+    return (key: string) => {
+      if (
+        this.__oneOfKeySet__?.has(key) &&
+        this.__oneOfKeySetList__ !== undefined
+      )
+        if (this.__oneOfIndex__ > -1)
+          return this.__oneOfKeySetList__[this.__oneOfIndex__].has(key);
+        else return false;
+      if (
+        this.__anyOfKeySet__?.has(key) &&
+        this.__anyOfKeySetList__ !== undefined
+      )
+        if (this.__anyOfIndices__.length > 0) {
+          for (let i = 0, l = this.__anyOfIndices__.length; i < l; i++)
+            if (this.__anyOfKeySetList__[this.__anyOfIndices__[i]].has(key))
+              return true;
+          return false;
+        } else return false;
+      return true;
+    };
   }
 
   /**

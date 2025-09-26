@@ -136,10 +136,9 @@ export const differenceBy = <Type1, Type2>(
   for (let i = 0, l = exclude.length; i < l; i++)
     excludeSet.add(mapper(exclude[i]));
   const result: Type1[] = [];
-  for (let i = 0, l = source.length; i < l; i++) {
-    const item = source[i];
-    const mappedItem = mapper(item);
-    if (!excludeSet.has(mappedItem)) result[result.length] = item;
+  for (let i = 0, e = source[0], l = source.length; i < l; i++, e = source[i]) {
+    const mappedItem = mapper(e);
+    if (!excludeSet.has(mappedItem)) result[result.length] = e;
   }
   return result;
 };

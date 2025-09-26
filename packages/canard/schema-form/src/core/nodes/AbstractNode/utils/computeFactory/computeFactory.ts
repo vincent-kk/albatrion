@@ -1,7 +1,10 @@
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import { checkComputedOptionFactory } from './utils/checkComputedOptionFactory';
-import { getConditionIndexFactory } from './utils/getConditionIndexFactory';
+import {
+  getConditionIndexFactory,
+  getConditionIndicesFactory,
+} from './utils/getConditionIndexFactory';
 import { getObservedValuesFactory } from './utils/getObservedValuesFactory';
 import { getPathManager } from './utils/getPathManager';
 
@@ -17,6 +20,7 @@ export const computeFactory = (
 ) => {
   const checkComputedOption = checkComputedOptionFactory(schema, rootSchema);
   const getConditionIndex = getConditionIndexFactory(schema);
+  const getConditionIndices = getConditionIndicesFactory(schema);
   const getObservedValues = getObservedValuesFactory(schema);
   const pathManager = getPathManager();
   return {
@@ -52,6 +56,12 @@ export const computeFactory = (
      * @returns Index of the oneOf branch
      */
     oneOfIndex: getConditionIndex(pathManager, 'oneOf', 'if'),
+    /**
+     * Calculate the indices of the anyOf branches
+     * @param dependencies - List of dependencies
+     * @returns Indices of the anyOf branches
+     */
+    anyOfIndices: getConditionIndices(pathManager, 'anyOf', 'if'),
     /**
      * Calculate the list of values to watch
      * @param dependencies - List of dependencies

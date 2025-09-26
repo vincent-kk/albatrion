@@ -1,32 +1,19 @@
 import { isArray } from '@winglet/common-utils/filter';
-import {
-  countKey,
-  getEmptyObject,
-  getFirstKey,
-} from '@winglet/common-utils/object';
 
-import type { Dictionary, Fn } from '@aileron/declare';
+import type { Fn } from '@aileron/declare';
 
 import { JsonSchemaError } from '@/schema-form/errors';
-import { combineConditions } from '@/schema-form/helpers/dynamicExpression';
 import type {
   JsonSchemaWithVirtual,
   PartialJsonSchema,
 } from '@/schema-form/types';
 
 import type { PathManager } from '../getPathManager';
-import { JSON_POINTER_PATH_REGEX } from '../regex';
-import { ALIAS, type ConditionIndexName } from '../type';
-import { getExpressionFromSchema } from './utils/getExpressionFromSchema';
+import type { ConditionIndexName } from '../type';
+import { extractConditionInfo } from './utils/extractConditionInfo';
+import { getSimpleEquality } from './utils/getSimpleEquality';
 
 type GetConditionIndex = Fn<[dependencies: unknown[]], number>;
-
-/**
- * Regular expression pattern for simple equality comparison
- * @example Matches expressions in the form dependencies[n] === "value"
- */
-const SIMPLE_EQUALITY_REGEX =
-  /^\s*dependencies\[(\d+)\]\s*===\s*(['"])([^'"]+)\2\s*$/;
 
 /**
  * Creates a function to calculate the index of condition schema.
@@ -47,94 +34,27 @@ export const getConditionIndexFactory =
     fieldName: string,
     conditionField: ConditionIndexName,
   ): GetConditionIndex | undefined => {
-    // Conditional Index is only available for object schemas(oneOf, anyOf, etc.)
     if (jsonSchema.type !== 'object') return undefined;
 
     const conditionSchemas: PartialJsonSchema[] = jsonSchema[fieldName];
     if (!isArray(conditionSchemas)) return undefined;
 
-    const expressions: string[] = [];
-    const schemaIndices: number[] = [];
+    const { expressions, schemaIndices } = extractConditionInfo(
+      conditionSchemas,
+      conditionField,
+      pathManager,
+    );
 
-    // Collect only valid expressions and maintain original schema indices
-    for (let i = 0, l = conditionSchemas.length; i < l; i++) {
-      const oneOfSchema = conditionSchemas[i];
-      if (!oneOfSchema) continue;
+    const length = expressions.length;
+    if (length === 0) return undefined;
 
-      // Extract condition from `computed.[<conditionField>]` or `&[<conditionField>]` field
-      const condition: boolean | string | undefined =
-        oneOfSchema.computed?.[conditionField] ??
-        oneOfSchema[ALIAS + conditionField];
+    const simpleEquality = getSimpleEquality(expressions, schemaIndices);
 
-      if (typeof condition === 'boolean') {
-        if (condition === true) {
-          expressions.push('true');
-          schemaIndices.push(i);
-        }
-        continue;
-      }
+    if (simpleEquality) return simpleEquality;
 
-      const expression = combineConditions([
-        typeof condition === 'string' ? condition.trim() : null,
-        getExpressionFromSchema(oneOfSchema),
-      ]);
-
-      if (expression === null) continue;
-      expressions.push(
-        expression
-          .replace(JSON_POINTER_PATH_REGEX, (path) => {
-            pathManager.set(path);
-            return `dependencies[${pathManager.findIndex(path)}]`;
-          })
-          .replace(/;$/, ''),
-      );
-      schemaIndices.push(i);
-    }
-
-    if (expressions.length === 0) return undefined;
-
-    // Analysis for simple equality comparison optimization
-    const equalityDictionary: Dictionary<Dictionary<number>> = getEmptyObject();
-    let isSimpleEquality = true;
-
-    for (let i = 0, l = expressions.length; i < l; i++) {
-      if (expressions[i] === 'true') {
-        isSimpleEquality = false;
-        break;
-      }
-
-      // Match simple equality pattern
-      const matches = expressions[i].match(SIMPLE_EQUALITY_REGEX);
-      if (matches) {
-        const depIndex = matches[1];
-        const value = matches[3];
-        if (equalityDictionary[depIndex] === undefined)
-          equalityDictionary[depIndex] = getEmptyObject();
-        if (value in equalityDictionary[depIndex]) continue;
-        equalityDictionary[depIndex][value] = schemaIndices[i];
-      } else {
-        // Exclude complex expressions from optimization
-        isSimpleEquality = false;
-        break;
-      }
-    }
-
-    // Simple equality optimization: when all conditions are simple and use only one dependency
-    if (isSimpleEquality && countKey(equalityDictionary) === 1) {
-      const dependencyIndex = Number(getFirstKey(equalityDictionary));
-      const valueMap = equalityDictionary[dependencyIndex];
-      return (dependencies: unknown[]) => {
-        const value = dependencies[dependencyIndex];
-        return typeof value === 'string' && value in valueMap
-          ? valueMap[value]
-          : -1;
-      };
-    }
-
-    // General conditional expression handling: dynamic function generation through Function constructor
-    const lines = new Array<string>(expressions.length);
-    for (let i = 0, l = expressions.length; i < l; i++)
-      lines[i] = `if(${expressions[i]}) return ${schemaIndices[i]};`;
+    const lines = new Array<string>(length);
+    for (let i = 0, exp = expressions[0]; i < length; i++, exp = expressions[i])
+      lines[i] = `if(${exp}) return ${schemaIndices[i]};`;
 
     try {
       return new Function(

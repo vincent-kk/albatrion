@@ -4,6 +4,13 @@ import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
 
 import type { JsonSchema } from '@/schema-form/types';
 
+/**
+ * Creates a JSON Schema scanner configured for resolving $ref references
+ *
+ * @param referenceTable - Map containing reference keys and their resolved schemas
+ * @param maxDepth - Maximum depth for reference resolution to prevent infinite recursion
+ * @returns JsonSchemaScanner instance configured with reference resolution options
+ */
 export const getResolveSchemaScanner = (
   referenceTable: Map<string, JsonSchema>,
   maxDepth: number,
