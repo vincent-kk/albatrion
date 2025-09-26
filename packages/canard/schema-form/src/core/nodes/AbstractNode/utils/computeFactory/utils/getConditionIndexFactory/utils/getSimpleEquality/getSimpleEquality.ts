@@ -32,7 +32,7 @@ export const getSimpleEquality = (
   expressions: string[],
   schemaIndices: number[],
 ) => {
-  const equalityDictionary: Dictionary<Dictionary<number>> = getEmptyObject();
+  const equalityDictionary = getEmptyObject<Dictionary<number>>();
   let isSimpleEquality = true;
   for (let i = 0, l = expressions.length; i < l; i++) {
     if (expressions[i] === 'true') {
