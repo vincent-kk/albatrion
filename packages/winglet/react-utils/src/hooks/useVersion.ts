@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
@@ -255,10 +255,9 @@ import { useReference } from './useReference';
 export const useVersion = (callback?: Fn) => {
   const [version, setVersion] = useState(0);
   const callbackRef = useReference(callback);
-  const update = useCallback(() => {
+  const update = useRef(() => {
     callbackRef.current?.();
     setVersion((prev) => prev + 1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  return [version, update] as const;
+  });
+  return [version, update.current] as const;
 };

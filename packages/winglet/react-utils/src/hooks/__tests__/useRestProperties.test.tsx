@@ -194,4 +194,250 @@ describe('useRestProperties', () => {
     rerender({ props: { callback: () => {} } });
     expect(result.current).not.toBe(firstResult);
   });
+
+  it('동일한 내용의 새 객체가 전달되면 이전 참조를 유지해야 한다', () => {
+    const { result, rerender } = renderHook(
+      ({ props }) => useRestProperties(props),
+      {
+        initialProps: { props: { a: 1, b: 2, c: 3 } },
+      },
+    );
+
+    const firstResult = result.current;
+
+    rerender({ props: { a: 1, b: 2, c: 3 } });
+    expect(result.current).toBe(firstResult);
+
+    rerender({ props: { a: 1, b: 2, c: 3 } });
+    expect(result.current).toBe(firstResult);
+  });
+
+  it('키 추가 시 새로운 참조를 반환해야 한다', () => {
+    const { result, rerender } = renderHook(
+      ({ props }) => useRestProperties(props),
+      {
+        initialProps: { props: { a: 1, b: 2 } as any },
+      },
+    );
+
+    const firstResult = result.current;
+
+    rerender({ props: { a: 1, b: 2, c: 3 } });
+    expect(result.current).not.toBe(firstResult);
+    expect(result.current).toEqual({ a: 1, b: 2, c: 3 });
+  });
+
+  it('키 삭제 시 새로운 참조를 반환해야 한다', () => {
+    const { result, rerender } = renderHook(
+      ({ props }) => useRestProperties(props),
+      {
+        initialProps: { props: { a: 1, b: 2, c: 3 } as any },
+      },
+    );
+
+    const firstResult = result.current;
+
+    rerender({ props: { a: 1, b: 2 } });
+    expect(result.current).not.toBe(firstResult);
+    expect(result.current).toEqual({ a: 1, b: 2 });
+  });
+
+  it('여러 속성 중 하나만 변경되어도 감지해야 한다', () => {
+    const { result, rerender } = renderHook(
+      ({ props }) => useRestProperties(props),
+      {
+        initialProps: { props: { a: 1, b: 2, c: 3, d: 4, e: 5 } },
+      },
+    );
+
+    const firstResult = result.current;
+
+    rerender({ props: { a: 1, b: 2, c: 3, d: 999, e: 5 } });
+    expect(result.current).not.toBe(firstResult);
+  });
+
+  it('0, false, 빈 문자열 등 falsy 값도 정확하게 비교해야 한다', () => {
+    const { result, rerender } = renderHook(
+      ({ props }) => useRestProperties(props),
+      {
+        initialProps: { props: { a: 0, b: false, c: '', d: null } },
+      },
+    );
+
+    const firstResult = result.current;
+
+    rerender({ props: { a: 0, b: false, c: '', d: null } });
+    expect(result.current).toBe(firstResult);
+
+    rerender({ props: { a: 1, b: false, c: '', d: null } });
+    expect(result.current).not.toBe(firstResult);
+  });
+
+  it('같은 배열 참조가 유지되면 이전 참조를 반환해야 한다', () => {
+    const arr = [1, 2, 3];
+    const obj = { value: 1 };
+    const { result, rerender } = renderHook(
+      ({ props }) => useRestProperties(props),
+      {
+        initialProps: { props: { arr, obj } },
+      },
+    );
+
+    const firstResult = result.current;
+
+    rerender({ props: { arr, obj } });
+    expect(result.current).toBe(firstResult);
+  });
+
+  it('undefined에서 객체로, 객체에서 undefined로 변경 시 처리해야 한다', () => {
+    const { result, rerender } = renderHook(
+      ({ props }) => useRestProperties(props as any),
+      {
+        initialProps: { props: undefined } as any,
+      },
+    );
+
+    expect(result.current).toBeUndefined();
+
+    rerender({ props: { a: 1 } });
+    expect(result.current).toEqual({ a: 1 });
+
+    rerender({ props: undefined });
+    expect(result.current).toBeUndefined();
+  });
+
+  it('null에서 객체로, 객체에서 null로 변경 시 처리해야 한다', () => {
+    const { result, rerender } = renderHook(
+      ({ props }) => useRestProperties(props as any),
+      {
+        initialProps: { props: null } as any,
+      },
+    );
+
+    expect(result.current).toBeNull();
+
+    rerender({ props: { a: 1 } });
+    expect(result.current).toEqual({ a: 1 });
+
+    rerender({ props: null });
+    expect(result.current).toBeNull();
+  });
+
+  it('복잡한 객체 구조에서도 정확하게 동작해야 한다', () => {
+    const fn = () => {};
+    const arr = [1, 2, 3];
+    const nestedObj = { x: 1 };
+
+    const { result, rerender } = renderHook(
+      ({ props }) => useRestProperties(props),
+      {
+        initialProps: {
+          props: {
+            a: 1,
+            b: 'test',
+            c: true,
+            d: fn,
+            e: arr,
+            f: nestedObj,
+            g: null,
+            h: undefined,
+          },
+        },
+      },
+    );
+
+    const firstResult = result.current;
+
+    rerender({
+      props: {
+        a: 1,
+        b: 'test',
+        c: true,
+        d: fn,
+        e: arr,
+        f: nestedObj,
+        g: null,
+        h: undefined,
+      },
+    });
+    expect(result.current).toBe(firstResult);
+  });
+
+  it('props가 빈 객체에서 값이 있는 객체로 변경되어야 한다', () => {
+    const { result, rerender } = renderHook(
+      ({ props }) => useRestProperties(props),
+      {
+        initialProps: { props: {} },
+      },
+    );
+
+    const firstResult = result.current;
+
+    rerender({ props: { a: 1 } });
+    expect(result.current).not.toBe(firstResult);
+    expect(result.current).toEqual({ a: 1 });
+  });
+
+  it('props가 값이 있는 객체에서 빈 객체로 변경되어야 한다', () => {
+    const { result, rerender } = renderHook<any, any>(
+      ({ props }) => useRestProperties(props),
+      {
+        initialProps: { props: { a: 1, b: 2 } },
+      },
+    );
+
+    const firstResult = result.current;
+
+    rerender({ props: {} });
+    expect(result.current).not.toBe(firstResult);
+    expect(result.current).toEqual({});
+  });
+
+  it('Symbol을 키로 가진 속성도 정확하게 비교해야 한다', () => {
+    const sym = Symbol('test');
+    const { result, rerender } = renderHook(
+      ({ props }) => useRestProperties(props),
+      {
+        initialProps: { props: { a: 1, [sym]: 'symbol-value' } as any },
+      },
+    );
+
+    const firstResult = result.current;
+
+    rerender({ props: { a: 1, [sym]: 'symbol-value' } });
+    expect(result.current).toBe(firstResult);
+  });
+
+  it('많은 속성이 있는 객체도 성능 저하 없이 처리해야 한다', () => {
+    const largeObj: any = {};
+    for (let i = 0; i < 100; i++) {
+      largeObj[`key${i}`] = i;
+    }
+
+    const { result, rerender } = renderHook(
+      ({ props }) => useRestProperties(props),
+      {
+        initialProps: { props: largeObj },
+      },
+    );
+
+    const firstResult = result.current;
+
+    const largeObj2: any = {};
+    for (let i = 0; i < 100; i++) {
+      largeObj2[`key${i}`] = i;
+    }
+
+    rerender({ props: largeObj2 });
+    expect(result.current).toBe(firstResult);
+
+    const largeObj3: any = {};
+    for (let i = 0; i < 100; i++) {
+      largeObj3[`key${i}`] = i;
+    }
+    largeObj3.key50 = 999;
+
+    rerender({ props: largeObj3 });
+    expect(result.current).not.toBe(firstResult);
+  });
 });

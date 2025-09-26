@@ -64,4 +64,40 @@ describe('useVersion', () => {
     expect(callback1).toHaveBeenCalledTimes(1);
     expect(callback2).toHaveBeenCalledTimes(1);
   });
+
+  it('update 함수의 참조는 리렌더링 시에도 안정적으로 유지되어야 합니다', () => {
+    const { result, rerender } = renderHook(() => useVersion());
+    const [, firstUpdate] = result.current;
+
+    rerender();
+    const [, secondUpdate] = result.current;
+
+    rerender();
+    const [, thirdUpdate] = result.current;
+
+    expect(firstUpdate).toBe(secondUpdate);
+    expect(secondUpdate).toBe(thirdUpdate);
+  });
+
+  it('callback이 변경되어도 update 함수의 참조는 안정적으로 유지되어야 합니다', () => {
+    const callback1 = vi.fn();
+    const callback2 = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ callback }) => useVersion(callback),
+      {
+        initialProps: { callback: callback1 },
+      },
+    );
+
+    const [, firstUpdate] = result.current;
+
+    rerender({ callback: callback2 });
+    const [, secondUpdate] = result.current;
+
+    rerender({ callback: callback1 });
+    const [, thirdUpdate] = result.current;
+
+    expect(firstUpdate).toBe(secondUpdate);
+    expect(secondUpdate).toBe(thirdUpdate);
+  });
 });

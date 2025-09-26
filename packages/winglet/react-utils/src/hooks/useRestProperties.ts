@@ -160,23 +160,23 @@ export const useRestProperties = <T extends Dictionary>(props: T): T => {
     if (!props || props === propsRef.current) return props;
 
     // If props's keys are not same as the previous props's keys, set the props and keys
-    const currentKeys = Object.keys(props);
-    if (currentKeys.length !== keysRef.current.length) {
+    const keys = Object.keys(props);
+    const length = keys.length;
+    if (length !== keysRef.current.length) {
       propsRef.current = props;
-      keysRef.current = currentKeys;
+      keysRef.current = keys;
       return props;
     }
 
     // If props's keys are same as the previous props's keys, return the previous props
     // If this case is true, previous props is empty object also.
-    if (!currentKeys.length) return propsRef.current;
+    if (length === 0) return propsRef.current;
 
     // If props's values are not same as the previous props's values, set the props and keys
-    for (let i = 0, l = currentKeys.length; i < l; i++) {
-      const key = currentKeys[i];
-      if (props[key] !== propsRef.current[key]) {
+    for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
+      if (props[k] !== propsRef.current[k]) {
         propsRef.current = props;
-        keysRef.current = currentKeys;
+        keysRef.current = keys;
         return props;
       }
     }
