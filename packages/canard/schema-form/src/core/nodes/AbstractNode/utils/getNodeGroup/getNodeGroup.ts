@@ -1,6 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { isReactComponent } from '@winglet/react-utils/filter';
 
+import { isBranchType } from '@/schema-form/core/nodes/filter';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 /**
@@ -13,11 +14,7 @@ export const getNodeGroup = (
 ): 'branch' | 'terminal' => {
   if (typeof schema.terminal === 'boolean')
     return schema.terminal ? 'terminal' : 'branch';
-  if (
-    schema.type === 'array' ||
-    schema.type === 'object' ||
-    schema.type === 'virtual'
-  )
+  if (isBranchType(schema.type))
     return isTerminalFormTypeInput(schema) ? 'terminal' : 'branch';
   return 'terminal';
 };

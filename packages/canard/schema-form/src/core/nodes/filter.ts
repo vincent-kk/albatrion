@@ -1,3 +1,5 @@
+import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+
 import { AbstractNode } from './AbstractNode';
 import type { ArrayNode } from './ArrayNode';
 import type { BooleanNode } from './BooleanNode';
@@ -106,40 +108,6 @@ export const isSchemaNode = (input: any): input is SchemaNode =>
  *   }
  *
  *   return values;
- * }
- * ```
- *
- * @example
- * Form section collapsing:
- * ```typescript
- * function CollapsibleFormSection({ node }: { node: SchemaNode }) {
- *   const [collapsed, setCollapsed] = useState(false);
- *
- *   if (!isBranchNode(node)) {
- *     // Terminal nodes can't be collapsed
- *     return <FormField node={node} />;
- *   }
- *
- *   const childCount = node.children?.length || 0;
- *   const hasErrors = node.children?.some(child => child.node.error?.length > 0);
- *
- *   return (
- *     <Section className={hasErrors ? 'has-errors' : ''}>
- *       <SectionHeader onClick={() => setCollapsed(!collapsed)}>
- *         <ChevronIcon rotated={!collapsed} />
- *         {node.jsonSchema.title || node.path}
- *         <Badge>{childCount} fields</Badge>
- *       </SectionHeader>
- *
- *       {!collapsed && (
- *         <SectionContent>
- *           {node.children?.map(child => (
- *             <FormField key={child.key} node={child.node} />
- *           ))}
- *         </SectionContent>
- *       )}
- *     </Section>
- *   );
  * }
  * ```
  *
@@ -279,3 +247,23 @@ export const isTerminalNode = (
   node: SchemaNode,
 ): node is BooleanNode | NumberNode | StringNode | NullNode =>
   node.group === 'terminal';
+
+/**
+ * Type guard to check if a type is a terminal type.
+ * @param type - The type to check
+ * @returns Whether the type is a terminal type
+ */
+export const isTerminalType = (type: JsonSchemaWithVirtual['type']) =>
+  type === 'boolean' ||
+  type === 'number' ||
+  type === 'integer' ||
+  type === 'string' ||
+  type === 'null';
+
+/**
+ * Type guard to check if a type is a branch type.
+ * @param type - The type to check
+ * @returns Whether the type is a branch type
+ */
+export const isBranchType = (type: JsonSchemaWithVirtual['type']) =>
+  type === 'array' || type === 'object' || type === 'virtual';
