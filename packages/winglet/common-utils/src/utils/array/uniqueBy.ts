@@ -225,10 +225,9 @@ export const uniqueBy = <Type, SubType>(
   mapper: (item: Type) => SubType,
 ): Type[] => {
   const map = new Map<SubType, Type>();
-  for (let i = 0, l = source.length; i < l; i++) {
-    const item = source[i];
-    const key = mapper(item);
-    if (!map.has(key)) map.set(key, item);
+  for (let i = 0, e = source[0], l = source.length; i < l; i++, e = source[i]) {
+    const key = mapper(e);
+    if (!map.has(key)) map.set(key, e);
   }
   return Array.from(map.values());
 };

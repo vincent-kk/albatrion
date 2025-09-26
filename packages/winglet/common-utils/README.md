@@ -145,6 +145,7 @@ Use transpilers like Babel to convert the code to match your target environment.
 - **[`chunk`](./src/utils/array/chunk.ts)**: Function to split an array into chunks of specified size
 - **[`difference`](./src/utils/array/difference.ts)**: Function to return elements in the first array that are not in other arrays
 - **[`differenceBy`](./src/utils/array/differenceBy.ts)**: Function to compute the difference between arrays based on results processed by an iterator function
+- **[`differenceLite`](./src/utils/array/differenceLite.ts)**: Lightweight version of difference optimized for small arrays (< 100 elements)
 - **[`differenceWith`](./src/utils/array/differenceWith.ts)**: Function to compute the difference between arrays using a comparator function
 - **[`forEach`](./src/utils/array/forEach.ts)**: Function to execute a given function for each element in an array
 - **[`forEachDual`](./src/utils/array/forEachDual.ts)**: Function to iterate through two arrays simultaneously
@@ -152,6 +153,7 @@ Use transpilers like Babel to convert the code to match your target environment.
 - **[`groupBy`](./src/utils/array/groupBy.ts)**: Function to group array elements by the result of an iterator function
 - **[`intersection`](./src/utils/array/intersection.ts)**: Function to return elements that exist in all arrays
 - **[`intersectionBy`](./src/utils/array/intersectionBy.ts)**: Function to compute the intersection of arrays based on results processed by an iterator function
+- **[`intersectionLite`](./src/utils/array/intersectionLite.ts)**: Lightweight version of intersection optimized for small arrays (< 100 elements)
 - **[`intersectionWith`](./src/utils/array/intersectionWith.ts)**: Function to compute the intersection of arrays using a comparator function
 - **[`map`](./src/utils/array/map.ts)**: Function to apply a function to each element in an array and create a new array with the results
 - **[`unique`](./src/utils/array/unique.ts)**: Function to remove duplicate elements from an array
