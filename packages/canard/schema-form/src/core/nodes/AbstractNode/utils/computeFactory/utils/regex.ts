@@ -89,3 +89,10 @@ export const JSON_POINTER_PATH_REGEX = new RegExp(
     `)`,
   'g',
 );
+
+/**
+ * Regular expression pattern for simple equality comparison
+ * @example Matches expressions in the form dependencies[n] === "value" or (dependencies[n]) === "value"
+ */
+export const SIMPLE_EQUALITY_REGEX =
+  /^\s*\(?\s*dependencies\[(\d+)\]\s*\)?\s*===\s*(['"])([^'"]+)\2\s*$/;

@@ -12,6 +12,26 @@ import {
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 import type { PartialJsonSchema } from '@/schema-form/types';
 
+/**
+ * Extracts conditional expressions from a JSON Schema's properties
+ *
+ * This function analyzes JSON Schema properties to identify conditional constraints
+ * (const or enum values) and converts them into JavaScript expressions that can be
+ * evaluated to determine which schema should be applied based on dependency values.
+ *
+ * @param schema - The JSON Schema object to extract conditions from
+ * @returns A JavaScript expression string representing the conditions, or null if no conditions found
+ *
+ * @example
+ * // Input schema with const constraint:
+ * // { properties: { userType: { const: "admin" } } }
+ * // Returns: "dependencies[0] === 'admin'"
+ *
+ * @example
+ * // Input schema with multi-value enum:
+ * // { properties: { status: { enum: ["active", "pending"] } } }
+ * // Returns: "['active', 'pending'].includes(dependencies[0])"
+ */
 export const getExpressionFromSchema = (schema: PartialJsonSchema) => {
   const properties = schema.properties as Dictionary<PartialJsonSchema>;
   if (!isPlainObject(properties)) return null;
