@@ -33,27 +33,26 @@ export const getSimpleEquality = (
   schemaIndices: number[],
 ) => {
   const equalityDictionary = getEmptyObject<Dictionary<number>>();
-  let isSimpleEquality = true;
+  let invalid = false;
   for (let i = 0, l = expressions.length; i < l; i++) {
     if (expressions[i] === 'true') {
-      isSimpleEquality = false;
+      invalid = true;
       break;
     }
     const matches = expressions[i].match(SIMPLE_EQUALITY_REGEX);
-    if (matches) {
-      const depIndex = matches[1];
-      const value = matches[3];
-      if (equalityDictionary[depIndex] === undefined)
-        equalityDictionary[depIndex] = getEmptyObject();
-      if (value in equalityDictionary[depIndex]) continue;
-      equalityDictionary[depIndex][value] = schemaIndices[i];
-    } else {
-      isSimpleEquality = false;
+    if (matches === null) {
+      invalid = true;
       break;
     }
+    const index = matches[1];
+    const value = matches[3];
+    if (equalityDictionary[index] === undefined)
+      equalityDictionary[index] = getEmptyObject();
+    if (value in equalityDictionary[index]) continue;
+    equalityDictionary[index][value] = schemaIndices[i];
   }
 
-  if (!isSimpleEquality || countKey(equalityDictionary) > 1) return null;
+  if (invalid || countKey(equalityDictionary) > 1) return null;
 
   const dependencyIndex = Number(getFirstKey(equalityDictionary));
   const valueMap = equalityDictionary[dependencyIndex];
