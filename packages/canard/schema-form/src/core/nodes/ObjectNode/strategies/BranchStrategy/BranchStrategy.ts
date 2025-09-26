@@ -15,7 +15,6 @@ import type { Fn, Nullish } from '@aileron/declare';
 import { ENHANCED_KEY } from '@/schema-form/app/constants';
 import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
-import { isTerminalType } from '@/schema-form/core/nodes/filter';
 import {
   type ChildNode,
   type HandleChange,
@@ -25,6 +24,7 @@ import {
   type UnionSetValueOption,
 } from '@/schema-form/core/nodes/type';
 import { joinSegment } from '@/schema-form/helpers/jsonPointer';
+import { isTerminalType } from '@/schema-form/helpers/jsonSchema';
 import type { ObjectValue } from '@/schema-form/types';
 
 import type { ObjectNodeStrategy } from '../type';

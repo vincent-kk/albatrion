@@ -1,7 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { isReactComponent } from '@winglet/react-utils/filter';
 
-import { isBranchType } from '@/schema-form/core/nodes/filter';
+import { isBranchType } from '@/schema-form/helpers/jsonSchema';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 /**
