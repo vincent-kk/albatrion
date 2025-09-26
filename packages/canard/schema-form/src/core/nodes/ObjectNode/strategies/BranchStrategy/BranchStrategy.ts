@@ -1,4 +1,5 @@
 import {
+  differenceLite,
   primitiveArrayEqual,
   sortWithReference,
 } from '@winglet/common-utils/array';
@@ -14,6 +15,7 @@ import type { Fn, Nullish } from '@aileron/declare';
 import { ENHANCED_KEY } from '@/schema-form/app/constants';
 import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
+import { isTerminalType } from '@/schema-form/core/nodes/filter';
 import {
   type ChildNode,
   type HandleChange,
@@ -476,7 +478,16 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (oneOfChildNodeMap)
       for (const child of oneOfChildNodeMap.values()) {
         const node = child.node;
-        node.resetNode(isolation, this.__value__?.[node.name]);
+        const alternate =
+          previousOneOfChildNodeMap?.get(node.name)?.node || false;
+        node.resetNode(
+          isolation ||
+            (alternate &&
+              isTerminalType(node.type) &&
+              node.type === alternate.type),
+          true,
+          this.__value__?.[node.name],
+        );
       }
     this.__locked__ = false;
 
@@ -494,9 +505,11 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__anyOfIndices__ = current;
 
     this.__locked__ = true;
-    if (previous.length > 0) {
-      for (let i = 0, l = previous.length; i < l; i++) {
-        const anyOfChildNodeMap = this.__anyOfChildNodeMapList__[previous[i]];
+    const previousExclusive = differenceLite(previous, current);
+    if (previousExclusive.length > 0) {
+      for (let i = 0, l = previousExclusive.length; i < l; i++) {
+        const anyOfChildNodeMap =
+          this.__anyOfChildNodeMapList__[previousExclusive[i]];
         for (const child of anyOfChildNodeMap.values())
           child.node.resetNode(false);
       }
@@ -505,14 +518,17 @@ export class BranchStrategy implements ObjectNodeStrategy {
       this.__locked__ = false;
       return undefined;
     }
+    const currentExclusive = differenceLite(current, previous);
     const anyOfChildNodeMaps = new Array(current.length);
     for (let i = 0, l = current.length; i < l; i++) {
-      const anyOfChildNodeMap = this.__anyOfChildNodeMapList__[current[i]];
+      const anyOfIndex = current[i];
+      const anyOfChildNodeMap = this.__anyOfChildNodeMapList__[anyOfIndex];
+      anyOfChildNodeMaps[i] = anyOfChildNodeMap;
+      if (currentExclusive.indexOf(anyOfIndex) === -1) continue;
       for (const child of anyOfChildNodeMap.values()) {
         const node = child.node;
-        node.resetNode(isolation, this.__value__?.[node.name]);
+        node.resetNode(isolation, false, this.__value__?.[node.name]);
       }
-      anyOfChildNodeMaps[i] = anyOfChildNodeMap;
     }
     this.__locked__ = false;
 
