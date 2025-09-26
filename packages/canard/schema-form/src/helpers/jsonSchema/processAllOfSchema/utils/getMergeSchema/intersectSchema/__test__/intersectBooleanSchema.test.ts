@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 
 import type { BooleanSchema } from '@/schema-form/types';
 
-import { intersectBooleanSchema } from '../intersectSchema/intersectBooleanSchema';
+import { intersectBooleanSchema } from '../intersectBooleanSchema';
 
 describe('intersectBooleanSchema', () => {
   describe('공통 필드 처리', () => {

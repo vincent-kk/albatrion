@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 
 import type { StringSchema } from '@/schema-form/types';
 
-import { intersectStringSchema } from '../intersectSchema/intersectStringSchema';
+import { intersectStringSchema } from '../intersectStringSchema';
 
 describe('intersectStringSchema', () => {
   describe('Pattern 병합 (AND 결합)', () => {

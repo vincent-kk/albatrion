@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 
 import type { NullSchema } from '@/schema-form/types';
 
-import { intersectNullSchema } from '../intersectSchema/intersectNullSchema';
+import { intersectNullSchema } from '../intersectNullSchema';
 
 describe('intersectNullSchema', () => {
   describe('공통 필드 처리', () => {

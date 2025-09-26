@@ -3,8 +3,15 @@ import type { JsonSchema } from '@/schema-form/types';
 import { FIRST_WIN_FIELDS } from './constants';
 
 /**
- * First-Win 필드들을 처리합니다.
- * base에 값이 있으면 base 값 유지, 없으면 source 값 사용
+ * Processes first-win fields by preserving base values over source values.
+ *
+ * This function implements the "first-win" strategy for specific schema fields
+ * where the base schema's value takes precedence. If the base doesn't have a value,
+ * the source value is used. This is typically used for metadata fields like
+ * title, description, examples, etc.
+ *
+ * @param base - The base schema to modify (first-win priority)
+ * @param source - The source schema to merge from
  */
 export function processFirstWinFields<T extends JsonSchema>(
   base: T,

@@ -5,6 +5,13 @@ type CompositionKeyInfo = {
   schemaKeySets: Array<Set<string>>;
 };
 
+/**
+ * Extract composition key information from oneOf or anyOf schema branches
+ *
+ * @param scope - Type of composition schema ('oneOf' or 'anyOf')
+ * @param schema - Object schema containing composition definitions
+ * @returns Composition key information containing union of all keys and individual branch key sets, or undefined if no composition schema exists
+ */
 export const getCompositionKeyInfo = (
   scope: 'oneOf' | 'anyOf',
   schema: ObjectSchema,

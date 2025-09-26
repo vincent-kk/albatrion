@@ -2,6 +2,13 @@ import type { Fn } from '@aileron/declare';
 
 import type { ObjectValue } from '@/schema-form/types';
 
+/**
+ * Filter object value by validating each key with the provided validation function
+ *
+ * @param value - Object value to filter
+ * @param validate - Validation function that returns true for keys that should be included
+ * @returns Object value filtered according to validation function, or original value if no validation function provided
+ */
 export const processValueWithValidate = (
   value: ObjectValue | undefined,
   validate?: Fn<[key: string], boolean>,

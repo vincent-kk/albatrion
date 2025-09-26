@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 
 import type { NumberSchema } from '@/schema-form/types';
 
-import { intersectNumberSchema } from '../intersectSchema/intersectNumberSchema';
+import { intersectNumberSchema } from '../intersectNumberSchema';
 
 describe('intersectNumberSchema', () => {
   describe('Min/Max 범위 병합 (가장 제한적인 값)', () => {

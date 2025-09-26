@@ -9,13 +9,20 @@ import {
   intersectNumberSchema,
   intersectObjectSchema,
   intersectStringSchema,
-} from './utils/intersectSchema';
+} from './intersectSchema';
 
 type MergeSchema = Fn<
   [base: JsonSchema, source: Partial<JsonSchema>],
   JsonSchema
 >;
 
+/**
+ * Returns the appropriate schema intersection function based on the JSON Schema type.
+ * Each type has its own specialized merge logic for combining schemas in an allOf array.
+ *
+ * @param type - The JSON Schema type to get the merge function for
+ * @returns The merge function for the given type, or null if no merge function exists
+ */
 export const getMergeSchema = (
   type: JsonSchema['type'],
 ): MergeSchema | null => {

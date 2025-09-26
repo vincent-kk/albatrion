@@ -4,6 +4,16 @@ import type { JsonSchema } from '@/schema-form/types';
 import type { ArraySchema } from '@/schema-form/types';
 import type { ObjectSchema } from '@/schema-form/types';
 
+/**
+ * Distributes object properties from source into base schema using allOf composition.
+ *
+ * This function merges object properties by either directly assigning them to the base
+ * schema or distributing them through allOf composition when properties already exist.
+ * This enables proper schema merging for complex object intersection scenarios.
+ *
+ * @param base - The base object schema to modify
+ * @param source - The source object schema containing properties to distribute
+ */
 export const distributeAllOfProperties = (
   base: ObjectSchema,
   source: Partial<ObjectSchema>,
@@ -21,6 +31,16 @@ export const distributeAllOfProperties = (
   }
 };
 
+/**
+ * Distributes array items from source into base schema using allOf composition.
+ *
+ * This function merges array item schemas by either directly assigning them to the base
+ * schema or distributing them through allOf composition when items already exist.
+ * This enables proper schema merging for complex array intersection scenarios.
+ *
+ * @param base - The base array schema to modify
+ * @param source - The source array schema containing items to distribute
+ */
 export const distributeAllOfItems = (
   base: ArraySchema,
   source: Partial<ArraySchema>,

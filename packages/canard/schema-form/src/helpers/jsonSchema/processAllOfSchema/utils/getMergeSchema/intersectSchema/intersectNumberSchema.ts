@@ -10,6 +10,22 @@ import { processOverwriteFields } from './utils/processOverwriteFields';
 import { unionRequired } from './utils/unionRequired';
 import { validateRange } from './utils/validateRange';
 
+/**
+ * Intersects two number schema objects, merging their constraints and properties.
+ *
+ * This function performs a complete intersection of number-specific schema properties including:
+ * - Numeric constraints (minimum, maximum, exclusive bounds)
+ * - Multiple of constraints
+ * - Enum and const value intersections
+ * - Type promotion (number to integer if applicable)
+ * - Required field unions
+ * - Validation of constraint consistency
+ *
+ * @param base - The base number schema to modify and return
+ * @param source - The source number schema to intersect with base
+ * @returns The modified base schema with intersected properties
+ * @throws {JsonSchemaError} When constraints create invalid ranges or conflicting values
+ */
 export const intersectNumberSchema = (
   base: NumberSchema,
   source: Partial<NumberSchema>,

@@ -10,6 +10,21 @@ import { processOverwriteFields } from './utils/processOverwriteFields';
 import { unionRequired } from './utils/unionRequired';
 import { validateRange } from './utils/validateRange';
 
+/**
+ * Intersects two string schema objects, merging their constraints and properties.
+ *
+ * This function performs a complete intersection of string-specific schema properties including:
+ * - Length constraints (minLength, maxLength)
+ * - Pattern matching (regex patterns combined with AND logic)
+ * - Enum and const value intersections
+ * - Required field unions
+ * - Validation of constraint consistency
+ *
+ * @param base - The base string schema to modify and return
+ * @param source - The source string schema to intersect with base
+ * @returns The modified base schema with intersected properties
+ * @throws {JsonSchemaError} When constraints create invalid ranges or conflicting values
+ */
 export const intersectStringSchema = (
   base: StringSchema,
   source: Partial<StringSchema>,

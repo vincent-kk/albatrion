@@ -494,6 +494,12 @@ export class BranchStrategy implements ObjectNodeStrategy {
     return oneOfChildNodeMap;
   }
 
+  /**
+   * Updates child nodes when anyOf indices change, if anyOf schema exists.
+   * @param isolation - Whether the operation is in isolation mode
+   * @returns Array of active anyOf child node maps, null if no change needed, or undefined if no active anyOf branches
+   * @private
+   */
   private __processAnyOfChildren__(isolation: boolean) {
     if (this.__anyOfChildNodeMapList__ === undefined) return null;
     const host = this.__host__;
@@ -535,6 +541,12 @@ export class BranchStrategy implements ObjectNodeStrategy {
     return anyOfChildNodeMaps;
   }
 
+  /**
+   * Updates the active children array based on current oneOf and anyOf selections.
+   * @param oneOfChildNodeMap - Active oneOf child node map (null if no oneOf or none selected)
+   * @param anyOfChildNodeMaps - Array of active anyOf child node maps (null if no anyOf or none selected)
+   * @private
+   */
   private __processChildren__(
     oneOfChildNodeMap: Map<string, ChildNode> | Nullish,
     anyOfChildNodeMaps: Map<string, ChildNode>[] | Nullish,
@@ -556,6 +568,11 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__publishChildrenChange__();
   }
 
+  /**
+   * Processes and validates the object value according to active composition branches.
+   * Filters out properties that are not allowed by current oneOf/anyOf selections.
+   * @private
+   */
   private __processCompositionValue__() {
     this.__draft__ = processValueWithValidate(
       this.__processValue__({ ...this.__value__, ...this.__draft__ }),
@@ -573,6 +590,12 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__emitChange__(SetValueOption.SoftReset);
   }
 
+  /**
+   * Creates a validator function that determines whether a property key is allowed
+   * based on the current oneOf and anyOf selections.
+   * @returns Function that validates if a property key should be included in the object value
+   * @private
+   */
   private __createAllowedKeyValidator__() {
     return (key: string) => {
       if (

@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 
 import type { ArraySchema } from '@/schema-form/types';
 
-import { intersectArraySchema } from '../intersectSchema/intersectArraySchema';
+import { intersectArraySchema } from '../intersectArraySchema';
 
 describe('intersectArraySchema', () => {
   describe('Items 제약 병합 (가장 제한적인 값)', () => {

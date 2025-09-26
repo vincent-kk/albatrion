@@ -3,8 +3,14 @@ import type { JsonSchema } from '@/schema-form/types';
 import { EXCLUDE_FIELDS } from './constants';
 
 /**
- * 덮어쓰기 필드들을 처리합니다.
- * First-Win과 Special 필드를 제외한 모든 필드는 source 값으로 덮어씁니다.
+ * Processes overwrite fields by copying source values to base, excluding special fields.
+ *
+ * This function implements the "overwrite" strategy for schema fields that are not
+ * handled by special processing logic. It copies all fields from source to base
+ * except those in the EXCLUDE_FIELDS set (first-win, special, and ignored fields).
+ *
+ * @param base - The base schema to modify
+ * @param source - The source schema to copy fields from
  */
 export function processOverwriteFields<T extends JsonSchema>(
   base: T,

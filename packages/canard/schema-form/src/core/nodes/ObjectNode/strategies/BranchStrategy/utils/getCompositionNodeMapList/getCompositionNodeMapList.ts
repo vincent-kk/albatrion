@@ -16,6 +16,20 @@ import type {
   ObjectValue,
 } from '@/schema-form/types';
 
+/**
+ * Generate child node maps for composition schemas (oneOf/anyOf)
+ *
+ * @param parentNode - Parent ObjectNode that contains the composition
+ * @param scope - Type of composition schema ('oneOf' or 'anyOf')
+ * @param jsonSchema - Object schema containing composition definitions
+ * @param defaultValue - Default values for child properties
+ * @param childNodeMap - Map of existing child nodes to check for conflicts
+ * @param keySetList - List of allowed key sets for each composition branch (for validation)
+ * @param excludeKeySet - Set of keys to exclude from composition processing
+ * @param handelChangeFactory - Factory function to create change handlers for child nodes
+ * @param nodeFactory - Factory function to create schema nodes
+ * @returns Array of child node maps for each composition branch, or undefined if no composition schema exists
+ */
 export const getCompositionNodeMapList = (
   parentNode: ObjectNode,
   scope: 'oneOf' | 'anyOf',

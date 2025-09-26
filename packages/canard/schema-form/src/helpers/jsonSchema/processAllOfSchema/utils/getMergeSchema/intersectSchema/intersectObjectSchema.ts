@@ -11,6 +11,22 @@ import { processOverwriteFields } from './utils/processOverwriteFields';
 import { unionRequired } from './utils/unionRequired';
 import { validateRange } from './utils/validateRange';
 
+/**
+ * Intersects two object schema objects, merging their constraints and properties.
+ *
+ * This function performs a complete intersection of object-specific schema properties including:
+ * - Property count constraints (minProperties, maxProperties)
+ * - Property name constraints (intersects string schemas for propertyNames)
+ * - Enum and const value intersections (with deep equality)
+ * - Property schema distribution through allOf
+ * - Required field unions
+ * - Validation of constraint consistency
+ *
+ * @param base - The base object schema to modify and return
+ * @param source - The source object schema to intersect with base
+ * @returns The modified base schema with intersected properties
+ * @throws {JsonSchemaError} When constraints create invalid ranges or conflicting values
+ */
 export const intersectObjectSchema = (
   base: ObjectSchema,
   source: Partial<ObjectSchema>,
