@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import { primitiveArrayEqual } from '../primitiveArrayEqual';
 
 describe('primitiveArrayEqual', () => {
@@ -115,7 +116,10 @@ describe('primitiveArrayEqual', () => {
       const arr = [1, 2, 3];
       const array1 = [arr, arr];
       const array2 = [arr, arr];
-      const array3 = [[1, 2, 3], [1, 2, 3]]; // Different array instances
+      const array3 = [
+        [1, 2, 3],
+        [1, 2, 3],
+      ]; // Different array instances
 
       expect(primitiveArrayEqual(array1, array2)).toBe(true);
       expect(primitiveArrayEqual(array1, array3)).toBe(false);
@@ -170,7 +174,9 @@ describe('primitiveArrayEqual', () => {
       const size = 10000;
       const array1 = Array.from({ length: size }, (_, i) => i);
       const array2 = Array.from({ length: size }, (_, i) => i);
-      const array3 = Array.from({ length: size }, (_, i) => i === size - 1 ? -1 : i);
+      const array3 = Array.from({ length: size }, (_, i) =>
+        i === size - 1 ? -1 : i,
+      );
 
       expect(primitiveArrayEqual(array1, array2)).toBe(true);
       expect(primitiveArrayEqual(array1, array3)).toBe(false);

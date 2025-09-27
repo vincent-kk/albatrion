@@ -6,8 +6,8 @@
  * optimized for primitive values (strings, numbers, booleans, null, undefined) but
  * will also work with object references (comparing by reference, not deep equality).
  *
- * @param array1 - First array to compare
- * @param array2 - Second array to compare
+ * @param base - First array to compare
+ * @param target - Second array to compare
  * @returns `true` if arrays have the same length and all elements are strictly equal, `false` otherwise
  *
  * @example
@@ -63,9 +63,9 @@
  * **Limitations:** Does not perform deep comparison of objects or nested arrays.
  * For deep equality, consider using a deep comparison utility.
  */
-export const primitiveArrayEqual = (array1: unknown[], array2: unknown[]) => {
-  if (array1.length !== array2.length) return false;
-  for (let i = 0, l = array1.length; i < l; i++)
-    if (array1[i] !== array2[i]) return false;
+export const primitiveArrayEqual = (base: unknown[], target: unknown[]) => {
+  if (base.length !== target.length) return false;
+  for (let i = 0, e = base[0], l = base.length; i < l; i++, e = base[i])
+    if (e !== target[i]) return false;
   return true;
 };
