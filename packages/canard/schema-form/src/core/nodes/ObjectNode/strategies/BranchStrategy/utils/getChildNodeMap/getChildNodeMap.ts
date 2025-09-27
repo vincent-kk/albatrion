@@ -4,13 +4,13 @@ import type { Fn, Nullish } from '@aileron/declare';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import type {
-  ChildNode,
   HandleChange,
   SchemaNodeFactory,
 } from '@/schema-form/core/nodes/type';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
+import type { ChildNodeMap } from '../../type';
 import type { ConditionsMap } from '../getConditionsMap';
 import type {
   VirtualReference,
@@ -41,8 +41,8 @@ export const getChildNodeMap = (
   virtualReferenceFieldsMap: VirtualReferenceFieldsMap | undefined,
   handelChangeFactory: Fn<[name: string], HandleChange>,
   nodeFactory: SchemaNodeFactory,
-) => {
-  const childNodeMap = new Map<string, ChildNode>();
+): ChildNodeMap => {
+  const childNodeMap = new Map() as ChildNodeMap;
   const properties = jsonSchema.properties;
   if (!properties) return childNodeMap;
   const required = jsonSchema.required;

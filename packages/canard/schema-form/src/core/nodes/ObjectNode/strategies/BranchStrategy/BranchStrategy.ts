@@ -28,6 +28,7 @@ import { isTerminalType } from '@/schema-form/helpers/jsonSchema';
 import type { ObjectValue } from '@/schema-form/types';
 
 import type { ObjectNodeStrategy } from '../type';
+import type { ChildNodeMap } from './type';
 import {
   type FieldConditionMap,
   getChildNodeMap,
@@ -64,7 +65,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   private readonly __oneOfKeySetList__?: Set<string>[];
 
   /** Array of child node arrays for each oneOf branch */
-  private readonly __oneOfChildNodeMapList__?: Map<string, ChildNode>[];
+  private readonly __oneOfChildNodeMapList__?: ChildNodeMap[];
 
   /** Set of all anyOf schema keys, undefined if no anyOf schema exists */
   private readonly __anyOfKeySet__?: Set<string>;
@@ -73,7 +74,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   private readonly __anyOfKeySetList__?: Set<string>[];
 
   /** Array of child node arrays for each anyOf branch */
-  private readonly __anyOfChildNodeMapList__?: Map<string, ChildNode>[];
+  private readonly __anyOfChildNodeMapList__?: ChildNodeMap[];
 
   /** Array of child nodes for regular properties (non-oneOf) */
   private readonly __propertyChildren__: ChildNode[];
@@ -82,7 +83,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   private readonly __fieldConditionMap__?: FieldConditionMap;
 
   /** Map of property keys to child nodes */
-  private readonly __childNodeMap__: Map<string, ChildNode>;
+  private readonly __childNodeMap__: ChildNodeMap;
 
   /** Flag indicating whether the node is in isolation mode (affects condition processing) */
   private __isolated__: boolean = false;
@@ -416,8 +417,14 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /** Previously active oneOf index for tracking oneOf branch changes */
   private __oneOfIndex__: number = -1;
 
+  /** Active oneOf child node map */
+  private __oneOfChildNodeMap__: ChildNodeMap | null = null;
+
   /** Previously active anyOf index for tracking anyOf branch changes */
   private __anyOfIndices__: number[] = [];
+
+  /** Active anyOf child node maps */
+  private __anyOfChildNodeMaps__: ChildNodeMap[] | null = null;
 
   /** Function to validate composition value */
   private __validateAllowedKey__: Fn<[key: string], boolean> | undefined;
@@ -458,23 +465,21 @@ export class BranchStrategy implements ObjectNodeStrategy {
    */
   private __processOneOfChildren__(isolation: boolean) {
     if (this.__oneOfChildNodeMapList__ === undefined) return null;
-    const host = this.__host__;
-    const current = host.oneOfIndex;
+
+    const current = this.__host__.oneOfIndex;
     const previous = this.__oneOfIndex__;
 
-    if (!isolation && current === previous) return null;
+    if (!isolation && current === previous) return this.__oneOfChildNodeMap__;
 
-    this.__oneOfIndex__ = current;
+    const oneOfChildNodeMap =
+      current > -1 ? this.__oneOfChildNodeMapList__[current] : null;
 
     this.__locked__ = true;
     const previousOneOfChildNodeMap =
-      previous > -1 ? this.__oneOfChildNodeMapList__[previous] : undefined;
+      previous > -1 ? this.__oneOfChildNodeMapList__[previous] : null;
     if (previousOneOfChildNodeMap)
       for (const child of previousOneOfChildNodeMap.values())
         child.node.resetNode(false);
-
-    const oneOfChildNodeMap =
-      current > -1 ? this.__oneOfChildNodeMapList__[current] : undefined;
     if (oneOfChildNodeMap)
       for (const child of oneOfChildNodeMap.values()) {
         const node = child.node;
@@ -491,6 +496,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
       }
     this.__locked__ = false;
 
+    this.__oneOfIndex__ = current;
+    this.__oneOfChildNodeMap__ = oneOfChildNodeMap;
+
     return oneOfChildNodeMap;
   }
 
@@ -502,43 +510,43 @@ export class BranchStrategy implements ObjectNodeStrategy {
    */
   private __processAnyOfChildren__(isolation: boolean) {
     if (this.__anyOfChildNodeMapList__ === undefined) return null;
-    const host = this.__host__;
-    const current = host.anyOfIndices;
+
+    const current = this.__host__.anyOfIndices;
     const previous = this.__anyOfIndices__;
 
-    if (!isolation && primitiveArrayEqual(current, previous)) return null;
+    if (!isolation && primitiveArrayEqual(current, previous))
+      return this.__anyOfChildNodeMaps__;
 
-    this.__anyOfIndices__ = current;
+    const anyOfChildNodeMaps = new Array<ChildNodeMap>(current.length);
+    for (let i = 0, l = current.length; i < l; i++)
+      anyOfChildNodeMaps[i] = this.__anyOfChildNodeMapList__[current[i]];
 
     this.__locked__ = true;
     const previousExclusive = differenceLite(previous, current);
-    if (previousExclusive.length > 0) {
+    if (previousExclusive.length > 0)
       for (let i = 0, l = previousExclusive.length; i < l; i++) {
         const anyOfChildNodeMap =
           this.__anyOfChildNodeMapList__[previousExclusive[i]];
         for (const child of anyOfChildNodeMap.values())
           child.node.resetNode(false);
       }
-    }
-    if (current.length === 0) {
-      this.__locked__ = false;
-      return undefined;
-    }
     const currentExclusive = differenceLite(current, previous);
-    const anyOfChildNodeMaps = new Array(current.length);
-    for (let i = 0, l = current.length; i < l; i++) {
-      const anyOfIndex = current[i];
-      const anyOfChildNodeMap = this.__anyOfChildNodeMapList__[anyOfIndex];
-      anyOfChildNodeMaps[i] = anyOfChildNodeMap;
-      if (currentExclusive.indexOf(anyOfIndex) === -1) continue;
-      for (const child of anyOfChildNodeMap.values()) {
-        const node = child.node;
-        node.resetNode(isolation, false, this.__value__?.[node.name]);
+    if (currentExclusive.length > 0)
+      for (let i = 0, l = currentExclusive.length; i < l; i++) {
+        const anyOfChildNodeMap =
+          this.__anyOfChildNodeMapList__[currentExclusive[i]];
+        for (const child of anyOfChildNodeMap.values()) {
+          const node = child.node;
+          node.resetNode(isolation, false, this.__value__?.[node.name]);
+        }
       }
-    }
     this.__locked__ = false;
 
-    return anyOfChildNodeMaps;
+    this.__anyOfIndices__ = current;
+    this.__anyOfChildNodeMaps__ =
+      anyOfChildNodeMaps.length > 0 ? anyOfChildNodeMaps : null;
+
+    return this.__anyOfChildNodeMaps__;
   }
 
   /**
@@ -548,19 +556,19 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @private
    */
   private __processChildren__(
-    oneOfChildNodeMap: Map<string, ChildNode> | Nullish,
-    anyOfChildNodeMaps: Map<string, ChildNode>[] | Nullish,
+    oneOfChildNodeMap: ChildNodeMap | null,
+    anyOfChildNodeMaps: ChildNodeMap[] | null,
   ) {
-    if (oneOfChildNodeMap == null && anyOfChildNodeMaps == null)
+    if (oneOfChildNodeMap === null && anyOfChildNodeMaps === null)
       this.__children__ = this.__propertyChildren__;
     else {
+      const keys = this.__schemaKeys__;
       const children: ChildNode[] = [];
-      for (let i = 0, l = this.__schemaKeys__.length; i < l; i++) {
-        const key = this.__schemaKeys__[i];
+      for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
         const childNode =
-          this.__childNodeMap__.get(key) ||
-          oneOfChildNodeMap?.get(key) ||
-          anyOfChildNodeMaps?.find((map) => map.has(key))?.get(key);
+          this.__childNodeMap__.get(k) ||
+          oneOfChildNodeMap?.get(k) ||
+          anyOfChildNodeMaps?.find((map) => map.has(k))?.get(k);
         if (childNode) children.push(childNode);
       }
       this.__children__ = children;
@@ -578,15 +586,12 @@ export class BranchStrategy implements ObjectNodeStrategy {
       this.__processValue__({ ...this.__value__, ...this.__draft__ }),
       this.__validateAllowedKey__,
     );
-
     this.__processComputedProperties__(this.__draft__);
-
     if (this.__host__.validation)
       this.__host__.adjustEnhancer(
         joinSegment(this.__host__.path, ENHANCED_KEY),
         this.__oneOfIndex__,
       );
-
     this.__emitChange__(SetValueOption.SoftReset);
   }
 

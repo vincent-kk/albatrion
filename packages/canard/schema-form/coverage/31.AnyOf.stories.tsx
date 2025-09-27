@@ -1069,3 +1069,149 @@ export const SimpleAnyOfValuePreservation = () => {
     </StoryLayout>
   );
 };
+
+export const CombinedAnyOfAndOneOf = () => {
+  const schema = {
+    type: 'object',
+    properties: {
+      category: {
+        type: 'string',
+        enum: ['electronics', 'clothing', 'food'],
+        default: 'electronics',
+        title: 'Product Category',
+      },
+      enableDiscount: {
+        type: 'boolean',
+        default: false,
+        title: 'Enable Discount',
+      },
+      enableWarranty: {
+        type: 'boolean',
+        default: false,
+        title: 'Enable Warranty',
+      },
+    },
+    oneOf: [
+      {
+        computed: { if: "./category === 'electronics'" },
+        properties: {
+          model: { type: 'string', title: 'Model' },
+          voltage: { type: 'number', title: 'Voltage (V)' },
+        },
+      },
+      {
+        computed: { if: "./category === 'clothing'" },
+        properties: {
+          size: { type: 'string', enum: ['S', 'M', 'L', 'XL'], title: 'Size' },
+          color: { type: 'string', title: 'Color' },
+        },
+      },
+      {
+        computed: { if: "./category === 'food'" },
+        properties: {
+          expiryDate: { type: 'string', format: 'date', title: 'Expiry Date' },
+          weight: { type: 'number', title: 'Weight (g)' },
+        },
+      },
+    ],
+    anyOf: [
+      {
+        computed: { if: './enableDiscount === true' },
+        properties: {
+          discountPercent: {
+            type: 'number',
+            title: 'Discount (%)',
+            minimum: 0,
+            maximum: 100,
+            default: 10,
+          },
+        },
+      },
+      {
+        computed: { if: './enableWarranty === true' },
+        properties: {
+          warrantyMonths: {
+            type: 'number',
+            title: 'Warranty (months)',
+            minimum: 1,
+            default: 12,
+          },
+        },
+      },
+    ],
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <div
+        style={{
+          marginBottom: 15,
+          padding: 10,
+          backgroundColor: '#e7f3ff',
+          borderRadius: 5,
+        }}
+      >
+        <h4 style={{ margin: '0 0 5px 0' }}>Combined AnyOf + OneOf Demo</h4>
+        <p style={{ margin: 0, fontSize: 12 }}>
+          <strong>OneOf</strong>: Category-specific fields (only one active at a
+          time)
+          <br />
+          <strong>AnyOf</strong>: Optional features (multiple can be active)
+        </p>
+      </div>
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
+      <div style={{ marginTop: 10, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({
+              category: 'electronics',
+              model: 'iPhone 15',
+              voltage: 220,
+              enableDiscount: true,
+              enableWarranty: true,
+              discountPercent: 15,
+              warrantyMonths: 24,
+            })
+          }
+        >
+          Electronics + All Features
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({
+              category: 'clothing',
+              size: 'M',
+              color: 'Blue',
+              enableDiscount: true,
+              discountPercent: 20,
+            })
+          }
+        >
+          Clothing + Discount
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({
+              category: 'food',
+              expiryDate: '2025-12-31',
+              weight: 500,
+              enableWarranty: false,
+              enableDiscount: false,
+            })
+          }
+        >
+          Food (No Features)
+        </button>
+      </div>
+    </StoryLayout>
+  );
+};

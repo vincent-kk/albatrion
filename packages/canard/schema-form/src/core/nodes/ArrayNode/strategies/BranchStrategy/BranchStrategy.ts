@@ -17,9 +17,8 @@ import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 
 import type { ArrayNodeStrategy } from '../type';
+import type { ChildSegmentKey } from './type';
 import { promiseAfterMicrotask } from './utils';
-
-type ChildSegmentKey = `#${number}`;
 
 export class BranchStrategy implements ArrayNodeStrategy {
   /** Host ArrayNode instance that this strategy belongs to */

@@ -555,4 +555,386 @@ describe('ObjectNode anyOf', () => {
       expect(node.value?.conditionalField).toBeUndefined(); // No default, so undefined
     });
   });
+
+  describe('combined anyOf and oneOf behavior', () => {
+    it('should correctly manage anyOf (multiple active) and oneOf (single active) together', async () => {
+      const schema: JsonSchema = {
+        type: 'object',
+        properties: {
+          category: {
+            type: 'string',
+            enum: ['electronics', 'clothing', 'food'],
+            default: 'electronics',
+          },
+          enableDiscount: { type: 'boolean', default: false },
+          enableWarranty: { type: 'boolean', default: false },
+        },
+        oneOf: [
+          {
+            '&if': "./category === 'electronics'",
+            properties: {
+              model: { type: 'string' },
+              voltage: { type: 'number' },
+            },
+          },
+          {
+            '&if': "./category === 'clothing'",
+            properties: {
+              size: { type: 'string', enum: ['S', 'M', 'L', 'XL'] },
+              color: { type: 'string' },
+            },
+          },
+          {
+            '&if': "./category === 'food'",
+            properties: {
+              expiryDate: { type: 'string', format: 'date' },
+              weight: { type: 'number' },
+            },
+          },
+        ],
+        anyOf: [
+          {
+            '&if': './enableDiscount === true',
+            properties: {
+              discountPercent: {
+                type: 'number',
+                minimum: 0,
+                maximum: 100,
+                default: 10,
+              },
+            },
+          },
+          {
+            '&if': './enableWarranty === true',
+            properties: {
+              warrantyMonths: { type: 'number', minimum: 1, default: 12 },
+            },
+          },
+        ],
+      };
+
+      const node = nodeFromJsonSchema({
+        onChange: () => {},
+        jsonSchema: schema,
+      }) as ObjectNode;
+
+      await delay();
+
+      // Initial state: electronics, no features
+      const categoryNode = node.find('category') as StringNode;
+      expect(categoryNode.value).toBe('electronics');
+      expect(node.find('model')).toBeDefined();
+      expect(node.find('voltage')).toBeDefined();
+
+      // Set electronics values
+      const modelNode = node.find('model') as StringNode;
+      const voltageNode = node.find('voltage') as NumberNode;
+      modelNode.setValue('iPhone 15');
+      voltageNode.setValue(220);
+      await delay();
+
+      expect(node.value?.model).toBe('iPhone 15');
+      expect(node.value?.voltage).toBe(220);
+
+      // Enable both anyOf features
+      const enableDiscountNode = node.find('enableDiscount') as any;
+      const enableWarrantyNode = node.find('enableWarranty') as any;
+
+      enableDiscountNode.setValue(true);
+      await delay();
+
+      expect(node.value?.discountPercent).toBe(10); // Default value
+      expect(node.value?.model).toBe('iPhone 15'); // oneOf values preserved
+
+      enableWarrantyNode.setValue(true);
+      await delay();
+
+      expect(node.value?.warrantyMonths).toBe(12); // Default value
+      expect(node.value?.discountPercent).toBe(10); // Still preserved
+      expect(node.value?.model).toBe('iPhone 15'); // Still preserved
+
+      // Modify anyOf values
+      const discountPercentNode = node.find('discountPercent') as NumberNode;
+      const warrantyMonthsNode = node.find('warrantyMonths') as NumberNode;
+      discountPercentNode.setValue(15);
+      warrantyMonthsNode.setValue(24);
+      await delay();
+
+      expect(node.value?.discountPercent).toBe(15);
+      expect(node.value?.warrantyMonths).toBe(24);
+
+      // Change category (oneOf) - should clear oneOf fields but preserve anyOf fields
+      categoryNode.setValue('clothing');
+      await delay();
+
+      // oneOf fields should be cleared
+      expect(node.value?.model).toBeUndefined();
+      expect(node.value?.voltage).toBeUndefined();
+
+      // New oneOf fields should be available
+      expect(node.find('size')).toBeDefined();
+      expect(node.find('color')).toBeDefined();
+
+      // anyOf fields should be preserved (still in anyOfIndices)
+      expect(node.value?.discountPercent).toBe(15);
+      expect(node.value?.warrantyMonths).toBe(24);
+
+      // Set clothing values
+      const sizeNode = node.find('size') as StringNode;
+      const colorNode = node.find('color') as StringNode;
+      sizeNode.setValue('M');
+      colorNode.setValue('Blue');
+      await delay();
+
+      expect(node.value?.size).toBe('M');
+      expect(node.value?.color).toBe('Blue');
+
+      // Disable one anyOf feature
+      enableWarrantyNode.setValue(false);
+      await delay();
+
+      // Disabled anyOf field should be cleared
+      expect(node.value?.warrantyMonths).toBeUndefined();
+      // Other anyOf field should remain
+      expect(node.value?.discountPercent).toBe(15);
+      // oneOf fields should remain
+      expect(node.value?.size).toBe('M');
+      expect(node.value?.color).toBe('Blue');
+
+      // Change to food category
+      categoryNode.setValue('food');
+      await delay();
+
+      // Clothing oneOf fields cleared
+      expect(node.value?.size).toBeUndefined();
+      expect(node.value?.color).toBeUndefined();
+
+      // anyOf fields still preserved
+      expect(node.value?.discountPercent).toBe(15);
+
+      // Food oneOf fields available
+      expect(node.find('expiryDate')).toBeDefined();
+      expect(node.find('weight')).toBeDefined();
+
+      // Disable all anyOf features
+      enableDiscountNode.setValue(false);
+      await delay();
+
+      expect(node.value?.discountPercent).toBeUndefined();
+      expect(node.value?.warrantyMonths).toBeUndefined();
+
+      // Re-enable anyOf features - should reset to defaults
+      enableDiscountNode.setValue(true);
+      enableWarrantyNode.setValue(true);
+      await delay();
+
+      expect(node.value?.discountPercent).toBe(10); // Reset to default
+      expect(node.value?.warrantyMonths).toBe(12); // Reset to default
+    });
+
+    it('should handle oneOf with nested anyOf correctly', async () => {
+      const schema: JsonSchema = {
+        type: 'object',
+        properties: {
+          productType: {
+            type: 'string',
+            enum: ['digital', 'service'],
+            default: 'digital',
+          },
+        },
+        oneOf: [
+          {
+            '&if': "./productType === 'digital'",
+            properties: {
+              product: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  enableLicense: { type: 'boolean', default: false },
+                },
+                anyOf: [
+                  {
+                    '&if': './enableLicense === true',
+                    properties: {
+                      licenseKey: { type: 'string', default: 'LICENSE-XXX' },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+          {
+            '&if': "./productType === 'service'",
+            properties: {
+              product: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  enableBooking: { type: 'boolean', default: false },
+                },
+                anyOf: [
+                  {
+                    '&if': './enableBooking === true',
+                    properties: {
+                      bookingSlots: { type: 'number', default: 10 },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      };
+
+      const node = nodeFromJsonSchema({
+        onChange: () => {},
+        jsonSchema: schema,
+      }) as ObjectNode;
+
+      await delay();
+
+      // Initial: digital product
+      const productNode = node.find('product') as ObjectNode;
+      expect(productNode).toBeDefined();
+
+      const nameNode = productNode.find('name') as StringNode;
+      nameNode.setValue('Software App');
+      await delay();
+
+      expect(node.value?.product?.name).toBe('Software App');
+
+      // Enable nested anyOf
+      const enableLicenseNode = productNode.find('enableLicense') as any;
+      enableLicenseNode.setValue(true);
+      await delay();
+
+      expect(node.value?.product?.licenseKey).toBe('LICENSE-XXX');
+
+      const licenseKeyNode = productNode.find('licenseKey') as StringNode;
+      licenseKeyNode.setValue('CUSTOM-LICENSE-123');
+      await delay();
+
+      expect(node.value?.product?.licenseKey).toBe('CUSTOM-LICENSE-123');
+
+      // Switch oneOf to service
+      const productTypeNode = node.find('productType') as StringNode;
+      productTypeNode.setValue('service');
+      await delay();
+
+      // Product object should be reset (oneOf changed)
+      const newProductNode = node.find('product') as ObjectNode;
+      expect(newProductNode.value?.name).toBeUndefined(); // Reset
+      expect(newProductNode.value?.licenseKey).toBeUndefined(); // Cleared
+      expect(newProductNode.value?.enableBooking).toBe(false);
+
+      // Set service product values
+      const newNameNode = newProductNode.find('name') as StringNode;
+      newNameNode.setValue('Consulting Service');
+      await delay();
+
+      const enableBookingNode = newProductNode.find('enableBooking') as any;
+      enableBookingNode.setValue(true);
+      await delay();
+
+      expect(node.value?.product?.bookingSlots).toBe(10);
+
+      // Switch back to digital
+      productTypeNode.setValue('digital');
+      await delay();
+
+      // Should be reset again
+      const finalProductNode = node.find('product') as ObjectNode;
+      expect(finalProductNode.value?.name).toBeUndefined();
+      expect(finalProductNode.value?.bookingSlots).toBeUndefined();
+      expect(finalProductNode.value?.enableLicense).toBe(false);
+    });
+
+    it('should preserve anyOf fields independently when oneOf changes', async () => {
+      const schema: JsonSchema = {
+        type: 'object',
+        properties: {
+          mode: { type: 'string', enum: ['A', 'B'], default: 'A' },
+          showExtra: { type: 'boolean', default: false },
+        },
+        oneOf: [
+          {
+            '&if': "./mode === 'A'",
+            properties: {
+              fieldA: { type: 'string' },
+            },
+          },
+          {
+            '&if': "./mode === 'B'",
+            properties: {
+              fieldB: { type: 'number' },
+            },
+          },
+        ],
+        anyOf: [
+          {
+            '&if': './showExtra === true',
+            properties: {
+              extraData: { type: 'string', default: 'extra' },
+            },
+          },
+        ],
+      };
+
+      const node = nodeFromJsonSchema({
+        onChange: () => {},
+        jsonSchema: schema,
+      }) as ObjectNode;
+
+      await delay();
+
+      // Set values in mode A
+      const fieldANode = node.find('fieldA') as StringNode;
+      fieldANode.setValue('Value A');
+      await delay();
+
+      // Enable anyOf
+      const showExtraNode = node.find('showExtra') as any;
+      showExtraNode.setValue(true);
+      await delay();
+
+      expect(node.value?.extraData).toBe('extra');
+
+      const extraDataNode = node.find('extraData') as StringNode;
+      extraDataNode.setValue('custom extra');
+      await delay();
+
+      expect(node.value?.fieldA).toBe('Value A');
+      expect(node.value?.extraData).toBe('custom extra');
+
+      // Change oneOf
+      const modeNode = node.find('mode') as StringNode;
+      modeNode.setValue('B');
+      await delay();
+
+      // oneOf field cleared
+      expect(node.value?.fieldA).toBeUndefined();
+      // anyOf field preserved
+      expect(node.value?.extraData).toBe('custom extra');
+
+      // New oneOf field available
+      const fieldBNode = node.find('fieldB') as NumberNode;
+      fieldBNode.setValue(42);
+      await delay();
+
+      expect(node.value?.fieldB).toBe(42);
+      expect(node.value?.extraData).toBe('custom extra'); // Still preserved
+
+      // Disable and re-enable anyOf
+      showExtraNode.setValue(false);
+      await delay();
+      expect(node.value?.extraData).toBeUndefined();
+
+      showExtraNode.setValue(true);
+      await delay();
+      expect(node.value?.extraData).toBe('extra'); // Reset to default
+
+      // oneOf field should remain
+      expect(node.value?.fieldB).toBe(42);
+    });
+  });
 });

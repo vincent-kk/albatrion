@@ -4,7 +4,6 @@ import type { Fn, Nullish } from '@aileron/declare';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import type {
-  ChildNode,
   HandleChange,
   SchemaNodeFactory,
 } from '@/schema-form/core/nodes/type';
@@ -15,6 +14,8 @@ import type {
   ObjectSchema,
   ObjectValue,
 } from '@/schema-form/types';
+
+import type { ChildNodeMap } from '../../type';
 
 /**
  * Generate child node maps for composition schemas (oneOf/anyOf)
@@ -35,7 +36,7 @@ export const getCompositionNodeMapList = (
   scope: 'oneOf' | 'anyOf',
   jsonSchema: ObjectSchema,
   defaultValue: ObjectValue | Nullish,
-  childNodeMap: Map<string, ChildNode>,
+  childNodeMap: ChildNodeMap,
   keySetList: Set<string>[] | undefined,
   excludeKeySet: Set<string> | undefined,
   handelChangeFactory: Fn<[name: string], HandleChange>,
@@ -46,7 +47,7 @@ export const getCompositionNodeMapList = (
 
   const propertyKeySet = scope === 'anyOf' ? new Set<string>() : null;
   const compositionLength = compositionSchemas.length;
-  const childNodeMapList = new Array<Map<string, ChildNode>>(compositionLength);
+  const childNodeMapList = new Array<ChildNodeMap>(compositionLength);
   for (let index = 0; index < compositionLength; index++) {
     const schema = compositionSchemas[index] as Partial<ObjectSchema>;
 
@@ -67,7 +68,7 @@ export const getCompositionNodeMapList = (
     if (!isPlainObject(properties)) continue;
 
     const keys = Object.keys(properties);
-    const compositionChildNodeMap = new Map<string, ChildNode>();
+    const compositionChildNodeMap = new Map() as ChildNodeMap;
     const required = schema.required;
     for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
       if (keySetList && !keySetList[index].has(k)) continue;
