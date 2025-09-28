@@ -303,12 +303,9 @@ export const transformValues = <
   object: Type,
   getValue: (value: Type[Key], key: Key, object: Type) => Value,
 ): Record<Key, Value> => {
-  const result = {} as Record<Key, Value>;
   const keys = Object.keys(object);
-  for (let i = 0, l = keys.length; i < l; i++) {
-    const key = keys[i] as Key;
-    const value = object[key];
-    result[key] = getValue(value, key, object);
-  }
+  const result = {} as Record<Key, Value>;
+  for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i])
+    result[k as Key] = getValue(object[k as Key], k as Key, object);
   return result;
 };

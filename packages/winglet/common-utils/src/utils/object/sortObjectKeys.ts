@@ -242,24 +242,19 @@ export const sortObjectKeys = <Dict extends Dictionary>(
 ): Dict => {
   if (!object) return {} as Dict;
   const result: Dictionary = {};
-  for (let i = 0, l = keys.length; i < l; i++) {
-    const key = keys[i];
+  for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
     if (
-      hasOwnProperty(object, key) === false ||
-      (omitUndefined && object[key] === undefined)
+      hasOwnProperty(object, k) === false ||
+      (omitUndefined && object[k] === undefined)
     )
       continue;
-    result[key] = object[key];
+    result[k] = object[k];
   }
-  const objectKeys = Object.keys(object);
-  for (let i = 0, l = objectKeys.length; i < l; i++) {
-    const key = objectKeys[i];
-    if (
-      hasOwnProperty(result, key) ||
-      (omitUndefined && object[key] === undefined)
-    )
+  const lefts = Object.keys(object);
+  for (let i = 0, k = lefts[0], l = lefts.length; i < l; i++, k = lefts[i]) {
+    if (hasOwnProperty(result, k) || (omitUndefined && object[k] === undefined))
       continue;
-    result[key] = object[key];
+    result[k] = object[k];
   }
   return result as Dict;
 };

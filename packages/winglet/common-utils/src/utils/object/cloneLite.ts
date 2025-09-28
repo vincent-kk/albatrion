@@ -216,9 +216,11 @@ const replicate = <Type>(
   depth = depth + 1;
 
   if (isArray(value)) {
-    const result = new Array(value.length);
-    for (let i = 0, l = value.length; i < l; i++)
-      if (i in value) result[i] = replicate(value[i], limit, depth);
+    const length = value.length;
+    const result = new Array(length);
+    if (length > 0)
+      for (let i = 0, v = value[0]; i < length; i++, v = value[i])
+        if (i in value) result[i] = replicate(v, limit, depth);
     return result as Type;
   }
 
@@ -226,12 +228,9 @@ const replicate = <Type>(
     const result: Dictionary = {};
     const keys = Object.keys(value);
     const length = keys.length;
-    if (length > 0) {
-      for (let i = 0; i < length; i++) {
-        const key = keys[i];
-        result[key] = replicate(value[key], limit, depth);
-      }
-    }
+    if (length > 0)
+      for (let i = 0, k = keys[0]; i < length; i++, k = keys[i])
+        result[k] = replicate(value[k], limit, depth);
     return result as Type;
   }
 

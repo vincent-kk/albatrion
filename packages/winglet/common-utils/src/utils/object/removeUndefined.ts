@@ -303,10 +303,9 @@ export const removeUndefined = <Type>(input: Type): Type => {
   if (isPlainObject(input)) {
     const result = {} as typeof input;
     const keys = Object.keys(input) as Array<keyof Type>;
-    for (let i = 0, l = keys.length; i < l; i++) {
-      const key = keys[i];
-      const value = removeUndefined(input[key] as object);
-      if (value !== undefined) (result as any)[key] = value;
+    for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
+      const value = removeUndefined(input[k] as object);
+      if (value !== undefined) (result as any)[k] = value;
     }
     return result;
   }

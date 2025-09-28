@@ -200,12 +200,9 @@ const propertyIsEnumerable = Object.prototype.propertyIsEnumerable;
 export const getSymbols = <Type extends object>(
   object: Type,
 ): Array<symbol> => {
-  const symbols = Object.getOwnPropertySymbols(object);
   const result: Array<symbol> = [];
-  for (let i = 0, l = symbols.length; i < l; i++) {
-    const symbol = symbols[i];
-    if (propertyIsEnumerable.call(object, symbol))
-      result[result.length] = symbol;
-  }
+  const keys = Object.getOwnPropertySymbols(object);
+  for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i])
+    if (propertyIsEnumerable.call(object, k)) result[result.length] = k;
   return result;
 };

@@ -316,20 +316,19 @@ export const merge = <
   source: Source,
 ): Target & Source => {
   const keys = Object.keys(source) as Array<keyof Source>;
-  for (let i = 0, l = keys.length; i < l; i++) {
-    const key = keys[i];
-    const sourceValue = source[key];
-    const targetValue = target[key];
+  for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
+    const sourceValue = source[k];
+    const targetValue = target[k];
     if (isArray(sourceValue))
-      target[key] = isArray(targetValue)
+      target[k] = isArray(targetValue)
         ? merge(targetValue, sourceValue)
         : merge([], sourceValue);
     else if (isPlainObject(sourceValue))
-      target[key] = isPlainObject(targetValue)
+      target[k] = isPlainObject(targetValue)
         ? merge(targetValue, sourceValue)
         : merge({}, sourceValue);
     else if (targetValue === undefined || sourceValue !== undefined)
-      target[key] = sourceValue;
+      target[k] = sourceValue;
   }
   return target;
 };

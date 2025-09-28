@@ -368,26 +368,26 @@ const stableEqualsRecursive = (
       const rightHasIndex = i in right;
       if (leftHasIndex !== rightHasIndex) return false;
       if (leftHasIndex)
-        if (!stableEqualsRecursive(left[i], right[i], visited, omits))
+        if (stableEqualsRecursive(left[i], right[i], visited, omits) === false)
           return false;
     }
     return true;
   }
 
   const leftKeys = Reflect.ownKeys(left);
+  const leftLength = leftKeys.length;
 
-  if (leftKeys.length !== Reflect.ownKeys(right).length) return false;
-  for (let i = 0, l = leftKeys.length; i < l; i++) {
-    const key = leftKeys[i];
-    if (omits?.has(key)) continue;
-    if (!Reflect.has(right, key)) return false;
+  if (leftLength !== Reflect.ownKeys(right).length) return false;
+  for (let i = 0, k = leftKeys[0]; i < leftLength; i++, k = leftKeys[i]) {
+    if (omits?.has(k)) continue;
+    if (!Reflect.has(right, k)) return false;
     if (
-      !stableEqualsRecursive(
-        (left as any)[key],
-        (right as any)[key],
+      stableEqualsRecursive(
+        left[k as keyof typeof left],
+        right[k as keyof typeof right],
         visited,
         omits,
-      )
+      ) === false
     )
       return false;
   }

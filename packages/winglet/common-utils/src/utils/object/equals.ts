@@ -297,12 +297,11 @@ const equalsRecursive = (
 
   if (length !== Object.keys(right).length) return false;
 
-  for (let i = 0; i < length; i++) {
-    const key = keys[i];
-    if (omits?.has(key)) continue;
+  for (let i = 0, k = keys[0]; i < length; i++, k = keys[i]) {
+    if (omits?.has(k)) continue;
     if (
-      !hasOwnProperty(right, key) ||
-      !equalsRecursive((left as any)[key], (right as any)[key], omits)
+      !hasOwnProperty(right, k) ||
+      !equalsRecursive((left as any)[k], (right as any)[k], omits)
     )
       return false;
   }

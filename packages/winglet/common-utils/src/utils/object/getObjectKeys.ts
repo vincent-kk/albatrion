@@ -181,18 +181,13 @@ export const getObjectKeys = <Type extends Dictionary>(
 ): Array<keyof Type> => {
   if (!object) return [];
   let keys: Array<keyof Type> = Object.keys(object);
-
   if (omit) {
     const omits = omit instanceof Set ? omit : new Set(omit);
     const filteredKeys: Array<keyof Type> = [];
-    for (let i = 0, l = keys.length; i < l; i++) {
-      const key = keys[i];
-      if (!omits.has(key)) filteredKeys[filteredKeys.length] = key;
-    }
+    for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i])
+      if (!omits.has(k)) filteredKeys[filteredKeys.length] = k;
     keys = filteredKeys;
   }
-
   if (sort) keys = keys.sort(sort);
-
   return keys;
 };

@@ -342,20 +342,20 @@ const replicateProperties = (
   cache: Map<object, any>,
 ): void => {
   const keys = Object.keys(source);
-  if (keys.length > 0)
-    for (let i = 0, l = keys.length; i < l; i++) {
-      const key = keys[i];
-      const descriptor = getOwnPropertyDescriptor(target, key);
+  const length = keys.length;
+  if (length > 0)
+    for (let i = 0, k = keys[0]; i < length; i++, k = keys[i]) {
+      const descriptor = getOwnPropertyDescriptor(target, k);
       if (descriptor == null || descriptor.writable)
-        target[key] = replicate(source[key], limit, depth, cache);
+        target[k] = replicate(source[k], limit, depth, cache);
     }
   const symbols = getSymbols(source);
-  if (symbols.length > 0)
-    for (let i = 0, l = symbols.length; i < l; i++) {
-      const key = symbols[i];
-      const descriptor = getOwnPropertyDescriptor(target, key);
+  const symbolsLength = symbols.length;
+  if (symbolsLength > 0)
+    for (let i = 0, s = symbols[0]; i < symbolsLength; i++, s = symbols[i]) {
+      const descriptor = getOwnPropertyDescriptor(target, s);
       if (descriptor == null || descriptor.writable)
-        target[key] = replicate(source[key], limit, depth, cache);
+        target[s] = replicate(source[s], limit, depth, cache);
     }
 };
 
