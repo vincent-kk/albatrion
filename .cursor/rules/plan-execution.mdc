@@ -1,0 +1,544 @@
+---
+alwaysApply: false
+---
+
+# Plan Execution Rules
+
+## Overview
+
+This rule defines the automated execution process for implementation plans created through requirement-driven development. It ensures consistent, guideline-based task execution with proper version control.
+
+## Execution Workflow
+
+### 1. Task Discovery Process
+
+#### Locate Task Directory
+
+```bash
+# Pattern: .tasks/{type}_{task_name}_{yyyyMMdd}/
+# Example: .tasks/feature_user_authentication_20241229/
+
+# Find active tasks
+ls -la .tasks/*/03_plan.md | head -5
+```
+
+#### Priority Order
+
+1. Tasks with `status: in_progress` in plan
+2. Oldest uncompleted tasks first
+3. Tasks marked as high priority
+4. Dependencies resolved first
+
+### 2. Document Loading Sequence
+
+```markdown
+## Load Order:
+
+1. project-structure.md - Project-specific configuration and commands
+2. 04_guideline.md - Execution rules and commands
+3. 03_plan.md - Task list and phases
+4. 01_requirements.md - Reference for validation
+5. 02_design.md - Technical specifications
+```
+
+### 3. Pre-Execution Setup
+
+```bash
+# Always execute before starting tasks
+# Auto-detect project configuration and setup commands
+
+# 1. Detect package manager from lockfiles
+if [ -f "yarn.lock" ]; then PM="yarn"
+elif [ -f "pnpm-lock.yaml" ]; then PM="pnpm"
+else PM="npm"; fi
+
+# 2. Detect Node version management
+if [ -f ".nvmrc" ]; then nvm use; fi
+if [ -f ".node-version" ]; then nvm use; fi
+
+# 3. Detect main branch and pull latest
+MAIN_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
+git pull origin $MAIN_BRANCH
+
+# 4. Install dependencies
+$PM install
+```
+
+## Task Execution Protocol
+
+### Phase-Based Execution
+
+#### Identify Current Phase
+
+```markdown
+## In 03_plan.md, locate:
+
+- [ ] Current uncompleted task
+- Phase it belongs to
+- Dependencies that must complete first
+```
+
+#### Task State Management
+
+```typescript
+interface TaskState {
+  id: string; // Task identifier (e.g., "Task 2.1")
+  status: "pending" | "in_progress" | "completed" | "blocked";
+  startTime?: Date;
+  completionTime?: Date;
+  blockReason?: string;
+}
+```
+
+### Execution Steps for Each Task
+
+#### 1. Pre-Task Validation
+
+```bash
+# Check preconditions from guideline and project-structure.md
+# Detect and run lint commands from package.json scripts
+# Detect and run test commands from package.json scripts
+git status                      # Clean working directory
+```
+
+#### 2. Task Implementation
+
+##### For Backend Tasks:
+
+```bash
+# Backend Implementation
+# Follow project-structure.md for:
+# - Backend directory structure
+# - Code generation commands
+# - Module/service patterns
+# - Testing conventions
+```
+
+##### For Frontend Tasks:
+
+```bash
+# Frontend Implementation
+# Follow project-structure.md for:
+# - Component directory structure
+# - Development server commands
+# - State management patterns
+# - Testing strategies
+```
+
+##### For Integration Tasks:
+
+```bash
+# Integration Implementation
+# Follow project-structure.md for:
+# - API integration patterns
+# - Error handling strategies
+# - Testing approaches
+# - Deployment procedures
+```
+
+#### 3. Task Validation
+
+```bash
+# Run quality checks - Auto-detect from package.json scripts
+
+# Detect and run lint commands
+LINT_SCRIPTS=$(jq -r '.scripts | to_entries[] | select(.key | test("^(lint|eslint|prettier|format|style)")) | .key' package.json)
+for script in $LINT_SCRIPTS; do $PM run $script; done
+
+# Detect and run test commands
+TEST_SCRIPTS=$(jq -r '.scripts | to_entries[] | select(.key | test("^(test|jest|vitest|spec|coverage)")) | .key' package.json)
+for script in $TEST_SCRIPTS; do $PM run $script; done
+
+# Detect and run build commands
+BUILD_SCRIPTS=$(jq -r '.scripts | to_entries[] | select(.key | test("^(build|compile|bundle|dist)")) | .key' package.json)
+for script in $BUILD_SCRIPTS; do $PM run $script; done
+
+# Detect and run typecheck commands
+TYPE_SCRIPTS=$(jq -r '.scripts | to_entries[] | select(.key | test("^(typecheck|tsc|type-check|types)")) | .key' package.json)
+for script in $TYPE_SCRIPTS; do $PM run $script; done
+```
+
+#### 4. Commit Strategy
+
+##### Commit Triggers:
+
+- After completing each numbered task
+- When switching between frontend/backend
+- Before starting new phase
+- After significant refactoring
+- When all tests pass
+
+##### Commit Message Generation:
+
+```typescript
+function generateCommitMessage(task: TaskState, phase: string): string {
+  const prefix = getCommitPrefix(task);
+  const scope = getScope(phase);
+  const description = getTaskDescription(task);
+
+  return `${prefix}(${scope}): ${description}`;
+}
+
+function getCommitPrefix(task: TaskState): string {
+  if (task.id.includes("2.")) return "feat"; // Backend features
+  if (task.id.includes("3.")) return "feat"; // Frontend features
+  if (task.id.includes("4.")) return "integrate"; // Integration
+  if (task.id.includes("5.")) return "refactor"; // Polish
+  if (task.id.includes("test")) return "test";
+  if (task.id.includes("fix")) return "fix";
+  return "chore";
+}
+```
+
+##### Commit Examples:
+
+```bash
+git add .
+git commit -m "feat(backend): implement feature resolver"
+git commit -m "feat(frontend): create component with validation"
+git commit -m "integrate: connect frontend to backend API"
+git commit -m "test: add unit tests for service"
+git commit -m "refactor: optimize feature performance"
+```
+
+## Automated Execution Rules
+
+### Task Selection Algorithm
+
+```typescript
+async function selectNextTask(): Task {
+  const projectStructure = await loadProjectStructure(); // Load project-structure.md
+  const plan = await loadPlanDocument();
+  const guideline = await loadGuidelineDocument();
+
+  // 1. Find in-progress tasks
+  let task = plan.tasks.find((t) => t.status === "in_progress");
+
+  // 2. If none, find next pending task
+  if (!task) {
+    task = plan.tasks.find(
+      (t) =>
+        t.status === "pending" && t.dependencies.every((d) => isCompleted(d))
+    );
+  }
+
+  // 3. Apply project structure and guideline rules
+  if (projectStructure.preTaskChecks) {
+    await runPreTaskChecks(projectStructure.preTaskChecks);
+  }
+  if (guideline.preTaskChecks) {
+    await runPreTaskChecks(guideline.preTaskChecks);
+  }
+
+  return task;
+}
+```
+
+### Error Handling Protocol
+
+#### Build Errors:
+
+```bash
+# Build Error Resolution
+# Follow project-structure.md for:
+# - Type checking procedures
+# - Code generation commands
+# - Module resolution patterns
+# - Dependency management
+```
+
+#### Test Failures:
+
+```bash
+# Test Failure Resolution
+# Follow project-structure.md for:
+# - Test configuration
+# - Mock data patterns
+# - Test isolation strategies
+# - Integration test setup
+```
+
+#### Technology-Specific Errors:
+
+```bash
+# Technology Error Resolution
+# Follow project-structure.md for:
+# - Code generation procedures
+# - Schema management
+# - Type synchronization
+# - API contract validation
+```
+
+### Progress Tracking
+
+#### Update Plan Document:
+
+```markdown
+## Mark completed tasks:
+
+- [x] Task 2.1: GraphQL schema definition ✓ 2024-12-29 10:30
+- [x] Task 2.2: NestJS module creation ✓ 2024-12-29 11:15
+- [ ] Task 2.3: Resolver implementation (in progress)
+```
+
+#### Create Progress Log:
+
+```markdown
+# Progress Log - {Task Name}
+
+## 2024-12-29
+
+- 10:30 - Started Task 2.1
+- 10:45 - Completed schema changes
+- 10:50 - Generated types successfully
+- 11:00 - Committed: feat(backend): add user schema
+- 11:15 - Started Task 2.2
+```
+
+## Guideline Integration
+
+### Dynamic Guideline Loading
+
+```typescript
+interface ProjectStructure {
+  packageManager: 'npm' | 'yarn' | 'pnpm';
+  scripts: {
+    dev?: string[];
+    test?: string[];
+    lint?: string[];
+    build?: string[];
+    typecheck?: string[];
+  };
+  directories: {
+    source: string;
+    tests: string;
+    build: string;
+  };
+  conventions: {
+    commitFormat: string;
+    branchNaming: string;
+  };
+}
+
+interface Guideline {
+  preExecution: string[]; // Commands to run before starting
+  commands: {
+    // Auto-detected from package.json and project-structure.md
+    dev: string;
+    test: string;
+    lint: string;
+    build: string;
+  };
+  commitRules: {
+    // When to commit
+    triggers: string[];
+    format: string;
+  };
+  errorHandling: {
+    // Error recovery procedures
+    [error: string]: string[];
+  };
+}
+```
+
+### Guideline Override Priority
+
+1. Task-specific guideline (04_guideline.md)
+2. Project structure documentation (project-structure.md)
+3. Project-wide CLAUDE.md
+4. Global .cursor/rules/
+5. Default execution rules
+
+## Monitoring and Reporting
+
+### Status Report Template
+
+```markdown
+## Task Execution Status
+
+### Current Task: {task.id}
+
+- Phase: {phase.name}
+- Status: {task.status}
+- Started: {task.startTime}
+- Progress: {percentage}%
+
+### Completed Today:
+
+- ✅ Task 2.1: GraphQL schema
+- ✅ Task 2.2: Module creation
+- ✅ Task 2.3: Resolver implementation
+
+### Blockers:
+
+- ⚠️ Task 2.4: Waiting for API specification
+
+### Next Steps:
+
+- Task 2.5: Unit tests
+- Task 3.1: Frontend component
+
+### Quality Metrics:
+
+- Tests Passing: 48/48 ✓
+- Lint Issues: 0
+- Type Errors: 0
+- Build Status: Success
+```
+
+## Continuous Improvement
+
+### Feedback Collection
+
+After each task phase:
+
+1. Note any guideline gaps
+2. Document unexpected issues
+3. Record time estimates vs actual
+4. Update guidelines accordingly
+
+### Guideline Updates
+
+```bash
+# When updating guidelines:
+1. Document the change reason
+2. Update in 04_guideline.md
+3. Commit with message: "docs: update execution guidelines - {reason}"
+```
+
+## Integration with CI/CD
+
+### Pre-Push Validation
+
+```bash
+#!/bin/bash
+# .git/hooks/pre-push
+
+# Run all quality checks (auto-detect from package.json)
+# Execute lint commands
+# Execute test commands
+# Execute build commands
+# Check project-structure.md for additional validations
+
+echo "All checks passed! Ready to push."
+```
+
+### GitHub Actions Integration
+
+```yaml
+# Automated plan execution check
+name: Plan Execution Validation
+on:
+  pull_request:
+    paths:
+      - ".tasks/**/03_plan.md"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check plan completeness
+      - name: Verify guideline compliance
+      - name: Run project quality checks (from package.json)
+```
+
+## Project Structure Documentation
+
+### Auto-Generated project-structure.md Template
+
+When Claude encounters a new codebase, it should analyze and generate:
+
+```markdown
+# Project Structure - {Project Name}
+
+## Package Manager
+- **Type**: {npm|yarn|pnpm} (detected from lockfiles)
+- **Version**: {version from package.json engines}
+
+## Available Scripts
+### Development
+{auto-detected dev scripts}
+
+### Testing
+{auto-detected test scripts}
+
+### Build & Deploy
+{auto-detected build scripts}
+
+### Quality Assurance
+{auto-detected lint/format scripts}
+
+## Directory Structure
+```
+project/
+├── {detected source dirs}/
+├── {detected test dirs}/
+├── {detected config dirs}/
+└── {detected output dirs}/
+```
+
+## Git Configuration
+- **Main Branch**: {detected main branch}
+- **Branch Naming**: {inferred from existing branches}
+- **Commit Convention**: {inferred from commit history}
+
+## Technology Stack
+{detected from package.json dependencies}
+
+## Development Workflow
+{inferred from scripts and directory structure}
+```
+
+## Usage Examples
+
+### Starting a New Task:
+
+```bash
+# Claude command example:
+"Execute the next task from .tasks/feature_<name>_<date>/03_plan.md following the guidelines and project-structure.md"
+```
+
+### Resuming Work:
+
+```bash
+# Claude command example:
+"Continue task execution from where we left off, check progress log and project structure"
+```
+
+### Handling Blockers:
+
+```bash
+# Claude command example:
+"Task 2.4 is blocked, skip to next available task and document the blocker according to project conventions"
+```
+
+### Project Setup:
+
+```bash
+# Claude command example:
+"Analyze the codebase and create/update project-structure.md with detected patterns"
+```
+
+## Best Practices
+
+### Do's:
+
+- ✅ Always check guidelines before starting
+- ✅ Commit after each logical unit
+- ✅ Run tests before moving to next task
+- ✅ Update plan document with progress
+- ✅ Document any deviations from plan
+
+### Don'ts:
+
+- ❌ Skip guideline pre-execution checks
+- ❌ Batch multiple tasks in one commit
+- ❌ Ignore test failures
+- ❌ Modify plan structure without updating guideline
+- ❌ Continue with errors present
+
+---
+
+> Last Updated: 2024
+> Purpose: Generic automated plan execution with quality assurance
+> Compatible with: Any codebase with project-structure.md documentation

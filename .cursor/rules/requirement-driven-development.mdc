@@ -1,0 +1,560 @@
+---
+alwaysApply: false
+---
+
+# Requirement-Driven Development Rules
+
+## Overview
+
+This rule defines the process of analyzing planning documents and generating structured development documentation using the EARS (Easy Approach to Requirements Syntax) methodology.
+
+## EARS Methodology
+
+### Requirement Types
+
+#### 1. Ubiquitous Requirements (일반 요구사항)
+
+- Format: `The <system> shall <requirement>`
+- Used for general, always-active requirements
+- Example: "The system shall validate user input before processing"
+
+#### 2. Event-Driven Requirements (이벤트 기반)
+
+- Format: `WHEN <trigger> the <system> shall <requirement>`
+- Used for requirements triggered by specific events
+- Example: "WHEN user clicks submit button, the system shall save the form data"
+
+#### 3. Unwanted Behaviors (금지 행동)
+
+- Format: `The <system> shall NOT <unwanted behavior>`
+- Used to explicitly prevent certain behaviors
+- Example: "The system shall NOT allow duplicate email registrations"
+
+#### 4. State-Driven Requirements (상태 기반)
+
+- Format: `WHILE <in state> the <system> shall <requirement>`
+- Used for requirements active during specific states
+- Example: "WHILE in maintenance mode, the system shall display maintenance message"
+
+#### 5. Optional Requirements (선택 기능)
+
+- Format: `WHERE <feature is included> the <system> shall <requirement>`
+- Used for optional or configurable features
+- Example: "WHERE premium subscription is active, the system shall enable advanced features"
+
+#### 6. Complex Requirements (복합 요구사항)
+
+- Combination of above formats
+- Example: "WHEN user logs in, IF premium subscription is active, the system shall display premium dashboard"
+
+## Document Structure
+
+### Directory Organization
+
+```
+.tasks/{type}_{task_name}_{yyyyMMdd}/
+├── 01_requirements.md      # EARS-based requirements analysis
+├── 02_design.md            # Technical design document
+├── 03_plan.md              # Implementation plan with tasks
+├── 04_guideline.md         # Execution guidelines
+└── assets/                 # Images and UI specifications
+    ├── mockups/           # UI mockups and wireframes
+    ├── diagrams/          # Technical diagrams
+    └── specs/             # Design specifications
+```
+
+### 1. 요구사항 문서 (01_requirements.md) - 한글 작성
+
+```markdown
+# 요구사항 분석 - {작업명}
+
+## 개요
+
+기능/작업에 대한 간략한 설명
+
+## 이해관계자
+
+- 사용자: [대상 사용자]
+- 시스템: [영향받는 시스템]
+- 외부: [서드파티 통합]
+
+## 기능 요구사항 (EARS 형식)
+
+### 핵심 요구사항 (Ubiquitous)
+
+- REQ-001: 시스템은 [요구사항]을 해야 한다
+- REQ-002: 시스템은 [요구사항]을 해야 한다
+
+### 이벤트 기반 요구사항
+
+- REQ-E01: [트리거] 시, 시스템은 [요구사항]을 해야 한다
+- REQ-E02: [트리거] 시, 시스템은 [요구사항]을 해야 한다
+
+### 상태 요구사항
+
+- REQ-S01: [상태] 동안, 시스템은 [요구사항]을 해야 한다
+
+### 제약사항 (금지 행동)
+
+- REQ-C01: 시스템은 [금지된 행동]을 하지 않아야 한다
+
+### 선택 기능
+
+- REQ-O01: [조건]인 경우, 시스템은 [요구사항]을 해야 한다
+
+## 비기능 요구사항
+
+- 성능: [구체적인 지표]
+- 보안: [보안 요구사항]
+- 사용성: [사용자 경험 요구사항]
+- 호환성: [브라우저/기기 요구사항]
+
+## 수락 기준
+
+- [ ] 기준 1
+- [ ] 기준 2
+
+## 의존성
+
+- 외부 API
+- 라이브러리
+- 다른 기능
+
+## 위험 및 완화 방안
+
+- 위험 1: [설명] → 완화: [전략]
+```
+
+### 2. 설계 문서 (02_design.md) - 한글 작성
+
+````markdown
+# 기술 설계 - {작업명}
+
+## 아키텍처 개요
+
+상위 수준 아키텍처 설명
+
+## 컴포넌트 설계
+
+### 프론트엔드 컴포넌트
+
+- 컴포넌트 구조
+- 상태 관리 전략 (Jotai atoms)
+- GraphQL 쿼리/뮤테이션
+
+### 백엔드 서비스
+
+- NestJS 모듈
+- GraphQL 리졸버
+- 데이터 모델
+
+## 데이터 흐름
+
+1. 사용자 상호작용
+2. 프론트엔드 처리
+3. API 호출
+4. 백엔드 처리
+5. 응답 처리
+
+## 데이터베이스 스키마 변경
+
+- 새로운 테이블/컬렉션
+- 수정된 필드
+- 인덱스
+
+## API 설계
+
+### GraphQL 스키마
+
+```graphql
+type NewType {
+  field: Type
+}
+```
+````
+
+### REST 엔드포인트 (해당 시)
+
+- POST /api/endpoint
+
+## 보안 고려사항
+
+- 인증 요구사항
+- 인가 규칙
+- 데이터 검증
+
+## 성능 고려사항
+
+- 캐싱 전략
+- 쿼리 최적화
+- 번들 크기 영향
+
+## 테스트 전략
+
+- 유닛 테스트
+- 통합 테스트
+- E2E 테스트
+
+````
+
+### 3. 구현 계획 (03_plan.md) - 한글 작성
+
+```markdown
+# 구현 계획 - {작업명}
+
+## 단계 1: 설정 및 준비
+- [ ] 작업 1.1: 환경 설정
+- [ ] 작업 1.2: 의존성 설치
+- [ ] 작업 1.3: 초기 프로젝트 구조
+
+## 단계 2: 백엔드 개발
+- [ ] 작업 2.1: GraphQL 스키마 정의
+- [ ] 작업 2.2: NestJS 모듈 생성
+- [ ] 작업 2.3: 리졸버 구현
+- [ ] 작업 2.4: 서비스 레이어 구현
+- [ ] 작업 2.5: 유닛 테스트
+
+## 단계 3: 프론트엔드 개발
+- [ ] 작업 3.1: 컴포넌트 구조 생성
+- [ ] 작업 3.2: Storybook 스토리
+- [ ] 작업 3.3: MSW 모의 핸들러
+- [ ] 작업 3.4: 상태 관리 (Jotai)
+- [ ] 작업 3.5: GraphQL 통합
+- [ ] 작업 3.6: 컴포넌트 테스트
+
+## 단계 4: 통합
+- [ ] 작업 4.1: 프론트엔드-백엔드 통합
+- [ ] 작업 4.2: 오류 처리
+- [ ] 작업 4.3: 로딩 상태
+- [ ] 작업 4.4: 통합 테스트
+
+## 단계 5: 개선 및 최적화
+- [ ] 작업 5.1: UI/UX 개선
+- [ ] 작업 5.2: 성능 최적화
+- [ ] 작업 5.3: 접근성
+- [ ] 작업 5.4: 코드 리뷰 준비
+
+## 타임라인
+- 단계 1: 1일차
+- 단계 2: 2-3일차
+- 단계 3: 3-4일차
+- 단계 4: 5일차
+- 단계 5: 6일차
+
+## 완료 기준
+- [ ] 모든 테스트 통과
+- [ ] 코드 리뷰 완료
+- [ ] 문서 업데이트
+- [ ] 린트 에러 없음
+- [ ] 성능 벤치마크 충족
+````
+
+### 4. 실행 가이드라인 (04_guideline.md) - 한글 작성
+
+````markdown
+# 실행 가이드라인 - {작업명}
+
+## 사전 실행 체크리스트
+
+- [ ] project-structure.md에 따른 개발 환경 설정
+- [ ] 기본 브랜치에서 최신 변경사항 가져오기 (main/master/develop 자동 감지)
+- [ ] 피처 브랜치 생성: 프로젝트 브랜치 네이밍 컨벤션 따르기
+- [ ] 패키지 매니저에 따른 의존성 설치: package.json에서 자동 감지
+
+## Development Commands
+
+```bash
+# Development commands (auto-detect from package.json and project-structure.md)
+# 개발 서버 시작: dev, start, serve 등의 스크립트 감지
+# 타입 생성: generate, codegen, build:types 등의 스크립트 감지
+# 테스트 실행: test, test:* 패턴의 스크립트 감지
+# 린트 및 포맷: lint, format, prettier 등의 스크립트 감지
+```
+````
+
+## 커밋 가이드라인
+
+### 다음 시점에 커밋:
+
+1. GraphQL 스키마 변경 후
+2. 백엔드 모듈 구현 후
+3. 컴포넌트 생성 후
+4. 상태 관리 설정 후
+5. 테스트 구현 후
+6. 버그 수정 후
+
+### 커밋 메시지 형식:
+
+- `feat: 새로운 기능 추가`
+- `fix: 버그 수정 설명`
+- `refactor: 리팩토링 설명`
+- `test: 테스트 추가/수정`
+- `docs: 문서 업데이트`
+- `style: 코드 포맷팅`
+- `chore: 빌드/설정 변경`
+
+## 품질 검사
+
+### 각 커밋 전:
+
+```bash
+# package.json에서 자동 감지된 품질 검사 명령어 실행
+# 린트: lint, eslint, prettier 등의 스크립트
+# 테스트: test, jest, vitest 등의 스크립트
+# 빌드: build, compile 등의 스크립트
+# 타입 체크: typecheck, tsc 등의 스크립트
+```
+
+## 오류 처리 절차
+
+### 빌드 오류:
+
+1. project-structure.md의 빌드 에러 해결 절차 따르기
+2. 프로젝트별 타입 생성 명령어 실행
+3. 프로젝트 구조에 따른 import 경로 확인
+
+### 테스트 실패:
+
+1. 로컬에서 테스트 실행하여 재현
+2. project-structure.md의 테스트 설정 확인
+3. 프로젝트별 모킹 전략 및 테스트 도구 설정 확인
+
+### 기술별 오류:
+
+1. project-structure.md의 기술별 오류 해결 절차 확인
+2. 프로젝트 특정 코드 생성 명령어 실행
+3. API 계약 및 스키마 호환성 확인
+
+## 문서화 요구사항
+
+- 관련 README 파일 업데이트
+- 복잡한 함수에 JSDoc 주석 추가
+- Storybook 스토리 업데이트
+- API 변경사항 문서화
+
+## 리뷰 준비
+
+- GitHub diff 보기로 자체 리뷰
+- 모든 수락 기준 충족 확인
+- PR 설명 업데이트:
+  - 변경사항 요약
+  - UI 변경 시 스크린샷
+  - 테스트 지침
+  - 주요 변경사항 (있는 경우)
+
+````
+
+## 에셋 관리
+
+### 지원되는 에셋 유형
+1. **이미지**: PNG, JPG, SVG, GIF
+   - UI 목업은 `assets/mockups/`에 저장
+   - 기술 다이어그램은 `assets/diagrams/`에 저장
+
+2. **Design Files**:
+   - Figma links: Include in requirements.md
+   - Sketch files: Store in assets/
+   - Adobe XD: Export as images
+
+3. **Specifications**:
+   - JSON specs: Store in `assets/specs/`
+   - PDF documents: Store in `assets/`
+
+### 에셋 처리 방법
+```markdown
+## 에셋 제공 방법:
+
+### 옵션 1: 직접 파일 경로
+- 파일 저장 위치: .tasks/{유형}_{이름}_{날짜}/assets/
+- 문서에서 참조: ![설명](./assets/image.png)
+
+### 옵션 2: 외부 링크
+- Figma: 공개 링크 공유 또는 뷰어 접근 권한 제공
+- 클라우드 스토리지: 직접 다운로드 링크 제공
+
+### 옵션 3: 인라인 설명
+- 간단한 레이아웃에는 ASCII 다이어그램 사용
+- 상세한 텍스트 설명 제공
+- 구조화된 데이터에는 마크다운 표 사용
+````
+
+## Integration with Existing Rules
+
+### Reference Documents
+
+- **Primary reference**: `project-structure.md` for project-specific guidelines
+- Follow coding guidelines from: `.cursor/rules/code-writing-guidelines.mdc`
+- Apply TypeScript rules from: `.cursor/rules/typescript-react.mdc`
+- Follow testing strategy from: `.cursor/rules/testing-strategy.mdc`
+- **Reference issue resolution workflow from: `.cursor/rules/resolve-issue-guidelines.mdc`**
+
+### Workflow Integration
+
+1. Use this rule for new feature development from planning documents
+2. Combine with `resolve-issue-guidelines.mdc` for issue-based work
+3. Apply `pull-request.mdc` when creating PRs
+
+### Guideline Document Generation Rules
+
+When creating the execution guideline (04_guideline.md), **MUST** auto-detect project patterns and reference:
+
+#### Auto-Detection Process:
+```typescript
+interface ProjectConfig {
+  packageManager: 'npm' | 'yarn' | 'pnpm';  // Detect from lockfiles
+  scripts: {
+    dev: string[];      // Scripts matching: dev, start, serve
+    test: string[];     // Scripts matching: test, jest, vitest
+    lint: string[];     // Scripts matching: lint, eslint, prettier
+    build: string[];    // Scripts matching: build, compile, bundle
+    typecheck: string[]; // Scripts matching: typecheck, tsc, type-check
+  };
+  mainBranch: string;   // Detect from git remote
+  directories: {
+    source: string;     // Detect common patterns: src, lib, app
+    tests: string;      // Detect: __tests__, test, tests, spec
+  };
+}
+```
+
+#### Integration References:
+
+#### Core Integration Points:
+- **Development Environment Setup**: Follow the Phase 2 setup from `resolve-issue-guidelines.mdc`
+- **Quality Assurance Process**: Apply the Phase 4 quality checks and pre-commit checklist
+- **Git Workflow**: Use the commit message conventions and branch naming from issue guidelines
+- **Technology-Specific Guidelines**: Integrate GraphQL, React, and state management patterns
+- **Error Handling**: Apply the documented error recovery procedures
+
+#### Mandatory Sections to Include:
+```markdown
+## 개발 프로세스 (resolve-issue-guidelines.mdc 기반)
+
+### 환경 설정 확인
+- [ ] project-structure.md의 개발 환경 설정 절차 따르기
+- [ ] package.json에서 감지된 개발 서버 정상 동작 확인
+- [ ] 프로젝트별 개발 도구 접근 가능 확인
+
+### 프로젝트별 개발 패턴
+1. project-structure.md의 코드 생성 명령어 확인
+2. 프로젝트 아키텍처에 따른 개발 순서 따르기
+3. 프로젝트별 모킹 및 테스트 전략 적용
+4. 컴포넌트/모듈 개발 우선순위 확인
+
+### 품질 보증 체크리스트 (자동 감지된 명령어 기준)
+- [ ] 린트 및 포맷팅: package.json의 lint 스크립트 실행
+- [ ] 테스트 실행: package.json의 test 스크립트 실행
+- [ ] 빌드 검증: package.json의 build 스크립트 실행
+- [ ] 타입 체크: package.json의 typecheck 스크립트 실행
+
+### 커밋 전략 (프로젝트 컨벤션 준수)
+- 논리적 단위별 커밋
+- project-structure.md의 커밋 메시지 형식 따르기
+- 주요 변경사항 후 즉시 커밋
+- 기능 단위 완성 후 즉시 커밋
+
+### 비상 절차
+- 빌드 실패: project-structure.md의 오류 해결 절차 따르기
+- 테스트 실패: 프로젝트별 테스트 설정 확인
+- 기술별 오류: project-structure.md의 기술별 해결책 적용
+```
+
+## Project Structure Analysis
+
+### Automatic Detection Strategy
+
+When working with a new codebase, Claude should automatically analyze and document:
+
+#### 1. Package Manager Detection
+```bash
+# Check for lockfiles to determine package manager
+if [ -f "yarn.lock" ]; then PACKAGE_MANAGER="yarn"
+elif [ -f "pnpm-lock.yaml" ]; then PACKAGE_MANAGER="pnpm"
+elif [ -f "package-lock.json" ]; then PACKAGE_MANAGER="npm"
+fi
+```
+
+#### 2. Script Pattern Analysis
+```typescript
+// Analyze package.json scripts for common patterns
+const scriptPatterns = {
+  dev: /^(dev|start|serve|develop)$/,
+  test: /^(test|jest|vitest|spec|coverage)$/,
+  lint: /^(lint|eslint|prettier|format|style)$/,
+  build: /^(build|compile|bundle|dist|production)$/,
+  typecheck: /^(typecheck|tsc|type-check|types)$/
+};
+```
+
+#### 3. Directory Structure Detection
+```bash
+# Common source directories
+SOURCE_DIRS=("src" "lib" "app" "components" "packages")
+# Common test directories
+TEST_DIRS=("__tests__" "test" "tests" "spec" "specs")
+# Common build output directories
+BUILD_DIRS=("dist" "build" "out" "public" "lib")
+```
+
+#### 4. Main Branch Detection
+```bash
+# Detect default branch
+MAIN_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+# Fallback patterns: main, master, develop
+```
+
+## Claude 사용 프롬프트
+
+### 새로운 프로젝트 처음 접근 시:
+
+1. "이 프로젝트의 구조를 분석하고 project-structure.md를 생성해줘"
+2. "package.json의 스크립트를 분석하고 개발 명령어를 추출해줘"
+3. "디렉토리 구조와 코드 컨벤션을 분석해줘"
+
+### 기획 문서 받았을 때:
+
+1. "이 기획 문서를 EARS 방법론으로 분석해줘"
+2. "프로젝트 구조를 분석하고 project-structure.md를 만들어줘"
+3. ".tasks/ 디렉토리에 요구사항 문서를 생성해줘"
+4. "요구사항에 기반한 구현 계획을 만들어줘"
+
+### 설계 검토 시:
+
+1. "이 설계를 요구사항과 대조하여 검토해줘"
+2. "누락된 요구사항을 찾아줘"
+3. "설계 개선사항을 제안해줘"
+
+### 구현 시:
+
+1. "X 단계 계획을 실행해줘"
+2. "04_guideline.md의 가이드라인을 따라줘"
+3. "완료된 작업을 커밋해줘"
+
+## Validation Checklist
+
+### Requirements Validation
+
+- [ ] All requirements follow EARS format
+- [ ] Requirements are testable
+- [ ] No ambiguous language
+- [ ] Complete coverage of use cases
+
+### Design Validation
+
+- [ ] Design addresses all requirements
+- [ ] Technical feasibility confirmed
+- [ ] Performance impact analyzed
+- [ ] Security considerations addressed
+
+### Plan Validation
+
+- [ ] Tasks are atomic and clear
+- [ ] Dependencies identified
+- [ ] Timeline realistic
+- [ ] Resources available
+
+---
+
+> Last Updated: 2024
+> Purpose: Generic requirement-driven development methodology
+> Compatible with: Any codebase with project-structure.md documentation
