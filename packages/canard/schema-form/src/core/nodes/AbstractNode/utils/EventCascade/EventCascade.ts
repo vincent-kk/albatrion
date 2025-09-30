@@ -2,12 +2,13 @@ import { scheduleMicrotask } from '@winglet/common-utils/scheduler';
 
 import type { Fn } from '@aileron/declare';
 
-import { BIT_MASK_NONE } from '@/schema-form/app/constants';
 import type {
   NodeEventCollection,
   NodeEventEntity,
   NodeEventType,
 } from '@/schema-form/core/nodes/type';
+
+import { mergeEventEntries } from './utils/mergeEventEntries';
 
 /**
  * Event batch data structure
@@ -56,30 +57,8 @@ export class EventCascade {
     this.__currentBatch__ = nextBatch;
     scheduleMicrotask(() => {
       nextBatch.resolved = true;
-      this.__batchHandler__(mergeEvents(nextBatch.eventEntities));
+      this.__batchHandler__(mergeEventEntries(nextBatch.eventEntities));
     });
     return nextBatch;
   }
 }
-
-/**
- * Merges an array of events into a single event.
- * @param eventEntities - Array of events to merge
- * @returns Merged event
- */
-const mergeEvents = (eventEntities: ReadonlyArray<NodeEventEntity>) => {
-  const merged: Required<NodeEventCollection> = {
-    type: BIT_MASK_NONE as NodeEventType,
-    payload: {},
-    options: {},
-  };
-  for (let i = 0, l = eventEntities.length; i < l; i++) {
-    const eventEntity = eventEntities[i];
-    merged.type |= eventEntity[0];
-    if (eventEntity[1] !== undefined)
-      (merged.payload[eventEntity[0]] as NodeEventEntity[1]) = eventEntity[1];
-    if (eventEntity[2] !== undefined)
-      (merged.options[eventEntity[0]] as NodeEventEntity[2]) = eventEntity[2];
-  }
-  return merged;
-};
