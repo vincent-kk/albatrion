@@ -1,9 +1,8 @@
-import { memo, useCallback, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useMemo, useRef } from 'react';
 
 import { useOnUnmount } from '@winglet/react-utils/hook';
 
 import { NodeEventType, NodeState } from '@/schema-form/core';
-import { useSchemaNodeSubscribe } from '@/schema-form/hooks/useSchemaNodeSubscribe';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
   useInputControlContext,
@@ -16,7 +15,6 @@ import { useFormTypeInput } from './hooks/useFormTypeInput';
 import { useFormTypeInputControl } from './hooks/useFormTypeInputControl';
 import {
   HANDLE_CHANGE_OPTION,
-  PREEMPTIVE_RERENDERING_EVENTS,
   REACTIVE_RERENDERING_EVENTS,
   type SchemaNodeInputProps,
 } from './type';
@@ -43,26 +41,15 @@ export const SchemaNodeInput = memo(
     const { readOnly: rootReadOnly, disabled: rootDisabled } =
       useInputControlContext();
 
-    const sync = useMemo(() => node.group === 'terminal', [node.group]);
-
-    const [value, setValue] = useState(sync ? node.value : undefined);
-    useSchemaNodeSubscribe(sync ? node : null, ({ type, payload }) => {
-      if (type & NodeEventType.UpdateValue) {
-        const currentValue = payload?.[NodeEventType.UpdateValue];
-        if (currentValue !== value) setValue(currentValue);
-      }
-    });
-
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
       (input, option = HANDLE_CHANGE_OPTION) => {
         if (node.readOnly || node.disabled) return;
         node.setValue(input, option);
-        if (sync) setValue(node.value);
         node.clearExternalErrors();
         if (!node.state[NodeState.Dirty])
           node.setState({ [NodeState.Dirty]: true });
       },
-      [node, sync],
+      [node],
     );
 
     const handleFileAttach = useCallback(
@@ -98,10 +85,7 @@ export const SchemaNodeInput = memo(
     });
 
     const version = useFormTypeInputControl(node, containerRef);
-    useSchemaNodeTracker(
-      node,
-      sync ? PREEMPTIVE_RERENDERING_EVENTS : REACTIVE_RERENDERING_EVENTS,
-    );
+    useSchemaNodeTracker(node, REACTIVE_RERENDERING_EVENTS);
 
     if (!FormTypeInput) return null;
 
@@ -119,7 +103,7 @@ export const SchemaNodeInput = memo(
           errors={node.errors}
           watchValues={node.watchValues}
           defaultValue={node.defaultValue}
-          value={sync ? value : node.value}
+          value={node.value}
           onChange={handleChange}
           onFileAttach={handleFileAttach}
           ChildNodeComponents={ChildNodeComponents}
