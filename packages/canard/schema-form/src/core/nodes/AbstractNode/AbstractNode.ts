@@ -411,10 +411,10 @@ export abstract class AbstractNode<
 
   /**
    * Publishes an event to the node's listeners
-   * @param event Event to publish
-   *    - type: Event type (see NodeEventType)
-   *    - payload: Data for the event (see MethodPayload)
-   *    - options: Options for the event (see MethodOptions)
+   * @param type - Event type (see NodeEventType)
+   * @param payload - Data for the event (see NodeEventPayload)
+   * @param options - Options for the event (see NodeEventOptions)
+   * @param immediate - If true, executes listeners synchronously; if false, batches event via EventCascade
    */
   public publish<Type extends NodeEventType>(
     this: AbstractNode,
