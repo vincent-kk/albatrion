@@ -171,7 +171,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
         NodeEventType.UpdateValue,
         current,
         { previous, current },
-        true,
+        this.initialized,
       );
   }
 }

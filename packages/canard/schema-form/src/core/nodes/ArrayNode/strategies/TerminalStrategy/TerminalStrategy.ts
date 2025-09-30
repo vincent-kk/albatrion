@@ -188,7 +188,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
         NodeEventType.UpdateValue,
         current,
         { previous, current },
-        true,
+        this.__host__.initialized,
       );
   }
 

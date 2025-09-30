@@ -115,7 +115,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
         NodeEventType.UpdateValue,
         current,
         { previous, current },
-        true,
+        this.initialized,
       );
   }
 

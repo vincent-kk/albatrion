@@ -101,7 +101,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
         NodeEventType.UpdateValue,
         current,
         { previous, current },
-        true,
+        this.initialized,
       );
   }
 

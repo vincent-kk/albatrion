@@ -130,7 +130,7 @@ export class TerminalStrategy implements ObjectNodeStrategy {
         NodeEventType.UpdateValue,
         current,
         { previous, current },
-        true,
+        this.__host__.initialized,
       );
   }
 

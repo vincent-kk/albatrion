@@ -314,7 +314,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
         NodeEventType.UpdateValue,
         current,
         { previous, current },
-        true,
+        this.__host__.initialized,
       );
 
     this.__idle__ = true;

@@ -98,7 +98,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
         NodeEventType.UpdateValue,
         current,
         { previous, current },
-        true,
+        this.initialized,
       );
   }
 

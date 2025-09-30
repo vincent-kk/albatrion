@@ -357,7 +357,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
           current,
           settled: (option & SetValueOption.Isolate) === 0,
         },
-        true,
+        this.__host__.initialized,
       );
 
     this.__draft__ = {};
