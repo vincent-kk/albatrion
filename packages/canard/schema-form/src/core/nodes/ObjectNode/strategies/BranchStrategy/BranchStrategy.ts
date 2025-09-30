@@ -452,13 +452,11 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__host__.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateComputedProperties) {
         const isolation = this.__isolated__;
-        const oneOfChildNodeMap = this.__processOneOfChildren__(isolation);
-        const anyOfChildNodeMaps = this.__processAnyOfChildren__(isolation);
-
-        if (oneOfChildNodeMap === null && anyOfChildNodeMaps === null) return;
+        const skipOneOfUpdate = this.__processOneOfChildren__(isolation);
+        const skipAnyOfUpdate = this.__processAnyOfChildren__(isolation);
+        if (skipOneOfUpdate && skipAnyOfUpdate) return;
         if (isolation) this.__isolated__ = false;
-
-        this.__processChildren__(oneOfChildNodeMap, anyOfChildNodeMaps);
+        this.__processChildren__();
         this.__processCompositionValue__();
       }
     });
@@ -469,12 +467,12 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @private
    */
   private __processOneOfChildren__(isolation: boolean) {
-    if (this.__oneOfChildNodeMapList__ === undefined) return null;
+    if (this.__oneOfChildNodeMapList__ === undefined) return true;
 
     const current = this.__host__.oneOfIndex;
     const previous = this.__oneOfIndex__;
 
-    if (!isolation && current === previous) return this.__oneOfChildNodeMap__;
+    if (!isolation && current === previous) return true;
 
     const oneOfChildNodeMap =
       current > -1 ? this.__oneOfChildNodeMapList__[current] : null;
@@ -504,7 +502,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__oneOfIndex__ = current;
     this.__oneOfChildNodeMap__ = oneOfChildNodeMap;
 
-    return oneOfChildNodeMap;
+    return false;
   }
 
   /**
@@ -514,13 +512,12 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @private
    */
   private __processAnyOfChildren__(isolation: boolean) {
-    if (this.__anyOfChildNodeMapList__ === undefined) return null;
+    if (this.__anyOfChildNodeMapList__ === undefined) return true;
 
     const current = this.__host__.anyOfIndices;
     const previous = this.__anyOfIndices__;
 
-    if (!isolation && primitiveArrayEqual(current, previous))
-      return this.__anyOfChildNodeMaps__;
+    if (!isolation && primitiveArrayEqual(current, previous)) return true;
 
     const anyOfChildNodeMaps = new Array<ChildNodeMap>(current.length);
     for (let i = 0, l = current.length; i < l; i++)
@@ -551,7 +548,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__anyOfChildNodeMaps__ =
       anyOfChildNodeMaps.length > 0 ? anyOfChildNodeMaps : null;
 
-    return this.__anyOfChildNodeMaps__;
+    return false;
   }
 
   /**
@@ -560,10 +557,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @param anyOfChildNodeMaps - Array of active anyOf child node maps (null if no anyOf or none selected)
    * @private
    */
-  private __processChildren__(
-    oneOfChildNodeMap: ChildNodeMap | null,
-    anyOfChildNodeMaps: ChildNodeMap[] | null,
-  ) {
+  private __processChildren__() {
+    const oneOfChildNodeMap = this.__oneOfChildNodeMap__;
+    const anyOfChildNodeMaps = this.__anyOfChildNodeMaps__;
     if (oneOfChildNodeMap === null && anyOfChildNodeMaps === null)
       this.__children__ = this.__propertyChildren__;
     else {
