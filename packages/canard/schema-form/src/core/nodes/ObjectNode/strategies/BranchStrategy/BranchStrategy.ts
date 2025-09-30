@@ -349,11 +349,16 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (option & SetValueOption.Isolate)
       this.__handleUpdateComputedProperties__();
     if (option & SetValueOption.PublishUpdateEvent)
-      this.__host__.publish(NodeEventType.UpdateValue, current, {
-        previous,
+      this.__host__.publish(
+        NodeEventType.UpdateValue,
         current,
-        settled: (option & SetValueOption.Isolate) === 0,
-      });
+        {
+          previous,
+          current,
+          settled: (option & SetValueOption.Isolate) === 0,
+        },
+        true,
+      );
 
     this.__draft__ = {};
   }

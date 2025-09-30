@@ -105,10 +105,12 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
           const current = [...previous];
           current[i] = value;
           this.#value = current;
-          this.publish(NodeEventType.UpdateValue, current, {
-            previous,
+          this.publish(
+            NodeEventType.UpdateValue,
             current,
-          });
+            { previous, current },
+            true,
+          );
         }
       });
       this.saveUnsubscribe(unsubscribe);
@@ -165,6 +167,11 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     this.#value = current;
     if (option & SetValueOption.Refresh) this.refresh(values);
     if (option & SetValueOption.PublishUpdateEvent)
-      this.publish(NodeEventType.UpdateValue, current, { previous, current });
+      this.publish(
+        NodeEventType.UpdateValue,
+        current,
+        { previous, current },
+        true,
+      );
   }
 }
