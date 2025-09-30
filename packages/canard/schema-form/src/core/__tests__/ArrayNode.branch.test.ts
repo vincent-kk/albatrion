@@ -101,39 +101,37 @@ describe('ArrayNode-Terminal', () => {
       },
     });
 
+    await delay();
+
     const booleanNode = node?.find('arr') as ArrayNode;
 
     // 이벤트 리스너 등록
     const mockListener = vi.fn();
     booleanNode.subscribe(mockListener);
 
-    await delay();
-
-    // 초기화 이벤트가 발생했는지 확인 (호출 횟수와 이벤트 타입만 검증)
-    expect(mockListener).toHaveBeenCalledTimes(1);
-    const firstCall = mockListener.mock.calls[0][0];
-    expect(firstCall.type & NodeEventType.Initialized).toBeTruthy();
-    expect(firstCall.type & NodeEventType.UpdateValue).toBeTruthy();
-    expect(firstCall.payload[NodeEventType.UpdateValue]).toEqual([]);
-
-    mockListener.mockClear();
-
     // 값 변경
     booleanNode.setValue([true, false, true]);
     await delay();
 
-    // 값 변경 이벤트가 발생했는지 확인 (호출 횟수와 핵심 이벤트 타입만 검증)
-    expect(mockListener).toHaveBeenCalledTimes(1);
-    const secondCall = mockListener.mock.calls[0][0];
-    expect(secondCall.type & NodeEventType.UpdateValue).toBeTruthy();
-    expect(secondCall.payload[NodeEventType.UpdateValue]).toEqual([
-      true,
-      false,
-      true,
-    ]);
-    expect(secondCall.options[NodeEventType.UpdateValue]).toMatchObject({
-      previous: [],
-      current: [true, false, true],
+    // After initialized, UpdateValue event is dispatched synchronously
+    expect(mockListener).toHaveBeenNthCalledWith(1, {
+      type: NodeEventType.UpdateValue,
+      payload: {
+        [NodeEventType.UpdateValue]: [true, false, true],
+      },
+      options: {
+        [NodeEventType.UpdateValue]: {
+          previous: [],
+          current: [true, false, true],
+        },
+      },
+    });
+
+    // Async events are merged in the next microtask (includes UpdateChildren for branch arrays)
+    expect(mockListener).toHaveBeenNthCalledWith(2, {
+      type: NodeEventType.RequestRefresh | NodeEventType.UpdateChildren,
+      payload: {},
+      options: {},
     });
   });
 

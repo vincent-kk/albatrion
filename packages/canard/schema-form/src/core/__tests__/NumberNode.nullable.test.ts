@@ -100,6 +100,8 @@ describe('NumberNode nullable functionality', () => {
       },
     });
 
+    await delay();
+
     const numberNode = node?.find('score') as NumberNode;
     const mockListener = vi.fn();
     numberNode.subscribe(mockListener);
@@ -108,14 +110,26 @@ describe('NumberNode nullable functionality', () => {
     numberNode.setValue(null);
     await delay();
 
-    expect(mockListener).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: expect.any(Number),
-        payload: {
-          [NodeEventType.UpdateValue]: null,
+    // After initialized, UpdateValue event is dispatched synchronously
+    expect(mockListener).toHaveBeenNthCalledWith(1, {
+      type: NodeEventType.UpdateValue,
+      payload: {
+        [NodeEventType.UpdateValue]: null,
+      },
+      options: {
+        [NodeEventType.UpdateValue]: {
+          previous: undefined,
+          current: null,
         },
-      }),
-    );
+      },
+    });
+
+    // Async events are merged in the next microtask
+    expect(mockListener).toHaveBeenNthCalledWith(2, {
+      type: NodeEventType.RequestRefresh,
+      payload: {},
+      options: {},
+    });
   });
 
   it('nullable 숫자 노드의 onChange 이벤트가 정상적으로 전파되어야 함', async () => {

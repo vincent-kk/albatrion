@@ -177,6 +177,8 @@ describe('ObjectNode terminal functionality', () => {
       },
     });
 
+    await delay();
+
     const objectNode = node?.find('payload') as ObjectNode;
     const mockListener = vi.fn();
     objectNode.subscribe(mockListener);
@@ -186,14 +188,26 @@ describe('ObjectNode terminal functionality', () => {
     objectNode.setValue(testValue);
     await delay();
 
-    expect(mockListener).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: expect.any(Number),
-        payload: {
-          [NodeEventType.UpdateValue]: testValue,
+    // After initialized, UpdateValue event is dispatched synchronously
+    expect(mockListener).toHaveBeenNthCalledWith(1, {
+      type: NodeEventType.UpdateValue,
+      payload: {
+        [NodeEventType.UpdateValue]: testValue,
+      },
+      options: {
+        [NodeEventType.UpdateValue]: {
+          previous: {},
+          current: testValue,
         },
-      }),
-    );
+      },
+    });
+
+    // Async events are merged in the next microtask
+    expect(mockListener).toHaveBeenNthCalledWith(2, {
+      type: NodeEventType.RequestRefresh,
+      payload: {},
+      options: {},
+    });
   });
 
   it('터미널 객체 노드가 유효성 검사와 함께 동작해야 함', async () => {

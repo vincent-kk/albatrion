@@ -5,7 +5,7 @@ import { delay } from '@winglet/common-utils';
 
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
-import { ValidationMode } from '../nodes';
+import { NodeEventType, ValidationMode } from '../nodes';
 import type { ArrayNode } from '../nodes/ArrayNode';
 import { createValidatorFactory } from './utils/createValidatorFactory';
 
@@ -149,6 +149,8 @@ describe('ArrayNode nullable functionality', () => {
       },
     });
 
+    await delay();
+
     const arrayNode = node?.find('list') as ArrayNode;
     const mockListener = vi.fn();
     arrayNode.subscribe(mockListener);
@@ -156,6 +158,27 @@ describe('ArrayNode nullable functionality', () => {
     // null 값으로 변경
     arrayNode.setValue(null);
     await delay();
+
+    // After initialized, UpdateValue event is dispatched synchronously
+    expect(mockListener).toHaveBeenNthCalledWith(1, {
+      type: NodeEventType.UpdateValue,
+      payload: {
+        [NodeEventType.UpdateValue]: null,
+      },
+      options: {
+        [NodeEventType.UpdateValue]: {
+          previous: [],
+          current: null,
+        },
+      },
+    });
+
+    // Async events are merged in the next microtask (includes UpdateChildren for branch arrays)
+    expect(mockListener).toHaveBeenNthCalledWith(2, {
+      type: NodeEventType.RequestRefresh | NodeEventType.UpdateChildren,
+      payload: {},
+      options: {},
+    });
 
     expect(arrayNode.value).toBeNull();
   });

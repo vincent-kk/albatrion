@@ -179,6 +179,8 @@ describe('ObjectNode nullable functionality', () => {
       },
     });
 
+    await delay();
+
     const objectNode = node?.find('data') as ObjectNode;
     const mockListener = vi.fn();
     objectNode.subscribe(mockListener);
@@ -187,14 +189,27 @@ describe('ObjectNode nullable functionality', () => {
     objectNode.setValue(null);
     await delay();
 
-    expect(mockListener).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: expect.any(Number),
-        payload: {
-          [NodeEventType.UpdateValue]: null,
+    // After initialized, UpdateValue event is dispatched synchronously (branch object includes settled)
+    expect(mockListener).toHaveBeenNthCalledWith(1, {
+      type: NodeEventType.UpdateValue,
+      payload: {
+        [NodeEventType.UpdateValue]: null,
+      },
+      options: {
+        [NodeEventType.UpdateValue]: {
+          previous: {},
+          current: null,
+          settled: false,
         },
-      }),
-    );
+      },
+    });
+
+    // Async events are merged in the next microtask (includes UpdateComputedProperties for branch objects)
+    expect(mockListener).toHaveBeenNthCalledWith(2, {
+      type: NodeEventType.RequestRefresh | NodeEventType.UpdateComputedProperties,
+      payload: {},
+      options: {},
+    });
   });
 
   it('nullable 객체 노드의 onChange 이벤트가 정상적으로 전파되어야 함', async () => {

@@ -359,14 +359,22 @@ describe('AbstractNode', () => {
 
     await wait();
 
+    // After initialized, UpdateValue is dispatched synchronously first
+    // VirtualNode uses array format for payload and previous
     expect(externalEvent[0]).toEqual({
-      type: NodeEventType.RequestEmitChange,
+      type: NodeEventType.UpdateValue,
       payload: {
-        [NodeEventType.RequestEmitChange]: SetValueOption.Default,
+        [NodeEventType.UpdateValue]: [undefined, '2021-01-02'],
       },
-      options: {},
+      options: {
+        [NodeEventType.UpdateValue]: {
+          current: [undefined, '2021-01-02'],
+          previous: [undefined, undefined],
+        },
+      },
     });
 
+    // Parent ObjectNode UpdateValue follows synchronously
     expect(externalEvent[1]).toEqual({
       type: NodeEventType.UpdateValue,
       payload: {
@@ -383,6 +391,15 @@ describe('AbstractNode', () => {
           settled: true,
         },
       },
+    });
+
+    // RequestEmitChange follows in async event stream
+    expect(externalEvent[2]).toEqual({
+      type: NodeEventType.RequestEmitChange,
+      payload: {
+        [NodeEventType.RequestEmitChange]: SetValueOption.Default,
+      },
+      options: {},
     });
 
     expect(node.value).toEqual({

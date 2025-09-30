@@ -166,12 +166,9 @@ describe('ObjectNode', () => {
     objectNode.setValue({ name: 'Ron', age: 28 });
     await delay();
 
-    // 이벤트가 발생했는지 확인
-    expect(mockListener).toHaveBeenCalledWith({
-      type:
-        NodeEventType.UpdateValue |
-        NodeEventType.RequestRefresh |
-        NodeEventType.UpdateComputedProperties,
+    // After initialized, UpdateValue event is dispatched synchronously
+    expect(mockListener).toHaveBeenNthCalledWith(1, {
+      type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: { name: 'Ron', age: 28 },
       },
@@ -182,6 +179,14 @@ describe('ObjectNode', () => {
           settled: false,
         },
       },
+    });
+
+    // Async events are merged in the next microtask
+    expect(mockListener).toHaveBeenNthCalledWith(2, {
+      type:
+        NodeEventType.RequestRefresh | NodeEventType.UpdateComputedProperties,
+      payload: {},
+      options: {},
     });
   });
 
@@ -897,11 +902,9 @@ describe('ObjectNode', () => {
       objectNode.setValue({ 'ünicøde-näme': 'Ron', пользователь: 28 });
       await delay();
 
-      expect(mockListener).toHaveBeenCalledWith({
-        type:
-          NodeEventType.UpdateValue |
-          NodeEventType.RequestRefresh |
-          NodeEventType.UpdateComputedProperties,
+      // After initialized, UpdateValue event is dispatched synchronously
+      expect(mockListener).toHaveBeenNthCalledWith(1, {
+        type: NodeEventType.UpdateValue,
         payload: {
           [NodeEventType.UpdateValue]: {
             'ünicøde-näme': 'Ron',
@@ -915,6 +918,14 @@ describe('ObjectNode', () => {
             settled: false,
           },
         },
+      });
+
+      // Async events are merged in the next microtask
+      expect(mockListener).toHaveBeenNthCalledWith(2, {
+        type:
+          NodeEventType.RequestRefresh | NodeEventType.UpdateComputedProperties,
+        payload: {},
+        options: {},
       });
     });
   });

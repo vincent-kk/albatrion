@@ -144,6 +144,8 @@ describe('VirtualNode', () => {
       },
     });
 
+    await delay();
+
     const virtualNode = node?.find('/period');
     const startDateNode = node?.find('/startDate') as StringNode;
 
@@ -155,7 +157,7 @@ describe('VirtualNode', () => {
     startDateNode?.setValue('2021-03-01');
     await delay();
 
-    // 이벤트가 발생했는지 확인
+    // VirtualNode updates synchronously when referenced nodes change
     expect(mockListener).toHaveBeenCalledWith({
       type: NodeEventType.UpdateValue,
       payload: {

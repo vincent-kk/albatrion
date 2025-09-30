@@ -226,6 +226,8 @@ describe('StringNode nullable functionality', () => {
       },
     });
 
+    await delay();
+
     const stringNode = node?.find('comment') as StringNode;
     const mockListener = vi.fn();
     stringNode.subscribe(mockListener);
@@ -234,14 +236,26 @@ describe('StringNode nullable functionality', () => {
     stringNode.setValue(null);
     await delay();
 
-    expect(mockListener).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: expect.any(Number),
-        payload: {
-          [NodeEventType.UpdateValue]: null,
+    // After initialized, UpdateValue event is dispatched synchronously
+    expect(mockListener).toHaveBeenNthCalledWith(1, {
+      type: NodeEventType.UpdateValue,
+      payload: {
+        [NodeEventType.UpdateValue]: null,
+      },
+      options: {
+        [NodeEventType.UpdateValue]: {
+          previous: undefined,
+          current: null,
         },
-      }),
-    );
+      },
+    });
+
+    // Async events are merged in the next microtask
+    expect(mockListener).toHaveBeenNthCalledWith(2, {
+      type: NodeEventType.RequestRefresh,
+      payload: {},
+      options: {},
+    });
   });
 
   it('nullable이 명시되지 않은 경우 null을 빈 문자열로 변환해야 함', async () => {

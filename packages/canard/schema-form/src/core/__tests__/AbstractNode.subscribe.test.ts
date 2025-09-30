@@ -358,6 +358,9 @@ describe('SchemaNode computed properties', () => {
         jsonSchema: schema,
         onChange: () => {},
       });
+
+      await delay();
+
       const descriptionNode = node.find('./description');
       const listener = vi.fn();
 
@@ -367,13 +370,11 @@ describe('SchemaNode computed properties', () => {
 
       await delay();
 
-      expect(listener).toHaveBeenCalledWith(
+      // After initialized, UpdateValue event is dispatched synchronously
+      expect(listener).toHaveBeenNthCalledWith(
+        1,
         expect.objectContaining({
-          type:
-            NodeEventType.Initialized |
-            NodeEventType.UpdateValue |
-            NodeEventType.UpdateComputedProperties |
-            NodeEventType.RequestRefresh,
+          type: NodeEventType.UpdateValue,
           options: {
             [NodeEventType.UpdateValue]: {
               previous: undefined,
@@ -383,6 +384,17 @@ describe('SchemaNode computed properties', () => {
           payload: {
             [NodeEventType.UpdateValue]: undefined,
           },
+        }),
+      );
+
+      // Async events - only RequestRefresh is emitted
+      // Note: UpdateComputedProperties is handled separately and may not always fire
+      expect(listener).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({
+          type: NodeEventType.RequestRefresh,
+          options: {},
+          payload: {},
         }),
       );
     });

@@ -83,6 +83,8 @@ describe('BooleanNode', () => {
       },
     });
 
+    await delay();
+
     const booleanNode = node?.find('isActive') as BooleanNode;
 
     // 이벤트 리스너 등록
@@ -93,13 +95,9 @@ describe('BooleanNode', () => {
     booleanNode.setValue(true);
     await delay();
 
-    // 이벤트가 발생했는지 확인
-    expect(mockListener).toHaveBeenCalledWith({
-      type:
-        NodeEventType.Initialized |
-        NodeEventType.RequestRefresh |
-        NodeEventType.UpdateValue |
-        NodeEventType.UpdateComputedProperties,
+    // After initialized, UpdateValue event is dispatched synchronously
+    expect(mockListener).toHaveBeenNthCalledWith(1, {
+      type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: true,
       },
@@ -109,6 +107,13 @@ describe('BooleanNode', () => {
           current: true,
         },
       },
+    });
+
+    // Async events are merged in the next microtask
+    expect(mockListener).toHaveBeenNthCalledWith(2, {
+      type: NodeEventType.RequestRefresh,
+      payload: {},
+      options: {},
     });
   });
 

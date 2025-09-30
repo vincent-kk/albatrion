@@ -381,11 +381,10 @@ describe('AllOf Schema', () => {
     objectNode.setValue({ firstName: 'John', lastName: 'Doe' });
     await delay();
 
-    expect(mockListener).toHaveBeenCalledWith({
-      type:
-        NodeEventType.UpdateValue |
-        NodeEventType.RequestRefresh |
-        NodeEventType.UpdateComputedProperties,
+    // After initialized, UpdateValue event is dispatched synchronously
+    // So it arrives separately from other async events (RequestRefresh, UpdateComputedProperties)
+    expect(mockListener).toHaveBeenNthCalledWith(1, {
+      type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: { firstName: 'John', lastName: 'Doe' },
       },
@@ -396,6 +395,14 @@ describe('AllOf Schema', () => {
           settled: false,
         },
       },
+    });
+
+    // Async events are merged in the next microtask
+    expect(mockListener).toHaveBeenNthCalledWith(2, {
+      type:
+        NodeEventType.RequestRefresh | NodeEventType.UpdateComputedProperties,
+      payload: {},
+      options: {},
     });
   });
 
