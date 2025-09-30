@@ -104,6 +104,42 @@ Standard JSONPointer (RFC 6901) with custom extensions:
 - **Node State Management**: Each node maintains its own state flags (dirty, touched, validated)
 - **Validation Modes**: Supports OnChange, OnRequest, and None validation modes
 
+#### EventCascade Batching Mechanism
+
+**Core Behavior:**
+- Each `AbstractNode` has its own `EventCascade` instance for event batching
+- Events are merged using microtask queue to prevent recursive triggering
+- Batch reuse condition: `if (batch && !batch.resolved) return batch`
+- New batches are created with `{ eventEntities: [] }` where `resolved` is `undefined` initially
+
+**Batch Lifecycle:**
+```typescript
+// Synchronous stack: resolved = undefined → events merged into same batch
+schedule(UpdateValue);
+schedule(RequestRefresh);
+// Both events go to same batch
+
+// Microtask execution:
+scheduleMicrotask(() => {
+  nextBatch.resolved = true;  // Set at start of microtask
+  this.__batchHandler__(mergeEvents(nextBatch.eventEntities));
+  // During listener execution:
+  //   - if listener calls schedule(), resolved = true → new batch created
+});
+```
+
+**SetValueOption.Isolate Effect:**
+- `SetValueOption.Overwrite` includes `Isolate` option (used by default in `setValue()`)
+- When `Isolate` is set, `BranchStrategy.__handleEmitChange__()` calls `updateComputedProperties()` **synchronously** before `publish(UpdateValue)`
+- This causes `UpdateComputedProperties` to be scheduled in the **same batch** as `UpdateValue` and `RequestRefresh` in synchronous stack
+- Result: `UpdateValue | RequestRefresh | UpdateComputedProperties` merge into a single event
+
+**Important Note on Test Behavior:**
+- Test cases that call `objectNode.setValue()` directly use `Overwrite` option (includes `Isolate`)
+- This creates synchronous `updateComputedProperties()` call, merging all events into one batch
+- In real user scenarios, child nodes trigger parent updates differently, so test behavior may not represent typical usage patterns
+- When modifying event timing (e.g., adding `immediate` flag), be aware that it may break `Isolate` option's synchronous merging behavior
+
 ## Testing Guidelines
 
 - Unit tests use Vitest and are located in `__tests__` directories
