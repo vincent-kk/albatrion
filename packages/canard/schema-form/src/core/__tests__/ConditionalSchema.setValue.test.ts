@@ -5,7 +5,9 @@ import { delay } from '@winglet/common-utils';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 import type { JsonSchema } from '@/schema-form/types';
 
+import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
+import type { StringNode } from '../nodes/StringNode';
 
 describe('Conditional Schema setValue behavior', () => {
   describe('oneOf - automatic field removal on setValue', () => {
@@ -563,6 +565,319 @@ describe('Conditional Schema setValue behavior', () => {
       expect(node.value?.fieldA).toBeUndefined(); // oneOf removed
       expect(node.value?.fieldB).toBe(200); // oneOf preserved
       expect(node.value?.extraField).toBe('extra2'); // anyOf preserved
+    });
+  });
+
+  describe('edge cases - consistency and timing', () => {
+    it('should handle child node direct modification after parent setValue', async () => {
+      const schema: JsonSchema = {
+        type: 'object',
+        properties: {
+          category: {
+            type: 'string',
+            enum: ['game', 'movie'],
+            default: 'game',
+          },
+        },
+        oneOf: [
+          {
+            '&if': "./category === 'game'",
+            properties: {
+              price: { type: 'number' },
+            },
+          },
+        ],
+      };
+
+      const node = nodeFromJsonSchema({
+        onChange: () => {},
+        jsonSchema: schema,
+      }) as ObjectNode;
+
+      await delay();
+
+      // Set initial value with game and price
+      node.setValue({ category: 'game', price: 100 });
+      await delay();
+
+      expect(node.value?.category).toBe('game');
+      expect(node.value?.price).toBe(100);
+
+      // Get child nodes
+      const categoryNode = node.find('./category') as StringNode;
+      const priceNode = node.find('./price') as NumberNode | null;
+
+      expect(priceNode).not.toBeNull();
+      expect(priceNode?.value).toBe(100);
+
+      // Modify category through child node to 'movie' (should remove price)
+      categoryNode.setValue('movie');
+      await delay();
+
+      expect(node.value?.category).toBe('movie');
+      expect(node.value?.price).toBeUndefined();
+
+      // Note: The price node still exists in the tree even though category is 'movie'
+      // When we modify the child node directly, the value propagates to parent
+      const priceNodeAfter = node.find('./price') as NumberNode | null;
+      expect(priceNodeAfter).not.toBeNull(); // Node exists
+
+      // If we set price through child node when category is 'movie',
+      // the value will propagate but will be filtered by parent setValue
+      priceNodeAfter?.setValue(999);
+      await delay();
+
+      expect(node.value?.category).toBe('movie');
+      // The price value appears because child setValue propagates to parent
+      expect(node.value?.price).toBe(999);
+
+      // However, if we do parent setValue with movie category, price will be removed
+      node.setValue({ category: 'movie', price: 888 });
+      await delay();
+
+      expect(node.value?.category).toBe('movie');
+      expect(node.value?.price).toBeUndefined(); // Removed by parent setValue filtering
+
+      // Switch back to 'game' through child node
+      categoryNode.setValue('game');
+      await delay();
+
+      expect(node.value?.category).toBe('game');
+      // Price is undefined because it was removed by previous parent setValue
+      expect(node.value?.price).toBeUndefined();
+
+      // Can set new price value
+      const priceNodeRestored = node.find('./price') as NumberNode | null;
+      expect(priceNodeRestored).not.toBeNull();
+
+      priceNodeRestored?.setValue(200);
+      await delay();
+
+      expect(node.value?.price).toBe(200);
+    });
+
+    it('should handle partial updates correctly (implicit field removal)', async () => {
+      const schema: JsonSchema = {
+        type: 'object',
+        properties: {
+          category: {
+            type: 'string',
+            enum: ['game', 'movie'],
+            default: 'game',
+          },
+        },
+        oneOf: [
+          {
+            '&if': "./category === 'game'",
+            properties: {
+              price: { type: 'number' },
+              platform: { type: 'string' },
+            },
+          },
+        ],
+      };
+
+      const node = nodeFromJsonSchema({
+        onChange: () => {},
+        jsonSchema: schema,
+      }) as ObjectNode;
+
+      await delay();
+
+      // Set full value with game, price, and platform
+      node.setValue({ category: 'game', price: 100, platform: 'PC' });
+      await delay();
+
+      expect(node.value?.category).toBe('game');
+      expect(node.value?.price).toBe(100);
+      expect(node.value?.platform).toBe('PC');
+
+      // Partial update: only change category to 'movie' without mentioning price/platform
+      // This should remove price and platform fields
+      node.setValue({ category: 'movie' });
+      await delay();
+
+      expect(node.value?.category).toBe('movie');
+      expect(node.value?.price).toBeUndefined();
+      expect(node.value?.platform).toBeUndefined();
+
+      // Partial update: switch back to 'game' with only price
+      node.setValue({ category: 'game', price: 200 });
+      await delay();
+
+      expect(node.value?.category).toBe('game');
+      expect(node.value?.price).toBe(200);
+      expect(node.value?.platform).toBeUndefined(); // Platform not set
+    });
+
+    it('should handle cascading removals with multi-level dependencies', async () => {
+      const schema: JsonSchema = {
+        type: 'object',
+        properties: {
+          levelA: {
+            type: 'string',
+            enum: ['A1', 'A2'],
+            default: 'A1',
+          },
+        },
+        oneOf: [
+          {
+            '&if': "./levelA === 'A1'",
+            properties: {
+              levelB: {
+                type: 'string',
+                enum: ['B1', 'B2'],
+              },
+            },
+          },
+        ],
+        anyOf: [
+          {
+            '&if': "./levelB === 'B1'",
+            properties: {
+              levelC: { type: 'string' },
+            },
+          },
+        ],
+      };
+
+      const node = nodeFromJsonSchema({
+        onChange: () => {},
+        jsonSchema: schema,
+      }) as ObjectNode;
+
+      await delay();
+
+      // Set all levels: A1 → B1 → C
+      node.setValue({ levelA: 'A1', levelB: 'B1', levelC: 'value-c' });
+      await delay();
+
+      expect(node.value?.levelA).toBe('A1');
+      expect(node.value?.levelB).toBe('B1');
+      expect(node.value?.levelC).toBe('value-c');
+
+      // Change levelA to A2, which should remove levelB by oneOf
+      // Note: levelC won't be automatically removed because anyOf conditions
+      // are evaluated independently and don't cascade from oneOf removals
+      node.setValue({ levelA: 'A2', levelB: 'B1', levelC: 'value-c' });
+      await delay();
+
+      expect(node.value?.levelA).toBe('A2');
+      expect(node.value?.levelB).toBeUndefined(); // Removed by oneOf
+      // levelC remains because anyOf doesn't automatically cascade from levelB removal
+      expect(node.value?.levelC).toBe('value-c');
+
+      // To properly remove levelC, explicitly set without it or change its dependency
+      node.setValue({ levelA: 'A2' });
+      await delay();
+
+      expect(node.value?.levelA).toBe('A2');
+      expect(node.value?.levelB).toBeUndefined();
+      expect(node.value?.levelC).toBeUndefined(); // Now removed by explicit omission
+
+      // Switch back to A1, set B1 again
+      node.setValue({ levelA: 'A1', levelB: 'B1', levelC: 'new-value-c' });
+      await delay();
+
+      expect(node.value?.levelA).toBe('A1');
+      expect(node.value?.levelB).toBe('B1');
+      expect(node.value?.levelC).toBe('new-value-c');
+
+      // Change levelB to B2, which should remove levelC (anyOf condition not met)
+      node.setValue({ levelA: 'A1', levelB: 'B2', levelC: 'should-remove' });
+      await delay();
+
+      expect(node.value?.levelA).toBe('A1');
+      expect(node.value?.levelB).toBe('B2');
+      expect(node.value?.levelC).toBeUndefined(); // Removed by anyOf
+    });
+
+    it('should handle sync/async timing correctly (immediate vs delayed reads)', async () => {
+      const schema: JsonSchema = {
+        type: 'object',
+        properties: {
+          category: {
+            type: 'string',
+            enum: ['game', 'movie'],
+            default: 'game',
+          },
+        },
+        oneOf: [
+          {
+            '&if': "./category === 'game'",
+            properties: {
+              price: { type: 'number' },
+            },
+          },
+        ],
+      };
+
+      const node = nodeFromJsonSchema({
+        onChange: () => {},
+        jsonSchema: schema,
+      }) as ObjectNode;
+
+      await delay();
+
+      // Test 1: Immediate read after setValue (synchronous UpdateValue)
+      node.setValue({ category: 'game', price: 100 });
+
+      // Immediate read - UpdateValue is synchronous after initialization
+      expect(node.value?.category).toBe('game');
+      expect(node.value?.price).toBe(100);
+
+      // After delay - computed properties updated
+      await delay();
+      expect(node.value?.category).toBe('game');
+      expect(node.value?.price).toBe(100);
+
+      // Test 2: Immediate read after condition change
+      node.setValue({ category: 'movie', price: 200 });
+
+      // Immediate read - value is set but oneOf filtering happens asynchronously
+      const immediateValue = node.value;
+      expect(immediateValue?.category).toBe('movie');
+      expect(immediateValue?.price).toBe(200); // Still present immediately
+
+      // After delay - computed properties updated and filtering applied
+      await delay();
+      const delayedValue = node.value;
+
+      expect(delayedValue?.category).toBe('movie');
+      expect(delayedValue?.price).toBeUndefined(); // Price removed by oneOf
+
+      // Test 3: Multiple setValue calls with delay to verify filtering timing
+      node.setValue({ category: 'game', price: 300 });
+      const value1Immediate = node.value; // Immediate read
+      expect(value1Immediate?.category).toBe('game');
+      expect(value1Immediate?.price).toBe(300); // Valid for 'game' category
+
+      await delay();
+      const value1Delayed = node.value;
+      expect(value1Delayed?.category).toBe('game');
+      expect(value1Delayed?.price).toBe(300); // Still valid after delay
+
+      // Set invalid combination (movie with price)
+      node.setValue({ category: 'movie', price: 400 });
+      const value2Immediate = node.value; // Immediate read
+      expect(value2Immediate?.category).toBe('movie');
+      expect(value2Immediate?.price).toBe(400); // Still present immediately (filtering not applied yet)
+
+      await delay();
+      const value2Delayed = node.value;
+      expect(value2Delayed?.category).toBe('movie');
+      expect(value2Delayed?.price).toBeUndefined(); // NOW filtered out after delay
+
+      // Set valid combination again
+      node.setValue({ category: 'game', price: 500 });
+      const value3Immediate = node.value; // Immediate read
+      expect(value3Immediate?.category).toBe('game');
+      expect(value3Immediate?.price).toBe(500); // Valid for 'game' category
+
+      await delay();
+      const value3Delayed = node.value;
+      expect(value3Delayed?.category).toBe('game');
+      expect(value3Delayed?.price).toBe(500); // Still valid after delay
     });
   });
 });
