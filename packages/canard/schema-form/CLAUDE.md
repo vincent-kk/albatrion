@@ -495,6 +495,82 @@ node.enhancedValue  // { userType: 'student', studentId: 'STU123' }
 - Schema condition changes complete within reasonable time (< 50ms for simple cases)
 - No memory leaks through conditional field creation/destruction
 
+#### Conditional Schema setValue Behavior
+
+Schema Form automatically removes fields that don't match oneOf/anyOf conditions when `setValue()` is called. However, the behavior differs significantly between parent and child `setValue()` calls.
+
+**Parent setValue (filtering enabled):**
+```typescript
+// Category is 'movie', price field doesn't match oneOf condition
+objectNode.setValue({ category: 'movie', price: 200 });
+await delay();
+
+objectNode.value; // { category: 'movie' }
+// price is automatically removed because oneOf condition not met
+```
+
+**Child setValue (filtering bypassed):**
+```typescript
+const priceNode = objectNode.find('./price') as NumberNode;
+
+// Even when category is 'movie', child setValue propagates the value
+priceNode.setValue(999);
+await delay();
+
+objectNode.value; // { category: 'movie', price: 999 }
+// price appears because child updates bypass conditional filtering
+```
+
+**Key differences:**
+1. **Parent setValue**: Applies conditional filtering, removes non-matching fields
+2. **Child setValue**: Bypasses filtering, value propagates regardless of conditions
+3. **Node existence**: Conditional field nodes exist in tree even when conditions don't match
+4. **Re-filtering**: Subsequent parent `setValue()` will re-apply filtering
+
+**Partial updates:**
+```typescript
+// Set with multiple fields
+node.setValue({ category: 'game', price: 100, platform: 'PC' });
+
+// Partial update - only change category
+node.setValue({ category: 'movie' });
+await delay();
+
+// All conditional fields are removed (price, platform)
+node.value; // { category: 'movie' }
+```
+
+**Cascading behavior:**
+```typescript
+{
+  oneOf: [
+    { '&if': "./levelA === 'A1'", properties: { levelB: {...} } }
+  ],
+  anyOf: [
+    { '&if': "./levelB === 'B1'", properties: { levelC: {...} } }
+  ]
+}
+
+// oneOf removes levelB, but levelC is NOT automatically removed
+node.setValue({ levelA: 'A2', levelB: 'B1', levelC: 'value' });
+await delay();
+
+node.value; // { levelA: 'A2', levelC: 'value' }
+// levelB removed by oneOf, levelC remains (anyOf evaluated independently)
+
+// To remove levelC, explicitly omit it or change its dependency
+node.setValue({ levelA: 'A2' });
+await delay();
+
+node.value; // { levelA: 'A2' }
+// Now levelC is removed by explicit omission
+```
+
+**Testing coverage:**
+- Validated by 11 tests in `src/core/__tests__/ConditionalSchema.setValue.test.ts`
+- Tests cover: shallow/nested/deep levels, multiple fields, oneOf/anyOf/combined, edge cases
+- Edge cases: child node modification, partial updates, cascading removals, sync/async timing
+
 ---
 
 ### 7. Array Operations
@@ -684,7 +760,7 @@ unsubscribe();
 
 ### 11. Test Coverage Summary
 
-**Total tests:** 341 passing tests across 34 test files
+**Total tests:** 352 passing tests across 35 test files
 
 **Test categories:**
 1. **Node functionality** (80+ tests)
@@ -709,10 +785,15 @@ unsubscribe();
    - Enhanced value validation
    - Conditional field validation
 
-5. **Schema composition** (40+ tests)
+5. **Schema composition** (51+ tests)
    - oneOf, anyOf, allOf
    - if-then-else
    - Nested conditions
+   - **Conditional setValue behavior** (11 tests)
+     - Parent vs child setValue filtering
+     - Shallow, nested, deep levels
+     - Partial updates and cascading
+     - Edge cases and timing
 
 6. **Array operations** (30+ tests)
    - Push, remove, clear
