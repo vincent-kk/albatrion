@@ -45,6 +45,7 @@ import {
   EventCascade,
   afterMicrotask,
   computeFactory,
+  getEventCollection,
   getFallbackValidator,
   getNodeGroup,
   getNodeType,
@@ -420,8 +421,12 @@ export abstract class AbstractNode<
     type: Type,
     payload?: NodeEventPayload[Type],
     options?: NodeEventOptions[Type],
+    immediate?: boolean,
   ) {
-    this.#eventCascade.schedule([type, payload, options]);
+    if (immediate) {
+      const eventCollection = getEventCollection(type, payload, options);
+      for (const listener of this.#listeners) listener(eventCollection);
+    } else this.#eventCascade.schedule([type, payload, options]);
   }
 
   /** Whether the node is initialized */
