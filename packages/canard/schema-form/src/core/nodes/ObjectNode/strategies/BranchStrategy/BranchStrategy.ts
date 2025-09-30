@@ -331,6 +331,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (this.__locked__) return;
 
     const replace = (option & SetValueOption.Replace) > 0;
+    const settled = (option & SetValueOption.Isolate) === 0;
     const previous = this.__value__ ? { ...this.__value__ } : this.__value__;
     const current = this.__parseValue__(
       this.__value__,
@@ -352,11 +353,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       this.__host__.publish(
         NodeEventType.UpdateValue,
         current,
-        {
-          previous,
-          current,
-          settled: (option & SetValueOption.Isolate) === 0,
-        },
+        { previous, current, settled },
         this.__host__.initialized,
       );
 
