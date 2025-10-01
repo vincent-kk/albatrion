@@ -326,6 +326,8 @@ describe('ObjectNode allOf', () => {
       jsonSchema: schema,
     }) as ObjectNode;
 
+    await delay();
+
     const modeNode = node.find('mode') as StringNode;
     const basicField = node.find('basicField') as StringNode;
     const advancedField = node.find('advancedField') as StringNode;

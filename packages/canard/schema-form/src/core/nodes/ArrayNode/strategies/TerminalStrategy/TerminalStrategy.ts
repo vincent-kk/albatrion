@@ -184,10 +184,12 @@ export class TerminalStrategy implements ArrayNodeStrategy {
       this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
     if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
     if (option & SetValueOption.PublishUpdateEvent)
-      this.__host__.publish(NodeEventType.UpdateValue, current, {
-        previous,
+      this.__host__.publish(
+        NodeEventType.UpdateValue,
         current,
-      });
+        { previous, current },
+        this.__host__.initialized,
+      );
   }
 
   /**

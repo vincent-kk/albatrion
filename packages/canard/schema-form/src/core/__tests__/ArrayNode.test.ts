@@ -328,6 +328,8 @@ describe('ArrayNode', () => {
       },
     });
 
+    await delay();
+
     const arrayNode = node?.find('/tags') as ArrayNode;
 
     // 이벤트 리스너 등록
@@ -339,14 +341,9 @@ describe('ArrayNode', () => {
 
     await delay();
 
-    // 이벤트가 발생했는지 확인
-    expect(mockListener).toHaveBeenCalledWith({
-      type:
-        NodeEventType.Initialized |
-        NodeEventType.UpdateValue |
-        NodeEventType.RequestRefresh |
-        NodeEventType.UpdateComputedProperties |
-        NodeEventType.UpdateChildren,
+    // After initialized, UpdateValue event is dispatched synchronously
+    expect(mockListener).toHaveBeenNthCalledWith(1, {
+      type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: ['새태그1', '새태그2'],
       },
@@ -356,6 +353,14 @@ describe('ArrayNode', () => {
           current: ['새태그1', '새태그2'],
         },
       },
+    });
+
+    // Async events (RequestRefresh, UpdateChildren) are merged
+    // Note: UpdateComputedProperties is not emitted when there are no computed properties
+    expect(mockListener).toHaveBeenNthCalledWith(2, {
+      type: NodeEventType.RequestRefresh | NodeEventType.UpdateChildren,
+      payload: {},
+      options: {},
     });
   });
 

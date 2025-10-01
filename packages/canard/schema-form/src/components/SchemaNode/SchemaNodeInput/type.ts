@@ -29,8 +29,7 @@ export const HANDLE_CHANGE_OPTION =
   SetValueOption.EmitChange |
   SetValueOption.PublishUpdateEvent;
 
-export const PREEMPTIVE_RERENDERING_EVENTS =
-  NodeEventType.UpdateError | NodeEventType.UpdateComputedProperties;
-
 export const REACTIVE_RERENDERING_EVENTS =
-  NodeEventType.UpdateValue | PREEMPTIVE_RERENDERING_EVENTS;
+  NodeEventType.UpdateValue |
+  NodeEventType.UpdateError |
+  NodeEventType.UpdateComputedProperties;

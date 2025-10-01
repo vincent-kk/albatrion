@@ -171,6 +171,8 @@ describe('ArrayNode terminal functionality', () => {
       },
     });
 
+    await delay();
+
     const arrayNode = node?.find('data') as ArrayNode;
     const mockListener = vi.fn();
     arrayNode.subscribe(mockListener);
@@ -179,14 +181,26 @@ describe('ArrayNode terminal functionality', () => {
     arrayNode.setValue([1, 2, 3]);
     await delay();
 
-    expect(mockListener).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: expect.any(Number),
-        payload: {
-          [NodeEventType.UpdateValue]: [1, 2, 3],
+    // After initialized, UpdateValue event is dispatched synchronously
+    expect(mockListener).toHaveBeenNthCalledWith(1, {
+      type: NodeEventType.UpdateValue,
+      payload: {
+        [NodeEventType.UpdateValue]: [1, 2, 3],
+      },
+      options: {
+        [NodeEventType.UpdateValue]: {
+          previous: [],
+          current: [1, 2, 3],
         },
-      }),
-    );
+      },
+    });
+
+    // Async events are merged in the next microtask
+    expect(mockListener).toHaveBeenNthCalledWith(2, {
+      type: NodeEventType.RequestRefresh,
+      payload: {},
+      options: {},
+    });
   });
 
   it('터미널 배열 노드가 유효성 검사와 함께 동작해야 함', async () => {

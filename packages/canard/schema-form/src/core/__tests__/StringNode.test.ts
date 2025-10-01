@@ -81,6 +81,8 @@ describe('StringNode', () => {
       },
     });
 
+    await delay();
+
     const stringNode = node?.find('name') as StringNode;
 
     // 이벤트 리스너 등록
@@ -91,13 +93,9 @@ describe('StringNode', () => {
     stringNode.setValue('Ron');
     await delay();
 
-    // 이벤트가 발생했는지 확인
-    expect(mockListener).toHaveBeenCalledWith({
-      type:
-        NodeEventType.Initialized |
-        NodeEventType.RequestRefresh |
-        NodeEventType.UpdateValue |
-        NodeEventType.UpdateComputedProperties,
+    // After initialized, UpdateValue event is dispatched synchronously
+    expect(mockListener).toHaveBeenNthCalledWith(1, {
+      type: NodeEventType.UpdateValue,
       payload: {
         [NodeEventType.UpdateValue]: 'Ron',
       },
@@ -107,6 +105,13 @@ describe('StringNode', () => {
           current: 'Ron',
         },
       },
+    });
+
+    // Async events are merged in the next microtask
+    expect(mockListener).toHaveBeenNthCalledWith(2, {
+      type: NodeEventType.RequestRefresh,
+      payload: {},
+      options: {},
     });
   });
 

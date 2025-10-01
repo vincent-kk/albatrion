@@ -45,6 +45,7 @@ import {
   EventCascade,
   afterMicrotask,
   computeFactory,
+  getEventCollection,
   getFallbackValidator,
   getNodeGroup,
   getNodeType,
@@ -410,18 +411,22 @@ export abstract class AbstractNode<
 
   /**
    * Publishes an event to the node's listeners
-   * @param event Event to publish
-   *    - type: Event type (see NodeEventType)
-   *    - payload: Data for the event (see MethodPayload)
-   *    - options: Options for the event (see MethodOptions)
+   * @param type - Event type (see NodeEventType)
+   * @param payload - Data for the event (see NodeEventPayload)
+   * @param options - Options for the event (see NodeEventOptions)
+   * @param immediate - If true, executes listeners synchronously; if false, batches event via EventCascade
    */
   public publish<Type extends NodeEventType>(
     this: AbstractNode,
     type: Type,
     payload?: NodeEventPayload[Type],
     options?: NodeEventOptions[Type],
+    immediate?: boolean,
   ) {
-    this.#eventCascade.schedule([type, payload, options]);
+    if (immediate) {
+      const eventCollection = getEventCollection(type, payload, options);
+      for (const listener of this.#listeners) listener(eventCollection);
+    } else this.#eventCascade.schedule([type, payload, options]);
   }
 
   /** Whether the node is initialized */
