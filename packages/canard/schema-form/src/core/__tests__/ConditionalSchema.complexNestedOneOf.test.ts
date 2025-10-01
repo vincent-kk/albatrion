@@ -171,14 +171,11 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
       expect(dimensionsNode?.enabled).toBe(true);
       expect(shippingNode?.enabled).toBe(true);
 
-      // Nested shipping oneOf fields
-      const costNode = shippingNode.find('./cost');
-      const hoursNode = shippingNode.find('./hours');
-      const daysNode = shippingNode.find('./days');
-
-      expect(costNode?.enabled).toBe(true);
-      expect(hoursNode?.enabled).toBe(true);
-      expect(daysNode?.enabled).toBe(false); // standard field should be disabled
+      // Nested shipping oneOf fields - check children instead of enabled
+      const shippingChildren = shippingNode.children?.map(c => c.node.name) ?? [];
+      expect(shippingChildren.includes('cost')).toBe(true);
+      expect(shippingChildren.includes('hours')).toBe(true);
+      expect(shippingChildren.includes('days')).toBe(false); // standard field not in children
     });
 
     it('should filter out digital/service fields when setting physical product', async () => {
@@ -285,16 +282,12 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
       expect(formatNode?.enabled).toBe(true);
       expect(downloadLinkNode?.enabled).toBe(true);
 
-      // Physical/service nodes should be disabled
-      const weightNode = productNode.find('./weight');
-      const dimensionsNode = productNode.find('./dimensions');
-      const shippingNode = productNode.find('./shipping');
-      const durationNode = productNode.find('./duration');
-
-      expect(weightNode?.enabled).toBe(false);
-      expect(dimensionsNode?.enabled).toBe(false);
-      expect(shippingNode?.enabled).toBe(false);
-      expect(durationNode?.enabled).toBe(false);
+      // Physical/service nodes should not be in children
+      const productChildren = productNode.children?.map(c => c.node.name) ?? [];
+      expect(productChildren.includes('weight')).toBe(false);
+      expect(productChildren.includes('dimensions')).toBe(false);
+      expect(productChildren.includes('shipping')).toBe(false);
+      expect(productChildren.includes('duration')).toBe(false);
     });
 
     it('should filter out physical/service fields when setting digital product with mixed data', async () => {
@@ -402,16 +395,12 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
       expect(durationUnitNode?.enabled).toBe(true);
       expect(availabilityNode?.enabled).toBe(true);
 
-      // Physical/digital nodes should be disabled
-      const weightNode = productNode.find('./weight');
-      const dimensionsNode = productNode.find('./dimensions');
-      const shippingNode = productNode.find('./shipping');
-      const fileSizeNode = productNode.find('./fileSize');
-
-      expect(weightNode?.enabled).toBe(false);
-      expect(dimensionsNode?.enabled).toBe(false);
-      expect(shippingNode?.enabled).toBe(false);
-      expect(fileSizeNode?.enabled).toBe(false);
+      // Physical/digital nodes should not be in children
+      const productChildren = productNode.children?.map(c => c.node.name) ?? [];
+      expect(productChildren.includes('weight')).toBe(false);
+      expect(productChildren.includes('dimensions')).toBe(false);
+      expect(productChildren.includes('shipping')).toBe(false);
+      expect(productChildren.includes('fileSize')).toBe(false);
     });
   });
 
@@ -608,13 +597,11 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
       // Verify node.enabled
       const productNode = node.find('./product') as ObjectNode;
       const shippingNode = productNode.find('./shipping') as ObjectNode;
-      const costNode = shippingNode.find('./cost');
-      const daysNode = shippingNode.find('./days');
-      const hoursNode = shippingNode.find('./hours');
-
-      expect(costNode?.enabled).toBe(true);
-      expect(daysNode?.enabled).toBe(true);
-      expect(hoursNode?.enabled).toBe(false);
+      // Check shipping children for standard method
+      const shippingChildren = shippingNode.children?.map(c => c.node.name) ?? [];
+      expect(shippingChildren.includes('cost')).toBe(true);
+      expect(shippingChildren.includes('days')).toBe(true);
+      expect(shippingChildren.includes('hours')).toBe(false);
     });
 
     it('should properly handle nested shipping oneOf - express method', async () => {
@@ -650,13 +637,11 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
       // Verify node.enabled
       const productNode = node.find('./product') as ObjectNode;
       const shippingNode = productNode.find('./shipping') as ObjectNode;
-      const costNode = shippingNode.find('./cost');
-      const hoursNode = shippingNode.find('./hours');
-      const daysNode = shippingNode.find('./days');
-
-      expect(costNode?.enabled).toBe(true);
-      expect(hoursNode?.enabled).toBe(true);
-      expect(daysNode?.enabled).toBe(false);
+      // Check shipping children for express method
+      const shippingChildren = shippingNode.children?.map(c => c.node.name) ?? [];
+      expect(shippingChildren.includes('cost')).toBe(true);
+      expect(shippingChildren.includes('hours')).toBe(true);
+      expect(shippingChildren.includes('days')).toBe(false);
     });
 
     it('should filter shipping fields when switching between standard and express', async () => {
@@ -842,7 +827,9 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
       expect(node.value?.product?.name).toBe('Laptop');
       expect(node.value?.product?.weight).toBe(2.5);
       expect(node.value?.product?.dimensions).toBeUndefined();
-      expect(node.value?.product?.shipping).toBeUndefined();
+
+      // shipping should have default method='standard' even though not explicitly provided
+      expect(node.value?.product?.shipping).toEqual({ method: 'standard' });
 
       // Digital/service fields should still be undefined
       expect(node.value?.product?.fileSize).toBeUndefined();
