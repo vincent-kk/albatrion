@@ -93,7 +93,6 @@ export const OneOf = () => {
   );
 };
 
-
 export const OneOfAlias = () => {
   const schema = {
     type: 'object',
@@ -149,7 +148,6 @@ export const OneOfAlias = () => {
     </StoryLayout>
   );
 };
-
 
 export const OneOfWithConstFieldCondition = () => {
   const schema = {
@@ -274,7 +272,6 @@ export const OneOfWithConstFieldCondition = () => {
   );
 };
 
-
 export const OneOfWithEnumFieldCondition = () => {
   const schema = {
     type: 'object',
@@ -375,7 +372,6 @@ export const OneOfWithEnumFieldCondition = () => {
     </StoryLayout>
   );
 };
-
 
 export const OneOfWithConditionalExpression = () => {
   const schema = {
@@ -498,7 +494,6 @@ export const OneOfWithConditionalExpression = () => {
     </StoryLayout>
   );
 };
-
 
 export const OneOfWithConditionalExpressionInArray = () => {
   const schema = {
@@ -627,7 +622,6 @@ export const OneOfWithConditionalExpressionInArray = () => {
   );
 };
 
-
 export const OneOfWithConditionalExpressionInObject = () => {
   const schema = {
     type: 'object',
@@ -754,7 +748,6 @@ export const OneOfWithConditionalExpressionInObject = () => {
     </StoryLayout>
   );
 };
-
 
 export const OneOfWithConditionalExpressionAndFieldCondition = () => {
   const schema = {
@@ -887,7 +880,6 @@ export const OneOfWithConditionalExpressionAndFieldCondition = () => {
   );
 };
 
-
 export const OneOfAliasWithKeyOrder = () => {
   const schema = {
     type: 'object',
@@ -944,7 +936,6 @@ export const OneOfAliasWithKeyOrder = () => {
     </StoryLayout>
   );
 };
-
 
 export const ComplexOneOf = () => {
   const schema = {
@@ -1073,7 +1064,6 @@ export const ComplexOneOf = () => {
   );
 };
 
-
 export const ComplexOneOfSmall = () => {
   const schema = {
     type: 'object',
@@ -1185,7 +1175,6 @@ export const ComplexOneOfSmall = () => {
     </StoryLayout>
   );
 };
-
 
 export const Array = () => {
   const jsonSchema = {
@@ -1320,7 +1309,6 @@ export const ErrorCase1 = () => {
   );
 };
 
-
 export const ErrorCase2 = () => {
   const schema = {
     type: 'object',
@@ -1370,7 +1358,6 @@ export const ErrorCase2 = () => {
     </StoryLayout>
   );
 };
-
 
 export const ComplexNestedOneOf = () => {
   const schema = {
@@ -1566,7 +1553,6 @@ export const ComplexNestedOneOf = () => {
     </StoryLayout>
   );
 };
-
 
 export const OneOfPrimitiveValuePreservationDemo = () => {
   const schema = {
@@ -1806,7 +1792,11 @@ export const SimpleOneOfTypePreservation = () => {
         computed: { if: "./mode === 'text'" },
         properties: {
           name: { type: 'string', title: 'Name (string)' }, // Same name, same type
-          value: { type: 'string', title: 'Text Value', default: 'default text' }, // Different name
+          value: {
+            type: 'string',
+            title: 'Text Value',
+            default: 'default text',
+          }, // Different name
         },
       },
       {
@@ -1825,28 +1815,53 @@ export const SimpleOneOfTypePreservation = () => {
 
   return (
     <StoryLayout jsonSchema={schema} value={value} errors={errors}>
-      <div style={{ marginBottom: 15, padding: 10, backgroundColor: '#fff3cd', borderRadius: 5 }}>
+      <div
+        style={{
+          marginBottom: 15,
+          padding: 10,
+          backgroundColor: '#fff3cd',
+          borderRadius: 5,
+        }}
+      >
         <h4 style={{ margin: '0 0 5px 0' }}>OneOf Type Preservation Test</h4>
         <p style={{ margin: 0, fontSize: 12 }}>
-          ✅ <strong>name</strong> (string→string): Value preserved<br/>
-          ❌ <strong>value</strong> (string→number): Value reset, default used
+          ✅ <strong>name</strong> (string→string): Value preserved
+          <br />❌ <strong>value</strong> (string→number): Value reset, default
+          used
         </p>
       </div>
-      <Form jsonSchema={schema} onChange={setValue} onValidate={setErrors} ref={formHandle} />
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
       <div style={{ marginTop: 10, display: 'flex', gap: 10 }}>
-        <button onClick={() => formHandle.current?.setValue({ mode: 'text', name: 'John', value: 'custom text' })}>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({
+              mode: 'text',
+              name: 'John',
+              value: 'custom text',
+            })
+          }
+        >
           Set Text Mode
         </button>
-        <button onClick={() => {
-          const current = formHandle.current?.getValue() || {};
-          formHandle.current?.setValue({ ...current, mode: 'number' });
-        }}>
+        <button
+          onClick={() => {
+            const current = formHandle.current?.getValue() || {};
+            formHandle.current?.setValue({ ...current, mode: 'number' });
+          }}
+        >
           Switch to Number
         </button>
-        <button onClick={() => {
-          const current = formHandle.current?.getValue() || {};
-          formHandle.current?.setValue({ ...current, mode: 'text' });
-        }}>
+        <button
+          onClick={() => {
+            const current = formHandle.current?.getValue() || {};
+            formHandle.current?.setValue({ ...current, mode: 'text' });
+          }}
+        >
           Switch to Text
         </button>
       </div>
@@ -1854,3 +1869,81 @@ export const SimpleOneOfTypePreservation = () => {
   );
 };
 
+export const PreferDefaultValues = () => {
+  const schema: JsonSchema = {
+    type: 'object',
+    properties: {
+      profile: {
+        type: 'string',
+        enum: ['dev', 'prod', 'test'],
+        default: 'dev',
+      },
+    },
+    oneOf: [
+      {
+        '&if': "./profile === 'dev'",
+        properties: {
+          debug: { type: 'boolean', default: true },
+          logLevel: { type: 'string', default: 'verbose' },
+          port: { type: 'number', default: 3000 },
+        },
+      },
+      {
+        '&if': "./profile === 'prod'",
+        properties: {
+          debug: { type: 'boolean', default: false },
+          logLevel: { type: 'string', default: 'error' },
+          port: { type: 'number', default: 8080 },
+          secure: { type: 'boolean', default: true },
+        },
+      },
+      {
+        '&if': "./profile === 'test'",
+        properties: {
+          debug: { type: 'boolean' }, // No default
+          logLevel: { type: 'string' }, // No default
+          port: { type: 'string' }, // Different type!
+          testMode: { type: 'boolean', default: true },
+        },
+      },
+    ],
+  };
+
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <button onClick={() => formHandle.current?.setValue({ profile: 'dev' })}>
+        Set Dev Mode
+      </button>
+      <button onClick={() => formHandle.current?.setValue({ profile: 'prod' })}>
+        Set Prod Mode
+      </button>
+      <button onClick={() => formHandle.current?.setValue({ profile: 'test' })}>
+        Set Test Mode
+      </button>
+      <button
+        onClick={() =>
+          formHandle.current?.setValue({
+            profile: 'test',
+            debug: true,
+            logLevel: 'verbose',
+            port: 3000,
+            secure: true,
+            testMode: true,
+          })
+        }
+      >
+        Set Value
+      </button>
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
+    </StoryLayout>
+  );
+};
