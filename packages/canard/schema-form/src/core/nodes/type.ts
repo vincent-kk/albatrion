@@ -319,10 +319,10 @@ export enum SetValueOption {
   Default = EmitChange | PublishUpdateEvent,
   /** Default SetValue option with batch mode */
   BatchDefault = Batch | Default,
-  /** Reset the node to its initial value */
-  SoftReset = Replace | Propagate | Isolate | BatchDefault,
   /** Reset the node to its initial value and trigger a refresh */
-  HardReset = SoftReset | Refresh,
+  RefreshReset = Replace | Propagate | BatchDefault | Refresh,
+  /** Reset the node to its initial value and isolate the computed properties */
+  IsolateReset = Replace | Propagate | Isolate | BatchDefault,
   /** Both propagate to children and trigger a refresh */
   Merge = Propagate | Refresh | Isolate | BatchDefault,
   /** Replace the value and propagate the update with refresh */

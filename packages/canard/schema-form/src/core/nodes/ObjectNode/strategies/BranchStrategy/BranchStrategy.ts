@@ -593,7 +593,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
         joinSegment(this.__host__.path, ENHANCED_KEY),
         this.__oneOfIndex__,
       );
-    this.__emitChange__(SetValueOption.SoftReset);
+    this.__emitChange__(SetValueOption.IsolateReset);
   }
 
   /**
