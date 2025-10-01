@@ -488,12 +488,13 @@ export class BranchStrategy implements ObjectNodeStrategy {
         const node = child.node;
         const alternatedNode =
           previousOneOfChildNodeMap?.get(node.name)?.node || false;
+        const preferInitial = isTerminalType(node.type);
         node.resetNode(
           isolation ||
             (alternatedNode &&
-              isTerminalType(node.type) &&
+              preferInitial &&
               node.type === alternatedNode.type),
-          true,
+          preferInitial,
           this.__value__?.[node.name],
         );
       }
