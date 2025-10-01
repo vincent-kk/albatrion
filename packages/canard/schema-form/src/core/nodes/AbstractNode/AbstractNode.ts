@@ -44,6 +44,7 @@ import {
 import {
   EventCascade,
   afterMicrotask,
+  checkDefinedValue,
   computeFactory,
   getEventCollection,
   getFallbackValidator,
@@ -201,7 +202,8 @@ export abstract class AbstractNode<
    * @param value input value for updating defaultValue
    */
   protected setDefaultValue(this: AbstractNode, value: Value | Nullish) {
-    this.#initialValue = this.#defaultValue = value;
+    this.#initialValue = checkDefinedValue(value) ? value : undefined;
+    this.#defaultValue = value;
   }
 
   /**

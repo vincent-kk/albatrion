@@ -457,7 +457,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
         if (skipOneOfUpdate && skipAnyOfUpdate) return;
         if (isolation) this.__isolated__ = false;
         this.__processChildren__();
-        this.__processCompositionValue__();
+        this.__processCompositionValue__(isolation);
       }
     });
   }
@@ -488,13 +488,12 @@ export class BranchStrategy implements ObjectNodeStrategy {
         const node = child.node;
         const alternatedNode =
           previousOneOfChildNodeMap?.get(node.name)?.node || false;
-        const preferInitial = isTerminalType(node.type);
         node.reset(
           isolation ||
             (alternatedNode &&
-              preferInitial &&
+              isTerminalType(node.type) &&
               node.type === alternatedNode.type),
-          preferInitial,
+          isolation === false,
           this.__value__?.[node.name],
         );
       }
@@ -580,9 +579,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /**
    * Processes and validates the object value according to active composition branches.
    * Filters out properties that are not allowed by current oneOf/anyOf selections.
+   * @param isolation - Whether the operation is in isolation mode
    * @private
    */
-  private __processCompositionValue__() {
+  private __processCompositionValue__(isolation: boolean) {
     this.__draft__ = processValueWithValidate(
       this.__processValue__({ ...this.__value__, ...this.__draft__ }),
       this.__validateAllowedKey__,
@@ -593,7 +593,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
         joinSegment(this.__host__.path, ENHANCED_KEY),
         this.__oneOfIndex__,
       );
-    this.__emitChange__(SetValueOption.IsolateReset);
+    this.__emitChange__(
+      isolation ? SetValueOption.IsolateReset : SetValueOption.Reset,
+    );
   }
 
   /**
