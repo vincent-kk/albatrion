@@ -757,15 +757,14 @@ describe('Conditional Schema setValue behavior', () => {
       expect(node.value?.levelC).toBe('value-c');
 
       // Change levelA to A2, which should remove levelB by oneOf
-      // Note: levelC won't be automatically removed because anyOf conditions
-      // are evaluated independently and don't cascade from oneOf removals
+      // levelC will also be removed because anyOf condition depends on levelB
+      // which no longer exists in the schema when levelA !== 'A1'
       node.setValue({ levelA: 'A2', levelB: 'B1', levelC: 'value-c' });
       await delay();
 
       expect(node.value?.levelA).toBe('A2');
       expect(node.value?.levelB).toBeUndefined(); // Removed by oneOf
-      // levelC remains because anyOf doesn't automatically cascade from levelB removal
-      expect(node.value?.levelC).toBe('value-c');
+      expect(node.value?.levelC).toBeUndefined(); // Removed because levelB doesn't exist
 
       // To properly remove levelC, explicitly set without it or change its dependency
       node.setValue({ levelA: 'A2' });

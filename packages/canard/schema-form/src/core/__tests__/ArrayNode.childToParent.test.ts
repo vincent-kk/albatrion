@@ -10,7 +10,6 @@
  * 3. Multiple item changes batch correctly
  * 4. Computed properties react to item changes
  */
-
 import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
@@ -46,7 +45,7 @@ describe('ArrayNode Child-to-Parent Updates', () => {
       await delay();
 
       const arrayNode = node as ArrayNode;
-      const firstItem = arrayNode.children[0]?.node as ObjectNode;
+      const firstItem = arrayNode.children?.[0]?.node as ObjectNode;
       const nameNode = firstItem.find('./name') as StringNode;
 
       const arrayListener = vi.fn();
@@ -81,7 +80,7 @@ describe('ArrayNode Child-to-Parent Updates', () => {
       await delay();
 
       const arrayNode = node as ArrayNode;
-      const firstItem = arrayNode.children[0]?.node as StringNode;
+      const firstItem = arrayNode.children?.[0]?.node as StringNode;
 
       const arrayListener = vi.fn();
       arrayNode.subscribe(arrayListener);
@@ -210,8 +209,8 @@ describe('ArrayNode Child-to-Parent Updates', () => {
       await delay();
 
       const arrayNode = node as ArrayNode;
-      const item1 = arrayNode.children[0]?.node as ObjectNode;
-      const item2 = arrayNode.children[1]?.node as ObjectNode;
+      const item1 = arrayNode.children?.[0]?.node as ObjectNode;
+      const item2 = arrayNode.children?.[1]?.node as ObjectNode;
 
       const arrayListener = vi.fn();
       arrayNode.subscribe(arrayListener);
@@ -248,9 +247,9 @@ describe('ArrayNode Child-to-Parent Updates', () => {
       arrayNode.subscribe(arrayListener);
 
       // Multiple synchronous changes
-      (arrayNode.children[0]?.node as StringNode).setValue('x');
-      (arrayNode.children[1]?.node as StringNode).setValue('y');
-      (arrayNode.children[2]?.node as StringNode).setValue('z');
+      (arrayNode.children?.[0]?.node as StringNode).setValue('x');
+      (arrayNode.children?.[1]?.node as StringNode).setValue('y');
+      (arrayNode.children?.[2]?.node as StringNode).setValue('z');
 
       await delay();
 
@@ -341,7 +340,7 @@ describe('ArrayNode Child-to-Parent Updates', () => {
 
       const objectNode = node as ObjectNode;
       const todosArray = objectNode.find('./todos') as ArrayNode;
-      const firstTodo = todosArray.children[0]?.node as ObjectNode;
+      const firstTodo = todosArray.children?.[0]?.node as ObjectNode;
 
       const objectListener = vi.fn();
       objectNode.subscribe(objectListener);
@@ -377,16 +376,13 @@ describe('ArrayNode Child-to-Parent Updates', () => {
       const arrayListener = vi.fn();
       arrayNode.subscribe(arrayListener);
 
-      (arrayNode.children[0]?.node as StringNode).setValue('modified');
+      (arrayNode.children?.[0]?.node as StringNode).setValue('modified');
       await delay();
 
       const allEvents = arrayListener.mock.calls.map((call) => call[0]);
 
       const hasUpdateValue = allEvents.some(
         (event) => event.type & NodeEventType.UpdateValue,
-      );
-      const hasUpdateChildren = allEvents.some(
-        (event) => event.type & NodeEventType.UpdateChildren,
       );
 
       expect(hasUpdateValue).toBe(true);
@@ -449,7 +445,7 @@ describe('ArrayNode Child-to-Parent Updates', () => {
 
       const objectNode = node as ObjectNode;
       const matrixArray = objectNode.find('./matrix') as ArrayNode;
-      const firstRow = matrixArray.children[0]?.node as ArrayNode;
+      const firstRow = matrixArray.children?.[0]?.node as ArrayNode;
 
       const objectListener = vi.fn();
       const matrixListener = vi.fn();
@@ -458,7 +454,7 @@ describe('ArrayNode Child-to-Parent Updates', () => {
       matrixArray.subscribe(matrixListener);
 
       // Change deep nested value
-      (firstRow.children[0]?.node as any).setValue(99);
+      (firstRow.children?.[0]?.node as any).setValue(99);
       await delay();
 
       // Both parent levels should receive events
