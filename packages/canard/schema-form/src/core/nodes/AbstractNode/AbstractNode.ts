@@ -593,7 +593,7 @@ export abstract class AbstractNode<
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
     this.#anyOfIndices = this.#compute.anyOfIndices?.(this.#dependencies) || [];
-    if (previous !== this.#active) this.resetNode(true);
+    if (previous !== this.#active) this.reset(true);
     this.publish(NodeEventType.UpdateComputedProperties);
   }
 
@@ -601,20 +601,20 @@ export abstract class AbstractNode<
    * Resets the current node to its initial value. Uses the current node's initial value, or the provided value if one is given.
    * @param preferLatestValue - Whether to use the latest value, uses the latest value if available
    * @param preferInitialValue - Whether to use the initial value, uses the initial value if available
-   * @param nextValue - The value to set, uses the provided value if given
+   * @param inputValue - The value to set, uses the provided value if given
    * @internal Internal implementation method. Do not call directly.
    */
-  public resetNode(
+  public reset(
     this: AbstractNode,
     preferLatestValue: boolean,
     preferInitialValue?: boolean,
-    nextValue?: Value | Nullish,
+    inputValue?: Value | Nullish,
   ) {
     const defaultValue = preferLatestValue
       ? preferInitialValue && this.#initialValue !== undefined
         ? this.#initialValue
-        : nextValue !== undefined
-          ? nextValue
+        : inputValue !== undefined
+          ? inputValue
           : this.value !== undefined
             ? this.value
             : this.#initialValue

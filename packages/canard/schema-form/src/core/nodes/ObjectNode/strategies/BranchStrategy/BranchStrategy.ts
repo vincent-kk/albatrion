@@ -482,14 +482,14 @@ export class BranchStrategy implements ObjectNodeStrategy {
       previous > -1 ? this.__oneOfChildNodeMapList__[previous] : null;
     if (previousOneOfChildNodeMap)
       for (const child of previousOneOfChildNodeMap.values())
-        child.node.resetNode(false);
+        child.node.reset(false);
     if (oneOfChildNodeMap)
       for (const child of oneOfChildNodeMap.values()) {
         const node = child.node;
         const alternatedNode =
           previousOneOfChildNodeMap?.get(node.name)?.node || false;
         const preferInitial = isTerminalType(node.type);
-        node.resetNode(
+        node.reset(
           isolation ||
             (alternatedNode &&
               preferInitial &&
@@ -530,7 +530,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       for (let i = 0, l = disables.length; i < l; i++) {
         const anyOfChildNodes =
           this.__anyOfChildNodeMapList__[disables[i]].values();
-        for (const child of anyOfChildNodes) child.node.resetNode(false);
+        for (const child of anyOfChildNodes) child.node.reset(false);
       }
     const enables = isolation ? current : differenceLite(current, previous);
     if (enables.length > 0)
@@ -539,7 +539,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
           this.__anyOfChildNodeMapList__[enables[i]].values();
         for (const child of anyOfChildNodes) {
           const node = child.node;
-          node.resetNode(isolation, false, this.__value__?.[node.name]);
+          node.reset(isolation, false, this.__value__?.[node.name]);
         }
       }
     this.__locked__ = false;
