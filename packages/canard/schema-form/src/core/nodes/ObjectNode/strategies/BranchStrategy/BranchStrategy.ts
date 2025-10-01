@@ -5,6 +5,7 @@ import {
 } from '@winglet/common-utils/array';
 import { isEmptyObject } from '@winglet/common-utils/filter';
 import {
+  equals,
   getObjectKeys,
   removePrototype,
   sortObjectKeys,
@@ -213,7 +214,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const handelChangeFactory =
       (property: string): HandleChange =>
       (input, batched) => {
-        if (!this.__draft__) this.__draft__ = {};
+        if (this.__draft__ == null) this.__draft__ = {};
         if (input !== undefined && this.__draft__[property] === input) return;
         this.__draft__[property] = input;
         if (this.__isolated__ && this.__isPristine__) this.__isolated__ = false;
@@ -341,6 +342,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
     );
 
     if (current === false) return;
+    if (!replace && !settled && equals(previous, current)) return;
+
     this.__value__ = current;
 
     if (option & SetValueOption.EmitChange)
@@ -354,7 +357,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
         NodeEventType.UpdateValue,
         current,
         { previous, current, settled },
-        this.__host__.initialized,
+        settled && this.__host__.initialized,
       );
 
     this.__draft__ = {};
@@ -521,20 +524,19 @@ export class BranchStrategy implements ObjectNodeStrategy {
       anyOfChildNodeMaps[i] = this.__anyOfChildNodeMapList__[current[i]];
 
     this.__locked__ = true;
-    const previousExclusive = differenceLite(previous, current);
-    if (previousExclusive.length > 0)
-      for (let i = 0, l = previousExclusive.length; i < l; i++) {
-        const anyOfChildNodeMap =
-          this.__anyOfChildNodeMapList__[previousExclusive[i]];
-        for (const child of anyOfChildNodeMap.values())
-          child.node.resetNode(false);
+    const disables = isolation ? previous : differenceLite(previous, current);
+    if (disables.length > 0)
+      for (let i = 0, l = disables.length; i < l; i++) {
+        const anyOfChildNodes =
+          this.__anyOfChildNodeMapList__[disables[i]].values();
+        for (const child of anyOfChildNodes) child.node.resetNode(false);
       }
-    const currentExclusive = differenceLite(current, previous);
-    if (currentExclusive.length > 0)
-      for (let i = 0, l = currentExclusive.length; i < l; i++) {
-        const anyOfChildNodeMap =
-          this.__anyOfChildNodeMapList__[currentExclusive[i]];
-        for (const child of anyOfChildNodeMap.values()) {
+    const enables = isolation ? current : differenceLite(current, previous);
+    if (enables.length > 0)
+      for (let i = 0, l = enables.length; i < l; i++) {
+        const anyOfChildNodes =
+          this.__anyOfChildNodeMapList__[enables[i]].values();
+        for (const child of anyOfChildNodes) {
           const node = child.node;
           node.resetNode(isolation, false, this.__value__?.[node.name]);
         }

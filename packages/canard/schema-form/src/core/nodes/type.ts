@@ -316,7 +316,7 @@ export enum SetValueOption {
   /** Update the value and trigger onChange with batch mode */
   BatchedEmitChange = EmitChange | Batch,
   /** Reset the node to its initial value */
-  SoftReset = Replace | Propagate | BatchedEmitChange,
+  SoftReset = Replace | Propagate | BatchedEmitChange | PublishUpdateEvent,
   /** Reset the node to its initial value and trigger a refresh */
   HardReset = SoftReset | Refresh,
   /** Default SetValue option */
