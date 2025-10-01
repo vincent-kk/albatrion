@@ -172,7 +172,8 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
       expect(shippingNode?.enabled).toBe(true);
 
       // Nested shipping oneOf fields - check children instead of enabled
-      const shippingChildren = shippingNode.children?.map(c => c.node.name) ?? [];
+      const shippingChildren =
+        shippingNode.children?.map((c) => c.node.name) ?? [];
       expect(shippingChildren.includes('cost')).toBe(true);
       expect(shippingChildren.includes('hours')).toBe(true);
       expect(shippingChildren.includes('days')).toBe(false); // standard field not in children
@@ -283,7 +284,8 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
       expect(downloadLinkNode?.enabled).toBe(true);
 
       // Physical/service nodes should not be in children
-      const productChildren = productNode.children?.map(c => c.node.name) ?? [];
+      const productChildren =
+        productNode.children?.map((c) => c.node.name) ?? [];
       expect(productChildren.includes('weight')).toBe(false);
       expect(productChildren.includes('dimensions')).toBe(false);
       expect(productChildren.includes('shipping')).toBe(false);
@@ -396,7 +398,8 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
       expect(availabilityNode?.enabled).toBe(true);
 
       // Physical/digital nodes should not be in children
-      const productChildren = productNode.children?.map(c => c.node.name) ?? [];
+      const productChildren =
+        productNode.children?.map((c) => c.node.name) ?? [];
       expect(productChildren.includes('weight')).toBe(false);
       expect(productChildren.includes('dimensions')).toBe(false);
       expect(productChildren.includes('shipping')).toBe(false);
@@ -598,7 +601,8 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
       const productNode = node.find('./product') as ObjectNode;
       const shippingNode = productNode.find('./shipping') as ObjectNode;
       // Check shipping children for standard method
-      const shippingChildren = shippingNode.children?.map(c => c.node.name) ?? [];
+      const shippingChildren =
+        shippingNode.children?.map((c) => c.node.name) ?? [];
       expect(shippingChildren.includes('cost')).toBe(true);
       expect(shippingChildren.includes('days')).toBe(true);
       expect(shippingChildren.includes('hours')).toBe(false);
@@ -638,7 +642,8 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
       const productNode = node.find('./product') as ObjectNode;
       const shippingNode = productNode.find('./shipping') as ObjectNode;
       // Check shipping children for express method
-      const shippingChildren = shippingNode.children?.map(c => c.node.name) ?? [];
+      const shippingChildren =
+        shippingNode.children?.map((c) => c.node.name) ?? [];
       expect(shippingChildren.includes('cost')).toBe(true);
       expect(shippingChildren.includes('hours')).toBe(true);
       expect(shippingChildren.includes('days')).toBe(false);
@@ -834,6 +839,81 @@ describe('ConditionalSchema - ComplexNestedOneOf story scenario', () => {
       // Digital/service fields should still be undefined
       expect(node.value?.product?.fileSize).toBeUndefined();
       expect(node.value?.product?.duration).toBeUndefined();
+    });
+  });
+
+  describe('Error cases', () => {
+    it('switching case', async () => {
+      const schema = createComplexNestedOneOfSchema();
+      const node = nodeFromJsonSchema({
+        onChange: () => {},
+        jsonSchema: schema,
+      }) as ObjectNode;
+
+      await delay();
+
+      node.setValue({
+        productType: 'physical',
+        product: {
+          name: 'Laptop',
+          weight: 2.5,
+          dimensions: { length: 35, width: 25, height: 2 },
+          shipping: { method: 'express', cost: 25, hours: 24 },
+        },
+      });
+
+      await delay();
+      expect(node.value).toEqual({
+        productType: 'physical',
+        product: {
+          name: 'Laptop',
+          weight: 2.5,
+          dimensions: { length: 35, width: 25, height: 2 },
+          shipping: { method: 'express', cost: 25, hours: 24 },
+        },
+      });
+
+      node.setValue({
+        productType: 'digital',
+        product: {
+          name: 'Software License',
+          fileSize: 1024,
+          format: 'exe',
+          downloadLink: 'https://example.com/download',
+        },
+      });
+
+      await delay();
+      expect(node.value).toEqual({
+        productType: 'digital',
+        product: {
+          name: 'Software License',
+          fileSize: 1024,
+          format: 'exe',
+          downloadLink: 'https://example.com/download',
+        },
+      });
+
+      node.setValue({
+        productType: 'physical',
+        product: {
+          name: 'Laptop',
+          weight: 2.5,
+          dimensions: { length: 35, width: 25, height: 2 },
+          shipping: { method: 'express', cost: 25, hours: 24 },
+        },
+      });
+
+      await delay();
+      expect(node.value).toEqual({
+        productType: 'physical',
+        product: {
+          name: 'Laptop',
+          weight: 2.5,
+          dimensions: { length: 35, width: 25, height: 2 },
+          shipping: { method: 'express', cost: 25, hours: 24 },
+        },
+      });
     });
   });
 });

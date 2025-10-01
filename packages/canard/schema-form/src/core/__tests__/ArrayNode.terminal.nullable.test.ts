@@ -159,9 +159,12 @@ describe('ArrayNode nullable functionality', () => {
     arrayNode.setValue(null);
     await delay();
 
-    // After initialized, UpdateValue event is dispatched synchronously
+    // After initialized, parent setValue with Isolate option causes events to merge
     expect(mockListener).toHaveBeenNthCalledWith(1, {
-      type: NodeEventType.UpdateValue,
+      type:
+        NodeEventType.UpdateValue |
+        NodeEventType.RequestRefresh |
+        NodeEventType.UpdateChildren,
       payload: {
         [NodeEventType.UpdateValue]: null,
       },
@@ -171,13 +174,6 @@ describe('ArrayNode nullable functionality', () => {
           current: null,
         },
       },
-    });
-
-    // Async events are merged in the next microtask (includes UpdateChildren for branch arrays)
-    expect(mockListener).toHaveBeenNthCalledWith(2, {
-      type: NodeEventType.RequestRefresh | NodeEventType.UpdateChildren,
-      payload: {},
-      options: {},
     });
 
     expect(arrayNode.value).toBeNull();

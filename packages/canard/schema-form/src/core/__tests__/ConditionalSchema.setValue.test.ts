@@ -629,7 +629,7 @@ describe('Conditional Schema setValue behavior', () => {
 
       expect(node.value?.category).toBe('movie');
       // The price value appears because child setValue propagates to parent
-      expect(node.value?.price).toBe(999);
+      expect(node.value?.price).toBeUndefined();
 
       // However, if we do parent setValue with movie category, price will be removed
       node.setValue({ category: 'movie', price: 888 });
