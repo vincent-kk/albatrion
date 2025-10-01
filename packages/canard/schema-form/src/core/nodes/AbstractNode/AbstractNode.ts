@@ -277,7 +277,7 @@ export abstract class AbstractNode<
     input: Value | Nullish,
     batch?: boolean,
   ): void {
-    this.#handleChange(input, batch);
+    if (this.#active && this.scoped) this.#handleChange(input, batch);
   }
 
   /** List of child nodes, nodes without child nodes return an `null` */
@@ -476,6 +476,18 @@ export abstract class AbstractNode<
     return this.#computeEnabled;
   }
 
+  /**
+   * [readonly] Whether the node is in scope
+   */
+  public get scoped() {
+    if (this.variant === undefined || this.parentNode === null) return true;
+    if (this.scope === 'oneOf')
+      return this.parentNode.oneOfIndex === this.variant;
+    if (this.scope === 'anyOf')
+      return this.parentNode.anyOfIndices.indexOf(this.variant) !== -1;
+    return true;
+  }
+
   /** Whether the node is active */
   #active: boolean = true;
 
@@ -494,7 +506,7 @@ export abstract class AbstractNode<
 
   /** [readonly] Whether the node is both active and visible */
   public get enabled() {
-    return this.#active && this.#visible;
+    return this.#active && this.#visible && this.scoped;
   }
 
   /** Whether the node is read only */
