@@ -5,6 +5,7 @@ import {
 } from '@winglet/common-utils/array';
 import { isEmptyObject } from '@winglet/common-utils/filter';
 import {
+  equals,
   getObjectKeys,
   removePrototype,
   sortObjectKeys,
@@ -40,6 +41,7 @@ import {
   getVirtualReferencesMap,
   processValueWithCondition,
   processValueWithValidate,
+  validateSchemaType,
 } from './utils';
 
 export class BranchStrategy implements ObjectNodeStrategy {
@@ -213,7 +215,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const handelChangeFactory =
       (property: string): HandleChange =>
       (input, batched) => {
-        if (!this.__draft__) this.__draft__ = {};
+        if (this.__draft__ == null) this.__draft__ = {};
         if (input !== undefined && this.__draft__[property] === input) return;
         this.__draft__[property] = input;
         if (this.__isolated__ && this.__isPristine__) this.__isolated__ = false;
@@ -331,6 +333,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (this.__locked__) return;
 
     const replace = (option & SetValueOption.Replace) > 0;
+    const settled = (option & SetValueOption.Isolate) === 0;
     const previous = this.__value__ ? { ...this.__value__ } : this.__value__;
     const current = this.__parseValue__(
       this.__value__,
@@ -340,6 +343,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
     );
 
     if (current === false) return;
+    if (!replace && !settled && equals(previous, current)) return;
+
     this.__value__ = current;
 
     if (option & SetValueOption.EmitChange)
@@ -352,12 +357,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
       this.__host__.publish(
         NodeEventType.UpdateValue,
         current,
-        {
-          previous,
-          current,
-          settled: (option & SetValueOption.Isolate) === 0,
-        },
-        this.__host__.initialized,
+        { previous, current, settled },
+        settled && this.__host__.initialized,
       );
 
     this.__draft__ = {};
@@ -457,7 +458,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
         if (skipOneOfUpdate && skipAnyOfUpdate) return;
         if (isolation) this.__isolated__ = false;
         this.__processChildren__();
-        this.__processCompositionValue__();
+        this.__processCompositionValue__(isolation);
       }
     });
   }
@@ -482,19 +483,19 @@ export class BranchStrategy implements ObjectNodeStrategy {
       previous > -1 ? this.__oneOfChildNodeMapList__[previous] : null;
     if (previousOneOfChildNodeMap)
       for (const child of previousOneOfChildNodeMap.values())
-        child.node.resetNode(false);
+        child.node.reset(false);
     if (oneOfChildNodeMap)
       for (const child of oneOfChildNodeMap.values()) {
         const node = child.node;
-        const alternatedNode =
-          previousOneOfChildNodeMap?.get(node.name)?.node || false;
-        node.resetNode(
+        const previousNode = previousOneOfChildNodeMap?.get(node.name)?.node;
+        const previousValue = this.__value__?.[node.name];
+        node.reset(
           isolation ||
-            (alternatedNode &&
-              isTerminalType(node.type) &&
-              node.type === alternatedNode.type),
-          true,
-          this.__value__?.[node.name],
+            (node.type === previousNode?.type && isTerminalType(node.type)),
+          isolation === false,
+          validateSchemaType(previousValue, node.type, node.nullable)
+            ? previousValue
+            : undefined,
         );
       }
     this.__locked__ = false;
@@ -524,22 +525,21 @@ export class BranchStrategy implements ObjectNodeStrategy {
       anyOfChildNodeMaps[i] = this.__anyOfChildNodeMapList__[current[i]];
 
     this.__locked__ = true;
-    const previousExclusive = differenceLite(previous, current);
-    if (previousExclusive.length > 0)
-      for (let i = 0, l = previousExclusive.length; i < l; i++) {
-        const anyOfChildNodeMap =
-          this.__anyOfChildNodeMapList__[previousExclusive[i]];
-        for (const child of anyOfChildNodeMap.values())
-          child.node.resetNode(false);
+    const disables = isolation ? previous : differenceLite(previous, current);
+    if (disables.length > 0)
+      for (let i = 0, l = disables.length; i < l; i++) {
+        const anyOfChildNodes =
+          this.__anyOfChildNodeMapList__[disables[i]].values();
+        for (const child of anyOfChildNodes) child.node.reset(false);
       }
-    const currentExclusive = differenceLite(current, previous);
-    if (currentExclusive.length > 0)
-      for (let i = 0, l = currentExclusive.length; i < l; i++) {
-        const anyOfChildNodeMap =
-          this.__anyOfChildNodeMapList__[currentExclusive[i]];
-        for (const child of anyOfChildNodeMap.values()) {
+    const enables = isolation ? current : differenceLite(current, previous);
+    if (enables.length > 0)
+      for (let i = 0, l = enables.length; i < l; i++) {
+        const anyOfChildNodes =
+          this.__anyOfChildNodeMapList__[enables[i]].values();
+        for (const child of anyOfChildNodes) {
           const node = child.node;
-          node.resetNode(isolation, false, this.__value__?.[node.name]);
+          node.reset(isolation, false, this.__value__?.[node.name]);
         }
       }
     this.__locked__ = false;
@@ -580,9 +580,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /**
    * Processes and validates the object value according to active composition branches.
    * Filters out properties that are not allowed by current oneOf/anyOf selections.
+   * @param isolation - Whether the operation is in isolation mode
    * @private
    */
-  private __processCompositionValue__() {
+  private __processCompositionValue__(isolation: boolean) {
     this.__draft__ = processValueWithValidate(
       this.__processValue__({ ...this.__value__, ...this.__draft__ }),
       this.__validateAllowedKey__,
@@ -593,7 +594,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
         joinSegment(this.__host__.path, ENHANCED_KEY),
         this.__oneOfIndex__,
       );
-    this.__emitChange__(SetValueOption.SoftReset);
+    this.__emitChange__(
+      isolation ? SetValueOption.IsolateReset : SetValueOption.Reset,
+    );
   }
 
   /**

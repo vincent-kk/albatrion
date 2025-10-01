@@ -1,4 +1,4 @@
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullish } from '@aileron/declare';
 
 import type { ObjectValue } from '@/schema-form/types';
 
@@ -10,9 +10,9 @@ import type { ObjectValue } from '@/schema-form/types';
  * @returns Object value filtered according to validation function, or original value if no validation function provided
  */
 export const processValueWithValidate = (
-  value: ObjectValue | undefined,
+  value: ObjectValue | Nullish,
   validate?: Fn<[key: string], boolean>,
-): ObjectValue | undefined => {
+): ObjectValue | Nullish => {
   if (value == null || validate === undefined) return value;
   const keys = Object.keys(value);
   if (keys.length === 0) return value;

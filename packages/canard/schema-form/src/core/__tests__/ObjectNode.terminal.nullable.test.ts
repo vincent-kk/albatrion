@@ -191,7 +191,10 @@ describe('ObjectNode nullable functionality', () => {
 
     // After initialized, UpdateValue event is dispatched synchronously (branch object includes settled)
     expect(mockListener).toHaveBeenNthCalledWith(1, {
-      type: NodeEventType.UpdateValue,
+      type:
+        NodeEventType.UpdateValue |
+        NodeEventType.RequestRefresh |
+        NodeEventType.UpdateComputedProperties,
       payload: {
         [NodeEventType.UpdateValue]: null,
       },
@@ -202,13 +205,6 @@ describe('ObjectNode nullable functionality', () => {
           settled: false,
         },
       },
-    });
-
-    // Async events are merged in the next microtask (includes UpdateComputedProperties for branch objects)
-    expect(mockListener).toHaveBeenNthCalledWith(2, {
-      type: NodeEventType.RequestRefresh | NodeEventType.UpdateComputedProperties,
-      payload: {},
-      options: {},
     });
   });
 

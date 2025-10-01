@@ -1,0 +1,1 @@
+export { validateSchemaType } from './validateSchemaType';

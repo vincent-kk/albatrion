@@ -341,9 +341,12 @@ describe('ArrayNode', () => {
 
     await delay();
 
-    // After initialized, UpdateValue event is dispatched synchronously
+    // After initialized, parent setValue with Isolate option causes events to merge
     expect(mockListener).toHaveBeenNthCalledWith(1, {
-      type: NodeEventType.UpdateValue,
+      type:
+        NodeEventType.UpdateValue |
+        NodeEventType.RequestRefresh |
+        NodeEventType.UpdateChildren,
       payload: {
         [NodeEventType.UpdateValue]: ['새태그1', '새태그2'],
       },
@@ -353,14 +356,6 @@ describe('ArrayNode', () => {
           current: ['새태그1', '새태그2'],
         },
       },
-    });
-
-    // Async events (RequestRefresh, UpdateChildren) are merged
-    // Note: UpdateComputedProperties is not emitted when there are no computed properties
-    expect(mockListener).toHaveBeenNthCalledWith(2, {
-      type: NodeEventType.RequestRefresh | NodeEventType.UpdateChildren,
-      payload: {},
-      options: {},
     });
   });
 

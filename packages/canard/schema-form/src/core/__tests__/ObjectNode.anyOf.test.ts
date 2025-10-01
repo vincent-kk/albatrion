@@ -68,11 +68,13 @@ describe('ObjectNode anyOf', () => {
       type: 'object',
       anyOf: [
         {
+          '&if': true,
           properties: {
             name: { type: 'string' },
           },
         },
         {
+          '&if': true,
           properties: {
             age: { type: 'number' },
           },

@@ -7,3 +7,4 @@ export * from './getFieldConditionMap';
 export * from './getVirtualReferencesMap';
 export * from './mergeShowConditions';
 export * from './processValueWithSchema';
+export * from './validateSchemaType';

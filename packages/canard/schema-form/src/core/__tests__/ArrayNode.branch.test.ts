@@ -113,9 +113,12 @@ describe('ArrayNode-Terminal', () => {
     booleanNode.setValue([true, false, true]);
     await delay();
 
-    // After initialized, UpdateValue event is dispatched synchronously
+    // After initialized, parent setValue with Isolate option causes events to merge
     expect(mockListener).toHaveBeenNthCalledWith(1, {
-      type: NodeEventType.UpdateValue,
+      type:
+        NodeEventType.UpdateValue |
+        NodeEventType.RequestRefresh |
+        NodeEventType.UpdateChildren,
       payload: {
         [NodeEventType.UpdateValue]: [true, false, true],
       },
@@ -125,13 +128,6 @@ describe('ArrayNode-Terminal', () => {
           current: [true, false, true],
         },
       },
-    });
-
-    // Async events are merged in the next microtask (includes UpdateChildren for branch arrays)
-    expect(mockListener).toHaveBeenNthCalledWith(2, {
-      type: NodeEventType.RequestRefresh | NodeEventType.UpdateChildren,
-      payload: {},
-      options: {},
     });
   });
 

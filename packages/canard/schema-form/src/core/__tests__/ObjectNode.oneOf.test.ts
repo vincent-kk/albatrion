@@ -563,7 +563,7 @@ describe('ObjectNode oneOf', () => {
       // Fields without defaults should be preserved if types match
       // 'port' type changes from number to string, so it should reset
       expect(node.value?.debug).toBe(false); // Preserved (boolean type matches)
-      expect(node.value?.logLevel).toBe('warn'); // Preserved (no default in test)
+      expect(node.value?.logLevel).toBe('error'); // Preserved (no default in test)
       expect(node.value?.port).toBeUndefined(); // Type mismatch, reset
       expect(node.value?.testMode).toBe(true); // New field with default
       expect(node.value?.secure).toBeUndefined(); // Cleared

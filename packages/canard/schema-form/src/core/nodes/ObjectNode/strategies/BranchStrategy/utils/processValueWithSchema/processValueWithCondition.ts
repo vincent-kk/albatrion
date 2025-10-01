@@ -21,9 +21,7 @@ export const processValueWithCondition = (
   if (keys.length === 0) return value;
   const isRequired = requiredFactory(value, fieldConditionMap);
   const filteredValue: ObjectValue = {};
-  for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
-    if (!isRequired(k)) continue;
-    filteredValue[k] = value[k];
-  }
+  for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i])
+    if (isRequired(k)) filteredValue[k] = value[k];
   return filteredValue;
 };
