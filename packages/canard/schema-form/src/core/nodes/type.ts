@@ -315,14 +315,14 @@ export enum SetValueOption {
   PublishUpdateEvent = BIT_FLAG_06,
   /** Update the value and trigger onChange with batch mode */
   BatchedEmitChange = EmitChange | Batch,
-  /** Reset the node to its initial value */
-  SoftReset = Replace | Propagate | BatchedEmitChange | PublishUpdateEvent,
-  /** Reset the node to its initial value and trigger a refresh */
-  HardReset = SoftReset | Refresh,
   /** Default SetValue option */
   Default = EmitChange | PublishUpdateEvent,
   /** Default SetValue option with batch mode */
   BatchDefault = Batch | Default,
+  /** Reset the node to its initial value */
+  SoftReset = Replace | Propagate | Isolate | BatchDefault,
+  /** Reset the node to its initial value and trigger a refresh */
+  HardReset = SoftReset | Refresh,
   /** Both propagate to children and trigger a refresh */
   Merge = Propagate | Refresh | Isolate | BatchDefault,
   /** Replace the value and propagate the update with refresh */
