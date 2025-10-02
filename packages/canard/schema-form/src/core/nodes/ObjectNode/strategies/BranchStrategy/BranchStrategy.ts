@@ -28,6 +28,7 @@ import { joinSegment } from '@/schema-form/helpers/jsonPointer';
 import { isTerminalType } from '@/schema-form/helpers/jsonSchema';
 import type { ObjectValue } from '@/schema-form/types';
 
+import { normalizeObjectValue } from '../../utils';
 import type { ObjectNodeStrategy } from '../type';
 import type { ChildNodeMap } from './type';
 import {
@@ -58,7 +59,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
   private readonly __handleUpdateComputedProperties__: Fn;
 
   /** Array of schema property keys in order */
-  private readonly __schemaKeys__: string[];
+  private readonly __propertyKeys__: string[];
 
   /** Set of all oneOf schema keys, undefined if no oneOf schema exists */
   private readonly __oneOfKeySet__?: Set<string>;
@@ -202,7 +203,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     }
 
     if (this.__oneOfKeySet__ || this.__anyOfKeySet__) {
-      this.__schemaKeys__ = sortWithReference(
+      this.__propertyKeys__ = sortWithReference(
         [
           ...propertyKeys,
           ...(this.__oneOfKeySet__ ? Array.from(this.__oneOfKeySet__) : []),
@@ -210,7 +211,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
         ],
         jsonSchema.propertyKeys,
       );
-    } else this.__schemaKeys__ = propertyKeys;
+    } else this.__propertyKeys__ = propertyKeys;
 
     const handelChangeFactory =
       (property: string): HandleChange =>
@@ -334,12 +335,15 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
     const replace = (option & SetValueOption.Replace) > 0;
     const settled = (option & SetValueOption.Isolate) === 0;
+    const normalize = (option & SetValueOption.Normalize) > 0;
+
     const previous = this.__value__ ? { ...this.__value__ } : this.__value__;
     const current = this.__parseValue__(
       this.__value__,
       this.__draft__,
       this.__host__.nullable,
       replace,
+      normalize,
     );
 
     if (current === false) return;
@@ -378,12 +382,13 @@ export class BranchStrategy implements ObjectNodeStrategy {
     draft: ObjectValue | Nullish,
     nullable: boolean,
     replace: boolean,
+    normalize: boolean,
   ) {
     if (draft === undefined) return undefined;
     if (draft === null) return nullable ? null : {};
-    if (replace || base == null) return this.__processValue__(draft);
+    if (replace || base == null) return this.__processValue__(draft, normalize);
     if (isEmptyObject(draft)) return false;
-    return this.__processValue__({ ...base, ...draft });
+    return this.__processValue__({ ...base, ...draft }, normalize);
   }
 
   /**
@@ -392,8 +397,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @returns {ObjectValue} Parsed object
    * @private
    */
-  private __processValue__(input: ObjectValue) {
-    const value = sortObjectKeys(input, this.__schemaKeys__, true);
+  private __processValue__(input: ObjectValue, normalize?: boolean) {
+    if (normalize) normalizeObjectValue(input, this.__propertyKeys__);
+    const value = sortObjectKeys(input, this.__propertyKeys__, true);
     if (this.__isolated__)
       return processValueWithCondition(value, this.__fieldConditionMap__);
     return value;
@@ -563,7 +569,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (oneOfChildNodeMap === null && anyOfChildNodeMaps === null)
       this.__children__ = this.__propertyChildren__;
     else {
-      const keys = this.__schemaKeys__;
+      const keys = this.__propertyKeys__;
       const children: ChildNode[] = [];
       for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
         const childNode =

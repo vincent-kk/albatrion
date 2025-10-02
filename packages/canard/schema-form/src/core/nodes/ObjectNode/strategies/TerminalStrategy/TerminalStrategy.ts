@@ -18,6 +18,7 @@ import { parseObject } from '@/schema-form/core/parsers';
 import { getObjectDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { ObjectValue } from '@/schema-form/types';
 
+import { normalizeObjectValue } from '../../utils';
 import type { ObjectNodeStrategy } from '../type';
 
 /**
@@ -115,11 +116,13 @@ export class TerminalStrategy implements ObjectNodeStrategy {
     input: ObjectValue | Nullish,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
-    const replace = option & SetValueOption.Replace;
-    const previous = this.__value__ ? { ...this.__value__ } : this.__value__;
-    const current = this.__parseValue__(input);
+    const retain = (option & SetValueOption.Replace) === 0;
+    const normalize = (option & SetValueOption.Normalize) > 0;
 
-    if (!replace && equals(previous, current)) return;
+    const previous = this.__value__ ? { ...this.__value__ } : this.__value__;
+    const current = this.__parseValue__(input, normalize);
+
+    if (retain && equals(previous, current)) return;
     this.__value__ = current;
 
     if (option & SetValueOption.EmitChange)
@@ -140,9 +143,10 @@ export class TerminalStrategy implements ObjectNodeStrategy {
    * @returns {ObjectValue|undefined} Parsed object value or undefined
    * @private
    */
-  private __parseValue__(input: ObjectValue | Nullish) {
+  private __parseValue__(input: ObjectValue | Nullish, normalize?: boolean) {
     if (input === undefined) return undefined;
     if (input === null && this.__host__.nullable) return null;
+    if (normalize) normalizeObjectValue(input, this.__propertyKeys__);
     return sortObjectKeys(parseObject(input), this.__propertyKeys__, true);
   }
 }

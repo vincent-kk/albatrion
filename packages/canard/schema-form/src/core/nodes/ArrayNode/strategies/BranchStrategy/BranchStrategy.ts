@@ -303,13 +303,14 @@ export class BranchStrategy implements ArrayNodeStrategy {
   ) {
     if (this.__locked__ || this.__idle__) return;
 
-    const replace = (option & SetValueOption.Replace) > 0;
+    const retain = (option & SetValueOption.Replace) === 0;
     const settled = (option & SetValueOption.Isolate) === 0;
+
     const previous = [...this.__value__];
     this.__value__ = this.__toArray__();
     const current = this.value;
 
-    if (!replace && !settled && equals(previous, current)) return;
+    if (retain && !settled && equals(previous, current)) return;
 
     if (option & SetValueOption.EmitChange)
       this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
