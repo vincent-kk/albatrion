@@ -311,8 +311,10 @@ export enum SetValueOption {
   Batch = BIT_FLAG_04,
   /** Ignore node tree update cycle */
   Isolate = BIT_FLAG_05,
+  /** Normalize the value that is not in the schema */
+  Normalize = BIT_FLAG_06,
   /** Trigger a refresh to update the FormTypeInput */
-  PublishUpdateEvent = BIT_FLAG_06,
+  PublishUpdateEvent = BIT_FLAG_07,
   /** Update the value and trigger onChange with batch mode */
   BatchedEmitChange = EmitChange | Batch,
   /** Default SetValue option */
@@ -324,7 +326,7 @@ export enum SetValueOption {
   /** Reset the node to its initial value and isolate the computed properties */
   IsolateReset = Reset | Isolate,
   /** Reset the node to its initial value and trigger a refresh */
-  RefreshReset = Reset | Refresh,
+  StableReset = Reset | Refresh | Normalize,
   /** Both propagate to children and trigger a refresh */
   Merge = Propagate | Refresh | Isolate | BatchDefault,
   /** Replace the value and propagate the update with refresh */
