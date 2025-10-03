@@ -581,68 +581,71 @@ export const MixedAnyOfWithAllOf = () => {
       },
       data: {
         type: 'object',
+
         allOf: [
           {
             properties: {
               id: { type: 'string' },
-              createdAt: { type: 'string', format: 'date' },
             },
             required: ['id'],
           },
           {
-            anyOf: [
-              {
-                computed: {
-                  if: "../entityType === 'person'",
-                },
-                properties: {
-                  firstName: { type: 'string' },
-                },
-                required: ['firstName'],
-              },
-              {
-                computed: {
-                  if: "../entityType === 'person'",
-                },
-                properties: {
-                  lastName: { type: 'string' },
-                },
-                required: ['lastName'],
-              },
-              {
-                computed: {
-                  if: "../entityType === 'person'",
-                },
-                properties: {
-                  dateOfBirth: { type: 'string', format: 'date' },
-                },
-              },
-              {
-                computed: {
-                  if: "../entityType === 'organization'",
-                },
-                properties: {
-                  organizationName: { type: 'string' },
-                },
-                required: ['organizationName'],
-              },
-              {
-                computed: {
-                  if: "../entityType === 'organization'",
-                },
-                properties: {
-                  taxId: { type: 'string' },
-                },
-              },
-              {
-                computed: {
-                  if: "../entityType === 'organization'",
-                },
-                properties: {
-                  foundedYear: { type: 'number', minimum: 1800, maximum: 2100 },
-                },
-              },
-            ],
+            properties: {
+              createdAt: { type: 'string', format: 'date' },
+            },
+          },
+        ],
+        anyOf: [
+          {
+            computed: {
+              if: "/entityType === 'person'",
+            },
+            properties: {
+              firstName: { type: 'string' },
+            },
+            required: ['firstName'],
+          },
+          {
+            computed: {
+              if: "/entityType === 'person'",
+            },
+            properties: {
+              lastName: { type: 'string' },
+            },
+            required: ['lastName'],
+          },
+          {
+            computed: {
+              if: "/entityType === 'person'",
+            },
+            properties: {
+              dateOfBirth: { type: 'string', format: 'date' },
+            },
+          },
+          {
+            computed: {
+              if: "/entityType === 'organization'",
+            },
+            properties: {
+              organizationName: { type: 'string' },
+            },
+            required: ['organizationName'],
+          },
+          {
+            computed: {
+              if: "/entityType === 'organization'",
+            },
+            properties: {
+              taxId: { type: 'string' },
+            },
+          },
+          {
+            computed: {
+              if: "/entityType === 'organization'",
+            },
+            properties: {
+              foundedYear: { type: 'number', minimum: 1800, maximum: 2100 },
+            },
           },
         ],
       },
@@ -1169,7 +1172,9 @@ export const CombinedAnyOfAndOneOf = () => {
         onValidate={setErrors}
         ref={formHandle}
       />
-      <div style={{ marginTop: 10, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+      <div
+        style={{ marginTop: 10, display: 'flex', gap: 10, flexWrap: 'wrap' }}
+      >
         <button
           onClick={() =>
             formHandle.current?.setValue({
