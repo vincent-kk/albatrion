@@ -5,7 +5,6 @@ import {
 } from '@winglet/common-utils/array';
 import { isEmptyObject } from '@winglet/common-utils/filter';
 import {
-  equals,
   getObjectKeys,
   removePrototype,
   sortObjectKeys,
@@ -332,7 +331,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
     if (this.__locked__) return;
-
     const replace = (option & SetValueOption.Replace) > 0;
     const settled = (option & SetValueOption.Isolate) === 0;
     const normalize = (option & SetValueOption.Normalize) > 0;
@@ -347,8 +345,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
     );
 
     if (current === false) return;
-    if (!replace && !settled && equals(previous, current)) return;
-
     this.__value__ = current;
 
     if (option & SetValueOption.EmitChange)

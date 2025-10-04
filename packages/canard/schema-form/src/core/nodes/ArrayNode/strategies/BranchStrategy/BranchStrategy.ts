@@ -1,5 +1,4 @@
 import { isArray } from '@winglet/common-utils/filter';
-import { equals } from '@winglet/common-utils/object';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
@@ -302,15 +301,11 @@ export class BranchStrategy implements ArrayNodeStrategy {
     updateChildren: boolean = false,
   ) {
     if (this.__locked__ || this.__idle__) return;
-
-    const retain = (option & SetValueOption.Replace) === 0;
     const settled = (option & SetValueOption.Isolate) === 0;
 
     const previous = [...this.__value__];
     this.__value__ = this.__toArray__();
     const current = this.value;
-
-    if (retain && !settled && equals(previous, current)) return;
 
     if (option & SetValueOption.EmitChange)
       this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
