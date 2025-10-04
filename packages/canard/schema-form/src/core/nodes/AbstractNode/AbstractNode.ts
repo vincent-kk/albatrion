@@ -279,7 +279,7 @@ export abstract class AbstractNode<
     input: Value | Nullish,
     batch?: boolean,
   ): void {
-    if (this.#active && this.scoped) this.#handleChange(input, batch);
+    if (this.#active && this.#scoped) this.#handleChange(input, batch);
     else if (input === undefined) this.#handleChange(undefined, batch);
   }
 
@@ -479,27 +479,15 @@ export abstract class AbstractNode<
     return this.#computeEnabled;
   }
 
-  /**
-   * [readonly] Whether the node matches its parent's oneOf/anyOf active branch
-   * - Returns `true` for non-conditional nodes or root nodes
-   * - Returns `true` if oneOf/anyOf condition met
-   * - Returns `false` if oneOf/anyOf condition not met
-   */
-  public get scoped() {
-    if (this.variant === undefined || this.parentNode === null) return true;
-    if (this.scope === 'oneOf')
-      return this.parentNode.oneOfIndex === this.variant;
-    if (this.scope === 'anyOf')
-      return this.parentNode.anyOfIndices.indexOf(this.variant) !== -1;
-    return true;
-  }
+  /**  Whether the node matches its parent's oneOf/anyOf active branch */
+  #scoped: boolean = true;
 
   /** Whether the node can assign values and update state (controlled by computed.active) */
   #active: boolean = true;
 
   /** [readonly] Whether the node can assign values and update state (controlled by computed.active) */
   public get active() {
-    return this.#active;
+    return this.#active && this.#scoped;
   }
 
   /** Whether the node should be displayed in UI (controlled by computed.visible) */
@@ -512,7 +500,7 @@ export abstract class AbstractNode<
 
   /** [readonly] Whether the node is active, visible, and within scope (ready for rendering) */
   public get enabled() {
-    return this.#active && this.#visible && this.scoped;
+    return this.#active && this.#scoped && this.#visible;
   }
 
   /** Whether the node value cannot be modified by user (controlled by computed.readOnly) */
@@ -599,12 +587,25 @@ export abstract class AbstractNode<
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
     this.#anyOfIndices = this.#compute.anyOfIndices?.(this.#dependencies) || [];
-    if (previous !== this.#active) this.reset(true);
+    if (previous !== this.#active) this.reset(false, true);
     this.publish(NodeEventType.UpdateComputedProperties);
   }
 
   /**
+   * Updates the node's scoped property.
+   * @returns Whether the scoped property was changed
+   */
+  #updateScoped(this: AbstractNode) {
+    if (this.variant === undefined || this.parentNode === null) return;
+    if (this.scope === 'oneOf')
+      this.#scoped = this.parentNode.oneOfIndex === this.variant;
+    else if (this.scope === 'anyOf')
+      this.#scoped = this.parentNode.anyOfIndices.indexOf(this.variant) !== -1;
+  }
+
+  /**
    * Resets the current node to its initial value. Uses the current node's initial value, or the provided value if one is given.
+   * @param updateScoped - Whether to update the scoped property
    * @param preferLatestValue - Whether to use the latest value, uses the latest value if available
    * @param preferInitialValue - Whether to use the initial value, uses the initial value if available
    * @param inputValue - The value to set, uses the provided value if given
@@ -612,10 +613,12 @@ export abstract class AbstractNode<
    */
   public reset(
     this: AbstractNode,
-    preferLatestValue: boolean,
+    updateScoped: boolean,
+    preferLatestValue?: boolean,
     preferInitialValue?: boolean,
     inputValue?: Value | Nullish,
   ) {
+    if (updateScoped) this.#updateScoped();
     const defaultValue = preferLatestValue
       ? preferInitialValue && this.#initialValue !== undefined
         ? this.#initialValue
@@ -627,7 +630,6 @@ export abstract class AbstractNode<
       : this.#initialValue;
     this.#defaultValue = defaultValue;
     const value = this.#active ? defaultValue : undefined;
-
     this.setValue(value, SetValueOption.StableReset);
     this.setState();
   }
