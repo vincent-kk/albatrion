@@ -480,7 +480,10 @@ export abstract class AbstractNode<
   }
 
   /**
-   * [readonly] Whether the node is in scope
+   * [readonly] Whether the node matches its parent's oneOf/anyOf active branch
+   * - Returns `true` for non-conditional nodes or root nodes
+   * - Returns `true` if oneOf/anyOf condition met
+   * - Returns `false` if oneOf/anyOf condition not met
    */
   public get scoped() {
     if (this.variant === undefined || this.parentNode === null) return true;
@@ -491,63 +494,63 @@ export abstract class AbstractNode<
     return true;
   }
 
-  /** Whether the node is active */
+  /** Whether the node can assign values and update state (controlled by computed.active) */
   #active: boolean = true;
 
-  /** [readonly] Whether the node is active */
+  /** [readonly] Whether the node can assign values and update state (controlled by computed.active) */
   public get active() {
     return this.#active;
   }
 
-  /** Whether the node is visible */
+  /** Whether the node should be displayed in UI (controlled by computed.visible) */
   #visible: boolean = true;
 
-  /** [readonly] Whether the node is visible */
+  /** [readonly] Whether the node should be displayed in UI (controlled by computed.visible) */
   public get visible() {
     return this.#visible;
   }
 
-  /** [readonly] Whether the node is both active and visible */
+  /** [readonly] Whether the node is active, visible, and within scope (ready for rendering) */
   public get enabled() {
     return this.#active && this.#visible && this.scoped;
   }
 
-  /** Whether the node is read only */
+  /** Whether the node value cannot be modified by user (controlled by computed.readOnly) */
   #readOnly: boolean = false;
 
-  /** [readonly] Whether the node is read only */
+  /** [readonly] Whether the node value cannot be modified by user (controlled by computed.readOnly) */
   public get readOnly() {
     return this.#readOnly;
   }
 
-  /** Whether the node is disabled */
+  /** Whether the node is disabled for user interaction (controlled by computed.disabled) */
   #disabled: boolean = false;
 
-  /** [readonly] Whether the node is disabled */
+  /** [readonly] Whether the node is disabled for user interaction (controlled by computed.disabled) */
   public get disabled() {
     return this.#disabled;
   }
 
-  /** Index of the oneOf branch */
+  /** Currently active oneOf branch index (-1 if none active) */
   #oneOfIndex: number = -1;
 
-  /** [readonly] Index of the oneOf branch */
+  /** [readonly] Currently active oneOf branch index (-1 if none active) */
   public get oneOfIndex() {
     return this.#oneOfIndex;
   }
 
-  /** Index of the anyOf branch */
+  /** Currently active anyOf branch indices (empty array if none active) */
   #anyOfIndices: number[] = [];
 
-  /** [readonly] Index of the anyOf branch */
+  /** [readonly] Currently active anyOf branch indices (empty array if none active) */
   public get anyOfIndices() {
     return this.#anyOfIndices;
   }
 
-  /** List of values to watch */
+  /** Computed values from dependencies, used for triggering component re-renders */
   #watchValues: ReadonlyArray<any> = [];
 
-  /** [readonly] List of values to watch */
+  /** [readonly] Computed values from dependencies, used for triggering component re-renders */
   public get watchValues() {
     return this.#watchValues;
   }
@@ -675,22 +678,22 @@ export abstract class AbstractNode<
     if (changed) this.publish(NodeEventType.UpdateState, this.#state);
   }
 
-  /** [root only] List of dataPath for all errors that occurred inside the form */
+  /** [root only] List of data paths where validation errors occurred */
   #errorDataPaths: string[] | undefined;
 
-  /** [root only] All errors that occurred inside the form */
+  /** [root only] All validation errors from schema validation */
   #globalErrors: JsonSchemaError[] | undefined;
 
-  /** Own errors received from root node */
+  /** Validation errors for this specific node from root validation */
   #localErrors: JsonSchemaError[] | undefined;
 
-  /** [root only] Result of merging all errors that occurred inside the form with externally received errors */
+  /** [root only] Combined schema errors and external errors */
   #mergedGlobalErrors: JsonSchemaError[] = [];
 
-  /** Result of merging own errors received from root node with externally received errors */
+  /** Combined local validation errors and external errors for this node */
   #mergedLocalErrors: JsonSchemaError[] = [];
 
-  /** Errors received from external sources (e.g. server errors) */
+  /** External errors provided by user (e.g., server-side validation errors) */
   #externalErrors: JsonSchemaError[] = [];
 
   /**
@@ -795,10 +798,10 @@ export abstract class AbstractNode<
       this.setExternalErrors(nextErrors);
   }
 
-  /** [root only] Enhancement value, `undefined` if not enabled */
+  /** [root only] Additional values for validation (includes virtual/computed fields) */
   #enhancer: Value | undefined;
 
-  /** [root only] Enhanced value for validation, `value` if not enabled */
+  /** [root only] Value used for validation, merges actual value with enhancer for virtual fields */
   get #enhancedValue(): Value | Nullish {
     const value = this.value;
     if (this.group === 'terminal' || value == null) return value;
@@ -808,9 +811,9 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Adjusts an enhancer value
-   * @param pointer - The path to adjust the enhancement value
-   * @param value - The enhancement value to adjust
+   * Adds or updates a value in the enhancer for validation purposes
+   * @param pointer - JSON Pointer path to the value location
+   * @param value - Value to set in enhancer (typically from virtual/computed fields)
    * @internal Internal implementation method. Do not call directly.
    * */
   public adjustEnhancer(this: AbstractNode, pointer: string, value: any) {
