@@ -408,10 +408,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @private
    */
   private __propagate__(replace: boolean, option: UnionSetValueOption) {
-    this.__locked__ = true;
     const target = removePrototype(this.__value__ || {});
     const draft = removePrototype(this.__draft__ || {});
     const nullify = this.__draft__ === null;
+    this.__locked__ = true;
     for (let i = 0, l = this.__children__.length; i < l; i++) {
       const node = this.__children__[i].node;
       if (node.type === 'virtual') continue;
