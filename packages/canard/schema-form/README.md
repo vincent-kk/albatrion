@@ -127,17 +127,17 @@ interface FormHandle<
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
   getErrors: Fn<[], JsonSchemaError[]>;
-  getAttachedFileMap: Fn<[], AttachedFileMap>;
+  getAttachedFilesMap: Fn<[], AttachedFilesMap>;
   validate: Fn<[], Promise<JsonSchemaError[]>>;
   submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
 }
 ```
 
-#### AttachedFileMap
+#### AttachedFilesMap
 
 ```ts
-// Stores File or File[] by JSONPointer path key (e.g., "/attachment" or "/items/0/file").
-type AttachedFileMap = Map<string, File | File[]>;
+// Stores File[] by JSONPointer path key (e.g., "/attachment" or "/items/0/file").
+type AttachedFilesMap = Map<string, File[]>;
 ```
 
 #### FormChildrenProps
@@ -527,9 +527,9 @@ interface FormTypeInputProps<
 
 ### File Management (onFileAttach)
 
-`@canard/schema-form` keeps the actual File objects in a dedicated store and writes only file metadata (name, size, type, lastModified) into the schema value. Use `onFileAttach` in your `FormTypeInput` to attach files, and then call `FormHandle.getAttachedFileMap()` on submit to send files to your API.
+`@canard/schema-form` keeps the actual File objects in a dedicated store and writes only file metadata (name, size, type, lastModified) into the schema value. Use `onFileAttach` in your `FormTypeInput` to attach files, and then call `FormHandle.getAttachedFilesMap()` on submit to send files to your API.
 
-- **Storage**: `getAttachedFileMap()` returns `Map<string, File | File[]>` where the key is the input's standard JSONPointer path (`node.path`). Keys must be standard RFC 6901 JSONPointer only; extended syntax (`..`, `.`, `*`) is not used for keys.
+- **Storage**: `getAttachedFilesMap()` returns `Map<string, File[]>` where the key is the input's standard JSONPointer path (`node.path`). Keys must be standard RFC 6901 JSONPointer only; extended syntax (`..`, `.`, `*`) is not used for keys.
 - **Automatic cleanup**:
   - When the form is re-initialized or a node is removed (including unmount), files at that path are deleted.
   - Conditional schemas (e.g., `if/then/else`, `oneOf`) that remove fields also trigger file cleanup.
@@ -626,7 +626,7 @@ export const UploadForm = () => {
 
     // Send schema value (JSON) together with attached files
     const values = form.getValue();
-    const files = form.getAttachedFileMap(); // AttachedFileMap
+    const files = form.getAttachedFilesMap(); // AttachedFilesMap
 
     const body = new FormData();
     body.append(
@@ -634,12 +634,13 @@ export const UploadForm = () => {
       new Blob([JSON.stringify(values)], { type: 'application/json' }),
     );
 
-    for (const [path, fileOrList] of files.entries()) {
-      if (Array.isArray(fileOrList)) {
-        // Use standard JSONPointer for array keys: "/0", "/1" (do not use brackets [])
-        fileOrList.forEach((file, idx) => body.append(`${path}/${idx}`, file));
+    for (const [path, fileList] of files.entries()) {
+      if (fileList.length === 1) {
+        // Single file: use path directly
+        body.append(path, fileList[0]);
       } else {
-        body.append(path, fileOrList);
+        // Multiple files: use standard JSONPointer for array keys: "/0", "/1" (do not use brackets [])
+        fileList.forEach((file, idx) => body.append(`${path}/${idx}`, file));
       }
     }
 

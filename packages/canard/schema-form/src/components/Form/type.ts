@@ -11,7 +11,7 @@ import type {
 } from '@/schema-form/core';
 import type {
   AllowedValue,
-  AttachedFileMap,
+  AttachedFilesMap,
   FormTypeInputDefinition,
   FormTypeInputMap,
   FormTypeRendererProps,
@@ -99,7 +99,7 @@ export interface FormHandle<
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
   getErrors: Fn<[], JsonSchemaError[]>;
-  getAttachedFileMap: Fn<[], AttachedFileMap>;
+  getAttachedFilesMap: Fn<[], AttachedFilesMap>;
   validate: Fn<[], Promise<JsonSchemaError[]>>;
   showError: Fn<[visible: boolean]>;
   submit: TrackableHandlerFunction;

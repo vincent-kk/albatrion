@@ -131,17 +131,17 @@ interface FormHandle<
   /** 폼 전역 오류를 반환합니다 */
   getErrors: Fn<[], JsonSchemaError[]>;
   /** onFileAttach로 첨부된 파일 맵을 반환합니다 */
-  getAttachedFileMap: Fn<[], AttachedFileMap>;
+  getAttachedFilesMap: Fn<[], AttachedFilesMap>;
   validate: Fn<[], Promise<JsonSchemaError[]>>;
   submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
 }
 ```
 
-#### AttachedFileMap
+#### AttachedFilesMap
 
 ```ts
-// JSONPointer 경로(예: "/attachment" 또는 "/items/0/file")를 키로, File 또는 File[]를 값으로 보관합니다.
-type AttachedFileMap = Map<string, File | File[]>;
+// JSONPointer 경로(예: "/attachment" 또는 "/items/0/file")를 키로, File[]를 값으로 보관합니다.
+type AttachedFilesMap = Map<string, File[]>;
 ```
 
 #### FormChildrenProps
@@ -519,9 +519,9 @@ interface FormTypeInputProps<
 
 ### 파일 관리 시스템 (onFileAttach)
 
-`@canard/schema-form`은 파일 자체는 별도의 저장소에 보관하고, 스키마 값에는 메타데이터(파일명, 크기 등)만 저장하는 방식을 지원합니다. 이를 위해 `FormTypeInput`에서 `onFileAttach`를 호출하여 파일을 첨부하고, 제출 시 `FormHandle.getAttachedFileMap()`으로 실제 파일을 추출해 API로 전송합니다.
+`@canard/schema-form`은 파일 자체는 별도의 저장소에 보관하고, 스키마 값에는 메타데이터(파일명, 크기 등)만 저장하는 방식을 지원합니다. 이를 위해 `FormTypeInput`에서 `onFileAttach`를 호출하여 파일을 첨부하고, 제출 시 `FormHandle.getAttachedFilesMap()`으로 실제 파일을 추출해 API로 전송합니다.
 
-- **저장 위치**: `getAttachedFileMap()`은 `Map<string, File | File[]>`을 반환합니다. 키는 해당 입력의 표준 JSONPointer 경로(`node.path`)입니다. 이때 키는 RFC 6901의 표준 JSONPointer만 사용하며, 확장 문법(`..`, `.`, `*`)은 사용하지 않습니다.
+- **저장 위치**: `getAttachedFilesMap()`은 `Map<string, File[]>`을 반환합니다. 키는 해당 입력의 표준 JSONPointer 경로(`node.path`)입니다. 이때 키는 RFC 6901의 표준 JSONPointer만 사용하며, 확장 문법(`..`, `.`, `*`)은 사용하지 않습니다.
 - **자동 정리(cleanup)**:
   - 폼이 재구성되거나(unmount 포함) 입력 노드가 제거되면 해당 경로의 파일은 자동으로 제거됩니다.
   - 조건부 스키마(`if/then/else`, `oneOf`)로 필드가 사라질 때도 파일이 정리됩니다.
@@ -618,7 +618,7 @@ export const UploadForm = () => {
 
     // 1) 스키마 값(JSON)과 2) 첨부 파일들을 함께 보냅니다.
     const values = form.getValue();
-    const files = form.getAttachedFileMap(); // AttachedFileMap
+    const files = form.getAttachedFilesMap(); // AttachedFilesMap
 
     const body = new FormData();
     body.append(
@@ -626,12 +626,13 @@ export const UploadForm = () => {
       new Blob([JSON.stringify(values)], { type: 'application/json' }),
     );
 
-    for (const [path, fileOrList] of files.entries()) {
-      if (Array.isArray(fileOrList)) {
-        // 배열 파일의 키는 JSONPointer 표준에 따라 "/0", "/1" 처럼 사용합니다 (대괄호 [] 사용 안 함)
-        fileOrList.forEach((file, idx) => body.append(`${path}/${idx}`, file));
+    for (const [path, fileList] of files.entries()) {
+      if (fileList.length === 1) {
+        // 단일 파일: 경로를 직접 사용
+        body.append(path, fileList[0]);
       } else {
-        body.append(path, fileOrList);
+        // 다중 파일: JSONPointer 표준에 따라 "/0", "/1" 처럼 사용합니다 (대괄호 [] 사용 안 함)
+        fileList.forEach((file, idx) => body.append(`${path}/${idx}`, file));
       }
     }
 

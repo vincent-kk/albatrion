@@ -36,7 +36,7 @@ import {
 } from '@/schema-form/providers';
 import type {
   AllowedValue,
-  AttachedFileMap,
+  AttachedFilesMap,
   InferValueType,
   JsonSchema,
 } from '@/schema-form/types';
@@ -74,10 +74,10 @@ const FormInner = <
 ) => {
   type Node = InferSchemaNode<Schema>;
   const ready = useRef(false);
-  const attachedFileMapRef = useRef<AttachedFileMap>(new Map());
+  const attachedFilesMapRef = useRef<AttachedFilesMap>(new Map());
   const [version, update] = useVersion(() => {
     ready.current = false;
-    attachedFileMapRef.current.clear();
+    attachedFilesMapRef.current.clear();
   });
 
   const jsonSchema = useMemorize(
@@ -149,7 +149,7 @@ const FormInner = <
         getValue: () => rootNode?.value as Value,
         setValue: (value, options) => rootNode?.setValue(value as any, options),
         getErrors: () => rootNode?.globalErrors || [],
-        getAttachedFileMap: () => attachedFileMapRef.current,
+        getAttachedFilesMap: () => attachedFilesMapRef.current,
         validate: async () => (await rootNode?.validate()) || [],
         showError: (visible = true) =>
           visible ? setShowError(true) : setShowError(inputShowError),
@@ -160,7 +160,7 @@ const FormInner = <
 
   return (
     <WorkspaceContextProvider
-      attachedFileMap={attachedFileMapRef.current}
+      attachedFilesMap={attachedFilesMapRef.current}
       context={context}
     >
       <FormTypeInputsContextProvider

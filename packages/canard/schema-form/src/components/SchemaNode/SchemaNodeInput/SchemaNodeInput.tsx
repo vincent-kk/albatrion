@@ -1,5 +1,6 @@
 import { memo, useCallback, useMemo, useRef } from 'react';
 
+import { isArray } from '@winglet/common-utils/filter';
 import { useOnUnmount } from '@winglet/react-utils/hook';
 
 import { NodeEventType, NodeState } from '@/schema-form/core';
@@ -37,7 +38,7 @@ export const SchemaNodeInput = memo(
     const ChildNodeComponents = useChildNodeComponents(node, NodeProxy);
     const containerRef = useRef<HTMLSpanElement>(null);
 
-    const { attachedFileMap, context } = useWorkspaceContext();
+    const { attachedFilesMap, context } = useWorkspaceContext();
     const { readOnly: rootReadOnly, disabled: rootDisabled } =
       useInputControlContext();
 
@@ -53,11 +54,11 @@ export const SchemaNodeInput = memo(
     );
 
     const handleFileAttach = useCallback(
-      (file: File | File[] | undefined) => {
-        if (file) attachedFileMap.set(node.path, file);
-        else attachedFileMap.delete(node.path);
+      (files: File | File[] | undefined) => {
+        if (files === undefined) attachedFilesMap.delete(node.path);
+        else attachedFilesMap.set(node.path, isArray(files) ? files : [files]);
       },
-      [attachedFileMap, node.path],
+      [attachedFilesMap, node.path],
     );
 
     const requestId =
@@ -79,7 +80,7 @@ export const SchemaNodeInput = memo(
     }, [node]);
 
     useOnUnmount(() => {
-      attachedFileMap.delete(node.path);
+      attachedFilesMap.delete(node.path);
       if (requestId.current === undefined) return;
       cancelAnimationFrame(requestId.current);
     });
