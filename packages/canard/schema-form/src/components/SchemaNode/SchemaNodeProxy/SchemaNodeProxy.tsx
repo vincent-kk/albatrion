@@ -92,6 +92,9 @@ export const SchemaNodeProxy = memo(
       <Wrapper key={version}>
         <span data-json-path={node.path}>
           <FormTypeRenderer
+            {...node.jsonSchema.FormTypeRendererProps}
+            {...overrideProps}
+            // Non-overridable: Essential node system properties
             node={node}
             type={node.type}
             jsonSchema={node.jsonSchema}
@@ -106,8 +109,6 @@ export const SchemaNodeProxy = memo(
             errorMessage={errorMessage}
             formatError={formatError}
             context={context}
-            {...node.jsonSchema.FormTypeRendererProps}
-            {...overrideProps}
           />
         </span>
       </Wrapper>
