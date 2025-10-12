@@ -8,60 +8,558 @@ alwaysApply: false
 
 This rule defines the automated execution process for implementation plans created through requirement-driven development. It ensures consistent, guideline-based task execution with proper version control.
 
+## Project Configuration Loading
+
+**CRITICAL: Load project structure before executing any tasks**
+
+### 1. Load .project-structure.yaml
+
+```bash
+# Check for project structure file in project root
+if [ ! -f ".project-structure.yaml" ]; then
+  echo "⚠️  .project-structure.yaml not found in project root"
+  echo "→ Running automatic project structure analysis..."
+  # Invoke analyze-project-structure rule
+  # This will:
+  # 1. Analyze project structure
+  # 2. Generate .project-structure.yaml
+  # 3. Show to user for review
+  # 4. Wait for confirmation
+  exit 1  # Re-run after generation
+fi
+
+# Load configuration
+# Extract: commands, paths, tech_stack, naming_conventions
+echo "✓ Loaded project structure configuration"
+```
+
+**Auto-Generation Process:**
+
+When `.project-structure.yaml` is missing:
+
+```markdown
+1. Detect project type and package manager
+2. Scan directories and analyze structure
+3. Extract tech stack from dependencies
+4. Parse package.json scripts for commands
+5. Infer path and naming conventions
+6. Generate .project-structure.yaml
+7. Show to user: "📋 Generated project structure configuration"
+8. Ask: "Please review .project-structure.yaml and confirm (yes/edit)"
+9. If "edit": Wait for user to modify
+10. If "yes": Continue with task execution
+```
+
+### 2. Variable Substitution
+
+Throughout this rule, replace variables with values from config:
+
+- `{dev_command}` → from `commands.dev.*`
+- `{test_command}` → from `commands.test.*`
+- `{lint_command}` → from `commands.lint.*`
+- `{build_command}` → from `commands.build.*`
+- `{packages_dir}` → from `structure.packages_dir`
+- `{source_dir}` → from `structure.source_dir`
+- `{package_name}` → determined from task context
+
+## 🔄 Continuous Execution Mode
+
+**Core Principle**: Execute tasks continuously without interrupting the user unless absolutely necessary.
+
+**User Interaction Strategy**:
+- ✅ **Minimize interruptions**: Make autonomous decisions based on guidelines
+- ✅ **Defer questions**: Use code comments (`// FIXME:`, `// REVIEW:`, `// WARNING:`) for non-blocking issues
+- ✅ **Batch reporting**: Collect all questions and report once at task completion
+- ❌ **Avoid mid-task questions**: Only stop for critical blockers
+
+**When to Stop and Ask User**:
+1. **Critical Blocker**: Cannot proceed without user input (e.g., missing API key, ambiguous requirement)
+2. **Level 2 Verification**: UI component testing requires manual user verification
+3. **Phase Completion**: Ask if user wants to continue to next phase
+
+**When to Use Code Comments Instead**:
+1. **Design Decisions**: Multiple valid approaches exist
+2. **Optimization Opportunities**: Code works but could be improved
+3. **Potential Issues**: Non-critical warnings or suggestions
+4. **Future Improvements**: Technical debt or refactoring opportunities
+
 ## Execution Workflow
 
 ### 1. Task Discovery Process
 
 #### Locate Task Directory
 
+**User Explicitly Specifies**:
 ```bash
-# Pattern: .tasks/{type}_{task_name}_{yyyyMMdd}/
-# Example: .tasks/feature_user_authentication_20241229/
-
-# Find active tasks
-ls -la .tasks/*/03_plan.md | head -5
+# User specifies which directory to work on
+"Execute tasks from .tasks/frontend_app-integration_20251007/"
 ```
 
-#### Priority Order
+**Auto-Discovery (when not specified)**:
+```bash
+# Find most recently modified 03_plan.md
+ls -lt .tasks/*/03_plan.md | head -1
+```
 
-1. Tasks with `status: in_progress` in plan
-2. Oldest uncompleted tasks first
-3. Tasks marked as high priority
-4. Dependencies resolved first
+#### Task Selection with Tree of Thoughts
+
+**Purpose**: Instead of simple sequential selection, evaluate multiple candidate tasks and choose the optimal one based on dependencies, complexity, and impact.
+
+**When to Apply ToT Task Selection**:
+- Multiple tasks have met dependencies
+- Tasks have different priority levels
+- Risk of choosing wrong task order exists
+- Need to optimize for efficiency
+
+**ToT-Based Task Selection Process:**
+
+##### Step 1: Generate Candidate Tasks (후보 생성)
+
+Scan 03_plan.md and generate 3-5 candidate tasks:
+
+```typescript
+interface TaskCandidate {
+  id: string;           // e.g., "작업 2.3"
+  phase: number;        // Current phase
+  dependencies: string[]; // Required previous tasks
+  optional: boolean;    // Has asterisk (*)
+  complexity: 'low' | 'medium' | 'high';
+  estimatedTime: number; // hours
+}
+
+function generateCandidates(plan: Plan): TaskCandidate[] {
+  const candidates: TaskCandidate[] = [];
+
+  for (const phase of plan.phases) {
+    for (const task of phase.tasks) {
+      if (task.status === 'uncompleted' && !task.optional) {
+        // Check if dependencies are met
+        const dependenciesMet = checkDependencies(task);
+        if (dependenciesMet) {
+          candidates.push(task);
+        }
+      }
+    }
+
+    // Limit lookahead to current phase + 1
+    if (candidates.length >= 5) break;
+  }
+
+  return candidates;
+}
+```
+
+**Example Candidates**:
+```markdown
+Phase 2: Component Foundation
+- Candidate A: 작업 2.3 (Storybook 스토리 작성)
+- Candidate B: 작업 2.5 (Phase 2 마무리)
+
+Phase 3: Core UI Components
+- Candidate C: 작업 3.1 (주요 컴포넌트 구현)
+- Candidate D: 작업 3.2 (MSW 핸들러)
+
+Optional Tasks:
+- Candidate E: 작업 2.4 (테스트 - optional*) ← Skip by default
+```
+
+##### Step 2: Evaluate Each Candidate (평가)
+
+Evaluate using weighted scoring (총 100점):
+
+**평가 기준**:
+1. **Dependencies Met** (30점): 모든 선행 작업 완료 여부
+2. **Priority/Impact** (25점): 비즈니스 가치 또는 다른 작업 차단 해제
+3. **Complexity vs Available Time** (20점): 현재 가용 시간 내 완료 가능성
+4. **Phase Alignment** (15점): 현재 Phase 내 작업 우선
+5. **Risk Level** (10점): 실패 시 영향도
+
+```markdown
+**Candidate A 평가: 작업 2.3 (Storybook 스토리)**
+- Dependencies: ✅ 2.1, 2.2 완료 (30/30)
+- Priority: Medium - 개발 도구 (18/25)
+- Complexity: Low, 1시간, 가능 (18/20)
+- Phase: 현재 Phase 2 (15/15)
+- Risk: Low - 실패 시 영향 작음 (9/10)
+- **총점: 90/100 (확실함)** ✅
+
+**Candidate B 평가: 작업 2.5 (Phase 2 마무리)**
+- Dependencies: ⚠️ 2.3, 2.4 필요 (15/30)
+- Priority: High - Phase 완료 필요 (23/25)
+- Complexity: Medium, 2시간 (15/20)
+- Phase: 현재 Phase 2 (15/15)
+- Risk: Medium (7/10)
+- **총점: 75/100 (가능함)**
+
+**Candidate C 평가: 작업 3.1 (주요 컴포넌트)**
+- Dependencies: ❌ Phase 2 미완료 (0/30)
+- Priority: High - 핵심 기능 (25/25)
+- Complexity: High, 4시간 (10/20)
+- Phase: 다음 Phase 3 (5/15)
+- Risk: High - 핵심 기능 (6/10)
+- **총점: 46/100 (불가능 - 의존성)** ❌
+
+**Candidate D 평가: 작업 3.2 (MSW 핸들러)**
+- Dependencies: ❌ Phase 2 미완료 (0/30)
+- **총점: 불가능** ❌
+
+**Candidate E 평가: 작업 2.4 (테스트 - optional)**
+- Optional: ⊘ 기본적으로 제외
+- 사용자 명시 요청 시에만 평가
+```
+
+##### Step 3: Select Best Task (선택)
+
+**평가 결과**:
+- 🏆 **1순위**: Candidate A (90점 - 확실함)
+- 🥈 **2순위**: Candidate B (75점 - 대기)
+- ❌ **제외**: Candidate C, D (의존성 미충족)
+- ⊘ **스킵**: Candidate E (optional)
+
+**선택**: 작업 2.3 (Storybook 스토리 작성)
+
+##### Step 4: Lookahead and Backtrack Plan (전방 예측 및 백트래킹)
+
+**Lookahead (다음 단계 예측)**:
+- 2.3 완료 시 → 2.5 가능해짐 (점수: 75 → 90으로 상승)
+- 2.5 완료 시 → Phase 2 완료, Phase 3 진입
+- 예상 진행: 2.3 (1h) → 2.5 (2h) → 3.1 (4h)
+
+**Backtrack Plan (막힘 시 대안)**:
+```markdown
+만약 Task 2.3 실패 시:
+1. 원인 분석 (5분)
+2. 복구 시도 (10분)
+3. 복구 실패 시 → Candidate B (2.5)로 전환
+   - 2.5는 2.3 의존성이지만 임시 우회 가능
+   - 2.5 완료 후 2.3 재시도
+4. 전환 비용: 15분 (코드 rollback + context switch)
+```
+
+##### Step 5: Execute and Verify (실행 및 검증)
+
+```markdown
+선택된 Task 실행:
+→ 작업 2.3 시작
+→ 구현 (Step 2)
+→ 검증 (Step 4)
+→ ✅ 성공: 체크박스 업데이트, 커밋, 다음 Task 선택
+→ ❌ 실패: Backtrack to Step 3, try Candidate B
+```
+
+**Legacy Simple Selection (Fallback)**:
+
+Simple sequential selection when ToT not needed:
+- Only 1 candidate available
+- All tasks in current phase have clear order
+- User explicitly requests sequential mode
+
+```typescript
+// Fallback: Simple selection
+function findNextTask(plan: Plan): Task | null {
+  for (const phase of plan.phases) {
+    const nextTask = phase.tasks.find(task =>
+      task.status === 'uncompleted' &&
+      !task.isOptional
+    );
+
+    if (nextTask) return nextTask;
+  }
+
+  return null;
+}
+```
+
+**Example Scenarios:**
+
+**Scenario 1: Normal Flow (Skip Optional)**
+```markdown
+## Phase 2: Component Foundation
+- [x] Task 2.1: Create Jotai atoms structure ✓ 2025-01-10 완료
+- [x] Task 2.2: Create reusable base components ✓ 2025-01-10 완료
+- [x] Task 2.3: Write Storybook stories ✓ 2025-01-10 완료
+- [ ]* Task 2.4: Component unit tests  ← SKIP (optional)
+
+## Phase 3: Core UI Components
+- [ ] Task 3.1: Implement main components  ← NEXT TASK (Phase 2 complete)
+```
+
+**Scenario 2: User Explicitly Requests Optional Task**
+```markdown
+User: "Execute task 2.4"
+
+AI: "Task 2.4 is marked as optional (*). Executing as requested..."
+     [Proceeds to execute task 2.4]
+```
+
+**Scenario 3: Mixed Optional Tasks**
+```markdown
+## Phase 2: Testing
+- [x] Task 2.1: Integration tests ✓ 2025-01-10 완료
+- [ ]* Task 2.2: Unit tests  ← SKIP
+- [ ] Task 2.3: E2E tests  ← NEXT TASK (required)
+- [ ]* Task 2.4: Performance tests  ← SKIP
+```
+
+**Phase Completion Rules:**
+
+```markdown
+Phase is "complete" when:
+✅ All required tasks (without *) are [x]
+✅ Optional tasks (*) can remain [ ]*
+
+Phase is "incomplete" when:
+❌ Any required task (without *) is still [ ]
+```
+
+**Visual Indicators:**
+
+```markdown
+- [ ] Required task (must complete)
+- [ ]* Optional task (auto-skip)
+- [x] Completed task ✓ YYYY-MM-DD 완료
+- [ ]* Optional task (skipped, never gets ✓)
+```
+
+**Phase Completion Detection & Reporting:**
+
+```markdown
+AI Detection Logic:
+1. After completing each task
+2. Check if current phase has any uncompleted required tasks
+3. If no uncompleted required tasks → Phase complete
+4. Generate phase completion report
+
+Phase Completion Report Template:
+---
+🎉 Phase [N] Complete: [Phase Name]
+
+**Summary:**
+- Duration: [Start Date] → [End Date]
+- Completed: [X] tasks
+- Skipped: [Y] optional tasks
+- Commits: [Z] commits
+
+**Completed Tasks:**
+- ✅ 작업 2.1: [Task Title] (YYYY-MM-DD)
+- ✅ 작업 2.2: [Task Title] (YYYY-MM-DD)
+- ✅ 작업 2.3: [Task Title] (YYYY-MM-DD)
+
+**Skipped Optional Tasks:**
+- ⏭️ 작업 2.4: [Task Title] (optional)
+
+**Quality Metrics:**
+- Lint: ✓ No errors
+- Tests: ✓ All passing (if tests exist)
+- Build: ✓ Success (if build was run)
+
+**Next Phase:** Phase [N+1]: [Next Phase Name]
+**Next Task:** 작업 [N+1].1: [Task Title]
+
+**⏭️ Auto-continuing to next phase in continuous mode...**
+---
+
+Continuous Execution Mode:
+- ✅ Automatically proceed to next phase
+- ✅ No user confirmation needed
+- ✅ User can interrupt anytime with "pause" or "stop"
+
+User can control execution:
+- "pause" → Stop after current task
+- "stop" → Stop immediately
+- "skip phase [N]" → Skip to specific phase
+- Default: Continue automatically
+```
+
+**Phase Header Update:**
+
+```markdown
+When phase completes, update phase header in 03_plan.md:
+
+Before:
+## 단계 2: 컴포넌트 기초 개발
+
+After:
+## 단계 2: 컴포넌트 기초 개발 ✓ 2025-01-12 완료
+
+AI Steps:
+1. Detect phase completion
+2. Use strReplace to update phase header
+3. Include in next commit (with next task or separate docs commit)
+```
 
 ### 2. Document Loading Sequence
 
-```markdown
-## Load Order:
+**Smart Loading (Load Only What's Needed)**
 
-1. project-structure.md - Project-specific configuration and commands
-2. 04_guideline.md - Execution rules and commands
-3. 03_plan.md - Task list and phases
-4. 01_requirements.md - Reference for validation
-5. 02_design.md - Technical specifications
+#### 🔴 Always Load (Every Task):
+1. **03_plan.md** - Find next task and read its 5 fields
+2. **04_guideline.md** - Get project-specific commands and rules
+
+#### 🟡 Load During Implementation (When Needed):
+3. **02_design.md** - When task requires architectural context
+   - Complex components
+   - State management decisions
+   - API integration patterns
+   - Cross-module interactions
+
+#### 🟢 Load During Verification (Always for Verification):
+4. **01_requirements.md** - ALWAYS load during Step 4 (Verification)
+   - Every task has `_Requirements: REQ-X.Y_`
+   - Must verify acceptance criteria
+   - Ensures correctness
+
+**Loading Strategy by Task Type:**
+
+```markdown
+Type 1: Simple Component (e.g., "Create Button component")
+├─ Implementation Phase:
+│  └─ Load: 03_plan.md + 04_guideline.md
+└─ Verification Phase:
+   └─ Load: 01_requirements.md (for REQ-X.Y)
+
+Type 2: Complex Feature (e.g., "Implement authentication flow")
+├─ Implementation Phase:
+│  └─ Load: 03_plan.md + 04_guideline.md + 02_design.md
+└─ Verification Phase:
+   └─ Load: 01_requirements.md (for REQ-X.Y)
+
+Type 3: Infrastructure/Config (e.g., "Setup Apollo Client")
+├─ Implementation Phase:
+│  └─ Load: 03_plan.md + 04_guideline.md + 02_design.md
+└─ Verification Phase:
+   └─ Load: 01_requirements.md (for REQ-X.Y)
 ```
+
+**Document Loading Timeline:**
+
+```
+Task Start
+    ↓
+[Load 03_plan.md + 04_guideline.md] ← Always
+    ↓
+Implementation
+    ↓
+[Load 02_design.md if needed] ← Conditional
+    ↓
+Verification (Step 4)
+    ↓
+[Load 01_requirements.md] ← Always for verification
+    ↓
+Task Complete
+```
+
+**Why This Order**:
+- **03_plan.md**: Tells you WHAT to do (most important)
+- **04_guideline.md**: Tells you HOW to do it (commands, patterns)
+- **02_design.md**: Provides context WHY (architecture decisions)
+- **01_requirements.md**: Validates CORRECTNESS (acceptance criteria)
+
+**Key Rule**: 
+> Every task MUST load 01_requirements.md during verification phase (Step 4, Level 3)
+> This is non-negotiable because every task has `_Requirements: REQ-X.Y_`
 
 ### 3. Pre-Execution Setup
 
+**🔴 Critical: Run Before Starting ANY Task**
+
+**AI Execution Steps (Tool-Based):**
+
+**Step 1: Node Version Check**
+```markdown
+1. Check if .nvmrc exists:
+   - Use fileSearch tool: query=".nvmrc"
+   - Or use readFile tool: path=".nvmrc"
+
+2. If .nvmrc exists:
+   - Execute: nvm use
+   - If error "Version not found":
+     → Read .nvmrc content
+     → Execute: nvm install <version>
+     → Execute: nvm use
+
+3. If .nvmrc not found:
+   - Log: "No .nvmrc found, using current Node version"
+   - Execute: node -v (to show current version)
+   - Continue (acceptable)
+```
+
+**Step 2: Git Sync**
+```markdown
+1. Try primary branch:
+   - Execute: git pull origin develop
+   
+2. If fails (exit code ≠ 0):
+   - Try alternative: git pull origin main
+   
+3. If still fails:
+   - Log: "Could not pull from remote (offline or no remote configured)"
+   - Continue (acceptable for offline work)
+   
+4. Success criteria:
+   - Exit code = 0, OR
+   - Offline mode acceptable
+```
+
+**Step 3: Dependencies Check**
+```markdown
+1. Check if dependencies changed:
+   - Execute: git diff HEAD@{1} HEAD --name-only
+   - Search output for: "package.json" or "yarn.lock"
+   
+2. If dependencies changed:
+   - Log: "Dependencies changed, running yarn install..."
+   - Execute: yarn install
+   - If fails: STOP (blocking error)
+   
+3. If dependencies unchanged:
+   - Log: "Dependencies unchanged, skipping install"
+   - Continue
+```
+
+**Error Handling for Setup Failures:**
+
+**Scenario 1: Node Version Mismatch**
 ```bash
-# Always execute before starting tasks
-# Auto-detect project configuration and setup commands
+$ nvm use
+# Error: Version 'v18.17.0' not found
 
-# 1. Detect package manager from lockfiles
-if [ -f "yarn.lock" ]; then PM="yarn"
-elif [ -f "pnpm-lock.yaml" ]; then PM="pnpm"
-else PM="npm"; fi
+Solution:
+nvm install 18.17.0
+nvm use
+```
 
-# 2. Detect Node version management
-if [ -f ".nvmrc" ]; then nvm use; fi
-if [ -f ".node-version" ]; then nvm use; fi
+**Scenario 2: Git Pull Fails (Network Issue)**
+```bash
+$ git pull origin develop
+# Error: Could not resolve host
 
-# 3. Detect main branch and pull latest
-MAIN_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
-git pull origin $MAIN_BRANCH
+Decision:
+→ Continue with local code (acceptable)
+→ Warn user about potential conflicts
+→ Proceed with task execution
+```
 
-# 4. Install dependencies
-$PM install
+**Scenario 3: Yarn Install Fails**
+```bash
+$ yarn install
+# Error: Network error
+
+Solution:
+1. Check internet connection
+2. Try: yarn install --network-timeout 100000
+3. If still fails: STOP and fix network issue
+   (Cannot proceed without dependencies)
+```
+
+**Setup Validation Checklist:**
+```markdown
+- [ ] Node version correct (or .nvmrc not present)
+- [ ] Git repository up to date (or offline mode acceptable)
+- [ ] Dependencies installed successfully
+- [ ] No blocking errors
+
+If ANY blocking error: STOP and resolve before proceeding
 ```
 
 ## Task Execution Protocol
@@ -80,157 +578,1061 @@ $PM install
 
 #### Task State Management
 
-```typescript
-interface TaskState {
-  id: string; // Task identifier (e.g., "Task 2.1")
-  status: "pending" | "in_progress" | "completed" | "blocked";
-  startTime?: Date;
-  completionTime?: Date;
-  blockReason?: string;
-}
+**Checkbox Format in 03_plan.md**:
+
+```markdown
+# Uncompleted task
+- [ ] 작업 2.1: Task title
+
+# Completed task (update immediately after completion)
+- [x] 작업 2.1: Task title ✓ YYYY-MM-DD 완료
+
+# Optional task (skipped)
+- [ ]* 작업 2.4: Optional task title  ← Keep unchecked, skip
+```
+
+**Update Rules**:
+- Use Korean: "작업" (not "Task")
+- Date only: "2025-01-10 완료" (not time like "10:30")
+- Completion marker: "✓ YYYY-MM-DD 완료"
+- **Update timing**: After ALL verifications pass, before commit
+
+**🎯 Task Completion Definition:**
+
+A task is "complete" when:
+1. ✅ Code implementation finished
+2. ✅ Level 1 verification passed (lint, types)
+3. ✅ Level 2 verification passed (functional test)
+4. ✅ Level 3 verification passed (requirements satisfied)
+
+**Checkpoint Timeline:**
+
+```
+1. Write Code
+   ↓
+2. Run Verification (Step 4)
+   ↓
+3. All Checks Pass? 
+   ├─ NO → Fix issues, go back to step 2
+   │        DO NOT update checkbox yet!
+   │
+   └─ YES → Task is COMPLETE
+            ↓
+            Update 03_plan.md checkbox NOW
+            ↓
+            Commit (checkbox update included)
+```
+
+**Example Flow:**
+
+```bash
+# 1. Implement feature
+vim packages/app/src/components/Button.tsx
+
+# 2. Verify
+yarn app lint
+# ✖ 3 errors found
+
+# ❌ DO NOT update checkbox (verification failed)
+
+# 3. Fix errors
+vim packages/app/src/components/Button.tsx
+
+# 4. Re-verify
+yarn app lint
+# ✓ No errors
+
+# 5. Functional test
+yarn app storybook
+# ✓ Button works correctly
+
+# 6. Requirements check
+grep "REQ-1.1" .tasks/*/01_requirements.md
+# ✓ All acceptance criteria met
+
+# ✅ NOW update checkbox
+vim .tasks/*/03_plan.md
+# Change: - [ ] 작업 2.1: Button 컴포넌트 구현
+# To:     - [x] 작업 2.1: Button 컴포넌트 구현 ✓ 2025-01-12 완료
+
+# 7. Commit feature first
+git add packages/app/src/components/Button.tsx
+git commit -m "feat(component): Button 컴포넌트 구현"
+
+# 8. Commit progress update separately
+git add .tasks/*/03_plan.md
+git commit -m "docs(plan): 작업 2.1 완료 표시"
+```
+
+**Phase Completion**:
+```markdown
+## 단계 2: 컴포넌트 기초 개발 ✓ 2025-01-10 완료
+- [x] 작업 2.1: ... ✓ 2025-01-10 완료
+- [x] 작업 2.2: ... ✓ 2025-01-10 완료
+- [x] 작업 2.3: ... ✓ 2025-01-10 완료
+- [ ]* 작업 2.4: ... (skipped)
 ```
 
 ### Execution Steps for Each Task
 
 #### 1. Pre-Task Validation
 
+**Lightweight Check (Before Each Task)**:
 ```bash
-# Check preconditions from guideline and project-structure.md
-# Detect and run lint commands from package.json scripts
-# Detect and run test commands from package.json scripts
-git status                      # Clean working directory
+# Only check what's relevant to the task
+git status  # Ensure clean working directory
+
+# For Frontend tasks only:
+{lint_command.frontend}  # Quick syntax check
+
+# For Backend tasks only:
+{lint_command.backend}  # Quick syntax check
+
+# Skip full test suite (too slow for every task)
+```
+
+**Full Validation (Only When)**:
+- Starting a new phase
+- Before creating PR
+- After completing all tasks in a phase
+- When explicitly requested by user
+
+**Full Validation Commands**:
+```bash
+{lint_command.frontend} && {lint_command.backend}
+{test_command.frontend} && {test_command.backend}
+{build_command.frontend} && {build_command.backend}
 ```
 
 #### 2. Task Implementation
 
-##### For Backend Tasks:
+**Follow the 5-Field Structure from 03_plan.md**:
 
-```bash
-# Backend Implementation
-# Follow project-structure.md for:
-# - Backend directory structure
-# - Code generation commands
-# - Module/service patterns
-# - Testing conventions
+Each task in 03_plan.md has:
+1. **파일** (File): Where to create/modify
+2. **내용** (Content): What to implement
+3. **방법** (Method): How to implement
+4. **완료** (Completion): How to verify
+5. **Requirements**: Which requirements it satisfies
+
+##### Implementation Steps:
+
+**Step 1: Read Task Details**
+```markdown
+- [ ] 3.1 ComponentName 컴포넌트 생성
+  - **파일**: `{component_path}` (from .project-structure.yaml path_conventions)
+  - **내용**: UI 컴포넌트 구현
+  - **방법**: 프로젝트 UI 라이브러리 사용, 상태 관리 방식 적용
+  - **완료**: 컴포넌트 동작 확인
+  - _Requirements: REQ-X.Y_
 ```
 
-##### For Frontend Tasks:
+**Step 2: Check Guidelines (Fallback Strategy)**
 
+**Primary: 04_guideline.md (Task-Specific)**
 ```bash
-# Frontend Implementation
-# Follow project-structure.md for:
-# - Component directory structure
-# - Development server commands
-# - State management patterns
-# - Testing strategies
+# Check if file exists
+if [ -f .tasks/[directory]/04_guideline.md ]; then
+  # Look for technology-specific guidelines
+  grep -i "Ant Design\|React\|GraphQL" .tasks/[directory]/04_guideline.md
+else
+  echo "⚠️  04_guideline.md not found, using fallback strategy"
+fi
 ```
 
-##### For Integration Tasks:
+**Fallback Hierarchy (When 04_guideline.md Missing or Incomplete):**
 
-```bash
-# Integration Implementation
-# Follow project-structure.md for:
-# - API integration patterns
-# - Error handling strategies
-# - Testing approaches
-# - Deployment procedures
+```
+1. Task's "방법" field (from 03_plan.md)
+   ↓ If not enough detail
+   
+2. Project-wide CLAUDE.md (root directory)
+   ↓ If not found
+   
+3. Global .cursor/rules/ (IDE-level rules)
+   ↓ If not found
+   
+4. Best Practices (built-in knowledge)
 ```
 
-#### 3. Task Validation
+**Guideline Lookup Process (AI Tool Sequence):**
+
+```markdown
+Step 1: Try Task-Specific Guideline
+→ Use readFile: .tasks/[directory]/04_guideline.md
+→ If file exists:
+  - Search for keywords from task's "방법" field
+  - Example: grep "Ant Design" or "Jotai"
+  - If relevant info found: Use this guideline
+  - If not relevant: Continue to Step 2
+→ If file not found: Continue to Step 2
+
+Step 2: Extract from Task's "방법" Field
+→ Already loaded from 03_plan.md
+→ Check "방법" field length and detail:
+  - If > 20 characters AND contains specific instructions:
+    Example: "Ant Design Mobile Checkbox 사용, Jotai atom으로 관리"
+    → Sufficient detail, use this
+  - If too vague (e.g., "구현"):
+    → Continue to Step 3
+
+Step 3: Try Project-Wide Guideline
+→ Use readFile: CLAUDE.md (root directory)
+→ If file exists:
+  - Search for relevant sections
+  - Use as general guidance
+→ If file not found: Continue to Step 4
+
+Step 4: Try Global Rules
+→ Use fileSearch: query="*.md", path=".cursor/rules/"
+→ Read relevant rule files
+→ Extract applicable patterns
+→ If found: Use these rules
+→ If not found: Continue to Step 5
+
+Step 5: Use Best Practices (Built-in Knowledge)
+→ Apply standard patterns based on task type:
+  - React component: Standard component structure
+  - API endpoint: RESTful/GraphQL conventions
+  - Utility function: Pure function patterns
+  - State management: Standard Jotai/Redux patterns
+```
+
+**Example: Missing Guideline Scenario**
+
+```markdown
+Task:
+- **방법**: Ant Design Mobile Checkbox 사용, Jotai atom으로 관리
+
+Guideline Lookup:
+1. Check 04_guideline.md
+   → File not found ⚠️
+   
+2. Use "방법" field
+   → "Ant Design Mobile Checkbox 사용" ✓
+   → "Jotai atom으로 관리" ✓
+   → Enough information to proceed!
+   
+3. Apply best practices:
+   - Install: yarn workspace app add antd-mobile
+   - Import: import { Checkbox } from 'antd-mobile'
+   - State: Use Jotai atom pattern from existing code
+```
+
+**When to Create 04_guideline.md:**
+
+```markdown
+Create guideline file when:
+- Project has specific setup requirements
+- Multiple tasks need same instructions
+- Complex error handling procedures
+- Non-standard tooling or commands
+
+Skip guideline file when:
+- Tasks are self-explanatory
+- "방법" field provides enough detail
+- Standard React/Node.js patterns
+```
+
+**Guideline Content Priority:**
+
+```markdown
+High Priority (Must Include):
+- Project-specific commands (dev, test, build)
+- Environment setup (API keys, config)
+- Common error solutions
+
+Medium Priority (Nice to Have):
+- Technology-specific patterns
+- Code style preferences
+- Testing strategies
+
+Low Priority (Optional):
+- General best practices (already known)
+- Standard library usage (documented elsewhere)
+```
+
+**Step 3: Implement According to 방법 (Method)**
+
+**Single File Implementation:**
+```typescript
+// Follow the specified method from task
+// Example based on tech_stack from .project-structure.yaml
+
+// Import UI library (from tech_stack.frontend.ui_library)
+import { Component } from '{ui_library}';
+
+// Import state management (from tech_stack.state_management)
+import { useStateHook } from '{state_management}';
+import { atomName } from '@/stores/{feature}';
+
+export const ComponentName = () => {
+  const [state, setState] = useStateHook(atomName);
+  // ... implementation
+};
+```
+
+**Multi-File Implementation (When task specifies multiple files):**
+
+```markdown
+Example Task:
+- **파일**:
+  - {packages_dir}/{package}/src/lib/config.ts
+  - {packages_dir}/{package}/src/App.tsx
+  - {packages_dir}/{package}/src/main.tsx
+
+AI Execution Strategy:
+1. Implement files in order (top to bottom)
+2. After each file: Quick validation
+3. If error in file: Fix before moving to next
+4. After all files: Full validation
+
+Detailed Steps:
+---
+File 1: config.ts
+→ Create/modify file
+→ Run: {lint_command.frontend} (check this file only)
+→ If error: Fix immediately
+→ If success: Continue to File 2
+
+File 2: App.tsx
+→ Create/modify file
+→ Run: {lint_command.frontend} (check this file only)
+→ If error: Fix immediately
+→ If success: Continue to File 3
+
+File 3: main.tsx
+→ Create/modify file
+→ Run: {lint_command.frontend} (check this file only)
+→ If error: Fix immediately
+→ If success: Continue to full validation
+
+Full Validation:
+→ Run: {lint_command.frontend} (all files)
+→ Check for integration issues
+→ Verify imports between files work
+→ If error: Fix and re-validate all
+---
+
+Error Recovery for Multi-File Tasks:
+- If File 2 fails after File 1 succeeds:
+  → Don't revert File 1
+  → Fix File 2
+  → Continue from File 2
+  
+- If integration error after all files:
+  → Identify which file causes issue
+  → Fix that specific file
+  → Re-validate all files together
+```
+
+**Step 4: Verify Implementation (3-Level Verification)**
+
+**🔴 Level 1: Code-Level Verification (필수)**
+```bash
+# 1. Syntax & Type Check
+{lint_command.frontend}  # or {lint_command.backend}
+
+# 2. Import/Export Check
+# - All imports resolve correctly
+# - No circular dependencies
+# - Types are properly exported
+
+# 3. Build Check (for critical changes only)
+{build_command.frontend}  # Only if modifying core infrastructure
+```
+
+**🔴 Level 2: Functional Verification (필수)**
+
+Based on the **완료** (Completion) field from task.
+
+**Verification Strategy: Automated First, Manual Fallback**
+
+```
+Step 1: Attempt Automated Verification
+├─ Is this a utility/helper function?
+│  └─ Yes → Automated Testing (Preferred)
+│      1. Create temporary test file
+│      2. Import the utility function
+│      3. Call with test data
+│      4. Verify output matches expected
+│      5. Clean up test file
+│      ✅ No user interaction needed
+│
+├─ Is this an API/Backend?
+│  └─ Yes → Automated API Testing (Preferred)
+│      1. Identify API endpoint from task
+│      2. Prepare test request (GraphQL/REST)
+│      3. Execute: curl or similar
+│      4. Verify response matches expected
+│      5. Check database state if needed
+│      ✅ No user interaction needed
+│
+└─ Is this a UI Component?
+   ├─ Try Automated First:
+   │  1. Check if Storybook story exists
+   │  2. Check if component has test file
+   │  3. Run: yarn app test --run [component-name]
+   │  4. If tests pass → ✅ Automated verification complete
+   │  5. If no tests → Continue to Manual
+   │
+   └─ Manual Testing (Only if automated fails/unavailable):
+       🛑 STOP and ask user
+       
+       Provide test checklist:
+       - [ ] Navigate to [Component]
+       - [ ] [Action from "완료" field]
+       - [ ] Verify: [Expected results]
+       - [ ] Check console: No errors
+       
+       Ask: "Did all tests pass? (yes/no)"
+```
+
+**Automated Verification Examples:**
 
 ```bash
-# Run quality checks - Auto-detect from package.json scripts
+# Utility Function
+cat > /tmp/test-util.ts << 'EOF'
+import { utilFunction } from './src/utils/{module}';
+const result = utilFunction(testInput);
+console.assert(result === expected, 'Test failed');
+console.log('✓ Utility test passed');
+EOF
+node /tmp/test-util.ts
+rm /tmp/test-util.ts
 
-# Detect and run lint commands
-LINT_SCRIPTS=$(jq -r '.scripts | to_entries[] | select(.key | test("^(lint|eslint|prettier|format|style)")) | .key' package.json)
-for script in $LINT_SCRIPTS; do $PM run $script; done
+# API Endpoint (technology-specific)
+# For GraphQL:
+curl -X POST http://localhost:{backend_port}/graphql \
+  -H "Content-Type: application/json" \
+  -d '{"query":"{ entity { id } }"}' \
+  | jq '.data'
 
-# Detect and run test commands
-TEST_SCRIPTS=$(jq -r '.scripts | to_entries[] | select(.key | test("^(test|jest|vitest|spec|coverage)")) | .key' package.json)
-for script in $TEST_SCRIPTS; do $PM run $script; done
+# For REST:
+curl http://localhost:{backend_port}/api/{endpoint}
 
-# Detect and run build commands
-BUILD_SCRIPTS=$(jq -r '.scripts | to_entries[] | select(.key | test("^(build|compile|bundle|dist)")) | .key' package.json)
-for script in $BUILD_SCRIPTS; do $PM run $script; done
+# Component (if test exists)
+{test_command.frontend} --run Component.test.tsx
+```
 
-# Detect and run typecheck commands
-TYPE_SCRIPTS=$(jq -r '.scripts | to_entries[] | select(.key | test("^(typecheck|tsc|type-check|types)")) | .key' package.json)
-for script in $TYPE_SCRIPTS; do $PM run $script; done
+**When Manual Testing is Required:**
+
+Only stop and ask user when:
+1. UI component has no automated tests
+2. Visual verification is explicitly required in "완료" field
+3. Interactive behavior cannot be tested programmatically
+
+**Minimize User Interruption:**
+- If component has tests: Run them automatically
+- If tests pass: Skip manual verification
+- If tests don't exist: Add `// FIXME: Add automated tests for [Component]` and proceed to manual
+
+**AI-User Interaction Protocol (Minimal Interruption)**
+
+**Automated Verification (Preferred - No User Interaction):**
+```bash
+# Run automated tests if available
+{test_command.frontend} --run [component-name]
+# If pass → Continue automatically
+# If fail → Fix and retry automatically
+```
+
+**Manual Verification (Only When Necessary):**
+
+```markdown
+🛑 Manual Testing Required
+
+Task: [Task ID] - [Task Title]
+Component: [Component Name]
+
+**Quick Test:**
+Server started at: http://localhost:6006 (Storybook)
+
+**Test Steps:**
+1. [Action from "완료" field]
+2. Verify: [Expected result]
+
+**Reply: "pass" to continue, or describe any issues**
+---
+
+Streamlined Response Handling:
+- "pass" / "ok" / "yes" → Continue immediately
+- "fail: [reason]" → Fix automatically if possible, otherwise ask for details
+- "pause" → Save state, allow resume later
+
+No Timeout:
+- User can respond anytime
+- State is preserved
+- Resume with: "continue" or "resume task [X.Y]"
+```
+
+**Autonomous Decision Making:**
+
+```markdown
+When user input is NOT required:
+✅ Lint errors → Fix automatically
+✅ Import errors → Fix automatically  
+✅ Type errors → Fix automatically
+✅ Missing dependencies → Install automatically
+✅ API tests → Run automatically
+✅ Utility tests → Run automatically
+
+When user input IS required:
+🛑 UI component without tests → Manual verification
+🛑 Ambiguous requirement → Clarification needed
+🛑 Missing credentials → User must provide
+🛑 Phase completion → Ask to continue
+
+Strategy: Assume "yes" for non-critical decisions, document concerns in code comments
+```
+
+**🔴 Level 3: Requirements Verification (필수)**
+
+```bash
+# 1. Find the requirement
+grep -A 10 "REQ-1.1" .tasks/[directory]/01_requirements.md
+
+# 2. Extract acceptance criteria (EARS format)
+# Example:
+# - WHEN 사용자가 시간대를 클릭할 때
+# - THEN 시스템은 해당 시간대를 선택된 상태로 표시해야 한다
+
+# 3. Verify each WHEN/THEN pair
+```
+
+**Verification Checklist:**
+```markdown
+- [ ] Code compiles without errors (Level 1)
+- [ ] Linter passes (Level 1)
+- [ ] Completion criteria met (Level 2)
+- [ ] No console errors during testing (Level 2)
+- [ ] All WHEN conditions tested (Level 3)
+- [ ] All THEN results verified (Level 3)
+- [ ] No regression in existing features (Level 3)
+```
+
+**When Verification Fails:**
+```bash
+# DO NOT proceed to commit
+# DO NOT update checkbox in 03_plan.md
+# DO NOT move to next task
+
+Instead:
+1. Fix the issue
+2. Re-run verification from Level 1
+3. Only proceed when ALL checks pass
+```
+
+#### 3. Post-Task Validation & Error Handling
+
+**Quick Validation (After Each Task)**:
+```bash
+# Only validate what was changed
+{lint_command.frontend}  # If frontend files changed
+{lint_command.backend}   # If backend files changed
+
+# Skip full test suite and build (too slow)
+```
+
+**When to Run Full Validation**:
+- After completing a phase
+- Before committing phase completion
+- When task involves critical changes (auth, API, etc.)
+
+**Full Validation Commands**:
+```bash
+{lint_command.all}
+{test_command.all}
+{build_command.all}
+```
+
+**🚨 Error Handling & Task State Management**
+
+**When Validation Fails:**
+
+```bash
+# Example: Lint errors
+$ {lint_command.frontend}
+✖ 23 problems (23 errors, 0 warnings)
+```
+
+**Error Recovery Protocol:**
+
+1. **DO NOT update 03_plan.md checkbox**
+   - Task is NOT complete if validation fails
+   - Keep checkbox as `- [ ]`
+
+2. **DO NOT commit**
+   - Never commit broken code
+   - Fix errors first
+
+3. **Analyze Error Type & Fix:**
+
+**Multi-Path Error Recovery with ToT**
+
+**Purpose**: When errors occur, generate and evaluate multiple recovery options instead of trying a single fix.
+
+##### Error Recovery Process
+
+**Step 1: Error Classification**
+```markdown
+Error Type Detection:
+- Syntax/Import Error → Type A (Quick Fix)
+- Logic/Design Error → Type B (Rethinking Required)
+- Missing Dependencies → Type C (Setup Issue)
+- Test Failure → Type D (Regression)
+```
+
+**Step 2: Generate Recovery Options (ToT)**
+
+**Example: Import Error - Cannot find module '@/components/Button'**
+
+**후보 옵션 생성**:
+```markdown
+- **Option A**: Fix import path (find correct path)
+- **Option B**: Create missing module (if intentionally new)
+- **Option C**: Use alternative component (existing similar)
+- **Option D**: Refactor to inline (remove dependency)
+```
+
+**Step 3: Evaluate Recovery Options**
+
+```markdown
+**Option A 평가: Fix import path**
+- 난이도: 낮음 (5/10)
+- 예상 시간: 1분
+- 성공 가능성: 높음 (9/10)
+- 리스크: 없음 (10/10)
+- Side effects: 없음 (10/10)
+- **총점: 90/100 (확실함)** ✅
+
+**Option B 평가: Create missing module**
+- 난이도: 중간 (6/10)
+- 예상 시간: 15분
+- 성공 가능성: 중간 (7/10)
+- 리스크: 중간 - 요구사항 확인 필요 (6/10)
+- Side effects: 프로젝트 구조 변경 (7/10)
+- **총점: 68/100 (가능함)**
+
+**Option C 평가: Use alternative component**
+- 난이도: 낮음 (8/10)
+- 예상 시간: 2분
+- 성공 가능성: 중간 (7/10)
+- 리스크: 낮음 - 기능 차이 가능 (8/10)
+- Side effects: UI 변경 가능 (7/10)
+- **총점: 76/100 (가능함)**
+
+**Option D 평가: Refactor to inline**
+- 난이도: 높음 (4/10)
+- 예상 시간: 10분
+- 성공 가능성: 높음 (8/10)
+- 리스크: 중간 - 중복 코드 (6/10)
+- Side effects: 유지보수성 저하 (5/10)
+- **총점: 60/100 (불가능 - 장기적으로 나쁜 선택)**
+```
+
+**Step 4: Try Best Option with Backtracking**
+
+```markdown
+실행 순서:
+1. **Try Option A** (90점 - 최선)
+   - fileSearch로 Button 컴포넌트 찾기
+   - 실제 경로 확인
+   - import path 수정
+   - 검증: lint 재실행
+   - ✅ 성공 → 완료
+   - ❌ 실패 → Option C로 백트랙
+
+2. **Backtrack to Option C** (76점 - 차선)
+   - 대안 컴포넌트 탐색
+   - 기능 호환성 확인
+   - import 변경
+   - 검증: lint + 기능 테스트
+   - ✅ 성공 → 완료 (FIXME 주석 추가)
+   - ❌ 실패 → Option B로 백트랙
+
+3. **Backtrack to Option B** (68점 - 최후)
+   - 요구사항 재확인
+   - Button 컴포넌트 생성
+   - 검증: 모든 테스트
+   - ✅ 성공 → 완료
+   - ❌ 실패 → 사용자에게 보고
+```
+
+**Type A: Syntax/Import Errors (Quick Fix with ToT)**
+
+```markdown
+Common Errors & Multi-Path Recovery:
+
+Error: 'React' is not defined
+→ Options Generated:
+  A. Add import React (90점) ✅
+  B. Use import * as React (85점)
+  C. Configure auto-import (70점)
+→ Try A first, backtrack to B if fails
+
+Error: Cannot find module '@/components/Button'
+→ Options Generated:
+  A. Fix import path (90점) ✅
+  B. Use alternative component (76점)
+  C. Create missing component (68점)
+→ Try A → C → B순으로 시도
+
+Error: Unused variable 'data'
+→ Options Generated:
+  A. Remove variable (85점) ✅
+  B. Use variable in code (80점)
+  C. Add eslint-disable comment (40점 - 나쁜 관행)
+→ Try A first, B if actually needed
+```
+
+**Type B: Logic/Design Errors (Requires Rethinking)**
+
+```markdown
+Error: Function returns wrong type
+→ AI Steps:
+  1. Read 02_design.md for intended behavior
+  2. Read 01_requirements.md for expected output
+  3. Analyze current implementation
+  4. Identify logic flaw
+  5. Use strReplace to fix logic
+  6. Re-run verification
+
+Error: State management not working
+→ AI Steps:
+  1. Check 02_design.md for state architecture
+  2. Verify atom/store is correctly defined
+  3. Check if component uses correct hook
+  4. Fix state management code
+  5. Re-run verification
+```
+
+**Type C: Missing Dependencies/Setup Issues**
+
+```markdown
+Error: Cannot find module '{library-name}'
+→ AI Steps (Autonomous):
+  1. Check 04_guideline.md for installation command
+  2. If not found: Use command from .project-structure.yaml
+  3. Execute: {workspace_command} {package_name} add {library-name}
+     # For single-package: {package_manager} add {library-name}
+  4. Wait for installation
+  5. Re-run lint
+  ✅ No user interaction needed
+
+Error: Environment variable not set
+→ AI Steps (Autonomous with Fallback):
+  1. Check 04_guideline.md for env setup
+  2. Read .env.example if exists
+  3. Check if variable has default value
+  4. If default exists: Use it and add comment
+     // FIXME: Using default value for [VAR_NAME], configure in .env for production
+  5. If no default: Add placeholder and continue
+     // WARNING: [VAR_NAME] not set, using placeholder "PLACEHOLDER_VALUE"
+  6. Re-run verification
+  7. Add to final report: "⚠️ Environment variable [VAR_NAME] needs configuration"
+  ✅ Continue without stopping, report at end
+```
+
+**Type D: Test Failures (Existing Tests Broken)**
+
+```markdown
+Error: Test "should render button" failed
+→ AI Steps:
+  1. Read test file
+  2. Identify what changed in implementation
+  3. Determine if test needs update or code needs fix
+  4. If test outdated: Update test expectations
+  5. If code broke feature: Revert changes, fix properly
+  6. Re-run tests
+
+Regression detected!
+→ AI Steps:
+  1. Use git diff to see all changes
+  2. Identify which change broke existing feature
+  3. Review 01_requirements.md for original behavior
+  4. Fix to maintain backward compatibility
+  5. Re-run all tests
+```
+
+4. **Fix and Re-validate:**
+```bash
+# After fixing errors
+git status  # Check what changed
+yarn app lint  # Re-run validation
+# Repeat verification from Step 4
+```
+
+5. **Document if Needed:**
+```markdown
+# If error was non-obvious or took >30min to fix:
+# Add note to 04_guideline.md
+
+## Common Issues
+
+### Issue: GraphQL Type Generation Error
+**Symptom**: `Cannot find module '@/generated/graphql'`
+**Solution**: 
+1. yarn common generate-types
+2. Restart TypeScript server
+3. Re-run lint
+```
+
+**Task State Tracking:**
+
+```markdown
+Task States:
+- [ ] Not Started: Checkbox unchecked, no code written
+- [ ] In Progress: Code written, validation failing
+- [x] Complete: Code written, ALL validations pass, checkbox checked
+
+IMPORTANT: Only mark [x] when validation passes!
 ```
 
 #### 4. Commit Strategy
 
-##### Commit Triggers:
+##### Commit Triggers (When to Commit):
 
-- After completing each numbered task
-- When switching between frontend/backend
-- Before starting new phase
-- After significant refactoring
-- When all tests pass
+- ✅ After completing each numbered task (Task 2.1, 2.2, etc.)
+- ✅ When file creation/modification forms a logical unit
+- ❌ Do NOT commit when skipping optional tasks(*)
+- ❌ Do NOT commit mid-task (only after completion criteria met)
 
-##### Commit Message Generation:
+**🎯 Commit Granularity Rules:**
 
-```typescript
-function generateCommitMessage(task: TaskState, phase: string): string {
-  const prefix = getCommitPrefix(task);
-  const scope = getScope(phase);
-  const description = getTaskDescription(task);
+**Rule 1: One Task = Two Commits (Default)**
 
-  return `${prefix}(${scope}): ${description}`;
-}
+**Commit 1: Feature Implementation**
+```bash
+# Commit only the implementation files
+# Example: Task 3.5 modifies 3 files
 
-function getCommitPrefix(task: TaskState): string {
-  if (task.id.includes("2.")) return "feat"; // Backend features
-  if (task.id.includes("3.")) return "feat"; // Frontend features
-  if (task.id.includes("4.")) return "integrate"; // Integration
-  if (task.id.includes("5.")) return "refactor"; // Polish
-  if (task.id.includes("test")) return "test";
-  if (task.id.includes("fix")) return "fix";
-  return "chore";
-}
+git add packages/app/src/lib/apollo.ts
+git add packages/app/src/App.tsx
+git add packages/app/src/main.tsx
+git commit -m "feat(frontend): Apollo Client 설정 및 통합"
 ```
 
-##### Commit Examples:
+**Commit 2: Task Progress Update**
+```bash
+# Separate commit for documentation
+git add .tasks/[directory]/03_plan.md
+git commit -m "docs(plan): 작업 3.5 완료 표시"
+```
+
+**Why Separate Commits?**
+- ✅ Clear separation of concerns (code vs documentation)
+- ✅ Easier to review feature changes without doc noise
+- ✅ Can revert feature without losing progress tracking
+- ✅ Better git history readability
+
+**Rule 2: Exception - Split Commits Only When:**
+
+```markdown
+Scenario A: Task creates unrelated changes
+Example: Task 4.1 creates both "auth logic" AND "logging utility"
+→ These are logically separate
+→ Split into 2 commits:
+   1. feat(auth): 인증 로직 구현
+   2. feat(utils): 로깅 유틸리티 추가
+
+Scenario B: Task has clear sub-steps
+Example: Task 5.2 has explicit sub-tasks in 03_plan.md
+- [ ] 5.2 Database setup
+  - [ ] 5.2.1 Create schema
+  - [ ] 5.2.2 Add migrations
+  - [ ] 5.2.3 Seed data
+→ Each sub-task gets its own commit
+
+Scenario C: Task modifies >10 files
+Example: Task 6.1 refactors entire module (15 files)
+→ Group by logical units:
+   1. refactor(types): 타입 정의 업데이트 (5 files)
+   2. refactor(components): 컴포넌트 리팩토링 (7 files)
+   3. refactor(tests): 테스트 업데이트 (3 files)
+```
+
+**Decision Tree for Multi-File Tasks:**
+
+```
+Task modifies multiple files?
+│
+├─ Are changes logically related?
+│  ├─ YES → One commit (default)
+│  │   Example: Apollo setup touches apollo.ts, App.tsx, main.tsx
+│  │   → All needed for Apollo to work
+│  │   → Commit together
+│  │
+│  └─ NO → Split commits
+│      Example: Task adds auth + logging
+│      → Auth and logging are independent
+│      → Separate commits
+│
+└─ Are there >10 files?
+   ├─ YES → Group by logical units
+   │   Example: 15 files refactored
+   │   → Group by: types, components, tests
+   │   → 3 commits
+   │
+   └─ NO → One commit
+       Example: 3-5 files for one feature
+       → Commit together
+```
+
+**Commit Message for Multi-File Tasks:**
 
 ```bash
-git add .
-git commit -m "feat(backend): implement feature resolver"
-git commit -m "feat(frontend): create component with validation"
-git commit -m "integrate: connect frontend to backend API"
-git commit -m "test: add unit tests for service"
-git commit -m "refactor: optimize feature performance"
+# Single commit (default)
+git commit -m "feat(frontend): Apollo Client 설정 및 통합
+
+- apollo.ts: Apollo Client 인스턴스 생성
+- App.tsx: ApolloProvider 래핑
+- main.tsx: 진입점에서 Apollo 초기화"
+
+# Split commits (when needed)
+git commit -m "feat(auth): 사용자 인증 로직 구현"
+git commit -m "feat(utils): 로깅 유틸리티 추가"
+```
+
+**Checkbox Update Strategy:**
+
+```markdown
+Standard Flow (Two Commits):
+1. Commit feature implementation first
+2. Update checkbox in 03_plan.md
+3. Commit documentation separately
+
+Example:
+# Commit 1: Feature
+git add packages/app/src/components/Button.tsx
+git commit -m "feat(component): Button 컴포넌트 구현"
+
+# Commit 2: Progress
+git add .tasks/[directory]/03_plan.md
+git commit -m "docs(plan): 작업 2.1 완료 표시"
+
+Exception - Multiple Sub-Commits:
+If task splits into multiple feature commits (Scenario A, B, C):
+1. Commit all feature changes separately
+2. Update checkbox after ALL features done
+3. Single docs commit at the end
+
+Example:
+git commit -m "feat(auth): 인증 로직 구현"
+git commit -m "feat(utils): 로깅 유틸리티 추가"
+# Now update checkbox
+git commit -m "docs(plan): 작업 4.1 완료 표시"
+```
+
+##### Commit Message Generation Rules
+
+**Format**: `{prefix}({scope}): {description}`
+
+**Prefix Decision (Based on Task Content)**:
+- `feat`: New feature (component, API, page, etc.)
+- `fix`: Bug fix
+- `refactor`: Code refactoring (no functionality change)
+- `test`: Add/modify tests
+- `style`: Code formatting, semicolons, etc.
+- `chore`: Build, config file changes
+
+**Scope Decision (Based on File Location)**:
+- Frontend work: `frontend`, `component`, `page`, `ui`
+- Backend work: `backend`, `api`, `resolver`, `service`
+- Common: `common`, `types`, `config`
+
+**Description Writing**:
+- Summarize task title from 03_plan.md concisely
+- Use Korean (project convention)
+- Example: "Jotai atoms 구조 생성" → "Jotai atoms 구조 추가"
+
+##### Commit Generation Examples
+
+**Task from 03_plan.md**:
+```markdown
+- [ ] 작업 2.1: Jotai atoms 구조 생성
+  - **파일**: `packages/app/src/stores/vote.ts`
+  - **내용**: 투표 상태 관리를 위한 Jotai atoms 구현
+```
+
+**Generated Commit**:
+```bash
+git add packages/app/src/stores/vote.ts
+git commit -m "feat(frontend): 투표 상태 관리 Jotai atoms 추가"
+```
+
+**More Examples**:
+```bash
+# Frontend component
+git commit -m "feat(component): TimeSlotSelector 컴포넌트 구현"
+
+# Backend API
+git commit -m "feat(api): 투표 저장 GraphQL mutation 추가"
+
+# MSW handler
+git commit -m "feat(mock): 투표 API MSW 핸들러 구현"
+
+# Test
+git commit -m "test(component): TimeSlotSelector 단위 테스트 추가"
+
+# Config
+git commit -m "chore(config): Apollo Client 설정 추가"
 ```
 
 ## Automated Execution Rules
 
-### Task Selection Algorithm
+### Task Selection Algorithm (AI Tool Sequence)
 
-```typescript
-async function selectNextTask(): Task {
-  const projectStructure = await loadProjectStructure(); // Load project-structure.md
-  const plan = await loadPlanDocument();
-  const guideline = await loadGuidelineDocument();
+```markdown
+Step 1: Load Plan Document
+→ Use readFile: .tasks/[directory]/03_plan.md
+→ Parse content into lines
 
-  // 1. Find in-progress tasks
-  let task = plan.tasks.find((t) => t.status === "in_progress");
+Step 2: Find In-Progress Tasks
+→ Search for pattern: "- [ ] 작업 X.Y:" (without *)
+→ Check if any task was previously started but not completed
+→ If found: Resume this task
+→ If not found: Continue to Step 3
 
-  // 2. If none, find next pending task
-  if (!task) {
-    task = plan.tasks.find(
-      (t) =>
-        t.status === "pending" && t.dependencies.every((d) => isCompleted(d))
-    );
-  }
+Step 3: Find Next Pending Task
+→ Iterate through phases sequentially
+→ For each phase:
+  a. Find lines matching: "- [ ] 작업 X.Y:"
+  b. Skip lines matching: "- [ ]* 작업 X.Y:" (optional tasks)
+  c. First match = next task
+  d. If found: Return this task
+  e. If no match in phase: Phase complete, move to next phase
 
-  // 3. Apply project structure and guideline rules
-  if (projectStructure.preTaskChecks) {
-    await runPreTaskChecks(projectStructure.preTaskChecks);
-  }
-  if (guideline.preTaskChecks) {
-    await runPreTaskChecks(guideline.preTaskChecks);
-  }
+Step 4: Check Dependencies (if task has sub-tasks)
+→ If task has format "작업 X.Y.Z" (sub-task):
+  - Check parent task "작업 X.Y" is started
+  - Check previous sub-tasks are complete
+→ If dependencies not met: Skip to next task
 
-  return task;
+Step 5: Apply Pre-Task Checks
+→ Use readFile: .tasks/[directory]/04_guideline.md
+→ Look for "preTaskChecks" or "Pre-Execution" section
+→ Execute any required commands
+→ If checks fail: Report to user
+
+Step 6: Return Selected Task
+→ Extract task details:
+  - Task ID: "작업 X.Y"
+  - Title: Text after ":"
+  - 5 fields: 파일, 내용, 방법, 완료, Requirements
+→ Return task object for execution
+
+Example Execution:
+Input: 03_plan.md content
+Output: 
+{
+  id: "작업 2.2",
+  title: "재사용 가능한 기본 컴포넌트 생성",
+  파일: "packages/app/src/components/common/Button.tsx",
+  내용: "재사용 가능한 Button 컴포넌트 구현",
+  방법: "Ant Design Mobile Button 래핑",
+  완료: "Button 클릭 시 정상 동작 확인",
+  requirements: "REQ-1.1"
 }
 ```
 
@@ -239,91 +1641,108 @@ async function selectNextTask(): Task {
 #### Build Errors:
 
 ```bash
-# Build Error Resolution
-# Follow project-structure.md for:
-# - Type checking procedures
-# - Code generation commands
-# - Module resolution patterns
-# - Dependency management
+# TypeScript errors
+1. Check imports and exports
+2. Verify type definitions
+3. Regenerate GraphQL types if needed
+
+# Module errors
+1. Check dependency injection
+2. Verify module imports
+3. Check provider registration
 ```
 
 #### Test Failures:
 
 ```bash
-# Test Failure Resolution
-# Follow project-structure.md for:
-# - Test configuration
-# - Mock data patterns
-# - Test isolation strategies
-# - Integration test setup
+# Unit test failures
+1. Check mock data consistency
+2. Verify test isolation
+3. Update snapshots if needed
+
+# Integration test failures
+1. Check API endpoints
+2. Verify network mocks
+3. Check timing issues
 ```
 
-#### Technology-Specific Errors:
+#### GraphQL Errors:
 
 ```bash
-# Technology Error Resolution
-# Follow project-structure.md for:
-# - Code generation procedures
-# - Schema management
-# - Type synchronization
-# - API contract validation
+# Schema mismatch
+1. yarn common generate-types
+2. yarn api generate:graphql
+3. Update resolver signatures
+4. Fix type imports
 ```
 
 ### Progress Tracking
 
-#### Update Plan Document:
+#### Update Plan Document (After Each Task)
+
+**Format**: `- [x] 작업 X.Y: {title} ✓ YYYY-MM-DD 완료`
 
 ```markdown
-## Mark completed tasks:
+## Mark completed tasks immediately:
 
-- [x] Task 2.1: GraphQL schema definition ✓ 2024-12-29 10:30
-- [x] Task 2.2: NestJS module creation ✓ 2024-12-29 11:15
-- [ ] Task 2.3: Resolver implementation (in progress)
+- [x] 작업 2.1: Jotai atoms 구조 생성 ✓ 2025-01-10 완료
+- [x] 작업 2.2: 재사용 가능한 기본 컴포넌트 생성 ✓ 2025-01-10 완료
+- [ ] 작업 2.3: Storybook 스토리 작성  ← Current task
 ```
 
-#### Create Progress Log:
+**Update Timing**:
+- Immediately after task completion
+- Before committing the task
+- Include completion date only (not time)
 
+#### Progress Log Creation (Only at Project Completion)
+
+**When to Create**: After ALL tasks in 03_plan.md are completed
+
+**Location**: `.tasks/{directory}/progress_log.md`
+
+**Content**:
 ```markdown
 # Progress Log - {Task Name}
 
-## 2024-12-29
+## Summary
+- Total Duration: X days
+- Completed Tasks: X/Y
+- Skipped Optional Tasks: Z
 
-- 10:30 - Started Task 2.1
-- 10:45 - Completed schema changes
-- 10:50 - Generated types successfully
-- 11:00 - Committed: feat(backend): add user schema
-- 11:15 - Started Task 2.2
+## Daily Progress
+
+### 2025-01-10
+- Completed: 작업 2.1, 2.2, 2.3
+- Commits: 3
+- Issues Encountered: None
+
+### 2025-01-11
+- Completed: 작업 3.1, 3.2
+- Commits: 2
+- Issues Encountered: GraphQL type generation error (resolved)
+
+## Key Achievements
+- Implemented core voting functionality
+- All tests passing
+- No lint errors
+
+## Lessons Learned
+- MSW handlers should be created before components
+- Jotai atoms structure should be planned upfront
 ```
+
+**Note**: Do NOT update progress log after each task (too frequent)
 
 ## Guideline Integration
 
 ### Dynamic Guideline Loading
 
 ```typescript
-interface ProjectStructure {
-  packageManager: 'npm' | 'yarn' | 'pnpm';
-  scripts: {
-    dev?: string[];
-    test?: string[];
-    lint?: string[];
-    build?: string[];
-    typecheck?: string[];
-  };
-  directories: {
-    source: string;
-    tests: string;
-    build: string;
-  };
-  conventions: {
-    commitFormat: string;
-    branchNaming: string;
-  };
-}
-
 interface Guideline {
   preExecution: string[]; // Commands to run before starting
   commands: {
-    // Auto-detected from package.json and project-structure.md
+    // Common commands reference
     dev: string;
     test: string;
     lint: string;
@@ -344,10 +1763,9 @@ interface Guideline {
 ### Guideline Override Priority
 
 1. Task-specific guideline (04_guideline.md)
-2. Project structure documentation (project-structure.md)
-3. Project-wide CLAUDE.md
-4. Global .cursor/rules/
-5. Default execution rules
+2. Project-wide CLAUDE.md
+3. Global .cursor/rules/
+4. Default execution rules
 
 ## Monitoring and Reporting
 
@@ -414,11 +1832,13 @@ After each task phase:
 #!/bin/bash
 # .git/hooks/pre-push
 
-# Run all quality checks (auto-detect from package.json)
-# Execute lint commands
-# Execute test commands
-# Execute build commands
-# Check project-structure.md for additional validations
+# Run all quality checks
+yarn app lint || exit 1
+yarn api lint || exit 1
+yarn app test --run || exit 1
+yarn api test || exit 1
+yarn app build || exit 1
+yarn api build || exit 1
 
 echo "All checks passed! Ready to push."
 ```
@@ -439,54 +1859,7 @@ jobs:
     steps:
       - name: Check plan completeness
       - name: Verify guideline compliance
-      - name: Run project quality checks (from package.json)
-```
-
-## Project Structure Documentation
-
-### Auto-Generated project-structure.md Template
-
-When Claude encounters a new codebase, it should analyze and generate:
-
-```markdown
-# Project Structure - {Project Name}
-
-## Package Manager
-- **Type**: {npm|yarn|pnpm} (detected from lockfiles)
-- **Version**: {version from package.json engines}
-
-## Available Scripts
-### Development
-{auto-detected dev scripts}
-
-### Testing
-{auto-detected test scripts}
-
-### Build & Deploy
-{auto-detected build scripts}
-
-### Quality Assurance
-{auto-detected lint/format scripts}
-
-## Directory Structure
-```
-project/
-├── {detected source dirs}/
-├── {detected test dirs}/
-├── {detected config dirs}/
-└── {detected output dirs}/
-```
-
-## Git Configuration
-- **Main Branch**: {detected main branch}
-- **Branch Naming**: {inferred from existing branches}
-- **Commit Convention**: {inferred from commit history}
-
-## Technology Stack
-{detected from package.json dependencies}
-
-## Development Workflow
-{inferred from scripts and directory structure}
+      - name: Run automated tests
 ```
 
 ## Usage Examples
@@ -494,30 +1867,205 @@ project/
 ### Starting a New Task:
 
 ```bash
-# Claude command example:
-"Execute the next task from .tasks/feature_<name>_<date>/03_plan.md following the guidelines and project-structure.md"
+# User command:
+"Execute the next task from .tasks/feature_auth_20241229/03_plan.md following the guidelines"
+
+# AI Response:
+"Starting task 2.1: User authentication logic
+Loading documents and running pre-execution setup..."
 ```
 
-### Resuming Work:
+### Resuming Work After Break:
 
 ```bash
-# Claude command example:
-"Continue task execution from where we left off, check progress log and project structure"
+# User command:
+"Continue task execution from where we left off"
+
+# AI Response:
+"Resuming task 2.2: Button component implementation
+Last checkpoint: Level 2 verification pending
+Restarting dev server for testing..."
+```
+
+### Pausing Work:
+
+```bash
+# User command:
+"Pause" or "Stop"
+
+# AI Response:
+"Task 2.2 paused at Level 2 verification
+Progress saved:
+- ✅ Code implementation complete
+- ✅ Level 1 verification passed
+- ⏸️ Level 2 verification pending
+
+Resume anytime with: 'Continue task 2.2'"
 ```
 
 ### Handling Blockers:
 
 ```bash
-# Claude command example:
-"Task 2.4 is blocked, skip to next available task and document the blocker according to project conventions"
+# User command:
+"Task 2.4 is blocked, skip to next available task"
+
+# AI Response:
+"Noted: Task 2.4 blocked
+Moving to next task: 2.5
+Would you like me to document the blocker in 03_plan.md?"
 ```
 
-### Project Setup:
+### Phase Completion:
 
 ```bash
-# Claude command example:
-"Analyze the codebase and create/update project-structure.md with detected patterns"
+# AI automatically detects and reports:
+"🎉 Phase 2 Complete: Component Foundation
+
+Summary:
+- Completed: 3 tasks
+- Skipped: 1 optional task
+- Duration: 2025-01-10 → 2025-01-12
+
+Next Phase: Phase 3: Core UI Components
+Ready to continue? (yes/pause)"
 ```
+
+### Multi-File Task:
+
+```bash
+# User command:
+"Execute task 3.5"
+
+# AI Response:
+"Task 3.5: Apollo Client setup (3 files)
+Implementing files sequentially:
+1. apollo.ts ✓
+2. App.tsx ✓
+3. main.tsx ✓
+Running full validation..."
+```
+
+### Error Recovery:
+
+```bash
+# During execution (Autonomous):
+"Lint error detected in Button.tsx
+Error: 'React' is not defined
+Fixing: Adding React import
+Re-validating... ✓ Fixed
+Continuing to next step..."
+```
+
+### Continuous Mode Execution:
+
+```bash
+# User command:
+"Execute all tasks in continuous mode"
+
+# AI Response:
+"🔄 Starting continuous execution mode
+▶️ Task 2.1: Jotai atoms 구조 생성
+  ✅ Implementation complete
+  ✅ Level 1 verification passed
+  ✅ Level 2 verification passed (automated)
+  ✅ Level 3 verification passed
+  ✅ Committed (2 commits)
+
+▶️ Task 2.2: 재사용 가능한 기본 컴포넌트 생성
+  ✅ Implementation complete
+  🔧 Fixed 2 lint errors automatically
+  ✅ Level 1 verification passed
+  🛑 Level 2: Manual testing required
+  
+  Please test Button component:
+  - Click button → Verify it responds
+  Reply 'pass' to continue"
+
+# User: "pass"
+
+"✅ Task 2.2 complete
+▶️ Task 2.3: Storybook 스토리 작성
+  ✅ Implementation complete
+  ✅ All verifications passed
+  ✅ Committed
+
+🎉 Phase 2 Complete
+⏭️ Auto-continuing to Phase 3...
+
+▶️ Task 3.1: 주요 컴포넌트 구현
+  ..."
+```
+
+### Deferred Issues Report:
+
+```bash
+# At task completion:
+"✅ Task 2.2 complete
+
+📋 Issues for Review:
+// FIXME: Button.tsx:15 - Consider adding loading state
+// REVIEW: Button.tsx:23 - Could optimize re-renders with useMemo
+// WARNING: Using default API endpoint, configure in .env
+
+⚠️ Requires Attention:
+- Environment variable API_URL not set (using default)
+
+▶️ Continuing to task 2.3..."
+```
+
+## Final Report Protocol
+
+### When to Generate Report
+
+Generate comprehensive report when:
+1. **Task Completion**: After each task completes
+2. **Phase Completion**: After all tasks in phase complete
+3. **User Request**: When user asks "status" or "report"
+4. **Error Accumulation**: When 3+ non-critical issues collected
+
+### Report Template
+
+```markdown
+## 📊 Execution Report
+
+### Completed
+- ✅ Task [X.Y]: [Title]
+- Files: [list of modified files]
+- Commits: [commit hashes]
+- Duration: [time taken]
+
+### Issues Resolved Automatically
+- 🔧 Fixed [N] lint errors
+- 📦 Installed [N] dependencies
+- 🐛 Resolved [N] import issues
+
+### Code Comments Added
+- // FIXME: [Issue 1] - [Location]
+- // REVIEW: [Issue 2] - [Location]
+- // WARNING: [Issue 3] - [Location]
+
+### Requires User Attention
+- ⚠️ [Issue 1]: [Description and suggested action]
+- ⚠️ [Issue 2]: [Description and suggested action]
+
+### Next Steps
+- ▶️ Next task: [X.Y+1] - [Title]
+- 📍 Current phase: [Phase name] ([X]/[Total] tasks complete)
+```
+
+### Continuous Mode Reporting
+
+**During Execution**: Minimal output
+```
+▶️ Starting task 2.1...
+✅ Task 2.1 complete
+▶️ Starting task 2.2...
+```
+
+**At Natural Breakpoints**: Detailed report
+- After each task (brief)
+- After each phase (detailed)
+- On user request (comprehensive)
 
 ## Best Practices
 
@@ -528,6 +2076,9 @@ project/
 - ✅ Run tests before moving to next task
 - ✅ Update plan document with progress
 - ✅ Document any deviations from plan
+- ✅ **Make autonomous decisions when possible**
+- ✅ **Use code comments for non-blocking issues**
+- ✅ **Batch questions for final report**
 
 ### Don'ts:
 
@@ -536,9 +2087,12 @@ project/
 - ❌ Ignore test failures
 - ❌ Modify plan structure without updating guideline
 - ❌ Continue with errors present
+- ❌ **Interrupt user for non-critical decisions**
+- ❌ **Ask questions that can be deferred**
+- ❌ **Stop execution for minor issues**
 
 ---
 
 > Last Updated: 2024
-> Purpose: Generic automated plan execution with quality assurance
-> Compatible with: Any codebase with project-structure.md documentation
+> Universal Rule: Plan Execution (Project-Agnostic)
+> Purpose: Automated plan execution with quality assurance
