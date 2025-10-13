@@ -24,9 +24,43 @@ When working on specific packages, **always check the package-specific CLAUDE.md
 - Package-specific commands use yarn workspace syntax: `yarn workspace @scope/package-name <command>`
 - Example: `yarn workspace @canard/schema-form build`
 
-## 📁 Rule Files Reference
+## 🔧 Slash Commands for .cursor/rules
 
-Please follow all guidelines defined in the following files:
+`.cursor/rules` 디렉토리의 규칙들을 쉽게 사용할 수 있도록 slash command를 제공합니다:
+
+### Development Workflow
+- **/changeset** - Create changeset and release notes (→ `.cursor/rules/create-changeset.mdc`)
+- **/plan** - Execute implementation plans with automated workflow (→ `.cursor/rules/plan-execution.mdc`)
+- **/requirements** - Create requirements document and implementation plan (→ `.cursor/rules/requirement-driven-development.mdc`)
+- **/review** - Perform comprehensive code review (→ `.cursor/rules/code-review.mdc`)
+- **/pr** - Create well-structured pull request (→ `.cursor/rules/pull-request.mdc`)
+
+### Code Quality
+- **/code-style** - Apply code writing and TypeScript guidelines (→ multiple style rules)
+  - Includes: code-writing-guidelines, typescript, typescript-react, toss-frontend-rules
+
+### Specialized Tasks
+- **/plugin** - Create new @canard/schema-form plugin (→ `.cursor/rules/create-canard-form-plugin-guidelines.mdc`)
+- **/release** - Generate comprehensive release notes (→ `.cursor/rules/create-release-note.mdc`)
+
+### 사용 방법
+
+각 slash command는 해당하는 `.cursor/rules` 파일을 자동으로 읽고 가이드라인을 따릅니다:
+
+```bash
+# 예시: changeset 생성
+/changeset
+
+# 예시: 계획 실행
+/plan
+
+# 예시: 요구사항 작성
+/requirements
+```
+
+## 📁 Rule Files Reference (직접 참조)
+
+필요시 `.cursor/rules` 파일을 직접 참조할 수도 있습니다:
 
 ### Core Guidelines
 - **Project Structure**: `.cursor/rules/project-structure.mdc`
@@ -39,6 +73,10 @@ Please follow all guidelines defined in the following files:
 ### Process Guidelines
 - **Changeset Creation**: `.cursor/rules/create-changeset.mdc`
 - **Pull Request Guidelines**: `.cursor/rules/pull-request.mdc`
+- **Plan Execution**: `.cursor/rules/plan-execution.mdc`
+- **Requirement Driven Development**: `.cursor/rules/requirement-driven-development.mdc`
+- **Code Review**: `.cursor/rules/code-review.mdc`
+- **Release Notes**: `.cursor/rules/create-release-note.mdc`
 
 ### Plugin Development
 - **Schema Form Plugin Guidelines**: `.cursor/rules/create-canard-form-plugin-guidelines.mdc`

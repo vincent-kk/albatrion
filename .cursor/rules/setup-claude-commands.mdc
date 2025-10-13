@@ -1,0 +1,262 @@
+---
+description: Setup Claude Code slash commands for .cursor/rules
+globs:
+alwaysApply: false
+---
+
+# Setup Claude Code Slash Commands
+
+## 목적
+
+`.cursor/rules` 디렉토리의 규칙 파일들을 Claude Code에서 쉽게 사용할 수 있도록 slash command를 생성합니다.
+
+## 원칙
+
+1. **중복 방지**: 규칙 내용을 복사하지 않고 파일 참조만 사용
+2. **단일 진실 공급원**: `.cursor/rules` 파일이 유일한 소스
+3. **자동 업데이트**: 규칙 파일 수정 시 command도 자동 반영
+
+## 작업 단계
+
+### 1. .cursor/rules 파일 분석
+
+```bash
+# 모든 규칙 파일 확인
+ls -la .cursor/rules/*.mdc
+
+# 각 파일의 목적 파악
+# - 파일명에서 주제 추출
+# - 파일 첫 부분의 description 확인
+```
+
+### 2. .claude/commands 디렉토리 생성
+
+```bash
+mkdir -p .claude/commands
+```
+
+### 3. Command 파일 생성 규칙
+
+각 `.cursor/rules/*.mdc` 파일에 대해 대응하는 `.claude/commands/*.md` 파일을 생성합니다.
+
+**Command 파일 템플릿**:
+
+```markdown
+Read and follow the guidelines in `.cursor/rules/{원본파일명}.mdc` to {작업 설명}.
+
+This command will {상세 설명}:
+1. {주요 기능 1}
+2. {주요 기능 2}
+3. {주요 기능 3}
+```
+
+**명명 규칙**:
+- `.cursor/rules/create-changeset.mdc` → `.claude/commands/changeset.md`
+- `.cursor/rules/plan-execution.mdc` → `.claude/commands/plan.md`
+- `.cursor/rules/requirement-driven-development.mdc` → `.claude/commands/requirements.md`
+- 접두사 제거 (`create-`, `setup-` 등)
+- 간결하고 사용하기 쉬운 이름 사용
+
+### 4. 카테고리별 Command 매핑
+
+#### Development Workflow
+- **changeset** → `create-changeset.mdc`
+- **plan** → `plan-execution.mdc`
+- **requirements** → `requirement-driven-development.mdc`
+- **review** → `code-review.mdc`
+- **pr** → `pull-request.mdc`
+
+#### Code Quality
+- **code-style** → 여러 파일 참조
+  - `code-writing-guidelines.mdc`
+  - `typescript.mdc`
+  - `typescript-react.mdc`
+  - `toss-basic-frontend-rules.mdc`
+
+#### Specialized Tasks
+- **plugin** → `create-canard-form-plugin-guidelines.mdc`
+- **release** → `create-release-note.mdc`
+
+### 5. CLAUDE.md 업데이트
+
+프로젝트 루트의 `CLAUDE.md`에 slash command 섹션을 추가합니다:
+
+```markdown
+## 🔧 Slash Commands for .cursor/rules
+
+`.cursor/rules` 디렉토리의 규칙들을 쉽게 사용할 수 있도록 slash command를 제공합니다:
+
+### Development Workflow
+- **/changeset** - Create changeset and release notes (→ `.cursor/rules/create-changeset.mdc`)
+- **/plan** - Execute implementation plans (→ `.cursor/rules/plan-execution.mdc`)
+- **/requirements** - Create requirements and plan (→ `.cursor/rules/requirement-driven-development.mdc`)
+
+### 사용 방법
+
+각 slash command는 해당하는 `.cursor/rules` 파일을 자동으로 읽고 가이드라인을 따릅니다:
+
+\`\`\`bash
+# 예시: changeset 생성
+/changeset
+
+# 예시: 계획 실행
+/plan
+\`\`\`
+
+## 📁 Rule Files Reference (직접 참조)
+
+필요시 `.cursor/rules` 파일을 직접 참조할 수도 있습니다:
+- **Changeset**: `.cursor/rules/create-changeset.mdc`
+- **Plan Execution**: `.cursor/rules/plan-execution.mdc`
+...
+```
+
+## Command 파일 예시
+
+### 예시 1: 단일 규칙 파일 참조
+
+**`.claude/commands/changeset.md`**:
+```markdown
+Read and follow the guidelines in `.cursor/rules/create-changeset.mdc` to create a changeset and release note.
+
+After reading the file, analyze the current changesets in `.changeset/` directory and create a release note following the format specified in the guidelines.
+```
+
+### 예시 2: 복수 규칙 파일 참조
+
+**`.claude/commands/code-style.md`**:
+```markdown
+Read and apply the code writing guidelines from:
+- `.cursor/rules/code-writing-guidelines.mdc` - General coding principles
+- `.cursor/rules/typescript.mdc` - TypeScript best practices
+- `.cursor/rules/typescript-react.mdc` - React + TypeScript patterns
+- `.cursor/rules/toss-basic-frontend-rules.mdc` - Frontend design guidelines
+
+Follow these guidelines when writing or reviewing code.
+```
+
+### 예시 3: 상세 설명이 있는 Command
+
+**`.claude/commands/plan.md`**:
+```markdown
+Read and follow the guidelines in `.cursor/rules/plan-execution.mdc` to execute implementation plans.
+
+This command will:
+1. Load the plan document (03_plan.md)
+2. Load guidelines (04_guideline.md)
+3. Execute tasks following the automated execution protocol
+4. Apply proper version control and commit strategies
+
+Execute tasks in continuous mode with minimal user interruption, following the document loading sequence and task selection rules defined in the guideline.
+```
+
+## 검증
+
+### 1. Command 파일 확인
+```bash
+# 생성된 command 파일 목록
+ls -la .claude/commands/
+
+# 각 파일이 올바른 .cursor/rules 파일을 참조하는지 확인
+grep -r "\.cursor/rules/" .claude/commands/
+```
+
+### 2. CLAUDE.md 확인
+```bash
+# Slash command 섹션 존재 확인
+grep "Slash Commands" CLAUDE.md
+
+# 모든 command가 문서화되었는지 확인
+```
+
+### 3. 테스트
+```bash
+# Claude Code에서 각 command 테스트
+# 예: /changeset 입력 → 해당 규칙 파일이 로드되는지 확인
+```
+
+## 유지보수
+
+### 새 규칙 파일 추가 시
+
+1. `.cursor/rules/new-rule.mdc` 생성
+2. `.claude/commands/new-command.md` 생성 (위 템플릿 사용)
+3. `CLAUDE.md`에 command 추가
+4. 테스트
+
+### 규칙 파일 수정 시
+
+- Command 파일은 수정 불필요 (참조만 하므로 자동 반영)
+- `CLAUDE.md`의 설명이 더 이상 정확하지 않으면 업데이트
+
+### 규칙 파일 삭제 시
+
+1. 해당 `.claude/commands/*.md` 파일 삭제
+2. `CLAUDE.md`에서 command 제거
+
+## 자동화 스크립트 (선택사항)
+
+향후 자동화를 위한 스크립트 예시:
+
+```bash
+#!/bin/bash
+# sync-claude-commands.sh
+
+echo "Syncing .cursor/rules to .claude/commands..."
+
+# .cursor/rules의 모든 .mdc 파일 순회
+for rule_file in .cursor/rules/*.mdc; do
+  # 파일명 추출 (확장자 제거)
+  basename=$(basename "$rule_file" .mdc)
+
+  # Command 이름 생성 (접두사 제거 등)
+  command_name=$(echo "$basename" | sed 's/^create-//;s/^setup-//')
+
+  # Command 파일이 없으면 템플릿 생성
+  if [ ! -f ".claude/commands/$command_name.md" ]; then
+    echo "Creating .claude/commands/$command_name.md"
+    cat > ".claude/commands/$command_name.md" <<EOF
+Read and follow the guidelines in \`.cursor/rules/$basename.mdc\`.
+
+This command will help you with [TODO: describe purpose].
+EOF
+  fi
+done
+
+echo "Sync complete!"
+```
+
+## 프롬프트로 실행하기
+
+이 작업을 Claude Code에 요청할 때 사용하는 프롬프트:
+
+```
+.cursor/rules 디렉토리의 규칙들을 Claude Code slash command로 연동해줘.
+
+요구사항:
+1. 중복 데이터를 만들지 말고 파일 참조만 사용
+2. .claude/commands/ 디렉토리에 각 규칙에 대한 command 파일 생성
+3. CLAUDE.md에 사용법 문서화
+4. 각 command는 간결한 이름으로 (changeset, plan, requirements 등)
+
+`.cursor/rules/setup-claude-commands.mdc`의 가이드라인을 따라서 작업해줘.
+```
+
+## 체크리스트
+
+작업 완료 후 확인사항:
+
+- [ ] `.claude/commands/` 디렉토리 생성됨
+- [ ] 각 주요 규칙 파일에 대한 command 파일 생성됨
+- [ ] Command 파일이 내용을 복사하지 않고 참조만 사용함
+- [ ] `CLAUDE.md`에 slash command 섹션 추가됨
+- [ ] 모든 command가 `CLAUDE.md`에 문서화됨
+- [ ] 각 command에 대응하는 규칙 파일이 명시됨
+- [ ] 사용 예시가 포함됨
+- [ ] 테스트 완료 (각 command가 올바르게 작동함)
+
+---
+
+> **참고**: 이 가이드라인은 프로젝트에서 .cursor/rules와 Claude Code를 연동하는 표준 프로세스를 정의합니다.
+>
+> Copyright © 2025 Vincent K. Kelvin. All rights reserved.
