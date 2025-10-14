@@ -18,7 +18,6 @@ import { parseObject } from '@/schema-form/core/parsers';
 import { getObjectDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { ObjectValue } from '@/schema-form/types';
 
-import { normalizeObjectValue } from '../../utils';
 import type { ObjectNodeStrategy } from '../type';
 
 /**
@@ -28,6 +27,9 @@ import type { ObjectNodeStrategy } from '../type';
 export class TerminalStrategy implements ObjectNodeStrategy {
   /** Host ObjectNode instance that this strategy belongs to */
   private readonly __host__: ObjectNode;
+
+  /** Flag indicating whether to ignore additional properties */
+  private readonly __ignoreAdditionalProperties__: boolean;
 
   /** Callback function to handle value changes */
   private readonly __handleChange__: HandleChange<ObjectValue | Nullish>;
@@ -93,6 +95,9 @@ export class TerminalStrategy implements ObjectNodeStrategy {
 
     const jsonSchema = host.jsonSchema;
 
+    this.__ignoreAdditionalProperties__ =
+      jsonSchema.additionalProperties === false;
+
     this.__propertyKeys__ = sortWithReference(
       getObjectKeys(jsonSchema.properties),
       jsonSchema.propertyKeys,
@@ -146,7 +151,9 @@ export class TerminalStrategy implements ObjectNodeStrategy {
   private __parseValue__(input: ObjectValue | Nullish, normalize?: boolean) {
     if (input === undefined) return undefined;
     if (input === null && this.__host__.nullable) return null;
-    if (normalize) normalizeObjectValue(input, this.__propertyKeys__);
-    return sortObjectKeys(parseObject(input), this.__propertyKeys__, true);
+    return sortObjectKeys(parseObject(input), this.__propertyKeys__, {
+      ignoreUndefinedKey: this.__ignoreAdditionalProperties__ || normalize,
+      ignoreUndefinedValue: true,
+    });
   }
 }

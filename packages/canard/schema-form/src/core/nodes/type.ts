@@ -299,6 +299,7 @@ export type NodeStateFlags = {
 };
 
 export enum SetValueOption {
+  None = BIT_MASK_NONE,
   /** Replace the current value */
   Replace = BIT_FLAG_00,
   /** Update the value and trigger onChange */

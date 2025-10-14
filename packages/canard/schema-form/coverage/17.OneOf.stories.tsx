@@ -1971,6 +1971,34 @@ export const OneOfPreservation = () => {
               A_value2: { type: 'number' },
               A_value3: { type: 'boolean' },
             },
+            terminal: false,
+            FormTypeInput: ({ value, ChildNodeComponents, onChange }) => {
+              return (
+                <div>
+                  <pre>{JSON.stringify(value, null, 2)}</pre>
+                  <button
+                    onClick={() =>
+                      onChange({
+                        value: 'valueA',
+                        A_value: 'valueA',
+                        A_value2: 100,
+                        A_value3: true,
+                        B_value: 'valueB',
+                        B_value2: 100,
+                        B_value3: true,
+                      })
+                    }
+                  >
+                    set
+                  </button>
+                  <div>
+                    {ChildNodeComponents.map((ChildNodeComponent) => (
+                      <ChildNodeComponent key={ChildNodeComponent.key} />
+                    ))}
+                  </div>
+                </div>
+              );
+            },
           },
           terminal: {
             type: 'object',
@@ -2016,6 +2044,35 @@ export const OneOfPreservation = () => {
               B_value2: { type: 'number' },
               B_value3: { type: 'boolean' },
             },
+            terminal: false,
+            additionalProperties: false,
+            FormTypeInput: ({ value, ChildNodeComponents, onChange }) => {
+              return (
+                <div>
+                  <pre>{JSON.stringify(value, null, 2)}</pre>
+                  <button
+                    onClick={() =>
+                      onChange({
+                        value: 'valueA',
+                        A_value: 'valueA',
+                        A_value2: 100,
+                        A_value3: true,
+                        B_value: 'valueB',
+                        B_value2: 100,
+                        B_value3: true,
+                      })
+                    }
+                  >
+                    set
+                  </button>
+                  <div>
+                    {ChildNodeComponents.map((ChildNodeComponent) => (
+                      <ChildNodeComponent key={ChildNodeComponent.key} />
+                    ))}
+                  </div>
+                </div>
+              );
+            },
           },
           terminal: {
             type: 'object',
@@ -2025,6 +2082,7 @@ export const OneOfPreservation = () => {
               B_value2: { type: 'number' },
               B_value3: { type: 'boolean' },
             },
+            additionalProperties: false,
             FormTypeInput: ({ value, onChange }) => {
               return (
                 <div>

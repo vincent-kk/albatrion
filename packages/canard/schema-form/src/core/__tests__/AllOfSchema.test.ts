@@ -344,10 +344,8 @@ describe('AllOf Schema', () => {
     objectNode.setValue({ name: 'John', extra: 'value' });
     await delay();
 
-    expect(objectNode.errors.length).toBeGreaterThan(0);
-    expect(objectNode.errors.map(({ keyword }) => keyword)).toContain(
-      'additionalProperties',
-    );
+    expect(objectNode.errors.length).toBe(0);
+    expect(objectNode.value).toEqual({ name: 'John' });
   });
 
   it('allOf 스키마의 이벤트가 정상적으로 발생해야 함', async () => {

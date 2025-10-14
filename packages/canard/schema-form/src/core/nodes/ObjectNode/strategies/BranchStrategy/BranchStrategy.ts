@@ -5,8 +5,8 @@ import {
 } from '@winglet/common-utils/array';
 import { isEmptyObject } from '@winglet/common-utils/filter';
 import {
+  equals,
   getObjectKeys,
-  removePrototype,
   sortObjectKeys,
 } from '@winglet/common-utils/object';
 
@@ -27,7 +27,6 @@ import { joinSegment } from '@/schema-form/helpers/jsonPointer';
 import { isTerminalType } from '@/schema-form/helpers/jsonSchema';
 import type { ObjectValue } from '@/schema-form/types';
 
-import { normalizeObjectValue } from '../../utils';
 import type { ObjectNodeStrategy } from '../type';
 import type { ChildNodeMap } from './type';
 import {
@@ -47,6 +46,9 @@ import {
 export class BranchStrategy implements ObjectNodeStrategy {
   /** Host ObjectNode instance that this strategy belongs to */
   private readonly __host__: ObjectNode;
+
+  /** Flag indicating whether to ignore additional properties */
+  private readonly __ignoreAdditionalProperties__: boolean;
 
   /** Callback function to handle value changes */
   private readonly __handleChange__: HandleChange<ObjectValue | Nullish>;
@@ -102,11 +104,15 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /** Draft value containing pending changes before commit */
   private __draft__: ObjectValue | Nullish;
 
+  /** Flag indicating whether the object value is expired */
+  private __expired__: boolean = true;
+
   /**
    * Gets the current value of the object.
    * @returns Current value of the object node or undefined
    */
   public get value() {
+    if (this.__expired__) this.__emitChange__(SetValueOption.None);
     return this.__value__;
   }
 
@@ -117,6 +123,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
    */
   public applyValue(input: ObjectValue | Nullish, option: UnionSetValueOption) {
     this.__draft__ = input;
+    this.__expired__ = true;
     this.__isolated__ = (option & SetValueOption.Isolate) > 0;
     this.__emitChange__(option);
   }
@@ -184,6 +191,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
     const jsonSchema = host.jsonSchema;
 
+    this.__ignoreAdditionalProperties__ =
+      jsonSchema.additionalProperties === false;
+
     const propertyKeys = sortWithReference(
       getObjectKeys(jsonSchema.properties),
       jsonSchema.propertyKeys,
@@ -216,8 +226,13 @@ export class BranchStrategy implements ObjectNodeStrategy {
       (property: string): HandleChange =>
       (input, batched) => {
         if (this.__draft__ == null) this.__draft__ = {};
-        if (input !== undefined && this.__draft__[property] === input) return;
+        if (
+          (input === undefined && this.__value__?.[property] === input) ||
+          (input !== undefined && this.__draft__[property] === input)
+        )
+          return;
         this.__draft__[property] = input;
+        this.__expired__ = true;
         if (this.__isolated__ && this.__isPristine__) this.__isolated__ = false;
         this.__emitChange__(SetValueOption.Default, batched);
       };
@@ -335,21 +350,27 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const settled = (option & SetValueOption.Isolate) === 0;
     const normalize = (option & SetValueOption.Normalize) > 0;
 
-    const previous = this.__value__ ? { ...this.__value__ } : this.__value__;
+    const base = this.__value__;
+    const draft = this.__draft__;
+    const previous = base ? { ...base } : base;
     const current = this.__parseValue__(
-      this.__value__,
-      this.__draft__,
-      this.__host__.nullable,
+      base,
+      draft,
       replace,
       normalize,
+      this.__host__.nullable,
     );
 
     if (current === false) return;
-    this.__value__ = current;
 
+    this.__value__ = current;
+    this.__draft__ = {};
+
+    if (this.__expired__) this.__expired__ = false;
     if (option & SetValueOption.EmitChange)
       this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
-    if (option & SetValueOption.Propagate) this.__propagate__(replace, option);
+    if (option & SetValueOption.Propagate)
+      this.__propagate__(current, draft, replace, option);
     if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
     if (option & SetValueOption.Isolate)
       this.__handleUpdateComputedProperties__();
@@ -360,8 +381,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
         { previous, current, settled },
         settled && this.__host__.initialized,
       );
-
-    this.__draft__ = {};
   }
 
   /**
@@ -376,14 +395,14 @@ export class BranchStrategy implements ObjectNodeStrategy {
   private __parseValue__(
     base: ObjectValue | Nullish,
     draft: ObjectValue | Nullish,
-    nullable: boolean,
     replace: boolean,
     normalize: boolean,
+    nullable: boolean,
   ) {
     if (draft === undefined) return undefined;
     if (draft === null) return nullable ? null : {};
     if (replace || base == null) return this.__processValue__(draft, normalize);
-    if (isEmptyObject(draft)) return false;
+    if (isEmptyObject(draft) || equals(base, draft)) return false;
     return this.__processValue__({ ...base, ...draft }, normalize);
   }
 
@@ -394,8 +413,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @private
    */
   private __processValue__(input: ObjectValue, normalize?: boolean) {
-    if (normalize) normalizeObjectValue(input, this.__propertyKeys__);
-    const value = sortObjectKeys(input, this.__propertyKeys__, true);
+    const value = sortObjectKeys(input, this.__propertyKeys__, {
+      ignoreUndefinedKey: this.__ignoreAdditionalProperties__ || normalize,
+      ignoreUndefinedValue: true,
+    });
     if (this.__isolated__)
       return processValueWithCondition(value, this.__fieldConditionMap__);
     return value;
@@ -407,17 +428,24 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @param option - Setting options
    * @private
    */
-  private __propagate__(replace: boolean, option: UnionSetValueOption) {
-    const target = removePrototype(this.__value__ || {});
-    const draft = removePrototype(this.__draft__ || {});
-    const nullify = this.__draft__ === null;
+  private __propagate__(
+    source: ObjectValue | Nullish,
+    target: ObjectValue | Nullish,
+    replace: boolean,
+    option: UnionSetValueOption,
+  ) {
+    const current = source || {};
+    const committed = target || {};
+    const nullify = target === null;
+    const propagateOption =
+      target == null ? option & ~SetValueOption.EmitChange : option;
     this.__locked__ = true;
     for (let i = 0, l = this.__children__.length; i < l; i++) {
       const node = this.__children__[i].node;
       if (node.type === 'virtual') continue;
       const name = node.name;
-      if (replace || nullify || (name in draft && name in target))
-        node.setValue(nullify ? null : target[name], option);
+      if (replace || nullify || (name in committed && name in current))
+        node.setValue(nullify ? null : current[name], propagateOption);
     }
     this.__locked__ = false;
   }
@@ -591,6 +619,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       this.__processValue__({ ...this.__value__, ...this.__draft__ }),
       this.__validateAllowedKey__,
     );
+    this.__expired__ = false;
     this.__processComputedProperties__(this.__draft__);
     if (this.__host__.validation)
       this.__host__.adjustEnhancer(

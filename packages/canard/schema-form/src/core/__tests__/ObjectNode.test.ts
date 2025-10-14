@@ -356,7 +356,7 @@ describe('ObjectNode', () => {
     });
   });
 
-  it('객체 노드의 추가 속성이 허용되지 않아야 함', async () => {
+  it('객체 노드의 추가 속성이 허용되지 않아야 함(자동 필터링)', async () => {
     const validatorFactory = createValidatorFactory(
       new Ajv({
         allErrors: true,
@@ -389,10 +389,11 @@ describe('ObjectNode', () => {
     // 추가 속성이 있는 값 설정
     objectNode.setValue({ name: 'John', age: 30, email: 'hong@example.com' });
     await delay();
-    expect(objectNode.errors.length).toBe(1);
-    expect(objectNode.errors.map(({ keyword }) => keyword)).toEqual([
-      'additionalProperties',
-    ]);
+    expect(objectNode.errors.length).toBe(0);
+    expect(objectNode.value).toEqual({
+      name: 'John',
+      age: 30,
+    });
   });
 
   it('객체 노드의 추가 속성이 허용되지 않아야 함, 객체 내부에 additionalProperties 속성이 있는 경우', async () => {
@@ -452,20 +453,55 @@ describe('ObjectNode', () => {
 
     await delay();
 
+    expect(node.value).toEqual({
+      users: [
+        {
+          id: 1,
+          name: 'User 1',
+          email: 'user1@example.com',
+        },
+        {
+          id: 2,
+          name: 'User 2',
+          email: 'user2@example.com',
+        },
+        {
+          id: 3,
+          name: 'User 3',
+          email: 'user3@example.com',
+        },
+      ],
+    });
+
     const arrayNode = node?.find('/users') as ArrayNode;
+    expect(arrayNode.value).toEqual([
+      {
+        id: 1,
+        name: 'User 1',
+        email: 'user1@example.com',
+      },
+      {
+        id: 2,
+        name: 'User 2',
+        email: 'user2@example.com',
+      },
+      {
+        id: 3,
+        name: 'User 3',
+        email: 'user3@example.com',
+      },
+    ]);
     const childNodes = arrayNode.children;
     expect(childNodes?.length).toBe(3);
+
     childNodes?.forEach(({ node }, index) => {
       expect(node.value).toEqual({
         id: index + 1,
         name: `User ${index + 1}`,
         email: `user${index + 1}@example.com`,
-        extra: `extra${index + 1}`,
       });
-      expect(node.errors.length).toBe(1);
-      expect(node.errors.map(({ keyword }) => keyword)).toEqual([
-        'additionalProperties',
-      ]);
+      expect(node.errors).toEqual([]);
+      expect(node.errors.length).toBe(0);
     });
   });
 
