@@ -6,14 +6,16 @@ import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
  * Reorders object properties according to a specified key sequence with optional filtering.
  *
  * Creates a new object with properties arranged in the order specified by the keys array,
- * followed by any remaining properties in their original order. Supports undefined value
- * filtering and maintains type safety while providing flexible property organization for
- * consistent object structures and serialization.
+ * followed by any remaining properties in their original order. Supports flexible undefined
+ * filtering options and maintains type safety while providing flexible property organization
+ * for consistent object structures and serialization.
  *
  * @template Dict - Dictionary type extending Record<PropertyKey, any>
  * @param object - Source object to reorder (null/undefined returns empty object)
  * @param keys - Array defining the desired property order
- * @param omitUndefined - Whether to exclude properties with undefined values (optional)
+ * @param options - Optional configuration object
+ * @param options.ignoreUndefinedKey - When true, excludes properties not in keys array
+ * @param options.ignoreUndefinedValue - When true, excludes properties with undefined values
  * @returns New object with properties ordered according to keys array
  *
  * @example
@@ -63,8 +65,7 @@ import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
  * // Order with undefined values included
  * const withUndefined = sortObjectKeys(
  *   incompleteData,
- *   ['id', 'name', 'email', 'phone'],
- *   false
+ *   ['id', 'name', 'email', 'phone']
  * );
  * console.log(withUndefined);
  * // { id: 1, name: 'Alice', email: undefined, phone: '+1234567890', address: undefined, active: true }
@@ -73,7 +74,7 @@ import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
  * const filtered = sortObjectKeys(
  *   incompleteData,
  *   ['id', 'name', 'email', 'phone'],
- *   true
+ *   { ignoreUndefinedValue: true }
  * );
  * console.log(filtered);
  * // { id: 1, name: 'Alice', phone: '+1234567890', active: true }
@@ -120,7 +121,9 @@ import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
  *   'city', 'zipCode', 'country', 'newsletter'
  * ];
  *
- * const orderedForm = sortObjectKeys(formData, fieldOrder, true);
+ * const orderedForm = sortObjectKeys(formData, fieldOrder, {
+ *   ignoreUndefinedValue: true
+ * });
  * console.log(orderedForm);
  * // {
  * //   firstName: 'John',
@@ -166,10 +169,27 @@ import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
  * const withNonExistent = sortObjectKeys(obj, ['a', 'x', 'b', 'y', 'c']);
  * console.log(withNonExistent); // { x: 1, y: 2 } (only existing keys included)
  *
+ * // Only include specific keys (ignoreUndefinedKey)
+ * const data = { a: 1, b: 2, c: 3, d: 4, e: 5 };
+ * const onlySpecified = sortObjectKeys(data, ['c', 'a'], {
+ *   ignoreUndefinedKey: true
+ * });
+ * console.log(onlySpecified); // { c: 3, a: 1 } (only keys in array)
+ *
  * // Objects with mixed undefined values
  * const mixed = { a: 1, b: undefined, c: 3, d: undefined, e: 5 };
- * const cleanOrdered = sortObjectKeys(mixed, ['e', 'c', 'a'], true);
+ * const cleanOrdered = sortObjectKeys(mixed, ['e', 'c', 'a'], {
+ *   ignoreUndefinedValue: true
+ * });
  * console.log(cleanOrdered); // { e: 5, c: 3, a: 1 }
+ *
+ * // Combine both options
+ * const complex = { a: 1, b: undefined, c: 3, d: 4, e: undefined };
+ * const filtered = sortObjectKeys(complex, ['c', 'b', 'a'], {
+ *   ignoreUndefinedKey: true,
+ *   ignoreUndefinedValue: true
+ * });
+ * console.log(filtered); // { c: 3, a: 1 } (only specified keys, excluding undefined)
  * ```
  *
  * @example
@@ -186,7 +206,9 @@ import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
  *
  * // Standard API response order
  * const apiOrder = ['success', 'data', 'pagination', 'timestamp', 'errors'];
- * const prepared = sortObjectKeys(responseData, apiOrder, true);
+ * const prepared = sortObjectKeys(responseData, apiOrder, {
+ *   ignoreUndefinedValue: true
+ * });
  *
  * console.log(JSON.stringify(prepared, null, 2));
  * // {
@@ -202,11 +224,12 @@ import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
  * - **Primary Order**: Properties appear in the sequence specified by keys array
  * - **Secondary Order**: Remaining properties follow in their original enumeration order
  * - **Missing Keys**: Keys in the order array that don't exist in the object are skipped
- * - **Extra Properties**: Properties not in the order array are appended at the end
+ * - **Extra Properties**: Properties not in the order array are appended at the end (unless ignoreUndefinedKey is true)
  *
  * **Filtering Behavior:**
- * - **omitUndefined = false**: All properties included regardless of value
- * - **omitUndefined = true**: Properties with undefined values are excluded
+ * - **ignoreUndefinedKey**: When true, only properties in keys array are included (remaining properties excluded)
+ * - **ignoreUndefinedValue**: When true, properties with undefined values are excluded
+ * - **Default behavior**: All properties included, ordered properties first then remaining ones
  * - **Filtering Priority**: Applied during both ordered and remaining property processing
  *
  * **Performance Characteristics:**
@@ -232,27 +255,38 @@ import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
  * - Only reorders enumerable own properties
  * - Does not handle Symbol keys
  * - String keys only in the ordering array
- * - Undefined filtering is binary (all or none)
+ * - Undefined filtering options are independent and can be combined
  * - Original object structure is not preserved if circular references exist
  */
 export const sortObjectKeys = <Dict extends Dictionary>(
   object: Dict | Nullish,
   keys: string[],
-  omitUndefined?: boolean,
+  options?: {
+    ignoreUndefinedKey?: boolean;
+    ignoreUndefinedValue?: boolean;
+  },
 ): Dict => {
   if (!object) return {} as Dict;
+  const ignoreUndefinedKey = options?.ignoreUndefinedKey === true;
+  const ignoreUndefinedValue = options?.ignoreUndefinedValue === true;
+
   const result: Dictionary = {};
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
     if (
       hasOwnProperty(object, k) === false ||
-      (omitUndefined && object[k] === undefined)
+      (ignoreUndefinedValue && object[k] === undefined)
     )
       continue;
     result[k] = object[k];
   }
+  if (ignoreUndefinedKey) return result as Dict;
+
   const lefts = Object.keys(object);
   for (let i = 0, k = lefts[0], l = lefts.length; i < l; i++, k = lefts[i]) {
-    if (hasOwnProperty(result, k) || (omitUndefined && object[k] === undefined))
+    if (
+      hasOwnProperty(result, k) ||
+      (ignoreUndefinedValue && object[k] === undefined)
+    )
       continue;
     result[k] = object[k];
   }

@@ -93,7 +93,9 @@ describe('sortObjectKeys', () => {
 
   testCases.forEach(({ name, input, keys, expected, omitUndefined }) => {
     it(name, () => {
-      const result = sortObjectKeys(input, keys, omitUndefined);
+      const result = sortObjectKeys(input, keys, {
+        ignoreUndefinedValue: omitUndefined,
+      });
       const resultKeys = Object.keys(result);
       const expectedKeys = Object.keys(expected);
       expect(resultKeys).toEqual(expectedKeys);
