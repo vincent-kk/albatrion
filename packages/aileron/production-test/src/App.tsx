@@ -9,6 +9,7 @@ import "./App.css";
 import CanardForm from "./pages/CanardForm";
 import CanardFormNullable from "./pages/CanardForm.nullable";
 import CanardFormComputed from "./pages/CanardForm.computed";
+import CanardFormIgnoreAdditionalProperties from "./pages/CanardForm.ignoreAdditionalProperties";
 
 function App() {
   return (
@@ -26,6 +27,10 @@ function App() {
           <Route
             path="/canard-form-computed"
             element={<CanardFormComputed />}
+          />
+          <Route
+            path="/canard-form-ignore-additional-properties"
+            element={<CanardFormIgnoreAdditionalProperties />}
           />
           <Route path="/forms" element={<FormTest />} />
           <Route path="/api" element={<ApiTest />} />
