@@ -45,7 +45,7 @@ This package is written using ECMAScript 2022 (ES2022) syntax.
 
 **Supported Environments:**
 
-- Node.js 14.0.0 이상
+- Node.js 14.0.0 or higher
 - Modern browsers (with ES2020 support)
 
 **For Legacy Environment Support:**
