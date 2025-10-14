@@ -1,6 +1,6 @@
 {
   "name": "@winglet/react-utils",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "React utility library providing custom hooks, higher-order components (HOCs), and utility functions to enhance React application development with improved reusability and functionality",
   "keywords": [
     "react",

@@ -1,6 +1,6 @@
 {
   "name": "@canard/schema-form-mui-plugin",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Material-UI (MUI) components plugin for @canard/schema-form providing pre-built form inputs with modern MUI styling and MUI X integration",
   "keywords": [
     "react",

@@ -7141,7 +7141,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@winglet/common-utils@npm:^0.7.0, @winglet/common-utils@workspace:^, @winglet/common-utils@workspace:packages/winglet/common-utils":
+"@winglet/common-utils@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "@winglet/common-utils@npm:0.7.0"
+  checksum: 10c0/eeefdecbd22772e7ec3a008ae81a27c432b221d851dce0b9c4069c358642c3e460e1fd27a8c3144295db24337ea7aa7e659330fb900b771588f0874ad9305be5
+  languageName: node
+  linkType: hard
+
+"@winglet/common-utils@workspace:^, @winglet/common-utils@workspace:packages/winglet/common-utils":
   version: 0.0.0-use.local
   resolution: "@winglet/common-utils@workspace:packages/winglet/common-utils"
   languageName: unknown
@@ -7185,7 +7192,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@winglet/json-schema@npm:^0.7.0, @winglet/json-schema@workspace:^, @winglet/json-schema@workspace:packages/winglet/json-schema":
+"@winglet/json-schema@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "@winglet/json-schema@npm:0.7.0"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.7.0"
+    "@winglet/json": "npm:^0.7.0"
+  checksum: 10c0/fdd3a7862a37e602c379d4125c1b0718d657005ec120bfabc30af15b752f732ce4a0a7734b07258dbb8bc4cb1290aaf377f84c703a857e8d029b9b742f0ae9a6
+  languageName: node
+  linkType: hard
+
+"@winglet/json-schema@workspace:^, @winglet/json-schema@workspace:packages/winglet/json-schema":
   version: 0.0.0-use.local
   resolution: "@winglet/json-schema@workspace:packages/winglet/json-schema"
   dependencies:
@@ -7221,7 +7238,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@winglet/json@npm:^0.7.0, @winglet/json@workspace:^, @winglet/json@workspace:packages/winglet/json":
+"@winglet/json@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "@winglet/json@npm:0.7.0"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.7.0"
+  checksum: 10c0/2e5eaf66117d89945f38d3c39b4bbc1f122ca33783b35a4306b43cff5597fb19ab04e027ac35c437751f96adb3adf3cc8f2753ad5278b4c83bfee51677e9fd1a
+  languageName: node
+  linkType: hard
+
+"@winglet/json@workspace:^, @winglet/json@workspace:packages/winglet/json":
   version: 0.0.0-use.local
   resolution: "@winglet/json@workspace:packages/winglet/json"
   dependencies:
@@ -7265,7 +7291,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@winglet/react-utils@npm:^0.7.0, @winglet/react-utils@workspace:^, @winglet/react-utils@workspace:packages/winglet/react-utils":
+"@winglet/react-utils@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "@winglet/react-utils@npm:0.7.0"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.7.0"
+  peerDependencies:
+    react: ">=16 <20"
+    react-dom: ">=16 <20"
+  checksum: 10c0/e006118c2b87c3e807d8443d12601a085241cf8c64a6dd9db6e76466b469a8aa7e9e7f99240a24d3341cfe569cc55bf314edecccf7a2098e5202bacb6f28bdb2
+  languageName: node
+  linkType: hard
+
+"@winglet/react-utils@workspace:^, @winglet/react-utils@workspace:packages/winglet/react-utils":
   version: 0.0.0-use.local
   resolution: "@winglet/react-utils@workspace:packages/winglet/react-utils"
   dependencies:
