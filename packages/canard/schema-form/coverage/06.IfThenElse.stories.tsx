@@ -248,6 +248,7 @@ export const IfThenElseComplex1 = () => {
               gender: {
                 type: 'string',
                 enum: ['male', 'female', 'other'],
+                default: 'male',
                 computed: {
                   active: '../age >= 18',
                 },
@@ -367,6 +368,7 @@ export const IfThenElseComplex2 = () => {
       gender: {
         type: 'string',
         enum: ['male', 'female', 'other'],
+        default: 'male',
         computed: {
           active: '../age >= 18',
         },

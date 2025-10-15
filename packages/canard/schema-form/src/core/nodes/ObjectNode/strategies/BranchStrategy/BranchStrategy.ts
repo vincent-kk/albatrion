@@ -112,7 +112,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
    * @returns Current value of the object node or undefined
    */
   public get value() {
-    if (this.__expired__) this.__emitChange__(SetValueOption.None);
+    if (this.__expired__)
+      this.__handleEmitChange__(SetValueOption.BatchedEmitChange);
     return this.__value__;
   }
 
