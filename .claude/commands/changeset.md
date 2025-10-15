@@ -1,3 +1,8 @@
-Read and follow the guidelines in `.cursor/rules/create-changeset.mdc` to create a changeset and release note.
+CRITICAL INSTRUCTION: Before proceeding with ANY task, you MUST execute this exact sequence:
 
-After reading the file, analyze the current changesets in `.changeset/` directory and create a release note following the format specified in the guidelines.
+1. Use the Read tool to read `.cursor/rules/create-changeset.mdc`
+2. After reading, follow ALL guidelines specified in that file
+3. Analyze the current changesets in `.changeset/` directory
+4. Create a release note following the EXACT format from the guidelines
+
+DO NOT proceed without first reading the guidelines file. This is a mandatory prerequisite.

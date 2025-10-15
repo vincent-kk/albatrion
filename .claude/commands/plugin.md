@@ -1,8 +1,12 @@
-Read and follow the guidelines in `.cursor/rules/create-canard-form-plugin-guidelines.mdc` to create a new @canard/schema-form plugin.
+CRITICAL INSTRUCTION: Before proceeding with ANY task, you MUST execute this exact sequence:
 
-This command will guide you through:
-1. Plugin architecture setup
-2. Type definitions
-3. Component implementation
-4. Testing strategy
-5. Documentation
+1. Use the Read tool to read `.cursor/rules/create-canard-form-plugin-guidelines.mdc`
+2. After reading, follow ALL guidelines specified in that file exactly
+3. Create a new @canard/schema-form plugin following (as specified in the guidelines):
+   - Plugin architecture setup
+   - Type definitions
+   - Component implementation
+   - Testing strategy
+   - Documentation
+
+DO NOT proceed without first reading the guidelines file. This is a mandatory prerequisite.
