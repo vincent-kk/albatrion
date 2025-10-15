@@ -11,12 +11,6 @@ import type { Fn } from '@aileron/declare';
 import type { Modal } from '@/promise-modal/types';
 
 export class ModalManager {
-  static #initialized = false;
-  static initialize() {
-    if (ModalManager.#initialized) return false;
-    return (ModalManager.#initialized = true);
-  }
-
   static #anchor: HTMLElement | null = null;
   static #scope: string = `promise-modal-${getRandomString(36)}`;
   static #hash: string = polynomialHash(ModalManager.#scope);
@@ -25,7 +19,7 @@ export class ModalManager {
     prefix?: string;
     root?: HTMLElement;
   }): HTMLElement {
-    if (ModalManager.#anchor) return ModalManager.#anchor;
+    if (ModalManager.#anchor !== null) return ModalManager.#anchor;
     const {
       tag = 'div',
       prefix = 'promise-modal',
@@ -39,6 +33,10 @@ export class ModalManager {
     return node;
   }
 
+  static get anchored() {
+    return ModalManager.#anchor !== null;
+  }
+
   static #prerenderList: Modal[] = [];
   static get prerender() {
     return ModalManager.#prerenderList;
@@ -49,10 +47,6 @@ export class ModalManager {
   static set openHandler(handler: Fn<[Modal], void>) {
     ModalManager.#openHandler = handler;
     ModalManager.#prerenderList = [];
-  }
-
-  static get unanchored() {
-    return !ModalManager.#anchor;
   }
 
   static #styleManager = styleManagerFactory(ModalManager.#scope);
@@ -70,7 +64,6 @@ export class ModalManager {
   }
 
   static reset() {
-    ModalManager.#initialized = false;
     ModalManager.#anchor = null;
     ModalManager.#prerenderList = [];
     ModalManager.#openHandler = (modal: Modal) =>

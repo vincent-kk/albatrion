@@ -2,6 +2,7 @@ import {
   Fragment,
   type PropsWithChildren,
   forwardRef,
+  memo,
   useImperativeHandle,
   useMemo,
 } from 'react';
@@ -129,70 +130,73 @@ import type { BootstrapProviderHandle, BootstrapProviderProps } from './type';
  * - All modals created within this provider share the same configuration
  * - The provider creates a portal for rendering modals outside the React tree
  */
-export const BootstrapProvider = forwardRef<
-  BootstrapProviderHandle,
-  PropsWithChildren<BootstrapProviderProps>
->(
-  (
-    {
-      usePathname: useExternalPathname,
-      ForegroundComponent,
-      BackgroundComponent,
-      TitleComponent,
-      SubtitleComponent,
-      ContentComponent,
-      FooterComponent,
-      options,
-      context,
-      children,
-    },
-    handleRef,
-  ) => {
-    const usePathname = useMemo(
-      () => useExternalPathname || useDefaultPathname,
-      [useExternalPathname],
-    );
-
-    const { anchorRef, handleInitialize, handleReset } = useInitialize();
-
-    useImperativeHandle(
+export const BootstrapProvider = memo(
+  forwardRef<
+    BootstrapProviderHandle,
+    PropsWithChildren<BootstrapProviderProps>
+  >(
+    (
+      {
+        usePathname: useExternalPathname,
+        ForegroundComponent,
+        BackgroundComponent,
+        TitleComponent,
+        SubtitleComponent,
+        ContentComponent,
+        FooterComponent,
+        options,
+        context,
+        children,
+      },
       handleRef,
-      () => ({
-        initialize: handleInitialize,
-      }),
-      [handleInitialize],
-    );
+    ) => {
+      const usePathname = useMemo(
+        () => useExternalPathname || useDefaultPathname,
+        [useExternalPathname],
+      );
 
-    useOnMount(() => {
-      /**
-       * NOTE: `handleRef` being null indicates that no `ref` was provided.
-       *   In this case, the `ModalProvider`(=`BootstrapProvider`) is not receiving the `ref`,
-       *   so it should be initialized automatically.
-       */
-      if (handleRef === null) handleInitialize();
-      return () => {
-        if (anchorRef.current) anchorRef.current.remove();
-        handleReset();
-      };
-    });
+      const { anchorRef, handleInitialize, handleReset } = useInitialize();
 
-    return (
-      <Fragment>
-        {children}
-        {anchorRef.current &&
-          bootstrap({
-            ForegroundComponent,
-            BackgroundComponent,
-            TitleComponent,
-            SubtitleComponent,
-            ContentComponent,
-            FooterComponent,
-            usePathname,
-            options,
-            context,
-            anchor: anchorRef.current,
-          })}
-      </Fragment>
-    );
-  },
+      useImperativeHandle(
+        handleRef,
+        () => ({
+          initialize: handleInitialize,
+        }),
+        [handleInitialize],
+      );
+
+      useOnMount(() => {
+        /**
+         * NOTE: `handleRef` being null indicates that no `ref` was provided.
+         *   In this case, the `ModalProvider`(=`BootstrapProvider`) is not receiving the `ref`,
+         *   so it should be initialized automatically.
+         */
+        if (handleRef !== null) return;
+        handleInitialize();
+        return () => {
+          if (anchorRef.current) anchorRef.current.remove();
+          handleReset();
+        };
+      });
+
+      return (
+        <Fragment>
+          {children}
+          {anchorRef.current &&
+            bootstrap({
+              ForegroundComponent,
+              BackgroundComponent,
+              TitleComponent,
+              SubtitleComponent,
+              ContentComponent,
+              FooterComponent,
+              usePathname,
+              options,
+              context,
+              anchor: anchorRef.current,
+            })}
+        </Fragment>
+      );
+    },
+  ),
 );
