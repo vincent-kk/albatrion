@@ -165,10 +165,9 @@ export const cacheMapFactory = <M extends Map<string, any>>(
   return {
     /**
      * Returns the original Map object
+     * @returns The original Map object
      */
-    get raw() {
-      return cache;
-    },
+    getCache: () => cache,
     /**
      * Stores a value for the given key
      * @param key - The key to store

@@ -15,7 +15,7 @@
  *
  * const counter = counterFactory(10);
  *
- * console.log(counter.value); // 10
+ * console.log(counter.getValue()); // 10
  * console.log(counter.increment()); // 11
  * console.log(counter.increment()); // 12
  * console.log(counter.decrement()); // 11
@@ -51,7 +51,7 @@
  * async function fetchWithRetry(url: string): Promise<Response> {
  *   retryCounter.reset();
  *
- *   while (retryCounter.value < MAX_RETRIES) {
+ *   while (retryCounter.getValue() < MAX_RETRIES) {
  *     try {
  *       return await fetch(url);
  *     } catch (error) {
@@ -86,9 +86,11 @@
 export const counterFactory = (initialValue = 0) => {
   let value = initialValue;
   return {
-    get value() {
-      return value;
-    },
+    /**
+     * Gets the current counter value
+     * @returns The current counter value
+     */
+    getValue: () => value,
     /**
      * Increments the counter value by 1 and returns the incremented value
      * @returns The incremented counter value

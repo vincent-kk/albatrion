@@ -206,10 +206,9 @@ export const cacheWeakMapFactory = <V, K extends object = object>(
   return {
     /**
      * Returns the original WeakMap object
+     * @returns The original WeakMap object
      */
-    get raw() {
-      return cache;
-    },
+    getCache: () => cache,
     /**
      * Checks if the given key exists in the cache
      * @param key - The key to check

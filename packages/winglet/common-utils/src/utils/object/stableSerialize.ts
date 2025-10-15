@@ -1,5 +1,5 @@
 import { cacheWeakMapFactory } from '@/common-utils/libs/cacheWeakMapFactory';
-import { counterFactory } from '@/common-utils/libs/counter';
+import { counterFactory } from '@/common-utils/libs/counterFactory';
 import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isDate } from '@/common-utils/utils/filter/isDate';
 import { isFunction } from '@/common-utils/utils/filter/isFunction';
