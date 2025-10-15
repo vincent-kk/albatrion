@@ -2,10 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import { ifThenElseSchema } from "../assets/jsonSchema/if-then-else";
 import { jsonSchema } from "../assets/jsonSchema/bigSchema";
 import { oneOfSchema } from "../assets/jsonSchema/oneOf";
+import { complexIfThenElseSchema } from "../assets/jsonSchema/complex-if-then-else";
 import { Form, type FormHandle } from "@canard/schema-form";
 import StoryLayout from "../components/StoryLayout";
 
-const canardFormSchema = [ifThenElseSchema, oneOfSchema, jsonSchema];
+const canardFormSchema = [
+  ifThenElseSchema,
+  oneOfSchema,
+  jsonSchema,
+  complexIfThenElseSchema,
+];
 
 const CanardForm = () => {
   const [value, setValue] = useState<Record<string, unknown>>({});
