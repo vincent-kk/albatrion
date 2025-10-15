@@ -6,6 +6,7 @@ const style = `
 .${presenter} {
   position: fixed;
   inset: 0;
+  z-index: var(--z-index);
   pointer-events: none;
   overflow: hidden;
 `;

@@ -10,6 +10,7 @@ import { useConstant, useSnapshot } from '@winglet/react-utils/hook';
 import {
   DEFAULT_ANIMATION_DURATION,
   DEFAULT_BACKDROP_COLOR,
+  DEFAULT_Z_INDEX,
 } from '@/promise-modal/app/constant';
 import {
   FallbackContent,
@@ -28,6 +29,7 @@ import type {
 import { ConfigurationContext } from './ConfigurationContext';
 
 const DEFAULT_OPTIONS = {
+  zIndex: DEFAULT_Z_INDEX,
   duration: DEFAULT_ANIMATION_DURATION,
   backdrop: DEFAULT_BACKDROP_COLOR,
   closeOnBackdropClick: true,

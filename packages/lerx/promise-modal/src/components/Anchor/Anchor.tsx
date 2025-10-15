@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react';
+import { type CSSProperties, memo, useEffect } from 'react';
 
 import { map } from '@winglet/common-utils/array';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
@@ -28,10 +28,13 @@ const AnchorInner = () => {
   return (
     <div
       className={anchor}
-      style={{
-        transitionDuration: options.duration,
-        backgroundColor: dimmed ? options.backdrop : 'transparent',
-      }}
+      style={
+        {
+          '--z-index': options.zIndex,
+          transitionDuration: options.duration,
+          backgroundColor: dimmed ? options.backdrop : 'transparent',
+        } as CSSProperties
+      }
     >
       {map(modalIds, (id) => (
         <Presenter key={id} modalId={id} />

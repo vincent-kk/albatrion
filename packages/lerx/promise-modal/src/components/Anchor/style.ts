@@ -10,7 +10,7 @@ const style = `
    position: fixed;
    inset: 0;
    pointer-events: none;
-   z-index: 1000;
+   z-index: var(--z-index);
    transition: background-color ease-in-out;
 }`;
 
