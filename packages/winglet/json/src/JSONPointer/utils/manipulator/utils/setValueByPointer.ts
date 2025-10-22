@@ -8,25 +8,30 @@ import { isForbiddenKey } from './isForbiddenKey';
 const ADD_ITEM_ALIAS = '-';
 
 export const setValueByPointer = <Input extends Dictionary | Array<any>>(
-  input: Input,
+  value: Input,
   segments: string[],
-  value: any,
+  input: any,
   overwrite: boolean,
+  preserveNull: boolean,
 ): Dictionary => {
   const length = segments.length;
   const hasRootPrefix = segments[0] === '' || segments[0] === '#';
-  if (length === 0 || (length === 1 && hasRootPrefix)) return value;
+  if (length === 0 || (length === 1 && hasRootPrefix)) return input;
 
-  let cursor: any = input;
+  let cursor: any = value;
   let segment = '';
-  for (let i = hasRootPrefix ? 1 : 0; i < length; ) {
-    segment = segments[i++];
-    if (isForbiddenKey(segment)) return input;
-    const isLastSegment = i === length;
-    if (cursor[segment] === undefined && !isLastSegment) {
-      if (isArrayIndex(segments[i]) || segments[i] === ADD_ITEM_ALIAS)
-        cursor[segment] = [];
-      else cursor[segment] = {};
+  for (let index = hasRootPrefix ? 1 : 0; index < length; ) {
+    segment = segments[index++];
+    if (isForbiddenKey(segment)) return value;
+    const isLastSegment = index === length;
+    if (isLastSegment === false) {
+      const current = cursor[segment];
+      if (preserveNull && current === null) return value;
+      if (current == null) {
+        if (isArrayIndex(segments[index]) || segments[index] === ADD_ITEM_ALIAS)
+          cursor[segment] = [];
+        else cursor[segment] = {};
+      }
     }
     if (isArray(cursor) && segment === ADD_ITEM_ALIAS)
       segment = cursor.length.toString();
@@ -34,12 +39,12 @@ export const setValueByPointer = <Input extends Dictionary | Array<any>>(
     cursor = cursor[segment];
   }
 
-  if (value === undefined) delete cursor[segment];
+  if (input === undefined) delete cursor[segment];
   else {
     if (hasOwnProperty(cursor, segment)) {
-      if (overwrite) cursor[segment] = value;
-    } else cursor[segment] = value;
+      if (overwrite) cursor[segment] = input;
+    } else cursor[segment] = input;
   }
 
-  return input;
+  return value;
 };

@@ -29,7 +29,7 @@ import { getValueByPointer } from './utils/getValueByPointer';
  * unexpected behavior with primitive values or non-plain objects.
  *
  * @template Input - Input object type constraint (Dictionary or Array)
- * @param input - The target JSON document to extract value from.
+ * @param value - The target JSON document to extract value from.
  *                Must be a plain object or array. Other types will throw an error.
  * @param pointer - JSON Pointer specifying the location of the value to extract.
  *                  Can be provided as:
@@ -127,14 +127,14 @@ import { getValueByPointer } from './utils/getValueByPointer';
 export const getValue = <
   Output extends Dictionary | Array<any> = Dictionary | Array<any>,
 >(
-  input: Dictionary | Array<any>,
+  value: Dictionary | Array<any>,
   pointer: string | string[],
 ): Output => {
-  if (!(isPlainObject(input) || isArray(input)))
+  if (!(isPlainObject(value) || isArray(value)))
     throw new JSONPointerError(
       'INVALID_INPUT',
       '`input` must be a plain object or an array.',
-      { input },
+      { input: value },
     );
-  return getValueByPointer(input, compilePointer(pointer)) as Output;
+  return getValueByPointer(value, compilePointer(pointer)) as Output;
 };

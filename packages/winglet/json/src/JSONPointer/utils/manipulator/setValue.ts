@@ -34,25 +34,35 @@ import { setValueByPointer } from './utils/setValueByPointer';
  * - Preserves existing structure when possible
  * - Supports both object property and array index assignments
  *
- * **Overwrite Control:**
- * The `overwrite` parameter controls behavior when the target location already exists:
- * - `true` (default): Replaces existing values
- * - `false`: Preserves existing values, only sets if location is empty/undefined
+ * **Options:**
+ * The function accepts an optional configuration object with the following properties:
+ *
+ * - **`overwrite`** (boolean, default: `true`):
+ *   Controls behavior when the target location already has a value.
+ *   - `true`: Replaces existing values at the target location
+ *   - `false`: Preserves existing values, only sets if location is undefined
+ *
+ * - **`preserveNull`** (boolean, default: `false`):
+ *   Controls behavior when encountering `null` values in intermediate paths.
+ *   - `true`: Preserves `null` values, returns original object without modification
+ *   - `false`: Replaces `null` with objects/arrays to continue path traversal
+ *
+ *   Note: This only affects intermediate path segments, not the final target value.
+ *   Setting a final value to `null` is always allowed regardless of this option
  *
  * @template Input - Input object type constraint (Dictionary or Array)
- * @param input - The target JSON document to modify.
+ * @param value - The target JSON document to modify.
  *                Must be a plain object or array. Other types will throw an error.
  *                The input object is modified in place and returned.
  * @param pointer - JSON Pointer specifying the location where the value should be set.
  *                  Can be provided as:
  *                  - String: JSON Pointer string following RFC 6901 format
  *                  - Array: Sequence of reference tokens as string array
- * @param value - The value to set at the specified location.
+ * @param input - The value to set at the specified location.
  *                Can be any valid JSON value (object, array, string, number, boolean, null).
- * @param overwrite - Controls whether to overwrite existing values at the target location.
- *                    When true (default), existing values are replaced.
- *                    When false, existing values are preserved and the operation is skipped.
- *                    This is an implementation-specific feature not defined in RFC 6901.
+ * @param options - Optional configuration object controlling set behavior:
+ *                  - `overwrite` (boolean, default: true): Whether to replace existing values
+ *                  - `preserveNull` (boolean, default: false): Whether to preserve null in intermediate paths
  *
  * @returns The modified input object with the value set at the specified location.
  *          The return value is the same reference as the input (modified in place).
@@ -116,14 +126,34 @@ import { setValueByPointer } from './utils/setValueByPointer';
  * // Overwrite control
  * const obj = { existing: "original", other: "data" };
  *
- * setValue(obj, '/existing', 'modified', true);
+ * setValue(obj, '/existing', 'modified', { overwrite: true });
  * // Returns: { existing: "modified", other: "data" }
  *
- * setValue(obj, '/existing', 'ignored', false);
+ * setValue(obj, '/existing', 'ignored', { overwrite: false });
  * // Returns: { existing: "modified", other: "data" } (unchanged)
  *
- * setValue(obj, '/new', 'value', false);
+ * setValue(obj, '/new', 'value', { overwrite: false });
  * // Returns: { existing: "modified", other: "data", new: "value" }
+ * ```
+ *
+ * @example
+ * ```typescript
+ * // Null preservation in intermediate paths
+ * const obj = { profile: null };
+ *
+ * // Default behavior: null is replaced
+ * setValue(obj, '/profile/name', 'John');
+ * // Returns: { profile: { name: "John" } }
+ *
+ * // Preserve null: returns original unchanged
+ * const obj2 = { profile: null };
+ * setValue(obj2, '/profile/name', 'John', { preserveNull: true });
+ * // Returns: { profile: null } (unchanged)
+ *
+ * // Setting final value to null is always allowed
+ * const obj3 = { profile: { name: "John" } };
+ * setValue(obj3, '/profile/name', null);
+ * // Returns: { profile: { name: null } }
  * ```
  *
  * @example
@@ -150,21 +180,24 @@ import { setValueByPointer } from './utils/setValueByPointer';
 export const setValue = <
   Output extends Dictionary | Array<any> = Dictionary | Array<any>,
 >(
-  input: Dictionary | Array<any>,
+  value: Dictionary | Array<any>,
   pointer: string | string[],
-  value: any,
-  overwrite: boolean = true,
+  input: any,
+  options?: { overwrite?: boolean; preserveNull?: boolean },
 ): Output => {
-  if (!(isPlainObject(input) || isArray(input)))
+  if (!(isPlainObject(value) || isArray(value)))
     throw new JSONPointerError(
       'INVALID_INPUT',
       '`input` must be a plain object or an array.',
-      { input },
+      { input: value },
     );
+  const overwrite = options?.overwrite ?? true;
+  const preserveNull = options?.preserveNull ?? false;
   return setValueByPointer(
-    input,
-    compilePointer(pointer),
     value,
+    compilePointer(pointer),
+    input,
     overwrite,
+    preserveNull,
   ) as Output;
 };

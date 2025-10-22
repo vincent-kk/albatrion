@@ -111,4 +111,156 @@ describe('setValue', () => {
   it('should return value if root path is provided', () => {
     expect(setValue(testObj, '#', 'value')).toEqual('value');
   });
+
+  describe('options.overwrite', () => {
+    it('should overwrite existing values when overwrite is true (default)', () => {
+      const obj = { foo: { bar: 'old' } };
+      setValue(obj, '/foo/bar', 'new');
+      expect(obj.foo.bar).toBe('new');
+    });
+
+    it('should overwrite existing values when overwrite is explicitly true', () => {
+      const obj = { foo: { bar: 'old' } };
+      setValue(obj, '/foo/bar', 'new', { overwrite: true });
+      expect(obj.foo.bar).toBe('new');
+    });
+
+    it('should not overwrite existing values when overwrite is false', () => {
+      const obj = { foo: { bar: 'old' } };
+      setValue(obj, '/foo/bar', 'new', { overwrite: false });
+      expect(obj.foo.bar).toBe('old');
+    });
+
+    it('should set new values even when overwrite is false', () => {
+      const obj: any = { foo: {} };
+      setValue(obj, '/foo/bar', 'new', { overwrite: false });
+      expect(obj.foo.bar).toBe('new');
+    });
+
+    it('should not overwrite undefined values when key exists and overwrite is false', () => {
+      const obj: any = { foo: { bar: undefined } };
+      setValue(obj, '/foo/bar', 'new', { overwrite: false });
+      // Key exists (even with undefined value), so it won't be overwritten
+      expect(obj.foo.bar).toBeUndefined();
+    });
+
+    it('should set value when key does not exist', () => {
+      const obj: any = { foo: {} };
+      // Key 'bar' doesn't exist
+      setValue(obj, '/foo/bar', 'new', { overwrite: false });
+      expect(obj.foo.bar).toBe('new');
+    });
+  });
+
+  describe('options.preserveNull', () => {
+    it('should replace null with object by default (preserveNull=false)', () => {
+      const obj = { profile: null };
+      setValue(obj, '/profile/name', 'John');
+      expect(obj).toEqual({ profile: { name: 'John' } });
+    });
+
+    it('should replace null when preserveNull is explicitly false', () => {
+      const obj = { profile: null };
+      setValue(obj, '/profile/name', 'John', { preserveNull: false });
+      expect(obj).toEqual({ profile: { name: 'John' } });
+    });
+
+    it('should preserve null when preserveNull is true', () => {
+      const obj = { profile: null };
+      const result = setValue(obj, '/profile/name', 'John', {
+        preserveNull: true,
+      });
+      expect(result).toBe(obj);
+      expect(obj).toEqual({ profile: null });
+    });
+
+    it('should replace null with array when next segment is numeric', () => {
+      const obj = { items: null };
+      setValue(obj, '/items/0', 'first', { preserveNull: false });
+      expect(obj).toEqual({ items: ['first'] });
+    });
+
+    it('should preserve null in array path when preserveNull is true', () => {
+      const obj = { items: null };
+      setValue(obj, '/items/0', 'first', { preserveNull: true });
+      expect(obj).toEqual({ items: null });
+    });
+
+    it('should handle deeply nested null paths', () => {
+      const obj = { a: { b: null } };
+      setValue(obj, '/a/b/c/d', 'value', { preserveNull: false });
+      expect(obj).toEqual({ a: { b: { c: { d: 'value' } } } });
+    });
+
+    it('should preserve deeply nested null', () => {
+      const obj = { a: { b: null } };
+      setValue(obj, '/a/b/c/d', 'value', { preserveNull: true });
+      expect(obj).toEqual({ a: { b: null } });
+    });
+
+    it('should allow setting final value to null regardless of preserveNull', () => {
+      const obj1 = { foo: 'bar' };
+      setValue(obj1, '/foo', null, { preserveNull: false });
+      expect(obj1.foo).toBeNull();
+
+      const obj2 = { foo: 'bar' };
+      setValue(obj2, '/foo', null, { preserveNull: true });
+      expect(obj2.foo).toBeNull();
+    });
+  });
+
+  describe('combined options', () => {
+    it('should respect both overwrite=false and preserveNull=false', () => {
+      const obj = { profile: null, existing: 'value' };
+      setValue(obj, '/profile/name', 'John', {
+        overwrite: false,
+        preserveNull: false,
+      });
+      expect(obj).toEqual({ profile: { name: 'John' }, existing: 'value' });
+    });
+
+    it('should respect both overwrite=false and preserveNull=true', () => {
+      const obj = { profile: null, existing: 'old' };
+      setValue(obj, '/profile/name', 'John', {
+        overwrite: false,
+        preserveNull: true,
+      });
+      expect(obj).toEqual({ profile: null, existing: 'old' });
+    });
+
+    it('should respect both overwrite=true and preserveNull=true', () => {
+      const obj = { profile: null, existing: 'old' };
+      setValue(obj, '/profile/name', 'John', {
+        overwrite: true,
+        preserveNull: true,
+      });
+      expect(obj).toEqual({ profile: null, existing: 'old' });
+
+      setValue(obj, '/existing', 'new', {
+        overwrite: true,
+        preserveNull: true,
+      });
+      expect(obj.existing).toBe('new');
+    });
+
+    it('should handle complex scenario with multiple options', () => {
+      const obj = {
+        data: null,
+        config: { setting: 'original' },
+        items: [1, 2, 3],
+      };
+
+      // Preserve null
+      setValue(obj, '/data/nested', 'value', { preserveNull: true });
+      expect(obj.data).toBeNull();
+
+      // Don't overwrite existing
+      setValue(obj, '/config/setting', 'new', { overwrite: false });
+      expect(obj.config.setting).toBe('original');
+
+      // Both options
+      setValue(obj, '/items/0', 999, { overwrite: true, preserveNull: false });
+      expect(obj.items[0]).toBe(999);
+    });
+  });
 });
