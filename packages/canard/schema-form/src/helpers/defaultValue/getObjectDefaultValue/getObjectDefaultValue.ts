@@ -1,3 +1,4 @@
+import { isEmptyObject } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
 import { setValue } from '@winglet/json/pointer';
@@ -10,15 +11,22 @@ export const getObjectDefaultValue = (
   jsonSchema: ObjectSchema,
   inputDefault?: ObjectValue | Nullish,
 ) => {
-  const defaultValue: ObjectValue = inputDefault || jsonSchema.default || {};
+  const defaultValue =
+    inputDefault !== undefined ? inputDefault : jsonSchema.default;
+  const result = defaultValue || {};
   new JsonSchemaScanner({
     visitor: {
       enter: ({ schema, dataPath }) => {
         if (hasOwnProperty(schema, 'default'))
-          setValue(defaultValue, dataPath, schema.default, false);
+          setValue(result, dataPath, schema.default, SET_VALUE_OPTIONS);
       },
     },
   }).scan(jsonSchema);
+  if (isEmptyObject(result)) return defaultValue;
+  return result;
+};
 
-  return defaultValue;
+const SET_VALUE_OPTIONS = {
+  overwrite: false,
+  preserveNull: false,
 };

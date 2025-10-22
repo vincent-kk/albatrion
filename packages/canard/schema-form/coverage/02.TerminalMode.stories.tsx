@@ -14,7 +14,11 @@ export const FormTypeInputArrayTerminal = () => {
     properties: {
       arr: {
         type: 'array',
-        FormTypeInput: ({ node, onChange, value }: FormTypeInputProps<string[]>) => {
+        FormTypeInput: ({
+          node,
+          onChange,
+          value,
+        }: FormTypeInputProps<string[]>) => {
           return (
             <div>
               i am array item: {node.group}
@@ -58,7 +62,11 @@ export const FormTypeInputArrayNotTerminal = () => {
       arr: {
         type: 'array',
         terminal: false,
-        FormTypeInput: ({ node, onChange, value }: FormTypeInputProps<string[]>) => {
+        FormTypeInput: ({
+          node,
+          onChange,
+          value,
+        }: FormTypeInputProps<string[]>) => {
           return (
             <div>
               i am array item: {node.group}
@@ -764,6 +772,296 @@ export const FormTypeInputObjectTerminalWithPropertyKeys = () => {
               },
             },
           },
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form jsonSchema={schema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+export const FormTypeInputObjectNullableWithDefaultNull = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      config: {
+        type: 'object',
+        terminal: true,
+        nullable: true,
+        default: null,
+        FormTypeInput: ({
+          onChange,
+          value,
+          defaultValue,
+        }: FormTypeInputProps<{ theme: string; language: string } | null>) => {
+          return (
+            <div>
+              <div>
+                <strong>Value:</strong>
+                <pre>{JSON.stringify(value, null, 2)}</pre>
+              </div>
+              <div>
+                <strong>Default Value:</strong>
+                <pre>{JSON.stringify(defaultValue, null, 2)}</pre>
+              </div>
+              <div>
+                <button
+                  onClick={() => onChange({ theme: 'dark', language: 'ko' })}
+                >
+                  Set Object
+                </button>
+                <button onClick={() => onChange(null)}>Set Null</button>
+              </div>
+            </div>
+          );
+        },
+        properties: {
+          theme: { type: 'string' },
+          language: { type: 'string' },
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form jsonSchema={schema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+export const FormTypeInputObjectNullableWithDefaultNullAndSubDefaults = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      settings: {
+        type: 'object',
+        terminal: true,
+        nullable: true,
+        default: null,
+        FormTypeInput: ({
+          onChange,
+          value,
+          defaultValue,
+        }: FormTypeInputProps<{ theme: string; autoSave: boolean } | null>) => {
+          return (
+            <div>
+              <div>
+                <strong>Value:</strong>
+                <pre>{JSON.stringify(value, null, 2)}</pre>
+              </div>
+              <div>
+                <strong>Default Value:</strong>
+                <pre>{JSON.stringify(defaultValue, null, 2)}</pre>
+              </div>
+              <div>
+                <button
+                  onClick={() => onChange({ theme: 'light', autoSave: false })}
+                >
+                  Set Custom
+                </button>
+                <button onClick={() => onChange(null)}>Set Null</button>
+              </div>
+            </div>
+          );
+        },
+        properties: {
+          theme: { type: 'string', default: 'dark' },
+          autoSave: { type: 'boolean', default: true },
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form jsonSchema={schema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+export const FormTypeInputObjectNullableNestedMixedDefaults = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      user: {
+        type: 'object',
+        terminal: true,
+        nullable: true,
+        default: null,
+        FormTypeInput: ({
+          onChange,
+          value,
+        }: FormTypeInputProps<{ name: string; age: number } | null>) => {
+          return (
+            <div
+              style={{
+                marginBottom: '1rem',
+                padding: '1rem',
+                border: '1px solid #ccc',
+              }}
+            >
+              <h4>User (has sub-defaults)</h4>
+              <div>
+                <strong>Value:</strong>
+                <pre>{JSON.stringify(value, null, 2)}</pre>
+              </div>
+              <div>
+                <button onClick={() => onChange({ name: 'John', age: 25 })}>
+                  Set User
+                </button>
+                <button onClick={() => onChange(null)}>Set Null</button>
+              </div>
+            </div>
+          );
+        },
+        properties: {
+          name: { type: 'string', default: 'Vincent' },
+          age: { type: 'number', default: 30 },
+        },
+      },
+      metadata: {
+        type: 'object',
+        terminal: true,
+        nullable: true,
+        default: null,
+        FormTypeInput: ({
+          onChange,
+          value,
+        }: FormTypeInputProps<{ created: string; updated: string } | null>) => {
+          return (
+            <div
+              style={{
+                marginBottom: '1rem',
+                padding: '1rem',
+                border: '1px solid #ccc',
+              }}
+            >
+              <h4>Metadata (no sub-defaults)</h4>
+              <div>
+                <strong>Value:</strong>
+                <pre>{JSON.stringify(value, null, 2)}</pre>
+              </div>
+              <div>
+                <button
+                  onClick={() =>
+                    onChange({ created: '2025-01-01', updated: '2025-01-02' })
+                  }
+                >
+                  Set Metadata
+                </button>
+                <button onClick={() => onChange(null)}>Set Null</button>
+              </div>
+            </div>
+          );
+        },
+        properties: {
+          created: { type: 'string' },
+          updated: { type: 'string' },
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form jsonSchema={schema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+export const FormTypeInputObjectNullableLifecycle = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      dynamic: {
+        type: 'object',
+        terminal: true,
+        nullable: true,
+        FormTypeInput: ({
+          onChange,
+          value,
+        }: FormTypeInputProps<{ key: string } | null>) => {
+          return (
+            <div>
+              <div>
+                <strong>Value:</strong>
+                <pre>{JSON.stringify(value, null, 2)}</pre>
+              </div>
+              <div>
+                <strong>Is Null:</strong> {value === null ? 'Yes' : 'No'}
+              </div>
+              <div>
+                <button onClick={() => onChange(null)}>Set Null</button>
+                <button onClick={() => onChange({ key: 'initial' })}>
+                  Set Initial
+                </button>
+                <button onClick={() => onChange({ key: 'updated' })}>
+                  Set Updated
+                </button>
+              </div>
+            </div>
+          );
+        },
+        properties: {
+          key: { type: 'string', default: 'initial' },
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form jsonSchema={schema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+export const FormTypeInputObjectNullableWithoutExplicitFlag = () => {
+  const [value, setValue] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      required: {
+        type: 'object',
+        terminal: true,
+        FormTypeInput: ({
+          onChange,
+          value,
+        }: FormTypeInputProps<{ value: string }>) => {
+          return (
+            <div>
+              <div>
+                <strong>Value:</strong>
+                <pre>{JSON.stringify(value, null, 2)}</pre>
+              </div>
+              <div>
+                <strong>Type:</strong> {typeof value}
+              </div>
+              <div>
+                <strong>Is Null:</strong> {value === null ? 'Yes' : 'No'}
+              </div>
+              <div>
+                <button onClick={() => onChange({ value: 'test' })}>
+                  Set Object
+                </button>
+                <button onClick={() => onChange(null as any)}>
+                  Try Set Null
+                </button>
+              </div>
+            </div>
+          );
+        },
+        properties: {
+          value: { type: 'string' },
         },
       },
     },
