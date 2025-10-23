@@ -153,10 +153,10 @@ describe('setValue', () => {
   });
 
   describe('options.preserveNull', () => {
-    it('should replace null with object by default (preserveNull=false)', () => {
+    it('should replace null with object by default (preserveNull=true)', () => {
       const obj = { profile: null };
       setValue(obj, '/profile/name', 'John');
-      expect(obj).toEqual({ profile: { name: 'John' } });
+      expect(obj).toEqual({ profile: null });
     });
 
     it('should replace null when preserveNull is explicitly false', () => {
