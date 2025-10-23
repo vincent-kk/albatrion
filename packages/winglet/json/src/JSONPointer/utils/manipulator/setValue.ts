@@ -42,7 +42,7 @@ import { setValueByPointer } from './utils/setValueByPointer';
  *   - `true`: Replaces existing values at the target location
  *   - `false`: Preserves existing values, only sets if location is undefined
  *
- * - **`preserveNull`** (boolean, default: `false`):
+ * - **`preserveNull`** (boolean, default: `true`):
  *   Controls behavior when encountering `null` values in intermediate paths.
  *   - `true`: Preserves `null` values, returns original object without modification
  *   - `false`: Replaces `null` with objects/arrays to continue path traversal
@@ -62,7 +62,7 @@ import { setValueByPointer } from './utils/setValueByPointer';
  *                Can be any valid JSON value (object, array, string, number, boolean, null).
  * @param options - Optional configuration object controlling set behavior:
  *                  - `overwrite` (boolean, default: true): Whether to replace existing values
- *                  - `preserveNull` (boolean, default: false): Whether to preserve null in intermediate paths
+ *                  - `preserveNull` (boolean, default: true): Whether to preserve null in intermediate paths
  *
  * @returns The modified input object with the value set at the specified location.
  *          The return value is the same reference as the input (modified in place).
@@ -141,14 +141,14 @@ import { setValueByPointer } from './utils/setValueByPointer';
  * // Null preservation in intermediate paths
  * const obj = { profile: null };
  *
- * // Default behavior: null is replaced
+ * // Default behavior: null is preserved
  * setValue(obj, '/profile/name', 'John');
- * // Returns: { profile: { name: "John" } }
- *
- * // Preserve null: returns original unchanged
- * const obj2 = { profile: null };
- * setValue(obj2, '/profile/name', 'John', { preserveNull: true });
  * // Returns: { profile: null } (unchanged)
+ *
+ * // Replace null: null is replaced with objects/arrays
+ * const obj2 = { profile: null };
+ * setValue(obj2, '/profile/name', 'John', { preserveNull: false });
+ * // Returns: { profile: { name: "John" } }
  *
  * // Setting final value to null is always allowed
  * const obj3 = { profile: { name: "John" } };
@@ -192,7 +192,7 @@ export const setValue = <
       { input: value },
     );
   const overwrite = options?.overwrite ?? true;
-  const preserveNull = options?.preserveNull ?? false;
+  const preserveNull = options?.preserveNull ?? true;
   return setValueByPointer(
     value,
     compilePointer(pointer),
