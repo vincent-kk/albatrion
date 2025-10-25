@@ -28,10 +28,10 @@ export type ModalFrameProps<Context extends Dictionary = object, B = any> = {
   manualDestroy: boolean;
   closeOnBackdropClick: boolean;
   background?: ModalBackground<B>;
-  onConfirm: () => void;
-  onClose: () => void;
-  onChange: (value: any) => void;
-  onDestroy: () => void;
+  onConfirm: Fn;
+  onClose: Fn;
+  onChange: Fn<[value: any]>;
+  onDestroy: Fn;
   onChangeOrder: Fn;
   context: Context;
 };
@@ -41,9 +41,9 @@ interface ModalIdProps {
 }
 
 export interface PresenterProps extends ModalIdProps {
-  getValue: () => number;
-  increment: () => number;
-  reset: () => number;
+  getValue: Fn<[], number>;
+  increment: Fn<[], number>;
+  reset: Fn<[], number>;
 }
 
 export interface ModalLayerProps extends ModalIdProps {
@@ -51,16 +51,16 @@ export interface ModalLayerProps extends ModalIdProps {
 }
 
 export interface ModalHandlersWithId {
-  onConfirm: (modalId: ModalNode['id']) => void;
-  onClose: (modalId: ModalNode['id']) => void;
-  onChange: (modalId: ModalNode['id'], value: any) => void;
-  onDestroy: (modalId: ModalNode['id']) => void;
+  onConfirm: Fn<[modalId: ModalNode['id']]>;
+  onClose: Fn<[modalId: ModalNode['id']]>;
+  onChange: Fn<[modalId: ModalNode['id'], value: any]>;
+  onDestroy: Fn<[modalId: ModalNode['id']]>;
 }
 
 export type ModalActions = {
   modal: ModalNode | undefined;
-  onConfirm: () => void;
-  onClose: () => void;
-  onChange: (value: any) => void;
-  onDestroy: () => void;
+  onConfirm: Fn;
+  onClose: Fn;
+  onChange: Fn<[value: any]>;
+  onDestroy: Fn;
 };

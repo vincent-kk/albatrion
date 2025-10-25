@@ -37,7 +37,7 @@ export abstract class AbstractNode<T, B> {
     return this.#visible;
   }
 
-  #resolve: (result: T | null) => void;
+  #resolve: Fn<[result: T | null]>;
   #listeners: Set<Fn> = new Set();
 
   constructor({

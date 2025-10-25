@@ -1,5 +1,7 @@
 import type { ComponentType, ReactNode } from 'react';
 
+import type { Fn } from '@aileron/declare';
+
 import type {
   FooterOptions,
   ManagedEntity,
@@ -17,8 +19,8 @@ export class PromptNode<T, B> extends AbstractNode<T, B> {
   readonly type: 'prompt';
   readonly content?: ReactNode | ComponentType<PromptContentProps>;
   readonly defaultValue: T | undefined;
-  readonly Input: (props: PromptInputProps<T>) => ReactNode;
-  readonly disabled?: (value: T) => boolean;
+  readonly Input: Fn<[props: PromptInputProps<T>], ReactNode>;
+  readonly disabled?: Fn<[value: T], boolean>;
   readonly returnOnCancel?: boolean;
   readonly footer?: PromptFooterRender<T> | FooterOptions | false;
 

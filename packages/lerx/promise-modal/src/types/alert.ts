@@ -1,13 +1,13 @@
 import type { ComponentType, ReactNode } from 'react';
 
-import type { Dictionary } from '@aileron/declare';
+import type { Dictionary, Fn } from '@aileron/declare';
 
 import type { BaseModal, ContentComponentProps, FooterOptions } from './base';
 
-export type AlertFooterRender<Context extends Dictionary = object> = (props: {
-  onConfirm: VoidFunction;
-  context: Context;
-}) => ReactNode;
+export type AlertFooterRender<Context extends Dictionary = object> = Fn<
+  [props: { onConfirm: Fn; context: Context }],
+  ReactNode
+>;
 
 export type AlertContentProps<Context extends Dictionary = object> = Pick<
   ContentComponentProps<Context>,

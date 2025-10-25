@@ -1,27 +1,29 @@
 import type { ComponentType, ReactNode } from 'react';
 
-import type { Dictionary, SetStateFn } from '@aileron/declare';
+import type { Dictionary, Fn, SetStateFn } from '@aileron/declare';
 
 import type { BaseModal, ContentComponentProps, FooterOptions } from './base';
 
-export type PromptFooterRender<
-  T,
-  Context extends Dictionary = object,
-> = (props: {
-  value: T | undefined;
-  onChange: SetStateFn<T | undefined>;
-  onConfirm: VoidFunction;
-  onCancel: VoidFunction;
-  disabled: boolean;
-  context: Context;
-}) => ReactNode;
+export type PromptFooterRender<T, Context extends Dictionary = object> = Fn<
+  [
+    props: {
+      value: T | undefined;
+      onChange: SetStateFn<T | undefined>;
+      onConfirm: Fn;
+      onCancel: Fn;
+      disabled: boolean;
+      context: Context;
+    },
+  ],
+  ReactNode
+>;
 
 export interface PromptInputProps<T, Context extends Dictionary = object> {
   value?: T;
   defaultValue?: T;
   onChange: SetStateFn<T | undefined>;
-  onConfirm: VoidFunction;
-  onCancel: VoidFunction;
+  onConfirm: Fn;
+  onCancel: Fn;
   context: Context;
 }
 
@@ -36,8 +38,8 @@ export interface PromptModal<
   type: 'prompt';
   content?: ReactNode | ComponentType<PromptContentProps<Context>>;
   defaultValue?: T;
-  Input: (props: PromptInputProps<T, Context>) => ReactNode;
-  disabled?: (value: T | undefined) => boolean;
+  Input: Fn<[props: PromptInputProps<T, Context>], ReactNode>;
+  disabled?: Fn<[value: T | undefined], boolean>;
   returnOnCancel?: boolean;
   footer?: PromptFooterRender<T, Context> | FooterOptions | false;
 }

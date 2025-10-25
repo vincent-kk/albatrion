@@ -1,5 +1,7 @@
 import type { ComponentType, ReactNode } from 'react';
 
+import type { Fn } from '@aileron/declare';
+
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import type {
   BackgroundComponent,
@@ -17,8 +19,8 @@ interface PromptProps<InputValue, BackgroundValue = any> {
   subtitle?: ReactNode;
   content?: ReactNode | ComponentType<PromptContentProps>;
   defaultValue?: InputValue;
-  Input: (props: PromptInputProps<InputValue>) => ReactNode;
-  disabled?: (value: InputValue) => boolean;
+  Input: Fn<[props: PromptInputProps<InputValue>], ReactNode>;
+  disabled?: Fn<[value: InputValue], boolean>;
   returnOnCancel?: boolean;
   background?: ModalBackground<BackgroundValue>;
   footer?: PromptFooterRender<InputValue> | FooterOptions | false;

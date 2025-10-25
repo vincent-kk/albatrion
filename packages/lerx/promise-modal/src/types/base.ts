@@ -1,6 +1,6 @@
 import type { ComponentType, PropsWithChildren, ReactNode } from 'react';
 
-import type { Dictionary } from '@aileron/declare';
+import type { Dictionary, Fn } from '@aileron/declare';
 
 import type { ModalBackground } from './background';
 import type { ModalFrameProps } from './modal';
@@ -13,7 +13,7 @@ export interface BaseModal<T, B> {
   dimmed?: boolean;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
-  resolve: (result: T | null) => void;
+  resolve: Fn<[result: T | null]>;
   ForegroundComponent?: ForegroundComponent;
   BackgroundComponent?: BackgroundComponent;
 }
@@ -24,8 +24,8 @@ export type ForegroundComponent = ComponentType<
 export type BackgroundComponent = ComponentType<ModalFrameProps>;
 
 export interface ContentComponentProps<Context extends Dictionary = object> {
-  onConfirm: VoidFunction;
-  onCancel: VoidFunction;
+  onConfirm: Fn;
+  onCancel: Fn;
   context: Context;
 }
 
@@ -47,7 +47,7 @@ export type FooterComponentProps<Context extends Dictionary = object> = {
   cancelLabel?: ReactNode;
   hideCancel?: boolean;
   disabled?: boolean;
-  onConfirm: VoidFunction;
-  onCancel?: VoidFunction;
+  onConfirm: Fn;
+  onCancel?: Fn;
   context: Context;
 };
