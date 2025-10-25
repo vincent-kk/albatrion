@@ -1,6 +1,7 @@
 import { type CSSProperties, memo, useEffect } from 'react';
 
 import { map } from '@winglet/common-utils/array';
+import { counterFactory } from '@winglet/common-utils/lib';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 import { useVersion } from '@winglet/react-utils/hook';
 
@@ -14,6 +15,8 @@ import {
 
 import { anchor } from './style';
 
+const { getValue, increment, reset } = counterFactory(0);
+
 const AnchorInner = () => {
   const [version, update] = useVersion();
 
@@ -25,6 +28,8 @@ const AnchorInner = () => {
 
   const options = useConfigurationOptions();
   const dimmed = useActiveModalCount(validateDimmable, version);
+  if (!dimmed) reset();
+
   return (
     <div
       className={anchor}
@@ -37,7 +42,13 @@ const AnchorInner = () => {
       }
     >
       {map(modalIds, (id) => (
-        <Presenter key={id} modalId={id} />
+        <Presenter
+          key={id}
+          modalId={id}
+          getValue={getValue}
+          increment={increment}
+          reset={reset}
+        />
       ))}
     </div>
   );

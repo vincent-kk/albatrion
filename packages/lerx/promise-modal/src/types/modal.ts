@@ -36,8 +36,14 @@ export type ModalFrameProps<Context extends Dictionary = object, B = any> = {
   context: Context;
 };
 
-export interface ModalIdProps {
+interface ModalIdProps {
   modalId: ModalNode['id'];
+}
+
+export interface PresenterProps extends ModalIdProps {
+  getValue: () => number;
+  increment: () => number;
+  reset: () => number;
 }
 
 export interface ModalLayerProps extends ModalIdProps {
