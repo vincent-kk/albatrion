@@ -32,11 +32,9 @@ export const cx = (...args: ClassValue[]): string => {
     length = args.length,
     cursor: any,
     result = '';
-  for (; index < length; index++) {
-    if ((cursor = args[index]) && (cursor = getSegment(cursor))) {
+  for (; index < length; index++)
+    if ((cursor = args[index]) && (cursor = getSegment(cursor)))
       result = result ? result + ' ' + cursor : cursor;
-    }
-  }
   return result;
 };
 
