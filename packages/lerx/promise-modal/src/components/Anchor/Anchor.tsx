@@ -1,4 +1,4 @@
-import { type CSSProperties, memo, useEffect } from 'react';
+import { type CSSProperties, memo, useEffect, useMemo } from 'react';
 
 import { map } from '@winglet/common-utils/array';
 import { counterFactory } from '@winglet/common-utils/lib';
@@ -13,7 +13,7 @@ import {
   useModalManagerContext,
 } from '@/promise-modal/providers';
 
-import { anchor } from './style';
+import { anchor, backdrop } from './style';
 
 const { getValue, increment, reset } = counterFactory(0);
 
@@ -30,17 +30,26 @@ const AnchorInner = () => {
   const dimmed = useActiveModalCount(validateDimmable, version);
   if (!dimmed) reset();
 
+  const anchorStyle = useMemo(
+    () =>
+      ({
+        '--z-index': options.zIndex,
+        '--transition-duration': options.duration,
+      }) as CSSProperties,
+    [options],
+  );
+
+  const backdropStyle = useMemo(
+    () => ({
+      ...options.backdrop,
+      opacity: dimmed ? 1 : 0,
+    }),
+    [dimmed, options],
+  );
+
   return (
-    <div
-      className={anchor}
-      style={
-        {
-          '--z-index': options.zIndex,
-          transitionDuration: options.duration,
-          backgroundColor: dimmed ? options.backdrop : 'transparent',
-        } as CSSProperties
-      }
-    >
+    <div className={anchor} style={anchorStyle}>
+      <div className={backdrop} style={backdropStyle} />
       {map(modalIds, (id) => (
         <Presenter
           key={id}

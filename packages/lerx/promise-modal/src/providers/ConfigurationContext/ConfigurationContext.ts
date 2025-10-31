@@ -1,4 +1,4 @@
-import { type ComponentType, createContext } from 'react';
+import { type CSSProperties, type ComponentType, createContext } from 'react';
 
 import type {
   BackgroundComponent,
@@ -15,7 +15,9 @@ export interface ConfigurationContextProps {
   SubtitleComponent: ComponentType<WrapperComponentProps>;
   ContentComponent: ComponentType<WrapperComponentProps>;
   FooterComponent: ComponentType<FooterComponentProps>;
-  options: Required<ModalOptions>;
+  options: Required<
+    Omit<ModalOptions, 'backdrop'> & { backdrop: CSSProperties }
+  >;
 }
 
 export const ConfigurationContext = createContext<ConfigurationContextProps>(

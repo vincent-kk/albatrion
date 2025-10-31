@@ -1,10 +1,12 @@
 import {
+  type CSSProperties,
   type ComponentType,
   type PropsWithChildren,
   memo,
   useMemo,
 } from 'react';
 
+import { isPlainObject, isString } from '@winglet/common-utils/filter';
 import { useConstant, useSnapshot } from '@winglet/react-utils/hook';
 
 import {
@@ -26,15 +28,18 @@ import type {
   WrapperComponentProps,
 } from '@/promise-modal/types';
 
-import { ConfigurationContext } from './ConfigurationContext';
+import {
+  ConfigurationContext,
+  type ConfigurationContextProps,
+} from './ConfigurationContext';
 
 const DEFAULT_OPTIONS = {
   zIndex: DEFAULT_Z_INDEX,
   duration: DEFAULT_ANIMATION_DURATION,
-  backdrop: DEFAULT_BACKDROP_COLOR,
+  backdrop: { backgroundColor: DEFAULT_BACKDROP_COLOR },
   closeOnBackdropClick: true,
   manualDestroy: false,
-} satisfies Required<ModalOptions>;
+} satisfies Required<ConfigurationContextProps['options']>;
 
 export interface ConfigurationContextProviderProps {
   BackgroundComponent?: ComponentType<ModalFrameProps>;
@@ -67,21 +72,19 @@ export const ConfigurationContextProvider = memo(
     });
     const options = useSnapshot(inputOptions);
 
-    const value = useMemo(
-      () => ({
+    const value = useMemo(() => {
+      const { backdrop: defaultBackdrop, ...defaultOptions } = DEFAULT_OPTIONS;
+      const backdrop = getBackdropStyle(options?.backdrop, defaultBackdrop);
+      return {
         ForegroundComponent: constant.ForegroundComponent,
         BackgroundComponent: constant.BackgroundComponent,
         TitleComponent: constant.TitleComponent,
         SubtitleComponent: constant.SubtitleComponent,
         ContentComponent: constant.ContentComponent,
         FooterComponent: constant.FooterComponent,
-        options: {
-          ...DEFAULT_OPTIONS,
-          ...options,
-        } satisfies ConfigurationContextProviderProps['options'],
-      }),
-      [constant, options],
-    );
+        options: { ...defaultOptions, ...options, backdrop },
+      };
+    }, [constant, options]);
     return (
       <ConfigurationContext.Provider value={value}>
         {children}
@@ -89,3 +92,12 @@ export const ConfigurationContextProvider = memo(
     );
   },
 );
+
+const getBackdropStyle = (
+  backdrop: ModalOptions['backdrop'],
+  defaultBackdrop: CSSProperties,
+): CSSProperties => {
+  if (isPlainObject(backdrop)) return backdrop;
+  if (isString(backdrop)) return { backgroundColor: backdrop };
+  return defaultBackdrop;
+};
