@@ -411,3 +411,303 @@ export const IfThenElseComplex2 = () => {
     </StoryLayout>
   );
 };
+
+export const IfThenElseMultipleConditions = () => {
+  const schema = {
+    type: 'object',
+    properties: {
+      participantType: {
+        type: 'string',
+        enum: ['adult', 'minor'],
+        default: 'adult',
+      },
+      participantRegion: {
+        type: 'string',
+        enum: ['domestic', 'international'],
+        default: 'domestic',
+      },
+      name: {
+        type: 'string',
+      },
+      passportNumber: {
+        type: 'string',
+        pattern: '^[A-Z0-9]{9}$',
+      },
+      visaInformation: {
+        type: 'string',
+      },
+      nationalIdNumber: {
+        type: 'string',
+        pattern: '^[0-9]{6}-[0-9]{7}$',
+      },
+      guardianConsent: {
+        type: 'string',
+      },
+      guardianContact: {
+        type: 'string',
+        pattern: '^[0-9]{3}-[0-9]{4}-[0-9]{4}$',
+      },
+    },
+    if: {
+      properties: {
+        participantType: { const: 'adult' },
+        participantRegion: { const: 'international' },
+      },
+    },
+    then: {
+      required: ['name', 'passportNumber', 'visaInformation'],
+    },
+    else: {
+      if: {
+        properties: {
+          participantType: { const: 'adult' },
+          participantRegion: { const: 'domestic' },
+        },
+      },
+      then: {
+        required: ['name', 'nationalIdNumber'],
+      },
+      else: {
+        if: {
+          properties: {
+            participantType: { const: 'minor' },
+          },
+        },
+        then: {
+          required: ['name', 'guardianConsent', 'guardianContact'],
+        },
+        else: {
+          required: ['name'],
+        },
+      },
+    },
+    required: ['participantType', 'participantRegion'],
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <div
+        style={{
+          padding: '16px',
+          marginBottom: '16px',
+          backgroundColor: '#f5f5f5',
+          borderRadius: '4px',
+          fontSize: '14px',
+        }}
+      >
+        <h3 style={{ marginTop: 0 }}>복합 조건 - 이벤트 참가 신청서</h3>
+        <p style={{ margin: '8px 0' }}>
+          <strong>조건 1:</strong> participantType = "adult" AND
+          participantRegion = "international"
+        </p>
+        <p style={{ margin: '8px 0', paddingLeft: '16px' }}>
+          → 필수 입력: name, passportNumber, visaInformation
+        </p>
+        <p style={{ margin: '8px 0' }}>
+          <strong>조건 2:</strong> participantType = "adult" AND
+          participantRegion = "domestic"
+        </p>
+        <p style={{ margin: '8px 0', paddingLeft: '16px' }}>
+          → 필수 입력: name, nationalIdNumber
+        </p>
+        <p style={{ margin: '8px 0' }}>
+          <strong>조건 3:</strong> participantType = "minor"
+        </p>
+        <p style={{ margin: '8px 0', paddingLeft: '16px' }}>
+          → 필수 입력: name, guardianConsent, guardianContact
+        </p>
+      </div>
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
+    </StoryLayout>
+  );
+};
+
+export const IfThenElseComplexLogic = () => {
+  const schema = {
+    type: 'object',
+    properties: {
+      accountType: {
+        type: 'string',
+        enum: ['personal', 'business'],
+        default: 'personal',
+      },
+      subscriptionPlan: {
+        type: 'string',
+        enum: ['free', 'premium', 'enterprise'],
+        default: 'free',
+      },
+      paymentMethod: {
+        type: 'string',
+        enum: ['card', 'invoice'],
+        default: 'card',
+      },
+      email: {
+        type: 'string',
+        format: 'email',
+      },
+      companyName: {
+        type: 'string',
+      },
+      businessNumber: {
+        type: 'string',
+        pattern: '^[0-9]{10}$',
+      },
+      billingAddress: {
+        type: 'string',
+      },
+      purchaseOrder: {
+        type: 'string',
+      },
+      taxDocument: {
+        type: 'string',
+      },
+    },
+    if: {
+      properties: {
+        accountType: { const: 'business' },
+        paymentMethod: { const: 'invoice' },
+      },
+    },
+    then: {
+      required: [
+        'email',
+        'companyName',
+        'businessNumber',
+        'billingAddress',
+        'purchaseOrder',
+        'taxDocument',
+      ],
+    },
+    else: {
+      if: {
+        properties: {
+          accountType: { const: 'business' },
+          paymentMethod: { const: 'card' },
+        },
+      },
+      then: {
+        required: ['email', 'companyName', 'businessNumber', 'billingAddress'],
+      },
+      else: {
+        if: {
+          properties: {
+            accountType: { const: 'personal' },
+            subscriptionPlan: { enum: ['premium', 'enterprise'] },
+          },
+        },
+        then: {
+          required: ['email', 'billingAddress'],
+        },
+        else: {
+          required: ['email'],
+        },
+      },
+    },
+    required: ['accountType', 'subscriptionPlan', 'paymentMethod'],
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof schema, any>>(null);
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>([]);
+  return (
+    <StoryLayout jsonSchema={schema} value={value} errors={errors}>
+      <div
+        style={{
+          padding: '16px',
+          marginBottom: '16px',
+          backgroundColor: '#f5f5f5',
+          borderRadius: '4px',
+          fontSize: '14px',
+        }}
+      >
+        <h3 style={{ marginTop: 0 }}>
+          복잡한 로직 - 계정 가입 및 결제 정보 폼
+        </h3>
+        <p style={{ margin: '8px 0' }}>
+          <strong>조건 1:</strong> accountType = "business" AND paymentMethod =
+          "invoice"
+        </p>
+        <p style={{ margin: '8px 0', paddingLeft: '16px' }}>
+          → 필수 입력: email, companyName, businessNumber, billingAddress,
+          purchaseOrder, taxDocument
+        </p>
+        <p
+          style={{
+            margin: '8px 0',
+            fontSize: '13px',
+            color: '#666',
+            paddingLeft: '16px',
+          }}
+        >
+          (기업 계정 + 세금계산서 결제 시 모든 회계 서류 필요)
+        </p>
+        <p style={{ margin: '8px 0' }}>
+          <strong>조건 2:</strong> accountType = "business" AND paymentMethod =
+          "card"
+        </p>
+        <p style={{ margin: '8px 0', paddingLeft: '16px' }}>
+          → 필수 입력: email, companyName, businessNumber, billingAddress
+        </p>
+        <p
+          style={{
+            margin: '8px 0',
+            fontSize: '13px',
+            color: '#666',
+            paddingLeft: '16px',
+          }}
+        >
+          (기업 계정 + 카드 결제 시 기본 회사 정보만 필요)
+        </p>
+        <p style={{ margin: '8px 0' }}>
+          <strong>조건 3:</strong> accountType = "personal" AND subscriptionPlan
+          = "premium" or "enterprise"
+        </p>
+        <p style={{ margin: '8px 0', paddingLeft: '16px' }}>
+          → 필수 입력: email, billingAddress
+        </p>
+        <p
+          style={{
+            margin: '8px 0',
+            fontSize: '13px',
+            color: '#666',
+            paddingLeft: '16px',
+          }}
+        >
+          (개인 계정 + 유료 플랜은 청구지 주소 필요)
+        </p>
+        <p style={{ margin: '8px 0' }}>
+          <strong>조건 4:</strong> 그 외 모든 경우 (개인 계정 + 무료 플랜)
+        </p>
+        <p style={{ margin: '8px 0', paddingLeft: '16px' }}>
+          → 필수 입력: email
+        </p>
+        <p
+          style={{
+            margin: '8px 0',
+            fontSize: '13px',
+            color: '#666',
+            paddingLeft: '16px',
+          }}
+        >
+          (무료 플랜은 이메일만 필요)
+        </p>
+      </div>
+      <Form
+        jsonSchema={schema}
+        onChange={setValue}
+        onValidate={setErrors}
+        ref={formHandle}
+      />
+    </StoryLayout>
+  );
+};

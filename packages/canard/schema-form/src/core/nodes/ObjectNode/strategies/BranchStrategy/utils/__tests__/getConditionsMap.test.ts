@@ -162,7 +162,7 @@ describe('getConditionsMap', () => {
     );
     const noneConditions = result?.get('none');
     expect(noneConditions).toEqual([
-      '(!["admin","user"].includes((../userType)))&&((../status)!=="active")',
+      '(!["admin","user"].includes((../userType)))||((../status)!=="active")',
     ]);
   });
 });
