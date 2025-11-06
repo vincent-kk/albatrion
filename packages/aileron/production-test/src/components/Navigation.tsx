@@ -70,6 +70,22 @@ const Navigation = () => {
         </li>
         <li>
           <NavLink
+            to="/promise-modal"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Promise Modal
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/modal-lifecycle"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Modal Lifecycle
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
             to="/about"
             className={({ isActive }) => (isActive ? "active" : "")}
           >

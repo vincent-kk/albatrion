@@ -5,7 +5,10 @@ import { useOnMountLayout } from '@winglet/react-utils/hook';
 import { Background } from '@/promise-modal/components/Background';
 import { Foreground } from '@/promise-modal/components/Foreground';
 import { useSubscribeModal } from '@/promise-modal/hooks/useSubscribeModal';
-import { useConfigurationOptions, useModal } from '@/promise-modal/providers';
+import {
+  useConfigurationOptions,
+  useModalManager,
+} from '@/promise-modal/providers';
 import type { PresenterProps } from '@/promise-modal/types';
 
 import { presenter } from './style';
@@ -14,7 +17,7 @@ export const Presenter = memo(
   ({ modalId, getValue, increment }: PresenterProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const options = useConfigurationOptions();
-    const { modal } = useModal(modalId);
+    const { modal } = useModalManager(modalId);
     useSubscribeModal(modal);
 
     useOnMountLayout(() => {

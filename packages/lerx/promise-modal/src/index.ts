@@ -11,6 +11,7 @@ export {
   type BootstrapProviderProps as ModalProviderProps,
 } from './bootstrap';
 
+export { useModal } from './hooks/useModal';
 export { useActiveModalCount } from './hooks/useActiveModalCount';
 export { useDestroyAfter } from './hooks/useDestroyAfter';
 export { useModalAnimation } from './hooks/useModalAnimation';

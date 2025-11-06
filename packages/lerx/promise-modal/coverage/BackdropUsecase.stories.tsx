@@ -222,7 +222,9 @@ export const BlurBackdrop = () => {
         >
           Open Modal with Blur Backdrop
         </button>
-        <p>Tests backdrop-filter blur effect (works best with background image)</p>
+        <p>
+          Tests backdrop-filter blur effect (works best with background image)
+        </p>
       </div>
     </ModalProvider>
   );
@@ -627,7 +629,8 @@ export const LightGlassmorphismBackdrop = () => {
           onClick={() =>
             alert({
               title: 'Glassmorphism Effect',
-              content: 'This modal demonstrates a modern glassmorphism backdrop',
+              content:
+                'This modal demonstrates a modern glassmorphism backdrop',
             })
           }
         >

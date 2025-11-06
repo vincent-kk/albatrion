@@ -12,7 +12,7 @@ import { AbstractNode } from './AbstractNode';
 
 type AlertNodeProps<B> = AlertModal<B> & ManagedEntity;
 
-export class AlertNode<B> extends AbstractNode<null, B> {
+export class AlertNode<B = any> extends AbstractNode<null, B> {
   readonly type: 'alert';
   readonly subtype?: 'info' | 'success' | 'warning' | 'error';
   readonly content?: ReactNode | ComponentType<AlertContentProps>;
@@ -33,9 +33,10 @@ export class AlertNode<B> extends AbstractNode<null, B> {
     footer,
     background,
     dimmed,
+    duration,
     manualDestroy,
     closeOnBackdropClick,
-    resolve,
+    handleResolve,
     ForegroundComponent,
     BackgroundComponent,
   }: AlertNodeProps<B>) {
@@ -47,9 +48,10 @@ export class AlertNode<B> extends AbstractNode<null, B> {
       subtitle,
       background,
       dimmed,
+      duration,
       manualDestroy,
       closeOnBackdropClick,
-      resolve,
+      handleResolve,
       ForegroundComponent,
       BackgroundComponent,
     });
@@ -58,10 +60,12 @@ export class AlertNode<B> extends AbstractNode<null, B> {
     this.content = content;
     this.footer = footer;
   }
+
   onClose() {
-    this.resolve(null);
+    this.onResolve(null);
   }
+
   onConfirm() {
-    this.resolve(null);
+    this.onResolve(null);
   }
 }

@@ -9,7 +9,6 @@ export interface ModalManagerContextProps extends ModalHandlersWithId {
   modalIds: ModalNode['id'][];
   getModal: Fn<[id: ModalNode['id']], ModalActions>;
   getModalNode: Fn<[id: ModalNode['id']], ModalNode | undefined>;
-  setUpdater: Fn<[updater: Fn]>;
 }
 
 export const ModalManagerContext = createContext<ModalManagerContextProps>(

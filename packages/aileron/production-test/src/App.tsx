@@ -1,5 +1,7 @@
 import { Routes, Route } from "react-router-dom";
+import { ModalProvider } from "@lerx/promise-modal";
 import Navigation from "./components/Navigation";
+import { DarkModalForeground } from "./components/DarkModalForeground";
 import Home from "./pages/Home";
 import ComponentTest from "./pages/ComponentTest";
 import FormTest from "./pages/FormTest";
@@ -10,34 +12,45 @@ import CanardForm from "./pages/CanardForm";
 import CanardFormNullable from "./pages/CanardForm.nullable";
 import CanardFormComputed from "./pages/CanardForm.computed";
 import CanardFormIgnoreAdditionalProperties from "./pages/CanardForm.ignoreAdditionalProperties";
+import PromiseModalTest from "./pages/PromiseModalTest";
+import ModalLifecycleTest from "./pages/ModalLifecycleTest";
 
 function App() {
   return (
-    <div className="app">
-      <Navigation />
-      <main className="main-content">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/components" element={<ComponentTest />} />
-          <Route path="/canard-form" element={<CanardForm />} />
-          <Route
-            path="/canard-form-nullable"
-            element={<CanardFormNullable />}
-          />
-          <Route
-            path="/canard-form-computed"
-            element={<CanardFormComputed />}
-          />
-          <Route
-            path="/canard-form-ignore-additional-properties"
-            element={<CanardFormIgnoreAdditionalProperties />}
-          />
-          <Route path="/forms" element={<FormTest />} />
-          <Route path="/api" element={<ApiTest />} />
-          <Route path="/about" element={<About />} />
-        </Routes>
-      </main>
-    </div>
+    <ModalProvider
+      options={{
+        closeOnBackdropClick: false,
+      }}
+      ForegroundComponent={DarkModalForeground}
+    >
+      <div className="app">
+        <Navigation />
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/components" element={<ComponentTest />} />
+            <Route path="/canard-form" element={<CanardForm />} />
+            <Route
+              path="/canard-form-nullable"
+              element={<CanardFormNullable />}
+            />
+            <Route
+              path="/canard-form-computed"
+              element={<CanardFormComputed />}
+            />
+            <Route
+              path="/canard-form-ignore-additional-properties"
+              element={<CanardFormIgnoreAdditionalProperties />}
+            />
+            <Route path="/forms" element={<FormTest />} />
+            <Route path="/api" element={<ApiTest />} />
+            <Route path="/promise-modal" element={<PromiseModalTest />} />
+            <Route path="/modal-lifecycle" element={<ModalLifecycleTest />} />
+            <Route path="/about" element={<About />} />
+          </Routes>
+        </main>
+      </div>
+    </ModalProvider>
   );
 }
 

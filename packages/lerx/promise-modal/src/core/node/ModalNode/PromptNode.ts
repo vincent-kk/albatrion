@@ -15,7 +15,7 @@ import { AbstractNode } from './AbstractNode';
 
 type PromptNodeProps<T, B> = PromptModal<T, B> & ManagedEntity;
 
-export class PromptNode<T, B> extends AbstractNode<T, B> {
+export class PromptNode<T = any, B = any> extends AbstractNode<T, B> {
   readonly type: 'prompt';
   readonly content?: ReactNode | ComponentType<PromptContentProps>;
   readonly defaultValue: T | undefined;
@@ -41,9 +41,10 @@ export class PromptNode<T, B> extends AbstractNode<T, B> {
     footer,
     background,
     dimmed,
+    duration,
     manualDestroy,
     closeOnBackdropClick,
-    resolve,
+    handleResolve,
     ForegroundComponent,
     BackgroundComponent,
   }: PromptNodeProps<T, B>) {
@@ -55,9 +56,10 @@ export class PromptNode<T, B> extends AbstractNode<T, B> {
       subtitle,
       background,
       dimmed,
+      duration,
       manualDestroy,
       closeOnBackdropClick,
-      resolve,
+      handleResolve,
       ForegroundComponent,
       BackgroundComponent,
     });
@@ -74,11 +76,13 @@ export class PromptNode<T, B> extends AbstractNode<T, B> {
   onChange(value: T) {
     this.#value = value;
   }
+
   onConfirm() {
-    this.resolve(this.#value ?? null);
+    this.onResolve(this.#value ?? null);
   }
+
   onClose() {
-    if (this.returnOnCancel) this.resolve(this.#value ?? null);
-    else this.resolve(null);
+    if (this.returnOnCancel) this.onResolve(this.#value ?? null);
+    else this.onResolve(null);
   }
 }

@@ -4,7 +4,7 @@ import { cxLite } from '@winglet/style-utils/util';
 
 import {
   useConfigurationContext,
-  useModal,
+  useModalManager,
   useUserDefinedContext,
 } from '@/promise-modal/providers';
 import type { ModalLayerProps } from '@/promise-modal/types';
@@ -17,7 +17,8 @@ export const BackgroundFrame = ({
 }: ModalLayerProps) => {
   const { BackgroundComponent } = useConfigurationContext();
   const { context: userDefinedContext } = useUserDefinedContext();
-  const { modal, onClose, onChange, onConfirm, onDestroy } = useModal(modalId);
+  const { modal, onClose, onChange, onConfirm, onDestroy } =
+    useModalManager(modalId);
 
   const handleClose = useCallback(
     (event: MouseEvent) => {

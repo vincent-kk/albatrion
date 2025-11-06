@@ -1,4 +1,4 @@
-export { useModalManagerContext, useModal } from './ModalManagerContext';
+export { useModalManagerContext, useModalManager } from './ModalManagerContext';
 
 export {
   useConfigurationContext,

@@ -3,6 +3,7 @@ import type { ComponentType, ReactNode } from 'react';
 import type { Fn } from '@aileron/declare';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
+import type { PromptNode } from '@/promise-modal/core';
 import type {
   BackgroundComponent,
   FooterOptions,
@@ -13,7 +14,7 @@ import type {
   PromptInputProps,
 } from '@/promise-modal/types';
 
-interface PromptProps<InputValue, BackgroundValue = any> {
+export interface PromptProps<InputValue, BackgroundValue = any> {
   group?: string;
   title?: ReactNode;
   subtitle?: ReactNode;
@@ -25,6 +26,7 @@ interface PromptProps<InputValue, BackgroundValue = any> {
   background?: ModalBackground<BackgroundValue>;
   footer?: PromptFooterRender<InputValue> | FooterOptions | false;
   dimmed?: boolean;
+  duration?: number;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
   ForegroundComponent?: ForegroundComponent;
@@ -40,7 +42,7 @@ interface PromptProps<InputValue, BackgroundValue = any> {
  *
  * @typeParam InputValue - Type of the value collected from user input
  * @typeParam BackgroundValue - Type of background data passed to BackgroundComponent
- * @param props - Prompt dialog configuration options
+ * @param args - Prompt dialog configuration options
  * @returns Promise that resolves with the user's input value
  * @throws Rejects when cancelled (unless returnOnCancel is true)
  *
@@ -243,46 +245,23 @@ interface PromptProps<InputValue, BackgroundValue = any> {
  * - The promise rejects when cancelled (unless returnOnCancel is set)
  * - Use onConfirm prop in Input to handle Enter key submission
  */
-export const prompt = <InputValue, BackgroundValue = any>({
-  group,
-  title,
-  subtitle,
-  content,
-  defaultValue,
-  Input,
-  disabled,
-  returnOnCancel,
-  background,
-  footer,
-  dimmed,
-  manualDestroy,
-  closeOnBackdropClick,
-  ForegroundComponent,
-  BackgroundComponent,
-}: PromptProps<InputValue, BackgroundValue>) => {
-  return new Promise<InputValue>((resolve, reject) => {
+export const prompt = <InputValue, BackgroundValue = any>(
+  args: PromptProps<InputValue, BackgroundValue>,
+) => promptHandler(args).promiseHandler;
+
+export const promptHandler = <InputValue, BackgroundValue = any>(
+  args: PromptProps<InputValue, BackgroundValue>,
+) => {
+  const modalNode = ModalManager.open({
+    ...args,
+    type: 'prompt',
+  }) as PromptNode<InputValue, BackgroundValue>;
+  const promiseHandler = new Promise<InputValue>((resolve, reject) => {
     try {
-      ModalManager.open({
-        type: 'prompt',
-        group,
-        resolve: (result) => resolve(result as InputValue),
-        title,
-        subtitle,
-        content,
-        Input,
-        defaultValue,
-        disabled,
-        returnOnCancel,
-        background,
-        footer,
-        dimmed,
-        manualDestroy,
-        closeOnBackdropClick,
-        ForegroundComponent,
-        BackgroundComponent,
-      });
+      modalNode.handleResolve = (result) => resolve(result as InputValue);
     } catch (error) {
       reject(error);
     }
   });
+  return { modalNode, promiseHandler } as const;
 };

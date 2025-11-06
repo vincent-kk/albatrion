@@ -6,7 +6,7 @@ import { ModalManagerContext } from './ModalManagerContext';
 
 export const useModalManagerContext = () => useContext(ModalManagerContext);
 
-export const useModal = (id: ManagedModal['id']) => {
-  const { getModal } = useModalManagerContext();
+export const useModalManager = (id: ManagedModal['id']) => {
+  const { getModal } = useContext(ModalManagerContext);
   return useMemo(() => getModal(id), [id, getModal]);
 };

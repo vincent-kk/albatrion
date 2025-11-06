@@ -1,6 +1,7 @@
 import type { ComponentType, ReactNode } from 'react';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
+import type { AlertNode } from '@/promise-modal/core';
 import type {
   AlertContentProps,
   AlertFooterRender,
@@ -10,7 +11,7 @@ import type {
   ModalBackground,
 } from '@/promise-modal/types';
 
-interface AlertProps<BackgroundValue> {
+export interface AlertProps<BackgroundValue> {
   group?: string;
   subtype?: 'info' | 'success' | 'warning' | 'error';
   title?: ReactNode;
@@ -22,6 +23,7 @@ interface AlertProps<BackgroundValue> {
     | Pick<FooterOptions, 'confirm' | 'hideConfirm'>
     | false;
   dimmed?: boolean;
+  duration?: number;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
   ForegroundComponent?: ForegroundComponent;
@@ -35,7 +37,7 @@ interface AlertProps<BackgroundValue> {
  * The promise resolves when the user clicks the button or closes the modal.
  *
  * @typeParam BackgroundValue - Type of background data passed to BackgroundComponent
- * @param props - Alert configuration options
+ * @param args - Alert configuration options
  * @returns Promise that resolves when the alert is dismissed
  *
  * @example
@@ -169,40 +171,23 @@ interface AlertProps<BackgroundValue> {
  * - Set `closeOnBackdropClick: false` to prevent closing by clicking outside
  * - The `group` prop can be used to manage multiple related modals
  */
-export const alert = <BackgroundValue = any>({
-  group,
-  subtype,
-  title,
-  subtitle,
-  content,
-  background,
-  footer,
-  dimmed,
-  manualDestroy,
-  closeOnBackdropClick,
-  ForegroundComponent,
-  BackgroundComponent,
-}: AlertProps<BackgroundValue>) => {
-  return new Promise<void>((resolve, reject) => {
+export const alert = <BackgroundValue = any>(
+  args: AlertProps<BackgroundValue>,
+) => alertHandler(args).promiseHandler;
+
+export const alertHandler = <BackgroundValue = any>(
+  args: AlertProps<BackgroundValue>,
+) => {
+  const modalNode = ModalManager.open({
+    ...args,
+    type: 'alert',
+  }) as AlertNode<BackgroundValue>;
+  const promiseHandler = new Promise<void>((resolve, reject) => {
     try {
-      ModalManager.open({
-        type: 'alert',
-        group,
-        subtype,
-        resolve: () => resolve(),
-        title,
-        subtitle,
-        content,
-        background,
-        footer,
-        dimmed,
-        manualDestroy,
-        closeOnBackdropClick,
-        ForegroundComponent,
-        BackgroundComponent,
-      });
+      modalNode.handleResolve = () => resolve();
     } catch (error) {
       reject(error);
     }
   });
+  return { modalNode, promiseHandler } as const;
 };

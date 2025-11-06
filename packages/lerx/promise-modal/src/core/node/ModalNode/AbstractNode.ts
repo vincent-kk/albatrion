@@ -21,9 +21,10 @@ export abstract class AbstractNode<T, B> {
   readonly subtitle?: ReactNode;
   readonly background?: ModalBackground<B>;
 
+  readonly dimmed: boolean;
+  readonly duration: number;
   readonly manualDestroy: boolean;
   readonly closeOnBackdropClick: boolean;
-  readonly dimmed: boolean;
 
   readonly ForegroundComponent?: ForegroundComponent;
   readonly BackgroundComponent?: BackgroundComponent;
@@ -32,12 +33,17 @@ export abstract class AbstractNode<T, B> {
   get alive() {
     return this.#alive;
   }
+
   #visible: boolean;
   get visible() {
     return this.#visible;
   }
 
-  #resolve: Fn<[result: T | null]>;
+  #handleResolve?: Fn<[result: T | null]>;
+  set handleResolve(handleResolve: Fn<[result: T | null]>) {
+    this.#handleResolve = handleResolve;
+  }
+
   #listeners: Set<Fn> = new Set();
 
   constructor({
@@ -48,9 +54,10 @@ export abstract class AbstractNode<T, B> {
     subtitle,
     background,
     dimmed = true,
+    duration = 0,
     manualDestroy = false,
     closeOnBackdropClick = true,
-    resolve,
+    handleResolve,
     ForegroundComponent,
     BackgroundComponent,
   }: AbstractNodeProps<T, B>) {
@@ -62,6 +69,7 @@ export abstract class AbstractNode<T, B> {
     this.background = background;
 
     this.dimmed = dimmed;
+    this.duration = duration;
     this.manualDestroy = manualDestroy;
     this.closeOnBackdropClick = closeOnBackdropClick;
 
@@ -70,7 +78,14 @@ export abstract class AbstractNode<T, B> {
 
     this.#alive = true;
     this.#visible = true;
-    this.#resolve = resolve;
+    this.#handleResolve = handleResolve;
+  }
+
+  abstract onClose(): void;
+  abstract onConfirm(): void;
+
+  protected onResolve(result: T | null) {
+    this.#handleResolve?.(result);
   }
 
   subscribe(listener: Fn) {
@@ -79,27 +94,26 @@ export abstract class AbstractNode<T, B> {
       this.#listeners.delete(listener);
     };
   }
+
   publish() {
     for (const listener of this.#listeners) listener();
   }
-  protected resolve(result: T | null) {
-    this.#resolve(result);
-  }
+
   onDestroy() {
     const needPublish = this.#alive === true;
     this.#alive = false;
     if (this.manualDestroy && needPublish) this.publish();
   }
+
   onShow() {
     const needPublish = this.#visible === false;
     this.#visible = true;
     if (needPublish) this.publish();
   }
+
   onHide() {
     const needPublish = this.#visible === true;
     this.#visible = false;
     if (needPublish) this.publish();
   }
-  abstract onClose(): void;
-  abstract onConfirm(): void;
 }

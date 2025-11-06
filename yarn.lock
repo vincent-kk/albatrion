@@ -71,7 +71,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@aileron/production-testbed@workspace:packages/aileron/production-test"
   dependencies:
+    "@canard/schema-form": "workspace:^"
     "@eslint/js": "npm:^9.33.0"
+    "@lerx/promise-modal": "workspace:^"
     "@types/react": "npm:^19.1.10"
     "@types/react-dom": "npm:^19.1.7"
     "@vitejs/plugin-react": "npm:^5.0.0"

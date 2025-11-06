@@ -1,6 +1,7 @@
 import type { ComponentType, ReactNode } from 'react';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
+import type { ConfirmNode } from '@/promise-modal/core';
 import type {
   BackgroundComponent,
   ConfirmContentProps,
@@ -10,7 +11,7 @@ import type {
   ModalBackground,
 } from '@/promise-modal/types';
 
-interface ConfirmProps<BackgroundValue> {
+export interface ConfirmProps<BackgroundValue> {
   group?: string;
   subtype?: 'info' | 'success' | 'warning' | 'error';
   title?: ReactNode;
@@ -19,6 +20,7 @@ interface ConfirmProps<BackgroundValue> {
   background?: ModalBackground<BackgroundValue>;
   footer?: ConfirmFooterRender | FooterOptions | false;
   dimmed?: boolean;
+  duration?: number;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
   ForegroundComponent?: ForegroundComponent;
@@ -32,7 +34,7 @@ interface ConfirmProps<BackgroundValue> {
  * The promise resolves with `true` when confirmed, `false` when cancelled.
  *
  * @typeParam BackgroundValue - Type of background data passed to BackgroundComponent
- * @param props - Confirmation dialog configuration options
+ * @param args - Confirmation dialog configuration options
  * @returns Promise that resolves to true if confirmed, false if cancelled
  *
  * @example
@@ -172,40 +174,23 @@ interface ConfirmProps<BackgroundValue> {
  * - Use `subtype` to indicate severity (error for destructive actions)
  * - The `footer` prop allows complete customization of button layout and behavior
  */
-export const confirm = <BackgroundValue = any>({
-  group,
-  subtype,
-  title,
-  subtitle,
-  content,
-  background,
-  footer,
-  dimmed,
-  manualDestroy,
-  closeOnBackdropClick,
-  ForegroundComponent,
-  BackgroundComponent,
-}: ConfirmProps<BackgroundValue>) => {
-  return new Promise<boolean>((resolve, reject) => {
+export const confirm = <BackgroundValue = any>(
+  args: ConfirmProps<BackgroundValue>,
+) => confirmHandler(args).promiseHandler;
+
+export const confirmHandler = <BackgroundValue = any>(
+  args: ConfirmProps<BackgroundValue>,
+) => {
+  const modalNode = ModalManager.open({
+    ...args,
+    type: 'confirm',
+  }) as ConfirmNode<BackgroundValue>;
+  const promiseHandler = new Promise<boolean>((resolve, reject) => {
     try {
-      ModalManager.open({
-        type: 'confirm',
-        group,
-        subtype,
-        resolve: (result) => resolve(result ?? false),
-        title,
-        subtitle,
-        content,
-        background,
-        footer,
-        dimmed,
-        manualDestroy,
-        closeOnBackdropClick,
-        ForegroundComponent,
-        BackgroundComponent,
-      });
+      modalNode.handleResolve = (result) => resolve(result ?? false);
     } catch (error) {
       reject(error);
     }
   });
+  return { modalNode, promiseHandler } as const;
 };

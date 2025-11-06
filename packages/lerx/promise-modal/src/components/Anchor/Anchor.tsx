@@ -5,6 +5,7 @@ import { counterFactory } from '@winglet/common-utils/lib';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 import { useVersion } from '@winglet/react-utils/hook';
 
+import { ModalManager } from '@/promise-modal/app/ModalManager';
 import { Presenter } from '@/promise-modal/components/Presenter';
 import type { ModalNode } from '@/promise-modal/core';
 import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
@@ -20,11 +21,11 @@ const { getValue, increment, reset } = counterFactory(0);
 const AnchorInner = () => {
   const [version, update] = useVersion();
 
-  const { modalIds, setUpdater } = useModalManagerContext();
+  const { modalIds } = useModalManagerContext();
 
   useEffect(() => {
-    setUpdater(update);
-  }, [setUpdater, update]);
+    ModalManager.refreshHandler = update;
+  }, [update]);
 
   const options = useConfigurationOptions();
   const dimmed = useActiveModalCount(validateDimmable, version);

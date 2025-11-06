@@ -12,7 +12,7 @@ import { AbstractNode } from './AbstractNode';
 
 type ConfirmNodeProps<B> = ConfirmModal<B> & ManagedEntity;
 
-export class ConfirmNode<B> extends AbstractNode<boolean, B> {
+export class ConfirmNode<B = any> extends AbstractNode<boolean, B> {
   readonly type: 'confirm';
   readonly subtype?: 'info' | 'success' | 'warning' | 'error';
   readonly content?: ReactNode | ComponentType<ConfirmContentProps>;
@@ -30,9 +30,10 @@ export class ConfirmNode<B> extends AbstractNode<boolean, B> {
     footer,
     background,
     dimmed,
+    duration,
     manualDestroy,
     closeOnBackdropClick,
-    resolve,
+    handleResolve,
     ForegroundComponent,
     BackgroundComponent,
   }: ConfirmNodeProps<B>) {
@@ -44,9 +45,10 @@ export class ConfirmNode<B> extends AbstractNode<boolean, B> {
       subtitle,
       background,
       dimmed,
+      duration,
       manualDestroy,
       closeOnBackdropClick,
-      resolve,
+      handleResolve,
       ForegroundComponent,
       BackgroundComponent,
     });
@@ -55,10 +57,12 @@ export class ConfirmNode<B> extends AbstractNode<boolean, B> {
     this.content = content;
     this.footer = footer;
   }
+
   onClose() {
-    this.resolve(false);
+    this.onResolve(false);
   }
+
   onConfirm() {
-    this.resolve(true);
+    this.onResolve(true);
   }
 }
