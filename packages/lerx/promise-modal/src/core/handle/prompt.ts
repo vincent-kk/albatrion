@@ -25,6 +25,7 @@ interface PromptProps<InputValue, BackgroundValue = any> {
   background?: ModalBackground<BackgroundValue>;
   footer?: PromptFooterRender<InputValue> | FooterOptions | false;
   dimmed?: boolean;
+  duration?: number;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
   ForegroundComponent?: ForegroundComponent;

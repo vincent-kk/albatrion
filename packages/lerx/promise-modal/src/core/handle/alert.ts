@@ -22,6 +22,7 @@ interface AlertProps<BackgroundValue> {
     | Pick<FooterOptions, 'confirm' | 'hideConfirm'>
     | false;
   dimmed?: boolean;
+  duration?: number;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
   ForegroundComponent?: ForegroundComponent;

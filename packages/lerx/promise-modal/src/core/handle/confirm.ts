@@ -19,6 +19,7 @@ interface ConfirmProps<BackgroundValue> {
   background?: ModalBackground<BackgroundValue>;
   footer?: ConfirmFooterRender | FooterOptions | false;
   dimmed?: boolean;
+  duration?: number;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
   ForegroundComponent?: ForegroundComponent;
