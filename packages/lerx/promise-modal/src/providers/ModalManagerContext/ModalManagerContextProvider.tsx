@@ -103,15 +103,14 @@ export const ModalManagerContextProvider = memo(
       const modal = modalDictionary.current.get(modalId);
       if (!modal) return;
       modal.onDestroy();
-      updaterRef.current?.();
+      ModalManager.refresh();
     });
 
-    const updaterRef = useRef<Fn>(undefined);
     const hideModalRef = useRef((modalId: ModalNode['id']) => {
       const modal = modalDictionary.current.get(modalId);
       if (!modal) return;
       modal.onHide();
-      updaterRef.current?.();
+      ModalManager.refresh();
       if (modal.manualDestroy === false)
         setTimeout(() => modal.onDestroy(), modal.duration);
     });
@@ -153,10 +152,6 @@ export const ModalManagerContextProvider = memo(
         onClose: onCloseRef.current,
         onDestroy: onDestroyRef.current,
         getModal: getModalRef.current,
-        setUpdater: (updater: Fn) => {
-          updaterRef.current = updater;
-          ModalManager.refreshHandler = updater;
-        },
       };
     }, [modalIds]);
 
