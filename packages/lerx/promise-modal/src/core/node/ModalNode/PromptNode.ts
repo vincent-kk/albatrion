@@ -43,7 +43,7 @@ export class PromptNode<T, B> extends AbstractNode<T, B> {
     dimmed,
     manualDestroy,
     closeOnBackdropClick,
-    resolve,
+    resolver,
     ForegroundComponent,
     BackgroundComponent,
   }: PromptNodeProps<T, B>) {
@@ -57,7 +57,7 @@ export class PromptNode<T, B> extends AbstractNode<T, B> {
       dimmed,
       manualDestroy,
       closeOnBackdropClick,
-      resolve,
+      resolver,
       ForegroundComponent,
       BackgroundComponent,
     });
@@ -74,11 +74,13 @@ export class PromptNode<T, B> extends AbstractNode<T, B> {
   onChange(value: T) {
     this.#value = value;
   }
+
   onConfirm() {
-    this.resolve(this.#value ?? null);
+    this.handleResolve(this.#value ?? null);
   }
+
   onClose() {
-    if (this.returnOnCancel) this.resolve(this.#value ?? null);
-    else this.resolve(null);
+    if (this.returnOnCancel) this.handleResolve(this.#value ?? null);
+    else this.handleResolve(null);
   }
 }

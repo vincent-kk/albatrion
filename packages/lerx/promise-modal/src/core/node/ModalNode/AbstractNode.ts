@@ -32,12 +32,17 @@ export abstract class AbstractNode<T, B> {
   get alive() {
     return this.#alive;
   }
+
   #visible: boolean;
   get visible() {
     return this.#visible;
   }
 
-  #resolve: Fn<[result: T | null]>;
+  #resolver?: Fn<[result: T | null]>;
+  set resolver(resolver: Fn<[result: T | null]>) {
+    this.#resolver = resolver;
+  }
+
   #listeners: Set<Fn> = new Set();
 
   constructor({
@@ -50,7 +55,7 @@ export abstract class AbstractNode<T, B> {
     dimmed = true,
     manualDestroy = false,
     closeOnBackdropClick = true,
-    resolve,
+    resolver,
     ForegroundComponent,
     BackgroundComponent,
   }: AbstractNodeProps<T, B>) {
@@ -70,7 +75,14 @@ export abstract class AbstractNode<T, B> {
 
     this.#alive = true;
     this.#visible = true;
-    this.#resolve = resolve;
+    this.#resolver = resolver;
+  }
+
+  abstract onClose(): void;
+  abstract onConfirm(): void;
+
+  protected handleResolve(result: T | null) {
+    this.#resolver?.(result);
   }
 
   subscribe(listener: Fn) {
@@ -79,27 +91,26 @@ export abstract class AbstractNode<T, B> {
       this.#listeners.delete(listener);
     };
   }
+
   publish() {
     for (const listener of this.#listeners) listener();
   }
-  protected resolve(result: T | null) {
-    this.#resolve(result);
-  }
+
   onDestroy() {
     const needPublish = this.#alive === true;
     this.#alive = false;
     if (this.manualDestroy && needPublish) this.publish();
   }
+
   onShow() {
     const needPublish = this.#visible === false;
     this.#visible = true;
     if (needPublish) this.publish();
   }
+
   onHide() {
     const needPublish = this.#visible === true;
     this.#visible = false;
     if (needPublish) this.publish();
   }
-  abstract onClose(): void;
-  abstract onConfirm(): void;
 }

@@ -265,7 +265,7 @@ export const prompt = <InputValue, BackgroundValue = any>({
       ModalManager.open({
         type: 'prompt',
         group,
-        resolve: (result) => resolve(result as InputValue),
+        resolver: (result) => resolve(result as InputValue),
         title,
         subtitle,
         content,

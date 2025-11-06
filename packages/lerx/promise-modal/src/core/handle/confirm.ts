@@ -192,7 +192,7 @@ export const confirm = <BackgroundValue = any>({
         type: 'confirm',
         group,
         subtype,
-        resolve: (result) => resolve(result ?? false),
+        resolver: (result) => resolve(result ?? false),
         title,
         subtitle,
         content,

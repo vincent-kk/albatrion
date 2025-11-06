@@ -13,7 +13,7 @@ export interface BaseModal<T, B> {
   dimmed?: boolean;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
-  resolve: Fn<[result: T | null]>;
+  resolver?: Fn<[result: T | null]>;
   ForegroundComponent?: ForegroundComponent;
   BackgroundComponent?: BackgroundComponent;
 }

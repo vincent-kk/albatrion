@@ -189,7 +189,7 @@ export const alert = <BackgroundValue = any>({
         type: 'alert',
         group,
         subtype,
-        resolve: () => resolve(),
+        resolver: () => resolve(),
         title,
         subtitle,
         content,
