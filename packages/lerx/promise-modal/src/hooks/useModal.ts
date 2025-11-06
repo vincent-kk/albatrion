@@ -44,9 +44,10 @@ export const useModal = () => {
 
   useOnUnmount(() => {
     for (const node of modalNodesRef.current) {
+      if (node.visible === false) continue;
       node.onClose();
       node.onHide();
-      if (node.manualDestroy === false)
+      if (node.alive && node.manualDestroy === false)
         setTimeout(() => node.onDestroy(), node.duration);
     }
     ModalManager.refresh();
