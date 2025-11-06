@@ -203,7 +203,7 @@ export const confirm = <BackgroundValue = any>({
   });
   return new Promise<boolean>((resolve, reject) => {
     try {
-      confirmNode.resolver = (result: boolean) => resolve(result ?? false);
+      confirmNode.handleResolve = (result: boolean) => resolve(result ?? false);
     } catch (error) {
       reject(error);
     }

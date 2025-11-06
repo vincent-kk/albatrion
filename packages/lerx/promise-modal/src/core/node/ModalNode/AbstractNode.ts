@@ -38,9 +38,9 @@ export abstract class AbstractNode<T, B> {
     return this.#visible;
   }
 
-  #resolver?: Fn<[result: T | null]>;
-  set resolver(resolver: Fn<[result: T | null]>) {
-    this.#resolver = resolver;
+  #handleResolve?: Fn<[result: T | null]>;
+  set handleResolve(handleResolve: Fn<[result: T | null]>) {
+    this.#handleResolve = handleResolve;
   }
 
   #listeners: Set<Fn> = new Set();
@@ -55,7 +55,7 @@ export abstract class AbstractNode<T, B> {
     dimmed = true,
     manualDestroy = false,
     closeOnBackdropClick = true,
-    resolver,
+    handleResolve,
     ForegroundComponent,
     BackgroundComponent,
   }: AbstractNodeProps<T, B>) {
@@ -75,14 +75,14 @@ export abstract class AbstractNode<T, B> {
 
     this.#alive = true;
     this.#visible = true;
-    this.#resolver = resolver;
+    this.#handleResolve = handleResolve;
   }
 
   abstract onClose(): void;
   abstract onConfirm(): void;
 
-  protected handleResolve(result: T | null) {
-    this.#resolver?.(result);
+  protected onResolve(result: T | null) {
+    this.#handleResolve?.(result);
   }
 
   subscribe(listener: Fn) {

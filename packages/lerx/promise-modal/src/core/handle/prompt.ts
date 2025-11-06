@@ -280,7 +280,7 @@ export const prompt = <InputValue, BackgroundValue = any>({
   });
   return new Promise<InputValue>((resolve, reject) => {
     try {
-      promptNode.resolver = (result: InputValue) => resolve(result);
+      promptNode.handleResolve = (result: InputValue) => resolve(result);
     } catch (error) {
       reject(error);
     }

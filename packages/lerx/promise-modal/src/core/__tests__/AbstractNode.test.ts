@@ -5,10 +5,10 @@ import { AbstractNode } from '../node/ModalNode/AbstractNode';
 // 테스트를 위한 구체 클래스 구현
 class TestNode extends AbstractNode<string, null> {
   onClose(): void {
-    this.handleResolve(null);
+    this.onResolve(null);
   }
   onConfirm(): void {
-    this.handleResolve('confirmed');
+    this.onResolve('confirmed');
   }
 }
 
@@ -19,7 +19,7 @@ describe('AbstractNode', () => {
     node = new TestNode({
       id: 1,
       initiator: 'test',
-      resolver: () => {},
+      handleResolve: () => {},
     });
   });
 

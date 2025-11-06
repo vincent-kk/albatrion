@@ -32,7 +32,7 @@ export class ConfirmNode<B> extends AbstractNode<boolean, B> {
     dimmed,
     manualDestroy,
     closeOnBackdropClick,
-    resolver,
+    handleResolve,
     ForegroundComponent,
     BackgroundComponent,
   }: ConfirmNodeProps<B>) {
@@ -46,7 +46,7 @@ export class ConfirmNode<B> extends AbstractNode<boolean, B> {
       dimmed,
       manualDestroy,
       closeOnBackdropClick,
-      resolver,
+      handleResolve,
       ForegroundComponent,
       BackgroundComponent,
     });
@@ -57,10 +57,10 @@ export class ConfirmNode<B> extends AbstractNode<boolean, B> {
   }
 
   onClose() {
-    this.handleResolve(false);
+    this.onResolve(false);
   }
 
   onConfirm() {
-    this.handleResolve(true);
+    this.onResolve(true);
   }
 }

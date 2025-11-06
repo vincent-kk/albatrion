@@ -35,7 +35,7 @@ export class AlertNode<B> extends AbstractNode<null, B> {
     dimmed,
     manualDestroy,
     closeOnBackdropClick,
-    resolver,
+    handleResolve,
     ForegroundComponent,
     BackgroundComponent,
   }: AlertNodeProps<B>) {
@@ -49,7 +49,7 @@ export class AlertNode<B> extends AbstractNode<null, B> {
       dimmed,
       manualDestroy,
       closeOnBackdropClick,
-      resolver,
+      handleResolve,
       ForegroundComponent,
       BackgroundComponent,
     });
@@ -60,10 +60,10 @@ export class AlertNode<B> extends AbstractNode<null, B> {
   }
 
   onClose() {
-    this.handleResolve(null);
+    this.onResolve(null);
   }
 
   onConfirm() {
-    this.handleResolve(null);
+    this.onResolve(null);
   }
 }

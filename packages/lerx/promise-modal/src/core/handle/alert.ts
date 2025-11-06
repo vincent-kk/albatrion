@@ -200,7 +200,7 @@ export const alert = <BackgroundValue = any>({
   });
   return new Promise<void>((resolve, reject) => {
     try {
-      alertNode.resolver = () => resolve();
+      alertNode.handleResolve = () => resolve();
     } catch (error) {
       reject(error);
     }
