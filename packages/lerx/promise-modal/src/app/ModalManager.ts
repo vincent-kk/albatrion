@@ -8,12 +8,16 @@ import { compressCss } from '@winglet/style-utils/util';
 
 import type { Fn } from '@aileron/declare';
 
+import type { ModalNode } from '@/promise-modal/core';
 import type { Modal } from '@/promise-modal/types';
 
 export class ModalManager {
   static #anchor: HTMLElement | null = null;
   static #scope: string = `promise-modal-${getRandomString(36)}`;
   static #hash: string = polynomialHash(ModalManager.#scope);
+  static #styleManager = styleManagerFactory(ModalManager.#scope);
+  static #styleSheetDefinition = new Map<string, string>();
+
   static anchor(options?: {
     tag?: string;
     prefix?: string;
@@ -38,22 +42,24 @@ export class ModalManager {
   }
 
   static #prerenderList: Modal[] = [];
+
   static get prerender() {
     return ModalManager.#prerenderList;
   }
 
-  static #openHandler: Fn<[Modal], void> = (modal: Modal) =>
+  static #openHandler: Fn<[Modal], ModalNode> = ((modal: Modal) => {
     ModalManager.#prerenderList.push(modal);
-  static set openHandler(handler: Fn<[Modal], void>) {
+  }) as Fn<[Modal], ModalNode>;
+
+  static set openHandler(handler: Fn<[Modal], ModalNode>) {
     ModalManager.#openHandler = handler;
     ModalManager.#prerenderList = [];
   }
 
-  static #styleManager = styleManagerFactory(ModalManager.#scope);
-  static #styleSheetDefinition = new Map<string, string>();
   static defineStyleSheet(styleId: string, css: string) {
     ModalManager.#styleSheetDefinition.set(styleId, compressCss(css));
   }
+
   static applyStyleSheet() {
     for (const [styleId, css] of ModalManager.#styleSheetDefinition)
       ModalManager.#styleManager(styleId, css, true);
@@ -66,12 +72,13 @@ export class ModalManager {
   static reset() {
     ModalManager.#anchor = null;
     ModalManager.#prerenderList = [];
-    ModalManager.#openHandler = (modal: Modal) =>
+    ModalManager.#openHandler = ((modal: Modal) => {
       ModalManager.#prerenderList.push(modal);
+    }) as Fn<[Modal], ModalNode>;
     destroyScope(ModalManager.#scope);
   }
 
-  static open(modal: Modal) {
-    ModalManager.#openHandler(modal);
+  static open(modal: Modal): ModalNode {
+    return ModalManager.#openHandler(modal);
   }
 }

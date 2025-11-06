@@ -67,7 +67,7 @@ export const ModalManagerContextProvider = memo(
       }
 
       ModalManager.openHandler = (data: Modal) => {
-        const modal = nodeFactory({
+        const modalNode = nodeFactory({
           ...data,
           id: modalIdSequence.current++,
           initiator: initiator.current,
@@ -80,7 +80,7 @@ export const ModalManagerContextProvider = memo(
               ? data.closeOnBackdropClick
               : closeOnBackdropClick,
         });
-        modalDictionary.current.set(modal.id, modal);
+        modalDictionary.current.set(modalNode.id, modalNode);
         setModalIds((ids) => {
           const aliveIds: number[] = [];
           for (let i = 0, l = ids.length; i < l; i++) {
@@ -89,8 +89,9 @@ export const ModalManagerContextProvider = memo(
             if (destroyed) modalDictionary.current.delete(id);
             else aliveIds.push(id);
           }
-          return [...aliveIds, modal.id];
+          return [...aliveIds, modalNode.id];
         });
+        return modalNode;
       };
     });
 
