@@ -4,7 +4,7 @@ import { cxLite } from '@winglet/style-utils/util';
 
 import {
   useConfigurationContext,
-  useModal,
+  useModalManager,
   useUserDefinedContext,
 } from '@/promise-modal/providers';
 import type { ModalLayerProps } from '@/promise-modal/types';
@@ -18,7 +18,8 @@ export const ForegroundFrame = ({
 }: ModalLayerProps) => {
   const { ForegroundComponent } = useConfigurationContext();
   const { context: userDefinedContext } = useUserDefinedContext();
-  const { modal, onChange, onConfirm, onClose, onDestroy } = useModal(modalId);
+  const { modal, onChange, onConfirm, onClose, onDestroy } =
+    useModalManager(modalId);
 
   const Foreground = useMemo(
     () => modal?.ForegroundComponent || ForegroundComponent,

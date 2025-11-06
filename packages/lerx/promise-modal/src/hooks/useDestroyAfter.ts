@@ -6,7 +6,7 @@ import { isString } from '@winglet/common-utils/filter';
 import type { Duration } from '@aileron/declare';
 
 import type { ModalNode } from '@/promise-modal/core';
-import { useModal } from '@/promise-modal/providers';
+import { useModalManager } from '@/promise-modal/providers';
 
 import { useSubscribeModal } from './useSubscribeModal';
 
@@ -141,7 +141,7 @@ export const useDestroyAfter = (
   modalId: ModalNode['id'],
   duration: Duration | number,
 ) => {
-  const { modal, onDestroy } = useModal(modalId);
+  const { modal, onDestroy } = useModalManager(modalId);
   const tick = useSubscribeModal(modal);
 
   const reference = useRef({
