@@ -293,7 +293,6 @@ describe('nodeFactory', () => {
   });
 
   describe('custom components', () => {
-    const mockInput = () => null;
     const mockForeground = ({ children }: any) => children;
     const mockBackground = () => null;
 

@@ -87,11 +87,6 @@ describe('PromptNode', () => {
     });
 
     it('복잡한 타입의 value를 처리할 수 있어야 함', () => {
-      interface UserData {
-        name: string;
-        age: number;
-      }
-
       const complexHandleResolve = vi.fn();
       const complexModal = {
         id: 2,

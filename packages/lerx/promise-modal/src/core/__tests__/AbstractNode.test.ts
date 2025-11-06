@@ -63,9 +63,9 @@ describe('AbstractNode', () => {
       const mockListener3 = vi.fn();
 
       // 여러 리스너 등록
-      const _unsubscribe1 = node.subscribe(mockListener1);
+      node.subscribe(mockListener1);
       const unsubscribe2 = node.subscribe(mockListener2);
-      const _unsubscribe3 = node.subscribe(mockListener3);
+      node.subscribe(mockListener3);
 
       // 초기 상태에서 모든 리스너가 호출되어야 함
       node.publish();
