@@ -21,9 +21,10 @@ export abstract class AbstractNode<T, B> {
   readonly subtitle?: ReactNode;
   readonly background?: ModalBackground<B>;
 
+  readonly dimmed: boolean;
+  readonly duration: number;
   readonly manualDestroy: boolean;
   readonly closeOnBackdropClick: boolean;
-  readonly dimmed: boolean;
 
   readonly ForegroundComponent?: ForegroundComponent;
   readonly BackgroundComponent?: BackgroundComponent;
@@ -53,6 +54,7 @@ export abstract class AbstractNode<T, B> {
     subtitle,
     background,
     dimmed = true,
+    duration = 0,
     manualDestroy = false,
     closeOnBackdropClick = true,
     handleResolve,
@@ -67,6 +69,7 @@ export abstract class AbstractNode<T, B> {
     this.background = background;
 
     this.dimmed = dimmed;
+    this.duration = duration;
     this.manualDestroy = manualDestroy;
     this.closeOnBackdropClick = closeOnBackdropClick;
 

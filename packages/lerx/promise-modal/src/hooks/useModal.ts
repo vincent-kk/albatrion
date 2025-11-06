@@ -31,7 +31,12 @@ export const useModal = () => {
   });
 
   useOnUnmount(() => {
-    for (const node of modalNodesRef.current) node.onHide();
+    for (const node of modalNodesRef.current) {
+      node.onClose();
+      node.onHide();
+      if (node.manualDestroy === false)
+        setTimeout(() => node.onDestroy(), node.duration);
+    }
     modalNodesRef.current = [];
   });
 

@@ -1,7 +1,6 @@
 import {
   type PropsWithChildren,
   memo,
-  useCallback,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -50,17 +49,12 @@ export const ModalManagerContextProvider = memo(
 
       for (const data of ModalManager.prerender) {
         const modal = nodeFactory({
+          duration,
+          manualDestroy,
+          closeOnBackdropClick,
           ...data,
           id: modalIdSequence.current++,
           initiator: initiator.current,
-          manualDestroy:
-            data.manualDestroy !== undefined
-              ? data.manualDestroy
-              : manualDestroy,
-          closeOnBackdropClick:
-            data.closeOnBackdropClick !== undefined
-              ? data.closeOnBackdropClick
-              : closeOnBackdropClick,
         });
         modalDictionary.current.set(modal.id, modal);
         setModalIds((ids) => [...ids, modal.id]);
@@ -68,17 +62,12 @@ export const ModalManagerContextProvider = memo(
 
       ModalManager.openHandler = (data: Modal) => {
         const modalNode = nodeFactory({
+          duration,
+          manualDestroy,
+          closeOnBackdropClick,
           ...data,
           id: modalIdSequence.current++,
           initiator: initiator.current,
-          manualDestroy:
-            data.manualDestroy !== undefined
-              ? data.manualDestroy
-              : manualDestroy,
-          closeOnBackdropClick:
-            data.closeOnBackdropClick !== undefined
-              ? data.closeOnBackdropClick
-              : closeOnBackdropClick,
         });
         modalDictionary.current.set(modalNode.id, modalNode);
         setModalIds((ids) => {
@@ -106,91 +95,69 @@ export const ModalManagerContextProvider = memo(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pathname]);
 
-    const getModalNode = useCallback((modalId: ModalNode['id']) => {
-      return modalDictionary.current.get(modalId);
-    }, []);
+    const getModalNodeRef = useRef((modalId: ModalNode['id']) =>
+      modalDictionary.current.get(modalId),
+    );
 
-    const onDestroy = useCallback((modalId: ModalNode['id']) => {
+    const onDestroyRef = useRef((modalId: ModalNode['id']) => {
       const modal = modalDictionary.current.get(modalId);
       if (!modal) return;
       modal.onDestroy();
       updaterRef.current?.();
-    }, []);
+    });
 
     const updaterRef = useRef<Fn>(undefined);
-    const hideModal = useCallback(
-      (modalId: ModalNode['id']) => {
-        const modal = modalDictionary.current.get(modalId);
-        if (!modal) return;
-        modal.onHide();
-        updaterRef.current?.();
-        if (!modal.manualDestroy)
-          setTimeout(() => {
-            modal.onDestroy();
-          }, duration);
-      },
-      [duration],
-    );
+    const hideModalRef = useRef((modalId: ModalNode['id']) => {
+      const modal = modalDictionary.current.get(modalId);
+      if (!modal) return;
+      modal.onHide();
+      updaterRef.current?.();
+      if (modal.manualDestroy === false)
+        setTimeout(() => modal.onDestroy(), modal.duration);
+    });
 
-    const onChange = useCallback((modalId: ModalNode['id'], value: any) => {
+    const onChangeRef = useRef((modalId: ModalNode['id'], value: any) => {
       const modal = modalDictionary.current.get(modalId);
       if (!modal) return;
       if (modal.type === 'prompt') modal.onChange(value);
-    }, []);
+    });
 
-    const onConfirm = useCallback(
-      (modalId: ModalNode['id']) => {
-        const modal = modalDictionary.current.get(modalId);
-        if (!modal) return;
-        modal.onConfirm();
-        hideModal(modalId);
-      },
-      [hideModal],
-    );
+    const onConfirmRef = useRef((modalId: ModalNode['id']) => {
+      const modal = modalDictionary.current.get(modalId);
+      if (!modal) return;
+      modal.onConfirm();
+      hideModalRef.current(modalId);
+    });
 
-    const onClose = useCallback(
-      (modalId: ModalNode['id']) => {
-        const modal = modalDictionary.current.get(modalId);
-        if (!modal) return;
-        modal.onClose();
-        hideModal(modalId);
-      },
-      [hideModal],
-    );
+    const onCloseRef = useRef((modalId: ModalNode['id']) => {
+      const modal = modalDictionary.current.get(modalId);
+      if (!modal) return;
+      modal.onClose();
+      hideModalRef.current(modalId);
+    });
 
-    const getModal = useCallback(
-      (modalId: ModalNode['id']) => ({
-        modal: getModalNode(modalId),
-        onConfirm: () => onConfirm(modalId),
-        onClose: () => onClose(modalId),
-        onChange: (value: any) => onChange(modalId, value),
-        onDestroy: () => onDestroy(modalId),
-      }),
-      [getModalNode, onConfirm, onClose, onChange, onDestroy],
-    );
+    const getModalRef = useRef((modalId: ModalNode['id']) => ({
+      modal: getModalNodeRef.current(modalId),
+      onConfirm: () => onConfirmRef.current(modalId),
+      onClose: () => onCloseRef.current(modalId),
+      onChange: (value: any) => onChangeRef.current(modalId, value),
+      onDestroy: () => onDestroyRef.current(modalId),
+    }));
 
     const value = useMemo(() => {
       return {
         modalIds,
-        getModalNode,
-        onChange,
-        onConfirm,
-        onClose,
-        onDestroy,
-        getModal,
+        getModalNode: getModalNodeRef.current,
+        onChange: onChangeRef.current,
+        onConfirm: onConfirmRef.current,
+        onClose: onCloseRef.current,
+        onDestroy: onDestroyRef.current,
+        getModal: getModalRef.current,
         setUpdater: (updater: Fn) => {
           updaterRef.current = updater;
         },
       };
-    }, [
-      modalIds,
-      getModal,
-      getModalNode,
-      onChange,
-      onConfirm,
-      onClose,
-      onDestroy,
-    ]);
+    }, [modalIds]);
 
     return (
       <ModalManagerContext.Provider value={value}>

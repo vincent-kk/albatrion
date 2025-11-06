@@ -11,6 +11,7 @@ export interface BaseModal<T, B> {
   subtitle?: ReactNode;
   background?: ModalBackground<B>;
   dimmed?: boolean;
+  duration?: number;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
   handleResolve?: Fn<[result: T | null]>;
