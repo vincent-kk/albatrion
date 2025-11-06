@@ -14,7 +14,7 @@ import type {
   PromptInputProps,
 } from '@/promise-modal/types';
 
-interface PromptProps<InputValue, BackgroundValue = any> {
+export interface PromptProps<InputValue, BackgroundValue = any> {
   group?: string;
   title?: ReactNode;
   subtitle?: ReactNode;

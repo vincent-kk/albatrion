@@ -11,7 +11,7 @@ import type {
   ModalBackground,
 } from '@/promise-modal/types';
 
-interface AlertProps<BackgroundValue> {
+export interface AlertProps<BackgroundValue> {
   group?: string;
   subtype?: 'info' | 'success' | 'warning' | 'error';
   title?: ReactNode;
@@ -37,7 +37,7 @@ interface AlertProps<BackgroundValue> {
  * The promise resolves when the user clicks the button or closes the modal.
  *
  * @typeParam BackgroundValue - Type of background data passed to BackgroundComponent
- * @param props - Alert configuration options
+ * @param args - Alert configuration options
  * @returns Promise that resolves when the alert is dismissed
  *
  * @example
@@ -172,8 +172,8 @@ interface AlertProps<BackgroundValue> {
  * - The `group` prop can be used to manage multiple related modals
  */
 export const alert = <BackgroundValue = any>(
-  props: AlertProps<BackgroundValue>,
-) => alertHandler(props).promiseHandler;
+  args: AlertProps<BackgroundValue>,
+) => alertHandler(args).promiseHandler;
 
 export const alertHandler = <BackgroundValue = any>(
   args: AlertProps<BackgroundValue>,

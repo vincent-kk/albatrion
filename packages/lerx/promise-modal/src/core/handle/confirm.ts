@@ -11,7 +11,7 @@ import type {
   ModalBackground,
 } from '@/promise-modal/types';
 
-interface ConfirmProps<BackgroundValue> {
+export interface ConfirmProps<BackgroundValue> {
   group?: string;
   subtype?: 'info' | 'success' | 'warning' | 'error';
   title?: ReactNode;
