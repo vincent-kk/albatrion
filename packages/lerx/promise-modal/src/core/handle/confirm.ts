@@ -1,6 +1,7 @@
 import type { ComponentType, ReactNode } from 'react';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
+import type { ConfirmNode } from '@/promise-modal/core';
 import type {
   BackgroundComponent,
   ConfirmContentProps,
@@ -180,10 +181,13 @@ export const confirm = <BackgroundValue = any>(
 export const confirmHandler = <BackgroundValue = any>(
   args: ConfirmProps<BackgroundValue>,
 ) => {
-  const modalNode = ModalManager.open({ type: 'confirm', ...args });
+  const modalNode = ModalManager.open({
+    ...args,
+    type: 'confirm',
+  }) as ConfirmNode<BackgroundValue>;
   const promiseHandler = new Promise<boolean>((resolve, reject) => {
     try {
-      modalNode.handleResolve = (result: boolean) => resolve(result ?? false);
+      modalNode.handleResolve = (result) => resolve(result ?? false);
     } catch (error) {
       reject(error);
     }

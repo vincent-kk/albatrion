@@ -3,6 +3,7 @@ import type { ComponentType, ReactNode } from 'react';
 import type { Fn } from '@aileron/declare';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
+import type { PromptNode } from '@/promise-modal/core';
 import type {
   BackgroundComponent,
   FooterOptions,
@@ -251,10 +252,13 @@ export const prompt = <InputValue, BackgroundValue = any>(
 export const promptHandler = <InputValue, BackgroundValue = any>(
   args: PromptProps<InputValue, BackgroundValue>,
 ) => {
-  const modalNode = ModalManager.open({ type: 'prompt', ...args });
+  const modalNode = ModalManager.open({
+    ...args,
+    type: 'prompt',
+  }) as PromptNode<InputValue, BackgroundValue>;
   const promiseHandler = new Promise<InputValue>((resolve, reject) => {
     try {
-      modalNode.handleResolve = (result: InputValue) => resolve(result);
+      modalNode.handleResolve = (result) => resolve(result as InputValue);
     } catch (error) {
       reject(error);
     }

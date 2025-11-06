@@ -155,6 +155,7 @@ export const ModalManagerContextProvider = memo(
         getModal: getModalRef.current,
         setUpdater: (updater: Fn) => {
           updaterRef.current = updater;
+          ModalManager.rerenderHandler = updater;
         },
       };
     }, [modalIds]);

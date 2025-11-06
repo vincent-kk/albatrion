@@ -1,6 +1,7 @@
 import type { ComponentType, ReactNode } from 'react';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
+import type { AlertNode } from '@/promise-modal/core';
 import type {
   AlertContentProps,
   AlertFooterRender,
@@ -177,7 +178,10 @@ export const alert = <BackgroundValue = any>(
 export const alertHandler = <BackgroundValue = any>(
   args: AlertProps<BackgroundValue>,
 ) => {
-  const modalNode = ModalManager.open({ type: 'alert', ...args });
+  const modalNode = ModalManager.open({
+    ...args,
+    type: 'alert',
+  }) as AlertNode<BackgroundValue>;
   const promiseHandler = new Promise<void>((resolve, reject) => {
     try {
       modalNode.handleResolve = () => resolve();

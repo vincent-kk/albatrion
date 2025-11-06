@@ -12,7 +12,7 @@ import { AbstractNode } from './AbstractNode';
 
 type ConfirmNodeProps<B> = ConfirmModal<B> & ManagedEntity;
 
-export class ConfirmNode<B> extends AbstractNode<boolean, B> {
+export class ConfirmNode<B = any> extends AbstractNode<boolean, B> {
   readonly type: 'confirm';
   readonly subtype?: 'info' | 'success' | 'warning' | 'error';
   readonly content?: ReactNode | ComponentType<ConfirmContentProps>;

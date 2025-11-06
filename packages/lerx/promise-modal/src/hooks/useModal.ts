@@ -2,6 +2,7 @@ import { useRef } from 'react';
 
 import { useOnUnmount } from '@winglet/react-utils/hook';
 
+import { ModalManager } from '@/promise-modal/app/ModalManager';
 import {
   type ModalNode,
   alertHandler,
@@ -37,6 +38,7 @@ export const useModal = () => {
       if (node.manualDestroy === false)
         setTimeout(() => node.onDestroy(), node.duration);
     }
+    ModalManager.rerender();
     modalNodesRef.current = [];
   });
 
