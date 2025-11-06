@@ -38,7 +38,7 @@ export const useModal = () => {
       if (node.manualDestroy === false)
         setTimeout(() => node.onDestroy(), node.duration);
     }
-    ModalManager.rerender();
+    ModalManager.refresh();
     modalNodesRef.current = [];
   });
 

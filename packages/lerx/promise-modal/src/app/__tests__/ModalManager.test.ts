@@ -33,7 +33,7 @@ describe('ModalManager', () => {
 
       // 내부적으로 스타일이 저장되었는지 확인 (에러 없이 실행)
       expect(() =>
-        ModalManager.defineStyleSheet('test-style', '.test { color: blue; }')
+        ModalManager.defineStyleSheet('test-style', '.test { color: blue; }'),
       ).not.toThrow();
     });
 
@@ -116,7 +116,7 @@ describe('ModalManager', () => {
         expect.objectContaining({
           type: 'alert',
           title: 'Test',
-        })
+        }),
       );
     });
 
@@ -136,15 +136,15 @@ describe('ModalManager', () => {
   describe('rerenderHandler', () => {
     it('rerenderHandler를 설정할 수 있어야 함', () => {
       const handler = vi.fn();
-      ModalManager.rerenderHandler = handler;
+      ModalManager.refreshHandler = handler;
 
-      ModalManager.rerender();
+      ModalManager.refresh();
 
       expect(handler).toHaveBeenCalledTimes(1);
     });
 
     it('rerenderHandler가 없으면 rerender()가 에러를 발생시키지 않아야 함', () => {
-      expect(() => ModalManager.rerender()).not.toThrow();
+      expect(() => ModalManager.refresh()).not.toThrow();
     });
   });
 
@@ -187,7 +187,7 @@ describe('ModalManager', () => {
       ModalManager.defineStyleSheet('modal', '.modal { display: block; }');
       ModalManager.defineStyleSheet(
         'backdrop',
-        '.backdrop { background: rgba(0,0,0,0.5); }'
+        '.backdrop { background: rgba(0,0,0,0.5); }',
       );
       expect(() => ModalManager.applyStyleSheet()).not.toThrow();
 

@@ -56,14 +56,14 @@ export class ModalManager {
     ModalManager.#prerenderList = [];
   }
 
-  static #rerenderHandler?: Fn<[], void>;
+  static #refreshHandler?: Fn<[], void>;
 
-  static set rerenderHandler(handler: Fn<[], void>) {
-    ModalManager.#rerenderHandler = handler;
+  static set refreshHandler(handler: Fn<[], void>) {
+    ModalManager.#refreshHandler = handler;
   }
 
-  static rerender() {
-    ModalManager.#rerenderHandler?.();
+  static refresh() {
+    ModalManager.#refreshHandler?.();
   }
 
   static defineStyleSheet(styleId: string, css: string) {
@@ -85,7 +85,7 @@ export class ModalManager {
     ModalManager.#openHandler = ((modal: Modal) => {
       ModalManager.#prerenderList.push(modal);
     }) as Fn<[Modal], ModalNode>;
-    ModalManager.#rerenderHandler = undefined;
+    ModalManager.#refreshHandler = undefined;
     destroyScope(ModalManager.#scope);
   }
 
