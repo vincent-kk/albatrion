@@ -40,7 +40,7 @@ interface PromptProps<InputValue, BackgroundValue = any> {
  *
  * @typeParam InputValue - Type of the value collected from user input
  * @typeParam BackgroundValue - Type of background data passed to BackgroundComponent
- * @param props - Prompt dialog configuration options
+ * @param args - Prompt dialog configuration options
  * @returns Promise that resolves with the user's input value
  * @throws Rejects when cancelled (unless returnOnCancel is true)
  *
@@ -243,46 +243,20 @@ interface PromptProps<InputValue, BackgroundValue = any> {
  * - The promise rejects when cancelled (unless returnOnCancel is set)
  * - Use onConfirm prop in Input to handle Enter key submission
  */
-export const prompt = <InputValue, BackgroundValue = any>({
-  group,
-  title,
-  subtitle,
-  content,
-  defaultValue,
-  Input,
-  disabled,
-  returnOnCancel,
-  background,
-  footer,
-  dimmed,
-  manualDestroy,
-  closeOnBackdropClick,
-  ForegroundComponent,
-  BackgroundComponent,
-}: PromptProps<InputValue, BackgroundValue>) => {
-  const promptNode = ModalManager.open({
-    type: 'prompt',
-    group,
-    title,
-    subtitle,
-    content,
-    Input,
-    defaultValue,
-    disabled,
-    returnOnCancel,
-    background,
-    footer,
-    dimmed,
-    manualDestroy,
-    closeOnBackdropClick,
-    ForegroundComponent,
-    BackgroundComponent,
-  });
-  return new Promise<InputValue>((resolve, reject) => {
+export const prompt = <InputValue, BackgroundValue = any>(
+  args: PromptProps<InputValue, BackgroundValue>,
+) => promptHandler(args).promiseHandler;
+
+export const promptHandler = <InputValue, BackgroundValue = any>(
+  args: PromptProps<InputValue, BackgroundValue>,
+) => {
+  const modalNode = ModalManager.open({ type: 'prompt', ...args });
+  const promiseHandler = new Promise<InputValue>((resolve, reject) => {
     try {
-      promptNode.handleResolve = (result: InputValue) => resolve(result);
+      modalNode.handleResolve = (result: InputValue) => resolve(result);
     } catch (error) {
       reject(error);
     }
   });
+  return { modalNode, promiseHandler } as const;
 };

@@ -169,40 +169,20 @@ interface AlertProps<BackgroundValue> {
  * - Set `closeOnBackdropClick: false` to prevent closing by clicking outside
  * - The `group` prop can be used to manage multiple related modals
  */
-export const alert = <BackgroundValue = any>({
-  group,
-  subtype,
-  title,
-  subtitle,
-  content,
-  background,
-  footer,
-  dimmed,
-  manualDestroy,
-  closeOnBackdropClick,
-  ForegroundComponent,
-  BackgroundComponent,
-}: AlertProps<BackgroundValue>) => {
-  const alertNode = ModalManager.open({
-    type: 'alert',
-    group,
-    subtype,
-    title,
-    subtitle,
-    content,
-    background,
-    footer,
-    dimmed,
-    manualDestroy,
-    closeOnBackdropClick,
-    ForegroundComponent,
-    BackgroundComponent,
-  });
-  return new Promise<void>((resolve, reject) => {
+export const alert = <BackgroundValue = any>(
+  props: AlertProps<BackgroundValue>,
+) => alertHandler(props).promiseHandler;
+
+export const alertHandler = <BackgroundValue = any>(
+  args: AlertProps<BackgroundValue>,
+) => {
+  const modalNode = ModalManager.open({ type: 'alert', ...args });
+  const promiseHandler = new Promise<void>((resolve, reject) => {
     try {
-      alertNode.handleResolve = () => resolve();
+      modalNode.handleResolve = () => resolve();
     } catch (error) {
       reject(error);
     }
   });
+  return { modalNode, promiseHandler } as const;
 };

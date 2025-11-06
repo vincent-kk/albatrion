@@ -1,3 +1,3 @@
-export { alert } from './alert';
-export { confirm } from './confirm';
-export { prompt } from './prompt';
+export { alert, alertHandler } from './alert';
+export { confirm, confirmHandler } from './confirm';
+export { prompt, promptHandler } from './prompt';
