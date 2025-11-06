@@ -183,24 +183,24 @@ export const alert = <BackgroundValue = any>({
   ForegroundComponent,
   BackgroundComponent,
 }: AlertProps<BackgroundValue>) => {
+  const alertNode = ModalManager.open({
+    type: 'alert',
+    group,
+    subtype,
+    title,
+    subtitle,
+    content,
+    background,
+    footer,
+    dimmed,
+    manualDestroy,
+    closeOnBackdropClick,
+    ForegroundComponent,
+    BackgroundComponent,
+  });
   return new Promise<void>((resolve, reject) => {
     try {
-      ModalManager.open({
-        type: 'alert',
-        group,
-        subtype,
-        resolver: () => resolve(),
-        title,
-        subtitle,
-        content,
-        background,
-        footer,
-        dimmed,
-        manualDestroy,
-        closeOnBackdropClick,
-        ForegroundComponent,
-        BackgroundComponent,
-      });
+      alertNode.resolver = () => resolve();
     } catch (error) {
       reject(error);
     }

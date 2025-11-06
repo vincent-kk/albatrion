@@ -186,24 +186,24 @@ export const confirm = <BackgroundValue = any>({
   ForegroundComponent,
   BackgroundComponent,
 }: ConfirmProps<BackgroundValue>) => {
+  const confirmNode = ModalManager.open({
+    type: 'confirm',
+    group,
+    subtype,
+    title,
+    subtitle,
+    content,
+    background,
+    footer,
+    dimmed,
+    manualDestroy,
+    closeOnBackdropClick,
+    ForegroundComponent,
+    BackgroundComponent,
+  });
   return new Promise<boolean>((resolve, reject) => {
     try {
-      ModalManager.open({
-        type: 'confirm',
-        group,
-        subtype,
-        resolver: (result) => resolve(result ?? false),
-        title,
-        subtitle,
-        content,
-        background,
-        footer,
-        dimmed,
-        manualDestroy,
-        closeOnBackdropClick,
-        ForegroundComponent,
-        BackgroundComponent,
-      });
+      confirmNode.resolver = (result: boolean) => resolve(result ?? false);
     } catch (error) {
       reject(error);
     }

@@ -260,27 +260,27 @@ export const prompt = <InputValue, BackgroundValue = any>({
   ForegroundComponent,
   BackgroundComponent,
 }: PromptProps<InputValue, BackgroundValue>) => {
+  const promptNode = ModalManager.open({
+    type: 'prompt',
+    group,
+    title,
+    subtitle,
+    content,
+    Input,
+    defaultValue,
+    disabled,
+    returnOnCancel,
+    background,
+    footer,
+    dimmed,
+    manualDestroy,
+    closeOnBackdropClick,
+    ForegroundComponent,
+    BackgroundComponent,
+  });
   return new Promise<InputValue>((resolve, reject) => {
     try {
-      ModalManager.open({
-        type: 'prompt',
-        group,
-        resolver: (result) => resolve(result as InputValue),
-        title,
-        subtitle,
-        content,
-        Input,
-        defaultValue,
-        disabled,
-        returnOnCancel,
-        background,
-        footer,
-        dimmed,
-        manualDestroy,
-        closeOnBackdropClick,
-        ForegroundComponent,
-        BackgroundComponent,
-      });
+      promptNode.resolver = (result: InputValue) => resolve(result);
     } catch (error) {
       reject(error);
     }
