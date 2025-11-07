@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ModalManager } from '../../app/ModalManager';
-import { alert, alertHandler } from '../handle/alert';
-import { confirm, confirmHandler } from '../handle/confirm';
-import { prompt, promptHandler } from '../handle/prompt';
+import { alertHandler } from '../handle/alert';
+import { confirmHandler } from '../handle/confirm';
+import { promptHandler } from '../handle/prompt';
+import { alert, confirm, prompt } from '../handle/static';
 
 // ModalManager를 모킹
 vi.mock('../../app/ModalManager', () => {

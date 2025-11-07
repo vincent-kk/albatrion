@@ -11,173 +11,66 @@ import type {
   ModalBackground,
 } from '@/promise-modal/types';
 
+/**
+ * Configuration options for Confirm modal.
+ *
+ * @typeParam BackgroundValue - Type of background data passed to BackgroundComponent
+ */
 export interface ConfirmProps<BackgroundValue> {
+  /** Modal group identifier for managing related modals */
   group?: string;
+  /** Confirmation subtype that affects UI styling */
   subtype?: 'info' | 'success' | 'warning' | 'error';
+  /** Modal title */
   title?: ReactNode;
+  /** Modal subtitle */
   subtitle?: ReactNode;
+  /** Modal content. Can be a ReactNode or a component */
   content?: ReactNode | ComponentType<ConfirmContentProps>;
+  /** Background layer data and configuration */
   background?: ModalBackground<BackgroundValue>;
+  /** Footer configuration. Can be a render function, options object, or false */
   footer?: ConfirmFooterRender | FooterOptions | false;
+  /** Whether to dim the background */
   dimmed?: boolean;
+  /** Modal animation duration in milliseconds */
   duration?: number;
+  /** If true, keeps modal in DOM after closing (for animations) */
   manualDestroy?: boolean;
+  /** Whether to close modal on backdrop click */
   closeOnBackdropClick?: boolean;
+  /** Custom foreground component */
   ForegroundComponent?: ForegroundComponent;
+  /** Custom background component */
   BackgroundComponent?: BackgroundComponent;
 }
 
 /**
- * Displays a promise-based confirmation modal that resolves with a boolean result.
- *
- * Creates a modal dialog with two action buttons (typically "OK/Cancel" or "Yes/No").
- * The promise resolves with `true` when confirmed, `false` when cancelled.
+ * Creates and manages a Confirm modal.
  *
  * @typeParam BackgroundValue - Type of background data passed to BackgroundComponent
- * @param args - Confirmation dialog configuration options
- * @returns Promise that resolves to true if confirmed, false if cancelled
+ * @param args - Confirm modal configuration options
+ * @returns Object containing modalNode and promiseHandler
+ *
+ * @remarks
+ * - modalNode: The created modal node instance
+ * - promiseHandler: Promise that resolves to true if confirmed, false if cancelled
+ * - Returns true only when explicitly confirmed via the confirm action
+ * - Returns false for cancel action or backdrop click (if enabled)
  *
  * @example
- * Basic confirmation:
  * ```tsx
- * const shouldDelete = await confirm({
+ * const { modalNode, promiseHandler } = confirmHandler({
  *   title: 'Delete Item?',
  *   content: 'This action cannot be undone.',
  * });
  *
- * if (shouldDelete) {
+ * const confirmed = await promiseHandler;
+ * if (confirmed) {
  *   await deleteItem();
  * }
  * ```
- *
- * @example
- * Destructive action with warning:
- * ```tsx
- * const shouldProceed = await confirm({
- *   subtype: 'error',
- *   title: 'Delete Account',
- *   content: 'Are you sure you want to delete your account? All data will be permanently lost.',
- *   footer: {
- *     confirm: 'Delete Account',
- *     cancel: 'Keep Account',
- *     confirmDanger: true,
- *   },
- * });
- * ```
- *
- * @example
- * Custom content with details:
- * ```tsx
- * const ConfirmDetails = ({ onConfirm, onCancel }) => (
- *   <div>
- *     <p>The following items will be affected:</p>
- *     <ul>
- *       <li>15 documents</li>
- *       <li>42 images</li>
- *       <li>3 videos</li>
- *     </ul>
- *     <p>Total size: 1.2 GB</p>
- *   </div>
- * );
- *
- * const confirmed = await confirm({
- *   title: 'Move to Trash?',
- *   content: ConfirmDetails,
- * });
- * ```
- *
- * @example
- * Custom footer with additional actions:
- * ```tsx
- * confirm({
- *   title: 'Save Changes?',
- *   content: 'You have unsaved changes.',
- *   footer: ({ onConfirm, onCancel, context }) => (
- *     <div className="save-dialog-footer">
- *       <button onClick={onCancel}>Don\'t Save</button>
- *       <button onClick={() => {
- *         saveAsDraft();
- *         onCancel();
- *       }}>Save as Draft</button>
- *       <button onClick={onConfirm} className="primary">
- *         Save and Publish
- *       </button>
- *     </div>
- *   ),
- * });
- * ```
- *
- * @example
- * Conditional confirmation flow:
- * ```tsx
- * async function deleteWithConfirmation(item) {
- *   // First confirmation
- *   const confirmDelete = await confirm({
- *     title: `Delete "${item.name}"?`,
- *     content: 'This item will be moved to trash.',
- *   });
- *
- *   if (!confirmDelete) return;
- *
- *   // Check if item has dependencies
- *   if (item.dependencies.length > 0) {
- *     const confirmForce = await confirm({
- *       subtype: 'warning',
- *       title: 'Item has dependencies',
- *       content: `${item.dependencies.length} other items depend on this. Delete anyway?`,
- *       footer: {
- *         confirm: 'Force Delete',
- *         confirmDanger: true,
- *       },
- *     });
- *
- *     if (!confirmForce) return;
- *   }
- *
- *   await deleteItem(item.id);
- * }
- * ```
- *
- * @example
- * With loading state:
- * ```tsx
- * const shouldExport = await confirm({
- *   title: 'Export Data',
- *   content: 'Export may take several minutes for large datasets.',
- *   footer: ({ onConfirm, onCancel }) => {
- *     const [loading, setLoading] = useState(false);
- *
- *     const handleExport = async () => {
- *       setLoading(true);
- *       await startExport();
- *       onConfirm();
- *     };
- *
- *     return (
- *       <>
- *         <button onClick={onCancel}>Cancel</button>
- *         <button
- *           onClick={handleExport}
- *           disabled={loading}
- *         >
- *           {loading ? 'Exporting...' : 'Start Export'}
- *         </button>
- *       </>
- *     );
- *   },
- * });
- * ```
- *
- * @remarks
- * - Returns `true` only when explicitly confirmed via the confirm action
- * - Returns `false` for cancel action or backdrop click (if enabled)
- * - Use `subtype` to indicate severity (error for destructive actions)
- * - The `footer` prop allows complete customization of button layout and behavior
  */
-export const confirm = <BackgroundValue = any>(
-  args: ConfirmProps<BackgroundValue>,
-) => confirmHandler(args).promiseHandler;
-
 export const confirmHandler = <BackgroundValue = any>(
   args: ConfirmProps<BackgroundValue>,
 ) => {
