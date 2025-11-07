@@ -868,6 +868,59 @@ function App() {
 
 ### Hooks
 
+#### `useModal`
+
+컴포넌트의 라이프사이클을 공유하는 모달 핸들러 함수들을 반환합니다.
+
+**핵심 특징:**
+
+정적 핸들러(`alert`, `confirm`, `prompt`)와 달리, `useModal`로 생성된 모달은 컴포넌트가 언마운트될 때 자동으로 정리됩니다. 특정 컴포넌트 내에서 열린 모달들이 해당 컴포넌트가 제거될 때 자동으로 닫히도록 보장하고 싶을 때 유용합니다.
+
+**반환값:**
+
+- `alert`: 알림 모달 핸들러 함수
+- `confirm`: 확인 모달 핸들러 함수
+- `prompt`: 프롬프트 모달 핸들러 함수
+
+```typescript
+import { useModal } from '@lerx/promise-modal';
+
+function MyComponent() {
+  const modal = useModal();
+
+  const handleShowAlert = async () => {
+    // MyComponent가 언마운트되면 모달도 자동으로 정리됩니다
+    await modal.alert({
+      title: '알림',
+      content: '이 모달은 컴포넌트 라이프사이클과 연동됩니다.',
+    });
+  };
+
+  const handleShowConfirm = async () => {
+    const result = await modal.confirm({
+      title: '확인',
+      content: '계속하시겠습니까?',
+    });
+    console.log('결과:', result);
+  };
+
+  return (
+    <div>
+      <button onClick={handleShowAlert}>알림 표시</button>
+      <button onClick={handleShowConfirm}>확인 표시</button>
+    </div>
+  );
+}
+```
+
+**정적 핸들러와의 비교:**
+
+| 특징         | 정적 핸들러                  | useModal Hook                |
+| ------------ | ---------------------------- | ---------------------------- |
+| 라이프사이클 | 컴포넌트와 독립적            | 컴포넌트 라이프사이클과 연동 |
+| 정리 방식    | 수동 정리 필요               | 언마운트 시 자동 정리        |
+| 사용 위치    | 어디서나 (React 외부도 가능) | React 컴포넌트 내부만 가능   |
+
 #### `useModalOptions`
 
 모달의 글로벌 옵션을 읽습니다.

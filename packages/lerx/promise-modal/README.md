@@ -868,6 +868,59 @@ function App() {
 
 ### Hooks
 
+#### `useModal`
+
+Returns modal handler functions that share the component's lifecycle.
+
+**Key Features:**
+
+Unlike static handlers (`alert`, `confirm`, `prompt`), modals created with `useModal` automatically clean up when the component unmounts. This is useful when you want to ensure that modals opened within a specific component are automatically closed when that component is removed.
+
+**Returns:**
+
+- `alert`: Alert modal handler function
+- `confirm`: Confirm modal handler function
+- `prompt`: Prompt modal handler function
+
+```typescript
+import { useModal } from '@lerx/promise-modal';
+
+function MyComponent() {
+  const modal = useModal();
+
+  const handleShowAlert = async () => {
+    // Modal will be automatically cleaned up when MyComponent unmounts
+    await modal.alert({
+      title: 'Notice',
+      content: 'This modal is tied to the component lifecycle.',
+    });
+  };
+
+  const handleShowConfirm = async () => {
+    const result = await modal.confirm({
+      title: 'Confirm',
+      content: 'Do you want to proceed?',
+    });
+    console.log('Result:', result);
+  };
+
+  return (
+    <div>
+      <button onClick={handleShowAlert}>Show Alert</button>
+      <button onClick={handleShowConfirm}>Show Confirm</button>
+    </div>
+  );
+}
+```
+
+**Comparison with Static Handlers:**
+
+| Feature        | Static Handlers               | useModal Hook                |
+| -------------- | ----------------------------- | ---------------------------- |
+| Lifecycle      | Independent of components     | Tied to component lifecycle  |
+| Cleanup        | Manual cleanup required       | Automatic cleanup on unmount |
+| Usage Location | Anywhere (even outside React) | Inside React components only |
+
 #### `useModalOptions`
 
 Read global options for modals.
