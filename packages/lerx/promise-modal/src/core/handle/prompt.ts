@@ -4,6 +4,7 @@ import type { Fn } from '@aileron/declare';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import type { PromptNode } from '@/promise-modal/core';
+import { closeModal } from '@/promise-modal/helpers/closeModal';
 import type {
   BackgroundComponent,
   FooterOptions,
@@ -105,6 +106,7 @@ export const promptHandler = <InputValue, BackgroundValue = any>(
     try {
       modalNode.handleResolve = (result) => resolve(result as InputValue);
     } catch (error) {
+      closeModal(modalNode);
       reject(error);
     }
   });

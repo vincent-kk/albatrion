@@ -2,6 +2,7 @@ import type { ComponentType, ReactNode } from 'react';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import type { AlertNode } from '@/promise-modal/core';
+import { closeModal } from '@/promise-modal/helpers/closeModal';
 import type {
   AlertContentProps,
   AlertFooterRender,
@@ -80,6 +81,7 @@ export const alertHandler = <BackgroundValue = any>(
     try {
       modalNode.handleResolve = () => resolve();
     } catch (error) {
+      closeModal(modalNode);
       reject(error);
     }
   });

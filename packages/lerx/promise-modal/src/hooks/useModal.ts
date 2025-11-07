@@ -12,6 +12,7 @@ import {
   confirmHandler,
   promptHandler,
 } from '@/promise-modal/core';
+import { closeModal } from '@/promise-modal/helpers/closeModal';
 
 export const useModal = () => {
   const modalNodesRef = useRef<Array<ModalNode>>([]);
@@ -43,13 +44,7 @@ export const useModal = () => {
   );
 
   useOnUnmount(() => {
-    for (const node of modalNodesRef.current) {
-      if (node.visible === false) continue;
-      node.onClose();
-      node.onHide();
-      if (node.alive && node.manualDestroy === false)
-        setTimeout(() => node.onDestroy(), node.duration);
-    }
+    for (const node of modalNodesRef.current) closeModal(node);
     ModalManager.refresh();
     modalNodesRef.current = [];
   });

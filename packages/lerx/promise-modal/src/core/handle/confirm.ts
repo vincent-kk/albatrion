@@ -2,6 +2,7 @@ import type { ComponentType, ReactNode } from 'react';
 
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import type { ConfirmNode } from '@/promise-modal/core';
+import { closeModal } from '@/promise-modal/helpers/closeModal';
 import type {
   BackgroundComponent,
   ConfirmContentProps,
@@ -82,6 +83,7 @@ export const confirmHandler = <BackgroundValue = any>(
     try {
       modalNode.handleResolve = (result) => resolve(result ?? false);
     } catch (error) {
+      closeModal(modalNode);
       reject(error);
     }
   });
