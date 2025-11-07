@@ -1,6 +1,7 @@
-import { type AlertProps, alertHandler } from './alert';
-import { type ConfirmProps, confirmHandler } from './confirm';
-import { type PromptProps, promptHandler } from './prompt';
+import { alertHandler } from './alert';
+import { confirmHandler } from './confirm';
+import { promptHandler } from './prompt';
+import type { AlertProps, ConfirmProps, PromptProps } from './type';
 
 /**
  * Displays a promise-based alert modal.
