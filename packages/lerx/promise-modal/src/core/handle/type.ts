@@ -34,6 +34,8 @@ export interface AlertProps<BackgroundValue> {
     | AlertFooterRender
     | Pick<FooterOptions, 'confirm' | 'hideConfirm'>
     | false;
+  /** Abort signal to cancel the modal */
+  signal?: AbortSignal;
   /** Whether to dim the background */
   dimmed?: boolean;
   /** Modal animation duration in milliseconds */
@@ -63,6 +65,8 @@ export interface ConfirmProps<BackgroundValue> {
   background?: ModalBackground<BackgroundValue>;
   /** Footer configuration. Can be a render function, options object, or false */
   footer?: ConfirmFooterRender | FooterOptions | false;
+  /** Abort signal to cancel the modal */
+  signal?: AbortSignal;
   /** Whether to dim the background */
   dimmed?: boolean;
   /** Modal animation duration in milliseconds */
@@ -98,6 +102,8 @@ export interface PromptProps<InputValue, BackgroundValue = any> {
   background?: ModalBackground<BackgroundValue>;
   /** Footer configuration. Can be a render function, options object, or false */
   footer?: PromptFooterRender<InputValue> | FooterOptions | false;
+  /** Abort signal to cancel the modal */
+  signal?: AbortSignal;
   /** Whether to dim the background */
   dimmed?: boolean;
   /** Modal animation duration in milliseconds */

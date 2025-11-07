@@ -1,6 +1,7 @@
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import type { AlertNode } from '@/promise-modal/core';
 import { closeModal } from '@/promise-modal/helpers/closeModal';
+import { subscribeAbortSignal } from '@/promise-modal/helpers/subscribeAbortSignal';
 
 import type { AlertProps } from './type';
 
@@ -32,11 +33,17 @@ export const alertHandler = <BackgroundValue = any>(
     ...args,
     type: 'alert',
   }) as AlertNode<BackgroundValue>;
+  const unsubscribe = subscribeAbortSignal(modalNode, args.signal);
   const promiseHandler = new Promise<void>((resolve, reject) => {
     try {
-      modalNode.handleResolve = () => resolve();
+      modalNode.handleResolve = () => {
+        unsubscribe?.();
+        resolve();
+      };
+      if (args.signal?.aborted) closeModal(modalNode);
     } catch (error) {
       closeModal(modalNode);
+      unsubscribe?.();
       reject(error);
     }
   });

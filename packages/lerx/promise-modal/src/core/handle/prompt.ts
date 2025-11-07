@@ -1,6 +1,7 @@
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import type { PromptNode } from '@/promise-modal/core';
 import { closeModal } from '@/promise-modal/helpers/closeModal';
+import { subscribeAbortSignal } from '@/promise-modal/helpers/subscribeAbortSignal';
 
 import type { PromptProps } from './type';
 
@@ -50,11 +51,17 @@ export const promptHandler = <InputValue, BackgroundValue = any>(
     ...args,
     type: 'prompt',
   }) as PromptNode<InputValue, BackgroundValue>;
+  const unsubscribe = subscribeAbortSignal(modalNode, args.signal);
   const promiseHandler = new Promise<InputValue>((resolve, reject) => {
     try {
-      modalNode.handleResolve = (result) => resolve(result as InputValue);
+      modalNode.handleResolve = (result) => {
+        unsubscribe?.();
+        resolve(result as InputValue);
+      };
+      if (args.signal?.aborted) closeModal(modalNode);
     } catch (error) {
       closeModal(modalNode);
+      unsubscribe?.();
       reject(error);
     }
   });

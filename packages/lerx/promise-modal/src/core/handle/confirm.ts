@@ -1,6 +1,7 @@
 import { ModalManager } from '@/promise-modal/app/ModalManager';
 import type { ConfirmNode } from '@/promise-modal/core';
 import { closeModal } from '@/promise-modal/helpers/closeModal';
+import { subscribeAbortSignal } from '@/promise-modal/helpers/subscribeAbortSignal';
 
 import type { ConfirmProps } from './type';
 
@@ -37,11 +38,17 @@ export const confirmHandler = <BackgroundValue = any>(
     ...args,
     type: 'confirm',
   }) as ConfirmNode<BackgroundValue>;
+  const unsubscribe = subscribeAbortSignal(modalNode, args.signal);
   const promiseHandler = new Promise<boolean>((resolve, reject) => {
     try {
-      modalNode.handleResolve = (result) => resolve(result ?? false);
+      modalNode.handleResolve = (result) => {
+        unsubscribe?.();
+        resolve(result ?? false);
+      };
+      if (args.signal?.aborted) closeModal(modalNode);
     } catch (error) {
       closeModal(modalNode);
+      unsubscribe?.();
       reject(error);
     }
   });

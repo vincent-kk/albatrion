@@ -44,7 +44,7 @@ export const useModal = () => {
   );
 
   useOnUnmount(() => {
-    for (const node of modalNodesRef.current) closeModal(node);
+    for (const node of modalNodesRef.current) closeModal(node, false);
     ModalManager.refresh();
     modalNodesRef.current = [];
   });
