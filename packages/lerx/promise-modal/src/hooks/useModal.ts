@@ -12,32 +12,36 @@ import {
   confirmHandler,
   promptHandler,
 } from '@/promise-modal/core';
+import type { OverridableHandleProps } from '@/promise-modal/core/handle/type';
 import { closeModal } from '@/promise-modal/helpers/closeModal';
 
-export const useModal = () => {
+export const useModal = (configuration?: OverridableHandleProps) => {
   const modalNodesRef = useRef<Array<ModalNode>>([]);
+  const baseArgsRef = useRef(configuration);
 
-  const alertRef = useRef(
-    <BackgroundValue = any>(args: AlertProps<BackgroundValue>) => {
-      const { modalNode, promiseHandler } = alertHandler(args);
-      modalNodesRef.current.push(modalNode);
-      return promiseHandler;
-    },
-  );
+  const alertRef = useRef(<Background = any>(args: AlertProps<Background>) => {
+    const { modalNode, promiseHandler } = alertHandler<Background>(
+      baseArgsRef.current ? { ...baseArgsRef.current, ...args } : args,
+    );
+    modalNodesRef.current.push(modalNode);
+    return promiseHandler;
+  });
 
   const confirmRef = useRef(
-    <BackgroundValue = any>(args: ConfirmProps<BackgroundValue>) => {
-      const { modalNode, promiseHandler } = confirmHandler(args);
+    <Background = any>(args: ConfirmProps<Background>) => {
+      const { modalNode, promiseHandler } = confirmHandler<Background>(
+        baseArgsRef.current ? { ...baseArgsRef.current, ...args } : args,
+      );
       modalNodesRef.current.push(modalNode);
       return promiseHandler;
     },
   );
 
   const promptRef = useRef(
-    <InputValue, BackgroundValue = any>(
-      args: PromptProps<InputValue, BackgroundValue>,
-    ) => {
-      const { modalNode, promiseHandler } = promptHandler(args);
+    <Value, Background = any>(args: PromptProps<Value, Background>) => {
+      const { modalNode, promiseHandler } = promptHandler<Value, Background>(
+        baseArgsRef.current ? { ...baseArgsRef.current, ...args } : args,
+      );
       modalNodesRef.current.push(modalNode);
       return promiseHandler;
     },
