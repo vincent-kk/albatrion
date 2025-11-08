@@ -9,6 +9,6 @@ export const useModalDuration = (id?: ModalNode['id']) => {
   if (id === undefined) return globalDuration;
   const { modal } = useModalManager(id);
   if (modal === undefined) return globalDuration;
-  const duration = modal.duration;
-  return { duration, milliseconds: duration + 'ms' };
+  const milliseconds = modal.duration;
+  return { duration: milliseconds + 'ms', milliseconds };
 };
