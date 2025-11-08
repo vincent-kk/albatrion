@@ -27,7 +27,7 @@ export const Foreground = forwardRef(
     ref: ForwardedRef<HTMLDivElement>,
   ) => {
     const modalRef = useRef<HTMLDivElement>(null);
-    const { duration } = useModalDuration();
+    const { duration } = useModalDuration(id);
 
     useLayoutEffect(() => {
       let timer: NodeJS.Timeout | null = null;

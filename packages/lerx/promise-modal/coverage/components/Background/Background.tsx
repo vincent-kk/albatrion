@@ -5,18 +5,18 @@ import React, {
   useRef,
 } from 'react';
 
-import type { ModalFrameProps} from '../../../src';
+import type { ModalFrameProps } from '../../../src';
 import { useModalDuration } from '../../../src';
 // @ts-expect-error css module
 import styles from './Background.module.css';
 
 export const Background = forwardRef(
   (
-    { visible, background }: ModalFrameProps,
+    { id, visible, background }: ModalFrameProps,
     ref: ForwardedRef<HTMLDivElement>,
   ) => {
     const modalRef = useRef<HTMLDivElement>(null);
-    const { duration } = useModalDuration();
+    const { duration } = useModalDuration(id);
 
     useLayoutEffect(() => {
       let timer: NodeJS.Timeout | null = null;
