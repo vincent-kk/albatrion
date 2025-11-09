@@ -1,6 +1,5 @@
+import { ModalManager } from '@/promise-modal/app/ModalManager';
 import type { ModalNode } from '@/promise-modal/core';
-
-import { ModalManager } from '../app/ModalManager';
 
 export const closeModal = (modalNode: ModalNode, refresh = true) => {
   if (modalNode.visible === false) return;
