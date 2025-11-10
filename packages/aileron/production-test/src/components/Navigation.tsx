@@ -86,6 +86,14 @@ const Navigation = () => {
         </li>
         <li>
           <NavLink
+            to="/dynamic-object-formtype"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Dynamic Object FormType
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
             to="/about"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
