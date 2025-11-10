@@ -78,7 +78,7 @@ export interface FormTypeInputProps<
   /** onChange handler of FormTypeInput Component */
   onChange: SetStateFnWithOptions<Value>;
   /** Child FormTypeInput Components of this FormTypeInput Component */
-  ChildNodeComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
+  ChildNodeComponents: ChildNodeComponent[];
   /** Style of FormTypeInput Component */
   style: CSSProperties | undefined;
   /** UserDefinedContext passed to Form */

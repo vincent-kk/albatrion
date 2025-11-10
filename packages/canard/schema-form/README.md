@@ -515,7 +515,7 @@ interface FormTypeInputProps<
   /** Attach or detach file(s) to the form's file store */
   onFileAttach: Fn<[file: File | File[] | undefined]>;
   /** Child FormTypeInput Components for this FormTypeInput Component */
-  ChildNodeComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
+  ChildNodeComponents: ChildNodeComponent[];
   /** Style for the FormTypeInput Component */
   style: CSSProperties | undefined;
   /** UserDefinedContext passed to the Form */

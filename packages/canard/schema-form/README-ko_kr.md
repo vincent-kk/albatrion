@@ -507,7 +507,7 @@ interface FormTypeInputProps<
   /** 파일(들)을 폼의 파일 저장소에 첨부/해제합니다 */
   onFileAttach: Fn<[file: File | File[] | undefined]>;
   /** 이 FormTypeInput 컴포넌트의 자식 FormTypeInput 컴포넌트 */
-  ChildNodeComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
+  ChildNodeComponents: ChildNodeComponent[];
   /** FormTypeInput 컴포넌트의 스타일 */
   style: CSSProperties | undefined;
   /** Form에 전달되는 사용자 정의 컨텍스트 */
