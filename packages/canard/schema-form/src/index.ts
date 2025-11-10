@@ -42,6 +42,7 @@ export {
 export { ShowError } from './types';
 
 export type {
+  ChildNodeComponentProps,
   FormTypeInputDefinition,
   FormTypeInputMap,
   FormTypeInputProps,

@@ -13,7 +13,7 @@ import {
   isTerminalNode,
 } from '@/schema-form/core';
 import { useSchemaNodeSubscribe } from '@/schema-form/hooks/useSchemaNodeSubscribe';
-import type { ChildFormTypeInputProps } from '@/schema-form/types';
+import type { ChildNodeComponentProps } from '@/schema-form/types';
 
 import type { ChildNodeComponent } from '../type';
 
@@ -48,7 +48,7 @@ export const useChildNodeComponents = (
         const ChildComponent = ({
           FormTypeRenderer: InputFormTypeRenderer,
           ...restProps
-        }: ChildFormTypeInputProps) => {
+        }: ChildNodeComponentProps) => {
           const FormTypeRenderer = useConstant(InputFormTypeRenderer);
           const overrideProps = useRestProperties(restProps);
           return (
@@ -59,7 +59,11 @@ export const useChildNodeComponents = (
             />
           );
         };
+
         ChildComponent.key = key;
+        ChildComponent.path = node.path;
+        ChildComponent.field = node.name;
+
         cache.current.set(key, ChildComponent);
         ChildNodeComponents.push(ChildComponent);
       }

@@ -1,7 +1,8 @@
 import type { CSSProperties, ComponentType } from 'react';
 
-import type { Dictionary, Fn, WithKey } from '@aileron/declare';
+import type { Dictionary, Fn } from '@aileron/declare';
 
+import type { ChildNodeComponent } from '@/schema-form/components/SchemaNode';
 import type {
   InferSchemaNode,
   PublicSetValueOption,
@@ -55,7 +56,7 @@ export interface FormTypeInputProps<
   /** onFileAttach handler of FormTypeInput Component */
   onFileAttach: Fn<[file: File | File[] | undefined]>;
   /** Child FormTypeInput Components of this FormTypeInput Component */
-  ChildNodeComponents: WithKey<ComponentType<ChildFormTypeInputProps>>[];
+  ChildNodeComponents: ChildNodeComponent[];
   /** Style of FormTypeInput Component */
   style: CSSProperties | undefined;
   /** UserDefinedContext passed to Form */
@@ -105,7 +106,7 @@ export interface UnknownFormTypeInputProps {
   value: any;
   onChange: SetStateFnWithOptions<any>;
   onFileAttach: Fn<[file: File | File[] | undefined]>;
-  ChildNodeComponents: WithKey<ComponentType<any>>[];
+  ChildNodeComponents: ChildNodeComponent<any>[];
   style: CSSProperties | undefined;
   context: any;
   [alt: string]: any;
@@ -126,8 +127,14 @@ export interface OverridableFormTypeInputProps {
   [alt: string]: any;
 }
 
-export interface ChildFormTypeInputProps extends OverridableFormTypeInputProps {
+export interface ChildNodeComponentProps<Value extends AllowedValue = any>
+  extends OverridableFormTypeInputProps {
+  defaultValue?: Value;
+  value?: Value;
+  onChange?: SetStateFnWithOptions<Value>;
+  onFileAttach?: Fn<[file: File | File[] | undefined]>;
   FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  context?: Dictionary;
   [alt: string]: any;
 }
 

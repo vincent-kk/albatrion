@@ -1,10 +1,9 @@
 import type { ComponentType } from 'react';
 
-import type { ElementOf } from '@aileron/declare';
-
 import type { SchemaNode } from '@/schema-form/core';
 import { NodeEventType, SetValueOption } from '@/schema-form/core';
 import type {
+  ChildNodeComponentProps,
   FormTypeInputProps,
   OverridableFormTypeInputProps,
 } from '@/schema-form/types';
@@ -18,9 +17,15 @@ export interface SchemaNodeInputProps {
   NodeProxy: ComponentType<SchemaNodeProxyProps>;
 }
 
-export type ChildNodeComponent = ElementOf<
-  FormTypeInputProps['ChildNodeComponents']
->;
+type AdditionalChildNodeProperties = {
+  key: string;
+  path: string;
+  field: string;
+};
+
+export type ChildNodeComponent<
+  Props extends ChildNodeComponentProps = ChildNodeComponentProps,
+> = ComponentType<Props> & AdditionalChildNodeProperties;
 
 /** Default option for node setValue when onChange is triggered in SchemaNodeInput component */
 export const HANDLE_CHANGE_OPTION =
