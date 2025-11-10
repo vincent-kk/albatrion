@@ -94,26 +94,27 @@ export const SchemaNodeInput = memo(
       <span ref={containerRef} onFocus={handleFocus} onBlur={handleBlur}>
         <FormTypeInput
           // Overridable: UI behavior and styling
+          required={node.required}
           readOnly={rootReadOnly || node.readOnly}
           disabled={rootDisabled || node.disabled}
           style={node.jsonSchema.style}
           {...node.jsonSchema.FormTypeInputProps}
+          // Semi-overridable: Value handler and file attach handler
+          defaultValue={node.defaultValue}
+          value={node.value}
+          onChange={handleChange}
+          onFileAttach={handleFileAttach}
+          context={context}
           {...overrideProps}
           // Non-overridable: Essential node system properties
           key={version}
           jsonSchema={node.jsonSchema}
-          required={node.required}
           node={node}
           name={node.name}
           path={node.path}
           errors={node.errors}
           watchValues={node.watchValues}
-          defaultValue={node.defaultValue}
-          value={node.value}
-          onChange={handleChange}
-          onFileAttach={handleFileAttach}
           ChildNodeComponents={ChildNodeComponents}
-          context={context}
         />
       </span>
     );
