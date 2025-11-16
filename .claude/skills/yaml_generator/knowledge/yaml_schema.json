@@ -1,0 +1,268 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Project Structure Configuration Schema",
+  "description": ".project-structure.yaml 파일의 스키마 정의",
+  "type": "object",
+  "required": ["project", "structure", "package_manager"],
+  "properties": {
+    "project": {
+      "type": "object",
+      "required": ["name", "type"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "프로젝트명 (package.json의 name 또는 디렉토리명)"
+        },
+        "type": {
+          "enum": ["monorepo", "single-package"],
+          "description": "프로젝트 구조 타입"
+        },
+        "description": {
+          "type": "string",
+          "description": "프로젝트 설명"
+        }
+      }
+    },
+    "structure": {
+      "type": "object",
+      "required": ["root", "source_dir"],
+      "properties": {
+        "root": {
+          "type": "string",
+          "description": "프로젝트 루트 디렉토리 (보통 '.')"
+        },
+        "packages_dir": {
+          "type": "string",
+          "description": "Monorepo 패키지 디렉토리 (monorepo인 경우 필수)"
+        },
+        "source_dir": {
+          "type": "string",
+          "description": "소스 코드 디렉토리 (예: src, lib)"
+        },
+        "tests_dir": {
+          "type": "string",
+          "description": "테스트 디렉토리 (예: __tests__, tests)"
+        },
+        "docs_dir": {
+          "type": "string",
+          "description": "문서 디렉토리"
+        },
+        "tasks_dir": {
+          "type": "string",
+          "description": "태스크/계획 디렉토리 (예: .tasks)"
+        }
+      }
+    },
+    "package_manager": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "enum": ["yarn", "npm", "pnpm", "bun"],
+          "description": "사용 중인 패키지 매니저"
+        },
+        "workspace_command": {
+          "type": "string",
+          "description": "워크스페이스 명령어 (monorepo인 경우)"
+        }
+      }
+    },
+    "commands": {
+      "type": "object",
+      "description": "프로젝트 명령어 모음",
+      "properties": {
+        "dev": {
+          "type": "object",
+          "description": "개발 서버 실행 명령어",
+          "additionalProperties": { "type": "string" }
+        },
+        "test": {
+          "type": "object",
+          "description": "테스트 실행 명령어",
+          "additionalProperties": { "type": "string" }
+        },
+        "lint": {
+          "type": "object",
+          "description": "린트 실행 명령어",
+          "additionalProperties": { "type": "string" }
+        },
+        "build": {
+          "type": "object",
+          "description": "빌드 명령어",
+          "additionalProperties": { "type": "string" }
+        },
+        "typecheck": {
+          "type": "object",
+          "description": "타입 체크 명령어",
+          "additionalProperties": { "type": "string" }
+        },
+        "custom": {
+          "type": "object",
+          "description": "커스텀 명령어",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "tech_stack": {
+      "type": "object",
+      "description": "기술 스택 정보",
+      "properties": {
+        "frontend": {
+          "type": "object",
+          "properties": {
+            "framework": {
+              "type": "string",
+              "description": "프론트엔드 프레임워크 (react, vue, angular 등)"
+            },
+            "language": {
+              "enum": ["typescript", "javascript"],
+              "description": "사용 언어"
+            },
+            "ui_library": {
+              "type": "string",
+              "description": "UI 라이브러리 (antd, mui, tailwind 등)"
+            }
+          }
+        },
+        "backend": {
+          "type": "object",
+          "properties": {
+            "framework": {
+              "type": "string",
+              "description": "백엔드 프레임워크 (nestjs, express 등)"
+            },
+            "language": {
+              "enum": ["typescript", "javascript"],
+              "description": "사용 언어"
+            },
+            "api_style": {
+              "enum": ["rest", "graphql", "trpc"],
+              "description": "API 스타일"
+            }
+          }
+        },
+        "state_management": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "상태 관리 라이브러리 (jotai, redux 등)"
+        },
+        "testing": {
+          "type": "object",
+          "properties": {
+            "unit": {
+              "type": "string",
+              "description": "유닛 테스트 프레임워크 (vitest, jest 등)"
+            },
+            "e2e": {
+              "type": "string",
+              "description": "E2E 테스트 프레임워크 (playwright, cypress 등)"
+            },
+            "mocking": {
+              "type": "string",
+              "description": "모킹 라이브러리 (msw 등)"
+            }
+          }
+        },
+        "database": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "데이터베이스 타입 (postgresql, mysql 등)"
+            },
+            "orm": {
+              "type": "string",
+              "description": "ORM (prisma, typeorm 등)"
+            }
+          }
+        }
+      }
+    },
+    "development": {
+      "type": "object",
+      "description": "개발 환경 설정",
+      "properties": {
+        "ports": {
+          "type": "object",
+          "properties": {
+            "frontend": { "type": "integer", "minimum": 1000, "maximum": 65535 },
+            "backend": { "type": "integer", "minimum": 1000, "maximum": 65535 },
+            "storybook": { "type": "integer", "minimum": 1000, "maximum": 65535 }
+          }
+        },
+        "env_files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "환경 변수 파일 목록"
+        }
+      }
+    },
+    "path_conventions": {
+      "type": "object",
+      "description": "파일 경로 컨벤션",
+      "properties": {
+        "component_path": {
+          "type": "string",
+          "description": "컴포넌트 파일 경로 패턴"
+        },
+        "page_path": {
+          "type": "string",
+          "description": "페이지 파일 경로 패턴"
+        },
+        "api_path": {
+          "type": "string",
+          "description": "API 파일 경로 패턴"
+        },
+        "test_path": {
+          "type": "string",
+          "description": "테스트 파일 경로 패턴"
+        },
+        "story_path": {
+          "type": "string",
+          "description": "Storybook 스토리 경로 패턴"
+        }
+      }
+    },
+    "naming_conventions": {
+      "type": "object",
+      "description": "네이밍 컨벤션",
+      "properties": {
+        "components": {
+          "enum": ["PascalCase", "camelCase", "kebab-case"],
+          "description": "컴포넌트 네이밍 컨벤션"
+        },
+        "files": {
+          "enum": ["PascalCase", "camelCase", "kebab-case", "snake_case"],
+          "description": "파일 네이밍 컨벤션"
+        },
+        "directories": {
+          "enum": ["PascalCase", "camelCase", "kebab-case", "snake_case"],
+          "description": "디렉토리 네이밍 컨벤션"
+        },
+        "variables": {
+          "enum": ["camelCase", "snake_case", "PascalCase"],
+          "description": "변수 네이밍 컨벤션"
+        }
+      }
+    },
+    "examples": {
+      "type": "object",
+      "description": "감지된 예시 (monorepo 패키지 목록 등)",
+      "properties": {
+        "packages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "path"],
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "enum": ["frontend", "backend", "library", "unknown"] },
+              "path": { "type": "string" },
+              "framework": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
