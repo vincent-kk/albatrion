@@ -6,33 +6,25 @@ When requested to create a Pull Request, automatically analyze changes in the cu
 
 ## Understanding Project Structure
 
-**CRITICAL: Project structure file verification required before PR creation**
+⚠️ **REQUIRED**: Verify project structure file before PR creation
 
 ### 1. Check Project Structure File
 
-Before starting PR creation, verify that `.project-structure.yaml` file exists:
+Verify `.project-structure.yaml` exists:
 
 ```bash
-# Check if .project-structure.yaml file exists
-if [ ! -f ".project-structure.yaml" ]; then
-  echo "⚠️  .project-structure.yaml file does not exist."
-  echo "→ Running project structure analysis first..."
-  echo ""
-  echo "📋 Executing @analyze-structure.md to analyze project structure."
-  # Execute analyze-structure.md rule to generate .project-structure.yaml
-  # Continue with this PR workflow after generation
-fi
+[ ! -f ".project-structure.yaml" ] && echo "⚠️ Missing → Run @analyze-structure.md"
 ```
 
-### 2. Load Project Information
+### 2. Load Project Info
 
-Load the following information from `.project-structure.yaml` file:
+Load from `.project-structure.yaml`:
 
-- **Project Type**: `project.type` (monorepo or single-package)
-- **Package Structure**: `examples.packages` (for monorepo)
-- **Tech Stack**: `tech_stack` (frontend, backend, testing, etc.)
-- **Package Manager**: `package_manager.type`
-- **Commands**: `commands` (test, lint, build, etc.)
+- **Type**: `project.type` (monorepo/single-package)
+- **Packages**: `examples.packages` (for monorepo)
+- **Stack**: `tech_stack` (frontend/backend/testing)
+- **Manager**: `package_manager.type`
+- **Commands**: `commands` (test/lint/build)
 
 Based on this information:
 
@@ -71,40 +63,41 @@ Check if the current branch is master and determine the analysis mode:
 - **If current branch is not master**: Branch comparison mode (current branch vs master)
 - **If current branch is master**: Staged changes analysis mode
 
-### Step 2: Collect Changes and Perform Code Review
+### Step 2: Collect Changes & Review
 
-Collect changes using appropriate git commands based on the analysis mode, and perform a comprehensive code review following the code-review.mdc guidelines.
+**Parallel execution** of git commands by mode:
 
-#### Branch Comparison Mode (current != master)
+#### Branch Comparison (current != master)
 
 ```bash
-# Analyze differences between branches
-git log master..HEAD --oneline --stat
-git diff master..HEAD --unified=3
-git diff master..HEAD --name-only
+# Parallel - branch diff analysis
+git log master..HEAD --oneline --stat &
+git diff master..HEAD --unified=3 &
+git diff master..HEAD --name-only &
+wait
 
-# Check divergence point
+# Divergence point
 git merge-base master HEAD
-git log $(git merge-base master HEAD)..HEAD --oneline
 ```
 
-#### Staged Changes Analysis Mode (current == master)
+#### Staged Changes (current == master)
 
 ```bash
-# Analyze staged changes
-git diff --cached --unified=3
-git diff --cached --name-only
-git status --porcelain
+# Parallel - staged changes
+git diff --cached --unified=3 &
+git diff --cached --name-only &
+git status --porcelain &
+wait
 ```
 
 ### Step 3: Generate Code Review
 
-Generate code review in the following format according to code-review.mdc guidelines:
+Per code-review.mdc:
 
-- **Simple Refactoring**: Structural changes without logic modifications
-- **Logic Changes**: Business logic and algorithm modifications
-- **File Movement/Reordering**: Structural reorganization
-- **Detailed Change History**: New features, bug fixes, etc.
+- **Simple Refactoring**: Structure changes w/o logic mods
+- **Logic Changes**: Business logic/algorithm updates
+- **File Movement**: Structural reorganization
+- **Detailed History**: New features, bug fixes
 
 ### Step 4: Generate PR Title and Description
 
@@ -113,16 +106,15 @@ Automatically generate PR title and description based on analyzed changes:
 #### PR Title Format
 
 ```
-[<Change Purpose Grouping>](<Scope>): <Change Summary>
+[<Type>](<Scope>): <Summary>
 ```
 
 **Examples**:
-
 - `[Fix/Feat](schema-form): input handling and parser improvements`
 - `[Refactor](schema-form): Async strategy methods and dependency optimization`
 - `[Feat](promise-modal): Add queue-based modal management system`
 
-#### PR 설명 구조
+#### PR Description Structure
 
 ```markdown
 ## 📋 TL;DR
@@ -177,79 +169,64 @@ Automatically generate PR title and description based on analyzed changes:
 
 ### Step 5: Create GitHub PR
 
-Create the actual PR using GitHub CLI:
-
 ```bash
-# Check if branch is pushed to remote
-git push -u origin <current-branch>
-
-# Create PR
-gh pr create --title "PR Title" --body "$(cat <<'EOF'
-PR Description Content
+# Push & create PR
+git push -u origin <branch>
+gh pr create --title "Title" --body "$(cat <<'EOF'
+Content
 EOF
-)" --base master --head <current-branch>
+)" --base master --head <branch>
 ```
 
 ## Automation Execution Guide
 
-When user requests "Create PR" or similar:
+On "Create PR" request:
 
-1. **Project Structure Check** ⚠️ **Required Pre-Step**
-   - Verify `.project-structure.yaml` file exists
-   - If file doesn't exist, automatically execute `@analyze-structure.md` rule
-   - Load project type, package structure, commands, etc.
-2. **Automatic Branch Analysis**: Identify current state and select appropriate analysis mode
+1. **Structure Check** ⚠️ **Required**
+   - Verify `.project-structure.yaml` exists → Run `@analyze-structure.md` if missing
+   - Load: type, packages, commands
+2. **Branch Analysis**: Detect state → Select mode
+3. **Code Review**: Analyze changes → Generate review
+4. **PR Content**:
+   - Title & description from review
+   - Auto-detect affected packages
+   - Auto-suggest test commands
+5. **Create PR**: Execute via `gh` CLI
+6. **Verify**: Return PR link & summary
 
-3. **Automatic Code Review**: Comprehensively analyze changes and generate review document
+## Quality Principles
 
-4. **Automatic PR Content Generation**:
-   - Write PR title and description based on review results
-   - Automatically detect affected packages using `.project-structure.yaml` information
-   - Automatically suggest test commands appropriate for the project
-5. **Automatic PR Creation**: Create actual PR through GitHub CLI
+### Accuracy
+- **Fact-Based**: Use actual git diff/commits
+- **Context**: Meta-level change understanding
+- **Impact**: Classify breaking/new/fixes correctly
 
-6. **Result Verification**: Provide generated PR link and summary information
+### Clarity
+- **Concise**: Focus on core changes
+- **Structured**: Consistent format
+- **Actionable**: Clear review/test items
 
-## Quality Assurance Principles
-
-### Analysis Accuracy
-
-- **Fact-Based**: Analyze based on actual git diff and commit messages
-- **Context Consideration**: Understand the overall context of changes and summarize from a meta perspective
-- **Impact Assessment**: Accurately classify impacts such as breaking changes, new features, bug fixes, etc.
-
-### PR Content Clarity
-
-- **Conciseness**: Write clearly and concisely, focusing on core changes
-- **Structure**: Structure information in a consistent format for easy reviewer understanding
-- **Actionability**: Clearly present sections requiring actual review and test verification items
-
-### Automation Reliability
-
-- **Verification Steps**: Check required items before PR creation (lint, typecheck, test)
-- **Error Handling**: Provide appropriate alternatives when errors occur during analysis
-- **User Confirmation**: Request user confirmation for critical changes
+### Reliability
+- **Verify**: Check lint/typecheck/test pre-PR
+- **Handle Errors**: Provide alternatives
+- **Confirm**: User approval for critical changes
 
 ## Additional Features
 
-### Automatic Mermaid Diagram Generation
+### Auto Mermaid Diagrams
+Generate when relevance ≥50%:
+- **Sequence**: Behavioral flows
+- **Flowchart**: Logic flows
+- **Class**: Structural changes
 
-When change relevance is 50% or higher, automatically generate the following diagrams:
-
-- **Sequence Diagram**: Behavioral flow changes
-- **Flowchart**: Logic flow changes
-- **Class Diagram**: Structural changes
-
-### Smart Labeling
-
-Automatic label suggestions based on change type:
-
+### Smart Labels
+Auto-suggest by type:
 - `enhancement`: New features
-- `bug`: Bug fixes
+- `bug`: Fixes
 - `refactor`: Refactoring
 - `breaking-change`: Breaking changes
-- `documentation`: Documentation changes
+- `documentation`: Docs
 
 ---
 
-Through this guide, users can automatically generate high-quality PRs with comprehensive analysis using a single simple command.
+**Result**: High-quality PRs with comprehensive analysis via single command.
