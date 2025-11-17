@@ -77,6 +77,8 @@ export interface FormTypeInputProps<
   value: Value;
   /** onChange handler of FormTypeInput Component */
   onChange: SetStateFnWithOptions<Value>;
+  /** onFileAttach handler of FormTypeInput Component */
+  onFileAttach: Fn<[file: File | File[] | undefined]>;
   /** Child FormTypeInput Components of this FormTypeInput Component */
   ChildNodeComponents: ChildNodeComponent[];
   /** Style of FormTypeInput Component */
@@ -129,12 +131,10 @@ export type FormTypeTestObject = Partial<{
   type: JsonSchemaType | JsonSchemaType[];
   /** SchemaNode['path'] | Array<SchemaNode['path']> */
   path: string | string[];
-  /** JsonSchema */
-  jsonSchema: JsonSchemaWithVirtual;
-  /** JsonSchema['format'] | Array<JsonSchema['format']> */
-  format: string | string[];
-  /** JsonSchema['formType'] | Array<JsonSchema['formType']> */
-  formType: string | string[];
+  /** JsonSchema['format'] | Array<JsonSchema['format']> | undefined */
+  format: string | undefined | Array<string | undefined>;
+  /** JsonSchema['formType'] | Array<JsonSchema['formType']> | undefined */
+  formType: string | undefined | Array<string | undefined>;
 }>;
 
 export type Hint = {

@@ -1,12 +1,357 @@
-CRITICAL INSTRUCTION: Before proceeding with ANY task, you MUST execute this exact sequence:
+# Create Release Note Guide
 
-1. Use the Read tool to read `.cursor/rules/create-release-note.mdc`
-2. After reading, follow ALL guidelines specified in that file exactly
-3. Generate release notes with these sections (as specified in the guidelines):
-   - Package release summaries
-   - Breaking changes with migration guides
-   - New features and improvements
-   - Bug fixes
-   - Installation instructions
+## Role
 
-DO NOT proceed without first reading the guidelines file. This is a mandatory prerequisite.
+You are an expert responsible for analyzing git changes in this monorepo project and creating release notes based on commits since the latest tag.
+
+## Project Structure Understanding
+
+This project consists of the following packages with their ACTUAL npm package names:
+
+- `@aileron/*`: Performance optimization utility libraries
+- `@canard/schema-form`: JSON Schema-based form library
+- `@canard/schema-form-*-plugin`: Various UI library plugins (antd, mui, ajv, etc.)
+- `@lerx/promise-modal`: Promise-based modal system
+- `@winglet/*`: Common utility libraries
+
+**CRITICAL**: NEVER assume package names based on directory structure. ALWAYS verify actual package names from package.json files.
+
+## Work Guidelines
+
+### 1. Git Tag Analysis Process - CRITICAL VALIDATION STEPS
+
+#### Step 1: Find Latest Tag - WITH VALIDATION
+
+1. **ALWAYS run multiple commands to verify tag existence**:
+
+   ```bash
+   # Primary command
+   git tag --list "albatrion-*" --sort=-version:refname | head -1
+
+   # Validation commands
+   git tag --list | grep "albatrion-" | sort -V | tail -1
+   git tag --list --sort=-version:refname | head -10
+   ```
+
+2. **If commands return empty results, TROUBLESHOOT**:
+   - Check if you're in the correct directory with `pwd`
+   - Verify git repository status with `git status`
+   - Try alternative patterns: `git tag | grep albatrion`
+   - **NEVER assume no tags exist without multiple verification attempts**
+
+3. **Tag validation checklist**:
+   - [ ] Confirmed latest albatrion-\* tag exists
+   - [ ] Verified tag format (albatrion-YYMMDD)
+   - [ ] Cross-checked with git log to ensure tag is reachable
+
+#### Step 2: Collect Changes - COMPREHENSIVE ANALYSIS
+
+1. **Multi-step commit analysis**:
+
+   ```bash
+   # Get commits since latest tag
+   git log <latest-tag>..HEAD --oneline
+
+   # Get detailed changes
+   git log <latest-tag>..HEAD --oneline --name-only
+
+   # Check for version bumps in commits
+   git log <latest-tag>..HEAD --grep="Bump version" --grep="version" --oneline
+   ```
+
+2. **Package version comparison**:
+
+   ```bash
+   # Compare package.json files between tag and HEAD
+   git show <latest-tag>:packages/<package>/package.json | jq '.version'
+   git show HEAD:packages/<package>/package.json | jq '.version'
+   ```
+
+3. **CRITICAL: Validate that changes actually exist**:
+   - If no commits between tag and HEAD, explain this in release notes
+   - Don't fabricate changes that don't exist
+   - Focus only on actual version bumps and code changes
+
+#### Step 3: Package Version Detection - EVIDENCE-BASED
+
+1. **MANDATORY: Verify actual package names from package.json**:
+
+   ```bash
+   # Get actual package names for changed packages
+   find packages -name "package.json" -not -path "*/node_modules/*" -exec sh -c 'echo "$1: $(cat "$1" | jq -r ".name")"' _ {} \;
+
+   # For specific package
+   cat packages/<path>/package.json | jq '.name'
+   ```
+
+2. **Only include packages with ACTUAL version changes**
+3. **Compare tag vs HEAD versions for each package**
+4. **Identify version bump type from commit messages**
+5. **Cross-reference with git tags for individual packages**
+
+#### Step 4: Categorize Changes - BASED ON ACTUAL COMMITS
+
+1. **Breaking Changes**: Only if commit messages indicate breaking changes
+2. **New Features**: Based on actual feature additions in commits
+3. **Improvements**: Refactoring and performance commits
+4. **Bug Fixes**: Fix-related commits only
+
+### 2. Release Notes Writing Principles
+
+#### Clarity & Conciseness
+
+- Use language that users can easily understand
+- **Keep it brief**: Focus on essential information only
+- Avoid lengthy explanations or technical details
+- Specify what changed and how to migrate (if needed)
+
+#### Structure with Emojis
+
+- **📦 Package Releases**: List of released packages with version changes
+- **💥 Breaking Changes**: Changes that break existing code
+- **✨ New Features**: Addition of new functionality
+- **🚀 Improvements**: Enhancement of existing features
+- **🐛 Bug Fixes**: Bug corrections
+- **📋 Installation**: Installation commands
+
+#### Practicality
+
+- Include brief migration steps (for Breaking Changes)
+- Provide minimal code examples only when necessary
+- Focus on user impact, not implementation details
+
+### 3. Writing Format
+
+````markdown
+# [albatrion-yyMMdd] Brief Summary of Key Changes
+
+## 📦 Package Releases
+
+- `@package/name@X.X.X` - Brief description (from vX.X.X)
+- `@package/plugin@X.X.X` 🆕 - New plugin description
+
+---
+
+## 💥 Breaking Changes
+
+### API Change Name
+
+Brief description of what changed.
+
+```tsx
+// Before
+<OldComponent prop={value} />
+
+// After
+<NewComponent newProp={value} />
+```
+````
+
+### Migration
+
+1. Brief step one
+2. Brief step two
+3. No other changes required
+
+---
+
+## ✨ New Features
+
+- **Feature name**: Brief description
+- **Another feature**: Brief description
+
+---
+
+## 🚀 Improvements
+
+- **Performance**: Brief description of improvement
+- **TypeScript**: Enhanced type definitions
+- **Bundle size**: Reduced dependencies
+
+---
+
+## 🐛 Bug Fixes
+
+- Fixed specific issue description
+- Improved error handling scenario
+- Resolved edge case behavior
+
+---
+
+## 📋 Installation
+
+```bash
+# Recommended
+npm install @package/name@X.X.X
+
+# With plugins
+npm install @package/name@X.X.X @package/plugin@X.X.X
+```
+
+````
+
+### 4. Git Analysis Commands Reference
+
+```bash
+# Find latest albatrion tag
+git tag --list "albatrion-*" --sort=-version:refname | head -1
+
+# Get commits since tag
+git log albatrion-20240101..HEAD --oneline
+
+# Get changed files since tag
+git diff --name-only albatrion-20240101..HEAD
+
+# Compare package.json versions
+git show albatrion-20240101:packages/package-name/package.json
+git show HEAD:packages/package-name/package.json
+
+# Get commit messages for specific paths
+git log albatrion-20240101..HEAD --oneline -- packages/specific-package/
+````
+
+### 5. Content Guidelines
+
+#### What to Include
+
+- Packages with version changes
+- Essential changes that affect users
+- Breaking changes with simple migration steps
+- New features with one-line descriptions
+- Important bug fixes
+- Installation commands
+
+#### What to Exclude
+
+- Technical implementation details
+- Internal refactoring details (unless performance impact)
+- Verbose explanations
+- Complex code examples
+- Architecture descriptions
+- Performance metrics (unless significant)
+
+### 6. Version Analysis Guide
+
+- **Major (X.0.0)**: Breaking changes in API, removed features
+- **Minor (0.X.0)**: New feature additions, backward compatibility maintained
+- **Patch (0.0.X)**: Bug fixes, internal improvements
+
+### 7. Title and File Output
+
+#### Title Format
+
+- Pattern: `[albatrion-yyMMdd] Brief Summary of Key Changes`
+- Examples:
+  - `[albatrion-250817] Enhanced Performance with Batch Processing`
+  - `[albatrion-250903] New Schema Form Plugins and TypeScript Improvements`
+  - `[albatrion-250915] Critical Bug Fixes and API Stabilization`
+  - `[albatrion-251201] Major API Redesign with Breaking Changes`
+
+#### Summary Guidelines
+
+- Focus on the most impactful change
+- Use action words (Enhanced, Added, Fixed, Improved, etc.)
+- Keep it under 8 words when possible
+- Prioritize: Breaking Changes > New Features > Major Improvements > Bug Fixes
+
+Create release notes file with name pattern: `./release-notes-yyMMdd.md`
+
+## Example Workflow
+
+1. **Tag Analysis**: "What's the latest albatrion-\* tag?"
+2. **Commit Analysis**: "What commits happened since that tag?"
+3. **Version Detection**: "Which packages had version changes?"
+4. **Change Classification**: "Breaking, Feature, Improvement, or Bug Fix?"
+5. **Title Creation**: "What's the most impactful change for the title?"
+6. **User Impact**: "What does the user need to know?"
+7. **Brevity Check**: "Can I say this in fewer words?"
+8. **File Creation**: "Save as release-notes-yyMMdd.md"
+
+## COMMON MISTAKES TO AVOID - LESSONS LEARNED
+
+### Terminal Command Issues
+
+- **Problem**: Commands returning empty results without proper validation
+- **Solution**: Always validate command execution and try multiple alternatives
+- **Never assume**: Empty results = no data exists
+
+### Wrong Tag Selection
+
+- **Problem**: Not finding the actual latest tag due to incomplete search
+- **Solution**: Use multiple sorting methods and verify manually with different commands
+
+### Fabricating Changes
+
+- **Problem**: Creating release notes for non-existent changes or "initial releases"
+- **Solution**: Only document actual commits and version changes between tags
+
+### Package Version Confusion
+
+- **Problem**: Using current package.json without comparing to tag versions
+- **Solution**: Always compare tag version vs HEAD version for each package
+
+### Package Name Errors
+
+- **Problem**: Assuming package names based on directory structure or project name
+- **Solution**: ALWAYS verify actual package names by reading package.json files
+- **Example**: Directory `packages/canard/schema-form/` does NOT mean package name is `@albatrion/canard/schema-form`
+- **Correct approach**: Run `cat packages/canard/schema-form/package.json | jq '.name'` to get actual name `@canard/schema-form`
+
+## VALIDATION WORKFLOW - MANDATORY
+
+```bash
+# 1. Verify repository state
+git status
+pwd
+
+# 2. Find and validate latest tag
+LATEST_TAG=$(git tag --list "albatrion-*" --sort=-version:refname | head -1)
+echo "Latest tag: $LATEST_TAG"
+
+# 3. Verify tag exists and is reachable
+git show $LATEST_TAG --oneline | head -1
+
+# 4. Check for actual changes
+COMMIT_COUNT=$(git rev-list $LATEST_TAG..HEAD --count)
+echo "Commits since tag: $COMMIT_COUNT"
+
+# 5. If no commits, document this fact
+if [ "$COMMIT_COUNT" -eq 0 ]; then
+  echo "No changes since latest tag - consider if release note is needed"
+fi
+```
+
+## FAILURE PREVENTION CHECKLIST
+
+Before creating release notes:
+
+- [ ] Confirmed git commands are working properly
+- [ ] Verified latest tag exists and is correct
+- [ ] Checked that commits exist between tag and HEAD
+- [ ] Validated that package versions actually changed
+- [ ] **Verified actual package names from package.json files**
+- [ ] Cross-referenced commit messages with claimed changes
+- [ ] Ensured no fabricated information in release notes
+
+## Error Recovery Process
+
+If you encounter command failures:
+
+1. **Stop and troubleshoot** - don't proceed with assumptions
+2. **Try alternative commands** - use different git syntax
+3. **Verify repository state** - check working directory and git status
+4. **Ask for clarification** - if unsure about repository state
+5. **Document uncertainties** - don't guess, be explicit about limitations
+
+## Important Notes
+
+- **Keep it short**: Release notes should be scannable in under 2 minutes
+- **Focus on user impact**: Internal changes go to "Improvements" if mentioned at all
+- Extract version changes from actual package.json diffs
+- Write code examples in TypeScript when needed
+- **ALWAYS write release note content in English only**
+- Use the emoji structure consistently
+- Link to package READMEs for detailed usage
+- Save output as `./release-notes-yyMMdd.md` where yyMMdd is today's date
+
+Please follow this UPDATED guide to create ACCURATE, EVIDENCE-BASED release notes that reflect actual changes in the repository.

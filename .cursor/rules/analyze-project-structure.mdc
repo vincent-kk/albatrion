@@ -106,11 +106,11 @@ done
 ```javascript
 // Read package.json dependencies
 const detectFrontendFramework = (dependencies) => {
-  if (dependencies.react || dependencies['react-dom']) return 'react';
-  if (dependencies.vue) return 'vue';
-  if (dependencies['@angular/core']) return 'angular';
-  if (dependencies.svelte) return 'svelte';
-  return 'unknown';
+  if (dependencies.react || dependencies["react-dom"]) return "react";
+  if (dependencies.vue) return "vue";
+  if (dependencies["@angular/core"]) return "angular";
+  if (dependencies.svelte) return "svelte";
+  return "unknown";
 };
 ```
 
@@ -118,12 +118,12 @@ const detectFrontendFramework = (dependencies) => {
 
 ```javascript
 const detectBackendFramework = (dependencies) => {
-  if (dependencies['@nestjs/core']) return 'nestjs';
-  if (dependencies.express) return 'express';
-  if (dependencies.fastify) return 'fastify';
-  if (dependencies.koa) return 'koa';
-  if (dependencies.next) return 'next';  // Next.js can be backend too
-  return 'unknown';
+  if (dependencies["@nestjs/core"]) return "nestjs";
+  if (dependencies.express) return "express";
+  if (dependencies.fastify) return "fastify";
+  if (dependencies.koa) return "koa";
+  if (dependencies.next) return "next"; // Next.js can be backend too
+  return "unknown";
 };
 ```
 
@@ -132,13 +132,14 @@ const detectBackendFramework = (dependencies) => {
 ```javascript
 const detectStateManagement = (dependencies) => {
   const stateLibs = [];
-  if (dependencies.jotai) stateLibs.push('jotai');
-  if (dependencies.redux || dependencies['@reduxjs/toolkit']) stateLibs.push('redux');
-  if (dependencies.zustand) stateLibs.push('zustand');
-  if (dependencies.mobx) stateLibs.push('mobx');
-  if (dependencies.recoil) stateLibs.push('recoil');
-  if (dependencies['@apollo/client']) stateLibs.push('apollo-client');
-  if (dependencies['@tanstack/react-query']) stateLibs.push('react-query');
+  if (dependencies.jotai) stateLibs.push("jotai");
+  if (dependencies.redux || dependencies["@reduxjs/toolkit"])
+    stateLibs.push("redux");
+  if (dependencies.zustand) stateLibs.push("zustand");
+  if (dependencies.mobx) stateLibs.push("mobx");
+  if (dependencies.recoil) stateLibs.push("recoil");
+  if (dependencies["@apollo/client"]) stateLibs.push("apollo-client");
+  if (dependencies["@tanstack/react-query"]) stateLibs.push("react-query");
   return stateLibs;
 };
 ```
@@ -147,10 +148,10 @@ const detectStateManagement = (dependencies) => {
 
 ```javascript
 const detectAPIStyle = (dependencies) => {
-  if (dependencies.graphql || dependencies['@apollo/server']) return 'graphql';
-  if (dependencies['express'] && !dependencies.graphql) return 'rest';
-  if (dependencies['@trpc/server']) return 'trpc';
-  return 'rest';  // default
+  if (dependencies.graphql || dependencies["@apollo/server"]) return "graphql";
+  if (dependencies["express"] && !dependencies.graphql) return "rest";
+  if (dependencies["@trpc/server"]) return "trpc";
+  return "rest"; // default
 };
 ```
 
@@ -161,16 +162,16 @@ const detectTestingFramework = (devDependencies) => {
   const testing = {};
 
   // Unit test frameworks
-  if (devDependencies.vitest) testing.unit = 'vitest';
-  else if (devDependencies.jest) testing.unit = 'jest';
-  else if (devDependencies.mocha) testing.unit = 'mocha';
+  if (devDependencies.vitest) testing.unit = "vitest";
+  else if (devDependencies.jest) testing.unit = "jest";
+  else if (devDependencies.mocha) testing.unit = "mocha";
 
   // E2E frameworks
-  if (devDependencies.playwright) testing.e2e = 'playwright';
-  else if (devDependencies.cypress) testing.e2e = 'cypress';
+  if (devDependencies.playwright) testing.e2e = "playwright";
+  else if (devDependencies.cypress) testing.e2e = "cypress";
 
   // Mocking
-  if (devDependencies.msw) testing.mocking = 'msw';
+  if (devDependencies.msw) testing.mocking = "msw";
 
   return testing;
 };
@@ -180,12 +181,12 @@ const detectTestingFramework = (devDependencies) => {
 
 ```javascript
 const detectUILibrary = (dependencies) => {
-  if (dependencies['antd-mobile']) return 'antd-mobile';
-  if (dependencies.antd) return 'antd';
-  if (dependencies['@mui/material']) return 'mui';
-  if (dependencies['@chakra-ui/react']) return 'chakra-ui';
-  if (dependencies.tailwindcss) return 'tailwind';
-  return 'custom';
+  if (dependencies["antd-mobile"]) return "antd-mobile";
+  if (dependencies.antd) return "antd";
+  if (dependencies["@mui/material"]) return "mui";
+  if (dependencies["@chakra-ui/react"]) return "chakra-ui";
+  if (dependencies.tailwindcss) return "tailwind";
+  return "custom";
 };
 ```
 
@@ -201,15 +202,15 @@ const detectCommands = (scripts, projectType, packagesDir) => {
     lint: {},
     build: {},
     typecheck: {},
-    custom: {}
+    custom: {},
   };
 
   // For monorepo, detect workspace-specific commands
-  if (projectType === 'monorepo') {
+  if (projectType === "monorepo") {
     // Pattern: "app:dev": "yarn workspace @scope/app dev"
     Object.entries(scripts).forEach(([key, value]) => {
-      const [pkg, cmd] = key.split(':');
-      if (cmd && ['dev', 'test', 'lint', 'build'].includes(cmd)) {
+      const [pkg, cmd] = key.split(":");
+      if (cmd && ["dev", "test", "lint", "build"].includes(cmd)) {
         commands[cmd][pkg] = value;
       }
     });
@@ -221,15 +222,17 @@ const detectCommands = (scripts, projectType, packagesDir) => {
     if (scripts.build) commands.build.all = scripts.build;
   } else {
     // Single package
-    commands.dev.all = scripts.dev || scripts.start || 'npm run dev';
-    commands.test.all = scripts.test || 'npm test';
-    commands.lint.all = scripts.lint || 'npm run lint';
-    commands.build.all = scripts.build || 'npm run build';
+    commands.dev.all = scripts.dev || scripts.start || "npm run dev";
+    commands.test.all = scripts.test || "npm test";
+    commands.lint.all = scripts.lint || "npm run lint";
+    commands.build.all = scripts.build || "npm run build";
   }
 
   // Detect custom commands
-  if (scripts['generate:types']) commands.custom.generate_types = scripts['generate:types'];
-  if (scripts['generate:graphql']) commands.custom.generate_graphql = scripts['generate:graphql'];
+  if (scripts["generate:types"])
+    commands.custom.generate_types = scripts["generate:types"];
+  if (scripts["generate:graphql"])
+    commands.custom.generate_graphql = scripts["generate:graphql"];
   if (scripts.storybook) commands.custom.storybook = scripts.storybook;
 
   return commands;
@@ -336,34 +339,28 @@ After analysis, generate `.project-structure.yaml`:
 
 project:
   name: "{project_name}"
-  type: "{project_type}"  # monorepo | single-package
+  type: "{project_type}" # monorepo | single-package
   description: "Auto-detected project structure"
 
 structure:
   root: "."
-  packages_dir: "{packages_dir}"  # For monorepo
-  source_dir: "{source_dir}"      # For single-package
+  packages_dir: "{packages_dir}" # For monorepo
+  source_dir: "{source_dir}" # For single-package
   tests_dir: "{tests_dir}"
   docs_dir: "docs"
   tasks_dir: ".tasks"
 
 package_manager:
-  type: "{package_manager}"  # yarn | npm | pnpm | bun
-  workspace_command: "{workspace_command}"  # For monorepo
+  type: "{package_manager}" # yarn | npm | pnpm | bun
+  workspace_command: "{workspace_command}" # For monorepo
 
 commands:
-  dev:
-    {dev_commands}
-  test:
-    {test_commands}
-  lint:
-    {lint_commands}
-  build:
-    {build_commands}
-  typecheck:
-    {typecheck_commands}
-  custom:
-    {custom_commands}
+  dev: { dev_commands }
+  test: { test_commands }
+  lint: { lint_commands }
+  build: { build_commands }
+  typecheck: { typecheck_commands }
+  custom: { custom_commands }
 
 tech_stack:
   frontend:
@@ -376,8 +373,7 @@ tech_stack:
     language: "{language}"
     api_style: "{api_style}"
 
-  state_management:
-    {state_management_list}
+  state_management: { state_management_list }
 
   testing:
     unit: "{unit_test_framework}"
@@ -390,9 +386,9 @@ tech_stack:
 
 development:
   ports:
-    frontend: {frontend_port}
-    backend: {backend_port}
-    storybook: {storybook_port}
+    frontend: { frontend_port }
+    backend: { backend_port }
+    storybook: { storybook_port }
 
   env_files:
     - ".env"
@@ -414,8 +410,7 @@ naming_conventions:
 
 # Detected packages (for monorepo)
 examples:
-  packages:
-    {detected_packages}
+  packages: { detected_packages }
 ```
 
 ## Execution Workflow
@@ -447,7 +442,7 @@ examples:
 
 ### In requirement-driven-development.mdc
 
-```markdown
+````markdown
 ## Project Structure Analysis
 
 **CRITICAL: Before applying any rules, load project-specific configuration**
@@ -462,10 +457,11 @@ if [ ! -f ".project-structure.yaml" ]; then
   # This will generate .project-structure.yaml
 fi
 ```
+````
 
 ### In plan-execution.mdc
 
-```markdown
+````markdown
 ## Project Configuration Loading
 
 **CRITICAL: Load project structure before executing any tasks**
@@ -480,6 +476,7 @@ if [ ! -f ".project-structure.yaml" ]; then
   exit 1  # Re-run after generation
 fi
 ```
+````
 
 ## Error Handling
 
@@ -487,6 +484,7 @@ fi
 
 ```markdown
 If project type cannot be determined:
+
 1. Default to "single-package"
 2. Set source_dir to "src" (most common)
 3. Add comment: "# Unable to auto-detect, please verify"
@@ -497,8 +495,9 @@ If project type cannot be determined:
 
 ```markdown
 If multiple lock files exist:
+
 1. Priority: yarn.lock > pnpm-lock.yaml > package-lock.json
-2. Warn user: "⚠️  Multiple package managers detected"
+2. Warn user: "⚠️ Multiple package managers detected"
 3. Use highest priority
 4. Add comment: "# Multiple lock files found, using {selected}"
 ```
@@ -507,6 +506,7 @@ If multiple lock files exist:
 
 ```markdown
 If package.json not found:
+
 1. Check if this is a sub-directory
 2. Search parent directories for package.json
 3. If still not found: Cannot proceed

@@ -69,16 +69,17 @@ rm .project-structure.yaml
 ```markdown
 When .project-structure.yaml is missing:
 → Import and execute all phases from analyze-project-structure.mdc:
-  - Phase 1: Detect Package Manager
-  - Phase 2: Detect Project Type
-  - Phase 3: Scan Directory Structure
-  - Phase 4: Detect Tech Stack
-  - Phase 5: Detect Commands
-  - Phase 6: Detect Path Conventions
-  - Phase 7: Detect Naming Conventions
-  - Phase 8: Detect Development Ports
-→ Generate .project-structure.yaml using the template
-→ Continue with code review workflow
+
+- Phase 1: Detect Package Manager
+- Phase 2: Detect Project Type
+- Phase 3: Scan Directory Structure
+- Phase 4: Detect Tech Stack
+- Phase 5: Detect Commands
+- Phase 6: Detect Path Conventions
+- Phase 7: Detect Naming Conventions
+- Phase 8: Detect Development Ports
+  → Generate .project-structure.yaml using the template
+  → Continue with code review workflow
 ```
 
 ### 1. Branch Analysis Process
@@ -395,6 +396,7 @@ Apply Tree of Thoughts deep analysis when changes meet any of these criteria:
 ## 📊 리뷰 요약
 
 **프로젝트 정보**: (`.project-structure.yaml`에서 로드)
+
 - **프로젝트 타입**: [monorepo | single-package]
 - **프론트엔드**: [react | vue | angular] + [antd | mui | tailwind]
 - **백엔드**: [nestjs | express | fastify]
@@ -409,6 +411,7 @@ Apply Tree of Thoughts deep analysis when changes meet any of these criteria:
 **삭제된 라인**: -X
 
 **변경된 파일 분류**: (프로젝트 구조 기반)
+
 - 컴포넌트: X개 ([naming convention]에 따름)
 - API/리졸버: X개 ([API style] 스타일)
 - 테스트: X개 ([testing framework] 규칙)
@@ -641,9 +644,10 @@ done
 **Step 4: Change Categorization** - Sort changes into review categories (project-aware)
 
 **Step 5: Complexity Assessment** - Calculate complexity score to determine review approach
-   - Simple changes (Score < 3): Use standard review process
-   - Complex changes (Score ≥ 3): Apply enhanced ToT deep analysis protocol (Section 8)
-   - Determine Search Strategy: BFS (Score 3-5) or DFS (Score 6+)
+
+- Simple changes (Score < 3): Use standard review process
+- Complex changes (Score ≥ 3): Apply enhanced ToT deep analysis protocol (Section 8)
+- Determine Search Strategy: BFS (Score 3-5) or DFS (Score 6+)
 
 5. **Enhanced ToT Internal Analysis** (for complex changes only):
 
@@ -798,6 +802,7 @@ git diff HEAD --unified=5
 **Review Quality Standards**:
 
 The review should be:
+
 1. **Project-Aware**: Leverage `.project-structure.yaml` for context-specific analysis
 2. **Comprehensive**: Cover all aspects of changes with proper categorization
 3. **Actionable**: Focus on concrete next steps for the development team
@@ -808,6 +813,7 @@ The review should be:
 **Integration Benefits**:
 
 By using `.project-structure.yaml`, the review provides:
+
 - ✅ More accurate file classification (component vs utility vs API)
 - ✅ Framework-specific recommendations (React hooks, NestJS patterns, etc.)
 - ✅ Naming convention validation against project standards
@@ -864,6 +870,7 @@ When complexity score ≥ 3, apply this **enhanced three-stage Tree of Thoughts 
 **Objective**: Generate multiple hypotheses about change intent through collaborative expert review with progressive refinement.
 
 **Search Strategy Selection**:
+
 - **Complexity 3-5**: Use **BFS (Breadth-First)** - explore multiple hypotheses in parallel
 - **Complexity 6+**: Use **DFS (Depth-First)** - deep dive into most promising hypothesis first
 
@@ -978,6 +985,7 @@ Use this collaborative process to understand the change intent deeply, then summ
 **Objective**: For each selected hypothesis, systematically explore the tree of impacts using search strategies and backtracking.
 
 **Search Algorithm Selection** (from Stage 1):
+
 - **BFS Mode (Complexity 3-5)**: Explore all hypotheses level-by-level in parallel
 - **DFS Mode (Complexity 6+)**: Deep dive into highest-priority hypothesis first
 
@@ -1048,15 +1056,15 @@ STEP 5: Impact Tree Consolidation
 
 **Backtracking Decision Matrix**:
 
-| Condition | Action | Reasoning |
-|-----------|--------|-----------|
-| Severity drops to 🟢 at Level 2 | PRUNE | Minor impacts don't warrant deep exploration |
-| No new files affected at Level 3+ | PRUNE | Impact contained, no further propagation |
-| Expert consensus: "impossible" | PRUNE | Professional judgment overrides speculation |
-| Duplicate of existing path | PRUNE | Avoid redundant analysis |
-| Contradicts proven fact | PRUNE | Evidence-based elimination |
-| Critical severity maintained | CONTINUE | Deep impact requires full exploration |
-| Uncovers new attack surface | CONTINUE | Security implications need tracking |
+| Condition                         | Action   | Reasoning                                    |
+| --------------------------------- | -------- | -------------------------------------------- |
+| Severity drops to 🟢 at Level 2   | PRUNE    | Minor impacts don't warrant deep exploration |
+| No new files affected at Level 3+ | PRUNE    | Impact contained, no further propagation     |
+| Expert consensus: "impossible"    | PRUNE    | Professional judgment overrides speculation  |
+| Duplicate of existing path        | PRUNE    | Avoid redundant analysis                     |
+| Contradicts proven fact           | PRUNE    | Evidence-based elimination                   |
+| Critical severity maintained      | CONTINUE | Deep impact requires full exploration        |
+| Uncovers new attack surface       | CONTINUE | Security implications need tracking          |
 
 **⚠️ MUST PERFORM THIS ANALYSIS - BUT DO NOT OUTPUT DETAILS**
 
@@ -1219,6 +1227,7 @@ If any expert strongly disagrees → Flag review for human expert validation
 ```
 
 **Decision-Making Principles**:
+
 1. **Safety First**: When in doubt, choose higher risk level
 2. **Evidence-Based**: All decisions must trace back to Stage 1-2 findings
 3. **Actionable**: Every "Must Do" must be specific and measurable
@@ -1537,18 +1546,21 @@ This enhanced protocol ensures high-quality code review for complex changes whil
 ### What This Integration Provides
 
 **1. Automatic Project Discovery**
+
 - ✅ No manual configuration needed
 - ✅ Auto-detects project type (monorepo/single-package)
 - ✅ Identifies tech stack (React/Vue/NestJS/etc.)
 - ✅ Discovers naming conventions and path patterns
 
 **2. Context-Aware Code Review**
+
 - ✅ File classification based on project conventions
 - ✅ Framework-specific best practice validation
 - ✅ Naming convention compliance checking
 - ✅ Tech stack-aware recommendations
 
 **3. Improved Review Quality**
+
 - ✅ More accurate categorization (component vs API vs test)
 - ✅ Framework-specific pattern validation (React hooks, NestJS decorators)
 - ✅ Monorepo-aware package impact analysis
@@ -1575,6 +1587,7 @@ Generate review.md with project context
 ### Usage Examples
 
 **Example 1: First-time Code Review**
+
 ```bash
 # User runs code review for the first time
 /review
@@ -1598,6 +1611,7 @@ Generate review.md with project context
 ```
 
 **Example 2: Subsequent Code Reviews**
+
 ```bash
 # .project-structure.yaml already exists
 /review
@@ -1612,6 +1626,7 @@ Generate review.md with project context
 ```
 
 **Example 3: Project Structure Update**
+
 ```bash
 # Project has changed significantly
 rm .project-structure.yaml
@@ -1627,16 +1642,19 @@ rm .project-structure.yaml
 ### Benefits
 
 **For Developers**:
+
 - 🎯 More relevant and accurate code review feedback
 - 🎯 Framework-specific best practice recommendations
 - 🎯 Consistent review standards across team
 
 **For Projects**:
+
 - 🎯 Automated project understanding
 - 🎯 Reduced manual configuration
 - 🎯 Better code quality enforcement
 
 **For Maintainability**:
+
 - 🎯 Self-documenting project structure
 - 🎯 Easy onboarding for new team members
 - 🎯 Consistent tooling configuration
@@ -1646,6 +1664,7 @@ rm .project-structure.yaml
 > **Last Updated**: 2024-10-14
 >
 > **Major Changes**:
+>
 > - ✅ Integrated `.project-structure.yaml` for project-aware analysis
 > - ✅ Added automatic execution of `analyze-project-structure.mdc` when config missing
 > - ✅ Enhanced file classification using project conventions
@@ -1653,5 +1672,6 @@ rm .project-structure.yaml
 > - ✅ Improved review output with project context
 >
 > **Dependencies**:
+>
 > - `.cursor/rules/analyze-project-structure.mdc` - Project structure analysis workflow
 > - `.project-structure.yaml` - Auto-generated project configuration (created on first run)

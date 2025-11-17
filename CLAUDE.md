@@ -31,13 +31,15 @@ When working on specific packages, **always check the package-specific CLAUDE.md
 ### Development Workflow
 - **/changeset** - Create changeset and release notes (→ `.cursor/rules/create-changeset.mdc`)
 - **/execute** - Execute implementation plans with automated workflow (→ `.cursor/rules/plan-execution.mdc`)
-- **/requirements** - Create requirements document and implementation plan (→ `.cursor/rules/requirement-driven-development.mdc`)
+- **/requirements** - Create requirements document and implementation plan (→ Skills: tot-requirements-engine, ears-documenter, design-architect, task-and-progress)
 - **/review** - Perform comprehensive code review (→ `.cursor/rules/code-review.mdc`)
 - **/pr** - Create well-structured pull request (→ `.cursor/rules/pull-request.mdc`)
 
 ### Code Quality
 - **/code-style** - Apply code writing and TypeScript guidelines (→ multiple style rules)
   - Includes: code-writing-guidelines, typescript, typescript-react, toss-frontend-rules
+- **/test** - Generate tests and analyze coverage (→ test_generator Skill)
+  - Auto-generates unit, component, integration, and E2E tests
 
 ### Specialized Tasks
 - **/plugin** - Create new @canard/schema-form plugin (→ `.cursor/rules/create-canard-form-plugin-guidelines.mdc`)
@@ -81,7 +83,8 @@ When working on specific packages, **always check the package-specific CLAUDE.md
 - **Changeset Creation**: `.cursor/rules/create-changeset.mdc`
 - **Pull Request Guidelines**: `.cursor/rules/pull-request.mdc`
 - **Plan Execution**: `.cursor/rules/plan-execution.mdc`
-- **Requirement Driven Development**: `.cursor/rules/requirement-driven-development.mdc`
+- **Requirement Driven Development**: `.cursor/rules/requirement-driven-development.mdc` (deprecated, use Skills instead)
+  - **New Approach**: Use `.claude/skills/` - tot-requirements-engine, ears-documenter, design-architect, task-and-progress
 - **Code Review**: `.cursor/rules/code-review.mdc`
 - **Release Notes**: `.cursor/rules/create-release-note.mdc`
 

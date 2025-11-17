@@ -1,0 +1,274 @@
+# 코드 품질 검토 규칙
+# code-writing-guidelines.mdc를 기반으로 자동 검증 가능한 규칙 정의
+
+readability:
+  sequential_flow:
+    description: "코드는 위에서 아래로 순차적으로 읽혀야 함"
+    checks:
+      - name: "변수 사용 전 선언"
+        pattern: "변수는 사용하기 직전에 선언"
+        auto_check: true
+      - name: "전방 참조 금지"
+        pattern: "정의되지 않은 변수/함수 참조 검출"
+        auto_check: true
+
+  concise_length:
+    description: "5줄 이내로 이해 가능한 코드 블록"
+    checks:
+      - name: "함수 길이 제한"
+        threshold: 15
+        unit: "lines"
+        severity: "warning"
+        auto_check: true
+      - name: "중첩 깊이 제한"
+        threshold: 3
+        unit: "levels"
+        severity: "error"
+        auto_check: true
+
+  no_duplicate_variables:
+    description: "동일 변수명 재사용 금지"
+    checks:
+      - name: "변수 재할당 검사"
+        pattern: "let 사용 시 재할당 이유 확인"
+        auto_check: true
+      - name: "의미 변화 감지"
+        pattern: "변수 재할당 시 의미가 바뀌는지 확인"
+        auto_check: false
+
+  clear_naming:
+    description: "명확한 변수/함수/클래스 네이밍"
+    conventions:
+      functions:
+        pattern: "동사+명사 (예: calculateTotal, fetchUser)"
+        case: "camelCase"
+      variables:
+        pattern: "명사 또는 형용사+명사 (예: totalPrice, isValid)"
+        case: "camelCase"
+      classes:
+        pattern: "명사 (예: UserRepository, PaymentService)"
+        case: "PascalCase"
+      constants:
+        pattern: "대문자 스네이크 케이스 (예: MAX_RETRY_COUNT)"
+        case: "SCREAMING_SNAKE_CASE"
+    checks:
+      - name: "약어 최소화"
+        exceptions: ["id", "url", "api", "ui", "html", "css"]
+        auto_check: true
+      - name: "의미 없는 이름 금지"
+        forbidden: ["data", "info", "temp", "foo", "bar", "test"]
+        auto_check: true
+
+performance:
+  prioritize_speed:
+    description: "빠른 코드 우선"
+    checks:
+      - name: "시간 복잡도"
+        targets:
+          optimal: "O(1), O(log n)"
+          acceptable: "O(n)"
+          warning: "O(n log n)"
+          error: "O(n²), O(2ⁿ)"
+        auto_check: false
+      - name: "공간 복잡도"
+        threshold: "O(n) 이하 권장"
+        auto_check: false
+
+  simplicity:
+    description: "불필요한 복잡성 제거"
+    anti_patterns:
+      - name: "불필요한 삼항 연산자"
+        bad: "condition ? true : false"
+        good: "condition"
+      - name: "불필요한 조건문"
+        bad: "if (x === true) return true; else return false;"
+        good: "return x;"
+
+  minimize_iterations:
+    description: "반복 최소화"
+    checks:
+      - name: "중첩 루프 경고"
+        threshold: 2
+        severity: "warning"
+      - name: "다중 패스 최적화"
+        pattern: "filter → map → reduce를 단일 패스로 통합 가능한지 확인"
+        auto_check: false
+
+explicit_io:
+  specify_types:
+    description: "입출력 타입 명시"
+    language_specific:
+      typescript:
+        required:
+          - "함수 파라미터 타입"
+          - "함수 반환 타입"
+          - "변수 타입 (추론 불가능한 경우)"
+        auto_check: true
+      javascript:
+        recommended:
+          - "JSDoc 타입 주석"
+        auto_check: false
+
+  comments_for_clarity:
+    description: "명확한 주석"
+    required_for:
+      - "public API 함수"
+      - "복잡한 알고리즘"
+      - "비즈니스 로직"
+    format:
+      jsdoc:
+        sections:
+          - "@param - 파라미터 설명"
+          - "@returns - 반환값 설명"
+          - "@throws - 발생 가능한 예외"
+        example: |
+          /**
+           * 사용자 인증을 수행합니다.
+           * @param email - 사용자 이메일
+           * @param password - 비밀번호
+           * @returns 인증 토큰
+           * @throws {AuthenticationError} 인증 실패 시
+           */
+
+maintainability:
+  continuous_improvement:
+    description: "지속적 리팩터링"
+    triggers:
+      - "중복 코드 발견"
+      - "복잡도 증가"
+      - "테스트 커버리지 감소"
+    actions:
+      - "즉시 추상화"
+      - "구조 재설계"
+      - "기술 부채 티켓 생성"
+
+  clear_structure:
+    description: "명확한 구조 (SRP)"
+    checks:
+      - name: "클래스 책임 개수"
+        threshold: 1
+        description: "한 클래스는 하나의 책임만"
+      - name: "함수 책임 개수"
+        threshold: 1
+        description: "한 함수는 하나의 일만"
+
+  test_code:
+    description: "자동화 테스트"
+    requirements:
+      coverage:
+        minimum: 80
+        target: 90
+        unit: "percent"
+      critical_features:
+        coverage: 100
+        description: "핵심 비즈니스 로직은 100% 커버리지"
+    test_types:
+      - "unit tests"
+      - "integration tests"
+      - "e2e tests (주요 플로우)"
+
+  consistent_style:
+    description: "일관된 코딩 스타일"
+    tools:
+      - name: "ESLint"
+        config: ".eslintrc.js"
+      - name: "Prettier"
+        config: ".prettierrc"
+    rules:
+      indentation: "2 spaces"
+      quotes: "single"
+      semicolons: true
+      trailing_commas: "es5"
+
+error_handling:
+  clear_exception_handling:
+    description: "명확한 예외 처리"
+    best_practices:
+      - name: "도메인 에러 정의"
+        example: "UserNotFoundError, ValidationError"
+      - name: "에러 변환"
+        pattern: "라이브러리 에러를 도메인 에러로 변환"
+      - name: "에러 무시 금지"
+        anti_pattern: "catch (error) { return null; }"
+
+  logging_and_tracing:
+    description: "로깅 및 추적"
+    required_info:
+      - "에러 메시지"
+      - "스택 트레이스"
+      - "컨텍스트 정보 (user ID, request ID 등)"
+      - "타임스탬프"
+    log_levels:
+      error: "복구 불가능한 오류"
+      warn: "잠재적 문제"
+      info: "중요 비즈니스 이벤트"
+      debug: "디버깅 정보"
+
+collaboration:
+  code_review:
+    description: "코드 리뷰 준비"
+    pr_template:
+      sections:
+        - "변경 내용 요약"
+        - "관련 이슈/티켓"
+        - "테스트 완료 체크리스트"
+        - "리뷰 포인트"
+        - "스크린샷 (UI 변경 시)"
+
+  version_control:
+    description: "버전 관리 지침"
+    commit_message:
+      format: "type(scope): subject"
+      types:
+        - "feat: 새 기능"
+        - "fix: 버그 수정"
+        - "docs: 문서 변경"
+        - "style: 포맷팅"
+        - "refactor: 리팩터링"
+        - "test: 테스트 추가"
+        - "chore: 빌드/설정"
+      examples:
+        good:
+          - "feat(auth): add email validation"
+          - "fix(api): handle null response"
+        bad:
+          - "update code"
+          - "changes"
+          - "wip"
+
+# 자동 검증 가능 항목
+auto_checkable:
+  - "함수 길이"
+  - "중첩 깊이"
+  - "네이밍 컨벤션"
+  - "타입 커버리지"
+  - "테스트 커버리지"
+  - "ESLint 규칙"
+  - "Prettier 포맷"
+
+# 수동 검토 필요 항목
+manual_review:
+  - "알고리즘 정확성"
+  - "비즈니스 로직"
+  - "보안 취약점"
+  - "성능 병목"
+  - "사용자 경험"
+  - "에러 메시지 명확성"
+
+# 우선순위
+priority:
+  p0_critical:
+    - "보안 취약점"
+    - "데이터 손실 위험"
+    - "서비스 중단 가능성"
+  p1_high:
+    - "기능 버그"
+    - "성능 저하"
+    - "테스트 커버리지 <80%"
+  p2_medium:
+    - "코드 스타일"
+    - "주석 누락"
+    - "중복 코드"
+  p3_low:
+    - "변수명 개선"
+    - "포맷팅"
