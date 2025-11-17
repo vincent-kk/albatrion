@@ -1,74 +1,122 @@
-# 자동화된 Pull Request 생성 가이드
+# Automated Pull Request Creation Guide
 
-## 역할
+## Role
 
-Pull Request 생성을 요청받으면, 현재 브랜치의 변경사항을 자동으로 분석하여 코드 리뷰를 수행하고, 그 결과를 바탕으로 master 브랜치로의 PR을 생성합니다.
+When requested to create a Pull Request, automatically analyze changes in the current branch, perform a code review, and create a PR to the master branch based on the results.
 
-## 프로젝트 구조 이해
+## Understanding Project Structure
 
-이 프로젝트는 다음 패키지들로 구성되어 있습니다:
+**CRITICAL: Project structure file verification required before PR creation**
 
-- `@albatrion/aileron`: 성능 최적화 유틸리티 라이브러리
-- `@albatrion/canard/schema-form`: JSON Schema 기반 폼 라이브러리
-- `@albatrion/canard/schema-form-*-plugin`: 다양한 UI 라이브러리 플러그인
-- `@albatrion/lerx/promise-modal`: Promise 기반 모달 시스템
-- `@albatrion/winglet/*`: 공통 유틸리티 라이브러리
+### 1. Check Project Structure File
 
-## 자동화 워크플로우
-
-### 1단계: 브랜치 분석 모드 결정
-
-현재 브랜치가 master인지 확인하고 분석 모드를 결정:
-
-- **현재 브랜치가 master가 아닌 경우**: 브랜치 비교 모드 (current branch vs master)
-- **현재 브랜치가 master인 경우**: 스테이징된 변경사항 분석 모드
-
-### 2단계: 변경사항 수집 및 코드 리뷰 수행
-
-분석 모드에 따라 적절한 git 명령어를 사용하여 변경사항을 수집하고, code-review.mdc 가이드라인에 따라 포괄적인 코드 리뷰를 수행합니다.
-
-#### 브랜치 비교 모드 (current != master)
+Before starting PR creation, verify that `.project-structure.yaml` file exists:
 
 ```bash
-# 브랜치 간 차이점 분석
+# Check if .project-structure.yaml file exists
+if [ ! -f ".project-structure.yaml" ]; then
+  echo "⚠️  .project-structure.yaml file does not exist."
+  echo "→ Running project structure analysis first..."
+  echo ""
+  echo "📋 Executing @analyze-structure.md to analyze project structure."
+  # Execute analyze-structure.md rule to generate .project-structure.yaml
+  # Continue with this PR workflow after generation
+fi
+```
+
+### 2. Load Project Information
+
+Load the following information from `.project-structure.yaml` file:
+
+- **Project Type**: `project.type` (monorepo or single-package)
+- **Package Structure**: `examples.packages` (for monorepo)
+- **Tech Stack**: `tech_stack` (frontend, backend, testing, etc.)
+- **Package Manager**: `package_manager.type`
+- **Commands**: `commands` (test, lint, build, etc.)
+
+Based on this information:
+
+1. **Identify Affected Packages**: Automatically detect which packages are affected based on changed file paths
+2. **Suggest Appropriate Test Commands**: Use test commands that match the project configuration
+3. **Group Changes by Package**: For monorepo, classify changes by package
+
+### 3. Example Output Format
+
+Express the following format based on information loaded from `.project-structure.yaml`:
+
+```markdown
+## 📦 Affected Packages
+
+<!-- Auto-generated based on examples.packages for monorepo -->
+
+- `@{project.name}/{package.name}`: {change summary}
+- `@{project.name}/{another-package.name}`: {change summary}
+
+## 🧪 Test Checklist
+
+<!-- Suggest appropriate test commands based on commands.test -->
+
+- [ ] Regression testing for existing features: `{commands.test.all}`
+- [ ] Test affected packages: `{commands.test.{package}}`
+- [ ] TypeScript compilation: `{commands.typecheck.all}`
+- [ ] Lint check: `{commands.lint.all}`
+```
+
+## Automation Workflow
+
+### Step 1: Determine Branch Analysis Mode
+
+Check if the current branch is master and determine the analysis mode:
+
+- **If current branch is not master**: Branch comparison mode (current branch vs master)
+- **If current branch is master**: Staged changes analysis mode
+
+### Step 2: Collect Changes and Perform Code Review
+
+Collect changes using appropriate git commands based on the analysis mode, and perform a comprehensive code review following the code-review.mdc guidelines.
+
+#### Branch Comparison Mode (current != master)
+
+```bash
+# Analyze differences between branches
 git log master..HEAD --oneline --stat
 git diff master..HEAD --unified=3
 git diff master..HEAD --name-only
 
-# 분기점 확인
+# Check divergence point
 git merge-base master HEAD
 git log $(git merge-base master HEAD)..HEAD --oneline
 ```
 
-#### 스테이징된 변경사항 분석 모드 (current == master)
+#### Staged Changes Analysis Mode (current == master)
 
 ```bash
-# 스테이징된 변경사항 분석
+# Analyze staged changes
 git diff --cached --unified=3
 git diff --cached --name-only
 git status --porcelain
 ```
 
-### 3단계: 코드 리뷰 생성
+### Step 3: Generate Code Review
 
-code-review.mdc의 가이드라인에 따라 다음 형식으로 코드 리뷰를 생성:
+Generate code review in the following format according to code-review.mdc guidelines:
 
-- **단순 리팩토링**: 로직 변경 없는 구조적 변경사항
-- **로직 변경사항**: 비즈니스 로직 및 알고리즘 수정사항
-- **파일 이동/순서 변경**: 구조적 재배치
-- **상세 변경 내역**: 새로운 기능, 버그 수정 등
+- **Simple Refactoring**: Structural changes without logic modifications
+- **Logic Changes**: Business logic and algorithm modifications
+- **File Movement/Reordering**: Structural reorganization
+- **Detailed Change History**: New features, bug fixes, etc.
 
-### 4단계: PR 제목 및 설명 생성
+### Step 4: Generate PR Title and Description
 
-분석된 변경사항을 바탕으로 PR 제목과 설명을 자동 생성:
+Automatically generate PR title and description based on analyzed changes:
 
-#### PR 제목 형식
+#### PR Title Format
 
 ```
-[<변경 목적별 그룹핑>](<변경범위>): <변경내용 정리>
+[<Change Purpose Grouping>](<Scope>): <Change Summary>
 ```
 
-**예시**:
+**Examples**:
 
 - `[Fix/Feat](schema-form): input handling and parser improvements`
 - `[Refactor](schema-form): Async strategy methods and dependency optimization`
@@ -110,86 +158,98 @@ code-review.mdc의 가이드라인에 따라 다음 형식으로 코드 리뷰�
 
 ## 🧪 테스트 확인사항
 
-- [ ] 기존 기능 회귀 테스트
+<!-- .project-structure.yaml의 commands를 기반으로 자동 생성 -->
+
+- [ ] 기존 기능 회귀 테스트: `{commands.test.all 또는 commands.test.{package}}`
 - [ ] 새로운 기능 동작 확인
-- [ ] TypeScript 컴파일 성공
-- [ ] 린트 검사 통과
+- [ ] TypeScript 컴파일: `{commands.typecheck.all 또는 'tsc --noEmit'}`
+- [ ] 린트 검사: `{commands.lint.all 또는 commands.lint.{package}}`
 
 ## 📦 영향받는 패키지
 
-- `@canard/schema-form`: 버전 x.x.x → x.x.x
-- `@winglet/common-utils`: 새로운 유틸리티 추가
+<!-- .project-structure.yaml의 examples.packages를 기반으로 변경된 파일 경로 분석하여 자동 생성 -->
+<!-- monorepo인 경우: @{project.name}/{package.name} 형식 -->
+<!-- single-package인 경우: 이 섹션 생략 -->
 
----
-
-🤖 이 PR은 자동화된 분석을 통해 생성되었습니다.
+- `@{project.name}/{affected-package}`: {변경사항 요약}
+- `@{project.name}/{another-package}`: {변경사항 요약}
 ```
 
-### 5단계: GitHub PR 생성
+### Step 5: Create GitHub PR
 
-GitHub CLI를 사용하여 실제 PR을 생성:
+Create the actual PR using GitHub CLI:
 
 ```bash
-# 브랜치가 원격에 푸시되어 있는지 확인
+# Check if branch is pushed to remote
 git push -u origin <current-branch>
 
-# PR 생성
-gh pr create --title "PR 제목" --body "$(cat <<'EOF'
-PR 설명 내용
+# Create PR
+gh pr create --title "PR Title" --body "$(cat <<'EOF'
+PR Description Content
 EOF
 )" --base master --head <current-branch>
 ```
 
-## 자동화 실행 가이드
+## Automation Execution Guide
 
-사용자가 "PR 생성해줘" 또는 "Create PR" 등의 요청을 하면:
+When user requests "Create PR" or similar:
 
-1. **자동 브랜치 분석**: 현재 상태를 파악하고 적절한 분석 모드 선택
-2. **자동 코드 리뷰**: 변경사항을 포괄적으로 분석하여 리뷰 문서 생성
-3. **자동 PR 내용 생성**: 리뷰 결과를 바탕으로 PR 제목과 설명 작성
-4. **자동 PR 생성**: GitHub CLI를 통해 실제 PR 생성
-5. **결과 확인**: 생성된 PR 링크와 요약 정보 제공
+1. **Project Structure Check** ⚠️ **Required Pre-Step**
+   - Verify `.project-structure.yaml` file exists
+   - If file doesn't exist, automatically execute `@analyze-structure.md` rule
+   - Load project type, package structure, commands, etc.
+2. **Automatic Branch Analysis**: Identify current state and select appropriate analysis mode
 
-## 품질 보장 원칙
+3. **Automatic Code Review**: Comprehensively analyze changes and generate review document
 
-### 분석의 정확성
+4. **Automatic PR Content Generation**:
+   - Write PR title and description based on review results
+   - Automatically detect affected packages using `.project-structure.yaml` information
+   - Automatically suggest test commands appropriate for the project
+5. **Automatic PR Creation**: Create actual PR through GitHub CLI
 
-- **사실 기반**: 실제 git diff와 commit 메시지를 기반으로 분석
-- **맥락 고려**: 전체적인 변경사항의 맥락을 파악하여 메타 관점에서 요약
-- **영향도 평가**: 브레이킹 체인지, 새로운 기능, 버그 수정 등의 영향도 정확히 분류
+6. **Result Verification**: Provide generated PR link and summary information
 
-### PR 내용의 명확성
+## Quality Assurance Principles
 
-- **간결성**: 핵심 변경사항에 집중하여 명확하고 간결하게 작성
-- **구조화**: 일관된 형식으로 정보를 구조화하여 리뷰어가 쉽게 이해할 수 있도록 구성
-- **실행 가능성**: 실제 검토가 필요한 부분과 테스트 확인사항을 명확히 제시
+### Analysis Accuracy
 
-### 자동화의 신뢰성
+- **Fact-Based**: Analyze based on actual git diff and commit messages
+- **Context Consideration**: Understand the overall context of changes and summarize from a meta perspective
+- **Impact Assessment**: Accurately classify impacts such as breaking changes, new features, bug fixes, etc.
 
-- **검증 단계**: PR 생성 전 필수 검사 항목 확인 (lint, typecheck, test)
-- **오류 처리**: 분석 중 오류 발생시 적절한 대안 제시
-- **사용자 확인**: 중요한 변경사항의 경우 사용자에게 확인 요청
+### PR Content Clarity
 
-## 추가 기능
+- **Conciseness**: Write clearly and concisely, focusing on core changes
+- **Structure**: Structure information in a consistent format for easy reviewer understanding
+- **Actionability**: Clearly present sections requiring actual review and test verification items
 
-### Mermaid 다이어그램 자동 생성
+### Automation Reliability
 
-변경사항의 적합도가 50% 이상인 경우, 다음 다이어그램 자동 생성:
+- **Verification Steps**: Check required items before PR creation (lint, typecheck, test)
+- **Error Handling**: Provide appropriate alternatives when errors occur during analysis
+- **User Confirmation**: Request user confirmation for critical changes
 
-- **시퀀스 다이어그램**: 동작 흐름 변경
-- **플로우차트**: 로직 흐름 변경
-- **클래스 다이어그램**: 구조적 변경
+## Additional Features
 
-### 스마트 라벨링
+### Automatic Mermaid Diagram Generation
 
-변경사항 유형에 따른 자동 라벨 제안:
+When change relevance is 50% or higher, automatically generate the following diagrams:
 
-- `enhancement`: 새로운 기능
-- `bug`: 버그 수정
-- `refactor`: 리팩토링
-- `breaking-change`: 브레이킹 체인지
-- `documentation`: 문서 변경
+- **Sequence Diagram**: Behavioral flow changes
+- **Flowchart**: Logic flow changes
+- **Class Diagram**: Structural changes
+
+### Smart Labeling
+
+Automatic label suggestions based on change type:
+
+- `enhancement`: New features
+- `bug`: Bug fixes
+- `refactor`: Refactoring
+- `breaking-change`: Breaking changes
+- `documentation`: Documentation changes
 
 ---
 
-이 가이드를 통해 사용자는 간단한 명령 하나로 포괄적인 분석과 함께 고품질의 PR을 자동으로 생성할 수 있습니다.
+Through this guide, users can automatically generate high-quality PRs with comprehensive analysis using a single simple command.
