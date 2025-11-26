@@ -38,6 +38,7 @@ When working on specific packages, **always check the package-specific CLAUDE.md
 - **/analyze-requirements** - Create requirements document and implementation plan (→ Skills: tot-requirements-engine, ears-documenter, design-architect, task-and-progress)
 - **/code-review** - Perform comprehensive code review (→ `.cursor/rules/code-review.mdc`)
 - **/create-pr** - Create well-structured pull request (→ `.cursor/rules/pull-request.mdc`)
+- **/commit** - Generate commit message and create commit (→ `.claude/commands/commit.md`)
 
 ### Code Quality
 
@@ -70,6 +71,9 @@ When working on specific packages, **always check the package-specific CLAUDE.md
 
 # 예시: PR 생성
 /create-pr
+
+# 예시: 커밋 메시지 생성 및 커밋
+/commit
 ```
 
 ## 📁 Rule Files Reference (직접 참조)
