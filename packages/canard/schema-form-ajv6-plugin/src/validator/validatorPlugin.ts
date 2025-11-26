@@ -12,6 +12,7 @@ import { createValidatorFactory } from './createValidatorFactory';
  */
 const defaultSettings: Ajv.Options = {
   allErrors: true,
+  nullable: true,
   verbose: true,
   format: false,
 };

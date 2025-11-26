@@ -42,6 +42,7 @@ registerPlugin(ajvValidatorPlugin);
 // When using a custom AJV instance
 const customAjv = new Ajv({
   allErrors: true,
+  nullable: true,
   verbose: true,
 });
 ajvValidatorPlugin.bind(customAjv);
@@ -75,6 +76,7 @@ When no custom AJV instance is provided, the plugin uses these default settings:
 ```typescript
 const defaultSettings: Ajv.Options = {
   allErrors: true, // Collect all validation errors, not just the first one
+  nullable: true, // Enable `nullable` keyword (= `type:[{type}, 'null']`)
   verbose: true, // Include schema and data information in errors
   format: false, // Disable format validation (can be enabled if needed)
 };

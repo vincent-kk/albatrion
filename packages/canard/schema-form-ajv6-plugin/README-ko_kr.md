@@ -42,6 +42,7 @@ registerPlugin(ajvValidatorPlugin);
 // 커스텀 AJV 인스턴스를 사용하는 경우
 const customAjv = new Ajv({
   allErrors: true,
+  nullable: true,
   verbose: true,
 });
 ajvValidatorPlugin.bind(customAjv);
@@ -75,6 +76,7 @@ registerPlugin(ajvValidatorPlugin);
 ```typescript
 const defaultSettings: Ajv.Options = {
   allErrors: true, // 첫 번째 오류뿐만 아니라 모든 검증 오류 수집
+  nullable: true, // nullable keyword 활성화 (= `type:[{type}, 'null']`)
   verbose: true, // 오류에 스키마 및 데이터 정보 포함
   format: false, // 포맷 검증 비활성화 (필요시 활성화 가능)
 };
