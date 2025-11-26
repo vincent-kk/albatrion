@@ -22,7 +22,7 @@ This command performs a **lightweight, fast code style check** using the **code_
 - ✅ **Nesting Depth**: ≤ 3 levels
 - ✅ **Type Coverage**: TypeScript type declarations (basic check)
 
-**NOT Checked** (Use `/review` for these):
+**NOT Checked** (Use `/code-review` for these):
 - ❌ Security vulnerabilities
 - ❌ Algorithm correctness
 - ❌ Business logic validation
@@ -49,7 +49,7 @@ This command performs a **lightweight, fast code style check** using the **code_
 ⏱️ Execution Time: 8 seconds
 ```
 
-**NOT Included** (use `/review` for detailed reports):
+**NOT Included** (use `/code-review` for detailed reports):
 - No security analysis
 - No algorithm review
 - No performance profiling
@@ -59,7 +59,7 @@ This command performs a **lightweight, fast code style check** using the **code_
 
 **Execution Instructions:**
 
-**IMPORTANT**: This is a **quick style check only**. For comprehensive review, use `/review`.
+**IMPORTANT**: This is a **quick style check only**. For comprehensive review, use `/code-review`.
 
 1. **Activate code_quality_reviewer skill (Quick Mode)**
    - Load style rules only from `.claude/skills/code_quality_reviewer/knowledge/quality_rules.yaml`
@@ -96,11 +96,11 @@ This command performs a **lightweight, fast code style check** using the **code_
 - **Quick feedback**: Immediate style issue detection (< 30 seconds)
 
 ### ❌ Do NOT use `/code-style` for:
-- Security vulnerability detection → Use `/review`
-- Algorithm correctness validation → Use `/review`
-- Performance optimization → Use `/review`
-- Comprehensive quality assessment → Use `/review`
-- PR review preparation → Use `/review`
+- Security vulnerability detection → Use `/code-review`
+- Algorithm correctness validation → Use `/code-review`
+- Performance optimization → Use `/code-review`
+- Comprehensive quality assessment → Use `/code-review`
+- PR review preparation → Use `/code-review`
 
 ---
 
@@ -129,9 +129,9 @@ Result: Confirm formatting rules applied correctly
 
 ---
 
-## 🔄 Relationship with `/review`
+## 🔄 Relationship with `/code-review`
 
-| Aspect | `/code-style` | `/review` |
+| Aspect | `/code-style` | `/code-review` |
 |--------|---------------|-----------|
 | **Purpose** | Quick style check | Comprehensive review |
 | **Time** | < 30 seconds | 1-3 minutes |
@@ -142,7 +142,7 @@ Result: Confirm formatting rules applied correctly
 | **Performance** | ❌ Not checked | ✅ Analysis included |
 | **Testing** | ❌ Not checked | ✅ Coverage analysis |
 
-**Recommendation**: Use `/code-style` for quick checks, then `/review` before creating PR.
+**Recommendation**: Use `/code-style` for quick checks, then `/code-review` before creating PR.
 
 
 ---
@@ -265,13 +265,13 @@ echo '{ "semi": true, "singleQuote": true }' > .prettierrc
 명령: /code-style
 결과:
   ❌ 함수 길이, 네이밍 이슈 발견
-  → 수정 후 /review로 종합 검증
+  → 수정 후 /code-review로 종합 검증
 ```
 
 ## 💡 팁
 - **빠른 피드백**: 30초 이내 결과로 즉시 수정 가능
 - **커밋 전 필수**: pre-commit hook에 통합 권장
-- **상세 분석 필요 시**: 보안/성능 검토는 `/review` 사용
+- **상세 분석 필요 시**: 보안/성능 검토는 `/code-review` 사용
 - **CI/CD 통합**: GitHub Actions 등에서 스타일 게이트로 활용
 
 
@@ -295,7 +295,7 @@ echo '{ "semi": true, "singleQuote": true }' > .prettierrc
 
 ⏱️ 실행 시간: 8초
 
-💡 다음 단계: 이슈 수정 후 /review로 종합 검증
+💡 다음 단계: 이슈 수정 후 /code-review로 종합 검증
 ```
 
 ## ❌ 실패 시 출력

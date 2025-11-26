@@ -699,8 +699,8 @@ Phase 5: 릴리즈 준비 (1일)
 
 💡 다음 단계:
 1. 개발 로드맵 검토
-2. /execute로 구현 시작
-3. 각 Phase 완료 후 /review
+2. /requirements-execute로 구현 시작
+3. 각 Phase 완료 후 /code-review
 ```
 
 ## ❌ 실패 시 출력

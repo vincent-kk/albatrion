@@ -1,4 +1,4 @@
-# /requirements - Requirements-Driven Development Workflow
+# /analyze-requirements - Requirements-Driven Development Workflow
 
 This command executes a requirements-driven development workflow, systematically progressing through the entire process from requirements gathering to implementation planning.
 
@@ -229,7 +229,7 @@ Assistant: What type of timezone selection would you like?
 ### Direct Input
 
 ```
-/requirements "Please create a UI component where users can select and save multiple time slots.
+/analyze-requirements "Please create a UI component where users can select and save multiple time slots.
               It should support both drag selection and individual clicks, and work on mobile devices."
 ```
 
@@ -439,7 +439,7 @@ User: d) 혼합
 ### 예시 1: 대화형 명확화 모드
 ```
 상황: 매우 모호한 요구사항 입력
-명령: /requirements "예약 기능 필요"
+명령: /analyze-requirements "예약 기능 필요"
 결과:
   - 명확도 점수: 15/100 (매우 모호)
   - 8개 질문으로 요구사항 구체화
@@ -450,7 +450,7 @@ User: d) 혼합
 ### 예시 2: 코드베이스 재사용 분석
 ```
 상황: 유사 컴포넌트가 이미 존재할 가능성
-명령: /requirements "날짜 범위 선택 컴포넌트"
+명령: /analyze-requirements "날짜 범위 선택 컴포넌트"
 결과:
   - 코드베이스 검색: 3개 유사 컴포넌트 발견
   - DateRangePicker 재사용 점수: 85/100
@@ -461,7 +461,7 @@ User: d) 혼합
 ### 예시 3: 비용 예측 및 의사결정
 ```
 상황: 프로젝트 일정 계획 필요
-명령: /requirements "실시간 채팅 기능 with AI 봇"
+명령: /analyze-requirements "실시간 채팅 기능 with AI 봇"
 결과:
   - 복잡도 분석: UI (8/10), 로직 (9/10), 통합 (7/10)
   - T-Shirt Size: XL (2주+)
@@ -514,10 +514,10 @@ User: d) 혼합
 
 After requirements documentation is complete:
 
-1. **/execute** - Execute implementation plan
+1. **/requirements-execute** - Execute implementation plan
 
    ```
-   /execute .tasks/timeslot_selector_250115
+   /requirements-execute .tasks/timeslot_selector_250115
    ```
 
 2. **Progress Tracking** - Track progress
@@ -534,9 +534,9 @@ After requirements documentation is complete:
      .tasks/timeslot_selector_250115
    ```
 
-4. **/review** - Code review and quality verification
+4. **/code-review** - Code review and quality verification
 
-5. **/pr** - Create Pull Request
+5. **/create-pr** - Create Pull Request
 
 ---
 
@@ -549,9 +549,9 @@ After requirements documentation is complete:
 
 **Related Commands**:
 
-- /execute - Execute plan
-- /review - Code review
-- /pr - Create PR
+- /requirements-execute - Execute plan
+- /code-review - Code review
+- /create-pr - Create PR
 
 ---
 
@@ -619,7 +619,7 @@ mkdir ~/my-tasks/
 **해결 방법**:
 ```bash
 # 더 상세한 입력 제공
-/requirements "상세한 요구사항: 사용자는 [목적], 기능은 [내용], 제약은 [조건]"
+/analyze-requirements "상세한 요구사항: 사용자는 [목적], 기능은 [내용], 제약은 [조건]"
 
 # 대화형 모드 사용
 /requirements
@@ -653,7 +653,7 @@ git checkout .claude/skills/*/knowledge/
 
 ### 직접 입력 사용법
 ```
-/requirements "상세 요구사항 설명"
+/analyze-requirements "상세 요구사항 설명"
 ```
 
 ### 실제 시나리오
@@ -678,7 +678,7 @@ git checkout .claude/skills/*/knowledge/
 #### 시나리오 2: 직접 입력으로 빠른 시작
 ```
 상황: 명확한 요구사항을 직접 입력
-명령: /requirements "사용자가 여러 시간대를 선택하고 저장할 수 있는 UI. 드래그 선택과 개별 클릭 모두 지원. 모바일 대응 필수."
+명령: /analyze-requirements "사용자가 여러 시간대를 선택하고 저장할 수 있는 UI. 드래그 선택과 개별 클릭 모두 지원. 모바일 대응 필수."
 결과:
   - ToT 분석으로 3개 후보 생성
   - 최적 후보 자동 선택 (점수 기반)
@@ -699,7 +699,7 @@ git checkout .claude/skills/*/knowledge/
 - **대화형 모드**: 요구사항이 불명확할 때 질문을 통해 구체화
 - **ToT 활용**: 여러 구현 방법을 평가하여 최적 선택
 - **EARS 패턴**: 명확하고 검증 가능한 요구사항 작성
-- **실행 연계**: 생성된 계획을 `/execute`로 즉시 실행
+- **실행 연계**: 생성된 계획을 `/requirements-execute`로 즉시 실행
 
 
 ---
@@ -733,7 +733,7 @@ git checkout .claude/skills/*/knowledge/
 💡 다음 단계:
 1. 요구사항 검토: cat .tasks/timeslot_selector_250115/01_requirements.md
 2. 설계 확인: cat .tasks/timeslot_selector_250115/02_design.md
-3. 구현 시작: /execute .tasks/timeslot_selector_250115
+3. 구현 시작: /requirements-execute .tasks/timeslot_selector_250115
 ```
 
 ## ❌ 실패 시 출력
@@ -748,7 +748,7 @@ git checkout .claude/skills/*/knowledge/
 
 💡 해결 방법:
 1. 더 상세한 입력 제공:
-   /requirements "상세 요구사항: 사용자가 [기능], [제약 조건], [기대 효과]"
+   /analyze-requirements "상세 요구사항: 사용자가 [기능], [제약 조건], [기대 효과]"
 
 2. 디렉토리 권한 확인:
    mkdir -p .tasks

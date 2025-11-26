@@ -101,7 +101,7 @@ Please perform comprehensive code review in the following order:
 
 ## 📖 When to Use
 
-### ✅ Use `/review` for:
+### ✅ Use `/code-review` for:
 - **PR Preparation**: Comprehensive review before creating pull request
 - **Security Audits**: Detect vulnerabilities and security issues
 - **Quality Assessment**: Full quality scoring and improvement roadmap
@@ -109,7 +109,7 @@ Please perform comprehensive code review in the following order:
 - **Performance Analysis**: Identify bottlenecks and optimization opportunities
 - **Logic Validation**: Ensure algorithm correctness and edge case handling
 
-### ❌ Do NOT use `/review` for:
+### ❌ Do NOT use `/code-review` for:
 - Quick pre-commit checks → Use `/code-style` (faster)
 - Simple formatting validation → Use `/code-style`
 - CI/CD style gates → Use `/code-style` (lightweight)
@@ -128,14 +128,14 @@ Expected: Detailed report with security, performance, and quality analysis (1-3 
 ### Example 2: Security Audit
 ```
 Scenario: Audit authentication implementation
-Command: /review src/auth/
+Command: /code-review src/auth/
 Result: Security vulnerability report + recommendations
 ```
 
 ### Example 3: Performance Optimization
 ```
 Scenario: Identify slow algorithms
-Command: /review src/utils/
+Command: /code-review src/utils/
 Result: Complexity analysis + optimization suggestions
 ```
 
@@ -150,7 +150,7 @@ Result: Comprehensive quality score + action items
 
 ## 🔄 Relationship with `/code-style`
 
-| Aspect | `/code-style` | `/review` ⬅️ **This** |
+| Aspect | `/code-style` | `/code-review` ⬅️ **This** |
 |--------|---------------|-----------|
 | **Purpose** | Quick style check | **Comprehensive review** |
 | **Time** | < 30 seconds | **1-3 minutes** |
@@ -163,7 +163,7 @@ Result: Comprehensive quality score + action items
 | **Architecture** | ❌ Not checked | **✅ Design review** |
 | **Logic** | ❌ Not checked | **✅ Correctness validation** |
 
-**Workflow**: Use `/code-style` for quick commits, then `/review` before PR.
+**Workflow**: Use `/code-style` for quick commits, then `/code-review` before PR.
 
 ---
 
@@ -379,7 +379,7 @@ npm install -g typescript eslint @typescript-eslint/parser
 
 ⏱️ 실행 시간: 1분 32초
 
-📋 다음 단계: P0 이슈 수정 → /review 재실행 → /pr
+📋 다음 단계: P0 이슈 수정 → /code-review 재실행 → /create-pr
 ```
 
 ## ❌ 실패 시 출력

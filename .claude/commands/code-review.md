@@ -1565,7 +1565,7 @@ This enhanced protocol ensures high-quality code review for complex changes whil
 ### Workflow Integration
 
 ```
-User triggers /review command
+User triggers /code-review command
     ↓
 Check for .project-structure.yaml
     ↓

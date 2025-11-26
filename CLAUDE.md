@@ -34,10 +34,10 @@ When working on specific packages, **always check the package-specific CLAUDE.md
 ### Development Workflow
 
 - **/changeset** - Create changeset and release notes (→ `.cursor/rules/create-changeset.mdc`)
-- **/execute** - Execute implementation plans with automated workflow (→ `.cursor/rules/plan-execution.mdc`)
-- **/requirements** - Create requirements document and implementation plan (→ Skills: tot-requirements-engine, ears-documenter, design-architect, task-and-progress)
-- **/review** - Perform comprehensive code review (→ `.cursor/rules/code-review.mdc`)
-- **/pr** - Create well-structured pull request (→ `.cursor/rules/pull-request.mdc`)
+- **/requirements-execute** - Execute implementation plans with automated workflow (→ `.cursor/rules/plan-execution.mdc`)
+- **/analyze-requirements** - Create requirements document and implementation plan (→ Skills: tot-requirements-engine, ears-documenter, design-architect, task-and-progress)
+- **/code-review** - Perform comprehensive code review (→ `.cursor/rules/code-review.mdc`)
+- **/create-pr** - Create well-structured pull request (→ `.cursor/rules/pull-request.mdc`)
 
 ### Code Quality
 
@@ -60,16 +60,16 @@ When working on specific packages, **always check the package-specific CLAUDE.md
 /changeset
 
 # 예시: 계획 실행
-/execute
+/requirements-execute
 
 # 예시: 요구사항 작성
-/requirements
+/analyze-requirements
 
 # 예시: 코드 리뷰
-/review
+/code-review
 
 # 예시: PR 생성
-/pr
+/create-pr
 ```
 
 ## 📁 Rule Files Reference (직접 참조)

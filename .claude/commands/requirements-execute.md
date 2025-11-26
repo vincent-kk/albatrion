@@ -17,7 +17,7 @@ fi
 ```
 
 **Auto-fix suggestions**:
-- ❌ **03_plan.md missing** → Run `/requirements` first to generate plan
+- ❌ **03_plan.md missing** → Run `/analyze-requirements` first to generate plan
 - ⚠️ **01_requirements.md missing** → Recommended but not required (execution continues)
 - ⚠️ **02_design.md missing** → Recommended but not required (execution continues)
 - ✅ **All files present** → Proceed to execution
@@ -49,10 +49,21 @@ grep -q "### [0-9]" 03_plan.md && echo "✅ Tasks defined"
 grep -q "Done: \[ \]" 03_plan.md && echo "✅ Checkboxes present"
 ```
 
+**Quality Checks** (Enhanced):
+- ✅ **Architecture diagram present**: Design section includes component structure
+- ✅ **Component specifications clear**: Each component has defined responsibilities
+- ✅ **Dependencies documented**: External and internal dependencies listed
+- ✅ **Test criteria defined**: Acceptance criteria for each task specified
+- ⚠️ **Incomplete sections**: Automatically generate missing specifications
+- ⚠️ **Ambiguous descriptions**: Request clarification before execution
+
 **Auto-fix suggestions**:
-- ❌ **No phases** → Plan format invalid, regenerate with `/requirements`
-- ❌ **No tasks** → Plan is empty, regenerate with `/requirements`
+- ❌ **No phases** → Plan format invalid, regenerate with `/analyze-requirements`
+- ❌ **No tasks** → Plan is empty, regenerate with `/analyze-requirements`
 - ⚠️ **No checkboxes** → Add `Done: [ ]` to each task
+- ⚠️ **Missing architecture** → Generate basic component structure from requirements
+- ⚠️ **Unclear dependencies** → Analyze imports and suggest dependencies
+- ⚠️ **No test criteria** → Generate default acceptance criteria
 - ✅ **Valid plan** → Proceed to execution
 
 ### 4. Skill Availability
@@ -80,26 +91,36 @@ CRITICAL INSTRUCTION: Before proceeding with ANY task, you MUST execute this exa
    - `execution-engine`: Implement and verify the selected task (3-level verification)
    - `git-workflow-automation`: Commit changes with 2-commit strategy
 
-2. **Skills Workflow**:
+2. **Skills Workflow** (with Parallel Optimization):
    ```
    task-and-progress:
    → Reads 03_plan.md
    → Analyzes dependencies and priorities
-   → Selects best task using ToT scoring
+   → **PARALLEL**: Identifies tasks that can run concurrently
+   → Selects best task(s) using ToT scoring
    → Provides task details to execution-engine
 
    execution-engine:
    → Receives task details
+   → **PARALLEL READ**: Reads all relevant files concurrently
    → Implements code following 5-Field format
-   → Runs 3-level verification (Code → Function → Requirements)
+   → **PARALLEL VERIFICATION**: Runs 3-level checks simultaneously
+     • Code quality (lint, type-check)
+     • Function correctness (unit tests)
+     • Requirements compliance (acceptance tests)
    → Uses ToT for error recovery if needed
    → Passes completion status to git-workflow-automation
 
    git-workflow-automation:
    → Runs git_setup.sh (nvm, pull, deps, branch check)
+   → **PARALLEL STAGING**: Stages code and tests in parallel
    → Creates Commit 1 (Feature): code + tests
    → Creates Commit 2 (Docs): documentation
-   → Reports progress and asks to continue
+   → Reports progress with live metrics:
+     • Current task: [name]
+     • Progress: [N/M tasks]
+     • Time spent: [duration]
+     • Quality score: [metrics]
    ```
 
 3. **Execute in continuous mode** with minimal user interruption:
@@ -143,18 +164,36 @@ DO NOT proceed without invoking the skills in order. This modular approach ensur
   - `--rollback phase-N` 플래그로 특정 Phase 이전으로 복원
   - Git commit 자동 복원
 
-### 2. Parallel Execution Support
+### 2. Parallel Execution Support (Enhanced)
 - **독립 Task 자동 감지**: 의존성 분석으로 병렬 실행 가능 Task 탐지
   - 의존성 그래프 자동 생성
   - 병렬 실행 가능 그룹 분류
   - 동시 실행 최대 수 제한 (기본: 3개)
 - **시간 단축 최적화**: 병렬 실행으로 전체 실행 시간 최소화
   - 예상 시간 계산: 순차 vs 병렬
-  - 실시간 진행 상황 표시
+  - **실시간 진행 상황 표시** (30초마다 업데이트):
+    ```
+    🔄 실행 중... (Phase 2/4)
+    ├─ ✅ Task 2.1: Component A (완료)
+    ├─ 🔄 Task 2.2: Component B (진행 중 - 45%)
+    ├─ ⏳ Task 2.3: Component C (대기)
+    └─ ⏳ Task 2.4: Tests (대기)
+
+    📊 Quality Metrics:
+    - Code quality: 95/100 (lint: ✅, typecheck: ✅)
+    - Test coverage: 87% (+5% from baseline)
+    - Type safety: 100% (0 errors)
+
+    ⏱️ Progress: 3/12 tasks | 8분 경과 | 예상 잔여: 12분
+    ```
   - 병렬 Task 간 결과 동기화
 - **에러 격리**: 하나의 Task 실패가 다른 Task에 영향 없음
   - 실패 Task만 재시도
   - 성공 Task는 보존
+  - **조기 경고 시스템**:
+    - Test failure detected → 즉시 일시 정지 및 보고
+    - Type error > 5 → 분석 후 계속 여부 결정
+    - Execution > 150% estimated → 진행 상황 확인 요청
 
 ### 3. Dry-Run Mode
 - **실행 시뮬레이션**: `--dry-run` 플래그로 실제 변경 없이 실행 계획 확인
@@ -172,7 +211,7 @@ DO NOT proceed without invoking the skills in order. This modular approach ensur
 
 **Example Dry-Run Output**:
 ```
-🔍 Dry-Run Mode: /execute .tasks/feature_250117
+🔍 Dry-Run Mode: /requirements-execute .tasks/feature_250117
 
 📋 실행 계획:
 - Phase 1: 타입 정의 (3 tasks) → 예상 5분
@@ -248,7 +287,7 @@ git checkout .claude/skills/
 **Fallback 동작**:
 1. ❌ 실행 차단
 2. 형식 오류 상세 안내
-3. 재생성 권장: `/requirements`
+3. 재생성 권장: `/analyze-requirements`
 
 **해결 방법**:
 ```bash
@@ -317,7 +356,7 @@ git commit -m "[Docs](scope): documentation updates"
 
 ### 기본 사용법
 ```
-/execute [작업디렉토리]
+/requirements-execute [작업디렉토리]
 ```
 - 작업디렉토리: `.tasks/feature_name_YYMMDD` 경로
 
@@ -325,8 +364,8 @@ git commit -m "[Docs](scope): documentation updates"
 
 #### 시나리오 1: 요구사항 기반 구현 시작
 ```
-상황: /requirements로 생성한 계획 실행
-명령: /execute .tasks/timeslot_selector_250115
+상황: /analyze-requirements로 생성한 계획 실행
+명령: /requirements-execute .tasks/timeslot_selector_250115
 결과:
   - Phase 1 작업 시작
   - Task 1.1: TimeSlot 타입 정의 완료
@@ -337,7 +376,7 @@ git commit -m "[Docs](scope): documentation updates"
 #### 시나리오 2: 중단된 작업 재개
 ```
 상황: 이전 작업 중단 지점부터 계속 진행
-명령: /execute .tasks/auth_feature_250110
+명령: /requirements-execute .tasks/auth_feature_250110
 결과:
   - progress_log.md 확인
   - 완료: Phase 1, Phase 2 (Task 2.1 ~ 2.3)
@@ -347,7 +386,7 @@ git commit -m "[Docs](scope): documentation updates"
 #### 시나리오 3: 자동 Git 커밋 포함 실행
 ```
 상황: 각 Phase 완료 시 자동 커밋
-명령: /execute .tasks/form_builder_250120
+명령: /requirements-execute .tasks/form_builder_250120
 결과:
   - Phase 1 완료 → 자동 커밋 생성
   - Phase 2 완료 → 자동 커밋 생성
@@ -359,18 +398,18 @@ git commit -m "[Docs](scope): documentation updates"
 #### 예시 1: Checkpoint 시스템 활용
 ```
 상황: 긴 작업 중 중단 후 재개
-명령: /execute .tasks/large_feature_250117
+명령: /requirements-execute .tasks/large_feature_250117
 결과:
   - Phase 1 완료 → checkpoint_phase_1.json 생성
   - Phase 2 진행 중 중단 (Task 2.3에서 멈춤)
-  - 재실행: /execute .tasks/large_feature_250117
+  - 재실행: /requirements-execute .tasks/large_feature_250117
   - 자동 감지: Phase 1 건너뛰기, Task 2.3부터 재개
 ```
 
 #### 예시 2: 병렬 실행으로 시간 단축
 ```
 상황: 독립적인 Task들이 많은 프로젝트
-명령: /execute .tasks/multi_component_250118
+명령: /requirements-execute .tasks/multi_component_250118
 결과:
   - 의존성 분석: Task 2.1, 2.2, 2.3 병렬 실행 가능
   - 병렬 실행: 3개 Task 동시 진행
@@ -381,19 +420,19 @@ git commit -m "[Docs](scope): documentation updates"
 #### 예시 3: Dry-Run으로 사전 검증
 ```
 상황: 대규모 변경 전 영향도 확인
-명령: /execute .tasks/refactoring_250119 --dry-run
+명령: /requirements-execute .tasks/refactoring_250119 --dry-run
 결과:
   - 실행 계획 표시 (파일 변경 없음)
   - 영향 범위: 15개 파일, +450/-120 LoC
   - 예상 시간: 순차 25분, 병렬 17분
   - 잠재적 충돌: utils/helper.ts에서 주의 필요
-  - 확인 후 실제 실행: /execute .tasks/refactoring_250119
+  - 확인 후 실제 실행: /requirements-execute .tasks/refactoring_250119
 ```
 
 #### 예시 4: 롤백 기능 사용
 ```
 상황: Phase 2 결과가 예상과 다름, Phase 1로 돌아가기
-명령: /execute .tasks/feature_250120 --rollback phase-1
+명령: /requirements-execute .tasks/feature_250120 --rollback phase-1
 결과:
   - checkpoint_phase_1.json 복원
   - Git commit 자동 롤백
@@ -401,13 +440,39 @@ git commit -m "[Docs](scope): documentation updates"
   - Phase 1 완료 상태로 복원
 ```
 
-## 💡 팁
-- **체크포인트**: 각 Phase 완료 시 자동 저장되어 중단 시에도 안전
-- **병렬 실행**: 독립적인 Task는 자동 병렬 처리로 시간 단축
-- **Progress 추적**: progress_log.md에서 실시간 진행 상황 확인
-- **Git 통합**: 자동 커밋으로 변경 이력 관리 용이
-- **Dry-Run 활용**: 대규모 변경 전 --dry-run으로 영향도 사전 확인
-- **롤백 안전망**: --rollback으로 언제든 이전 Phase로 안전하게 복원
+## 💡 팁 & 모범 사례
+
+### 실행 전 체크리스트
+- ✅ **Requirements 품질 확인**: Architecture diagram, component specs, dependencies 모두 포함 여부
+- ✅ **Git 상태 확인**: 깨끗한 working tree에서 시작 (`git status`)
+- ✅ **Branch 전략**: Feature branch에서 작업 (`git checkout -b feature/xxx`)
+- ✅ **Dependencies 최신화**: `yarn install` 또는 `npm install` 실행
+- ✅ **Dry-Run 먼저**: 대규모 변경은 `--dry-run`으로 영향도 사전 확인
+
+### 실행 중 모니터링
+- 📊 **실시간 메트릭 확인**: 30초마다 업데이트되는 진행 상황 및 품질 지표
+- 🔍 **조기 경고 대응**: Test 실패나 type error가 임계치 초과 시 즉시 대응
+- ⏸️ **체크포인트 활용**: Phase 완료마다 자동 저장, 안전하게 중단/재개 가능
+- 🔄 **병렬 처리 확인**: 독립 Task들이 자동으로 병렬 실행되는지 확인
+
+### 실행 후 검증
+- ✅ **Test 실행**: `yarn test` 로 모든 테스트 통과 확인
+- ✅ **Build 확인**: `yarn build` 로 빌드 에러 없음 확인
+- ✅ **Type Safety**: `yarn typecheck` 로 타입 안전성 확인
+- ✅ **Lint**: `yarn lint` 로 코드 스타일 확인
+- 📝 **Review**: `/code-review` 명령어로 최종 품질 검증
+- 🚀 **PR 생성**: `/create-pr` 명령어로 구조화된 Pull Request 생성
+
+### 문제 발생 시 대응
+- 🔴 **즉시 중단**: Critical error 발생 시 실행 중단 및 원인 분석
+- 🟡 **Checkpoint 복원**: 이전 Phase로 롤백 (`--rollback phase-N`)
+- 🔧 **부분 재시도**: 실패한 Task만 선택적으로 재실행
+- 📋 **Progress Log**: `progress_log.md`에서 상세 로그 및 에러 원인 확인
+
+### 프로젝트 규모별 전략
+- **소규모 (< 20 파일)**: 전체 실행, 예상 5-8분
+- **중규모 (20-50 파일)**: 배치 실행, Phase별 검증, 예상 10-15분
+- **대규모 (> 50 파일)**: 증분 실행, 체크포인트 활용, 여러 세션 분할, 예상 20-30분
 
 
 ---
@@ -462,12 +527,12 @@ git commit -m "[Docs](scope): documentation updates"
    cat .tasks/your_feature/03_plan.md
 
 2. Plan 재생성:
-   /requirements "your feature description"
+   /analyze-requirements "your feature description"
 
 3. 실패 지점부터 재개:
    - progress_log.md에서 마지막 완료 Task 확인
    - 해당 Task부터 수동 진행
-   - 또는 /execute 재실행 (자동 재개)
+   - 또는 /requirements-execute 재실행 (자동 재개)
 
 4. 스킬 확인:
    ls -la .claude/skills/execution-engine/
