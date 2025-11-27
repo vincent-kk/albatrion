@@ -335,7 +335,11 @@ export abstract class AbstractNode<
       : joinSegment(parentNode?.schemaPath, this.#escapedName);
     this.depth = parentNode ? parentNode.depth + 1 : 0;
 
-    this.#compute = computeFactory(this.jsonSchema, this.rootNode.jsonSchema);
+    this.#compute = computeFactory(
+      schemaType,
+      this.jsonSchema,
+      this.rootNode.jsonSchema,
+    );
 
     this.setDefaultValue(
       defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema),
