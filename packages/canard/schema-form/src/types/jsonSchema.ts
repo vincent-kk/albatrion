@@ -122,7 +122,6 @@ export type PartialJsonSchema<Options extends Dictionary = object> = Partial<
 
 export type NumberSchema<Options extends Dictionary = object> = BasicSchema &
   BaseNumberSchema<Options, JsonSchema<Options>>;
-
 export type NumberNullableSchema<Options extends Dictionary = object> =
   BasicSchema & BaseNumberNullableSchema<Options, JsonSchema<Options>>;
 
@@ -130,7 +129,6 @@ export type StringSchema<Options extends Dictionary = object> = BasicSchema &
   BaseStringSchema<Options, JsonSchema<Options>> & {
     options?: { trim?: boolean };
   };
-
 export type StringNullableSchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseStringNullableSchema<Options, JsonSchema<Options>> & {
@@ -144,23 +142,22 @@ export type BooleanNullableSchema<Options extends Dictionary = object> =
 
 export type ArraySchema<Options extends Dictionary = object> = BasicSchema &
   BaseArraySchema<Options, JsonSchema<Options>>;
-
 export type ArrayNullableSchema<Options extends Dictionary = object> =
   BasicSchema & BaseArrayNullableSchema<Options, JsonSchema<Options>>;
 
+type VirtualSchemaProperties = Dictionary<
+  { fields: string[]; nullable?: never } & BasicSchema
+>;
 export type ObjectSchema<Options extends Dictionary = object> = BasicSchema &
   BaseObjectSchema<Options, JsonSchema<Options>> & {
     propertyKeys?: string[];
-    virtual?: Dictionary<{ fields: string[]; nullable?: never } & BasicSchema>;
+    virtual?: VirtualSchemaProperties;
   };
-
 export type ObjectNullableSchema<Options extends Dictionary = object> =
   BasicSchema &
     BaseObjectNullableSchema<Options, JsonSchema<Options>> & {
       propertyKeys?: string[];
-      virtual?: Dictionary<
-        { fields: string[]; nullable?: never } & BasicSchema
-      >;
+      virtual?: VirtualSchemaProperties;
     };
 
 export type VirtualSchema<Options extends Dictionary = object> = {
