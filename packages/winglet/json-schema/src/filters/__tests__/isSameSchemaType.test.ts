@@ -246,4 +246,112 @@ describe('isSameSchemaType', () => {
     };
     expect(isSameSchemaType(left, right)).toBe(false);
   });
+
+  // P0 critical edge cases for nullable types
+  describe('nullable type array syntax edge cases', () => {
+    test('should return true for nullable string in both array syntaxes (order independent)', () => {
+      const left: UnknownSchema = { type: ['string', 'null'] };
+      const right: UnknownSchema = { type: ['null', 'string'] };
+      expect(isSameSchemaType(left, right)).toBe(true);
+    });
+
+    test('should return true for nullable number in both array syntaxes', () => {
+      const left: UnknownSchema = { type: ['number', 'null'] };
+      const right: UnknownSchema = { type: ['null', 'number'] };
+      expect(isSameSchemaType(left, right)).toBe(true);
+    });
+
+    test('should return true for nullable object in both array syntaxes', () => {
+      const left: UnknownSchema = { type: ['object', 'null'] };
+      const right: UnknownSchema = { type: ['null', 'object'] };
+      expect(isSameSchemaType(left, right)).toBe(true);
+    });
+
+    test('should return true for nullable array type in both syntaxes', () => {
+      const left: UnknownSchema = { type: ['array', 'null'] };
+      const right: UnknownSchema = { type: ['null', 'array'] };
+      expect(isSameSchemaType(left, right)).toBe(true);
+    });
+
+    test('should return false for single type vs nullable array syntax', () => {
+      const nonNullable: UnknownSchema = { type: 'string' };
+      const nullable: UnknownSchema = { type: ['string', 'null'] };
+      expect(isSameSchemaType(nonNullable, nullable)).toBe(false);
+    });
+
+    test('should return false for nullable vs non-nullable array syntax', () => {
+      const nullable: UnknownSchema = { type: ['string', 'null'] };
+      const nonNullable: UnknownSchema = { type: ['string'] };
+      expect(isSameSchemaType(nullable, nonNullable)).toBe(false);
+    });
+
+    test('should handle pure null type in single vs array syntax', () => {
+      const singleNull: UnknownSchema = { type: 'null' };
+      const arrayNull: UnknownSchema = { type: ['null'] };
+      // Different forms (string vs array) should be considered different
+      expect(isSameSchemaType(singleNull, arrayNull)).toBe(false);
+    });
+
+    test('should handle pure null type array syntax consistently', () => {
+      const arrayNull1: UnknownSchema = { type: ['null'] };
+      const arrayNull2: UnknownSchema = { type: ['null'] };
+      expect(isSameSchemaType(arrayNull1, arrayNull2)).toBe(true);
+    });
+  });
+
+  describe('nullable type validation edge cases', () => {
+    test('should return false for invalid multi-type arrays (no null)', () => {
+      const left: UnknownSchema = { type: ['string', 'number'] };
+      const right: UnknownSchema = { type: ['string', 'boolean'] };
+      // These should be different
+      expect(isSameSchemaType(left, right)).toBe(false);
+    });
+
+    test('should return true for same invalid multi-type arrays', () => {
+      const left: UnknownSchema = { type: ['string', 'number'] };
+      const right: UnknownSchema = { type: ['number', 'string'] };
+      // Even if invalid for JSON Schema, should compare consistently
+      expect(isSameSchemaType(left, right)).toBe(true);
+    });
+
+    test('should handle mixed nullable and non-nullable complex types', () => {
+      const nullableObject: UnknownSchema = { type: ['object', 'null'] };
+      const nullableArray: UnknownSchema = { type: ['array', 'null'] };
+      expect(isSameSchemaType(nullableObject, nullableArray)).toBe(false);
+    });
+
+    test('should handle triple type arrays with null', () => {
+      const left: UnknownSchema = { type: ['string', 'number', 'null'] };
+      const right: UnknownSchema = { type: ['null', 'string', 'number'] };
+      expect(isSameSchemaType(left, right)).toBe(true);
+    });
+
+    test('should handle integer vs number in nullable contexts', () => {
+      const nullableInteger: UnknownSchema = { type: ['integer', 'null'] };
+      const nullableNumber: UnknownSchema = { type: ['number', 'null'] };
+      // integer and number are different types
+      expect(isSameSchemaType(nullableInteger, nullableNumber)).toBe(false);
+    });
+
+    test('should handle complex real-world nullable schema comparison', () => {
+      const schema1: UnknownSchema = {
+        type: ['string', 'null'],
+        format: 'email',
+        minLength: 1,
+        maxLength: 100,
+      };
+      const schema2: UnknownSchema = {
+        type: ['null', 'string'],
+        pattern: '^[a-z]+@[a-z]+\\.[a-z]+$',
+      };
+      // Same type structure, different constraints (should ignore constraints)
+      expect(isSameSchemaType(schema1, schema2)).toBe(true);
+    });
+
+    test('should handle nullable boolean consistently', () => {
+      const left: UnknownSchema = { type: ['boolean', 'null'] };
+      const right: UnknownSchema = { type: ['null', 'boolean'] };
+      expect(isSameSchemaType(left, right)).toBe(true);
+    });
+  });
 });

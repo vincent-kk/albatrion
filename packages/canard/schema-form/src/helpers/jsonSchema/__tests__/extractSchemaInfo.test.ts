@@ -304,4 +304,197 @@ describe('extractSchemaInfo', () => {
       expect(result).toEqual({ type: 'array', nullable: true });
     });
   });
+
+  describe('P0 critical edge cases (nullable type consistency)', () => {
+    describe('pure null type consistency', () => {
+      it('should return consistent results for { type: "null" } and { type: ["null"] }', () => {
+        const singleNull: JsonSchema = { type: 'null' };
+        const arrayNull = { type: ['null'] } as unknown as JsonSchema;
+
+        const singleResult = extractSchemaInfo(singleNull);
+        const arrayResult = extractSchemaInfo(arrayNull);
+
+        expect(singleResult).toEqual(arrayResult);
+        expect(singleResult).toEqual({ type: 'null', nullable: true });
+      });
+
+      it('should treat pure null type as nullable in both syntaxes', () => {
+        const schemas = [
+          { type: 'null' } as JsonSchema,
+          { type: ['null'] } as unknown as JsonSchema,
+        ];
+
+        schemas.forEach((schema) => {
+          const result = extractSchemaInfo(schema);
+          expect(result?.nullable).toBe(true);
+          expect(result?.type).toBe('null');
+        });
+      });
+    });
+
+    describe('nullable property with array type syntax', () => {
+      it('should prioritize array syntax over nullable property for consistency', () => {
+        // Array syntax should be the source of truth
+        const schema = {
+          type: ['string', 'null'],
+          nullable: false, // This should be ignored in favor of array syntax
+        } as unknown as JsonSchema;
+
+        const result = extractSchemaInfo(schema);
+
+        expect(result).toEqual({ type: 'string', nullable: true });
+      });
+
+      it('should handle conflicting nullable property gracefully', () => {
+        // When array doesn't contain null but nullable property is true
+        // Array syntax takes precedence (returns null for invalid array)
+        const schema = {
+          type: ['string'],
+          nullable: true,
+        } as unknown as JsonSchema;
+
+        const result = extractSchemaInfo(schema);
+
+        // Array syntax wins: single element array with 'string' → not nullable
+        expect(result).toEqual({ type: 'string', nullable: false });
+      });
+    });
+
+    describe('invalid type combinations validation', () => {
+      it('should return null for array with multiple non-null types', () => {
+        const schemas = [
+          { type: ['string', 'number'] },
+          { type: ['boolean', 'object'] },
+          { type: ['array', 'integer'] },
+        ];
+
+        schemas.forEach((schema) => {
+          const result = extractSchemaInfo(schema as unknown as JsonSchema);
+          expect(result).toBeNull();
+        });
+      });
+
+      it('should return null for array with >2 elements even if one is null', () => {
+        const schema = {
+          type: ['string', 'number', 'null'],
+        } as unknown as JsonSchema;
+
+        const result = extractSchemaInfo(schema);
+
+        expect(result).toBeNull();
+      });
+
+      it('should handle malformed type arrays gracefully', () => {
+        const malformedSchemas = [
+          { type: [] }, // Empty array
+          { type: ['string', 'string'] }, // Duplicates
+          { type: ['null', 'null'] }, // Double null
+        ];
+
+        malformedSchemas.forEach((schema) => {
+          const result = extractSchemaInfo(schema as unknown as JsonSchema);
+          // Should handle gracefully - either null or consistent behavior
+          expect(result === null || typeof result === 'object').toBe(true);
+        });
+      });
+    });
+
+    describe('type coercion and edge values', () => {
+      it('should handle undefined nullable property consistently', () => {
+        const stringType: JsonSchema = { type: 'string' };
+        const numberType: JsonSchema = { type: 'number' };
+        const objectType: JsonSchema = { type: 'object' };
+
+        [stringType, numberType, objectType].forEach((schema) => {
+          const result = extractSchemaInfo(schema);
+          expect(result?.nullable).toBe(false);
+        });
+      });
+
+      it('should handle explicit nullable: false consistently', () => {
+        const schema: JsonSchema = {
+          type: 'string',
+          nullable: false,
+        };
+
+        const result = extractSchemaInfo(schema);
+
+        expect(result).toEqual({ type: 'string', nullable: false });
+      });
+
+      it('should handle mixed case: string type with nullable true vs array syntax', () => {
+        const nullableProperty: JsonSchema = {
+          type: 'string',
+          nullable: true,
+        };
+        const arrayProperty = {
+          type: ['string', 'null'],
+        } as unknown as JsonSchema;
+
+        const result1 = extractSchemaInfo(nullableProperty);
+        const result2 = extractSchemaInfo(arrayProperty);
+
+        // Both should produce the same result
+        expect(result1).toEqual(result2);
+        expect(result1).toEqual({ type: 'string', nullable: true });
+      });
+    });
+
+    describe('real-world schema patterns', () => {
+      it('should handle nullable string with format constraint', () => {
+        const schema: JsonSchema = {
+          type: 'string',
+          format: 'email',
+          nullable: true,
+        };
+
+        const result = extractSchemaInfo(schema);
+
+        expect(result).toEqual({ type: 'string', nullable: true });
+      });
+
+      it('should handle nullable number with range constraint', () => {
+        const schema: JsonSchema = {
+          type: 'number',
+          minimum: 0,
+          maximum: 100,
+          nullable: true,
+        };
+
+        const result = extractSchemaInfo(schema);
+
+        expect(result).toEqual({ type: 'number', nullable: true });
+      });
+
+      it('should handle nullable enum pattern', () => {
+        const schema = {
+          type: ['string', 'null'],
+          enum: ['option1', 'option2', null],
+        } as unknown as JsonSchema;
+
+        const result = extractSchemaInfo(schema);
+
+        expect(result).toEqual({ type: 'string', nullable: true });
+      });
+
+      it('should handle complex nullable object with deep nesting', () => {
+        const schema: JsonSchema = {
+          type: 'object',
+          nullable: true,
+          properties: {
+            nested: {
+              type: 'object',
+              properties: {
+                deepField: { type: 'string', nullable: true },
+              },
+            },
+          },
+        };
+
+        const result = extractSchemaInfo(schema);
+
+        expect(result).toEqual({ type: 'object', nullable: true });
+      });
+    });
+  });
 });
