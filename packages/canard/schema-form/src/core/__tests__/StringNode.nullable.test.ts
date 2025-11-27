@@ -74,7 +74,7 @@ describe('StringNode nullable functionality', () => {
         type: 'object',
         properties: {
           description: {
-            type: 'string',
+            type: ['string', 'null'],
             nullable: true,
             default: null,
           },
@@ -182,7 +182,7 @@ describe('StringNode nullable functionality', () => {
         type: 'object',
         properties: {
           status: {
-            type: 'string',
+            type: ['string', 'null'],
             nullable: true,
             enum: ['active', 'inactive', 'pending', null],
           },

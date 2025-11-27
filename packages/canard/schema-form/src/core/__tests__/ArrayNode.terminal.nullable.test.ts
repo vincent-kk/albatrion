@@ -113,8 +113,7 @@ describe('ArrayNode nullable functionality', () => {
         type: 'object',
         properties: {
           categories: {
-            type: 'array',
-            nullable: true,
+            type: ['array', 'null'],
             default: null,
             items: {
               type: 'string',

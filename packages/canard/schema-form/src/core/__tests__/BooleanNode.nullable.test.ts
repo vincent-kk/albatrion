@@ -82,8 +82,7 @@ describe('BooleanNode nullable functionality', () => {
         type: 'object',
         properties: {
           confirmed: {
-            type: 'boolean',
-            nullable: true,
+            type: ['boolean', 'null'],
             default: null,
           },
         },
@@ -246,7 +245,7 @@ describe('BooleanNode nullable functionality', () => {
         type: 'object',
         properties: {
           status: {
-            type: 'boolean',
+            type: ['boolean', 'null'],
             nullable: true,
             enum: [true, false, null],
           },
