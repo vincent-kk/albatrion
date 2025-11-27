@@ -16,6 +16,8 @@ import {
  * Manages and parses boolean values.
  */
 export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
+  public override readonly type = 'boolean';
+
   /** Current value of the boolean node */
   #value: BooleanValue | Nullish = undefined;
 
@@ -58,7 +60,9 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
     parentNode,
     validationMode,
     validatorFactory,
+    schemaType,
     required,
+    nullable,
   }: SchemaNodeConstructorProps<BooleanSchema>) {
     super({
       name,
@@ -70,7 +74,9 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
       parentNode,
       validationMode,
       validatorFactory,
+      schemaType,
       required,
+      nullable,
     });
     if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
     this.initialize();

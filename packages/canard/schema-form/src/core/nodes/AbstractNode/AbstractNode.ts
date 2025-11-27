@@ -21,6 +21,7 @@ import type {
   AllowedValue,
   JsonSchema,
   JsonSchemaError,
+  JsonSchemaType,
   JsonSchemaWithVirtual,
   ValidateFunction,
   ValidatorFactory,
@@ -49,7 +50,6 @@ import {
   getEventCollection,
   getFallbackValidator,
   getNodeGroup,
-  getNodeType,
   getSafeEmptyValue,
   getScopedSegment,
   matchesSchemaPath,
@@ -66,7 +66,10 @@ export abstract class AbstractNode<
   public readonly group: 'branch' | 'terminal';
 
   /** [readonly] Node's type, `array`, `number`, `object`, `string`, `boolean`, `virtual`, `null` */
-  public readonly type: Exclude<Schema['type'], 'integer'>;
+  public abstract readonly type: Exclude<Schema['type'], 'integer'>;
+
+  /** [readonly] Schema's type, `array`, `number`, `integer`, `object`, `string`, `boolean`, `virtual`, `null` */
+  public readonly schemaType: JsonSchemaType;
 
   /** [readonly] Node's depth */
   public readonly depth: number;
@@ -303,17 +306,19 @@ export abstract class AbstractNode<
     parentNode,
     validationMode,
     validatorFactory,
+    schemaType,
     required,
+    nullable,
   }: SchemaNodeConstructorProps<Schema, Value>) {
-    this.type = getNodeType(jsonSchema);
     this.group = getNodeGroup(jsonSchema);
+    this.schemaType = schemaType;
 
     this.scope = scope;
     this.variant = variant;
     this.jsonSchema = jsonSchema;
     this.parentNode = parentNode || null;
     this.required = required ?? false;
-    this.nullable = jsonSchema.nullable || false;
+    this.nullable = nullable ?? false;
 
     this.isRoot = !parentNode;
     this.rootNode = (parentNode?.rootNode || this) as SchemaNode;
@@ -342,7 +347,7 @@ export abstract class AbstractNode<
         : false;
       this.#handleChange = afterMicrotask(() => {
         if (validateOnChange) this.#handleValidation();
-        onChange(getSafeEmptyValue(this.value, this.jsonSchema));
+        onChange(getSafeEmptyValue(this.value, this.schemaType));
       });
       this.#prepareValidator(validatorFactory, validationMode);
     } else this.#handleChange = onChange;
@@ -915,7 +920,7 @@ export abstract class AbstractNode<
       this.#validator =
         validatorFactory?.(this.jsonSchema as JsonSchema) ||
         PluginManager.validator?.compile(this.jsonSchema as JsonSchema);
-      if (this.validation) this.#enhancer = getEmptyValue(this.type);
+      if (this.validation) this.#enhancer = getEmptyValue(this.schemaType);
     } catch (error: any) {
       this.#validator = getFallbackValidator(error, this.jsonSchema);
     }

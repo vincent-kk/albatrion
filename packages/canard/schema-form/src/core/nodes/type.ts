@@ -23,12 +23,12 @@ import type {
   BooleanSchema,
   InferValueType,
   JsonSchemaError,
+  JsonSchemaType,
   JsonSchemaWithRef,
   JsonSchemaWithVirtual,
   NullSchema,
   NumberSchema,
   ObjectSchema,
-  SchemaType,
   StringSchema,
   ValidatorFactory,
   VirtualSchema,
@@ -132,7 +132,7 @@ export interface SchemaNodeConstructorProps<
   parentNode?: SchemaNode;
   validationMode?: ValidationMode;
   validatorFactory?: ValidatorFactory;
-  schemaType?: SchemaType;
+  schemaType: JsonSchemaType;
   required?: boolean;
   nullable?: boolean;
 }

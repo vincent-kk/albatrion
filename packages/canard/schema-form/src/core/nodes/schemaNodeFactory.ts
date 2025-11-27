@@ -1,8 +1,7 @@
-import { isArray } from '@winglet/common-utils/filter';
-
 import { JsonSchemaError } from '@/schema-form/errors';
 import {
   type ResolveSchema,
+  extractSchemaInfo,
   processAllOfSchema,
 } from '@/schema-form/helpers/jsonSchema';
 import type {
@@ -96,20 +95,6 @@ const processSchema = (
 ) => {
   if (resolve) schema = resolve(schema) || schema;
   return processAllOfSchema(schema as JsonSchema);
-};
-
-const extractSchemaInfo = (jsonSchema: JsonSchema) => {
-  const type = jsonSchema.type;
-  if (isArray(type)) {
-    // @ts-expect-error: if incorrect `type` is received
-    if (type.length === 0 || type.length > 2) return null;
-    // @ts-expect-error: if incorrect `type` is received
-    if (type.length === 1) return type[0];
-    const nullIndex = type.indexOf('null');
-    if (nullIndex === -1) return null;
-    return { type: type[nullIndex === 0 ? 1 : 0], nullable: true };
-  }
-  return { type, nullable: jsonSchema.nullable === true };
 };
 
 const resolveReferences = <Schema extends JsonSchemaWithVirtual>(

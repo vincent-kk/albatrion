@@ -4,7 +4,6 @@ export * from './computeFactory';
 export * from './EventCascade';
 export * from './getFallbackValidator';
 export * from './getNodeGroup';
-export * from './getNodeType';
 export * from './getSafeEmptyValue';
 export * from './getScopedSegment';
 export * from './matchesSchemaPath';

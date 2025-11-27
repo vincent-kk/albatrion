@@ -19,6 +19,8 @@ import {
  * Holds references to multiple nodes and works by integrating them.
  */
 export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
+  public override readonly type = 'virtual';
+
   /** Current value of the virtual node */
   #value: VirtualNodeValue = [];
 
@@ -76,7 +78,9 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     refNodes,
     validationMode,
     validatorFactory,
+    schemaType,
     required,
+    nullable,
   }: VirtualNodeConstructorProps<VirtualSchema>) {
     super({
       name,
@@ -88,7 +92,9 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
       parentNode,
       validationMode,
       validatorFactory,
+      schemaType,
       required,
+      nullable,
     });
 
     this.#refNodes = refNodes || [];

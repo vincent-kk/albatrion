@@ -1,3 +1,5 @@
+import { extractSchemaInfo } from '@/schema-form/helpers/jsonSchema';
+
 import { getEmptyValue } from '../getEmptyValue';
 
 /**
@@ -6,11 +8,16 @@ import { getEmptyValue } from '../getEmptyValue';
  * @returns Default value
  */
 export const getDefaultValue = <
-  Schema extends { type?: string; default?: any },
+  Schema extends {
+    type?: string | string[];
+    default?: any;
+  },
 >(
   jsonSchema: Schema,
 ) => {
   if (jsonSchema.default !== undefined) return jsonSchema.default;
   if (jsonSchema.type === 'virtual') return [];
-  return getEmptyValue(jsonSchema.type);
+  const schemaInfo = extractSchemaInfo(jsonSchema);
+  if (schemaInfo === null) return undefined;
+  return getEmptyValue(schemaInfo.type);
 };

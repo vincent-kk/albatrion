@@ -33,7 +33,7 @@ export const isVirtualSchema = (schema: {
   type: string;
 }): schema is VirtualSchema => schema.type === 'virtual';
 
-export type SchemaType = Extract<JsonSchemaWithVirtual['type'], string>;
+export type JsonSchemaType = Extract<JsonSchemaWithVirtual['type'], string>;
 
 /** Schema inference for non-nullable values */
 type InferNonNullableSchema<

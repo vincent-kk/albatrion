@@ -17,6 +17,8 @@ import {
  * Manages and parses numeric values (integers or floating-point numbers).
  */
 export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
+  public override readonly type = 'number';
+
   /** Current value of the number node */
   #value: NumberValue | Nullish = undefined;
 
@@ -61,7 +63,9 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     parentNode,
     validationMode,
     validatorFactory,
+    schemaType,
     required,
+    nullable,
   }: SchemaNodeConstructorProps<NumberSchema>) {
     super({
       name,
@@ -73,7 +77,9 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
       parentNode,
       validationMode,
       validatorFactory,
+      schemaType,
       required,
+      nullable,
     });
 
     this.onChange =

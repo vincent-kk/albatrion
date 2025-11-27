@@ -17,6 +17,8 @@ import {
  * Manages and parses string values.
  */
 export class StringNode extends AbstractNode<StringSchema, StringValue> {
+  public override readonly type = 'string';
+
   /** Current value of the string node */
   #value: StringValue | Nullish = undefined;
 
@@ -61,7 +63,9 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     parentNode,
     validationMode,
     validatorFactory,
+    schemaType,
     required,
+    nullable,
   }: SchemaNodeConstructorProps<StringSchema>) {
     super({
       name,
@@ -73,7 +77,9 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
       parentNode,
       validationMode,
       validatorFactory,
+      schemaType,
       required,
+      nullable,
     });
 
     this.onChange =

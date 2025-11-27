@@ -1,1 +1,0 @@
-export { getNodeType } from './getNodeType';

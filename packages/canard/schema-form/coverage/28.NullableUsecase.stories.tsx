@@ -320,14 +320,10 @@ export const FormRefWithCustomNullableInputs = () => {
         onChange,
         value,
         node,
-      }: FormTypeInputProps<
-        | {
-            title?: string;
-            description?: string;
-          }
-        | null
-        | undefined
-      >) => {
+      }: FormTypeInputProps<{
+        title?: string;
+        description?: string;
+      } | null>) => {
         return (
           <div
             style={{

@@ -22,6 +22,8 @@ import { omitEmptyObject } from './utils';
  * Manages object properties and handles complex schemas like oneOf.
  */
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
+  public override readonly type = 'object';
+
   /**
    * Strategy used by the object node:
    *  - BranchStrategy: Handles complex child nodes with associated processing logic, including oneOf/if-then-else.
@@ -100,7 +102,9 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     parentNode,
     validationMode,
     validatorFactory,
+    schemaType,
     required,
+    nullable,
   }: BranchNodeConstructorProps<ObjectSchema>) {
     super({
       name,
@@ -112,7 +116,9 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       parentNode,
       validationMode,
       validatorFactory,
+      schemaType,
       required,
+      nullable,
     });
     const handleChange: HandleChange<ObjectValue | Nullish> =
       this.jsonSchema.options?.omitEmpty === false
