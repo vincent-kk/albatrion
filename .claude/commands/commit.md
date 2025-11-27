@@ -14,6 +14,7 @@ git diff --cached --quiet
 ```
 
 **Decision**:
+
 - **Has staged changes** → Proceed to Step 2
 - **No staged changes** → Execute `git add -A` to stage all changes, then proceed to Step 2
 
@@ -34,15 +35,27 @@ git diff --cached --name-only
 
 ### Step 3: Generate Commit Message
 
+**CRITICAL REQUIREMENTS**:
+
+- ✅ Summary line MUST be under 72 characters (including [Type](scope): prefix)
+- ✅ ALL text MUST be in English only - NO Korean, Japanese, or other languages
+- ✅ Use imperative mood: "Add", "Fix", "Update" (NOT "Added", "Fixed", "Updated")
+
 Based on the analysis, generate a commit message following this format:
 
 ```
-[Type](scope): summary
+[Type](scope): summary (MUST be <72 chars total)
 
-Description with detailed context
+Description with detailed context in English
 
 Footer (if applicable)
 ```
+
+**Self-check before committing**:
+
+1. Count summary line characters - is it under 72?
+2. Is every word in English?
+3. Is it imperative mood?
 
 ### Step 4: Execute Commit
 
@@ -78,23 +91,23 @@ Footer (optional: BREAKING CHANGE, issue references, PR links)
 
 ### Available Types
 
-| Type | Description | When to Use |
-|------|-------------|-------------|
-| `Feat` | New feature | Adding new functionality |
-| `Fix` | Bug fix | Fixing a bug or issue |
-| `Docs` | Documentation | README, comments, docs only |
-| `Style` | Code style | Formatting, no code change |
-| `Refactor` | Refactoring | Code change without behavior change |
-| `Perf` | Performance | Performance improvements |
-| `Test` | Testing | Adding or updating tests |
-| `Build` | Build system | Build configuration changes |
-| `Ci` | CI/CD | CI pipeline changes |
-| `Chore` | Maintenance | Routine tasks, version bumps |
-| `Revert` | Revert | Reverting previous commits |
-| `Ux` | User experience | UX improvements |
-| `Infra` | Infrastructure | Infrastructure changes |
-| `Deps` | Dependencies | Dependency updates |
-| `Localize` | Localization | i18n, l10n changes |
+| Type       | Description     | When to Use                         |
+| ---------- | --------------- | ----------------------------------- |
+| `Feat`     | New feature     | Adding new functionality            |
+| `Fix`      | Bug fix         | Fixing a bug or issue               |
+| `Docs`     | Documentation   | README, comments, docs only         |
+| `Style`    | Code style      | Formatting, no code change          |
+| `Refactor` | Refactoring     | Code change without behavior change |
+| `Perf`     | Performance     | Performance improvements            |
+| `Test`     | Testing         | Adding or updating tests            |
+| `Build`    | Build system    | Build configuration changes         |
+| `Ci`       | CI/CD           | CI pipeline changes                 |
+| `Chore`    | Maintenance     | Routine tasks, version bumps        |
+| `Revert`   | Revert          | Reverting previous commits          |
+| `Ux`       | User experience | UX improvements                     |
+| `Infra`    | Infrastructure  | Infrastructure changes              |
+| `Deps`     | Dependencies    | Dependency updates                  |
+| `Localize` | Localization    | i18n, l10n changes                  |
 
 ### Scope Guidelines
 
@@ -103,16 +116,23 @@ Footer (optional: BREAKING CHANGE, issue references, PR links)
 3. **Specific feature** → Feature name (e.g., `modal`, `validation`)
 4. **Single file** → File name (e.g., `index.js`, `config.ts`)
 
-### Writing Rules
+### Writing Rules (STRICT ENFORCEMENT)
 
 - **Use imperative mood**: "Add", "Fix", "Update" (NOT "Added", "Fixed", "Updated")
-- **Summary**: Under 72 characters, capitalize first letter
+- **Summary**: MAXIMUM 72 characters total (including [Type](scope): prefix)
+  - Example: `[Feat](schema-form): add validation` = 39 chars ✅
+  - Example: `[Fix](modal): resolve memory leak in modal cleanup handler` = 60 chars ✅
+  - Example: `[Feat](schema-form): add dynamic field validation support with debouncing` = 77 chars ❌ TOO LONG
 - **Description**: Provide context, explain "why" not just "what"
-- **Language**: Always in English
+- **Language**: ENGLISH ONLY - absolutely no Korean (한글), Japanese (日本語), Chinese (中文), or any other language
+  - ✅ Correct: "Fix memory leak in modal cleanup"
+  - ❌ Wrong: "메모리 누수 수정" (Korean)
+  - ❌ Wrong: "モーダルのバグを修正" (Japanese)
 
 ### Examples
 
 #### Feature Addition
+
 ```
 [Feat](schema-form): add dynamic field validation support
 
@@ -124,6 +144,7 @@ Closes #234
 ```
 
 #### Bug Fix
+
 ```
 [Fix](promise-modal): resolve memory leak in modal cleanup
 
@@ -133,6 +154,7 @@ Closes #234
 ```
 
 #### Refactoring
+
 ```
 [Refactor](core): simplify async handling in data fetcher
 
@@ -142,6 +164,7 @@ Closes #234
 ```
 
 #### Version Bump
+
 ```
 [Chore](deps): update React to version 18.3.0
 
@@ -151,6 +174,7 @@ Closes #234
 ```
 
 #### Breaking Change
+
 ```
 [Feat](api): redesign authentication flow
 
@@ -169,12 +193,25 @@ Migration guide: https://docs.example.com/auth-migration
 ## Important Notes
 
 ### What This Command Does
+
 1. Checks for staged changes (stages all if none)
 2. Analyzes the diff to understand changes
-3. Generates an appropriate commit message
+3. Generates an appropriate commit message following STRICT rules:
+   - Summary MUST be under 72 characters total
+   - ALL text MUST be in English only
+   - MUST use imperative mood
 4. Executes the commit immediately WITHOUT co-author attribution
 
+### Validation Checklist (MUST verify before committing)
+
+- [ ] Summary line is under 72 characters (count it!)
+- [ ] No Korean, Japanese, Chinese, or other non-English text
+- [ ] Uses imperative mood ("Add", "Fix", not "Added", "Fixed")
+- [ ] Type is appropriate for the change
+- [ ] Scope accurately represents the affected area
+
 ### What This Command Does NOT Do
+
 - Does not push to remote
 - Does not add co-author attribution
 - Does not modify files
@@ -183,12 +220,14 @@ Migration guide: https://docs.example.com/auth-migration
 ### Error Handling
 
 **No changes to commit**:
+
 ```
 ⚠️ No changes detected in the working directory.
 Nothing to commit.
 ```
 
 **Commit hook failure**:
+
 ```
 ⚠️ Commit failed due to pre-commit hook.
 Review the hook output and fix any issues before retrying.
