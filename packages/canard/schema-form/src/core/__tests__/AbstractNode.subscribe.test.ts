@@ -14,11 +14,15 @@ import { NodeEventType } from '../nodes/type';
 
 // 테스트를 위한 구체 클래스 구현
 class TestNode extends AbstractNode<JsonSchemaWithVirtual, AllowedValue> {
+  public override readonly type = 'string';
+
   constructor() {
     super({
       jsonSchema: { type: 'string' },
       scope: 'test',
       name: 'test',
+      nullable: false,
+      schemaType: 'string',
       onChange: () => {},
     });
   }

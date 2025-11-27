@@ -301,24 +301,24 @@ export abstract class AbstractNode<
     scope,
     variant,
     jsonSchema,
+    schemaType,
+    nullable,
     defaultValue,
     onChange,
     parentNode,
     validationMode,
     validatorFactory,
-    schemaType,
     required,
-    nullable,
   }: SchemaNodeConstructorProps<Schema, Value>) {
     this.group = getNodeGroup(jsonSchema);
-    this.schemaType = schemaType;
 
     this.scope = scope;
     this.variant = variant;
     this.jsonSchema = jsonSchema;
+    this.schemaType = schemaType;
+    this.nullable = nullable;
     this.parentNode = parentNode || null;
     this.required = required ?? false;
-    this.nullable = nullable ?? false;
 
     this.isRoot = !parentNode;
     this.rootNode = (parentNode?.rootNode || this) as SchemaNode;

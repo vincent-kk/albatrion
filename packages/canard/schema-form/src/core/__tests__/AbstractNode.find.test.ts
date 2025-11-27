@@ -700,9 +700,8 @@ describe('Namespace with oneOf functionality', () => {
           type: 'object',
           properties: {
             mode: {
-              type: 'string',
-              enum: [null, 'dev', 'prod', 'test'],
-              nullable: true,
+              type: ['string', 'null'],
+              enum: ['dev', 'prod', 'test'],
               default: null,
             },
           },

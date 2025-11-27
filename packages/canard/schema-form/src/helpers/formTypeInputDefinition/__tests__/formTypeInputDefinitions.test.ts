@@ -120,6 +120,7 @@ describe('normalizeFormTypeInputDefinitions', () => {
 describe('formTypeTestFnFactory (formTypeTestObject를 통한 간접 테스트)', () => {
   const createTestHint = (overrides: Partial<Hint> = {}): Hint => ({
     type: 'string',
+    nullable: false,
     path: '/test',
     jsonSchema: { type: 'string' },
     format: undefined,

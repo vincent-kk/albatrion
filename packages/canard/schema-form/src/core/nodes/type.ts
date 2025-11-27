@@ -127,14 +127,14 @@ export interface SchemaNodeConstructorProps<
   scope?: string;
   variant?: number;
   jsonSchema: Schema;
+  schemaType: JsonSchemaType;
+  nullable: boolean;
   defaultValue?: Value;
   onChange: HandleChange<Value>;
   parentNode?: SchemaNode;
   validationMode?: ValidationMode;
   validatorFactory?: ValidatorFactory;
-  schemaType: JsonSchemaType;
   required?: boolean;
-  nullable?: boolean;
 }
 
 /**
@@ -168,9 +168,11 @@ export type NodeFactoryProps<Schema extends JsonSchemaWithVirtual> = Omit<
   SchemaNodeConstructorProps<Schema> &
     BranchNodeConstructorProps<Schema> &
     VirtualNodeConstructorProps<Schema>,
-  'jsonSchema'
+  'jsonSchema' | 'schemaType' | 'nullable'
 > & {
   jsonSchema: JsonSchemaWithRef;
+  schemaType?: JsonSchemaType;
+  nullable?: boolean;
 };
 
 /** Callback signature invoked when a `NodeEvent` is published by a node. */

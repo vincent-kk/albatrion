@@ -25,7 +25,9 @@ export const FormTypeInputArrayTerminal = () => {
               <div>{value?.join(',')}</div>
               <div>
                 <button
-                  onClick={() => onChange((prev) => [...prev, 'NEW ITEM'])}
+                  onClick={() =>
+                    onChange((prev) => [...(prev || []), 'NEW ITEM'])
+                  }
                 >
                   onChange
                 </button>
@@ -73,7 +75,9 @@ export const FormTypeInputArrayNotTerminal = () => {
               <div>{value?.join(',')}</div>
               <div>
                 <button
-                  onClick={() => onChange((prev) => [...prev, 'NEW ITEM'])}
+                  onClick={() =>
+                    onChange((prev) => [...(prev || []), 'NEW ITEM'])
+                  }
                 >
                   onChange
                 </button>
@@ -126,7 +130,9 @@ export const FormTypeInputArrayTerminalWithDefaultValue = () => {
               </div>
               <div>
                 <button
-                  onClick={() => onChange((prev) => [...prev, 'NEW ITEM'])}
+                  onClick={() =>
+                    onChange((prev) => [...(prev || []), 'NEW ITEM'])
+                  }
                 >
                   onChange
                 </button>
@@ -183,7 +189,10 @@ export const FormTypeInputArrayTerminalWithDefaultObjectValue = () => {
               <div>
                 <button
                   onClick={() =>
-                    onChange((prev) => [...prev, { name: 'Jinny', age: 24 }])
+                    onChange((prev) => [
+                      ...(prev || []),
+                      { name: 'Jinny', age: 24 },
+                    ])
                   }
                 >
                   onChange
@@ -253,7 +262,10 @@ export const FormTypeInputArrayTerminalWithMixedDefaultObjectValue = () => {
               <div>
                 <button
                   onClick={() =>
-                    onChange((prev) => [...prev, { name: 'Jinny', age: 24 }])
+                    onChange((prev) => [
+                      ...(prev || []),
+                      { name: 'Jinny', age: 24 },
+                    ])
                   }
                 >
                   onChange

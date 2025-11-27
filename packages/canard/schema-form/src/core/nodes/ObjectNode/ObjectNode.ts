@@ -96,29 +96,29 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     scope,
     variant,
     jsonSchema,
+    nullable,
+    schemaType,
     defaultValue,
     onChange,
     nodeFactory,
     parentNode,
     validationMode,
     validatorFactory,
-    schemaType,
     required,
-    nullable,
   }: BranchNodeConstructorProps<ObjectSchema>) {
     super({
       name,
       scope,
       variant,
       jsonSchema,
+      schemaType,
+      nullable,
       defaultValue,
       onChange,
       parentNode,
       validationMode,
       validatorFactory,
-      schemaType,
       required,
-      nullable,
     });
     const handleChange: HandleChange<ObjectValue | Nullish> =
       this.jsonSchema.options?.omitEmpty === false

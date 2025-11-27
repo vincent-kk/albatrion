@@ -99,29 +99,29 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     scope,
     variant,
     jsonSchema,
+    schemaType,
+    nullable,
     defaultValue,
     onChange,
     nodeFactory,
     parentNode,
     validationMode,
     validatorFactory,
-    schemaType,
     required,
-    nullable,
   }: BranchNodeConstructorProps<ArraySchema>) {
     super({
       name,
       scope,
       variant,
       jsonSchema,
+      schemaType,
+      nullable,
       defaultValue,
       onChange,
       parentNode,
       validationMode,
       validatorFactory,
-      schemaType,
       required,
-      nullable,
     });
     const handleChange: HandleChange<ArrayValue | Nullish> =
       this.jsonSchema.options?.omitEmpty === false

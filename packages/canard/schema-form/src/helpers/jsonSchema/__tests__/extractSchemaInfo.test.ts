@@ -139,7 +139,10 @@ describe('extractSchemaInfo', () => {
 
         const result = extractSchemaInfo(schema);
 
-        expect(result).toBe('string');
+        expect(result).toEqual({
+          nullable: false,
+          type: 'string',
+        });
       });
 
       it('should return null for single element null type', () => {
@@ -147,7 +150,10 @@ describe('extractSchemaInfo', () => {
 
         const result = extractSchemaInfo(schema);
 
-        expect(result).toBe('null');
+        expect(result).toEqual({
+          nullable: true,
+          type: 'null',
+        });
       });
     });
 

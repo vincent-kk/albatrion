@@ -72,29 +72,29 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     scope,
     variant,
     jsonSchema,
+    schemaType,
+    nullable,
     defaultValue,
     onChange,
     parentNode,
     refNodes,
     validationMode,
     validatorFactory,
-    schemaType,
     required,
-    nullable,
   }: VirtualNodeConstructorProps<VirtualSchema>) {
     super({
       name,
       scope,
       variant,
       jsonSchema,
+      schemaType,
+      nullable,
       defaultValue,
       onChange,
       parentNode,
       validationMode,
       validatorFactory,
-      schemaType,
       required,
-      nullable,
     });
 
     this.#refNodes = refNodes || [];

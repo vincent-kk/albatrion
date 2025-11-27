@@ -58,28 +58,28 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     scope,
     variant,
     jsonSchema,
+    schemaType,
+    nullable,
     defaultValue,
     onChange,
     parentNode,
     validationMode,
     validatorFactory,
-    schemaType,
     required,
-    nullable,
   }: SchemaNodeConstructorProps<NumberSchema>) {
     super({
       name,
       scope,
       variant,
       jsonSchema,
+      schemaType,
+      nullable,
       defaultValue,
       onChange,
       parentNode,
       validationMode,
       validatorFactory,
-      schemaType,
       required,
-      nullable,
     });
 
     this.onChange =
