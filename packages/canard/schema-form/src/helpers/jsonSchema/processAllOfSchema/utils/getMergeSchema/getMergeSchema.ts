@@ -1,6 +1,6 @@
 import type { Fn } from '@aileron/declare';
 
-import { extractSchemaInfo } from '@/schema-form/helpers/jsonSchema';
+import { extractSchemaInfo } from '@/schema-form/helpers/jsonSchema/extractSchemaInfo';
 import type { JsonSchema } from '@/schema-form/types';
 
 import {
