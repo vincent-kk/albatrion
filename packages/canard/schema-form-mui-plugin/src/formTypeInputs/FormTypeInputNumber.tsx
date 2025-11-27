@@ -28,6 +28,7 @@ interface FormTypeInputNumberProps
 }
 
 const FormTypeInputNumber = ({
+  type,
   path,
   name,
   jsonSchema,
@@ -79,9 +80,7 @@ const FormTypeInputNumber = ({
 
     // 숫자로 변환
     const numericValue =
-      jsonSchema.type === 'integer'
-        ? parseInt(inputValue, 10)
-        : parseFloat(inputValue);
+      type === 'integer' ? parseInt(inputValue, 10) : parseFloat(inputValue);
 
     // 유효한 숫자인지 확인
     if (!isNaN(numericValue)) {
@@ -109,9 +108,7 @@ const FormTypeInputNumber = ({
           inputProps: {
             min: jsonSchema.minimum,
             max: jsonSchema.maximum,
-            step:
-              jsonSchema.multipleOf ||
-              (jsonSchema.type === 'integer' ? 1 : 'any'),
+            step: jsonSchema.multipleOf || (type === 'integer' ? 1 : 'any'),
           },
         },
       }}

@@ -8,9 +8,9 @@
 
 ```typescript
 interface MuiContext {
-  size?: 'small' | 'medium' | 'large';
-  variant?: 'outlined' | 'filled' | 'standard';
-  color?: 'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success';
+  size?: "small" | "medium" | "large";
+  variant?: "outlined" | "filled" | "standard";
+  color?: "primary" | "secondary" | "error" | "warning" | "info" | "success";
 }
 ```
 
@@ -18,8 +18,8 @@ interface MuiContext {
 
 ```typescript
 interface AntdContext {
-  size?: 'small' | 'middle' | 'large';
-  status?: 'error' | 'warning';
+  size?: "small" | "middle" | "large";
+  status?: "error" | "warning";
 }
 ```
 
@@ -27,7 +27,7 @@ interface AntdContext {
 
 ```typescript
 interface AntdMobileContext {
-  size?: 'small' | 'middle' | 'large';
+  size?: "small" | "middle" | "large";
 }
 ```
 
@@ -35,8 +35,8 @@ interface AntdMobileContext {
 
 ```typescript
 interface ChakraContext {
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  variant?: 'outline' | 'filled' | 'flushed' | 'unstyled';
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  variant?: "outline" | "filled" | "flushed" | "unstyled";
   colorScheme?: string;
 }
 ```
@@ -80,11 +80,11 @@ const FormTypeInputString = ({
 }: FormTypeInputStringProps) => {
   const size = sizeProp || context.size || 'medium';
   const variant = variantProp || context.variant || 'outlined';
-  
+
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
   });
-  
+
   return (
     <TextField
       id={path}
@@ -137,12 +137,12 @@ const FormTypeInputNumber = ({
   step,
 }: FormTypeInputNumberProps) => {
   const size = sizeProp || context.size || 'medium';
-  
+
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const numValue = parseFloat(event.target.value);
     onChange(isNaN(numValue) ? 0 : numValue);
   });
-  
+
   return (
     <TextField
       id={path}
@@ -199,11 +199,11 @@ const FormTypeInputBoolean = ({
     if (hideLabel) return undefined;
     return labelProp || jsonSchema.label || jsonSchema.title || name;
   }, [hideLabel, labelProp, jsonSchema, name]);
-  
+
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.checked);
   });
-  
+
   return (
     <FormControlLabel
       control={
@@ -251,7 +251,7 @@ const FormTypeInputArray = ({
   size: sizeProp,
 }: FormTypeInputArrayProps) => {
   const size = sizeProp || context.size || 'medium';
-  
+
   return (
     <Box>
       {ChildNodeComponents.map((ChildComponent, index) => (
@@ -287,6 +287,7 @@ interface FormTypeInputStringEnumProps
 }
 
 const FormTypeInputStringEnum = ({
+  type,
   jsonSchema,
   path,
   name,
@@ -299,14 +300,14 @@ const FormTypeInputStringEnum = ({
   enumLabels,
 }: FormTypeInputStringEnumProps) => {
   const size = sizeProp || context.size || 'medium';
-  const isMultiple = jsonSchema.type === 'array';
-  
+  const isMultiple = type === 'array';
+
   const labels = enumLabels || jsonSchema.enumLabels || {};
-  
+
   const handleChange = useHandle((event: SelectChangeEvent<string | string[]>) => {
     onChange(event.target.value);
   });
-  
+
   return (
     <Select
       id={path}
@@ -358,6 +359,7 @@ interface FormTypeInputRadioGroupProps
 
 const FormTypeInputRadioGroup = ({
   jsonSchema,
+  type,
   path,
   name,
   required,
@@ -368,12 +370,12 @@ const FormTypeInputRadioGroup = ({
   direction = 'vertical',
 }: FormTypeInputRadioGroupProps) => {
   const labels = radioLabels || jsonSchema.radioLabels || {};
-  
+
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    onChange(jsonSchema.type === 'string' ? value : Number(value));
+    onChange(type === 'string' ? value : Number(value));
   });
-  
+
   return (
     <RadioGroup
       name={name}
@@ -425,8 +427,8 @@ interface FormTypeInputTimeProps
 ```typescript
 // 복잡한 Schema가 필요한 경우 명시적으로 지정
 interface CustomSchema extends JsonSchema {
-  type: 'string';
-  format: 'custom-format';
+  type: "string";
+  format: "custom-format";
   customProperty: boolean;
 }
 
@@ -453,12 +455,12 @@ const FormTypeInputComponent = ({
       // 1순위: 직접 props
       // 2순위: context
       // 3순위: jsonSchema
-      sizeProp || context.size || 'medium',
-      placeholderProp || jsonSchema.placeholder || '',
+      sizeProp || context.size || "medium",
+      placeholderProp || jsonSchema.placeholder || "",
       customPropProp ?? jsonSchema.customProperty ?? false,
     ];
   }, [sizeProp, context, jsonSchema, placeholderProp, customPropProp]);
-  
+
   // ...
 };
 ```
@@ -466,9 +468,9 @@ const FormTypeInputComponent = ({
 ---
 
 **핵심 포인트**:
+
 1. `FormTypeInputPropsWithSchema`를 사용하여 타입 간소화
 2. Context 타입을 intersection으로 확장하여 size, variant 등 자동 포함
 3. test 조건: 단순하면 객체, 복합하면 함수 형태
 4. 값 우선순위: 직접 props > context > jsonSchema
 5. useMemo와 useHandle로 성능 최적화
-

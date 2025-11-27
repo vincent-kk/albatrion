@@ -146,7 +146,8 @@ import { DatePicker } from 'your-date-picker-library';
 
 const customFormType = {
   name: 'date-picker',
-  test: (schema) => schema.type === 'string' && schema.format === 'date',
+  test: ({ type, jsonSchema }) =>
+    type === 'string' && jsonSchema.format === 'date',
   component: DatePicker,
 };
 

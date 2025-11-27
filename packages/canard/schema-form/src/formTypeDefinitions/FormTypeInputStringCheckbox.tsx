@@ -87,8 +87,8 @@ const FormTypeInputStringCheckbox = ({
 
 export const FormTypeInputStringCheckboxDefinition = {
   Component: FormTypeInputStringCheckbox,
-  test: ({ jsonSchema }) =>
-    jsonSchema.type === 'array' &&
+  test: ({ type, jsonSchema }) =>
+    type === 'array' &&
     jsonSchema.formType === 'checkbox' &&
     jsonSchema.items?.type === 'string' &&
     !!jsonSchema.items?.enum?.length,
