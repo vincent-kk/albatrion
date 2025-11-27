@@ -1,86 +1,70 @@
-import type { ArraySchema, UnknownSchema } from '../types/jsonSchema';
+import type {
+  ArraySchema,
+  NullableArraySchema,
+  UnknownSchema,
+} from '../types/jsonSchema';
+import { hasNullInType } from './utils/hasNullInType';
 
 /**
- * Determines whether a given JSON schema represents an array type.
+ * Determines whether a given JSON schema represents a non-nullable array type.
  *
- * Validates that the schema's `type` property is set to `'array'`, indicating
- * it describes array values with item validation rules, length constraints,
- * and uniqueness requirements according to JSON Schema specification.
+ * Validates that the schema's `type` property is set to `'array'` (not an array of types),
+ * indicating it describes non-nullable array values.
  *
- * @param schema - The JSON schema object to inspect for array type characteristics
- * @returns Type-safe boolean indicating whether the schema is an ArraySchema
- *
- * @example
- * Basic array schema detection:
- * ```typescript
- * import { isArraySchema } from '@winglet/json-schema';
- *
- * const arraySchema = {
- *   type: 'array',
- *   items: { type: 'string' },
- *   minItems: 1,
- *   maxItems: 10
- * };
- *
- * const stringSchema = {
- *   type: 'string',
- *   maxLength: 100
- * };
- *
- * console.log(isArraySchema(arraySchema)); // true
- * console.log(isArraySchema(stringSchema)); // false
- * ```
+ * @param schema - The JSON schema object to inspect
+ * @returns Type-safe boolean indicating whether the schema is a non-nullable ArraySchema
  *
  * @example
- * Type-safe schema processing:
  * ```typescript
- * function processSchema(schema: UnknownSchema) {
- *   if (isArraySchema(schema)) {
- *     // TypeScript knows schema is ArraySchema
- *     console.log('Array items schema:', schema.items);
- *     console.log('Min items:', schema.minItems);
- *     console.log('Max items:', schema.maxItems);
- *     console.log('Unique items:', schema.uniqueItems);
- *   }
- * }
+ * isNonNullableArraySchema({ type: 'array', items: { type: 'string' } }); // true
+ * isNonNullableArraySchema({ type: ['array', 'null'] }); // false
+ * isNonNullableArraySchema({ type: 'object' }); // false
  * ```
- *
- * @example
- * Complex array schemas:
- * ```typescript
- * const complexArraySchemas = [
- *   {
- *     type: 'array',
- *     items: { type: 'object', properties: { id: { type: 'number' } } },
- *     uniqueItems: true
- *   },
- *   {
- *     type: 'array',
- *     items: { anyOf: [{ type: 'string' }, { type: 'number' }] },
- *     contains: { type: 'string', pattern: '^[A-Z]+
-export const isArraySchema = (schema: UnknownSchema): schema is ArraySchema =>
-  schema.type === 'array';
- }
- *   }
- * ];
- *
- * complexArraySchemas.forEach(schema => {
- *   if (isArraySchema(schema)) {
- *     console.log('Processing array schema with items:', schema.items);
- *   }
- * });
- * ```
- *
- * @remarks
- * Array schemas support rich validation options:
- * - `items`: Schema for array elements
- * - `minItems`/`maxItems`: Length constraints
- * - `uniqueItems`: Prevent duplicate values
- * - `contains`: At least one element must match schema
- * - `minContains`/`maxContains`: Control contains matching count
- *
- * This function only checks the `type` property and does not validate
- * the completeness or correctness of other array-specific properties.
  */
-export const isArraySchema = (schema: UnknownSchema): schema is ArraySchema =>
-  schema.type === 'array';
+export const isNonNullableArraySchema = (
+  schema: UnknownSchema,
+): schema is ArraySchema => schema.type === 'array';
+
+/**
+ * Determines whether a given JSON schema represents a nullable array type.
+ *
+ * Validates that the schema's `type` property is an array containing both
+ * `'array'` and `'null'`, indicating it describes nullable array values.
+ *
+ * @param schema - The JSON schema object to inspect
+ * @returns Type-safe boolean indicating whether the schema is a NullableArraySchema
+ *
+ * @example
+ * ```typescript
+ * isNullableArraySchema({ type: ['array', 'null'], items: { type: 'string' } }); // true
+ * isNullableArraySchema({ type: 'array' }); // false
+ * isNullableArraySchema({ type: ['object', 'null'] }); // false
+ * ```
+ */
+export const isNullableArraySchema = (
+  schema: UnknownSchema,
+): schema is NullableArraySchema =>
+  hasNullInType(schema) &&
+  Array.isArray(schema.type) &&
+  schema.type.indexOf('array') !== -1;
+
+/**
+ * Determines whether a given JSON schema represents an array type (nullable or non-nullable).
+ *
+ * This is a combined filter that matches both `{ type: 'array' }` and
+ * `{ type: ['array', 'null'] }` schemas.
+ *
+ * @param schema - The JSON schema object to inspect
+ * @returns Type-safe boolean indicating whether the schema is an array schema (nullable or not)
+ *
+ * @example
+ * ```typescript
+ * isArraySchema({ type: 'array', items: { type: 'string' } }); // true
+ * isArraySchema({ type: ['array', 'null'] }); // true
+ * isArraySchema({ type: 'object' }); // false
+ * ```
+ */
+export const isArraySchema = (
+  schema: UnknownSchema,
+): schema is ArraySchema | NullableArraySchema =>
+  isNonNullableArraySchema(schema) || isNullableArraySchema(schema);

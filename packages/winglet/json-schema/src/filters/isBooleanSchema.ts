@@ -1,74 +1,71 @@
-import type { BooleanSchema, UnknownSchema } from '../types/jsonSchema';
+import type {
+  BooleanSchema,
+  NullableBooleanSchema,
+  UnknownSchema,
+} from '../types/jsonSchema';
+
+import { hasNullInType } from './utils/hasNullInType';
 
 /**
- * Determines whether a given JSON schema represents a boolean type.
+ * Determines whether a given JSON schema represents a non-nullable boolean type.
  *
- * Validates that the schema's `type` property is set to `'boolean'`, indicating
- * it describes boolean values (true/false) according to JSON Schema specification.
- * Boolean schemas are typically used for flags, toggles, and binary state validation.
+ * Validates that the schema's `type` property is set to `'boolean'` (not an array),
+ * indicating it describes non-nullable boolean values.
  *
- * @param schema - The JSON schema object to inspect for boolean type characteristics
- * @returns Type-safe boolean indicating whether the schema is a BooleanSchema
- *
- * @example
- * Basic boolean schema detection:
- * ```typescript
- * import { isBooleanSchema } from '@winglet/json-schema';
- *
- * const booleanSchema = {
- *   type: 'boolean',
- *   default: false
- * };
- *
- * const stringSchema = {
- *   type: 'string',
- *   enum: ['true', 'false']
- * };
- *
- * console.log(isBooleanSchema(booleanSchema)); // true
- * console.log(isBooleanSchema(stringSchema)); // false
- * ```
+ * @param schema - The JSON schema object to inspect
+ * @returns Type-safe boolean indicating whether the schema is a non-nullable BooleanSchema
  *
  * @example
- * Type-safe schema processing:
  * ```typescript
- * function processSchema(schema: UnknownSchema) {
- *   if (isBooleanSchema(schema)) {
- *     // TypeScript knows schema is BooleanSchema
- *     console.log('Default value:', schema.default);
- *     console.log('Const value:', schema.const);
- *   }
- * }
+ * isNonNullableBooleanSchema({ type: 'boolean' }); // true
+ * isNonNullableBooleanSchema({ type: ['boolean', 'null'] }); // false
+ * isNonNullableBooleanSchema({ type: 'string' }); // false
  * ```
+ */
+export const isNonNullableBooleanSchema = (
+  schema: UnknownSchema,
+): schema is BooleanSchema => schema.type === 'boolean';
+
+/**
+ * Determines whether a given JSON schema represents a nullable boolean type.
+ *
+ * Validates that the schema's `type` property is an array containing both
+ * `'boolean'` and `'null'`, indicating it describes nullable boolean values.
+ *
+ * @param schema - The JSON schema object to inspect
+ * @returns Type-safe boolean indicating whether the schema is a NullableBooleanSchema
  *
  * @example
- * Boolean schema validation scenarios:
  * ```typescript
- * const booleanSchemas = [
- *   { type: 'boolean' }, // Simple boolean
- *   { type: 'boolean', default: true }, // With default
- *   { type: 'boolean', const: false }, // Constant boolean
- *   { type: 'boolean', enum: [true] } // Only allows true
- * ];
- *
- * booleanSchemas.forEach((schema, index) => {
- *   if (isBooleanSchema(schema)) {
- *     console.log(`Schema ${index + 1} is a boolean schema`);
- *   }
- * });
+ * isNullableBooleanSchema({ type: ['boolean', 'null'] }); // true
+ * isNullableBooleanSchema({ type: 'boolean' }); // false
+ * isNullableBooleanSchema({ type: ['string', 'null'] }); // false
  * ```
+ */
+export const isNullableBooleanSchema = (
+  schema: UnknownSchema,
+): schema is NullableBooleanSchema =>
+  hasNullInType(schema) &&
+  Array.isArray(schema.type) &&
+  schema.type.indexOf('boolean') !== -1;
+
+/**
+ * Determines whether a given JSON schema represents a boolean type (nullable or non-nullable).
  *
- * @remarks
- * Boolean schemas are one of the simplest JSON Schema types since boolean
- * values have only two possible states. They support standard JSON Schema
- * properties like:
- * - `default`: Default boolean value
- * - `const`: Restricts to a specific boolean value
- * - `enum`: List of allowed boolean values (typically [true] or [false])
+ * This is a combined filter that matches both `{ type: 'boolean' }` and
+ * `{ type: ['boolean', 'null'] }` schemas.
  *
- * This function only validates the `type` property and does not verify
- * the logical consistency of other boolean-specific constraints.
+ * @param schema - The JSON schema object to inspect
+ * @returns Type-safe boolean indicating whether the schema is a boolean schema (nullable or not)
+ *
+ * @example
+ * ```typescript
+ * isBooleanSchema({ type: 'boolean' }); // true
+ * isBooleanSchema({ type: ['boolean', 'null'] }); // true
+ * isBooleanSchema({ type: 'string' }); // false
+ * ```
  */
 export const isBooleanSchema = (
   schema: UnknownSchema,
-): schema is BooleanSchema => schema.type === 'boolean';
+): schema is BooleanSchema | NullableBooleanSchema =>
+  isNonNullableBooleanSchema(schema) || isNullableBooleanSchema(schema);
