@@ -1,9 +1,8 @@
 import type {
-  NullableNumberSchema,
+  NumberNullableSchema,
   NumberSchema,
   UnknownSchema,
 } from '../types/jsonSchema';
-
 import { hasNullInType } from './utils/hasNullInType';
 
 /**
@@ -47,10 +46,11 @@ export const isNonNullableNumberSchema = (
  */
 export const isNullableNumberSchema = (
   schema: UnknownSchema,
-): schema is NullableNumberSchema =>
+): schema is NumberNullableSchema =>
   hasNullInType(schema) &&
   Array.isArray(schema.type) &&
-  (schema.type.indexOf('number') !== -1 || schema.type.indexOf('integer') !== -1);
+  (schema.type.indexOf('number') !== -1 ||
+    schema.type.indexOf('integer') !== -1);
 
 /**
  * Determines whether a given JSON schema represents a number type (nullable or non-nullable).
@@ -71,5 +71,5 @@ export const isNullableNumberSchema = (
  */
 export const isNumberSchema = (
   schema: UnknownSchema,
-): schema is NumberSchema | NullableNumberSchema =>
+): schema is NumberSchema | NumberNullableSchema =>
   isNonNullableNumberSchema(schema) || isNullableNumberSchema(schema);

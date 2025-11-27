@@ -1,9 +1,8 @@
 import type {
+  BooleanNullableSchema,
   BooleanSchema,
-  NullableBooleanSchema,
   UnknownSchema,
 } from '../types/jsonSchema';
-
 import { hasNullInType } from './utils/hasNullInType';
 
 /**
@@ -44,7 +43,7 @@ export const isNonNullableBooleanSchema = (
  */
 export const isNullableBooleanSchema = (
   schema: UnknownSchema,
-): schema is NullableBooleanSchema =>
+): schema is BooleanNullableSchema =>
   hasNullInType(schema) &&
   Array.isArray(schema.type) &&
   schema.type.indexOf('boolean') !== -1;
@@ -67,5 +66,5 @@ export const isNullableBooleanSchema = (
  */
 export const isBooleanSchema = (
   schema: UnknownSchema,
-): schema is BooleanSchema | NullableBooleanSchema =>
+): schema is BooleanSchema | BooleanNullableSchema =>
   isNonNullableBooleanSchema(schema) || isNullableBooleanSchema(schema);

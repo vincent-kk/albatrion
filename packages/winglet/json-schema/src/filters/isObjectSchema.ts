@@ -1,9 +1,8 @@
 import type {
-  NullableObjectSchema,
+  ObjectNullableSchema,
   ObjectSchema,
   UnknownSchema,
 } from '../types/jsonSchema';
-
 import { hasNullInType } from './utils/hasNullInType';
 
 /**
@@ -44,7 +43,7 @@ export const isNonNullableObjectSchema = (
  */
 export const isNullableObjectSchema = (
   schema: UnknownSchema,
-): schema is NullableObjectSchema =>
+): schema is ObjectNullableSchema =>
   hasNullInType(schema) &&
   Array.isArray(schema.type) &&
   schema.type.indexOf('object') !== -1;
@@ -67,5 +66,5 @@ export const isNullableObjectSchema = (
  */
 export const isObjectSchema = (
   schema: UnknownSchema,
-): schema is ObjectSchema | NullableObjectSchema =>
+): schema is ObjectSchema | ObjectNullableSchema =>
   isNonNullableObjectSchema(schema) || isNullableObjectSchema(schema);
