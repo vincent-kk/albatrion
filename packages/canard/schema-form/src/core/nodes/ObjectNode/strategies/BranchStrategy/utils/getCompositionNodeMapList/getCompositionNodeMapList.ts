@@ -1,4 +1,5 @@
 import { isArray, isPlainObject } from '@winglet/common-utils/filter';
+import { isSameSchemaType } from '@winglet/json-schema/filter';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
@@ -11,11 +12,14 @@ import { JsonSchemaError } from '@/schema-form/errors';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type {
   JsonSchema,
-  ObjectSchema,
+  ObjectSchema as NonNullableObjectSchema,
+  ObjectNullableSchema as NullableObjectSchema,
   ObjectValue,
 } from '@/schema-form/types';
 
 import type { ChildNodeMap } from '../../type';
+
+type ObjectSchema = NonNullableObjectSchema | NullableObjectSchema;
 
 /**
  * Generate child node maps for composition schemas (oneOf/anyOf)
@@ -51,7 +55,10 @@ export const getCompositionNodeMapList = (
   for (let index = 0; index < compositionLength; index++) {
     const schema = compositionSchemas[index] as Partial<ObjectSchema>;
 
-    if (schema.type && jsonSchema.type !== schema.type)
+    if (
+      schema.type !== undefined &&
+      isSameSchemaType(jsonSchema, schema) === false
+    )
       throw new JsonSchemaError(
         'COMPOSITION_TYPE_REDEFINITION',
         `Type cannot be redefined in '${scope}' schema. It must either be omitted or match the parent schema type.`,
