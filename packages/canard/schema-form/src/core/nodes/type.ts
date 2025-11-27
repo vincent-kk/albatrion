@@ -28,6 +28,7 @@ import type {
   NullSchema,
   NumberSchema,
   ObjectSchema,
+  SchemaType,
   StringSchema,
   ValidatorFactory,
   VirtualSchema,
@@ -131,7 +132,9 @@ export interface SchemaNodeConstructorProps<
   parentNode?: SchemaNode;
   validationMode?: ValidationMode;
   validatorFactory?: ValidatorFactory;
+  schemaType?: SchemaType;
   required?: boolean;
+  nullable?: boolean;
 }
 
 /**

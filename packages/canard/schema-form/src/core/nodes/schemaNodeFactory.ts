@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import { JsonSchemaError } from '@/schema-form/errors';
 import {
   type ResolveSchema,
@@ -44,7 +46,7 @@ export const createSchemaNodeFactory =
   ): SchemaNodeFactory<Schema> =>
   (props: NodeFactoryProps<Schema>) => {
     const nodeProps = resolveReferences(props, resolveSchema);
-    switch (nodeProps.jsonSchema.type) {
+    switch (nodeProps.schemaType) {
       case 'boolean':
         return new BooleanNode(
           nodeProps as SchemaNodeConstructorProps<BooleanSchema>,
@@ -81,7 +83,6 @@ export const createSchemaNodeFactory =
     }
     throw new JsonSchemaError(
       'UNKNOWN_JSON_SCHEMA',
-      // @ts-expect-error: This line should be unreachable if all variants are handled.
       `Unknown JsonSchema: ${nodeProps.jsonSchema.type}`,
       {
         jsonSchema: nodeProps.jsonSchema,
@@ -97,11 +98,29 @@ const processSchema = (
   return processAllOfSchema(schema as JsonSchema);
 };
 
+const extractSchemaInfo = (jsonSchema: JsonSchema) => {
+  const type = jsonSchema.type;
+  if (isArray(type)) {
+    // @ts-expect-error: if incorrect `type` is received
+    if (type.length === 0 || type.length > 2) return null;
+    // @ts-expect-error: if incorrect `type` is received
+    if (type.length === 1) return type[0];
+    const nullIndex = type.indexOf('null');
+    if (nullIndex === -1) return null;
+    return { type: type[nullIndex === 0 ? 1 : 0], nullable: true };
+  }
+  return { type, nullable: jsonSchema.nullable === true };
+};
+
 const resolveReferences = <Schema extends JsonSchemaWithVirtual>(
   nodeProps: NodeFactoryProps<Schema>,
   resolve: ResolveSchema | null,
 ) => {
   nodeProps.jsonSchema = processSchema(nodeProps.jsonSchema, resolve);
+  const schemaInfo = extractSchemaInfo(nodeProps.jsonSchema);
+  if (schemaInfo === null) return nodeProps;
+  nodeProps.nullable = schemaInfo.nullable;
+  nodeProps.schemaType = schemaInfo.type;
   return nodeProps as UnionSchemaNodeConstructorProps;
 };
 
