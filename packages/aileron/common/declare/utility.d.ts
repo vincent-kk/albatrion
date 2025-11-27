@@ -2,6 +2,8 @@ export type Nullish = null | undefined;
 
 export type Nullable<T> = T | null;
 
+export type IsNullable<T> = [null] extends [T] ? true : false;
+
 export type Optional<T> = T | undefined;
 
 /** Extract keys K from T and make them required */

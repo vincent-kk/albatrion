@@ -50,9 +50,9 @@ export interface FormTypeInputProps<
   /** Default value of FormTypeInput Component */
   defaultValue: Value | undefined;
   /** Current value of FormTypeInput Component */
-  value: Value;
+  value: Value | undefined;
   /** onChange handler of FormTypeInput Component */
-  onChange: SetStateFnWithOptions<Value>;
+  onChange: SetStateFnWithOptions<Value | undefined>;
   /** onFileAttach handler of FormTypeInput Component */
   onFileAttach: Fn<[file: File | File[] | undefined]>;
   /** Child FormTypeInput Components of this FormTypeInput Component */
