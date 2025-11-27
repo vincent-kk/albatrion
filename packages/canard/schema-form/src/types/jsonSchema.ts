@@ -1,24 +1,28 @@
 import type { CSSProperties, ComponentType, ReactNode } from 'react';
 
 import type {
+  ArrayNullableSchema as BaseArrayNullableSchema,
   ArraySchema as BaseArraySchema,
   BasicSchema as BaseBasicSchema,
+  BooleanNullableSchema as BaseBooleanNullableSchema,
   BooleanSchema as BaseBooleanSchema,
   NullSchema as BaseNullSchema,
+  NumberNullableSchema as BaseNumberNullableSchema,
   NumberSchema as BaseNumberSchema,
+  ObjectNullableSchema as BaseObjectNullableSchema,
   ObjectSchema as BaseObjectSchema,
+  StringNullableSchema as BaseStringNullableSchema,
   StringSchema as BaseStringSchema,
   RefSchema,
 } from '@winglet/json-schema';
 
-import type { Dictionary, Nullable, Nullish } from '@aileron/declare';
+import type { Dictionary, IsNullable } from '@aileron/declare';
 
 import type { UnknownFormTypeInputProps } from './formTypeInput';
 import type {
   AllowedValue,
   ArrayValue,
   BooleanValue,
-  NullValue,
   NumberValue,
   ObjectValue,
   StringValue,
@@ -29,39 +33,82 @@ export const isVirtualSchema = (schema: {
   type: string;
 }): schema is VirtualSchema => schema.type === 'virtual';
 
-/** Infer appropriate Schema based on input value */
+export type SchemaType = Extract<JsonSchemaWithVirtual['type'], string>;
+
+/** Schema inference for non-nullable values */
+type InferNonNullableSchema<
+  Value,
+  Options extends Dictionary = object,
+> = Value extends NumberValue
+  ? NumberSchema<Options>
+  : Value extends StringValue
+    ? StringSchema<Options>
+    : Value extends BooleanValue
+      ? BooleanSchema<Options>
+      : Value extends ArrayValue
+        ? ArraySchema<Options>
+        : Value extends ObjectValue
+          ? ObjectSchema<Options>
+          : Value extends VirtualNodeValue
+            ? VirtualSchema<Options>
+            : JsonSchemaWithVirtual<Options>;
+
+/** Schema inference for nullable values (excluding VirtualSchema - cannot be nullable) */
+type InferNullableSchema<
+  Value,
+  Options extends Dictionary = object,
+> = Value extends NumberValue
+  ? NumberNullableSchema<Options>
+  : Value extends StringValue
+    ? StringNullableSchema<Options>
+    : Value extends BooleanValue
+      ? BooleanNullableSchema<Options>
+      : Value extends ArrayValue
+        ? ArrayNullableSchema<Options>
+        : Value extends ObjectValue
+          ? ObjectNullableSchema<Options>
+          : NullSchema<Options>;
+
+/**
+ * Infers the appropriate Schema type based on the input value.
+ * - For nullable types (T | null), returns the corresponding Nullable schema
+ * - For non-nullable types, returns the standard schema
+ * - For pure null type, returns NullSchema
+ */
 export type InferJsonSchema<
   Value extends AllowedValue | unknown = any,
   Options extends Dictionary = object,
-> = [Value] extends [NumberValue | Nullish]
-  ? NumberSchema<Options>
-  : [Value] extends [StringValue | Nullish]
-    ? StringSchema<Options>
-    : [Value] extends [BooleanValue | Nullish]
-      ? BooleanSchema<Options>
-      : [Value] extends [ArrayValue | Nullish]
-        ? ArraySchema<Options>
-        : [Value] extends [ObjectValue | Nullish]
-          ? ObjectSchema<Options>
-          : [Value] extends [Nullish]
-            ? NullSchema<Options>
-            : JsonSchemaWithVirtual<Options>;
+> = [Value] extends [null]
+  ? NullSchema<Options>
+  : IsNullable<Value> extends true
+    ? InferNullableSchema<Exclude<Value, null>, Options>
+    : InferNonNullableSchema<Value, Options>;
 
 export type JsonSchema<Options extends Dictionary = object> =
   | NumberSchema<Options>
+  | NumberNullableSchema<Options>
   | StringSchema<Options>
+  | StringNullableSchema<Options>
   | BooleanSchema<Options>
+  | BooleanNullableSchema<Options>
   | ArraySchema<Options>
+  | ArrayNullableSchema<Options>
   | ObjectSchema<Options>
+  | ObjectNullableSchema<Options>
   | NullSchema<Options>
   | RefSchema;
 
 export type JsonSchemaWithVirtual<Options extends Dictionary = object> =
   | NumberSchema<Options>
+  | NumberNullableSchema<Options>
   | StringSchema<Options>
+  | StringNullableSchema<Options>
   | BooleanSchema<Options>
+  | BooleanNullableSchema<Options>
   | ArraySchema<Options>
+  | ArrayNullableSchema<Options>
   | ObjectSchema<Options>
+  | ObjectNullableSchema<Options>
   | NullSchema<Options>
   | VirtualSchema<Options>;
 
@@ -73,24 +120,43 @@ export type PartialJsonSchema<Options extends Dictionary = object> = Partial<
   JsonSchemaWithVirtual<Options>
 >;
 
-export type NumberSchema<Options extends Dictionary = object> =
-  BasicSchema<NumberValue> & BaseNumberSchema<Options, JsonSchema<Options>>;
+export type NumberSchema<Options extends Dictionary = object> = BasicSchema &
+  BaseNumberSchema<Options, JsonSchema<Options>>;
 
-export type StringSchema<Options extends Dictionary = object> =
-  BasicSchema<StringValue> &
-    BaseStringSchema<Options, JsonSchema<Options>> & {
+export type NumberNullableSchema<Options extends Dictionary = object> =
+  BasicSchema & BaseNumberNullableSchema<Options, JsonSchema<Options>>;
+
+export type StringSchema<Options extends Dictionary = object> = BasicSchema &
+  BaseStringSchema<Options, JsonSchema<Options>> & {
+    options?: { trim?: boolean };
+  };
+
+export type StringNullableSchema<Options extends Dictionary = object> =
+  BasicSchema &
+    BaseStringNullableSchema<Options, JsonSchema<Options>> & {
       options?: { trim?: boolean };
     };
 
-export type BooleanSchema<Options extends Dictionary = object> =
-  BasicSchema<BooleanValue> & BaseBooleanSchema<Options, JsonSchema<Options>>;
+export type BooleanSchema<Options extends Dictionary = object> = BasicSchema &
+  BaseBooleanSchema<Options, JsonSchema<Options>>;
+export type BooleanNullableSchema<Options extends Dictionary = object> =
+  BasicSchema & BaseBooleanNullableSchema<Options, JsonSchema<Options>>;
 
-export type ArraySchema<Options extends Dictionary = object> =
-  BasicSchema<ArrayValue> & BaseArraySchema<Options, JsonSchema<Options>>;
+export type ArraySchema<Options extends Dictionary = object> = BasicSchema &
+  BaseArraySchema<Options, JsonSchema<Options>>;
 
-export type ObjectSchema<Options extends Dictionary = object> =
-  BasicSchema<ObjectValue> &
-    BaseObjectSchema<Options, JsonSchema<Options>> & {
+export type ArrayNullableSchema<Options extends Dictionary = object> =
+  BasicSchema & BaseArrayNullableSchema<Options, JsonSchema<Options>>;
+
+export type ObjectSchema<Options extends Dictionary = object> = BasicSchema &
+  BaseObjectSchema<Options, JsonSchema<Options>> & {
+    propertyKeys?: string[];
+    virtual?: Dictionary<{ fields: string[]; nullable?: never } & BasicSchema>;
+  };
+
+export type ObjectNullableSchema<Options extends Dictionary = object> =
+  BasicSchema &
+    BaseObjectNullableSchema<Options, JsonSchema<Options>> & {
       propertyKeys?: string[];
       virtual?: Dictionary<
         { fields: string[]; nullable?: never } & BasicSchema
@@ -101,13 +167,13 @@ export type VirtualSchema<Options extends Dictionary = object> = {
   type: 'virtual';
   fields?: string[];
   nullable?: never;
-} & BasicSchema<VirtualNodeValue> &
+} & BasicSchema &
   BaseBasicSchema<VirtualNodeValue, Options, JsonSchema<Options>>;
 
-export type NullSchema<Options extends Dictionary = object> =
-  BasicSchema<NullValue> & BaseNullSchema<Options, JsonSchema<Options>>;
+export type NullSchema<Options extends Dictionary = object> = BasicSchema &
+  BaseNullSchema<Options, JsonSchema<Options>>;
 
-export type BasicSchema<Value extends AllowedValue = any> = {
+export type BasicSchema = {
   FormTypeInput?: ComponentType<UnknownFormTypeInputProps>;
   FormTypeInputProps?: Dictionary;
   FormTypeRendererProps?: Dictionary;
@@ -146,18 +212,4 @@ export type BasicSchema<Value extends AllowedValue = any> = {
     disabled?: boolean | string;
   };
   [alt: string]: any;
-} & NullableSchema<Value>;
-
-type NullableSchema<Value extends AllowedValue> =
-  | {
-      nullable: true;
-      enum?: Nullable<Value>[];
-      default?: Nullable<Value>;
-      const?: Nullable<Value>;
-    }
-  | {
-      nullable?: false;
-      enum?: Value[];
-      default?: Value;
-      const?: Value;
-    };
+};

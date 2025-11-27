@@ -790,9 +790,8 @@ export const FormTypeInputObjectNullableWithDefaultNull = () => {
     type: 'object',
     properties: {
       config: {
-        type: 'object',
+        type: ['object', 'null'],
         terminal: true,
-        nullable: true,
         default: null,
         FormTypeInput: ({
           onChange,
@@ -841,9 +840,8 @@ export const FormTypeInputObjectNullableWithDefaultNullAndSubDefaults = () => {
     type: 'object',
     properties: {
       settings: {
-        type: 'object',
+        type: ['object', 'null'],
         terminal: true,
-        nullable: true,
         default: null,
         FormTypeInput: ({
           onChange,
@@ -892,9 +890,8 @@ export const FormTypeInputObjectNullableNestedMixedDefaults = () => {
     type: 'object',
     properties: {
       user: {
-        type: 'object',
+        type: ['object', 'null'],
         terminal: true,
-        nullable: true,
         default: null,
         FormTypeInput: ({
           onChange,
@@ -928,9 +925,8 @@ export const FormTypeInputObjectNullableNestedMixedDefaults = () => {
         },
       },
       metadata: {
-        type: 'object',
+        type: ['object', 'null'],
         terminal: true,
-        nullable: true,
         default: null,
         FormTypeInput: ({
           onChange,
@@ -983,9 +979,8 @@ export const FormTypeInputObjectNullableLifecycle = () => {
     type: 'object',
     properties: {
       dynamic: {
-        type: 'object',
+        type: ['object', 'null'],
         terminal: true,
-        nullable: true,
         FormTypeInput: ({
           onChange,
           value,
