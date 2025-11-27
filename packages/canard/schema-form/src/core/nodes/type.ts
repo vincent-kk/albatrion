@@ -19,7 +19,9 @@ import {
 } from '@/schema-form/app/constants';
 import type {
   AllowedValue,
+  ArrayNullableSchema,
   ArraySchema,
+  BooleanNullableSchema,
   BooleanSchema,
   InferValueType,
   JsonSchemaError,
@@ -27,8 +29,11 @@ import type {
   JsonSchemaWithRef,
   JsonSchemaWithVirtual,
   NullSchema,
+  NumberNullableSchema,
   NumberSchema,
+  ObjectNullableSchema,
   ObjectSchema,
+  StringNullableSchema,
   StringSchema,
   ValidatorFactory,
   VirtualSchema,
@@ -44,19 +49,20 @@ import type { VirtualNode } from './VirtualNode';
 
 /**
  * Compile-time utility that maps a JSON Schema to its concrete `SchemaNode` implementation.
+ * Supports both regular schemas (e.g., NumberSchema) and nullable schemas (e.g., NumberNullableSchema).
  * Falls back to the broad `SchemaNode` union when the schema type cannot be narrowed.
  * @typeParam Schema - JSON Schema used as the basis for node inference
  */
 export type InferSchemaNode<Schema extends JsonSchemaWithVirtual | unknown> =
-  Schema extends ArraySchema
+  Schema extends ArraySchema | ArrayNullableSchema
     ? ArrayNode
-    : Schema extends NumberSchema
+    : Schema extends NumberSchema | NumberNullableSchema
       ? NumberNode
-      : Schema extends ObjectSchema
+      : Schema extends ObjectSchema | ObjectNullableSchema
         ? ObjectNode
-        : Schema extends StringSchema
+        : Schema extends StringSchema | StringNullableSchema
           ? StringNode
-          : Schema extends BooleanSchema
+          : Schema extends BooleanSchema | BooleanNullableSchema
             ? BooleanNode
             : Schema extends VirtualSchema
               ? VirtualNode

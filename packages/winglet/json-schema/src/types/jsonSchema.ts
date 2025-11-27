@@ -11,10 +11,10 @@ import type {
 
 // REF: https://github.com/ajv-validator/ajv/blob/master/lib/types/json-schema.ts
 
-export type UnknownSchema = { type?: string | string[]; [key: string]: any };
-
-/** Extracts the non-null type from a potentially nullable type */
-type ExtractNonNull<T> = Exclude<T, null>;
+export type UnknownSchema = {
+  type?: string | Readonly<string[]>;
+  [key: string]: any;
+};
 
 /** Maps base types to their Non-Nullable Schema counterparts */
 type InferNonNullableSchema<
@@ -65,7 +65,7 @@ export type InferJsonSchema<
 > = [Value] extends [null]
   ? NullSchema<Options, Schema>
   : IsNullable<Value> extends true
-    ? InferNullableSchema<ExtractNonNull<Value>, Options, Schema>
+    ? InferNullableSchema<Extract<Value, null>, Options, Schema>
     : InferNonNullableSchema<Value, Options, Schema>;
 
 export type JsonSchema<Options extends Dictionary = object> =
@@ -92,7 +92,7 @@ export interface NumberNullableSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BaseNumberSchema<NumberValue | null, Options, Schema> {
-  type: ['number' | 'integer', 'null'];
+  type: Readonly<['number' | 'integer', 'null']>;
 }
 
 interface BaseNumberSchema<
@@ -119,7 +119,7 @@ export interface StringNullableSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BaseStringSchema<StringValue | null, Options, Schema> {
-  type: ['string', 'null'];
+  type: Readonly<['string', 'null']>;
 }
 
 interface BaseStringSchema<
@@ -144,7 +144,7 @@ export interface BooleanNullableSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BasicSchema<BooleanValue | null, Options, Schema> {
-  type: ['boolean', 'null'];
+  type: Readonly<['boolean', 'null']>;
 }
 
 export interface ArraySchema<
@@ -158,7 +158,7 @@ export interface ArrayNullableSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BaseArraySchema<ArrayValue | null, Options, Schema> {
-  type: ['array', 'null'];
+  type: Readonly<['array', 'null']>;
 }
 
 interface BaseArraySchema<
@@ -187,7 +187,7 @@ export interface ObjectNullableSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BaseObjectSchema<ObjectValue | null, Options, Schema> {
-  type: ['object', 'null'];
+  type: Readonly<['object', 'null']>;
 }
 
 interface BaseObjectSchema<
