@@ -310,18 +310,18 @@ export abstract class AbstractNode<
     validatorFactory,
     required,
   }: SchemaNodeConstructorProps<Schema, Value>) {
-    this.group = getNodeGroup(jsonSchema);
-
     this.scope = scope;
     this.variant = variant;
     this.jsonSchema = jsonSchema;
     this.schemaType = schemaType;
     this.nullable = nullable;
-    this.parentNode = parentNode || null;
-    this.required = required ?? false;
 
     this.isRoot = !parentNode;
     this.rootNode = (parentNode?.rootNode || this) as SchemaNode;
+    this.parentNode = parentNode || null;
+    this.required = required ?? false;
+
+    this.group = getNodeGroup(schemaType, jsonSchema);
 
     this.#name = name || '';
     this.#escapedName = escapeSegment(this.#name);

@@ -1,3 +1,4 @@
+import { isObjectSchema } from '@winglet/json-schema/filter';
 import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
 
 import type { JsonSchema } from '@/schema-form/types';
@@ -21,7 +22,7 @@ const scanner = new JsonSchemaScanner({
     mutate: (entry) => {
       let schema = entry.schema as Partial<JsonSchema>;
       let idle = true;
-      if (schema.type === 'object') {
+      if (isObjectSchema(schema)) {
         const processed = processVirtualSchema(schema);
         schema = processed || schema;
         if (idle) idle = processed === null;

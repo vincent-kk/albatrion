@@ -21,7 +21,7 @@ describe('getNodeGroup', () => {
       default: ['computed', 'value'],
     };
 
-    const result = getNodeGroup(schema);
+    const result = getNodeGroup(schema.type, schema);
     expect(result).toBe('branch');
   });
 
@@ -32,7 +32,7 @@ describe('getNodeGroup', () => {
       properties: {},
     };
 
-    const result = getNodeGroup(schema);
+    const result = getNodeGroup(schema.type, schema);
     expect(result).toBe('terminal');
   });
 
@@ -43,7 +43,7 @@ describe('getNodeGroup', () => {
       items: { type: 'string' },
     };
 
-    const result = getNodeGroup(schema);
+    const result = getNodeGroup(schema.type, schema);
     expect(result).toBe('branch');
   });
 
@@ -55,7 +55,7 @@ describe('getNodeGroup', () => {
       items: { type: 'number' },
     };
 
-    const result = getNodeGroup(schema);
+    const result = getNodeGroup(schema.type, schema);
     expect(result).toBe('terminal');
   });
 
@@ -69,7 +69,7 @@ describe('getNodeGroup', () => {
       },
     };
 
-    const result = getNodeGroup(schema);
+    const result = getNodeGroup(schema.type, schema);
     expect(result).toBe('terminal');
   });
 
@@ -79,7 +79,7 @@ describe('getNodeGroup', () => {
       items: { type: 'string' },
     };
 
-    const result = getNodeGroup(schema);
+    const result = getNodeGroup(schema.type, schema);
     expect(result).toBe('branch');
   });
 
@@ -91,7 +91,7 @@ describe('getNodeGroup', () => {
       },
     };
 
-    const result = getNodeGroup(schema);
+    const result = getNodeGroup(schema.type, schema);
     expect(result).toBe('branch');
   });
 
@@ -102,11 +102,11 @@ describe('getNodeGroup', () => {
     const integerSchema: JsonSchemaWithVirtual = { type: 'integer' };
     const nullSchema: JsonSchemaWithVirtual = { type: 'null' };
 
-    expect(getNodeGroup(stringSchema)).toBe('terminal');
-    expect(getNodeGroup(numberSchema)).toBe('terminal');
-    expect(getNodeGroup(booleanSchema)).toBe('terminal');
-    expect(getNodeGroup(integerSchema)).toBe('terminal');
-    expect(getNodeGroup(nullSchema)).toBe('terminal');
+    expect(getNodeGroup(stringSchema.type, stringSchema)).toBe('terminal');
+    expect(getNodeGroup(numberSchema.type, numberSchema)).toBe('terminal');
+    expect(getNodeGroup(booleanSchema.type, booleanSchema)).toBe('terminal');
+    expect(getNodeGroup(integerSchema.type, integerSchema)).toBe('terminal');
+    expect(getNodeGroup(nullSchema.type, nullSchema)).toBe('terminal');
   });
 
   it('should handle React component class as FormTypeInput', () => {
@@ -123,7 +123,7 @@ describe('getNodeGroup', () => {
       properties: {},
     };
 
-    const result = getNodeGroup(schema);
+    const result = getNodeGroup(schema.type, schema);
     expect(result).toBe('terminal');
   });
 
@@ -134,7 +134,7 @@ describe('getNodeGroup', () => {
       properties: {},
     };
 
-    const result = getNodeGroup(schema);
+    const result = getNodeGroup(schema.type, schema);
     expect(result).toBe('branch');
   });
 
@@ -147,7 +147,7 @@ describe('getNodeGroup', () => {
       properties: {},
     };
 
-    const result = getNodeGroup(schema);
+    const result = getNodeGroup(schema.type, schema);
     expect(result).toBe('branch');
   });
 
@@ -160,7 +160,7 @@ describe('getNodeGroup', () => {
       items: { type: 'string' },
     };
 
-    const result = getNodeGroup(schema);
+    const result = getNodeGroup(schema.type, schema);
     expect(result).toBe('terminal');
   });
 
@@ -177,7 +177,7 @@ describe('getNodeGroup', () => {
       },
     };
 
-    const result = getNodeGroup(schema);
+    const result = getNodeGroup(schema.type, schema);
     expect(result).toBe('branch');
   });
 
@@ -187,7 +187,7 @@ describe('getNodeGroup', () => {
       oneOf: [{ const: 'option1' }, { const: 'option2' }],
     };
 
-    const result = getNodeGroup(schema);
+    const result = getNodeGroup(schema.type, schema);
     expect(result).toBe('terminal');
   });
 
@@ -199,7 +199,7 @@ describe('getNodeGroup', () => {
       },
     };
 
-    const result = getNodeGroup(schema);
+    const result = getNodeGroup(schema.type, schema);
     expect(result).toBe('terminal');
   });
 });

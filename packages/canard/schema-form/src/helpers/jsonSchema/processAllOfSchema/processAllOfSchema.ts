@@ -17,12 +17,12 @@ import { validateCompatibility } from './utils/validateCompatibility';
  */
 export const processAllOfSchema = (schema: JsonSchema): JsonSchema => {
   if (!schema.allOf?.length) return schema;
-  const mergeSchema = getMergeSchema(schema.type);
+  const mergeSchema = getMergeSchema(schema);
   if (!mergeSchema) return schema;
 
   const type = schema.type;
   const { allOf, ...rest } = schema;
-  schema = cloneLite(rest, getLimit(type));
+  schema = cloneLite(rest, getLimit(schema));
   for (let i = 0, l = allOf!.length; i < l; i++) {
     const allOfSchema = allOf![i];
     if (validateCompatibility(type, allOfSchema.type) === false)

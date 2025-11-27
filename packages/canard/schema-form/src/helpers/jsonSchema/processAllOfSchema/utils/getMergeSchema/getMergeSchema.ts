@@ -1,5 +1,6 @@
 import type { Fn } from '@aileron/declare';
 
+import { extractSchemaInfo } from '@/schema-form/helpers/jsonSchema';
 import type { JsonSchema } from '@/schema-form/types';
 
 import {
@@ -17,16 +18,15 @@ type MergeSchema = Fn<
 >;
 
 /**
- * Returns the appropriate schema intersection function based on the JSON Schema type.
+ * Returns the appropriate schema intersection function based on the JSON Schema.
  * Each type has its own specialized merge logic for combining schemas in an allOf array.
  *
- * @param type - The JSON Schema type to get the merge function for
- * @returns The merge function for the given type, or null if no merge function exists
+ * @param schema - The JSON Schema to get the merge function for
+ * @returns The merge function for the given schema type, or null if no merge function exists
  */
-export const getMergeSchema = (
-  type: JsonSchema['type'],
-): MergeSchema | null => {
-  switch (type) {
+export const getMergeSchema = (schema: JsonSchema): MergeSchema | null => {
+  const info = extractSchemaInfo(schema);
+  switch (info?.type) {
     case 'array':
       return intersectArraySchema as MergeSchema;
     case 'boolean':
