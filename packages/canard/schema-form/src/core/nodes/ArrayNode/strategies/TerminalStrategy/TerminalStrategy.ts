@@ -1,4 +1,5 @@
 import { equals } from '@winglet/common-utils/object';
+import { isObjectSchema } from '@winglet/json-schema/filter';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
@@ -89,10 +90,9 @@ export class TerminalStrategy implements ArrayNodeStrategy {
 
     const jsonSchema = host.jsonSchema;
 
-    this.__defaultItemValue__ =
-      jsonSchema.items.type === 'object'
-        ? getObjectDefaultValue(jsonSchema.items)
-        : jsonSchema.items.default;
+    this.__defaultItemValue__ = isObjectSchema(jsonSchema.items)
+      ? getObjectDefaultValue(jsonSchema.items)
+      : jsonSchema.items.default;
 
     if (host.defaultValue?.length)
       for (const value of host.defaultValue) this.push(value);
