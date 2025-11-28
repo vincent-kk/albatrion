@@ -843,10 +843,10 @@ export abstract class AbstractNode<
     this: AbstractNode,
     value: Value | Nullish,
   ): Promise<JsonSchemaError[]> {
-    if (!this.isRoot || !this.#validator) return [];
-    const errors = await this.#validator(value);
-    if (errors) return transformErrors(errors);
-    else return [];
+    if (this.isRoot === false) return [];
+    const errors = await this.#validator?.(value);
+    if (errors == null) return [];
+    else return transformErrors(errors);
   }
 
   /**
@@ -854,7 +854,7 @@ export abstract class AbstractNode<
    * @note Only works for rootNode
    */
   async #handleValidation(this: AbstractNode) {
-    if (!this.isRoot) return;
+    if (this.isRoot === false || this.#validator === undefined) return;
 
     const internalErrors = await this.#validate(this.#enhancedValue);
 
@@ -924,7 +924,8 @@ export abstract class AbstractNode<
       this.#validator =
         validatorFactory?.(this.jsonSchema as JsonSchema) ||
         PluginManager.validator?.compile(this.jsonSchema as JsonSchema);
-      if (this.validation) this.#enhancer = getEmptyValue(this.schemaType);
+      if (this.#validator !== undefined)
+        this.#enhancer = getEmptyValue(this.schemaType);
     } catch (error: any) {
       this.#validator = getFallbackValidator(error, this.jsonSchema);
     }
