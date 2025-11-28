@@ -3,6 +3,7 @@ import { type ReactNode, useMemo } from 'react';
 import { Checkbox } from 'antd';
 
 import { map } from '@winglet/common-utils/array';
+import { isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
@@ -82,8 +83,8 @@ export const FormTypeInputStringCheckboxDefinition = {
     return (
       type === 'array' &&
       formType === 'checkbox' &&
-      jsonSchema.items.type === 'string' &&
-      jsonSchema.items.enum?.length
+      isStringSchema(jsonSchema.items) &&
+      !!jsonSchema.items.enum?.length
     );
   },
 } satisfies FormTypeInputDefinition;

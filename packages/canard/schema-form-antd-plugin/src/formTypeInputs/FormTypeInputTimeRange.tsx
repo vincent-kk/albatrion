@@ -4,6 +4,7 @@ import { DatePicker } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 import dayjs, { type Dayjs } from 'dayjs';
 
+import { isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
@@ -99,5 +100,5 @@ export const FormTypeInputTimeRangeDefinition = {
   test: ({ type, format, formType, jsonSchema }) =>
     type === 'array' &&
     (format === 'time-range' || formType === 'timeRange') &&
-    jsonSchema.items?.type === 'string',
+    isStringSchema(jsonSchema.items),
 } satisfies FormTypeInputDefinition;

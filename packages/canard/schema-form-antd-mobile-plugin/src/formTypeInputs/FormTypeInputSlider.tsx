@@ -2,6 +2,8 @@ import { useCallback, useMemo } from 'react';
 
 import { Slider } from 'antd-mobile';
 
+import { isNumberSchema } from '@winglet/json-schema/filter';
+
 import type {
   FormTypeInputDefinition,
   FormTypeInputPropsWithSchema,
@@ -57,8 +59,7 @@ export const FormTypeInputSliderDefinition = {
       ((type === 'number' || type === 'integer') && format === 'slider') ||
       (type === 'array' &&
         jsonSchema.items &&
-        (jsonSchema.items.type === 'number' ||
-          jsonSchema.items.type === 'integer') &&
+        isNumberSchema(jsonSchema.items) &&
         format === 'slider')
     );
   },

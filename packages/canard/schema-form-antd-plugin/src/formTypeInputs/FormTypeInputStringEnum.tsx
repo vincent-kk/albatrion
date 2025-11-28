@@ -4,6 +4,7 @@ import { Select } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
 import { map } from '@winglet/common-utils/array';
+import { isArraySchema, isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
@@ -46,9 +47,9 @@ const FormTypeInputStringEnum = ({
       context.enumLabels ||
       jsonSchema.items?.options?.alias ||
       jsonSchema.options?.alias;
-    if (jsonSchema.type === 'array')
-      return [jsonSchema.items, alias, 'multiple'] as const;
-    else return [jsonSchema, alias, undefined] as const;
+    if (isArraySchema(jsonSchema))
+      return [jsonSchema.items as StringJsonSchema, alias, 'multiple'] as const;
+    else return [jsonSchema as StringJsonSchema, alias, undefined] as const;
   }, [context, jsonSchema]);
 
   const options = useMemo(() => {
@@ -111,10 +112,10 @@ export const FormTypeInputStringEnumDefinition = {
   Component: FormTypeInputStringEnum,
   test: ({ type, jsonSchema }) => {
     return (
-      (type === 'string' && jsonSchema.enum?.length) ||
+      (type === 'string' && !!jsonSchema.enum?.length) ||
       (type === 'array' &&
-        jsonSchema.items.type === 'string' &&
-        jsonSchema.items.enum?.length)
+        isStringSchema(jsonSchema.items) &&
+        !!jsonSchema.items.enum?.length)
     );
   },
 } satisfies FormTypeInputDefinition;
