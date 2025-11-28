@@ -1,15 +1,17 @@
 import { isArray, isPlainObject } from '@winglet/common-utils';
 
-import type { Dictionary, RequiredBy } from '@aileron/declare';
-
-import { JsonSchema, ObjectSchema } from '@/json-schema';
-import type { ArrayValue, ObjectValue } from '@/json-schema/types/value';
-
 import {
   type StackItem,
   isArrayStackItem,
   isObjectStackItem,
 } from './getDataWithSchema/type';
+
+type ObjectSchema = any;
+type ObjectValue = any;
+type ArrayValue = any;
+type JsonSchema = any;
+type RequiredBy<T, K> = T;
+type Dictionary = Record<string, any>;
 
 export const isObjectAnyOfSchema = (
   schema: NonNullable<ObjectSchema['anyOf']>[number],

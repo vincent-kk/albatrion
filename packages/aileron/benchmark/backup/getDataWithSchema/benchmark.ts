@@ -1,13 +1,14 @@
 import Benchmark from 'benchmark';
 
-import { type Ratio, getRatio } from '@/benchmark/helpers/getRatio';
-
 import { schema, value } from './data';
 import { getDataWithSchema } from './getDataWithSchema';
 import { getDataWithSchema as getDataWithSchema_AnyOf } from './getDataWithSchema_anyOf';
 import { getDataWithSchema as getDataWithSchema_AnyOf_Old } from './getDataWithSchema_anyOf_old';
 
 const suite = new Benchmark.Suite();
+
+type Ratio = any;
+const getRatio = (...args: any[]) => void 0;
 
 const getDataWithSchema_anyOf_Old = () => {
   getDataWithSchema_AnyOf_Old(value, schema);
