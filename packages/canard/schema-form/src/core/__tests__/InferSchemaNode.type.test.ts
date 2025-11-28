@@ -24,8 +24,8 @@ import type { StringNode } from '../nodes/StringNode';
 import type { VirtualNode } from '../nodes/VirtualNode';
 import type { InferSchemaNode, SchemaNode } from '../nodes/type';
 
-describe('InferSchemaNode 타입 추론 테스트', () => {
-  describe('Non-nullable 스키마', () => {
+describe('InferSchemaNode type inference tests', () => {
+  describe('Non-nullable schemas', () => {
     it('NumberSchema → NumberNode', () => {
       expectTypeOf<InferSchemaNode<NumberSchema>>().toEqualTypeOf<NumberNode>();
     });
@@ -59,7 +59,7 @@ describe('InferSchemaNode 타입 추론 테스트', () => {
     });
   });
 
-  describe('Nullable 스키마', () => {
+  describe('Nullable schemas', () => {
     it('NumberNullableSchema → NumberNode', () => {
       expectTypeOf<
         InferSchemaNode<NullableNumberSchema>
@@ -102,7 +102,7 @@ describe('InferSchemaNode 타입 추론 테스트', () => {
     });
   });
 
-  describe('Const 스키마 리터럴 테스트 (mutable tuple)', () => {
+  describe('Const schema literal tests (mutable tuple)', () => {
     it('number type schema literal → NumberNode', () => {
       type Schema = { type: 'number' };
       expectTypeOf<InferSchemaNode<Schema>>().toEqualTypeOf<NumberNode>();
@@ -173,7 +173,7 @@ describe('InferSchemaNode 타입 추론 테스트', () => {
     });
   });
 
-  describe('Const 스키마 리터럴 테스트 (readonly tuple - as const 사용 시)', () => {
+  describe('Const schema literal tests (readonly tuple - with as const)', () => {
     it('nullable number type with readonly → NumberNode', () => {
       type Schema = { type: readonly ['number', 'null'] };
       expectTypeOf<InferSchemaNode<Schema>>().toEqualTypeOf<NumberNode>();

@@ -16,8 +16,8 @@ import type {
   StringSchema,
 } from '../jsonSchema';
 
-describe('InferJsonSchema 타입 추론 테스트', () => {
-  describe('Non-nullable 타입', () => {
+describe('InferJsonSchema type inference tests', () => {
+  describe('Non-nullable types', () => {
     it('string → StringSchema', () => {
       expectTypeOf<InferJsonSchema<string>>().toExtend<StringSchema>();
     });
@@ -37,7 +37,7 @@ describe('InferJsonSchema 타입 추론 테스트', () => {
     });
   });
 
-  describe('Nullable 타입', () => {
+  describe('Nullable types', () => {
     it('string | null → StringNullableSchema', () => {
       expectTypeOf<
         InferJsonSchema<string | null>
@@ -65,7 +65,7 @@ describe('InferJsonSchema 타입 추론 테스트', () => {
     });
   });
 
-  describe('순수 null 타입', () => {
+  describe('Pure null type', () => {
     it('null → NullSchema', () => {
       expectTypeOf<InferJsonSchema<null>>().toExtend<NullSchema>();
     });
