@@ -5,8 +5,8 @@ import type { NullSchema } from '@/schema-form/types';
 import { intersectNullSchema } from '../intersectNullSchema';
 
 describe('intersectNullSchema', () => {
-  describe('공통 필드 처리', () => {
-    describe('First-Win 필드들', () => {
+  describe('Common field handling', () => {
+    describe('First-Win fields', () => {
       const firstWinFields = [
         'title',
         'description',
@@ -17,7 +17,7 @@ describe('intersectNullSchema', () => {
         'writeOnly',
       ] as const;
 
-      test.each(firstWinFields)('%s 필드는 base 값 우선', (field) => {
+      test.each(firstWinFields)('%s field prioritizes base value', (field) => {
         const baseValue = field === 'default' ? null : `base-${field}`;
         const sourceValue = field === 'default' ? null : `source-${field}`;
 
@@ -30,7 +30,7 @@ describe('intersectNullSchema', () => {
       });
 
       test.each(firstWinFields)(
-        '%s 필드가 base에 없으면 source 값 사용',
+        '%s field uses source value when base has no value',
         (field) => {
           const sourceValue = field === 'default' ? null : `source-${field}`;
 
@@ -44,8 +44,8 @@ describe('intersectNullSchema', () => {
       );
     });
 
-    describe('덮어쓰기 필드들', () => {
-      test('커스텀 필드는 source 값으로 덮어쓰기', () => {
+    describe('Overwrite fields', () => {
+      test('custom fields are overwritten with source value', () => {
         const base: NullSchema = {
           type: 'null',
           customField1: 'base-value1',
@@ -58,14 +58,14 @@ describe('intersectNullSchema', () => {
 
         const result = intersectNullSchema(base, source);
 
-        expect((result as any).customField1).toBe('source-value1'); // 덮어쓰기
-        expect((result as any).customField2).toBe('base-value2'); // 유지
-        expect((result as any).customField3).toBe('source-value3'); // 추가
+        expect((result as any).customField1).toBe('source-value1'); // Overwritten
+        expect((result as any).customField2).toBe('base-value2'); // Retained
+        expect((result as any).customField3).toBe('source-value3'); // Added
       });
     });
 
-    describe('Enum 교집합', () => {
-      test('null 타입의 enum은 항상 [null]', () => {
+    describe('Enum intersection', () => {
+      test('null type enum is always [null]', () => {
         const base: NullSchema = { type: 'null', enum: [null] };
         const source: Partial<NullSchema> = { enum: [null] };
 
@@ -74,9 +74,9 @@ describe('intersectNullSchema', () => {
         expect(result.enum).toEqual([null]);
       });
 
-      test('null이 아닌 enum 값이 있으면 에러', () => {
+      test('throws error for non-null enum values', () => {
         const base: NullSchema = { type: 'null', enum: [null] };
-        const source: Partial<NullSchema> = { enum: [] }; // 빈 교집합
+        const source: Partial<NullSchema> = { enum: [] }; // Empty intersection
 
         expect(() => intersectNullSchema(base, source)).toThrow(
           'Enum values must have at least one common value',
@@ -84,8 +84,8 @@ describe('intersectNullSchema', () => {
       });
     });
 
-    describe('Const 처리', () => {
-      test('null const 값이면 유지', () => {
+    describe('Const handling', () => {
+      test('retains null const value', () => {
         const base: NullSchema = { type: 'null', const: null };
         const source: Partial<NullSchema> = { const: null };
 
@@ -94,7 +94,7 @@ describe('intersectNullSchema', () => {
         expect(result.const).toBe(null);
       });
 
-      test('null이 아닌 const 값이면 에러', () => {
+      test('throws error for non-null const value', () => {
         const base: NullSchema = { type: 'null', const: null };
         const source: Partial<NullSchema> = { const: 'not-null' as any };
 
@@ -104,8 +104,8 @@ describe('intersectNullSchema', () => {
       });
     });
 
-    describe('Required 합집합', () => {
-      test('모든 required 배열 합치고 중복 제거', () => {
+    describe('Required union', () => {
+      test('merges all required arrays and removes duplicates', () => {
         const base: NullSchema = { type: 'null', required: ['a', 'b'] };
         const source: Partial<NullSchema> = { required: ['b', 'c'] };
 
@@ -116,8 +116,8 @@ describe('intersectNullSchema', () => {
     });
   });
 
-  describe('단순 병합 시나리오', () => {
-    test('Null 타입은 추가 제약 조건이 없어 단순 병합', () => {
+  describe('Simple merge scenarios', () => {
+    test('Null type has no additional constraints so simple merge', () => {
       const base: NullSchema = {
         type: 'null',
         title: 'Base Title',

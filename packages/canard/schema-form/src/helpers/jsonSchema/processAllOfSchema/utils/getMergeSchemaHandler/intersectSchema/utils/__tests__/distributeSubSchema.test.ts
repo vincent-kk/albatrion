@@ -8,7 +8,7 @@ import {
 } from '../distributeSubSchema';
 
 describe('distributeAllOfProperties', () => {
-  test('source properties가 없으면 아무것도 하지 않음', () => {
+  test('does nothing when source properties is empty', () => {
     const base: ObjectSchema = { type: 'object' };
     const source: Partial<ObjectSchema> = {};
 
@@ -17,7 +17,7 @@ describe('distributeAllOfProperties', () => {
     expect(base.properties).toBeUndefined();
   });
 
-  test('base properties가 없으면 source properties를 할당', () => {
+  test('assigns source properties when base properties is empty', () => {
     const base: ObjectSchema = { type: 'object' };
     const source: Partial<ObjectSchema> = {
       properties: {
@@ -34,7 +34,7 @@ describe('distributeAllOfProperties', () => {
     });
   });
 
-  test('기존 properties에 새로운 property 추가', () => {
+  test('adds new property to existing properties', () => {
     const base: ObjectSchema = {
       type: 'object',
       properties: {
@@ -55,7 +55,7 @@ describe('distributeAllOfProperties', () => {
     });
   });
 
-  test('중복 property는 allOf로 분배', () => {
+  test('distributes duplicate property to allOf', () => {
     const base: ObjectSchema = {
       type: 'object',
       properties: {
@@ -76,7 +76,7 @@ describe('distributeAllOfProperties', () => {
     });
   });
 
-  test('여러 property를 동시에 처리', () => {
+  test('handles multiple properties simultaneously', () => {
     const base: ObjectSchema = {
       type: 'object',
       properties: {
@@ -103,7 +103,7 @@ describe('distributeAllOfProperties', () => {
     });
   });
 
-  test('원본 base 객체가 변경됨 (mutation)', () => {
+  test('original base object is mutated', () => {
     const base: ObjectSchema = { type: 'object' };
     const originalBase = base;
     const source: Partial<ObjectSchema> = {
@@ -120,7 +120,7 @@ describe('distributeAllOfProperties', () => {
 });
 
 describe('distributeAllOfItems', () => {
-  test('source items가 없으면 아무것도 하지 않음', () => {
+  test('does nothing when source items is empty', () => {
     const base: ArraySchema = { type: 'array', items: { type: 'string' } };
     const source: Partial<ArraySchema> = {};
 
@@ -129,7 +129,7 @@ describe('distributeAllOfItems', () => {
     expect(base.items).toEqual({ type: 'string' });
   });
 
-  test('base items가 없으면 source items를 할당', () => {
+  test('assigns source items when base items is empty', () => {
     const base = { type: 'array' } as ArraySchema;
     const source: Partial<ArraySchema> = {
       items: { type: 'string' },
@@ -140,7 +140,7 @@ describe('distributeAllOfItems', () => {
     expect(base.items).toEqual({ type: 'string' });
   });
 
-  test('기존 items에 allOf로 분배', () => {
+  test('distributes to allOf for existing items', () => {
     const base: ArraySchema = {
       type: 'array',
       items: { type: 'string' },
@@ -157,7 +157,7 @@ describe('distributeAllOfItems', () => {
     });
   });
 
-  test('복잡한 items 스키마 처리', () => {
+  test('handles complex items schema', () => {
     const base: ArraySchema = {
       type: 'array',
       items: {
@@ -184,7 +184,7 @@ describe('distributeAllOfItems', () => {
     });
   });
 
-  test('원본 base 객체가 변경됨 (mutation)', () => {
+  test('original base object is mutated', () => {
     const base = { type: 'array' } as ArraySchema;
     const originalBase = base;
     const source: Partial<ArraySchema> = {
@@ -197,7 +197,7 @@ describe('distributeAllOfItems', () => {
     expect(base.items).toBeDefined();
   });
 
-  test('여러 번 호출하면 allOf에 계속 추가', () => {
+  test('continues to add to allOf on multiple calls', () => {
     const base: ArraySchema = {
       type: 'array',
       items: { type: 'string' },

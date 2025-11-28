@@ -5,8 +5,8 @@ import type { NumberSchema } from '@/schema-form/types';
 import { intersectNumberSchema } from '../intersectNumberSchema';
 
 describe('intersectNumberSchema', () => {
-  describe('Min/Max 범위 병합 (가장 제한적인 값)', () => {
-    test('minimum은 더 큰 값, maximum은 더 작은 값 선택', () => {
+  describe('Min/Max range merging (most restrictive value)', () => {
+    test('selects larger minimum and smaller maximum', () => {
       const base: NumberSchema = { type: 'number', minimum: 0, maximum: 100 };
       const source: Partial<NumberSchema> = { minimum: 10, maximum: 50 };
 
@@ -16,7 +16,7 @@ describe('intersectNumberSchema', () => {
       expect(result.maximum).toBe(50); // Math.min(100, 50)
     });
 
-    test('exclusiveMinimum/exclusiveMaximum 처리', () => {
+    test('handles exclusiveMinimum/exclusiveMaximum', () => {
       const base: NumberSchema = {
         type: 'number',
         exclusiveMinimum: 0,
@@ -33,7 +33,7 @@ describe('intersectNumberSchema', () => {
       expect(result.exclusiveMaximum).toBe(50); // Math.min(100, 50)
     });
 
-    test('범위 충돌 시 에러 발생', () => {
+    test('throws error on range conflict', () => {
       const base: NumberSchema = { type: 'number', minimum: 100 };
       const source: Partial<NumberSchema> = { maximum: 50 };
 
@@ -42,7 +42,7 @@ describe('intersectNumberSchema', () => {
       );
     });
 
-    test('exclusive와 inclusive 범위 혼합', () => {
+    test('mixes exclusive and inclusive ranges', () => {
       const base: NumberSchema = {
         type: 'number',
         minimum: 0,
@@ -62,8 +62,8 @@ describe('intersectNumberSchema', () => {
     });
   });
 
-  describe('MultipleOf 병합 (최소공배수)', () => {
-    test('두 배수의 최소공배수 계산', () => {
+  describe('MultipleOf merging (LCM)', () => {
+    test('calculates LCM of two multiples', () => {
       const base: NumberSchema = { type: 'number', multipleOf: 2 };
       const source: Partial<NumberSchema> = { multipleOf: 3 };
 
@@ -72,7 +72,7 @@ describe('intersectNumberSchema', () => {
       expect(result.multipleOf).toBe(6); // lcm(2, 3)
     });
 
-    test('같은 배수인 경우', () => {
+    test('when multiples are the same', () => {
       const base: NumberSchema = { type: 'number', multipleOf: 5 };
       const source: Partial<NumberSchema> = { multipleOf: 5 };
 
@@ -81,7 +81,7 @@ describe('intersectNumberSchema', () => {
       expect(result.multipleOf).toBe(5);
     });
 
-    test('소수 배수 처리', () => {
+    test('handles decimal multiples', () => {
       const base: NumberSchema = { type: 'number', multipleOf: 0.1 };
       const source: Partial<NumberSchema> = { multipleOf: 0.2 };
 
@@ -91,9 +91,9 @@ describe('intersectNumberSchema', () => {
     });
   });
 
-  describe('공통 필드 처리', () => {
-    describe('type 처리', () => {
-      test('integer와 number 타입 처리', () => {
+  describe('Common field handling', () => {
+    describe('type handling', () => {
+      test('handles integer and number types', () => {
         const base: NumberSchema = { type: 'number' };
         const source: Partial<NumberSchema> = { type: 'integer' };
 
@@ -102,7 +102,7 @@ describe('intersectNumberSchema', () => {
         expect(result.type).toBe('integer');
       });
 
-      test('number와 integer 타입 처리', () => {
+      test('handles number and integer types', () => {
         const base: NumberSchema = { type: 'integer' };
         const source: Partial<NumberSchema> = { type: 'number' };
 
@@ -111,7 +111,7 @@ describe('intersectNumberSchema', () => {
         expect(result.type).toBe('integer');
       });
 
-      test('type이 없으면 base 타입 유지', () => {
+      test('retains base type when type is not provided', () => {
         const base: NumberSchema = { type: 'number' };
         const source: Partial<NumberSchema> = {};
 
@@ -121,7 +121,7 @@ describe('intersectNumberSchema', () => {
       });
     });
 
-    describe('First-Win 필드들', () => {
+    describe('First-Win fields', () => {
       const firstWinFields = [
         'title',
         'description',
@@ -133,7 +133,7 @@ describe('intersectNumberSchema', () => {
         'format',
       ] as const;
 
-      test.each(firstWinFields)('%s 필드는 base 값 우선', (field) => {
+      test.each(firstWinFields)('%s field prioritizes base value', (field) => {
         const baseValue = field === 'default' ? 42 : `base-${field}`;
         const sourceValue = field === 'default' ? 84 : `source-${field}`;
 
@@ -149,8 +149,8 @@ describe('intersectNumberSchema', () => {
       });
     });
 
-    describe('Enum 교집합', () => {
-      test('공통 값만 남김', () => {
+    describe('Enum intersection', () => {
+      test('keeps only common values', () => {
         const base: NumberSchema = { type: 'number', enum: [1, 2, 3] };
         const source: Partial<NumberSchema> = { enum: [2, 3, 4] };
 
@@ -159,7 +159,7 @@ describe('intersectNumberSchema', () => {
         expect(result.enum).toEqual([2, 3]);
       });
 
-      test('교집합이 빈 배열이면 에러', () => {
+      test('throws error when intersection is empty', () => {
         const base: NumberSchema = { type: 'number', enum: [1, 2] };
         const source: Partial<NumberSchema> = { enum: [3, 4] };
 
@@ -169,8 +169,8 @@ describe('intersectNumberSchema', () => {
       });
     });
 
-    describe('Const 처리', () => {
-      test('같은 const 값이면 유지', () => {
+    describe('Const handling', () => {
+      test('retains same const value', () => {
         const base: NumberSchema = { type: 'number', const: 42 };
         const source: Partial<NumberSchema> = { const: 42 };
 
@@ -179,7 +179,7 @@ describe('intersectNumberSchema', () => {
         expect(result.const).toBe(42);
       });
 
-      test('다른 const 값이면 에러', () => {
+      test('throws error for different const values', () => {
         const base: NumberSchema = { type: 'number', const: 42 };
         const source: Partial<NumberSchema> = { const: 84 };
 
@@ -190,8 +190,8 @@ describe('intersectNumberSchema', () => {
     });
   });
 
-  describe('복합 시나리오', () => {
-    test('모든 제약이 함께 적용되는 경우', () => {
+  describe('Complex scenarios', () => {
+    test('applies all constraints together', () => {
       const base: NumberSchema = {
         type: 'number',
         title: 'Base Title',

@@ -12,7 +12,7 @@ import {
   intersectStringSchema,
 } from './intersectSchema';
 
-type MergeSchema = Fn<
+type MergeSchemaHandler = Fn<
   [base: JsonSchema, source: Partial<JsonSchema>],
   JsonSchema
 >;
@@ -24,22 +24,24 @@ type MergeSchema = Fn<
  * @param schema - The JSON Schema to get the merge function for
  * @returns The merge function for the given schema type, or null if no merge function exists
  */
-export const getMergeSchema = (schema: JsonSchema): MergeSchema | null => {
-  const info = extractSchemaInfo(schema);
-  switch (info?.type) {
+export const getMergeSchemaHandler = (
+  schema: JsonSchema,
+): MergeSchemaHandler | null => {
+  const schemaInfo = extractSchemaInfo(schema);
+  switch (schemaInfo?.type) {
     case 'array':
-      return intersectArraySchema as MergeSchema;
+      return intersectArraySchema as MergeSchemaHandler;
     case 'boolean':
-      return intersectBooleanSchema as MergeSchema;
+      return intersectBooleanSchema as MergeSchemaHandler;
     case 'null':
-      return intersectNullSchema as MergeSchema;
+      return intersectNullSchema as MergeSchemaHandler;
     case 'number':
     case 'integer':
-      return intersectNumberSchema as MergeSchema;
+      return intersectNumberSchema as MergeSchemaHandler;
     case 'object':
-      return intersectObjectSchema as MergeSchema;
+      return intersectObjectSchema as MergeSchemaHandler;
     case 'string':
-      return intersectStringSchema as MergeSchema;
+      return intersectStringSchema as MergeSchemaHandler;
   }
   return null;
 };

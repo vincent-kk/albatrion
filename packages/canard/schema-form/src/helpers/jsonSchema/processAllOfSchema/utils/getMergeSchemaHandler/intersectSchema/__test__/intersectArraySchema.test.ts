@@ -5,8 +5,8 @@ import type { ArraySchema } from '@/schema-form/types';
 import { intersectArraySchema } from '../intersectArraySchema';
 
 describe('intersectArraySchema', () => {
-  describe('Items 제약 병합 (가장 제한적인 값)', () => {
-    test('minItems는 더 큰 값, maxItems는 더 작은 값 선택', () => {
+  describe('Items constraint merging (most restrictive value)', () => {
+    test('selects larger minItems and smaller maxItems', () => {
       const base = { type: 'array', minItems: 1, maxItems: 10 } as ArraySchema;
       const source: Partial<ArraySchema> = { minItems: 3, maxItems: 5 };
 
@@ -16,7 +16,7 @@ describe('intersectArraySchema', () => {
       expect(result.maxItems).toBe(5); // Math.min(10, 5)
     });
 
-    test('minContains/maxContains 처리', () => {
+    test('handles minContains/maxContains', () => {
       const base = {
         type: 'array',
         minContains: 1,
@@ -30,7 +30,7 @@ describe('intersectArraySchema', () => {
       expect(result.maxContains).toBe(3); // Math.min(5, 3)
     });
 
-    test('범위 충돌 시 에러 발생', () => {
+    test('throws error on range conflict', () => {
       const base = { type: 'array', minItems: 10 } as ArraySchema;
       const source: Partial<ArraySchema> = { maxItems: 5 };
 
@@ -40,8 +40,8 @@ describe('intersectArraySchema', () => {
     });
   });
 
-  describe('UniqueItems 병합 (OR 결합)', () => {
-    test('하나라도 true면 true', () => {
+  describe('UniqueItems merging (OR combination)', () => {
+    test('returns true if any is true', () => {
       const base = { type: 'array', uniqueItems: false } as ArraySchema;
       const source: Partial<ArraySchema> = { uniqueItems: true };
 
@@ -50,7 +50,7 @@ describe('intersectArraySchema', () => {
       expect(result.uniqueItems).toBe(true);
     });
 
-    test('둘 다 false면 false', () => {
+    test('returns false if both are false', () => {
       const base = { type: 'array', uniqueItems: false } as ArraySchema;
       const source: Partial<ArraySchema> = { uniqueItems: false };
 
@@ -59,7 +59,7 @@ describe('intersectArraySchema', () => {
       expect(result.uniqueItems).toBe(false);
     });
 
-    test('둘 다 true면 true', () => {
+    test('returns true if both are true', () => {
       const base = { type: 'array', uniqueItems: true } as ArraySchema;
       const source: Partial<ArraySchema> = { uniqueItems: true };
 
@@ -68,7 +68,7 @@ describe('intersectArraySchema', () => {
       expect(result.uniqueItems).toBe(true);
     });
 
-    test('base에만 값이 있는 경우', () => {
+    test('uses base value when only base has value', () => {
       const base = { type: 'array', uniqueItems: true } as ArraySchema;
       const source: Partial<ArraySchema> = {};
 
@@ -78,8 +78,8 @@ describe('intersectArraySchema', () => {
     });
   });
 
-  describe('공통 필드 처리', () => {
-    describe('First-Win 필드들', () => {
+  describe('Common field handling', () => {
+    describe('First-Win fields', () => {
       const firstWinFields = [
         'title',
         'description',
@@ -91,7 +91,7 @@ describe('intersectArraySchema', () => {
         'additionalProperties',
       ] as const;
 
-      test.each(firstWinFields)('%s 필드는 base 값 우선', (field) => {
+      test.each(firstWinFields)('%s field prioritizes base value', (field) => {
         const baseValue = field === 'default' ? ['base'] : `base-${field}`;
         const sourceValue =
           field === 'default' ? ['source'] : `source-${field}`;
@@ -105,8 +105,8 @@ describe('intersectArraySchema', () => {
       });
     });
 
-    describe('Enum 교집합', () => {
-      test('공통 값만 남김', () => {
+    describe('Enum intersection', () => {
+      test('keeps only common values', () => {
         const base = {
           type: 'array',
           enum: [['a'], ['b'], ['c']],
@@ -119,8 +119,8 @@ describe('intersectArraySchema', () => {
       });
     });
 
-    describe('Required 합집합', () => {
-      test('모든 required 배열 합치고 중복 제거', () => {
+    describe('Required union', () => {
+      test('merges all required arrays and removes duplicates', () => {
         const base = {
           type: 'array',
           required: ['a', 'b'],
@@ -134,8 +134,8 @@ describe('intersectArraySchema', () => {
     });
   });
 
-  describe('Items 병합 (allOf에서 items 처리)', () => {
-    test('base에 items가 없고 source에만 있는 경우', () => {
+  describe('Items merging (handling items in allOf)', () => {
+    test('when base has no items and only source has items', () => {
       const base = {
         type: 'array',
         title: 'Base Array',
@@ -151,7 +151,7 @@ describe('intersectArraySchema', () => {
       });
     });
 
-    test('base와 source 모두 items가 있는 경우 - distributeSchema로 병합', () => {
+    test('when both base and source have items - merges with distributeSchema', () => {
       const base = {
         type: 'array',
         items: {
@@ -182,7 +182,7 @@ describe('intersectArraySchema', () => {
       });
     });
 
-    test('복잡한 객체 items 병합', () => {
+    test('merges complex object items', () => {
       const base = {
         type: 'array',
         items: {
@@ -227,7 +227,7 @@ describe('intersectArraySchema', () => {
       });
     });
 
-    test('중첩 배열 items 병합', () => {
+    test('merges nested array items', () => {
       const base = {
         type: 'array',
         items: {
@@ -272,7 +272,7 @@ describe('intersectArraySchema', () => {
       });
     });
 
-    test('다양한 items 스키마 제약 조건 병합', () => {
+    test('merges various items schema constraints', () => {
       const base = {
         type: 'array',
         items: {
@@ -306,8 +306,8 @@ describe('intersectArraySchema', () => {
     });
   });
 
-  describe('복합 시나리오', () => {
-    test('모든 제약이 함께 적용되는 경우', () => {
+  describe('Complex scenarios', () => {
+    test('applies all constraints together', () => {
       const base = {
         type: 'array',
         title: 'Base Title',
@@ -340,7 +340,7 @@ describe('intersectArraySchema', () => {
       });
     });
 
-    test('모든 기능이 함께 적용되는 복합 시나리오 - items 포함', () => {
+    test('complex scenario with all features including items', () => {
       const base = {
         type: 'array',
         title: 'User List',
@@ -401,8 +401,8 @@ describe('intersectArraySchema', () => {
       });
     });
 
-    test('실제 allOf 사용 사례 - 배열 요소 스키마 확장', () => {
-      // 기본 사용자 배열
+    test('real allOf use case - extending array item schema', () => {
+      // Basic user array
       const base = {
         type: 'array',
         description: 'Basic user array',
@@ -416,11 +416,11 @@ describe('intersectArraySchema', () => {
         },
       } as ArraySchema;
 
-      // 추가 검증 규칙
+      // Additional validation rules
       const source: Partial<ArraySchema> = {
-        minItems: 1, // 최소 1명은 있어야 함
-        maxItems: 1000, // 최대 1000명
-        uniqueItems: true, // 중복 사용자 없음
+        minItems: 1, // At least 1 user required
+        maxItems: 1000, // Maximum 1000 users
+        uniqueItems: true, // No duplicate users
         items: {
           type: 'object' as const,
           properties: {

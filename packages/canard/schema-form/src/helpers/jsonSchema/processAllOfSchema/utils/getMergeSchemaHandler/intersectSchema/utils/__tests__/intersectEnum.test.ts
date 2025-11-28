@@ -3,48 +3,48 @@ import { describe, expect, test } from 'vitest';
 import { intersectEnum } from '../intersectEnum';
 
 describe('intersectEnum', () => {
-  test('공통 값만 반환', () => {
+  test('returns only common values', () => {
     const result = intersectEnum(['a', 'b', 'c'], ['b', 'c', 'd']);
     expect(result).toEqual(['b', 'c']);
   });
 
-  test('교집합이 빈 배열이면 에러', () => {
+  test('throws error when intersection is empty', () => {
     expect(() => intersectEnum(['a', 'b'], ['c', 'd'])).toThrow(
       'Enum values must have at least one common value',
     );
   });
 
-  test('완전히 동일한 배열', () => {
+  test('identical arrays', () => {
     const result = intersectEnum(['a', 'b'], ['a', 'b']);
     expect(result).toEqual(['a', 'b']);
   });
 
-  test('하나의 값만 공통', () => {
+  test('only one common value', () => {
     const result = intersectEnum(['a', 'b', 'c'], ['c', 'd', 'e']);
     expect(result).toEqual(['c']);
   });
 
-  test('base만 있는 경우', () => {
+  test('when only base exists', () => {
     const result = intersectEnum(['a', 'b'], undefined);
     expect(result).toEqual(['a', 'b']);
   });
 
-  test('source만 있는 경우', () => {
+  test('when only source exists', () => {
     const result = intersectEnum(undefined, ['c', 'd']);
     expect(result).toEqual(['c', 'd']);
   });
 
-  test('둘 다 없으면 undefined', () => {
+  test('returns undefined when both are undefined', () => {
     const result = intersectEnum(undefined, undefined);
     expect(result).toBeUndefined();
   });
 
-  test('숫자 배열 교집합', () => {
+  test('number array intersection', () => {
     const result = intersectEnum([1, 2, 3], [2, 3, 4]);
     expect(result).toEqual([2, 3]);
   });
 
-  test('객체 배열 교집합 (참조 동일성)', () => {
+  test('object array intersection (reference equality)', () => {
     const obj1 = { id: 1 };
     const obj2 = { id: 2 };
     const obj3 = { id: 3 };
@@ -53,7 +53,7 @@ describe('intersectEnum', () => {
     expect(result).toEqual([obj2]);
   });
 
-  test('빈 배열들', () => {
+  test('empty arrays', () => {
     expect(() => intersectEnum([], [])).toThrow(
       'Enum values must have at least one common value',
     );
@@ -65,8 +65,8 @@ describe('intersectEnum', () => {
     );
   });
 
-  test('중복 값이 있는 경우', () => {
+  test('when duplicate values exist', () => {
     const result = intersectEnum(['a', 'b', 'b', 'c'], ['b', 'c', 'c', 'd']);
-    expect(result).toEqual(['b', 'b', 'c']); // 중복 유지
+    expect(result).toEqual(['b', 'b', 'c']); // preserves duplicates
   });
 });

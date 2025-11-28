@@ -5,7 +5,7 @@ import type { StringSchema } from '@/schema-form/types';
 import { processFirstWinFields } from '../processFirstWinFields';
 
 describe('processFirstWinFields', () => {
-  test('base에 있는 First-Win 필드는 유지', () => {
+  test('First-Win fields in base are preserved', () => {
     const base: StringSchema = {
       type: 'string',
       title: 'Base Title',
@@ -23,10 +23,10 @@ describe('processFirstWinFields', () => {
     expect(base.title).toBe('Base Title');
     expect(base.format).toBe('email');
     expect(base.description).toBe('Base Description');
-    expect(base.examples).toEqual(['example']); // base에 없으므로 source에서 가져옴
+    expect(base.examples).toEqual(['example']); // not in base, so taken from source
   });
 
-  test('base에 없는 First-Win 필드는 source에서 가져옴', () => {
+  test('First-Win fields not in base are taken from source', () => {
     const base: StringSchema = { type: 'string' };
     const source: Partial<StringSchema> = {
       title: 'Source Title',
@@ -45,7 +45,7 @@ describe('processFirstWinFields', () => {
     expect(base.writeOnly).toBe(false);
   });
 
-  test('둘 다 없는 필드는 결과에 포함되지 않음', () => {
+  test('fields not in both are not included in result', () => {
     const base: StringSchema = { type: 'string' };
     const source: Partial<StringSchema> = {};
 
@@ -56,20 +56,20 @@ describe('processFirstWinFields', () => {
     expect(base.description).toBeUndefined();
   });
 
-  test('모든 First-Win 필드를 처리', () => {
+  test('processes all First-Win fields', () => {
     const base: StringSchema = {
       type: 'string',
       title: 'Base Title',
       $comment: 'Base Comment',
     };
     const source: Partial<StringSchema> = {
-      title: 'Source Title', // 무시됨
-      description: 'Source Description', // 사용됨
-      examples: ['example'], // 사용됨
-      default: 'default', // 사용됨
-      readOnly: true, // 사용됨
-      writeOnly: false, // 사용됨
-      format: 'email', // 사용됨
+      title: 'Source Title', // ignored
+      description: 'Source Description', // used
+      examples: ['example'], // used
+      default: 'default', // used
+      readOnly: true, // used
+      writeOnly: false, // used
+      format: 'email', // used
     };
 
     processFirstWinFields(base, source);

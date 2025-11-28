@@ -3,32 +3,32 @@ import { describe, expect, test } from 'vitest';
 import { intersectBooleanOr } from '../intersectBooleanOr';
 
 describe('intersectBooleanOr', () => {
-  test('하나라도 true면 true', () => {
+  test('returns true if at least one is true', () => {
     expect(intersectBooleanOr(true, false)).toBe(true);
     expect(intersectBooleanOr(false, true)).toBe(true);
     expect(intersectBooleanOr(true, true)).toBe(true);
   });
 
-  test('둘 다 false면 false', () => {
+  test('returns false when both are false', () => {
     expect(intersectBooleanOr(false, false)).toBe(false);
   });
 
-  test('base만 있는 경우', () => {
+  test('when only base exists', () => {
     expect(intersectBooleanOr(true, undefined)).toBe(true);
     expect(intersectBooleanOr(false, undefined)).toBe(false);
   });
 
-  test('source만 있는 경우', () => {
+  test('when only source exists', () => {
     expect(intersectBooleanOr(undefined, true)).toBe(true);
     expect(intersectBooleanOr(undefined, false)).toBe(false);
   });
 
-  test('둘 다 없으면 undefined', () => {
+  test('returns undefined when both are undefined', () => {
     expect(intersectBooleanOr(undefined, undefined)).toBeUndefined();
   });
 
-  test('OR 연산자와 동일한 동작', () => {
-    // JavaScript의 || 연산자와 동일한 결과
+  test('behaves same as OR operator', () => {
+    // Same result as JavaScript || operator
     // eslint-disable-next-line no-constant-binary-expression
     expect(intersectBooleanOr(true, true)).toBe(true || true);
     // eslint-disable-next-line no-constant-binary-expression
@@ -39,7 +39,7 @@ describe('intersectBooleanOr', () => {
     expect(intersectBooleanOr(false, false)).toBe(false || false);
   });
 
-  test('모든 가능한 조합', () => {
+  test('all possible combinations', () => {
     const combinations = [
       [true, true, true],
       [true, false, true],

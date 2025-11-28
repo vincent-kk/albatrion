@@ -3,8 +3,8 @@ import { cloneLite } from '@winglet/common-utils/object';
 import { JsonSchemaError } from '@/schema-form/errors';
 import type { JsonSchema } from '@/schema-form/types';
 
-import { getLimit } from './utils/getLimit';
-import { getMergeSchema } from './utils/getMergeSchema';
+import { getCloneDepth } from './utils/getCloneDepth';
+import { getMergeSchemaHandler } from './utils/getMergeSchemaHandler';
 import { validateCompatibility } from './utils/validateCompatibility';
 
 /**
@@ -17,12 +17,12 @@ import { validateCompatibility } from './utils/validateCompatibility';
  */
 export const processAllOfSchema = (schema: JsonSchema): JsonSchema => {
   if (!schema.allOf?.length) return schema;
-  const mergeSchema = getMergeSchema(schema);
-  if (!mergeSchema) return schema;
+  const mergeHandler = getMergeSchemaHandler(schema);
+  if (!mergeHandler) return schema;
 
   const type = schema.type;
   const { allOf, ...rest } = schema;
-  schema = cloneLite(rest, getLimit(schema));
+  schema = cloneLite(rest, getCloneDepth(schema));
   for (let i = 0, l = allOf!.length; i < l; i++) {
     const allOfSchema = allOf![i];
     if (validateCompatibility(type, allOfSchema.type) === false)
@@ -32,7 +32,7 @@ export const processAllOfSchema = (schema: JsonSchema): JsonSchema => {
         { schema, allOfSchema },
       );
 
-    schema = mergeSchema(schema, allOfSchema);
+    schema = mergeHandler(schema, allOfSchema);
   }
   return schema;
 };

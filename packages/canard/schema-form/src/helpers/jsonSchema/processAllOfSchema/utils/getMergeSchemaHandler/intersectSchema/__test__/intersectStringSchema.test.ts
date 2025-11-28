@@ -5,8 +5,8 @@ import type { StringSchema } from '@/schema-form/types';
 import { intersectStringSchema } from '../intersectStringSchema';
 
 describe('intersectStringSchema', () => {
-  describe('Pattern 병합 (AND 결합)', () => {
-    test('두 패턴을 AND로 결합', () => {
+  describe('Pattern merging (AND combination)', () => {
+    test('combines two patterns with AND', () => {
       const base: StringSchema = { type: 'string', pattern: '^[a-z]+$' };
       const source: Partial<StringSchema> = { pattern: '^.{5,}$' };
 
@@ -15,7 +15,7 @@ describe('intersectStringSchema', () => {
       expect(result.pattern).toBe('(?=^[a-z]+$)(?=^.{5,}$)');
     });
 
-    test('세 개 이상의 패턴 결합', () => {
+    test('combines three or more patterns', () => {
       const base: StringSchema = { type: 'string', pattern: '^[a-z]+$' };
       const source: Partial<StringSchema> = { pattern: '^.{5,}$' };
 
@@ -25,7 +25,7 @@ describe('intersectStringSchema', () => {
       expect(result2.pattern).toBe('(?=(?=^[a-z]+$)(?=^.{5,}$))(?=^.{0,10}$)');
     });
 
-    test('base에만 패턴이 있는 경우', () => {
+    test('when only base has pattern', () => {
       const base: StringSchema = { type: 'string', pattern: '^[a-z]+$' };
       const source: Partial<StringSchema> = {};
 
@@ -34,7 +34,7 @@ describe('intersectStringSchema', () => {
       expect(result.pattern).toBe('^[a-z]+$');
     });
 
-    test('source에만 패턴이 있는 경우', () => {
+    test('when only source has pattern', () => {
       const base: StringSchema = { type: 'string' };
       const source: Partial<StringSchema> = { pattern: '^.{5,}$' };
 
@@ -44,8 +44,8 @@ describe('intersectStringSchema', () => {
     });
   });
 
-  describe('MinLength/MaxLength 병합 (가장 제한적인 값)', () => {
-    test('minLength는 더 큰 값, maxLength는 더 작은 값 선택', () => {
+  describe('MinLength/MaxLength merging (most restrictive value)', () => {
+    test('selects larger minLength and smaller maxLength', () => {
       const base: StringSchema = {
         type: 'string',
         minLength: 3,
@@ -59,7 +59,7 @@ describe('intersectStringSchema', () => {
       expect(result.maxLength).toBe(8); // Math.min(10, 8)
     });
 
-    test('base에만 제약이 있는 경우', () => {
+    test('when only base has constraint', () => {
       const base: StringSchema = { type: 'string', minLength: 3 };
       const source: Partial<StringSchema> = {};
 
@@ -68,7 +68,7 @@ describe('intersectStringSchema', () => {
       expect(result.minLength).toBe(3);
     });
 
-    test('source에만 제약이 있는 경우', () => {
+    test('when only source has constraint', () => {
       const base: StringSchema = { type: 'string' };
       const source: Partial<StringSchema> = { maxLength: 10 };
 
@@ -77,7 +77,7 @@ describe('intersectStringSchema', () => {
       expect(result.maxLength).toBe(10);
     });
 
-    test('범위 충돌 시 에러 발생', () => {
+    test('throws error on range conflict', () => {
       const base: StringSchema = { type: 'string', minLength: 10 };
       const source: Partial<StringSchema> = { maxLength: 5 };
 
@@ -87,8 +87,8 @@ describe('intersectStringSchema', () => {
     });
   });
 
-  describe('Format 필드 (First-Win)', () => {
-    test('base에 format이 있으면 base 값 유지', () => {
+  describe('Format field (First-Win)', () => {
+    test('retains base value when base has format', () => {
       const base: StringSchema = { type: 'string', format: 'email' };
       const source: Partial<StringSchema> = { format: 'uri' };
 
@@ -97,7 +97,7 @@ describe('intersectStringSchema', () => {
       expect(result.format).toBe('email');
     });
 
-    test('base에 format이 없으면 source 값 사용', () => {
+    test('uses source value when base has no format', () => {
       const base: StringSchema = { type: 'string' };
       const source: Partial<StringSchema> = { format: 'uri' };
 
@@ -107,8 +107,8 @@ describe('intersectStringSchema', () => {
     });
   });
 
-  describe('공통 필드 처리', () => {
-    describe('First-Win 필드들', () => {
+  describe('Common field handling', () => {
+    describe('First-Win fields', () => {
       const firstWinFields = [
         'title',
         'description',
@@ -119,7 +119,7 @@ describe('intersectStringSchema', () => {
         'writeOnly',
       ] as const;
 
-      test.each(firstWinFields)('%s 필드는 base 값 우선', (field) => {
+      test.each(firstWinFields)('%s field prioritizes base value', (field) => {
         const baseValue = `base-${field}`;
         const sourceValue = `source-${field}`;
 
@@ -135,7 +135,7 @@ describe('intersectStringSchema', () => {
       });
 
       test.each(firstWinFields)(
-        '%s 필드가 base에 없으면 source 값 사용',
+        '%s field uses source value when base has no value',
         (field) => {
           const sourceValue = `source-${field}`;
 
@@ -149,8 +149,8 @@ describe('intersectStringSchema', () => {
       );
     });
 
-    describe('덮어쓰기 필드들', () => {
-      test('커스텀 필드는 source 값으로 덮어쓰기', () => {
+    describe('Overwrite fields', () => {
+      test('custom fields are overwritten with source value', () => {
         const base: StringSchema = {
           type: 'string',
           customField1: 'base-value1',
@@ -163,14 +163,14 @@ describe('intersectStringSchema', () => {
 
         const result = intersectStringSchema(base, source);
 
-        expect((result as any).customField1).toBe('source-value1'); // 덮어쓰기
-        expect((result as any).customField2).toBe('base-value2'); // 유지
-        expect((result as any).customField3).toBe('source-value3'); // 추가
+        expect((result as any).customField1).toBe('source-value1'); // Overwritten
+        expect((result as any).customField2).toBe('base-value2'); // Retained
+        expect((result as any).customField3).toBe('source-value3'); // Added
       });
     });
 
-    describe('Enum 교집합', () => {
-      test('공통 값만 남김', () => {
+    describe('Enum intersection', () => {
+      test('keeps only common values', () => {
         const base: StringSchema = { type: 'string', enum: ['a', 'b', 'c'] };
         const source: Partial<StringSchema> = { enum: ['b', 'c', 'd'] };
 
@@ -179,7 +179,7 @@ describe('intersectStringSchema', () => {
         expect(result.enum).toEqual(['b', 'c']);
       });
 
-      test('교집합이 빈 배열이면 에러', () => {
+      test('throws error when intersection is empty', () => {
         const base: StringSchema = { type: 'string', enum: ['a', 'b'] };
         const source: Partial<StringSchema> = { enum: ['c', 'd'] };
 
@@ -188,7 +188,7 @@ describe('intersectStringSchema', () => {
         );
       });
 
-      test('base에만 enum이 있는 경우', () => {
+      test('when only base has enum', () => {
         const base: StringSchema = { type: 'string', enum: ['a', 'b'] };
         const source: Partial<StringSchema> = {};
 
@@ -198,8 +198,8 @@ describe('intersectStringSchema', () => {
       });
     });
 
-    describe('Const 처리', () => {
-      test('같은 const 값이면 유지', () => {
+    describe('Const handling', () => {
+      test('retains same const value', () => {
         const base: StringSchema = { type: 'string', const: 'value' };
         const source: Partial<StringSchema> = { const: 'value' };
 
@@ -208,7 +208,7 @@ describe('intersectStringSchema', () => {
         expect(result.const).toBe('value');
       });
 
-      test('다른 const 값이면 에러', () => {
+      test('throws error for different const values', () => {
         const base: StringSchema = { type: 'string', const: 'value1' };
         const source: Partial<StringSchema> = { const: 'value2' };
 
@@ -218,8 +218,8 @@ describe('intersectStringSchema', () => {
       });
     });
 
-    describe('Required 합집합', () => {
-      test('모든 required 배열 합치고 중복 제거', () => {
+    describe('Required union', () => {
+      test('merges all required arrays and removes duplicates', () => {
         const base: StringSchema = { type: 'string', required: ['a', 'b'] };
         const source: Partial<StringSchema> = { required: ['b', 'c'] };
 
@@ -230,8 +230,8 @@ describe('intersectStringSchema', () => {
     });
   });
 
-  describe('복합 시나리오', () => {
-    test('모든 제약이 함께 적용되는 경우', () => {
+  describe('Complex scenarios', () => {
+    test('applies all constraints together', () => {
       const base: StringSchema = {
         type: 'string',
         title: 'Base Title',

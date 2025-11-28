@@ -1,1 +1,0 @@
-export { getLimit } from './getLimit';

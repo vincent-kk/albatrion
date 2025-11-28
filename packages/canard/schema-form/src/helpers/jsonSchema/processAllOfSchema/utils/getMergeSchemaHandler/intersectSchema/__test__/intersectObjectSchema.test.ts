@@ -5,8 +5,8 @@ import type { ObjectSchema } from '@/schema-form/types';
 import { intersectObjectSchema } from '../intersectObjectSchema';
 
 describe('intersectObjectSchema', () => {
-  describe('Properties 제약 병합 (가장 제한적인 값)', () => {
-    test('minProperties는 더 큰 값, maxProperties는 더 작은 값 선택', () => {
+  describe('Properties constraint merging (most restrictive value)', () => {
+    test('selects larger minProperties and smaller maxProperties', () => {
       const base: ObjectSchema = {
         type: 'object',
         minProperties: 1,
@@ -23,7 +23,7 @@ describe('intersectObjectSchema', () => {
       expect(result.maxProperties).toBe(5); // Math.min(10, 5)
     });
 
-    test('범위 충돌 시 에러 발생', () => {
+    test('throws error on range conflict', () => {
       const base: ObjectSchema = { type: 'object', minProperties: 10 };
       const source: Partial<ObjectSchema> = { maxProperties: 5 };
 
@@ -34,7 +34,7 @@ describe('intersectObjectSchema', () => {
   });
 
   describe('AdditionalProperties/PatternProperties (First-Win)', () => {
-    test('additionalProperties는 base 값 우선', () => {
+    test('additionalProperties prioritizes base value', () => {
       const base: ObjectSchema = {
         type: 'object',
         additionalProperties: false,
@@ -48,7 +48,7 @@ describe('intersectObjectSchema', () => {
       expect(result.additionalProperties).toBe(false);
     });
 
-    test('patternProperties는 base 값 우선', () => {
+    test('patternProperties prioritizes base value', () => {
       const basePattern = { '^[a-z]+$': { type: 'string' as const } };
       const sourcePattern = { '^[0-9]+$': { type: 'number' as const } };
 
@@ -65,7 +65,7 @@ describe('intersectObjectSchema', () => {
       expect(result.patternProperties).toBe(basePattern);
     });
 
-    test('base에 없으면 source 값 사용', () => {
+    test('uses source value when base has no value', () => {
       const base: ObjectSchema = { type: 'object' };
       const source: Partial<ObjectSchema> = {
         additionalProperties: { type: 'string' as const },
@@ -77,8 +77,8 @@ describe('intersectObjectSchema', () => {
     });
   });
 
-  describe('PropertyNames 병합 (intersectStringSchema 사용)', () => {
-    test('base에만 propertyNames가 있는 경우', () => {
+  describe('PropertyNames merging (using intersectStringSchema)', () => {
+    test('when only base has propertyNames', () => {
       const base: ObjectSchema = {
         type: 'object',
         propertyNames: {
@@ -96,7 +96,7 @@ describe('intersectObjectSchema', () => {
       });
     });
 
-    test('source에만 propertyNames가 있는 경우', () => {
+    test('when only source has propertyNames', () => {
       const base: ObjectSchema = { type: 'object' };
       const source: Partial<ObjectSchema> = {
         propertyNames: {
@@ -115,7 +115,7 @@ describe('intersectObjectSchema', () => {
       });
     });
 
-    test('둘 다 propertyNames가 있는 경우 - intersectStringSchema로 병합', () => {
+    test('when both have propertyNames - merge with intersectStringSchema', () => {
       const base: ObjectSchema = {
         type: 'object',
         propertyNames: {
@@ -134,7 +134,7 @@ describe('intersectObjectSchema', () => {
 
       const result = intersectObjectSchema(base, source);
 
-      // intersectStringSchema의 결과: 패턴은 lookahead assertion으로 결합, 제약은 더 제한적인 값으로 병합
+      // intersectStringSchema result: patterns combined with lookahead assertion, constraints merged to most restrictive values
       expect(result.propertyNames).toEqual({
         type: 'string',
         minLength: 1,
@@ -143,7 +143,7 @@ describe('intersectObjectSchema', () => {
       });
     });
 
-    test('propertyNames 병합 시 문자열 제약 충돌', () => {
+    test('string constraint conflict when merging propertyNames', () => {
       const base: ObjectSchema = {
         type: 'object',
         propertyNames: {
@@ -163,7 +163,7 @@ describe('intersectObjectSchema', () => {
       );
     });
 
-    test('propertyNames와 properties가 함께 있는 복합 시나리오', () => {
+    test('complex scenario with propertyNames and properties together', () => {
       const base: ObjectSchema = {
         type: 'object',
         propertyNames: {
@@ -200,8 +200,8 @@ describe('intersectObjectSchema', () => {
     });
   });
 
-  describe('공통 필드 처리', () => {
-    describe('First-Win 필드들', () => {
+  describe('Common field handling', () => {
+    describe('First-Win fields', () => {
       const firstWinFields = [
         'title',
         'description',
@@ -212,7 +212,7 @@ describe('intersectObjectSchema', () => {
         'writeOnly',
       ] as const;
 
-      test.each(firstWinFields)('%s 필드는 base 값 우선', (field) => {
+      test.each(firstWinFields)('%s field prioritizes base value', (field) => {
         const baseValue =
           field === 'default' ? { base: true } : `base-${field}`;
         const sourceValue =
@@ -230,8 +230,8 @@ describe('intersectObjectSchema', () => {
       });
     });
 
-    describe('Required 합집합', () => {
-      test('모든 required 배열 합치고 중복 제거', () => {
+    describe('Required union', () => {
+      test('merges all required arrays and removes duplicates', () => {
         const base: ObjectSchema = { type: 'object', required: ['a', 'b'] };
         const source: Partial<ObjectSchema> = { required: ['b', 'c'] };
 
@@ -241,8 +241,8 @@ describe('intersectObjectSchema', () => {
       });
     });
 
-    describe('Enum 교집합', () => {
-      test('공통 값만 남김', () => {
+    describe('Enum intersection', () => {
+      test('keeps only common values', () => {
         const base: ObjectSchema = {
           type: 'object',
           enum: [{ a: 1 }, { b: 2 }, { c: 3 }],
@@ -257,8 +257,8 @@ describe('intersectObjectSchema', () => {
       });
     });
 
-    describe('Const 처리', () => {
-      test('같은 const 값이면 유지', () => {
+    describe('Const handling', () => {
+      test('retains same const value', () => {
         const constValue = { test: 'value' };
         const base: ObjectSchema = { type: 'object', const: constValue };
         const source: Partial<ObjectSchema> = { const: constValue };
@@ -268,7 +268,7 @@ describe('intersectObjectSchema', () => {
         expect(result.const).toBe(constValue);
       });
 
-      test('다른 const 값이면 에러', () => {
+      test('throws error for different const values', () => {
         const base: ObjectSchema = { type: 'object', const: { a: 1 } };
         const source: Partial<ObjectSchema> = { const: { b: 2 } };
 
@@ -279,8 +279,8 @@ describe('intersectObjectSchema', () => {
     });
   });
 
-  describe('Properties 병합 (allOf에서 properties 처리)', () => {
-    test('base에 properties가 없고 source에만 있는 경우', () => {
+  describe('Properties merging (handling properties in allOf)', () => {
+    test('when base has no properties and only source has properties', () => {
       const base: ObjectSchema = {
         type: 'object',
         title: 'Base Object',
@@ -302,7 +302,7 @@ describe('intersectObjectSchema', () => {
       });
     });
 
-    test('base와 source 모두 properties가 있는 경우 - 새로운 프로퍼티 추가', () => {
+    test('when both base and source have properties - add new properties', () => {
       const base: ObjectSchema = {
         type: 'object',
         properties: {
@@ -330,7 +330,7 @@ describe('intersectObjectSchema', () => {
       });
     });
 
-    test('같은 프로퍼티 키가 있는 경우 - distributeSchema로 병합', () => {
+    test('when same property keys exist - merge with distributeSchema', () => {
       const base: ObjectSchema = {
         type: 'object',
         properties: {
@@ -372,7 +372,7 @@ describe('intersectObjectSchema', () => {
       });
     });
 
-    test('복잡한 중첩 객체 프로퍼티 병합', () => {
+    test('complex nested object property merging', () => {
       const base: ObjectSchema = {
         type: 'object',
         properties: {
@@ -437,7 +437,7 @@ describe('intersectObjectSchema', () => {
       });
     });
 
-    test('빈 properties 객체 처리', () => {
+    test('empty properties object handling', () => {
       const base: ObjectSchema = {
         type: 'object',
         properties: {},
@@ -457,8 +457,8 @@ describe('intersectObjectSchema', () => {
     });
   });
 
-  describe('복합 시나리오', () => {
-    test('모든 제약이 함께 적용되는 경우', () => {
+  describe('Complex scenarios', () => {
+    test('applies all constraints together', () => {
       const base: ObjectSchema = {
         type: 'object',
         title: 'Base Title',
@@ -469,10 +469,10 @@ describe('intersectObjectSchema', () => {
       };
 
       const source: Partial<ObjectSchema> = {
-        title: 'Source Title', // 무시됨 (First-Win)
+        title: 'Source Title', // Ignored (First-Win)
         minProperties: 3,
         maxProperties: 8,
-        additionalProperties: true, // 무시됨 (First-Win)
+        additionalProperties: true, // Ignored (First-Win)
         required: ['b', 'c'],
       };
 
@@ -488,7 +488,7 @@ describe('intersectObjectSchema', () => {
       });
     });
 
-    test('모든 기능이 함께 적용되는 복합 시나리오 - properties 포함', () => {
+    test('complex scenario with all features including properties', () => {
       const base: ObjectSchema = {
         type: 'object',
         title: 'User Schema',
@@ -511,7 +511,7 @@ describe('intersectObjectSchema', () => {
       };
 
       const source: Partial<ObjectSchema> = {
-        title: 'Extended User Schema', // 무시됨 (First-Win)
+        title: 'Extended User Schema', // Ignored (First-Win)
         minProperties: 3,
         maxProperties: 8,
         required: ['email', 'active'],

@@ -5,8 +5,8 @@ import type { BooleanSchema } from '@/schema-form/types';
 import { intersectBooleanSchema } from '../intersectBooleanSchema';
 
 describe('intersectBooleanSchema', () => {
-  describe('공통 필드 처리', () => {
-    describe('First-Win 필드들', () => {
+  describe('Common field handling', () => {
+    describe('First-Win fields', () => {
       const firstWinFields = [
         'title',
         'description',
@@ -17,7 +17,7 @@ describe('intersectBooleanSchema', () => {
         'writeOnly',
       ] as const;
 
-      test.each(firstWinFields)('%s 필드는 base 값 우선', (field) => {
+      test.each(firstWinFields)('%s field prioritizes base value', (field) => {
         const baseValue = field === 'default' ? true : `base-${field}`;
         const sourceValue = field === 'default' ? false : `source-${field}`;
 
@@ -33,7 +33,7 @@ describe('intersectBooleanSchema', () => {
       });
 
       test.each(firstWinFields)(
-        '%s 필드가 base에 없으면 source 값 사용',
+        '%s field uses source value when base has no value',
         (field) => {
           const sourceValue = field === 'default' ? false : `source-${field}`;
 
@@ -49,8 +49,8 @@ describe('intersectBooleanSchema', () => {
       );
     });
 
-    describe('덮어쓰기 필드들', () => {
-      test('커스텀 필드는 source 값으로 덮어쓰기', () => {
+    describe('Overwrite fields', () => {
+      test('custom fields are overwritten with source value', () => {
         const base: BooleanSchema = {
           type: 'boolean',
           customField1: 'base-value1',
@@ -63,14 +63,14 @@ describe('intersectBooleanSchema', () => {
 
         const result = intersectBooleanSchema(base, source);
 
-        expect((result as any).customField1).toBe('source-value1'); // 덮어쓰기
-        expect((result as any).customField2).toBe('base-value2'); // 유지
-        expect((result as any).customField3).toBe('source-value3'); // 추가
+        expect((result as any).customField1).toBe('source-value1'); // Overwritten
+        expect((result as any).customField2).toBe('base-value2'); // Retained
+        expect((result as any).customField3).toBe('source-value3'); // Added
       });
     });
 
-    describe('Enum 교집합', () => {
-      test('공통 값만 남김', () => {
+    describe('Enum intersection', () => {
+      test('keeps only common values', () => {
         const base: BooleanSchema = { type: 'boolean', enum: [true, false] };
         const source: Partial<BooleanSchema> = { enum: [false] };
 
@@ -79,7 +79,7 @@ describe('intersectBooleanSchema', () => {
         expect(result.enum).toEqual([false]);
       });
 
-      test('교집합이 빈 배열이면 에러', () => {
+      test('throws error when intersection is empty', () => {
         const base: BooleanSchema = { type: 'boolean', enum: [true] };
         const source: Partial<BooleanSchema> = { enum: [false] };
 
@@ -89,8 +89,8 @@ describe('intersectBooleanSchema', () => {
       });
     });
 
-    describe('Const 처리', () => {
-      test('같은 const 값이면 유지', () => {
+    describe('Const handling', () => {
+      test('retains same const value', () => {
         const base: BooleanSchema = { type: 'boolean', const: true };
         const source: Partial<BooleanSchema> = { const: true };
 
@@ -99,7 +99,7 @@ describe('intersectBooleanSchema', () => {
         expect(result.const).toBe(true);
       });
 
-      test('다른 const 값이면 에러', () => {
+      test('throws error for different const values', () => {
         const base: BooleanSchema = { type: 'boolean', const: true };
         const source: Partial<BooleanSchema> = { const: false };
 
@@ -109,8 +109,8 @@ describe('intersectBooleanSchema', () => {
       });
     });
 
-    describe('Required 합집합', () => {
-      test('모든 required 배열 합치고 중복 제거', () => {
+    describe('Required union', () => {
+      test('merges all required arrays and removes duplicates', () => {
         const base: BooleanSchema = { type: 'boolean', required: ['a', 'b'] };
         const source: Partial<BooleanSchema> = { required: ['b', 'c'] };
 
@@ -121,8 +121,8 @@ describe('intersectBooleanSchema', () => {
     });
   });
 
-  describe('단순 병합 시나리오', () => {
-    test('Boolean 타입은 추가 제약 조건이 없어 단순 병합', () => {
+  describe('Simple merge scenarios', () => {
+    test('Boolean type has no additional constraints so simple merge', () => {
       const base: BooleanSchema = {
         type: 'boolean',
         title: 'Base Title',
@@ -130,7 +130,7 @@ describe('intersectBooleanSchema', () => {
       };
 
       const source: Partial<BooleanSchema> = {
-        title: 'Source Title', // 무시됨 (First-Win)
+        title: 'Source Title', // Ignored (First-Win)
         description: 'Source Description',
       };
 
