@@ -849,7 +849,7 @@ Size limits are enforced: 20KB for both CJS and ESM builds.
 ## Development Tips
 
 1. **Working with Nodes**: When modifying node behavior, check both the node implementation and its strategies (BranchStrategy vs TerminalStrategy)
-2. **Adding FormTypeInputs**: Define test conditions carefully to avoid conflicts. Test functions receive `{ jsonSchema, type, format, formType, path }` hint object
+2. **Adding FormTypeInputs**: Define test conditions carefully to avoid conflicts. Test functions receive `{ jsonSchema, type, format, formType, path, nullable }` hint object
 3. **Plugin Development**: Follow the `SchemaFormPlugin` interface in `src/app/plugin/type.ts`. Plugins can provide FormTypeInputs, validators, and form renderers
 4. **Performance**: Use memoization for expensive computations, especially in computed properties. Consider validation modes to optimize performance
 5. **Type Safety**: Leverage TypeScript's type inference with `InferValueType` and `InferSchemaNode` for schema-based type checking
@@ -906,3 +906,102 @@ Use JSONPointer paths with `node.find()` for programmatic node access. Extended 
 ### Error Management
 
 Errors propagate through the node tree. Use `transformErrors` utility for custom error processing and the built-in `errorMessages` JSON Schema property for localized messages.
+
+### Nullable Schema Support
+
+The library supports JSON Schema's array type syntax for nullable fields:
+
+```typescript
+// Nullable field using array syntax
+const schema = {
+  type: 'object',
+  properties: {
+    // Required field (non-nullable)
+    name: { type: 'string' },
+
+    // Optional field (nullable) - use as const for type inference
+    nickname: { type: ['string', 'null'] as const },
+
+    // Nullable number
+    age: { type: ['number', 'null'] as const },
+  },
+};
+```
+
+**FormTypeInput with nullable conditions:**
+
+```typescript
+const formTypeInputDefinitions: FormTypeInputDefinition[] = [
+  // Match nullable string fields
+  {
+    test: { type: 'string', nullable: true },
+    component: NullableStringInput,
+  },
+  // Match non-nullable string fields
+  {
+    test: { type: 'string', nullable: false },
+    component: RequiredStringInput,
+  },
+  // Match all string fields (regardless of nullable)
+  {
+    test: { type: 'string' },
+    component: StringInput,
+  },
+];
+```
+
+**Accessing nullable info in FormTypeInput components:**
+
+```typescript
+const MyFormTypeInput: FC<FormTypeInputProps> = ({
+  value,
+  onChange,
+  type,      // 'string', 'number', 'boolean', 'array', 'object'
+  nullable,  // true if field accepts null
+}) => {
+  return (
+    <input
+      value={value ?? ''}
+      onChange={(e) => onChange(e.target.value || (nullable ? null : ''))}
+      placeholder={nullable ? 'Optional' : 'Required'}
+    />
+  );
+};
+```
+
+**Type inference with nullable schemas:**
+
+```typescript
+import { InferValueType } from '@winglet/json-schema';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    nickname: { type: ['string', 'null'] as const },
+  },
+} as const;
+
+// Type: { name: string; nickname: string | null }
+type FormValue = InferValueType<typeof schema>;
+```
+
+**Schema filter utilities:**
+
+```typescript
+import {
+  isStringSchema,           // Matches both nullable and non-nullable
+  isNullableStringSchema,   // Matches only { type: ['string', 'null'] }
+  isNonNullableStringSchema,// Matches only { type: 'string' }
+  hasNullInType,            // Checks if type array contains 'null'
+  isSameSchemaType,         // Type comparison (ignores null in array)
+} from '@winglet/json-schema';
+
+// Usage
+isStringSchema({ type: 'string' });           // true
+isStringSchema({ type: ['string', 'null'] }); // true
+isNullableStringSchema({ type: ['string', 'null'] }); // true
+isNonNullableStringSchema({ type: 'string' }); // true
+hasNullInType({ type: ['string', 'null'] });  // true
+isSameSchemaType({ type: ['number', 'null'] }, 'number'); // true
+```
