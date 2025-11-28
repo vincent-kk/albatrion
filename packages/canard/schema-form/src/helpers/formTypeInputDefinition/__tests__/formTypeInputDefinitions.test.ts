@@ -269,6 +269,189 @@ describe('formTypeTestFnFactory (formTypeTestObject를 통한 간접 테스트)'
     });
   });
 
+  describe('nullable 필드 테스트', () => {
+    test('nullable이 true인 경우 매칭', () => {
+      const definitions: FormTypeInputDefinition[] = [
+        { test: { nullable: true }, Component: TestStringComponent },
+        { test: { nullable: false }, Component: TestNumberComponent },
+      ];
+
+      const normalized = normalizeFormTypeInputDefinitions(definitions);
+
+      // nullable이 true인 hint
+      const nullableHint = createTestHint({ nullable: true });
+      expect(normalized[0].test(nullableHint)).toBe(true);
+      expect(normalized[1].test(nullableHint)).toBe(false);
+
+      // nullable이 false인 hint
+      const nonNullableHint = createTestHint({ nullable: false });
+      expect(normalized[0].test(nonNullableHint)).toBe(false);
+      expect(normalized[1].test(nonNullableHint)).toBe(true);
+    });
+
+    test('nullable 조건이 없으면 모든 nullable 값과 매칭', () => {
+      const definitions: FormTypeInputDefinition[] = [
+        { test: { type: 'string' }, Component: TestStringComponent },
+      ];
+
+      const normalized = normalizeFormTypeInputDefinitions(definitions);
+      const testFn = normalized[0].test;
+
+      // nullable이 true인 경우
+      expect(testFn(createTestHint({ type: 'string', nullable: true }))).toBe(
+        true,
+      );
+
+      // nullable이 false인 경우
+      expect(testFn(createTestHint({ type: 'string', nullable: false }))).toBe(
+        true,
+      );
+    });
+
+    test('type과 nullable 복합 조건', () => {
+      const definitions: FormTypeInputDefinition[] = [
+        {
+          test: { type: 'string', nullable: true },
+          Component: TestStringComponent,
+        },
+        {
+          test: { type: 'string', nullable: false },
+          Component: TestNumberComponent,
+        },
+        {
+          test: { type: 'number', nullable: true },
+          Component: TestEmailComponent,
+        },
+      ];
+
+      const normalized = normalizeFormTypeInputDefinitions(definitions);
+
+      // string + nullable: true
+      const stringNullable = createTestHint({ type: 'string', nullable: true });
+      expect(normalized[0].test(stringNullable)).toBe(true);
+      expect(normalized[1].test(stringNullable)).toBe(false);
+      expect(normalized[2].test(stringNullable)).toBe(false);
+
+      // string + nullable: false
+      const stringNonNullable = createTestHint({
+        type: 'string',
+        nullable: false,
+      });
+      expect(normalized[0].test(stringNonNullable)).toBe(false);
+      expect(normalized[1].test(stringNonNullable)).toBe(true);
+      expect(normalized[2].test(stringNonNullable)).toBe(false);
+
+      // number + nullable: true
+      const numberNullable = createTestHint({ type: 'number', nullable: true });
+      expect(normalized[0].test(numberNullable)).toBe(false);
+      expect(normalized[1].test(numberNullable)).toBe(false);
+      expect(normalized[2].test(numberNullable)).toBe(true);
+
+      // number + nullable: false
+      const numberNonNullable = createTestHint({
+        type: 'number',
+        nullable: false,
+      });
+      expect(normalized[0].test(numberNonNullable)).toBe(false);
+      expect(normalized[1].test(numberNonNullable)).toBe(false);
+      expect(normalized[2].test(numberNonNullable)).toBe(false);
+    });
+
+    test('format과 nullable 복합 조건', () => {
+      const definitions: FormTypeInputDefinition[] = [
+        {
+          test: { format: 'email', nullable: true },
+          Component: TestEmailComponent,
+        },
+        {
+          test: { format: 'email', nullable: false },
+          Component: TestPasswordComponent,
+        },
+      ];
+
+      const normalized = normalizeFormTypeInputDefinitions(definitions);
+
+      // email + nullable: true
+      const emailNullable = createTestHint({ format: 'email', nullable: true });
+      expect(normalized[0].test(emailNullable)).toBe(true);
+      expect(normalized[1].test(emailNullable)).toBe(false);
+
+      // email + nullable: false
+      const emailNonNullable = createTestHint({
+        format: 'email',
+        nullable: false,
+      });
+      expect(normalized[0].test(emailNonNullable)).toBe(false);
+      expect(normalized[1].test(emailNonNullable)).toBe(true);
+    });
+
+    test('path와 nullable 복합 조건', () => {
+      const definitions: FormTypeInputDefinition[] = [
+        {
+          test: { path: '/user/name', nullable: true },
+          Component: TestStringComponent,
+        },
+        {
+          test: { path: '/user/name', nullable: false },
+          Component: TestNumberComponent,
+        },
+      ];
+
+      const normalized = normalizeFormTypeInputDefinitions(definitions);
+
+      // path + nullable: true
+      const pathNullable = createTestHint({
+        path: '/user/name',
+        nullable: true,
+      });
+      expect(normalized[0].test(pathNullable)).toBe(true);
+      expect(normalized[1].test(pathNullable)).toBe(false);
+
+      // path + nullable: false
+      const pathNonNullable = createTestHint({
+        path: '/user/name',
+        nullable: false,
+      });
+      expect(normalized[0].test(pathNonNullable)).toBe(false);
+      expect(normalized[1].test(pathNonNullable)).toBe(true);
+    });
+
+    test('모든 조건과 nullable 복합 조건', () => {
+      const definitions: FormTypeInputDefinition[] = [
+        {
+          test: {
+            type: 'string',
+            format: 'email',
+            path: '/user/email',
+            nullable: true,
+          },
+          Component: TestEmailComponent,
+        },
+      ];
+
+      const normalized = normalizeFormTypeInputDefinitions(definitions);
+      const testFn = normalized[0].test;
+
+      // 모든 조건 만족 (nullable: true)
+      const validHint = createTestHint({
+        type: 'string',
+        format: 'email',
+        path: '/user/email',
+        nullable: true,
+      });
+      expect(testFn(validHint)).toBe(true);
+
+      // nullable만 다름
+      const invalidNullableHint = createTestHint({
+        type: 'string',
+        format: 'email',
+        path: '/user/email',
+        nullable: false,
+      });
+      expect(testFn(invalidNullableHint)).toBe(false);
+    });
+  });
+
   describe('formType 필드 테스트', () => {
     test('단일 formType 값 매칭', () => {
       const definitions: FormTypeInputDefinition[] = [
