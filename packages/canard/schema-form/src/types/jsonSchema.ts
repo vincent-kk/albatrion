@@ -1,18 +1,18 @@
 import type { CSSProperties, ComponentType, ReactNode } from 'react';
 
 import type {
-  ArrayNullableSchema as BaseArrayNullableSchema,
-  ArraySchema as BaseArraySchema,
   BasicSchema as BaseBasicSchema,
-  BooleanNullableSchema as BaseBooleanNullableSchema,
-  BooleanSchema as BaseBooleanSchema,
+  NonNullableArraySchema as BaseNonNullableArraySchema,
+  NonNullableBooleanSchema as BaseNonNullableBooleanSchema,
+  NonNullableNumberSchema as BaseNonNullableNumberSchema,
+  NonNullableObjectSchema as BaseNonNullableObjectSchema,
+  NonNullableStringSchema as BaseNonNullableStringSchema,
   NullSchema as BaseNullSchema,
-  NumberNullableSchema as BaseNumberNullableSchema,
-  NumberSchema as BaseNumberSchema,
-  ObjectNullableSchema as BaseObjectNullableSchema,
-  ObjectSchema as BaseObjectSchema,
-  StringNullableSchema as BaseStringNullableSchema,
-  StringSchema as BaseStringSchema,
+  NullableArraySchema as BaseNullableArraySchema,
+  NullableBooleanSchema as BaseNullableBooleanSchema,
+  NullableNumberSchema as BaseNullableNumberSchema,
+  NullableObjectSchema as BaseNullableObjectSchema,
+  NullableStringSchema as BaseNullableStringSchema,
   RefSchema,
 } from '@winglet/json-schema';
 
@@ -40,15 +40,15 @@ type InferNonNullableSchema<
   Value,
   Options extends Dictionary = object,
 > = Value extends NumberValue
-  ? NumberSchema<Options>
+  ? NonNullableNumberSchema<Options>
   : Value extends StringValue
-    ? StringSchema<Options>
+    ? NonNullableStringSchema<Options>
     : Value extends BooleanValue
-      ? BooleanSchema<Options>
+      ? NonNullableBooleanSchema<Options>
       : Value extends ArrayValue
-        ? ArraySchema<Options>
+        ? NonNullableArraySchema<Options>
         : Value extends ObjectValue
-          ? ObjectSchema<Options>
+          ? NonNullableObjectSchema<Options>
           : Value extends VirtualNodeValue
             ? VirtualSchema<Options>
             : JsonSchemaWithVirtual<Options>;
@@ -58,15 +58,15 @@ type InferNullableSchema<
   Value,
   Options extends Dictionary = object,
 > = Value extends NumberValue
-  ? NumberNullableSchema<Options>
+  ? NullableNumberSchema<Options>
   : Value extends StringValue
-    ? StringNullableSchema<Options>
+    ? NullableStringSchema<Options>
     : Value extends BooleanValue
-      ? BooleanNullableSchema<Options>
+      ? NullableBooleanSchema<Options>
       : Value extends ArrayValue
-        ? ArrayNullableSchema<Options>
+        ? NullableArraySchema<Options>
         : Value extends ObjectValue
-          ? ObjectNullableSchema<Options>
+          ? NullableObjectSchema<Options>
           : NullSchema<Options>;
 
 /**
@@ -86,29 +86,19 @@ export type InferJsonSchema<
 
 export type JsonSchema<Options extends Dictionary = object> =
   | NumberSchema<Options>
-  | NumberNullableSchema<Options>
   | StringSchema<Options>
-  | StringNullableSchema<Options>
   | BooleanSchema<Options>
-  | BooleanNullableSchema<Options>
   | ArraySchema<Options>
-  | ArrayNullableSchema<Options>
   | ObjectSchema<Options>
-  | ObjectNullableSchema<Options>
   | NullSchema<Options>
   | RefSchema;
 
 export type JsonSchemaWithVirtual<Options extends Dictionary = object> =
   | NumberSchema<Options>
-  | NumberNullableSchema<Options>
   | StringSchema<Options>
-  | StringNullableSchema<Options>
   | BooleanSchema<Options>
-  | BooleanNullableSchema<Options>
   | ArraySchema<Options>
-  | ArrayNullableSchema<Options>
   | ObjectSchema<Options>
-  | ObjectNullableSchema<Options>
   | NullSchema<Options>
   | VirtualSchema<Options>;
 
@@ -120,45 +110,62 @@ export type PartialJsonSchema<Options extends Dictionary = object> = Partial<
   JsonSchemaWithVirtual<Options>
 >;
 
-export type NumberSchema<Options extends Dictionary = object> = BasicSchema &
-  BaseNumberSchema<Options, JsonSchema<Options>>;
-export type NumberNullableSchema<Options extends Dictionary = object> =
-  BasicSchema & BaseNumberNullableSchema<Options, JsonSchema<Options>>;
+export type NumberSchema<Options extends Dictionary = object> =
+  | NonNullableNumberSchema<Options>
+  | NullableNumberSchema<Options>;
+export type NonNullableNumberSchema<Options extends Dictionary = object> =
+  BasicSchema & BaseNonNullableNumberSchema<Options, JsonSchema<Options>>;
+export type NullableNumberSchema<Options extends Dictionary = object> =
+  BasicSchema & BaseNullableNumberSchema<Options, JsonSchema<Options>>;
 
-export type StringSchema<Options extends Dictionary = object> = BasicSchema &
-  BaseStringSchema<Options, JsonSchema<Options>> & {
-    options?: { trim?: boolean };
-  };
-export type StringNullableSchema<Options extends Dictionary = object> =
+export type StringSchema<Options extends Dictionary = object> =
+  | NonNullableStringSchema<Options>
+  | NullableStringSchema<Options>;
+export type NonNullableStringSchema<Options extends Dictionary = object> =
   BasicSchema &
-    BaseStringNullableSchema<Options, JsonSchema<Options>> & {
+    BaseNonNullableStringSchema<Options, JsonSchema<Options>> & {
+      options?: { trim?: boolean };
+    };
+export type NullableStringSchema<Options extends Dictionary = object> =
+  BasicSchema &
+    BaseNullableStringSchema<Options, JsonSchema<Options>> & {
       options?: { trim?: boolean };
     };
 
-export type BooleanSchema<Options extends Dictionary = object> = BasicSchema &
-  BaseBooleanSchema<Options, JsonSchema<Options>>;
-export type BooleanNullableSchema<Options extends Dictionary = object> =
-  BasicSchema & BaseBooleanNullableSchema<Options, JsonSchema<Options>>;
+export type BooleanSchema<Options extends Dictionary = object> =
+  | NonNullableBooleanSchema<Options>
+  | NullableBooleanSchema<Options>;
+export type NonNullableBooleanSchema<Options extends Dictionary = object> =
+  BasicSchema & BaseNonNullableBooleanSchema<Options, JsonSchema<Options>>;
+export type NullableBooleanSchema<Options extends Dictionary = object> =
+  BasicSchema & BaseNullableBooleanSchema<Options, JsonSchema<Options>>;
 
-export type ArraySchema<Options extends Dictionary = object> = BasicSchema &
-  BaseArraySchema<Options, JsonSchema<Options>>;
-export type ArrayNullableSchema<Options extends Dictionary = object> =
-  BasicSchema & BaseArrayNullableSchema<Options, JsonSchema<Options>>;
+export type ArraySchema<Options extends Dictionary = object> =
+  | NonNullableArraySchema<Options>
+  | NullableArraySchema<Options>;
+export type NonNullableArraySchema<Options extends Dictionary = object> =
+  BasicSchema & BaseNonNullableArraySchema<Options, JsonSchema<Options>>;
+export type NullableArraySchema<Options extends Dictionary = object> =
+  BasicSchema & BaseNullableArraySchema<Options, JsonSchema<Options>>;
 
-type VirtualSchemaProperties = Dictionary<
-  { fields: string[]; nullable?: never } & BasicSchema
->;
-export type ObjectSchema<Options extends Dictionary = object> = BasicSchema &
-  BaseObjectSchema<Options, JsonSchema<Options>> & {
-    propertyKeys?: string[];
-    virtual?: VirtualSchemaProperties;
-  };
-export type ObjectNullableSchema<Options extends Dictionary = object> =
+export type ObjectSchema<Options extends Dictionary = object> =
+  | NonNullableObjectSchema<Options>
+  | NullableObjectSchema<Options>;
+export type NonNullableObjectSchema<Options extends Dictionary = object> =
   BasicSchema &
-    BaseObjectNullableSchema<Options, JsonSchema<Options>> & {
+    BaseNonNullableObjectSchema<Options, JsonSchema<Options>> & {
       propertyKeys?: string[];
       virtual?: VirtualSchemaProperties;
     };
+export type NullableObjectSchema<Options extends Dictionary = object> =
+  BasicSchema &
+    BaseNullableObjectSchema<Options, JsonSchema<Options>> & {
+      propertyKeys?: string[];
+      virtual?: VirtualSchemaProperties;
+    };
+type VirtualSchemaProperties = Dictionary<
+  { fields: string[]; nullable?: never } & BasicSchema
+>;
 
 export type VirtualSchema<Options extends Dictionary = object> = {
   type: 'virtual';

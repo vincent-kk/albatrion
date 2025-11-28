@@ -1,16 +1,16 @@
 import { describe, expectTypeOf, it } from 'vitest';
 
 import type {
-  ArrayNullableSchema,
   ArraySchema,
-  BooleanNullableSchema,
   BooleanSchema,
   NullSchema,
-  NumberNullableSchema,
+  NullableArraySchema,
+  NullableBooleanSchema,
+  NullableNumberSchema,
+  NullableObjectSchema,
+  NullableStringSchema,
   NumberSchema,
-  ObjectNullableSchema,
   ObjectSchema,
-  StringNullableSchema,
   StringSchema,
   VirtualSchema,
 } from '@/schema-form/types';
@@ -62,31 +62,31 @@ describe('InferSchemaNode 타입 추론 테스트', () => {
   describe('Nullable 스키마', () => {
     it('NumberNullableSchema → NumberNode', () => {
       expectTypeOf<
-        InferSchemaNode<NumberNullableSchema>
+        InferSchemaNode<NullableNumberSchema>
       >().toEqualTypeOf<NumberNode>();
     });
 
     it('StringNullableSchema → StringNode', () => {
       expectTypeOf<
-        InferSchemaNode<StringNullableSchema>
+        InferSchemaNode<NullableStringSchema>
       >().toEqualTypeOf<StringNode>();
     });
 
     it('BooleanNullableSchema → BooleanNode', () => {
       expectTypeOf<
-        InferSchemaNode<BooleanNullableSchema>
+        InferSchemaNode<NullableBooleanSchema>
       >().toEqualTypeOf<BooleanNode>();
     });
 
     it('ArrayNullableSchema → ArrayNode', () => {
       expectTypeOf<
-        InferSchemaNode<ArrayNullableSchema>
+        InferSchemaNode<NullableArraySchema>
       >().toEqualTypeOf<ArrayNode>();
     });
 
     it('ObjectNullableSchema → ObjectNode', () => {
       expectTypeOf<
-        InferSchemaNode<ObjectNullableSchema>
+        InferSchemaNode<NullableObjectSchema>
       >().toEqualTypeOf<ObjectNode>();
     });
   });

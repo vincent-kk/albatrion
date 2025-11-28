@@ -56,25 +56,7 @@ export type {
   PublicJsonSchemaError as JsonSchemaError,
 } from './types';
 
-export type {
-  FormGroupProps,
-  FormInputProps,
-  FormRenderProps,
-  FormTypeRendererProps,
-  BooleanSchema,
-  BooleanNullableSchema,
-  NumberSchema,
-  NumberNullableSchema,
-  StringSchema,
-  StringNullableSchema,
-  ArraySchema,
-  ArrayNullableSchema,
-  ObjectSchema,
-  ObjectNullableSchema,
-  NullSchema,
-  JsonSchema,
-  InferJsonSchema,
-} from './types/rolled';
+export type * from './types/rolled';
 
 export { useFormSubmit } from './hooks/useFormSubmit';
 export { useChildNodeErrors } from './hooks/useChildNodeErrors';

@@ -1,18 +1,18 @@
 import { describe, expectTypeOf, it } from 'vitest';
 
 import type {
-  ArrayNullableSchema,
   ArraySchema,
-  BooleanNullableSchema,
   BooleanSchema,
   InferJsonSchema,
   JsonSchema,
   NullSchema,
-  NumberNullableSchema,
+  NullableArraySchema,
+  NullableBooleanSchema,
+  NullableNumberSchema,
+  NullableObjectSchema,
+  NullableStringSchema,
   NumberSchema,
-  ObjectNullableSchema,
   ObjectSchema,
-  StringNullableSchema,
   StringSchema,
 } from '../jsonSchema';
 
@@ -41,27 +41,27 @@ describe('InferJsonSchema 타입 추론 테스트', () => {
     it('string | null → StringNullableSchema', () => {
       expectTypeOf<
         InferJsonSchema<string | null>
-      >().toExtend<StringNullableSchema>();
+      >().toExtend<NullableStringSchema>();
     });
     it('number | null → NumberNullableSchema', () => {
       expectTypeOf<
         InferJsonSchema<number | null>
-      >().toExtend<NumberNullableSchema>();
+      >().toExtend<NullableNumberSchema>();
     });
     it('boolean | null → BooleanNullableSchema', () => {
       expectTypeOf<
         InferJsonSchema<boolean | null>
-      >().toExtend<BooleanNullableSchema>();
+      >().toExtend<NullableBooleanSchema>();
     });
     it('array | null → ArrayNullableSchema', () => {
       expectTypeOf<
         InferJsonSchema<any[] | null>
-      >().toExtend<ArrayNullableSchema>();
+      >().toExtend<NullableArraySchema>();
     });
     it('object | null → ObjectNullableSchema', () => {
       expectTypeOf<
         InferJsonSchema<Record<string, any> | null>
-      >().toExtend<ObjectNullableSchema>();
+      >().toExtend<NullableObjectSchema>();
     });
   });
 

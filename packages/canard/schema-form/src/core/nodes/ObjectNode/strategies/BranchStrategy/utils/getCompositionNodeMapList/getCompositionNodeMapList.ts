@@ -12,14 +12,11 @@ import { JsonSchemaError } from '@/schema-form/errors';
 import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type {
   JsonSchema,
-  ObjectSchema as NonNullableObjectSchema,
-  ObjectNullableSchema as NullableObjectSchema,
+  ObjectSchema,
   ObjectValue,
 } from '@/schema-form/types';
 
 import type { ChildNodeMap } from '../../type';
-
-type ObjectSchema = NonNullableObjectSchema | NullableObjectSchema;
 
 /**
  * Generate child node maps for composition schemas (oneOf/anyOf)

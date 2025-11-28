@@ -19,9 +19,7 @@ import {
 } from '@/schema-form/app/constants';
 import type {
   AllowedValue,
-  ArrayNullableSchema,
   ArraySchema,
-  BooleanNullableSchema,
   BooleanSchema,
   InferValueType,
   JsonSchemaError,
@@ -29,11 +27,8 @@ import type {
   JsonSchemaWithRef,
   JsonSchemaWithVirtual,
   NullSchema,
-  NumberNullableSchema,
   NumberSchema,
-  ObjectNullableSchema,
   ObjectSchema,
-  StringNullableSchema,
   StringSchema,
   ValidatorFactory,
   VirtualSchema,
@@ -54,15 +49,15 @@ import type { VirtualNode } from './VirtualNode';
  * @typeParam Schema - JSON Schema used as the basis for node inference
  */
 export type InferSchemaNode<Schema extends JsonSchemaWithVirtual | unknown> =
-  Schema extends ArraySchema | ArrayNullableSchema
+  Schema extends ArraySchema
     ? ArrayNode
-    : Schema extends NumberSchema | NumberNullableSchema
+    : Schema extends NumberSchema
       ? NumberNode
-      : Schema extends ObjectSchema | ObjectNullableSchema
+      : Schema extends ObjectSchema
         ? ObjectNode
-        : Schema extends StringSchema | StringNullableSchema
+        : Schema extends StringSchema
           ? StringNode
-          : Schema extends BooleanSchema | BooleanNullableSchema
+          : Schema extends BooleanSchema
             ? BooleanNode
             : Schema extends VirtualSchema
               ? VirtualNode
