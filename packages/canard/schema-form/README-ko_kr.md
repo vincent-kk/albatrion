@@ -488,12 +488,18 @@ interface FormTypeInputProps<
   readOnly: boolean;
   /** FormTypeInput 컴포넌트의 비활성화 상태 */
   disabled: boolean;
+  /** FormTypeInput 컴포넌트에 할당된 스키마 노드가 필수인지 여부 */
+  required: boolean;
   /** FormTypeInput 컴포넌트에 할당된 스키마 노드 */
   node: Node;
+  /** 이 필드의 JSON Schema 타입 (예: 'string', 'number', 'object', 'array') */
+  type: Node['schemaType'];
   /** FormTypeInput 컴포넌트에 할당된 스키마 노드의 이름 */
   name: Node['name'];
   /** FormTypeInput 컴포넌트에 할당된 스키마 노드의 경로 */
   path: Node['path'];
+  /** 이 필드가 null 값을 허용하는지 여부 (스키마 타입 배열에 'null'이 포함된 경우에서 파생) */
+  nullable: Node['nullable'];
   /** FormTypeInput 컴포넌트에 할당된 스키마 노드의 오류 */
   errors: Node['errors'];
   /** JsonSchema에서 정의된 `computed.watch`(=`&watch`) 속성에 따라 모니터링되는 값 */
