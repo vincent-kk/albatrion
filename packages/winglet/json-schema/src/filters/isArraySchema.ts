@@ -1,6 +1,7 @@
 import type {
-  ArrayNullableSchema,
   ArraySchema,
+  NonNullableArraySchema,
+  NullableArraySchema,
   UnknownSchema,
 } from '../types/jsonSchema';
 import { hasNullInType } from './utils/hasNullInType';
@@ -23,7 +24,7 @@ import { hasNullInType } from './utils/hasNullInType';
  */
 export const isNonNullableArraySchema = (
   schema: UnknownSchema,
-): schema is ArraySchema => schema.type === 'array';
+): schema is NonNullableArraySchema => schema.type === 'array';
 
 /**
  * Determines whether a given JSON schema represents a nullable array type.
@@ -43,7 +44,7 @@ export const isNonNullableArraySchema = (
  */
 export const isNullableArraySchema = (
   schema: UnknownSchema,
-): schema is ArrayNullableSchema =>
+): schema is NullableArraySchema =>
   hasNullInType(schema) &&
   Array.isArray(schema.type) &&
   schema.type.indexOf('array') !== -1;
@@ -64,7 +65,5 @@ export const isNullableArraySchema = (
  * isArraySchema({ type: 'object' }); // false
  * ```
  */
-export const isArraySchema = (
-  schema: UnknownSchema,
-): schema is ArraySchema | ArrayNullableSchema =>
+export const isArraySchema = (schema: UnknownSchema): schema is ArraySchema =>
   isNonNullableArraySchema(schema) || isNullableArraySchema(schema);

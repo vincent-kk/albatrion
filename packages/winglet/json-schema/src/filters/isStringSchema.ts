@@ -1,5 +1,6 @@
 import type {
-  StringNullableSchema,
+  NonNullableStringSchema,
+  NullableStringSchema,
   StringSchema,
   UnknownSchema,
 } from '../types/jsonSchema';
@@ -23,7 +24,7 @@ import { hasNullInType } from './utils/hasNullInType';
  */
 export const isNonNullableStringSchema = (
   schema: UnknownSchema,
-): schema is StringSchema => schema.type === 'string';
+): schema is NonNullableStringSchema => schema.type === 'string';
 
 /**
  * Determines whether a given JSON schema represents a nullable string type.
@@ -43,7 +44,7 @@ export const isNonNullableStringSchema = (
  */
 export const isNullableStringSchema = (
   schema: UnknownSchema,
-): schema is StringNullableSchema =>
+): schema is NullableStringSchema =>
   hasNullInType(schema) &&
   Array.isArray(schema.type) &&
   schema.type.indexOf('string') !== -1;
@@ -64,7 +65,5 @@ export const isNullableStringSchema = (
  * isStringSchema({ type: 'number' }); // false
  * ```
  */
-export const isStringSchema = (
-  schema: UnknownSchema,
-): schema is StringSchema | StringNullableSchema =>
+export const isStringSchema = (schema: UnknownSchema): schema is StringSchema =>
   isNonNullableStringSchema(schema) || isNullableStringSchema(schema);

@@ -1,6 +1,7 @@
 import type {
-  BooleanNullableSchema,
   BooleanSchema,
+  NonNullableBooleanSchema,
+  NullableBooleanSchema,
   UnknownSchema,
 } from '../types/jsonSchema';
 import { hasNullInType } from './utils/hasNullInType';
@@ -23,7 +24,7 @@ import { hasNullInType } from './utils/hasNullInType';
  */
 export const isNonNullableBooleanSchema = (
   schema: UnknownSchema,
-): schema is BooleanSchema => schema.type === 'boolean';
+): schema is NonNullableBooleanSchema => schema.type === 'boolean';
 
 /**
  * Determines whether a given JSON schema represents a nullable boolean type.
@@ -43,7 +44,7 @@ export const isNonNullableBooleanSchema = (
  */
 export const isNullableBooleanSchema = (
   schema: UnknownSchema,
-): schema is BooleanNullableSchema =>
+): schema is NullableBooleanSchema =>
   hasNullInType(schema) &&
   Array.isArray(schema.type) &&
   schema.type.indexOf('boolean') !== -1;
@@ -66,5 +67,5 @@ export const isNullableBooleanSchema = (
  */
 export const isBooleanSchema = (
   schema: UnknownSchema,
-): schema is BooleanSchema | BooleanNullableSchema =>
+): schema is BooleanSchema =>
   isNonNullableBooleanSchema(schema) || isNullableBooleanSchema(schema);

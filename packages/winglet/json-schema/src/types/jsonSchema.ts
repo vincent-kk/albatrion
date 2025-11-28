@@ -1,4 +1,4 @@
-import type { Dictionary, IsNullable } from '@aileron/declare';
+import type { Dictionary, IsNullable, Nullable } from '@aileron/declare';
 
 import type {
   AllowedValue,
@@ -22,15 +22,15 @@ type InferNonNullableSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > = Value extends NumberValue
-  ? NumberSchema<Options, Schema>
+  ? NonNullableNumberSchema<Options, Schema>
   : Value extends StringValue
-    ? StringSchema<Options, Schema>
+    ? NonNullableStringSchema<Options, Schema>
     : Value extends BooleanValue
-      ? BooleanSchema<Options, Schema>
+      ? NonNullableBooleanSchema<Options, Schema>
       : Value extends ArrayValue
-        ? ArraySchema<Options, Schema>
+        ? NonNullableArraySchema<Options, Schema>
         : Value extends ObjectValue
-          ? ObjectSchema<Options, Schema>
+          ? NonNullableObjectSchema<Options, Schema>
           : JsonSchema<Options>;
 
 /** Maps base types to their Nullable Schema counterparts */
@@ -39,15 +39,15 @@ type InferNullableSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > = Value extends NumberValue
-  ? NumberNullableSchema<Options, Schema>
+  ? NullableNumberSchema<Options, Schema>
   : Value extends StringValue
-    ? StringNullableSchema<Options, Schema>
+    ? NullableStringSchema<Options, Schema>
     : Value extends BooleanValue
-      ? BooleanNullableSchema<Options, Schema>
+      ? NullableBooleanSchema<Options, Schema>
       : Value extends ArrayValue
-        ? ArrayNullableSchema<Options, Schema>
+        ? NullableArraySchema<Options, Schema>
         : Value extends ObjectValue
-          ? ObjectNullableSchema<Options, Schema>
+          ? NullableObjectSchema<Options, Schema>
           : NullSchema<Options, Schema>;
 
 /**
@@ -65,33 +65,40 @@ export type InferJsonSchema<
 > = [Value] extends [null]
   ? NullSchema<Options, Schema>
   : IsNullable<Value> extends true
-    ? InferNullableSchema<Extract<Value, null>, Options, Schema>
+    ? InferNullableSchema<Exclude<Value, null>, Options, Schema>
     : InferNonNullableSchema<Value, Options, Schema>;
 
 export type JsonSchema<Options extends Dictionary = object> =
-  | NumberSchema<Options, JsonSchema>
-  | NumberNullableSchema<Options, JsonSchema>
-  | StringSchema<Options, JsonSchema>
-  | StringNullableSchema<Options, JsonSchema>
-  | BooleanSchema<Options, JsonSchema>
-  | BooleanNullableSchema<Options, JsonSchema>
-  | ArraySchema<Options, JsonSchema>
-  | ArrayNullableSchema<Options, JsonSchema>
-  | ObjectSchema<Options, JsonSchema>
-  | ObjectNullableSchema<Options, JsonSchema>
+  | NonNullableNumberSchema<Options, JsonSchema>
+  | NullableNumberSchema<Options, JsonSchema>
+  | NonNullableStringSchema<Options, JsonSchema>
+  | NullableStringSchema<Options, JsonSchema>
+  | NonNullableBooleanSchema<Options, JsonSchema>
+  | NullableBooleanSchema<Options, JsonSchema>
+  | NonNullableArraySchema<Options, JsonSchema>
+  | NullableArraySchema<Options, JsonSchema>
+  | NonNullableObjectSchema<Options, JsonSchema>
+  | NullableObjectSchema<Options, JsonSchema>
   | NullSchema<Options, JsonSchema>;
 
-export interface NumberSchema<
+export type NumberSchema<
+  Options extends Dictionary = object,
+  Schema extends UnknownSchema = JsonSchema,
+> =
+  | NonNullableNumberSchema<Options, Schema>
+  | NullableNumberSchema<Options, Schema>;
+
+export interface NonNullableNumberSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BaseNumberSchema<NumberValue, Options, Schema> {
   type: 'number' | 'integer';
 }
 
-export interface NumberNullableSchema<
+export interface NullableNumberSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
-> extends BaseNumberSchema<NumberValue | null, Options, Schema> {
+> extends BaseNumberSchema<NumberValue, Options, Schema> {
   type: Readonly<['number' | 'integer', 'null']>;
 }
 
@@ -108,17 +115,24 @@ interface BaseNumberSchema<
   format?: string;
 }
 
-export interface StringSchema<
+export type StringSchema<
+  Options extends Dictionary = object,
+  Schema extends UnknownSchema = JsonSchema,
+> =
+  | NonNullableStringSchema<Options, Schema>
+  | NullableStringSchema<Options, Schema>;
+
+export interface NonNullableStringSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BaseStringSchema<StringValue, Options, Schema> {
   type: 'string';
 }
 
-export interface StringNullableSchema<
+export interface NullableStringSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
-> extends BaseStringSchema<StringValue | null, Options, Schema> {
+> extends BaseStringSchema<StringValue, Options, Schema> {
   type: Readonly<['string', 'null']>;
 }
 
@@ -133,31 +147,45 @@ interface BaseStringSchema<
   format?: string;
 }
 
-export interface BooleanSchema<
+export type BooleanSchema<
+  Options extends Dictionary = object,
+  Schema extends UnknownSchema = JsonSchema,
+> =
+  | NonNullableBooleanSchema<Options, Schema>
+  | NullableBooleanSchema<Options, Schema>;
+
+export interface NonNullableBooleanSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BasicSchema<BooleanValue, Options, Schema> {
   type: 'boolean';
 }
 
-export interface BooleanNullableSchema<
+export interface NullableBooleanSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
-> extends BasicSchema<BooleanValue | null, Options, Schema> {
+> extends BasicSchema<BooleanValue, Options, Schema> {
   type: Readonly<['boolean', 'null']>;
 }
 
-export interface ArraySchema<
+export type ArraySchema<
+  Options extends Dictionary = object,
+  Schema extends UnknownSchema = JsonSchema,
+> =
+  | NonNullableArraySchema<Options, Schema>
+  | NullableArraySchema<Options, Schema>;
+
+export interface NonNullableArraySchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BaseArraySchema<ArrayValue, Options, Schema> {
   type: 'array';
 }
 
-export interface ArrayNullableSchema<
+export interface NullableArraySchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
-> extends BaseArraySchema<ArrayValue | null, Options, Schema> {
+> extends BaseArraySchema<ArrayValue, Options, Schema> {
   type: Readonly<['array', 'null']>;
 }
 
@@ -176,17 +204,24 @@ interface BaseArraySchema<
   additionalItems?: Partial<Schema> | boolean;
 }
 
-export interface ObjectSchema<
+export type ObjectSchema<
+  Options extends Dictionary = object,
+  Schema extends UnknownSchema = JsonSchema,
+> =
+  | NonNullableObjectSchema<Options, Schema>
+  | NullableObjectSchema<Options, Schema>;
+
+export interface NonNullableObjectSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BaseObjectSchema<ObjectValue, Options, Schema> {
   type: 'object';
 }
 
-export interface ObjectNullableSchema<
+export interface NullableObjectSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
-> extends BaseObjectSchema<ObjectValue | null, Options, Schema> {
+> extends BaseObjectSchema<ObjectValue, Options, Schema> {
   type: Readonly<['object', 'null']>;
 }
 
@@ -235,9 +270,9 @@ export interface BasicSchema<
   anyOf?: Partial<Schema>[];
   oneOf?: Partial<Schema>[];
   nullable?: boolean;
-  const?: Type;
-  default?: Type;
-  enum?: Type[];
+  const?: Nullable<Type>;
+  default?: Nullable<Type>;
+  enum?: Nullable<Type>[];
 }
 
 interface CustomOptions<Options extends Dictionary> {

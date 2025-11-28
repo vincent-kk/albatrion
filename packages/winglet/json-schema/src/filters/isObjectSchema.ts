@@ -1,5 +1,6 @@
 import type {
-  ObjectNullableSchema,
+  NonNullableObjectSchema,
+  NullableObjectSchema,
   ObjectSchema,
   UnknownSchema,
 } from '../types/jsonSchema';
@@ -23,7 +24,7 @@ import { hasNullInType } from './utils/hasNullInType';
  */
 export const isNonNullableObjectSchema = (
   schema: UnknownSchema,
-): schema is ObjectSchema => schema.type === 'object';
+): schema is NonNullableObjectSchema => schema.type === 'object';
 
 /**
  * Determines whether a given JSON schema represents a nullable object type.
@@ -43,7 +44,7 @@ export const isNonNullableObjectSchema = (
  */
 export const isNullableObjectSchema = (
   schema: UnknownSchema,
-): schema is ObjectNullableSchema =>
+): schema is NullableObjectSchema =>
   hasNullInType(schema) &&
   Array.isArray(schema.type) &&
   schema.type.indexOf('object') !== -1;
@@ -64,7 +65,5 @@ export const isNullableObjectSchema = (
  * isObjectSchema({ type: 'array' }); // false
  * ```
  */
-export const isObjectSchema = (
-  schema: UnknownSchema,
-): schema is ObjectSchema | ObjectNullableSchema =>
+export const isObjectSchema = (schema: UnknownSchema): schema is ObjectSchema =>
   isNonNullableObjectSchema(schema) || isNullableObjectSchema(schema);

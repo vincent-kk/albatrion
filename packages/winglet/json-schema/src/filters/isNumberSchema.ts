@@ -1,5 +1,6 @@
 import type {
-  NumberNullableSchema,
+  NonNullableNumberSchema,
+  NullableNumberSchema,
   NumberSchema,
   UnknownSchema,
 } from '../types/jsonSchema';
@@ -24,7 +25,7 @@ import { hasNullInType } from './utils/hasNullInType';
  */
 export const isNonNullableNumberSchema = (
   schema: UnknownSchema,
-): schema is NumberSchema =>
+): schema is NonNullableNumberSchema =>
   schema.type === 'number' || schema.type === 'integer';
 
 /**
@@ -46,7 +47,7 @@ export const isNonNullableNumberSchema = (
  */
 export const isNullableNumberSchema = (
   schema: UnknownSchema,
-): schema is NumberNullableSchema =>
+): schema is NullableNumberSchema =>
   hasNullInType(schema) &&
   Array.isArray(schema.type) &&
   (schema.type.indexOf('number') !== -1 ||
@@ -69,7 +70,5 @@ export const isNullableNumberSchema = (
  * isNumberSchema({ type: 'string' }); // false
  * ```
  */
-export const isNumberSchema = (
-  schema: UnknownSchema,
-): schema is NumberSchema | NumberNullableSchema =>
+export const isNumberSchema = (schema: UnknownSchema): schema is NumberSchema =>
   isNonNullableNumberSchema(schema) || isNullableNumberSchema(schema);
