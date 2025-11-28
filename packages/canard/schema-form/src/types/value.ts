@@ -20,7 +20,7 @@ export type InferValueType<
   type: 'virtual';
 }
   ? VirtualNodeValue
-  : BaseInferValueType<NormalizeType<T> & { type?: string | string[] }>;
+  : BaseInferValueType<NormalizeType<T>>;
 
 export type {
   BooleanValue,
