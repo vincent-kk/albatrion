@@ -1,5 +1,5 @@
 import { isArray, isPlainObject } from '@winglet/common-utils/filter';
-import { isSameSchemaType } from '@winglet/json-schema/filter';
+import { isIdenticalSchemaType } from '@winglet/json-schema/filter';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
@@ -54,7 +54,7 @@ export const getCompositionNodeMapList = (
 
     if (
       subSchema.type !== undefined &&
-      isSameSchemaType(jsonSchema, subSchema) === false
+      isIdenticalSchemaType(jsonSchema, subSchema) === false
     )
       throw new JsonSchemaError(
         'COMPOSITION_TYPE_REDEFINITION',

@@ -1,4 +1,4 @@
-import { isSameSchemaType } from '@winglet/json-schema/filter';
+import { isCompatibleSchemaType } from '@winglet/json-schema/filter';
 
 import type { JsonSchema } from '@/schema-form/types';
 
@@ -7,7 +7,7 @@ import type { JsonSchema } from '@/schema-form/types';
  *
  * Compatibility rules:
  * 1. Compatible if allOf schema has no type (only adds constraints)
- * 2. Compatible if both schema types match exactly (using isSameSchemaType)
+ * 2. Compatible if both schema types match exactly (using isCompatibleSchemaType)
  *
  * Important notes:
  * - number and integer are treated as different types and are incompatible
@@ -21,4 +21,5 @@ import type { JsonSchema } from '@/schema-form/types';
 export const validateCompatibility = (
   schema: JsonSchema,
   allOfSchema: JsonSchema,
-) => allOfSchema.type === undefined || isSameSchemaType(schema, allOfSchema);
+) =>
+  allOfSchema.type === undefined || isCompatibleSchemaType(schema, allOfSchema);
