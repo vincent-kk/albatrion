@@ -26,4 +26,5 @@ export {
 } from './isStringSchema';
 export { hasNullInType } from './utils';
 
-export { isSameSchemaType } from './isSameSchemaType';
+export { isCompatibleSchemaType } from './isCompatibleSchemaType';
+export { isIdenticalSchemaType } from './isIdenticalSchemaType';
