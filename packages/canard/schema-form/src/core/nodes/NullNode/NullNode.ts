@@ -13,6 +13,8 @@ import {
  * Manages null values.
  */
 export class NullNode extends AbstractNode<NullSchema, NullValue> {
+  public override readonly type = 'null';
+
   /** Current value of the null node */
   #value: NullValue | undefined;
 
@@ -50,6 +52,8 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
     scope,
     variant,
     jsonSchema,
+    schemaType,
+    nullable,
     defaultValue,
     onChange,
     parentNode,
@@ -62,6 +66,8 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
       scope,
       variant,
       jsonSchema,
+      schemaType,
+      nullable,
       defaultValue,
       onChange,
       parentNode,

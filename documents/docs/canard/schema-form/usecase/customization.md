@@ -15,7 +15,8 @@ import { registerPlugin } from '@canard/schema-form';
 
 const customFormType = {
   name: 'custom-input',
-  test: (schema) => schema.type === 'string' && schema.format === 'custom',
+  test: ({ type, jsonSchema }) =>
+    type === 'string' && jsonSchema.format === 'custom',
   component: CustomInputComponent,
 };
 

@@ -25,7 +25,9 @@ export const FormTypeInputArrayTerminal = () => {
               <div>{value?.join(',')}</div>
               <div>
                 <button
-                  onClick={() => onChange((prev) => [...prev, 'NEW ITEM'])}
+                  onClick={() =>
+                    onChange((prev) => [...(prev || []), 'NEW ITEM'])
+                  }
                 >
                   onChange
                 </button>
@@ -73,7 +75,9 @@ export const FormTypeInputArrayNotTerminal = () => {
               <div>{value?.join(',')}</div>
               <div>
                 <button
-                  onClick={() => onChange((prev) => [...prev, 'NEW ITEM'])}
+                  onClick={() =>
+                    onChange((prev) => [...(prev || []), 'NEW ITEM'])
+                  }
                 >
                   onChange
                 </button>
@@ -126,7 +130,9 @@ export const FormTypeInputArrayTerminalWithDefaultValue = () => {
               </div>
               <div>
                 <button
-                  onClick={() => onChange((prev) => [...prev, 'NEW ITEM'])}
+                  onClick={() =>
+                    onChange((prev) => [...(prev || []), 'NEW ITEM'])
+                  }
                 >
                   onChange
                 </button>
@@ -183,7 +189,10 @@ export const FormTypeInputArrayTerminalWithDefaultObjectValue = () => {
               <div>
                 <button
                   onClick={() =>
-                    onChange((prev) => [...prev, { name: 'Jinny', age: 24 }])
+                    onChange((prev) => [
+                      ...(prev || []),
+                      { name: 'Jinny', age: 24 },
+                    ])
                   }
                 >
                   onChange
@@ -253,7 +262,10 @@ export const FormTypeInputArrayTerminalWithMixedDefaultObjectValue = () => {
               <div>
                 <button
                   onClick={() =>
-                    onChange((prev) => [...prev, { name: 'Jinny', age: 24 }])
+                    onChange((prev) => [
+                      ...(prev || []),
+                      { name: 'Jinny', age: 24 },
+                    ])
                   }
                 >
                   onChange
@@ -790,9 +802,8 @@ export const FormTypeInputObjectNullableWithDefaultNull = () => {
     type: 'object',
     properties: {
       config: {
-        type: 'object',
+        type: ['object', 'null'],
         terminal: true,
-        nullable: true,
         default: null,
         FormTypeInput: ({
           onChange,
@@ -841,9 +852,8 @@ export const FormTypeInputObjectNullableWithDefaultNullAndSubDefaults = () => {
     type: 'object',
     properties: {
       settings: {
-        type: 'object',
+        type: ['object', 'null'],
         terminal: true,
-        nullable: true,
         default: null,
         FormTypeInput: ({
           onChange,
@@ -892,9 +902,8 @@ export const FormTypeInputObjectNullableNestedMixedDefaults = () => {
     type: 'object',
     properties: {
       user: {
-        type: 'object',
+        type: ['object', 'null'],
         terminal: true,
-        nullable: true,
         default: null,
         FormTypeInput: ({
           onChange,
@@ -928,9 +937,8 @@ export const FormTypeInputObjectNullableNestedMixedDefaults = () => {
         },
       },
       metadata: {
-        type: 'object',
+        type: ['object', 'null'],
         terminal: true,
-        nullable: true,
         default: null,
         FormTypeInput: ({
           onChange,
@@ -983,9 +991,8 @@ export const FormTypeInputObjectNullableLifecycle = () => {
     type: 'object',
     properties: {
       dynamic: {
-        type: 'object',
+        type: ['object', 'null'],
         terminal: true,
-        nullable: true,
         FormTypeInput: ({
           onChange,
           value,

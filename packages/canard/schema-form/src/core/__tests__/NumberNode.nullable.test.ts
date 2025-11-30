@@ -73,8 +73,7 @@ describe('NumberNode nullable functionality', () => {
         type: 'object',
         properties: {
           score: {
-            type: 'number',
-            nullable: true,
+            type: ['number', 'null'],
             default: null,
           },
         },
@@ -233,7 +232,7 @@ describe('NumberNode nullable functionality', () => {
         type: 'object',
         properties: {
           priority: {
-            type: 'number',
+            type: ['number', 'null'],
             nullable: true,
             enum: [1, 2, 3, null],
             default: null,

@@ -1,6 +1,7 @@
 import { JsonSchemaError } from '@/schema-form/errors';
 import {
   type ResolveSchema,
+  extractSchemaInfo,
   processAllOfSchema,
 } from '@/schema-form/helpers/jsonSchema';
 import type {
@@ -44,7 +45,7 @@ export const createSchemaNodeFactory =
   ): SchemaNodeFactory<Schema> =>
   (props: NodeFactoryProps<Schema>) => {
     const nodeProps = resolveReferences(props, resolveSchema);
-    switch (nodeProps.jsonSchema.type) {
+    switch (nodeProps.schemaType) {
       case 'boolean':
         return new BooleanNode(
           nodeProps as SchemaNodeConstructorProps<BooleanSchema>,
@@ -81,7 +82,6 @@ export const createSchemaNodeFactory =
     }
     throw new JsonSchemaError(
       'UNKNOWN_JSON_SCHEMA',
-      // @ts-expect-error: This line should be unreachable if all variants are handled.
       `Unknown JsonSchema: ${nodeProps.jsonSchema.type}`,
       {
         jsonSchema: nodeProps.jsonSchema,
@@ -102,6 +102,10 @@ const resolveReferences = <Schema extends JsonSchemaWithVirtual>(
   resolve: ResolveSchema | null,
 ) => {
   nodeProps.jsonSchema = processSchema(nodeProps.jsonSchema, resolve);
+  const schemaInfo = extractSchemaInfo(nodeProps.jsonSchema);
+  if (schemaInfo === null) return nodeProps;
+  nodeProps.schemaType = schemaInfo.type;
+  nodeProps.nullable = schemaInfo.nullable;
   return nodeProps as UnionSchemaNodeConstructorProps;
 };
 

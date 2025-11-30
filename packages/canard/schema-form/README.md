@@ -496,12 +496,18 @@ interface FormTypeInputProps<
   readOnly: boolean;
   /** disabled state for the FormTypeInput Component */
   disabled: boolean;
+  /** Whether the schema node assigned to the FormTypeInput Component is required */
+  required: boolean;
   /** Schema node assigned to the FormTypeInput Component */
   node: Node;
+  /** JSON Schema type of this field (e.g., 'string', 'number', 'object', 'array') */
+  type: Node['schemaType'];
   /** Name of the schema node assigned to the FormTypeInput Component */
   name: Node['name'];
   /** Path of the schema node assigned to the FormTypeInput Component */
   path: Node['path'];
+  /** Whether this field accepts null as a valid value (derived from schema type array including 'null') */
+  nullable: Node['nullable'];
   /** Errors of the schema node assigned to the FormTypeInput Component */
   errors: Node['errors'];
   /** Values being watched according to the `computed.watch`(=`&watch`) property defined in JsonSchema */

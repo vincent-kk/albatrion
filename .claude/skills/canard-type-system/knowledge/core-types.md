@@ -27,10 +27,14 @@ export interface FormTypeInputProps<
   required: boolean;
   /** Schema node assigned to FormTypeInput Component */
   node: Node;
+  /** JSON Schema type of this field (e.g., 'string', 'number', 'object', 'array') */
+  type: Node['schemaType'];
   /** Name of schema node assigned to FormTypeInput Component */
   name: Node['name'];
   /** Path of schema node assigned to FormTypeInput Component */
   path: Node['path'];
+  /** Whether this field accepts null as a valid value (derived from schema type array including 'null') */
+  nullable: Node['nullable'];
   /** Errors of schema node assigned to FormTypeInput Component */
   errors: Node['errors'];
   /** Values subscribed according to `computed.watch`(=`&watch`) property defined in JsonSchema */

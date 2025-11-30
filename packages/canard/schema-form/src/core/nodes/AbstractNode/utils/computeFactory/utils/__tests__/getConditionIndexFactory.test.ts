@@ -12,7 +12,7 @@ describe('getConditionIndexFactory', () => {
     // type이 object가 아닌 경우
     const schema1 = { type: 'string' } as JsonSchemaWithVirtual;
     expect(
-      getConditionIndexFactory(schema1)(pathManager, 'oneOf', 'if'),
+      getConditionIndexFactory('string', schema1)(pathManager, 'oneOf', 'if'),
     ).toBeUndefined();
 
     // oneOf가 배열이 아닌 경우
@@ -21,13 +21,13 @@ describe('getConditionIndexFactory', () => {
       oneOf: 'invalid',
     } as unknown as JsonSchemaWithVirtual;
     expect(
-      getConditionIndexFactory(schema2)(pathManager, 'oneOf', 'if'),
+      getConditionIndexFactory('object', schema2)(pathManager, 'oneOf', 'if'),
     ).toBeUndefined();
 
     // oneOf가 없는 경우
     const schema3 = { type: 'object' } as JsonSchemaWithVirtual;
     expect(
-      getConditionIndexFactory(schema3)(pathManager, 'oneOf', 'if'),
+      getConditionIndexFactory('object', schema3)(pathManager, 'oneOf', 'if'),
     ).toBeUndefined();
   });
 
@@ -39,7 +39,7 @@ describe('getConditionIndexFactory', () => {
     } as unknown as JsonSchemaWithVirtual;
 
     expect(
-      getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if'),
+      getConditionIndexFactory('object', schema)(pathManager, 'oneOf', 'if'),
     ).toBeUndefined();
   });
 
@@ -59,7 +59,7 @@ describe('getConditionIndexFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
 
     expect(pathManager.get()).toContain('/value');
     expect(result).toBeDefined();
@@ -82,7 +82,7 @@ describe('getConditionIndexFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
 
     expect(pathManager.get()).toContain('../value');
     expect(pathManager.get()).toContain('../count');
@@ -110,7 +110,7 @@ describe('getConditionIndexFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
 
     expect(pathManager.get()).toContain('/type');
     expect(pathManager.get()).toContain('/length');
@@ -142,7 +142,7 @@ describe('getConditionIndexFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
 
     expect(pathManager.get()).toContain('/age');
     expect(result).toBeDefined();
@@ -163,7 +163,7 @@ describe('getConditionIndexFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
 
     expect(pathManager.get()).toContain('/value');
     expect(result).toBeDefined();
@@ -179,7 +179,7 @@ describe('getConditionIndexFactory', () => {
       oneOf: [{ type: 'object', computed: { if: '/value === "option1";' } }],
     } as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
 
     expect(result!(['option1'])).toBe(0);
   });
@@ -195,7 +195,7 @@ describe('getConditionIndexFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
 
     expect(result).toBeDefined();
     // true 조건은 항상 매칭되어야 함 (인덱스 1)
@@ -219,7 +219,7 @@ describe('getConditionIndexFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
 
     expect(result).toBeDefined();
     // 구체적인 조건이 우선
@@ -240,7 +240,7 @@ describe('getConditionIndexFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
 
     // 유효한 표현식이 없으므로 undefined 반환
     expect(result).toBeUndefined();
@@ -256,7 +256,7 @@ describe('getConditionIndexFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
 
     expect(result).toBeDefined();
     expect(result!(['test'])).toBe(1);
@@ -274,7 +274,7 @@ describe('getConditionIndexFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
 
     expect(result).toBeDefined();
     // true 조건은 항상 매칭되어야 함 (인덱스 1)
@@ -296,7 +296,7 @@ describe('getConditionIndexFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
 
     expect(result).toBeDefined();
     // 구체적인 조건이 우선
@@ -318,7 +318,7 @@ describe('getConditionIndexFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
 
     expect(result).toBeDefined();
     // 빈 문자열은 유효하지 않으므로 무시되고, true 조건(인덱스 2)이 선택됨
@@ -351,7 +351,7 @@ describe('getConditionIndexFactory custom test', () => {
     };
 
     const pathManager = getPathManager();
-    const getOneOfIndex = getConditionIndexFactory(schema)(
+    const getOneOfIndex = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -386,7 +386,7 @@ describe('getConditionIndexFactory custom test', () => {
     };
 
     const pathManager = getPathManager();
-    const getOneOfIndex = getConditionIndexFactory(schema)(
+    const getOneOfIndex = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -426,7 +426,7 @@ describe('getConditionIndexFactory custom test', () => {
     };
 
     const pathManager = getPathManager();
-    const getOneOfIndex = getConditionIndexFactory(schema)(
+    const getOneOfIndex = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -447,7 +447,7 @@ describe('getConditionIndexFactory custom test', () => {
       oneOf: [],
     };
     let pathManager = getPathManager();
-    let getOneOfIndex = getConditionIndexFactory(schema)(
+    let getOneOfIndex = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -460,7 +460,7 @@ describe('getConditionIndexFactory custom test', () => {
       oneOf: 'invalid' as any,
     };
     pathManager = getPathManager();
-    getOneOfIndex = getConditionIndexFactory(schema)(
+    getOneOfIndex = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -473,7 +473,7 @@ describe('getConditionIndexFactory custom test', () => {
       oneOf: [],
     };
     pathManager = getPathManager();
-    getOneOfIndex = getConditionIndexFactory(schema)(
+    getOneOfIndex = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -506,7 +506,7 @@ describe('getConditionIndexFactory custom test', () => {
     };
 
     const pathManager = getPathManager();
-    const getOneOfIndex = getConditionIndexFactory(schema)(
+    const getOneOfIndex = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -542,7 +542,7 @@ describe('getConditionIndexFactory custom test', () => {
     };
 
     const pathManager = getPathManager();
-    const getOneOfIndex = getConditionIndexFactory(schema)(
+    const getOneOfIndex = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -573,7 +573,7 @@ describe('getConditionIndexFactory custom test', () => {
     };
 
     const pathManager = getPathManager();
-    const getOneOfIndex = getConditionIndexFactory(schema)(
+    const getOneOfIndex = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -612,7 +612,7 @@ describe('getConditionIndexFactory custom test', () => {
     ['./rootPath1', './rootPath2', './rootPath3'].forEach((path) => {
       pathManager.set(path);
     });
-    const getOneOfIndex = getConditionIndexFactory(schema)(
+    const getOneOfIndex = getConditionIndexFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -652,7 +652,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
       ],
     };
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
     expect(result).toBeDefined();
 
     // status가 active이고 type이 premium일 때만 첫 번째 스키마가 선택됨
@@ -691,7 +691,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
       ],
     };
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
     expect(result).toBeDefined();
 
     // enabled가 true이고 role이 admin 또는 moderator일 때
@@ -738,7 +738,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
       ],
     };
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
     expect(result).toBeDefined();
 
     // electronics + apple
@@ -780,7 +780,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
       ],
     };
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
     expect(result).toBeDefined();
 
     // mode가 advanced이고 isEnabled=true, isPublic=false일 때
@@ -820,7 +820,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
       ],
     };
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
     expect(result).toBeDefined();
 
     // version > 2이고 format이 json일 때
@@ -857,7 +857,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
       ],
     };
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
     expect(result).toBeDefined();
 
     // hasData가 true이고 value가 null일 때
@@ -899,7 +899,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
       ],
     };
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
     expect(result).toBeDefined();
 
     // level이 pro이고 tier가 gold, features가 advanced 또는 premium일 때
@@ -930,7 +930,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
       ],
     };
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
     expect(result).toBeDefined();
 
     // active가 true이고 status가 ready일 때 (options는 무시됨)
@@ -965,7 +965,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
       ],
     };
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
     expect(result).toBeDefined();
 
     // type이 mixed이고 value가 enum에 포함될 때
@@ -1002,7 +1002,7 @@ describe('getConditionIndexFactory with schema property conditions', () => {
       ],
     };
 
-    const result = getConditionIndexFactory(schema)(pathManager, 'oneOf', 'if');
+    const result = getConditionIndexFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
     expect(result).toBeDefined();
 
     // field1=value1이고 field2가 a 또는 b일 때

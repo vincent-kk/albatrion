@@ -1,6 +1,6 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
-import type { FormatError, JsonSchemaError } from '../src';
+import type { FormHandle, FormatError, JsonSchemaError } from '../src';
 import {
   Form,
   type JsonSchema,
@@ -1169,6 +1169,391 @@ export const UseChildNodeErrorsRealTimeUpdate = () => {
         onChange={setValue}
         onValidate={setErrors}
       />
+    </StoryLayout>
+  );
+};
+
+export const NullableFieldValidation = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      nullableString: {
+        type: ['string', 'null'],
+        minLength: 3,
+        errorMessages: {
+          minLength: '최소 {limit}자 이상 입력해야 합니다',
+          type: '문자열이거나 null이어야 합니다',
+        },
+      },
+      nullableNumber: {
+        type: ['number', 'null'],
+        minimum: 0,
+        maximum: 100,
+        errorMessages: {
+          minimum: '{limit} 이상의 숫자를 입력해야 합니다',
+          maximum: '{limit} 이하의 숫자를 입력해야 합니다',
+          type: '숫자이거나 null이어야 합니다',
+        },
+      },
+      nullableEmail: {
+        type: ['string', 'null'],
+        format: 'email',
+        errorMessages: {
+          format: '올바른 이메일 형식이 아닙니다',
+          type: '문자열이거나 null이어야 합니다',
+        },
+      },
+    },
+    required: [],
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>({});
+  const [errors, setErrors] = useState<JsonSchemaError[]>();
+  const ref = useRef<FormHandle<typeof jsonSchema>>(null);
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
+      <div>
+        <h3>Nullable Field Validation</h3>
+        <button
+          onClick={() => {
+            ref.current?.setValue({
+              nullableString: null,
+              nullableNumber: null,
+              nullableEmail: null,
+            });
+          }}
+        >
+          set null
+        </button>
+        <p>
+          nullable 필드는 값이 없어도 에러가 발생하지 않지만, 값이 있을 경우
+          유효성 검사를 통과해야 합니다.
+        </p>
+
+        <Form
+          ref={ref}
+          jsonSchema={jsonSchema}
+          onChange={setValue}
+          onValidate={setErrors}
+        />
+      </div>
+    </StoryLayout>
+  );
+};
+
+export const NullableWithDefaultValueError = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      invalidDefaultString: {
+        type: ['string', 'null'],
+        default: 'ab',
+        minLength: 3,
+        errorMessages: {
+          minLength: '기본값이 최소 길이({limit}자)를 충족하지 않습니다',
+        },
+      },
+      invalidDefaultNumber: {
+        type: ['number', 'null'],
+        default: 150,
+        maximum: 100,
+        errorMessages: {
+          maximum: '기본값이 최대값({limit})을 초과합니다',
+        },
+      },
+      invalidDefaultPattern: {
+        type: ['string', 'null'],
+        default: 'invalid',
+        pattern: '^[0-9]+$',
+        errorMessages: {
+          pattern: '기본값이 숫자 패턴을 충족하지 않습니다',
+        },
+      },
+    },
+    required: [],
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [errors, setErrors] = useState<JsonSchemaError[]>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
+      <div>
+        <h3>Nullable Fields with Invalid Default Values</h3>
+        <p>
+          기본값이 스키마의 유효성 검사 규칙을 위반하는 경우 AJV 에러가
+          발생합니다.
+        </p>
+        <Form
+          jsonSchema={jsonSchema}
+          onChange={setValue}
+          onValidate={setErrors}
+        />
+      </div>
+    </StoryLayout>
+  );
+};
+
+export const NullableTypeCoercionError = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      strictNumber: {
+        type: ['number', 'null'],
+        errorMessages: {
+          type: '숫자 타입이어야 합니다 (문자열 숫자는 허용되지 않음)',
+        },
+      },
+      strictBoolean: {
+        type: ['boolean', 'null'],
+        errorMessages: {
+          type: 'boolean 타입이어야 합니다 (0, 1은 허용되지 않음)',
+        },
+      },
+      strictArray: {
+        type: ['array', 'null'],
+        items: { type: 'string' },
+        errorMessages: {
+          type: '배열이어야 합니다',
+        },
+      },
+    },
+    required: [],
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>({
+    strictNumber: '123',
+    strictBoolean: 1,
+    strictArray: 'not an array',
+  });
+  const [errors, setErrors] = useState<JsonSchemaError[]>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
+      <div>
+        <h3>Nullable Type Coercion Errors</h3>
+        <p>
+          타입 강제 변환이 없는 엄격한 타입 검사에서 발생하는 에러를
+          테스트합니다.
+        </p>
+        <Form
+          jsonSchema={jsonSchema}
+          onChange={setValue}
+          onValidate={setErrors}
+        />
+      </div>
+    </StoryLayout>
+  );
+};
+
+export const NullableRequiredFieldConflict = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      requiredNullable: {
+        type: ['string', 'null'],
+        minLength: 3,
+        errorMessages: {
+          required: '이 필드는 필수입니다 (null 허용)',
+          minLength: '최소 {limit}자 이상이어야 합니다',
+        },
+      },
+      requiredNullableNumber: {
+        type: ['number', 'null'],
+        minimum: 0,
+        errorMessages: {
+          required: '이 필드는 필수입니다 (null 허용)',
+          minimum: '{limit} 이상이어야 합니다',
+        },
+      },
+    },
+    required: ['requiredNullable', 'requiredNullableNumber'],
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>({});
+  const [errors, setErrors] = useState<JsonSchemaError[]>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
+      <div>
+        <h3>Nullable Required Fields</h3>
+        <p>
+          required 필드이면서 nullable인 경우, 필드가 존재해야 하지만 null 값은
+          허용됩니다.
+        </p>
+        <Form
+          jsonSchema={jsonSchema}
+          onChange={setValue}
+          onValidate={setErrors}
+        />
+      </div>
+    </StoryLayout>
+  );
+};
+
+export const NullableNestedObjectError = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      nullableObject: {
+        type: ['object', 'null'],
+        properties: {
+          name: {
+            type: 'string',
+            minLength: 2,
+            errorMessages: {
+              minLength: '이름은 최소 {limit}자 이상이어야 합니다',
+            },
+          },
+          age: {
+            type: 'number',
+            minimum: 0,
+            maximum: 150,
+            errorMessages: {
+              minimum: '나이는 {limit} 이상이어야 합니다',
+              maximum: '나이는 {limit} 이하여야 합니다',
+            },
+          },
+        },
+        required: ['name'],
+        errorMessages: {
+          required: '이름 필드는 필수입니다',
+        },
+      },
+    },
+    required: [],
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>({
+    nullableObject: { age: 200 },
+  });
+  const [errors, setErrors] = useState<JsonSchemaError[]>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
+      <div>
+        <h3>Nullable Nested Object Validation</h3>
+        <p>nullable 중첩 객체의 내부 필드 유효성 검사 에러를 테스트합니다.</p>
+        <Form
+          jsonSchema={jsonSchema}
+          onChange={setValue}
+          onValidate={setErrors}
+        />
+      </div>
+    </StoryLayout>
+  );
+};
+
+export const NullableArrayItemError = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      nullableArray: {
+        type: ['array', 'null'],
+        items: {
+          type: 'string',
+          minLength: 3,
+          pattern: '^[A-Z]',
+          errorMessages: {
+            minLength: '각 항목은 최소 {limit}자 이상이어야 합니다',
+            pattern: '각 항목은 대문자로 시작해야 합니다',
+          },
+        },
+        minItems: 2,
+        errorMessages: {
+          minItems: '최소 {limit}개 이상의 항목이 필요합니다',
+        },
+      },
+      nullableNumberArray: {
+        type: ['array', 'null'],
+        items: {
+          type: 'number',
+          minimum: 0,
+          maximum: 100,
+          errorMessages: {
+            minimum: '각 항목은 {limit} 이상이어야 합니다',
+            maximum: '각 항목은 {limit} 이하여야 합니다',
+          },
+        },
+        errorMessages: {},
+      },
+    },
+    required: [],
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>({
+    nullableArray: ['ab', 'cd'],
+    nullableNumberArray: [-10, 150, 50],
+  });
+  const [errors, setErrors] = useState<JsonSchemaError[]>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
+      <div>
+        <h3>Nullable Array Item Validation</h3>
+        <p>
+          nullable 배열의 항목 유효성 검사 에러와 배열 제약 조건 에러를
+          테스트합니다.
+        </p>
+        <Form
+          jsonSchema={jsonSchema}
+          onChange={setValue}
+          onValidate={setErrors}
+        />
+      </div>
+    </StoryLayout>
+  );
+};
+
+export const NullableMultipleTypeError = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      number: {
+        type: ['number', 'null'],
+        minimum: 10,
+        errorMessages: {
+          minimum: '{limit} 이하여야 합니다.',
+          type: '문자열, 숫자, 또는 null이어야 합니다',
+        },
+      },
+      array: {
+        type: ['array', 'null'],
+        minItems: 2,
+        errorMessages: {
+          minItems: '배열인 경우 최소 {limit}개 이상의 항목이 필요합니다',
+          minProperties: '객체인 경우 최소 {limit}개 이상의 속성이 필요합니다',
+          type: '배열, 객체, 또는 null이어야 합니다',
+        },
+        items: {
+          type: 'string',
+        },
+      },
+    },
+    required: [],
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>({
+    stringOrNumber: 5,
+    arrayOrObject: [],
+  });
+  const [errors, setErrors] = useState<JsonSchemaError[]>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value} errors={errors}>
+      <div>
+        <h3>Nullable Multiple Type Validation</h3>
+        <p>
+          여러 타입을 허용하는 nullable 필드의 타입별 유효성 검사 에러를
+          테스트합니다.
+        </p>
+        <Form
+          jsonSchema={jsonSchema}
+          onChange={setValue}
+          onValidate={setErrors}
+        />
+      </div>
     </StoryLayout>
   );
 };

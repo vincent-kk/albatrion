@@ -1,0 +1,1 @@
+export { hasNullInType } from './hasNullInType';

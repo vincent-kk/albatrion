@@ -124,6 +124,7 @@ const FormInner = <
     ready.current = true;
     setRootNode(rootNode);
     handleChange(rootNode.value as Value);
+    rootNode.validate().then((errors) => handleValidate(errors));
   }) as Fn<[SchemaNode], void>;
 
   useEffect(() => {

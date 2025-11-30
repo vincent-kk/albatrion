@@ -1,4 +1,6 @@
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+// import type { JsonSchemaWithVirtual } from '@/schema-form/types/';
+
+type JsonSchemaWithVirtual = any;
 
 export const getDataWithSchema = (
   data: any,

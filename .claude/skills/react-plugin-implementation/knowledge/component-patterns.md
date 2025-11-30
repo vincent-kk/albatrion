@@ -9,6 +9,7 @@ React 기반 @canard/schema-form 플러그인 컴포넌트 구현 시 권장되�
 **사용 시기**: 기본 패턴으로 항상 우선 사용
 
 **장점**:
+
 - 불필요한 리렌더링 방지
 - 성능 최적화
 - React Hook Form과 호환성 우수
@@ -24,7 +25,7 @@ const FormTypeInputString = ({
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
   });
-  
+
   return (
     <TextField
       defaultValue={defaultValue}  // ✅ 비제어
@@ -38,6 +39,7 @@ const FormTypeInputString = ({
 ### 제어 컴포넌트 (필요시만)
 
 **사용 시기**:
+
 - 실시간 validation 필요
 - 조건부 렌더링 필요
 - 값 포맷팅/변환 필요
@@ -54,11 +56,11 @@ const FormTypeInputEmail = ({
   const isValid = useMemo(() => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   }, [value]);
-  
+
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
   });
-  
+
   return (
     <TextField
       value={value}  // ✅ 제어
@@ -97,7 +99,7 @@ const FormTypeInputString = ({
       labelProp || jsonSchema.label || jsonSchema.title || name,
     ];
   }, [sizeProp, context, jsonSchema, variantProp, placeholderProp, labelProp, name]);
-  
+
   return (
     <TextField
       size={size}
@@ -126,16 +128,16 @@ const FormTypeInputArray = ({
   context,
 }: FormTypeInputArrayProps) => {
   // ChildNodeComponents는 이미 필요한 props를 받은 함수형 컴포넌트 배열
-  
+
   return (
     <Box>
       <Typography variant="h6">{jsonSchema.title || name}</Typography>
-      
+
       {ChildNodeComponents.map((ChildComponent, index) => (
         <Paper key={index} sx={{ p: 2, mb: 2 }}>
           {/* ✅ ChildComponent는 이미 props를 가지고 있음 */}
           <ChildComponent />
-          
+
           {/* UI 라이브러리별 스타일 적용 */}
           <IconButton
             size="small"
@@ -147,7 +149,7 @@ const FormTypeInputArray = ({
           </IconButton>
         </Paper>
       ))}
-      
+
       {/* 추가 버튼 */}
       <Button
         startIcon={<AddIcon />}
@@ -167,6 +169,7 @@ const FormTypeInputArray = ({
 ```
 
 **주의사항**:
+
 - `ChildNodeComponents`에 props를 직접 전달하지 **않음**
 - 추가/제거 버튼만 UI 라이브러리 스타일로 구현
 - 실제 추가/제거 로직은 canard-form 내부에서 처리됨
@@ -190,7 +193,7 @@ const FormTypeInputDate = ({
       return null;
     }
   }, [defaultValue]);
-  
+
   // 2. onChange 변환 (Date → string)
   const handleChange = useHandle((newDate: Date | null) => {
     if (!newDate) {
@@ -203,7 +206,7 @@ const FormTypeInputDate = ({
       onChange('');
     }
   });
-  
+
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DatePicker
@@ -322,14 +325,14 @@ const FormTypeInputStringEnum = ({
   onChange,
   ...props
 }: FormTypeInputStringEnumProps) => {
-  const isMultiple = jsonSchema.type === 'array';
+  const isMultiple = type === 'array';
   const enumValues = jsonSchema.enum || [];
   const enumLabels = jsonSchema.enumLabels || {};
-  
+
   const handleChange = useHandle((event: SelectChangeEvent<string | string[]>) => {
     onChange(event.target.value);
   });
-  
+
   return (
     <Select
       defaultValue={defaultValue}
@@ -357,7 +360,7 @@ const FormTypeInputString = ({
   // errors는 JsonSchemaError[] 타입
   const hasError = errors.length > 0;
   const errorMessage = hasError ? errors[0].message : '';
-  
+
   return (
     <TextField
       error={hasError}
@@ -384,7 +387,7 @@ const FormTypeInputBoolean = ({
     if (hideLabel) return undefined;
     return labelProp || jsonSchema.label || jsonSchema.title || name;
   }, [hideLabel, labelProp, jsonSchema, name]);
-  
+
   return (
     <FormControlLabel
       control={<Checkbox {...props} />}
@@ -407,7 +410,7 @@ const FormTypeInputString = ({
 }: FormTypeInputStringProps) => {
   const hasError = errors.length > 0;
   const describedBy = hasError ? `${path}-error` : undefined;
-  
+
   return (
     <>
       <TextField
@@ -432,6 +435,7 @@ const FormTypeInputString = ({
 ---
 
 **핵심 원칙**:
+
 1. 비제어 컴포넌트 우선
 2. 값 우선순위: 직접 props > context > jsonSchema
 3. useMemo로 연산 최적화
@@ -439,4 +443,3 @@ const FormTypeInputString = ({
 5. ChildNodeComponents는 props 전달 금지
 6. 값 변환은 명시적으로
 7. 접근성 속성 필수
-

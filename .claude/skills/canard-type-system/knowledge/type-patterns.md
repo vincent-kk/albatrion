@@ -204,10 +204,10 @@ function AddressInput(props: FormTypeInputProps<Address>) {
 ```typescript
 // Union 타입 값 처리
 function NumberOrStringInput(props: FormTypeInputProps<number | string>) {
-  const { value, onChange, jsonSchema } = props;
+  const { type, value, onChange, jsonSchema } = props;
 
-  // jsonSchema.type을 확인하여 현재 타입 결정
-  const isNumber = jsonSchema.type === 'number';
+  // type을 확인하여 현재 타입 결정
+  const isNumber = type === 'number';
 
   return (
     <input

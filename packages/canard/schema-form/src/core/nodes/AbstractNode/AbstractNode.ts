@@ -21,6 +21,7 @@ import type {
   AllowedValue,
   JsonSchema,
   JsonSchemaError,
+  JsonSchemaType,
   JsonSchemaWithVirtual,
   ValidateFunction,
   ValidatorFactory,
@@ -49,7 +50,6 @@ import {
   getEventCollection,
   getFallbackValidator,
   getNodeGroup,
-  getNodeType,
   getSafeEmptyValue,
   getScopedSegment,
   matchesSchemaPath,
@@ -66,7 +66,10 @@ export abstract class AbstractNode<
   public readonly group: 'branch' | 'terminal';
 
   /** [readonly] Node's type, `array`, `number`, `object`, `string`, `boolean`, `virtual`, `null` */
-  public readonly type: Exclude<Schema['type'], 'integer'>;
+  public abstract readonly type: Exclude<JsonSchemaType, 'integer'>;
+
+  /** [readonly] Schema's type, `array`, `number`, `integer`, `object`, `string`, `boolean`, `virtual`, `null` */
+  public readonly schemaType: JsonSchemaType;
 
   /** [readonly] Node's depth */
   public readonly depth: number;
@@ -298,6 +301,8 @@ export abstract class AbstractNode<
     scope,
     variant,
     jsonSchema,
+    schemaType,
+    nullable,
     defaultValue,
     onChange,
     parentNode,
@@ -305,32 +310,39 @@ export abstract class AbstractNode<
     validatorFactory,
     required,
   }: SchemaNodeConstructorProps<Schema, Value>) {
-    this.type = getNodeType(jsonSchema);
-    this.group = getNodeGroup(jsonSchema);
-
     this.scope = scope;
     this.variant = variant;
     this.jsonSchema = jsonSchema;
-    this.parentNode = parentNode || null;
+    this.schemaType = schemaType;
+    this.nullable = nullable;
     this.required = required ?? false;
-    this.nullable = jsonSchema.nullable || false;
+    this.#name = name || '';
 
     this.isRoot = !parentNode;
     this.rootNode = (parentNode?.rootNode || this) as SchemaNode;
+    this.parentNode = parentNode || null;
 
-    this.#name = name || '';
+    this.group = getNodeGroup(this.schemaType, this.jsonSchema);
     this.#escapedName = escapeSegment(this.#name);
-
-    this.#path = joinSegment(parentNode?.path, this.#escapedName);
-    this.#schemaPath = scope
+    this.#path = joinSegment(this.parentNode?.path, this.#escapedName);
+    this.#schemaPath = this.scope
       ? joinSegment(
-          parentNode?.schemaPath,
-          getScopedSegment(this.#escapedName, scope, parentNode?.type, variant),
+          this.parentNode?.schemaPath,
+          getScopedSegment(
+            this.#escapedName,
+            this.scope,
+            this.parentNode?.type,
+            this.variant,
+          ),
         )
-      : joinSegment(parentNode?.schemaPath, this.#escapedName);
-    this.depth = parentNode ? parentNode.depth + 1 : 0;
+      : joinSegment(this.parentNode?.schemaPath, this.#escapedName);
+    this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
 
-    this.#compute = computeFactory(this.jsonSchema, this.rootNode.jsonSchema);
+    this.#compute = computeFactory(
+      this.schemaType,
+      this.jsonSchema,
+      this.rootNode.jsonSchema,
+    );
 
     this.setDefaultValue(
       defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema),
@@ -342,7 +354,7 @@ export abstract class AbstractNode<
         : false;
       this.#handleChange = afterMicrotask(() => {
         if (validateOnChange) this.#handleValidation();
-        onChange(getSafeEmptyValue(this.value, this.jsonSchema));
+        onChange(getSafeEmptyValue(this.value, this.schemaType));
       });
       this.#prepareValidator(validatorFactory, validationMode);
     } else this.#handleChange = onChange;
@@ -834,10 +846,10 @@ export abstract class AbstractNode<
     this: AbstractNode,
     value: Value | Nullish,
   ): Promise<JsonSchemaError[]> {
-    if (!this.isRoot || !this.#validator) return [];
+    if (this.#validator === undefined) return [];
     const errors = await this.#validator(value);
-    if (errors) return transformErrors(errors);
-    else return [];
+    if (errors === null) return [];
+    else return transformErrors(errors);
   }
 
   /**
@@ -845,7 +857,7 @@ export abstract class AbstractNode<
    * @note Only works for rootNode
    */
   async #handleValidation(this: AbstractNode) {
-    if (!this.isRoot) return;
+    if (this.isRoot === false || this.#validator === undefined) return;
 
     const internalErrors = await this.#validate(this.#enhancedValue);
 
@@ -915,7 +927,8 @@ export abstract class AbstractNode<
       this.#validator =
         validatorFactory?.(this.jsonSchema as JsonSchema) ||
         PluginManager.validator?.compile(this.jsonSchema as JsonSchema);
-      if (this.validation) this.#enhancer = getEmptyValue(this.type);
+      if (this.#validator !== undefined)
+        this.#enhancer = getEmptyValue(this.schemaType);
     } catch (error: any) {
       this.#validator = getFallbackValidator(error, this.jsonSchema);
     }

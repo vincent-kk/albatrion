@@ -17,7 +17,7 @@ describe('computeFactory', () => {
       },
     };
 
-    const compute = computeFactory(schema, rootSchema);
+    const compute = computeFactory(schema.type, schema, rootSchema);
 
     expect(compute).toHaveProperty('visible');
     expect(compute).toHaveProperty('readOnly');
@@ -43,7 +43,7 @@ describe('computeFactory', () => {
       },
     };
 
-    const compute = computeFactory(schema, rootSchema);
+    const compute = computeFactory(schema.type, schema, rootSchema);
 
     expect(compute.dependencyPaths).toContain('/enabled');
 
@@ -71,7 +71,7 @@ describe('computeFactory', () => {
       },
     };
 
-    const compute = computeFactory(schema, rootSchema);
+    const compute = computeFactory(schema.type, schema, rootSchema);
 
     expect(compute.dependencyPaths).toContain('/prepared');
 
@@ -95,7 +95,7 @@ describe('computeFactory', () => {
       type: 'object',
     };
 
-    const compute = computeFactory(schema, rootSchema);
+    const compute = computeFactory(schema.type, schema, rootSchema);
 
     // Test that the function works correctly
     if (compute.disabled) {
@@ -125,7 +125,7 @@ describe('computeFactory', () => {
       },
     };
 
-    const compute = computeFactory(schema, rootSchema);
+    const compute = computeFactory(schema.type, schema, rootSchema);
 
     // Test that the function works correctly
 
@@ -150,7 +150,7 @@ describe('computeFactory', () => {
     };
     const rootSchema: any = { type: 'object' };
 
-    const compute = computeFactory(schema, rootSchema);
+    const compute = computeFactory(schema.type, schema, rootSchema);
 
     expect(compute.dependencyPaths).toContain('/field1');
     expect(compute.dependencyPaths).toContain('/field2');
@@ -173,7 +173,7 @@ describe('computeFactory', () => {
     };
     const rootSchema: any = { type: 'object' };
 
-    const compute = computeFactory(schema, rootSchema);
+    const compute = computeFactory(schema.type, schema, rootSchema);
 
     expect(compute.dependencyPaths).toContain('/dependency1');
     expect(compute.dependencyPaths).toContain('/dependency2');
@@ -195,7 +195,7 @@ describe('computeFactory', () => {
     };
     const rootSchema: any = { type: 'object' };
 
-    const compute = computeFactory(schema, rootSchema);
+    const compute = computeFactory(schema.type, schema, rootSchema);
 
     expect(compute.dependencyPaths).toEqual([]);
 
@@ -219,8 +219,16 @@ describe('computeFactory', () => {
     };
     const rootSchema: any = { type: 'object' };
 
-    const visibleCompute = computeFactory(visibleSchema, rootSchema);
-    const readOnlyCompute = computeFactory(readOnlySchema, rootSchema);
+    const visibleCompute = computeFactory(
+      visibleSchema.type,
+      visibleSchema,
+      rootSchema,
+    );
+    const readOnlyCompute = computeFactory(
+      readOnlySchema.type,
+      readOnlySchema,
+      rootSchema,
+    );
 
     expect(visibleCompute.dependencyPaths).toEqual([]);
     expect(readOnlyCompute.dependencyPaths).toEqual([]);
@@ -244,7 +252,7 @@ describe('computeFactory', () => {
     };
     const rootSchema: any = { type: 'object' };
 
-    const compute = computeFactory(schema, rootSchema);
+    const compute = computeFactory(schema.type, schema, rootSchema);
 
     expect(compute.dependencyPaths).toContain('/field1');
     expect(compute.dependencyPaths).toContain('field2');
@@ -267,7 +275,7 @@ describe('computeFactory', () => {
     };
     const rootSchema: any = { type: 'object' };
 
-    const compute = computeFactory(schema, rootSchema);
+    const compute = computeFactory(schema.type, schema, rootSchema);
 
     // Check that some dependencies were processed
     expect(compute.dependencyPaths.length).toBeGreaterThanOrEqual(0);

@@ -136,7 +136,7 @@ describe('ObjectNode nullable functionality', () => {
         type: 'object',
         properties: {
           metadata: {
-            type: 'object',
+            type: ['object', 'null'],
             nullable: true,
             default: null,
             properties: {
@@ -386,7 +386,7 @@ describe('ObjectNode nullable functionality', () => {
           type: 'object',
           properties: {
             config: {
-              type: 'object',
+              type: ['object', 'null'],
               terminal: true,
               nullable: true,
               default: null,
@@ -414,7 +414,7 @@ describe('ObjectNode nullable functionality', () => {
           type: 'object',
           properties: {
             settings: {
-              type: 'object',
+              type: ['object', 'null'],
               terminal: true,
               nullable: true,
               default: null,
@@ -444,7 +444,7 @@ describe('ObjectNode nullable functionality', () => {
           type: 'object',
           properties: {
             user: {
-              type: 'object',
+              type: ['object', 'null'],
               terminal: true,
               nullable: true,
               default: null,
@@ -454,7 +454,7 @@ describe('ObjectNode nullable functionality', () => {
               },
             },
             metadata: {
-              type: 'object',
+              type: ['object', 'null'],
               terminal: true,
               nullable: true,
               default: null,

@@ -1,5 +1,7 @@
 import { Space } from 'antd-mobile';
 
+import { isArraySchema } from '@winglet/json-schema/filter';
+
 import type { FormTypeRendererProps } from '@canard/schema-form';
 
 export const FormGroup = ({
@@ -23,7 +25,7 @@ export const FormGroup = ({
     return (
       <Space direction="vertical" block>
         <div>
-          {node.parentNode?.type !== 'array' && (
+          {node.parentNode && isArraySchema(node.parentNode) === false && (
             <label htmlFor={path}>
               {name}
               {required && (

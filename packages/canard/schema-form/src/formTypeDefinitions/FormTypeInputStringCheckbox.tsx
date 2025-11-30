@@ -1,6 +1,7 @@
 import { type ChangeEvent, type ReactNode, useMemo } from 'react';
 
 import { map } from '@winglet/common-utils/array';
+import { isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
@@ -87,9 +88,9 @@ const FormTypeInputStringCheckbox = ({
 
 export const FormTypeInputStringCheckboxDefinition = {
   Component: FormTypeInputStringCheckbox,
-  test: ({ jsonSchema }) =>
-    jsonSchema.type === 'array' &&
+  test: ({ type, jsonSchema }) =>
+    type === 'array' &&
     jsonSchema.formType === 'checkbox' &&
-    jsonSchema.items?.type === 'string' &&
+    isStringSchema(jsonSchema.items) &&
     !!jsonSchema.items?.enum?.length,
 } satisfies FormTypeInputDefinition;

@@ -175,7 +175,9 @@ export const FormTypeInputArrayTerminalRef = () => {
               <div>{value?.join(',')}</div>
               <div>
                 <button
-                  onClick={() => onChange((prev) => [...prev, 'NEW ITEM'])}
+                  onClick={() =>
+                    onChange((prev) => [...(prev || []), 'NEW ITEM'])
+                  }
                 >
                   onChange
                 </button>

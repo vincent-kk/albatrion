@@ -73,11 +73,13 @@ interface JsonSchemaScannerProps<ContextType> {
  * @example
  * Schema transformation with mutation:
  * ```typescript
+ * import { isStringSchema } from '@winglet/json-schema/filter';
+ *
  * const transformScanner = new JsonSchemaScanner({
  *   options: {
  *     mutate: (entry) => {
- *       // Add default titles to string fields
- *       if (entry.schema.type === 'string' && !entry.schema.title) {
+ *       // Add default titles to string fields (handles both nullable and non-nullable)
+ *       if (isStringSchema(entry.schema) && !entry.schema.title) {
  *         return {
  *           ...entry.schema,
  *           title: `Field at ${entry.dataPath}`
@@ -120,6 +122,8 @@ interface JsonSchemaScannerProps<ContextType> {
  * @example
  * Conditional processing with filtering:
  * ```typescript
+ * import { isStringSchema, isObjectSchema } from '@winglet/json-schema/filter';
+ *
  * interface AnalysisContext {
  *   stringFieldCount: number;
  *   objectFieldCount: number;
@@ -135,8 +139,9 @@ interface JsonSchemaScannerProps<ContextType> {
  *   },
  *   visitor: {
  *     enter: (entry, context) => {
- *       if (entry.schema.type === 'string') context.stringFieldCount++;
- *       if (entry.schema.type === 'object') context.objectFieldCount++;
+ *       // Use filter functions to handle both nullable and non-nullable types
+ *       if (isStringSchema(entry.schema)) context.stringFieldCount++;
+ *       if (isObjectSchema(entry.schema)) context.objectFieldCount++;
  *     }
  *   }
  * });

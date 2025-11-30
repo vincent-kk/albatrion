@@ -1,4 +1,7 @@
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type {
+  JsonSchemaType,
+  JsonSchemaWithVirtual,
+} from '@/schema-form/types';
 
 import { checkComputedOptionFactory } from './utils/checkComputedOptionFactory';
 import {
@@ -15,12 +18,13 @@ import { getPathManager } from './utils/getPathManager';
  * @returns Computed property functions
  */
 export const computeFactory = (
+  type: JsonSchemaType,
   schema: JsonSchemaWithVirtual,
   rootSchema: JsonSchemaWithVirtual,
 ) => {
   const checkComputedOption = checkComputedOptionFactory(schema, rootSchema);
-  const getConditionIndex = getConditionIndexFactory(schema);
-  const getConditionIndices = getConditionIndicesFactory(schema);
+  const getConditionIndex = getConditionIndexFactory(type, schema);
+  const getConditionIndices = getConditionIndicesFactory(type, schema);
   const getObservedValues = getObservedValuesFactory(schema);
   const pathManager = getPathManager();
   return {

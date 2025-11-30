@@ -1,0 +1,1 @@
+export { getMergeSchemaHandler } from './getMergeSchemaHandler';

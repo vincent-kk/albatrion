@@ -12,7 +12,7 @@ describe('getConditionIndicesFactory', () => {
     // type이 object가 아닌 경우
     const schema1 = { type: 'string' } as JsonSchemaWithVirtual;
     expect(
-      getConditionIndicesFactory(schema1)(pathManager, 'oneOf', 'if'),
+      getConditionIndicesFactory('string', schema1)(pathManager, 'oneOf', 'if'),
     ).toBeUndefined();
 
     // oneOf가 배열이 아닌 경우
@@ -21,13 +21,13 @@ describe('getConditionIndicesFactory', () => {
       oneOf: 'invalid',
     } as unknown as JsonSchemaWithVirtual;
     expect(
-      getConditionIndicesFactory(schema2)(pathManager, 'oneOf', 'if'),
+      getConditionIndicesFactory('object', schema2)(pathManager, 'oneOf', 'if'),
     ).toBeUndefined();
 
     // oneOf가 없는 경우
     const schema3 = { type: 'object' } as JsonSchemaWithVirtual;
     expect(
-      getConditionIndicesFactory(schema3)(pathManager, 'oneOf', 'if'),
+      getConditionIndicesFactory('object', schema3)(pathManager, 'oneOf', 'if'),
     ).toBeUndefined();
   });
 
@@ -39,7 +39,7 @@ describe('getConditionIndicesFactory', () => {
     } as unknown as JsonSchemaWithVirtual;
 
     expect(
-      getConditionIndicesFactory(schema)(pathManager, 'oneOf', 'if'),
+      getConditionIndicesFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if'),
     ).toBeUndefined();
   });
 
@@ -54,7 +54,7 @@ describe('getConditionIndicesFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -82,7 +82,7 @@ describe('getConditionIndicesFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'anyOf',
       'if',
@@ -117,7 +117,7 @@ describe('getConditionIndicesFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'allOf',
       'if',
@@ -151,7 +151,7 @@ describe('getConditionIndicesFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'anyOf',
       'if',
@@ -178,7 +178,7 @@ describe('getConditionIndicesFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -203,7 +203,7 @@ describe('getConditionIndicesFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -225,7 +225,7 @@ describe('getConditionIndicesFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -252,7 +252,7 @@ describe('getConditionIndicesFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'anyOf',
       'if',
@@ -282,7 +282,7 @@ describe('getConditionIndicesFactory', () => {
     } as unknown as JsonSchemaWithVirtual;
 
     expect(() => {
-      getConditionIndicesFactory(schema)(pathManager, 'oneOf', 'if');
+      getConditionIndicesFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
     }).toThrow('Failed to create dynamic function');
   });
 
@@ -298,7 +298,7 @@ describe('getConditionIndicesFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -321,7 +321,7 @@ describe('getConditionIndicesFactory', () => {
       ],
     } as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -344,7 +344,7 @@ describe('getConditionIndicesFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -369,7 +369,7 @@ describe('getConditionIndicesFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -396,7 +396,7 @@ describe('getConditionIndicesFactory', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -421,7 +421,7 @@ describe('getConditionIndicesFactory with different fields', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'allOf',
       'if',
@@ -446,7 +446,7 @@ describe('getConditionIndicesFactory with different fields', () => {
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'anyOf',
       'if',
@@ -489,7 +489,7 @@ describe('getConditionIndicesFactory with properties const/enum conditions', () 
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -539,7 +539,7 @@ describe('getConditionIndicesFactory with properties const/enum conditions', () 
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -592,7 +592,7 @@ describe('getConditionIndicesFactory with properties const/enum conditions', () 
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -638,7 +638,7 @@ describe('getConditionIndicesFactory with properties const/enum conditions', () 
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -682,7 +682,7 @@ describe('getConditionIndicesFactory with properties const/enum conditions', () 
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -723,7 +723,7 @@ describe('getConditionIndicesFactory with properties const/enum conditions', () 
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -769,7 +769,7 @@ describe('getConditionIndicesFactory with properties const/enum conditions', () 
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -804,7 +804,7 @@ describe('getConditionIndicesFactory with properties const/enum conditions', () 
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -843,7 +843,7 @@ describe('getConditionIndicesFactory with properties const/enum conditions', () 
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'oneOf',
       'if',
@@ -892,7 +892,7 @@ describe('getConditionIndicesFactory with properties const/enum conditions', () 
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'anyOf',
       'if',
@@ -943,7 +943,7 @@ describe('getConditionIndicesFactory with properties const/enum conditions', () 
       ],
     } as unknown as JsonSchemaWithVirtual;
 
-    const result = getConditionIndicesFactory(schema)(
+    const result = getConditionIndicesFactory(schema.type as any, schema)(
       pathManager,
       'anyOf',
       'if',

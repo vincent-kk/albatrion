@@ -16,6 +16,8 @@ import {
  * Manages and parses boolean values.
  */
 export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
+  public override readonly type = 'boolean';
+
   /** Current value of the boolean node */
   #value: BooleanValue | Nullish = undefined;
 
@@ -53,6 +55,8 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
     scope,
     variant,
     jsonSchema,
+    schemaType,
+    nullable,
     defaultValue,
     onChange,
     parentNode,
@@ -65,6 +69,8 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
       scope,
       variant,
       jsonSchema,
+      schemaType,
+      nullable,
       defaultValue,
       onChange,
       parentNode,

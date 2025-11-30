@@ -17,6 +17,8 @@ import {
  * Manages and parses string values.
  */
 export class StringNode extends AbstractNode<StringSchema, StringValue> {
+  public override readonly type = 'string';
+
   /** Current value of the string node */
   #value: StringValue | Nullish = undefined;
 
@@ -56,6 +58,8 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     scope,
     variant,
     jsonSchema,
+    schemaType,
+    nullable,
     defaultValue,
     onChange,
     parentNode,
@@ -68,6 +72,8 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
       scope,
       variant,
       jsonSchema,
+      schemaType,
+      nullable,
       defaultValue,
       onChange,
       parentNode,

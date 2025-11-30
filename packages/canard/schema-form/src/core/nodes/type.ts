@@ -23,6 +23,7 @@ import type {
   BooleanSchema,
   InferValueType,
   JsonSchemaError,
+  JsonSchemaType,
   JsonSchemaWithRef,
   JsonSchemaWithVirtual,
   NullSchema,
@@ -43,6 +44,7 @@ import type { VirtualNode } from './VirtualNode';
 
 /**
  * Compile-time utility that maps a JSON Schema to its concrete `SchemaNode` implementation.
+ * Supports both regular schemas (e.g., NumberSchema) and nullable schemas (e.g., NumberNullableSchema).
  * Falls back to the broad `SchemaNode` union when the schema type cannot be narrowed.
  * @typeParam Schema - JSON Schema used as the basis for node inference
  */
@@ -126,6 +128,8 @@ export interface SchemaNodeConstructorProps<
   scope?: string;
   variant?: number;
   jsonSchema: Schema;
+  schemaType: JsonSchemaType;
+  nullable: boolean;
   defaultValue?: Value;
   onChange: HandleChange<Value>;
   parentNode?: SchemaNode;
@@ -165,9 +169,11 @@ export type NodeFactoryProps<Schema extends JsonSchemaWithVirtual> = Omit<
   SchemaNodeConstructorProps<Schema> &
     BranchNodeConstructorProps<Schema> &
     VirtualNodeConstructorProps<Schema>,
-  'jsonSchema'
+  'jsonSchema' | 'schemaType' | 'nullable'
 > & {
   jsonSchema: JsonSchemaWithRef;
+  schemaType?: JsonSchemaType;
+  nullable?: boolean;
 };
 
 /** Callback signature invoked when a `NodeEvent` is published by a node. */

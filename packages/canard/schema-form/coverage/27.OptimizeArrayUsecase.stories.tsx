@@ -17,7 +17,7 @@ export const FormTypeInputArrayTerminal_Controlled = () => {
           return (
             <input
               type="text"
-              value={value.join('')}
+              value={value?.join('')}
               onChange={(e) => {
                 onChange(e.target.value.split(''));
               }}

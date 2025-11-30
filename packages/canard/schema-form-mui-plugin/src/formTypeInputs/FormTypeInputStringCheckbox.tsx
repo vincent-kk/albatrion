@@ -2,6 +2,7 @@ import { type ReactNode, useMemo, useState } from 'react';
 
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 
+import { isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
@@ -131,7 +132,6 @@ export const FormTypeInputStringCheckboxDefinition = {
   test: ({ type, formType, jsonSchema }) =>
     type === 'array' &&
     formType === 'checkbox' &&
-    jsonSchema.items?.type === 'string' &&
-    jsonSchema.items?.enum &&
-    jsonSchema.items.enum.length > 0,
+    isStringSchema(jsonSchema.items) &&
+    !!jsonSchema.items?.enum?.length,
 } satisfies FormTypeInputDefinition;

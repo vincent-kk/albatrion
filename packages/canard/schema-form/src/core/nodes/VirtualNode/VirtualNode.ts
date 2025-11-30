@@ -19,6 +19,8 @@ import {
  * Holds references to multiple nodes and works by integrating them.
  */
 export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
+  public override readonly type = 'virtual';
+
   /** Current value of the virtual node */
   #value: VirtualNodeValue = [];
 
@@ -70,6 +72,8 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     scope,
     variant,
     jsonSchema,
+    schemaType,
+    nullable,
     defaultValue,
     onChange,
     parentNode,
@@ -83,6 +87,8 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
       scope,
       variant,
       jsonSchema,
+      schemaType,
+      nullable,
       defaultValue,
       onChange,
       parentNode,

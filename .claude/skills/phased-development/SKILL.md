@@ -295,36 +295,39 @@
 
 ### 기본 컴포넌트 매핑
 
-| FormTypeInput | MUI Component | 우선순위 | 난이도 | 비고 |
-|---------------|---------------|----------|--------|------|
-| String | TextField | P1 | 쉬움 | 기본 |
-| Number | TextField (type="number") | P1 | 쉬움 | 기본 |
-| Boolean | Checkbox / Switch | P1 | 쉬움 | 기본 |
-| Textarea | TextField (multiline) | P2 | 쉬움 | format: textarea |
-| Password | TextField (type="password") | P2 | 쉬움 | format: password |
-| Email | TextField (type="email") | P2 | 쉬움 | format: email |
-| Date | DatePicker (@mui/x) | P2 | 중간 | 별도 패키지, ISO 변환 |
-| Time | TimePicker (@mui/x) | P2 | 중간 | 별도 패키지, ISO 변환 |
-| StringEnum | Select / RadioGroup | P2 | 중간 | 개수 기반 선택 |
-| NumberEnum | Select | P2 | 중간 | - |
-| Slider | Slider | P3 | 중간 | formType: slider |
-| Array | Box + Button | P2 | 어려움 | ChildNodeComponents |
-| Object | Box | P2 | 쉬움 | ChildNodeComponents |
+| FormTypeInput | MUI Component               | 우선순위 | 난이도 | 비고                  |
+| ------------- | --------------------------- | -------- | ------ | --------------------- |
+| String        | TextField                   | P1       | 쉬움   | 기본                  |
+| Number        | TextField (type="number")   | P1       | 쉬움   | 기본                  |
+| Boolean       | Checkbox / Switch           | P1       | 쉬움   | 기본                  |
+| Textarea      | TextField (multiline)       | P2       | 쉬움   | format: textarea      |
+| Password      | TextField (type="password") | P2       | 쉬움   | format: password      |
+| Email         | TextField (type="email")    | P2       | 쉬움   | format: email         |
+| Date          | DatePicker (@mui/x)         | P2       | 중간   | 별도 패키지, ISO 변환 |
+| Time          | TimePicker (@mui/x)         | P2       | 중간   | 별도 패키지, ISO 변환 |
+| StringEnum    | Select / RadioGroup         | P2       | 중간   | 개수 기반 선택        |
+| NumberEnum    | Select                      | P2       | 중간   | -                     |
+| Slider        | Slider                      | P3       | 중간   | formType: slider      |
+| Array         | Box + Button                | P2       | 어려움 | ChildNodeComponents   |
+| Object        | Box                         | P2       | 쉬움   | ChildNodeComponents   |
 
 ### 특수 고려사항
 
 **DatePicker/TimePicker**:
+
 - ✅ 장점: @mui/x-date-pickers 공식 지원
 - ⚠️ 주의: 별도 패키지 필요, date-fns 어댑터 설치
 - 🔧 구현: ISO 8601 ↔ Date 객체 변환 필수
 - 📦 의존성: `@mui/x-date-pickers`, `date-fns`
 
 **Slider**:
+
 - ✅ 장점: MUI Slider 컴포넌트 기본 제공
 - 🔧 구현: formType: 'slider' 조건 추가
 - 📋 Schema 예시: `{ type: 'number', formType: 'slider', minimum: 0, maximum: 100 }`
 
 **Array/Object**:
+
 - ✅ 장점: Box, Paper 컴포넌트로 깔끔한 레이아웃 가능
 - 🔧 구현: ChildNodeComponents 활용, IconButton으로 삭제
 - 🎨 스타일: Paper + sx prop으로 depth 표현
@@ -343,19 +346,19 @@ export interface MuiFormContext {
    * 전역 컴포넌트 크기
    * @default 'medium'
    */
-  size?: 'small' | 'medium' | 'large';
+  size?: "small" | "medium" | "large";
 
   /**
    * 전역 TextField variant
    * @default 'outlined'
    */
-  variant?: 'standard' | 'outlined' | 'filled';
+  variant?: "standard" | "outlined" | "filled";
 
   /**
    * 전역 색상 테마
    * @default 'primary'
    */
-  color?: 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
+  color?: "primary" | "secondary" | "error" | "info" | "success" | "warning";
 
   /**
    * 파일 업로드 콜백 (Phase 4 또는 2차 버전)
@@ -393,6 +396,7 @@ export interface MuiFormContext {
 ## 구현 우선순위 및 일정
 
 ### Phase 1: 설계 및 검증 (2일)
+
 **날짜**: 2025-01-20 ~ 2025-01-21
 
 - [x] 호환성 매트릭스 작성
@@ -401,43 +405,52 @@ export interface MuiFormContext {
 - [ ] package.json 초안
 
 **결정사항**:
+
 - DatePicker는 Phase 3에 구현 (date-fns 학습 필요)
 - Slider는 Phase 4로 미룸 (P3 우선순위)
 - Array/Object는 Phase 3에 포함 (MVP에 필요)
 
 ### Phase 2: 기본 인프라 (3일)
+
 **예상 날짜**: 2025-01-22 ~ 2025-01-24
 
 **Priority 1: 프로젝트 설정**
+
 - [ ] yarn create 및 패키지 초기화
 - [ ] tsconfig.json, rollup.config.js 설정
 - [ ] @canard/schema-form peerDependencies 설정
 - [ ] MUI 의존성 설치
 
 **Priority 2: 타입 및 렌더러**
+
 - [ ] src/type.ts 완성
 - [ ] FormGroup, FormLabel, FormInput, FormError 구현
 - [ ] formatError 헬퍼 함수
 
 ### Phase 3: 핵심 컴포넌트 (5일)
+
 **예상 날짜**: 2025-01-25 ~ 2025-01-29
 
 **Day 1-2: P1 기본 Input**
+
 - [ ] FormTypeInputString
 - [ ] FormTypeInputNumber
 - [ ] FormTypeInputBoolean (Checkbox)
 
 **Day 3-4: P2 특수 Format**
+
 - [ ] FormTypeInputTextarea
 - [ ] FormTypeInputPassword
 - [ ] FormTypeInputEmail
 
 **Day 5: Enum 및 구조**
+
 - [ ] FormTypeInputStringEnum (Select 또는 RadioGroup)
 - [ ] FormTypeInputArray (간단 버전)
 - [ ] formTypeInputDefinitions 우선순위 정렬
 
 ### Phase 4: 고급 기능 (3일)
+
 **예상 날짜**: 2025-01-30 ~ 2025-02-01
 
 - [ ] FormTypeInputDate (DatePicker)
@@ -446,6 +459,7 @@ export interface MuiFormContext {
 - [ ] Storybook stories 3-5개
 
 ### Phase 5: 최적화 (2일)
+
 **예상 날짜**: 2025-02-02 ~ 2025-02-03
 
 - [ ] 성능 최적화 체크리스트
@@ -505,6 +519,7 @@ export interface MuiFormContext {
 ```
 
 **Phase 1 완료 조건**:
+
 - ✅ 호환성 매트릭스 완성
 - ✅ Context 타입 설계 완료
 - ✅ 우선순위 및 일정 결정
@@ -583,7 +598,7 @@ export interface AntdFormContext {
    * 전역 컴포넌트 크기
    * @default 'middle'
    */
-  size?: 'small' | 'middle' | 'large';
+  size?: "small" | "middle" | "large";
 
   /**
    * 전역 Input variant (Ant Design은 variant 없음, bordered로 제어)
@@ -594,7 +609,7 @@ export interface AntdFormContext {
   /**
    * ConfigProvider의 componentSize 연동
    */
-  componentSize?: 'small' | 'middle' | 'large';
+  componentSize?: "small" | "middle" | "large";
 
   /**
    * 파일 업로드 콜백 (Phase 4)
@@ -611,7 +626,7 @@ export interface AntdFormContext {
 /**
  * 재사용 타입
  */
-export type { FormTypeInputPropsWithSchema } from '@canard/schema-form';
+export type { FormTypeInputPropsWithSchema } from "@canard/schema-form";
 ```
 
 #### Step 4: 기본 렌더러 구현 (FormGroup)
@@ -737,13 +752,13 @@ export const formatError = (error: FormTypeError): string => {
 
 ```typescript
 // src/index.ts
-import type { SchemaFormPlugin } from '@canard/schema-form';
+import type { SchemaFormPlugin } from "@canard/schema-form";
 
-import { FormError } from './components/FormError';
-import { FormGroup } from './components/FormGroup';
-import { FormInput } from './components/FormInput';
-import { FormLabel } from './components/FormLabel';
-import { formatError } from './components/formatError';
+import { FormError } from "./components/FormError";
+import { FormGroup } from "./components/FormGroup";
+import { FormInput } from "./components/FormInput";
+import { FormLabel } from "./components/FormLabel";
+import { formatError } from "./components/formatError";
 
 /**
  * Ant Design v5 플러그인
@@ -758,52 +773,52 @@ export const plugin = {
   formTypeInputDefinitions: [], // ⚠️ Phase 3에서 구현
 } satisfies SchemaFormPlugin;
 
-export type * from './type';
+export type * from "./type";
 ```
 
 #### Step 8: rollup.config.js 설정
 
 ```javascript
 // rollup.config.js
-import typescript from '@rollup/plugin-typescript';
-import dts from 'rollup-plugin-dts';
+import typescript from "@rollup/plugin-typescript";
+import dts from "rollup-plugin-dts";
 
 export default [
   // ESM 및 CJS 빌드
   {
-    input: 'src/index.ts',
+    input: "src/index.ts",
     output: [
       {
-        file: 'dist/index.esm.js',
-        format: 'esm',
+        file: "dist/index.esm.js",
+        format: "esm",
         sourcemap: true,
       },
       {
-        file: 'dist/index.cjs.js',
-        format: 'cjs',
+        file: "dist/index.cjs.js",
+        format: "cjs",
         sourcemap: true,
       },
     ],
     external: [
-      'react',
-      'react-dom',
-      'antd',
-      '@canard/schema-form',
-      '@winglet/react-utils',
+      "react",
+      "react-dom",
+      "antd",
+      "@canard/schema-form",
+      "@winglet/react-utils",
     ],
     plugins: [
       typescript({
-        tsconfig: './tsconfig.json',
+        tsconfig: "./tsconfig.json",
         declaration: false, // dts 플러그인이 처리
       }),
     ],
   },
   // 타입 선언 파일 번들
   {
-    input: 'src/index.ts',
+    input: "src/index.ts",
     output: {
-      file: 'dist/index.d.ts',
-      format: 'esm',
+      file: "dist/index.d.ts",
+      format: "esm",
     },
     external: [/\.css$/],
     plugins: [dts()],
@@ -833,6 +848,7 @@ ls -la dist/
 ```
 
 **Phase 2 완료 조건**:
+
 - ✅ 빌드 성공 (`yarn build`)
 - ✅ 타입 체크 통과 (`yarn typecheck`)
 - ✅ 기본 렌더러 5개 구현 완료 (FormGroup, FormLabel, FormInput, FormError, formatError)
@@ -944,7 +960,7 @@ const FormTypeInputNumber = ({ /* ...props */ }: FormTypeInputNumberProps) => {
 export const FormTypeInputNumberDefinition = {
   Component: FormTypeInputNumber,
   test: (params) => {
-    return params.jsonSchema.type === 'number' || params.jsonSchema.type === 'integer';
+    return params.type === 'number' || params.type === 'integer';
   },
 } satisfies FormTypeInputDefinition;
 ```
@@ -983,6 +999,7 @@ export const FormTypeInputBooleanDefinition = {
 ```
 
 **Day 1-2 완료**:
+
 - ✅ FormTypeInputString
 - ✅ FormTypeInputNumber
 - ✅ FormTypeInputBoolean
@@ -1043,6 +1060,7 @@ export const FormTypeInputPasswordDefinition = {
 ```
 
 **Day 3-4 완료**:
+
 - ✅ FormTypeInputTextarea
 - ✅ FormTypeInputPassword
 - ✅ FormTypeInputEmail (Input type="email")
@@ -1093,7 +1111,7 @@ export const FormTypeInputStringEnumDefinition = {
   Component: FormTypeInputStringEnum,
   test: ({ jsonSchema }) => {
     return (
-      jsonSchema.type === 'string' &&
+      .type === 'string' &&
       Array.isArray(jsonSchema.enum) &&
       jsonSchema.enum.length > 0
     );
@@ -1159,40 +1177,41 @@ export const FormTypeInputArrayDefinition = {
 
 ```typescript
 // src/formTypeInputs/index.ts
-import type { FormTypeInputDefinition } from '@canard/schema-form';
+import type { FormTypeInputDefinition } from "@canard/schema-form";
 
 // ⚠️ 순서가 매우 중요! 구체적 조건이 앞에 와야 함
 
 export const formTypeInputDefinitions: FormTypeInputDefinition[] = [
   // === Phase 1: 가장 구체적 (format + type) ===
-  FormTypeInputPasswordDefinition,     // type: string, format: password
-  FormTypeInputTextareaDefinition,     // type: string, format: textarea
-  FormTypeInputEmailDefinition,        // type: string, format: email
+  FormTypeInputPasswordDefinition, // type: string, format: password
+  FormTypeInputTextareaDefinition, // type: string, format: textarea
+  FormTypeInputEmailDefinition, // type: string, format: email
 
   // === Phase 2: Enum 조건 (함수 형태) ===
-  FormTypeInputStringEnumDefinition,   // type: string, enum exists
+  FormTypeInputStringEnumDefinition, // type: string, enum exists
 
   // === Phase 3: 구조 타입 ===
-  FormTypeInputArrayDefinition,        // type: array
+  FormTypeInputArrayDefinition, // type: array
 
   // === Phase 4: 일반 타입 (마지막!) ===
-  FormTypeInputNumberDefinition,       // type: number | integer
-  FormTypeInputBooleanDefinition,      // type: boolean
-  FormTypeInputStringDefinition,       // type: string (가장 일반적 - 마지막!)
+  FormTypeInputNumberDefinition, // type: number | integer
+  FormTypeInputBooleanDefinition, // type: boolean
+  FormTypeInputStringDefinition, // type: string (가장 일반적 - 마지막!)
 ];
 
 // ✅ 모든 Definition export
-export * from './FormTypeInputString';
-export * from './FormTypeInputNumber';
-export * from './FormTypeInputBoolean';
-export * from './FormTypeInputTextarea';
-export * from './FormTypeInputPassword';
-export * from './FormTypeInputEmail';
-export * from './FormTypeInputStringEnum';
-export * from './FormTypeInputArray';
+export * from "./FormTypeInputString";
+export * from "./FormTypeInputNumber";
+export * from "./FormTypeInputBoolean";
+export * from "./FormTypeInputTextarea";
+export * from "./FormTypeInputPassword";
+export * from "./FormTypeInputEmail";
+export * from "./FormTypeInputStringEnum";
+export * from "./FormTypeInputArray";
 ```
 
 **Phase 3 완료 조건**:
+
 - ✅ P1 컴포넌트 모두 구현 (String, Number, Boolean)
 - ✅ P2 컴포넌트 선택 구현 (Textarea, Password, Email)
 - ✅ Enum 및 Array 구현
@@ -1201,9 +1220,15 @@ export * from './FormTypeInputArray';
 
 ```typescript
 // src/index.ts 최종
-import type { SchemaFormPlugin } from '@canard/schema-form';
-import { formTypeInputDefinitions } from './formTypeInputs';
-import { FormGroup, FormLabel, FormInput, FormError, formatError } from './components';
+import type { SchemaFormPlugin } from "@canard/schema-form";
+import { formTypeInputDefinitions } from "./formTypeInputs";
+import {
+  FormGroup,
+  FormLabel,
+  FormInput,
+  FormError,
+  formatError,
+} from "./components";
 
 export const plugin = {
   FormGroup,
@@ -1211,11 +1236,11 @@ export const plugin = {
   FormInput,
   FormError,
   formatError,
-  formTypeInputDefinitions,  // ✅ Phase 3에서 추가됨
+  formTypeInputDefinitions, // ✅ Phase 3에서 추가됨
 } satisfies SchemaFormPlugin;
 
-export type * from './type';
-export * from './formTypeInputs';  // 개별 Definition export
+export type * from "./type";
+export * from "./formTypeInputs"; // 개별 Definition export
 ```
 
 **다음 단계**: Phase 4로 진행, DatePicker 추가 및 문서화
@@ -1230,7 +1255,7 @@ export * from './formTypeInputs';  // 개별 Definition export
 
 #### Step 1: README.md 작성
 
-```markdown
+````markdown
 # @canard/schema-form-chakra-ui-plugin
 
 Chakra UI v2 plugin for [@canard/schema-form](https://github.com/your-org/canard-schema-form).
@@ -1242,8 +1267,10 @@ npm install @canard/schema-form-chakra-ui-plugin
 # or
 yarn add @canard/schema-form-chakra-ui-plugin
 ```
+````
 
 **Peer Dependencies** (required):
+
 ```bash
 npm install @canard/schema-form @chakra-ui/react react react-dom
 ```
@@ -1251,16 +1278,16 @@ npm install @canard/schema-form @chakra-ui/react react react-dom
 ## Quick Start
 
 ```tsx
-import { SchemaForm } from '@canard/schema-form';
-import { plugin as chakraPlugin } from '@canard/schema-form-chakra-ui-plugin';
-import { ChakraProvider } from '@chakra-ui/react';
+import { SchemaForm } from "@canard/schema-form";
+import { plugin as chakraPlugin } from "@canard/schema-form-chakra-ui-plugin";
+import { ChakraProvider } from "@chakra-ui/react";
 
 const schema = {
-  type: 'object',
+  type: "object",
   properties: {
-    name: { type: 'string', label: 'Name' },
-    age: { type: 'number', label: 'Age' },
-    subscribe: { type: 'boolean', label: 'Subscribe to newsletter' },
+    name: { type: "string", label: "Name" },
+    age: { type: "number", label: "Age" },
+    subscribe: { type: "boolean", label: "Subscribe to newsletter" },
   },
 };
 
@@ -1271,7 +1298,7 @@ function App() {
         schema={schema}
         plugin={chakraPlugin}
         context={{
-          size: 'md',
+          size: "md",
         }}
       />
     </ChakraProvider>
@@ -1297,24 +1324,24 @@ Configure global settings via `context` prop:
   schema={schema}
   plugin={chakraPlugin}
   context={{
-    size: 'sm' | 'md' | 'lg',        // Global component size
-    colorScheme: 'blue' | 'green',   // Color scheme
+    size: "sm" | "md" | "lg", // Global component size
+    colorScheme: "blue" | "green", // Color scheme
   }}
 />
 ```
 
 ## Supported FormTypeInputs
 
-| Type | Component | Priority | Notes |
-|------|-----------|----------|-------|
-| string | Input | P1 | Basic text input |
-| number | Input (type="number") | P1 | Number input |
-| boolean | Checkbox | P1 | Checkbox |
-| string (format: textarea) | Textarea | P2 | Multiline text |
-| string (format: password) | Input (type="password") | P2 | Password |
-| string (format: email) | Input (type="email") | P2 | Email |
-| string (enum) | Select | P2 | Dropdown |
-| array | VStack + Button | P2 | Dynamic array |
+| Type                      | Component               | Priority | Notes            |
+| ------------------------- | ----------------------- | -------- | ---------------- |
+| string                    | Input                   | P1       | Basic text input |
+| number                    | Input (type="number")   | P1       | Number input     |
+| boolean                   | Checkbox                | P1       | Checkbox         |
+| string (format: textarea) | Textarea                | P2       | Multiline text   |
+| string (format: password) | Input (type="password") | P2       | Password         |
+| string (format: email)    | Input (type="email")    | P2       | Email            |
+| string (enum)             | Select                  | P2       | Dropdown         |
+| array                     | VStack + Button         | P2       | Dynamic array    |
 
 ## Examples
 
@@ -1322,12 +1349,12 @@ Configure global settings via `context` prop:
 
 ```tsx
 const schema = {
-  type: 'object',
+  type: "object",
   properties: {
     description: {
-      type: 'string',
-      format: 'textarea',
-      label: 'Description',
+      type: "string",
+      format: "textarea",
+      label: "Description",
     },
   },
 };
@@ -1337,13 +1364,13 @@ const schema = {
 
 ```tsx
 const schema = {
-  type: 'object',
+  type: "object",
   properties: {
     country: {
-      type: 'string',
-      enum: ['USA', 'Canada', 'Mexico'],
-      enumLabels: ['United States', 'Canada', 'Mexico'],
-      label: 'Country',
+      type: "string",
+      enum: ["USA", "Canada", "Mexico"],
+      enumLabels: ["United States", "Canada", "Mexico"],
+      label: "Country",
     },
   },
 };
@@ -1353,12 +1380,12 @@ const schema = {
 
 ```tsx
 const schema = {
-  type: 'object',
+  type: "object",
   properties: {
     tags: {
-      type: 'array',
-      items: { type: 'string' },
-      label: 'Tags',
+      type: "array",
+      items: { type: "string" },
+      label: "Tags",
     },
   },
 };
@@ -1373,7 +1400,8 @@ MIT
 - [Documentation](https://your-docs-site.com)
 - [GitHub](https://github.com/your-org/canard-schema-form-chakra-ui-plugin)
 - [Issues](https://github.com/your-org/canard-schema-form-chakra-ui-plugin/issues)
-```
+
+````
 
 #### Step 2: Storybook Stories 작성
 
@@ -1454,7 +1482,7 @@ export const AllBasicTypes: Story = {
     context: { size: 'md' },
   },
 };
-```
+````
 
 #### Step 3: package.json 최종 확인
 
@@ -1516,6 +1544,7 @@ export const AllBasicTypes: Story = {
 ```
 
 **Phase 4 완료 조건**:
+
 - ✅ README.md 작성 완료
 - ✅ README-ko_kr.md 작성 (선택)
 - ✅ Storybook stories 3개 이상 작성
@@ -1534,7 +1563,7 @@ export const AllBasicTypes: Story = {
 
 #### Step 1: 성능 최적화 체크리스트 적용
 
-```markdown
+````markdown
 ## 성능 최적화 체크리스트
 
 ### 컴포넌트 최적화
@@ -1565,48 +1594,49 @@ ls -lh dist/
 # index.cjs.js: 47KB
 # index.d.ts: 8KB
 ```
+````
 
 #### Step 2: 접근성 검증
 
 ```tsx
 // tests/accessibility.test.tsx
-import { render } from '@testing-library/react';
-import { axe, toHaveNoViolations } from 'jest-axe';
-import { SchemaForm } from '@canard/schema-form';
-import { plugin as chakraPlugin } from '../src';
-import { ChakraProvider } from '@chakra-ui/react';
+import { render } from "@testing-library/react";
+import { axe, toHaveNoViolations } from "jest-axe";
+import { SchemaForm } from "@canard/schema-form";
+import { plugin as chakraPlugin } from "../src";
+import { ChakraProvider } from "@chakra-ui/react";
 
 expect.extend(toHaveNoViolations);
 
-describe('Accessibility', () => {
-  it('should have no a11y violations - basic inputs', async () => {
+describe("Accessibility", () => {
+  it("should have no a11y violations - basic inputs", async () => {
     const schema = {
-      type: 'object',
+      type: "object",
       properties: {
-        name: { type: 'string', label: 'Name' },
-        age: { type: 'number', label: 'Age' },
-        subscribe: { type: 'boolean', label: 'Subscribe' },
+        name: { type: "string", label: "Name" },
+        age: { type: "number", label: "Age" },
+        subscribe: { type: "boolean", label: "Subscribe" },
       },
     };
 
     const { container } = render(
       <ChakraProvider>
         <SchemaForm schema={schema} plugin={chakraPlugin} />
-      </ChakraProvider>
+      </ChakraProvider>,
     );
 
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
 
-  it('should have proper ARIA attributes', () => {
+  it("should have proper ARIA attributes", () => {
     const schema = {
-      type: 'object',
+      type: "object",
       properties: {
         email: {
-          type: 'string',
-          format: 'email',
-          label: 'Email',
+          type: "string",
+          format: "email",
+          label: "Email",
           required: true,
         },
       },
@@ -1615,14 +1645,14 @@ describe('Accessibility', () => {
     const { getByLabelText } = render(
       <ChakraProvider>
         <SchemaForm schema={schema} plugin={chakraPlugin} />
-      </ChakraProvider>
+      </ChakraProvider>,
     );
 
-    const input = getByLabelText('Email');
+    const input = getByLabelText("Email");
 
     // ✅ Chakra UI FormControl이 자동으로 추가
-    expect(input).toHaveAttribute('aria-required', 'true');
-    expect(input).toHaveAttribute('id');
+    expect(input).toHaveAttribute("aria-required", "true");
+    expect(input).toHaveAttribute("id");
   });
 });
 ```
@@ -1637,66 +1667,62 @@ yarn test accessibility.test.tsx
 
 ```tsx
 // tests/integration.test.tsx
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { SchemaForm } from '@canard/schema-form';
-import { plugin as chakraPlugin } from '../src';
-import { ChakraProvider } from '@chakra-ui/react';
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { SchemaForm } from "@canard/schema-form";
+import { plugin as chakraPlugin } from "../src";
+import { ChakraProvider } from "@chakra-ui/react";
 
-describe('Integration Tests', () => {
-  it('should render and submit complex form', async () => {
+describe("Integration Tests", () => {
+  it("should render and submit complex form", async () => {
     const onSubmit = jest.fn();
     const user = userEvent.setup();
 
     const schema = {
-      type: 'object',
+      type: "object",
       properties: {
-        name: { type: 'string', label: 'Name' },
-        age: { type: 'number', label: 'Age' },
-        bio: { type: 'string', format: 'textarea', label: 'Bio' },
+        name: { type: "string", label: "Name" },
+        age: { type: "number", label: "Age" },
+        bio: { type: "string", format: "textarea", label: "Bio" },
         country: {
-          type: 'string',
-          enum: ['USA', 'Canada'],
-          label: 'Country',
+          type: "string",
+          enum: ["USA", "Canada"],
+          label: "Country",
         },
         tags: {
-          type: 'array',
-          items: { type: 'string' },
-          label: 'Tags',
+          type: "array",
+          items: { type: "string" },
+          label: "Tags",
         },
       },
     };
 
     render(
       <ChakraProvider>
-        <SchemaForm
-          schema={schema}
-          plugin={chakraPlugin}
-          onSubmit={onSubmit}
-        />
-      </ChakraProvider>
+        <SchemaForm schema={schema} plugin={chakraPlugin} onSubmit={onSubmit} />
+      </ChakraProvider>,
     );
 
     // 입력
-    await user.type(screen.getByLabelText('Name'), 'John Doe');
-    await user.type(screen.getByLabelText('Age'), '30');
-    await user.type(screen.getByLabelText('Bio'), 'Developer');
-    await user.selectOptions(screen.getByLabelText('Country'), 'USA');
+    await user.type(screen.getByLabelText("Name"), "John Doe");
+    await user.type(screen.getByLabelText("Age"), "30");
+    await user.type(screen.getByLabelText("Bio"), "Developer");
+    await user.selectOptions(screen.getByLabelText("Country"), "USA");
 
     // 배열 아이템 추가
-    await user.click(screen.getByText('추가'));
-    await user.type(screen.getByRole('textbox', { name: /tags/i }), 'react');
+    await user.click(screen.getByText("추가"));
+    await user.type(screen.getByRole("textbox", { name: /tags/i }), "react");
 
     // 제출
-    await user.click(screen.getByText('Submit'));
+    await user.click(screen.getByText("Submit"));
 
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledWith({
-        name: 'John Doe',
+        name: "John Doe",
         age: 30,
-        bio: 'Developer',
-        country: 'USA',
-        tags: ['react'],
+        bio: "Developer",
+        country: "USA",
+        tags: ["react"],
       });
     });
   });
@@ -1736,43 +1762,50 @@ git push origin v0.1.0
 
 #### Step 5: 배포 체크리스트
 
-```markdown
+````markdown
 ## 배포 전 최종 체크리스트
 
 ### 코드 품질
+
 - [x] ✅ TypeScript 타입 체크 통과
 - [x] ✅ ESLint 경고 0개
 - [x] ✅ 모든 테스트 통과 (단위 + 통합 + 접근성)
 - [x] ✅ 빌드 크기 목표 달성 (<50KB gzipped)
 
 ### 문서
+
 - [x] ✅ README.md 작성 완료
 - [x] ✅ 예제 코드 3개 이상
 - [x] ✅ API 문서 작성
 - [x] ✅ Storybook stories 작성
 
 ### 패키지
+
 - [x] ✅ package.json 의존성 최종 확인
 - [x] ✅ peerDependencies 정확함
 - [x] ✅ exports 필드 설정
 - [x] ✅ LICENSE 파일 존재
 
 ### 성능
+
 - [x] ✅ 비제어 컴포넌트 패턴 적용
 - [x] ✅ useMemo, useHandle 최적화
 - [x] ✅ 불필요한 리렌더링 방지
 
 ### 접근성
+
 - [x] ✅ axe-core 테스트 통과
 - [x] ✅ ARIA 속성 자동 추가 (FormControl)
 - [x] ✅ 키보드 네비게이션 테스트
 
 ### 버전 관리
+
 - [x] ✅ CHANGELOG.md 작성
 - [x] ✅ Git 태그 생성 (v0.1.0)
 - [x] ✅ 배포 스크립트 준비
 
 ### 배포
+
 ```bash
 # NPM 배포
 npm publish --access public
@@ -1780,13 +1813,16 @@ npm publish --access public
 # 또는 Yarn
 yarn publish --access public
 ```
+````
 
 ## 배포 후 확인
+
 - [ ] NPM에서 패키지 확인
 - [ ] 설치 테스트 (`npm install @canard/schema-form-chakra-ui-plugin`)
 - [ ] GitHub Release 생성
 - [ ] 문서 사이트 업데이트
-```
+
+````
 
 **Phase 5 완료 조건**:
 - ✅ 성능 최적화 체크리스트 100% 완료
@@ -1878,7 +1914,7 @@ error_handling:
         auto_handling: "Storybook 단계 생략 (필요시 Phase 6으로 추가)"
       - condition: "마일스톤 미지정"
         auto_handling: "상대적 시간 사용: Phase 1 완료: D+2, Phase 2: D+5"
-```
+````
 
 ---
 

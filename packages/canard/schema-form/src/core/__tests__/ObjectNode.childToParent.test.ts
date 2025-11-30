@@ -11,7 +11,6 @@
  * 3. Multiple child changes batch correctly
  * 4. Computed properties in siblings react to child changes
  */
-
 import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
@@ -19,6 +18,8 @@ import { delay } from '@winglet/common-utils';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 import type { JsonSchema } from '@/schema-form/types';
 
+import type { BooleanNode } from '../nodes/BooleanNode';
+import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
 import { NodeEventType } from '../nodes/type';
@@ -161,7 +162,7 @@ describe('ObjectNode Child-to-Parent Updates', () => {
       await delay();
 
       const objectNode = node as ObjectNode;
-      const counterNode = objectNode.find('./counter');
+      const counterNode = objectNode.find('./counter') as NumberNode;
 
       const parentListener = vi.fn();
       objectNode.subscribe(parentListener);
@@ -211,9 +212,9 @@ describe('ObjectNode Child-to-Parent Updates', () => {
       await delay();
 
       const objectNode = node as ObjectNode;
-      const priceNode = objectNode.find('./price');
-      const discountNode = objectNode.find('./discount');
-      const finalPriceNode = objectNode.find('./finalPrice');
+      const priceNode = objectNode.find('./price') as NumberNode;
+      const discountNode = objectNode.find('./discount') as NumberNode;
+      const finalPriceNode = objectNode.find('./finalPrice') as NumberNode;
 
       // Initially finalPrice should be inactive and invisible
       expect(finalPriceNode?.active).toBe(false);
@@ -388,7 +389,7 @@ describe('ObjectNode Child-to-Parent Updates', () => {
       await delay();
 
       const objectNode = node as ObjectNode;
-      const toggleNode = objectNode.find('./toggle');
+      const toggleNode = objectNode.find('./toggle') as BooleanNode;
       const dependentNode = objectNode.find('./dependent');
 
       // Initially invisible

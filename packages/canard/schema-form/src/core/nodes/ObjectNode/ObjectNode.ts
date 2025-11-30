@@ -22,6 +22,8 @@ import { omitEmptyObject } from './utils';
  * Manages object properties and handles complex schemas like oneOf.
  */
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
+  public override readonly type = 'object';
+
   /**
    * Strategy used by the object node:
    *  - BranchStrategy: Handles complex child nodes with associated processing logic, including oneOf/if-then-else.
@@ -94,6 +96,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     scope,
     variant,
     jsonSchema,
+    nullable,
+    schemaType,
     defaultValue,
     onChange,
     nodeFactory,
@@ -107,6 +111,8 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
       scope,
       variant,
       jsonSchema,
+      schemaType,
+      nullable,
       defaultValue,
       onChange,
       parentNode,

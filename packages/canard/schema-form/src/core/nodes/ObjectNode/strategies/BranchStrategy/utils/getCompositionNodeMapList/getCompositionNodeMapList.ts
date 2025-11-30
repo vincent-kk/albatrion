@@ -1,4 +1,5 @@
 import { isArray, isPlainObject } from '@winglet/common-utils/filter';
+import { isIdenticalSchemaType } from '@winglet/json-schema/filter';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
@@ -49,9 +50,12 @@ export const getCompositionNodeMapList = (
   const compositionLength = compositionSchemas.length;
   const childNodeMapList = new Array<ChildNodeMap>(compositionLength);
   for (let index = 0; index < compositionLength; index++) {
-    const schema = compositionSchemas[index] as Partial<ObjectSchema>;
+    const subSchema = compositionSchemas[index] as Partial<ObjectSchema>;
 
-    if (schema.type && jsonSchema.type !== schema.type)
+    if (
+      subSchema.type !== undefined &&
+      isIdenticalSchemaType(jsonSchema, subSchema) === false
+    )
       throw new JsonSchemaError(
         'COMPOSITION_TYPE_REDEFINITION',
         `Type cannot be redefined in '${scope}' schema. It must either be omitted or match the parent schema type.`,
@@ -60,16 +64,16 @@ export const getCompositionNodeMapList = (
           type: jsonSchema.type,
           path: parentNode.path,
           compositionType: scope,
-          subSchemaType: schema.type,
+          subSchemaType: subSchema.type,
         },
       );
 
-    const properties = schema.properties;
+    const properties = subSchema.properties;
     if (!isPlainObject(properties)) continue;
 
     const keys = Object.keys(properties);
     const compositionChildNodeMap = new Map() as ChildNodeMap;
-    const required = schema.required;
+    const required = subSchema.required;
     for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
       if (keySetList && !keySetList[index].has(k)) continue;
       if (excludeKeySet?.has(k) || propertyKeySet?.has(k))
@@ -95,16 +99,18 @@ export const getCompositionNodeMapList = (
           },
         );
 
-      const schema = properties[k] as JsonSchema;
+      const childSchema = properties[k] as JsonSchema;
       const inputDefault = defaultValue?.[k];
       compositionChildNodeMap.set(k, {
         node: nodeFactory({
           name: k,
           scope: scope,
           variant: index,
-          jsonSchema: schema,
+          jsonSchema: childSchema,
           defaultValue:
-            inputDefault !== undefined ? inputDefault : getDefaultValue(schema),
+            inputDefault !== undefined
+              ? inputDefault
+              : getDefaultValue(childSchema),
           onChange: handelChangeFactory(k),
           nodeFactory,
           parentNode,

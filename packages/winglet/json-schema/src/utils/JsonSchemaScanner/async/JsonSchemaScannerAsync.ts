@@ -72,6 +72,8 @@ interface JsonSchemaScannerProps<ContextType> {
  * @example
  * Async schema validation with database lookups:
  * ```typescript
+ * import { isStringSchema, isObjectSchema } from '@winglet/json-schema/filter';
+ *
  * interface ValidationContext {
  *   validatedPaths: string[];
  *   errors: string[];
@@ -87,7 +89,8 @@ interface JsonSchemaScannerProps<ContextType> {
  *     },
  *     mutate: async (entry, context) => {
  *       // Async mutation with external API calls
- *       if (entry.schema.type === 'string' && entry.schema.format === 'email') {
+ *       // Use isStringSchema() to handle both { type: 'string' } and { type: ['string', 'null'] }
+ *       if (isStringSchema(entry.schema) && entry.schema.format === 'email') {
  *         const domainValidation = await validateEmailDomain(entry.schema.pattern);
  *         if (!domainValidation.valid) {
  *           context.errors.push(`Invalid email pattern at ${entry.path}`);
@@ -104,7 +107,8 @@ interface JsonSchemaScannerProps<ContextType> {
  *       context.validatedPaths.push(entry.path);
  *
  *       // Async validation against external service
- *       if (entry.schema.type === 'object') {
+ *       // Use isObjectSchema() to handle both { type: 'object' } and { type: ['object', 'null'] }
+ *       if (isObjectSchema(entry.schema)) {
  *         const validationResult = await validateSchemaStructure(entry.schema);
  *         if (!validationResult.valid) {
  *           context.errors.push(`Schema structure invalid at ${entry.path}`);

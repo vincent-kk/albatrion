@@ -4,6 +4,7 @@ import type { Fn } from '@aileron/declare';
 
 import { JsonSchemaError } from '@/schema-form/errors';
 import type {
+  JsonSchemaType,
   JsonSchemaWithVirtual,
   PartialJsonSchema,
 } from '@/schema-form/types';
@@ -27,7 +28,7 @@ type GetConditionIndices = Fn<[dependencies: unknown[]], number[]>;
  * const indices = getIndices([dependency1, dependency2]); // Returns [0, 2] if conditions at indices 0 and 2 are met
  */
 export const getConditionIndicesFactory =
-  (jsonSchema: JsonSchemaWithVirtual) =>
+  (type: JsonSchemaType, jsonSchema: JsonSchemaWithVirtual) =>
   /**
    * Creates a condition index calculation function for the specified field and condition type.
    * The returned function evaluates all conditions and returns an array of indices
@@ -49,7 +50,7 @@ export const getConditionIndicesFactory =
     fieldName: string,
     conditionField: ConditionIndexName,
   ): GetConditionIndices | undefined => {
-    if (jsonSchema.type !== 'object') return undefined;
+    if (type !== 'object') return undefined;
 
     const conditionSchemas: PartialJsonSchema[] = jsonSchema[fieldName];
     if (!isArray(conditionSchemas)) return undefined;

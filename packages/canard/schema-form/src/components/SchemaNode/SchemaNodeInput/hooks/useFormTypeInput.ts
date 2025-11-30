@@ -66,8 +66,9 @@ export const useFormTypeInput = (node: SchemaNode, disabled: boolean) => {
 };
 
 const getHint = (node: SchemaNode): Hint => ({
-  type: node.jsonSchema.type,
+  type: node.schemaType,
   path: node.path,
+  nullable: node.nullable,
   jsonSchema: node.jsonSchema,
   format: node.jsonSchema.format,
   formType: node.jsonSchema.formType,

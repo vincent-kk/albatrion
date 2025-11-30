@@ -22,6 +22,8 @@ import { omitEmptyArray } from './utils';
  * Manages each element of the array and provides push/pop/update/remove/clear functionality.
  */
 export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
+  public override readonly type = 'array';
+
   /**
    * Strategy used by the array node:
    *  - BranchStrategy: Handles complex child nodes with associated processing logic.
@@ -97,6 +99,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     scope,
     variant,
     jsonSchema,
+    schemaType,
+    nullable,
     defaultValue,
     onChange,
     nodeFactory,
@@ -110,6 +114,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       scope,
       variant,
       jsonSchema,
+      schemaType,
+      nullable,
       defaultValue,
       onChange,
       parentNode,

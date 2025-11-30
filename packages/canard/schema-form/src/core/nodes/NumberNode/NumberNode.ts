@@ -17,6 +17,8 @@ import {
  * Manages and parses numeric values (integers or floating-point numbers).
  */
 export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
+  public override readonly type = 'number';
+
   /** Current value of the number node */
   #value: NumberValue | Nullish = undefined;
 
@@ -56,6 +58,8 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     scope,
     variant,
     jsonSchema,
+    schemaType,
+    nullable,
     defaultValue,
     onChange,
     parentNode,
@@ -68,6 +72,8 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
       scope,
       variant,
       jsonSchema,
+      schemaType,
+      nullable,
       defaultValue,
       onChange,
       parentNode,
@@ -123,7 +129,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   #parseValue(this: NumberNode, input: NumberValue | Nullish) {
     if (input === undefined) return undefined;
     if (input === null && this.nullable) return null;
-    return parseNumber(input, this.jsonSchema.type === 'integer');
+    return parseNumber(input, this.schemaType === 'integer');
   }
 
   /**

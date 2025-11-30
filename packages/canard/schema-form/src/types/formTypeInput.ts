@@ -10,7 +10,11 @@ import type {
 } from '@/schema-form/core';
 
 import type { FormTypeRendererProps } from './formTypeRenderer';
-import type { InferJsonSchema, JsonSchemaWithVirtual } from './jsonSchema';
+import type {
+  InferJsonSchema,
+  JsonSchemaType,
+  JsonSchemaWithVirtual,
+} from './jsonSchema';
 import type { AllowedValue } from './value';
 
 /**
@@ -39,10 +43,14 @@ export interface FormTypeInputProps<
   required: boolean;
   /** Schema node assigned to FormTypeInput Component */
   node: Node;
+  /** JSON Schema type of this field (e.g., 'string', 'number', 'object', 'array') */
+  type: Node['schemaType'];
   /** Name of schema node assigned to FormTypeInput Component */
   name: Node['name'];
   /** Path of schema node assigned to FormTypeInput Component */
   path: Node['path'];
+  /** Whether this field accepts null as a valid value (derived from schema type array including 'null') */
+  nullable: Node['nullable'];
   /** Errors of schema node assigned to FormTypeInput Component */
   errors: Node['errors'];
   /** Values subscribed according to `computed.watch`(=`&watch`) property defined in JsonSchema */
@@ -100,6 +108,8 @@ export interface UnknownFormTypeInputProps {
   node: any;
   name: string;
   path: string;
+  type: any;
+  nullable: boolean;
   errors: any[];
   watchValues: any[];
   defaultValue: any;
@@ -140,14 +150,15 @@ export interface ChildNodeComponentProps<Value extends AllowedValue = any>
 
 export type FormTypeTestFn = Fn<[hint: Hint], boolean>;
 
-type JsonSchemaType = JsonSchemaWithVirtual['type'];
 type OptionalString = string | undefined;
 
 export type FormTypeTestObject = Partial<{
-  /** JsonSchema['type'] | Array<JsonSchema['type']> */
+  /** SchemaNode['schemaType'] | Array<SchemaNode['schemaType']> */
   type: JsonSchemaType | JsonSchemaType[];
   /** SchemaNode['path'] | Array<SchemaNode['path']> */
   path: string | string[];
+  /** SchemaNode['nullable] */
+  nullable: boolean;
   /** JsonSchema['format'] | Array<JsonSchema['format']> | undefined */
   format: OptionalString | OptionalString[];
   /** JsonSchema['formType'] | Array<JsonSchema['formType']> | undefined */
@@ -155,10 +166,12 @@ export type FormTypeTestObject = Partial<{
 }>;
 
 export type Hint = {
-  /** JsonSchema['type'] */
+  /** SchemaNode['schemaType'] */
   type: JsonSchemaType;
   /** SchemaNode['path'] */
   path: string;
+  /** SchemaNode['nullable] */
+  nullable: boolean;
   /** JsonSchema */
   jsonSchema: JsonSchemaWithVirtual;
   /** JsonSchema['format'] */

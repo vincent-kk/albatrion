@@ -48,7 +48,7 @@ const formTypeTestFnFactory = (test: FormTypeTestObject): FormTypeTestFn => {
       const reference = test[k as keyof FormTypeTestObject];
       const subject = hint[k as keyof FormTypeTestObject];
       if (isArray(reference)) {
-        if (!reference.includes(subject as any)) return false;
+        if (reference.indexOf(subject as any) === -1) return false;
       } else {
         if (reference !== subject) return false;
       }

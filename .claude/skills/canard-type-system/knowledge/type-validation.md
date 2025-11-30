@@ -36,8 +36,8 @@ function UserInput(props: FormTypeInputProps<UserData>) {
 ```typescript
 // ✅ Context 타입 명시
 interface MuiContext {
-  size?: 'small' | 'medium' | 'large';
-  variant?: 'outlined' | 'filled' | 'standard';
+  size?: "small" | "medium" | "large";
+  variant?: "outlined" | "filled" | "standard";
 }
 
 function MuiInput(props: FormTypeInputProps<string, MuiContext>) {
@@ -57,7 +57,9 @@ function NoContextInput(props: FormTypeInputProps<string>) {
 
 ```typescript
 // ✅ WatchValues 타입 명시
-function DependentInput(props: FormTypeInputProps<string, object, [string, number]>) {
+function DependentInput(
+  props: FormTypeInputProps<string, object, [string, number]>,
+) {
   const { watchValues } = props;
   const [watchedString, watchedNumber] = watchValues;
   // watchedString: string
@@ -109,7 +111,7 @@ function FunctionalUpdateInput(props: FormTypeInputProps<string>) {
   const handleUpdate = () => {
     onChange((prev) => {
       // prev의 타입: string | undefined
-      return prev ? prev.toUpperCase() : 'DEFAULT';
+      return prev ? prev.toUpperCase() : "DEFAULT";
     });
   };
 
@@ -117,7 +119,7 @@ function FunctionalUpdateInput(props: FormTypeInputProps<string>) {
   const handleWrongUpdate = () => {
     onChange((prev) => {
       // @ts-expect-error
-      return 123;  // TypeScript 에러 - number 반환 불가
+      return 123; // TypeScript 에러 - number 반환 불가
     });
   };
 }
@@ -145,12 +147,12 @@ const numberInput = <InferredInput<number> />;  // T = number
 ### 3.2 Schema 타입 추론
 
 ```typescript
-import type { InferJsonSchema } from '@canard/schema-form';
+import type { InferJsonSchema } from "@canard/schema-form";
 
 // ✅ Schema 타입 자동 추론
 function SchemaInferredInput<
   Value extends string | number,
-  Schema extends InferJsonSchema<Value> = InferJsonSchema<Value>
+  Schema extends InferJsonSchema<Value> = InferJsonSchema<Value>,
 >(props: FormTypeInputProps<Value, object, any[], Schema>) {
   const { jsonSchema } = props;
   // jsonSchema의 타입이 Value를 기반으로 추론됨
@@ -162,41 +164,41 @@ function SchemaInferredInput<
 ### 4.1 Test 객체 타입 체크
 
 ```typescript
-import type { FormTypeInputDefinition } from '@canard/schema-form';
+import type { FormTypeInputDefinition } from "@canard/schema-form";
 
 // ✅ 올바른 test 객체 정의
 export const StringEmailDefinition = {
   Component: EmailInput,
   test: {
-    type: 'string',
-    format: 'email'  // OptionalString
-  }
+    type: "string",
+    format: "email", // OptionalString
+  },
 } satisfies FormTypeInputDefinition;
 
 // ✅ 배열 형태도 가능
 export const MultiTypeDefinition = {
   Component: FlexibleInput,
   test: {
-    type: ['string', 'number'],  // JsonSchemaType[]
-    format: ['email', 'uri']     // OptionalString[]
-  }
+    type: ["string", "number"], // JsonSchemaType[]
+    format: ["email", "uri"], // OptionalString[]
+  },
 } satisfies FormTypeInputDefinition;
 
 // ❌ 잘못된 test 객체
 export const WrongDefinition = {
   Component: SomeInput,
   test: {
-    type: 'string',
+    type: "string",
     // @ts-expect-error
-    invalidField: 'value'  // FormTypeTestObject에 없는 필드
-  }
+    invalidField: "value", // FormTypeTestObject에 없는 필드
+  },
 };
 ```
 
 ### 4.2 Test 함수 타입 체크
 
 ```typescript
-import type { FormTypeTestFn, Hint } from '@canard/schema-form';
+import type { FormTypeTestFn, Hint } from "@canard/schema-form";
 
 // ✅ 올바른 test 함수 정의
 const testFn: FormTypeTestFn = (hint: Hint) => {
@@ -209,18 +211,18 @@ const testFn: FormTypeTestFn = (hint: Hint) => {
   //   formType?: string;
   // }
 
-  return hint.type === 'string' && hint.format === 'email';
+  return hint.type === "string" && hint.format === "email";
 };
 
 export const FunctionTestDefinition = {
   Component: EmailInput,
-  test: testFn
+  test: testFn,
 } satisfies FormTypeInputDefinition<string>;
 
 // ❌ 잘못된 test 함수 시그니처
 const wrongTestFn = (wrongParam: any) => {
   // @ts-expect-error
-  return wrongParam === 'test';
+  return wrongParam === "test";
 };
 ```
 
@@ -229,8 +231,8 @@ const wrongTestFn = (wrongParam: any) => {
 ### 5.1 Node 타입 가드 사용
 
 ```typescript
-import { isArrayNode, isObjectNode } from '@canard/schema-form';
-import type { ArrayNode, ObjectNode } from '@canard/schema-form';
+import { isArrayNode, isObjectNode } from "@canard/schema-form";
+import type { ArrayNode, ObjectNode } from "@canard/schema-form";
 
 function NodeTypeGuardInput(props: FormTypeInputProps<any>) {
   const { node } = props;
@@ -238,12 +240,12 @@ function NodeTypeGuardInput(props: FormTypeInputProps<any>) {
   // ✅ 타입 가드로 안전하게 타입 체크
   if (isArrayNode(node)) {
     // node의 타입: ArrayNode
-    node.push();  // ArrayNode 메서드 사용 가능
+    node.push(); // ArrayNode 메서드 사용 가능
   }
 
   if (isObjectNode(node)) {
     // node의 타입: ObjectNode
-    const childNode = node.find('./childPath');  // ObjectNode 메서드 사용 가능
+    const childNode = node.find("./childPath"); // ObjectNode 메서드 사용 가능
   }
 }
 ```
@@ -251,7 +253,7 @@ function NodeTypeGuardInput(props: FormTypeInputProps<any>) {
 ### 5.2 타입 캐스팅 검증
 
 ```typescript
-import type { ArrayNode, SchemaNode } from '@canard/schema-form';
+import type { ArrayNode, SchemaNode } from "@canard/schema-form";
 
 function TypeCastingInput(props: FormTypeInputProps<any[]>) {
   const { node } = props;
@@ -259,7 +261,7 @@ function TypeCastingInput(props: FormTypeInputProps<any[]>) {
   // ✅ 타입 가드 후 안전한 캐스팅
   if (isArrayNode(node)) {
     const arrayNode = node as ArrayNode;
-    arrayNode.push();  // 안전하게 사용
+    arrayNode.push(); // 안전하게 사용
   }
 
   // ❌ 타입 가드 없이 직접 캐스팅 (위험)
@@ -333,13 +335,13 @@ function AdditionalPropsInput(props: FormTypeInputProps<string>) {
 ```json
 {
   "compilerOptions": {
-    "strict": true,                    // 엄격한 타입 체크 활성화
-    "noImplicitAny": true,             // 암시적 any 금지
-    "strictNullChecks": true,          // null/undefined 엄격 체크
-    "strictFunctionTypes": true,       // 함수 타입 엄격 체크
+    "strict": true, // 엄격한 타입 체크 활성화
+    "noImplicitAny": true, // 암시적 any 금지
+    "strictNullChecks": true, // null/undefined 엄격 체크
+    "strictFunctionTypes": true, // 함수 타입 엄격 체크
     "strictPropertyInitialization": true,
-    "noUncheckedIndexedAccess": true,  // 인덱스 접근 시 undefined 체크
-    "skipLibCheck": false              // 타입 정의 파일도 체크
+    "noUncheckedIndexedAccess": true, // 인덱스 접근 시 undefined 체크
+    "skipLibCheck": false // 타입 정의 파일도 체크
   }
 }
 ```
@@ -367,22 +369,22 @@ npx tsc --noEmit src/components/MyInput.tsx
 
 // FormTypeInputProps 필드 체크리스트:
 interface TypeCheckList {
-  jsonSchema: '✅ 존재';
-  readOnly: '✅ 존재';
-  disabled: '✅ 존재';
-  required: '✅ 존재';
-  node: '✅ 존재';
-  name: '✅ 존재';
-  path: '✅ 존재';
-  errors: '✅ 존재';
-  watchValues: '✅ 존재';
-  defaultValue: '✅ 존재';
-  value: '✅ 존재';
-  onChange: '✅ 존재';
-  onFileAttach: '✅ 존재 (최신 버전)';  // 최근 추가됨
-  ChildNodeComponents: '✅ 존재';
-  style: '✅ 존재';
-  context: '✅ 존재';
+  jsonSchema: "✅ 존재";
+  readOnly: "✅ 존재";
+  disabled: "✅ 존재";
+  required: "✅ 존재";
+  node: "✅ 존재";
+  name: "✅ 존재";
+  path: "✅ 존재";
+  errors: "✅ 존재";
+  watchValues: "✅ 존재";
+  defaultValue: "✅ 존재";
+  value: "✅ 존재";
+  onChange: "✅ 존재";
+  onFileAttach: "✅ 존재 (최신 버전)"; // 최근 추가됨
+  ChildNodeComponents: "✅ 존재";
+  style: "✅ 존재";
+  context: "✅ 존재";
 }
 ```
 
@@ -401,8 +403,8 @@ import type {
   FormTypeInputDefinition,
   FormTypeTestObject,
   FormTypeTestFn,
-  Hint
-} from '@canard/schema-form';
+  Hint,
+} from "@canard/schema-form";
 
 // @canard/schema-form 패키지 버전 확인
 // package.json에서 최신 버전 사용 중인지 체크
@@ -414,7 +416,7 @@ import type {
 
 ```typescript
 function DevModeValidationInput(props: FormTypeInputProps<string>) {
-  const { value, onChange, jsonSchema } = props;
+  const { type, value, onChange, jsonSchema } = props;
 
   // ✅ 개발 모드에서만 타입 검증
   if (process.env.NODE_ENV === 'development') {
@@ -422,8 +424,8 @@ function DevModeValidationInput(props: FormTypeInputProps<string>) {
       console.error(`Expected string, got ${typeof value}`);
     }
 
-    if (jsonSchema.type !== 'string') {
-      console.warn('jsonSchema.type mismatch with Value type parameter');
+    if (type !== 'string') {
+      console.warn('type mismatch with Value type parameter');
     }
   }
 
@@ -457,44 +459,51 @@ PropTypesInput.propTypes = {
 
 ```typescript
 // type-tests.ts
-import type { FormTypeInputProps } from '@canard/schema-form';
+import type { FormTypeInputProps } from "@canard/schema-form";
 
 // ✅ 컴파일 시 타입 체크
-type AssertString = FormTypeInputProps<string>['value'];
+type AssertString = FormTypeInputProps<string>["value"];
 // @ts-expect-error
-type AssertError = AssertString extends number ? true : false;  // 에러 발생 (string !== number)
+type AssertError = AssertString extends number ? true : false; // 에러 발생 (string !== number)
 
-type AssertStringOrUndefined = AssertString extends string | undefined ? true : false;
-const _test: AssertStringOrUndefined = true;  // 통과
-
-// onChange 시그니처 테스트
-type OnChangeType = FormTypeInputProps<number>['onChange'];
-type AssertOnChange = OnChangeType extends (value: number | ((prev: number) => number), options?: any) => void
+type AssertStringOrUndefined = AssertString extends string | undefined
   ? true
   : false;
-const _onChangeTest: AssertOnChange = true;  // 통과
+const _test: AssertStringOrUndefined = true; // 통과
+
+// onChange 시그니처 테스트
+type OnChangeType = FormTypeInputProps<number>["onChange"];
+type AssertOnChange = OnChangeType extends (
+  value: number | ((prev: number) => number),
+  options?: any,
+) => void
+  ? true
+  : false;
+const _onChangeTest: AssertOnChange = true; // 통과
 ```
 
 ### 10.2 단위 테스트에서 타입 검증
 
 ```typescript
-import { describe, it, expect } from 'vitest';
-import type { FormTypeInputProps } from '@canard/schema-form';
+import { describe, it, expect } from "vitest";
+import type { FormTypeInputProps } from "@canard/schema-form";
 
-describe('FormTypeInput Type Safety', () => {
-  it('should enforce correct value type', () => {
+describe("FormTypeInput Type Safety", () => {
+  it("should enforce correct value type", () => {
     const mockProps: FormTypeInputProps<string> = {
-      value: 'test',
+      value: "test",
       onChange: (value) => {
         // value의 타입이 string | ((prev: string) => string) 인지 확인
-        expect(typeof value === 'string' || typeof value === 'function').toBe(true);
+        expect(typeof value === "string" || typeof value === "function").toBe(
+          true,
+        );
       },
       // ... 기타 필수 props
     } as any;
 
     // 컴파일 타임 체크
     const value: string | undefined = mockProps.value;
-    expect(value).toBe('test');
+    expect(value).toBe("test");
   });
 });
 ```

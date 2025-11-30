@@ -136,10 +136,9 @@ export const StringEnum = () => {
         },
       },
       nullableEnum: {
-        type: 'string',
+        type: ['string', 'null'],
         enum: [null, 'j', 'k', 'l'],
         formType: 'select',
-        nullable: true,
         placeholder: 'select one of item',
         options: {
           alias: {
