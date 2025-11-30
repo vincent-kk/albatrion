@@ -846,9 +846,9 @@ export abstract class AbstractNode<
     this: AbstractNode,
     value: Value | Nullish,
   ): Promise<JsonSchemaError[]> {
-    if (this.isRoot === false) return [];
-    const errors = await this.#validator?.(value);
-    if (errors == null) return [];
+    if (this.#validator === undefined) return [];
+    const errors = await this.#validator(value);
+    if (errors === null) return [];
     else return transformErrors(errors);
   }
 
