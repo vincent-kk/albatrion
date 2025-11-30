@@ -57,14 +57,17 @@ export const processSchemaType = <T extends JsonSchema>(
   const sourceNullable = (sourceInfo?.nullable ?? source.nullable) !== false;
 
   type Type = (typeof base)['type'];
-  const schemaType = intersectNumericType(baseInfo.type, sourceInfo?.type);
+  const schemaType =
+    sourceInfo !== null
+      ? intersectSchemaType(baseInfo.type, sourceInfo.type)
+      : baseInfo.type;
   if (base.nullable !== undefined) base.nullable = undefined;
   if (baseInfo.nullable && sourceNullable)
     base.type = (schemaType !== 'null' ? [schemaType, 'null'] : 'null') as Type;
   else base.type = schemaType as Type;
 };
 
-const intersectNumericType = (
+const intersectSchemaType = (
   baseType: JsonSchemaType,
-  sourceType?: JsonSchemaType,
+  sourceType: JsonSchemaType,
 ) => (baseType === 'number' && sourceType === 'integer' ? 'integer' : baseType);
