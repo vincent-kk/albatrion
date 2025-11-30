@@ -104,7 +104,9 @@ export interface NullableNumberSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BaseNumberSchema<NumberValue, Options, Schema> {
-  type: Readonly<['number' | 'integer', 'null']>;
+  type:
+    | Readonly<['number' | 'integer', 'null']>
+    | Readonly<['null', 'number' | 'integer']>;
 }
 
 /** Base number schema with numeric constraints */
@@ -148,7 +150,7 @@ export interface NullableStringSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BaseStringSchema<StringValue, Options, Schema> {
-  type: Readonly<['string', 'null']>;
+  type: Readonly<['string', 'null']> | Readonly<['null', 'string']>;
 }
 
 /** Base string schema with string constraints */
@@ -188,7 +190,7 @@ export interface NullableBooleanSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BasicSchema<BooleanValue, Options, Schema> {
-  type: Readonly<['boolean', 'null']>;
+  type: Readonly<['boolean', 'null']> | Readonly<['null', 'boolean']>;
 }
 
 /** Array type schema */
@@ -212,7 +214,7 @@ export interface NullableArraySchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BaseArraySchema<ArrayValue, Options, Schema> {
-  type: Readonly<['array', 'null']>;
+  type: Readonly<['array', 'null']> | Readonly<['null', 'array']>;
 }
 
 /** Base array schema with array constraints */
@@ -260,7 +262,7 @@ export interface NullableObjectSchema<
   Options extends Dictionary = object,
   Schema extends UnknownSchema = JsonSchema,
 > extends BaseObjectSchema<ObjectValue, Options, Schema> {
-  type: Readonly<['object', 'null']>;
+  type: Readonly<['object', 'null']> | Readonly<['null', 'object']>;
 }
 
 /** Base object schema with object constraints */
@@ -278,9 +280,7 @@ interface BaseObjectSchema<
   /** Schema definitions for properties matching regex patterns */
   patternProperties?: Dictionary<Schema>;
   /** Schema for property names */
-  propertyNames?: Partial<
-    Extract<Schema, { type: 'string' | readonly ['string', 'null'] }>
-  >;
+  propertyNames?: Partial<Extract<Schema, { type: StringSchema['type'] }>>;
   /** Property dependencies (deprecated, use dependentSchemas) */
   dependencies?: Dictionary<Partial<Schema> | string[]>;
   /** Required properties when another property is present */
