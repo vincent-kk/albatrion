@@ -104,8 +104,8 @@ const resolveReferences = <Schema extends JsonSchemaWithVirtual>(
   nodeProps.jsonSchema = processSchema(nodeProps.jsonSchema, resolve);
   const schemaInfo = extractSchemaInfo(nodeProps.jsonSchema);
   if (schemaInfo === null) return nodeProps;
-  nodeProps.nullable = schemaInfo.nullable;
   nodeProps.schemaType = schemaInfo.type;
+  nodeProps.nullable = schemaInfo.nullable;
   return nodeProps as UnionSchemaNodeConstructorProps;
 };
 

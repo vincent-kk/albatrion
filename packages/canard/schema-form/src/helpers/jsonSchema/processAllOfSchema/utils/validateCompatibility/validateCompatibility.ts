@@ -1,19 +1,24 @@
+import { isSameSchemaType } from '@winglet/json-schema/filter';
+
 import type { JsonSchema } from '@/schema-form/types';
 
 /**
- * Validates whether a schema type is compatible with an allOf schema type.
- * Types are compatible if the allOf type is undefined, if they match exactly,
- * or if they are number/integer combinations (which are cross-compatible).
+ * Validates type compatibility between two schemas during allOf schema merging.
  *
- * @param schemaType - The main schema type
- * @param allOfSchemaType - The type from the allOf schema to validate
- * @returns True if the types are compatible, false otherwise
+ * Compatibility rules:
+ * 1. Compatible if allOf schema has no type (only adds constraints)
+ * 2. Compatible if both schema types match exactly (using isSameSchemaType)
+ *
+ * Important notes:
+ * - number and integer are treated as different types and are incompatible
+ * - Nullable types (['string', 'null']) and non-nullable types ('string') are incompatible
+ * - Order of nullable type arrays is ignored (['string', 'null'] equals ['null', 'string'])
+ *
+ * @param schema - The base schema
+ * @param allOfSchema - The allOf schema to merge
+ * @returns True if types are compatible, false otherwise
  */
 export const validateCompatibility = (
-  schemaType: JsonSchema['type'],
-  allOfSchemaType: JsonSchema['type'],
-) =>
-  allOfSchemaType === undefined ||
-  (schemaType === 'number' && allOfSchemaType === 'integer') ||
-  (schemaType === 'integer' && allOfSchemaType === 'number') ||
-  schemaType === allOfSchemaType;
+  schema: JsonSchema,
+  allOfSchema: JsonSchema,
+) => allOfSchema.type === undefined || isSameSchemaType(schema, allOfSchema);

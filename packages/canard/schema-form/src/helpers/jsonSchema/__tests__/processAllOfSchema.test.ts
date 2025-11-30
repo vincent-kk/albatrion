@@ -3,6 +3,7 @@ import { describe, expect, test } from 'vitest';
 import type {
   ArraySchema,
   BooleanSchema,
+  JsonSchema,
   NullSchema,
   NumberSchema,
   ObjectSchema,
@@ -12,8 +13,8 @@ import type {
 import { processAllOfSchema } from '../processAllOfSchema/processAllOfSchema';
 
 describe('processAllOfSchema', () => {
-  describe('기본 동작', () => {
-    test('allOf가 없으면 원본 스키마 반환', () => {
+  describe('Basic behavior', () => {
+    test('should return original schema when allOf is not present', () => {
       const schema: StringSchema = {
         type: 'string',
         title: 'Test Schema',
@@ -22,10 +23,10 @@ describe('processAllOfSchema', () => {
 
       const result = processAllOfSchema(schema);
 
-      expect(result).toBe(schema); // 원본과 동일한 참조
+      expect(result).toBe(schema); // Same reference as original
     });
 
-    test('allOf가 빈 배열이면 원본 스키마 반환', () => {
+    test('should return original schema when allOf is an empty array', () => {
       const schema: StringSchema = {
         type: 'string',
         title: 'Test Schema',
@@ -34,10 +35,10 @@ describe('processAllOfSchema', () => {
 
       const result = processAllOfSchema(schema);
 
-      expect(result).toBe(schema); // 원본과 동일한 참조
+      expect(result).toBe(schema); // Same reference as original
     });
 
-    test('타입이 없으면 원본 스키마 반환', () => {
+    test('should return original schema when type is not present', () => {
       const schema = {
         title: 'Test Schema',
         allOf: [{ minLength: 1 }],
@@ -45,10 +46,10 @@ describe('processAllOfSchema', () => {
 
       const result = processAllOfSchema(schema);
 
-      expect(result).toBe(schema); // 원본과 동일한 참조
+      expect(result).toBe(schema); // Same reference as original
     });
 
-    test('지원하지 않는 타입이면 원본 스키마 반환', () => {
+    test('should return original schema for unsupported types', () => {
       const schema = {
         type: 'unknown' as any,
         title: 'Test Schema',
@@ -57,12 +58,12 @@ describe('processAllOfSchema', () => {
 
       const result = processAllOfSchema(schema);
 
-      expect(result).toBe(schema); // 원본과 동일한 참조
+      expect(result).toBe(schema); // Same reference as original
     });
   });
 
-  describe('String 스키마 allOf 병합', () => {
-    test('단일 allOf 항목 병합', () => {
+  describe('String schema allOf merging', () => {
+    test('should merge single allOf item', () => {
       const schema: StringSchema = {
         type: 'string',
         title: 'Base String',
@@ -78,7 +79,7 @@ describe('processAllOfSchema', () => {
 
       const result = processAllOfSchema(schema) as StringSchema;
 
-      expect(result).not.toBe(schema); // 새로운 객체
+      expect(result).not.toBe(schema); // New object
       expect(result).toEqual({
         type: 'string',
         title: 'Base String',
@@ -88,7 +89,7 @@ describe('processAllOfSchema', () => {
       });
     });
 
-    test('다중 allOf 항목 순차 병합', () => {
+    test('should merge multiple allOf items sequentially', () => {
       const schema: StringSchema = {
         type: 'string',
         title: 'Base String',
@@ -114,14 +115,14 @@ describe('processAllOfSchema', () => {
       expect(result).toEqual({
         type: 'string',
         title: 'Base String', // First-Win
-        description: 'Final description', // 마지막 항목에서 추가
+        description: 'Final description', // Added from last item
         minLength: 1,
         maxLength: 50,
         pattern: '^[a-zA-Z]+$',
       });
     });
 
-    test('패턴 AND 결합', () => {
+    test('should combine patterns with AND logic', () => {
       const schema: StringSchema = {
         type: 'string',
         pattern: '^[A-Z]',
@@ -143,8 +144,8 @@ describe('processAllOfSchema', () => {
     });
   });
 
-  describe('Number 스키마 allOf 병합', () => {
-    test('숫자 제약 조건 병합', () => {
+  describe('Number schema allOf merging', () => {
+    test('should merge number constraints', () => {
       const schema: NumberSchema = {
         type: 'number',
         minimum: 0,
@@ -170,7 +171,7 @@ describe('processAllOfSchema', () => {
       });
     });
 
-    test('multipleOf LCM 계산', () => {
+    test('should calculate LCM for multipleOf', () => {
       const schema: NumberSchema = {
         type: 'number',
         multipleOf: 6,
@@ -193,8 +194,8 @@ describe('processAllOfSchema', () => {
     });
   });
 
-  describe('Array 스키마 allOf 병합', () => {
-    test('배열 제약 조건 병합', () => {
+  describe('Array schema allOf merging', () => {
+    test('should merge array constraints', () => {
       const schema: ArraySchema = {
         type: 'array',
         items: { type: 'string' },
@@ -206,7 +207,7 @@ describe('processAllOfSchema', () => {
             uniqueItems: true,
           },
           {
-            minItems: 2, // type 없이 병합
+            minItems: 2, // Merge without type
           },
         ],
       };
@@ -222,7 +223,7 @@ describe('processAllOfSchema', () => {
       });
     });
 
-    test('복잡한 items 병합', () => {
+    test('should merge complex items', () => {
       const schema: ArraySchema = {
         type: 'array',
         items: {
@@ -269,8 +270,8 @@ describe('processAllOfSchema', () => {
     });
   });
 
-  describe('Object 스키마 allOf 병합', () => {
-    test('객체 제약 조건 병합', () => {
+  describe('Object schema allOf merging', () => {
+    test('should merge object constraints', () => {
       const schema: ObjectSchema = {
         type: 'object',
         minProperties: 1,
@@ -300,7 +301,7 @@ describe('processAllOfSchema', () => {
       });
     });
 
-    test('properties 병합', () => {
+    test('should merge properties', () => {
       const schema: ObjectSchema = {
         type: 'object',
         properties: {
@@ -347,8 +348,8 @@ describe('processAllOfSchema', () => {
     });
   });
 
-  describe('Boolean 스키마 allOf 병합', () => {
-    test('Boolean 스키마 병합', () => {
+  describe('Boolean schema allOf merging', () => {
+    test('should merge boolean schema', () => {
       const schema: BooleanSchema = {
         type: 'boolean',
         title: 'Base Boolean',
@@ -375,8 +376,8 @@ describe('processAllOfSchema', () => {
     });
   });
 
-  describe('Null 스키마 allOf 병합', () => {
-    test('Null 스키마 병합', () => {
+  describe('Null schema allOf merging', () => {
+    test('should merge null schema', () => {
       const schema: NullSchema = {
         type: 'null',
         title: 'Base Null',
@@ -398,31 +399,30 @@ describe('processAllOfSchema', () => {
     });
   });
 
-  describe('에러 처리', () => {
-    test('타입 충돌 시 에러 발생', () => {
+  describe('Error handling', () => {
+    test('should throw error on type conflict', () => {
       const schema: StringSchema = {
         type: 'string',
         allOf: [
           {
-            type: 'number', // 타입 충돌
+            type: 'number', // Type conflict
           },
         ],
       };
 
-      // 실제로는 타입이 다른 경우 에러가 발생할 수 있지만,
-      // 기본 스키마에서 allOf 항목으로 유효하지 않은 타입이 대신 무시되는 경우가 있음
+      // When types differ, an error should be thrown
       expect(() => processAllOfSchema(schema)).toThrow(
         'Type cannot be redefined in allOf schema. It must either be omitted or match the parent schema type.',
       );
     });
 
-    test('allOf 항목에 type이 undefined인 경우 정상 처리', () => {
+    test('should handle allOf item with undefined type', () => {
       const schema: StringSchema = {
         type: 'string',
         minLength: 1,
         allOf: [
           {
-            type: undefined, // type이 undefined
+            type: undefined, // Type is undefined
             maxLength: 50,
             pattern: '^[a-z]+$',
           },
@@ -439,13 +439,13 @@ describe('processAllOfSchema', () => {
       });
     });
 
-    test('allOf 항목에 type이 없는 경우 정상 처리', () => {
+    test('should handle allOf item without type property', () => {
       const schema: NumberSchema = {
         type: 'number',
         minimum: 0,
         allOf: [
           {
-            // type 속성 없음
+            // No type property
             maximum: 100,
             multipleOf: 5,
           },
@@ -462,7 +462,7 @@ describe('processAllOfSchema', () => {
       });
     });
 
-    test('allOf 항목의 type이 base와 동일한 경우 정상 처리', () => {
+    test('should handle allOf item with same type as base', () => {
       const schema: ObjectSchema = {
         type: 'object',
         properties: {
@@ -470,7 +470,7 @@ describe('processAllOfSchema', () => {
         },
         allOf: [
           {
-            type: 'object', // 동일한 type
+            type: 'object', // Same type
             properties: {
               email: { type: 'string', format: 'email' },
             },
@@ -491,21 +491,21 @@ describe('processAllOfSchema', () => {
       });
     });
 
-    test('여러 allOf 항목 중 하나라도 type이 다르면 에러', () => {
+    test('should throw error if any allOf item has different type', () => {
       const schema: ArraySchema = {
         type: 'array',
         items: { type: 'string' },
         allOf: [
           {
-            type: 'array', // 동일한 type
+            type: 'array', // Same type
             minItems: 1,
           },
           {
-            // type 없음 - OK
+            // No type - OK
             maxItems: 10,
           },
           {
-            type: 'object', // 다른 type - 에러!
+            type: 'object', // Different type - Error!
             properties: {},
           },
         ],
@@ -516,7 +516,7 @@ describe('processAllOfSchema', () => {
       );
     });
 
-    test('각 타입별 충돌 검증', () => {
+    test('should verify type conflicts for each type', () => {
       // string -> number
       expect(() =>
         processAllOfSchema({
@@ -545,7 +545,7 @@ describe('processAllOfSchema', () => {
       expect(() =>
         processAllOfSchema({
           type: 'array',
-          items: { type: 'string' }, // array type requires items property
+          items: { type: 'string' }, // Array type requires items property
           allOf: [{ type: 'object' }],
         } as ArraySchema),
       ).toThrow('Type cannot be redefined');
@@ -559,7 +559,54 @@ describe('processAllOfSchema', () => {
       ).toThrow('Type cannot be redefined');
     });
 
-    test('integer와 number 타입 병합, integer 타입 우선', () => {
+    test('should merge number and number types', () => {
+      const schema: NumberSchema = {
+        type: 'number',
+        minimum: 0,
+        allOf: [
+          {
+            type: 'number',
+            maximum: 100,
+          },
+        ],
+      };
+      const result = processAllOfSchema(schema);
+      expect(result.type).toBe('number');
+    });
+
+    test('should merge integer and integer types', () => {
+      const schema: NumberSchema = {
+        type: 'integer',
+        minimum: 0,
+        allOf: [
+          {
+            type: 'integer',
+            maximum: 100,
+          },
+        ],
+      };
+      const result = processAllOfSchema(schema);
+      expect(result.type).toBe('integer');
+    });
+
+    test('should throw error on number vs integer type conflict (spec change)', () => {
+      const schema: NumberSchema = {
+        type: 'number',
+        minimum: 0,
+        allOf: [
+          {
+            type: 'integer',
+            maximum: 100,
+          },
+        ],
+      };
+      // Spec change: Using isSameSchemaType, number/integer are no longer compatible
+      expect(() => processAllOfSchema(schema)).toThrow(
+        'Type cannot be redefined in allOf schema',
+      );
+    });
+
+    test('should throw error on integer vs number type conflict (spec change)', () => {
       const schema: NumberSchema = {
         type: 'integer',
         minimum: 0,
@@ -570,18 +617,20 @@ describe('processAllOfSchema', () => {
           },
         ],
       };
-      const result = processAllOfSchema(schema);
-      expect(result.type).toBe('integer');
+      // Spec change: Using isSameSchemaType, integer/number are no longer compatible
+      expect(() => processAllOfSchema(schema)).toThrow(
+        'Type cannot be redefined in allOf schema',
+      );
     });
 
-    test('const 충돌 시 에러 발생', () => {
+    test('should throw error on const conflict', () => {
       const schema: StringSchema = {
         type: 'string',
         const: 'value1',
         allOf: [
           {
             type: 'string',
-            const: 'value2', // const 충돌
+            const: 'value2', // Const conflict
           },
         ],
       };
@@ -591,14 +640,14 @@ describe('processAllOfSchema', () => {
       );
     });
 
-    test('범위 충돌 시 에러 발생', () => {
+    test('should throw error on range conflict', () => {
       const schema: NumberSchema = {
         type: 'number',
         minimum: 10,
         allOf: [
           {
             type: 'number',
-            maximum: 5, // 범위 충돌
+            maximum: 5, // Range conflict
           },
         ],
       };
@@ -609,8 +658,8 @@ describe('processAllOfSchema', () => {
     });
   });
 
-  describe('실제 사용 사례', () => {
-    test('기본 사용자 스키마 확장', () => {
+  describe('Real-world usage scenarios', () => {
+    test('should extend base user schema', () => {
       const schema: ObjectSchema = {
         type: 'object',
         title: 'User Schema',
@@ -667,7 +716,7 @@ describe('processAllOfSchema', () => {
       });
     });
 
-    test('중첩된 allOf 처리', () => {
+    test('should handle nested allOf', () => {
       const schema: ObjectSchema = {
         type: 'object',
         properties: {
@@ -703,7 +752,7 @@ describe('processAllOfSchema', () => {
 
       const result = processAllOfSchema(schema) as ObjectSchema;
 
-      // 중첩된 allOf는 이 함수에서 처리하지 않음 (별도 처리 필요)
+      // Nested allOf is not processed by this function (requires separate handling)
       expect(result.properties?.nested).toEqual({
         type: 'object',
         properties: {
@@ -727,8 +776,8 @@ describe('processAllOfSchema', () => {
     });
   });
 
-  describe('원본 스키마 보존', () => {
-    test('원본 스키마가 변경되지 않음', () => {
+  describe('Original schema preservation', () => {
+    test('should not modify original schema', () => {
       const originalSchema: StringSchema = {
         type: 'string',
         title: 'Original',
@@ -744,9 +793,9 @@ describe('processAllOfSchema', () => {
       const clonedSchema = JSON.parse(JSON.stringify(originalSchema));
       const result = processAllOfSchema(originalSchema);
 
-      // 원본은 변경되지 않음
+      // Original is not modified
       expect(originalSchema).toEqual(clonedSchema);
-      // 결과는 다름
+      // Result is different
       expect(result).not.toBe(originalSchema);
       expect(result).toEqual({
         type: 'string',
@@ -754,6 +803,246 @@ describe('processAllOfSchema', () => {
         minLength: 1,
         maxLength: 50,
       });
+    });
+  });
+
+  describe('Nullable types (array type syntax) compatibility', () => {
+    test('should merge same nullable string types', () => {
+      const schema = {
+        type: ['string', 'null'] as const,
+        minLength: 1,
+        allOf: [
+          {
+            type: ['string', 'null'] as const,
+            maxLength: 100,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+      expect(result.type).toEqual(['string', 'null']);
+      expect(result.minLength).toBe(1);
+      expect(result.maxLength).toBe(100);
+    });
+
+    test('should be compatible with nullable types in different order', () => {
+      const schema = {
+        type: ['string', 'null'] as const,
+        title: 'Optional Name',
+        allOf: [
+          {
+            type: ['null', 'string'] as const,
+            maxLength: 50,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+      expect(result.type).toEqual(['string', 'null']);
+      expect(result.maxLength).toBe(50);
+    });
+
+    test('should be compatible with nullable number types regardless of order', () => {
+      const schema = {
+        type: ['number', 'null'] as const,
+        minimum: 0,
+        allOf: [
+          {
+            type: ['null', 'number'] as const,
+            maximum: 100,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+      expect(result.type).toEqual(['number', 'null']);
+      expect(result.minimum).toBe(0);
+      expect(result.maximum).toBe(100);
+    });
+
+    test('should merge nullable object types', () => {
+      const schema = {
+        type: ['object', 'null'] as const,
+        properties: {
+          name: { type: 'string' } as StringSchema,
+        },
+        allOf: [
+          {
+            type: ['null', 'object'] as const,
+            properties: {
+              email: { type: 'string', format: 'email' } as StringSchema,
+            },
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+      expect(result.type).toEqual(['object', 'null']);
+      expect(result.properties).toHaveProperty('name');
+      expect(result.properties).toHaveProperty('email');
+    });
+
+    test('should merge nullable array types', () => {
+      const schema = {
+        type: ['array', 'null'] as const,
+        items: { type: 'string' } as StringSchema,
+        minItems: 1,
+        allOf: [
+          {
+            type: ['null', 'array'] as const,
+            maxItems: 10,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+      expect(result.type).toEqual(['array', 'null']);
+      expect(result.minItems).toBe(1);
+      expect(result.maxItems).toBe(10);
+    });
+
+    test('should throw error on non-nullable vs nullable type conflict', () => {
+      const schema = {
+        type: 'string' as const,
+        allOf: [
+          {
+            type: ['string', 'null'] as const,
+          },
+        ],
+      };
+
+      expect(() => processAllOfSchema(schema)).toThrow(
+        'Type cannot be redefined in allOf schema',
+      );
+    });
+
+    test('should throw error on nullable vs non-nullable type conflict', () => {
+      const schema = {
+        type: ['string', 'null'] as const,
+        allOf: [
+          {
+            type: 'string' as const,
+          },
+        ],
+      };
+
+      expect(() => processAllOfSchema(schema)).toThrow(
+        'Type cannot be redefined in allOf schema',
+      );
+    });
+
+    test('should throw error on different nullable type conflict', () => {
+      const schema = {
+        type: ['string', 'null'] as const,
+        allOf: [
+          {
+            type: ['number', 'null'] as const,
+          },
+        ],
+      };
+
+      expect(() => processAllOfSchema(schema)).toThrow(
+        'Type cannot be redefined in allOf schema',
+      );
+    });
+
+    test('should throw error on nullable integer vs nullable number conflict', () => {
+      const schema = {
+        type: ['integer', 'null'] as const,
+        allOf: [
+          {
+            type: ['number', 'null'] as const,
+          },
+        ],
+      };
+
+      expect(() => processAllOfSchema(schema)).toThrow(
+        'Type cannot be redefined in allOf schema',
+      );
+    });
+
+    test('should merge nullable type when allOf has no type', () => {
+      const schema = {
+        type: ['string', 'null'] as const,
+        minLength: 1,
+        allOf: [
+          {
+            // No type
+            maxLength: 100,
+            pattern: '^[a-z]+$',
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+      expect(result.type).toEqual(['string', 'null']);
+      expect(result.minLength).toBe(1);
+      expect(result.maxLength).toBe(100);
+      expect(result.pattern).toBe('^[a-z]+$');
+    });
+  });
+
+  describe('Complex type compatibility scenarios', () => {
+    test('should handle allOf items where only some have type', () => {
+      const schema: StringSchema = {
+        type: 'string',
+        minLength: 1,
+        allOf: [
+          {
+            // No type - OK
+            maxLength: 50,
+          },
+          {
+            type: 'string', // Same type - OK
+            pattern: '^[a-z]+$',
+          },
+          {
+            // No type - OK
+            format: 'email',
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema) as StringSchema;
+      expect(result.type).toBe('string');
+      expect(result.minLength).toBe(1);
+      expect(result.maxLength).toBe(50);
+      expect(result.pattern).toBe('^[a-z]+$');
+      expect(result.format).toBe('email');
+    });
+
+    test('should merge multiple allOf items with nullable types', () => {
+      const schema = {
+        type: ['object', 'null'] as const,
+        properties: {
+          id: { type: 'integer' } as NumberSchema,
+        },
+        allOf: [
+          {
+            // No type
+            properties: {
+              name: { type: 'string' } as StringSchema,
+            },
+          },
+          {
+            type: ['object', 'null'] as const,
+            properties: {
+              email: { type: 'string', format: 'email' } as StringSchema,
+            },
+          },
+          {
+            type: ['null', 'object'] as const, // Different order
+            required: ['id'],
+          },
+        ],
+      } as JsonSchema;
+
+      const result = processAllOfSchema(schema);
+      expect(result.type).toEqual(['object', 'null']);
+      expect(result.properties).toHaveProperty('id');
+      expect(result.properties).toHaveProperty('name');
+      expect(result.properties).toHaveProperty('email');
+      expect(result.required).toEqual(['id']);
     });
   });
 });

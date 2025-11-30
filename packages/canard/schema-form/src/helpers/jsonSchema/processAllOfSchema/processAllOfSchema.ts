@@ -20,12 +20,11 @@ export const processAllOfSchema = (schema: JsonSchema): JsonSchema => {
   const mergeHandler = getMergeSchemaHandler(schema);
   if (!mergeHandler) return schema;
 
-  const type = schema.type;
   const { allOf, ...rest } = schema;
   schema = cloneLite(rest, getCloneDepth(schema));
   for (let i = 0, l = allOf!.length; i < l; i++) {
     const allOfSchema = allOf![i];
-    if (validateCompatibility(type, allOfSchema.type) === false)
+    if (validateCompatibility(schema, allOfSchema) === false)
       throw new JsonSchemaError(
         'ALL_OF_TYPE_REDEFINITION',
         'Type cannot be redefined in allOf schema. It must either be omitted or match the parent schema type.',
