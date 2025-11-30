@@ -1,5 +1,7 @@
 import { Flex, Typography } from 'antd';
 
+import { isArraySchema } from '@winglet/json-schema/filter';
+
 import type { FormTypeRendererProps } from '@canard/schema-form';
 
 export const FormGroup = ({
@@ -36,7 +38,7 @@ export const FormGroup = ({
         }}
       >
         <Flex gap={10} align="center">
-          {node.parentNode?.type !== 'array' && (
+          {node.parentNode && isArraySchema(node.parentNode) === false && (
             <label htmlFor={path}>
               <Typography.Text>{name}</Typography.Text>
               {required && (

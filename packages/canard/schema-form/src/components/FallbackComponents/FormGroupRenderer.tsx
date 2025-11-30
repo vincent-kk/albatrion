@@ -1,3 +1,5 @@
+import { isArraySchema } from '@winglet/json-schema/filter';
+
 import type { FormTypeRendererProps } from '@/schema-form/types';
 
 export const FormGroupRenderer = ({
@@ -42,7 +44,7 @@ export const FormGroupRenderer = ({
         }}
         className={className}
       >
-        {node.parentNode?.type !== 'array' && (
+        {node.parentNode && isArraySchema(node.parentNode) === false && (
           <label htmlFor={path} style={{ marginRight: 5 }}>
             {name} {required && <span style={{ color: 'red' }}>*</span>}
           </label>
