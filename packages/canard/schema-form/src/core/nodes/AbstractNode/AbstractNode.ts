@@ -66,7 +66,7 @@ export abstract class AbstractNode<
   public readonly group: 'branch' | 'terminal';
 
   /** [readonly] Node's type, `array`, `number`, `object`, `string`, `boolean`, `virtual`, `null` */
-  public abstract readonly type: Exclude<Schema['type'], 'integer'>;
+  public abstract readonly type: Exclude<JsonSchemaType, 'integer'>;
 
   /** [readonly] Schema's type, `array`, `number`, `integer`, `object`, `string`, `boolean`, `virtual`, `null` */
   public readonly schemaType: JsonSchemaType;
