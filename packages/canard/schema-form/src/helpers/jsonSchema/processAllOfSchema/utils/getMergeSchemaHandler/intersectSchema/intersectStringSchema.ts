@@ -7,6 +7,7 @@ import { intersectMinimum } from './utils/intersectMinimum';
 import { intersectPattern } from './utils/intersectPattern';
 import { processFirstWinFields } from './utils/processFirstWinFields';
 import { processOverwriteFields } from './utils/processOverwriteFields';
+import { processSchemaType } from './utils/processSchemaType';
 import { unionRequired } from './utils/unionRequired';
 import { validateRange } from './utils/validateRange';
 
@@ -29,6 +30,7 @@ export const intersectStringSchema = (
   base: StringSchema,
   source: Partial<StringSchema>,
 ): StringSchema => {
+  processSchemaType(base, source);
   processFirstWinFields(base, source);
   processOverwriteFields(base, source);
 

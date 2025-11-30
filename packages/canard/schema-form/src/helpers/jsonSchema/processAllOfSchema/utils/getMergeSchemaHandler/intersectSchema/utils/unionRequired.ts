@@ -11,12 +11,12 @@ import { unique } from '@winglet/common-utils/array';
  * @param sourceRequired - The source required fields array (optional)
  * @returns Combined unique required fields array, or undefined if both are undefined
  */
-export function unionRequired(
+export const unionRequired = (
   baseRequired?: string[],
   sourceRequired?: string[],
-): string[] | undefined {
+): string[] | undefined => {
   if (!baseRequired && !sourceRequired) return undefined;
   if (!baseRequired) return sourceRequired;
   if (!sourceRequired) return baseRequired;
   return unique([...baseRequired, ...sourceRequired]);
-}
+};

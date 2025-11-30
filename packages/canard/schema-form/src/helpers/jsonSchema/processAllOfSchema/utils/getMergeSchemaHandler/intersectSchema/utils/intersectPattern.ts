@@ -11,12 +11,12 @@
  * @example
  * intersectPattern('\\d+', '[a-z]+') // Returns '(?=\\d+)(?=[a-z]+)'
  */
-export function intersectPattern(
+export const intersectPattern = (
   basePattern?: string,
   sourcePattern?: string,
-): string | undefined {
+): string | undefined => {
   if (!basePattern && !sourcePattern) return undefined;
   if (!basePattern) return sourcePattern;
   if (!sourcePattern) return basePattern;
   return '(?=' + basePattern + ')(?=' + sourcePattern + ')';
-}
+};

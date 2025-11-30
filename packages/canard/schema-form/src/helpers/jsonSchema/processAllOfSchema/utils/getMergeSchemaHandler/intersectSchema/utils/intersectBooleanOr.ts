@@ -10,12 +10,12 @@
  * @param sourceBool - The source boolean value (optional)
  * @returns The OR result, or undefined if both inputs are undefined
  */
-export function intersectBooleanOr(
+export const intersectBooleanOr = (
   baseBool?: boolean,
   sourceBool?: boolean,
-): boolean | undefined {
+): boolean | undefined => {
   if (baseBool === undefined && sourceBool === undefined) return undefined;
   if (baseBool === undefined) return sourceBool;
   if (sourceBool === undefined) return baseBool;
   return baseBool || sourceBool;
-}
+};

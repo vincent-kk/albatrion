@@ -10,12 +10,12 @@ import { maxLite } from '@winglet/common-utils/math';
  * @param sourceMin - The source minimum value (optional)
  * @returns The larger minimum value, or undefined if both are undefined
  */
-export function intersectMinimum(
+export const intersectMinimum = (
   baseMin?: number,
   sourceMin?: number,
-): number | undefined {
+): number | undefined => {
   if (baseMin === undefined && sourceMin === undefined) return undefined;
   if (baseMin === undefined) return sourceMin;
   if (sourceMin === undefined) return baseMin;
   return maxLite(baseMin, sourceMin);
-}
+};

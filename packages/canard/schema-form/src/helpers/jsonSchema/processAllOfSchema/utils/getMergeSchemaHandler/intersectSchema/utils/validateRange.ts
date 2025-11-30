@@ -12,15 +12,15 @@ import { JsonSchemaError } from '@/schema-form/errors';
  * @param errorMessage - Custom error message prefix
  * @throws {JsonSchemaError} When min > max, creating an invalid range
  */
-export function validateRange(
+export const validateRange = (
   min?: number,
   max?: number,
   errorMessage: string = 'Invalid range: min > max',
-): void {
+): void => {
   if (min !== undefined && max !== undefined && min > max) {
     throw new JsonSchemaError(
       'INVALID_RANGE',
       `${errorMessage} (${min} > ${max})`,
     );
   }
-}
+};

@@ -19,11 +19,11 @@ import { JsonSchemaError } from '@/schema-form/errors';
  * @returns Intersected enum array, or undefined if both inputs are undefined
  * @throws {JsonSchemaError} When intersection results in empty array (impossible constraint)
  */
-export function intersectEnum<T>(
+export const intersectEnum = <T>(
   baseEnum?: T[],
   sourceEnum?: T[],
   deepEqual?: boolean,
-): T[] | undefined {
+): T[] | undefined => {
   if (!baseEnum && !sourceEnum) return undefined;
   if (!baseEnum) return sourceEnum;
   if (!sourceEnum) return baseEnum;
@@ -37,4 +37,4 @@ export function intersectEnum<T>(
       'Enum values must have at least one common value',
     );
   return intersected;
-}
+};

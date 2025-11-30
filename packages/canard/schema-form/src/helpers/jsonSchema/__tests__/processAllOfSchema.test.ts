@@ -600,10 +600,8 @@ describe('processAllOfSchema', () => {
           },
         ],
       };
-      // Spec change: Using isSameSchemaType, number/integer are no longer compatible
-      expect(() => processAllOfSchema(schema)).toThrow(
-        'Type cannot be redefined in allOf schema',
-      );
+      const result = processAllOfSchema(schema);
+      expect(result.type).toBe('integer');
     });
 
     test('should throw error on integer vs number type conflict (spec change)', () => {
@@ -617,10 +615,8 @@ describe('processAllOfSchema', () => {
           },
         ],
       };
-      // Spec change: Using isSameSchemaType, integer/number are no longer compatible
-      expect(() => processAllOfSchema(schema)).toThrow(
-        'Type cannot be redefined in allOf schema',
-      );
+      const result = processAllOfSchema(schema);
+      expect(result.type).toBe('integer');
     });
 
     test('should throw error on const conflict', () => {
@@ -911,9 +907,10 @@ describe('processAllOfSchema', () => {
         ],
       };
 
-      expect(() => processAllOfSchema(schema)).toThrow(
-        'Type cannot be redefined in allOf schema',
-      );
+      const result = processAllOfSchema(schema);
+
+      expect(result.type).toBe('string');
+      expect(result.nullable).toBeUndefined();
     });
 
     test('should throw error on nullable vs non-nullable type conflict', () => {
@@ -925,10 +922,10 @@ describe('processAllOfSchema', () => {
           },
         ],
       };
+      const result = processAllOfSchema(schema);
 
-      expect(() => processAllOfSchema(schema)).toThrow(
-        'Type cannot be redefined in allOf schema',
-      );
+      expect(result.type).toBe('string');
+      expect(result.nullable).toBeUndefined();
     });
 
     test('should throw error on different nullable type conflict', () => {
@@ -955,10 +952,8 @@ describe('processAllOfSchema', () => {
           },
         ],
       };
-
-      expect(() => processAllOfSchema(schema)).toThrow(
-        'Type cannot be redefined in allOf schema',
-      );
+      const result = processAllOfSchema(schema);
+      expect(result.type).toEqual(['integer', 'null']);
     });
 
     test('should merge nullable type when allOf has no type', () => {
@@ -979,6 +974,347 @@ describe('processAllOfSchema', () => {
       expect(result.minLength).toBe(1);
       expect(result.maxLength).toBe(100);
       expect(result.pattern).toBe('^[a-z]+$');
+    });
+  });
+
+  describe('Nullable property merging', () => {
+    test('should keep nullable when both base and source have nullable: true', () => {
+      const schema = {
+        type: 'string' as const,
+        nullable: true,
+        minLength: 1,
+        allOf: [
+          {
+            type: 'string' as const,
+            nullable: true,
+            maxLength: 100,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+
+      expect(result.type).toEqual(['string', 'null']);
+      expect(result.nullable).toBeUndefined();
+      expect(result.minLength).toBe(1);
+      expect(result.maxLength).toBe(100);
+    });
+
+    test('should remove nullable when base is nullable but source is not', () => {
+      const schema = {
+        type: 'string' as const,
+        nullable: true,
+        minLength: 1,
+        allOf: [
+          {
+            type: 'string' as const,
+            nullable: false,
+            maxLength: 100,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+
+      expect(result.type).toBe('string');
+      expect(result.nullable).toBeUndefined();
+    });
+
+    test('should remove nullable when base is not nullable but source is', () => {
+      const schema = {
+        type: 'string' as const,
+        nullable: false,
+        minLength: 1,
+        allOf: [
+          {
+            type: 'string' as const,
+            nullable: true,
+            maxLength: 100,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+
+      expect(result.type).toBe('string');
+      expect(result.nullable).toBeUndefined();
+    });
+
+    test('should keep non-nullable when neither has nullable property', () => {
+      const schema = {
+        type: 'string' as const,
+        minLength: 1,
+        allOf: [
+          {
+            type: 'string' as const,
+            maxLength: 100,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+
+      expect(result.type).toBe('string');
+      expect(result.nullable).toBeUndefined();
+    });
+
+    test('should merge nullable number types with nullable property', () => {
+      const schema = {
+        type: 'number' as const,
+        nullable: true,
+        minimum: 0,
+        allOf: [
+          {
+            type: 'number' as const,
+            nullable: true,
+            maximum: 100,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+
+      expect(result.type).toEqual(['number', 'null']);
+      expect(result.nullable).toBeUndefined();
+      expect(result.minimum).toBe(0);
+      expect(result.maximum).toBe(100);
+    });
+
+    test('should merge nullable object types with nullable property', () => {
+      const schema = {
+        type: 'object' as const,
+        nullable: true,
+        properties: {
+          name: { type: 'string' } as StringSchema,
+        },
+        allOf: [
+          {
+            type: 'object' as const,
+            nullable: true,
+            properties: {
+              email: { type: 'string', format: 'email' } as StringSchema,
+            },
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+
+      expect(result.type).toEqual(['object', 'null']);
+      expect(result.nullable).toBeUndefined();
+      expect(result.properties).toHaveProperty('name');
+      expect(result.properties).toHaveProperty('email');
+    });
+
+    test('should merge nullable array types with nullable property', () => {
+      const schema = {
+        type: 'array' as const,
+        nullable: true,
+        items: { type: 'string' } as StringSchema,
+        minItems: 1,
+        allOf: [
+          {
+            type: 'array' as const,
+            nullable: true,
+            maxItems: 10,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+
+      expect(result.type).toEqual(['array', 'null']);
+      expect(result.nullable).toBeUndefined();
+      expect(result.minItems).toBe(1);
+      expect(result.maxItems).toBe(10);
+    });
+
+    test('should handle mixed nullable representations (property and array type)', () => {
+      const schema = {
+        type: 'string' as const,
+        nullable: true,
+        minLength: 1,
+        allOf: [
+          {
+            type: ['string', 'null'] as const,
+            maxLength: 100,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+
+      expect(result.type).toEqual(['string', 'null']);
+      expect(result.nullable).toBeUndefined();
+    });
+
+    test('should handle mixed nullable representations (array type and property)', () => {
+      const schema = {
+        type: ['string', 'null'] as const,
+        minLength: 1,
+        allOf: [
+          {
+            type: 'string' as const,
+            nullable: true,
+            maxLength: 100,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+
+      expect(result.type).toEqual(['string', 'null']);
+      expect(result.nullable).toBeUndefined();
+    });
+
+    test('should remove nullable with mixed representations when source is not nullable', () => {
+      const schema = {
+        type: ['string', 'null'] as const,
+        minLength: 1,
+        allOf: [
+          {
+            type: 'string' as const,
+            nullable: false,
+            maxLength: 100,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+
+      expect(result.type).toBe('string');
+      expect(result.nullable).toBeUndefined();
+    });
+
+    test('should handle multiple allOf items with nullable', () => {
+      const schema = {
+        type: 'string' as const,
+        nullable: true,
+        allOf: [
+          {
+            type: 'string' as const,
+            nullable: true,
+            minLength: 1,
+          },
+          {
+            type: 'string' as const,
+            nullable: true,
+            maxLength: 100,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+
+      expect(result.type).toEqual(['string', 'null']);
+      expect(result.nullable).toBeUndefined();
+      expect(result.minLength).toBe(1);
+      expect(result.maxLength).toBe(100);
+    });
+
+    test('should remove nullable if any allOf item is not nullable', () => {
+      const schema = {
+        type: 'string' as const,
+        nullable: true,
+        allOf: [
+          {
+            type: 'string' as const,
+            nullable: true,
+            minLength: 1,
+          },
+          {
+            type: 'string' as const,
+            nullable: false, // This makes result non-nullable
+            maxLength: 100,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+
+      expect(result.type).toBe('string');
+      expect(result.nullable).toBeUndefined();
+    });
+
+    test('should handle null type with nullable property', () => {
+      const schema = {
+        type: 'null' as const,
+        nullable: true,
+        allOf: [
+          {
+            type: 'null' as const,
+            nullable: true,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+
+      expect(result.type).toBe('null');
+      expect(result.nullable).toBeUndefined();
+    });
+
+    test('should handle boolean type with nullable property', () => {
+      const schema = {
+        type: 'boolean' as const,
+        nullable: true,
+        allOf: [
+          {
+            type: 'boolean' as const,
+            nullable: true,
+            default: false,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+
+      expect(result.type).toEqual(['boolean', 'null']);
+      expect(result.nullable).toBeUndefined();
+      expect(result.default).toBe(false);
+    });
+
+    test('should handle integer type with nullable property', () => {
+      const schema = {
+        type: 'integer' as const,
+        nullable: true,
+        minimum: 0,
+        allOf: [
+          {
+            type: 'integer' as const,
+            nullable: true,
+            maximum: 100,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+
+      expect(result.type).toEqual(['integer', 'null']);
+      expect(result.nullable).toBeUndefined();
+      expect(result.minimum).toBe(0);
+      expect(result.maximum).toBe(100);
+    });
+
+    test('should not process nullable when source has no nullable info', () => {
+      const schema = {
+        type: 'string' as const,
+        nullable: true,
+        minLength: 1,
+        allOf: [
+          {
+            // No type and no nullable - should not trigger processNullable
+            maxLength: 100,
+          },
+        ],
+      };
+
+      const result = processAllOfSchema(schema);
+
+      // When source has no nullable info, nullable processing is skipped
+      // but nullable property should still be cleaned up through other means
+      expect(result.minLength).toBe(1);
+      expect(result.maxLength).toBe(100);
     });
   });
 

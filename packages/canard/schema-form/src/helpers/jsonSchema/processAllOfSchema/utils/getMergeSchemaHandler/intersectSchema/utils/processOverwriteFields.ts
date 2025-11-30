@@ -12,14 +12,14 @@ import { EXCLUDE_FIELDS } from './constants';
  * @param base - The base schema to modify
  * @param source - The source schema to copy fields from
  */
-export function processOverwriteFields<T extends JsonSchema>(
+export const processOverwriteFields = <T extends JsonSchema>(
   base: T,
   source: Partial<T>,
-) {
+) => {
   const keys = Object.keys(source);
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
     const value = source[k];
     if (EXCLUDE_FIELDS.has(k) || value === undefined) continue;
     base[k as keyof T] = value;
   }
-}
+};

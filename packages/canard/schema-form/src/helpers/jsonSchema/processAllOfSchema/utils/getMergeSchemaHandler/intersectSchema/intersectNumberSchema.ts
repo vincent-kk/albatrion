@@ -7,6 +7,7 @@ import { intersectMinimum } from './utils/intersectMinimum';
 import { intersectMultipleOf } from './utils/intersectMultipleOf';
 import { processFirstWinFields } from './utils/processFirstWinFields';
 import { processOverwriteFields } from './utils/processOverwriteFields';
+import { processSchemaType } from './utils/processSchemaType';
 import { unionRequired } from './utils/unionRequired';
 import { validateRange } from './utils/validateRange';
 
@@ -30,10 +31,10 @@ export const intersectNumberSchema = (
   base: NumberSchema,
   source: Partial<NumberSchema>,
 ): NumberSchema => {
+  processSchemaType(base, source);
   processFirstWinFields(base, source);
   processOverwriteFields(base, source);
 
-  const typeResult = source.type === 'integer' ? 'integer' : undefined;
   const enumResult = intersectEnum(base.enum, source.enum);
   const constResult = intersectConst(base.const, source.const);
   const requiredResult = unionRequired(base.required, source.required);
@@ -56,7 +57,6 @@ export const intersectNumberSchema = (
     'Invalid number constraints: exclusiveMinimum',
   );
 
-  if (typeResult !== undefined) base.type = typeResult;
   if (enumResult !== undefined) base.enum = enumResult;
   if (constResult !== undefined) base.const = constResult;
   if (requiredResult !== undefined) base.required = requiredResult;

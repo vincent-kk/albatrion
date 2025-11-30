@@ -11,13 +11,13 @@ import { lcm } from '@winglet/common-utils/math';
  * @param sourceMultiple - The source multipleOf value (optional)
  * @returns LCM of both values, or undefined if both are undefined
  */
-export function intersectMultipleOf(
+export const intersectMultipleOf = (
   baseMultiple?: number,
   sourceMultiple?: number,
-): number | undefined {
+): number | undefined => {
   if (baseMultiple === undefined && sourceMultiple === undefined)
     return undefined;
   if (baseMultiple === undefined) return sourceMultiple;
   if (sourceMultiple === undefined) return baseMultiple;
   return lcm(baseMultiple, sourceMultiple);
-}
+};

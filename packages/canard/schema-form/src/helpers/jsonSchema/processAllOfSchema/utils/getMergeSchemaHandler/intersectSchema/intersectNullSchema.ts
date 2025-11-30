@@ -4,6 +4,7 @@ import { intersectConst } from './utils/intersectConst';
 import { intersectEnum } from './utils/intersectEnum';
 import { processFirstWinFields } from './utils/processFirstWinFields';
 import { processOverwriteFields } from './utils/processOverwriteFields';
+import { processSchemaType } from './utils/processSchemaType';
 import { unionRequired } from './utils/unionRequired';
 
 /**
@@ -24,6 +25,7 @@ export const intersectNullSchema = (
   base: NullSchema,
   source: Partial<NullSchema>,
 ): NullSchema => {
+  processSchemaType(base, source);
   processFirstWinFields(base, source);
   processOverwriteFields(base, source);
 

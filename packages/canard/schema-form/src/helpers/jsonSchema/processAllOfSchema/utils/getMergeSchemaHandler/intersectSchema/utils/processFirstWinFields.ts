@@ -13,10 +13,10 @@ import { FIRST_WIN_FIELDS } from './constants';
  * @param base - The base schema to modify (first-win priority)
  * @param source - The source schema to merge from
  */
-export function processFirstWinFields<T extends JsonSchema>(
+export const processFirstWinFields = <T extends JsonSchema>(
   base: T,
   source: Partial<T>,
-) {
+) => {
   for (let i = 0, l = FIRST_WIN_FIELDS.length; i < l; i++) {
     const field = FIRST_WIN_FIELDS[i];
     const baseValue = base[field as keyof T];
@@ -24,4 +24,4 @@ export function processFirstWinFields<T extends JsonSchema>(
     if (baseValue !== undefined) base[field as keyof T] = baseValue;
     else if (sourceValue !== undefined) base[field as keyof T] = sourceValue;
   }
-}
+};

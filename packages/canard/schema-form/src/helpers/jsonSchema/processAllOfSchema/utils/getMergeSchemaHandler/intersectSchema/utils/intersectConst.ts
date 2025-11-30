@@ -12,10 +12,10 @@ import { JsonSchemaError } from '@/schema-form/errors';
  * @returns The const value if both are undefined or equal, undefined if only one is defined
  * @throws {JsonSchemaError} When both values are defined but different
  */
-export function intersectConst<T>(
+export const intersectConst = <T>(
   baseConst?: T,
   sourceConst?: T,
-): T | undefined {
+): T | undefined => {
   if (baseConst === undefined && sourceConst === undefined) return undefined;
   if (baseConst === undefined) return sourceConst;
   if (sourceConst === undefined) return baseConst;
@@ -25,4 +25,4 @@ export function intersectConst<T>(
       `Conflicting const values: ${baseConst} vs ${sourceConst}`,
     );
   return baseConst;
-}
+};

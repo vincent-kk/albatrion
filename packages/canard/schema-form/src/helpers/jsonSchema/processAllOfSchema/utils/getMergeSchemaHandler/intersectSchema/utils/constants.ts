@@ -29,6 +29,7 @@ export const SPECIAL_FIELDS = [
   'enum',
   'const',
   'required',
+  'nullable',
   'pattern',
   'multipleOf',
   'minimum',

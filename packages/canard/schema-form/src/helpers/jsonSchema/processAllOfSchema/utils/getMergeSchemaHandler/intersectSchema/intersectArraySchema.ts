@@ -8,6 +8,7 @@ import { intersectMaximum } from './utils/intersectMaximum';
 import { intersectMinimum } from './utils/intersectMinimum';
 import { processFirstWinFields } from './utils/processFirstWinFields';
 import { processOverwriteFields } from './utils/processOverwriteFields';
+import { processSchemaType } from './utils/processSchemaType';
 import { unionRequired } from './utils/unionRequired';
 import { validateRange } from './utils/validateRange';
 
@@ -32,6 +33,7 @@ export const intersectArraySchema = (
   base: ArraySchema,
   source: Partial<ArraySchema>,
 ): ArraySchema => {
+  processSchemaType(base, source);
   processFirstWinFields(base, source);
   processOverwriteFields(base, source);
   distributeAllOfItems(base, source);
