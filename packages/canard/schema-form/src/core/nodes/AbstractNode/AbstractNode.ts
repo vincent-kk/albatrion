@@ -315,28 +315,31 @@ export abstract class AbstractNode<
     this.jsonSchema = jsonSchema;
     this.schemaType = schemaType;
     this.nullable = nullable;
+    this.required = required ?? false;
+    this.#name = name || '';
 
     this.isRoot = !parentNode;
     this.rootNode = (parentNode?.rootNode || this) as SchemaNode;
     this.parentNode = parentNode || null;
-    this.required = required ?? false;
 
-    this.group = getNodeGroup(schemaType, jsonSchema);
-
-    this.#name = name || '';
+    this.group = getNodeGroup(this.schemaType, this.jsonSchema);
     this.#escapedName = escapeSegment(this.#name);
-
-    this.#path = joinSegment(parentNode?.path, this.#escapedName);
-    this.#schemaPath = scope
+    this.#path = joinSegment(this.parentNode?.path, this.#escapedName);
+    this.#schemaPath = this.scope
       ? joinSegment(
-          parentNode?.schemaPath,
-          getScopedSegment(this.#escapedName, scope, parentNode?.type, variant),
+          this.parentNode?.schemaPath,
+          getScopedSegment(
+            this.#escapedName,
+            this.scope,
+            this.parentNode?.type,
+            this.variant,
+          ),
         )
-      : joinSegment(parentNode?.schemaPath, this.#escapedName);
-    this.depth = parentNode ? parentNode.depth + 1 : 0;
+      : joinSegment(this.parentNode?.schemaPath, this.#escapedName);
+    this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
 
     this.#compute = computeFactory(
-      schemaType,
+      this.schemaType,
       this.jsonSchema,
       this.rootNode.jsonSchema,
     );
