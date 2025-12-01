@@ -1,9 +1,16 @@
-import { type ComponentType, useMemo, useRef, useState } from 'react';
+import {
+  type ComponentType,
+  type MemoExoticComponent,
+  memo,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import {
   useConstant,
   useOnUnmount,
-  useRestProperties,
+  useReference,
 } from '@winglet/react-utils/hook';
 
 import type { SchemaNodeProxyProps } from '@/schema-form/components/SchemaNode/SchemaNodeProxy';
@@ -15,7 +22,10 @@ import {
 import { useSchemaNodeSubscribe } from '@/schema-form/hooks/useSchemaNodeSubscribe';
 import type { ChildNodeComponentProps } from '@/schema-form/types';
 
-import type { ChildNodeComponent } from '../type';
+import type {
+  AdditionalChildNodeProperties,
+  ChildNodeComponent,
+} from '../type';
 
 /**
  * Create child node components for the given SchemaNode
@@ -45,20 +55,29 @@ export const useChildNodeComponents = (
       const CachedComponent = cache.current.get(key);
       if (CachedComponent) ChildNodeComponents.push(CachedComponent);
       else {
-        const ChildComponent = ({
-          FormTypeRenderer: InputFormTypeRenderer,
-          ...restProps
-        }: ChildNodeComponentProps) => {
-          const FormTypeRenderer = useConstant(InputFormTypeRenderer);
-          const overrideProps = useRestProperties(restProps);
-          return (
-            <NodeProxy
-              node={node}
-              FormTypeRenderer={FormTypeRenderer}
-              overrideProps={overrideProps}
-            />
-          );
-        };
+        const ChildComponent = memo(
+          ({
+            FormTypeRenderer: InputFormTypeRenderer,
+            onChange,
+            onFileAttach,
+            ...restProps
+          }: ChildNodeComponentProps) => {
+            const onChangeRef = useReference(onChange);
+            const onFileAttachRef = useReference(onFileAttach);
+            const overridePropsRef = useReference(restProps);
+            const FormTypeRenderer = useConstant(InputFormTypeRenderer);
+            return (
+              <NodeProxy
+                node={node}
+                onChangeRef={onChangeRef}
+                onFileAttachRef={onFileAttachRef}
+                overridePropsRef={overridePropsRef}
+                FormTypeRenderer={FormTypeRenderer}
+              />
+            );
+          },
+        ) as MemoExoticComponent<ChildNodeComponent> &
+          AdditionalChildNodeProperties;
 
         ChildComponent.key = key;
         ChildComponent.path = node.path;

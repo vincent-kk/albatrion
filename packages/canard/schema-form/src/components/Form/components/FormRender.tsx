@@ -1,15 +1,15 @@
 import type { ComponentType, PropsWithChildren, ReactNode } from 'react';
 
-import { useConstant, useSnapshot } from '@winglet/react-utils/hook';
+import { useConstant, useReference } from '@winglet/react-utils/hook';
 
 import type { Dictionary, Fn } from '@aileron/declare';
 
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import type {
   AllowedValue,
+  ChildNodeComponentProps,
   FormTypeInputProps,
   FormTypeRendererProps,
-  OverridableFormTypeInputProps,
 } from '@/schema-form/types';
 
 export type FormRenderProps<Value extends AllowedValue> = {
@@ -17,7 +17,7 @@ export type FormRenderProps<Value extends AllowedValue> = {
   FormTypeInput?: ComponentType<FormTypeInputProps<Value>>;
   children: Fn<[props: FormTypeRendererProps], ReactNode>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
-} & OverridableFormTypeInputProps;
+} & ChildNodeComponentProps;
 
 /**
  * Renders form fields with complete control through a custom render function.
@@ -114,7 +114,7 @@ export const FormRender = <Value extends AllowedValue = AllowedValue>({
   children,
   ...restProps
 }: FormRenderProps<Value>) => {
-  const overrideProps = useSnapshot(restProps);
+  const overridePropsRef = useReference(restProps);
   const constant = useConstant({
     FormTypeInput: FormTypeInput as ComponentType<FormTypeInputProps>,
     FormTypeRenderer: children,
@@ -123,7 +123,7 @@ export const FormRender = <Value extends AllowedValue = AllowedValue>({
   return (
     <SchemaNodeProxy
       path={path}
-      overrideProps={overrideProps}
+      overridePropsRef={overridePropsRef}
       FormTypeInput={constant.FormTypeInput}
       FormTypeRenderer={constant.FormTypeRenderer}
       Wrapper={constant.Wrapper}

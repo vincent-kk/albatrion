@@ -1,15 +1,15 @@
 import type { ComponentType, PropsWithChildren } from 'react';
 
-import { useConstant, useSnapshot } from '@winglet/react-utils/hook';
+import { useConstant, useReference } from '@winglet/react-utils/hook';
 
 import type { Dictionary } from '@aileron/declare';
 
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import type {
   AllowedValue,
+  ChildNodeComponentProps,
   FormTypeInputProps,
   FormTypeRendererProps,
-  OverridableFormTypeInputProps,
 } from '@/schema-form/types';
 
 export type FormGroupProps<Value extends AllowedValue> = {
@@ -17,7 +17,7 @@ export type FormGroupProps<Value extends AllowedValue> = {
   FormTypeInput?: ComponentType<FormTypeInputProps<Value>>;
   FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
-} & OverridableFormTypeInputProps;
+} & ChildNodeComponentProps;
 
 /**
  * Renders a complete form field group with customizable input and renderer components.
@@ -101,7 +101,7 @@ export const FormGroup = <Value extends AllowedValue = AllowedValue>({
   Wrapper,
   ...restProps
 }: FormGroupProps<Value>) => {
-  const overrideProps = useSnapshot(restProps);
+  const overridePropsRef = useReference(restProps);
   const constant = useConstant({
     FormTypeInput: FormTypeInput as ComponentType<FormTypeInputProps>,
     FormTypeRenderer,
@@ -110,7 +110,7 @@ export const FormGroup = <Value extends AllowedValue = AllowedValue>({
   return (
     <SchemaNodeProxy
       path={path}
-      overrideProps={overrideProps}
+      overridePropsRef={overridePropsRef}
       FormTypeInput={constant.FormTypeInput}
       FormTypeRenderer={constant.FormTypeRenderer}
       Wrapper={constant.Wrapper}

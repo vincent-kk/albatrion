@@ -1,20 +1,20 @@
 import type { ComponentType } from 'react';
 
-import { useConstant, useSnapshot } from '@winglet/react-utils/hook';
+import { useConstant, useReference } from '@winglet/react-utils/hook';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import { useExternalFormContext } from '@/schema-form/providers';
 import type {
   AllowedValue,
+  ChildNodeComponentProps,
   FormTypeInputProps,
-  OverridableFormTypeInputProps,
 } from '@/schema-form/types';
 
 export type FormInputProps<Value extends AllowedValue> = {
   path?: string;
   FormTypeInput?: ComponentType<FormTypeInputProps<Value>>;
-} & OverridableFormTypeInputProps;
+} & ChildNodeComponentProps;
 
 /**
  * Renders form input fields with automatic type detection from schema.
@@ -83,14 +83,14 @@ export const FormInput = <Value extends AllowedValue>({
   ...restProps
 }: FormInputProps<Value>) => {
   const { FormInputRenderer } = useExternalFormContext();
-  const overrideProps = useSnapshot(restProps);
+  const overridePropsRef = useReference(restProps);
   const FormTypeInput = useConstant(
     InputFormTypeInput as ComponentType<FormTypeInputProps>,
   );
   return (
     <SchemaNodeProxy
       path={path}
-      overrideProps={overrideProps}
+      overridePropsRef={overridePropsRef}
       FormTypeInput={FormTypeInput}
       FormTypeRenderer={FormInputRenderer || PluginManager.FormInput}
     />

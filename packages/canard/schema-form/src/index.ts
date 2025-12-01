@@ -58,8 +58,9 @@ export type {
 
 export type * from './types/rolled';
 
-export { useFormSubmit } from './hooks/useFormSubmit';
+export { useChildNodeComponentMap } from './hooks/useChildNodeComponentMap';
 export { useChildNodeErrors } from './hooks/useChildNodeErrors';
+export { useFormSubmit } from './hooks/useFormSubmit';
 
 export {
   ExternalFormContextProvider as FormProvider,

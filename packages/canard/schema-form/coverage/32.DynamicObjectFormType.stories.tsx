@@ -1,5 +1,4 @@
 import {
-  type ComponentType,
   type ReactNode,
   useCallback,
   useEffect,
@@ -7,14 +6,14 @@ import {
   useState,
 } from 'react';
 
-import type { ElementOf } from '@aileron/declare';
+import { useHandle } from '@winglet/react-utils';
 
 import {
-  type ChildNodeComponentProps,
   Form,
   type FormTypeInputProps,
   type JsonSchema,
   registerPlugin,
+  useChildNodeComponentMap,
 } from '../src';
 import StoryLayout from './components/StoryLayout';
 import { plugin as validatorPlugin } from './components/validator';
@@ -92,21 +91,14 @@ const CustomObjectFormType = ({
   defaultValue,
   ChildNodeComponents,
 }: FormTypeInputProps<Value | undefined>) => {
-  const ChildNodeMap = useMemo(() => {
-    return ChildNodeComponents.reduce(
-      (acc, component) => {
-        acc[component.field as keyof Value] = component;
-        return acc;
-      },
-      {} as Record<keyof Value, ElementOf<typeof ChildNodeComponents>>,
-    );
-  }, [ChildNodeComponents]);
+  const ChildNodeComponentMap =
+    useChildNodeComponentMap<Value>(ChildNodeComponents);
 
   const [layoutMode, setLayoutMode] = useState<
     'basic' | 'work' | 'contact' | 'grid'
   >('basic');
 
-  const [formData, setFormData] = useState<Value | undefined>();
+  const [formData, setFormData] = useState<Value | undefined>(defaultValue);
 
   const handleFieldChange = useCallback(
     (field: keyof Value) => (value: unknown) => {
@@ -115,9 +107,11 @@ const CustomObjectFormType = ({
     [],
   );
 
+  const handleChange = useHandle(onChange);
+
   useEffect(() => {
-    onChange(formData);
-  }, [formData, onChange]);
+    handleChange(formData);
+  }, [formData, handleChange]);
 
   useEffect(() => {
     setFormData(
@@ -129,27 +123,25 @@ const CustomObjectFormType = ({
           )
         : undefined,
     );
-  }, [defaultValue, layoutMode, onChange]);
+  }, [defaultValue, layoutMode]);
 
   // 각 필드별 컴포넌트를 메모이제이션하여 안정적으로 유지
   const fieldComponents = useMemo(() => {
     const components: Partial<Record<keyof Value, ReactNode>> = {};
-    Object.keys(ChildNodeMap).forEach((field) => {
-      const Component = ChildNodeMap[field as keyof Value] as ComponentType<
-        ChildNodeComponentProps<Value[keyof Value]>
-      >;
+    (Object.keys(ChildNodeComponentMap) as (keyof Value)[]).forEach((field) => {
+      const Component = ChildNodeComponentMap[field];
       if (Component) {
-        components[field as keyof Value] = (
+        components[field] = (
           <Component
             key={field}
-            onChange={handleFieldChange(field as keyof Value)}
-            defaultValue={defaultValue?.[field as keyof Value]}
+            onChange={handleFieldChange(field)}
+            defaultValue={defaultValue?.[field] as any}
           />
         );
       }
     });
     return components;
-  }, [ChildNodeMap, handleFieldChange, defaultValue]);
+  }, [ChildNodeComponentMap, handleFieldChange, defaultValue]);
 
   const renderFields = useCallback(
     (fields: readonly (keyof Value)[]) => {
@@ -262,5 +254,103 @@ const CustomObjectFormType = ({
         </div>
       )}
     </div>
+  );
+};
+
+// ============================================================================
+// ChildComponentMap Story - useChildNodeComponentMap 기본 사용 예제
+// ============================================================================
+
+type SimpleValue = Partial<{
+  name: string;
+  age: number;
+  email: string;
+  homepage: string;
+}>;
+
+const SimpleCustomObjectFormType = ({
+  defaultValue,
+  onChange,
+  ChildNodeComponents,
+}: FormTypeInputProps<SimpleValue>) => {
+  const [formData, setFormData] = useState<SimpleValue | undefined>(
+    defaultValue,
+  );
+  const ChildNodeComponentMap =
+    useChildNodeComponentMap<SimpleValue>(ChildNodeComponents);
+
+  const handleFieldChange = useCallback(
+    (field: keyof SimpleValue) => (value: unknown) => {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    },
+    [],
+  );
+
+  const handleChange = useHandle(onChange);
+
+  useEffect(() => {
+    handleChange(formData);
+  }, [formData, handleChange]);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <ChildNodeComponentMap.age
+        defaultValue={defaultValue?.age}
+        onChange={handleFieldChange('age')}
+      />
+      <ChildNodeComponentMap.name
+        defaultValue={defaultValue?.name}
+        onChange={handleFieldChange('name')}
+      />
+      <ChildNodeComponentMap.email
+        defaultValue={defaultValue?.email}
+        onChange={handleFieldChange('email')}
+      />
+      <ChildNodeComponentMap.homepage
+        defaultValue={defaultValue?.homepage}
+        onChange={handleFieldChange('homepage')}
+      />
+    </div>
+  );
+};
+
+export const ChildComponentMap = () => {
+  const schema = {
+    type: 'object',
+    FormTypeInput: SimpleCustomObjectFormType,
+    terminal: false,
+    properties: {
+      name: {
+        type: 'string',
+        default: 'John Smith',
+        minLength: 2,
+        maxLength: 10,
+      },
+      age: {
+        type: 'number',
+        minimum: 0,
+        maximum: 50,
+        default: 30,
+      },
+      email: {
+        type: 'string',
+        pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}',
+        default: 'john.smith@example.com',
+      },
+      homepage: {
+        type: 'string',
+        format: 'uri',
+        default: 'https://johnsmith.dev',
+        pattern: 'https?://(www\\.)?[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(/[^\\s]*)?',
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<SimpleValue>({});
+
+  return (
+    <StoryLayout jsonSchema={schema} value={value}>
+      <Form jsonSchema={schema} onChange={setValue} />
+    </StoryLayout>
   );
 };

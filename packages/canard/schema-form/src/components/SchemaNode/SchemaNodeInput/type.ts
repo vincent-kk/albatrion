@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react';
+import type { ComponentType, RefObject } from 'react';
 
 import type { SchemaNode } from '@/schema-form/core';
 import { NodeEventType, SetValueOption } from '@/schema-form/core';
@@ -12,12 +12,14 @@ import type { SchemaNodeProxyProps } from '../SchemaNodeProxy';
 
 export interface SchemaNodeInputProps {
   node: SchemaNode;
+  onChangeRef: RefObject<ChildNodeComponentProps['onChange']>;
+  onFileAttachRef: RefObject<ChildNodeComponentProps['onFileAttach']>;
   overrideProps: OverridableFormTypeInputProps;
   PreferredFormTypeInput: ComponentType<FormTypeInputProps> | null;
   NodeProxy: ComponentType<SchemaNodeProxyProps>;
 }
 
-type AdditionalChildNodeProperties = {
+export type AdditionalChildNodeProperties = {
   key: string;
   path: string;
   field: string;

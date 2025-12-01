@@ -5,10 +5,10 @@ import type { Dictionary, Fn } from '@aileron/declare';
 import type { SchemaNode } from '@/schema-form/core';
 
 import type { JsonSchemaError } from './error';
-import type { OverridableFormTypeInputProps } from './formTypeInput';
+import type { ChildNodeComponentProps } from './formTypeInput';
 
 /** Props that FormTypeRenderer Component must satisfy */
-export interface FormTypeRendererProps extends OverridableFormTypeInputProps {
+export interface FormTypeRendererProps extends ChildNodeComponentProps {
   /** Whether the schema node assigned to FormTypeRenderer Component is the root node */
   isRoot: boolean;
   /** Depth of the schema node assigned to FormTypeRenderer Component */
@@ -30,7 +30,7 @@ export interface FormTypeRendererProps extends OverridableFormTypeInputProps {
   /** Whether the schema node assigned to FormTypeRenderer Component is required */
   required: SchemaNode['required'];
   /** FromTypeInput component of the schema node assigned to FormTypeRenderer Component */
-  Input: ComponentType<OverridableFormTypeInputProps>;
+  Input: ComponentType<ChildNodeComponentProps>;
   /** Error message of the schema node assigned to FormTypeRenderer Component */
   errorMessage: ReactNode;
   /** Function to format error message of the schema node assigned to FormTypeRenderer Component */

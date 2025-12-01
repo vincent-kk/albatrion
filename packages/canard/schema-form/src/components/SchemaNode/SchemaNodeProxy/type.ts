@@ -1,9 +1,10 @@
-import type { ComponentType, PropsWithChildren } from 'react';
+import type { ComponentType, PropsWithChildren, RefObject } from 'react';
 
 import type { Dictionary } from '@aileron/declare';
 
 import type { SchemaNode } from '@/schema-form/core';
 import type {
+  ChildNodeComponentProps,
   FormTypeInputProps,
   FormTypeRendererProps,
   OverridableFormTypeInputProps,
@@ -12,7 +13,9 @@ import type {
 export interface SchemaNodeProxyProps {
   path?: string;
   node?: SchemaNode;
-  overrideProps?: OverridableFormTypeInputProps;
+  onChangeRef?: RefObject<ChildNodeComponentProps['onChange']>;
+  onFileAttachRef?: RefObject<ChildNodeComponentProps['onFileAttach']>;
+  overridePropsRef?: RefObject<OverridableFormTypeInputProps>;
   FormTypeInput?: ComponentType<FormTypeInputProps>;
   FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;

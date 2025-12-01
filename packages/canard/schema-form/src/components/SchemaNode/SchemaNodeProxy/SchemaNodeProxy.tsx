@@ -26,7 +26,9 @@ export const SchemaNodeProxy = memo(
   ({
     path,
     node: inputNode,
-    overrideProps,
+    onChangeRef,
+    onFileAttachRef,
+    overridePropsRef,
     FormTypeInput,
     FormTypeRenderer: InputFormTypeRenderer,
     Wrapper: InputWrapper,
@@ -38,11 +40,13 @@ export const SchemaNodeProxy = memo(
       () =>
         SchemaNodeInputWrapper(
           node,
-          overrideProps,
+          onChangeRef,
+          onFileAttachRef,
+          overridePropsRef,
           FormTypeInput,
           SchemaNodeProxy,
         ),
-      [node, overrideProps, FormTypeInput],
+      [node, onChangeRef, onFileAttachRef, overridePropsRef, FormTypeInput],
     );
 
     const {
@@ -93,7 +97,7 @@ export const SchemaNodeProxy = memo(
         <span data-json-path={node.path}>
           <FormTypeRenderer
             {...node.jsonSchema.FormTypeRendererProps}
-            {...overrideProps}
+            {...overridePropsRef?.current}
             // Non-overridable: Essential node system properties
             node={node}
             type={node.type}

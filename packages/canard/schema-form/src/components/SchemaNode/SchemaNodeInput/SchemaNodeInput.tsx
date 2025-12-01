@@ -23,6 +23,8 @@ import {
 export const SchemaNodeInput = memo(
   ({
     node,
+    onChangeRef,
+    onFileAttachRef,
     overrideProps,
     PreferredFormTypeInput,
     NodeProxy,
@@ -45,20 +47,22 @@ export const SchemaNodeInput = memo(
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
       (input, option = HANDLE_CHANGE_OPTION) => {
         if (node.readOnly || node.disabled) return;
-        node.setValue(input, option);
+        if (onChangeRef.current) onChangeRef.current(input, option);
+        else node.setValue(input, option);
         node.clearExternalErrors();
         if (!node.state[NodeState.Dirty])
           node.setState({ [NodeState.Dirty]: true });
       },
-      [node],
+      [node, onChangeRef],
     );
 
     const handleFileAttach = useCallback(
       (files: File | File[] | undefined) => {
+        if (onFileAttachRef.current) return onFileAttachRef.current(files);
         if (files === undefined) attachedFilesMap.delete(node.path);
         else attachedFilesMap.set(node.path, isArray(files) ? files : [files]);
       },
-      [attachedFilesMap, node.path],
+      [attachedFilesMap, node.path, onFileAttachRef],
     );
 
     const requestId =
@@ -104,7 +108,6 @@ export const SchemaNodeInput = memo(
           value={node.value}
           onChange={handleChange}
           onFileAttach={handleFileAttach}
-          context={context}
           {...overrideProps}
           // Non-overridable: Essential node system properties
           key={version}
@@ -117,6 +120,7 @@ export const SchemaNodeInput = memo(
           errors={node.errors}
           watchValues={node.watchValues}
           ChildNodeComponents={ChildNodeComponents}
+          context={context}
         />
       </span>
     );

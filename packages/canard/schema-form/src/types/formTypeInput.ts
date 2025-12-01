@@ -126,27 +126,25 @@ export type InferFormTypeInputProps<Value> = Value extends AllowedValue
   ? FormTypeInputProps<Value>
   : UnknownFormTypeInputProps;
 
-export interface OverridableFormTypeInputProps {
+export type ChildNodeComponentProps<Value extends AllowedValue = any> = {
   name?: string;
   readOnly?: boolean;
   disabled?: boolean;
   required?: boolean;
-  context?: Dictionary;
-  style?: CSSProperties;
-  className?: string;
-  [alt: string]: any;
-}
-
-export interface ChildNodeComponentProps<Value extends AllowedValue = any>
-  extends OverridableFormTypeInputProps {
   defaultValue?: Value;
   value?: Value;
   onChange?: SetStateFnWithOptions<Value>;
   onFileAttach?: Fn<[file: File | File[] | undefined]>;
   FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
-  context?: Dictionary;
+  className?: string;
+  style?: CSSProperties;
   [alt: string]: any;
-}
+};
+
+export type OverridableFormTypeInputProps = Omit<
+  ChildNodeComponentProps,
+  'onChange' | 'onFileAttach' | 'FormTypeRenderer'
+>;
 
 export type FormTypeTestFn = Fn<[hint: Hint], boolean>;
 
