@@ -30,6 +30,7 @@ export const useFormTypeInput = (node: SchemaNode, disabled: boolean) => {
     if (disabled) return null;
     // If FormTypeInput is a React Component, return that Component.
     const InlineFormTypeInput = node.jsonSchema?.FormTypeInput;
+    if (InlineFormTypeInput === null) return null;
     if (InlineFormTypeInput && isReactComponent(InlineFormTypeInput))
       if (isMemoComponent(InlineFormTypeInput))
         return withErrorBoundary(InlineFormTypeInput);

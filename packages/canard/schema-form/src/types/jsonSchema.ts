@@ -207,7 +207,7 @@ export type NullSchema<Options extends Dictionary = object> = BasicSchema &
 /** Base schema properties for all types */
 export type BasicSchema = {
   /** Custom React component for input rendering */
-  FormTypeInput?: ComponentType<UnknownFormTypeInputProps>;
+  FormTypeInput?: ComponentType<UnknownFormTypeInputProps> | null;
   /** Props passed to FormTypeInput component */
   FormTypeInputProps?: Dictionary;
   /** Props passed to FormTypeRenderer component */
