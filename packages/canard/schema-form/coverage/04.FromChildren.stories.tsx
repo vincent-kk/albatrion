@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 
-import { Form, type JsonSchema } from '../src';
+import { Form, type FormTypeInputProps, type JsonSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -186,6 +186,94 @@ export const IterableChildren = () => {
         <div>
           name error:
           <Form.Error path="/name" style={{ display: 'inline' }} />
+        </div>
+      </Form>
+    </StoryLayout>
+  );
+};
+
+export const FormWithSubComponentProps = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      allowed: {
+        type: 'boolean',
+      },
+      name: {
+        type: 'string',
+        maxLength: 3,
+      },
+      alt_name: {
+        type: 'string',
+        maxLength: 3,
+      },
+      age: {
+        type: 'number',
+      },
+      gender: {
+        type: 'string',
+        enum: ['male', 'female'],
+      },
+    },
+  } satisfies JsonSchema;
+
+  const defaultValue = useRef({
+    allowed: false,
+  });
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [readOnly, setReadOnly] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+  const Input = useRef(
+    ({ defaultValue, onChange }: FormTypeInputProps<string>) => (
+      <input
+        style={{ border: 'solid red 1px' }}
+        defaultValue={defaultValue}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    ),
+  );
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <button onClick={() => setReadOnly((prev) => !prev)}>
+        readOnly: {readOnly ? 'true' : 'false'}
+      </button>
+      <button onClick={() => setDisabled((prev) => !prev)}>
+        disabled: {disabled ? 'true' : 'false'}
+      </button>
+      <Form
+        jsonSchema={jsonSchema}
+        defaultValue={defaultValue.current}
+        onChange={setValue}
+      >
+        <div>
+          <Form.Input path="/allowed" readOnly={readOnly} disabled={disabled} />
+        </div>
+        <div>
+          <Form.Label path="/name" />
+          <Form.Input path="/name" readOnly={readOnly} disabled={disabled} />
+          <Form.Input
+            path="/alt_name"
+            FormTypeInput={Input.current}
+            readOnly={readOnly}
+            disabled={disabled}
+          />
+        </div>
+        <div>
+          <Form.Render path="/age" readOnly={readOnly} disabled={disabled}>
+            {({ Input, path }) => {
+              return (
+                <div>
+                  <label htmlFor={path}>{path}</label>
+                  <Input />
+                </div>
+              );
+            }}
+          </Form.Render>
+        </div>
+        <div>
+          <Form.Group path="/gender" readOnly={readOnly} disabled={disabled} />
         </div>
       </Form>
     </StoryLayout>

@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { type CSSProperties, memo } from 'react';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
@@ -61,7 +61,7 @@ export interface FormErrorProps {
  * </Form>
  * ```
  */
-export const FormError = ({ path, style, className }: FormErrorProps) => {
+export const FormError = memo(({ path, style, className }: FormErrorProps) => {
   const { FormErrorRenderer } = useExternalFormContext();
   return (
     <span style={style} className={className}>
@@ -71,4 +71,4 @@ export const FormError = ({ path, style, className }: FormErrorProps) => {
       />
     </span>
   );
-};
+});

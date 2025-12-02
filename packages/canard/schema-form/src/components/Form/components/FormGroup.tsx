@@ -1,4 +1,9 @@
-import type { ComponentType, PropsWithChildren } from 'react';
+import {
+  type ComponentType,
+  type PropsWithChildren,
+  type ReactNode,
+  memo,
+} from 'react';
 
 import { useConstant, useReference } from '@winglet/react-utils/hook';
 
@@ -94,26 +99,30 @@ export type FormGroupProps<Value extends AllowedValue> = {
  * />
  * ```
  */
-export const FormGroup = <Value extends AllowedValue = AllowedValue>({
-  path,
-  FormTypeInput,
-  FormTypeRenderer,
-  Wrapper,
-  ...restProps
-}: FormGroupProps<Value>) => {
-  const overridePropsRef = useReference(restProps);
-  const constant = useConstant({
-    FormTypeInput: FormTypeInput as ComponentType<FormTypeInputProps>,
+export const FormGroup = memo(
+  ({
+    path,
+    FormTypeInput,
     FormTypeRenderer,
     Wrapper,
-  });
-  return (
-    <SchemaNodeProxy
-      path={path}
-      overridePropsRef={overridePropsRef}
-      FormTypeInput={constant.FormTypeInput}
-      FormTypeRenderer={constant.FormTypeRenderer}
-      Wrapper={constant.Wrapper}
-    />
-  );
-};
+    ...restProps
+  }: FormGroupProps<AllowedValue>) => {
+    const overridePropsRef = useReference(restProps);
+    const constant = useConstant({
+      FormTypeInput: FormTypeInput as ComponentType<FormTypeInputProps>,
+      FormTypeRenderer,
+      Wrapper,
+    });
+    return (
+      <SchemaNodeProxy
+        path={path}
+        overridePropsRef={overridePropsRef}
+        FormTypeInput={constant.FormTypeInput}
+        FormTypeRenderer={constant.FormTypeRenderer}
+        Wrapper={constant.Wrapper}
+      />
+    );
+  },
+) as <Value extends AllowedValue = AllowedValue>(
+  props: FormGroupProps<Value>,
+) => ReactNode;

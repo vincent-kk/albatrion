@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react';
+import { type ComponentType, type ReactNode, memo } from 'react';
 
 import { useConstant, useReference } from '@winglet/react-utils/hook';
 
@@ -77,22 +77,26 @@ export type FormInputProps<Value extends AllowedValue> = {
  * </div>
  * ```
  */
-export const FormInput = <Value extends AllowedValue>({
-  path,
-  FormTypeInput: InputFormTypeInput,
-  ...restProps
-}: FormInputProps<Value>) => {
-  const { FormInputRenderer } = useExternalFormContext();
-  const overridePropsRef = useReference(restProps);
-  const FormTypeInput = useConstant(
-    InputFormTypeInput as ComponentType<FormTypeInputProps>,
-  );
-  return (
-    <SchemaNodeProxy
-      path={path}
-      overridePropsRef={overridePropsRef}
-      FormTypeInput={FormTypeInput}
-      FormTypeRenderer={FormInputRenderer || PluginManager.FormInput}
-    />
-  );
-};
+export const FormInput = memo(
+  ({
+    path,
+    FormTypeInput: InputFormTypeInput,
+    ...restProps
+  }: FormInputProps<AllowedValue>) => {
+    const { FormInputRenderer } = useExternalFormContext();
+    const overridePropsRef = useReference(restProps);
+    const FormTypeInput = useConstant(
+      InputFormTypeInput as ComponentType<FormTypeInputProps>,
+    );
+    return (
+      <SchemaNodeProxy
+        path={path}
+        overridePropsRef={overridePropsRef}
+        FormTypeInput={FormTypeInput}
+        FormTypeRenderer={FormInputRenderer || PluginManager.FormInput}
+      />
+    );
+  },
+) as <Value extends AllowedValue = AllowedValue>(
+  props: FormInputProps<Value>,
+) => ReactNode;

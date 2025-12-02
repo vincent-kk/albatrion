@@ -15,11 +15,15 @@ import {
 import { getTrackableHandler } from '@winglet/common-utils/function';
 import { clone } from '@winglet/common-utils/object';
 import { withErrorBoundaryForwardRef } from '@winglet/react-utils/hoc';
-import { useHandle, useMemorize, useVersion } from '@winglet/react-utils/hook';
+import {
+  useHandle,
+  useMemorize,
+  useReference,
+  useVersion,
+} from '@winglet/react-utils/hook';
 
 import type { Fn, Parameter } from '@aileron/declare';
 
-import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import {
   type InferSchemaNode,
   NodeEventType,
@@ -41,6 +45,7 @@ import type {
   JsonSchema,
 } from '@/schema-form/types';
 
+import { FormRootProxy } from './components/FormRootProxy';
 import type { FormHandle, FormProps } from './type';
 import { createChildren } from './util';
 
@@ -68,7 +73,7 @@ const FormInner = <
     validationMode,
     validatorFactory,
     context,
-    children: inputChildren,
+    children: ChildComponent,
   }: FormProps<Schema, Value>,
   ref: ForwardedRef<FormHandle<Schema, Value>>,
 ) => {
@@ -88,7 +93,7 @@ const FormInner = <
 
   const [rootNode, setRootNode] = useState<Node>();
   const [children, setChildren] = useState<ReactNode>(
-    createChildren(inputChildren, jsonSchema),
+    createChildren(ChildComponent, jsonSchema),
   );
   const [showError, setShowError] = useState(inputShowError);
 
@@ -127,15 +132,22 @@ const FormInner = <
     rootNode.validate().then((errors) => handleValidate(errors));
   }) as Fn<[SchemaNode], void>;
 
+  const ChildComponentRef = useReference(ChildComponent);
   useEffect(() => {
     if (!rootNode) return;
-    setChildren(createChildren(inputChildren, jsonSchema, rootNode));
     const unsubscribe = rootNode.subscribe(({ type }) => {
       if (type & UPDATE_CHILDREN_MASK)
-        setChildren(createChildren(inputChildren, jsonSchema, rootNode));
+        setChildren(
+          createChildren(ChildComponentRef.current, jsonSchema, rootNode),
+        );
     });
     return unsubscribe;
-  }, [inputChildren, jsonSchema, rootNode]);
+  }, [ChildComponentRef, jsonSchema, rootNode]);
+
+  useEffect(() => {
+    if (!rootNode) return;
+    setChildren(createChildren(ChildComponent, jsonSchema, rootNode));
+  }, [ChildComponent, jsonSchema, rootNode]);
 
   useImperativeHandle(
     ref,
@@ -185,9 +197,9 @@ const FormInner = <
               validationMode={validationMode}
               validatorFactory={validatorFactory}
             >
-              <form onSubmit={handleFormSubmit}>
-                {children || <SchemaNodeProxy />}
-              </form>
+              <FormRootProxy onSubmit={handleFormSubmit}>
+                {children}
+              </FormRootProxy>
             </RootNodeContextProvider>
           </InputControlContextProvider>
         </FormTypeRendererContextProvider>

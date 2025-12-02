@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { type CSSProperties, memo } from 'react';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
@@ -55,7 +55,7 @@ export interface FormLabelProps {
  * </div>
  * ```
  */
-export const FormLabel = ({ path, style, className }: FormLabelProps) => {
+export const FormLabel = memo(({ path, style, className }: FormLabelProps) => {
   const { FormLabelRenderer } = useExternalFormContext();
   return (
     <label style={style} className={className} htmlFor={path}>
@@ -65,4 +65,4 @@ export const FormLabel = ({ path, style, className }: FormLabelProps) => {
       />
     </label>
   );
-};
+});

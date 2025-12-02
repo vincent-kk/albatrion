@@ -1,4 +1,9 @@
-import type { ComponentType, PropsWithChildren, ReactNode } from 'react';
+import {
+  type ComponentType,
+  type PropsWithChildren,
+  type ReactNode,
+  memo,
+} from 'react';
 
 import { useConstant, useReference } from '@winglet/react-utils/hook';
 
@@ -107,26 +112,30 @@ export type FormRenderProps<Value extends AllowedValue> = {
  * </Form.Render>
  * ```
  */
-export const FormRender = <Value extends AllowedValue = AllowedValue>({
-  path,
-  FormTypeInput,
-  Wrapper,
-  children,
-  ...restProps
-}: FormRenderProps<Value>) => {
-  const overridePropsRef = useReference(restProps);
-  const constant = useConstant({
-    FormTypeInput: FormTypeInput as ComponentType<FormTypeInputProps>,
-    FormTypeRenderer: children,
+export const FormRender = memo(
+  ({
+    path,
+    FormTypeInput,
     Wrapper,
-  });
-  return (
-    <SchemaNodeProxy
-      path={path}
-      overridePropsRef={overridePropsRef}
-      FormTypeInput={constant.FormTypeInput}
-      FormTypeRenderer={constant.FormTypeRenderer}
-      Wrapper={constant.Wrapper}
-    />
-  );
-};
+    children,
+    ...restProps
+  }: FormRenderProps<AllowedValue>) => {
+    const overridePropsRef = useReference(restProps);
+    const constant = useConstant({
+      FormTypeInput: FormTypeInput as ComponentType<FormTypeInputProps>,
+      FormTypeRenderer: children,
+      Wrapper,
+    });
+    return (
+      <SchemaNodeProxy
+        path={path}
+        overridePropsRef={overridePropsRef}
+        FormTypeInput={constant.FormTypeInput}
+        FormTypeRenderer={constant.FormTypeRenderer}
+        Wrapper={constant.Wrapper}
+      />
+    );
+  },
+) as <Value extends AllowedValue = AllowedValue>(
+  props: FormRenderProps<Value>,
+) => ReactNode;
