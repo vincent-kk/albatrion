@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+
 import { intersectMaximum } from '../intersectMaximum';
 
 describe('intersectMaximum', () => {

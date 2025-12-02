@@ -30,9 +30,7 @@ describe('validateSchemaType', () => {
       expect(validateSchemaType([], 'array', false)).toBe(true);
       expect(validateSchemaType([1, 2, 3], 'array', false)).toBe(true);
       expect(validateSchemaType(['a', 'b'], 'array', false)).toBe(true);
-      expect(validateSchemaType([{ key: 'value' }], 'array', false)).toBe(
-        true,
-      );
+      expect(validateSchemaType([{ key: 'value' }], 'array', false)).toBe(true);
     });
 
     it('should return false for array value with non-array schema type', () => {

@@ -41,7 +41,10 @@ describe('max', () => {
     const largeArray = Array.from({ length: 10000 }, (_, i) => i);
     expect(max(largeArray)).toBe(9999);
 
-    const randomArray = Array.from({ length: 10000 }, () => Math.random() * 1000);
+    const randomArray = Array.from(
+      { length: 10000 },
+      () => Math.random() * 1000,
+    );
     randomArray.push(10001);
     expect(max(randomArray)).toBe(10001);
   });

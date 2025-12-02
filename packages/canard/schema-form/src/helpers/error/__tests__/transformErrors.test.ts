@@ -254,10 +254,10 @@ describe('transformErrors', () => {
       const result = transformErrors(realWorldErrors, true);
 
       // Assert
-      expect(result).toHaveLength(3);  // pattern 에러가 더 이상 필터링되지 않음
+      expect(result).toHaveLength(3); // pattern 에러가 더 이상 필터링되지 않음
       expect(result[0].keyword).toBe('required');
       expect(result[1].keyword).toBe('minLength');
-      expect(result[2].keyword).toBe('pattern');  // pattern 에러도 포함됨
+      expect(result[2].keyword).toBe('pattern'); // pattern 에러도 포함됨
       expect(result[0].key).toBeDefined();
       expect(result[1].key).toBeDefined();
       expect(result[2].key).toBeDefined();

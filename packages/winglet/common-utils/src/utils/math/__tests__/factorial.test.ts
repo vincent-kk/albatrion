@@ -34,19 +34,35 @@ describe('factorial', () => {
   });
 
   it('음수는 에러를 발생시켜야 합니다', () => {
-    expect(() => factorial(-1)).toThrow('Factorial is only defined for non-negative integers');
-    expect(() => factorial(-10)).toThrow('Factorial is only defined for non-negative integers');
+    expect(() => factorial(-1)).toThrow(
+      'Factorial is only defined for non-negative integers',
+    );
+    expect(() => factorial(-10)).toThrow(
+      'Factorial is only defined for non-negative integers',
+    );
   });
 
   it('소수점 숫자는 에러를 발생시켜야 합니다', () => {
-    expect(() => factorial(1.5)).toThrow('Factorial is only defined for non-negative integers');
-    expect(() => factorial(2.7)).toThrow('Factorial is only defined for non-negative integers');
-    expect(() => factorial(0.5)).toThrow('Factorial is only defined for non-negative integers');
+    expect(() => factorial(1.5)).toThrow(
+      'Factorial is only defined for non-negative integers',
+    );
+    expect(() => factorial(2.7)).toThrow(
+      'Factorial is only defined for non-negative integers',
+    );
+    expect(() => factorial(0.5)).toThrow(
+      'Factorial is only defined for non-negative integers',
+    );
   });
 
   it('특수한 값들도 처리해야 합니다', () => {
-    expect(() => factorial(Infinity)).toThrow('Factorial is only defined for non-negative integers');
-    expect(() => factorial(-Infinity)).toThrow('Factorial is only defined for non-negative integers');
-    expect(() => factorial(NaN)).toThrow('Factorial is only defined for non-negative integers');
+    expect(() => factorial(Infinity)).toThrow(
+      'Factorial is only defined for non-negative integers',
+    );
+    expect(() => factorial(-Infinity)).toThrow(
+      'Factorial is only defined for non-negative integers',
+    );
+    expect(() => factorial(NaN)).toThrow(
+      'Factorial is only defined for non-negative integers',
+    );
   });
 });

@@ -9,7 +9,7 @@ describe('replacePattern', () => {
     const value = 7;
 
     expect(replacePattern(errorMessage, details, value)).toBe(
-      'Value must be at least 5 and at most 10'
+      'Value must be at least 5 and at most 10',
     );
   });
 
@@ -19,7 +19,7 @@ describe('replacePattern', () => {
     const value = 'test';
 
     expect(replacePattern(errorMessage, details, value)).toBe(
-      'The value test is invalid'
+      'The value test is invalid',
     );
   });
 
@@ -29,7 +29,7 @@ describe('replacePattern', () => {
     const value = 150;
 
     expect(replacePattern(errorMessage, details, value)).toBe(
-      '150 must be between 1 and 100'
+      '150 must be between 1 and 100',
     );
   });
 
@@ -39,7 +39,7 @@ describe('replacePattern', () => {
     const value = 'error';
 
     expect(replacePattern(errorMessage, details, value)).toBe(
-      'Invalid value: error'
+      'Invalid value: error',
     );
   });
 
@@ -49,7 +49,7 @@ describe('replacePattern', () => {
     const value = 42;
 
     expect(replacePattern(errorMessage, details, value)).toBe(
-      '42 is not valid'
+      '42 is not valid',
     );
   });
 
@@ -59,7 +59,7 @@ describe('replacePattern', () => {
     const value = 'test';
 
     expect(replacePattern(errorMessage, details, value)).toBe(
-      'This is a simple error message'
+      'This is a simple error message',
     );
   });
 
@@ -69,7 +69,7 @@ describe('replacePattern', () => {
     const value = 'test';
 
     expect(replacePattern(errorMessage, details, value)).toBe(
-      '{unknown} pattern and replaced pattern'
+      '{unknown} pattern and replaced pattern',
     );
   });
 
@@ -79,7 +79,7 @@ describe('replacePattern', () => {
     const value = 128;
 
     expect(replacePattern(errorMessage, details, value)).toBe(
-      'Minimum: 0, Maximum: 255, Current: 128'
+      'Minimum: 0, Maximum: 255, Current: 128',
     );
   });
 
@@ -89,7 +89,7 @@ describe('replacePattern', () => {
     const value = false;
 
     expect(replacePattern(errorMessage, details, value)).toBe(
-      'Expected true, got false'
+      'Expected true, got false',
     );
   });
 
@@ -98,7 +98,9 @@ describe('replacePattern', () => {
     const details = {};
 
     expect(replacePattern(errorMessage, details, null)).toBe('Value is null');
-    expect(replacePattern(errorMessage, details, undefined)).toBe('Value is undefined');
+    expect(replacePattern(errorMessage, details, undefined)).toBe(
+      'Value is undefined',
+    );
   });
 
   it('배열과 객체 값을 문자열로 변환해야 합니다', () => {
@@ -108,10 +110,10 @@ describe('replacePattern', () => {
     const objectValue = { key: 'value' };
 
     expect(replacePattern(errorMessage, details, arrayValue)).toBe(
-      'Invalid value: 1,2,3'
+      'Invalid value: 1,2,3',
     );
     expect(replacePattern(errorMessage, details, objectValue)).toBe(
-      'Invalid value: [object Object]'
+      'Invalid value: [object Object]',
     );
   });
 
@@ -121,7 +123,7 @@ describe('replacePattern', () => {
     const value = 'test';
 
     expect(replacePattern(errorMessage, details, value)).toBe(
-      'replaced and {pattern} again'
+      'replaced and {pattern} again',
     );
   });
 
@@ -139,7 +141,7 @@ describe('replacePattern', () => {
     const value = 'test';
 
     expect(replacePattern(errorMessage, details, value)).toBe(
-      'value1 and value2'
+      'value1 and value2',
     );
   });
 });

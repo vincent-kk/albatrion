@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import type { JsonSchema } from '@/schema-form/types';
 
@@ -67,7 +67,10 @@ describe('processVirtualSchema', () => {
         const result = processVirtualSchema(schema);
         expect(result).not.toBeNull();
         expect(result?.required).toEqual(['street', 'city', 'state']);
-        expect(result?.virtualRequired).toEqual(['fullAddress', 'locationInfo']);
+        expect(result?.virtualRequired).toEqual([
+          'fullAddress',
+          'locationInfo',
+        ]);
       });
 
       it('should handle mixed virtual and non-virtual required fields', () => {

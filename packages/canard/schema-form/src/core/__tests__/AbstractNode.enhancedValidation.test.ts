@@ -1394,7 +1394,9 @@ describe('AbstractNode Enhanced Validation', () => {
 
       expect(emailNode.errors).toHaveLength(1);
       expect(emailNode.errors[0].keyword).toBe('pattern');
-      expect((emailNode.errors[0].source as any)?.params?.pattern).toBe('^[^@]+@[^@]+\\.[^@]+$');
+      expect((emailNode.errors[0].source as any)?.params?.pattern).toBe(
+        '^[^@]+@[^@]+\\.[^@]+$',
+      );
 
       // Test required field validation (empty values)
       nameNode.setValue('');
@@ -1488,7 +1490,9 @@ describe('AbstractNode Enhanced Validation', () => {
       // Check individual node error
       expect(personalIdNode.errors).toHaveLength(1);
       expect(personalIdNode.errors[0].keyword).toBe('pattern');
-      expect((personalIdNode.errors[0].source as any)?.params?.pattern).toBe('^[0-9]{10}$');
+      expect((personalIdNode.errors[0].source as any)?.params?.pattern).toBe(
+        '^[0-9]{10}$',
+      );
 
       // Now set valid values and check error clearing
       ageNode.setValue(25);
@@ -1500,8 +1504,10 @@ describe('AbstractNode Enhanced Validation', () => {
       expect(personalIdNode.errors).toHaveLength(0);
 
       // Parent validation should pass or only have remaining validation issues
-      const hasValidationErrors = node.errors.some(error =>
-        error.keyword !== 'oneOf' && error.dataPath.includes('/age') || error.dataPath.includes('/personalId')
+      const hasValidationErrors = node.errors.some(
+        (error) =>
+          (error.keyword !== 'oneOf' && error.dataPath.includes('/age')) ||
+          error.dataPath.includes('/personalId'),
       );
       expect(hasValidationErrors).toBe(false);
     });
@@ -1711,7 +1717,9 @@ describe('AbstractNode Enhanced Validation', () => {
 
       expect(studentIdNode.errors).toHaveLength(1);
       expect(studentIdNode.errors[0].keyword).toBe('pattern');
-      expect((studentIdNode.errors[0].source as any)?.params?.pattern).toBe('^STU[0-9]{6}$');
+      expect((studentIdNode.errors[0].source as any)?.params?.pattern).toBe(
+        '^STU[0-9]{6}$',
+      );
 
       // Set invalid GPA (above maximum)
       gpaNode.setValue(4.5);
@@ -1731,7 +1739,8 @@ describe('AbstractNode Enhanced Validation', () => {
 
       // Check that enhancedValue includes virtual fields for validation
       // The enhancedValue should include the scholarship field due to &if condition
-      const enhancedValue = (node as any)._enhancedValue || (node as any).enhancedValue;
+      const enhancedValue =
+        (node as any)._enhancedValue || (node as any).enhancedValue;
 
       // enhancedValue should contain additional virtual fields
       // Note: enhancedValue might not be accessible directly or might not be initialized yet
@@ -1889,7 +1898,9 @@ describe('AbstractNode Enhanced Validation', () => {
 
       expect(studentIdNode.errors).toHaveLength(1);
       expect(studentIdNode.errors[0].keyword).toBe('pattern');
-      expect((studentIdNode.errors[0].source as any)?.params?.pattern).toBe('^STU[0-9]{6}$');
+      expect((studentIdNode.errors[0].source as any)?.params?.pattern).toBe(
+        '^STU[0-9]{6}$',
+      );
 
       // Invalid GPA range
       gpaNode.setValue(5.0);
@@ -1916,14 +1927,17 @@ describe('AbstractNode Enhanced Validation', () => {
 
       // Check globalErrors on root node
       expect(node.globalErrors.length).toBeGreaterThan(0);
-      const hasStudentIdError = node.globalErrors.some(error =>
-        error.dataPath.includes('studentId') && error.keyword === 'pattern'
+      const hasStudentIdError = node.globalErrors.some(
+        (error) =>
+          error.dataPath.includes('studentId') && error.keyword === 'pattern',
       );
-      const hasGpaError = node.globalErrors.some(error =>
-        error.dataPath.includes('gpa') && error.keyword === 'minimum'
+      const hasGpaError = node.globalErrors.some(
+        (error) =>
+          error.dataPath.includes('gpa') && error.keyword === 'minimum',
       );
-      const hasAgeError = node.globalErrors.some(error =>
-        error.dataPath.includes('age') && error.keyword === 'minimum'
+      const hasAgeError = node.globalErrors.some(
+        (error) =>
+          error.dataPath.includes('age') && error.keyword === 'minimum',
       );
 
       expect(hasStudentIdError).toBe(true);
@@ -1941,8 +1955,8 @@ describe('AbstractNode Enhanced Validation', () => {
       expect(ageNode.errors).toHaveLength(0);
 
       // GlobalErrors should be reduced significantly
-      const remainingGlobalErrors = node.globalErrors.filter(error =>
-        ['pattern', 'minimum', 'maximum'].includes(error.keyword || '')
+      const remainingGlobalErrors = node.globalErrors.filter((error) =>
+        ['pattern', 'minimum', 'maximum'].includes(error.keyword || ''),
       );
       expect(remainingGlobalErrors.length).toBe(0);
     });
@@ -2027,7 +2041,9 @@ describe('AbstractNode Enhanced Validation', () => {
       }
 
       if (!studentIdNode) {
-        console.log('Student ID node not found - conditional field may not be created yet');
+        console.log(
+          'Student ID node not found - conditional field may not be created yet',
+        );
         return;
       }
 
@@ -2052,7 +2068,9 @@ describe('AbstractNode Enhanced Validation', () => {
       }
 
       if (!employeeIdNode) {
-        console.log('Employee ID node not found - conditional field may not be created yet');
+        console.log(
+          'Employee ID node not found - conditional field may not be created yet',
+        );
         return;
       }
 
@@ -2070,8 +2088,8 @@ describe('AbstractNode Enhanced Validation', () => {
       expect(employeeIdNode.errors).toHaveLength(0);
 
       // Check globalErrors reflects current state
-      const currentGlobalErrors = node.globalErrors.filter(error =>
-        error.keyword === 'pattern'
+      const currentGlobalErrors = node.globalErrors.filter(
+        (error) => error.keyword === 'pattern',
       );
       expect(currentGlobalErrors.length).toBe(0);
     });
@@ -2112,7 +2130,11 @@ describe('AbstractNode Enhanced Validation', () => {
                         type: 'array',
                         items: {
                           type: 'string',
-                          enum: ['analytics', 'priority_support', 'advanced_reports'],
+                          enum: [
+                            'analytics',
+                            'priority_support',
+                            'advanced_reports',
+                          ],
                         },
                         minItems: 1,
                         maxItems: 3,
@@ -2175,7 +2197,9 @@ describe('AbstractNode Enhanced Validation', () => {
       }
 
       if (!premiumFeaturesNode) {
-        console.log('Premium features node not found - conditional field may not be created yet');
+        console.log(
+          'Premium features node not found - conditional field may not be created yet',
+        );
         return;
       }
 
@@ -2187,7 +2211,12 @@ describe('AbstractNode Enhanced Validation', () => {
       expect(premiumFeaturesNode.errors[0].keyword).toBe('minItems');
 
       // Set too many items (should fail maxItems)
-      premiumFeaturesNode.setValue(['analytics', 'priority_support', 'advanced_reports', 'extra_feature']);
+      premiumFeaturesNode.setValue([
+        'analytics',
+        'priority_support',
+        'advanced_reports',
+        'extra_feature',
+      ]);
       await wait(50);
 
       expect(premiumFeaturesNode.errors).toHaveLength(1);
@@ -2213,7 +2242,9 @@ describe('AbstractNode Enhanced Validation', () => {
       }
 
       if (!enterpriseConfigNode) {
-        console.log('Enterprise config node not found - conditional field may not be created yet');
+        console.log(
+          'Enterprise config node not found - conditional field may not be created yet',
+        );
         return;
       }
 
@@ -2225,7 +2256,9 @@ describe('AbstractNode Enhanced Validation', () => {
       await wait(50);
 
       const maxUsersNode = enterpriseConfigNode.find('/maxUsers') as NumberNode;
-      const customDomainNode = enterpriseConfigNode.find('/customDomain') as StringNode;
+      const customDomainNode = enterpriseConfigNode.find(
+        '/customDomain',
+      ) as StringNode;
 
       expect(maxUsersNode.errors).toHaveLength(1);
       expect(maxUsersNode.errors[0].keyword).toBe('minimum');
@@ -2236,11 +2269,14 @@ describe('AbstractNode Enhanced Validation', () => {
 
       // Check globalErrors includes all nested errors
       expect(node.globalErrors.length).toBeGreaterThan(0);
-      const hasMaxUsersError = node.globalErrors.some(error =>
-        error.dataPath.includes('maxUsers') && error.keyword === 'minimum'
+      const hasMaxUsersError = node.globalErrors.some(
+        (error) =>
+          error.dataPath.includes('maxUsers') && error.keyword === 'minimum',
       );
-      const hasCustomDomainError = node.globalErrors.some(error =>
-        error.dataPath.includes('customDomain') && error.keyword === 'pattern'
+      const hasCustomDomainError = node.globalErrors.some(
+        (error) =>
+          error.dataPath.includes('customDomain') &&
+          error.keyword === 'pattern',
       );
 
       expect(hasMaxUsersError).toBe(true);
@@ -2257,8 +2293,10 @@ describe('AbstractNode Enhanced Validation', () => {
       expect(customDomainNode.errors).toHaveLength(0);
 
       // GlobalErrors should be cleared for enterprise config
-      const remainingEnterpriseErrors = node.globalErrors.filter(error =>
-        error.dataPath.includes('enterprise') && ['minimum', 'pattern'].includes(error.keyword || '')
+      const remainingEnterpriseErrors = node.globalErrors.filter(
+        (error) =>
+          error.dataPath.includes('enterprise') &&
+          ['minimum', 'pattern'].includes(error.keyword || ''),
       );
       expect(remainingEnterpriseErrors.length).toBe(0);
     });

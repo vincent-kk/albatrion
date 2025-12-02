@@ -9,12 +9,17 @@ describe('intersectionLite', () => {
     ]);
     expect(intersectionLite([], ['apple', 'banana', 'orange'])).toEqual([]);
     expect(
-      intersectionLite(['apple', 'banana', 'orange', 'grape'], ['banana', 'grape']),
+      intersectionLite(
+        ['apple', 'banana', 'orange', 'grape'],
+        ['banana', 'grape'],
+      ),
     ).toEqual(['banana', 'grape']);
   });
 
   it('숫자 배열에서 교집합을 반환해야 합니다', () => {
-    expect(intersectionLite([1, 2, 3, 4, 5], [3, 4, 5, 6, 7])).toEqual([3, 4, 5]);
+    expect(intersectionLite([1, 2, 3, 4, 5], [3, 4, 5, 6, 7])).toEqual([
+      3, 4, 5,
+    ]);
     expect(intersectionLite([1, 2, 3], [4, 5, 6])).toEqual([]);
     expect(intersectionLite([1, 2, 3], [1, 2, 3])).toEqual([1, 2, 3]);
   });
@@ -87,7 +92,10 @@ describe('intersectionLite', () => {
     const userPermissions = ['read', 'write', 'delete', 'admin'];
     const requiredPermissions = ['read', 'write', 'execute'];
 
-    const grantedPermissions = intersectionLite(userPermissions, requiredPermissions);
+    const grantedPermissions = intersectionLite(
+      userPermissions,
+      requiredPermissions,
+    );
     expect(grantedPermissions).toEqual(['read', 'write']);
   });
 

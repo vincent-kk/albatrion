@@ -43,11 +43,11 @@ describe('gcd', () => {
     expect(gcd(3.2, 4.8)).toBe(1.6);
     expect(gcd(2.4, 3.6)).toBe(1.2);
     expect(gcd(1.5, 2.5)).toBe(0.5);
-    
+
     // 하나만 소수인 경우
     expect(gcd(4, 6.5)).toBe(0.5);
     expect(gcd(7.5, 15)).toBe(7.5);
-    
+
     // 아주 작은 소수
     expect(gcd(0.2, 0.3)).toBe(0.1);
     expect(gcd(0.6, 0.4)).toBe(0.2);

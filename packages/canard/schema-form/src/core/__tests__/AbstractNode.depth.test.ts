@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import { nodeFromJsonSchema } from '@/schema-form/core';
+
 import type { ArrayNode } from '../nodes/ArrayNode';
+import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
-import type { NumberNode } from '../nodes/NumberNode';
 import { ValidationMode } from '../nodes/type';
 
 describe('AbstractNode depth calculation', () => {
@@ -149,7 +150,9 @@ describe('AbstractNode depth calculation', () => {
     const street = node.find('/users/0/addresses/0/street') as StringNode;
     expect(street.depth).toBe(5);
 
-    const coordinates = node.find('/users/0/addresses/0/coordinates') as ObjectNode;
+    const coordinates = node.find(
+      '/users/0/addresses/0/coordinates',
+    ) as ObjectNode;
     expect(coordinates.depth).toBe(5);
 
     const lat = node.find('/users/0/addresses/0/coordinates/lat') as NumberNode;
@@ -215,7 +218,9 @@ describe('AbstractNode depth calculation', () => {
     const propWithSlash = node.find('/prop~1with~1slash') as ObjectNode;
     expect(propWithSlash.depth).toBe(1);
 
-    const propWithTilde = node.find('/prop~1with~1slash/prop~0with~0tilde') as StringNode;
+    const propWithTilde = node.find(
+      '/prop~1with~1slash/prop~0with~0tilde',
+    ) as StringNode;
     expect(propWithTilde.depth).toBe(2);
   });
 

@@ -1,28 +1,15 @@
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { NodeState } from '@/schema-form/core';
 
-// Mock isSchemaNode to accept our mock objects
-vi.mock('@/schema-form/core/nodes/filter', async (importOriginal) => {
-  const original = await importOriginal<typeof import('@/schema-form/core/nodes/filter')>();
-  return {
-    ...original,
-    isSchemaNode: (input: any): boolean => {
-      // Accept real SchemaNode instances OR our mock objects with _isMockSchemaNode flag
-      if (input && input._isMockSchemaNode === true) return true;
-      return original.isSchemaNode(input);
-    },
-  };
-});
-
 import { SchemaNodeProxy } from '../SchemaNodeProxy';
 import {
-  createStringNode,
   CustomFormTypeInput,
   FileFormTypeInput,
   HANDLE_CHANGE_OPTION,
+  createStringNode,
   resetAllMocks,
 } from './SchemaNodePropsFlow.fixtures.js';
 import {
@@ -32,6 +19,20 @@ import {
   createOverridePropsRef,
   createTestWrapper,
 } from './SchemaNodePropsFlow.helpers';
+
+// Mock isSchemaNode to accept our mock objects
+vi.mock('@/schema-form/core/nodes/filter', async (importOriginal) => {
+  const original =
+    await importOriginal<typeof import('@/schema-form/core/nodes/filter')>();
+  return {
+    ...original,
+    isSchemaNode: (input: any): boolean => {
+      // Accept real SchemaNode instances OR our mock objects with _isMockSchemaNode flag
+      if (input && input._isMockSchemaNode === true) return true;
+      return original.isSchemaNode(input);
+    },
+  };
+});
 
 describe('SchemaNodePropsFlow', () => {
   beforeEach(() => {
@@ -51,7 +52,10 @@ describe('SchemaNodePropsFlow', () => {
       it('Direct onChange가 Ref onChange보다 우선한다', async () => {
         const refOnChange = vi.fn();
         const onChangeRef = createOnChangeRef(refOnChange);
-        const mockNode = createStringNode({ path: 'test.field', name: 'field' });
+        const mockNode = createStringNode({
+          path: 'test.field',
+          name: 'field',
+        });
 
         // SchemaNodeProxy를 통해 렌더링하고, Input 컴포넌트에 직접 props 전달
         const definitions = [
@@ -66,14 +70,11 @@ describe('SchemaNodePropsFlow', () => {
           },
         ];
 
-        render(
-          <SchemaNodeProxy node={mockNode} onChangeRef={onChangeRef} />,
-          {
-            wrapper: createTestWrapper({
-              formTypeInputDefinitions: definitions as any,
-            }),
-          },
-        );
+        render(<SchemaNodeProxy node={mockNode} onChangeRef={onChangeRef} />, {
+          wrapper: createTestWrapper({
+            formTypeInputDefinitions: definitions as any,
+          }),
+        });
 
         // Input 컴포넌트가 렌더링된 후 FormTypeInput에서 onChange 호출
         const input = screen.getByTestId('input-field');
@@ -84,7 +85,10 @@ describe('SchemaNodePropsFlow', () => {
       });
 
       it('Ref onChange가 없으면 node.setValue가 호출된다', async () => {
-        const mockNode = createStringNode({ path: 'test.field', name: 'field' });
+        const mockNode = createStringNode({
+          path: 'test.field',
+          name: 'field',
+        });
 
         render(<SchemaNodeProxy node={mockNode} />, {
           wrapper: createTestWrapper(),
@@ -102,17 +106,22 @@ describe('SchemaNodePropsFlow', () => {
       it('Ref onChange가 있으면 node.setValue는 호출되지 않는다', async () => {
         const customOnChange = vi.fn();
         const onChangeRef = createOnChangeRef(customOnChange);
-        const mockNode = createStringNode({ path: 'test.field', name: 'field' });
+        const mockNode = createStringNode({
+          path: 'test.field',
+          name: 'field',
+        });
 
-        render(
-          <SchemaNodeProxy node={mockNode} onChangeRef={onChangeRef} />,
-          { wrapper: createTestWrapper() },
-        );
+        render(<SchemaNodeProxy node={mockNode} onChangeRef={onChangeRef} />, {
+          wrapper: createTestWrapper(),
+        });
 
         const input = screen.getByTestId('input-field');
         fireEvent.change(input, { target: { value: 'test' } });
 
-        expect(customOnChange).toHaveBeenCalledWith('test', HANDLE_CHANGE_OPTION);
+        expect(customOnChange).toHaveBeenCalledWith(
+          'test',
+          HANDLE_CHANGE_OPTION,
+        );
         expect(mockNode.setValue).not.toHaveBeenCalled();
       });
     });
@@ -130,10 +139,7 @@ describe('SchemaNodePropsFlow', () => {
       const mockNode = createStringNode({ path: 'test.field', name: 'field' });
 
       render(
-        <SchemaNodeProxy
-          node={mockNode}
-          onChangeRef={onChangeRef as any}
-        />,
+        <SchemaNodeProxy node={mockNode} onChangeRef={onChangeRef as any} />,
         { wrapper: createTestWrapper() },
       );
 
@@ -150,16 +156,18 @@ describe('SchemaNodePropsFlow', () => {
     it('ref가 없으면 node.setValue가 호출된다', async () => {
       const mockNode = createStringNode({ path: 'test.field', name: 'field' });
 
-      render(
-        <SchemaNodeProxy node={mockNode} />,
-        { wrapper: createTestWrapper() },
-      );
+      render(<SchemaNodeProxy node={mockNode} />, {
+        wrapper: createTestWrapper(),
+      });
 
       const input = screen.getByTestId('input-field');
 
       fireEvent.change(input, { target: { value: 'test' } });
 
-      expect(mockNode.setValue).toHaveBeenCalledWith('test', expect.any(Number));
+      expect(mockNode.setValue).toHaveBeenCalledWith(
+        'test',
+        expect.any(Number),
+      );
     });
   });
 
@@ -176,10 +184,9 @@ describe('SchemaNodePropsFlow', () => {
         readOnly: true,
       });
 
-      render(
-        <SchemaNodeProxy node={mockNode} onChangeRef={onChangeRef} />,
-        { wrapper: createTestWrapper() },
-      );
+      render(<SchemaNodeProxy node={mockNode} onChangeRef={onChangeRef} />, {
+        wrapper: createTestWrapper(),
+      });
 
       const input = screen.getByTestId('input-field');
       fireEvent.change(input, { target: { value: 'test' } });
@@ -197,10 +204,9 @@ describe('SchemaNodePropsFlow', () => {
         disabled: true,
       });
 
-      render(
-        <SchemaNodeProxy node={mockNode} onChangeRef={onChangeRef} />,
-        { wrapper: createTestWrapper() },
-      );
+      render(<SchemaNodeProxy node={mockNode} onChangeRef={onChangeRef} />, {
+        wrapper: createTestWrapper(),
+      });
 
       const input = screen.getByTestId('input-field');
       fireEvent.change(input, { target: { value: 'test' } });
@@ -281,10 +287,7 @@ describe('SchemaNodePropsFlow', () => {
       ];
 
       render(
-        <SchemaNodeProxy
-          node={mockNode}
-          onFileAttachRef={onFileAttachRef}
-        />,
+        <SchemaNodeProxy node={mockNode} onFileAttachRef={onFileAttachRef} />,
         {
           wrapper: createTestWrapper({
             formTypeInputDefinitions: definitions as any,
@@ -415,10 +418,7 @@ describe('SchemaNodePropsFlow', () => {
       ];
 
       render(
-        <SchemaNodeProxy
-          node={mockNode}
-          overridePropsRef={overridePropsRef}
-        />,
+        <SchemaNodeProxy node={mockNode} overridePropsRef={overridePropsRef} />,
         {
           wrapper: createTestWrapper({
             formTypeInputDefinitions: definitions as any,
@@ -461,10 +461,9 @@ describe('SchemaNodePropsFlow', () => {
       const onChangeRef = { current: firstHandler };
       const mockNode = createStringNode({ path: 'test.field', name: 'field' });
 
-      render(
-        <SchemaNodeProxy node={mockNode} onChangeRef={onChangeRef} />,
-        { wrapper: createTestWrapper() },
-      );
+      render(<SchemaNodeProxy node={mockNode} onChangeRef={onChangeRef} />, {
+        wrapper: createTestWrapper(),
+      });
 
       const input = screen.getByTestId('input-field');
 
@@ -489,10 +488,9 @@ describe('SchemaNodePropsFlow', () => {
         enabled: false,
       });
 
-      const { container } = render(
-        <SchemaNodeProxy node={mockNode} />,
-        { wrapper: createTestWrapper() },
-      );
+      const { container } = render(<SchemaNodeProxy node={mockNode} />, {
+        wrapper: createTestWrapper(),
+      });
 
       expect(container.querySelector('[data-testid="input-field"]')).toBeNull();
     });
@@ -502,10 +500,9 @@ describe('SchemaNodePropsFlow', () => {
       const onChangeRef = createOnChangeRef(onChange);
       const mockNode = createStringNode({ path: 'test.field', name: 'field' });
 
-      render(
-        <SchemaNodeProxy node={mockNode} onChangeRef={onChangeRef} />,
-        { wrapper: createTestWrapper() },
-      );
+      render(<SchemaNodeProxy node={mockNode} onChangeRef={onChangeRef} />, {
+        wrapper: createTestWrapper(),
+      });
 
       const input = screen.getByTestId('input-field');
 
@@ -528,12 +525,9 @@ describe('SchemaNodePropsFlow', () => {
       // 먼저 파일을 첨부
       attachedFilesMap.set('test.file', [createMockFile()]);
 
-      const { unmount } = render(
-        <SchemaNodeProxy node={mockNode} />,
-        {
-          wrapper: createTestWrapper({ attachedFilesMap }),
-        },
-      );
+      const { unmount } = render(<SchemaNodeProxy node={mockNode} />, {
+        wrapper: createTestWrapper({ attachedFilesMap }),
+      });
 
       expect(attachedFilesMap.has('test.file')).toBe(true);
 
@@ -554,10 +548,7 @@ describe('SchemaNodePropsFlow', () => {
         {
           test: () => true,
           Component: vi.fn(({ readOnly, name }) => (
-            <input
-              data-testid={`input-${name}`}
-              readOnly={readOnly}
-            />
+            <input data-testid={`input-${name}`} readOnly={readOnly} />
           )),
         },
       ];
@@ -580,10 +571,7 @@ describe('SchemaNodePropsFlow', () => {
         {
           test: () => true,
           Component: vi.fn(({ disabled, name }) => (
-            <input
-              data-testid={`input-${name}`}
-              disabled={disabled}
-            />
+            <input data-testid={`input-${name}`} disabled={disabled} />
           )),
         },
       ];

@@ -603,7 +603,8 @@ describe('SIMPLE_EQUALITY_REGEX', () => {
     });
 
     it('should not match complex expressions', () => {
-      const input = 'dependencies[0] === "email" && dependencies[1] === "phone"';
+      const input =
+        'dependencies[0] === "email" && dependencies[1] === "phone"';
       const matches = input.match(SIMPLE_EQUALITY_REGEX);
 
       expect(matches).toBeNull();

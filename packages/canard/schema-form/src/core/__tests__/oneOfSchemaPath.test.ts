@@ -189,7 +189,9 @@ describe('oneOf schemaPath assignment', () => {
       const idNode = userNode.find('id');
       const nameNode = profileNode.find('name');
       expect(idNode?.schemaPath).toBe('/properties/user/properties/id');
-      expect(nameNode?.schemaPath).toBe('/properties/user/properties/profile/properties/name');
+      expect(nameNode?.schemaPath).toBe(
+        '/properties/user/properties/profile/properties/name',
+      );
 
       // oneOf properties should have nested oneOf paths
       const typeNode = profileNode.find('type');
@@ -199,7 +201,9 @@ describe('oneOf schemaPath assignment', () => {
 
       // type is a const discriminator, so it might be null or have special handling
       expect(typeNode).toBeNull();
-      expect(bioNode?.schemaPath).toBe('/properties/user/properties/profile/oneOf/0/properties/bio');
+      expect(bioNode?.schemaPath).toBe(
+        '/properties/user/properties/profile/oneOf/0/properties/bio',
+      );
       expect(companyNode?.schemaPath).toBe(
         '/properties/user/properties/profile/oneOf/1/properties/company',
       );
@@ -333,7 +337,9 @@ describe('oneOf schemaPath assignment', () => {
 
       // Base property
       const categoryNode = dataNode.find('category');
-      expect(categoryNode?.schemaPath).toBe('/properties/data/properties/category');
+      expect(categoryNode?.schemaPath).toBe(
+        '/properties/data/properties/category',
+      );
 
       // First level oneOf content
       const contentNode = dataNode.find('content');
@@ -661,7 +667,9 @@ describe('oneOf schemaPath assignment', () => {
 
       expect(typeNode1?.schemaPath).toBe('/items/properties/type');
       expect(nameNode1?.schemaPath).toBe('/items/oneOf/1/properties/name');
-      expect(permissionsNode1?.schemaPath).toBe('/items/oneOf/1/properties/permissions');
+      expect(permissionsNode1?.schemaPath).toBe(
+        '/items/oneOf/1/properties/permissions',
+      );
     });
 
     it('should handle complex array with nested oneOf objects', () => {
@@ -746,8 +754,12 @@ describe('oneOf schemaPath assignment', () => {
       console.log('categoryNode schemaPath:', categoryNode?.schemaPath);
       console.log('detailsNode schemaPath:', detailsNode?.schemaPath);
 
-      expect(categoryNode?.schemaPath).toBe('/items/properties/data/properties/category');
-      expect(detailsNode?.schemaPath).toBe('/items/properties/data/oneOf/0/properties/details');
+      expect(categoryNode?.schemaPath).toBe(
+        '/items/properties/data/properties/category',
+      );
+      expect(detailsNode?.schemaPath).toBe(
+        '/items/properties/data/oneOf/0/properties/details',
+      );
 
       expect(isObjectNode(detailsNode)).toBe(true);
       if (!isObjectNode(detailsNode)) return;
@@ -758,8 +770,12 @@ describe('oneOf schemaPath assignment', () => {
       console.log('nameNode in details schemaPath:', nameNode?.schemaPath);
       console.log('priceNode in details schemaPath:', priceNode?.schemaPath);
 
-      expect(nameNode?.schemaPath).toBe('/items/properties/data/oneOf/0/properties/details/properties/name');
-      expect(priceNode?.schemaPath).toBe('/items/properties/data/oneOf/0/properties/details/properties/price');
+      expect(nameNode?.schemaPath).toBe(
+        '/items/properties/data/oneOf/0/properties/details/properties/name',
+      );
+      expect(priceNode?.schemaPath).toBe(
+        '/items/properties/data/oneOf/0/properties/details/properties/price',
+      );
     });
 
     it('should handle array with oneOf at items level with different types', () => {
@@ -819,7 +835,9 @@ describe('oneOf schemaPath assignment', () => {
         console.log('typeNode0 schemaPath:', typeNode0?.schemaPath);
         console.log('contentNode schemaPath:', contentNode?.schemaPath);
         expect(typeNode0?.schemaPath).toBe('/items/properties/type');
-        expect(contentNode?.schemaPath).toBe('/items/oneOf/0/properties/content');
+        expect(contentNode?.schemaPath).toBe(
+          '/items/oneOf/0/properties/content',
+        );
       }
 
       if (isObjectNode(item1)) {

@@ -29,14 +29,26 @@ describe('digitSum', () => {
   });
 
   it('소수점 숫자는 에러를 발생시켜야 합니다', () => {
-    expect(() => digitSum(1.5)).toThrow('digitSum is only defined for integers');
-    expect(() => digitSum(2.7)).toThrow('digitSum is only defined for integers');
-    expect(() => digitSum(0.1)).toThrow('digitSum is only defined for integers');
+    expect(() => digitSum(1.5)).toThrow(
+      'digitSum is only defined for integers',
+    );
+    expect(() => digitSum(2.7)).toThrow(
+      'digitSum is only defined for integers',
+    );
+    expect(() => digitSum(0.1)).toThrow(
+      'digitSum is only defined for integers',
+    );
   });
 
   it('특수한 값들도 처리해야 합니다', () => {
-    expect(() => digitSum(Infinity)).toThrow('digitSum is only defined for integers');
-    expect(() => digitSum(-Infinity)).toThrow('digitSum is only defined for integers');
-    expect(() => digitSum(NaN)).toThrow('digitSum is only defined for integers');
+    expect(() => digitSum(Infinity)).toThrow(
+      'digitSum is only defined for integers',
+    );
+    expect(() => digitSum(-Infinity)).toThrow(
+      'digitSum is only defined for integers',
+    );
+    expect(() => digitSum(NaN)).toThrow(
+      'digitSum is only defined for integers',
+    );
   });
 });

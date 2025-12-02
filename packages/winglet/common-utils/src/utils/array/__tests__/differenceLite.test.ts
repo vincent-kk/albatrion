@@ -10,7 +10,10 @@ describe('differenceLite', () => {
     ]);
     expect(differenceLite([], ['apple', 'banana', 'orange'])).toEqual([]);
     expect(
-      differenceLite(['apple', 'banana', 'orange', 'grape'], ['banana', 'grape']),
+      differenceLite(
+        ['apple', 'banana', 'orange', 'grape'],
+        ['banana', 'grape'],
+      ),
     ).toEqual(['apple', 'orange']);
   });
 
