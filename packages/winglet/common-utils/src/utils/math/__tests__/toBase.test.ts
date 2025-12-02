@@ -37,19 +37,35 @@ describe('toBase', () => {
   });
 
   it('잘못된 진법은 에러를 발생시켜야 합니다', () => {
-    expect(() => toBase(10, 1)).toThrow('Base must be an integer between 2 and 36');
-    expect(() => toBase(10, 37)).toThrow('Base must be an integer between 2 and 36');
-    expect(() => toBase(10, 2.5)).toThrow('Base must be an integer between 2 and 36');
+    expect(() => toBase(10, 1)).toThrow(
+      'Base must be an integer between 2 and 36',
+    );
+    expect(() => toBase(10, 37)).toThrow(
+      'Base must be an integer between 2 and 36',
+    );
+    expect(() => toBase(10, 2.5)).toThrow(
+      'Base must be an integer between 2 and 36',
+    );
   });
 
   it('소수점 숫자는 에러를 발생시켜야 합니다', () => {
-    expect(() => toBase(1.5, 10)).toThrow('toBase is only defined for integers');
-    expect(() => toBase(2.7, 10)).toThrow('toBase is only defined for integers');
+    expect(() => toBase(1.5, 10)).toThrow(
+      'toBase is only defined for integers',
+    );
+    expect(() => toBase(2.7, 10)).toThrow(
+      'toBase is only defined for integers',
+    );
   });
 
   it('특수한 값들도 처리해야 합니다', () => {
-    expect(() => toBase(Infinity, 10)).toThrow('toBase is only defined for integers');
-    expect(() => toBase(-Infinity, 10)).toThrow('toBase is only defined for integers');
-    expect(() => toBase(NaN, 10)).toThrow('toBase is only defined for integers');
+    expect(() => toBase(Infinity, 10)).toThrow(
+      'toBase is only defined for integers',
+    );
+    expect(() => toBase(-Infinity, 10)).toThrow(
+      'toBase is only defined for integers',
+    );
+    expect(() => toBase(NaN, 10)).toThrow(
+      'toBase is only defined for integers',
+    );
   });
 });

@@ -4,7 +4,6 @@
  * These tests provide detailed analysis of call counts and timing
  * to verify the effectiveness of the Batch option in preventing infinite loops.
  */
-
 import { describe, expect, it, vi } from 'vitest';
 
 import { delay } from '@winglet/common-utils';
@@ -41,7 +40,11 @@ describe('ObjectNode Propagate Batch Detailed Analysis', () => {
       objectNode.subscribe(eventListener);
 
       // Parent setValue
-      objectNode.setValue({ name: 'Alice', age: 25, email: 'alice@example.com' });
+      objectNode.setValue({
+        name: 'Alice',
+        age: 25,
+        email: 'alice@example.com',
+      });
       await delay();
 
       const totalCalls = eventListener.mock.calls.length;
@@ -161,7 +164,9 @@ describe('ObjectNode Propagate Batch Detailed Analysis', () => {
       console.log('\n=== Parent vs Child Call Comparison ===');
       console.log(`Parent setValue: ${parentCallCount} events`);
       console.log(`Child setValue: ${childCallCount} events`);
-      console.log(`Difference: ${Math.abs(parentCallCount - childCallCount)} events`);
+      console.log(
+        `Difference: ${Math.abs(parentCallCount - childCallCount)} events`,
+      );
 
       // Both should be reasonable
       expect(parentCallCount).toBeLessThan(20);
@@ -203,7 +208,8 @@ describe('ObjectNode Propagate Batch Detailed Analysis', () => {
       expect(onChangeCallCount).toBeLessThan(10);
 
       // Verify final callback value
-      const lastCall = onChangeSpy.mock.calls[onChangeSpy.mock.calls.length - 1];
+      const lastCall =
+        onChangeSpy.mock.calls[onChangeSpy.mock.calls.length - 1];
       expect(lastCall[0]).toEqual({ field1: 'value1', field2: 'value2' });
     });
 
@@ -299,7 +305,9 @@ describe('ObjectNode Propagate Batch Detailed Analysis', () => {
       console.log('\n=== Timing Analysis (10 iterations) ===');
       console.log(`Average: ${avgTiming.toFixed(2)}ms`);
       console.log(`Max: ${maxTiming.toFixed(2)}ms`);
-      console.log(`All timings: ${timings.map((t) => t.toFixed(2)).join(', ')}ms`);
+      console.log(
+        `All timings: ${timings.map((t) => t.toFixed(2)).join(', ')}ms`,
+      );
 
       // Performance bounds
       expect(avgTiming).toBeLessThan(50);
@@ -341,7 +349,9 @@ describe('ObjectNode Propagate Batch Detailed Analysis', () => {
       console.log('\n=== Rapid setValue Stress Test ===');
       console.log(`Iterations: ${iterations}`);
       console.log(`Total events: ${totalCalls}`);
-      console.log(`Events per iteration: ${(totalCalls / iterations).toFixed(2)}`);
+      console.log(
+        `Events per iteration: ${(totalCalls / iterations).toFixed(2)}`,
+      );
 
       // Should be bounded even with many rapid calls
       expect(totalCalls).toBeLessThan(iterations * 10);
@@ -383,7 +393,9 @@ describe('ObjectNode Propagate Batch Detailed Analysis', () => {
       console.log('\n=== Rapid Child setValue Stress Test ===');
       console.log(`Iterations: ${iterations}`);
       console.log(`Parent total events: ${totalCalls}`);
-      console.log(`Events per iteration: ${(totalCalls / iterations).toFixed(2)}`);
+      console.log(
+        `Events per iteration: ${(totalCalls / iterations).toFixed(2)}`,
+      );
 
       // Should be bounded
       expect(totalCalls).toBeLessThan(iterations * 10);

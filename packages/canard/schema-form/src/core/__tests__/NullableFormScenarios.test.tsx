@@ -368,8 +368,9 @@ describe('Nullable Form Scenarios - E2E Tests', () => {
       try {
         await waitFor(
           () => {
-            const requiredItems = screen.getByTestId('value-required-items')
-              .textContent;
+            const requiredItems = screen.getByTestId(
+              'value-required-items',
+            ).textContent;
             expect(requiredItems).not.toBe('"undefined"');
           },
           { timeout: 500 },
@@ -461,9 +462,7 @@ describe('Nullable Form Scenarios - E2E Tests', () => {
       // Wait for conditional field initialization
       await waitFor(
         () => {
-          expect(screen.getByTestId('value-type').textContent).toBe(
-            'personal',
-          );
+          expect(screen.getByTestId('value-type').textContent).toBe('personal');
           expect(screen.getByTestId('has-nickname').textContent).toBe('yes');
         },
         { timeout: 1000 },

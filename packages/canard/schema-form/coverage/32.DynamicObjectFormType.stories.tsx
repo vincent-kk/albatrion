@@ -292,23 +292,33 @@ const SimpleCustomObjectFormType = ({
     handleChange(formData);
   }, [formData, handleChange]);
 
+  const handler = useMemo(
+    () => ({
+      age: handleFieldChange('age'),
+      name: handleFieldChange('name'),
+      email: handleFieldChange('email'),
+      homepage: handleFieldChange('homepage'),
+    }),
+    [handleFieldChange],
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <ChildNodeComponentMap.age
         defaultValue={defaultValue?.age}
-        onChange={handleFieldChange('age')}
+        onChange={handler.age}
       />
       <ChildNodeComponentMap.name
         defaultValue={defaultValue?.name}
-        onChange={handleFieldChange('name')}
+        onChange={handler.name}
       />
       <ChildNodeComponentMap.email
         defaultValue={defaultValue?.email}
-        onChange={handleFieldChange('email')}
+        onChange={handler.email}
       />
       <ChildNodeComponentMap.homepage
         defaultValue={defaultValue?.homepage}
-        onChange={handleFieldChange('homepage')}
+        onChange={handler.homepage}
       />
     </div>
   );
@@ -342,6 +352,7 @@ export const ChildComponentMap = () => {
         format: 'uri',
         default: 'https://johnsmith.dev',
         pattern: 'https?://(www\\.)?[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(/[^\\s]*)?',
+        '&disabled': '!(../email)',
       },
     },
   } satisfies JsonSchema;

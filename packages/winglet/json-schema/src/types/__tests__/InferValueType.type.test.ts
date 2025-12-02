@@ -14,31 +14,45 @@ import type {
 describe('InferValueType 타입 추론 테스트', () => {
   describe('Non-nullable 타입 (단일 type)', () => {
     it('{ type: "string" } → StringValue', () => {
-      expectTypeOf<InferValueType<{ type: 'string' }>>().toEqualTypeOf<StringValue>();
+      expectTypeOf<
+        InferValueType<{ type: 'string' }>
+      >().toEqualTypeOf<StringValue>();
     });
 
     it('{ type: "number" } → NumberValue', () => {
-      expectTypeOf<InferValueType<{ type: 'number' }>>().toEqualTypeOf<NumberValue>();
+      expectTypeOf<
+        InferValueType<{ type: 'number' }>
+      >().toEqualTypeOf<NumberValue>();
     });
 
     it('{ type: "integer" } → NumberValue', () => {
-      expectTypeOf<InferValueType<{ type: 'integer' }>>().toEqualTypeOf<NumberValue>();
+      expectTypeOf<
+        InferValueType<{ type: 'integer' }>
+      >().toEqualTypeOf<NumberValue>();
     });
 
     it('{ type: "boolean" } → BooleanValue', () => {
-      expectTypeOf<InferValueType<{ type: 'boolean' }>>().toEqualTypeOf<BooleanValue>();
+      expectTypeOf<
+        InferValueType<{ type: 'boolean' }>
+      >().toEqualTypeOf<BooleanValue>();
     });
 
     it('{ type: "array" } → ArrayValue', () => {
-      expectTypeOf<InferValueType<{ type: 'array' }>>().toEqualTypeOf<ArrayValue>();
+      expectTypeOf<
+        InferValueType<{ type: 'array' }>
+      >().toEqualTypeOf<ArrayValue>();
     });
 
     it('{ type: "object" } → ObjectValue', () => {
-      expectTypeOf<InferValueType<{ type: 'object' }>>().toEqualTypeOf<ObjectValue>();
+      expectTypeOf<
+        InferValueType<{ type: 'object' }>
+      >().toEqualTypeOf<ObjectValue>();
     });
 
     it('{ type: "null" } → NullValue', () => {
-      expectTypeOf<InferValueType<{ type: 'null' }>>().toEqualTypeOf<NullValue>();
+      expectTypeOf<
+        InferValueType<{ type: 'null' }>
+      >().toEqualTypeOf<NullValue>();
     });
   });
 
@@ -68,9 +82,9 @@ describe('InferValueType 타입 추론 테스트', () => {
     });
 
     it('{ type: ["array", "null"] } → ArrayValue | NullValue', () => {
-      expectTypeOf<
-        InferValueType<{ type: ['array', 'null'] }>
-      >().toEqualTypeOf<ArrayValue | NullValue>();
+      expectTypeOf<InferValueType<{ type: ['array', 'null'] }>>().toEqualTypeOf<
+        ArrayValue | NullValue
+      >();
     });
 
     it('{ type: ["object", "null"] } → ObjectValue | NullValue', () => {
@@ -82,7 +96,9 @@ describe('InferValueType 타입 추론 테스트', () => {
 
   describe('Edge cases', () => {
     it('{ type?: undefined } → AnyValue', () => {
-      expectTypeOf<InferValueType<{ type?: undefined }>>().toEqualTypeOf<AnyValue>();
+      expectTypeOf<
+        InferValueType<{ type?: undefined }>
+      >().toEqualTypeOf<AnyValue>();
     });
 
     it('빈 객체 {} → AnyValue', () => {

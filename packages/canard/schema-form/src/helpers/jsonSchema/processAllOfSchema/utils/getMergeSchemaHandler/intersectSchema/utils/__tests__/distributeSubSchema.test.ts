@@ -1,10 +1,14 @@
 import { describe, expect, test } from 'vitest';
 
-import type { ArraySchema, ObjectSchema, JsonSchema } from '@/schema-form/types';
+import type {
+  ArraySchema,
+  JsonSchema,
+  ObjectSchema,
+} from '@/schema-form/types';
 
 import {
-  distributeAllOfProperties,
   distributeAllOfItems,
+  distributeAllOfProperties,
 } from '../distributeSubSchema';
 
 describe('distributeAllOfProperties', () => {

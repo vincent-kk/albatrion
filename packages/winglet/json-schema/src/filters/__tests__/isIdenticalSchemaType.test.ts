@@ -394,7 +394,7 @@ describe('isIdenticalSchemaType', () => {
     });
   });
 
-// nullable과 null이 섞인 배열-배열 케이스
+  // nullable과 null이 섞인 배열-배열 케이스
   describe('nullable and null mixed array-array cases', () => {
     // 기본: 양쪽 모두 nullable 배열 (동일)
     test('should return true for identical nullable arrays', () => {
@@ -513,19 +513,29 @@ describe('isIdenticalSchemaType', () => {
 
     // 4개 이상의 타입
     test('should return true for identical 4+ types with nullable', () => {
-      const left: UnknownSchema = { type: ['string', 'number', 'boolean', 'object', 'null'] };
-      const right: UnknownSchema = { type: ['null', 'object', 'boolean', 'number', 'string'] };
+      const left: UnknownSchema = {
+        type: ['string', 'number', 'boolean', 'object', 'null'],
+      };
+      const right: UnknownSchema = {
+        type: ['null', 'object', 'boolean', 'number', 'string'],
+      };
       expect(isIdenticalSchemaType(left, right)).toBe(true);
     });
 
     test('should return false for 4+ types with one type difference', () => {
-      const left: UnknownSchema = { type: ['string', 'number', 'boolean', 'object', 'null'] };
-      const right: UnknownSchema = { type: ['string', 'number', 'boolean', 'array', 'null'] };
+      const left: UnknownSchema = {
+        type: ['string', 'number', 'boolean', 'object', 'null'],
+      };
+      const right: UnknownSchema = {
+        type: ['string', 'number', 'boolean', 'array', 'null'],
+      };
       expect(isIdenticalSchemaType(left, right)).toBe(false);
     });
 
     test('should return false for 4+ types vs 3 types (different count)', () => {
-      const left: UnknownSchema = { type: ['string', 'number', 'boolean', 'null'] };
+      const left: UnknownSchema = {
+        type: ['string', 'number', 'boolean', 'null'],
+      };
       const right: UnknownSchema = { type: ['string', 'number', 'null'] };
       expect(isIdenticalSchemaType(left, right)).toBe(false);
     });
@@ -551,14 +561,20 @@ describe('isIdenticalSchemaType', () => {
 
     // 다중 타입 배열 + nullable:true
     test('should return true for multi-type array with nullable:true vs with null in array', () => {
-      const left: UnknownSchema = { type: ['string', 'number'], nullable: true };
+      const left: UnknownSchema = {
+        type: ['string', 'number'],
+        nullable: true,
+      };
       const right: UnknownSchema = { type: ['string', 'number', 'null'] };
       expect(isIdenticalSchemaType(left, right)).toBe(true);
     });
 
     test('should return true for multi-type array with null vs nullable:true', () => {
       const left: UnknownSchema = { type: ['string', 'number', 'null'] };
-      const right: UnknownSchema = { type: ['number', 'string'], nullable: true };
+      const right: UnknownSchema = {
+        type: ['number', 'string'],
+        nullable: true,
+      };
       expect(isIdenticalSchemaType(left, right)).toBe(true);
     });
 
@@ -570,8 +586,14 @@ describe('isIdenticalSchemaType', () => {
     });
 
     test('should handle different array orders with nullable:true', () => {
-      const left: UnknownSchema = { type: ['null', 'string', 'number'], nullable: true };
-      const right: UnknownSchema = { type: ['number', 'string', 'null'], nullable: true };
+      const left: UnknownSchema = {
+        type: ['null', 'string', 'number'],
+        nullable: true,
+      };
+      const right: UnknownSchema = {
+        type: ['number', 'string', 'null'],
+        nullable: true,
+      };
       expect(isIdenticalSchemaType(left, right)).toBe(true);
     });
 
@@ -590,7 +612,10 @@ describe('isIdenticalSchemaType', () => {
 
     // 비동일: 한쪽만 nullable
     test('should return false when only one side is nullable via property', () => {
-      const left: UnknownSchema = { type: ['string', 'number'], nullable: true };
+      const left: UnknownSchema = {
+        type: ['string', 'number'],
+        nullable: true,
+      };
       const right: UnknownSchema = { type: ['string', 'number'] };
       expect(isIdenticalSchemaType(left, right)).toBe(false);
     });

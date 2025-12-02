@@ -37,20 +37,38 @@ describe('combination', () => {
   });
 
   it('음수는 에러를 발생시켜야 합니다', () => {
-    expect(() => combination(-5, 2)).toThrow('Combination is only defined for non-negative integers');
-    expect(() => combination(5, -2)).toThrow('Combination is only defined for non-negative integers');
-    expect(() => combination(-5, -2)).toThrow('Combination is only defined for non-negative integers');
+    expect(() => combination(-5, 2)).toThrow(
+      'Combination is only defined for non-negative integers',
+    );
+    expect(() => combination(5, -2)).toThrow(
+      'Combination is only defined for non-negative integers',
+    );
+    expect(() => combination(-5, -2)).toThrow(
+      'Combination is only defined for non-negative integers',
+    );
   });
 
   it('소수점 숫자는 에러를 발생시켜야 합니다', () => {
-    expect(() => combination(5.5, 2)).toThrow('Combination is only defined for non-negative integers');
-    expect(() => combination(5, 2.5)).toThrow('Combination is only defined for non-negative integers');
-    expect(() => combination(5.5, 2.5)).toThrow('Combination is only defined for non-negative integers');
+    expect(() => combination(5.5, 2)).toThrow(
+      'Combination is only defined for non-negative integers',
+    );
+    expect(() => combination(5, 2.5)).toThrow(
+      'Combination is only defined for non-negative integers',
+    );
+    expect(() => combination(5.5, 2.5)).toThrow(
+      'Combination is only defined for non-negative integers',
+    );
   });
 
   it('특수한 값들도 처리해야 합니다', () => {
-    expect(() => combination(Infinity, 5)).toThrow('Combination is only defined for non-negative integers');
-    expect(() => combination(5, Infinity)).toThrow('Combination is only defined for non-negative integers');
-    expect(() => combination(NaN, 5)).toThrow('Combination is only defined for non-negative integers');
+    expect(() => combination(Infinity, 5)).toThrow(
+      'Combination is only defined for non-negative integers',
+    );
+    expect(() => combination(5, Infinity)).toThrow(
+      'Combination is only defined for non-negative integers',
+    );
+    expect(() => combination(NaN, 5)).toThrow(
+      'Combination is only defined for non-negative integers',
+    );
   });
 });

@@ -114,8 +114,14 @@ describe('AlertNode', () => {
     it('onConfirm과 onClose가 동일하게 동작해야 함', () => {
       const handleResolve1 = vi.fn();
       const handleResolve2 = vi.fn();
-      const node1 = new AlertNode({ ...alertModal, handleResolve: handleResolve1 });
-      const node2 = new AlertNode({ ...alertModal, handleResolve: handleResolve2 });
+      const node1 = new AlertNode({
+        ...alertModal,
+        handleResolve: handleResolve1,
+      });
+      const node2 = new AlertNode({
+        ...alertModal,
+        handleResolve: handleResolve2,
+      });
 
       node1.onConfirm();
       node2.onClose();

@@ -41,7 +41,10 @@ describe('min', () => {
     const largeArray = Array.from({ length: 10000 }, (_, i) => i);
     expect(min(largeArray)).toBe(0);
 
-    const randomArray = Array.from({ length: 10000 }, () => Math.random() * 1000);
+    const randomArray = Array.from(
+      { length: 10000 },
+      () => Math.random() * 1000,
+    );
     randomArray.push(-1);
     expect(min(randomArray)).toBe(-1);
   });

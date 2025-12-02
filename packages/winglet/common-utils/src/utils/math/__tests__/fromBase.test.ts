@@ -44,9 +44,15 @@ describe('fromBase', () => {
   });
 
   it('잘못된 진법은 에러를 발생시켜야 합니다', () => {
-    expect(() => fromBase('10', 1)).toThrow('Base must be an integer between 2 and 36');
-    expect(() => fromBase('10', 37)).toThrow('Base must be an integer between 2 and 36');
-    expect(() => fromBase('10', 2.5)).toThrow('Base must be an integer between 2 and 36');
+    expect(() => fromBase('10', 1)).toThrow(
+      'Base must be an integer between 2 and 36',
+    );
+    expect(() => fromBase('10', 37)).toThrow(
+      'Base must be an integer between 2 and 36',
+    );
+    expect(() => fromBase('10', 2.5)).toThrow(
+      'Base must be an integer between 2 and 36',
+    );
   });
 
   it('유효하지 않은 자릿수는 에러를 발생시켜야 합니다', () => {
@@ -61,8 +67,14 @@ describe('fromBase', () => {
   });
 
   it('문자열이 아닌 값은 에러를 발생시켜야 합니다', () => {
-    expect(() => fromBase(123 as any, 10)).toThrow('Value must be a non-empty string');
-    expect(() => fromBase(null as any, 10)).toThrow('Value must be a non-empty string');
-    expect(() => fromBase(undefined as any, 10)).toThrow('Value must be a non-empty string');
+    expect(() => fromBase(123 as any, 10)).toThrow(
+      'Value must be a non-empty string',
+    );
+    expect(() => fromBase(null as any, 10)).toThrow(
+      'Value must be a non-empty string',
+    );
+    expect(() => fromBase(undefined as any, 10)).toThrow(
+      'Value must be a non-empty string',
+    );
   });
 });

@@ -120,7 +120,7 @@ describe('shallowClone', () => {
         nil: null,
         undef: undefined,
         func: func,
-        nested: { deep: 'value' }
+        nested: { deep: 'value' },
       };
       const cloned = shallowClone(original);
 
@@ -245,9 +245,9 @@ describe('shallowClone', () => {
       const original = {
         level1: {
           level2: {
-            value: 'deep'
-          }
-        }
+            value: 'deep',
+          },
+        },
       };
       const cloned = shallowClone(original);
 
@@ -261,7 +261,7 @@ describe('shallowClone', () => {
     it('should share nested array references after cloning', () => {
       const original = [
         [1, 2, 3],
-        [4, 5, 6]
+        [4, 5, 6],
       ];
       const cloned = shallowClone(original);
 
@@ -276,7 +276,7 @@ describe('shallowClone', () => {
     it('should handle mixed nested structures', () => {
       const original = {
         array: [1, { nested: true }],
-        object: { inner: [1, 2, 3] }
+        object: { inner: [1, 2, 3] },
       };
       const cloned = shallowClone(original);
 
@@ -310,7 +310,7 @@ describe('shallowClone', () => {
         'special-key': 'value1',
         'key with spaces': 'value2',
         '': 'empty key',
-        '123': 'numeric key'
+        '123': 'numeric key',
       };
       const cloned = shallowClone(original);
 

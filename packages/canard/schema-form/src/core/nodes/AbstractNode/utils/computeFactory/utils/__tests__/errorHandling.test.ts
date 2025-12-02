@@ -118,7 +118,10 @@ describe('Error Handling in Dynamic Function Creation', () => {
         ],
       };
 
-      const factory = getConditionIndexFactory(jsonSchema.type as any, jsonSchema);
+      const factory = getConditionIndexFactory(
+        jsonSchema.type as any,
+        jsonSchema,
+      );
       const pathManager = getPathManager();
 
       expect(() => {
@@ -140,7 +143,10 @@ describe('Error Handling in Dynamic Function Creation', () => {
         ],
       };
 
-      const factory = getConditionIndexFactory(jsonSchema.type as any, jsonSchema);
+      const factory = getConditionIndexFactory(
+        jsonSchema.type as any,
+        jsonSchema,
+      );
       const pathManager = getPathManager();
 
       try {
@@ -193,7 +199,10 @@ describe('Error Handling in Dynamic Function Creation', () => {
         ],
       };
 
-      const factory = getConditionIndexFactory(jsonSchema.type as any, jsonSchema);
+      const factory = getConditionIndexFactory(
+        jsonSchema.type as any,
+        jsonSchema,
+      );
       const pathManager = getPathManager();
 
       expect(() => {
@@ -214,7 +223,10 @@ describe('Error Handling in Dynamic Function Creation', () => {
         ],
       };
 
-      const factory = getConditionIndexFactory(jsonSchema.type as any, jsonSchema);
+      const factory = getConditionIndexFactory(
+        jsonSchema.type as any,
+        jsonSchema,
+      );
       const pathManager = getPathManager();
 
       expect(() => {
@@ -454,7 +466,10 @@ describe('Error Handling in Dynamic Function Creation', () => {
         ],
       };
 
-      const factory = getConditionIndexFactory(jsonSchema.type as any, jsonSchema);
+      const factory = getConditionIndexFactory(
+        jsonSchema.type as any,
+        jsonSchema,
+      );
       const pathManager = getPathManager();
 
       try {

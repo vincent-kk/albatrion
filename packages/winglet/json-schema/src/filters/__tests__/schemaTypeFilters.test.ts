@@ -154,10 +154,7 @@ describe('Schema Type Filters', () => {
       });
 
       test('should return false for pure null type', () => {
-        const schemas = [
-          { type: 'null' },
-          { type: ['null'] },
-        ];
+        const schemas = [{ type: 'null' }, { type: ['null'] }];
 
         schemas.forEach((schema) => {
           expect(isStringSchema(schema as UnknownSchema)).toBe(false);
@@ -290,10 +287,7 @@ describe('Schema Type Filters', () => {
 
     describe('edge cases', () => {
       test('should return false for non-nullable array syntax', () => {
-        const schemas = [
-          { type: ['number'] },
-          { type: ['integer'] },
-        ];
+        const schemas = [{ type: ['number'] }, { type: ['integer'] }];
 
         schemas.forEach((schema) => {
           expect(isNullableNumberSchema(schema as UnknownSchema)).toBe(false);

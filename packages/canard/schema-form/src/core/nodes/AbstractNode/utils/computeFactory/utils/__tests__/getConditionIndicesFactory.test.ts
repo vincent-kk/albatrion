@@ -39,7 +39,11 @@ describe('getConditionIndicesFactory', () => {
     } as unknown as JsonSchemaWithVirtual;
 
     expect(
-      getConditionIndicesFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if'),
+      getConditionIndicesFactory(schema.type as any, schema)(
+        pathManager,
+        'oneOf',
+        'if',
+      ),
     ).toBeUndefined();
   });
 
@@ -282,7 +286,11 @@ describe('getConditionIndicesFactory', () => {
     } as unknown as JsonSchemaWithVirtual;
 
     expect(() => {
-      getConditionIndicesFactory(schema.type as any, schema)(pathManager, 'oneOf', 'if');
+      getConditionIndicesFactory(schema.type as any, schema)(
+        pathManager,
+        'oneOf',
+        'if',
+      );
     }).toThrow('Failed to create dynamic function');
   });
 
