@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 
+import { countObjectKey } from './countObjectKey';
+
 /**
  * Performs deep equality comparison between two values with optimized recursive traversal.
  *
@@ -295,7 +297,7 @@ const equalsRecursive = (
   const keys = Object.keys(left);
   const length = keys.length;
 
-  if (length !== Object.keys(right).length) return false;
+  if (length !== countObjectKey(right)) return false;
 
   for (let i = 0, k = keys[0]; i < length; i++, k = keys[i]) {
     if (omits?.has(k)) continue;
