@@ -155,6 +155,8 @@ export type FormTypeTestObject = Partial<{
   type: JsonSchemaType | JsonSchemaType[];
   /** SchemaNode['path'] | Array<SchemaNode['path']> */
   path: string | string[];
+  /** SchemaNode['required'] */
+  required: boolean;
   /** SchemaNode['nullable] */
   nullable: boolean;
   /** JsonSchema['format'] | Array<JsonSchema['format']> | undefined */
@@ -168,6 +170,8 @@ export type Hint = {
   type: JsonSchemaType;
   /** SchemaNode['path'] */
   path: string;
+  /** SchemaNode['required'] */
+  required: boolean;
   /** SchemaNode['nullable] */
   nullable: boolean;
   /** JsonSchema */
