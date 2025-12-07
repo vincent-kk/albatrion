@@ -127,10 +127,9 @@ export type InferFormTypeInputProps<Value> = Value extends AllowedValue
   : UnknownFormTypeInputProps;
 
 export type ChildNodeComponentProps<Value extends AllowedValue = any> = {
-  name?: string;
+  required?: boolean;
   readOnly?: boolean;
   disabled?: boolean;
-  required?: boolean;
   defaultValue?: Value;
   value?: Value;
   onChange?: SetStateFnWithOptions<Value>;
