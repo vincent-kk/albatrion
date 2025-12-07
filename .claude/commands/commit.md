@@ -16,7 +16,15 @@ git diff --cached --quiet
 **Decision**:
 
 - **Has staged changes** → Proceed to Step 2
-- **No staged changes** → Execute `git add -A` to stage all changes, then proceed to Step 2
+- **No staged changes** → Review tracked/untracked files before staging:
+  - **Only stage tracked files**: `git add -u` (updates tracked files only)
+  - **IMPORTANT**: Never blindly use `git add -A` - this stages ALL files including untracked ones
+  - Verify that untracked files (`.gitignore`, local configs, etc.) are intentional before adding
+  - If unsure, ask before staging untracked files
+
+⚠️ **Critical Warning**: Untracked files should NOT be automatically added. Check `git status` carefully to distinguish between:
+- Modified tracked files → Safe to stage with `git add -u`
+- Untracked files → Review intentionality before staging
 
 ### Step 2: Analyze Changes
 
