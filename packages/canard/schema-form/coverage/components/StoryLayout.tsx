@@ -1,5 +1,7 @@
 import { type PropsWithChildren } from 'react';
 
+import { isReactElement } from '@winglet/react-utils';
+
 import type { JsonSchema } from '../../src';
 
 const StoryLayout = ({
@@ -47,7 +49,16 @@ const StoryLayout = ({
       </div>
       <fieldset>
         <legend>Schema</legend>
-        <pre>{JSON.stringify(jsonSchema, null, 2)}</pre>
+        <pre>
+          {JSON.stringify(
+            jsonSchema,
+            (key, value) =>
+              isReactElement(value)
+                ? `React Element: [${key}] => <${value.type} />`
+                : value,
+            2,
+          )}
+        </pre>
       </fieldset>
     </div>
   );

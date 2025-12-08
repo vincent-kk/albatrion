@@ -225,9 +225,16 @@ export const FormWithSubComponentProps = () => {
   const [readOnly, setReadOnly] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const Input = useRef(
-    ({ defaultValue, onChange }: FormTypeInputProps<string>) => (
+    ({
+      defaultValue,
+      onChange,
+      readOnly,
+      disabled,
+    }: FormTypeInputProps<string>) => (
       <input
         style={{ border: 'solid red 1px' }}
+        readOnly={readOnly}
+        disabled={disabled}
         defaultValue={defaultValue}
         onChange={(e) => onChange(e.target.value)}
       />

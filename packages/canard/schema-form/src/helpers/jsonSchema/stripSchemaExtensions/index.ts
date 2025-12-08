@@ -1,0 +1,1 @@
+export { stripSchemaExtensions } from './stripSchemaExtensions';

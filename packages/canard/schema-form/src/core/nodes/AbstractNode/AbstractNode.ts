@@ -11,19 +11,20 @@ import type { Fn, Nullish } from '@aileron/declare';
 
 import { UNIT_SEPARATOR } from '@/schema-form/app/constants';
 import { PluginManager } from '@/schema-form/app/plugin';
+import { JsonSchemaError } from '@/schema-form/errors';
 import {
   getDefaultValue,
   getEmptyValue,
 } from '@/schema-form/helpers/defaultValue';
 import { transformErrors } from '@/schema-form/helpers/error';
 import { isAbsolutePath, joinSegment } from '@/schema-form/helpers/jsonPointer';
+import { stripSchemaExtensions } from '@/schema-form/helpers/jsonSchema';
 import type {
   AllowedValue,
-  JsonSchema,
-  JsonSchemaError,
   JsonSchemaType,
   JsonSchemaWithVirtual,
   ValidateFunction,
+  JsonSchemaError as ValidationError,
   ValidatorFactory,
 } from '@/schema-form/types';
 
@@ -356,7 +357,7 @@ export abstract class AbstractNode<
         if (validateOnChange) this.#handleValidation();
         onChange(getSafeEmptyValue(this.value, this.schemaType));
       });
-      this.#prepareValidator(validatorFactory, validationMode);
+      this.#prepareValidator(jsonSchema, validatorFactory, validationMode);
     } else this.#handleChange = onChange;
   }
 
@@ -696,25 +697,25 @@ export abstract class AbstractNode<
   #errorDataPaths: string[] | undefined;
 
   /** [root only] All validation errors from schema validation */
-  #globalErrors: JsonSchemaError[] | undefined;
+  #globalErrors: ValidationError[] | undefined;
 
   /** Validation errors for this specific node from root validation */
-  #localErrors: JsonSchemaError[] | undefined;
+  #localErrors: ValidationError[] | undefined;
 
   /** [root only] Combined schema errors and external errors */
-  #mergedGlobalErrors: JsonSchemaError[] = [];
+  #mergedGlobalErrors: ValidationError[] = [];
 
   /** Combined local validation errors and external errors for this node */
-  #mergedLocalErrors: JsonSchemaError[] = [];
+  #mergedLocalErrors: ValidationError[] = [];
 
   /** External errors provided by user (e.g., server-side validation errors) */
-  #externalErrors: JsonSchemaError[] = [];
+  #externalErrors: ValidationError[] = [];
 
   /**
    * Returns the merged result of errors that occurred inside the form and externally received errors.
    * @returns All of the errors that occurred inside the form and externally received errors
    */
-  public get globalErrors(): JsonSchemaError[] {
+  public get globalErrors(): ValidationError[] {
     return this.isRoot ? this.#mergedGlobalErrors : this.rootNode.globalErrors;
   }
 
@@ -722,7 +723,7 @@ export abstract class AbstractNode<
    * Returns the merged result of own errors and externally received errors.
    * @returns Local errors and externally received errors
    */
-  public get errors(): JsonSchemaError[] {
+  public get errors(): ValidationError[] {
     return this.#mergedLocalErrors;
   }
 
@@ -731,7 +732,7 @@ export abstract class AbstractNode<
    * @param errors - List of errors to set
    * @returns {boolean} Whether the merge result changed
    */
-  #setGlobalErrors(this: AbstractNode, errors: JsonSchemaError[]) {
+  #setGlobalErrors(this: AbstractNode, errors: ValidationError[]) {
     if (equals(this.#globalErrors, errors)) return false;
     this.#globalErrors = errors;
     this.#mergedGlobalErrors = [...this.#externalErrors, ...this.#globalErrors];
@@ -743,7 +744,7 @@ export abstract class AbstractNode<
    * Updates own errors and then merges them with externally received errors.
    * @param errors - List of errors to set
    */
-  public setErrors(this: AbstractNode, errors: JsonSchemaError[]) {
+  public setErrors(this: AbstractNode, errors: ValidationError[]) {
     if (equals(this.#localErrors, errors)) return;
     this.#localErrors = errors;
     this.#mergedLocalErrors = [...this.#externalErrors, ...this.#localErrors];
@@ -762,11 +763,11 @@ export abstract class AbstractNode<
    * Merges externally received errors with local errors. For rootNode, also merges internal errors.
    * @param errors - List of received errors
    */
-  public setExternalErrors(this: AbstractNode, errors: JsonSchemaError[] = []) {
+  public setExternalErrors(this: AbstractNode, errors: ValidationError[] = []) {
     if (equals(this.#externalErrors, errors, RECURSIVE_ERROR_OMITTED_KEYS))
       return;
 
-    this.#externalErrors = new Array<JsonSchemaError>(errors.length);
+    this.#externalErrors = new Array<ValidationError>(errors.length);
     for (let i = 0, l = errors.length; i < l; i++)
       this.#externalErrors[i] = { ...errors[i], key: i };
 
@@ -800,12 +801,12 @@ export abstract class AbstractNode<
    */
   public removeFromExternalErrors(
     this: AbstractNode,
-    errors: JsonSchemaError[],
+    errors: ValidationError[],
   ) {
     const deleteKeys: Array<number> = [];
     for (const error of errors)
       if (typeof error.key === 'number') deleteKeys.push(error.key);
-    const nextErrors: JsonSchemaError[] = [];
+    const nextErrors: ValidationError[] = [];
     for (const error of this.#externalErrors)
       if (!error.key || !deleteKeys.includes(error.key)) nextErrors.push(error);
     if (this.#externalErrors.length !== nextErrors.length)
@@ -845,7 +846,7 @@ export abstract class AbstractNode<
   async #validate(
     this: AbstractNode,
     value: Value | Nullish,
-  ): Promise<JsonSchemaError[]> {
+  ): Promise<ValidationError[]> {
     if (this.#validator === undefined) return [];
     const errors = await this.#validator(value);
     if (errors === null) return [];
@@ -864,8 +865,8 @@ export abstract class AbstractNode<
     if (this.#setGlobalErrors(internalErrors) === false) return;
 
     const errorsByDataPath = new Map<
-      JsonSchemaError['dataPath'],
-      JsonSchemaError[]
+      ValidationError['dataPath'],
+      ValidationError[]
     >();
     for (const error of internalErrors) {
       const errors = errorsByDataPath.get(error.dataPath);
@@ -898,7 +899,7 @@ export abstract class AbstractNode<
 
   /**
    * Performs validation based on the current value.
-   * @returns {Promise<JsonSchemaError[]>} List of errors that occurred inside the form
+   * @returns {Promise<ValidationError[]>} List of errors that occurred inside the form
    * @note If `ValidationMode.None` is set, an empty array is returned.
    */
   public async validate(this: AbstractNode) {
@@ -919,18 +920,25 @@ export abstract class AbstractNode<
    */
   #prepareValidator(
     this: AbstractNode,
+    jsonSchema: JsonSchemaWithVirtual,
     validatorFactory?: ValidatorFactory,
     validationMode?: ValidationMode,
   ) {
     if (!validationMode) return;
+    const schema = stripSchemaExtensions(jsonSchema);
     try {
       this.#validator =
-        validatorFactory?.(this.jsonSchema as JsonSchema) ||
-        PluginManager.validator?.compile(this.jsonSchema as JsonSchema);
+        validatorFactory?.(schema) || PluginManager.validator?.compile(schema);
       if (this.#validator !== undefined)
         this.#enhancer = getEmptyValue(this.schemaType);
     } catch (error: any) {
-      this.#validator = getFallbackValidator(error, this.jsonSchema);
+      const jsonSchemaError = new JsonSchemaError(
+        'CIRCULAR_REFERENCE',
+        `Circular reference detected in JSON Schema. Validation will use fallback mode. Original error: ${error.message}`,
+        { error, schema: jsonSchema },
+      );
+      this.#validator = getFallbackValidator(jsonSchemaError, jsonSchema);
+      console.error(jsonSchemaError);
     }
   }
 }
