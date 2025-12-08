@@ -66,6 +66,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/user/name',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -75,6 +76,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/user/email',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -84,6 +86,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/user/phone',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false);
@@ -94,6 +97,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/api/v1/users',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -103,6 +107,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/api/v2/users',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -112,6 +117,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/api/v3/users',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false);
@@ -122,6 +128,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/settings/123',
           type: 'number',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'number' },
         }),
       ).toBe(true);
@@ -131,6 +138,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/settings/0',
           type: 'number',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'number' },
         }),
       ).toBe(true);
@@ -140,6 +148,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/settings/abc',
           type: 'number',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'number' },
         }),
       ).toBe(false);
@@ -150,6 +159,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/admin',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -159,6 +169,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/admin/users',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -168,6 +179,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/admin/settings/theme',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -177,6 +189,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/user/admin',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false);
@@ -198,6 +211,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/orders/2024-01-15',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -207,6 +221,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/orders/2024-1-5',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false); // 형식이 맞지 않음
@@ -217,6 +232,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/files/avatar.jpg',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -226,6 +242,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/files/logo.png',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -235,6 +252,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/files/document.pdf',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false);
@@ -245,6 +263,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/api/users/123/comments',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -254,6 +273,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/api/posts/456/comments',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -263,6 +283,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/api/orders/789/comments',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false);
@@ -282,6 +303,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/user/profile',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true); // 정확한 경로 매칭
@@ -291,6 +313,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/user/profile',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true); // 정규식도 매칭됨
@@ -300,6 +323,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/user/settings',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true); // 정규식만 매칭됨
@@ -350,6 +374,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/user/name',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -359,6 +384,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/user/email',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false);
@@ -368,6 +394,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/user/email',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -377,6 +404,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/settings/theme',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -394,6 +422,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/user/age',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false);
@@ -403,6 +432,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/admin/name',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false);
@@ -426,6 +456,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/0/name',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -435,6 +466,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/123/name',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -444,6 +476,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/invalid/name',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false); // 'invalid'는 배열 인덱스가 아님
@@ -453,6 +486,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/0/email',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false); // 마지막 세그먼트가 다름
@@ -463,6 +497,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/items/5/description',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -472,6 +507,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/items/0/title',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false);
@@ -482,6 +518,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/data/0/nested/1/value',
           type: 'number',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'number' },
         }),
       ).toBe(true);
@@ -491,6 +528,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/data/10/nested/20/value',
           type: 'number',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'number' },
         }),
       ).toBe(true);
@@ -500,6 +538,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/data/abc/nested/1/value',
           type: 'number',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'number' },
         }),
       ).toBe(false); // 'abc'는 배열 인덱스가 아님
@@ -518,6 +557,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/0',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false); // 2개 vs 3개
@@ -527,6 +567,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/0/name/extra',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false); // 4개 vs 3개
@@ -536,6 +577,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false); // 1개 vs 3개
@@ -553,6 +595,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/api/users/0/profile',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -562,6 +605,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/api/admin/0/profile',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false); // 'admin' vs 'users'
@@ -571,6 +615,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/v2/users/0/profile',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false); // 'v2' vs 'api'
@@ -596,6 +641,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/0/name',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -605,6 +651,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/admin/name',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false); // 'admin'은 배열 인덱스가 아님
@@ -615,6 +662,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/123/email',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -624,6 +672,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/0/email',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -633,6 +682,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/admin/email',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false); // 'admin'은 숫자가 아님
@@ -643,6 +693,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/admin/settings',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -652,6 +703,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/0/settings',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false);
@@ -662,6 +714,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/api/v1/users',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -671,6 +724,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/api/v2/posts/123',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -680,6 +734,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/api/beta/users',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false);
@@ -690,6 +745,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/files/gallery/images/thumb',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false); // 'gallery'는 배열 인덱스가 아님 (정규식이 아닌 인덱스 패턴으로 처리됨)
@@ -710,6 +766,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/123/profile',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -719,6 +776,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/admin/users',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -728,6 +786,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/admin/posts',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -737,6 +796,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/admin/comments',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false);
@@ -761,6 +821,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/0/name',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -771,6 +832,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/profile',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -780,6 +842,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/admin/settings',
           type: 'number',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'number' },
         }),
       ).toBe(true);
@@ -790,6 +853,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/items/0/tags/1',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -799,6 +863,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/items/5/tags/10',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -821,6 +886,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/user/name',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -830,6 +896,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/items/0/title',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -855,6 +922,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/user/name',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -864,6 +932,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/user/email',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -874,6 +943,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/orders/0/items/0/name',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -883,6 +953,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/orders/5/items/2/name',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -893,6 +964,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/orders/0/total',
           type: 'number',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'number' },
         }),
       ).toBe(true);
@@ -903,6 +975,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/settings/0',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -912,6 +985,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/settings/100',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -932,6 +1006,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/api/users/123',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -941,6 +1016,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/api/posts/1/comments/2',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false);
@@ -950,6 +1026,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/api/posts/1/comments/2',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -959,6 +1036,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/api/users/123',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false);
@@ -968,6 +1046,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/static/assets',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -1003,6 +1082,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -1012,6 +1092,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -1029,6 +1110,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/level1/0/level3/1/level5/2/level7/3/value',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -1038,6 +1120,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/level1/0/level3/1/level5/2/level7/invalid/value',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false);
@@ -1056,6 +1139,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/0/profile',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -1065,6 +1149,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/123/profile',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true);
@@ -1075,6 +1160,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/abc/profile',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false);
@@ -1084,6 +1170,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/-1/profile',
           type: 'string',
           nullable: false,
+          required: false,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(false);
@@ -1093,6 +1180,7 @@ describe('normalizeFormTypeInputMap', () => {
           path: '/users/01/profile',
           type: 'string',
           nullable: false,
+          required: true,
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true); // isArrayIndex가 '01'을 유효한 인덱스로 인식

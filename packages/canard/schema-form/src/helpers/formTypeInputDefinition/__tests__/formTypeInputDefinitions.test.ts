@@ -121,6 +121,7 @@ describe('formTypeTestFnFactory (formTypeTestObject를 통한 간접 테스트)'
   const createTestHint = (overrides: Partial<Hint> = {}): Hint => ({
     type: 'string',
     nullable: false,
+    required: true,
     path: '/test',
     jsonSchema: { type: 'string' },
     format: undefined,
