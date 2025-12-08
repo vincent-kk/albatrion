@@ -1,6 +1,6 @@
 {
   "name": "@canard/schema-form-ajv8-plugin",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "AJV 8.x validator plugin for @canard/schema-form providing JSON Schema validation with latest Draft 2020-12 and Draft 2019-09 support",
   "keywords": [
     "react",
