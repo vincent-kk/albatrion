@@ -106,7 +106,7 @@ export const StringEnum = () => {
         type: 'string',
         enum: ['a', 'b', 'c'],
         formType: 'radio',
-        options: {
+        FormTypeInputProps: {
           alias: {
             a: 'a label',
             b: 'b label',
@@ -118,7 +118,7 @@ export const StringEnum = () => {
         type: 'string',
         enum: ['one', 'two', 'three'],
         formType: 'radiogroup',
-        options: {
+        FormTypeInputProps: {
           alias: {
             unset: 'OFF',
             one: 'one label',
@@ -134,7 +134,7 @@ export const StringEnum = () => {
           enum: ['d', 'e', 'f'],
         },
         formType: 'checkbox',
-        options: {
+        FormTypeInputProps: {
           alias: {
             d: 'd label',
             e: 'e label',
@@ -146,8 +146,8 @@ export const StringEnum = () => {
         type: 'string',
         enum: ['', 'g', 'h', 'i'],
         formType: 'enum',
-        placeholder: 'select one of item',
-        options: {
+        FormTypeInputProps: {
+          placeholder: 'select one of item',
           alias: {
             g: 'g label',
             h: 'h label',
@@ -157,18 +157,18 @@ export const StringEnum = () => {
       },
       multiple: {
         type: 'array',
-        placeholder: 'select one of item',
-        items: {
-          type: 'string',
-          enum: ['', 'g', 'h', 'i'],
-          formType: 'enum',
-        },
-        options: {
+        FormTypeInputProps: {
+          placeholder: 'select one of item',
           alias: {
             g: 'g label',
             h: 'h label',
             i: 'i label',
           },
+        },
+        items: {
+          type: 'string',
+          enum: ['', 'g', 'h', 'i'],
+          formType: 'enum',
         },
       },
     },
@@ -415,7 +415,9 @@ export const FunctionalChildren = () => {
       gender: {
         type: 'string',
         enum: ['male', 'female'],
-        placeholder: 'select gender',
+        FormTypeInputProps: {
+          placeholder: 'select gender',
+        },
       },
     },
   } satisfies JsonSchema;
@@ -482,7 +484,9 @@ export const IterableChildren = () => {
       gender: {
         type: 'string',
         enum: ['male', 'female'],
-        placeholder: 'select gender',
+        FormTypeInputProps: {
+          placeholder: 'select gender',
+        },
       },
     },
   } satisfies JsonSchema;
@@ -756,14 +760,18 @@ export const ComputedProps = () => {
       },
       name: {
         type: 'string',
-        placeholder: 'enter your name',
+        FormTypeInputProps: {
+          placeholder: 'enter your name',
+        },
         computed: {
           readOnly: '!../prepared',
         },
       },
       age: {
         type: 'number',
-        placeholder: 'enter your age',
+        FormTypeInputProps: {
+          placeholder: 'enter your age',
+        },
         computed: {
           disabled: '(../name)===undefined||(../name).length<5',
         },
@@ -771,7 +779,9 @@ export const ComputedProps = () => {
       nationality: {
         type: 'string',
         enum: ['', 'US', 'UK', 'JP', 'KR'],
-        placeholder: 'select your nationality',
+        FormTypeInputProps: {
+          placeholder: 'select your nationality',
+        },
         computed: {
           disabled: '(../age)===undefined||(../age)<10',
         },

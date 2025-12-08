@@ -12,9 +12,7 @@ import type {
 
 import type { MuiContext } from '../type';
 
-type BooleanSwitchJsonSchema = BooleanSchema<{
-  size?: 'small' | 'medium';
-}> & {
+type BooleanSwitchJsonSchema = BooleanSchema & {
   formType: 'switch';
 };
 
@@ -33,7 +31,6 @@ const FormTypeInputBooleanSwitch = ({
   path,
   name,
   required,
-  jsonSchema,
   disabled,
   defaultValue,
   onChange,
@@ -50,8 +47,8 @@ const FormTypeInputBooleanSwitch = ({
 
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
-  }, [jsonSchema, context, labelProp, name, sizeProp, hideLabel]);
+    return [labelProp || name, sizeProp || context.size];
+  }, [context, labelProp, name, sizeProp, hideLabel]);
 
   return (
     <FormControlLabel

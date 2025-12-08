@@ -56,13 +56,12 @@ const FormTypeInputDate = ({
         fullWidthProp ?? context.fullWidth,
       ];
     return [
-      labelProp || jsonSchema.label || name,
+      labelProp || name,
       sizeProp || context.size,
       variantProp || context.variant,
       fullWidthProp ?? context.fullWidth,
     ];
   }, [
-    jsonSchema,
     context,
     labelProp,
     name,

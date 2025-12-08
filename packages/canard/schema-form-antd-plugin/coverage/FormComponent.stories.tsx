@@ -78,7 +78,9 @@ const bigSchema = {
               computed: {
                 active: '../age >= 18',
               },
-              placeholder: 'Select gender',
+              FormTypeInputProps: {
+                placeholder: 'Select gender',
+              },
             },
             preferences: {
               type: 'object',

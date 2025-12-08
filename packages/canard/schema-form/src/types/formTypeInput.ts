@@ -65,6 +65,10 @@ export interface FormTypeInputProps<
   onFileAttach: Fn<[file: File | File[] | undefined]>;
   /** Child FormTypeInput Components of this FormTypeInput Component */
   ChildNodeComponents: ChildNodeComponent[];
+  /** Placeholder text for input fields */
+  placeholder: string | undefined;
+  /** CSS class name for styling */
+  className: string | undefined;
   /** Style of FormTypeInput Component */
   style: CSSProperties | undefined;
   /** UserDefinedContext passed to Form */
@@ -117,6 +121,8 @@ export interface UnknownFormTypeInputProps {
   onChange: SetStateFnWithOptions<any>;
   onFileAttach: Fn<[file: File | File[] | undefined]>;
   ChildNodeComponents: ChildNodeComponent<any>[];
+  placeholder: string | undefined;
+  className: string | undefined;
   style: CSSProperties | undefined;
   context: any;
   [alt: string]: any;

@@ -88,7 +88,7 @@ export const StringEnum = () => {
         type: 'string',
         enum: ['a', 'b', 'c'],
         formType: 'radio',
-        options: {
+        FormTypeInputProps: {
           alias: {
             a: 'a label',
             b: 'b label',
@@ -100,7 +100,7 @@ export const StringEnum = () => {
         type: 'string',
         enum: ['one', 'two', 'three'],
         formType: 'radiogroup',
-        options: {
+        FormTypeInputProps: {
           alias: {
             unset: 'OFF',
             one: 'one label',
@@ -116,7 +116,7 @@ export const StringEnum = () => {
           enum: ['d', 'e', 'f'],
         },
         formType: 'checkbox',
-        options: {
+        FormTypeInputProps: {
           alias: {
             d: 'd label',
             e: 'e label',
@@ -128,7 +128,7 @@ export const StringEnum = () => {
         type: 'string',
         enum: ['', 'g', 'h', 'i'],
         formType: 'enum',
-        options: {
+        FormTypeInputProps: {
           alias: {
             g: 'g label',
             h: 'h label',

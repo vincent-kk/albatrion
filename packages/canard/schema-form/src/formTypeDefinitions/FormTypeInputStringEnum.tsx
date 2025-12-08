@@ -24,11 +24,12 @@ const FormTypeInputStringEnum = ({
   readOnly,
   disabled,
   context,
+  alias,
   style,
   className,
 }: FormTypeInputPropsWithSchema<
   string | null,
-  StringSchema<{ alias?: { [label: string]: ReactNode } }>,
+  StringSchema,
   EnumLabelsContext
 >) => {
   const enumOptions = useMemo(
@@ -39,14 +40,11 @@ const FormTypeInputStringEnum = ({
             return {
               value,
               rawValue,
-              label:
-                context.enumLabels?.[value] ||
-                jsonSchema.options?.alias?.[value] ||
-                value,
+              label: context.enumLabels?.[value] || alias?.[value] || value,
             };
           })
         : [],
-    [context, jsonSchema],
+    [context, jsonSchema, alias],
   );
   const initialValue = useMemo(() => {
     if (defaultValue === undefined) return undefined;

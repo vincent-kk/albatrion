@@ -24,11 +24,12 @@ const FormTypeInputStringRadio = ({
   defaultValue,
   onChange,
   context,
+  alias,
   style,
   className,
 }: FormTypeInputPropsWithSchema<
   string | null,
-  StringSchema<{ alias?: { [label: string]: ReactNode } }>,
+  StringSchema,
   RadioLabelsContext
 >) => {
   const radioOptions = useMemo(
@@ -39,14 +40,11 @@ const FormTypeInputStringRadio = ({
             return {
               value,
               rawValue,
-              label:
-                context.radioLabels?.[value] ||
-                jsonSchema.options?.alias?.[value] ||
-                value,
+              label: context.radioLabels?.[value] || alias?.[value] || value,
             };
           })
         : [],
-    [context, jsonSchema],
+    [context, jsonSchema, alias],
   );
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const rawValue = radioOptions.find(

@@ -95,7 +95,7 @@ StringCheckbox.args = {
     items: {
       type: 'string',
       enum: ['a', 'b', 'c'],
-      options: {
+      FormTypeInputProps: {
         alias: {
           a: 'alias a',
           b: 'alias b',
@@ -114,7 +114,7 @@ StringRadio.args = {
     enum: [null, 'a', 'b', 'c'],
     nullable: true,
     FormTypeInput: FormTypeInputRadioGroupDefinition.Component,
-    options: {
+    FormTypeInputProps: {
       alias: {
         a: 'alias a',
         b: 'alias b',
@@ -130,7 +130,7 @@ StringSwitch.args = {
     type: 'string',
     enum: ['on', 'off'],
     FormTypeInput: FormTypeInputStringSwitchDefinition.Component,
-    options: {
+    FormTypeInputProps: {
       alias: {
         on: 'alias on',
         off: 'alias off',

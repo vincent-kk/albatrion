@@ -12,9 +12,7 @@ import type {
 
 import type { MuiContext } from '../type';
 
-type NumberJsonSchema = NumberSchema & {
-  placeholder?: string;
-};
+type NumberJsonSchema = NumberSchema;
 
 interface FormTypeInputNumberProps
   extends FormTypeInputPropsWithSchema<
@@ -39,6 +37,7 @@ const FormTypeInputNumber = ({
   onChange,
   context,
   label: labelProp,
+  placeholder,
   size: sizeProp,
   variant: variantProp,
   fullWidth: fullWidthProp,
@@ -53,13 +52,12 @@ const FormTypeInputNumber = ({
         fullWidthProp ?? context.fullWidth,
       ];
     return [
-      labelProp || jsonSchema.label || name,
+      labelProp || name,
       sizeProp || context.size,
       variantProp || context.variant,
       fullWidthProp ?? context.fullWidth,
     ];
   }, [
-    jsonSchema,
     context,
     labelProp,
     name,
@@ -98,7 +96,7 @@ const FormTypeInputNumber = ({
       label={label}
       required={required}
       size={size}
-      placeholder={jsonSchema.placeholder}
+      placeholder={placeholder}
       defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
       disabled={disabled}

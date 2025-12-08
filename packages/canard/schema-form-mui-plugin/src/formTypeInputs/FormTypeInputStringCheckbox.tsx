@@ -18,9 +18,6 @@ type StringCheckboxJsonSchema = ArraySchema & {
   items: {
     type: 'string';
     enum: string[];
-    options?: {
-      alias?: Record<string, string>;
-    };
     nullable: false;
   };
   formType: 'checkbox';
@@ -34,6 +31,7 @@ interface FormTypeInputStringCheckboxProps
     >,
     MuiContext {
   label?: ReactNode;
+  alias?: Record<string, string>;
   row?: boolean;
   hideLabel?: boolean;
 }
@@ -48,27 +46,27 @@ const FormTypeInputStringCheckbox = ({
   onChange,
   context,
   label: labelProp,
+  alias,
   size: sizeProp = 'medium',
   row = true,
   hideLabel,
 }: FormTypeInputStringCheckboxProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
-  }, [hideLabel, sizeProp, context.size, labelProp, jsonSchema, name]);
+    return [labelProp || name, sizeProp || context.size];
+  }, [hideLabel, sizeProp, context.size, labelProp, name]);
 
   const options = useMemo(() => {
     const enumValues = jsonSchema.items.enum || [];
-    const checkboxLabels = jsonSchema.items?.options?.alias;
     return enumValues.map((rawValue) => {
       const value = '' + rawValue;
       return {
         value,
         rawValue,
-        label: checkboxLabels?.[value] || value,
+        label: alias?.[value] || value,
       };
     });
-  }, [jsonSchema]);
+  }, [jsonSchema, alias]);
 
   const [value, setValue] = useState<string[]>(defaultValue.map((v) => '' + v));
 

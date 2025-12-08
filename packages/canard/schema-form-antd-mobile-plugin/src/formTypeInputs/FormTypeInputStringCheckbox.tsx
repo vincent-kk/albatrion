@@ -14,15 +14,18 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-type StringJsonSchema = StringSchema<{
-  alias?: { [label: string]: ReactNode };
-}>;
-
-type ArrayJsonSchema = ArraySchema<{
-  alias?: { [label: string]: ReactNode };
-}> & {
-  items: StringJsonSchema;
+type ArrayJsonSchema = ArraySchema & {
+  items: StringSchema;
 };
+
+interface FormTypeInputStringCheckboxProps
+  extends FormTypeInputPropsWithSchema<
+    Array<string | null>,
+    ArrayJsonSchema,
+    { checkboxLabels?: { [label: string]: ReactNode } }
+  > {
+  alias?: { [label: string]: ReactNode };
+}
 
 const FormTypeInputStringCheckbox = ({
   jsonSchema,
@@ -30,28 +33,21 @@ const FormTypeInputStringCheckbox = ({
   defaultValue,
   onChange,
   context,
-}: FormTypeInputPropsWithSchema<
-  Array<string | null>,
-  ArrayJsonSchema,
-  { checkboxLabels?: { [label: string]: ReactNode } }
->) => {
+  alias,
+}: FormTypeInputStringCheckboxProps) => {
   const options = useMemo(() => {
-    const alias =
-      context.checkboxLabels ||
-      jsonSchema.items?.options?.alias ||
-      jsonSchema.options?.alias ||
-      {};
+    const labels = context.checkboxLabels || alias || {};
     return jsonSchema.items?.enum
       ? map(jsonSchema.items.enum, (rawValue: string | null) => {
           const value = '' + rawValue;
           return {
             value,
             rawValue,
-            label: alias[value] || value,
+            label: labels[value] || value,
           };
         })
       : [];
-  }, [context, jsonSchema]);
+  }, [context, jsonSchema, alias]);
 
   const initialValue = useMemo(() => {
     if (defaultValue === undefined) return undefined;

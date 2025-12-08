@@ -91,6 +91,7 @@ const FormTypeInputUri = ({
   onChange,
   context,
   label: labelProp,
+  placeholder,
   size: sizeProp,
   variant: variantProp,
   fullWidth: fullWidthProp,
@@ -106,13 +107,12 @@ const FormTypeInputUri = ({
         fullWidthProp ?? context.fullWidth,
       ];
     return [
-      labelProp || jsonSchema.label || name,
+      labelProp || name,
       sizeProp || context.size,
       variantProp || context.variant,
       fullWidthProp ?? context.fullWidth,
     ];
   }, [
-    jsonSchema,
     context,
     labelProp,
     name,
@@ -211,7 +211,7 @@ const FormTypeInputUri = ({
           variant={variant}
           fullWidth={fullWidth}
           size={size}
-          placeholder={jsonSchema.placeholder}
+          placeholder={placeholder}
           defaultValue={initialUri}
           onChange={handleUriChange}
           disabled={disabled}

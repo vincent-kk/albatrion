@@ -36,13 +36,17 @@ export const NumberWithNull = () => {
       nullableNumber: {
         type: 'number',
         nullable: true,
-        placeholder: 'null 값 허용 (Stepper)',
+        FormTypeInputProps: {
+          placeholder: 'null 값 허용 (Stepper)',
+        },
       },
       numberWithDefault: {
         type: 'number',
         nullable: true,
         default: null,
-        placeholder: '기본값이 null인 숫자',
+        FormTypeInputProps: {
+          placeholder: '기본값이 null인 숫자',
+        },
       },
     },
   } satisfies JsonSchema;
@@ -97,7 +101,7 @@ export const RadioGroupWithNull = () => {
         enum: [null, 'option1', 'option2', 'option3'],
         formType: 'radio',
         nullable: true,
-        options: {
+        FormTypeInputProps: {
           alias: {
             null: '선택 안함',
             option1: '옵션 1',
@@ -111,7 +115,7 @@ export const RadioGroupWithNull = () => {
         enum: [null, 1, 2, 3],
         formType: 'radiogroup',
         nullable: true,
-        options: {
+        FormTypeInputProps: {
           alias: {
             null: '미정',
             '1': '하나',
@@ -174,7 +178,7 @@ export const StringCheckboxWithNull = () => {
           type: 'string',
           enum: [null, 'feature1', 'feature2', 'feature3'],
           nullable: true,
-          options: {
+          FormTypeInputProps: {
             alias: {
               null: '기본 기능',
               feature1: '기능 1',
@@ -194,7 +198,7 @@ export const StringCheckboxWithNull = () => {
         },
         formType: 'checkbox',
         default: [null],
-        options: {
+        FormTypeInputProps: {
           alias: {
             null: 'null 값',
             '': '빈 문자열',
@@ -256,7 +260,7 @@ export const StringSwitchWithNull = () => {
         enum: ['active', null],
         formType: 'switch',
         nullable: true,
-        options: {
+        FormTypeInputProps: {
           alias: {
             active: '활성',
             null: '비활성 (null)',
@@ -269,7 +273,7 @@ export const StringSwitchWithNull = () => {
         formType: 'switch',
         nullable: true,
         default: null,
-        options: {
+        FormTypeInputProps: {
           alias: {
             null: '켜짐 (null)',
             disabled: '꺼짐',
@@ -280,7 +284,7 @@ export const StringSwitchWithNull = () => {
         type: 'boolean',
         formType: 'switch',
         nullable: false,
-        options: {
+        FormTypeInputProps: {
           alias: {
             true: '참',
             false: '거짓',
@@ -420,7 +424,7 @@ export const ComplexNullScenarios = () => {
           nullable: true,
         },
         formType: 'checkbox',
-        options: {
+        FormTypeInputProps: {
           alias: {
             null: 'null 값',
             '': '빈 문자열',
@@ -435,7 +439,7 @@ export const ComplexNullScenarios = () => {
         default: null,
         formType: 'radiogroup',
         nullable: true,
-        options: {
+        FormTypeInputProps: {
           alias: {
             null: '우선순위 없음 (기본)',
             low: '낮음',
@@ -458,7 +462,7 @@ export const ComplexNullScenarios = () => {
               enum: [null, 'low', 'high'],
               nullable: true,
               formType: 'switch',
-              options: {
+              FormTypeInputProps: {
                 alias: {
                   null: '보통',
                   low: '낮음',

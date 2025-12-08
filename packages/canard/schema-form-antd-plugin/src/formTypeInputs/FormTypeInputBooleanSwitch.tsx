@@ -33,21 +33,22 @@ interface FormTypeInputBooleanSwitchProps
     }
   > {
   size?: SwitchSize;
+  alias?: { checked?: ReactNode; unchecked?: ReactNode };
 }
 
 const FormTypeInputBooleanSwitch = ({
   path,
-  jsonSchema,
   disabled,
   value,
   onChange,
   context,
   size,
+  alias,
 }: FormTypeInputBooleanSwitchProps) => {
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
-    const alias = context?.checkboxLabels || jsonSchema.options?.alias || {};
-    return [alias.checked, alias.unchecked];
-  }, [context, jsonSchema]);
+    const labels = context?.checkboxLabels || alias || {};
+    return [labels.checked, labels.unchecked];
+  }, [context, alias]);
 
   const handleChange = useHandle((input: boolean) => {
     onChange(input);

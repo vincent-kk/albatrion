@@ -12,8 +12,8 @@ import type {
 } from '@/schema-form/types';
 
 type StringCheckboxJsonSchema = {
-  items: StringSchema<{ alias?: { [label: string]: ReactNode } }>;
-} & ArraySchema<{ alias?: { [label: string]: ReactNode } }>;
+  items: StringSchema;
+} & ArraySchema;
 
 type CheckboxLabelsContext = {
   checkboxLabels?: {
@@ -30,6 +30,7 @@ const FormTypeInputStringCheckbox = ({
   defaultValue,
   onChange,
   context,
+  alias,
   style,
   className,
 }: FormTypeInputPropsWithSchema<
@@ -45,15 +46,11 @@ const FormTypeInputStringCheckbox = ({
             return {
               value,
               rawValue,
-              label:
-                context.checkboxLabels?.[value] ||
-                jsonSchema.options?.alias?.[value] ||
-                jsonSchema.items?.options?.alias?.[value] ||
-                value,
+              label: context.checkboxLabels?.[value] || alias?.[value] || value,
             };
           })
         : [],
-    [context, jsonSchema],
+    [context, jsonSchema, alias],
   );
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = event.target;

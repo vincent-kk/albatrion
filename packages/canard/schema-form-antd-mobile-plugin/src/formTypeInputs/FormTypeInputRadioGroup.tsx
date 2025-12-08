@@ -12,13 +12,18 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-type StringJsonSchema = StringSchema<{
+interface FormTypeInputRadioGroupProps
+  extends FormTypeInputPropsWithSchema<
+    string | number | null,
+    StringSchema | NumberSchema,
+    {
+      radioLabels?: {
+        [label: string]: ReactNode;
+      };
+    }
+  > {
   alias?: { [label: string]: ReactNode };
-}>;
-
-type NumberJsonSchema = NumberSchema<{
-  alias?: { [label: string]: ReactNode };
-}>;
+}
 
 const FormTypeInputRadioGroup = ({
   jsonSchema,
@@ -26,29 +31,22 @@ const FormTypeInputRadioGroup = ({
   defaultValue,
   onChange,
   context,
+  alias,
   style,
-}: FormTypeInputPropsWithSchema<
-  string | number | null,
-  StringJsonSchema | NumberJsonSchema,
-  {
-    radioLabels?: {
-      [label: string]: ReactNode;
-    };
-  }
->) => {
+}: FormTypeInputRadioGroupProps) => {
   const options = useMemo(() => {
-    const alias = context.radioLabels || jsonSchema.options?.alias || {};
+    const labels = context.radioLabels || alias || {};
     return jsonSchema.enum
       ? map(jsonSchema.enum, (rawValue: string | number | null) => {
           const value = '' + rawValue;
           return {
             value,
             rawValue,
-            label: alias[value] || value,
+            label: labels[value] || value,
           };
         })
       : [];
-  }, [context, jsonSchema]);
+  }, [context, jsonSchema, alias]);
 
   const initialValue = useMemo(
     () => options.find((option) => option.rawValue === defaultValue)?.value,

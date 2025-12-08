@@ -101,7 +101,6 @@ export const SchemaNodeInput = memo(
           required={node.required}
           readOnly={rootReadOnly || node.readOnly}
           disabled={rootDisabled || node.disabled}
-          style={node.jsonSchema.style}
           {...node.jsonSchema.FormTypeInputProps}
           // Semi-overridable: Value handler and file attach handler
           defaultValue={node.defaultValue}

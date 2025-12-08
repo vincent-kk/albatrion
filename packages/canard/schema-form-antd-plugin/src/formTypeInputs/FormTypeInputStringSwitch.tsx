@@ -25,6 +25,7 @@ interface FormTypeInputStringSwitchProps
     { switchSize?: SwitchSize; switchLabels?: { [label: string]: ReactNode } }
   > {
   size?: SwitchSize;
+  alias?: { [label: string]: ReactNode };
 }
 
 const FormTypeInputStringSwitch = ({
@@ -35,6 +36,7 @@ const FormTypeInputStringSwitch = ({
   onChange,
   context,
   size,
+  alias,
 }: FormTypeInputStringSwitchProps) => {
   const [checked, unchecked] = useMemo(() => {
     const [checked, unchecked] = jsonSchema.enum || [];
@@ -45,9 +47,12 @@ const FormTypeInputStringSwitch = ({
   }, [jsonSchema]);
 
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
-    const alias = context.switchLabels || jsonSchema.options?.alias || {};
-    return [alias['' + checked] || checked, alias['' + unchecked] || unchecked];
-  }, [checked, unchecked, context, jsonSchema]);
+    const labels = context.switchLabels || alias || {};
+    return [
+      labels['' + checked] || checked,
+      labels['' + unchecked] || unchecked,
+    ];
+  }, [checked, unchecked, context, alias]);
 
   const handleChange = useHandle((input: boolean) => {
     onChange(input ? checked : unchecked);

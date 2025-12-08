@@ -28,6 +28,7 @@ interface FormTypeInputRadioGroupProps
     { size?: SizeType; radioLabels?: { [label: string]: ReactNode } }
   > {
   size?: SizeType;
+  alias?: { [label: string]: ReactNode };
 }
 
 const FormTypeInputRadioGroup = ({
@@ -39,20 +40,21 @@ const FormTypeInputRadioGroup = ({
   onChange,
   context,
   size,
+  alias,
 }: FormTypeInputRadioGroupProps) => {
   const options = useMemo(() => {
-    const alias = context.radioLabels || jsonSchema.options?.alias || {};
+    const labels = context.radioLabels || alias || {};
     return jsonSchema.enum
       ? map(jsonSchema.enum, (rawValue: string | number | null) => {
           const value = '' + rawValue;
           return {
             value,
             rawValue,
-            label: alias[value] || value,
+            label: labels[value] || value,
           };
         })
       : [];
-  }, [context, jsonSchema]);
+  }, [context, jsonSchema, alias]);
   const initialValue = useMemo(
     () => options.find((option) => option.rawValue === defaultValue)?.value,
     [defaultValue, options],

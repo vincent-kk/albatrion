@@ -15,6 +15,7 @@ const FormTypeInputNumber = ({
   disabled,
   defaultValue,
   onChange,
+  placeholder,
   style,
   className,
 }: FormTypeInputProps<number | null>) => {
@@ -29,7 +30,7 @@ const FormTypeInputNumber = ({
       step={jsonSchema.multipleOf}
       readOnly={readOnly}
       disabled={disabled}
-      placeholder={jsonSchema?.placeholder}
+      placeholder={placeholder}
       defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
       style={style}

@@ -21,7 +21,6 @@ interface FormTypeInputBooleanProps
 const FormTypeInputBoolean = ({
   path,
   name,
-  jsonSchema,
   required,
   disabled,
   defaultValue,
@@ -33,8 +32,8 @@ const FormTypeInputBoolean = ({
 }: FormTypeInputBooleanProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
-  }, [jsonSchema, context, labelProp, name, sizeProp, hideLabel]);
+    return [labelProp || name, sizeProp || context.size];
+  }, [context, labelProp, name, sizeProp, hideLabel]);
 
   const [indeterminate, defaultChecked] = useMemo(() => {
     const isIndeterminate =

@@ -36,8 +36,8 @@ export const StringEnumWithNull = () => {
         enum: [null, 'option1', 'option2', 'option3'],
         formType: 'select',
         nullable: true,
-        placeholder: '값을 선택하세요',
-        options: {
+        FormTypeInputProps: {
+          placeholder: '값을 선택하세요',
           alias: {
             null: '선택 안함 (null)',
             option1: '옵션 1',
@@ -51,7 +51,7 @@ export const StringEnumWithNull = () => {
         enum: [null, '', 'value1', 'value2'],
         formType: 'enum',
         nullable: true,
-        options: {
+        FormTypeInputProps: {
           alias: {
             null: 'null 값',
             '': '빈 문자열',
@@ -95,7 +95,7 @@ export const StringSwitchWithNull = () => {
         enum: ['active', null],
         formType: 'switch',
         nullable: true,
-        options: {
+        FormTypeInputProps: {
           alias: {
             active: '활성',
             null: '비활성 (null)',
@@ -108,7 +108,7 @@ export const StringSwitchWithNull = () => {
         formType: 'switch',
         nullable: true,
         default: null,
-        options: {
+        FormTypeInputProps: {
           alias: {
             null: '활성 (null)',
             inactive: '비활성',
@@ -150,7 +150,7 @@ export const RadioGroupWithNull = () => {
         enum: [null, 'left', 'center', 'right'],
         formType: 'radio',
         nullable: true,
-        options: {
+        FormTypeInputProps: {
           alias: {
             null: '정렬 안함',
             left: '왼쪽',
@@ -165,7 +165,7 @@ export const RadioGroupWithNull = () => {
         formType: 'radio',
         nullable: true,
         default: null,
-        options: {
+        FormTypeInputProps: {
           alias: {
             null: '미정 (기본값)',
             yes: '예',
@@ -209,7 +209,7 @@ export const StringCheckboxWithNull = () => {
           type: 'string',
           enum: [null, 'feature1', 'feature2', 'feature3'],
           nullable: true,
-          options: {
+          FormTypeInputProps: {
             alias: {
               null: '기본 기능',
               feature1: '기능 1',
@@ -229,7 +229,7 @@ export const StringCheckboxWithNull = () => {
         },
         default: [null],
         formType: 'checkbox',
-        options: {
+        FormTypeInputProps: {
           alias: {
             null: 'null 포함',
             a: 'A',
@@ -331,7 +331,7 @@ export const ComplexNullScenarios = () => {
           type: 'string',
           enum: [null, 'tag1', 'tag2', 'tag3', 'tag4'],
           nullable: true,
-          options: {
+          FormTypeInputProps: {
             alias: {
               null: '태그 없음',
               tag1: '태그 1',
@@ -342,7 +342,9 @@ export const ComplexNullScenarios = () => {
           },
         },
         formType: 'select',
-        placeholder: '여러 태그 선택 (null 포함 가능)',
+        FormTypeInputProps: {
+          placeholder: '여러 태그 선택 (null 포함 가능)',
+        },
       },
       mixedValuesEnum: {
         type: 'string',
@@ -350,7 +352,7 @@ export const ComplexNullScenarios = () => {
         formType: 'enum',
         nullable: true,
         default: null,
-        options: {
+        FormTypeInputProps: {
           alias: {
             '': '빈 문자열',
             null: 'null (기본값)',
@@ -364,7 +366,7 @@ export const ComplexNullScenarios = () => {
         enum: [null, 'low', 'medium', 'high'],
         formType: 'radio',
         nullable: true,
-        options: {
+        FormTypeInputProps: {
           alias: {
             null: '우선순위 없음',
             low: '낮음',

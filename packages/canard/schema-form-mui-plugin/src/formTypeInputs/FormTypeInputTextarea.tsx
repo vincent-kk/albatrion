@@ -15,7 +15,6 @@ import type { MuiContext } from '../type';
 type TextareaJsonSchema = StringSchema & {
   format?: 'textarea';
   formType?: 'textarea';
-  placeholder?: string;
   minRows?: number;
   maxRows?: number;
 };
@@ -44,6 +43,7 @@ const FormTypeInputTextarea = ({
   onChange,
   context,
   label: labelProp,
+  placeholder,
   size: sizeProp,
   variant: variantProp,
   fullWidth: fullWidthProp,
@@ -60,13 +60,12 @@ const FormTypeInputTextarea = ({
         fullWidthProp ?? context.fullWidth,
       ];
     return [
-      labelProp || jsonSchema.label || name,
+      labelProp || name,
       sizeProp || context.size,
       variantProp || context.variant,
       fullWidthProp ?? context.fullWidth,
     ];
   }, [
-    jsonSchema,
     context,
     labelProp,
     name,
@@ -93,7 +92,7 @@ const FormTypeInputTextarea = ({
       label={label}
       required={required}
       size={size}
-      placeholder={jsonSchema.placeholder}
+      placeholder={placeholder}
       defaultValue={defaultValue}
       onChange={handleChange}
       disabled={disabled}

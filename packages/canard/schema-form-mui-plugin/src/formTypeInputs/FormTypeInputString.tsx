@@ -15,7 +15,6 @@ import type { MuiContext } from '../type';
 type StringJsonSchema = StringSchema & {
   format?: 'password';
   formType?: 'password';
-  placeholder?: string;
 };
 
 interface FormTypeInputStringProps
@@ -40,6 +39,7 @@ const FormTypeInputString = ({
   onChange,
   context,
   label: labelProp,
+  placeholder,
   size: sizeProp,
   variant: variantProp,
   fullWidth: fullWidthProp,
@@ -54,13 +54,12 @@ const FormTypeInputString = ({
         fullWidthProp ?? context.fullWidth,
       ];
     return [
-      labelProp || jsonSchema.label || name,
+      labelProp || name,
       sizeProp || context.size,
       variantProp || context.variant,
       fullWidthProp ?? context.fullWidth,
     ];
   }, [
-    jsonSchema,
     context,
     labelProp,
     name,
@@ -87,7 +86,7 @@ const FormTypeInputString = ({
       type={isPassword ? 'password' : 'text'}
       variant={variant}
       fullWidth={fullWidth}
-      placeholder={jsonSchema.placeholder}
+      placeholder={placeholder}
       label={label}
       required={required}
       disabled={disabled}

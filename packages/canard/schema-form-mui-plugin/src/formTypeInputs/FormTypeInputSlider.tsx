@@ -48,8 +48,8 @@ const FormTypeInputSlider = ({
 }: FormTypeInputSliderProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
-  }, [jsonSchema, context, labelProp, name, sizeProp, hideLabel]);
+    return [labelProp || name, sizeProp || context.size];
+  }, [context, labelProp, name, sizeProp, hideLabel]);
 
   const min = jsonSchema.minimum ?? 0;
   const max = jsonSchema.maximum ?? 100;

@@ -12,10 +12,18 @@ import type {
 
 type StringSwitchSchema = StringSchema & {
   enum?: [string | null, string | null];
-  options?: {
-    alias?: { [label: string]: ReactNode };
-  };
 };
+
+interface FormTypeInputStringSwitchProps
+  extends FormTypeInputPropsWithSchema<
+    string | null,
+    StringSwitchSchema,
+    {
+      switchLabels?: { [label: string]: ReactNode };
+    }
+  > {
+  alias?: { [label: string]: ReactNode };
+}
 
 const FormTypeInputStringSwitch = ({
   path,
@@ -24,13 +32,8 @@ const FormTypeInputStringSwitch = ({
   value,
   onChange,
   context,
-}: FormTypeInputPropsWithSchema<
-  string | null,
-  StringSwitchSchema,
-  {
-    switchLabels?: { [label: string]: ReactNode };
-  }
->) => {
+  alias,
+}: FormTypeInputStringSwitchProps) => {
   const [checked, unchecked] = useMemo(() => {
     const [checked, unchecked] = jsonSchema.enum || [];
     return [
@@ -40,9 +43,12 @@ const FormTypeInputStringSwitch = ({
   }, [jsonSchema]);
 
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
-    const alias = context.switchLabels || jsonSchema.options?.alias || {};
-    return [alias['' + checked] || checked, alias['' + unchecked] || unchecked];
-  }, [checked, unchecked, context, jsonSchema]);
+    const labels = context.switchLabels || alias || {};
+    return [
+      labels['' + checked] || checked,
+      labels['' + unchecked] || unchecked,
+    ];
+  }, [checked, unchecked, context, alias]);
 
   const handleChange = useHandle((input: boolean) => {
     onChange(input ? checked : unchecked);

@@ -12,7 +12,7 @@ import type {
 
 import type { MuiContext } from '../type';
 
-type StringEnumJsonSchema = StringSchema<{ alias?: Record<string, string> }>;
+type StringEnumJsonSchema = StringSchema;
 
 interface FormTypeInputStringEnumProps
   extends FormTypeInputPropsWithSchema<
@@ -22,6 +22,7 @@ interface FormTypeInputStringEnumProps
     >,
     MuiContext {
   label?: ReactNode;
+  alias?: Record<string, string>;
   hideLabel?: boolean;
 }
 
@@ -36,6 +37,7 @@ const FormTypeInputStringEnum = ({
   onChange,
   context,
   label: labelProp,
+  alias,
   size: sizeProp,
   variant: variantProp,
   fullWidth: fullWidthProp,
@@ -50,13 +52,12 @@ const FormTypeInputStringEnum = ({
         fullWidthProp ?? context.fullWidth,
       ];
     return [
-      labelProp || jsonSchema.label || name,
+      labelProp || name,
       sizeProp || context.size,
       variantProp || context.variant,
       fullWidthProp ?? context.fullWidth,
     ];
   }, [
-    jsonSchema,
     context,
     labelProp,
     name,
@@ -73,10 +74,10 @@ const FormTypeInputStringEnum = ({
         return {
           value,
           rawValue,
-          label: jsonSchema.options?.alias?.[value] || value,
+          label: alias?.[value] || value,
         };
       }) || [],
-    [jsonSchema],
+    [jsonSchema, alias],
   );
 
   const handleChange = useHandle((event: any) => {

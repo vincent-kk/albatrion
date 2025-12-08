@@ -13,22 +13,19 @@ import type {
 
 import type { MuiContext } from '../type';
 
-type RadioGroupStringJsonSchema = StringSchema<{
-  alias?: { [label: string]: ReactNode };
-}> & {
+type RadioGroupStringJsonSchema = StringSchema & {
   radioLabels?: string[];
   formType: 'radio';
 };
 
-type RadioGroupNumberJsonSchema = NumberSchema<{
-  alias?: { [label: string]: ReactNode };
-}> & {
+type RadioGroupNumberJsonSchema = NumberSchema & {
   radioLabels?: string[];
   formType: 'radio';
 };
 
 type FormTypeInputRadioGroupProps = {
   label?: ReactNode;
+  alias?: { [label: string]: ReactNode };
   row?: boolean;
   hideLabel?: boolean;
 } & MuiContext &
@@ -48,29 +45,29 @@ const FormTypeInputRadioGroup = ({
   onChange,
   context,
   label: labelProp,
+  alias,
   size: sizeProp = 'medium',
   row = true,
   hideLabel,
 }: FormTypeInputRadioGroupProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || jsonSchema.label || name, sizeProp || context.size];
-  }, [jsonSchema, context, labelProp, name, sizeProp, hideLabel]);
+    return [labelProp || name, sizeProp || context.size];
+  }, [context, labelProp, name, sizeProp, hideLabel]);
 
   const options = useMemo(() => {
     const enumValues = jsonSchema.enum || [];
     const radioLabels = jsonSchema.radioLabels;
-    const alias = jsonSchema.options?.alias || {};
 
     return enumValues.map((rawValue, index) => {
       const value = '' + rawValue;
       return {
         value,
         rawValue,
-        label: radioLabels?.[index] || alias[value] || value,
+        label: radioLabels?.[index] || alias?.[value] || value,
       };
     });
-  }, [jsonSchema]);
+  }, [jsonSchema, alias]);
 
   const initialValue = useMemo(
     () => options.find((option) => option.rawValue === defaultValue)?.value,

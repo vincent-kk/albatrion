@@ -14,23 +14,18 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-type StringJsonSchema = StringSchema<{
-  alias?: { [label: string]: string };
-}>;
-
-type ArrayJsonSchema = ArraySchema<{
-  alias?: { [label: string]: string };
-}> & {
-  items: StringJsonSchema;
+type ArrayJsonSchema = ArraySchema & {
+  items: StringSchema;
 };
 
 interface FormTypeInputStringEnumProps
   extends FormTypeInputPropsWithSchema<
     (string | null) | Array<string | null>,
-    StringJsonSchema | ArrayJsonSchema,
+    StringSchema | ArrayJsonSchema,
     { size?: SizeType; enumLabels?: { [label: string]: string } }
   > {
   size?: SizeType;
+  alias?: { [label: string]: string };
 }
 
 const FormTypeInputStringEnum = ({
@@ -40,17 +35,16 @@ const FormTypeInputStringEnum = ({
   defaultValue,
   onChange,
   context,
+  alias: aliasProp,
+  placeholder,
   size,
 }: FormTypeInputStringEnumProps) => {
   const [schema, alias, mode] = useMemo(() => {
-    const alias =
-      context.enumLabels ||
-      jsonSchema.items?.options?.alias ||
-      jsonSchema.options?.alias;
+    const labels = context.enumLabels || aliasProp;
     if (isArraySchema(jsonSchema))
-      return [jsonSchema.items as StringJsonSchema, alias, 'multiple'] as const;
-    else return [jsonSchema as StringJsonSchema, alias, undefined] as const;
-  }, [context, jsonSchema]);
+      return [jsonSchema.items as StringSchema, labels, 'multiple'] as const;
+    else return [jsonSchema as StringSchema, labels, undefined] as const;
+  }, [context, jsonSchema, aliasProp]);
 
   const options = useMemo(() => {
     return schema.enum
@@ -96,7 +90,7 @@ const FormTypeInputStringEnum = ({
     <Select
       id={path}
       mode={mode}
-      placeholder={jsonSchema.placeholder}
+      placeholder={placeholder}
       disabled={disabled}
       defaultValue={initialValue}
       onChange={handleChange}

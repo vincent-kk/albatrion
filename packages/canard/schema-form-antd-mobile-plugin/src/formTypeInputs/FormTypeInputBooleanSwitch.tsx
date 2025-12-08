@@ -10,36 +10,32 @@ import type {
   FormTypeInputPropsWithSchema,
 } from '@canard/schema-form';
 
-type BooleanSwitchSchema = BooleanSchema & {
-  options?: {
-    alias?: {
-      checked?: ReactNode;
-      unchecked?: ReactNode;
-    };
-  };
-};
+interface FormTypeInputBooleanSwitchProps
+  extends FormTypeInputPropsWithSchema<
+    boolean | null,
+    BooleanSchema,
+    {
+      checkboxLabels?: {
+        checked?: ReactNode;
+        unchecked?: ReactNode;
+      };
+    }
+  > {
+  alias?: { checked?: ReactNode; unchecked?: ReactNode };
+}
 
 const FormTypeInputBooleanSwitch = ({
   path,
-  jsonSchema,
   disabled,
   value,
   onChange,
   context,
-}: FormTypeInputPropsWithSchema<
-  boolean | null,
-  BooleanSwitchSchema,
-  {
-    checkboxLabels?: {
-      checked?: ReactNode;
-      unchecked?: ReactNode;
-    };
-  }
->) => {
+  alias,
+}: FormTypeInputBooleanSwitchProps) => {
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
-    const alias = context?.checkboxLabels || jsonSchema.options?.alias || {};
-    return [alias.checked, alias.unchecked];
-  }, [context, jsonSchema]);
+    const labels = context?.checkboxLabels || alias || {};
+    return [labels.checked, labels.unchecked];
+  }, [context, alias]);
 
   const handleChange = useHandle(onChange);
 

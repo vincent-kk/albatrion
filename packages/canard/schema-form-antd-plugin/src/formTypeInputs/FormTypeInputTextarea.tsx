@@ -34,6 +34,7 @@ const FormTypeInputTextarea = ({
   defaultValue,
   onChange,
   context,
+  placeholder,
   size,
 }: FormTypeInputTextareaProps) => {
   const handleChange = useHandle((value: ChangeEvent<HTMLTextAreaElement>) => {
@@ -53,7 +54,7 @@ const FormTypeInputTextarea = ({
       disabled={disabled}
       readOnly={readOnly}
       autoSize={autoSize}
-      placeholder={jsonSchema.placeholder}
+      placeholder={placeholder}
       defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
       size={size || context?.size}

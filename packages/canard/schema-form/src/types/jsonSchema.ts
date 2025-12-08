@@ -209,19 +209,33 @@ export type BasicSchema = {
   /** Custom React component for input rendering */
   FormTypeInput?: ComponentType<UnknownFormTypeInputProps> | null;
   /** Props passed to FormTypeInput component */
-  FormTypeInputProps?: Dictionary;
+  FormTypeInputProps?: {
+    /** Placeholder text for input fields */
+    placeholder?: string;
+    /** Display name aliases for enum values */
+    alias?: Dictionary<ReactNode>;
+    /** CSS class name for styling */
+    className?: string;
+    /** Inline CSS styles */
+    style?: CSSProperties;
+    /** Additional custom props */
+    [alt: string]: any;
+  };
   /** Props passed to FormTypeRenderer component */
-  FormTypeRendererProps?: Dictionary;
+  FormTypeRendererProps?: {
+    /** Field label text or element */
+    label?: ReactNode;
+    /** CSS class name for styling */
+    className?: string;
+    /** Inline CSS styles */
+    style?: CSSProperties;
+    /** Additional custom props */
+    [alt: string]: any;
+  };
   /** Form type identifier for component selection */
   formType?: string;
   /** Whether node is a terminal (leaf) node */
   terminal?: boolean;
-  /** Inline CSS styles for the field */
-  style?: CSSProperties;
-  /** Field label (React node) */
-  label?: ReactNode;
-  /** Placeholder text for input fields */
-  placeholder?: string;
   /** Custom error messages per validation rule */
   errorMessages?: {
     [key: string]: string | Dictionary<string> | undefined;
@@ -229,8 +243,6 @@ export type BasicSchema = {
   };
   /** Field options and configurations */
   options?: {
-    /** Display name aliases for enum values */
-    alias?: Dictionary<ReactNode>;
     /** Omit empty values from form data */
     omitEmpty?: boolean;
     [alt: string]: any;

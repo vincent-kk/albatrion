@@ -16,14 +16,18 @@ export const Common = () => {
       },
       name: {
         type: 'string',
-        placeholder: 'enter your name',
+        FormTypeInputProps: {
+          placeholder: 'enter your name',
+        },
         computed: {
           readOnly: '!(/prepared)',
         },
       },
       age: {
         type: 'number',
-        placeholder: 'enter your age',
+        FormTypeInputProps: {
+          placeholder: 'enter your age',
+        },
         computed: {
           disabled: '(../name)===undefined||(../name).length<5',
         },
@@ -56,11 +60,15 @@ export const GlobalReadOnly = () => {
       },
       name: {
         type: 'string',
-        placeholder: 'enter your name',
+        FormTypeInputProps: {
+          placeholder: 'enter your name',
+        },
       },
       age: {
         type: 'number',
-        placeholder: 'enter your age',
+        FormTypeInputProps: {
+          placeholder: 'enter your age',
+        },
       },
       nationality: {
         type: 'string',
@@ -90,11 +98,15 @@ export const GlobalDisabled = () => {
       },
       name: {
         type: 'string',
-        placeholder: 'enter your name',
+        FormTypeInputProps: {
+          placeholder: 'enter your name',
+        },
       },
       age: {
         type: 'number',
-        placeholder: 'enter your age',
+        FormTypeInputProps: {
+          placeholder: 'enter your age',
+        },
       },
       nationality: {
         type: 'string',

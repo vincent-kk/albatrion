@@ -34,6 +34,7 @@ const FormTypeInputString = ({
   defaultValue,
   onChange,
   context,
+  placeholder,
   size,
 }: FormTypeInputStringProps) => {
   const TextInput = useMemo(() => {
@@ -51,7 +52,7 @@ const FormTypeInputString = ({
       name={name}
       readOnly={readOnly}
       disabled={disabled}
-      placeholder={jsonSchema.placeholder}
+      placeholder={placeholder}
       defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
       size={size || context?.size}

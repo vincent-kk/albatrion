@@ -87,6 +87,7 @@ const FormTypeInputUri = ({
   defaultValue,
   onChange,
   context,
+  placeholder,
   size,
 }: FormTypeInputUriProps) => {
   // 프로토콜 배열 정규화 및 준비
@@ -180,7 +181,7 @@ const FormTypeInputUri = ({
       readOnly={readOnly}
       disabled={disabled}
       addonBefore={ProtocolDropdown}
-      placeholder={jsonSchema.placeholder}
+      placeholder={placeholder}
       defaultValue={initialUri}
       onChange={handleUriChange}
       size={size || context?.size}

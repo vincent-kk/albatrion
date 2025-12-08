@@ -23,6 +23,15 @@ type ArrayJsonSchema = ArraySchema<{
   items: StringJsonSchema;
 };
 
+interface FormTypeInputStringCheckboxProps
+  extends FormTypeInputPropsWithSchema<
+    Array<string | null> | null,
+    ArrayJsonSchema,
+    { checkboxLabels?: { [label: string]: ReactNode } }
+  > {
+  alias?: { [label: string]: ReactNode };
+}
+
 const FormTypeInputStringCheckbox = ({
   name,
   jsonSchema,
@@ -30,28 +39,21 @@ const FormTypeInputStringCheckbox = ({
   defaultValue,
   onChange,
   context,
-}: FormTypeInputPropsWithSchema<
-  Array<string | null> | null,
-  ArrayJsonSchema,
-  { checkboxLabels?: { [label: string]: ReactNode } }
->) => {
+  alias,
+}: FormTypeInputStringCheckboxProps) => {
   const options = useMemo(() => {
-    const alias =
-      context.checkboxLabels ||
-      jsonSchema.items?.options?.alias ||
-      jsonSchema.options?.alias ||
-      {};
+    const labels = context.checkboxLabels || alias || {};
     return jsonSchema.items?.enum
       ? map(jsonSchema.items.enum, (rawValue: string | null) => {
           const value = '' + rawValue;
           return {
             value,
             rawValue,
-            label: alias[value] || value,
+            label: labels[value] || value,
           };
         })
       : [];
-  }, [context, jsonSchema]);
+  }, [context, jsonSchema, alias]);
 
   const handleChange = useHandle((value: string[]) => {
     const convertedValues = value

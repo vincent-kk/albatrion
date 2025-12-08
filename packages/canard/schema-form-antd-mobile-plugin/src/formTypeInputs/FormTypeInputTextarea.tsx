@@ -23,6 +23,7 @@ const FormTypeInputTextarea = ({
   disabled,
   defaultValue,
   onChange,
+  placeholder,
 }: FormTypeInputPropsWithSchema<string, TextareaSchema>) => {
   const handleChange = useHandle(onChange);
   const autoSize = useMemo(
@@ -39,7 +40,7 @@ const FormTypeInputTextarea = ({
       disabled={disabled}
       readOnly={readOnly}
       autoSize={autoSize}
-      placeholder={jsonSchema.placeholder}
+      placeholder={placeholder}
       defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
     />

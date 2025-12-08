@@ -15,6 +15,7 @@ const FormTypeInputString = ({
   jsonSchema,
   defaultValue,
   onChange,
+  placeholder,
   style,
   className,
 }: FormTypeInputProps<string | null>) => {
@@ -33,7 +34,7 @@ const FormTypeInputString = ({
       name={name}
       readOnly={readOnly}
       disabled={disabled}
-      placeholder={jsonSchema?.placeholder}
+      placeholder={placeholder}
       defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
       style={style}
