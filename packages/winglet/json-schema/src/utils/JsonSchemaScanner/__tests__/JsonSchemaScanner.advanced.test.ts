@@ -31,7 +31,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.allOf[0],
           path: `${JSONPointer.Fragment}/allOf/0`,
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 1,
           keyword: 'allOf',
           variant: 0,
@@ -42,7 +42,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.allOf[1],
           path: `${JSONPointer.Fragment}/allOf/1`,
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 1,
           keyword: 'allOf',
           variant: 1,
@@ -55,7 +55,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.anyOf[0],
           path: `${JSONPointer.Fragment}/anyOf/0`,
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 1,
           keyword: 'anyOf',
           variant: 0,
@@ -66,7 +66,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.anyOf[1],
           path: `${JSONPointer.Fragment}/anyOf/1`,
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 1,
           keyword: 'anyOf',
           variant: 1,
@@ -79,7 +79,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.oneOf[0],
           path: `${JSONPointer.Fragment}/oneOf/0`,
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 1,
           keyword: 'oneOf',
           variant: 0,
@@ -90,7 +90,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.oneOf[1],
           path: `${JSONPointer.Fragment}/oneOf/1`,
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 1,
           keyword: 'oneOf',
           variant: 1,
@@ -120,7 +120,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.if,
           path: `${JSONPointer.Fragment}/if`,
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 1,
           keyword: 'if',
         },
@@ -130,7 +130,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.then,
           path: `${JSONPointer.Fragment}/then`,
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 1,
           keyword: 'then',
         },
@@ -140,7 +140,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.else,
           path: `${JSONPointer.Fragment}/else`,
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 1,
           keyword: 'else',
         },
@@ -172,7 +172,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.definitions.stringType,
           path: `${JSONPointer.Fragment}/definitions/stringType`,
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 1,
           keyword: 'definitions',
           variant: 'stringType',
@@ -183,7 +183,7 @@ describe('JsonSchemaScanner Advanced Features', () => {
         {
           schema: schema.$defs.numberType,
           path: `${JSONPointer.Fragment}/$defs/numberType`,
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 1,
           keyword: '$defs',
           variant: 'numberType',
@@ -231,7 +231,7 @@ describe('JsonSchemaScannerAsync Advanced Features', () => {
         {
           schema,
           path: JSONPointer.Fragment,
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 0,
         },
         context,
@@ -283,7 +283,7 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 스펙 테스트', () => {
       {
         schema,
         path: JSONPointer.Fragment,
-        dataPath: JSONPointer.Fragment,
+        dataPath: JSONPointer.Root,
         depth: 0,
       },
       undefined,
@@ -306,7 +306,7 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 스펙 테스트', () => {
       {
         schema,
         path: JSONPointer.Fragment,
-        dataPath: JSONPointer.Fragment,
+        dataPath: JSONPointer.Root,
         depth: 0,
       },
       undefined,
@@ -355,7 +355,7 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 스펙 테스트', () => {
         referencePath: '#/ref',
         referenceResolved: true,
         path: JSONPointer.Fragment,
-        dataPath: JSONPointer.Fragment,
+        dataPath: JSONPointer.Root,
         depth: 0,
       },
       context,
@@ -364,7 +364,7 @@ describe('JsonSchemaScanner/JsonSchemaScannerAsync 스펙 테스트', () => {
       {
         depth: 0,
         path: '#',
-        dataPath: JSONPointer.Fragment,
+        dataPath: JSONPointer.Root,
         referencePath: '#/ref',
         referenceResolved: true,
         schema: {

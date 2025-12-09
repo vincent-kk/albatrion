@@ -30,7 +30,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema,
           path: JSONPointer.Fragment,
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 0,
         },
         undefined,
@@ -41,7 +41,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema: schema.properties.name,
           path: `${JSONPointer.Fragment}/properties/name`,
-          dataPath: `${JSONPointer.Fragment}/name`,
+          dataPath: `/name`,
           depth: 1,
           keyword: 'properties',
           variant: 'name',
@@ -52,7 +52,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema: schema.properties.age,
           path: `${JSONPointer.Fragment}/properties/age`,
-          dataPath: `${JSONPointer.Fragment}/age`,
+          dataPath: `/age`,
           depth: 1,
           keyword: 'properties',
           variant: 'age',
@@ -91,7 +91,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema,
           path: JSONPointer.Fragment,
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 0,
         },
         undefined,
@@ -100,7 +100,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema: schema.properties.user,
           path: `${JSONPointer.Fragment}/properties/user`,
-          dataPath: `${JSONPointer.Fragment}/user`,
+          dataPath: `/user`,
           depth: 1,
           keyword: 'properties',
           variant: 'user',
@@ -125,7 +125,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema: { type: 'string' },
           path: '#',
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 0,
         },
         undefined,
@@ -134,7 +134,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema: { type: 'string' },
           path: '#',
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 0,
         },
         undefined,
@@ -278,7 +278,7 @@ describe('JsonSchemaScanner', () => {
         {
           schema: { type: 'string' },
           path: '#',
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 0,
         },
         { user: 'vincent' },
@@ -309,7 +309,7 @@ describe('JsonSchemaScanner', () => {
       expect(resolveReference).toHaveBeenCalledWith(
         '#/definitions/string',
         {
-          dataPath: '#/ref',
+          dataPath: '/ref',
           depth: 1,
           keyword: 'properties',
           path: '#/properties/ref',
@@ -326,7 +326,7 @@ describe('JsonSchemaScanner', () => {
         {
           depth: 0,
           path: '#',
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           schema: {
             properties: {
               ref: {
@@ -342,7 +342,7 @@ describe('JsonSchemaScanner', () => {
         {
           depth: 1,
           path: '#/properties/ref',
-          dataPath: `${JSONPointer.Fragment}/ref`,
+          dataPath: `/ref`,
           referencePath: '#/definitions/string',
           referenceResolved: true,
           keyword: 'properties',
@@ -590,7 +590,7 @@ describe('JsonSchemaScannerAsync', () => {
         {
           schema,
           path: JSONPointer.Fragment,
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           depth: 0,
         },
         undefined,
@@ -599,7 +599,7 @@ describe('JsonSchemaScannerAsync', () => {
         {
           schema: schema.properties.name,
           path: `${JSONPointer.Fragment}/properties/name`,
-          dataPath: `${JSONPointer.Fragment}/name`,
+          dataPath: `/name`,
           depth: 1,
           keyword: 'properties',
           variant: 'name',
@@ -610,7 +610,7 @@ describe('JsonSchemaScannerAsync', () => {
         {
           schema: schema.properties.age,
           path: `${JSONPointer.Fragment}/properties/age`,
-          dataPath: `${JSONPointer.Fragment}/age`,
+          dataPath: `/age`,
           depth: 1,
           keyword: 'properties',
           variant: 'age',
@@ -644,7 +644,7 @@ describe('JsonSchemaScannerAsync', () => {
       expect(resolveReference).toHaveBeenCalledWith(
         '#/definitions/string',
         {
-          dataPath: '#/ref',
+          dataPath: '/ref',
           depth: 1,
           keyword: 'properties',
           path: '#/properties/ref',
@@ -662,7 +662,7 @@ describe('JsonSchemaScannerAsync', () => {
         {
           depth: 0,
           path: '#',
-          dataPath: JSONPointer.Fragment,
+          dataPath: JSONPointer.Root,
           schema: {
             properties: {
               ref: {
@@ -688,7 +688,7 @@ describe('JsonSchemaScannerAsync', () => {
         {
           depth: 1,
           path: '#/properties/ref',
-          dataPath: `${JSONPointer.Fragment}/ref`,
+          dataPath: `/ref`,
           referencePath: '#/definitions/string',
           referenceResolved: true,
           keyword: 'properties',
@@ -722,7 +722,7 @@ describe('JsonSchemaScannerAsync', () => {
       expect(resolveReference).toHaveBeenCalledWith(
         '#/definitions/nonexistent',
         {
-          dataPath: '#/ref',
+          dataPath: '/ref',
           depth: 1,
           hasReference: true,
           keyword: 'properties',
