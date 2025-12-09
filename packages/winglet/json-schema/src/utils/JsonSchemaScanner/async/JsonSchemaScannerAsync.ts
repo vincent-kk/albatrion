@@ -300,7 +300,7 @@ export class JsonSchemaScannerAsync<ContextType = void> {
       {
         schema,
         path: JSONPointer.Fragment,
-        dataPath: JSONPointer.Fragment,
+        dataPath: JSONPointer.Root,
         depth: 0,
       },
     ];
