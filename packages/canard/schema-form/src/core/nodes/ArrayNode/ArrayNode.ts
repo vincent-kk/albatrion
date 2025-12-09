@@ -123,12 +123,18 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
       validatorFactory,
       required,
     });
+    const hasDefault =
+      defaultValue !== undefined || jsonSchema.default !== undefined;
     const handleChange: HandleChange<ArrayValue | Nullish> =
       this.jsonSchema.options?.omitEmpty === false
         ? (value, batch) => super.onChange(value, batch)
         : (value, batch) => super.onChange(omitEmptyArray(value), batch);
     this.onChange = handleChange;
-    this.#strategy = this.#createStrategy(handleChange, nodeFactory);
+    this.#strategy = this.#createStrategy(
+      hasDefault,
+      handleChange,
+      nodeFactory,
+    );
     this.initialize();
   }
 
@@ -182,6 +188,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns {ArrayNodeStrategy} Created strategy: TerminalStrategy | BranchStrategy
    */
   #createStrategy(
+    this: ArrayNode,
+    hasDefault: boolean,
     handleChange: HandleChange<ArrayValue | Nullish>,
     nodeFactory: SchemaNodeFactory,
   ) {
@@ -192,6 +200,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     if (this.group === 'terminal') {
       return new TerminalStrategy(
         this,
+        hasDefault,
         handleChange,
         handleRefresh,
         handleSetDefaultValue,
@@ -199,6 +208,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     } else {
       return new BranchStrategy(
         this,
+        hasDefault,
         handleChange,
         handleRefresh,
         handleSetDefaultValue,

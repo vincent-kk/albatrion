@@ -1227,6 +1227,53 @@ export const ArrayForm = () => {
 };
 ```
 
+#### 배열 minItems 자동 채우기 동작
+
+배열에 `minItems`를 사용할 때, 자동 채우기 동작은 기본값(default value) 제공 여부에 따라 달라집니다:
+
+**규칙**: `defaultValue` 또는 `schema.default`가 제공되면 minItems 자동 채우기가 **비활성화**됩니다. 제공된 기본값이 `minItems`보다 적은 항목을 가지고 있어도 그대로 사용됩니다.
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    // Case 1: 기본값 없음 → minItems 자동 채우기 활성화
+    autoFillArray: {
+      type: 'array',
+      items: { type: 'string', default: 'item' },
+      minItems: 3,
+    },
+    // 결과: ['item', 'item', 'item'] (minItems까지 자동 채우기)
+
+    // Case 2: schema.default 제공 → minItems 자동 채우기 비활성화
+    schemaDefaultArray: {
+      type: 'array',
+      items: { type: 'string', default: 'item' },
+      minItems: 3,
+      default: ['one'],
+    },
+    // 결과: ['one'] (기본값 사용, minItems 무시)
+
+    // Case 3: 빈 schema.default → minItems 자동 채우기 비활성화
+    emptyDefaultArray: {
+      type: 'array',
+      items: { type: 'string', default: 'item' },
+      minItems: 3,
+      default: [],
+    },
+    // 결과: [] (빈 기본값 사용, minItems 무시)
+  },
+};
+
+// Form의 defaultValue prop도 minItems 자동 채우기를 제어합니다
+<Form
+  jsonSchema={jsonSchema}
+  defaultValue={{
+    partialArray: ['a', 'b'], // minItems=5여도 2개 항목만 사용
+  }}
+/>
+```
+
 ### 명령형 핸들을 사용한 양식
 
 `FormHandle`을 사용하여 양식을 프로그래밍 방식으로 제어하는 방법:

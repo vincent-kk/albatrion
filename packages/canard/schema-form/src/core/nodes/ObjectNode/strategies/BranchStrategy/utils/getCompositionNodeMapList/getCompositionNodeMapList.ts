@@ -9,7 +9,6 @@ import type {
   SchemaNodeFactory,
 } from '@/schema-form/core/nodes/type';
 import { JsonSchemaError } from '@/schema-form/errors';
-import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type {
   JsonSchema,
   ObjectSchema,
@@ -108,9 +107,7 @@ export const getCompositionNodeMapList = (
           variant: index,
           jsonSchema: childSchema,
           defaultValue:
-            inputDefault !== undefined
-              ? inputDefault
-              : getDefaultValue(childSchema),
+            inputDefault !== undefined ? inputDefault : childSchema.default,
           onChange: handelChangeFactory(k),
           nodeFactory,
           parentNode,

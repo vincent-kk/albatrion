@@ -1237,6 +1237,53 @@ export const ArrayForm = () => {
 };
 ```
 
+#### Array minItems Auto-fill Behavior
+
+When using `minItems` with arrays, the auto-fill behavior depends on whether a default value is provided:
+
+**Rule**: When `defaultValue` or `schema.default` is provided, minItems auto-fill is **disabled**. The provided default value is used as-is, even if it has fewer items than `minItems`.
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    // Case 1: No default → minItems auto-fill enabled
+    autoFillArray: {
+      type: 'array',
+      items: { type: 'string', default: 'item' },
+      minItems: 3,
+    },
+    // Result: ['item', 'item', 'item'] (auto-filled to minItems)
+
+    // Case 2: schema.default provided → minItems auto-fill disabled
+    schemaDefaultArray: {
+      type: 'array',
+      items: { type: 'string', default: 'item' },
+      minItems: 3,
+      default: ['one'],
+    },
+    // Result: ['one'] (uses default, ignores minItems)
+
+    // Case 3: Empty schema.default → minItems auto-fill disabled
+    emptyDefaultArray: {
+      type: 'array',
+      items: { type: 'string', default: 'item' },
+      minItems: 3,
+      default: [],
+    },
+    // Result: [] (uses empty default, ignores minItems)
+  },
+};
+
+// Using Form's defaultValue prop also controls minItems auto-fill
+<Form
+  jsonSchema={jsonSchema}
+  defaultValue={{
+    partialArray: ['a', 'b'], // Only 2 items even if minItems=5
+  }}
+/>
+```
+
 ### Form with Imperative Handle
 
 Using the `FormHandle` to programmatically control the form:

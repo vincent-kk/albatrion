@@ -13,7 +13,6 @@ import {
   SetValueOption,
   type UnionSetValueOption,
 } from '@/schema-form/core/nodes/type';
-import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 
 import type { ArrayNodeStrategy } from '../type';
@@ -143,6 +142,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
    */
   constructor(
     host: ArrayNode,
+    hasDefault: boolean,
     handleChange: HandleChange<ArrayValue | Nullish>,
     handleRefresh: Fn<[ArrayValue | Nullish]>,
     handleSetDefaultValue: Fn<[ArrayValue | Nullish]>,
@@ -155,11 +155,15 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
     if (host.defaultValue === null) this.__nullish__ = null;
 
-    // If defaultValue is an array and its length is greater than 0, push each value to the array.
-    if (host.defaultValue?.length)
-      for (const value of host.defaultValue) this.push(value);
-
-    while (this.length < (host.jsonSchema.minItems || 0)) this.push();
+    if (hasDefault) {
+      const defaultValue = host.defaultValue;
+      if (defaultValue != null && defaultValue.length > 0)
+        for (const value of defaultValue) this.push(value);
+    } else {
+      const defaultLength = host.jsonSchema.minItems || 0;
+      if (defaultLength < (host.jsonSchema.maxItems || Infinity))
+        while (this.length < defaultLength) this.push();
+    }
 
     host.subscribe(({ type, payload, options }) => {
       if (type & NodeEventType.RequestEmitChange) {
@@ -192,7 +196,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__keys__.push(key);
 
     const defaultValue =
-      data !== undefined ? data : getDefaultValue(host.jsonSchema.items);
+      data !== undefined ? data : host.jsonSchema.items.default;
     const childNode = this.__nodeFactory__({
       name: index,
       scope: 'items',

@@ -80,6 +80,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
    */
   constructor(
     host: ArrayNode,
+    hasDefault: boolean,
     handleChange: HandleChange<ArrayValue | Nullish>,
     handleRefresh: Fn<[ArrayValue | Nullish]>,
     handleSetDefaultValue: Fn<[ArrayValue | Nullish]>,
@@ -94,9 +95,15 @@ export class TerminalStrategy implements ArrayNodeStrategy {
       ? getObjectDefaultValue(jsonSchema.items)
       : jsonSchema.items.default;
 
-    if (host.defaultValue?.length)
-      for (const value of host.defaultValue) this.push(value);
-    while (this.length < (jsonSchema.minItems || 0)) this.push();
+    if (hasDefault) {
+      const defaultValue = host.defaultValue;
+      if (defaultValue != null && defaultValue.length > 0)
+        for (const value of defaultValue) this.push(value);
+    } else {
+      const defaultLength = host.jsonSchema.minItems || 0;
+      if (defaultLength < (host.jsonSchema.maxItems || Infinity))
+        while (this.length < defaultLength) this.push();
+    }
 
     this.__locked__ = false;
 

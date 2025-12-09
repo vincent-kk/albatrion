@@ -7,7 +7,6 @@ import type {
   HandleChange,
   SchemaNodeFactory,
 } from '@/schema-form/core/nodes/type';
-import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
 
 import type { ChildNodeMap } from '../../type';
@@ -68,7 +67,7 @@ export const getChildNodeMap = (
         scope: 'properties',
         jsonSchema: mergeShowConditions(schema, mergedConditions),
         defaultValue:
-          inputDefault !== undefined ? inputDefault : getDefaultValue(schema),
+          inputDefault !== undefined ? inputDefault : schema.default,
         onChange: handelChangeFactory(propertyKey),
         nodeFactory,
         parentNode,
