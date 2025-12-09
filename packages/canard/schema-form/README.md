@@ -891,15 +891,25 @@ This structure provides consistent priority and extensibility even when using mu
 JSONPointer follows the RFC 6901 specification:
 
 - `/` - Path separator
-- `#` - Fragment identifier (can be used as root pointer)
-- Empty string or `#` represents the root
+- `#` - URI fragment identifier prefix
+- `''` (empty string) - Root pointer representing the entire document
+
+#### Path Conventions
+
+`@canard/schema-form` distinguishes between two path types:
+
+| Path Type | Root Value | Example | Description |
+|-----------|------------|---------|-------------|
+| `dataPath` | `''` (empty string) | `''`, `'/user/name'` | JSON Pointer string without URI fragment prefix. Used for data value references. |
+| `schemaPath` | `'#'` | `'#'`, `'#/properties/user'` | JSON Pointer URI fragment with `#` prefix. Used for schema definition references. |
 
 ```tsx
 // Examples of standard JSONPointer usage
-<Form.Render path="/user/name" />        // Access user.name
+<Form.Render path="/user/name" />        // Access user.name (dataPath style)
 <Form.Render path="/user/address/0" />   // Access first item in user.address array
-<Form.Render path="#/user/email" />      // Using fragment identifier
 ```
+
+**Note**: `<Form.Render path="..." />` uses `dataPath` style paths (without `#` prefix).
 
 ### Extended JSONPointer
 

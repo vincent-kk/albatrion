@@ -106,6 +106,12 @@ JSONPath 표현식에서 사용되는 특수 문자 상수를 제공합니다.
 
 RFC 6901을 완전히 준수하는 JSON Pointer 구현을 제공합니다.
 
+#### 상수
+
+- **[`JSONPointer.Root`](./src/JSONPointer/enum.ts)** (`''`): 전체 문서를 나타내는 루트 포인터 (RFC 6901에 따라 빈 문자열)
+- **[`JSONPointer.Fragment`](./src/JSONPointer/enum.ts)** (`#`): URI 프래그먼트 식별자 접두사
+- **[`JSONPointer.Separator`](./src/JSONPointer/enum.ts)** (`/`): 경로 세그먼트 구분자
+
 #### 핵심 기능
 
 ##### 데이터 조작

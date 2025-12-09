@@ -17,7 +17,11 @@ import {
   getEmptyValue,
 } from '@/schema-form/helpers/defaultValue';
 import { transformErrors } from '@/schema-form/helpers/error';
-import { isAbsolutePath, joinSegment } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  isAbsolutePath,
+  joinSegment,
+} from '@/schema-form/helpers/jsonPointer';
 import { stripSchemaExtensions } from '@/schema-form/helpers/jsonSchema';
 import type {
   AllowedValue,
@@ -172,10 +176,10 @@ export abstract class AbstractNode<
     this.#path = current;
     this.#schemaPath = this.scope
       ? joinSegment(
-          parent?.schemaPath,
+          parent?.schemaPath || $.Fragment,
           getScopedSegment(escapedName, this.scope, parent?.type, this.variant),
         )
-      : joinSegment(parent?.schemaPath, escapedName);
+      : joinSegment(parent?.schemaPath || $.Fragment, escapedName);
 
     const subnodes = this.subnodes;
     if (subnodes?.length)
@@ -328,7 +332,7 @@ export abstract class AbstractNode<
     this.#path = joinSegment(this.parentNode?.path, this.#escapedName);
     this.#schemaPath = this.scope
       ? joinSegment(
-          this.parentNode?.schemaPath,
+          this.parentNode?.schemaPath || $.Fragment,
           getScopedSegment(
             this.#escapedName,
             this.scope,
@@ -336,7 +340,10 @@ export abstract class AbstractNode<
             this.variant,
           ),
         )
-      : joinSegment(this.parentNode?.schemaPath, this.#escapedName);
+      : joinSegment(
+          this.parentNode?.schemaPath || $.Fragment,
+          this.#escapedName,
+        );
     this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
 
     this.#compute = computeFactory(
@@ -369,7 +376,8 @@ export abstract class AbstractNode<
   public find(this: AbstractNode, pointer?: string): SchemaNode | null {
     if (pointer === undefined) return this as SchemaNode;
     const absolute = isAbsolutePath(pointer);
-    if (absolute && pointer.length === 1) return this.rootNode;
+    if (pointer === $.Root || (absolute && pointer.length === 1))
+      return this.rootNode;
     return traversal(absolute ? this.rootNode : (this as SchemaNode), pointer);
   }
 

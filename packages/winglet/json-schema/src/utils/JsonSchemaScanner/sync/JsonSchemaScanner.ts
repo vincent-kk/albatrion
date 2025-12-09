@@ -271,7 +271,7 @@ export class JsonSchemaScanner<ContextType = void> {
       {
         schema,
         path: JSONPointer.Fragment,
-        dataPath: JSONPointer.Fragment,
+        dataPath: JSONPointer.Root,
         depth: 0,
       },
     ];

@@ -2,11 +2,25 @@ import { describe, expect, it } from 'vitest';
 
 import { matchesSchemaPath } from '../matchesSchemaPath';
 
+/**
+ * Path Standardization Rules (RFC 6901 Compliance):
+ *
+ * 1. schemaPath: Uses URI fragment representation WITH `#` prefix
+ *    - Root schema: `'#'`
+ *    - Nested: `'#/properties/user'`, `'#/items/0'`
+ *
+ * 2. dataPath: Uses JSON Pointer string representation WITHOUT `#` prefix
+ *    - Root document: `''` (empty string)
+ *    - Nested: `'/user'`, `'/items/0'`
+ *
+ * These conventions ensure clear distinction between schema references
+ * (for validation rule identification) and data references (for value location).
+ */
 describe('matchesSchemaPath', () => {
   describe('exact path matching', () => {
     it('should match when target path exactly equals schema path with fragment', () => {
       const schemaPath = '#/properties/user';
-      const targetPath = '/properties/user';
+      const targetPath = '#/properties/user';
 
       expect(matchesSchemaPath(schemaPath, targetPath)).toBe(true);
     });
@@ -20,9 +34,9 @@ describe('matchesSchemaPath', () => {
 
     it('should match empty target path only with empty schema paths', () => {
       expect(matchesSchemaPath('', '')).toBe(true);
-      expect(matchesSchemaPath('#', '')).toBe(true);
-      expect(matchesSchemaPath('#/properties/user', '')).toBe(true);
-      expect(matchesSchemaPath('/properties/user', '')).toBe(true);
+      expect(matchesSchemaPath('#', '#')).toBe(true);
+      expect(matchesSchemaPath('#/properties/user', '#')).toBe(true);
+      expect(matchesSchemaPath('#/properties/user', '#')).toBe(true);
     });
   });
 
@@ -30,7 +44,7 @@ describe('matchesSchemaPath', () => {
     it('should NOT match prefix paths even with separator boundaries', () => {
       // The new implementation only matches if next char is '#' (Fragment)
       const schemaPath = '#/properties/user/properties/name';
-      const targetPath = '/properties/user';
+      const targetPath = '#/properties/user';
 
       expect(matchesSchemaPath(schemaPath, targetPath)).toBe(true);
     });
@@ -60,7 +74,7 @@ describe('matchesSchemaPath', () => {
   describe('edge cases', () => {
     it('should handle empty schema paths', () => {
       expect(matchesSchemaPath('', '')).toBe(true);
-      expect(matchesSchemaPath('#', '')).toBe(true);
+      expect(matchesSchemaPath('#', '#')).toBe(true);
       expect(matchesSchemaPath('', 'anything')).toBe(false);
     });
 
@@ -75,7 +89,7 @@ describe('matchesSchemaPath', () => {
       const schemaPath = '#';
       const targetPath = '';
 
-      expect(matchesSchemaPath(schemaPath, targetPath)).toBe(true);
+      expect(matchesSchemaPath(schemaPath, targetPath)).toBe(false);
     });
   });
 
@@ -84,7 +98,7 @@ describe('matchesSchemaPath', () => {
       expect(matchesSchemaPath('/properties/user', '/properties/user')).toBe(
         true,
       );
-      expect(matchesSchemaPath('#/properties/user', '/properties/user')).toBe(
+      expect(matchesSchemaPath('#/properties/user', '#/properties/user')).toBe(
         true,
       );
       expect(matchesSchemaPath('/definitions/User', '/definitions/User')).toBe(
@@ -97,7 +111,7 @@ describe('matchesSchemaPath', () => {
         matchesSchemaPath('/properties/user/name', '/properties/user'),
       ).toBe(true);
       expect(
-        matchesSchemaPath('#/properties/user/name', '/properties/user'),
+        matchesSchemaPath('#/properties/user/name', '#/properties/user'),
       ).toBe(true);
       expect(
         matchesSchemaPath('/properties/items/0/name', '/properties/items/0'),
@@ -176,7 +190,7 @@ describe('matchesSchemaPath', () => {
       expect(
         matchesSchemaPath(
           '#/properties/测试/properties/字段',
-          '/properties/测试',
+          '#/properties/测试',
         ),
       ).toBe(true);
     });
@@ -197,7 +211,7 @@ describe('matchesSchemaPath', () => {
         false,
       );
       expect(
-        matchesSchemaPath('#/properties//user/field', '/properties//user'),
+        matchesSchemaPath('#/properties//user/field', '#/properties//user'),
       ).toBe(true);
     });
 
@@ -211,9 +225,9 @@ describe('matchesSchemaPath', () => {
 
     it('should handle single character paths', () => {
       expect(matchesSchemaPath('/', '/')).toBe(true);
-      expect(matchesSchemaPath('#/', '/')).toBe(true);
+      expect(matchesSchemaPath('#/', '#/')).toBe(true);
       expect(matchesSchemaPath('/a', '/a')).toBe(true);
-      expect(matchesSchemaPath('#/a', '/a')).toBe(true);
+      expect(matchesSchemaPath('#/a', '#/a')).toBe(true);
       expect(matchesSchemaPath('/a/b', '/a')).toBe(true);
     });
 
@@ -223,7 +237,7 @@ describe('matchesSchemaPath', () => {
       expect(matchesSchemaPath('/properties//field', '/properties/')).toBe(
         true,
       ); // Actually matches because '/properties/' is at start
-      expect(matchesSchemaPath('#/properties/', '/properties/')).toBe(true);
+      expect(matchesSchemaPath('#/properties/', '#/properties/')).toBe(true);
     });
 
     it('should handle case sensitivity correctly', () => {
@@ -277,7 +291,7 @@ describe('matchesSchemaPath', () => {
       expect(
         matchesSchemaPath(
           '#/properties/items/0/properties/name',
-          '/properties/items/0',
+          '#/properties/items/0',
         ),
       ).toBe(true);
       expect(
@@ -295,9 +309,9 @@ describe('matchesSchemaPath', () => {
     });
 
     it('should handle fragment-only scenarios', () => {
-      expect(matchesSchemaPath('#', '#')).toBe(false); // target should not include fragment
-      expect(matchesSchemaPath('##', '#')).toBe(true); // Actually matches because after skipping first '#', we have '#' which matches target '#'
-      expect(matchesSchemaPath('#/#', '/#')).toBe(true);
+      expect(matchesSchemaPath('#', '#')).toBe(true); // target should not include fragment
+      expect(matchesSchemaPath('##', '#')).toBe(false); // Actually matches because after skipping first '#', we have '#' which matches target '#'
+      expect(matchesSchemaPath('#/#', '#/#')).toBe(true);
     });
 
     it('should handle partial matches at word boundaries', () => {
@@ -314,6 +328,101 @@ describe('matchesSchemaPath', () => {
       expect(
         matchesSchemaPath('/properties/userProfile', '/properties/user'),
       ).toBe(false);
+    });
+  });
+
+  describe('Path standardization rules (RFC 6901)', () => {
+    /**
+     * These tests document and enforce the standard path conventions:
+     * - schemaPath: Root is '#', nested paths start with '#/'
+     * - dataPath: Root is '', nested paths start with '/'
+     */
+
+    describe('schemaPath format (with # prefix)', () => {
+      it('should recognize # as the root schemaPath', () => {
+        // Root schemaPath is '#', not ''
+        expect(matchesSchemaPath('#', '#')).toBe(true);
+        expect(matchesSchemaPath('#/properties/name', '#')).toBe(true);
+        expect(matchesSchemaPath('#/items/0', '#')).toBe(true);
+      });
+
+      it('should match nested schemaPath with # prefix', () => {
+        expect(
+          matchesSchemaPath('#/properties/user', '#/properties/user'),
+        ).toBe(true);
+        expect(
+          matchesSchemaPath(
+            '#/properties/user/properties/name',
+            '#/properties/user',
+          ),
+        ).toBe(true);
+        expect(matchesSchemaPath('#/items/0', '#/items/0')).toBe(true);
+      });
+
+      it('should NOT match schemaPath without # against schemaPath with #', () => {
+        // Different formats should not match
+        expect(matchesSchemaPath('#/properties/user', '/properties/user')).toBe(
+          false,
+        );
+        expect(matchesSchemaPath('/properties/user', '#/properties/user')).toBe(
+          false,
+        );
+      });
+    });
+
+    describe('dataPath format (without # prefix)', () => {
+      it('should recognize empty string as the root dataPath', () => {
+        // Root dataPath is '', not '#'
+        expect(matchesSchemaPath('', '')).toBe(true);
+        // Empty target matches any path starting with '' (which is all paths)
+        // This is the expected behavior for prefix matching
+        expect(matchesSchemaPath('/name', '')).toBe(true);
+      });
+
+      it('should match nested dataPath without # prefix', () => {
+        expect(matchesSchemaPath('/user', '/user')).toBe(true);
+        expect(matchesSchemaPath('/user/name', '/user')).toBe(true);
+        expect(matchesSchemaPath('/items/0', '/items/0')).toBe(true);
+      });
+
+      it('should NOT treat # as root for dataPath', () => {
+        // '#' is NOT a valid root for dataPath
+        expect(matchesSchemaPath('', '#')).toBe(false);
+        expect(matchesSchemaPath('#', '')).toBe(false);
+      });
+    });
+
+    describe('format consistency requirements', () => {
+      it('should require same format for source and target', () => {
+        // With # (schemaPath format)
+        expect(
+          matchesSchemaPath('#/properties/user', '#/properties/user'),
+        ).toBe(true);
+
+        // Without # (dataPath format)
+        expect(matchesSchemaPath('/properties/user', '/properties/user')).toBe(
+          true,
+        );
+
+        // Mixed formats should not match
+        expect(matchesSchemaPath('#/properties/user', '/properties/user')).toBe(
+          false,
+        );
+        expect(matchesSchemaPath('/properties/user', '#/properties/user')).toBe(
+          false,
+        );
+      });
+
+      it('should handle root transitions correctly', () => {
+        // From schemaPath root (#) to nested schemaPath
+        expect(matchesSchemaPath('#/properties/name', '#')).toBe(true);
+
+        // Cannot match schemaPath root against dataPath format
+        expect(matchesSchemaPath('#/properties/name', '')).toBe(false);
+
+        // Cannot match dataPath against schemaPath root
+        expect(matchesSchemaPath('/properties/name', '#')).toBe(false);
+      });
     });
   });
 });

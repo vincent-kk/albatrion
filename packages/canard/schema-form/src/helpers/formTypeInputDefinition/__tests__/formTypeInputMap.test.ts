@@ -1071,15 +1071,17 @@ describe('normalizeFormTypeInputMap', () => {
     test('루트 경로', () => {
       const inputMap: FormTypeInputMap = {
         '/': TestStringComponent,
+        '#': TestNumberComponent,
+        '#/': TestNumberComponent,
         '': TestNumberComponent,
       };
 
       const result = normalizeFormTypeInputMap(inputMap);
-      expect(result).toHaveLength(2);
+      expect(result).toHaveLength(4);
 
       expect(
         result[0].test({
-          path: '/',
+          path: '',
           type: 'string',
           nullable: false,
           required: true,
@@ -1089,6 +1091,26 @@ describe('normalizeFormTypeInputMap', () => {
 
       expect(
         result[1].test({
+          path: '',
+          type: 'string',
+          nullable: false,
+          required: false,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      expect(
+        result[2].test({
+          path: '',
+          type: 'string',
+          nullable: false,
+          required: false,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      expect(
+        result[3].test({
           path: '',
           type: 'string',
           nullable: false,

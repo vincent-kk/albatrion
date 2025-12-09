@@ -43,10 +43,10 @@ export const normalizeFormTypeInputMap = (
 const pathExactMatchFnFactory = (inputPath: string): FormTypeTestFn => {
   try {
     const path = stripFragment(inputPath);
-    const regex = new RegExp(path);
+    const regex = path ? new RegExp(path) : null;
     return (hint) => {
       if (hint.path === path) return true;
-      if (regex.test(hint.path)) return true;
+      if (regex?.test(hint.path)) return true;
       return false;
     };
   } catch (error) {

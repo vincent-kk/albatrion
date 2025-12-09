@@ -16,13 +16,13 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
  * @example
  * ```typescript
  * // Valid matches
- * matchesSchemaPath("#/oneOf/2/properties/workingHours/maximum", "/oneOf/2/properties/workingHours") // true
- * matchesSchemaPath("#/properties/name", "/properties") // true
- * matchesSchemaPath("/oneOf/1/properties/age", "/oneOf/1/properties/age") // true (exact match)
+ * matchesSchemaPath("#/oneOf/2/properties/workingHours/maximum", "#/oneOf/2/properties/workingHours") // true
+ * matchesSchemaPath("#/properties/name", "#/properties") // true
+ * matchesSchemaPath("#/oneOf/1/properties/age", "#/oneOf/1/properties/age") // true (exact match)
  *
  * // Invalid matches (partial segments)
- * matchesSchemaPath("#/oneOf/2/properties/workingHours", "/oneOf/2/proper") // false
- * matchesSchemaPath("#/properties/username", "/properties/user") // false
+ * matchesSchemaPath("#/oneOf/2/properties/workingHours", "#/oneOf/2/proper") // false
+ * matchesSchemaPath("#/properties/username", "#/properties/user") // false
  * ```
  *
  * @performance
@@ -31,8 +31,7 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
  * - Early termination on mismatch for optimal performance
  */
 export const matchesSchemaPath = (source: string, target: string): boolean => {
-  const start = source[0] === $.Fragment ? 1 : 0;
-  if (source.indexOf(target, start) !== start) return false;
-  const endCode = source[start + target.length];
+  if (source.indexOf(target) !== 0) return false;
+  const endCode = source[target.length];
   return endCode === $.Separator || endCode === undefined;
 };

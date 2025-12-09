@@ -881,15 +881,25 @@ export interface ValidatorFactory {
 JSONPointer는 RFC 6901 사양을 따릅니다:
 
 - `/` - 경로 구분자
-- `#` - 프래그먼트 식별자 (루트 포인터로 사용 가능)
-- 빈 문자열 또는 `#`는 루트를 나타냄
+- `#` - URI 프래그먼트 식별자 접두사
+- `''` (빈 문자열) - 전체 문서를 나타내는 루트 포인터
+
+#### 경로 규칙
+
+`@canard/schema-form`은 두 가지 경로 타입을 구분합니다:
+
+| 경로 타입 | 루트 값 | 예시 | 설명 |
+|-----------|--------|------|------|
+| `dataPath` | `''` (빈 문자열) | `''`, `'/user/name'` | URI 프래그먼트 접두사 없는 JSON Pointer 문자열. 데이터 값 참조에 사용. |
+| `schemaPath` | `'#'` | `'#'`, `'#/properties/user'` | `#` 접두사가 있는 JSON Pointer URI 프래그먼트. 스키마 정의 참조에 사용. |
 
 ```tsx
 // 표준 JSONPointer 사용 예시
-<Form.Render path="/user/name" />        // user.name 접근
+<Form.Render path="/user/name" />        // user.name 접근 (dataPath 스타일)
 <Form.Render path="/user/address/0" />   // user.address 배열의 첫 번째 항목 접근
-<Form.Render path="#/user/email" />      // 프래그먼트 식별자 사용
 ```
+
+**참고**: `<Form.Render path="..." />`는 `dataPath` 스타일의 경로(`#` 접두사 없이)를 사용합니다.
 
 ### 확장 JSONPointer
 

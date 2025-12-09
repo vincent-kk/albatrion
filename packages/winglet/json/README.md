@@ -106,6 +106,12 @@ Provides special character constants used in JSONPath expressions.
 
 Provides a complete JSON Pointer implementation that fully complies with RFC 6901.
 
+#### Constants
+
+- **[`JSONPointer.Root`](./src/JSONPointer/enum.ts)** (`''`): Root pointer representing the entire document (empty string per RFC 6901)
+- **[`JSONPointer.Fragment`](./src/JSONPointer/enum.ts)** (`#`): URI fragment identifier prefix
+- **[`JSONPointer.Separator`](./src/JSONPointer/enum.ts)** (`/`): Path segment separator
+
 #### Core Features
 
 ##### Data Manipulation
