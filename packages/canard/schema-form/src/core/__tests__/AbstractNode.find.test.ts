@@ -62,8 +62,8 @@ describe('Namespace with oneOf functionality', () => {
     // Verify base properties exist
     const categoryNode = node.find('category') as StringNode;
     const titleNode = node.find('title') as StringNode;
-    expect(categoryNode.schemaPath).toBe('/properties/category');
-    expect(titleNode.schemaPath).toBe('/properties/title');
+    expect(categoryNode.schemaPath).toBe('#/properties/category');
+    expect(titleNode.schemaPath).toBe('#/properties/title');
     expect(categoryNode.value).toBe('movie');
     expect(titleNode.value).toBe('Default Title');
 
@@ -138,19 +138,19 @@ describe('Namespace with oneOf functionality', () => {
 
     // Test user branch profile structure
     const userProfile = node.find('profile') as ObjectNode;
-    expect(userProfile.schemaPath).toBe('/oneOf/0/properties/profile');
+    expect(userProfile.schemaPath).toBe('#/oneOf/0/properties/profile');
 
     const userBio = userProfile.find('bio') as StringNode;
     const userAge = userProfile.find('age') as NumberNode;
     expect(userBio.schemaPath).toBe(
-      '/oneOf/0/properties/profile/properties/bio',
+      '#/oneOf/0/properties/profile/properties/bio',
     );
     expect(userAge.schemaPath).toBe(
-      '/oneOf/0/properties/profile/properties/age',
+      '#/oneOf/0/properties/profile/properties/age',
     );
 
     const userPermissions = node.find('permissions') as StringNode;
-    expect(userPermissions.schemaPath).toBe('/oneOf/0/properties/permissions');
+    expect(userPermissions.schemaPath).toBe('#/oneOf/0/properties/permissions');
     expect(userPermissions.type).toBe('string');
     expect(userPermissions.value).toBe('read');
 
@@ -163,20 +163,20 @@ describe('Namespace with oneOf functionality', () => {
 
     // Test admin branch profile structure
     const adminProfile = node.find('profile') as ObjectNode;
-    expect(adminProfile.schemaPath).toBe('/oneOf/1/properties/profile');
+    expect(adminProfile.schemaPath).toBe('#/oneOf/1/properties/profile');
 
     const adminDepartment = adminProfile.find('department') as StringNode;
     const adminLevel = adminProfile.find('level') as NumberNode;
     expect(adminDepartment.schemaPath).toBe(
-      '/oneOf/1/properties/profile/properties/department',
+      '#/oneOf/1/properties/profile/properties/department',
     );
     expect(adminLevel.schemaPath).toBe(
-      '/oneOf/1/properties/profile/properties/level',
+      '#/oneOf/1/properties/profile/properties/level',
     );
 
     const adminPermissions = node.find('permissions');
     expect(adminPermissions?.schemaPath).toBe(
-      '/oneOf/1/properties/permissions',
+      '#/oneOf/1/properties/permissions',
     );
     expect(adminPermissions?.type).toBe('array');
     expect(adminPermissions?.value).toEqual(['read', 'write', 'admin']);
@@ -247,9 +247,9 @@ describe('Namespace with oneOf functionality', () => {
     const mode = container.find('mode') as StringNode;
     const config = container.find('config') as ObjectNode;
 
-    expect(container.schemaPath).toBe('/properties/container');
-    expect(mode.schemaPath).toBe('/properties/container/properties/mode');
-    expect(config.schemaPath).toBe('/properties/container/properties/config');
+    expect(container.schemaPath).toBe('#/properties/container');
+    expect(mode.schemaPath).toBe('#/properties/container/properties/mode');
+    expect(config.schemaPath).toBe('#/properties/container/properties/config');
     expect(mode.value).toBe('simple');
 
     // Test simple mode namespace
@@ -259,10 +259,10 @@ describe('Namespace with oneOf functionality', () => {
     const simpleValue = config.find('value') as NumberNode;
 
     expect(simpleSetting.schemaPath).toBe(
-      '/properties/container/properties/config/oneOf/0/properties/setting',
+      '#/properties/container/properties/config/oneOf/0/properties/setting',
     );
     expect(simpleValue.schemaPath).toBe(
-      '/properties/container/properties/config/oneOf/0/properties/value',
+      '#/properties/container/properties/config/oneOf/0/properties/value',
     );
     expect(simpleSetting.type).toBe('string');
     expect(simpleValue.type).toBe('number');
@@ -280,13 +280,13 @@ describe('Namespace with oneOf functionality', () => {
     const extra = config.find('extra');
 
     expect(advancedSetting.schemaPath).toBe(
-      '/properties/container/properties/config/oneOf/1/properties/setting',
+      '#/properties/container/properties/config/oneOf/1/properties/setting',
     );
     expect(advancedValue?.schemaPath).toBe(
-      '/properties/container/properties/config/oneOf/1/properties/value',
+      '#/properties/container/properties/config/oneOf/1/properties/value',
     );
     expect(extra?.schemaPath).toBe(
-      '/properties/container/properties/config/oneOf/1/properties/extra',
+      '#/properties/container/properties/config/oneOf/1/properties/extra',
     );
     expect(advancedSetting.type).toBe('object');
     expect(advancedValue?.type).toBe('array');
@@ -298,16 +298,16 @@ describe('Namespace with oneOf functionality', () => {
     const settingKey = advancedSetting.find('key') as StringNode;
     const settingData = advancedSetting.find('data') as StringNode;
     expect(settingKey.schemaPath).toBe(
-      '/properties/container/properties/config/oneOf/1/properties/setting/properties/key',
+      '#/properties/container/properties/config/oneOf/1/properties/setting/properties/key',
     );
     expect(settingData.schemaPath).toBe(
-      '/properties/container/properties/config/oneOf/1/properties/setting/properties/data',
+      '#/properties/container/properties/config/oneOf/1/properties/setting/properties/data',
     );
 
     // Verify that simple mode nodes are no longer accessible
     const simpleSettingFromAdvanced = config.find('setting');
     expect(simpleSettingFromAdvanced?.schemaPath).not.toBe(
-      '/properties/container/properties/config/oneOf/0/properties/setting',
+      '#/properties/container/properties/config/oneOf/0/properties/setting',
     );
     expect(simpleSettingFromAdvanced?.type).toBe('object'); // Now it's the advanced setting
   });
@@ -365,7 +365,7 @@ describe('Namespace with oneOf functionality', () => {
     await delay();
 
     const vehicleType = node.find('vehicleType') as StringNode;
-    expect(vehicleType.schemaPath).toBe('/properties/vehicleType');
+    expect(vehicleType.schemaPath).toBe('#/properties/vehicleType');
     expect(vehicleType.value).toBe('car');
     expect(node.oneOfIndex).toBe(0);
 
@@ -374,9 +374,9 @@ describe('Namespace with oneOf functionality', () => {
     const carDoors = node.find('doors') as NumberNode;
     const carFuel = node.find('fuel') as StringNode;
 
-    expect(carEngine.schemaPath).toBe('/oneOf/0/properties/engine');
-    expect(carDoors.schemaPath).toBe('/oneOf/0/properties/doors');
-    expect(carFuel.schemaPath).toBe('/oneOf/0/properties/fuel');
+    expect(carEngine.schemaPath).toBe('#/oneOf/0/properties/engine');
+    expect(carDoors.schemaPath).toBe('#/oneOf/0/properties/doors');
+    expect(carFuel.schemaPath).toBe('#/oneOf/0/properties/fuel');
     expect(carEngine.type).toBe('string');
     expect(carDoors.type).toBe('number');
     expect(carFuel.type).toBe('string');
@@ -391,9 +391,9 @@ describe('Namespace with oneOf functionality', () => {
     const bikeWheels = node.find('wheels') as NumberNode;
     const bikeFuel = node.find('fuel');
 
-    expect(bikeEngine.schemaPath).toBe('/oneOf/1/properties/engine');
-    expect(bikeWheels.schemaPath).toBe('/oneOf/1/properties/wheels');
-    expect(bikeFuel?.schemaPath).toBe('/oneOf/1/properties/fuel');
+    expect(bikeEngine.schemaPath).toBe('#/oneOf/1/properties/engine');
+    expect(bikeWheels.schemaPath).toBe('#/oneOf/1/properties/wheels');
+    expect(bikeFuel?.schemaPath).toBe('#/oneOf/1/properties/fuel');
     expect(bikeEngine.type).toBe('number');
     expect(bikeWheels.type).toBe('number');
     expect(bikeFuel?.type).toBe('boolean');
@@ -415,10 +415,10 @@ describe('Namespace with oneOf functionality', () => {
     const truckCapacity = node.find('capacity') as StringNode;
     const truckFuel = node.find('fuel');
 
-    expect(truckEngine.schemaPath).toBe('/oneOf/2/properties/engine');
-    expect(truckDoors.schemaPath).toBe('/oneOf/2/properties/doors');
-    expect(truckCapacity.schemaPath).toBe('/oneOf/2/properties/capacity');
-    expect(truckFuel?.schemaPath).toBe('/oneOf/2/properties/fuel');
+    expect(truckEngine.schemaPath).toBe('#/oneOf/2/properties/engine');
+    expect(truckDoors.schemaPath).toBe('#/oneOf/2/properties/doors');
+    expect(truckCapacity.schemaPath).toBe('#/oneOf/2/properties/capacity');
+    expect(truckFuel?.schemaPath).toBe('#/oneOf/2/properties/fuel');
     expect(truckEngine.type).toBe('object');
     expect(truckDoors.type).toBe('number');
     expect(truckCapacity.type).toBe('string');
@@ -428,15 +428,15 @@ describe('Namespace with oneOf functionality', () => {
     const horsepower = truckEngine.find('horsepower') as NumberNode;
     const engineType = truckEngine.find('type') as StringNode;
     expect(horsepower.schemaPath).toBe(
-      '/oneOf/2/properties/engine/properties/horsepower',
+      '#/oneOf/2/properties/engine/properties/horsepower',
     );
     expect(engineType.schemaPath).toBe(
-      '/oneOf/2/properties/engine/properties/type',
+      '#/oneOf/2/properties/engine/properties/type',
     );
 
     // Verify bike-specific nodes are no longer accessible
     const bikeWheelsFromTruck = node.find('wheels');
-    expect(bikeWheelsFromTruck?.schemaPath).toBe('/oneOf/1/properties/wheels');
+    expect(bikeWheelsFromTruck?.schemaPath).toBe('#/oneOf/1/properties/wheels');
   });
 
   it('should handle JSONPointer navigation with namespace awareness', async () => {
@@ -494,8 +494,8 @@ describe('Namespace with oneOf functionality', () => {
     // Test absolute JSONPointer paths
     const section = node.find('section') as ObjectNode;
     const sectionType = section.find('type') as StringNode;
-    expect(section.schemaPath).toBe('/properties/section');
-    expect(sectionType.schemaPath).toBe('/properties/section/properties/type');
+    expect(section.schemaPath).toBe('#/properties/section');
+    expect(sectionType.schemaPath).toBe('#/properties/section/properties/type');
     expect(sectionType.value).toBe('basic');
 
     // Basic branch should be active
@@ -503,7 +503,7 @@ describe('Namespace with oneOf functionality', () => {
 
     const basicFeatures = section.find('features');
     expect(basicFeatures?.schemaPath).toBe(
-      '/properties/section/oneOf/0/properties/features',
+      '#/properties/section/oneOf/0/properties/features',
     );
     expect(basicFeatures?.type).toBe('array');
     expect(basicFeatures?.value).toEqual(['feature1', 'feature2']);
@@ -511,7 +511,7 @@ describe('Namespace with oneOf functionality', () => {
     // Test absolute path access with namespace
     const basicFeaturesAbs = node.find('#/section/features');
     expect(basicFeaturesAbs?.schemaPath).toBe(
-      '/properties/section/oneOf/0/properties/features',
+      '#/properties/section/oneOf/0/properties/features',
     );
 
     // Switch to premium and test namespace separation
@@ -522,17 +522,17 @@ describe('Namespace with oneOf functionality', () => {
 
     const premiumFeatures = section.find('features') as ObjectNode;
     expect(premiumFeatures.schemaPath).toBe(
-      '/properties/section/oneOf/1/properties/features',
+      '#/properties/section/oneOf/1/properties/features',
     );
     expect(premiumFeatures.type).toBe('object');
 
     const advanced = premiumFeatures.find('advanced');
     const options = premiumFeatures.find('options');
     expect(advanced?.schemaPath).toBe(
-      '/properties/section/oneOf/1/properties/features/properties/advanced',
+      '#/properties/section/oneOf/1/properties/features/properties/advanced',
     );
     expect(options?.schemaPath).toBe(
-      '/properties/section/oneOf/1/properties/features/properties/options',
+      '#/properties/section/oneOf/1/properties/features/properties/options',
     );
     expect(advanced?.value).toBe(true);
     expect(options?.value).toEqual(['option1', 'option2']);
@@ -541,10 +541,10 @@ describe('Namespace with oneOf functionality', () => {
     const advancedDirect = node.find('#/section/features/advanced');
     const optionsDirect = node.find('#/section/features/options');
     expect(advancedDirect?.schemaPath).toBe(
-      '/properties/section/oneOf/1/properties/features/properties/advanced',
+      '#/properties/section/oneOf/1/properties/features/properties/advanced',
     );
     expect(optionsDirect?.schemaPath).toBe(
-      '/properties/section/oneOf/1/properties/features/properties/options',
+      '#/properties/section/oneOf/1/properties/features/properties/options',
     );
     expect(advancedDirect?.value).toBe(true);
     expect(optionsDirect?.value).toEqual(['option1', 'option2']);
@@ -628,9 +628,9 @@ describe('Namespace with oneOf functionality', () => {
     const context = node.find('context') as ObjectNode;
     const mode = context.find('mode') as StringNode;
 
-    expect(global.schemaPath).toBe('/properties/global');
-    expect(context.schemaPath).toBe('/properties/context');
-    expect(mode.schemaPath).toBe('/properties/context/properties/mode');
+    expect(global.schemaPath).toBe('#/properties/global');
+    expect(context.schemaPath).toBe('#/properties/context');
+    expect(mode.schemaPath).toBe('#/properties/context/properties/mode');
     expect(global.value).toBe('global-value');
     expect(mode.value).toBe('dev');
     expect(context.oneOfIndex).toBe(0);
@@ -639,20 +639,20 @@ describe('Namespace with oneOf functionality', () => {
     const devSettings = context.find('settings') as ObjectNode;
 
     expect(devDebug?.schemaPath).toBe(
-      '/properties/context/oneOf/0/properties/debug',
+      '#/properties/context/oneOf/0/properties/debug',
     );
     expect(devSettings.schemaPath).toBe(
-      '/properties/context/oneOf/0/properties/settings',
+      '#/properties/context/oneOf/0/properties/settings',
     );
     expect(devDebug?.value).toBe(true);
 
     const devLevel = devSettings.find('level') as NumberNode;
     const devData = devSettings.find('data') as StringNode;
     expect(devLevel.schemaPath).toBe(
-      '/properties/context/oneOf/0/properties/settings/properties/level',
+      '#/properties/context/oneOf/0/properties/settings/properties/level',
     );
     expect(devData.schemaPath).toBe(
-      '/properties/context/oneOf/0/properties/settings/properties/data',
+      '#/properties/context/oneOf/0/properties/settings/properties/data',
     );
     expect(devLevel.value).toBe(1);
     // Note: computed property evaluation is separate from namespace functionality
@@ -667,20 +667,20 @@ describe('Namespace with oneOf functionality', () => {
     const prodSettings = context.find('settings') as ObjectNode;
 
     expect(prodDebug?.schemaPath).toBe(
-      '/properties/context/oneOf/1/properties/debug',
+      '#/properties/context/oneOf/1/properties/debug',
     );
     expect(prodSettings.schemaPath).toBe(
-      '/properties/context/oneOf/1/properties/settings',
+      '#/properties/context/oneOf/1/properties/settings',
     );
     expect(prodDebug?.value).toBe(false);
 
     const prodLevel = prodSettings.find('level') as NumberNode;
     const prodData = prodSettings.find('data') as StringNode;
     expect(prodLevel.schemaPath).toBe(
-      '/properties/context/oneOf/1/properties/settings/properties/level',
+      '#/properties/context/oneOf/1/properties/settings/properties/level',
     );
     expect(prodData.schemaPath).toBe(
-      '/properties/context/oneOf/1/properties/settings/properties/data',
+      '#/properties/context/oneOf/1/properties/settings/properties/data',
     );
     expect(prodLevel.value).toBe(5);
     // Note: computed property evaluation is separate from namespace functionality
@@ -773,10 +773,10 @@ describe('Namespace with oneOf functionality', () => {
     await delay();
 
     expect(node.find('context/debug')?.schemaPath).toBe(
-      '/properties/context/oneOf/0/properties/debug',
+      '#/properties/context/oneOf/0/properties/debug',
     );
     expect(node.find('context/settings')?.schemaPath).toBe(
-      '/properties/context/oneOf/0/properties/settings',
+      '#/properties/context/oneOf/0/properties/settings',
     );
     expect(node.find('context/settings/data')?.value).toBe(
       '../../../global + "-dev"',

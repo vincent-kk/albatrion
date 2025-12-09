@@ -242,17 +242,30 @@ export type ValidateFunction<Value = unknown> = Fn<
 export interface PublicJsonSchemaError<SourceError = unknown> {
   /**
    * JSON Pointer to the data property that failed validation.
-   * @note Use JSON Pointer notation for nested objects and arrays
+   *
+   * Uses JSON Pointer string representation (RFC 6901) **without** the URI fragment identifier.
+   * - Root document: `''` (empty string)
+   * - Nested properties: `'/property/nested'`
+   * - Array items: `'/items/0/name'`
+   *
+   * @note Does NOT start with `#`. The `#` prefix is reserved for schemaPath.
    * @see https://datatracker.ietf.org/doc/html/rfc6901
-   * @example '/user/profile/email' or '/items/0/name'
+   * @example '' (root) | '/user/profile/email' | '/items/0/name'
    */
   dataPath: string;
 
   /**
    * JSON Pointer to the schema definition that triggered the validation error.
+   *
+   * Uses JSON Pointer URI fragment representation (RFC 6901) **with** the `#` prefix.
+   * - Root schema: `'#'`
+   * - Nested definitions: `'#/properties/user'`
+   * - Array schema: `'#/items/properties/price'`
+   *
+   * @note MUST start with `#`. This differentiates it from dataPath which does NOT use `#`.
    * @note Useful for identifying which schema rule/constraint was violated
    * @see https://datatracker.ietf.org/doc/html/rfc6901
-   * @example '/properties/user/properties/email/format' | '/items/properties/price/minimum'
+   * @example '#' (root) | '#/properties/user/properties/email/format' | '#/items/properties/price/minimum'
    */
   schemaPath?: string;
 
