@@ -541,9 +541,8 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
         { keys },
       );
     const loadPromises = new Array(keys.length);
-    for (let i = 0, l = keys.length; i < l; i++) {
+    for (let i = 0, l = keys.length; i < l; i++)
       loadPromises[i] = this.load(keys[i]).catch((error) => error);
-    }
     return Promise.all(loadPromises);
   }
 
@@ -772,9 +771,7 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
         if (value instanceof Error) {
           promise = Promise.reject(value);
           promise.catch(NOOP_FUNCTION);
-        } else {
-          promise = Promise.resolve(value);
-        }
+        } else promise = Promise.resolve(value);
         cacheMap.set(cacheKey, promise);
       }
     }
