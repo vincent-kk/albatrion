@@ -739,7 +739,10 @@ describe('ArrayNode Default Value Initialization', () => {
       expect(node.value?.[1]).toBeUndefined();
     });
 
-    it('should respect maxItems even with minItems auto-fill', async () => {
+    it('should ignore maxItems during minItems auto-fill (unlimited=true)', async () => {
+      // After commit 446a022c: minItems auto-fill uses unlimited=true,
+      // so maxItems constraint is bypassed during initialization.
+      // This ensures minItems requirement is always satisfied regardless of maxItems.
       const node = nodeFromJsonSchema({
         onChange: () => {},
         jsonSchema: {
@@ -752,7 +755,9 @@ describe('ArrayNode Default Value Initialization', () => {
 
       await delay();
 
-      expect(node.value?.length).toBe(0);
+      // minItems auto-fill ignores maxItems constraint
+      expect(node.value?.length).toBe(5);
+      expect(node.value).toEqual([0, 0, 0, 0, 0]);
     });
 
     it('should handle schema.default taking precedence over items.default', async () => {

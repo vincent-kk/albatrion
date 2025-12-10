@@ -32,6 +32,12 @@ export class BranchStrategy implements ArrayNodeStrategy {
   /** Factory function for creating new schema nodes */
   private readonly __nodeFactory__: SchemaNodeFactory;
 
+  /** Minimum number of items required in the array (from JSON Schema minItems) */
+  private readonly __minItems__: number;
+
+  /** Maximum number of items allowed in the array (from JSON Schema maxItems) */
+  private readonly __maxItems__: number;
+
   /** Flag indicating whether the strategy is locked to prevent recursive updates */
   private __locked__: boolean = true;
 
@@ -93,7 +99,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     } else if (isArray(input)) {
       this.__locked__ = true;
       this.clear(option);
-      for (const value of input) this.push(value, option);
+      for (const value of input) this.push(value, true, option);
       this.__locked__ = false;
       this.__emitChange__(option, false);
     }
@@ -153,17 +159,16 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__handleRefresh__ = handleRefresh;
     this.__nodeFactory__ = nodeFactory;
 
+    this.__minItems__ = host.jsonSchema.minItems || 0;
+    this.__maxItems__ = host.jsonSchema.maxItems || Infinity;
+
     if (host.defaultValue === null) this.__nullish__ = null;
 
     if (hasDefault) {
       const defaultValue = host.defaultValue;
       if (defaultValue != null && defaultValue.length > 0)
-        for (const value of defaultValue) this.push(value);
-    } else {
-      const defaultLength = host.jsonSchema.minItems || 0;
-      if (defaultLength < (host.jsonSchema.maxItems || Infinity))
-        while (this.length < defaultLength) this.push();
-    }
+        for (const value of defaultValue) this.push(value, true);
+    } else while (this.length < this.__minItems__) this.push(void 0, true);
 
     host.subscribe(({ type, payload, options }) => {
       if (type & NodeEventType.RequestEmitChange) {
@@ -186,9 +191,13 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @param data - Value to add (optional)
    * @returns Returns itself (this) for method chaining
    */
-  public push(data?: ArrayValue[number], option?: UnionSetValueOption) {
+  public push(
+    data?: ArrayValue[number],
+    unlimited?: boolean,
+    option?: UnionSetValueOption,
+  ) {
     const host = this.__host__;
-    if (host.jsonSchema.maxItems && host.jsonSchema.maxItems <= this.length)
+    if (unlimited !== true && this.__maxItems__ <= this.length)
       return promiseAfterMicrotask(this.length);
 
     const index = '' + this.__keys__.length;

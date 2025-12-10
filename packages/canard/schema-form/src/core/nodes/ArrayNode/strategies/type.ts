@@ -42,7 +42,7 @@ export interface ArrayNodeStrategy {
    * Adds a new element to the array.
    * @param data - Value to add (optional)
    */
-  push(data?: ArrayValue[number]): Promise<number>;
+  push(data?: ArrayValue[number], unlimited?: boolean): Promise<number>;
 
   /**
    * Updates the value of a specific element.

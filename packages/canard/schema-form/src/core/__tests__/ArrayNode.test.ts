@@ -485,11 +485,12 @@ describe('ArrayNode', () => {
     expect(arrayNode.errors.length).toBeGreaterThan(0);
     expect(arrayNode.errors[0].keyword).toBe('minItems');
 
-    // 최대 아이템 수 초과 설정시, 최대 아이템 수만큼만 저장되어야 함
+    // After commit 446a022c: setValue bypasses maxItems constraint (unlimited=true)
+    // to allow explicit value setting regardless of schema limits
     arrayNode.setValue([1, 2, 3, 4, 5, 6]);
     await delay();
 
-    expect(arrayNode.value?.length).toBe(5);
+    expect(arrayNode.value?.length).toBe(6);
 
     // 유효한 값 설정
     arrayNode.setValue([1, 2, 3]);

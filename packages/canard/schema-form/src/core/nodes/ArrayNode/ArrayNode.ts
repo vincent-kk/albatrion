@@ -143,8 +143,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @param data - Value to add (optional)
    * @returns {Promise<number> } the length of the array after the push operation
    */
-  public push(this: ArrayNode, data?: ArrayValue[number]) {
-    return this.#strategy.push(data);
+  public push(this: ArrayNode, data?: ArrayValue[number], unlimited?: boolean) {
+    return this.#strategy.push(data, unlimited);
   }
 
   /**

@@ -29,6 +29,12 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   /** Callback function to handle refresh operations */
   private readonly __handleRefresh__: Fn<[ArrayValue | Nullish]>;
 
+  /** Minimum number of items required in the array (from JSON Schema minItems) */
+  private readonly __minItems__: number;
+
+  /** Maximum number of items allowed in the array (from JSON Schema maxItems) */
+  private readonly __maxItems__: number;
+
   /** Default value to use when creating new array items */
   private readonly __defaultItemValue__: AllowedValue;
 
@@ -91,6 +97,9 @@ export class TerminalStrategy implements ArrayNodeStrategy {
 
     const jsonSchema = host.jsonSchema;
 
+    this.__minItems__ = jsonSchema.minItems || 0;
+    this.__maxItems__ = jsonSchema.maxItems || Infinity;
+
     this.__defaultItemValue__ = isObjectSchema(jsonSchema.items)
       ? getObjectDefaultValue(jsonSchema.items)
       : jsonSchema.items.default;
@@ -98,12 +107,8 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     if (hasDefault) {
       const defaultValue = host.defaultValue;
       if (defaultValue != null && defaultValue.length > 0)
-        for (const value of defaultValue) this.push(value);
-    } else {
-      const defaultLength = host.jsonSchema.minItems || 0;
-      if (defaultLength < (host.jsonSchema.maxItems || Infinity))
-        while (this.length < defaultLength) this.push();
-    }
+        for (const value of defaultValue) this.push(value, true);
+    } else while (this.length < this.__minItems__) this.push(void 0, true);
 
     this.__locked__ = false;
 
@@ -115,11 +120,8 @@ export class TerminalStrategy implements ArrayNodeStrategy {
    * Adds a new element to the array.
    * @param input - Value to add (optional)
    */
-  public push(input?: ArrayValue[number]) {
-    if (
-      this.__host__.jsonSchema.maxItems &&
-      this.__host__.jsonSchema.maxItems <= this.length
-    )
+  public push(input?: ArrayValue[number], unlimited?: boolean) {
+    if (unlimited !== true && this.__maxItems__ <= this.length)
       return Promise.resolve(this.length);
     const data = input ?? this.__defaultItemValue__;
     const value = this.__value__ == null ? [data] : [...this.__value__, data];
