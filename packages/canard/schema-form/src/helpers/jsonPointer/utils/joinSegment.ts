@@ -7,9 +7,7 @@ import { JSONPointer as $ } from '../enum';
  * @note Use string literal type to execute faster.
  * @returns The path with the segment joined.
  */
-export const joinSegment = (basePath: string | undefined, segment: string) =>
-  basePath !== undefined
-    ? segment !== ''
-      ? basePath + $.Separator + segment
-      : basePath
-    : $.Root;
+export const joinSegment = (
+  basePath: string = $.Root,
+  segment: string | number,
+) => (segment !== '' ? basePath + $.Separator + segment : basePath);
