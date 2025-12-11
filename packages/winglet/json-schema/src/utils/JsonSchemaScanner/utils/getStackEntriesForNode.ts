@@ -23,9 +23,11 @@ import {
  * @param entry The schema entry to extract child nodes from
  * @returns Array of child schema entries
  */
-export const getStackEntriesForNode = (entry: SchemaEntry): SchemaEntry[] => {
+export const getStackEntriesForNode = <Entry extends SchemaEntry>(
+  entry: Entry,
+): Entry[] => {
   const { schema, path, dataPath, depth } = entry;
-  const entries: SchemaEntry[] = [];
+  const entries: Entry[] = [];
 
   if (hasOwnProperty(schema, $DEFS))
     handleDefinitionsNode(schema, entries, path, dataPath, depth, $DEFS);

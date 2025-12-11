@@ -12,9 +12,9 @@ import {
 import { getStackEntriesForNode } from '../utils/getStackEntriesForNode';
 import { isDefinitionSchema } from '../utils/isDefinitionSchema';
 
-interface JsonSchemaScannerProps<ContextType> {
-  visitor?: SchemaVisitor<ContextType>;
-  options?: JsonScannerOptions<ContextType>;
+interface JsonSchemaScannerProps<Schema extends UnknownSchema, ContextType> {
+  visitor?: SchemaVisitor<Schema, ContextType>;
+  options?: JsonScannerOptions<Schema, ContextType>;
 }
 
 /**
@@ -192,11 +192,14 @@ interface JsonSchemaScannerProps<ContextType> {
  * This scanner is ideal for complex schema analysis, transformation,
  * documentation generation, form building, and validation preprocessing.
  */
-export class JsonSchemaScanner<ContextType = void> {
+export class JsonSchemaScanner<
+  Schema extends UnknownSchema = UnknownSchema,
+  ContextType = void,
+> {
   /** Visitor object: contains callback functions to be executed when entering/exiting schema nodes. */
-  readonly #visitor: SchemaVisitor<ContextType>;
+  readonly #visitor: SchemaVisitor<Schema, ContextType>;
   /** Scan options: includes maximum traversal depth, filtering functions, reference resolution functions, etc. */
-  readonly #options: JsonScannerOptions<ContextType>;
+  readonly #options: JsonScannerOptions<Schema, ContextType>;
   /** Original JSON schema passed to the `scan` method. */
   #originalSchema: UnknownSchema | undefined;
   /** Final schema with references resolved. Computed on first call to `getValue`. */
@@ -208,7 +211,7 @@ export class JsonSchemaScanner<ContextType = void> {
    * Creates a JsonSchemaScanner instance.
    * @param {JsonSchemaScannerProps<ContextType>} [props] - Scanner configuration (visitor, options).
    */
-  constructor(props?: JsonSchemaScannerProps<ContextType>) {
+  constructor(props?: JsonSchemaScannerProps<Schema, ContextType>) {
     this.#visitor = props?.visitor || {};
     this.#options = props?.options || {};
   }
@@ -217,14 +220,14 @@ export class JsonSchemaScanner<ContextType = void> {
    * Scans the given JSON schema and updates internal state.
    * Executes visitor hooks and collects resolved reference information to store in `#pendingResolvedRefs`.
    *
-   * @param {UnknownSchema} schema - The JSON schema object to scan.
+   * @param {Schema} schema - The JSON schema object to scan.
    * @returns {this} The current JsonSchemaScanner instance (allows method chaining).
    */
-  public scan(this: this, schema: UnknownSchema): this {
+  public scan(this: this, schema: Schema): this {
     this.#originalSchema = schema;
     this.#processedSchema = undefined;
     this.#pendingResolves = [];
-    this.#run(this.#originalSchema);
+    this.#run(this.#originalSchema as Schema);
     return this;
   }
 
@@ -235,19 +238,32 @@ export class JsonSchemaScanner<ContextType = void> {
    * to create the final schema and cache it.
    * From second call onwards: Returns the cached final schema.
    *
-   * @returns {UnknownSchema | undefined} The processed final schema. Returns undefined if called before scanning.
-   * Returns a deep copy of the original schema if references are not resolved.
+   * @template OutputSchema - The expected output schema type. Defaults to the class-level Schema type.
+   *   Use this to narrow or widen the return type when the processed schema structure differs from input.
+   * @returns The processed final schema typed as `OutputSchema`.
+   *   Returns `undefined` if called before scanning.
+   *   Returns a reference to the original schema if no references were resolved,
+   *   otherwise returns a deep copy with all `$ref` references inlined.
+   *
+   * @example
+   * ```typescript
+   * // Default: returns same type as input schema
+   * const result = scanner.scan(mySchema).getValue();
+   *
+   * // Explicit type narrowing for processed schema
+   * const result = scanner.scan(mySchema).getValue<ResolvedSchema>();
+   * ```
    */
-  public getValue<Schema extends UnknownSchema>(
+  public getValue<OutputSchema extends UnknownSchema = Schema>(
     this: this,
-  ): Schema | undefined {
+  ): OutputSchema | undefined {
     if (!this.#originalSchema) return undefined;
-    if (this.#processedSchema) return this.#processedSchema as Schema;
+    if (this.#processedSchema) return this.#processedSchema as OutputSchema;
     const pendingResolves = this.#pendingResolves;
     const pendingResolvesLength = pendingResolves.length;
     if (pendingResolvesLength === 0) {
       this.#processedSchema = this.#originalSchema;
-      return this.#processedSchema as Schema;
+      return this.#processedSchema as OutputSchema;
     }
     let processedSchema = clone(this.#originalSchema);
     for (let i = 0; i < pendingResolvesLength; i++) {
@@ -256,18 +272,19 @@ export class JsonSchemaScanner<ContextType = void> {
     }
     this.#pendingResolves = [];
     this.#processedSchema = processedSchema;
-    return processedSchema as Schema;
+    return processedSchema as OutputSchema;
   }
 
   /**
    * Internal logic that traverses the schema using depth-first search (DFS) and resolves references.
    * Uses a state machine (OperationPhase) to manage the processing stages of each node.
    *
-   * @param {UnknownSchema} schema - The schema node to start traversal from.
+   * @param {Schema} schema - The schema node to start traversal from.
    * @private
    */
-  #run(this: this, schema: UnknownSchema): void {
-    const stack: SchemaEntry[] = [
+  #run(this: this, schema: Schema): void {
+    type Entry = SchemaEntry<Schema>;
+    const stack: Entry[] = [
       {
         schema,
         path: JSONPointer.Fragment,
@@ -275,7 +292,7 @@ export class JsonSchemaScanner<ContextType = void> {
         depth: 0,
       },
     ];
-    const entryPhase = new Map<SchemaEntry, OperationPhase>();
+    const entryPhase = new Map<Entry, OperationPhase>();
     const visitedReference = new Set<string>();
     const pendingResolves = this.#pendingResolves;
 

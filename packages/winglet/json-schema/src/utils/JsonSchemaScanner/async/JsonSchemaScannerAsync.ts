@@ -12,9 +12,9 @@ import {
 import { getStackEntriesForNode } from '../utils/getStackEntriesForNode';
 import { isDefinitionSchema } from '../utils/isDefinitionSchema';
 
-interface JsonSchemaScannerProps<ContextType> {
-  visitor?: SchemaVisitor<ContextType>;
-  options?: JsonScannerOptionsAsync<ContextType>;
+interface JsonSchemaScannerProps<Schema extends UnknownSchema, ContextType> {
+  visitor?: SchemaVisitor<Schema, ContextType>;
+  options?: JsonScannerOptionsAsync<Schema, ContextType>;
 }
 
 /**
@@ -221,11 +221,14 @@ interface JsonSchemaScannerProps<ContextType> {
  * This async scanner is essential for modern microservice architectures,
  * distributed schema systems, and complex validation workflows.
  */
-export class JsonSchemaScannerAsync<ContextType = void> {
+export class JsonSchemaScannerAsync<
+  Schema extends UnknownSchema = UnknownSchema,
+  ContextType = void,
+> {
   /** Visitor object: contains callback functions to be executed when entering/exiting schema nodes. */
-  readonly #visitor: SchemaVisitor<ContextType>;
+  readonly #visitor: SchemaVisitor<Schema, ContextType>;
   /** Scan options: includes maximum traversal depth, filtering functions, reference resolution functions, etc. */
-  readonly #options: JsonScannerOptionsAsync<ContextType>;
+  readonly #options: JsonScannerOptionsAsync<Schema, ContextType>;
   /** Original JSON schema passed to the `scan` method. */
   #originalSchema: UnknownSchema | undefined;
   /** Final schema with references resolved. Computed on first call to `getValue`. */
@@ -235,9 +238,9 @@ export class JsonSchemaScannerAsync<ContextType = void> {
 
   /**
    * Creates a JsonSchemaScannerAsync instance.
-   * @param {JsonSchemaScannerProps<ContextType>} [props] - Scanner configuration (visitor, options).
+   * @param {JsonSchemaScannerProps<Schema, ContextType>} [props] - Scanner configuration (visitor, options).
    */
-  constructor(props?: JsonSchemaScannerProps<ContextType>) {
+  constructor(props?: JsonSchemaScannerProps<Schema, ContextType>) {
     this.#visitor = props?.visitor || {};
     this.#options = props?.options || {};
   }
@@ -246,14 +249,14 @@ export class JsonSchemaScannerAsync<ContextType = void> {
    * Asynchronously scans the given JSON schema and updates internal state.
    * Executes visitor hooks and collects resolved reference information to store in `#pendingResolvedRefs`.
    *
-   * @param {UnknownSchema} schema - The JSON schema object to scan.
+   * @param {Schema} schema - The JSON schema object to scan.
    * @returns {Promise<this>} The current JsonSchemaScannerAsync instance (allows method chaining).
    */
-  public async scan(this: this, schema: UnknownSchema): Promise<this> {
+  public async scan(this: this, schema: Schema): Promise<this> {
     this.#originalSchema = schema;
     this.#processedSchema = undefined; // Reset previous results when starting new scan
     this.#pendingResolves = [];
-    await this.#run(this.#originalSchema);
+    await this.#run(this.#originalSchema as Schema);
     return this;
   }
 
@@ -264,19 +267,33 @@ export class JsonSchemaScannerAsync<ContextType = void> {
    * to create the final schema and cache it.
    * From second call onwards: Returns the cached final schema.
    *
-   * @returns {UnknownSchema | undefined} The processed final schema. Returns undefined if called before scanning.
-   * Returns a deep copy of the original schema if references are not resolved.
+   * @template OutputSchema - The expected output schema type. Defaults to the class-level Schema type.
+   *   Use this to narrow or widen the return type when the processed schema structure differs from input.
+   * @returns The processed final schema typed as `OutputSchema`.
+   *   Returns `undefined` if called before scanning.
+   *   Returns a reference to the original schema if no references were resolved,
+   *   otherwise returns a deep copy with all `$ref` references inlined.
+   *
+   * @example
+   * ```typescript
+   * // Default: returns same type as input schema
+   * const result = await scanner.scan(mySchema);
+   * const schema = result.getValue();
+   *
+   * // Explicit type narrowing for processed schema
+   * const schema = result.getValue<ResolvedSchema>();
+   * ```
    */
-  public getValue<Schema extends UnknownSchema>(
+  public getValue<OutputSchema extends UnknownSchema = Schema>(
     this: this,
-  ): Schema | undefined {
+  ): OutputSchema | undefined {
     if (!this.#originalSchema) return undefined;
-    if (this.#processedSchema) return this.#processedSchema as Schema;
+    if (this.#processedSchema) return this.#processedSchema as OutputSchema;
     const pendingResolves = this.#pendingResolves;
     const pendingResolvesLength = pendingResolves.length;
     if (pendingResolvesLength === 0) {
       this.#processedSchema = this.#originalSchema;
-      return this.#processedSchema as Schema;
+      return this.#processedSchema as OutputSchema;
     }
     let processedSchema = clone(this.#originalSchema);
     for (let i = 0; i < pendingResolvesLength; i++) {
@@ -285,18 +302,19 @@ export class JsonSchemaScannerAsync<ContextType = void> {
     }
     this.#pendingResolves = [];
     this.#processedSchema = processedSchema;
-    return processedSchema as Schema;
+    return processedSchema as OutputSchema;
   }
 
   /**
    * Internal logic that asynchronously traverses the schema using depth-first search (DFS) and resolves references.
    * Uses a state machine (OperationPhase) to manage the processing stages of each node.
    *
-   * @param {UnknownSchema} schema - The schema node to start traversal from.
+   * @param {Schema} schema - The schema node to start traversal from.
    * @private
    */
-  async #run(this: this, schema: UnknownSchema): Promise<void> {
-    const stack: SchemaEntry[] = [
+  async #run(this: this, schema: Schema): Promise<void> {
+    type Entry = SchemaEntry<Schema>;
+    const stack: Entry[] = [
       {
         schema,
         path: JSONPointer.Fragment,
@@ -304,7 +322,7 @@ export class JsonSchemaScannerAsync<ContextType = void> {
         depth: 0,
       },
     ];
-    const entryPhase = new Map<SchemaEntry, OperationPhase>();
+    const entryPhase = new Map<Entry, OperationPhase>();
     const visitedReference = new Set<string>();
     const pendingResolves = this.#pendingResolves;
 

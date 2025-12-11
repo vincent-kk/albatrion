@@ -30,9 +30,9 @@ export enum OperationPhase {
   Exit = 1 << 3,
 }
 
-export type SchemaEntry = {
+export type SchemaEntry<Schema extends UnknownSchema = UnknownSchema> = {
   /** The schema node being processed */
-  schema: UnknownSchema;
+  schema: Schema;
   /** JSON pointer path of the current node */
   path: string;
   /** Data pointer path corresponding to the current node */
@@ -64,25 +64,31 @@ export type SchemaEntry = {
   | { keyword?: never }
 );
 
-export interface SchemaVisitor<ContextType = void> {
+export interface SchemaVisitor<
+  Schema extends UnknownSchema = UnknownSchema,
+  ContextType = void,
+> {
   /** Callback called when node processing starts */
-  enter?: Fn<[entry: SchemaEntry, context?: ContextType]>;
+  enter?: Fn<[entry: SchemaEntry<Schema>, context?: ContextType]>;
   /** Callback called when node processing ends */
-  exit?: Fn<[entry: SchemaEntry, context?: ContextType]>;
+  exit?: Fn<[entry: SchemaEntry<Schema>, context?: ContextType]>;
 }
 
-export interface JsonScannerOptions<ContextType = void> {
+export interface JsonScannerOptions<
+  Schema extends UnknownSchema = UnknownSchema,
+  ContextType = void,
+> {
   /** Schema node filtering function */
-  filter?: Fn<[entry: SchemaEntry, context?: ContextType], boolean>;
+  filter?: Fn<[entry: SchemaEntry<Schema>, context?: ContextType], boolean>;
   /** Function to mutate schema */
   mutate?: Fn<
-    [entry: SchemaEntry, context?: ContextType],
-    UnknownSchema | void
+    [entry: SchemaEntry<Schema>, context?: ContextType],
+    Schema | void
   >;
   /** Function to resolve $ref references */
   resolveReference?: Fn<
-    [reference: string, entry: SchemaEntry, context?: ContextType],
-    UnknownSchema | undefined
+    [reference: string, entry: SchemaEntry<Schema>, context?: ContextType],
+    Schema | undefined
   >;
   /** Maximum traversal depth */
   maxDepth?: number;
@@ -90,10 +96,12 @@ export interface JsonScannerOptions<ContextType = void> {
   context?: ContextType;
 }
 
-export interface JsonScannerOptionsAsync<ContextType = void>
-  extends JsonScannerOptions<ContextType> {
+export interface JsonScannerOptionsAsync<
+  Schema extends UnknownSchema = UnknownSchema,
+  ContextType = void,
+> extends Omit<JsonScannerOptions<Schema, ContextType>, 'resolveReference'> {
   resolveReference?: Fn<
-    [reference: string, entry: SchemaEntry, context?: ContextType],
-    UnknownSchema | Promise<UnknownSchema | undefined> | undefined
+    [reference: string, entry: SchemaEntry<Schema>, context?: ContextType],
+    Schema | Promise<Schema | undefined> | undefined
   >;
 }
