@@ -5,7 +5,11 @@ import { setValue } from '@winglet/json/pointer';
 
 import type { Nullish } from '@aileron/declare';
 
-import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
+import type {
+  JsonSchema,
+  ObjectSchema,
+  ObjectValue,
+} from '@/schema-form/types';
 
 export const getObjectDefaultValue = (
   jsonSchema: ObjectSchema,
@@ -14,7 +18,7 @@ export const getObjectDefaultValue = (
   const defaultValue =
     inputDefault !== undefined ? inputDefault : jsonSchema.default;
   const result = defaultValue || {};
-  new JsonSchemaScanner({
+  new JsonSchemaScanner<JsonSchema>({
     visitor: {
       enter: ({ schema, dataPath }) => {
         if (hasOwnProperty(schema, 'default'))

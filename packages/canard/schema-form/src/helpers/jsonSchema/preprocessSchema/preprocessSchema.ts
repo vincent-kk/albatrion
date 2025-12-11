@@ -15,12 +15,12 @@ import { processVirtualSchema } from './utils/processVirtualSchema';
  */
 export const preprocessSchema = <Schema extends JsonSchema>(
   schema: Schema,
-): Schema => scanner.scan(schema).getValue<Schema>() || schema;
+): Schema => scanner.scan(schema).getValue() || schema;
 
-const scanner = new JsonSchemaScanner({
+const scanner = new JsonSchemaScanner<Partial<JsonSchema>>({
   options: {
     mutate: (entry) => {
-      let schema = entry.schema as Partial<JsonSchema>;
+      let schema = entry.schema;
       let idle = true;
       if (isObjectSchema(schema)) {
         const processed = processVirtualSchema(schema);

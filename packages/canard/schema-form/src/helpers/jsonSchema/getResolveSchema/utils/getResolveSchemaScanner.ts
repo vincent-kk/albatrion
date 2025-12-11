@@ -2,7 +2,7 @@ import { isEmptyObject } from '@winglet/common-utils/filter';
 import { clone, merge } from '@winglet/common-utils/object';
 import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { JsonSchema, JsonSchemaWithRef } from '@/schema-form/types';
 
 /**
  * Creates a JSON Schema scanner configured for resolving $ref references
@@ -15,7 +15,7 @@ export const getResolveSchemaScanner = (
   referenceTable: Map<string, JsonSchema>,
   maxDepth: number,
 ) =>
-  new JsonSchemaScanner({
+  new JsonSchemaScanner<JsonSchemaWithRef>({
     options: {
       resolveReference: (path, entry) => {
         const { $ref: _, ...preferredSchema } = entry.schema;

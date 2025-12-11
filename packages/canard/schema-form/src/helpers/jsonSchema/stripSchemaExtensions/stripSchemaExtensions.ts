@@ -8,13 +8,15 @@ import type { JsonSchema, JsonSchemaWithVirtual } from '@/schema-form/types';
 export const stripSchemaExtensions = (
   jsonSchema: JsonSchemaWithVirtual,
 ): JsonSchema =>
-  new JsonSchemaScanner({ options: { mutate } })
-    .scan(jsonSchema)
-    .getValue<JsonSchema>() || (jsonSchema as JsonSchema);
+  new JsonSchemaScanner({ options: { mutate } }).scan(jsonSchema).getValue() ||
+  (jsonSchema as JsonSchema);
 
-const mutate: JsonScannerOptions['mutate'] = ({ schema }) => {
+const mutate: JsonScannerOptions<JsonSchemaWithVirtual>['mutate'] = ({
+  schema,
+}) => {
   if (schema == null) return;
   if (
+    schema.FormTypeInput === undefined &&
     schema.FormTypeInputProps === undefined &&
     schema.FormTypeRendererProps === undefined &&
     schema.errorMessages === undefined &&
@@ -22,6 +24,7 @@ const mutate: JsonScannerOptions['mutate'] = ({ schema }) => {
   )
     return;
   const {
+    FormTypeInput,
     FormTypeInputProps,
     FormTypeRendererProps,
     errorMessages,

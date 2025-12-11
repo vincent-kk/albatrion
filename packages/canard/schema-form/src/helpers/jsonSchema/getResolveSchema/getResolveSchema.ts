@@ -22,12 +22,11 @@ export const getResolveSchema = (
   const table = getReferenceTable(jsonSchema);
   const scanner = table ? getResolveSchemaScanner(table, maxDepth) : null;
   return scanner
-    ? (schema: JsonSchemaWithRef) =>
-        scanner.scan(schema).getValue() as JsonSchemaWithVirtual
+    ? (schema: JsonSchemaWithRef) => scanner.scan(schema).getValue()
     : null;
 };
 
 export type ResolveSchema = Fn<
   [schema: JsonSchemaWithRef],
-  JsonSchemaWithVirtual
+  JsonSchemaWithVirtual | undefined
 >;

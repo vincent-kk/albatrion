@@ -11,7 +11,7 @@ import type { JsonSchema } from '@/schema-form/types';
  */
 export const getReferenceTable = (jsonSchema: JsonSchema) => {
   const referenceTable = new Map<string, JsonSchema>();
-  new JsonSchemaScanner({
+  new JsonSchemaScanner<JsonSchema>({
     visitor: {
       exit: ({ schema, hasReference }) => {
         if (hasReference && typeof schema.$ref === 'string')
