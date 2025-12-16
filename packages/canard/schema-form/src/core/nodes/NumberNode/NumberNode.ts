@@ -53,40 +53,12 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
 
   protected override onChange: HandleChange<NumberValue | Nullish>;
 
-  constructor({
-    name,
-    scope,
-    variant,
-    jsonSchema,
-    schemaType,
-    nullable,
-    defaultValue,
-    onChange,
-    parentNode,
-    validationMode,
-    validatorFactory,
-    required,
-  }: SchemaNodeConstructorProps<NumberSchema>) {
-    super({
-      name,
-      scope,
-      variant,
-      jsonSchema,
-      schemaType,
-      nullable,
-      defaultValue,
-      onChange,
-      parentNode,
-      validationMode,
-      validatorFactory,
-      required,
-    });
-
+  constructor(properties: SchemaNodeConstructorProps<NumberSchema>) {
+    super(properties);
     this.onChange =
       this.jsonSchema.options?.omitEmpty !== false
         ? this.onChangeWithOmitEmpty
         : super.onChange;
-
     if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
     this.initialize();
   }

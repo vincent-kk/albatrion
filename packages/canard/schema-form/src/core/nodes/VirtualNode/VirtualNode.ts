@@ -67,40 +67,10 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     return this.#children;
   }
 
-  constructor({
-    name,
-    scope,
-    variant,
-    jsonSchema,
-    schemaType,
-    nullable,
-    defaultValue,
-    onChange,
-    parentNode,
-    refNodes,
-    validationMode,
-    validatorFactory,
-    required,
-  }: VirtualNodeConstructorProps<VirtualSchema>) {
-    super({
-      name,
-      scope,
-      variant,
-      jsonSchema,
-      schemaType,
-      nullable,
-      defaultValue,
-      onChange,
-      parentNode,
-      validationMode,
-      validatorFactory,
-      required,
-    });
-
-    this.#refNodes = refNodes || [];
-
+  constructor(properties: VirtualNodeConstructorProps<VirtualSchema>) {
+    super(properties);
+    this.#refNodes = properties.refNodes || [];
     if (this.defaultValue != null) this.#value = this.defaultValue;
-
     for (let i = 0, l = this.#refNodes.length; i < l; i++) {
       const node = this.#refNodes[i];
       const unsubscribe = node.subscribe(({ type, payload }) => {

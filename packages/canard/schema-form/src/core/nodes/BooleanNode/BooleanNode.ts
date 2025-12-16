@@ -50,34 +50,8 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
     this.#emitChange(input, option);
   }
 
-  constructor({
-    name,
-    scope,
-    variant,
-    jsonSchema,
-    schemaType,
-    nullable,
-    defaultValue,
-    onChange,
-    parentNode,
-    validationMode,
-    validatorFactory,
-    required,
-  }: SchemaNodeConstructorProps<BooleanSchema>) {
-    super({
-      name,
-      scope,
-      variant,
-      jsonSchema,
-      schemaType,
-      nullable,
-      defaultValue,
-      onChange,
-      parentNode,
-      validationMode,
-      validatorFactory,
-      required,
-    });
+  constructor(properties: SchemaNodeConstructorProps<BooleanSchema>) {
+    super(properties);
     if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
     this.initialize();
   }
