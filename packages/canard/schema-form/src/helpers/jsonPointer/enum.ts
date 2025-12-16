@@ -36,6 +36,11 @@ export const JSONPointer = {
    * @note This is not a official JSONPointer syntax, but it is used in some implementations.
    */
   Index: '*',
+  /**
+   * Special symbol for Context (`@`)
+   * @note This is not a official JSONPointer syntax, but it is used in some implementations.
+   */
+  Context: '@',
 } as const;
 
 export type JSONPointer = (typeof JSONPointer)[keyof typeof JSONPointer];
