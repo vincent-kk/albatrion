@@ -1,6 +1,18 @@
-export { nodeFromJsonSchema } from './nodeFromJsonSchema';
+export { nodeFromJsonSchema, contextNodeFactory } from './nodeFromJsonSchema';
 
-export type { InferSchemaNode, SchemaNode, NodeListener } from './nodes';
+export type {
+  ArrayNode,
+  BooleanNode,
+  NullNode,
+  NumberNode,
+  ObjectNode,
+  StringNode,
+  VirtualNode,
+  InferSchemaNode,
+  SchemaNode,
+  NodeListener,
+} from './nodes';
+
 export {
   NodeState,
   NodeEventType,

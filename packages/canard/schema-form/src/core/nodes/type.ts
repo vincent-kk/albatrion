@@ -136,6 +136,7 @@ export interface SchemaNodeConstructorProps<
   validationMode?: ValidationMode;
   validatorFactory?: ValidatorFactory;
   required?: boolean;
+  context?: ObjectNode;
 }
 
 /**
