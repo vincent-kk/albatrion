@@ -23,6 +23,7 @@ import type {
 
 import { ArrayNode } from './ArrayNode';
 import { BooleanNode } from './BooleanNode';
+import { ContextNode } from './ContextNode';
 import { NullNode } from './NullNode';
 import { NumberNode } from './NumberNode';
 import { ObjectNode } from './ObjectNode';
@@ -44,14 +45,13 @@ import {
  * @returns An ObjectNode instance for form-wide context data
  */
 export const contextNodeFactory = (defaultValue?: ObjectValue) =>
-  new ObjectNode({
-    jsonSchema: { type: 'object', terminal: true },
+  new ContextNode({
+    jsonSchema: { type: 'object' },
     schemaType: 'object',
     name: JSONPointer.Context,
     nullable: false,
     defaultValue,
     onChange: NOOP_FUNCTION,
-    nodeFactory: NOOP_FUNCTION as unknown as SchemaNodeFactory,
     validationMode: ValidationMode.None,
   });
 

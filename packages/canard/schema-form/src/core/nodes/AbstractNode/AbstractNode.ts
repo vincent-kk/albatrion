@@ -32,7 +32,6 @@ import type {
   ValidatorFactory,
 } from '@/schema-form/types';
 
-import type { ObjectNode } from '../ObjectNode';
 import {
   type ChildNode,
   type HandleChange,
@@ -192,15 +191,15 @@ export abstract class AbstractNode<
   }
 
   /** Context node reference for form-wide shared data */
-  #context: ObjectNode | null;
+  #context: AbstractNode | null;
 
   /**
    * [readonly] Context node for accessing form-wide shared data
    * @note Root nodes return their own context, child nodes delegate to rootNode.context
    * @internal Internal implementation method. Do not call directly.
    */
-  public get context(): ObjectNode | null {
-    return this.isRoot ? this.#context : this.rootNode.context;
+  public get context(): SchemaNode | null {
+    return this.isRoot ? (this.#context as SchemaNode) : this.rootNode.context;
   }
 
   /** Node's initial default value */

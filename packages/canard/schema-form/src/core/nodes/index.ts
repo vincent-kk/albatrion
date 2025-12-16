@@ -20,5 +20,6 @@ export { type NumberNode, isNumberNode } from './NumberNode';
 export { type ObjectNode, isObjectNode } from './ObjectNode';
 export { type StringNode, isStringNode } from './StringNode';
 export { type VirtualNode, isVirtualNode } from './VirtualNode';
+export type { ContextNode } from './ContextNode';
 
 export { isSchemaNode, isBranchNode, isTerminalNode } from './filter';

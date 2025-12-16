@@ -8,7 +8,7 @@ import type {
 } from '@/schema-form/types';
 
 import { contextNodeFactory, createSchemaNodeFactory } from './nodes';
-import type { ObjectNode } from './nodes';
+import type { ContextNode } from './nodes';
 import type { InferSchemaNode, ValidationMode } from './nodes/type';
 
 /** Properties interface for creating Node from JSON Schema */
@@ -21,7 +21,7 @@ interface NodeFromSchemaProps<
   onChange: Fn<[value: Value]>;
   validationMode?: ValidationMode;
   validatorFactory?: ValidatorFactory;
-  context?: ObjectNode;
+  context?: ContextNode;
 }
 
 /**
