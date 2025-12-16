@@ -1,5 +1,7 @@
 import { type PropsWithChildren, useEffect, useMemo, useRef } from 'react';
 
+import { useConstant } from '@winglet/react-utils/hook';
+
 import type { Fn } from '@aileron/declare';
 
 import type { FormProps } from '@/schema-form/components/Form';
@@ -7,6 +9,7 @@ import {
   NodeEventType,
   type SchemaNode,
   ValidationMode,
+  contextNodeFactory,
   nodeFromJsonSchema,
 } from '@/schema-form/core';
 import { transformErrors } from '@/schema-form/helpers/error';
@@ -17,6 +20,7 @@ import type {
 } from '@/schema-form/types';
 
 import { useExternalFormContext } from '../ExternalFormContext';
+import { useWorkspaceContext } from '../WorkspaceContext';
 import { RootNodeContext } from './RootNodeContext';
 
 const DEFAULT_VALIDATION_MODE =
@@ -67,6 +71,12 @@ export const RootNodeContextProvider = <
     validationMode: externalValidationMode,
     validatorFactory: externalValidatorFactory,
   } = useExternalFormContext();
+  const { context } = useWorkspaceContext();
+
+  const contextNode = useConstant(contextNodeFactory(context));
+  useEffect(() => {
+    contextNode.setValue(context);
+  }, [contextNode, context]);
 
   const rootNode = useMemo(
     () =>
@@ -79,6 +89,7 @@ export const RootNodeContextProvider = <
           externalValidationMode ??
           DEFAULT_VALIDATION_MODE,
         validatorFactory: inputValidatorFactory || externalValidatorFactory,
+        context: contextNode,
       }),
     [
       jsonSchema,
@@ -88,9 +99,9 @@ export const RootNodeContextProvider = <
       externalValidationMode,
       inputValidatorFactory,
       externalValidatorFactory,
+      contextNode,
     ],
   );
-
   useEffect(() => {
     if (!rootNode) return;
     const unsubscribe = rootNode.subscribe(({ type, payload }) => {
