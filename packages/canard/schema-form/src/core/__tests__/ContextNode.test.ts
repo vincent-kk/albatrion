@@ -6,8 +6,11 @@ import {
   contextNodeFactory,
   nodeFromJsonSchema,
 } from '@/schema-form/core/nodeFromJsonSchema';
+import { NodeEventType } from '@/schema-form/core/nodes/type';
 import type { JsonSchema } from '@/schema-form/types';
 
+import type { ArrayNode } from '../nodes/ArrayNode';
+import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
 
@@ -625,7 +628,10 @@ describe('ContextNode', () => {
 
   describe('Context 변경 시 Node Tree 안정성', () => {
     it('context 값 변경 시 node tree가 재생성되지 않아야 함 (주소값 유지)', async () => {
-      const contextNode = contextNodeFactory({ mode: 'view', userRole: 'admin' });
+      const contextNode = contextNodeFactory({
+        mode: 'view',
+        userRole: 'admin',
+      });
 
       const rootNode = nodeFromJsonSchema({
         jsonSchema: {
@@ -760,7 +766,9 @@ describe('ContextNode', () => {
     });
 
     it('중첩된 객체 구조에서도 context 변경 시 node tree가 유지되어야 함', async () => {
-      const contextNode = contextNodeFactory({ permissions: { canEdit: false } });
+      const contextNode = contextNodeFactory({
+        permissions: { canEdit: false },
+      });
 
       const rootNode = nodeFromJsonSchema({
         jsonSchema: {
@@ -934,6 +942,862 @@ describe('ContextNode', () => {
       expect(titleNode?.readOnly).toBe(true); // mode="view"
       expect(adminNotesNode?.visible).toBe(false); // userRole="user"
       expect(deleteButtonNode?.visible).toBe(false); // canDelete=false
+    });
+  });
+
+  describe('Context가 없는 경우 처리', () => {
+    it('context 없이 nodeFromJsonSchema 호출 시 node.context는 null이어야 함', async () => {
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+        // context 미전달
+      });
+
+      await delay();
+
+      expect(node.context).toBeNull();
+    });
+
+    it('context 없을 때 node.find("@")는 null을 반환해야 함', async () => {
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+      });
+
+      await delay();
+
+      expect(node.find('@')).toBeNull();
+    });
+
+    it('child node에서도 context가 null이어야 함', async () => {
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            nested: {
+              type: 'object',
+              properties: {
+                value: { type: 'string' },
+              },
+            },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+      });
+
+      await delay();
+
+      const nameNode = node.find('./name');
+      const nestedNode = node.find('./nested');
+      const valueNode = node.find('./nested/value');
+
+      expect(nameNode?.context).toBeNull();
+      expect(nestedNode?.context).toBeNull();
+      expect(valueNode?.context).toBeNull();
+    });
+
+    it('context 없을 때 @.property 표현식 사용 시 TypeError 발생해야 함 (오설정 인지 목적)', async () => {
+      // context 없이 @.property 표현식을 사용하면 TypeError가 발생해야 함
+      // 에러 메시지: "Cannot read properties of undefined (reading 'mode')"
+      // 이를 통해 사용자가 잘못된 설정(context 미제공)을 인지할 수 있음
+      expect(() => {
+        nodeFromJsonSchema({
+          jsonSchema: {
+            type: 'object',
+            properties: {
+              field: {
+                type: 'string',
+                computed: {
+                  visible: '@.mode === "edit"',
+                },
+              },
+            },
+          } satisfies JsonSchema,
+          onChange: () => {},
+          // context 없음 - @.mode 접근 시 TypeError 발생
+        });
+      }).toThrow(TypeError);
+    });
+
+    it('context 없을 때 (@).property 표현식 사용 시 TypeError 발생해야 함', async () => {
+      // context 없이 (@).property 표현식을 사용하면 TypeError가 발생해야 함
+      // 에러 메시지: "Cannot read properties of undefined (reading 'permissions')"
+      expect(() => {
+        nodeFromJsonSchema({
+          jsonSchema: {
+            type: 'object',
+            properties: {
+              field: {
+                type: 'string',
+                computed: {
+                  readOnly: '(@).permissions?.canEdit !== true',
+                },
+              },
+            },
+          } satisfies JsonSchema,
+          onChange: () => {},
+        });
+      }).toThrow(TypeError);
+    });
+
+    it('context 없는 상태에서 @.property 사용 시 TypeError 발생 - 오설정 감지', async () => {
+      // 여러 computed 속성에서 @.property 사용 시 TypeError 발생
+      // 에러 메시지: "Cannot read properties of undefined (reading 'show')"
+      expect(() => {
+        nodeFromJsonSchema({
+          jsonSchema: {
+            type: 'object',
+            properties: {
+              field1: {
+                type: 'string',
+                computed: {
+                  visible: '@.show === true',
+                  readOnly: '@.mode === "view"',
+                  disabled: '(@).disabled === true',
+                  active: '@.active !== false',
+                },
+              },
+            },
+          } satisfies JsonSchema,
+          onChange: () => {},
+        });
+      }).toThrow(TypeError);
+    });
+  });
+
+  describe('배열 내 Context 접근', () => {
+    it('ArrayNode 아이템에서 context에 접근할 수 있어야 함', async () => {
+      const contextNode = contextNodeFactory({ mode: 'edit' });
+
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            items: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: {
+                    type: 'string',
+                    computed: {
+                      readOnly: '@.mode === "view"',
+                    },
+                  },
+                },
+              },
+              default: [{ name: 'item1' }],
+            },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+        context: contextNode,
+      });
+
+      await delay();
+
+      const itemNameNode = node.find('./items/0/name');
+      expect(itemNameNode?.context).toBe(contextNode);
+      expect(itemNameNode?.readOnly).toBe(false); // mode="edit"
+    });
+
+    it('동적으로 추가된 배열 아이템에서도 context에 접근할 수 있어야 함', async () => {
+      const contextNode = contextNodeFactory({ mode: 'view' });
+
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            items: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: {
+                    type: 'string',
+                    computed: {
+                      readOnly: '@.mode === "view"',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+        context: contextNode,
+      });
+
+      await delay();
+
+      // 동적으로 아이템 추가
+      const arrayNode = node.find('./items') as ArrayNode;
+      arrayNode.push({ name: 'new item' });
+      await delay();
+
+      const newItemNameNode = node.find('./items/0/name');
+      expect(newItemNameNode?.context).toBe(contextNode);
+      expect(newItemNameNode?.readOnly).toBe(true); // mode="view"
+    });
+
+    it('배열 아이템 삭제 후 남은 아이템에서도 context 접근이 유지되어야 함', async () => {
+      const contextNode = contextNodeFactory({ mode: 'edit' });
+
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            items: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: {
+                    type: 'string',
+                    computed: {
+                      visible: '@.mode === "edit"',
+                    },
+                  },
+                },
+              },
+              default: [
+                { name: 'item1' },
+                { name: 'item2' },
+                { name: 'item3' },
+              ],
+            },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+        context: contextNode,
+      });
+
+      await delay();
+
+      const arrayNode = node.find('./items') as ArrayNode;
+      expect(arrayNode.length).toBe(3);
+
+      // 중간 아이템 삭제
+      arrayNode.remove(1);
+      await delay();
+
+      expect(arrayNode.length).toBe(2);
+
+      // 남은 아이템들의 context 확인
+      const item0Name = node.find('./items/0/name');
+      const item1Name = node.find('./items/1/name');
+
+      expect(item0Name?.context).toBe(contextNode);
+      expect(item1Name?.context).toBe(contextNode);
+      expect(item0Name?.visible).toBe(true);
+      expect(item1Name?.visible).toBe(true);
+    });
+
+    it('context 변경 시 모든 배열 아이템의 computed 속성이 업데이트되어야 함', async () => {
+      const contextNode = contextNodeFactory({ mode: 'edit' });
+
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            items: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  field: {
+                    type: 'string',
+                    computed: {
+                      readOnly: '@.mode === "view"',
+                    },
+                  },
+                },
+              },
+              default: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
+            },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+        context: contextNode,
+      });
+
+      await delay();
+
+      // 초기 상태: 모두 readOnly=false
+      expect(node.find('./items/0/field')?.readOnly).toBe(false);
+      expect(node.find('./items/1/field')?.readOnly).toBe(false);
+      expect(node.find('./items/2/field')?.readOnly).toBe(false);
+
+      // context 변경
+      contextNode.setValue({ mode: 'view' });
+      await delay();
+
+      // 변경 후: 모두 readOnly=true
+      expect(node.find('./items/0/field')?.readOnly).toBe(true);
+      expect(node.find('./items/1/field')?.readOnly).toBe(true);
+      expect(node.find('./items/2/field')?.readOnly).toBe(true);
+    });
+
+    it('중첩된 배열에서도 context에 접근할 수 있어야 함', async () => {
+      const contextNode = contextNodeFactory({ level: 'deep' });
+
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            outer: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  inner: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        value: {
+                          type: 'string',
+                          computed: {
+                            active: '@.level === "deep"',
+                          },
+                        },
+                      },
+                    },
+                    default: [{ value: 'nested' }],
+                  },
+                },
+              },
+              default: [{ inner: [{ value: 'nested' }] }],
+            },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+        context: contextNode,
+      });
+
+      await delay();
+
+      const deepNode = node.find('./outer/0/inner/0/value');
+      expect(deepNode?.context).toBe(contextNode);
+      expect(deepNode?.active).toBe(true);
+    });
+  });
+
+  describe('이벤트 발행 검증', () => {
+    it('contextNode.setValue() 시 UpdateValue 이벤트가 발행되어야 함', async () => {
+      const contextNode = contextNodeFactory({ mode: 'view' });
+      const events: number[] = [];
+
+      contextNode.subscribe(({ type }) => {
+        events.push(type);
+      });
+
+      await delay();
+      events.length = 0; // 초기화 이벤트 제거
+
+      contextNode.setValue({ mode: 'edit' });
+      await delay();
+
+      expect(events).toContain(NodeEventType.UpdateValue);
+    });
+
+    it('context 변경 시 의존 노드가 업데이트되어야 함', async () => {
+      const contextNode = contextNodeFactory({ mode: 'view' });
+
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            field: {
+              type: 'string',
+              computed: {
+                readOnly: '@.mode === "view"',
+              },
+            },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+        context: contextNode,
+      });
+
+      await delay();
+
+      const fieldNode = node.find('./field');
+      expect(fieldNode?.readOnly).toBe(true);
+
+      // context 변경
+      contextNode.setValue({ mode: 'edit' });
+      await delay();
+
+      // 의존 노드가 업데이트됨
+      expect(fieldNode?.readOnly).toBe(false);
+    });
+
+    it('contextNode subscribe 후 unsubscribe하면 이벤트를 받지 않아야 함', async () => {
+      const contextNode = contextNodeFactory({ count: 0 });
+      const events: number[] = [];
+
+      const unsubscribe = contextNode.subscribe(({ type }) => {
+        events.push(type);
+      });
+
+      await delay();
+      events.length = 0;
+
+      // 첫 번째 변경 - 이벤트 수신
+      contextNode.setValue({ count: 1 });
+      await delay();
+      expect(events.length).toBeGreaterThan(0);
+
+      // unsubscribe
+      unsubscribe();
+      events.length = 0;
+
+      // 두 번째 변경 - 이벤트 수신 안 함
+      contextNode.setValue({ count: 2 });
+      await delay();
+      expect(events.length).toBe(0);
+    });
+
+    it('여러 구독자가 있을 때 모두 이벤트를 받아야 함', async () => {
+      const contextNode = contextNodeFactory({ value: 'initial' });
+      const events1: number[] = [];
+      const events2: number[] = [];
+      const events3: number[] = [];
+
+      contextNode.subscribe(({ type }) => events1.push(type));
+      contextNode.subscribe(({ type }) => events2.push(type));
+      contextNode.subscribe(({ type }) => events3.push(type));
+
+      await delay();
+      events1.length = 0;
+      events2.length = 0;
+      events3.length = 0;
+
+      contextNode.setValue({ value: 'changed' });
+      await delay();
+
+      expect(events1).toContain(NodeEventType.UpdateValue);
+      expect(events2).toContain(NodeEventType.UpdateValue);
+      expect(events3).toContain(NodeEventType.UpdateValue);
+    });
+  });
+
+  describe('computed.watch와 Context 조합', () => {
+    it('computed.watch에 @ 경로가 포함된 경우 context 변경 시 업데이트되어야 함', async () => {
+      const contextNode = contextNodeFactory({ threshold: 10 });
+
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            value: { type: 'number', default: 5 },
+            status: {
+              type: 'string',
+              computed: {
+                visible: '../value > (@).threshold',
+                watch: ['../value', '@'],
+              },
+            },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+        context: contextNode,
+      });
+
+      await delay();
+
+      const statusNode = node.find('./status');
+      expect(statusNode?.visible).toBe(false); // 5 > 10 = false
+
+      // context 변경
+      contextNode.setValue({ threshold: 3 });
+      await delay();
+
+      expect(statusNode?.visible).toBe(true); // 5 > 3 = true
+    });
+
+    it('watch 없이도 @.property 의존성이 자동 감지되어야 함', async () => {
+      const contextNode = contextNodeFactory({ enabled: false });
+
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            field: {
+              type: 'string',
+              computed: {
+                active: '@.enabled === true',
+                // watch 없음 - 자동 감지
+              },
+            },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+        context: contextNode,
+      });
+
+      await delay();
+
+      const fieldNode = node.find('./field');
+      expect(fieldNode?.active).toBe(false);
+
+      contextNode.setValue({ enabled: true });
+      await delay();
+
+      expect(fieldNode?.active).toBe(true);
+    });
+
+    it('watch에 여러 context 속성과 form 필드가 혼합된 경우', async () => {
+      const contextNode = contextNodeFactory({ min: 0, max: 100 });
+
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            value: { type: 'number', default: 50 },
+            isValid: {
+              type: 'string',
+              computed: {
+                visible: '../value >= (@).min && ../value <= (@).max',
+                watch: ['../value', '@'],
+              },
+            },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+        context: contextNode,
+      }) as ObjectNode;
+
+      await delay();
+
+      const isValidNode = node.find('./isValid');
+      expect(isValidNode?.visible).toBe(true); // 50 >= 0 && 50 <= 100
+
+      // min 변경
+      contextNode.setValue({ min: 60, max: 100 });
+      await delay();
+
+      expect(isValidNode?.visible).toBe(false); // 50 >= 60 = false
+
+      // value 변경
+      (node.find('./value') as NumberNode)?.setValue(70);
+      await delay();
+
+      expect(isValidNode?.visible).toBe(true); // 70 >= 60 && 70 <= 100
+    });
+  });
+
+  describe('에러 복원력', () => {
+    it('context 속성이 undefined인 깊은 경로 접근 시 에러 없이 처리되어야 함', async () => {
+      const contextNode = contextNodeFactory({}); // permissions 없음
+
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            field: {
+              type: 'string',
+              computed: {
+                visible: '@.permissions?.canEdit?.level === "admin"',
+              },
+            },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+        context: contextNode,
+      });
+
+      await delay();
+
+      // 에러 없이 false 반환
+      expect(node.find('./field')?.visible).toBe(false);
+    });
+
+    it('context가 빈 객체일 때도 정상 동작해야 함', async () => {
+      const contextNode = contextNodeFactory({});
+
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            field1: {
+              type: 'string',
+              computed: { visible: '@.mode === "edit"' },
+            },
+            field2: {
+              type: 'string',
+              computed: { readOnly: '(@).readonly === true' },
+            },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+        context: contextNode,
+      });
+
+      await delay();
+
+      expect(node.find('./field1')?.visible).toBe(false);
+      expect(node.find('./field2')?.readOnly).toBe(false);
+    });
+
+    it('context에 null 값이 포함되어도 정상 동작해야 함', async () => {
+      const contextNode = contextNodeFactory({
+        mode: null,
+        settings: null,
+      });
+
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            field: {
+              type: 'string',
+              computed: {
+                visible: '@.mode === "edit"',
+                readOnly: '@.settings?.readOnly === true',
+              },
+            },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+        context: contextNode,
+      });
+
+      await delay();
+
+      expect(node.find('./field')?.visible).toBe(false);
+      expect(node.find('./field')?.readOnly).toBe(false);
+    });
+
+    it('context에 복잡한 중첩 객체가 있을 때 optional chaining이 동작해야 함', async () => {
+      const contextNode = contextNodeFactory({
+        user: {
+          profile: {
+            settings: {
+              preferences: {
+                darkMode: true,
+              },
+            },
+          },
+        },
+      });
+
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            themeField: {
+              type: 'string',
+              computed: {
+                active:
+                  '@.user?.profile?.settings?.preferences?.darkMode === true',
+              },
+            },
+            missingField: {
+              type: 'string',
+              computed: {
+                visible: '@.user?.profile?.nonExistent?.deep?.value === "test"',
+              },
+            },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+        context: contextNode,
+      });
+
+      await delay();
+
+      expect(node.find('./themeField')?.active).toBe(true);
+      expect(node.find('./missingField')?.visible).toBe(false);
+    });
+
+    it('context 값을 여러 번 빠르게 변경해도 최종 상태가 올바르게 반영되어야 함', async () => {
+      const contextNode = contextNodeFactory({ count: 0 });
+
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            field: {
+              type: 'string',
+              computed: {
+                visible: '@.count > 5',
+              },
+            },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+        context: contextNode,
+      });
+
+      await delay();
+
+      // 빠르게 여러 번 변경
+      contextNode.setValue({ count: 1 });
+      contextNode.setValue({ count: 2 });
+      contextNode.setValue({ count: 3 });
+      contextNode.setValue({ count: 10 });
+      contextNode.setValue({ count: 4 });
+      contextNode.setValue({ count: 8 }); // 최종값
+
+      await delay();
+
+      // 최종 상태 반영
+      expect(contextNode.value).toEqual({ count: 8 });
+      expect(node.find('./field')?.visible).toBe(true); // 8 > 5
+    });
+  });
+
+  describe('성능 테스트', () => {
+    it('많은 노드가 동일 context 속성을 참조할 때 변경이 적절한 시간 내에 완료되어야 함', async () => {
+      const contextNode = contextNodeFactory({ theme: 'light' });
+
+      // 50개의 필드 생성
+      const properties: Record<string, JsonSchema> = {};
+      for (let i = 0; i < 50; i++) {
+        properties[`field${i}`] = {
+          type: 'string',
+          computed: {
+            active: '@.theme === "dark"',
+          },
+        };
+      }
+
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties,
+        } satisfies JsonSchema,
+        onChange: () => {},
+        context: contextNode,
+      });
+
+      await delay();
+
+      // 초기 상태 확인
+      for (let i = 0; i < 50; i++) {
+        expect(node.find(`./field${i}`)?.active).toBe(false);
+      }
+
+      // 성능 측정
+      const startTime = performance.now();
+      contextNode.setValue({ theme: 'dark' });
+      await delay();
+      const endTime = performance.now();
+
+      // 모든 노드가 업데이트되었는지 확인
+      for (let i = 0; i < 50; i++) {
+        expect(node.find(`./field${i}`)?.active).toBe(true);
+      }
+
+      // 100ms 이내에 완료되어야 함
+      expect(endTime - startTime).toBeLessThan(100);
+    });
+
+    it('깊은 중첩 구조에서도 context 변경이 적절한 시간 내에 완료되어야 함', async () => {
+      const contextNode = contextNodeFactory({ enabled: false });
+
+      // 5레벨 중첩 구조 생성
+      const createNestedSchema = (depth: number): JsonSchema => {
+        if (depth === 0) {
+          return {
+            type: 'string',
+            computed: {
+              visible: '@.enabled === true',
+            },
+          };
+        }
+        return {
+          type: 'object',
+          properties: {
+            child: createNestedSchema(depth - 1),
+          },
+        };
+      };
+
+      const node = nodeFromJsonSchema({
+        jsonSchema: createNestedSchema(5),
+        onChange: () => {},
+        context: contextNode,
+      });
+
+      await delay();
+
+      const deepestNode = node.find('./child/child/child/child/child');
+      expect(deepestNode?.visible).toBe(false);
+
+      const startTime = performance.now();
+      contextNode.setValue({ enabled: true });
+      await delay();
+      const endTime = performance.now();
+
+      expect(deepestNode?.visible).toBe(true);
+      expect(endTime - startTime).toBeLessThan(50);
+    });
+
+    it('배열 아이템이 많을 때 context 변경이 적절한 시간 내에 완료되어야 함', async () => {
+      const contextNode = contextNodeFactory({ readOnly: false });
+
+      // 30개 아이템의 기본값 생성
+      const defaultItems = Array.from({ length: 30 }, (_, i) => ({
+        name: `item${i}`,
+      }));
+
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            items: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: {
+                    type: 'string',
+                    computed: {
+                      readOnly: '@.readOnly === true',
+                    },
+                  },
+                },
+              },
+              default: defaultItems,
+            },
+          },
+        } satisfies JsonSchema,
+        onChange: () => {},
+        context: contextNode,
+      });
+
+      await delay();
+
+      // 초기 상태 확인 (샘플링)
+      expect(node.find('./items/0/name')?.readOnly).toBe(false);
+      expect(node.find('./items/15/name')?.readOnly).toBe(false);
+      expect(node.find('./items/29/name')?.readOnly).toBe(false);
+
+      const startTime = performance.now();
+      contextNode.setValue({ readOnly: true });
+      await delay();
+      const endTime = performance.now();
+
+      // 모든 아이템이 업데이트됨
+      expect(node.find('./items/0/name')?.readOnly).toBe(true);
+      expect(node.find('./items/15/name')?.readOnly).toBe(true);
+      expect(node.find('./items/29/name')?.readOnly).toBe(true);
+
+      expect(endTime - startTime).toBeLessThan(100);
     });
   });
 });

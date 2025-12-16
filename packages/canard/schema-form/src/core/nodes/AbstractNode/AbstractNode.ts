@@ -391,9 +391,9 @@ export abstract class AbstractNode<
   public find(this: AbstractNode, pointer?: string): SchemaNode | null {
     if (pointer === undefined) return this as SchemaNode;
     if (pointer === $.Context) return this.context;
+    if (pointer === $.Root) return this.rootNode;
     const absolute = isAbsolutePath(pointer);
-    if (pointer === $.Root || (absolute && pointer.length === 1))
-      return this.rootNode;
+    if (absolute && pointer.length === 1) return this.rootNode;
     return traversal(absolute ? this.rootNode : (this as SchemaNode), pointer);
   }
 

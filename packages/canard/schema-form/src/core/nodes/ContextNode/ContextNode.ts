@@ -10,11 +10,11 @@ import { NodeEventType, type SchemaNodeConstructorProps } from '../type';
  * allowing descendant nodes to access shared context values through
  * computed properties and expressions.
  */
-export class ContextNode extends AbstractNode<ObjectSchema, any> {
+export class ContextNode extends AbstractNode<ObjectSchema> {
   public override readonly type = 'object';
 
   /** Current context value */
-  #value: any;
+  #value: unknown;
 
   /**
    * Gets the current context value.
@@ -28,7 +28,7 @@ export class ContextNode extends AbstractNode<ObjectSchema, any> {
    * Sets the context value.
    * @param input - The context value to set
    */
-  public override set value(input: any) {
+  public override set value(input: unknown) {
     this.setValue(input);
   }
 
@@ -36,7 +36,7 @@ export class ContextNode extends AbstractNode<ObjectSchema, any> {
    * Applies the input value to the context node.
    * @param input - The context value to apply
    */
-  protected override applyValue(this: ContextNode, input: any) {
+  protected override applyValue(this: ContextNode, input: unknown) {
     this.#emitChange(input);
   }
 
@@ -54,7 +54,7 @@ export class ContextNode extends AbstractNode<ObjectSchema, any> {
    * Reflects context value changes and publishes related events.
    * @param current - The new context value
    */
-  #emitChange(this: ContextNode, current: any) {
+  #emitChange(this: ContextNode, current: unknown) {
     const previous = this.#value;
     this.#value = current;
     this.publish(
