@@ -292,4 +292,326 @@ describe('computeFactory', () => {
       expect(validResult).toBe(false);
     }
   });
+
+  describe('Context (@) path support', () => {
+    it('should handle standalone @ context reference', () => {
+      const schema: any = {
+        type: 'string',
+        computed: {
+          visible: '@ !== null && @ !== undefined',
+        },
+      };
+      const rootSchema: any = { type: 'object' };
+
+      const compute = computeFactory(schema.type, schema, rootSchema);
+
+      expect(compute.dependencyPaths).toContain('@');
+
+      if (compute.visible) {
+        // Context exists
+        const visibleResult = compute.visible([{ userRole: 'admin' }]);
+        expect(visibleResult).toBe(true);
+
+        // Context is null
+        const hiddenResult = compute.visible([null]);
+        expect(hiddenResult).toBe(false);
+
+        // Context is undefined
+        const undefinedResult = compute.visible([undefined]);
+        expect(undefinedResult).toBe(false);
+      }
+    });
+
+    it('should handle @ with property access using dot notation', () => {
+      const schema: any = {
+        type: 'string',
+        computed: {
+          visible: '@.userRole === "admin"',
+        },
+      };
+      const rootSchema: any = { type: 'object' };
+
+      const compute = computeFactory(schema.type, schema, rootSchema);
+
+      expect(compute.dependencyPaths).toContain('@');
+
+      // Admin user
+      const adminResult = compute.visible?.([{ userRole: 'admin' }]);
+      expect(adminResult).toBe(true);
+
+      // Regular user
+      const userResult = compute.visible?.([{ userRole: 'user' }]);
+      expect(userResult).toBe(false);
+    });
+
+    it('should handle @ with nested property access', () => {
+      const schema: any = {
+        type: 'string',
+        computed: {
+          disabled: '!(@).permissions.canEdit',
+        },
+      };
+      const rootSchema: any = { type: 'object' };
+
+      const compute = computeFactory(schema.type, schema, rootSchema);
+
+      expect(compute.dependencyPaths).toContain('@');
+
+      // Has edit permission
+      const enabledResult = compute.disabled?.([
+        { permissions: { canEdit: true } },
+      ]);
+      expect(enabledResult).toBe(false);
+
+      // No edit permission
+      const disabledResult = compute.disabled?.([
+        { permissions: { canEdit: false } },
+      ]);
+      expect(disabledResult).toBe(true);
+    });
+
+    it('should handle @ with optional chaining', () => {
+      const schema: any = {
+        type: 'string',
+        computed: {
+          readOnly: '!(@)?.permissions?.canEdit',
+        },
+      };
+      const rootSchema: any = { type: 'object' };
+
+      const compute = computeFactory(schema.type, schema, rootSchema);
+
+      expect(compute.dependencyPaths).toContain('@');
+
+      if (compute.readOnly) {
+        // Context with permissions
+        const editableResult = compute.readOnly([
+          { permissions: { canEdit: true } },
+        ]);
+        expect(editableResult).toBe(false);
+
+        // Context without permissions
+        const readOnlyResult = compute.readOnly([{}]);
+        expect(readOnlyResult).toBe(true);
+
+        // Null context
+        const nullResult = compute.readOnly([null]);
+        expect(nullResult).toBe(true);
+      }
+    });
+
+    it('should handle @ combined with other JSON Pointer paths', () => {
+      const schema: any = {
+        type: 'string',
+        computed: {
+          visible: '@.userRole === "admin" && /status === "draft"',
+        },
+      };
+      const rootSchema: any = {
+        type: 'object',
+        properties: {
+          status: { type: 'string' },
+        },
+      };
+
+      const compute = computeFactory(schema.type, schema, rootSchema);
+
+      expect(compute.dependencyPaths).toContain('@');
+      expect(compute.dependencyPaths).toContain('/status');
+
+      if (compute.visible) {
+        // Admin with draft status
+        const visibleResult = compute.visible([{ userRole: 'admin' }, 'draft']);
+        expect(visibleResult).toBe(true);
+
+        // Admin with published status
+        const hiddenResult1 = compute.visible([
+          { userRole: 'admin' },
+          'published',
+        ]);
+        expect(hiddenResult1).toBe(false);
+
+        // Non-admin with draft status
+        const hiddenResult2 = compute.visible([{ userRole: 'user' }, 'draft']);
+        expect(hiddenResult2).toBe(false);
+      }
+    });
+
+    it('should handle @ in watch array', () => {
+      const schema: any = {
+        type: 'string',
+        computed: {
+          watch: ['@', '/field1', '/field2'],
+        },
+      };
+      const rootSchema: any = { type: 'object' };
+
+      const compute = computeFactory(schema.type, schema, rootSchema);
+
+      expect(compute.dependencyPaths).toContain('@');
+      expect(compute.dependencyPaths).toContain('/field1');
+      expect(compute.dependencyPaths).toContain('/field2');
+
+      if (compute.watchValues) {
+        const context = { theme: 'dark' };
+        const watchedValues = compute.watchValues([
+          context,
+          'value1',
+          'value2',
+        ]);
+        expect(watchedValues).toEqual([context, 'value1', 'value2']);
+      }
+    });
+
+    it('should handle @ with parentheses for explicit grouping', () => {
+      const schema: any = {
+        type: 'string',
+        computed: {
+          visible: '(@) !== null && (@).active === true',
+        },
+      };
+      const rootSchema: any = { type: 'object' };
+
+      const compute = computeFactory(schema.type, schema, rootSchema);
+
+      expect(compute.dependencyPaths).toContain('@');
+
+      if (compute.visible) {
+        // Active context
+        const visibleResult = compute.visible([{ active: true }]);
+        expect(visibleResult).toBe(true);
+
+        // Inactive context
+        const hiddenResult = compute.visible([{ active: false }]);
+        expect(hiddenResult).toBe(false);
+
+        // Null context
+        const nullResult = compute.visible([null]);
+        expect(nullResult).toBe(false);
+      }
+    });
+
+    it('should handle complex expression with @ and multiple paths', () => {
+      const schema: any = {
+        type: 'string',
+        computed: {
+          disabled:
+            '!((@)?.permissions?.canEdit && /formState === "editable" && ../parentEnabled)',
+        },
+      };
+      const rootSchema: any = {
+        type: 'object',
+        properties: {
+          formState: { type: 'string' },
+          parent: {
+            type: 'object',
+            properties: {
+              parentEnabled: { type: 'boolean' },
+              child: { type: 'string' },
+            },
+          },
+        },
+      };
+
+      const compute = computeFactory(schema.type, schema, rootSchema);
+
+      expect(compute.dependencyPaths).toContain('@');
+      expect(compute.dependencyPaths).toContain('/formState');
+      expect(compute.dependencyPaths).toContain('../parentEnabled');
+
+      if (compute.disabled) {
+        // All conditions met - should be enabled (disabled = false)
+        const enabledResult = compute.disabled([
+          { permissions: { canEdit: true } },
+          'editable',
+          true,
+        ]);
+        expect(enabledResult).toBe(false);
+
+        // No edit permission - should be disabled
+        const noPermissionResult = compute.disabled([
+          { permissions: { canEdit: false } },
+          'editable',
+          true,
+        ]);
+        expect(noPermissionResult).toBe(true);
+
+        // Form not editable - should be disabled
+        const notEditableResult = compute.disabled([
+          { permissions: { canEdit: true } },
+          'readonly',
+          true,
+        ]);
+        expect(notEditableResult).toBe(true);
+
+        // Parent not enabled - should be disabled
+        const parentDisabledResult = compute.disabled([
+          { permissions: { canEdit: true } },
+          'editable',
+          false,
+        ]);
+        expect(parentDisabledResult).toBe(true);
+      }
+    });
+
+    it('should handle @ with typeof check', () => {
+      const schema: any = {
+        type: 'string',
+        computed: {
+          visible: 'typeof @ === "object" && @ !== null',
+        },
+      };
+      const rootSchema: any = { type: 'object' };
+
+      const compute = computeFactory(schema.type, schema, rootSchema);
+
+      expect(compute.dependencyPaths).toContain('@');
+
+      if (compute.visible) {
+        // Valid object context
+        const objectResult = compute.visible([{ data: 'test' }]);
+        expect(objectResult).toBe(true);
+
+        // Null context (typeof null is "object" but we check !== null)
+        const nullResult = compute.visible([null]);
+        expect(nullResult).toBe(false);
+
+        // Undefined context
+        const undefinedResult = compute.visible([undefined]);
+        expect(undefinedResult).toBe(false);
+      }
+    });
+
+    it('should handle @ reference appearing multiple times (deduplication)', () => {
+      const schema: any = {
+        type: 'string',
+        computed: {
+          visible: '@ !== null && @.active && @.permissions?.view',
+        },
+      };
+      const rootSchema: any = { type: 'object' };
+
+      const compute = computeFactory(schema.type, schema, rootSchema);
+
+      // @ should appear only once in dependencyPaths (deduplication)
+      const contextCount = compute.dependencyPaths.filter(
+        (p: string) => p === '@',
+      ).length;
+      expect(contextCount).toBe(1);
+
+      if (compute.visible) {
+        // All conditions met
+        const visibleResult = compute.visible([
+          { active: true, permissions: { view: true } },
+        ]);
+        expect(visibleResult).toBe(true);
+
+        // Missing view permission
+        const noViewResult = compute.visible([
+          { active: true, permissions: { view: false } },
+        ]);
+        expect(noViewResult).toBe(false);
+      }
+    });
+  });
 });

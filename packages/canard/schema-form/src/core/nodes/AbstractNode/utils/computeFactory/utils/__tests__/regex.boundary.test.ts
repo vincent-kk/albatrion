@@ -825,9 +825,10 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
           paths: ['../pointer'],
         },
         {
+          // @../ 형태는 Context 뒤에 Parent 경로가 오는 것으로, @ 도 경로도 매칭되지 않음
           input: '@../annotation',
-          expected: '@dependencies[0]',
-          paths: ['../annotation'],
+          expected: '@../annotation',
+          paths: [],
         },
         {
           input: '%../modulo',
