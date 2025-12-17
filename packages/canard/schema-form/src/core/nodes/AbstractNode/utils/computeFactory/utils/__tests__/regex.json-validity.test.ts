@@ -378,10 +378,10 @@ describe('JSON 키 유효성 및 표현식 파싱 테스트', () => {
       const { paths: paths2 } = transformExpression(expr2);
       expect(paths2).toEqual(['#/items.0']); // 전체가 하나의 경로
 
-      // 중괄호도 마찬가지
+      // 균형 잡힌 중괄호는 경로에 포함됨
       const expr3 = '#/template{id}';
       const { paths: paths3 } = transformExpression(expr3);
-      expect(paths3).toEqual(['#/template{id}']);
+      expect(paths3).toEqual(['#/template{id}']); // 균형 잡힌 {...} 포함
 
       // 대신 이렇게 사용
       const expr4 = '(#/template:id)'; // 콜론 사용
@@ -406,16 +406,21 @@ describe('JSON 키 유효성 및 표현식 파싱 테스트', () => {
       expect(paths3).toEqual(['#/key_with_space']);
     });
 
-    test('따옴표 처리 - 키의 일부', () => {
-      // 따옴표는 이제 키의 일부로 처리됨
+    test('따옴표 처리 - 문자열 리터럴 내 경로 불매칭', () => {
+      // 따옴표로 시작하는 경로는 문자열 리터럴 내부로 간주되어 매칭되지 않음
       const expr1 = '"#/path1""#/path2"';
       const { paths: paths1 } = transformExpression(expr1);
-      expect(paths1).toEqual(['#/path1""#/path2"']);
+      expect(paths1).toEqual([]);
 
-      // 백틱도 키의 일부로 처리됨
+      // 백틱도 동일하게 처리됨
       const expr2 = '`#/path1``#/path2`';
       const { paths: paths2 } = transformExpression(expr2);
-      expect(paths2).toEqual(['#/path1``#/path2`']);
+      expect(paths2).toEqual([]);
+
+      // 경로 내 중간에 있는 따옴표는 허용됨 (드문 케이스)
+      const expr3 = '#/path"with"quote';
+      const { paths: paths3 } = transformExpression(expr3);
+      expect(paths3).toEqual(['#/path"with"quote']);
     });
   });
 });

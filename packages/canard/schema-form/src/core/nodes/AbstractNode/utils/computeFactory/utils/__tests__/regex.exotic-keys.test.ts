@@ -304,24 +304,32 @@ describe('JSON_POINTER_REGEX - 특이한 JSON 키 지원', () => {
     });
 
     test('대괄호와 중괄호를 포함한 JSON 키 지원', () => {
-      // 대괄호는 이제 JSON 키의 일부로 인식됨
+      // 균형 잡힌 대괄호/중괄호는 경로에 포함됨
       expect(extractMatches('[#/path1][#/path2]')).toEqual([
-        '#/path1][#/path2]',
+        '#/path1',
+        '#/path2',
       ]);
-      expect(extractMatches('#/items[0]')).toEqual(['#/items[0]']); // 전체가 하나의 키로 인식
+      expect(extractMatches('#/items[0]')).toEqual(['#/items[0]']); // 균형 잡힌 [...] 포함
 
-      // 중괄호도 JSON 키의 일부로 인식됨
+      // 균형 잡힌 중괄호는 경로에 포함됨
       expect(extractMatches('{../key1}{../key2}')).toEqual([
-        '../key1}{../key2}',
+        '../key1',
+        '../key2',
       ]);
-      expect(extractMatches('#/template{id}')).toEqual(['#/template{id}']); // 전체가 하나의 키로 인식
+      expect(extractMatches('#/template{id}')).toEqual(['#/template{id}']); // 균형 잡힌 {...} 포함
 
       // 다양한 표기법 모두 지원
       expect(extractMatches('(#/items.0)')).toEqual(['#/items.0']); // 점 표기법
       expect(extractMatches('(#/template_id)')).toEqual(['#/template_id']); // 언더스코어
       expect(extractMatches('(#/template:id)')).toEqual(['#/template:id']); // 콜론
-      expect(extractMatches('(#/array[0])')).toEqual(['#/array[0]']); // 대괄호
-      expect(extractMatches('(#/config{env})')).toEqual(['#/config{env}']); // 중괄호
+      expect(extractMatches('(#/array[0])')).toEqual(['#/array[0]']); // 균형 잡힌 [...] 포함
+      expect(extractMatches('(#/config{env})')).toEqual(['#/config{env}']); // 균형 잡힌 {...} 포함
+
+      // 불균형 괄호가 경로 중간에 있으면 포함 (뒤에 경로 문자가 있을 때)
+      expect(extractMatches('#/weird}key')).toEqual(['#/weird}key']); // } 뒤에 k → 포함
+      expect(extractMatches('#/odd]key')).toEqual(['#/odd]key']); // ] 뒤에 k → 포함
+      expect(extractMatches('#/key{partial')).toEqual(['#/key{partial']); // { 뒤에 p → 포함
+      expect(extractMatches('#/key[partial')).toEqual(['#/key[partial']); // [ 뒤에 p → 포함
     });
 
     test('공백으로 구분되는 경우', () => {
@@ -338,20 +346,24 @@ describe('JSON_POINTER_REGEX - 특이한 JSON 키 지원', () => {
     });
 
     test('따옴표와 괄호는 구조적 구분자', () => {
-      // 대괄호와 중괄호는 더 이상 구분자가 아님 (JSON 키의 일부)
+      // 균형 잡힌 대괄호/중괄호 없이는 구분자로 작동
       expect(extractMatches('[#/path1][#/path2]')).toEqual([
-        '#/path1][#/path2]',
+        '#/path1',
+        '#/path2',
       ]);
+      // 균형 잡힌 중괄호 없이는 구분자로 작동
       expect(extractMatches('{../key1}{../key2}')).toEqual([
-        '../key1}{../key2}',
+        '../key1',
+        '../key2',
       ]);
 
-      // 따옴표도 이제 키의 일부로 처리됨
-      expect(extractMatches('"#/path1""#/path2"')).toEqual([
-        '#/path1""#/path2"',
-      ]);
-      expect(extractMatches("'../key1''../key2'")).toEqual([
-        "../key1''../key2'",
+      // 따옴표 뒤의 경로는 문자열 리터럴 내부로 간주되어 불매칭
+      expect(extractMatches('"#/path1""#/path2"')).toEqual([]);
+      expect(extractMatches("'../key1''../key2'")).toEqual([]);
+
+      // 경로 중간의 따옴표는 허용됨
+      expect(extractMatches('#/path"middle"quote')).toEqual([
+        '#/path"middle"quote',
       ]);
 
       // 소괄호는 여전히 경계로 작동 (명시적 구분용)

@@ -157,6 +157,30 @@ describe('JSON_POINTER_REGEX', () => {
       ]);
     });
 
+    test('괄호로 감싼 루트 (/) - Pattern 5', () => {
+      // (/) 는 루트를 나타내며, 매칭 결과는 '/' 만 포함 (괄호 제외)
+      expect(extractMatches('(/)')).toEqual(['/']);
+      expect(extractMatches('(/).property')).toEqual(['/']);
+      expect(extractMatches('(/)["key"]')).toEqual(['/']);
+
+      // 표현식 내에서 사용
+      expect(extractMatches('(/) && ../value')).toEqual(['/', '../value']);
+      expect(extractMatches('(/).enabled === true')).toEqual(['/']);
+
+      // 여러 (/) 사용
+      expect(extractMatches('(/) === (/)')).toEqual(['/', '/']);
+      expect(extractMatches('(/).a + (/).b')).toEqual(['/', '/']);
+
+      // (/) vs (/path) 구분 - (/path)는 Pattern 3 (절대 경로)
+      expect(extractMatches('(/path)')).toEqual(['/path']);
+      expect(extractMatches('(/)')).toEqual(['/']);
+
+      // 공백이 있으면 매칭 안됨
+      expect(extractMatches('( / )')).toEqual([]);
+      expect(extractMatches('( /)')).toEqual([]);
+      expect(extractMatches('(/ )')).toEqual([]);
+    });
+
     test('여러 JSON Pointer 패턴이 있는 경우', () => {
       expect(extractMatches('#/first ../second ./third')).toEqual([
         '#/first',

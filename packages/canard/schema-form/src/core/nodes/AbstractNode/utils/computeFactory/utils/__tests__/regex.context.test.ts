@@ -100,29 +100,39 @@ describe('Context Symbol (@) - JSON_POINTER_REGEX', () => {
     test('@ 와 상대 경로 조합', () => {
       const result = testDepsMatch('../path && @');
       expect(result.pathManager).toEqual(['../path', '@']);
-      expect(result.computedExpression).toBe('dependencies[0] && dependencies[1]');
+      expect(result.computedExpression).toBe(
+        'dependencies[0] && dependencies[1]',
+      );
     });
 
     test('@ 와 현재 디렉토리 경로 조합', () => {
       const result = testDepsMatch('./current || @');
       expect(result.pathManager).toEqual(['./current', '@']);
-      expect(result.computedExpression).toBe('dependencies[0] || dependencies[1]');
+      expect(result.computedExpression).toBe(
+        'dependencies[0] || dependencies[1]',
+      );
     });
 
     test('@ 와 프래그먼트 참조 조합', () => {
       const result = testDepsMatch('#/property && @');
       expect(result.pathManager).toEqual(['#/property', '@']);
-      expect(result.computedExpression).toBe('dependencies[0] && dependencies[1]');
+      expect(result.computedExpression).toBe(
+        'dependencies[0] && dependencies[1]',
+      );
     });
 
     test('@ 와 절대 경로 조합', () => {
       const result = testDepsMatch('/absolute/path || @');
       expect(result.pathManager).toEqual(['/absolute/path', '@']);
-      expect(result.computedExpression).toBe('dependencies[0] || dependencies[1]');
+      expect(result.computedExpression).toBe(
+        'dependencies[0] || dependencies[1]',
+      );
     });
 
     test('@ 여러 경로와 함께 사용', () => {
-      const result = testDepsMatch('../age >= 18 && @ !== null && #/status === "active"');
+      const result = testDepsMatch(
+        '../age >= 18 && @ !== null && #/status === "active"',
+      );
       expect(result.pathManager).toEqual(['../age', '@', '#/status']);
       expect(result.computedExpression).toBe(
         'dependencies[0] >= 18 && dependencies[1] !== null && dependencies[2] === "active"',
@@ -141,19 +151,25 @@ describe('Context Symbol (@) - JSON_POINTER_REGEX', () => {
       // @.property 형태가 아닌 @ 단독 사용 후 JavaScript 접근
       const result = testDepsMatch('(@).someProperty === "value"');
       expect(result.pathManager).toEqual(['@']);
-      expect(result.computedExpression).toBe('(dependencies[0]).someProperty === "value"');
+      expect(result.computedExpression).toBe(
+        '(dependencies[0]).someProperty === "value"',
+      );
     });
 
     test('@ 타입 체크', () => {
       const result = testDepsMatch('typeof @ === "object"');
       expect(result.pathManager).toEqual(['@']);
-      expect(result.computedExpression).toBe('typeof dependencies[0] === "object"');
+      expect(result.computedExpression).toBe(
+        'typeof dependencies[0] === "object"',
+      );
     });
 
     test('@ null 체크와 속성 접근', () => {
       const result = testDepsMatch('@ && (@).enabled');
       expect(result.pathManager).toEqual(['@']);
-      expect(result.computedExpression).toBe('dependencies[0] && (dependencies[0]).enabled');
+      expect(result.computedExpression).toBe(
+        'dependencies[0] && (dependencies[0]).enabled',
+      );
     });
   });
 
@@ -216,17 +232,23 @@ describe('Context Symbol (@) - JSON_POINTER_REGEX', () => {
       // @.property 형태에서 @만 매칭되고 .property는 JavaScript 속성 접근으로 남음
       const result = testDepsMatch('@.userRole === "admin"');
       expect(result.pathManager).toEqual(['@']);
-      expect(result.computedExpression).toBe('dependencies[0].userRole === "admin"');
+      expect(result.computedExpression).toBe(
+        'dependencies[0].userRole === "admin"',
+      );
     });
 
     test('Context 중첩 속성 접근 - @.a.b.c 패턴', () => {
       const result = testDepsMatch('@.config.settings.enabled');
       expect(result.pathManager).toEqual(['@']);
-      expect(result.computedExpression).toBe('dependencies[0].config.settings.enabled');
+      expect(result.computedExpression).toBe(
+        'dependencies[0].config.settings.enabled',
+      );
     });
 
     test('Context 속성 접근과 다른 경로 조합', () => {
-      const result = testDepsMatch('@.permissions.canEdit && ../status === "draft"');
+      const result = testDepsMatch(
+        '@.permissions.canEdit && ../status === "draft"',
+      );
       expect(result.pathManager).toEqual(['@', '../status']);
       expect(result.computedExpression).toBe(
         'dependencies[0].permissions.canEdit && dependencies[1] === "draft"',
@@ -257,6 +279,24 @@ describe('Context Symbol (@) - JSON_POINTER_REGEX', () => {
       expect(extractMatches('@;')).toEqual(['@']);
     });
 
+    test('@ 뒤에 닫는 브래킷/중괄호가 오는 경우 - 매칭됨', () => {
+      // 닫는 브래킷 ] 과 중괄호 } 는 유효한 JS 토큰으로 허용됨
+      expect(extractMatches('@]')).toEqual(['@']);
+      expect(extractMatches('@}')).toEqual(['@']);
+      // 닫는 소괄호 ) 도 허용됨
+      expect(extractMatches('@)')).toEqual(['@']);
+    });
+
+    test('유효한 @ + 브래킷 사용 - 열린 브래킷이 먼저 있는 경우', () => {
+      // 브래킷 접근: @["key"] - @ 뒤에 [ 가 먼저 오므로 유효
+      expect(extractMatches('@["key"]')).toEqual(['@']);
+      expect(extractMatches('@[0]')).toEqual(['@']);
+      // 객체 내 @: { value: @ } - @ 뒤에 공백 후 } 이므로 유효
+      expect(extractMatches('{ value: @ }')).toEqual(['@']);
+      // 배열 내 @: [ @, value ] - @ 뒤에 쉼표이므로 유효
+      expect(extractMatches('[ @, value ]')).toEqual(['@']);
+    });
+
     test('문자열 내의 @ - 매칭되지 않아야 함', () => {
       // 따옴표 바로 뒤의 @는 매칭되지 않음
       expect(extractMatches('"@"')).toEqual([]);
@@ -272,8 +312,8 @@ describe('Context Symbol (@) - JSON_POINTER_REGEX', () => {
       expect(extractMatches('test@test.com')).toEqual([]);
     });
 
-    test('특수문자 뒤의 @ - 매칭되지 않아야 함', () => {
-      // 문자열 내 특수문자 조합에서 @는 매칭되지 않음
+    test('path prefix 뒤의 @ - 매칭되지 않아야 함', () => {
+      // # . / @ 뒤의 @는 path prefix 뒤이므로 매칭 안 됨
       expect(extractMatches('!@#$%')).toEqual([]);
       expect(extractMatches('특수문자!@#$%^&*()')).toEqual([]);
       expect(extractMatches('#@tag')).toEqual([]);
@@ -282,13 +322,10 @@ describe('Context Symbol (@) - JSON_POINTER_REGEX', () => {
       expect(extractMatches('^@caret')).toEqual([]);
       expect(extractMatches('&@ampersand')).toEqual([]);
       expect(extractMatches('*@asterisk')).toEqual([]);
-    });
 
-    test('문자열 내 특수문자와 @ 조합이 포함된 표현식', () => {
-      // 경로는 매칭되지만, 문자열 내의 @는 매칭되지 않음
-      const result = testDepsMatch('./root/value === "특수문자!@#$%^&*()"');
-      expect(result.pathManager).toEqual(['./root/value']);
-      expect(result.computedExpression).toBe('dependencies[0] === "특수문자!@#$%^&*()"');
+      expect(extractMatches('#@tag')).toEqual([]);
+      expect(extractMatches('.@prop')).toEqual([]);
+      expect(extractMatches('/@path')).toEqual(['/@path']); // /@ 는 절대경로의 일부
     });
 
     test('@./ 또는 @../ 형태 - @ 뒤에 Current/Parent 경로가 오는 경우', () => {
@@ -310,6 +347,185 @@ describe('Context Symbol (@) - JSON_POINTER_REGEX', () => {
       const result = testDepsMatch('(../email).includes("@")');
       expect(result.pathManager).toEqual(['../email']);
       expect(result.computedExpression).toBe('(dependencies[0]).includes("@")');
+    });
+
+    test('@ 뒤에 @ 가 오는 경우 - 매칭되지 않아야 함', () => {
+      expect(extractMatches('@@')).toEqual([]);
+      expect(extractMatches('@@@')).toEqual([]);
+    });
+  });
+
+  describe('연산자 뒤의 @ - JS 표현식 위치에서 매칭', () => {
+    test('단항 연산자 뒤의 @', () => {
+      // 논리 부정
+      expect(extractMatches('!@')).toEqual(['@']);
+      expect(extractMatches('!@.property')).toEqual(['@']);
+      expect(extractMatches('!@.aa.bb.cc')).toEqual(['@']);
+
+      // 비트 NOT
+      expect(extractMatches('~@')).toEqual(['@']);
+      expect(extractMatches('~@.value')).toEqual(['@']);
+
+      // 단항 플러스/마이너스
+      expect(extractMatches('+@')).toEqual(['@']);
+      expect(extractMatches('-@')).toEqual(['@']);
+    });
+
+    test('소괄호 안의 @', () => {
+      // 함수 호출의 인자로 사용
+      expect(extractMatches('func(@)')).toEqual(['@']);
+      expect(extractMatches('func(@, ../value)')).toEqual(['@', '../value']);
+    });
+
+    test('구분자 뒤의 @', () => {
+      expect(extractMatches(',@')).toEqual(['@']);
+      expect(extractMatches(';@')).toEqual(['@']);
+      expect(extractMatches(':@')).toEqual(['@']);
+      expect(extractMatches('?@')).toEqual(['@']);
+    });
+
+    test('이항 연산자 뒤의 @', () => {
+      expect(extractMatches('x&&@')).toEqual(['@']);
+      expect(extractMatches('x||@')).toEqual(['@']);
+      expect(extractMatches('x===@')).toEqual(['@']);
+      expect(extractMatches('x!==@')).toEqual(['@']);
+      expect(extractMatches('x>@')).toEqual(['@']);
+      expect(extractMatches('x<@')).toEqual(['@']);
+      expect(extractMatches('x>=@')).toEqual(['@']);
+      expect(extractMatches('x<=@')).toEqual(['@']);
+    });
+
+    test('연산자 뒤의 @ 와 속성 접근 조합 - 실제 사용 예시', () => {
+      // !@.property 패턴 - 가장 일반적인 사용 케이스
+      const result1 = testDepsMatch('!@.isAdmin');
+      expect(result1.pathManager).toEqual(['@']);
+      expect(result1.computedExpression).toBe('!dependencies[0].isAdmin');
+
+      // !@.nested.property 패턴
+      const result2 = testDepsMatch('!@.config.enabled && ../visible');
+      expect(result2.pathManager).toEqual(['@', '../visible']);
+      expect(result2.computedExpression).toBe(
+        '!dependencies[0].config.enabled && dependencies[1]',
+      );
+
+      // 삼항 연산자에서 사용
+      const result3 = testDepsMatch(
+        '@.role === "admin" ? !@.disabled : @.enabled',
+      );
+      expect(result3.pathManager).toEqual(['@']);
+      expect(result3.computedExpression).toBe(
+        'dependencies[0].role === "admin" ? !dependencies[0].disabled : dependencies[0].enabled',
+      );
+    });
+
+    test('대괄호 속성 접근 - @["key"] 및 @[index]', () => {
+      // @['key'] 형태 - 대괄호 속성 접근
+      const result1 = testDepsMatch('@["property"]');
+      expect(result1.pathManager).toEqual(['@']);
+      expect(result1.computedExpression).toBe('dependencies[0]["property"]');
+
+      // @[index] 형태
+      const result2 = testDepsMatch('@[0]');
+      expect(result2.pathManager).toEqual(['@']);
+      expect(result2.computedExpression).toBe('dependencies[0][0]');
+
+      // 복합 표현식
+      const result3 = testDepsMatch('@["items"][0].name');
+      expect(result3.pathManager).toEqual(['@']);
+      expect(result3.computedExpression).toBe(
+        'dependencies[0]["items"][0].name',
+      );
+    });
+  });
+
+  describe('Performance - repeated @ characters (ReDoS prevention)', () => {
+    test('many repeated @ characters should not cause catastrophic backtracking', () => {
+      // Various @ repetitions - none should match
+      expect(extractMatches('@@@@@@@')).toEqual([]);
+      expect(extractMatches('@@@@@@@@@@')).toEqual([]);
+      expect(extractMatches('@'.repeat(50))).toEqual([]);
+      expect(extractMatches('@'.repeat(100))).toEqual([]);
+    });
+
+    test('@ followed by many repeated characters should not match', () => {
+      expect(extractMatches('@' + 'a'.repeat(100))).toEqual([]);
+      expect(extractMatches('@' + 'a'.repeat(1000))).toEqual([]);
+    });
+
+    test('alternating @ and other characters', () => {
+      expect(extractMatches('@a@b@c@d@e')).toEqual([]);
+      expect(extractMatches('a@b@c@d@e@')).toEqual([]);
+    });
+
+    test('@ in various problematic positions should complete quickly', () => {
+      // All should complete quickly without hanging
+      const start = performance.now();
+      extractMatches('@'.repeat(1000));
+      extractMatches('@/'.repeat(100));
+      extractMatches('@..'.repeat(100));
+      const elapsed = performance.now() - start;
+      expect(elapsed).toBeLessThan(100); // Should complete in < 100ms
+    });
+
+    test('pathological patterns with @ should not cause ReDoS', () => {
+      const start = performance.now();
+
+      // Test various pathological patterns
+      extractMatches('user' + '@'.repeat(100));
+      extractMatches('@'.repeat(50) + 'domain');
+      extractMatches(('@/' + 'path').repeat(50));
+      extractMatches(('@.' + 'prop').repeat(50));
+
+      const elapsed = performance.now() - start;
+      expect(elapsed).toBeLessThan(100); // Should complete in < 100ms
+    });
+  });
+
+  describe('Edge case verification - 스펙 확인', () => {
+    test('{@ - 중괄호 뒤의 @', () => {
+      // { 는 허용됨 (JS 표현식 내 객체 리터럴 컨텍스트)
+      expect(extractMatches('{@')).toEqual(['@']);
+      expect(extractMatches('{@}')).toEqual(['@']);
+      // 공백이 있어도 매칭됨
+      expect(extractMatches('{ @')).toEqual(['@']);
+      expect(extractMatches('{ @ }')).toEqual(['@']);
+    });
+
+    test('# 단독 - Fragment 단독', () => {
+      // # 단독 허용 (@ 와 유사)
+      expect(extractMatches('#')).toEqual(['#']);
+      expect(extractMatches('# ')).toEqual(['#']);
+      expect(extractMatches('(#)')).toEqual(['#']);
+      expect(extractMatches('#.prop')).toEqual(['#']);
+      expect(extractMatches('#["key"]')).toEqual(['#']);
+      // #/ 는 Pattern 1로 매칭
+      expect(extractMatches('#/')).toEqual(['#/']);
+      expect(extractMatches('#/path')).toEqual(['#/path']);
+      // #identifier 는 매칭 안됨
+      expect(extractMatches('#alone')).toEqual([]);
+      expect(extractMatches('#123')).toEqual([]);
+    });
+
+    test('경로 내 @ 포함 - path segment 내에 @ 허용', () => {
+      // @ 는 path segment에서 허용되는 문자
+      expect(extractMatches('./aa/@asdas/bbb/cc')).toEqual(['./aa/@asdas/bbb/cc']);
+      expect(extractMatches('#/config/@env/value')).toEqual(['#/config/@env/value']);
+      expect(extractMatches('../@special/path')).toEqual(['../@special/path']);
+      expect(extractMatches('/@root/@nested')).toEqual(['/@root/@nested']);
+    });
+
+    test('경로 내 @ 단독 세그먼트', () => {
+      // @ 가 세그먼트 이름으로 사용되는 경우
+      expect(extractMatches('./@/path')).toEqual(['./@/path']);
+      expect(extractMatches('#/@/value')).toEqual(['#/@/value']);
+      expect(extractMatches('../@/data')).toEqual(['../@/data']);
+    });
+
+    test('경로 내 @ vs 독립 @ 구분', () => {
+      // @ 가 경로의 일부일 때 vs 독립적인 context일 때
+      expect(extractMatches('./aa/@asdas/bbb/cc === true')).toEqual(['./aa/@asdas/bbb/cc']);
+      expect(extractMatches('@ === true')).toEqual(['@']);
+      expect(extractMatches('@.prop && ./path/@segment')).toEqual(['@', './path/@segment']);
     });
   });
 });
