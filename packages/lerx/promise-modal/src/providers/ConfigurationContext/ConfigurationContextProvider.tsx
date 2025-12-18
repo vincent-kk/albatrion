@@ -7,7 +7,7 @@ import {
 } from 'react';
 
 import { isPlainObject, isString } from '@winglet/common-utils/filter';
-import { useConstant, useSnapshot } from '@winglet/react-utils/hook';
+import { useMemorize, useSnapshot } from '@winglet/react-utils/hook';
 
 import {
   DEFAULT_ANIMATION_DURATION,
@@ -62,14 +62,14 @@ export const ConfigurationContextProvider = memo(
     options: inputOptions,
     children,
   }: PropsWithChildren<ConfigurationContextProviderProps>) => {
-    const constant = useConstant({
+    const constant = useMemorize(() => ({
       BackgroundComponent,
       ForegroundComponent: ForegroundComponent || FallbackForegroundFrame,
       TitleComponent: TitleComponent || FallbackTitle,
       SubtitleComponent: SubtitleComponent || FallbackSubtitle,
       ContentComponent: memo(ContentComponent || FallbackContent),
       FooterComponent: memo(FooterComponent || FallbackFooter),
-    });
+    }));
     const options = useSnapshot(inputOptions);
 
     const value = useMemo(() => {
