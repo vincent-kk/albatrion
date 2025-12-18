@@ -888,10 +888,10 @@ JSONPointer는 RFC 6901 사양을 따릅니다:
 
 `@canard/schema-form`은 두 가지 경로 타입을 구분합니다:
 
-| 경로 타입 | 루트 값 | 예시 | 설명 |
-|-----------|--------|------|------|
-| `dataPath` | `''` (빈 문자열) | `''`, `'/user/name'` | URI 프래그먼트 접두사 없는 JSON Pointer 문자열. 데이터 값 참조에 사용. |
-| `schemaPath` | `'#'` | `'#'`, `'#/properties/user'` | `#` 접두사가 있는 JSON Pointer URI 프래그먼트. 스키마 정의 참조에 사용. |
+| 경로 타입    | 루트 값          | 예시                         | 설명                                                                    |
+| ------------ | ---------------- | ---------------------------- | ----------------------------------------------------------------------- |
+| `dataPath`   | `''` (빈 문자열) | `''`, `'/user/name'`         | URI 프래그먼트 접두사 없는 JSON Pointer 문자열. 데이터 값 참조에 사용.  |
+| `schemaPath` | `'#'`            | `'#'`, `'#/properties/user'` | `#` 접두사가 있는 JSON Pointer URI 프래그먼트. 스키마 정의 참조에 사용. |
 
 ```tsx
 // 표준 JSONPointer 사용 예시
@@ -977,6 +977,76 @@ const formInputMap = {
   '/data/*/status': StatusBadge, // 모든 상태 필드
 };
 ```
+
+#### Context 참조 (`@`)
+
+Form에 전달된 외부 context 데이터를 참조합니다. 주로 computed 속성에서 사용됩니다.
+
+**중요:** `@` 심볼은 context 객체 자체를 직접 참조하며, JSON Pointer 경로가 아닙니다. 따라서 JSON Pointer 형식이 아닌 **JavaScript 속성 접근자 문법**(점 표기법 또는 대괄호 표기법)을 사용해야 합니다:
+
+```tsx
+// ✅ 올바른 사용 - 속성 접근자 문법
+'@.mode'; // context.mode
+'@.user.role'; // context.user.role
+'@.permissions?.edit'; // context.permissions?.edit (옵셔널 체이닝)
+
+// ❌ 잘못된 사용 - JSON Pointer 형식
+'@/mode'; // 작동하지 않음
+'@/user/role'; // 작동하지 않음
+```
+
+**computed 속성에서의 사용:**
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    secretField: {
+      type: 'string',
+      computed: {
+        visible: '@.userRole === "admin"', // admin 사용자에게만 표시
+        readOnly: '@.mode === "view"', // 보기 모드에서 읽기 전용
+        disabled: '@.permissions?.canEdit === false', // 권한에 따라 비활성화
+      },
+    },
+    combinedCondition: {
+      type: 'string',
+      computed: {
+        // context (@)와 폼 필드 참조 (..)를 조합
+        active: '@.featureEnabled && ../category === "premium"',
+      },
+    },
+  },
+};
+
+// Form에 context 전달
+<Form
+  jsonSchema={jsonSchema}
+  context={{
+    mode: 'edit',
+    userRole: 'admin',
+    featureEnabled: true,
+    permissions: { canEdit: true },
+  }}
+/>;
+```
+
+**주요 특징:**
+
+- Context 값은 반응형으로 업데이트됩니다 - context가 변경되면 computed 속성이 재평가됩니다
+- 안전한 중첩 접근을 위한 옵셔널 체이닝(`?.`) 지원
+- `computed` 속성에서만 사용 가능하며, `FormTypeInputMap`이나 `Form.Render`에서는 사용 불가
+
+> ⚠️ **권장사항:** `@`는 런타임에 동적으로 변경될 수 있는 context 객체를 참조하므로, 중첩 속성에 안전하게 접근하기 위해 **옵셔널 체이닝(`?.`)**을 사용하는 것을 권장합니다. 이렇게 하면 context 속성이 undefined 또는 null일 때 발생할 수 있는 런타임 오류를 방지할 수 있습니다.
+>
+> ```tsx
+> // ✅ 옵셔널 체이닝을 사용한 안전한 접근
+> '@.user?.profile?.name'
+> '@.settings?.theme ?? "light"'
+>
+> // ⚠️ context 구조가 변경되면 오류 발생 가능
+> '@.user.profile.name'
+> ```
 
 ### 실제 사용 예시
 
@@ -1271,7 +1341,7 @@ const jsonSchema = {
   defaultValue={{
     partialArray: ['a', 'b'], // minItems=5여도 2개 항목만 사용
   }}
-/>
+/>;
 ```
 
 ### 명령형 핸들을 사용한 양식

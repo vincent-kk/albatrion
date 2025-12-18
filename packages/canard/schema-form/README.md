@@ -898,10 +898,10 @@ JSONPointer follows the RFC 6901 specification:
 
 `@canard/schema-form` distinguishes between two path types:
 
-| Path Type | Root Value | Example | Description |
-|-----------|------------|---------|-------------|
-| `dataPath` | `''` (empty string) | `''`, `'/user/name'` | JSON Pointer string without URI fragment prefix. Used for data value references. |
-| `schemaPath` | `'#'` | `'#'`, `'#/properties/user'` | JSON Pointer URI fragment with `#` prefix. Used for schema definition references. |
+| Path Type    | Root Value          | Example                      | Description                                                                       |
+| ------------ | ------------------- | ---------------------------- | --------------------------------------------------------------------------------- |
+| `dataPath`   | `''` (empty string) | `''`, `'/user/name'`         | JSON Pointer string without URI fragment prefix. Used for data value references.  |
+| `schemaPath` | `'#'`               | `'#'`, `'#/properties/user'` | JSON Pointer URI fragment with `#` prefix. Used for schema definition references. |
 
 ```tsx
 // Examples of standard JSONPointer usage
@@ -987,6 +987,76 @@ const formInputMap = {
   '/data/*/status': StatusBadge, // All status fields
 };
 ```
+
+#### Context Reference (`@`)
+
+Reference external context data passed to the Form, primarily used in computed properties.
+
+**Important:** The `@` symbol directly references the context object itself, not a JSON Pointer path. Therefore, you must use **JavaScript property accessor syntax** (dot notation or bracket notation) instead of JSON Pointer format:
+
+```tsx
+// ✅ Correct - Property accessor syntax
+'@.mode'; // context.mode
+'@.user.role'; // context.user.role
+'@.permissions?.edit'; // context.permissions?.edit (optional chaining)
+
+// ❌ Wrong - JSON Pointer format
+'@/mode'; // This will NOT work
+'@/user/role'; // This will NOT work
+```
+
+**Usage in computed properties:**
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    secretField: {
+      type: 'string',
+      computed: {
+        visible: '@.userRole === "admin"', // Show only for admin users
+        readOnly: '@.mode === "view"', // Read-only in view mode
+        disabled: '@.permissions?.canEdit === false', // Disabled based on permissions
+      },
+    },
+    combinedCondition: {
+      type: 'string',
+      computed: {
+        // Combine context (@) with form field references (..)
+        active: '@.featureEnabled && ../category === "premium"',
+      },
+    },
+  },
+};
+
+// Pass context to Form
+<Form
+  jsonSchema={jsonSchema}
+  context={{
+    mode: 'edit',
+    userRole: 'admin',
+    featureEnabled: true,
+    permissions: { canEdit: true },
+  }}
+/>;
+```
+
+**Key characteristics:**
+
+- Context values update reactively - when context changes, computed properties re-evaluate
+- Supports optional chaining (`?.`) for safe nested access
+- Available only in `computed` properties, not in `FormTypeInputMap` or `Form.Render`
+
+> ⚠️ **Recommendation:** Since `@` references the context object which may change dynamically at runtime, we recommend using **optional chaining (`?.`)** for safe access to nested properties. This prevents runtime errors when context properties are undefined or null.
+>
+> ```tsx
+> // ✅ Safe access with optional chaining
+> '@.user?.profile?.name'
+> '@.settings?.theme ?? "light"'
+>
+> // ⚠️ May cause errors if context structure changes
+> '@.user.profile.name'
+> ```
 
 ### Practical Usage Examples
 
@@ -1281,7 +1351,7 @@ const jsonSchema = {
   defaultValue={{
     partialArray: ['a', 'b'], // Only 2 items even if minItems=5
   }}
-/>
+/>;
 ```
 
 ### Form with Imperative Handle
