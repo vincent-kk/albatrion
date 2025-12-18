@@ -1053,7 +1053,7 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
         },
       ];
 
-      cases.forEach(({ input, expected, paths, description }) => {
+      cases.forEach(({ input, expected, paths }) => {
         const result = transformExpression(input);
         expect(result.result).toBe(expected);
         expect(result.paths).toEqual(paths);

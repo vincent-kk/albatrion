@@ -28,50 +28,50 @@
   "type": "module",
   "exports": {
     ".": {
-      "source": "./src/index.ts",
       "types": "./dist/index.d.ts",
+      "source": "./src/index.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
     "./path": {
-      "source": "./src/JSONPath/index.ts",
       "types": "./dist/JSONPath/index.d.ts",
+      "source": "./src/JSONPath/index.ts",
       "import": "./dist/JSONPath/index.mjs",
       "require": "./dist/JSONPath/index.cjs"
     },
     "./path-common": {
-      "source": "./src/JSONPath/utils/common.ts",
       "types": "./dist/JSONPath/utils/common.d.ts",
+      "source": "./src/JSONPath/utils/common.ts",
       "import": "./dist/JSONPath/utils/common.mjs",
       "require": "./dist/JSONPath/utils/common.cjs"
     },
     "./pointer": {
-      "source": "./src/JSONPointer/index.ts",
       "types": "./dist/JSONPointer/index.d.ts",
+      "source": "./src/JSONPointer/index.ts",
       "import": "./dist/JSONPointer/index.mjs",
       "require": "./dist/JSONPointer/index.cjs"
     },
     "./pointer-common": {
-      "source": "./src/JSONPointer/utils/common.ts",
       "types": "./dist/JSONPointer/utils/common.d.ts",
+      "source": "./src/JSONPointer/utils/common.ts",
       "import": "./dist/JSONPointer/utils/common.mjs",
       "require": "./dist/JSONPointer/utils/common.cjs"
     },
     "./pointer-escape": {
-      "source": "./src/JSONPointer/utils/escape/index.ts",
       "types": "./dist/JSONPointer/utils/escape/index.d.ts",
+      "source": "./src/JSONPointer/utils/escape/index.ts",
       "import": "./dist/JSONPointer/utils/escape/index.mjs",
       "require": "./dist/JSONPointer/utils/escape/index.cjs"
     },
     "./pointer-manipulator": {
-      "source": "./src/JSONPointer/utils/manipulator/index.ts",
       "types": "./dist/JSONPointer/utils/manipulator/index.d.ts",
+      "source": "./src/JSONPointer/utils/manipulator/index.ts",
       "import": "./dist/JSONPointer/utils/manipulator/index.mjs",
       "require": "./dist/JSONPointer/utils/manipulator/index.cjs"
     },
     "./pointer-patch": {
-      "source": "./src/JSONPointer/utils/patch/index.ts",
       "types": "./dist/JSONPointer/utils/patch/index.d.ts",
+      "source": "./src/JSONPointer/utils/patch/index.ts",
       "import": "./dist/JSONPointer/utils/patch/index.mjs",
       "require": "./dist/JSONPointer/utils/patch/index.cjs"
     }

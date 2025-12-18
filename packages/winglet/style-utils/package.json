@@ -28,20 +28,20 @@
   "type": "module",
   "exports": {
     ".": {
-      "source": "./src/index.ts",
       "types": "./dist/index.d.ts",
+      "source": "./src/index.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
     "./style-manager": {
-      "source": "./src/styleManager/index.ts",
       "types": "./dist/styleManager/index.d.ts",
+      "source": "./src/styleManager/index.ts",
       "import": "./dist/styleManager/index.mjs",
       "require": "./dist/styleManager/index.cjs"
     },
     "./util": {
-      "source": "./src/utils/index.ts",
       "types": "./dist/utils/index.d.ts",
+      "source": "./src/utils/index.ts",
       "import": "./dist/utils/index.mjs",
       "require": "./dist/utils/index.cjs"
     }

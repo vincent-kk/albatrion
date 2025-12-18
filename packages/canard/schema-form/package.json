@@ -29,8 +29,8 @@
   "type": "module",
   "exports": {
     ".": {
-      "source": "./src/index.ts",
       "types": "./dist/index.d.ts",
+      "source": "./src/index.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     }
@@ -44,9 +44,9 @@
   ],
   "scripts": {
     "build": "rollup -c && yarn build:types",
-    "build-storybook": "storybook build",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.declarations.json",
+    "build-storybook": "storybook build",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "make-dependency-graph": "npx depcruise src --config .dependency-cruiser.js --output-type dot > dependency-graph.dot && dot -Tpng dependency-graph.dot -o dependency-graph.png",

@@ -508,8 +508,12 @@ describe('Context Symbol (@) - JSON_POINTER_REGEX', () => {
 
     test('경로 내 @ 포함 - path segment 내에 @ 허용', () => {
       // @ 는 path segment에서 허용되는 문자
-      expect(extractMatches('./aa/@asdas/bbb/cc')).toEqual(['./aa/@asdas/bbb/cc']);
-      expect(extractMatches('#/config/@env/value')).toEqual(['#/config/@env/value']);
+      expect(extractMatches('./aa/@asdas/bbb/cc')).toEqual([
+        './aa/@asdas/bbb/cc',
+      ]);
+      expect(extractMatches('#/config/@env/value')).toEqual([
+        '#/config/@env/value',
+      ]);
       expect(extractMatches('../@special/path')).toEqual(['../@special/path']);
       expect(extractMatches('/@root/@nested')).toEqual(['/@root/@nested']);
     });
@@ -523,9 +527,14 @@ describe('Context Symbol (@) - JSON_POINTER_REGEX', () => {
 
     test('경로 내 @ vs 독립 @ 구분', () => {
       // @ 가 경로의 일부일 때 vs 독립적인 context일 때
-      expect(extractMatches('./aa/@asdas/bbb/cc === true')).toEqual(['./aa/@asdas/bbb/cc']);
+      expect(extractMatches('./aa/@asdas/bbb/cc === true')).toEqual([
+        './aa/@asdas/bbb/cc',
+      ]);
       expect(extractMatches('@ === true')).toEqual(['@']);
-      expect(extractMatches('@.prop && ./path/@segment')).toEqual(['@', './path/@segment']);
+      expect(extractMatches('@.prop && ./path/@segment')).toEqual([
+        '@',
+        './path/@segment',
+      ]);
     });
   });
 });

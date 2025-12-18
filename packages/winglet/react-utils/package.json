@@ -30,44 +30,44 @@
   "type": "module",
   "exports": {
     ".": {
-      "source": "./src/index.ts",
       "types": "./dist/index.d.ts",
+      "source": "./src/index.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
     "./portal": {
-      "source": "./src/components/Portal/index.ts",
       "types": "./dist/components/Portal/index.d.ts",
+      "source": "./src/components/Portal/index.ts",
       "import": "./dist/components/Portal/index.mjs",
       "require": "./dist/components/Portal/index.cjs"
     },
     "./hoc": {
-      "source": "./src/hoc/index.ts",
       "types": "./dist/hoc/index.d.ts",
+      "source": "./src/hoc/index.ts",
       "import": "./dist/hoc/index.mjs",
       "require": "./dist/hoc/index.cjs"
     },
     "./hook": {
-      "source": "./src/hooks/index.ts",
       "types": "./dist/hooks/index.d.ts",
+      "source": "./src/hooks/index.ts",
       "import": "./dist/hooks/index.mjs",
       "require": "./dist/hooks/index.cjs"
     },
     "./filter": {
-      "source": "./src/utils/filter/index.ts",
       "types": "./dist/utils/filter/index.d.ts",
+      "source": "./src/utils/filter/index.ts",
       "import": "./dist/utils/filter/index.mjs",
       "require": "./dist/utils/filter/index.cjs"
     },
     "./object": {
-      "source": "./src/utils/object/index.ts",
       "types": "./dist/utils/object/index.d.ts",
+      "source": "./src/utils/object/index.ts",
       "import": "./dist/utils/object/index.mjs",
       "require": "./dist/utils/object/index.cjs"
     },
     "./render": {
-      "source": "./src/utils/render/index.ts",
       "types": "./dist/utils/render/index.d.ts",
+      "source": "./src/utils/render/index.ts",
       "import": "./dist/utils/render/index.mjs",
       "require": "./dist/utils/render/index.cjs"
     }
