@@ -53,40 +53,12 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
 
   protected override onChange: HandleChange<StringValue | Nullish>;
 
-  constructor({
-    name,
-    scope,
-    variant,
-    jsonSchema,
-    schemaType,
-    nullable,
-    defaultValue,
-    onChange,
-    parentNode,
-    validationMode,
-    validatorFactory,
-    required,
-  }: SchemaNodeConstructorProps<StringSchema>) {
-    super({
-      name,
-      scope,
-      variant,
-      jsonSchema,
-      schemaType,
-      nullable,
-      defaultValue,
-      onChange,
-      parentNode,
-      validationMode,
-      validatorFactory,
-      required,
-    });
-
+  constructor(properties: SchemaNodeConstructorProps<StringSchema>) {
+    super(properties);
     this.onChange =
       this.jsonSchema.options?.omitEmpty !== false
         ? this.onChangeWithOmitEmpty
         : super.onChange;
-
     if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
     if (this.jsonSchema.options?.trim === true)
       this.subscribe(({ type }) => {

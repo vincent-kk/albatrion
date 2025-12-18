@@ -4,7 +4,7 @@ import { NULL_FUNCTION } from '@winglet/common-utils/constant';
 import { isMemoComponent, isReactComponent } from '@winglet/react-utils/filter';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 import {
-  useConstant,
+  useMemorize,
   useReference,
   useSnapshot,
 } from '@winglet/react-utils/hook';
@@ -49,9 +49,9 @@ export const SchemaNodeInputWrapper = (
       ...overrideFormTypeInputPropsRef?.current,
       ...preferredOverrideProps,
     });
-    const PreferredFormTypeInput = useConstant(
+    const PreferredFormTypeInput = useMemorize(() =>
       OverridePreferredFormTypeInput &&
-        isReactComponent(OverridePreferredFormTypeInput)
+      isReactComponent(OverridePreferredFormTypeInput)
         ? isMemoComponent(OverridePreferredFormTypeInput)
           ? withErrorBoundary(OverridePreferredFormTypeInput)
           : memo(withErrorBoundary(OverridePreferredFormTypeInput))

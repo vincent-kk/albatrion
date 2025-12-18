@@ -306,14 +306,16 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
           paths: ['../a'],
         },
         {
+          // ] is a structural delimiter (balanced brackets)
           input: '[../b]',
-          expected: '[dependencies[0]',
-          paths: ['../b]'],
+          expected: '[dependencies[0]]',
+          paths: ['../b'],
         },
         {
+          // } is a structural delimiter (template literal closing)
           input: '{../c}',
-          expected: '{dependencies[0]',
-          paths: ['../c}'],
+          expected: '{dependencies[0]}',
+          paths: ['../c'],
         },
         {
           input: 'func((../arg1), (../arg2))',
@@ -476,6 +478,48 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
         expect(result.paths).toEqual(paths);
       });
     });
+
+    test('템플릿 리터럴 placeholder', () => {
+      // } 는 구조적 구분자로 템플릿 리터럴 placeholder 닫기에 사용
+      const cases = [
+        {
+          // 가장 일반적인 패턴: ${../path}
+          input: '${../path}',
+          expected: '${dependencies[0]}',
+          paths: ['../path'],
+        },
+        {
+          // 여러 placeholder
+          input: '${../a} + ${../b}',
+          expected: '${dependencies[0]} + ${dependencies[1]}',
+          paths: ['../a', '../b'],
+        },
+        {
+          // 중첩된 경로
+          input: '${#/data/items}',
+          expected: '${dependencies[0]}',
+          paths: ['#/data/items'],
+        },
+        {
+          // 컨텍스트 참조
+          input: '${@}',
+          expected: '${dependencies[0]}',
+          paths: ['@'],
+        },
+        {
+          // 복잡한 표현식
+          input: '${../price * ../quantity}',
+          expected: '${dependencies[0] * dependencies[1]}',
+          paths: ['../price', '../quantity'],
+        },
+      ];
+
+      cases.forEach(({ input, expected, paths }) => {
+        const result = transformExpression(input);
+        expect(result.result).toBe(expected);
+        expect(result.paths).toEqual(paths);
+      });
+    });
   });
 
   describe('❌ 매칭되지 않는 패턴', () => {
@@ -551,9 +595,9 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
           paths: ['#/'],
         },
         {
-          input: '(/)', // 괄호 안의 나누기 연산자
-          expected: 'dependencies[0]',
-          paths: ['(/)'],
+          input: '(/)', // 괄호로 감싼 루트 경로
+          expected: '(dependencies[0])',
+          paths: ['/'],
         },
         {
           input: '/absolute/path', // 명확한 절대 경로
@@ -774,11 +818,13 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
           paths: ['../array[0]'],
         },
         {
+          // Balanced braces are included in path
           input: '#/config{env} === "prod"',
           expected: 'dependencies[0] === "prod"',
           paths: ['#/config{env}'],
         },
         {
+          // Balanced braces are included in path
           input: './template{value} !== null',
           expected: 'dependencies[0] !== null',
           paths: ['./template{value}'],
@@ -825,9 +871,10 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
           paths: ['../pointer'],
         },
         {
+          // @../ 형태는 Context 뒤에 Parent 경로가 오는 것으로, @ 도 경로도 매칭되지 않음
           input: '@../annotation',
-          expected: '@dependencies[0]',
-          paths: ['../annotation'],
+          expected: '@../annotation',
+          paths: [],
         },
         {
           input: '%../modulo',
@@ -958,8 +1005,8 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
 
     test('조건부 필드 표시 로직', () => {
       const displayLogic = `
-        (../showAdvanced) && 
-        ((../../role) === "admin" || 
+        (../showAdvanced) &&
+        ((../../role) === "admin" ||
          ((../permissions).includes("edit") && (../permissions).includes("view"))) &&
         !(#/config/maintenanceMode)
       `;
@@ -971,6 +1018,108 @@ describe('JSON_POINTER_REGEX 경계선 테스트', () => {
         '../permissions',
         '#/config/maintenanceMode',
       ]);
+    });
+  });
+
+  describe('백슬래시 이스케이프 (정규식 리터럴)', () => {
+    test('백슬래시로 이스케이프된 슬래시는 경로로 매칭되지 않음', () => {
+      // \/ 는 JS에서 / 와 동일하지만, 정규식에서는 이스케이프로 처리
+      // lookbehind가 백슬래시를 블랙리스트에 포함하므로 매칭 안됨
+      const cases = [
+        {
+          input: '\\/pattern\\/',
+          expected: '\\/pattern\\/',
+          paths: [],
+          description: '정규식 리터럴 이스케이프',
+        },
+        {
+          input: '\\/test\\/i.test(../value)',
+          expected: '\\/test\\/i.test(dependencies[0])',
+          paths: ['../value'],
+          description: '정규식 + 경로 조합',
+        },
+        {
+          input: '(\\/abc\\/).test(../str)',
+          expected: '(\\/abc\\/).test(dependencies[0])',
+          paths: ['../str'],
+          description: '괄호로 감싼 정규식 + 경로',
+        },
+        {
+          // 경로와 메서드를 분리하려면 괄호 필요 (그렇지 않으면 .match가 경로의 일부)
+          input: '(../value).match(\\/\\d+\\/)',
+          expected: '(dependencies[0]).match(\\/\\d+\\/)',
+          paths: ['../value'],
+          description: 'match 메서드와 이스케이프된 정규식',
+        },
+      ];
+
+      cases.forEach(({ input, expected, paths, description }) => {
+        const result = transformExpression(input);
+        expect(result.result).toBe(expected);
+        expect(result.paths).toEqual(paths);
+      });
+    });
+
+    test('이스케이프 안된 슬래시는 절대 경로로 매칭됨', () => {
+      // 비교: 이스케이프 없이 /pattern/은 경로로 매칭
+      const result = transformExpression('/pattern/');
+      expect(result.paths).toEqual(['/pattern']);
+      // /pattern/은 /pattern 경로 + / 나누기 연산자로 해석됨
+    });
+  });
+
+  describe('Performance - deeply nested paths (ReDoS prevention)', () => {
+    test('extremely deep parent references', () => {
+      const deepParent = '../'.repeat(100) + 'target';
+      const result = transformExpression(deepParent);
+      expect(result.paths).toHaveLength(1);
+      expect(result.paths[0]).toBe(deepParent);
+    });
+
+    test('extremely deep path segments', () => {
+      const deepPath = '#/' + Array(200).fill('level').join('/');
+      const result = transformExpression(deepPath);
+      expect(result.paths).toHaveLength(1);
+      expect(result.paths[0]).toBe(deepPath);
+    });
+
+    test('combined deep parent refs and segments', () => {
+      const combinedPath =
+        '../'.repeat(30) + Array(100).fill('segment').join('/');
+      const result = transformExpression(combinedPath);
+      expect(result.paths).toHaveLength(1);
+      expect(result.paths[0]).toBe(combinedPath);
+    });
+
+    test('deeply nested paths should complete quickly', () => {
+      const start = performance.now();
+
+      transformExpression('../'.repeat(50) + 'a');
+      transformExpression('#/' + 'a/'.repeat(200) + 'final');
+      transformExpression('./' + 'path/'.repeat(100) + 'end');
+
+      const elapsed = performance.now() - start;
+      expect(elapsed).toBeLessThan(100); // Should complete in < 100ms
+    });
+
+    test('multiple deep paths in single expression', () => {
+      const expr = `${'../'.repeat(20)}a === "x" && #/${'b/'.repeat(50)}c > 0`;
+      const result = transformExpression(expr);
+      expect(result.paths).toHaveLength(2);
+    });
+
+    test('pathological nesting patterns should not cause ReDoS', () => {
+      const start = performance.now();
+
+      // Test various pathological patterns
+      transformExpression('../'.repeat(200) + 'end');
+      transformExpression('#/' + 'segment/'.repeat(300) + 'final');
+      transformExpression(
+        '../'.repeat(50) + 'a === "x" && ../' + 'b/'.repeat(50) + 'c > 0',
+      );
+
+      const elapsed = performance.now() - start;
+      expect(elapsed).toBeLessThan(200); // Should complete in < 200ms
     });
   });
 });

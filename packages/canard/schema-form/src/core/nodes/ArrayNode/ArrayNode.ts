@@ -94,37 +94,11 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
 
   protected override onChange: HandleChange<ArrayValue | Nullish>;
 
-  constructor({
-    name,
-    scope,
-    variant,
-    jsonSchema,
-    schemaType,
-    nullable,
-    defaultValue,
-    onChange,
-    nodeFactory,
-    parentNode,
-    validationMode,
-    validatorFactory,
-    required,
-  }: BranchNodeConstructorProps<ArraySchema>) {
-    super({
-      name,
-      scope,
-      variant,
-      jsonSchema,
-      schemaType,
-      nullable,
-      defaultValue,
-      onChange,
-      parentNode,
-      validationMode,
-      validatorFactory,
-      required,
-    });
+  constructor(properties: BranchNodeConstructorProps<ArraySchema>) {
+    super(properties);
     const hasDefault =
-      defaultValue !== undefined || jsonSchema.default !== undefined;
+      properties.defaultValue !== undefined ||
+      properties.jsonSchema.default !== undefined;
     const handleChange: HandleChange<ArrayValue | Nullish> =
       this.jsonSchema.options?.omitEmpty === false
         ? (value, batch) => super.onChange(value, batch)
@@ -133,7 +107,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     this.#strategy = this.#createStrategy(
       hasDefault,
       handleChange,
-      nodeFactory,
+      properties.nodeFactory,
     );
     this.initialize();
   }

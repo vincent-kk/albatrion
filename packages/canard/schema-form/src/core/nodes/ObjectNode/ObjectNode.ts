@@ -91,41 +91,14 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     return false;
   }
 
-  constructor({
-    name,
-    scope,
-    variant,
-    jsonSchema,
-    nullable,
-    schemaType,
-    defaultValue,
-    onChange,
-    nodeFactory,
-    parentNode,
-    validationMode,
-    validatorFactory,
-    required,
-  }: BranchNodeConstructorProps<ObjectSchema>) {
-    super({
-      name,
-      scope,
-      variant,
-      jsonSchema,
-      schemaType,
-      nullable,
-      defaultValue,
-      onChange,
-      parentNode,
-      validationMode,
-      validatorFactory,
-      required,
-    });
+  constructor(properties: BranchNodeConstructorProps<ObjectSchema>) {
+    super(properties);
     const handleChange: HandleChange<ObjectValue | Nullish> =
       this.jsonSchema.options?.omitEmpty === false
         ? (value, batch) => super.onChange(value, batch)
         : (value, batch) => super.onChange(omitEmptyObject(value), batch);
     this.onChange = handleChange;
-    this.#strategy = this.#createStrategy(handleChange, nodeFactory);
+    this.#strategy = this.#createStrategy(handleChange, properties.nodeFactory);
     this.initialize();
   }
 

@@ -7,14 +7,19 @@ export {
   PublicNodeEventType,
   PublicSetValueOption,
 } from './type';
-export { createSchemaNodeFactory } from './schemaNodeFactory';
 
-export { isArrayNode } from './ArrayNode';
-export { isBooleanNode } from './BooleanNode';
-export { isNullNode } from './NullNode';
-export { isNumberNode } from './NumberNode';
-export { isObjectNode } from './ObjectNode';
-export { isStringNode } from './StringNode';
-export { isVirtualNode } from './VirtualNode';
+export {
+  createSchemaNodeFactory,
+  contextNodeFactory,
+} from './schemaNodeFactory';
+
+export { type ArrayNode, isArrayNode } from './ArrayNode';
+export { type BooleanNode, isBooleanNode } from './BooleanNode';
+export { type NullNode, isNullNode } from './NullNode';
+export { type NumberNode, isNumberNode } from './NumberNode';
+export { type ObjectNode, isObjectNode } from './ObjectNode';
+export { type StringNode, isStringNode } from './StringNode';
+export { type VirtualNode, isVirtualNode } from './VirtualNode';
+export type { ContextNode } from './ContextNode';
 
 export { isSchemaNode, isBranchNode, isTerminalNode } from './filter';

@@ -2,7 +2,7 @@ import { Fragment, memo, useMemo } from 'react';
 
 import { NULL_FUNCTION } from '@winglet/common-utils/constant';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
-import { useConstant } from '@winglet/react-utils/hook';
+import { useConstant, useMemorize } from '@winglet/react-utils/hook';
 
 import { NodeEventType, NodeState } from '@/schema-form/core';
 import { useSchemaNode } from '@/schema-form/hooks/useSchemaNode';
@@ -54,7 +54,7 @@ export const SchemaNodeProxy = ({
     checkShowError,
   } = useFormTypeRendererContext();
 
-  const FormTypeRenderer = useConstant(
+  const FormTypeRenderer = useMemorize(() =>
     memo(withErrorBoundary(InputFormTypeRenderer || ContextFormTypeRenderer)),
   );
 

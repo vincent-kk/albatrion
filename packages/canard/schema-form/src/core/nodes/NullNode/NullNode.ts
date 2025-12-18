@@ -47,34 +47,8 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
     this.#emitChange(input, option);
   }
 
-  constructor({
-    name,
-    scope,
-    variant,
-    jsonSchema,
-    schemaType,
-    nullable,
-    defaultValue,
-    onChange,
-    parentNode,
-    validationMode,
-    validatorFactory,
-    required,
-  }: SchemaNodeConstructorProps<NullSchema>) {
-    super({
-      name,
-      scope,
-      variant,
-      jsonSchema,
-      schemaType,
-      nullable,
-      defaultValue,
-      onChange,
-      parentNode,
-      validationMode,
-      validatorFactory,
-      required,
-    });
+  constructor(properties: SchemaNodeConstructorProps<NullSchema>) {
+    super(properties);
     if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
     this.initialize();
   }

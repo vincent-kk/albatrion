@@ -36,6 +36,7 @@ import type {
 
 import type { ArrayNode } from './ArrayNode';
 import type { BooleanNode } from './BooleanNode';
+import type { ContextNode } from './ContextNode';
 import type { NullNode } from './NullNode';
 import type { NumberNode } from './NumberNode';
 import type { ObjectNode } from './ObjectNode';
@@ -136,6 +137,7 @@ export interface SchemaNodeConstructorProps<
   validationMode?: ValidationMode;
   validatorFactory?: ValidatorFactory;
   required?: boolean;
+  context?: ContextNode;
 }
 
 /**

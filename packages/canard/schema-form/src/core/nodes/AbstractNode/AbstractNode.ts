@@ -158,6 +158,7 @@ export abstract class AbstractNode<
     return this.#schemaPath;
   }
 
+  /** [readonly] Unique identifier combining schemaPath and data path */
   public get key() {
     return this.#schemaPath + UNIT_SEPARATOR + this.#path;
   }
@@ -187,6 +188,18 @@ export abstract class AbstractNode<
 
     this.publish(NodeEventType.UpdatePath, current, { previous, current });
     return true;
+  }
+
+  /** Context node reference for form-wide shared data */
+  #context: AbstractNode | null;
+
+  /**
+   * [readonly] Context node for accessing form-wide shared data
+   * @note Root nodes return their own context, child nodes delegate to rootNode.context
+   * @internal Internal implementation method. Do not call directly.
+   */
+  public get context(): SchemaNode | null {
+    return this.isRoot ? (this.#context as SchemaNode) : this.rootNode.context;
   }
 
   /** Node's initial default value */
@@ -314,6 +327,7 @@ export abstract class AbstractNode<
     validationMode,
     validatorFactory,
     required,
+    context,
   }: SchemaNodeConstructorProps<Schema, Value>) {
     this.scope = scope;
     this.variant = variant;
@@ -322,6 +336,7 @@ export abstract class AbstractNode<
     this.nullable = nullable;
     this.required = required ?? false;
     this.#name = name || '';
+    this.#context = context || null;
 
     this.isRoot = !parentNode;
     this.rootNode = (parentNode?.rootNode || this) as SchemaNode;
@@ -375,9 +390,10 @@ export abstract class AbstractNode<
    */
   public find(this: AbstractNode, pointer?: string): SchemaNode | null {
     if (pointer === undefined) return this as SchemaNode;
+    if (pointer === $.Context) return this.context;
+    if (pointer === $.Root) return this.rootNode;
     const absolute = isAbsolutePath(pointer);
-    if (pointer === $.Root || (absolute && pointer.length === 1))
-      return this.rootNode;
+    if (absolute && pointer.length === 1) return this.rootNode;
     return traversal(absolute ? this.rootNode : (this as SchemaNode), pointer);
   }
 
@@ -916,6 +932,7 @@ export abstract class AbstractNode<
     return this.globalErrors;
   }
 
+  /** [readonly] Whether validation is enabled for this form */
   public get validation(): boolean {
     return this.isRoot
       ? this.#validator !== undefined

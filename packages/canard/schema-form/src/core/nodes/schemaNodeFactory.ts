@@ -1,4 +1,7 @@
+import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
+
 import { JsonSchemaError } from '@/schema-form/errors';
+import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 import {
   type ResolveSchema,
   extractSchemaInfo,
@@ -13,24 +16,44 @@ import type {
   NullSchema,
   NumberSchema,
   ObjectSchema,
+  ObjectValue,
   StringSchema,
   VirtualSchema,
 } from '@/schema-form/types';
 
 import { ArrayNode } from './ArrayNode';
 import { BooleanNode } from './BooleanNode';
+import { ContextNode } from './ContextNode';
 import { NullNode } from './NullNode';
 import { NumberNode } from './NumberNode';
 import { ObjectNode } from './ObjectNode';
 import { StringNode } from './StringNode';
 import { VirtualNode } from './VirtualNode';
-import type {
-  BranchNodeConstructorProps,
-  NodeFactoryProps,
-  SchemaNodeConstructorProps,
-  SchemaNodeFactory,
-  VirtualNodeConstructorProps,
+import {
+  type BranchNodeConstructorProps,
+  type NodeFactoryProps,
+  type SchemaNodeConstructorProps,
+  type SchemaNodeFactory,
+  ValidationMode,
+  type VirtualNodeConstructorProps,
 } from './type';
+
+/**
+ * Creates a context ObjectNode for sharing form-wide data across all nodes.
+ * @note The context node is a terminal ObjectNode with no validation.
+ * @param defaultValue - Initial value for the context node
+ * @returns An ObjectNode instance for form-wide context data
+ */
+export const contextNodeFactory = (defaultValue?: ObjectValue) =>
+  new ContextNode({
+    jsonSchema: { type: 'object' },
+    schemaType: 'object',
+    name: JSONPointer.Context,
+    nullable: false,
+    defaultValue,
+    onChange: NOOP_FUNCTION,
+    validationMode: ValidationMode.None,
+  });
 
 /**
  * Creates a SchemaNode factory function that matches the JSON Schema type.

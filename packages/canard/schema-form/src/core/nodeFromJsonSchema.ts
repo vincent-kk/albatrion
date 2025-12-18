@@ -7,7 +7,8 @@ import type {
   ValidatorFactory,
 } from '@/schema-form/types';
 
-import { createSchemaNodeFactory } from './nodes';
+import { contextNodeFactory, createSchemaNodeFactory } from './nodes';
+import type { ContextNode } from './nodes';
 import type { InferSchemaNode, ValidationMode } from './nodes/type';
 
 /** Properties interface for creating Node from JSON Schema */
@@ -20,6 +21,7 @@ interface NodeFromSchemaProps<
   onChange: Fn<[value: Value]>;
   validationMode?: ValidationMode;
   validatorFactory?: ValidatorFactory;
+  context?: ContextNode;
 }
 
 /**
@@ -38,6 +40,7 @@ export const nodeFromJsonSchema = <
   onChange,
   validationMode,
   validatorFactory,
+  context,
 }: NodeFromSchemaProps<Schema, Value>) => {
   const resolveSchema = getResolveSchema(jsonSchema);
   const nodeFactory = createSchemaNodeFactory(resolveSchema);
@@ -48,5 +51,8 @@ export const nodeFromJsonSchema = <
     onChange: onChange as Fn<[unknown]>,
     validationMode,
     validatorFactory,
+    context,
   }) as InferSchemaNode<Schema>;
 };
+
+export { contextNodeFactory };

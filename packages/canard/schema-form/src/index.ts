@@ -24,6 +24,13 @@ export { JSONPointer } from './helpers/jsonPointer';
 
 export {
   type SchemaNode,
+  type ArrayNode,
+  type BooleanNode,
+  type NullNode,
+  type NumberNode,
+  type ObjectNode,
+  type StringNode,
+  type VirtualNode,
   NodeState,
   ValidationMode,
   PublicNodeEventType as NodeEventType,
