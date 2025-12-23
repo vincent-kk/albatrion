@@ -1,3 +1,6 @@
+import { map } from '@winglet/common-utils/array';
+import { isArray } from '@winglet/common-utils/filter';
+import { minLite } from '@winglet/common-utils/math';
 import { equals } from '@winglet/common-utils/object';
 import { isObjectSchema } from '@winglet/json-schema/filter';
 
@@ -37,6 +40,29 @@ export class TerminalStrategy implements ArrayNodeStrategy {
 
   /** Default value to use when creating new array items */
   private readonly __defaultItemValue__: AllowedValue;
+
+  /** Default value to use when creating new array prefixItems */
+  private readonly __defaultPrefixItemValues__: Array<AllowedValue> | undefined;
+
+  /**
+   * Gets the default value for a new array item based on its position.
+   *
+   * Returns the appropriate default value considering `prefixItems`:
+   * - If `prefixItems` is defined and the current length is within its range,
+   *   returns the default value from the corresponding prefixItems schema
+   * - Otherwise, returns the default value from the `items` schema
+   *
+   * @returns The default value to use when adding a new item at the current position
+   */
+  private get __defaultValue__() {
+    const index = this.length;
+    if (
+      this.__defaultPrefixItemValues__ !== undefined &&
+      this.__defaultPrefixItemValues__.length > index
+    )
+      return this.__defaultPrefixItemValues__[index];
+    return this.__defaultItemValue__;
+  }
 
   /** Flag indicating whether the strategy is locked to prevent recursive updates */
   private __locked__: boolean = true;
@@ -100,9 +126,28 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     this.__minItems__ = jsonSchema.minItems || 0;
     this.__maxItems__ = jsonSchema.maxItems || Infinity;
 
-    this.__defaultItemValue__ = isObjectSchema(jsonSchema.items)
-      ? getObjectDefaultValue(jsonSchema.items)
-      : jsonSchema.items.default;
+    if (jsonSchema.items)
+      this.__defaultItemValue__ = isObjectSchema(jsonSchema.items)
+        ? getObjectDefaultValue(jsonSchema.items)
+        : jsonSchema.items.default;
+
+    if (isArray(jsonSchema.prefixItems))
+      this.__defaultPrefixItemValues__ = map(
+        jsonSchema.prefixItems,
+        (schema) =>
+          isObjectSchema(schema)
+            ? getObjectDefaultValue(schema)
+            : schema.default,
+      );
+
+    if (
+      jsonSchema.items === false &&
+      this.__defaultPrefixItemValues__ !== undefined
+    )
+      this.__maxItems__ = minLite(
+        this.__maxItems__,
+        this.__defaultPrefixItemValues__.length,
+      );
 
     if (hasDefault) {
       const defaultValue = host.defaultValue;
@@ -123,7 +168,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   public push(input?: ArrayValue[number], unlimited?: boolean) {
     if (unlimited !== true && this.__maxItems__ <= this.length)
       return Promise.resolve(this.length);
-    const data = input ?? this.__defaultItemValue__;
+    const data = input ?? this.__defaultValue__;
     const value = this.__value__ == null ? [data] : [...this.__value__, data];
     this.__emitChange__(value);
     return Promise.resolve(this.length);
