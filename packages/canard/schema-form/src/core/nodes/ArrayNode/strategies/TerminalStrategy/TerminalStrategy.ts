@@ -140,10 +140,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
             : schema.default,
       );
 
-    if (
-      jsonSchema.items === false &&
-      this.__defaultPrefixItemValues__ !== undefined
-    )
+    if (!jsonSchema.items && this.__defaultPrefixItemValues__ !== undefined)
       this.__maxItems__ = minLite(
         this.__maxItems__,
         this.__defaultPrefixItemValues__.length,

@@ -165,7 +165,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__minItems__ = jsonSchema.minItems || 0;
     this.__maxItems__ = jsonSchema.maxItems || Infinity;
 
-    if (jsonSchema.items === false && isArray(jsonSchema.prefixItems))
+    if (!jsonSchema.items && isArray(jsonSchema.prefixItems))
       this.__maxItems__ = minLite(
         this.__maxItems__,
         jsonSchema.prefixItems.length,
