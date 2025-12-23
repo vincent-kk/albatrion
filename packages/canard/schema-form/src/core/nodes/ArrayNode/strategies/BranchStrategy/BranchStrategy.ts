@@ -210,10 +210,12 @@ export class BranchStrategy implements ArrayNodeStrategy {
       return promiseAfterMicrotask(this.length);
 
     const index = this.__keys__.length;
+    const childSchema = getChildSchema(host.jsonSchema, index);
+    if (childSchema === null) return promiseAfterMicrotask(this.length);
+
     const key = ('#' + this.__revision__++) as ChildSegmentKey;
     this.__keys__.push(key);
 
-    const childSchema = getChildSchema(host.jsonSchema, index);
     const defaultValue = data !== undefined ? data : childSchema?.default;
     const childNode = this.__nodeFactory__({
       name: '' + index,
