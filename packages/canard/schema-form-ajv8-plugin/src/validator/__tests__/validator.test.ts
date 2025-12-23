@@ -1,4 +1,4 @@
-import Ajv from 'ajv';
+import Ajv from 'ajv/dist/2020';
 import { describe, expect, it } from 'vitest';
 
 import { ajvValidatorPlugin } from '../validatorPlugin';

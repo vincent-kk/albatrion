@@ -1,5 +1,5 @@
 import type { JsonSchemaError } from '@canard/schema-form';
-import type { ErrorObject } from 'ajv';
+import type { ErrorObject } from 'ajv/dist/2020';
 
 const JSON_POINTER_SEPARATOR = '/';
 
