@@ -9,13 +9,17 @@ import { validateBuildOptions } from './utils/validateBuildOptions.mjs';
 
 export { getEntrypoints } from './utils/getEntrypoints.mjs';
 
-const baseExternal = (path) => {
-  // 내부 패키지는 번들에 포함
-  if (path.startsWith('@aileron')) return false;
-  // 다른 외부 라이브러리들은 external로 처리
-  if (path.startsWith('@winglet')) return true;
-  return /node_modules/.test(path);
-};
+/**
+ * Determines whether a module should be treated as external.
+ *
+ * Bundled: @aileron/*, @/* (path aliases), relative paths, absolute paths
+ * External: Everything else (workspace packages, node:*, npm packages)
+ */
+const baseExternal = (id) =>
+  !id.startsWith('@aileron') &&
+  !id.startsWith('@/') &&
+  !id.startsWith('.') &&
+  !id.startsWith('/');
 
 export const getLibBuildOptions = (callerUrl) => ({
   /**
