@@ -7,6 +7,7 @@ export const DEFINITIONS = 'definitions';
 export const PROPERTIES = 'properties';
 export const ADDITIONAL_PROPERTIES = 'additionalProperties';
 export const ITEMS = 'items';
+export const PREFIX_ITEMS = 'prefixItems';
 
 export const CONDITIONAL_KEYWORDS = ['not', 'if', 'then', 'else'] as const;
 export const COMPOSITION_KEYWORDS = ['allOf', 'anyOf', 'oneOf'] as const;
@@ -17,7 +18,7 @@ export type CompositionKeyword = (typeof COMPOSITION_KEYWORDS)[number];
 
 export type PropertiesKeyword = typeof PROPERTIES;
 export type AdditionalPropertiesKeyword = typeof ADDITIONAL_PROPERTIES;
-export type ItemsKeyword = typeof ITEMS;
+export type ItemsKeyword = typeof ITEMS | typeof PREFIX_ITEMS;
 
 export enum OperationPhase {
   /** Phase when first visiting a node */
