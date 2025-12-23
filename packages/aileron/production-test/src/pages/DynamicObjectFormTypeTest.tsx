@@ -8,7 +8,7 @@ import {
 } from "react";
 
 import {
-  type ChildComponentProps,
+  type ChildNodeComponentProps,
   Form,
   type FormTypeInputProps,
   type JsonSchema,
@@ -169,7 +169,7 @@ const CustomObjectFormType = ({
     const components: Partial<Record<keyof Value, ReactNode>> = {};
     Object.keys(ChildNodeMap).forEach((field) => {
       const Component = ChildNodeMap[field as keyof Value] as ComponentType<
-        ChildComponentProps<Value[keyof Value]>
+        ChildNodeComponentProps<Value[keyof Value]>
       >;
       if (Component) {
         components[field as keyof Value] = (
