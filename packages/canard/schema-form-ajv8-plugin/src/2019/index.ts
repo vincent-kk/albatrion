@@ -1,9 +1,9 @@
 import type { SchemaFormPlugin } from '@canard/schema-form';
 
-import { ajvValidatorPlugin } from './validator/validatorPlugin';
+import { ajvValidatorPlugin, createValidatorFactory } from './validatorPlugin';
 
 export const plugin = {
   validator: ajvValidatorPlugin,
 } satisfies SchemaFormPlugin;
 
-export { createValidatorFactory } from './validator/createValidatorFactory';
+export { createValidatorFactory };

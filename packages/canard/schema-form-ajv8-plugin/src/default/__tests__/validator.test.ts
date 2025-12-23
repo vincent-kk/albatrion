@@ -1,7 +1,7 @@
 import Ajv from 'ajv/dist/2020';
 import { describe, expect, it } from 'vitest';
 
-import { ajvValidatorPlugin } from '../validatorPlugin';
+import { ajvValidatorPlugin } from '../../default/validatorPlugin';
 
 describe('ajvValidatorPlugin', () => {
   describe('기본 검증 동작', () => {
