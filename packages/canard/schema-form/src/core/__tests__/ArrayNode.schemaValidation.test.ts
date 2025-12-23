@@ -82,6 +82,105 @@ describe('ArrayNode Schema Validation', () => {
         "Array schema with 'items: false' must have 'prefixItems' defined",
       );
     });
+
+    it('should throw error when prefixItems only and maxItems exceeds prefixItems length', () => {
+      const schema = {
+        type: 'array',
+        prefixItems: [{ type: 'string' }, { type: 'number' }],
+        maxItems: 5, // prefixItems.length = 2, maxItems = 5
+      } as const;
+
+      // @ts-expect-error - Testing invalid schema configuration
+      expect(() => validateArraySchema(schema)).toThrow(JsonSchemaError);
+      // @ts-expect-error - Testing invalid schema configuration
+      expect(() => validateArraySchema(schema)).toThrow(
+        "Array schema without 'items' cannot have 'maxItems' (5) greater than 'prefixItems' length (2)",
+      );
+    });
+
+    it('should throw error when prefixItems only and minItems exceeds prefixItems length', () => {
+      const schema = {
+        type: 'array',
+        prefixItems: [{ type: 'string' }, { type: 'number' }],
+        minItems: 4, // prefixItems.length = 2, minItems = 4
+      } as const;
+
+      // @ts-expect-error - Testing invalid schema configuration
+      expect(() => validateArraySchema(schema)).toThrow(JsonSchemaError);
+      // @ts-expect-error - Testing invalid schema configuration
+      expect(() => validateArraySchema(schema)).toThrow(
+        "Array schema without 'items' cannot have 'minItems' (4) greater than 'prefixItems' length (2)",
+      );
+    });
+
+    it('should pass when prefixItems only and maxItems equals prefixItems length', () => {
+      const schema = {
+        type: 'array',
+        prefixItems: [{ type: 'string' }, { type: 'number' }, { type: 'boolean' }],
+        maxItems: 3, // prefixItems.length = 3, maxItems = 3 (equal is OK)
+      } as const;
+
+      // @ts-expect-error - Testing valid schema configuration
+      expect(() => validateArraySchema(schema)).not.toThrow();
+      // @ts-expect-error - Testing valid schema configuration
+      expect(validateArraySchema(schema)).toBe(true);
+    });
+
+    it('should pass when prefixItems only and minItems equals prefixItems length', () => {
+      const schema = {
+        type: 'array',
+        prefixItems: [{ type: 'string' }, { type: 'number' }],
+        minItems: 2, // prefixItems.length = 2, minItems = 2 (equal is OK)
+      } as const;
+
+      // @ts-expect-error - Testing valid schema configuration
+      expect(() => validateArraySchema(schema)).not.toThrow();
+      // @ts-expect-error - Testing valid schema configuration
+      expect(validateArraySchema(schema)).toBe(true);
+    });
+
+    it('should pass when prefixItems only and maxItems is less than prefixItems length', () => {
+      const schema = {
+        type: 'array',
+        prefixItems: [{ type: 'string' }, { type: 'number' }, { type: 'boolean' }],
+        maxItems: 2, // prefixItems.length = 3, maxItems = 2 (less is OK)
+      } as const;
+
+      // @ts-expect-error - Testing valid schema configuration
+      expect(() => validateArraySchema(schema)).not.toThrow();
+      // @ts-expect-error - Testing valid schema configuration
+      expect(validateArraySchema(schema)).toBe(true);
+    });
+
+    it('should pass when prefixItems with items schema and minItems exceeds prefixItems length', () => {
+      // With items schema defined, minItems can exceed prefixItems length
+      const schema = {
+        type: 'array',
+        prefixItems: [{ type: 'string' }, { type: 'number' }],
+        items: { type: 'boolean' }, // items schema defined for additional elements
+        minItems: 5, // OK because items schema handles indices beyond prefixItems
+      } as const;
+
+      // @ts-expect-error - Testing valid open tuple schema
+      expect(() => validateArraySchema(schema)).not.toThrow();
+      // @ts-expect-error - Testing valid open tuple schema
+      expect(validateArraySchema(schema)).toBe(true);
+    });
+
+    it('should pass when prefixItems with items schema and maxItems exceeds prefixItems length', () => {
+      // With items schema defined, maxItems can exceed prefixItems length
+      const schema = {
+        type: 'array',
+        prefixItems: [{ type: 'string' }, { type: 'number' }],
+        items: { type: 'boolean' }, // items schema defined for additional elements
+        maxItems: 10, // OK because items schema handles indices beyond prefixItems
+      } as const;
+
+      // @ts-expect-error - Testing valid open tuple schema
+      expect(() => validateArraySchema(schema)).not.toThrow();
+      // @ts-expect-error - Testing valid open tuple schema
+      expect(validateArraySchema(schema)).toBe(true);
+    });
   });
 
   describe('nodeFromJsonSchema integration', () => {
