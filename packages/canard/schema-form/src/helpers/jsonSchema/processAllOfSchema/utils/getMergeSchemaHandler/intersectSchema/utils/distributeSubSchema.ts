@@ -45,8 +45,9 @@ export const distributeAllOfItems = (
   base: ArraySchema,
   source: Partial<ArraySchema>,
 ) => {
-  if (source.items === undefined) return;
-  if (base.items === undefined) base.items = source.items;
+  if (source.items === undefined || source.items === false) return;
+  if (base.items === undefined || base.items === false)
+    base.items = source.items;
   else distributeSchema(base.items, source.items);
 };
 
