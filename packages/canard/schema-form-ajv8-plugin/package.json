@@ -48,9 +48,9 @@
       "require": "./dist/2020/index.cjs"
     }
   },
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "main": "dist/default/index.cjs",
+  "module": "dist/default/index.mjs",
+  "types": "dist/default/index.d.ts",
   "files": [
     "dist",
     "README.md"
