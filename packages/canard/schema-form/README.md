@@ -1051,11 +1051,11 @@ const jsonSchema = {
 >
 > ```tsx
 > // ✅ Safe access with optional chaining
-> '@.user?.profile?.name'
-> '@.settings?.theme ?? "light"'
+> '@.user?.profile?.name';
+> '@.settings?.theme ?? "light"';
 >
 > // ⚠️ May cause errors if context structure changes
-> '@.user.profile.name'
+> '@.user.profile.name';
 > ```
 
 ### Practical Usage Examples
@@ -1353,6 +1353,53 @@ const jsonSchema = {
   }}
 />;
 ```
+
+#### Array prefixItems Support (JSON Schema 2020-12)
+
+The library supports `prefixItems` from JSON Schema Draft 2020-12 for position-based tuple validation:
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    // Tuple with specific types for each position
+    coordinates: {
+      type: 'array',
+      prefixItems: [
+        { type: 'number', title: 'X' },
+        { type: 'number', title: 'Y' },
+        { type: 'number', title: 'Z' },
+      ],
+      items: false, // No additional items allowed
+    },
+
+    // Mixed tuple: fixed prefix + flexible tail
+    person: {
+      type: 'array',
+      prefixItems: [
+        { type: 'string', title: 'First Name' },
+        { type: 'string', title: 'Last Name' },
+      ],
+      items: { type: 'string', title: 'Middle Name' }, // Additional items allowed
+    },
+  },
+};
+```
+
+**Key behaviors:**
+
+- **Position-based schemas**: Each array index uses its corresponding `prefixItems` schema
+- **Fallback to items**: Indices beyond `prefixItems.length` use the `items` schema
+- **items: false**: Prevents adding items beyond `prefixItems.length`
+- **Auto maxItems**: When `items` is undefined or `false`, `maxItems` is automatically set to `prefixItems.length`
+
+**Validation requirements:**
+
+> To use `prefixItems` validation, import the AJV8 plugin with Draft 2020-12 support:
+>
+> ```tsx
+> import { plugin } from '@canard/schema-form-ajv8-plugin/2020';
+> ```
 
 ### Form with Imperative Handle
 

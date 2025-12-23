@@ -1041,11 +1041,11 @@ const jsonSchema = {
 >
 > ```tsx
 > // ✅ 옵셔널 체이닝을 사용한 안전한 접근
-> '@.user?.profile?.name'
-> '@.settings?.theme ?? "light"'
+> '@.user?.profile?.name';
+> '@.settings?.theme ?? "light"';
 >
 > // ⚠️ context 구조가 변경되면 오류 발생 가능
-> '@.user.profile.name'
+> '@.user.profile.name';
 > ```
 
 ### 실제 사용 예시
@@ -1343,6 +1343,53 @@ const jsonSchema = {
   }}
 />;
 ```
+
+#### 배열 prefixItems 지원 (JSON Schema 2020-12)
+
+이 라이브러리는 JSON Schema Draft 2020-12의 `prefixItems`를 지원하여 위치 기반 튜플 검증이 가능합니다:
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    // 각 위치에 특정 타입을 가진 튜플
+    coordinates: {
+      type: 'array',
+      prefixItems: [
+        { type: 'number', title: 'X' },
+        { type: 'number', title: 'Y' },
+        { type: 'number', title: 'Z' },
+      ],
+      items: false, // 추가 항목 불허
+    },
+
+    // 혼합 튜플: 고정 접두사 + 유연한 꼬리
+    person: {
+      type: 'array',
+      prefixItems: [
+        { type: 'string', title: '이름' },
+        { type: 'string', title: '성' },
+      ],
+      items: { type: 'string', title: '중간 이름' }, // 추가 항목 허용
+    },
+  },
+};
+```
+
+**주요 동작:**
+
+- **위치 기반 스키마**: 각 배열 인덱스는 해당하는 `prefixItems` 스키마를 사용합니다
+- **items로 폴백**: `prefixItems.length`를 초과하는 인덱스는 `items` 스키마를 사용합니다
+- **items: false**: `prefixItems.length`를 초과하는 항목 추가를 방지합니다
+- **자동 maxItems**: `items`가 undefined이거나 `false`일 때, `maxItems`는 자동으로 `prefixItems.length`로 설정됩니다
+
+**검증 요구사항:**
+
+> `prefixItems` 검증을 사용하려면 Draft 2020-12를 지원하는 AJV8 플러그인을 import하세요:
+>
+> ```tsx
+> import { plugin } from '@canard/schema-form-ajv8-plugin/2020';
+> ```
 
 ### 명령형 핸들을 사용한 양식
 

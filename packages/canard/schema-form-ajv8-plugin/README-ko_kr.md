@@ -32,7 +32,7 @@ yarn add @canard/schema-form @canard/schema-form-ajv8-plugin
 
 ```tsx
 import { SchemaForm, registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
 // 또는 커스텀 AJV 인스턴스와 함께 등록
 import Ajv from 'ajv';
 
@@ -48,6 +48,44 @@ const customAjv = new Ajv({
 ajvValidatorPlugin.bind(customAjv);
 registerPlugin(ajvValidatorPlugin);
 ```
+
+---
+
+## 다중 드래프트 지원
+
+이 플러그인은 다양한 JSON Schema 드래프트 버전에 대한 sub-path exports를 제공합니다:
+
+### 사용 가능한 Import 경로
+
+| Import 경로                            | JSON Schema 드래프트 | 설명                                    |
+| -------------------------------------- | -------------------- | --------------------------------------- |
+| `@canard/schema-form-ajv8-plugin`      | Draft-07             | 기본값, 하위 호환성                     |
+| `@canard/schema-form-ajv8-plugin/2019` | Draft 2019-09        | 최신 기능, `$recursiveRef` 지원         |
+| `@canard/schema-form-ajv8-plugin/2020` | Draft 2020-12        | 최신 명세, `prefixItems`, `$dynamicRef` |
+
+### 사용 예시
+
+```tsx
+// 기본 (Draft-07) - 하위 호환성
+import { plugin } from '@canard/schema-form-ajv8-plugin';
+
+// Draft 2019-09 - 최신 JSON Schema 기능용
+import { plugin } from '@canard/schema-form-ajv8-plugin/2019';
+
+// Draft 2020-12 - prefixItems 등 최신 기능용
+import { plugin } from '@canard/schema-form-ajv8-plugin/2020';
+
+// 선택한 버전 등록
+registerPlugin(plugin);
+```
+
+### 드래프트 선택 가이드
+
+- **Draft-07 (기본값)**: 기존 스키마 및 도구와의 최대 호환성이 필요한 경우
+- **Draft 2019-09**: `$recursiveRef`, 향상된 `$ref` 처리, `unevaluatedProperties` 사용 시
+- **Draft 2020-12**: `prefixItems`, `$dynamicRef` 등 최신 JSON Schema 기능 사용 시
+
+> **참고**: `@canard/schema-form-ajv8-plugin`에서 import하는 기존 사용자는 마이그레이션이 필요하지 않습니다. 기본 export는 완전한 하위 호환성을 유지합니다.
 
 ---
 
