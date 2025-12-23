@@ -95,7 +95,7 @@ export const createSchemaNodeFactory =
             nodeProps.jsonSchema.prefixItems,
             (schema) => processSchema(schema, resolveSchema),
           );
-        validateArraySchema(nodeProps.jsonSchema);
+        validateArraySchema(nodeProps.jsonSchema as ArraySchema);
         return new ArrayNode(
           nodeProps as BranchNodeConstructorProps<ArraySchema>,
         );
