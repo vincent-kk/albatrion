@@ -22,7 +22,8 @@ export const getResolveSchema = (
   const table = getReferenceTable(jsonSchema);
   const scanner = table ? getResolveSchemaScanner(table, maxDepth) : null;
   return scanner
-    ? (schema: JsonSchemaWithRef) => scanner.scan(schema).getValue()
+    ? (schema: JsonSchemaWithRef | undefined) =>
+        schema !== undefined ? scanner.scan(schema).getValue() : undefined
     : null;
 };
 

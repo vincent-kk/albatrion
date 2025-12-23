@@ -1,4 +1,6 @@
+import { map } from '@winglet/common-utils/array';
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
+import { isArray } from '@winglet/common-utils/filter';
 
 import { JsonSchemaError } from '@/schema-form/errors';
 import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
@@ -21,7 +23,7 @@ import type {
   VirtualSchema,
 } from '@/schema-form/types';
 
-import { ArrayNode } from './ArrayNode';
+import { ArrayNode, validateArraySchema } from './ArrayNode';
 import { BooleanNode } from './BooleanNode';
 import { ContextNode } from './ContextNode';
 import { NullNode } from './NullNode';
@@ -83,10 +85,17 @@ export const createSchemaNodeFactory =
           nodeProps as SchemaNodeConstructorProps<StringSchema>,
         );
       case 'array':
-        nodeProps.jsonSchema.items = processSchema(
-          nodeProps.jsonSchema.items,
-          resolveSchema,
-        );
+        if (nodeProps.jsonSchema.items)
+          nodeProps.jsonSchema.items = processSchema(
+            nodeProps.jsonSchema.items,
+            resolveSchema,
+          );
+        if (isArray(nodeProps.jsonSchema.prefixItems))
+          nodeProps.jsonSchema.prefixItems = map(
+            nodeProps.jsonSchema.prefixItems,
+            (schema) => processSchema(schema, resolveSchema),
+          );
+        validateArraySchema(nodeProps.jsonSchema);
         return new ArrayNode(
           nodeProps as BranchNodeConstructorProps<ArraySchema>,
         );
