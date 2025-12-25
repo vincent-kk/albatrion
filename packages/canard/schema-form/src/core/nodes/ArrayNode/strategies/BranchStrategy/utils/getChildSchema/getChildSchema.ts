@@ -16,9 +16,9 @@ export const getChildSchema = (
   schema: ArraySchema,
   index: number,
 ): JsonSchema | null => {
-  const itemSchema = schema.items;
+  const itemSchema = schema.items || null;
   const prefixItemSchemas = schema.prefixItems;
-  if (prefixItemSchemas === undefined) return itemSchema || null;
+  if (prefixItemSchemas === undefined) return itemSchema;
   if (prefixItemSchemas.length > index) return prefixItemSchemas[index] || null;
-  return itemSchema || null;
+  return itemSchema;
 };
