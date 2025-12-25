@@ -215,4 +215,63 @@ describe('distributeAllOfItems', () => {
       allOf: [{ minLength: 3 }, { maxLength: 10 }],
     });
   });
+
+  describe('items: false handling (allOf AND logic)', () => {
+    test('sets base.items to false when source.items is false and base.items is undefined', () => {
+      const base = { type: 'array' } as ArraySchema;
+      const source: Partial<ArraySchema> = { items: false };
+
+      distributeAllOfItems(base, source);
+
+      expect(base.items).toBe(false);
+    });
+
+    test('sets base.items to false when source.items is false and base.items has schema', () => {
+      const base: ArraySchema = {
+        type: 'array',
+        items: { type: 'string' },
+      };
+      const source: Partial<ArraySchema> = { items: false };
+
+      distributeAllOfItems(base, source);
+
+      expect(base.items).toBe(false);
+    });
+
+    test('keeps base.items as false when base.items is false and source.items is undefined', () => {
+      const base: ArraySchema = {
+        type: 'array',
+        items: false,
+      };
+      const source: Partial<ArraySchema> = {};
+
+      distributeAllOfItems(base, source);
+
+      expect(base.items).toBe(false);
+    });
+
+    test('keeps base.items as false when base.items is false and source.items has schema', () => {
+      const base: ArraySchema = {
+        type: 'array',
+        items: false,
+      };
+      const source: Partial<ArraySchema> = { items: { type: 'string' } };
+
+      distributeAllOfItems(base, source);
+
+      expect(base.items).toBe(false);
+    });
+
+    test('keeps base.items as false when both are false', () => {
+      const base: ArraySchema = {
+        type: 'array',
+        items: false,
+      };
+      const source: Partial<ArraySchema> = { items: false };
+
+      distributeAllOfItems(base, source);
+
+      expect(base.items).toBe(false);
+    });
+  });
 });
