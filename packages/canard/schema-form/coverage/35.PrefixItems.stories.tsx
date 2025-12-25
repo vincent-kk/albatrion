@@ -282,6 +282,30 @@ export const TerminalStrategyWithPrefixItems = () => {
         type: 'array',
         title: 'Mixed Primitives [string, number, boolean]',
         terminal: true,
+        FormTypeInput: ({
+          node,
+          onChange,
+          value,
+          defaultValue,
+        }: {
+          node: { push: () => void; remove: (index: number) => void; clear: () => void };
+          onChange: (value: (string | number | boolean)[]) => void;
+          value?: (string | number | boolean)[];
+          defaultValue?: (string | number | boolean)[];
+        }) => {
+          return (
+            <div style={{ border: '1px solid #ccc', padding: '8px', marginBottom: '8px' }}>
+              <div><strong>Value:</strong> {JSON.stringify(value)}</div>
+              <div><strong>Default:</strong> {JSON.stringify(defaultValue)}</div>
+              <div style={{ marginTop: '8px' }}>
+                <button onClick={() => node.push()}>push</button>
+                <button onClick={() => node.remove(0)}>remove(0)</button>
+                <button onClick={() => node.clear()}>clear</button>
+                <button onClick={() => onChange(['custom', 99, false])}>set custom</button>
+              </div>
+            </div>
+          );
+        },
         prefixItems: [
           { type: 'string', default: 'hello' },
           { type: 'number', default: 42 },
@@ -294,6 +318,30 @@ export const TerminalStrategyWithPrefixItems = () => {
         type: 'array',
         title: 'Numbers with Different Defaults',
         terminal: true,
+        FormTypeInput: ({
+          node,
+          onChange,
+          value,
+          defaultValue,
+        }: {
+          node: { push: () => void; remove: (index: number) => void; clear: () => void };
+          onChange: (value: number[]) => void;
+          value?: number[];
+          defaultValue?: number[];
+        }) => {
+          return (
+            <div style={{ border: '1px solid #ccc', padding: '8px', marginBottom: '8px' }}>
+              <div><strong>Value:</strong> {JSON.stringify(value)}</div>
+              <div><strong>Default:</strong> {JSON.stringify(defaultValue)}</div>
+              <div style={{ marginTop: '8px' }}>
+                <button onClick={() => node.push()}>push (adds 0)</button>
+                <button onClick={() => node.remove(value?.length ? value.length - 1 : 0)}>remove last</button>
+                <button onClick={() => node.clear()}>clear</button>
+                <button onClick={() => onChange([100, 200, 300, 400])}>set [100,200,300,400]</button>
+              </div>
+            </div>
+          );
+        },
         prefixItems: [
           { type: 'number', default: 10 },
           { type: 'number', default: 20 },
@@ -1072,7 +1120,11 @@ export const PrefixItemsWithRef_NestedReferences = () => {
         type: 'object',
         properties: {
           amount: { type: 'number', minimum: 0, default: 0 },
-          currency: { type: 'string', enum: ['USD', 'EUR', 'KRW'], default: 'USD' },
+          currency: {
+            type: 'string',
+            enum: ['USD', 'EUR', 'KRW'],
+            default: 'USD',
+          },
         },
         required: ['amount', 'currency'],
       },
