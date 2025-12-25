@@ -5,11 +5,10 @@
 #
 # Usage: ./scripts/setup-npm-token.sh <NPM_TOKEN>
 #
-# Registers a Granular Access Token to project's .npmrc file.
+# Registers a Granular Access Token to ~/.zshrc as NPM_TOKEN environment variable.
 # - Requires token with "Bypass two-factor authentication" option enabled
 # - Token validity: up to 90 days
-# - Token is stored per-project, not globally
-# - Yarn Berry automatically reads .npmrc for authentication
+# - Yarn Berry reads NPM_TOKEN from .yarnrc.yml: npmAuthToken: "${NPM_TOKEN}"
 # =============================================================================
 
 set -e
@@ -21,10 +20,8 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Get project root (where this script is located)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-NPMRC_FILE="$PROJECT_ROOT/.npmrc"
+# Shell config file
+ZSHRC_FILE="$HOME/.zshrc"
 
 # Check token argument
 if [ -z "$1" ]; then
@@ -48,7 +45,7 @@ if [[ ! "$NPM_TOKEN" =~ ^npm_ ]]; then
     echo -e "${YELLOW}Warning: Token does not start with 'npm_'. Please verify this is a Granular Access Token.${NC}"
 fi
 
-echo -e "${BLUE}Setting up NPM token for project...${NC}"
+echo -e "${BLUE}Setting up NPM token in ~/.zshrc...${NC}"
 echo ""
 
 # Calculate expiry date (90 days from now)
@@ -59,38 +56,39 @@ else
 fi
 
 # =============================================================================
-# Update project .npmrc file
+# Update ~/.zshrc file
 # =============================================================================
 
-if [ -f "$NPMRC_FILE" ]; then
-    echo -e "${YELLOW}Updating existing $NPMRC_FILE${NC}"
-    # Remove old token line and its comments
+if [ -f "$ZSHRC_FILE" ]; then
+    echo -e "${YELLOW}Updating existing $ZSHRC_FILE${NC}"
+    # Remove old NPM_TOKEN export and its comments
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        sed -i '' '/^# NPM Granular Access Token/d' "$NPMRC_FILE"
-        sed -i '' '/^# Added:/d' "$NPMRC_FILE"
-        sed -i '' '/^# Expires:/d' "$NPMRC_FILE"
-        sed -i '' '/^\/\/registry.npmjs.org\/:_authToken=/d' "$NPMRC_FILE"
+        sed -i '' '/^# NPM Granular Access Token/d' "$ZSHRC_FILE"
+        sed -i '' '/^# Added:/d' "$ZSHRC_FILE"
+        sed -i '' '/^# Expires:/d' "$ZSHRC_FILE"
+        sed -i '' '/^export NPM_TOKEN=/d' "$ZSHRC_FILE"
     else
-        sed -i '/^# NPM Granular Access Token/d' "$NPMRC_FILE"
-        sed -i '/^# Added:/d' "$NPMRC_FILE"
-        sed -i '/^# Expires:/d' "$NPMRC_FILE"
-        sed -i '/^\/\/registry.npmjs.org\/:_authToken=/d' "$NPMRC_FILE"
+        sed -i '/^# NPM Granular Access Token/d' "$ZSHRC_FILE"
+        sed -i '/^# Added:/d' "$ZSHRC_FILE"
+        sed -i '/^# Expires:/d' "$ZSHRC_FILE"
+        sed -i '/^export NPM_TOKEN=/d' "$ZSHRC_FILE"
     fi
 else
-    echo -e "${BLUE}Creating $NPMRC_FILE${NC}"
-    touch "$NPMRC_FILE"
+    echo -e "${BLUE}Creating $ZSHRC_FILE${NC}"
+    touch "$ZSHRC_FILE"
 fi
 
-# Add token with comments
-cat >> "$NPMRC_FILE" << EOF
+# Add token export with comments
+cat >> "$ZSHRC_FILE" << EOF
+
 # NPM Granular Access Token (Bypass 2FA enabled)
 # Added: $CURRENT_DATE
 # Expires: ~$EXPIRY_DATE (90 days from creation)
-//registry.npmjs.org/:_authToken=$NPM_TOKEN
+export NPM_TOKEN=$NPM_TOKEN
 EOF
 
-# Secure file permissions
-chmod 600 "$NPMRC_FILE"
+# Export for current session
+export NPM_TOKEN="$NPM_TOKEN"
 
 # =============================================================================
 # Done
@@ -99,7 +97,11 @@ chmod 600 "$NPMRC_FILE"
 echo ""
 echo -e "${GREEN}NPM token has been configured successfully!${NC}"
 echo ""
-echo "Token stored in: $NPMRC_FILE"
+echo "Token added to: $ZSHRC_FILE"
+echo "Token also exported to current shell session."
+echo ""
+echo -e "${BLUE}To apply in other terminal sessions:${NC}"
+echo "  source ~/.zshrc"
 echo ""
 echo -e "${BLUE}Verify configuration:${NC}"
 echo "  yarn npm whoami"
