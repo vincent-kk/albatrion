@@ -1,4 +1,4 @@
-import type { ErrorObject } from 'ajv/dist/2020';
+import type { ErrorObject } from 'ajv';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { transformErrors } from '../transformErrors';
