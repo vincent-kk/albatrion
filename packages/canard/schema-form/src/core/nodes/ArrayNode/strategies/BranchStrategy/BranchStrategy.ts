@@ -4,7 +4,6 @@ import type { Fn, Nullish } from '@aileron/declare';
 
 import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
 import type { ArrayNode } from '@/schema-form/core/nodes/ArrayNode';
-import { resolveArrayLimits } from '@/schema-form/core/nodes/ArrayNode/utils';
 import {
   type ChildNode,
   type HandleChange,
@@ -16,6 +15,7 @@ import {
 } from '@/schema-form/core/nodes/type';
 import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 
+import { resolveArrayLimits } from '../../utils';
 import type { ArrayNodeStrategy } from '../type';
 import type { ChildSegmentKey } from './type';
 import { getChildSchema, promiseAfterMicrotask } from './utils';

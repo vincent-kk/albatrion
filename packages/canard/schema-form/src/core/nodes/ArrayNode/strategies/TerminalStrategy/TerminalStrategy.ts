@@ -6,7 +6,6 @@ import { isObjectSchema } from '@winglet/json-schema/filter';
 import type { Fn, Nullish } from '@aileron/declare';
 
 import type { ArrayNode } from '@/schema-form/core/nodes/ArrayNode';
-import { resolveArrayLimits } from '@/schema-form/core/nodes/ArrayNode/utils';
 import {
   type HandleChange,
   NodeEventType,
@@ -17,6 +16,7 @@ import { parseArray } from '@/schema-form/core/parsers';
 import { getObjectDefaultValue } from '@/schema-form/helpers/defaultValue';
 import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 
+import { resolveArrayLimits } from '../../utils';
 import type { ArrayNodeStrategy } from '../type';
 
 const FIRST_EMIT_CHANGE_OPTION =
