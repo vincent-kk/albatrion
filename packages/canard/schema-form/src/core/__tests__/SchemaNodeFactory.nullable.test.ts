@@ -492,7 +492,7 @@ describe('SchemaNodeFactory - Nullable Type Handling', () => {
       // Items should be nullable
       const arrayNode = node as ArrayNode;
       const itemsSchema = arrayNode.jsonSchema.items;
-      expect(itemsSchema?.type).toEqual(['string', 'null']);
+      expect((itemsSchema as StringSchema)?.type).toEqual(['string', 'null']);
     });
 
     it('should handle deeply nested nullable types', () => {

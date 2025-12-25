@@ -1,4 +1,4 @@
-import Ajv from 'ajv';
+import Ajv from 'ajv/dist/2020';
 import { describe, expect, it, vi } from 'vitest';
 
 import { nodeFromJsonSchema } from '@/schema-form/core';

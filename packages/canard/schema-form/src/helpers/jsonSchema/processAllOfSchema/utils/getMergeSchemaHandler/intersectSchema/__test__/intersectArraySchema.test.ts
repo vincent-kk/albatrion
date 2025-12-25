@@ -464,4 +464,79 @@ describe('intersectArraySchema', () => {
       });
     });
   });
+
+  describe('prefixItems merging (First-Win strategy)', () => {
+    test('base prefixItems is preserved when both have prefixItems', () => {
+      const base = {
+        type: 'array',
+        prefixItems: [
+          { type: 'string' as const, minLength: 1 },
+          { type: 'number' as const, minimum: 0 },
+        ],
+      } as ArraySchema;
+      const source: Partial<ArraySchema> = {
+        prefixItems: [
+          { type: 'string' as const, maxLength: 100 },
+          { type: 'number' as const, maximum: 100 },
+        ],
+      };
+
+      const result = intersectArraySchema(base, source);
+
+      // First-Win: base prefixItems preserved
+      expect(result.prefixItems).toEqual([
+        { type: 'string', minLength: 1 },
+        { type: 'number', minimum: 0 },
+      ]);
+    });
+
+    test('source prefixItems is used when base has no prefixItems', () => {
+      const base = { type: 'array' } as ArraySchema;
+      const source: Partial<ArraySchema> = {
+        prefixItems: [
+          { type: 'string' as const },
+          { type: 'number' as const },
+        ],
+      };
+
+      const result = intersectArraySchema(base, source);
+
+      expect(result.prefixItems).toEqual([
+        { type: 'string' },
+        { type: 'number' },
+      ]);
+    });
+
+    test('prefixItems remains undefined when neither has it', () => {
+      const base = { type: 'array' } as ArraySchema;
+      const source: Partial<ArraySchema> = {};
+
+      const result = intersectArraySchema(base, source);
+
+      expect(result.prefixItems).toBeUndefined();
+    });
+
+    test('prefixItems works together with items', () => {
+      const base = {
+        type: 'array',
+        prefixItems: [{ type: 'string' as const }],
+        items: { type: 'number' as const, minimum: 0 },
+      } as ArraySchema;
+      const source: Partial<ArraySchema> = {
+        prefixItems: [{ type: 'boolean' as const }], // Should be ignored (First-Win)
+        items: { type: 'number' as const, maximum: 100 },
+      };
+
+      const result = intersectArraySchema(base, source);
+
+      // prefixItems: First-Win (base preserved)
+      expect(result.prefixItems).toEqual([{ type: 'string' }]);
+      // items: merged via allOf
+      expect(result.items).toEqual({
+        type: 'number',
+        minimum: 0,
+        allOf: [{ type: 'number', maximum: 100 }],
+      });
+    });
+  });
 });

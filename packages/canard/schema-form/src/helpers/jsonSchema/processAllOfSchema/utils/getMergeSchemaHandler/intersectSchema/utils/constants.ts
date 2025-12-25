@@ -16,6 +16,7 @@ export const FIRST_WIN_FIELDS = [
   'format',
   'additionalProperties',
   'patternProperties',
+  'prefixItems',
 ] as const;
 
 /**

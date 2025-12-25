@@ -30,15 +30,27 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "source": "./src/index.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "types": "./dist/default/index.d.ts",
+      "source": "./src/default/index.ts",
+      "import": "./dist/default/index.mjs",
+      "require": "./dist/default/index.cjs"
+    },
+    "./2019": {
+      "types": "./dist/2019/index.d.ts",
+      "source": "./src/2019/index.ts",
+      "import": "./dist/2019/index.mjs",
+      "require": "./dist/2019/index.cjs"
+    },
+    "./2020": {
+      "types": "./dist/2020/index.d.ts",
+      "source": "./src/2020/index.ts",
+      "import": "./dist/2020/index.mjs",
+      "require": "./dist/2020/index.cjs"
     }
   },
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "main": "dist/default/index.cjs",
+  "module": "dist/default/index.mjs",
+  "types": "dist/default/index.d.ts",
   "files": [
     "dist",
     "README.md"

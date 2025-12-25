@@ -6,7 +6,7 @@ import type { Dictionary } from '@aileron/declare';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import type { DefinitionKeyword, SchemaEntry } from '../type';
+import type { DefinitionKeyword, ItemsKeyword, SchemaEntry } from '../type';
 import {
   $DEFS,
   ADDITIONAL_PROPERTIES,
@@ -14,6 +14,7 @@ import {
   CONDITIONAL_KEYWORDS,
   DEFINITIONS,
   ITEMS,
+  PREFIX_ITEMS,
   PROPERTIES,
 } from '../type';
 
@@ -45,8 +46,11 @@ export const getStackEntriesForNode = <Entry extends SchemaEntry>(
 
   handleCompositionNode(schema, entries, path, dataPath, depth);
 
+  if (hasOwnProperty(schema, PREFIX_ITEMS))
+    handleArrayItems(schema, entries, path, dataPath, depth, PREFIX_ITEMS);
+
   if (hasOwnProperty(schema, ITEMS))
-    handleArrayItems(schema, entries, path, dataPath, depth);
+    handleArrayItems(schema, entries, path, dataPath, depth, ITEMS);
 
   if (hasOwnProperty(schema, PROPERTIES))
     handleObjectProperties(schema, entries, path, dataPath, depth);
@@ -178,6 +182,7 @@ const handleAdditionalProperties = (
  * @param path Current path
  * @param dataPath Current data path
  * @param depth Current depth
+ * @param fieldName Field name (items or prefixItems)
  */
 const handleArrayItems = (
   schema: UnknownSchema,
@@ -185,14 +190,15 @@ const handleArrayItems = (
   path: string,
   dataPath: string,
   depth: number,
+  fieldName: ItemsKeyword,
 ) => {
-  const items = schema.items;
+  const items = schema[fieldName];
   if (isArray(items)) {
     for (let i = 0, l = items.length; i < l; i++) {
       entries.push({
         schema: items[i],
-        path: path + $.Separator + ITEMS + $.Separator + i,
-        keyword: ITEMS,
+        path: path + $.Separator + fieldName + $.Separator + i,
+        keyword: fieldName,
         variant: i,
         dataPath: dataPath + $.Separator + i,
         depth: depth + 1,
@@ -201,8 +207,8 @@ const handleArrayItems = (
   } else {
     entries.push({
       schema: items,
-      path: path + $.Separator + ITEMS,
-      keyword: ITEMS,
+      path: path + $.Separator + fieldName,
+      keyword: fieldName,
       dataPath,
       depth: depth + 1,
     });

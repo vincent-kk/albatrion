@@ -16,8 +16,9 @@ export const extractSchemaInfo = <
     nullable?: boolean;
   },
 >(
-  jsonSchema: Schema,
+  jsonSchema: Schema | undefined,
 ) => {
+  if (jsonSchema === undefined) return null;
   const type = jsonSchema.type;
   if (type === undefined) return null;
   if (isArray(type)) {

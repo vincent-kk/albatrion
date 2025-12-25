@@ -1,42 +1,31 @@
-// 번들 빌드 예제 - rollup.config.bundle.mjs
 import { createRequire } from 'node:module';
-import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 
-import { getBundleBuildOptions } from '../../aileron/script/build/rollup.bundle.mjs';
-
-const { bundleBuildOptions, clearDir } = getBundleBuildOptions(import.meta.url);
+import {
+  getEntrypoints,
+  getLibBuildOptions,
+} from '../../aileron/script/build/rollup.transpile.mjs';
 
 const packageJson = createRequire(import.meta.url)('./package.json');
 
-const mainEntry = packageJson.exports['.'];
+const { libBuildOptions, clearDir } = getLibBuildOptions(import.meta.url);
 
 export default async () => {
   clearDir('dist');
-
+  const entrypoints = getEntrypoints(packageJson);
   return [
-    // ESM 단일 번들
-    await bundleBuildOptions({
-      entry: mainEntry.source,
+    await libBuildOptions({
       format: 'esm',
-      outFile: mainEntry.import,
+      extension: 'mjs',
+      entrypoints,
+      outDir: 'dist',
       sourcemap: false,
-      minify: false,
-      optimizeImports: true,
-      plugins: {
-        beforeTransform: [peerDepsExternal()],
-      },
     }),
-    // CJS 단일 번들
-    await bundleBuildOptions({
-      entry: mainEntry.source,
+    await libBuildOptions({
       format: 'cjs',
-      outFile: mainEntry.require,
+      extension: 'cjs',
+      entrypoints,
+      outDir: 'dist',
       sourcemap: false,
-      minify: false,
-      optimizeImports: true,
-      plugins: {
-        beforeTransform: [peerDepsExternal()],
-      },
     }),
   ];
 };

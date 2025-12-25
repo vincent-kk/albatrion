@@ -1,5 +1,5 @@
 import type { ValidatorPlugin } from '@canard/schema-form';
-import Ajv, { type Options } from 'ajv';
+import Ajv, { type Options } from 'ajv/dist/2020';
 
 import { createValidatorFactory } from './createValidatorFactory';
 

@@ -1,9 +1,9 @@
-import Ajv from 'ajv';
+import Ajv from 'ajv/dist/2019';
 import { describe, expect, it } from 'vitest';
 
-import { ajvValidatorPlugin } from '../validatorPlugin';
+import { ajvValidatorPlugin } from '../../2019/validatorPlugin';
 
-describe('ajvValidatorPlugin', () => {
+describe('ajvValidatorPlugin (2019)', () => {
   describe('기본 검증 동작', () => {
     it('유효한 데이터는 null을 반환한다', async () => {
       // Arrange

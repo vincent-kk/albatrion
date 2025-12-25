@@ -32,7 +32,7 @@ yarn add @canard/schema-form @canard/schema-form-ajv8-plugin
 
 ```tsx
 import { SchemaForm, registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
 // Or register with custom AJV instance
 import Ajv from 'ajv';
 
@@ -48,6 +48,44 @@ const customAjv = new Ajv({
 ajvValidatorPlugin.bind(customAjv);
 registerPlugin(ajvValidatorPlugin);
 ```
+
+---
+
+## Multi-Draft Support
+
+This plugin provides sub-path exports for different JSON Schema draft versions:
+
+### Available Imports
+
+| Import Path                            | JSON Schema Draft | Description                               |
+| -------------------------------------- | ----------------- | ----------------------------------------- |
+| `@canard/schema-form-ajv8-plugin`      | Draft-07          | Default, backward compatible              |
+| `@canard/schema-form-ajv8-plugin/2019` | Draft 2019-09     | Modern features, `$recursiveRef` support  |
+| `@canard/schema-form-ajv8-plugin/2020` | Draft 2020-12     | Latest spec, `prefixItems`, `$dynamicRef` |
+
+### Usage Examples
+
+```tsx
+// Default (Draft-07) - backward compatible
+import { plugin } from '@canard/schema-form-ajv8-plugin';
+
+// Draft 2019-09 - for modern JSON Schema features
+import { plugin } from '@canard/schema-form-ajv8-plugin/2019';
+
+// Draft 2020-12 - for latest features like prefixItems
+import { plugin } from '@canard/schema-form-ajv8-plugin/2020';
+
+// Register your chosen version
+registerPlugin(plugin);
+```
+
+### Choosing the Right Draft
+
+- **Draft-07 (default)**: Use for maximum compatibility with existing schemas and tools
+- **Draft 2019-09**: Use for `$recursiveRef`, enhanced `$ref` handling, and `unevaluatedProperties`
+- **Draft 2020-12**: Use for `prefixItems`, `$dynamicRef`, and the latest JSON Schema features
+
+> **Note**: Existing users importing from `@canard/schema-form-ajv8-plugin` require no migration. The default export maintains full backward compatibility.
 
 ---
 

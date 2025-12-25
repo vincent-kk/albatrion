@@ -224,7 +224,9 @@ interface BaseArraySchema<
   Schema extends UnknownSchema = JsonSchema,
 > extends BasicSchema<Value, Options, Schema> {
   /** Schema for all array items */
-  items: Schema;
+  items?: Schema | false;
+  /** Schema for all array items */
+  prefixItems?: Schema[];
   /** Schema for items that must be present */
   contains?: Partial<Schema>;
   /** Minimum number of items */

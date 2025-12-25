@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { ajvValidatorPlugin } from '../validatorPlugin';
+import { ajvValidatorPlugin } from '../../default/validatorPlugin';
 
 describe('ajvValidatorPlugin - dataPath 정확성 검증', () => {
   describe('객체형태 유효성 검증에서 dataPath 반환', () => {

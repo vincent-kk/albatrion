@@ -15,9 +15,10 @@ import {
 } from '@/schema-form/core/nodes/type';
 import type { AllowedValue, ArrayValue } from '@/schema-form/types';
 
+import { resolveArrayLimits } from '../../utils';
 import type { ArrayNodeStrategy } from '../type';
 import type { ChildSegmentKey } from './type';
-import { promiseAfterMicrotask } from './utils';
+import { getChildSchema, promiseAfterMicrotask } from './utils';
 
 export class BranchStrategy implements ArrayNodeStrategy {
   /** Host ArrayNode instance that this strategy belongs to */
@@ -159,8 +160,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__handleRefresh__ = handleRefresh;
     this.__nodeFactory__ = nodeFactory;
 
-    this.__minItems__ = host.jsonSchema.minItems || 0;
-    this.__maxItems__ = host.jsonSchema.maxItems || Infinity;
+    const limit = resolveArrayLimits(host.jsonSchema);
+    this.__minItems__ = limit.min;
+    this.__maxItems__ = limit.max;
 
     if (host.defaultValue === null) this.__nullish__ = null;
 
@@ -200,16 +202,18 @@ export class BranchStrategy implements ArrayNodeStrategy {
     if (unlimited !== true && this.__maxItems__ <= this.length)
       return promiseAfterMicrotask(this.length);
 
-    const index = '' + this.__keys__.length;
+    const index = this.__keys__.length;
+    const childSchema = getChildSchema(host.jsonSchema, index);
+    if (childSchema === null) return promiseAfterMicrotask(this.length);
+
     const key = ('#' + this.__revision__++) as ChildSegmentKey;
     this.__keys__.push(key);
 
-    const defaultValue =
-      data !== undefined ? data : host.jsonSchema.items.default;
+    const defaultValue = data !== undefined ? data : childSchema?.default;
     const childNode = this.__nodeFactory__({
-      name: index,
+      name: '' + index,
       scope: 'items',
-      jsonSchema: host.jsonSchema.items,
+      jsonSchema: childSchema,
       parentNode: host,
       defaultValue,
       onChange: this.__handleChangeFactory__(key),

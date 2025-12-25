@@ -1,5 +1,5 @@
-import type Ajv from 'ajv';
 import type { ErrorObject } from 'ajv';
+import type Ajv from 'ajv/dist/2020';
 
 import { JSONPointer as $ } from '@winglet/json/pointer';
 
