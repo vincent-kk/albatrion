@@ -506,28 +506,28 @@ describe('ArrayNode maxItems unlimited', () => {
     });
 
     /**
-     * Note: maxItems=0 behaves as "no limit" due to JavaScript's falsy value handling:
-     * `maxItems || Infinity` evaluates `0 || Infinity` to `Infinity`.
-     * This is existing behavior and not a bug introduced by the unlimited feature.
+     * maxItems=0 correctly prevents adding any items.
+     * Using nullish coalescing (`??`) instead of logical OR (`||`)
+     * ensures that 0 is treated as a valid limit, not as falsy.
      */
-    it('maxItems=0 is treated as no limit (falsy value behavior)', async () => {
+    it('maxItems=0 prevents adding any items (correct JSON Schema behavior)', async () => {
       const node = nodeFromJsonSchema({
         onChange: () => {},
         jsonSchema: {
           type: 'array',
           items: { type: 'number' },
-          maxItems: 0, // 0 is falsy, so this becomes Infinity
+          maxItems: 0, // Only empty array is allowed
         },
       });
 
       await delay();
 
-      // maxItems=0 is treated as unlimited due to `0 || Infinity` = Infinity
+      // maxItems=0 means no items allowed - push should be blocked
       await node.push(1);
       await node.push(2);
       await delay();
 
-      expect(node.value).toEqual([1, 2]);
+      expect(node.value).toEqual([]);
     });
 
     it('no maxItems defined should always allow push', async () => {
