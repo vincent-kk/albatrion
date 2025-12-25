@@ -1,12 +1,12 @@
 import { map } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
-import { minLite } from '@winglet/common-utils/math';
 import { equals } from '@winglet/common-utils/object';
 import { isObjectSchema } from '@winglet/json-schema/filter';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
 import type { ArrayNode } from '@/schema-form/core/nodes/ArrayNode';
+import { resolveArrayLimits } from '@/schema-form/core/nodes/ArrayNode/utils';
 import {
   type HandleChange,
   NodeEventType,
@@ -122,9 +122,9 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     this.__handleRefresh__ = handleRefresh;
 
     const jsonSchema = host.jsonSchema;
-
-    this.__minItems__ = jsonSchema.minItems || 0;
-    this.__maxItems__ = jsonSchema.maxItems || Infinity;
+    const limit = resolveArrayLimits(jsonSchema);
+    this.__minItems__ = limit.min;
+    this.__maxItems__ = limit.max;
 
     if (jsonSchema.items)
       this.__defaultItemValue__ = isObjectSchema(jsonSchema.items)
@@ -138,12 +138,6 @@ export class TerminalStrategy implements ArrayNodeStrategy {
           isObjectSchema(schema)
             ? getObjectDefaultValue(schema)
             : schema.default,
-      );
-
-    if (!jsonSchema.items && this.__defaultPrefixItemValues__ !== undefined)
-      this.__maxItems__ = minLite(
-        this.__maxItems__,
-        this.__defaultPrefixItemValues__.length,
       );
 
     if (hasDefault) {

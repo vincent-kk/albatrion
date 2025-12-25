@@ -1,10 +1,10 @@
 import { isArray } from '@winglet/common-utils/filter';
-import { minLite } from '@winglet/common-utils/math';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
 import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
 import type { ArrayNode } from '@/schema-form/core/nodes/ArrayNode';
+import { resolveArrayLimits } from '@/schema-form/core/nodes/ArrayNode/utils';
 import {
   type ChildNode,
   type HandleChange,
@@ -160,16 +160,9 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__handleRefresh__ = handleRefresh;
     this.__nodeFactory__ = nodeFactory;
 
-    const jsonSchema = host.jsonSchema;
-
-    this.__minItems__ = jsonSchema.minItems || 0;
-    this.__maxItems__ = jsonSchema.maxItems || Infinity;
-
-    if (!jsonSchema.items && isArray(jsonSchema.prefixItems))
-      this.__maxItems__ = minLite(
-        this.__maxItems__,
-        jsonSchema.prefixItems.length,
-      );
+    const limit = resolveArrayLimits(host.jsonSchema);
+    this.__minItems__ = limit.min;
+    this.__maxItems__ = limit.max;
 
     if (host.defaultValue === null) this.__nullish__ = null;
 
