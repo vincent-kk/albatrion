@@ -8,18 +8,18 @@ import { getPathManager } from '../getPathManager';
 
 describe('getDerivedValueFactory', () => {
   describe('기본 동작', () => {
-    it('computed.value 표현식을 파싱하여 함수를 반환해야 함', () => {
+    it('computed.derived 표현식을 파싱하여 함수를 반환해야 함', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: './price * 1.1',
+          derived: './price * 1.1',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -29,16 +29,16 @@ describe('getDerivedValueFactory', () => {
       expect(getDerivedValue!([100])).toBeCloseTo(110);
     });
 
-    it('&value 별칭을 사용하여 표현식을 파싱해야 함', () => {
+    it('&derived 별칭을 사용하여 표현식을 파싱해야 함', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
-        '&value': './quantity * ./unitPrice',
+        '&derived': './quantity * ./unitPrice',
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -53,15 +53,15 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: './a + ./b',
+          derived: './a + ./b',
         },
-        '&value': './a - ./b',
+        '&derived': './a - ./b',
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -79,7 +79,7 @@ describe('getDerivedValueFactory', () => {
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeUndefined();
@@ -94,7 +94,7 @@ describe('getDerivedValueFactory', () => {
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeUndefined();
@@ -104,14 +104,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: '',
+          derived: '',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeUndefined();
@@ -121,14 +121,14 @@ describe('getDerivedValueFactory', () => {
       const schema = {
         type: 'string',
         computed: {
-          value: null,
+          derived: null,
         },
       } as unknown as JsonSchemaWithVirtual;
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeUndefined();
@@ -138,14 +138,14 @@ describe('getDerivedValueFactory', () => {
       const schema = {
         type: 'string',
         computed: {
-          value: 123,
+          derived: 123,
         },
       } as unknown as JsonSchemaWithVirtual;
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeUndefined();
@@ -155,14 +155,14 @@ describe('getDerivedValueFactory', () => {
       const schema = {
         type: 'string',
         computed: {
-          value: true,
+          derived: true,
         },
       } as unknown as JsonSchemaWithVirtual;
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeUndefined();
@@ -174,18 +174,18 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: '/root/value * 2',
+          derived: '/root/derived * 2',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
-      expect(pathManager.get()).toContain('/root/value');
+      expect(pathManager.get()).toContain('/root/derived');
       expect(getDerivedValue!([50])).toBe(100);
     });
 
@@ -193,14 +193,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: './current + 10',
+          derived: './current + 10',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -212,14 +212,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: '../sibling - 5',
+          derived: '../sibling - 5',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -231,14 +231,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: '../../ancestor + 100',
+          derived: '../../ancestor + 100',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -250,14 +250,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: '#/root/data * 3',
+          derived: '#/root/data * 3',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -270,14 +270,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: '@ ? "active" : "inactive"',
+          derived: '@ ? "active" : "inactive"',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -290,14 +290,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: '@.name + " - " + @.role',
+          derived: '@.name + " - " + @.role',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -311,14 +311,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: '# ? "has data" : "no data"',
+          derived: '# ? "has data" : "no data"',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -332,14 +332,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: '(./price * ./quantity) + ./tax - ./discount',
+          derived: '(./price * ./quantity) + ./tax - ./discount',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -356,14 +356,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'boolean',
         computed: {
-          value: './isActive && ./hasPermission || ./isAdmin',
+          derived: './isActive && ./hasPermission || ./isAdmin',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -376,14 +376,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: './age >= 18 ? "성인" : "미성년자"',
+          derived: './age >= 18 ? "성인" : "미성년자"',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -395,14 +395,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: './firstName + " " + ./lastName',
+          derived: './firstName + " " + ./lastName',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -414,14 +414,14 @@ describe('getDerivedValueFactory', () => {
         type: 'number',
         computed: {
           // ./items는 경로로 인식되고, .length는 JS 프로퍼티 접근으로 처리됨
-          value: '(./items).length',
+          derived: '(./items).length',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -433,14 +433,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'boolean',
         computed: {
-          value: './score >= 80 && ./score <= 100',
+          derived: './score >= 80 && ./score <= 100',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -453,14 +453,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: './nickname ?? ./name ?? "Anonymous"',
+          derived: './nickname ?? ./name ?? "Anonymous"',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -474,14 +474,14 @@ describe('getDerivedValueFactory', () => {
         type: 'string',
         computed: {
           // ./user는 경로로 인식되고, ?.profile?.name은 JS 표현식으로 처리됨
-          value: '(./user)?.profile?.name ?? "Unknown"',
+          derived: '(./user)?.profile?.name ?? "Unknown"',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -497,18 +497,18 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'number',
         computed: {
-          value: './value + ./value + ./value',
+          derived: './derived + ./derived + ./derived',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
-      expect(pathManager.get()).toEqual(['./value']);
+      expect(pathManager.get()).toEqual(['./derived']);
       expect(getDerivedValue!([10])).toBe(30);
     });
 
@@ -516,14 +516,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: './a + ../b + /c + ../../d + ./a', // ./a가 두 번 사용됨
+          derived: './a + ../b + /c + ../../d + ./a', // ./a가 두 번 사용됨
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -543,14 +543,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'number',
         computed: {
-          value: './value * 2;',
+          derived: './derived * 2;',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -561,14 +561,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'number',
         computed: {
-          value: '  ./value   +   10   ',
+          derived: '  ./derived   +   10   ',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -579,14 +579,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: './user/profile/settings/theme',
+          derived: './user/profile/settings/theme',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -598,14 +598,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: './value === "특수문자!@#$%^&*()"',
+          derived: './derived === "특수문자!@#$%^&*()"',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -617,20 +617,20 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'boolean',
         computed: {
-          value: './value === null',
+          derived: './derived === null',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
       expect(getDerivedValue!([null])).toBe(true);
       expect(getDerivedValue!([undefined])).toBe(false);
-      expect(getDerivedValue!(['value'])).toBe(false);
+      expect(getDerivedValue!(['derived'])).toBe(false);
     });
 
     it('배열 인덱스 접근을 포함한 표현식을 처리해야 함', () => {
@@ -638,14 +638,14 @@ describe('getDerivedValueFactory', () => {
         type: 'string',
         computed: {
           // ./items[0]과 ./items[1]은 각각 별도의 경로로 인식됨
-          value: './items[0] + ./items[1]',
+          derived: './items[0] + ./items[1]',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -662,14 +662,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: './value ===== "invalid"', // 잘못된 연산자
+          derived: './derived ===== "invalid"', // 잘못된 연산자
         },
       };
 
       const pathManager = getPathManager();
 
       expect(() =>
-        getDerivedValueFactory(schema)(pathManager, 'value'),
+        getDerivedValueFactory(schema)(pathManager, 'derived'),
       ).toThrow(JsonSchemaError);
     });
 
@@ -677,14 +677,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: './value +', // 불완전한 표현식
+          derived: './derived +', // 불완전한 표현식
         },
       };
 
       const pathManager = getPathManager();
 
       expect(() =>
-        getDerivedValueFactory(schema)(pathManager, 'value'),
+        getDerivedValueFactory(schema)(pathManager, 'derived'),
       ).toThrow(JsonSchemaError);
     });
 
@@ -692,18 +692,18 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: './invalid {{{{ syntax',
+          derived: './invalid {{{{ syntax',
         },
       };
 
       const pathManager = getPathManager();
 
       try {
-        getDerivedValueFactory(schema)(pathManager, 'value');
+        getDerivedValueFactory(schema)(pathManager, 'derived');
         expect.fail('에러가 발생해야 합니다');
       } catch (error) {
         expect(error).toBeInstanceOf(JsonSchemaError);
-        expect((error as JsonSchemaError).message).toContain('value');
+        expect((error as JsonSchemaError).message).toContain('derived');
         expect((error as JsonSchemaError).message).toContain(
           './invalid {{{{ syntax',
         );
@@ -716,14 +716,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'number',
         computed: {
-          value: './price * ./quantity * (1 + ./taxRate / 100)',
+          derived: './price * ./quantity * (1 + ./taxRate / 100)',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -735,14 +735,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value: './lastName + ./firstName',
+          derived: './lastName + ./firstName',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -753,7 +753,7 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'string',
         computed: {
-          value:
+          derived:
             './status === "active" ? "활성" : ./status === "pending" ? "대기" : "비활성"',
         },
       };
@@ -761,7 +761,7 @@ describe('getDerivedValueFactory', () => {
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -775,14 +775,14 @@ describe('getDerivedValueFactory', () => {
         type: 'string',
         computed: {
           // 템플릿 리터럴 내에서 경로를 사용할 때는 문자열 연결을 사용
-          value: './count > 0 ? ./count + "개의 항목" : "항목 없음"',
+          derived: './count > 0 ? ./count + "개의 항목" : "항목 없음"',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
@@ -794,14 +794,14 @@ describe('getDerivedValueFactory', () => {
       const schema: JsonSchemaWithVirtual = {
         type: 'number',
         computed: {
-          value: '../originalPrice * (1 - ./discountRate / 100)',
+          derived: '../originalPrice * (1 - ./discountRate / 100)',
         },
       };
 
       const pathManager = getPathManager();
       const getDerivedValue = getDerivedValueFactory(schema)(
         pathManager,
-        'value',
+        'derived',
       );
 
       expect(getDerivedValue).toBeDefined();
