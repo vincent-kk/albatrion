@@ -4,11 +4,7 @@ import {
   sortWithReference,
 } from '@winglet/common-utils/array';
 import { isEmptyObject } from '@winglet/common-utils/filter';
-import {
-  equals,
-  getObjectKeys,
-  sortObjectKeys,
-} from '@winglet/common-utils/object';
+import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils/object';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
@@ -403,7 +399,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (draft === undefined) return undefined;
     if (draft === null) return nullable ? null : {};
     if (replace || base == null) return this.__processValue__(draft, normalize);
-    if (isEmptyObject(draft) || equals(base, draft)) return false;
+    if (isEmptyObject(draft) || this.__host__.equals(base, draft)) return false;
     return this.__processValue__({ ...base, ...draft }, normalize);
   }
 

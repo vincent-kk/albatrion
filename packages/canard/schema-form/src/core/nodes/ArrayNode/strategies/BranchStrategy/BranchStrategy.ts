@@ -318,6 +318,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     updateChildren: boolean = false,
   ) {
     if (this.__locked__ || this.__idle__) return;
+    const host = this.__host__;
     const settled = (option & SetValueOption.Isolate) === 0;
 
     const previous = [...this.__value__];
@@ -328,11 +329,11 @@ export class BranchStrategy implements ArrayNodeStrategy {
       this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
     if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
     if (option & SetValueOption.PublishUpdateEvent)
-      this.__host__.publish(
+      host.publish(
         NodeEventType.UpdateValue,
         current,
         { previous, current },
-        settled && this.__host__.initialized,
+        settled && host.initialized,
       );
 
     this.__idle__ = true;

@@ -1,6 +1,5 @@
 import { map } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
-import { equals } from '@winglet/common-utils/object';
 import { isObjectSchema } from '@winglet/json-schema/filter';
 
 import type { Fn, Nullish } from '@aileron/declare';
@@ -217,12 +216,13 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     input: ArrayValue | Nullish,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
+    const host = this.__host__;
     const retain = (option & SetValueOption.Replace) === 0;
 
     const previous = this.__value__ ? [...this.__value__] : this.__value__;
     const current = this.__parseValue__(input);
 
-    if (retain && equals(previous, current)) return;
+    if (retain && host.equals(previous, current)) return;
     this.__value__ = current;
 
     if (this.__locked__) return;
@@ -230,11 +230,11 @@ export class TerminalStrategy implements ArrayNodeStrategy {
       this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
     if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
     if (option & SetValueOption.PublishUpdateEvent)
-      this.__host__.publish(
+      host.publish(
         NodeEventType.UpdateValue,
         current,
         { previous, current },
-        this.__host__.initialized,
+        host.initialized,
       );
   }
 
