@@ -249,6 +249,8 @@ export type BasicSchema = {
   };
   /** Alias for computed.if */
   '&if'?: boolean | string;
+  /** Value expression for auto update value */
+  '&value'?: string;
   /** Alias for computed.watch */
   '&watch'?: string | string[];
   /** Alias for computed.active */
@@ -263,6 +265,8 @@ export type BasicSchema = {
   computed?: {
     /** Conditional rendering expression */
     if?: boolean | string;
+    /** Value expression for auto update value */
+    value?: string;
     /** Watched field paths for reactivity */
     watch?: string | string[];
     /** Active state expression */
