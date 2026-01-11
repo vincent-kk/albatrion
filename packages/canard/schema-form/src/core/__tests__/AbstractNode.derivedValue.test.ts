@@ -1341,4 +1341,1034 @@ describe('AbstractNode - derivedValue', () => {
       expect(node.find('/result/calc')?.value).toBe(300);
     });
   });
+
+  describe('oneOf/anyOf와 derivedValue 무한 루프 방지 테스트', () => {
+    describe('안전한 패턴: if 조건이 사용자 입력만 참조', () => {
+      it('oneOf if 조건이 사용자 입력만 참조하고, derived가 외부 필드만 참조하면 안전해야 함', async () => {
+        const onChange = vi.fn();
+        const jsonSchema: JsonSchemaWithVirtual = {
+          type: 'object',
+          properties: {
+            mode: {
+              type: 'string',
+              enum: ['simple', 'advanced'],
+              default: 'simple',
+            },
+            baseValue: {
+              type: 'number',
+              default: 100,
+            },
+            result: {
+              type: 'object',
+              oneOf: [
+                {
+                  type: 'object',
+                  computed: {
+                    // 안전: 사용자 입력만 참조
+                    if: '/mode === "simple"',
+                  },
+                  properties: {
+                    calculation: {
+                      type: 'number',
+                      computed: {
+                        // 안전: 외부 필드만 참조
+                        derived: '/baseValue * 2',
+                      },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  computed: {
+                    if: '/mode === "advanced"',
+                  },
+                  properties: {
+                    calculation: {
+                      type: 'number',
+                      computed: {
+                        derived: '/baseValue * 3 + 50',
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        };
+
+        const node = nodeFromJsonSchema({
+          jsonSchema,
+          onChange,
+        });
+
+        await wait();
+
+        // 초기: simple 모드, 100 * 2 = 200
+        expect(node.find('/result/calculation')?.value).toBe(200);
+
+        // advanced 모드로 전환
+        (node.find('/mode') as StringNode).setValue('advanced');
+        await wait();
+
+        // advanced: 100 * 3 + 50 = 350
+        expect(node.find('/result/calculation')?.value).toBe(350);
+
+        // baseValue 변경
+        (node.find('/baseValue') as NumberNode).setValue(50);
+        await wait();
+
+        // 50 * 3 + 50 = 200
+        expect(node.find('/result/calculation')?.value).toBe(200);
+
+        // simple로 다시 전환
+        (node.find('/mode') as StringNode).setValue('simple');
+        await wait();
+
+        // simple: 50 * 2 = 100
+        expect(node.find('/result/calculation')?.value).toBe(100);
+      });
+
+      it('anyOf 각 분기의 derived가 독립적인 외부 값만 참조하면 안전해야 함', async () => {
+        const onChange = vi.fn();
+        const jsonSchema: JsonSchemaWithVirtual = {
+          type: 'object',
+          properties: {
+            baseValue: {
+              type: 'number',
+              default: 100,
+            },
+            showPercentages: {
+              type: 'boolean',
+              default: true,
+            },
+            showMultiples: {
+              type: 'boolean',
+              default: true,
+            },
+            calculations: {
+              type: 'object',
+              anyOf: [
+                {
+                  type: 'object',
+                  computed: {
+                    if: '/showPercentages',
+                  },
+                  properties: {
+                    tenPercent: {
+                      type: 'number',
+                      computed: {
+                        derived: '/baseValue * 0.1',
+                      },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  computed: {
+                    if: '/showMultiples',
+                  },
+                  properties: {
+                    double: {
+                      type: 'number',
+                      computed: {
+                        derived: '/baseValue * 2',
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        };
+
+        const node = nodeFromJsonSchema({
+          jsonSchema,
+          onChange,
+        });
+
+        await wait();
+
+        // 두 분기 모두 활성화: tenPercent = 10, double = 200
+        expect(node.find('/calculations')?.value).toEqual({
+          tenPercent: 10,
+          double: 200,
+        });
+
+        // baseValue 변경
+        (node.find('/baseValue') as NumberNode).setValue(50);
+        await wait();
+
+        // tenPercent = 5, double = 100
+        expect(node.find('/calculations')?.value).toEqual({
+          tenPercent: 5,
+          double: 100,
+        });
+
+        // showPercentages 비활성화
+        (node.find('/showPercentages') as BooleanNode).setValue(false);
+        await wait();
+
+        // tenPercent 분기 비활성화
+        expect(node.find('/calculations')?.value).toEqual({
+          double: 100,
+        });
+      });
+    });
+
+    describe('안전한 패턴: derived가 oneOf 분기 내부 값을 참조하지만 if에 영향 없음', () => {
+      it('외부 derived가 oneOf 분기 내부 값을 참조하되, if 조건에 영향을 주지 않으면 안전해야 함', async () => {
+        const onChange = vi.fn();
+        const jsonSchema: JsonSchemaWithVirtual = {
+          type: 'object',
+          properties: {
+            userChoice: {
+              type: 'string',
+              enum: ['option1', 'option2'],
+              default: 'option1',
+            },
+            options: {
+              type: 'object',
+              oneOf: [
+                {
+                  type: 'object',
+                  computed: {
+                    // 안전: 사용자 입력만 참조
+                    if: '/userChoice === "option1"',
+                  },
+                  properties: {
+                    multiplier: {
+                      type: 'number',
+                      default: 2,
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  computed: {
+                    if: '/userChoice === "option2"',
+                  },
+                  properties: {
+                    multiplier: {
+                      type: 'number',
+                      default: 3,
+                    },
+                  },
+                },
+              ],
+            },
+            baseValue: {
+              type: 'number',
+              default: 100,
+            },
+            // oneOf 분기 내부 값을 참조하지만, if 조건에 영향을 주지 않음
+            result: {
+              type: 'number',
+              computed: {
+                derived: '/baseValue * (/options/multiplier ?? 1)',
+              },
+            },
+          },
+        };
+
+        const node = nodeFromJsonSchema({
+          jsonSchema,
+          onChange,
+        });
+
+        await wait();
+
+        // option1: 100 * 2 = 200
+        expect(node.find('/result')?.value).toBe(200);
+
+        // option2로 전환
+        (node.find('/userChoice') as StringNode).setValue('option2');
+        await wait();
+
+        // option2: 100 * 3 = 300
+        expect(node.find('/result')?.value).toBe(300);
+
+        // baseValue 변경
+        (node.find('/baseValue') as NumberNode).setValue(50);
+        await wait();
+
+        // 50 * 3 = 150
+        expect(node.find('/result')?.value).toBe(150);
+      });
+    });
+
+    describe('안전한 패턴: if 조건에서 원본 값으로 직접 계산', () => {
+      it('if 조건에서 derived 대신 원본 값으로 동일한 계산을 하면 안전해야 함', async () => {
+        const onChange = vi.fn();
+        const jsonSchema: JsonSchemaWithVirtual = {
+          type: 'object',
+          properties: {
+            price: {
+              type: 'number',
+              default: 100,
+            },
+            quantity: {
+              type: 'number',
+              default: 1,
+            },
+            // derived 필드
+            totalPrice: {
+              type: 'number',
+              computed: {
+                derived: '../price * ../quantity',
+              },
+            },
+            // if 조건에서 derived(totalPrice)가 아닌 원본 값으로 직접 계산
+            discount: {
+              type: 'object',
+              oneOf: [
+                {
+                  type: 'object',
+                  computed: {
+                    // 안전: derived 대신 원본 값으로 계산
+                    if: '/price * /quantity < 1000',
+                  },
+                  properties: {
+                    message: {
+                      type: 'string',
+                      default: '할인 없음',
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  computed: {
+                    if: '/price * /quantity >= 1000',
+                  },
+                  properties: {
+                    rate: {
+                      type: 'number',
+                      default: 10,
+                    },
+                    discountedPrice: {
+                      type: 'number',
+                      computed: {
+                        derived: '/totalPrice * 0.9',
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        };
+
+        const node = nodeFromJsonSchema({
+          jsonSchema,
+          onChange,
+        });
+
+        await wait();
+
+        // 초기: 100 * 1 = 100 < 1000, 첫 번째 분기
+        expect(node.find('/totalPrice')?.value).toBe(100);
+        expect(node.find('/discount/message')?.value).toBe('할인 없음');
+
+        // quantity를 10으로 변경: 100 * 10 = 1000 >= 1000
+        (node.find('/quantity') as NumberNode).setValue(10);
+        await wait();
+
+        expect(node.find('/totalPrice')?.value).toBe(1000);
+        expect(node.find('/discount/rate')?.value).toBe(10);
+        expect(node.find('/discount/discountedPrice')?.value).toBe(900); // 1000 * 0.9
+
+        // price 변경: 200 * 10 = 2000
+        (node.find('/price') as NumberNode).setValue(200);
+        await wait();
+
+        expect(node.find('/totalPrice')?.value).toBe(2000);
+        expect(node.find('/discount/discountedPrice')?.value).toBe(1800); // 2000 * 0.9
+      });
+    });
+
+    describe('안전한 패턴: derived 체인과 oneOf 조건 분리', () => {
+      it('derived 체인이 oneOf 조건과 완전히 분리되면 안전해야 함', async () => {
+        const onChange = vi.fn();
+        const jsonSchema: JsonSchemaWithVirtual = {
+          type: 'object',
+          properties: {
+            input: {
+              type: 'number',
+              default: 100,
+            },
+            // derived 체인: input → step1 → step2 → final
+            step1: {
+              type: 'number',
+              computed: {
+                derived: '../input + 10',
+              },
+            },
+            step2: {
+              type: 'number',
+              computed: {
+                derived: '../step1 * 2',
+              },
+            },
+            final: {
+              type: 'number',
+              computed: {
+                derived: '../step2 + 100',
+              },
+            },
+            // oneOf 조건이 derived 체인과 무관
+            displayMode: {
+              type: 'string',
+              enum: ['compact', 'detailed'],
+              default: 'compact',
+            },
+            display: {
+              type: 'object',
+              oneOf: [
+                {
+                  type: 'object',
+                  computed: {
+                    // 안전: 사용자 입력만 참조
+                    if: '/displayMode === "compact"',
+                  },
+                  properties: {
+                    summary: {
+                      type: 'string',
+                      computed: {
+                        derived: '"Result: " + /final',
+                      },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  computed: {
+                    if: '/displayMode === "detailed"',
+                  },
+                  properties: {
+                    detail: {
+                      type: 'string',
+                      computed: {
+                        derived: '/step1 + " -> " + /step2 + " -> " + /final',
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        };
+
+        const node = nodeFromJsonSchema({
+          jsonSchema,
+          onChange,
+        });
+
+        await wait();
+
+        // 초기: input=100 → step1=110 → step2=220 → final=320
+        expect(node.find('/step1')?.value).toBe(110);
+        expect(node.find('/step2')?.value).toBe(220);
+        expect(node.find('/final')?.value).toBe(320);
+        expect(node.find('/display/summary')?.value).toBe('Result: 320');
+
+        // displayMode 변경
+        (node.find('/displayMode') as StringNode).setValue('detailed');
+        await wait();
+
+        expect(node.find('/display/detail')?.value).toBe('110 -> 220 -> 320');
+
+        // input 변경: 50 → 60 → 120 → 220
+        (node.find('/input') as NumberNode).setValue(50);
+        await wait();
+
+        expect(node.find('/step1')?.value).toBe(60);
+        expect(node.find('/step2')?.value).toBe(120);
+        expect(node.find('/final')?.value).toBe(220);
+        expect(node.find('/display/detail')?.value).toBe('60 -> 120 -> 220');
+      });
+    });
+
+    describe('업데이트 횟수 제한 테스트', () => {
+      it('oneOf 분기 전환과 derived 업데이트의 총 횟수가 합리적이어야 함', async () => {
+        const onChange = vi.fn();
+        const jsonSchema: JsonSchemaWithVirtual = {
+          type: 'object',
+          properties: {
+            trigger: {
+              type: 'string',
+              enum: ['a', 'b'],
+              default: 'a',
+            },
+            value: {
+              type: 'number',
+              default: 10,
+            },
+            result: {
+              type: 'object',
+              oneOf: [
+                {
+                  type: 'object',
+                  computed: { if: '/trigger === "a"' },
+                  properties: {
+                    calc: {
+                      type: 'number',
+                      computed: { derived: '/value * 2' },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  computed: { if: '/trigger === "b"' },
+                  properties: {
+                    calc: {
+                      type: 'number',
+                      computed: { derived: '/value * 3' },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        };
+
+        const node = nodeFromJsonSchema({
+          jsonSchema,
+          onChange,
+        });
+
+        await wait();
+
+        let calcUpdateCount = 0;
+        const calcNode = node.find('/result/calc');
+        calcNode?.subscribe(({ type }) => {
+          if (type & NodeEventType.UpdateValue) calcUpdateCount++;
+        });
+
+        // 분기 전환 10번 수행
+        for (let i = 0; i < 10; i++) {
+          (node.find('/trigger') as StringNode).setValue(i % 2 === 0 ? 'b' : 'a');
+          await wait();
+        }
+
+        // 분기 전환 횟수에 비례하는 합리적인 업데이트 횟수여야 함
+        // 각 분기 전환마다 새 노드가 생성되므로 구독은 이전 노드에 대한 것
+        // 새 노드의 업데이트는 카운트되지 않음
+        expect(calcUpdateCount).toBeLessThan(100);
+      });
+
+      it('anyOf 다중 분기 활성화/비활성화 시 업데이트 횟수가 합리적이어야 함', async () => {
+        const onChange = vi.fn();
+        const jsonSchema: JsonSchemaWithVirtual = {
+          type: 'object',
+          properties: {
+            base: {
+              type: 'number',
+              default: 10,
+            },
+            showA: {
+              type: 'boolean',
+              default: true,
+            },
+            showB: {
+              type: 'boolean',
+              default: true,
+            },
+            results: {
+              type: 'object',
+              anyOf: [
+                {
+                  type: 'object',
+                  computed: { if: '/showA' },
+                  properties: {
+                    a: {
+                      type: 'number',
+                      computed: { derived: '/base * 2' },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  computed: { if: '/showB' },
+                  properties: {
+                    b: {
+                      type: 'number',
+                      computed: { derived: '/base * 3' },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        };
+
+        const node = nodeFromJsonSchema({
+          jsonSchema,
+          onChange,
+        });
+
+        await wait();
+
+        let baseChangeCount = 0;
+        node.subscribe(({ type }) => {
+          if (type & NodeEventType.UpdateValue) baseChangeCount++;
+        });
+
+        // base 값 여러 번 변경
+        for (let i = 0; i < 5; i++) {
+          (node.find('/base') as NumberNode).setValue(10 + i * 10);
+          await wait();
+        }
+
+        // 합리적인 업데이트 횟수여야 함
+        expect(baseChangeCount).toBeLessThan(50);
+
+        // 최종 값 확인
+        expect(node.find('/results')?.value).toEqual({
+          a: 100, // 50 * 2
+          b: 150, // 50 * 3
+        });
+      });
+    });
+
+    describe('위험 패턴 감지 및 안정화 테스트', () => {
+      it('수렴하는 순환 참조가 oneOf와 결합되어도 안정화되어야 함', async () => {
+        const onChange = vi.fn();
+        // 수렴하는 순환: a = b * 0.5, b = a + 10 → a=10, b=20
+        const jsonSchema: JsonSchemaWithVirtual = {
+          type: 'object',
+          properties: {
+            a: {
+              type: 'number',
+              default: 0,
+              computed: {
+                derived: '(../b || 0) * 0.5',
+              },
+            },
+            b: {
+              type: 'number',
+              default: 0,
+              computed: {
+                derived: '(../a || 0) + 10',
+              },
+            },
+            // oneOf가 수렴하는 순환 참조 값을 사용 (읽기 전용)
+            display: {
+              type: 'object',
+              oneOf: [
+                {
+                  type: 'object',
+                  computed: {
+                    // 안전: 수렴 후의 안정적인 값을 참조
+                    if: '/a < 15',
+                  },
+                  properties: {
+                    message: {
+                      type: 'string',
+                      default: 'A is low',
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  computed: {
+                    if: '/a >= 15',
+                  },
+                  properties: {
+                    message: {
+                      type: 'string',
+                      default: 'A is high',
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        };
+
+        const node = nodeFromJsonSchema({
+          jsonSchema,
+          onChange,
+        });
+
+        // 수렴 시간 대기
+        await wait(100);
+
+        // 수렴 값 확인: a=10, b=20
+        expect(node.find('/a')?.value).toBeCloseTo(10);
+        expect(node.find('/b')?.value).toBeCloseTo(20);
+
+        // oneOf가 올바른 분기 선택 (a=10 < 15)
+        expect(node.find('/display/message')?.value).toBe('A is low');
+      });
+
+      it('active=false인 노드의 derived가 oneOf 조건에 영향을 주지 않아야 함', async () => {
+        const onChange = vi.fn();
+        const jsonSchema: JsonSchemaWithVirtual = {
+          type: 'object',
+          properties: {
+            enableCalc: {
+              type: 'boolean',
+              default: false,
+            },
+            base: {
+              type: 'number',
+              default: 50,
+            },
+            calculated: {
+              type: 'number',
+              computed: {
+                active: '../enableCalc',
+                derived: '../base * 2',
+              },
+            },
+            // oneOf가 calculated 값이 아닌 base 값을 참조
+            display: {
+              type: 'object',
+              oneOf: [
+                {
+                  type: 'object',
+                  computed: {
+                    // 안전: derived가 아닌 원본 값 참조
+                    if: '/base < 100',
+                  },
+                  properties: {
+                    label: {
+                      type: 'string',
+                      default: 'Small',
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  computed: {
+                    if: '/base >= 100',
+                  },
+                  properties: {
+                    label: {
+                      type: 'string',
+                      default: 'Large',
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        };
+
+        const node = nodeFromJsonSchema({
+          jsonSchema,
+          onChange,
+        });
+
+        await wait();
+
+        // calculated는 비활성화 상태
+        expect(node.find('/calculated')?.active).toBe(false);
+        expect(node.find('/calculated')?.value).toBeUndefined();
+
+        // oneOf는 base 값 기준: 50 < 100
+        expect(node.find('/display/label')?.value).toBe('Small');
+
+        // enableCalc 활성화
+        (node.find('/enableCalc') as BooleanNode).setValue(true);
+        await wait();
+
+        // calculated 활성화
+        expect(node.find('/calculated')?.active).toBe(true);
+        expect(node.find('/calculated')?.value).toBe(100);
+
+        // oneOf는 여전히 base 값 기준 (calculated와 무관)
+        expect(node.find('/display/label')?.value).toBe('Small');
+
+        // base 변경
+        (node.find('/base') as NumberNode).setValue(150);
+        await wait();
+
+        // calculated도 업데이트
+        expect(node.find('/calculated')?.value).toBe(300);
+        // oneOf 분기 전환
+        expect(node.find('/display/label')?.value).toBe('Large');
+      });
+    });
+
+    describe('복합 시나리오 테스트', () => {
+      it('중첩된 oneOf에서 각 레벨의 derived가 독립적으로 동작해야 함', async () => {
+        const onChange = vi.fn();
+        const jsonSchema: JsonSchemaWithVirtual = {
+          type: 'object',
+          properties: {
+            level1Choice: {
+              type: 'string',
+              enum: ['x', 'y'],
+              default: 'x',
+            },
+            level2Choice: {
+              type: 'string',
+              enum: ['p', 'q'],
+              default: 'p',
+            },
+            baseValue: {
+              type: 'number',
+              default: 10,
+            },
+            nested: {
+              type: 'object',
+              oneOf: [
+                {
+                  type: 'object',
+                  computed: { if: '/level1Choice === "x"' },
+                  properties: {
+                    innerNested: {
+                      type: 'object',
+                      oneOf: [
+                        {
+                          type: 'object',
+                          computed: { if: '/level2Choice === "p"' },
+                          properties: {
+                            result: {
+                              type: 'number',
+                              computed: { derived: '/baseValue * 2' },
+                            },
+                          },
+                        },
+                        {
+                          type: 'object',
+                          computed: { if: '/level2Choice === "q"' },
+                          properties: {
+                            result: {
+                              type: 'number',
+                              computed: { derived: '/baseValue * 3' },
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  computed: { if: '/level1Choice === "y"' },
+                  properties: {
+                    innerNested: {
+                      type: 'object',
+                      oneOf: [
+                        {
+                          type: 'object',
+                          computed: { if: '/level2Choice === "p"' },
+                          properties: {
+                            result: {
+                              type: 'number',
+                              computed: { derived: '/baseValue * 4' },
+                            },
+                          },
+                        },
+                        {
+                          type: 'object',
+                          computed: { if: '/level2Choice === "q"' },
+                          properties: {
+                            result: {
+                              type: 'number',
+                              computed: { derived: '/baseValue * 5' },
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        };
+
+        const node = nodeFromJsonSchema({
+          jsonSchema,
+          onChange,
+        });
+
+        await wait();
+
+        // x + p: 10 * 2 = 20
+        expect(node.find('/nested/innerNested/result')?.value).toBe(20);
+
+        // level2를 q로 변경: x + q: 10 * 3 = 30
+        (node.find('/level2Choice') as StringNode).setValue('q');
+        await wait();
+        expect(node.find('/nested/innerNested/result')?.value).toBe(30);
+
+        // level1을 y로 변경: y + q: 10 * 5 = 50
+        (node.find('/level1Choice') as StringNode).setValue('y');
+        await wait();
+        expect(node.find('/nested/innerNested/result')?.value).toBe(50);
+
+        // level2를 p로 변경: y + p: 10 * 4 = 40
+        (node.find('/level2Choice') as StringNode).setValue('p');
+        await wait();
+        expect(node.find('/nested/innerNested/result')?.value).toBe(40);
+
+        // baseValue 변경: y + p: 20 * 4 = 80
+        (node.find('/baseValue') as NumberNode).setValue(20);
+        await wait();
+        expect(node.find('/nested/innerNested/result')?.value).toBe(80);
+      });
+
+      it('anyOf 여러 분기가 동시에 활성화되어도 derived 간 간섭이 없어야 함', async () => {
+        const onChange = vi.fn();
+        const jsonSchema: JsonSchemaWithVirtual = {
+          type: 'object',
+          properties: {
+            input: {
+              type: 'number',
+              default: 100,
+            },
+            showAll: {
+              type: 'boolean',
+              default: true,
+            },
+            results: {
+              type: 'object',
+              anyOf: [
+                {
+                  type: 'object',
+                  computed: { if: '/showAll' },
+                  properties: {
+                    sum: {
+                      type: 'number',
+                      computed: { derived: '/input + 10' },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  computed: { if: '/showAll' },
+                  properties: {
+                    product: {
+                      type: 'number',
+                      computed: { derived: '/input * 2' },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  computed: { if: '/showAll' },
+                  properties: {
+                    quotient: {
+                      type: 'number',
+                      computed: { derived: '/input / 2' },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        };
+
+        const node = nodeFromJsonSchema({
+          jsonSchema,
+          onChange,
+        });
+
+        await wait();
+
+        // 모든 분기 활성화
+        expect(node.find('/results')?.value).toEqual({
+          sum: 110,
+          product: 200,
+          quotient: 50,
+        });
+
+        // input 변경
+        (node.find('/input') as NumberNode).setValue(200);
+        await wait();
+
+        // 모든 derived가 독립적으로 업데이트
+        expect(node.find('/results')?.value).toEqual({
+          sum: 210,
+          product: 400,
+          quotient: 100,
+        });
+      });
+
+      it('./를 사용한 조건부 업데이트가 oneOf와 함께 안전하게 동작해야 함', async () => {
+        const onChange = vi.fn();
+        const jsonSchema: JsonSchemaWithVirtual = {
+          type: 'object',
+          properties: {
+            mode: {
+              type: 'string',
+              enum: ['auto', 'manual'],
+              default: 'auto',
+            },
+            input: {
+              type: 'number',
+              default: 100,
+            },
+            result: {
+              type: 'object',
+              oneOf: [
+                {
+                  type: 'object',
+                  computed: { if: '/mode === "auto"' },
+                  properties: {
+                    value: {
+                      type: 'number',
+                      default: 0,
+                      computed: {
+                        // auto 모드에서만 자동 계산
+                        derived: '/input * 2',
+                      },
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  computed: { if: '/mode === "manual"' },
+                  properties: {
+                    value: {
+                      type: 'number',
+                      default: 50,
+                      // manual 모드에서는 derived 없음 (사용자 입력만)
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        };
+
+        const node = nodeFromJsonSchema({
+          jsonSchema,
+          onChange,
+        });
+
+        await wait();
+
+        // auto 모드: 자동 계산
+        expect(node.find('/result/value')?.value).toBe(200);
+
+        // input 변경
+        (node.find('/input') as NumberNode).setValue(150);
+        await wait();
+        expect(node.find('/result/value')?.value).toBe(300);
+
+        // manual 모드로 전환
+        (node.find('/mode') as StringNode).setValue('manual');
+        await wait();
+
+        // manual 모드: 기본값 사용
+        expect(node.find('/result/value')?.value).toBe(50);
+
+        // manual 모드에서 값 변경
+        (node.find('/result/value') as NumberNode).setValue(999);
+        await wait();
+        expect(node.find('/result/value')?.value).toBe(999);
+
+        // auto 모드로 다시 전환
+        (node.find('/mode') as StringNode).setValue('auto');
+        await wait();
+
+        // auto 모드: 자동 계산 재개
+        expect(node.find('/result/value')?.value).toBe(300); // 150 * 2
+      });
+    });
+  });
 });
