@@ -1,4 +1,5 @@
 import { isEmptyObject, isObject } from '@winglet/common-utils/filter';
+import { isClose } from '@winglet/common-utils/math';
 import {
   cloneLite,
   equals,
@@ -501,6 +502,7 @@ export abstract class AbstractNode<
    *  - `readOnly`: Calculate whether the node is read only
    *  - `disabled`: Calculate whether the node is disabled
    *  - `oneOfIndex`: Calculate the index of the oneOf branch
+   *  - `derivedValue`: Get derived value from dependencies
    *  - `watchValues`: Calculate the list of values to watch
    */
   #compute: ReturnType<typeof computeFactory>;
@@ -580,6 +582,9 @@ export abstract class AbstractNode<
     return this.#watchValues;
   }
 
+  /** Computed derived value from dependencies, used for triggering component re-renders */
+  #derivedValue: Value | undefined;
+
   /**
    * Prepares dependencies for update computation.
    * @internal Internal implementation method. Do not call directly.
@@ -606,6 +611,19 @@ export abstract class AbstractNode<
         });
         this.saveUnsubscribe(unsubscribe);
       }
+      if (this.#compute.derivedValue !== undefined)
+        this.subscribe(({ type }) => {
+          if (type & NodeEventType.UpdateComputedProperties) {
+            if (
+              this.active === false ||
+              (this.schemaType === 'number'
+                ? isClose(this.value, this.#derivedValue)
+                : equals(this.value, this.#derivedValue))
+            )
+              return;
+            this.setValue(this.#derivedValue);
+          }
+        });
     }
     this.updateComputedProperties();
     this.#computeEnabled = computeEnabled;
@@ -621,9 +639,10 @@ export abstract class AbstractNode<
     this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
     this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
     this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
-    this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
     this.#anyOfIndices = this.#compute.anyOfIndices?.(this.#dependencies) || [];
+    this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
+    this.#derivedValue = this.#compute.derivedValue?.(this.#dependencies);
     if (previous !== this.#active) this.reset(false, true);
     this.publish(NodeEventType.UpdateComputedProperties);
   }

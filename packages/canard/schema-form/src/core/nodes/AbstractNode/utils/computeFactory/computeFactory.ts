@@ -8,6 +8,7 @@ import {
   getConditionIndexFactory,
   getConditionIndicesFactory,
 } from './utils/getConditionIndexFactory';
+import { getDerivedValueFactory } from './utils/getDerivedValueFactory/getDerivedValueFactory';
 import { getObservedValuesFactory } from './utils/getObservedValuesFactory';
 import { getPathManager } from './utils/getPathManager';
 
@@ -26,6 +27,7 @@ export const computeFactory = (
   const getConditionIndex = getConditionIndexFactory(type, schema);
   const getConditionIndices = getConditionIndicesFactory(type, schema);
   const getObservedValues = getObservedValuesFactory(schema);
+  const getDerivedValue = getDerivedValueFactory(schema);
   const pathManager = getPathManager();
   return {
     /** List of paths to dependencies */
@@ -72,5 +74,11 @@ export const computeFactory = (
      * @returns List of values to watch
      */
     watchValues: getObservedValues(pathManager, 'watch'),
+    /**
+     * Get derived value
+     * @param dependencies - List of dependencies
+     * @returns Derived value
+     */
+    derivedValue: getDerivedValue(pathManager, 'derived'),
   };
 };

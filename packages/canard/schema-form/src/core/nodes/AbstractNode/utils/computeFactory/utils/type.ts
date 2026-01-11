@@ -12,9 +12,9 @@ export type ObservedFieldName = Extract<ComputedFieldName, 'watch'>;
 
 export type ConditionIndexName = Extract<ComputedFieldName, 'if'>;
 
-export type ComputedValueFieldName = Extract<ComputedFieldName, 'value'>;
+export type DerivedValueFieldName = Extract<ComputedFieldName, 'derived'>;
 
 export type ConditionFieldName = Exclude<
   ComputedFieldName,
-  ObservedFieldName | ConditionIndexName | ComputedValueFieldName
+  ObservedFieldName | ConditionIndexName | DerivedValueFieldName
 >;
