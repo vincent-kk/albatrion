@@ -1845,7 +1845,9 @@ describe('AbstractNode - derivedValue', () => {
 
         // 분기 전환 10번 수행
         for (let i = 0; i < 10; i++) {
-          (node.find('/trigger') as StringNode).setValue(i % 2 === 0 ? 'b' : 'a');
+          (node.find('/trigger') as StringNode).setValue(
+            i % 2 === 0 ? 'b' : 'a',
+          );
           await wait();
         }
 

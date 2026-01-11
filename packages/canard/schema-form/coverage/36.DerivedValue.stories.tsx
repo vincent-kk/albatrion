@@ -1675,7 +1675,9 @@ export const InfiniteLoopPreventionGuide = () => {
           <code>{'computed: { if: "/derivedField > 100" }'}</code>
         </li>
         <li>
-          <strong>derived가 분기 내부 값을 참조하고, 그 값이 분기 조건에 영향</strong>
+          <strong>
+            derived가 분기 내부 값을 참조하고, 그 값이 분기 조건에 영향
+          </strong>
           <br />
           분기 전환 → derived 변경 → 분기 전환 → 무한 루프
         </li>
@@ -1705,12 +1707,14 @@ export const InfiniteLoopPreventionGuide = () => {
           분기 조건에 영향을 주지 않는 필드들만 참조
         </li>
         <li>
-          <strong>if 조건에서 동일한 계산이 필요하면 원본 값으로 직접 계산</strong>
+          <strong>
+            if 조건에서 동일한 계산이 필요하면 원본 값으로 직접 계산
+          </strong>
           <br />
           <code>{'computed: { if: "/price * /quantity > 1000" }'}</code> (O)
           <br />
-          <code>{'computed: { if: "/totalPrice > 1000" }'}</code> (X, totalPrice가
-          derived인 경우)
+          <code>{'computed: { if: "/totalPrice > 1000" }'}</code> (X,
+          totalPrice가 derived인 경우)
         </li>
         <li>
           <strong>derived 체인과 oneOf 조건을 완전히 분리</strong>
@@ -1724,7 +1728,10 @@ export const InfiniteLoopPreventionGuide = () => {
         <li>oneOf/anyOf의 if 조건이 참조하는 필드 목록 작성</li>
         <li>해당 필드 중 computed.derived가 있는 필드 확인</li>
         <li>derived 표현식이 oneOf/anyOf 분기 내부 값을 참조하는지 확인</li>
-        <li>분기 내부 값 변경이 derived에 영향 → derived가 if 조건에 영향이면 위험!</li>
+        <li>
+          분기 내부 값 변경이 derived에 영향 → derived가 if 조건에 영향이면
+          위험!
+        </li>
       </ol>
 
       <h3>💡 팁</h3>
