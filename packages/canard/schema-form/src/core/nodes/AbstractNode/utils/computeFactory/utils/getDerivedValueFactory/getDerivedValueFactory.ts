@@ -49,7 +49,7 @@ const createDynamicFunction = (
   const derivedExpression = expression
     .replace(JSON_POINTER_PATH_REGEX, (path) => {
       pathManager.set(path);
-      return `(dependencies[${pathManager.findIndex(path)}])`;
+      return `dependencies[${pathManager.findIndex(path)}]`;
     })
     .trim()
     .replace(/;$/, '');
@@ -57,11 +57,13 @@ const createDynamicFunction = (
   // Cannot create function if expression is empty after transformation
   if (derivedExpression.length === 0) return;
 
+  const functionBody =
+    derivedExpression.startsWith('{') && derivedExpression.endsWith('}')
+      ? derivedExpression.slice(1, -1).trim()
+      : `return ${derivedExpression}`;
+
   try {
-    return new Function(
-      'dependencies',
-      `return ${derivedExpression}`,
-    ) as GetDerivedValue;
+    return new Function('dependencies', functionBody) as GetDerivedValue;
   } catch (error) {
     throw new JsonSchemaError(
       'GET_DERIVED_VALUE',
