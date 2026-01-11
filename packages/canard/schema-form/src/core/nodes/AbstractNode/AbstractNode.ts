@@ -1,5 +1,4 @@
 import { isEmptyObject, isObject } from '@winglet/common-utils/filter';
-import { isClose } from '@winglet/common-utils/math';
 import {
   cloneLite,
   equals,
@@ -306,6 +305,20 @@ export abstract class AbstractNode<
     else if (input === undefined) this.#handleChange(undefined, batch);
   }
 
+  /**
+   * Compares the node's value with the derived value
+   * @param left - The left value
+   * @param right - The right value
+   * @returns Whether the left value is equal to the right value
+   */
+  public equals(
+    this: AbstractNode,
+    left: Value | Nullish,
+    right: Value | Nullish,
+  ): boolean {
+    return left === right;
+  }
+
   /** List of child nodes, nodes without child nodes return an `null` */
   public get children(): ChildNode[] | null {
     return null;
@@ -488,9 +501,9 @@ export abstract class AbstractNode<
   public initialize(this: AbstractNode, actor?: SchemaNode) {
     if (this.#initialized || (actor !== this.parentNode && !this.isRoot))
       return false;
-    this.#initialized = true;
     this.#prepareUpdateDependencies();
     this.publish(NodeEventType.Initialized);
+    this.#initialized = true;
     return true;
   }
 
@@ -634,6 +647,25 @@ export abstract class AbstractNode<
   }
 
   /**
+   * Applies the derived value to the node.
+   * @param this - The node to apply the derived value to
+   * @param option - The option to apply the derived value with
+   * @returns Whether the derived value was applied (return false if the derived value was applied)
+   */
+  #applyDerivedValue(
+    this: AbstractNode,
+    checkEquals: boolean = true,
+    option: UnionSetValueOption = SetValueOption.StableReset,
+  ): boolean {
+    if (this.#compute.derivedValue === undefined || this.active === false)
+      return true;
+    const derivedValue = this.#compute.derivedValue(this.#dependencies);
+    if (checkEquals && this.equals(this.value, derivedValue)) return true;
+    this.setValue(derivedValue, option);
+    return false;
+  }
+
+  /**
    * Updates the node's scoped property.
    * @returns Whether the scoped property was changed
    */
@@ -643,29 +675,6 @@ export abstract class AbstractNode<
       this.#scoped = this.parentNode.oneOfIndex === this.variant;
     else if (this.scope === 'anyOf')
       this.#scoped = this.parentNode.anyOfIndices.indexOf(this.variant) !== -1;
-  }
-
-  /**
-   * Applies the derived value to the node.
-   * @param this - The node to apply the derived value to
-   * @param option - The option to apply the derived value with
-   * @returns Whether the derived value was applied (return false if the derived value was applied)
-   */
-  #applyDerivedValue(
-    this: AbstractNode,
-    option: UnionSetValueOption = SetValueOption.StableReset,
-  ): boolean {
-    if (this.#compute.derivedValue === undefined || this.active === false)
-      return true;
-    const derivedValue = this.#compute.derivedValue(this.#dependencies);
-    if (
-      this.type === 'number'
-        ? isClose(this.value, derivedValue)
-        : equals(this.value, derivedValue)
-    )
-      return true;
-    this.setValue(derivedValue, option);
-    return false;
   }
 
   /**
@@ -694,7 +703,7 @@ export abstract class AbstractNode<
               : this.#initialValue;
     } else this.#defaultValue = this.#initialValue;
 
-    if (this.#applyDerivedValue())
+    if (this.#applyDerivedValue(false))
       this.setValue(
         this.#active ? this.#defaultValue : undefined,
         SetValueOption.StableReset,

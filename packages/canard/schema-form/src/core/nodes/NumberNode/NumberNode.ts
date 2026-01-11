@@ -1,3 +1,5 @@
+import { isClose } from '@winglet/common-utils/math';
+
 import type { Nullish } from '@aileron/declare';
 
 import type { NumberSchema, NumberValue } from '@/schema-form/types';
@@ -18,6 +20,17 @@ import {
  */
 export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   public override readonly type = 'number';
+
+  public override equals(
+    this: NumberNode,
+    left: NumberValue | Nullish,
+    right: NumberValue | Nullish,
+    fullPrecision?: boolean,
+  ): boolean {
+    if (fullPrecision) return left === right;
+    if (left == null || right == null) return left === right;
+    return isClose(left, right);
+  }
 
   /** Current value of the number node */
   #value: NumberValue | Nullish = undefined;
@@ -78,7 +91,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     const previous = this.#value;
     const current = this.#parseValue(input);
 
-    if (retain && previous === current) return;
+    if (retain && this.equals(previous, current)) return;
     this.#value = current;
 
     if (option & SetValueOption.EmitChange)

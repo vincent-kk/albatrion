@@ -1,3 +1,5 @@
+import { equals } from '@winglet/common-utils/object';
+
 import type { Nullish } from '@aileron/declare';
 
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
@@ -23,6 +25,14 @@ import { omitEmptyObject } from './utils';
  */
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   public override readonly type = 'object';
+
+  public override equals(
+    this: ObjectNode,
+    left: ObjectValue | Nullish,
+    right: ObjectValue | Nullish,
+  ): boolean {
+    return equals(left, right);
+  }
 
   /**
    * Strategy used by the object node:
