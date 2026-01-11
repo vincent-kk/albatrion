@@ -514,21 +514,22 @@ export class BranchStrategy implements ObjectNodeStrategy {
       previous > -1 ? this.__oneOfChildNodeMapList__[previous] : null;
     if (previousOneOfChildNodeMap)
       for (const child of previousOneOfChildNodeMap.values())
-        child.node.reset(true);
+        child.node.reset({ updateScoped: true });
     if (oneOfChildNodeMap)
       for (const child of oneOfChildNodeMap.values()) {
         const node = child.node;
         const previousNode = previousOneOfChildNodeMap?.get(node.name)?.node;
         const previousValue = this.__value__?.[node.name];
-        node.reset(
-          true,
-          isolation ||
+        node.reset({
+          updateScoped: true,
+          preferLatest:
+            isolation ||
             (node.type === previousNode?.type && isTerminalType(node.type)),
-          isolation === false,
-          validateSchemaType(previousValue, node.type, node.nullable)
+          preferInitial: isolation === false,
+          fallbackValue: validateSchemaType(previousValue, node.type, node.nullable)
             ? previousValue
             : undefined,
-        );
+        });
       }
     this.__locked__ = false;
 
@@ -562,7 +563,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
       for (let i = 0, l = disables.length; i < l; i++) {
         const anyOfChildNodes =
           this.__anyOfChildNodeMapList__[disables[i]].values();
-        for (const child of anyOfChildNodes) child.node.reset(true);
+        for (const child of anyOfChildNodes)
+          child.node.reset({ updateScoped: true });
       }
     const enables = isolation ? current : differenceLite(current, previous);
     if (enables.length > 0)
@@ -571,7 +573,12 @@ export class BranchStrategy implements ObjectNodeStrategy {
           this.__anyOfChildNodeMapList__[enables[i]].values();
         for (const child of anyOfChildNodes) {
           const node = child.node;
-          node.reset(true, isolation, false, this.__value__?.[node.name]);
+          node.reset({
+            updateScoped: true,
+            preferLatest: isolation,
+            preferInitial: false,
+            fallbackValue: this.__value__?.[node.name],
+          });
         }
       }
     this.__locked__ = false;

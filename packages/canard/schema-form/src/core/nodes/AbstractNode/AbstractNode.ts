@@ -42,6 +42,7 @@ import {
   NodeEventType,
   type NodeListener,
   type NodeStateFlags,
+  type ResetOptions,
   type SchemaNode,
   type SchemaNodeConstructorProps,
   SetValueOption,
@@ -643,7 +644,11 @@ export abstract class AbstractNode<
     this.#anyOfIndices = this.#compute.anyOfIndices?.(this.#dependencies) || [];
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#derivedValue = this.#compute.derivedValue?.(this.#dependencies);
-    if (previous !== this.#active) this.reset(false, true);
+
+    if (previous !== this.#active) {
+      // active 변경 시 reset 호출 (derivedValue 자동 적용됨)
+      this.reset({ preferLatest: true });
+    }
     this.publish(NodeEventType.UpdateComputedProperties);
   }
 
@@ -660,32 +665,32 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Resets the current node to its initial value. Uses the current node's initial value, or the provided value if one is given.
-   * @param updateScoped - Whether to update the scoped property
-   * @param preferLatestValue - Whether to use the latest value, uses the latest value if available
-   * @param preferInitialValue - Whether to use the initial value, uses the initial value if available
-   * @param inputValue - The value to set, uses the provided value if given
+   * Resets the current node to its initial value or computed derived value.
+   * Value priority: inputValue > derivedValue > fallbackValue/computed default
+   * @param options - Reset options
+   * @param options.updateScoped - Whether to update the scoped property (for oneOf/anyOf branches)
+   * @param options.preferLatest - Whether to prefer the latest value over initial value
+   * @param options.preferInitial - Whether to prefer the initial value when preferLatest is true
+   * @param options.inputValue - Explicit input value with highest priority
+   * @param options.fallbackValue - Fallback value used in default calculation
    * @internal Internal implementation method. Do not call directly.
    */
-  public reset(
-    this: AbstractNode,
-    updateScoped: boolean,
-    preferLatestValue?: boolean,
-    preferInitialValue?: boolean,
-    inputValue?: Value | Nullish,
-  ) {
-    if (updateScoped) this.#updateScoped();
-    const defaultValue = preferLatestValue
-      ? preferInitialValue && this.#initialValue !== undefined
-        ? this.#initialValue
-        : inputValue !== undefined
-          ? inputValue
-          : this.value !== undefined
-            ? this.value
-            : this.#initialValue
-      : this.#initialValue;
-    this.#defaultValue = defaultValue;
-    const value = this.#active ? defaultValue : undefined;
+  public reset(this: AbstractNode, options: ResetOptions<Value> = {}) {
+    if (options.updateScoped) this.#updateScoped();
+    if ('inputValue' in options) {
+      this.#defaultValue = options.inputValue;
+    } else {
+      this.#defaultValue = options.preferLatest
+        ? options.preferInitial && this.#initialValue !== undefined
+          ? this.#initialValue
+          : 'fallbackValue' in options && options.fallbackValue !== undefined
+            ? options.fallbackValue
+            : this.value !== undefined
+              ? this.value
+              : this.#initialValue
+        : this.#initialValue;
+    }
+    const value = this.#active ? this.#defaultValue : undefined;
     this.setValue(value, SetValueOption.StableReset);
     this.setState();
   }
