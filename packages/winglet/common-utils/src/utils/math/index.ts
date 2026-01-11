@@ -7,6 +7,7 @@ export * from './fibonacci';
 export * from './fromBase';
 export * from './gcd';
 export * from './inRange';
+export * from './isClose';
 export * from './isEven';
 export * from './isOdd';
 export * from './isPrime';
