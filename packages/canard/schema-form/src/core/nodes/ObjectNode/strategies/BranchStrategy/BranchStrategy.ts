@@ -525,8 +525,12 @@ export class BranchStrategy implements ObjectNodeStrategy {
           preferLatest:
             isolation ||
             (node.type === previousNode?.type && isTerminalType(node.type)),
-          preferInitial: isolation === false,
-          fallbackValue: validateSchemaType(previousValue, node.type, node.nullable)
+          checkInitialValueFirst: isolation === false,
+          fallbackValue: validateSchemaType(
+            previousValue,
+            node.type,
+            node.nullable,
+          )
             ? previousValue
             : undefined,
         });
@@ -576,7 +580,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
           node.reset({
             updateScoped: true,
             preferLatest: isolation,
-            preferInitial: false,
             fallbackValue: this.__value__?.[node.name],
           });
         }

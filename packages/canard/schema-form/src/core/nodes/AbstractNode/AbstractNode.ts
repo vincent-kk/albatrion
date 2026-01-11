@@ -583,9 +583,6 @@ export abstract class AbstractNode<
     return this.#watchValues;
   }
 
-  /** Computed derived value from dependencies, used for triggering component re-renders */
-  #derivedValue: Value | undefined;
-
   /**
    * Prepares dependencies for update computation.
    * @internal Internal implementation method. Do not call directly.
@@ -596,8 +593,7 @@ export abstract class AbstractNode<
     if (computeEnabled) {
       this.#dependencies = new Array(dependencyPaths.length);
       for (let i = 0, l = dependencyPaths.length; i < l; i++) {
-        const dependencyPath = dependencyPaths[i];
-        const targetNode = this.find(dependencyPath);
+        const targetNode = this.find(dependencyPaths[i]);
         if (targetNode === null) continue;
         this.#dependencies[i] = targetNode.value;
         const unsubscribe = targetNode.subscribe(({ type, payload }) => {
@@ -612,19 +608,6 @@ export abstract class AbstractNode<
         });
         this.saveUnsubscribe(unsubscribe);
       }
-      if (this.#compute.derivedValue !== undefined)
-        this.subscribe(({ type }) => {
-          if (type & NodeEventType.UpdateComputedProperties) {
-            if (
-              this.active === false ||
-              (this.schemaType === 'number'
-                ? isClose(this.value, this.#derivedValue)
-                : equals(this.value, this.#derivedValue))
-            )
-              return;
-            this.setValue(this.#derivedValue);
-          }
-        });
     }
     this.updateComputedProperties();
     this.#computeEnabled = computeEnabled;
@@ -643,12 +626,10 @@ export abstract class AbstractNode<
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
     this.#anyOfIndices = this.#compute.anyOfIndices?.(this.#dependencies) || [];
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
-    this.#derivedValue = this.#compute.derivedValue?.(this.#dependencies);
 
-    if (previous !== this.#active) {
-      // active 변경 시 reset 호출 (derivedValue 자동 적용됨)
-      this.reset({ preferLatest: true });
-    }
+    if (previous !== this.#active) this.reset({ preferLatest: true });
+    else if (this.active) this.#applyDerivedValue();
+
     this.publish(NodeEventType.UpdateComputedProperties);
   }
 
@@ -665,6 +646,29 @@ export abstract class AbstractNode<
   }
 
   /**
+   * Applies the derived value to the node.
+   * @param this - The node to apply the derived value to
+   * @param option - The option to apply the derived value with
+   * @returns Whether the derived value was applied (return false if the derived value was applied)
+   */
+  #applyDerivedValue(
+    this: AbstractNode,
+    option: UnionSetValueOption = SetValueOption.StableReset,
+  ): boolean {
+    if (this.#compute.derivedValue === undefined || this.active === false)
+      return true;
+    const derivedValue = this.#compute.derivedValue(this.#dependencies);
+    if (
+      this.type === 'number'
+        ? isClose(this.value, derivedValue)
+        : equals(this.value, derivedValue)
+    )
+      return true;
+    this.setValue(derivedValue, option);
+    return false;
+  }
+
+  /**
    * Resets the current node to its initial value or computed derived value.
    * Value priority: inputValue > derivedValue > fallbackValue/computed default
    * @param options - Reset options
@@ -677,21 +681,25 @@ export abstract class AbstractNode<
    */
   public reset(this: AbstractNode, options: ResetOptions<Value> = {}) {
     if (options.updateScoped) this.#updateScoped();
-    if ('inputValue' in options) {
-      this.#defaultValue = options.inputValue;
-    } else {
-      this.#defaultValue = options.preferLatest
-        ? options.preferInitial && this.#initialValue !== undefined
-          ? this.#initialValue
-          : 'fallbackValue' in options && options.fallbackValue !== undefined
+    if ('inputValue' in options) this.#defaultValue = options.inputValue;
+    else if (options.preferLatest) {
+      if (options.checkInitialValueFirst && this.#initialValue !== undefined)
+        this.#defaultValue = this.#initialValue;
+      else
+        this.#defaultValue =
+          options.fallbackValue !== undefined
             ? options.fallbackValue
             : this.value !== undefined
               ? this.value
-              : this.#initialValue
-        : this.#initialValue;
-    }
-    const value = this.#active ? this.#defaultValue : undefined;
-    this.setValue(value, SetValueOption.StableReset);
+              : this.#initialValue;
+    } else this.#defaultValue = this.#initialValue;
+
+    if (this.#applyDerivedValue())
+      this.setValue(
+        this.#active ? this.#defaultValue : undefined,
+        SetValueOption.StableReset,
+      );
+
     this.setState();
   }
 

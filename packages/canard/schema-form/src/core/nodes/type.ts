@@ -361,8 +361,8 @@ export interface ResetOptions<Value = unknown> {
   updateScoped?: boolean;
   /** Whether to prefer the latest (current) value over the initial value */
   preferLatest?: boolean;
-  /** Whether to prefer the initial value when preferLatest is true */
-  preferInitial?: boolean;
+  /** Whether to check the initial value first when preferLatest is true */
+  checkInitialValueFirst?: boolean;
   /** Explicit input value with highest priority - overrides all other values */
   inputValue?: Value | null;
   /** Fallback value used in the default value calculation logic */
