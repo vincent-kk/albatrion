@@ -91,7 +91,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     const previous = this.#value;
     const current = this.#parseValue(input);
 
-    if (retain && this.equals(previous, current)) return;
+    if (retain && this.equals(previous, current, true)) return;
     this.#value = current;
 
     if (option & SetValueOption.EmitChange)
