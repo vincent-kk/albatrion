@@ -221,10 +221,7 @@ describe('ajvValidatorPlugin (2020) - Draft 2020-12 전용 스펙 검증', () =>
       expect(
         await validator({
           id: 1,
-          children: [
-            { id: 2 },
-            { id: 3, children: [{ id: 4 }] },
-          ],
+          children: [{ id: 2 }, { id: 3, children: [{ id: 4 }] }],
         }),
       ).toBeNull();
 

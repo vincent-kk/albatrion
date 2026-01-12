@@ -493,10 +493,7 @@ describe('intersectArraySchema', () => {
     test('source prefixItems is used when base has no prefixItems', () => {
       const base = { type: 'array' } as ArraySchema;
       const source: Partial<ArraySchema> = {
-        prefixItems: [
-          { type: 'string' as const },
-          { type: 'number' as const },
-        ],
+        prefixItems: [{ type: 'string' as const }, { type: 'number' as const }],
       };
 
       const result = intersectArraySchema(base, source);
