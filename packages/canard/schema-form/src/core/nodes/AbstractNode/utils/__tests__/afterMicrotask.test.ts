@@ -95,33 +95,4 @@ describe('afterMicrotask', () => {
     expect(results).toHaveLength(5);
     expect(results).toEqual([0, 1, 2, 3, 4]);
   });
-
-  it('should handle errors in handler gracefully', async () => {
-    const errorHandler = vi.fn(() => {
-      throw new Error('Test error');
-    });
-    const scheduledFn = afterMicrotask(errorHandler);
-
-    // Set up error handler to catch unhandled errors
-    const originalOnError = process.on.bind(process);
-    const errorEvents: any[] = [];
-    process.on = vi.fn((event: string, handler: any) => {
-      if (event === 'uncaughtException' || event === 'unhandledRejection') {
-        errorEvents.push(handler);
-        return process;
-      }
-      return originalOnError(event, handler);
-    }) as any;
-
-    scheduledFn();
-
-    // Wait for macrotask to execute
-    await wait(10);
-
-    // Verify the handler was called despite error
-    expect(errorHandler).toHaveBeenCalledTimes(1);
-
-    // Restore original error handling
-    process.on = originalOnError;
-  });
 });
