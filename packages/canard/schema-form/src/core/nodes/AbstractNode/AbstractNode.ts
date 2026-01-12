@@ -1,3 +1,4 @@
+import { map } from '@winglet/common-utils/array';
 import { isEmptyObject, isObject } from '@winglet/common-utils/filter';
 import {
   cloneLite,
@@ -476,7 +477,7 @@ export abstract class AbstractNode<
    * @param listener Event listener
    * @returns Event listener removal function
    */
-  public subscribe(this: AbstractNode, listener: NodeListener) {
+  public subscribe(this: AbstractNode, listener: NodeListener): Fn {
     this.#listeners.add(listener);
     return () => {
       this.#listeners.delete(listener);
@@ -628,20 +629,23 @@ export abstract class AbstractNode<
     if (computeEnabled) {
       this.#dependencies = new Array(dependencyPaths.length);
       for (let i = 0, l = dependencyPaths.length; i < l; i++) {
-        const targetNode = this.find(dependencyPaths[i]);
-        if (targetNode === null) continue;
-        this.#dependencies[i] = targetNode.value;
-        const unsubscribe = targetNode.subscribe(({ type, payload }) => {
-          if (type & NodeEventType.UpdateValue) {
-            if (
-              this.#dependencies[i] !== payload?.[NodeEventType.UpdateValue]
-            ) {
-              this.#dependencies[i] = payload?.[NodeEventType.UpdateValue];
-              this.updateComputedProperties();
+        const targetNodes = this.findAll(dependencyPaths[i]);
+        if (targetNodes.length === 0) continue;
+        this.#dependencies[i] = this.find(dependencyPaths[i])?.value;
+        const unsubscribes = map(targetNodes, (node) =>
+          node.subscribe(({ type, payload }) => {
+            if (type & NodeEventType.UpdateValue) {
+              if (
+                this.#dependencies[i] !== payload?.[NodeEventType.UpdateValue]
+              ) {
+                this.#dependencies[i] = payload?.[NodeEventType.UpdateValue];
+                this.updateComputedProperties();
+              }
             }
-          }
-        });
-        this.saveUnsubscribe(unsubscribe);
+          }),
+        );
+        for (const unsubscribe of unsubscribes)
+          this.saveUnsubscribe(unsubscribe);
       }
       if (this.#compute.derivedValue !== undefined)
         this.subscribe(({ type }) => {
