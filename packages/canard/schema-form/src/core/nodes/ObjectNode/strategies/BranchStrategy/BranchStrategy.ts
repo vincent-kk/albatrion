@@ -52,9 +52,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /** Callback function to handle refresh operations */
   private readonly __handleRefresh__: Fn<[ObjectValue | Nullish]>;
 
-  /** Callback function to handle computed properties updates */
-  private readonly __handleUpdateComputedProperties__: Fn;
-
   /** Array of schema property keys in order */
   private readonly __propertyKeys__: string[];
 
@@ -175,13 +172,11 @@ export class BranchStrategy implements ObjectNodeStrategy {
     handleChange: HandleChange<ObjectValue | Nullish>,
     handleRefresh: Fn<[ObjectValue | Nullish]>,
     handleSetDefaultValue: Fn<[ObjectValue | Nullish]>,
-    handleUpdateComputedProperties: Fn,
     nodeFactory: SchemaNodeFactory,
   ) {
     this.__host__ = host;
     this.__handleChange__ = handleChange;
     this.__handleRefresh__ = handleRefresh;
-    this.__handleUpdateComputedProperties__ = handleUpdateComputedProperties;
 
     this.__value__ = host.defaultValue;
     this.__draft__ = host.defaultValue === null ? null : {};
@@ -343,6 +338,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
     if (this.__locked__) return;
+    const host = this.__host__;
     const replace = (option & SetValueOption.Replace) > 0;
     const settled = (option & SetValueOption.Isolate) === 0;
     const normalize = (option & SetValueOption.Normalize) > 0;
@@ -355,7 +351,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       draft,
       replace,
       normalize,
-      this.__host__.nullable,
+      host.nullable,
     );
 
     if (current === false) return;
@@ -369,14 +365,13 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (option & SetValueOption.Propagate)
       this.__propagate__(current, draft, replace, option);
     if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
-    if (option & SetValueOption.Isolate)
-      this.__handleUpdateComputedProperties__();
+    if (option & SetValueOption.Isolate) host.updateComputedProperties();
     if (option & SetValueOption.PublishUpdateEvent)
-      this.__host__.publish(
+      host.publish(
         NodeEventType.UpdateValue,
         current,
         { previous, current, settled },
-        settled && this.__host__.initialized,
+        settled && host.initialized,
       );
   }
 

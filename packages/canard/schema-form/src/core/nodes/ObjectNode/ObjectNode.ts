@@ -124,25 +124,19 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     const handleRefresh = (value: ObjectValue | Nullish) => this.refresh(value);
     const handleSetDefaultValue = (value: ObjectValue | Nullish) =>
       this.setDefaultValue(value);
-
-    if (this.group === 'terminal') {
-      return new TerminalStrategy(
-        this,
-        handleChange,
-        handleRefresh,
-        handleSetDefaultValue,
-      );
-    } else {
-      const handleUpdateComputedProperties = () =>
-        this.updateComputedProperties();
-      return new BranchStrategy(
-        this,
-        handleChange,
-        handleRefresh,
-        handleSetDefaultValue,
-        handleUpdateComputedProperties,
-        nodeFactory,
-      );
-    }
+    return this.group === 'terminal'
+      ? new TerminalStrategy(
+          this,
+          handleChange,
+          handleRefresh,
+          handleSetDefaultValue,
+        )
+      : new BranchStrategy(
+          this,
+          handleChange,
+          handleRefresh,
+          handleSetDefaultValue,
+          nodeFactory,
+        );
   }
 }

@@ -664,7 +664,7 @@ export abstract class AbstractNode<
    * Updates the node's computed properties.
    * @internal Internal implementation method. Do not call directly.
    */
-  protected updateComputedProperties(this: AbstractNode) {
+  public updateComputedProperties(this: AbstractNode) {
     const previous = this.#active;
     this.#active = this.#compute.active?.(this.#dependencies) ?? true;
     this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
