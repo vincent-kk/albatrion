@@ -1860,6 +1860,183 @@ export const NestedOneOfWithDerived = () => {
 };
 
 /**
+ * oneOf 분기 전환 후 중첩된 derived value 테스트
+ *
+ * 테스트 케이스 검증용 스토리:
+ * - simple 모드: baseValue * 2 = result, result * 2 = doubleResult
+ * - complex 모드: baseValue * 3 + 50 = result, result * 2 = doubleResult
+ *
+ * 예상 동작:
+ * 1. 초기 (simple, baseValue=100): result=200, doubleResult=400
+ * 2. complex로 전환: result=350, doubleResult=700
+ * 3. baseValue=200으로 변경: result=650, doubleResult=1300
+ */
+export const OneOfNestedDerivedValueTest = () => {
+  const jsonSchema: JsonSchema = {
+    type: 'object',
+    properties: {
+      mode: {
+        type: 'string',
+        title: '모드',
+        enum: ['simple', 'complex'],
+        default: 'simple',
+      },
+      baseValue: {
+        type: 'number',
+        title: '기본값',
+        default: 100,
+      },
+      calculation: {
+        type: 'object',
+        title: '계산 결과',
+        oneOf: [
+          {
+            type: 'object',
+            title: 'Simple 모드',
+            computed: { if: '/mode === "simple"' },
+            properties: {
+              result: {
+                type: 'number',
+                title: 'result (baseValue × 2)',
+                computed: {
+                  derived: '/baseValue * 2',
+                },
+              },
+              nested: {
+                type: 'object',
+                title: '중첩 계산',
+                properties: {
+                  doubleResult: {
+                    type: 'number',
+                    title: 'doubleResult (result × 2)',
+                    computed: {
+                      derived: '../../result * 2',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          {
+            type: 'object',
+            title: 'Complex 모드',
+            computed: { if: '/mode === "complex"' },
+            properties: {
+              result: {
+                type: 'number',
+                title: 'result (baseValue × 3 + 50)',
+                computed: {
+                  derived: '/baseValue * 3 + 50',
+                },
+              },
+              nested: {
+                type: 'object',
+                title: '중첩 계산',
+                properties: {
+                  doubleResult: {
+                    type: 'number',
+                    title: 'doubleResult (result × 2)',
+                    computed: {
+                      derived: '../../result * 2',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
+      },
+    },
+  };
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <div
+        style={{ padding: '10px', background: '#e7f3ff', marginBottom: '10px' }}
+      >
+        <strong>🧪 oneOf 분기 전환 후 중첩된 derived value 테스트</strong>
+        <br />
+        <br />
+        <table
+          style={{
+            borderCollapse: 'collapse',
+            width: '100%',
+            fontSize: '14px',
+          }}
+        >
+          <thead>
+            <tr style={{ background: '#f0f0f0' }}>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>모드</th>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                baseValue
+              </th>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                result 계산식
+              </th>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                예상 result
+              </th>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                예상 doubleResult
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                simple
+              </td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>100</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                100 × 2
+              </td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>200</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>400</td>
+            </tr>
+            <tr>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                complex
+              </td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>100</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                100 × 3 + 50
+              </td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>350</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>700</td>
+            </tr>
+            <tr>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                complex
+              </td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>200</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                200 × 3 + 50
+              </td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>650</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>1300</td>
+            </tr>
+          </tbody>
+        </table>
+        <br />
+        <strong>테스트 시나리오:</strong>
+        <ol style={{ margin: '5px 0', paddingLeft: '20px' }}>
+          <li>
+            초기 상태 (simple, baseValue=100): result=200, doubleResult=400
+          </li>
+          <li>
+            mode를 &quot;complex&quot;로 변경: result=350, doubleResult=700
+          </li>
+          <li>baseValue를 200으로 변경: result=650, doubleResult=1300</li>
+        </ol>
+      </div>
+      <Form jsonSchema={jsonSchema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+/**
  * 📋 무한 루프 방지 가이드라인 요약
  */
 export const InfiniteLoopPreventionGuide = () => {

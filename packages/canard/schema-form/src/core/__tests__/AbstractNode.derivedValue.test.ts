@@ -2373,4 +2373,476 @@ describe('AbstractNode - derivedValue', () => {
       });
     });
   });
+
+  describe('updateComputedPropertiesRecursively 메서드 테스트', () => {
+    it('모든 자손 노드의 computed properties가 재귀적으로 업데이트되어야 함', async () => {
+      const onChange = vi.fn();
+      const jsonSchema: JsonSchemaWithVirtual = {
+        type: 'object',
+        properties: {
+          multiplier: {
+            type: 'number',
+            default: 2,
+          },
+          level1: {
+            type: 'object',
+            properties: {
+              value1: {
+                type: 'number',
+                computed: {
+                  derived: '/multiplier * 10',
+                },
+              },
+              level2: {
+                type: 'object',
+                properties: {
+                  value2: {
+                    type: 'number',
+                    computed: {
+                      derived: '/multiplier * 100',
+                    },
+                  },
+                  level3: {
+                    type: 'object',
+                    properties: {
+                      value3: {
+                        type: 'number',
+                        computed: {
+                          derived: '/multiplier * 1000',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange,
+      });
+
+      await wait();
+
+      // 초기값 확인: multiplier=2
+      expect(node.find('/level1/value1')?.value).toBe(20);
+      expect(node.find('/level1/level2/value2')?.value).toBe(200);
+      expect(node.find('/level1/level2/level3/value3')?.value).toBe(2000);
+
+      // multiplier 변경
+      (node.find('/multiplier') as NumberNode).setValue(5);
+      await wait();
+
+      // 모든 레벨의 derived value가 업데이트됨
+      expect(node.find('/level1/value1')?.value).toBe(50);
+      expect(node.find('/level1/level2/value2')?.value).toBe(500);
+      expect(node.find('/level1/level2/level3/value3')?.value).toBe(5000);
+    });
+
+    it('oneOf 분기 전환 후 중첩된 derived value가 올바르게 계산되어야 함', async () => {
+      const onChange = vi.fn();
+      const jsonSchema: JsonSchemaWithVirtual = {
+        type: 'object',
+        properties: {
+          mode: {
+            type: 'string',
+            enum: ['simple', 'complex'],
+            default: 'simple',
+          },
+          baseValue: {
+            type: 'number',
+            default: 100,
+          },
+          calculation: {
+            type: 'object',
+            oneOf: [
+              {
+                type: 'object',
+                computed: { if: '/mode === "simple"' },
+                properties: {
+                  result: {
+                    type: 'number',
+                    computed: {
+                      derived: '/baseValue * 2',
+                    },
+                  },
+                  nested: {
+                    type: 'object',
+                    properties: {
+                      doubleResult: {
+                        type: 'number',
+                        computed: {
+                          derived: '../../result * 2',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              {
+                type: 'object',
+                computed: { if: '/mode === "complex"' },
+                properties: {
+                  result: {
+                    type: 'number',
+                    computed: {
+                      derived: '/baseValue * 3 + 50',
+                    },
+                  },
+                  nested: {
+                    type: 'object',
+                    properties: {
+                      doubleResult: {
+                        type: 'number',
+                        computed: {
+                          derived: '../../result * 2',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        },
+      };
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange,
+      });
+
+      await wait();
+
+      // simple 모드: 100 * 2 = 200, doubleResult = 400
+      expect(node.find('/calculation/result')?.value).toBe(200);
+      expect(node.find('/calculation/nested/doubleResult')?.value).toBe(400);
+
+      // complex 모드로 전환
+      (node.find('/mode') as StringNode).setValue('complex');
+      await wait();
+
+      // complex 모드: 100 * 3 + 50 = 350, doubleResult = 700
+      expect(node.find('/calculation/result')?.value).toBe(350);
+      expect(node.find('/calculation/nested/doubleResult')?.value).toBe(700);
+
+      // baseValue 변경
+      (node.find('/baseValue') as NumberNode).setValue(200);
+      await wait();
+
+      // 200 * 3 + 50 = 650, doubleResult = 1300
+      expect(node.find('/calculation/result')?.value).toBe(650);
+      expect(node.find('/calculation/nested/doubleResult')?.value).toBe(1300);
+    });
+
+    it('anyOf 분기 활성화 시 모든 활성 분기의 derived가 올바르게 계산되어야 함', async () => {
+      const onChange = vi.fn();
+      const jsonSchema: JsonSchemaWithVirtual = {
+        type: 'object',
+        properties: {
+          base: {
+            type: 'number',
+            default: 10,
+          },
+          enableA: {
+            type: 'boolean',
+            default: true,
+          },
+          enableB: {
+            type: 'boolean',
+            default: false,
+          },
+          results: {
+            type: 'object',
+            anyOf: [
+              {
+                type: 'object',
+                computed: { if: '/enableA' },
+                properties: {
+                  calcA: {
+                    type: 'number',
+                    computed: { derived: '/base * 2' },
+                  },
+                  nestedA: {
+                    type: 'object',
+                    properties: {
+                      deepCalcA: {
+                        type: 'number',
+                        computed: { derived: '/results/calcA + 100' },
+                      },
+                    },
+                  },
+                },
+              },
+              {
+                type: 'object',
+                computed: { if: '/enableB' },
+                properties: {
+                  calcB: {
+                    type: 'number',
+                    computed: { derived: '/base * 3' },
+                  },
+                  nestedB: {
+                    type: 'object',
+                    properties: {
+                      deepCalcB: {
+                        type: 'number',
+                        computed: { derived: '/results/calcB + 200' },
+                      },
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        },
+      };
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange,
+      });
+
+      await wait();
+
+      // 초기 상태: A 분기만 활성화 (enableA: true, enableB: false)
+      // calcA = 10 * 2 = 20, deepCalcA = 20 + 100 = 120
+      expect(node.find('/results/calcA')?.value).toBe(20);
+      expect(node.find('/results/nestedA/deepCalcA')?.value).toBe(120);
+
+      // enableB도 활성화
+      (node.find('/enableB') as BooleanNode).setValue(true);
+      await wait();
+
+      // 두 분기 모두 활성화
+      // calcA = 10 * 2 = 20, deepCalcA = 120
+      // calcB = 10 * 3 = 30, deepCalcB = 30 + 200 = 230
+      expect(node.find('/results/calcA')?.value).toBe(20);
+      expect(node.find('/results/nestedA/deepCalcA')?.value).toBe(120);
+      expect(node.find('/results/calcB')?.value).toBe(30);
+      expect(node.find('/results/nestedB/deepCalcB')?.value).toBe(230);
+
+      // base 변경
+      (node.find('/base') as NumberNode).setValue(50);
+      await wait();
+
+      // 모든 분기의 derived가 업데이트됨
+      // calcA = 50 * 2 = 100, deepCalcA = 100 + 100 = 200
+      // calcB = 50 * 3 = 150, deepCalcB = 150 + 200 = 350
+      expect(node.find('/results/calcA')?.value).toBe(100);
+      expect(node.find('/results/nestedA/deepCalcA')?.value).toBe(200);
+      expect(node.find('/results/calcB')?.value).toBe(150);
+      expect(node.find('/results/nestedB/deepCalcB')?.value).toBe(350);
+
+      // enableA 비활성화
+      (node.find('/enableA') as BooleanNode).setValue(false);
+      await wait();
+
+      // B 분기만 활성화 상태
+      expect(node.find('/results/calcB')?.value).toBe(150);
+      expect(node.find('/results/nestedB/deepCalcB')?.value).toBe(350);
+    });
+
+    it('updateComputedProperties(false)가 reset을 스킵해야 함', async () => {
+      const onChange = vi.fn();
+      const jsonSchema: JsonSchemaWithVirtual = {
+        type: 'object',
+        properties: {
+          trigger: {
+            type: 'boolean',
+            default: true,
+          },
+          conditionalNode: {
+            type: 'string',
+            default: 'initial',
+            computed: {
+              active: '../trigger',
+            },
+          },
+        },
+      };
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange,
+      });
+
+      await wait();
+
+      const conditionalNode = node.find('/conditionalNode');
+      expect(conditionalNode?.active).toBe(true);
+      expect(conditionalNode?.value).toBe('initial');
+
+      // 값을 변경
+      (conditionalNode as StringNode).setValue('modified');
+      await wait();
+      expect(conditionalNode?.value).toBe('modified');
+
+      // trigger를 false로 변경 (active가 false로 변경됨)
+      (node.find('/trigger') as BooleanNode).setValue(false);
+      await wait();
+
+      // active가 false가 되면서 값이 undefined가 됨
+      expect(conditionalNode?.active).toBe(false);
+      expect(conditionalNode?.value).toBeUndefined();
+    });
+
+    it('깊은 중첩 구조에서도 모든 레벨의 derivedValue가 정확히 계산되어야 함', async () => {
+      const onChange = vi.fn();
+      // 10단계 깊이의 중첩 구조를 JSON으로 직접 생성
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          multiplier: {
+            type: 'number',
+            default: 1,
+          },
+          root: {
+            type: 'object',
+            properties: {
+              level1Value: {
+                type: 'number',
+                computed: { derived: '/multiplier * 1' },
+              },
+              nested1: {
+                type: 'object',
+                properties: {
+                  level2Value: {
+                    type: 'number',
+                    computed: { derived: '/multiplier * 2' },
+                  },
+                  nested2: {
+                    type: 'object',
+                    properties: {
+                      level3Value: {
+                        type: 'number',
+                        computed: { derived: '/multiplier * 3' },
+                      },
+                      nested3: {
+                        type: 'object',
+                        properties: {
+                          level4Value: {
+                            type: 'number',
+                            computed: { derived: '/multiplier * 4' },
+                          },
+                          nested4: {
+                            type: 'object',
+                            properties: {
+                              level5Value: {
+                                type: 'number',
+                                computed: { derived: '/multiplier * 5' },
+                              },
+                              nested5: {
+                                type: 'object',
+                                properties: {
+                                  level6Value: {
+                                    type: 'number',
+                                    computed: { derived: '/multiplier * 6' },
+                                  },
+                                  nested6: {
+                                    type: 'object',
+                                    properties: {
+                                      level7Value: {
+                                        type: 'number',
+                                        computed: {
+                                          derived: '/multiplier * 7',
+                                        },
+                                      },
+                                      nested7: {
+                                        type: 'object',
+                                        properties: {
+                                          level8Value: {
+                                            type: 'number',
+                                            computed: {
+                                              derived: '/multiplier * 8',
+                                            },
+                                          },
+                                          nested8: {
+                                            type: 'object',
+                                            properties: {
+                                              level9Value: {
+                                                type: 'number',
+                                                computed: {
+                                                  derived: '/multiplier * 9',
+                                                },
+                                              },
+                                              nested9: {
+                                                type: 'object',
+                                                properties: {
+                                                  level10Value: {
+                                                    type: 'number',
+                                                    computed: {
+                                                      derived:
+                                                        '/multiplier * 10',
+                                                    },
+                                                  },
+                                                  nested10: {
+                                                    type: 'number',
+                                                    computed: {
+                                                      derived:
+                                                        '/multiplier * 11',
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      } satisfies JsonSchemaWithVirtual;
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange,
+      });
+
+      await wait();
+
+      // 초기값 확인
+      expect(node.find('/root/level1Value')?.value).toBe(1);
+      expect(node.find('/root/nested1/level2Value')?.value).toBe(2);
+      expect(
+        node.find('/root/nested1/nested2/nested3/nested4/level5Value')?.value,
+      ).toBe(5);
+      expect(
+        node.find(
+          '/root/nested1/nested2/nested3/nested4/nested5/nested6/nested7/nested8/nested9/nested10',
+        )?.value,
+      ).toBe(11);
+
+      // multiplier 변경
+      (node.find('/multiplier') as NumberNode).setValue(10);
+      await wait();
+
+      // 모든 레벨의 값이 업데이트됨
+      expect(node.find('/root/level1Value')?.value).toBe(10);
+      expect(node.find('/root/nested1/level2Value')?.value).toBe(20);
+      expect(
+        node.find('/root/nested1/nested2/nested3/nested4/level5Value')?.value,
+      ).toBe(50);
+      expect(
+        node.find(
+          '/root/nested1/nested2/nested3/nested4/nested5/nested6/nested7/nested8/nested9/nested10',
+        )?.value,
+      ).toBe(110);
+    });
+  });
 });
