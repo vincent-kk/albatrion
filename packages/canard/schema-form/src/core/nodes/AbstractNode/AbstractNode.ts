@@ -53,13 +53,14 @@ import {
   afterMicrotask,
   checkDefinedValue,
   computeFactory,
+  findAllNodes,
+  findNode,
   getEventCollection,
   getFallbackValidator,
   getNodeGroup,
   getSafeEmptyValue,
   getScopedSegment,
   matchesSchemaPath,
-  traversal,
 } from './utils';
 
 const RECURSIVE_ERROR_OMITTED_KEYS = new Set(['key']);
@@ -200,7 +201,7 @@ export abstract class AbstractNode<
    * @internal Internal implementation method. Do not call directly.
    */
   public get context(): SchemaNode | null {
-    return this.isRoot ? (this.#context as SchemaNode) : this.rootNode.context;
+    return this.#context as SchemaNode;
   }
 
   /** Node's initial default value */
@@ -351,13 +352,13 @@ export abstract class AbstractNode<
     this.nullable = nullable;
     this.required = required ?? false;
     this.#name = name || '';
-    this.#context = context || null;
 
     this.isRoot = !parentNode;
     this.rootNode = (parentNode?.rootNode || this) as SchemaNode;
     this.parentNode = parentNode || null;
 
     this.group = getNodeGroup(this.schemaType, this.jsonSchema);
+    this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
     this.#escapedName = escapeSegment(this.#name);
     this.#path = joinSegment(this.parentNode?.path, this.#escapedName);
     this.#schemaPath = this.scope
@@ -374,8 +375,8 @@ export abstract class AbstractNode<
           this.parentNode?.schemaPath || $.Fragment,
           this.#escapedName,
         );
-    this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
 
+    this.#context = this.isRoot ? context || null : this.rootNode.context;
     this.#compute = computeFactory(
       this.schemaType,
       this.jsonSchema,
@@ -409,7 +410,25 @@ export abstract class AbstractNode<
     if (pointer === $.Root) return this.rootNode;
     const absolute = isAbsolutePath(pointer);
     if (absolute && pointer.length === 1) return this.rootNode;
-    return traversal(absolute ? this.rootNode : (this as SchemaNode), pointer);
+    return findNode(absolute ? this.rootNode : (this as SchemaNode), pointer);
+  }
+
+  /**
+   * Finds all nodes in the node tree that match the given pointer.
+   * @param pointer - JSON Pointer of the nodes to find (e.g., '/foo/0/bar'), returns itself if not provided
+   * @returns {SchemaNode[]} The found nodes, empty array if not found
+   */
+  public findAll(this: AbstractNode, pointer?: string): SchemaNode[] {
+    if (pointer === undefined) return [this as SchemaNode];
+    if (pointer === $.Context)
+      return this.#context ? [this.#context as SchemaNode] : [];
+    if (pointer === $.Root) return [this.rootNode];
+    const absolute = isAbsolutePath(pointer);
+    if (absolute && pointer.length === 1) return [this.rootNode];
+    return findAllNodes(
+      absolute ? this.rootNode : (this as SchemaNode),
+      pointer,
+    );
   }
 
   /** List of node event listeners */

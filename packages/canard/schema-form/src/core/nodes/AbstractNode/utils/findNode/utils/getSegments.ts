@@ -1,5 +1,3 @@
-import { isTruthy } from '@winglet/common-utils/filter';
-
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 /**
@@ -30,4 +28,6 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
  * @returns An array of path segments.(no unescape)
  */
 export const getSegments = (pointer: string) =>
-  pointer.split($.Separator).filter(isTruthy);
+  pointer.split($.Separator).filter(validate);
+
+const validate = (segment: string) => segment && segment !== $.Current;
