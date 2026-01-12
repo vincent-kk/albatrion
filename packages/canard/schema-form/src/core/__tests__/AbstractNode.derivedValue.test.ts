@@ -2128,7 +2128,7 @@ describe('AbstractNode - derivedValue', () => {
                           properties: {
                             result: {
                               type: 'number',
-                              computed: { derived: '/baseValue * 2' },
+                              computed: { derived: '(/baseValue || 0) * 2' },
                             },
                           },
                         },
@@ -2138,7 +2138,7 @@ describe('AbstractNode - derivedValue', () => {
                           properties: {
                             result: {
                               type: 'number',
-                              computed: { derived: '/baseValue * 3' },
+                              computed: { derived: '(/baseValue || 0) * 3' },
                             },
                           },
                         },
@@ -2159,7 +2159,7 @@ describe('AbstractNode - derivedValue', () => {
                           properties: {
                             result: {
                               type: 'number',
-                              computed: { derived: '/baseValue * 4' },
+                              computed: { derived: '(/baseValue || 0) * 4' },
                             },
                           },
                         },
@@ -2169,7 +2169,7 @@ describe('AbstractNode - derivedValue', () => {
                           properties: {
                             result: {
                               type: 'number',
-                              computed: { derived: '/baseValue * 5' },
+                              computed: { derived: '(/baseValue || 0) * 5' },
                             },
                           },
                         },

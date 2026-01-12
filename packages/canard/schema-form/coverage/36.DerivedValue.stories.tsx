@@ -1660,6 +1660,206 @@ conditional: {
 };
 
 /**
+ * 중첩된 oneOf에서 각 레벨의 derived가 독립적으로 동작
+ *
+ * level1Choice (x/y)와 level2Choice (p/q)에 따라
+ * 중첩된 oneOf 분기가 결정되고, 각 분기에서 다른 계산식이 적용됩니다.
+ *
+ * - x + p: baseValue * 2
+ * - x + q: baseValue * 3
+ * - y + p: baseValue * 4
+ * - y + q: baseValue * 5
+ */
+export const NestedOneOfWithDerived = () => {
+  const jsonSchema: JsonSchema = {
+    type: 'object',
+    properties: {
+      level1Choice: {
+        type: 'string',
+        title: 'Level 1 선택',
+        enum: ['x', 'y'],
+        default: 'x',
+      },
+      level2Choice: {
+        type: 'string',
+        title: 'Level 2 선택',
+        enum: ['p', 'q'],
+        default: 'p',
+      },
+      baseValue: {
+        type: 'number',
+        title: '기본값',
+        default: 10,
+      },
+      nested: {
+        type: 'object',
+        title: '중첩 구조',
+        oneOf: [
+          {
+            type: 'object',
+            title: 'X 분기',
+            computed: { if: '/level1Choice === "x"' },
+            properties: {
+              innerNested: {
+                type: 'object',
+                title: '내부 중첩',
+                oneOf: [
+                  {
+                    type: 'object',
+                    title: 'P 분기 (×2)',
+                    computed: { if: '/level2Choice === "p"' },
+                    properties: {
+                      result: {
+                        type: 'number',
+                        title: '결과 (baseValue × 2)',
+                        computed: { derived: '(/baseValue || 0) * 2' },
+                      },
+                    },
+                  },
+                  {
+                    type: 'object',
+                    title: 'Q 분기 (×3)',
+                    computed: { if: '/level2Choice === "q"' },
+                    properties: {
+                      result: {
+                        type: 'number',
+                        title: '결과 (baseValue × 3)',
+                        computed: { derived: '(/baseValue || 0) * 3' },
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+          {
+            type: 'object',
+            title: 'Y 분기',
+            computed: { if: '/level1Choice === "y"' },
+            properties: {
+              innerNested: {
+                type: 'object',
+                title: '내부 중첩',
+                oneOf: [
+                  {
+                    type: 'object',
+                    title: 'P 분기 (×4)',
+                    computed: { if: '/level2Choice === "p"' },
+                    properties: {
+                      result: {
+                        type: 'number',
+                        title: '결과 (baseValue × 4)',
+                        computed: { derived: '(/baseValue || 0) * 4' },
+                      },
+                    },
+                  },
+                  {
+                    type: 'object',
+                    title: 'Q 분기 (×5)',
+                    computed: { if: '/level2Choice === "q"' },
+                    properties: {
+                      result: {
+                        type: 'number',
+                        title: '결과 (baseValue × 5)',
+                        computed: { derived: '(/baseValue || 0) * 5' },
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      },
+    },
+  };
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <div
+        style={{ padding: '10px', background: '#e7f3ff', marginBottom: '10px' }}
+      >
+        <strong>🔀 중첩된 oneOf + derivedValue:</strong>
+        <br />
+        두 개의 선택지(level1, level2)에 따라 중첩된 oneOf 분기가 결정됩니다.
+        <br />
+        <br />
+        <table
+          style={{
+            borderCollapse: 'collapse',
+            width: '100%',
+            fontSize: '14px',
+          }}
+        >
+          <thead>
+            <tr style={{ background: '#f0f0f0' }}>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                Level1
+              </th>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                Level2
+              </th>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                계산식
+              </th>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                결과 (기본값=10)
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>x</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>p</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                baseValue × 2
+              </td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>20</td>
+            </tr>
+            <tr>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>x</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>q</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                baseValue × 3
+              </td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>30</td>
+            </tr>
+            <tr>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>y</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>p</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                baseValue × 4
+              </td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>40</td>
+            </tr>
+            <tr>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>y</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>q</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                baseValue × 5
+              </td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>50</td>
+            </tr>
+          </tbody>
+        </table>
+        <br />
+        <strong>테스트 시나리오:</strong>
+        <ol style={{ margin: '5px 0', paddingLeft: '20px' }}>
+          <li>초기 상태 (x + p): 10 × 2 = 20</li>
+          <li>level2를 q로 변경 (x + q): 10 × 3 = 30</li>
+          <li>level1을 y로 변경 (y + q): 10 × 5 = 50</li>
+          <li>level2를 p로 변경 (y + p): 10 × 4 = 40</li>
+          <li>baseValue를 20으로 변경 (y + p): 20 × 4 = 80</li>
+        </ol>
+      </div>
+      <Form jsonSchema={jsonSchema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+/**
  * 📋 무한 루프 방지 가이드라인 요약
  */
 export const InfiniteLoopPreventionGuide = () => {
