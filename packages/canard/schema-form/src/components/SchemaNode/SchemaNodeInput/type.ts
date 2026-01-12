@@ -38,5 +38,6 @@ export const HANDLE_CHANGE_OPTION =
 
 export const REACTIVE_RERENDERING_EVENTS =
   NodeEventType.UpdateValue |
+  NodeEventType.UpdateState |
   NodeEventType.UpdateError |
   NodeEventType.UpdateComputedProperties;

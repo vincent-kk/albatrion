@@ -6,6 +6,7 @@ import { useOnUnmount } from '@winglet/react-utils/hook';
 import { NodeEventType, NodeState } from '@/schema-form/core';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
+  useFormTypeRendererContext,
   useInputControlContext,
   useWorkspaceContext,
 } from '@/schema-form/providers';
@@ -39,6 +40,8 @@ export const SchemaNodeInput = memo(
     );
     const ChildNodeComponents = useChildNodeComponents(node, NodeProxy);
     const containerRef = useRef<HTMLSpanElement>(null);
+
+    const { checkShowError } = useFormTypeRendererContext();
 
     const { attachedFilesMap, context } = useWorkspaceContext();
     const { readOnly: rootReadOnly, disabled: rootDisabled } =
@@ -117,6 +120,7 @@ export const SchemaNodeInput = memo(
           path={node.path}
           nullable={node.nullable}
           errors={node.errors}
+          errorVisible={checkShowError(node.state)}
           watchValues={node.watchValues}
           ChildNodeComponents={ChildNodeComponents}
           context={context}

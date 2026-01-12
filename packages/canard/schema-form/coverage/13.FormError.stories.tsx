@@ -1,8 +1,10 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import {
   Form,
   type FormHandle,
+  type FormTypeInputDefinition,
+  type FormTypeInputProps,
   type FormTypeRendererProps,
   type JsonSchema,
   type JsonSchemaError,
@@ -363,6 +365,267 @@ export const ExternalErrors = () => {
       <button onClick={clearErrors}>clear external errors</button>
       <button onClick={setExternalErrors}>set external errors</button>
     </StoryLayout>
+  );
+};
+
+export const ErrorVisibleInCustomInput = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+        minLength: 3,
+      },
+      email: {
+        type: 'string',
+        format: 'email',
+        minLength: 5,
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [logs, setLogs] = useState<string[]>([]);
+  const logsRef = useRef(logs);
+  logsRef.current = logs;
+
+  const addLog = (message: string) => {
+    setLogs((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${message}`]);
+  };
+
+  const formTypeInputDefinitions = useMemo<FormTypeInputDefinition[]>(() => {
+    return [
+      {
+        test: { type: 'string' },
+        Component: ({
+          name,
+          path,
+          value,
+          onChange,
+          errors,
+          errorVisible,
+        }: FormTypeInputProps<string>) => {
+          const prevErrorVisibleRef = useRef<boolean | undefined>(undefined);
+
+          if (prevErrorVisibleRef.current !== undefined && prevErrorVisibleRef.current !== errorVisible) {
+            addLog(`[${path}] errorVisible: ${prevErrorVisibleRef.current} → ${errorVisible}`);
+          }
+          prevErrorVisibleRef.current = errorVisible;
+
+          return (
+            <div
+              style={{
+                padding: 10,
+                border: `2px solid ${errorVisible && errors.length > 0 ? 'red' : '#ccc'}`,
+                borderRadius: 4,
+                marginBottom: 10,
+              }}
+            >
+              <label style={{ display: 'block', marginBottom: 5, fontWeight: 'bold' }}>
+                {name}
+              </label>
+              <input
+                type="text"
+                value={value ?? ''}
+                onChange={(e) => onChange(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: 8,
+                  border: '1px solid #ddd',
+                  borderRadius: 4,
+                }}
+              />
+              <div style={{ marginTop: 5, fontSize: 12 }}>
+                <span
+                  style={{
+                    display: 'inline-block',
+                    padding: '2px 6px',
+                    borderRadius: 3,
+                    backgroundColor: errorVisible ? '#fee' : '#efe',
+                    color: errorVisible ? '#c00' : '#0a0',
+                    marginRight: 10,
+                  }}
+                >
+                  errorVisible: {String(errorVisible)}
+                </span>
+                <span style={{ color: '#666' }}>
+                  errors: {errors.length > 0 ? errors.map((e) => e.message).join(', ') : 'none'}
+                </span>
+              </div>
+            </div>
+          );
+        },
+      },
+    ];
+  }, []);
+
+  const Renderer = ({
+    depth,
+    node,
+    Input,
+    errorMessage,
+  }: FormTypeRendererProps) => {
+    const {
+      [NodeState.Dirty]: dirty,
+      [NodeState.Touched]: touched,
+      [NodeState.ShowError]: showError,
+    } = node.state || {};
+
+    return depth === 0 ? (
+      <Input />
+    ) : (
+      <div style={{ marginBottom: 15, padding: 10, backgroundColor: '#f9f9f9', borderRadius: 4 }}>
+        <Input />
+        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+          <button
+            onClick={() =>
+              showError !== true
+                ? node.setState({ [NodeState.ShowError]: true })
+                : node.setState({ [NodeState.ShowError]: undefined })
+            }
+            style={{
+              padding: '4px 8px',
+              backgroundColor: showError === true ? '#4CAF50' : '#ddd',
+              color: showError === true ? 'white' : 'black',
+              border: 'none',
+              borderRadius: 4,
+              cursor: 'pointer',
+            }}
+          >
+            Force Show Error
+          </button>
+          <button
+            onClick={() =>
+              showError !== false
+                ? node.setState({ [NodeState.ShowError]: false })
+                : node.setState({ [NodeState.ShowError]: undefined })
+            }
+            style={{
+              padding: '4px 8px',
+              backgroundColor: showError === false ? '#f44336' : '#ddd',
+              color: showError === false ? 'white' : 'black',
+              border: 'none',
+              borderRadius: 4,
+              cursor: 'pointer',
+            }}
+          >
+            Force Hide Error
+          </button>
+        </div>
+        <pre style={{ fontSize: 11, margin: '8px 0 0', color: '#666' }}>
+          state: {JSON.stringify({ dirty, touched, showError }, null, 2)}
+        </pre>
+        {errorMessage && (
+          <div style={{ color: 'red', fontSize: 12, marginTop: 5 }}>{errorMessage}</div>
+        )}
+      </div>
+    );
+  };
+
+  const [showError, setShowError] = useState<ShowError | boolean>(ShowError.DirtyTouched);
+  const refHandle = useRef<FormHandle<typeof jsonSchema>>(null);
+
+  return (
+    <div style={{ display: 'flex', gap: 20 }}>
+      <div style={{ flex: 1 }}>
+        <h3>ShowError Mode</h3>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 15 }}>
+          {[
+            { label: 'DirtyTouched', value: ShowError.DirtyTouched },
+            { label: 'Dirty', value: ShowError.Dirty },
+            { label: 'Touched', value: ShowError.Touched },
+            { label: 'Always', value: ShowError.Always },
+            { label: 'Never', value: ShowError.Never },
+          ].map(({ label, value }) => (
+            <label key={label} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <input
+                type="checkbox"
+                checked={!!(typeof showError === 'number' && showError & value)}
+                onChange={(e) => {
+                  setShowError((prev) => {
+                    if (typeof prev === 'boolean') return value;
+                    return e.target.checked ? prev | value : prev & ~value;
+                  });
+                }}
+              />
+              {label}
+            </label>
+          ))}
+          <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <input
+              type="radio"
+              name="showErrorBool"
+              checked={showError === true}
+              onChange={() => setShowError(true)}
+            />
+            true
+          </label>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <input
+              type="radio"
+              name="showErrorBool"
+              checked={showError === false}
+              onChange={() => setShowError(false)}
+            />
+            false
+          </label>
+        </div>
+
+        <StoryLayout jsonSchema={jsonSchema}>
+          <Form
+            key={`${showError}`}
+            ref={refHandle}
+            jsonSchema={jsonSchema}
+            CustomFormTypeRenderer={Renderer}
+            formTypeInputDefinitions={formTypeInputDefinitions}
+            showError={showError}
+          />
+        </StoryLayout>
+
+        <div style={{ marginTop: 15 }}>
+          <h4>Test Actions</h4>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={() => refHandle.current?.focus('/name')}>Focus name</button>
+            <button onClick={() => refHandle.current?.focus('/email')}>Focus email</button>
+            <button onClick={() => refHandle.current?.setValue({ name: 'ab' })}>
+              Set name = "ab" (invalid)
+            </button>
+            <button onClick={() => refHandle.current?.setValue({ name: 'abc' })}>
+              Set name = "abc" (valid)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ width: 350 }}>
+        <h3>
+          errorVisible Change Logs
+          <button
+            onClick={() => setLogs([])}
+            style={{ marginLeft: 10, fontSize: 12, padding: '2px 6px' }}
+          >
+            Clear
+          </button>
+        </h3>
+        <div
+          style={{
+            height: 400,
+            overflow: 'auto',
+            backgroundColor: '#1e1e1e',
+            color: '#0f0',
+            padding: 10,
+            borderRadius: 4,
+            fontFamily: 'monospace',
+            fontSize: 11,
+          }}
+        >
+          {logs.length === 0 ? (
+            <div style={{ color: '#666' }}>No logs yet. Interact with the form to see errorVisible changes.</div>
+          ) : (
+            logs.map((log, i) => <div key={i}>{log}</div>)
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -5,6 +5,7 @@ import { isReactComponent } from '@winglet/react-utils/filter';
 import { useConstant } from '@winglet/react-utils/hook';
 
 import type { FormProps } from '@/schema-form/components/Form';
+import { NodeState } from '@/schema-form/core';
 import { ShowError } from '@/schema-form/types';
 
 import { useExternalFormContext } from '../ExternalFormContext';
@@ -50,11 +51,12 @@ export const FormTypeRendererContextProvider = ({
           ? ShowError.Always
           : ShowError.Never
         : showError;
-    return ({
-      dirty,
-      touched,
-      showError,
-    }: Parameters<FormTypeRendererContext['checkShowError']>[0]) => {
+    return (
+      condition: Parameters<FormTypeRendererContext['checkShowError']>[0],
+    ) => {
+      const showError = condition?.[NodeState.ShowError],
+        dirty = condition?.[NodeState.Dirty],
+        touched = condition?.[NodeState.Touched];
       if (showError !== undefined) return showError;
       if (errorState & ShowError.Always) return true;
       if (errorState & ShowError.Never) return false;

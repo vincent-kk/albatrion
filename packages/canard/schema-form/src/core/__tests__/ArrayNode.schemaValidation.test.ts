@@ -63,9 +63,7 @@ describe('ArrayNode Schema Validation', () => {
         type: 'array',
       } as const;
 
-      // @ts-expect-error - Testing invalid schema without items/prefixItems
       expect(() => validateArraySchema(schema)).toThrow(JsonSchemaError);
-      // @ts-expect-error - Testing invalid schema without items/prefixItems
       expect(() => validateArraySchema(schema)).toThrow(
         "Array schema must have at least one of 'items' or 'prefixItems' defined",
       );
@@ -116,7 +114,11 @@ describe('ArrayNode Schema Validation', () => {
     it('should pass when prefixItems only and maxItems equals prefixItems length', () => {
       const schema = {
         type: 'array',
-        prefixItems: [{ type: 'string' }, { type: 'number' }, { type: 'boolean' }],
+        prefixItems: [
+          { type: 'string' },
+          { type: 'number' },
+          { type: 'boolean' },
+        ],
         maxItems: 3, // prefixItems.length = 3, maxItems = 3 (equal is OK)
       } as const;
 
@@ -142,7 +144,11 @@ describe('ArrayNode Schema Validation', () => {
     it('should pass when prefixItems only and maxItems is less than prefixItems length', () => {
       const schema = {
         type: 'array',
-        prefixItems: [{ type: 'string' }, { type: 'number' }, { type: 'boolean' }],
+        prefixItems: [
+          { type: 'string' },
+          { type: 'number' },
+          { type: 'boolean' },
+        ],
         maxItems: 2, // prefixItems.length = 3, maxItems = 2 (less is OK)
       } as const;
 
@@ -207,7 +213,6 @@ describe('ArrayNode Schema Validation', () => {
     it('should create ArrayNode with prefixItems only', async () => {
       const node = nodeFromJsonSchema({
         onChange: () => {},
-        // @ts-expect-error - Testing schema with prefixItems only (valid per JSON Schema spec)
         jsonSchema: {
           type: 'object',
           properties: {
@@ -321,7 +326,9 @@ describe('ArrayNode Schema Validation', () => {
             },
           },
         }),
-      ).toThrow("Array schema with 'items: false' must have 'prefixItems' defined");
+      ).toThrow(
+        "Array schema with 'items: false' must have 'prefixItems' defined",
+      );
     });
 
     it('should throw specific error message for missing items and prefixItems', () => {
@@ -361,7 +368,6 @@ describe('ArrayNode Schema Validation', () => {
     it('should create root ArrayNode with prefixItems only', async () => {
       const node = nodeFromJsonSchema({
         onChange: () => {},
-        // @ts-expect-error - Testing schema with prefixItems only (valid per JSON Schema spec)
         jsonSchema: {
           type: 'array',
           prefixItems: [{ type: 'string' }, { type: 'number' }],
@@ -443,7 +449,9 @@ describe('ArrayNode Schema Validation', () => {
 
       // The inner array should be created but validation happens at processSchema time
       // Since the inner array lacks items/prefixItems, pushing to outer array should fail
-      const matrixNode = node?.find('/matrix') as import('../nodes/ArrayNode').ArrayNode;
+      const matrixNode = node?.find(
+        '/matrix',
+      ) as import('../nodes/ArrayNode').ArrayNode;
       expect(matrixNode).toBeDefined();
 
       // When trying to push an item, the inner array node will be created

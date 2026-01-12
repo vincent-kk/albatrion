@@ -53,6 +53,8 @@ export interface FormTypeInputProps<
   nullable: Node['nullable'];
   /** Errors of schema node assigned to FormTypeInput Component */
   errors: Node['errors'];
+  /** Whether to show errors for this field */
+  errorVisible: boolean;
   /** Values subscribed according to `computed.watch`(=`&watch`) property defined in JsonSchema */
   watchValues: WatchValues;
   /** Default value of FormTypeInput Component */
@@ -115,6 +117,7 @@ export interface UnknownFormTypeInputProps {
   type: any;
   nullable: boolean;
   errors: any[];
+  errorVisible: boolean;
   watchValues: any[];
   defaultValue: any;
   value: any;

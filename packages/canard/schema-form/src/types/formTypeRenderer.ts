@@ -31,6 +31,8 @@ export interface FormTypeRendererProps extends ChildNodeComponentProps {
   required: SchemaNode['required'];
   /** FromTypeInput component of the schema node assigned to FormTypeRenderer Component */
   Input: ComponentType<ChildNodeComponentProps>;
+  /** Whether to show errors for the schema node assigned to FormTypeRenderer Component */
+  errorVisible: boolean;
   /** Error message of the schema node assigned to FormTypeRenderer Component */
   errorMessage: ReactNode;
   /** Function to format error message of the schema node assigned to FormTypeRenderer Component */

@@ -4,7 +4,7 @@ import { NULL_FUNCTION } from '@winglet/common-utils/constant';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 import { useConstant, useMemorize } from '@winglet/react-utils/hook';
 
-import { NodeEventType, NodeState } from '@/schema-form/core';
+import { NodeEventType } from '@/schema-form/core';
 import { useSchemaNode } from '@/schema-form/hooks/useSchemaNode';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
@@ -62,19 +62,12 @@ export const SchemaNodeProxy = ({
 
   const { context } = useWorkspaceContext();
 
+  const errorVisible = checkShowError(node?.state);
+
   const formatError = useMemo(() => {
-    const state = node?.state || {};
-    if (
-      checkShowError({
-        dirty: state[NodeState.Dirty],
-        touched: state[NodeState.Touched],
-        showError: state[NodeState.ShowError],
-      })
-    )
-      return contextFormatError;
+    if (errorVisible) return contextFormatError;
     else return NULL_FUNCTION;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [node, refresh, checkShowError, contextFormatError]);
+  }, [errorVisible, contextFormatError]);
 
   const errorMessage = useMemo(() => {
     const errors = node?.errors;
@@ -109,6 +102,7 @@ export const SchemaNodeProxy = ({
           errors={node.errors}
           required={node.required}
           Input={Input}
+          errorVisible={errorVisible}
           errorMessage={errorMessage}
           formatError={formatError}
           context={context}
