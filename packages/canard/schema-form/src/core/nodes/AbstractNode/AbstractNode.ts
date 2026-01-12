@@ -384,6 +384,7 @@ export abstract class AbstractNode<
       this.rootNode.jsonSchema,
     );
 
+    this.#updateScoped();
     this.setDefaultValue(
       defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema),
     );
