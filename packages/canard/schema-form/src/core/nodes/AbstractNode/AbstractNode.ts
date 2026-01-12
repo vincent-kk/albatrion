@@ -596,6 +596,9 @@ export abstract class AbstractNode<
     return this.#watchValues;
   }
 
+  /** Derived value from dependencies */
+  #derivedValue: Value | Nullish;
+
   /**
    * Prepares dependencies for update computation.
    * @internal Internal implementation method. Do not call directly.
@@ -621,6 +624,14 @@ export abstract class AbstractNode<
         });
         this.saveUnsubscribe(unsubscribe);
       }
+      if (this.#compute.derivedValue !== undefined)
+        this.subscribe(({ type }) => {
+          if (type & NodeEventType.UpdateComputedProperties) {
+            if (!this.active || this.equals(this.value, this.#derivedValue))
+              return;
+            this.setValue(this.#derivedValue);
+          }
+        });
     }
     this.updateComputedProperties();
     this.#computeEnabled = computeEnabled;
@@ -639,30 +650,10 @@ export abstract class AbstractNode<
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
     this.#anyOfIndices = this.#compute.anyOfIndices?.(this.#dependencies) || [];
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
+    this.#derivedValue = this.#compute.derivedValue?.(this.#dependencies);
 
     if (previous !== this.#active) this.reset({ preferLatest: true });
-    else if (this.active) this.#applyDerivedValue();
-
     this.publish(NodeEventType.UpdateComputedProperties);
-  }
-
-  /**
-   * Applies the derived value to the node.
-   * @param this - The node to apply the derived value to
-   * @param option - The option to apply the derived value with
-   * @returns Whether the derived value was applied (return false if the derived value was applied)
-   */
-  #applyDerivedValue(
-    this: AbstractNode,
-    checkEquals: boolean = true,
-    option: UnionSetValueOption = SetValueOption.StableReset,
-  ): boolean {
-    if (this.#compute.derivedValue === undefined || this.active === false)
-      return true;
-    const derivedValue = this.#compute.derivedValue(this.#dependencies);
-    if (checkEquals && this.equals(this.value, derivedValue)) return true;
-    this.setValue(derivedValue, option);
-    return false;
   }
 
   /**
@@ -690,6 +681,7 @@ export abstract class AbstractNode<
    */
   public reset(this: AbstractNode, options: ResetOptions<Value> = {}) {
     if (options.updateScoped) this.#updateScoped();
+
     if ('inputValue' in options) this.#defaultValue = options.inputValue;
     else if (options.preferLatest) {
       if (options.checkInitialValueFirst && this.#initialValue !== undefined)
@@ -703,12 +695,16 @@ export abstract class AbstractNode<
               : this.#initialValue;
     } else this.#defaultValue = this.#initialValue;
 
-    if (this.#applyDerivedValue(false))
-      this.setValue(
-        this.#active ? this.#defaultValue : undefined,
-        SetValueOption.StableReset,
-      );
+    if (options.applyDerivedValue && this.#compute.derivedValue !== undefined) {
+      const derivedValue = this.#compute.derivedValue(this.#dependencies);
+      this.#derivedValue = derivedValue;
+      if (this.active) this.#defaultValue = derivedValue ?? this.#defaultValue;
+    }
 
+    this.setValue(
+      this.#active ? this.#defaultValue : undefined,
+      SetValueOption.StableReset,
+    );
     this.setState();
   }
 

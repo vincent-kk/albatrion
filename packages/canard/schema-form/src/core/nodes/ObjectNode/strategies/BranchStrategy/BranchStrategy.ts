@@ -521,6 +521,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
           preferLatest:
             isolation ||
             (node.type === previousNode?.type && isTerminalType(node.type)),
+          applyDerivedValue: true,
           checkInitialValueFirst: isolation === false,
           fallbackValue: validateSchemaType(
             previousValue,
@@ -576,6 +577,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
           node.reset({
             updateScoped: true,
             preferLatest: isolation,
+            applyDerivedValue: true,
             fallbackValue: this.__value__?.[node.name],
           });
         }
