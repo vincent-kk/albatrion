@@ -526,6 +526,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
             ? previousValue
             : undefined,
         });
+        node.updateComputedPropertiesRecursively();
       }
     this.__locked__ = false;
 
@@ -575,6 +576,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
             applyDerivedValue: true,
             fallbackValue: this.__value__?.[node.name],
           });
+          node.updateComputedPropertiesRecursively();
         }
       }
     this.__locked__ = false;

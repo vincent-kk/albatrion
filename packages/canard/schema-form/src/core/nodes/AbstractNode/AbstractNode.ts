@@ -662,9 +662,10 @@ export abstract class AbstractNode<
 
   /**
    * Updates the node's computed properties.
+   * @param reset - Whether to reset the node when the active property changes, default is `true`
    * @internal Internal implementation method. Do not call directly.
    */
-  public updateComputedProperties(this: AbstractNode) {
+  public updateComputedProperties(this: AbstractNode, reset: boolean = true) {
     const previous = this.#active;
     this.#active = this.#compute.active?.(this.#dependencies) ?? true;
     this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
@@ -675,8 +676,26 @@ export abstract class AbstractNode<
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#derivedValue = this.#compute.derivedValue?.(this.#dependencies);
 
-    if (previous !== this.#active) this.reset({ preferLatest: true });
+    if (reset && previous !== this.#active) this.reset({ preferLatest: true });
     this.publish(NodeEventType.UpdateComputedProperties);
+  }
+
+  /**
+   * Updates the computed properties of the node and its children recursively.
+   * @param includeSelf - Whether to include the current node, default is `false`
+   * @param includeInactive - Whether to include the inactive child nodes, default is `true`
+   * @internal Internal implementation method. Do not call directly.
+   */
+  public updateComputedPropertiesRecursively(
+    this: AbstractNode,
+    includeSelf: boolean = false,
+    includeInactive: boolean = true,
+  ) {
+    if (includeSelf) this.updateComputedProperties(false);
+    const list = includeInactive ? this.subnodes : this.children;
+    if (!list?.length) return;
+    for (let i = 0, e = list[0], l = list.length; i < l; i++, e = list[i])
+      e.node.updateComputedPropertiesRecursively(true, includeInactive);
   }
 
   /**
