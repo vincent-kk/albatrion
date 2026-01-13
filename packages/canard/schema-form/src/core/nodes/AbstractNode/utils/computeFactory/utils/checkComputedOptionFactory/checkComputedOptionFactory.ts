@@ -1,13 +1,8 @@
-import type { Fn } from '@aileron/declare';
-
-import { JsonSchemaError } from '@/schema-form/errors';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
+import { createDynamicFunction } from '../createDynamicFunction';
 import type { PathManager } from '../getPathManager';
-import { JSON_POINTER_PATH_REGEX } from '../regex';
 import { ALIAS, type ConditionFieldName } from '../type';
-
-type CheckComputedOption = Fn<[dependencies: unknown[]], boolean>;
 
 /**
  * Creates a function to check computed options in a JSON schema.
@@ -23,55 +18,12 @@ export const checkComputedOptionFactory =
    * @param fieldName - Field name to check
    * @returns Computed option check function or undefined
    */
-  (
-    pathManager: PathManager,
-    fieldName: ConditionFieldName,
-  ): CheckComputedOption | undefined => {
+  (pathManager: PathManager, fieldName: ConditionFieldName) => {
     const expression: string | boolean | undefined =
       rootJsonSchema[fieldName] ??
       jsonSchema[fieldName] ??
       jsonSchema.computed?.[fieldName] ??
       jsonSchema[ALIAS + fieldName];
     if (typeof expression === 'boolean') return () => expression;
-    return createDynamicFunction(pathManager, fieldName, expression);
+    return createDynamicFunction<boolean>(pathManager, fieldName, expression);
   };
-
-/**
- * Creates a dynamic condition check function using dependency paths and expression.
- * @param dependencyPaths - Dependency path array
- * @param expression - Expression to evaluate
- * @returns Function that takes dependency array and returns condition result, or undefined
- */
-const createDynamicFunction = (
-  pathManager: PathManager,
-  fieldName: ConditionFieldName,
-  expression: string | undefined,
-): CheckComputedOption | undefined => {
-  // Cannot process non-string expressions
-  if (typeof expression !== 'string') return;
-
-  // Transform JSON paths to dependency array references
-  const computedExpression = expression
-    .replace(JSON_POINTER_PATH_REGEX, (path) => {
-      pathManager.set(path);
-      return `dependencies[${pathManager.findIndex(path)}]`;
-    })
-    .trim()
-    .replace(/;$/, '');
-
-  // Cannot create function if expression is empty after transformation
-  if (computedExpression.length === 0) return;
-
-  try {
-    return new Function(
-      'dependencies',
-      `return !!(${computedExpression})`,
-    ) as CheckComputedOption;
-  } catch (error) {
-    throw new JsonSchemaError(
-      'COMPUTED_OPTION',
-      `Failed to create dynamic function: ${fieldName} -> '${expression}'`,
-      { fieldName, expression, computedExpression, error },
-    );
-  }
-};
