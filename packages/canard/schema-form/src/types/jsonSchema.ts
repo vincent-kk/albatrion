@@ -259,11 +259,7 @@ export type BasicSchema = {
   '&disabled'?: boolean | string;
   /** Alias for computed.watch */
   '&watch'?: string | string[];
-  /**
-   * Value expression for auto update value
-   * @warning This expression can cause infinite loop if not used correctly
-   * @note Don't use this expression with circular reference
-   * */
+  /** Alias for computed.derived */
   '&derived'?: string;
   /** Computed properties with JSONPointer expressions */
   computed?: {
