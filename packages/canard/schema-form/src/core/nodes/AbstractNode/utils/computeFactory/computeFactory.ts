@@ -8,7 +8,7 @@ import {
   getConditionIndexFactory,
   getConditionIndicesFactory,
 } from './utils/getConditionIndexFactory';
-import { getDerivedValueFactory } from './utils/getDerivedValueFactory/getDerivedValueFactory';
+import { getDerivedValueFactory } from './utils/getDerivedValueFactory';
 import { getObservedValuesFactory } from './utils/getObservedValuesFactory';
 import { getPathManager } from './utils/getPathManager';
 

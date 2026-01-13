@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import type { SchemaNode } from '@/schema-form/core';
 
-import { findNode } from '../findNode/findNode';
+import { findNode } from '../findNode';
 
 describe('findNode', () => {
   let mockRootNode: any;
