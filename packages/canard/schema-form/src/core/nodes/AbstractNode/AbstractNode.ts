@@ -648,15 +648,15 @@ export abstract class AbstractNode<
         for (const unsubscribe of unsubscribes)
           this.saveUnsubscribe(unsubscribe);
       }
-      if (this.#compute.derivedValue !== undefined)
-        this.subscribe(({ type }) => {
-          if (type & NodeEventType.UpdateComputedProperties) {
-            if (!this.active || this.equals(this.value, this.#derivedValue))
-              return;
-            this.setValue(this.#derivedValue);
-          }
-        });
     }
+    if (this.#compute.derivedValue !== undefined)
+      this.subscribe(({ type }) => {
+        if (type & NodeEventType.UpdateComputedProperties) {
+          if (!this.active || this.equals(this.value, this.#derivedValue))
+            return;
+          this.setValue(this.#derivedValue);
+        }
+      });
     this.updateComputedProperties();
     this.#computeEnabled = computeEnabled;
   }

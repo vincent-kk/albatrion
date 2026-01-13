@@ -18,6 +18,68 @@ const wait = (delay = 10) => {
 };
 
 describe('AbstractNode - derivedValue', () => {
+  describe('상수 표현식 처리', () => {
+    it('필드 참조가 없는 상수 표현식도 적용되어야 함', async () => {
+      const onChange = vi.fn();
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          constantValue: {
+            type: 'number',
+            '&derived': '42', // 상수 표현식, 필드 참조 없음
+          },
+          computedConstant: {
+            type: 'string',
+            computed: {
+              derived: '"hello"', // 상수 표현식, 필드 참조 없음
+            },
+          },
+        },
+      } satisfies JsonSchemaWithVirtual;
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange,
+      });
+
+      await wait();
+
+      const constantNode = node?.find('/constantValue') as NumberNode;
+      const computedNode = node?.find('/computedConstant') as StringNode;
+
+      // 상수 표현식의 derived value가 실제 value에 적용되어야 함
+      expect(constantNode?.value).toBe(42);
+      expect(computedNode?.value).toBe('hello');
+    });
+
+    it('필드 참조가 없는 블록 표현식도 적용되어야 함', async () => {
+      const onChange = vi.fn();
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          calculated: {
+            type: 'number',
+            computed: {
+              derived: '{ return 10 + 20 }', // 블록 표현식, 필드 참조 없음
+            },
+          },
+        },
+      } satisfies JsonSchemaWithVirtual;
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange,
+      });
+
+      await wait();
+
+      const calculatedNode = node?.find('/calculated') as NumberNode;
+
+      // 블록 표현식의 derived value가 실제 value에 적용되어야 함
+      expect(calculatedNode?.value).toBe(30);
+    });
+  });
+
   describe('기본 derivedValue 동작', () => {
     it('computed.value 표현식으로 값을 계산해야 함 (BasicDerivedValue)', async () => {
       const onChange = vi.fn();
