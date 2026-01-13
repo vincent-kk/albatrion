@@ -25,5 +25,5 @@ export const checkComputedOptionFactory =
       jsonSchema.computed?.[fieldName] ??
       jsonSchema[ALIAS + fieldName];
     if (typeof expression === 'boolean') return () => expression;
-    return createDynamicFunction<boolean>(pathManager, fieldName, expression);
+    return createDynamicFunction(pathManager, fieldName, expression, true);
   };

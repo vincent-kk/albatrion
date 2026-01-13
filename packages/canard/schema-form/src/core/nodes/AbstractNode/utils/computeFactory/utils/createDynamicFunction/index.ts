@@ -1,4 +1,2 @@
-export {
-  createDynamicFunction,
-  type DynamicFunction,
-} from './createDynamicFunction';
+export { createDynamicFunction } from './createDynamicFunction';
+export type { DynamicFunction } from './type';

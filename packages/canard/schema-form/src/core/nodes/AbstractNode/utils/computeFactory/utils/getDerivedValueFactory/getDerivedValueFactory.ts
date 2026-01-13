@@ -1,12 +1,8 @@
-import type { Fn } from '@aileron/declare';
-
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import { createDynamicFunction } from '../createDynamicFunction';
 import type { PathManager } from '../getPathManager';
 import { ALIAS, type DerivedValueFieldName } from '../type';
-
-type GetDerivedValue = Fn<[dependencies: unknown[]], any>;
 
 /**
  * Creates a function to get derived values in a JSON schema.
@@ -21,10 +17,7 @@ export const getDerivedValueFactory =
    * @param fieldName - Field name to get
    * @returns Derived value getter factory function or undefined
    */
-  (
-    pathManager: PathManager,
-    fieldName: DerivedValueFieldName,
-  ): GetDerivedValue | undefined => {
+  (pathManager: PathManager, fieldName: DerivedValueFieldName) => {
     const expression: string | undefined =
       jsonSchema.computed?.[fieldName] ?? jsonSchema[ALIAS + fieldName];
     return createDynamicFunction(pathManager, fieldName, expression);
