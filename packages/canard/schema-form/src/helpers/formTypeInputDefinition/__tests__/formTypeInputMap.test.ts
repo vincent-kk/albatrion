@@ -471,6 +471,7 @@ describe('normalizeFormTypeInputMap', () => {
         }),
       ).toBe(true);
 
+      // 와일드카드(*)는 이제 모든 필드를 매칭 (배열 인덱스뿐만 아니라 문자열 키도)
       expect(
         result[0].test({
           path: '/users/invalid/name',
@@ -479,7 +480,7 @@ describe('normalizeFormTypeInputMap', () => {
           required: true,
           jsonSchema: { type: 'string' },
         }),
-      ).toBe(false); // 'invalid'는 배열 인덱스가 아님
+      ).toBe(true); // 와일드카드는 어떤 세그먼트든 매칭
 
       expect(
         result[0].test({
@@ -533,6 +534,7 @@ describe('normalizeFormTypeInputMap', () => {
         }),
       ).toBe(true);
 
+      // 와일드카드(*)는 문자열 키도 매칭
       expect(
         result[2].test({
           path: '/data/abc/nested/1/value',
@@ -541,7 +543,7 @@ describe('normalizeFormTypeInputMap', () => {
           required: true,
           jsonSchema: { type: 'number' },
         }),
-      ).toBe(false); // 'abc'는 배열 인덱스가 아님
+      ).toBe(true); // 와일드카드는 어떤 세그먼트든 매칭
     });
 
     test('세그먼트 길이가 다르면 매칭되지 않음', () => {
@@ -646,6 +648,7 @@ describe('normalizeFormTypeInputMap', () => {
         }),
       ).toBe(true);
 
+      // 와일드카드(*)는 모든 세그먼트 매칭 (문자열 키 포함)
       expect(
         result[0].test({
           path: '/users/admin/name',
@@ -654,7 +657,7 @@ describe('normalizeFormTypeInputMap', () => {
           required: false,
           jsonSchema: { type: 'string' },
         }),
-      ).toBe(false); // 'admin'은 배열 인덱스가 아님
+      ).toBe(true); // 와일드카드는 어떤 세그먼트든 매칭
 
       // 정규식: /users/\\d+/email (숫자 인덱스만)
       expect(
@@ -1137,6 +1140,7 @@ describe('normalizeFormTypeInputMap', () => {
         }),
       ).toBe(true);
 
+      // 와일드카드(*)는 모든 세그먼트 매칭 (문자열 키 포함)
       expect(
         result[0].test({
           path: '/level1/0/level3/1/level5/2/level7/invalid/value',
@@ -1145,7 +1149,7 @@ describe('normalizeFormTypeInputMap', () => {
           required: false,
           jsonSchema: { type: 'string' },
         }),
-      ).toBe(false);
+      ).toBe(true); // 와일드카드는 어떤 세그먼트든 매칭
     });
 
     test('숫자가 아닌 문자열이 인덱스 위치에 있는 경우', () => {
@@ -1176,7 +1180,7 @@ describe('normalizeFormTypeInputMap', () => {
         }),
       ).toBe(true);
 
-      // 무효한 인덱스들
+      // 와일드카드(*)는 모든 세그먼트 매칭 (문자열 키 포함)
       expect(
         result[0].test({
           path: '/users/abc/profile',
@@ -1185,7 +1189,7 @@ describe('normalizeFormTypeInputMap', () => {
           required: true,
           jsonSchema: { type: 'string' },
         }),
-      ).toBe(false);
+      ).toBe(true); // 와일드카드는 어떤 세그먼트든 매칭
 
       expect(
         result[0].test({
@@ -1195,7 +1199,7 @@ describe('normalizeFormTypeInputMap', () => {
           required: false,
           jsonSchema: { type: 'string' },
         }),
-      ).toBe(false);
+      ).toBe(true); // '-1'도 세그먼트로 매칭됨
 
       expect(
         result[0].test({
@@ -1206,6 +1210,405 @@ describe('normalizeFormTypeInputMap', () => {
           jsonSchema: { type: 'string' },
         }),
       ).toBe(true); // isArrayIndex가 '01'을 유효한 인덱스로 인식
+    });
+  });
+
+  describe('와일드카드 확장 기능 (모든 필드 매칭)', () => {
+    test('와일드카드가 문자열 키를 매칭', () => {
+      const inputMap: FormTypeInputMap = {
+        '/config/*/value': TestStringComponent,
+      };
+
+      const result = normalizeFormTypeInputMap(inputMap);
+
+      // 다양한 문자열 키 매칭
+      expect(
+        result[0].test({
+          path: '/config/theme/value',
+          type: 'string',
+          nullable: false,
+          required: true,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      expect(
+        result[0].test({
+          path: '/config/language/value',
+          type: 'string',
+          nullable: false,
+          required: false,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      expect(
+        result[0].test({
+          path: '/config/user-settings/value',
+          type: 'string',
+          nullable: false,
+          required: true,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      // 숫자 인덱스도 여전히 매칭
+      expect(
+        result[0].test({
+          path: '/config/0/value',
+          type: 'string',
+          nullable: false,
+          required: false,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+    });
+
+    test('additionalProperties 스키마에서 와일드카드 사용', () => {
+      // additionalProperties가 있는 객체에서 동적 키 매칭
+      const inputMap: FormTypeInputMap = {
+        '/metadata/*': TestStringComponent,
+      };
+
+      const result = normalizeFormTypeInputMap(inputMap);
+
+      expect(
+        result[0].test({
+          path: '/metadata/customKey1',
+          type: 'string',
+          nullable: false,
+          required: true,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      expect(
+        result[0].test({
+          path: '/metadata/another-custom-key',
+          type: 'string',
+          nullable: false,
+          required: false,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      expect(
+        result[0].test({
+          path: '/metadata/key_with_underscore',
+          type: 'string',
+          nullable: false,
+          required: true,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+    });
+
+    test('중첩된 와일드카드로 복잡한 구조 매칭', () => {
+      const inputMap: FormTypeInputMap = {
+        '/entities/*/attributes/*/value': TestStringComponent,
+      };
+
+      const result = normalizeFormTypeInputMap(inputMap);
+
+      // entity와 attribute 모두 문자열 키
+      expect(
+        result[0].test({
+          path: '/entities/user/attributes/name/value',
+          type: 'string',
+          nullable: false,
+          required: true,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      // entity는 숫자, attribute는 문자열
+      expect(
+        result[0].test({
+          path: '/entities/0/attributes/email/value',
+          type: 'string',
+          nullable: false,
+          required: false,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      // entity는 문자열, attribute는 숫자
+      expect(
+        result[0].test({
+          path: '/entities/product/attributes/0/value',
+          type: 'string',
+          nullable: false,
+          required: true,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      // 모두 숫자
+      expect(
+        result[0].test({
+          path: '/entities/0/attributes/1/value',
+          type: 'string',
+          nullable: false,
+          required: false,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+    });
+
+    test('특수 문자가 포함된 키 매칭', () => {
+      const inputMap: FormTypeInputMap = {
+        '/fields/*/label': TestStringComponent,
+      };
+
+      const result = normalizeFormTypeInputMap(inputMap);
+
+      // 하이픈, 언더스코어
+      expect(
+        result[0].test({
+          path: '/fields/field-name/label',
+          type: 'string',
+          nullable: false,
+          required: true,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      expect(
+        result[0].test({
+          path: '/fields/field_name/label',
+          type: 'string',
+          nullable: false,
+          required: false,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      // camelCase, PascalCase
+      expect(
+        result[0].test({
+          path: '/fields/fieldName/label',
+          type: 'string',
+          nullable: false,
+          required: true,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      expect(
+        result[0].test({
+          path: '/fields/FieldName/label',
+          type: 'string',
+          nullable: false,
+          required: false,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+    });
+
+    test('와일드카드가 빈 세그먼트를 매칭하지 않음', () => {
+      const inputMap: FormTypeInputMap = {
+        '/users/*/name': TestStringComponent,
+      };
+
+      const result = normalizeFormTypeInputMap(inputMap);
+
+      // 경로 세그먼트 수가 일치하지 않으면 매칭 안됨
+      expect(
+        result[0].test({
+          path: '/users/name',
+          type: 'string',
+          nullable: false,
+          required: true,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(false);
+
+      expect(
+        result[0].test({
+          path: '/users//name', // 빈 세그먼트
+          type: 'string',
+          nullable: false,
+          required: false,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true); // 빈 문자열도 세그먼트로 매칭됨
+    });
+
+    test('와일드카드와 정확한 경로의 구분', () => {
+      const inputMap: FormTypeInputMap = {
+        '/users/admin/settings': TestUserNameComponent, // 정확한 경로
+        '/users/*/settings': TestStringComponent, // 와일드카드 패턴
+      };
+
+      const result = normalizeFormTypeInputMap(inputMap);
+
+      // 정확한 경로는 첫 번째 정의에서 매칭
+      expect(
+        result[0].test({
+          path: '/users/admin/settings',
+          type: 'string',
+          nullable: false,
+          required: true,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      // 와일드카드 패턴도 같은 경로 매칭
+      expect(
+        result[1].test({
+          path: '/users/admin/settings',
+          type: 'string',
+          nullable: false,
+          required: false,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      // 다른 사용자는 와일드카드만 매칭
+      expect(
+        result[0].test({
+          path: '/users/guest/settings',
+          type: 'string',
+          nullable: false,
+          required: true,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(false);
+
+      expect(
+        result[1].test({
+          path: '/users/guest/settings',
+          type: 'string',
+          nullable: false,
+          required: false,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+    });
+
+    test('연속된 와일드카드', () => {
+      const inputMap: FormTypeInputMap = {
+        '/a/*/*/b': TestStringComponent,
+      };
+
+      const result = normalizeFormTypeInputMap(inputMap);
+
+      expect(
+        result[0].test({
+          path: '/a/x/y/b',
+          type: 'string',
+          nullable: false,
+          required: true,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      expect(
+        result[0].test({
+          path: '/a/1/2/b',
+          type: 'string',
+          nullable: false,
+          required: false,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      expect(
+        result[0].test({
+          path: '/a/key1/key2/b',
+          type: 'string',
+          nullable: false,
+          required: true,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      // 세그먼트 수 불일치
+      expect(
+        result[0].test({
+          path: '/a/x/b',
+          type: 'string',
+          nullable: false,
+          required: false,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(false);
+    });
+
+    test('마지막 세그먼트가 와일드카드인 경우', () => {
+      const inputMap: FormTypeInputMap = {
+        '/settings/*': TestStringComponent,
+      };
+
+      const result = normalizeFormTypeInputMap(inputMap);
+
+      expect(
+        result[0].test({
+          path: '/settings/theme',
+          type: 'string',
+          nullable: false,
+          required: true,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      expect(
+        result[0].test({
+          path: '/settings/0',
+          type: 'string',
+          nullable: false,
+          required: false,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      expect(
+        result[0].test({
+          path: '/settings/very-long-key-name',
+          type: 'string',
+          nullable: false,
+          required: true,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+    });
+
+    test('첫 번째 세그먼트가 와일드카드인 경우', () => {
+      const inputMap: FormTypeInputMap = {
+        '/*/config/value': TestStringComponent,
+      };
+
+      const result = normalizeFormTypeInputMap(inputMap);
+
+      expect(
+        result[0].test({
+          path: '/app/config/value',
+          type: 'string',
+          nullable: false,
+          required: true,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      expect(
+        result[0].test({
+          path: '/0/config/value',
+          type: 'string',
+          nullable: false,
+          required: false,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
+
+      expect(
+        result[0].test({
+          path: '/production/config/value',
+          type: 'string',
+          nullable: false,
+          required: true,
+          jsonSchema: { type: 'string' },
+        }),
+      ).toBe(true);
     });
   });
 });

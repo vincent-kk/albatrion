@@ -1,4 +1,3 @@
-import { isArrayIndex } from '@winglet/common-utils/filter';
 import { isReactComponent } from '@winglet/react-utils/filter';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 
@@ -9,7 +8,7 @@ import {
 } from '@/schema-form/helpers/jsonPointer';
 import type { FormTypeInputMap, FormTypeTestFn } from '@/schema-form/types';
 
-import { INCLUDE_INDEX_REGEX } from './regex';
+import { INCLUDE_WILDCARD_REGEX } from './regex';
 import type { NormalizedFormTypeInputDefinition } from './type';
 
 /**
@@ -26,7 +25,7 @@ export const normalizeFormTypeInputMap = (
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
     const Component = formTypeInputMap[k];
     if (!isReactComponent(Component)) continue;
-    if (INCLUDE_INDEX_REGEX.test(k))
+    if (INCLUDE_WILDCARD_REGEX.test(k))
       result.push({
         test: formTypeTestFnFactory(k),
         Component: withErrorBoundary(Component),
@@ -66,9 +65,8 @@ const formTypeTestFnFactory = (path: string): FormTypeTestFn => {
     for (let i = 0, l = segments.length; i < l; i++) {
       const segment = segments[i];
       const hintSegment = hintSegments[i];
-      if (segment === $.Index) {
-        if (!isArrayIndex(hintSegment)) return false;
-      } else if (segment !== hintSegment) return false;
+      if (segment === $.Wildcard) continue;
+      else if (segment !== hintSegment) return false;
     }
     return true;
   };

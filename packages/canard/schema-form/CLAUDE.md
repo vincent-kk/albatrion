@@ -95,7 +95,7 @@ Standard JSONPointer (RFC 6901) with custom extensions:
 
 - `..` - Parent navigation (computed properties only)
 - `.` - Current node reference
-- `*` - Array wildcard (FormTypeInputMap only)
+- `*` - Wildcard for any segment (FormTypeInputMap only)
 
 ### Event System and Node Communication
 
@@ -685,12 +685,13 @@ computed: {
 '&if': "./type === 'A'"  // ✅ Valid
 ```
 
-**Array wildcard (`*`)**:
+**Wildcard (`*`)**:
 - Available in: FormTypeInputMap only
-- Matches any array index
+- Matches any segment (array indices or dynamic object keys)
 ```typescript
 formTypeInputMap: {
-  '/items/*/name': CustomNameInput  // ✅ Valid
+  '/items/*/name': CustomNameInput,  // ✅ Array indices: /items/0/name, /items/1/name
+  '/config/*/value': ConfigInput     // ✅ Object keys: /config/theme/value, /config/lang/value
 }
 ```
 

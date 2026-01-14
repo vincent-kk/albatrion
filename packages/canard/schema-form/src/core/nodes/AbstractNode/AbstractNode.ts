@@ -54,8 +54,8 @@ import {
   afterMicrotask,
   checkDefinedValue,
   computeFactory,
-  findAllNodes,
   findNode,
+  findNodes,
   getEventCollection,
   getFallbackValidator,
   getNodeGroup,
@@ -427,10 +427,7 @@ export abstract class AbstractNode<
     if (pointer === $.Root) return [this.rootNode];
     const absolute = isAbsolutePath(pointer);
     if (absolute && pointer.length === 1) return [this.rootNode];
-    return findAllNodes(
-      absolute ? this.rootNode : (this as SchemaNode),
-      pointer,
-    );
+    return findNodes(absolute ? this.rootNode : (this as SchemaNode), pointer);
   }
 
   /** List of node event listeners */

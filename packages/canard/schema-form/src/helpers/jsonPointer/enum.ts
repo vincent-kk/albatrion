@@ -32,9 +32,14 @@ export const JSONPointer = {
    */
   Current: '.',
   /**
-   * All index operator (`*`)
+   * Wildcard operator (`*`)
    * @note This is not a official JSONPointer syntax, but it is used in some implementations.
    */
+  Wildcard: '*',
+  /**
+   * Index operator (`*`)
+   * @deprecated Use `Wildcard` instead. This will be removed in next version.
+   * */
   Index: '*',
   /**
    * Special symbol for Context (`@`)

@@ -160,7 +160,7 @@ const FormInner = <
           rootNode?.find(path)?.publish(NodeEventType.RequestSelect),
         reset: update,
         findNode: (path) => rootNode?.find(path) || null,
-        findAllNodes: (path) => rootNode?.findAll(path) || [],
+        findNodes: (path) => rootNode?.findAll(path) || [],
         getValue: () => rootNode?.value as Value,
         setValue: (value, options) => rootNode?.setValue(value as any, options),
         getErrors: () => rootNode?.globalErrors || [],

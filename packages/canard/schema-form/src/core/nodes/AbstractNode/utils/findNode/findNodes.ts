@@ -41,20 +41,20 @@ import { getSegments } from './utils/getSegments';
  * // Branch 1: { name: StringNode }
  *
  * // Returns both "name" nodes from different branches
- * const nodes = findAllNodes(rootNode, ["name"]);
+ * const nodes = findNodes(rootNode, ["name"]);
  * // nodes.length === 2
  *
  * // Terminal node preservation: if "child" is terminal, it stays in result
- * const result = findAllNodes(root, ["child", "nonexistent"]);
+ * const result = findNodes(root, ["child", "nonexistent"]);
  * // result === [childNode] (terminal preserved)
  *
  * // Navigate via special segments
- * findAllNodes(someNode, ["#", "data"]);  // root → data
- * findAllNodes(someNode, ["..", "sibling"]);  // parent → sibling
- * findAllNodes(someNode, [".", "child"]);  // stay → child
+ * findNodes(someNode, ["#", "data"]);  // root → data
+ * findNodes(someNode, ["..", "sibling"]);  // parent → sibling
+ * findNodes(someNode, [".", "child"]);  // stay → child
  * ```
  */
-export const findAllNodes = (
+export const findNodes = (
   source: SchemaNode,
   pointer: string | string[] | null,
 ): SchemaNode[] => {
@@ -83,6 +83,7 @@ export const findAllNodes = (
       nextCursors = cursors;
     } else {
       nextCursors = [];
+      const isWildcard = segment === $.Wildcard;
       for (let j = 0, jl = cursors.length; j < jl; j++) {
         const cursor = cursors[j];
         if (cursor.group === 'terminal') {
@@ -93,7 +94,7 @@ export const findAllNodes = (
           for (let k = 0, kl = subnodes.length; k < kl; k++) {
             const node = subnodes[k].node;
             if (
-              node.escapedName === segment &&
+              (isWildcard || node.escapedName === segment) &&
               nextCursors.indexOf(node) === -1
             )
               nextCursors.push(node);

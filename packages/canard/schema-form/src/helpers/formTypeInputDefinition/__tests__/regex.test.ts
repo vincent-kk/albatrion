@@ -1,11 +1,11 @@
 import { describe, expect, test } from 'vitest';
 
-import { INCLUDE_INDEX_REGEX } from '../regex';
+import { INCLUDE_WILDCARD_REGEX } from '../regex';
 
 describe('INCLUDE_INDEX_REGEX', () => {
   // 헬퍼 함수: 정규식 테스트
   const testIndexRegex = (input: string): boolean => {
-    return INCLUDE_INDEX_REGEX.test(input);
+    return INCLUDE_WILDCARD_REGEX.test(input);
   };
 
   describe('유효한 JSON Pointer with Index 패턴', () => {

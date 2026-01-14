@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import type { SchemaNode } from '@/schema-form/core';
 
-import { findAllNodes } from '../findNode';
+import { findNodes } from '../findNode';
 
 describe('findAllNodes', () => {
   let mockRootNode: any;
@@ -55,71 +55,71 @@ describe('findAllNodes', () => {
 
   describe('basic behavior', () => {
     it('should return empty array for null source', () => {
-      const result = findAllNodes(null as any, ['child1']);
+      const result = findNodes(null as any, ['child1']);
       expect(result).toEqual([]);
     });
 
     it('should return source in array for null pointer', () => {
-      const result = findAllNodes(mockRootNode, null);
+      const result = findNodes(mockRootNode, null);
       expect(result).toEqual([mockRootNode]);
     });
 
     it('should return source in array for empty segments', () => {
-      const result = findAllNodes(mockRootNode, []);
+      const result = findNodes(mockRootNode, []);
       expect(result).toEqual([mockRootNode]);
     });
 
     it('should return source in array for empty string pointer', () => {
-      const result = findAllNodes(mockRootNode, '');
+      const result = findNodes(mockRootNode, '');
       expect(result).toEqual([mockRootNode]);
     });
   });
 
   describe('single path traversal', () => {
     it('should find direct child node', () => {
-      const result = findAllNodes(mockRootNode, ['child1']);
+      const result = findNodes(mockRootNode, ['child1']);
       expect(result).toEqual([mockChildNode1]);
     });
 
     it('should find terminal child node', () => {
-      const result = findAllNodes(mockRootNode, ['child2']);
+      const result = findNodes(mockRootNode, ['child2']);
       expect(result).toEqual([mockChildNode2]);
     });
 
     it('should find nested grandchild node', () => {
-      const result = findAllNodes(mockRootNode, ['child1', 'grandchild']);
+      const result = findNodes(mockRootNode, ['child1', 'grandchild']);
       expect(result).toEqual([mockGrandchildNode]);
     });
 
     it('should return empty array for non-existent path', () => {
-      const result = findAllNodes(mockRootNode, ['nonexistent']);
+      const result = findNodes(mockRootNode, ['nonexistent']);
       expect(result).toEqual([]);
     });
 
     it('should return empty array for partial non-existent path', () => {
-      const result = findAllNodes(mockRootNode, ['child1', 'nonexistent']);
+      const result = findNodes(mockRootNode, ['child1', 'nonexistent']);
       expect(result).toEqual([]);
     });
   });
 
   describe('special segment handling', () => {
     it('should handle # (Fragment) to navigate to root', () => {
-      const result = findAllNodes(mockChildNode1, ['#', 'child2']);
+      const result = findNodes(mockChildNode1, ['#', 'child2']);
       expect(result).toEqual([mockChildNode2]);
     });
 
     it('should handle .. (Parent) to navigate to parent', () => {
-      const result = findAllNodes(mockGrandchildNode, ['..', '..', 'child2']);
+      const result = findNodes(mockGrandchildNode, ['..', '..', 'child2']);
       expect(result).toEqual([mockChildNode2]);
     });
 
     it('should handle . (Current) to reset to source', () => {
-      const result = findAllNodes(mockChildNode1, ['.', 'grandchild']);
+      const result = findNodes(mockChildNode1, ['.', 'grandchild']);
       expect(result).toEqual([mockGrandchildNode]);
     });
 
     it('should return empty array when parent navigation fails', () => {
-      const result = findAllNodes(mockRootNode, ['..']);
+      const result = findNodes(mockRootNode, ['..']);
       expect(result).toEqual([]);
     });
 
@@ -132,20 +132,20 @@ describe('findAllNodes', () => {
         subnodes: null,
       };
 
-      const result = findAllNodes(nodeWithoutRoot, ['#']);
+      const result = findNodes(nodeWithoutRoot, ['#']);
       expect(result).toEqual([]);
     });
   });
 
   describe('terminal node handling', () => {
     it('should return terminal node when it is the final destination', () => {
-      const result = findAllNodes(mockRootNode, ['child2']);
+      const result = findNodes(mockRootNode, ['child2']);
       expect(result).toEqual([mockChildNode2]);
     });
 
     it('should keep terminal node when trying to traverse beyond it', () => {
       // terminal node cannot be traversed further, but it remains in the result
-      const result = findAllNodes(mockRootNode, ['child2', 'nonexistent']);
+      const result = findNodes(mockRootNode, ['child2', 'nonexistent']);
       expect(result).toEqual([mockChildNode2]);
     });
 
@@ -173,7 +173,7 @@ describe('findAllNodes', () => {
         { node: nodeWithSubnodes },
       ];
 
-      const result = findAllNodes(mockRootNode, ['shared', 'grandchild']);
+      const result = findNodes(mockRootNode, ['shared', 'grandchild']);
       // terminal 'shared' node stays, branch 'shared' traverses to grandchild
       expect(result).toHaveLength(2);
       expect(result).toContain(nodeWithSameName);
@@ -222,7 +222,7 @@ describe('findAllNodes', () => {
     });
 
     it('should return all nodes with same escapedName regardless of variant', () => {
-      const result = findAllNodes(parentWithOneOf, ['name']);
+      const result = findNodes(parentWithOneOf, ['name']);
       expect(result).toHaveLength(2);
       expect(result).toContain(variant0Child);
       expect(result).toContain(variant1Child);
@@ -252,7 +252,7 @@ describe('findAllNodes', () => {
       deepVariant1.parentNode = variant1Child;
       deepVariant1.rootNode = parentWithOneOf;
 
-      const result = findAllNodes(parentWithOneOf, ['name', 'deep']);
+      const result = findNodes(parentWithOneOf, ['name', 'deep']);
       expect(result).toHaveLength(2);
       expect(result).toContain(deepVariant0);
       expect(result).toContain(deepVariant1);
@@ -281,7 +281,7 @@ describe('findAllNodes', () => {
       mockRootNode.subnodes = [{ node: branch1 }, { node: branch2 }];
 
       // Both branches lead to same root via #
-      const result = findAllNodes(mockRootNode, ['branch', '#']);
+      const result = findNodes(mockRootNode, ['branch', '#']);
       expect(result).toHaveLength(1);
       expect(result[0]).toBe(mockRootNode);
     });
@@ -298,7 +298,7 @@ describe('findAllNodes', () => {
       // Same node referenced twice in subnodes (unusual but possible)
       mockRootNode.subnodes = [{ node: sharedNode }, { node: sharedNode }];
 
-      const result = findAllNodes(mockRootNode, ['shared']);
+      const result = findNodes(mockRootNode, ['shared']);
       expect(result).toHaveLength(1);
       expect(result[0]).toBe(sharedNode);
     });
@@ -337,7 +337,7 @@ describe('findAllNodes', () => {
       ];
 
       // From 2 branch nodes, go to root, then find target
-      const result = findAllNodes(mockRootNode, ['branch', '#', 'target']);
+      const result = findNodes(mockRootNode, ['branch', '#', 'target']);
       expect(result).toHaveLength(1);
       expect(result[0]).toBe(targetNode);
     });
@@ -374,7 +374,7 @@ describe('findAllNodes', () => {
       ];
 
       // From 2 child nodes, go to parent (root), then find target
-      const result = findAllNodes(mockRootNode, ['child', '..', 'target']);
+      const result = findNodes(mockRootNode, ['child', '..', 'target']);
       expect(result).toHaveLength(1);
       expect(result[0]).toBe(targetNode);
     });
@@ -399,7 +399,7 @@ describe('findAllNodes', () => {
       mockRootNode.subnodes = [{ node: child1 }, { node: child2 }];
 
       // . keeps current cursors (child1, child2), then find grandchild
-      const result = findAllNodes(mockRootNode, ['child', '.', 'grandchild']);
+      const result = findNodes(mockRootNode, ['child', '.', 'grandchild']);
       // Both child nodes have grandchild, but it's the same node so deduplicated
       expect(result).toHaveLength(1);
       expect(result[0]).toBe(mockGrandchildNode);
@@ -414,7 +414,7 @@ describe('findAllNodes', () => {
         subnodes: null,
       } as SchemaNode;
 
-      const result = findAllNodes(emptyNode, ['child']);
+      const result = findNodes(emptyNode, ['child']);
       expect(result).toEqual([]);
     });
 
@@ -425,7 +425,7 @@ describe('findAllNodes', () => {
         subnodes: [],
       } as unknown as SchemaNode;
 
-      const result = findAllNodes(emptyChildrenNode, ['child']);
+      const result = findNodes(emptyChildrenNode, ['child']);
       expect(result).toEqual([]);
     });
 
@@ -445,7 +445,7 @@ describe('findAllNodes', () => {
         subnodes: [{ node: arrayNode }],
       };
 
-      const result = findAllNodes(parentWithArray, ['0']);
+      const result = findNodes(parentWithArray, ['0']);
       expect(result).toEqual([arrayNode]);
     });
 
@@ -473,17 +473,17 @@ describe('findAllNodes', () => {
         subnodes: [{ node: level2 }],
       } as SchemaNode;
 
-      const result = findAllNodes(level1, ['level2', 'level3', 'level4']);
+      const result = findNodes(level1, ['level2', 'level3', 'level4']);
       expect(result).toEqual([level4]);
     });
 
     it('should handle string pointer with leading slash', () => {
-      const result = findAllNodes(mockRootNode, '/child1');
+      const result = findNodes(mockRootNode, '/child1');
       expect(result).toEqual([mockChildNode1]);
     });
 
     it('should handle string pointer with multiple segments', () => {
-      const result = findAllNodes(mockRootNode, '/child1/grandchild');
+      const result = findNodes(mockRootNode, '/child1/grandchild');
       expect(result).toEqual([mockGrandchildNode]);
     });
   });
@@ -491,36 +491,36 @@ describe('findAllNodes', () => {
   describe('complex path scenarios', () => {
     it('should handle mixed special segments: #/../child1', () => {
       // # goes to root, .. goes to parent (null for root), should return []
-      const result = findAllNodes(mockChildNode1, ['#', '..']);
+      const result = findNodes(mockChildNode1, ['#', '..']);
       expect(result).toEqual([]);
     });
 
     it('should handle path with multiple consecutive special segments', () => {
       // . keeps cursors, . keeps cursors again
-      const result = findAllNodes(mockChildNode1, ['.', '.', 'grandchild']);
+      const result = findNodes(mockChildNode1, ['.', '.', 'grandchild']);
       expect(result).toEqual([mockGrandchildNode]);
     });
 
     it('should handle path starting with . (Current)', () => {
-      const result = findAllNodes(mockRootNode, ['.', 'child1']);
+      const result = findNodes(mockRootNode, ['.', 'child1']);
       expect(result).toEqual([mockChildNode1]);
     });
 
     it('should handle path with # in the middle resetting context', () => {
       // Start from grandchild, go to root, then find child2
-      const result = findAllNodes(mockGrandchildNode, ['#', 'child2']);
+      const result = findNodes(mockGrandchildNode, ['#', 'child2']);
       expect(result).toEqual([mockChildNode2]);
     });
 
     it('should handle complex path: child1/../child2', () => {
       // Go to child1, then parent (root), then child2
-      const result = findAllNodes(mockRootNode, ['child1', '..', 'child2']);
+      const result = findNodes(mockRootNode, ['child1', '..', 'child2']);
       expect(result).toEqual([mockChildNode2]);
     });
 
     it('should handle path going down and up multiple times', () => {
       // child1 -> parent (root) -> child1 -> grandchild
-      const result = findAllNodes(mockRootNode, [
+      const result = findNodes(mockRootNode, [
         'child1',
         '..',
         'child1',
@@ -533,19 +533,19 @@ describe('findAllNodes', () => {
   describe('terminal node edge cases', () => {
     it('should handle all cursors being terminal', () => {
       // When source itself is terminal and we try to traverse
-      const result = findAllNodes(mockChildNode2, ['nonexistent']);
+      const result = findNodes(mockChildNode2, ['nonexistent']);
       expect(result).toEqual([mockChildNode2]);
     });
 
     it('should handle terminal at source with special segment #', () => {
       // Terminal can still navigate via # to root
-      const result = findAllNodes(mockChildNode2, ['#', 'child1']);
+      const result = findNodes(mockChildNode2, ['#', 'child1']);
       expect(result).toEqual([mockChildNode1]);
     });
 
     it('should handle terminal at source with special segment ..', () => {
       // Terminal can still navigate via .. to parent
-      const result = findAllNodes(mockChildNode2, ['..']);
+      const result = findNodes(mockChildNode2, ['..']);
       expect(result).toEqual([mockRootNode]);
     });
 
@@ -584,7 +584,7 @@ describe('findAllNodes', () => {
       // - terminalA stays (can't traverse)
       // - branchB has no subnodes, drops out
       // - terminalC stays (can't traverse)
-      const result = findAllNodes(mockRootNode, ['item', 'deeper']);
+      const result = findNodes(mockRootNode, ['item', 'deeper']);
       expect(result).toHaveLength(2);
       expect(result).toContain(terminalA);
       expect(result).toContain(terminalC);
@@ -602,7 +602,7 @@ describe('findAllNodes', () => {
       mockRootNode.subnodes = [{ node: terminal }];
 
       // Terminal found, then 3 more segments that can't match anything
-      const result = findAllNodes(mockRootNode, ['leaf', 'a', 'b', 'c']);
+      const result = findNodes(mockRootNode, ['leaf', 'a', 'b', 'c']);
       expect(result).toEqual([terminal]);
     });
   });
@@ -638,7 +638,7 @@ describe('findAllNodes', () => {
       mockRootNode.subnodes = [{ node: branch1 }, { node: branch2 }];
 
       // Both branches lead to same shared grandchild
-      const result = findAllNodes(mockRootNode, ['branch', 'shared']);
+      const result = findNodes(mockRootNode, ['branch', 'shared']);
       expect(result).toHaveLength(1);
       expect(result[0]).toBe(sharedGrandchild);
     });
@@ -663,7 +663,7 @@ describe('findAllNodes', () => {
       mockRootNode.subnodes = [{ node: child1 }, { node: child2 }];
 
       // Both children go to same root via #
-      const result = findAllNodes(mockRootNode, ['child', '#']);
+      const result = findNodes(mockRootNode, ['child', '#']);
       expect(result).toHaveLength(1);
       expect(result[0]).toBe(mockRootNode);
     });
@@ -708,7 +708,7 @@ describe('findAllNodes', () => {
 
       mockRootNode.subnodes = [{ node: parent1 }];
 
-      const result = findAllNodes(mockRootNode, ['parent', 'gc', '..']);
+      const result = findNodes(mockRootNode, ['parent', 'gc', '..']);
       expect(result).toHaveLength(1);
       expect(result[0]).toBe(parent1);
     });
@@ -726,7 +726,7 @@ describe('findAllNodes', () => {
 
       mockRootNode.subnodes = [{ node: emptyBranch }];
 
-      const result = findAllNodes(mockRootNode, ['empty', 'child']);
+      const result = findNodes(mockRootNode, ['empty', 'child']);
       expect(result).toEqual([]);
     });
 
@@ -741,7 +741,7 @@ describe('findAllNodes', () => {
 
       mockRootNode.subnodes = [{ node: nullSubnodesBranch }];
 
-      const result = findAllNodes(mockRootNode, ['nullsub', 'child']);
+      const result = findNodes(mockRootNode, ['nullsub', 'child']);
       expect(result).toEqual([]);
     });
 
@@ -756,12 +756,12 @@ describe('findAllNodes', () => {
 
       mockRootNode.subnodes = [{ node: undefinedSubnodesBranch }];
 
-      const result = findAllNodes(mockRootNode, ['undefsub', 'child']);
+      const result = findNodes(mockRootNode, ['undefsub', 'child']);
       expect(result).toEqual([]);
     });
 
     it('should return empty array for single non-matching segment', () => {
-      const result = findAllNodes(mockRootNode, ['nonexistent']);
+      const result = findNodes(mockRootNode, ['nonexistent']);
       expect(result).toEqual([]);
     });
 
@@ -774,12 +774,12 @@ describe('findAllNodes', () => {
         subnodes: [],
       };
 
-      const result = findAllNodes(orphanNode, ['#']);
+      const result = findNodes(orphanNode, ['#']);
       expect(result).toEqual([]);
     });
 
     it('should handle parentNode being null during .. navigation', () => {
-      const result = findAllNodes(mockRootNode, ['..']);
+      const result = findNodes(mockRootNode, ['..']);
       expect(result).toEqual([]);
     });
   });
@@ -796,7 +796,7 @@ describe('findAllNodes', () => {
 
       mockRootNode.subnodes = [{ node: specialNode }];
 
-      const result = findAllNodes(mockRootNode, ['~0~1']);
+      const result = findNodes(mockRootNode, ['~0~1']);
       expect(result).toEqual([specialNode]);
     });
 
@@ -811,7 +811,7 @@ describe('findAllNodes', () => {
 
       mockRootNode.subnodes = [{ node: numericNode }];
 
-      const result = findAllNodes(mockRootNode, ['123']);
+      const result = findNodes(mockRootNode, ['123']);
       expect(result).toEqual([numericNode]);
     });
 
@@ -826,8 +826,285 @@ describe('findAllNodes', () => {
 
       mockRootNode.subnodes = [{ node: emptyNameNode }];
 
-      const result = findAllNodes(mockRootNode, ['']);
+      const result = findNodes(mockRootNode, ['']);
       expect(result).toEqual([emptyNameNode]);
+    });
+  });
+
+  describe('wildcard (*) operator', () => {
+    it('should match all direct children with * operator', () => {
+      const result = findNodes(mockRootNode, ['*']);
+      expect(result).toHaveLength(2);
+      expect(result).toContain(mockChildNode1);
+      expect(result).toContain(mockChildNode2);
+    });
+
+    it('should match all children at specific level with */child pattern', () => {
+      const grandchild1: any = {
+        escapedName: 'nested',
+        group: 'terminal',
+        parentNode: mockChildNode1,
+        rootNode: mockRootNode,
+        subnodes: null,
+      };
+
+      const grandchild2: any = {
+        escapedName: 'nested',
+        group: 'terminal',
+        parentNode: mockChildNode2,
+        rootNode: mockRootNode,
+        subnodes: null,
+      };
+
+      mockChildNode1.subnodes = [{ node: grandchild1 }];
+      mockChildNode2.group = 'branch';
+      mockChildNode2.subnodes = [{ node: grandchild2 }];
+
+      // */nested should find all 'nested' nodes under all children
+      const result = findNodes(mockRootNode, ['*', 'nested']);
+      expect(result).toHaveLength(2);
+      expect(result).toContain(grandchild1);
+      expect(result).toContain(grandchild2);
+    });
+
+    it('should handle multiple wildcards in path', () => {
+      const level3a: any = {
+        escapedName: 'leaf',
+        group: 'terminal',
+        parentNode: null,
+        rootNode: mockRootNode,
+        subnodes: null,
+      };
+
+      const level3b: any = {
+        escapedName: 'leaf',
+        group: 'terminal',
+        parentNode: null,
+        rootNode: mockRootNode,
+        subnodes: null,
+      };
+
+      const level2a: any = {
+        escapedName: 'mid',
+        group: 'branch',
+        parentNode: mockChildNode1,
+        rootNode: mockRootNode,
+        subnodes: [{ node: level3a }],
+      };
+
+      const level2b: any = {
+        escapedName: 'mid',
+        group: 'branch',
+        parentNode: mockChildNode2,
+        rootNode: mockRootNode,
+        subnodes: [{ node: level3b }],
+      };
+
+      level3a.parentNode = level2a;
+      level3b.parentNode = level2b;
+
+      mockChildNode1.subnodes = [{ node: level2a }];
+      mockChildNode2.group = 'branch';
+      mockChildNode2.subnodes = [{ node: level2b }];
+
+      // */*  should find all level2 nodes
+      const result = findNodes(mockRootNode, ['*', '*']);
+      expect(result).toHaveLength(2);
+      expect(result).toContain(level2a);
+      expect(result).toContain(level2b);
+
+      // */* /leaf should find all level3 nodes
+      const leafResult = findNodes(mockRootNode, ['*', '*', 'leaf']);
+      expect(leafResult).toHaveLength(2);
+      expect(leafResult).toContain(level3a);
+      expect(leafResult).toContain(level3b);
+    });
+
+    it('should handle wildcard with specific path segments', () => {
+      const targetA: any = {
+        escapedName: 'target',
+        group: 'terminal',
+        parentNode: mockChildNode1,
+        rootNode: mockRootNode,
+        subnodes: null,
+      };
+
+      const targetB: any = {
+        escapedName: 'target',
+        group: 'terminal',
+        parentNode: mockChildNode2,
+        rootNode: mockRootNode,
+        subnodes: null,
+      };
+
+      const otherA: any = {
+        escapedName: 'other',
+        group: 'terminal',
+        parentNode: mockChildNode1,
+        rootNode: mockRootNode,
+        subnodes: null,
+      };
+
+      mockChildNode1.subnodes = [{ node: targetA }, { node: otherA }];
+      mockChildNode2.group = 'branch';
+      mockChildNode2.subnodes = [{ node: targetB }];
+
+      // */target should find all 'target' nodes under all children
+      const result = findNodes(mockRootNode, ['*', 'target']);
+      expect(result).toHaveLength(2);
+      expect(result).toContain(targetA);
+      expect(result).toContain(targetB);
+      expect(result).not.toContain(otherA);
+    });
+
+    it('should return empty array when wildcard matches no children', () => {
+      const emptyNode: any = {
+        escapedName: 'empty',
+        group: 'branch',
+        parentNode: null,
+        rootNode: null,
+        subnodes: [],
+      };
+
+      const result = findNodes(emptyNode, ['*']);
+      expect(result).toEqual([]);
+    });
+
+    it('should handle wildcard on terminal nodes', () => {
+      // Terminal node cannot be traversed, so wildcard should keep terminal in result
+      const result = findNodes(mockChildNode2, ['*']);
+      expect(result).toEqual([mockChildNode2]);
+    });
+
+    it('should combine wildcard with special segments', () => {
+      const nested: any = {
+        escapedName: 'nested',
+        group: 'branch',
+        parentNode: mockChildNode1,
+        rootNode: mockRootNode,
+        subnodes: [],
+      };
+
+      mockChildNode1.subnodes = [{ node: nested }];
+      nested.subnodes = [{ node: mockGrandchildNode }];
+      mockGrandchildNode.parentNode = nested;
+
+      // Go to child1, then *, then parent
+      const result = findNodes(mockRootNode, ['child1', '*', '..']);
+      expect(result).toHaveLength(1);
+      expect(result[0]).toBe(mockChildNode1);
+    });
+
+    it('should deduplicate when wildcard leads to same node', () => {
+      const sharedChild: any = {
+        escapedName: 'shared',
+        group: 'terminal',
+        parentNode: mockRootNode,
+        rootNode: mockRootNode,
+        subnodes: null,
+      };
+
+      // Both subnodes point to same node
+      mockRootNode.subnodes = [{ node: sharedChild }, { node: sharedChild }];
+
+      const result = findNodes(mockRootNode, ['*']);
+      expect(result).toHaveLength(1);
+      expect(result[0]).toBe(sharedChild);
+    });
+
+    it('should handle string pointer with wildcard', () => {
+      const result = findNodes(mockRootNode, '/*');
+      expect(result).toHaveLength(2);
+      expect(result).toContain(mockChildNode1);
+      expect(result).toContain(mockChildNode2);
+    });
+
+    it('should handle nested path with string pointer containing wildcard', () => {
+      // Reset child2 to terminal (no grandchild)
+      mockChildNode2.group = 'terminal';
+      mockChildNode2.subnodes = null;
+      mockChildNode1.subnodes = [{ node: mockGrandchildNode }];
+
+      const result = findNodes(mockRootNode, '/*/grandchild');
+      // child1 has grandchild, child2 is terminal and preserved
+      expect(result).toHaveLength(2);
+      expect(result).toContain(mockGrandchildNode);
+      expect(result).toContain(mockChildNode2); // terminal preserved
+    });
+
+    it('should handle wildcard at different levels', () => {
+      const deep1: any = {
+        escapedName: 'deep',
+        group: 'terminal',
+        parentNode: mockChildNode1,
+        rootNode: mockRootNode,
+        subnodes: null,
+      };
+
+      const deep2: any = {
+        escapedName: 'deep',
+        group: 'terminal',
+        parentNode: mockChildNode2,
+        rootNode: mockRootNode,
+        subnodes: null,
+      };
+
+      mockChildNode1.subnodes = [{ node: deep1 }];
+      mockChildNode2.group = 'branch';
+      mockChildNode2.subnodes = [{ node: deep2 }];
+
+      // First use specific path, then wildcard
+      const result1 = findNodes(mockRootNode, ['child1', '*']);
+      expect(result1).toHaveLength(1);
+      expect(result1).toContain(deep1);
+
+      // Use wildcard first, then specific path
+      const result2 = findNodes(mockRootNode, ['*', 'deep']);
+      expect(result2).toHaveLength(2);
+      expect(result2).toContain(deep1);
+      expect(result2).toContain(deep2);
+    });
+
+    it('should handle wildcard with oneOf-like structures', () => {
+      const variant0: any = {
+        escapedName: 'data',
+        group: 'terminal',
+        parentNode: mockRootNode,
+        rootNode: mockRootNode,
+        subnodes: null,
+        variant: 0,
+      };
+
+      const variant1: any = {
+        escapedName: 'data',
+        group: 'terminal',
+        parentNode: mockRootNode,
+        rootNode: mockRootNode,
+        subnodes: null,
+        variant: 1,
+      };
+
+      const variant2: any = {
+        escapedName: 'other',
+        group: 'terminal',
+        parentNode: mockRootNode,
+        rootNode: mockRootNode,
+        subnodes: null,
+        variant: 1,
+      };
+
+      mockRootNode.subnodes = [
+        { node: variant0 },
+        { node: variant1 },
+        { node: variant2 },
+      ];
+
+      // Wildcard should get all variants
+      const result = findNodes(mockRootNode, ['*']);
+      expect(result).toHaveLength(3);
+      expect(result).toContain(variant0);
+      expect(result).toContain(variant1);
+      expect(result).toContain(variant2);
     });
   });
 
@@ -848,7 +1125,7 @@ describe('findAllNodes', () => {
 
       mockRootNode.subnodes = siblings;
 
-      const result = findAllNodes(mockRootNode, ['sibling50']);
+      const result = findNodes(mockRootNode, ['sibling50']);
       expect(result).toHaveLength(1);
       expect(result[0].escapedName).toBe('sibling50');
     });
@@ -870,7 +1147,7 @@ describe('findAllNodes', () => {
         path.push(`level${i}`);
       }
 
-      const result = findAllNodes(mockRootNode, path);
+      const result = findNodes(mockRootNode, path);
       expect(result).toHaveLength(1);
       expect(result[0].escapedName).toBe('level19');
     });

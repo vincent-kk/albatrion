@@ -923,6 +923,523 @@ describe('AbstractNode.findAll', () => {
     });
   });
 
+  describe('wildcard (*) operator', () => {
+    it('should match all direct children with * operator', async () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          name: { type: 'string', default: 'test' },
+          age: { type: 'number', default: 25 },
+          active: { type: 'boolean', default: true },
+        },
+      } satisfies JsonSchema;
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange: () => {},
+      }) as ObjectNode;
+
+      await delay();
+
+      const allChildren = node.findAll('*');
+      expect(allChildren).toHaveLength(3);
+
+      const names = allChildren.map((n) => n.name);
+      expect(names).toContain('name');
+      expect(names).toContain('age');
+      expect(names).toContain('active');
+    });
+
+    it('should find all nested properties with */property pattern', async () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          user: {
+            type: 'object',
+            properties: {
+              email: { type: 'string', default: 'user@example.com' },
+            },
+          },
+          admin: {
+            type: 'object',
+            properties: {
+              email: { type: 'string', default: 'admin@example.com' },
+            },
+          },
+        },
+      } satisfies JsonSchema;
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange: () => {},
+      }) as ObjectNode;
+
+      await delay();
+
+      // */email should find all 'email' nodes under all children
+      const emailNodes = node.findAll('*/email') as StringNode[];
+      expect(emailNodes).toHaveLength(2);
+
+      const values = emailNodes.map((n) => n.value);
+      expect(values).toContain('user@example.com');
+      expect(values).toContain('admin@example.com');
+    });
+
+    it('should handle wildcard with array items', async () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          items: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                value: { type: 'number' },
+              },
+            },
+            default: [
+              { name: 'first', value: 1 },
+              { name: 'second', value: 2 },
+              { name: 'third', value: 3 },
+            ],
+          },
+        },
+      } satisfies JsonSchema;
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange: () => {},
+      }) as ObjectNode;
+
+      await delay();
+
+      const items = node.find('items') as ArrayNode;
+
+      // * should find all array items
+      const allItems = items.findAll('*');
+      expect(allItems).toHaveLength(3);
+
+      // */name should find all 'name' properties in all items
+      const nameNodes = items.findAll('*/name') as StringNode[];
+      expect(nameNodes).toHaveLength(3);
+
+      const names = nameNodes.map((n) => n.value);
+      expect(names).toContain('first');
+      expect(names).toContain('second');
+      expect(names).toContain('third');
+    });
+
+    it('should combine wildcard with oneOf branches', async () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          type: {
+            type: 'string',
+            enum: ['person', 'company'],
+            default: 'person',
+          },
+        },
+        oneOf: [
+          {
+            '&if': "(./type) === 'person'",
+            properties: {
+              details: {
+                type: 'object',
+                properties: {
+                  firstName: { type: 'string', default: 'John' },
+                  lastName: { type: 'string', default: 'Doe' },
+                },
+              },
+            },
+          },
+          {
+            '&if': "(./type) === 'company'",
+            properties: {
+              details: {
+                type: 'object',
+                properties: {
+                  companyName: { type: 'string', default: 'Acme' },
+                  taxId: { type: 'string', default: '12345' },
+                },
+              },
+            },
+          },
+        ],
+      } satisfies JsonSchema;
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange: () => {},
+      }) as ObjectNode;
+
+      await delay();
+
+      // Find all 'details' nodes from both oneOf branches
+      const detailsNodes = node.findAll('details') as ObjectNode[];
+      expect(detailsNodes).toHaveLength(2);
+
+      // details/* should find all properties under each details
+      // Person details: firstName, lastName
+      // Company details: companyName, taxId
+      // Total: 4 nodes
+      let allDetailProps: any[] = [];
+      for (const details of detailsNodes) {
+        const props = details.findAll('*');
+        allDetailProps = allDetailProps.concat(props);
+      }
+      expect(allDetailProps).toHaveLength(4);
+
+      const propNames = allDetailProps.map((n) => n.name);
+      expect(propNames).toContain('firstName');
+      expect(propNames).toContain('lastName');
+      expect(propNames).toContain('companyName');
+      expect(propNames).toContain('taxId');
+    });
+
+    it('should handle multiple wildcards in path', async () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          categories: {
+            type: 'object',
+            properties: {
+              electronics: {
+                type: 'object',
+                properties: {
+                  phone: { type: 'string', default: 'iPhone' },
+                  laptop: { type: 'string', default: 'MacBook' },
+                },
+              },
+              clothing: {
+                type: 'object',
+                properties: {
+                  shirt: { type: 'string', default: 'T-Shirt' },
+                  pants: { type: 'string', default: 'Jeans' },
+                },
+              },
+            },
+          },
+        },
+      } satisfies JsonSchema;
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange: () => {},
+      }) as ObjectNode;
+
+      await delay();
+
+      const categories = node.find('categories') as ObjectNode;
+
+      // */* should find all products (phone, laptop, shirt, pants)
+      const allProducts = categories.findAll('*/*') as StringNode[];
+      expect(allProducts).toHaveLength(4);
+
+      const values = allProducts.map((n) => n.value);
+      expect(values).toContain('iPhone');
+      expect(values).toContain('MacBook');
+      expect(values).toContain('T-Shirt');
+      expect(values).toContain('Jeans');
+    });
+
+    it('should handle wildcard with deeply nested structure', async () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          level1: {
+            type: 'object',
+            properties: {
+              a: {
+                type: 'object',
+                properties: {
+                  level3: {
+                    type: 'object',
+                    properties: {
+                      value: { type: 'number', default: 1 },
+                    },
+                  },
+                },
+              },
+              b: {
+                type: 'object',
+                properties: {
+                  level3: {
+                    type: 'object',
+                    properties: {
+                      value: { type: 'number', default: 2 },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      } satisfies JsonSchema;
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange: () => {},
+      }) as ObjectNode;
+
+      await delay();
+
+      // level1/*/level3/value should find both values
+      const valueNodes = node.findAll('level1/*/level3/value') as NumberNode[];
+      expect(valueNodes).toHaveLength(2);
+
+      const values = valueNodes.map((n) => n.value);
+      expect(values).toContain(1);
+      expect(values).toContain(2);
+    });
+
+    it('should handle wildcard combined with special segments', async () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          shared: { type: 'string', default: 'shared-value' },
+          container: {
+            type: 'object',
+            properties: {
+              item1: {
+                type: 'object',
+                properties: {
+                  data: { type: 'string', default: 'data1' },
+                },
+              },
+              item2: {
+                type: 'object',
+                properties: {
+                  data: { type: 'string', default: 'data2' },
+                },
+              },
+            },
+          },
+        },
+      } satisfies JsonSchema;
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange: () => {},
+      }) as ObjectNode;
+
+      await delay();
+
+      const container = node.find('container') as ObjectNode;
+
+      // * finds all items, then #/shared navigates to root's shared
+      const allItems = container.findAll('*') as ObjectNode[];
+      expect(allItems).toHaveLength(2);
+
+      // Each item can navigate to #/shared
+      for (const item of allItems) {
+        const sharedNodes = item.findAll('#/shared');
+        expect(sharedNodes).toHaveLength(1);
+        expect((sharedNodes[0] as StringNode).value).toBe('shared-value');
+      }
+    });
+
+    it('should handle wildcard with empty container', async () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          emptyArray: {
+            type: 'array',
+            items: { type: 'string' },
+            default: [],
+          },
+        },
+      } satisfies JsonSchema;
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange: () => {},
+      }) as ObjectNode;
+
+      await delay();
+
+      const emptyArray = node.find('emptyArray') as ArrayNode;
+
+      // * on empty array should return empty
+      const result = emptyArray.findAll('*');
+      expect(result).toEqual([]);
+    });
+
+    it('should bulk update all fields matching wildcard pattern', async () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          users: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                status: { type: 'string', default: 'pending' },
+              },
+            },
+            default: [
+              { name: 'Alice', status: 'pending' },
+              { name: 'Bob', status: 'pending' },
+              { name: 'Charlie', status: 'pending' },
+            ],
+          },
+        },
+      } satisfies JsonSchema;
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange: () => {},
+      }) as ObjectNode;
+
+      await delay();
+
+      const users = node.find('users') as ArrayNode;
+
+      // Find all status fields using wildcard
+      const statusNodes = users.findAll('*/status') as StringNode[];
+      expect(statusNodes).toHaveLength(3);
+
+      // Bulk update all status to 'active'
+      for (const status of statusNodes) {
+        status.setValue('active');
+      }
+
+      await delay();
+
+      // Verify all were updated
+      for (const status of statusNodes) {
+        expect(status.value).toBe('active');
+      }
+    });
+
+    it('should work with wildcard on nested oneOf structures', async () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          mode: { type: 'string', enum: ['a', 'b'], default: 'a' },
+        },
+        oneOf: [
+          {
+            '&if': "(./mode) === 'a'",
+            properties: {
+              settings: {
+                type: 'object',
+                properties: {
+                  option1: { type: 'string', default: 'a1' },
+                  option2: { type: 'string', default: 'a2' },
+                },
+              },
+            },
+          },
+          {
+            '&if': "(./mode) === 'b'",
+            properties: {
+              settings: {
+                type: 'object',
+                properties: {
+                  option1: { type: 'string', default: 'b1' },
+                  option2: { type: 'string', default: 'b2' },
+                },
+              },
+            },
+          },
+        ],
+      } satisfies JsonSchema;
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange: () => {},
+      }) as ObjectNode;
+
+      await delay();
+
+      // Find all settings nodes (from both oneOf branches)
+      const settingsNodes = node.findAll('settings') as ObjectNode[];
+      expect(settingsNodes).toHaveLength(2);
+
+      // Use wildcard to find all options in all settings
+      let allOptions: any[] = [];
+      for (const settings of settingsNodes) {
+        const options = settings.findAll('*');
+        allOptions = allOptions.concat(options);
+      }
+
+      // Each settings has 2 options, 2 settings = 4 total
+      expect(allOptions).toHaveLength(4);
+
+      const values = allOptions.map((n) => n.value);
+      expect(values).toContain('a1');
+      expect(values).toContain('a2');
+      expect(values).toContain('b1');
+      expect(values).toContain('b2');
+    });
+
+    it('should combine findAll wildcard for cross-branch value sync', async () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          type: { type: 'string', enum: ['x', 'y'], default: 'x' },
+        },
+        oneOf: [
+          {
+            '&if': "(./type) === 'x'",
+            properties: {
+              config: {
+                type: 'object',
+                properties: {
+                  enabled: { type: 'boolean', default: false },
+                },
+              },
+            },
+          },
+          {
+            '&if': "(./type) === 'y'",
+            properties: {
+              config: {
+                type: 'object',
+                properties: {
+                  enabled: { type: 'boolean', default: false },
+                },
+              },
+            },
+          },
+        ],
+      } satisfies JsonSchema;
+
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange: () => {},
+      }) as ObjectNode;
+
+      await delay();
+
+      // Use findAll with wildcard-like pattern through config nodes
+      const configNodes = node.findAll('config') as ObjectNode[];
+      expect(configNodes).toHaveLength(2);
+
+      // Find all 'enabled' under all configs
+      let allEnabled: any[] = [];
+      for (const config of configNodes) {
+        const enabled = config.findAll('*');
+        allEnabled = allEnabled.concat(enabled);
+      }
+      expect(allEnabled).toHaveLength(2);
+
+      // Set all to true
+      for (const enabled of allEnabled) {
+        enabled.setValue(true);
+      }
+
+      await delay();
+
+      // Verify all are now true
+      for (const enabled of allEnabled) {
+        expect(enabled.value).toBe(true);
+      }
+    });
+  });
+
   describe('edge cases', () => {
     it('should handle escaped property names', async () => {
       const jsonSchema = {

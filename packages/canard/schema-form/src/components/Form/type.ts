@@ -97,7 +97,7 @@ export interface FormHandle<
   select: Fn<[path: SchemaNode['path']]>;
   reset: Fn;
   findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
-  findAllNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
+  findNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
   getErrors: Fn<[], JsonSchemaError[]>;

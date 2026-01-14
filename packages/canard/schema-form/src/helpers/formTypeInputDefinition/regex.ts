@@ -18,6 +18,6 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
  * - Does not match: "/property＊", "/prop＊erty", "/＊property", "/property/`*`/"
  * (Note: `*` represents the asterisk wildcard character)
  */
-export const INCLUDE_INDEX_REGEX = new RegExp(
-  `^(\\${$.Fragment})?\\${$.Separator}(?:.*\\${$.Separator})?\\${$.Index}(?:\\${$.Separator}.*)?(?<!\\${$.Separator})$`,
+export const INCLUDE_WILDCARD_REGEX = new RegExp(
+  `^(\\${$.Fragment})?\\${$.Separator}(?:.*\\${$.Separator})?\\${$.Wildcard}(?:\\${$.Separator}.*)?(?<!\\${$.Separator})$`,
 );

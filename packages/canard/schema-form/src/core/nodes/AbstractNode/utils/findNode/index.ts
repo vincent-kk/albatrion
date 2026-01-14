@@ -1,2 +1,2 @@
-export { findAllNodes } from './findAllNodes';
 export { findNode } from './findNode';
+export { findNodes } from './findNodes';

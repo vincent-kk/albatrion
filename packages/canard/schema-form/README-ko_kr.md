@@ -966,17 +966,41 @@ const jsonSchema = {
 const currentNode = node.find('.'); // 현재 노드 참조
 ```
 
-#### 배열 인덱스 와일드카드 (`*`)
+#### 와일드카드 (`*`)
 
-배열의 모든 항목에 대해 작업, 주로 FormTypeInputMap에서 사용:
+경로의 모든 세그먼트를 매칭, 주로 FormTypeInputMap에서 사용됩니다. 와일드카드는 배열 인덱스와 동적 객체 키(`additionalProperties` 등) 모두를 매칭합니다:
 
 ```tsx
 const formInputMap = {
-  '/users/*/name': CustomNameInput, // 모든 사용자 이름
-  '/settings/*/enabled': ToggleInput, // 모든 활성화 설정
-  '/data/*/status': StatusBadge, // 모든 상태 필드
+  // 배열 인덱스 매칭
+  '/users/*/name': CustomNameInput, // /users/0/name, /users/1/name 등 매칭
+  '/settings/*/enabled': ToggleInput, // 모든 배열 항목의 enabled 필드
+
+  // 동적 키 매칭 (additionalProperties)
+  '/config/*/value': ConfigValueInput, // /config/theme/value, /config/lang/value 등 매칭
+  '/permissions/*/granted': PermissionToggle, // 모든 권한 키 매칭
 };
+
+// additionalProperties를 사용한 스키마 예시
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    config: {
+      type: 'object',
+      additionalProperties: {
+        type: 'object',
+        properties: {
+          value: { type: 'string' },
+          enabled: { type: 'boolean' },
+        },
+      },
+    },
+  },
+};
+// '/config/*/value'는 /config/theme/value, /config/language/value 등을 매칭
 ```
+
+**참고**: 와일드카드 `*`는 `FormTypeInputMap` 키에서만 사용 가능합니다. `<Form.Render path="..." />` 또는 `node.find()` 메서드에서는 지원되지 않습니다.
 
 #### Context 참조 (`@`)
 
@@ -1130,19 +1154,29 @@ JSONPointer는 RFC 6901에 따라 특수 문자를 이스케이프해야 합니�
 
 ### 확장 경로를 사용한 FormTypeInputMap
 
-`FormTypeInputMap`을 사용할 때, 배열 요소에 대해 와일드카드 문법을 사용할 수 있습니다:
+`FormTypeInputMap`을 사용할 때, 와일드카드 문법을 사용하여 모든 경로 세그먼트를 매칭할 수 있습니다 (배열 인덱스 또는 동적 객체 키):
 
 ```tsx
 const formInputMap = {
   '/user/email': EmailInput, // 표준 경로
   '/user/profile/avatar': AvatarUploader, // 중첩 경로
-  '/settings/*/enabled': ToggleInput, // ✅ 배열용 와일드카드
+
+  // 배열 인덱스 와일드카드
+  '/settings/*/enabled': ToggleInput, // ✅ 모든 배열 항목의 enabled 필드
   '/users/*/permissions': PermissionSelector, // ✅ 모든 사용자 권한
-  '/data/*/status': StatusBadge, // ✅ 모든 상태 필드
+
+  // 동적 키 와일드카드 (additionalProperties)
+  '/metadata/*/value': MetadataInput, // ✅ 모든 메타데이터 키의 value
+  '/features/*/*': FeatureInput, // ✅ 중첩된 와일드카드 지원
 };
 
 <Form jsonSchema={jsonSchema} formTypeInputMap={formInputMap} />;
 ```
+
+**와일드카드 매칭 예시:**
+- `/users/*/name`은 `/users/0/name`, `/users/1/name` 매칭 (배열 인덱스)
+- `/config/*/enabled`는 `/config/theme/enabled`, `/config/lang/enabled` 매칭 (객체 키)
+- `/data/*/*/status`는 깊게 중첩된 모든 status 필드를 매칭
 
 ### 프로그래밍적 노드 탐색
 

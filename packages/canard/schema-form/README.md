@@ -976,17 +976,41 @@ const jsonSchema = {
 const currentNode = node.find('.'); // Reference current node
 ```
 
-#### Array Index Wildcard (`*`)
+#### Wildcard (`*`)
 
-Operate on all items in an array, primarily used in FormTypeInputMap:
+Match any segment in a path, primarily used in FormTypeInputMap. The wildcard matches both array indices and dynamic object keys (e.g., `additionalProperties`):
 
 ```tsx
 const formInputMap = {
-  '/users/*/name': CustomNameInput, // All user names
-  '/settings/*/enabled': ToggleInput, // All enabled settings
-  '/data/*/status': StatusBadge, // All status fields
+  // Array index matching
+  '/users/*/name': CustomNameInput, // Matches /users/0/name, /users/1/name, etc.
+  '/settings/*/enabled': ToggleInput, // Matches all array item's enabled field
+
+  // Dynamic key matching (additionalProperties)
+  '/config/*/value': ConfigValueInput, // Matches /config/theme/value, /config/lang/value, etc.
+  '/permissions/*/granted': PermissionToggle, // Matches any permission key
 };
+
+// Example schema with additionalProperties
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    config: {
+      type: 'object',
+      additionalProperties: {
+        type: 'object',
+        properties: {
+          value: { type: 'string' },
+          enabled: { type: 'boolean' },
+        },
+      },
+    },
+  },
+};
+// '/config/*/value' matches: /config/theme/value, /config/language/value, etc.
 ```
+
+**Note**: Wildcard `*` is only available in `FormTypeInputMap` keys. It is NOT supported in `<Form.Render path="..." />` or `node.find()` method.
 
 #### Context Reference (`@`)
 
@@ -1140,19 +1164,29 @@ JSONPointer requires special characters to be escaped according to RFC 6901:
 
 ### FormTypeInputMap with Extended Paths
 
-When using `FormTypeInputMap`, you can use wildcard syntax for array elements:
+When using `FormTypeInputMap`, you can use wildcard syntax to match any path segment (array indices or dynamic object keys):
 
 ```tsx
 const formInputMap = {
   '/user/email': EmailInput, // Standard path
   '/user/profile/avatar': AvatarUploader, // Nested path
-  '/settings/*/enabled': ToggleInput, // ✅ Wildcard for arrays
+
+  // Array index wildcard
+  '/settings/*/enabled': ToggleInput, // ✅ All array items' enabled field
   '/users/*/permissions': PermissionSelector, // ✅ All user permissions
-  '/data/*/status': StatusBadge, // ✅ All status fields
+
+  // Dynamic key wildcard (additionalProperties)
+  '/metadata/*/value': MetadataInput, // ✅ Any metadata key's value
+  '/features/*/*': FeatureInput, // ✅ Nested wildcards supported
 };
 
 <Form jsonSchema={jsonSchema} formTypeInputMap={formInputMap} />;
 ```
+
+**Wildcard matching examples:**
+- `/users/*/name` matches `/users/0/name`, `/users/1/name` (array indices)
+- `/config/*/enabled` matches `/config/theme/enabled`, `/config/lang/enabled` (object keys)
+- `/data/*/*/status` matches any deeply nested status field
 
 ### Programmatic Node Navigation
 
