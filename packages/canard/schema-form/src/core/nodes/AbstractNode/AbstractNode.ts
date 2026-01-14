@@ -617,9 +617,6 @@ export abstract class AbstractNode<
     return this.#watchValues;
   }
 
-  /** Derived value from dependencies */
-  #derivedValue: Value | Nullish;
-
   /**
    * Prepares dependencies for update computation.
    * @internal Internal implementation method. Do not call directly.
@@ -649,12 +646,14 @@ export abstract class AbstractNode<
           this.saveUnsubscribe(unsubscribe);
       }
     }
-    if (this.#compute.derivedValue !== undefined)
+    if (this.#compute.derivedValue)
       this.subscribe(({ type }) => {
         if (type & NodeEventType.UpdateComputedProperties) {
-          if (!this.active || this.equals(this.value, this.#derivedValue))
-            return;
-          this.setValue(this.#derivedValue);
+          if (this.#compute.derivedValue) {
+            const derivedValue = this.#compute.derivedValue(this.#dependencies);
+            if (!this.active || this.equals(this.value, derivedValue)) return;
+            this.setValue(derivedValue);
+          }
         }
       });
     this.updateComputedProperties();
@@ -675,7 +674,6 @@ export abstract class AbstractNode<
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
     this.#anyOfIndices = this.#compute.anyOfIndices?.(this.#dependencies) || [];
     this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
-    this.#derivedValue = this.#compute.derivedValue?.(this.#dependencies);
 
     if (reset && previous !== this.#active) this.reset({ preferLatest: true });
     this.publish(NodeEventType.UpdateComputedProperties);
@@ -738,11 +736,9 @@ export abstract class AbstractNode<
               : this.#initialValue;
     } else this.#defaultValue = this.#initialValue;
 
-    if (options.applyDerivedValue && this.#compute.derivedValue !== undefined) {
-      const derivedValue = this.#compute.derivedValue(this.#dependencies);
-      this.#derivedValue = derivedValue;
-      if (this.active) this.#defaultValue = derivedValue ?? this.#defaultValue;
-    }
+    if (options.applyDerivedValue && this.#compute.derivedValue && this.active)
+      this.#defaultValue =
+        this.#compute.derivedValue(this.#dependencies) ?? this.#defaultValue;
 
     this.setValue(
       this.#active ? this.#defaultValue : undefined,
