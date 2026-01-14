@@ -1,3 +1,4 @@
+import { map } from '@winglet/common-utils/array';
 import { isEmptyObject, isObject } from '@winglet/common-utils/filter';
 import {
   cloneLite,
@@ -41,6 +42,7 @@ import {
   NodeEventType,
   type NodeListener,
   type NodeStateFlags,
+  type ResetOptions,
   type SchemaNode,
   type SchemaNodeConstructorProps,
   SetValueOption,
@@ -52,13 +54,14 @@ import {
   afterMicrotask,
   checkDefinedValue,
   computeFactory,
+  findAllNodes,
+  findNode,
   getEventCollection,
   getFallbackValidator,
   getNodeGroup,
   getSafeEmptyValue,
   getScopedSegment,
   matchesSchemaPath,
-  traversal,
 } from './utils';
 
 const RECURSIVE_ERROR_OMITTED_KEYS = new Set(['key']);
@@ -199,7 +202,7 @@ export abstract class AbstractNode<
    * @internal Internal implementation method. Do not call directly.
    */
   public get context(): SchemaNode | null {
-    return this.isRoot ? (this.#context as SchemaNode) : this.rootNode.context;
+    return this.#context as SchemaNode;
   }
 
   /** Node's initial default value */
@@ -304,6 +307,20 @@ export abstract class AbstractNode<
     else if (input === undefined) this.#handleChange(undefined, batch);
   }
 
+  /**
+   * Compares the node's value with the derived value
+   * @param left - The left value
+   * @param right - The right value
+   * @returns Whether the left value is equal to the right value
+   */
+  public equals(
+    this: AbstractNode,
+    left: Value | Nullish,
+    right: Value | Nullish,
+  ): boolean {
+    return left === right;
+  }
+
   /** List of child nodes, nodes without child nodes return an `null` */
   public get children(): ChildNode[] | null {
     return null;
@@ -336,13 +353,13 @@ export abstract class AbstractNode<
     this.nullable = nullable;
     this.required = required ?? false;
     this.#name = name || '';
-    this.#context = context || null;
 
     this.isRoot = !parentNode;
     this.rootNode = (parentNode?.rootNode || this) as SchemaNode;
     this.parentNode = parentNode || null;
 
     this.group = getNodeGroup(this.schemaType, this.jsonSchema);
+    this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
     this.#escapedName = escapeSegment(this.#name);
     this.#path = joinSegment(this.parentNode?.path, this.#escapedName);
     this.#schemaPath = this.scope
@@ -359,14 +376,15 @@ export abstract class AbstractNode<
           this.parentNode?.schemaPath || $.Fragment,
           this.#escapedName,
         );
-    this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
 
+    this.#context = this.isRoot ? context || null : this.rootNode.context;
     this.#compute = computeFactory(
       this.schemaType,
       this.jsonSchema,
       this.rootNode.jsonSchema,
     );
 
+    this.#updateScoped();
     this.setDefaultValue(
       defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema),
     );
@@ -394,7 +412,25 @@ export abstract class AbstractNode<
     if (pointer === $.Root) return this.rootNode;
     const absolute = isAbsolutePath(pointer);
     if (absolute && pointer.length === 1) return this.rootNode;
-    return traversal(absolute ? this.rootNode : (this as SchemaNode), pointer);
+    return findNode(absolute ? this.rootNode : (this as SchemaNode), pointer);
+  }
+
+  /**
+   * Finds all nodes in the node tree that match the given pointer.
+   * @param pointer - JSON Pointer of the nodes to find (e.g., '/foo/0/bar'), returns itself if not provided
+   * @returns {SchemaNode[]} The found nodes, empty array if not found
+   */
+  public findAll(this: AbstractNode, pointer?: string): SchemaNode[] {
+    if (pointer === undefined) return [this as SchemaNode];
+    if (pointer === $.Context)
+      return this.#context ? [this.#context as SchemaNode] : [];
+    if (pointer === $.Root) return [this.rootNode];
+    const absolute = isAbsolutePath(pointer);
+    if (absolute && pointer.length === 1) return [this.rootNode];
+    return findAllNodes(
+      absolute ? this.rootNode : (this as SchemaNode),
+      pointer,
+    );
   }
 
   /** List of node event listeners */
@@ -442,7 +478,7 @@ export abstract class AbstractNode<
    * @param listener Event listener
    * @returns Event listener removal function
    */
-  public subscribe(this: AbstractNode, listener: NodeListener) {
+  public subscribe(this: AbstractNode, listener: NodeListener): Fn {
     this.#listeners.add(listener);
     return () => {
       this.#listeners.delete(listener);
@@ -486,9 +522,9 @@ export abstract class AbstractNode<
   public initialize(this: AbstractNode, actor?: SchemaNode) {
     if (this.#initialized || (actor !== this.parentNode && !this.isRoot))
       return false;
-    this.#initialized = true;
     this.#prepareUpdateDependencies();
     this.publish(NodeEventType.Initialized);
+    this.#initialized = true;
     return true;
   }
 
@@ -501,6 +537,7 @@ export abstract class AbstractNode<
    *  - `readOnly`: Calculate whether the node is read only
    *  - `disabled`: Calculate whether the node is disabled
    *  - `oneOfIndex`: Calculate the index of the oneOf branch
+   *  - `derivedValue`: Get derived value from dependencies
    *  - `watchValues`: Calculate the list of values to watch
    */
   #compute: ReturnType<typeof computeFactory>;
@@ -590,42 +627,74 @@ export abstract class AbstractNode<
     if (computeEnabled) {
       this.#dependencies = new Array(dependencyPaths.length);
       for (let i = 0, l = dependencyPaths.length; i < l; i++) {
-        const dependencyPath = dependencyPaths[i];
-        const targetNode = this.find(dependencyPath);
-        if (targetNode === null) continue;
-        this.#dependencies[i] = targetNode.value;
-        const unsubscribe = targetNode.subscribe(({ type, payload }) => {
-          if (type & NodeEventType.UpdateValue) {
-            if (
-              this.#dependencies[i] !== payload?.[NodeEventType.UpdateValue]
-            ) {
-              this.#dependencies[i] = payload?.[NodeEventType.UpdateValue];
-              this.updateComputedProperties();
+        const targetNodes = this.findAll(dependencyPaths[i]);
+        if (targetNodes.length === 0) continue;
+        this.#dependencies[i] = this.find(dependencyPaths[i])?.value;
+        const unsubscribes = map(targetNodes, (node) =>
+          node.subscribe(({ type, payload }) => {
+            if (type & NodeEventType.UpdateValue) {
+              if (
+                this.#dependencies[i] !== payload?.[NodeEventType.UpdateValue]
+              ) {
+                this.#dependencies[i] = payload?.[NodeEventType.UpdateValue];
+                this.updateComputedProperties();
+              }
             }
-          }
-        });
-        this.saveUnsubscribe(unsubscribe);
+          }),
+        );
+        for (const unsubscribe of unsubscribes)
+          this.saveUnsubscribe(unsubscribe);
       }
     }
+    if (this.#compute.derivedValue)
+      this.subscribe(({ type }) => {
+        if (type & NodeEventType.UpdateComputedProperties) {
+          if (this.#compute.derivedValue) {
+            const derivedValue = this.#compute.derivedValue(this.#dependencies);
+            if (!this.active || this.equals(this.value, derivedValue)) return;
+            this.setValue(derivedValue);
+          }
+        }
+      });
     this.updateComputedProperties();
     this.#computeEnabled = computeEnabled;
   }
 
   /**
    * Updates the node's computed properties.
+   * @param reset - Whether to reset the node when the active property changes, default is `true`
    * @internal Internal implementation method. Do not call directly.
    */
-  protected updateComputedProperties(this: AbstractNode) {
+  public updateComputedProperties(this: AbstractNode, reset: boolean = true) {
     const previous = this.#active;
     this.#active = this.#compute.active?.(this.#dependencies) ?? true;
     this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
     this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
     this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
-    this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
     this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
     this.#anyOfIndices = this.#compute.anyOfIndices?.(this.#dependencies) || [];
-    if (previous !== this.#active) this.reset(false, true);
+    this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
+
+    if (reset && previous !== this.#active) this.reset({ preferLatest: true });
     this.publish(NodeEventType.UpdateComputedProperties);
+  }
+
+  /**
+   * Updates the computed properties of the node and its children recursively.
+   * @param includeSelf - Whether to include the current node, default is `false`
+   * @param includeInactive - Whether to include the inactive child nodes, default is `true`
+   * @internal Internal implementation method. Do not call directly.
+   */
+  public updateComputedPropertiesRecursively(
+    this: AbstractNode,
+    includeSelf: boolean = false,
+    includeInactive: boolean = true,
+  ) {
+    if (includeSelf) this.updateComputedProperties(false);
+    const list = includeInactive ? this.subnodes : this.children;
+    if (!list?.length) return;
+    for (let i = 0, e = list[0], l = list.length; i < l; i++, e = list[i])
+      e.node.updateComputedPropertiesRecursively(true, includeInactive);
   }
 
   /**
@@ -641,33 +710,40 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Resets the current node to its initial value. Uses the current node's initial value, or the provided value if one is given.
-   * @param updateScoped - Whether to update the scoped property
-   * @param preferLatestValue - Whether to use the latest value, uses the latest value if available
-   * @param preferInitialValue - Whether to use the initial value, uses the initial value if available
-   * @param inputValue - The value to set, uses the provided value if given
+   * Resets the current node to its initial value or computed derived value.
+   * Value priority: inputValue > derivedValue > fallbackValue/computed default
+   * @param options - Reset options
+   * @param options.updateScoped - Whether to update the scoped property (for oneOf/anyOf branches)
+   * @param options.preferLatest - Whether to prefer the latest value over initial value
+   * @param options.preferInitial - Whether to prefer the initial value when preferLatest is true
+   * @param options.inputValue - Explicit input value with highest priority
+   * @param options.fallbackValue - Fallback value used in default calculation
    * @internal Internal implementation method. Do not call directly.
    */
-  public reset(
-    this: AbstractNode,
-    updateScoped: boolean,
-    preferLatestValue?: boolean,
-    preferInitialValue?: boolean,
-    inputValue?: Value | Nullish,
-  ) {
-    if (updateScoped) this.#updateScoped();
-    const defaultValue = preferLatestValue
-      ? preferInitialValue && this.#initialValue !== undefined
-        ? this.#initialValue
-        : inputValue !== undefined
-          ? inputValue
-          : this.value !== undefined
-            ? this.value
-            : this.#initialValue
-      : this.#initialValue;
-    this.#defaultValue = defaultValue;
-    const value = this.#active ? defaultValue : undefined;
-    this.setValue(value, SetValueOption.StableReset);
+  public reset(this: AbstractNode, options: ResetOptions<Value> = {}) {
+    if (options.updateScoped) this.#updateScoped();
+
+    if ('inputValue' in options) this.#defaultValue = options.inputValue;
+    else if (options.preferLatest) {
+      if (options.checkInitialValueFirst && this.#initialValue !== undefined)
+        this.#defaultValue = this.#initialValue;
+      else
+        this.#defaultValue =
+          options.fallbackValue !== undefined
+            ? options.fallbackValue
+            : this.value !== undefined
+              ? this.value
+              : this.#initialValue;
+    } else this.#defaultValue = this.#initialValue;
+
+    if (options.applyDerivedValue && this.#compute.derivedValue && this.active)
+      this.#defaultValue =
+        this.#compute.derivedValue(this.#dependencies) ?? this.#defaultValue;
+
+    this.setValue(
+      this.#active ? this.#defaultValue : undefined,
+      SetValueOption.StableReset,
+    );
     this.setState();
   }
 

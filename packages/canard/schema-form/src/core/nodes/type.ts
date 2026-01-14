@@ -351,3 +351,22 @@ export enum PublicSetValueOption {
 
 /** Union of internal and public `SetValueOption` flags. */
 export type UnionSetValueOption = SetValueOption | PublicSetValueOption;
+
+/**
+ * Options for resetting a node to its initial or computed value.
+ * @typeParam Value - The value type of the node
+ */
+export interface ResetOptions<Value = unknown> {
+  /** Whether to update the scoped property (for oneOf/anyOf branches) */
+  updateScoped?: boolean;
+  /** Whether to prefer the latest (current) value over the initial value */
+  preferLatest?: boolean;
+  /** Whether to apply the derived value when preferLatest is true and derivedValue is defined */
+  applyDerivedValue?: boolean;
+  /** Whether to check the initial value first when preferLatest is true */
+  checkInitialValueFirst?: boolean;
+  /** Explicit input value with highest priority - overrides all other values */
+  inputValue?: Value | null;
+  /** Fallback value used in the default value calculation logic */
+  fallbackValue?: Value | null;
+}

@@ -249,8 +249,6 @@ export type BasicSchema = {
   };
   /** Alias for computed.if */
   '&if'?: boolean | string;
-  /** Alias for computed.watch */
-  '&watch'?: string | string[];
   /** Alias for computed.active */
   '&active'?: boolean | string;
   /** Alias for computed.visible */
@@ -259,12 +257,14 @@ export type BasicSchema = {
   '&readOnly'?: boolean | string;
   /** Alias for computed.disabled */
   '&disabled'?: boolean | string;
+  /** Alias for computed.watch */
+  '&watch'?: string | string[];
+  /** Alias for computed.derived */
+  '&derived'?: string;
   /** Computed properties with JSONPointer expressions */
   computed?: {
     /** Conditional rendering expression */
     if?: boolean | string;
-    /** Watched field paths for reactivity */
-    watch?: string | string[];
     /** Active state expression */
     active?: boolean | string;
     /** Visibility state expression */
@@ -273,6 +273,14 @@ export type BasicSchema = {
     readOnly?: boolean | string;
     /** Disabled state expression */
     disabled?: boolean | string;
+    /** Watched field paths for reactivity */
+    watch?: string | string[];
+    /**
+     * Value expression for auto update value
+     * @warning This expression can cause infinite loop if not used correctly
+     * @note Don't use this expression with circular reference
+     * */
+    derived?: string;
   };
   [alt: string]: any;
 };

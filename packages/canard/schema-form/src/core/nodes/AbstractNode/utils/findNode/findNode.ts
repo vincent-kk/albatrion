@@ -5,16 +5,16 @@ import { detectsCandidate } from './utils/detectsCandidate';
 import { getSegments } from './utils/getSegments';
 
 /**
- * Traverses the schema node tree to find a node that matches the given path segments.
+ * Finds a single node in the schema node tree that matches the given path segments.
  *
  * This function implements variant-aware traversal for oneOf scenarios where multiple nodes
  * can share the same propertyKey but exist in different variants (oneOf branches).
  *
  * **Scope Resolution Logic:**
  * - When multiple child nodes match the same propertyKey, variant filtering is applied
- * - The `next` function determines if a node should be skipped based on variant mismatch
- * - Priority is given to nodes where `next(source, node)` returns `false` (variant match)
- * - If all matching nodes return `true` from `next`, the first found node is used as fallback
+ * - The `detectsCandidate` function checks if the candidate node shares the same oneOf scope as the source
+ * - Priority is given to nodes where `detectsCandidate(source, node)` returns `true` (same variant scope)
+ * - If no matching nodes pass the scope check, the first found node is used as fallback
  *
  * **Special Path Segments:**
  * - `JSONPointer.Fragment` - Navigate to root node (`#`)
@@ -28,22 +28,22 @@ import { getSegments } from './utils/getSegments';
  * - Uses tentative matching with fallback for variant conflicts
  *
  * @param source - The starting node for traversal (used for variant comparison)
- * @param segments - Array of path segments to traverse (e.g. ["user", "address", "0", "street"])
+ * @param pointer - JSON Pointer path string, array of segments, or null
  * @returns The found node or null if path is invalid or node doesn't exist
  *
  * @example
  * ```ts
  * // Navigate to nested property
- * const node = traversal(rootNode, ["user", "profile", "name"]);
+ * const node = findNode(rootNode, ["user", "profile", "name"]);
  *
  * // Navigate with array index
- * const arrayItem = traversal(rootNode, ["items", "0", "title"]);
+ * const arrayItem = findNode(rootNode, ["items", "0", "title"]);
  *
  * // Navigate to parent then specific child
- * const sibling = traversal(currentNode, [JSONPointer.Parent, "sibling"]);
+ * const sibling = findNode(currentNode, [JSONPointer.Parent, "sibling"]);
  * ```
  */
-export const traversal = (
+export const findNode = (
   source: SchemaNode,
   pointer: string | string[] | null,
 ): SchemaNode | null => {
@@ -62,7 +62,8 @@ export const traversal = (
       cursor = cursor.parentNode!;
       if (!cursor) return null;
     } else if (segment === $.Current) {
-      cursor = source;
+      // Do Not Change Cursor
+      // Keep the current cursor
     } else {
       if (cursor.group === 'terminal') return null;
       const subnodes = cursor.subnodes;

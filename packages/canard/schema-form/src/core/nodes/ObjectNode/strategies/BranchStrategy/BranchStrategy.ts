@@ -4,11 +4,7 @@ import {
   sortWithReference,
 } from '@winglet/common-utils/array';
 import { isEmptyObject } from '@winglet/common-utils/filter';
-import {
-  equals,
-  getObjectKeys,
-  sortObjectKeys,
-} from '@winglet/common-utils/object';
+import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils/object';
 
 import type { Fn, Nullish } from '@aileron/declare';
 
@@ -55,9 +51,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
   /** Callback function to handle refresh operations */
   private readonly __handleRefresh__: Fn<[ObjectValue | Nullish]>;
-
-  /** Callback function to handle computed properties updates */
-  private readonly __handleUpdateComputedProperties__: Fn;
 
   /** Array of schema property keys in order */
   private readonly __propertyKeys__: string[];
@@ -179,13 +172,11 @@ export class BranchStrategy implements ObjectNodeStrategy {
     handleChange: HandleChange<ObjectValue | Nullish>,
     handleRefresh: Fn<[ObjectValue | Nullish]>,
     handleSetDefaultValue: Fn<[ObjectValue | Nullish]>,
-    handleUpdateComputedProperties: Fn,
     nodeFactory: SchemaNodeFactory,
   ) {
     this.__host__ = host;
     this.__handleChange__ = handleChange;
     this.__handleRefresh__ = handleRefresh;
-    this.__handleUpdateComputedProperties__ = handleUpdateComputedProperties;
 
     this.__value__ = host.defaultValue;
     this.__draft__ = host.defaultValue === null ? null : {};
@@ -347,6 +338,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
     if (this.__locked__) return;
+    const host = this.__host__;
     const replace = (option & SetValueOption.Replace) > 0;
     const settled = (option & SetValueOption.Isolate) === 0;
     const normalize = (option & SetValueOption.Normalize) > 0;
@@ -359,7 +351,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       draft,
       replace,
       normalize,
-      this.__host__.nullable,
+      host.nullable,
     );
 
     if (current === false) return;
@@ -373,14 +365,13 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (option & SetValueOption.Propagate)
       this.__propagate__(current, draft, replace, option);
     if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
-    if (option & SetValueOption.Isolate)
-      this.__handleUpdateComputedProperties__();
+    if (option & SetValueOption.Isolate) host.updateComputedProperties();
     if (option & SetValueOption.PublishUpdateEvent)
-      this.__host__.publish(
+      host.publish(
         NodeEventType.UpdateValue,
         current,
         { previous, current, settled },
-        settled && this.__host__.initialized,
+        settled && host.initialized,
       );
   }
 
@@ -403,7 +394,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (draft === undefined) return undefined;
     if (draft === null) return nullable ? null : {};
     if (replace || base == null) return this.__processValue__(draft, normalize);
-    if (isEmptyObject(draft) || equals(base, draft)) return false;
+    if (isEmptyObject(draft) || this.__host__.equals(base, draft)) return false;
     return this.__processValue__({ ...base, ...draft }, normalize);
   }
 
@@ -514,21 +505,28 @@ export class BranchStrategy implements ObjectNodeStrategy {
       previous > -1 ? this.__oneOfChildNodeMapList__[previous] : null;
     if (previousOneOfChildNodeMap)
       for (const child of previousOneOfChildNodeMap.values())
-        child.node.reset(true);
+        child.node.reset({ updateScoped: true });
     if (oneOfChildNodeMap)
       for (const child of oneOfChildNodeMap.values()) {
         const node = child.node;
         const previousNode = previousOneOfChildNodeMap?.get(node.name)?.node;
         const previousValue = this.__value__?.[node.name];
-        node.reset(
-          true,
-          isolation ||
+        node.reset({
+          updateScoped: true,
+          preferLatest:
+            isolation ||
             (node.type === previousNode?.type && isTerminalType(node.type)),
-          isolation === false,
-          validateSchemaType(previousValue, node.type, node.nullable)
+          applyDerivedValue: true,
+          checkInitialValueFirst: isolation === false,
+          fallbackValue: validateSchemaType(
+            previousValue,
+            node.type,
+            node.nullable,
+          )
             ? previousValue
             : undefined,
-        );
+        });
+        node.updateComputedPropertiesRecursively();
       }
     this.__locked__ = false;
 
@@ -562,7 +560,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
       for (let i = 0, l = disables.length; i < l; i++) {
         const anyOfChildNodes =
           this.__anyOfChildNodeMapList__[disables[i]].values();
-        for (const child of anyOfChildNodes) child.node.reset(true);
+        for (const child of anyOfChildNodes)
+          child.node.reset({ updateScoped: true });
       }
     const enables = isolation ? current : differenceLite(current, previous);
     if (enables.length > 0)
@@ -571,7 +570,13 @@ export class BranchStrategy implements ObjectNodeStrategy {
           this.__anyOfChildNodeMapList__[enables[i]].values();
         for (const child of anyOfChildNodes) {
           const node = child.node;
-          node.reset(true, isolation, false, this.__value__?.[node.name]);
+          node.reset({
+            updateScoped: true,
+            preferLatest: isolation,
+            applyDerivedValue: true,
+            fallbackValue: this.__value__?.[node.name],
+          });
+          node.updateComputedPropertiesRecursively();
         }
       }
     this.__locked__ = false;

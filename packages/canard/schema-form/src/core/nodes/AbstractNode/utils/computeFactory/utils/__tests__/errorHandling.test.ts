@@ -46,7 +46,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
       } catch (error) {
         expect(error).toBeInstanceOf(JsonSchemaError);
         expect((error as JsonSchemaError).code).toBe(
-          'JSON_SCHEMA_ERROR.COMPUTED_OPTION',
+          'JSON_SCHEMA_ERROR.CREATE_DYNAMIC_FUNCTION',
         );
         expect((error as JsonSchemaError).message).toContain(
           'Failed to create dynamic function',
@@ -57,7 +57,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
         expect((error as JsonSchemaError).details).toMatchObject({
           fieldName: 'active',
           expression: invalidExpression,
-          computedExpression: expect.stringContaining('dependencies[0]'),
+          functionBody: expect.stringContaining('dependencies[0]'),
           error: expect.any(Error),
         });
       }
@@ -331,7 +331,9 @@ describe('Error Handling in Dynamic Function Creation', () => {
         const schemaError = error as JsonSchemaError;
 
         // 에러 코드 확인
-        expect(schemaError.code).toBe('JSON_SCHEMA_ERROR.COMPUTED_OPTION');
+        expect(schemaError.code).toBe(
+          'JSON_SCHEMA_ERROR.CREATE_DYNAMIC_FUNCTION',
+        );
 
         // 메시지에 유용한 정보 포함 확인
         expect(schemaError.message).toContain(
@@ -347,7 +349,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
         // 컨텍스트에 디버깅 정보 포함 확인
         expect(schemaError.details).toHaveProperty('fieldName');
         expect(schemaError.details).toHaveProperty('expression');
-        expect(schemaError.details).toHaveProperty('computedExpression');
+        expect(schemaError.details).toHaveProperty('functionBody');
         expect(schemaError.details).toHaveProperty('error');
         expect(schemaError.details.fieldName).toBe('active');
         expect(schemaError.details.error).toBeInstanceOf(Error);

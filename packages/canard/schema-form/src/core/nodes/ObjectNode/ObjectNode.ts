@@ -1,3 +1,5 @@
+import { equals } from '@winglet/common-utils/object';
+
 import type { Nullish } from '@aileron/declare';
 
 import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
@@ -23,6 +25,14 @@ import { omitEmptyObject } from './utils';
  */
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   public override readonly type = 'object';
+
+  public override equals(
+    this: ObjectNode,
+    left: ObjectValue | Nullish,
+    right: ObjectValue | Nullish,
+  ): boolean {
+    return equals(left, right);
+  }
 
   /**
    * Strategy used by the object node:
@@ -114,25 +124,19 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     const handleRefresh = (value: ObjectValue | Nullish) => this.refresh(value);
     const handleSetDefaultValue = (value: ObjectValue | Nullish) =>
       this.setDefaultValue(value);
-
-    if (this.group === 'terminal') {
-      return new TerminalStrategy(
-        this,
-        handleChange,
-        handleRefresh,
-        handleSetDefaultValue,
-      );
-    } else {
-      const handleUpdateComputedProperties = () =>
-        this.updateComputedProperties();
-      return new BranchStrategy(
-        this,
-        handleChange,
-        handleRefresh,
-        handleSetDefaultValue,
-        handleUpdateComputedProperties,
-        nodeFactory,
-      );
-    }
+    return this.group === 'terminal'
+      ? new TerminalStrategy(
+          this,
+          handleChange,
+          handleRefresh,
+          handleSetDefaultValue,
+        )
+      : new BranchStrategy(
+          this,
+          handleChange,
+          handleRefresh,
+          handleSetDefaultValue,
+          nodeFactory,
+        );
   }
 }

@@ -1,3 +1,5 @@
+import { equals } from '@winglet/common-utils/object';
+
 import type { Nullish } from '@aileron/declare';
 
 import type { ArraySchema, ArrayValue } from '@/schema-form/types';
@@ -31,6 +33,14 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @internal Internal implementation detail. Do not call directly.
    */
   #strategy: ArrayNodeStrategy;
+
+  public override equals(
+    this: ArrayNode,
+    left: ArrayValue | Nullish,
+    right: ArrayValue | Nullish,
+  ): boolean {
+    return equals(left, right);
+  }
 
   /**
    * Gets the value of the array node.
