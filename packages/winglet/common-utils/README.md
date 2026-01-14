@@ -243,6 +243,7 @@ Use transpilers like Babel to convert the code to match your target environment.
 - **[`fromBase`](./src/utils/math/fromBase.ts)**: Function to convert a string representation of a number in any base (2-36) to decimal
 - **[`gcd`](./src/utils/math/gcd.ts)**: Function to calculate the greatest common divisor (GCD) of two numbers using Euclidean algorithm
 - **[`inRange`](./src/utils/math/inRange.ts)**: Function to check if a number falls within a specified range (inclusive)
+- **[`isClose`](./src/utils/math/isClose.ts)**: Function to compare two floating-point numbers for equality within a specified tolerance, handling precision issues across all number magnitudes
 - **[`isEven`](./src/utils/math/isEven.ts)**: Function to determine if a number is even using modulo operation
 - **[`isOdd`](./src/utils/math/isOdd.ts)**: Function to determine if a number is odd with proper handling for negative numbers
 - **[`isPrime`](./src/utils/math/isPrime.ts)**: Function to determine if a number is prime using optimized trial division algorithm

@@ -1522,6 +1522,7 @@ export const FormWithCustomInput = () => {
 #### Types of Conditional Properties
 
 - `watch`: Subscribe to another node's value changes (passed as watchValues prop)
+- `derived`: Automatically calculate values based on other field references using JSONPointer expressions. Use `&derived` or `computed.derived` property
 - `active`: Determines if a node should be activated. Inactive nodes are not displayed and their values are removed from the form data
 - `visible`: Determines if a node should be displayed. Hidden inputs retain their values but are not visible
 - `readOnly`: Determines if a node should be read-only. Read-only inputs cannot be modified

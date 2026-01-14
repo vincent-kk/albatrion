@@ -236,6 +236,7 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 - **[`fromBase`](./src/utils/math/fromBase.ts)**: 임의의 진법(2-36)으로 표현된 숫자 문자열을 10진수로 변환하는 함수
 - **[`gcd`](./src/utils/math/gcd.ts)**: 유클리드 호제법을 사용하여 두 수의 최대공약수(GCD)를 계산하는 함수
 - **[`inRange`](./src/utils/math/inRange.ts)**: 숫자가 지정된 범위(포함) 내에 있는지 확인하는 함수
+- **[`isClose`](./src/utils/math/isClose.ts)**: 지정된 허용 오차 내에서 두 부동소수점 숫자의 동등성을 비교하는 함수로, 모든 숫자 크기에서 정밀도 문제를 처리
 - **[`isEven`](./src/utils/math/isEven.ts)**: 모듈로 연산을 사용하여 숫자가 짝수인지 판단하는 함수
 - **[`isOdd`](./src/utils/math/isOdd.ts)**: 음수에 대한 적절한 처리로 숫자가 홀수인지 판단하는 함수
 - **[`isPrime`](./src/utils/math/isPrime.ts)**: 최적화된 시행착오 나눗셈 알고리즘을 사용하여 숫자가 소수인지 판단하는 함수
