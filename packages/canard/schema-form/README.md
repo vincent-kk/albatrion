@@ -1525,6 +1525,7 @@ export const FormWithCustomInput = () => {
 - `derived`: Automatically calculate values based on other field references using JSONPointer expressions. Use `&derived` or `computed.derived` property
 - `active`: Determines if a node should be activated. Inactive nodes are not displayed and their values are removed from the form data
 - `visible`: Determines if a node should be displayed. Hidden inputs retain their values but are not visible
+- `pristine`: Determines if a node's state should be reset. If the expression evaluates to `true`, the node's state will be reset.
 - `readOnly`: Determines if a node should be read-only. Read-only inputs cannot be modified
 - `disabled`: Determines if a node should be disabled. Disabled inputs cannot be modified
 - `if` + `oneOf`: Display the schema definition that satisfies the if condition among oneOf definitions (ObjectNode only)

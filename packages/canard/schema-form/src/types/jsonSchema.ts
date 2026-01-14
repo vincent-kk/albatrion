@@ -253,6 +253,8 @@ export type BasicSchema = {
   '&active'?: boolean | string;
   /** Alias for computed.visible */
   '&visible'?: boolean | string;
+  /** Alias for computed.pristine */
+  '&pristine'?: boolean | string;
   /** Alias for computed.readOnly */
   '&readOnly'?: boolean | string;
   /** Alias for computed.disabled */
@@ -263,17 +265,46 @@ export type BasicSchema = {
   '&derived'?: string;
   /** Computed properties with JSONPointer expressions */
   computed?: {
-    /** Conditional rendering expression */
+    /**
+     * Conditional rendering expression
+     * @warning This expression only works with oneOf/anyOf branches in ObjectNode.
+     * @note If expression is true, the corresponding branch will be rendered.
+     * */
     if?: boolean | string;
-    /** Active state expression */
+    /**
+     * Active state expression
+     * @warning When active is false, the node cannot write values and will be excluded from the final output. In this case, derived values are also not calculated.
+     * @note If expression is false, the FormTypeInput component will be hidden.
+     */
     active?: boolean | string;
-    /** Visibility state expression */
+    /**
+     * Visibility state expression
+     * @warning Even when visible is false, the node can still write values and will be included in the final output.
+     * @note If expression is false, the FormTypeInput component will be hidden.
+     */
     visible?: boolean | string;
-    /** Read-only state expression */
+    /**
+     * Expression to initialize the node's state
+     * @note If expression is true, the node's state (dirty, touched, etc.) will be reset.
+     * */
+    pristine?: boolean | string;
+    /**
+     * Read-only state expression
+     * @warning Even in readOnly state, values can still be changed programmatically via setValue().
+     * @note This field only passes the property to the node; each FormTypeInput must implement the readOnly behavior.
+     */
     readOnly?: boolean | string;
-    /** Disabled state expression */
+    /**
+     * Disabled state expression
+     * @warning Even in disabled state, values can still be changed programmatically via setValue().
+     * @note This field only passes the property to the node; each FormTypeInput must implement the disabled behavior.
+     */
     disabled?: boolean | string;
-    /** Watched field paths for reactivity */
+    /**
+     * Watched field paths for reactivity
+     * @warning The watchValues passed to this field returns a new array reference even when internal values haven't changed, so do not use it directly in dependency arrays.
+     * @note If field path is changed, the node's `watchValues` will be updated.
+     */
     watch?: string | string[];
     /**
      * Value expression for auto update value

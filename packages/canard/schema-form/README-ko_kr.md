@@ -1515,6 +1515,7 @@ export const FormWithCustomInput = () => {
 - `derived`: JSONPointer 표현식을 사용하여 다른 필드 값을 참조해 자동으로 값을 계산합니다. `&derived` 또는 `computed.derived` 속성을 사용합니다
 - `active`: 해당 Node가 활성화될지 여부를 결정합니다. 활성화 되지 않은 Node의 Input은 표시되지 않으며 그 값은 제거됩니다.
 - `visible`: 해당 Node가 표시될지 여부를 결정합니다. Input의 표시 여부를 결정합니다.
+- `pristine`: 해당 Node의 상태를 초기화할지 여부를 결정합니다. 표현식이 `true`로 평가되면 Node의 상태를 초기화합니다.
 - `readOnly`: 해당 Node가 읽기 전용일지 여부를 결정합니다. readOnly 상태인 경우 Input에서 값을 수정할 수 없습니다.
 - `disabled`: 해당 Node가 비활성화될 때 표시될지 여부를 결정합니다. disabled 상태인 경우 Input에서 값을 수정할 수 없습니다.
 - `if` + `oneOf`: oneOf 정의 중 if 조건을 만족하는 정의를 표시합니다. ObjectNode 에서만 사용할 수 있습니다.

@@ -646,14 +646,15 @@ export abstract class AbstractNode<
           this.saveUnsubscribe(unsubscribe);
       }
     }
-    if (this.#compute.derivedValue)
+    if (this.#compute.derivedValue || this.#compute.pristine)
       this.subscribe(({ type }) => {
         if (type & NodeEventType.UpdateComputedProperties) {
           if (this.#compute.derivedValue) {
             const derivedValue = this.#compute.derivedValue(this.#dependencies);
-            if (!this.active || this.equals(this.value, derivedValue)) return;
-            this.setValue(derivedValue);
+            if (this.active && !this.equals(this.value, derivedValue))
+              this.setValue(derivedValue);
           }
+          if (this.#compute.pristine?.(this.#dependencies)) this.setState();
         }
       });
     this.updateComputedProperties();

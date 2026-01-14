@@ -45,6 +45,12 @@ export const computeFactory = (
      */
     visible: checkComputedOption(pathManager, 'visible'),
     /**
+     * Calculate whether the node's state should be reset
+     * @param dependencies - List of dependencies
+     * @returns Whether the node's state should be reset
+     */
+    pristine: checkComputedOption(pathManager, 'pristine'),
+    /**
      * Calculate whether the node is read only
      * @param dependencies - List of dependencies
      * @returns Whether the node is read only
