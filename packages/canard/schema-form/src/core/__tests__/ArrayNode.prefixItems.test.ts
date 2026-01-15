@@ -1418,7 +1418,7 @@ describe('ArrayNode prefixItems', () => {
           },
         }),
       ).toThrow(
-        "Array schema with 'items: false' must have 'prefixItems' defined",
+        "Invalid array schema: 'items: false' requires 'prefixItems' to be defined.",
       );
     });
 
@@ -1450,7 +1450,7 @@ describe('ArrayNode prefixItems', () => {
           },
         }),
       ).toThrow(
-        "Array schema must have at least one of 'items' or 'prefixItems' defined",
+        "Invalid array schema: Array must have 'items' or 'prefixItems' defined.",
       );
     });
   });

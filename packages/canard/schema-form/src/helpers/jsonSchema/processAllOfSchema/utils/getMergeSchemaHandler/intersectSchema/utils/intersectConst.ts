@@ -1,4 +1,5 @@
 import { JsonSchemaError } from '@/schema-form/errors';
+import { formatConflictingConstValuesError } from '@/schema-form/helpers/error';
 
 /**
  * Intersects two optional const values, ensuring they are identical or throwing an error.
@@ -22,7 +23,7 @@ export const intersectConst = <T>(
   if (baseConst !== sourceConst)
     throw new JsonSchemaError(
       'CONFLICTING_CONST_VALUES',
-      `Conflicting const values: ${baseConst} vs ${sourceConst}`,
+      formatConflictingConstValuesError(baseConst, sourceConst),
     );
   return baseConst;
 };

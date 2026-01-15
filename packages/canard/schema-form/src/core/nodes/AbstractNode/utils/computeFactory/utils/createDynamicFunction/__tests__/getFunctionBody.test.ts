@@ -68,9 +68,7 @@ describe('getFunctionBody', () => {
       });
 
       it('should wrap ternary expression with !! and return', () => {
-        expect(getFunctionBody('a ? b : c', true)).toBe(
-          'return !!(a ? b : c)',
-        );
+        expect(getFunctionBody('a ? b : c', true)).toBe('return !!(a ? b : c)');
       });
 
       it('should wrap function call with !! and return', () => {
@@ -100,8 +98,13 @@ describe('getFunctionBody', () => {
 
       it('should wrap complex expression with !! and return', () => {
         expect(
-          getFunctionBody('dependencies[0] === "active" && dependencies[1] > 0', true),
-        ).toBe('return !!(dependencies[0] === "active" && dependencies[1] > 0)');
+          getFunctionBody(
+            'dependencies[0] === "active" && dependencies[1] > 0',
+            true,
+          ),
+        ).toBe(
+          'return !!(dependencies[0] === "active" && dependencies[1] > 0)',
+        );
       });
     });
   });
@@ -115,20 +118,22 @@ describe('getFunctionBody', () => {
       });
 
       it('should handle block with multiple statements', () => {
-        expect(
-          getFunctionBody('{ const x = 1; return x; }', false),
-        ).toBe('const x = 1; return x;');
+        expect(getFunctionBody('{ const x = 1; return x; }', false)).toBe(
+          'const x = 1; return x;',
+        );
       });
 
       it('should handle block with if-else', () => {
-        expect(
-          getFunctionBody('{ if (a) return b; return c; }', false),
-        ).toBe('if (a) return b; return c;');
+        expect(getFunctionBody('{ if (a) return b; return c; }', false)).toBe(
+          'if (a) return b; return c;',
+        );
       });
 
       it('should handle block with complex logic', () => {
-        const input = '{ const val = dependencies[0]; if (val > 10) return true; return false; }';
-        const expected = 'const val = dependencies[0]; if (val > 10) return true; return false;';
+        const input =
+          '{ const val = dependencies[0]; if (val > 10) return true; return false; }';
+        const expected =
+          'const val = dependencies[0]; if (val > 10) return true; return false;';
         expect(getFunctionBody(input, false)).toBe(expected);
       });
 
@@ -161,9 +166,9 @@ describe('getFunctionBody', () => {
       });
 
       it('should wrap multiple returns with !!', () => {
-        expect(
-          getFunctionBody('{ if (a) return b; return c; }', true),
-        ).toBe('if (a) return !!(b); return !!(c);');
+        expect(getFunctionBody('{ if (a) return b; return c; }', true)).toBe(
+          'if (a) return !!(b); return !!(c);',
+        );
       });
 
       it('should convert empty return to return false', () => {
@@ -171,9 +176,9 @@ describe('getFunctionBody', () => {
       });
 
       it('should handle mixed empty and value returns', () => {
-        expect(
-          getFunctionBody('{ if (a) return; return value; }', true),
-        ).toBe('if (a) return false; return !!(value);');
+        expect(getFunctionBody('{ if (a) return; return value; }', true)).toBe(
+          'if (a) return false; return !!(value);',
+        );
       });
 
       it('should wrap object literal return with !!', () => {
@@ -196,25 +201,33 @@ describe('getFunctionBody', () => {
 
       it('should wrap complex expression return with !!', () => {
         expect(
-          getFunctionBody('{ return dependencies[0] && dependencies[1]; }', true),
+          getFunctionBody(
+            '{ return dependencies[0] && dependencies[1]; }',
+            true,
+          ),
         ).toBe('return !!(dependencies[0] && dependencies[1]);');
       });
 
       it('should handle guard clause pattern', () => {
         const input = '{ if (!x) return; if (!y) return; return x + y; }';
-        const expected = 'if (!x) return false; if (!y) return false; return !!(x + y);';
+        const expected =
+          'if (!x) return false; if (!y) return false; return !!(x + y);';
         expect(getFunctionBody(input, true)).toBe(expected);
       });
 
       it('should handle visibility check pattern', () => {
-        const input = '{ if (dependencies[0] === "premium") return true; return false; }';
-        const expected = 'if (dependencies[0] === "premium") return !!(true); return !!(false);';
+        const input =
+          '{ if (dependencies[0] === "premium") return true; return false; }';
+        const expected =
+          'if (dependencies[0] === "premium") return !!(true); return !!(false);';
         expect(getFunctionBody(input, true)).toBe(expected);
       });
 
       it('should handle null check pattern', () => {
-        const input = '{ if (dependencies[0] == null) return; return dependencies[0].active; }';
-        const expected = 'if (dependencies[0] == null) return false; return !!(dependencies[0].active);';
+        const input =
+          '{ if (dependencies[0] == null) return; return dependencies[0].active; }';
+        const expected =
+          'if (dependencies[0] == null) return false; return !!(dependencies[0].active);';
         expect(getFunctionBody(input, true)).toBe(expected);
       });
 
@@ -258,12 +271,16 @@ describe('getFunctionBody', () => {
 
     it('should handle nested braces in block', () => {
       const input = '{ const obj = { a: 1 }; return obj; }';
-      expect(getFunctionBody(input, false)).toBe('const obj = { a: 1 }; return obj;');
+      expect(getFunctionBody(input, false)).toBe(
+        'const obj = { a: 1 }; return obj;',
+      );
     });
 
     it('should handle nested braces in block with coercion', () => {
       const input = '{ const obj = { a: 1 }; return obj; }';
-      expect(getFunctionBody(input, true)).toBe('const obj = { a: 1 }; return !!(obj);');
+      expect(getFunctionBody(input, true)).toBe(
+        'const obj = { a: 1 }; return !!(obj);',
+      );
     });
 
     it('should handle empty expression', () => {
@@ -285,14 +302,16 @@ describe('getFunctionBody', () => {
   describe('real-world computed expression patterns', () => {
     describe('visibility expressions', () => {
       it('should handle simple path comparison', () => {
-        expect(
-          getFunctionBody('dependencies[0] === "premium"', true),
-        ).toBe('return !!(dependencies[0] === "premium")');
+        expect(getFunctionBody('dependencies[0] === "premium"', true)).toBe(
+          'return !!(dependencies[0] === "premium")',
+        );
       });
 
       it('should handle block visibility logic', () => {
-        const input = '{ if (dependencies[0] === "admin") return true; if (dependencies[1] > 100) return true; return false; }';
-        const expected = 'if (dependencies[0] === "admin") return !!(true); if (dependencies[1] > 100) return !!(true); return !!(false);';
+        const input =
+          '{ if (dependencies[0] === "admin") return true; if (dependencies[1] > 100) return true; return false; }';
+        const expected =
+          'if (dependencies[0] === "admin") return !!(true); if (dependencies[1] > 100) return !!(true); return !!(false);';
         expect(getFunctionBody(input, true)).toBe(expected);
       });
     });
@@ -305,7 +324,8 @@ describe('getFunctionBody', () => {
       });
 
       it('should handle block calculation', () => {
-        const input = '{ const total = dependencies[0] + dependencies[1]; return total * 1.1; }';
+        const input =
+          '{ const total = dependencies[0] + dependencies[1]; return total * 1.1; }';
         expect(getFunctionBody(input, false)).toBe(
           'const total = dependencies[0] + dependencies[1]; return total * 1.1;',
         );
@@ -314,14 +334,16 @@ describe('getFunctionBody', () => {
 
     describe('validation expressions', () => {
       it('should handle simple validation', () => {
-        expect(
-          getFunctionBody('dependencies[0].length > 0', true),
-        ).toBe('return !!(dependencies[0].length > 0)');
+        expect(getFunctionBody('dependencies[0].length > 0', true)).toBe(
+          'return !!(dependencies[0].length > 0)',
+        );
       });
 
       it('should handle block validation with early return', () => {
-        const input = '{ if (!dependencies[0]) return; return dependencies[0].length >= 3; }';
-        const expected = 'if (!dependencies[0]) return false; return !!(dependencies[0].length >= 3);';
+        const input =
+          '{ if (!dependencies[0]) return; return dependencies[0].length >= 3; }';
+        const expected =
+          'if (!dependencies[0]) return false; return !!(dependencies[0].length >= 3);';
         expect(getFunctionBody(input, true)).toBe(expected);
       });
     });

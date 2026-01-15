@@ -82,7 +82,7 @@ describe('intersectStringSchema', () => {
       const source: Partial<StringSchema> = { maxLength: 5 };
 
       expect(() => intersectStringSchema(base, source)).toThrow(
-        'Invalid string constraints: minLength (10 > 5)',
+        'Invalid range constraint in schema intersection',
       );
     });
   });
@@ -184,7 +184,7 @@ describe('intersectStringSchema', () => {
         const source: Partial<StringSchema> = { enum: ['c', 'd'] };
 
         expect(() => intersectStringSchema(base, source)).toThrow(
-          'Enum values must have at least one common value',
+          'Empty enum intersection in schema merge',
         );
       });
 
@@ -213,7 +213,7 @@ describe('intersectStringSchema', () => {
         const source: Partial<StringSchema> = { const: 'value2' };
 
         expect(() => intersectStringSchema(base, source)).toThrow(
-          'Conflicting const values: value1 vs value2',
+          'Conflicting const values in schema intersection',
         );
       });
     });

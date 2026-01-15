@@ -7,7 +7,9 @@ describe('createDynamicFunction', () => {
   describe('basic functionality', () => {
     it('should return undefined for non-string expression', () => {
       const pathManager = getPathManager();
-      expect(createDynamicFunction(pathManager, 'test', undefined)).toBeUndefined();
+      expect(
+        createDynamicFunction(pathManager, 'test', undefined),
+      ).toBeUndefined();
     });
 
     it('should return undefined for empty string expression', () => {
@@ -59,7 +61,11 @@ describe('createDynamicFunction', () => {
 
     it('should execute object expression', () => {
       const pathManager = getPathManager();
-      const fn = createDynamicFunction(pathManager, 'test', '({ key: "value" })');
+      const fn = createDynamicFunction(
+        pathManager,
+        'test',
+        '({ key: "value" })',
+      );
       expect(fn?.([])).toEqual({ key: 'value' });
     });
 
@@ -92,14 +98,22 @@ describe('createDynamicFunction', () => {
 
     it('should replace nested JSON pointer', () => {
       const pathManager = getPathManager();
-      const fn = createDynamicFunction(pathManager, 'test', '/user/profile/name');
+      const fn = createDynamicFunction(
+        pathManager,
+        'test',
+        '/user/profile/name',
+      );
       expect(pathManager.get()).toEqual(['/user/profile/name']);
       expect(fn?.(['Alice'])).toBe('Alice');
     });
 
     it('should handle comparison with JSON pointer', () => {
       const pathManager = getPathManager();
-      const fn = createDynamicFunction(pathManager, 'test', '/status === "active"');
+      const fn = createDynamicFunction(
+        pathManager,
+        'test',
+        '/status === "active"',
+      );
       expect(pathManager.get()).toEqual(['/status']);
       expect(fn?.(['active'])).toBe(true);
       expect(fn?.(['inactive'])).toBe(false);
@@ -134,11 +148,7 @@ describe('createDynamicFunction', () => {
 
     it('should deduplicate repeated JSON pointers', () => {
       const pathManager = getPathManager();
-      const fn = createDynamicFunction(
-        pathManager,
-        'test',
-        '/value + /value',
-      );
+      const fn = createDynamicFunction(pathManager, 'test', '/value + /value');
       expect(pathManager.get()).toEqual(['/value']);
       expect(fn?.([5])).toBe(10);
     });
@@ -147,11 +157,7 @@ describe('createDynamicFunction', () => {
   describe('block expressions', () => {
     it('should execute simple block expression', () => {
       const pathManager = getPathManager();
-      const fn = createDynamicFunction(
-        pathManager,
-        'test',
-        '{ return true; }',
-      );
+      const fn = createDynamicFunction(pathManager, 'test', '{ return true; }');
       expect(fn?.([])).toBe(true);
     });
 
@@ -269,12 +275,7 @@ describe('createDynamicFunction', () => {
 
     it('should coerce logical expression to boolean', () => {
       const pathManager = getPathManager();
-      const fn = createDynamicFunction(
-        pathManager,
-        'test',
-        '/a && /b',
-        true,
-      );
+      const fn = createDynamicFunction(pathManager, 'test', '/a && /b', true);
       expect(fn?.([true, true])).toBe(true);
       expect(fn?.([true, false])).toBe(false);
       expect(fn?.([false, true])).toBe(false);

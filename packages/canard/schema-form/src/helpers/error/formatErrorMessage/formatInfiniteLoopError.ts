@@ -1,3 +1,6 @@
+import { createDivider } from './utils/createDivider';
+import { formatBulletList } from './utils/formatBulletList';
+
 /**
  * Formats a structured error message for infinite loop detection.
  * @param path - JSON pointer path of the node where the loop was detected
@@ -11,11 +14,8 @@ export const formatInfiniteLoopError = (
   batchCount: number,
   maxBatchCount: number,
 ): string => {
-  const divider = '─'.repeat(50);
-  const dependenciesSection =
-    dependencies.length > 0
-      ? dependencies.map((dep) => `  │    • ${dep}`).join('\n')
-      : '  │    (none)';
+  const divider = createDivider();
+  const dependenciesSection = formatBulletList(dependencies);
 
   return `
 Infinite loop detected in derived value computation.

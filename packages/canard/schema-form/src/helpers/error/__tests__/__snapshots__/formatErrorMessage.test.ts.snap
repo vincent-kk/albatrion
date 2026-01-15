@@ -1,0 +1,741 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatAllOfTypeRedefinitionError 스냅샷 1`] = `
+"Type redefinition not allowed in allOf schema.
+
+  ╭──────────────────────────────────────────────────
+  │  Base Schema Type:   object
+  │  allOf Schema Type:  array
+  ├──────────────────────────────────────────────────
+  │  Conflict:  allOf schema attempts to change the type
+  ╰──────────────────────────────────────────────────
+
+In JSON Schema, when using 'allOf', the type must either be omitted
+in the sub-schemas or match the parent schema type exactly.
+Redefining the type in allOf would create an impossible constraint.
+
+How to fix:
+  1. Remove the 'type' property from the allOf sub-schema:
+     {
+       "type": "object",
+       "allOf": [
+         { "properties": { ... } }  // No type here
+       ]
+     }
+
+  2. Or ensure the types match:
+     {
+       "type": "object",
+       "allOf": [
+         { "type": "object", "properties": { ... } }
+       ]
+     }
+
+  3. If different types are needed, consider using 'oneOf' instead"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatCircularReferenceError 스냅샷 1`] = `
+"Circular reference detected in JSON Schema.
+
+  ╭──────────────────────────────────────────────────
+  │  Error:     Circular reference in schema definition
+  │  Fallback:  Validation will use fallback mode
+  ├──────────────────────────────────────────────────
+  │  Schema Preview:
+  │    {
+  │      "type": "object",
+  │      "$ref": "#/definitions/RecursiveType",
+  │      "properties": {
+  │        "name": {
+  │          "type": "string"
+  │        },
+  │        "children": {
+  │          "$ref": "#/definitions/RecursiveType"
+  │        }
+  │    ...(truncated)
+  ╰──────────────────────────────────────────────────
+
+Original error: Circular structure in JSON
+
+This typically occurs when a schema references itself directly or indirectly,
+creating an infinite loop in the schema definition.
+
+How to fix:
+  1. Check for $ref references that point back to parent schemas
+  2. Look for recursive type definitions without proper termination
+  3. Consider using a $defs section with properly scoped references"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatCompositionPropertyExclusivenessError 스냅샷 1`] = `
+"Property exclusiveness violation in 'anyOf' schema.
+
+  ╭──────────────────────────────────────────────────
+  │  Path:         /registration/form
+  │  Composition:  anyOf
+  │  Property:     'email'
+  ├──────────────────────────────────────────────────
+  │  Conflict:  Property already defined in another anyOf branch
+  ╰──────────────────────────────────────────────────
+
+In 'anyOf' composition, each property can only be defined in one branch.
+The property 'email' appears in multiple anyOf branches, which
+would create ambiguity about which schema definition to use.
+
+How to fix:
+  1. Ensure 'email' is only defined in one anyOf branch:
+     {
+       "anyOf": [
+         { "properties": { "email": { ... } } },
+         { "properties": { "otherProp": { ... } } }  // Different property
+       ]
+     }
+
+  2. Or move the common property to the parent schema:
+     {
+       "properties": { "email": { ... } },
+       "anyOf": [
+         { "properties": { "branch1Prop": { ... } } },
+         { "properties": { "branch2Prop": { ... } } }
+       ]
+     }"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatCompositionPropertyRedefinitionError 스냅샷 1`] = `
+"Property redefinition not allowed in 'oneOf' schema.
+
+  ╭──────────────────────────────────────────────────
+  │  Path:         /user/settings
+  │  Composition:  oneOf
+  │  Property:     'theme'
+  ├──────────────────────────────────────────────────
+  │  Conflict:  Property already defined in parent schema
+  ╰──────────────────────────────────────────────────
+
+A property defined in the parent schema's 'properties' cannot be
+redefined in a 'oneOf' sub-schema. The property 'theme'
+exists in the parent and cannot be overridden.
+
+How to fix:
+  1. Remove 'theme' from the oneOf sub-schema:
+     {
+       "properties": { "theme": { ... } },
+       "oneOf": [
+         { "properties": { "newProp": { ... } } }  // Only new properties
+       ]
+     }
+
+  2. Or move 'theme' to oneOf branches if it should vary:
+     {
+       "properties": { "commonProp": { ... } },
+       "oneOf": [
+         { "properties": { "theme": { "type": "string" } } },
+         { "properties": { "theme": { "type": "number" } } }
+       ]
+     }"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatCompositionTypeRedefinitionError 스냅샷 1`] = `
+"Type redefinition not allowed in 'oneOf' schema.
+
+  ╭──────────────────────────────────────────────────
+  │  Path:              /user/profile
+  │  Composition:       oneOf
+  │  Parent Type:       object
+  │  Sub-schema Type:   string
+  │  Properties:        userType, email, age
+  ├──────────────────────────────────────────────────
+  │  Conflict:  oneOf sub-schema attempts to change the type
+  ╰──────────────────────────────────────────────────
+
+In composition schemas (oneOf/anyOf), sub-schemas cannot redefine
+the type of the parent schema. The type must either be omitted
+or match exactly.
+
+How to fix:
+  1. Remove the 'type' from the oneOf sub-schema:
+     {
+       "type": "object",
+       "oneOf": [
+         { "properties": { ... } }  // No type here
+       ]
+     }
+
+  2. Or ensure types match:
+     {
+       "type": "object",
+       "oneOf": [
+         { "type": "object", "properties": { ... } }
+       ]
+     }"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatConditionIndexError 스냅샷 1`] = `
+"Failed to create condition index function for 'oneOf'.
+
+  ╭──────────────────────────────────────────────────
+  │  Field:  oneOf
+  ├──────────────────────────────────────────────────
+  │  Condition Expressions:
+  │    [0] ./type === 'personal'
+  │    [1] ./type === 'business'
+  │    [2] ./type === 'admin'
+  ├──────────────────────────────────────────────────
+  │  Generated Code:
+  │    if (values[0] === "personal") return 0;
+  │    if (values[0] === "business") return 1;
+  │    if (values[0] === "admin") return 2;
+  ├──────────────────────────────────────────────────
+  │  Error: values is not defined
+  ╰──────────────────────────────────────────────────
+
+The condition expressions could not be compiled into a valid function.
+This typically occurs when '&if' expressions contain invalid syntax.
+
+How to fix:
+  1. Check each '&if' expression for valid JavaScript syntax
+  2. Ensure JSONPointer paths in conditions are correct
+  3. Verify that comparison operators are properly used
+  4. Look for missing quotes around string comparisons"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatConditionIndicesError 스냅샷 1`] = `
+"Failed to create condition indices function for 'anyOf'.
+
+  ╭──────────────────────────────────────────────────
+  │  Field:  anyOf
+  ├──────────────────────────────────────────────────
+  │  Condition Expressions:
+  │    [0] ./hasEmail === true
+  │    [1] ./hasPhone === true
+  │    [2] ./hasAddress === true
+  ├──────────────────────────────────────────────────
+  │  Generated Code:
+  │    const results = [];
+  │    if (values[0]) results.push(0);
+  │    if (values[1]) results.push(1);
+  │    if (values[2]) results.push(2);
+  │    return results;
+  ├──────────────────────────────────────────────────
+  │  Error: Cannot read property "push" of undefined
+  ╰──────────────────────────────────────────────────
+
+The condition expressions could not be compiled into a function that
+returns all matching indices. This is used for anyOf/allOf conditions
+where multiple schemas can be active simultaneously.
+
+How to fix:
+  1. Check each '&if' expression for valid JavaScript syntax
+  2. Ensure JSONPointer paths in conditions are correct
+  3. Verify that comparison operators are properly used
+  4. Look for missing quotes around string comparisons"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatConflictingConstValuesError 스냅샷 1`] = `
+"Conflicting const values in schema intersection.
+
+  ╭──────────────────────────────────────────────────
+  │  Base const:    {"status":"active","role":"admin"}
+  │  Source const:  {"status":"inactive","role":"user"}
+  ├──────────────────────────────────────────────────
+  │  Conflict:  Two different const values cannot be merged
+  ╰──────────────────────────────────────────────────
+
+When merging schemas with 'allOf', each schema has a 'const' constraint
+with different values. A value cannot equal two different constants
+simultaneously.
+
+How to fix:
+  1. Use the same const value in both schemas:
+     {
+       "allOf": [
+         { "const": {"status":"active","role":"admin"} },
+         { "const": {"status":"active","role":"admin"} }  // Same value
+       ]
+     }
+
+  2. Remove 'const' from one of the allOf schemas
+
+  3. Use 'enum' instead if multiple values are acceptable:
+     { "enum": [{"status":"active","role":"admin"}, {"status":"inactive","role":"user"}] }"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatCreateDynamicFunctionError 스냅샷 1`] = `
+"Failed to create dynamic function for computed property.
+
+  ╭──────────────────────────────────────────────────
+  │  Field:       computed.visible
+  │  Expression:  '../category === 'premium' && ../price > 100'
+  ├──────────────────────────────────────────────────
+  │  Generated Function Body:
+  │    return values[0] === 'premium' && values[1] > 100
+  ├──────────────────────────────────────────────────
+  │  Error: Unexpected token '>'
+  ╰──────────────────────────────────────────────────
+
+The expression could not be compiled into a valid JavaScript function.
+This usually indicates a syntax error in the computed property expression.
+
+How to fix:
+  1. Check the expression syntax for typos or invalid JavaScript
+  2. Ensure all JSONPointer paths (e.g., '../fieldName') are valid
+  3. Verify that the expression returns a valid value
+  4. Check for unbalanced parentheses or brackets"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatEmptyEnumIntersectionError 스냅샷 1`] = `
+"Empty enum intersection in schema merge.
+
+  ╭──────────────────────────────────────────────────
+  │  Base enum:    ["draft","pending","review"]
+  │  Source enum:  ["approved","rejected","archived"]
+  ├──────────────────────────────────────────────────
+  │  Problem:  No common values between enum arrays
+  ╰──────────────────────────────────────────────────
+
+When merging schemas with 'allOf', the enum arrays from different
+schemas must have at least one value in common. An empty intersection
+means no valid value exists.
+
+How to fix:
+  1. Ensure enum arrays have at least one common value:
+     {
+       "allOf": [
+         { "enum": ["a", "b", "c"] },
+         { "enum": ["b", "c", "d"] }  // "b" and "c" are common
+       ]
+     }
+     // Results in: enum: ["b", "c"]
+
+  2. Remove 'enum' from one of the allOf schemas
+
+  3. Use 'oneOf' instead if values should be exclusive:
+     {
+       "oneOf": [
+         { "enum": ["a", "b"] },
+         { "enum": ["c", "d"] }
+       ]
+     }"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatFormTypeInputMapError 스냅샷 1`] = `
+"Invalid key pattern in FormTypeInputMap.
+
+  ╭──────────────────────────────────────────────────
+  │  Pattern:  '/users/*/profile/[invalid'
+  ├──────────────────────────────────────────────────
+  │  Error:  Invalid regular expression: /\\/users\\/.*\\/profile\\/[invalid/: Unterminated character class
+  ╰──────────────────────────────────────────────────
+
+FormTypeInputMap keys must be valid JSONPointer paths or patterns.
+The provided pattern could not be compiled into a valid path matcher.
+
+Valid patterns:
+  • Exact paths:    '/property/nested'
+  • Root path:      ''
+  • With wildcard:  '/items/*/name'  (matches any index)
+  • Fragment:       '#/definitions/User'
+
+How to fix:
+  1. Use valid JSONPointer syntax:
+     {
+       '/users/0/name': UserNameInput,
+       '/items/*/title': ItemTitleInput
+     }
+
+  2. Escape special characters properly:
+     • '/' in property names → '~1'
+     • '~' in property names → '~0'
+
+  3. Check for typos or invalid regex patterns in the key"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatInfiniteLoopError 스냅샷 1`] = `
+"Infinite loop detected in derived value computation.
+
+  ╭──────────────────────────────────────────────────
+  │  Node:         /form/computed/derived
+  │  Batch Count:  150 (exceeded maximum of 100)
+  ├──────────────────────────────────────────────────
+  │  Dependencies:
+  │    • ../price
+  │    • ../quantity
+  │    • ../discount
+  ╰──────────────────────────────────────────────────
+
+This indicates a circular dependency where derived values reference each other
+in a loop (e.g., A depends on B, B depends on A).
+
+How to fix:
+  1. Check the 'computed.derived' expression in the node above
+  2. Look for circular references among the listed dependencies
+  3. Break the cycle by removing or restructuring one dependency"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatInvalidRangeError 스냅샷 1`] = `
+"Invalid range constraint in schema intersection.
+
+  ╭──────────────────────────────────────────────────
+  │  Minimum:  100
+  │  Maximum:  50
+  ├──────────────────────────────────────────────────
+  │  Error:  minimum (100) exceeds maximum (50)
+  ╰──────────────────────────────────────────────────
+
+When merging schemas with 'allOf', the intersection of range constraints
+resulted in an impossible range where minimum exceeds maximum.
+
+How to fix:
+  1. Adjust the allOf schemas so their ranges overlap:
+     {
+       "allOf": [
+         { "minimum": 0, "maximum": 100 },
+         { "minimum": 50, "maximum": 150 }  // Overlapping range
+       ]
+     }
+     // Results in: minimum: 50, maximum: 100
+
+  2. Remove conflicting constraints from one of the allOf schemas
+
+  3. Use separate validation rules instead of allOf for exclusive ranges"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatInvalidVirtualNodeValuesError 스냅샷 1`] = `
+"Invalid values for virtual node.
+
+  ╭──────────────────────────────────────────────────
+  │  Expected:   3-element array
+  │  Received:   array with 1 elements
+  │  Mismatch:   Expected 3, got 1
+  ├──────────────────────────────────────────────────
+  │  Value Preview:  ["onlyOneValue"]
+  ╰──────────────────────────────────────────────────
+
+Virtual nodes expect an array with a specific number of elements
+matching the number of reference fields defined in 'virtual.fields'.
+
+How to fix:
+  1. Provide an array with exactly 3 element(s):
+     virtualNode.setValue([value1, value2, ...])
+
+  2. Use 'undefined' to reset all reference values:
+     virtualNode.setValue(undefined)
+
+  3. Check that virtual.fields configuration matches your data structure"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatItemsFalseWithoutPrefixItemsError 스냅샷 1`] = `
+"Invalid array schema: 'items: false' requires 'prefixItems' to be defined.
+
+  ╭──────────────────────────────────────────────────
+  │  Schema Type:   array
+  │  items:         false
+  │  prefixItems:   undefined
+  ├──────────────────────────────────────────────────
+  │  Schema Preview:
+  │    {
+  │      "type": "array",
+  │      "items": false,
+  │      "minItems": 1,
+  │      "maxItems": 5
+  │    }
+  ╰──────────────────────────────────────────────────
+
+When 'items' is set to 'false', it means no additional items are allowed
+beyond those defined in 'prefixItems'. Without 'prefixItems', the array
+would have no valid schema for any elements.
+
+How to fix:
+  1. Add 'prefixItems' array to define allowed tuple elements:
+     {
+       "type": "array",
+       "items": false,
+       "prefixItems": [
+         { "type": "string" },
+         { "type": "number" }
+       ]
+     }
+
+  2. Or remove 'items: false' and use a regular items schema:
+     {
+       "type": "array",
+       "items": { "type": "string" }
+     }"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatMaxItemsExceedsPrefixItemsError 스냅샷 1`] = `
+"Invalid array schema: 'maxItems' exceeds 'prefixItems' length without 'items' schema.
+
+  ╭──────────────────────────────────────────────────
+  │  Schema Type:      array
+  │  maxItems:         5
+  │  prefixItems:      ["string", "string"] (length: 2)
+  │  items:            undefined
+  ├──────────────────────────────────────────────────
+  │  Problem:  maxItems (5) > prefixItems.length (2)
+  ╰──────────────────────────────────────────────────
+
+Without an 'items' schema, there's no definition for array indices
+beyond prefixItems. Setting maxItems > prefixItems.length would allow
+elements without a schema.
+
+How to fix:
+  1. Set maxItems to 2 or less:
+     { "maxItems": 2 }
+
+  2. Or add 'items' schema for additional elements:
+     {
+       "items": { "type": "string" },
+       "maxItems": 5
+     }"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatMinItemsExceedsPrefixItemsError 스냅샷 1`] = `
+"Invalid array schema: 'minItems' exceeds 'prefixItems' length without 'items' schema.
+
+  ╭──────────────────────────────────────────────────
+  │  Schema Type:      array
+  │  minItems:         3
+  │  prefixItems:      ["number"] (length: 1)
+  │  items:            undefined
+  ├──────────────────────────────────────────────────
+  │  Problem:  minItems (3) > prefixItems.length (1)
+  ╰──────────────────────────────────────────────────
+
+Without an 'items' schema, there's no way to create array elements
+beyond prefixItems. Setting minItems > prefixItems.length would
+require elements that cannot be created.
+
+How to fix:
+  1. Set minItems to 1 or less:
+     { "minItems": 1 }
+
+  2. Or add 'items' schema for additional elements:
+     {
+       "items": { "type": "string" },
+       "minItems": 3
+     }"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatMissingItemsAndPrefixItemsError 스냅샷 1`] = `
+"Invalid array schema: Array must have 'items' or 'prefixItems' defined.
+
+  ╭──────────────────────────────────────────────────
+  │  Schema Type:   array
+  │  items:         undefined
+  │  prefixItems:   undefined
+  ╰──────────────────────────────────────────────────
+
+An array schema must define either 'items' (schema for all elements)
+or 'prefixItems' (schemas for tuple positions) to be valid.
+
+How to fix:
+  1. Add 'items' for homogeneous arrays:
+     {
+       "type": "array",
+       "items": { "type": "string" }
+     }
+
+  2. Add 'prefixItems' for tuple arrays:
+     {
+       "type": "array",
+       "prefixItems": [
+         { "type": "string" },
+         { "type": "number" }
+       ]
+     }
+
+  3. Combine both for tuples with additional items:
+     {
+       "type": "array",
+       "prefixItems": [{ "type": "string" }],
+       "items": { "type": "number" }
+     }"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatObservedValuesError 스냅샷 1`] = `
+"Failed to create observed values function for 'discountedPrice'.
+
+  ╭──────────────────────────────────────────────────
+  │  Field:  discountedPrice
+  │  Watch:  ["../price","../discount","../taxRate"]
+  ├──────────────────────────────────────────────────
+  │  Watch Path Mappings:
+  │    [0] ../price → index 0
+  │    [1] ../discount → index 1
+  │    [2] ../taxRate → index 2
+  ├──────────────────────────────────────────────────
+  │  Error: Invalid watch path: ../taxRate does not exist
+  ╰──────────────────────────────────────────────────
+
+The watch configuration could not be compiled into a valid function.
+This monitors dependencies defined in 'computed.watch' or '&watch'.
+
+How to fix:
+  1. Verify that all watch paths are valid JSONPointer paths
+  2. Check that watched fields exist in the schema
+  3. Ensure watch values are strings or an array of strings
+  4. Look for syntax errors in path expressions"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatRegisterPluginError 스냅샷 1`] = `
+"Failed to register schema form plugin.
+
+  ╭──────────────────────────────────────────────────
+  │  Plugin Features:
+  │    • FormInput
+  │    • FormLabel
+  │    • formTypeInputDefinitions
+  │    • validator
+  ├──────────────────────────────────────────────────
+  │  Error:  Plugin conflict: formTypeInputDefinitions[0] conflicts with existing definition
+  ╰──────────────────────────────────────────────────
+
+The plugin could not be registered with the form system.
+This may indicate a problem with the plugin's configuration
+or a conflict with existing registered plugins.
+
+How to fix:
+  1. Check that the plugin exports are correctly structured:
+     {
+       renderKit?: { ... },
+       formTypeInputDefinitions?: [...],
+       validator?: ValidatorFactory,
+       formatError?: ErrorFormatter
+     }
+
+  2. Ensure the plugin is not already registered
+
+  3. Verify there are no conflicts with existing plugins
+
+  4. Check the error message above for specific details"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatSchemaValidationFailedError 스냅샷 1`] = `
+"Form submission rejected due to validation errors.
+
+  ╭──────────────────────────────────────────────────
+  │  Total Errors:  6
+  │  Schema Type:   object
+  │  Value:         {"name":"J","email":"not-an-email","age":-5,"tags":"should-be-array"}
+  ├──────────────────────────────────────────────────
+  │  Validation Errors:
+  │    • /name: must be at least 2 characters
+  │    • /email: must be a valid email address
+  │    • /age: must be >= 0
+  │    • /tags: must be array
+  │    • /phone: is required
+  │    ... and 1 more error(s)
+  ╰──────────────────────────────────────────────────
+
+The form data did not pass validation against the JSON Schema.
+All validation errors must be resolved before submission.
+
+How to fix:
+  1. Review each error above and correct the corresponding field
+  2. Ensure required fields are filled in
+  3. Check that values match the expected format and constraints
+  4. Use form.validate() to check errors before submission"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatUnknownJsonSchemaError 스냅샷 1`] = `
+"Unknown JSON Schema type encountered.
+
+  ╭──────────────────────────────────────────────────
+  │  Received Type:  'customType'
+  │  Valid Types:    string, number, integer, boolean, array, object, null
+  ├──────────────────────────────────────────────────
+  │  Schema:
+  │    {
+  │      "type": "customType",
+  │      "title": "Custom Field",
+  │      "properties": {
+  │        "value": {
+  │          "type": "string"
+  │        }
+  │      }
+  │    ...
+  ╰──────────────────────────────────────────────────
+
+The schema contains a type that is not recognized by the form builder.
+Only standard JSON Schema types are supported.
+
+How to fix:
+  1. Change the type to one of: string, number, integer, boolean, array, object, null
+  2. If using a custom type, ensure it's properly handled
+  3. Check for typos in the type name
+  4. For nullable types, use: { "type": ["string", "null"] }"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatVirtualFieldsNotInPropertiesError 스냅샷 1`] = `
+"Virtual fields reference non-existent properties.
+
+  ╭──────────────────────────────────────────────────
+  │  Virtual:          'contactInfo'
+  │  Declared Fields:  [email, phone, fax, telegram]
+  ├──────────────────────────────────────────────────
+  │  Missing Properties:
+  │    • 'fax'
+  │    • 'telegram'
+  ╰──────────────────────────────────────────────────
+
+Virtual nodes can only reference fields that are defined in the
+schema's 'properties'. The listed fields were not found.
+
+How to fix:
+  1. Add the missing properties to the schema:
+     {
+       "properties": {
+         "fax": { "type": "string" },
+         "telegram": { "type": "string" }
+       },
+       "virtual": {
+         "contactInfo": {
+           "fields": ["fax", "telegram"]
+         }
+       }
+     }
+
+  2. Or correct the field names in virtual.fields:
+     {
+       "virtual": {
+         "contactInfo": {
+           "fields": ["existingField1", "existingField2"]
+         }
+       }
+     }
+
+  3. Check for typos in field names"
+`;
+
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatVirtualFieldsNotValidError 스냅샷 1`] = `
+"Invalid virtual.fields configuration.
+
+  ╭──────────────────────────────────────────────────
+  │  Node:      addressForm
+  │  Virtual:   'fullAddress'
+  │  Expected:  array of field names
+  │  Received:  string
+  ╰──────────────────────────────────────────────────
+
+The 'virtual.fields' property must be an array containing the names
+of properties that this virtual node references.
+
+How to fix:
+  1. Provide an array of field names:
+     {
+       "virtual": {
+         "fullAddress": {
+           "fields": ["field1", "field2"]
+         }
+       }
+     }
+
+  2. If only one field, still use an array:
+     {
+       "virtual": {
+         "fullAddress": {
+           "fields": ["singleField"]
+         }
+       }
+     }"
+`;

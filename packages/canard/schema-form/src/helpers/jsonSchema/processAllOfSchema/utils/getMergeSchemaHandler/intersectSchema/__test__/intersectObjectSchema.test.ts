@@ -28,7 +28,7 @@ describe('intersectObjectSchema', () => {
       const source: Partial<ObjectSchema> = { maxProperties: 5 };
 
       expect(() => intersectObjectSchema(base, source)).toThrow(
-        'Invalid object constraints: minProperties (10 > 5)',
+        'Invalid range constraint in schema intersection',
       );
     });
   });
@@ -159,7 +159,7 @@ describe('intersectObjectSchema', () => {
       };
 
       expect(() => intersectObjectSchema(base, source)).toThrow(
-        'Invalid string constraints: minLength (10 > 5)',
+        'Invalid range constraint in schema intersection',
       );
     });
 

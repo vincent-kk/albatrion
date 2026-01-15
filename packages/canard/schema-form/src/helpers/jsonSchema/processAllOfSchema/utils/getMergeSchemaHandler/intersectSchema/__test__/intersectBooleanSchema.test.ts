@@ -84,7 +84,7 @@ describe('intersectBooleanSchema', () => {
         const source: Partial<BooleanSchema> = { enum: [false] };
 
         expect(() => intersectBooleanSchema(base, source)).toThrow(
-          'Enum values must have at least one common value',
+          'Empty enum intersection in schema merge',
         );
       });
     });
@@ -104,7 +104,7 @@ describe('intersectBooleanSchema', () => {
         const source: Partial<BooleanSchema> = { const: false };
 
         expect(() => intersectBooleanSchema(base, source)).toThrow(
-          'Conflicting const values: true vs false',
+          'Conflicting const values in schema intersection',
         );
       });
     });

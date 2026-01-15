@@ -3,6 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { Fn } from '@aileron/declare';
 
 import { JsonSchemaError } from '@/schema-form/errors';
+import { formatConditionIndexError } from '@/schema-form/helpers/error';
 import type {
   JsonSchemaType,
   JsonSchemaWithVirtual,
@@ -65,7 +66,7 @@ export const getConditionIndexFactory =
     } catch (error) {
       throw new JsonSchemaError(
         'CONDITION_INDEX',
-        `Failed to create dynamic function: ${fieldName} -> '${expressions.join(', ')}'`,
+        formatConditionIndexError(fieldName, expressions, lines, error),
         { fieldName, expressions, lines, error },
       );
     }

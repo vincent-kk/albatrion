@@ -30,6 +30,7 @@ import {
   type SchemaNode,
 } from '@/schema-form/core';
 import { ValidationError } from '@/schema-form/errors';
+import { formatSchemaValidationFailedError } from '@/schema-form/helpers/error';
 import { preprocessSchema } from '@/schema-form/helpers/jsonSchema';
 import {
   FormTypeInputsContextProvider,
@@ -111,7 +112,7 @@ const FormInner = <
     if (errors.length > 0)
       throw new ValidationError(
         'SCHEMA_VALIDATION_FAILED',
-        'Form submission rejected due to validation errors, please check the errors and try again',
+        formatSchemaValidationFailedError(value, errors, jsonSchema),
         { value, errors, jsonSchema },
       );
     await inputOnSubmit(value);

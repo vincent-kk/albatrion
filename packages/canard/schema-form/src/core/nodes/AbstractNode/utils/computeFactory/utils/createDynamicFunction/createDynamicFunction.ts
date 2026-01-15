@@ -1,4 +1,5 @@
 import { JsonSchemaError } from '@/schema-form/errors';
+import { formatCreateDynamicFunctionError } from '@/schema-form/helpers/error';
 
 import type { PathManager } from '../getPathManager';
 import { JSON_POINTER_PATH_REGEX } from '../regex';
@@ -40,7 +41,12 @@ export const createDynamicFunction: CreateDynamicFunction = (
   } catch (error) {
     throw new JsonSchemaError(
       'CREATE_DYNAMIC_FUNCTION',
-      `Failed to create dynamic function: ${fieldName} -> '${expression}'`,
+      formatCreateDynamicFunctionError(
+        fieldName,
+        expression,
+        functionBody,
+        error,
+      ),
       {
         fieldName,
         expression: expression,

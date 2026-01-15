@@ -291,7 +291,7 @@ describe('getConditionIndicesFactory', () => {
         'oneOf',
         'if',
       );
-    }).toThrow('Failed to create dynamic function');
+    }).toThrow("Failed to create condition indices function for 'oneOf'");
   });
 
   it('null 및 undefined 표현식을 올바르게 처리해야 함', () => {

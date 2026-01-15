@@ -65,7 +65,7 @@ describe('ArrayNode Schema Validation', () => {
 
       expect(() => validateArraySchema(schema)).toThrow(JsonSchemaError);
       expect(() => validateArraySchema(schema)).toThrow(
-        "Array schema must have at least one of 'items' or 'prefixItems' defined",
+        "Invalid array schema: Array must have 'items' or 'prefixItems' defined.",
       );
     });
 
@@ -77,7 +77,7 @@ describe('ArrayNode Schema Validation', () => {
 
       expect(() => validateArraySchema(schema)).toThrow(JsonSchemaError);
       expect(() => validateArraySchema(schema)).toThrow(
-        "Array schema with 'items: false' must have 'prefixItems' defined",
+        "Invalid array schema: 'items: false' requires 'prefixItems' to be defined.",
       );
     });
 
@@ -92,7 +92,7 @@ describe('ArrayNode Schema Validation', () => {
       expect(() => validateArraySchema(schema)).toThrow(JsonSchemaError);
       // @ts-expect-error - Testing invalid schema configuration
       expect(() => validateArraySchema(schema)).toThrow(
-        "Array schema without 'items' cannot have 'maxItems' (5) greater than 'prefixItems' length (2)",
+        "Invalid array schema: 'maxItems' exceeds 'prefixItems' length without 'items' schema.",
       );
     });
 
@@ -107,7 +107,7 @@ describe('ArrayNode Schema Validation', () => {
       expect(() => validateArraySchema(schema)).toThrow(JsonSchemaError);
       // @ts-expect-error - Testing invalid schema configuration
       expect(() => validateArraySchema(schema)).toThrow(
-        "Array schema without 'items' cannot have 'minItems' (4) greater than 'prefixItems' length (2)",
+        "Invalid array schema: 'minItems' exceeds 'prefixItems' length without 'items' schema.",
       );
     });
 
@@ -327,7 +327,7 @@ describe('ArrayNode Schema Validation', () => {
           },
         }),
       ).toThrow(
-        "Array schema with 'items: false' must have 'prefixItems' defined",
+        "Invalid array schema: 'items: false' requires 'prefixItems' to be defined.",
       );
     });
 
@@ -345,7 +345,7 @@ describe('ArrayNode Schema Validation', () => {
           },
         }),
       ).toThrow(
-        "Array schema must have at least one of 'items' or 'prefixItems' defined",
+        "Invalid array schema: Array must have 'items' or 'prefixItems' defined.",
       );
     });
   });
@@ -465,7 +465,7 @@ describe('ArrayNode Schema Validation', () => {
 
       expect(thrownError).toBeInstanceOf(JsonSchemaError);
       expect(thrownError?.message).toContain(
-        "Array schema must have at least one of 'items' or 'prefixItems' defined",
+        "Invalid array schema: Array must have 'items' or 'prefixItems' defined.",
       );
     });
 

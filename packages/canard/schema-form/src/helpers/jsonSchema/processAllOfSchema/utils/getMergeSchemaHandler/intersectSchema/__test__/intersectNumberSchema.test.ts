@@ -38,7 +38,7 @@ describe('intersectNumberSchema', () => {
       const source: Partial<NumberSchema> = { maximum: 50 };
 
       expect(() => intersectNumberSchema(base, source)).toThrow(
-        'Invalid number constraints: minimum (100 > 50)',
+        'Invalid range constraint in schema intersection',
       );
     });
 
@@ -164,7 +164,7 @@ describe('intersectNumberSchema', () => {
         const source: Partial<NumberSchema> = { enum: [3, 4] };
 
         expect(() => intersectNumberSchema(base, source)).toThrow(
-          'Enum values must have at least one common value',
+          'Empty enum intersection in schema merge',
         );
       });
     });
@@ -184,7 +184,7 @@ describe('intersectNumberSchema', () => {
         const source: Partial<NumberSchema> = { const: 84 };
 
         expect(() => intersectNumberSchema(base, source)).toThrow(
-          'Conflicting const values: 42 vs 84',
+          'Conflicting const values in schema intersection',
         );
       });
     });

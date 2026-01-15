@@ -17,7 +17,10 @@ import {
   getDefaultValue,
   getEmptyValue,
 } from '@/schema-form/helpers/defaultValue';
-import { transformErrors } from '@/schema-form/helpers/error';
+import {
+  formatCircularReferenceError,
+  transformErrors,
+} from '@/schema-form/helpers/error';
 import {
   JSONPointer as $,
   isAbsolutePath,
@@ -1036,7 +1039,7 @@ export abstract class AbstractNode<
     } catch (error: any) {
       const jsonSchemaError = new JsonSchemaError(
         'CIRCULAR_REFERENCE',
-        `Circular reference detected in JSON Schema. Validation will use fallback mode. Original error: ${error.message}`,
+        formatCircularReferenceError(error.message, jsonSchema),
         { error, schema: jsonSchema },
       );
       this.#validator = getFallbackValidator(jsonSchemaError, jsonSchema);

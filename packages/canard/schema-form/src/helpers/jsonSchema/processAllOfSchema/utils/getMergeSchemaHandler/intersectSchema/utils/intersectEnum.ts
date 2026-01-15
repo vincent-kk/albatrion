@@ -5,6 +5,7 @@ import {
 import { equals } from '@winglet/common-utils/object';
 
 import { JsonSchemaError } from '@/schema-form/errors';
+import { formatEmptyEnumIntersectionError } from '@/schema-form/helpers/error';
 
 /**
  * Intersects two enum arrays, returning only values that exist in both arrays.
@@ -34,7 +35,7 @@ export const intersectEnum = <T>(
   if (intersected.length === 0)
     throw new JsonSchemaError(
       'EMPTY_ENUM_INTERSECTION',
-      'Enum values must have at least one common value',
+      formatEmptyEnumIntersectionError(baseEnum, sourceEnum),
     );
   return intersected;
 };

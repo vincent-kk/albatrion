@@ -412,7 +412,7 @@ describe('processAllOfSchema', () => {
 
       // When types differ, an error should be thrown
       expect(() => processAllOfSchema(schema)).toThrow(
-        'Type cannot be redefined in allOf schema. It must either be omitted or match the parent schema type.',
+        'Type redefinition not allowed in allOf schema.',
       );
     });
 
@@ -512,7 +512,7 @@ describe('processAllOfSchema', () => {
       };
 
       expect(() => processAllOfSchema(schema)).toThrow(
-        'Type cannot be redefined in allOf schema',
+        'Type redefinition not allowed in allOf schema',
       );
     });
 
@@ -523,7 +523,7 @@ describe('processAllOfSchema', () => {
           type: 'string',
           allOf: [{ type: 'number' }],
         }),
-      ).toThrow('Type cannot be redefined');
+      ).toThrow('Type redefinition not allowed');
 
       // number -> boolean
       expect(() =>
@@ -531,7 +531,7 @@ describe('processAllOfSchema', () => {
           type: 'number',
           allOf: [{ type: 'boolean' }],
         }),
-      ).toThrow('Type cannot be redefined');
+      ).toThrow('Type redefinition not allowed');
 
       // boolean -> null
       expect(() =>
@@ -539,7 +539,7 @@ describe('processAllOfSchema', () => {
           type: 'boolean',
           allOf: [{ type: 'null' }],
         }),
-      ).toThrow('Type cannot be redefined');
+      ).toThrow('Type redefinition not allowed');
 
       // array -> object
       expect(() =>
@@ -548,7 +548,7 @@ describe('processAllOfSchema', () => {
           items: { type: 'string' }, // Array type requires items property
           allOf: [{ type: 'object' }],
         } as ArraySchema),
-      ).toThrow('Type cannot be redefined');
+      ).toThrow('Type redefinition not allowed');
 
       // object -> string
       expect(() =>
@@ -556,7 +556,7 @@ describe('processAllOfSchema', () => {
           type: 'object',
           allOf: [{ type: 'string' }],
         }),
-      ).toThrow('Type cannot be redefined');
+      ).toThrow('Type redefinition not allowed');
     });
 
     test('should merge number and number types', () => {
@@ -939,7 +939,7 @@ describe('processAllOfSchema', () => {
       };
 
       expect(() => processAllOfSchema(schema)).toThrow(
-        'Type cannot be redefined in allOf schema',
+        'Type redefinition not allowed in allOf schema',
       );
     });
 

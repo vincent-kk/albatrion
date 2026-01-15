@@ -2,6 +2,7 @@ import { isReactComponent } from '@winglet/react-utils/filter';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 
 import { SchemaFormError } from '@/schema-form/errors';
+import { formatFormTypeInputMapError } from '@/schema-form/helpers/error';
 import {
   JSONPointer as $,
   stripFragment,
@@ -51,7 +52,7 @@ const pathExactMatchFnFactory = (inputPath: string): FormTypeTestFn => {
   } catch (error) {
     throw new SchemaFormError(
       'FORM_TYPE_INPUT_MAP',
-      `FormTypeInputMap contains an invalid key pattern.: ${inputPath}`,
+      formatFormTypeInputMapError(inputPath, error),
       { path: inputPath, error },
     );
   }

@@ -35,7 +35,7 @@ describe('intersectArraySchema', () => {
       const source: Partial<ArraySchema> = { maxItems: 5 };
 
       expect(() => intersectArraySchema(base, source)).toThrow(
-        'Invalid array constraints: minItems (10 > 5)',
+        'Invalid range constraint in schema intersection',
       );
     });
   });

@@ -1,6 +1,7 @@
 import { cloneLite } from '@winglet/common-utils/object';
 
 import { JsonSchemaError } from '@/schema-form/errors';
+import { formatAllOfTypeRedefinitionError } from '@/schema-form/helpers/error';
 import type { JsonSchema } from '@/schema-form/types';
 
 import { getCloneDepth } from './utils/getCloneDepth';
@@ -27,7 +28,7 @@ export const processAllOfSchema = (schema: JsonSchema): JsonSchema => {
     if (validateCompatibility(schema, allOfSchema) === false)
       throw new JsonSchemaError(
         'ALL_OF_TYPE_REDEFINITION',
-        'Type cannot be redefined in allOf schema. It must either be omitted or match the parent schema type.',
+        formatAllOfTypeRedefinitionError(schema, allOfSchema),
         { schema, allOfSchema },
       );
 

@@ -9,6 +9,11 @@ import type {
   SchemaNodeFactory,
 } from '@/schema-form/core/nodes/type';
 import { JsonSchemaError } from '@/schema-form/errors';
+import {
+  formatCompositionPropertyExclusivenessError,
+  formatCompositionPropertyRedefinitionError,
+  formatCompositionTypeRedefinitionError,
+} from '@/schema-form/helpers/error';
 import type {
   JsonSchema,
   ObjectSchema,
@@ -57,7 +62,13 @@ export const getCompositionNodeMapList = (
     )
       throw new JsonSchemaError(
         'COMPOSITION_TYPE_REDEFINITION',
-        `Type cannot be redefined in '${scope}' schema. It must either be omitted or match the parent schema type.`,
+        formatCompositionTypeRedefinitionError(
+          scope,
+          jsonSchema,
+          parentNode.path,
+          jsonSchema.type,
+          subSchema.type,
+        ),
         {
           jsonSchema,
           type: jsonSchema.type,
@@ -78,7 +89,11 @@ export const getCompositionNodeMapList = (
       if (excludeKeySet?.has(k) || propertyKeySet?.has(k))
         throw new JsonSchemaError(
           'COMPOSITION_PROPERTY_EXCLUSIVENESS_REDEFINITION',
-          `Property '${k}' defined in '${scope}' schema cannot redefine a property already defined in the current schema.`,
+          formatCompositionPropertyExclusivenessError(
+            scope,
+            parentNode.path,
+            k,
+          ),
           {
             jsonSchema,
             compositionType: scope,
@@ -89,7 +104,7 @@ export const getCompositionNodeMapList = (
       if (childNodeMap.has(k))
         throw new JsonSchemaError(
           'COMPOSITION_PROPERTY_REDEFINITION',
-          `Property '${k}' defined in '${scope}' schema cannot redefine a property already defined in the current schema.`,
+          formatCompositionPropertyRedefinitionError(scope, parentNode.path, k),
           {
             jsonSchema,
             compositionType: scope,

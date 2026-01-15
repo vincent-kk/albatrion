@@ -3,6 +3,7 @@ import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { JsonSchemaError } from '@/schema-form/errors';
+import { formatUnknownJsonSchemaError } from '@/schema-form/helpers/error';
 import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
 import {
   type ResolveSchema,
@@ -114,7 +115,10 @@ export const createSchemaNodeFactory =
     }
     throw new JsonSchemaError(
       'UNKNOWN_JSON_SCHEMA',
-      `Unknown JsonSchema: ${nodeProps.jsonSchema.type}`,
+      formatUnknownJsonSchemaError(
+        nodeProps.jsonSchema.type,
+        nodeProps.jsonSchema,
+      ),
       {
         jsonSchema: nodeProps.jsonSchema,
       },

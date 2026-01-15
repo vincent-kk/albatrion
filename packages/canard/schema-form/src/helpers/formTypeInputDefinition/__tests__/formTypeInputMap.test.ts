@@ -336,7 +336,7 @@ describe('normalizeFormTypeInputMap', () => {
           '/invalid[regex': TestStringComponent, // 닫히지 않은 bracket
         });
       }).toThrow(
-        'FormTypeInputMap contains an invalid key pattern.: /invalid[regex',
+        'Invalid key pattern in FormTypeInputMap.',
       );
 
       expect(() => {
@@ -344,7 +344,7 @@ describe('normalizeFormTypeInputMap', () => {
           '/another(unclosed': TestStringComponent, // 닫히지 않은 parenthesis
         });
       }).toThrow(
-        'FormTypeInputMap contains an invalid key pattern.: /another(unclosed',
+        'Invalid key pattern in FormTypeInputMap.',
       );
 
       expect(() => {
@@ -352,7 +352,7 @@ describe('normalizeFormTypeInputMap', () => {
           '/invalid*+': TestStringComponent, // 잘못된 quantifier
         });
       }).toThrow(
-        'FormTypeInputMap contains an invalid key pattern.: /invalid*+',
+        'Invalid key pattern in FormTypeInputMap.',
       );
     });
   });

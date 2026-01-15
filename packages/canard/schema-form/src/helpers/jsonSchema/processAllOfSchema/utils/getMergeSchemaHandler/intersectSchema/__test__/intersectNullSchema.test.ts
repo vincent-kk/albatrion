@@ -79,7 +79,7 @@ describe('intersectNullSchema', () => {
         const source: Partial<NullSchema> = { enum: [] }; // Empty intersection
 
         expect(() => intersectNullSchema(base, source)).toThrow(
-          'Enum values must have at least one common value',
+          'Empty enum intersection in schema merge',
         );
       });
     });
@@ -99,7 +99,7 @@ describe('intersectNullSchema', () => {
         const source: Partial<NullSchema> = { const: 'not-null' as any };
 
         expect(() => intersectNullSchema(base, source)).toThrow(
-          'Conflicting const values: null vs not-null',
+          'Conflicting const values in schema intersection',
         );
       });
     });

@@ -661,7 +661,7 @@ describe('ObjectNode', () => {
         onChange: () => {},
       }),
     ).toThrowError(
-      "Property 'category' defined in 'oneOf' schema cannot redefine a property already defined in the current schema.",
+      "Property redefinition not allowed in 'oneOf' schema.",
     );
   });
 
@@ -705,7 +705,7 @@ describe('ObjectNode', () => {
         onChange: () => {},
       }),
     ).toThrowError(
-      "Type cannot be redefined in 'oneOf' schema. It must either be omitted or match the parent schema type.",
+      "Type redefinition not allowed in 'oneOf' schema.",
     );
   });
 

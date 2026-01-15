@@ -10,7 +10,7 @@ describe('intersectEnum', () => {
 
   test('throws error when intersection is empty', () => {
     expect(() => intersectEnum(['a', 'b'], ['c', 'd'])).toThrow(
-      'Enum values must have at least one common value',
+      'Empty enum intersection in schema merge',
     );
   });
 
@@ -55,13 +55,13 @@ describe('intersectEnum', () => {
 
   test('empty arrays', () => {
     expect(() => intersectEnum([], [])).toThrow(
-      'Enum values must have at least one common value',
+      'Empty enum intersection in schema merge',
     );
     expect(() => intersectEnum(['a'], [])).toThrow(
-      'Enum values must have at least one common value',
+      'Empty enum intersection in schema merge',
     );
     expect(() => intersectEnum([], ['a'])).toThrow(
-      'Enum values must have at least one common value',
+      'Empty enum intersection in schema merge',
     );
   });
 

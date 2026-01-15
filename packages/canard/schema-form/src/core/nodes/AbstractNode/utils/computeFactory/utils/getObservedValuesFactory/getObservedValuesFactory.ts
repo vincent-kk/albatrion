@@ -3,6 +3,7 @@ import { isArray, isString } from '@winglet/common-utils/filter';
 import type { Fn } from '@aileron/declare';
 
 import { JsonSchemaError } from '@/schema-form/errors';
+import { formatObservedValuesError } from '@/schema-form/helpers/error';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import type { PathManager } from '../getPathManager';
@@ -58,7 +59,7 @@ export const getObservedValuesFactory =
     } catch (error) {
       throw new JsonSchemaError(
         'OBSERVED_VALUES',
-        `Failed to create dynamic function: ${fieldName} -> '${JSON.stringify(watch)}'`,
+        formatObservedValuesError(fieldName, watch, watchValueIndexes, error),
         { fieldName, watch, watchValueIndexes, error },
       );
     }

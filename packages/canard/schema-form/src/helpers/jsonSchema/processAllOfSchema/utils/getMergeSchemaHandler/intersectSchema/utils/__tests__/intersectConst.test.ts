@@ -12,13 +12,13 @@ describe('intersectConst', () => {
 
   test('throws error when values are different', () => {
     expect(() => intersectConst('value1', 'value2')).toThrow(
-      'Conflicting const values: value1 vs value2',
+      'Conflicting const values in schema intersection',
     );
     expect(() => intersectConst(42, 84)).toThrow(
-      'Conflicting const values: 42 vs 84',
+      'Conflicting const values in schema intersection',
     );
     expect(() => intersectConst(true, false)).toThrow(
-      'Conflicting const values: true vs false',
+      'Conflicting const values in schema intersection',
     );
   });
 
@@ -63,7 +63,7 @@ describe('intersectConst', () => {
     expect(intersectConst(false, false)).toBe(false);
     expect(intersectConst('', '')).toBe('');
     expect(() => intersectConst(0, false as any)).toThrow(
-      'Conflicting const values: 0 vs false',
+      'Conflicting const values in schema intersection',
     );
   });
 

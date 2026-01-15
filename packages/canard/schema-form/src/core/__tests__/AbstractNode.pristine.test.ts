@@ -270,7 +270,10 @@ describe('AbstractNode - pristine', () => {
       const thresholdNode = node?.find('/threshold') as NumberNode;
 
       // dirty 상태로 만듦
-      dataNode.setState({ [NodeState.Dirty]: true, [NodeState.ShowError]: true });
+      dataNode.setState({
+        [NodeState.Dirty]: true,
+        [NodeState.ShowError]: true,
+      });
       await wait();
       expect(dataNode.state[NodeState.Dirty]).toBe(true);
       expect(dataNode.state[NodeState.ShowError]).toBe(true);
@@ -385,7 +388,9 @@ describe('AbstractNode - pristine', () => {
 
       await wait();
 
-      const conditionalFieldNode = node?.find('/conditionalField') as StringNode;
+      const conditionalFieldNode = node?.find(
+        '/conditionalField',
+      ) as StringNode;
       const resetTriggerNode = node?.find('/resetTrigger') as BooleanNode;
 
       // dirty 상태로 만듦
@@ -590,7 +595,9 @@ describe('AbstractNode - pristine', () => {
       await wait();
 
       const innerFieldNode = node?.find('/nested/innerField') as StringNode;
-      const resetTriggerNode = node?.find('/nested/resetTrigger') as BooleanNode;
+      const resetTriggerNode = node?.find(
+        '/nested/resetTrigger',
+      ) as BooleanNode;
 
       // dirty 상태로 만듦
       innerFieldNode.setState({ [NodeState.Dirty]: true });
@@ -820,7 +827,10 @@ describe('AbstractNode - pristine', () => {
       const resetTriggerNode = node?.find('/resetTrigger') as BooleanNode;
 
       // nested 노드를 dirty 상태로 만듦
-      nestedNode.setState({ [NodeState.Dirty]: true, [NodeState.Touched]: true });
+      nestedNode.setState({
+        [NodeState.Dirty]: true,
+        [NodeState.Touched]: true,
+      });
       await wait();
 
       expect(nestedNode.state[NodeState.Dirty]).toBe(true);

@@ -3,6 +3,7 @@ import { stableSerialize } from '@winglet/common-utils/object';
 
 import type { SchemaFormPlugin } from '@/schema-form';
 import { UnhandledError } from '@/schema-form/errors';
+import { formatRegisterPluginError } from '@/schema-form/helpers/error';
 
 import { PluginManager } from './PluginManager';
 
@@ -203,10 +204,14 @@ export const registerPlugin = (plugin: SchemaFormPlugin | null) => {
     PluginManager.appendValidator(validator);
     PluginManager.appendFormatError(formatError);
   } catch (error) {
-    throw new UnhandledError('REGISTER_PLUGIN', 'Failed to register plugin', {
-      plugin,
-      error,
-    });
+    throw new UnhandledError(
+      'REGISTER_PLUGIN',
+      formatRegisterPluginError(plugin, error),
+      {
+        plugin,
+        error,
+      },
+    );
   }
   RegisteredPlugin.add(hash);
 };

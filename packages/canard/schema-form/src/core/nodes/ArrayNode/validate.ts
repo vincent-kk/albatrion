@@ -1,4 +1,10 @@
 import { JsonSchemaError } from '@/schema-form/errors';
+import {
+  formatItemsFalseWithoutPrefixItemsError,
+  formatMaxItemsExceedsPrefixItemsError,
+  formatMinItemsExceedsPrefixItemsError,
+  formatMissingItemsAndPrefixItemsError,
+} from '@/schema-form/helpers/error';
 import type { ArraySchema } from '@/schema-form/types';
 
 /**
@@ -19,7 +25,7 @@ export const validateArraySchema = (jsonSchema: ArraySchema) => {
   if (itemsSchema === false && !prefixItemsSchema)
     throw new JsonSchemaError(
       'UNEXPECTED_ARRAY_SCHEMA',
-      `Array schema with 'items: false' must have 'prefixItems' defined to specify allowed tuple elements`,
+      formatItemsFalseWithoutPrefixItemsError(jsonSchema),
       {
         jsonSchema,
         items: itemsSchema,
@@ -33,7 +39,7 @@ export const validateArraySchema = (jsonSchema: ArraySchema) => {
     if (!prefixItemsSchema)
       throw new JsonSchemaError(
         'UNEXPECTED_ARRAY_SCHEMA',
-        `Array schema must have at least one of 'items' or 'prefixItems' defined`,
+        formatMissingItemsAndPrefixItemsError(jsonSchema),
         {
           jsonSchema,
           items: itemsSchema,
@@ -46,8 +52,11 @@ export const validateArraySchema = (jsonSchema: ArraySchema) => {
     if (maxItems !== undefined && prefixItemsLength < maxItems)
       throw new JsonSchemaError(
         'UNEXPECTED_ARRAY_SCHEMA',
-        `Array schema without 'items' cannot have 'maxItems' (${maxItems}) greater than 'prefixItems' length (${prefixItemsLength}). ` +
-          `Define 'items' schema for indices beyond prefixItems, or set 'maxItems' to ${prefixItemsLength} or less.`,
+        formatMaxItemsExceedsPrefixItemsError(
+          jsonSchema,
+          maxItems,
+          prefixItemsLength,
+        ),
         {
           jsonSchema,
           items: itemsSchema,
@@ -62,8 +71,11 @@ export const validateArraySchema = (jsonSchema: ArraySchema) => {
     if (minItems !== undefined && prefixItemsLength < minItems)
       throw new JsonSchemaError(
         'UNEXPECTED_ARRAY_SCHEMA',
-        `Array schema without 'items' cannot have 'minItems' (${minItems}) greater than 'prefixItems' length (${prefixItemsLength}). ` +
-          `Define 'items' schema for indices beyond prefixItems, or set 'minItems' to ${prefixItemsLength} or less.`,
+        formatMinItemsExceedsPrefixItemsError(
+          jsonSchema,
+          minItems,
+          prefixItemsLength,
+        ),
         {
           jsonSchema,
           items: itemsSchema,
