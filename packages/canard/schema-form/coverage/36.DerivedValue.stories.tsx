@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { Form, type JsonSchema } from '../src';
+import { Form, type FormHandle, type JsonSchema, SetValueOption } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
@@ -483,63 +483,75 @@ export const RealCircularReferenceConverging = () => {
  * 실제 사용 시 브라우저가 멈출 수 있습니다!
  */
 export const RealCircularReferenceDiverging = () => {
-  // ⚠️ 위험! 이 스키마는 무한 루프를 발생시킬 수 있습니다.
-  // 실제로 테스트하려면 주석을 해제하세요.
+  // 🛡️ 무한 루프 감지 메커니즘이 활성화되어 있어 안전합니다.
+  // 100회 배치 초과 시 JsonSchemaError가 발생합니다.
   const jsonSchema = {
     type: 'object',
     properties: {
-      warning: {
-        type: 'string',
-        title: '⚠️ 경고',
-        default: '이 스토리는 위험한 패턴을 보여줍니다.',
-        FormTypeInputProps: {
-          disabled: true,
+      a: {
+        type: 'number',
+        title: 'A (B + 1)',
+        default: 0,
+        computed: {
+          derived: '(../b || 0) + 1', // 발산!
         },
       },
-      // 아래 스키마를 활성화하면 무한 루프 발생!
-      // a: {
-      //   type: 'number',
-      //   title: 'A (B + 1)',
-      //   computed: {
-      //     derived: '../b + 1',  // 발산!
-      //   },
-      // },
-      // b: {
-      //   type: 'number',
-      //   title: 'B (A + 1)',
-      //   computed: {
-      //     derived: '../a + 1',  // 발산!
-      //   },
-      // },
+      b: {
+        type: 'number',
+        title: 'B (A + 1)',
+        default: 0,
+        computed: {
+          derived: '(../a || 0) + 1', // 발산!
+        },
+      },
     },
   } satisfies JsonSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handler = (event: ErrorEvent) => {
+      if (event.error?.code?.includes?.('INFINITE_LOOP_DETECTED')) {
+        setError(event.error.message);
+        event.preventDefault();
+      }
+    };
+    window.addEventListener('error', handler);
+    return () => window.removeEventListener('error', handler);
+  }, []);
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value}>
       <div
         style={{ padding: '10px', background: '#f8d7da', marginBottom: '10px' }}
       >
-        <strong>🔴 발산하는 순환 참조 (비활성화됨):</strong>
+        <strong>🔴 발산하는 순환 참조 (무한 루프 감지 활성화):</strong>
         <br />
         <code>A = B + 1, B = A + 1</code>
         <br />
-        이 수식은 값이 계속 증가하므로 무한 루프가 발생합니다!
+        이 수식은 값이 계속 증가하여 무한 루프가 발생하지만,
+        <br />
+        <strong>
+          100회 배치 초과 시 JsonSchemaError가 발생하여 보호됩니다.
+        </strong>
         <br />
         <br />
-        <strong>발산하는 수식 예시:</strong>
-        <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
-          <li>
-            <code>A = B + 1, B = A + 1</code> → 무한 증가
-          </li>
-          <li>
-            <code>A = B * 2, B = A * 2</code> → 무한 증가
-          </li>
-          <li>
-            <code>self = self + 1</code> → 자기 참조로 무한 증가
-          </li>
-        </ul>
+        {error && (
+          <pre
+            style={{
+              padding: '10px',
+              background: '#721c24',
+              color: 'white',
+              borderRadius: '4px',
+              marginTop: '10px',
+            }}
+          >
+            <strong>🛡️ 무한 루프 감지됨:</strong>
+            <br />
+            {error}
+          </pre>
+        )}
       </div>
       <Form jsonSchema={jsonSchema} onChange={setValue} />
     </StoryLayout>
@@ -1546,67 +1558,82 @@ export const SafeDerivedChainWithOneOf = () => {
 };
 
 /**
- * 🔴 실제 무한 루프 시뮬레이션 (비활성화됨)
+ * 🔴 실제 무한 루프 시뮬레이션 (무한 루프 감지 활성화)
  *
  * 이 케이스는 실제로 무한 루프를 발생시키는 패턴을 보여줍니다.
- * ⚠️ 경고: 주석 해제 시 브라우저가 멈출 수 있습니다!
+ * 🛡️ 100회 배치 초과 시 JsonSchemaError가 발생하여 보호됩니다.
  */
 export const DangerInfiniteLoopSimulation = () => {
-  // ⚠️ 이 스키마는 무한 루프를 발생시킵니다. 활성화하지 마세요!
+  // 🛡️ 무한 루프 감지 메커니즘이 활성화되어 있어 안전합니다.
+  // oneOf if가 derived를 참조하고, 분기 전환이 derived를 다시 변경하는 패턴
   const jsonSchema: JsonSchema = {
     type: 'object',
     properties: {
-      warning: {
-        type: 'string',
-        title: '⚠️ 경고',
-        default: '아래 주석 처리된 스키마는 무한 루프를 발생시킵니다.',
-        FormTypeInputProps: {
-          disabled: true,
+      // threshold는 conditional.value에 의존하는 derived
+      threshold: {
+        type: 'number',
+        title: 'Threshold (derived: value * 2)',
+        computed: {
+          derived: '(/conditional/value || 0) * 2',
         },
       },
-      // ❌ 위험한 패턴 1: oneOf if가 derived를 직접 참조
-      // derived가 변경 → if 조건 재평가 → 분기 전환 → 새 derived 계산 → 무한 루프
-      //
-      // threshold: {
-      //   type: 'number',
-      //   computed: {
-      //     derived: '/value * 2',  // value가 변경되면 threshold도 변경
-      //   },
-      // },
-      // conditional: {
-      //   type: 'object',
-      //   oneOf: [
-      //     {
-      //       type: 'object',
-      //       computed: {
-      //         if: '/threshold < 100',  // ❌ derived인 threshold를 참조!
-      //       },
-      //       properties: {
-      //         value: { type: 'number', default: 10 },  // 이 값이 threshold에 영향
-      //       },
-      //     },
-      //     {
-      //       type: 'object',
-      //       computed: {
-      //         if: '/threshold >= 100',
-      //       },
-      //       properties: {
-      //         value: { type: 'number', default: 100 },  // 분기 전환 시 이 값이 threshold에 영향
-      //       },
-      //     },
-      //   ],
-      // },
+      conditional: {
+        type: 'object',
+        oneOf: [
+          {
+            type: 'object',
+            computed: {
+              // ❌ derived인 threshold를 참조!
+              // threshold < 50 → 이 분기 활성화 → value = 30 → threshold = 60 → 분기 전환!
+              if: '/threshold < 50',
+            },
+            properties: {
+              value: {
+                type: 'number',
+                default: 30,
+                title: 'Value (분기 A: default=30)',
+              },
+            },
+          },
+          {
+            type: 'object',
+            computed: {
+              // threshold >= 50 → 이 분기 활성화 → value = 20 → threshold = 40 → 분기 전환!
+              if: '/threshold >= 50',
+            },
+            properties: {
+              value: {
+                type: 'number',
+                default: 20,
+                title: 'Value (분기 B: default=20)',
+              },
+            },
+          },
+        ],
+      },
     },
   };
 
   const [value, setValue] = useState<Record<string, unknown>>();
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handler = (event: ErrorEvent) => {
+      if (event.error?.code?.includes?.('INFINITE_LOOP_DETECTED')) {
+        setError(event.error.message);
+        event.preventDefault();
+      }
+    };
+    window.addEventListener('error', handler);
+    return () => window.removeEventListener('error', handler);
+  }, []);
 
   return (
     <StoryLayout jsonSchema={jsonSchema} value={value}>
       <div
         style={{ padding: '10px', background: '#f8d7da', marginBottom: '10px' }}
       >
-        <strong>🔴 무한 루프 패턴 (비활성화됨)</strong>
+        <strong>🔴 무한 루프 패턴 (무한 루프 감지 활성화)</strong>
         <br />
         <br />
         <strong>위험한 패턴:</strong>
@@ -1620,22 +1647,22 @@ export const DangerInfiniteLoopSimulation = () => {
         >
           {`// threshold는 derived (value * 2)
 threshold: {
-  computed: { derived: '/value * 2' }
+  computed: { derived: '/conditional/value * 2' }
 }
 
 // oneOf의 if가 threshold(derived)를 참조
 conditional: {
   oneOf: [
     {
-      computed: { if: '/threshold < 100' },  // ❌ derived 참조!
+      computed: { if: '/threshold < 50' },  // ❌ derived 참조!
       properties: {
-        value: { default: 10 }  // threshold = 20
+        value: { default: 30 }  // threshold = 60 → 분기 전환!
       }
     },
     {
-      computed: { if: '/threshold >= 100' },
+      computed: { if: '/threshold >= 50' },
       properties: {
-        value: { default: 100 }  // threshold = 200
+        value: { default: 20 }  // threshold = 40 → 분기 전환!
       }
     }
   ]
@@ -1644,15 +1671,28 @@ conditional: {
         <br />
         <strong>순환:</strong>
         <ol style={{ margin: '5px 0', paddingLeft: '20px' }}>
-          <li>초기 value=10 → threshold=20 → 첫 번째 분기 활성화</li>
-          <li>value를 100으로 수동 변경 → threshold=200</li>
-          <li>threshold≥100 → 두 번째 분기로 전환</li>
-          <li>두 번째 분기의 value=100 → threshold=200 (유지)</li>
-          <li>
-            만약 분기마다 value가 다르고 threshold 조건이 분기 전환을 일으키면
-            무한 루프!
-          </li>
+          <li>초기 threshold=0 → 첫 번째 분기 활성화 (threshold {'<'} 50)</li>
+          <li>value=30 → threshold=60</li>
+          <li>threshold≥50 → 두 번째 분기로 전환</li>
+          <li>value=20 → threshold=40</li>
+          <li>threshold{'<'}50 → 첫 번째 분기로 전환</li>
+          <li>무한 반복! → 100회 초과 시 JsonSchemaError 발생</li>
         </ol>
+        {error && (
+          <pre
+            style={{
+              padding: '10px',
+              background: '#721c24',
+              color: 'white',
+              borderRadius: '4px',
+              marginTop: '10px',
+            }}
+          >
+            <strong>🛡️ 무한 루프 감지됨:</strong>
+            <br />
+            {error}
+          </pre>
+        )}
       </div>
       <Form jsonSchema={jsonSchema} onChange={setValue} />
     </StoryLayout>
@@ -2121,5 +2161,950 @@ export const InfiniteLoopPreventionGuide = () => {
         <li>발산하는 순환 (값이 계속 증가/변경)은 무한 루프 발생!</li>
       </ul>
     </div>
+  );
+};
+
+// ============================================================================
+// 🔬 테스트 시나리오: 순환 참조 및 동시 다발적 업데이트
+// ============================================================================
+
+/**
+ * 🔴 발산하는 순환 참조 테스트 (무한 루프 감지 활성화)
+ *
+ * A = B + 1, B = A + 1 형태의 발산하는 순환 참조입니다.
+ * 🛡️ 100회 배치 초과 시 JsonSchemaError가 발생하여 보호됩니다.
+ */
+export const CircularReferenceDivergingWithProtection = () => {
+  // 🛡️ 무한 루프 감지 메커니즘이 활성화되어 있어 안전합니다.
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      a: {
+        type: 'number',
+        title: 'A (B + 1)',
+        default: 0,
+        computed: {
+          derived: '(../b || 0) + 1', // 발산!
+        },
+      },
+      b: {
+        type: 'number',
+        title: 'B (A + 1)',
+        default: 0,
+        computed: {
+          derived: '(../a || 0) + 1', // 발산!
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handler = (event: ErrorEvent) => {
+      if (event.error?.code?.includes?.('INFINITE_LOOP_DETECTED')) {
+        setError(event.error.message);
+        event.preventDefault();
+      }
+    };
+    window.addEventListener('error', handler);
+    return () => window.removeEventListener('error', handler);
+  }, []);
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <div
+        style={{ padding: '10px', background: '#f8d7da', marginBottom: '10px' }}
+      >
+        <strong>🔴 발산하는 순환 참조 (무한 루프 감지 활성화)</strong>
+        <br />
+        <br />
+        <strong>스키마:</strong>
+        <pre
+          style={{
+            background: '#fff',
+            padding: '10px',
+            fontSize: '12px',
+            overflow: 'auto',
+          }}
+        >
+          {`// 발산하는 순환 참조
+{
+  a: {
+    type: 'number',
+    default: 0,
+    computed: {
+      derived: '(../b || 0) + 1',  // B + 1
+    },
+  },
+  b: {
+    type: 'number',
+    default: 0,
+    computed: {
+      derived: '(../a || 0) + 1',  // A + 1
+    },
+  },
+}`}
+        </pre>
+        <br />
+        <strong>동작 순서:</strong>
+        <ol style={{ margin: '5px 0', paddingLeft: '20px' }}>
+          <li>초기값: A=0, B=0</li>
+          <li>A = B + 1 = 1</li>
+          <li>B = A + 1 = 2</li>
+          <li>A = B + 1 = 3</li>
+          <li>B = A + 1 = 4</li>
+          <li>... → 100회 배치 초과 시 JsonSchemaError 발생!</li>
+        </ol>
+        {error && (
+          <pre
+            style={{
+              padding: '10px',
+              background: '#721c24',
+              color: 'white',
+              borderRadius: '4px',
+              marginTop: '10px',
+            }}
+          >
+            <strong>🛡️ 무한 루프 감지됨:</strong>
+            <br />
+            {error}
+          </pre>
+        )}
+      </div>
+      <Form jsonSchema={jsonSchema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+/**
+ * 🔬 동시 다발적 derived 업데이트 테스트
+ *
+ * 단일 소스가 여러 derived 필드에 영향을 줄 때,
+ * 모든 derived가 올바르게 업데이트되고
+ * 이벤트 순서가 일관성 있게 유지되는지 확인합니다.
+ */
+export const ConcurrentDerivedUpdates = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      source: {
+        type: 'number',
+        title: '소스 값',
+        default: 10,
+      },
+      derived1: {
+        type: 'number',
+        title: 'Derived 1 (source × 2)',
+        computed: {
+          derived: '../source * 2',
+        },
+      },
+      derived2: {
+        type: 'number',
+        title: 'Derived 2 (source × 3)',
+        computed: {
+          derived: '../source * 3',
+        },
+      },
+      derived3: {
+        type: 'number',
+        title: 'Derived 3 (source × 4)',
+        computed: {
+          derived: '../source * 4',
+        },
+      },
+      combined: {
+        type: 'number',
+        title: 'Combined (derived1 + derived2)',
+        computed: {
+          derived: '../derived1 + ../derived2',
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <div
+        style={{ padding: '10px', background: '#e7f3ff', marginBottom: '10px' }}
+      >
+        <strong>🔬 동시 다발적 derived 업데이트</strong>
+        <br />
+        <br />
+        <strong>의존성 구조:</strong>
+        <pre
+          style={{
+            background: '#fff',
+            padding: '10px',
+            fontSize: '12px',
+            overflow: 'auto',
+          }}
+        >
+          {`source (10)
+├── derived1 = source × 2 = 20
+├── derived2 = source × 3 = 30
+├── derived3 = source × 4 = 40
+└── combined = derived1 + derived2 = 50`}
+        </pre>
+        <br />
+        <table
+          style={{
+            borderCollapse: 'collapse',
+            width: '100%',
+            fontSize: '14px',
+          }}
+        >
+          <thead>
+            <tr style={{ background: '#f0f0f0' }}>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                source
+              </th>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                derived1
+              </th>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                derived2
+              </th>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                derived3
+              </th>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                combined
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>10</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>20</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>30</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>40</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>50</td>
+            </tr>
+            <tr>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>100</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>200</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>300</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>400</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>500</td>
+            </tr>
+          </tbody>
+        </table>
+        <br />
+        <strong>테스트 시나리오:</strong>
+        <ol style={{ margin: '5px 0', paddingLeft: '20px' }}>
+          <li>source를 10에서 100으로 변경</li>
+          <li>derived1, derived2, derived3이 동시에 업데이트됨</li>
+          <li>combined가 derived1, derived2의 새 값을 반영</li>
+          <li>모든 이벤트가 올바른 순서로 발생</li>
+        </ol>
+      </div>
+      <Form jsonSchema={jsonSchema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+/**
+ * 🔗 체이닝된 derived value 테스트
+ *
+ * A → B → C → D 형태의 연쇄 의존성에서
+ * 값이 올바르게 전파되는지 확인합니다.
+ */
+export const ChainedDerivedValues = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      source: {
+        type: 'number',
+        title: '소스 (입력값)',
+        default: 10,
+      },
+      step1: {
+        type: 'number',
+        title: 'Step 1 (source + 10)',
+        computed: {
+          derived: '../source + 10',
+        },
+      },
+      step2: {
+        type: 'number',
+        title: 'Step 2 (step1 × 2)',
+        computed: {
+          derived: '../step1 * 2',
+        },
+      },
+      step3: {
+        type: 'number',
+        title: 'Step 3 (step2 + 100)',
+        computed: {
+          derived: '../step2 + 100',
+        },
+      },
+      final: {
+        type: 'number',
+        title: 'Final (step3 / 10)',
+        computed: {
+          derived: '../step3 / 10',
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <div
+        style={{ padding: '10px', background: '#d4edda', marginBottom: '10px' }}
+      >
+        <strong>🔗 체이닝된 derived value</strong>
+        <br />
+        <br />
+        <strong>의존성 체인:</strong>
+        <pre
+          style={{
+            background: '#fff',
+            padding: '10px',
+            fontSize: '12px',
+            overflow: 'auto',
+          }}
+        >
+          {`source → step1 → step2 → step3 → final
+
+source = 10
+step1 = source + 10 = 20
+step2 = step1 × 2 = 40
+step3 = step2 + 100 = 140
+final = step3 / 10 = 14`}
+        </pre>
+        <br />
+        <table
+          style={{
+            borderCollapse: 'collapse',
+            width: '100%',
+            fontSize: '14px',
+          }}
+        >
+          <thead>
+            <tr style={{ background: '#f0f0f0' }}>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                source
+              </th>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                step1
+              </th>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                step2
+              </th>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                step3
+              </th>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                final
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>10</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>20</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>40</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>140</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>14</td>
+            </tr>
+            <tr>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>50</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>60</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>120</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>220</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>22</td>
+            </tr>
+          </tbody>
+        </table>
+        <br />
+        <strong>핵심 포인트:</strong>
+        <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
+          <li>source 변경 시 전체 체인이 순차적으로 업데이트됨</li>
+          <li>각 단계의 derived가 이전 단계의 새 값을 올바르게 반영</li>
+          <li>이벤트 순서가 의존성 순서를 따름</li>
+        </ul>
+      </div>
+      <Form jsonSchema={jsonSchema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+/**
+ * ⚡ 3노드 순환 참조 테스트 (무한 루프 감지 활성화)
+ *
+ * A → B → C → A 형태의 3노드 순환 참조입니다.
+ * 🛡️ 100회 배치 초과 시 JsonSchemaError가 발생하여 보호됩니다.
+ */
+export const ThreeNodeCircularReference = () => {
+  // 🛡️ 무한 루프 감지 메커니즘이 활성화되어 있어 안전합니다.
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      a: {
+        type: 'number',
+        title: 'A (C + 1)',
+        default: 0,
+        computed: { derived: '(../c || 0) + 1' },
+      },
+      b: {
+        type: 'number',
+        title: 'B (A + 1)',
+        default: 0,
+        computed: { derived: '(../a || 0) + 1' },
+      },
+      c: {
+        type: 'number',
+        title: 'C (B + 1)',
+        default: 0,
+        computed: { derived: '(../b || 0) + 1' },
+      },
+    },
+  } satisfies JsonSchema;
+
+  const [value, setValue] = useState<Record<string, unknown>>();
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handler = (event: ErrorEvent) => {
+      if (event.error?.code?.includes?.('INFINITE_LOOP_DETECTED')) {
+        setError(event.error.message);
+        event.preventDefault();
+      }
+    };
+    window.addEventListener('error', handler);
+    return () => window.removeEventListener('error', handler);
+  }, []);
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <div
+        style={{ padding: '10px', background: '#f8d7da', marginBottom: '10px' }}
+      >
+        <strong>⚡ 3노드 순환 참조 (무한 루프 감지 활성화)</strong>
+        <br />
+        <br />
+        <strong>순환 구조:</strong>
+        <pre
+          style={{
+            background: '#fff',
+            padding: '10px',
+            fontSize: '12px',
+            overflow: 'auto',
+          }}
+        >
+          {`A → B → C → A (순환!)
+
+a = c + 1
+b = a + 1
+c = b + 1
+
+동작 순서:
+1. 초기: a=0, b=0, c=0
+2. a = c + 1 = 1
+3. b = a + 1 = 2
+4. c = b + 1 = 3
+5. a = c + 1 = 4
+6. b = a + 1 = 5
+7. ... → 100회 배치 초과 시 JsonSchemaError 발생!`}
+        </pre>
+        {error && (
+          <pre
+            style={{
+              padding: '10px',
+              background: '#721c24',
+              color: 'white',
+              borderRadius: '4px',
+              marginTop: '10px',
+            }}
+          >
+            <strong>🛡️ 무한 루프 감지됨:</strong>
+            <br />
+            {error}
+          </pre>
+        )}
+      </div>
+      <Form jsonSchema={jsonSchema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+// ============================================================================
+// 🔄 formHandle.setValue() + oneOf/if-then-else + derived 수렴 테스트
+// ============================================================================
+
+/**
+ * 📋 formHandle.setValue()로 여러 필드 동시 주입 + if-then-else + derived
+ *
+ * refHandler (formHandle)를 통해 값을 주입할 때
+ * if-then-else 조건부 스키마와 derived 값이 함께 존재하는 경우의
+ * 정상적인 수렴을 보여줍니다.
+ */
+export const FormHandleSetValueWithIfThenElseAndDerived = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      category: {
+        type: 'string',
+        title: '카테고리',
+        enum: ['game', 'movie'],
+        default: 'game',
+      },
+      basePrice: {
+        type: 'number',
+        title: '기본 가격',
+        default: 100,
+      },
+      quantity: {
+        type: 'number',
+        title: '수량',
+        default: 1,
+      },
+      totalPrice: {
+        type: 'number',
+        title: '총 가격 (자동 계산)',
+        computed: {
+          derived: '(../basePrice || 0) * (../quantity || 1)',
+        },
+      },
+      openingDate: {
+        type: 'string',
+        title: '개봉일 (movie일 때 필수)',
+        format: 'date',
+      },
+    },
+    if: {
+      properties: {
+        category: { enum: ['movie'] },
+      },
+    },
+    then: {
+      required: ['openingDate'],
+    },
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof jsonSchema>>(null);
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <div
+        style={{ padding: '10px', background: '#d4edda', marginBottom: '10px' }}
+      >
+        <strong>📋 formHandle.setValue() + if-then-else + derived</strong>
+        <br />
+        <br />
+        <strong>시나리오:</strong>
+        <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
+          <li>
+            <code>totalPrice = basePrice × quantity</code> (derived)
+          </li>
+          <li>
+            <code>category</code>가 movie일 때 <code>openingDate</code> 필수
+            (if-then-else)
+          </li>
+          <li>
+            formHandle.setValue()로 여러 필드를 동시에 주입해도 값이 올바르게
+            수렴
+          </li>
+        </ul>
+      </div>
+      <div style={{ marginBottom: '10px' }}>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({
+              category: 'movie',
+              basePrice: 200,
+              quantity: 3,
+              openingDate: '2025-01-01',
+            })
+          }
+        >
+          영화 설정 (200 × 3 = 600)
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({
+              category: 'game',
+              basePrice: 500,
+              quantity: 2,
+            })
+          }
+        >
+          게임 설정 (500 × 2 = 1000)
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({ quantity: 5 }, SetValueOption.Merge)
+          }
+        >
+          수량만 변경 (Merge: 5)
+        </button>
+        <button onClick={() => formHandle.current?.reset()}>리셋</button>
+      </div>
+      <Form ref={formHandle} jsonSchema={jsonSchema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+/**
+ * 📋 formHandle.setValue()로 여러 필드 동시 주입 + oneOf + derived
+ *
+ * oneOf 조건부 스키마와 derived 값이 함께 존재할 때
+ * formHandle.setValue()로 값을 주입하면 올바르게 수렴합니다.
+ */
+export const FormHandleSetValueWithOneOfAndDerived = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      productType: {
+        type: 'string',
+        title: '제품 유형',
+        enum: ['basic', 'premium'],
+        default: 'basic',
+      },
+      price: {
+        type: 'number',
+        title: '가격',
+        default: 1000,
+      },
+      discountRate: {
+        type: 'number',
+        title: '할인율',
+        default: 0.9,
+      },
+      discountedPrice: {
+        type: 'number',
+        title: '할인가 (자동 계산)',
+        computed: {
+          derived: '(../price || 0) * (../discountRate || 1)',
+        },
+      },
+    },
+    oneOf: [
+      {
+        computed: {
+          if: "#/productType === 'premium'",
+        },
+        properties: {
+          premiumFeatures: {
+            type: 'array',
+            title: '프리미엄 기능',
+            items: { type: 'string' },
+          },
+        },
+      },
+    ],
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof jsonSchema>>(null);
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <div
+        style={{ padding: '10px', background: '#d4edda', marginBottom: '10px' }}
+      >
+        <strong>📋 formHandle.setValue() + oneOf + derived</strong>
+        <br />
+        <br />
+        <strong>시나리오:</strong>
+        <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
+          <li>
+            <code>discountedPrice = price × discountRate</code> (derived)
+          </li>
+          <li>
+            <code>productType</code>이 premium일 때 premiumFeatures 필드 활성화
+            (oneOf)
+          </li>
+          <li>formHandle.setValue()로 동시에 값 주입 시 올바르게 수렴</li>
+        </ul>
+      </div>
+      <div style={{ marginBottom: '10px' }}>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({
+              productType: 'premium',
+              price: 5000,
+              discountRate: 0.8,
+            })
+          }
+        >
+          프리미엄 (5000 × 0.8 = 4000)
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({
+              productType: 'basic',
+              price: 1000,
+              discountRate: 0.9,
+            })
+          }
+        >
+          베이직 (1000 × 0.9 = 900)
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue(
+              { discountRate: 0.5 },
+              SetValueOption.Merge,
+            )
+          }
+        >
+          할인율만 변경 (Merge: 0.5)
+        </button>
+        <button onClick={() => formHandle.current?.reset()}>리셋</button>
+      </div>
+      <Form ref={formHandle} jsonSchema={jsonSchema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+/**
+ * 📋 복합 시나리오: formHandle.setValue() + if-then-else + 체이닝된 derived
+ *
+ * 체이닝된 derived (A → B → C → D)와 if-then-else 조건부 스키마가
+ * 함께 존재할 때 formHandle.setValue()로 값을 주입하면
+ * 모든 체이닝된 계산이 올바르게 수렴합니다.
+ */
+export const FormHandleSetValueWithChainedDerived = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      mode: {
+        type: 'string',
+        title: '모드',
+        enum: ['standard', 'express'],
+        default: 'standard',
+      },
+      input: {
+        type: 'number',
+        title: '입력값',
+        default: 10,
+      },
+      step1: {
+        type: 'number',
+        title: 'Step 1 (input × 2)',
+        computed: {
+          derived: '(../input || 0) * 2',
+        },
+      },
+      step2: {
+        type: 'number',
+        title: 'Step 2 (step1 + 100)',
+        computed: {
+          derived: '(../step1 || 0) + 100',
+        },
+      },
+      step3: {
+        type: 'number',
+        title: 'Step 3 (조건부 계산)',
+        computed: {
+          derived: '(../step2 || 0) * (../mode === "express" ? 2 : 1)',
+        },
+      },
+    },
+    if: {
+      properties: {
+        mode: { enum: ['express'] },
+      },
+    },
+    then: {
+      properties: {
+        expressNote: {
+          type: 'string',
+          title: '빠른 배송 메모',
+          default: '빠른 배송이 선택되었습니다.',
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof jsonSchema>>(null);
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <div
+        style={{ padding: '10px', background: '#d4edda', marginBottom: '10px' }}
+      >
+        <strong>
+          📋 formHandle.setValue() + 체이닝된 derived + if-then-else
+        </strong>
+        <br />
+        <br />
+        <strong>체이닝된 계산:</strong>
+        <pre
+          style={{
+            background: '#fff',
+            padding: '10px',
+            fontSize: '12px',
+            overflow: 'auto',
+          }}
+        >
+          {`input → step1 → step2 → step3
+
+step1 = input × 2
+step2 = step1 + 100
+step3 = step2 × (mode === "express" ? 2 : 1)
+
+예시 (input=10, mode=standard):
+step1 = 10 × 2 = 20
+step2 = 20 + 100 = 120
+step3 = 120 × 1 = 120
+
+예시 (input=50, mode=express):
+step1 = 50 × 2 = 100
+step2 = 100 + 100 = 200
+step3 = 200 × 2 = 400`}
+        </pre>
+      </div>
+      <div style={{ marginBottom: '10px' }}>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({
+              mode: 'express',
+              input: 50,
+            })
+          }
+        >
+          Express 모드 (input=50, step3=400)
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({
+              mode: 'standard',
+              input: 100,
+            })
+          }
+        >
+          Standard 모드 (input=100, step3=300)
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({ input: 25 }, SetValueOption.Merge)
+          }
+        >
+          입력값만 변경 (Merge: 25)
+        </button>
+        <button onClick={() => formHandle.current?.reset()}>리셋</button>
+      </div>
+      <Form ref={formHandle} jsonSchema={jsonSchema} onChange={setValue} />
+    </StoryLayout>
+  );
+};
+
+/**
+ * 📋 복합 시나리오: formHandle.setValue() + 여러 derived 필드 동시 업데이트
+ *
+ * 여러 derived 필드가 동일한 소스에 의존할 때
+ * formHandle.setValue()로 소스를 변경하면
+ * 모든 derived 필드가 동시에 올바르게 업데이트됩니다.
+ */
+export const FormHandleSetValueWithMultipleDerived = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      baseAmount: {
+        type: 'number',
+        title: '기본 금액',
+        default: 1000,
+      },
+      taxRate: {
+        type: 'number',
+        title: '세율',
+        default: 0.1,
+      },
+      taxAmount: {
+        type: 'number',
+        title: '세금 (자동 계산)',
+        computed: {
+          derived: '(../baseAmount || 0) * (../taxRate || 0)',
+        },
+      },
+      totalAmount: {
+        type: 'number',
+        title: '총액 (자동 계산)',
+        computed: {
+          derived:
+            '(../baseAmount || 0) + ((../baseAmount || 0) * (../taxRate || 0))',
+        },
+      },
+      displayLabel: {
+        type: 'string',
+        title: '표시 라벨 (자동 계산)',
+        computed: {
+          derived:
+            '"총액: " + ((../baseAmount || 0) + ((../baseAmount || 0) * (../taxRate || 0))) + "원"',
+        },
+      },
+    },
+  } satisfies JsonSchema;
+
+  const formHandle = useRef<FormHandle<typeof jsonSchema>>(null);
+  const [value, setValue] = useState<Record<string, unknown>>();
+
+  return (
+    <StoryLayout jsonSchema={jsonSchema} value={value}>
+      <div
+        style={{ padding: '10px', background: '#d4edda', marginBottom: '10px' }}
+      >
+        <strong>📋 formHandle.setValue() + 여러 derived 필드</strong>
+        <br />
+        <br />
+        <strong>동시 업데이트되는 derived 필드:</strong>
+        <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
+          <li>
+            <code>taxAmount = baseAmount × taxRate</code>
+          </li>
+          <li>
+            <code>totalAmount = baseAmount + taxAmount</code>
+          </li>
+          <li>
+            <code>displayLabel = "총액: " + totalAmount + "원"</code>
+          </li>
+        </ul>
+        <strong>모든 derived가 동일 소스(baseAmount, taxRate)에 의존</strong>
+      </div>
+      <div style={{ marginBottom: '10px' }}>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({
+              baseAmount: 5000,
+              taxRate: 0.2,
+            })
+          }
+        >
+          5000원, 20% 세금 (총 6000원)
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({
+              baseAmount: 10000,
+              taxRate: 0.15,
+            })
+          }
+        >
+          10000원, 15% 세금 (총 11500원)
+        </button>
+        <button
+          onClick={() =>
+            formHandle.current?.setValue({ taxRate: 0 }, SetValueOption.Merge)
+          }
+        >
+          세율만 0으로 (Merge)
+        </button>
+        <button onClick={() => formHandle.current?.reset()}>리셋</button>
+      </div>
+      <Form ref={formHandle} jsonSchema={jsonSchema} onChange={setValue} />
+    </StoryLayout>
   );
 };

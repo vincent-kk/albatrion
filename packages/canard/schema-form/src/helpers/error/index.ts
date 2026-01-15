@@ -1,2 +1,3 @@
+export * from './formatErrorMessage';
+export * from './formatValidationError';
 export * from './transformErrors';
-export * from './formatError';

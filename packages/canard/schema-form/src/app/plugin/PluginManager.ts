@@ -9,7 +9,7 @@ import {
   FormLabelRenderer,
 } from '@/schema-form/components/FallbackComponents';
 import { formTypeDefinitions } from '@/schema-form/formTypeDefinitions';
-import { formatError } from '@/schema-form/helpers/error';
+import { formatValidationError } from '@/schema-form/helpers/error';
 import {
   type NormalizedFormTypeInputDefinition,
   normalizeFormTypeInputDefinitions,
@@ -39,14 +39,12 @@ const defaultRenderKit = {
 const defaultFormTypeInputDefinitions =
   normalizeFormTypeInputDefinitions(formTypeDefinitions);
 
-const defaultFormatError = formatError;
-
 export class PluginManager {
   static #renderKit: RenderKit = defaultRenderKit;
   static #formTypeInputDefinitions: NormalizedFormTypeInputDefinition[] =
     defaultFormTypeInputDefinitions;
   static #validator: ValidatorPlugin | undefined;
-  static #formatError: FormatError = defaultFormatError;
+  static #formatError: FormatError = formatValidationError;
 
   static get FormGroup() {
     return PluginManager.#renderKit.FormGroup;
@@ -74,7 +72,7 @@ export class PluginManager {
     PluginManager.#renderKit = defaultRenderKit;
     PluginManager.#formTypeInputDefinitions = defaultFormTypeInputDefinitions;
     PluginManager.#validator = undefined;
-    PluginManager.#formatError = defaultFormatError;
+    PluginManager.#formatError = formatValidationError;
   }
 
   static appendRenderKit(renderKit: Partial<RenderKit> | undefined) {

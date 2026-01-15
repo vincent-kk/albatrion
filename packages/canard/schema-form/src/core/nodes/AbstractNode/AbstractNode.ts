@@ -434,9 +434,12 @@ export abstract class AbstractNode<
   #listeners: Set<NodeListener> = new Set();
 
   /** Collects pushed events and publishes them at once */
-  #eventCascade = new EventCascade((eventCollection: NodeEventCollection) => {
-    for (const listener of this.#listeners) listener(eventCollection);
-  });
+  #eventCascade = new EventCascade(
+    (eventCollection: NodeEventCollection) => {
+      for (const listener of this.#listeners) listener(eventCollection);
+    },
+    () => ({ path: this.path, dependencies: this.#compute.dependencyPaths }),
+  );
 
   /** List of unsubscribe functions for other nodes */
   #unsubscribes: Array<Fn> = [];

@@ -67,9 +67,9 @@ describe('wrapReturnStatements', () => {
     });
 
     it('should wrap deeply nested object literal', () => {
-      expect(wrapReturnStatements('return { a: { b: { c: { d: 1 } } } };')).toBe(
-        'return !!({ a: { b: { c: { d: 1 } } } });',
-      );
+      expect(
+        wrapReturnStatements('return { a: { b: { c: { d: 1 } } } };'),
+      ).toBe('return !!({ a: { b: { c: { d: 1 } } } });');
     });
 
     it('should wrap array literal return', () => {
@@ -300,7 +300,9 @@ describe('wrapReturnStatements', () => {
       // In practice, this is acceptable because block expressions typically don't have
       // inline comments with "return" keyword pattern
       const input = 'return x; // return early';
-      expect(wrapReturnStatements(input)).toBe('return !!(x); // return !!(early)');
+      expect(wrapReturnStatements(input)).toBe(
+        'return !!(x); // return !!(early)',
+      );
     });
   });
 
@@ -328,9 +330,7 @@ describe('wrapReturnStatements', () => {
         wrapReturnStatements(
           'return dependencies[0] === "active" && dependencies[1] > 0;',
         ),
-      ).toBe(
-        'return !!(dependencies[0] === "active" && dependencies[1] > 0);',
-      );
+      ).toBe('return !!(dependencies[0] === "active" && dependencies[1] > 0);');
     });
 
     it('should handle conditional with dependencies', () => {
@@ -344,7 +344,8 @@ describe('wrapReturnStatements', () => {
 
   describe('real-world computed expression patterns', () => {
     it('should handle visibility check pattern', () => {
-      const input = 'if (dependencies[0] === "premium") return true; return false;';
+      const input =
+        'if (dependencies[0] === "premium") return true; return false;';
       const expected =
         'if (dependencies[0] === "premium") return !!(true); return !!(false);';
       expect(wrapReturnStatements(input)).toBe(expected);
@@ -413,16 +414,16 @@ return !!(dependencies[0] + dependencies[1]);`;
     });
 
     it('should handle complex business logic', () => {
-      const input = `const value = dependencies[0];
+      const input = `{const value = dependencies[0];
 const threshold = dependencies[1];
 if (value == null) return;
 if (value < threshold) return false;
-return value >= threshold;`;
-      const expected = `const value = dependencies[0];
+return value >= threshold;}`;
+      const expected = `{const value = dependencies[0];
 const threshold = dependencies[1];
 if (value == null) return false;
 if (value < threshold) return !!(false);
-return !!(value >= threshold);`;
+return !!(value >= threshold);}`;
       expect(wrapReturnStatements(input)).toBe(expected);
     });
   });
