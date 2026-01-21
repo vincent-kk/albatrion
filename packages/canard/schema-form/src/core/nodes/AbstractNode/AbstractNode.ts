@@ -1,11 +1,6 @@
 import { map } from '@winglet/common-utils/array';
 import { isEmptyObject, isObject } from '@winglet/common-utils/filter';
-import {
-  cloneLite,
-  equals,
-  getEmptyObject,
-  merge,
-} from '@winglet/common-utils/object';
+import { cloneLite, equals, merge } from '@winglet/common-utils/object';
 import { escapeSegment, setValue } from '@winglet/json/pointer';
 
 import type { Fn, Nullish } from '@aileron/declare';
@@ -752,7 +747,7 @@ export abstract class AbstractNode<
   }
 
   /** Node's state flags */
-  #state: NodeStateFlags = getEmptyObject();
+  #state: NodeStateFlags = {};
 
   /**
    * [readonly] Node's state flags
@@ -770,14 +765,14 @@ export abstract class AbstractNode<
     this: AbstractNode,
     input?: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags,
   ) {
-    const state = this.#state;
+    let state: NodeStateFlags | null = this.#state;
     const inputState =
       typeof input === 'function' ? input({ ...state }) : input;
-    let changed = false;
+    let idle = true;
     if (inputState === undefined) {
       if (isEmptyObject(state)) return;
-      this.#state = getEmptyObject();
-      changed = true;
+      state = null;
+      idle = false;
     } else if (isObject(inputState)) {
       const keys = Object.keys(inputState);
       for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
@@ -785,16 +780,18 @@ export abstract class AbstractNode<
         if (value === undefined) {
           if (k in state) {
             delete state[k];
-            changed = true;
+            if (idle) idle = false;
           }
         } else if (state[k] !== value) {
           state[k] = value;
-          changed = true;
+          if (idle) idle = false;
         }
       }
-      this.#state = state;
     }
-    if (changed) this.publish(NodeEventType.UpdateState, this.#state);
+    if (idle) return;
+    this.#state = state !== null ? { ...state } : {};
+    this.publish(NodeEventType.UpdateState, this.#state);
+    this.setFormState(this.#state);
   }
 
   /** [root only] List of data paths where validation errors occurred */
