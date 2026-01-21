@@ -7,6 +7,7 @@ import type { StringNode } from '../nodes/StringNode';
 import {
   type NodeEventCollection,
   NodeEventType,
+  NodeState,
   SetValueOption,
   ValidationMode,
 } from '../nodes/type';
@@ -174,6 +175,244 @@ describe('AbstractNode', () => {
       name.setState(undefined);
       expect(name.state).toEqual({});
     }
+  });
+
+  describe('setState - 이벤트 발생', () => {
+    it('setState 호출 시 UpdateState 이벤트가 발생해야 함', async () => {
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+          },
+        },
+        onChange: () => {},
+      });
+      await wait();
+
+      const name = node?.find('name');
+      const listener = vi.fn();
+      name?.subscribe(listener);
+
+      name?.setState({ [NodeState.Dirty]: true });
+      await wait();
+
+      expect(listener).toHaveBeenCalled();
+      const call = listener.mock.calls[0][0];
+      expect(call.type & NodeEventType.UpdateState).toBeTruthy();
+      expect(call.payload[NodeEventType.UpdateState]).toEqual({
+        [NodeState.Dirty]: true,
+      });
+    });
+
+    it('동일한 값 설정 시 이벤트가 발생하지 않아야 함 (idle 최적화)', async () => {
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+          },
+        },
+        onChange: () => {},
+      });
+      await wait();
+
+      const name = node?.find('name');
+      name?.setState({ [NodeState.Dirty]: true });
+      await wait();
+
+      const listener = vi.fn();
+      name?.subscribe(listener);
+
+      // 동일한 값으로 다시 설정
+      name?.setState({ [NodeState.Dirty]: true });
+      await wait();
+
+      // UpdateState 이벤트가 발생하지 않아야 함
+      const updateStateEvents = listener.mock.calls.filter(
+        (call) => call[0].type & NodeEventType.UpdateState,
+      );
+      expect(updateStateEvents).toHaveLength(0);
+    });
+
+    it('NodeState enum을 사용하여 상태를 설정할 수 있어야 함', async () => {
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+          },
+        },
+        onChange: () => {},
+      });
+      await wait();
+
+      const name = node?.find('name');
+
+      // NodeState enum 사용
+      name?.setState({
+        [NodeState.Dirty]: true,
+        [NodeState.Touched]: true,
+        [NodeState.ShowError]: true,
+      });
+
+      expect(name?.state[NodeState.Dirty]).toBe(true);
+      expect(name?.state[NodeState.Touched]).toBe(true);
+      expect(name?.state[NodeState.ShowError]).toBe(true);
+    });
+
+    it('여러 키를 동시에 업데이트할 수 있어야 함', async () => {
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+          },
+        },
+        onChange: () => {},
+      });
+      await wait();
+
+      const name = node?.find('name');
+      const listener = vi.fn();
+      name?.subscribe(listener);
+
+      // 한 번의 setState로 여러 키 업데이트
+      name?.setState({
+        [NodeState.Dirty]: true,
+        [NodeState.Touched]: true,
+        customFlag: 'test',
+      });
+      await wait();
+
+      expect(name?.state).toEqual({
+        [NodeState.Dirty]: true,
+        [NodeState.Touched]: true,
+        customFlag: 'test',
+      });
+
+      // 이벤트는 한 번만 발생해야 함
+      const updateStateEvents = listener.mock.calls.filter(
+        (call) => call[0].type & NodeEventType.UpdateState,
+      );
+      expect(updateStateEvents).toHaveLength(1);
+    });
+
+    it('빈 객체를 전달해도 변경이 없으면 이벤트가 발생하지 않아야 함', async () => {
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+          },
+        },
+        onChange: () => {},
+      });
+      await wait();
+
+      const name = node?.find('name');
+      const listener = vi.fn();
+      name?.subscribe(listener);
+
+      name?.setState({});
+      await wait();
+
+      const updateStateEvents = listener.mock.calls.filter(
+        (call) => call[0].type & NodeEventType.UpdateState,
+      );
+      expect(updateStateEvents).toHaveLength(0);
+    });
+
+    it('실제 변경이 있을 때만 이벤트가 발생하고, 새로운 객체 참조를 가져야 함', async () => {
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+          },
+        },
+        onChange: () => {},
+      });
+      await wait();
+
+      const name = node?.find('name');
+      const listener = vi.fn();
+      name?.subscribe(listener);
+
+      // 초기 state 참조 저장
+      const initialState = name?.state;
+      expect(initialState).toEqual({});
+
+      // 첫 번째 변경: 이벤트 발생 + 새 참조
+      name?.setState({ [NodeState.Dirty]: true });
+      await wait();
+
+      expect(listener).toHaveBeenCalledTimes(1);
+      expect(name?.state).not.toBe(initialState); // 새 참조
+      expect(name?.state).toEqual({ [NodeState.Dirty]: true });
+
+      const stateAfterFirst = name?.state;
+
+      // 동일한 값 설정: 이벤트 미발생 + 참조 유지
+      listener.mockClear();
+      name?.setState({ [NodeState.Dirty]: true });
+      await wait();
+
+      expect(listener).not.toHaveBeenCalled();
+      expect(name?.state).toBe(stateAfterFirst); // 참조 동일
+
+      // 다른 값 추가: 이벤트 발생 + 새 참조
+      listener.mockClear();
+      name?.setState({ [NodeState.Touched]: true });
+      await wait();
+
+      expect(listener).toHaveBeenCalledTimes(1);
+      expect(name?.state).not.toBe(stateAfterFirst); // 새 참조
+      expect(name?.state).toEqual({
+        [NodeState.Dirty]: true,
+        [NodeState.Touched]: true,
+      });
+    });
+
+    it('undefined로 키를 삭제할 때 실제 삭제가 있어야만 이벤트가 발생해야 함', async () => {
+      const node = nodeFromJsonSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+          },
+        },
+        onChange: () => {},
+      });
+      await wait();
+
+      const name = node?.find('name');
+
+      // 상태 설정
+      name?.setState({ [NodeState.Dirty]: true, customKey: 'value' });
+      await wait();
+
+      const stateBeforeDelete = name?.state;
+      const listener = vi.fn();
+      name?.subscribe(listener);
+
+      // 존재하지 않는 키 삭제 시도: 이벤트 미발생 + 참조 유지
+      name?.setState({ nonExistentKey: undefined });
+      await wait();
+
+      expect(listener).not.toHaveBeenCalled();
+      expect(name?.state).toBe(stateBeforeDelete);
+
+      // 존재하는 키 삭제: 이벤트 발생 + 새 참조
+      listener.mockClear();
+      name?.setState({ customKey: undefined });
+      await wait();
+
+      expect(listener).toHaveBeenCalledTimes(1);
+      expect(name?.state).not.toBe(stateBeforeDelete);
+      expect(name?.state).toEqual({ [NodeState.Dirty]: true });
+      expect('customKey' in (name?.state ?? {})).toBe(false);
+    });
   });
 
   it('setValue, applyValue', async () => {
