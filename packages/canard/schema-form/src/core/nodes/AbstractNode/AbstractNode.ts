@@ -746,17 +746,32 @@ export abstract class AbstractNode<
     this.setState();
   }
 
-  /** [root only] Internal state flags for the form */
+  /** [root only] Node's global state flags */
   #globalState: NodeStateFlags = {};
 
-  /** [readonly] Node's form state flags */
+  /** Node's local state flags */
+  #state: NodeStateFlags = {};
+
+  /**
+   * [readonly] Node's global state flags
+   * @note use `setGlobalState` method to set the global state
+   * */
   public get globalState(): NodeStateFlags {
     return this.isRoot ? this.#globalState : this.rootNode.globalState;
   }
 
   /**
-   * Sets the root node's form state flags
-   * @param input - The state to set. (If undefined, the form state will be cleared)
+   * [readonly] Node's local state flags
+   * @note use `setState` method to set the state
+   * */
+  public get state() {
+    return this.#state;
+  }
+
+  /**
+   * Sets the root node's global state flags.
+   * Only truthy values are accumulated (falsy values are ignored).
+   * @param input - The state to set. (If undefined, the global state will be cleared)
    * @internal Internal implementation method. Do not call directly.
    */
   public setGlobalState(this: AbstractNode, input?: NodeStateFlags) {
@@ -782,26 +797,15 @@ export abstract class AbstractNode<
     } else this.rootNode.setGlobalState(input);
   }
 
-  /** Node's state flags */
-  #state: NodeStateFlags = {};
-
   /**
-   * [readonly] Node's state flags
-   * @note use `setState` method to set the state
-   * */
-  public get state() {
-    return this.#state;
-  }
-
-  /**
-   * Sets the node's state. Maintains existing state unless explicitly passing undefined.
+   * Sets the node's local state. Maintains existing state unless explicitly passing undefined.
    * @param input - The state to set or a function that computes new state based on previous state
-   * @param batch - Whether to update the global state, default is `falsy` (same as `false`)
+   * @param silent - If true, skip updating globalState (default: false)
    */
   public setState(
     this: AbstractNode,
     input?: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags,
-    batch?: boolean,
+    silent?: boolean,
   ) {
     let state: NodeStateFlags | null = this.#state;
     const inputState =
@@ -829,7 +833,7 @@ export abstract class AbstractNode<
     if (idle) return;
     this.#state = state !== null ? { ...state } : {};
     this.publish(NodeEventType.UpdateState, this.#state);
-    if (batch !== true) this.setGlobalState(this.#state);
+    if (silent !== true) this.setGlobalState(this.#state);
   }
 
   /** [root only] List of data paths where validation errors occurred */
