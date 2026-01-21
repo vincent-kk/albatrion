@@ -15,6 +15,7 @@ import {
   BIT_FLAG_11,
   BIT_FLAG_12,
   BIT_FLAG_13,
+  BIT_FLAG_14,
   BIT_MASK_NONE,
 } from '@/schema-form/app/constants';
 import type {
@@ -202,26 +203,28 @@ export enum NodeEventType {
   UpdateValue = BIT_FLAG_02,
   /** Node's UI state flags have changed. */
   UpdateState = BIT_FLAG_03,
+  /** Node's form state flags have changed. */
+  UpdateFormState = BIT_FLAG_04,
   /** Node's validation errors have changed. */
-  UpdateError = BIT_FLAG_04,
+  UpdateError = BIT_FLAG_05,
   /** Node's global/aggregate errors have changed. */
-  UpdateGlobalError = BIT_FLAG_05,
+  UpdateGlobalError = BIT_FLAG_06,
   /** Children collection has changed (add/remove/reorder). */
-  UpdateChildren = BIT_FLAG_06,
+  UpdateChildren = BIT_FLAG_07,
   /** Derived/computed properties have changed. */
-  UpdateComputedProperties = BIT_FLAG_07,
+  UpdateComputedProperties = BIT_FLAG_08,
   /** Input element associated with the node receives focus. */
-  Focused = BIT_FLAG_08,
+  Focused = BIT_FLAG_09,
   /** Input element loses focus. */
-  Blurred = BIT_FLAG_09,
+  Blurred = BIT_FLAG_10,
   /** Request the input element to receive focus. */
-  RequestFocus = BIT_FLAG_10,
+  RequestFocus = BIT_FLAG_11,
   /** Request selection on the input element. */
-  RequestSelect = BIT_FLAG_11,
+  RequestSelect = BIT_FLAG_12,
   /** Request a refresh of the input element. */
-  RequestRefresh = BIT_FLAG_12,
+  RequestRefresh = BIT_FLAG_13,
   /** Request to emit a value change with a specific strategy. */
-  RequestEmitChange = BIT_FLAG_13,
+  RequestEmitChange = BIT_FLAG_14,
 }
 
 export enum PublicNodeEventType {
@@ -249,6 +252,7 @@ export type NodeEventPayload = {
   [NodeEventType.UpdatePath]: string;
   [NodeEventType.UpdateValue]: any;
   [NodeEventType.UpdateState]: NodeStateFlags;
+  [NodeEventType.UpdateFormState]: NodeStateFlags;
   [NodeEventType.UpdateError]: JsonSchemaError[];
   [NodeEventType.UpdateGlobalError]: JsonSchemaError[];
   [NodeEventType.UpdateChildren]: void;
@@ -277,6 +281,7 @@ export type NodeEventOptions = {
     settled?: boolean;
   };
   [NodeEventType.UpdateState]: void;
+  [NodeEventType.UpdateFormState]: void;
   [NodeEventType.UpdateError]: void;
   [NodeEventType.UpdateGlobalError]: void;
   [NodeEventType.UpdateChildren]: void;
