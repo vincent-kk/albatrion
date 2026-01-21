@@ -747,39 +747,39 @@ export abstract class AbstractNode<
   }
 
   /** [root only] Internal state flags for the form */
-  #formState: NodeStateFlags = {};
+  #globalState: NodeStateFlags = {};
 
   /** [readonly] Node's form state flags */
-  public get formState(): NodeStateFlags {
-    return this.isRoot ? this.#formState : this.rootNode.formState;
+  public get globalState(): NodeStateFlags {
+    return this.isRoot ? this.#globalState : this.rootNode.globalState;
   }
 
   /**
    * Sets the root node's form state flags
-   * @param state - The state to set. (If undefined, the form state will be cleared)
+   * @param input - The state to set. (If undefined, the form state will be cleared)
    * @internal Internal implementation method. Do not call directly.
    */
-  public setFormState(this: AbstractNode, state?: NodeStateFlags) {
+  public setGlobalState(this: AbstractNode, input?: NodeStateFlags) {
     if (this.isRoot) {
-      let formState: NodeStateFlags | null = this.#formState;
+      let state: NodeStateFlags | null = this.#globalState;
       let idle = true;
-      if (state === undefined) {
-        if (isEmptyObject(formState)) return;
-        formState = null;
+      if (input === undefined) {
+        if (isEmptyObject(state)) return;
+        state = null;
         idle = false;
       } else {
-        for (const key in state) {
-          const stateFlag = state[key];
-          if (stateFlag && formState[key] !== stateFlag) {
-            formState[key] = stateFlag;
+        for (const key in input) {
+          const stateFlag = input[key];
+          if (stateFlag && state[key] !== stateFlag) {
+            state[key] = stateFlag;
             if (idle) idle = false;
           }
         }
       }
       if (idle) return;
-      this.#formState = formState !== null ? { ...formState } : {};
-      this.publish(NodeEventType.UpdateFormState, this.#formState);
-    } else this.rootNode.setFormState(state);
+      this.#globalState = state !== null ? { ...state } : {};
+      this.publish(NodeEventType.UpdateGlobalState, this.#globalState);
+    } else this.rootNode.setGlobalState(input);
   }
 
   /** Node's state flags */
@@ -827,7 +827,7 @@ export abstract class AbstractNode<
     if (idle) return;
     this.#state = state !== null ? { ...state } : {};
     this.publish(NodeEventType.UpdateState, this.#state);
-    this.setFormState(this.#state);
+    this.setGlobalState(this.#state);
   }
 
   /** [root only] List of data paths where validation errors occurred */

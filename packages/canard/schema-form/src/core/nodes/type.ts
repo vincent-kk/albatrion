@@ -203,8 +203,8 @@ export enum NodeEventType {
   UpdateValue = BIT_FLAG_02,
   /** Node's UI state flags have changed. */
   UpdateState = BIT_FLAG_03,
-  /** Node's form state flags have changed. */
-  UpdateFormState = BIT_FLAG_04,
+  /** Node's global state flags have changed. */
+  UpdateGlobalState = BIT_FLAG_04,
   /** Node's validation errors have changed. */
   UpdateError = BIT_FLAG_05,
   /** Node's global/aggregate errors have changed. */
@@ -252,7 +252,7 @@ export type NodeEventPayload = {
   [NodeEventType.UpdatePath]: string;
   [NodeEventType.UpdateValue]: any;
   [NodeEventType.UpdateState]: NodeStateFlags;
-  [NodeEventType.UpdateFormState]: NodeStateFlags;
+  [NodeEventType.UpdateGlobalState]: NodeStateFlags;
   [NodeEventType.UpdateError]: JsonSchemaError[];
   [NodeEventType.UpdateGlobalError]: JsonSchemaError[];
   [NodeEventType.UpdateChildren]: void;
@@ -281,7 +281,7 @@ export type NodeEventOptions = {
     settled?: boolean;
   };
   [NodeEventType.UpdateState]: void;
-  [NodeEventType.UpdateFormState]: void;
+  [NodeEventType.UpdateGlobalState]: void;
   [NodeEventType.UpdateError]: void;
   [NodeEventType.UpdateGlobalError]: void;
   [NodeEventType.UpdateChildren]: void;
