@@ -796,10 +796,12 @@ export abstract class AbstractNode<
   /**
    * Sets the node's state. Maintains existing state unless explicitly passing undefined.
    * @param input - The state to set or a function that computes new state based on previous state
+   * @param batch - Whether to update the global state, default is `falsy` (same as `false`)
    */
   public setState(
     this: AbstractNode,
     input?: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags,
+    batch?: boolean,
   ) {
     let state: NodeStateFlags | null = this.#state;
     const inputState =
@@ -827,7 +829,7 @@ export abstract class AbstractNode<
     if (idle) return;
     this.#state = state !== null ? { ...state } : {};
     this.publish(NodeEventType.UpdateState, this.#state);
-    this.setGlobalState(this.#state);
+    if (batch !== true) this.setGlobalState(this.#state);
   }
 
   /** [root only] List of data paths where validation errors occurred */

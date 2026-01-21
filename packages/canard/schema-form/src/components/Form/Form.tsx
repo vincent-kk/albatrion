@@ -29,6 +29,7 @@ import {
   NodeEventType,
   type SchemaNode,
 } from '@/schema-form/core';
+import type { ChildNode } from '@/schema-form/core/nodes/type';
 import { ValidationError } from '@/schema-form/errors';
 import { formatSchemaValidationFailedError } from '@/schema-form/helpers/error';
 import { preprocessSchema } from '@/schema-form/helpers/jsonSchema';
@@ -65,6 +66,7 @@ const FormInner = <
     onChange,
     onValidate,
     onSubmit: inputOnSubmit,
+    onStateChange,
     formTypeInputDefinitions,
     formTypeInputMap,
     CustomFormTypeRenderer,
@@ -104,6 +106,8 @@ const FormInner = <
   });
 
   const handleValidate = useHandle(onValidate);
+
+  const handleStateChange = useHandle(onStateChange);
 
   const onSubmit = useHandle(async () => {
     if (!ready.current || !rootNode || inputOnSubmit === undefined) return;
@@ -160,10 +164,27 @@ const FormInner = <
         select: (path) =>
           rootNode?.find(path)?.publish(NodeEventType.RequestSelect),
         reset: update,
+        clearState: () => {
+          if (rootNode == null) return;
+          let cursors: ChildNode[] = [{ node: rootNode }];
+          let nextCursors: ChildNode[] = [];
+          while (cursors.length > 0) {
+            for (const cursor of cursors) {
+              cursor.node.setState(undefined, true);
+              const subnodes = cursor.node.subnodes;
+              if (!subnodes?.length) continue;
+              nextCursors.push(...subnodes);
+            }
+            cursors = nextCursors;
+            nextCursors = [];
+          }
+          rootNode.setGlobalState();
+        },
         findNode: (path) => rootNode?.find(path) || null,
         findNodes: (path) => rootNode?.findAll(path) || [],
         getValue: () => rootNode?.value as Value,
         setValue: (value, options) => rootNode?.setValue(value as any, options),
+        getState: () => rootNode?.globalState || {},
         getErrors: () => rootNode?.globalErrors || [],
         getAttachedFilesMap: () => attachedFilesMapRef.current,
         validate: async () => (await rootNode?.validate()) || [],
@@ -196,6 +217,7 @@ const FormInner = <
               errors={errors}
               onChange={handleChange}
               onValidate={handleValidate}
+              onStateChange={handleStateChange}
               onReady={handleReady}
               validationMode={validationMode}
               validatorFactory={validatorFactory}

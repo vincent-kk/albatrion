@@ -40,6 +40,8 @@ interface RootNodeContextProviderProps<
   onChange: NonNullable<FormProps<Schema, Value>['onChange']>;
   /** Function called when this SchemaForm is validated */
   onValidate: NonNullable<FormProps<Schema, Value>['onValidate']>;
+  /** Function called when the state of this SchemaForm changes */
+  onStateChange: NonNullable<FormProps<Schema, Value>['onStateChange']>;
   /** Function called when the root node of this SchemaForm is ready */
   onReady: Fn<[rootNode: SchemaNode]>;
   /**
@@ -62,6 +64,7 @@ export const RootNodeContextProvider = <
   errors,
   onChange,
   onValidate,
+  onStateChange,
   onReady,
   validationMode: inputValidationMode,
   validatorFactory: inputValidatorFactory,
@@ -107,10 +110,12 @@ export const RootNodeContextProvider = <
     const unsubscribe = rootNode.subscribe(({ type, payload }) => {
       if (type & NodeEventType.UpdateGlobalError)
         onValidate(payload?.[NodeEventType.UpdateGlobalError] || []);
+      if (type & NodeEventType.UpdateGlobalState)
+        onStateChange(payload?.[NodeEventType.UpdateGlobalState] || {});
     });
     onReady(rootNode);
     return unsubscribe;
-  }, [rootNode, onValidate, onReady]);
+  }, [rootNode, onValidate, onStateChange, onReady]);
 
   const lastErrorDictionary = useRef<
     Record<JsonSchemaError['dataPath'], JsonSchemaError[]>

@@ -9,6 +9,7 @@ import type {
   SchemaNode,
   ValidationMode,
 } from '@/schema-form/core';
+import type { NodeStateFlags } from '@/schema-form/core/nodes';
 import type {
   AllowedValue,
   AttachedFilesMap,
@@ -52,6 +53,8 @@ export interface FormProps<
   onValidate?: Fn<[jsonSchemaError: JsonSchemaError[]]>;
   /** Function called when the form is submitted */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
+  /** Function called when the state of this SchemaForm changes */
+  onStateChange?: Fn<[state: NodeStateFlags]>;
   /** List of FormTypeInput definitions */
   formTypeInputDefinitions?: FormTypeInputDefinition[];
   /** FormTypeInput path mapping */
@@ -96,8 +99,10 @@ export interface FormHandle<
   focus: Fn<[path: SchemaNode['path']]>;
   select: Fn<[path: SchemaNode['path']]>;
   reset: Fn;
+  clearState: Fn;
   findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
   findNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
+  getState: Fn<[], NodeStateFlags>;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
   getErrors: Fn<[], JsonSchemaError[]>;
