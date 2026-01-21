@@ -746,6 +746,42 @@ export abstract class AbstractNode<
     this.setState();
   }
 
+  /** [root only] Internal state flags for the form */
+  #formState: NodeStateFlags = {};
+
+  /** [readonly] Node's form state flags */
+  public get formState(): NodeStateFlags {
+    return this.isRoot ? this.#formState : this.rootNode.formState;
+  }
+
+  /**
+   * Sets the root node's form state flags
+   * @param state - The state to set. (If undefined, the form state will be cleared)
+   * @internal Internal implementation method. Do not call directly.
+   */
+  public setFormState(this: AbstractNode, state?: NodeStateFlags) {
+    if (this.isRoot) {
+      let formState: NodeStateFlags | null = this.#formState;
+      let idle = true;
+      if (state === undefined) {
+        if (isEmptyObject(formState)) return;
+        formState = null;
+        idle = false;
+      } else {
+        for (const key in state) {
+          const stateFlag = state[key];
+          if (stateFlag && formState[key] !== stateFlag) {
+            formState[key] = stateFlag;
+            if (idle) idle = false;
+          }
+        }
+      }
+      if (idle) return;
+      this.#formState = formState !== null ? { ...formState } : {};
+      this.publish(NodeEventType.UpdateFormState, this.#formState);
+    } else this.rootNode.setFormState(state);
+  }
+
   /** Node's state flags */
   #state: NodeStateFlags = {};
 
