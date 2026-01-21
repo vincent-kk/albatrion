@@ -3,6 +3,7 @@ export type {
   SchemaNode,
   NodeListener,
   NodeStateFlags,
+  UnionNodeEventType,
 } from './type';
 export {
   NodeState,
