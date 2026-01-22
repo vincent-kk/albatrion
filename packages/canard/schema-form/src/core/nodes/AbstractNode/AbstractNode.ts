@@ -52,6 +52,7 @@ import {
   afterMicrotask,
   checkDefinedValue,
   computeFactory,
+  depthFirstSearch,
   findNode,
   findNodes,
   getEventCollection,
@@ -697,18 +698,6 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Updates the node's scoped property.
-   * @returns Whether the scoped property was changed
-   */
-  #updateScoped(this: AbstractNode) {
-    if (this.variant === undefined || this.parentNode === null) return;
-    if (this.scope === 'oneOf')
-      this.#scoped = this.parentNode.oneOfIndex === this.variant;
-    else if (this.scope === 'anyOf')
-      this.#scoped = this.parentNode.anyOfIndices.indexOf(this.variant) !== -1;
-  }
-
-  /**
    * Resets the current node to its initial value or computed derived value.
    * Value priority: inputValue > derivedValue > fallbackValue/computed default
    * @param options - Reset options
@@ -744,6 +733,18 @@ export abstract class AbstractNode<
       SetValueOption.StableReset,
     );
     this.setState();
+  }
+
+  /**
+   * Updates the node's scoped property.
+   * @returns Whether the scoped property was changed
+   */
+  #updateScoped(this: AbstractNode) {
+    if (this.variant === undefined || this.parentNode === null) return;
+    if (this.scope === 'oneOf')
+      this.#scoped = this.parentNode.oneOfIndex === this.variant;
+    else if (this.scope === 'anyOf')
+      this.#scoped = this.parentNode.anyOfIndices.indexOf(this.variant) !== -1;
   }
 
   /** [root only] Node's global state flags */
@@ -834,6 +835,38 @@ export abstract class AbstractNode<
     this.#state = state !== null ? { ...state } : {};
     this.publish(NodeEventType.UpdateState, this.#state);
     if (silent !== true) this.setGlobalState(this.#state);
+  }
+
+  /**
+   * Sets the state of the subtree.
+   * @param this - The node to set the state for.
+   * @param state - The state to set
+   * @returns void
+   */
+  public setSubtreeState(this: AbstractNode, state: NodeStateFlags) {
+    depthFirstSearch(this, (node) => node.setState(state, true));
+    this.setGlobalState(state);
+  }
+
+  /**
+   * Clears the state of the subtree.
+   * If the node is the root node, it will also clear the global state.
+   * @param this - The node to clear the state for.
+   * @returns void
+   */
+  public clearSubtreeState(this: AbstractNode) {
+    depthFirstSearch(this, (node) => node.setState(undefined, true));
+    if (this.isRoot) this.setGlobalState();
+  }
+
+  /**
+   * Resets the subtree.
+   * @param this - The node to reset the subtree for.
+   * @returns void
+   */
+  public resetSubtree(this: AbstractNode) {
+    this.clearSubtreeState();
+    this.reset();
   }
 
   /** [root only] List of data paths where validation errors occurred */
