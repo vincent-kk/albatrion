@@ -451,9 +451,7 @@ describe('oneOf schemaPath assignment', () => {
           jsonSchema: schema,
           onChange: () => {},
         }),
-      ).toThrow(
-        "Property redefinition not allowed in 'oneOf' schema.",
-      );
+      ).toThrow("Property redefinition not allowed in 'oneOf' schema.");
     });
 
     it('should throw error when oneOf redefines type', () => {
@@ -477,9 +475,7 @@ describe('oneOf schemaPath assignment', () => {
           jsonSchema: schema,
           onChange: () => {},
         }),
-      ).toThrow(
-        "Type redefinition not allowed in 'oneOf' schema.",
-      );
+      ).toThrow("Type redefinition not allowed in 'oneOf' schema.");
     });
 
     it('should handle oneOf with required fields', () => {

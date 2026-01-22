@@ -335,25 +335,19 @@ describe('normalizeFormTypeInputMap', () => {
         normalizeFormTypeInputMap({
           '/invalid[regex': TestStringComponent, // 닫히지 않은 bracket
         });
-      }).toThrow(
-        'Invalid key pattern in FormTypeInputMap.',
-      );
+      }).toThrow('Invalid key pattern in FormTypeInputMap.');
 
       expect(() => {
         normalizeFormTypeInputMap({
           '/another(unclosed': TestStringComponent, // 닫히지 않은 parenthesis
         });
-      }).toThrow(
-        'Invalid key pattern in FormTypeInputMap.',
-      );
+      }).toThrow('Invalid key pattern in FormTypeInputMap.');
 
       expect(() => {
         normalizeFormTypeInputMap({
           '/invalid*+': TestStringComponent, // 잘못된 quantifier
         });
-      }).toThrow(
-        'Invalid key pattern in FormTypeInputMap.',
-      );
+      }).toThrow('Invalid key pattern in FormTypeInputMap.');
     });
   });
 

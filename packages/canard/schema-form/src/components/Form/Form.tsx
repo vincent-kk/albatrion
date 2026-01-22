@@ -65,6 +65,7 @@ const FormInner = <
     onChange,
     onValidate,
     onSubmit: inputOnSubmit,
+    onStateChange,
     formTypeInputDefinitions,
     formTypeInputMap,
     CustomFormTypeRenderer,
@@ -104,6 +105,8 @@ const FormInner = <
   });
 
   const handleValidate = useHandle(onValidate);
+
+  const handleStateChange = useHandle(onStateChange);
 
   const onSubmit = useHandle(async () => {
     if (!ready.current || !rootNode || inputOnSubmit === undefined) return;
@@ -164,6 +167,9 @@ const FormInner = <
         findNodes: (path) => rootNode?.findAll(path) || [],
         getValue: () => rootNode?.value as Value,
         setValue: (value, options) => rootNode?.setValue(value as any, options),
+        getState: () => rootNode?.globalState || {},
+        setState: (state) => rootNode?.setSubtreeState(state),
+        clearState: () => rootNode?.clearSubtreeState(),
         getErrors: () => rootNode?.globalErrors || [],
         getAttachedFilesMap: () => attachedFilesMapRef.current,
         validate: async () => (await rootNode?.validate()) || [],
@@ -196,6 +202,7 @@ const FormInner = <
               errors={errors}
               onChange={handleChange}
               onValidate={handleValidate}
+              onStateChange={handleStateChange}
               onReady={handleReady}
               validationMode={validationMode}
               validatorFactory={validatorFactory}

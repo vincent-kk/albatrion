@@ -160,9 +160,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
         expect((error as JsonSchemaError).message).toContain(
           "Failed to create condition index function for 'oneOf'",
         );
-        expect((error as JsonSchemaError).message).toContain(
-          `Field:  oneOf`,
-        );
+        expect((error as JsonSchemaError).message).toContain(`Field:  oneOf`);
         expect((error as JsonSchemaError).details).toMatchObject({
           fieldName: 'oneOf',
           expressions: expect.arrayContaining([
@@ -288,9 +286,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
           expect((error as JsonSchemaError).message).toContain(
             "Failed to create observed values function for 'watch'",
           );
-          expect((error as JsonSchemaError).message).toContain(
-            `Field:  watch`,
-          );
+          expect((error as JsonSchemaError).message).toContain(`Field:  watch`);
           console.log(
             (error as JsonSchemaError).message,
             (error as JsonSchemaError).details,
@@ -339,9 +335,7 @@ describe('Error Handling in Dynamic Function Creation', () => {
         expect(schemaError.message).toContain(
           'Failed to create dynamic function',
         );
-        expect(schemaError.message).toContain(
-          `Field:       active`,
-        );
+        expect(schemaError.message).toContain(`Field:       active`);
         expect(schemaError.message).toContain(
           'dependencies[0] === "test" { malformed expression',
         );

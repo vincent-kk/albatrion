@@ -11,6 +11,7 @@ export type {
   InferSchemaNode,
   SchemaNode,
   NodeListener,
+  UnionNodeEventType,
 } from './nodes';
 
 export {

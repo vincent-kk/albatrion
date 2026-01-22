@@ -660,9 +660,7 @@ describe('ObjectNode', () => {
         jsonSchema,
         onChange: () => {},
       }),
-    ).toThrowError(
-      "Property redefinition not allowed in 'oneOf' schema.",
-    );
+    ).toThrowError("Property redefinition not allowed in 'oneOf' schema.");
   });
 
   it('oneOf schema는 properties 속성을 재정의할 수 없음, 단, 부모와 동일한 타입은 허용됨', async () => {
@@ -704,9 +702,7 @@ describe('ObjectNode', () => {
         jsonSchema,
         onChange: () => {},
       }),
-    ).toThrowError(
-      "Type redefinition not allowed in 'oneOf' schema.",
-    );
+    ).toThrowError("Type redefinition not allowed in 'oneOf' schema.");
   });
 
   describe('극단적인 키를 사용한 ObjectNode 기능 테스트', () => {

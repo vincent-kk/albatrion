@@ -1,11 +1,6 @@
 import { map } from '@winglet/common-utils/array';
 import { isEmptyObject, isObject } from '@winglet/common-utils/filter';
-import {
-  cloneLite,
-  equals,
-  getEmptyObject,
-  merge,
-} from '@winglet/common-utils/object';
+import { cloneLite, equals, merge } from '@winglet/common-utils/object';
 import { escapeSegment, setValue } from '@winglet/json/pointer';
 
 import type { Fn, Nullish } from '@aileron/declare';
@@ -57,6 +52,7 @@ import {
   afterMicrotask,
   checkDefinedValue,
   computeFactory,
+  depthFirstSearch,
   findNode,
   findNodes,
   getEventCollection,
@@ -702,18 +698,6 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Updates the node's scoped property.
-   * @returns Whether the scoped property was changed
-   */
-  #updateScoped(this: AbstractNode) {
-    if (this.variant === undefined || this.parentNode === null) return;
-    if (this.scope === 'oneOf')
-      this.#scoped = this.parentNode.oneOfIndex === this.variant;
-    else if (this.scope === 'anyOf')
-      this.#scoped = this.parentNode.anyOfIndices.indexOf(this.variant) !== -1;
-  }
-
-  /**
    * Resets the current node to its initial value or computed derived value.
    * Value priority: inputValue > derivedValue > fallbackValue/computed default
    * @param options - Reset options
@@ -751,11 +735,34 @@ export abstract class AbstractNode<
     this.setState();
   }
 
-  /** Node's state flags */
-  #state: NodeStateFlags = getEmptyObject();
+  /**
+   * Updates the node's scoped property.
+   * @returns Whether the scoped property was changed
+   */
+  #updateScoped(this: AbstractNode) {
+    if (this.variant === undefined || this.parentNode === null) return;
+    if (this.scope === 'oneOf')
+      this.#scoped = this.parentNode.oneOfIndex === this.variant;
+    else if (this.scope === 'anyOf')
+      this.#scoped = this.parentNode.anyOfIndices.indexOf(this.variant) !== -1;
+  }
+
+  /** [root only] Node's global state flags */
+  #globalState: NodeStateFlags = {};
+
+  /** Node's local state flags */
+  #state: NodeStateFlags = {};
 
   /**
-   * [readonly] Node's state flags
+   * [readonly] Node's global state flags
+   * @note use `setGlobalState` method to set the global state
+   * */
+  public get globalState(): NodeStateFlags {
+    return this.isRoot ? this.#globalState : this.rootNode.globalState;
+  }
+
+  /**
+   * [readonly] Node's local state flags
    * @note use `setState` method to set the state
    * */
   public get state() {
@@ -763,21 +770,52 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Sets the node's state. Maintains existing state unless explicitly passing undefined.
+   * Sets the root node's global state flags.
+   * Only truthy values are accumulated (falsy values are ignored).
+   * @param input - The state to set. (If undefined, the global state will be cleared)
+   * @internal Internal implementation method. Do not call directly.
+   */
+  public setGlobalState(this: AbstractNode, input?: NodeStateFlags) {
+    if (this.isRoot) {
+      let state: NodeStateFlags | null = this.#globalState;
+      let idle = true;
+      if (input === undefined) {
+        if (isEmptyObject(state)) return;
+        state = null;
+        idle = false;
+      } else {
+        for (const key in input) {
+          const stateFlag = input[key];
+          if (stateFlag && state[key] !== stateFlag) {
+            state[key] = stateFlag;
+            if (idle) idle = false;
+          }
+        }
+      }
+      if (idle) return;
+      this.#globalState = state !== null ? { ...state } : {};
+      this.publish(NodeEventType.UpdateGlobalState, this.#globalState);
+    } else this.rootNode.setGlobalState(input);
+  }
+
+  /**
+   * Sets the node's local state. Maintains existing state unless explicitly passing undefined.
    * @param input - The state to set or a function that computes new state based on previous state
+   * @param silent - If true, skip updating globalState (default: false)
    */
   public setState(
     this: AbstractNode,
     input?: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags,
+    silent?: boolean,
   ) {
-    const state = this.#state;
+    let state: NodeStateFlags | null = this.#state;
     const inputState =
       typeof input === 'function' ? input({ ...state }) : input;
-    let changed = false;
+    let idle = true;
     if (inputState === undefined) {
       if (isEmptyObject(state)) return;
-      this.#state = getEmptyObject();
-      changed = true;
+      state = null;
+      idle = false;
     } else if (isObject(inputState)) {
       const keys = Object.keys(inputState);
       for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
@@ -785,16 +823,50 @@ export abstract class AbstractNode<
         if (value === undefined) {
           if (k in state) {
             delete state[k];
-            changed = true;
+            if (idle) idle = false;
           }
         } else if (state[k] !== value) {
           state[k] = value;
-          changed = true;
+          if (idle) idle = false;
         }
       }
-      this.#state = state;
     }
-    if (changed) this.publish(NodeEventType.UpdateState, this.#state);
+    if (idle) return;
+    this.#state = state !== null ? { ...state } : {};
+    this.publish(NodeEventType.UpdateState, this.#state);
+    if (silent !== true) this.setGlobalState(this.#state);
+  }
+
+  /**
+   * Sets the state of the subtree.
+   * @param this - The node to set the state for.
+   * @param state - The state to set
+   * @returns void
+   */
+  public setSubtreeState(this: AbstractNode, state: NodeStateFlags) {
+    depthFirstSearch(this, (node) => node.setState(state, true));
+    this.setGlobalState(state);
+  }
+
+  /**
+   * Clears the state of the subtree.
+   * If the node is the root node, it will also clear the global state.
+   * @param this - The node to clear the state for.
+   * @returns void
+   */
+  public clearSubtreeState(this: AbstractNode) {
+    depthFirstSearch(this, (node) => node.setState(undefined, true));
+    if (this.isRoot) this.setGlobalState();
+  }
+
+  /**
+   * Resets the subtree.
+   * @param this - The node to reset the subtree for.
+   * @returns void
+   */
+  public resetSubtree(this: AbstractNode) {
+    this.clearSubtreeState();
+    this.reset();
   }
 
   /** [root only] List of data paths where validation errors occurred */

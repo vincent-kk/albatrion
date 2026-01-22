@@ -3,7 +3,7 @@ import { useLayoutEffect } from 'react';
 import { useVersion } from '@winglet/react-utils/hook';
 
 import { BIT_MASK_ALL } from '@/schema-form/app/constants';
-import type { NodeEventType, SchemaNode } from '@/schema-form/core';
+import type { SchemaNode, UnionNodeEventType } from '@/schema-form/core';
 
 /**
  * @description Updates tick for every SchemaNode event.
@@ -12,7 +12,7 @@ import type { NodeEventType, SchemaNode } from '@/schema-form/core';
  */
 export const useSchemaNodeTracker = <Node extends SchemaNode>(
   node: Node | null,
-  tracking: NodeEventType = BIT_MASK_ALL,
+  tracking: UnionNodeEventType = BIT_MASK_ALL,
 ) => {
   const [version, update] = useVersion();
   useLayoutEffect(() => {

@@ -65,6 +65,8 @@ export type {
 
 export type * from './types/rolled';
 
+export { useSchemaNodeTracker } from './hooks/useSchemaNodeTracker';
+export { useSchemaNodeSubscribe } from './hooks/useSchemaNodeSubscribe';
 export { useChildNodeComponentMap } from './hooks/useChildNodeComponentMap';
 export { useChildNodeErrors } from './hooks/useChildNodeErrors';
 export { useFormSubmit } from './hooks/useFormSubmit';
