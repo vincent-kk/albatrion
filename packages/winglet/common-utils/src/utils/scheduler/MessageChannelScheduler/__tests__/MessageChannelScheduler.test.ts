@@ -1399,7 +1399,7 @@ describe('MessageChannelScheduler', () => {
       expect(mcCompleted).toBe(batchSize);
       expect(stCompleted).toBe(batchSize);
       // MessageChannel should be competitive with setTimeout
-      expect(mcTime).toBeLessThan(stTime * 2); // At most 2x slower
+      expect(mcTime).toBeLessThan(stTime * 1.5); // At most 1.5x slower
     });
   });
 });
