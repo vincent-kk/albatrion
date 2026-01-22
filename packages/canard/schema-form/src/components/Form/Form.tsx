@@ -29,7 +29,6 @@ import {
   NodeEventType,
   type SchemaNode,
 } from '@/schema-form/core';
-import type { ChildNode } from '@/schema-form/core/nodes/type';
 import { ValidationError } from '@/schema-form/errors';
 import { formatSchemaValidationFailedError } from '@/schema-form/helpers/error';
 import { preprocessSchema } from '@/schema-form/helpers/jsonSchema';
@@ -164,27 +163,13 @@ const FormInner = <
         select: (path) =>
           rootNode?.find(path)?.publish(NodeEventType.RequestSelect),
         reset: update,
-        clearState: () => {
-          if (rootNode == null) return;
-          let cursors: ChildNode[] = [{ node: rootNode }];
-          let nextCursors: ChildNode[] = [];
-          while (cursors.length > 0) {
-            for (const cursor of cursors) {
-              cursor.node.setState(undefined, true);
-              const subnodes = cursor.node.subnodes;
-              if (!subnodes?.length) continue;
-              nextCursors.push(...subnodes);
-            }
-            cursors = nextCursors;
-            nextCursors = [];
-          }
-          rootNode.setGlobalState();
-        },
         findNode: (path) => rootNode?.find(path) || null,
         findNodes: (path) => rootNode?.findAll(path) || [],
         getValue: () => rootNode?.value as Value,
         setValue: (value, options) => rootNode?.setValue(value as any, options),
         getState: () => rootNode?.globalState || {},
+        setState: (state) => rootNode?.setSubtreeState(state),
+        clearState: () => rootNode?.clearSubtreeState(),
         getErrors: () => rootNode?.globalErrors || [],
         getAttachedFilesMap: () => attachedFilesMapRef.current,
         validate: async () => (await rootNode?.validate()) || [],
