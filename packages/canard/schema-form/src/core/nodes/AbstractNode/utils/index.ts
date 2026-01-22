@@ -8,3 +8,4 @@ export * from './getNodeGroup';
 export * from './getSafeEmptyValue';
 export * from './getScopedSegment';
 export * from './matchesSchemaPath';
+export * from './traversal';
