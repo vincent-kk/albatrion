@@ -15,7 +15,7 @@ import {
 } from '@/schema-form/helpers/defaultValue';
 import {
   formatCircularReferenceError,
-  formatInjectValueToError,
+  formatInjectToError,
   transformErrors,
 } from '@/schema-form/helpers/error';
 import {
@@ -401,7 +401,7 @@ export abstract class AbstractNode<
         onChange(getSafeEmptyValue(this.value, this.schemaType));
       });
       this.#prepareValidator(jsonSchema, validatorFactory, validationMode);
-      this.#injectedNodeFlags = new Set();
+      this.#injectedPaths = new Set();
     } else this.#handleChange = onChange;
   }
 
@@ -527,7 +527,7 @@ export abstract class AbstractNode<
     if (this.#initialized || (actor !== this.parentNode && !this.isRoot))
       return false;
     this.#prepareUpdateDependencies();
-    this.#prepareInjectValueToHandler();
+    this.#prepareInjectHandler();
     this.publish(NodeEventType.Initialized);
     this.#initialized = true;
     return true;
@@ -880,14 +880,14 @@ export abstract class AbstractNode<
    * @note Tracks which nodes are currently being injected to prevent circular injection loops.
    *       Only initialized and used by the root node.
    */
-  #injectedNodeFlags: Set<SchemaNode['path']> | undefined;
+  #injectedPaths: Set<SchemaNode['path']> | undefined;
 
   /**
    * [root node] Scheduled ID for clearing injected node flags (macrotask)
    * @note Used to batch clear injected flags after all synchronous injection operations complete.
    *       The ID is used to prevent duplicate scheduling.
    */
-  #scheduledClearInjectedNodeFlagsId: number | undefined;
+  #scheduledClearInjectedPathsId: number | undefined;
 
   /**
    * Checks if a node at the given path is currently being injected.
@@ -896,20 +896,20 @@ export abstract class AbstractNode<
    * @note Root nodes check their own flag set, child nodes delegate to rootNode.
    * @internal Internal implementation method. Do not call directly.
    */
-  public isInjectedNode(this: AbstractNode, path: SchemaNode['path']): boolean {
-    if (this.isRoot) return this.#injectedNodeFlags?.has(path) ?? false;
-    else return this.rootNode.isInjectedNode(path);
+  public isInjectedPath(this: AbstractNode, path: SchemaNode['path']): boolean {
+    if (this.isRoot) return this.#injectedPaths?.has(path) ?? false;
+    else return this.rootNode.isInjectedPath(path);
   }
 
   /**
    * Sets the injected flag for a node at the given path.
    * @param path - The data path of the node to mark as injected
-   * @note Used to prevent circular injection when `injectValueTo` affects multiple nodes.
+   * @note Used to prevent circular injection when `injectTo` affects multiple nodes.
    * @internal Internal implementation method. Do not call directly.
    */
-  public setInjectedNodeFlag(this: AbstractNode, path: SchemaNode['path']) {
-    if (this.isRoot) this.#injectedNodeFlags?.add(path);
-    else this.rootNode.setInjectedNodeFlag(path);
+  public setInjectedPath(this: AbstractNode, path: SchemaNode['path']) {
+    if (this.isRoot) this.#injectedPaths?.add(path);
+    else this.rootNode.setInjectedPath(path);
   }
 
   /**
@@ -917,9 +917,9 @@ export abstract class AbstractNode<
    * @param path - The data path of the node to unmark
    * @internal Internal implementation method. Do not call directly.
    */
-  public unsetInjectedNodeFlag(this: AbstractNode, path: SchemaNode['path']) {
-    if (this.isRoot) this.#injectedNodeFlags?.delete(path);
-    else this.rootNode.unsetInjectedNodeFlag(path);
+  public unsetInjectedPath(this: AbstractNode, path: SchemaNode['path']) {
+    if (this.isRoot) this.#injectedPaths?.delete(path);
+    else this.rootNode.unsetInjectedPath(path);
   }
 
   /**
@@ -927,64 +927,64 @@ export abstract class AbstractNode<
    * @note Typically used for cleanup or reset operations.
    * @internal Internal implementation method. Do not call directly.
    */
-  public clearInjectedNodeFlags(this: AbstractNode) {
-    if (this.isRoot) this.#injectedNodeFlags?.clear();
-    else this.rootNode.clearInjectedNodeFlags();
+  public clearInjectedPaths(this: AbstractNode) {
+    if (this.isRoot) this.#injectedPaths?.clear();
+    else this.rootNode.clearInjectedPaths();
   }
 
   /**
    * Schedules clearing of all injected node flags in a macrotask.
    * @note Uses macrotask scheduling to ensure all synchronous injection operations
    *       complete before clearing flags. Prevents duplicate scheduling if already scheduled.
-   *       This allows multiple `injectValueTo` operations to complete within the same
+   *       This allows multiple `injectTo` operations to complete within the same
    *       synchronous execution context before the flags are cleared.
    * @internal Internal implementation method. Do not call directly.
    */
-  public scheduleClearInjectedNodeFlags(this: AbstractNode) {
+  public scheduleClearInjectedPaths(this: AbstractNode) {
     if (this.isRoot) {
-      if (this.#scheduledClearInjectedNodeFlagsId !== undefined) return;
-      this.#scheduledClearInjectedNodeFlagsId = scheduleMacrotaskSafe(() => {
-        this.#scheduledClearInjectedNodeFlagsId = undefined;
-        this.#injectedNodeFlags?.clear();
+      if (this.#scheduledClearInjectedPathsId !== undefined) return;
+      this.#scheduledClearInjectedPathsId = scheduleMacrotaskSafe(() => {
+        this.#scheduledClearInjectedPathsId = undefined;
+        this.#injectedPaths?.clear();
       });
-    } else this.rootNode.scheduleClearInjectedNodeFlags();
+    } else this.rootNode.scheduleClearInjectedPaths();
   }
 
   /**
-   * Prepares the handler for `injectValueTo` schema property.
+   * Prepares the handler for `injectTo` schema property.
    * @note Sets up a subscription that listens for value updates and propagates
-   *       values to other nodes as defined by the `injectValueTo` function in the schema.
+   *       values to other nodes as defined by the `injectTo` function in the schema.
    *       Implements circular injection prevention using injected node flags.
    * @internal Internal implementation method. Do not call directly.
    */
-  #prepareInjectValueToHandler(this: AbstractNode) {
-    const injectValueTo = this.jsonSchema.injectValueTo;
-    if (typeof injectValueTo !== 'function') return;
+  #prepareInjectHandler(this: AbstractNode) {
+    const injectHandler = this.jsonSchema.injectTo;
+    if (typeof injectHandler !== 'function') return;
     this.subscribe(({ type }) => {
       if (type & NodeEventType.UpdateValue) {
-        this.publish(NodeEventType.RequestInjectValueTo);
+        this.publish(NodeEventType.RequestInjection);
         return;
       }
-      if (type & NodeEventType.RequestInjectValueTo) {
+      if (type & NodeEventType.RequestInjection) {
         const value = this.value;
         const rootValue = this.rootNode.value;
         const contextValue = this.context?.value || {};
         const dataPath = this.path;
         try {
-          this.setInjectedNodeFlag(dataPath);
-          const affect = injectValueTo(value, rootValue, contextValue);
+          this.setInjectedPath(dataPath);
+          const affect = injectHandler(value, rootValue, contextValue);
           if (affect == null) return;
           const operations = isArray(affect) ? affect : Object.entries(affect);
           for (let i = 0, l = operations.length; i < l; i++) {
             const path = getAbsolutePath(dataPath, operations[i][0]);
-            if (this.isInjectedNode(path)) continue;
-            this.setInjectedNodeFlag(path);
+            if (this.isInjectedPath(path)) continue;
+            this.setInjectedPath(path);
             this.find(path)?.setValue(operations[i][1]);
           }
         } catch (error) {
           throw new JsonSchemaError(
-            'INJECT_VALUE_TO',
-            formatInjectValueToError(
+            'INJECT_TO',
+            formatInjectToError(
               value,
               dataPath,
               rootValue,
@@ -1004,7 +1004,7 @@ export abstract class AbstractNode<
             },
           );
         } finally {
-          this.scheduleClearInjectedNodeFlags();
+          this.scheduleClearInjectedPaths();
         }
       }
     });

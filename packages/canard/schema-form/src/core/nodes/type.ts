@@ -227,7 +227,7 @@ export enum NodeEventType {
   /** Request to emit a value change with a specific strategy. */
   RequestEmitChange = BIT_FLAG_14,
   /** Request to inject the node's value to a handler. */
-  RequestInjectValueTo = BIT_FLAG_15,
+  RequestInjection = BIT_FLAG_15,
 }
 
 export enum PublicNodeEventType {
@@ -266,7 +266,7 @@ export type NodeEventPayload = {
   [NodeEventType.RequestSelect]: void;
   [NodeEventType.RequestRefresh]: void;
   [NodeEventType.RequestEmitChange]: UnionSetValueOption;
-  [NodeEventType.RequestInjectValueTo]: void;
+  [NodeEventType.RequestInjection]: void;
 };
 
 /**
@@ -296,7 +296,7 @@ export type NodeEventOptions = {
   [NodeEventType.RequestSelect]: void;
   [NodeEventType.RequestRefresh]: void;
   [NodeEventType.RequestEmitChange]: boolean;
-  [NodeEventType.RequestInjectValueTo]: void;
+  [NodeEventType.RequestInjection]: void;
 };
 
 export enum NodeState {

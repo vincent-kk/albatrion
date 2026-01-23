@@ -16,7 +16,7 @@ import {
   formatEmptyEnumIntersectionError,
   formatFormTypeInputMapError,
   formatInfiniteLoopError,
-  formatInjectValueToError,
+  formatInjectToError,
   formatInvalidRangeError,
   formatInvalidVirtualNodeValuesError,
   formatItemsFalseWithoutPrefixItemsError,
@@ -437,9 +437,9 @@ describe('formatErrorMessage', () => {
     });
   });
 
-  describe('formatInjectValueToError', () => {
-    it('injectValueTo 실행 에러 메시지를 포맷해야 합니다', () => {
-      const result = formatInjectValueToError(
+  describe('formatInjectToError', () => {
+    it('injectTo 실행 에러 메시지를 포맷해야 합니다', () => {
+      const result = formatInjectToError(
         'test-value',
         '/source',
         { source: 'test-value', target: '' },
@@ -449,14 +449,14 @@ describe('formatErrorMessage', () => {
         new Error('Cannot read property of undefined'),
       );
 
-      expect(result).toContain('injectValueTo');
+      expect(result).toContain('injectTo');
       expect(result).toContain('/properties/source');
       expect(result).toContain('/source');
       expect(result).toContain('How to fix');
     });
 
     it('복잡한 값도 처리해야 합니다', () => {
-      const result = formatInjectValueToError(
+      const result = formatInjectToError(
         { nested: { value: 123 } },
         '/config',
         { config: { nested: { value: 123 } } },
@@ -469,7 +469,7 @@ describe('formatErrorMessage', () => {
         new TypeError('Invalid operation'),
       );
 
-      expect(result).toContain('injectValueTo');
+      expect(result).toContain('injectTo');
       expect(result).toContain('Invalid operation');
     });
   });
@@ -533,7 +533,7 @@ describe('formatErrorMessage', () => {
         formatFormTypeInputMapError('/path', new Error()),
         formatSchemaValidationFailedError({}, [], { type: 'object' as const }),
         formatRegisterPluginError({} as SchemaFormPlugin, new Error()),
-        formatInjectValueToError(
+        formatInjectToError(
           'value',
           '/path',
           {},
@@ -871,8 +871,8 @@ describe('formatErrorMessage', () => {
       expect(result).toMatchSnapshot();
     });
 
-    it('formatInjectValueToError 스냅샷', () => {
-      const result = formatInjectValueToError(
+    it('formatInjectToError 스냅샷', () => {
+      const result = formatInjectToError(
         'current-value',
         '/sourceField',
         {
@@ -884,7 +884,7 @@ describe('formatErrorMessage', () => {
         {
           type: 'string',
           title: 'Source Field',
-          injectValueTo: () => ({ '/targetField': 'injected-value' }),
+          injectTo: () => ({ '/targetField': 'injected-value' }),
         },
         '/properties/sourceField',
         new TypeError("Cannot read properties of undefined (reading 'map')"),

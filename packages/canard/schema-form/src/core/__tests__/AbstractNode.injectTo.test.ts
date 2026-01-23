@@ -13,7 +13,7 @@ const wait = (delay = 10) => {
   });
 };
 
-describe('AbstractNode.injectValueTo', () => {
+describe('AbstractNode.injectTo', () => {
   // ============================================================================
   // 1. Basic Functionality (Critical)
   // ============================================================================
@@ -25,7 +25,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: (value: string) => ({
+            injectTo: (value: string) => ({
               '../target': `injected:${value}`,
             }),
           },
@@ -57,7 +57,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: (value: string) => ({
+            injectTo: (value: string) => ({
               '/deep/nested/target': `injected:${value}`,
             }),
           },
@@ -94,7 +94,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: (value: string) => ({
+            injectTo: (value: string) => ({
               '../target1': `${value}-1`,
               '../target2': `${value}-2`,
               '../target3': `${value}-3`,
@@ -130,7 +130,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: (value: string): [string, string][] => [
+            injectTo: (value: string): [string, string][] => [
               ['../target1', `${value}-1`],
               ['../target2', `${value}-2`],
             ],
@@ -156,14 +156,14 @@ describe('AbstractNode.injectValueTo', () => {
       });
     });
 
-    it('should not inject when injectValueTo returns null', async () => {
+    it('should not inject when injectTo returns null', async () => {
       const onChange = vi.fn();
       const jsonSchema = {
         type: 'object',
         properties: {
           source: {
             type: 'string',
-            injectValueTo: () => null,
+            injectTo: () => null,
           },
           target: {
             type: 'string',
@@ -184,14 +184,14 @@ describe('AbstractNode.injectValueTo', () => {
       expect(node.find('/target')?.value).toBe('original');
     });
 
-    it('should not inject when injectValueTo returns undefined', async () => {
+    it('should not inject when injectTo returns undefined', async () => {
       const onChange = vi.fn();
       const jsonSchema = {
         type: 'object',
         properties: {
           source: {
             type: 'string',
-            injectValueTo: () => undefined,
+            injectTo: () => undefined,
           },
           target: {
             type: 'string',
@@ -212,7 +212,7 @@ describe('AbstractNode.injectValueTo', () => {
       expect(node.find('/target')?.value).toBe('original');
     });
 
-    it('should not inject when injectValueTo returns empty object', async () => {
+    it('should not inject when injectTo returns empty object', async () => {
       const onChange = vi.fn();
       const injectFn = vi.fn(() => ({}));
       const jsonSchema = {
@@ -220,7 +220,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: injectFn,
+            injectTo: injectFn,
           },
           target: {
             type: 'string',
@@ -242,7 +242,7 @@ describe('AbstractNode.injectValueTo', () => {
       expect(node.find('/target')?.value).toBe('original');
     });
 
-    it('should not inject when injectValueTo returns empty array', async () => {
+    it('should not inject when injectTo returns empty array', async () => {
       const onChange = vi.fn();
       const injectFn = vi.fn(() => []);
       const jsonSchema = {
@@ -250,7 +250,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: injectFn,
+            injectTo: injectFn,
           },
           target: {
             type: 'string',
@@ -285,7 +285,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: injectFn,
+            injectTo: injectFn,
           },
           target: { type: 'string' },
           other: { type: 'number', default: 42 },
@@ -331,14 +331,14 @@ describe('AbstractNode.injectValueTo', () => {
           properties: {
             fieldA: {
               type: 'string',
-              injectValueTo: (value: string) => {
+              injectTo: (value: string) => {
                 callCountA++;
                 return { '../fieldB': `fromA:${value}` };
               },
             },
             fieldB: {
               type: 'string',
-              injectValueTo: (value: string) => {
+              injectTo: (value: string) => {
                 callCountB++;
                 return { '../fieldA': `fromB:${value}` };
               },
@@ -356,7 +356,7 @@ describe('AbstractNode.injectValueTo', () => {
         await wait();
 
         // 순환 참조 방지로 인해 각 노드는 정확히 1번만 호출되어야 함
-        // A.setValue('start') → A.injectValueTo() → B.setValue() → B.injectValueTo() attempts A.setValue() but skipped
+        // A.setValue('start') → A.injectTo() → B.setValue() → B.injectTo() attempts A.setValue() but skipped
         expect(callCountA).toBe(1);
         expect(callCountB).toBe(1);
 
@@ -376,21 +376,21 @@ describe('AbstractNode.injectValueTo', () => {
           properties: {
             fieldA: {
               type: 'string',
-              injectValueTo: (value: string) => {
+              injectTo: (value: string) => {
                 callCount.A++;
                 return { '../fieldB': `A→B:${value}` };
               },
             },
             fieldB: {
               type: 'string',
-              injectValueTo: (value: string) => {
+              injectTo: (value: string) => {
                 callCount.B++;
                 return { '../fieldC': `B→C:${value}` };
               },
             },
             fieldC: {
               type: 'string',
-              injectValueTo: (value: string) => {
+              injectTo: (value: string) => {
                 callCount.C++;
                 return { '../fieldA': `C→A:${value}` };
               },
@@ -429,7 +429,7 @@ describe('AbstractNode.injectValueTo', () => {
           properties: {
             source: {
               type: 'string',
-              injectValueTo: (value: string) => {
+              injectTo: (value: string) => {
                 callCount++;
                 return { '/source': `self:${value}` };
               },
@@ -446,7 +446,7 @@ describe('AbstractNode.injectValueTo', () => {
         }
         await wait();
 
-        // 자기 참조는 스킵되어야 함 (injectValueTo는 1번 호출되지만 setValue는 스킵)
+        // 자기 참조는 스킵되어야 함 (injectTo는 1번 호출되지만 setValue는 스킵)
         expect(callCount).toBe(1);
         expect(node.find('/source')?.value).toBe('original');
       });
@@ -460,7 +460,7 @@ describe('AbstractNode.injectValueTo', () => {
           properties: {
             source: {
               type: 'string',
-              injectValueTo: (value: string) => {
+              injectTo: (value: string) => {
                 callCount++;
                 return { './': `self:${value}` };
               },
@@ -493,28 +493,28 @@ describe('AbstractNode.injectValueTo', () => {
           properties: {
             a: {
               type: 'string',
-              injectValueTo: (v: string) => {
+              injectTo: (v: string) => {
                 callCounts.a++;
                 return { '../b': `a→${v}` };
               },
             },
             b: {
               type: 'string',
-              injectValueTo: (v: string) => {
+              injectTo: (v: string) => {
                 callCounts.b++;
                 return { '../c': `b→${v}` };
               },
             },
             c: {
               type: 'string',
-              injectValueTo: (v: string) => {
+              injectTo: (v: string) => {
                 callCounts.c++;
                 return { '../d': `c→${v}` };
               },
             },
             d: {
               type: 'string',
-              injectValueTo: (v: string) => {
+              injectTo: (v: string) => {
                 callCounts.d++;
                 return { '../a': `d→${v}` };
               },
@@ -553,7 +553,7 @@ describe('AbstractNode.injectValueTo', () => {
           properties: {
             source: {
               type: 'string',
-              injectValueTo: (value: string) => ({
+              injectTo: (value: string) => ({
                 '../target': `injected:${value}`,
               }),
             },
@@ -604,7 +604,7 @@ describe('AbstractNode.injectValueTo', () => {
             properties: {
               source: {
                 type: 'string',
-                injectValueTo: (value: string) => ({
+                injectTo: (value: string) => ({
                   '../sibling': value.toUpperCase(),
                 }),
               },
@@ -639,7 +639,7 @@ describe('AbstractNode.injectValueTo', () => {
                 properties: {
                   source: {
                     type: 'string',
-                    injectValueTo: (value: string) => ({
+                    injectTo: (value: string) => ({
                       '../../uncle': `from-grandchild:${value}`,
                     }),
                   },
@@ -680,7 +680,7 @@ describe('AbstractNode.injectValueTo', () => {
                     properties: {
                       source: {
                         type: 'string',
-                        injectValueTo: (value: string) => ({
+                        injectTo: (value: string) => ({
                           '/rootTarget': `deep:${value}`,
                         }),
                       },
@@ -712,7 +712,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: (value: string) => ({
+            injectTo: (value: string) => ({
               '/a/b/c/target': `root→deep:${value}`,
             }),
           },
@@ -764,7 +764,7 @@ describe('AbstractNode.injectValueTo', () => {
               properties: {
                 value: {
                   type: 'string',
-                  injectValueTo: (value: string) => ({
+                  injectTo: (value: string) => ({
                     '/summary': `item-value:${value}`,
                   }),
                 },
@@ -810,7 +810,7 @@ describe('AbstractNode.injectValueTo', () => {
                       properties: {
                         source: {
                           type: 'string',
-                          injectValueTo: (value: string) => ({
+                          injectTo: (value: string) => ({
                             '/rootTarget': `from-array:${value}`,
                           }),
                         },
@@ -852,7 +852,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: (value: string) => ({
+            injectTo: (value: string) => ({
               '/nonExistent/path': value,
             }),
           },
@@ -882,7 +882,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: (value: string) => ({
+            injectTo: (value: string) => ({
               '../valid1': `v1:${value}`,
               '/invalid/path': 'should-skip',
               '../valid2': `v2:${value}`,
@@ -913,7 +913,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: () => ({
+            injectTo: () => ({
               '/a/b/c/d/e/f': 'deeply-nested-nonexistent',
             }),
           },
@@ -944,15 +944,15 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           a: {
             type: 'string',
-            injectValueTo: (value: string) => ({ '../b': `A→${value}` }),
+            injectTo: (value: string) => ({ '../b': `A→${value}` }),
           },
           b: {
             type: 'string',
-            injectValueTo: (value: string) => ({ '../c': `B→${value}` }),
+            injectTo: (value: string) => ({ '../c': `B→${value}` }),
           },
           c: {
             type: 'string',
-            // c는 injectValueTo 없음 - 체인 종료
+            // c는 injectTo 없음 - 체인 종료
           },
         },
       } satisfies JsonSchema;
@@ -978,7 +978,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: (value: string) => ({
+            injectTo: (value: string) => ({
               '../t1': `${value}-1`,
               '../t2': `${value}-2`,
               '../t3': `${value}-3`,
@@ -1020,11 +1020,11 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source1: {
             type: 'string',
-            injectValueTo: (value: string) => ({ '../target': `from1:${value}` }),
+            injectTo: (value: string) => ({ '../target': `from1:${value}` }),
           },
           source2: {
             type: 'string',
-            injectValueTo: (value: string) => ({ '../target': `from2:${value}` }),
+            injectTo: (value: string) => ({ '../target': `from2:${value}` }),
           },
           target: { type: 'string' },
         },
@@ -1056,11 +1056,11 @@ describe('AbstractNode.injectValueTo', () => {
   // ============================================================================
   describe('Error Handling', () => {
     /**
-     * injectValueTo에서 에러가 발생하면 JsonSchemaError로 래핑되어 throw됩니다.
+     * injectTo에서 에러가 발생하면 JsonSchemaError로 래핑되어 throw됩니다.
      * 이 에러는 이벤트 루프에서 비동기로 발생하므로 unhandled rejection이 됩니다.
      * 테스트에서는 이 동작을 문서화합니다.
      */
-    it('should document that errors in injectValueTo cause unhandled rejections', async () => {
+    it('should document that errors in injectTo cause unhandled rejections', async () => {
       // 에러 핸들링 테스트는 비동기 특성으로 인해 복잡합니다.
       // 이 테스트는 에러가 발생하지 않는 정상 케이스를 확인합니다.
       const onChange = vi.fn();
@@ -1069,7 +1069,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: (value: string) => {
+            injectTo: (value: string) => {
               // 에러 없이 정상 반환
               return { '../target': `ok:${value}` };
             },
@@ -1097,7 +1097,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: (value: string) => ({
+            injectTo: (value: string) => ({
               '../target': `injected:${value}`,
             }),
           },
@@ -1135,7 +1135,7 @@ describe('AbstractNode.injectValueTo', () => {
   // 8. Initialization Timing (Medium)
   // ============================================================================
   describe('Initialization Timing', () => {
-    it('should trigger injectValueTo when defaultValue is provided', async () => {
+    it('should trigger injectTo when defaultValue is provided', async () => {
       const onChange = vi.fn();
       const injectFn = vi.fn((value: string) => ({
         '../target': `default:${value}`,
@@ -1146,7 +1146,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: injectFn,
+            injectTo: injectFn,
           },
           target: { type: 'string' },
         },
@@ -1159,19 +1159,19 @@ describe('AbstractNode.injectValueTo', () => {
       });
       await wait();
 
-      // defaultValue 설정으로 인해 injectValueTo가 트리거될 수 있음
+      // defaultValue 설정으로 인해 injectTo가 트리거될 수 있음
       // 실제 동작은 구현에 따라 다름 - 현재 상태 확인
       expect(node.find('/source')?.value).toBe('initial');
     });
 
-    it('should trigger injectValueTo when setValue is called after initialization', async () => {
+    it('should trigger injectTo when setValue is called after initialization', async () => {
       const onChange = vi.fn();
       const jsonSchema = {
         type: 'object',
         properties: {
           source: {
             type: 'string',
-            injectValueTo: (value: string) => ({
+            injectTo: (value: string) => ({
               '../target': `post-init:${value}`,
             }),
           },
@@ -1200,7 +1200,11 @@ describe('AbstractNode.injectValueTo', () => {
     it('should receive context value as third parameter', async () => {
       const onChange = vi.fn();
       const injectFn = vi.fn(
-        (_value: string, _rootValue: unknown, _context: Record<string, unknown>) => {
+        (
+          _value: string,
+          _rootValue: unknown,
+          _context: Record<string, unknown>,
+        ) => {
           // context는 ObjectNode의 context.value
           return { '../target': `context-received` };
         },
@@ -1211,7 +1215,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: injectFn,
+            injectTo: injectFn,
           },
           target: { type: 'string' },
         },
@@ -1244,7 +1248,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: (value: string) => ({
+            injectTo: (value: string) => ({
               '../special-field': `special:${value}`,
             }),
           },
@@ -1271,7 +1275,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: (value: string) => ({
+            injectTo: (value: string) => ({
               '../123': `numeric:${value}`,
             }),
           },
@@ -1317,7 +1321,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: (value: string) => ({
+            injectTo: (value: string) => ({
               '/nested/nested/nested/nested/nested/nested/nested/nested/nested/nested/target': `deep:${value}`,
             }),
           },
@@ -1347,7 +1351,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           clear: {
             type: 'boolean',
-            injectValueTo: (value: boolean) => {
+            injectTo: (value: boolean) => {
               if (!value) return null;
               return {
                 '../name': undefined,
@@ -1398,7 +1402,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: (value: string) => ({
+            injectTo: (value: string) => ({
               '../target': `injected:${value}`,
             }),
           },
@@ -1449,7 +1453,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'number',
-            injectValueTo: (value: number) => ({
+            injectTo: (value: number) => ({
               '../target': value * 2,
             }),
           },
@@ -1491,7 +1495,7 @@ describe('AbstractNode.injectValueTo', () => {
         properties: {
           source: {
             type: 'string',
-            injectValueTo: () => injectTargets,
+            injectTo: () => injectTargets,
           },
           ...targets,
         },
@@ -1514,9 +1518,9 @@ describe('AbstractNode.injectValueTo', () => {
   });
 
   // ============================================================================
-  // 13. oneOf/anyOf with injectValueTo
+  // 13. oneOf/anyOf with injectTo
   // ============================================================================
-  describe('oneOf/anyOf with injectValueTo', () => {
+  describe('oneOf/anyOf with injectTo', () => {
     describe('oneOf internal field to external field injection', () => {
       it('should inject from oneOf conditional field to parent sibling field', async () => {
         const onChange = vi.fn();
@@ -1536,7 +1540,7 @@ describe('AbstractNode.injectValueTo', () => {
               properties: {
                 platform: {
                   type: 'string',
-                  injectValueTo: (value: string) => ({
+                  injectTo: (value: string) => ({
                     '/summary': `Game platform: ${value}`,
                   }),
                 },
@@ -1547,7 +1551,7 @@ describe('AbstractNode.injectValueTo', () => {
               properties: {
                 director: {
                   type: 'string',
-                  injectValueTo: (value: string) => ({
+                  injectTo: (value: string) => ({
                     '/summary': `Directed by: ${value}`,
                   }),
                 },
@@ -1587,7 +1591,7 @@ describe('AbstractNode.injectValueTo', () => {
               properties: {
                 fieldA: {
                   type: 'string',
-                  injectValueTo: (value: string) => ({
+                  injectTo: (value: string) => ({
                     '/result': `From A: ${value}`,
                   }),
                 },
@@ -1598,7 +1602,7 @@ describe('AbstractNode.injectValueTo', () => {
               properties: {
                 fieldB: {
                   type: 'string',
-                  injectValueTo: (value: string) => ({
+                  injectTo: (value: string) => ({
                     '/result': `From B: ${value}`,
                   }),
                 },
@@ -1654,7 +1658,7 @@ describe('AbstractNode.injectValueTo', () => {
               properties: {
                 hobby: {
                   type: 'string',
-                  injectValueTo: (value: string) => ({
+                  injectTo: (value: string) => ({
                     '/summary': `Hobby: ${value}`,
                   }),
                 },
@@ -1665,7 +1669,7 @@ describe('AbstractNode.injectValueTo', () => {
               properties: {
                 company: {
                   type: 'string',
-                  injectValueTo: (value: string) => ({
+                  injectTo: (value: string) => ({
                     '/summary': `Company: ${value}`,
                   }),
                 },
@@ -1701,7 +1705,7 @@ describe('AbstractNode.injectValueTo', () => {
               properties: {
                 source1: {
                   type: 'string',
-                  injectValueTo: (value: string) => ({
+                  injectTo: (value: string) => ({
                     '/target1': `from-source1: ${value}`,
                   }),
                 },
@@ -1712,7 +1716,7 @@ describe('AbstractNode.injectValueTo', () => {
               properties: {
                 source2: {
                   type: 'string',
-                  injectValueTo: (value: string) => ({
+                  injectTo: (value: string) => ({
                     '/target2': `from-source2: ${value}`,
                   }),
                 },
@@ -1751,7 +1755,7 @@ describe('AbstractNode.injectValueTo', () => {
           properties: {
             source: {
               type: 'string',
-              injectValueTo: (value: string) => ({
+              injectTo: (value: string) => ({
                 '/conditionalField': `injected: ${value}`,
               }),
             },
@@ -1797,7 +1801,7 @@ describe('AbstractNode.injectValueTo', () => {
           properties: {
             source: {
               type: 'string',
-              injectValueTo: (value: string) => ({
+              injectTo: (value: string) => ({
                 '/inactiveField': `injected: ${value}`,
               }),
             },
@@ -1853,7 +1857,7 @@ describe('AbstractNode.injectValueTo', () => {
           properties: {
             trigger: {
               type: 'string',
-              injectValueTo: (value: string) => ({
+              injectTo: (value: string) => ({
                 '/category': value === 'switch' ? 'B' : 'A',
               }),
             },
@@ -1920,7 +1924,7 @@ describe('AbstractNode.injectValueTo', () => {
               properties: {
                 xField: {
                   type: 'string',
-                  injectValueTo: (value: string) => ({
+                  injectTo: (value: string) => ({
                     '/rootTarget': `from-X: ${value}`,
                   }),
                 },
@@ -1931,7 +1935,7 @@ describe('AbstractNode.injectValueTo', () => {
               properties: {
                 yField: {
                   type: 'string',
-                  injectValueTo: (value: string) => ({
+                  injectTo: (value: string) => ({
                     '/rootTarget': `from-Y: ${value}`,
                   }),
                 },
@@ -1991,7 +1995,7 @@ describe('AbstractNode.injectValueTo', () => {
               properties: {
                 simpleField: {
                   type: 'string',
-                  injectValueTo: (value: string) => ({
+                  injectTo: (value: string) => ({
                     '/result': `simple: ${value}`,
                   }),
                 },
@@ -2005,7 +2009,7 @@ describe('AbstractNode.injectValueTo', () => {
                   properties: {
                     nestedField: {
                       type: 'string',
-                      injectValueTo: (value: string) => ({
+                      injectTo: (value: string) => ({
                         '/result': `nested: ${value}`,
                       }),
                     },
@@ -2065,14 +2069,14 @@ describe('AbstractNode.injectValueTo', () => {
               properties: {
                 fieldA: {
                   type: 'string',
-                  injectValueTo: (value: string) => {
+                  injectTo: (value: string) => {
                     callCountA++;
                     return { '../fieldB': `fromA: ${value}` };
                   },
                 },
                 fieldB: {
                   type: 'string',
-                  injectValueTo: (value: string) => {
+                  injectTo: (value: string) => {
                     callCountB++;
                     return { '../fieldA': `fromB: ${value}` };
                   },
@@ -2125,7 +2129,7 @@ describe('AbstractNode.injectValueTo', () => {
               properties: {
                 sourceField: {
                   type: 'string',
-                  injectValueTo: (value: string) => ({
+                  injectTo: (value: string) => ({
                     '/externalTarget': `from-oneOf: ${value}`,
                   }),
                 },
@@ -2151,7 +2155,9 @@ describe('AbstractNode.injectValueTo', () => {
 
         // oneOf 필드에서 외부 필드로 정상 injection
         expect(node.find('/sourceField')?.value).toBe('test-value');
-        expect(node.find('/externalTarget')?.value).toBe('from-oneOf: test-value');
+        expect(node.find('/externalTarget')?.value).toBe(
+          'from-oneOf: test-value',
+        );
       });
     });
   });

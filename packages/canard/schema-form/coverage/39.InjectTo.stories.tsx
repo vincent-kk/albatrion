@@ -4,7 +4,7 @@ import { Form, type JsonSchema } from '../src';
 import StoryLayout from './components/StoryLayout';
 
 export default {
-  title: 'Form/39. InjectValueTo',
+  title: 'Form/39. injectTo',
 };
 
 /**
@@ -18,7 +18,7 @@ export const BasicSiblingInjection = () => {
       source: {
         type: 'string',
         title: 'Source (입력하면 Target에 주입)',
-        injectValueTo: (value: string) => ({
+        injectTo: (value: string) => ({
           '../target': `injected: ${value}`,
         }),
       },
@@ -61,7 +61,7 @@ export const AbsolutePathInjection = () => {
               source: {
                 type: 'string',
                 title: 'Deep Source (입력하면 루트로 주입)',
-                injectValueTo: (value: string) => ({
+                injectTo: (value: string) => ({
                   '/rootTarget': `from-deep: ${value}`,
                 }),
               },
@@ -92,7 +92,7 @@ export const MultipleTargetInjection = () => {
       source: {
         type: 'string',
         title: 'Source (여러 타겟에 주입)',
-        injectValueTo: (value: string) => ({
+        injectTo: (value: string) => ({
           '../target1': `${value}-1`,
           '../target2': `${value}-2`,
           '../target3': `${value}-3`,
@@ -125,14 +125,14 @@ export const CircularReferencePreventionDirect = () => {
       fieldA: {
         type: 'string',
         title: 'Field A (→ B로 주입)',
-        injectValueTo: (value: string) => ({
+        injectTo: (value: string) => ({
           '../fieldB': `fromA: ${value}`,
         }),
       },
       fieldB: {
         type: 'string',
         title: 'Field B (→ A로 주입 시도, 순환 방지됨)',
-        injectValueTo: (value: string) => ({
+        injectTo: (value: string) => ({
           '../fieldA': `fromB: ${value}`,
         }),
       },
@@ -163,21 +163,21 @@ export const CircularReferencePreventionTriangular = () => {
       fieldA: {
         type: 'string',
         title: 'Field A (→ B)',
-        injectValueTo: (value: string) => ({
+        injectTo: (value: string) => ({
           '../fieldB': `A→B: ${value}`,
         }),
       },
       fieldB: {
         type: 'string',
         title: 'Field B (→ C)',
-        injectValueTo: (value: string) => ({
+        injectTo: (value: string) => ({
           '../fieldC': `B→C: ${value}`,
         }),
       },
       fieldC: {
         type: 'string',
         title: 'Field C (→ A, 순환 방지됨)',
-        injectValueTo: (value: string) => ({
+        injectTo: (value: string) => ({
           '../fieldA': `C→A: ${value}`,
         }),
       },
@@ -207,14 +207,14 @@ export const ChainInjection = () => {
       a: {
         type: 'string',
         title: 'A (체인 시작점)',
-        injectValueTo: (value: string) => ({
+        injectTo: (value: string) => ({
           '../b': `A→${value}`,
         }),
       },
       b: {
         type: 'string',
         title: 'B (A로부터 받고 C로 전달)',
-        injectValueTo: (value: string) => ({
+        injectTo: (value: string) => ({
           '../c': `B→${value}`,
         }),
       },
@@ -256,7 +256,7 @@ export const ParentPathInjection = () => {
               source: {
                 type: 'string',
                 title: 'Source (../../uncle로 주입)',
-                injectValueTo: (value: string) => ({
+                injectTo: (value: string) => ({
                   '../../uncle': `from-grandchild: ${value}`,
                 }),
               },
@@ -297,7 +297,7 @@ export const ArrayItemInjection = () => {
             value: {
               type: 'string',
               title: 'Item Value (summary로 주입)',
-              injectValueTo: (value: string) => ({
+              injectTo: (value: string) => ({
                 '/summary': `item-value: ${value}`,
               }),
             },
@@ -332,7 +332,7 @@ export const ConditionalInjection = () => {
       source: {
         type: 'string',
         title: 'Source (3자 이상일 때만 주입)',
-        injectValueTo: (value: string) => {
+        injectTo: (value: string) => {
           if (value.length < 3) return null;
           return { '../target': `valid: ${value}` };
         },
@@ -383,7 +383,7 @@ export const OneOfInternalToExternal = () => {
           platform: {
             type: 'string',
             title: 'Platform (game)',
-            injectValueTo: (value: string) => ({
+            injectTo: (value: string) => ({
               '/summary': `Game platform: ${value}`,
             }),
           },
@@ -395,7 +395,7 @@ export const OneOfInternalToExternal = () => {
           director: {
             type: 'string',
             title: 'Director (movie)',
-            injectValueTo: (value: string) => ({
+            injectTo: (value: string) => ({
               '/summary': `Directed by: ${value}`,
             }),
           },
@@ -428,7 +428,7 @@ export const OneOfConditionChangeViaInjection = () => {
       trigger: {
         type: 'string',
         title: 'Trigger ("switch" 입력 시 category가 B로 변경)',
-        injectValueTo: (value: string) => ({
+        injectTo: (value: string) => ({
           '/category': value === 'switch' ? 'B' : 'A',
         }),
       },
@@ -486,14 +486,14 @@ export const MultipleSourceToSameTarget = () => {
       source1: {
         type: 'string',
         title: 'Source 1 (→ target)',
-        injectValueTo: (value: string) => ({
+        injectTo: (value: string) => ({
           '../target': `from-source1: ${value}`,
         }),
       },
       source2: {
         type: 'string',
         title: 'Source 2 (→ target)',
-        injectValueTo: (value: string) => ({
+        injectTo: (value: string) => ({
           '../target': `from-source2: ${value}`,
         }),
       },

@@ -6,7 +6,7 @@ import { formatValuePreview } from './utils/formatValuePreview';
 import { getErrorMessage } from './utils/getErrorMessage';
 
 /**
- * Formats a structured error message for injectValueTo execution failures.
+ * Formats a structured error message for injectTo execution failures.
  * @param schemaPath - The schema path of the node where the error occurred
  * @param dataPath - The data path of the node where the error occurred
  * @param value - The current value of the node
@@ -15,7 +15,7 @@ import { getErrorMessage } from './utils/getErrorMessage';
  * @param jsonSchema - The JSON Schema of the node
  * @param error - The original error object
  */
-export const formatInjectValueToError = (
+export const formatInjectToError = (
   value: unknown,
   dataPath: string,
   rootValue: unknown,
@@ -33,7 +33,7 @@ export const formatInjectValueToError = (
   const contextValuePreview = formatValuePreview(contextValue);
 
   return `
-An error occurred while executing injectValueTo.
+An error occurred while executing injectTo.
 
   ╭${divider}
   │  Schema Path:   ${schemaPath}
@@ -49,13 +49,13 @@ ${schemaPreview}${schemaTruncated ? '\n  │    ...(truncated)' : ''}
   │  Error: ${errorMessage}
   ╰${divider}
 
-The injectValueTo function threw an error during execution.
+The injectTo function threw an error during execution.
 This function is called when the node's value changes to inject values
 into other nodes based on the current value.
 
 How to fix:
-  1. Check the injectValueTo function in your schema for runtime errors
-  2. Verify that all target paths returned by injectValueTo are valid
+  1. Check the injectTo function in your schema for runtime errors
+  2. Verify that all target paths returned by injectTo are valid
   3. Ensure the function handles edge cases (null, undefined values)
   4. Check for type mismatches in the injected values
   5. Review any conditional logic that may fail with certain inputs

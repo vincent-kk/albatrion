@@ -21,7 +21,7 @@ const mutate: JsonScannerOptions<JsonSchemaWithVirtual>['mutate'] = ({
     schema.FormTypeRendererProps === undefined &&
     schema.errorMessages === undefined &&
     schema.options === undefined &&
-    schema.injectValueTo === undefined
+    schema.injectTo === undefined
   )
     return;
   const {
@@ -30,7 +30,7 @@ const mutate: JsonScannerOptions<JsonSchemaWithVirtual>['mutate'] = ({
     FormTypeRendererProps,
     errorMessages,
     options,
-    injectValueTo,
+    injectTo,
     ...stripedSchema
   } = schema;
   return stripedSchema;
