@@ -19,6 +19,7 @@ import type {
 import type { Dictionary, IsNullable } from '@aileron/declare';
 
 import type { UnknownFormTypeInputProps } from './formTypeInput';
+import type { InjectValueTo } from './injectValueTo';
 import type {
   AllowedValue,
   ArrayValue,
@@ -247,6 +248,7 @@ export type BasicSchema = {
     omitEmpty?: boolean;
     [alt: string]: any;
   };
+  injectValueTo?: InjectValueTo;
   /** Alias for computed.if */
   '&if'?: boolean | string;
   /** Alias for computed.active */
