@@ -16,6 +16,7 @@ import {
   BIT_FLAG_12,
   BIT_FLAG_13,
   BIT_FLAG_14,
+  BIT_FLAG_15,
   BIT_MASK_NONE,
 } from '@/schema-form/app/constants';
 import type {
@@ -225,6 +226,8 @@ export enum NodeEventType {
   RequestRefresh = BIT_FLAG_13,
   /** Request to emit a value change with a specific strategy. */
   RequestEmitChange = BIT_FLAG_14,
+  /** Request to inject the node's value to a handler. */
+  RequestInjectValueTo = BIT_FLAG_15,
 }
 
 export enum PublicNodeEventType {
@@ -263,6 +266,7 @@ export type NodeEventPayload = {
   [NodeEventType.RequestSelect]: void;
   [NodeEventType.RequestRefresh]: void;
   [NodeEventType.RequestEmitChange]: UnionSetValueOption;
+  [NodeEventType.RequestInjectValueTo]: void;
 };
 
 /**
@@ -292,6 +296,7 @@ export type NodeEventOptions = {
   [NodeEventType.RequestSelect]: void;
   [NodeEventType.RequestRefresh]: void;
   [NodeEventType.RequestEmitChange]: boolean;
+  [NodeEventType.RequestInjectValueTo]: void;
 };
 
 export enum NodeState {

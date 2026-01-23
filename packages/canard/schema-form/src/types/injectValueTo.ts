@@ -1,4 +1,4 @@
-import type { Dictionary, Fn } from '@aileron/declare';
+import type { Dictionary, Fn, Nullish } from '@aileron/declare';
 
 export type InjectValueTo<
   Value = any,
@@ -6,7 +6,7 @@ export type InjectValueTo<
   Context extends Dictionary = Dictionary,
 > = Fn<
   [value: Value, rootValue: RootValue, context: Context],
-  InjectValueOperation
+  InjectValueOperation | Nullish
 >;
 
 export type InjectValueOperation =

@@ -16,6 +16,7 @@ import {
   formatEmptyEnumIntersectionError,
   formatFormTypeInputMapError,
   formatInfiniteLoopError,
+  formatInjectValueToError,
   formatInvalidRangeError,
   formatInvalidVirtualNodeValuesError,
   formatItemsFalseWithoutPrefixItemsError,
@@ -436,6 +437,43 @@ describe('formatErrorMessage', () => {
     });
   });
 
+  describe('formatInjectValueToError', () => {
+    it('injectValueTo 실행 에러 메시지를 포맷해야 합니다', () => {
+      const result = formatInjectValueToError(
+        'test-value',
+        '/source',
+        { source: 'test-value', target: '' },
+        {},
+        { type: 'string' as const },
+        '/properties/source',
+        new Error('Cannot read property of undefined'),
+      );
+
+      expect(result).toContain('injectValueTo');
+      expect(result).toContain('/properties/source');
+      expect(result).toContain('/source');
+      expect(result).toContain('How to fix');
+    });
+
+    it('복잡한 값도 처리해야 합니다', () => {
+      const result = formatInjectValueToError(
+        { nested: { value: 123 } },
+        '/config',
+        { config: { nested: { value: 123 } } },
+        { contextData: 'some-context' },
+        {
+          type: 'object' as const,
+          properties: { nested: { type: 'object' as const } },
+        },
+        '/properties/config',
+        new TypeError('Invalid operation'),
+      );
+
+      expect(result).toContain('injectValueTo');
+      expect(result).toContain('Invalid operation');
+    });
+  });
+
   describe('에러 메시지 일관성 테스트', () => {
     it('모든 포맷터가 "How to fix" 섹션을 포함해야 합니다', () => {
       const formatters = [
@@ -495,6 +533,15 @@ describe('formatErrorMessage', () => {
         formatFormTypeInputMapError('/path', new Error()),
         formatSchemaValidationFailedError({}, [], { type: 'object' as const }),
         formatRegisterPluginError({} as SchemaFormPlugin, new Error()),
+        formatInjectValueToError(
+          'value',
+          '/path',
+          {},
+          {},
+          { type: 'string' },
+          '/path',
+          new Error(),
+        ),
       ];
 
       for (const message of formatters) {
@@ -820,6 +867,27 @@ describe('formatErrorMessage', () => {
         new Error(
           'Plugin conflict: formTypeInputDefinitions[0] conflicts with existing definition',
         ),
+      );
+      expect(result).toMatchSnapshot();
+    });
+
+    it('formatInjectValueToError 스냅샷', () => {
+      const result = formatInjectValueToError(
+        'current-value',
+        '/sourceField',
+        {
+          sourceField: 'current-value',
+          targetField: '',
+          otherField: 123,
+        },
+        { userId: 'user-123', sessionId: 'session-456' },
+        {
+          type: 'string',
+          title: 'Source Field',
+          injectValueTo: () => ({ '/targetField': 'injected-value' }),
+        },
+        '/properties/sourceField',
+        new TypeError("Cannot read properties of undefined (reading 'map')"),
       );
       expect(result).toMatchSnapshot();
     });
