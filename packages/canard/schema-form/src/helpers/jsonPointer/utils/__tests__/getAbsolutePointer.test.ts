@@ -120,11 +120,14 @@ describe('getAbsolutePath', () => {
     });
 
     it('should handle ../ with very deep nesting (10+ levels)', () => {
+      expect(getAbsolutePath('/1/2/3/4/5/6/7/8/9/10', '../../../../../a')).toBe(
+        '/1/2/3/4/5/a',
+      );
       expect(
-        getAbsolutePath('/1/2/3/4/5/6/7/8/9/10', '../../../../../a'),
-      ).toBe('/1/2/3/4/5/a');
-      expect(
-        getAbsolutePath('/1/2/3/4/5/6/7/8/9/10', '../../../../../../../../../../x'),
+        getAbsolutePath(
+          '/1/2/3/4/5/6/7/8/9/10',
+          '../../../../../../../../../../x',
+        ),
       ).toBe('/x');
     });
 
@@ -213,7 +216,9 @@ describe('getAbsolutePath', () => {
     });
 
     it('should handle unicode characters in paths', () => {
-      expect(getAbsolutePath('/한글/경로', './새로운')).toBe('/한글/경로/새로운');
+      expect(getAbsolutePath('/한글/경로', './새로운')).toBe(
+        '/한글/경로/새로운',
+      );
       expect(getAbsolutePath('/한글/경로', '../다른')).toBe('/한글/다른');
       expect(getAbsolutePath('/日本語/パス', '../../新規')).toBe('/新規');
     });
@@ -227,7 +232,9 @@ describe('getAbsolutePath', () => {
     });
 
     it('should handle paths with spaces (encoded)', () => {
-      expect(getAbsolutePath('/foo%20bar/baz', '../qux')).toBe('/foo%20bar/qux');
+      expect(getAbsolutePath('/foo%20bar/baz', '../qux')).toBe(
+        '/foo%20bar/qux',
+      );
       expect(getAbsolutePath('/foo/bar%20baz', './qux')).toBe(
         '/foo/bar%20baz/qux',
       );
@@ -294,9 +301,9 @@ describe('getAbsolutePath', () => {
     });
 
     it('should handle maximum ../ then deep path', () => {
-      expect(
-        getAbsolutePath('/a/b/c', '../../../../../x/y/z/w/v/u/t'),
-      ).toBe('/x/y/z/w/v/u/t');
+      expect(getAbsolutePath('/a/b/c', '../../../../../x/y/z/w/v/u/t')).toBe(
+        '/x/y/z/w/v/u/t',
+      );
     });
   });
 
@@ -344,19 +351,19 @@ describe('getAbsolutePath', () => {
       expect(
         getAbsolutePath('/definitions/User/properties/name', '../../Address'),
       ).toBe('/definitions/User/Address');
-      expect(
-        getAbsolutePath('/properties/user', './type'),
-      ).toBe('/properties/user/type');
+      expect(getAbsolutePath('/properties/user', './type')).toBe(
+        '/properties/user/type',
+      );
     });
 
     it('should resolve sibling references', () => {
       // To get sibling at same level, use ../siblingName
-      expect(
-        getAbsolutePath('/definitions/User', '../Address'),
-      ).toBe('/definitions/Address');
-      expect(
-        getAbsolutePath('/properties/name', '../age'),
-      ).toBe('/properties/age');
+      expect(getAbsolutePath('/definitions/User', '../Address')).toBe(
+        '/definitions/Address',
+      );
+      expect(getAbsolutePath('/properties/name', '../age')).toBe(
+        '/properties/age',
+      );
     });
 
     it('should resolve deeply nested schema references', () => {
@@ -375,7 +382,10 @@ describe('getAbsolutePath', () => {
       // '/properties/nested/deep/value' has 4 segments after root
       // ../../../../ goes back 4 levels to root
       expect(
-        getAbsolutePath('/properties/nested/deep/value', '../../../../definitions/Type'),
+        getAbsolutePath(
+          '/properties/nested/deep/value',
+          '../../../../definitions/Type',
+        ),
       ).toBe('/definitions/Type');
     });
 
