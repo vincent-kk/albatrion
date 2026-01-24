@@ -46,9 +46,8 @@ export class ContextNode extends AbstractNode<ObjectSchema> {
    */
   constructor(properties: SchemaNodeConstructorProps<ObjectSchema>) {
     super(properties);
-    if (this.defaultValue !== undefined)
-      this.__emitChange__(this.defaultValue);
-    this.initialize();
+    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
+    this.__initialize__();
   }
 
   /**

@@ -9,7 +9,6 @@ import type {
   BranchNodeConstructorProps,
   HandleChange,
   SchemaNode,
-  SchemaNodeFactory,
   UnionSetValueOption,
 } from '../type';
 import {
@@ -30,7 +29,6 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * Strategy used by the array node:
    *  - BranchStrategy: Handles complex child nodes with associated processing logic.
    *  - TerminalStrategy: Acts as a terminal node for array-type data with no child nodes and simple processing logic.
-   * @internal Internal implementation detail. Do not call directly.
    */
   private __strategy__: ArrayNodeStrategy;
 
@@ -92,10 +90,12 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * Activates this ArrayNode and propagates activation to all child nodes.
    * @param actor - The node that requested activation
    * @returns {boolean} Whether activation was successful
-   * @internal Internal implementation method. Do not call directly.
    */
-  public override initialize(this: ArrayNode, actor?: SchemaNode): boolean {
-    if (super.initialize(actor)) {
+  protected override __initialize__(
+    this: ArrayNode,
+    actor?: SchemaNode,
+  ): boolean {
+    if (super.__initialize__(actor)) {
       this.__strategy__.initialize?.();
       return true;
     }
@@ -114,12 +114,16 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
         ? (value, batch) => super.onChange(value, batch)
         : (value, batch) => super.onChange(omitEmptyArray(value), batch);
     this.onChange = handleChange;
-    this.__strategy__ = this.__createStrategy__(
-      hasDefault,
-      handleChange,
-      properties.nodeFactory,
-    );
-    this.initialize();
+    this.__strategy__ =
+      this.group === 'terminal'
+        ? new TerminalStrategy(this, hasDefault, handleChange)
+        : new BranchStrategy(
+            this,
+            hasDefault,
+            handleChange,
+            properties.nodeFactory,
+          );
+    this.__initialize__();
   }
 
   /**
@@ -164,40 +168,5 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    */
   public clear(this: ArrayNode) {
     return this.__strategy__.clear();
-  }
-
-  /**
-   * Creates a strategy for the array node.
-   * @param nodeFactory - Node factory
-   * @returns {ArrayNodeStrategy} Created strategy: TerminalStrategy | BranchStrategy
-   */
-  private __createStrategy__(
-    this: ArrayNode,
-    hasDefault: boolean,
-    handleChange: HandleChange<ArrayValue | Nullish>,
-    nodeFactory: SchemaNodeFactory,
-  ) {
-    const handleRefresh = (value: ArrayValue | Nullish) => this.refresh(value);
-    const handleSetDefaultValue = (value: ArrayValue | Nullish) =>
-      this.setDefaultValue(value);
-
-    if (this.group === 'terminal') {
-      return new TerminalStrategy(
-        this,
-        hasDefault,
-        handleChange,
-        handleRefresh,
-        handleSetDefaultValue,
-      );
-    } else {
-      return new BranchStrategy(
-        this,
-        hasDefault,
-        handleChange,
-        handleRefresh,
-        handleSetDefaultValue,
-        nodeFactory,
-      );
-    }
   }
 }

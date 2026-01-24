@@ -1,7 +1,7 @@
 import { sortWithReference } from '@winglet/common-utils/array';
 import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils/object';
 
-import type { Fn, Nullish } from '@aileron/declare';
+import type { Nullish } from '@aileron/declare';
 
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 import {
@@ -29,9 +29,6 @@ export class TerminalStrategy implements ObjectNodeStrategy {
 
   /** Callback function to handle value changes */
   private readonly __handleChange__: HandleChange<ObjectValue | Nullish>;
-
-  /** Callback function to handle refresh operations */
-  private readonly __handleRefresh__: Fn<[ObjectValue | Nullish]>;
 
   /** Array of property keys defined in the JSON schema, used for ordering object properties */
   private readonly __propertyKeys__: string[];
@@ -82,12 +79,9 @@ export class TerminalStrategy implements ObjectNodeStrategy {
   constructor(
     host: ObjectNode,
     handleChange: HandleChange<ObjectValue | Nullish>,
-    handleRefresh: Fn<[ObjectValue | Nullish]>,
-    handleSetDefaultValue: Fn<[ObjectValue | Nullish]>,
   ) {
     this.__host__ = host;
     this.__handleChange__ = handleChange;
-    this.__handleRefresh__ = handleRefresh;
 
     const jsonSchema = host.jsonSchema;
 
@@ -103,7 +97,8 @@ export class TerminalStrategy implements ObjectNodeStrategy {
       getObjectDefaultValue(jsonSchema, host.defaultValue),
     );
 
-    handleSetDefaultValue(defaultValue);
+    // @ts-expect-error [internal] setDefaultValue delegation
+    host.__setDefaultValue__(defaultValue);
     this.__emitChange__(defaultValue);
   }
 
@@ -129,7 +124,8 @@ export class TerminalStrategy implements ObjectNodeStrategy {
 
     if (option & SetValueOption.EmitChange)
       this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
-    if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
+    // @ts-expect-error [internal] refresh delegation
+    if (option & SetValueOption.Refresh) host.__refresh__(current);
     if (option & SetValueOption.PublishUpdateEvent)
       host.publish(
         NodeEventType.UpdateValue,

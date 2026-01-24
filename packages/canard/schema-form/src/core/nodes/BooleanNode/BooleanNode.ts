@@ -52,9 +52,8 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
 
   constructor(properties: SchemaNodeConstructorProps<BooleanSchema>) {
     super(properties);
-    if (this.defaultValue !== undefined)
-      this.__emitChange__(this.defaultValue);
-    this.initialize();
+    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
+    this.__initialize__();
   }
 
   /**
@@ -77,7 +76,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
 
     if (option & SetValueOption.EmitChange)
       this.onChange(current, (option & SetValueOption.Batch) > 0);
-    if (option & SetValueOption.Refresh) this.refresh(current);
+    if (option & SetValueOption.Refresh) this.__refresh__(current);
     if (option & SetValueOption.PublishUpdateEvent)
       this.publish(
         NodeEventType.UpdateValue,

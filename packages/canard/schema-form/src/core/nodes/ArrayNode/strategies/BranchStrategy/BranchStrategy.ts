@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { Fn, Nullish } from '@aileron/declare';
+import type { Nullish } from '@aileron/declare';
 
 import type { AbstractNode } from '@/schema-form/core/nodes/AbstractNode';
 import type { ArrayNode } from '@/schema-form/core/nodes/ArrayNode';
@@ -26,9 +26,6 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
   /** Callback function to handle value changes */
   private readonly __handleChange__: HandleChange<ArrayValue | Nullish>;
-
-  /** Callback function to handle refresh operations */
-  private readonly __handleRefresh__: Fn<[ArrayValue | Nullish]>;
 
   /** Factory function for creating new schema nodes */
   private readonly __nodeFactory__: SchemaNodeFactory;
@@ -133,10 +130,10 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @internal Internal implementation method. Do not call directly.
    */
   public initialize() {
-    for (const key of this.__keys__)
-      (this.__sourceMap__.get(key)?.node as AbstractNode)?.initialize(
-        this.__host__,
-      );
+    for (const key of this.__keys__) {
+      // @ts-expect-error [internal] child node initialization
+      this.__sourceMap__.get(key)?.node?.__initialize__(this.__host__);
+    }
   }
 
   /**
@@ -151,13 +148,10 @@ export class BranchStrategy implements ArrayNodeStrategy {
     host: ArrayNode,
     hasDefault: boolean,
     handleChange: HandleChange<ArrayValue | Nullish>,
-    handleRefresh: Fn<[ArrayValue | Nullish]>,
-    handleSetDefaultValue: Fn<[ArrayValue | Nullish]>,
     nodeFactory: SchemaNodeFactory,
   ) {
     this.__host__ = host;
     this.__handleChange__ = handleChange;
-    this.__handleRefresh__ = handleRefresh;
     this.__nodeFactory__ = nodeFactory;
 
     const limit = resolveArrayLimits(host.jsonSchema);
@@ -184,7 +178,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
     this.__locked__ = false;
     this.__emitChange__(SetValueOption.Default, false);
-    handleSetDefaultValue(this.value);
+    // @ts-expect-error [internal] setDefaultValue delegation
+    host.__setDefaultValue__(this.value);
     this.__publishUpdateChildren__();
   }
 
@@ -221,7 +216,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
     });
     this.__sourceMap__.set(key, { node: childNode, data: childNode.value });
 
-    if (host.initialized) (childNode as AbstractNode).initialize(host);
+    // @ts-expect-error [internal] child node initialization
+    if (host.initialized) (childNode as AbstractNode).__initialize__(host);
 
     this.__expire__();
     this.__emitChange__(option);
@@ -273,8 +269,10 @@ export class BranchStrategy implements ArrayNodeStrategy {
   /** Clears all elements to initialize the array. */
   public clear(option?: UnionSetValueOption) {
     for (let i = 0, l = this.__keys__.length; i < l; i++)
-      this.__sourceMap__.get(this.__keys__[i])?.node.cleanUp(this.__host__);
-
+      this.__sourceMap__
+        .get(this.__keys__[i])
+        // @ts-expect-error [internal] child node cleanup
+        ?.node?.__cleanUp__(this.__host__);
     this.__keys__ = [];
     this.__sourceMap__.clear();
     this.__expire__();
@@ -327,7 +325,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
     if (option & SetValueOption.EmitChange)
       this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
-    if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
+    // @ts-expect-error [internal] refresh delegation
+    if (option & SetValueOption.Refresh) host.__refresh__(current);
     if (option & SetValueOption.PublishUpdateEvent)
       host.publish(
         NodeEventType.UpdateValue,

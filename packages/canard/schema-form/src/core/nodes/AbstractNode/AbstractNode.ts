@@ -203,7 +203,6 @@ export abstract class AbstractNode<
   /**
    * [readonly] Context node for accessing form-wide shared data
    * @note Root nodes return their own context, child nodes delegate to rootNode.context
-   * @internal Internal implementation method. Do not call directly.
    */
   public get context(): ObjectNode | null {
     return this.__context__ as ObjectNode;
@@ -229,7 +228,7 @@ export abstract class AbstractNode<
    * For use in `constructor`
    * @param value input value for updating defaultValue
    */
-  protected setDefaultValue(this: AbstractNode, value: Value | Nullish) {
+  protected __setDefaultValue__(this: AbstractNode, value: Value | Nullish) {
     this.__initialValue__ = checkDefinedValue(value) ? value : undefined;
     this.__defaultValue__ = value;
   }
@@ -240,7 +239,7 @@ export abstract class AbstractNode<
    * @param value input value for updating defaultValue
    * @returns {Promise<void>} A promise that resolves when the refresh is complete
    */
-  protected refresh(this: AbstractNode, value: Value | Nullish) {
+  protected __refresh__(this: AbstractNode, value: Value | Nullish) {
     this.__defaultValue__ = value;
     this.publish(NodeEventType.RequestRefresh);
   }
@@ -399,7 +398,7 @@ export abstract class AbstractNode<
     );
 
     this.__updateScoped__();
-    this.setDefaultValue(
+    this.__setDefaultValue__(
       defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema),
     );
 
@@ -478,10 +477,7 @@ export abstract class AbstractNode<
     this.__unsubscribes__.push(unsubscribe);
   }
 
-  /**
-   * Cancels all saved event subscriptions.
-   * @internal Internal implementation method. Do not call directly.
-   */
+  /* Cancels all saved event subscriptions. */
   private __clearUnsubscribes__(this: AbstractNode) {
     for (let i = 0, l = this.__unsubscribes__.length; i < l; i++)
       this.__unsubscribes__[i]();
@@ -491,9 +487,8 @@ export abstract class AbstractNode<
   /**
    * Initializes the node's event listener/subscription list. Initialization must be called by itself or by the parent node.
    * @param actor - The node requesting initialization
-   * @internal Internal implementation method. Do not call directly.
    */
-  public cleanUp(this: AbstractNode, actor?: SchemaNode) {
+  protected __cleanUp__(this: AbstractNode, actor?: SchemaNode) {
     if (actor !== this.parentNode && !this.isRoot) return;
     this.__clearUnsubscribes__();
     this.__listeners__.clear();
@@ -551,9 +546,8 @@ export abstract class AbstractNode<
    * Initializes the node. Initialization must be called by itself or by the parent node.
    * @param actor - The node requesting initialization
    * @returns {boolean} Whether initialization occurred
-   * @internal Internal implementation method. Do not call directly.
    */
-  public initialize(this: AbstractNode, actor?: SchemaNode) {
+  protected __initialize__(this: AbstractNode, actor?: SchemaNode) {
     if (this.__initialized__ || (actor !== this.parentNode && !this.isRoot))
       return false;
     this.__prepareUpdateDependencies__();
@@ -720,10 +714,7 @@ export abstract class AbstractNode<
     return this.__watchValues__;
   }
 
-  /**
-   * Prepares dependencies for update computation.
-   * @internal Internal implementation method. Do not call directly.
-   */
+  /** Prepares dependencies for update computation. */
   private __prepareUpdateDependencies__(this: AbstractNode) {
     const dependencyPaths = this.__compute__.dependencyPaths;
     const computeEnabled = dependencyPaths.length > 0;
@@ -741,7 +732,7 @@ export abstract class AbstractNode<
                 payload?.[NodeEventType.UpdateValue]
               ) {
                 this.__dependencies__[i] = payload?.[NodeEventType.UpdateValue];
-                this.updateComputedProperties();
+                this.__updateComputedProperties__();
               }
             }
           }),
@@ -764,16 +755,18 @@ export abstract class AbstractNode<
             this.setState();
         }
       });
-    this.updateComputedProperties();
+    this.__updateComputedProperties__();
     this.__computeEnabled__ = computeEnabled;
   }
 
   /**
    * Updates the node's computed properties.
    * @param reset - Whether to reset the node when the active property changes, default is `true`
-   * @internal Internal implementation method. Do not call directly.
    */
-  public updateComputedProperties(this: AbstractNode, reset: boolean = true) {
+  protected __updateComputedProperties__(
+    this: AbstractNode,
+    reset: boolean = true,
+  ) {
     const previous = this.__active__;
     this.__active__ = this.__compute__.active?.(this.__dependencies__) ?? true;
     this.__visible__ =
@@ -790,7 +783,7 @@ export abstract class AbstractNode<
       this.__compute__.watchValues?.(this.__dependencies__) || [];
 
     if (reset && previous !== this.__active__)
-      this.reset({ preferLatest: true });
+      this.__reset__({ preferLatest: true });
     this.publish(NodeEventType.UpdateComputedProperties);
   }
 
@@ -798,18 +791,19 @@ export abstract class AbstractNode<
    * Updates the computed properties of the node and its children recursively.
    * @param includeSelf - Whether to include the current node, default is `false`
    * @param includeInactive - Whether to include the inactive child nodes, default is `true`
-   * @internal Internal implementation method. Do not call directly.
    */
-  public updateComputedPropertiesRecursively(
+  protected __updateComputedPropertiesRecursively__(
     this: AbstractNode,
     includeSelf: boolean = false,
     includeInactive: boolean = true,
   ) {
-    if (includeSelf) this.updateComputedProperties(false);
+    if (includeSelf) this.__updateComputedProperties__(false);
     const list = includeInactive ? this.subnodes : this.children;
     if (!list?.length) return;
-    for (let i = 0, e = list[0], l = list.length; i < l; i++, e = list[i])
-      e.node.updateComputedPropertiesRecursively(true, includeInactive);
+    for (let i = 0, e = list[0], l = list.length; i < l; i++, e = list[i]) {
+      // @ts-expect-error [internal] update computed properties recursively
+      e.node.__updateComputedPropertiesRecursively__(true, includeInactive);
+    }
   }
 
   /**
@@ -821,17 +815,13 @@ export abstract class AbstractNode<
    * @param options.preferInitial - Whether to prefer the initial value when preferLatest is true
    * @param options.inputValue - Explicit input value with highest priority
    * @param options.fallbackValue - Fallback value used in default calculation
-   * @internal Internal implementation method. Do not call directly.
    */
-  public reset(this: AbstractNode, options: ResetOptions<Value> = {}) {
+  protected __reset__(this: AbstractNode, options: ResetOptions<Value> = {}) {
     if (options.updateScoped) this.__updateScoped__();
 
     if ('inputValue' in options) this.__defaultValue__ = options.inputValue;
     else if (options.preferLatest) {
-      if (
-        options.checkInitialValueFirst &&
-        this.__initialValue__ !== undefined
-      )
+      if (options.checkInitialValueFirst && this.__initialValue__ !== undefined)
         this.__defaultValue__ = this.__initialValue__;
       else
         this.__defaultValue__ =
@@ -908,9 +898,8 @@ export abstract class AbstractNode<
    * On root nodes, updates `__globalState__` directly. On child nodes, delegates to `rootNode.setGlobalState()`.
    * Only truthy values are accumulated (falsy values are ignored).
    * @param input - The state to set. If `undefined`, clears all global state flags.
-   * @internal Internal implementation method. Do not call directly.
    */
-  public setGlobalState(this: AbstractNode, input?: NodeStateFlags) {
+  private __setGlobalState__(this: AbstractNode, input?: NodeStateFlags) {
     if (this.isRoot) {
       let state: NodeStateFlags | null = this.__globalState__;
       let idle = true;
@@ -930,7 +919,7 @@ export abstract class AbstractNode<
       if (idle) return;
       this.__globalState__ = state !== null ? { ...state } : {};
       this.publish(NodeEventType.UpdateGlobalState, this.__globalState__);
-    } else this.rootNode.setGlobalState(input);
+    } else this.rootNode.__setGlobalState__(input);
   }
 
   /**
@@ -969,7 +958,7 @@ export abstract class AbstractNode<
     if (idle) return;
     this.__state__ = state !== null ? { ...state } : {};
     this.publish(NodeEventType.UpdateState, this.__state__);
-    if (silent !== true) this.setGlobalState(this.__state__);
+    if (silent !== true) this.__setGlobalState__(this.__state__);
   }
 
   /**
@@ -980,7 +969,7 @@ export abstract class AbstractNode<
    */
   public setSubtreeState(this: AbstractNode, state: NodeStateFlags) {
     depthFirstSearch(this, (node) => node.setState(state, true));
-    this.setGlobalState(state);
+    this.__setGlobalState__(state);
   }
 
   /**
@@ -991,7 +980,7 @@ export abstract class AbstractNode<
    */
   public clearSubtreeState(this: AbstractNode) {
     depthFirstSearch(this, (node) => node.setState(undefined, true));
-    if (this.isRoot) this.setGlobalState();
+    if (this.isRoot) this.__setGlobalState__();
   }
 
   /**
@@ -1001,7 +990,7 @@ export abstract class AbstractNode<
    */
   public resetSubtree(this: AbstractNode) {
     this.clearSubtreeState();
-    this.reset();
+    this.__reset__();
   }
 
   /**
@@ -1024,42 +1013,44 @@ export abstract class AbstractNode<
    * @param path - The data path of the node to check
    * @returns {boolean} Whether the node is currently being injected
    * @note Root nodes check their own flag set, child nodes delegate to rootNode.
-   * @internal Internal implementation method. Do not call directly.
    */
-  public isInjectedPath(this: AbstractNode, path: SchemaNode['path']): boolean {
+  protected __isInjectedPath__(
+    this: AbstractNode,
+    path: SchemaNode['path'],
+  ): boolean {
     if (this.isRoot) return this.__injectedPaths__?.has(path) ?? false;
-    else return this.rootNode.isInjectedPath(path);
+    else return (this.rootNode as AbstractNode).__isInjectedPath__(path);
   }
 
   /**
    * Sets the injected flag for a node at the given path.
    * @param path - The data path of the node to mark as injected
    * @note Used to prevent circular injection when `injectTo` affects multiple nodes.
-   * @internal Internal implementation method. Do not call directly.
    */
-  public setInjectedPath(this: AbstractNode, path: SchemaNode['path']) {
+  protected __setInjectedPath__(this: AbstractNode, path: SchemaNode['path']) {
     if (this.isRoot) this.__injectedPaths__?.add(path);
-    else this.rootNode.setInjectedPath(path);
+    else (this.rootNode as AbstractNode).__setInjectedPath__(path);
   }
 
   /**
    * Removes the injected flag for a node at the given path.
    * @param path - The data path of the node to unmark
-   * @internal Internal implementation method. Do not call directly.
    */
-  public unsetInjectedPath(this: AbstractNode, path: SchemaNode['path']) {
+  protected __unsetInjectedPath__(
+    this: AbstractNode,
+    path: SchemaNode['path'],
+  ) {
     if (this.isRoot) this.__injectedPaths__?.delete(path);
-    else this.rootNode.unsetInjectedPath(path);
+    else (this.rootNode as AbstractNode).__unsetInjectedPath__(path);
   }
 
   /**
    * Clears all injected node flags immediately.
    * @note Typically used for cleanup or reset operations.
-   * @internal Internal implementation method. Do not call directly.
    */
-  public clearInjectedPaths(this: AbstractNode) {
+  protected __clearInjectedPaths__(this: AbstractNode) {
     if (this.isRoot) this.__injectedPaths__?.clear();
-    else this.rootNode.clearInjectedPaths();
+    else (this.rootNode as AbstractNode).__clearInjectedPaths__();
   }
 
   /**
@@ -1068,16 +1059,15 @@ export abstract class AbstractNode<
    *       complete before clearing flags. Prevents duplicate scheduling if already scheduled.
    *       This allows multiple `injectTo` operations to complete within the same
    *       synchronous execution context before the flags are cleared.
-   * @internal Internal implementation method. Do not call directly.
    */
-  public scheduleClearInjectedPaths(this: AbstractNode) {
+  protected __scheduleClearInjectedPaths__(this: AbstractNode) {
     if (this.isRoot) {
       if (this.__scheduledClearInjectedPathsId__ !== undefined) return;
       this.__scheduledClearInjectedPathsId__ = scheduleMacrotaskSafe(() => {
         this.__scheduledClearInjectedPathsId__ = undefined;
         this.__injectedPaths__?.clear();
       });
-    } else this.rootNode.scheduleClearInjectedPaths();
+    } else (this.rootNode as AbstractNode).__scheduleClearInjectedPaths__();
   }
 
   /**
@@ -1085,7 +1075,6 @@ export abstract class AbstractNode<
    * @note Sets up a subscription that listens for value updates and propagates
    *       values to other nodes as defined by the `injectTo` function in the schema.
    *       Implements circular injection prevention using injected node flags.
-   * @internal Internal implementation method. Do not call directly.
    */
   private __prepareInjectHandler__(this: AbstractNode) {
     const injectHandler = this.jsonSchema.injectTo;
@@ -1109,14 +1098,14 @@ export abstract class AbstractNode<
           context: this.context?.value || {},
         } satisfies InjectHandlerContext;
         try {
-          this.setInjectedPath(dataPath);
+          this.__setInjectedPath__(dataPath);
           const affect = injectHandler(value, context);
           if (affect == null) return;
           const operations = isArray(affect) ? affect : Object.entries(affect);
           for (let i = 0, l = operations.length; i < l; i++) {
             const path = getAbsolutePath(dataPath, operations[i][0]);
-            if (this.isInjectedPath(path)) continue;
-            this.setInjectedPath(path);
+            if (this.__isInjectedPath__(path)) continue;
+            this.__setInjectedPath__(path);
             this.find(path)?.setValue(operations[i][1]);
           }
         } catch (error) {
@@ -1127,7 +1116,7 @@ export abstract class AbstractNode<
             errorContext,
           );
         } finally {
-          this.scheduleClearInjectedPaths();
+          this.__scheduleClearInjectedPaths__();
         }
       }
     });
@@ -1309,11 +1298,14 @@ export abstract class AbstractNode<
    * Adds or updates a value in the enhancer for validation purposes
    * @param pointer - JSON Pointer path to the value location
    * @param value - Value to set in enhancer (typically from virtual/computed fields)
-   * @internal Internal implementation method. Do not call directly.
    * */
-  public adjustEnhancer(this: AbstractNode, pointer: string, value: any) {
+  protected __adjustEnhancer__(
+    this: AbstractNode,
+    pointer: string,
+    value: any,
+  ) {
     if (this.isRoot) setValue(this.__enhancer__, pointer, value);
-    else this.rootNode.adjustEnhancer(pointer, value);
+    else (this.rootNode as AbstractNode).__adjustEnhancer__(pointer, value);
   }
 
   /**

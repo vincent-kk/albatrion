@@ -57,17 +57,15 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     super(properties);
     this.onChange =
       this.jsonSchema.options?.omitEmpty !== false
-        ? this.onChangeWithOmitEmpty
+        ? this.__onChangeWithOmitEmpty__
         : super.onChange;
-    if (this.defaultValue !== undefined)
-      this.__emitChange__(this.defaultValue);
+    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
     if (this.jsonSchema.options?.trim === true)
       this.subscribe(({ type }) => {
         if (type & NodeEventType.Blurred)
-          this.__value__ != null &&
-            this.__emitChange__(this.__value__.trim());
+          this.__value__ != null && this.__emitChange__(this.__value__.trim());
       });
-    this.initialize();
+    this.__initialize__();
   }
 
   /**
@@ -90,7 +88,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
 
     if (option & SetValueOption.EmitChange)
       this.onChange(current, (option & SetValueOption.Batch) > 0);
-    if (option & SetValueOption.Refresh) this.refresh(current);
+    if (option & SetValueOption.Refresh) this.__refresh__(current);
     if (option & SetValueOption.PublishUpdateEvent)
       this.publish(
         NodeEventType.UpdateValue,
@@ -115,9 +113,8 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
    * Reflects value changes excluding empty values.
    * @param input - The value to set
    * @param batch - Optional flag indicating whether the change should be batched
-   * @internal Internal implementation method. Do not call directly.
    */
-  private onChangeWithOmitEmpty(
+  private __onChangeWithOmitEmpty__(
     this: StringNode,
     input: StringValue | Nullish,
     batch?: boolean,

@@ -91,11 +91,9 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
       });
       this.saveUnsubscribe(unsubscribe);
     }
-
     this.__children__ = map(this.__refNodes__, (node) => ({ node }));
-
     this.publish(NodeEventType.UpdateChildren);
-    this.initialize();
+    this.__initialize__();
   }
 
   /**
@@ -141,7 +139,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
         current[i] = node.value;
       }
     this.__value__ = current;
-    if (option & SetValueOption.Refresh) this.refresh(values);
+    if (option & SetValueOption.Refresh) this.__refresh__(values);
     if (option & SetValueOption.PublishUpdateEvent)
       this.publish(
         NodeEventType.UpdateValue,

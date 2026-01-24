@@ -2,7 +2,7 @@ import { map } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 import { isObjectSchema } from '@winglet/json-schema/filter';
 
-import type { Fn, Nullish } from '@aileron/declare';
+import type { Nullish } from '@aileron/declare';
 
 import type { ArrayNode } from '@/schema-form/core/nodes/ArrayNode';
 import {
@@ -27,9 +27,6 @@ export class TerminalStrategy implements ArrayNodeStrategy {
 
   /** Callback function to handle value changes */
   private readonly __handleChange__: HandleChange<ArrayValue | Nullish>;
-
-  /** Callback function to handle refresh operations */
-  private readonly __handleRefresh__: Fn<[ArrayValue | Nullish]>;
 
   /** Minimum number of items required in the array (from JSON Schema minItems) */
   private readonly __minItems__: number;
@@ -113,12 +110,9 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     host: ArrayNode,
     hasDefault: boolean,
     handleChange: HandleChange<ArrayValue | Nullish>,
-    handleRefresh: Fn<[ArrayValue | Nullish]>,
-    handleSetDefaultValue: Fn<[ArrayValue | Nullish]>,
   ) {
     this.__host__ = host;
     this.__handleChange__ = handleChange;
-    this.__handleRefresh__ = handleRefresh;
 
     const jsonSchema = host.jsonSchema;
     const limit = resolveArrayLimits(jsonSchema);
@@ -148,7 +142,8 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     this.__locked__ = false;
 
     this.__emitChange__(this.__value__, FIRST_EMIT_CHANGE_OPTION);
-    handleSetDefaultValue(this.__value__);
+    // @ts-expect-error [internal] setDefaultValue delegation
+    host.__setDefaultValue__(this.__value__);
   }
 
   /**
@@ -228,7 +223,8 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     if (this.__locked__) return;
     if (option & SetValueOption.EmitChange)
       this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
-    if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
+    // @ts-expect-error [internal] refresh delegation
+    if (option & SetValueOption.Refresh) host.__refresh__(current);
     if (option & SetValueOption.PublishUpdateEvent)
       host.publish(
         NodeEventType.UpdateValue,

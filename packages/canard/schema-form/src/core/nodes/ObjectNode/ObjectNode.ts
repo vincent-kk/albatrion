@@ -9,7 +9,6 @@ import type {
   BranchNodeConstructorProps,
   HandleChange,
   SchemaNode,
-  SchemaNodeFactory,
   UnionSetValueOption,
 } from '../type';
 import {
@@ -38,7 +37,6 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * Strategy used by the object node:
    *  - BranchStrategy: Handles complex child nodes with associated processing logic, including oneOf/if-then-else.
    *  - TerminalStrategy: Acts as a terminal node for object-type data with no child nodes and simple processing logic.
-   * @internal Internal implementation detail. Do not call directly.
    */
   private __strategy__: ObjectNodeStrategy;
 
@@ -91,10 +89,12 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * Activates this ObjectNode and propagates activation to all child nodes.
    * @param actor - The node that requested activation
    * @returns {boolean} Whether activation was successful
-   * @internal Internal implementation method. Do not call directly.
    */
-  public override initialize(this: ObjectNode, actor?: SchemaNode): boolean {
-    if (super.initialize(actor)) {
+  protected override __initialize__(
+    this: ObjectNode,
+    actor?: SchemaNode,
+  ): boolean {
+    if (super.__initialize__(actor)) {
       this.__strategy__.initialize?.();
       return true;
     }
@@ -108,38 +108,10 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         ? (value, batch) => super.onChange(value, batch)
         : (value, batch) => super.onChange(omitEmptyObject(value), batch);
     this.onChange = handleChange;
-    this.__strategy__ = this.__createStrategy__(
-      handleChange,
-      properties.nodeFactory,
-    );
-    this.initialize();
-  }
-
-  /**
-   * Creates a strategy for the object node.
-   * @param nodeFactory - Node factory
-   * @returns Created strategy: TerminalStrategy | BranchStrategy
-   */
-  private __createStrategy__(
-    handleChange: HandleChange<ObjectValue | Nullish>,
-    nodeFactory: SchemaNodeFactory,
-  ) {
-    const handleRefresh = (value: ObjectValue | Nullish) => this.refresh(value);
-    const handleSetDefaultValue = (value: ObjectValue | Nullish) =>
-      this.setDefaultValue(value);
-    return this.group === 'terminal'
-      ? new TerminalStrategy(
-          this,
-          handleChange,
-          handleRefresh,
-          handleSetDefaultValue,
-        )
-      : new BranchStrategy(
-          this,
-          handleChange,
-          handleRefresh,
-          handleSetDefaultValue,
-          nodeFactory,
-        );
+    this.__strategy__ =
+      this.group === 'terminal'
+        ? new TerminalStrategy(this, handleChange)
+        : new BranchStrategy(this, handleChange, properties.nodeFactory);
+    this.__initialize__();
   }
 }
