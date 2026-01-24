@@ -4,7 +4,7 @@ import { cloneLite, equals, merge } from '@winglet/common-utils/object';
 import { scheduleMacrotaskSafe } from '@winglet/common-utils/scheduler';
 import { escapeSegment, setValue } from '@winglet/json/pointer';
 
-import type { Fn, Nullish } from '@aileron/declare';
+import type { Dictionary, Fn, Nullish } from '@aileron/declare';
 
 import { UNIT_SEPARATOR } from '@/schema-form/app/constants';
 import { PluginManager } from '@/schema-form/app/plugin';
@@ -197,7 +197,15 @@ export abstract class AbstractNode<
   }
 
   /** Context node reference for form-wide shared data */
-  private __context__: AbstractNode | null;
+  private __contextNode__: AbstractNode | null;
+
+  /**
+   * [readonly] Context node for accessing form-wide shared data
+   * @note Root nodes return their own context, child nodes delegate to rootNode.context
+   */
+  public get context(): Dictionary {
+    return this.__contextNode__?.value || {};
+  }
 
   /** Node's initial default value */
   private __initialValue__: Value | Nullish;
@@ -275,8 +283,10 @@ export abstract class AbstractNode<
     input: Value | Nullish | Fn<[prev: Value | Nullish], Value | Nullish>,
     option: UnionSetValueOption = SetValueOption.Overwrite,
   ): void {
-    const inputValue = typeof input === 'function' ? input(this.value) : input;
-    this.applyValue(inputValue, option);
+    this.applyValue(
+      typeof input === 'function' ? input(this.value) : input,
+      option,
+    );
   }
 
   /**
@@ -381,9 +391,9 @@ export abstract class AbstractNode<
           this.__escapedName__,
         );
 
-    this.__context__ = this.isRoot
+    this.__contextNode__ = this.isRoot
       ? context || null
-      : this.rootNode.__context__;
+      : this.rootNode.__contextNode__;
     this.__compute__ = computeFactory(
       this.schemaType,
       this.jsonSchema,
@@ -415,7 +425,7 @@ export abstract class AbstractNode<
    */
   public find(this: AbstractNode, pointer?: string): SchemaNode | null {
     if (pointer === undefined) return this as SchemaNode;
-    if (pointer === $.Context) return this.__context__ as SchemaNode;
+    if (pointer === $.Context) return this.__contextNode__ as SchemaNode;
     if (pointer === $.Root) return this.rootNode;
     const absolute = isAbsolutePath(pointer);
     if (absolute && pointer.length === 1) return this.rootNode;
@@ -430,7 +440,7 @@ export abstract class AbstractNode<
   public findAll(this: AbstractNode, pointer?: string): SchemaNode[] {
     if (pointer === undefined) return [this as SchemaNode];
     if (pointer === $.Context)
-      return this.__context__ ? [this.__context__ as SchemaNode] : [];
+      return this.__contextNode__ ? [this.__contextNode__ as SchemaNode] : [];
     if (pointer === $.Root) return [this.rootNode];
     const absolute = isAbsolutePath(pointer);
     if (absolute && pointer.length === 1) return [this.rootNode];
@@ -1081,7 +1091,7 @@ export abstract class AbstractNode<
           parentJsonSchema: this.parentNode?.jsonSchema || null,
           rootValue: this.rootNode.value,
           rootJsonSchema: this.rootNode.jsonSchema,
-          context: this.__context__?.value || {},
+          context: this.context,
         } satisfies InjectHandlerContext;
         try {
           this.__setInjectedPath__(dataPath);

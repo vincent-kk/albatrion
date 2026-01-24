@@ -7,8 +7,16 @@ import type { ArrayNode } from '../nodes/ArrayNode';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
-import { ValidationMode } from '../nodes/type';
+import { type SchemaNode, ValidationMode } from '../nodes/type';
 import { createValidatorFactory } from './utils/createValidatorFactory';
+
+/**
+ * Helper function to access protected __validationEnabled__ property for testing
+ */
+const getValidationEnabled = (node: SchemaNode): boolean => {
+  // @ts-expect-error [test] access protected property for testing
+  return (node as AbstractNode).__validationEnabled__;
+};
 
 const DEFAULT_VALIDATION_OPTIONS = {
   allErrors: true,
@@ -1214,7 +1222,7 @@ describe('AbstractNode Enhanced Validation', () => {
       });
 
       // Should have validation enabled
-      expect(node.__validationEnabled__).toBe(true);
+      expect(getValidationEnabled(node)).toBe(true);
 
       // Set active data
       const activeDataNode = node.find('/activeData') as ObjectNode;
@@ -1283,7 +1291,7 @@ describe('AbstractNode Enhanced Validation', () => {
       });
 
       // Should have validation enabled
-      expect(node.__validationEnabled__).toBe(true);
+      expect(getValidationEnabled(node)).toBe(true);
 
       // Validation should work properly
       await wait();
@@ -1305,7 +1313,7 @@ describe('AbstractNode Enhanced Validation', () => {
       });
 
       // Should not have validation enabled
-      expect(node.__validationEnabled__).toBe(false);
+      expect(getValidationEnabled(node)).toBe(false);
 
       // Should not have errors array populated
       expect(node.errors).toHaveLength(0);

@@ -6,7 +6,15 @@ import type { ArrayNode } from '../nodes/ArrayNode';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
-import { ValidationMode } from '../nodes/type';
+import { type SchemaNode, ValidationMode } from '../nodes/type';
+
+/**
+ * Helper function to access protected __setName__ method for testing
+ */
+const setName = (node: SchemaNode, name: string, actor: SchemaNode) => {
+  // @ts-expect-error [test] access protected method for testing
+  (node as AbstractNode).__setName__(name, actor);
+};
 
 describe('AbstractNode depth calculation', () => {
   it('should calculate depth correctly for root node', () => {
@@ -189,7 +197,7 @@ describe('AbstractNode depth calculation', () => {
     expect(parent1.depth).toBe(1);
     expect(child.depth).toBe(2);
 
-    child.__setName__('renamedChild', parent1);
+    setName(child, 'renamedChild', parent1);
     expect(child.depth).toBe(2);
     expect(child.path).toBe('/parent1/renamedChild');
   });

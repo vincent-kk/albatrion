@@ -7,7 +7,15 @@ import type { ArrayNode } from '../nodes/ArrayNode';
 import type { BooleanNode } from '../nodes/BooleanNode';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { StringNode } from '../nodes/StringNode';
-import { NodeEventType } from '../nodes/type';
+import { NodeEventType, type SchemaNode } from '../nodes/type';
+
+/**
+ * Helper function to access protected __computeEnabled__ property for testing
+ */
+const getComputeEnabled = (node: SchemaNode | null | undefined): boolean => {
+  // @ts-expect-error [test] access protected property for testing
+  return (node as AbstractNode)?.__computeEnabled__ ?? false;
+};
 
 const wait = (delay = 10) => {
   return new Promise((resolve) => {
@@ -780,7 +788,7 @@ describe('AbstractNode - derivedValue', () => {
       await wait();
 
       const normal = node.find('/normal');
-      expect(normal?.computeEnabled).toBe(false);
+      expect(getComputeEnabled(normal)).toBe(false);
     });
 
     it('derivedValue가 있는 노드에서는 computeEnabled가 true여야 함', async () => {
@@ -809,7 +817,7 @@ describe('AbstractNode - derivedValue', () => {
       await wait();
 
       const derived = node.find('/derived');
-      expect(derived?.computeEnabled).toBe(true);
+      expect(getComputeEnabled(derived)).toBe(true);
     });
   });
 

@@ -47,8 +47,7 @@ describe('ContextNode', () => {
 
       await delay();
 
-      expect(node.context).toBe(contextNode);
-      expect(node.context?.value).toEqual({ mode: 'edit' });
+      expect(node.context).toEqual({ mode: 'edit' });
     });
 
     it('node.find("@")로 context를 찾을 수 있어야 함', async () => {
@@ -97,10 +96,10 @@ describe('ContextNode', () => {
       const nestedNode = node.find('./nested');
       const valueNode = node.find('./nested/value');
 
-      // 모든 노드에서 동일한 context 접근
-      expect(nameNode?.context).toBe(contextNode);
-      expect(nestedNode?.context).toBe(contextNode);
-      expect(valueNode?.context).toBe(contextNode);
+      // 모든 노드에서 동일한 context 값 접근
+      expect(nameNode?.context).toEqual({ mode: 'edit' });
+      expect(nestedNode?.context).toEqual({ mode: 'edit' });
+      expect(valueNode?.context).toEqual({ mode: 'edit' });
     });
   });
 
@@ -754,15 +753,14 @@ describe('ContextNode', () => {
       await delay();
 
       const rootNodeBefore = rootNode;
-      const contextBefore = rootNode.context;
 
       contextNode.setValue({ theme: 'dark' });
       await delay();
 
-      // rootNode와 context 참조가 동일해야 함
+      // rootNode 참조가 동일해야 함
       expect(rootNode).toBe(rootNodeBefore);
-      expect(rootNode.context).toBe(contextBefore);
-      expect(rootNode.context).toBe(contextNode);
+      // context 값이 업데이트됨
+      expect(rootNode.context).toEqual({ theme: 'dark' });
     });
 
     it('중첩된 객체 구조에서도 context 변경 시 node tree가 유지되어야 함', async () => {
@@ -946,7 +944,7 @@ describe('ContextNode', () => {
   });
 
   describe('Context가 없는 경우 처리', () => {
-    it('context 없이 nodeFromJsonSchema 호출 시 node.context는 null이어야 함', async () => {
+    it('context 없이 nodeFromJsonSchema 호출 시 node.context는 빈 객체여야 함', async () => {
       const node = nodeFromJsonSchema({
         jsonSchema: {
           type: 'object',
@@ -960,7 +958,7 @@ describe('ContextNode', () => {
 
       await delay();
 
-      expect(node.context).toBeNull();
+      expect(node.context).toEqual({});
     });
 
     it('context 없을 때 node.find("@")는 null을 반환해야 함', async () => {
@@ -979,7 +977,7 @@ describe('ContextNode', () => {
       expect(node.find('@')).toBeNull();
     });
 
-    it('child node에서도 context가 null이어야 함', async () => {
+    it('child node에서도 context가 빈 객체여야 함', async () => {
       const node = nodeFromJsonSchema({
         jsonSchema: {
           type: 'object',
@@ -1002,9 +1000,9 @@ describe('ContextNode', () => {
       const nestedNode = node.find('./nested');
       const valueNode = node.find('./nested/value');
 
-      expect(nameNode?.context).toBeNull();
-      expect(nestedNode?.context).toBeNull();
-      expect(valueNode?.context).toBeNull();
+      expect(nameNode?.context).toEqual({});
+      expect(nestedNode?.context).toEqual({});
+      expect(valueNode?.context).toEqual({});
     });
 
     it('context 없을 때 @.property 표현식 사용 시 TypeError 발생해야 함 (오설정 인지 목적)', async () => {
@@ -1108,7 +1106,7 @@ describe('ContextNode', () => {
       await delay();
 
       const itemNameNode = node.find('./items/0/name');
-      expect(itemNameNode?.context).toBe(contextNode);
+      expect(itemNameNode?.context).toEqual({ mode: 'edit' });
       expect(itemNameNode?.readOnly).toBe(false); // mode="edit"
     });
 
@@ -1147,7 +1145,7 @@ describe('ContextNode', () => {
       await delay();
 
       const newItemNameNode = node.find('./items/0/name');
-      expect(newItemNameNode?.context).toBe(contextNode);
+      expect(newItemNameNode?.context).toEqual({ mode: 'view' });
       expect(newItemNameNode?.readOnly).toBe(true); // mode="view"
     });
 
@@ -1198,8 +1196,8 @@ describe('ContextNode', () => {
       const item0Name = node.find('./items/0/name');
       const item1Name = node.find('./items/1/name');
 
-      expect(item0Name?.context).toBe(contextNode);
-      expect(item1Name?.context).toBe(contextNode);
+      expect(item0Name?.context).toEqual({ mode: 'edit' });
+      expect(item1Name?.context).toEqual({ mode: 'edit' });
       expect(item0Name?.visible).toBe(true);
       expect(item1Name?.visible).toBe(true);
     });
@@ -1289,7 +1287,7 @@ describe('ContextNode', () => {
       await delay();
 
       const deepNode = node.find('./outer/0/inner/0/value');
-      expect(deepNode?.context).toBe(contextNode);
+      expect(deepNode?.context).toEqual({ level: 'deep' });
       expect(deepNode?.active).toBe(true);
     });
   });
