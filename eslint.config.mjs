@@ -102,6 +102,20 @@ export function createESLintConfig(
         // 커스텀 규칙: 모든 import에 확장자 강제 (디렉터리 import 제외)
         // "custom/require-import-extensions": "error",
         "no-undef": "off", // TypeScript에서는 타입 체크가 이미 수행됨
+        // Disallow ES private fields (#) - use 'private __name__' convention instead
+        "no-restricted-syntax": [
+          "error",
+          {
+            selector: "PropertyDefinition[key.type='PrivateIdentifier']",
+            message:
+              "ES private fields (#) are not allowed. Use 'private __fieldName__' convention instead for ECMA 2022 compatibility.",
+          },
+          {
+            selector: "MethodDefinition[key.type='PrivateIdentifier']",
+            message:
+              "ES private methods (#) are not allowed. Use 'private __methodName__()' convention instead for ECMA 2022 compatibility.",
+          },
+        ],
       },
     },
   ];
