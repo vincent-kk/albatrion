@@ -41,8 +41,6 @@ pnpm add @winglet/data-loader
 
 ## Compatibility
 
-This package is written using ECMAScript 2022 (ES2022) syntax.
-
 **Supported Environments:**
 
 - Node.js 14.0.0 or higher
