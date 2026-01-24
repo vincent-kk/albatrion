@@ -1687,6 +1687,221 @@ export const ConditionalForm = () => {
 };
 ```
 
+### Value Injection with injectTo
+
+The `injectTo` feature enables automatic value propagation between form fields. When a source field's value changes, you can automatically inject derived values into other fields in the form.
+
+#### Basic Usage
+
+Define an `injectTo` handler function in your JSON Schema that returns an object mapping target paths to values:
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    source: {
+      type: 'string',
+      title: 'Source',
+      injectTo: (value: string) => ({
+        '../target': `injected: ${value}`,
+      }),
+    },
+    target: {
+      type: 'string',
+      title: 'Target (auto-injected)',
+    },
+  },
+};
+
+// When user types "hello" in source field,
+// target field automatically becomes "injected: hello"
+```
+
+#### Path Types
+
+`injectTo` supports both relative and absolute JSON Pointer paths:
+
+**Relative paths** (from current node):
+```tsx
+injectTo: (value) => ({
+  '../sibling': value,           // Sibling field
+  '../nested/child': value,      // Nested sibling's child
+  '../../uncle': value,          // Parent's sibling
+})
+```
+
+**Absolute paths** (from root):
+```tsx
+injectTo: (value) => ({
+  '/rootField': value,           // Root level field
+  '/user/profile/name': value,   // Deeply nested field
+})
+```
+
+#### Multiple Targets
+
+Inject to multiple fields simultaneously:
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    fullName: {
+      type: 'string',
+      injectTo: (value: string) => ({
+        '../displayName': value,
+        '../searchName': value.toLowerCase(),
+        '../initials': value.split(' ').map(n => n[0]).join(''),
+      }),
+    },
+    displayName: { type: 'string' },
+    searchName: { type: 'string' },
+    initials: { type: 'string' },
+  },
+};
+```
+
+#### Array Format
+
+For dynamic paths or when order matters, use array format:
+
+```tsx
+injectTo: (value: number) => [
+  ['/calculations/doubled', value * 2],
+  ['/calculations/squared', value * value],
+]
+```
+
+#### Accessing Context
+
+The handler receives a context object with access to parent values, root form value, and user-defined context:
+
+```tsx
+import type { InjectToHandler } from '@canard/schema-form';
+
+const handler: InjectToHandler<string> = (value, ctx) => {
+  // ctx.dataPath - Current node's JSON Pointer path
+  // ctx.schemaPath - Current node's schema path
+  // ctx.jsonSchema - Current node's JSON Schema
+  // ctx.parentValue - Parent node's value (null if root)
+  // ctx.parentJsonSchema - Parent's JSON Schema (null if root)
+  // ctx.rootValue - Entire form value
+  // ctx.rootJsonSchema - Root JSON Schema
+  // ctx.context - User-defined context passed to Form
+
+  // Conditional injection based on parent
+  if (ctx.parentValue?.locked) {
+    return null; // Skip injection
+  }
+
+  // Use root form value for calculations
+  return {
+    '/total': ctx.rootValue.baseAmount + parseFloat(value),
+  };
+};
+```
+
+#### Using Form Context
+
+Access form-wide context data for conditional injection:
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    secretField: {
+      type: 'string',
+      injectTo: (value, ctx) => {
+        // Only inject for admin users
+        if (ctx.context.userRole === 'admin') {
+          return { '/adminCopy': value };
+        }
+        return null;
+      },
+    },
+  },
+};
+
+// Pass context to Form
+<Form
+  jsonSchema={jsonSchema}
+  context={{ userRole: 'admin' }}
+/>
+```
+
+#### Circular Reference Prevention
+
+The library automatically prevents infinite loops when fields inject to each other:
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    fieldA: {
+      type: 'string',
+      injectTo: (value) => ({ '../fieldB': `from A: ${value}` }),
+    },
+    fieldB: {
+      type: 'string',
+      injectTo: (value) => ({ '../fieldA': `from B: ${value}` }),
+    },
+  },
+};
+
+// User types in fieldA:
+// 1. fieldA → fieldB (injection succeeds)
+// 2. fieldB → fieldA (blocked - circular reference prevented)
+```
+
+Circular reference prevention works for any chain length (A→B→C→A, etc.) within the same macrotask execution context.
+
+#### Error Handling
+
+Errors in `injectTo` handlers are caught and wrapped in `JsonSchemaError` with detailed context:
+
+```tsx
+injectTo: (value) => {
+  if (!value) {
+    throw new Error('Value is required');
+  }
+  return { '../target': value };
+}
+
+// Error includes:
+// - Source node path
+// - Target paths attempted
+// - Original error message
+// - Suggested resolution steps
+```
+
+#### TypeScript Support
+
+Full type safety with generics:
+
+```tsx
+import type { InjectToHandler } from '@canard/schema-form';
+
+interface FormContext {
+  userId: string;
+  permissions: string[];
+}
+
+const typedHandler: InjectToHandler<
+  string,        // Value type
+  ParentType,    // Parent value type
+  RootType,      // Root form value type
+  FormContext    // Context type
+> = (value, ctx) => {
+  // ctx.context is typed as FormContext
+  if (ctx.context.permissions.includes('write')) {
+    return { '/audit/lastModifiedBy': ctx.context.userId };
+  }
+  return null;
+};
+```
+
+---
+
 ### Form Submission Management
 
 `@canard/schema-form` provides various methods to effectively manage form submission state.

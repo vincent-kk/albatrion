@@ -1677,6 +1677,221 @@ export const ConditionalForm = () => {
 };
 ```
 
+### injectTo를 통한 값 주입
+
+`injectTo` 기능은 폼 필드 간의 자동 값 전파를 가능하게 합니다. 소스 필드의 값이 변경되면 폼의 다른 필드에 파생된 값을 자동으로 주입할 수 있습니다.
+
+#### 기본 사용법
+
+JSON Schema에 타겟 경로와 값을 매핑하는 객체를 반환하는 `injectTo` 핸들러 함수를 정의합니다:
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    source: {
+      type: 'string',
+      title: '소스',
+      injectTo: (value: string) => ({
+        '../target': `주입됨: ${value}`,
+      }),
+    },
+    target: {
+      type: 'string',
+      title: '타겟 (자동 주입됨)',
+    },
+  },
+};
+
+// 사용자가 source 필드에 "안녕"을 입력하면,
+// target 필드는 자동으로 "주입됨: 안녕"이 됩니다
+```
+
+#### 경로 유형
+
+`injectTo`는 상대 경로와 절대 경로 모두 지원합니다:
+
+**상대 경로** (현재 노드 기준):
+```tsx
+injectTo: (value) => ({
+  '../sibling': value,           // 형제 필드
+  '../nested/child': value,      // 중첩된 형제의 자식
+  '../../uncle': value,          // 부모의 형제
+})
+```
+
+**절대 경로** (루트 기준):
+```tsx
+injectTo: (value) => ({
+  '/rootField': value,           // 루트 레벨 필드
+  '/user/profile/name': value,   // 깊이 중첩된 필드
+})
+```
+
+#### 다중 타겟
+
+여러 필드에 동시에 주입:
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    fullName: {
+      type: 'string',
+      injectTo: (value: string) => ({
+        '../displayName': value,
+        '../searchName': value.toLowerCase(),
+        '../initials': value.split(' ').map(n => n[0]).join(''),
+      }),
+    },
+    displayName: { type: 'string' },
+    searchName: { type: 'string' },
+    initials: { type: 'string' },
+  },
+};
+```
+
+#### 배열 형식
+
+동적 경로나 순서가 중요한 경우 배열 형식을 사용합니다:
+
+```tsx
+injectTo: (value: number) => [
+  ['/calculations/doubled', value * 2],
+  ['/calculations/squared', value * value],
+]
+```
+
+#### 컨텍스트 접근
+
+핸들러는 부모 값, 루트 폼 값, 사용자 정의 컨텍스트에 접근할 수 있는 컨텍스트 객체를 받습니다:
+
+```tsx
+import type { InjectToHandler } from '@canard/schema-form';
+
+const handler: InjectToHandler<string> = (value, ctx) => {
+  // ctx.dataPath - 현재 노드의 JSON Pointer 경로
+  // ctx.schemaPath - 현재 노드의 스키마 경로
+  // ctx.jsonSchema - 현재 노드의 JSON Schema
+  // ctx.parentValue - 부모 노드의 값 (루트인 경우 null)
+  // ctx.parentJsonSchema - 부모의 JSON Schema (루트인 경우 null)
+  // ctx.rootValue - 전체 폼 값
+  // ctx.rootJsonSchema - 루트 JSON Schema
+  // ctx.context - Form에 전달된 사용자 정의 컨텍스트
+
+  // 부모 값에 따른 조건부 주입
+  if (ctx.parentValue?.locked) {
+    return null; // 주입 건너뛰기
+  }
+
+  // 루트 폼 값을 사용한 계산
+  return {
+    '/total': ctx.rootValue.baseAmount + parseFloat(value),
+  };
+};
+```
+
+#### Form 컨텍스트 사용
+
+조건부 주입을 위해 폼 전역 컨텍스트 데이터에 접근:
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    secretField: {
+      type: 'string',
+      injectTo: (value, ctx) => {
+        // admin 사용자에게만 주입
+        if (ctx.context.userRole === 'admin') {
+          return { '/adminCopy': value };
+        }
+        return null;
+      },
+    },
+  },
+};
+
+// Form에 컨텍스트 전달
+<Form
+  jsonSchema={jsonSchema}
+  context={{ userRole: 'admin' }}
+/>
+```
+
+#### 순환 참조 방지
+
+라이브러리는 필드가 서로를 주입할 때 무한 루프를 자동으로 방지합니다:
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    fieldA: {
+      type: 'string',
+      injectTo: (value) => ({ '../fieldB': `A에서: ${value}` }),
+    },
+    fieldB: {
+      type: 'string',
+      injectTo: (value) => ({ '../fieldA': `B에서: ${value}` }),
+    },
+  },
+};
+
+// 사용자가 fieldA에 입력:
+// 1. fieldA → fieldB (주입 성공)
+// 2. fieldB → fieldA (차단됨 - 순환 참조 방지)
+```
+
+순환 참조 방지는 동일한 매크로태스크 실행 컨텍스트 내에서 모든 체인 길이(A→B→C→A 등)에 대해 작동합니다.
+
+#### 에러 처리
+
+`injectTo` 핸들러의 에러는 캡처되어 상세한 컨텍스트와 함께 `JsonSchemaError`로 래핑됩니다:
+
+```tsx
+injectTo: (value) => {
+  if (!value) {
+    throw new Error('값이 필요합니다');
+  }
+  return { '../target': value };
+}
+
+// 에러에 포함되는 정보:
+// - 소스 노드 경로
+// - 시도된 타겟 경로들
+// - 원본 에러 메시지
+// - 권장 해결 방법
+```
+
+#### TypeScript 지원
+
+제네릭을 통한 완전한 타입 안전성:
+
+```tsx
+import type { InjectToHandler } from '@canard/schema-form';
+
+interface FormContext {
+  userId: string;
+  permissions: string[];
+}
+
+const typedHandler: InjectToHandler<
+  string,        // Value 타입
+  ParentType,    // 부모 값 타입
+  RootType,      // 루트 폼 값 타입
+  FormContext    // 컨텍스트 타입
+> = (value, ctx) => {
+  // ctx.context는 FormContext 타입으로 지정됨
+  if (ctx.context.permissions.includes('write')) {
+    return { '/audit/lastModifiedBy': ctx.context.userId };
+  }
+  return null;
+};
+```
+
+---
+
 ### 폼 제출 관리
 
 `@canard/schema-form`은 폼 제출 상태를 효과적으로 관리할 수 있는 다양한 방법을 제공합니다.
