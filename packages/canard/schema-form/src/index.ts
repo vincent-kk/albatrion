@@ -58,6 +58,7 @@ export type {
   FormTypeTestFn,
   FormTypeTestObject,
   FormatError,
+  InjectToHandler,
   ValidatorFactory,
   ValidateFunction,
   PublicJsonSchemaError as JsonSchemaError,

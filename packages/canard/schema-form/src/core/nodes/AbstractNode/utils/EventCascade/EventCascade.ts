@@ -1,5 +1,5 @@
 import {
-  scheduleMacrotask,
+  scheduleMacrotaskSafe,
   scheduleMicrotask,
 } from '@winglet/common-utils/scheduler';
 
@@ -93,7 +93,7 @@ export class EventCascade {
     // Schedule batch count reset via macrotask (after all microtasks complete)
     if (this.__idle__) {
       this.__idle__ = false;
-      scheduleMacrotask(() => {
+      scheduleMacrotaskSafe(() => {
         this.__idle__ = true;
         this.__count__ = 0;
       });

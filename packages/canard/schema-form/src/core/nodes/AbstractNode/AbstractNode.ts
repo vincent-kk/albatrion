@@ -1,6 +1,7 @@
 import { map } from '@winglet/common-utils/array';
-import { isEmptyObject, isObject } from '@winglet/common-utils/filter';
+import { isArray, isEmptyObject, isObject } from '@winglet/common-utils/filter';
 import { cloneLite, equals, merge } from '@winglet/common-utils/object';
+import { scheduleMacrotaskSafe } from '@winglet/common-utils/scheduler';
 import { escapeSegment, setValue } from '@winglet/json/pointer';
 
 import type { Fn, Nullish } from '@aileron/declare';
@@ -14,16 +15,19 @@ import {
 } from '@/schema-form/helpers/defaultValue';
 import {
   formatCircularReferenceError,
+  formatInjectToError,
   transformErrors,
 } from '@/schema-form/helpers/error';
 import {
   JSONPointer as $,
+  getAbsolutePath,
   isAbsolutePath,
   joinSegment,
 } from '@/schema-form/helpers/jsonPointer';
 import { stripSchemaExtensions } from '@/schema-form/helpers/jsonSchema';
 import type {
   AllowedValue,
+  InjectHandlerContext,
   JsonSchemaType,
   JsonSchemaWithVirtual,
   ValidateFunction,
@@ -31,6 +35,7 @@ import type {
   ValidatorFactory,
 } from '@/schema-form/types';
 
+import type { ObjectNode } from '../ObjectNode';
 import {
   type ChildNode,
   type HandleChange,
@@ -200,8 +205,8 @@ export abstract class AbstractNode<
    * @note Root nodes return their own context, child nodes delegate to rootNode.context
    * @internal Internal implementation method. Do not call directly.
    */
-  public get context(): SchemaNode | null {
-    return this.#context as SchemaNode;
+  public get context(): ObjectNode | null {
+    return this.#context as ObjectNode;
   }
 
   /** Node's initial default value */
@@ -320,12 +325,22 @@ export abstract class AbstractNode<
     return left === right;
   }
 
-  /** List of child nodes, nodes without child nodes return an `null` */
+  /**
+   * List of active child nodes within the current scope.
+   * @returns Child nodes that are currently active, or `null` for terminal nodes
+   * @note For branch nodes (object/array), returns children matching the active oneOf/anyOf branch.
+   *       For terminal nodes, always returns `null`.
+   */
   public get children(): ChildNode[] | null {
     return null;
   }
 
-  /** List of subnodes, nodes without subnodes return an `null` */
+  /**
+   * List of all child nodes regardless of scope or active state.
+   * @returns All subnodes including inactive oneOf/anyOf branches, or `null` for terminal nodes
+   * @note Unlike `children`, this includes nodes from all oneOf/anyOf variants.
+   *       Useful for operations that need to traverse the complete node tree.
+   */
   public get subnodes(): ChildNode[] | null {
     return this.children;
   }
@@ -397,6 +412,7 @@ export abstract class AbstractNode<
         onChange(getSafeEmptyValue(this.value, this.schemaType));
       });
       this.#prepareValidator(jsonSchema, validatorFactory, validationMode);
+      this.#injectedPaths = new Set();
     } else this.#handleChange = onChange;
   }
 
@@ -429,10 +445,17 @@ export abstract class AbstractNode<
     return findNodes(absolute ? this.rootNode : (this as SchemaNode), pointer);
   }
 
-  /** List of node event listeners */
+  /**
+   * Set of registered event listeners for this node.
+   * @note Listeners receive batched events via EventCascade for performance optimization.
+   */
   #listeners: Set<NodeListener> = new Set();
 
-  /** Collects pushed events and publishes them at once */
+  /**
+   * Event batching system that collects multiple events and publishes them together.
+   * @note Improves performance by reducing the number of listener invocations
+   *       when multiple events occur in rapid succession.
+   */
   #eventCascade = new EventCascade(
     (eventCollection: NodeEventCollection) => {
       for (const listener of this.#listeners) listener(eventCollection);
@@ -440,7 +463,11 @@ export abstract class AbstractNode<
     () => ({ path: this.path, dependencies: this.#compute.dependencyPaths }),
   );
 
-  /** List of unsubscribe functions for other nodes */
+  /**
+   * Array of cleanup functions for subscriptions to other nodes.
+   * @note Stores unsubscribe functions from dependency subscriptions.
+   *       Called during cleanUp() to prevent memory leaks.
+   */
   #unsubscribes: Array<Fn> = [];
 
   /**
@@ -504,10 +531,18 @@ export abstract class AbstractNode<
     } else this.#eventCascade.schedule([type, payload, options]);
   }
 
-  /** Whether the node is initialized */
+  /**
+   * Flag indicating whether the node has completed initialization.
+   * @note Set to `true` after `initialize()` completes successfully.
+   *       Prevents duplicate initialization.
+   */
   #initialized: boolean = false;
 
-  /** [readonly] Whether the node is initialized */
+  /**
+   * Whether the node has completed its initialization phase.
+   * @returns `true` if `initialize()` has been called successfully
+   * @note Initialization sets up dependency subscriptions and injectTo handlers.
+   */
   public get initialized() {
     return this.#initialized;
   }
@@ -522,6 +557,7 @@ export abstract class AbstractNode<
     if (this.#initialized || (actor !== this.parentNode && !this.isRoot))
       return false;
     this.#prepareUpdateDependencies();
+    this.#prepareInjectHandler();
     this.publish(NodeEventType.Initialized);
     this.#initialized = true;
     return true;
@@ -541,77 +577,145 @@ export abstract class AbstractNode<
    */
   #compute: ReturnType<typeof computeFactory>;
 
-  /** List of dependencies for the node */
+  /**
+   * Cached values from dependency nodes used for computed property calculations.
+   * @note Array indices correspond to `#compute.dependencyPaths` order.
+   *       Updated automatically when dependency node values change.
+   */
   #dependencies: any[] = [];
 
-  /** Whether the node has computed properties */
+  /**
+   * Flag indicating whether this node has any computed properties defined.
+   * @note Set during initialization based on whether `dependencyPaths` is non-empty.
+   */
   #computeEnabled: boolean = false;
 
-  /** [readonly] Whether the node has computed properties */
+  /**
+   * Whether this node has computed properties that depend on other nodes.
+   * @returns `true` if the schema defines computed properties (active, visible, etc.)
+   * @note When enabled, the node subscribes to dependency changes and recalculates properties.
+   */
   public get computeEnabled() {
     return this.#computeEnabled;
   }
 
-  /**  Whether the node matches its parent's oneOf/anyOf active branch */
+  /**
+   * Whether this node belongs to the currently active oneOf/anyOf branch of its parent.
+   * @note Nodes outside the active branch are excluded from value propagation.
+   *       This is separate from `#active` which is controlled by computed properties.
+   */
   #scoped: boolean = true;
 
-  /** Whether the node can assign values and update state (controlled by computed.active) */
+  /**
+   * Whether the node is active based on computed.active evaluation.
+   * @note Inactive nodes don't propagate values to parent but retain their internal state.
+   */
   #active: boolean = true;
 
-  /** [readonly] Whether the node can assign values and update state (controlled by computed.active) */
+  /**
+   * Whether this node is currently active and can participate in value updates.
+   * @returns `true` if both `#active` (computed) and `#scoped` (branch) conditions are met
+   * @note An inactive node's value is excluded from the parent's value composition.
+   */
   public get active() {
     return this.#active && this.#scoped;
   }
 
-  /** Whether the node should be displayed in UI (controlled by computed.visible) */
+  /**
+   * Whether the node should be rendered in the UI based on computed.visible evaluation.
+   * @note Invisible nodes still participate in validation and value composition.
+   */
   #visible: boolean = true;
 
-  /** [readonly] Whether the node should be displayed in UI (controlled by computed.visible) */
+  /**
+   * Whether this node should be displayed in the UI.
+   * @returns `true` if computed.visible evaluates to true (or is not defined)
+   * @note Visibility only affects rendering; invisible nodes still hold values.
+   */
   public get visible() {
     return this.#visible;
   }
 
-  /** [readonly] Whether the node is active, visible, and within scope (ready for rendering) */
+  /**
+   * Whether this node is fully enabled for rendering and interaction.
+   * @returns `true` if the node is active, scoped, and visible
+   * @note Use this to determine if a form field should be rendered and interactive.
+   */
   public get enabled() {
     return this.#active && this.#scoped && this.#visible;
   }
 
-  /** Whether the node value cannot be modified by user (controlled by computed.readOnly) */
+  /**
+   * Whether the node's value is read-only based on computed.readOnly evaluation.
+   * @note Read-only nodes display values but prevent user modification.
+   */
   #readOnly: boolean = false;
 
-  /** [readonly] Whether the node value cannot be modified by user (controlled by computed.readOnly) */
+  /**
+   * Whether this node's value cannot be modified by user interaction.
+   * @returns `true` if computed.readOnly evaluates to true
+   * @note The value can still be changed programmatically via setValue().
+   */
   public get readOnly() {
     return this.#readOnly;
   }
 
-  /** Whether the node is disabled for user interaction (controlled by computed.disabled) */
+  /**
+   * Whether the node is disabled based on computed.disabled evaluation.
+   * @note Disabled nodes are typically grayed out and non-interactive.
+   */
   #disabled: boolean = false;
 
-  /** [readonly] Whether the node is disabled for user interaction (controlled by computed.disabled) */
+  /**
+   * Whether this node is disabled for user interaction.
+   * @returns `true` if computed.disabled evaluates to true
+   * @note Unlike readOnly, disabled typically affects the visual appearance more significantly.
+   */
   public get disabled() {
     return this.#disabled;
   }
 
-  /** Currently active oneOf branch index (-1 if none active) */
+  /**
+   * Index of the currently active oneOf branch.
+   * @note -1 indicates no oneOf branch is active or oneOf is not defined.
+   */
   #oneOfIndex: number = -1;
 
-  /** [readonly] Currently active oneOf branch index (-1 if none active) */
+  /**
+   * The index of the currently active oneOf schema branch.
+   * @returns Branch index (0-based), or -1 if no branch is active
+   * @note Used by child nodes to determine their `#scoped` state.
+   */
   public get oneOfIndex() {
     return this.#oneOfIndex;
   }
 
-  /** Currently active anyOf branch indices (empty array if none active) */
+  /**
+   * Indices of currently active anyOf branches.
+   * @note Empty array indicates no anyOf branches are active or anyOf is not defined.
+   */
   #anyOfIndices: number[] = [];
 
-  /** [readonly] Currently active anyOf branch indices (empty array if none active) */
+  /**
+   * The indices of currently active anyOf schema branches.
+   * @returns Array of branch indices (0-based), empty if none active
+   * @note Multiple branches can be active simultaneously with anyOf.
+   */
   public get anyOfIndices() {
     return this.#anyOfIndices;
   }
 
-  /** Computed values from dependencies, used for triggering component re-renders */
+  /**
+   * Array of computed values derived from dependencies for watch functionality.
+   * @note Used by UI frameworks to trigger re-renders when specific computed values change.
+   */
   #watchValues: ReadonlyArray<any> = [];
 
-  /** [readonly] Computed values from dependencies, used for triggering component re-renders */
+  /**
+   * Computed values from dependencies that can trigger UI updates.
+   * @returns Readonly array of values computed from dependency paths
+   * @note Useful for React useMemo/useEffect dependencies or similar reactive patterns.
+   */
   public get watchValues() {
     return this.#watchValues;
   }
@@ -747,16 +851,26 @@ export abstract class AbstractNode<
       this.#scoped = this.parentNode.anyOfIndices.indexOf(this.variant) !== -1;
   }
 
-  /** [root only] Node's global state flags */
+  /**
+   * Global state flags aggregated from all nodes in the form tree.
+   * @remarks **[Root Node Only]** This field is only meaningful on the root node.
+   *          Aggregates truthy state values from all descendant nodes.
+   *          Useful for form-wide indicators like "hasErrors" or "isDirty".
+   */
   #globalState: NodeStateFlags = {};
 
-  /** Node's local state flags */
+  /**
+   * Local state flags specific to this node.
+   * @note Stores custom state like "touched", "dirty", "focused", etc.
+   *       Changes are published via UpdateState event and propagated to globalState.
+   */
   #state: NodeStateFlags = {};
 
   /**
-   * [readonly] Node's global state flags
-   * @note use `setGlobalState` method to set the global state
-   * */
+   * Aggregated state flags from all nodes in the form tree.
+   * @returns On root nodes, returns `#globalState`. On child nodes, delegates to `rootNode.globalState`.
+   * @note Use `setGlobalState` method to update. Read-only via this getter.
+   */
   public get globalState(): NodeStateFlags {
     return this.isRoot ? this.#globalState : this.rootNode.globalState;
   }
@@ -770,9 +884,10 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Sets the root node's global state flags.
+   * Sets the global state flags for the form tree.
+   * On root nodes, updates `#globalState` directly. On child nodes, delegates to `rootNode.setGlobalState()`.
    * Only truthy values are accumulated (falsy values are ignored).
-   * @param input - The state to set. (If undefined, the global state will be cleared)
+   * @param input - The state to set. If `undefined`, clears all global state flags.
    * @internal Internal implementation method. Do not call directly.
    */
   public setGlobalState(this: AbstractNode, input?: NodeStateFlags) {
@@ -869,22 +984,172 @@ export abstract class AbstractNode<
     this.reset();
   }
 
-  /** [root only] List of data paths where validation errors occurred */
+  /**
+   * Set of data paths currently being injected.
+   * @remarks **[Root Node Only]** Only initialized and used by the root node.
+   *          Tracks which nodes are currently being injected to prevent circular injection loops.
+   *          Child nodes delegate injection tracking to `rootNode`.
+   */
+  #injectedPaths: Set<SchemaNode['path']> | undefined;
+
+  /**
+   * Scheduled macrotask ID for clearing injected node flags.
+   * @remarks **[Root Node Only]** Used to batch clear injected flags after all
+   *          synchronous injection operations complete. The ID prevents duplicate scheduling.
+   */
+  #scheduledClearInjectedPathsId: number | undefined;
+
+  /**
+   * Checks if a node at the given path is currently being injected.
+   * @param path - The data path of the node to check
+   * @returns {boolean} Whether the node is currently being injected
+   * @note Root nodes check their own flag set, child nodes delegate to rootNode.
+   * @internal Internal implementation method. Do not call directly.
+   */
+  public isInjectedPath(this: AbstractNode, path: SchemaNode['path']): boolean {
+    if (this.isRoot) return this.#injectedPaths?.has(path) ?? false;
+    else return this.rootNode.isInjectedPath(path);
+  }
+
+  /**
+   * Sets the injected flag for a node at the given path.
+   * @param path - The data path of the node to mark as injected
+   * @note Used to prevent circular injection when `injectTo` affects multiple nodes.
+   * @internal Internal implementation method. Do not call directly.
+   */
+  public setInjectedPath(this: AbstractNode, path: SchemaNode['path']) {
+    if (this.isRoot) this.#injectedPaths?.add(path);
+    else this.rootNode.setInjectedPath(path);
+  }
+
+  /**
+   * Removes the injected flag for a node at the given path.
+   * @param path - The data path of the node to unmark
+   * @internal Internal implementation method. Do not call directly.
+   */
+  public unsetInjectedPath(this: AbstractNode, path: SchemaNode['path']) {
+    if (this.isRoot) this.#injectedPaths?.delete(path);
+    else this.rootNode.unsetInjectedPath(path);
+  }
+
+  /**
+   * Clears all injected node flags immediately.
+   * @note Typically used for cleanup or reset operations.
+   * @internal Internal implementation method. Do not call directly.
+   */
+  public clearInjectedPaths(this: AbstractNode) {
+    if (this.isRoot) this.#injectedPaths?.clear();
+    else this.rootNode.clearInjectedPaths();
+  }
+
+  /**
+   * Schedules clearing of all injected node flags in a macrotask.
+   * @note Uses macrotask scheduling to ensure all synchronous injection operations
+   *       complete before clearing flags. Prevents duplicate scheduling if already scheduled.
+   *       This allows multiple `injectTo` operations to complete within the same
+   *       synchronous execution context before the flags are cleared.
+   * @internal Internal implementation method. Do not call directly.
+   */
+  public scheduleClearInjectedPaths(this: AbstractNode) {
+    if (this.isRoot) {
+      if (this.#scheduledClearInjectedPathsId !== undefined) return;
+      this.#scheduledClearInjectedPathsId = scheduleMacrotaskSafe(() => {
+        this.#scheduledClearInjectedPathsId = undefined;
+        this.#injectedPaths?.clear();
+      });
+    } else this.rootNode.scheduleClearInjectedPaths();
+  }
+
+  /**
+   * Prepares the handler for `injectTo` schema property.
+   * @note Sets up a subscription that listens for value updates and propagates
+   *       values to other nodes as defined by the `injectTo` function in the schema.
+   *       Implements circular injection prevention using injected node flags.
+   * @internal Internal implementation method. Do not call directly.
+   */
+  #prepareInjectHandler(this: AbstractNode) {
+    const injectHandler = this.jsonSchema.injectTo;
+    if (typeof injectHandler !== 'function') return;
+    this.subscribe(({ type }) => {
+      if (type & NodeEventType.UpdateValue) {
+        this.publish(NodeEventType.RequestInjection);
+        return;
+      }
+      if (type & NodeEventType.RequestInjection) {
+        const value = this.value;
+        const dataPath = this.path;
+        const context = {
+          dataPath,
+          schemaPath: this.schemaPath,
+          jsonSchema: this.jsonSchema,
+          parentValue: this.parentNode?.value || null,
+          parentJsonSchema: this.parentNode?.jsonSchema || null,
+          rootValue: this.rootNode.value,
+          rootJsonSchema: this.rootNode.jsonSchema,
+          context: this.context?.value || {},
+        } satisfies InjectHandlerContext;
+        try {
+          this.setInjectedPath(dataPath);
+          const affect = injectHandler(value, context);
+          if (affect == null) return;
+          const operations = isArray(affect) ? affect : Object.entries(affect);
+          for (let i = 0, l = operations.length; i < l; i++) {
+            const path = getAbsolutePath(dataPath, operations[i][0]);
+            if (this.isInjectedPath(path)) continue;
+            this.setInjectedPath(path);
+            this.find(path)?.setValue(operations[i][1]);
+          }
+        } catch (error) {
+          const errorContext = { ...context, value, error };
+          throw new JsonSchemaError(
+            'INJECT_TO',
+            formatInjectToError(errorContext),
+            errorContext,
+          );
+        } finally {
+          this.scheduleClearInjectedPaths();
+        }
+      }
+    });
+  }
+
+  /**
+   * List of data paths that had validation errors in the last validation run.
+   * @remarks **[Root Node Only]** Used to clear errors from nodes that no longer have errors
+   *          after a subsequent validation run.
+   */
   #errorDataPaths: string[] | undefined;
 
-  /** [root only] All validation errors from schema validation */
+  /**
+   * All validation errors from the most recent schema validation.
+   * @remarks **[Root Node Only]** Contains raw errors from the validator before
+   *          merging with external errors.
+   */
   #globalErrors: ValidationError[] | undefined;
 
-  /** Validation errors for this specific node from root validation */
+  /**
+   * Validation errors specific to this node from the root's validation.
+   * @note Filtered subset of globalErrors matching this node's dataPath.
+   */
   #localErrors: ValidationError[] | undefined;
 
-  /** [root only] Combined schema errors and external errors */
+  /**
+   * Combined array of internal schema errors and external errors.
+   * @note Only used by root node. Represents all errors across the entire form.
+   */
   #mergedGlobalErrors: ValidationError[] = [];
 
-  /** Combined local validation errors and external errors for this node */
+  /**
+   * Combined array of local validation errors and external errors for this node.
+   * @note This is the primary error array exposed via the `errors` getter.
+   */
   #mergedLocalErrors: ValidationError[] = [];
 
-  /** External errors provided by user (e.g., server-side validation errors) */
+  /**
+   * Errors provided externally (e.g., from server-side validation).
+   * @note External errors are merged with local errors but tracked separately
+   *       for independent clearing via clearExternalErrors().
+   */
   #externalErrors: ValidationError[] = [];
 
   /**
@@ -989,10 +1254,18 @@ export abstract class AbstractNode<
       this.setExternalErrors(nextErrors);
   }
 
-  /** [root only] Additional values for validation (includes virtual/computed fields) */
+  /**
+   * Additional data for validation that includes virtual/computed field values.
+   * @note Only used by root node. Virtual fields don't exist in the actual value
+   *       but need to be included for schema validation.
+   */
   #enhancer: Value | undefined;
 
-  /** [root only] Value used for validation, merges actual value with enhancer for virtual fields */
+  /**
+   * Gets the value used for validation, merging actual value with enhancer data.
+   * @returns Combined value including virtual field values for complete schema validation
+   * @note Only used by root node during validation.
+   */
   get #enhancedValue(): Value | Nullish {
     const value = this.value;
     if (this.group === 'terminal' || value == null) return value;
@@ -1012,7 +1285,11 @@ export abstract class AbstractNode<
     else this.rootNode.adjustEnhancer(pointer, value);
   }
 
-  /** Node's validator function */
+  /**
+   * Compiled validator function for schema validation.
+   * @note Only initialized for root node when validationMode is set.
+   *       Created from validatorFactory or PluginManager.validator.
+   */
   #validator: ValidateFunction | undefined;
 
   /**

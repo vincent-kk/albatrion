@@ -68,6 +68,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const hint: Hint = {
         type: 'string',
         nullable: true,
+        required: false,
         path: '/name',
         jsonSchema: { type: ['string', 'null'] },
       };
@@ -84,6 +85,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const hint: Hint = {
         type: 'string',
         nullable: false,
+        required: true,
         path: '/name',
         jsonSchema: { type: 'string' },
       };
@@ -100,6 +102,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const nonNullableHint: Hint = {
         type: 'string',
         nullable: false,
+        required: true,
         path: '/name',
         jsonSchema: { type: 'string' },
       };
@@ -116,6 +119,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const nullableHint: Hint = {
         type: 'string',
         nullable: true,
+        required: false,
         path: '/name',
         jsonSchema: { type: ['string', 'null'] },
       };
@@ -123,6 +127,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const nonNullableHint: Hint = {
         type: 'string',
         nullable: false,
+        required: true,
         path: '/name',
         jsonSchema: { type: 'string' },
       };
@@ -142,6 +147,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const hint: Hint = {
         type: 'number',
         nullable: true,
+        required: false,
         path: '/age',
         jsonSchema: { type: ['number', 'null'] },
       };
@@ -158,6 +164,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const hint: Hint = {
         type: 'integer',
         nullable: true,
+        required: false,
         path: '/count',
         jsonSchema: { type: ['integer', 'null'] },
       };
@@ -174,6 +181,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const hint: Hint = {
         type: 'boolean',
         nullable: true,
+        required: false,
         path: '/active',
         jsonSchema: { type: ['boolean', 'null'] },
       };
@@ -190,6 +198,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const hint: Hint = {
         type: 'object',
         nullable: true,
+        required: false,
         path: '/address',
         jsonSchema: { type: ['object', 'null'], properties: {} },
       };
@@ -206,6 +215,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const hint: Hint = {
         type: 'array',
         nullable: true,
+        required: false,
         path: '/items',
         jsonSchema: {
           type: ['array', 'null'],
@@ -229,6 +239,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const stringHint: Hint = {
         type: 'string',
         nullable: true,
+        required: false,
         path: '/value',
         jsonSchema: { type: ['string', 'null'] },
       };
@@ -236,6 +247,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const numberHint: Hint = {
         type: 'number',
         nullable: true,
+        required: false,
         path: '/value',
         jsonSchema: { type: ['number', 'null'] },
       };
@@ -253,6 +265,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const nonNullableHint: Hint = {
         type: 'string',
         nullable: false,
+        required: true,
         path: '/value',
         jsonSchema: { type: 'string' },
       };
@@ -272,6 +285,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const hint: Hint = {
         type: 'string',
         nullable: true,
+        required: false,
         path: '/email',
         format: 'email',
         jsonSchema: {
@@ -293,6 +307,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const hint: Hint = {
         type: 'string',
         nullable: false,
+        required: true,
         path: '/email',
         format: 'email',
         jsonSchema: {
@@ -316,6 +331,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const hint: Hint = {
         type: 'string',
         nullable: true,
+        required: false,
         path: '/user/name',
         jsonSchema: { type: ['string', 'null'] },
       };
@@ -333,6 +349,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const hint: Hint = {
         type: 'string',
         nullable: true,
+        required: false,
         path: '/user/email',
         jsonSchema: { type: ['string', 'null'] },
       };
@@ -353,6 +370,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const hint: Hint = {
         type: 'string',
         nullable: true,
+        required: false,
         path: '/user/birthdate',
         format: 'date',
         jsonSchema: {
@@ -368,6 +386,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const baseHint: Hint = {
         type: 'string',
         nullable: true,
+        required: false,
         path: '/field',
         format: 'email',
         jsonSchema: { type: ['string', 'null'], format: 'email' },
@@ -396,6 +415,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const hint: Hint = {
         type: 'null',
         nullable: true,
+        required: false,
         path: '/nullField',
         jsonSchema: { type: 'null' },
       };
@@ -417,6 +437,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const integerHint: Hint = {
         type: 'integer',
         nullable: true,
+        required: false,
         path: '/count',
         jsonSchema: { type: ['integer', 'null'] },
       };
@@ -424,6 +445,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const numberHint: Hint = {
         type: 'number',
         nullable: true,
+        required: false,
         path: '/amount',
         jsonSchema: { type: ['number', 'null'] },
       };
@@ -444,18 +466,21 @@ describe('FormTypeInput - Nullable Type Matching', () => {
         {
           type: 'string',
           nullable: true,
+          required: false,
           path: '/a',
           jsonSchema: { type: ['string', 'null'] },
         },
         {
           type: 'number',
           nullable: false,
+          required: true,
           path: '/b',
           jsonSchema: { type: 'number' },
         },
         {
           type: 'boolean',
           nullable: true,
+          required: false,
           path: '/c',
           jsonSchema: { type: ['boolean', 'null'] },
         },
@@ -476,6 +501,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const hint: Hint = {
         type: 'string',
         nullable: true,
+        required: false,
         path: '/field',
         // format is undefined
         jsonSchema: { type: ['string', 'null'] },
@@ -494,6 +520,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const hint: Hint = {
         type: 'string',
         nullable: true,
+        required: false,
         path: '/custom',
         formType: 'custom-input',
         jsonSchema: {
@@ -515,6 +542,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const nullableStringHint: Hint = {
         type: 'string',
         nullable: true,
+        required: false,
         path: '/field',
         jsonSchema: { type: ['string', 'null'] },
       };
@@ -522,6 +550,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const nonNullableStringHint: Hint = {
         type: 'string',
         nullable: false,
+        required: true,
         path: '/field',
         jsonSchema: { type: 'string' },
       };
@@ -545,6 +574,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
         {
           type: 'string',
           nullable: true,
+          required: false,
           path: '/email',
           format: 'email',
           jsonSchema: { type: ['string', 'null'], format: 'email' },
@@ -552,6 +582,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
         {
           type: 'number',
           nullable: false,
+          required: true,
           path: '/age',
           jsonSchema: { type: 'number' },
         },
@@ -561,6 +592,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
         {
           type: 'string',
           nullable: false,
+          required: true,
           path: '/email',
           format: 'email',
           jsonSchema: { type: 'string', format: 'email' },
@@ -568,6 +600,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
         {
           type: 'number',
           nullable: true,
+          required: false,
           path: '/age',
           jsonSchema: { type: ['number', 'null'] },
         },
@@ -600,6 +633,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const requiredEmail: Hint = {
         type: 'string',
         nullable: false,
+        required: true,
         path: '/contact/email',
         format: 'email',
         jsonSchema: { type: 'string', format: 'email' },
@@ -608,6 +642,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const optionalEmail: Hint = {
         type: 'string',
         nullable: true,
+        required: false,
         path: '/contact/secondaryEmail',
         format: 'email',
         jsonSchema: { type: ['string', 'null'], format: 'email' },
@@ -636,6 +671,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const requiredNumber: Hint = {
         type: 'number',
         nullable: false,
+        required: true,
         path: '/settings/volume',
         jsonSchema: { type: 'number', minimum: 0, maximum: 100 },
       };
@@ -643,6 +679,7 @@ describe('FormTypeInput - Nullable Type Matching', () => {
       const optionalNumber: Hint = {
         type: 'number',
         nullable: true,
+        required: false,
         path: '/settings/optionalVolume',
         jsonSchema: {
           type: ['number', 'null'],

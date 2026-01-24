@@ -371,6 +371,38 @@ How to fix:
   3. Break the cycle by removing or restructuring one dependency"
 `;
 
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatInjectToError 스냅샷 1`] = `
+"An error occurred while executing injectTo.
+
+  ╭──────────────────────────────────────────────────
+  │  Schema Path:   /properties/sourceField
+  │  Data Path:     /sourceField
+  ├──────────────────────────────────────────────────
+  │  Current Value:   "current-value"
+  │  Root Value:      {"sourceField":"current-value","targetField":"","otherField":123}
+  │  Context Value:   {"userId":"user-123","sessionId":"session-456"}
+  ├──────────────────────────────────────────────────
+  │  Schema Preview:
+  │    {
+  │      "type": "string",
+  │      "title": "Source Field"
+  │    }
+  ├──────────────────────────────────────────────────
+  │  Error: Cannot read properties of undefined (reading 'map')
+  ╰──────────────────────────────────────────────────
+
+The injectTo function threw an error during execution.
+This function is called when the node's value changes to inject values
+into other nodes based on the current value.
+
+How to fix:
+  1. Check the injectTo function in your schema for runtime errors
+  2. Verify that all target paths returned by injectTo are valid
+  3. Ensure the function handles edge cases (null, undefined values)
+  4. Check for type mismatches in the injected values
+  5. Review any conditional logic that may fail with certain inputs"
+`;
+
 exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatInvalidRangeError 스냅샷 1`] = `
 "Invalid range constraint in schema intersection.
 

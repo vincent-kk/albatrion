@@ -16,6 +16,7 @@ import {
   formatEmptyEnumIntersectionError,
   formatFormTypeInputMapError,
   formatInfiniteLoopError,
+  formatInjectToError,
   formatInvalidRangeError,
   formatInvalidVirtualNodeValuesError,
   formatItemsFalseWithoutPrefixItemsError,
@@ -436,6 +437,49 @@ describe('formatErrorMessage', () => {
     });
   });
 
+  describe('formatInjectToError', () => {
+    it('injectTo 실행 에러 메시지를 포맷해야 합니다', () => {
+      const result = formatInjectToError({
+        value: 'test-value',
+        dataPath: '/source',
+        schemaPath: '/properties/source',
+        jsonSchema: { type: 'string' as const },
+        parentValue: { source: 'test-value', target: '' },
+        parentJsonSchema: { type: 'object' as const },
+        rootValue: { source: 'test-value', target: '' },
+        rootJsonSchema: { type: 'object' as const },
+        context: {},
+        error: new Error('Cannot read property of undefined'),
+      });
+
+      expect(result).toContain('injectTo');
+      expect(result).toContain('/properties/source');
+      expect(result).toContain('/source');
+      expect(result).toContain('How to fix');
+    });
+
+    it('복잡한 값도 처리해야 합니다', () => {
+      const result = formatInjectToError({
+        value: { nested: { value: 123 } },
+        dataPath: '/config',
+        schemaPath: '/properties/config',
+        jsonSchema: {
+          type: 'object' as const,
+          properties: { nested: { type: 'object' as const } },
+        },
+        parentValue: { config: { nested: { value: 123 } } },
+        parentJsonSchema: { type: 'object' as const },
+        rootValue: { config: { nested: { value: 123 } } },
+        rootJsonSchema: { type: 'object' as const },
+        context: { contextData: 'some-context' },
+        error: new TypeError('Invalid operation'),
+      });
+
+      expect(result).toContain('injectTo');
+      expect(result).toContain('Invalid operation');
+    });
+  });
+
   describe('에러 메시지 일관성 테스트', () => {
     it('모든 포맷터가 "How to fix" 섹션을 포함해야 합니다', () => {
       const formatters = [
@@ -495,6 +539,18 @@ describe('formatErrorMessage', () => {
         formatFormTypeInputMapError('/path', new Error()),
         formatSchemaValidationFailedError({}, [], { type: 'object' as const }),
         formatRegisterPluginError({} as SchemaFormPlugin, new Error()),
+        formatInjectToError({
+          value: 'value',
+          dataPath: '/path',
+          schemaPath: '/path',
+          jsonSchema: { type: 'string' },
+          parentValue: null,
+          parentJsonSchema: null,
+          rootValue: {},
+          rootJsonSchema: { type: 'object' },
+          context: {},
+          error: new Error(),
+        }),
       ];
 
       for (const message of formatters) {
@@ -821,6 +877,36 @@ describe('formatErrorMessage', () => {
           'Plugin conflict: formTypeInputDefinitions[0] conflicts with existing definition',
         ),
       );
+      expect(result).toMatchSnapshot();
+    });
+
+    it('formatInjectToError 스냅샷', () => {
+      const result = formatInjectToError({
+        value: 'current-value',
+        dataPath: '/sourceField',
+        schemaPath: '/properties/sourceField',
+        jsonSchema: {
+          type: 'string',
+          title: 'Source Field',
+          injectTo: () => ({ '/targetField': 'injected-value' }),
+        },
+        parentValue: {
+          sourceField: 'current-value',
+          targetField: '',
+          otherField: 123,
+        },
+        parentJsonSchema: { type: 'object' as const },
+        rootValue: {
+          sourceField: 'current-value',
+          targetField: '',
+          otherField: 123,
+        },
+        rootJsonSchema: { type: 'object' as const },
+        context: { userId: 'user-123', sessionId: 'session-456' },
+        error: new TypeError(
+          "Cannot read properties of undefined (reading 'map')",
+        ),
+      });
       expect(result).toMatchSnapshot();
     });
   });

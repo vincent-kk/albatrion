@@ -71,7 +71,6 @@ describe('extractSchemaInfo', () => {
     });
 
     it('should return type info for array type', () => {
-      // @ts-expect-error: error for test
       const schema: JsonSchema = { type: 'array' };
 
       const result = extractSchemaInfo(schema);

@@ -32,3 +32,4 @@ export {
 export { formatFormTypeInputMapError } from './formatFormTypeInputMapError';
 export { formatSchemaValidationFailedError } from './formatSchemaValidationFailedError';
 export { formatRegisterPluginError } from './formatRegisterPluginError';
+export { formatInjectToError } from './formatInjectToError';
