@@ -1,32 +1,28 @@
-import { type RefObject, useLayoutEffect } from 'react';
-
-import { useVersion } from '@winglet/react-utils/hook';
+import { useLayoutEffect, useRef } from 'react';
 
 import { NodeEventType, type SchemaNode } from '@/schema-form/core';
 
 /**
- * Controls focus and selection for form-type inputs during SchemaNode-driven updates.
+ * Hook that controls focus and select behavior for form inputs based on SchemaNode events.
  *
- * Rationale:
- * - In controlled inputs, some browsers move the caret to the tail when value is re-assigned.
- * - When value updates come from node event subscriptions (not immediate onChange setState),
- *   React's native caret preservation may not kick in. This hook captures selection around
- *   UpdateValue and restores it if the caret unexpectedly jumps to the end.
- * - IME composition is respected to avoid fighting with native composing behavior.
+ * Behavior:
+ * - `RequestFocus` event: Focuses the first focusable element (input, textarea, button) within the container
+ * - `RequestSelect` event: Selects all text in the first selectable element (input, textarea) within the container
  *
  * Usage:
- * - Call from a component that owns a container ref wrapping the actual input element.
- * - Does not modify input components themselves.
+ * - Attach the returned ref to a container element wrapping the input
+ * - Example: `<span ref={containerRef}><input ... /></span>`
+ *
+ * @param node - The SchemaNode instance to subscribe to for events
+ * @returns A ref object to attach to the container element
  */
 export const useFormTypeInputControl = <Node extends SchemaNode>(
   node: Node,
-  containerRef: RefObject<HTMLElement | null>,
 ) => {
-  const [version, update] = useVersion();
+  const containerRef = useRef<HTMLSpanElement>(null);
   useLayoutEffect(() => {
     if (!node) return;
     const unsubscribe = node.subscribe(({ type }) => {
-      if (type & NodeEventType.RequestRefresh) update();
       if (type & NodeEventType.RequestFocus)
         queryElement(containerRef.current)?.focus();
       if (type & NodeEventType.RequestSelect) {
@@ -35,9 +31,8 @@ export const useFormTypeInputControl = <Node extends SchemaNode>(
       }
     });
     return unsubscribe;
-  }, [node, containerRef, update]);
-
-  return version;
+  }, [node, containerRef]);
+  return containerRef;
 };
 
 const FOCUS_SELECT_SELECTOR = 'input, textarea, button' as const;

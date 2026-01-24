@@ -1225,7 +1225,11 @@ describe('AbstractNode.injectTo', () => {
       } satisfies JsonSchema;
 
       const context = contextNodeFactory(testContext);
-      const node = nodeFromJsonSchema({ jsonSchema, onChange, context });
+      const node = nodeFromJsonSchema({
+        jsonSchema,
+        onChange,
+        contextNode: context,
+      });
       await wait();
 
       const sourceNode = node.find('/source');

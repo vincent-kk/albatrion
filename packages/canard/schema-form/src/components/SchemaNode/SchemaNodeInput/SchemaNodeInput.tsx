@@ -1,7 +1,7 @@
 import { memo, useCallback, useMemo, useRef } from 'react';
 
 import { isArray } from '@winglet/common-utils/filter';
-import { useOnUnmount } from '@winglet/react-utils/hook';
+import { useConstant, useOnUnmount } from '@winglet/react-utils/hook';
 
 import { NodeEventType, NodeState } from '@/schema-form/core';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
@@ -39,10 +39,8 @@ export const SchemaNodeInput = memo(
       [PreferredFormTypeInput, FormTypeInputByNode],
     );
     const ChildNodeComponents = useChildNodeComponents(node, NodeProxy);
-    const containerRef = useRef<HTMLSpanElement>(null);
 
     const { checkShowError } = useFormTypeRendererContext();
-
     const { attachedFilesMap, context } = useWorkspaceContext();
     const { readOnly: rootReadOnly, disabled: rootDisabled } =
       useInputControlContext();
@@ -92,7 +90,8 @@ export const SchemaNodeInput = memo(
       cancelAnimationFrame(requestId.current);
     });
 
-    const version = useFormTypeInputControl(node, containerRef);
+    const defaultValue = useConstant(node.value);
+    const containerRef = useFormTypeInputControl(node);
     useSchemaNodeTracker(node, REACTIVE_RERENDERING_EVENTS);
 
     if (!FormTypeInput) return null;
@@ -106,13 +105,12 @@ export const SchemaNodeInput = memo(
           disabled={rootDisabled || node.disabled}
           {...node.jsonSchema.FormTypeInputProps}
           // Semi-overridable: Value handler and file attach handler
-          defaultValue={node.defaultValue}
+          defaultValue={defaultValue}
           value={node.value}
           onChange={handleChange}
           onFileAttach={handleFileAttach}
           {...overrideProps}
           // Non-overridable: Essential node system properties
-          key={version}
           jsonSchema={node.jsonSchema}
           node={node}
           type={node.schemaType}

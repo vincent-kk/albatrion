@@ -132,14 +132,14 @@ export interface SchemaNodeConstructorProps<
   variant?: number;
   jsonSchema: Schema;
   schemaType: JsonSchemaType;
+  required?: boolean;
   nullable: boolean;
   defaultValue?: Value;
   onChange: HandleChange<Value>;
   parentNode?: SchemaNode;
   validationMode?: ValidationMode;
   validatorFactory?: ValidatorFactory;
-  required?: boolean;
-  context?: ContextNode;
+  contextNode?: ContextNode;
 }
 
 /**

@@ -361,8 +361,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
       this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
     if (option & SetValueOption.Propagate)
       this.__propagate__(current, draft, replace, option);
-    // @ts-expect-error [internal] refresh delegation
-    if (option & SetValueOption.Refresh) host.__refresh__(current);
+    if (option & SetValueOption.Refresh)
+      host.publish(NodeEventType.RequestRefresh);
     // @ts-expect-error [internal] computed property update
     if (option & SetValueOption.Isolate) host.__updateComputedProperties__();
     if (option & SetValueOption.PublishUpdateEvent)

@@ -54,7 +54,6 @@ import {
 import {
   EventCascade,
   afterMicrotask,
-  checkDefinedValue,
   computeFactory,
   depthFirstSearch,
   findNode,
@@ -207,9 +206,6 @@ export abstract class AbstractNode<
     return this.__contextNode__?.value || {};
   }
 
-  /** Node's initial default value */
-  private __initialValue__: Value | Nullish;
-
   /** Node's current default value */
   private __defaultValue__: Value | Nullish;
 
@@ -228,19 +224,7 @@ export abstract class AbstractNode<
    * @param value input value for updating defaultValue
    */
   protected __setDefaultValue__(this: AbstractNode, value: Value | Nullish) {
-    this.__initialValue__ = checkDefinedValue(value) ? value : undefined;
     this.__defaultValue__ = value;
-  }
-
-  /**
-   * Changes the node's default value and publishes a Refresh event. Can only be performed by inherited nodes
-   * For use outside of `constructor`
-   * @param value input value for updating defaultValue
-   * @returns {Promise<void>} A promise that resolves when the refresh is complete
-   */
-  protected __refresh__(this: AbstractNode, value: Value | Nullish) {
-    this.__defaultValue__ = value;
-    this.publish(NodeEventType.RequestRefresh);
   }
 
   /**
@@ -351,14 +335,14 @@ export abstract class AbstractNode<
     variant,
     jsonSchema,
     schemaType,
+    required,
     nullable,
     defaultValue,
     onChange,
     parentNode,
     validationMode,
     validatorFactory,
-    required,
-    context,
+    contextNode,
   }: SchemaNodeConstructorProps<Schema, Value>) {
     this.scope = scope;
     this.variant = variant;
@@ -366,14 +350,16 @@ export abstract class AbstractNode<
     this.schemaType = schemaType;
     this.nullable = nullable;
     this.required = required ?? false;
-    this.__name__ = name || '';
 
     this.isRoot = !parentNode;
     this.rootNode = (parentNode?.rootNode || this) as SchemaNode;
     this.parentNode = parentNode || null;
-
     this.group = getNodeGroup(this.schemaType, this.jsonSchema);
     this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
+
+    this.__defaultValue__ =
+      defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema);
+    this.__name__ = name || '';
     this.__escapedName__ = escapeSegment(this.__name__);
     this.__path__ = joinSegment(this.parentNode?.path, this.__escapedName__);
     this.__schemaPath__ = this.scope
@@ -392,7 +378,7 @@ export abstract class AbstractNode<
         );
 
     this.__contextNode__ = this.isRoot
-      ? context || null
+      ? contextNode || null
       : this.rootNode.__contextNode__;
     this.__compute__ = computeFactory(
       this.schemaType,
@@ -401,9 +387,6 @@ export abstract class AbstractNode<
     );
 
     this.__updateScoped__();
-    this.__setDefaultValue__(
-      defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema),
-    );
 
     if (this.isRoot) {
       const validateOnChange = validationMode
@@ -814,30 +797,29 @@ export abstract class AbstractNode<
   protected __reset__(this: AbstractNode, options: ResetOptions<Value> = {}) {
     if (options.updateScoped) this.__updateScoped__();
 
-    if ('inputValue' in options) this.__defaultValue__ = options.inputValue;
+    let value;
+    if ('inputValue' in options) value = options.inputValue;
     else if (options.preferLatest) {
-      if (options.checkInitialValueFirst && this.__initialValue__ !== undefined)
-        this.__defaultValue__ = this.__initialValue__;
+      if (options.checkInitialValueFirst && this.__defaultValue__ !== undefined)
+        value = this.__defaultValue__;
       else
-        this.__defaultValue__ =
+        value =
           options.fallbackValue !== undefined
             ? options.fallbackValue
             : this.value !== undefined
               ? this.value
-              : this.__initialValue__;
-    } else this.__defaultValue__ = this.__initialValue__;
+              : this.__defaultValue__;
+    } else value = this.__defaultValue__;
 
     if (
       options.applyDerivedValue &&
       this.__compute__.derivedValue &&
       this.active
     )
-      this.__defaultValue__ =
-        this.__compute__.derivedValue(this.__dependencies__) ??
-        this.__defaultValue__;
+      value = this.__compute__.derivedValue(this.__dependencies__) ?? value;
 
     this.setValue(
-      this.__active__ ? this.__defaultValue__ : undefined,
+      this.__active__ ? value : undefined,
       SetValueOption.StableReset,
     );
     this.setState();

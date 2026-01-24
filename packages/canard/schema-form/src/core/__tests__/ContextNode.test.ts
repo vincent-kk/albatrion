@@ -42,7 +42,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -61,7 +61,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -87,7 +87,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -130,7 +130,7 @@ describe('ContextNode', () => {
       const node = nodeFromJsonSchema({
         jsonSchema: createModeSchema(),
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -149,7 +149,7 @@ describe('ContextNode', () => {
       const node = nodeFromJsonSchema({
         jsonSchema: createModeSchema(),
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -168,7 +168,7 @@ describe('ContextNode', () => {
       const node = nodeFromJsonSchema({
         jsonSchema: createModeSchema(),
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -219,7 +219,7 @@ describe('ContextNode', () => {
       const node = nodeFromJsonSchema({
         jsonSchema: createUserRoleSchema(),
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -237,7 +237,7 @@ describe('ContextNode', () => {
       const node = nodeFromJsonSchema({
         jsonSchema: createUserRoleSchema(),
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -257,7 +257,7 @@ describe('ContextNode', () => {
       const node = nodeFromJsonSchema({
         jsonSchema: createUserRoleSchema(),
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -305,7 +305,7 @@ describe('ContextNode', () => {
       const node = nodeFromJsonSchema({
         jsonSchema: createPermissionsSchema(),
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -322,7 +322,7 @@ describe('ContextNode', () => {
       const node = nodeFromJsonSchema({
         jsonSchema: createPermissionsSchema(),
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -339,7 +339,7 @@ describe('ContextNode', () => {
       const node = nodeFromJsonSchema({
         jsonSchema: createPermissionsSchema(),
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -356,7 +356,7 @@ describe('ContextNode', () => {
       const node = nodeFromJsonSchema({
         jsonSchema: createPermissionsSchema(),
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -371,7 +371,7 @@ describe('ContextNode', () => {
       const node = nodeFromJsonSchema({
         jsonSchema: createPermissionsSchema(),
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -429,7 +429,7 @@ describe('ContextNode', () => {
       const node = nodeFromJsonSchema({
         jsonSchema: createCombinedSchema(),
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       }) as ObjectNode;
 
       await delay();
@@ -463,7 +463,7 @@ describe('ContextNode', () => {
       const node = nodeFromJsonSchema({
         jsonSchema: createCombinedSchema(),
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       }) as ObjectNode;
 
       await delay();
@@ -497,7 +497,7 @@ describe('ContextNode', () => {
       const node = nodeFromJsonSchema({
         jsonSchema: createCombinedSchema(),
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       }) as ObjectNode;
 
       await delay();
@@ -545,7 +545,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -600,7 +600,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -656,7 +656,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -705,7 +705,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -747,7 +747,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -791,7 +791,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -837,7 +837,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       }) as ObjectNode;
 
       await delay();
@@ -909,7 +909,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -1100,7 +1100,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -1134,7 +1134,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -1178,7 +1178,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -1227,7 +1227,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -1281,7 +1281,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -1326,7 +1326,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -1411,7 +1411,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -1443,7 +1443,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -1475,7 +1475,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       }) as ObjectNode;
 
       await delay();
@@ -1514,7 +1514,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -1541,7 +1541,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -1570,7 +1570,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -1612,7 +1612,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -1637,7 +1637,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -1679,7 +1679,7 @@ describe('ContextNode', () => {
           properties,
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -1728,7 +1728,7 @@ describe('ContextNode', () => {
       const node = nodeFromJsonSchema({
         jsonSchema: createNestedSchema(5),
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();
@@ -1775,7 +1775,7 @@ describe('ContextNode', () => {
           },
         } satisfies JsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       });
 
       await delay();

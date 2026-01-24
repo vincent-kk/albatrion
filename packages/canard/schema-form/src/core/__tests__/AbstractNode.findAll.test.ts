@@ -844,7 +844,7 @@ describe('AbstractNode.findAll', () => {
       const node = nodeFromJsonSchema({
         jsonSchema,
         onChange: () => {},
-        context: contextNode,
+        contextNode: contextNode,
       }) as ObjectNode;
 
       await delay();

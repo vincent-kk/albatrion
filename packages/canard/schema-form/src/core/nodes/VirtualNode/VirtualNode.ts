@@ -139,7 +139,8 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
         current[i] = node.value;
       }
     this.__value__ = current;
-    if (option & SetValueOption.Refresh) this.__refresh__(values);
+    if (option & SetValueOption.Refresh)
+      this.publish(NodeEventType.RequestRefresh);
     if (option & SetValueOption.PublishUpdateEvent)
       this.publish(
         NodeEventType.UpdateValue,

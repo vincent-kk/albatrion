@@ -325,8 +325,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
     if (option & SetValueOption.EmitChange)
       this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
-    // @ts-expect-error [internal] refresh delegation
-    if (option & SetValueOption.Refresh) host.__refresh__(current);
+    if (option & SetValueOption.Refresh)
+      host.publish(NodeEventType.RequestRefresh);
     if (option & SetValueOption.PublishUpdateEvent)
       host.publish(
         NodeEventType.UpdateValue,

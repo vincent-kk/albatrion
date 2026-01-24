@@ -21,7 +21,7 @@ interface NodeFromSchemaProps<
   onChange: Fn<[value: Value]>;
   validationMode?: ValidationMode;
   validatorFactory?: ValidatorFactory;
-  context?: ContextNode;
+  contextNode?: ContextNode;
 }
 
 /**
@@ -40,7 +40,7 @@ export const nodeFromJsonSchema = <
   onChange,
   validationMode,
   validatorFactory,
-  context,
+  contextNode,
 }: NodeFromSchemaProps<Schema, Value>) => {
   const resolveSchema = getResolveSchema(jsonSchema);
   const nodeFactory = createSchemaNodeFactory(resolveSchema);
@@ -51,7 +51,7 @@ export const nodeFromJsonSchema = <
     onChange: onChange as Fn<[unknown]>,
     validationMode,
     validatorFactory,
-    context,
+    contextNode,
   }) as InferSchemaNode<Schema>;
 };
 

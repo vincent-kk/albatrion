@@ -1,5 +1,4 @@
 export * from './afterMicrotask';
-export * from './checkDefinedValue';
 export * from './computeFactory';
 export * from './EventCascade';
 export * from './findNode';
