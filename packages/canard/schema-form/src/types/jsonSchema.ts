@@ -248,7 +248,25 @@ export type BasicSchema = {
     omitEmpty?: boolean;
     [alt: string]: any;
   };
-  /** Handler to inject values to other nodes */
+  /**
+   * Handler to propagate this node's value to other nodes in the form tree.
+   *
+   * Called whenever this node's value changes. The handler receives the current value
+   * and a context object containing node info, parent info, root value, and shared context.
+   *
+   * @example
+   * ```typescript
+   * // Sync derived field when source changes
+   * injectTo: (value) => ({ '/derived/uppercase': value?.toUpperCase() })
+   *
+   * // Access root value for calculations
+   * injectTo: (value, ctx) => ({
+   *   '/total': ctx.rootValue.price * value
+   * })
+   * ```
+   *
+   * @see InjectToHandler for full documentation and examples
+   */
   injectTo?: InjectToHandler;
   /** Alias for computed.if */
   '&if'?: boolean | string;

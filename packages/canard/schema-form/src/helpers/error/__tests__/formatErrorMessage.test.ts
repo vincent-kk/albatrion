@@ -439,15 +439,18 @@ describe('formatErrorMessage', () => {
 
   describe('formatInjectToError', () => {
     it('injectTo 실행 에러 메시지를 포맷해야 합니다', () => {
-      const result = formatInjectToError(
-        'test-value',
-        '/source',
-        { source: 'test-value', target: '' },
-        {},
-        { type: 'string' as const },
-        '/properties/source',
-        new Error('Cannot read property of undefined'),
-      );
+      const result = formatInjectToError({
+        value: 'test-value',
+        dataPath: '/source',
+        schemaPath: '/properties/source',
+        jsonSchema: { type: 'string' as const },
+        parentValue: { source: 'test-value', target: '' },
+        parentJsonSchema: { type: 'object' as const },
+        rootValue: { source: 'test-value', target: '' },
+        rootJsonSchema: { type: 'object' as const },
+        context: {},
+        error: new Error('Cannot read property of undefined'),
+      });
 
       expect(result).toContain('injectTo');
       expect(result).toContain('/properties/source');
@@ -456,18 +459,21 @@ describe('formatErrorMessage', () => {
     });
 
     it('복잡한 값도 처리해야 합니다', () => {
-      const result = formatInjectToError(
-        { nested: { value: 123 } },
-        '/config',
-        { config: { nested: { value: 123 } } },
-        { contextData: 'some-context' },
-        {
+      const result = formatInjectToError({
+        value: { nested: { value: 123 } },
+        dataPath: '/config',
+        schemaPath: '/properties/config',
+        jsonSchema: {
           type: 'object' as const,
           properties: { nested: { type: 'object' as const } },
         },
-        '/properties/config',
-        new TypeError('Invalid operation'),
-      );
+        parentValue: { config: { nested: { value: 123 } } },
+        parentJsonSchema: { type: 'object' as const },
+        rootValue: { config: { nested: { value: 123 } } },
+        rootJsonSchema: { type: 'object' as const },
+        context: { contextData: 'some-context' },
+        error: new TypeError('Invalid operation'),
+      });
 
       expect(result).toContain('injectTo');
       expect(result).toContain('Invalid operation');
@@ -533,15 +539,18 @@ describe('formatErrorMessage', () => {
         formatFormTypeInputMapError('/path', new Error()),
         formatSchemaValidationFailedError({}, [], { type: 'object' as const }),
         formatRegisterPluginError({} as SchemaFormPlugin, new Error()),
-        formatInjectToError(
-          'value',
-          '/path',
-          {},
-          {},
-          { type: 'string' },
-          '/path',
-          new Error(),
-        ),
+        formatInjectToError({
+          value: 'value',
+          dataPath: '/path',
+          schemaPath: '/path',
+          jsonSchema: { type: 'string' },
+          parentValue: null,
+          parentJsonSchema: null,
+          rootValue: {},
+          rootJsonSchema: { type: 'object' },
+          context: {},
+          error: new Error(),
+        }),
       ];
 
       for (const message of formatters) {
@@ -872,23 +881,32 @@ describe('formatErrorMessage', () => {
     });
 
     it('formatInjectToError 스냅샷', () => {
-      const result = formatInjectToError(
-        'current-value',
-        '/sourceField',
-        {
-          sourceField: 'current-value',
-          targetField: '',
-          otherField: 123,
-        },
-        { userId: 'user-123', sessionId: 'session-456' },
-        {
+      const result = formatInjectToError({
+        value: 'current-value',
+        dataPath: '/sourceField',
+        schemaPath: '/properties/sourceField',
+        jsonSchema: {
           type: 'string',
           title: 'Source Field',
           injectTo: () => ({ '/targetField': 'injected-value' }),
         },
-        '/properties/sourceField',
-        new TypeError("Cannot read properties of undefined (reading 'map')"),
-      );
+        parentValue: {
+          sourceField: 'current-value',
+          targetField: '',
+          otherField: 123,
+        },
+        parentJsonSchema: { type: 'object' as const },
+        rootValue: {
+          sourceField: 'current-value',
+          targetField: '',
+          otherField: 123,
+        },
+        rootJsonSchema: { type: 'object' as const },
+        context: { userId: 'user-123', sessionId: 'session-456' },
+        error: new TypeError(
+          "Cannot read properties of undefined (reading 'map')",
+        ),
+      });
       expect(result).toMatchSnapshot();
     });
   });

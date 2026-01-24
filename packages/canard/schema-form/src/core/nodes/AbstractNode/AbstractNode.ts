@@ -27,6 +27,7 @@ import {
 import { stripSchemaExtensions } from '@/schema-form/helpers/jsonSchema';
 import type {
   AllowedValue,
+  InjectHandlerContext,
   JsonSchemaType,
   JsonSchemaWithVirtual,
   ValidateFunction,
@@ -1076,12 +1077,20 @@ export abstract class AbstractNode<
       }
       if (type & NodeEventType.RequestInjection) {
         const value = this.value;
-        const rootValue = this.rootNode.value;
-        const contextValue = this.context?.value || {};
         const dataPath = this.path;
+        const context = {
+          dataPath,
+          schemaPath: this.schemaPath,
+          jsonSchema: this.jsonSchema,
+          parentValue: this.parentNode?.value || null,
+          parentJsonSchema: this.parentNode?.jsonSchema || null,
+          rootValue: this.rootNode.value,
+          rootJsonSchema: this.rootNode.jsonSchema,
+          context: this.context?.value || {},
+        } satisfies InjectHandlerContext;
         try {
           this.setInjectedPath(dataPath);
-          const affect = injectHandler(value, rootValue, contextValue);
+          const affect = injectHandler(value, context);
           if (affect == null) return;
           const operations = isArray(affect) ? affect : Object.entries(affect);
           for (let i = 0, l = operations.length; i < l; i++) {
@@ -1091,26 +1100,11 @@ export abstract class AbstractNode<
             this.find(path)?.setValue(operations[i][1]);
           }
         } catch (error) {
+          const errorContext = { ...context, value, error };
           throw new JsonSchemaError(
             'INJECT_TO',
-            formatInjectToError(
-              value,
-              dataPath,
-              rootValue,
-              contextValue,
-              this.jsonSchema,
-              this.schemaPath,
-              error,
-            ),
-            {
-              value,
-              dataPath,
-              rootValue,
-              contextValue,
-              jsonSchema: this.jsonSchema,
-              schemaPath: this.schemaPath,
-              error,
-            },
+            formatInjectToError(errorContext),
+            errorContext,
           );
         } finally {
           this.scheduleClearInjectedPaths();

@@ -1,4 +1,4 @@
-import type { JsonSchemaWithVirtual } from '@/schema-form/types';
+import type { InjectHandlerContext } from '@/schema-form/types';
 
 import { createDivider } from './utils/createDivider';
 import { formatJsonPreview } from './utils/formatJsonPreview';
@@ -6,31 +6,54 @@ import { formatValuePreview } from './utils/formatValuePreview';
 import { getErrorMessage } from './utils/getErrorMessage';
 
 /**
- * Formats a structured error message for injectTo execution failures.
- * @param schemaPath - The schema path of the node where the error occurred
- * @param dataPath - The data path of the node where the error occurred
- * @param value - The current value of the node
- * @param rootValue - The root value of the form
- * @param contextValue - The context value
- * @param jsonSchema - The JSON Schema of the node
- * @param error - The original error object
+ * Context for formatting injectTo error messages.
+ * Extends {@link InjectHandlerContext} with additional error-specific fields.
  */
-export const formatInjectToError = (
-  value: unknown,
-  dataPath: string,
-  rootValue: unknown,
-  contextValue: unknown,
-  jsonSchema: JsonSchemaWithVirtual,
-  schemaPath: string,
-  error: unknown,
-): string => {
+export interface FormatInjectToErrorContext extends InjectHandlerContext {
+  /** The current value that triggered the error */
+  value: unknown;
+  /** The error that occurred during injectTo execution */
+  error: unknown;
+}
+
+/**
+ * Formats a structured error message for injectTo execution failures.
+ *
+ * @param context - The error context containing all relevant information
+ * @returns A formatted error message string with diagnostic information
+ *
+ * @example
+ * ```typescript
+ * const message = formatInjectToError({
+ *   value: 'test',
+ *   dataPath: '/user/name',
+ *   schemaPath: '/properties/user/properties/name',
+ *   jsonSchema: { type: 'string' },
+ *   parentValue: { name: 'test' },
+ *   parentJsonSchema: { type: 'object', properties: { name: { type: 'string' } } },
+ *   rootValue: { user: { name: 'test' } },
+ *   rootJsonSchema: { type: 'object' },
+ *   context: {},
+ *   error: new Error('Something went wrong'),
+ * });
+ * ```
+ */
+export const formatInjectToError = ({
+  value,
+  dataPath,
+  schemaPath,
+  jsonSchema,
+  rootValue,
+  context,
+  error,
+}: FormatInjectToErrorContext): string => {
   const divider = createDivider();
   const errorMessage = getErrorMessage(error);
   const { preview: schemaPreview, truncated: schemaTruncated } =
     formatJsonPreview(jsonSchema);
   const valuePreview = formatValuePreview(value);
   const rootValuePreview = formatValuePreview(rootValue);
-  const contextValuePreview = formatValuePreview(contextValue);
+  const contextValuePreview = formatValuePreview(context);
 
   return `
 An error occurred while executing injectTo.

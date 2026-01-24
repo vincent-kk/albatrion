@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { JsonSchema } from '@/schema-form/types';
+import type { InjectHandlerContext, JsonSchema } from '@/schema-form/types';
 
-import { nodeFromJsonSchema } from '../nodeFromJsonSchema';
+import { contextNodeFactory, nodeFromJsonSchema } from '../nodeFromJsonSchema';
 import { NodeEventType } from '../nodes/type';
 
 const wait = (delay = 10) => {
@@ -272,13 +272,11 @@ describe('AbstractNode.injectTo', () => {
       expect(node.find('/target')?.value).toBe('original');
     });
 
-    it('should receive correct parameters (value, rootValue, context)', async () => {
+    it('should receive correct parameters (value, context)', async () => {
       const onChange = vi.fn();
-      const injectFn = vi.fn(
-        (value: string, _rootValue: unknown, _context: unknown) => {
-          return { '../target': `${value}` };
-        },
-      );
+      const injectFn = vi.fn((value: string, _context: unknown) => {
+        return { '../target': `${value}` };
+      });
 
       const jsonSchema = {
         type: 'object',
@@ -303,8 +301,16 @@ describe('AbstractNode.injectTo', () => {
 
       expect(injectFn).toHaveBeenCalledWith(
         'test',
-        expect.objectContaining({ source: 'test', other: 42 }),
-        expect.any(Object),
+        expect.objectContaining({
+          dataPath: '/source',
+          schemaPath: '#/properties/source',
+          jsonSchema: expect.objectContaining({ type: 'string' }),
+          rootValue: expect.objectContaining({ source: 'test', other: 42 }),
+          rootJsonSchema: expect.objectContaining({ type: 'object' }),
+          parentValue: expect.objectContaining({ source: 'test', other: 42 }),
+          parentJsonSchema: expect.objectContaining({ type: 'object' }),
+          context: {},
+        }),
       );
     });
   });
@@ -1197,18 +1203,61 @@ describe('AbstractNode.injectTo', () => {
   // 9. Context Value (Medium)
   // ============================================================================
   describe('Context Value Usage', () => {
-    it('should receive context value as third parameter', async () => {
+    it('should receive context value in InjectHandlerContext', async () => {
       const onChange = vi.fn();
+      const testContext = { userId: 'user-123', permissions: ['read', 'write'] };
       const injectFn = vi.fn(
-        (
-          _value: string,
-          _rootValue: unknown,
-          _context: Record<string, unknown>,
-        ) => {
-          // context는 ObjectNode의 context.value
-          return { '../target': `context-received` };
+        (_value: string, ctx: InjectHandlerContext) => {
+          return { '../target': `user:${ctx.context.userId}` };
         },
       );
+
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          source: {
+            type: 'string',
+            injectTo: injectFn,
+          },
+          target: { type: 'string' },
+        },
+      } satisfies JsonSchema;
+
+      const context = contextNodeFactory(testContext);
+      const node = nodeFromJsonSchema({ jsonSchema, onChange, context });
+      await wait();
+
+      const sourceNode = node.find('/source');
+      if (sourceNode?.type === 'string') {
+        sourceNode.setValue('test');
+      }
+      await wait();
+
+      expect(injectFn).toHaveBeenCalled();
+      const [value, handlerContext] = injectFn.mock.calls[0];
+      expect(value).toBe('test');
+
+      // InjectHandlerContext의 모든 필드 검증
+      expect(handlerContext).toMatchObject({
+        dataPath: '/source',
+        schemaPath: '#/properties/source',
+        jsonSchema: expect.objectContaining({ type: 'string' }),
+        parentValue: expect.objectContaining({ source: 'test' }),
+        parentJsonSchema: expect.objectContaining({ type: 'object' }),
+        rootValue: expect.objectContaining({ source: 'test' }),
+        rootJsonSchema: expect.objectContaining({ type: 'object' }),
+        context: testContext,
+      });
+
+      // target에 context 값이 주입되었는지 확인
+      expect(node.find('/target')?.value).toBe('user:user-123');
+    });
+
+    it('should receive empty object when context is not provided', async () => {
+      const onChange = vi.fn();
+      const injectFn = vi.fn((_value: string, ctx: InjectHandlerContext) => {
+        return { '../target': `empty:${Object.keys(ctx.context).length}` };
+      });
 
       const jsonSchema = {
         type: 'object',
@@ -1231,9 +1280,9 @@ describe('AbstractNode.injectTo', () => {
       await wait();
 
       expect(injectFn).toHaveBeenCalled();
-      const [, , context] = injectFn.mock.calls[0];
-      expect(context).toBeDefined();
-      expect(typeof context).toBe('object');
+      const [, handlerContext] = injectFn.mock.calls[0];
+      expect(handlerContext.context).toEqual({});
+      expect(node.find('/target')?.value).toBe('empty:0');
     });
   });
 
