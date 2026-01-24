@@ -29,22 +29,22 @@ export abstract class AbstractNode<T, B> {
   readonly ForegroundComponent?: ForegroundComponent;
   readonly BackgroundComponent?: BackgroundComponent;
 
-  #alive: boolean;
+  private __alive__: boolean;
   get alive() {
-    return this.#alive;
+    return this.__alive__;
   }
 
-  #visible: boolean;
+  private __visible__: boolean;
   get visible() {
-    return this.#visible;
+    return this.__visible__;
   }
 
-  #handleResolve?: Fn<[result: T | null]>;
+  private __handleResolve__?: Fn<[result: T | null]>;
   set handleResolve(handleResolve: Fn<[result: T | null]>) {
-    this.#handleResolve = handleResolve;
+    this.__handleResolve__ = handleResolve;
   }
 
-  #listeners: Set<Fn> = new Set();
+  private __listeners__: Set<Fn> = new Set();
 
   constructor({
     id,
@@ -76,44 +76,44 @@ export abstract class AbstractNode<T, B> {
     this.ForegroundComponent = ForegroundComponent;
     this.BackgroundComponent = BackgroundComponent;
 
-    this.#alive = true;
-    this.#visible = true;
-    this.#handleResolve = handleResolve;
+    this.__alive__ = true;
+    this.__visible__ = true;
+    this.__handleResolve__ = handleResolve;
   }
 
   abstract onClose(): void;
   abstract onConfirm(): void;
 
   protected onResolve(result: T | null) {
-    this.#handleResolve?.(result);
+    this.__handleResolve__?.(result);
   }
 
   subscribe(listener: Fn) {
-    this.#listeners.add(listener);
+    this.__listeners__.add(listener);
     return () => {
-      this.#listeners.delete(listener);
+      this.__listeners__.delete(listener);
     };
   }
 
   publish() {
-    for (const listener of this.#listeners) listener();
+    for (const listener of this.__listeners__) listener();
   }
 
   onDestroy() {
-    const needPublish = this.#alive === true;
-    this.#alive = false;
+    const needPublish = this.__alive__ === true;
+    this.__alive__ = false;
     if (this.manualDestroy && needPublish) this.publish();
   }
 
   onShow() {
-    const needPublish = this.#visible === false;
-    this.#visible = true;
+    const needPublish = this.__visible__ === false;
+    this.__visible__ = true;
     if (needPublish) this.publish();
   }
 
   onHide() {
-    const needPublish = this.#visible === true;
-    this.#visible = false;
+    const needPublish = this.__visible__ === true;
+    this.__visible__ = false;
     if (needPublish) this.publish();
   }
 }
