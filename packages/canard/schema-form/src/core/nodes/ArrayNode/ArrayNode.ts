@@ -32,7 +32,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    */
   private __strategy__: ArrayNodeStrategy;
 
-  public override equals(
+  protected override __equals__(
     this: ArrayNode,
     left: ArrayValue | Nullish,
     right: ArrayValue | Nullish,

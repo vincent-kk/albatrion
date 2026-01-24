@@ -32,7 +32,7 @@ describe('AbstractNode - setName and updatePath', () => {
 
       // Note: In real usage, parent nodes manage their children's names internally
       // Direct setName calls are typically only done by the parent node itself
-      childNode?.setName('newName', node);
+      childNode?.__setName__('newName', node);
       expect(childNode?.name).toBe('newName');
       expect(childNode?.escapedName).toBe('newName');
     });
@@ -56,7 +56,7 @@ describe('AbstractNode - setName and updatePath', () => {
       expect(childNode?.name).toBe('name/with~special');
       expect(childNode?.escapedName).toBe('name~1with~0special');
 
-      childNode?.setName('another/~name', node);
+      childNode?.__setName__('another/~name', node);
       expect(childNode?.name).toBe('another/~name');
       expect(childNode?.escapedName).toBe('another~1~0name');
     });
@@ -78,7 +78,7 @@ describe('AbstractNode - setName and updatePath', () => {
       const field2 = node.find('/field2');
 
       expect(field1?.name).toBe('field1');
-      field2?.setName('wrongName', field2!);
+      field2?.__setName__('wrongName', field2!);
       expect(field1?.name).toBe('field1');
     });
 
@@ -105,7 +105,7 @@ describe('AbstractNode - setName and updatePath', () => {
       expect(nestedField?.path).toBe('/nested/field');
 
       // setName triggers synchronous path update for children
-      nestedNode?.setName('renamed', node);
+      nestedNode?.__setName__('renamed', node);
       expect(nestedNode?.path).toBe('/renamed');
 
       // Child paths are immediately updated synchronously
@@ -136,7 +136,7 @@ describe('AbstractNode - setName and updatePath', () => {
 
       expect(childNode?.path).toBe('/parent/child');
 
-      parentNode?.setName('renamedParent', node);
+      parentNode?.__setName__('renamedParent', node);
       expect(parentNode?.path).toBe('/renamedParent');
 
       // Child paths are immediately updated synchronously
@@ -169,7 +169,7 @@ describe('AbstractNode - setName and updatePath', () => {
         '#/properties/container/properties/item',
       );
 
-      containerNode?.setName('newContainer', node);
+      containerNode?.__setName__('newContainer', node);
       expect(containerNode?.schemaPath).toBe('#/properties/newContainer');
 
       // Child schemaPath is immediately updated synchronously
@@ -226,7 +226,7 @@ describe('AbstractNode - setName and updatePath', () => {
       fieldNode?.subscribe(listener);
 
       // Call setName which triggers updatePath
-      fieldNode?.setName('renamedField', node);
+      fieldNode?.__setName__('renamedField', node);
 
       // Wait for microtask to complete (events are batched in microtasks)
       await Promise.resolve();
@@ -336,7 +336,7 @@ describe('AbstractNode - setName and updatePath', () => {
         '#/properties/level1/properties/level2/properties/level3/properties/deepField',
       );
 
-      level1?.setName('renamedLevel1', node);
+      level1?.__setName__('renamedLevel1', node);
 
       // Deep nested paths are immediately updated synchronously
       expect(deepField?.path).toBe('/renamedLevel1/level2/level3/deepField');
@@ -392,7 +392,7 @@ describe('AbstractNode - setName and updatePath', () => {
         '#/properties/users/items/properties/addresses/items/properties/street',
       );
 
-      usersArray?.setName('members', node);
+      usersArray?.__setName__('members', node);
 
       // Complex nested paths are immediately updated synchronously
       expect(streetField?.path).toBe('/members/0/addresses/0/street');
@@ -433,7 +433,7 @@ describe('AbstractNode - setName and updatePath', () => {
         '#/properties/special~0key~1name/properties/subField',
       );
 
-      specialNode?.setName('normal_name', node);
+      specialNode?.__setName__('normal_name', node);
 
       expect(specialNode?.name).toBe('normal_name');
       expect(specialNode?.escapedName).toBe('normal_name');
@@ -477,7 +477,7 @@ describe('AbstractNode - setName and updatePath', () => {
       const childListener = vi.fn();
       childNode?.subscribe(childListener);
 
-      parentNode?.setName('renamed', node);
+      parentNode?.__setName__('renamed', node);
 
       // Paths are immediately updated synchronously
       expect(parentNode?.path).toBe('/renamed');

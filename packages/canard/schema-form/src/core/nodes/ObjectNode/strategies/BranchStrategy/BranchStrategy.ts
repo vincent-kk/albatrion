@@ -151,7 +151,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
       const childNode = this.__subnodes__[i].node;
       // @ts-expect-error [internal] child node initialization
       (childNode as AbstractNode).__initialize__(this.__host__);
-      if (!enabled && childNode.computeEnabled) enabled = true;
+      // @ts-expect-error [internal] computeEnabled delegation
+      if (!enabled && childNode.__computeEnabled__) enabled = true;
     }
     if (enabled) this.__prepareProcessComputedProperties__();
   }
@@ -392,7 +393,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (draft === undefined) return undefined;
     if (draft === null) return nullable ? null : {};
     if (replace || base == null) return this.__processValue__(draft, normalize);
-    if (isEmptyObject(draft) || this.__host__.equals(base, draft)) return false;
+    // @ts-expect-error [internal] equals delegation
+    if (isEmptyObject(draft) || this.__host__.__equals__(base, draft))
+      return false;
     return this.__processValue__({ ...base, ...draft }, normalize);
   }
 
@@ -504,7 +507,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (previousOneOfChildNodeMap)
       for (const child of previousOneOfChildNodeMap.values()) {
         // @ts-expect-error [internal] reset child node
-        (child.node as AbstractNode).__reset__({ updateScoped: true });
+        child.node.__reset__({ updateScoped: true });
       }
     if (oneOfChildNodeMap)
       for (const child of oneOfChildNodeMap.values()) {
@@ -512,7 +515,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
         const previousNode = previousOneOfChildNodeMap?.get(node.name)?.node;
         const previousValue = this.__value__?.[node.name];
         // @ts-expect-error [internal] reset child node
-        (node as AbstractNode).__reset__({
+        node.__reset__({
           updateScoped: true,
           preferLatest:
             isolation ||
@@ -528,7 +531,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
             : undefined,
         });
         // @ts-expect-error [internal] recursive computed property update
-        (node as AbstractNode).__updateComputedPropertiesRecursively__();
+        node.__updateComputedPropertiesRecursively__();
       }
     this.__locked__ = false;
 
@@ -562,10 +565,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
       for (let i = 0, l = disables.length; i < l; i++) {
         const anyOfChildNodes =
           this.__anyOfChildNodeMapList__[disables[i]].values();
-
         for (const child of anyOfChildNodes) {
           // @ts-expect-error [internal] reset child node
-          (child.node as AbstractNode).__reset__({ updateScoped: true });
+          child.node.__reset__({ updateScoped: true });
         }
       }
     const enables = isolation ? current : differenceLite(current, previous);
@@ -576,14 +578,14 @@ export class BranchStrategy implements ObjectNodeStrategy {
         for (const child of anyOfChildNodes) {
           const node = child.node;
           // @ts-expect-error [internal] reset child node
-          (node as AbstractNode).__reset__({
+          node.__reset__({
             updateScoped: true,
             preferLatest: isolation,
             applyDerivedValue: true,
             fallbackValue: this.__value__?.[node.name],
           });
           // @ts-expect-error [internal] recursive computed property update
-          (node as AbstractNode).__updateComputedPropertiesRecursively__();
+          node.__updateComputedPropertiesRecursively__();
         }
       }
     this.__locked__ = false;
@@ -634,7 +636,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
     );
     this.__expired__ = false;
     this.__processComputedProperties__(this.__draft__);
-    if (this.__host__.validation)
+    // @ts-expect-error [internal] validationEnabled delegation
+    if (this.__host__.__validationEnabled__)
       // @ts-expect-error [internal] enhancer adjustment
       this.__host__.__adjustEnhancer__(
         joinSegment(this.__host__.path, ENHANCED_KEY),

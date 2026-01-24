@@ -217,7 +217,8 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     const previous = this.__value__ ? [...this.__value__] : this.__value__;
     const current = this.__parseValue__(input);
 
-    if (retain && host.equals(previous, current)) return;
+    // @ts-expect-error [internal] equals delegation
+    if (retain && host.__equals__(previous, current)) return;
     this.__value__ = current;
 
     if (this.__locked__) return;

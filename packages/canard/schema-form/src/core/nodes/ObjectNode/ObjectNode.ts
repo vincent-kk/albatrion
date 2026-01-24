@@ -25,7 +25,7 @@ import { omitEmptyObject } from './utils';
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   public override readonly type = 'object';
 
-  public override equals(
+  protected override __equals__(
     this: ObjectNode,
     left: ObjectValue | Nullish,
     right: ObjectValue | Nullish,

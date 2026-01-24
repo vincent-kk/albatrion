@@ -35,7 +35,6 @@ import type {
   ValidatorFactory,
 } from '@/schema-form/types';
 
-import type { ObjectNode } from '../ObjectNode';
 import {
   type ChildNode,
   type HandleChange,
@@ -137,11 +136,11 @@ export abstract class AbstractNode<
    * @param name - The name to set
    * @param actor - The node setting the name
    */
-  public setName(this: AbstractNode, name: string, actor: SchemaNode) {
+  protected __setName__(this: AbstractNode, name: string, actor: SchemaNode) {
     if (actor !== this.parentNode && actor !== this) return;
     this.__name__ = name;
     this.__escapedName__ = escapeSegment(name);
-    this.updatePath();
+    this.__updatePath__();
   }
 
   /** Node's data path */
@@ -175,7 +174,7 @@ export abstract class AbstractNode<
    * @returns Whether the path was changed
    * @returns {boolean} Whether the path was changed
    */
-  public updatePath(this: AbstractNode) {
+  private __updatePath__(this: AbstractNode) {
     const previous = this.__path__;
     const parent = this.parentNode;
     const escapedName = this.__escapedName__;
@@ -191,7 +190,7 @@ export abstract class AbstractNode<
 
     const subnodes = this.subnodes;
     if (subnodes?.length)
-      for (const subnode of subnodes) subnode.node.updatePath();
+      for (const subnode of subnodes) subnode.node.__updatePath__();
 
     this.publish(NodeEventType.UpdatePath, current, { previous, current });
     return true;
@@ -199,14 +198,6 @@ export abstract class AbstractNode<
 
   /** Context node reference for form-wide shared data */
   private __context__: AbstractNode | null;
-
-  /**
-   * [readonly] Context node for accessing form-wide shared data
-   * @note Root nodes return their own context, child nodes delegate to rootNode.context
-   */
-  public get context(): ObjectNode | null {
-    return this.__context__ as ObjectNode;
-  }
 
   /** Node's initial default value */
   private __initialValue__: Value | Nullish;
@@ -316,7 +307,7 @@ export abstract class AbstractNode<
    * @param right - The right value
    * @returns Whether the left value is equal to the right value
    */
-  public equals(
+  protected __equals__(
     this: AbstractNode,
     left: Value | Nullish,
     right: Value | Nullish,
@@ -390,7 +381,9 @@ export abstract class AbstractNode<
           this.__escapedName__,
         );
 
-    this.__context__ = this.isRoot ? context || null : this.rootNode.context;
+    this.__context__ = this.isRoot
+      ? context || null
+      : this.rootNode.__context__;
     this.__compute__ = computeFactory(
       this.schemaType,
       this.jsonSchema,
@@ -422,7 +415,7 @@ export abstract class AbstractNode<
    */
   public find(this: AbstractNode, pointer?: string): SchemaNode | null {
     if (pointer === undefined) return this as SchemaNode;
-    if (pointer === $.Context) return this.context;
+    if (pointer === $.Context) return this.__context__ as SchemaNode;
     if (pointer === $.Root) return this.rootNode;
     const absolute = isAbsolutePath(pointer);
     if (absolute && pointer.length === 1) return this.rootNode;
@@ -582,16 +575,7 @@ export abstract class AbstractNode<
    * Flag indicating whether this node has any computed properties defined.
    * @note Set during initialization based on whether `dependencyPaths` is non-empty.
    */
-  private __computeEnabled__: boolean = false;
-
-  /**
-   * Whether this node has computed properties that depend on other nodes.
-   * @returns `true` if the schema defines computed properties (active, visible, etc.)
-   * @note When enabled, the node subscribes to dependency changes and recalculates properties.
-   */
-  public get computeEnabled() {
-    return this.__computeEnabled__;
-  }
+  protected __computeEnabled__: boolean = false;
 
   /**
    * Whether this node belongs to the currently active oneOf/anyOf branch of its parent.
@@ -716,6 +700,7 @@ export abstract class AbstractNode<
 
   /** Prepares dependencies for update computation. */
   private __prepareUpdateDependencies__(this: AbstractNode) {
+    if (this.__initialized__) return;
     const dependencyPaths = this.__compute__.dependencyPaths;
     const computeEnabled = dependencyPaths.length > 0;
     if (computeEnabled) {
@@ -748,7 +733,7 @@ export abstract class AbstractNode<
             const derivedValue = this.__compute__.derivedValue(
               this.__dependencies__,
             );
-            if (this.active && !this.equals(this.value, derivedValue))
+            if (this.active && !this.__equals__(this.value, derivedValue))
               this.setValue(derivedValue);
           }
           if (this.__compute__.pristine?.(this.__dependencies__))
@@ -1077,6 +1062,7 @@ export abstract class AbstractNode<
    *       Implements circular injection prevention using injected node flags.
    */
   private __prepareInjectHandler__(this: AbstractNode) {
+    if (this.__initialized__) return;
     const injectHandler = this.jsonSchema.injectTo;
     if (typeof injectHandler !== 'function') return;
     this.subscribe(({ type }) => {
@@ -1095,7 +1081,7 @@ export abstract class AbstractNode<
           parentJsonSchema: this.parentNode?.jsonSchema || null,
           rootValue: this.rootNode.value,
           rootJsonSchema: this.rootNode.jsonSchema,
-          context: this.context?.value || {},
+          context: this.__context__?.value || {},
         } satisfies InjectHandlerContext;
         try {
           this.__setInjectedPath__(dataPath);
@@ -1385,10 +1371,10 @@ export abstract class AbstractNode<
   }
 
   /** [readonly] Whether validation is enabled for this form */
-  public get validation(): boolean {
+  protected get __validationEnabled__(): boolean {
     return this.isRoot
       ? this.__validator__ !== undefined
-      : this.rootNode.validation;
+      : (this.rootNode as AbstractNode).__validationEnabled__;
   }
 
   /**

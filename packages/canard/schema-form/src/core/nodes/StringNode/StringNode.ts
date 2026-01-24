@@ -83,7 +83,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     const previous = this.__value__;
     const current = this.__parseValue__(input);
 
-    if (retain && this.equals(previous, current)) return;
+    if (retain && this.__equals__(previous, current)) return;
     this.__value__ = current;
 
     if (option & SetValueOption.EmitChange)

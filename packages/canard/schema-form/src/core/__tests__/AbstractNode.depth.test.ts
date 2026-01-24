@@ -189,7 +189,7 @@ describe('AbstractNode depth calculation', () => {
     expect(parent1.depth).toBe(1);
     expect(child.depth).toBe(2);
 
-    child.setName('renamedChild', parent1);
+    child.__setName__('renamedChild', parent1);
     expect(child.depth).toBe(2);
     expect(child.path).toBe('/parent1/renamedChild');
   });

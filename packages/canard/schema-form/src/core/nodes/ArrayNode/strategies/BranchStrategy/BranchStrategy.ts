@@ -393,7 +393,8 @@ export class BranchStrategy implements ArrayNodeStrategy {
       if (this.__sourceMap__.has(key)) {
         const node = this.__sourceMap__.get(key)!.node;
         const name = '' + i;
-        if (node.name !== name) node.setName(name, this.__host__);
+        // @ts-expect-error [internal] setName delegation
+        if (node.name !== name) node.__setName__(name, this.__host__);
       }
     }
   }

@@ -21,7 +21,7 @@ import {
 export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   public override readonly type = 'number';
 
-  public override equals(
+  protected override __equals__(
     this: NumberNode,
     left: NumberValue | Nullish,
     right: NumberValue | Nullish,
@@ -91,7 +91,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     const previous = this.__value__;
     const current = this.__parseValue__(input);
 
-    if (retain && this.equals(previous, current, true)) return;
+    if (retain && this.__equals__(previous, current, true)) return;
     this.__value__ = current;
 
     if (option & SetValueOption.EmitChange)

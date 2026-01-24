@@ -1214,7 +1214,7 @@ describe('AbstractNode Enhanced Validation', () => {
       });
 
       // Should have validation enabled
-      expect(node.validation).toBe(true);
+      expect(node.__validationEnabled__).toBe(true);
 
       // Set active data
       const activeDataNode = node.find('/activeData') as ObjectNode;
@@ -1283,7 +1283,7 @@ describe('AbstractNode Enhanced Validation', () => {
       });
 
       // Should have validation enabled
-      expect(node.validation).toBe(true);
+      expect(node.__validationEnabled__).toBe(true);
 
       // Validation should work properly
       await wait();
@@ -1305,7 +1305,7 @@ describe('AbstractNode Enhanced Validation', () => {
       });
 
       // Should not have validation enabled
-      expect(node.validation).toBe(false);
+      expect(node.__validationEnabled__).toBe(false);
 
       // Should not have errors array populated
       expect(node.errors).toHaveLength(0);
