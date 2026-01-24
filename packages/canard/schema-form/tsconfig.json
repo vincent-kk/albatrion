@@ -19,8 +19,8 @@
     "src",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "coverage/**/*.ts",
-    "coverage/**/*.tsx"
+    "stories/**/*.ts",
+    "stories/**/*.tsx",
   ],
   "exclude": [
     "node_modules",
