@@ -20,14 +20,14 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
   public override readonly type = 'string';
 
   /** Current value of the string node */
-  #value: StringValue | Nullish = undefined;
+  private __value__: StringValue | Nullish = undefined;
 
   /**
    * Gets the value of the string node.
    * @returns String value or undefined
    */
   public override get value() {
-    return this.#value;
+    return this.__value__;
   }
 
   /**
@@ -48,7 +48,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     input: StringValue | Nullish,
     option: UnionSetValueOption,
   ) {
-    this.#emitChange(input, option);
+    this.__emitChange__(input, option);
   }
 
   protected override onChange: HandleChange<StringValue | Nullish>;
@@ -59,11 +59,13 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
       this.jsonSchema.options?.omitEmpty !== false
         ? this.onChangeWithOmitEmpty
         : super.onChange;
-    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
+    if (this.defaultValue !== undefined)
+      this.__emitChange__(this.defaultValue);
     if (this.jsonSchema.options?.trim === true)
       this.subscribe(({ type }) => {
         if (type & NodeEventType.Blurred)
-          this.#value != null && this.#emitChange(this.#value.trim());
+          this.__value__ != null &&
+            this.__emitChange__(this.__value__.trim());
       });
     this.initialize();
   }
@@ -73,18 +75,18 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
    * @param input - The value to set
    * @param option - Set value options
    */
-  #emitChange(
+  private __emitChange__(
     this: StringNode,
     input: StringValue | Nullish,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
     const retain = (option & SetValueOption.Replace) === 0;
 
-    const previous = this.#value;
-    const current = this.#parseValue(input);
+    const previous = this.__value__;
+    const current = this.__parseValue__(input);
 
     if (retain && this.equals(previous, current)) return;
-    this.#value = current;
+    this.__value__ = current;
 
     if (option & SetValueOption.EmitChange)
       this.onChange(current, (option & SetValueOption.Batch) > 0);
@@ -103,7 +105,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
    * @param input - The value to parse
    * @returns {StringValue|null|undefined} Parsed string value
    */
-  #parseValue(this: StringNode, input: StringValue | Nullish) {
+  private __parseValue__(this: StringNode, input: StringValue | Nullish) {
     if (input === undefined) return undefined;
     if (input === null && this.nullable) return null;
     return parseString(input);

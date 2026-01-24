@@ -14,14 +14,14 @@ export class ContextNode extends AbstractNode<ObjectSchema> {
   public override readonly type = 'object';
 
   /** Current context value */
-  #value: unknown;
+  private __value__: unknown;
 
   /**
    * Gets the current context value.
    * @returns The context value object
    */
   public override get value() {
-    return this.#value;
+    return this.__value__;
   }
 
   /**
@@ -37,7 +37,7 @@ export class ContextNode extends AbstractNode<ObjectSchema> {
    * @param input - The context value to apply
    */
   protected override applyValue(this: ContextNode, input: unknown) {
-    this.#emitChange(input);
+    this.__emitChange__(input);
   }
 
   /**
@@ -46,7 +46,8 @@ export class ContextNode extends AbstractNode<ObjectSchema> {
    */
   constructor(properties: SchemaNodeConstructorProps<ObjectSchema>) {
     super(properties);
-    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
+    if (this.defaultValue !== undefined)
+      this.__emitChange__(this.defaultValue);
     this.initialize();
   }
 
@@ -54,9 +55,9 @@ export class ContextNode extends AbstractNode<ObjectSchema> {
    * Reflects context value changes and publishes related events.
    * @param current - The new context value
    */
-  #emitChange(this: ContextNode, current: unknown) {
-    const previous = this.#value;
-    this.#value = current;
+  private __emitChange__(this: ContextNode, current: unknown) {
+    const previous = this.__value__;
+    this.__value__ = current;
     this.publish(
       NodeEventType.UpdateValue,
       current,

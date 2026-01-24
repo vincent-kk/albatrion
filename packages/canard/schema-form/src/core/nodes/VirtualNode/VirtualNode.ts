@@ -22,14 +22,14 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
   public override readonly type = 'virtual';
 
   /** Current value of the virtual node */
-  #value: VirtualNodeValue = [];
+  private __value__: VirtualNodeValue = [];
 
   /**
    * Gets the value of the virtual node.
    * @returns Array of values from all referenced nodes or undefined
    */
   public override get value() {
-    return this.#value;
+    return this.__value__;
   }
 
   /**
@@ -50,37 +50,37 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     input: VirtualNodeValue | undefined,
     option: UnionSetValueOption,
   ) {
-    this.#emitChange(input, option);
+    this.__emitChange__(input, option);
   }
 
   /** List of reference nodes */
-  #refNodes: SchemaNode[] = [];
+  private __refNodes__: SchemaNode[] = [];
 
   /** List of child nodes */
-  #children: ChildNode[];
+  private __children__: ChildNode[];
 
   /**
    * Gets the child nodes of the virtual node.
    * @returns List of child nodes
    */
   public override get children() {
-    return this.#children;
+    return this.__children__;
   }
 
   constructor(properties: VirtualNodeConstructorProps<VirtualSchema>) {
     super(properties);
-    this.#refNodes = properties.refNodes || [];
-    if (this.defaultValue != null) this.#value = this.defaultValue;
-    for (let i = 0, l = this.#refNodes.length; i < l; i++) {
-      const node = this.#refNodes[i];
+    this.__refNodes__ = properties.refNodes || [];
+    if (this.defaultValue != null) this.__value__ = this.defaultValue;
+    for (let i = 0, l = this.__refNodes__.length; i < l; i++) {
+      const node = this.__refNodes__[i];
       const unsubscribe = node.subscribe(({ type, payload }) => {
         if (type & NodeEventType.UpdateValue) {
           const value = payload?.[NodeEventType.UpdateValue];
-          const previous = this.#value;
+          const previous = this.__value__;
           if (previous[i] === value) return;
           const current = [...previous];
           current[i] = value;
-          this.#value = current;
+          this.__value__ = current;
           this.publish(
             NodeEventType.UpdateValue,
             current,
@@ -92,7 +92,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
       this.saveUnsubscribe(unsubscribe);
     }
 
-    this.#children = map(this.#refNodes, (node) => ({ node }));
+    this.__children__ = map(this.__refNodes__, (node) => ({ node }));
 
     this.publish(NodeEventType.UpdateChildren);
     this.initialize();
@@ -103,12 +103,12 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
    * @param values - The values to set
    * @param option - Set value options
    */
-  #emitChange(
+  private __emitChange__(
     this: VirtualNode,
     values: VirtualNodeValue | undefined,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
-    const refNodesLength = this.#refNodes.length;
+    const refNodesLength = this.__refNodes__.length;
     if (values !== undefined && values?.length !== refNodesLength)
       throw new JsonSchemaError(
         'INVALID_VIRTUAL_NODE_VALUES',
@@ -124,8 +124,8 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
         },
       );
 
-    const refNodes = this.#refNodes;
-    const previous = this.#value;
+    const refNodes = this.__refNodes__;
+    const previous = this.__value__;
     const current = [...previous];
     if (values === undefined)
       for (let i = 0; i < refNodesLength; i++) {
@@ -140,7 +140,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
         node.setValue(value, option);
         current[i] = node.value;
       }
-    this.#value = current;
+    this.__value__ = current;
     if (option & SetValueOption.Refresh) this.refresh(values);
     if (option & SetValueOption.PublishUpdateEvent)
       this.publish(

@@ -16,14 +16,14 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
   public override readonly type = 'null';
 
   /** Current value of the null node */
-  #value: NullValue | undefined;
+  private __value__: NullValue | undefined;
 
   /**
    * Gets the value of the null node.
    * @returns null or undefined
    */
   public override get value() {
-    return this.#value;
+    return this.__value__;
   }
 
   /**
@@ -44,12 +44,13 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
     input: NullValue | undefined,
     option: UnionSetValueOption,
   ) {
-    this.#emitChange(input, option);
+    this.__emitChange__(input, option);
   }
 
   constructor(properties: SchemaNodeConstructorProps<NullSchema>) {
     super(properties);
-    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
+    if (this.defaultValue !== undefined)
+      this.__emitChange__(this.defaultValue);
     this.initialize();
   }
 
@@ -58,18 +59,18 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
    * @param input - The value to set
    * @param option - Set value options
    */
-  #emitChange(
+  private __emitChange__(
     this: NullNode,
     input: NullValue | undefined,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
     const retain = (option & SetValueOption.Replace) === 0;
 
-    const previous = this.#value;
-    const current = this.#parseValue(input);
+    const previous = this.__value__;
+    const current = this.__parseValue__(input);
 
     if (retain && this.equals(previous, current)) return;
-    this.#value = current;
+    this.__value__ = current;
 
     if (option & SetValueOption.EmitChange)
       this.onChange(current, (option & SetValueOption.Batch) > 0);
@@ -88,7 +89,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
    * @param input - The value to parse
    * @returns {NullValue|undefined} Returns the input as-is
    */
-  #parseValue(this: NullNode, input: NullValue | undefined) {
+  private __parseValue__(this: NullNode, input: NullValue | undefined) {
     if (input === undefined) return undefined;
     return input;
   }

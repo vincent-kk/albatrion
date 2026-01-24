@@ -33,14 +33,14 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   }
 
   /** Current value of the number node */
-  #value: NumberValue | Nullish = undefined;
+  private __value__: NumberValue | Nullish = undefined;
 
   /**
    * Gets the value of the number node.
    * @returns Number value or undefined
    */
   public override get value() {
-    return this.#value;
+    return this.__value__;
   }
 
   /**
@@ -61,7 +61,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     input: NumberValue | Nullish,
     option: UnionSetValueOption,
   ) {
-    this.#emitChange(input, option);
+    this.__emitChange__(input, option);
   }
 
   protected override onChange: HandleChange<NumberValue | Nullish>;
@@ -72,7 +72,8 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
       this.jsonSchema.options?.omitEmpty !== false
         ? this.onChangeWithOmitEmpty
         : super.onChange;
-    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
+    if (this.defaultValue !== undefined)
+      this.__emitChange__(this.defaultValue);
     this.initialize();
   }
 
@@ -81,18 +82,18 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
    * @param input - The value to set
    * @param option - Set value options
    */
-  #emitChange(
+  private __emitChange__(
     this: NumberNode,
     input: NumberValue | Nullish,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
     const retain = (option & SetValueOption.Replace) === 0;
 
-    const previous = this.#value;
-    const current = this.#parseValue(input);
+    const previous = this.__value__;
+    const current = this.__parseValue__(input);
 
     if (retain && this.equals(previous, current, true)) return;
-    this.#value = current;
+    this.__value__ = current;
 
     if (option & SetValueOption.EmitChange)
       this.onChange(current, (option & SetValueOption.Batch) > 0);
@@ -111,7 +112,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
    * @param input - The value to parse
    * @returns {NumberValue|null|undefined} Parsed number value
    */
-  #parseValue(this: NumberNode, input: NumberValue | Nullish) {
+  private __parseValue__(this: NumberNode, input: NumberValue | Nullish) {
     if (input === undefined) return undefined;
     if (input === null && this.nullable) return null;
     return parseNumber(input, this.schemaType === 'integer');
