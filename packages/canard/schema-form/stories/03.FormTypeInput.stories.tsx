@@ -47,7 +47,7 @@ export const FormTypeInputDefinitions = () => {
     return [
       {
         test: (hint) => {
-          return hint.path === '$.objectNode';
+          return hint.path === '/objectNode';
         },
         Component: ({ onChange }: FormTypeInputProps<{ test?: string }>) => {
           const handleClick = () => {
