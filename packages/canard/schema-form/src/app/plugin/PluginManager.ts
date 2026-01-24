@@ -70,7 +70,8 @@ export class PluginManager {
 
   static reset() {
     PluginManager.__renderKit__ = defaultRenderKit;
-    PluginManager.__formTypeInputDefinitions__ = defaultFormTypeInputDefinitions;
+    PluginManager.__formTypeInputDefinitions__ =
+      defaultFormTypeInputDefinitions;
     PluginManager.__validator__ = undefined;
     PluginManager.__formatError__ = formatValidationError;
   }

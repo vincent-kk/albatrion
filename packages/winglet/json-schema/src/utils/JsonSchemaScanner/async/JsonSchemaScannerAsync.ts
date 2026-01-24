@@ -234,7 +234,7 @@ export class JsonSchemaScannerAsync<
   /** Final schema with references resolved. Computed on first call to `getValue`. */
   private __processedSchema__: UnknownSchema | undefined;
   /** Array of references resolved during `__run__` execution but not yet applied to the final schema ([path, resolved schema]). */
-  private __pendingResolves__: Array<[path: string, schema: UnknownSchema]> = [];
+  private __resolves__: Array<[path: string, schema: UnknownSchema]> = [];
 
   /**
    * Creates a JsonSchemaScannerAsync instance.
@@ -247,7 +247,7 @@ export class JsonSchemaScannerAsync<
 
   /**
    * Asynchronously scans the given JSON schema and updates internal state.
-   * Executes visitor hooks and collects resolved reference information to store in `__pendingResolves__`.
+   * Executes visitor hooks and collects resolved reference information to store in `__resolves__`.
    *
    * @param {Schema} schema - The JSON schema object to scan.
    * @returns {Promise<this>} The current JsonSchemaScannerAsync instance (allows method chaining).
@@ -255,7 +255,7 @@ export class JsonSchemaScannerAsync<
   public async scan(this: this, schema: Schema): Promise<this> {
     this.__originalSchema__ = schema;
     this.__processedSchema__ = undefined; // Reset previous results when starting new scan
-    this.__pendingResolves__ = [];
+    this.__resolves__ = [];
     await this.__run__(this.__originalSchema__ as Schema);
     return this;
   }
@@ -263,7 +263,7 @@ export class JsonSchemaScannerAsync<
   /**
    * Returns the final schema with scanning and reference resolution completed.
    *
-   * On first call: Applies references stored in `__pendingResolves__` to a deep copy of the original schema
+   * On first call: Applies references stored in `__resolves__` to a deep copy of the original schema
    * to create the final schema and cache it.
    * From second call onwards: Returns the cached final schema.
    *
@@ -288,19 +288,20 @@ export class JsonSchemaScannerAsync<
     this: this,
   ): OutputSchema | undefined {
     if (!this.__originalSchema__) return undefined;
-    if (this.__processedSchema__) return this.__processedSchema__ as OutputSchema;
-    const pendingResolves = this.__pendingResolves__;
-    const pendingResolvesLength = pendingResolves.length;
-    if (pendingResolvesLength === 0) {
+    if (this.__processedSchema__)
+      return this.__processedSchema__ as OutputSchema;
+    const resolves = this.__resolves__;
+    const resolvesLength = resolves.length;
+    if (resolvesLength === 0) {
       this.__processedSchema__ = this.__originalSchema__;
       return this.__processedSchema__ as OutputSchema;
     }
     let processedSchema = clone(this.__originalSchema__);
-    for (let i = 0; i < pendingResolvesLength; i++) {
-      const [path, resolvedSchema] = pendingResolves[i];
+    for (let i = 0; i < resolvesLength; i++) {
+      const [path, resolvedSchema] = resolves[i];
       processedSchema = setValue(processedSchema, path, resolvedSchema);
     }
-    this.__pendingResolves__ = [];
+    this.__resolves__ = [];
     this.__processedSchema__ = processedSchema;
     return processedSchema as OutputSchema;
   }
@@ -324,7 +325,6 @@ export class JsonSchemaScannerAsync<
     ];
     const entryPhase = new Map<Entry, OperationPhase>();
     const visitedReference = new Set<string>();
-    const pendingResolves = this.__pendingResolves__;
 
     const context = this.__options__.context;
     const maxDepth = this.__options__.maxDepth;
@@ -349,7 +349,7 @@ export class JsonSchemaScannerAsync<
           const mutatedSchema = mutate?.(entry, context);
           if (mutatedSchema) {
             entry.schema = mutatedSchema;
-            pendingResolves.push([entry.path, mutatedSchema]);
+            this.__resolves__.push([entry.path, mutatedSchema]);
           }
 
           await enter?.(entry, context);
@@ -373,7 +373,7 @@ export class JsonSchemaScannerAsync<
                 : undefined;
 
             if (resolvedReference) {
-              pendingResolves.push([entry.path, resolvedReference]);
+              this.__resolves__.push([entry.path, resolvedReference]);
 
               entry.schema = resolvedReference;
               entry.referencePath = referencePath;
