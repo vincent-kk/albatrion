@@ -1,11 +1,6 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": [
-      "ES2022",
-      "DOM"
-    ],
     "baseUrl": "../../",
     "outDir": "./dist",
     "paths": {
@@ -24,8 +19,8 @@
     "src",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "coverage/**/*.ts",
-    "coverage/**/*.tsx"
+    "stories/**/*.ts",
+    "stories/**/*.tsx",
   ],
   "exclude": [
     "node_modules",

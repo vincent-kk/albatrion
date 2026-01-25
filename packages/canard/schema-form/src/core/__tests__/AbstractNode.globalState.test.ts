@@ -2,7 +2,20 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
-import { NodeEventType, NodeState } from '../nodes/type';
+import type { AbstractNode } from '../nodes/AbstractNode';
+import { NodeEventType, NodeState, type SchemaNode } from '../nodes/type';
+
+/**
+ * Test helper to access private __setGlobalState__ method
+ * @internal This is only for testing purposes
+ */
+const setGlobalState = (
+  node: SchemaNode | null | undefined,
+  state?: Record<string, unknown>,
+) => {
+  // @ts-expect-error [test] access private method for testing
+  (node as AbstractNode)?.__setGlobalState__(state);
+};
 
 const wait = (delay = 5) => {
   return new Promise((resolve) => {
@@ -87,7 +100,7 @@ describe('AbstractNode - globalState', () => {
       });
       await wait();
 
-      node.setGlobalState({ [NodeState.Dirty]: true });
+      setGlobalState(node, { [NodeState.Dirty]: true });
       await wait();
 
       expect(node.globalState[NodeState.Dirty]).toBe(true);
@@ -115,14 +128,14 @@ describe('AbstractNode - globalState', () => {
       const deepNode = node?.find('/nested/value');
 
       // 자식 노드에서 setGlobalState 호출
-      nameNode?.setGlobalState({ customFlag: 'fromName' });
+      setGlobalState(nameNode, { customFlag: 'fromName' });
       await wait();
 
       // root의 globalState가 업데이트되어야 함
       expect(node.globalState.customFlag).toBe('fromName');
 
       // 더 깊은 자식 노드에서도 동일하게 동작
-      deepNode?.setGlobalState({ anotherFlag: 'fromDeep' });
+      setGlobalState(deepNode, { anotherFlag: 'fromDeep' });
       await wait();
 
       expect(node.globalState.anotherFlag).toBe('fromDeep');
@@ -143,7 +156,7 @@ describe('AbstractNode - globalState', () => {
       const listener = vi.fn();
       node.subscribe(listener);
 
-      node.setGlobalState({ [NodeState.Dirty]: true });
+      setGlobalState(node, { [NodeState.Dirty]: true });
       await wait();
 
       const updateFormStateEvents = listener.mock.calls.filter(
@@ -169,14 +182,14 @@ describe('AbstractNode - globalState', () => {
       await wait();
 
       // 먼저 상태 설정
-      node.setGlobalState({ [NodeState.Dirty]: true });
+      setGlobalState(node, { [NodeState.Dirty]: true });
       await wait();
 
       const listener = vi.fn();
       node.subscribe(listener);
 
       // 동일한 값으로 다시 설정
-      node.setGlobalState({ [NodeState.Dirty]: true });
+      setGlobalState(node, { [NodeState.Dirty]: true });
       await wait();
 
       const updateFormStateEvents = listener.mock.calls.filter(
@@ -197,7 +210,7 @@ describe('AbstractNode - globalState', () => {
       });
       await wait();
 
-      node.setGlobalState({
+      setGlobalState(node, {
         [NodeState.Dirty]: true,
         [NodeState.Touched]: true,
         customKey: 'value',
@@ -223,10 +236,10 @@ describe('AbstractNode - globalState', () => {
       });
       await wait();
 
-      node.setGlobalState({ firstKey: 'first' });
+      setGlobalState(node, { firstKey: 'first' });
       await wait();
 
-      node.setGlobalState({ secondKey: 'second' });
+      setGlobalState(node, { secondKey: 'second' });
       await wait();
 
       expect(node.globalState.firstKey).toBe('first');
@@ -377,14 +390,14 @@ describe('AbstractNode - globalState', () => {
       await wait();
 
       // globalState에 true 설정
-      node.setGlobalState({ [NodeState.Dirty]: true });
+      setGlobalState(node, { [NodeState.Dirty]: true });
       await wait();
       expect(node.globalState[NodeState.Dirty]).toBe(true);
 
       const globalStateAfterTrue = node.globalState;
 
       // false로 되돌리려고 시도
-      node.setGlobalState({ [NodeState.Dirty]: false });
+      setGlobalState(node, { [NodeState.Dirty]: false });
       await wait();
 
       // 여전히 true여야 함 (되돌릴 수 없음)
@@ -406,7 +419,7 @@ describe('AbstractNode - globalState', () => {
       await wait();
 
       // truthy 값 설정
-      node.setGlobalState({
+      setGlobalState(node, {
         flag1: true,
         flag2: 'active',
         flag3: 1,
@@ -416,7 +429,7 @@ describe('AbstractNode - globalState', () => {
       const globalStateAfterSet = node.globalState;
 
       // falsy 값으로 덮어쓰기 시도
-      node.setGlobalState({
+      setGlobalState(node, {
         flag1: false,
         flag2: '',
         flag3: 0,
@@ -473,7 +486,7 @@ describe('AbstractNode - globalState', () => {
       await wait();
 
       // 여러 상태 설정
-      node.setGlobalState({
+      setGlobalState(node, {
         [NodeState.Dirty]: true,
         [NodeState.Touched]: true,
         [NodeState.ShowError]: true,
@@ -486,7 +499,7 @@ describe('AbstractNode - globalState', () => {
       node.subscribe(listener);
 
       // undefined로 초기화
-      node.setGlobalState(undefined);
+      setGlobalState(node, undefined);
       await wait();
 
       // globalState가 빈 객체가 되어야 함
@@ -517,7 +530,7 @@ describe('AbstractNode - globalState', () => {
       node.subscribe(listener);
 
       // 이미 빈 상태에서 undefined 전달
-      node.setGlobalState(undefined);
+      setGlobalState(node, undefined);
       await wait();
 
       // 이벤트가 발생하지 않아야 함
@@ -540,17 +553,17 @@ describe('AbstractNode - globalState', () => {
       await wait();
 
       // 상태 설정
-      node.setGlobalState({ [NodeState.Dirty]: true });
+      setGlobalState(node, { [NodeState.Dirty]: true });
       await wait();
       expect(node.globalState[NodeState.Dirty]).toBe(true);
 
       // 초기화
-      node.setGlobalState(undefined);
+      setGlobalState(node, undefined);
       await wait();
       expect(node.globalState).toEqual({});
 
       // 다시 상태 설정
-      node.setGlobalState({ [NodeState.Touched]: true });
+      setGlobalState(node, { [NodeState.Touched]: true });
       await wait();
       expect(node.globalState).toEqual({ [NodeState.Touched]: true });
     });
@@ -570,7 +583,7 @@ describe('AbstractNode - globalState', () => {
       const nameNode = node?.find('name');
 
       // 상태 설정
-      node.setGlobalState({
+      setGlobalState(node, {
         [NodeState.Dirty]: true,
         [NodeState.Touched]: true,
       });
@@ -578,7 +591,7 @@ describe('AbstractNode - globalState', () => {
       expect(Object.keys(node.globalState).length).toBe(2);
 
       // 자식 노드에서 undefined로 초기화
-      nameNode?.setGlobalState(undefined);
+      setGlobalState(nameNode, undefined);
       await wait();
 
       // root의 globalState가 초기화되어야 함
@@ -601,7 +614,7 @@ describe('AbstractNode - globalState', () => {
 
       const originalGlobalState = node.globalState;
 
-      node.setGlobalState({ [NodeState.Dirty]: true });
+      setGlobalState(node, { [NodeState.Dirty]: true });
       await wait();
 
       // 참조가 달라야 함 (불변성)
@@ -628,7 +641,7 @@ describe('AbstractNode - globalState', () => {
       expect(initialFormState).toEqual({});
 
       // 첫 번째 변경: 이벤트 발생 + 새 참조
-      node.setGlobalState({ [NodeState.Dirty]: true });
+      setGlobalState(node, { [NodeState.Dirty]: true });
       await wait();
 
       const updateFormStateEvents1 = listener.mock.calls.filter(
@@ -642,7 +655,7 @@ describe('AbstractNode - globalState', () => {
 
       // 동일한 값 설정: 이벤트 미발생 + 참조 유지
       listener.mockClear();
-      node.setGlobalState({ [NodeState.Dirty]: true });
+      setGlobalState(node, { [NodeState.Dirty]: true });
       await wait();
 
       const updateFormStateEvents2 = listener.mock.calls.filter(
@@ -653,7 +666,7 @@ describe('AbstractNode - globalState', () => {
 
       // 다른 값 추가: 이벤트 발생 + 새 참조
       listener.mockClear();
-      node.setGlobalState({ [NodeState.Touched]: true });
+      setGlobalState(node, { [NodeState.Touched]: true });
       await wait();
 
       const updateFormStateEvents3 = listener.mock.calls.filter(
@@ -686,7 +699,7 @@ describe('AbstractNode - globalState', () => {
       const initialFormState = node.globalState;
 
       // 자식 노드에서 setGlobalState 호출: 이벤트 발생 + 새 참조
-      nameNode?.setGlobalState({ customFlag: 'test' });
+      setGlobalState(nameNode, { customFlag: 'test' });
       await wait();
 
       const updateFormStateEvents1 = listener.mock.calls.filter(
@@ -699,7 +712,7 @@ describe('AbstractNode - globalState', () => {
 
       // 동일한 값 설정: 이벤트 미발생 + 참조 유지
       listener.mockClear();
-      nameNode?.setGlobalState({ customFlag: 'test' });
+      setGlobalState(nameNode, { customFlag: 'test' });
       await wait();
 
       const updateFormStateEvents2 = listener.mock.calls.filter(

@@ -9,7 +9,6 @@ import type {
   BranchNodeConstructorProps,
   HandleChange,
   SchemaNode,
-  SchemaNodeFactory,
   UnionSetValueOption,
 } from '../type';
 import {
@@ -30,11 +29,10 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * Strategy used by the array node:
    *  - BranchStrategy: Handles complex child nodes with associated processing logic.
    *  - TerminalStrategy: Acts as a terminal node for array-type data with no child nodes and simple processing logic.
-   * @internal Internal implementation detail. Do not call directly.
    */
-  #strategy: ArrayNodeStrategy;
+  private __strategy__: ArrayNodeStrategy;
 
-  public override equals(
+  protected override __equals__(
     this: ArrayNode,
     left: ArrayValue | Nullish,
     right: ArrayValue | Nullish,
@@ -47,7 +45,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns Array value or undefined (if empty) or null (if nullable)
    */
   public override get value() {
-    return this.#strategy.value;
+    return this.__strategy__.value;
   }
 
   /**
@@ -68,7 +66,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     input: ArrayValue | Nullish,
     option: UnionSetValueOption,
   ) {
-    this.#strategy.applyValue(input, option);
+    this.__strategy__.applyValue(input, option);
   }
 
   /** Child nodes of ArrayNode */
@@ -77,7 +75,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns List of child nodes
    */
   public override get children() {
-    return this.#strategy.children;
+    return this.__strategy__.children;
   }
 
   /**
@@ -85,18 +83,20 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns Length of the array
    */
   public get length() {
-    return this.#strategy.length;
+    return this.__strategy__.length;
   }
 
   /**
    * Activates this ArrayNode and propagates activation to all child nodes.
    * @param actor - The node that requested activation
    * @returns {boolean} Whether activation was successful
-   * @internal Internal implementation method. Do not call directly.
    */
-  public override initialize(this: ArrayNode, actor?: SchemaNode): boolean {
-    if (super.initialize(actor)) {
-      this.#strategy.initialize?.();
+  protected override __initialize__(
+    this: ArrayNode,
+    actor?: SchemaNode,
+  ): boolean {
+    if (super.__initialize__(actor)) {
+      this.__strategy__.initialize?.();
       return true;
     }
     return false;
@@ -114,12 +114,16 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
         ? (value, batch) => super.onChange(value, batch)
         : (value, batch) => super.onChange(omitEmptyArray(value), batch);
     this.onChange = handleChange;
-    this.#strategy = this.#createStrategy(
-      hasDefault,
-      handleChange,
-      properties.nodeFactory,
-    );
-    this.initialize();
+    this.__strategy__ =
+      this.group === 'terminal'
+        ? new TerminalStrategy(this, hasDefault, handleChange)
+        : new BranchStrategy(
+            this,
+            hasDefault,
+            handleChange,
+            properties.nodeFactory,
+          );
+    this.__initialize__();
   }
 
   /**
@@ -128,7 +132,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns {Promise<number> } the length of the array after the push operation
    */
   public push(this: ArrayNode, data?: ArrayValue[number], unlimited?: boolean) {
-    return this.#strategy.push(data, unlimited);
+    return this.__strategy__.push(data, unlimited);
   }
 
   /**
@@ -136,7 +140,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns {Promise<ArrayValue[number]|undefined>} the value of the removed value
    */
   public pop(this: ArrayNode) {
-    return this.#strategy.pop();
+    return this.__strategy__.pop();
   }
 
   /**
@@ -146,7 +150,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns {Promise<ArrayValue[number]|undefined>} the value of the updated value
    */
   public update(this: ArrayNode, index: number, data: ArrayValue[number]) {
-    return this.#strategy.update(index, data);
+    return this.__strategy__.update(index, data);
   }
 
   /**
@@ -155,7 +159,7 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns {Promise<ArrayValue[number]|undefined>} value of the removed value
    */
   public remove(this: ArrayNode, index: number) {
-    return this.#strategy.remove(index);
+    return this.__strategy__.remove(index);
   }
 
   /**
@@ -163,41 +167,6 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    * @returns {Promise<void>}
    */
   public clear(this: ArrayNode) {
-    return this.#strategy.clear();
-  }
-
-  /**
-   * Creates a strategy for the array node.
-   * @param nodeFactory - Node factory
-   * @returns {ArrayNodeStrategy} Created strategy: TerminalStrategy | BranchStrategy
-   */
-  #createStrategy(
-    this: ArrayNode,
-    hasDefault: boolean,
-    handleChange: HandleChange<ArrayValue | Nullish>,
-    nodeFactory: SchemaNodeFactory,
-  ) {
-    const handleRefresh = (value: ArrayValue | Nullish) => this.refresh(value);
-    const handleSetDefaultValue = (value: ArrayValue | Nullish) =>
-      this.setDefaultValue(value);
-
-    if (this.group === 'terminal') {
-      return new TerminalStrategy(
-        this,
-        hasDefault,
-        handleChange,
-        handleRefresh,
-        handleSetDefaultValue,
-      );
-    } else {
-      return new BranchStrategy(
-        this,
-        hasDefault,
-        handleChange,
-        handleRefresh,
-        handleSetDefaultValue,
-        nodeFactory,
-      );
-    }
+    return this.__strategy__.clear();
   }
 }

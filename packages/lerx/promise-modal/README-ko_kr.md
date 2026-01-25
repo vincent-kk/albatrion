@@ -35,10 +35,6 @@ npm install @lerx/promise-modal
 
 ## 호환성 안내
 
-`@lerx/promise-modal`은 ECMAScript 2022 (ES2022) 문법으로 작성되었습니다.
-
-ES2022보다 낮은 버전의 JavaScript 환경에서 사용하시는 경우, 별도의 트랜스파일 과정이 필요합니다.
-
 **지원 환경:**
 
 - Node.js 16.11.0 이상

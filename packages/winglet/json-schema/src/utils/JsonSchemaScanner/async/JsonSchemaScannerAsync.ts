@@ -226,44 +226,44 @@ export class JsonSchemaScannerAsync<
   ContextType = void,
 > {
   /** Visitor object: contains callback functions to be executed when entering/exiting schema nodes. */
-  readonly #visitor: SchemaVisitor<Schema, ContextType>;
+  private readonly __visitor__: SchemaVisitor<Schema, ContextType>;
   /** Scan options: includes maximum traversal depth, filtering functions, reference resolution functions, etc. */
-  readonly #options: JsonScannerOptionsAsync<Schema, ContextType>;
+  private readonly __options__: JsonScannerOptionsAsync<Schema, ContextType>;
   /** Original JSON schema passed to the `scan` method. */
-  #originalSchema: UnknownSchema | undefined;
+  private __originalSchema__: UnknownSchema | undefined;
   /** Final schema with references resolved. Computed on first call to `getValue`. */
-  #processedSchema: UnknownSchema | undefined;
-  /** Array of references resolved during `#run` execution but not yet applied to the final schema ([path, resolved schema]). */
-  #pendingResolves: Array<[path: string, schema: UnknownSchema]> = [];
+  private __processedSchema__: UnknownSchema | undefined;
+  /** Array of references resolved during `__run__` execution but not yet applied to the final schema ([path, resolved schema]). */
+  private __resolves__: Array<[path: string, schema: UnknownSchema]> = [];
 
   /**
    * Creates a JsonSchemaScannerAsync instance.
    * @param {JsonSchemaScannerProps<Schema, ContextType>} [props] - Scanner configuration (visitor, options).
    */
   constructor(props?: JsonSchemaScannerProps<Schema, ContextType>) {
-    this.#visitor = props?.visitor || {};
-    this.#options = props?.options || {};
+    this.__visitor__ = props?.visitor || {};
+    this.__options__ = props?.options || {};
   }
 
   /**
    * Asynchronously scans the given JSON schema and updates internal state.
-   * Executes visitor hooks and collects resolved reference information to store in `#pendingResolvedRefs`.
+   * Executes visitor hooks and collects resolved reference information to store in `__resolves__`.
    *
    * @param {Schema} schema - The JSON schema object to scan.
    * @returns {Promise<this>} The current JsonSchemaScannerAsync instance (allows method chaining).
    */
   public async scan(this: this, schema: Schema): Promise<this> {
-    this.#originalSchema = schema;
-    this.#processedSchema = undefined; // Reset previous results when starting new scan
-    this.#pendingResolves = [];
-    await this.#run(this.#originalSchema as Schema);
+    this.__originalSchema__ = schema;
+    this.__processedSchema__ = undefined; // Reset previous results when starting new scan
+    this.__resolves__ = [];
+    await this.__run__(this.__originalSchema__ as Schema);
     return this;
   }
 
   /**
    * Returns the final schema with scanning and reference resolution completed.
    *
-   * On first call: Applies references stored in `#pendingResolvedRefs` to a deep copy of the original schema
+   * On first call: Applies references stored in `__resolves__` to a deep copy of the original schema
    * to create the final schema and cache it.
    * From second call onwards: Returns the cached final schema.
    *
@@ -287,21 +287,22 @@ export class JsonSchemaScannerAsync<
   public getValue<OutputSchema extends UnknownSchema = Schema>(
     this: this,
   ): OutputSchema | undefined {
-    if (!this.#originalSchema) return undefined;
-    if (this.#processedSchema) return this.#processedSchema as OutputSchema;
-    const pendingResolves = this.#pendingResolves;
-    const pendingResolvesLength = pendingResolves.length;
-    if (pendingResolvesLength === 0) {
-      this.#processedSchema = this.#originalSchema;
-      return this.#processedSchema as OutputSchema;
+    if (!this.__originalSchema__) return undefined;
+    if (this.__processedSchema__)
+      return this.__processedSchema__ as OutputSchema;
+    const resolves = this.__resolves__;
+    const resolvesLength = resolves.length;
+    if (resolvesLength === 0) {
+      this.__processedSchema__ = this.__originalSchema__;
+      return this.__processedSchema__ as OutputSchema;
     }
-    let processedSchema = clone(this.#originalSchema);
-    for (let i = 0; i < pendingResolvesLength; i++) {
-      const [path, resolvedSchema] = pendingResolves[i];
+    let processedSchema = clone(this.__originalSchema__);
+    for (let i = 0; i < resolvesLength; i++) {
+      const [path, resolvedSchema] = resolves[i];
       processedSchema = setValue(processedSchema, path, resolvedSchema);
     }
-    this.#pendingResolves = [];
-    this.#processedSchema = processedSchema;
+    this.__resolves__ = [];
+    this.__processedSchema__ = processedSchema;
     return processedSchema as OutputSchema;
   }
 
@@ -312,7 +313,7 @@ export class JsonSchemaScannerAsync<
    * @param {Schema} schema - The schema node to start traversal from.
    * @private
    */
-  async #run(this: this, schema: Schema): Promise<void> {
+  private async __run__(this: this, schema: Schema): Promise<void> {
     type Entry = SchemaEntry<Schema>;
     const stack: Entry[] = [
       {
@@ -324,15 +325,14 @@ export class JsonSchemaScannerAsync<
     ];
     const entryPhase = new Map<Entry, OperationPhase>();
     const visitedReference = new Set<string>();
-    const pendingResolves = this.#pendingResolves;
 
-    const context = this.#options.context;
-    const maxDepth = this.#options.maxDepth;
-    const filter = this.#options.filter;
-    const mutate = this.#options.mutate;
-    const resolveReference = this.#options.resolveReference;
-    const enter = this.#visitor.enter;
-    const exit = this.#visitor.exit;
+    const context = this.__options__.context;
+    const maxDepth = this.__options__.maxDepth;
+    const filter = this.__options__.filter;
+    const mutate = this.__options__.mutate;
+    const resolveReference = this.__options__.resolveReference;
+    const enter = this.__visitor__.enter;
+    const exit = this.__visitor__.exit;
 
     while (stack.length > 0) {
       const entry = stack[stack.length - 1];
@@ -349,7 +349,7 @@ export class JsonSchemaScannerAsync<
           const mutatedSchema = mutate?.(entry, context);
           if (mutatedSchema) {
             entry.schema = mutatedSchema;
-            pendingResolves.push([entry.path, mutatedSchema]);
+            this.__resolves__.push([entry.path, mutatedSchema]);
           }
 
           await enter?.(entry, context);
@@ -373,7 +373,7 @@ export class JsonSchemaScannerAsync<
                 : undefined;
 
             if (resolvedReference) {
-              pendingResolves.push([entry.path, resolvedReference]);
+              this.__resolves__.push([entry.path, resolvedReference]);
 
               entry.schema = resolvedReference;
               entry.referencePath = referencePath;

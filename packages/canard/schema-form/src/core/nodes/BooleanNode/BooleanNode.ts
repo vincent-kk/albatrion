@@ -19,14 +19,14 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   public override readonly type = 'boolean';
 
   /** Current value of the boolean node */
-  #value: BooleanValue | Nullish = undefined;
+  private __value__: BooleanValue | Nullish = undefined;
 
   /**
    * Gets the value of the boolean node.
    * @returns Boolean value or undefined
    */
   public override get value() {
-    return this.#value;
+    return this.__value__;
   }
 
   /**
@@ -47,13 +47,13 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
     input: BooleanValue | Nullish,
     option: UnionSetValueOption,
   ) {
-    this.#emitChange(input, option);
+    this.__emitChange__(input, option);
   }
 
   constructor(properties: SchemaNodeConstructorProps<BooleanSchema>) {
     super(properties);
-    if (this.defaultValue !== undefined) this.#emitChange(this.defaultValue);
-    this.initialize();
+    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
+    this.__initialize__();
   }
 
   /**
@@ -61,22 +61,22 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
    * @param input - The value to set
    * @param option - Set value options
    */
-  #emitChange(
+  private __emitChange__(
     this: BooleanNode,
     input: BooleanValue | Nullish,
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
     const retain = (option & SetValueOption.Replace) === 0;
 
-    const previous = this.#value;
-    const current = this.#parseValue(input);
+    const previous = this.__value__;
+    const current = this.__parseValue__(input);
 
-    if (retain && this.equals(previous, current)) return;
-    this.#value = current;
+    if (retain && this.__equals__(previous, current)) return;
+    this.__value__ = current;
 
     if (option & SetValueOption.EmitChange)
       this.onChange(current, (option & SetValueOption.Batch) > 0);
-    if (option & SetValueOption.Refresh) this.refresh(current);
+    if (option & SetValueOption.Refresh) this.__refresh__(current);
     if (option & SetValueOption.PublishUpdateEvent)
       this.publish(
         NodeEventType.UpdateValue,
@@ -91,7 +91,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
    * @param input - The value to parse
    * @returns {BooleanValue|null|undefined} Parsed boolean value
    */
-  #parseValue(this: BooleanNode, input: BooleanValue | Nullish) {
+  private __parseValue__(this: BooleanNode, input: BooleanValue | Nullish) {
     if (input === undefined) return undefined;
     if (input === null && this.nullable) return null;
     return parseBoolean(input);

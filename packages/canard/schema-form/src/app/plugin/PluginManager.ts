@@ -40,45 +40,46 @@ const defaultFormTypeInputDefinitions =
   normalizeFormTypeInputDefinitions(formTypeDefinitions);
 
 export class PluginManager {
-  static #renderKit: RenderKit = defaultRenderKit;
-  static #formTypeInputDefinitions: NormalizedFormTypeInputDefinition[] =
+  private static __renderKit__: RenderKit = defaultRenderKit;
+  private static __formTypeInputDefinitions__: NormalizedFormTypeInputDefinition[] =
     defaultFormTypeInputDefinitions;
-  static #validator: ValidatorPlugin | undefined;
-  static #formatError: FormatError = formatValidationError;
+  private static __validator__: ValidatorPlugin | undefined;
+  private static __formatError__: FormatError = formatValidationError;
 
   static get FormGroup() {
-    return PluginManager.#renderKit.FormGroup;
+    return PluginManager.__renderKit__.FormGroup;
   }
   static get FormLabel() {
-    return PluginManager.#renderKit.FormLabel;
+    return PluginManager.__renderKit__.FormLabel;
   }
   static get FormInput() {
-    return PluginManager.#renderKit.FormInput;
+    return PluginManager.__renderKit__.FormInput;
   }
   static get FormError() {
-    return PluginManager.#renderKit.FormError;
+    return PluginManager.__renderKit__.FormError;
   }
   static get formatError() {
-    return PluginManager.#formatError;
+    return PluginManager.__formatError__;
   }
   static get formTypeInputDefinitions() {
-    return PluginManager.#formTypeInputDefinitions;
+    return PluginManager.__formTypeInputDefinitions__;
   }
   static get validator() {
-    return PluginManager.#validator;
+    return PluginManager.__validator__;
   }
 
   static reset() {
-    PluginManager.#renderKit = defaultRenderKit;
-    PluginManager.#formTypeInputDefinitions = defaultFormTypeInputDefinitions;
-    PluginManager.#validator = undefined;
-    PluginManager.#formatError = formatValidationError;
+    PluginManager.__renderKit__ = defaultRenderKit;
+    PluginManager.__formTypeInputDefinitions__ =
+      defaultFormTypeInputDefinitions;
+    PluginManager.__validator__ = undefined;
+    PluginManager.__formatError__ = formatValidationError;
   }
 
   static appendRenderKit(renderKit: Partial<RenderKit> | undefined) {
     if (!renderKit) return;
-    PluginManager.#renderKit = {
-      ...PluginManager.#renderKit,
+    PluginManager.__renderKit__ = {
+      ...PluginManager.__renderKit__,
       ...remainOnlyReactComponent(renderKit),
     };
   }
@@ -86,17 +87,17 @@ export class PluginManager {
     formTypeInputDefinitions: FormTypeInputDefinition[] | undefined,
   ) {
     if (!formTypeInputDefinitions) return;
-    PluginManager.#formTypeInputDefinitions = [
+    PluginManager.__formTypeInputDefinitions__ = [
       ...normalizeFormTypeInputDefinitions(formTypeInputDefinitions),
-      ...PluginManager.#formTypeInputDefinitions,
+      ...PluginManager.__formTypeInputDefinitions__,
     ];
   }
   static appendValidator(validator: ValidatorPlugin | undefined) {
     if (!validator) return;
-    PluginManager.#validator = validator;
+    PluginManager.__validator__ = validator;
   }
   static appendFormatError(formatError: FormatError | undefined) {
     if (!formatError) return;
-    PluginManager.#formatError = formatError;
+    PluginManager.__formatError__ = formatError;
   }
 }

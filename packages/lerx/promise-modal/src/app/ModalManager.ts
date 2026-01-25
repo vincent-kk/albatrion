@@ -12,18 +12,18 @@ import type { ModalNode } from '@/promise-modal/core';
 import type { Modal } from '@/promise-modal/types';
 
 export class ModalManager {
-  static #anchor: HTMLElement | null = null;
-  static #scope: string = `promise-modal-${getRandomString(36)}`;
-  static #hash: string = polynomialHash(ModalManager.#scope);
-  static #styleManager = styleManagerFactory(ModalManager.#scope);
-  static #styleSheetDefinition = new Map<string, string>();
+  private static __anchor__: HTMLElement | null = null;
+  private static __scope__: string = `promise-modal-${getRandomString(36)}`;
+  private static __hash__: string = polynomialHash(ModalManager.__scope__);
+  private static __styleManager__ = styleManagerFactory(ModalManager.__scope__);
+  private static __styleSheetDefinition__ = new Map<string, string>();
 
   static anchor(options?: {
     tag?: string;
     prefix?: string;
     root?: HTMLElement;
   }): HTMLElement {
-    if (ModalManager.#anchor !== null) return ModalManager.#anchor;
+    if (ModalManager.__anchor__ !== null) return ModalManager.__anchor__;
     const {
       tag = 'div',
       prefix = 'promise-modal',
@@ -31,65 +31,65 @@ export class ModalManager {
     } = options || {};
     const node = document.createElement(tag);
     node.id = `${prefix}-${getRandomString(36)}`;
-    node.className = ModalManager.#scope;
+    node.className = ModalManager.__scope__;
     root.appendChild(node);
-    ModalManager.#anchor = node;
+    ModalManager.__anchor__ = node;
     return node;
   }
 
   static get anchored() {
-    return ModalManager.#anchor !== null;
+    return ModalManager.__anchor__ !== null;
   }
 
-  static #prerenderList: Modal[] = [];
+  private static __prerenderList__: Modal[] = [];
 
   static get prerender() {
-    return ModalManager.#prerenderList;
+    return ModalManager.__prerenderList__;
   }
 
-  static #openHandler: Fn<[Modal], ModalNode> = ((modal: Modal) => {
-    ModalManager.#prerenderList.push(modal);
+  private static __openHandler__: Fn<[Modal], ModalNode> = ((modal: Modal) => {
+    ModalManager.__prerenderList__.push(modal);
   }) as Fn<[Modal], ModalNode>;
 
   static set openHandler(handler: Fn<[Modal], ModalNode>) {
-    ModalManager.#openHandler = handler;
-    ModalManager.#prerenderList = [];
+    ModalManager.__openHandler__ = handler;
+    ModalManager.__prerenderList__ = [];
   }
 
-  static #refreshHandler?: Fn<[], void>;
+  private static __refreshHandler__?: Fn<[], void>;
 
   static set refreshHandler(handler: Fn<[], void>) {
-    ModalManager.#refreshHandler = handler;
+    ModalManager.__refreshHandler__ = handler;
   }
 
   static refresh() {
-    ModalManager.#refreshHandler?.();
+    ModalManager.__refreshHandler__?.();
   }
 
   static defineStyleSheet(styleId: string, css: string) {
-    ModalManager.#styleSheetDefinition.set(styleId, compressCss(css));
+    ModalManager.__styleSheetDefinition__.set(styleId, compressCss(css));
   }
 
   static applyStyleSheet() {
-    for (const [styleId, css] of ModalManager.#styleSheetDefinition)
-      ModalManager.#styleManager(styleId, css, true);
+    for (const [styleId, css] of ModalManager.__styleSheetDefinition__)
+      ModalManager.__styleManager__(styleId, css, true);
   }
 
   static getHashedClassNames(styleId: string) {
-    return `${styleId}-${ModalManager.#hash}`;
+    return `${styleId}-${ModalManager.__hash__}`;
   }
 
   static reset() {
-    ModalManager.#anchor = null;
-    ModalManager.#prerenderList = [];
-    ModalManager.#openHandler = ((modal: Modal) => {
-      ModalManager.#prerenderList.push(modal);
+    ModalManager.__anchor__ = null;
+    ModalManager.__prerenderList__ = [];
+    ModalManager.__openHandler__ = ((modal: Modal) => {
+      ModalManager.__prerenderList__.push(modal);
     }) as Fn<[Modal], ModalNode>;
-    ModalManager.#refreshHandler = undefined;
-    destroyScope(ModalManager.#scope);
+    ModalManager.__refreshHandler__ = undefined;
+    destroyScope(ModalManager.__scope__);
   }
 
   static open(modal: Modal): ModalNode {
-    return ModalManager.#openHandler(modal);
+    return ModalManager.__openHandler__(modal);
   }
 }

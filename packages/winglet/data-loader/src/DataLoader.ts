@@ -233,31 +233,31 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
   public readonly name: string | null = null;
 
   /** The batch loader function that transforms a set of keys to a set of values */
-  readonly #batchLoader: BatchLoader<Key, Value>;
+  private readonly __batchLoader__: BatchLoader<Key, Value>;
   /** The maximum number of keys to process in a single batch */
-  readonly #maxBatchSize: number;
+  private readonly __maxBatchSize__: number;
   /** The function that schedules batch execution */
-  readonly #batchScheduler: Fn<[task: Fn]>;
+  private readonly __batchScheduler__: Fn<[task: Fn]>;
   /** The cache map object, null when caching is disabled */
-  readonly #cacheMap: MapLike<CacheKey, Promise<Value>> | null;
+  private readonly __cacheMap__: MapLike<CacheKey, Promise<Value>> | null;
   /** The function that converts loader keys to cache keys */
-  readonly #cacheKeyFn: Fn<[key: Key], CacheKey>;
+  private readonly __cacheKeyFn__: Fn<[key: Key], CacheKey>;
 
   /** The currently processing batch */
-  #currentBatch: Batch<Key, Value> | null = null;
+  private __currentBatch__: Batch<Key, Value> | null = null;
 
   /**
    * Acquires the current batch or creates a new batch
    * @returns The currently available batch or a newly created batch
    */
-  #acquireBatch(): Batch<Key, Value> {
-    const batch = this.#currentBatch;
-    if (batch && !batch.isResolved && batch.keys.length < this.#maxBatchSize)
+  private __acquireBatch__(): Batch<Key, Value> {
+    const batch = this.__currentBatch__;
+    if (batch && !batch.isResolved && batch.keys.length < this.__maxBatchSize__)
       return batch;
     const nextBatch = createBatch<Key, Value>();
-    this.#currentBatch = nextBatch;
-    this.#batchScheduler(() => {
-      this.#dispatchBatch(nextBatch);
+    this.__currentBatch__ = nextBatch;
+    this.__batchScheduler__(() => {
+      this.__dispatchBatch__(nextBatch);
     });
     return nextBatch;
   }
@@ -344,15 +344,15 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
     options?: DataLoaderOptions<Key, Value, CacheKey>,
   ) {
     // An asynchronous batch loader function must be provided
-    this.#batchLoader = prepareBatchLoader(batchLoader);
+    this.__batchLoader__ = prepareBatchLoader(batchLoader);
     // Set the maximum batch size (default: Infinity)
-    this.#maxBatchSize = prepareMaxBatchSize(options);
+    this.__maxBatchSize__ = prepareMaxBatchSize(options);
     // Set the batch scheduler (default: nextTick)
-    this.#batchScheduler = prepareBatchScheduler(options?.batchScheduler);
+    this.__batchScheduler__ = prepareBatchScheduler(options?.batchScheduler);
     // Set the caching map (null when disabled)
-    this.#cacheMap = prepareCacheMap(options?.cache);
+    this.__cacheMap__ = prepareCacheMap(options?.cache);
     // Set the cache key function (default: identity function)
-    this.#cacheKeyFn = prepareCacheKeyFn(options?.cacheKeyFn);
+    this.__cacheKeyFn__ = prepareCacheKeyFn(options?.cacheKeyFn);
     // Set optional name
     this.name = options?.name ?? null;
   }
@@ -421,24 +421,22 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
         `DataLoader > load's key must be a non-nil value: ${key}`,
         { key },
       );
-    const batch = this.#acquireBatch();
-    const cacheMap = this.#cacheMap;
-    const cacheKey = cacheMap ? this.#cacheKeyFn(key) : null;
+    const batch = this.__acquireBatch__();
+    const cacheMap = this.__cacheMap__;
+    const cacheKey = cacheMap ? this.__cacheKeyFn__(key) : null;
     if (cacheMap && cacheKey) {
       const cachedPromise = cacheMap.get(cacheKey);
       if (cachedPromise) {
         const cacheHits = batch.cacheHits || (batch.cacheHits = []);
-        return new Promise((resolve) => {
-          cacheHits.push(() => {
-            resolve(cachedPromise);
-          });
-        });
+        return new Promise((resolve) =>
+          cacheHits.push(() => resolve(cachedPromise)),
+        );
       }
     }
     batch.keys.push(key);
-    const promise = new Promise<Value>((resolve, reject) => {
-      batch.promises.push({ resolve, reject });
-    });
+    const promise = new Promise<Value>((resolve, reject) =>
+      batch.promises.push({ resolve, reject }),
+    );
     if (cacheMap && cacheKey) cacheMap.set(cacheKey, promise);
     return promise;
   }
@@ -611,11 +609,8 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
    * ```
    */
   clear(key: Key): this {
-    const cacheMap = this.#cacheMap;
-    if (cacheMap) {
-      const cacheKey = this.#cacheKeyFn(key);
-      cacheMap.delete(cacheKey);
-    }
+    const cacheMap = this.__cacheMap__;
+    if (cacheMap) cacheMap.delete(this.__cacheKeyFn__(key));
     return this;
   }
 
@@ -676,7 +671,7 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
    * ```
    */
   clearAll(): this {
-    this.#cacheMap?.clear();
+    this.__cacheMap__?.clear();
     return this;
   }
 
@@ -763,9 +758,9 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
    * - Useful for cache warming and post-mutation updates
    */
   prime(key: Key, value: Value | Promise<Value> | Error): this {
-    const cacheMap = this.#cacheMap;
+    const cacheMap = this.__cacheMap__;
     if (cacheMap) {
-      const cacheKey = this.#cacheKeyFn(key);
+      const cacheKey = this.__cacheKeyFn__(key);
       if (cacheMap.get(cacheKey) === undefined) {
         let promise: Promise<Value>;
         if (value instanceof Error) {
@@ -784,10 +779,10 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
    * to the provided Promise
    * @param batch - The batch object to process
    */
-  #dispatchBatch(batch: Batch<Key, Value>): void {
+  private __dispatchBatch__(batch: Batch<Key, Value>): void {
     batch.isResolved = true;
     if (!batch.keys.length) return resolveCacheHits(batch);
-    const batchPromise = this.#stableBatchLoader(batch.keys);
+    const batchPromise = this.__stableBatchLoader__(batch.keys);
     if (batchPromise instanceof Error)
       return failedDispatch(this, batch, batchPromise);
     if (!isFunction(batchPromise?.then))
@@ -832,11 +827,11 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
    * @param keys - Array of keys to load
    * @returns The result of the batch loader or an error
    */
-  #stableBatchLoader(
+  private __stableBatchLoader__(
     keys: ReadonlyArray<Key>,
   ): ReturnType<BatchLoader<Key, Value>> | Error {
     try {
-      return this.#batchLoader(keys);
+      return this.__batchLoader__(keys);
     } catch (error: any) {
       return error;
     }

@@ -1074,7 +1074,7 @@ export const ResetSubtreeMethod = () => {
 
     const targetNode = selectedPath ? rootNode.find(selectedPath) : rootNode;
     if (targetNode) {
-      targetNode.reset();
+      targetNode.resetSubtree();
     }
   };
 

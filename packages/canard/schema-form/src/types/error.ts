@@ -303,14 +303,12 @@ export interface PublicJsonSchemaError<SourceError = unknown> {
 
 /**
  * JsonSchemaError extends PublicJsonSchemaError and adds `key` property.
- * @internal
  */
 export interface JsonSchemaError extends PublicJsonSchemaError {
   /**
    * Internal management property for array item errors.
    * @note This value is automatically managed and overwritten by the system.
    * @warning Users should not set or rely on this property directly.
-   * @internal
    */
   key?: number;
 }

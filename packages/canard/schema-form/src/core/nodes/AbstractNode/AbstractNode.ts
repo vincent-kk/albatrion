@@ -4,7 +4,7 @@ import { cloneLite, equals, merge } from '@winglet/common-utils/object';
 import { scheduleMacrotaskSafe } from '@winglet/common-utils/scheduler';
 import { escapeSegment, setValue } from '@winglet/json/pointer';
 
-import type { Fn, Nullish } from '@aileron/declare';
+import type { Dictionary, Fn, Nullish } from '@aileron/declare';
 
 import { UNIT_SEPARATOR } from '@/schema-form/app/constants';
 import { PluginManager } from '@/schema-form/app/plugin';
@@ -35,7 +35,6 @@ import type {
   ValidatorFactory,
 } from '@/schema-form/types';
 
-import type { ObjectNode } from '../ObjectNode';
 import {
   type ChildNode,
   type HandleChange,
@@ -111,25 +110,25 @@ export abstract class AbstractNode<
   public readonly nullable: boolean;
 
   /** Node's name */
-  #name: string;
+  private __name__: string;
 
   /**
    * [readonly] Node's name
    * @note Basically it is readonly, but can be changed with `setName` by the parent node.
    * */
   public get name() {
-    return this.#name;
+    return this.__name__;
   }
 
   /** Node's escaped name, it can be same as `name` */
-  #escapedName: string;
+  private __escapedName__: string;
 
   /**
    * [readonly] Node's escaped name, it can be same as `name`
    * @note Basically it is readonly, but can be changed with `setName` by the parent node.
    * */
   public get escapedName() {
-    return this.#escapedName;
+    return this.__escapedName__;
   }
 
   /**
@@ -137,37 +136,37 @@ export abstract class AbstractNode<
    * @param name - The name to set
    * @param actor - The node setting the name
    */
-  public setName(this: AbstractNode, name: string, actor: SchemaNode) {
+  protected __setName__(this: AbstractNode, name: string, actor: SchemaNode) {
     if (actor !== this.parentNode && actor !== this) return;
-    this.#name = name;
-    this.#escapedName = escapeSegment(name);
-    this.updatePath();
+    this.__name__ = name;
+    this.__escapedName__ = escapeSegment(name);
+    this.__updatePath__();
   }
 
   /** Node's data path */
-  #path: string;
+  private __path__: string;
 
   /**
    * [readonly] Node's data path.
    * @note Basically it is readonly, but can be changed with `updatePath` by the parent node.
    * */
   public get path() {
-    return this.#path;
+    return this.__path__;
   }
 
   /** Node's schema path */
-  #schemaPath: string;
+  private __schemaPath__: string;
 
   /** [readonly] Node's schema path
    * @note Basically it is readonly, but can be changed with `updatePath` by the parent node.
    */
   public get schemaPath() {
-    return this.#schemaPath;
+    return this.__schemaPath__;
   }
 
   /** [readonly] Unique identifier combining schemaPath and data path */
   public get key() {
-    return this.#schemaPath + UNIT_SEPARATOR + this.#path;
+    return this.__schemaPath__ + UNIT_SEPARATOR + this.__path__;
   }
 
   /**
@@ -175,14 +174,14 @@ export abstract class AbstractNode<
    * @returns Whether the path was changed
    * @returns {boolean} Whether the path was changed
    */
-  public updatePath(this: AbstractNode) {
-    const previous = this.#path;
+  private __updatePath__(this: AbstractNode) {
+    const previous = this.__path__;
     const parent = this.parentNode;
-    const escapedName = this.#escapedName;
+    const escapedName = this.__escapedName__;
     const current = joinSegment(parent?.path, escapedName);
     if (previous === current) return false;
-    this.#path = current;
-    this.#schemaPath = this.scope
+    this.__path__ = current;
+    this.__schemaPath__ = this.scope
       ? joinSegment(
           parent?.schemaPath || $.Fragment,
           getScopedSegment(escapedName, this.scope, parent?.type, this.variant),
@@ -191,29 +190,28 @@ export abstract class AbstractNode<
 
     const subnodes = this.subnodes;
     if (subnodes?.length)
-      for (const subnode of subnodes) subnode.node.updatePath();
+      for (const subnode of subnodes) subnode.node.__updatePath__();
 
     this.publish(NodeEventType.UpdatePath, current, { previous, current });
     return true;
   }
 
   /** Context node reference for form-wide shared data */
-  #context: AbstractNode | null;
+  private __contextNode__: AbstractNode | null;
 
   /**
    * [readonly] Context node for accessing form-wide shared data
    * @note Root nodes return their own context, child nodes delegate to rootNode.context
-   * @internal Internal implementation method. Do not call directly.
    */
-  public get context(): ObjectNode | null {
-    return this.#context as ObjectNode;
+  public get context(): Dictionary {
+    return this.__contextNode__?.value || {};
   }
 
   /** Node's initial default value */
-  #initialValue: Value | Nullish;
+  private __initialValue__: Value | Nullish;
 
   /** Node's current default value */
-  #defaultValue: Value | Nullish;
+  private __defaultValue__: Value | Nullish;
 
   /**
    * Node's default value
@@ -221,7 +219,7 @@ export abstract class AbstractNode<
    *  - get: `defaultValue`, can be read in all situations
    */
   public get defaultValue() {
-    return this.#defaultValue;
+    return this.__defaultValue__;
   }
 
   /**
@@ -229,9 +227,9 @@ export abstract class AbstractNode<
    * For use in `constructor`
    * @param value input value for updating defaultValue
    */
-  protected setDefaultValue(this: AbstractNode, value: Value | Nullish) {
-    this.#initialValue = checkDefinedValue(value) ? value : undefined;
-    this.#defaultValue = value;
+  protected __setDefaultValue__(this: AbstractNode, value: Value | Nullish) {
+    this.__initialValue__ = checkDefinedValue(value) ? value : undefined;
+    this.__defaultValue__ = value;
   }
 
   /**
@@ -240,8 +238,8 @@ export abstract class AbstractNode<
    * @param value input value for updating defaultValue
    * @returns {Promise<void>} A promise that resolves when the refresh is complete
    */
-  protected refresh(this: AbstractNode, value: Value | Nullish) {
-    this.#defaultValue = value;
+  protected __refresh__(this: AbstractNode, value: Value | Nullish) {
+    this.__defaultValue__ = value;
     this.publish(NodeEventType.RequestRefresh);
   }
 
@@ -285,8 +283,10 @@ export abstract class AbstractNode<
     input: Value | Nullish | Fn<[prev: Value | Nullish], Value | Nullish>,
     option: UnionSetValueOption = SetValueOption.Overwrite,
   ): void {
-    const inputValue = typeof input === 'function' ? input(this.value) : input;
-    this.applyValue(inputValue, option);
+    this.applyValue(
+      typeof input === 'function' ? input(this.value) : input,
+      option,
+    );
   }
 
   /**
@@ -295,7 +295,7 @@ export abstract class AbstractNode<
    * @param input - The changed value
    * @param batch - Optional flag indicating whether the change should be batched
    */
-  #handleChange: HandleChange<Value>;
+  private __handleChange__: HandleChange<Value>;
 
   /**
    * Function called when the node's value changes.
@@ -307,8 +307,8 @@ export abstract class AbstractNode<
     input: Value | Nullish,
     batch?: boolean,
   ): void {
-    if (this.#active && this.#scoped) this.#handleChange(input, batch);
-    else if (input === undefined) this.#handleChange(undefined, batch);
+    if (this.__active__ && this.__scoped__) this.__handleChange__(input, batch);
+    else if (input === undefined) this.__handleChange__(undefined, batch);
   }
 
   /**
@@ -317,7 +317,7 @@ export abstract class AbstractNode<
    * @param right - The right value
    * @returns Whether the left value is equal to the right value
    */
-  public equals(
+  protected __equals__(
     this: AbstractNode,
     left: Value | Nullish,
     right: Value | Nullish,
@@ -366,7 +366,7 @@ export abstract class AbstractNode<
     this.schemaType = schemaType;
     this.nullable = nullable;
     this.required = required ?? false;
-    this.#name = name || '';
+    this.__name__ = name || '';
 
     this.isRoot = !parentNode;
     this.rootNode = (parentNode?.rootNode || this) as SchemaNode;
@@ -374,13 +374,13 @@ export abstract class AbstractNode<
 
     this.group = getNodeGroup(this.schemaType, this.jsonSchema);
     this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
-    this.#escapedName = escapeSegment(this.#name);
-    this.#path = joinSegment(this.parentNode?.path, this.#escapedName);
-    this.#schemaPath = this.scope
+    this.__escapedName__ = escapeSegment(this.__name__);
+    this.__path__ = joinSegment(this.parentNode?.path, this.__escapedName__);
+    this.__schemaPath__ = this.scope
       ? joinSegment(
           this.parentNode?.schemaPath || $.Fragment,
           getScopedSegment(
-            this.#escapedName,
+            this.__escapedName__,
             this.scope,
             this.parentNode?.type,
             this.variant,
@@ -388,18 +388,20 @@ export abstract class AbstractNode<
         )
       : joinSegment(
           this.parentNode?.schemaPath || $.Fragment,
-          this.#escapedName,
+          this.__escapedName__,
         );
 
-    this.#context = this.isRoot ? context || null : this.rootNode.context;
-    this.#compute = computeFactory(
+    this.__contextNode__ = this.isRoot
+      ? context || null
+      : this.rootNode.__contextNode__;
+    this.__compute__ = computeFactory(
       this.schemaType,
       this.jsonSchema,
       this.rootNode.jsonSchema,
     );
 
-    this.#updateScoped();
-    this.setDefaultValue(
+    this.__updateScoped__();
+    this.__setDefaultValue__(
       defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema),
     );
 
@@ -407,13 +409,13 @@ export abstract class AbstractNode<
       const validateOnChange = validationMode
         ? (validationMode & ValidationMode.OnChange) > 0
         : false;
-      this.#handleChange = afterMicrotask(() => {
-        if (validateOnChange) this.#handleValidation();
+      this.__handleChange__ = afterMicrotask(() => {
+        if (validateOnChange) this.__handleValidation__();
         onChange(getSafeEmptyValue(this.value, this.schemaType));
       });
-      this.#prepareValidator(jsonSchema, validatorFactory, validationMode);
-      this.#injectedPaths = new Set();
-    } else this.#handleChange = onChange;
+      this.__prepareValidator__(jsonSchema, validatorFactory, validationMode);
+      this.__injectedPaths__ = new Set();
+    } else this.__handleChange__ = onChange;
   }
 
   /**
@@ -423,7 +425,7 @@ export abstract class AbstractNode<
    */
   public find(this: AbstractNode, pointer?: string): SchemaNode | null {
     if (pointer === undefined) return this as SchemaNode;
-    if (pointer === $.Context) return this.context;
+    if (pointer === $.Context) return this.__contextNode__ as SchemaNode;
     if (pointer === $.Root) return this.rootNode;
     const absolute = isAbsolutePath(pointer);
     if (absolute && pointer.length === 1) return this.rootNode;
@@ -438,7 +440,7 @@ export abstract class AbstractNode<
   public findAll(this: AbstractNode, pointer?: string): SchemaNode[] {
     if (pointer === undefined) return [this as SchemaNode];
     if (pointer === $.Context)
-      return this.#context ? [this.#context as SchemaNode] : [];
+      return this.__contextNode__ ? [this.__contextNode__ as SchemaNode] : [];
     if (pointer === $.Root) return [this.rootNode];
     const absolute = isAbsolutePath(pointer);
     if (absolute && pointer.length === 1) return [this.rootNode];
@@ -449,18 +451,18 @@ export abstract class AbstractNode<
    * Set of registered event listeners for this node.
    * @note Listeners receive batched events via EventCascade for performance optimization.
    */
-  #listeners: Set<NodeListener> = new Set();
+  private __listeners__: Set<NodeListener> = new Set();
 
   /**
    * Event batching system that collects multiple events and publishes them together.
    * @note Improves performance by reducing the number of listener invocations
    *       when multiple events occur in rapid succession.
    */
-  #eventCascade = new EventCascade(
+  private __eventCascade__ = new EventCascade(
     (eventCollection: NodeEventCollection) => {
-      for (const listener of this.#listeners) listener(eventCollection);
+      for (const listener of this.__listeners__) listener(eventCollection);
     },
-    () => ({ path: this.path, dependencies: this.#compute.dependencyPaths }),
+    () => ({ path: this.path, dependencies: this.__compute__.dependencyPaths }),
   );
 
   /**
@@ -468,35 +470,31 @@ export abstract class AbstractNode<
    * @note Stores unsubscribe functions from dependency subscriptions.
    *       Called during cleanUp() to prevent memory leaks.
    */
-  #unsubscribes: Array<Fn> = [];
+  private __unsubscribes__: Array<Fn> = [];
 
   /**
    * Saves an event unsubscribe function.
    * @param unsubscribe - The unsubscribe function to save
    */
   protected saveUnsubscribe(this: AbstractNode, unsubscribe: Fn) {
-    this.#unsubscribes.push(unsubscribe);
+    this.__unsubscribes__.push(unsubscribe);
   }
 
-  /**
-   * Cancels all saved event subscriptions.
-   * @internal Internal implementation method. Do not call directly.
-   */
-  #clearUnsubscribes(this: AbstractNode) {
-    for (let i = 0, l = this.#unsubscribes.length; i < l; i++)
-      this.#unsubscribes[i]();
-    this.#unsubscribes = [];
+  /* Cancels all saved event subscriptions. */
+  private __clearUnsubscribes__(this: AbstractNode) {
+    for (let i = 0, l = this.__unsubscribes__.length; i < l; i++)
+      this.__unsubscribes__[i]();
+    this.__unsubscribes__ = [];
   }
 
   /**
    * Initializes the node's event listener/subscription list. Initialization must be called by itself or by the parent node.
    * @param actor - The node requesting initialization
-   * @internal Internal implementation method. Do not call directly.
    */
-  public cleanUp(this: AbstractNode, actor?: SchemaNode) {
+  protected __cleanUp__(this: AbstractNode, actor?: SchemaNode) {
     if (actor !== this.parentNode && !this.isRoot) return;
-    this.#clearUnsubscribes();
-    this.#listeners.clear();
+    this.__clearUnsubscribes__();
+    this.__listeners__.clear();
   }
 
   /**
@@ -505,9 +503,9 @@ export abstract class AbstractNode<
    * @returns Event listener removal function
    */
   public subscribe(this: AbstractNode, listener: NodeListener): Fn {
-    this.#listeners.add(listener);
+    this.__listeners__.add(listener);
     return () => {
-      this.#listeners.delete(listener);
+      this.__listeners__.delete(listener);
     };
   }
 
@@ -527,8 +525,8 @@ export abstract class AbstractNode<
   ) {
     if (immediate) {
       const eventCollection = getEventCollection(type, payload, options);
-      for (const listener of this.#listeners) listener(eventCollection);
-    } else this.#eventCascade.schedule([type, payload, options]);
+      for (const listener of this.__listeners__) listener(eventCollection);
+    } else this.__eventCascade__.schedule([type, payload, options]);
   }
 
   /**
@@ -536,7 +534,7 @@ export abstract class AbstractNode<
    * @note Set to `true` after `initialize()` completes successfully.
    *       Prevents duplicate initialization.
    */
-  #initialized: boolean = false;
+  private __initialized__: boolean = false;
 
   /**
    * Whether the node has completed its initialization phase.
@@ -544,22 +542,21 @@ export abstract class AbstractNode<
    * @note Initialization sets up dependency subscriptions and injectTo handlers.
    */
   public get initialized() {
-    return this.#initialized;
+    return this.__initialized__;
   }
 
   /**
    * Initializes the node. Initialization must be called by itself or by the parent node.
    * @param actor - The node requesting initialization
    * @returns {boolean} Whether initialization occurred
-   * @internal Internal implementation method. Do not call directly.
    */
-  public initialize(this: AbstractNode, actor?: SchemaNode) {
-    if (this.#initialized || (actor !== this.parentNode && !this.isRoot))
+  protected __initialize__(this: AbstractNode, actor?: SchemaNode) {
+    if (this.__initialized__ || (actor !== this.parentNode && !this.isRoot))
       return false;
-    this.#prepareUpdateDependencies();
-    this.#prepareInjectHandler();
+    this.__prepareUpdateDependencies__();
+    this.__prepareInjectHandler__();
     this.publish(NodeEventType.Initialized);
-    this.#initialized = true;
+    this.__initialized__ = true;
     return true;
   }
 
@@ -575,57 +572,48 @@ export abstract class AbstractNode<
    *  - `derivedValue`: Get derived value from dependencies
    *  - `watchValues`: Calculate the list of values to watch
    */
-  #compute: ReturnType<typeof computeFactory>;
+  private __compute__: ReturnType<typeof computeFactory>;
 
   /**
    * Cached values from dependency nodes used for computed property calculations.
-   * @note Array indices correspond to `#compute.dependencyPaths` order.
+   * @note Array indices correspond to `__compute__.dependencyPaths` order.
    *       Updated automatically when dependency node values change.
    */
-  #dependencies: any[] = [];
+  private __dependencies__: any[] = [];
 
   /**
    * Flag indicating whether this node has any computed properties defined.
    * @note Set during initialization based on whether `dependencyPaths` is non-empty.
    */
-  #computeEnabled: boolean = false;
-
-  /**
-   * Whether this node has computed properties that depend on other nodes.
-   * @returns `true` if the schema defines computed properties (active, visible, etc.)
-   * @note When enabled, the node subscribes to dependency changes and recalculates properties.
-   */
-  public get computeEnabled() {
-    return this.#computeEnabled;
-  }
+  protected __computeEnabled__: boolean = false;
 
   /**
    * Whether this node belongs to the currently active oneOf/anyOf branch of its parent.
    * @note Nodes outside the active branch are excluded from value propagation.
-   *       This is separate from `#active` which is controlled by computed properties.
+   *       This is separate from `__active__` which is controlled by computed properties.
    */
-  #scoped: boolean = true;
+  private __scoped__: boolean = true;
 
   /**
    * Whether the node is active based on computed.active evaluation.
    * @note Inactive nodes don't propagate values to parent but retain their internal state.
    */
-  #active: boolean = true;
+  private __active__: boolean = true;
 
   /**
    * Whether this node is currently active and can participate in value updates.
-   * @returns `true` if both `#active` (computed) and `#scoped` (branch) conditions are met
+   * @returns `true` if both `__active__` (computed) and `__scoped__` (branch) conditions are met
    * @note An inactive node's value is excluded from the parent's value composition.
    */
   public get active() {
-    return this.#active && this.#scoped;
+    return this.__active__ && this.__scoped__;
   }
 
   /**
    * Whether the node should be rendered in the UI based on computed.visible evaluation.
    * @note Invisible nodes still participate in validation and value composition.
    */
-  #visible: boolean = true;
+  private __visible__: boolean = true;
 
   /**
    * Whether this node should be displayed in the UI.
@@ -633,7 +621,7 @@ export abstract class AbstractNode<
    * @note Visibility only affects rendering; invisible nodes still hold values.
    */
   public get visible() {
-    return this.#visible;
+    return this.__visible__;
   }
 
   /**
@@ -642,14 +630,14 @@ export abstract class AbstractNode<
    * @note Use this to determine if a form field should be rendered and interactive.
    */
   public get enabled() {
-    return this.#active && this.#scoped && this.#visible;
+    return this.__active__ && this.__scoped__ && this.__visible__;
   }
 
   /**
    * Whether the node's value is read-only based on computed.readOnly evaluation.
    * @note Read-only nodes display values but prevent user modification.
    */
-  #readOnly: boolean = false;
+  private __readOnly__: boolean = false;
 
   /**
    * Whether this node's value cannot be modified by user interaction.
@@ -657,14 +645,14 @@ export abstract class AbstractNode<
    * @note The value can still be changed programmatically via setValue().
    */
   public get readOnly() {
-    return this.#readOnly;
+    return this.__readOnly__;
   }
 
   /**
    * Whether the node is disabled based on computed.disabled evaluation.
    * @note Disabled nodes are typically grayed out and non-interactive.
    */
-  #disabled: boolean = false;
+  private __disabled__: boolean = false;
 
   /**
    * Whether this node is disabled for user interaction.
@@ -672,29 +660,29 @@ export abstract class AbstractNode<
    * @note Unlike readOnly, disabled typically affects the visual appearance more significantly.
    */
   public get disabled() {
-    return this.#disabled;
+    return this.__disabled__;
   }
 
   /**
    * Index of the currently active oneOf branch.
    * @note -1 indicates no oneOf branch is active or oneOf is not defined.
    */
-  #oneOfIndex: number = -1;
+  private __oneOfIndex__: number = -1;
 
   /**
    * The index of the currently active oneOf schema branch.
    * @returns Branch index (0-based), or -1 if no branch is active
-   * @note Used by child nodes to determine their `#scoped` state.
+   * @note Used by child nodes to determine their `__scoped__` state.
    */
   public get oneOfIndex() {
-    return this.#oneOfIndex;
+    return this.__oneOfIndex__;
   }
 
   /**
    * Indices of currently active anyOf branches.
    * @note Empty array indicates no anyOf branches are active or anyOf is not defined.
    */
-  #anyOfIndices: number[] = [];
+  private __anyOfIndices__: number[] = [];
 
   /**
    * The indices of currently active anyOf schema branches.
@@ -702,14 +690,14 @@ export abstract class AbstractNode<
    * @note Multiple branches can be active simultaneously with anyOf.
    */
   public get anyOfIndices() {
-    return this.#anyOfIndices;
+    return this.__anyOfIndices__;
   }
 
   /**
    * Array of computed values derived from dependencies for watch functionality.
    * @note Used by UI frameworks to trigger re-renders when specific computed values change.
    */
-  #watchValues: ReadonlyArray<any> = [];
+  private __watchValues__: ReadonlyArray<any> = [];
 
   /**
    * Computed values from dependencies that can trigger UI updates.
@@ -717,30 +705,29 @@ export abstract class AbstractNode<
    * @note Useful for React useMemo/useEffect dependencies or similar reactive patterns.
    */
   public get watchValues() {
-    return this.#watchValues;
+    return this.__watchValues__;
   }
 
-  /**
-   * Prepares dependencies for update computation.
-   * @internal Internal implementation method. Do not call directly.
-   */
-  #prepareUpdateDependencies(this: AbstractNode) {
-    const dependencyPaths = this.#compute.dependencyPaths;
+  /** Prepares dependencies for update computation. */
+  private __prepareUpdateDependencies__(this: AbstractNode) {
+    if (this.__initialized__) return;
+    const dependencyPaths = this.__compute__.dependencyPaths;
     const computeEnabled = dependencyPaths.length > 0;
     if (computeEnabled) {
-      this.#dependencies = new Array(dependencyPaths.length);
+      this.__dependencies__ = new Array(dependencyPaths.length);
       for (let i = 0, l = dependencyPaths.length; i < l; i++) {
         const targetNodes = this.findAll(dependencyPaths[i]);
         if (targetNodes.length === 0) continue;
-        this.#dependencies[i] = this.find(dependencyPaths[i])?.value;
+        this.__dependencies__[i] = this.find(dependencyPaths[i])?.value;
         const unsubscribes = map(targetNodes, (node) =>
           node.subscribe(({ type, payload }) => {
             if (type & NodeEventType.UpdateValue) {
               if (
-                this.#dependencies[i] !== payload?.[NodeEventType.UpdateValue]
+                this.__dependencies__[i] !==
+                payload?.[NodeEventType.UpdateValue]
               ) {
-                this.#dependencies[i] = payload?.[NodeEventType.UpdateValue];
-                this.updateComputedProperties();
+                this.__dependencies__[i] = payload?.[NodeEventType.UpdateValue];
+                this.__updateComputedProperties__();
               }
             }
           }),
@@ -749,37 +736,49 @@ export abstract class AbstractNode<
           this.saveUnsubscribe(unsubscribe);
       }
     }
-    if (this.#compute.derivedValue || this.#compute.pristine)
+    if (this.__compute__.derivedValue || this.__compute__.pristine)
       this.subscribe(({ type }) => {
         if (type & NodeEventType.UpdateComputedProperties) {
-          if (this.#compute.derivedValue) {
-            const derivedValue = this.#compute.derivedValue(this.#dependencies);
-            if (this.active && !this.equals(this.value, derivedValue))
+          if (this.__compute__.derivedValue) {
+            const derivedValue = this.__compute__.derivedValue(
+              this.__dependencies__,
+            );
+            if (this.active && !this.__equals__(this.value, derivedValue))
               this.setValue(derivedValue);
           }
-          if (this.#compute.pristine?.(this.#dependencies)) this.setState();
+          if (this.__compute__.pristine?.(this.__dependencies__))
+            this.setState();
         }
       });
-    this.updateComputedProperties();
-    this.#computeEnabled = computeEnabled;
+    this.__updateComputedProperties__();
+    this.__computeEnabled__ = computeEnabled;
   }
 
   /**
    * Updates the node's computed properties.
    * @param reset - Whether to reset the node when the active property changes, default is `true`
-   * @internal Internal implementation method. Do not call directly.
    */
-  public updateComputedProperties(this: AbstractNode, reset: boolean = true) {
-    const previous = this.#active;
-    this.#active = this.#compute.active?.(this.#dependencies) ?? true;
-    this.#visible = this.#compute.visible?.(this.#dependencies) ?? true;
-    this.#readOnly = this.#compute.readOnly?.(this.#dependencies) ?? false;
-    this.#disabled = this.#compute.disabled?.(this.#dependencies) ?? false;
-    this.#oneOfIndex = this.#compute.oneOfIndex?.(this.#dependencies) ?? -1;
-    this.#anyOfIndices = this.#compute.anyOfIndices?.(this.#dependencies) || [];
-    this.#watchValues = this.#compute.watchValues?.(this.#dependencies) || [];
+  protected __updateComputedProperties__(
+    this: AbstractNode,
+    reset: boolean = true,
+  ) {
+    const previous = this.__active__;
+    this.__active__ = this.__compute__.active?.(this.__dependencies__) ?? true;
+    this.__visible__ =
+      this.__compute__.visible?.(this.__dependencies__) ?? true;
+    this.__readOnly__ =
+      this.__compute__.readOnly?.(this.__dependencies__) ?? false;
+    this.__disabled__ =
+      this.__compute__.disabled?.(this.__dependencies__) ?? false;
+    this.__oneOfIndex__ =
+      this.__compute__.oneOfIndex?.(this.__dependencies__) ?? -1;
+    this.__anyOfIndices__ =
+      this.__compute__.anyOfIndices?.(this.__dependencies__) || [];
+    this.__watchValues__ =
+      this.__compute__.watchValues?.(this.__dependencies__) || [];
 
-    if (reset && previous !== this.#active) this.reset({ preferLatest: true });
+    if (reset && previous !== this.__active__)
+      this.__reset__({ preferLatest: true });
     this.publish(NodeEventType.UpdateComputedProperties);
   }
 
@@ -787,18 +786,19 @@ export abstract class AbstractNode<
    * Updates the computed properties of the node and its children recursively.
    * @param includeSelf - Whether to include the current node, default is `false`
    * @param includeInactive - Whether to include the inactive child nodes, default is `true`
-   * @internal Internal implementation method. Do not call directly.
    */
-  public updateComputedPropertiesRecursively(
+  protected __updateComputedPropertiesRecursively__(
     this: AbstractNode,
     includeSelf: boolean = false,
     includeInactive: boolean = true,
   ) {
-    if (includeSelf) this.updateComputedProperties(false);
+    if (includeSelf) this.__updateComputedProperties__(false);
     const list = includeInactive ? this.subnodes : this.children;
     if (!list?.length) return;
-    for (let i = 0, e = list[0], l = list.length; i < l; i++, e = list[i])
-      e.node.updateComputedPropertiesRecursively(true, includeInactive);
+    for (let i = 0, e = list[0], l = list.length; i < l; i++, e = list[i]) {
+      // @ts-expect-error [internal] update computed properties recursively
+      e.node.__updateComputedPropertiesRecursively__(true, includeInactive);
+    }
   }
 
   /**
@@ -810,30 +810,34 @@ export abstract class AbstractNode<
    * @param options.preferInitial - Whether to prefer the initial value when preferLatest is true
    * @param options.inputValue - Explicit input value with highest priority
    * @param options.fallbackValue - Fallback value used in default calculation
-   * @internal Internal implementation method. Do not call directly.
    */
-  public reset(this: AbstractNode, options: ResetOptions<Value> = {}) {
-    if (options.updateScoped) this.#updateScoped();
+  protected __reset__(this: AbstractNode, options: ResetOptions<Value> = {}) {
+    if (options.updateScoped) this.__updateScoped__();
 
-    if ('inputValue' in options) this.#defaultValue = options.inputValue;
+    if ('inputValue' in options) this.__defaultValue__ = options.inputValue;
     else if (options.preferLatest) {
-      if (options.checkInitialValueFirst && this.#initialValue !== undefined)
-        this.#defaultValue = this.#initialValue;
+      if (options.checkInitialValueFirst && this.__initialValue__ !== undefined)
+        this.__defaultValue__ = this.__initialValue__;
       else
-        this.#defaultValue =
+        this.__defaultValue__ =
           options.fallbackValue !== undefined
             ? options.fallbackValue
             : this.value !== undefined
               ? this.value
-              : this.#initialValue;
-    } else this.#defaultValue = this.#initialValue;
+              : this.__initialValue__;
+    } else this.__defaultValue__ = this.__initialValue__;
 
-    if (options.applyDerivedValue && this.#compute.derivedValue && this.active)
-      this.#defaultValue =
-        this.#compute.derivedValue(this.#dependencies) ?? this.#defaultValue;
+    if (
+      options.applyDerivedValue &&
+      this.__compute__.derivedValue &&
+      this.active
+    )
+      this.__defaultValue__ =
+        this.__compute__.derivedValue(this.__dependencies__) ??
+        this.__defaultValue__;
 
     this.setValue(
-      this.#active ? this.#defaultValue : undefined,
+      this.__active__ ? this.__defaultValue__ : undefined,
       SetValueOption.StableReset,
     );
     this.setState();
@@ -843,12 +847,13 @@ export abstract class AbstractNode<
    * Updates the node's scoped property.
    * @returns Whether the scoped property was changed
    */
-  #updateScoped(this: AbstractNode) {
+  private __updateScoped__(this: AbstractNode) {
     if (this.variant === undefined || this.parentNode === null) return;
     if (this.scope === 'oneOf')
-      this.#scoped = this.parentNode.oneOfIndex === this.variant;
+      this.__scoped__ = this.parentNode.oneOfIndex === this.variant;
     else if (this.scope === 'anyOf')
-      this.#scoped = this.parentNode.anyOfIndices.indexOf(this.variant) !== -1;
+      this.__scoped__ =
+        this.parentNode.anyOfIndices.indexOf(this.variant) !== -1;
   }
 
   /**
@@ -857,22 +862,22 @@ export abstract class AbstractNode<
    *          Aggregates truthy state values from all descendant nodes.
    *          Useful for form-wide indicators like "hasErrors" or "isDirty".
    */
-  #globalState: NodeStateFlags = {};
+  private __globalState__: NodeStateFlags = {};
 
   /**
    * Local state flags specific to this node.
    * @note Stores custom state like "touched", "dirty", "focused", etc.
    *       Changes are published via UpdateState event and propagated to globalState.
    */
-  #state: NodeStateFlags = {};
+  private __state__: NodeStateFlags = {};
 
   /**
    * Aggregated state flags from all nodes in the form tree.
-   * @returns On root nodes, returns `#globalState`. On child nodes, delegates to `rootNode.globalState`.
+   * @returns On root nodes, returns `__globalState__`. On child nodes, delegates to `rootNode.globalState`.
    * @note Use `setGlobalState` method to update. Read-only via this getter.
    */
   public get globalState(): NodeStateFlags {
-    return this.isRoot ? this.#globalState : this.rootNode.globalState;
+    return this.isRoot ? this.__globalState__ : this.rootNode.globalState;
   }
 
   /**
@@ -880,19 +885,18 @@ export abstract class AbstractNode<
    * @note use `setState` method to set the state
    * */
   public get state() {
-    return this.#state;
+    return this.__state__;
   }
 
   /**
    * Sets the global state flags for the form tree.
-   * On root nodes, updates `#globalState` directly. On child nodes, delegates to `rootNode.setGlobalState()`.
+   * On root nodes, updates `__globalState__` directly. On child nodes, delegates to `rootNode.setGlobalState()`.
    * Only truthy values are accumulated (falsy values are ignored).
    * @param input - The state to set. If `undefined`, clears all global state flags.
-   * @internal Internal implementation method. Do not call directly.
    */
-  public setGlobalState(this: AbstractNode, input?: NodeStateFlags) {
+  private __setGlobalState__(this: AbstractNode, input?: NodeStateFlags) {
     if (this.isRoot) {
-      let state: NodeStateFlags | null = this.#globalState;
+      let state: NodeStateFlags | null = this.__globalState__;
       let idle = true;
       if (input === undefined) {
         if (isEmptyObject(state)) return;
@@ -908,9 +912,9 @@ export abstract class AbstractNode<
         }
       }
       if (idle) return;
-      this.#globalState = state !== null ? { ...state } : {};
-      this.publish(NodeEventType.UpdateGlobalState, this.#globalState);
-    } else this.rootNode.setGlobalState(input);
+      this.__globalState__ = state !== null ? { ...state } : {};
+      this.publish(NodeEventType.UpdateGlobalState, this.__globalState__);
+    } else this.rootNode.__setGlobalState__(input);
   }
 
   /**
@@ -923,7 +927,7 @@ export abstract class AbstractNode<
     input?: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags,
     silent?: boolean,
   ) {
-    let state: NodeStateFlags | null = this.#state;
+    let state: NodeStateFlags | null = this.__state__;
     const inputState =
       typeof input === 'function' ? input({ ...state }) : input;
     let idle = true;
@@ -947,9 +951,9 @@ export abstract class AbstractNode<
       }
     }
     if (idle) return;
-    this.#state = state !== null ? { ...state } : {};
-    this.publish(NodeEventType.UpdateState, this.#state);
-    if (silent !== true) this.setGlobalState(this.#state);
+    this.__state__ = state !== null ? { ...state } : {};
+    this.publish(NodeEventType.UpdateState, this.__state__);
+    if (silent !== true) this.__setGlobalState__(this.__state__);
   }
 
   /**
@@ -960,7 +964,7 @@ export abstract class AbstractNode<
    */
   public setSubtreeState(this: AbstractNode, state: NodeStateFlags) {
     depthFirstSearch(this, (node) => node.setState(state, true));
-    this.setGlobalState(state);
+    this.__setGlobalState__(state);
   }
 
   /**
@@ -971,7 +975,7 @@ export abstract class AbstractNode<
    */
   public clearSubtreeState(this: AbstractNode) {
     depthFirstSearch(this, (node) => node.setState(undefined, true));
-    if (this.isRoot) this.setGlobalState();
+    if (this.isRoot) this.__setGlobalState__();
   }
 
   /**
@@ -981,7 +985,7 @@ export abstract class AbstractNode<
    */
   public resetSubtree(this: AbstractNode) {
     this.clearSubtreeState();
-    this.reset();
+    this.__reset__();
   }
 
   /**
@@ -990,56 +994,58 @@ export abstract class AbstractNode<
    *          Tracks which nodes are currently being injected to prevent circular injection loops.
    *          Child nodes delegate injection tracking to `rootNode`.
    */
-  #injectedPaths: Set<SchemaNode['path']> | undefined;
+  private __injectedPaths__: Set<SchemaNode['path']> | undefined;
 
   /**
    * Scheduled macrotask ID for clearing injected node flags.
    * @remarks **[Root Node Only]** Used to batch clear injected flags after all
    *          synchronous injection operations complete. The ID prevents duplicate scheduling.
    */
-  #scheduledClearInjectedPathsId: number | undefined;
+  private __scheduledClearInjectedPathsId__: number | undefined;
 
   /**
    * Checks if a node at the given path is currently being injected.
    * @param path - The data path of the node to check
    * @returns {boolean} Whether the node is currently being injected
    * @note Root nodes check their own flag set, child nodes delegate to rootNode.
-   * @internal Internal implementation method. Do not call directly.
    */
-  public isInjectedPath(this: AbstractNode, path: SchemaNode['path']): boolean {
-    if (this.isRoot) return this.#injectedPaths?.has(path) ?? false;
-    else return this.rootNode.isInjectedPath(path);
+  protected __isInjectedPath__(
+    this: AbstractNode,
+    path: SchemaNode['path'],
+  ): boolean {
+    if (this.isRoot) return this.__injectedPaths__?.has(path) ?? false;
+    else return (this.rootNode as AbstractNode).__isInjectedPath__(path);
   }
 
   /**
    * Sets the injected flag for a node at the given path.
    * @param path - The data path of the node to mark as injected
    * @note Used to prevent circular injection when `injectTo` affects multiple nodes.
-   * @internal Internal implementation method. Do not call directly.
    */
-  public setInjectedPath(this: AbstractNode, path: SchemaNode['path']) {
-    if (this.isRoot) this.#injectedPaths?.add(path);
-    else this.rootNode.setInjectedPath(path);
+  protected __setInjectedPath__(this: AbstractNode, path: SchemaNode['path']) {
+    if (this.isRoot) this.__injectedPaths__?.add(path);
+    else (this.rootNode as AbstractNode).__setInjectedPath__(path);
   }
 
   /**
    * Removes the injected flag for a node at the given path.
    * @param path - The data path of the node to unmark
-   * @internal Internal implementation method. Do not call directly.
    */
-  public unsetInjectedPath(this: AbstractNode, path: SchemaNode['path']) {
-    if (this.isRoot) this.#injectedPaths?.delete(path);
-    else this.rootNode.unsetInjectedPath(path);
+  protected __unsetInjectedPath__(
+    this: AbstractNode,
+    path: SchemaNode['path'],
+  ) {
+    if (this.isRoot) this.__injectedPaths__?.delete(path);
+    else (this.rootNode as AbstractNode).__unsetInjectedPath__(path);
   }
 
   /**
    * Clears all injected node flags immediately.
    * @note Typically used for cleanup or reset operations.
-   * @internal Internal implementation method. Do not call directly.
    */
-  public clearInjectedPaths(this: AbstractNode) {
-    if (this.isRoot) this.#injectedPaths?.clear();
-    else this.rootNode.clearInjectedPaths();
+  protected __clearInjectedPaths__(this: AbstractNode) {
+    if (this.isRoot) this.__injectedPaths__?.clear();
+    else (this.rootNode as AbstractNode).__clearInjectedPaths__();
   }
 
   /**
@@ -1048,16 +1054,15 @@ export abstract class AbstractNode<
    *       complete before clearing flags. Prevents duplicate scheduling if already scheduled.
    *       This allows multiple `injectTo` operations to complete within the same
    *       synchronous execution context before the flags are cleared.
-   * @internal Internal implementation method. Do not call directly.
    */
-  public scheduleClearInjectedPaths(this: AbstractNode) {
+  protected __scheduleClearInjectedPaths__(this: AbstractNode) {
     if (this.isRoot) {
-      if (this.#scheduledClearInjectedPathsId !== undefined) return;
-      this.#scheduledClearInjectedPathsId = scheduleMacrotaskSafe(() => {
-        this.#scheduledClearInjectedPathsId = undefined;
-        this.#injectedPaths?.clear();
+      if (this.__scheduledClearInjectedPathsId__ !== undefined) return;
+      this.__scheduledClearInjectedPathsId__ = scheduleMacrotaskSafe(() => {
+        this.__scheduledClearInjectedPathsId__ = undefined;
+        this.__injectedPaths__?.clear();
       });
-    } else this.rootNode.scheduleClearInjectedPaths();
+    } else (this.rootNode as AbstractNode).__scheduleClearInjectedPaths__();
   }
 
   /**
@@ -1065,9 +1070,9 @@ export abstract class AbstractNode<
    * @note Sets up a subscription that listens for value updates and propagates
    *       values to other nodes as defined by the `injectTo` function in the schema.
    *       Implements circular injection prevention using injected node flags.
-   * @internal Internal implementation method. Do not call directly.
    */
-  #prepareInjectHandler(this: AbstractNode) {
+  private __prepareInjectHandler__(this: AbstractNode) {
+    if (this.__initialized__) return;
     const injectHandler = this.jsonSchema.injectTo;
     if (typeof injectHandler !== 'function') return;
     this.subscribe(({ type }) => {
@@ -1086,17 +1091,17 @@ export abstract class AbstractNode<
           parentJsonSchema: this.parentNode?.jsonSchema || null,
           rootValue: this.rootNode.value,
           rootJsonSchema: this.rootNode.jsonSchema,
-          context: this.context?.value || {},
+          context: this.context,
         } satisfies InjectHandlerContext;
         try {
-          this.setInjectedPath(dataPath);
+          this.__setInjectedPath__(dataPath);
           const affect = injectHandler(value, context);
           if (affect == null) return;
           const operations = isArray(affect) ? affect : Object.entries(affect);
           for (let i = 0, l = operations.length; i < l; i++) {
             const path = getAbsolutePath(dataPath, operations[i][0]);
-            if (this.isInjectedPath(path)) continue;
-            this.setInjectedPath(path);
+            if (this.__isInjectedPath__(path)) continue;
+            this.__setInjectedPath__(path);
             this.find(path)?.setValue(operations[i][1]);
           }
         } catch (error) {
@@ -1107,7 +1112,7 @@ export abstract class AbstractNode<
             errorContext,
           );
         } finally {
-          this.scheduleClearInjectedPaths();
+          this.__scheduleClearInjectedPaths__();
         }
       }
     });
@@ -1118,46 +1123,48 @@ export abstract class AbstractNode<
    * @remarks **[Root Node Only]** Used to clear errors from nodes that no longer have errors
    *          after a subsequent validation run.
    */
-  #errorDataPaths: string[] | undefined;
+  private __errorDataPaths__: string[] | undefined;
 
   /**
    * All validation errors from the most recent schema validation.
    * @remarks **[Root Node Only]** Contains raw errors from the validator before
    *          merging with external errors.
    */
-  #globalErrors: ValidationError[] | undefined;
+  private __globalErrors__: ValidationError[] | undefined;
 
   /**
    * Validation errors specific to this node from the root's validation.
    * @note Filtered subset of globalErrors matching this node's dataPath.
    */
-  #localErrors: ValidationError[] | undefined;
+  private __localErrors__: ValidationError[] | undefined;
 
   /**
    * Combined array of internal schema errors and external errors.
    * @note Only used by root node. Represents all errors across the entire form.
    */
-  #mergedGlobalErrors: ValidationError[] = [];
+  private __mergedGlobalErrors__: ValidationError[] = [];
 
   /**
    * Combined array of local validation errors and external errors for this node.
    * @note This is the primary error array exposed via the `errors` getter.
    */
-  #mergedLocalErrors: ValidationError[] = [];
+  private __mergedLocalErrors__: ValidationError[] = [];
 
   /**
    * Errors provided externally (e.g., from server-side validation).
    * @note External errors are merged with local errors but tracked separately
    *       for independent clearing via clearExternalErrors().
    */
-  #externalErrors: ValidationError[] = [];
+  private __externalErrors__: ValidationError[] = [];
 
   /**
    * Returns the merged result of errors that occurred inside the form and externally received errors.
    * @returns All of the errors that occurred inside the form and externally received errors
    */
   public get globalErrors(): ValidationError[] {
-    return this.isRoot ? this.#mergedGlobalErrors : this.rootNode.globalErrors;
+    return this.isRoot
+      ? this.__mergedGlobalErrors__
+      : this.rootNode.globalErrors;
   }
 
   /**
@@ -1165,7 +1172,7 @@ export abstract class AbstractNode<
    * @returns Local errors and externally received errors
    */
   public get errors(): ValidationError[] {
-    return this.#mergedLocalErrors;
+    return this.__mergedLocalErrors__;
   }
 
   /**
@@ -1173,11 +1180,14 @@ export abstract class AbstractNode<
    * @param errors - List of errors to set
    * @returns {boolean} Whether the merge result changed
    */
-  #setGlobalErrors(this: AbstractNode, errors: ValidationError[]) {
-    if (equals(this.#globalErrors, errors)) return false;
-    this.#globalErrors = errors;
-    this.#mergedGlobalErrors = [...this.#externalErrors, ...this.#globalErrors];
-    this.publish(NodeEventType.UpdateGlobalError, this.#mergedGlobalErrors);
+  private __setGlobalErrors__(this: AbstractNode, errors: ValidationError[]) {
+    if (equals(this.__globalErrors__, errors)) return false;
+    this.__globalErrors__ = errors;
+    this.__mergedGlobalErrors__ = [
+      ...this.__externalErrors__,
+      ...this.__globalErrors__,
+    ];
+    this.publish(NodeEventType.UpdateGlobalError, this.__mergedGlobalErrors__);
     return true;
   }
 
@@ -1186,10 +1196,13 @@ export abstract class AbstractNode<
    * @param errors - List of errors to set
    */
   public setErrors(this: AbstractNode, errors: ValidationError[]) {
-    if (equals(this.#localErrors, errors)) return;
-    this.#localErrors = errors;
-    this.#mergedLocalErrors = [...this.#externalErrors, ...this.#localErrors];
-    this.publish(NodeEventType.UpdateError, this.#mergedLocalErrors);
+    if (equals(this.__localErrors__, errors)) return;
+    this.__localErrors__ = errors;
+    this.__mergedLocalErrors__ = [
+      ...this.__externalErrors__,
+      ...this.__localErrors__,
+    ];
+    this.publish(NodeEventType.UpdateError, this.__mergedLocalErrors__);
   }
 
   /**
@@ -1205,23 +1218,26 @@ export abstract class AbstractNode<
    * @param errors - List of received errors
    */
   public setExternalErrors(this: AbstractNode, errors: ValidationError[] = []) {
-    if (equals(this.#externalErrors, errors, RECURSIVE_ERROR_OMITTED_KEYS))
+    if (equals(this.__externalErrors__, errors, RECURSIVE_ERROR_OMITTED_KEYS))
       return;
 
-    this.#externalErrors = new Array<ValidationError>(errors.length);
+    this.__externalErrors__ = new Array<ValidationError>(errors.length);
     for (let i = 0, l = errors.length; i < l; i++)
-      this.#externalErrors[i] = { ...errors[i], key: i };
+      this.__externalErrors__[i] = { ...errors[i], key: i };
 
-    this.#mergedLocalErrors = this.#localErrors
-      ? [...this.#externalErrors, ...this.#localErrors]
-      : this.#externalErrors;
-    this.publish(NodeEventType.UpdateError, this.#mergedLocalErrors);
+    this.__mergedLocalErrors__ = this.__localErrors__
+      ? [...this.__externalErrors__, ...this.__localErrors__]
+      : this.__externalErrors__;
+    this.publish(NodeEventType.UpdateError, this.__mergedLocalErrors__);
 
     if (this.isRoot) {
-      this.#mergedGlobalErrors = this.#globalErrors
-        ? [...this.#externalErrors, ...this.#globalErrors]
-        : this.#externalErrors;
-      this.publish(NodeEventType.UpdateGlobalError, this.#mergedGlobalErrors);
+      this.__mergedGlobalErrors__ = this.__globalErrors__
+        ? [...this.__externalErrors__, ...this.__globalErrors__]
+        : this.__externalErrors__;
+      this.publish(
+        NodeEventType.UpdateGlobalError,
+        this.__mergedGlobalErrors__,
+      );
     }
   }
 
@@ -1230,9 +1246,9 @@ export abstract class AbstractNode<
    * @note Does not clear localErrors / internalErrors.
    */
   public clearExternalErrors(this: AbstractNode) {
-    if (this.#externalErrors.length === 0) return;
+    if (this.__externalErrors__.length === 0) return;
     if (!this.isRoot)
-      this.rootNode.removeFromExternalErrors(this.#externalErrors);
+      this.rootNode.removeFromExternalErrors(this.__externalErrors__);
     this.setExternalErrors([]);
   }
 
@@ -1248,9 +1264,9 @@ export abstract class AbstractNode<
     for (const error of errors)
       if (typeof error.key === 'number') deleteKeys.push(error.key);
     const nextErrors: ValidationError[] = [];
-    for (const error of this.#externalErrors)
+    for (const error of this.__externalErrors__)
       if (!error.key || !deleteKeys.includes(error.key)) nextErrors.push(error);
-    if (this.#externalErrors.length !== nextErrors.length)
+    if (this.__externalErrors__.length !== nextErrors.length)
       this.setExternalErrors(nextErrors);
   }
 
@@ -1259,17 +1275,17 @@ export abstract class AbstractNode<
    * @note Only used by root node. Virtual fields don't exist in the actual value
    *       but need to be included for schema validation.
    */
-  #enhancer: Value | undefined;
+  private __enhancer__: Value | undefined;
 
   /**
    * Gets the value used for validation, merging actual value with enhancer data.
    * @returns Combined value including virtual field values for complete schema validation
    * @note Only used by root node during validation.
    */
-  get #enhancedValue(): Value | Nullish {
+  private get __enhancedValue__(): Value | Nullish {
     const value = this.value;
     if (this.group === 'terminal' || value == null) return value;
-    const enhancer = this.#enhancer;
+    const enhancer = this.__enhancer__;
     if (enhancer === undefined || isEmptyObject(enhancer)) return value;
     return merge(cloneLite(enhancer), value);
   }
@@ -1278,11 +1294,14 @@ export abstract class AbstractNode<
    * Adds or updates a value in the enhancer for validation purposes
    * @param pointer - JSON Pointer path to the value location
    * @param value - Value to set in enhancer (typically from virtual/computed fields)
-   * @internal Internal implementation method. Do not call directly.
    * */
-  public adjustEnhancer(this: AbstractNode, pointer: string, value: any) {
-    if (this.isRoot) setValue(this.#enhancer, pointer, value);
-    else this.rootNode.adjustEnhancer(pointer, value);
+  protected __adjustEnhancer__(
+    this: AbstractNode,
+    pointer: string,
+    value: any,
+  ) {
+    if (this.isRoot) setValue(this.__enhancer__, pointer, value);
+    else (this.rootNode as AbstractNode).__adjustEnhancer__(pointer, value);
   }
 
   /**
@@ -1290,18 +1309,18 @@ export abstract class AbstractNode<
    * @note Only initialized for root node when validationMode is set.
    *       Created from validatorFactory or PluginManager.validator.
    */
-  #validator: ValidateFunction | undefined;
+  private __validator__: ValidateFunction | undefined;
 
   /**
    * Performs validation using the node's JsonSchema
    * @note Only available for rootNode
    * */
-  async #validate(
+  private async __validate__(
     this: AbstractNode,
     value: Value | Nullish,
   ): Promise<ValidationError[]> {
-    if (this.#validator === undefined) return [];
-    const errors = await this.#validator(value);
+    if (this.__validator__ === undefined) return [];
+    const errors = await this.__validator__(value);
     if (errors === null) return [];
     else return transformErrors(errors);
   }
@@ -1310,12 +1329,12 @@ export abstract class AbstractNode<
    * Performs validation when own value changes
    * @note Only works for rootNode
    */
-  async #handleValidation(this: AbstractNode) {
-    if (this.isRoot === false || this.#validator === undefined) return;
+  private async __handleValidation__(this: AbstractNode) {
+    if (this.isRoot === false || this.__validator__ === undefined) return;
 
-    const internalErrors = await this.#validate(this.#enhancedValue);
+    const internalErrors = await this.__validate__(this.__enhancedValue__);
 
-    if (this.#setGlobalErrors(internalErrors) === false) return;
+    if (this.__setGlobalErrors__(internalErrors) === false) return;
 
     const errorsByDataPath = new Map<
       ValidationError['dataPath'],
@@ -1328,8 +1347,8 @@ export abstract class AbstractNode<
     }
 
     const errorDataPaths = Array.from(errorsByDataPath.keys());
-    if (this.#errorDataPaths)
-      for (const dataPath of this.#errorDataPaths) {
+    if (this.__errorDataPaths__)
+      for (const dataPath of this.__errorDataPaths__) {
         if (errorDataPaths.includes(dataPath)) continue;
         this.find(dataPath)?.clearErrors();
       }
@@ -1347,7 +1366,7 @@ export abstract class AbstractNode<
           : errors,
       );
     }
-    this.#errorDataPaths = errorDataPaths;
+    this.__errorDataPaths__ = errorDataPaths;
   }
 
   /**
@@ -1356,23 +1375,23 @@ export abstract class AbstractNode<
    * @note If `ValidationMode.None` is set, an empty array is returned.
    */
   public async validate(this: AbstractNode) {
-    if (this.isRoot) await this.#handleValidation();
+    if (this.isRoot) await this.__handleValidation__();
     else await this.rootNode.validate();
     return this.globalErrors;
   }
 
   /** [readonly] Whether validation is enabled for this form */
-  public get validation(): boolean {
+  protected get __validationEnabled__(): boolean {
     return this.isRoot
-      ? this.#validator !== undefined
-      : this.rootNode.validation;
+      ? this.__validator__ !== undefined
+      : (this.rootNode as AbstractNode).__validationEnabled__;
   }
 
   /**
    * Prepares validator, only available for rootNode
    * @param validator ValidatorFactory, creates new one if not provided
    */
-  #prepareValidator(
+  private __prepareValidator__(
     this: AbstractNode,
     jsonSchema: JsonSchemaWithVirtual,
     validatorFactory?: ValidatorFactory,
@@ -1381,17 +1400,17 @@ export abstract class AbstractNode<
     if (!validationMode) return;
     const schema = stripSchemaExtensions(jsonSchema);
     try {
-      this.#validator =
+      this.__validator__ =
         validatorFactory?.(schema) || PluginManager.validator?.compile(schema);
-      if (this.#validator !== undefined)
-        this.#enhancer = getEmptyValue(this.schemaType);
+      if (this.__validator__ !== undefined)
+        this.__enhancer__ = getEmptyValue(this.schemaType);
     } catch (error: any) {
       const jsonSchemaError = new JsonSchemaError(
         'CIRCULAR_REFERENCE',
         formatCircularReferenceError(error.message, jsonSchema),
         { error, schema: jsonSchema },
       );
-      this.#validator = getFallbackValidator(jsonSchemaError, jsonSchema);
+      this.__validator__ = getFallbackValidator(jsonSchemaError, jsonSchema);
       console.error(jsonSchemaError);
     }
   }

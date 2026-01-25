@@ -9,7 +9,6 @@ import type {
   BranchNodeConstructorProps,
   HandleChange,
   SchemaNode,
-  SchemaNodeFactory,
   UnionSetValueOption,
 } from '../type';
 import {
@@ -26,7 +25,7 @@ import { omitEmptyObject } from './utils';
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   public override readonly type = 'object';
 
-  public override equals(
+  protected override __equals__(
     this: ObjectNode,
     left: ObjectValue | Nullish,
     right: ObjectValue | Nullish,
@@ -38,16 +37,15 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * Strategy used by the object node:
    *  - BranchStrategy: Handles complex child nodes with associated processing logic, including oneOf/if-then-else.
    *  - TerminalStrategy: Acts as a terminal node for object-type data with no child nodes and simple processing logic.
-   * @internal Internal implementation detail. Do not call directly.
    */
-  #strategy: ObjectNodeStrategy;
+  private __strategy__: ObjectNodeStrategy;
 
   /**
    * Gets the value of the object node.
    * @returns Object value or undefined (if empty) or null (if nullable)
    */
   public override get value() {
-    return this.#strategy.value;
+    return this.__strategy__.value;
   }
 
   /**
@@ -68,7 +66,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     input: ObjectValue | Nullish,
     option: UnionSetValueOption,
   ) {
-    this.#strategy.applyValue(input, option);
+    this.__strategy__.applyValue(input, option);
   }
 
   /**
@@ -76,7 +74,7 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * @returns List of child nodes
    */
   public override get children() {
-    return this.#strategy.children;
+    return this.__strategy__.children;
   }
 
   /**
@@ -84,18 +82,20 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    * @returns List of subnodes
    */
   public override get subnodes() {
-    return this.#strategy.subnodes;
+    return this.__strategy__.subnodes;
   }
 
   /**
    * Activates this ObjectNode and propagates activation to all child nodes.
    * @param actor - The node that requested activation
    * @returns {boolean} Whether activation was successful
-   * @internal Internal implementation method. Do not call directly.
    */
-  public override initialize(this: ObjectNode, actor?: SchemaNode): boolean {
-    if (super.initialize(actor)) {
-      this.#strategy.initialize?.();
+  protected override __initialize__(
+    this: ObjectNode,
+    actor?: SchemaNode,
+  ): boolean {
+    if (super.__initialize__(actor)) {
+      this.__strategy__.initialize?.();
       return true;
     }
     return false;
@@ -108,35 +108,10 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
         ? (value, batch) => super.onChange(value, batch)
         : (value, batch) => super.onChange(omitEmptyObject(value), batch);
     this.onChange = handleChange;
-    this.#strategy = this.#createStrategy(handleChange, properties.nodeFactory);
-    this.initialize();
-  }
-
-  /**
-   * Creates a strategy for the object node.
-   * @param nodeFactory - Node factory
-   * @returns Created strategy: TerminalStrategy | BranchStrategy
-   */
-  #createStrategy(
-    handleChange: HandleChange<ObjectValue | Nullish>,
-    nodeFactory: SchemaNodeFactory,
-  ) {
-    const handleRefresh = (value: ObjectValue | Nullish) => this.refresh(value);
-    const handleSetDefaultValue = (value: ObjectValue | Nullish) =>
-      this.setDefaultValue(value);
-    return this.group === 'terminal'
-      ? new TerminalStrategy(
-          this,
-          handleChange,
-          handleRefresh,
-          handleSetDefaultValue,
-        )
-      : new BranchStrategy(
-          this,
-          handleChange,
-          handleRefresh,
-          handleSetDefaultValue,
-          nodeFactory,
-        );
+    this.__strategy__ =
+      this.group === 'terminal'
+        ? new TerminalStrategy(this, handleChange)
+        : new BranchStrategy(this, handleChange, properties.nodeFactory);
+    this.__initialize__();
   }
 }

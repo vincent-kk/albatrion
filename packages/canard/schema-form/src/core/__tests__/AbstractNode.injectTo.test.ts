@@ -1205,12 +1205,13 @@ describe('AbstractNode.injectTo', () => {
   describe('Context Value Usage', () => {
     it('should receive context value in InjectHandlerContext', async () => {
       const onChange = vi.fn();
-      const testContext = { userId: 'user-123', permissions: ['read', 'write'] };
-      const injectFn = vi.fn(
-        (_value: string, ctx: InjectHandlerContext) => {
-          return { '../target': `user:${ctx.context.userId}` };
-        },
-      );
+      const testContext = {
+        userId: 'user-123',
+        permissions: ['read', 'write'],
+      };
+      const injectFn = vi.fn((_value: string, ctx: InjectHandlerContext) => {
+        return { '../target': `user:${ctx.context.userId}` };
+      });
 
       const jsonSchema = {
         type: 'object',

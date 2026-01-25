@@ -49,9 +49,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /** Callback function to handle value changes */
   private readonly __handleChange__: HandleChange<ObjectValue | Nullish>;
 
-  /** Callback function to handle refresh operations */
-  private readonly __handleRefresh__: Fn<[ObjectValue | Nullish]>;
-
   /** Array of schema property keys in order */
   private readonly __propertyKeys__: string[];
 
@@ -152,8 +149,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
     let enabled = false;
     for (let i = 0, l = this.__subnodes__.length; i < l; i++) {
       const childNode = this.__subnodes__[i].node;
-      (childNode as AbstractNode).initialize(this.__host__);
-      if (!enabled && childNode.computeEnabled) enabled = true;
+      // @ts-expect-error [internal] child node initialization
+      (childNode as AbstractNode).__initialize__(this.__host__);
+      // @ts-expect-error [internal] computeEnabled delegation
+      if (!enabled && childNode.__computeEnabled__) enabled = true;
     }
     if (enabled) this.__prepareProcessComputedProperties__();
   }
@@ -170,13 +169,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
   constructor(
     host: ObjectNode,
     handleChange: HandleChange<ObjectValue | Nullish>,
-    handleRefresh: Fn<[ObjectValue | Nullish]>,
-    handleSetDefaultValue: Fn<[ObjectValue | Nullish]>,
     nodeFactory: SchemaNodeFactory,
   ) {
     this.__host__ = host;
     this.__handleChange__ = handleChange;
-    this.__handleRefresh__ = handleRefresh;
 
     this.__value__ = host.defaultValue;
     this.__draft__ = host.defaultValue === null ? null : {};
@@ -302,7 +298,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__locked__ = false;
 
     this.__emitChange__(SetValueOption.Default);
-    handleSetDefaultValue(this.__value__);
+    // @ts-expect-error [internal] setDefaultValue delegation
+    this.__host__.__setDefaultValue__(this.__value__);
     this.__publishChildrenChange__();
 
     this.__prepareCompositionChildren__();
@@ -364,8 +361,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
       this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
     if (option & SetValueOption.Propagate)
       this.__propagate__(current, draft, replace, option);
-    if (option & SetValueOption.Refresh) this.__handleRefresh__(current);
-    if (option & SetValueOption.Isolate) host.updateComputedProperties();
+    // @ts-expect-error [internal] refresh delegation
+    if (option & SetValueOption.Refresh) host.__refresh__(current);
+    // @ts-expect-error [internal] computed property update
+    if (option & SetValueOption.Isolate) host.__updateComputedProperties__();
     if (option & SetValueOption.PublishUpdateEvent)
       host.publish(
         NodeEventType.UpdateValue,
@@ -394,7 +393,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (draft === undefined) return undefined;
     if (draft === null) return nullable ? null : {};
     if (replace || base == null) return this.__processValue__(draft, normalize);
-    if (isEmptyObject(draft) || this.__host__.equals(base, draft)) return false;
+    // @ts-expect-error [internal] equals delegation
+    if (isEmptyObject(draft) || this.__host__.__equals__(base, draft))
+      return false;
     return this.__processValue__({ ...base, ...draft }, normalize);
   }
 
@@ -504,14 +505,17 @@ export class BranchStrategy implements ObjectNodeStrategy {
     const previousOneOfChildNodeMap =
       previous > -1 ? this.__oneOfChildNodeMapList__[previous] : null;
     if (previousOneOfChildNodeMap)
-      for (const child of previousOneOfChildNodeMap.values())
-        child.node.reset({ updateScoped: true });
+      for (const child of previousOneOfChildNodeMap.values()) {
+        // @ts-expect-error [internal] reset child node
+        child.node.__reset__({ updateScoped: true });
+      }
     if (oneOfChildNodeMap)
       for (const child of oneOfChildNodeMap.values()) {
         const node = child.node;
         const previousNode = previousOneOfChildNodeMap?.get(node.name)?.node;
         const previousValue = this.__value__?.[node.name];
-        node.reset({
+        // @ts-expect-error [internal] reset child node
+        node.__reset__({
           updateScoped: true,
           preferLatest:
             isolation ||
@@ -526,7 +530,8 @@ export class BranchStrategy implements ObjectNodeStrategy {
             ? previousValue
             : undefined,
         });
-        node.updateComputedPropertiesRecursively();
+        // @ts-expect-error [internal] recursive computed property update
+        node.__updateComputedPropertiesRecursively__();
       }
     this.__locked__ = false;
 
@@ -560,8 +565,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
       for (let i = 0, l = disables.length; i < l; i++) {
         const anyOfChildNodes =
           this.__anyOfChildNodeMapList__[disables[i]].values();
-        for (const child of anyOfChildNodes)
-          child.node.reset({ updateScoped: true });
+        for (const child of anyOfChildNodes) {
+          // @ts-expect-error [internal] reset child node
+          child.node.__reset__({ updateScoped: true });
+        }
       }
     const enables = isolation ? current : differenceLite(current, previous);
     if (enables.length > 0)
@@ -570,13 +577,15 @@ export class BranchStrategy implements ObjectNodeStrategy {
           this.__anyOfChildNodeMapList__[enables[i]].values();
         for (const child of anyOfChildNodes) {
           const node = child.node;
-          node.reset({
+          // @ts-expect-error [internal] reset child node
+          node.__reset__({
             updateScoped: true,
             preferLatest: isolation,
             applyDerivedValue: true,
             fallbackValue: this.__value__?.[node.name],
           });
-          node.updateComputedPropertiesRecursively();
+          // @ts-expect-error [internal] recursive computed property update
+          node.__updateComputedPropertiesRecursively__();
         }
       }
     this.__locked__ = false;
@@ -627,8 +636,10 @@ export class BranchStrategy implements ObjectNodeStrategy {
     );
     this.__expired__ = false;
     this.__processComputedProperties__(this.__draft__);
-    if (this.__host__.validation)
-      this.__host__.adjustEnhancer(
+    // @ts-expect-error [internal] validationEnabled delegation
+    if (this.__host__.__validationEnabled__)
+      // @ts-expect-error [internal] enhancer adjustment
+      this.__host__.__adjustEnhancer__(
         joinSegment(this.__host__.path, ENHANCED_KEY),
         this.__oneOfIndex__,
       );
