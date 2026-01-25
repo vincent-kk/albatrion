@@ -4,7 +4,11 @@ import { delay } from '@winglet/common-utils';
 
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
-import { NodeEventType, SetValueOption, type UnionNodeEventType } from '../nodes';
+import {
+  NodeEventType,
+  SetValueOption,
+  type UnionNodeEventType,
+} from '../nodes';
 import type { StringNode } from '../nodes/StringNode';
 import type { VirtualNode } from '../nodes/VirtualNode';
 
@@ -167,6 +171,7 @@ describe('VirtualNode', () => {
         [NodeEventType.UpdateValue]: {
           previous: [undefined, undefined],
           current: ['2021-03-01', undefined],
+          inject: true,
         },
       },
     });
@@ -263,7 +268,10 @@ describe('VirtualNode', () => {
       virtualNode?.subscribe(({ type }) => events.push(type));
 
       // setValue with Overwrite (which includes Refresh flag)
-      virtualNode?.setValue(['2021-01-01', '2021-01-02'], SetValueOption.Overwrite);
+      virtualNode?.setValue(
+        ['2021-01-01', '2021-01-02'],
+        SetValueOption.Overwrite,
+      );
       await delay();
 
       // RequestRefresh should be published
@@ -294,7 +302,10 @@ describe('VirtualNode', () => {
       virtualNode?.subscribe(({ type }) => events.push(type));
 
       // setValue with Default (no Refresh flag)
-      virtualNode?.setValue(['2021-01-01', '2021-01-02'], SetValueOption.Default);
+      virtualNode?.setValue(
+        ['2021-01-01', '2021-01-02'],
+        SetValueOption.Default,
+      );
       await delay();
 
       // RequestRefresh should NOT be published
@@ -330,7 +341,10 @@ describe('VirtualNode', () => {
       expect(endDateNode?.value).toBeUndefined();
 
       // Set value on virtual node
-      virtualNode?.setValue(['2021-05-01', '2021-05-31'], SetValueOption.Overwrite);
+      virtualNode?.setValue(
+        ['2021-05-01', '2021-05-31'],
+        SetValueOption.Overwrite,
+      );
       await delay();
 
       // Reference nodes should be updated
@@ -368,12 +382,19 @@ describe('VirtualNode', () => {
       endDateNode?.subscribe(({ type }) => endDateEvents.push(type));
 
       // Set value on virtual node
-      virtualNode?.setValue(['2021-06-01', '2021-06-30'], SetValueOption.Overwrite);
+      virtualNode?.setValue(
+        ['2021-06-01', '2021-06-30'],
+        SetValueOption.Overwrite,
+      );
       await delay();
 
       // Both reference nodes should receive UpdateValue events
-      expect(startDateEvents.some((e) => e & NodeEventType.UpdateValue)).toBe(true);
-      expect(endDateEvents.some((e) => e & NodeEventType.UpdateValue)).toBe(true);
+      expect(startDateEvents.some((e) => e & NodeEventType.UpdateValue)).toBe(
+        true,
+      );
+      expect(endDateEvents.some((e) => e & NodeEventType.UpdateValue)).toBe(
+        true,
+      );
     });
   });
 });

@@ -393,6 +393,7 @@ describe('AllOf Schema', () => {
           current: { firstName: 'John', lastName: 'Doe' },
           previous: {},
           settled: false,
+          inject: true,
         },
       },
     });

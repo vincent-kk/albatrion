@@ -609,6 +609,7 @@ describe('AbstractNode', () => {
         [NodeEventType.UpdateValue]: {
           current: [undefined, '2021-01-02'],
           previous: [undefined, undefined],
+          inject: true,
         },
       },
     });
@@ -628,6 +629,7 @@ describe('AbstractNode', () => {
           },
           previous: {},
           settled: true,
+          inject: true,
         },
       },
     });

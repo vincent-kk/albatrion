@@ -1957,6 +1957,61 @@ describe('AbstractNode.injectTo', () => {
         expect(node.find('/fieldA')?.active).toBe(false);
         expect(node.find('/fieldB')?.active).toBe(true);
       });
+
+      it('should preserve common field value when directly changing oneOf condition field', async () => {
+        const onChange = vi.fn();
+        const jsonSchema = {
+          type: 'object',
+          properties: {
+            trigger: {
+              type: 'string',
+              injectTo: (value: string) => ({
+                '/category': value === 'switch' ? 'B' : 'A',
+              }),
+            },
+            category: {
+              type: 'string',
+              enum: ['A', 'B'],
+              default: 'A',
+            },
+          },
+          oneOf: [
+            {
+              '&if': "./category === 'A'",
+              properties: {
+                fieldA: { type: 'string', default: 'A-default' },
+              },
+            },
+            {
+              '&if': "./category === 'B'",
+              properties: {
+                fieldB: { type: 'string', default: 'B-default' },
+              },
+            },
+          ],
+        } satisfies JsonSchema;
+
+        const node = nodeFromJsonSchema({ jsonSchema, onChange });
+        await wait();
+
+        // 초기 상태: category='A', fieldA가 active
+        expect(node.find('/category')?.value).toBe('A');
+        expect(node.find('/fieldA')?.active).toBe(true);
+        expect(node.find('/fieldB')?.active).toBe(false);
+
+        // category를 직접 'B'로 변경 (trigger를 거치지 않고)
+        const categoryNode = node.find('/category');
+        if (categoryNode?.type === 'string') {
+          categoryNode.setValue('B');
+        }
+        await wait();
+
+        // category 값이 'B'로 유지되고 oneOf 분기가 변경되어야 함
+        expect(node.find('/category')?.value).toBe('B');
+        expect(node.find('/fieldA')?.active).toBe(false);
+        expect(node.find('/fieldB')?.active).toBe(true);
+        expect(node.find('/fieldB')?.value).toBe('B-default');
+      });
     });
 
     describe('nested oneOf/anyOf with injection', () => {

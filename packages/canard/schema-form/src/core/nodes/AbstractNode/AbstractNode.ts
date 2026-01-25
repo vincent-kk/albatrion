@@ -1066,9 +1066,10 @@ export abstract class AbstractNode<
     if (this.__initialized__) return;
     const injectHandler = this.jsonSchema.injectTo;
     if (typeof injectHandler !== 'function') return;
-    this.subscribe(({ type }) => {
+    this.subscribe(({ type, options }) => {
       if (type & NodeEventType.UpdateValue) {
-        this.publish(NodeEventType.RequestInjection);
+        if (options?.[NodeEventType.UpdateValue]?.inject)
+          this.publish(NodeEventType.RequestInjection);
         return;
       }
       if (type & NodeEventType.RequestInjection) {

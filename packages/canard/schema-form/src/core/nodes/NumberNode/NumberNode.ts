@@ -87,6 +87,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
     const retain = (option & SetValueOption.Replace) === 0;
+    const inject = (option & SetValueOption.PreventInjection) === 0;
 
     const previous = this.__value__;
     const current = this.__parseValue__(input);
@@ -102,7 +103,7 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
       this.publish(
         NodeEventType.UpdateValue,
         current,
-        { previous, current },
+        { previous, current, inject },
         this.initialized,
       );
   }

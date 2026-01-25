@@ -126,6 +126,7 @@ describe('ArrayNode-Terminal', () => {
         [NodeEventType.UpdateValue]: {
           previous: [],
           current: [true, false, true],
+          inject: true,
         },
       },
     });

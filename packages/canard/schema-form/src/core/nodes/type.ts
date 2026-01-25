@@ -289,6 +289,7 @@ export type NodeEventOptions = {
     previous: any;
     current: any;
     settled?: boolean;
+    inject?: boolean;
   };
   [NodeEventType.UpdateState]: void;
   [NodeEventType.UpdateGlobalState]: void;
@@ -341,6 +342,8 @@ export enum SetValueOption {
   Normalize = BIT_FLAG_06,
   /** Trigger a refresh to update the FormTypeInput */
   PublishUpdateEvent = BIT_FLAG_07,
+  /** Prevent the injection of the node's value */
+  PreventInjection = BIT_FLAG_08,
   /** Update the value and trigger onChange with batch mode */
   BatchedEmitChange = EmitChange | Batch,
   /** Default SetValue option */
@@ -348,7 +351,7 @@ export enum SetValueOption {
   /** Default SetValue option with batch mode */
   BatchDefault = Batch | Default,
   /** Reset the node to its initial value */
-  Reset = Replace | Propagate | BatchDefault,
+  Reset = Replace | Propagate | BatchDefault | PreventInjection,
   /** Reset the node to its initial value and isolate the computed properties */
   IsolateReset = Reset | Isolate,
   /** Reset the node to its initial value and trigger a refresh */

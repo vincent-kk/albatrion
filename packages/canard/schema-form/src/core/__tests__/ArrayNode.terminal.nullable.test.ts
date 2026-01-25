@@ -171,6 +171,7 @@ describe('ArrayNode nullable functionality', () => {
         [NodeEventType.UpdateValue]: {
           previous: [],
           current: null,
+          inject: true,
         },
       },
     });

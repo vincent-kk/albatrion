@@ -213,6 +213,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   ) {
     const host = this.__host__;
     const retain = (option & SetValueOption.Replace) === 0;
+    const inject = (option & SetValueOption.PreventInjection) === 0;
 
     const previous = this.__value__ ? [...this.__value__] : this.__value__;
     const current = this.__parseValue__(input);
@@ -230,7 +231,7 @@ export class TerminalStrategy implements ArrayNodeStrategy {
       host.publish(
         NodeEventType.UpdateValue,
         current,
-        { previous, current },
+        { previous, current, inject },
         host.initialized,
       );
   }

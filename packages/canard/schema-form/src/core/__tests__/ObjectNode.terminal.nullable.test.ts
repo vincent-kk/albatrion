@@ -203,6 +203,7 @@ describe('ObjectNode nullable functionality', () => {
           previous: {},
           current: null,
           settled: false,
+          inject: true,
         },
       },
     });

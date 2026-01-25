@@ -318,6 +318,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     if (this.__locked__ || this.__idle__) return;
     const host = this.__host__;
     const settled = (option & SetValueOption.Isolate) === 0;
+    const inject = (option & SetValueOption.PreventInjection) === 0;
 
     const previous = [...this.__value__];
     this.__value__ = this.__toArray__();
@@ -331,7 +332,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
       host.publish(
         NodeEventType.UpdateValue,
         current,
-        { previous, current },
+        { previous, current, inject },
         settled && host.initialized,
       );
 

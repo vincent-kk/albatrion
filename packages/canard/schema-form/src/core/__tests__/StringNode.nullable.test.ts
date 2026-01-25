@@ -246,6 +246,7 @@ describe('StringNode nullable functionality', () => {
         [NodeEventType.UpdateValue]: {
           previous: undefined,
           current: null,
+          inject: true,
         },
       },
     });

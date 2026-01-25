@@ -67,6 +67,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
     const retain = (option & SetValueOption.Replace) === 0;
+    const inject = (option & SetValueOption.PreventInjection) === 0;
 
     const previous = this.__value__;
     const current = this.__parseValue__(input);
@@ -82,7 +83,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
       this.publish(
         NodeEventType.UpdateValue,
         current,
-        { previous, current },
+        { previous, current, inject },
         this.initialized,
       );
   }

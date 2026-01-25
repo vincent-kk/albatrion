@@ -103,6 +103,7 @@ describe('StringNode', () => {
         [NodeEventType.UpdateValue]: {
           previous: undefined,
           current: 'Ron',
+          inject: true,
         },
       },
     });

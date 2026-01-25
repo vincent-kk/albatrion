@@ -64,6 +64,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
     const retain = (option & SetValueOption.Replace) === 0;
+    const inject = (option & SetValueOption.PreventInjection) === 0;
 
     const previous = this.__value__;
     const current = this.__parseValue__(input);
@@ -79,7 +80,7 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
       this.publish(
         NodeEventType.UpdateValue,
         current,
-        { previous, current },
+        { previous, current, inject },
         this.initialized,
       );
   }

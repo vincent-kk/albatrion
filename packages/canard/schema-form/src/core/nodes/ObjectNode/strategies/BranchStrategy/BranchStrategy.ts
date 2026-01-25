@@ -337,8 +337,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (this.__locked__) return;
     const host = this.__host__;
     const replace = (option & SetValueOption.Replace) > 0;
-    const settled = (option & SetValueOption.Isolate) === 0;
     const normalize = (option & SetValueOption.Normalize) > 0;
+    const settled = (option & SetValueOption.Isolate) === 0;
+    const inject = (option & SetValueOption.PreventInjection) === 0;
 
     const base = this.__value__;
     const draft = this.__draft__;
@@ -369,7 +370,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       host.publish(
         NodeEventType.UpdateValue,
         current,
-        { previous, current, settled },
+        { previous, current, settled, inject },
         settled && host.initialized,
       );
   }

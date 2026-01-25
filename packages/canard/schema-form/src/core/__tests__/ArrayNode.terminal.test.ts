@@ -191,6 +191,7 @@ describe('ArrayNode terminal functionality', () => {
         [NodeEventType.UpdateValue]: {
           previous: [],
           current: [1, 2, 3],
+          inject: true,
         },
       },
     });
