@@ -48,12 +48,55 @@ const inputExists = (testId: string): boolean => {
 };
 
 /**
+ * Helper: Creates a Form component with ref for testing advanced features.
+ * Reduces boilerplate for FormHandle-based tests.
+ *
+ * NOTE: This helper is available for future refactoring.
+ * Current tests use inline FormWithRef patterns for explicitness.
+ *
+ * @example
+ * const { formHandle, FormWithRef } = _createFormWithRef(schema, formTypeInputDefs);
+ * render(<FormWithRef />);
+ * await vi.advanceTimersByTimeAsync(100);
+ * formHandle.current?.setValue({ name: 'test' });
+ */
+const _createFormWithRef = <TSchema extends JsonSchema>(
+  schema: TSchema,
+  formTypeInputDefs: FormTypeInputDefinition[],
+) => {
+  const formHandle: { current: FormHandle<TSchema> | null } = { current: null };
+
+  const FormWithRef = () => {
+    const ref = useRef<FormHandle<TSchema>>(null);
+    formHandle.current = ref.current;
+
+    // Update formHandle.current after ref is assigned
+    useEffect(() => {
+      formHandle.current = ref.current;
+    });
+
+    return (
+      <Form
+        ref={ref}
+        jsonSchema={schema}
+        formTypeInputDefinitions={formTypeInputDefs}
+      />
+    );
+  };
+
+  return { formHandle, FormWithRef };
+};
+
+/**
  * SchemaNodeProxy Refresh Integration Tests
  *
- * These tests verify that the refresh mechanism works correctly at the component level:
- * 1. useSchemaNodeTracker detects RequestRefresh events
- * 2. Components re-render when RequestRefresh is published
- * 3. defaultValue prop stability through useConstant
+ * Tests verify the refresh mechanism at the component level:
+ * - useSchemaNodeTracker detects RequestRefresh events
+ * - Components re-render when RequestRefresh is published
+ * - defaultValue prop stability through useConstant
+ *
+ * @see src/core/nodes/AbstractNode/AbstractNode.ts - Event publishing
+ * @see src/hooks/useSchemaNodeTracker.ts - Event subscription
  */
 describe('SchemaNodeProxy Refresh Integration', () => {
   beforeEach(() => {
@@ -104,8 +147,11 @@ describe('SchemaNodeProxy Refresh Integration', () => {
         await vi.advanceTimersByTimeAsync(100);
       });
 
-      // Component should have re-rendered
-      expect(renderCount).toBeGreaterThan(initialRenderCount);
+      // Component should have re-rendered due to RequestRefresh event
+      expect(
+        renderCount,
+        'Component should re-render when RequestRefresh is published via setValue with Overwrite option',
+      ).toBeGreaterThan(initialRenderCount);
     });
 
     it('should NOT publish RequestRefresh when SetValueOption.Default is used', async () => {
@@ -146,8 +192,11 @@ describe('SchemaNodeProxy Refresh Integration', () => {
         await vi.advanceTimersByTimeAsync(100);
       });
 
-      // RequestRefresh should not be in events
-      expect(events.some((e) => e & NodeEventType.RequestRefresh)).toBe(false);
+      // RequestRefresh should not be in events when using Default option
+      expect(
+        events.some((e) => e & NodeEventType.RequestRefresh),
+        'SetValueOption.Default should not trigger RequestRefresh event',
+      ).toBe(false);
     });
   });
 
@@ -399,9 +448,16 @@ describe('SchemaNodeProxy Refresh Integration', () => {
 /**
  * Advanced Feature Tests using FormHandle ref
  *
- * Tests for oneOf, anyOf, if-then-else, injectTo, and computed.derived
- * These tests verify that the advanced schema features work correctly
- * when values are set via FormHandle.setValue()
+ * Tests for JSON Schema advanced features:
+ * - oneOf: Exclusive conditional schemas (only one branch active)
+ * - anyOf: Non-exclusive conditional schemas (multiple branches can be active)
+ * - if-then-else: Conditional field rendering based on conditions
+ * - injectTo: Value injection from source to target fields
+ * - computed.derived: Computed values based on sibling field expressions
+ *
+ * All tests use FormHandle.setValue() to verify form state and DOM synchronization.
+ *
+ * @see CLAUDE.md#6-schema-composition for conditional schema specifications
  */
 describe('FormHandle Advanced Feature Integration', () => {
   beforeEach(() => {
@@ -412,7 +468,19 @@ describe('FormHandle Advanced Feature Integration', () => {
     vi.useRealTimers();
   });
 
+  /**
+   * oneOf: Exclusive conditional schema tests
+   *
+   * oneOf ensures only ONE branch is active at a time.
+   * When condition changes, the previous branch's fields are removed
+   * and new branch's fields appear.
+   */
   describe('oneOf conditional schema', () => {
+    /**
+     * Scenario: Switch between 'game' and 'movie' categories
+     * - Initial: category='game' → platform field visible
+     * - After switch: category='movie' → director field visible, platform removed
+     */
     it('should switch between oneOf branches when condition field changes via FormHandle', async () => {
       const schema = {
         type: 'object',
@@ -975,7 +1043,20 @@ describe('FormHandle Advanced Feature Integration', () => {
     });
   });
 
+  /**
+   * injectTo: Value injection between fields
+   *
+   * injectTo allows a field to automatically update other fields
+   * when its value changes. Supports:
+   * - Single target injection
+   * - Multiple target injection
+   * - Chain injection (A → B → C)
+   * - Conditional schema triggering via injection
+   */
   describe('injectTo field injection', () => {
+    /**
+     * Basic injection: source field updates target field automatically
+     */
     it('should inject value to sibling field when source changes', async () => {
       const schema = {
         type: 'object',
@@ -1259,7 +1340,20 @@ describe('FormHandle Advanced Feature Integration', () => {
     });
   });
 
+  /**
+   * computed.derived: Automatic value computation
+   *
+   * Derived values are automatically computed from expressions
+   * referencing sibling fields. Supports:
+   * - Arithmetic operations (price * quantity)
+   * - String concatenation (lastName + firstName)
+   * - Conditional expressions (age >= 18 ? 'adult' : 'minor')
+   * - Parent path references (../../basePrice)
+   */
   describe('computed.derived values', () => {
+    /**
+     * Arithmetic: totalPrice = price × quantity
+     */
     it('should compute derived value from sibling fields', async () => {
       const schema = {
         type: 'object',
@@ -1775,11 +1869,16 @@ describe('FormHandle Advanced Feature Integration', () => {
 /**
  * Edge Case Tests
  *
- * Tests for edge cases that may not be covered by standard tests:
- * - Rendering performance (excessive re-renders)
- * - Error handling (invalid schemas, null refs)
- * - Memory leak prevention
- * - Real async scenarios without fake timers
+ * Tests for edge cases ensuring system robustness:
+ *
+ * 1. **Rendering Performance**: Verify render count limits during rapid updates
+ * 2. **Error Handling**: Handle invalid states gracefully (null refs, undefined values)
+ * 3. **Memory Management**: Prevent subscription leaks on mount/unmount cycles
+ * 4. **Complex Value Types**: Support deeply nested objects and arrays
+ * 5. **Concurrent Updates**: Handle multiple sibling updates simultaneously
+ *
+ * @see src/hooks/useSchemaNodeTracker.ts - Subscription management
+ * @see src/core/nodes/AbstractNode/AbstractNode.ts - Event batching
  */
 describe('Edge Cases', () => {
   beforeEach(() => {
@@ -1836,7 +1935,10 @@ describe('Edge Cases', () => {
       const rendersPerUpdate = rendersForUpdates / updateCount;
 
       // Each update should not cause more than MAX_EXPECTED_RENDERS_PER_UPDATE renders
-      expect(rendersPerUpdate).toBeLessThanOrEqual(MAX_EXPECTED_RENDERS_PER_UPDATE);
+      expect(
+        rendersPerUpdate,
+        `Each setValue should cause at most ${MAX_EXPECTED_RENDERS_PER_UPDATE} renders, but got ${rendersPerUpdate.toFixed(2)} renders per update`,
+      ).toBeLessThanOrEqual(MAX_EXPECTED_RENDERS_PER_UPDATE);
     });
 
     it('should batch multiple setValue calls efficiently', async () => {
@@ -2062,8 +2164,11 @@ describe('Edge Cases', () => {
         });
       }
 
-      // All subscriptions should be cleaned up
-      expect(unsubscribeCount).toBe(subscribeCount);
+      // All subscriptions should be cleaned up to prevent memory leaks
+      expect(
+        unsubscribeCount,
+        `All ${subscribeCount} subscriptions should be unsubscribed, but only ${unsubscribeCount} were cleaned up`,
+      ).toBe(subscribeCount);
     });
 
     it('should handle component remount with same schema', async () => {
