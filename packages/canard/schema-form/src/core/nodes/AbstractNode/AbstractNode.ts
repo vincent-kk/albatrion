@@ -54,6 +54,7 @@ import {
 import {
   EventCascade,
   afterMicrotask,
+  checkDefinedValue,
   computeFactory,
   depthFirstSearch,
   findNode,
@@ -209,6 +210,9 @@ export abstract class AbstractNode<
   /** Node's current default value */
   private __defaultValue__: Value | Nullish;
 
+  /** Flag indicating whether the node's default value is defined */
+  private __isDefinedDefaultValue__: boolean = false;
+
   /**
    * Node's default value
    *  - set: `setDefaultValue`, can only be updated by inherited nodes
@@ -221,10 +225,14 @@ export abstract class AbstractNode<
   /**
    * Changes the node's default value, can only be performed by inherited nodes
    * For use in `constructor`
-   * @param value input value for updating defaultValue
+   * @param defaultValue input value for updating defaultValue
    */
-  protected __setDefaultValue__(this: AbstractNode, value: Value | Nullish) {
-    this.__defaultValue__ = value;
+  protected __setDefaultValue__(
+    this: AbstractNode,
+    defaultValue: Value | Nullish,
+  ) {
+    this.__defaultValue__ = defaultValue;
+    this.__isDefinedDefaultValue__ = checkDefinedValue(defaultValue);
   }
 
   /**
@@ -357,8 +365,6 @@ export abstract class AbstractNode<
     this.group = getNodeGroup(this.schemaType, this.jsonSchema);
     this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
 
-    this.__defaultValue__ =
-      defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema);
     this.__name__ = name || '';
     this.__escapedName__ = escapeSegment(this.__name__);
     this.__path__ = joinSegment(this.parentNode?.path, this.__escapedName__);
@@ -386,6 +392,9 @@ export abstract class AbstractNode<
       this.rootNode.jsonSchema,
     );
 
+    this.__setDefaultValue__(
+      defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema),
+    );
     this.__updateScoped__();
 
     if (this.isRoot) {
@@ -800,7 +809,7 @@ export abstract class AbstractNode<
     let value;
     if ('inputValue' in options) value = options.inputValue;
     else if (options.preferLatest) {
-      if (options.checkInitialValueFirst && this.__defaultValue__ !== undefined)
+      if (options.checkDefaultValueFirst && this.__isDefinedDefaultValue__)
         value = this.__defaultValue__;
       else
         value =

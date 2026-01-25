@@ -521,7 +521,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
             isolation ||
             (node.type === previousNode?.type && isTerminalType(node.type)),
           applyDerivedValue: true,
-          checkInitialValueFirst: isolation === false,
+          checkDefaultValueFirst: isolation === false,
           fallbackValue: validateSchemaType(
             previousValue,
             node.type,

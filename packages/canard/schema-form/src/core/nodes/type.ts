@@ -373,8 +373,8 @@ export interface ResetOptions<Value = unknown> {
   preferLatest?: boolean;
   /** Whether to apply the derived value when preferLatest is true and derivedValue is defined */
   applyDerivedValue?: boolean;
-  /** Whether to check the initial value first when preferLatest is true */
-  checkInitialValueFirst?: boolean;
+  /** Whether to check the default value first when preferLatest is true */
+  checkDefaultValueFirst?: boolean;
   /** Explicit input value with highest priority - overrides all other values */
   inputValue?: Value | null;
   /** Fallback value used in the default value calculation logic */
