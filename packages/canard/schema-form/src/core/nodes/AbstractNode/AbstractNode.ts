@@ -806,7 +806,7 @@ export abstract class AbstractNode<
   protected __reset__(this: AbstractNode, options: ResetOptions<Value> = {}) {
     if (options.updateScoped) this.__updateScoped__();
 
-    let value;
+    let value: Value | Nullish;
     if ('inputValue' in options) value = options.inputValue;
     else if (options.preferLatest) {
       if (options.checkDefaultValueFirst && this.__isDefinedDefaultValue__)
