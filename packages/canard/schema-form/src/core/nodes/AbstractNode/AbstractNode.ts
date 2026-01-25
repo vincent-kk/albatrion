@@ -1239,7 +1239,9 @@ export abstract class AbstractNode<
   public clearExternalErrors(this: AbstractNode) {
     if (this.__externalErrors__.length === 0) return;
     if (!this.isRoot)
-      this.rootNode.removeFromExternalErrors(this.__externalErrors__);
+      (this.rootNode as AbstractNode).__removeExternalErrors__(
+        this.__externalErrors__,
+      );
     this.setExternalErrors([]);
   }
 
@@ -1247,7 +1249,7 @@ export abstract class AbstractNode<
    * Finds and removes specific errors from the externally received errors.
    * @param errors - List of errors to remove
    */
-  public removeFromExternalErrors(
+  private __removeExternalErrors__(
     this: AbstractNode,
     errors: ValidationError[],
   ) {
