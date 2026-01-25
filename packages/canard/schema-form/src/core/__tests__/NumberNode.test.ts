@@ -103,6 +103,7 @@ describe('NumberNode', () => {
         [NodeEventType.UpdateValue]: {
           previous: undefined,
           current: 35,
+          inject: true,
         },
       },
     });

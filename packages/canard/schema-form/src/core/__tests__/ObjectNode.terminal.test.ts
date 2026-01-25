@@ -198,6 +198,7 @@ describe('ObjectNode terminal functionality', () => {
         [NodeEventType.UpdateValue]: {
           previous: {},
           current: testValue,
+          inject: true,
         },
       },
     });

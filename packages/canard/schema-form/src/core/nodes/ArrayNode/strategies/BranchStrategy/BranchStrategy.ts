@@ -318,6 +318,7 @@ export class BranchStrategy implements ArrayNodeStrategy {
     if (this.__locked__ || this.__idle__) return;
     const host = this.__host__;
     const settled = (option & SetValueOption.Isolate) === 0;
+    const inject = (option & SetValueOption.PreventInjection) === 0;
 
     const previous = [...this.__value__];
     this.__value__ = this.__toArray__();
@@ -325,13 +326,13 @@ export class BranchStrategy implements ArrayNodeStrategy {
 
     if (option & SetValueOption.EmitChange)
       this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
-    // @ts-expect-error [internal] refresh delegation
-    if (option & SetValueOption.Refresh) host.__refresh__(current);
+    if (option & SetValueOption.Refresh)
+      host.publish(NodeEventType.RequestRefresh);
     if (option & SetValueOption.PublishUpdateEvent)
       host.publish(
         NodeEventType.UpdateValue,
         current,
-        { previous, current },
+        { previous, current, inject },
         settled && host.initialized,
       );
 

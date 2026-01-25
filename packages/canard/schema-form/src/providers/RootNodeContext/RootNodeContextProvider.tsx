@@ -92,7 +92,7 @@ export const RootNodeContextProvider = <
           externalValidationMode ??
           DEFAULT_VALIDATION_MODE,
         validatorFactory: inputValidatorFactory || externalValidatorFactory,
-        context: contextNode,
+        contextNode,
       }),
     [
       jsonSchema,

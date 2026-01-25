@@ -235,14 +235,30 @@ node.enhancedValue   // Includes virtual/computed fields for validation
 
 ```typescript
 enum NodeEventType {
-  Initialized = 1,                    // Node created and initialized
-  UpdateValue = 4,                    // Value changed
-  UpdateComputedProperties = 128,     // Computed properties need recalculation
-  RequestRefresh = 4096,              // UI refresh needed
-  UpdateChildren = 64,                // Array children changed
-  RequestEmitChange = 8192,           // Request onChange callback
+  // Lifecycle
+  Initialized,              // Node created and initialized
+
+  // Value & State
+  UpdateValue,              // Value changed
+  UpdateState,              // Node state changed (touched, dirty, etc.)
+  UpdateError,              // Validation errors changed
+  UpdateComputedProperties, // Computed properties need recalculation
+  UpdateChildren,           // Array/Object children changed
+  UpdatePath,               // Node path changed (e.g., array item reordering)
+
+  // UI Sync
+  RequestRefresh,           // Sync uncontrolled component's defaultValue with UI (internal)
+  RequestRemount,           // Force full component remount (external API)
+
+  // System
+  RequestEmitChange,        // Request onChange callback
+  RequestInjection,         // Request injection propagation
 }
 ```
+
+> **Note**: `RequestRefresh` vs `RequestRemount`:
+> - `RequestRefresh`: 내부 시스템에서 사용, 비제어 컴포넌트의 `defaultValue`를 UI와 동기화
+> - `RequestRemount`: 외부 API, 사용자가 `node.publish(NodeEventType.RequestRemount)`로 직접 호출
 
 #### Event Timing (After Initialization)
 

@@ -180,6 +180,7 @@ describe('ObjectNode', () => {
           current: { name: 'Ron', age: 28 },
           previous: {},
           settled: false,
+          inject: true,
         },
       },
     });
@@ -261,6 +262,7 @@ describe('ObjectNode', () => {
           current: { name: 'John' },
           previous: {},
           settled: true,
+          inject: true,
         },
       },
     });
@@ -946,6 +948,7 @@ describe('ObjectNode', () => {
             current: { 'ünicøde-näme': 'Ron', пользователь: 28 },
             previous: {},
             settled: false,
+            inject: true,
           },
         },
       });

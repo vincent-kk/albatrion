@@ -337,8 +337,9 @@ export class BranchStrategy implements ObjectNodeStrategy {
     if (this.__locked__) return;
     const host = this.__host__;
     const replace = (option & SetValueOption.Replace) > 0;
-    const settled = (option & SetValueOption.Isolate) === 0;
     const normalize = (option & SetValueOption.Normalize) > 0;
+    const settled = (option & SetValueOption.Isolate) === 0;
+    const inject = (option & SetValueOption.PreventInjection) === 0;
 
     const base = this.__value__;
     const draft = this.__draft__;
@@ -361,15 +362,15 @@ export class BranchStrategy implements ObjectNodeStrategy {
       this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
     if (option & SetValueOption.Propagate)
       this.__propagate__(current, draft, replace, option);
-    // @ts-expect-error [internal] refresh delegation
-    if (option & SetValueOption.Refresh) host.__refresh__(current);
+    if (option & SetValueOption.Refresh)
+      host.publish(NodeEventType.RequestRefresh);
     // @ts-expect-error [internal] computed property update
     if (option & SetValueOption.Isolate) host.__updateComputedProperties__();
     if (option & SetValueOption.PublishUpdateEvent)
       host.publish(
         NodeEventType.UpdateValue,
         current,
-        { previous, current, settled },
+        { previous, current, settled, inject },
         settled && host.initialized,
       );
   }
@@ -521,7 +522,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
             isolation ||
             (node.type === previousNode?.type && isTerminalType(node.type)),
           applyDerivedValue: true,
-          checkInitialValueFirst: isolation === false,
+          checkDefaultValueFirst: isolation === false,
           fallbackValue: validateSchemaType(
             previousValue,
             node.type,

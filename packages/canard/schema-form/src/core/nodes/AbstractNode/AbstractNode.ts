@@ -207,11 +207,11 @@ export abstract class AbstractNode<
     return this.__contextNode__?.value || {};
   }
 
-  /** Node's initial default value */
-  private __initialValue__: Value | Nullish;
-
-  /** Node's current default value */
+  /** Node's default value, can be updated by inherited nodes */
   private __defaultValue__: Value | Nullish;
+
+  /** Flag indicating whether the node's default value is defined */
+  private __isDefinedDefaultValue__: boolean = false;
 
   /**
    * Node's default value
@@ -225,22 +225,14 @@ export abstract class AbstractNode<
   /**
    * Changes the node's default value, can only be performed by inherited nodes
    * For use in `constructor`
-   * @param value input value for updating defaultValue
+   * @param defaultValue input value for updating defaultValue
    */
-  protected __setDefaultValue__(this: AbstractNode, value: Value | Nullish) {
-    this.__initialValue__ = checkDefinedValue(value) ? value : undefined;
-    this.__defaultValue__ = value;
-  }
-
-  /**
-   * Changes the node's default value and publishes a Refresh event. Can only be performed by inherited nodes
-   * For use outside of `constructor`
-   * @param value input value for updating defaultValue
-   * @returns {Promise<void>} A promise that resolves when the refresh is complete
-   */
-  protected __refresh__(this: AbstractNode, value: Value | Nullish) {
-    this.__defaultValue__ = value;
-    this.publish(NodeEventType.RequestRefresh);
+  protected __setDefaultValue__(
+    this: AbstractNode,
+    defaultValue: Value | Nullish,
+  ) {
+    this.__defaultValue__ = defaultValue;
+    this.__isDefinedDefaultValue__ = checkDefinedValue(defaultValue);
   }
 
   /**
@@ -351,14 +343,14 @@ export abstract class AbstractNode<
     variant,
     jsonSchema,
     schemaType,
+    required,
     nullable,
     defaultValue,
     onChange,
     parentNode,
     validationMode,
     validatorFactory,
-    required,
-    context,
+    contextNode,
   }: SchemaNodeConstructorProps<Schema, Value>) {
     this.scope = scope;
     this.variant = variant;
@@ -366,14 +358,14 @@ export abstract class AbstractNode<
     this.schemaType = schemaType;
     this.nullable = nullable;
     this.required = required ?? false;
-    this.__name__ = name || '';
 
     this.isRoot = !parentNode;
     this.rootNode = (parentNode?.rootNode || this) as SchemaNode;
     this.parentNode = parentNode || null;
-
     this.group = getNodeGroup(this.schemaType, this.jsonSchema);
     this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
+
+    this.__name__ = name || '';
     this.__escapedName__ = escapeSegment(this.__name__);
     this.__path__ = joinSegment(this.parentNode?.path, this.__escapedName__);
     this.__schemaPath__ = this.scope
@@ -392,7 +384,7 @@ export abstract class AbstractNode<
         );
 
     this.__contextNode__ = this.isRoot
-      ? context || null
+      ? contextNode || null
       : this.rootNode.__contextNode__;
     this.__compute__ = computeFactory(
       this.schemaType,
@@ -498,18 +490,6 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Registers a node event listener
-   * @param listener Event listener
-   * @returns Event listener removal function
-   */
-  public subscribe(this: AbstractNode, listener: NodeListener): Fn {
-    this.__listeners__.add(listener);
-    return () => {
-      this.__listeners__.delete(listener);
-    };
-  }
-
-  /**
    * Publishes an event to the node's listeners
    * @param type - Event type (see NodeEventType)
    * @param payload - Data for the event (see NodeEventPayload)
@@ -527,6 +507,18 @@ export abstract class AbstractNode<
       const eventCollection = getEventCollection(type, payload, options);
       for (const listener of this.__listeners__) listener(eventCollection);
     } else this.__eventCascade__.schedule([type, payload, options]);
+  }
+
+  /**
+   * Registers a node event listener
+   * @param listener Event listener
+   * @returns Event listener removal function
+   */
+  public subscribe(this: AbstractNode, listener: NodeListener): Fn {
+    this.__listeners__.add(listener);
+    return () => {
+      this.__listeners__.delete(listener);
+    };
   }
 
   /**
@@ -814,30 +806,29 @@ export abstract class AbstractNode<
   protected __reset__(this: AbstractNode, options: ResetOptions<Value> = {}) {
     if (options.updateScoped) this.__updateScoped__();
 
-    if ('inputValue' in options) this.__defaultValue__ = options.inputValue;
+    let value: Value | Nullish;
+    if ('inputValue' in options) value = options.inputValue;
     else if (options.preferLatest) {
-      if (options.checkInitialValueFirst && this.__initialValue__ !== undefined)
-        this.__defaultValue__ = this.__initialValue__;
+      if (options.checkDefaultValueFirst && this.__isDefinedDefaultValue__)
+        value = this.__defaultValue__;
       else
-        this.__defaultValue__ =
+        value =
           options.fallbackValue !== undefined
             ? options.fallbackValue
             : this.value !== undefined
               ? this.value
-              : this.__initialValue__;
-    } else this.__defaultValue__ = this.__initialValue__;
+              : this.__defaultValue__;
+    } else value = this.__defaultValue__;
 
     if (
       options.applyDerivedValue &&
       this.__compute__.derivedValue &&
       this.active
     )
-      this.__defaultValue__ =
-        this.__compute__.derivedValue(this.__dependencies__) ??
-        this.__defaultValue__;
+      value = this.__compute__.derivedValue(this.__dependencies__) ?? value;
 
     this.setValue(
-      this.__active__ ? this.__defaultValue__ : undefined,
+      this.__active__ ? value : undefined,
       SetValueOption.StableReset,
     );
     this.setState();
@@ -1075,9 +1066,10 @@ export abstract class AbstractNode<
     if (this.__initialized__) return;
     const injectHandler = this.jsonSchema.injectTo;
     if (typeof injectHandler !== 'function') return;
-    this.subscribe(({ type }) => {
+    this.subscribe(({ type, options }) => {
       if (type & NodeEventType.UpdateValue) {
-        this.publish(NodeEventType.RequestInjection);
+        if (options?.[NodeEventType.UpdateValue]?.inject)
+          this.publish(NodeEventType.RequestInjection);
         return;
       }
       if (type & NodeEventType.RequestInjection) {
@@ -1248,7 +1240,9 @@ export abstract class AbstractNode<
   public clearExternalErrors(this: AbstractNode) {
     if (this.__externalErrors__.length === 0) return;
     if (!this.isRoot)
-      this.rootNode.removeFromExternalErrors(this.__externalErrors__);
+      (this.rootNode as AbstractNode).__removeExternalErrors__(
+        this.__externalErrors__,
+      );
     this.setExternalErrors([]);
   }
 
@@ -1256,7 +1250,7 @@ export abstract class AbstractNode<
    * Finds and removes specific errors from the externally received errors.
    * @param errors - List of errors to remove
    */
-  public removeFromExternalErrors(
+  private __removeExternalErrors__(
     this: AbstractNode,
     errors: ValidationError[],
   ) {

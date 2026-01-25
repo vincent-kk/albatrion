@@ -80,7 +80,7 @@ export const SchemaNodeProxy = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [node, refresh, context, formatError]);
 
-  const version = useSchemaNodeTracker(node, NodeEventType.RequestRefresh);
+  const version = useSchemaNodeTracker(node, NodeEventType.RequestRemount);
 
   if (!node?.enabled) return null;
 

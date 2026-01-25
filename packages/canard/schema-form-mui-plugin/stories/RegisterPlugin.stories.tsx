@@ -655,7 +655,7 @@ export const FormRefHandle = () => {
 
   const formTypeMap = useMemo<FormTypeInputMap>(() => {
     return {
-      '$.objectNode': ({ onChange }: FormTypeInputProps<{ test?: string }>) => {
+      '/objectNode': ({ onChange }: FormTypeInputProps<{ test?: string }>) => {
         const handleClick = () => {
           onChange({ test: 'wow' });
         };
@@ -669,13 +669,13 @@ export const FormRefHandle = () => {
           </div>
         );
       },
-      '$.textNode': ({ onChange }: FormTypeInputProps) => {
+      '/textNode': ({ onChange }: FormTypeInputProps) => {
         const handleClick = () => {
           onChange('wow');
         };
         return <button onClick={handleClick}>text set</button>;
       },
-      '$.arrayNode.#': () => {
+      '/arrayNode/*': () => {
         return <div>i am array item</div>;
       },
     };

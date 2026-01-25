@@ -84,7 +84,7 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
           this.publish(
             NodeEventType.UpdateValue,
             current,
-            { previous, current },
+            { previous, current, inject: true },
             true,
           );
         }
@@ -122,6 +122,8 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
         },
       );
 
+    const inject = (option & SetValueOption.PreventInjection) === 0;
+
     const refNodes = this.__refNodes__;
     const previous = this.__value__;
     const current = [...previous];
@@ -139,12 +141,13 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
         current[i] = node.value;
       }
     this.__value__ = current;
-    if (option & SetValueOption.Refresh) this.__refresh__(values);
+    if (option & SetValueOption.Refresh)
+      this.publish(NodeEventType.RequestRefresh);
     if (option & SetValueOption.PublishUpdateEvent)
       this.publish(
         NodeEventType.UpdateValue,
         current,
-        { previous, current },
+        { previous, current, inject },
         this.initialized,
       );
   }

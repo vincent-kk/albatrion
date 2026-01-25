@@ -113,8 +113,9 @@ export class TerminalStrategy implements ObjectNodeStrategy {
     option: UnionSetValueOption = SetValueOption.Default,
   ) {
     const host = this.__host__;
-    const retain = (option & SetValueOption.Replace) === 0;
     const normalize = (option & SetValueOption.Normalize) > 0;
+    const retain = (option & SetValueOption.Replace) === 0;
+    const inject = (option & SetValueOption.PreventInjection) === 0;
 
     const previous = this.__value__ ? { ...this.__value__ } : this.__value__;
     const current = this.__parseValue__(input, normalize);
@@ -125,13 +126,13 @@ export class TerminalStrategy implements ObjectNodeStrategy {
 
     if (option & SetValueOption.EmitChange)
       this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
-    // @ts-expect-error [internal] refresh delegation
-    if (option & SetValueOption.Refresh) host.__refresh__(current);
+    if (option & SetValueOption.Refresh)
+      host.publish(NodeEventType.RequestRefresh);
     if (option & SetValueOption.PublishUpdateEvent)
       host.publish(
         NodeEventType.UpdateValue,
         current,
-        { previous, current },
+        { previous, current, inject },
         host.initialized,
       );
   }

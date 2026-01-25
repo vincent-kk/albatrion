@@ -105,6 +105,7 @@ describe('BooleanNode', () => {
         [NodeEventType.UpdateValue]: {
           previous: undefined,
           current: true,
+          inject: true,
         },
       },
     });

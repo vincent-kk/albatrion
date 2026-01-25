@@ -354,6 +354,7 @@ describe('ArrayNode', () => {
         [NodeEventType.UpdateValue]: {
           previous: [],
           current: ['새태그1', '새태그2'],
+          inject: true,
         },
       },
     });

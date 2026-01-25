@@ -4,7 +4,11 @@ import { delay } from '@winglet/common-utils';
 
 import { nodeFromJsonSchema } from '@/schema-form/core';
 
-import { NodeEventType } from '../nodes';
+import {
+  NodeEventType,
+  SetValueOption,
+  type UnionNodeEventType,
+} from '../nodes';
 import type { StringNode } from '../nodes/StringNode';
 import type { VirtualNode } from '../nodes/VirtualNode';
 
@@ -167,6 +171,7 @@ describe('VirtualNode', () => {
         [NodeEventType.UpdateValue]: {
           previous: [undefined, undefined],
           current: ['2021-03-01', undefined],
+          inject: true,
         },
       },
     });
@@ -236,5 +241,160 @@ describe('VirtualNode', () => {
     expect(virtualNode?.children?.length).toBe(2);
     expect(virtualNode?.children?.[0].node.type).toBe('string');
     expect(virtualNode?.children?.[1].node.type).toBe('string');
+  });
+
+  describe('refresh behavior', () => {
+    it('should publish RequestRefresh when setValue with Overwrite option', async () => {
+      const events: UnionNodeEventType[] = [];
+      const node = nodeFromJsonSchema({
+        onChange: () => {},
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            startDate: { type: 'string', format: 'date' },
+            endDate: { type: 'string', format: 'date' },
+          },
+          virtual: {
+            period: {
+              fields: ['startDate', 'endDate'],
+            },
+          },
+        },
+      });
+
+      await delay();
+
+      const virtualNode = node?.find('/period') as VirtualNode;
+      virtualNode?.subscribe(({ type }) => events.push(type));
+
+      // setValue with Overwrite (which includes Refresh flag)
+      virtualNode?.setValue(
+        ['2021-01-01', '2021-01-02'],
+        SetValueOption.Overwrite,
+      );
+      await delay();
+
+      // RequestRefresh should be published
+      expect(events.some((e) => e & NodeEventType.RequestRefresh)).toBe(true);
+    });
+
+    it('should NOT publish RequestRefresh when setValue with Default option', async () => {
+      const events: UnionNodeEventType[] = [];
+      const node = nodeFromJsonSchema({
+        onChange: () => {},
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            startDate: { type: 'string', format: 'date' },
+            endDate: { type: 'string', format: 'date' },
+          },
+          virtual: {
+            period: {
+              fields: ['startDate', 'endDate'],
+            },
+          },
+        },
+      });
+
+      await delay();
+
+      const virtualNode = node?.find('/period') as VirtualNode;
+      virtualNode?.subscribe(({ type }) => events.push(type));
+
+      // setValue with Default (no Refresh flag)
+      virtualNode?.setValue(
+        ['2021-01-01', '2021-01-02'],
+        SetValueOption.Default,
+      );
+      await delay();
+
+      // RequestRefresh should NOT be published
+      expect(events.some((e) => e & NodeEventType.RequestRefresh)).toBe(false);
+    });
+
+    it('should propagate value changes to reference nodes when setValue is called', async () => {
+      const node = nodeFromJsonSchema({
+        onChange: () => {},
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            startDate: { type: 'string', format: 'date' },
+            endDate: { type: 'string', format: 'date' },
+          },
+          virtual: {
+            period: {
+              fields: ['startDate', 'endDate'],
+            },
+          },
+        },
+      });
+
+      await delay();
+
+      const virtualNode = node?.find('/period') as VirtualNode;
+      const startDateNode = node?.find('/startDate') as StringNode;
+      const endDateNode = node?.find('/endDate') as StringNode;
+
+      // Initial state
+      expect(virtualNode?.value).toEqual([undefined, undefined]);
+      expect(startDateNode?.value).toBeUndefined();
+      expect(endDateNode?.value).toBeUndefined();
+
+      // Set value on virtual node
+      virtualNode?.setValue(
+        ['2021-05-01', '2021-05-31'],
+        SetValueOption.Overwrite,
+      );
+      await delay();
+
+      // Reference nodes should be updated
+      expect(startDateNode?.value).toBe('2021-05-01');
+      expect(endDateNode?.value).toBe('2021-05-31');
+    });
+
+    it('should publish UpdateValue on reference nodes when virtual node setValue is called', async () => {
+      const startDateEvents: UnionNodeEventType[] = [];
+      const endDateEvents: UnionNodeEventType[] = [];
+
+      const node = nodeFromJsonSchema({
+        onChange: () => {},
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            startDate: { type: 'string', format: 'date' },
+            endDate: { type: 'string', format: 'date' },
+          },
+          virtual: {
+            period: {
+              fields: ['startDate', 'endDate'],
+            },
+          },
+        },
+      });
+
+      await delay();
+
+      const virtualNode = node?.find('/period') as VirtualNode;
+      const startDateNode = node?.find('/startDate') as StringNode;
+      const endDateNode = node?.find('/endDate') as StringNode;
+
+      startDateNode?.subscribe(({ type }) => startDateEvents.push(type));
+      endDateNode?.subscribe(({ type }) => endDateEvents.push(type));
+
+      // Set value on virtual node
+      virtualNode?.setValue(
+        ['2021-06-01', '2021-06-30'],
+        SetValueOption.Overwrite,
+      );
+      await delay();
+
+      // Both reference nodes should receive UpdateValue events
+      expect(startDateEvents.some((e) => e & NodeEventType.UpdateValue)).toBe(
+        true,
+      );
+      expect(endDateEvents.some((e) => e & NodeEventType.UpdateValue)).toBe(
+        true,
+      );
+    });
   });
 });

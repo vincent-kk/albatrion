@@ -383,6 +383,7 @@ describe('SchemaNode computed properties', () => {
             [NodeEventType.UpdateValue]: {
               previous: undefined,
               current: undefined,
+              inject: true,
             },
           },
           payload: {
