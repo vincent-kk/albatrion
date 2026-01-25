@@ -207,7 +207,7 @@ export abstract class AbstractNode<
     return this.__contextNode__?.value || {};
   }
 
-  /** Node's current default value */
+  /** Node's default value, can be updated by inherited nodes */
   private __defaultValue__: Value | Nullish;
 
   /** Flag indicating whether the node's default value is defined */
@@ -490,18 +490,6 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Registers a node event listener
-   * @param listener Event listener
-   * @returns Event listener removal function
-   */
-  public subscribe(this: AbstractNode, listener: NodeListener): Fn {
-    this.__listeners__.add(listener);
-    return () => {
-      this.__listeners__.delete(listener);
-    };
-  }
-
-  /**
    * Publishes an event to the node's listeners
    * @param type - Event type (see NodeEventType)
    * @param payload - Data for the event (see NodeEventPayload)
@@ -519,6 +507,18 @@ export abstract class AbstractNode<
       const eventCollection = getEventCollection(type, payload, options);
       for (const listener of this.__listeners__) listener(eventCollection);
     } else this.__eventCascade__.schedule([type, payload, options]);
+  }
+
+  /**
+   * Registers a node event listener
+   * @param listener Event listener
+   * @returns Event listener removal function
+   */
+  public subscribe(this: AbstractNode, listener: NodeListener): Fn {
+    this.__listeners__.add(listener);
+    return () => {
+      this.__listeners__.delete(listener);
+    };
   }
 
   /**
