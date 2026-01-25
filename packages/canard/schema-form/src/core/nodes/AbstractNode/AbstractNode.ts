@@ -392,10 +392,10 @@ export abstract class AbstractNode<
       this.rootNode.jsonSchema,
     );
 
+    this.__updateScoped__();
     this.__setDefaultValue__(
       defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema),
     );
-    this.__updateScoped__();
 
     if (this.isRoot) {
       const validateOnChange = validationMode
