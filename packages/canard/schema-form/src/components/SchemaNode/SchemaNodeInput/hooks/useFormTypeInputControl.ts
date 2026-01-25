@@ -1,38 +1,49 @@
 import { useLayoutEffect, useRef } from 'react';
 
+import { useVersion } from '@winglet/react-utils/hook';
+
 import { NodeEventType, type SchemaNode } from '@/schema-form/core';
 
 /**
- * Hook that controls focus and select behavior for form inputs based on SchemaNode events.
+ * Controls rendering and focus/select behavior for form-type inputs based on SchemaNode events.
  *
- * Behavior:
- * - `RequestFocus` event: Focuses the first focusable element (input, textarea, button) within the container
- * - `RequestSelect` event: Selects all text in the first selectable element (input, textarea) within the container
+ * Event Handling:
+ * - `RequestRefresh`: Increments version to trigger component re-rendering
+ * - `RequestFocus`: Focuses the first focusable element (input, textarea, button) in container
+ * - `RequestSelect`: Selects text in the first selectable element (input, textarea) in container
  *
- * Usage:
- * - Attach the returned ref to a container element wrapping the input
- * - Example: `<span ref={containerRef}><input ... /></span>`
+ * Usage in SchemaNodeInput:
+ * - The returned version is used as:
+ *   1. `key` prop for FormTypeInput to force remount on external value changes
+ *   2. Dependency for `useMemorize` to recalculate defaultValue
+ *
+ * Design Note:
+ * - RequestRefresh is only published when SetValueOption.Overwrite is used (external setValue)
+ * - Normal user input (SetValueOption.Default) does NOT trigger RequestRefresh
+ * - This prevents unnecessary remounts and preserves caret position during user typing
  *
  * @param node - The SchemaNode instance to subscribe to for events
- * @returns A ref object to attach to the container element
+ * @returns Tuple of [ref, version] - ref to attach to container element,
+ *          version number that increments on RequestRefresh events
  */
 export const useFormTypeInputControl = <Node extends SchemaNode>(
   node: Node,
 ) => {
-  const containerRef = useRef<HTMLSpanElement>(null);
+  const [version, update] = useVersion();
+  const ref = useRef<HTMLSpanElement>(null);
   useLayoutEffect(() => {
     if (!node) return;
     const unsubscribe = node.subscribe(({ type }) => {
-      if (type & NodeEventType.RequestFocus)
-        queryElement(containerRef.current)?.focus();
+      if (type & NodeEventType.RequestRefresh) update();
+      if (type & NodeEventType.RequestFocus) queryElement(ref.current)?.focus();
       if (type & NodeEventType.RequestSelect) {
-        const element = queryElement(containerRef.current) as SelectableElement;
+        const element = queryElement(ref.current) as SelectableElement;
         if (element && typeof element.select === 'function') element.select();
       }
     });
     return unsubscribe;
-  }, [node, containerRef]);
-  return containerRef;
+  }, [node, ref, update]);
+  return [ref, version] as const;
 };
 
 const FOCUS_SELECT_SELECTOR = 'input, textarea, button' as const;

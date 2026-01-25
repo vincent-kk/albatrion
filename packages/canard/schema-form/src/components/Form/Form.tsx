@@ -51,7 +51,9 @@ import type { FormHandle, FormProps } from './type';
 import { createChildren } from './util';
 
 const UPDATE_CHILDREN_MASK =
-  NodeEventType.RequestRefresh | NodeEventType.UpdateError;
+  NodeEventType.UpdateError |
+  NodeEventType.RequestRefresh |
+  NodeEventType.RequestRemount;
 
 const FormInner = <
   Schema extends JsonSchema,

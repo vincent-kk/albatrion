@@ -1,7 +1,7 @@
 import { memo, useCallback, useMemo, useRef } from 'react';
 
 import { isArray } from '@winglet/common-utils/filter';
-import { useConstant, useOnUnmount } from '@winglet/react-utils/hook';
+import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
 
 import { NodeEventType, NodeState } from '@/schema-form/core';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
@@ -90,14 +90,14 @@ export const SchemaNodeInput = memo(
       cancelAnimationFrame(requestId.current);
     });
 
-    const defaultValue = useConstant(node.value);
-    const containerRef = useFormTypeInputControl(node);
+    const [ref, version] = useFormTypeInputControl(node);
+    const defaultValue = useMemorize(() => node.value, [version]);
     useSchemaNodeTracker(node, REACTIVE_RERENDERING_EVENTS);
 
     if (!FormTypeInput) return null;
 
     return (
-      <span ref={containerRef} onFocus={handleFocus} onBlur={handleBlur}>
+      <span ref={ref} onFocus={handleFocus} onBlur={handleBlur}>
         <FormTypeInput
           // Overridable: UI behavior and styling
           required={node.required}
@@ -111,6 +111,7 @@ export const SchemaNodeInput = memo(
           onFileAttach={handleFileAttach}
           {...overrideProps}
           // Non-overridable: Essential node system properties
+          key={version}
           jsonSchema={node.jsonSchema}
           node={node}
           type={node.schemaType}

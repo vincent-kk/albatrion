@@ -17,6 +17,7 @@ import {
   BIT_FLAG_13,
   BIT_FLAG_14,
   BIT_FLAG_15,
+  BIT_FLAG_16,
   BIT_MASK_NONE,
 } from '@/schema-form/app/constants';
 import type {
@@ -214,20 +215,22 @@ export enum NodeEventType {
   UpdateChildren = BIT_FLAG_07,
   /** Derived/computed properties have changed. */
   UpdateComputedProperties = BIT_FLAG_08,
-  /** Input element associated with the node receives focus. */
+  /** `Input` component associated with the node receives focus. */
   Focused = BIT_FLAG_09,
-  /** Input element loses focus. */
+  /** `Input` component loses focus. */
   Blurred = BIT_FLAG_10,
-  /** Request the input element to receive focus. */
+  /** Request the `Input` component to receive focus. */
   RequestFocus = BIT_FLAG_11,
-  /** Request selection on the input element. */
+  /** Request selection on the `Input` component. */
   RequestSelect = BIT_FLAG_12,
-  /** Request a refresh of the input element. */
+  /** Request a refresh of the `Input` component. */
   RequestRefresh = BIT_FLAG_13,
+  /** Request a remount of the `Renderer` component. */
+  RequestRemount = BIT_FLAG_14,
   /** Request to emit a value change with a specific strategy. */
-  RequestEmitChange = BIT_FLAG_14,
+  RequestEmitChange = BIT_FLAG_15,
   /** Request to inject the node's value to a handler. */
-  RequestInjection = BIT_FLAG_15,
+  RequestInjection = BIT_FLAG_16,
 }
 
 export enum PublicNodeEventType {
@@ -241,6 +244,8 @@ export enum PublicNodeEventType {
   RequestFocus = NodeEventType.RequestFocus,
   /** Public request to select the node's input. */
   RequestSelect = NodeEventType.RequestSelect,
+  /** Public request to remount the `Renderer` component. */
+  RequestRemount = NodeEventType.RequestRemount,
 }
 
 /** Union of internal and public node event types. */
@@ -265,6 +270,7 @@ export type NodeEventPayload = {
   [NodeEventType.RequestFocus]: void;
   [NodeEventType.RequestSelect]: void;
   [NodeEventType.RequestRefresh]: void;
+  [NodeEventType.RequestRemount]: void;
   [NodeEventType.RequestEmitChange]: UnionSetValueOption;
   [NodeEventType.RequestInjection]: void;
 };
@@ -295,6 +301,7 @@ export type NodeEventOptions = {
   [NodeEventType.RequestFocus]: void;
   [NodeEventType.RequestSelect]: void;
   [NodeEventType.RequestRefresh]: void;
+  [NodeEventType.RequestRemount]: void;
   [NodeEventType.RequestEmitChange]: boolean;
   [NodeEventType.RequestInjection]: void;
 };
