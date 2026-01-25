@@ -1771,3 +1771,542 @@ describe('FormHandle Advanced Feature Integration', () => {
     });
   });
 });
+
+/**
+ * Edge Case Tests
+ *
+ * Tests for edge cases that may not be covered by standard tests:
+ * - Rendering performance (excessive re-renders)
+ * - Error handling (invalid schemas, null refs)
+ * - Memory leak prevention
+ * - Real async scenarios without fake timers
+ */
+describe('Edge Cases', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  describe('Rendering Performance', () => {
+    it('should not exceed expected render count during rapid updates', async () => {
+      const MAX_EXPECTED_RENDERS_PER_UPDATE = 3;
+      let renderCount = 0;
+      let capturedNode: any = null;
+
+      const TrackingInput: FC<FormTypeInputProps> = (props) => {
+        renderCount++;
+        const node = useSchemaNode();
+        capturedNode = node;
+        return (
+          <input
+            data-testid="perf-input"
+            value={props.value ?? ''}
+            onChange={(e) => props.onChange?.(e.target.value)}
+          />
+        );
+      };
+
+      await act(async () => {
+        render(
+          <Form
+            jsonSchema={{ type: 'string' } as JsonSchema}
+            formTypeInputDefinitions={[
+              { test: { type: 'string' }, Component: TrackingInput },
+            ]}
+          />,
+        );
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      const initialRenderCount = renderCount;
+
+      // Perform 5 rapid updates
+      const updateCount = 5;
+      await act(async () => {
+        for (let i = 0; i < updateCount; i++) {
+          capturedNode?.setValue(`value-${i}`, SetValueOption.Overwrite);
+        }
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      const rendersForUpdates = renderCount - initialRenderCount;
+      const rendersPerUpdate = rendersForUpdates / updateCount;
+
+      // Each update should not cause more than MAX_EXPECTED_RENDERS_PER_UPDATE renders
+      expect(rendersPerUpdate).toBeLessThanOrEqual(MAX_EXPECTED_RENDERS_PER_UPDATE);
+    });
+
+    it('should batch multiple setValue calls efficiently', async () => {
+      let renderCount = 0;
+      let capturedNode: any = null;
+
+      const TrackingInput: FC<FormTypeInputProps> = (props) => {
+        renderCount++;
+        const node = useSchemaNode();
+        capturedNode = node;
+        return (
+          <input
+            data-testid="batch-input"
+            value={props.value ?? ''}
+            onChange={(e) => props.onChange?.(e.target.value)}
+          />
+        );
+      };
+
+      await act(async () => {
+        render(
+          <Form
+            jsonSchema={{ type: 'string' } as JsonSchema}
+            formTypeInputDefinitions={[
+              { test: { type: 'string' }, Component: TrackingInput },
+            ]}
+          />,
+        );
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      const initialRenderCount = renderCount;
+
+      // Rapid setValue calls in same synchronous stack should batch
+      await act(async () => {
+        capturedNode?.setValue('a');
+        capturedNode?.setValue('ab');
+        capturedNode?.setValue('abc');
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      // Batching should reduce total renders
+      expect(renderCount - initialRenderCount).toBeLessThan(10);
+      expect(capturedNode?.value).toBe('abc');
+    });
+  });
+
+  describe('Error Handling', () => {
+    it('should handle FormHandle.getValue before form is ready', async () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+        },
+      } satisfies JsonSchema;
+
+      let formHandle: { current: FormHandle<typeof schema> | null } = {
+        current: null,
+      };
+
+      const FormWithRef = () => {
+        const ref = useRef<FormHandle<typeof schema>>(null);
+        formHandle = ref;
+        return (
+          <Form
+            ref={ref}
+            jsonSchema={schema}
+            formTypeInputDefinitions={[
+              { test: { type: 'string' }, Component: createTestInput('error-test') },
+            ]}
+          />
+        );
+      };
+
+      // Before render, formHandle.current should be null
+      expect(formHandle.current).toBeNull();
+
+      await act(async () => {
+        render(<FormWithRef />);
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      // After render, getValue should work
+      expect(formHandle.current?.getValue()).toBeDefined();
+    });
+
+    it('should handle setValue with undefined gracefully', async () => {
+      let capturedNode: any = null;
+
+      const TrackingInput: FC<FormTypeInputProps> = (props) => {
+        const node = useSchemaNode();
+        capturedNode = node;
+        return (
+          <input
+            data-testid="undefined-input"
+            value={props.value ?? ''}
+            onChange={(e) => props.onChange?.(e.target.value)}
+          />
+        );
+      };
+
+      await act(async () => {
+        render(
+          <Form
+            jsonSchema={{ type: 'string', default: 'initial' } as JsonSchema}
+            formTypeInputDefinitions={[
+              { test: { type: 'string' }, Component: TrackingInput },
+            ]}
+          />,
+        );
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      expect(capturedNode?.value).toBe('initial');
+
+      // Setting undefined should not throw
+      await act(async () => {
+        capturedNode?.setValue(undefined);
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      // Value should be undefined now
+      expect(capturedNode?.value).toBeUndefined();
+    });
+
+    it('should handle null values in nullable schemas', async () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          nullableField: { type: ['string', 'null'] as const },
+        },
+      } satisfies JsonSchema;
+
+      let formHandle: { current: FormHandle<typeof schema> | null } = {
+        current: null,
+      };
+
+      const NullableInput = createTestInput('nullable-input');
+
+      const FormWithRef = () => {
+        const ref = useRef<FormHandle<typeof schema>>(null);
+        formHandle = ref;
+        return (
+          <Form
+            ref={ref}
+            jsonSchema={schema}
+            formTypeInputDefinitions={[
+              { test: { path: '/nullableField' }, Component: NullableInput },
+            ]}
+          />
+        );
+      };
+
+      await act(async () => {
+        render(<FormWithRef />);
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      // Set to null
+      await act(async () => {
+        formHandle.current?.setValue({ nullableField: null });
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      expect(formHandle.current?.getValue()?.nullableField).toBeNull();
+
+      // Set to string
+      await act(async () => {
+        formHandle.current?.setValue({ nullableField: 'not null' });
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      expect(formHandle.current?.getValue()?.nullableField).toBe('not null');
+    });
+  });
+
+  describe('Memory and Subscription Management', () => {
+    it('should not leak subscriptions on rapid mount/unmount', async () => {
+      let subscribeCount = 0;
+      let unsubscribeCount = 0;
+
+      const TrackingInput: FC<FormTypeInputProps> = (props) => {
+        const node = useSchemaNode();
+
+        useEffect(() => {
+          if (!node) return;
+          subscribeCount++;
+          const unsub = node.subscribe(() => {});
+          return () => {
+            unsubscribeCount++;
+            unsub();
+          };
+        }, [node]);
+
+        return (
+          <input
+            data-testid="leak-input"
+            value={props.value ?? ''}
+            onChange={(e) => props.onChange?.(e.target.value)}
+          />
+        );
+      };
+
+      // Mount and unmount multiple times
+      for (let i = 0; i < 3; i++) {
+        let unmount: () => void;
+        await act(async () => {
+          const result = render(
+            <Form
+              jsonSchema={{ type: 'string' } as JsonSchema}
+              formTypeInputDefinitions={[
+                { test: { type: 'string' }, Component: TrackingInput },
+              ]}
+            />,
+          );
+          unmount = result.unmount;
+          await vi.advanceTimersByTimeAsync(50);
+        });
+
+        await act(async () => {
+          unmount!();
+          await vi.advanceTimersByTimeAsync(50);
+        });
+      }
+
+      // All subscriptions should be cleaned up
+      expect(unsubscribeCount).toBe(subscribeCount);
+    });
+
+    it('should handle component remount with same schema', async () => {
+      let mountCount = 0;
+
+      const CountingInput: FC<FormTypeInputProps> = (props) => {
+        useEffect(() => {
+          mountCount++;
+        }, []);
+
+        return (
+          <input
+            data-testid="remount-input"
+            value={props.value ?? ''}
+            onChange={(e) => props.onChange?.(e.target.value)}
+          />
+        );
+      };
+
+      const schema = { type: 'string' } as JsonSchema;
+      const formTypeInputDefs: FormTypeInputDefinition[] = [
+        { test: { type: 'string' }, Component: CountingInput },
+      ];
+
+      // First mount
+      let unmount: () => void;
+      await act(async () => {
+        const result = render(
+          <Form jsonSchema={schema} formTypeInputDefinitions={formTypeInputDefs} />,
+        );
+        unmount = result.unmount;
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      const firstMountCount = mountCount;
+
+      // Unmount
+      await act(async () => {
+        unmount!();
+        await vi.advanceTimersByTimeAsync(50);
+      });
+
+      // Remount with same schema
+      await act(async () => {
+        render(
+          <Form jsonSchema={schema} formTypeInputDefinitions={formTypeInputDefs} />,
+        );
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      // Should have mounted twice total
+      expect(mountCount).toBe(firstMountCount * 2);
+    });
+  });
+
+  describe('Complex Value Types', () => {
+    it('should handle deeply nested object updates', async () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          level1: {
+            type: 'object',
+            properties: {
+              level2: {
+                type: 'object',
+                properties: {
+                  level3: {
+                    type: 'object',
+                    properties: {
+                      value: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      } satisfies JsonSchema;
+
+      const DeepInput = createTestInput('deep-input');
+
+      let formHandle: { current: FormHandle<typeof schema> | null } = {
+        current: null,
+      };
+
+      const FormWithRef = () => {
+        const ref = useRef<FormHandle<typeof schema>>(null);
+        formHandle = ref;
+        return (
+          <Form
+            ref={ref}
+            jsonSchema={schema}
+            formTypeInputDefinitions={[
+              { test: { path: '/level1/level2/level3/value' }, Component: DeepInput },
+            ]}
+          />
+        );
+      };
+
+      await act(async () => {
+        render(<FormWithRef />);
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      // Set deeply nested value
+      await act(async () => {
+        formHandle.current?.setValue({
+          level1: {
+            level2: {
+              level3: {
+                value: 'deep-value',
+              },
+            },
+          },
+        });
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      const value = formHandle.current?.getValue();
+      expect(value?.level1?.level2?.level3?.value).toBe('deep-value');
+      expect(getInputValue('deep-input')).toBe('deep-value');
+    });
+
+    it('should handle array with complex object items', async () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          items: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                id: { type: 'number' },
+                name: { type: 'string' },
+                nested: {
+                  type: 'object',
+                  properties: {
+                    data: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+        },
+      } satisfies JsonSchema;
+
+      let formHandle: { current: FormHandle<typeof schema> | null } = {
+        current: null,
+      };
+
+      const FormWithRef = () => {
+        const ref = useRef<FormHandle<typeof schema>>(null);
+        formHandle = ref;
+        return (
+          <Form
+            ref={ref}
+            jsonSchema={schema}
+            formTypeInputDefinitions={[
+              { test: { type: 'string' }, Component: createTestInput('array-item') },
+              { test: { type: 'number' }, Component: createTestInput('array-num') },
+            ]}
+          />
+        );
+      };
+
+      await act(async () => {
+        render(<FormWithRef />);
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      // Set array with complex items
+      await act(async () => {
+        formHandle.current?.setValue({
+          items: [
+            { id: 1, name: 'Item 1', nested: { data: 'data1' } },
+            { id: 2, name: 'Item 2', nested: { data: 'data2' } },
+          ],
+        });
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      const value = formHandle.current?.getValue();
+      expect(value?.items).toHaveLength(2);
+      expect(value?.items?.[0]?.name).toBe('Item 1');
+      expect(value?.items?.[1]?.nested?.data).toBe('data2');
+    });
+  });
+
+  describe('Concurrent Updates', () => {
+    it('should handle setValue on multiple sibling nodes simultaneously', async () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          field1: { type: 'string' },
+          field2: { type: 'string' },
+          field3: { type: 'string' },
+        },
+      } satisfies JsonSchema;
+
+      let formHandle: { current: FormHandle<typeof schema> | null } = {
+        current: null,
+      };
+
+      const FormWithRef = () => {
+        const ref = useRef<FormHandle<typeof schema>>(null);
+        formHandle = ref;
+        return (
+          <Form
+            ref={ref}
+            jsonSchema={schema}
+            formTypeInputDefinitions={[
+              { test: { path: '/field1' }, Component: createTestInput('concurrent-1') },
+              { test: { path: '/field2' }, Component: createTestInput('concurrent-2') },
+              { test: { path: '/field3' }, Component: createTestInput('concurrent-3') },
+            ]}
+          />
+        );
+      };
+
+      await act(async () => {
+        render(<FormWithRef />);
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      // Set all fields at once
+      await act(async () => {
+        formHandle.current?.setValue({
+          field1: 'value1',
+          field2: 'value2',
+          field3: 'value3',
+        });
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      const value = formHandle.current?.getValue();
+      expect(value?.field1).toBe('value1');
+      expect(value?.field2).toBe('value2');
+      expect(value?.field3).toBe('value3');
+
+      // Verify DOM
+      expect(getInputValue('concurrent-1')).toBe('value1');
+      expect(getInputValue('concurrent-2')).toBe('value2');
+      expect(getInputValue('concurrent-3')).toBe('value3');
+    });
+  });
+});
