@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { JsonSchema } from '@winglet/json-schema';
 
 import { NodeEventType, SetValueOption } from '@/schema-form/core';
+import type { ArrayNode } from '@/schema-form/core/nodes/ArrayNode';
 import { useSchemaNode } from '@/schema-form/hooks/useSchemaNode';
 import type {
   FormTypeInputDefinition,
@@ -2412,6 +2413,258 @@ describe('Edge Cases', () => {
       expect(getInputValue('concurrent-1')).toBe('value1');
       expect(getInputValue('concurrent-2')).toBe('value2');
       expect(getInputValue('concurrent-3')).toBe('value3');
+    });
+  });
+
+  describe('Array item shift - value and path updates', () => {
+    it('should correctly update array value when first item is removed', async () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          items: {
+            type: 'array',
+            items: { type: 'string' },
+            default: ['A', 'B', 'C'],
+          },
+        },
+      } satisfies JsonSchema;
+
+      let formHandle: { current: FormHandle<typeof schema> | null } = {
+        current: null,
+      };
+
+      const FormWithRef = () => {
+        const ref = useRef<FormHandle<typeof schema>>(null);
+        formHandle = ref;
+        return (
+          <Form
+            ref={ref}
+            jsonSchema={schema}
+            formTypeInputDefinitions={[
+              { test: { type: 'string' }, Component: createTestInput('item') },
+            ]}
+          />
+        );
+      };
+
+      await act(async () => {
+        render(<FormWithRef />);
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      // Verify initial state - 3 items
+      expect(formHandle.current?.getValue()?.items).toEqual(['A', 'B', 'C']);
+
+      // Remove first item (A)
+      await act(async () => {
+        const arrayNode = formHandle.current?.findNode('/items') as ArrayNode;
+        await arrayNode?.remove(0);
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      // After removal: [B, C] - value should be updated correctly
+      const value = formHandle.current?.getValue();
+      expect(value?.items).toEqual(['B', 'C']);
+    });
+
+    it('should correctly update paths for shifted items at node level', async () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          items: {
+            type: 'array',
+            items: { type: 'string' },
+            default: ['A', 'B', 'C'],
+          },
+        },
+      } satisfies JsonSchema;
+
+      let formHandle: { current: FormHandle<typeof schema> | null } = {
+        current: null,
+      };
+
+      const FormWithRef = () => {
+        const ref = useRef<FormHandle<typeof schema>>(null);
+        formHandle = ref;
+        return (
+          <Form
+            ref={ref}
+            jsonSchema={schema}
+            formTypeInputDefinitions={[
+              { test: { type: 'string' }, Component: createTestInput('item') },
+            ]}
+          />
+        );
+      };
+
+      await act(async () => {
+        render(<FormWithRef />);
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      const arrayNode = formHandle.current?.findNode('/items') as ArrayNode;
+      expect(arrayNode?.children?.length).toBe(3);
+
+      // Get references to items before removal
+      const itemBNode = arrayNode?.children?.[1]?.node;
+      const itemCNode = arrayNode?.children?.[2]?.node;
+
+      expect(itemBNode?.path).toBe('/items/1');
+      expect(itemCNode?.path).toBe('/items/2');
+
+      // Remove first item (A)
+      await act(async () => {
+        await arrayNode?.remove(0);
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      // Node paths should be updated - B is now at index 0, C at index 1
+      expect(itemBNode?.path).toBe('/items/0');
+      expect(itemCNode?.path).toBe('/items/1');
+
+      // Array children should reflect the new state
+      expect(arrayNode?.children?.length).toBe(2);
+      expect(arrayNode?.children?.[0]?.node.path).toBe('/items/0');
+      expect(arrayNode?.children?.[1]?.node.path).toBe('/items/1');
+    });
+
+    it('should handle nested object array item removal correctly', async () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          items: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                details: {
+                  type: 'object',
+                  properties: {
+                    description: { type: 'string' },
+                  },
+                },
+              },
+            },
+            default: [
+              { name: 'Item A', details: { description: 'Desc A' } },
+              { name: 'Item B', details: { description: 'Desc B' } },
+              { name: 'Item C', details: { description: 'Desc C' } },
+            ],
+          },
+        },
+      } satisfies JsonSchema;
+
+      let formHandle: { current: FormHandle<typeof schema> | null } = {
+        current: null,
+      };
+
+      const FormWithRef = () => {
+        const ref = useRef<FormHandle<typeof schema>>(null);
+        formHandle = ref;
+        return (
+          <Form
+            ref={ref}
+            jsonSchema={schema}
+            formTypeInputDefinitions={[
+              { test: { type: 'string' }, Component: createTestInput('nested') },
+            ]}
+          />
+        );
+      };
+
+      await act(async () => {
+        render(<FormWithRef />);
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      // Verify initial state - 3 items with nested objects
+      const initialValue = formHandle.current?.getValue();
+      expect(initialValue?.items).toHaveLength(3);
+      expect(initialValue?.items?.[0]?.name).toBe('Item A');
+      expect(initialValue?.items?.[1]?.details?.description).toBe('Desc B');
+
+      // Get deeply nested node from item B before removal
+      const arrayNode = formHandle.current?.findNode('/items') as ArrayNode;
+      const itemBNode = arrayNode?.children?.[1]?.node;
+      const itemBDescriptionNode = formHandle.current?.findNode(
+        '/items/1/details/description',
+      );
+
+      expect(itemBDescriptionNode?.path).toBe('/items/1/details/description');
+
+      // Remove first item
+      await act(async () => {
+        await arrayNode?.remove(0);
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      // After removal: [B, C] should now be at indices [0, 1]
+      const value = formHandle.current?.getValue();
+      expect(value?.items).toHaveLength(2);
+      expect(value?.items?.[0]?.name).toBe('Item B');
+      expect(value?.items?.[0]?.details?.description).toBe('Desc B');
+      expect(value?.items?.[1]?.name).toBe('Item C');
+      expect(value?.items?.[1]?.details?.description).toBe('Desc C');
+
+      // Verify deeply nested path was updated
+      expect(itemBDescriptionNode?.path).toBe('/items/0/details/description');
+    });
+
+    it('should emit UpdateChildren event when array item is removed', async () => {
+      const updateChildrenEvents: number[] = [];
+
+      const schema = {
+        type: 'object',
+        properties: {
+          items: {
+            type: 'array',
+            items: { type: 'string' },
+            default: ['A', 'B', 'C'],
+          },
+        },
+      } satisfies JsonSchema;
+
+      let formHandle: { current: FormHandle<typeof schema> | null } = {
+        current: null,
+      };
+
+      const FormWithRef = () => {
+        const ref = useRef<FormHandle<typeof schema>>(null);
+        formHandle = ref;
+        return (
+          <Form
+            ref={ref}
+            jsonSchema={schema}
+            formTypeInputDefinitions={[
+              { test: { type: 'string' }, Component: createTestInput('item') },
+            ]}
+          />
+        );
+      };
+
+      await act(async () => {
+        render(<FormWithRef />);
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      const arrayNode = formHandle.current?.findNode('/items') as ArrayNode;
+
+      // Subscribe to track UpdateChildren events
+      arrayNode?.subscribe(({ type }) => {
+        if (type & NodeEventType.UpdateChildren) {
+          updateChildrenEvents.push(type);
+        }
+      });
+
+      // Remove first item (A)
+      await act(async () => {
+        await arrayNode?.remove(0);
+        await vi.advanceTimersByTimeAsync(100);
+      });
+
+      // UpdateChildren should have been emitted
+      expect(updateChildrenEvents.length).toBeGreaterThan(0);
     });
   });
 });

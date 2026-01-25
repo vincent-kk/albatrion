@@ -216,6 +216,102 @@ describe('Refresh and DefaultValue Migration Verification', () => {
       // Second call: RequestRefresh (async, batched separately)
       expect(eventCalls[1]?.type & NodeEventType.RequestRefresh).toBeTruthy();
     });
+
+    it('should still publish UpdateValue when setting the same value with Overwrite option', async () => {
+      /**
+       * Note: The current implementation publishes UpdateValue even when setting the same value.
+       * This is because SetValueOption.Overwrite forces the update regardless of value equality.
+       * This behavior ensures UI consistency and is intentional.
+       */
+      const events: UnionNodeEventType[] = [];
+      const node = nodeFromJsonSchema({
+        onChange: () => {},
+        jsonSchema: { type: 'string' },
+      });
+
+      await delay();
+
+      // Set initial value
+      node.setValue('same-value', SetValueOption.Overwrite);
+      await delay();
+
+      // Start capturing events after initial set
+      node.subscribe(({ type }) => {
+        events.push(type);
+      });
+
+      // Set the same value again with Overwrite
+      node.setValue('same-value', SetValueOption.Overwrite);
+      await delay();
+
+      // Overwrite option forces event publishing even for same values
+      const updateValueEvents = events.filter(
+        (e) => e & NodeEventType.UpdateValue,
+      );
+      expect(updateValueEvents.length).toBe(1);
+    });
+
+    it('should publish RequestRefresh only once per setValue call (deduplication)', async () => {
+      const refreshEventCounts: number[] = [];
+      const node = nodeFromJsonSchema({
+        onChange: () => {},
+        jsonSchema: { type: 'string' },
+      });
+
+      await delay();
+
+      node.subscribe(({ type }) => {
+        if (type & NodeEventType.RequestRefresh) {
+          refreshEventCounts.push(1);
+        }
+      });
+
+      // Single setValue should trigger at most one RequestRefresh
+      node.setValue('new-value', SetValueOption.Overwrite);
+      await delay();
+
+      // Exactly one RequestRefresh per setValue call
+      expect(refreshEventCounts.length).toBe(1);
+    });
+
+    it('should handle multiple rapid setValue calls by batching events appropriately', async () => {
+      const events: UnionNodeEventType[] = [];
+      const node = nodeFromJsonSchema({
+        onChange: () => {},
+        jsonSchema: { type: 'string' },
+      });
+
+      await delay();
+
+      node.subscribe(({ type }) => {
+        events.push(type);
+      });
+
+      // Multiple rapid setValue calls (synchronously)
+      node.setValue('value1', SetValueOption.Overwrite);
+      node.setValue('value2', SetValueOption.Overwrite);
+      node.setValue('value3', SetValueOption.Overwrite);
+      await delay();
+
+      // Final value should be 'value3'
+      expect(node.value).toBe('value3');
+
+      // Events should be published for each change
+      // Each setValue triggers UpdateValue (immediate) and RequestRefresh (async)
+      const updateValueCount = events.filter(
+        (e) => e & NodeEventType.UpdateValue,
+      ).length;
+      const requestRefreshCount = events.filter(
+        (e) => e & NodeEventType.RequestRefresh,
+      ).length;
+
+      // All three UpdateValue events should be emitted (one per setValue)
+      expect(updateValueCount).toBe(3);
+
+      // RequestRefresh events are batched asynchronously
+      // The exact count depends on microtask timing, but at least one should be emitted
+      expect(requestRefreshCount).toBeGreaterThanOrEqual(1);
+    });
   });
 
   /**
