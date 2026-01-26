@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { matchesSchemaPath } from '../matchesSchemaPath';
+import { matchesSchemaPath } from '../utils/matchesSchemaPath';
 
 /**
  * Path Standardization Rules (RFC 6901 Compliance):
