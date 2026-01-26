@@ -42,6 +42,27 @@ import type { DynamicFunction } from './utils/type';
  * @see {@link https://json-schema.org/understanding-json-schema/ JSON Schema}
  */
 export class ComputedPropertiesManager {
+  /** @internal Internal function to calculate active state */
+  private __active__: DynamicFunction<boolean> | undefined;
+
+  /** @internal Internal function to calculate visible state */
+  private __visible__: DynamicFunction<boolean> | undefined;
+
+  /** @internal Internal function to calculate readOnly state */
+  private __readOnly__: DynamicFunction<boolean> | undefined;
+
+  /** @internal Internal function to calculate disabled state */
+  private __disabled__: DynamicFunction<boolean> | undefined;
+
+  /** @internal Internal function to calculate oneOfIndex */
+  private __oneOfIndex__: DynamicFunction<number> | undefined;
+
+  /** @internal Internal function to calculate anyOfIndices */
+  private __anyOfIndices__: DynamicFunction<number[]> | undefined;
+
+  /** @internal Internal function to calculate watchValues */
+  private __watchValues__: DynamicFunction<any[]> | undefined;
+
   /**
    * The active state of the node.
    * @description Result of evaluating the `computed.active` expression. When `false`, the node is treated as inactive.
@@ -112,26 +133,40 @@ export class ComputedPropertiesManager {
    */
   public readonly getPristine: DynamicFunction<boolean> | undefined;
 
-  /** @internal Internal function to calculate active state */
-  private __active__: DynamicFunction<boolean> | undefined;
-
-  /** @internal Internal function to calculate visible state */
-  private __visible__: DynamicFunction<boolean> | undefined;
-
-  /** @internal Internal function to calculate readOnly state */
-  private __readOnly__: DynamicFunction<boolean> | undefined;
-
-  /** @internal Internal function to calculate disabled state */
-  private __disabled__: DynamicFunction<boolean> | undefined;
-
-  /** @internal Internal function to calculate oneOfIndex */
-  private __oneOfIndex__: DynamicFunction<number> | undefined;
-
-  /** @internal Internal function to calculate anyOfIndices */
-  private __anyOfIndices__: DynamicFunction<number[]> | undefined;
-
-  /** @internal Internal function to calculate watchValues */
-  private __watchValues__: DynamicFunction<any[]> | undefined;
+  /**
+   * Recalculates all computed properties based on dependency values.
+   *
+   * @param dependencies - Array of dependency values corresponding to the order of `dependencyPaths`
+   *
+   * @description
+   * This method is called when dependency values change and updates the following properties:
+   * - `active`, `visible`, `readOnly`, `disabled`: Boolean state values
+   * - `oneOfIndex`: Index of the matching oneOf condition
+   * - `anyOfIndices`: Array of indices for all matching anyOf conditions
+   * - `watchValues`: Current values of watched paths
+   *
+   * @example
+   * ```typescript
+   * // Dependency paths: ['../category', '../locked']
+   * // Dependency values: ['premium', true]
+   * manager.recalculate(['premium', true]);
+   *
+   * console.log(manager.visible); // Result of computed.visible expression
+   * console.log(manager.readOnly); // Result of computed.readOnly expression
+   * ```
+   */
+  public recalculate(this: ComputedPropertiesManager, dependencies: any[]) {
+    if (this.__active__) this.active = this.__active__(dependencies);
+    if (this.__visible__) this.visible = this.__visible__(dependencies);
+    if (this.__readOnly__) this.readOnly = this.__readOnly__(dependencies);
+    if (this.__disabled__) this.disabled = this.__disabled__(dependencies);
+    if (this.__oneOfIndex__)
+      this.oneOfIndex = this.__oneOfIndex__(dependencies);
+    if (this.__anyOfIndices__)
+      this.anyOfIndices = this.__anyOfIndices__(dependencies);
+    if (this.__watchValues__)
+      this.watchValues = this.__watchValues__(dependencies);
+  }
 
   /**
    * Creates a ComputedPropertiesManager instance.
@@ -184,40 +219,5 @@ export class ComputedPropertiesManager {
     this.__oneOfIndex__ = getConditionIndex(pathManager, 'oneOf', 'if');
     this.__anyOfIndices__ = getConditionIndices(pathManager, 'anyOf', 'if');
     this.__watchValues__ = getObservedValues(pathManager, 'watch');
-  }
-
-  /**
-   * Recalculates all computed properties based on dependency values.
-   *
-   * @param dependencies - Array of dependency values corresponding to the order of `dependencyPaths`
-   *
-   * @description
-   * This method is called when dependency values change and updates the following properties:
-   * - `active`, `visible`, `readOnly`, `disabled`: Boolean state values
-   * - `oneOfIndex`: Index of the matching oneOf condition
-   * - `anyOfIndices`: Array of indices for all matching anyOf conditions
-   * - `watchValues`: Current values of watched paths
-   *
-   * @example
-   * ```typescript
-   * // Dependency paths: ['../category', '../locked']
-   * // Dependency values: ['premium', true]
-   * manager.recalculate(['premium', true]);
-   *
-   * console.log(manager.visible); // Result of computed.visible expression
-   * console.log(manager.readOnly); // Result of computed.readOnly expression
-   * ```
-   */
-  public recalculate(this: ComputedPropertiesManager, dependencies: any[]) {
-    if (this.__active__) this.active = this.__active__(dependencies);
-    if (this.__visible__) this.visible = this.__visible__(dependencies);
-    if (this.__readOnly__) this.readOnly = this.__readOnly__(dependencies);
-    if (this.__disabled__) this.disabled = this.__disabled__(dependencies);
-    if (this.__oneOfIndex__)
-      this.oneOfIndex = this.__oneOfIndex__(dependencies);
-    if (this.__anyOfIndices__)
-      this.anyOfIndices = this.__anyOfIndices__(dependencies);
-    if (this.__watchValues__)
-      this.watchValues = this.__watchValues__(dependencies);
   }
 }

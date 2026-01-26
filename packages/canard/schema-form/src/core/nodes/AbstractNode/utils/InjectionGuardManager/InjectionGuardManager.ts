@@ -14,7 +14,7 @@ export class InjectionGuardManager {
    * Set of data paths currently being injected.
    * @description Tracks which nodes are currently being injected to prevent circular injection loops.
    */
-  private __injectedPaths__: Set<AbstractNode['path']>;
+  private __injectedPaths__: Set<AbstractNode['path']> = new Set();
 
   /**
    * Scheduled macrotask ID for clearing injected node flags.
@@ -22,10 +22,6 @@ export class InjectionGuardManager {
    *              operations complete. The ID prevents duplicate scheduling.
    */
   private __scheduledClearInjectedPathsId__: number | null = null;
-
-  constructor() {
-    this.__injectedPaths__ = new Set();
-  }
 
   /**
    * Marks a node path as currently being injected.

@@ -70,6 +70,21 @@ export abstract class AbstractNode<
   /** [readonly] Schema's type, `array`, `number`, `integer`, `object`, `string`, `boolean`, `virtual`, `null` */
   public readonly schemaType: JsonSchemaType;
 
+  /** [readonly] Node's JSON Schema */
+  public readonly jsonSchema: Schema;
+
+  /** [readonly] Whether the node value is required */
+  public readonly required: boolean;
+
+  /** [readonly] Whether the node value is nullable */
+  public readonly nullable: boolean;
+
+  /** [readonly] Node's scope */
+  public readonly scope: string | undefined;
+
+  /** [readonly] Node's variant */
+  public readonly variant: number | undefined;
+
   /** [readonly] Node's depth */
   public readonly depth: number;
 
@@ -82,20 +97,36 @@ export abstract class AbstractNode<
   /** [readonly] Node's parent node */
   public readonly parentNode: SchemaNode | null;
 
-  /** [readonly] Node's JSON Schema */
-  public readonly jsonSchema: Schema;
+  /** Context node reference for form-wide shared data */
+  private __contextNode__: AbstractNode | null;
 
-  /** [readonly] Node's scope */
-  public readonly scope: string | undefined;
+  /**
+   * [readonly] Context node for accessing form-wide shared data
+   * @note Root nodes return their own context, child nodes delegate to rootNode.context
+   */
+  public get context(): Dictionary {
+    return this.__contextNode__?.value || {};
+  }
 
-  /** [readonly] Node's variant */
-  public readonly variant: number | undefined;
+  /**
+   * List of active child nodes within the current scope.
+   * @returns Child nodes that are currently active, or `null` for terminal nodes
+   * @note For branch nodes (object/array), returns children matching the active oneOf/anyOf branch.
+   *       For terminal nodes, always returns `null`.
+   */
+  public get children(): ChildNode[] | null {
+    return null;
+  }
 
-  /** [readonly] Whether the node value is required */
-  public readonly required: boolean;
-
-  /** [readonly] Whether the node value is nullable */
-  public readonly nullable: boolean;
+  /**
+   * List of all child nodes regardless of scope or active state.
+   * @returns All subnodes including inactive oneOf/anyOf branches, or `null` for terminal nodes
+   * @note Unlike `children`, this includes nodes from all oneOf/anyOf variants.
+   *       Useful for operations that need to traverse the complete node tree.
+   */
+  public get subnodes(): ChildNode[] | null {
+    return this.children;
+  }
 
   /** Node's name */
   private __name__: string;
@@ -184,15 +215,33 @@ export abstract class AbstractNode<
     return true;
   }
 
-  /** Context node reference for form-wide shared data */
-  private __contextNode__: AbstractNode | null;
+  /**
+   * Finds the node corresponding to the given pointer in the node tree.
+   * @param pointer - JSON Pointer of the node to find (e.g., '/foo/0/bar'), returns itself if not provided
+   * @returns {SchemaNode|null} The found node, null if not found
+   */
+  public find(this: AbstractNode, pointer?: string): SchemaNode | null {
+    if (pointer === undefined) return this as SchemaNode;
+    if (pointer === $.Context) return this.__contextNode__ as SchemaNode;
+    if (pointer === $.Root) return this.rootNode;
+    const absolute = isAbsolutePath(pointer);
+    if (absolute && pointer.length === 1) return this.rootNode;
+    return findNode(absolute ? this.rootNode : (this as SchemaNode), pointer);
+  }
 
   /**
-   * [readonly] Context node for accessing form-wide shared data
-   * @note Root nodes return their own context, child nodes delegate to rootNode.context
+   * Finds all nodes in the node tree that match the given pointer.
+   * @param pointer - JSON Pointer of the nodes to find (e.g., '/foo/0/bar'), returns itself if not provided
+   * @returns {SchemaNode[]} The found nodes, empty array if not found
    */
-  public get context(): Dictionary {
-    return this.__contextNode__?.value || {};
+  public findAll(this: AbstractNode, pointer?: string): SchemaNode[] {
+    if (pointer === undefined) return [this as SchemaNode];
+    if (pointer === $.Context)
+      return this.__contextNode__ ? [this.__contextNode__ as SchemaNode] : [];
+    if (pointer === $.Root) return [this.rootNode];
+    const absolute = isAbsolutePath(pointer);
+    if (absolute && pointer.length === 1) return [this.rootNode];
+    return findNodes(absolute ? this.rootNode : (this as SchemaNode), pointer);
   }
 
   /** Node's default value, can be updated by inherited nodes */
@@ -270,6 +319,20 @@ export abstract class AbstractNode<
   }
 
   /**
+   * Compares the node's value with the derived value
+   * @param left - The left value
+   * @param right - The right value
+   * @returns Whether the left value is equal to the right value
+   */
+  protected __equals__(
+    this: AbstractNode,
+    left: Value | Nullish,
+    right: Value | Nullish,
+  ): boolean {
+    return left === right;
+  }
+
+  /**
    * Function called when the node's value changes
    * @note For RootNode, the onChange function is called only after all microtasks have been completed.
    * @param input - The changed value
@@ -290,369 +353,6 @@ export abstract class AbstractNode<
     if (this.__computeManager__.active && this.__scoped__)
       this.__handleChange__(input, batch);
     else if (input === undefined) this.__handleChange__(undefined, batch);
-  }
-
-  /**
-   * Compares the node's value with the derived value
-   * @param left - The left value
-   * @param right - The right value
-   * @returns Whether the left value is equal to the right value
-   */
-  protected __equals__(
-    this: AbstractNode,
-    left: Value | Nullish,
-    right: Value | Nullish,
-  ): boolean {
-    return left === right;
-  }
-
-  /**
-   * List of active child nodes within the current scope.
-   * @returns Child nodes that are currently active, or `null` for terminal nodes
-   * @note For branch nodes (object/array), returns children matching the active oneOf/anyOf branch.
-   *       For terminal nodes, always returns `null`.
-   */
-  public get children(): ChildNode[] | null {
-    return null;
-  }
-
-  /**
-   * List of all child nodes regardless of scope or active state.
-   * @returns All subnodes including inactive oneOf/anyOf branches, or `null` for terminal nodes
-   * @note Unlike `children`, this includes nodes from all oneOf/anyOf variants.
-   *       Useful for operations that need to traverse the complete node tree.
-   */
-  public get subnodes(): ChildNode[] | null {
-    return this.children;
-  }
-
-  constructor({
-    name,
-    scope,
-    variant,
-    jsonSchema,
-    schemaType,
-    required,
-    nullable,
-    defaultValue,
-    onChange,
-    parentNode,
-    validationMode,
-    validatorFactory,
-    contextNode,
-  }: SchemaNodeConstructorProps<Schema, Value>) {
-    this.scope = scope;
-    this.variant = variant;
-    this.jsonSchema = jsonSchema;
-    this.schemaType = schemaType;
-    this.nullable = nullable;
-    this.required = required ?? false;
-
-    this.isRoot = !parentNode;
-    this.rootNode = (parentNode?.rootNode || this) as SchemaNode;
-    this.parentNode = parentNode || null;
-    this.group = getNodeGroup(this.schemaType, this.jsonSchema);
-    this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
-
-    this.__name__ = name || '';
-    this.__escapedName__ = escapeSegment(this.__name__);
-    this.__path__ = joinSegment(this.parentNode?.path, this.__escapedName__);
-    this.__schemaPath__ = this.scope
-      ? joinSegment(
-          this.parentNode?.schemaPath || $.Fragment,
-          getScopedSegment(
-            this.__escapedName__,
-            this.scope,
-            this.parentNode?.type,
-            this.variant,
-          ),
-        )
-      : joinSegment(
-          this.parentNode?.schemaPath || $.Fragment,
-          this.__escapedName__,
-        );
-
-    this.__contextNode__ = this.isRoot
-      ? contextNode || null
-      : this.rootNode.__contextNode__;
-
-    this.__updateScoped__();
-    this.__setDefaultValue__(
-      defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema),
-    );
-
-    this.__computeManager__ = new ComputedPropertiesManager(
-      this.schemaType,
-      this.jsonSchema,
-      this.rootNode.jsonSchema,
-    );
-
-    if (this.isRoot) {
-      this.__injectionGuardManager__ = new InjectionGuardManager();
-      this.__validationManager__ = new ValidationManager(
-        this,
-        validatorFactory,
-        validationMode,
-      );
-      const validateEnabled = this.__validationManager__?.enabled === true;
-      const validateOnChange = validationMode
-        ? (validationMode & ValidationMode.OnChange) > 0
-        : false;
-      this.__handleChange__ = afterMicrotask(() => {
-        if (validateEnabled && validateOnChange)
-          this.__validationManager__?.validate(this.__enhancedValue__);
-        onChange(getSafeEmptyValue(this.value, this.schemaType));
-      });
-      if (validateEnabled)
-        this.__enhancer__ = getEmptyValue(this.schemaType) as Value;
-    } else this.__handleChange__ = onChange;
-  }
-
-  /**
-   * Finds the node corresponding to the given pointer in the node tree.
-   * @param pointer - JSON Pointer of the node to find (e.g., '/foo/0/bar'), returns itself if not provided
-   * @returns {SchemaNode|null} The found node, null if not found
-   */
-  public find(this: AbstractNode, pointer?: string): SchemaNode | null {
-    if (pointer === undefined) return this as SchemaNode;
-    if (pointer === $.Context) return this.__contextNode__ as SchemaNode;
-    if (pointer === $.Root) return this.rootNode;
-    const absolute = isAbsolutePath(pointer);
-    if (absolute && pointer.length === 1) return this.rootNode;
-    return findNode(absolute ? this.rootNode : (this as SchemaNode), pointer);
-  }
-
-  /**
-   * Finds all nodes in the node tree that match the given pointer.
-   * @param pointer - JSON Pointer of the nodes to find (e.g., '/foo/0/bar'), returns itself if not provided
-   * @returns {SchemaNode[]} The found nodes, empty array if not found
-   */
-  public findAll(this: AbstractNode, pointer?: string): SchemaNode[] {
-    if (pointer === undefined) return [this as SchemaNode];
-    if (pointer === $.Context)
-      return this.__contextNode__ ? [this.__contextNode__ as SchemaNode] : [];
-    if (pointer === $.Root) return [this.rootNode];
-    const absolute = isAbsolutePath(pointer);
-    if (absolute && pointer.length === 1) return [this.rootNode];
-    return findNodes(absolute ? this.rootNode : (this as SchemaNode), pointer);
-  }
-
-  /**
-   * Manages node event publishing, subscription, and batching.
-   * @description Encapsulates all event-related functionality:
-   *              - Listener registration/unregistration
-   *              - Event batching to prevent recursive triggering
-   *              - Dependency subscription management
-   * @see EventCascadeManager
-   */
-  private __eventManager__ = new EventCascadeManager(() => ({
-    path: this.path,
-    dependencies: this.__computeManager__.dependencyPaths,
-  }));
-
-  /**
-   * Saves an event unsubscribe function.
-   * @param unsubscribe - The unsubscribe function to save
-   */
-  protected saveUnsubscribe(this: AbstractNode, unsubscribe: Fn) {
-    this.__eventManager__.saveUnsubscribe(unsubscribe);
-  }
-
-  /**
-   * Initializes the node's event listener/subscription list. Initialization must be called by itself or by the parent node.
-   * @param actor - The node requesting initialization
-   */
-  protected __cleanUp__(this: AbstractNode, actor?: SchemaNode) {
-    if (actor !== this.parentNode && !this.isRoot) return;
-    this.__eventManager__.cleanUp();
-  }
-
-  /**
-   * Publishes an event to the node's listeners
-   * @param type - Event type (see NodeEventType)
-   * @param payload - Data for the event (see NodeEventPayload)
-   * @param options - Options for the event (see NodeEventOptions)
-   * @param immediate - If true, executes listeners synchronously; if false, batches event via EventCascadeManager
-   */
-  public publish<Type extends NodeEventType>(
-    this: AbstractNode,
-    type: Type,
-    payload?: NodeEventPayload[Type],
-    options?: NodeEventOptions[Type],
-    immediate?: boolean,
-  ) {
-    if (immediate) this.__eventManager__.dispatch(type, payload, options);
-    else this.__eventManager__.publish(type, payload, options);
-  }
-
-  /**
-   * Registers a node event listener
-   * @param listener Event listener
-   * @returns Event listener removal function
-   */
-  public subscribe(this: AbstractNode, listener: NodeListener): Fn {
-    return this.__eventManager__.subscribe(listener);
-  }
-
-  private __validationManager__: ValidationManager | undefined;
-
-  /** [readonly] Whether validation is enabled for this form */
-  protected get __validationEnabled__(): boolean {
-    return this.isRoot
-      ? this.__validationManager__?.enabled === true
-      : (this.rootNode as AbstractNode).__validationEnabled__;
-  }
-
-  /**
-   * Performs validation based on the current value.
-   * @returns {Promise<ValidationError[]>} List of errors that occurred inside the form
-   * @note If `ValidationMode.None` is set, an empty array is returned.
-   */
-  public async validate(this: AbstractNode) {
-    if (this.isRoot)
-      await this.__validationManager__?.validate(this.__enhancedValue__);
-    else await this.rootNode.validate();
-    return this.globalErrors;
-  }
-
-  /**
-   * Additional data for validation that includes virtual/computed field values.
-   * @note Only used by root node. Virtual fields don't exist in the actual value
-   *       but need to be included for schema validation.
-   */
-  private __enhancer__: Value | undefined;
-
-  /**
-   * Gets the value used for validation, merging actual value with enhancer data.
-   * @returns Combined value including virtual field values for complete schema validation
-   * @note Only used by root node during validation.
-   */
-  private get __enhancedValue__(): Value | Nullish {
-    const value = this.value;
-    if (this.group === 'terminal' || value == null) return value;
-    const enhancer = this.__enhancer__;
-    if (enhancer === undefined || isEmptyObject(enhancer)) return value;
-    return merge(cloneLite(enhancer), value);
-  }
-
-  /**
-   * Adds or updates a value in the enhancer for validation purposes
-   * @param pointer - JSON Pointer path to the value location
-   * @param value - Value to set in enhancer (typically from virtual/computed fields)
-   * */
-  protected __adjustEnhancer__(
-    this: AbstractNode,
-    pointer: string,
-    value: any,
-  ) {
-    if (this.isRoot) setValue(this.__enhancer__, pointer, value);
-    else (this.rootNode as AbstractNode).__adjustEnhancer__(pointer, value);
-  }
-
-  /**
-   * Manages injection guard state to prevent circular injection loops.
-   * @description Only initialized on the root node. Tracks which node paths are currently
-   *              being injected and coordinates deferred cleanup across all nodes in the tree.
-   * @see InjectionGuardManager
-   */
-  private __injectionGuardManager__: InjectionGuardManager | undefined;
-
-  /**
-   * Provides access to the injection guard manager from any node in the tree.
-   * @description Root nodes return their own manager instance, while child nodes
-   *              delegate to the root node's manager to ensure centralized tracking.
-   * @returns The injection guard manager, or `undefined` if not initialized
-   */
-  private get __injectionGuard__() {
-    if (this.isRoot) return this.__injectionGuardManager__;
-    return this.rootNode.__injectionGuardManager__;
-  }
-
-  /**
-   * Prepares the handler for `injectTo` schema property.
-   * @note Sets up a subscription that listens for value updates and propagates
-   *       values to other nodes as defined by the `injectTo` function in the schema.
-   *       Implements circular injection prevention using injected node flags.
-   */
-  private __prepareInjectHandler__(this: AbstractNode) {
-    if (this.__initialized__) return;
-    const injectHandler = this.jsonSchema.injectTo;
-    if (typeof injectHandler !== 'function') return;
-    this.subscribe(({ type, options }) => {
-      if (type & NodeEventType.UpdateValue) {
-        if (options?.[NodeEventType.UpdateValue]?.inject)
-          this.publish(NodeEventType.RequestInjection);
-        return;
-      }
-      if (type & NodeEventType.RequestInjection) {
-        const injectionGuard = this.__injectionGuard__;
-        if (injectionGuard == null) return;
-        const value = this.value;
-        const dataPath = this.path;
-        const context = {
-          dataPath,
-          schemaPath: this.schemaPath,
-          jsonSchema: this.jsonSchema,
-          parentValue: this.parentNode?.value || null,
-          parentJsonSchema: this.parentNode?.jsonSchema || null,
-          rootValue: this.rootNode.value,
-          rootJsonSchema: this.rootNode.jsonSchema,
-          context: this.context,
-        } satisfies InjectHandlerContext;
-        try {
-          injectionGuard.add(dataPath);
-          const affect = injectHandler(value, context);
-          if (affect == null) return;
-          const operations = isArray(affect) ? affect : Object.entries(affect);
-          for (let i = 0, l = operations.length; i < l; i++) {
-            const path = getAbsolutePath(dataPath, operations[i][0]);
-            if (injectionGuard.has(path)) continue;
-            injectionGuard.add(path);
-            this.find(path)?.setValue(operations[i][1]);
-          }
-        } catch (error) {
-          const errorContext = { ...context, value, error };
-          throw new JsonSchemaError(
-            'INJECT_TO',
-            formatInjectToError(errorContext),
-            errorContext,
-          );
-        } finally {
-          injectionGuard.scheduleClearInjectedPaths();
-        }
-      }
-    });
-  }
-
-  /**
-   * Flag indicating whether the node has completed initialization.
-   * @note Set to `true` after `initialize()` completes successfully.
-   *       Prevents duplicate initialization.
-   */
-  private __initialized__: boolean = false;
-
-  /**
-   * Whether the node has completed its initialization phase.
-   * @returns `true` if `initialize()` has been called successfully
-   * @note Initialization sets up dependency subscriptions and injectTo handlers.
-   */
-  public get initialized() {
-    return this.__initialized__;
-  }
-
-  /**
-   * Initializes the node. Initialization must be called by itself or by the parent node.
-   * @param actor - The node requesting initialization
-   * @returns {boolean} Whether initialization occurred
-   */
-  protected __initialize__(this: AbstractNode, actor?: SchemaNode) {
-    if (this.__initialized__ || (actor !== this.parentNode && !this.isRoot))
-      return false;
-    this.__prepareUpdateDependencies__();
-    this.__prepareInjectHandler__();
-    this.publish(NodeEventType.Initialized);
-    this.__initialized__ = true;
-    return true;
   }
 
   /**
@@ -849,48 +549,6 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Resets the current node to its initial value or computed derived value.
-   * Value priority: inputValue > derivedValue > fallbackValue/computed default
-   * @param options - Reset options
-   * @param options.updateScoped - Whether to update the scoped property (for oneOf/anyOf branches)
-   * @param options.preferLatest - Whether to prefer the latest value over initial value
-   * @param options.preferInitial - Whether to prefer the initial value when preferLatest is true
-   * @param options.inputValue - Explicit input value with highest priority
-   * @param options.fallbackValue - Fallback value used in default calculation
-   */
-  protected __reset__(this: AbstractNode, options: ResetOptions<Value> = {}) {
-    if (options.updateScoped) this.__updateScoped__();
-
-    let value: Value | Nullish;
-    if ('inputValue' in options) value = options.inputValue;
-    else if (options.preferLatest) {
-      if (options.checkDefaultValueFirst && this.__isDefinedDefaultValue__)
-        value = this.__defaultValue__;
-      else
-        value =
-          options.fallbackValue !== undefined
-            ? options.fallbackValue
-            : this.value !== undefined
-              ? this.value
-              : this.__defaultValue__;
-    } else value = this.__defaultValue__;
-
-    if (
-      options.applyDerivedValue &&
-      this.__computeManager__.getDerivedValue &&
-      this.active
-    )
-      value =
-        this.__computeManager__.getDerivedValue(this.__dependencies__) ?? value;
-
-    this.setValue(
-      this.__computeManager__.active ? value : undefined,
-      SetValueOption.StableReset,
-    );
-    this.setState();
-  }
-
-  /**
    * Updates the node's scoped property.
    * @returns Whether the scoped property was changed
    */
@@ -1025,14 +683,59 @@ export abstract class AbstractNode<
     if (this.isRoot) this.__setGlobalState__();
   }
 
+  private __validationManager__: ValidationManager | undefined;
+
+  /** [readonly] Whether validation is enabled for this form */
+  protected get __validationEnabled__(): boolean {
+    return this.isRoot
+      ? this.__validationManager__?.enabled === true
+      : (this.rootNode as AbstractNode).__validationEnabled__;
+  }
+
   /**
-   * Resets the subtree.
-   * @param this - The node to reset the subtree for.
-   * @returns void
+   * Performs validation based on the current value.
+   * @returns {Promise<ValidationError[]>} List of errors that occurred inside the form
+   * @note If `ValidationMode.None` is set, an empty array is returned.
    */
-  public resetSubtree(this: AbstractNode) {
-    this.clearSubtreeState();
-    this.__reset__();
+  public async validate(this: AbstractNode) {
+    if (this.isRoot)
+      await this.__validationManager__?.validate(this.__enhancedValue__);
+    else await this.rootNode.validate();
+    return this.globalErrors;
+  }
+
+  /**
+   * Additional data for validation that includes virtual/computed field values.
+   * @note Only used by root node. Virtual fields don't exist in the actual value
+   *       but need to be included for schema validation.
+   */
+  private __enhancer__: Value | undefined;
+
+  /**
+   * Gets the value used for validation, merging actual value with enhancer data.
+   * @returns Combined value including virtual field values for complete schema validation
+   * @note Only used by root node during validation.
+   */
+  private get __enhancedValue__(): Value | Nullish {
+    const value = this.value;
+    if (this.group === 'terminal' || value == null) return value;
+    const enhancer = this.__enhancer__;
+    if (enhancer === undefined || isEmptyObject(enhancer)) return value;
+    return merge(cloneLite(enhancer), value);
+  }
+
+  /**
+   * Adds or updates a value in the enhancer for validation purposes
+   * @param pointer - JSON Pointer path to the value location
+   * @param value - Value to set in enhancer (typically from virtual/computed fields)
+   * */
+  protected __adjustEnhancer__(
+    this: AbstractNode,
+    pointer: string,
+    value: any,
+  ) {
+    if (this.isRoot) setValue(this.__enhancer__, pointer, value);
+    else (this.rootNode as AbstractNode).__adjustEnhancer__(pointer, value);
   }
 
   /** @internal Error management for this node */
@@ -1129,5 +832,302 @@ export abstract class AbstractNode<
   ) {
     const filteredErrors = this.__errorManager__.filterExternalErrors(errors);
     if (filteredErrors !== null) this.setExternalErrors(filteredErrors);
+  }
+
+  /**
+   * Manages node event publishing, subscription, and batching.
+   * @description Encapsulates all event-related functionality:
+   *              - Listener registration/unregistration
+   *              - Event batching to prevent recursive triggering
+   *              - Dependency subscription management
+   * @see EventCascadeManager
+   */
+  private __eventManager__ = new EventCascadeManager(() => ({
+    path: this.path,
+    dependencies: this.__computeManager__.dependencyPaths,
+  }));
+
+  /**
+   * Saves an event unsubscribe function.
+   * @param unsubscribe - The unsubscribe function to save
+   */
+  protected saveUnsubscribe(this: AbstractNode, unsubscribe: Fn) {
+    this.__eventManager__.saveUnsubscribe(unsubscribe);
+  }
+
+  /**
+   * Initializes the node's event listener/subscription list. Initialization must be called by itself or by the parent node.
+   * @param actor - The node requesting initialization
+   */
+  protected __cleanUp__(this: AbstractNode, actor?: SchemaNode) {
+    if (actor !== this.parentNode && !this.isRoot) return;
+    this.__eventManager__.cleanUp();
+  }
+
+  /**
+   * Publishes an event to the node's listeners
+   * @param type - Event type (see NodeEventType)
+   * @param payload - Data for the event (see NodeEventPayload)
+   * @param options - Options for the event (see NodeEventOptions)
+   * @param immediate - If true, executes listeners synchronously; if false, batches event via EventCascadeManager
+   */
+  public publish<Type extends NodeEventType>(
+    this: AbstractNode,
+    type: Type,
+    payload?: NodeEventPayload[Type],
+    options?: NodeEventOptions[Type],
+    immediate?: boolean,
+  ) {
+    if (immediate) this.__eventManager__.dispatch(type, payload, options);
+    else this.__eventManager__.publish(type, payload, options);
+  }
+
+  /**
+   * Registers a node event listener
+   * @param listener Event listener
+   * @returns Event listener removal function
+   */
+  public subscribe(this: AbstractNode, listener: NodeListener): Fn {
+    return this.__eventManager__.subscribe(listener);
+  }
+
+  /**
+   * Manages injection guard state to prevent circular injection loops.
+   * @description Only initialized on the root node. Tracks which node paths are currently
+   *              being injected and coordinates deferred cleanup across all nodes in the tree.
+   * @see InjectionGuardManager
+   */
+  private __injectionGuardManager__: InjectionGuardManager | undefined;
+
+  /**
+   * Provides access to the injection guard manager from any node in the tree.
+   * @description Root nodes return their own manager instance, while child nodes
+   *              delegate to the root node's manager to ensure centralized tracking.
+   * @returns The injection guard manager, or `undefined` if not initialized
+   */
+  private get __injectionGuard__() {
+    if (this.isRoot) return this.__injectionGuardManager__;
+    return this.rootNode.__injectionGuardManager__;
+  }
+
+  /**
+   * Prepares the handler for `injectTo` schema property.
+   * @note Sets up a subscription that listens for value updates and propagates
+   *       values to other nodes as defined by the `injectTo` function in the schema.
+   *       Implements circular injection prevention using injected node flags.
+   */
+  private __prepareInjectHandler__(this: AbstractNode) {
+    if (this.__initialized__) return;
+    const injectHandler = this.jsonSchema.injectTo;
+    if (typeof injectHandler !== 'function') return;
+    this.subscribe(({ type, options }) => {
+      if (type & NodeEventType.UpdateValue) {
+        if (options?.[NodeEventType.UpdateValue]?.inject)
+          this.publish(NodeEventType.RequestInjection);
+        return;
+      }
+      if (type & NodeEventType.RequestInjection) {
+        const injectionGuard = this.__injectionGuard__;
+        if (injectionGuard == null) return;
+        const value = this.value;
+        const dataPath = this.path;
+        const context = {
+          dataPath,
+          schemaPath: this.schemaPath,
+          jsonSchema: this.jsonSchema,
+          parentValue: this.parentNode?.value || null,
+          parentJsonSchema: this.parentNode?.jsonSchema || null,
+          rootValue: this.rootNode.value,
+          rootJsonSchema: this.rootNode.jsonSchema,
+          context: this.context,
+        } satisfies InjectHandlerContext;
+        try {
+          injectionGuard.add(dataPath);
+          const affect = injectHandler(value, context);
+          if (affect == null) return;
+          const operations = isArray(affect) ? affect : Object.entries(affect);
+          for (let i = 0, l = operations.length; i < l; i++) {
+            const path = getAbsolutePath(dataPath, operations[i][0]);
+            if (injectionGuard.has(path)) continue;
+            injectionGuard.add(path);
+            this.find(path)?.setValue(operations[i][1]);
+          }
+        } catch (error) {
+          const errorContext = { ...context, value, error };
+          throw new JsonSchemaError(
+            'INJECT_TO',
+            formatInjectToError(errorContext),
+            errorContext,
+          );
+        } finally {
+          injectionGuard.scheduleClearInjectedPaths();
+        }
+      }
+    });
+  }
+
+  /**
+   * Flag indicating whether the node has completed initialization.
+   * @note Set to `true` after `initialize()` completes successfully.
+   *       Prevents duplicate initialization.
+   */
+  private __initialized__: boolean = false;
+
+  /**
+   * Whether the node has completed its initialization phase.
+   * @returns `true` if `initialize()` has been called successfully
+   * @note Initialization sets up dependency subscriptions and injectTo handlers.
+   */
+  public get initialized() {
+    return this.__initialized__;
+  }
+
+  /**
+   * Initializes the node. Initialization must be called by itself or by the parent node.
+   * @param actor - The node requesting initialization
+   * @returns {boolean} Whether initialization occurred
+   */
+  protected __initialize__(this: AbstractNode, actor?: SchemaNode) {
+    if (this.__initialized__ || (actor !== this.parentNode && !this.isRoot))
+      return false;
+    this.__prepareUpdateDependencies__();
+    this.__prepareInjectHandler__();
+    this.publish(NodeEventType.Initialized);
+    this.__initialized__ = true;
+    return true;
+  }
+
+  /**
+   * Resets the current node to its initial value or computed derived value.
+   * Value priority: inputValue > derivedValue > fallbackValue/computed default
+   * @param options - Reset options
+   * @param options.updateScoped - Whether to update the scoped property (for oneOf/anyOf branches)
+   * @param options.preferLatest - Whether to prefer the latest value over initial value
+   * @param options.preferInitial - Whether to prefer the initial value when preferLatest is true
+   * @param options.inputValue - Explicit input value with highest priority
+   * @param options.fallbackValue - Fallback value used in default calculation
+   */
+  protected __reset__(this: AbstractNode, options: ResetOptions<Value> = {}) {
+    if (options.updateScoped) this.__updateScoped__();
+
+    let value: Value | Nullish;
+    if ('inputValue' in options) value = options.inputValue;
+    else if (options.preferLatest) {
+      if (options.checkDefaultValueFirst && this.__isDefinedDefaultValue__)
+        value = this.__defaultValue__;
+      else
+        value =
+          options.fallbackValue !== undefined
+            ? options.fallbackValue
+            : this.value !== undefined
+              ? this.value
+              : this.__defaultValue__;
+    } else value = this.__defaultValue__;
+
+    if (
+      options.applyDerivedValue &&
+      this.__computeManager__.getDerivedValue &&
+      this.active
+    )
+      value =
+        this.__computeManager__.getDerivedValue(this.__dependencies__) ?? value;
+
+    this.setValue(
+      this.__computeManager__.active ? value : undefined,
+      SetValueOption.StableReset,
+    );
+    this.setState();
+  }
+
+  /**
+   * Resets the subtree.
+   * @param this - The node to reset the subtree for.
+   * @returns void
+   */
+  public resetSubtree(this: AbstractNode) {
+    this.clearSubtreeState();
+    this.__reset__();
+  }
+
+  constructor({
+    name,
+    scope,
+    variant,
+    jsonSchema,
+    schemaType,
+    required,
+    nullable,
+    defaultValue,
+    onChange,
+    parentNode,
+    validationMode,
+    validatorFactory,
+    contextNode,
+  }: SchemaNodeConstructorProps<Schema, Value>) {
+    this.scope = scope;
+    this.variant = variant;
+    this.jsonSchema = jsonSchema;
+    this.schemaType = schemaType;
+    this.nullable = nullable;
+    this.required = required ?? false;
+
+    this.isRoot = !parentNode;
+    this.rootNode = (parentNode?.rootNode || this) as SchemaNode;
+    this.parentNode = parentNode || null;
+    this.group = getNodeGroup(this.schemaType, this.jsonSchema);
+    this.depth = this.parentNode ? this.parentNode.depth + 1 : 0;
+
+    this.__name__ = name || '';
+    this.__escapedName__ = escapeSegment(this.__name__);
+    this.__path__ = joinSegment(this.parentNode?.path, this.__escapedName__);
+    this.__schemaPath__ = this.scope
+      ? joinSegment(
+          this.parentNode?.schemaPath || $.Fragment,
+          getScopedSegment(
+            this.__escapedName__,
+            this.scope,
+            this.parentNode?.type,
+            this.variant,
+          ),
+        )
+      : joinSegment(
+          this.parentNode?.schemaPath || $.Fragment,
+          this.__escapedName__,
+        );
+
+    this.__contextNode__ = this.isRoot
+      ? contextNode || null
+      : this.rootNode.__contextNode__;
+
+    this.__updateScoped__();
+    this.__setDefaultValue__(
+      defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema),
+    );
+
+    this.__computeManager__ = new ComputedPropertiesManager(
+      this.schemaType,
+      this.jsonSchema,
+      this.rootNode.jsonSchema,
+    );
+
+    if (this.isRoot) {
+      this.__injectionGuardManager__ = new InjectionGuardManager();
+      this.__validationManager__ = new ValidationManager(
+        this,
+        validatorFactory,
+        validationMode,
+      );
+      const validateEnabled = this.__validationManager__?.enabled === true;
+      const validateOnChange = validationMode
+        ? (validationMode & ValidationMode.OnChange) > 0
+        : false;
+      this.__handleChange__ = afterMicrotask(() => {
+        if (validateEnabled && validateOnChange)
+          this.__validationManager__?.validate(this.__enhancedValue__);
+        onChange(getSafeEmptyValue(this.value, this.schemaType));
+      });
+      if (validateEnabled)
+        this.__enhancer__ = getEmptyValue(this.schemaType) as Value;
+    } else this.__handleChange__ = onChange;
   }
 }

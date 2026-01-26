@@ -21,6 +21,9 @@ import {
 export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   public override readonly type = 'number';
 
+  /** Current value of the number node */
+  private __value__: NumberValue | Nullish = undefined;
+
   protected override __equals__(
     this: NumberNode,
     left: NumberValue | Nullish,
@@ -30,25 +33,6 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     if (fullPrecision) return left === right;
     if (left == null || right == null) return left === right;
     return isClose(left, right);
-  }
-
-  /** Current value of the number node */
-  private __value__: NumberValue | Nullish = undefined;
-
-  /**
-   * Gets the value of the number node.
-   * @returns Number value or undefined
-   */
-  public override get value() {
-    return this.__value__;
-  }
-
-  /**
-   * Sets the value of the number node.
-   * @param input - The number value to set
-   */
-  public override set value(input: NumberValue | Nullish) {
-    this.setValue(input);
   }
 
   /**
@@ -66,14 +50,20 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
 
   protected override onChange: HandleChange<NumberValue | Nullish>;
 
-  constructor(properties: SchemaNodeConstructorProps<NumberSchema>) {
-    super(properties);
-    this.onChange =
-      this.jsonSchema.options?.omitEmpty !== false
-        ? this.__onChangeWithOmitEmpty__
-        : super.onChange;
-    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
-    this.__initialize__();
+  /**
+   * Gets the value of the number node.
+   * @returns Number value or undefined
+   */
+  public override get value() {
+    return this.__value__;
+  }
+
+  /**
+   * Sets the value of the number node.
+   * @param input - The number value to set
+   */
+  public override set value(input: NumberValue | Nullish) {
+    this.setValue(input);
   }
 
   /**
@@ -133,5 +123,15 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     else if (input === undefined || isNaN(input))
       super.onChange(undefined, batch);
     else super.onChange(input, batch);
+  }
+
+  constructor(properties: SchemaNodeConstructorProps<NumberSchema>) {
+    super(properties);
+    this.onChange =
+      this.jsonSchema.options?.omitEmpty !== false
+        ? this.__onChangeWithOmitEmpty__
+        : super.onChange;
+    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
+    this.__initialize__();
   }
 }

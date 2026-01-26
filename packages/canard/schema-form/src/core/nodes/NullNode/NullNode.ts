@@ -19,41 +19,6 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
   private __value__: NullValue | undefined;
 
   /**
-   * Gets the value of the null node.
-   * @returns null or undefined
-   */
-  public override get value() {
-    return this.__value__;
-  }
-
-  /**
-   * Sets the value of the null node.
-   * @param input - The value to set
-   */
-  public override set value(input: NullValue | undefined) {
-    this.setValue(input);
-  }
-
-  /**
-   * Applies the input value to the null node.
-   * @param input - The value to set
-   * @param option - Set value options
-   */
-  protected override applyValue(
-    this: NullNode,
-    input: NullValue | undefined,
-    option: UnionSetValueOption,
-  ) {
-    this.__emitChange__(input, option);
-  }
-
-  constructor(properties: SchemaNodeConstructorProps<NullSchema>) {
-    super(properties);
-    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
-    this.__initialize__();
-  }
-
-  /**
    * Reflects value changes and publishes related events.
    * @param input - The value to set
    * @param option - Set value options
@@ -93,5 +58,40 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
   private __parseValue__(this: NullNode, input: NullValue | undefined) {
     if (input === undefined) return undefined;
     return input;
+  }
+
+  /**
+   * Applies the input value to the null node.
+   * @param input - The value to set
+   * @param option - Set value options
+   */
+  protected override applyValue(
+    this: NullNode,
+    input: NullValue | undefined,
+    option: UnionSetValueOption,
+  ) {
+    this.__emitChange__(input, option);
+  }
+
+  /**
+   * Gets the value of the null node.
+   * @returns null or undefined
+   */
+  public override get value() {
+    return this.__value__;
+  }
+
+  /**
+   * Sets the value of the null node.
+   * @param input - The value to set
+   */
+  public override set value(input: NullValue | undefined) {
+    this.setValue(input);
+  }
+
+  constructor(properties: SchemaNodeConstructorProps<NullSchema>) {
+    super(properties);
+    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
+    this.__initialize__();
   }
 }

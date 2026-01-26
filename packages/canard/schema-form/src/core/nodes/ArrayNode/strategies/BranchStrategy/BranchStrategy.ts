@@ -42,18 +42,6 @@ export class BranchStrategy implements ArrayNodeStrategy {
   /** Flag indicating whether the strategy is already processing a batch */
   private __batched__: boolean = false;
 
-  /** Revision counter for generating unique keys for array elements */
-  private __revision__: number = 0;
-
-  /** Array of unique keys for each element in the array, maintaining order */
-  private __keys__: ChildSegmentKey[] = [];
-
-  /** Map storing actual data and corresponding schema nodes for each array element */
-  private __sourceMap__: Map<
-    ChildSegmentKey,
-    { data: AllowedValue; node: SchemaNode }
-  > = new Map();
-
   /** Flag indicating whether the array value is not changed */
   private __idle__: boolean = false;
 
@@ -69,8 +57,152 @@ export class BranchStrategy implements ArrayNodeStrategy {
     this.__expired__ = true;
   }
 
+  /** Revision counter for generating unique keys for array elements */
+  private __revision__: number = 0;
+
+  /** Array of unique keys for each element in the array, maintaining order */
+  private __keys__: ChildSegmentKey[] = [];
+
+  /** Map storing actual data and corresponding schema nodes for each array element */
+  private __sourceMap__: Map<
+    ChildSegmentKey,
+    { data: AllowedValue; node: SchemaNode }
+  > = new Map();
+
   /** Current value of the array node */
   private __value__: ArrayValue = [];
+
+  private __children__: ChildNode[] = [];
+
+  /**
+   * Gets information about child nodes.
+   * @returns Array containing key and node information
+   * @private
+   */
+  private get __edges__() {
+    const edges = new Array<ChildNode>(this.__keys__.length);
+    for (let i = 0, l = this.__keys__.length; i < l; i++) {
+      const key = this.__keys__[i];
+      edges[i] = { nonce: key, node: this.__sourceMap__.get(key)!.node };
+    }
+    return edges;
+  }
+
+  /**
+   * Converts internal array state to an object array.
+   * @returns Array containing the values of the array
+   * @private
+   */
+  private __toArray__() {
+    const values = new Array<AllowedValue>(this.__keys__.length);
+    for (let i = 0, l = this.__keys__.length; i < l; i++) {
+      const edge = this.__sourceMap__.get(this.__keys__[i]);
+      if (edge) values[i] = edge.data;
+    }
+    return values;
+  }
+
+  /**
+   * Determines whether to queue or immediately process value changes.
+   *
+   * In batch mode: Publishes RequestEmitChange event for deferred processing
+   * In sync mode: Immediately calls handleEmitChange for instant updates
+   *
+   * @param option - Change options (optional)
+   * @private
+   */
+  private __emitChange__(
+    option: UnionSetValueOption = SetValueOption.BatchDefault,
+    batched: boolean = true,
+    updateChildren: boolean = true,
+  ) {
+    if (this.__locked__) return;
+    if (batched) {
+      if (this.__batched__) return;
+      this.__batched__ = true;
+      this.__host__.publish(
+        NodeEventType.RequestEmitChange,
+        option,
+        updateChildren,
+      );
+    } else this.__handleEmitChange__(option, updateChildren);
+  }
+
+  /**
+   * Emits a value change event.
+   * @param option - Option settings (default: SetValueOption.Default)
+   * @private
+   */
+  private __handleEmitChange__(
+    option: UnionSetValueOption = SetValueOption.Default,
+    updateChildren: boolean = false,
+  ) {
+    if (this.__locked__ || this.__idle__) return;
+    const host = this.__host__;
+    const settled = (option & SetValueOption.Isolate) === 0;
+    const inject = (option & SetValueOption.PreventInjection) === 0;
+
+    const previous = [...this.__value__];
+    this.__value__ = this.__toArray__();
+    const current = this.value;
+
+    if (option & SetValueOption.EmitChange)
+      this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
+    if (option & SetValueOption.Refresh)
+      host.publish(NodeEventType.RequestRefresh);
+    if (option & SetValueOption.PublishUpdateEvent)
+      host.publish(
+        NodeEventType.UpdateValue,
+        current,
+        { previous, current, inject },
+        settled && host.initialized,
+      );
+
+    this.__idle__ = true;
+    if (updateChildren) this.__publishUpdateChildren__();
+  }
+
+  /**
+   * Creates a function to handle value changes for a specific element.
+   * @param key - Child node Key
+   * @returns {HandleChange} Value change handler
+   * @private
+   */
+  private __handleChangeFactory__(key: ChildSegmentKey): HandleChange {
+    return (input, batched) => {
+      const source = this.__sourceMap__.get(key);
+      if (!source || source.data === input) return;
+      source.data = input;
+      this.__idle__ = false;
+      this.__nullish__ = false;
+      this.__emitChange__(SetValueOption.Default, batched, false);
+    };
+  }
+
+  /**
+   * Updates the names of array elements.
+   * @private
+   */
+  private __updateChildName__() {
+    for (let i = 0, l = this.__keys__.length; i < l; i++) {
+      const key = this.__keys__[i];
+      if (this.__sourceMap__.has(key)) {
+        const node = this.__sourceMap__.get(key)!.node;
+        const name = '' + i;
+        // @ts-expect-error [internal] setName delegation
+        if (node.name !== name) node.__setName__(name, this.__host__);
+      }
+    }
+  }
+
+  /**
+   * Publishes a child node update event.
+   * @private
+   */
+  private __publishUpdateChildren__() {
+    if (this.__locked__) return;
+    this.__host__.publish(NodeEventType.UpdateChildren);
+  }
 
   /**
    * Gets the current value of the array.
@@ -79,6 +211,26 @@ export class BranchStrategy implements ArrayNodeStrategy {
   public get value() {
     if (this.__nullish__ == null) return this.__nullish__;
     else return this.__value__;
+  }
+
+  /**
+   * Gets the child nodes of the array node.
+   * @returns List of child nodes
+   */
+  public get children() {
+    if (this.__expired__) {
+      this.__children__ = this.__edges__;
+      this.__expired__ = false;
+    }
+    return this.__children__;
+  }
+
+  /**
+   * Gets the current length of the array.
+   * @returns Length of the array
+   */
+  public get length() {
+    return this.__keys__.length;
   }
 
   /**
@@ -103,28 +255,6 @@ export class BranchStrategy implements ArrayNodeStrategy {
     }
   }
 
-  private __children__: ChildNode[] = [];
-
-  /**
-   * Gets the child nodes of the array node.
-   * @returns List of child nodes
-   */
-  public get children() {
-    if (this.__expired__) {
-      this.__children__ = this.__edges__;
-      this.__expired__ = false;
-    }
-    return this.__children__;
-  }
-
-  /**
-   * Gets the current length of the array.
-   * @returns Length of the array
-   */
-  public get length() {
-    return this.__keys__.length;
-  }
-
   /**
    * Propagates activation to all child nodes.
    * @internal Internal implementation method. Do not call directly.
@@ -134,53 +264,6 @@ export class BranchStrategy implements ArrayNodeStrategy {
       (this.__sourceMap__.get(this.__keys__[i])?.node as AbstractNode)
         // @ts-expect-error [internal] child node initialization
         ?.__initialize__(this.__host__);
-  }
-
-  /**
-   * Initializes the BranchStrategy object.
-   * @param host - Host ArrayNode object
-   * @param handleChange - Value change handler
-   * @param handleRefresh - Refresh handler
-   * @param handleSetDefaultValue - Default value setting handler
-   * @param nodeFactory - Node creation factory
-   */
-  constructor(
-    host: ArrayNode,
-    hasDefault: boolean,
-    handleChange: HandleChange<ArrayValue | Nullish>,
-    nodeFactory: SchemaNodeFactory,
-  ) {
-    this.__host__ = host;
-    this.__handleChange__ = handleChange;
-    this.__nodeFactory__ = nodeFactory;
-
-    const limit = resolveArrayLimits(host.jsonSchema);
-    this.__minItems__ = limit.min;
-    this.__maxItems__ = limit.max;
-
-    if (host.defaultValue === null) this.__nullish__ = null;
-
-    if (hasDefault) {
-      const defaultValue = host.defaultValue;
-      if (defaultValue != null && defaultValue.length > 0)
-        for (const value of defaultValue) this.push(value, true);
-    } else while (this.length < this.__minItems__) this.push(void 0, true);
-
-    host.subscribe(({ type, payload, options }) => {
-      if (type & NodeEventType.RequestEmitChange) {
-        this.__handleEmitChange__(
-          payload?.[NodeEventType.RequestEmitChange],
-          options?.[NodeEventType.RequestEmitChange],
-        );
-        this.__batched__ = false;
-      }
-    });
-
-    this.__locked__ = false;
-    this.__emitChange__(SetValueOption.Default, false);
-    // @ts-expect-error [internal] setDefaultValue delegation
-    host.__setDefaultValue__(this.value);
-    this.__publishUpdateChildren__();
   }
 
   /**
@@ -281,131 +364,49 @@ export class BranchStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * Determines whether to queue or immediately process value changes.
-   *
-   * In batch mode: Publishes RequestEmitChange event for deferred processing
-   * In sync mode: Immediately calls handleEmitChange for instant updates
-   *
-   * @param option - Change options (optional)
-   * @private
+   * Initializes the BranchStrategy object.
+   * @param host - Host ArrayNode object
+   * @param handleChange - Value change handler
+   * @param handleRefresh - Refresh handler
+   * @param handleSetDefaultValue - Default value setting handler
+   * @param nodeFactory - Node creation factory
    */
-  private __emitChange__(
-    option: UnionSetValueOption = SetValueOption.BatchDefault,
-    batched: boolean = true,
-    updateChildren: boolean = true,
+  constructor(
+    host: ArrayNode,
+    hasDefault: boolean,
+    handleChange: HandleChange<ArrayValue | Nullish>,
+    nodeFactory: SchemaNodeFactory,
   ) {
-    if (this.__locked__) return;
-    if (batched) {
-      if (this.__batched__) return;
-      this.__batched__ = true;
-      this.__host__.publish(
-        NodeEventType.RequestEmitChange,
-        option,
-        updateChildren,
-      );
-    } else this.__handleEmitChange__(option, updateChildren);
-  }
+    this.__host__ = host;
+    this.__handleChange__ = handleChange;
+    this.__nodeFactory__ = nodeFactory;
 
-  /**
-   * Emits a value change event.
-   * @param option - Option settings (default: SetValueOption.Default)
-   * @private
-   */
-  private __handleEmitChange__(
-    option: UnionSetValueOption = SetValueOption.Default,
-    updateChildren: boolean = false,
-  ) {
-    if (this.__locked__ || this.__idle__) return;
-    const host = this.__host__;
-    const settled = (option & SetValueOption.Isolate) === 0;
-    const inject = (option & SetValueOption.PreventInjection) === 0;
+    const limit = resolveArrayLimits(host.jsonSchema);
+    this.__minItems__ = limit.min;
+    this.__maxItems__ = limit.max;
 
-    const previous = [...this.__value__];
-    this.__value__ = this.__toArray__();
-    const current = this.value;
+    if (host.defaultValue === null) this.__nullish__ = null;
 
-    if (option & SetValueOption.EmitChange)
-      this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
-    if (option & SetValueOption.Refresh)
-      host.publish(NodeEventType.RequestRefresh);
-    if (option & SetValueOption.PublishUpdateEvent)
-      host.publish(
-        NodeEventType.UpdateValue,
-        current,
-        { previous, current, inject },
-        settled && host.initialized,
-      );
+    if (hasDefault) {
+      const defaultValue = host.defaultValue;
+      if (defaultValue != null && defaultValue.length > 0)
+        for (const value of defaultValue) this.push(value, true);
+    } else while (this.length < this.__minItems__) this.push(void 0, true);
 
-    this.__idle__ = true;
-    if (updateChildren) this.__publishUpdateChildren__();
-  }
-
-  /**
-   * Gets information about child nodes.
-   * @returns Array containing key and node information
-   * @private
-   */
-  private get __edges__() {
-    const edges = new Array<ChildNode>(this.__keys__.length);
-    for (let i = 0, l = this.__keys__.length; i < l; i++) {
-      const key = this.__keys__[i];
-      edges[i] = { nonce: key, node: this.__sourceMap__.get(key)!.node };
-    }
-    return edges;
-  }
-  /**
-   * Converts internal array state to an object array.
-   * @returns Array containing the values of the array
-   * @private
-   */
-  private __toArray__() {
-    const values = new Array<AllowedValue>(this.__keys__.length);
-    for (let i = 0, l = this.__keys__.length; i < l; i++) {
-      const edge = this.__sourceMap__.get(this.__keys__[i]);
-      if (edge) values[i] = edge.data;
-    }
-    return values;
-  }
-
-  /**
-   * Creates a function to handle value changes for a specific element.
-   * @param key - Child node Key
-   * @returns {HandleChange} Value change handler
-   * @private
-   */
-  private __handleChangeFactory__(key: ChildSegmentKey): HandleChange {
-    return (input, batched) => {
-      const source = this.__sourceMap__.get(key);
-      if (!source || source.data === input) return;
-      source.data = input;
-      this.__idle__ = false;
-      this.__nullish__ = false;
-      this.__emitChange__(SetValueOption.Default, batched, false);
-    };
-  }
-
-  /**
-   * Updates the names of array elements.
-   * @private
-   */
-  private __updateChildName__() {
-    for (let i = 0, l = this.__keys__.length; i < l; i++) {
-      const key = this.__keys__[i];
-      if (this.__sourceMap__.has(key)) {
-        const node = this.__sourceMap__.get(key)!.node;
-        const name = '' + i;
-        // @ts-expect-error [internal] setName delegation
-        if (node.name !== name) node.__setName__(name, this.__host__);
+    host.subscribe(({ type, payload, options }) => {
+      if (type & NodeEventType.RequestEmitChange) {
+        this.__handleEmitChange__(
+          payload?.[NodeEventType.RequestEmitChange],
+          options?.[NodeEventType.RequestEmitChange],
+        );
+        this.__batched__ = false;
       }
-    }
-  }
+    });
 
-  /**
-   * Publishes a child node update event.
-   * @private
-   */
-  private __publishUpdateChildren__() {
-    if (this.__locked__) return;
-    this.__host__.publish(NodeEventType.UpdateChildren);
+    this.__locked__ = false;
+    this.__emitChange__(SetValueOption.Default, false);
+    // @ts-expect-error [internal] setDefaultValue delegation
+    host.__setDefaultValue__(this.value);
+    this.__publishUpdateChildren__();
   }
 }

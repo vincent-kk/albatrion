@@ -37,6 +37,56 @@ export class TerminalStrategy implements ObjectNodeStrategy {
   private __value__: ObjectValue | Nullish;
 
   /**
+   * Emits a value change event.
+   * @param input - New object value
+   * @param option - Option settings (default: SetValueOption.Default)
+   * @private
+   */
+  private __emitChange__(
+    input: ObjectValue | Nullish,
+    option: UnionSetValueOption = SetValueOption.Default,
+  ) {
+    const host = this.__host__;
+    const normalize = (option & SetValueOption.Normalize) > 0;
+    const retain = (option & SetValueOption.Replace) === 0;
+    const inject = (option & SetValueOption.PreventInjection) === 0;
+
+    const previous = this.__value__ ? { ...this.__value__ } : this.__value__;
+    const current = this.__parseValue__(input, normalize);
+
+    // @ts-expect-error [internal] equals delegation
+    if (retain && host.__equals__(previous, current)) return;
+    this.__value__ = current;
+
+    if (option & SetValueOption.EmitChange)
+      this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
+    if (option & SetValueOption.Refresh)
+      host.publish(NodeEventType.RequestRefresh);
+    if (option & SetValueOption.PublishUpdateEvent)
+      host.publish(
+        NodeEventType.UpdateValue,
+        current,
+        { previous, current, inject },
+        host.initialized,
+      );
+  }
+
+  /**
+   * Parses input value into appropriate object format.
+   * @param input - Value to parse
+   * @returns {ObjectValue|undefined} Parsed object value or undefined
+   * @private
+   */
+  private __parseValue__(input: ObjectValue | Nullish, normalize?: boolean) {
+    if (input === undefined) return undefined;
+    if (input === null && this.__host__.nullable) return null;
+    return sortObjectKeys(parseObject(input), this.__propertyKeys__, {
+      ignoreUndefinedKey: this.__ignoreAdditionalProperties__ || normalize,
+      ignoreUndefinedValue: true,
+    });
+  }
+
+  /**
    * Gets the current value of the object.
    * @returns Current value of the object node or undefined (if empty) or null (if nullable)
    */
@@ -100,55 +150,5 @@ export class TerminalStrategy implements ObjectNodeStrategy {
     // @ts-expect-error [internal] setDefaultValue delegation
     host.__setDefaultValue__(defaultValue);
     this.__emitChange__(defaultValue);
-  }
-
-  /**
-   * Emits a value change event.
-   * @param input - New object value
-   * @param option - Option settings (default: SetValueOption.Default)
-   * @private
-   */
-  private __emitChange__(
-    input: ObjectValue | Nullish,
-    option: UnionSetValueOption = SetValueOption.Default,
-  ) {
-    const host = this.__host__;
-    const normalize = (option & SetValueOption.Normalize) > 0;
-    const retain = (option & SetValueOption.Replace) === 0;
-    const inject = (option & SetValueOption.PreventInjection) === 0;
-
-    const previous = this.__value__ ? { ...this.__value__ } : this.__value__;
-    const current = this.__parseValue__(input, normalize);
-
-    // @ts-expect-error [internal] equals delegation
-    if (retain && host.__equals__(previous, current)) return;
-    this.__value__ = current;
-
-    if (option & SetValueOption.EmitChange)
-      this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
-    if (option & SetValueOption.Refresh)
-      host.publish(NodeEventType.RequestRefresh);
-    if (option & SetValueOption.PublishUpdateEvent)
-      host.publish(
-        NodeEventType.UpdateValue,
-        current,
-        { previous, current, inject },
-        host.initialized,
-      );
-  }
-
-  /**
-   * Parses input value into appropriate object format.
-   * @param input - Value to parse
-   * @returns {ObjectValue|undefined} Parsed object value or undefined
-   * @private
-   */
-  private __parseValue__(input: ObjectValue | Nullish, normalize?: boolean) {
-    if (input === undefined) return undefined;
-    if (input === null && this.__host__.nullable) return null;
-    return sortObjectKeys(parseObject(input), this.__propertyKeys__, {
-      ignoreUndefinedKey: this.__ignoreAdditionalProperties__ || normalize,
-      ignoreUndefinedValue: true,
-    });
   }
 }

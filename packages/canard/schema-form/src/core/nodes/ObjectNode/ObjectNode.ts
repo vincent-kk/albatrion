@@ -25,12 +25,20 @@ import { omitEmptyObject } from './utils';
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   public override readonly type = 'object';
 
-  protected override __equals__(
-    this: ObjectNode,
-    left: ObjectValue | Nullish,
-    right: ObjectValue | Nullish,
-  ): boolean {
-    return equals(left, right);
+  /**
+   * Gets the child nodes of the object node.
+   * @returns List of child nodes
+   */
+  public override get children() {
+    return this.__strategy__.children;
+  }
+
+  /**
+   * Gets the list of subnodes of the object node.
+   * @returns List of subnodes
+   */
+  public override get subnodes() {
+    return this.__strategy__.subnodes;
   }
 
   /**
@@ -40,20 +48,12 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
    */
   private __strategy__: ObjectNodeStrategy;
 
-  /**
-   * Gets the value of the object node.
-   * @returns Object value or undefined (if empty) or null (if nullable)
-   */
-  public override get value() {
-    return this.__strategy__.value;
-  }
-
-  /**
-   * Sets the value of the object node.
-   * @param input - Object value to set
-   */
-  public override set value(input: ObjectValue | Nullish) {
-    this.setValue(input);
+  protected override __equals__(
+    this: ObjectNode,
+    left: ObjectValue | Nullish,
+    right: ObjectValue | Nullish,
+  ): boolean {
+    return equals(left, right);
   }
 
   /**
@@ -70,19 +70,19 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   }
 
   /**
-   * Gets the child nodes of the object node.
-   * @returns List of child nodes
+   * Gets the value of the object node.
+   * @returns Object value or undefined (if empty) or null (if nullable)
    */
-  public override get children() {
-    return this.__strategy__.children;
+  public override get value() {
+    return this.__strategy__.value;
   }
 
   /**
-   * Gets the list of subnodes of the object node.
-   * @returns List of subnodes
+   * Sets the value of the object node.
+   * @param input - Object value to set
    */
-  public override get subnodes() {
-    return this.__strategy__.subnodes;
+  public override set value(input: ObjectValue | Nullish) {
+    this.setValue(input);
   }
 
   /**

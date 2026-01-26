@@ -49,67 +49,15 @@ export class ValidationManager {
   /** @internal Compiled validator function from JSON Schema */
   private __validator__: ValidateFunction | undefined;
 
+  /** @internal Tracks data paths that had errors in the previous validation run */
+  private __errorDataPaths__: string[] | undefined;
+
   /**
    * Indicates whether validation is enabled for this manager.
    * @description `true` if a validator was successfully compiled, `false` otherwise.
    * @readonly
    */
   public readonly enabled: boolean = false;
-
-  /** @internal Tracks data paths that had errors in the previous validation run */
-  private __errorDataPaths__: string[] | undefined;
-
-  /**
-   * Creates a ValidationManager instance.
-   *
-   * @param host - The AbstractNode that owns this validation manager
-   * @param validatorFactory - Optional factory function to create custom validators
-   * @param validationMode - The validation mode (OnChange, OnRequest, None). If undefined, validation is disabled.
-   *
-   * @description
-   * The constructor performs the following:
-   * 1. If `validationMode` is falsy, validation remains disabled
-   * 2. Strips schema extensions (computed, formType, etc.) before compilation
-   * 3. Attempts to compile the schema using the provided factory or the plugin's validator
-   * 4. On circular reference errors, creates a fallback validator that returns the error
-   *
-   * @example
-   * ```typescript
-   * // With custom validator factory
-   * const manager = new ValidationManager(
-   *   node,
-   *   (schema) => ajv.compile(schema),
-   *   'OnChange'
-   * );
-   *
-   * // Using plugin validator
-   * const manager = new ValidationManager(node, undefined, 'OnRequest');
-   * ```
-   */
-  constructor(
-    host: AbstractNode,
-    validatorFactory: ValidatorFactory | undefined,
-    validationMode: ValidationMode | undefined,
-  ) {
-    this.__host__ = host;
-
-    if (!validationMode) return;
-    const jsonSchema = host.jsonSchema;
-    const schema = stripSchemaExtensions(jsonSchema);
-    try {
-      this.__validator__ =
-        validatorFactory?.(schema) || PluginManager.validator?.compile(schema);
-      this.enabled = this.__validator__ !== undefined;
-    } catch (error: any) {
-      const jsonSchemaError = new JsonSchemaError(
-        'CIRCULAR_REFERENCE',
-        formatCircularReferenceError(error.message, jsonSchema),
-        { error, schema: jsonSchema },
-      );
-      this.__validator__ = getFallbackValidator(jsonSchemaError, jsonSchema);
-      console.error(jsonSchemaError);
-    }
-  }
 
   /**
    * Executes the validator against the provided value.
@@ -200,5 +148,57 @@ export class ValidationManager {
       );
     }
     this.__errorDataPaths__ = errorDataPaths;
+  }
+
+  /**
+   * Creates a ValidationManager instance.
+   *
+   * @param host - The AbstractNode that owns this validation manager
+   * @param validatorFactory - Optional factory function to create custom validators
+   * @param validationMode - The validation mode (OnChange, OnRequest, None). If undefined, validation is disabled.
+   *
+   * @description
+   * The constructor performs the following:
+   * 1. If `validationMode` is falsy, validation remains disabled
+   * 2. Strips schema extensions (computed, formType, etc.) before compilation
+   * 3. Attempts to compile the schema using the provided factory or the plugin's validator
+   * 4. On circular reference errors, creates a fallback validator that returns the error
+   *
+   * @example
+   * ```typescript
+   * // With custom validator factory
+   * const manager = new ValidationManager(
+   *   node,
+   *   (schema) => ajv.compile(schema),
+   *   'OnChange'
+   * );
+   *
+   * // Using plugin validator
+   * const manager = new ValidationManager(node, undefined, 'OnRequest');
+   * ```
+   */
+  constructor(
+    host: AbstractNode,
+    validatorFactory: ValidatorFactory | undefined,
+    validationMode: ValidationMode | undefined,
+  ) {
+    this.__host__ = host;
+
+    if (!validationMode) return;
+    const jsonSchema = host.jsonSchema;
+    const schema = stripSchemaExtensions(jsonSchema);
+    try {
+      this.__validator__ =
+        validatorFactory?.(schema) || PluginManager.validator?.compile(schema);
+      this.enabled = this.__validator__ !== undefined;
+    } catch (error: any) {
+      const jsonSchemaError = new JsonSchemaError(
+        'CIRCULAR_REFERENCE',
+        formatCircularReferenceError(error.message, jsonSchema),
+        { error, schema: jsonSchema },
+      );
+      this.__validator__ = getFallbackValidator(jsonSchemaError, jsonSchema);
+      console.error(jsonSchemaError);
+    }
   }
 }

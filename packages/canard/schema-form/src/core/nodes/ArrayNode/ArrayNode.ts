@@ -25,6 +25,23 @@ import { omitEmptyArray } from './utils';
 export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   public override readonly type = 'array';
 
+  /** Child nodes of ArrayNode */
+  /**
+   * Gets the child nodes of the array node.
+   * @returns List of child nodes
+   */
+  public override get children() {
+    return this.__strategy__.children;
+  }
+
+  /**
+   * Gets the current length of the array.
+   * @returns Length of the array
+   */
+  public get length() {
+    return this.__strategy__.length;
+  }
+
   /**
    * Strategy used by the array node:
    *  - BranchStrategy: Handles complex child nodes with associated processing logic.
@@ -39,6 +56,8 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   ): boolean {
     return equals(left, right);
   }
+
+  protected override onChange: HandleChange<ArrayValue | Nullish>;
 
   /**
    * Gets the value of the array node.
@@ -67,63 +86,6 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     option: UnionSetValueOption,
   ) {
     this.__strategy__.applyValue(input, option);
-  }
-
-  /** Child nodes of ArrayNode */
-  /**
-   * Gets the child nodes of the array node.
-   * @returns List of child nodes
-   */
-  public override get children() {
-    return this.__strategy__.children;
-  }
-
-  /**
-   * Gets the current length of the array.
-   * @returns Length of the array
-   */
-  public get length() {
-    return this.__strategy__.length;
-  }
-
-  /**
-   * Activates this ArrayNode and propagates activation to all child nodes.
-   * @param actor - The node that requested activation
-   * @returns {boolean} Whether activation was successful
-   */
-  protected override __initialize__(
-    this: ArrayNode,
-    actor?: SchemaNode,
-  ): boolean {
-    if (super.__initialize__(actor)) {
-      this.__strategy__.initialize?.();
-      return true;
-    }
-    return false;
-  }
-
-  protected override onChange: HandleChange<ArrayValue | Nullish>;
-
-  constructor(properties: BranchNodeConstructorProps<ArraySchema>) {
-    super(properties);
-    const hasDefault =
-      properties.defaultValue !== undefined ||
-      properties.jsonSchema.default !== undefined;
-    const handleChange: HandleChange<ArrayValue | Nullish> =
-      this.jsonSchema.options?.omitEmpty === false
-        ? (value, batch) => super.onChange(value, batch)
-        : (value, batch) => super.onChange(omitEmptyArray(value), batch);
-    this.onChange = handleChange;
-    this.__strategy__ =
-      this.group === 'terminal'
-        ? new TerminalStrategy(this, hasDefault, handleChange)
-        : new BranchStrategy(
-            this,
-            hasDefault,
-            handleChange,
-            properties.nodeFactory,
-          );
-    this.__initialize__();
   }
 
   /**
@@ -168,5 +130,43 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
    */
   public clear(this: ArrayNode) {
     return this.__strategy__.clear();
+  }
+
+  /**
+   * Activates this ArrayNode and propagates activation to all child nodes.
+   * @param actor - The node that requested activation
+   * @returns {boolean} Whether activation was successful
+   */
+  protected override __initialize__(
+    this: ArrayNode,
+    actor?: SchemaNode,
+  ): boolean {
+    if (super.__initialize__(actor)) {
+      this.__strategy__.initialize?.();
+      return true;
+    }
+    return false;
+  }
+
+  constructor(properties: BranchNodeConstructorProps<ArraySchema>) {
+    super(properties);
+    const hasDefault =
+      properties.defaultValue !== undefined ||
+      properties.jsonSchema.default !== undefined;
+    const handleChange: HandleChange<ArrayValue | Nullish> =
+      this.jsonSchema.options?.omitEmpty === false
+        ? (value, batch) => super.onChange(value, batch)
+        : (value, batch) => super.onChange(omitEmptyArray(value), batch);
+    this.onChange = handleChange;
+    this.__strategy__ =
+      this.group === 'terminal'
+        ? new TerminalStrategy(this, hasDefault, handleChange)
+        : new BranchStrategy(
+            this,
+            hasDefault,
+            handleChange,
+            properties.nodeFactory,
+          );
+    this.__initialize__();
   }
 }
