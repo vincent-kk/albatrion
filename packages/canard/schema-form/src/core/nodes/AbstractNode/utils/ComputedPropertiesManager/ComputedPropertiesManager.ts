@@ -35,7 +35,9 @@ import type { DynamicFunction } from './utils/type';
  *
  * // Create and use the manager
  * const manager = new ComputedPropertiesManager(type, schema, rootSchema);
- * manager.recalculate(dependencyValues);
+ * manager.dependencies[0] = 'premium';
+ * manager.dependencies[1] = true;
+ * manager.recalculate();
  * console.log(manager.visible); // Result of condition evaluation
  * ```
  *
@@ -62,6 +64,12 @@ export class ComputedPropertiesManager {
 
   /** @internal Internal function to calculate watchValues */
   private __watchValues__: DynamicFunction<any[]> | undefined;
+
+  /** @internal Internal function to calculate derivedValue */
+  private __derivedValue__: DynamicFunction<any> | undefined;
+
+  /** @internal Internal function to calculate pristine */
+  private __pristine__: DynamicFunction<boolean> | undefined;
 
   /**
    * The active state of the node.
@@ -120,18 +128,43 @@ export class ComputedPropertiesManager {
   public readonly dependencyPaths: string[];
 
   /**
-   * Function to calculate derived values.
-   * @description Evaluates the `computed.derived` expression to return the node's derived value.
-   * @readonly
+   * Calculates and returns the derived value.
+   * @description Evaluates the `computed.derived` expression using current dependency values.
+   * @returns The derived value, or `undefined` if no derived function is defined.
    */
-  public readonly getDerivedValue: DynamicFunction<any> | undefined;
+  public getDerivedValue() {
+    return this.__derivedValue__?.(this.dependencies);
+  }
 
   /**
-   * Function to calculate pristine state.
-   * @description Evaluates the `computed.pristine` expression to return whether the node is in its initial state.
+   * Calculates and returns the pristine state.
+   * @description Evaluates the `computed.pristine` expression using current dependency values.
+   * @returns The pristine state (`true`/`false`), or `undefined` if no pristine function is defined.
+   */
+  public getPristine() {
+    return this.__pristine__?.(this.dependencies);
+  }
+
+  /**
+   * Array of dependency values.
+   * @description Current values of dependency paths.
    * @readonly
    */
-  public readonly getPristine: DynamicFunction<boolean> | undefined;
+  public readonly dependencies: unknown[];
+
+  /**
+   * Whether computed properties has pristine function.
+   * @description Indicates that a pristine function is defined.
+   * @readonly
+   */
+  public readonly isPristineDefined: boolean = false;
+
+  /**
+   * Whether computed properties has derived function.
+   * @description Indicates that a derived function is defined.
+   * @readonly
+   */
+  public readonly isDerivedDefined: boolean = false;
 
   /**
    * Whether the node has a post-processor.
@@ -141,9 +174,14 @@ export class ComputedPropertiesManager {
   public readonly hasPostProcessor: boolean = false;
 
   /**
+   * Whether computed properties are configured.
+   * @description Set during initialization based on whether `dependencyPaths` is non-empty.
+   * @readonly
+   */
+  public readonly isEnabled: boolean = false;
+
+  /**
    * Recalculates all computed properties based on dependency values.
-   *
-   * @param dependencies - Array of dependency values corresponding to the order of `dependencyPaths`
    *
    * @description
    * This method is called when dependency values change and updates the following properties:
@@ -155,14 +193,17 @@ export class ComputedPropertiesManager {
    * @example
    * ```typescript
    * // Dependency paths: ['../category', '../locked']
-   * // Dependency values: ['premium', true]
-   * manager.recalculate(['premium', true]);
+   * // Set dependency values directly
+   * manager.dependencies[0] = 'premium';
+   * manager.dependencies[1] = true;
+   * manager.recalculate();
    *
    * console.log(manager.visible); // Result of computed.visible expression
    * console.log(manager.readOnly); // Result of computed.readOnly expression
    * ```
    */
-  public recalculate(this: ComputedPropertiesManager, dependencies: any[]) {
+  public recalculate(this: ComputedPropertiesManager) {
+    const dependencies = this.dependencies;
     if (this.__active__) this.active = this.__active__(dependencies);
     if (this.__visible__) this.visible = this.__visible__(dependencies);
     if (this.__readOnly__) this.readOnly = this.__readOnly__(dependencies);
@@ -208,18 +249,12 @@ export class ComputedPropertiesManager {
     schema: JsonSchemaWithVirtual,
     rootSchema: JsonSchemaWithVirtual,
   ) {
+    const pathManager = getPathManager();
     const checkComputedOption = checkComputedOptionFactory(schema, rootSchema);
     const getConditionIndex = getConditionIndexFactory(type, schema);
     const getConditionIndices = getConditionIndicesFactory(type, schema);
     const getObservedValues = getObservedValuesFactory(schema);
     const getDerivedValue = getDerivedValueFactory(schema);
-    const pathManager = getPathManager();
-
-    this.dependencyPaths = pathManager.get();
-    this.getDerivedValue = getDerivedValue(pathManager, 'derived');
-    this.getPristine = checkComputedOption(pathManager, 'pristine');
-    this.hasPostProcessor =
-      this.getDerivedValue !== undefined || this.getPristine !== undefined;
 
     this.__active__ = checkComputedOption(pathManager, 'active');
     this.__visible__ = checkComputedOption(pathManager, 'visible');
@@ -228,5 +263,15 @@ export class ComputedPropertiesManager {
     this.__oneOfIndex__ = getConditionIndex(pathManager, 'oneOf', 'if');
     this.__anyOfIndices__ = getConditionIndices(pathManager, 'anyOf', 'if');
     this.__watchValues__ = getObservedValues(pathManager, 'watch');
+    this.__derivedValue__ = getDerivedValue(pathManager, 'derived');
+    this.__pristine__ = checkComputedOption(pathManager, 'pristine');
+
+    this.dependencyPaths = pathManager.get();
+    this.dependencies = new Array(this.dependencyPaths.length);
+
+    this.isEnabled = this.dependencyPaths.length > 0;
+    this.isPristineDefined = this.__pristine__ !== undefined;
+    this.isDerivedDefined = this.__derivedValue__ !== undefined;
+    this.hasPostProcessor = this.isDerivedDefined || this.isPristineDefined;
   }
 }

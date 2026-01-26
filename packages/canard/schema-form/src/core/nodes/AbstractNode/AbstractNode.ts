@@ -28,10 +28,10 @@ import type {
 
 import {
   type ChildNode,
+  NodeEventType as EventType,
   type HandleChange,
   type NodeEventOptions,
   type NodeEventPayload,
-  NodeEventType,
   type NodeListener,
   type NodeStateFlags,
   type ResetOptions,
@@ -232,7 +232,7 @@ export abstract class AbstractNode<
     if (subnodes?.length)
       for (const subnode of subnodes) subnode.node.__updatePath__();
 
-    this.publish(NodeEventType.UpdatePath, current, { previous, current });
+    this.publish(EventType.UpdatePath, current, { previous, current });
     return true;
   }
 
@@ -393,19 +393,6 @@ export abstract class AbstractNode<
   private __computeManager__: ComputedPropertiesManager;
 
   /**
-   * @internal Cached values from dependency nodes.
-   * @remarks Array indices correspond to `dependencyPaths` order.
-   *          Updated automatically when dependency node values change.
-   */
-  private __dependencies__: any[] = [];
-
-  /**
-   * @internal Flag indicating whether computed properties are configured.
-   * @remarks Set during initialization based on whether `dependencyPaths` is non-empty.
-   */
-  protected __computeEnabled__: boolean = false;
-
-  /**
    * @internal Whether this node belongs to the active `oneOf`/`anyOf` branch.
    * @remarks Separate from `active` which is controlled by computed properties.
    *          Nodes outside the active branch are excluded from value propagation.
@@ -494,22 +481,20 @@ export abstract class AbstractNode<
    */
   private __prepareUpdateDependencies__(this: AbstractNode) {
     if (this.__initialized__) return;
-    const dependencyPaths = this.__computeManager__.dependencyPaths;
-    const computeEnabled = dependencyPaths.length > 0;
-    if (computeEnabled) {
-      this.__dependencies__ = new Array(dependencyPaths.length);
+    const manager = this.__computeManager__;
+    const dependencyPaths = manager.dependencyPaths;
+    if (manager.isEnabled) {
       for (let i = 0, l = dependencyPaths.length; i < l; i++) {
         const targetNodes = this.findAll(dependencyPaths[i]);
         if (targetNodes.length === 0) continue;
-        this.__dependencies__[i] = this.find(dependencyPaths[i])?.value;
+        manager.dependencies[i] = this.find(dependencyPaths[i])?.value;
         const unsubscribes = map(targetNodes, (node) =>
           node.subscribe(({ type, payload }) => {
-            if (type & NodeEventType.UpdateValue) {
+            if (type & EventType.UpdateValue) {
               if (
-                this.__dependencies__[i] !==
-                payload?.[NodeEventType.UpdateValue]
+                manager.dependencies[i] !== payload?.[EventType.UpdateValue]
               ) {
-                this.__dependencies__[i] = payload?.[NodeEventType.UpdateValue];
+                manager.dependencies[i] = payload?.[EventType.UpdateValue];
                 this.__updateComputedProperties__();
               }
             }
@@ -519,22 +504,19 @@ export abstract class AbstractNode<
           this.saveUnsubscribe(unsubscribe);
       }
     }
-    if (this.__computeManager__.hasPostProcessor)
+    if (manager.hasPostProcessor)
       this.subscribe(({ type }) => {
-        if (type & NodeEventType.UpdateComputedProperties) {
-          if (this.__computeManager__.getDerivedValue) {
-            const derivedValue = this.__computeManager__.getDerivedValue(
-              this.__dependencies__,
-            );
+        if (type & EventType.UpdateComputedProperties) {
+          if (manager.isDerivedDefined) {
+            const derivedValue = manager.getDerivedValue();
             if (this.active && !this.__equals__(this.value, derivedValue))
               this.setValue(derivedValue);
           }
-          if (this.__computeManager__.getPristine?.(this.__dependencies__))
+          if (manager.isPristineDefined && manager.getPristine())
             this.setState();
         }
       });
     this.__updateComputedProperties__();
-    this.__computeEnabled__ = computeEnabled;
   }
 
   /**
@@ -546,11 +528,12 @@ export abstract class AbstractNode<
     this: AbstractNode,
     reset: boolean = true,
   ) {
-    const previous = this.__computeManager__.active;
-    this.__computeManager__.recalculate(this.__dependencies__);
-    if (reset && previous !== this.__computeManager__.active)
+    const manager = this.__computeManager__;
+    const previous = manager.active;
+    manager.recalculate();
+    if (reset && previous !== manager.active)
       this.__reset__({ preferLatest: true });
-    this.publish(NodeEventType.UpdateComputedProperties);
+    this.publish(EventType.UpdateComputedProperties);
   }
 
   /**
@@ -642,7 +625,7 @@ export abstract class AbstractNode<
       }
       if (idle) return;
       this.__globalState__ = state !== null ? { ...state } : {};
-      this.publish(NodeEventType.UpdateGlobalState, this.__globalState__);
+      this.publish(EventType.UpdateGlobalState, this.__globalState__);
     } else this.rootNode.__setGlobalState__(input);
   }
 
@@ -688,7 +671,7 @@ export abstract class AbstractNode<
     }
     if (idle) return;
     this.__state__ = state !== null ? { ...state } : {};
-    this.publish(NodeEventType.UpdateState, this.__state__);
+    this.publish(EventType.UpdateState, this.__state__);
     if (silent !== true) this.__setGlobalState__(this.__state__);
   }
 
@@ -720,9 +703,8 @@ export abstract class AbstractNode<
    * @remarks Delegates to root node for child nodes.
    */
   protected get __validationEnabled__(): boolean {
-    return this.isRoot
-      ? this.__validationManager__?.enabled === true
-      : (this.rootNode as AbstractNode).__validationEnabled__;
+    if (this.isRoot) return this.__validationManager__?.enabled === true;
+    else return this.rootNode.__validationManager__?.enabled === true;
   }
 
   /**
@@ -802,7 +784,7 @@ export abstract class AbstractNode<
   protected __setGlobalErrors__(this: AbstractNode, errors: ValidationError[]) {
     if (this.__errorManager__.setGlobalErrors(errors)) return true;
     this.publish(
-      NodeEventType.UpdateGlobalError,
+      EventType.UpdateGlobalError,
       this.__errorManager__.mergedGlobalErrors,
     );
     return false;
@@ -816,7 +798,7 @@ export abstract class AbstractNode<
   public setErrors(this: AbstractNode, errors: ValidationError[]) {
     if (this.__errorManager__.setLocalErrors(errors)) return;
     this.publish(
-      NodeEventType.UpdateError,
+      EventType.UpdateError,
       this.__errorManager__.mergedLocalErrors,
     );
   }
@@ -838,12 +820,12 @@ export abstract class AbstractNode<
   public setExternalErrors(this: AbstractNode, errors: ValidationError[] = []) {
     if (this.__errorManager__.setExternalErrors(errors, this.isRoot)) return;
     this.publish(
-      NodeEventType.UpdateError,
+      EventType.UpdateError,
       this.__errorManager__.mergedLocalErrors,
     );
     if (this.isRoot)
       this.publish(
-        NodeEventType.UpdateGlobalError,
+        EventType.UpdateGlobalError,
         this.__errorManager__.mergedGlobalErrors,
       );
   }
@@ -910,7 +892,7 @@ export abstract class AbstractNode<
    * @param options - Event-specific options
    * @param immediate - If `true`, dispatch synchronously; otherwise batch via microtask
    */
-  public publish<Type extends NodeEventType>(
+  public publish<Type extends EventType>(
     this: AbstractNode,
     type: Type,
     payload?: NodeEventPayload[Type],
@@ -965,12 +947,12 @@ export abstract class AbstractNode<
     const injectHandler = this.jsonSchema.injectTo;
     if (typeof injectHandler !== 'function') return;
     this.subscribe(({ type, options }) => {
-      if (type & NodeEventType.UpdateValue) {
-        if (options?.[NodeEventType.UpdateValue]?.inject)
-          this.publish(NodeEventType.RequestInjection);
+      if (type & EventType.UpdateValue) {
+        if (options?.[EventType.UpdateValue]?.inject)
+          this.publish(EventType.RequestInjection);
         return;
       }
-      if (type & NodeEventType.RequestInjection) {
+      if (type & EventType.RequestInjection) {
         const injectionGuard = this.__injectionGuard__;
         if (injectionGuard == null) return;
         const value = this.value;
@@ -1032,7 +1014,7 @@ export abstract class AbstractNode<
       return false;
     this.__prepareUpdateDependencies__();
     this.__prepareInjectHandler__();
-    this.publish(NodeEventType.Initialized);
+    this.publish(EventType.Initialized);
     this.__initialized__ = true;
     return true;
   }
@@ -1067,11 +1049,10 @@ export abstract class AbstractNode<
 
     if (
       options.applyDerivedValue &&
-      this.__computeManager__.getDerivedValue &&
-      this.active
+      this.active &&
+      this.__computeManager__.isDerivedDefined
     )
-      value =
-        this.__computeManager__.getDerivedValue(this.__dependencies__) ?? value;
+      value = this.__computeManager__.getDerivedValue() ?? value;
 
     this.setValue(
       this.__computeManager__.active ? value : undefined,

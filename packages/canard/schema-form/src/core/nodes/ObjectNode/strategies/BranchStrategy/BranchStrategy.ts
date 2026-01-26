@@ -569,7 +569,7 @@ export class BranchStrategy implements ObjectNodeStrategy {
       // @ts-expect-error [internal] child node initialization
       (childNode as AbstractNode).__initialize__(this.__host__);
       // @ts-expect-error [internal] computeEnabled delegation
-      if (!enabled && childNode.__computeEnabled__) enabled = true;
+      if (!enabled && childNode.__computeManager__.isEnabled) enabled = true;
     }
     if (enabled) this.__prepareProcessComputedProperties__();
   }
