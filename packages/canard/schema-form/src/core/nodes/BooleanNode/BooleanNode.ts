@@ -13,18 +13,17 @@ import {
 
 /**
  * Node class for handling boolean schemas.
- * Manages and parses boolean values.
+ * @remarks Manages and parses boolean values.
  */
 export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   public override readonly type = 'boolean';
 
-  /** Current value of the boolean node */
+  /** @internal Current value of the boolean node. */
   private __value__: BooleanValue | Nullish = undefined;
 
   /**
-   * Parses the input value as a boolean.
+   * @internal Parses the input value as a boolean.
    * @param input - The value to parse
-   * @returns {BooleanValue|null|undefined} Parsed boolean value
    */
   private __parseValue__(this: BooleanNode, input: BooleanValue | Nullish) {
     if (input === undefined) return undefined;
@@ -33,7 +32,7 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   }
 
   /**
-   * Reflects value changes and publishes related events.
+   * @internal Reflects value changes and publishes related events.
    * @param input - The value to set
    * @param option - Set value options
    */
@@ -64,11 +63,6 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
       );
   }
 
-  /**
-   * Applies the input value to the boolean node.
-   * @param input - The boolean value to set
-   * @param option - Set value options
-   */
   protected override applyValue(
     this: BooleanNode,
     input: BooleanValue | Nullish,
@@ -77,18 +71,11 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
     this.__emitChange__(input, option);
   }
 
-  /**
-   * Gets the value of the boolean node.
-   * @returns Boolean value or undefined
-   */
+  /** Current boolean value or `undefined`. */
   public override get value() {
     return this.__value__;
   }
 
-  /**
-   * Sets the value of the boolean node.
-   * @param input - The boolean value to set
-   */
   public override set value(input: BooleanValue | Nullish) {
     this.setValue(input);
   }

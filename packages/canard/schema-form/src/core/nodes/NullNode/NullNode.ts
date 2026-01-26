@@ -10,16 +10,16 @@ import {
 
 /**
  * Node class for handling null schemas.
- * Manages null values.
+ * @remarks Manages null values.
  */
 export class NullNode extends AbstractNode<NullSchema, NullValue> {
   public override readonly type = 'null';
 
-  /** Current value of the null node */
+  /** @internal Current value of the null node. */
   private __value__: NullValue | undefined;
 
   /**
-   * Reflects value changes and publishes related events.
+   * @internal Reflects value changes and publishes related events.
    * @param input - The value to set
    * @param option - Set value options
    */
@@ -51,20 +51,14 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
   }
 
   /**
-   * Parses the input value.
+   * @internal Parses the input value.
    * @param input - The value to parse
-   * @returns {NullValue|undefined} Returns the input as-is
    */
   private __parseValue__(this: NullNode, input: NullValue | undefined) {
     if (input === undefined) return undefined;
     return input;
   }
 
-  /**
-   * Applies the input value to the null node.
-   * @param input - The value to set
-   * @param option - Set value options
-   */
   protected override applyValue(
     this: NullNode,
     input: NullValue | undefined,
@@ -73,18 +67,11 @@ export class NullNode extends AbstractNode<NullSchema, NullValue> {
     this.__emitChange__(input, option);
   }
 
-  /**
-   * Gets the value of the null node.
-   * @returns null or undefined
-   */
+  /** Current value (`null` or `undefined`). */
   public override get value() {
     return this.__value__;
   }
 
-  /**
-   * Sets the value of the null node.
-   * @param input - The value to set
-   */
   public override set value(input: NullValue | undefined) {
     this.setValue(input);
   }

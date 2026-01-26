@@ -19,35 +19,30 @@ import {
 import { omitEmptyObject } from './utils';
 
 /**
- * A node class for handling object schemas.
- * Manages object properties and handles complex schemas like oneOf.
+ * Node class for handling object schemas.
+ * @remarks Manages object properties and handles complex schemas like `oneOf`/`anyOf`/`if-then-else`.
  */
 export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
   public override readonly type = 'object';
 
-  /**
-   * Gets the child nodes of the object node.
-   * @returns List of child nodes
-   */
+  /** Active child nodes within the current scope. */
   public override get children() {
     return this.__strategy__.children;
   }
 
-  /**
-   * Gets the list of subnodes of the object node.
-   * @returns List of subnodes
-   */
+  /** All child nodes regardless of scope or active state. */
   public override get subnodes() {
     return this.__strategy__.subnodes;
   }
 
   /**
-   * Strategy used by the object node:
-   *  - BranchStrategy: Handles complex child nodes with associated processing logic, including oneOf/if-then-else.
-   *  - TerminalStrategy: Acts as a terminal node for object-type data with no child nodes and simple processing logic.
+   * @internal Strategy used by the object node.
+   * @remarks `BranchStrategy` for branch node with child nodes,
+   *          `TerminalStrategy` for simple object data, without child nodes.
    */
   private __strategy__: ObjectNodeStrategy;
 
+  /** @internal */
   protected override __equals__(
     this: ObjectNode,
     left: ObjectValue | Nullish,
@@ -56,11 +51,6 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     return equals(left, right);
   }
 
-  /**
-   * Applies input value to the object node.
-   * @param input - Object value to set
-   * @param option - Setting options
-   */
   protected override applyValue(
     this: ObjectNode,
     input: ObjectValue | Nullish,
@@ -69,27 +59,16 @@ export class ObjectNode extends AbstractNode<ObjectSchema, ObjectValue> {
     this.__strategy__.applyValue(input, option);
   }
 
-  /**
-   * Gets the value of the object node.
-   * @returns Object value or undefined (if empty) or null (if nullable)
-   */
+  /** Current object value or `undefined`. */
   public override get value() {
     return this.__strategy__.value;
   }
 
-  /**
-   * Sets the value of the object node.
-   * @param input - Object value to set
-   */
   public override set value(input: ObjectValue | Nullish) {
     this.setValue(input);
   }
 
-  /**
-   * Activates this ObjectNode and propagates activation to all child nodes.
-   * @param actor - The node that requested activation
-   * @returns {boolean} Whether activation was successful
-   */
+  /** @internal */
   protected override __initialize__(
     this: ObjectNode,
     actor?: SchemaNode,

@@ -14,18 +14,17 @@ import {
 
 /**
  * Node class for handling string schemas.
- * Manages and parses string values.
+ * @remarks Manages and parses string values.
  */
 export class StringNode extends AbstractNode<StringSchema, StringValue> {
   public override readonly type = 'string';
 
-  /** Current value of the string node */
+  /** @internal Current value of the string node. */
   private __value__: StringValue | Nullish = undefined;
 
   /**
-   * Parses the input value as a string.
+   * @internal Parses the input value as a string.
    * @param input - The value to parse
-   * @returns {StringValue|null|undefined} Parsed string value
    */
   private __parseValue__(this: StringNode, input: StringValue | Nullish) {
     if (input === undefined) return undefined;
@@ -34,7 +33,7 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
   }
 
   /**
-   * Reflects value changes and publishes related events.
+   * @internal Reflects value changes and publishes related events.
    * @param input - The value to set
    * @param option - Set value options
    */
@@ -66,9 +65,9 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
   }
 
   /**
-   * Reflects value changes excluding empty values.
+   * @internal Reflects value changes excluding empty values.
    * @param input - The value to set
-   * @param batch - Optional flag indicating whether the change should be batched
+   * @param batch - Whether the change should be batched
    */
   private __onChangeWithOmitEmpty__(
     this: StringNode,
@@ -81,11 +80,6 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     else super.onChange(input, batch);
   }
 
-  /**
-   * Applies the input value to the string node.
-   * @param input - The string value to set
-   * @param option - Set value options
-   */
   protected override applyValue(
     this: StringNode,
     input: StringValue | Nullish,
@@ -94,20 +88,14 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     this.__emitChange__(input, option);
   }
 
+  /** @internal */
   protected override onChange: HandleChange<StringValue | Nullish>;
 
-  /**
-   * Gets the value of the string node.
-   * @returns String value or undefined
-   */
+  /** Current string value or `undefined`. */
   public override get value() {
     return this.__value__;
   }
 
-  /**
-   * Sets the value of the string node.
-   * @param input - The string value to set
-   */
   public override set value(input: StringValue | Nullish) {
     this.setValue(input);
   }

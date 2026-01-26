@@ -16,22 +16,23 @@ import {
 
 /**
  * Node class for handling virtual schemas.
- * Holds references to multiple nodes and works by integrating them.
+ * @remarks Holds references to multiple nodes and works by integrating them.
+ *          Useful for creating composite form fields that control multiple values.
  */
 export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
   public override readonly type = 'virtual';
 
-  /** Current value of the virtual node */
+  /** @internal Current value of the virtual node. */
   private __value__: VirtualNodeValue = [];
 
-  /** List of reference nodes */
+  /** @internal List of reference nodes. */
   private __refNodes__: SchemaNode[] = [];
 
-  /** List of child nodes */
+  /** @internal List of child nodes. */
   private __children__: ChildNode[];
 
   /**
-   * Propagates value changes to reference nodes and publishes related events.
+   * @internal Propagates value changes to reference nodes and publishes related events.
    * @param values - The values to set
    * @param option - Set value options
    */
@@ -86,11 +87,6 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
       );
   }
 
-  /**
-   * Applies the input value to the virtual node.
-   * @param input - The value to set
-   * @param option - Set value options
-   */
   protected override applyValue(
     this: VirtualNode,
     input: VirtualNodeValue | undefined,
@@ -99,26 +95,16 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
     this.__emitChange__(input, option);
   }
 
-  /**
-   * Gets the value of the virtual node.
-   * @returns Array of values from all referenced nodes or undefined
-   */
+  /** Array of values from all referenced nodes. */
   public override get value() {
     return this.__value__;
   }
 
-  /**
-   * Sets the value of the virtual node.
-   * @param input - The value to set
-   */
   public override set value(input: VirtualNodeValue | undefined) {
     this.setValue(input);
   }
 
-  /**
-   * Gets the child nodes of the virtual node.
-   * @returns List of child nodes
-   */
+  /** Child nodes representing the referenced nodes. */
   public override get children() {
     return this.__children__;
   }
