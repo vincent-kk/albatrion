@@ -1,2 +1,2 @@
-export { EventCascade } from './EventCascade';
+export { EventCascadeManager } from './EventCascadeManager';
 export { getEventCollection } from './utils/getEventCollection';

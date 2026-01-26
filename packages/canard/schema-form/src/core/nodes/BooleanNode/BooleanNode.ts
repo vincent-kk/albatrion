@@ -13,51 +13,26 @@ import {
 
 /**
  * Node class for handling boolean schemas.
- * Manages and parses boolean values.
+ * @remarks Manages and parses boolean values.
  */
 export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
   public override readonly type = 'boolean';
 
-  /** Current value of the boolean node */
+  /** @internal Current value of the boolean node. */
   private __value__: BooleanValue | Nullish = undefined;
 
   /**
-   * Gets the value of the boolean node.
-   * @returns Boolean value or undefined
+   * @internal Parses the input value as a boolean.
+   * @param input - The value to parse
    */
-  public override get value() {
-    return this.__value__;
+  private __parseValue__(this: BooleanNode, input: BooleanValue | Nullish) {
+    if (input === undefined) return undefined;
+    if (input === null && this.nullable) return null;
+    return parseBoolean(input);
   }
 
   /**
-   * Sets the value of the boolean node.
-   * @param input - The boolean value to set
-   */
-  public override set value(input: BooleanValue | Nullish) {
-    this.setValue(input);
-  }
-
-  /**
-   * Applies the input value to the boolean node.
-   * @param input - The boolean value to set
-   * @param option - Set value options
-   */
-  protected override applyValue(
-    this: BooleanNode,
-    input: BooleanValue | Nullish,
-    option: UnionSetValueOption,
-  ) {
-    this.__emitChange__(input, option);
-  }
-
-  constructor(properties: SchemaNodeConstructorProps<BooleanSchema>) {
-    super(properties);
-    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
-    this.__initialize__();
-  }
-
-  /**
-   * Reflects value changes and publishes related events.
+   * @internal Reflects value changes and publishes related events.
    * @param input - The value to set
    * @param option - Set value options
    */
@@ -88,14 +63,26 @@ export class BooleanNode extends AbstractNode<BooleanSchema, BooleanValue> {
       );
   }
 
-  /**
-   * Parses the input value as a boolean.
-   * @param input - The value to parse
-   * @returns {BooleanValue|null|undefined} Parsed boolean value
-   */
-  private __parseValue__(this: BooleanNode, input: BooleanValue | Nullish) {
-    if (input === undefined) return undefined;
-    if (input === null && this.nullable) return null;
-    return parseBoolean(input);
+  protected override applyValue(
+    this: BooleanNode,
+    input: BooleanValue | Nullish,
+    option: UnionSetValueOption,
+  ) {
+    this.__emitChange__(input, option);
+  }
+
+  /** Current boolean value or `undefined`. */
+  public override get value() {
+    return this.__value__;
+  }
+
+  public override set value(input: BooleanValue | Nullish) {
+    this.setValue(input);
+  }
+
+  constructor(properties: SchemaNodeConstructorProps<BooleanSchema>) {
+    super(properties);
+    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
+    this.__initialize__();
   }
 }

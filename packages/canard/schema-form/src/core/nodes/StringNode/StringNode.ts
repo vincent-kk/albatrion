@@ -14,62 +14,26 @@ import {
 
 /**
  * Node class for handling string schemas.
- * Manages and parses string values.
+ * @remarks Manages and parses string values.
  */
 export class StringNode extends AbstractNode<StringSchema, StringValue> {
   public override readonly type = 'string';
 
-  /** Current value of the string node */
+  /** @internal Current value of the string node. */
   private __value__: StringValue | Nullish = undefined;
 
   /**
-   * Gets the value of the string node.
-   * @returns String value or undefined
+   * @internal Parses the input value as a string.
+   * @param input - The value to parse
    */
-  public override get value() {
-    return this.__value__;
+  private __parseValue__(this: StringNode, input: StringValue | Nullish) {
+    if (input === undefined) return undefined;
+    if (input === null && this.nullable) return null;
+    return parseString(input);
   }
 
   /**
-   * Sets the value of the string node.
-   * @param input - The string value to set
-   */
-  public override set value(input: StringValue | Nullish) {
-    this.setValue(input);
-  }
-
-  /**
-   * Applies the input value to the string node.
-   * @param input - The string value to set
-   * @param option - Set value options
-   */
-  protected override applyValue(
-    this: StringNode,
-    input: StringValue | Nullish,
-    option: UnionSetValueOption,
-  ) {
-    this.__emitChange__(input, option);
-  }
-
-  protected override onChange: HandleChange<StringValue | Nullish>;
-
-  constructor(properties: SchemaNodeConstructorProps<StringSchema>) {
-    super(properties);
-    this.onChange =
-      this.jsonSchema.options?.omitEmpty !== false
-        ? this.__onChangeWithOmitEmpty__
-        : super.onChange;
-    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
-    if (this.jsonSchema.options?.trim === true)
-      this.subscribe(({ type }) => {
-        if (type & NodeEventType.Blurred)
-          this.__value__ != null && this.__emitChange__(this.__value__.trim());
-      });
-    this.__initialize__();
-  }
-
-  /**
-   * Reflects value changes and publishes related events.
+   * @internal Reflects value changes and publishes related events.
    * @param input - The value to set
    * @param option - Set value options
    */
@@ -101,20 +65,9 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
   }
 
   /**
-   * Parses the input value as a string.
-   * @param input - The value to parse
-   * @returns {StringValue|null|undefined} Parsed string value
-   */
-  private __parseValue__(this: StringNode, input: StringValue | Nullish) {
-    if (input === undefined) return undefined;
-    if (input === null && this.nullable) return null;
-    return parseString(input);
-  }
-
-  /**
-   * Reflects value changes excluding empty values.
+   * @internal Reflects value changes excluding empty values.
    * @param input - The value to set
-   * @param batch - Optional flag indicating whether the change should be batched
+   * @param batch - Whether the change should be batched
    */
   private __onChangeWithOmitEmpty__(
     this: StringNode,
@@ -125,5 +78,40 @@ export class StringNode extends AbstractNode<StringSchema, StringValue> {
     else if (input === undefined || input.length === 0)
       super.onChange(undefined, batch);
     else super.onChange(input, batch);
+  }
+
+  protected override applyValue(
+    this: StringNode,
+    input: StringValue | Nullish,
+    option: UnionSetValueOption,
+  ) {
+    this.__emitChange__(input, option);
+  }
+
+  /** @internal */
+  protected override onChange: HandleChange<StringValue | Nullish>;
+
+  /** Current string value or `undefined`. */
+  public override get value() {
+    return this.__value__;
+  }
+
+  public override set value(input: StringValue | Nullish) {
+    this.setValue(input);
+  }
+
+  constructor(properties: SchemaNodeConstructorProps<StringSchema>) {
+    super(properties);
+    this.onChange =
+      this.jsonSchema.options?.omitEmpty !== false
+        ? this.__onChangeWithOmitEmpty__
+        : super.onChange;
+    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
+    if (this.jsonSchema.options?.trim === true)
+      this.subscribe(({ type }) => {
+        if (type & NodeEventType.Blurred)
+          this.__value__ != null && this.__emitChange__(this.__value__.trim());
+      });
+    this.__initialize__();
   }
 }

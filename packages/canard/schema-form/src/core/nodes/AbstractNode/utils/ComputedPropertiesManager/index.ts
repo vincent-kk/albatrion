@@ -1,0 +1,1 @@
+export { ComputedPropertiesManager } from './ComputedPropertiesManager';

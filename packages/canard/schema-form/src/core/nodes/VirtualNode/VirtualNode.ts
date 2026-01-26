@@ -16,88 +16,23 @@ import {
 
 /**
  * Node class for handling virtual schemas.
- * Holds references to multiple nodes and works by integrating them.
+ * @remarks Holds references to multiple nodes and works by integrating them.
+ *          Useful for creating composite form fields that control multiple values.
  */
 export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
   public override readonly type = 'virtual';
 
-  /** Current value of the virtual node */
+  /** @internal Current value of the virtual node. */
   private __value__: VirtualNodeValue = [];
 
-  /**
-   * Gets the value of the virtual node.
-   * @returns Array of values from all referenced nodes or undefined
-   */
-  public override get value() {
-    return this.__value__;
-  }
-
-  /**
-   * Sets the value of the virtual node.
-   * @param input - The value to set
-   */
-  public override set value(input: VirtualNodeValue | undefined) {
-    this.setValue(input);
-  }
-
-  /**
-   * Applies the input value to the virtual node.
-   * @param input - The value to set
-   * @param option - Set value options
-   */
-  protected override applyValue(
-    this: VirtualNode,
-    input: VirtualNodeValue | undefined,
-    option: UnionSetValueOption,
-  ) {
-    this.__emitChange__(input, option);
-  }
-
-  /** List of reference nodes */
+  /** @internal List of reference nodes. */
   private __refNodes__: SchemaNode[] = [];
 
-  /** List of child nodes */
+  /** @internal List of child nodes. */
   private __children__: ChildNode[];
 
   /**
-   * Gets the child nodes of the virtual node.
-   * @returns List of child nodes
-   */
-  public override get children() {
-    return this.__children__;
-  }
-
-  constructor(properties: VirtualNodeConstructorProps<VirtualSchema>) {
-    super(properties);
-    this.__refNodes__ = properties.refNodes || [];
-    if (this.defaultValue != null) this.__value__ = this.defaultValue;
-    for (let i = 0, l = this.__refNodes__.length; i < l; i++) {
-      const node = this.__refNodes__[i];
-      const unsubscribe = node.subscribe(({ type, payload }) => {
-        if (type & NodeEventType.UpdateValue) {
-          const value = payload?.[NodeEventType.UpdateValue];
-          const previous = this.__value__;
-          if (previous[i] === value) return;
-          const current = [...previous];
-          current[i] = value;
-          this.__value__ = current;
-          this.publish(
-            NodeEventType.UpdateValue,
-            current,
-            { previous, current, inject: true },
-            true,
-          );
-        }
-      });
-      this.saveUnsubscribe(unsubscribe);
-    }
-    this.__children__ = map(this.__refNodes__, (node) => ({ node }));
-    this.publish(NodeEventType.UpdateChildren);
-    this.__initialize__();
-  }
-
-  /**
-   * Propagates value changes to reference nodes and publishes related events.
+   * @internal Propagates value changes to reference nodes and publishes related events.
    * @param values - The values to set
    * @param option - Set value options
    */
@@ -150,5 +85,56 @@ export class VirtualNode extends AbstractNode<VirtualSchema, VirtualNodeValue> {
         { previous, current, inject },
         this.initialized,
       );
+  }
+
+  protected override applyValue(
+    this: VirtualNode,
+    input: VirtualNodeValue | undefined,
+    option: UnionSetValueOption,
+  ) {
+    this.__emitChange__(input, option);
+  }
+
+  /** Array of values from all referenced nodes. */
+  public override get value() {
+    return this.__value__;
+  }
+
+  public override set value(input: VirtualNodeValue | undefined) {
+    this.setValue(input);
+  }
+
+  /** Child nodes representing the referenced nodes. */
+  public override get children() {
+    return this.__children__;
+  }
+
+  constructor(properties: VirtualNodeConstructorProps<VirtualSchema>) {
+    super(properties);
+    this.__refNodes__ = properties.refNodes || [];
+    if (this.defaultValue != null) this.__value__ = this.defaultValue;
+    for (let i = 0, l = this.__refNodes__.length; i < l; i++) {
+      const node = this.__refNodes__[i];
+      const unsubscribe = node.subscribe(({ type, payload }) => {
+        if (type & NodeEventType.UpdateValue) {
+          const value = payload?.[NodeEventType.UpdateValue];
+          const previous = this.__value__;
+          if (previous[i] === value) return;
+          const current = [...previous];
+          current[i] = value;
+          this.__value__ = current;
+          this.publish(
+            NodeEventType.UpdateValue,
+            current,
+            { previous, current, inject: true },
+            true,
+          );
+        }
+      });
+      this.saveUnsubscribe(unsubscribe);
+    }
+    this.__children__ = map(this.__refNodes__, (node) => ({ node }));
+    this.publish(NodeEventType.UpdateChildren);
+    this.__initialize__();
   }
 }

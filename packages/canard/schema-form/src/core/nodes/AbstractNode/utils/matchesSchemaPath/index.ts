@@ -1,1 +1,0 @@
-export { matchesSchemaPath } from './matchesSchemaPath';

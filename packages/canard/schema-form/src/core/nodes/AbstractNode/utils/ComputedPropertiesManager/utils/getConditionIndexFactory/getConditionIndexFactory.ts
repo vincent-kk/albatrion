@@ -1,7 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { Fn } from '@aileron/declare';
-
 import { JsonSchemaError } from '@/schema-form/errors';
 import { formatConditionIndexError } from '@/schema-form/helpers/error';
 import type {
@@ -11,11 +9,11 @@ import type {
 } from '@/schema-form/types';
 
 import type { PathManager } from '../getPathManager';
-import type { ConditionIndexName } from '../type';
+import type { ConditionIndexName, DynamicFunction } from '../type';
 import { extractConditionInfo } from './utils/extractConditionInfo';
 import { getSimpleEquality } from './utils/getSimpleEquality';
 
-type GetConditionIndex = Fn<[dependencies: unknown[]], number>;
+type GetConditionIndex = DynamicFunction<number>;
 
 /**
  * Creates a function to calculate the index of condition schema.

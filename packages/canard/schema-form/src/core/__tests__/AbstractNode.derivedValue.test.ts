@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import { nodeFromJsonSchema } from '../nodeFromJsonSchema';
+import type { AbstractNode } from '../nodes/AbstractNode';
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { BooleanNode } from '../nodes/BooleanNode';
 import type { NumberNode } from '../nodes/NumberNode';
@@ -14,7 +15,7 @@ import { NodeEventType, type SchemaNode } from '../nodes/type';
  */
 const getComputeEnabled = (node: SchemaNode | null | undefined): boolean => {
   // @ts-expect-error [test] access protected property for testing
-  return (node as AbstractNode)?.__computeEnabled__ ?? false;
+  return (node as AbstractNode)?.__computeManager__?.isEnabled ?? false;
 };
 
 const wait = (delay = 10) => {

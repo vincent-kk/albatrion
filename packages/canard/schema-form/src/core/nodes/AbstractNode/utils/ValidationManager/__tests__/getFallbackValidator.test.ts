@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
-import { getFallbackValidator } from '../getFallbackValidator';
+import { getFallbackValidator } from '../utils/getFallbackValidator';
 
 describe('getFallbackValidator', () => {
   it('should return a function that returns error array', () => {

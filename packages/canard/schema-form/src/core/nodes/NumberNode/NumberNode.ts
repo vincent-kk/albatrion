@@ -16,11 +16,15 @@ import {
 
 /**
  * Node class for handling number schemas.
- * Manages and parses numeric values (integers or floating-point numbers).
+ * @remarks Manages and parses numeric values (integers or floating-point numbers).
  */
 export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   public override readonly type = 'number';
 
+  /** @internal Current value of the number node. */
+  private __value__: NumberValue | Nullish = undefined;
+
+  /** @internal */
   protected override __equals__(
     this: NumberNode,
     left: NumberValue | Nullish,
@@ -32,30 +36,6 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     return isClose(left, right);
   }
 
-  /** Current value of the number node */
-  private __value__: NumberValue | Nullish = undefined;
-
-  /**
-   * Gets the value of the number node.
-   * @returns Number value or undefined
-   */
-  public override get value() {
-    return this.__value__;
-  }
-
-  /**
-   * Sets the value of the number node.
-   * @param input - The number value to set
-   */
-  public override set value(input: NumberValue | Nullish) {
-    this.setValue(input);
-  }
-
-  /**
-   * Applies the input value to the number node.
-   * @param input - The number value to set
-   * @param option - Set value options
-   */
   protected override applyValue(
     this: NumberNode,
     input: NumberValue | Nullish,
@@ -64,20 +44,20 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     this.__emitChange__(input, option);
   }
 
+  /** @internal */
   protected override onChange: HandleChange<NumberValue | Nullish>;
 
-  constructor(properties: SchemaNodeConstructorProps<NumberSchema>) {
-    super(properties);
-    this.onChange =
-      this.jsonSchema.options?.omitEmpty !== false
-        ? this.__onChangeWithOmitEmpty__
-        : super.onChange;
-    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
-    this.__initialize__();
+  /** Current number value or `undefined`. */
+  public override get value() {
+    return this.__value__;
+  }
+
+  public override set value(input: NumberValue | Nullish) {
+    this.setValue(input);
   }
 
   /**
-   * Reflects value changes and publishes related events.
+   * @internal Reflects value changes and publishes related events.
    * @param input - The value to set
    * @param option - Set value options
    */
@@ -109,9 +89,8 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   }
 
   /**
-   * Parses the input value as a number.
+   * @internal Parses the input value as a number.
    * @param input - The value to parse
-   * @returns {NumberValue|null|undefined} Parsed number value
    */
   private __parseValue__(this: NumberNode, input: NumberValue | Nullish) {
     if (input === undefined) return undefined;
@@ -120,9 +99,9 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
   }
 
   /**
-   * Reflects value changes excluding empty values.
+   * @internal Reflects value changes excluding empty values.
    * @param input - The value to set
-   * @param batch - Optional flag indicating whether the change should be batched
+   * @param batch - Whether the change should be batched
    */
   private __onChangeWithOmitEmpty__(
     this: NumberNode,
@@ -133,5 +112,15 @@ export class NumberNode extends AbstractNode<NumberSchema, NumberValue> {
     else if (input === undefined || isNaN(input))
       super.onChange(undefined, batch);
     else super.onChange(input, batch);
+  }
+
+  constructor(properties: SchemaNodeConstructorProps<NumberSchema>) {
+    super(properties);
+    this.onChange =
+      this.jsonSchema.options?.omitEmpty !== false
+        ? this.__onChangeWithOmitEmpty__
+        : super.onChange;
+    if (this.defaultValue !== undefined) this.__emitChange__(this.defaultValue);
+    this.__initialize__();
   }
 }

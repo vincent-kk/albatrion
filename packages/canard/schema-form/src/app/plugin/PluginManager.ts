@@ -41,10 +41,6 @@ const defaultFormTypeInputDefinitions =
 
 export class PluginManager {
   private static __renderKit__: RenderKit = defaultRenderKit;
-  private static __formTypeInputDefinitions__: NormalizedFormTypeInputDefinition[] =
-    defaultFormTypeInputDefinitions;
-  private static __validator__: ValidatorPlugin | undefined;
-  private static __formatError__: FormatError = formatValidationError;
 
   static get FormGroup() {
     return PluginManager.__renderKit__.FormGroup;
@@ -58,23 +54,6 @@ export class PluginManager {
   static get FormError() {
     return PluginManager.__renderKit__.FormError;
   }
-  static get formatError() {
-    return PluginManager.__formatError__;
-  }
-  static get formTypeInputDefinitions() {
-    return PluginManager.__formTypeInputDefinitions__;
-  }
-  static get validator() {
-    return PluginManager.__validator__;
-  }
-
-  static reset() {
-    PluginManager.__renderKit__ = defaultRenderKit;
-    PluginManager.__formTypeInputDefinitions__ =
-      defaultFormTypeInputDefinitions;
-    PluginManager.__validator__ = undefined;
-    PluginManager.__formatError__ = formatValidationError;
-  }
 
   static appendRenderKit(renderKit: Partial<RenderKit> | undefined) {
     if (!renderKit) return;
@@ -83,6 +62,14 @@ export class PluginManager {
       ...remainOnlyReactComponent(renderKit),
     };
   }
+
+  private static __formTypeInputDefinitions__: NormalizedFormTypeInputDefinition[] =
+    defaultFormTypeInputDefinitions;
+
+  static get formTypeInputDefinitions() {
+    return PluginManager.__formTypeInputDefinitions__;
+  }
+
   static appendFormTypeInputDefinitions(
     formTypeInputDefinitions: FormTypeInputDefinition[] | undefined,
   ) {
@@ -92,6 +79,18 @@ export class PluginManager {
       ...PluginManager.__formTypeInputDefinitions__,
     ];
   }
+
+  private static __validator__: ValidatorPlugin | undefined;
+
+  private static __formatError__: FormatError = formatValidationError;
+
+  static get validator() {
+    return PluginManager.__validator__;
+  }
+  static get formatError() {
+    return PluginManager.__formatError__;
+  }
+
   static appendValidator(validator: ValidatorPlugin | undefined) {
     if (!validator) return;
     PluginManager.__validator__ = validator;
@@ -99,5 +98,13 @@ export class PluginManager {
   static appendFormatError(formatError: FormatError | undefined) {
     if (!formatError) return;
     PluginManager.__formatError__ = formatError;
+  }
+
+  static reset() {
+    PluginManager.__renderKit__ = defaultRenderKit;
+    PluginManager.__formTypeInputDefinitions__ =
+      defaultFormTypeInputDefinitions;
+    PluginManager.__validator__ = undefined;
+    PluginManager.__formatError__ = formatValidationError;
   }
 }

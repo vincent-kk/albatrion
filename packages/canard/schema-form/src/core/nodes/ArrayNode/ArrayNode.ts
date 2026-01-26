@@ -19,19 +19,29 @@ import {
 import { omitEmptyArray } from './utils';
 
 /**
- * A node class for handling array schemas.
- * Manages each element of the array and provides push/pop/update/remove/clear functionality.
+ * Node class for handling array schemas.
+ * @remarks Manages each element of the array and provides `push`/`pop`/`update`/`remove`/`clear` functionality.
  */
 export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
   public override readonly type = 'array';
 
+  /** Active child nodes within the current scope. */
+  public override get children() {
+    return this.__strategy__.children;
+  }
+
+  /** Current length of the array. */
+  public get length() {
+    return this.__strategy__.length;
+  }
+
   /**
-   * Strategy used by the array node:
-   *  - BranchStrategy: Handles complex child nodes with associated processing logic.
-   *  - TerminalStrategy: Acts as a terminal node for array-type data with no child nodes and simple processing logic.
+   * @internal Strategy used by the array node.
+   * @remarks `BranchStrategy` for branch node with child nodes, `TerminalStrategy` for simple array data, without child nodes.
    */
   private __strategy__: ArrayNodeStrategy;
 
+  /** @internal */
   protected override __equals__(
     this: ArrayNode,
     left: ArrayValue | Nullish,
@@ -40,27 +50,18 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     return equals(left, right);
   }
 
-  /**
-   * Gets the value of the array node.
-   * @returns Array value or undefined (if empty) or null (if nullable)
-   */
+  /** @internal */
+  protected override onChange: HandleChange<ArrayValue | Nullish>;
+
+  /** Current array value or `undefined`. */
   public override get value() {
     return this.__strategy__.value;
   }
 
-  /**
-   * Sets the value of the array node.
-   * @param input - Array value to set
-   */
   public override set value(input: ArrayValue | Nullish) {
     this.setValue(input);
   }
 
-  /**
-   * Applies input value to the array node.
-   * @param input - Array value to set
-   * @param option - Setting options
-   */
   protected override applyValue(
     this: ArrayNode,
     input: ArrayValue | Nullish,
@@ -69,28 +70,52 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     this.__strategy__.applyValue(input, option);
   }
 
-  /** Child nodes of ArrayNode */
   /**
-   * Gets the child nodes of the array node.
-   * @returns List of child nodes
+   * Adds a new element to the array.
+   * @param data - Value to add (optional, uses default if not provided)
+   * @param unlimited - If `true`, ignores `maxItems` constraint
+   * @returns The length of the array after the push operation
    */
-  public override get children() {
-    return this.__strategy__.children;
+  public push(this: ArrayNode, data?: ArrayValue[number], unlimited?: boolean) {
+    return this.__strategy__.push(data, unlimited);
   }
 
   /**
-   * Gets the current length of the array.
-   * @returns Length of the array
+   * Removes the last element from the array.
+   * @returns The removed value, or `undefined` if array was empty
    */
-  public get length() {
-    return this.__strategy__.length;
+  public pop(this: ArrayNode) {
+    return this.__strategy__.pop();
   }
 
   /**
-   * Activates this ArrayNode and propagates activation to all child nodes.
-   * @param actor - The node that requested activation
-   * @returns {boolean} Whether activation was successful
+   * Updates the value of an element at the specified index.
+   * @param index - Index of the element to update
+   * @param data - New value
+   * @returns The updated value, or `undefined` if index was out of bounds
    */
+  public update(this: ArrayNode, index: number, data: ArrayValue[number]) {
+    return this.__strategy__.update(index, data);
+  }
+
+  /**
+   * Removes an element at the specified index.
+   * @param index - Index of the element to remove
+   * @returns The removed value, or `undefined` if index was out of bounds
+   */
+  public remove(this: ArrayNode, index: number) {
+    return this.__strategy__.remove(index);
+  }
+
+  /**
+   * Clears all elements from the array.
+   * @remarks Respects `minItems` constraint; may not fully clear if `minItems > 0`.
+   */
+  public clear(this: ArrayNode) {
+    return this.__strategy__.clear();
+  }
+
+  /** @internal */
   protected override __initialize__(
     this: ArrayNode,
     actor?: SchemaNode,
@@ -101,8 +126,6 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
     }
     return false;
   }
-
-  protected override onChange: HandleChange<ArrayValue | Nullish>;
 
   constructor(properties: BranchNodeConstructorProps<ArraySchema>) {
     super(properties);
@@ -124,49 +147,5 @@ export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
             properties.nodeFactory,
           );
     this.__initialize__();
-  }
-
-  /**
-   * Adds a new element to the array.
-   * @param data - Value to add (optional)
-   * @returns {Promise<number> } the length of the array after the push operation
-   */
-  public push(this: ArrayNode, data?: ArrayValue[number], unlimited?: boolean) {
-    return this.__strategy__.push(data, unlimited);
-  }
-
-  /**
-   * Removes the last element from the array.
-   * @returns {Promise<ArrayValue[number]|undefined>} the value of the removed value
-   */
-  public pop(this: ArrayNode) {
-    return this.__strategy__.pop();
-  }
-
-  /**
-   * Updates the value of a specific element.
-   * @param index - Index of the element to update
-   * @param data - New value
-   * @returns {Promise<ArrayValue[number]|undefined>} the value of the updated value
-   */
-  public update(this: ArrayNode, index: number, data: ArrayValue[number]) {
-    return this.__strategy__.update(index, data);
-  }
-
-  /**
-   * Removes a specific element.
-   * @param index - Index of the element to remove
-   * @returns {Promise<ArrayValue[number]|undefined>} value of the removed value
-   */
-  public remove(this: ArrayNode, index: number) {
-    return this.__strategy__.remove(index);
-  }
-
-  /**
-   * Clears all elements to initialize the array.
-   * @returns {Promise<void>}
-   */
-  public clear(this: ArrayNode) {
-    return this.__strategy__.clear();
   }
 }

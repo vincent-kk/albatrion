@@ -876,6 +876,168 @@ Size limits are enforced: 20KB for both CJS and ESM builds.
 9. **Error Handling**: Implement custom error formatting with `formatError` function or use built-in multilingual support in JSON Schema
 10. **Custom Layouts**: Use `Form.Render` with JSONPointer paths for building custom form layouts outside the default structure
 
+## Class Member Ordering Convention
+
+All classes in this project follow a **Domain-First** ordering approach. Members are grouped by functional domain rather than by access modifiers.
+
+### Ordering Principles
+
+1. **Domain Cohesion**: Related functionality is grouped together regardless of access modifiers
+2. **Within Each Domain**: `private fields` → `protected methods` → `public getters/setters` → `public methods`
+3. **Constructor Position**: Always placed at the bottom of the class
+4. **No Section Comments**: Do not add separator comments between sections
+
+### Standard Domain Order
+
+For node classes (AbstractNode, StringNode, ObjectNode, etc.):
+
+```
+1. Identity (type, schemaType, jsonSchema, required, nullable)
+2. Tree Structure (depth, isRoot, parentNode, children, name, path)
+3. Value Management (defaultValue, value, setValue, onChange)
+4. Computed Properties (active, visible, enabled, readOnly, disabled)
+5. State Management (state, globalState, setState)
+6. Validation & Errors (errors, globalErrors, validate, setErrors)
+7. Events (publish, subscribe, saveUnsubscribe)
+8. Injection (injection guards, handlers)
+9. Lifecycle (initialized, __initialize__, __cleanUp__, __reset__)
+10. Constructor
+```
+
+For strategy classes (BranchStrategy, TerminalStrategy):
+
+```
+1. Host & Dependencies (private references)
+2. Internal State (flags, caches)
+3. Value Management (value getter, applyValue)
+4. Children Management (children getter, child operations)
+5. Composition Operations (push, remove, clear, update)
+6. Lifecycle (initialize)
+7. Constructor
+```
+
+For manager classes (EventCascadeManager, ValidationManager, etc.):
+
+```
+1. Internal State (private fields)
+2. Core Operations (primary public methods)
+3. Helper Methods (private/protected utilities)
+4. Lifecycle (cleanup methods)
+5. Constructor
+```
+
+### Example
+
+```typescript
+class ExampleNode {
+  // 1. Identity
+  public readonly type = 'example';
+  private readonly __schema__: JsonSchema;
+
+  // 2. Tree Structure
+  public readonly parentNode: AbstractNode | null;
+  private __name__: string;
+  public get name() { return this.__name__; }
+
+  // 3. Value Management
+  private __value__: string;
+  public get value() { return this.__value__; }
+  public setValue(value: string) { /* ... */ }
+
+  // 4. Computed Properties
+  public get visible() { return this.__computeManager__.visible; }
+
+  // 5. State Management
+  private __state__: NodeState;
+  public get state() { return this.__state__; }
+
+  // 6. Validation & Errors
+  private __errorManager__: ValidationErrorManager;
+  public get errors() { return this.__errorManager__.mergedLocalErrors; }
+
+  // 7. Events
+  public subscribe(listener: NodeListener) { /* ... */ }
+
+  // 8. Lifecycle
+  private __initialized__ = false;
+  public get initialized() { return this.__initialized__; }
+
+  // 9. Constructor (always at the bottom)
+  constructor(options: NodeOptions) {
+    // initialization logic
+  }
+}
+```
+
+## JSDoc Convention
+
+All classes and methods in this project follow a consistent JSDoc documentation style.
+
+### Tag Usage
+
+| Tag | Usage |
+|-----|-------|
+| `@internal` | Private fields and internal methods not part of public API |
+| `@remarks` | Additional context, notes, or implementation details |
+| `@param` | Parameter description with format `@param name - Description` |
+| `@returns` | Return value description (omit type, TypeScript handles it) |
+| `@example` | Code examples for public API methods |
+
+### Documentation Patterns
+
+**Private fields**: Use `@internal` tag with brief description
+```typescript
+/** @internal Storage for node's name. */
+private __name__: string;
+```
+
+**Public getters**: Direct description with `@remarks` for additional context
+```typescript
+/**
+ * Node's name (property key or array index).
+ * @remarks Readonly externally, but can be changed via `__setName__` by the parent node.
+ */
+public get name() {
+  return this.__name__;
+}
+```
+
+**Internal methods**: `@internal` tag with description and parameters
+```typescript
+/**
+ * Sets the node's name.
+ * @param name - The new name to set
+ * @param actor - The node requesting the change (must be parent or self)
+ * @internal Only the parent node or self can change the name.
+ */
+protected __setName__(name: string, actor: SchemaNode) { /* ... */ }
+```
+
+**Public methods**: Full documentation with examples for complex APIs
+```typescript
+/**
+ * Sets the node's value with configurable update behavior.
+ * @param input - The value to set, or a function receiving the previous value
+ * @param option - Bitwise options (default: `Overwrite`)
+ * @example
+ * ```ts
+ * node.setValue('new value');
+ * node.setValue(prev => prev + ' updated');
+ * node.setValue({ key: 'value' }, SetValueOption.Merge);
+ * ```
+ */
+public setValue(input: Value | Fn, option?: UnionSetValueOption): void { /* ... */ }
+```
+
+### Style Guidelines
+
+1. **Concise descriptions**: One sentence or short phrase for the main description
+2. **No redundant types**: Don't repeat TypeScript types in `@returns` or `@param`
+3. **Use backticks**: Wrap code references like `oneOf`, `setValue()`, `true`/`false` in backticks
+4. **Avoid `@note`**: Use standard `@remarks` instead
+5. **No section separators**: Do not add `/* ═══════ */` style section comments
+6. **Examples for public API**: Add `@example` blocks for complex public methods
+
 ## Important Hooks and Utilities
 
 ### Core Hooks

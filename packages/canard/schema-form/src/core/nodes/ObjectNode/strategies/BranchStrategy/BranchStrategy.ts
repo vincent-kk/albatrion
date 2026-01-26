@@ -52,27 +52,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
   /** Array of schema property keys in order */
   private readonly __propertyKeys__: string[];
 
-  /** Set of all oneOf schema keys, undefined if no oneOf schema exists */
-  private readonly __oneOfKeySet__?: Set<string>;
-
-  /** Array of key sets for each oneOf branch, undefined if no oneOf schema exists */
-  private readonly __oneOfKeySetList__?: Set<string>[];
-
-  /** Array of child node arrays for each oneOf branch */
-  private readonly __oneOfChildNodeMapList__?: ChildNodeMap[];
-
-  /** Set of all anyOf schema keys, undefined if no anyOf schema exists */
-  private readonly __anyOfKeySet__?: Set<string>;
-
-  /** Array of key sets for each anyOf branch, undefined if no anyOf schema exists */
-  private readonly __anyOfKeySetList__?: Set<string>[];
-
-  /** Array of child node arrays for each anyOf branch */
-  private readonly __anyOfChildNodeMapList__?: ChildNodeMap[];
-
-  /** Array of child nodes for regular properties (non-oneOf) */
-  private readonly __propertyChildren__: ChildNode[];
-
   /** Map of field conditions for conditional schema properties */
   private readonly __fieldConditionMap__?: FieldConditionMap;
 
@@ -96,214 +75,6 @@ export class BranchStrategy implements ObjectNodeStrategy {
 
   /** Flag indicating whether the object value is expired */
   private __expired__: boolean = true;
-
-  /**
-   * Gets the current value of the object.
-   * @returns Current value of the object node or undefined
-   */
-  public get value() {
-    if (this.__expired__)
-      this.__handleEmitChange__(SetValueOption.BatchedEmitChange);
-    return this.__value__;
-  }
-
-  /**
-   * Applies input value to the object node.
-   * @param input - Object value to set
-   * @param option - Setting options
-   */
-  public applyValue(input: ObjectValue | Nullish, option: UnionSetValueOption) {
-    this.__draft__ = input;
-    this.__expired__ = true;
-    this.__isolated__ = (option & SetValueOption.Isolate) > 0;
-    this.__emitChange__(option);
-  }
-
-  /** Current active children nodes (combination of property and oneOf children) */
-  private __children__: ChildNode[];
-
-  /**
-   * Gets the child nodes of the object node.
-   * @returns List of child nodes
-   */
-  public get children() {
-    return this.__children__;
-  }
-
-  /** Array of child nodes for regular properties and oneOf properties */
-  private readonly __subnodes__: ChildNode[];
-
-  /**
-   * Gets all of the child nodes of the object node.
-   * @returns List of child nodes
-   */
-  public get subnodes() {
-    return this.__subnodes__;
-  }
-
-  /**
-   * Propagates activation to all child nodes.
-   * @internal Internal implementation method. Do not call directly.
-   */
-  public initialize() {
-    let enabled = false;
-    for (let i = 0, l = this.__subnodes__.length; i < l; i++) {
-      const childNode = this.__subnodes__[i].node;
-      // @ts-expect-error [internal] child node initialization
-      (childNode as AbstractNode).__initialize__(this.__host__);
-      // @ts-expect-error [internal] computeEnabled delegation
-      if (!enabled && childNode.__computeEnabled__) enabled = true;
-    }
-    if (enabled) this.__prepareProcessComputedProperties__();
-  }
-
-  /**
-   * Initializes the BranchStrategy object.
-   * @param host - Host ObjectNode object
-   * @param handleChange - Value change handler
-   * @param handleRefresh - Refresh handler
-   * @param handleSetDefaultValue - Default value setting handler
-   * @param handleUpdateComputedProperties - Computed properties update handler
-   * @param nodeFactory - Node creation factory
-   */
-  constructor(
-    host: ObjectNode,
-    handleChange: HandleChange<ObjectValue | Nullish>,
-    nodeFactory: SchemaNodeFactory,
-  ) {
-    this.__host__ = host;
-    this.__handleChange__ = handleChange;
-
-    this.__value__ = host.defaultValue;
-    this.__draft__ = host.defaultValue === null ? null : {};
-
-    const jsonSchema = host.jsonSchema;
-
-    this.__ignoreAdditionalProperties__ =
-      jsonSchema.additionalProperties === false;
-
-    const propertyKeys = sortWithReference(
-      getObjectKeys(jsonSchema.properties),
-      jsonSchema.propertyKeys,
-    );
-
-    const oneOfKeyInfo = getCompositionKeyInfo('oneOf', jsonSchema);
-    if (oneOfKeyInfo) {
-      this.__oneOfKeySet__ = oneOfKeyInfo.unionKeySet;
-      this.__oneOfKeySetList__ = oneOfKeyInfo.schemaKeySets;
-    }
-
-    const anyOfKeyInfo = getCompositionKeyInfo('anyOf', jsonSchema);
-    if (anyOfKeyInfo) {
-      this.__anyOfKeySet__ = anyOfKeyInfo.unionKeySet;
-      this.__anyOfKeySetList__ = anyOfKeyInfo.schemaKeySets;
-    }
-
-    if (this.__oneOfKeySet__ || this.__anyOfKeySet__) {
-      this.__propertyKeys__ = sortWithReference(
-        [
-          ...propertyKeys,
-          ...(this.__oneOfKeySet__ ? Array.from(this.__oneOfKeySet__) : []),
-          ...(this.__anyOfKeySet__ ? Array.from(this.__anyOfKeySet__) : []),
-        ],
-        jsonSchema.propertyKeys,
-      );
-    } else this.__propertyKeys__ = propertyKeys;
-
-    const handelChangeFactory =
-      (property: string): HandleChange =>
-      (input, batched) => {
-        if (this.__draft__ == null) this.__draft__ = {};
-        if (
-          (input === undefined && this.__value__?.[property] === input) ||
-          (input !== undefined && this.__draft__[property] === input)
-        )
-          return;
-        this.__draft__[property] = input;
-        this.__expired__ = true;
-        if (this.__isolated__ && this.__isPristine__) this.__isolated__ = false;
-        this.__emitChange__(SetValueOption.Default, batched);
-      };
-    host.subscribe(({ type, payload }) => {
-      if (type & NodeEventType.RequestEmitChange) {
-        this.__handleEmitChange__(payload?.[NodeEventType.RequestEmitChange]);
-        this.__batched__ = false;
-      }
-    });
-
-    const { virtualReferencesMap, virtualReferenceFieldsMap } =
-      getVirtualReferencesMap(host.name, propertyKeys, host.jsonSchema.virtual);
-
-    this.__fieldConditionMap__ = getFieldConditionMap(jsonSchema);
-
-    const conditionsMap = getConditionsMap(this.__fieldConditionMap__);
-
-    this.__childNodeMap__ = getChildNodeMap(
-      host,
-      jsonSchema,
-      propertyKeys,
-      host.defaultValue,
-      conditionsMap,
-      virtualReferencesMap,
-      virtualReferenceFieldsMap,
-      handelChangeFactory,
-      nodeFactory,
-    );
-
-    this.__propertyChildren__ = getChildren(
-      host,
-      propertyKeys,
-      this.__childNodeMap__,
-      conditionsMap,
-      virtualReferencesMap,
-      virtualReferenceFieldsMap,
-      nodeFactory,
-    );
-
-    this.__oneOfChildNodeMapList__ = getCompositionNodeMapList(
-      host,
-      'oneOf',
-      jsonSchema,
-      host.defaultValue,
-      this.__childNodeMap__,
-      this.__oneOfKeySetList__,
-      this.__anyOfKeySet__,
-      handelChangeFactory,
-      nodeFactory,
-    );
-
-    this.__anyOfChildNodeMapList__ = getCompositionNodeMapList(
-      host,
-      'anyOf',
-      jsonSchema,
-      host.defaultValue,
-      this.__childNodeMap__,
-      this.__anyOfKeySetList__,
-      this.__oneOfKeySet__,
-      handelChangeFactory,
-      nodeFactory,
-    );
-
-    this.__children__ = this.__propertyChildren__;
-
-    const subnodes = [...this.__propertyChildren__];
-    if (this.__oneOfChildNodeMapList__)
-      for (const childNodeMap of this.__oneOfChildNodeMapList__)
-        for (const child of childNodeMap.values()) subnodes.push(child);
-    if (this.__anyOfChildNodeMapList__)
-      for (const childNodeMap of this.__anyOfChildNodeMapList__)
-        for (const child of childNodeMap.values()) subnodes.push(child);
-    this.__subnodes__ = subnodes;
-
-    this.__locked__ = false;
-
-    this.__emitChange__(SetValueOption.Default);
-    // @ts-expect-error [internal] setDefaultValue delegation
-    this.__host__.__setDefaultValue__(this.__value__);
-    this.__publishChildrenChange__();
-
-    this.__prepareCompositionChildren__();
-  }
 
   /**
    * Determines whether to queue or immediately process value changes.
@@ -444,11 +215,85 @@ export class BranchStrategy implements ObjectNodeStrategy {
     this.__locked__ = false;
   }
 
+  /**
+   * Gets the current value of the object.
+   * @returns Current value of the object node or undefined
+   */
+  public get value() {
+    if (this.__expired__)
+      this.__handleEmitChange__(SetValueOption.BatchedEmitChange);
+    return this.__value__;
+  }
+
+  /**
+   * Applies input value to the object node.
+   * @param input - Object value to set
+   * @param option - Setting options
+   */
+  public applyValue(input: ObjectValue | Nullish, option: UnionSetValueOption) {
+    this.__draft__ = input;
+    this.__expired__ = true;
+    this.__isolated__ = (option & SetValueOption.Isolate) > 0;
+    this.__emitChange__(option);
+  }
+
+  /** Array of child nodes for regular properties (non-oneOf) */
+  private readonly __propertyChildren__: ChildNode[];
+
+  /** Current active children nodes (combination of property and oneOf children) */
+  private __children__: ChildNode[];
+
+  /** Array of child nodes for regular properties and oneOf properties */
+  private readonly __subnodes__: ChildNode[];
+
+  /**
+   * Publishes a child node change event.
+   * @private
+   */
+  private __publishChildrenChange__() {
+    if (this.__locked__) return;
+    this.__host__.publish(NodeEventType.UpdateChildren);
+  }
+
+  /**
+   * Gets the child nodes of the object node.
+   * @returns List of child nodes
+   */
+  public get children() {
+    return this.__children__;
+  }
+
+  /**
+   * Gets all of the child nodes of the object node.
+   * @returns List of child nodes
+   */
+  public get subnodes() {
+    return this.__subnodes__;
+  }
+
+  /** Set of all oneOf schema keys, undefined if no oneOf schema exists */
+  private readonly __oneOfKeySet__?: Set<string>;
+
+  /** Array of key sets for each oneOf branch, undefined if no oneOf schema exists */
+  private readonly __oneOfKeySetList__?: Set<string>[];
+
+  /** Array of child node arrays for each oneOf branch */
+  private readonly __oneOfChildNodeMapList__?: ChildNodeMap[];
+
   /** Previously active oneOf index for tracking oneOf branch changes */
   private __oneOfIndex__: number = -1;
 
   /** Active oneOf child node map */
   private __oneOfChildNodeMap__: ChildNodeMap | null = null;
+
+  /** Set of all anyOf schema keys, undefined if no anyOf schema exists */
+  private readonly __anyOfKeySet__?: Set<string>;
+
+  /** Array of key sets for each anyOf branch, undefined if no anyOf schema exists */
+  private readonly __anyOfKeySetList__?: Set<string>[];
+
+  /** Array of child node arrays for each anyOf branch */
+  private readonly __anyOfChildNodeMapList__?: ChildNodeMap[];
 
   /** Previously active anyOf index for tracking anyOf branch changes */
   private __anyOfIndices__: number[] = [];
@@ -714,11 +559,166 @@ export class BranchStrategy implements ObjectNodeStrategy {
   }
 
   /**
-   * Publishes a child node change event.
-   * @private
+   * Propagates activation to all child nodes.
+   * @internal Internal implementation method. Do not call directly.
    */
-  private __publishChildrenChange__() {
-    if (this.__locked__) return;
-    this.__host__.publish(NodeEventType.UpdateChildren);
+  public initialize() {
+    let enabled = false;
+    for (let i = 0, l = this.__subnodes__.length; i < l; i++) {
+      const childNode = this.__subnodes__[i].node;
+      // @ts-expect-error [internal] child node initialization
+      (childNode as AbstractNode).__initialize__(this.__host__);
+      // @ts-expect-error [internal] computeEnabled delegation
+      if (!enabled && childNode.__computeManager__.isEnabled) enabled = true;
+    }
+    if (enabled) this.__prepareProcessComputedProperties__();
+  }
+
+  /**
+   * Initializes the BranchStrategy object.
+   * @param host - Host ObjectNode object
+   * @param handleChange - Value change handler
+   * @param handleRefresh - Refresh handler
+   * @param handleSetDefaultValue - Default value setting handler
+   * @param handleUpdateComputedProperties - Computed properties update handler
+   * @param nodeFactory - Node creation factory
+   */
+  constructor(
+    host: ObjectNode,
+    handleChange: HandleChange<ObjectValue | Nullish>,
+    nodeFactory: SchemaNodeFactory,
+  ) {
+    this.__host__ = host;
+    this.__handleChange__ = handleChange;
+
+    this.__value__ = host.defaultValue;
+    this.__draft__ = host.defaultValue === null ? null : {};
+
+    const jsonSchema = host.jsonSchema;
+
+    this.__ignoreAdditionalProperties__ =
+      jsonSchema.additionalProperties === false;
+
+    const propertyKeys = sortWithReference(
+      getObjectKeys(jsonSchema.properties),
+      jsonSchema.propertyKeys,
+    );
+
+    const oneOfKeyInfo = getCompositionKeyInfo('oneOf', jsonSchema);
+    if (oneOfKeyInfo) {
+      this.__oneOfKeySet__ = oneOfKeyInfo.unionKeySet;
+      this.__oneOfKeySetList__ = oneOfKeyInfo.schemaKeySets;
+    }
+
+    const anyOfKeyInfo = getCompositionKeyInfo('anyOf', jsonSchema);
+    if (anyOfKeyInfo) {
+      this.__anyOfKeySet__ = anyOfKeyInfo.unionKeySet;
+      this.__anyOfKeySetList__ = anyOfKeyInfo.schemaKeySets;
+    }
+
+    if (this.__oneOfKeySet__ || this.__anyOfKeySet__) {
+      this.__propertyKeys__ = sortWithReference(
+        [
+          ...propertyKeys,
+          ...(this.__oneOfKeySet__ ? Array.from(this.__oneOfKeySet__) : []),
+          ...(this.__anyOfKeySet__ ? Array.from(this.__anyOfKeySet__) : []),
+        ],
+        jsonSchema.propertyKeys,
+      );
+    } else this.__propertyKeys__ = propertyKeys;
+
+    const handelChangeFactory =
+      (property: string): HandleChange =>
+      (input, batched) => {
+        if (this.__draft__ == null) this.__draft__ = {};
+        if (
+          (input === undefined && this.__value__?.[property] === input) ||
+          (input !== undefined && this.__draft__[property] === input)
+        )
+          return;
+        this.__draft__[property] = input;
+        this.__expired__ = true;
+        if (this.__isolated__ && this.__isPristine__) this.__isolated__ = false;
+        this.__emitChange__(SetValueOption.Default, batched);
+      };
+    host.subscribe(({ type, payload }) => {
+      if (type & NodeEventType.RequestEmitChange) {
+        this.__handleEmitChange__(payload?.[NodeEventType.RequestEmitChange]);
+        this.__batched__ = false;
+      }
+    });
+
+    const { virtualReferencesMap, virtualReferenceFieldsMap } =
+      getVirtualReferencesMap(host.name, propertyKeys, host.jsonSchema.virtual);
+
+    this.__fieldConditionMap__ = getFieldConditionMap(jsonSchema);
+
+    const conditionsMap = getConditionsMap(this.__fieldConditionMap__);
+
+    this.__childNodeMap__ = getChildNodeMap(
+      host,
+      jsonSchema,
+      propertyKeys,
+      host.defaultValue,
+      conditionsMap,
+      virtualReferencesMap,
+      virtualReferenceFieldsMap,
+      handelChangeFactory,
+      nodeFactory,
+    );
+
+    this.__propertyChildren__ = getChildren(
+      host,
+      propertyKeys,
+      this.__childNodeMap__,
+      conditionsMap,
+      virtualReferencesMap,
+      virtualReferenceFieldsMap,
+      nodeFactory,
+    );
+
+    this.__oneOfChildNodeMapList__ = getCompositionNodeMapList(
+      host,
+      'oneOf',
+      jsonSchema,
+      host.defaultValue,
+      this.__childNodeMap__,
+      this.__oneOfKeySetList__,
+      this.__anyOfKeySet__,
+      handelChangeFactory,
+      nodeFactory,
+    );
+
+    this.__anyOfChildNodeMapList__ = getCompositionNodeMapList(
+      host,
+      'anyOf',
+      jsonSchema,
+      host.defaultValue,
+      this.__childNodeMap__,
+      this.__anyOfKeySetList__,
+      this.__oneOfKeySet__,
+      handelChangeFactory,
+      nodeFactory,
+    );
+
+    this.__children__ = this.__propertyChildren__;
+
+    const subnodes = [...this.__propertyChildren__];
+    if (this.__oneOfChildNodeMapList__)
+      for (const childNodeMap of this.__oneOfChildNodeMapList__)
+        for (const child of childNodeMap.values()) subnodes.push(child);
+    if (this.__anyOfChildNodeMapList__)
+      for (const childNodeMap of this.__anyOfChildNodeMapList__)
+        for (const child of childNodeMap.values()) subnodes.push(child);
+    this.__subnodes__ = subnodes;
+
+    this.__locked__ = false;
+
+    this.__emitChange__(SetValueOption.Default);
+    // @ts-expect-error [internal] setDefaultValue delegation
+    this.__host__.__setDefaultValue__(this.__value__);
+    this.__publishChildrenChange__();
+
+    this.__prepareCompositionChildren__();
   }
 }

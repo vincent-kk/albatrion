@@ -40,6 +40,12 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   /** Default value to use when creating new array prefixItems */
   private readonly __defaultPrefixItemValues__: Array<AllowedValue> | undefined;
 
+  /** Flag indicating whether the strategy is locked to prevent recursive updates */
+  private __locked__: boolean = true;
+
+  /** Current value of the array node, initialized as empty array */
+  private __value__: ArrayValue | Nullish = [];
+
   /**
    * Gets the default value for a new array item based on its position.
    *
@@ -60,11 +66,52 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     return this.__defaultItemValue__;
   }
 
-  /** Flag indicating whether the strategy is locked to prevent recursive updates */
-  private __locked__: boolean = true;
+  /**
+   * Emits a value change event.
+   * @param input - New array value
+   * @param option - Option settings (default: SetValueOption.Default)
+   * @private
+   */
+  private __emitChange__(
+    input: ArrayValue | Nullish,
+    option: UnionSetValueOption = SetValueOption.Default,
+  ) {
+    const host = this.__host__;
+    const retain = (option & SetValueOption.Replace) === 0;
+    const inject = (option & SetValueOption.PreventInjection) === 0;
 
-  /** Current value of the array node, initialized as empty array */
-  private __value__: ArrayValue | Nullish = [];
+    const previous = this.__value__ ? [...this.__value__] : this.__value__;
+    const current = this.__parseValue__(input);
+
+    // @ts-expect-error [internal] equals delegation
+    if (retain && host.__equals__(previous, current)) return;
+    this.__value__ = current;
+
+    if (this.__locked__) return;
+    if (option & SetValueOption.EmitChange)
+      this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
+    if (option & SetValueOption.Refresh)
+      host.publish(NodeEventType.RequestRefresh);
+    if (option & SetValueOption.PublishUpdateEvent)
+      host.publish(
+        NodeEventType.UpdateValue,
+        current,
+        { previous, current, inject },
+        host.initialized,
+      );
+  }
+
+  /**
+   * Parses input value into appropriate array format.
+   * @param input - Value to parse
+   * @returns {ArrayValue|null|undefined} Parsed array value or undefined or null
+   * @private
+   */
+  private __parseValue__(input: ArrayValue | Nullish) {
+    if (input === undefined) return undefined;
+    if (input === null && this.__host__.nullable) return null;
+    return parseArray(input);
+  }
 
   /**
    * Gets the current value of the array.
@@ -72,15 +119,6 @@ export class TerminalStrategy implements ArrayNodeStrategy {
    */
   public get value() {
     return this.__value__;
-  }
-
-  /**
-   * Applies input value to the array node.
-   * @param input - Array value to set
-   * @param option - Setting options
-   */
-  public applyValue(input: ArrayValue | Nullish, option: UnionSetValueOption) {
-    this.__emitChange__(input, option);
   }
 
   /**
@@ -100,50 +138,12 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * Initializes the TerminalStrategy object.
-   * @param host - Host ArrayNode object
-   * @param handleChange - Value change handler
-   * @param handleRefresh - Refresh handler
-   * @param handleSetDefaultValue - Default value setting handler
+   * Applies input value to the array node.
+   * @param input - Array value to set
+   * @param option - Setting options
    */
-  constructor(
-    host: ArrayNode,
-    hasDefault: boolean,
-    handleChange: HandleChange<ArrayValue | Nullish>,
-  ) {
-    this.__host__ = host;
-    this.__handleChange__ = handleChange;
-
-    const jsonSchema = host.jsonSchema;
-    const limit = resolveArrayLimits(jsonSchema);
-    this.__minItems__ = limit.min;
-    this.__maxItems__ = limit.max;
-
-    if (jsonSchema.items)
-      this.__defaultItemValue__ = isObjectSchema(jsonSchema.items)
-        ? getObjectDefaultValue(jsonSchema.items)
-        : jsonSchema.items.default;
-
-    if (isArray(jsonSchema.prefixItems))
-      this.__defaultPrefixItemValues__ = map(
-        jsonSchema.prefixItems,
-        (schema) =>
-          isObjectSchema(schema)
-            ? getObjectDefaultValue(schema)
-            : schema.default,
-      );
-
-    if (hasDefault) {
-      const defaultValue = host.defaultValue;
-      if (defaultValue != null && defaultValue.length > 0)
-        for (const value of defaultValue) this.push(value, true);
-    } else while (this.length < this.__minItems__) this.push(void 0, true);
-
-    this.__locked__ = false;
-
-    this.__emitChange__(this.__value__, FIRST_EMIT_CHANGE_OPTION);
-    // @ts-expect-error [internal] setDefaultValue delegation
-    host.__setDefaultValue__(this.__value__);
+  public applyValue(input: ArrayValue | Nullish, option: UnionSetValueOption) {
+    this.__emitChange__(input, option);
   }
 
   /**
@@ -202,49 +202,49 @@ export class TerminalStrategy implements ArrayNodeStrategy {
   }
 
   /**
-   * Emits a value change event.
-   * @param input - New array value
-   * @param option - Option settings (default: SetValueOption.Default)
-   * @private
+   * Initializes the TerminalStrategy object.
+   * @param host - Host ArrayNode object
+   * @param handleChange - Value change handler
+   * @param handleRefresh - Refresh handler
+   * @param handleSetDefaultValue - Default value setting handler
    */
-  private __emitChange__(
-    input: ArrayValue | Nullish,
-    option: UnionSetValueOption = SetValueOption.Default,
+  constructor(
+    host: ArrayNode,
+    hasDefault: boolean,
+    handleChange: HandleChange<ArrayValue | Nullish>,
   ) {
-    const host = this.__host__;
-    const retain = (option & SetValueOption.Replace) === 0;
-    const inject = (option & SetValueOption.PreventInjection) === 0;
+    this.__host__ = host;
+    this.__handleChange__ = handleChange;
 
-    const previous = this.__value__ ? [...this.__value__] : this.__value__;
-    const current = this.__parseValue__(input);
+    const jsonSchema = host.jsonSchema;
+    const limit = resolveArrayLimits(jsonSchema);
+    this.__minItems__ = limit.min;
+    this.__maxItems__ = limit.max;
 
-    // @ts-expect-error [internal] equals delegation
-    if (retain && host.__equals__(previous, current)) return;
-    this.__value__ = current;
+    if (jsonSchema.items)
+      this.__defaultItemValue__ = isObjectSchema(jsonSchema.items)
+        ? getObjectDefaultValue(jsonSchema.items)
+        : jsonSchema.items.default;
 
-    if (this.__locked__) return;
-    if (option & SetValueOption.EmitChange)
-      this.__handleChange__(current, (option & SetValueOption.Batch) > 0);
-    if (option & SetValueOption.Refresh)
-      host.publish(NodeEventType.RequestRefresh);
-    if (option & SetValueOption.PublishUpdateEvent)
-      host.publish(
-        NodeEventType.UpdateValue,
-        current,
-        { previous, current, inject },
-        host.initialized,
+    if (isArray(jsonSchema.prefixItems))
+      this.__defaultPrefixItemValues__ = map(
+        jsonSchema.prefixItems,
+        (schema) =>
+          isObjectSchema(schema)
+            ? getObjectDefaultValue(schema)
+            : schema.default,
       );
-  }
 
-  /**
-   * Parses input value into appropriate array format.
-   * @param input - Value to parse
-   * @returns {ArrayValue|null|undefined} Parsed array value or undefined or null
-   * @private
-   */
-  private __parseValue__(input: ArrayValue | Nullish) {
-    if (input === undefined) return undefined;
-    if (input === null && this.__host__.nullable) return null;
-    return parseArray(input);
+    if (hasDefault) {
+      const defaultValue = host.defaultValue;
+      if (defaultValue != null && defaultValue.length > 0)
+        for (const value of defaultValue) this.push(value, true);
+    } else while (this.length < this.__minItems__) this.push(void 0, true);
+
+    this.__locked__ = false;
+
+    this.__emitChange__(this.__value__, FIRST_EMIT_CHANGE_OPTION);
+    // @ts-expect-error [internal] setDefaultValue delegation
+    host.__setDefaultValue__(this.__value__);
   }
 }

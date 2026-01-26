@@ -1,15 +1,13 @@
 import { isArray, isString } from '@winglet/common-utils/filter';
 
-import type { Fn } from '@aileron/declare';
-
 import { JsonSchemaError } from '@/schema-form/errors';
 import { formatObservedValuesError } from '@/schema-form/helpers/error';
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
 import type { PathManager } from '../getPathManager';
-import { ALIAS, type ObservedFieldName } from '../type';
+import { ALIAS, type DynamicFunction, type ObservedFieldName } from '../type';
 
-type GetObservedValues = Fn<[dependencies: unknown[]], unknown[]>;
+type GetObservedValues = DynamicFunction<unknown[]>;
 
 /**
  * Creates a function to calculate observed values for a specific field in a JSON schema.
