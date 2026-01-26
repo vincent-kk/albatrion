@@ -40,8 +40,6 @@ import type { DynamicFunction } from './utils/type';
  * manager.recalculate();
  * console.log(manager.visible); // Result of condition evaluation
  * ```
- *
- * @see {@link https://json-schema.org/understanding-json-schema/ JSON Schema}
  */
 export class ComputedPropertiesManager {
   /** @internal Internal function to calculate active state */
