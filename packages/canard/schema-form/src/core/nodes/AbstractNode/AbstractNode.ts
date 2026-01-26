@@ -1,7 +1,6 @@
 import { map } from '@winglet/common-utils/array';
 import { isArray, isEmptyObject, isObject } from '@winglet/common-utils/filter';
 import { cloneLite, equals, merge } from '@winglet/common-utils/object';
-import { scheduleMacrotaskSafe } from '@winglet/common-utils/scheduler';
 import { escapeSegment, setValue } from '@winglet/json/pointer';
 
 import type { Dictionary, Fn, Nullish } from '@aileron/declare';
@@ -53,6 +52,7 @@ import {
 } from '../type';
 import {
   EventCascade,
+  InjectionGuardManager,
   afterMicrotask,
   checkDefinedValue,
   computeFactory,
@@ -406,7 +406,7 @@ export abstract class AbstractNode<
         onChange(getSafeEmptyValue(this.value, this.schemaType));
       });
       this.__prepareValidator__(jsonSchema, validatorFactory, validationMode);
-      this.__injectedPaths__ = new Set();
+      this.__injectionGuardManager__ = new InjectionGuardManager();
     } else this.__handleChange__ = onChange;
   }
 
@@ -437,6 +437,25 @@ export abstract class AbstractNode<
     const absolute = isAbsolutePath(pointer);
     if (absolute && pointer.length === 1) return [this.rootNode];
     return findNodes(absolute ? this.rootNode : (this as SchemaNode), pointer);
+  }
+
+  /**
+   * Manages injection guard state to prevent circular injection loops.
+   * @description Only initialized on the root node. Tracks which node paths are currently
+   *              being injected and coordinates deferred cleanup across all nodes in the tree.
+   * @see InjectionGuardManager
+   */
+  private __injectionGuardManager__: InjectionGuardManager | undefined;
+
+  /**
+   * Provides access to the injection guard manager from any node in the tree.
+   * @description Root nodes return their own manager instance, while child nodes
+   *              delegate to the root node's manager to ensure centralized tracking.
+   * @returns The injection guard manager, or `undefined` if not initialized
+   */
+  private get __injectionGuard__() {
+    if (this.isRoot) return this.__injectionGuardManager__;
+    return this.rootNode.__injectionGuardManager__;
   }
 
   /**
@@ -980,83 +999,6 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Set of data paths currently being injected.
-   * @remarks **[Root Node Only]** Only initialized and used by the root node.
-   *          Tracks which nodes are currently being injected to prevent circular injection loops.
-   *          Child nodes delegate injection tracking to `rootNode`.
-   */
-  private __injectedPaths__: Set<SchemaNode['path']> | undefined;
-
-  /**
-   * Scheduled macrotask ID for clearing injected node flags.
-   * @remarks **[Root Node Only]** Used to batch clear injected flags after all
-   *          synchronous injection operations complete. The ID prevents duplicate scheduling.
-   */
-  private __scheduledClearInjectedPathsId__: number | undefined;
-
-  /**
-   * Checks if a node at the given path is currently being injected.
-   * @param path - The data path of the node to check
-   * @returns {boolean} Whether the node is currently being injected
-   * @note Root nodes check their own flag set, child nodes delegate to rootNode.
-   */
-  protected __isInjectedPath__(
-    this: AbstractNode,
-    path: SchemaNode['path'],
-  ): boolean {
-    if (this.isRoot) return this.__injectedPaths__?.has(path) ?? false;
-    else return (this.rootNode as AbstractNode).__isInjectedPath__(path);
-  }
-
-  /**
-   * Sets the injected flag for a node at the given path.
-   * @param path - The data path of the node to mark as injected
-   * @note Used to prevent circular injection when `injectTo` affects multiple nodes.
-   */
-  protected __setInjectedPath__(this: AbstractNode, path: SchemaNode['path']) {
-    if (this.isRoot) this.__injectedPaths__?.add(path);
-    else (this.rootNode as AbstractNode).__setInjectedPath__(path);
-  }
-
-  /**
-   * Removes the injected flag for a node at the given path.
-   * @param path - The data path of the node to unmark
-   */
-  protected __unsetInjectedPath__(
-    this: AbstractNode,
-    path: SchemaNode['path'],
-  ) {
-    if (this.isRoot) this.__injectedPaths__?.delete(path);
-    else (this.rootNode as AbstractNode).__unsetInjectedPath__(path);
-  }
-
-  /**
-   * Clears all injected node flags immediately.
-   * @note Typically used for cleanup or reset operations.
-   */
-  protected __clearInjectedPaths__(this: AbstractNode) {
-    if (this.isRoot) this.__injectedPaths__?.clear();
-    else (this.rootNode as AbstractNode).__clearInjectedPaths__();
-  }
-
-  /**
-   * Schedules clearing of all injected node flags in a macrotask.
-   * @note Uses macrotask scheduling to ensure all synchronous injection operations
-   *       complete before clearing flags. Prevents duplicate scheduling if already scheduled.
-   *       This allows multiple `injectTo` operations to complete within the same
-   *       synchronous execution context before the flags are cleared.
-   */
-  protected __scheduleClearInjectedPaths__(this: AbstractNode) {
-    if (this.isRoot) {
-      if (this.__scheduledClearInjectedPathsId__ !== undefined) return;
-      this.__scheduledClearInjectedPathsId__ = scheduleMacrotaskSafe(() => {
-        this.__scheduledClearInjectedPathsId__ = undefined;
-        this.__injectedPaths__?.clear();
-      });
-    } else (this.rootNode as AbstractNode).__scheduleClearInjectedPaths__();
-  }
-
-  /**
    * Prepares the handler for `injectTo` schema property.
    * @note Sets up a subscription that listens for value updates and propagates
    *       values to other nodes as defined by the `injectTo` function in the schema.
@@ -1073,6 +1015,8 @@ export abstract class AbstractNode<
         return;
       }
       if (type & NodeEventType.RequestInjection) {
+        const injectionGuard = this.__injectionGuard__;
+        if (injectionGuard == null) return;
         const value = this.value;
         const dataPath = this.path;
         const context = {
@@ -1086,14 +1030,14 @@ export abstract class AbstractNode<
           context: this.context,
         } satisfies InjectHandlerContext;
         try {
-          this.__setInjectedPath__(dataPath);
+          injectionGuard.add(dataPath);
           const affect = injectHandler(value, context);
           if (affect == null) return;
           const operations = isArray(affect) ? affect : Object.entries(affect);
           for (let i = 0, l = operations.length; i < l; i++) {
             const path = getAbsolutePath(dataPath, operations[i][0]);
-            if (this.__isInjectedPath__(path)) continue;
-            this.__setInjectedPath__(path);
+            if (injectionGuard.has(path)) continue;
+            injectionGuard.add(path);
             this.find(path)?.setValue(operations[i][1]);
           }
         } catch (error) {
@@ -1104,7 +1048,7 @@ export abstract class AbstractNode<
             errorContext,
           );
         } finally {
-          this.__scheduleClearInjectedPaths__();
+          injectionGuard.scheduleClearInjectedPaths();
         }
       }
     });
