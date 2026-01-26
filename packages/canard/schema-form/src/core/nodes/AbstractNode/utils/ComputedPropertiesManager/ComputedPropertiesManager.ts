@@ -134,6 +134,13 @@ export class ComputedPropertiesManager {
   public readonly getPristine: DynamicFunction<boolean> | undefined;
 
   /**
+   * Whether the node has a post-processor.
+   * @description Indicates that a post-process function (derivedValue or pristine) is defined.
+   * @readonly
+   */
+  public readonly hasPostProcessor: boolean = false;
+
+  /**
    * Recalculates all computed properties based on dependency values.
    *
    * @param dependencies - Array of dependency values corresponding to the order of `dependencyPaths`
@@ -211,6 +218,8 @@ export class ComputedPropertiesManager {
     this.dependencyPaths = pathManager.get();
     this.getDerivedValue = getDerivedValue(pathManager, 'derived');
     this.getPristine = checkComputedOption(pathManager, 'pristine');
+    this.hasPostProcessor =
+      this.getDerivedValue !== undefined || this.getPristine !== undefined;
 
     this.__active__ = checkComputedOption(pathManager, 'active');
     this.__visible__ = checkComputedOption(pathManager, 'visible');

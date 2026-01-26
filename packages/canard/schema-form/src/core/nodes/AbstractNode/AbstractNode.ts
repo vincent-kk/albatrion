@@ -519,10 +519,7 @@ export abstract class AbstractNode<
           this.saveUnsubscribe(unsubscribe);
       }
     }
-    if (
-      this.__computeManager__.getDerivedValue ||
-      this.__computeManager__.getPristine
-    )
+    if (this.__computeManager__.hasPostProcessor)
       this.subscribe(({ type }) => {
         if (type & NodeEventType.UpdateComputedProperties) {
           if (this.__computeManager__.getDerivedValue) {
