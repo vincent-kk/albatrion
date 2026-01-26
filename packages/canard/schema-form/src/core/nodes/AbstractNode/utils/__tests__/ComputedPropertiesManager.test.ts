@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import type { JsonSchemaWithVirtual } from '@/schema-form/types';
 
-import { computeFactory } from '../computeFactory';
+import { ComputedPropertiesManager } from '../ComputedPropertiesManager';
 
-describe('computeFactory', () => {
+describe('new ComputedPropertiesManager', () => {
   it('should create compute functions for basic schema', () => {
     const schema: JsonSchemaWithVirtual = {
       type: 'string',
@@ -17,14 +17,21 @@ describe('computeFactory', () => {
       },
     };
 
-    const compute = computeFactory(schema.type, schema, rootSchema);
+    const compute = new ComputedPropertiesManager(
+      schema.type,
+      schema,
+      rootSchema,
+    );
 
+    expect(compute).toHaveProperty('active');
     expect(compute).toHaveProperty('visible');
     expect(compute).toHaveProperty('readOnly');
     expect(compute).toHaveProperty('disabled');
     expect(compute).toHaveProperty('oneOfIndex');
+    expect(compute).toHaveProperty('anyOfIndices');
     expect(compute).toHaveProperty('watchValues');
     expect(compute).toHaveProperty('dependencyPaths');
+    expect(compute).toHaveProperty('recalculate');
     expect(compute.dependencyPaths).toEqual([]);
   });
 
@@ -43,17 +50,20 @@ describe('computeFactory', () => {
       },
     };
 
-    const compute = computeFactory(schema.type, schema, rootSchema);
+    const compute = new ComputedPropertiesManager(
+      schema.type,
+      schema,
+      rootSchema,
+    );
 
     expect(compute.dependencyPaths).toContain('/enabled');
 
-    if (compute.visible) {
-      const result = compute.visible([true]);
-      expect(result).toBe(true);
+    // Test visible by calling recalculate
+    compute.recalculate([true]);
+    expect(compute.visible).toBe(true);
 
-      const hiddenResult = compute.visible([false]);
-      expect(hiddenResult).toBe(false);
-    }
+    compute.recalculate([false]);
+    expect(compute.visible).toBe(false);
   });
 
   it('should handle computed readOnly property with negation', () => {
@@ -71,17 +81,21 @@ describe('computeFactory', () => {
       },
     };
 
-    const compute = computeFactory(schema.type, schema, rootSchema);
+    const compute = new ComputedPropertiesManager(
+      schema.type,
+      schema,
+      rootSchema,
+    );
 
     expect(compute.dependencyPaths).toContain('/prepared');
 
-    if (compute.readOnly) {
-      const readOnlyResult = compute.readOnly([false]); // not prepared = readOnly
-      expect(readOnlyResult).toBe(true);
+    // not prepared = readOnly
+    compute.recalculate([false]);
+    expect(compute.readOnly).toBe(true);
 
-      const editableResult = compute.readOnly([true]); // prepared = not readOnly
-      expect(editableResult).toBe(false);
-    }
+    // prepared = not readOnly
+    compute.recalculate([true]);
+    expect(compute.readOnly).toBe(false);
   });
 
   it('should handle computed disabled property with expressions', () => {
@@ -95,19 +109,23 @@ describe('computeFactory', () => {
       type: 'object',
     };
 
-    const compute = computeFactory(schema.type, schema, rootSchema);
+    const compute = new ComputedPropertiesManager(
+      schema.type,
+      schema,
+      rootSchema,
+    );
 
-    // Test that the function works correctly
-    if (compute.disabled) {
-      const disabledResult = compute.disabled([undefined]); // no name = disabled
-      expect(disabledResult).toBe(true);
+    // no name = disabled
+    compute.recalculate([undefined]);
+    expect(compute.disabled).toBe(true);
 
-      const shortNameResult = compute.disabled(['hi']); // short name = disabled
-      expect(shortNameResult).toBe(true);
+    // short name = disabled
+    compute.recalculate(['hi']);
+    expect(compute.disabled).toBe(true);
 
-      const enabledResult = compute.disabled(['alice']); // valid name = enabled
-      expect(enabledResult).toBe(false);
-    }
+    // valid name = enabled
+    compute.recalculate(['alice']);
+    expect(compute.disabled).toBe(false);
   });
 
   it('should handle multiple conditions with logical operators', () => {
@@ -125,20 +143,20 @@ describe('computeFactory', () => {
       },
     };
 
-    const compute = computeFactory(schema.type, schema, rootSchema);
+    const compute = new ComputedPropertiesManager(
+      schema.type,
+      schema,
+      rootSchema,
+    );
 
-    // Test that the function works correctly
+    compute.recalculate([undefined, 11]);
+    expect(compute.disabled).toBe(true);
 
-    if (compute.disabled) {
-      const noAgeResult = compute.disabled([undefined, 11]);
-      expect(noAgeResult).toBe(true);
+    compute.recalculate([NaN, 5]);
+    expect(compute.disabled).toBe(true);
 
-      const youngResult = compute.disabled([NaN, 5]);
-      expect(youngResult).toBe(true);
-
-      const oldEnoughResult = compute.disabled([NaN, 15]);
-      expect(oldEnoughResult).toBe(false);
-    }
+    compute.recalculate([NaN, 15]);
+    expect(compute.disabled).toBe(false);
   });
 
   it('should handle watch values with simple array', () => {
@@ -150,16 +168,18 @@ describe('computeFactory', () => {
     };
     const rootSchema: any = { type: 'object' };
 
-    const compute = computeFactory(schema.type, schema, rootSchema);
+    const compute = new ComputedPropertiesManager(
+      schema.type,
+      schema,
+      rootSchema,
+    );
 
     expect(compute.dependencyPaths).toContain('/field1');
     expect(compute.dependencyPaths).toContain('/field2');
     expect(compute.dependencyPaths).toContain('/nested/field3');
 
-    if (compute.watchValues) {
-      const watchedValues = compute.watchValues(['value1', 'value2', 'value3']);
-      expect(watchedValues).toEqual(['value1', 'value2', 'value3']);
-    }
+    compute.recalculate(['value1', 'value2', 'value3']);
+    expect(compute.watchValues).toEqual(['value1', 'value2', 'value3']);
   });
 
   it('should handle multiple computed properties', () => {
@@ -173,20 +193,22 @@ describe('computeFactory', () => {
     };
     const rootSchema: any = { type: 'object' };
 
-    const compute = computeFactory(schema.type, schema, rootSchema);
+    const compute = new ComputedPropertiesManager(
+      schema.type,
+      schema,
+      rootSchema,
+    );
 
     expect(compute.dependencyPaths).toContain('/dependency1');
     expect(compute.dependencyPaths).toContain('/dependency2');
 
-    if (compute.visible) {
-      const visibleResult = compute.visible([true, false]);
-      expect(visibleResult).toBe(true);
-    }
+    compute.recalculate([true, false]);
+    expect(compute.visible).toBe(true);
+    expect(compute.disabled).toBe(false);
 
-    if (compute.disabled) {
-      const disabledResult = compute.disabled([false, true]);
-      expect(disabledResult).toBe(true);
-    }
+    compute.recalculate([false, true]);
+    expect(compute.visible).toBe(false);
+    expect(compute.disabled).toBe(true);
   });
 
   it('should handle schema without computed properties', () => {
@@ -195,17 +217,31 @@ describe('computeFactory', () => {
     };
     const rootSchema: any = { type: 'object' };
 
-    const compute = computeFactory(schema.type, schema, rootSchema);
+    const compute = new ComputedPropertiesManager(
+      schema.type,
+      schema,
+      rootSchema,
+    );
 
     expect(compute.dependencyPaths).toEqual([]);
 
-    // Functions can be undefined when no computed properties exist
-    // Just check that the properties exist on the compute object
+    // Check that the properties exist with default values
+    expect(compute).toHaveProperty('active');
     expect(compute).toHaveProperty('visible');
     expect(compute).toHaveProperty('readOnly');
     expect(compute).toHaveProperty('disabled');
     expect(compute).toHaveProperty('oneOfIndex');
+    expect(compute).toHaveProperty('anyOfIndices');
     expect(compute).toHaveProperty('watchValues');
+
+    // Default values
+    expect(compute.active).toBe(true);
+    expect(compute.visible).toBe(true);
+    expect(compute.readOnly).toBe(false);
+    expect(compute.disabled).toBe(false);
+    expect(compute.oneOfIndex).toBe(-1);
+    expect(compute.anyOfIndices).toEqual([]);
+    expect(compute.watchValues).toEqual([]);
   });
 
   it('should handle boolean values directly set', () => {
@@ -219,12 +255,12 @@ describe('computeFactory', () => {
     };
     const rootSchema: any = { type: 'object' };
 
-    const visibleCompute = computeFactory(
+    const visibleCompute = new ComputedPropertiesManager(
       visibleSchema.type,
       visibleSchema,
       rootSchema,
     );
-    const readOnlyCompute = computeFactory(
+    const readOnlyCompute = new ComputedPropertiesManager(
       readOnlySchema.type,
       readOnlySchema,
       rootSchema,
@@ -233,13 +269,11 @@ describe('computeFactory', () => {
     expect(visibleCompute.dependencyPaths).toEqual([]);
     expect(readOnlyCompute.dependencyPaths).toEqual([]);
 
-    if (visibleCompute.visible) {
-      expect(visibleCompute.visible([])).toBe(false);
-    }
+    visibleCompute.recalculate([]);
+    expect(visibleCompute.visible).toBe(false);
 
-    if (readOnlyCompute.readOnly) {
-      expect(readOnlyCompute.readOnly([])).toBe(true);
-    }
+    readOnlyCompute.recalculate([]);
+    expect(readOnlyCompute.readOnly).toBe(true);
   });
 
   it('should normalize paths correctly', () => {
@@ -252,18 +286,20 @@ describe('computeFactory', () => {
     };
     const rootSchema: any = { type: 'object' };
 
-    const compute = computeFactory(schema.type, schema, rootSchema);
+    const compute = new ComputedPropertiesManager(
+      schema.type,
+      schema,
+      rootSchema,
+    );
 
     expect(compute.dependencyPaths).toContain('/field1');
     expect(compute.dependencyPaths).toContain('field2');
 
-    if (compute.visible) {
-      const result = compute.visible([1, 2, 'value']);
-      expect(result).toBe(true);
+    compute.recalculate([1, 2, 'value']);
+    expect(compute.visible).toBe(true);
 
-      const nullResult = compute.visible([1, 2, null]);
-      expect(nullResult).toBe(false);
-    }
+    compute.recalculate([1, 2, null]);
+    expect(compute.visible).toBe(false);
   });
 
   it('should handle complex expressions like in the stories', () => {
@@ -275,22 +311,24 @@ describe('computeFactory', () => {
     };
     const rootSchema: any = { type: 'object' };
 
-    const compute = computeFactory(schema.type, schema, rootSchema);
+    const compute = new ComputedPropertiesManager(
+      schema.type,
+      schema,
+      rootSchema,
+    );
 
     // Check that some dependencies were processed
     expect(compute.dependencyPaths.length).toBeGreaterThanOrEqual(0);
 
-    if (compute.disabled) {
-      // Test the actual expression logic
-      const undefinedResult = compute.disabled([undefined]);
-      expect(undefinedResult).toBe(true);
+    // Test the actual expression logic
+    compute.recalculate([undefined]);
+    expect(compute.disabled).toBe(true);
 
-      const shortResult = compute.disabled(['ab']);
-      expect(shortResult).toBe(true);
+    compute.recalculate(['ab']);
+    expect(compute.disabled).toBe(true);
 
-      const validResult = compute.disabled(['alice']);
-      expect(validResult).toBe(false);
-    }
+    compute.recalculate(['alice']);
+    expect(compute.disabled).toBe(false);
   });
 
   describe('Context (@) path support', () => {
@@ -303,23 +341,25 @@ describe('computeFactory', () => {
       };
       const rootSchema: any = { type: 'object' };
 
-      const compute = computeFactory(schema.type, schema, rootSchema);
+      const compute = new ComputedPropertiesManager(
+        schema.type,
+        schema,
+        rootSchema,
+      );
 
       expect(compute.dependencyPaths).toContain('@');
 
-      if (compute.visible) {
-        // Context exists
-        const visibleResult = compute.visible([{ userRole: 'admin' }]);
-        expect(visibleResult).toBe(true);
+      // Context exists
+      compute.recalculate([{ userRole: 'admin' }]);
+      expect(compute.visible).toBe(true);
 
-        // Context is null
-        const hiddenResult = compute.visible([null]);
-        expect(hiddenResult).toBe(false);
+      // Context is null
+      compute.recalculate([null]);
+      expect(compute.visible).toBe(false);
 
-        // Context is undefined
-        const undefinedResult = compute.visible([undefined]);
-        expect(undefinedResult).toBe(false);
-      }
+      // Context is undefined
+      compute.recalculate([undefined]);
+      expect(compute.visible).toBe(false);
     });
 
     it('should handle @ with property access using dot notation', () => {
@@ -331,17 +371,21 @@ describe('computeFactory', () => {
       };
       const rootSchema: any = { type: 'object' };
 
-      const compute = computeFactory(schema.type, schema, rootSchema);
+      const compute = new ComputedPropertiesManager(
+        schema.type,
+        schema,
+        rootSchema,
+      );
 
       expect(compute.dependencyPaths).toContain('@');
 
       // Admin user
-      const adminResult = compute.visible?.([{ userRole: 'admin' }]);
-      expect(adminResult).toBe(true);
+      compute.recalculate([{ userRole: 'admin' }]);
+      expect(compute.visible).toBe(true);
 
       // Regular user
-      const userResult = compute.visible?.([{ userRole: 'user' }]);
-      expect(userResult).toBe(false);
+      compute.recalculate([{ userRole: 'user' }]);
+      expect(compute.visible).toBe(false);
     });
 
     it('should handle @ with nested property access', () => {
@@ -353,21 +397,21 @@ describe('computeFactory', () => {
       };
       const rootSchema: any = { type: 'object' };
 
-      const compute = computeFactory(schema.type, schema, rootSchema);
+      const compute = new ComputedPropertiesManager(
+        schema.type,
+        schema,
+        rootSchema,
+      );
 
       expect(compute.dependencyPaths).toContain('@');
 
       // Has edit permission
-      const enabledResult = compute.disabled?.([
-        { permissions: { canEdit: true } },
-      ]);
-      expect(enabledResult).toBe(false);
+      compute.recalculate([{ permissions: { canEdit: true } }]);
+      expect(compute.disabled).toBe(false);
 
       // No edit permission
-      const disabledResult = compute.disabled?.([
-        { permissions: { canEdit: false } },
-      ]);
-      expect(disabledResult).toBe(true);
+      compute.recalculate([{ permissions: { canEdit: false } }]);
+      expect(compute.disabled).toBe(true);
     });
 
     it('should handle @ with optional chaining', () => {
@@ -379,25 +423,25 @@ describe('computeFactory', () => {
       };
       const rootSchema: any = { type: 'object' };
 
-      const compute = computeFactory(schema.type, schema, rootSchema);
+      const compute = new ComputedPropertiesManager(
+        schema.type,
+        schema,
+        rootSchema,
+      );
 
       expect(compute.dependencyPaths).toContain('@');
 
-      if (compute.readOnly) {
-        // Context with permissions
-        const editableResult = compute.readOnly([
-          { permissions: { canEdit: true } },
-        ]);
-        expect(editableResult).toBe(false);
+      // Context with permissions
+      compute.recalculate([{ permissions: { canEdit: true } }]);
+      expect(compute.readOnly).toBe(false);
 
-        // Context without permissions
-        const readOnlyResult = compute.readOnly([{}]);
-        expect(readOnlyResult).toBe(true);
+      // Context without permissions
+      compute.recalculate([{}]);
+      expect(compute.readOnly).toBe(true);
 
-        // Null context
-        const nullResult = compute.readOnly([null]);
-        expect(nullResult).toBe(true);
-      }
+      // Null context
+      compute.recalculate([null]);
+      expect(compute.readOnly).toBe(true);
     });
 
     it('should handle @ combined with other JSON Pointer paths', () => {
@@ -414,27 +458,26 @@ describe('computeFactory', () => {
         },
       };
 
-      const compute = computeFactory(schema.type, schema, rootSchema);
+      const compute = new ComputedPropertiesManager(
+        schema.type,
+        schema,
+        rootSchema,
+      );
 
       expect(compute.dependencyPaths).toContain('@');
       expect(compute.dependencyPaths).toContain('/status');
 
-      if (compute.visible) {
-        // Admin with draft status
-        const visibleResult = compute.visible([{ userRole: 'admin' }, 'draft']);
-        expect(visibleResult).toBe(true);
+      // Admin with draft status
+      compute.recalculate([{ userRole: 'admin' }, 'draft']);
+      expect(compute.visible).toBe(true);
 
-        // Admin with published status
-        const hiddenResult1 = compute.visible([
-          { userRole: 'admin' },
-          'published',
-        ]);
-        expect(hiddenResult1).toBe(false);
+      // Admin with published status
+      compute.recalculate([{ userRole: 'admin' }, 'published']);
+      expect(compute.visible).toBe(false);
 
-        // Non-admin with draft status
-        const hiddenResult2 = compute.visible([{ userRole: 'user' }, 'draft']);
-        expect(hiddenResult2).toBe(false);
-      }
+      // Non-admin with draft status
+      compute.recalculate([{ userRole: 'user' }, 'draft']);
+      expect(compute.visible).toBe(false);
     });
 
     it('should handle @ in watch array', () => {
@@ -446,21 +489,19 @@ describe('computeFactory', () => {
       };
       const rootSchema: any = { type: 'object' };
 
-      const compute = computeFactory(schema.type, schema, rootSchema);
+      const compute = new ComputedPropertiesManager(
+        schema.type,
+        schema,
+        rootSchema,
+      );
 
       expect(compute.dependencyPaths).toContain('@');
       expect(compute.dependencyPaths).toContain('/field1');
       expect(compute.dependencyPaths).toContain('/field2');
 
-      if (compute.watchValues) {
-        const context = { theme: 'dark' };
-        const watchedValues = compute.watchValues([
-          context,
-          'value1',
-          'value2',
-        ]);
-        expect(watchedValues).toEqual([context, 'value1', 'value2']);
-      }
+      const context = { theme: 'dark' };
+      compute.recalculate([context, 'value1', 'value2']);
+      expect(compute.watchValues).toEqual([context, 'value1', 'value2']);
     });
 
     it('should handle @ with parentheses for explicit grouping', () => {
@@ -472,23 +513,25 @@ describe('computeFactory', () => {
       };
       const rootSchema: any = { type: 'object' };
 
-      const compute = computeFactory(schema.type, schema, rootSchema);
+      const compute = new ComputedPropertiesManager(
+        schema.type,
+        schema,
+        rootSchema,
+      );
 
       expect(compute.dependencyPaths).toContain('@');
 
-      if (compute.visible) {
-        // Active context
-        const visibleResult = compute.visible([{ active: true }]);
-        expect(visibleResult).toBe(true);
+      // Active context
+      compute.recalculate([{ active: true }]);
+      expect(compute.visible).toBe(true);
 
-        // Inactive context
-        const hiddenResult = compute.visible([{ active: false }]);
-        expect(hiddenResult).toBe(false);
+      // Inactive context
+      compute.recalculate([{ active: false }]);
+      expect(compute.visible).toBe(false);
 
-        // Null context
-        const nullResult = compute.visible([null]);
-        expect(nullResult).toBe(false);
-      }
+      // Null context
+      compute.recalculate([null]);
+      expect(compute.visible).toBe(false);
     });
 
     it('should handle complex expression with @ and multiple paths', () => {
@@ -513,45 +556,31 @@ describe('computeFactory', () => {
         },
       };
 
-      const compute = computeFactory(schema.type, schema, rootSchema);
+      const compute = new ComputedPropertiesManager(
+        schema.type,
+        schema,
+        rootSchema,
+      );
 
       expect(compute.dependencyPaths).toContain('@');
       expect(compute.dependencyPaths).toContain('/formState');
       expect(compute.dependencyPaths).toContain('../parentEnabled');
 
-      if (compute.disabled) {
-        // All conditions met - should be enabled (disabled = false)
-        const enabledResult = compute.disabled([
-          { permissions: { canEdit: true } },
-          'editable',
-          true,
-        ]);
-        expect(enabledResult).toBe(false);
+      // All conditions met - should be enabled (disabled = false)
+      compute.recalculate([{ permissions: { canEdit: true } }, 'editable', true]);
+      expect(compute.disabled).toBe(false);
 
-        // No edit permission - should be disabled
-        const noPermissionResult = compute.disabled([
-          { permissions: { canEdit: false } },
-          'editable',
-          true,
-        ]);
-        expect(noPermissionResult).toBe(true);
+      // No edit permission - should be disabled
+      compute.recalculate([{ permissions: { canEdit: false } }, 'editable', true]);
+      expect(compute.disabled).toBe(true);
 
-        // Form not editable - should be disabled
-        const notEditableResult = compute.disabled([
-          { permissions: { canEdit: true } },
-          'readonly',
-          true,
-        ]);
-        expect(notEditableResult).toBe(true);
+      // Form not editable - should be disabled
+      compute.recalculate([{ permissions: { canEdit: true } }, 'readonly', true]);
+      expect(compute.disabled).toBe(true);
 
-        // Parent not enabled - should be disabled
-        const parentDisabledResult = compute.disabled([
-          { permissions: { canEdit: true } },
-          'editable',
-          false,
-        ]);
-        expect(parentDisabledResult).toBe(true);
-      }
+      // Parent not enabled - should be disabled
+      compute.recalculate([{ permissions: { canEdit: true } }, 'editable', false]);
+      expect(compute.disabled).toBe(true);
     });
 
     it('should handle @ with typeof check', () => {
@@ -563,23 +592,25 @@ describe('computeFactory', () => {
       };
       const rootSchema: any = { type: 'object' };
 
-      const compute = computeFactory(schema.type, schema, rootSchema);
+      const compute = new ComputedPropertiesManager(
+        schema.type,
+        schema,
+        rootSchema,
+      );
 
       expect(compute.dependencyPaths).toContain('@');
 
-      if (compute.visible) {
-        // Valid object context
-        const objectResult = compute.visible([{ data: 'test' }]);
-        expect(objectResult).toBe(true);
+      // Valid object context
+      compute.recalculate([{ data: 'test' }]);
+      expect(compute.visible).toBe(true);
 
-        // Null context (typeof null is "object" but we check !== null)
-        const nullResult = compute.visible([null]);
-        expect(nullResult).toBe(false);
+      // Null context (typeof null is "object" but we check !== null)
+      compute.recalculate([null]);
+      expect(compute.visible).toBe(false);
 
-        // Undefined context
-        const undefinedResult = compute.visible([undefined]);
-        expect(undefinedResult).toBe(false);
-      }
+      // Undefined context
+      compute.recalculate([undefined]);
+      expect(compute.visible).toBe(false);
     });
 
     it('should handle @ reference appearing multiple times (deduplication)', () => {
@@ -591,7 +622,11 @@ describe('computeFactory', () => {
       };
       const rootSchema: any = { type: 'object' };
 
-      const compute = computeFactory(schema.type, schema, rootSchema);
+      const compute = new ComputedPropertiesManager(
+        schema.type,
+        schema,
+        rootSchema,
+      );
 
       // @ should appear only once in dependencyPaths (deduplication)
       const contextCount = compute.dependencyPaths.filter(
@@ -599,19 +634,13 @@ describe('computeFactory', () => {
       ).length;
       expect(contextCount).toBe(1);
 
-      if (compute.visible) {
-        // All conditions met
-        const visibleResult = compute.visible([
-          { active: true, permissions: { view: true } },
-        ]);
-        expect(visibleResult).toBe(true);
+      // All conditions met
+      compute.recalculate([{ active: true, permissions: { view: true } }]);
+      expect(compute.visible).toBe(true);
 
-        // Missing view permission
-        const noViewResult = compute.visible([
-          { active: true, permissions: { view: false } },
-        ]);
-        expect(noViewResult).toBe(false);
-      }
+      // Missing view permission
+      compute.recalculate([{ active: true, permissions: { view: false } }]);
+      expect(compute.visible).toBe(false);
     });
   });
 });

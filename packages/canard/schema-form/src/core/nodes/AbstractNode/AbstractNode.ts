@@ -51,11 +51,11 @@ import {
   ValidationMode,
 } from '../type';
 import {
+  ComputedPropertiesManager,
   EventCascade,
   InjectionGuardManager,
   afterMicrotask,
   checkDefinedValue,
-  computeFactory,
   depthFirstSearch,
   findNode,
   findNodes,
@@ -299,7 +299,8 @@ export abstract class AbstractNode<
     input: Value | Nullish,
     batch?: boolean,
   ): void {
-    if (this.__active__ && this.__scoped__) this.__handleChange__(input, batch);
+    if (this.__computeManager__.active && this.__scoped__)
+      this.__handleChange__(input, batch);
     else if (input === undefined) this.__handleChange__(undefined, batch);
   }
 
@@ -386,15 +387,16 @@ export abstract class AbstractNode<
     this.__contextNode__ = this.isRoot
       ? contextNode || null
       : this.rootNode.__contextNode__;
-    this.__compute__ = computeFactory(
-      this.schemaType,
-      this.jsonSchema,
-      this.rootNode.jsonSchema,
-    );
 
     this.__updateScoped__();
     this.__setDefaultValue__(
       defaultValue !== undefined ? defaultValue : getDefaultValue(jsonSchema),
+    );
+
+    this.__computeManager__ = new ComputedPropertiesManager(
+      this.schemaType,
+      this.jsonSchema,
+      this.rootNode.jsonSchema,
     );
 
     if (this.isRoot) {
@@ -473,7 +475,10 @@ export abstract class AbstractNode<
     (eventCollection: NodeEventCollection) => {
       for (const listener of this.__listeners__) listener(eventCollection);
     },
-    () => ({ path: this.path, dependencies: this.__compute__.dependencyPaths }),
+    () => ({
+      path: this.path,
+      dependencies: this.__computeManager__.dependencyPaths,
+    }),
   );
 
   /**
@@ -583,7 +588,7 @@ export abstract class AbstractNode<
    *  - `derivedValue`: Get derived value from dependencies
    *  - `watchValues`: Calculate the list of values to watch
    */
-  private __compute__: ReturnType<typeof computeFactory>;
+  private __computeManager__: ComputedPropertiesManager;
 
   /**
    * Cached values from dependency nodes used for computed property calculations.
@@ -606,25 +611,13 @@ export abstract class AbstractNode<
   private __scoped__: boolean = true;
 
   /**
-   * Whether the node is active based on computed.active evaluation.
-   * @note Inactive nodes don't propagate values to parent but retain their internal state.
-   */
-  private __active__: boolean = true;
-
-  /**
    * Whether this node is currently active and can participate in value updates.
    * @returns `true` if both `__active__` (computed) and `__scoped__` (branch) conditions are met
    * @note An inactive node's value is excluded from the parent's value composition.
    */
   public get active() {
-    return this.__active__ && this.__scoped__;
+    return this.__computeManager__.active && this.__scoped__;
   }
-
-  /**
-   * Whether the node should be rendered in the UI based on computed.visible evaluation.
-   * @note Invisible nodes still participate in validation and value composition.
-   */
-  private __visible__: boolean = true;
 
   /**
    * Whether this node should be displayed in the UI.
@@ -632,7 +625,7 @@ export abstract class AbstractNode<
    * @note Visibility only affects rendering; invisible nodes still hold values.
    */
   public get visible() {
-    return this.__visible__;
+    return this.__computeManager__.visible;
   }
 
   /**
@@ -641,14 +634,12 @@ export abstract class AbstractNode<
    * @note Use this to determine if a form field should be rendered and interactive.
    */
   public get enabled() {
-    return this.__active__ && this.__scoped__ && this.__visible__;
+    return (
+      this.__scoped__ &&
+      this.__computeManager__.active &&
+      this.__computeManager__.visible
+    );
   }
-
-  /**
-   * Whether the node's value is read-only based on computed.readOnly evaluation.
-   * @note Read-only nodes display values but prevent user modification.
-   */
-  private __readOnly__: boolean = false;
 
   /**
    * Whether this node's value cannot be modified by user interaction.
@@ -656,14 +647,8 @@ export abstract class AbstractNode<
    * @note The value can still be changed programmatically via setValue().
    */
   public get readOnly() {
-    return this.__readOnly__;
+    return this.__computeManager__.readOnly;
   }
-
-  /**
-   * Whether the node is disabled based on computed.disabled evaluation.
-   * @note Disabled nodes are typically grayed out and non-interactive.
-   */
-  private __disabled__: boolean = false;
 
   /**
    * Whether this node is disabled for user interaction.
@@ -671,14 +656,8 @@ export abstract class AbstractNode<
    * @note Unlike readOnly, disabled typically affects the visual appearance more significantly.
    */
   public get disabled() {
-    return this.__disabled__;
+    return this.__computeManager__.disabled;
   }
-
-  /**
-   * Index of the currently active oneOf branch.
-   * @note -1 indicates no oneOf branch is active or oneOf is not defined.
-   */
-  private __oneOfIndex__: number = -1;
 
   /**
    * The index of the currently active oneOf schema branch.
@@ -686,14 +665,8 @@ export abstract class AbstractNode<
    * @note Used by child nodes to determine their `__scoped__` state.
    */
   public get oneOfIndex() {
-    return this.__oneOfIndex__;
+    return this.__computeManager__.oneOfIndex;
   }
-
-  /**
-   * Indices of currently active anyOf branches.
-   * @note Empty array indicates no anyOf branches are active or anyOf is not defined.
-   */
-  private __anyOfIndices__: number[] = [];
 
   /**
    * The indices of currently active anyOf schema branches.
@@ -701,14 +674,8 @@ export abstract class AbstractNode<
    * @note Multiple branches can be active simultaneously with anyOf.
    */
   public get anyOfIndices() {
-    return this.__anyOfIndices__;
+    return this.__computeManager__.anyOfIndices;
   }
-
-  /**
-   * Array of computed values derived from dependencies for watch functionality.
-   * @note Used by UI frameworks to trigger re-renders when specific computed values change.
-   */
-  private __watchValues__: ReadonlyArray<any> = [];
 
   /**
    * Computed values from dependencies that can trigger UI updates.
@@ -716,13 +683,13 @@ export abstract class AbstractNode<
    * @note Useful for React useMemo/useEffect dependencies or similar reactive patterns.
    */
   public get watchValues() {
-    return this.__watchValues__;
+    return this.__computeManager__.watchValues;
   }
 
   /** Prepares dependencies for update computation. */
   private __prepareUpdateDependencies__(this: AbstractNode) {
     if (this.__initialized__) return;
-    const dependencyPaths = this.__compute__.dependencyPaths;
+    const dependencyPaths = this.__computeManager__.dependencyPaths;
     const computeEnabled = dependencyPaths.length > 0;
     if (computeEnabled) {
       this.__dependencies__ = new Array(dependencyPaths.length);
@@ -747,17 +714,20 @@ export abstract class AbstractNode<
           this.saveUnsubscribe(unsubscribe);
       }
     }
-    if (this.__compute__.derivedValue || this.__compute__.pristine)
+    if (
+      this.__computeManager__.getDerivedValue ||
+      this.__computeManager__.getPristine
+    )
       this.subscribe(({ type }) => {
         if (type & NodeEventType.UpdateComputedProperties) {
-          if (this.__compute__.derivedValue) {
-            const derivedValue = this.__compute__.derivedValue(
+          if (this.__computeManager__.getDerivedValue) {
+            const derivedValue = this.__computeManager__.getDerivedValue(
               this.__dependencies__,
             );
             if (this.active && !this.__equals__(this.value, derivedValue))
               this.setValue(derivedValue);
           }
-          if (this.__compute__.pristine?.(this.__dependencies__))
+          if (this.__computeManager__.getPristine?.(this.__dependencies__))
             this.setState();
         }
       });
@@ -773,22 +743,9 @@ export abstract class AbstractNode<
     this: AbstractNode,
     reset: boolean = true,
   ) {
-    const previous = this.__active__;
-    this.__active__ = this.__compute__.active?.(this.__dependencies__) ?? true;
-    this.__visible__ =
-      this.__compute__.visible?.(this.__dependencies__) ?? true;
-    this.__readOnly__ =
-      this.__compute__.readOnly?.(this.__dependencies__) ?? false;
-    this.__disabled__ =
-      this.__compute__.disabled?.(this.__dependencies__) ?? false;
-    this.__oneOfIndex__ =
-      this.__compute__.oneOfIndex?.(this.__dependencies__) ?? -1;
-    this.__anyOfIndices__ =
-      this.__compute__.anyOfIndices?.(this.__dependencies__) || [];
-    this.__watchValues__ =
-      this.__compute__.watchValues?.(this.__dependencies__) || [];
-
-    if (reset && previous !== this.__active__)
+    const previous = this.__computeManager__.active;
+    this.__computeManager__.recalculate(this.__dependencies__);
+    if (reset && previous !== this.__computeManager__.active)
       this.__reset__({ preferLatest: true });
     this.publish(NodeEventType.UpdateComputedProperties);
   }
@@ -841,13 +798,14 @@ export abstract class AbstractNode<
 
     if (
       options.applyDerivedValue &&
-      this.__compute__.derivedValue &&
+      this.__computeManager__.getDerivedValue &&
       this.active
     )
-      value = this.__compute__.derivedValue(this.__dependencies__) ?? value;
+      value =
+        this.__computeManager__.getDerivedValue(this.__dependencies__) ?? value;
 
     this.setValue(
-      this.__active__ ? value : undefined,
+      this.__computeManager__.active ? value : undefined,
       SetValueOption.StableReset,
     );
     this.setState();

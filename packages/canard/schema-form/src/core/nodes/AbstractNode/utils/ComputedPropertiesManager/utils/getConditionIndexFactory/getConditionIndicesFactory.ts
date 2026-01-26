@@ -1,7 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { Fn } from '@aileron/declare';
-
 import { JsonSchemaError } from '@/schema-form/errors';
 import { formatConditionIndicesError } from '@/schema-form/helpers/error';
 import type {
@@ -11,10 +9,10 @@ import type {
 } from '@/schema-form/types';
 
 import type { PathManager } from '../getPathManager';
-import type { ConditionIndexName } from '../type';
+import type { ConditionIndexName, DynamicFunction } from '../type';
 import { extractConditionInfo } from './utils/extractConditionInfo';
 
-type GetConditionIndices = Fn<[dependencies: unknown[]], number[]>;
+type GetConditionIndices = DynamicFunction<number[]>;
 
 /**
  * Creates a factory function that generates condition index calculators for JSON schemas.

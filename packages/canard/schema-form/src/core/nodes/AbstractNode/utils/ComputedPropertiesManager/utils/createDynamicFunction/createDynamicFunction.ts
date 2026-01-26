@@ -3,7 +3,8 @@ import { formatCreateDynamicFunctionError } from '@/schema-form/helpers/error';
 
 import type { PathManager } from '../getPathManager';
 import { JSON_POINTER_PATH_REGEX } from '../regex';
-import type { CreateDynamicFunction, DynamicFunction } from './type';
+import type { DynamicFunction } from '../type';
+import type { CreateDynamicFunction } from './type';
 import { getFunctionBody } from './utils/getFunctionBody';
 
 /**

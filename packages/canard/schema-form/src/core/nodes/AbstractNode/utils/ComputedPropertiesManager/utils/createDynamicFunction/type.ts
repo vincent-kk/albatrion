@@ -1,11 +1,5 @@
-import type { Fn } from '@aileron/declare';
-
 import type { PathManager } from '../getPathManager';
-
-export type DynamicFunction<ReturnType = any> = Fn<
-  [dependencies: unknown[]],
-  ReturnType
->;
+import type { DynamicFunction } from '../type';
 
 export interface CreateDynamicFunction {
   (
