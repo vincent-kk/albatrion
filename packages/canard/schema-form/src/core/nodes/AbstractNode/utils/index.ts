@@ -1,6 +1,7 @@
 export * from './ComputedPropertiesManager';
 export * from './EventCascadeManager';
 export * from './InjectionGuardManager';
+export * from './ValidationErrorManager';
 export * from './ValidationManager';
 export * from './afterMicrotask';
 export * from './checkDefinedValue';

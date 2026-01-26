@@ -1,6 +1,6 @@
 import { map } from '@winglet/common-utils/array';
 import { isArray, isEmptyObject, isObject } from '@winglet/common-utils/filter';
-import { cloneLite, equals, merge } from '@winglet/common-utils/object';
+import { cloneLite, merge } from '@winglet/common-utils/object';
 import { escapeSegment, setValue } from '@winglet/json/pointer';
 
 import type { Dictionary, Fn, Nullish } from '@aileron/declare';
@@ -45,6 +45,7 @@ import {
   ComputedPropertiesManager,
   EventCascadeManager,
   InjectionGuardManager,
+  ValidationErrorManager,
   ValidationManager,
   afterMicrotask,
   checkDefinedValue,
@@ -55,8 +56,6 @@ import {
   getSafeEmptyValue,
   getScopedSegment,
 } from './utils';
-
-const RECURSIVE_ERROR_OMITTED_KEYS = new Set(['key']);
 
 export abstract class AbstractNode<
   Schema extends JsonSchemaWithVirtual = JsonSchemaWithVirtual,
@@ -1036,46 +1035,16 @@ export abstract class AbstractNode<
     this.__reset__();
   }
 
-  /**
-   * All validation errors from the most recent schema validation.
-   * @remarks **[Root Node Only]** Contains raw errors from the validator before
-   *          merging with external errors.
-   */
-  private __globalErrors__: ValidationError[] | undefined;
-
-  /**
-   * Validation errors specific to this node from the root's validation.
-   * @note Filtered subset of globalErrors matching this node's dataPath.
-   */
-  private __localErrors__: ValidationError[] | undefined;
-
-  /**
-   * Combined array of internal schema errors and external errors.
-   * @note Only used by root node. Represents all errors across the entire form.
-   */
-  private __mergedGlobalErrors__: ValidationError[] = [];
-
-  /**
-   * Combined array of local validation errors and external errors for this node.
-   * @note This is the primary error array exposed via the `errors` getter.
-   */
-  private __mergedLocalErrors__: ValidationError[] = [];
-
-  /**
-   * Errors provided externally (e.g., from server-side validation).
-   * @note External errors are merged with local errors but tracked separately
-   *       for independent clearing via clearExternalErrors().
-   */
-  private __externalErrors__: ValidationError[] = [];
+  /** @internal Error management for this node */
+  private __errorManager__ = new ValidationErrorManager();
 
   /**
    * Returns the merged result of errors that occurred inside the form and externally received errors.
    * @returns All of the errors that occurred inside the form and externally received errors
    */
   public get globalErrors(): ValidationError[] {
-    return this.isRoot
-      ? this.__mergedGlobalErrors__
-      : this.rootNode.globalErrors;
+    if (this.isRoot) return this.__errorManager__.mergedGlobalErrors;
+    else return this.rootNode.__errorManager__.mergedGlobalErrors;
   }
 
   /**
@@ -1083,22 +1052,20 @@ export abstract class AbstractNode<
    * @returns Local errors and externally received errors
    */
   public get errors(): ValidationError[] {
-    return this.__mergedLocalErrors__;
+    return this.__errorManager__.mergedLocalErrors;
   }
 
   /**
    * Merges externally received errors into the global errors.
    * @param errors - List of errors to set
-   * @returns {boolean} Whether the merge result changed
+   * @returns {boolean} Whether the merge result changed (true if unchanged)
    */
   protected __setGlobalErrors__(this: AbstractNode, errors: ValidationError[]) {
-    if (equals(this.__globalErrors__, errors)) return true;
-    this.__globalErrors__ = errors;
-    this.__mergedGlobalErrors__ = [
-      ...this.__externalErrors__,
-      ...this.__globalErrors__,
-    ];
-    this.publish(NodeEventType.UpdateGlobalError, this.__mergedGlobalErrors__);
+    if (this.__errorManager__.setGlobalErrors(errors)) return true;
+    this.publish(
+      NodeEventType.UpdateGlobalError,
+      this.__errorManager__.mergedGlobalErrors,
+    );
     return false;
   }
 
@@ -1107,13 +1074,11 @@ export abstract class AbstractNode<
    * @param errors - List of errors to set
    */
   public setErrors(this: AbstractNode, errors: ValidationError[]) {
-    if (equals(this.__localErrors__, errors)) return;
-    this.__localErrors__ = errors;
-    this.__mergedLocalErrors__ = [
-      ...this.__externalErrors__,
-      ...this.__localErrors__,
-    ];
-    this.publish(NodeEventType.UpdateError, this.__mergedLocalErrors__);
+    if (this.__errorManager__.setLocalErrors(errors)) return;
+    this.publish(
+      NodeEventType.UpdateError,
+      this.__errorManager__.mergedLocalErrors,
+    );
   }
 
   /**
@@ -1129,27 +1094,16 @@ export abstract class AbstractNode<
    * @param errors - List of received errors
    */
   public setExternalErrors(this: AbstractNode, errors: ValidationError[] = []) {
-    if (equals(this.__externalErrors__, errors, RECURSIVE_ERROR_OMITTED_KEYS))
-      return;
-
-    this.__externalErrors__ = new Array<ValidationError>(errors.length);
-    for (let i = 0, l = errors.length; i < l; i++)
-      this.__externalErrors__[i] = { ...errors[i], key: i };
-
-    this.__mergedLocalErrors__ = this.__localErrors__
-      ? [...this.__externalErrors__, ...this.__localErrors__]
-      : this.__externalErrors__;
-    this.publish(NodeEventType.UpdateError, this.__mergedLocalErrors__);
-
-    if (this.isRoot) {
-      this.__mergedGlobalErrors__ = this.__globalErrors__
-        ? [...this.__externalErrors__, ...this.__globalErrors__]
-        : this.__externalErrors__;
+    if (this.__errorManager__.setExternalErrors(errors, this.isRoot)) return;
+    this.publish(
+      NodeEventType.UpdateError,
+      this.__errorManager__.mergedLocalErrors,
+    );
+    if (this.isRoot)
       this.publish(
         NodeEventType.UpdateGlobalError,
-        this.__mergedGlobalErrors__,
+        this.__errorManager__.mergedGlobalErrors,
       );
-    }
   }
 
   /**
@@ -1157,10 +1111,10 @@ export abstract class AbstractNode<
    * @note Does not clear localErrors / internalErrors.
    */
   public clearExternalErrors(this: AbstractNode) {
-    if (this.__externalErrors__.length === 0) return;
-    if (!this.isRoot)
+    if (this.__errorManager__.externalErrors.length === 0) return;
+    if (this.isRoot === false)
       (this.rootNode as AbstractNode).__removeExternalErrors__(
-        this.__externalErrors__,
+        this.__errorManager__.externalErrors,
       );
     this.setExternalErrors([]);
   }
@@ -1173,13 +1127,7 @@ export abstract class AbstractNode<
     this: AbstractNode,
     errors: ValidationError[],
   ) {
-    const deleteKeys: Array<number> = [];
-    for (const error of errors)
-      if (typeof error.key === 'number') deleteKeys.push(error.key);
-    const nextErrors: ValidationError[] = [];
-    for (const error of this.__externalErrors__)
-      if (!error.key || !deleteKeys.includes(error.key)) nextErrors.push(error);
-    if (this.__externalErrors__.length !== nextErrors.length)
-      this.setExternalErrors(nextErrors);
+    const filteredErrors = this.__errorManager__.filterExternalErrors(errors);
+    if (filteredErrors !== null) this.setExternalErrors(filteredErrors);
   }
 }
