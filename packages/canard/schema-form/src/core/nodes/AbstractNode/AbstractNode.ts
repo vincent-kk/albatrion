@@ -6,32 +6,24 @@ import { escapeSegment, setValue } from '@winglet/json/pointer';
 import type { Dictionary, Fn, Nullish } from '@aileron/declare';
 
 import { UNIT_SEPARATOR } from '@/schema-form/app/constants';
-import { PluginManager } from '@/schema-form/app/plugin';
 import { JsonSchemaError } from '@/schema-form/errors';
 import {
   getDefaultValue,
   getEmptyValue,
 } from '@/schema-form/helpers/defaultValue';
-import {
-  formatCircularReferenceError,
-  formatInjectToError,
-  transformErrors,
-} from '@/schema-form/helpers/error';
+import { formatInjectToError } from '@/schema-form/helpers/error';
 import {
   JSONPointer as $,
   getAbsolutePath,
   isAbsolutePath,
   joinSegment,
 } from '@/schema-form/helpers/jsonPointer';
-import { stripSchemaExtensions } from '@/schema-form/helpers/jsonSchema';
 import type {
   AllowedValue,
   InjectHandlerContext,
   JsonSchemaType,
   JsonSchemaWithVirtual,
-  ValidateFunction,
   JsonSchemaError as ValidationError,
-  ValidatorFactory,
 } from '@/schema-form/types';
 
 import {
@@ -53,16 +45,15 @@ import {
   ComputedPropertiesManager,
   EventCascadeManager,
   InjectionGuardManager,
+  ValidationManager,
   afterMicrotask,
   checkDefinedValue,
   depthFirstSearch,
   findNode,
   findNodes,
-  getFallbackValidator,
   getNodeGroup,
   getSafeEmptyValue,
   getScopedSegment,
-  matchesSchemaPath,
 } from './utils';
 
 const RECURSIVE_ERROR_OMITTED_KEYS = new Set(['key']);
@@ -398,15 +389,23 @@ export abstract class AbstractNode<
     );
 
     if (this.isRoot) {
+      this.__injectionGuardManager__ = new InjectionGuardManager();
+      this.__validationManager__ = new ValidationManager(
+        this,
+        validatorFactory,
+        validationMode,
+      );
+      const validateEnabled = this.__validationManager__?.enabled === true;
       const validateOnChange = validationMode
         ? (validationMode & ValidationMode.OnChange) > 0
         : false;
       this.__handleChange__ = afterMicrotask(() => {
-        if (validateOnChange) this.__handleValidation__();
+        if (validateEnabled && validateOnChange)
+          this.__validationManager__?.validate(this.__enhancedValue__);
         onChange(getSafeEmptyValue(this.value, this.schemaType));
       });
-      this.__prepareValidator__(jsonSchema, validatorFactory, validationMode);
-      this.__injectionGuardManager__ = new InjectionGuardManager();
+      if (validateEnabled)
+        this.__enhancer__ = getEmptyValue(this.schemaType) as Value;
     } else this.__handleChange__ = onChange;
   }
 
@@ -513,6 +512,27 @@ export abstract class AbstractNode<
    */
   public subscribe(this: AbstractNode, listener: NodeListener): Fn {
     return this.__eventManager__.subscribe(listener);
+  }
+
+  private __validationManager__: ValidationManager | undefined;
+
+  /** [readonly] Whether validation is enabled for this form */
+  protected get __validationEnabled__(): boolean {
+    return this.isRoot
+      ? this.__validationManager__?.enabled === true
+      : (this.rootNode as AbstractNode).__validationEnabled__;
+  }
+
+  /**
+   * Performs validation based on the current value.
+   * @returns {Promise<ValidationError[]>} List of errors that occurred inside the form
+   * @note If `ValidationMode.None` is set, an empty array is returned.
+   */
+  public async validate(this: AbstractNode) {
+    if (this.isRoot)
+      await this.__validationManager__?.validate(this.__enhancedValue__);
+    else await this.rootNode.validate();
+    return this.globalErrors;
   }
 
   /**
@@ -983,13 +1003,6 @@ export abstract class AbstractNode<
   }
 
   /**
-   * List of data paths that had validation errors in the last validation run.
-   * @remarks **[Root Node Only]** Used to clear errors from nodes that no longer have errors
-   *          after a subsequent validation run.
-   */
-  private __errorDataPaths__: string[] | undefined;
-
-  /**
    * All validation errors from the most recent schema validation.
    * @remarks **[Root Node Only]** Contains raw errors from the validator before
    *          merging with external errors.
@@ -1044,15 +1057,15 @@ export abstract class AbstractNode<
    * @param errors - List of errors to set
    * @returns {boolean} Whether the merge result changed
    */
-  private __setGlobalErrors__(this: AbstractNode, errors: ValidationError[]) {
-    if (equals(this.__globalErrors__, errors)) return false;
+  protected __setGlobalErrors__(this: AbstractNode, errors: ValidationError[]) {
+    if (equals(this.__globalErrors__, errors)) return true;
     this.__globalErrors__ = errors;
     this.__mergedGlobalErrors__ = [
       ...this.__externalErrors__,
       ...this.__globalErrors__,
     ];
     this.publish(NodeEventType.UpdateGlobalError, this.__mergedGlobalErrors__);
-    return true;
+    return false;
   }
 
   /**
@@ -1168,116 +1181,5 @@ export abstract class AbstractNode<
   ) {
     if (this.isRoot) setValue(this.__enhancer__, pointer, value);
     else (this.rootNode as AbstractNode).__adjustEnhancer__(pointer, value);
-  }
-
-  /**
-   * Compiled validator function for schema validation.
-   * @note Only initialized for root node when validationMode is set.
-   *       Created from validatorFactory or PluginManager.validator.
-   */
-  private __validator__: ValidateFunction | undefined;
-
-  /**
-   * Performs validation using the node's JsonSchema
-   * @note Only available for rootNode
-   * */
-  private async __validate__(
-    this: AbstractNode,
-    value: Value | Nullish,
-  ): Promise<ValidationError[]> {
-    if (this.__validator__ === undefined) return [];
-    const errors = await this.__validator__(value);
-    if (errors === null) return [];
-    else return transformErrors(errors);
-  }
-
-  /**
-   * Performs validation when own value changes
-   * @note Only works for rootNode
-   */
-  private async __handleValidation__(this: AbstractNode) {
-    if (this.isRoot === false || this.__validator__ === undefined) return;
-
-    const internalErrors = await this.__validate__(this.__enhancedValue__);
-
-    if (this.__setGlobalErrors__(internalErrors) === false) return;
-
-    const errorsByDataPath = new Map<
-      ValidationError['dataPath'],
-      ValidationError[]
-    >();
-    for (const error of internalErrors) {
-      const errors = errorsByDataPath.get(error.dataPath);
-      if (errors) errors.push(error);
-      else errorsByDataPath.set(error.dataPath, [error]);
-    }
-
-    const errorDataPaths = Array.from(errorsByDataPath.keys());
-    if (this.__errorDataPaths__)
-      for (const dataPath of this.__errorDataPaths__) {
-        if (errorDataPaths.includes(dataPath)) continue;
-        this.find(dataPath)?.clearErrors();
-      }
-
-    for (const [dataPath, errors] of errorsByDataPath) {
-      const childNode = this.find(dataPath);
-      if (childNode === null) continue;
-      childNode.setErrors(
-        childNode.variant !== undefined
-          ? errors.filter(
-              (error) =>
-                error.schemaPath === undefined ||
-                matchesSchemaPath(error.schemaPath, childNode.schemaPath),
-            )
-          : errors,
-      );
-    }
-    this.__errorDataPaths__ = errorDataPaths;
-  }
-
-  /**
-   * Performs validation based on the current value.
-   * @returns {Promise<ValidationError[]>} List of errors that occurred inside the form
-   * @note If `ValidationMode.None` is set, an empty array is returned.
-   */
-  public async validate(this: AbstractNode) {
-    if (this.isRoot) await this.__handleValidation__();
-    else await this.rootNode.validate();
-    return this.globalErrors;
-  }
-
-  /** [readonly] Whether validation is enabled for this form */
-  protected get __validationEnabled__(): boolean {
-    return this.isRoot
-      ? this.__validator__ !== undefined
-      : (this.rootNode as AbstractNode).__validationEnabled__;
-  }
-
-  /**
-   * Prepares validator, only available for rootNode
-   * @param validator ValidatorFactory, creates new one if not provided
-   */
-  private __prepareValidator__(
-    this: AbstractNode,
-    jsonSchema: JsonSchemaWithVirtual,
-    validatorFactory?: ValidatorFactory,
-    validationMode?: ValidationMode,
-  ) {
-    if (!validationMode) return;
-    const schema = stripSchemaExtensions(jsonSchema);
-    try {
-      this.__validator__ =
-        validatorFactory?.(schema) || PluginManager.validator?.compile(schema);
-      if (this.__validator__ !== undefined)
-        this.__enhancer__ = getEmptyValue(this.schemaType);
-    } catch (error: any) {
-      const jsonSchemaError = new JsonSchemaError(
-        'CIRCULAR_REFERENCE',
-        formatCircularReferenceError(error.message, jsonSchema),
-        { error, schema: jsonSchema },
-      );
-      this.__validator__ = getFallbackValidator(jsonSchemaError, jsonSchema);
-      console.error(jsonSchemaError);
-    }
   }
 }

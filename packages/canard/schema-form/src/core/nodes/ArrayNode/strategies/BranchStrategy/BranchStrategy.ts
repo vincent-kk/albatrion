@@ -130,10 +130,10 @@ export class BranchStrategy implements ArrayNodeStrategy {
    * @internal Internal implementation method. Do not call directly.
    */
   public initialize() {
-    for (const key of this.__keys__) {
-      // @ts-expect-error [internal] child node initialization
-      this.__sourceMap__.get(key)?.node?.__initialize__(this.__host__);
-    }
+    for (let i = 0, l = this.__keys__.length; i < l; i++)
+      (this.__sourceMap__.get(this.__keys__[i])?.node as AbstractNode)
+        // @ts-expect-error [internal] child node initialization
+        ?.__initialize__(this.__host__);
   }
 
   /**
