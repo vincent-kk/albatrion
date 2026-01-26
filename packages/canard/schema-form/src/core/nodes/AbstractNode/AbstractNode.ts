@@ -439,25 +439,6 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Manages injection guard state to prevent circular injection loops.
-   * @description Only initialized on the root node. Tracks which node paths are currently
-   *              being injected and coordinates deferred cleanup across all nodes in the tree.
-   * @see InjectionGuardManager
-   */
-  private __injectionGuardManager__: InjectionGuardManager | undefined;
-
-  /**
-   * Provides access to the injection guard manager from any node in the tree.
-   * @description Root nodes return their own manager instance, while child nodes
-   *              delegate to the root node's manager to ensure centralized tracking.
-   * @returns The injection guard manager, or `undefined` if not initialized
-   */
-  private get __injectionGuard__() {
-    if (this.isRoot) return this.__injectionGuardManager__;
-    return this.rootNode.__injectionGuardManager__;
-  }
-
-  /**
    * Manages node event publishing, subscription, and batching.
    * @description Encapsulates all event-related functionality:
    *              - Listener registration/unregistration
@@ -533,6 +514,115 @@ export abstract class AbstractNode<
       await this.__validationManager__?.validate(this.__enhancedValue__);
     else await this.rootNode.validate();
     return this.globalErrors;
+  }
+
+  /**
+   * Additional data for validation that includes virtual/computed field values.
+   * @note Only used by root node. Virtual fields don't exist in the actual value
+   *       but need to be included for schema validation.
+   */
+  private __enhancer__: Value | undefined;
+
+  /**
+   * Gets the value used for validation, merging actual value with enhancer data.
+   * @returns Combined value including virtual field values for complete schema validation
+   * @note Only used by root node during validation.
+   */
+  private get __enhancedValue__(): Value | Nullish {
+    const value = this.value;
+    if (this.group === 'terminal' || value == null) return value;
+    const enhancer = this.__enhancer__;
+    if (enhancer === undefined || isEmptyObject(enhancer)) return value;
+    return merge(cloneLite(enhancer), value);
+  }
+
+  /**
+   * Adds or updates a value in the enhancer for validation purposes
+   * @param pointer - JSON Pointer path to the value location
+   * @param value - Value to set in enhancer (typically from virtual/computed fields)
+   * */
+  protected __adjustEnhancer__(
+    this: AbstractNode,
+    pointer: string,
+    value: any,
+  ) {
+    if (this.isRoot) setValue(this.__enhancer__, pointer, value);
+    else (this.rootNode as AbstractNode).__adjustEnhancer__(pointer, value);
+  }
+
+  /**
+   * Manages injection guard state to prevent circular injection loops.
+   * @description Only initialized on the root node. Tracks which node paths are currently
+   *              being injected and coordinates deferred cleanup across all nodes in the tree.
+   * @see InjectionGuardManager
+   */
+  private __injectionGuardManager__: InjectionGuardManager | undefined;
+
+  /**
+   * Provides access to the injection guard manager from any node in the tree.
+   * @description Root nodes return their own manager instance, while child nodes
+   *              delegate to the root node's manager to ensure centralized tracking.
+   * @returns The injection guard manager, or `undefined` if not initialized
+   */
+  private get __injectionGuard__() {
+    if (this.isRoot) return this.__injectionGuardManager__;
+    return this.rootNode.__injectionGuardManager__;
+  }
+
+  /**
+   * Prepares the handler for `injectTo` schema property.
+   * @note Sets up a subscription that listens for value updates and propagates
+   *       values to other nodes as defined by the `injectTo` function in the schema.
+   *       Implements circular injection prevention using injected node flags.
+   */
+  private __prepareInjectHandler__(this: AbstractNode) {
+    if (this.__initialized__) return;
+    const injectHandler = this.jsonSchema.injectTo;
+    if (typeof injectHandler !== 'function') return;
+    this.subscribe(({ type, options }) => {
+      if (type & NodeEventType.UpdateValue) {
+        if (options?.[NodeEventType.UpdateValue]?.inject)
+          this.publish(NodeEventType.RequestInjection);
+        return;
+      }
+      if (type & NodeEventType.RequestInjection) {
+        const injectionGuard = this.__injectionGuard__;
+        if (injectionGuard == null) return;
+        const value = this.value;
+        const dataPath = this.path;
+        const context = {
+          dataPath,
+          schemaPath: this.schemaPath,
+          jsonSchema: this.jsonSchema,
+          parentValue: this.parentNode?.value || null,
+          parentJsonSchema: this.parentNode?.jsonSchema || null,
+          rootValue: this.rootNode.value,
+          rootJsonSchema: this.rootNode.jsonSchema,
+          context: this.context,
+        } satisfies InjectHandlerContext;
+        try {
+          injectionGuard.add(dataPath);
+          const affect = injectHandler(value, context);
+          if (affect == null) return;
+          const operations = isArray(affect) ? affect : Object.entries(affect);
+          for (let i = 0, l = operations.length; i < l; i++) {
+            const path = getAbsolutePath(dataPath, operations[i][0]);
+            if (injectionGuard.has(path)) continue;
+            injectionGuard.add(path);
+            this.find(path)?.setValue(operations[i][1]);
+          }
+        } catch (error) {
+          const errorContext = { ...context, value, error };
+          throw new JsonSchemaError(
+            'INJECT_TO',
+            formatInjectToError(errorContext),
+            errorContext,
+          );
+        } finally {
+          injectionGuard.scheduleClearInjectedPaths();
+        }
+      }
+    });
   }
 
   /**
@@ -947,62 +1037,6 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Prepares the handler for `injectTo` schema property.
-   * @note Sets up a subscription that listens for value updates and propagates
-   *       values to other nodes as defined by the `injectTo` function in the schema.
-   *       Implements circular injection prevention using injected node flags.
-   */
-  private __prepareInjectHandler__(this: AbstractNode) {
-    if (this.__initialized__) return;
-    const injectHandler = this.jsonSchema.injectTo;
-    if (typeof injectHandler !== 'function') return;
-    this.subscribe(({ type, options }) => {
-      if (type & NodeEventType.UpdateValue) {
-        if (options?.[NodeEventType.UpdateValue]?.inject)
-          this.publish(NodeEventType.RequestInjection);
-        return;
-      }
-      if (type & NodeEventType.RequestInjection) {
-        const injectionGuard = this.__injectionGuard__;
-        if (injectionGuard == null) return;
-        const value = this.value;
-        const dataPath = this.path;
-        const context = {
-          dataPath,
-          schemaPath: this.schemaPath,
-          jsonSchema: this.jsonSchema,
-          parentValue: this.parentNode?.value || null,
-          parentJsonSchema: this.parentNode?.jsonSchema || null,
-          rootValue: this.rootNode.value,
-          rootJsonSchema: this.rootNode.jsonSchema,
-          context: this.context,
-        } satisfies InjectHandlerContext;
-        try {
-          injectionGuard.add(dataPath);
-          const affect = injectHandler(value, context);
-          if (affect == null) return;
-          const operations = isArray(affect) ? affect : Object.entries(affect);
-          for (let i = 0, l = operations.length; i < l; i++) {
-            const path = getAbsolutePath(dataPath, operations[i][0]);
-            if (injectionGuard.has(path)) continue;
-            injectionGuard.add(path);
-            this.find(path)?.setValue(operations[i][1]);
-          }
-        } catch (error) {
-          const errorContext = { ...context, value, error };
-          throw new JsonSchemaError(
-            'INJECT_TO',
-            formatInjectToError(errorContext),
-            errorContext,
-          );
-        } finally {
-          injectionGuard.scheduleClearInjectedPaths();
-        }
-      }
-    });
-  }
-
-  /**
    * All validation errors from the most recent schema validation.
    * @remarks **[Root Node Only]** Contains raw errors from the validator before
    *          merging with external errors.
@@ -1147,39 +1181,5 @@ export abstract class AbstractNode<
       if (!error.key || !deleteKeys.includes(error.key)) nextErrors.push(error);
     if (this.__externalErrors__.length !== nextErrors.length)
       this.setExternalErrors(nextErrors);
-  }
-
-  /**
-   * Additional data for validation that includes virtual/computed field values.
-   * @note Only used by root node. Virtual fields don't exist in the actual value
-   *       but need to be included for schema validation.
-   */
-  private __enhancer__: Value | undefined;
-
-  /**
-   * Gets the value used for validation, merging actual value with enhancer data.
-   * @returns Combined value including virtual field values for complete schema validation
-   * @note Only used by root node during validation.
-   */
-  private get __enhancedValue__(): Value | Nullish {
-    const value = this.value;
-    if (this.group === 'terminal' || value == null) return value;
-    const enhancer = this.__enhancer__;
-    if (enhancer === undefined || isEmptyObject(enhancer)) return value;
-    return merge(cloneLite(enhancer), value);
-  }
-
-  /**
-   * Adds or updates a value in the enhancer for validation purposes
-   * @param pointer - JSON Pointer path to the value location
-   * @param value - Value to set in enhancer (typically from virtual/computed fields)
-   * */
-  protected __adjustEnhancer__(
-    this: AbstractNode,
-    pointer: string,
-    value: any,
-  ) {
-    if (this.isRoot) setValue(this.__enhancer__, pointer, value);
-    else (this.rootNode as AbstractNode).__adjustEnhancer__(pointer, value);
   }
 }
