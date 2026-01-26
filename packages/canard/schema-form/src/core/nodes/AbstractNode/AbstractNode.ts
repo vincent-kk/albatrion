@@ -37,7 +37,6 @@ import type {
 import {
   type ChildNode,
   type HandleChange,
-  type NodeEventCollection,
   type NodeEventOptions,
   type NodeEventPayload,
   NodeEventType,
@@ -52,14 +51,13 @@ import {
 } from '../type';
 import {
   ComputedPropertiesManager,
-  EventCascade,
+  EventCascadeManager,
   InjectionGuardManager,
   afterMicrotask,
   checkDefinedValue,
   depthFirstSearch,
   findNode,
   findNodes,
-  getEventCollection,
   getFallbackValidator,
   getNodeGroup,
   getSafeEmptyValue,
@@ -461,46 +459,24 @@ export abstract class AbstractNode<
   }
 
   /**
-   * Set of registered event listeners for this node.
-   * @note Listeners receive batched events via EventCascade for performance optimization.
+   * Manages node event publishing, subscription, and batching.
+   * @description Encapsulates all event-related functionality:
+   *              - Listener registration/unregistration
+   *              - Event batching to prevent recursive triggering
+   *              - Dependency subscription management
+   * @see EventCascadeManager
    */
-  private __listeners__: Set<NodeListener> = new Set();
-
-  /**
-   * Event batching system that collects multiple events and publishes them together.
-   * @note Improves performance by reducing the number of listener invocations
-   *       when multiple events occur in rapid succession.
-   */
-  private __eventCascade__ = new EventCascade(
-    (eventCollection: NodeEventCollection) => {
-      for (const listener of this.__listeners__) listener(eventCollection);
-    },
-    () => ({
-      path: this.path,
-      dependencies: this.__computeManager__.dependencyPaths,
-    }),
-  );
-
-  /**
-   * Array of cleanup functions for subscriptions to other nodes.
-   * @note Stores unsubscribe functions from dependency subscriptions.
-   *       Called during cleanUp() to prevent memory leaks.
-   */
-  private __unsubscribes__: Array<Fn> = [];
+  private __eventManager__ = new EventCascadeManager(() => ({
+    path: this.path,
+    dependencies: this.__computeManager__.dependencyPaths,
+  }));
 
   /**
    * Saves an event unsubscribe function.
    * @param unsubscribe - The unsubscribe function to save
    */
   protected saveUnsubscribe(this: AbstractNode, unsubscribe: Fn) {
-    this.__unsubscribes__.push(unsubscribe);
-  }
-
-  /* Cancels all saved event subscriptions. */
-  private __clearUnsubscribes__(this: AbstractNode) {
-    for (let i = 0, l = this.__unsubscribes__.length; i < l; i++)
-      this.__unsubscribes__[i]();
-    this.__unsubscribes__ = [];
+    this.__eventManager__.saveUnsubscribe(unsubscribe);
   }
 
   /**
@@ -509,8 +485,7 @@ export abstract class AbstractNode<
    */
   protected __cleanUp__(this: AbstractNode, actor?: SchemaNode) {
     if (actor !== this.parentNode && !this.isRoot) return;
-    this.__clearUnsubscribes__();
-    this.__listeners__.clear();
+    this.__eventManager__.cleanUp();
   }
 
   /**
@@ -518,7 +493,7 @@ export abstract class AbstractNode<
    * @param type - Event type (see NodeEventType)
    * @param payload - Data for the event (see NodeEventPayload)
    * @param options - Options for the event (see NodeEventOptions)
-   * @param immediate - If true, executes listeners synchronously; if false, batches event via EventCascade
+   * @param immediate - If true, executes listeners synchronously; if false, batches event via EventCascadeManager
    */
   public publish<Type extends NodeEventType>(
     this: AbstractNode,
@@ -527,10 +502,8 @@ export abstract class AbstractNode<
     options?: NodeEventOptions[Type],
     immediate?: boolean,
   ) {
-    if (immediate) {
-      const eventCollection = getEventCollection(type, payload, options);
-      for (const listener of this.__listeners__) listener(eventCollection);
-    } else this.__eventCascade__.schedule([type, payload, options]);
+    if (immediate) this.__eventManager__.dispatch(type, payload, options);
+    else this.__eventManager__.publish(type, payload, options);
   }
 
   /**
@@ -539,10 +512,7 @@ export abstract class AbstractNode<
    * @returns Event listener removal function
    */
   public subscribe(this: AbstractNode, listener: NodeListener): Fn {
-    this.__listeners__.add(listener);
-    return () => {
-      this.__listeners__.delete(listener);
-    };
+    return this.__eventManager__.subscribe(listener);
   }
 
   /**

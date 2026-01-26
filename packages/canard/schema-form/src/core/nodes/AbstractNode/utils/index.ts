@@ -1,5 +1,5 @@
 export * from './ComputedPropertiesManager';
-export * from './EventCascade';
+export * from './EventCascadeManager';
 export * from './InjectionGuardManager';
 export * from './afterMicrotask';
 export * from './checkDefinedValue';
