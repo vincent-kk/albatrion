@@ -55,6 +55,7 @@
     "start": "yarn build && yarn storybook",
     "storybook": "storybook dev -p 6006",
     "test": "vitest",
+    "test-storybook": "test-storybook",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
     "version:patch": "yarn version patch"

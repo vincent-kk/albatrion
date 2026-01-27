@@ -1,5 +1,8 @@
 import { useMemo, useRef, useState } from 'react';
 
+import type { Meta, StoryObj } from '@storybook/react';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
+
 import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
 
 import {
@@ -17,11 +20,14 @@ import { plugin as validatorPlugin } from './components/validator';
 
 registerPlugin(validatorPlugin);
 
-export default {
+const meta: Meta = {
   title: 'Form/07. FormRefHandle',
 };
+export default meta;
 
-export const FormRefHandle = () => {
+type Story = StoryObj;
+
+const FormRefHandleComponent = () => {
   const [value, setValue] = useState({});
   const schema = {
     type: 'object',
@@ -157,7 +163,62 @@ export const FormRefHandle = () => {
   );
 };
 
-export const FormTypeInputArrayTerminalRef = () => {
+export const FormRefHandle: Story = {
+  render: () => <FormRefHandleComponent />,
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+
+    await step('초기 렌더링 - 기본값 확인', async () => {
+      await waitFor(() => {
+        expect(canvas.getByText(/"name": "ron"/)).toBeInTheDocument();
+        expect(canvas.getByText(/"number": 10/)).toBeInTheDocument();
+      });
+    });
+
+    await step('set name 버튼 클릭 → name이 harry로 변경', async () => {
+      const setNameButton = canvas.getByRole('button', { name: 'set name' });
+      await userEvent.click(setNameButton);
+
+      await waitFor(() => {
+        expect(canvas.getByText(/"name": "harry"/)).toBeInTheDocument();
+      });
+    });
+
+    await step('increase number 버튼 클릭 → number가 11로 증가', async () => {
+      const increaseButton = canvas.getByRole('button', {
+        name: 'increase number',
+      });
+      await userEvent.click(increaseButton);
+
+      await waitFor(() => {
+        expect(canvas.getByText(/"number": 11/)).toBeInTheDocument();
+      });
+    });
+
+    await step('reset 버튼 클릭 → 기본값으로 복원', async () => {
+      const resetButton = canvas.getByRole('button', { name: 'reset' });
+      await userEvent.click(resetButton);
+
+      await waitFor(() => {
+        expect(canvas.getByText(/"name": "ron"/)).toBeInTheDocument();
+        expect(canvas.getByText(/"number": 10/)).toBeInTheDocument();
+      });
+    });
+
+    await step('overwrite number 버튼 클릭 → number가 100으로 덮어쓰기', async () => {
+      const overwriteButton = canvas.getByRole('button', {
+        name: 'overwrite number',
+      });
+      await userEvent.click(overwriteButton);
+
+      await waitFor(() => {
+        expect(canvas.getByText(/"number": 100/)).toBeInTheDocument();
+      });
+    });
+  },
+};
+
+const FormTypeInputArrayTerminalRefComponent = () => {
   const [value, setValue] = useState({});
   const schema = {
     type: 'object',
@@ -239,6 +300,43 @@ export const FormTypeInputArrayTerminalRef = () => {
       </StoryLayout>
     </div>
   );
+};
+
+export const FormTypeInputArrayTerminalRef: Story = {
+  render: () => <FormTypeInputArrayTerminalRefComponent />,
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+
+    await step('set value 버튼 → 배열에 [1,2,3] 설정', async () => {
+      const setValueButton = canvas.getByRole('button', { name: 'set value' });
+      await userEvent.click(setValueButton);
+
+      await waitFor(() => {
+        expect(canvas.getByText(/"arr":/)).toBeInTheDocument();
+        expect(canvas.getByText(/1/)).toBeInTheDocument();
+        expect(canvas.getByText(/2/)).toBeInTheDocument();
+        expect(canvas.getByText(/3/)).toBeInTheDocument();
+      });
+    });
+
+    await step('push value 버튼 → 배열에 NEW ITEM 추가', async () => {
+      const pushButton = canvas.getByRole('button', { name: 'push value' });
+      await userEvent.click(pushButton);
+
+      await waitFor(() => {
+        expect(canvas.getByText(/NEW ITEM/)).toBeInTheDocument();
+      });
+    });
+
+    await step('clear 버튼 → 배열 비우기', async () => {
+      const clearButton = canvas.getByRole('button', { name: 'clear' });
+      await userEvent.click(clearButton);
+
+      await waitFor(() => {
+        expect(canvas.getByText(/"arr": \[\]/)).toBeInTheDocument();
+      });
+    });
+  },
 };
 
 export const FormTypeInputObjectTerminalRef = () => {
@@ -355,7 +453,7 @@ export const FormTypeInputObjectTerminalRef = () => {
   );
 };
 
-export const FormRefHandleWithIfThenElse = () => {
+const FormRefHandleWithIfThenElseComponent = () => {
   const [value, setValue] = useState({});
   const schema = {
     type: 'object',
@@ -489,6 +587,64 @@ export const FormRefHandleWithIfThenElse = () => {
       </StoryLayout>
     </div>
   );
+};
+
+export const FormRefHandleWithIfThenElse: Story = {
+  render: () => <FormRefHandleWithIfThenElseComponent />,
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+
+    await step('초기 렌더링 - category 기본값 game 확인', async () => {
+      await waitFor(() => {
+        expect(canvas.getByText(/"category": "game"/)).toBeInTheDocument();
+      });
+    });
+
+    await step('set category to movie 버튼 클릭 → category가 movie로 변경', async () => {
+      const movieButton = canvas.getByRole('button', {
+        name: 'set category to movie',
+      });
+      await userEvent.click(movieButton);
+
+      await waitFor(() => {
+        expect(canvas.getByText(/"category": "movie"/)).toBeInTheDocument();
+      });
+    });
+
+    await step('set category to game 버튼 클릭 → category가 game으로 변경', async () => {
+      const gameButton = canvas.getByRole('button', {
+        name: 'set category to game',
+      });
+      await userEvent.click(gameButton);
+
+      await waitFor(() => {
+        expect(canvas.getByText(/"category": "game"/)).toBeInTheDocument();
+      });
+    });
+
+    await step('set new member 버튼 클릭 → 여러 필드 동시 설정', async () => {
+      const setNewMemberButton = canvas.getByRole('button', {
+        name: 'set new member',
+      });
+      await userEvent.click(setNewMemberButton);
+
+      await waitFor(() => {
+        expect(canvas.getByText(/"category": "movie"/)).toBeInTheDocument();
+        expect(canvas.getByText(/"title": "wow"/)).toBeInTheDocument();
+        expect(canvas.getByText(/"openingDate": "2025-01-01"/)).toBeInTheDocument();
+        expect(canvas.getByText(/"price": 100/)).toBeInTheDocument();
+      });
+    });
+
+    await step('reset 버튼 클릭 → 초기 상태로 복원', async () => {
+      const resetButton = canvas.getByRole('button', { name: 'reset' });
+      await userEvent.click(resetButton);
+
+      await waitFor(() => {
+        expect(canvas.getByText(/"category": "game"/)).toBeInTheDocument();
+      });
+    });
+  },
 };
 
 export const FormRefHandleWithIfThenElse2 = () => {
