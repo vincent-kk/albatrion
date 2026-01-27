@@ -513,8 +513,8 @@ export abstract class AbstractNode<
             if (this.active && !this.__equals__(this.value, derivedValue))
               this.setValue(derivedValue);
           }
-          if (manager.isPristineDefined && manager.getPristine())
-            this.setState();
+          if (manager.isPristineDefined)
+            if (manager.getPristine()) this.setState();
         }
       });
     this.__updateComputedProperties__();
@@ -529,10 +529,10 @@ export abstract class AbstractNode<
     this: AbstractNode,
     reset: boolean = true,
   ) {
-    const manager = this.__computeManager__;
-    const previous = manager.active;
-    manager.recalculate();
-    if (reset && previous !== manager.active)
+    const computeManager = this.__computeManager__;
+    const previous = computeManager.active;
+    computeManager.recalculate();
+    if (reset && previous !== computeManager.active)
       this.__reset__({ preferLatest: true });
     this.publish(EventType.UpdateComputedProperties);
   }
@@ -590,7 +590,7 @@ export abstract class AbstractNode<
    *          On child nodes, delegates to `rootNode.globalState`.
    */
   public get globalState(): NodeStateFlags {
-    return this.isRoot ? this.__globalState__ : this.rootNode.globalState;
+    return this.isRoot ? this.__globalState__ : this.rootNode.__globalState__;
   }
 
   /**
@@ -846,7 +846,7 @@ export abstract class AbstractNode<
    * @internal Called during node destruction or reinitialization.
    */
   protected __cleanUp__(this: AbstractNode, actor?: SchemaNode) {
-    if (actor !== this.parentNode && !this.isRoot) return;
+    if (!this.isRoot && actor !== this.parentNode) return;
     this.__eventManager__.cleanUp();
   }
 
@@ -975,7 +975,7 @@ export abstract class AbstractNode<
    * @internal Sets up dependency subscriptions, `injectTo` handlers, and publishes `Initialized` event.
    */
   protected __initialize__(this: AbstractNode, actor?: SchemaNode) {
-    if (this.__initialized__ || (actor !== this.parentNode && !this.isRoot))
+    if (this.__initialized__ || (!this.isRoot && actor !== this.parentNode))
       return false;
     this.__prepareUpdateDependencies__();
     this.__prepareInjectHandler__();
