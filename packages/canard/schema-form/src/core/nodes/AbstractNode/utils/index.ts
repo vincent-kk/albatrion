@@ -9,4 +9,5 @@ export * from './findNode';
 export * from './getNodeGroup';
 export * from './getSafeEmptyValue';
 export * from './getScopedSegment';
+export * from './shallowPatch';
 export * from './traversal';

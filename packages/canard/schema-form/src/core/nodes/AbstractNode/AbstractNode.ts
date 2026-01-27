@@ -1,5 +1,5 @@
 import { map } from '@winglet/common-utils/array';
-import { isArray, isEmptyObject, isObject } from '@winglet/common-utils/filter';
+import { isArray, isEmptyObject } from '@winglet/common-utils/filter';
 import { cloneLite, merge } from '@winglet/common-utils/object';
 import { escapeSegment, setValue } from '@winglet/json/pointer';
 
@@ -55,6 +55,7 @@ import {
   getNodeGroup,
   getSafeEmptyValue,
   getScopedSegment,
+  shallowPatch,
 } from './utils';
 
 export abstract class AbstractNode<
@@ -608,24 +609,10 @@ export abstract class AbstractNode<
    */
   private __setGlobalState__(this: AbstractNode, input?: NodeStateFlags) {
     if (this.isRoot) {
-      let state: NodeStateFlags | null = this.__globalState__;
-      let idle = true;
-      if (input === undefined) {
-        if (isEmptyObject(state)) return;
-        state = null;
-        idle = false;
-      } else {
-        for (const key in input) {
-          const stateFlag = input[key];
-          if (stateFlag && state[key] !== stateFlag) {
-            state[key] = stateFlag;
-            if (idle) idle = false;
-          }
-        }
-      }
-      if (idle) return;
-      this.__globalState__ = state !== null ? { ...state } : {};
-      this.publish(EventType.UpdateGlobalState, this.__globalState__);
+      const state = shallowPatch(this.__globalState__, input, true);
+      if (state === void 0) return;
+      this.__globalState__ = state;
+      this.publish(EventType.UpdateGlobalState, state);
     } else this.rootNode.__setGlobalState__(input);
   }
 
@@ -646,33 +633,11 @@ export abstract class AbstractNode<
     input?: ((prev: NodeStateFlags) => NodeStateFlags) | NodeStateFlags,
     silent?: boolean,
   ) {
-    let state: NodeStateFlags | null = this.__state__;
-    const inputState =
-      typeof input === 'function' ? input({ ...state }) : input;
-    let idle = true;
-    if (inputState === undefined) {
-      if (isEmptyObject(state)) return;
-      state = null;
-      idle = false;
-    } else if (isObject(inputState)) {
-      const keys = Object.keys(inputState);
-      for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
-        const value = inputState[k];
-        if (value === undefined) {
-          if (k in state) {
-            delete state[k];
-            if (idle) idle = false;
-          }
-        } else if (state[k] !== value) {
-          state[k] = value;
-          if (idle) idle = false;
-        }
-      }
-    }
-    if (idle) return;
-    this.__state__ = state !== null ? { ...state } : {};
-    this.publish(EventType.UpdateState, this.__state__);
-    if (silent !== true) this.__setGlobalState__(this.__state__);
+    const state = shallowPatch(this.__state__, input);
+    if (state === void 0) return;
+    this.__state__ = state;
+    this.publish(EventType.UpdateState, state);
+    if (silent !== true) this.__setGlobalState__(state);
   }
 
   /**
