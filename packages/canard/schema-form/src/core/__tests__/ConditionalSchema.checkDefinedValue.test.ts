@@ -5,8 +5,8 @@ import { delay } from '@winglet/common-utils';
 import { nodeFromJsonSchema } from '@/schema-form/core';
 import type { JsonSchema } from '@/schema-form/types';
 
-import type { ArrayNode } from '../nodes/ArrayNode';
 import { checkDefinedValue } from '../nodes/AbstractNode/utils';
+import type { ArrayNode } from '../nodes/ArrayNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
 
@@ -603,7 +603,10 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
           {
             '&if': "./selector === 'B'",
             properties: {
-              data: { type: 'object', properties: { value: { type: 'string' } } },
+              data: {
+                type: 'object',
+                properties: { value: { type: 'string' } },
+              },
             },
           },
         ],
@@ -834,7 +837,10 @@ describe('ConditionalSchema - checkDefinedValue with Reset Logic', () => {
           {
             '&if': "./selector === 'B'",
             properties: {
-              parent: { type: 'object', properties: { child: { type: 'string' } } },
+              parent: {
+                type: 'object',
+                properties: { child: { type: 'string' } },
+              },
             },
           },
         ],

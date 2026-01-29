@@ -49,46 +49,6 @@ const inputExists = (testId: string): boolean => {
 };
 
 /**
- * Helper: Creates a Form component with ref for testing advanced features.
- * Reduces boilerplate for FormHandle-based tests.
- *
- * NOTE: This helper is available for future refactoring.
- * Current tests use inline FormWithRef patterns for explicitness.
- *
- * @example
- * const { formHandle, FormWithRef } = _createFormWithRef(schema, formTypeInputDefs);
- * render(<FormWithRef />);
- * await vi.advanceTimersByTimeAsync(100);
- * formHandle.current?.setValue({ name: 'test' });
- */
-const _createFormWithRef = <TSchema extends JsonSchema>(
-  schema: TSchema,
-  formTypeInputDefs: FormTypeInputDefinition[],
-) => {
-  const formHandle: { current: FormHandle<TSchema> | null } = { current: null };
-
-  const FormWithRef = () => {
-    const ref = useRef<FormHandle<TSchema>>(null);
-    formHandle.current = ref.current;
-
-    // Update formHandle.current after ref is assigned
-    useEffect(() => {
-      formHandle.current = ref.current;
-    });
-
-    return (
-      <Form
-        ref={ref}
-        jsonSchema={schema}
-        formTypeInputDefinitions={formTypeInputDefs}
-      />
-    );
-  };
-
-  return { formHandle, FormWithRef };
-};
-
-/**
  * SchemaNodeProxy Refresh Integration Tests
  *
  * Tests verify the refresh mechanism at the component level:
@@ -2008,7 +1968,10 @@ describe('Edge Cases', () => {
             ref={ref}
             jsonSchema={schema}
             formTypeInputDefinitions={[
-              { test: { type: 'string' }, Component: createTestInput('error-test') },
+              {
+                test: { type: 'string' },
+                Component: createTestInput('error-test'),
+              },
             ]}
           />
         );
@@ -2198,7 +2161,10 @@ describe('Edge Cases', () => {
       let unmount: () => void;
       await act(async () => {
         const result = render(
-          <Form jsonSchema={schema} formTypeInputDefinitions={formTypeInputDefs} />,
+          <Form
+            jsonSchema={schema}
+            formTypeInputDefinitions={formTypeInputDefs}
+          />,
         );
         unmount = result.unmount;
         await vi.advanceTimersByTimeAsync(100);
@@ -2215,7 +2181,10 @@ describe('Edge Cases', () => {
       // Remount with same schema
       await act(async () => {
         render(
-          <Form jsonSchema={schema} formTypeInputDefinitions={formTypeInputDefs} />,
+          <Form
+            jsonSchema={schema}
+            formTypeInputDefinitions={formTypeInputDefs}
+          />,
         );
         await vi.advanceTimersByTimeAsync(100);
       });
@@ -2263,7 +2232,10 @@ describe('Edge Cases', () => {
             ref={ref}
             jsonSchema={schema}
             formTypeInputDefinitions={[
-              { test: { path: '/level1/level2/level3/value' }, Component: DeepInput },
+              {
+                test: { path: '/level1/level2/level3/value' },
+                Component: DeepInput,
+              },
             ]}
           />
         );
@@ -2328,8 +2300,14 @@ describe('Edge Cases', () => {
             ref={ref}
             jsonSchema={schema}
             formTypeInputDefinitions={[
-              { test: { type: 'string' }, Component: createTestInput('array-item') },
-              { test: { type: 'number' }, Component: createTestInput('array-num') },
+              {
+                test: { type: 'string' },
+                Component: createTestInput('array-item'),
+              },
+              {
+                test: { type: 'number' },
+                Component: createTestInput('array-num'),
+              },
             ]}
           />
         );
@@ -2381,9 +2359,18 @@ describe('Edge Cases', () => {
             ref={ref}
             jsonSchema={schema}
             formTypeInputDefinitions={[
-              { test: { path: '/field1' }, Component: createTestInput('concurrent-1') },
-              { test: { path: '/field2' }, Component: createTestInput('concurrent-2') },
-              { test: { path: '/field3' }, Component: createTestInput('concurrent-3') },
+              {
+                test: { path: '/field1' },
+                Component: createTestInput('concurrent-1'),
+              },
+              {
+                test: { path: '/field2' },
+                Component: createTestInput('concurrent-2'),
+              },
+              {
+                test: { path: '/field3' },
+                Component: createTestInput('concurrent-3'),
+              },
             ]}
           />
         );
@@ -2567,7 +2554,10 @@ describe('Edge Cases', () => {
             ref={ref}
             jsonSchema={schema}
             formTypeInputDefinitions={[
-              { test: { type: 'string' }, Component: createTestInput('nested') },
+              {
+                test: { type: 'string' },
+                Component: createTestInput('nested'),
+              },
             ]}
           />
         );
@@ -2586,7 +2576,6 @@ describe('Edge Cases', () => {
 
       // Get deeply nested node from item B before removal
       const arrayNode = formHandle.current?.findNode('/items') as ArrayNode;
-      const itemBNode = arrayNode?.children?.[1]?.node;
       const itemBDescriptionNode = formHandle.current?.findNode(
         '/items/1/details/description',
       );
