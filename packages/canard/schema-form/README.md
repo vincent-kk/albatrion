@@ -72,6 +72,8 @@ interface FormProps<
   onValidate?: Fn<[jsonSchemaError: JsonSchemaError[]]>;
   /** Function called when the form is submitted */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
+  /** Function called when the state of this SchemaForm changes */
+  onStateChange?: Fn<[state: NodeStateFlags]>;
   /** FormTypeInput definition list */
   formTypeInputDefinitions?: FormTypeInputDefinition[];
   /** FormTypeInput path mapping */
@@ -92,10 +94,10 @@ interface FormProps<
    */
   showError?: boolean | ShowError;
   /**
-   * Execute Validation Mode (default: ValidationMode.OnChange)
+   * Execute Validation Mode (default: ValidationMode.OnChange | ValidationMode.OnRequest)
    *  - `ValidationMode.None`: Disable validation
    *  - `ValidationMode.OnChange`: Validate when value changes
-   *  - `ValidationMode.OnRequest`: Validate only when requested
+   *  - `ValidationMode.OnRequest`: Validate on request
    */
   validationMode?: ValidationMode;
   /** Custom ValidatorFactory function */
@@ -120,11 +122,17 @@ interface FormHandle<
   focus: Fn<[dataPath: SchemaNode['path']]>;
   select: Fn<[dataPath: SchemaNode['path']]>;
   reset: Fn;
+  findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
+  findNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
+  getState: Fn<[], NodeStateFlags>;
+  setState: Fn<[state: NodeStateFlags]>;
+  clearState: Fn;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
   getErrors: Fn<[], JsonSchemaError[]>;
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
   validate: Fn<[], Promise<JsonSchemaError[]>>;
+  showError: Fn<[visible: boolean]>;
   submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
 }
 ```
@@ -506,6 +514,8 @@ interface FormTypeInputProps<
   nullable: Node['nullable'];
   /** Errors of the schema node assigned to the FormTypeInput Component */
   errors: Node['errors'];
+  /** Whether to show errors for this field */
+  errorVisible: boolean;
   /** Values being watched according to the `computed.watch`(=`&watch`) property defined in JsonSchema */
   watchValues: WatchValues;
   /** Default value for the FormTypeInput Component */
@@ -518,6 +528,10 @@ interface FormTypeInputProps<
   onFileAttach: Fn<[file: File | File[] | undefined]>;
   /** Child FormTypeInput Components for this FormTypeInput Component */
   ChildNodeComponents: ChildNodeComponent[];
+  /** Placeholder text for input fields */
+  placeholder: string | undefined;
+  /** CSS class name for styling */
+  className: string | undefined;
   /** Style for the FormTypeInput Component */
   style: CSSProperties | undefined;
   /** UserDefinedContext passed to the Form */

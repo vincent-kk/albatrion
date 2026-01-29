@@ -74,6 +74,8 @@ interface FormProps<
   onValidate?: Fn<[jsonSchemaError: JsonSchemaError[]]>;
   /** 폼이 제출될 때 호출되는 함수 (검증 통과 후 실행) */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
+  /** 이 SchemaForm의 상태가 변경될 때 호출되는 함수 */
+  onStateChange?: Fn<[state: NodeStateFlags]>;
   /** FormTypeInput 정의 목록 */
   formTypeInputDefinitions?: FormTypeInputDefinition[];
   /** FormTypeInput 경로 매핑 */
@@ -94,10 +96,10 @@ interface FormProps<
    */
   showError?: boolean | ShowError;
   /**
-   * 유효성 검사 모드 실행 (기본값: ValidationMode.OnChange)
+   * 유효성 검사 모드 실행 (기본값: ValidationMode.OnChange | ValidationMode.OnRequest)
    *  - `ValidationMode.None`: 유효성 검사 비활성화
    *  - `ValidationMode.OnChange`: 값이 변경될 때 유효성 검사
-   *  - `ValidationMode.OnRequest`: 요청 시에만 유효성 검사
+   *  - `ValidationMode.OnRequest`: 요청 시 유효성 검사
    */
   validationMode?: ValidationMode;
   /** 커스텀 Validator Factory 함수 */
@@ -122,6 +124,11 @@ interface FormHandle<
   focus: Fn<[dataPath: SchemaNode['path']]>;
   select: Fn<[dataPath: SchemaNode['path']]>;
   reset: Fn;
+  findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
+  findNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
+  getState: Fn<[], NodeStateFlags>;
+  setState: Fn<[state: NodeStateFlags]>;
+  clearState: Fn;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
   /** 폼 전역 오류를 반환합니다 */
@@ -129,6 +136,7 @@ interface FormHandle<
   /** onFileAttach로 첨부된 파일 맵을 반환합니다 */
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
   validate: Fn<[], Promise<JsonSchemaError[]>>;
+  showError: Fn<[visible: boolean]>;
   submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
 }
 ```
@@ -498,6 +506,8 @@ interface FormTypeInputProps<
   nullable: Node['nullable'];
   /** FormTypeInput 컴포넌트에 할당된 스키마 노드의 오류 */
   errors: Node['errors'];
+  /** 이 필드의 에러를 표시할지 여부 */
+  errorVisible: boolean;
   /** JsonSchema에서 정의된 `computed.watch`(=`&watch`) 속성에 따라 모니터링되는 값 */
   watchValues: WatchValues;
   /** FormTypeInput 컴포넌트의 기본값 */
@@ -510,6 +520,10 @@ interface FormTypeInputProps<
   onFileAttach: Fn<[file: File | File[] | undefined]>;
   /** 이 FormTypeInput 컴포넌트의 자식 FormTypeInput 컴포넌트 */
   ChildNodeComponents: ChildNodeComponent[];
+  /** 입력 필드의 placeholder 텍스트 */
+  placeholder: string | undefined;
+  /** 스타일링을 위한 CSS 클래스 이름 */
+  className: string | undefined;
   /** FormTypeInput 컴포넌트의 스타일 */
   style: CSSProperties | undefined;
   /** Form에 전달되는 사용자 정의 컨텍스트 */
