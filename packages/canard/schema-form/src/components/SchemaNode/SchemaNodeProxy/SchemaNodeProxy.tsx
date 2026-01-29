@@ -86,7 +86,7 @@ export const SchemaNodeProxy = ({
 
   return (
     <Wrapper key={version}>
-      <span data-json-path={node.path}>
+      <span data-path={node.path}>
         <FormTypeRenderer
           {...node.jsonSchema.FormTypeRendererProps}
           {...overridePropsRef?.current}
