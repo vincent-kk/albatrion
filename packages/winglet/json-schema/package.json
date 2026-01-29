@@ -1,6 +1,6 @@
 {
   "name": "@winglet/json-schema",
-  "version": "0.9.3",
+  "version": "0.10.0",
   "description": "Powerful utility library for JSON Schema manipulation featuring schema traversal, validation, reference resolution, and filtering with TypeScript support and visitor pattern implementation",
   "keywords": [
     "typescript",
