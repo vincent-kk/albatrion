@@ -2,21 +2,6 @@ import { resolve } from 'path';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  esbuild: {
-    target: 'es2022',
-  },
-  optimizeDeps: {
-    include: ['@canard/schema-form', '@winglet/json-schema'],
-    esbuildOptions: {
-      target: 'es2022',
-    },
-  },
-  build: {
-    target: 'es2022',
-    commonjsOptions: {
-      include: [/node_modules/],
-    },
-  },
   resolve: {
     alias: {
       '@/schema-form': resolve(__dirname, './src'),
