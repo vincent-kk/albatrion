@@ -24,7 +24,12 @@ export function readPackageJson(
   cwd: string = process.cwd(),
 ): PackageInfo | null {
   try {
-    const packageJsonPath = join(cwd, 'node_modules', packageName, 'package.json');
+    const packageJsonPath = join(
+      cwd,
+      'node_modules',
+      packageName,
+      'package.json',
+    );
     const content = readFileSync(packageJsonPath, 'utf-8');
     const json = JSON.parse(content);
 
@@ -114,8 +119,6 @@ export function buildVersionTag(packageName: string, version: string): string {
  * @returns Full asset path
  */
 export function buildAssetPath(assetPath: string, directory?: string): string {
-  if (directory) {
-    return `${directory}/${assetPath}`;
-  }
+  if (directory) return `${directory}/${assetPath}`;
   return assetPath;
 }
