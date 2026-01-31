@@ -17,6 +17,7 @@ This command generates or updates documentation, skills, and commands for a give
 ## Overview
 
 This command automates the creation and maintenance of package documentation:
+
 - **CREATE Mode**: When `docs/` doesn't exist → Analyzes package and generates all documentation
 - **UPDATE Mode**: When `docs/` exists → Re-analyzes and updates existing documentation
 
@@ -229,11 +230,13 @@ Key features include:
 
 ## Purpose
 
-This command provides an interactive Q&A guide for `{package-name}` library users.
+This command provides an interactive Q&A guide for `{package-name}` library users. `guide.md` file is used for this command.
+(example: `packages/canard/schema-form/docs/claude/commands/guide.md`)
 
 ## Activation
 
 This command should be used when users:
+
 - Ask questions about `{package-name}`
 - Need help implementing features
 - Want to understand specific API usage
@@ -245,6 +248,7 @@ This command should be used when users:
 ### Step 1: Identify Question Category
 
 Categorize the user's question into one of:
+
 1. **Getting Started** - Installation, setup, basic usage
 2. **API Usage** - Specific function/hook usage
 3. **Customization** - Custom components, styling, theming
@@ -254,6 +258,7 @@ Categorize the user's question into one of:
 ### Step 2: Provide Structured Response
 
 For each category, provide:
+
 1. Brief answer (1-2 sentences)
 2. Code example
 3. Key points to understand
@@ -264,6 +269,7 @@ For each category, provide:
 ## Category: Getting Started
 
 ### Questions like:
+
 - "How do I install {package-name}?"
 - "How do I set up the provider/config?"
 - "What's the basic usage?"
@@ -301,6 +307,7 @@ For each category, provide:
 ## Knowledge Sources
 
 This command uses knowledge from:
+
 - `/docs/claude/skills/{package-name}-expert.md` - Full API reference
 - `/docs/en/SPECIFICATION.md` - Detailed specifications
 - `/README.md` - Official documentation
@@ -407,6 +414,7 @@ done
 ### 4.2 Content Completeness Check
 
 Verify that documentation covers:
+
 - [ ] All exported functions
 - [ ] All exported hooks
 - [ ] All exported components
@@ -534,15 +542,18 @@ When this command is invoked:
 ## Troubleshooting
 
 ### "Package directory not found"
+
 - Verify the path is correct
 - Use relative path from repository root
 - Example: `packages/lerx/promise-modal` not `/absolute/path`
 
 ### "No exports found"
+
 - Ensure `src/index.ts` exists and has exports
 - Check if package uses different export pattern
 
 ### "README.md not found"
+
 - Command will still work but may produce less detailed docs
 - Consider adding README.md first for better results
 
