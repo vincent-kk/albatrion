@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { createProgram } from '../cli';
 
@@ -54,7 +54,14 @@ describe('CLI', () => {
       program.exitOverride();
 
       program.parse(
-        ['node', 'test', '-p', '@canard/schema-form', '-p', '@lerx/promise-modal'],
+        [
+          'node',
+          'test',
+          '-p',
+          '@canard/schema-form',
+          '-p',
+          '@lerx/promise-modal',
+        ],
         { from: 'user' },
       );
 

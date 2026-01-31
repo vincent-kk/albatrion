@@ -35,9 +35,7 @@ export const getDestinationDir = (
   assetType: AssetType,
 ): string => {
   const [scope, name] = parsePackageName(packageName);
-  if (scope) {
-    return join(cwd, '.claude', assetType, scope, name);
-  }
+  if (scope) return join(cwd, '.claude', assetType, scope, name);
   return join(cwd, '.claude', assetType, name);
 };
 
@@ -155,17 +153,12 @@ export const needsSync = (
   const skillsMeta = readSyncMeta(cwd, packageName, 'skills');
 
   // If neither exists, needs sync
-  if (!commandsMeta && !skillsMeta) {
-    return true;
-  }
+  if (!commandsMeta && !skillsMeta) return true;
 
   // If version differs in any existing meta, needs sync
-  if (commandsMeta && commandsMeta.version !== version) {
-    return true;
-  }
-  if (skillsMeta && skillsMeta.version !== version) {
-    return true;
-  }
+  if (commandsMeta && commandsMeta.version !== version) return true;
+
+  if (skillsMeta && skillsMeta.version !== version) return true;
 
   return false;
 };

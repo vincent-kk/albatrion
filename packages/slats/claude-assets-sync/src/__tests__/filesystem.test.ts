@@ -15,13 +15,7 @@ import {
   writeFile,
   writeSyncMeta,
 } from '../core/filesystem';
-
-import {
-  createTestFixture,
-  mockSchemaFormPackage,
-  mockSyncMeta,
-  type TestFixture,
-} from './helpers';
+import { type TestFixture, createTestFixture, mockSyncMeta } from './helpers';
 
 describe('parsePackageName', () => {
   it('should parse scoped package name', () => {
@@ -45,7 +39,11 @@ describe('parsePackageName', () => {
 
 describe('getDestinationDir', () => {
   it('should build path for scoped package commands', () => {
-    const path = getDestinationDir('/project', '@canard/schema-form', 'commands');
+    const path = getDestinationDir(
+      '/project',
+      '@canard/schema-form',
+      'commands',
+    );
     expect(path).toBe('/project/.claude/commands/@canard/schema-form');
   });
 
@@ -244,7 +242,11 @@ describe('Filesystem operations with temp directory', () => {
         '# Skill',
       );
 
-      const destDir = getDestinationDir(fixture.tempDir, 'my-package', 'skills');
+      const destDir = getDestinationDir(
+        fixture.tempDir,
+        'my-package',
+        'skills',
+      );
       expect(existsSync(join(destDir, 'skill.md'))).toBe(true);
     });
   });

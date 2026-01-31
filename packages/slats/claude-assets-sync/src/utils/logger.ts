@@ -81,13 +81,10 @@ export const logger = {
     _packageName: string,
     result: { success: boolean; skipped: boolean; reason?: string },
   ): void {
-    if (result.skipped) {
+    if (result.skipped)
       console.log(pc.gray(`  Skipped: ${result.reason || 'Unknown reason'}`));
-    } else if (result.success) {
-      console.log(pc.green(`  Completed successfully`));
-    } else {
-      console.log(pc.red(`  Failed: ${result.reason || 'Unknown error'}`));
-    }
+    else if (result.success) console.log(pc.green(`  Completed successfully`));
+    else console.log(pc.red(`  Failed: ${result.reason || 'Unknown error'}`));
   },
 
   /**
@@ -98,9 +95,8 @@ export const logger = {
     console.log(pc.bold('Summary:'));
     console.log(`  ${pc.green('Success:')} ${results.success}`);
     console.log(`  ${pc.gray('Skipped:')} ${results.skipped}`);
-    if (results.failed > 0) {
+    if (results.failed > 0)
       console.log(`  ${pc.red('Failed:')} ${results.failed}`);
-    }
   },
 
   /**
@@ -108,7 +104,9 @@ export const logger = {
    */
   dryRunNotice(): void {
     console.log();
-    console.log(pc.yellow(pc.bold('[DRY RUN] No files will be created or modified.')));
+    console.log(
+      pc.yellow(pc.bold('[DRY RUN] No files will be created or modified.')),
+    );
     console.log();
   },
 };

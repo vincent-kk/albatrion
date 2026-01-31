@@ -1,15 +1,14 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
+  NotFoundError,
+  RateLimitError,
   downloadAssetFiles,
   downloadFile,
   fetchAssetFiles,
   fetchDirectoryContents,
-  NotFoundError,
-  RateLimitError,
 } from '../core/github';
 import type { GitHubRepoInfo } from '../utils/types';
-
 import {
   mockCommandContent,
   mockCommandEntries,
@@ -212,9 +211,9 @@ describe('GitHub API Client', () => {
     it('should throw error for other HTTP errors', async () => {
       vi.stubGlobal(
         'fetch',
-        vi.fn().mockResolvedValue(
-          new Response('Server error', { status: 500 }),
-        ),
+        vi
+          .fn()
+          .mockResolvedValue(new Response('Server error', { status: 500 })),
       );
 
       await expect(

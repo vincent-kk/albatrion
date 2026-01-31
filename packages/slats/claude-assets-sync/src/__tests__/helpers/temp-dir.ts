@@ -54,7 +54,10 @@ export const setupExistingSyncMeta = (
     : join(tempDir, '.claude', assetType, name);
 
   mkdirSync(destDir, { recursive: true });
-  writeFileSync(join(destDir, '.sync-meta.json'), JSON.stringify(meta, null, 2));
+  writeFileSync(
+    join(destDir, '.sync-meta.json'),
+    JSON.stringify(meta, null, 2),
+  );
 };
 
 /**
@@ -65,7 +68,9 @@ export interface TestFixture {
   cleanup: () => void;
 }
 
-export const createTestFixture = (packages: PackageInfo[] = []): TestFixture => {
+export const createTestFixture = (
+  packages: PackageInfo[] = [],
+): TestFixture => {
   const tempDir = createTempDir();
 
   if (packages.length > 0) {

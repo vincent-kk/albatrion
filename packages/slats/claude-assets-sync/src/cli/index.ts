@@ -10,20 +10,21 @@ import type { CliOptions } from '../utils/types';
 const runSync = async (options: CliOptions): Promise<void> => {
   // Validate packages
   if (options.package.length === 0) {
-    logger.error('No packages specified. Use -p <package> to specify packages.');
+    logger.error(
+      'No packages specified. Use -p <package> to specify packages.',
+    );
     logger.info('Example: claude-assets-sync -p @canard/schema-form');
     process.exit(1);
   }
 
   // Show dry-run notice
-  if (options.dryRun) {
-    logger.dryRunNotice();
-  }
+  if (options.dryRun) logger.dryRunNotice();
 
   // Show local mode notice
-  if (options.local) {
-    logger.info('[LOCAL MODE] Reading packages from workspace instead of node_modules\n');
-  }
+  if (options.local)
+    logger.info(
+      '[LOCAL MODE] Reading packages from workspace instead of node_modules\n',
+    );
 
   // Run sync
   const results = await syncPackages(options.package, {
@@ -35,9 +36,7 @@ const runSync = async (options: CliOptions): Promise<void> => {
 
   // Exit with error code if any failed
   const hasFailures = results.some((r) => !r.success && !r.skipped);
-  if (hasFailures) {
-    process.exit(1);
-  }
+  if (hasFailures) process.exit(1);
 };
 
 /**
@@ -60,8 +59,15 @@ export const createProgram = (): Command => {
     )
     .option('-f, --force', 'Force sync even if version matches', false)
     .option('--dry-run', 'Preview changes without writing files', false)
-    .option('-l, --local', 'Read packages from local workspace instead of node_modules', false)
-    .option('-r, --ref <ref>', 'Git ref (branch, tag, or commit) to fetch from (overrides version tag)')
+    .option(
+      '-l, --local',
+      'Read packages from local workspace instead of node_modules',
+      false,
+    )
+    .option(
+      '-r, --ref <ref>',
+      'Git ref (branch, tag, or commit) to fetch from (overrides version tag)',
+    )
     .action(async (opts) => {
       const options: CliOptions = {
         package: opts.package,

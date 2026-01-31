@@ -35,9 +35,7 @@ export const readPackageJson = (
     const json = JSON.parse(content);
 
     // Validate required fields
-    if (!json.name || !json.version || !json.repository) {
-      return null;
-    }
+    if (!json.name || !json.version || !json.repository) return null;
 
     return {
       name: json.name,
@@ -64,41 +62,36 @@ export const readPackageJson = (
 export const parseGitHubRepo = (
   repository: PackageInfo['repository'],
 ): GitHubRepoInfo | null => {
-  if (!repository || typeof repository.url !== 'string') {
-    return null;
-  }
+  if (!repository || typeof repository.url !== 'string') return null;
 
   const url = repository.url;
 
   // HTTPS URL: https://github.com/owner/repo.git
   const httpsMatch = url.match(GITHUB_HTTPS_URL_PATTERN);
-  if (httpsMatch) {
+  if (httpsMatch)
     return {
       owner: httpsMatch[1],
       repo: httpsMatch[2],
       directory: repository.directory,
     };
-  }
 
   // SSH URL: git@github.com:owner/repo.git
   const sshMatch = url.match(GITHUB_SSH_URL_PATTERN);
-  if (sshMatch) {
+  if (sshMatch)
     return {
       owner: sshMatch[1],
       repo: sshMatch[2],
       directory: repository.directory,
     };
-  }
 
   // GitHub shorthand: github:owner/repo
   const shorthandMatch = url.match(GITHUB_SHORTHAND_PATTERN);
-  if (shorthandMatch) {
+  if (shorthandMatch)
     return {
       owner: shorthandMatch[1],
       repo: shorthandMatch[2],
       directory: repository.directory,
     };
-  }
 
   return null;
 };
@@ -118,8 +111,10 @@ export const buildVersionTag = (packageName: string, version: string): string =>
  * @param directory - Repository directory (optional)
  * @returns Full asset path
  */
-export const buildAssetPath = (assetPath: string, directory?: string): string =>
-  directory ? `${directory}/${assetPath}` : assetPath;
+export const buildAssetPath = (
+  assetPath: string,
+  directory?: string,
+): string => (directory ? `${directory}/${assetPath}` : assetPath);
 
 /**
  * Find git repository root directory
@@ -144,7 +139,9 @@ export const findGitRoot = (cwd: string = process.cwd()): string | null => {
  * @param startDir - Directory to start searching from
  * @returns Workspace root path or null if not found
  */
-export const findWorkspaceRoot = (startDir: string = process.cwd()): string | null => {
+export const findWorkspaceRoot = (
+  startDir: string = process.cwd(),
+): string | null => {
   let currentDir = startDir;
 
   while (currentDir !== '/') {
@@ -153,9 +150,7 @@ export const findWorkspaceRoot = (startDir: string = process.cwd()): string | nu
       try {
         const content = readFileSync(packageJsonPath, 'utf-8');
         const json = JSON.parse(content);
-        if (json.workspaces) {
-          return currentDir;
-        }
+        if (json.workspaces) return currentDir;
       } catch {
         // Continue searching
       }
@@ -218,24 +213,18 @@ export const readLocalPackageJson = (
   try {
     // Find workspace root
     const workspaceRoot = findWorkspaceRoot(cwd);
-    if (!workspaceRoot) {
-      return null;
-    }
+    if (!workspaceRoot) return null;
 
     // Find package location in workspaces
     const packageLocation = findWorkspaceLocation(packageName, workspaceRoot);
-    if (!packageLocation) {
-      return null;
-    }
+    if (!packageLocation) return null;
 
     const packageJsonPath = join(packageLocation, 'package.json');
     const content = readFileSync(packageJsonPath, 'utf-8');
     const json = JSON.parse(content);
 
     // Validate required fields
-    if (!json.name || !json.version || !json.repository) {
-      return null;
-    }
+    if (!json.name || !json.version || !json.repository) return null;
 
     return {
       name: json.name,

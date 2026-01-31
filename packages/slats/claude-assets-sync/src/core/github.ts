@@ -32,9 +32,7 @@ const getHeaders = (): HeadersInit => {
   };
 
   const token = process.env.GITHUB_TOKEN;
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
+  if (token) headers.Authorization = `Bearer ${token}`;
 
   return headers;
 };
@@ -60,21 +58,16 @@ export const fetchDirectoryContents = async (
   // Handle rate limit
   if (response.status === 403) {
     const remaining = response.headers.get('x-ratelimit-remaining');
-    if (remaining === '0') {
-      throw new RateLimitError();
-    }
+    if (remaining === '0') throw new RateLimitError();
   }
 
   // Handle not found (directory doesn't exist)
-  if (response.status === 404) {
-    return null;
-  }
+  if (response.status === 404) return null;
 
-  if (!response.ok) {
+  if (!response.ok)
     throw new Error(
       `GitHub API error: ${response.status} ${response.statusText}`,
     );
-  }
 
   const data = await response.json();
 

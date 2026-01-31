@@ -8,7 +8,6 @@ import {
   readPackageJson,
 } from '../utils/package';
 import type { CliOptions, SyncResult } from '../utils/types';
-
 import {
   cleanAssetDir,
   createSyncMeta,
@@ -17,11 +16,7 @@ import {
   writeAssetFile,
   writeSyncMeta,
 } from './filesystem';
-import {
-  downloadAssetFiles,
-  fetchAssetFiles,
-  RateLimitError,
-} from './github';
+import { RateLimitError, downloadAssetFiles, fetchAssetFiles } from './github';
 
 /**
  * Sync Claude assets for a single package
@@ -57,14 +52,13 @@ export const syncPackage = async (
     }
 
     // Step 2: Check for claude config
-    if (!packageInfo.claude?.assetPath) {
+    if (!packageInfo.claude?.assetPath)
       return {
         packageName,
         success: false,
         skipped: true,
         reason: 'Package does not have claude.assetPath in package.json',
       };
-    }
 
     // Step 3: Parse GitHub repository
     const repoInfo = parseGitHubRepo(packageInfo.repository);
@@ -78,7 +72,10 @@ export const syncPackage = async (
     }
 
     // Step 4: Check if sync is needed (unless force)
-    if (!options.force && !needsSync(destDir, packageName, packageInfo.version)) {
+    if (
+      !options.force &&
+      !needsSync(destDir, packageName, packageInfo.version)
+    ) {
       return {
         packageName,
         success: true,
@@ -88,7 +85,8 @@ export const syncPackage = async (
     }
 
     // Step 5: Build version tag (or use custom ref) and asset path
-    const tag = options.ref ?? buildVersionTag(packageName, packageInfo.version);
+    const tag =
+      options.ref ?? buildVersionTag(packageName, packageInfo.version);
     const assetPath = buildAssetPath(packageInfo.claude.assetPath);
 
     logger.step('Fetching', `asset list from GitHub (ref: ${tag})`);
@@ -101,14 +99,13 @@ export const syncPackage = async (
     );
 
     // Check if any assets exist
-    if (commands.length === 0 && skills.length === 0) {
+    if (commands.length === 0 && skills.length === 0)
       return {
         packageName,
         success: false,
         skipped: true,
         reason: 'No commands or skills found in package',
       };
-    }
 
     logger.step(
       'Found',
@@ -118,11 +115,17 @@ export const syncPackage = async (
     // Dry run mode - just log what would happen
     if (options.dryRun) {
       if (commands.length > 0) {
-        logger.step('Would sync commands to', getDestinationDir(destDir, packageName, 'commands'));
+        logger.step(
+          'Would sync commands to',
+          getDestinationDir(destDir, packageName, 'commands'),
+        );
         commands.forEach((entry) => logger.file('create', entry.name));
       }
       if (skills.length > 0) {
-        logger.step('Would sync skills to', getDestinationDir(destDir, packageName, 'skills'));
+        logger.step(
+          'Would sync skills to',
+          getDestinationDir(destDir, packageName, 'skills'),
+        );
         skills.forEach((entry) => logger.file('create', entry.name));
       }
 
@@ -206,14 +209,13 @@ export const syncPackage = async (
       syncedFiles,
     };
   } catch (error) {
-    if (error instanceof RateLimitError) {
+    if (error instanceof RateLimitError)
       return {
         packageName,
         success: false,
         skipped: false,
         reason: error.message,
       };
-    }
 
     const message =
       error instanceof Error ? error.message : 'Unknown error occurred';
@@ -242,12 +244,15 @@ export const syncPackages = async (
 
   // Find git root once for all packages
   const gitRoot = findGitRoot(cwd);
-  if (gitRoot) {
-    logger.info(`[Output] ${gitRoot}/.claude\n`);
-  }
+  if (gitRoot) logger.info(`[Output] ${gitRoot}/.claude\n`);
 
   for (const packageName of packages) {
-    const result = await syncPackage(packageName, options, cwd, gitRoot ?? undefined);
+    const result = await syncPackage(
+      packageName,
+      options,
+      cwd,
+      gitRoot ?? undefined,
+    );
     logger.packageEnd(packageName, result);
     results.push(result);
   }

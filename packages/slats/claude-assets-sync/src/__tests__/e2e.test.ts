@@ -6,8 +6,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getDestinationDir } from '../core/filesystem';
 import { syncPackage, syncPackages } from '../core/sync';
 import type { PackageInfo, SyncMeta } from '../utils/types';
-
 import {
+  type TestFixture,
   createTestFixture,
   mockCommandContent,
   mockCommandEntries,
@@ -17,7 +17,6 @@ import {
   restoreFetchMock,
   setupExistingSyncMeta,
   setupFetchMock,
-  type TestFixture,
 } from './helpers';
 
 // Suppress console output during tests
@@ -104,11 +103,16 @@ describe('E2E: Full Sync Flow', () => {
 
     it('should skip sync when version matches', async () => {
       // Setup existing sync
-      setupExistingSyncMeta(fixture.tempDir, '@canard/schema-form', 'commands', {
-        version: '0.10.0',
-        syncedAt: new Date().toISOString(),
-        files: ['schema-form.md'],
-      });
+      setupExistingSyncMeta(
+        fixture.tempDir,
+        '@canard/schema-form',
+        'commands',
+        {
+          version: '0.10.0',
+          syncedAt: new Date().toISOString(),
+          files: ['schema-form.md'],
+        },
+      );
 
       const result = await syncPackage(
         '@canard/schema-form',
@@ -123,11 +127,16 @@ describe('E2E: Full Sync Flow', () => {
 
     it('should re-sync when version changes', async () => {
       // Setup existing sync with older version
-      setupExistingSyncMeta(fixture.tempDir, '@canard/schema-form', 'commands', {
-        version: '0.9.0',
-        syncedAt: new Date().toISOString(),
-        files: ['old-command.md'],
-      });
+      setupExistingSyncMeta(
+        fixture.tempDir,
+        '@canard/schema-form',
+        'commands',
+        {
+          version: '0.9.0',
+          syncedAt: new Date().toISOString(),
+          files: ['old-command.md'],
+        },
+      );
 
       setupFetchMock({
         directoryEntries: {
@@ -161,11 +170,16 @@ describe('E2E: Full Sync Flow', () => {
 
     it('should clean old files when re-syncing', async () => {
       // Setup existing sync with different files
-      setupExistingSyncMeta(fixture.tempDir, '@canard/schema-form', 'commands', {
-        version: '0.9.0',
-        syncedAt: new Date().toISOString(),
-        files: ['old-command.md'],
-      });
+      setupExistingSyncMeta(
+        fixture.tempDir,
+        '@canard/schema-form',
+        'commands',
+        {
+          version: '0.9.0',
+          syncedAt: new Date().toISOString(),
+          files: ['old-command.md'],
+        },
+      );
 
       // Create old file
       const commandsDir = getDestinationDir(
@@ -291,11 +305,16 @@ describe('E2E: Full Sync Flow', () => {
   describe('Force mode E2E', () => {
     it('should re-sync even when version matches', async () => {
       // Setup existing sync with same version
-      setupExistingSyncMeta(fixture.tempDir, '@canard/schema-form', 'commands', {
-        version: '0.10.0',
-        syncedAt: '2020-01-01T00:00:00.000Z', // Old date
-        files: ['old-file.md'],
-      });
+      setupExistingSyncMeta(
+        fixture.tempDir,
+        '@canard/schema-form',
+        'commands',
+        {
+          version: '0.10.0',
+          syncedAt: '2020-01-01T00:00:00.000Z', // Old date
+          files: ['old-file.md'],
+        },
+      );
 
       setupFetchMock({
         directoryEntries: {

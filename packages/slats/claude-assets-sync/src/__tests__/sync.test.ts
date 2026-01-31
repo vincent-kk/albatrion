@@ -1,12 +1,12 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getDestinationDir, writeSyncMeta } from '../core/filesystem';
 import { syncPackage, syncPackages } from '../core/sync';
-
 import {
+  type TestFixture,
   createTestFixture,
   mockCommandContent,
   mockCommandEntries,
@@ -16,7 +16,6 @@ import {
   mockSkillEntries,
   restoreFetchMock,
   setupFetchMock,
-  type TestFixture,
 } from './helpers';
 
 // Mock console to suppress output during tests
@@ -37,7 +36,7 @@ describe('syncPackage', () => {
   it('should return skipped if package not found in node_modules', async () => {
     const result = await syncPackage(
       '@non/existent',
-      { force: false, dryRun: false },
+      { force: false, dryRun: false, local: false, ref: '' },
       fixture.tempDir,
     );
 
@@ -51,7 +50,7 @@ describe('syncPackage', () => {
 
     const result = await syncPackage(
       '@some/package',
-      { force: false, dryRun: false },
+      { force: false, dryRun: false, local: false, ref: '' },
       fixtureWithoutClaude.tempDir,
     );
 
@@ -72,7 +71,7 @@ describe('syncPackage', () => {
 
     const result = await syncPackage(
       '@canard/schema-form',
-      { force: false, dryRun: false },
+      { force: false, dryRun: false, local: false, ref: '' },
       fixture.tempDir,
     );
 
@@ -102,7 +101,7 @@ describe('syncPackage', () => {
 
     const result = await syncPackage(
       '@canard/schema-form',
-      { force: true, dryRun: false },
+      { force: true, dryRun: false, local: false, ref: '' },
       fixture.tempDir,
     );
 
@@ -125,7 +124,7 @@ describe('syncPackage', () => {
 
     const result = await syncPackage(
       '@canard/schema-form',
-      { force: false, dryRun: false },
+      { force: false, dryRun: false, local: false, ref: '' },
       fixture.tempDir,
     );
 
@@ -168,7 +167,7 @@ describe('syncPackage', () => {
 
     const result = await syncPackage(
       '@canard/schema-form',
-      { force: false, dryRun: false },
+      { force: false, dryRun: false, local: false, ref: '' },
       fixture.tempDir,
     );
 
@@ -190,7 +189,7 @@ describe('syncPackage', () => {
 
     const result = await syncPackage(
       '@canard/schema-form',
-      { force: false, dryRun: false },
+      { force: false, dryRun: false, local: false, ref: '' },
       fixture.tempDir,
     );
 
@@ -206,7 +205,7 @@ describe('syncPackage', () => {
 
     const result = await syncPackage(
       '@canard/schema-form',
-      { force: false, dryRun: false },
+      { force: false, dryRun: false, local: false, ref: '' },
       fixture.tempDir,
     );
 
@@ -231,7 +230,7 @@ describe('syncPackage', () => {
 
       const result = await syncPackage(
         '@canard/schema-form',
-        { force: false, dryRun: true },
+        { force: false, dryRun: true, local: false, ref: '' },
         fixture.tempDir,
       );
 
@@ -258,7 +257,7 @@ describe('syncPackage', () => {
 
       const result = await syncPackage(
         '@canard/schema-form',
-        { force: false, dryRun: true },
+        { force: false, dryRun: true, local: false, ref: '' },
         fixture.tempDir,
       );
 
@@ -276,7 +275,7 @@ describe('syncPackage', () => {
 
       const result = await syncPackage(
         '@canard/schema-form',
-        { force: false, dryRun: false },
+        { force: false, dryRun: false, local: false, ref: '' },
         fixture.tempDir,
       );
 
@@ -290,7 +289,7 @@ describe('syncPackage', () => {
 
       const result = await syncPackage(
         '@canard/schema-form',
-        { force: false, dryRun: false },
+        { force: false, dryRun: false, local: false, ref: '' },
         fixture.tempDir,
       );
 
@@ -325,7 +324,7 @@ describe('syncPackages', () => {
 
     const results = await syncPackages(
       ['@canard/schema-form'],
-      { force: false, dryRun: false },
+      { force: false, dryRun: false, local: false, ref: '' },
       fixture.tempDir,
     );
 
@@ -345,7 +344,7 @@ describe('syncPackages', () => {
 
     const results = await syncPackages(
       ['@canard/schema-form', '@non/existent'],
-      { force: false, dryRun: false },
+      { force: false, dryRun: false, local: false, ref: '' },
       fixture.tempDir,
     );
 
@@ -370,7 +369,7 @@ describe('syncPackages', () => {
 
     await syncPackages(
       ['@canard/schema-form'],
-      { force: false, dryRun: false },
+      { force: false, dryRun: false, local: false, ref: '' },
       fixture.tempDir,
     );
 
