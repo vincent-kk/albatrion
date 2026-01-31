@@ -1,0 +1,24 @@
+{
+  "version": "0.10.0",
+  "syncedAt": "2026-01-31T16:14:47.571Z",
+  "files": [
+    "array-operations.md",
+    "computed-properties.md",
+    "conditional-schema.md",
+    "context-usage.md",
+    "event-system.md",
+    "form-handle.md",
+    "form-render.md",
+    "formtype-input.md",
+    "inject-to.md",
+    "jsonpointer.md",
+    "performance-optimization.md",
+    "plugin-system.md",
+    "schema-form-expert.md",
+    "state-management.md",
+    "testing-guide.md",
+    "troubleshooting.md",
+    "validation.md",
+    "virtual-schema.md"
+  ]
+}
