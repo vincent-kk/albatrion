@@ -43,6 +43,7 @@
     "build": "rollup -c && yarn build:types",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.declarations.json",
+    "dev": "tsx src/index.ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\"",
     "publish:npm": "yarn npm publish --access public",
