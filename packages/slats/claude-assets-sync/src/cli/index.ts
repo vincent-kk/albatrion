@@ -5,9 +5,38 @@ import { logger } from '../utils/logger';
 import type { CliOptions } from '../utils/types';
 
 /**
+ * Run the sync process
+ */
+const runSync = async (options: CliOptions): Promise<void> => {
+  // Validate packages
+  if (options.package.length === 0) {
+    logger.error('No packages specified. Use -p <package> to specify packages.');
+    logger.info('Example: claude-assets-sync -p @canard/schema-form');
+    process.exit(1);
+  }
+
+  // Show dry-run notice
+  if (options.dryRun) {
+    logger.dryRunNotice();
+  }
+
+  // Run sync
+  const results = await syncPackages(options.package, {
+    force: options.force,
+    dryRun: options.dryRun,
+  });
+
+  // Exit with error code if any failed
+  const hasFailures = results.some((r) => !r.success && !r.skipped);
+  if (hasFailures) {
+    process.exit(1);
+  }
+};
+
+/**
  * Create and configure the CLI program
  */
-export function createProgram(): Command {
+export const createProgram = (): Command => {
   const program = new Command();
 
   program
@@ -35,41 +64,12 @@ export function createProgram(): Command {
     });
 
   return program;
-}
-
-/**
- * Run the sync process
- */
-async function runSync(options: CliOptions): Promise<void> {
-  // Validate packages
-  if (options.package.length === 0) {
-    logger.error('No packages specified. Use -p <package> to specify packages.');
-    logger.info('Example: claude-assets-sync -p @canard/schema-form');
-    process.exit(1);
-  }
-
-  // Show dry-run notice
-  if (options.dryRun) {
-    logger.dryRunNotice();
-  }
-
-  // Run sync
-  const results = await syncPackages(options.package, {
-    force: options.force,
-    dryRun: options.dryRun,
-  });
-
-  // Exit with error code if any failed
-  const hasFailures = results.some((r) => !r.success && !r.skipped);
-  if (hasFailures) {
-    process.exit(1);
-  }
-}
+};
 
 /**
  * Run the CLI
  */
-export async function run(): Promise<void> {
+export const run = async (): Promise<void> => {
   const program = createProgram();
   await program.parseAsync(process.argv);
-}
+};

@@ -28,11 +28,11 @@ import {
  * @param cwd - Current working directory
  * @returns Sync result
  */
-export async function syncPackage(
+export const syncPackage = async (
   packageName: string,
   options: Pick<CliOptions, 'force' | 'dryRun'>,
   cwd: string = process.cwd(),
-): Promise<SyncResult> {
+): Promise<SyncResult> => {
   logger.packageStart(packageName);
 
   try {
@@ -215,7 +215,7 @@ export async function syncPackage(
       reason: message,
     };
   }
-}
+};
 
 /**
  * Sync Claude assets for multiple packages
@@ -224,11 +224,11 @@ export async function syncPackage(
  * @param cwd - Current working directory
  * @returns Array of sync results
  */
-export async function syncPackages(
+export const syncPackages = async (
   packages: string[],
   options: Pick<CliOptions, 'force' | 'dryRun'>,
   cwd: string = process.cwd(),
-): Promise<SyncResult[]> {
+): Promise<SyncResult[]> => {
   const results: SyncResult[] = [];
 
   for (const packageName of packages) {
@@ -246,4 +246,4 @@ export async function syncPackages(
   logger.summary(summary);
 
   return results;
-}
+};

@@ -21,8 +21,8 @@ interface MockFetchOptions {
 /**
  * Create a mock fetch function for testing GitHub API calls
  */
-export function createMockFetch(options: MockFetchOptions = {}) {
-  return vi.fn(async (url: string, _init?: RequestInit): Promise<Response> => {
+export const createMockFetch = (options: MockFetchOptions = {}) =>
+  vi.fn(async (url: string, _init?: RequestInit): Promise<Response> => {
     // Simulate network error
     if (options.networkError) {
       throw new Error('Network error');
@@ -90,20 +90,19 @@ export function createMockFetch(options: MockFetchOptions = {}) {
     // Default: not found
     return new Response('Not found', { status: 404 });
   });
-}
 
 /**
  * Setup global fetch mock
  */
-export function setupFetchMock(options: MockFetchOptions = {}) {
+export const setupFetchMock = (options: MockFetchOptions = {}) => {
   const mockFetch = createMockFetch(options);
   vi.stubGlobal('fetch', mockFetch);
   return mockFetch;
-}
+};
 
 /**
  * Restore global fetch
  */
-export function restoreFetchMock() {
+export const restoreFetchMock = () => {
   vi.unstubAllGlobals();
-}
+};

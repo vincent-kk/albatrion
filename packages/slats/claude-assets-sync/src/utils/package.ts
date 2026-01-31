@@ -19,10 +19,10 @@ const GITHUB_SHORTHAND_PATTERN = /^github:([^/]+)\/([^/]+)$/;
  * @param cwd - Current working directory
  * @returns PackageInfo or null if not found
  */
-export function readPackageJson(
+export const readPackageJson = (
   packageName: string,
   cwd: string = process.cwd(),
-): PackageInfo | null {
+): PackageInfo | null => {
   try {
     const packageJsonPath = join(
       cwd,
@@ -47,7 +47,7 @@ export function readPackageJson(
   } catch {
     return null;
   }
-}
+};
 
 /**
  * Parse GitHub repository URL to extract owner and repo
@@ -60,9 +60,9 @@ export function readPackageJson(
  * @param repository - Repository info from package.json
  * @returns GitHubRepoInfo or null if parsing failed
  */
-export function parseGitHubRepo(
+export const parseGitHubRepo = (
   repository: PackageInfo['repository'],
-): GitHubRepoInfo | null {
+): GitHubRepoInfo | null => {
   if (!repository || typeof repository.url !== 'string') {
     return null;
   }
@@ -100,7 +100,7 @@ export function parseGitHubRepo(
   }
 
   return null;
-}
+};
 
 /**
  * Build version tag for GitHub
@@ -108,9 +108,8 @@ export function parseGitHubRepo(
  * @param version - Package version (e.g., "0.10.0")
  * @returns Version tag (e.g., "@canard/schema-form@0.10.0")
  */
-export function buildVersionTag(packageName: string, version: string): string {
-  return `${packageName}@${version}`;
-}
+export const buildVersionTag = (packageName: string, version: string): string =>
+  `${packageName}@${version}`;
 
 /**
  * Build asset path for a package
@@ -118,7 +117,5 @@ export function buildVersionTag(packageName: string, version: string): string {
  * @param directory - Repository directory (optional)
  * @returns Full asset path
  */
-export function buildAssetPath(assetPath: string, directory?: string): string {
-  if (directory) return `${directory}/${assetPath}`;
-  return assetPath;
-}
+export const buildAssetPath = (assetPath: string, directory?: string): string =>
+  directory ? `${directory}/${assetPath}` : assetPath;

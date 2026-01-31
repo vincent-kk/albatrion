@@ -127,13 +127,11 @@ export const mockSyncMeta: SyncMeta = {
 /**
  * Create a mock package.json content
  */
-export function createMockPackageJson(info: PackageInfo): string {
-  return JSON.stringify(info, null, 2);
-}
+export const createMockPackageJson = (info: PackageInfo): string =>
+  JSON.stringify(info, null, 2);
 
 /**
  * Create a mock GitHub API response for directory listing
  */
-export function createGitHubDirectoryResponse(entries: GitHubEntry[]): string {
-  return JSON.stringify(entries);
-}
+export const createGitHubDirectoryResponse = (entries: GitHubEntry[]): string =>
+  JSON.stringify(entries);

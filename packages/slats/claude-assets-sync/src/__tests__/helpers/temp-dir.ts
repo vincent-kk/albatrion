@@ -7,24 +7,23 @@ import type { PackageInfo, SyncMeta } from '../../utils/types';
 /**
  * Create a temporary directory for testing
  */
-export function createTempDir(): string {
-  return mkdtempSync(join(tmpdir(), 'claude-assets-sync-test-'));
-}
+export const createTempDir = (): string =>
+  mkdtempSync(join(tmpdir(), 'claude-assets-sync-test-'));
 
 /**
  * Remove a temporary directory
  */
-export function removeTempDir(dirPath: string): void {
+export const removeTempDir = (dirPath: string): void => {
   rmSync(dirPath, { recursive: true, force: true });
-}
+};
 
 /**
  * Setup a mock project with node_modules
  */
-export function setupMockProject(
+export const setupMockProject = (
   tempDir: string,
   packages: PackageInfo[],
-): void {
+): void => {
   // Create node_modules directory
   const nodeModulesDir = join(tempDir, 'node_modules');
   mkdirSync(nodeModulesDir, { recursive: true });
@@ -35,17 +34,17 @@ export function setupMockProject(
     mkdirSync(pkgDir, { recursive: true });
     writeFileSync(join(pkgDir, 'package.json'), JSON.stringify(pkg, null, 2));
   }
-}
+};
 
 /**
  * Setup existing sync meta for a package
  */
-export function setupExistingSyncMeta(
+export const setupExistingSyncMeta = (
   tempDir: string,
   packageName: string,
   assetType: 'commands' | 'skills',
   meta: SyncMeta,
-): void {
+): void => {
   const [scope, name] = packageName.startsWith('@')
     ? packageName.split('/')
     : ['', packageName];
@@ -56,7 +55,7 @@ export function setupExistingSyncMeta(
 
   mkdirSync(destDir, { recursive: true });
   writeFileSync(join(destDir, '.sync-meta.json'), JSON.stringify(meta, null, 2));
-}
+};
 
 /**
  * Create a test fixture for full E2E testing
@@ -66,7 +65,7 @@ export interface TestFixture {
   cleanup: () => void;
 }
 
-export function createTestFixture(packages: PackageInfo[] = []): TestFixture {
+export const createTestFixture = (packages: PackageInfo[] = []): TestFixture => {
   const tempDir = createTempDir();
 
   if (packages.length > 0) {
@@ -77,4 +76,4 @@ export function createTestFixture(packages: PackageInfo[] = []): TestFixture {
     tempDir,
     cleanup: () => removeTempDir(tempDir),
   };
-}
+};

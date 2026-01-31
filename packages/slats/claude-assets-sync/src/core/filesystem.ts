@@ -14,13 +14,13 @@ import type { AssetType, SyncMeta } from '../utils/types';
  * @param packageName - Package name (e.g., "@canard/schema-form")
  * @returns [scope, name] tuple (e.g., ["@canard", "schema-form"])
  */
-export function parsePackageName(packageName: string): [string, string] {
+export const parsePackageName = (packageName: string): [string, string] => {
   if (packageName.startsWith('@')) {
     const [scope, name] = packageName.split('/');
     return [scope, name];
   }
   return ['', packageName];
-}
+};
 
 /**
  * Get the destination directory for synced assets
@@ -29,37 +29,37 @@ export function parsePackageName(packageName: string): [string, string] {
  * @param assetType - Asset type (commands or skills)
  * @returns Full path to destination directory
  */
-export function getDestinationDir(
+export const getDestinationDir = (
   cwd: string,
   packageName: string,
   assetType: AssetType,
-): string {
+): string => {
   const [scope, name] = parsePackageName(packageName);
   if (scope) {
     return join(cwd, '.claude', assetType, scope, name);
   }
   return join(cwd, '.claude', assetType, name);
-}
+};
 
 /**
  * Ensure directory exists (creates recursively if needed)
  * @param dirPath - Directory path
  */
-export function ensureDir(dirPath: string): void {
+export const ensureDir = (dirPath: string): void => {
   if (!existsSync(dirPath)) {
     mkdirSync(dirPath, { recursive: true });
   }
-}
+};
 
 /**
  * Write file with directory creation
  * @param filePath - Full file path
  * @param content - File content
  */
-export function writeFile(filePath: string, content: string): void {
+export const writeFile = (filePath: string, content: string): void => {
   ensureDir(dirname(filePath));
   writeFileSync(filePath, content, 'utf-8');
-}
+};
 
 /**
  * Read sync metadata file
@@ -68,11 +68,11 @@ export function writeFile(filePath: string, content: string): void {
  * @param assetType - Asset type
  * @returns SyncMeta or null if not found
  */
-export function readSyncMeta(
+export const readSyncMeta = (
   cwd: string,
   packageName: string,
   assetType: AssetType,
-): SyncMeta | null {
+): SyncMeta | null => {
   try {
     const destDir = getDestinationDir(cwd, packageName, assetType);
     const metaPath = join(destDir, '.sync-meta.json');
@@ -81,7 +81,7 @@ export function readSyncMeta(
   } catch {
     return null;
   }
-}
+};
 
 /**
  * Write sync metadata file
@@ -90,16 +90,16 @@ export function readSyncMeta(
  * @param assetType - Asset type
  * @param meta - Sync metadata
  */
-export function writeSyncMeta(
+export const writeSyncMeta = (
   cwd: string,
   packageName: string,
   assetType: AssetType,
   meta: SyncMeta,
-): void {
+): void => {
   const destDir = getDestinationDir(cwd, packageName, assetType);
   const metaPath = join(destDir, '.sync-meta.json');
   writeFile(metaPath, JSON.stringify(meta, null, 2));
-}
+};
 
 /**
  * Write asset file to destination
@@ -109,17 +109,17 @@ export function writeSyncMeta(
  * @param fileName - File name
  * @param content - File content
  */
-export function writeAssetFile(
+export const writeAssetFile = (
   cwd: string,
   packageName: string,
   assetType: AssetType,
   fileName: string,
   content: string,
-): void {
+): void => {
   const destDir = getDestinationDir(cwd, packageName, assetType);
   const filePath = join(destDir, fileName);
   writeFile(filePath, content);
-}
+};
 
 /**
  * Clean existing synced files for a package
@@ -127,16 +127,16 @@ export function writeAssetFile(
  * @param packageName - Package name
  * @param assetType - Asset type
  */
-export function cleanAssetDir(
+export const cleanAssetDir = (
   cwd: string,
   packageName: string,
   assetType: AssetType,
-): void {
+): void => {
   const destDir = getDestinationDir(cwd, packageName, assetType);
   if (existsSync(destDir)) {
     rmSync(destDir, { recursive: true, force: true });
   }
-}
+};
 
 /**
  * Check if package assets need sync (version mismatch)
@@ -145,11 +145,11 @@ export function cleanAssetDir(
  * @param version - Current package version
  * @returns true if sync is needed
  */
-export function needsSync(
+export const needsSync = (
   cwd: string,
   packageName: string,
   version: string,
-): boolean {
+): boolean => {
   // Check both asset types
   const commandsMeta = readSyncMeta(cwd, packageName, 'commands');
   const skillsMeta = readSyncMeta(cwd, packageName, 'skills');
@@ -168,7 +168,7 @@ export function needsSync(
   }
 
   return false;
-}
+};
 
 /**
  * Create SyncMeta object for current sync operation
@@ -176,10 +176,8 @@ export function needsSync(
  * @param files - List of synced file names
  * @returns SyncMeta object
  */
-export function createSyncMeta(version: string, files: string[]): SyncMeta {
-  return {
-    version,
-    syncedAt: new Date().toISOString(),
-    files,
-  };
-}
+export const createSyncMeta = (version: string, files: string[]): SyncMeta => ({
+  version,
+  syncedAt: new Date().toISOString(),
+  files,
+});

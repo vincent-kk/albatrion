@@ -25,7 +25,7 @@ export class NotFoundError extends Error {
 /**
  * Get GitHub API headers with optional authentication
  */
-function getHeaders(): HeadersInit {
+const getHeaders = (): HeadersInit => {
   const headers: HeadersInit = {
     Accept: 'application/vnd.github.v3+json',
     'User-Agent': 'claude-assets-sync',
@@ -37,7 +37,7 @@ function getHeaders(): HeadersInit {
   }
 
   return headers;
-}
+};
 
 /**
  * Fetch directory contents from GitHub API
@@ -46,11 +46,11 @@ function getHeaders(): HeadersInit {
  * @param tag - Git tag or ref to fetch from
  * @returns Array of GitHubEntry or null if directory doesn't exist
  */
-export async function fetchDirectoryContents(
+export const fetchDirectoryContents = async (
   repoInfo: GitHubRepoInfo,
   path: string,
   tag: string,
-): Promise<GitHubEntry[] | null> {
+): Promise<GitHubEntry[] | null> => {
   const url = `https://api.github.com/repos/${repoInfo.owner}/${repoInfo.repo}/contents/${path}?ref=${encodeURIComponent(tag)}`;
 
   const response = await fetch(url, {
@@ -82,7 +82,7 @@ export async function fetchDirectoryContents(
   return (data as GitHubEntry[]).filter(
     (entry) => entry.type === 'file' && entry.name.endsWith('.md'),
   );
-}
+};
 
 /**
  * Fetch asset files (commands and skills) from GitHub
@@ -91,14 +91,14 @@ export async function fetchDirectoryContents(
  * @param tag - Git tag or ref to fetch from
  * @returns Object with commands and skills file lists
  */
-export async function fetchAssetFiles(
+export const fetchAssetFiles = async (
   repoInfo: GitHubRepoInfo,
   assetPath: string,
   tag: string,
 ): Promise<{
   commands: GitHubEntry[];
   skills: GitHubEntry[];
-}> {
+}> => {
   // Build full paths
   const basePath = repoInfo.directory
     ? `${repoInfo.directory}/${assetPath}`
@@ -116,7 +116,7 @@ export async function fetchAssetFiles(
     commands: commandsEntries || [],
     skills: skillsEntries || [],
   };
-}
+};
 
 /**
  * Download file content from raw.githubusercontent.com
@@ -125,11 +125,11 @@ export async function fetchAssetFiles(
  * @param tag - Git tag or ref
  * @returns File content as string
  */
-export async function downloadFile(
+export const downloadFile = async (
   repoInfo: GitHubRepoInfo,
   filePath: string,
   tag: string,
-): Promise<string> {
+): Promise<string> => {
   const url = `https://raw.githubusercontent.com/${repoInfo.owner}/${repoInfo.repo}/${encodeURIComponent(tag)}/${filePath}`;
 
   const response = await fetch(url, {
@@ -149,7 +149,7 @@ export async function downloadFile(
   }
 
   return response.text();
-}
+};
 
 /**
  * Download multiple files from a specific asset type
@@ -160,13 +160,13 @@ export async function downloadFile(
  * @param tag - Git tag or ref
  * @returns Map of filename to content
  */
-export async function downloadAssetFiles(
+export const downloadAssetFiles = async (
   repoInfo: GitHubRepoInfo,
   assetPath: string,
   assetType: AssetType,
   entries: GitHubEntry[],
   tag: string,
-): Promise<Map<string, string>> {
+): Promise<Map<string, string>> => {
   const basePath = repoInfo.directory
     ? `${repoInfo.directory}/${assetPath}/${assetType}`
     : `${assetPath}/${assetType}`;
@@ -181,4 +181,4 @@ export async function downloadAssetFiles(
   }
 
   return results;
-}
+};
