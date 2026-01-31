@@ -1,5 +1,5 @@
 {
-  "name": "@canard/schema-form-antd-plugin",
+  "name": "@canard/schema-form-antd5-plugin",
   "version": "0.10.0",
   "description": "Ant Design components plugin for @canard/schema-form providing pre-built form inputs with advanced components like date pickers, sliders, and file uploads",
   "keywords": [
@@ -19,7 +19,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/vincent-kk/albatrion.git",
-    "directory": "packages/canard/schema-form-antd-plugin"
+    "directory": "packages/canard/schema-form-antd5-plugin"
   },
   "license": "MIT",
   "author": {
