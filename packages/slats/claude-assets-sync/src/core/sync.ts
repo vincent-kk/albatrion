@@ -5,7 +5,7 @@ import {
   parseGitHubRepo,
   readPackageJson,
 } from '../utils/package';
-import type { AssetType, CliOptions, SyncResult } from '../utils/types';
+import type { CliOptions, SyncResult } from '../utils/types';
 
 import {
   cleanAssetDir,

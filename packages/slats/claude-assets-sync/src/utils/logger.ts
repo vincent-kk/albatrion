@@ -78,7 +78,7 @@ export const logger = {
    * Log package sync result
    */
   packageEnd(
-    packageName: string,
+    _packageName: string,
     result: { success: boolean; skipped: boolean; reason?: string },
   ): void {
     if (result.skipped) {
