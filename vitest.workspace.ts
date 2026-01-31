@@ -7,6 +7,7 @@ export default defineWorkspace([
   "./packages/winglet/json-schema/vite.config.ts",
   "./packages/winglet/react-utils/vite.config.ts",
   "./packages/winglet/style-utils/vite.config.ts",
+  "./packages/slats/claude-assets-sync/vite.config.ts",
   "./packages/lerx/promise-modal/vite.config.ts",
   "./packages/canard/schema-form-antd5-plugin/vite.config.ts",
   "./packages/canard/schema-form-antd6-plugin/vite.config.ts",
