@@ -23,9 +23,6 @@
   },
   "sideEffects": false,
   "type": "module",
-  "bin": {
-    "claude-assets-sync": "./dist/index.mjs"
-  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -37,6 +34,7 @@
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "bin": "./dist/index.mjs",
   "files": [
     "dist",
     "README.md"

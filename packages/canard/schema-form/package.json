@@ -77,6 +77,9 @@
     "react": ">=18 <20",
     "react-dom": ">=18 <20"
   },
+  "claude": {
+    "assetPath": "docs/claude"
+  },
   "size-limit": [
     {
       "path": "dist/index.cjs",
@@ -86,8 +89,5 @@
       "path": "dist/index.mjs",
       "limit": "20 KB"
     }
-  ],
-  "claude": {
-    "assetPath": "docs/claude"
-  }
+  ]
 }
