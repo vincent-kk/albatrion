@@ -20,10 +20,17 @@ const runSync = async (options: CliOptions): Promise<void> => {
     logger.dryRunNotice();
   }
 
+  // Show local mode notice
+  if (options.local) {
+    logger.info('[LOCAL MODE] Reading packages from workspace instead of node_modules\n');
+  }
+
   // Run sync
   const results = await syncPackages(options.package, {
     force: options.force,
     dryRun: options.dryRun,
+    local: options.local,
+    ref: options.ref,
   });
 
   // Exit with error code if any failed
@@ -53,11 +60,15 @@ export const createProgram = (): Command => {
     )
     .option('-f, --force', 'Force sync even if version matches', false)
     .option('--dry-run', 'Preview changes without writing files', false)
+    .option('-l, --local', 'Read packages from local workspace instead of node_modules', false)
+    .option('-r, --ref <ref>', 'Git ref (branch, tag, or commit) to fetch from (overrides version tag)')
     .action(async (opts) => {
       const options: CliOptions = {
         package: opts.package,
         force: opts.force,
         dryRun: opts.dryRun,
+        local: opts.local,
+        ref: opts.ref,
       };
 
       await runSync(options);

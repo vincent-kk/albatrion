@@ -1,7 +1,8 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { execSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 
-import type { GitHubRepoInfo, PackageInfo } from './types';
+import type { GitHubRepoInfo, PackageInfo, WorkspaceInfo } from './types';
 
 /** GitHub HTTPS URL pattern: https://github.com/owner/repo.git */
 const GITHUB_HTTPS_URL_PATTERN =
@@ -119,3 +120,112 @@ export const buildVersionTag = (packageName: string, version: string): string =>
  */
 export const buildAssetPath = (assetPath: string, directory?: string): string =>
   directory ? `${directory}/${assetPath}` : assetPath;
+
+/**
+ * Find the workspace root directory by looking for package.json with workspaces
+ * @param startDir - Directory to start searching from
+ * @returns Workspace root path or null if not found
+ */
+export const findWorkspaceRoot = (startDir: string = process.cwd()): string | null => {
+  let currentDir = startDir;
+
+  while (currentDir !== '/') {
+    const packageJsonPath = join(currentDir, 'package.json');
+    if (existsSync(packageJsonPath)) {
+      try {
+        const content = readFileSync(packageJsonPath, 'utf-8');
+        const json = JSON.parse(content);
+        if (json.workspaces) {
+          return currentDir;
+        }
+      } catch {
+        // Continue searching
+      }
+    }
+    currentDir = dirname(currentDir);
+  }
+
+  return null;
+};
+
+/**
+ * Get list of workspaces using yarn workspaces list
+ * @param workspaceRoot - Workspace root directory
+ * @returns Array of WorkspaceInfo
+ */
+export const getWorkspaceList = (workspaceRoot: string): WorkspaceInfo[] => {
+  try {
+    const output = execSync('yarn workspaces list --json', {
+      cwd: workspaceRoot,
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+
+    // yarn workspaces list --json outputs one JSON object per line
+    return output
+      .trim()
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => JSON.parse(line) as WorkspaceInfo);
+  } catch {
+    return [];
+  }
+};
+
+/**
+ * Find workspace location by package name
+ * @param packageName - Package name to find
+ * @param workspaceRoot - Workspace root directory
+ * @returns Workspace location path or null if not found
+ */
+export const findWorkspaceLocation = (
+  packageName: string,
+  workspaceRoot: string,
+): string | null => {
+  const workspaces = getWorkspaceList(workspaceRoot);
+  const workspace = workspaces.find((ws) => ws.name === packageName);
+  return workspace ? join(workspaceRoot, workspace.location) : null;
+};
+
+/**
+ * Read package.json from local workspace
+ * @param packageName - Package name (e.g., "@canard/schema-form")
+ * @param cwd - Current working directory
+ * @returns PackageInfo or null if not found
+ */
+export const readLocalPackageJson = (
+  packageName: string,
+  cwd: string = process.cwd(),
+): PackageInfo | null => {
+  try {
+    // Find workspace root
+    const workspaceRoot = findWorkspaceRoot(cwd);
+    if (!workspaceRoot) {
+      return null;
+    }
+
+    // Find package location in workspaces
+    const packageLocation = findWorkspaceLocation(packageName, workspaceRoot);
+    if (!packageLocation) {
+      return null;
+    }
+
+    const packageJsonPath = join(packageLocation, 'package.json');
+    const content = readFileSync(packageJsonPath, 'utf-8');
+    const json = JSON.parse(content);
+
+    // Validate required fields
+    if (!json.name || !json.version || !json.repository) {
+      return null;
+    }
+
+    return {
+      name: json.name,
+      version: json.version,
+      repository: json.repository,
+      claude: json.claude,
+    };
+  } catch {
+    return null;
+  }
+};

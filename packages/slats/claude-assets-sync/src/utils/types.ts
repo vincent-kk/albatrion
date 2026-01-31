@@ -83,4 +83,15 @@ export interface CliOptions {
   package: string[];
   force: boolean;
   dryRun: boolean;
+  local: boolean;
+  /** Custom git ref (branch, tag, or commit) to fetch from */
+  ref?: string;
+}
+
+/**
+ * Workspace info from yarn workspaces
+ */
+export interface WorkspaceInfo {
+  name: string;
+  location: string;
 }

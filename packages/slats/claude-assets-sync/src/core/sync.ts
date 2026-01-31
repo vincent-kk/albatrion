@@ -3,6 +3,7 @@ import {
   buildAssetPath,
   buildVersionTag,
   parseGitHubRepo,
+  readLocalPackageJson,
   readPackageJson,
 } from '../utils/package';
 import type { CliOptions, SyncResult } from '../utils/types';
@@ -30,20 +31,23 @@ import {
  */
 export const syncPackage = async (
   packageName: string,
-  options: Pick<CliOptions, 'force' | 'dryRun'>,
+  options: Pick<CliOptions, 'force' | 'dryRun' | 'local' | 'ref'>,
   cwd: string = process.cwd(),
 ): Promise<SyncResult> => {
   logger.packageStart(packageName);
 
   try {
-    // Step 1: Read package.json from node_modules
-    const packageInfo = readPackageJson(packageName, cwd);
+    // Step 1: Read package.json from node_modules or local workspace
+    const packageInfo = options.local
+      ? readLocalPackageJson(packageName, cwd)
+      : readPackageJson(packageName, cwd);
     if (!packageInfo) {
+      const location = options.local ? 'workspace' : 'node_modules';
       return {
         packageName,
         success: false,
         skipped: true,
-        reason: 'Package not found in node_modules',
+        reason: `Package not found in ${location}`,
       };
     }
 
@@ -78,11 +82,11 @@ export const syncPackage = async (
       };
     }
 
-    // Step 5: Build version tag and asset path
-    const tag = buildVersionTag(packageName, packageInfo.version);
+    // Step 5: Build version tag (or use custom ref) and asset path
+    const tag = options.ref ?? buildVersionTag(packageName, packageInfo.version);
     const assetPath = buildAssetPath(packageInfo.claude.assetPath);
 
-    logger.step('Fetching', `asset list from GitHub (tag: ${tag})`);
+    logger.step('Fetching', `asset list from GitHub (ref: ${tag})`);
 
     // Step 6: Fetch asset file lists from GitHub
     const { commands, skills } = await fetchAssetFiles(
@@ -226,7 +230,7 @@ export const syncPackage = async (
  */
 export const syncPackages = async (
   packages: string[],
-  options: Pick<CliOptions, 'force' | 'dryRun'>,
+  options: Pick<CliOptions, 'force' | 'dryRun' | 'local' | 'ref'>,
   cwd: string = process.cwd(),
 ): Promise<SyncResult[]> => {
   const results: SyncResult[] = [];
