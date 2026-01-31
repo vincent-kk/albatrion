@@ -1,0 +1,26 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "../../",
+    "outDir": "./dist",
+    "paths": {
+      "@/claude-assets-sync": [
+        "./slats/claude-assets-sync/src"
+      ],
+      "@/claude-assets-sync/*": [
+        "./slats/claude-assets-sync/src/*"
+      ],
+      "@aileron/*": [
+        "./aileron/common/*"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
