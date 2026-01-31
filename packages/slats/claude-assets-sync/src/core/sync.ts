@@ -2,6 +2,7 @@ import { logger } from '../utils/logger';
 import {
   buildAssetPath,
   buildVersionTag,
+  findGitRoot,
   parseGitHubRepo,
   readLocalPackageJson,
   readPackageJson,
@@ -33,10 +34,14 @@ export const syncPackage = async (
   packageName: string,
   options: Pick<CliOptions, 'force' | 'dryRun' | 'local' | 'ref'>,
   cwd: string = process.cwd(),
+  outputDir?: string,
 ): Promise<SyncResult> => {
   logger.packageStart(packageName);
 
   try {
+    // Determine output directory (git root or provided outputDir)
+    const destDir = outputDir ?? findGitRoot(cwd) ?? cwd;
+
     // Step 1: Read package.json from node_modules or local workspace
     const packageInfo = options.local
       ? readLocalPackageJson(packageName, cwd)
@@ -73,7 +78,7 @@ export const syncPackage = async (
     }
 
     // Step 4: Check if sync is needed (unless force)
-    if (!options.force && !needsSync(cwd, packageName, packageInfo.version)) {
+    if (!options.force && !needsSync(destDir, packageName, packageInfo.version)) {
       return {
         packageName,
         success: true,
@@ -113,11 +118,11 @@ export const syncPackage = async (
     // Dry run mode - just log what would happen
     if (options.dryRun) {
       if (commands.length > 0) {
-        logger.step('Would sync commands to', getDestinationDir(cwd, packageName, 'commands'));
+        logger.step('Would sync commands to', getDestinationDir(destDir, packageName, 'commands'));
         commands.forEach((entry) => logger.file('create', entry.name));
       }
       if (skills.length > 0) {
-        logger.step('Would sync skills to', getDestinationDir(cwd, packageName, 'skills'));
+        logger.step('Would sync skills to', getDestinationDir(destDir, packageName, 'skills'));
         skills.forEach((entry) => logger.file('create', entry.name));
       }
 
@@ -150,16 +155,16 @@ export const syncPackage = async (
       );
 
       // Clean existing directory and write new files
-      cleanAssetDir(cwd, packageName, 'commands');
+      cleanAssetDir(destDir, packageName, 'commands');
       for (const [fileName, content] of commandFiles) {
-        writeAssetFile(cwd, packageName, 'commands', fileName, content);
+        writeAssetFile(destDir, packageName, 'commands', fileName, content);
         logger.file('create', fileName);
         syncedFiles.commands.push(fileName);
       }
 
       // Write sync meta
       writeSyncMeta(
-        cwd,
+        destDir,
         packageName,
         'commands',
         createSyncMeta(packageInfo.version, syncedFiles.commands),
@@ -178,16 +183,16 @@ export const syncPackage = async (
       );
 
       // Clean existing directory and write new files
-      cleanAssetDir(cwd, packageName, 'skills');
+      cleanAssetDir(destDir, packageName, 'skills');
       for (const [fileName, content] of skillFiles) {
-        writeAssetFile(cwd, packageName, 'skills', fileName, content);
+        writeAssetFile(destDir, packageName, 'skills', fileName, content);
         logger.file('create', fileName);
         syncedFiles.skills.push(fileName);
       }
 
       // Write sync meta
       writeSyncMeta(
-        cwd,
+        destDir,
         packageName,
         'skills',
         createSyncMeta(packageInfo.version, syncedFiles.skills),
@@ -235,8 +240,14 @@ export const syncPackages = async (
 ): Promise<SyncResult[]> => {
   const results: SyncResult[] = [];
 
+  // Find git root once for all packages
+  const gitRoot = findGitRoot(cwd);
+  if (gitRoot) {
+    logger.info(`[Output] ${gitRoot}/.claude\n`);
+  }
+
   for (const packageName of packages) {
-    const result = await syncPackage(packageName, options, cwd);
+    const result = await syncPackage(packageName, options, cwd, gitRoot ?? undefined);
     logger.packageEnd(packageName, result);
     results.push(result);
   }

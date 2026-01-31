@@ -122,6 +122,24 @@ export const buildAssetPath = (assetPath: string, directory?: string): string =>
   directory ? `${directory}/${assetPath}` : assetPath;
 
 /**
+ * Find git repository root directory
+ * @param cwd - Current working directory
+ * @returns Git root path or null if not in a git repository
+ */
+export const findGitRoot = (cwd: string = process.cwd()): string | null => {
+  try {
+    const gitRoot = execSync('git rev-parse --show-toplevel', {
+      cwd,
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    }).trim();
+    return gitRoot;
+  } catch {
+    return null;
+  }
+};
+
+/**
  * Find the workspace root directory by looking for package.json with workspaces
  * @param startDir - Directory to start searching from
  * @returns Workspace root path or null if not found
