@@ -34,6 +34,10 @@ Each package provides individual `README.md` documentation with detailed usage i
 
 - **[`@lerx/promise-modal`](./packages/lerx/promise-modal/README.md)** - Promise-based modal utilities
 
+### `slats`
+
+- **[`@slats/claude-assets-sync`](./packages/slats/claude-assets-sync/README.md)** - CLI tool to sync Claude commands and skills from npm packages to your project's `.claude/` directory.
+
 ### `winglet`
 
 - **[`@winglet/common-utils`](./packages/winglet/common-utils/README.md)** - JavaScript utilities

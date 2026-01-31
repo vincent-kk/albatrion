@@ -34,6 +34,10 @@
 
 - **[`@lerx/promise-modal`](./packages/lerx/promise-modal/README-ko_kr.md)** - Promise 기반 모달 유틸리티
 
+### `slats`
+
+- **[`@slats/claude-assets-sync`](./packages/slats/claude-assets-sync/README-ko_kr.md)** - Claude Code commands와 skills를 프로젝트의 `.claude/` 디렉토리로 동기화하는 CLI 도구
+
 ### `winglet`
 
 - **[`@winglet/common-utils`](./packages/winglet/common-utils/README-ko_kr.md)** - JavaScript 유틸리티
