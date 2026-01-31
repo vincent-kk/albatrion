@@ -288,7 +288,7 @@ Format: @{scope}/{package-name}[-{type}]
 
 Examples:
   @canard/schema-form              # Core package
-  @canard/schema-form-antd-plugin  # Plugin
+  @canard/schema-form-antd5-plugin  # Plugin
   @winglet/common-utils            # Utility
   @aileron/benchmark-form          # Tool
 ```

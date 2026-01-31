@@ -40,7 +40,7 @@
     "schemaForm:ajv6": "yarn workspace @canard/schema-form-ajv6-plugin",
     "schemaForm:ajv7": "yarn workspace @canard/schema-form-ajv7-plugin",
     "schemaForm:ajv8": "yarn workspace @canard/schema-form-ajv8-plugin",
-    "schemaForm:antd": "yarn workspace @canard/schema-form-antd-plugin",
+    "schemaForm:antd5": "yarn workspace @canard/schema-form-antd5-plugin",
     "schemaForm:antdMobile": "yarn workspace @canard/schema-form-antd-mobile-plugin",
     "schemaForm:mui": "yarn workspace @canard/schema-form-mui-plugin",
     "sort:packages": "npx sort-package-json '**/package.json'",

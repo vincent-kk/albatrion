@@ -745,10 +745,10 @@ This powerful mechanism enables **high levels of customization**:
 
 ```tsx
 import { Form, FormProvider, registerPlugin } from '@canard/schema-form';
-import { AntdPlugin } from '@canard/schema-form-antd-plugin';
+import { plugin as antd5Plugin } from '@canard/schema-form-antd5-plugin';
 
 // Register plugin (lowest priority)
-registerPlugin(AntdPlugin);
+registerPlugin(antd5Plugin);
 
 export const CustomizedForm = () => {
   // Global FormTypeInput definitions (medium priority)
@@ -821,10 +821,10 @@ This powerful system allows developers to have fine-grained control over every a
 
 ```tsx
 import { registerPlugin } from '@canard/schema-form';
-import { plugin as AjvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
-import { plugin as AntdPlugin } from '@canard/schema-form-antd-plugin';
+import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as antd5Plugin } from '@canard/schema-form-antd5-plugin';
 
-registerPlugin(AntdPlugin);
+registerPlugin(antd5Plugin);
 registerPlugin(AjvValidatorPlugin);
 ```
 
@@ -832,7 +832,7 @@ registerPlugin(AjvValidatorPlugin);
 
 #### UI Plugins
 
-- [**@canard/schema-form-antd-plugin**](../schema-form-antd-plugin/README.md): Ant Design based basic components
+- [**@canard/schema-form-antd5-plugin**](../schema-form-antd5-plugin/README.md): Ant Design based basic components
 - [**@canard/schema-form-antd-mobile-plugin**](../schema-form-antd-mobile-plugin/README.md): Ant Design Mobile based basic components
 - [**@canard/schema-form-mui-plugin**](../schema-form-mui-plugin/README.md): MUI based basic components
 
@@ -2294,10 +2294,10 @@ export const TypeSafeForm = () => {
 import React from 'react';
 
 import { Form, registerPlugin } from '@canard/schema-form';
-import { AntdPlugin } from '@canard/schema-form-antd-plugin';
+import { plugin as antd5Plugin } from '@canard/schema-form-antd5-plugin';
 
 // Register Ant Design plugin
-registerPlugin(AntdPlugin);
+registerPlugin(antd5Plugin);
 
 export const AntdForm = () => {
   const jsonSchema = {

@@ -2,11 +2,11 @@
 sidebar_position: 1
 ---
 
-# @canard/schema-form-antd-plugin
+# @canard/schema-form-antd5-plugin
 
 ## 소개
 
-`@canard/schema-form-antd-plugin`은 `@canard/schema-form`의 플러그인으로, Ant Design 컴포넌트를 스키마 폼에서 사용할 수 있게 해주는 패키지입니다.
+`@canard/schema-form-antd5-plugin`은 `@canard/schema-form`의 플러그인으로, Ant Design 컴포넌트를 스키마 폼에서 사용할 수 있게 해주는 패키지입니다.
 
 ## 주요 기능
 
@@ -24,16 +24,16 @@ sidebar_position: 1
 ## 설치
 
 ```bash
-npm install @canard/schema-form-antd-plugin antd
+npm install @canard/schema-form-antd5-plugin antd
 # or
-yarn add @canard/schema-form-antd-plugin antd
+yarn add @canard/schema-form-antd5-plugin antd
 ```
 
 ## 기본 사용법
 
 ```tsx
 import { Form, FormProvider } from '@canard/schema-form';
-import { registerAntdPlugin } from '@canard/schema-form-antd-plugin';
+import { registerAntdPlugin } from '@canard/schema-form-antd5-plugin';
 
 // 플러그인 등록
 registerAntdPlugin();

@@ -233,7 +233,7 @@ Based on most impactful change:
 ## 📦 Package Releases
 
 - `@canard/schema-form@1.5.0` - Added plugin system support (from v1.4.0)
-- `@canard/schema-form-antd-plugin@1.0.0` 🆕 - Ant Design component integration
+- `@canard/schema-form-antd5-plugin@1.0.0` 🆕 - Ant Design component integration
 - `@canard/schema-form-mui-plugin@1.0.0` 🆕 - Material-UI component integration
 
 ---
@@ -268,7 +268,7 @@ Based on most impactful change:
 npm install @canard/schema-form@1.5.0
 
 # With Ant Design plugin
-npm install @canard/schema-form@1.5.0 @canard/schema-form-antd-plugin@1.0.0
+npm install @canard/schema-form@1.5.0 @canard/schema-form-antd5-plugin@1.0.0
 
 # With Material-UI plugin
 npm install @canard/schema-form@1.5.0 @canard/schema-form-mui-plugin@1.0.0

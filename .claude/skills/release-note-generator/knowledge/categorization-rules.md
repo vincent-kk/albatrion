@@ -103,7 +103,7 @@ Added {feature}
 #### ✅ New Feature
 ```
 - Added async validator support
-- New `@canard/schema-form-antd-plugin` package
+- New `@canard/schema-form-antd5-plugin` package
 - Added `theme` prop for custom styling
 - Introduced plugin system for custom renderers
 ```

@@ -29,7 +29,7 @@
   "dependencies": {
     "@canard/schema-form": "workspace:^",
     "@canard/schema-form-antd-mobile-plugin": "workspace:^",
-    "@canard/schema-form-antd-plugin": "workspace:^",
+    "@canard/schema-form-antd5-plugin": "workspace:^",
     "@docusaurus/core": "3.8.1",
     "@docusaurus/preset-classic": "3.8.1",
     "@lerx/promise-modal": "workspace:^",

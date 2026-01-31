@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-`@canard/schema-form-antd-plugin` is a plugin for the `@canard/schema-form` library that provides Ant Design UI components for form rendering. This package is part of a larger monorepo (`albatrion`) and specifically extends the schema-form system with pre-built Ant Design components.
+`@canard/schema-form-antd5-plugin` is a plugin for the `@canard/schema-form` library that provides Ant Design UI components for form rendering. This package is part of a larger monorepo (`albatrion`) and specifically extends the schema-form system with pre-built Ant Design components.
 
 ## Development Commands
 

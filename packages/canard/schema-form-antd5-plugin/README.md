@@ -1,4 +1,4 @@
-# @canard/schema-form-antd-plugin
+# @canard/schema-form-antd5-plugin
 
 [![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
 [![Javascript](https://img.shields.io/badge/javascript-✔-yellow.svg)]()
@@ -8,9 +8,25 @@
 
 ---
 
+## Package Renamed
+
+> **Note**: This package was previously published as `@canard/schema-form-antd-plugin`.
+> The old package name is no longer maintained. Please use `@canard/schema-form-antd5-plugin` instead.
+>
+> To migrate, simply update your imports:
+>
+> ```bash
+> # Remove old package
+> yarn remove @canard/schema-form-antd-plugin
+> # Install new package
+> yarn add @canard/schema-form-antd5-plugin
+> ```
+
+---
+
 ## Overview
 
-`@canard/schema-form-antd-plugin` is a plugin for `@canard/schema-form` that provides Ant Design components.
+`@canard/schema-form-antd5-plugin` is a plugin for `@canard/schema-form` that provides Ant Design components.
 
 ---
 
@@ -27,12 +43,12 @@
 ## How to use
 
 ```bash
-yarn add @canard/schema-form @canard/schema-form-antd-plugin
+yarn add @canard/schema-form @canard/schema-form-antd5-plugin
 ```
 
 ```tsx
 import { SchemaForm, registerPlugin } from '@canard/schema-form';
-import { plugin } from '@canard/schema-form-antd-plugin';
+import { plugin } from '@canard/schema-form-antd5-plugin';
 
 // Plugin will be registered globally
 registerPlugin(plugin);
@@ -174,7 +190,7 @@ Within the same priority level, earlier items in the array take precedence. Comp
 
 ## Compatibility
 
-`@canard/schema-form-antd-plugin` is built with ECMAScript 2020 (ES2020) syntax.
+`@canard/schema-form-antd5-plugin` is built with ECMAScript 2020 (ES2020) syntax.
 
 If you're using a JavaScript environment that doesn't support ES2020, you'll need to include this package in your transpilation process.
 
