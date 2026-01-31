@@ -1,0 +1,81 @@
+{
+  "name": "@canard/schema-form-antd6-plugin",
+  "version": "0.10.0",
+  "description": "Ant Design v6 components plugin for @canard/schema-form providing pre-built form inputs with advanced components like date pickers, sliders, and file uploads",
+  "keywords": [
+    "react",
+    "@canard/schema-form",
+    "schema-form",
+    "canard-form",
+    "json-schema",
+    "form",
+    "plugin",
+    "antd",
+    "ant-design",
+    "ui-library",
+    "typescript",
+    "form-components"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vincent-kk/albatrion.git",
+    "directory": "packages/canard/schema-form-antd6-plugin"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Vincent K. Kelvin",
+    "email": "lunox273@gmail.com"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "source": "./src/index.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rollup -c && yarn build:types",
+    "build:publish:npm": "yarn build && yarn publish:npm",
+    "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.declarations.json",
+    "build-storybook": "storybook build",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" --report-unused-disable-directives --max-warnings 0",
+    "publish:npm": "yarn npm publish --access public",
+    "start": "yarn build && yarn storybook",
+    "storybook": "storybook dev -p 6006",
+    "test": "vitest",
+    "version:major": "yarn version major",
+    "version:minor": "yarn version minor",
+    "version:patch": "yarn version patch"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^6.0.0",
+    "@winglet/common-utils": "workspace:^",
+    "@winglet/react-utils": "workspace:^",
+    "antd": "^6.0.0",
+    "dayjs": "^1.0.0"
+  },
+  "devDependencies": {
+    "@canard/schema-form": "workspace:^",
+    "@canard/schema-form-ajv8-plugin": "workspace:^",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "peerDependencies": {
+    "antd": ">=6.0.0",
+    "dayjs": ">=1",
+    "react": ">=18 <20",
+    "react-dom": ">=18 <20"
+  }
+}
