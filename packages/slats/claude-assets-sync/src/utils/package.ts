@@ -3,6 +3,16 @@ import { join } from 'node:path';
 
 import type { GitHubRepoInfo, PackageInfo } from './types';
 
+/** GitHub HTTPS URL pattern: https://github.com/owner/repo.git */
+const GITHUB_HTTPS_URL_PATTERN =
+  /https?:\/\/github\.com\/([^/]+)\/([^/]+?)(?:\.git)?$/;
+
+/** GitHub SSH URL pattern: git@github.com:owner/repo.git */
+const GITHUB_SSH_URL_PATTERN = /git@github\.com:([^/]+)\/([^/]+?)(?:\.git)?$/;
+
+/** GitHub shorthand pattern: github:owner/repo */
+const GITHUB_SHORTHAND_PATTERN = /^github:([^/]+)\/([^/]+)$/;
+
 /**
  * Read package.json from node_modules
  * @param packageName - Package name (e.g., "@canard/schema-form")
@@ -55,9 +65,7 @@ export function parseGitHubRepo(
   const url = repository.url;
 
   // HTTPS URL: https://github.com/owner/repo.git
-  const httpsMatch = url.match(
-    /https?:\/\/github\.com\/([^/]+)\/([^/]+?)(?:\.git)?$/,
-  );
+  const httpsMatch = url.match(GITHUB_HTTPS_URL_PATTERN);
   if (httpsMatch) {
     return {
       owner: httpsMatch[1],
@@ -67,7 +75,7 @@ export function parseGitHubRepo(
   }
 
   // SSH URL: git@github.com:owner/repo.git
-  const sshMatch = url.match(/git@github\.com:([^/]+)\/([^/]+?)(?:\.git)?$/);
+  const sshMatch = url.match(GITHUB_SSH_URL_PATTERN);
   if (sshMatch) {
     return {
       owner: sshMatch[1],
@@ -77,7 +85,7 @@ export function parseGitHubRepo(
   }
 
   // GitHub shorthand: github:owner/repo
-  const shorthandMatch = url.match(/^github:([^/]+)\/([^/]+)$/);
+  const shorthandMatch = url.match(GITHUB_SHORTHAND_PATTERN);
   if (shorthandMatch) {
     return {
       owner: shorthandMatch[1],
