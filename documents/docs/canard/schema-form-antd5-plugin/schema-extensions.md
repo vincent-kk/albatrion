@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # 스키마 확장
 
-`@canard/schema-form-antd-plugin`은 JSON 스키마에 UI 관련 속성을 추가하여 Ant Design 컴포넌트의 다양한 기능을 활용할 수 있게 해줍니다.
+`@canard/schema-form-antd5-plugin`은 JSON 스키마에 UI 관련 속성을 추가하여 Ant Design 컴포넌트의 다양한 기능을 활용할 수 있게 해줍니다.
 
 ## UI 속성
 

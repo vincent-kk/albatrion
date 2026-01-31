@@ -735,10 +735,10 @@ const jsonSchema = {
 
 ```tsx
 import { Form, FormProvider, registerPlugin } from '@canard/schema-form';
-import { AntdPlugin } from '@canard/schema-form-antd-plugin';
+import { plugin as antd5Plugin } from '@canard/schema-form-antd5-plugin';
 
 // 플러그인 등록 (최저 우선순위)
-registerPlugin(AntdPlugin);
+registerPlugin(antd5Plugin);
 
 export const CustomizedForm = () => {
   // 글로벌 FormTypeInput 정의 (중간 우선순위)
@@ -811,10 +811,10 @@ export const CustomizedForm = () => {
 
 ```tsx
 import { registerPlugin } from '@canard/schema-form';
-import { plugin as AjvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
-import { plugin as AntdPlugin } from '@canard/schema-form-antd-plugin';
+import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as antd5Plugin } from '@canard/schema-form-antd5-plugin';
 
-registerPlugin(AntdPlugin);
+registerPlugin(antd5Plugin);
 registerPlugin(AjvValidatorPlugin);
 ```
 
@@ -822,7 +822,7 @@ registerPlugin(AjvValidatorPlugin);
 
 #### UI Plugins
 
-- [**@canard/schema-form-antd-plugin**](../schema-form-antd-plugin/README-ko_kr.md): Ant Design 기반 기초 컴포넌트 제공
+- [**@canard/schema-form-antd5-plugin**](../schema-form-antd5-plugin/README-ko_kr.md): Ant Design 기반 기초 컴포넌트 제공
 - [**@canard/schema-form-antd-mobile-plugin**](../schema-form-antd-mobile-plugin/README-ko_kr.md): Ant Design Mobile 기반 기초 컴포넌트 제공
 - [**@canard/schema-form-mui-plugin**](../schema-form-mui-plugin/README-ko_kr.md): MUI 기반 기초 컴포넌트 제공
 
@@ -2273,10 +2273,10 @@ export const TypeSafeForm = () => {
 import React from 'react';
 
 import { Form, registerPlugin } from '@canard/schema-form';
-import { AntdPlugin } from '@canard/schema-form-antd-plugin';
+import { plugin as antd5Plugin } from '@canard/schema-form-antd5-plugin';
 
 // Ant Design 플러그인 등록
-registerPlugin(AntdPlugin);
+registerPlugin(antd5Plugin);
 
 export const AntdForm = () => {
   const jsonSchema = {

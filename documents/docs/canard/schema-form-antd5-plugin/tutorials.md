@@ -13,16 +13,16 @@ sidebar_position: 1
 먼저 필요한 패키지들을 설치합니다:
 
 ```bash
-npm install @canard/schema-form @canard/schema-form-antd-plugin antd
+npm install @canard/schema-form @canard/schema-form-antd5-plugin antd
 # or
-yarn add @canard/schema-form @canard/schema-form-antd-plugin antd
+yarn add @canard/schema-form @canard/schema-form-antd5-plugin antd
 ```
 
 ### 1.2 기본 폼 구현
 
 ```tsx
 import { Form, FormProvider } from '@canard/schema-form';
-import { registerAntdPlugin } from '@canard/schema-form-antd-plugin';
+import { registerAntdPlugin } from '@canard/schema-form-antd5-plugin';
 import 'antd/dist/antd.css';
 
 // 플러그인 등록

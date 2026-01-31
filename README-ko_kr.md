@@ -25,7 +25,7 @@
 - **[`@canard/schema-form-ajv6-plugin`](./packages/canard/schema-form-ajv6-plugin/README-ko_kr.md)** - `canard/schema-form`용 AJV 6.x 검증 플러그인
 - **[`@canard/schema-form-ajv7-plugin`](./packages/canard/schema-form-ajv7-plugin/README-ko_kr.md)** - `canard/schema-form`용 AJV 7.x 검증 플러그인
 - **[`@canard/schema-form-ajv8-plugin`](./packages/canard/schema-form-ajv8-plugin/README-ko_kr.md)** - `canard/schema-form`용 AJV 8.x 검증 플러그인
-- **[`@canard/schema-form-antd-plugin`](./packages/canard/schema-form-antd-plugin/README-ko_kr.md)** - `canard/schema-form`에 적용할 수 있는 Ant Design 플러그인
+- **[`@canard/schema-form-antd5-plugin`](./packages/canard/schema-form-antd5-plugin/README-ko_kr.md)** - `canard/schema-form`에 적용할 수 있는 Ant Design 플러그인
 - **[`@canard/schema-form-antd-mobile-plugin`](./packages/canard/schema-form-antd-mobile-plugin/README-ko_kr.md)** - `canard/schema-form`에 적용할 수 있는 Ant Design Mobile 플러그인
 - **[`@canard/schema-form-mui-plugin`](./packages/canard/schema-form-mui-plugin/README-ko_kr.md)** - `canard/schema-form`에 적용할 수 있는 MUI 플러그인
 
@@ -102,7 +102,7 @@ Babel과 같은 트랜스파일러를 사용하여 타겟 환경에 맞게 코�
 - `@canard/schema-form` - 핵심 스키마 폼 라이브러리
 - `@canard/schema-form-ajv6-plugin` - AJV 6.x 검증 플러그인
 - `@canard/schema-form-ajv8-plugin` - AJV 8.x 검증 플러그인
-- `@canard/schema-form-antd-plugin` - Ant Design 플러그인
+- `@canard/schema-form-antd5-plugin` - Ant Design 플러그인
 - `@canard/schema-form-antd-mobile-plugin` - Ant Design Mobile 플러그인
 - `@canard/schema-form-mui-plugin` - Material-UI 플러그인
 

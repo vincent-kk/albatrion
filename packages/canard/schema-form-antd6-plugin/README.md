@@ -1,22 +1,38 @@
-# @canard/schema-form-antd-plugin
+# @canard/schema-form-antd6-plugin
 
 [![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
 [![Javascript](https://img.shields.io/badge/javascript-✔-yellow.svg)]()
 [![React](https://img.shields.io/badge/react-✔-61DAFB.svg)]()
-[![Ant Design](https://img.shields.io/badge/antd-✔-blue.svg)]()
+[![Ant Design v6](https://img.shields.io/badge/antd-v6-blue.svg)]()
 [![Json Schema Form Plugin](https://img.shields.io/badge/JsonSchemaForm-plugin-pink.svg)]()
+
+---
+
+## About This Package
+
+`@canard/schema-form-antd6-plugin` is the Ant Design **v6** version of the schema-form plugin.
+
+If you're using Ant Design v5, please use [`@canard/schema-form-antd5-plugin`](../schema-form-antd5-plugin) instead.
 
 ---
 
 ## Overview
 
-`@canard/schema-form-antd-plugin` is a plugin for `@canard/schema-form` that provides Ant Design components.
+`@canard/schema-form-antd6-plugin` is a plugin for `@canard/schema-form` that provides Ant Design v6 components.
+
+---
+
+## Requirements
+
+- **React**: 18 or higher (required for Ant Design v6)
+- **Ant Design**: 6.0.0 or higher
+- **@ant-design/icons**: 6.0.0 or higher
 
 ---
 
 ## Notice
 
-⚠️ This plugin provides pre-implemented core components commonly needed when using `@canard/schema-form` in Ant Design Mobile environments.
+⚠️ This plugin provides pre-implemented core components commonly needed when using `@canard/schema-form` in Ant Design environments.
 
 📌 As the plugin's purpose is to enhance development convenience, it does not include every possible component.
 
@@ -27,12 +43,12 @@
 ## How to use
 
 ```bash
-yarn add @canard/schema-form @canard/schema-form-antd-plugin
+yarn add @canard/schema-form @canard/schema-form-antd6-plugin
 ```
 
 ```tsx
 import { SchemaForm, registerPlugin } from '@canard/schema-form';
-import { plugin } from '@canard/schema-form-antd-plugin';
+import { plugin } from '@canard/schema-form-antd6-plugin';
 
 // Plugin will be registered globally
 registerPlugin(plugin);
@@ -40,9 +56,30 @@ registerPlugin(plugin);
 
 ---
 
+## Migrating from antd5-plugin
+
+If you're migrating from `@canard/schema-form-antd5-plugin`:
+
+```bash
+# Remove old package
+yarn remove @canard/schema-form-antd5-plugin
+
+# Install new package
+yarn add @canard/schema-form-antd6-plugin
+```
+
+Update your imports:
+
+```diff
+- import { plugin } from '@canard/schema-form-antd5-plugin';
++ import { plugin } from '@canard/schema-form-antd6-plugin';
+```
+
+---
+
 ## Supported Components
 
-This plugin provides the following Ant Design components:
+This plugin provides the following Ant Design v6 components:
 
 ### **[`FormTypeInputBooleanSwitch.tsx`](./src/formTypeInputs/FormTypeInputBooleanSwitch.tsx)**
 
@@ -174,7 +211,7 @@ Within the same priority level, earlier items in the array take precedence. Comp
 
 ## Compatibility
 
-`@canard/schema-form-antd-plugin` is built with ECMAScript 2020 (ES2020) syntax.
+`@canard/schema-form-antd6-plugin` is built with ECMAScript 2020 (ES2020) syntax.
 
 If you're using a JavaScript environment that doesn't support ES2020, you'll need to include this package in your transpilation process.
 
@@ -182,9 +219,22 @@ If you're using a JavaScript environment that doesn't support ES2020, you'll nee
 
 - Node.js 14.17.0 or later
 - Modern browsers (Chrome 91+, Firefox 90+, Safari 14+)
+- React 18 or higher (required for Ant Design v6)
 
 **For legacy environment support:**
 Please use a transpiler like Babel to transform the code for your target environment.
+
+---
+
+## Ant Design v6 Notes
+
+This plugin is built for Ant Design v6, which includes the following changes from v5:
+
+- CSS Variables are enabled by default
+- React 18+ is required
+- `@ant-design/icons` v6 is required (not compatible with antd v5)
+
+For more information about Ant Design v6 changes, see the [official migration guide](https://ant.design/docs/react/migration-v6/).
 
 ---
 

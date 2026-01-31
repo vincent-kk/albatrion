@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## 개발 사상
 
-`@canard/schema-form-antd-plugin`은 다음과 같은 핵심 사상들을 바탕으로 설계되었습니다:
+`@canard/schema-form-antd5-plugin`은 다음과 같은 핵심 사상들을 바탕으로 설계되었습니다:
 
 1. **Ant Design 통합**
 
@@ -27,9 +27,9 @@ sidebar_position: 1
 ### 1. 패키지 설치
 
 ```bash
-npm install @canard/schema-form-antd-plugin antd
+npm install @canard/schema-form-antd5-plugin antd
 # or
-yarn add @canard/schema-form-antd-plugin antd
+yarn add @canard/schema-form-antd5-plugin antd
 ```
 
 ### 2. Ant Design 스타일 import
@@ -46,7 +46,7 @@ import 'antd/dist/reset.css';
 ### 3. 플러그인 등록
 
 ```tsx
-import { registerAntdPlugin } from '@canard/schema-form-antd-plugin';
+import { registerAntdPlugin } from '@canard/schema-form-antd5-plugin';
 
 // 플러그인 등록
 registerAntdPlugin();
@@ -56,7 +56,7 @@ registerAntdPlugin();
 
 ```tsx
 import { Form, FormProvider } from '@canard/schema-form';
-import { registerAntdPlugin } from '@canard/schema-form-antd-plugin';
+import { registerAntdPlugin } from '@canard/schema-form-antd5-plugin';
 import 'antd/dist/antd.css';
 
 // 플러그인 등록

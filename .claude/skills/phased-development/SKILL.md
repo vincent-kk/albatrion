@@ -539,8 +539,8 @@ export interface MuiFormContext {
 
 ```bash
 # 1. 패키지 디렉토리 생성
-mkdir packages/canard-schema-form-antd-plugin
-cd packages/canard-schema-form-antd-plugin
+mkdir packages/canard-schema-form-antd5-plugin
+cd packages/canard-schema-form-antd5-plugin
 
 # 2. package.json 생성 (Phase 1 초안 기반)
 yarn init -y

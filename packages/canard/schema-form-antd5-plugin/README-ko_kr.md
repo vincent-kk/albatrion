@@ -1,4 +1,4 @@
-# @canard/schema-form-antd-plugin
+# @canard/schema-form-antd5-plugin
 
 [![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
 [![Javascript](https://img.shields.io/badge/javascript-✔-yellow.svg)]()
@@ -8,9 +8,25 @@
 
 ---
 
+## 패키지 이름 변경 안내
+
+> **알림**: 이 패키지는 이전에 `@canard/schema-form-antd-plugin`으로 배포되었습니다.
+> 이전 패키지명은 더 이상 유지보수되지 않습니다. `@canard/schema-form-antd5-plugin`을 사용해 주세요.
+>
+> 마이그레이션 방법:
+>
+> ```bash
+> # 이전 패키지 제거
+> yarn remove @canard/schema-form-antd-plugin
+> # 새 패키지 설치
+> yarn add @canard/schema-form-antd5-plugin
+> ```
+
+---
+
 ## 개요
 
-`@canard/schema-form-antd-plugin`은 Ant Design 컴포넌트를 제공하는 `@canard/schema-form`용 플러그인입니다.
+`@canard/schema-form-antd5-plugin`은 Ant Design 컴포넌트를 제공하는 `@canard/schema-form`용 플러그인입니다.
 
 ---
 
@@ -27,12 +43,12 @@
 ## 사용 방법
 
 ```bash
-yarn add @canard/schema-form @canard/schema-form-antd-plugin
+yarn add @canard/schema-form @canard/schema-form-antd5-plugin
 ```
 
 ```tsx
 import { SchemaForm, registerPlugin } from '@canard/schema-form';
-import { plugin } from '@canard/schema-form-antd-plugin';
+import { plugin } from '@canard/schema-form-antd5-plugin';
 
 // 플러그인이 전역으로 등록됩니다
 registerPlugin(plugin);
@@ -174,7 +190,7 @@ registerPlugin(plugin);
 
 ## 호환성 안내
 
-`@canard/schema-form-antd-plugin`은 ECMAScript 2020 (ES2020) 문법으로 작성되었습니다.
+`@canard/schema-form-antd5-plugin`은 ECMAScript 2020 (ES2020) 문법으로 작성되었습니다.
 
 ES2020보다 낮은 버전의 JavaScript 환경에서 사용하시는 경우, 별도의 트랜스파일 과정이 필요합니다.
 

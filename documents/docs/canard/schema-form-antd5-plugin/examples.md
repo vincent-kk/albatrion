@@ -10,7 +10,7 @@ sidebar_position: 1
 
 ```tsx
 import { Form, FormProvider } from '@canard/schema-form';
-import { registerAntdPlugin } from '@canard/schema-form-antd-plugin';
+import { registerAntdPlugin } from '@canard/schema-form-antd5-plugin';
 import 'antd/dist/antd.css';
 
 registerAntdPlugin();
