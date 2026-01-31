@@ -78,5 +78,8 @@
   "peerDependencies": {
     "react": ">=18 <20",
     "react-dom": ">=18 <20"
+  },
+  "claude": {
+    "assetPath": "docs/claude"
   }
 }

@@ -1,0 +1,59 @@
+{
+  "name": "@slats/claude-assets-sync",
+  "version": "0.0.1",
+  "description": "CLI tool to sync Claude commands and skills from npm packages to your project's .claude directory",
+  "keywords": [
+    "claude",
+    "claude-code",
+    "cli",
+    "sync",
+    "commands",
+    "skills",
+    "assets"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vincent-kk/albatrion.git",
+    "directory": "packages/slats/claude-assets-sync"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Vincent K. Kelvin",
+    "email": "lunox273@gmail.com"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "source": "./src/index.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "bin": "./dist/index.mjs",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rollup -c && yarn build:types",
+    "build:publish:npm": "yarn build && yarn publish:npm",
+    "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.declarations.json",
+    "dev": "tsx src/index.ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "eslint \"src/**/*.ts\"",
+    "publish:npm": "yarn npm publish --access public",
+    "test": "vitest",
+    "version:major": "yarn version major",
+    "version:minor": "yarn version minor",
+    "version:patch": "yarn version patch"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "picocolors": "^1.1.1"
+  }
+}
