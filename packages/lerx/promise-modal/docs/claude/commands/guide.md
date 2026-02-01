@@ -1,5 +1,8 @@
 # Promise Modal 가이드 명령어
 
+**Package**: `@lerx/promise-modal`
+**Skill Scope**: `@lerx:promise-modal`
+
 ## 목적
 
 이 명령어는 `@lerx/promise-modal` 라이브러리 사용자를 위한 대화형 Q&A 가이드를 제공합니다. 호출되면 사용자의 구체적인 질문과 사용 사례에 따라 라이브러리를 이해하고 효과적으로 사용할 수 있도록 도와주세요.
@@ -742,9 +745,12 @@ const email = await prompt<string>({
 
 ---
 
-## 지식 소스
+## 지식 소스 (Knowledge Sources)
 
-이 명령어는 다음의 지식을 사용합니다:
-- `/docs/claude/skills/promise-modal-expert.md` - 전체 API 레퍼런스
-- `/docs/ko/SPECIFICATION.md` - 상세 스펙 문서
-- `/README.md` - 공식 문서
+더 상세한 정보가 필요한 경우, 다음 관련 skill에서 심화 지식을 확인할 수 있습니다:
+
+| 주제 | Skill 이름 |
+|------|-----------|
+| 종합 가이드 | `promise-modal-expert` |
+
+SPECIFICATION 문서에서 전체 API 스펙을 확인할 수 있습니다.

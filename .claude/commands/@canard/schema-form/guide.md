@@ -1,5 +1,8 @@
 # @canard/schema-form Q&A Command
 
+**Package**: `@canard/schema-form`
+**Skill Scope**: `@canard:schema-form`
+
 `/schema-form` 커맨드를 통해 @canard/schema-form에 대해 질문하고 답변을 받을 수 있습니다.
 
 ## 사용법 (Usage)
@@ -80,34 +83,28 @@
 - 성능 최적화
 - 디버깅 팁
 
-## 관련 문서 (Related Documents)
+## 지식 소스 (Knowledge Sources)
 
-이 커맨드는 다음 스킬 문서를 참조합니다:
+더 상세한 정보가 필요한 경우, 다음 관련 skill에서 심화 지식을 확인할 수 있습니다:
 
-- `docs/claude/skills/schema-form-expert.md` - 메인 전문가 스킬
-- `docs/claude/skills/computed-properties.md` - Computed Properties
-- `docs/claude/skills/conditional-schema.md` - 조건부 스키마
-- `docs/claude/skills/formtype-input.md` - FormTypeInput 시스템
-- `docs/claude/skills/validation.md` - 검증 시스템
-- `docs/claude/skills/inject-to.md` - InjectTo 기능
-- `docs/claude/skills/array-operations.md` - 배열 조작
-- `docs/claude/skills/form-handle.md` - FormHandle API
-- `docs/claude/skills/jsonpointer.md` - JSONPointer 시스템
-- `docs/claude/skills/plugin-system.md` - 플러그인 시스템
-- `docs/claude/skills/form-render.md` - 커스텀 레이아웃
-- `docs/claude/skills/virtual-schema.md` - Virtual Schema
-- `docs/claude/skills/state-management.md` - 상태 관리
-- `docs/claude/skills/context-usage.md` - Context 사용
+| 주제 | Skill 이름 |
+|------|-----------|
+| 종합 가이드 | `schema-form-expert` |
+| Computed Properties | `computed-properties` |
+| 조건부 스키마 | `conditional-schema` |
+| FormTypeInput | `formtype-input` |
+| 검증 시스템 | `validation` |
+| InjectTo | `inject-to` |
+| 배열 조작 | `array-operations` |
+| FormHandle | `form-handle` |
+| JSONPointer | `jsonpointer` |
+| 플러그인 | `plugin-system` |
+| 커스텀 레이아웃 | `form-render` |
+| Virtual Schema | `virtual-schema` |
+| 상태 관리 | `state-management` |
+| Context | `context-usage` |
+| 성능 최적화 | `performance-optimization` |
+| 문제 해결 | `troubleshooting` |
+| 테스트 가이드 | `testing-guide` |
 
-## 구현 가이드 (Implementation Guide)
-
-이 커맨드를 Claude Code에서 사용하려면:
-
-1. `.claude/commands/schema-form.md` 파일로 복사
-2. 또는 프로젝트의 `.claude/` 디렉토리에 배치
-
-```bash
-# 프로젝트 루트에서
-mkdir -p .claude/commands
-cp docs/claude/commands/schema-form.md .claude/commands/
-```
+SPECIFICATION 문서에서 전체 API 스펙을 확인할 수 있습니다.

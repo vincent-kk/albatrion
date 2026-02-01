@@ -228,6 +228,9 @@ Key features include:
 ```markdown
 # {Package Display Name} Guide Command
 
+**Package**: `{full-package-name}`
+**Skill Scope**: `@{scope}:{package-name}`
+
 ## Purpose
 
 This command provides an interactive Q&A guide for `{package-name}` library users. `guide.md` file is used for this command.
@@ -306,11 +309,13 @@ For each category, provide:
 
 ## Knowledge Sources
 
-This command uses knowledge from:
+For more detailed information, the following related skills provide in-depth knowledge:
 
-- `/docs/claude/skills/{package-name}-expert.md` - Full API reference
-- `/docs/en/SPECIFICATION.md` - Detailed specifications
-- `/README.md` - Official documentation
+| Topic | Skill Name |
+|-------|-----------|
+| Comprehensive Guide | `{package-name}-expert` |
+
+Full API specifications are available in the SPECIFICATION documents.
 ```
 
 #### SPECIFICATION Template (English): `en/SPECIFICATION.md`
