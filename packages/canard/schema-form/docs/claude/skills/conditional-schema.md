@@ -1,3 +1,9 @@
+---
+name: schema-form-conditional-schema
+description: "@canard/schema-form의 조건부 스키마 기능 전문가. oneOf, anyOf, allOf, if-then-else를 통한 동적 폼 구조 변경을 안내합니다."
+user-invocable: false
+---
+
 # Conditional Schema Skill
 
 @canard/schema-form의 조건부 스키마 기능에 대한 전문 스킬입니다.

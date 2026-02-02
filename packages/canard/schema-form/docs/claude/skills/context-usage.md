@@ -1,3 +1,9 @@
+---
+name: schema-form-context-usage
+description: "@canard/schema-form의 context 기능 전문가. context prop과 @ 참조를 사용한 외부 데이터 연동 및 동적 UI 제어를 안내합니다."
+user-invocable: false
+---
+
 # Context Usage Skill
 
 @canard/schema-form의 context 기능에 대한 전문 스킬입니다.

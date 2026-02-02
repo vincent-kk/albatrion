@@ -1,3 +1,9 @@
+---
+name: tot-requirements-engine
+description: "Tree of Thoughts 방법론을 사용하여 요구사항을 다중 해석하고 최적 해석을 선택하는 전문가. 후보 생성, 다차원 평가, Lookahead & Backtrack을 수행합니다."
+user-invocable: false
+---
+
 # ToT Requirements Engine Skill
 
 ## 역할

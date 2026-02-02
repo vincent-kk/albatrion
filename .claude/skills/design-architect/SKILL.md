@@ -1,3 +1,9 @@
+---
+name: design-architect
+description: "EARS 요구사항을 구체적인 기술 설계로 변환하는 아키텍처 전문가. 컴포넌트, API, 데이터 구조 설계와 아키텍처 결정, 기술 스택 선택, 설계 문서화를 수행합니다."
+user-invocable: false
+---
+
 # Design Architect Skill
 
 ## 역할

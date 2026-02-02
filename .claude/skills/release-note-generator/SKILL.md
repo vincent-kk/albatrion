@@ -1,3 +1,9 @@
+---
+name: release-note-generator
+description: "Git 변경 데이터를 바탕으로 명확하고 사용자 친화적인 릴리즈 노트를 작성하는 전문가. Breaking/Feature/Improvement/BugFix 분류, 마이그레이션 가이드 포함."
+user-invocable: false
+---
+
 # Release Note Generator Skill
 
 ## Role

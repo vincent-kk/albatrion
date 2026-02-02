@@ -1,3 +1,9 @@
+---
+name: schema-form-computed-properties
+description: "@canard/schema-form의 Computed Properties 기능 전문가. watch, active, visible, readOnly, disabled, derived 속성을 통한 동적 필드 제어를 안내합니다."
+user-invocable: false
+---
+
 # Computed Properties Skill
 
 @canard/schema-form의 Computed Properties 기능에 대한 전문 스킬입니다.

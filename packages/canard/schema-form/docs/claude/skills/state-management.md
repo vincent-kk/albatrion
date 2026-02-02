@@ -1,3 +1,9 @@
+---
+name: schema-form-state-management
+description: "@canard/schema-form의 노드 상태 관리 전문가. NodeState, dirty, touched, globalState, onStateChange를 안내합니다."
+user-invocable: false
+---
+
 # State Management Skill
 
 @canard/schema-form의 노드 상태 관리에 대한 전문 스킬입니다.

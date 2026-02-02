@@ -1,3 +1,9 @@
+---
+name: schema-form-plugin-system
+description: "@canard/schema-form의 플러그인 시스템 전문가. registerPlugin, Validator/UI 플러그인 등록 및 개발을 안내합니다."
+user-invocable: false
+---
+
 # Plugin System Skill
 
 @canard/schema-form의 플러그인 시스템에 대한 전문 스킬입니다.

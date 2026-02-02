@@ -1,3 +1,9 @@
+---
+name: schema-form-jsonpointer
+description: "@canard/schema-form의 JSONPointer 확장 문법 전문가. RFC 6901 표준, 상대 경로(..), 와일드카드(*) 문법을 안내합니다."
+user-invocable: false
+---
+
 # JSONPointer Skill
 
 @canard/schema-form의 JSONPointer 확장 문법에 대한 전문 스킬입니다.

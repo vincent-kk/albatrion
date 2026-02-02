@@ -1,3 +1,9 @@
+---
+name: schema-form-expert
+description: "@canard/schema-form 라이브러리 전문가. Q&A, 사용 예제, 트러블슈팅을 제공하며 모든 보조 스킬을 오케스트레이션합니다."
+user-invocable: false
+---
+
 # Schema Form Expert Skill
 
 @canard/schema-form 전문가 스킬입니다. 이 스킬은 schema-form 라이브러리에 대한 질문에 답변하고, 사용 예제를 제공하며, 트러블슈팅을 도와줍니다.

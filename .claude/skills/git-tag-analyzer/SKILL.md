@@ -1,3 +1,9 @@
+---
+name: git-tag-analyzer
+description: "모노레포 프로젝트에서 Git 태그를 찾고, 검증하고, 분석하는 전문가. 릴리즈 노트 생성을 위한 태그 발견, 태그 검증, 변경 사항 수집, 패키지 버전 감지를 수행합니다."
+user-invocable: false
+---
+
 # Git Tag Analyzer Skill
 
 ## Role

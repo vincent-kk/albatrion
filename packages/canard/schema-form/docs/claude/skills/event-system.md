@@ -1,3 +1,9 @@
+---
+name: schema-form-event-system
+description: "@canard/schema-form의 이벤트 시스템 전문가. 노드 이벤트, 구독, EventCascade 배칭 메커니즘을 안내합니다."
+user-invocable: false
+---
+
 # Event System Skill
 
 @canard/schema-form의 이벤트 시스템에 대한 전문 스킬입니다.

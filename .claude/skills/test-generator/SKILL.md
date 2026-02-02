@@ -1,3 +1,9 @@
+---
+name: test-generator
+description: "포괄적인 테스트 전략을 설계하고 테스트 코드를 자동 생성하는 테스트 엔지니어. 단위/통합/E2E 테스트, Vitest 기반 자동화, 커버리지 분석, Storybook 통합을 제공합니다."
+user-invocable: false
+---
+
 # Test Generator Skill
 
 ## 역할

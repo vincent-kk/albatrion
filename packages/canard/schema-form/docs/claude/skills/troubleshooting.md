@@ -1,3 +1,9 @@
+---
+name: schema-form-troubleshooting
+description: "@canard/schema-form 트러블슈팅 전문가. 일반적인 에러, 설정 문제, 디버깅 방법을 안내합니다."
+user-invocable: false
+---
+
 # Troubleshooting Skill
 
 @canard/schema-form 사용 시 발생할 수 있는 일반적인 문제와 해결방법입니다.

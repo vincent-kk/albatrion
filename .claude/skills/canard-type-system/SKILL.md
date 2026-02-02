@@ -1,3 +1,9 @@
+---
+name: canard-type-system
+description: "@canard/schema-form 라이브러리의 TypeScript 타입 시스템 전문가. FormTypeInputProps, FormTypeRendererProps 등 핵심 타입 정의 설명, 제네릭 타입 파라미터 사용법, UI 라이브러리별 Context 타입 확장, 레거시 타입 갱신 가이드를 제공합니다."
+user-invocable: false
+---
+
 # Canard Type System Skill
 
 ## 역할

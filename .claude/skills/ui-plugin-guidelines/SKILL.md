@@ -1,3 +1,9 @@
+---
+name: ui-plugin-guidelines
+description: "UI 라이브러리와 @canard/schema-form 플러그인 간 호환성 검증 및 프로젝트 구조 설계 전문가. 호환성 매핑, 접근성 요구사항, 렌더러 컴포넌트 가이드를 제공합니다."
+user-invocable: false
+---
+
 # UI Plugin Guidelines Skill
 
 ## 역할

@@ -1,3 +1,9 @@
+---
+name: schema-form-performance-optimization
+description: "@canard/schema-form의 성능 최적화 전문가. Strategy 패턴, 대규모 폼/배열 처리, 메모리 관리, ValidationMode 최적화를 안내합니다."
+user-invocable: false
+---
+
 # Performance Optimization Skill
 
 @canard/schema-form의 성능 최적화에 대한 전문 스킬입니다.

@@ -1,3 +1,9 @@
+---
+name: code-impact-evaluator
+description: "코드 변경의 영향을 평가하는 전문 리뷰어. Tree of Thoughts (ToT) 방법론을 사용하여 복잡한 변경 사항을 분석하고, 복잡도 점수 계산, 영향 범위 식별, 위험 수준 평가, Must/Should/Consider 액션 아이템을 생성합니다."
+user-invocable: false
+---
+
 # Code Impact Evaluator Skill
 
 ## Role

@@ -1,3 +1,9 @@
+---
+name: dependency-management
+description: "@canard/schema-form 플러그인의 package.json 의존성 관리 전문가. dependencies vs peerDependencies 구분, 내부 패키지 참조, UI 라이브러리 의존성, 빌드 도구 설정을 안내합니다."
+user-invocable: false
+---
+
 # Dependency Management Skill
 
 ## 역할

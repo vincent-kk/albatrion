@@ -1,3 +1,9 @@
+---
+name: react-plugin-implementation
+description: "React 기반 @canard/schema-form 플러그인 구현 패턴 전문가. 비제어 컴포넌트 패턴, test 조건 작성, 성능 최적화(useMemo, useHandle), 플러그인 구조 설계를 안내합니다."
+user-invocable: false
+---
+
 # React Plugin Implementation Skill
 
 ## 역할

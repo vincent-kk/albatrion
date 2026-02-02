@@ -1,3 +1,9 @@
+---
+name: schema-form-validation
+description: "@canard/schema-form의 검증 시스템 전문가. ValidationMode, AJV 플러그인, 에러 메시지 커스터마이징을 안내합니다."
+user-invocable: false
+---
+
 # Validation Skill
 
 @canard/schema-form의 검증 시스템에 대한 전문 스킬입니다.

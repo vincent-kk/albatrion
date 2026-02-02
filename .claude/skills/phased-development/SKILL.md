@@ -1,3 +1,9 @@
+---
+name: phased-development
+description: "@canard/schema-form 플러그인의 단계별 개발 프로세스 전문가. 5단계 개발 절차(설계→인프라→핵심→고급→최적화), 우선순위 결정, 체크리스트, 마일스톤 관리를 제공합니다."
+user-invocable: false
+---
+
 # Phased Development Skill
 
 ## 역할

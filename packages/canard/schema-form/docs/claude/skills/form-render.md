@@ -1,3 +1,9 @@
+---
+name: schema-form-form-render
+description: "@canard/schema-form의 커스텀 레이아웃 기능 전문가. Form.Render, Form.Input, Form.Label을 사용한 경로 기반 렌더링을 안내합니다."
+user-invocable: false
+---
+
 # Form.Render Skill
 
 @canard/schema-form의 커스텀 레이아웃 기능에 대한 전문 스킬입니다.

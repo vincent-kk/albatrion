@@ -1,3 +1,9 @@
+---
+name: promise-modal-expert
+description: "@lerx/promise-modal 라이브러리 전문가. React 기반 Promise 모달 유틸리티 (alert, confirm, prompt), 아키텍처, 커스터마이징을 안내합니다."
+user-invocable: false
+---
+
 # Promise Modal 전문가 스킬
 
 ## 역할

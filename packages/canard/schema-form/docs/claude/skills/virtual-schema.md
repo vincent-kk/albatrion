@@ -1,3 +1,9 @@
+---
+name: schema-form-virtual-schema
+description: "@canard/schema-form의 Virtual Schema 기능 전문가. 가상 필드 그룹화, 기간 선택, 다중 필드 조합을 안내합니다."
+user-invocable: false
+---
+
 # Virtual Schema Skill
 
 @canard/schema-form의 Virtual Schema 기능에 대한 전문 스킬입니다.

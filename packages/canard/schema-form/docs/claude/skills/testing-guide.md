@@ -1,3 +1,9 @@
+---
+name: schema-form-testing-guide
+description: "@canard/schema-form 테스트 작성 전문가. Vitest, React Testing Library를 사용한 단위/컴포넌트/통합 테스트를 안내합니다."
+user-invocable: false
+---
+
 # Testing Guide Skill
 
 @canard/schema-form 테스트 작성에 대한 전문 스킬입니다.

@@ -1,3 +1,9 @@
+---
+name: schema-form-array-operations
+description: "@canard/schema-form의 배열 조작 기능 전문가. ArrayNode 조작, 배열 아이템 관리, minItems/maxItems 제약조건을 안내합니다."
+user-invocable: false
+---
+
 # Array Operations Skill
 
 @canard/schema-form의 배열 조작 기능에 대한 전문 스킬입니다.

@@ -1,3 +1,9 @@
+---
+name: ears-documenter
+description: "EARS (Easy Approach to Requirements Syntax) 형식을 사용하여 요구사항을 명확하고 검증 가능한 문서로 작성하는 전문가. Ubiquitous, Event-Driven, Unwanted, State-Driven, Optional 패턴을 활용합니다."
+user-invocable: false
+---
+
 # EARS Documenter Skill
 
 ## 역할

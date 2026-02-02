@@ -1,3 +1,9 @@
+---
+name: git-workflow-automation
+description: "Git 워크플로우를 자동화하고 체계적인 커밋 전략을 관리하는 전문가. 사전 설정 검증, 2-커밋 전략(feature + docs), 커밋 메시지 자동 생성, 충돌 방지 및 복구를 수행합니다."
+user-invocable: false
+---
+
 # Git Workflow Automation Skill
 
 ## 역할

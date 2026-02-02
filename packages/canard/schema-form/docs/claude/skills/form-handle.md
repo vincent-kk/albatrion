@@ -1,3 +1,9 @@
+---
+name: schema-form-form-handle
+description: "@canard/schema-form의 FormHandle API 전문가. useRef를 통한 프로그래매틱 폼 제어 (getValue, setValue, validate, reset, submit)를 안내합니다."
+user-invocable: false
+---
+
 # Form Handle Skill
 
 @canard/schema-form의 FormHandle API에 대한 전문 스킬입니다.

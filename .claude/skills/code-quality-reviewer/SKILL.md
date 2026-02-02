@@ -1,3 +1,9 @@
+---
+name: code-quality-reviewer
+description: "코드 작성 가이드라인 준수 여부를 체계적으로 검토하는 품질 검증 전문가. 가독성, 성능, 명시적 I/O, 유지보수성, 에러 처리, 협업 프로세스를 평가합니다."
+user-invocable: false
+---
+
 # Code Quality Reviewer Skill
 
 ## 역할

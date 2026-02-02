@@ -1,3 +1,9 @@
+---
+name: git-change-analyzer
+description: "Git 변경 사항을 수집하고 구조화하는 분석 전문가. 커밋, 브랜치 비교, 스테이징된 변경 사항에서 코드 변경을 수집하고 JSON 형식으로 출력합니다."
+user-invocable: false
+---
+
 # Git Change Analyzer Skill
 
 ## Role

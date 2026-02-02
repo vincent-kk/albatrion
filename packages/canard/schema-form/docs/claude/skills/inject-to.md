@@ -1,3 +1,9 @@
+---
+name: schema-form-inject-to
+description: "@canard/schema-form의 injectTo 기능 전문가. 필드 간 값 주입, 순환 참조 방지, injectTo vs derived 선택을 안내합니다."
+user-invocable: false
+---
+
 # InjectTo Skill
 
 @canard/schema-form의 injectTo 기능에 대한 전문 스킬입니다.

@@ -1,3 +1,9 @@
+---
+name: execution-engine
+description: "작업 계획을 실제로 구현하고 검증하는 실행 엔진. 5-Field 형식에 따른 파일 생성/수정, 3-레벨 검증(코드→기능→요구사항), ToT 기반 에러 복구를 수행합니다."
+user-invocable: false
+---
+
 # Execution Engine Skill
 
 ## 역할

@@ -1,3 +1,9 @@
+---
+name: schema-form-formtype-input
+description: "@canard/schema-form의 FormTypeInput 시스템 전문가. 커스텀 입력 컴포넌트 개발, formTypeInputDefinitions, formTypeInputMap 매핑을 안내합니다."
+user-invocable: false
+---
+
 # FormTypeInput Skill
 
 @canard/schema-form의 FormTypeInput 시스템에 대한 전문 스킬입니다.
