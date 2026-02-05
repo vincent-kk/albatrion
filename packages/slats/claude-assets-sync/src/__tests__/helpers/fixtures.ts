@@ -95,6 +95,20 @@ export const mockSkillEntries: GitHubEntry[] = [
 ];
 
 /**
+ * Mock GitHub entries for agents directory
+ */
+export const mockAgentEntries: GitHubEntry[] = [
+  {
+    name: 'form-builder.md',
+    path: 'packages/canard/schema-form/docs/claude/agents/form-builder.md',
+    type: 'file',
+    download_url:
+      'https://raw.githubusercontent.com/vincent-kk/albatrion/main/packages/canard/schema-form/docs/claude/agents/form-builder.md',
+    sha: 'jkl012',
+  },
+];
+
+/**
  * Mock file content for commands
  */
 export const mockCommandContent = `# Schema Form Command
@@ -114,6 +128,80 @@ export const mockSkillContent = `# Schema Form Expert Skill
 
 This skill provides expertise in JSON Schema form generation.
 `;
+
+/**
+ * Mock file content for agents
+ */
+export const mockAgentContent = `# Form Builder Agent
+
+This agent helps build complex forms from JSON Schema.
+`;
+
+/**
+ * Mock GitHub entries for docs directory (custom asset type)
+ */
+export const mockDocsEntries: GitHubEntry[] = [
+  {
+    name: 'api-reference.md',
+    path: 'packages/canard/schema-form/docs/claude/docs/api-reference.md',
+    type: 'file',
+    download_url:
+      'https://raw.githubusercontent.com/vincent-kk/albatrion/main/packages/canard/schema-form/docs/claude/docs/api-reference.md',
+    sha: 'doc123',
+  },
+];
+
+/**
+ * Mock GitHub entries for rules directory (custom asset type)
+ */
+export const mockRulesEntries: GitHubEntry[] = [
+  {
+    name: 'validation-rules.md',
+    path: 'packages/canard/schema-form/docs/claude/rules/validation-rules.md',
+    type: 'file',
+    download_url:
+      'https://raw.githubusercontent.com/vincent-kk/albatrion/main/packages/canard/schema-form/docs/claude/rules/validation-rules.md',
+    sha: 'rule456',
+  },
+];
+
+/**
+ * Mock file content for docs
+ */
+export const mockDocsContent = `# API Reference
+
+API documentation here.
+`;
+
+/**
+ * Mock file content for rules
+ */
+export const mockRulesContent = `# Validation Rules
+
+Rules documentation here.
+`;
+
+/**
+ * Mock package info with custom assets config
+ */
+export const mockPackageWithCustomAssets: PackageInfo = {
+  name: '@canard/schema-form',
+  version: '0.10.0',
+  repository: {
+    type: 'git',
+    url: 'https://github.com/vincent-kk/albatrion.git',
+    directory: 'packages/canard/schema-form',
+  },
+  claude: {
+    assetPath: 'docs/claude',
+    assets: {
+      commands: { structure: 'nested' },
+      skills: { structure: 'flat' },
+      docs: { structure: 'nested' },
+      rules: { structure: 'flat' },
+    },
+  },
+};
 
 /**
  * Mock sync meta

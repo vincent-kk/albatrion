@@ -2,17 +2,15 @@ import { execSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
+import {
+  DEFAULT_ASSET_STRUCTURES,
+  DEFAULT_ASSET_TYPES,
+} from '../core/assetStructure';
+import { FS_PATTERNS } from '../core/constants';
 import type { GitHubRepoInfo, PackageInfo, WorkspaceInfo } from './types';
 
-/** GitHub HTTPS URL pattern: https://github.com/owner/repo.git */
-const GITHUB_HTTPS_URL_PATTERN =
-  /https?:\/\/github\.com\/([^/]+)\/([^/]+?)(?:\.git)?$/;
-
-/** GitHub SSH URL pattern: git@github.com:owner/repo.git */
-const GITHUB_SSH_URL_PATTERN = /git@github\.com:([^/]+)\/([^/]+?)(?:\.git)?$/;
-
-/** GitHub shorthand pattern: github:owner/repo */
-const GITHUB_SHORTHAND_PATTERN = /^github:([^/]+)\/([^/]+)$/;
+// Re-export for backward compatibility
+export { getAssetStructure } from '../core/assetStructure';
 
 /**
  * Read package.json from node_modules
@@ -67,7 +65,7 @@ export const parseGitHubRepo = (
   const url = repository.url;
 
   // HTTPS URL: https://github.com/owner/repo.git
-  const httpsMatch = url.match(GITHUB_HTTPS_URL_PATTERN);
+  const httpsMatch = url.match(FS_PATTERNS.GITHUB_HTTPS_URL);
   if (httpsMatch)
     return {
       owner: httpsMatch[1],
@@ -76,7 +74,7 @@ export const parseGitHubRepo = (
     };
 
   // SSH URL: git@github.com:owner/repo.git
-  const sshMatch = url.match(GITHUB_SSH_URL_PATTERN);
+  const sshMatch = url.match(FS_PATTERNS.GITHUB_SSH_URL);
   if (sshMatch)
     return {
       owner: sshMatch[1],
@@ -85,7 +83,7 @@ export const parseGitHubRepo = (
     };
 
   // GitHub shorthand: github:owner/repo
-  const shorthandMatch = url.match(GITHUB_SHORTHAND_PATTERN);
+  const shorthandMatch = url.match(FS_PATTERNS.GITHUB_SHORTHAND);
   if (shorthandMatch)
     return {
       owner: shorthandMatch[1],
@@ -236,3 +234,44 @@ export const readLocalPackageJson = (
     return null;
   }
 };
+
+/**
+ * Parse assets configuration from package.json with defaults
+ * @param config - ClaudeConfig from package.json
+ * @returns Normalized AssetsConfig with defaults
+ */
+export function parseAssetsConfig(config: {
+  assetPath: string;
+  assets?: Record<string, { structure: 'nested' | 'flat' }>;
+}): Record<string, { structure: 'nested' | 'flat' }> {
+  // If no assets config, return default structure
+  if (!config.assets) {
+    const defaultConfig: Record<string, { structure: 'nested' | 'flat' }> = {};
+
+    DEFAULT_ASSET_TYPES.forEach((assetType) => {
+      defaultConfig[assetType] = {
+        structure: DEFAULT_ASSET_STRUCTURES[assetType] || 'flat',
+      };
+    });
+    return defaultConfig;
+  }
+
+  return config.assets;
+}
+
+/**
+ * Get list of asset types to sync from configuration
+ * @param config - ClaudeConfig from package.json
+ * @returns Array of asset type names
+ */
+export function getAssetTypes(config: {
+  assetPath: string;
+  assets?: Record<string, { structure: 'nested' | 'flat' }>;
+}): string[] {
+  if (!config.assets) {
+    // Return a copy of the default asset types array
+    return Array.from(DEFAULT_ASSET_TYPES);
+  }
+
+  return Object.keys(config.assets);
+}

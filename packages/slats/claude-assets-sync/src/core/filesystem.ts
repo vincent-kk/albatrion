@@ -1,63 +1,34 @@
+import { rmSync } from 'node:fs';
+import { join } from 'node:path';
+
 import {
-  existsSync,
-  mkdirSync,
-  readFileSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs';
-import { dirname, join } from 'node:path';
-
-import type { AssetType, SyncMeta } from '../utils/types';
-
-/**
- * Parse scoped package name into scope and name
- * @param packageName - Package name (e.g., "@canard/schema-form")
- * @returns [scope, name] tuple (e.g., ["@canard", "schema-form"])
- */
-export const parsePackageName = (packageName: string): [string, string] => {
-  if (packageName.startsWith('@')) {
-    const [scope, name] = packageName.split('/');
-    return [scope, name];
-  }
-  return ['', packageName];
-};
-
-/**
- * Get the destination directory for synced assets
- * @param cwd - Current working directory
- * @param packageName - Package name
- * @param assetType - Asset type (commands or skills)
- * @returns Full path to destination directory
- */
-export const getDestinationDir = (
-  cwd: string,
-  packageName: string,
-  assetType: AssetType,
-): string => {
-  const [scope, name] = parsePackageName(packageName);
-  if (scope) return join(cwd, '.claude', assetType, scope, name);
-  return join(cwd, '.claude', assetType, name);
-};
+  getDestinationDir as getDestinationDirUtil,
+  getFlatDestinationDir as getFlatDestinationDirUtil,
+} from '../utils/paths';
+import type { AssetType, SyncMeta, UnifiedSyncMeta } from '../utils/types';
+import { needsVersionSync } from '../utils/version';
+import { DEFAULT_ASSET_TYPES, META_FILES } from './constants';
+import {
+  ensureDirectory,
+  fileExists,
+  listDirectory,
+  readJsonFile,
+  writeJsonFile,
+  writeTextFile,
+} from './io';
 
 /**
  * Ensure directory exists (creates recursively if needed)
  * @param dirPath - Directory path
  */
-export const ensureDir = (dirPath: string): void => {
-  if (!existsSync(dirPath)) {
-    mkdirSync(dirPath, { recursive: true });
-  }
-};
+export const ensureDir = ensureDirectory;
 
 /**
  * Write file with directory creation
  * @param filePath - Full file path
  * @param content - File content
  */
-export const writeFile = (filePath: string, content: string): void => {
-  ensureDir(dirname(filePath));
-  writeFileSync(filePath, content, 'utf-8');
-};
+export const writeFile = writeTextFile;
 
 /**
  * Read sync metadata file
@@ -71,14 +42,9 @@ export const readSyncMeta = (
   packageName: string,
   assetType: AssetType,
 ): SyncMeta | null => {
-  try {
-    const destDir = getDestinationDir(cwd, packageName, assetType);
-    const metaPath = join(destDir, '.sync-meta.json');
-    const content = readFileSync(metaPath, 'utf-8');
-    return JSON.parse(content) as SyncMeta;
-  } catch {
-    return null;
-  }
+  const destDir = getDestinationDirUtil(cwd, packageName, assetType);
+  const metaPath = join(destDir, META_FILES.SYNC_META);
+  return readJsonFile<SyncMeta>(metaPath);
 };
 
 /**
@@ -94,9 +60,9 @@ export const writeSyncMeta = (
   assetType: AssetType,
   meta: SyncMeta,
 ): void => {
-  const destDir = getDestinationDir(cwd, packageName, assetType);
-  const metaPath = join(destDir, '.sync-meta.json');
-  writeFile(metaPath, JSON.stringify(meta, null, 2));
+  const destDir = getDestinationDirUtil(cwd, packageName, assetType);
+  const metaPath = join(destDir, META_FILES.SYNC_META);
+  writeJsonFile(metaPath, meta);
 };
 
 /**
@@ -114,7 +80,7 @@ export const writeAssetFile = (
   fileName: string,
   content: string,
 ): void => {
-  const destDir = getDestinationDir(cwd, packageName, assetType);
+  const destDir = getDestinationDirUtil(cwd, packageName, assetType);
   const filePath = join(destDir, fileName);
   writeFile(filePath, content);
 };
@@ -130,8 +96,8 @@ export const cleanAssetDir = (
   packageName: string,
   assetType: AssetType,
 ): void => {
-  const destDir = getDestinationDir(cwd, packageName, assetType);
-  if (existsSync(destDir)) {
+  const destDir = getDestinationDirUtil(cwd, packageName, assetType);
+  if (fileExists(destDir)) {
     rmSync(destDir, { recursive: true, force: true });
   }
 };
@@ -141,24 +107,34 @@ export const cleanAssetDir = (
  * @param cwd - Current working directory
  * @param packageName - Package name
  * @param version - Current package version
+ * @param assetTypes - Optional array of asset types to check. If not provided, uses default types.
  * @returns true if sync is needed
  */
 export const needsSync = (
   cwd: string,
   packageName: string,
   version: string,
+  assetTypes?: string[],
 ): boolean => {
-  // Check both asset types
-  const commandsMeta = readSyncMeta(cwd, packageName, 'commands');
-  const skillsMeta = readSyncMeta(cwd, packageName, 'skills');
+  // Use provided asset types or default to standard types
+  const typesToCheck = assetTypes || [...DEFAULT_ASSET_TYPES];
 
-  // If neither exists, needs sync
-  if (!commandsMeta && !skillsMeta) return true;
+  // Check all asset types
+  const metadataByType = typesToCheck.map((assetType) =>
+    readSyncMeta(cwd, packageName, assetType),
+  );
+
+  // If none exists, needs sync
+  if (metadataByType.every((meta) => !meta)) return true;
 
   // If version differs in any existing meta, needs sync
-  if (commandsMeta && commandsMeta.version !== version) return true;
-
-  if (skillsMeta && skillsMeta.version !== version) return true;
+  if (
+    metadataByType.some(
+      (meta) => meta && needsVersionSync(version, meta.version),
+    )
+  ) {
+    return true;
+  }
 
   return false;
 };
@@ -174,3 +150,111 @@ export const createSyncMeta = (version: string, files: string[]): SyncMeta => ({
   syncedAt: new Date().toISOString(),
   files,
 });
+
+// ============================================================================
+// Flat Structure Support Functions (v2)
+// ============================================================================
+
+/**
+ * Write asset file to flat structure destination
+ * @param cwd - Current working directory
+ * @param assetType - Asset type (commands or skills)
+ * @param flatFileName - Flat file name with prefix (e.g., "canard-schemaForm_guide.md")
+ * @param content - File content
+ * @example
+ * writeFlatAssetFile(cwd, 'commands', 'canard-schemaForm_guide.md', content)
+ */
+export const writeFlatAssetFile = (
+  cwd: string,
+  assetType: AssetType,
+  flatFileName: string,
+  content: string,
+): void => {
+  const destDir = getFlatDestinationDirUtil(cwd, assetType);
+  const filePath = join(destDir, flatFileName);
+  writeFile(filePath, content);
+};
+
+/**
+ * Clean flat asset files with specific prefix
+ * Removes only files belonging to the specified package, preserving others
+ * @param cwd - Current working directory
+ * @param assetType - Asset type (commands, skills, agents, or any custom string)
+ * @param prefix - Package prefix (e.g., "canard-schemaForm")
+ * @param existingMeta - Existing unified metadata to identify exact files to remove
+ * @example
+ * cleanFlatAssetFiles(cwd, 'commands', 'canard-schemaForm', meta)
+ */
+export const cleanFlatAssetFiles = (
+  cwd: string,
+  assetType: AssetType,
+  prefix: string,
+  existingMeta: UnifiedSyncMeta | null,
+): void => {
+  const destDir = getFlatDestinationDirUtil(cwd, assetType);
+
+  if (!fileExists(destDir)) {
+    return; // Nothing to clean
+  }
+
+  // If we have metadata, use it for precise cleanup
+  if (existingMeta?.packages[prefix]) {
+    const packageInfo = existingMeta.packages[prefix];
+    const filesToRemove = packageInfo.files[assetType];
+
+    // Files can be string[] or FileMapping[], iterate and get transformed names
+    if (Array.isArray(filesToRemove)) {
+      for (const fileMapping of filesToRemove) {
+        // Handle both string (nested structure) and FileMapping (flat structure)
+        const fileName =
+          typeof fileMapping === 'string'
+            ? fileMapping
+            : fileMapping.transformed;
+        const filePath = join(destDir, fileName);
+        if (fileExists(filePath)) {
+          rmSync(filePath, { force: true });
+        }
+      }
+    }
+  } else {
+    // Fallback: pattern-based cleanup (less precise)
+    const pattern = `${prefix}_`;
+    const files = listDirectory(destDir);
+
+    for (const file of files) {
+      if (file.startsWith(pattern) && file.endsWith('.md')) {
+        const filePath = join(destDir, file);
+        rmSync(filePath, { force: true });
+      }
+    }
+  }
+};
+
+/**
+ * List flat asset files with specific prefix
+ * @param cwd - Current working directory
+ * @param assetType - Asset type (commands or skills)
+ * @param prefix - Package prefix (e.g., "canard-schemaForm")
+ * @returns Array of file names matching the pattern
+ * @example
+ * listFlatAssetFiles(cwd, 'commands', 'canard-schemaForm')
+ * // => ['canard-schemaForm_guide.md', 'canard-schemaForm_usage.md']
+ */
+export const listFlatAssetFiles = (
+  cwd: string,
+  assetType: AssetType,
+  prefix: string,
+): string[] => {
+  const destDir = getFlatDestinationDirUtil(cwd, assetType);
+
+  if (!fileExists(destDir)) {
+    return [];
+  }
+
+  const pattern = `${prefix}_`;
+  const files = listDirectory(destDir);
+
+  return files.filter(
+    (file) => file.startsWith(pattern) && file.endsWith('.md'),
+  );
+};

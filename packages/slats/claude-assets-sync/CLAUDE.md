@@ -34,17 +34,128 @@ yarn publish:npm        # Publish to npm with public access
 ```
 src/
 ├── index.ts           # Main entry point (CLI + exports)
-├── cli/
-│   └── index.ts       # CLI command definitions using commander
+├── components/        # ink-based React UI components
+│   ├── types.ts           # Shared component types
+│   ├── primitives/        # Base UI components
+│   │   ├── Box.tsx        # Wrapper around ink Box
+│   │   ├── Text.tsx       # Wrapper around ink Text
+│   │   └── Spinner.tsx    # Wrapper around ink-spinner
+│   ├── status/            # Status command UI
+│   │   ├── StatusDisplay.tsx      # Main status UI
+│   │   └── PackageStatusCard.tsx  # Individual package card
+│   ├── tree/              # Tree UI components
+│   │   ├── TreeSelect.tsx         # Interactive tree selection
+│   │   ├── AssetTreeNode.tsx      # Single tree item
+│   │   └── hooks.ts               # Tree state management hooks
+│   ├── add/               # Add command UI
+│   │   └── AddCommand.tsx         # Interactive add flow
+│   └── list/              # List command UI
+│       ├── ListCommand.tsx        # Main list UI
+│       ├── SyncedPackageTree.tsx  # Package tree view
+│       └── EditableTreeItem.tsx   # Editable tree item
+├── commands/          # Command implementations
+│   ├── sync.ts        # Main sync command
+│   ├── add.ts         # Interactive add command
+│   ├── list.ts        # List command with tree UI
+│   ├── status.ts      # Status command with visual UI
+│   ├── remove.ts      # Remove command
+│   └── migrate.ts     # Migration command
 ├── core/
+│   ├── cli.ts         # CLI command definitions using commander
 │   ├── github.ts      # GitHub API client
 │   ├── filesystem.ts  # File system operations
-│   └── sync.ts        # Main sync logic
+│   ├── sync.ts        # Main sync logic
+│   └── migration.ts   # Migration logic
 └── utils/
     ├── types.ts       # TypeScript type definitions
     ├── package.ts     # Package.json parsing utilities
     └── logger.ts      # Logging utility with colors
 ```
+
+### UI Components (`components/`)
+
+The CLI now uses **ink** (React for CLIs) to provide interactive terminal UI.
+
+#### Primitives (`primitives/`)
+
+Basic building blocks that wrap ink components:
+
+- **Box.tsx**: Layout container with border and padding support
+- **Text.tsx**: Text rendering with color and style support
+- **Spinner.tsx**: Loading spinner for async operations
+
+#### Status Components (`status/`)
+
+Visual status display for the `status` command:
+
+- **StatusDisplay.tsx**: Main status UI with bordered box layout
+  - Renders list of package status cards
+  - Shows summary statistics
+  - Handles loading and error states
+- **PackageStatusCard.tsx**: Individual package status card
+  - Color-coded status indicators (✓ ⚠ ✗)
+  - Version comparison (local vs synced)
+  - Last sync timestamp
+  - Asset count
+
+#### Tree Components (`tree/`)
+
+Interactive tree selection for browsing file structures:
+
+- **TreeSelect.tsx**: Main tree selection component
+  - Keyboard navigation (↑/↓ arrows)
+  - Selection toggle (Space)
+  - Expand/collapse (→/← arrows)
+  - Batch operations (a=select all, n=deselect all)
+  - Submit/cancel (Enter/q)
+- **AssetTreeNode.tsx**: Single tree item renderer
+  - Displays files and directories
+  - Shows selection state (checkboxes)
+  - Handles expand/collapse icons
+- **hooks.ts**: Tree state management
+  - `useTreeSelect`: Manages selection, focus, expansion
+  - Keyboard event handling
+  - Tree traversal utilities
+
+#### Add Command UI (`add/`)
+
+Interactive add flow with file selection:
+
+- **AddCommand.tsx**: Complete add command flow
+  - Discovers available assets from package
+  - Renders TreeSelect for file selection
+  - Handles asset syncing
+  - Shows progress and results
+
+#### List Command UI (`list/`)
+
+Tree view of synced packages with edit mode:
+
+- **ListCommand.tsx**: Main list UI with view/edit modes
+  - **View mode**: Browse synced packages
+    - Tree structure of all packages and files
+    - Keyboard shortcuts (e=edit, r=refresh, q=quit)
+  - **Edit mode**: Modify synced assets
+    - Mark files for deletion (d key)
+    - Add new files (a key)
+    - Exit edit mode (Esc)
+- **SyncedPackageTree.tsx**: Tree view renderer
+  - Displays package hierarchy
+  - Shows file types (commands/skills)
+  - Expandable/collapsible structure
+- **EditableTreeItem.tsx**: Tree item with edit capabilities
+  - Selection state in edit mode
+  - Delete markers
+  - Add file prompts
+
+#### Shared Types (`components/types.ts`)
+
+Common type definitions for UI components:
+
+- **TreeNode**: File/directory tree structure
+- **SelectionState**: Track selected items
+- **TreeAction**: Keyboard action types
+- **PackageStatusInfo**: Status display data
 
 ### Key Components
 
@@ -63,10 +174,11 @@ src/
 - Compares versions to skip unnecessary syncs
 - Supports dry-run mode for previewing changes
 
-#### CLI (`cli/index.ts`)
+#### CLI (`core/cli.ts`)
 - Uses Commander.js for argument parsing
 - Supports multiple package flags (-p)
 - Provides --force and --dry-run options
+- Routes to appropriate command implementations
 
 ### Sync Flow
 
@@ -133,7 +245,7 @@ The library produces multiple formats:
 ## Common Patterns
 
 ### Adding New CLI Options
-1. Add option to `createProgram()` in `cli/index.ts`
+1. Add option to `createProgram()` in `core/cli.ts`
 2. Add type to `CliOptions` in `utils/types.ts`
 3. Use option in `syncPackage()` or `syncPackages()`
 

@@ -7,14 +7,14 @@ import {
   cleanAssetDir,
   createSyncMeta,
   ensureDir,
-  getDestinationDir,
   needsSync,
-  parsePackageName,
   readSyncMeta,
   writeAssetFile,
   writeFile,
   writeSyncMeta,
 } from '../core/filesystem';
+import { parsePackageName } from '../utils/packageName';
+import { getDestinationDir } from '../utils/paths';
 import { type TestFixture, createTestFixture, mockSyncMeta } from './helpers';
 
 describe('parsePackageName', () => {

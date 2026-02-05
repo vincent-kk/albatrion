@@ -10,6 +10,7 @@ import {
 } from '../core/github';
 import type { GitHubRepoInfo } from '../utils/types';
 import {
+  mockAgentEntries,
   mockCommandContent,
   mockCommandEntries,
   mockRepoInfo,
@@ -115,11 +116,12 @@ describe('GitHub API Client', () => {
   });
 
   describe('fetchAssetFiles', () => {
-    it('should fetch both commands and skills', async () => {
+    it('should fetch commands, skills, and agents', async () => {
       setupFetchMock({
         directoryEntries: {
           commands: mockCommandEntries,
           skills: mockSkillEntries,
+          agents: mockAgentEntries,
         },
       });
 
@@ -127,10 +129,12 @@ describe('GitHub API Client', () => {
         mockRepoInfo,
         'docs/claude',
         '@canard/schema-form@0.10.0',
+        ['commands', 'skills', 'agents'],
       );
 
       expect(result.commands).toHaveLength(1);
       expect(result.skills).toHaveLength(2);
+      expect(result.agents).toHaveLength(1);
     });
 
     it('should return empty arrays when directories do not exist', async () => {
@@ -142,10 +146,12 @@ describe('GitHub API Client', () => {
         mockRepoInfo,
         'docs/claude',
         '@canard/schema-form@0.10.0',
+        ['commands', 'skills', 'agents'],
       );
 
       expect(result.commands).toEqual([]);
       expect(result.skills).toEqual([]);
+      expect(result.agents).toEqual([]);
     });
 
     it('should handle partial results (only commands)', async () => {
@@ -159,10 +165,12 @@ describe('GitHub API Client', () => {
         mockRepoInfo,
         'docs/claude',
         '@canard/schema-form@0.10.0',
+        ['commands', 'skills', 'agents'],
       );
 
       expect(result.commands).toHaveLength(1);
       expect(result.skills).toEqual([]);
+      expect(result.agents).toEqual([]);
     });
 
     it('should handle partial results (only skills)', async () => {
@@ -176,10 +184,31 @@ describe('GitHub API Client', () => {
         mockRepoInfo,
         'docs/claude',
         '@canard/schema-form@0.10.0',
+        ['commands', 'skills', 'agents'],
       );
 
       expect(result.commands).toEqual([]);
       expect(result.skills).toHaveLength(2);
+      expect(result.agents).toEqual([]);
+    });
+
+    it('should handle partial results (only agents)', async () => {
+      setupFetchMock({
+        directoryEntries: {
+          agents: mockAgentEntries,
+        },
+      });
+
+      const result = await fetchAssetFiles(
+        mockRepoInfo,
+        'docs/claude',
+        '@canard/schema-form@0.10.0',
+        ['commands', 'skills', 'agents'],
+      );
+
+      expect(result.commands).toEqual([]);
+      expect(result.skills).toEqual([]);
+      expect(result.agents).toHaveLength(1);
     });
   });
 

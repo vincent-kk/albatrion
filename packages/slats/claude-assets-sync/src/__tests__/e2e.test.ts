@@ -3,9 +3,11 @@ import { join } from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { getDestinationDir } from '../core/filesystem';
 import { syncPackage, syncPackages } from '../core/sync';
-import type { PackageInfo, SyncMeta } from '../utils/types';
+import { readUnifiedSyncMeta } from '../core/syncMeta';
+import { packageNameToPrefix, toFlatFileName } from '../utils/nameTransform';
+import { getDestinationDir, getFlatDestinationDir } from '../utils/paths';
+import type { PackageInfo, UnifiedSyncMeta } from '../utils/types';
 import {
   type TestFixture,
   createTestFixture,
@@ -15,7 +17,6 @@ import {
   mockSkillContent,
   mockSkillEntries,
   restoreFetchMock,
-  setupExistingSyncMeta,
   setupFetchMock,
 } from './helpers';
 
@@ -51,7 +52,7 @@ describe('E2E: Full Sync Flow', () => {
       // Sync the package
       const result = await syncPackage(
         '@canard/schema-form',
-        { force: false, dryRun: false },
+        { force: false, dryRun: false, local: false, flat: true },
         fixture.tempDir,
       );
 
@@ -59,64 +60,101 @@ describe('E2E: Full Sync Flow', () => {
       expect(result.success).toBe(true);
       expect(result.skipped).toBe(false);
 
-      // Verify directory structure
+      // Verify hybrid directory structure:
+      // - Commands use NESTED structure
+      // - Skills use FLAT structure
       const commandsDir = getDestinationDir(
         fixture.tempDir,
         '@canard/schema-form',
         'commands',
       );
-      const skillsDir = getDestinationDir(
-        fixture.tempDir,
-        '@canard/schema-form',
-        'skills',
-      );
+      const skillsDir = getFlatDestinationDir(fixture.tempDir, 'skills');
 
       expect(existsSync(commandsDir)).toBe(true);
       expect(existsSync(skillsDir)).toBe(true);
 
-      // Verify files
-      expect(existsSync(join(commandsDir, 'schema-form.md'))).toBe(true);
-      expect(existsSync(join(skillsDir, 'schema-form-expert.md'))).toBe(true);
-      expect(existsSync(join(skillsDir, 'validation.md'))).toBe(true);
+      // Calculate file names
+      const prefix = packageNameToPrefix('@canard/schema-form');
+      // Commands: original filename (nested structure)
+      const commandFile = 'schema-form.md';
+      // Skills: transformed filename (flat structure)
+      const skillFile1 = toFlatFileName(prefix, 'schema-form-expert.md');
+      const skillFile2 = toFlatFileName(prefix, 'validation.md');
+
+      // Verify files exist in correct locations
+      expect(existsSync(join(commandsDir, commandFile))).toBe(true);
+      expect(existsSync(join(skillsDir, skillFile1))).toBe(true);
+      expect(existsSync(join(skillsDir, skillFile2))).toBe(true);
 
       // Verify file contents
       const commandContent = readFileSync(
-        join(commandsDir, 'schema-form.md'),
+        join(commandsDir, commandFile),
         'utf-8',
       );
       expect(commandContent).toBe(mockCommandContent);
 
-      // Verify sync meta
-      const commandsMeta: SyncMeta = JSON.parse(
-        readFileSync(join(commandsDir, '.sync-meta.json'), 'utf-8'),
+      // Verify unified sync meta
+      const unifiedMeta = readUnifiedSyncMeta(fixture.tempDir);
+      expect(unifiedMeta).not.toBeNull();
+      expect(unifiedMeta!.schemaVersion).toBe('0.0.2');
+      expect(unifiedMeta!.packages[prefix]).toBeDefined();
+      expect(unifiedMeta!.packages[prefix].version).toBe('0.10.0');
+      expect(unifiedMeta!.packages[prefix].originalName).toBe(
+        '@canard/schema-form',
       );
-      expect(commandsMeta.version).toBe('0.10.0');
-      expect(commandsMeta.files).toEqual(['schema-form.md']);
 
-      const skillsMeta: SyncMeta = JSON.parse(
-        readFileSync(join(skillsDir, '.sync-meta.json'), 'utf-8'),
-      );
-      expect(skillsMeta.version).toBe('0.10.0');
-      expect(skillsMeta.files).toContain('schema-form-expert.md');
-      expect(skillsMeta.files).toContain('validation.md');
+      // Verify synced files structure:
+      // - commands: string[] (original filenames)
+      // - skills: FileMapping[] (with original and transformed)
+      const commandFiles = unifiedMeta!.packages[prefix].files.commands;
+      expect(commandFiles).toHaveLength(1);
+      expect(commandFiles[0]).toBe('schema-form.md');
+
+      const skillFiles = unifiedMeta!.packages[prefix].files.skills;
+      expect(skillFiles).toHaveLength(2);
+      expect(
+        skillFiles.find(
+          (f) =>
+            typeof f !== 'string' && f.original === 'schema-form-expert.md',
+        ),
+      ).toBeDefined();
+      expect(
+        skillFiles.find(
+          (f) => typeof f !== 'string' && f.original === 'validation.md',
+        ),
+      ).toBeDefined();
     });
 
     it('should skip sync when version matches', async () => {
-      // Setup existing sync
-      setupExistingSyncMeta(
-        fixture.tempDir,
-        '@canard/schema-form',
-        'commands',
-        {
-          version: '0.10.0',
-          syncedAt: new Date().toISOString(),
-          files: ['schema-form.md'],
+      // Setup existing unified sync meta
+      const prefix = packageNameToPrefix('@canard/schema-form');
+
+      const unifiedMeta: UnifiedSyncMeta = {
+        schemaVersion: '2.0',
+        syncedAt: new Date().toISOString(),
+        packages: {
+          [prefix]: {
+            originalName: '@canard/schema-form',
+            version: '0.10.0',
+            files: {
+              commands: ['schema-form.md'],
+              skills: [],
+              agents: [],
+            },
+          },
         },
-      );
+      };
+
+      // Write unified meta manually
+      const metaPath = join(fixture.tempDir, '.claude/.sync-meta.json');
+      const claudeDir = join(fixture.tempDir, '.claude');
+      const { mkdirSync, writeFileSync } = await import('node:fs');
+      mkdirSync(claudeDir, { recursive: true });
+      writeFileSync(metaPath, JSON.stringify(unifiedMeta, null, 2));
 
       const result = await syncPackage(
         '@canard/schema-form',
-        { force: false, dryRun: false },
+        { force: false, dryRun: false, local: false, flat: true },
         fixture.tempDir,
       );
 
@@ -126,17 +164,30 @@ describe('E2E: Full Sync Flow', () => {
     });
 
     it('should re-sync when version changes', async () => {
-      // Setup existing sync with older version
-      setupExistingSyncMeta(
-        fixture.tempDir,
-        '@canard/schema-form',
-        'commands',
-        {
-          version: '0.9.0',
-          syncedAt: new Date().toISOString(),
-          files: ['old-command.md'],
+      // Setup existing unified sync meta with older version
+      const prefix = packageNameToPrefix('@canard/schema-form');
+
+      const unifiedMeta: UnifiedSyncMeta = {
+        schemaVersion: '2.0',
+        syncedAt: new Date().toISOString(),
+        packages: {
+          [prefix]: {
+            originalName: '@canard/schema-form',
+            version: '0.9.0',
+            files: {
+              commands: ['old-command.md'],
+              skills: [],
+              agents: [],
+            },
+          },
         },
-      );
+      };
+
+      const metaPath = join(fixture.tempDir, '.claude/.sync-meta.json');
+      const claudeDir = join(fixture.tempDir, '.claude');
+      const { mkdirSync, writeFileSync } = await import('node:fs');
+      mkdirSync(claudeDir, { recursive: true });
+      writeFileSync(metaPath, JSON.stringify(unifiedMeta, null, 2));
 
       setupFetchMock({
         directoryEntries: {
@@ -149,44 +200,54 @@ describe('E2E: Full Sync Flow', () => {
 
       const result = await syncPackage(
         '@canard/schema-form',
-        { force: false, dryRun: false },
+        { force: false, dryRun: false, local: false, flat: true },
         fixture.tempDir,
       );
 
       expect(result.success).toBe(true);
       expect(result.skipped).toBe(false);
 
-      // Verify new version in meta
-      const commandsDir = getDestinationDir(
-        fixture.tempDir,
-        '@canard/schema-form',
-        'commands',
-      );
-      const meta: SyncMeta = JSON.parse(
-        readFileSync(join(commandsDir, '.sync-meta.json'), 'utf-8'),
-      );
-      expect(meta.version).toBe('0.10.0');
+      // Verify new version in unified meta
+      const updatedMeta = readUnifiedSyncMeta(fixture.tempDir);
+      expect(updatedMeta).not.toBeNull();
+      expect(updatedMeta!.packages[prefix].version).toBe('0.10.0');
     });
 
     it('should clean old files when re-syncing', async () => {
-      // Setup existing sync with different files
-      setupExistingSyncMeta(
-        fixture.tempDir,
-        '@canard/schema-form',
-        'commands',
-        {
-          version: '0.9.0',
-          syncedAt: new Date().toISOString(),
-          files: ['old-command.md'],
-        },
-      );
+      // Setup existing unified sync meta with different files
+      // Commands use NESTED structure with original filenames
+      const prefix = packageNameToPrefix('@canard/schema-form');
 
-      // Create old file
+      const unifiedMeta: UnifiedSyncMeta = {
+        schemaVersion: '2.0',
+        syncedAt: new Date().toISOString(),
+        packages: {
+          [prefix]: {
+            originalName: '@canard/schema-form',
+            version: '0.9.0',
+            files: {
+              // Commands: string[] (original filenames)
+              commands: ['old-command.md'],
+              skills: [],
+              agents: [],
+            },
+          },
+        },
+      };
+
+      const metaPath = join(fixture.tempDir, '.claude/.sync-meta.json');
+      // Commands use nested structure
       const commandsDir = getDestinationDir(
         fixture.tempDir,
         '@canard/schema-form',
         'commands',
       );
+      const { mkdirSync, writeFileSync } = await import('node:fs');
+      mkdirSync(commandsDir, { recursive: true });
+      writeFileSync(metaPath, JSON.stringify(unifiedMeta, null, 2));
+
+      // Create old file in nested directory
+      writeFileSync(join(commandsDir, 'old-command.md'), '# Old content');
 
       setupFetchMock({
         directoryEntries: {
@@ -199,13 +260,13 @@ describe('E2E: Full Sync Flow', () => {
 
       await syncPackage(
         '@canard/schema-form',
-        { force: false, dryRun: false },
+        { force: false, dryRun: false, local: false, flat: true },
         fixture.tempDir,
       );
 
-      // Old files should be removed (directory was cleaned)
+      // Old file should be removed (cleanAssetDir removes entire nested directory)
       expect(existsSync(join(commandsDir, 'old-command.md'))).toBe(false);
-      // New file should exist
+      // New file should exist with original filename in nested structure
       expect(existsSync(join(commandsDir, 'schema-form.md'))).toBe(true);
     });
   });
@@ -245,7 +306,7 @@ describe('E2E: Full Sync Flow', () => {
 
       const results = await syncPackages(
         ['@canard/schema-form', '@lerx/promise-modal'],
-        { force: false, dryRun: false },
+        { force: false, dryRun: false, local: false, flat: true },
         multiFixture.tempDir,
       );
 
@@ -268,7 +329,7 @@ describe('E2E: Full Sync Flow', () => {
 
       const results = await syncPackages(
         ['@non/existent', '@canard/schema-form'],
-        { force: false, dryRun: false },
+        { force: false, dryRun: false, local: false, flat: true },
         fixture.tempDir,
       );
 
@@ -289,12 +350,23 @@ describe('E2E: Full Sync Flow', () => {
 
       const result = await syncPackage(
         '@canard/schema-form',
-        { force: false, dryRun: true },
+        { force: false, dryRun: true, local: false, flat: true },
         fixture.tempDir,
       );
 
       expect(result.success).toBe(true);
+
+      // In hybrid mode:
+      // - Commands: original filenames (nested structure)
+      // - Skills: transformed filenames (flat structure)
+      const prefix = packageNameToPrefix('@canard/schema-form');
       expect(result.syncedFiles?.commands).toContain('schema-form.md');
+      expect(result.syncedFiles?.skills).toContain(
+        toFlatFileName(prefix, 'schema-form-expert.md'),
+      );
+      expect(result.syncedFiles?.skills).toContain(
+        toFlatFileName(prefix, 'validation.md'),
+      );
 
       // Verify no directories were created
       const claudeDir = join(fixture.tempDir, '.claude');
@@ -304,17 +376,32 @@ describe('E2E: Full Sync Flow', () => {
 
   describe('Force mode E2E', () => {
     it('should re-sync even when version matches', async () => {
-      // Setup existing sync with same version
-      setupExistingSyncMeta(
-        fixture.tempDir,
-        '@canard/schema-form',
-        'commands',
-        {
-          version: '0.10.0',
-          syncedAt: '2020-01-01T00:00:00.000Z', // Old date
-          files: ['old-file.md'],
+      // Setup existing unified sync with same version
+      // Commands use string[] (original filenames) in hybrid mode
+      const prefix = packageNameToPrefix('@canard/schema-form');
+
+      const unifiedMeta: UnifiedSyncMeta = {
+        schemaVersion: '2.0',
+        syncedAt: '2020-01-01T00:00:00.000Z',
+        packages: {
+          [prefix]: {
+            originalName: '@canard/schema-form',
+            version: '0.10.0',
+            files: {
+              // Commands: string[] (original filenames)
+              commands: ['old-file.md'],
+              skills: [],
+              agents: [],
+            },
+          },
         },
-      );
+      };
+
+      const metaPath = join(fixture.tempDir, '.claude/.sync-meta.json');
+      const claudeDir = join(fixture.tempDir, '.claude');
+      const { mkdirSync, writeFileSync } = await import('node:fs');
+      mkdirSync(claudeDir, { recursive: true });
+      writeFileSync(metaPath, JSON.stringify(unifiedMeta, null, 2));
 
       setupFetchMock({
         directoryEntries: {
@@ -327,28 +414,26 @@ describe('E2E: Full Sync Flow', () => {
 
       const result = await syncPackage(
         '@canard/schema-form',
-        { force: true, dryRun: false },
+        { force: true, dryRun: false, local: false, flat: true },
         fixture.tempDir,
       );
 
       expect(result.success).toBe(true);
       expect(result.skipped).toBe(false);
 
-      // Verify sync meta was updated
-      const commandsDir = getDestinationDir(
-        fixture.tempDir,
-        '@canard/schema-form',
-        'commands',
-      );
-      const meta: SyncMeta = JSON.parse(
-        readFileSync(join(commandsDir, '.sync-meta.json'), 'utf-8'),
-      );
+      // Verify unified sync meta was updated
+      const updatedMeta = readUnifiedSyncMeta(fixture.tempDir);
+      expect(updatedMeta).not.toBeNull();
 
       // Should have new timestamp
-      expect(meta.syncedAt).not.toBe('2020-01-01T00:00:00.000Z');
-      // Should have new files
-      expect(meta.files).toContain('schema-form.md');
-      expect(meta.files).not.toContain('old-file.md');
+      expect(updatedMeta!.syncedAt).not.toBe('2020-01-01T00:00:00.000Z');
+      // Commands use string[] with original filenames in hybrid mode
+      expect(updatedMeta!.packages[prefix].files.commands).toContain(
+        'schema-form.md',
+      );
+      expect(updatedMeta!.packages[prefix].files.commands).not.toContain(
+        'old-file.md',
+      );
     });
   });
 
@@ -365,28 +450,24 @@ describe('E2E: Full Sync Flow', () => {
 
       const result = await syncPackage(
         '@canard/schema-form',
-        { force: false, dryRun: false },
+        { force: false, dryRun: false, local: false, flat: true },
         fixture.tempDir,
       );
 
       expect(result.success).toBe(true);
       expect(result.syncedFiles?.commands).toHaveLength(1);
-      expect(result.syncedFiles?.skills).toHaveLength(0);
+      expect(result.syncedFiles?.skills).toBeUndefined();
 
-      // Only commands directory should exist
+      // Commands use NESTED structure with original filenames
       const commandsDir = getDestinationDir(
         fixture.tempDir,
         '@canard/schema-form',
         'commands',
       );
-      const skillsDir = getDestinationDir(
-        fixture.tempDir,
-        '@canard/schema-form',
-        'skills',
-      );
-
       expect(existsSync(commandsDir)).toBe(true);
-      expect(existsSync(skillsDir)).toBe(false);
+
+      // Commands keep original filename in nested directory
+      expect(existsSync(join(commandsDir, 'schema-form.md'))).toBe(true);
     });
 
     it('should handle package with only skills', async () => {
@@ -402,13 +483,25 @@ describe('E2E: Full Sync Flow', () => {
 
       const result = await syncPackage(
         '@canard/schema-form',
-        { force: false, dryRun: false },
+        { force: false, dryRun: false, local: false, flat: true },
         fixture.tempDir,
       );
 
       expect(result.success).toBe(true);
-      expect(result.syncedFiles?.commands).toHaveLength(0);
+      expect(result.syncedFiles?.commands).toBeUndefined();
       expect(result.syncedFiles?.skills).toHaveLength(2);
+
+      // Skills use FLAT structure with transformed filenames
+      const skillsDir = getFlatDestinationDir(fixture.tempDir, 'skills');
+      const prefix = packageNameToPrefix('@canard/schema-form');
+      expect(
+        existsSync(
+          join(skillsDir, toFlatFileName(prefix, 'schema-form-expert.md')),
+        ),
+      ).toBe(true);
+      expect(
+        existsSync(join(skillsDir, toFlatFileName(prefix, 'validation.md'))),
+      ).toBe(true);
     });
 
     it('should handle unscoped package names', async () => {
@@ -445,13 +538,13 @@ describe('E2E: Full Sync Flow', () => {
 
       const result = await syncPackage(
         'my-package',
-        { force: false, dryRun: false },
+        { force: false, dryRun: false, local: false, flat: true },
         unscopedFixture.tempDir,
       );
 
       expect(result.success).toBe(true);
 
-      // Verify path structure for unscoped package
+      // Commands use NESTED structure even for unscoped packages
       const commandsDir = getDestinationDir(
         unscopedFixture.tempDir,
         'my-package',
@@ -460,6 +553,8 @@ describe('E2E: Full Sync Flow', () => {
       expect(commandsDir).toBe(
         join(unscopedFixture.tempDir, '.claude/commands/my-package'),
       );
+
+      // Commands keep original filename in nested directory
       expect(existsSync(join(commandsDir, 'command.md'))).toBe(true);
 
       unscopedFixture.cleanup();
@@ -493,15 +588,17 @@ const example = {
 
       await syncPackage(
         '@canard/schema-form',
-        { force: false, dryRun: false },
+        { force: false, dryRun: false, local: false, flat: true },
         fixture.tempDir,
       );
 
+      // Commands use NESTED structure with original filename
       const commandsDir = getDestinationDir(
         fixture.tempDir,
         '@canard/schema-form',
         'commands',
       );
+
       const savedContent = readFileSync(
         join(commandsDir, 'schema-form.md'),
         'utf-8',

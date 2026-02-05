@@ -1,6 +1,6 @@
 {
   "name": "@slats/claude-assets-sync",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "CLI tool to sync Claude commands and skills from npm packages to your project's .claude directory",
   "keywords": [
     "claude",
@@ -40,10 +40,10 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rollup -c && yarn build:types",
+    "build": "node scripts/inject-version.js && rollup -c && yarn build:types",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "tsc -p ./tsconfig.declarations.json && tsc-alias -p ./tsconfig.declarations.json",
-    "dev": "tsx src/index.ts",
+    "dev": "node scripts/inject-version.js && tsx src/index.ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\"",
     "publish:npm": "yarn npm publish --access public",
@@ -53,7 +53,16 @@
     "version:patch": "yarn version patch"
   },
   "dependencies": {
+    "@winglet/react-utils": "workspace:^",
     "commander": "^12.1.0",
-    "picocolors": "^1.1.1"
+    "ink": "^6.6.0",
+    "ink-spinner": "^5.0.0",
+    "picocolors": "^1.1.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "ink-testing-library": "^4.0.0"
   }
 }

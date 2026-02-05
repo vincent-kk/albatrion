@@ -4,12 +4,12 @@
 /node_modules
 
 # testing
-/coverage
+coverage
 
-/.omc
+.omc
 
 # production
-/build
+build
 *.tsbuildinfo
 **/storybook-static
 

@@ -11,6 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
+*.tgz
+
+# Auto-generated version file
+src/version.ts
 
 # Editor directories and files
 .vscode/*

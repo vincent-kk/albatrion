@@ -3,11 +3,8 @@ import { vi } from 'vitest';
 import type { GitHubEntry } from '../../utils/types';
 
 interface MockFetchOptions {
-  /** Directory entries for GitHub API calls */
-  directoryEntries?: {
-    commands?: GitHubEntry[];
-    skills?: GitHubEntry[];
-  };
+  /** Directory entries for GitHub API calls - dynamic asset types */
+  directoryEntries?: Record<string, GitHubEntry[]>;
   /** File contents keyed by path */
   fileContents?: Record<string, string>;
   /** Simulate rate limit */
@@ -43,28 +40,22 @@ export const createMockFetch = (options: MockFetchOptions = {}) =>
       return new Response('Not found', { status: 404 });
     }
 
-    // Handle GitHub API directory listing
+    // Handle GitHub API directory listing - DYNAMIC VERSION
     if (url.includes('api.github.com/repos') && url.includes('/contents/')) {
       const entries = options.directoryEntries;
 
-      if (url.includes('/commands')) {
-        if (entries?.commands) {
-          return new Response(JSON.stringify(entries.commands), {
-            status: 200,
-            headers: { 'content-type': 'application/json' },
-          });
+      if (entries) {
+        // Dynamic: check all configured asset types
+        // Match asset type at the END of the path to avoid false matches
+        // (e.g., /docs/claude/commands should match 'commands', not 'docs')
+        for (const [assetType, assetEntries] of Object.entries(entries)) {
+          if (url.endsWith(`/${assetType}`) || url.includes(`/${assetType}?`)) {
+            return new Response(JSON.stringify(assetEntries), {
+              status: 200,
+              headers: { 'content-type': 'application/json' },
+            });
+          }
         }
-        return new Response('Not found', { status: 404 });
-      }
-
-      if (url.includes('/skills')) {
-        if (entries?.skills) {
-          return new Response(JSON.stringify(entries.skills), {
-            status: 200,
-            headers: { 'content-type': 'application/json' },
-          });
-        }
-        return new Response('Not found', { status: 404 });
       }
 
       return new Response('Not found', { status: 404 });

@@ -1,9 +1,11 @@
 #!/usr/bin/env node
-import { run } from './cli';
+import { run } from './core/cli.js';
 
 // Export for programmatic use
 export { syncPackage, syncPackages } from './core/sync';
-export { createProgram, run } from './cli';
+export { createProgram, run } from './core/cli.js';
+export { migrateToFlat, needsMigration } from './core/migration';
+export type { MigrationResult } from './core/migration';
 export type {
   AssetType,
   CliOptions,
@@ -12,6 +14,9 @@ export type {
   PackageInfo,
   SyncMeta,
   SyncResult,
+  UnifiedSyncMeta,
+  PackageSyncInfo,
+  FileMapping,
 } from './utils/types';
 
 // Run CLI when executed directly

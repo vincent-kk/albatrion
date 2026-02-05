@@ -78,37 +78,38 @@ export const fetchDirectoryContents = async (
 };
 
 /**
- * Fetch asset files (commands and skills) from GitHub
+ * Fetch asset files dynamically from GitHub
  * @param repoInfo - GitHub repository information
  * @param assetPath - Base path to Claude assets (e.g., "docs/claude")
  * @param tag - Git tag or ref to fetch from
- * @returns Object with commands and skills file lists
+ * @param assetTypes - Array of asset type names to fetch
+ * @returns Record mapping asset type names to their GitHubEntry arrays
  */
 export const fetchAssetFiles = async (
   repoInfo: GitHubRepoInfo,
   assetPath: string,
   tag: string,
-): Promise<{
-  commands: GitHubEntry[];
-  skills: GitHubEntry[];
-}> => {
-  // Build full paths
+  assetTypes: string[],
+): Promise<Record<string, GitHubEntry[]>> => {
+  // Build base path
   const basePath = repoInfo.directory
     ? `${repoInfo.directory}/${assetPath}`
     : assetPath;
-  const commandsPath = `${basePath}/commands`;
-  const skillsPath = `${basePath}/skills`;
 
-  // Fetch both directories in parallel
-  const [commandsEntries, skillsEntries] = await Promise.all([
-    fetchDirectoryContents(repoInfo, commandsPath, tag),
-    fetchDirectoryContents(repoInfo, skillsPath, tag),
-  ]);
+  // Fetch all asset types in parallel
+  const fetchPromises = assetTypes.map((assetType) =>
+    fetchDirectoryContents(repoInfo, `${basePath}/${assetType}`, tag),
+  );
 
-  return {
-    commands: commandsEntries || [],
-    skills: skillsEntries || [],
-  };
+  const results = await Promise.all(fetchPromises);
+
+  // Build dynamic result object
+  const assetFiles: Record<string, GitHubEntry[]> = {};
+  assetTypes.forEach((assetType, index) => {
+    assetFiles[assetType] = results[index] || [];
+  });
+
+  return assetFiles;
 };
 
 /**
