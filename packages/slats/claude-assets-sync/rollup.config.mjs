@@ -12,22 +12,32 @@ const { libBuildOptions, clearDir } = getLibBuildOptions(import.meta.url);
 export default async () => {
   clearDir('dist');
   const entrypoints = getEntrypoints(packageJson);
-  return [
-    await libBuildOptions({
-      format: 'esm',
-      extension: 'mjs',
-      entrypoints,
-      outDir: 'dist',
-      sourcemap: false,
-      // CLI shebang 추가
-      banner: '#!/usr/bin/env node',
-    }),
-    await libBuildOptions({
-      format: 'cjs',
-      extension: 'cjs',
-      entrypoints,
-      outDir: 'dist',
-      sourcemap: false,
-    }),
-  ];
+
+  // CLI entrypoint 추가
+  const cliEntry = './src/cli.ts';
+
+  // ESM 빌드 설정 - CLI만 shebang 추가
+  const esmConfig = await libBuildOptions({
+    format: 'esm',
+    extension: 'mjs',
+    entrypoints: [...entrypoints, cliEntry], // CLI 추가
+    outDir: 'dist',
+    sourcemap: false,
+  });
+
+  // CLI 파일에만 shebang 추가
+  esmConfig.output.banner = (chunk) => {
+    return chunk.fileName === 'cli.mjs' ? '#!/usr/bin/env node' : '';
+  };
+
+  // CJS 빌드 설정 - shebang 없음
+  const cjsConfig = await libBuildOptions({
+    format: 'cjs',
+    extension: 'cjs',
+    entrypoints: [...entrypoints, cliEntry], // CLI 추가
+    outDir: 'dist',
+    sourcemap: false,
+  });
+
+  return [esmConfig, cjsConfig];
 };

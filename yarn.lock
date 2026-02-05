@@ -6848,7 +6848,7 @@ __metadata:
     react: "npm:^19.1.1"
     react-dom: "npm:^19.1.1"
   bin:
-    claude-assets-sync: ./dist/index.mjs
+    claude-assets-sync: ./dist/cli.mjs
   languageName: unknown
   linkType: soft
 
