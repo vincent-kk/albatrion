@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "0.0.3",
+  "syncedAt": "2026-02-10T17:38:51.026Z",
+  "packages": {
+    "canard-schemaForm": {
+      "originalName": "@canard/schema-form",
+      "version": "0.10.3",
+      "local": true,
+      "files": {
+        "commands": [
+          "guide.md"
+        ],
+        "skills": [
+          {
+            "original": "expert/SKILL.md",
+            "transformed": "canard-schemaForm_expert/SKILL.md"
+          },
+          {
+            "original": "expert/knowledge/array-operations.md",
+            "transformed": "canard-schemaForm_expert/knowledge/array-operations.md"
+          },
+          {
+            "original": "expert/knowledge/computed-properties.md",
+            "transformed": "canard-schemaForm_expert/knowledge/computed-properties.md"
+          },
+          {
+            "original": "expert/knowledge/conditional-schema.md",
+            "transformed": "canard-schemaForm_expert/knowledge/conditional-schema.md"
+          },
+          {
+            "original": "expert/knowledge/context-usage.md",
+            "transformed": "canard-schemaForm_expert/knowledge/context-usage.md"
+          },
+          {
+            "original": "expert/knowledge/event-system.md",
+            "transformed": "canard-schemaForm_expert/knowledge/event-system.md"
+          },
+          {
+            "original": "expert/knowledge/form-handle.md",
+            "transformed": "canard-schemaForm_expert/knowledge/form-handle.md"
+          },
+          {
+            "original": "expert/knowledge/form-render.md",
+            "transformed": "canard-schemaForm_expert/knowledge/form-render.md"
+          },
+          {
+            "original": "expert/knowledge/formtype-input.md",
+            "transformed": "canard-schemaForm_expert/knowledge/formtype-input.md"
+          },
+          {
+            "original": "expert/knowledge/inject-to.md",
+            "transformed": "canard-schemaForm_expert/knowledge/inject-to.md"
+          },
+          {
+            "original": "expert/knowledge/jsonpointer.md",
+            "transformed": "canard-schemaForm_expert/knowledge/jsonpointer.md"
+          },
+          {
+            "original": "expert/knowledge/performance-optimization.md",
+            "transformed": "canard-schemaForm_expert/knowledge/performance-optimization.md"
+          },
+          {
+            "original": "expert/knowledge/plugin-system.md",
+            "transformed": "canard-schemaForm_expert/knowledge/plugin-system.md"
+          },
+          {
+            "original": "expert/knowledge/state-management.md",
+            "transformed": "canard-schemaForm_expert/knowledge/state-management.md"
+          },
+          {
+            "original": "expert/knowledge/testing-guide.md",
+            "transformed": "canard-schemaForm_expert/knowledge/testing-guide.md"
+          },
+          {
+            "original": "expert/knowledge/troubleshooting.md",
+            "transformed": "canard-schemaForm_expert/knowledge/troubleshooting.md"
+          },
+          {
+            "original": "expert/knowledge/validation.md",
+            "transformed": "canard-schemaForm_expert/knowledge/validation.md"
+          },
+          {
+            "original": "expert/knowledge/virtual-schema.md",
+            "transformed": "canard-schemaForm_expert/knowledge/virtual-schema.md"
+          }
+        ]
+      }
+    },
+    "lerx-promiseModal": {
+      "originalName": "@lerx/promise-modal",
+      "version": "0.10.3",
+      "local": true,
+      "files": {
+        "commands": [
+          "guide.md"
+        ],
+        "skills": [
+          {
+            "original": "expert/SKILL.md",
+            "transformed": "lerx-promiseModal_expert/SKILL.md"
+          },
+          {
+            "original": "expert/knowledge/advanced-patterns.md",
+            "transformed": "lerx-promiseModal_expert/knowledge/advanced-patterns.md"
+          },
+          {
+            "original": "expert/knowledge/api-reference.md",
+            "transformed": "lerx-promiseModal_expert/knowledge/api-reference.md"
+          },
+          {
+            "original": "expert/knowledge/hooks-reference.md",
+            "transformed": "lerx-promiseModal_expert/knowledge/hooks-reference.md"
+          },
+          {
+            "original": "expert/knowledge/type-definitions.md",
+            "transformed": "lerx-promiseModal_expert/knowledge/type-definitions.md"
+          }
+        ]
+      }
+    }
+  }
+}
