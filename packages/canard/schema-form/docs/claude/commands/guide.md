@@ -1,110 +1,110 @@
 # @canard/schema-form Q&A Command
 
 **Package**: `@canard/schema-form`
-**Skill Scope**: `@canard:schema-form`
+**Expert Skill**: `schema-form-expert` (directory-based skill)
 
-`/schema-form` 커맨드를 통해 @canard/schema-form에 대해 질문하고 답변을 받을 수 있습니다.
+Ask questions about @canard/schema-form and get answers through the `/schema-form` command.
 
-## 사용법 (Usage)
-
-```
-/schema-form [질문 또는 주제]
-```
-
-## 예시 (Examples)
+## Usage
 
 ```
-/schema-form FormTypeInput 우선순위가 어떻게 되나요?
-/schema-form computed 속성에서 상대 경로 사용법
-/schema-form oneOf와 anyOf의 차이점
-/schema-form 파일 업로드 구현 방법
-/schema-form 커스텀 검증 키워드 추가하는 방법
+/schema-form [question or topic]
 ```
 
-## 지원 주제 (Supported Topics)
+## Examples
 
-### 기본 개념 (Basic Concepts)
-- 설치 및 설정
-- Form 컴포넌트 사용법
+```
+/schema-form What is the FormTypeInput priority?
+/schema-form How to use relative paths in computed properties
+/schema-form Difference between oneOf and anyOf
+/schema-form How to implement file upload
+/schema-form How to add custom validation keywords
+```
+
+## Supported Topics
+
+### Basic Concepts
+- Installation and setup
+- Form component usage
 - FormHandle API
-- 기본 예제
+- Basic examples
 
-### 노드 시스템 (Node System)
-- 노드 타입 (StringNode, NumberNode, ObjectNode, ArrayNode 등)
-- 노드 속성 및 메서드
+### Node System
+- Node types (StringNode, NumberNode, ObjectNode, ArrayNode, etc.)
+- Node properties and methods
 - Strategy Pattern (BranchStrategy, TerminalStrategy)
-- 이벤트 시스템
+- Event system
 
 ### FormTypeInput
-- FormTypeInputDefinition 작성
-- test 조건 (객체, 함수)
-- FormTypeInputMap (경로 기반 매핑)
-- 우선순위 규칙
-- 커스텀 입력 컴포넌트 작성
+- Writing FormTypeInputDefinition
+- Test conditions (object, function)
+- FormTypeInputMap (path-based mapping)
+- Priority rules
+- Writing custom input components
 
-### 검증 (Validation)
-- 검증 플러그인 (AJV 6/7/8)
+### Validation
+- Validation plugins (AJV 6/7/8)
 - ValidationMode
-- 에러 메시지 커스터마이징
-- 다국어 지원
-- 커스텀 검증 키워드/포맷
+- Customizing error messages
+- Multilingual support
+- Custom validation keywords/formats
 
 ### Computed Properties
 - watch, active, visible, readOnly, disabled
-- derived (파생 값)
-- 경로 참조 (상대, 절대)
-- 컨텍스트 참조 (@)
+- derived (derived values)
+- Path references (relative, absolute)
+- Context references (@)
 
-### 조건부 스키마 (Conditional Schema)
+### Conditional Schemas
 - oneOf, anyOf, allOf
 - if-then-else
-- 조건부 필수 필드
+- Conditional required fields
 
-### 고급 기능 (Advanced Features)
-- injectTo (값 주입)
-- 파일 첨부 관리
-- 배열 조작 (push, remove, clear)
-- prefixItems (튜플)
+### Advanced Features
+- injectTo (value injection)
+- File attachment management
+- Array manipulation (push, remove, clear)
+- prefixItems (tuples)
 
 ### JSONPointer
-- 표준 RFC 6901 문법
-- 확장 문법 (.., ., *, @)
-- 이스케이프 규칙
+- Standard RFC 6901 syntax
+- Extended syntax (.., ., *, @)
+- Escape rules
 
-### 플러그인 시스템
-- 플러그인 등록
-- 커스텀 플러그인 작성
+### Plugin System
+- Plugin registration
+- Custom plugin writing
 - ValidatorPlugin
 - FormatError
 
-### 트러블슈팅
-- 자주 묻는 질문
-- 일반적인 문제 해결
-- 성능 최적화
-- 디버깅 팁
+### Troubleshooting
+- Frequently asked questions
+- Common problem resolution
+- Performance optimization
+- Debugging tips
 
-## 지식 소스 (Knowledge Sources)
+## Knowledge Sources
 
-더 상세한 정보가 필요한 경우, 다음 관련 skill에서 심화 지식을 확인할 수 있습니다:
+For more detailed information, you can check the in-depth knowledge in the following related skills:
 
-| 주제 | Skill 이름 |
+| Topic | Knowledge File |
 |------|-----------|
-| 종합 가이드 | `schema-form-expert` |
-| Computed Properties | `computed-properties` |
-| 조건부 스키마 | `conditional-schema` |
-| FormTypeInput | `formtype-input` |
-| 검증 시스템 | `validation` |
-| InjectTo | `inject-to` |
-| 배열 조작 | `array-operations` |
-| FormHandle | `form-handle` |
-| JSONPointer | `jsonpointer` |
-| 플러그인 | `plugin-system` |
-| 커스텀 레이아웃 | `form-render` |
-| Virtual Schema | `virtual-schema` |
-| 상태 관리 | `state-management` |
-| Context | `context-usage` |
-| 성능 최적화 | `performance-optimization` |
-| 문제 해결 | `troubleshooting` |
-| 테스트 가이드 | `testing-guide` |
+| Comprehensive guide | `schema-form-expert` (directory skill) |
+| Computed Properties | `knowledge/computed-properties.md` |
+| Conditional schemas | `knowledge/conditional-schema.md` |
+| FormTypeInput | `knowledge/formtype-input.md` |
+| Validation system | `knowledge/validation.md` |
+| InjectTo | `knowledge/inject-to.md` |
+| Array manipulation | `knowledge/array-operations.md` |
+| FormHandle | `knowledge/form-handle.md` |
+| JSONPointer | `knowledge/jsonpointer.md` |
+| Plugins | `knowledge/plugin-system.md` |
+| Custom layouts | `knowledge/form-render.md` |
+| Virtual Schema | `knowledge/virtual-schema.md` |
+| State management | `knowledge/state-management.md` |
+| Context | `knowledge/context-usage.md` |
+| Performance optimization | `knowledge/performance-optimization.md` |
+| Troubleshooting | `knowledge/troubleshooting.md` |
+| Test guide | `knowledge/testing-guide.md` |
 
-SPECIFICATION 문서에서 전체 API 스펙을 확인할 수 있습니다.
+You can check the full API specification in the SPECIFICATION document.

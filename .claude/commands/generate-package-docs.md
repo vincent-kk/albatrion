@@ -67,14 +67,16 @@ fi
 ```bash
 if [ "$MODE" = "UPDATE" ]; then
   # Check for existing documentation files
-  SKILL_FILES=$(find "$DOCS_PATH/claude/skills" -name "*.md" 2>/dev/null)
-  COMMAND_FILES=$(find "$DOCS_PATH/claude/commands" -name "*.md" 2>/dev/null)
+  SKILL_FILE="$DOCS_PATH/claude/skills/expert/SKILL.md"
+  COMMAND_FILE="$DOCS_PATH/claude/commands/guide.md"
+  KNOWLEDGE_FILES=$(find "$DOCS_PATH/claude/skills/expert/knowledge" -name "*.md" 2>/dev/null)
   EN_SPEC="$DOCS_PATH/en/SPECIFICATION.md"
   KO_SPEC="$DOCS_PATH/ko/SPECIFICATION.md"
 
   echo "📁 Existing files detected:"
-  [ -n "$SKILL_FILES" ] && echo "  - Skills: $SKILL_FILES"
-  [ -n "$COMMAND_FILES" ] && echo "  - Commands: $COMMAND_FILES"
+  [ -f "$SKILL_FILE" ] && echo "  - Expert Skill: $SKILL_FILE"
+  [ -f "$COMMAND_FILE" ] && echo "  - Guide Command: $COMMAND_FILE"
+  [ -n "$KNOWLEDGE_FILES" ] && echo "  - Knowledge Files: $(echo "$KNOWLEDGE_FILES" | wc -l) files"
   [ -f "$EN_SPEC" ] && echo "  - English Spec: $EN_SPEC"
   [ -f "$KO_SPEC" ] && echo "  - Korean Spec: $KO_SPEC"
 fi
@@ -141,9 +143,14 @@ Create the following structure if not exists:
 {package-path}/docs/
 ├── claude/
 │   ├── skills/
-│   │   └── {package-name}-expert.md
+│   │   └── expert/
+│   │       ├── SKILL.md
+│   │       └── knowledge/
+│   │           ├── {topic-1}.md
+│   │           ├── {topic-2}.md
+│   │           └── ...
 │   └── commands/
-│       └── {package-name}-guide.md
+│       └── guide.md
 ├── en/
 │   └── SPECIFICATION.md
 └── ko/
@@ -152,171 +159,261 @@ Create the following structure if not exists:
 
 ### 3.2 File Templates
 
-#### Skills Template: `{package-name}-expert.md`
+#### Skills Template: `claude/skills/expert/SKILL.md`
 
 ```markdown
+---
+name: {package-name-slug}-expert
+description: "@{package-name} library expert. Provides Q&A, usage examples, and troubleshooting by referencing all knowledge files."
+user-invocable: false
+---
+
 # {Package Display Name} Expert Skill
 
-## Role
+This is an expert skill for @{package-name}. This skill answers questions about the {package-name} library, provides usage examples, and assists with troubleshooting.
 
-You are an expert on the `{package-name}` library. Your role is to help users implement features effectively using this library.
+## Skill Info
 
-## Core Knowledge
+- **Name**: {package-name-slug}-expert
+- **Purpose**: @{package-name} library Q&A and guidance
+- **Triggers**: `/{package-name-slug}` command or {package-name} related questions
 
-### Library Overview
+---
 
-`{package-name}` is {description from package.json}.
+## Knowledge Files Reference
 
-Key features include:
-{extracted features}
+Refer to the following knowledge files for detailed guides by feature:
 
-### Architecture
+| File | Topics | Load When |
+|------|--------|-----------|
+| `knowledge/{topic-1}.md` | {topic-1 description} | {when to load topic-1} |
+| `knowledge/{topic-2}.md` | {topic-2 description} | {when to load topic-2} |
+| `knowledge/{topic-3}.md` | {topic-3 description} | {when to load topic-3} |
 
-{architecture analysis}
+---
+
+## Knowledge Base
+
+### Core Architecture
+
+{architecture analysis from package}
+
+### Key Interfaces
+
+```typescript
+{extracted key interfaces and types}
+```
+
+### Usage Patterns
+
+{extracted usage patterns from README/stories}
+
+---
+
+## Common Questions
+
+### Installation & Setup
+
+{installation and setup guidance}
+
+### Basic Usage
+
+{basic usage examples}
+
+### Advanced Features
+
+{advanced features overview}
+
+### Troubleshooting
+
+{common issues and solutions}
+```
+
+#### Commands Template: `claude/commands/guide.md`
+
+```markdown
+# @{package-name} Q&A Command
+
+**Package**: `@{package-name}`
+**Expert Skill**: `{package-name-slug}-expert` (directory-based skill)
+
+Ask questions about @{package-name} and get answers through the `/{package-name-slug}` command.
+
+## Usage
+
+```
+/{package-name-slug} [question or topic]
+```
+
+## Examples
+
+```
+/{package-name-slug} How to get started?
+/{package-name-slug} What is the main API?
+/{package-name-slug} How to customize components?
+/{package-name-slug} How to handle errors?
+```
+
+## Supported Topics
+
+### Basic Concepts
+- Installation and setup
+- Main component usage
+- Basic examples
+
+### Core Features
+- {Feature 1}
+- {Feature 2}
+- {Feature 3}
+
+### Advanced Features
+- {Advanced Feature 1}
+- {Advanced Feature 2}
+- {Advanced Feature 3}
+
+### Troubleshooting
+- Frequently asked questions
+- Common problem resolution
+- Performance optimization
+- Debugging tips
+
+## Knowledge Sources
+
+For more detailed information, you can check the in-depth knowledge in the following related skills:
+
+| Topic | Knowledge File |
+|------|-----------|
+| Comprehensive guide | `{package-name-slug}-expert` (directory skill) |
+| {Topic 1} | `knowledge/{topic-1}.md` |
+| {Topic 2} | `knowledge/{topic-2}.md` |
+| {Topic 3} | `knowledge/{topic-3}.md` |
+
+Full API specifications are available in the SPECIFICATION documents:
+- English: `en/SPECIFICATION.md`
+- Korean: `ko/SPECIFICATION.md`
+```
+
+#### Knowledge Files Template: `claude/skills/expert/knowledge/{topic}.md`
+
+Knowledge files are detailed topic-specific guides referenced by the expert skill. Each file should focus on a single feature or concept.
+
+**File naming convention:** Use kebab-case (e.g., `computed-properties.md`, `validation-system.md`, `event-handling.md`)
+
+**Template structure:**
+
+```markdown
+# {Topic Name} Knowledge
+
+Expert knowledge for {topic} features in @{package-name}.
+
+## Overview
+
+{Brief description of the topic and when to use it}
+
+## Basic Concepts
+
+### Concept 1
+
+{Explanation with code examples}
+
+### Concept 2
+
+{Explanation with code examples}
 
 ---
 
 ## API Reference
 
-### Core Functions
+### Function/Hook/Component 1
 
-{extracted functions with signatures and descriptions}
+```typescript
+{Type signature}
+```
 
-### Hooks
+{Description and usage}
 
-{extracted hooks with signatures and descriptions}
+**Parameters:**
+- `param1` - {description}
+- `param2` - {description}
 
-### Components
+**Returns:** {return value description}
 
-{extracted components with props}
+**Example:**
 
-### Type Definitions
+```typescript
+{code example}
+```
 
-{extracted types and interfaces}
+### Function/Hook/Component 2
+
+{Similar structure}
 
 ---
 
-## Usage Patterns
+## Common Patterns
 
-### Pattern 1: Basic Usage
+### Pattern 1: {Pattern Name}
 
-{basic usage example}
+{Description and use case}
 
-### Pattern 2: Advanced Usage
+```typescript
+{code example}
+```
 
-{advanced usage example}
+### Pattern 2: {Pattern Name}
 
-### Pattern 3: Customization
+{Description and use case}
 
-{customization example}
+```typescript
+{code example}
+```
+
+---
+
+## Best Practices
+
+1. **{Practice 1}**: {Description}
+2. **{Practice 2}**: {Description}
+3. **{Practice 3}**: {Description}
 
 ---
 
 ## Troubleshooting
 
-### Common Issues
+### Issue 1: {Issue Description}
 
-{common issues and solutions}
+**Symptom:** {What the user sees}
 
-### Best Practices
+**Cause:** {Why it happens}
 
-{best practices}
+**Solution:** {How to fix it}
+
+```typescript
+{code example if applicable}
 ```
 
-#### Commands Template: `{package-name}-guide.md`
+### Issue 2: {Issue Description}
 
-```markdown
-# {Package Display Name} Guide Command
-
-**Package**: `{full-package-name}`
-**Skill Scope**: `@{scope}:{package-name}`
-
-## Purpose
-
-This command provides an interactive Q&A guide for `{package-name}` library users. `guide.md` file is used for this command.
-(example: `packages/canard/schema-form/docs/claude/commands/guide.md`)
-
-## Activation
-
-This command should be used when users:
-
-- Ask questions about `{package-name}`
-- Need help implementing features
-- Want to understand specific API usage
-- Encounter issues with the library
-- Need code examples for specific scenarios
-
-## Response Strategy
-
-### Step 1: Identify Question Category
-
-Categorize the user's question into one of:
-
-1. **Getting Started** - Installation, setup, basic usage
-2. **API Usage** - Specific function/hook usage
-3. **Customization** - Custom components, styling, theming
-4. **Advanced Patterns** - Complex use cases
-5. **Troubleshooting** - Error resolution, debugging
-
-### Step 2: Provide Structured Response
-
-For each category, provide:
-
-1. Brief answer (1-2 sentences)
-2. Code example
-3. Key points to understand
-4. Related APIs or further reading
+{Similar structure}
 
 ---
 
-## Category: Getting Started
+## Related Topics
 
-### Questions like:
-
-- "How do I install {package-name}?"
-- "How do I set up the provider/config?"
-- "What's the basic usage?"
-
-### Response Template:
-
-{getting started template}
-
----
-
-## Category: API Usage
-
-{API usage templates for each major API}
-
----
-
-## Category: Customization
-
-{customization templates}
-
----
-
-## Category: Advanced Patterns
-
-{advanced pattern templates}
-
----
-
-## Category: Troubleshooting
-
-{troubleshooting templates}
-
----
-
-## Knowledge Sources
-
-For more detailed information, the following related skills provide in-depth knowledge:
-
-| Topic | Skill Name |
-|-------|-----------|
-| Comprehensive Guide | `{package-name}-expert` |
-
-Full API specifications are available in the SPECIFICATION documents.
+- See `knowledge/{related-topic-1}.md` for {related topic 1}
+- See `knowledge/{related-topic-2}.md` for {related topic 2}
+- See main SPECIFICATION for comprehensive API reference
 ```
+
+**Example topics to create:**
+- `getting-started.md` - Installation and basic setup
+- `core-concepts.md` - Fundamental concepts and architecture
+- `api-reference.md` - Core API functions and hooks
+- `advanced-patterns.md` - Complex usage patterns
+- `performance.md` - Performance optimization techniques
+- `troubleshooting.md` - Common issues and solutions
+- `testing.md` - Testing strategies and examples
+- `migration.md` - Migration guides from previous versions
 
 #### SPECIFICATION Template (English): `en/SPECIFICATION.md`
 
@@ -401,12 +498,13 @@ Same structure as English but with Korean translations.
 ```bash
 # Verify all files were created/updated
 FILES=(
-  "$DOCS_PATH/claude/skills/${PACKAGE_NAME}-expert.md"
-  "$DOCS_PATH/claude/commands/${PACKAGE_NAME}-guide.md"
+  "$DOCS_PATH/claude/skills/expert/SKILL.md"
+  "$DOCS_PATH/claude/commands/guide.md"
   "$DOCS_PATH/en/SPECIFICATION.md"
   "$DOCS_PATH/ko/SPECIFICATION.md"
 )
 
+echo "📝 Checking core documentation files:"
 for file in "${FILES[@]}"; do
   if [ -f "$file" ]; then
     echo "✅ $file"
@@ -414,6 +512,20 @@ for file in "${FILES[@]}"; do
     echo "❌ Missing: $file"
   fi
 done
+
+# Check for knowledge files
+KNOWLEDGE_DIR="$DOCS_PATH/claude/skills/expert/knowledge"
+if [ -d "$KNOWLEDGE_DIR" ]; then
+  KNOWLEDGE_COUNT=$(find "$KNOWLEDGE_DIR" -name "*.md" 2>/dev/null | wc -l)
+  echo ""
+  echo "📚 Knowledge files: $KNOWLEDGE_COUNT"
+  if [ "$KNOWLEDGE_COUNT" -gt 0 ]; then
+    echo "Knowledge topics:"
+    find "$KNOWLEDGE_DIR" -name "*.md" -exec basename {} \; | sed 's/^/  - /'
+  fi
+else
+  echo "⚠️ Knowledge directory not found: $KNOWLEDGE_DIR"
+fi
 ```
 
 ### 4.2 Content Completeness Check
@@ -447,14 +559,18 @@ Verify that documentation covers:
 - Types: X interfaces
 
 📁 Generated Files:
-├── docs/claude/skills/{package-name}-expert.md
-├── docs/claude/commands/{package-name}-guide.md
+├── docs/claude/skills/expert/SKILL.md
+├── docs/claude/skills/expert/knowledge/
+│   ├── {topic-1}.md
+│   ├── {topic-2}.md
+│   └── ... (X knowledge files)
+├── docs/claude/commands/guide.md
 ├── docs/en/SPECIFICATION.md
 └── docs/ko/SPECIFICATION.md
 
 💡 Next Steps:
 1. Review generated documentation
-2. Test skill with: /{package-name}-guide
+2. Test skill with: /{package-name-slug}
 3. Update CLAUDE.md to reference new docs
 ```
 
@@ -473,8 +589,12 @@ Verify that documentation covers:
 - Removed APIs: X ({list})
 
 📁 Updated Files:
-├── docs/claude/skills/{package-name}-expert.md ✏️
-├── docs/claude/commands/{package-name}-guide.md ✏️
+├── docs/claude/skills/expert/SKILL.md ✏️
+├── docs/claude/skills/expert/knowledge/ ✏️
+│   ├── {topic-1}.md (updated)
+│   ├── {topic-2}.md (new)
+│   └── ... (X files updated/added)
+├── docs/claude/commands/guide.md ✏️
 ├── docs/en/SPECIFICATION.md ✏️
 └── docs/ko/SPECIFICATION.md ✏️
 
@@ -529,10 +649,18 @@ When this command is invoked:
 
 ## Language Policy
 
-- **Claude documents (skills, commands)**: English
-- **SPECIFICATION documents**:
+All documentation follows a consistent language policy:
+
+- **Claude documents**: English only
+  - `claude/skills/expert/SKILL.md`: English
+  - `claude/skills/expert/knowledge/*.md`: English
+  - `claude/commands/guide.md`: English
+  - **Rationale**: Claude works best with English technical documentation
+
+- **User documentation (SPECIFICATION)**: Bilingual
   - `en/SPECIFICATION.md`: English
   - `ko/SPECIFICATION.md`: Korean
+  - **Rationale**: End-user documentation should support multiple languages
 
 ---
 

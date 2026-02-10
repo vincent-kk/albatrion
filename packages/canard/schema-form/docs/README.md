@@ -16,7 +16,9 @@ docs/
 │   ├── commands/
 │   │   └── schema-form.md     # /schema-form 커맨드
 │   └── skills/
-│       └── schema-form-expert.md  # 전문가 스킬
+│       └── schema-form-expert/  # 전문가 스킬 디렉토리
+│           ├── SKILL.md         # 스킬 정의
+│           └── knowledge/       # 지식 베이스
 └── README.md                  # 이 파일
 ```
 
@@ -53,7 +55,7 @@ mkdir -p .claude/commands .claude/skills
 cp node_modules/@canard/schema-form/docs/claude/commands/schema-form.md .claude/commands/
 
 # 스킬 복사
-cp node_modules/@canard/schema-form/docs/claude/skills/schema-form-expert.md .claude/skills/
+cp -r node_modules/@canard/schema-form/docs/claude/skills/schema-form-expert .claude/skills/
 ```
 
 ### 사용 방법

@@ -1,69 +1,69 @@
-# Promise Modal 가이드 명령어
+# Promise Modal Guide Command
 
 **Package**: `@lerx/promise-modal`
-**Skill Scope**: `@lerx:promise-modal`
+**Expert Skill**: `promise-modal-expert` (directory-based skill)
 
-## 목적
+## Purpose
 
-이 명령어는 `@lerx/promise-modal` 라이브러리 사용자를 위한 대화형 Q&A 가이드를 제공합니다. 호출되면 사용자의 구체적인 질문과 사용 사례에 따라 라이브러리를 이해하고 효과적으로 사용할 수 있도록 도와주세요.
+This command provides an interactive Q&A guide for users of the `@lerx/promise-modal` library. When invoked, help users understand and effectively use the library based on their specific questions and use cases.
 
-## 활성화
+## Activation
 
-이 명령어는 사용자가 다음과 같은 경우에 사용해야 합니다:
-- `@lerx/promise-modal`에 대해 질문할 때
-- 모달 구현에 도움이 필요할 때
-- 특정 API 사용법을 이해하고 싶을 때
-- 라이브러리 관련 문제가 발생했을 때
-- 특정 시나리오에 대한 코드 예제가 필요할 때
+This command should be used when users:
+- Have questions about `@lerx/promise-modal`
+- Need help implementing modals
+- Want to understand specific API usage
+- Experience library-related issues
+- Need code examples for specific scenarios
 
-## 응답 전략
+## Response Strategy
 
-### 1단계: 질문 카테고리 식별
+### Step 1: Identify Question Category
 
-사용자의 질문을 다음 중 하나로 분류합니다:
+Classify user questions into one of the following:
 
-1. **시작하기** - 설치, 설정, 기본 사용법
-2. **API 사용법** - 특정 함수/훅 사용법
-3. **커스터마이징** - 커스텀 컴포넌트, 스타일링, 테마
-4. **고급 패턴** - 토스트, 중첩 모달, 애니메이션, AbortSignal
-5. **문제 해결** - 오류 해결, 디버깅
+1. **Getting Started** - Installation, setup, basic usage
+2. **API Usage** - Specific function/hook usage
+3. **Customization** - Custom components, styling, theming
+4. **Advanced Patterns** - Toast, nested modals, animations, AbortSignal
+5. **Troubleshooting** - Error resolution, debugging
 
-### 2단계: 구조화된 응답 제공
+### Step 2: Provide Structured Response
 
-각 카테고리에 대해 다음 응답 패턴을 따릅니다:
+Follow this response pattern for each category:
 
 ---
 
-## 카테고리: 시작하기
+## Category: Getting Started
 
-### 관련 질문:
-- "promise-modal을 어떻게 설치하나요?"
-- "Provider는 어떻게 설정하나요?"
-- "기본 사용법은 무엇인가요?"
+### Related Questions:
+- "How do I install promise-modal?"
+- "How do I set up the Provider?"
+- "What is the basic usage?"
 
-### 응답 템플릿:
+### Response Template:
 
 ```markdown
-## 설치
+## Installation
 
 ```bash
 yarn add @lerx/promise-modal
-# 또는
+# or
 npm install @lerx/promise-modal
 ```
 
-## 기본 설정
+## Basic Setup
 
-1. 앱을 ModalProvider로 래핑합니다:
+1. Wrap your app with ModalProvider:
 
 ```tsx
 import { ModalProvider } from '@lerx/promise-modal';
-import { useLocation } from 'react-router-dom'; // 선택적 라우터 통합
+import { useLocation } from 'react-router-dom'; // Optional router integration
 
 function App() {
   return (
     <ModalProvider
-      usePathname={useLocation}  // 라우터 통합 (경로 변경 시 모달 자동 닫힘)
+      usePathname={useLocation}  // Router integration (auto-close on path change)
       options={{
         duration: '200ms',
         backdrop: 'rgba(0, 0, 0, 0.35)',
@@ -76,20 +76,20 @@ function App() {
 }
 ```
 
-2. 어디서든 모달 함수를 사용합니다:
+2. Use modal functions anywhere:
 
 ```tsx
 import { alert, confirm, prompt } from '@lerx/promise-modal';
 
-// 간단한 알림
-await alert({ title: '알림', content: '안녕하세요!' });
+// Simple alert
+await alert({ title: 'Alert', content: 'Hello!' });
 
-// 확인
-const result = await confirm({ title: '확인', content: '계속하시겠습니까?' });
+// Confirmation
+const result = await confirm({ title: 'Confirm', content: 'Continue?' });
 
-// 사용자 입력
+// User input
 const value = await prompt<string>({
-  title: '입력',
+  title: 'Input',
   defaultValue: '',
   Input: ({ value, onChange }) => (
     <input value={value} onChange={(e) => onChange(e.target.value)} />
@@ -100,93 +100,93 @@ const value = await prompt<string>({
 
 ---
 
-## 카테고리: API 사용법
+## Category: API Usage
 
-### `alert` 질문:
+### `alert` Questions:
 
 ```markdown
 ## alert() API
 
-간단한 알림 모달을 엽니다.
+Opens a simple notification modal.
 
-**시그니처:**
+**Signature:**
 ```typescript
 alert(options: AlertProps): Promise<void>
 ```
 
-**주요 옵션:**
-- `title`: 모달 제목 (ReactNode)
-- `content`: 모달 내용 (ReactNode 또는 Component)
+**Key Options:**
+- `title`: Modal title (ReactNode)
+- `content`: Modal content (ReactNode or Component)
 - `subtype`: 'info' | 'success' | 'warning' | 'error'
-- `dimmed`: 배경 어둡게 처리 (boolean)
-- `closeOnBackdropClick`: 배경 클릭 시 닫기 (boolean)
-- `signal`: 모달 취소용 AbortSignal
+- `dimmed`: Darken background (boolean)
+- `closeOnBackdropClick`: Close on backdrop click (boolean)
+- `signal`: AbortSignal for modal cancellation
 
-**예제:**
+**Example:**
 ```tsx
 await alert({
-  title: '성공',
-  content: '작업이 완료되었습니다!',
+  title: 'Success',
+  content: 'Task completed!',
   subtype: 'success',
   dimmed: true,
 });
 ```
 ```
 
-### `confirm` 질문:
+### `confirm` Questions:
 
 ```markdown
 ## confirm() API
 
-예/아니오 옵션이 있는 확인 모달을 엽니다.
+Opens a confirmation modal with yes/no options.
 
-**시그니처:**
+**Signature:**
 ```typescript
 confirm(options: ConfirmProps): Promise<boolean>
 ```
 
-**반환값:**
-- `true` - 사용자가 확인 클릭
-- `false` - 사용자가 취소 또는 배경 클릭
+**Return Value:**
+- `true` - User clicked confirm
+- `false` - User clicked cancel or backdrop
 
-**예제:**
+**Example:**
 ```tsx
 const shouldDelete = await confirm({
-  title: '항목 삭제',
-  content: '정말 삭제하시겠습니까?',
+  title: 'Delete Item',
+  content: 'Are you sure you want to delete this?',
   footer: {
-    confirm: '삭제',
-    cancel: '취소',
+    confirm: 'Delete',
+    cancel: 'Cancel',
   },
 });
 
 if (shouldDelete) {
-  // 삭제 수행
+  // Perform deletion
 }
 ```
 ```
 
-### `prompt` 질문:
+### `prompt` Questions:
 
 ```markdown
 ## prompt<T>() API
 
-사용자 입력을 수집하는 모달을 엽니다.
+Opens a modal to collect user input.
 
-**시그니처:**
+**Signature:**
 ```typescript
 prompt<T>(options: PromptProps<T>): Promise<T>
 ```
 
-**주요 옵션:**
-- `Input`: 커스텀 입력 컴포넌트 (필수)
-- `defaultValue`: 초기값
-- `disabled`: 확인 버튼 비활성화 함수
+**Key Options:**
+- `Input`: Custom input component (required)
+- `defaultValue`: Initial value
+- `disabled`: Function to disable confirm button
 
-**간단한 예제:**
+**Simple Example:**
 ```tsx
 const name = await prompt<string>({
-  title: '이름 입력',
+  title: 'Enter Name',
   defaultValue: '',
   Input: ({ value, onChange }) => (
     <input
@@ -198,7 +198,7 @@ const name = await prompt<string>({
 });
 ```
 
-**복잡한 데이터 예제:**
+**Complex Data Example:**
 ```tsx
 interface UserData {
   name: string;
@@ -206,19 +206,19 @@ interface UserData {
 }
 
 const userData = await prompt<UserData>({
-  title: '사용자 정보',
+  title: 'User Information',
   defaultValue: { name: '', email: '' },
   Input: ({ value, onChange }) => (
     <form>
       <input
         value={value.name}
         onChange={(e) => onChange({ ...value, name: e.target.value })}
-        placeholder="이름"
+        placeholder="Name"
       />
       <input
         value={value.email}
         onChange={(e) => onChange({ ...value, email: e.target.value })}
-        placeholder="이메일"
+        placeholder="Email"
       />
     </form>
   ),
@@ -226,16 +226,16 @@ const userData = await prompt<UserData>({
 ```
 ```
 
-### `useModal` 질문:
+### `useModal` Questions:
 
 ```markdown
-## useModal() 훅
+## useModal() Hook
 
-컴포넌트 생명주기에 연결된 모달 핸들러를 반환합니다.
+Returns modal handlers tied to component lifecycle.
 
-**핵심 기능:** 컴포넌트 언마운트 시 자동 정리.
+**Key Feature:** Automatic cleanup on component unmount.
 
-**예제:**
+**Example:**
 ```tsx
 import { useModal } from '@lerx/promise-modal';
 
@@ -243,17 +243,17 @@ function MyComponent() {
   const modal = useModal();
 
   const handleAction = async () => {
-    // 컴포넌트가 언마운트되면 이 모달들이 자동으로 닫힙니다
-    if (await modal.confirm({ content: '진행하시겠습니까?' })) {
-      await modal.alert({ content: '완료!' });
+    // These modals will auto-close if component unmounts
+    if (await modal.confirm({ content: 'Proceed?' })) {
+      await modal.alert({ content: 'Done!' });
     }
   };
 
-  return <button onClick={handleAction}>실행</button>;
+  return <button onClick={handleAction}>Execute</button>;
 }
 ```
 
-**설정과 함께 사용:**
+**With Configuration:**
 ```tsx
 const modal = useModal({
   ForegroundComponent: CustomForeground,
@@ -265,48 +265,48 @@ const modal = useModal({
 
 ---
 
-## 카테고리: 설정 우선순위
+## Category: Configuration Priority
 
 ```markdown
-## 설정 우선순위
+## Configuration Priority
 
-설정은 계층적으로 적용됩니다:
+Configuration is applied hierarchically:
 
 ```
-Provider 설정 (최하위) < Hook 설정 < Handler 설정 (최상위)
+Provider Config (Lowest) < Hook Config < Handler Config (Highest)
 ```
 
-**예제:**
+**Example:**
 ```tsx
-// Provider 레벨: 전역 기본값
+// Provider level: Global defaults
 <ModalProvider options={{ duration: '500ms', closeOnBackdropClick: true }}>
   <App />
 </ModalProvider>
 
-// Hook 레벨: 컴포넌트 기본값 (Provider 설정을 덮어씀)
+// Hook level: Component defaults (overrides Provider config)
 const modal = useModal({
   ForegroundComponent: CustomForeground,
 });
 
-// Handler 레벨: 개별 모달 (Hook 설정을 덮어씀)
+// Handler level: Individual modal (overrides Hook config)
 modal.alert({
-  title: '알림',
-  duration: 200, // 500ms → 200ms로 오버라이드
-  ForegroundComponent: SpecialForeground, // CustomForeground 오버라이드
+  title: 'Alert',
+  duration: 200, // Override 500ms → 200ms
+  ForegroundComponent: SpecialForeground, // Override CustomForeground
 });
 ```
 ```
 
 ---
 
-## 카테고리: 커스터마이징
+## Category: Customization
 
-### 컴포넌트 커스터마이징 질문:
+### Component Customization Questions:
 
 ```markdown
-## 커스텀 컴포넌트
+## Custom Components
 
-### 커스텀 Foreground
+### Custom Foreground
 
 ```tsx
 const CustomForeground = ({ children, visible, id }) => {
@@ -335,38 +335,38 @@ const CustomForeground = ({ children, visible, id }) => {
   );
 };
 
-// Provider에서 사용
+// Use in Provider
 <ModalProvider ForegroundComponent={CustomForeground}>
   <App />
 </ModalProvider>
 
-// 또는 개별 모달에서 사용
+// Or in individual modal
 alert({
-  content: '안녕하세요',
+  content: 'Hello',
   ForegroundComponent: CustomForeground,
 });
 ```
 
-### 커스텀 Footer
+### Custom Footer
 
 ```tsx
 const CustomFooter = ({ onConfirm, onClose, type, disabled }) => (
   <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
     {type !== 'alert' && (
-      <button onClick={onClose}>취소</button>
+      <button onClick={onClose}>Cancel</button>
     )}
     <button onClick={() => onConfirm()} disabled={disabled}>
-      확인
+      Confirm
     </button>
   </div>
 );
 ```
 ```
 
-### 스타일링/테마 질문:
+### Styling/Theming Questions:
 
 ```markdown
-## Context를 사용한 테마
+## Theming with Context
 
 ```tsx
 <ModalProvider
@@ -378,7 +378,7 @@ const CustomFooter = ({ onConfirm, onClose, type, disabled }) => (
   <App />
 </ModalProvider>
 
-// 커스텀 컴포넌트에서 접근
+// Access in custom components
 const CustomTitle = ({ children, context }) => (
   <h2 style={{ color: context.theme === 'dark' ? '#fff' : '#333' }}>
     {children}
@@ -389,32 +389,32 @@ const CustomTitle = ({ children, context }) => (
 
 ---
 
-## 카테고리: 고급 패턴
+## Category: Advanced Patterns
 
-### AbortSignal 질문:
+### AbortSignal Questions:
 
 ```markdown
-## AbortSignal을 사용한 모달 취소
+## Modal Cancellation with AbortSignal
 
-프로그래밍 방식으로 모달을 취소할 수 있습니다.
+Programmatically cancel modals.
 
-**기본 사용법:**
+**Basic Usage:**
 ```tsx
 const controller = new AbortController();
 
 alert({
-  title: '취소 가능한 모달',
-  content: '3초 후 자동으로 닫힙니다.',
+  title: 'Cancelable Modal',
+  content: 'Auto-closes in 3 seconds.',
   signal: controller.signal,
 });
 
-// 3초 후 모달 취소
+// Cancel modal after 3 seconds
 setTimeout(() => {
   controller.abort();
 }, 3000);
 ```
 
-**수동 취소 제어:**
+**Manual Abort Control:**
 ```tsx
 function ManualAbortControl() {
   const [controller, setController] = useState<AbortController | null>(null);
@@ -424,8 +424,8 @@ function ManualAbortControl() {
     setController(newController);
 
     alert({
-      title: '수동 취소',
-      content: '"취소" 버튼을 클릭하면 모달이 닫힙니다.',
+      title: 'Manual Cancel',
+      content: 'Click "Cancel" button to close modal.',
       signal: newController.signal,
       closeOnBackdropClick: false,
     }).then(() => {
@@ -441,14 +441,14 @@ function ManualAbortControl() {
 
   return (
     <div>
-      <button onClick={handleOpen} disabled={!!controller}>모달 열기</button>
-      <button onClick={handleAbort} disabled={!controller}>모달 취소</button>
+      <button onClick={handleOpen} disabled={!!controller}>Open Modal</button>
+      <button onClick={handleAbort} disabled={!controller}>Cancel Modal</button>
     </div>
   );
 }
 ```
 
-**여러 모달 일괄 취소:**
+**Batch Cancel Multiple Modals:**
 ```tsx
 const controllers: AbortController[] = [];
 
@@ -457,20 +457,20 @@ for (let i = 0; i < 3; i++) {
   controllers.push(controller);
 
   alert({
-    title: `모달 ${i + 1}`,
+    title: `Modal ${i + 1}`,
     signal: controller.signal,
   });
 }
 
-// 모든 모달 취소
+// Cancel all modals
 controllers.forEach((c) => c.abort());
 ```
 ```
 
-### 토스트 구현 질문:
+### Toast Implementation Questions:
 
 ```markdown
-## 토스트 구현
+## Toast Implementation
 
 ```tsx
 import { alert, useModalAnimation, useDestroyAfter, useModalDuration } from '@lerx/promise-modal';
@@ -513,11 +513,11 @@ const ToastForeground = ({ id, visible, children, onClose, onDestroy }) => {
   );
 };
 
-// 이전 토스트 제거 패턴
+// Pattern for removing previous toast
 let onDestroyPrevToast: () => void;
 
 export const toast = (message: ReactNode, duration = 1250) => {
-  onDestroyPrevToast?.(); // 이전 토스트 제거
+  onDestroyPrevToast?.(); // Remove previous toast
 
   return alert({
     content: message,
@@ -531,29 +531,29 @@ export const toast = (message: ReactNode, duration = 1250) => {
   });
 };
 
-// 사용
-toast('작업이 성공적으로 완료되었습니다!');
+// Usage
+toast('Task completed successfully!');
 ```
 ```
 
-### 중첩 모달 질문:
+### Nested Modal Questions:
 
 ```markdown
-## 중첩 모달
+## Nested Modals
 
 ```tsx
 async function multiStepWizard() {
-  // 1단계: 확인
+  // Step 1: Confirm
   const proceed = await confirm({
-    title: '마법사 시작',
-    content: '설정 과정을 안내해 드립니다.',
+    title: 'Start Wizard',
+    content: 'We will guide you through the setup.',
   });
 
   if (!proceed) return;
 
-  // 2단계: 사용자 입력
+  // Step 2: User input
   const username = await prompt<string>({
-    title: '1단계: 사용자명',
+    title: 'Step 1: Username',
     defaultValue: '',
     Input: ({ value, onChange }) => (
       <input value={value} onChange={(e) => onChange(e.target.value)} />
@@ -562,16 +562,16 @@ async function multiStepWizard() {
 
   if (!username) return;
 
-  // 3단계: 확인 및 완료
+  // Step 3: Confirm and complete
   const confirmed = await confirm({
-    title: '2단계: 확인',
-    content: `"${username}" 계정을 생성하시겠습니까?`,
+    title: 'Step 2: Confirm',
+    content: `Create account "${username}"?`,
   });
 
   if (confirmed) {
     await alert({
-      title: '완료!',
-      content: `환영합니다, ${username}님!`,
+      title: 'Complete!',
+      content: `Welcome, ${username}!`,
       subtype: 'success',
     });
   }
@@ -579,10 +579,10 @@ async function multiStepWizard() {
 ```
 ```
 
-### 커스텀 앵커 질문:
+### Custom Anchor Questions:
 
 ```markdown
-## 커스텀 모달 앵커
+## Custom Modal Anchor
 
 ```tsx
 import { ModalProvider, useInitializeModal, alert } from '@lerx/promise-modal';
@@ -599,7 +599,7 @@ function CustomAnchorExample() {
 
   return (
     <div>
-      {/* 모달이 이 컨테이너 안에 렌더링됩니다 */}
+      {/* Modals render inside this container */}
       <div
         ref={containerRef}
         style={{
@@ -609,8 +609,8 @@ function CustomAnchorExample() {
           overflow: 'hidden',
         }}
       />
-      <button onClick={() => alert({ content: '커스텀 컨테이너 안에 있습니다!' })}>
-        모달 표시
+      <button onClick={() => alert({ content: 'Inside custom container!' })}>
+        Show Modal
       </button>
     </div>
   );
@@ -620,23 +620,23 @@ function CustomAnchorExample() {
 
 ---
 
-## 카테고리: 문제 해결
+## Category: Troubleshooting
 
-### 일반적인 문제:
+### Common Issues:
 
 ```markdown
-## 문제 해결 가이드
+## Troubleshooting Guide
 
-### 모달이 나타나지 않음
+### Modal Not Appearing
 
-**원인 1:** ModalProvider 누락
+**Cause 1:** Missing ModalProvider
 ```tsx
-// ❌ 잘못됨
+// ❌ Wrong
 function App() {
   return <MyApp />;
 }
 
-// ✅ 올바름
+// ✅ Correct
 function App() {
   return (
     <ModalProvider>
@@ -646,49 +646,49 @@ function App() {
 }
 ```
 
-**원인 2:** z-index 충돌
+**Cause 2:** z-index conflict
 ```css
-/* 모달이 가장 높은 z-index를 갖도록 확인 */
+/* Ensure modal has highest z-index */
 .modal-container {
   z-index: 9999;
 }
 ```
 
-### 모달이 닫히지 않음
+### Modal Not Closing
 
-**원인 1:** manualDestroy가 true
+**Cause 1:** manualDestroy is true
 ```tsx
-// 모달이 자동으로 닫히지 않음
-alert({ content: '안녕', manualDestroy: true });
+// Modal won't auto-close
+alert({ content: 'Hello', manualDestroy: true });
 
-// onDestroy를 수동으로 호출해야 함
+// Must call onDestroy manually
 ```
 
-**원인 2:** closeOnBackdropClick이 false
+**Cause 2:** closeOnBackdropClick is false
 ```tsx
-// 배경 클릭으로 닫히지 않음
-alert({ content: '안녕', closeOnBackdropClick: false });
+// Won't close on backdrop click
+alert({ content: 'Hello', closeOnBackdropClick: false });
 ```
 
-### prompt TypeScript 오류
+### prompt TypeScript Errors
 
-**원인:** 제네릭 타입 누락
+**Cause:** Missing generic type
 ```tsx
-// ❌ 잘못됨 - TypeScript가 타입을 추론할 수 없음
+// ❌ Wrong - TypeScript can't infer type
 const value = await prompt({ ... });
 
-// ✅ 올바름 - 타입 지정
+// ✅ Correct - Specify type
 const value = await prompt<string>({ ... });
 ```
 
-### 애니메이션이 작동하지 않음
+### Animation Not Working
 
-**원인:** useModalAnimation을 사용하지 않음
+**Cause:** Not using useModalAnimation
 ```tsx
-// ❌ 잘못됨 - visible을 직접 확인
+// ❌ Wrong - Checking visible directly
 if (visible) element.classList.add('show');
 
-// ✅ 올바름 - 훅 사용
+// ✅ Correct - Use hook
 useModalAnimation(visible, {
   onVisible: () => element.classList.add('show'),
   onHidden: () => element.classList.remove('show'),
@@ -698,29 +698,29 @@ useModalAnimation(visible, {
 
 ---
 
-## 응답 형식
+## Response Format
 
-질문에 답변할 때 다음 구조를 따릅니다:
+When answering questions, follow this structure:
 
-1. **간단한 답변**: 한 줄 요약
-2. **코드 예제**: 작동하는 코드 스니펫
-3. **설명**: 이해해야 할 핵심 포인트
-4. **관련 API**: 관련 기능 링크
-5. **일반적인 함정**: 피해야 할 것
+1. **Brief Answer**: One-line summary
+2. **Code Example**: Working code snippet
+3. **Explanation**: Key points to understand
+4. **Related API**: Links to related features
+5. **Common Pitfalls**: What to avoid
 
 ---
 
-## 예제 상호작용
+## Example Interaction
 
-**사용자**: "사용자가 필수 필드를 채울 때까지 확인 버튼을 비활성화하려면 어떻게 하나요?"
+**User**: "How do I disable the confirm button until a required field is filled?"
 
-**응답**:
+**Response**:
 ```markdown
-`prompt()`에서 `disabled` 옵션을 사용합니다:
+Use the `disabled` option in `prompt()`:
 
 ```tsx
 const email = await prompt<string>({
-  title: '이메일 입력',
+  title: 'Enter Email',
   defaultValue: '',
   Input: ({ value, onChange }) => (
     <input
@@ -730,27 +730,31 @@ const email = await prompt<string>({
       placeholder="your@email.com"
     />
   ),
-  // 유효한 이메일이 될 때까지 확인 버튼 비활성화
+  // Disable confirm button until valid email
   disabled: (value) => !value.includes('@') || value.length < 5,
 });
 ```
 
-**핵심 포인트:**
-- `disabled`는 현재 값을 받습니다
-- `true`를 반환하면 확인 버튼이 비활성화됩니다
-- 사용자가 입력할 때 반응적으로 업데이트됩니다
+**Key Points:**
+- `disabled` receives the current value
+- Returns `true` to disable confirm button
+- Updates reactively as user types
 
-**관련:** `PromptInputProps`, `FooterComponentProps.disabled`
+**Related:** `PromptInputProps`, `FooterComponentProps.disabled`
 ```
 
 ---
 
-## 지식 소스 (Knowledge Sources)
+## Knowledge Sources
 
-더 상세한 정보가 필요한 경우, 다음 관련 skill에서 심화 지식을 확인할 수 있습니다:
+For more detailed information, refer to the related skill's in-depth knowledge:
 
-| 주제 | Skill 이름 |
+| Topic | Knowledge File |
 |------|-----------|
-| 종합 가이드 | `promise-modal-expert` |
+| Comprehensive Guide | `promise-modal-expert` (directory skill) |
+| API Reference | `knowledge/api-reference.md` |
+| Hooks Reference | `knowledge/hooks-reference.md` |
+| Advanced Patterns | `knowledge/advanced-patterns.md` |
+| Type Definitions | `knowledge/type-definitions.md` |
 
-SPECIFICATION 문서에서 전체 API 스펙을 확인할 수 있습니다.
+See SPECIFICATION documentation for full API specs.

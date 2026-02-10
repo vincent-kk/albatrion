@@ -165,8 +165,10 @@ function buildTreeFromLocalDir(
     const relativePath = join(basePath, entry);
 
     if (stat.isDirectory()) {
-      // Check if it's a directory-based skill (contains Skill.md)
-      const isSkill = existsSync(join(fullPath, 'Skill.md'));
+      // Check if it's a directory-based skill (contains SKILL.md or Skill.md)
+      const isSkill =
+        existsSync(join(fullPath, 'SKILL.md')) ||
+        existsSync(join(fullPath, 'Skill.md'));
 
       if (isSkill) {
         // Treat as a single selectable item (directory skill)
@@ -234,7 +236,9 @@ function buildTreeFromGitHubEntries(
     } else {
       // Directory (possibly with subdirectories)
       const isSkill = items.some(
-        (item) => item.type === 'file' && item.name === 'Skill.md',
+        (item) =>
+          item.type === 'file' &&
+          (item.name === 'SKILL.md' || item.name === 'Skill.md'),
       );
 
       if (isSkill) {
@@ -299,7 +303,9 @@ function groupByTopLevel(
  */
 export function isDirectorySkill(entries: GitHubEntry[]): boolean {
   return entries.some(
-    (entry) => entry.type === 'file' && entry.name === 'Skill.md',
+    (entry) =>
+      entry.type === 'file' &&
+      (entry.name === 'SKILL.md' || entry.name === 'Skill.md'),
   );
 }
 
