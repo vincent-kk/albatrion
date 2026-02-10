@@ -16,7 +16,9 @@ import {
 } from 'node:fs';
 import { join } from 'node:path';
 
-import { packageNameToPrefix, toFlatFileName } from '../utils/nameTransform.js';
+import { toFlatFileName } from '@/claude-assets-sync/utils/nameTransform.js';
+import { packageNameToPrefix } from '@/claude-assets-sync/utils/packageName.js';
+
 import type {
   AssetType,
   FileMapping,

@@ -5,9 +5,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { syncPackage, syncPackages } from '../core/sync';
 import { readUnifiedSyncMeta } from '../core/syncMeta';
-import { packageNameToPrefix, toFlatFileName } from '../utils/nameTransform';
+import { toFlatFileName } from '../utils/nameTransform';
+import { packageNameToPrefix } from '../utils/packageName';
 import { getDestinationDir, getFlatDestinationDir } from '../utils/paths';
 import type { PackageInfo, UnifiedSyncMeta } from '../utils/types';
+import { VERSION } from '../version';
 import {
   type TestFixture,
   createTestFixture,
@@ -96,7 +98,7 @@ describe('E2E: Full Sync Flow', () => {
       // Verify unified sync meta
       const unifiedMeta = readUnifiedSyncMeta(fixture.tempDir);
       expect(unifiedMeta).not.toBeNull();
-      expect(unifiedMeta!.schemaVersion).toBe('0.0.2');
+      expect(unifiedMeta!.schemaVersion).toBe(VERSION);
       expect(unifiedMeta!.packages[prefix]).toBeDefined();
       expect(unifiedMeta!.packages[prefix].version).toBe('0.10.0');
       expect(unifiedMeta!.packages[prefix].originalName).toBe(

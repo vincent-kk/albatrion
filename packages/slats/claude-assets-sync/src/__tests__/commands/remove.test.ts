@@ -10,7 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { runRemoveCommand } from '../../commands/remove';
 import { ensureDir } from '../../core/filesystem';
 import { readUnifiedSyncMeta, writeUnifiedSyncMeta } from '../../core/syncMeta';
-import { packageNameToPrefix } from '../../utils/nameTransform';
+import { packageNameToPrefix } from '../../utils/packageName';
 import { getDestinationDir, getFlatDestinationDir } from '../../utils/paths';
 import type { FileMapping, UnifiedSyncMeta } from '../../utils/types';
 import { type TestFixture, createTestFixture } from '../helpers';
@@ -77,9 +77,10 @@ describe('remove command', () => {
         fixture.tempDir,
       );
 
-      // Verify dry-run message (logger.info uses console.log(level, message))
-      const dryRunCall = mockConsoleLog.mock.calls.find(
-        (call) => call[0] === 'info' && call[1]?.includes('[DRY RUN]'),
+      // Verify dry-run message (logger.info uses console.log(pc.blue('info'), message))
+      // picocolors adds ANSI codes, so we check if any call contains the message
+      const dryRunCall = mockConsoleLog.mock.calls.find((call) =>
+        call.some((arg) => String(arg).includes('[DRY RUN]')),
       );
       expect(dryRunCall).toBeDefined();
 

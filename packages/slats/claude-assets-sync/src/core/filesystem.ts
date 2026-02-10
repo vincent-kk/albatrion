@@ -4,9 +4,14 @@ import { join } from 'node:path';
 import {
   getDestinationDir as getDestinationDirUtil,
   getFlatDestinationDir as getFlatDestinationDirUtil,
-} from '../utils/paths';
-import type { AssetType, SyncMeta, UnifiedSyncMeta } from '../utils/types';
-import { needsVersionSync } from '../utils/version';
+} from '@/claude-assets-sync/utils/paths.js';
+import type {
+  AssetType,
+  SyncMeta,
+  UnifiedSyncMeta,
+} from '@/claude-assets-sync/utils/types.js';
+import { needsVersionSync } from '@/claude-assets-sync/utils/version.js';
+
 import { DEFAULT_ASSET_TYPES, META_FILES } from './constants';
 import {
   ensureDirectory,
@@ -177,7 +182,8 @@ export const writeFlatAssetFile = (
 
 /**
  * Clean flat asset files with specific prefix
- * Removes only files belonging to the specified package, preserving others
+ * Removes only files belonging to the specified package, preserving others.
+ * Handles both single flat files (prefix_file.md) and directory-based skills (prefix_dir/).
  * @param cwd - Current working directory
  * @param assetType - Asset type (commands, skills, agents, or any custom string)
  * @param prefix - Package prefix (e.g., "canard-schemaForm")
@@ -204,27 +210,45 @@ export const cleanFlatAssetFiles = (
 
     // Files can be string[] or FileMapping[], iterate and get transformed names
     if (Array.isArray(filesToRemove)) {
+      const skillDirs = new Set<string>();
+
       for (const fileMapping of filesToRemove) {
         // Handle both string (nested structure) and FileMapping (flat structure)
         const fileName =
           typeof fileMapping === 'string'
             ? fileMapping
             : fileMapping.transformed;
-        const filePath = join(destDir, fileName);
-        if (fileExists(filePath)) {
-          rmSync(filePath, { force: true });
+
+        if (fileName.includes('/')) {
+          // Directory-based skill: collect top-level directory for bulk removal
+          skillDirs.add(fileName.split('/')[0]);
+        } else {
+          // Single flat file
+          const filePath = join(destDir, fileName);
+          if (fileExists(filePath)) {
+            rmSync(filePath, { force: true });
+          }
+        }
+      }
+
+      // Remove skill directories recursively
+      for (const dir of skillDirs) {
+        const dirPath = join(destDir, dir);
+        if (fileExists(dirPath)) {
+          rmSync(dirPath, { recursive: true, force: true });
         }
       }
     }
   } else {
-    // Fallback: pattern-based cleanup (less precise)
+    // Fallback: pattern-based cleanup (handles both files and directories)
     const pattern = `${prefix}_`;
-    const files = listDirectory(destDir);
+    const entries = listDirectory(destDir);
 
-    for (const file of files) {
-      if (file.startsWith(pattern) && file.endsWith('.md')) {
-        const filePath = join(destDir, file);
-        rmSync(filePath, { force: true });
+    for (const entry of entries) {
+      if (entry.startsWith(pattern)) {
+        const entryPath = join(destDir, entry);
+        // rmSync with recursive handles both files and directories
+        rmSync(entryPath, { recursive: true, force: true });
       }
     }
   }

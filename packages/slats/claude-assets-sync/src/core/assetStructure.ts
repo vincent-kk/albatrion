@@ -1,7 +1,11 @@
 import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-import type { AssetStructure, AssetsConfig } from '../utils/types';
+import type {
+  AssetStructure,
+  AssetsConfig,
+} from '@/claude-assets-sync/utils/types.js';
+
 import { DEFAULT_ASSET_TYPES } from './constants';
 
 // Re-export for backward compatibility

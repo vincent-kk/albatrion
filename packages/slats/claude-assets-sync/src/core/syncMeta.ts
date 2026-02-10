@@ -4,8 +4,9 @@ import type {
   FileMapping,
   PackageSyncInfo,
   UnifiedSyncMeta,
-} from '../utils/types.js';
-import { needsVersionSync } from '../utils/version';
+} from '@/claude-assets-sync/utils/types.js';
+import { needsVersionSync } from '@/claude-assets-sync/utils/version.js';
+
 import { META_FILES, SCHEMA_VERSIONS } from './constants';
 import { readJsonFile, writeJsonFile } from './io';
 

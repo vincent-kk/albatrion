@@ -12,7 +12,8 @@ import { runRemoveCommand } from '../../commands/remove';
 import { runStatusCommand } from '../../commands/status';
 import { syncPackage } from '../../core/sync';
 import { readUnifiedSyncMeta, writeUnifiedSyncMeta } from '../../core/syncMeta';
-import { packageNameToPrefix, toFlatFileName } from '../../utils/nameTransform';
+import { toFlatFileName } from '../../utils/nameTransform';
+import { packageNameToPrefix } from '../../utils/packageName';
 import type { UnifiedSyncMeta } from '../../utils/types';
 import {
   type TestFixture,

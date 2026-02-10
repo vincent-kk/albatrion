@@ -1,8 +1,13 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { parseGitHubRepo } from '../utils/package.js';
-import type { GitHubEntry, PackageInfo, TreeNode } from '../utils/types.js';
+import { parseGitHubRepo } from '@/claude-assets-sync/utils/package.js';
+import type {
+  GitHubEntry,
+  PackageInfo,
+  TreeNode,
+} from '@/claude-assets-sync/utils/types.js';
+
 import { DEFAULT_ASSET_TYPES } from './assetStructure.js';
 import { fetchDirectoryContents } from './github.js';
 
@@ -118,6 +123,7 @@ async function scanRemoteAssets(
     throw new Error(`Invalid GitHub repository URL in package ${packageName}`);
   }
   const assetBasePath = pkgInfo.claude.assetPath;
+  const tag = ref ?? 'HEAD';
 
   // Fetch asset files from GitHub
   const trees: TreeNode[] = [];
@@ -130,11 +136,31 @@ async function scanRemoteAssets(
       const entries = await fetchDirectoryContents(
         repoInfo,
         assetPath,
-        ref ?? 'HEAD',
+        tag,
       );
 
       if (entries && entries.length > 0) {
-        const tree = buildTreeFromGitHubEntries(assetType, entries, assetType);
+        // Fetch contents for directory entries
+        const dirContentsMap = new Map<string, GitHubEntry[]>();
+        for (const entry of entries) {
+          if (entry.type === 'dir') {
+            const dirEntries = await fetchDirectoryContents(
+              repoInfo,
+              `${assetPath}/${entry.name}`,
+              tag,
+            );
+            if (dirEntries) {
+              dirContentsMap.set(entry.name, dirEntries);
+            }
+          }
+        }
+
+        const tree = buildTreeFromGitHubEntries(
+          assetType,
+          entries,
+          assetType,
+          dirContentsMap,
+        );
         if (tree.children && tree.children.length > 0) {
           trees.push(tree);
         }
@@ -217,47 +243,41 @@ function buildTreeFromGitHubEntries(
   label: string,
   entries: GitHubEntry[],
   basePath: string,
+  dirContentsMap?: Map<string, GitHubEntry[]>,
 ): TreeNode {
   const children: TreeNode[] = [];
-  const grouped = groupByTopLevel(entries);
 
-  for (const [name, items] of Object.entries(grouped)) {
-    if (items.length === 1 && items[0].type === 'file') {
-      // Single file
-      const filePath = items[0].path;
+  for (const entry of entries) {
+    if (entry.type === 'file') {
       children.push({
-        id: filePath,
-        label: name,
-        path: filePath,
+        id: entry.path,
+        label: entry.name,
+        path: entry.path,
         type: 'file',
         selected: true,
         expanded: false,
       });
-    } else {
-      // Directory (possibly with subdirectories)
-      const isSkill = items.some(
-        (item) =>
-          item.type === 'file' &&
-          (item.name === 'SKILL.md' || item.name === 'Skill.md'),
-      );
+    } else if (entry.type === 'dir') {
+      const dirEntries = dirContentsMap?.get(entry.name);
+      const hasSkillMd = dirEntries
+        ? isDirectorySkill(dirEntries)
+        : false;
 
-      if (isSkill) {
-        // Directory-based skill
-        const skillPath = `${basePath}/${name}`;
+      if (hasSkillMd) {
+        const skillPath = `${basePath}/${entry.name}`;
         children.push({
           id: skillPath,
-          label: name,
+          label: entry.name,
           path: skillPath,
           type: 'skill-directory',
           selected: true,
           expanded: false,
         });
-      } else {
-        // Regular directory
+      } else if (dirEntries && dirEntries.length > 0) {
         const subTree = buildTreeFromGitHubEntries(
-          name,
-          items,
-          `${basePath}/${name}`,
+          entry.name,
+          dirEntries,
+          `${basePath}/${entry.name}`,
         );
         if (subTree.children && subTree.children.length > 0) {
           children.push(subTree);
@@ -277,26 +297,6 @@ function buildTreeFromGitHubEntries(
   };
 }
 
-/**
- * Group GitHub entries by top-level name
- */
-function groupByTopLevel(
-  entries: GitHubEntry[],
-): Record<string, GitHubEntry[]> {
-  const groups: Record<string, GitHubEntry[]> = {};
-
-  for (const entry of entries) {
-    const parts = entry.path.split('/');
-    const topLevel = parts[parts.length - (entry.type === 'file' ? 1 : 0)];
-
-    if (!groups[topLevel]) {
-      groups[topLevel] = [];
-    }
-    groups[topLevel].push(entry);
-  }
-
-  return groups;
-}
 
 /**
  * Check if entries represent a directory-based skill

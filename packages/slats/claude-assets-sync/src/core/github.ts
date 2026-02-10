@@ -1,4 +1,8 @@
-import type { AssetType, GitHubEntry, GitHubRepoInfo } from '../utils/types';
+import type {
+  AssetType,
+  GitHubEntry,
+  GitHubRepoInfo,
+} from '@/claude-assets-sync/utils/types.js';
 
 /**
  * Error thrown when GitHub API rate limit is exceeded
@@ -71,10 +75,63 @@ export const fetchDirectoryContents = async (
 
   const data = await response.json();
 
-  // Filter only files (exclude subdirectories for now)
+  // Filter .md files and directory entries
   return (data as GitHubEntry[]).filter(
-    (entry) => entry.type === 'file' && entry.name.endsWith('.md'),
+    (entry) =>
+      (entry.type === 'file' && entry.name.endsWith('.md')) ||
+      entry.type === 'dir',
   );
+};
+
+/**
+ * Expand directory entries into flat file entries with recursive traversal.
+ * Fetches contents of each directory and prefixes file names with the directory path.
+ * Recursively traverses subdirectories to collect all nested files.
+ *
+ * @param repoInfo - GitHub repository information
+ * @param parentPath - Parent directory path in the repository
+ * @param entries - Array of GitHubEntry (may contain both file and dir types)
+ * @param tag - Git tag or ref to fetch from
+ * @param prefix - Accumulated path prefix for nested entries
+ * @returns Flat array of file GitHubEntry with dir-prefixed names
+ */
+export const expandDirectoryEntries = async (
+  repoInfo: GitHubRepoInfo,
+  parentPath: string,
+  entries: GitHubEntry[],
+  tag: string,
+  prefix: string = '',
+): Promise<GitHubEntry[]> => {
+  const result: GitHubEntry[] = [];
+
+  for (const entry of entries) {
+    const entryPrefix = prefix ? `${prefix}/${entry.name}` : entry.name;
+
+    if (entry.type === 'file') {
+      result.push({
+        ...entry,
+        name: prefix ? entryPrefix : entry.name,
+      });
+    } else if (entry.type === 'dir') {
+      const subEntries = await fetchDirectoryContents(
+        repoInfo,
+        `${parentPath}/${entry.name}`,
+        tag,
+      );
+      if (subEntries) {
+        const expanded = await expandDirectoryEntries(
+          repoInfo,
+          `${parentPath}/${entry.name}`,
+          subEntries,
+          tag,
+          entryPrefix,
+        );
+        result.push(...expanded);
+      }
+    }
+  }
+
+  return result;
 };
 
 /**
@@ -101,12 +158,21 @@ export const fetchAssetFiles = async (
     fetchDirectoryContents(repoInfo, `${basePath}/${assetType}`, tag),
   );
 
-  const results = await Promise.all(fetchPromises);
+  const rawResults = await Promise.all(fetchPromises);
+
+  // Expand directory entries into flat file lists
+  const expandedResults = await Promise.all(
+    rawResults.map((entries, index) => {
+      if (!entries) return Promise.resolve([] as GitHubEntry[]);
+      const assetDirPath = `${basePath}/${assetTypes[index]}`;
+      return expandDirectoryEntries(repoInfo, assetDirPath, entries, tag);
+    }),
+  );
 
   // Build dynamic result object
   const assetFiles: Record<string, GitHubEntry[]> = {};
   assetTypes.forEach((assetType, index) => {
-    assetFiles[assetType] = results[index] || [];
+    assetFiles[assetType] = expandedResults[index] || [];
   });
 
   return assetFiles;

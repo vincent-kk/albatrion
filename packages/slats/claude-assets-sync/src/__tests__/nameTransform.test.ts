@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import {
   kebabToCamel,
-  packageNameToPrefix,
   parseFlatFileName,
   toFlatFileName,
 } from '../utils/nameTransform';
+import { packageNameToPrefix } from '../utils/packageName';
 
 describe('kebabToCamel', () => {
   it('converts simple kebab-case to camelCase', () => {
@@ -110,7 +110,7 @@ describe('packageNameToPrefix', () => {
 });
 
 describe('toFlatFileName', () => {
-  it('creates flat file names with underscore separator', () => {
+  it('creates flat file names with underscore separator for single files', () => {
     expect(toFlatFileName('canard-schemaForm', 'guide.md')).toBe(
       'canard-schemaForm_guide.md',
     );
@@ -122,30 +122,24 @@ describe('toFlatFileName', () => {
     );
   });
 
-  it('converts path separators to underscores', () => {
-    expect(toFlatFileName('canard-schemaForm', 'api/types.md')).toBe(
-      'canard-schemaForm_api_types.md',
+  it('preserves directory structure for directory-based entries', () => {
+    expect(toFlatFileName('canard-schemaForm', 'expert/SKILL.md')).toBe(
+      'canard-schemaForm_expert/SKILL.md',
     );
     expect(toFlatFileName('winglet-reactUtils', 'docs/guide.md')).toBe(
-      'winglet-reactUtils_docs_guide.md',
+      'winglet-reactUtils_docs/guide.md',
     );
     expect(toFlatFileName('lerx-promiseModal', 'src/utils/helper.ts')).toBe(
-      'lerx-promiseModal_src_utils_helper.ts',
+      'lerx-promiseModal_src/utils/helper.ts',
     );
   });
 
-  it('handles Windows-style path separators', () => {
-    expect(toFlatFileName('canard-schemaForm', 'api\\types.md')).toBe(
-      'canard-schemaForm_api_types.md',
+  it('applies prefix only to top-level directory', () => {
+    expect(toFlatFileName('canard-schemaForm', 'expert/knowledge/api.md')).toBe(
+      'canard-schemaForm_expert/knowledge/api.md',
     );
-    expect(toFlatFileName('winglet-reactUtils', 'docs\\api\\guide.md')).toBe(
-      'winglet-reactUtils_docs_api_guide.md',
-    );
-  });
-
-  it('handles mixed path separators', () => {
-    expect(toFlatFileName('canard-schemaForm', 'api/docs\\guide.md')).toBe(
-      'canard-schemaForm_api_docs_guide.md',
+    expect(toFlatFileName('winglet-reactUtils', 'docs/api/guide.md')).toBe(
+      'winglet-reactUtils_docs/api/guide.md',
     );
   });
 
@@ -169,7 +163,7 @@ describe('toFlatFileName', () => {
 
   it('handles deeply nested paths', () => {
     expect(toFlatFileName('canard-schemaForm', 'a/b/c/d/e/file.md')).toBe(
-      'canard-schemaForm_a_b_c_d_e_file.md',
+      'canard-schemaForm_a/b/c/d/e/file.md',
     );
   });
 });
@@ -187,17 +181,17 @@ describe('parseFlatFileName', () => {
       });
     });
 
-    it('parses flat file names with nested paths', () => {
-      expect(parseFlatFileName('canard-schemaForm_api_types.md')).toEqual({
+    it('parses flat file names with preserved directory structure', () => {
+      expect(parseFlatFileName('canard-schemaForm_expert/SKILL.md')).toEqual({
         prefix: 'canard-schemaForm',
-        original: 'api/types.md',
+        original: 'expert/SKILL.md',
       });
-      expect(parseFlatFileName('winglet-reactUtils_docs_guide.md')).toEqual({
+      expect(parseFlatFileName('winglet-reactUtils_docs/guide.md')).toEqual({
         prefix: 'winglet-reactUtils',
         original: 'docs/guide.md',
       });
       expect(
-        parseFlatFileName('lerx-promiseModal_src_utils_helper.ts'),
+        parseFlatFileName('lerx-promiseModal_src/utils/helper.ts'),
       ).toEqual({
         prefix: 'lerx-promiseModal',
         original: 'src/utils/helper.ts',
@@ -205,7 +199,7 @@ describe('parseFlatFileName', () => {
     });
 
     it('parses deeply nested paths', () => {
-      expect(parseFlatFileName('canard-schemaForm_a_b_c_d_e_file.md')).toEqual({
+      expect(parseFlatFileName('canard-schemaForm_a/b/c/d/e/file.md')).toEqual({
         prefix: 'canard-schemaForm',
         original: 'a/b/c/d/e/file.md',
       });
@@ -230,14 +224,6 @@ describe('parseFlatFileName', () => {
       expect(parseFlatFileName('winglet-reactUtils_types.d.ts')).toEqual({
         prefix: 'winglet-reactUtils',
         original: 'types.d.ts',
-      });
-    });
-
-    it('handles prefix with underscores in original filename', () => {
-      // Multiple underscores after prefix should be treated as path separators
-      expect(parseFlatFileName('canard-schemaForm_my_file_name.md')).toEqual({
-        prefix: 'canard-schemaForm',
-        original: 'my/file/name.md',
       });
     });
   });
@@ -279,7 +265,7 @@ describe('parseFlatFileName', () => {
     it('correctly round-trips toFlatFileName and parseFlatFileName', () => {
       const testCases = [
         { prefix: 'canard-schemaForm', fileName: 'guide.md' },
-        { prefix: 'winglet-reactUtils', fileName: 'api/types.md' },
+        { prefix: 'winglet-reactUtils', fileName: 'expert/SKILL.md' },
         { prefix: 'lerx-promiseModal', fileName: 'src/utils/helper.ts' },
         { prefix: 'scope-packageName', fileName: 'docs/api/reference.md' },
       ];
@@ -292,30 +278,18 @@ describe('parseFlatFileName', () => {
         expect(parsed?.original).toBe(fileName);
       });
     });
-
-    it('handles Windows paths in round-trip', () => {
-      const prefix = 'canard-schemaForm';
-      const windowsPath = 'api\\types.md';
-      const flatName = toFlatFileName(prefix, windowsPath);
-
-      const parsed = parseFlatFileName(flatName);
-      expect(parsed).not.toBeNull();
-      expect(parsed?.prefix).toBe(prefix);
-      // Note: parseFlatFileName always returns forward slashes
-      expect(parsed?.original).toBe('api/types.md');
-    });
   });
 });
 
 describe('integration: packageNameToPrefix + toFlatFileName', () => {
   it('converts package name to flat file name end-to-end', () => {
     const packageName = '@canard/schema-form';
-    const fileName = 'api/types.md';
+    const fileName = 'expert/SKILL.md';
 
     const prefix = packageNameToPrefix(packageName);
     const flatName = toFlatFileName(prefix, fileName);
 
-    expect(flatName).toBe('canard-schemaForm_api_types.md');
+    expect(flatName).toBe('canard-schemaForm_expert/SKILL.md');
   });
 
   it('handles multiple real-world examples', () => {
@@ -323,7 +297,7 @@ describe('integration: packageNameToPrefix + toFlatFileName', () => {
       {
         packageName: '@winglet/react-utils',
         fileName: 'docs/guide.md',
-        expected: 'winglet-reactUtils_docs_guide.md',
+        expected: 'winglet-reactUtils_docs/guide.md',
       },
       {
         packageName: '@lerx/promise-modal',
@@ -332,8 +306,8 @@ describe('integration: packageNameToPrefix + toFlatFileName', () => {
       },
       {
         packageName: 'lodash',
-        fileName: 'lib/index.js',
-        expected: 'lodash_lib_index.js',
+        fileName: 'expert/knowledge/api.md',
+        expected: 'lodash_expert/knowledge/api.md',
       },
     ];
 

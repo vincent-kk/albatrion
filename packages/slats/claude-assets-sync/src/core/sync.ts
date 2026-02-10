@@ -1,5 +1,5 @@
 import { logger } from '../utils/logger';
-import { packageNameToPrefix, toFlatFileName } from '../utils/nameTransform';
+import { toFlatFileName } from '../utils/nameTransform';
 import {
   buildAssetPath,
   buildVersionTag,
@@ -10,6 +10,7 @@ import {
   readLocalPackageJson,
   readPackageJson,
 } from '../utils/package';
+import { packageNameToPrefix } from '../utils/packageName';
 import { getDestinationDir, getFlatDestinationDir } from '../utils/paths';
 import type { CliOptions, FileMapping, SyncResult } from '../utils/types';
 import {

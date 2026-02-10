@@ -13,6 +13,7 @@ import {
   writeUnifiedSyncMeta,
 } from '../core/syncMeta';
 import type { PackageSyncInfo, UnifiedSyncMeta } from '../utils/types';
+import { VERSION } from '../version';
 
 describe('Unified Metadata Management', () => {
   let tempDir: string;
@@ -33,7 +34,7 @@ describe('Unified Metadata Management', () => {
     it('should create empty metadata with correct schema version', () => {
       const meta = createEmptyUnifiedMeta();
 
-      expect(meta.schemaVersion).toBe('0.0.2');
+      expect(meta.schemaVersion).toBe(VERSION);
       expect(meta.packages).toEqual({});
       expect(meta.syncedAt).toBeDefined();
       expect(new Date(meta.syncedAt).getTime()).toBeLessThanOrEqual(Date.now());

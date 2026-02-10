@@ -12,7 +12,7 @@ import {
   writeUnifiedSyncMeta,
 } from '@/claude-assets-sync/core/syncMeta';
 import { logger } from '@/claude-assets-sync/utils/logger';
-import { packageNameToPrefix } from '@/claude-assets-sync/utils/nameTransform';
+import { packageNameToPrefix } from '@/claude-assets-sync/utils/packageName.js';
 import type { FileMapping } from '@/claude-assets-sync/utils/types';
 
 import type { RemoveCommandOptions } from './types';

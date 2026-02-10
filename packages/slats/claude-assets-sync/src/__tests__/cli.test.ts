@@ -2,13 +2,15 @@ import { describe, expect, it } from 'vitest';
 
 import { createProgram } from '@/claude-assets-sync/core/cli';
 
+import { VERSION } from '../version';
+
 describe('CLI', () => {
   describe('createProgram', () => {
     it('should create a commander program', () => {
       const program = createProgram();
 
       expect(program.name()).toBe('claude-assets-sync');
-      expect(program.version()).toBe('0.0.2');
+      expect(program.version()).toBe(VERSION);
     });
 
     it('should have -p/--package option', () => {

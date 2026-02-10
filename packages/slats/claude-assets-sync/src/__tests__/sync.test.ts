@@ -5,7 +5,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { syncPackage, syncPackages } from '../core/sync';
 import { readUnifiedSyncMeta, writeUnifiedSyncMeta } from '../core/syncMeta';
-import { packageNameToPrefix, toFlatFileName } from '../utils/nameTransform';
+import { toFlatFileName } from '../utils/nameTransform';
+import { packageNameToPrefix } from '../utils/packageName';
 import { getDestinationDir, getFlatDestinationDir } from '../utils/paths';
 import type { UnifiedSyncMeta } from '../utils/types';
 import {

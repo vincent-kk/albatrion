@@ -27,10 +27,10 @@ describe('list command', () => {
     it('should show message when no packages are synced', async () => {
       await runListCommand({ json: false }, fixture.tempDir);
 
-      // logger.info uses console.log('info', message)
-      const infoCall = mockConsoleLog.mock.calls.find(
-        (call) =>
-          call[0] === 'info' && call[1]?.includes('No packages synced yet'),
+      // logger.info uses console.log(pc.blue('info'), message)
+      // picocolors adds ANSI codes, so we check if any call contains the message
+      const infoCall = mockConsoleLog.mock.calls.find((call) =>
+        call.some((arg) => String(arg).includes('No packages synced yet')),
       );
       expect(infoCall).toBeDefined();
     });
