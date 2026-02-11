@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import type {
   FileMapping,
   PackageSyncInfo,
+  SkillUnit,
   UnifiedSyncMeta,
 } from '@/claude-assets-sync/utils/types.js';
 import { needsVersionSync } from '@/claude-assets-sync/utils/version.js';
@@ -28,7 +29,13 @@ export const SCHEMA_VERSION = SCHEMA_VERSIONS.UNIFIED_SYNC_META;
  */
 export function readUnifiedSyncMeta(cwd: string): UnifiedSyncMeta | null {
   const metaPath = join(cwd, UNIFIED_META_PATH);
-  return readJsonFile<UnifiedSyncMeta>(metaPath);
+  const meta = readJsonFile<UnifiedSyncMeta>(metaPath);
+  if (meta && needsSkillUnitMigration(meta)) {
+    // In-memory migration only -- do NOT write back.
+    // The migrated format is persisted naturally on the next writeUnifiedSyncMeta() call.
+    return migrateToSkillUnitSchema(meta);
+  }
+  return meta;
 }
 
 /**
@@ -132,50 +139,26 @@ export function createEmptyUnifiedMeta(): UnifiedSyncMeta {
 }
 
 /**
- * Add a file to a package's asset type in unified metadata
- *
- * @param meta - Current unified metadata
- * @param prefix - Package prefix (e.g., 'canard-schema-form')
- * @param assetType - Asset type (e.g., 'commands', 'skills')
- * @param fileName - File name to add
- * @returns Updated metadata object
+ * Add a skill unit to a package's asset type in unified metadata
  */
-export function addFileToPackage(
+export function addSkillUnitToPackage(
   meta: UnifiedSyncMeta,
   prefix: string,
   assetType: string,
-  fileName: string,
+  unit: SkillUnit,
 ): UnifiedSyncMeta {
   const pkgInfo = meta.packages[prefix];
   if (!pkgInfo) {
     throw new Error(`Package ${prefix} not found in metadata`);
   }
 
-  const existingFiles = pkgInfo.files[assetType] || [];
+  const existingUnits = (pkgInfo.files[assetType] || []) as SkillUnit[];
 
-  // Check if file already exists (handle both string[] and FileMapping[])
-  // For FileMapping, match against both original and transformed names
-  const fileExists = existingFiles.some((f) =>
-    typeof f === 'string'
-      ? f === fileName
-      : f.original === fileName || f.transformed === fileName,
-  );
-
-  if (fileExists) {
-    // File already exists, return unchanged
+  // Check if a skill unit with matching name already exists
+  const unitExists = existingUnits.some((u) => u.name === unit.name);
+  if (unitExists) {
     return meta;
   }
-
-  // Add the new file (maintain the same structure)
-  const updatedFiles =
-    Array.isArray(existingFiles) &&
-    existingFiles.length > 0 &&
-    typeof existingFiles[0] === 'object'
-      ? [
-          ...(existingFiles as any[]),
-          { original: fileName, transformed: fileName },
-        ]
-      : [...(existingFiles as string[]), fileName].sort();
 
   return {
     ...meta,
@@ -186,7 +169,7 @@ export function addFileToPackage(
         ...pkgInfo,
         files: {
           ...pkgInfo.files,
-          [assetType]: updatedFiles as string[] | FileMapping[],
+          [assetType]: [...existingUnits, unit],
         },
       },
     },
@@ -194,37 +177,23 @@ export function addFileToPackage(
 }
 
 /**
- * Remove a file from a package's asset type in unified metadata
- *
- * @param meta - Current unified metadata
- * @param prefix - Package prefix (e.g., 'canard-schema-form')
- * @param assetType - Asset type (e.g., 'commands', 'skills')
- * @param fileName - File name to remove
- * @returns Updated metadata object
+ * Remove a skill unit from a package's asset type in unified metadata
  */
-export function removeFileFromPackage(
+export function removeSkillUnitFromPackage(
   meta: UnifiedSyncMeta,
   prefix: string,
   assetType: string,
-  fileName: string,
+  skillName: string,
 ): UnifiedSyncMeta {
   const pkgInfo = meta.packages[prefix];
   if (!pkgInfo) {
     throw new Error(`Package ${prefix} not found in metadata`);
   }
 
-  const existingFiles = pkgInfo.files[assetType] || [];
+  const existingUnits = (pkgInfo.files[assetType] || []) as SkillUnit[];
+  const updatedUnits = existingUnits.filter((u) => u.name !== skillName);
 
-  // Filter out the file (handle both string[] and FileMapping[])
-  // For FileMapping, match against both original and transformed names
-  const updatedFiles = existingFiles.filter((f) =>
-    typeof f === 'string'
-      ? f !== fileName
-      : f.original !== fileName && f.transformed !== fileName,
-  ) as string[] | FileMapping[];
-
-  // If no change, return original
-  if (existingFiles.length === updatedFiles.length) {
+  if (existingUnits.length === updatedUnits.length) {
     return meta;
   }
 
@@ -237,9 +206,205 @@ export function removeFileFromPackage(
         ...pkgInfo,
         files: {
           ...pkgInfo.files,
-          [assetType]: updatedFiles,
+          [assetType]: updatedUnits,
         },
       },
     },
+  };
+}
+
+/**
+ * Update package version in unified metadata
+ */
+export function updatePackageVersion(
+  meta: UnifiedSyncMeta,
+  prefix: string,
+  newVersion: string,
+): UnifiedSyncMeta {
+  const pkgInfo = meta.packages[prefix];
+  if (!pkgInfo) {
+    throw new Error(`Package ${prefix} not found in metadata`);
+  }
+
+  return {
+    ...meta,
+    syncedAt: new Date().toISOString(),
+    packages: {
+      ...meta.packages,
+      [prefix]: {
+        ...pkgInfo,
+        version: newVersion,
+      },
+    },
+  };
+}
+
+/**
+ * Update filesystem metadata for a package's asset type
+ */
+export function updatePackageFilesystemMeta(
+  meta: UnifiedSyncMeta,
+  prefix: string,
+  assetType: string,
+  updatedUnits: SkillUnit[],
+): UnifiedSyncMeta {
+  const pkgInfo = meta.packages[prefix];
+  if (!pkgInfo) {
+    throw new Error(`Package ${prefix} not found in metadata`);
+  }
+
+  return {
+    ...meta,
+    syncedAt: new Date().toISOString(),
+    skillUnitFormat: SCHEMA_VERSIONS.SKILL_UNIT_FORMAT,
+    packages: {
+      ...meta.packages,
+      [prefix]: {
+        ...pkgInfo,
+        files: {
+          ...pkgInfo.files,
+          [assetType]: updatedUnits,
+        },
+      },
+    },
+  };
+}
+
+/**
+ * Check if unified metadata needs migration to SkillUnit format
+ */
+export function needsSkillUnitMigration(meta: UnifiedSyncMeta): boolean {
+  // If skillUnitFormat matches current version, no migration needed
+  if (meta.skillUnitFormat === SCHEMA_VERSIONS.SKILL_UNIT_FORMAT) {
+    return false;
+  }
+
+  // Check actual data format
+  for (const pkgInfo of Object.values(meta.packages)) {
+    for (const rawFiles of Object.values(pkgInfo.files)) {
+      const files = rawFiles as unknown[];
+      if (!Array.isArray(files) || files.length === 0) {
+        continue;
+      }
+
+      const first = files[0];
+
+      // Old nested format: plain strings
+      if (typeof first === 'string') {
+        return true;
+      }
+
+      // Old flat format: has original/transformed but no isDirectory
+      if (
+        typeof first === 'object' &&
+        first !== null &&
+        'original' in first &&
+        'transformed' in first &&
+        !('isDirectory' in first)
+      ) {
+        return true;
+      }
+
+      // New format: has isDirectory key
+      if (typeof first === 'object' && first !== null && 'isDirectory' in first) {
+        return false;
+      }
+    }
+  }
+
+  // All arrays empty or no packages -- no migration needed
+  return false;
+}
+
+/**
+ * Migrate unified metadata from old format to SkillUnit format (in-memory only)
+ */
+export function migrateToSkillUnitSchema(
+  meta: UnifiedSyncMeta,
+): UnifiedSyncMeta {
+  const migratedPackages: Record<string, PackageSyncInfo> = {};
+
+  for (const [prefix, pkgInfo] of Object.entries(meta.packages)) {
+    const migratedFiles: Record<string, SkillUnit[]> = {};
+
+    for (const [assetType, rawFiles] of Object.entries(pkgInfo.files)) {
+      const files = rawFiles as unknown[];
+      if (!Array.isArray(files) || files.length === 0) {
+        migratedFiles[assetType] = [];
+        continue;
+      }
+
+      const first = files[0];
+
+      if (typeof first === 'string') {
+        // Old nested format: string[] -> SkillUnit[] (all default to non-directory)
+        migratedFiles[assetType] = (files as string[]).map((name) => ({
+          name,
+          isDirectory: false,
+        }));
+      } else if (
+        typeof first === 'object' &&
+        first !== null &&
+        'original' in first &&
+        !('isDirectory' in first)
+      ) {
+        // Old flat format: FileMapping[] -> group by first path segment
+        const fileMappings = files as unknown as FileMapping[];
+        const groupedByDir = new Map<string, { transformed: string; internalFiles: string[] }>();
+        const singleFiles: SkillUnit[] = [];
+
+        for (const mapping of fileMappings) {
+          const slashIndex = mapping.original.indexOf('/');
+          if (slashIndex === -1) {
+            // Single file skill
+            singleFiles.push({
+              name: mapping.original,
+              isDirectory: false,
+              transformed: mapping.transformed,
+            });
+          } else {
+            // Part of a directory skill
+            const dirName = mapping.original.substring(0, slashIndex);
+            const internalFile = mapping.original.substring(slashIndex + 1);
+            const transformedSlashIndex = mapping.transformed.indexOf('/');
+            const transformedDir = transformedSlashIndex !== -1
+              ? mapping.transformed.substring(0, transformedSlashIndex)
+              : mapping.transformed;
+
+            if (!groupedByDir.has(dirName)) {
+              groupedByDir.set(dirName, { transformed: transformedDir, internalFiles: [] });
+            }
+            groupedByDir.get(dirName)!.internalFiles.push(internalFile);
+          }
+        }
+
+        // Convert grouped directories to SkillUnits
+        const dirSkillUnits: SkillUnit[] = [];
+        for (const [dirName, data] of groupedByDir.entries()) {
+          dirSkillUnits.push({
+            name: dirName,
+            isDirectory: true,
+            transformed: data.transformed,
+            internalFiles: data.internalFiles,
+          });
+        }
+
+        migratedFiles[assetType] = [...singleFiles, ...dirSkillUnits];
+      } else {
+        // Already in new format or unknown - keep as-is
+        migratedFiles[assetType] = files as SkillUnit[];
+      }
+    }
+
+    migratedPackages[prefix] = {
+      ...pkgInfo,
+      files: migratedFiles,
+    };
+  }
+
+  return {
+    ...meta,
+    skillUnitFormat: SCHEMA_VERSIONS.SKILL_UNIT_FORMAT,
+    packages: migratedPackages,
   };
 }
