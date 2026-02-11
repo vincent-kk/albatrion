@@ -27,20 +27,23 @@ export const TreeSelect: React.FC<TreeSelectProps> = ({
   const flattenTree = (
     nodes: TreeNode[],
     depth = 0,
-  ): Array<{ node: TreeNode; depth: number; path: number[] }> => {
-    const result: Array<{ node: TreeNode; depth: number; path: number[] }> = [];
+  ): Array<{ node: TreeNode; depth: number; path: number[]; isLastAtDepth: boolean[] }> => {
+    const result: Array<{ node: TreeNode; depth: number; path: number[]; isLastAtDepth: boolean[] }> = [];
 
     const traverse = (
       items: TreeNode[],
       currentDepth: number,
       parentPath: number[] = [],
+      ancestorIsLast: boolean[] = [],
     ) => {
       items.forEach((item, index) => {
+        const isLast = index === items.length - 1;
+        const currentIsLast = [...ancestorIsLast, isLast];
         const currentPath = [...parentPath, index];
-        result.push({ node: item, depth: currentDepth, path: currentPath });
+        result.push({ node: item, depth: currentDepth, path: currentPath, isLastAtDepth: currentIsLast });
 
         if (item.expanded && item.children) {
-          traverse(item.children, currentDepth + 1, currentPath);
+          traverse(item.children, currentDepth + 1, currentPath, currentIsLast);
         }
       });
     };
@@ -109,7 +112,7 @@ export const TreeSelect: React.FC<TreeSelectProps> = ({
         <AssetTreeNode
           key={item.path.join('-')}
           node={item.node}
-          depth={item.depth}
+          isLastAtDepth={item.isLastAtDepth}
           isSelected={index === selectedIndex}
           onToggle={() => {
             const newTrees = toggleNodeSelection(treeData, item.path);

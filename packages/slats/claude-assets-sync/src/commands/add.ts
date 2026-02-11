@@ -66,14 +66,11 @@ async function performSync(
   };
 
   for (const assetType of Object.keys(selection.excludedAssets)) {
-    for (const path of selection.excludedAssets[assetType]) {
-      // Determine if it's a directory or file based on path
-      // For now, assume directories don't have extensions
-      if (path.includes('.')) {
-        exclusions.files.push(path);
-      } else {
-        exclusions.directories.push(path);
-      }
+    for (const excludedPath of selection.excludedAssets[assetType]) {
+      // All excluded items go to files list - sync.ts handles
+      // prefix matching for directory skills (e.g., "skills/expert"
+      // will match "skills/expert/SKILL.md", "skills/expert/knowledge/api.md", etc.)
+      exclusions.files.push(excludedPath);
     }
   }
 

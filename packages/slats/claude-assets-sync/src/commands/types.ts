@@ -1,6 +1,7 @@
 /**
  * Common types for command modules
  */
+import type { SkillUnit } from '@/claude-assets-sync/utils/types';
 
 /**
  * Base command result
@@ -73,10 +74,7 @@ export interface PackageStatusItem {
   upToDate: boolean;
   syncedAt: string;
   error?: string;
-  files: Record<
-    string,
-    Array<string | { original: string; transformed: string }>
-  >;
+  files: Record<string, SkillUnit[]>;
   fileCount: number;
 }
 

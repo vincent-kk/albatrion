@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Text } from 'ink';
 import Spinner from 'ink-spinner';
+import type { SkillUnit } from '@/claude-assets-sync/utils/types.js';
 import { StatusTreeNode } from './StatusTreeNode';
 
 export interface PackageStatusItem {
@@ -10,7 +11,7 @@ export interface PackageStatusItem {
   status: 'up-to-date' | 'outdated' | 'error' | 'unknown';
   syncedAt: string;
   error?: string;
-  files: Record<string, Array<string | { original: string; transformed: string }>>;
+  files: Record<string, SkillUnit[]>;
   fileCount: number;
 }
 
@@ -79,12 +80,13 @@ export const StatusDisplay: React.FC<StatusDisplayProps> = ({
                   />
 
                   {/* Files */}
-                  {fileArray.map((file, index) => {
-                    const fileName = typeof file === 'string' ? file : file.transformed;
+                  {fileArray.map((unit: SkillUnit, index) => {
+                    const displayName = unit.transformed ?? unit.name;
+                    const label = unit.isDirectory ? `${displayName}/` : displayName;
                     return (
                       <StatusTreeNode
                         key={`${assetType}-${index}`}
-                        label={fileName}
+                        label={label}
                         depth={2}
                         type="file"
                       />
