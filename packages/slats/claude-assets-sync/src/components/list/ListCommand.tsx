@@ -9,12 +9,12 @@ import { scanPackageAssets } from '@/claude-assets-sync/core/packageScanner.js';
 import { syncPackage } from '@/claude-assets-sync/core/sync.js';
 import {
   readUnifiedSyncMeta,
-  removeFileFromPackage,
+  removeSkillUnitFromPackage,
   removePackageFromMeta,
   writeUnifiedSyncMeta,
 } from '@/claude-assets-sync/core/syncMeta.js';
 import type {
-  FileMapping,
+  SkillUnit,
   TreeNode,
   UnifiedSyncMeta,
 } from '@/claude-assets-sync/utils/types.js';
@@ -33,8 +33,8 @@ type State =
   | 'done';
 
 type FileOperation =
-  | { type: 'add'; prefix: string; assetType: string; fileName: string }
-  | { type: 'remove'; prefix: string; assetType: string; fileName: string };
+  | { type: 'add'; prefix: string; assetType: string; skillName: string }
+  | { type: 'remove'; prefix: string; assetType: string; skillName: string };
 
 interface ChangesSummary {
   filesToDelete: string[];
@@ -78,10 +78,11 @@ export const ListCommand: React.FC<ListCommandProps> = ({ cwd }) => {
 
         if (clonedTree.children) {
           clonedTree.children = clonedTree.children.map((fileNode) => {
-            const filePath = `${assetTypeTree.label}/${fileNode.label}`;
+            // Use path for matching (contains original name, not display label)
+            const selected = packageData.selected.has(fileNode.path);
             return {
               ...fileNode,
-              selected: packageData.selected.has(filePath),
+              selected,
             };
           });
 
@@ -166,16 +167,37 @@ export const ListCommand: React.FC<ListCommandProps> = ({ cwd }) => {
             for (const [assetType, files] of Object.entries(
               packageInfo.files,
             )) {
-              const fileArray = Array.isArray(files) ? files : [];
-              if (fileArray.length === 0) continue;
+              const units = Array.isArray(files) ? (files as SkillUnit[]) : [];
+              if (units.length === 0) continue;
 
-              const fileNodes: TreeNode[] = fileArray.map((file) => {
-                const fileName =
-                  typeof file === 'string' ? file : file.transformed;
+              const skillNodes: TreeNode[] = units.map((unit) => {
+                const displayName = unit.transformed ?? unit.name;
+
+                if (unit.isDirectory) {
+                  return {
+                    id: `${prefix}/${assetType}/${displayName}`,
+                    label: displayName,
+                    path: `${assetType}/${unit.name}`,
+                    type: 'skill-directory' as const,
+                    viewOnly: true,
+                    selected: true,
+                    expanded: false,
+                    children: (unit.internalFiles || []).map((f) => ({
+                      id: `${prefix}/${assetType}/${displayName}/${f}`,
+                      label: f,
+                      path: `${assetType}/${unit.name}/${f}`,
+                      type: 'file' as const,
+                      selected: true,
+                      expanded: false,
+                      disabled: true,
+                    })),
+                  };
+                }
+
                 return {
-                  id: `${prefix}/${assetType}/${fileName}`,
-                  label: fileName,
-                  path: `${assetType}/${fileName}`,
+                  id: `${prefix}/${assetType}/${displayName}`,
+                  label: displayName,
+                  path: `${assetType}/${unit.name}`,
                   type: 'file' as const,
                   selected: true,
                   expanded: false,
@@ -187,7 +209,7 @@ export const ListCommand: React.FC<ListCommandProps> = ({ cwd }) => {
                 label: assetType,
                 path: assetType,
                 type: 'directory' as const,
-                children: fileNodes,
+                children: skillNodes,
                 selected: true,
                 expanded: true,
               });
@@ -209,15 +231,12 @@ export const ListCommand: React.FC<ListCommandProps> = ({ cwd }) => {
 
         const metaSelectedFiles = new Set(
           Object.entries(packageInfo.files).flatMap(([assetType, files]) =>
-            (Array.isArray(files) ? files : [])
-              .map((f) => {
-                // Use original filename for comparison with available tree
-                const fileName = typeof f === 'string' ? f : f.original;
-                const filePath = `${assetType}/${fileName}`;
-                // Check if file is excluded
+            (Array.isArray(files) ? (files as SkillUnit[]) : [])
+              .map((unit) => {
+                const filePath = `${assetType}/${unit.name}`;
                 if (
                   excludedFiles.has(filePath) ||
-                  excludedFiles.has(fileName)
+                  excludedFiles.has(unit.name)
                 ) {
                   return null;
                 }
@@ -304,8 +323,10 @@ export const ListCommand: React.FC<ListCommandProps> = ({ cwd }) => {
         for (const assetTypeNode of packageTree.children) {
           if (assetTypeNode.children) {
             for (const fileNode of assetTypeNode.children) {
+              // Skip disabled nodes (internal files of directory skills)
+              if (fileNode.disabled) continue;
               if (fileNode.selected) {
-                selectedPaths.add(`${assetTypeNode.label}/${fileNode.label}`);
+                selectedPaths.add(fileNode.path);
               }
             }
           }
@@ -337,34 +358,33 @@ export const ListCommand: React.FC<ListCommandProps> = ({ cwd }) => {
         // Package deselected - remove all files and mark for deletion
         for (const [assetType, files] of Object.entries(packageInfo.files)) {
           if (!Array.isArray(files)) continue;
+          const units = files as SkillUnit[];
 
-          const firstFile = files[0];
-          const isFlat =
-            typeof firstFile === 'object' && 'transformed' in firstFile;
-
-          // Add remove operations for each file
-          for (const file of files) {
-            const fileName = typeof file === 'string' ? file : file.original;
+          // Add remove operations for each skill unit
+          for (const unit of units) {
             fileOperations.push({
               type: 'remove',
               prefix,
               assetType,
-              fileName,
+              skillName: unit.name,
             });
           }
 
           // Add files to deletion list
-          if (isFlat) {
-            for (const file of files as FileMapping[]) {
-              const filePath = path.join(
+          const firstUnit = units[0];
+          if (firstUnit?.transformed) {
+            // Flat structure
+            for (const unit of units) {
+              const targetPath = path.join(
                 cwd,
                 '.claude',
                 assetType,
-                file.transformed,
+                unit.transformed!,
               );
-              filesToDelete.push(filePath);
+              filesToDelete.push(targetPath);
             }
           } else {
+            // Nested structure
             const dirPath = path.join(
               cwd,
               '.claude',
@@ -394,35 +414,33 @@ export const ListCommand: React.FC<ListCommandProps> = ({ cwd }) => {
         packageInfo.files,
       )) {
         const selectedFiles = selectedByAssetType[assetType];
-        const fileArray = Array.isArray(originalFiles) ? originalFiles : [];
-        const firstFile = fileArray[0];
-        const isFlat =
-          typeof firstFile === 'object' && 'transformed' in firstFile;
+        const units = Array.isArray(originalFiles) ? (originalFiles as SkillUnit[]) : [];
+        const firstUnit = units[0];
+        const isFlat = !!firstUnit?.transformed;
 
         if (!selectedFiles || selectedFiles.size === 0) {
-          // Asset type deselected - remove all files
+          // Asset type deselected - remove all skill units
           hasChanges = true;
 
-          for (const file of fileArray) {
-            const fileName = typeof file === 'string' ? file : file.original;
+          for (const unit of units) {
             fileOperations.push({
               type: 'remove',
               prefix,
               assetType,
-              fileName,
+              skillName: unit.name,
             });
           }
 
           // Add to deletion list
           if (isFlat) {
-            for (const file of fileArray as FileMapping[]) {
-              const filePath = path.join(
+            for (const unit of units) {
+              const targetPath = path.join(
                 cwd,
                 '.claude',
                 assetType,
-                file.transformed,
+                unit.transformed!,
               );
-              filesToDelete.push(filePath);
+              filesToDelete.push(targetPath);
             }
           } else {
             const dirPath = path.join(
@@ -436,56 +454,55 @@ export const ListCommand: React.FC<ListCommandProps> = ({ cwd }) => {
           continue;
         }
 
-        // Find deselected and new files
-        const originalFileNames = new Set(
-          fileArray.map((f) => (typeof f === 'string' ? f : f.transformed)),
+        // Find deselected and new skill units
+        const originalNames = new Set(
+          units.map((u) => u.name),
         );
 
-        // Check for deselected files (in original but not in selected)
-        for (const file of fileArray) {
-          const fileName = typeof file === 'string' ? file : file.original;
-          if (!selectedFiles.has(fileName)) {
-            // File was deselected - remove it
+        // Check for deselected skills (in original but not in selected)
+        for (const unit of units) {
+          if (!selectedFiles.has(unit.name)) {
+            // Skill was deselected - remove it
             hasChanges = true;
             fileOperations.push({
               type: 'remove',
               prefix,
               assetType,
-              fileName,
+              skillName: unit.name,
             });
 
             // Add to deletion list
-            if (isFlat) {
-              const filePath = path.join(
+            if (unit.transformed) {
+              const targetPath = path.join(
                 cwd,
                 '.claude',
                 assetType,
-                (file as FileMapping).transformed,
+                unit.transformed,
               );
-              filesToDelete.push(filePath);
+              filesToDelete.push(targetPath);
             } else {
               const filePath = path.join(
                 cwd,
                 '.claude',
                 assetType,
                 packageInfo.originalName,
-                fileName,
+                unit.name,
               );
               filesToDelete.push(filePath);
             }
           }
         }
 
-        // Check for new files (in selected but not in original)
-        for (const fileName of selectedFiles) {
-          if (!originalFileNames.has(fileName)) {
-            // New file selected - add it
+        // Check for new skills (in selected but not in original)
+        for (const skillName of selectedFiles) {
+          if (!originalNames.has(skillName)) {
+            // New skill selected - add it
             hasChanges = true;
             fileOperations.push({
               type: 'add',
               prefix,
               assetType,
-              fileName,
+              skillName,
             });
           }
         }
@@ -536,11 +553,11 @@ export const ListCommand: React.FC<ListCommandProps> = ({ cwd }) => {
 
     for (const op of changesSummary.fileOperations) {
       if (op.type === 'remove') {
-        updatedMeta = removeFileFromPackage(
+        updatedMeta = removeSkillUnitFromPackage(
           updatedMeta,
           op.prefix,
           op.assetType,
-          op.fileName,
+          op.skillName,
         );
       }
       // Skip add operations here - they will be handled by sync
@@ -565,7 +582,7 @@ export const ListCommand: React.FC<ListCommandProps> = ({ cwd }) => {
           // Build exclusions from removed files
           const removedFiles = changesSummary.fileOperations
             .filter((op) => op.type === 'remove' && op.prefix === prefix)
-            .map((op) => `${op.assetType}/${op.fileName}`);
+            .map((op) => `${op.assetType}/${op.skillName}`);
 
           const exclusions =
             removedFiles.length > 0

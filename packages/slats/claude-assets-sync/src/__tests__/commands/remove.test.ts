@@ -12,7 +12,7 @@ import { ensureDir } from '../../core/filesystem';
 import { readUnifiedSyncMeta, writeUnifiedSyncMeta } from '../../core/syncMeta';
 import { packageNameToPrefix } from '../../utils/packageName';
 import { getDestinationDir, getFlatDestinationDir } from '../../utils/paths';
-import type { FileMapping, UnifiedSyncMeta } from '../../utils/types';
+import type { UnifiedSyncMeta } from '../../utils/types';
 import { type TestFixture, createTestFixture } from '../helpers';
 
 // Mock console and readline
@@ -54,8 +54,8 @@ describe('remove command', () => {
             originalName: '@canard/schema-form',
             version: '0.10.0',
             files: {
-              commands: ['schema-form.md', 'generate.md'],
-              skills: ['expert.md'],
+              commands: [{ name: 'schema-form.md', isDirectory: false }, { name: 'generate.md', isDirectory: false }],
+              skills: [{ name: 'expert.md', isDirectory: false }],
             },
           },
         },
@@ -98,7 +98,7 @@ describe('remove command', () => {
             originalName: '@canard/schema-form',
             version: '0.10.0',
             files: {
-              commands: ['schema-form.md', 'generate.md'],
+              commands: [{ name: 'schema-form.md', isDirectory: false }, { name: 'generate.md', isDirectory: false }],
             },
           },
         },
@@ -142,13 +142,15 @@ describe('remove command', () => {
             files: {
               skills: [
                 {
-                  original: 'expert.md',
+                  name: 'expert.md',
+                  isDirectory: false,
                   transformed: 'canard-schema-form-expert.md',
-                } as FileMapping,
+                },
                 {
-                  original: 'validator.md',
+                  name: 'validator.md',
+                  isDirectory: false,
                   transformed: 'canard-schema-form-validator.md',
-                } as FileMapping,
+                },
               ],
             },
           },
@@ -197,12 +199,13 @@ describe('remove command', () => {
             originalName: '@canard/schema-form',
             version: '0.10.0',
             files: {
-              commands: ['cmd.md'], // nested
+              commands: [{ name: 'cmd.md', isDirectory: false }], // nested
               skills: [
                 {
-                  original: 'skill.md',
+                  name: 'skill.md',
+                  isDirectory: false,
                   transformed: 'canard-schema-form-skill.md',
-                } as FileMapping,
+                },
               ], // flat
             },
           },
@@ -250,7 +253,7 @@ describe('remove command', () => {
             originalName: '@test/pkg',
             version: '1.0.0',
             files: {
-              commands: ['test.md'],
+              commands: [{ name: 'test.md', isDirectory: false }],
             },
           },
         },
@@ -279,7 +282,7 @@ describe('remove command', () => {
             originalName: '@test/pkg',
             version: '1.0.0',
             files: {
-              commands: ['missing.md'],
+              commands: [{ name: 'missing.md', isDirectory: false }],
             },
           },
         },
@@ -309,7 +312,7 @@ describe('remove command', () => {
           [prefix]: {
             originalName: '@test/pkg',
             version: '1.0.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
         },
       };
@@ -338,12 +341,13 @@ describe('remove command', () => {
             originalName: '@custom/pkg',
             version: '1.0.0',
             files: {
-              docs: ['doc.md'],
+              docs: [{ name: 'doc.md', isDirectory: false }],
               rules: [
                 {
-                  original: 'rule.md',
+                  name: 'rule.md',
+                  isDirectory: false,
                   transformed: 'custom-pkg-rule.md',
-                } as FileMapping,
+                },
               ],
             },
           },

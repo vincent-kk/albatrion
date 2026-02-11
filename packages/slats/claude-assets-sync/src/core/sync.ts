@@ -12,7 +12,7 @@ import {
 } from '../utils/package';
 import { packageNameToPrefix } from '../utils/packageName';
 import { getDestinationDir, getFlatDestinationDir } from '../utils/paths';
-import type { CliOptions, FileMapping, SyncResult } from '../utils/types';
+import type { CliOptions, GitHubEntry, SkillUnit, SyncResult } from '../utils/types';
 import {
   cleanAssetDir,
   cleanFlatAssetFiles,
@@ -30,6 +30,53 @@ import {
   updatePackageInMeta,
   writeUnifiedSyncMeta,
 } from './syncMeta';
+import { SCHEMA_VERSIONS } from './constants';
+
+/**
+ * Group flattened GitHub entries into SkillUnit array.
+ * fetchAssetFiles already flattens directory contents, so entries from
+ * a directory skill arrive as "expert/SKILL.md", "expert/knowledge/api.md", etc.
+ * This function re-groups them by the first "/" segment.
+ */
+function groupEntriesIntoSkillUnits(
+  entries: GitHubEntry[],
+  prefix: string,
+): SkillUnit[] {
+  const dirGroups = new Map<string, string[]>();
+  const singleFiles: SkillUnit[] = [];
+
+  for (const entry of entries) {
+    const slashIndex = entry.name.indexOf('/');
+    if (slashIndex === -1) {
+      // Single file skill
+      singleFiles.push({
+        name: entry.name,
+        isDirectory: false,
+        transformed: toFlatFileName(prefix, entry.name),
+      });
+    } else {
+      // Part of a directory skill
+      const dirName = entry.name.substring(0, slashIndex);
+      const internalFile = entry.name.substring(slashIndex + 1);
+      if (!dirGroups.has(dirName)) {
+        dirGroups.set(dirName, []);
+      }
+      dirGroups.get(dirName)!.push(internalFile);
+    }
+  }
+
+  const dirSkillUnits: SkillUnit[] = [];
+  for (const [dirName, internalFiles] of dirGroups.entries()) {
+    dirSkillUnits.push({
+      name: dirName,
+      isDirectory: true,
+      transformed: toFlatFileName(prefix, dirName),
+      internalFiles,
+    });
+  }
+
+  return [...singleFiles, ...dirSkillUnits];
+}
 
 /**
  * Sync Claude assets for a single package
@@ -148,7 +195,7 @@ export const syncPackage = async (
       logger.step('Found', foundSummary);
 
       // Build file mappings dynamically based on structure
-      const fileMappings: Record<string, string[] | FileMapping[]> = {};
+      const fileMappings: Record<string, SkillUnit[]> = {};
 
       for (const assetType of assetTypes) {
         const entries = assetFiles[assetType] || [];
@@ -167,22 +214,22 @@ export const syncPackage = async (
         const structure = getAssetStructure(assetType, packageInfo.claude);
 
         if (structure === 'nested') {
-          // Nested structure: store original file names
-          fileMappings[assetType] = filteredEntries.map((e) => e.name);
-        } else {
-          // Flat structure: store original → transformed mappings
-          fileMappings[assetType] = filteredEntries.map((entry) => ({
-            original: entry.name,
-            transformed: toFlatFileName(prefix, entry.name),
+          // Nested structure: store as SkillUnit with no transformed name
+          fileMappings[assetType] = filteredEntries.map((e) => ({
+            name: e.name,
+            isDirectory: false, // Will be corrected by update command
           }));
+        } else {
+          // Flat structure: group entries into skill units
+          fileMappings[assetType] = groupEntriesIntoSkillUnits(filteredEntries, prefix);
         }
       }
 
       // Dry run mode - just log what would happen
       if (options.dryRun) {
         for (const assetType of assetTypes) {
-          const mappings = fileMappings[assetType];
-          if (!mappings || mappings.length === 0) continue;
+          const units = fileMappings[assetType];
+          if (!units || units.length === 0) continue;
 
           const structure = getAssetStructure(assetType, packageInfo.claude);
 
@@ -191,16 +238,17 @@ export const syncPackage = async (
               `Would sync ${assetType} to`,
               getDestinationDir(destDir, packageName, assetType),
             );
-            (mappings as string[]).forEach((fileName) => {
-              logger.file('create', fileName);
+            units.forEach((unit) => {
+              logger.file('create', unit.name);
             });
           } else {
             logger.step(
               `Would sync ${assetType} to`,
               getFlatDestinationDir(destDir, assetType),
             );
-            (mappings as FileMapping[]).forEach((mapping) => {
-              logger.file('create', mapping.transformed);
+            units.forEach((unit) => {
+              const displayName = unit.transformed ?? unit.name;
+              logger.file('create', displayName);
             });
           }
         }
@@ -208,16 +256,9 @@ export const syncPackage = async (
         // Build syncedFiles for dry-run return
         const syncedFiles: Record<string, string[]> = {};
         for (const assetType of assetTypes) {
-          const mappings = fileMappings[assetType];
-          if (!mappings || mappings.length === 0) continue;
-
-          if (typeof mappings[0] === 'string') {
-            syncedFiles[assetType] = mappings as string[];
-          } else {
-            syncedFiles[assetType] = (mappings as FileMapping[]).map(
-              (m) => m.transformed,
-            );
-          }
+          const units = fileMappings[assetType];
+          if (!units || units.length === 0) continue;
+          syncedFiles[assetType] = units.map((u) => u.transformed ?? u.name);
         }
 
         return {
@@ -274,11 +315,8 @@ export const syncPackage = async (
           }
         } else {
           // Flat structure: write with prefix to shared directory
-          const mappings = fileMappings[assetType] as FileMapping[];
           for (const [fileName, content] of downloadedFiles) {
-            const mapping = mappings.find((m) => m.original === fileName);
-            const flatName =
-              mapping?.transformed ?? toFlatFileName(prefix, fileName);
+            const flatName = toFlatFileName(prefix, fileName);
             writeFlatAssetFile(destDir, assetType, flatName, content);
             logger.file('create', flatName);
           }
@@ -297,21 +335,16 @@ export const syncPackage = async (
             ? exclusions
             : undefined,
       });
+      // Set skillUnitFormat on the meta being written
+      updatedMeta.skillUnitFormat = SCHEMA_VERSIONS.SKILL_UNIT_FORMAT;
       writeUnifiedSyncMeta(destDir, updatedMeta);
 
       // Build syncedFiles for return
       const syncedFiles: Record<string, string[]> = {};
       for (const assetType of assetTypes) {
-        const mappings = fileMappings[assetType];
-        if (!mappings || mappings.length === 0) continue;
-
-        if (typeof mappings[0] === 'string') {
-          syncedFiles[assetType] = mappings as string[];
-        } else {
-          syncedFiles[assetType] = (mappings as FileMapping[]).map(
-            (m) => m.transformed,
-          );
-        }
+        const units = fileMappings[assetType];
+        if (!units || units.length === 0) continue;
+        syncedFiles[assetType] = units.map((u) => u.transformed ?? u.name);
       }
 
       return {

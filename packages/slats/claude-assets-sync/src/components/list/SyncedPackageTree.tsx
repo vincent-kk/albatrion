@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Text } from 'ink';
-import type { PackageSyncInfo } from '@/claude-assets-sync/utils/types.js';
+import type { PackageSyncInfo, SkillUnit } from '@/claude-assets-sync/utils/types.js';
 
 export interface SyncedPackageTreeProps {
   packages: Array<{
@@ -12,16 +12,35 @@ export interface SyncedPackageTreeProps {
 }
 
 interface TreeNode {
-  type: 'package' | 'folder' | 'file';
+  type: 'package' | 'folder' | 'file' | 'skill-directory';
   label: string;
   depth: number;
+  isLastAtDepth: boolean[];
   packagePrefix?: string;
   assetType?: string;
   fileName?: string;
 }
 
 /**
- * Build tree structure from package data
+ * Generate CLI directory tree prefix from ancestor position info
+ */
+function getTreePrefix(isLastAtDepth: boolean[]): string {
+  let prefix = '';
+  const depth = isLastAtDepth.length;
+
+  for (let i = 0; i < depth; i++) {
+    if (i === depth - 1) {
+      prefix += isLastAtDepth[i] ? '└── ' : '├── ';
+    } else {
+      prefix += isLastAtDepth[i] ? '    ' : '│   ';
+    }
+  }
+
+  return prefix;
+}
+
+/**
+ * Build tree structure from package data with sibling position tracking
  */
 function buildTree(
   packages: Array<{ prefix: string; packageInfo: PackageSyncInfo }>
@@ -29,51 +48,63 @@ function buildTree(
   const nodes: TreeNode[] = [];
 
   for (const { prefix, packageInfo } of packages) {
-    // Package node
+    // Package node (depth 0) - no tree prefix
     nodes.push({
       type: 'package',
       label: `${packageInfo.originalName}@${packageInfo.version}`,
       depth: 0,
+      isLastAtDepth: [],
       packagePrefix: prefix,
     });
 
+    // Collect non-empty asset types
+    const assetEntries = Object.entries(packageInfo.files).filter(
+      ([, files]) => Array.isArray(files) && files.length > 0,
+    );
+
     // Asset type folders
-    for (const [assetType, files] of Object.entries(packageInfo.files)) {
-      const fileArray = Array.isArray(files) ? files : [];
+    assetEntries.forEach(([assetType, files], folderIndex) => {
+      const fileArray = files as SkillUnit[];
+      const isLastFolder = folderIndex === assetEntries.length - 1;
 
-      if (fileArray.length === 0) continue;
-
-      // Folder node - show asset type only (structure info removed)
+      // Folder node
       nodes.push({
         type: 'folder',
         label: assetType,
         depth: 1,
+        isLastAtDepth: [isLastFolder],
         packagePrefix: prefix,
         assetType,
       });
 
-      // File nodes - handle both string[] and FileMapping[]
-      for (const file of fileArray) {
-        const fileName = typeof file === 'string' ? file : file.transformed;
-        nodes.push({
-          type: 'file',
-          label: fileName,
-          depth: 2,
-          packagePrefix: prefix,
-          assetType,
-          fileName,
-        });
-      }
-    }
+      // Skill unit nodes
+      fileArray.forEach((unit, unitIndex) => {
+        const displayName = unit.transformed ?? unit.name;
+        const isLastUnit = unitIndex === fileArray.length - 1;
 
-    // Empty line between packages
-    if (packages.indexOf({ prefix, packageInfo }) < packages.length - 1) {
-      nodes.push({
-        type: 'file',
-        label: '',
-        depth: 0,
+        if (unit.isDirectory) {
+          nodes.push({
+            type: 'skill-directory',
+            label: displayName,
+            depth: 2,
+            isLastAtDepth: [isLastFolder, isLastUnit],
+            packagePrefix: prefix,
+            assetType,
+            fileName: displayName,
+          });
+        } else {
+          nodes.push({
+            type: 'file',
+            label: displayName,
+            depth: 2,
+            isLastAtDepth: [isLastFolder, isLastUnit],
+            packagePrefix: prefix,
+            assetType,
+            fileName: displayName,
+          });
+        }
       });
-    }
+    });
   }
 
   return nodes;
@@ -104,25 +135,13 @@ export const SyncedPackageTree: React.FC<SyncedPackageTreeProps> = ({
           {/* Tree content */}
           <Box flexDirection="column" paddingY={1}>
             {nodes.map((node, index) => {
-              if (node.label === '') {
-                return <Text key={index}> </Text>;
-              }
-
-              const indent = '  '.repeat(node.depth);
-              let icon = '';
-
-              if (node.type === 'folder') {
-                icon = node.depth === 1 ? '├── ' : '│   ├── ';
-              } else if (node.type === 'file') {
-                icon = node.depth === 2 ? '│   ├── ' : '';
-              }
+              const treePrefix = getTreePrefix(node.isLastAtDepth);
+              const label = node.type === 'skill-directory' ? `${node.label}/` : node.label;
 
               return (
                 <Box key={index}>
                   <Text dimColor={node.type === 'file'}>
-                    {indent}
-                    {icon}
-                    {node.label}
+                    {treePrefix}{label}
                   </Text>
                 </Box>
               );

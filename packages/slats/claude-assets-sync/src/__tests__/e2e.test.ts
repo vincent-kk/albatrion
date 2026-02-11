@@ -110,20 +110,15 @@ describe('E2E: Full Sync Flow', () => {
       // - skills: FileMapping[] (with original and transformed)
       const commandFiles = unifiedMeta!.packages[prefix].files.commands;
       expect(commandFiles).toHaveLength(1);
-      expect(commandFiles[0]).toBe('schema-form.md');
+      expect(commandFiles[0].name).toBe('schema-form.md');
 
       const skillFiles = unifiedMeta!.packages[prefix].files.skills;
       expect(skillFiles).toHaveLength(2);
       expect(
-        skillFiles.find(
-          (f) =>
-            typeof f !== 'string' && f.original === 'schema-form-expert.md',
-        ),
+        skillFiles.find((f) => f.name === 'schema-form-expert.md'),
       ).toBeDefined();
       expect(
-        skillFiles.find(
-          (f) => typeof f !== 'string' && f.original === 'validation.md',
-        ),
+        skillFiles.find((f) => f.name === 'validation.md'),
       ).toBeDefined();
     });
 
@@ -139,7 +134,7 @@ describe('E2E: Full Sync Flow', () => {
             originalName: '@canard/schema-form',
             version: '0.10.0',
             files: {
-              commands: ['schema-form.md'],
+              commands: [{ name: 'schema-form.md', isDirectory: false }],
               skills: [],
               agents: [],
             },
@@ -177,7 +172,7 @@ describe('E2E: Full Sync Flow', () => {
             originalName: '@canard/schema-form',
             version: '0.9.0',
             files: {
-              commands: ['old-command.md'],
+              commands: [{ name: 'old-command.md', isDirectory: false }],
               skills: [],
               agents: [],
             },
@@ -228,8 +223,8 @@ describe('E2E: Full Sync Flow', () => {
             originalName: '@canard/schema-form',
             version: '0.9.0',
             files: {
-              // Commands: string[] (original filenames)
-              commands: ['old-command.md'],
+              // Commands: SkillUnit[] (original filenames)
+              commands: [{ name: 'old-command.md', isDirectory: false }],
               skills: [],
               agents: [],
             },
@@ -390,8 +385,8 @@ describe('E2E: Full Sync Flow', () => {
             originalName: '@canard/schema-form',
             version: '0.10.0',
             files: {
-              // Commands: string[] (original filenames)
-              commands: ['old-file.md'],
+              // Commands: SkillUnit[] (original filenames)
+              commands: [{ name: 'old-file.md', isDirectory: false }],
               skills: [],
               agents: [],
             },
@@ -429,13 +424,9 @@ describe('E2E: Full Sync Flow', () => {
 
       // Should have new timestamp
       expect(updatedMeta!.syncedAt).not.toBe('2020-01-01T00:00:00.000Z');
-      // Commands use string[] with original filenames in hybrid mode
-      expect(updatedMeta!.packages[prefix].files.commands).toContain(
-        'schema-form.md',
-      );
-      expect(updatedMeta!.packages[prefix].files.commands).not.toContain(
-        'old-file.md',
-      );
+      // Commands use SkillUnit[] with original filenames in hybrid mode
+      expect(updatedMeta!.packages[prefix].files.commands.some(u => u.name === 'schema-form.md')).toBe(true);
+      expect(updatedMeta!.packages[prefix].files.commands.some(u => u.name === 'old-file.md')).toBe(false);
     });
   });
 

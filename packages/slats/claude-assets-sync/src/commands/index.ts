@@ -9,7 +9,9 @@ export { runRemoveCommand } from './remove';
 export { runStatusCommand } from './status';
 export { runMigrateCommand } from './migrate';
 export { runAddCommand } from './add';
+export { runUpdateCommand } from './update';
 export type { AddCommandOptions } from './add';
+export type { UpdateCommandOptions } from './update';
 
 /**
  * Command metadata for CLI help and documentation
@@ -74,6 +76,17 @@ export const COMMANDS = {
         flag: '--dry-run',
         description: 'Preview migration without making changes',
       },
+    ],
+  },
+  update: {
+    name: 'update',
+    description: 'Update package metadata in .sync-meta.json',
+    options: [
+      { flag: '-p, --package <name>', description: 'Package name to update (default: all)' },
+      { flag: '-l, --local', description: 'Read from local workspace' },
+      { flag: '-r, --ref <ref>', description: 'Git ref to fetch from' },
+      { flag: '--dry-run', description: 'Preview changes without writing' },
+      { flag: '--sync', description: 'Re-sync files after updating metadata' },
     ],
   },
 } as const;

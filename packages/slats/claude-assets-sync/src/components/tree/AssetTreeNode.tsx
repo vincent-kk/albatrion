@@ -1,11 +1,11 @@
-import React from 'react';
 import { Box, Text } from 'ink';
+import React from 'react';
 
 import type { TreeNode } from '@/claude-assets-sync/utils/types.js';
 
 export interface AssetTreeNodeProps {
   node: TreeNode;
-  depth: number;
+  isLastAtDepth: boolean[];
   isSelected: boolean;
   onToggle: () => void;
 }
@@ -23,14 +23,44 @@ function hasPartialSelection(node: TreeNode): boolean {
 }
 
 /**
+ * Generate CLI directory tree prefix from ancestor position info
+ */
+function getTreePrefix(isLastAtDepth: boolean[]): string {
+  let prefix = '';
+  const depth = isLastAtDepth.length;
+
+  for (let i = 0; i < depth; i++) {
+    if (i === depth - 1) {
+      prefix += isLastAtDepth[i] ? '└─ ' : '├─ ';
+    } else {
+      prefix += isLastAtDepth[i] ? '   ' : '│  ';
+    }
+  }
+
+  return prefix;
+}
+
+/**
  * Single tree node component for asset selection
  */
 export const AssetTreeNode: React.FC<AssetTreeNodeProps> = ({
   node,
-  depth,
+  isLastAtDepth,
   isSelected,
 }) => {
-  const indent = '  '.repeat(depth);
+  const treePrefix = getTreePrefix(isLastAtDepth);
+
+  // Disabled nodes (internal files of directory skills) - render dimmed without selection icon
+  if (node.disabled) {
+    return (
+      <Box>
+        <Text color={isSelected ? 'cyan' : undefined} dimColor={!isSelected}>
+          {treePrefix}
+          {node.label}
+        </Text>
+      </Box>
+    );
+  }
 
   // Determine selection icon and color based on state
   let selectionIcon: string;
@@ -49,16 +79,19 @@ export const AssetTreeNode: React.FC<AssetTreeNodeProps> = ({
     iconColor = 'red';
   }
 
-  const expandIcon = node.type === 'directory' && node.children
-    ? node.expanded
-      ? '▼'
-      : '▶'
-    : ' ';
+  const expandIcon =
+    (node.type === 'directory' || node.type === 'skill-directory') &&
+    node.children
+      ? node.expanded
+        ? '▼'
+        : '▶'
+      : ' ';
 
   return (
     <Box>
       <Text color={isSelected ? 'cyan' : undefined}>
-        {indent}{expandIcon} <Text color={iconColor}>{selectionIcon}</Text> {node.label}
+        {treePrefix}
+        {expandIcon} <Text color={iconColor}>{selectionIcon}</Text> {node.label}
       </Text>
     </Box>
   );

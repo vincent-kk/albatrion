@@ -7,6 +7,7 @@ import {
   runRemoveCommand,
   runStatusCommand,
   runSyncCommand,
+  runUpdateCommand,
 } from '../commands';
 import { VERSION } from '../version';
 
@@ -119,6 +120,32 @@ export const createProgram = (): Command => {
     .option('--dry-run', 'Preview migration without making changes')
     .action(async (opts) => {
       await runMigrateCommand({ dryRun: opts.dryRun });
+    });
+
+  // Update command
+  program
+    .command('update')
+    .description('Update package metadata in .sync-meta.json')
+    .option('-p, --package <name>', 'Package name to update (default: all)')
+    .option(
+      '-l, --local',
+      'Read packages from local workspace instead of node_modules',
+      false,
+    )
+    .option(
+      '-r, --ref <ref>',
+      'Git ref (branch, tag, or commit) to fetch from',
+    )
+    .option('--dry-run', 'Preview changes without writing files', false)
+    .option('--sync', 'Re-sync files after updating metadata', false)
+    .action(async (opts) => {
+      await runUpdateCommand({
+        package: opts.package,
+        local: opts.local,
+        ref: opts.ref,
+        dryRun: opts.dryRun,
+        sync: opts.sync,
+      });
     });
 
   return program;

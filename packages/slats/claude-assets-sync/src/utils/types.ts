@@ -126,6 +126,8 @@ export interface UnifiedSyncMeta {
   syncedAt: string;
   /** Package metadata keyed by transformed name (e.g., "canard-schemaForm") */
   packages: Record<string, PackageSyncInfo>;
+  /** SkillUnit format version marker. Present when data uses SkillUnit[] format. */
+  skillUnitFormat?: string;
 }
 
 /**
@@ -138,11 +140,8 @@ export interface PackageSyncInfo {
   version: string;
   /** Whether this package is from local workspace (true) or remote npm (false/undefined) */
   local?: boolean;
-  /** Synced files - dynamic structure based on asset configuration:
-   * - For nested structure: array of original filenames
-   * - For flat structure: array of FileMapping with original → transformed
-   */
-  files: Record<string, string[] | FileMapping[]>;
+  /** Synced skill units per asset type. Each entry is a SkillUnit (atomic unit of selection). */
+  files: Record<string, SkillUnit[]>;
   /** Optional exclusions for selective syncing */
   exclusions?: {
     /** Excluded directory paths (e.g., ["skills/deprecated"]) */
@@ -163,6 +162,23 @@ export interface FileMapping {
 }
 
 /**
+ * Represents an atomic skill unit in sync metadata.
+ * A skill unit is either a single .md file or a directory skill (containing SKILL.md).
+ */
+export interface SkillUnit {
+  /** Skill name (file name without extension, or directory name) */
+  name: string;
+  /** Whether this is a directory-based skill */
+  isDirectory: boolean;
+  /** For flat structure: transformed file/directory name */
+  transformed?: string;
+  /** Internal files within directory skill (for tree browsing, not individual selection).
+   *  Only present when isDirectory is true.
+   *  Stores relative paths within the skill directory (e.g., ["SKILL.md", "knowledge/api.md"]) */
+  internalFiles?: string[];
+}
+
+/**
  * Add command selection result
  */
 export interface AddCommandSelection {
@@ -172,9 +188,9 @@ export interface AddCommandSelection {
   source: 'local' | 'npm';
   /** Git ref (branch, tag, or commit) */
   ref?: string;
-  /** Included assets by type */
+  /** Included skill units by asset type (skill unit names, not individual file paths) */
   includedAssets: Record<string, string[]>;
-  /** Excluded assets by type */
+  /** Excluded skill units by asset type (skill unit names, not individual file paths) */
   excludedAssets: Record<string, string[]>;
 }
 
@@ -198,6 +214,8 @@ export interface TreeNode {
   expanded: boolean;
   /** Disabled state */
   disabled?: boolean;
+  /** If true, this node's children are view-only (cannot be individually selected) */
+  viewOnly?: boolean;
   /** Additional metadata */
   metadata?: {
     assetType: string;

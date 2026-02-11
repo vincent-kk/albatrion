@@ -21,8 +21,8 @@ import { packageNameToPrefix } from '@/claude-assets-sync/utils/packageName.js';
 
 import type {
   AssetType,
-  FileMapping,
   PackageSyncInfo,
+  SkillUnit,
   SyncMeta,
 } from '../utils/types.js';
 import { writeFlatAssetFile } from './filesystem.js';
@@ -192,9 +192,8 @@ export async function migrateToFlat(
             // Generate prefix for flat structure
             const prefix = packageNameToPrefix(packageName);
 
-            // Prepare file mappings (commands use string[], skills/agents use FileMapping[])
-            const commandFiles: string[] = [];
-            const fileMappings: FileMapping[] = [];
+            const commandUnits: SkillUnit[] = [];
+            const skillUnits: SkillUnit[] = [];
 
             // Migrate files
             for (const fileName of legacyMeta.files) {
@@ -214,14 +213,10 @@ export async function migrateToFlat(
                 } else {
                   console.log(`    🔍 Would migrate: ${fileName}`);
                 }
-                commandFiles.push(fileName);
+                commandUnits.push({ name: fileName, isDirectory: false });
               } else {
                 // Skills/Agents: flat structure with prefix transformation
                 const flatFileName = toFlatFileName(prefix, fileName);
-                fileMappings.push({
-                  original: fileName,
-                  transformed: flatFileName,
-                });
 
                 if (!dryRun) {
                   const content = readFileSync(sourcePath, 'utf-8');
@@ -232,6 +227,11 @@ export async function migrateToFlat(
                     `    🔍 Would migrate: ${fileName} → ${flatFileName}`,
                   );
                 }
+                skillUnits.push({
+                  name: fileName,
+                  isDirectory: false,
+                  transformed: flatFileName,
+                });
               }
             }
 
@@ -240,9 +240,9 @@ export async function migrateToFlat(
               originalName: packageName,
               version: legacyMeta.version,
               files: {
-                commands: assetType === 'commands' ? commandFiles : [],
-                skills: assetType === 'skills' ? fileMappings : [],
-                agents: [], // Will be populated by agents migration pass
+                commands: assetType === 'commands' ? commandUnits : [],
+                skills: assetType === 'skills' ? skillUnits : [],
+                agents: [],
               },
             };
 

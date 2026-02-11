@@ -2,9 +2,11 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { parseGitHubRepo } from '@/claude-assets-sync/utils/package.js';
+import { toFlatFileName } from '@/claude-assets-sync/utils/nameTransform.js';
 import type {
   GitHubEntry,
   PackageInfo,
+  SkillUnit,
   TreeNode,
 } from '@/claude-assets-sync/utils/types.js';
 
@@ -175,6 +177,29 @@ async function scanRemoteAssets(
 }
 
 /**
+ * Recursively scan a directory and return flat list of relative file paths
+ */
+function scanDirectoryRecursive(dirPath: string, prefix: string): string[] {
+  const results: string[] = [];
+  try {
+    const entries = readdirSync(dirPath);
+    for (const entry of entries) {
+      const fullPath = join(dirPath, entry);
+      const relativePath = prefix ? `${prefix}/${entry}` : entry;
+      const stat = statSync(fullPath);
+      if (stat.isDirectory()) {
+        results.push(...scanDirectoryRecursive(fullPath, relativePath));
+      } else {
+        results.push(relativePath);
+      }
+    }
+  } catch {
+    // Ignore errors (permission denied, etc.)
+  }
+  return results;
+}
+
+/**
  * Build tree from local directory
  */
 function buildTreeFromLocalDir(
@@ -197,12 +222,25 @@ function buildTreeFromLocalDir(
         existsSync(join(fullPath, 'Skill.md'));
 
       if (isSkill) {
-        // Treat as a single selectable item (directory skill)
+        // Read internal files for browsing
+        const internalFiles = scanDirectoryRecursive(fullPath, '');
+        const internalChildren: TreeNode[] = internalFiles.map((f) => ({
+          id: `${relativePath}/${f}`,
+          label: f,
+          path: `${relativePath}/${f}`,
+          type: 'file' as const,
+          selected: true,
+          expanded: false,
+          disabled: true,
+        }));
+
         children.push({
           id: relativePath,
           label: entry,
           path: relativePath,
           type: 'skill-directory',
+          children: internalChildren,
+          viewOnly: true,
           selected: true,
           expanded: false,
         });
@@ -265,11 +303,26 @@ function buildTreeFromGitHubEntries(
 
       if (hasSkillMd) {
         const skillPath = `${basePath}/${entry.name}`;
+        // Create view-only children from directory entries
+        const internalChildren: TreeNode[] = dirEntries
+          ? dirEntries.map((de) => ({
+              id: `${skillPath}/${de.name}`,
+              label: de.name,
+              path: `${skillPath}/${de.name}`,
+              type: 'file' as const,
+              selected: true,
+              expanded: false,
+              disabled: true,
+            }))
+          : [];
+
         children.push({
           id: skillPath,
           label: entry.name,
           path: skillPath,
           type: 'skill-directory',
+          children: internalChildren,
+          viewOnly: true,
           selected: true,
           expanded: false,
         });
@@ -392,4 +445,40 @@ function searchPackagesRecursively(
   }
 
   return null;
+}
+
+/**
+ * Convert a TreeNode asset-type subtree into SkillUnit[] for writing to meta.
+ * Used by both `add` and `list` commands when saving.
+ */
+export function buildSkillUnitsFromTree(
+  tree: TreeNode,
+  prefix: string,
+): SkillUnit[] {
+  if (!tree.children) return [];
+
+  const units: SkillUnit[] = [];
+  for (const child of tree.children) {
+    if (child.type === 'skill-directory') {
+      const internalFiles = child.children
+        ? child.children.map((c) => c.label)
+        : [];
+      units.push({
+        name: child.label,
+        isDirectory: true,
+        transformed: toFlatFileName(prefix, child.label),
+        internalFiles,
+      });
+    } else if (child.type === 'file') {
+      units.push({
+        name: child.label,
+        isDirectory: false,
+        transformed: toFlatFileName(prefix, child.label),
+      });
+    } else if (child.type === 'directory') {
+      // Recurse into regular directories
+      units.push(...buildSkillUnitsFromTree(child, prefix));
+    }
+  }
+  return units;
 }

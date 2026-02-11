@@ -154,9 +154,22 @@ function extractSelection(
   excluded: string[],
 ): void {
   for (const node of nodes) {
+    // Skip disabled nodes (internal files of directory skills)
+    if (node.disabled) continue;
+
+    if (node.type === 'skill-directory') {
+      // Directory skills are atomic - include/exclude as whole unit
+      if (node.selected) {
+        included.push(node.path);
+      } else {
+        excluded.push(node.path);
+      }
+      // Don't recurse into skill-directory children
+      continue;
+    }
+
     if (node.selected) {
       included.push(node.path);
-      // If directory is selected, don't need to list children
     } else {
       excluded.push(node.path);
     }

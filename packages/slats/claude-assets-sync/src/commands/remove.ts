@@ -13,7 +13,7 @@ import {
 } from '@/claude-assets-sync/core/syncMeta';
 import { logger } from '@/claude-assets-sync/utils/logger';
 import { packageNameToPrefix } from '@/claude-assets-sync/utils/packageName.js';
-import type { FileMapping } from '@/claude-assets-sync/utils/types';
+import type { SkillUnit } from '@/claude-assets-sync/utils/types';
 
 import type { RemoveCommandOptions } from './types';
 
@@ -51,15 +51,14 @@ export const runRemoveCommand = async (
   for (const [assetType, files] of Object.entries(packageInfo.files)) {
     if (!Array.isArray(files) || files.length === 0) continue;
 
-    // Determine structure type from first file
-    const firstFile = files[0];
-    const isFlat = typeof firstFile === 'object' && 'transformed' in firstFile;
+    const units = files as SkillUnit[];
+    const firstUnit = units[0];
 
-    if (isFlat) {
-      // Flat structure: remove prefixed files from shared directory
-      for (const file of files as FileMapping[]) {
-        const filePath = path.join(cwd, '.claude', assetType, file.transformed);
-        filesToRemove.push({ assetType, path: filePath });
+    if (firstUnit.transformed) {
+      // Flat structure: remove prefixed files/directories from shared directory
+      for (const unit of units) {
+        const targetPath = path.join(cwd, '.claude', assetType, unit.transformed!);
+        filesToRemove.push({ assetType, path: targetPath });
       }
     } else {
       // Nested structure: remove package directory

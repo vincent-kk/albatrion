@@ -423,7 +423,7 @@ describe('Sync Workflow Integration', () => {
           [prefix]: {
             originalName: '@canard/schema-form',
             version: '0.9.0',
-            files: { commands: ['old.md'] },
+            files: { commands: [{ name: 'old.md', isDirectory: false }] },
           },
         },
       };
