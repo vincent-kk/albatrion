@@ -208,34 +208,23 @@ export const cleanFlatAssetFiles = (
     const packageInfo = existingMeta.packages[prefix];
     const filesToRemove = packageInfo.files[assetType];
 
-    // Files can be string[] or FileMapping[], iterate and get transformed names
+    // SkillUnit[]: use transformed name (flat) or name (nested) for cleanup
     if (Array.isArray(filesToRemove)) {
-      const skillDirs = new Set<string>();
+      for (const unit of filesToRemove) {
+        const fileName = unit.transformed ?? unit.name;
 
-      for (const fileMapping of filesToRemove) {
-        // Handle both string (nested structure) and FileMapping (flat structure)
-        const fileName =
-          typeof fileMapping === 'string'
-            ? fileMapping
-            : fileMapping.transformed;
-
-        if (fileName.includes('/')) {
-          // Directory-based skill: collect top-level directory for bulk removal
-          skillDirs.add(fileName.split('/')[0]);
+        if (unit.isDirectory) {
+          // Directory-based skill: remove the directory
+          const dirPath = join(destDir, fileName);
+          if (fileExists(dirPath)) {
+            rmSync(dirPath, { recursive: true, force: true });
+          }
         } else {
           // Single flat file
           const filePath = join(destDir, fileName);
           if (fileExists(filePath)) {
             rmSync(filePath, { force: true });
           }
-        }
-      }
-
-      // Remove skill directories recursively
-      for (const dir of skillDirs) {
-        const dirPath = join(destDir, dir);
-        if (fileExists(dirPath)) {
-          rmSync(dirPath, { recursive: true, force: true });
         }
       }
     }
