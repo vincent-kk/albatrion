@@ -50,8 +50,8 @@ describe('list command', () => {
             originalName: '@canard/schema-form',
             version: '0.10.0',
             files: {
-              commands: ['schema-form.md', 'generate.md'],
-              skills: ['expert.md'],
+              commands: [{ name: 'schema-form.md', isDirectory: false }, { name: 'generate.md', isDirectory: false }],
+              skills: [{ name: 'expert.md', isDirectory: false }],
               agents: [],
             },
           },
@@ -59,7 +59,7 @@ describe('list command', () => {
             originalName: '@lerx/promise-modal',
             version: '0.5.0',
             files: {
-              commands: ['modal.md'],
+              commands: [{ name: 'modal.md', isDirectory: false }],
               skills: [],
             },
           },
@@ -96,8 +96,8 @@ describe('list command', () => {
             originalName: '@canard/schema-form',
             version: '0.10.0',
             files: {
-              commands: ['schema-form.md'],
-              skills: ['expert.md', 'validator.md'],
+              commands: [{ name: 'schema-form.md', isDirectory: false }],
+              skills: [{ name: 'expert.md', isDirectory: false }, { name: 'validator.md', isDirectory: false }],
             },
           },
         },
@@ -134,17 +134,17 @@ describe('list command', () => {
           'winglet-react-utils': {
             originalName: '@winglet/react-utils',
             version: '1.0.0',
-            files: { commands: ['utils.md'] },
+            files: { commands: [{ name: 'utils.md', isDirectory: false }] },
           },
           'canard-schema-form': {
             originalName: '@canard/schema-form',
             version: '0.10.0',
-            files: { commands: ['form.md'] },
+            files: { commands: [{ name: 'form.md', isDirectory: false }] },
           },
           'lerx-promise-modal': {
             originalName: '@lerx/promise-modal',
             version: '0.5.0',
-            files: { commands: ['modal.md'] },
+            files: { commands: [{ name: 'modal.md', isDirectory: false }] },
           },
         },
       };
@@ -173,9 +173,9 @@ describe('list command', () => {
             originalName: '@canard/schema-form',
             version: '0.10.0',
             files: {
-              commands: ['cmd1.md', 'cmd2.md'],
-              skills: ['skill1.md', 'skill2.md', 'skill3.md'],
-              agents: ['agent1.md'],
+              commands: [{ name: 'cmd1.md', isDirectory: false }, { name: 'cmd2.md', isDirectory: false }],
+              skills: [{ name: 'skill1.md', isDirectory: false }, { name: 'skill2.md', isDirectory: false }, { name: 'skill3.md', isDirectory: false }],
+              agents: [{ name: 'agent1.md', isDirectory: false }],
             },
           },
         },
@@ -238,7 +238,7 @@ describe('list command', () => {
           'test-pkg': {
             originalName: '@test/pkg',
             version: '1.0.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
         },
       };
@@ -264,10 +264,10 @@ describe('list command', () => {
             originalName: '@custom/pkg',
             version: '1.0.0',
             files: {
-              commands: ['cmd.md'],
-              skills: ['skill.md'],
-              docs: ['doc1.md', 'doc2.md'],
-              rules: ['rule.md'],
+              commands: [{ name: 'cmd.md', isDirectory: false }],
+              skills: [{ name: 'skill.md', isDirectory: false }],
+              docs: [{ name: 'doc1.md', isDirectory: false }, { name: 'doc2.md', isDirectory: false }],
+              rules: [{ name: 'rule.md', isDirectory: false }],
             },
           },
         },

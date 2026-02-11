@@ -73,7 +73,7 @@ describe('status command', () => {
           'canard-schema-form': {
             originalName: '@canard/schema-form',
             version: '0.10.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
         },
       };
@@ -114,7 +114,7 @@ describe('status command', () => {
           'canard-schema-form': {
             originalName: '@canard/schema-form',
             version: '0.10.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
         },
       };
@@ -142,7 +142,7 @@ describe('status command', () => {
           'test-pkg': {
             originalName: '@test/pkg',
             version: '1.0.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
         },
       };
@@ -171,7 +171,7 @@ describe('status command', () => {
           'private-pkg': {
             originalName: '@private/pkg',
             version: '1.0.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
         },
       };
@@ -199,7 +199,7 @@ describe('status command', () => {
           'test-pkg': {
             originalName: '@test/pkg',
             version: '1.0.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
         },
       };
@@ -228,17 +228,17 @@ describe('status command', () => {
           pkg1: {
             originalName: '@test/pkg1',
             version: '1.0.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
           pkg2: {
             originalName: '@test/pkg2',
             version: '2.0.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
           pkg3: {
             originalName: '@test/pkg3',
             version: '3.0.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
         },
       };
@@ -271,17 +271,17 @@ describe('status command', () => {
           'z-pkg': {
             originalName: '@z/pkg',
             version: '1.0.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
           'a-pkg': {
             originalName: '@a/pkg',
             version: '1.0.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
           'm-pkg': {
             originalName: '@m/pkg',
             version: '1.0.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
         },
       };
@@ -314,7 +314,7 @@ describe('status command', () => {
           'slow-pkg': {
             originalName: '@slow/pkg',
             version: '1.0.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
         },
       };
@@ -342,7 +342,7 @@ describe('status command', () => {
           'test-pkg': {
             originalName: '@test/pkg',
             version: '1.0.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
         },
       };
@@ -369,7 +369,7 @@ describe('status command', () => {
           'test-pkg': {
             originalName: '@test/pkg',
             version: '1.0.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
         },
       };

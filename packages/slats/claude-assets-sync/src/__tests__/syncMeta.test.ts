@@ -130,10 +130,11 @@ describe('Unified Metadata Management', () => {
             originalName: '@canard/schema-form',
             version: '0.10.0',
             files: {
-              commands: ['schema-form.md'],
+              commands: [{ name: 'schema-form.md', isDirectory: false }],
               skills: [
                 {
-                  original: 'expert.md',
+                  name: 'expert.md',
+                  isDirectory: false,
                   transformed: 'canard-schemaForm_expert.md',
                 },
               ],
@@ -217,9 +218,16 @@ describe('Unified Metadata Management', () => {
             originalName: '@test/pkg',
             version: '1.2.3',
             files: {
-              commands: ['cmd1.md', 'cmd2.md'],
+              commands: [
+                { name: 'cmd1.md', isDirectory: false },
+                { name: 'cmd2.md', isDirectory: false },
+              ],
               skills: [
-                { original: 'skill1.md', transformed: 'test-pkg_skill1.md' },
+                {
+                  name: 'skill1.md',
+                  isDirectory: false,
+                  transformed: 'test-pkg_skill1.md',
+                },
               ],
               agents: [],
             },
@@ -317,7 +325,7 @@ describe('Unified Metadata Management', () => {
         originalName: '@test/pkg',
         version: '2.0.0',
         files: {
-          commands: ['new.md'],
+          commands: [{ name: 'new.md', isDirectory: false }],
           skills: [],
           agents: [],
         },
@@ -349,14 +357,19 @@ describe('Unified Metadata Management', () => {
         originalName: '@canard/schema-form',
         version: '0.10.0',
         files: {
-          commands: ['form.md', 'validate.md'],
+          commands: [
+            { name: 'form.md', isDirectory: false },
+            { name: 'validate.md', isDirectory: false },
+          ],
           skills: [
             {
-              original: 'expert.md',
+              name: 'expert.md',
+              isDirectory: false,
               transformed: 'canard-schemaForm_expert.md',
             },
             {
-              original: 'advanced.md',
+              name: 'advanced.md',
+              isDirectory: false,
               transformed: 'canard-schemaForm_advanced.md',
             },
           ],
@@ -372,16 +385,12 @@ describe('Unified Metadata Management', () => {
       expect(updated.packages['canard-schemaForm'].files.skills).toHaveLength(
         2,
       );
-      expect(updated.packages['canard-schemaForm'].files.commands[0]).toBe(
+      expect(updated.packages['canard-schemaForm'].files.commands[0].name).toBe(
         'form.md',
       );
       const skillFile = updated.packages['canard-schemaForm'].files.skills[0];
-      expect(typeof skillFile !== 'string' && skillFile.original).toBe(
-        'expert.md',
-      );
-      expect(typeof skillFile !== 'string' && skillFile.transformed).toBe(
-        'canard-schemaForm_expert.md',
-      );
+      expect(skillFile.name).toBe('expert.md');
+      expect(skillFile.transformed).toBe('canard-schemaForm_expert.md');
     });
   });
 
@@ -632,7 +641,7 @@ describe('Unified Metadata Management', () => {
         originalName: '@test/pkg1',
         version: '2.0.0',
         files: {
-          commands: ['cmd.md'],
+          commands: [{ name: 'cmd.md', isDirectory: false }],
           skills: [],
           agents: [],
         },
@@ -737,9 +746,16 @@ describe('Unified Metadata Management', () => {
             originalName: '@complex/pkg',
             version: '1.2.3-beta.4+build.567',
             files: {
-              commands: ['cmd1.md', 'cmd-2.md'],
+              commands: [
+                { name: 'cmd1.md', isDirectory: false },
+                { name: 'cmd-2.md', isDirectory: false },
+              ],
               skills: [
-                { original: 'skill.md', transformed: 'complex-pkg_skill.md' },
+                {
+                  name: 'skill.md',
+                  isDirectory: false,
+                  transformed: 'complex-pkg_skill.md',
+                },
               ],
               agents: [],
             },
@@ -769,17 +785,19 @@ describe('Unified Metadata Management', () => {
             originalName: '@canard/schema-form',
             version: '0.10.0',
             files: {
-              commands: ['schema-form.md'],
+              commands: [{ name: 'schema-form.md', isDirectory: false }],
               skills: [
                 {
-                  original: 'expert.md',
+                  name: 'expert.md',
+                  isDirectory: false,
                   transformed: 'canard-schemaForm_expert.md',
                 },
               ],
-              docs: ['api-reference.md'],
+              docs: [{ name: 'api-reference.md', isDirectory: false }],
               rules: [
                 {
-                  original: 'validation.md',
+                  name: 'validation.md',
+                  isDirectory: false,
                   transformed: 'canard-schemaForm_validation.md',
                 },
               ],
@@ -793,7 +811,7 @@ describe('Unified Metadata Management', () => {
 
       expect(read).toEqual(meta);
       expect(read?.packages['canard-schemaForm'].files.docs).toEqual([
-        'api-reference.md',
+        { name: 'api-reference.md', isDirectory: false },
       ]);
       expect(read?.packages['canard-schemaForm'].files.rules).toHaveLength(1);
     });
@@ -808,9 +826,16 @@ describe('Unified Metadata Management', () => {
             version: '1.0.0',
             files: {
               // Custom asset types with arbitrary names
-              tutorials: ['getting-started.md', 'advanced.md'],
+              tutorials: [
+                { name: 'getting-started.md', isDirectory: false },
+                { name: 'advanced.md', isDirectory: false },
+              ],
               templates: [
-                { original: 'basic.md', transformed: 'test-pkg_basic.md' },
+                {
+                  name: 'basic.md',
+                  isDirectory: false,
+                  transformed: 'test-pkg_basic.md',
+                },
               ],
               examples: [],
             },
@@ -834,7 +859,7 @@ describe('Unified Metadata Management', () => {
         originalName: '@test/pkg',
         version: '1.0.0',
         files: {
-          commands: ['cmd.md'],
+          commands: [{ name: 'cmd.md', isDirectory: false }],
           skills: [],
           agents: [],
         },
@@ -846,18 +871,20 @@ describe('Unified Metadata Management', () => {
         originalName: '@test/pkg',
         version: '1.1.0',
         files: {
-          commands: ['cmd.md'],
+          commands: [{ name: 'cmd.md', isDirectory: false }],
           skills: [],
           agents: [],
-          docs: ['readme.md'],
-          rules: ['style-guide.md'],
+          docs: [{ name: 'readme.md', isDirectory: false }],
+          rules: [{ name: 'style-guide.md', isDirectory: false }],
         },
       };
       const updated2 = updatePackageInMeta(updated1, 'test-pkg', extendedInfo);
 
-      expect(updated2.packages['test-pkg'].files.docs).toEqual(['readme.md']);
+      expect(updated2.packages['test-pkg'].files.docs).toEqual([
+        { name: 'readme.md', isDirectory: false },
+      ]);
       expect(updated2.packages['test-pkg'].files.rules).toEqual([
-        'style-guide.md',
+        { name: 'style-guide.md', isDirectory: false },
       ]);
       expect(updated2.packages['test-pkg'].version).toBe('1.1.0');
     });
@@ -871,16 +898,31 @@ describe('Unified Metadata Management', () => {
             originalName: '@mixed/pkg',
             version: '1.0.0',
             files: {
-              // Nested structure: string array
-              commands: ['create.md', 'update.md'],
-              docs: ['api.md'],
-              // Flat structure: FileMapping array
+              // Nested structure: SkillUnit array
+              commands: [
+                { name: 'create.md', isDirectory: false },
+                { name: 'update.md', isDirectory: false },
+              ],
+              docs: [{ name: 'api.md', isDirectory: false }],
+              // Flat structure: SkillUnit array with transformed
               skills: [
-                { original: 'expert.md', transformed: 'mixed-pkg_expert.md' },
+                {
+                  name: 'expert.md',
+                  isDirectory: false,
+                  transformed: 'mixed-pkg_expert.md',
+                },
               ],
               rules: [
-                { original: 'lint.md', transformed: 'mixed-pkg_lint.md' },
-                { original: 'format.md', transformed: 'mixed-pkg_format.md' },
+                {
+                  name: 'lint.md',
+                  isDirectory: false,
+                  transformed: 'mixed-pkg_lint.md',
+                },
+                {
+                  name: 'format.md',
+                  isDirectory: false,
+                  transformed: 'mixed-pkg_format.md',
+                },
               ],
             },
           },
@@ -890,19 +932,19 @@ describe('Unified Metadata Management', () => {
       writeUnifiedSyncMeta(tempDir, meta);
       const read = readUnifiedSyncMeta(tempDir);
 
-      // Verify nested structure (string arrays)
+      // Verify nested structure (SkillUnit arrays)
       expect(read?.packages['mixed-pkg'].files.commands).toEqual([
-        'create.md',
-        'update.md',
+        { name: 'create.md', isDirectory: false },
+        { name: 'update.md', isDirectory: false },
       ]);
-      expect(read?.packages['mixed-pkg'].files.docs).toEqual(['api.md']);
+      expect(read?.packages['mixed-pkg'].files.docs).toEqual([
+        { name: 'api.md', isDirectory: false },
+      ]);
 
-      // Verify flat structure (FileMapping arrays)
+      // Verify flat structure (SkillUnit arrays with transformed)
       const skills = read?.packages['mixed-pkg'].files.skills;
       expect(skills).toHaveLength(1);
-      expect(typeof skills?.[0] !== 'string' && skills?.[0].original).toBe(
-        'expert.md',
-      );
+      expect(skills?.[0].name).toBe('expert.md');
 
       const rules = read?.packages['mixed-pkg'].files.rules;
       expect(rules).toHaveLength(2);

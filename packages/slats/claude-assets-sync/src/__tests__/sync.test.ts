@@ -81,7 +81,7 @@ describe('syncPackage', () => {
           originalName: '@canard/schema-form',
           version: '0.10.0',
           files: {
-            commands: ['cmd.md'],
+            commands: [{ name: 'cmd.md', isDirectory: false }],
             skills: [],
             agents: [],
           },
@@ -112,7 +112,7 @@ describe('syncPackage', () => {
           originalName: '@canard/schema-form',
           version: '0.10.0',
           files: {
-            commands: ['old-cmd.md'],
+            commands: [{ name: 'old-cmd.md', isDirectory: false }],
             skills: [],
             agents: [],
           },

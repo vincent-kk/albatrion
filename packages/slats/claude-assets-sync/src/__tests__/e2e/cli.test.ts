@@ -129,7 +129,7 @@ describe('CLI E2E Tests', () => {
           'canard-schemaForm': {
             originalName: '@canard/schema-form',
             version: '0.10.0',
-            files: { commands: ['old.md'] },
+            files: { commands: [{ name: 'old.md', isDirectory: false }] },
           },
         },
       };
@@ -193,7 +193,7 @@ describe('CLI E2E Tests', () => {
           'canard-schemaForm': {
             originalName: '@canard/schema-form',
             version: '0.10.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
         },
       };
@@ -216,7 +216,7 @@ describe('CLI E2E Tests', () => {
           'canard-schemaForm': {
             originalName: '@canard/schema-form',
             version: '0.10.0',
-            files: { commands: ['test.md'], skills: ['skill.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }], skills: [{ name: 'skill.md', isDirectory: false }] },
           },
         },
       };
@@ -260,7 +260,7 @@ describe('CLI E2E Tests', () => {
           'canard-schemaForm': {
             originalName: '@canard/schema-form',
             version: '0.10.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
         },
       };
@@ -294,7 +294,7 @@ describe('CLI E2E Tests', () => {
           'test-pkg': {
             originalName: '@test/pkg',
             version: '1.0.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
         },
       };
@@ -323,7 +323,7 @@ describe('CLI E2E Tests', () => {
           'canard-schemaForm': {
             originalName: '@canard/schema-form',
             version: '0.10.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
         },
       };
@@ -363,7 +363,7 @@ describe('CLI E2E Tests', () => {
           'test-pkg': {
             originalName: '@test/pkg',
             version: '1.0.0',
-            files: { commands: ['test.md'] },
+            files: { commands: [{ name: 'test.md', isDirectory: false }] },
           },
         },
       };
