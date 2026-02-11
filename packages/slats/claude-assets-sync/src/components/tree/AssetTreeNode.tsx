@@ -32,6 +32,17 @@ export const AssetTreeNode: React.FC<AssetTreeNodeProps> = ({
 }) => {
   const indent = '  '.repeat(depth);
 
+  // Disabled nodes (internal files of directory skills) - render dimmed without selection icon
+  if (node.disabled) {
+    return (
+      <Box>
+        <Text color={isSelected ? 'cyan' : undefined} dimColor={!isSelected}>
+          {indent}      {node.label}
+        </Text>
+      </Box>
+    );
+  }
+
   // Determine selection icon and color based on state
   let selectionIcon: string;
   let iconColor: string;
@@ -49,11 +60,12 @@ export const AssetTreeNode: React.FC<AssetTreeNodeProps> = ({
     iconColor = 'red';
   }
 
-  const expandIcon = node.type === 'directory' && node.children
-    ? node.expanded
-      ? '▼'
-      : '▶'
-    : ' ';
+  const expandIcon =
+    (node.type === 'directory' || node.type === 'skill-directory') && node.children
+      ? node.expanded
+        ? '▼'
+        : '▶'
+      : ' ';
 
   return (
     <Box>

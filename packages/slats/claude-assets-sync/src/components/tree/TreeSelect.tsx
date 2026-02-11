@@ -57,9 +57,13 @@ export const TreeSelect: React.FC<TreeSelectProps> = ({
     } else if (key.downArrow) {
       setSelectedIndex((prev) => Math.min(flatItems.length - 1, prev + 1));
     } else if (key.rightArrow) {
-      // Expand directory
+      // Expand directory or skill-directory
       const current = flatItems[selectedIndex];
-      if (current.node.type === 'directory' && !current.node.expanded) {
+      if (
+        (current.node.type === 'directory' || current.node.type === 'skill-directory') &&
+        !current.node.expanded &&
+        current.node.children
+      ) {
         const newTrees = updateNodeAtPath(treeData, current.path, (node) => ({
           ...node,
           expanded: true,
@@ -67,9 +71,12 @@ export const TreeSelect: React.FC<TreeSelectProps> = ({
         setTreeData(newTrees);
       }
     } else if (key.leftArrow) {
-      // Collapse directory
+      // Collapse directory or skill-directory
       const current = flatItems[selectedIndex];
-      if (current.node.type === 'directory' && current.node.expanded) {
+      if (
+        (current.node.type === 'directory' || current.node.type === 'skill-directory') &&
+        current.node.expanded
+      ) {
         const newTrees = updateNodeAtPath(treeData, current.path, (node) => ({
           ...node,
           expanded: false,
@@ -77,8 +84,11 @@ export const TreeSelect: React.FC<TreeSelectProps> = ({
         setTreeData(newTrees);
       }
     } else if (input === ' ') {
-      // Toggle selection
+      // Toggle selection (skip disabled nodes - internal skill files)
       const current = flatItems[selectedIndex];
+      if (current.node.disabled) {
+        return;
+      }
       const newTrees = toggleNodeSelection(treeData, current.path);
       setTreeData(newTrees);
     } else if (input === 'r' && onRefresh) {
