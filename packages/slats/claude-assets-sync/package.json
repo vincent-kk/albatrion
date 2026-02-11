@@ -1,6 +1,6 @@
 {
   "name": "@slats/claude-assets-sync",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "CLI tool to sync Claude commands and skills from npm packages to your project's .claude directory",
   "keywords": [
     "claude",
