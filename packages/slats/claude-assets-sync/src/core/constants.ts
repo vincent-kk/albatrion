@@ -33,7 +33,15 @@ export const META_FILES = {
 export const SCHEMA_VERSIONS = {
   UNIFIED_SYNC_META: VERSION,
   LEGACY_SYNC_META: '1.0.0',
+  SKILL_UNIT_FORMAT: '2',
 } as const;
+
+/**
+ * Schema version for SkillUnit-based metadata format.
+ * Separate from package VERSION to allow independent format evolution.
+ * Used to detect whether migration from old format is needed.
+ */
+export const SKILL_UNIT_SCHEMA_VERSION = '2' as const;
 
 /**
  * Default asset types (exported for backward compatibility)
