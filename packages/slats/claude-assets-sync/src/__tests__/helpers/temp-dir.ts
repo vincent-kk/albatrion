@@ -68,6 +68,25 @@ export interface TestFixture {
   cleanup: () => void;
 }
 
+/**
+ * Setup local docs in node_modules for testing local source logic
+ */
+export const setupLocalDocs = (
+  tempDir: string,
+  packageName: string,
+  assetPath: string,
+  docs: Record<string, Record<string, string>>,
+): void => {
+  const docsDir = join(tempDir, 'node_modules', packageName, assetPath);
+  for (const [assetType, files] of Object.entries(docs)) {
+    const assetDir = join(docsDir, assetType);
+    mkdirSync(assetDir, { recursive: true });
+    for (const [fileName, content] of Object.entries(files)) {
+      writeFileSync(join(assetDir, fileName), content);
+    }
+  }
+};
+
 export const createTestFixture = (
   packages: PackageInfo[] = [],
 ): TestFixture => {

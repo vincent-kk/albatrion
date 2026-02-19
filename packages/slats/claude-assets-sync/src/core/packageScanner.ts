@@ -116,6 +116,27 @@ async function scanRemoteAssets(
     );
   }
 
+  const assetBasePath = pkgInfo.claude.assetPath;
+
+  // Try local docs first when no explicit ref is specified
+  if (!ref) {
+    const localDocsPath = join(nodeModulesPath, assetBasePath);
+    if (existsSync(localDocsPath)) {
+      const trees: TreeNode[] = [];
+      for (const assetType of DEFAULT_ASSET_TYPES) {
+        const assetDir = join(localDocsPath, assetType);
+        if (!existsSync(assetDir)) continue;
+
+        const tree = buildTreeFromLocalDir(assetType, assetDir, assetType);
+        if (tree.children && tree.children.length > 0) {
+          trees.push(tree);
+        }
+      }
+      if (trees.length > 0) return trees;
+      // If no trees found locally, fall through to GitHub
+    }
+  }
+
   if (!pkgInfo.repository) {
     throw new Error(`Package ${packageName} has no repository field`);
   }
@@ -124,7 +145,6 @@ async function scanRemoteAssets(
   if (!repoInfo) {
     throw new Error(`Invalid GitHub repository URL in package ${packageName}`);
   }
-  const assetBasePath = pkgInfo.claude.assetPath;
   const tag = ref ?? 'HEAD';
 
   // Fetch asset files from GitHub

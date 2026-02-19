@@ -23,6 +23,7 @@ import {
   writeSyncMeta,
 } from './filesystem';
 import { RateLimitError, downloadAssetFiles, fetchAssetFiles } from './github';
+import { canUseLocalSource, downloadLocalAssetFiles, fetchLocalAssetFiles } from './localSource';
 import {
   createEmptyUnifiedMeta,
   needsSyncUnified,
@@ -122,16 +123,8 @@ export const syncPackage = async (
         reason: 'Package does not have claude.assetPath in package.json',
       };
 
-    // Step 3: Parse GitHub repository
+    // Step 3: Parse GitHub repository (may be null; validated when GitHub fallback is needed)
     const repoInfo = parseGitHubRepo(packageInfo.repository);
-    if (!repoInfo) {
-      return {
-        packageName,
-        success: false,
-        skipped: true,
-        reason: 'Unable to parse GitHub repository URL',
-      };
-    }
 
     // Determine if using flat structure (default: true)
     const useFlat = options.flat !== false;
@@ -157,21 +150,44 @@ export const syncPackage = async (
         };
       }
 
-      // Step 5: Build version tag (or use custom ref) and asset path
-      const tag =
-        options.ref ?? buildVersionTag(packageName, packageInfo.version);
+      // Step 5: Build asset path
       const assetPath = buildAssetPath(packageInfo.claude.assetPath);
 
-      logger.step('Fetching', `asset list from GitHub (ref: ${tag})`);
+      // Determine document source: local (node_modules) or remote (GitHub)
+      // If options.ref is explicitly set, always use GitHub (user wants a specific git ref)
+      const useLocalSource = options.ref
+        ? { available: false as const }
+        : canUseLocalSource(packageName, packageInfo.version, assetPath, cwd);
 
-      // Step 6: Get asset types from config and fetch asset file lists from GitHub
+      // Step 6: Get asset types from config and fetch asset file lists
       const assetTypes = getAssetTypes(packageInfo.claude);
-      const assetFiles = await fetchAssetFiles(
-        repoInfo,
-        assetPath,
-        tag,
-        assetTypes,
-      );
+
+      let assetFiles: Record<string, GitHubEntry[]>;
+      let isLocalSource: boolean;
+
+      if (useLocalSource.available && useLocalSource.docsPath) {
+        isLocalSource = true;
+        logger.step('Using', 'local docs from node_modules');
+        assetFiles = await fetchLocalAssetFiles(useLocalSource.docsPath, assetTypes);
+      } else {
+        if (!repoInfo) {
+          return {
+            packageName,
+            success: false,
+            skipped: true,
+            reason: `Package ${packageName} has no valid GitHub repository URL for remote fetch`,
+          };
+        }
+        isLocalSource = false;
+        const tag = options.ref ?? buildVersionTag(packageName, packageInfo.version);
+        logger.step('Fetching', `asset list from GitHub (ref: ${tag})`);
+        assetFiles = await fetchAssetFiles(
+          repoInfo,
+          assetPath,
+          tag,
+          assetTypes,
+        );
+      }
 
       // Calculate total files across all asset types
       let totalFiles = 0;
@@ -299,13 +315,19 @@ export const syncPackage = async (
         const structure = getAssetStructure(assetType, packageInfo.claude);
 
         logger.step('Downloading', assetType);
-        const downloadedFiles = await downloadAssetFiles(
-          repoInfo,
-          assetPath,
-          assetType,
-          filteredEntries,
-          tag,
-        );
+        let downloadedFiles: Map<string, string>;
+        if (isLocalSource && useLocalSource.docsPath) {
+          downloadedFiles = await downloadLocalAssetFiles(useLocalSource.docsPath, assetType, filteredEntries);
+        } else {
+          const tag = options.ref ?? buildVersionTag(packageName, packageInfo.version);
+          downloadedFiles = await downloadAssetFiles(
+            repoInfo!,
+            assetPath,
+            assetType,
+            filteredEntries,
+            tag,
+          );
+        }
 
         if (structure === 'nested') {
           // Nested structure: write to package-specific directory
@@ -358,21 +380,44 @@ export const syncPackage = async (
       // LEGACY MODE: Nested structure with per-package metadata
       // ============================================
 
-      // Step 5: Build version tag (or use custom ref) and asset path
-      const tag =
-        options.ref ?? buildVersionTag(packageName, packageInfo.version);
+      // Step 5: Build asset path
       const assetPath = buildAssetPath(packageInfo.claude.assetPath);
 
-      logger.step('Fetching', `asset list from GitHub (ref: ${tag})`);
+      // Determine document source: local (node_modules) or remote (GitHub)
+      // If options.ref is explicitly set, always use GitHub (user wants a specific git ref)
+      const useLocalSource = options.ref
+        ? { available: false as const }
+        : canUseLocalSource(packageName, packageInfo.version, assetPath, cwd);
 
-      // Step 6: Get asset types from config and fetch asset file lists from GitHub
+      // Step 6: Get asset types from config and fetch asset file lists
       const assetTypes = getAssetTypes(packageInfo.claude);
-      const assetFiles = await fetchAssetFiles(
-        repoInfo,
-        assetPath,
-        tag,
-        assetTypes,
-      );
+
+      let assetFiles: Record<string, GitHubEntry[]>;
+      let isLocalSource: boolean;
+
+      if (useLocalSource.available && useLocalSource.docsPath) {
+        isLocalSource = true;
+        logger.step('Using', 'local docs from node_modules');
+        assetFiles = await fetchLocalAssetFiles(useLocalSource.docsPath, assetTypes);
+      } else {
+        if (!repoInfo) {
+          return {
+            packageName,
+            success: false,
+            skipped: true,
+            reason: `Package ${packageName} has no valid GitHub repository URL for remote fetch`,
+          };
+        }
+        isLocalSource = false;
+        const tag = options.ref ?? buildVersionTag(packageName, packageInfo.version);
+        logger.step('Fetching', `asset list from GitHub (ref: ${tag})`);
+        assetFiles = await fetchAssetFiles(
+          repoInfo,
+          assetPath,
+          tag,
+          assetTypes,
+        );
+      }
 
       // Calculate total files across all asset types
       let totalFiles = 0;
@@ -460,13 +505,19 @@ export const syncPackage = async (
         if (filteredEntries.length === 0) continue;
 
         logger.step('Downloading', assetType);
-        const downloadedFiles = await downloadAssetFiles(
-          repoInfo,
-          assetPath,
-          assetType,
-          filteredEntries,
-          tag,
-        );
+        let downloadedFiles: Map<string, string>;
+        if (isLocalSource && useLocalSource.docsPath) {
+          downloadedFiles = await downloadLocalAssetFiles(useLocalSource.docsPath, assetType, filteredEntries);
+        } else {
+          const tag = options.ref ?? buildVersionTag(packageName, packageInfo.version);
+          downloadedFiles = await downloadAssetFiles(
+            repoInfo!,
+            assetPath,
+            assetType,
+            filteredEntries,
+            tag,
+          );
+        }
 
         // Clean existing directory and write new files
         cleanAssetDir(destDir, packageName, assetType);

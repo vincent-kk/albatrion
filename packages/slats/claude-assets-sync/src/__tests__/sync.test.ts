@@ -25,6 +25,7 @@ import {
   mockSkillEntries,
   restoreFetchMock,
   setupFetchMock,
+  setupLocalDocs,
 } from './helpers';
 
 // Mock console to suppress output during tests
@@ -602,5 +603,263 @@ describe('Dynamic Asset Types', () => {
     // Default asset types should not be present (undefined, not empty arrays)
     expect(result.syncedFiles?.commands).toBeUndefined();
     expect(result.syncedFiles?.skills).toBeUndefined();
+  });
+});
+
+describe('syncPackage - local source', () => {
+  let fixture: TestFixture;
+
+  beforeEach(() => {
+    fixture = createTestFixture([mockSchemaFormPackage]);
+  });
+
+  afterEach(() => {
+    fixture.cleanup();
+    restoreFetchMock();
+  });
+
+  it('should use local docs from node_modules when available', async () => {
+    setupLocalDocs(fixture.tempDir, '@canard/schema-form', 'docs/claude', {
+      commands: { 'schema-form.md': mockCommandContent },
+      skills: {
+        'schema-form-expert.md': mockSkillContent,
+        'validation.md': '# Validation Guide',
+      },
+    });
+
+    // No fetch mock setup — should NOT call GitHub at all
+    const mockFetch = setupFetchMock({ notFound: true });
+
+    const result = await syncPackage(
+      '@canard/schema-form',
+      { force: false, dryRun: false, local: false, ref: '', flat: true },
+      fixture.tempDir,
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.skipped).toBe(false);
+    expect(result.syncedFiles?.commands).toContain('schema-form.md');
+
+    // Verify GitHub API was never called
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it('should fall back to GitHub when local docs path does not exist', async () => {
+    // No local docs setup — node_modules has package.json but no docs/claude
+    setupFetchMock({
+      directoryEntries: {
+        commands: mockCommandEntries,
+        skills: mockSkillEntries,
+      },
+      fileContents: {
+        'schema-form.md': mockCommandContent,
+        'schema-form-expert.md': mockSkillContent,
+        'validation.md': '# Validation',
+      },
+    });
+
+    const result = await syncPackage(
+      '@canard/schema-form',
+      { force: false, dryRun: false, local: false, ref: '', flat: true },
+      fixture.tempDir,
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.skipped).toBe(false);
+  });
+
+  it('should use GitHub when --ref is specified even if local docs exist', async () => {
+    setupLocalDocs(fixture.tempDir, '@canard/schema-form', 'docs/claude', {
+      commands: { 'schema-form.md': '# Local version' },
+    });
+
+    setupFetchMock({
+      directoryEntries: {
+        commands: mockCommandEntries,
+        skills: mockSkillEntries,
+      },
+      fileContents: {
+        'schema-form.md': mockCommandContent,
+        'schema-form-expert.md': mockSkillContent,
+        'validation.md': '# Validation',
+      },
+    });
+
+    const result = await syncPackage(
+      '@canard/schema-form',
+      {
+        force: false,
+        dryRun: false,
+        local: false,
+        ref: 'v0.10.0',
+        flat: true,
+      },
+      fixture.tempDir,
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.skipped).toBe(false);
+  });
+
+  it('should fall back to GitHub when installed version mismatches', async () => {
+    // Setup local docs but with a different version in package.json
+    setupLocalDocs(fixture.tempDir, '@canard/schema-form', 'docs/claude', {
+      commands: { 'schema-form.md': '# Local version' },
+    });
+
+    // Overwrite package.json with different version
+    const pkgJsonPath = join(
+      fixture.tempDir,
+      'node_modules',
+      '@canard/schema-form',
+      'package.json',
+    );
+    const pkgJson = {
+      ...mockSchemaFormPackage,
+      version: '0.9.0', // older version installed
+    };
+    const { writeFileSync } = await import('node:fs');
+    writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, null, 2));
+
+    setupFetchMock({
+      directoryEntries: {
+        commands: mockCommandEntries,
+        skills: mockSkillEntries,
+      },
+      fileContents: {
+        'schema-form.md': mockCommandContent,
+        'schema-form-expert.md': mockSkillContent,
+        'validation.md': '# Validation',
+      },
+    });
+
+    const result = await syncPackage(
+      '@canard/schema-form',
+      { force: false, dryRun: false, local: false, ref: '', flat: true },
+      fixture.tempDir,
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.skipped).toBe(false);
+  });
+
+  it('should return error when no local docs and no valid repo URL', async () => {
+    // Package with unparseable repository URL (repoInfo will be null)
+    const noRepoPackage = {
+      ...mockSchemaFormPackage,
+      repository: { type: 'git', url: 'not-a-valid-github-url' },
+    };
+    const noRepoFixture = createTestFixture([noRepoPackage]);
+
+    const result = await syncPackage(
+      '@canard/schema-form',
+      { force: false, dryRun: false, local: false, ref: '', flat: true },
+      noRepoFixture.tempDir,
+    );
+
+    expect(result.success).toBe(false);
+    expect(result.skipped).toBe(true);
+    expect(result.reason).toContain('GitHub repository URL');
+
+    noRepoFixture.cleanup();
+  });
+
+  it('should log "local docs from node_modules" when using local source', async () => {
+    const consoleSpy = vi.spyOn(console, 'log');
+
+    setupLocalDocs(fixture.tempDir, '@canard/schema-form', 'docs/claude', {
+      commands: { 'schema-form.md': mockCommandContent },
+      skills: {
+        'schema-form-expert.md': mockSkillContent,
+      },
+    });
+
+    await syncPackage(
+      '@canard/schema-form',
+      { force: false, dryRun: false, local: false, ref: '', flat: true },
+      fixture.tempDir,
+    );
+
+    const logCalls = consoleSpy.mock.calls.map((args) => args.join(' '));
+    expect(logCalls.some((msg) => msg.includes('local docs from node_modules'))).toBe(true);
+  });
+
+  it('should use local source in legacy mode (flat: false)', async () => {
+    setupLocalDocs(fixture.tempDir, '@canard/schema-form', 'docs/claude', {
+      commands: { 'schema-form.md': mockCommandContent },
+      skills: {
+        'schema-form-expert.md': mockSkillContent,
+      },
+    });
+
+    const mockFetch = setupFetchMock({ notFound: true });
+
+    const result = await syncPackage(
+      '@canard/schema-form',
+      { force: false, dryRun: false, local: false, ref: '', flat: false },
+      fixture.tempDir,
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.skipped).toBe(false);
+    expect(result.syncedFiles?.commands).toContain('schema-form.md');
+    expect(result.syncedFiles?.skills).toContain('schema-form-expert.md');
+
+    // GitHub API should NOT be called
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it('should use GitHub when --ref is specified in legacy mode', async () => {
+    setupLocalDocs(fixture.tempDir, '@canard/schema-form', 'docs/claude', {
+      commands: { 'schema-form.md': '# Local version' },
+    });
+
+    setupFetchMock({
+      directoryEntries: {
+        commands: mockCommandEntries,
+        skills: mockSkillEntries,
+      },
+      fileContents: {
+        'schema-form.md': mockCommandContent,
+        'schema-form-expert.md': mockSkillContent,
+        'validation.md': '# Validation',
+      },
+    });
+
+    const result = await syncPackage(
+      '@canard/schema-form',
+      { force: false, dryRun: false, local: false, ref: 'v0.10.0', flat: false },
+      fixture.tempDir,
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.skipped).toBe(false);
+  });
+
+  it('should work with dry-run and local source', async () => {
+    setupLocalDocs(fixture.tempDir, '@canard/schema-form', 'docs/claude', {
+      commands: { 'schema-form.md': mockCommandContent },
+      skills: {
+        'schema-form-expert.md': mockSkillContent,
+      },
+    });
+
+    const result = await syncPackage(
+      '@canard/schema-form',
+      { force: false, dryRun: true, local: false, ref: '', flat: true },
+      fixture.tempDir,
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.skipped).toBe(false);
+    expect(result.syncedFiles?.commands).toContain('schema-form.md');
+
+    // Verify no actual files were created (dry-run)
+    const commandsDir = getDestinationDir(
+      fixture.tempDir,
+      '@canard/schema-form',
+      'commands',
+    );
+    expect(existsSync(commandsDir)).toBe(false);
   });
 });
