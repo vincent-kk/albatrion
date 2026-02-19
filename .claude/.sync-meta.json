@@ -1,11 +1,11 @@
 {
   "schemaVersion": "0.0.4",
-  "syncedAt": "2026-02-11T02:58:48.187Z",
+  "syncedAt": "2026-02-19T14:24:37.179Z",
   "packages": {
     "lerx-promiseModal": {
       "originalName": "@lerx/promise-modal",
-      "version": "0.10.4",
-      "local": true,
+      "version": "0.10.5",
+      "local": false,
       "files": {
         "commands": [
           {
@@ -31,8 +31,8 @@
     },
     "canard-schemaForm": {
       "originalName": "@canard/schema-form",
-      "version": "0.10.4",
-      "local": true,
+      "version": "0.10.5",
+      "local": false,
       "files": {
         "commands": [
           {
