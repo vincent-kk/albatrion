@@ -1,0 +1,406 @@
+---
+sidebar_position: 1
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import LangTabs from '@site/src/components/LangTabs';
+import ForAI from '@site/src/components/ForAI';
+
+# @slats/claude-assets-sync
+
+<PackageHeader
+  name="@slats/claude-assets-sync"
+  description="CLI tool to sync Claude commands and skills from npm packages to your project's .claude/ directory."
+/>
+
+<LangTabs
+  en={<>
+    <p>
+      Allows npm package authors to distribute Claude Code commands and skills alongside their packages.
+      When users install these packages, they can sync the assets to their local <code>.claude/</code> directory for immediate use.
+    </p>
+    <ul>
+      <li>Multi-package sync in a single command</li>
+      <li>Version tracking — skips re-sync when version is unchanged</li>
+      <li>Flat file structure with prefixed filenames (default)</li>
+      <li>Interactive add/list UI (ink-based terminal UI)</li>
+      <li>Status monitoring with npm registry update checks</li>
+      <li>Dry-run mode to preview changes before applying</li>
+      <li>Legacy nested structure support and migration tool</li>
+    </ul>
+  </>}
+  kr={<>
+    <p>
+      npm 패키지 작성자가 Claude Code 커맨드와 스킬을 패키지와 함께 배포할 수 있도록 합니다.
+      사용자는 패키지 설치 후 <code>.claude/</code> 디렉토리로 에셋을 동기화하여 즉시 사용할 수 있습니다.
+    </p>
+    <ul>
+      <li>단일 명령으로 여러 패키지 동기화</li>
+      <li>버전 추적 — 버전이 동일하면 재동기화 생략</li>
+      <li>접두사 파일명을 사용하는 플랫 구조 (기본값)</li>
+      <li>ink 기반 인터랙티브 터미널 UI</li>
+      <li>npm 레지스트리 업데이트 확인이 포함된 상태 모니터링</li>
+      <li>변경 사항 미리보기를 위한 드라이런 모드</li>
+      <li>레거시 중첩 구조 지원 및 마이그레이션 도구</li>
+    </ul>
+  </>}
+/>
+
+## Installation
+
+```bash
+# One-time use (recommended)
+npx @slats/claude-assets-sync -p @canard/schema-form
+
+# Global install
+npm install -g @slats/claude-assets-sync
+```
+
+## Commands
+
+### sync (default)
+
+Sync Claude assets from one or more npm packages.
+
+```bash
+npx @slats/claude-assets-sync [options] -p <package>
+```
+
+| Option | Description |
+|--------|-------------|
+| `-p, --package <name>` | Package to sync (repeatable) |
+| `-f, --force` | Force sync even if version matches |
+| `--dry-run` | Preview changes without writing files |
+| `-l, --local` | Read from local workspace instead of node_modules |
+| `-r, --ref <ref>` | Git ref (branch, tag, commit) to fetch from |
+| `--no-flat` | Use legacy nested directory structure |
+
+```bash
+# Sync a single package
+npx @slats/claude-assets-sync -p @canard/schema-form
+
+# Sync multiple packages
+npx @slats/claude-assets-sync -p @canard/schema-form -p @lerx/promise-modal
+
+# Preview without writing
+npx @slats/claude-assets-sync -p @canard/schema-form --dry-run
+
+# Force re-sync
+npx @slats/claude-assets-sync -p @canard/schema-form --force
+
+# Sync from a specific branch
+npx @slats/claude-assets-sync -p @canard/schema-form -r main
+```
+
+### add
+
+Add a package with interactive file selection (TTY).
+
+```bash
+npx @slats/claude-assets-sync add -p <package> [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-p, --package <name>` | Package to add (required) |
+| `-l, --local` | Read from local workspace |
+| `-r, --ref <ref>` | Git ref to fetch from |
+
+**Keyboard controls in interactive mode:**
+
+| Key | Action |
+|-----|--------|
+| `↑` / `↓` | Navigate items |
+| `Space` | Toggle selection |
+| `→` / `←` | Expand / collapse directory |
+| `Enter` | Confirm and sync |
+| `a` | Select all |
+| `n` | Deselect all |
+| `q` | Cancel |
+
+```bash
+npx @slats/claude-assets-sync add -p @lerx/promise-modal
+```
+
+### list
+
+List all synced packages with an interactive tree view.
+
+```bash
+npx @slats/claude-assets-sync list [--json]
+```
+
+**View mode keys:** `e` edit, `r` refresh, `q` quit
+**Edit mode keys:** `d` delete file, `a` add file, `Esc` exit edit
+
+```bash
+# Interactive tree view
+npx @slats/claude-assets-sync list
+
+# JSON output for scripting
+npx @slats/claude-assets-sync list --json
+```
+
+```
+┌─ Synced Packages ─────────────────────────────┐
+│                                               │
+│ ▼ @canard/schema-form@1.0.0                   │
+│   ├─ commands/                                │
+│   │  └─ @canard-schema-form-my-command.md     │
+│   └─ skills/                                  │
+│      └─ @canard-schema-form-my-skill.md       │
+│                                               │
+│ [e] Edit  [r] Refresh  [q] Quit               │
+└───────────────────────────────────────────────┘
+```
+
+### status
+
+Show sync status and check for available updates.
+
+```bash
+npx @slats/claude-assets-sync status [--no-remote]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--no-remote` | Skip npm registry check |
+
+Status indicators: `✓` up-to-date, `⚠` update available, `✗` error
+
+```
+┌─ Package Status ──────────────────────────────┐
+│ ✓ @canard/schema-form                         │
+│   Local: 1.0.0  Synced: 1.0.0  Assets: 2     │
+│ ⚠ @lerx/promise-modal                         │
+│   Local: 0.6.0  Synced: 0.5.0                │
+├─ Summary ────────────────────────────────────┤
+│   Total: 2  ✓ 1  ⚠ 1                          │
+└───────────────────────────────────────────────┘
+```
+
+### remove
+
+Remove a synced package and its assets.
+
+```bash
+npx @slats/claude-assets-sync remove -p <package> [--yes] [--dry-run]
+```
+
+```bash
+npx @slats/claude-assets-sync remove -p @canard/schema-form --yes
+```
+
+### migrate
+
+Migrate from legacy nested structure to flat structure.
+
+```bash
+npx @slats/claude-assets-sync migrate [--dry-run]
+```
+
+## Directory Structure
+
+### Flat (default)
+
+```
+your-project/
+└── .claude/
+    ├── commands/
+    │   ├── @canard-schema-form-my-command.md
+    │   └── @lerx-promise-modal-another-command.md
+    └── skills/
+        ├── @canard-schema-form-my-skill.md
+        └── @lerx-promise-modal-another-skill.md
+```
+
+A single `.sync-meta.json` tracks all packages in each asset directory.
+
+### Nested (legacy, `--no-flat`)
+
+```
+your-project/
+└── .claude/
+    ├── commands/
+    │   └── @canard/schema-form/
+    │       ├── my-command.md
+    │       └── .sync-meta.json
+    └── skills/
+        └── @lerx/promise-modal/
+            ├── my-skill.md
+            └── .sync-meta.json
+```
+
+## .sync-meta.json
+
+```json
+{
+  "version": "0.0.1",
+  "syncedAt": "2025-02-05T10:30:00.000Z",
+  "packages": {
+    "@canard-schema-form": {
+      "originalName": "@canard/schema-form",
+      "version": "1.0.0",
+      "files": {
+        "commands": [
+          { "original": "my-command.md", "transformed": "@canard-schema-form-my-command.md" }
+        ],
+        "skills": [
+          { "original": "my-skill.md", "transformed": "@canard-schema-form-my-skill.md" }
+        ]
+      }
+    }
+  }
+}
+```
+
+## Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `GITHUB_TOKEN` | GitHub personal access token (raises rate limit to 5,000 req/hr) | unauthenticated (60 req/hr) |
+| `VERBOSE` | Enable debug logging | disabled |
+
+```bash
+GITHUB_TOKEN=ghp_xxxxxxxxxxxx npx @slats/claude-assets-sync -p @package1 -p @package2
+```
+
+## For Package Authors
+
+Add a `claude` field to your `package.json` and place assets under the declared path:
+
+```json
+{
+  "name": "@your-scope/your-package",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/your-repo.git",
+    "directory": "packages/your-package"
+  },
+  "claude": {
+    "assetPath": "docs/claude"
+  }
+}
+```
+
+```
+your-package/
+└── docs/claude/
+    ├── commands/
+    │   └── your-command.md
+    └── skills/
+        └── your-skill.md
+```
+
+- Asset files must be Markdown (`.md`)
+- `repository.type` and `repository.url` are required
+- `assetPath` is relative to the package root
+
+## Sync Flow
+
+```
+1. Read package.json from node_modules (or local workspace)
+2. Extract claude.assetPath
+3. Parse repository URL → GitHub owner/repo
+4. Compare version against .sync-meta.json (skip if unchanged, unless --force)
+5. Fetch file list from GitHub API (commands/ and skills/ under assetPath)
+6. Download each file from raw.githubusercontent.com
+7. Write to .claude/{type}/{prefixed-name}.md
+8. Update .sync-meta.json
+```
+
+## Programmatic API
+
+```ts
+import { syncPackage, syncPackages } from '@slats/claude-assets-sync';
+import type { CliOptions, SyncResult } from '@slats/claude-assets-sync';
+
+// Sync a single package
+const result: SyncResult = await syncPackage('@canard/schema-form', {
+  force: false,
+  dryRun: false,
+  flat: true,
+});
+
+// Sync multiple packages
+const results = await syncPackages(['@canard/schema-form', '@lerx/promise-modal'], {
+  force: true,
+});
+```
+
+<ForAI>
+
+## Package: @slats/claude-assets-sync
+
+**Purpose:** Sync Claude Code commands and skills from npm packages into a project's `.claude/` directory.
+
+**CLI entry:** `npx @slats/claude-assets-sync`
+**npm:** https://www.npmjs.com/package/@slats/claude-assets-sync
+**Version:** 0.0.6
+
+### Commands
+
+| Command | Trigger | Key options |
+|---------|---------|-------------|
+| `sync` (default) | `-p <pkg>` | `--force`, `--dry-run`, `--local`, `--ref`, `--no-flat` |
+| `add` | `add -p <pkg>` | `--local`, `--ref` |
+| `list` | `list` | `--json` |
+| `status` | `status` | `--no-remote` |
+| `remove` | `remove -p <pkg>` | `--yes`, `--dry-run` |
+| `migrate` | `migrate` | `--dry-run` |
+
+### Key types
+
+```ts
+type AssetType = 'commands' | 'skills';
+
+interface ClaudeConfig {
+  assetPath: string; // e.g. "docs/claude"
+}
+
+interface SyncResult {
+  package: string;
+  version: string;
+  skipped: boolean;
+  files: { commands: string[]; skills: string[] };
+  error?: string;
+}
+
+interface UnifiedSyncMeta {
+  version: string;
+  syncedAt: string;
+  packages: Record<string, PackageSyncInfo>;
+}
+
+interface PackageSyncInfo {
+  originalName: string;
+  version: string;
+  files: Record<AssetType, FileMapping[]>;
+}
+
+interface FileMapping {
+  original: string;
+  transformed: string;
+}
+```
+
+### Package author requirements
+
+A package must have in its `package.json`:
+1. `repository.type = "git"` and `repository.url` pointing to a GitHub repo
+2. `claude.assetPath` pointing to a directory that contains `commands/` and/or `skills/` subdirectories
+3. Asset files must be `.md`
+
+### Flat vs nested
+
+- **Flat (default):** all files in `.claude/commands/` and `.claude/skills/`, prefixed with `@scope-name-`
+- **Nested (`--no-flat`):** files under `.claude/commands/@scope/name/` and `.claude/skills/@scope/name/`
+- Use `migrate` command to convert nested → flat
+
+### Environment
+
+- `GITHUB_TOKEN`: set to avoid GitHub API rate limits (60 → 5,000 req/hr)
+- `VERBOSE`: set to any value for debug output
+
+</ForAI>

@@ -1,0 +1,119 @@
+---
+sidebar_position: 3
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import LangTabs from '@site/src/components/LangTabs';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@winglet/json" />
+
+<LangTabs
+  en={<>
+    <p>
+      TypeScript library for safe JSON data manipulation.
+      Implements RFC 6901 (JSON Pointer) and RFC 6902 (JSON Patch)
+      with prototype pollution protection, immutable operations, and sub-path exports.
+    </p>
+  </>}
+  kr={<>
+    <p>
+      안전한 JSON 데이터 조작을 위한 TypeScript 라이브러리입니다.
+      RFC 6901(JSON Pointer)과 RFC 6902(JSON Patch)를 구현하며,
+      프로토타입 오염 방지, 불변 연산, 서브패스 익스포트를 지원합니다.
+    </p>
+  </>}
+/>
+
+## Installation
+
+```bash
+yarn add @winglet/json
+```
+
+## Sub-path Exports
+
+| Import path | Contents |
+|---|---|
+| `@winglet/json` | All exports |
+| `@winglet/json/pointer` | Full JSON Pointer API |
+| `@winglet/json/pointer-manipulator` | `getValue`, `setValue`, `compilePointer` |
+| `@winglet/json/pointer-patch` | JSON Patch operations |
+| `@winglet/json/pointer-escape` | `escapePath`, `unescapePath` |
+| `@winglet/json/path` | JSON Path constants |
+
+## Key Exports
+
+### Pointer Manipulation (`/pointer-manipulator`)
+
+- `getValue(object, pointer, options?)` — read a value at a JSON Pointer path
+- `setValue(object, pointer, value, options?)` — write a value at the path
+- `compilePointer(pointer)` — compile a pointer to reusable segments
+
+### JSON Patch (`/pointer-patch`)
+
+- `compare(a, b, options?)` — generate RFC 6902 patch between two objects
+- `applyPatch(object, patches, options?)` — apply a patch array
+- `difference(a, b)` — generate RFC 7396 merge patch
+- `mergePatch(object, patch)` — apply a merge patch
+
+### Options
+
+| Option | Default | Description |
+|---|---|---|
+| `immutable` | `true` | Return new object instead of mutating |
+| `protectPrototype` | `true` | Block `__proto__`, `constructor`, `prototype` |
+| `strict` | `false` | Throw on missing paths |
+
+## Usage Examples
+
+```ts
+import { getValue, setValue } from '@winglet/json/pointer-manipulator';
+
+const data = { user: { name: 'Alice', roles: ['admin'] } };
+
+getValue(data, '/user/name');              // 'Alice'
+setValue(data, '/user/name', 'Bob');        // new object, original unchanged
+```
+
+```ts
+import { compare, applyPatch } from '@winglet/json/pointer-patch';
+
+const a = { x: 1, y: 2 };
+const b = { x: 1, y: 3, z: 4 };
+
+const patch = compare(a, b);
+// [{ op: 'replace', path: '/y', value: 3 }, { op: 'add', path: '/z', value: 4 }]
+
+applyPatch(a, patch); // { x: 1, y: 3, z: 4 }
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@winglet/json` v0.10.0
+**Purpose**: RFC 6901 JSON Pointer and RFC 6902 JSON Patch with security protections.
+
+### Key exports
+```
+/pointer-manipulator → getValue(obj, pointer, opts?), setValue(obj, pointer, value, opts?), compilePointer(pointer)
+/pointer-patch       → compare(a, b, opts?), applyPatch(obj, patches, opts?), difference(a, b), mergePatch(obj, patch)
+/pointer-escape      → escapePath(token), unescapePath(token)
+```
+
+### Default options
+```ts
+{ immutable: true, protectPrototype: true, strict: false }
+```
+
+### Error types
+- `JSONPointerError` with codes: `INVALID_INPUT`, `INVALID_POINTER`, `PROPERTY_NOT_FOUND`
+
+### Constraints
+- Pointer format: RFC 6901 (`/foo/bar`, `/arr/0`)
+- Escape: `~0` = `~`, `~1` = `/`
+- `protectPrototype: true` blocks prototype pollution via `__proto__`, `constructor`, `prototype`
+- `immutable: true` (default) returns new objects; `immutable: false` mutates in place
+
+</ForAI>

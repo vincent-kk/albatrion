@@ -1,0 +1,197 @@
+---
+sidebar_position: 2
+---
+
+import LangTabs from '@site/src/components/LangTabs';
+import ForAI from '@site/src/components/ForAI';
+
+# Quick Start
+
+## Installation
+
+```bash
+# Core library
+yarn add @canard/schema-form
+
+# Validator plugin (AJV 8)
+yarn add @canard/schema-form-ajv8-plugin ajv
+
+# UI plugin — pick one
+yarn add @canard/schema-form-antd5-plugin   # Ant Design 5
+yarn add @canard/schema-form-mui6-plugin    # MUI 6
+```
+
+## Register Plugins
+
+<LangTabs
+  en={<>
+    <p>
+      Register plugins <strong>once</strong> at application entry point, before any
+      <code>&lt;Form&gt;</code> renders. The call is idempotent — duplicate registrations
+      are ignored by content hash.
+    </p>
+  </>}
+  kr={<>
+    <p>
+      <code>&lt;Form&gt;</code>이 렌더링되기 전, 애플리케이션 진입점에서 <strong>한 번</strong> 플러그인을
+      등록합니다. 중복 등록은 콘텐츠 해시로 자동 무시됩니다.
+    </p>
+  </>}
+/>
+
+```ts title="src/main.tsx (or index.tsx)"
+import { registerPlugin } from '@canard/schema-form';
+import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { antd5Plugin } from '@canard/schema-form-antd5-plugin';
+
+registerPlugin(ajvValidatorPlugin);
+registerPlugin(antd5Plugin);
+```
+
+## Minimal Form
+
+```tsx
+import { Form } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name:  { type: 'string',  title: 'Name',  minLength: 1 },
+    email: { type: 'string',  title: 'Email', format: 'email' },
+    age:   { type: 'number',  title: 'Age',   minimum: 0 },
+  },
+  required: ['name', 'email'],
+} as const;
+
+function MyForm() {
+  return (
+    <Form
+      jsonSchema={schema}
+      onSubmit={async (value) => {
+        console.log('submitted:', value);
+      }}
+    />
+  );
+}
+```
+
+## With onChange and Ref
+
+```tsx
+import { useRef, useState } from 'react';
+import { Form, type FormHandle, ShowError } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    username: { type: 'string', title: 'Username', minLength: 3 },
+    password: { type: 'string', title: 'Password', minLength: 8 },
+  },
+  required: ['username', 'password'],
+} as const;
+
+function LoginForm() {
+  const formRef = useRef<FormHandle<typeof schema>>(null);
+  const [value, setValue] = useState<any>({});
+
+  const handleSubmit = async (data: typeof value) => {
+    await api.login(data);
+  };
+
+  return (
+    <>
+      <Form
+        ref={formRef}
+        jsonSchema={schema}
+        onChange={setValue}
+        onSubmit={handleSubmit}
+        showError={ShowError.DirtyTouched}
+      />
+      <button onClick={() => formRef.current?.submit()}>
+        Login
+      </button>
+    </>
+  );
+}
+```
+
+## Custom Layout with Form.Group
+
+<LangTabs
+  en={<>
+    <p>
+      Use <code>Form.Group</code>, <code>Form.Label</code>, <code>Form.Input</code>,
+      and <code>Form.Error</code> sub-components to build a custom layout.
+      Each takes a <code>path</code> prop (JSONPointer string).
+    </p>
+  </>}
+  kr={<>
+    <p>
+      <code>Form.Group</code>, <code>Form.Label</code>, <code>Form.Input</code>,
+      <code>Form.Error</code> 서브 컴포넌트를 사용하여 커스텀 레이아웃을 구성합니다.
+      각각 JSONPointer 문자열인 <code>path</code> prop을 받습니다.
+    </p>
+  </>}
+/>
+
+```tsx
+<Form jsonSchema={schema} onSubmit={handleSubmit}>
+  <div className="form-row">
+    <Form.Group path="/firstName" />
+    <Form.Group path="/lastName" />
+  </div>
+  <Form.Group path="/email" />
+  <Form.Group path="/birthDate" />
+</Form>
+```
+
+## Using the Children Render Prop
+
+```tsx
+<Form jsonSchema={schema}>
+  {({ value, errors, node }) => (
+    <>
+      <Form.Input path="/email" />
+      <Form.Error path="/email" />
+      {value?.role === 'admin' && <Form.Group path="/permissions" />}
+      <button disabled={(errors?.length ?? 0) > 0}>Submit</button>
+    </>
+  )}
+</Form>
+```
+
+<ForAI>
+
+## AI Quick Reference
+
+```ts
+// 1. Register at app entry (once)
+registerPlugin(validatorPlugin);
+registerPlugin(uiPlugin);
+
+// 2. Render
+<Form
+  jsonSchema={schema}          // required
+  defaultValue={initialValue}  // optional
+  onChange={setValue}
+  onSubmit={async (value) => { /* validated value */ }}
+  onValidate={(errors) => { /* called after each validation */ }}
+  showError={ShowError.DirtyTouched}  // default
+  validationMode={ValidationMode.OnChange | ValidationMode.OnRequest}
+  ref={formRef}
+/>
+
+// 3. Imperative API via ref
+formRef.current?.submit()
+formRef.current?.validate()     // Promise<JsonSchemaError[]>
+formRef.current?.getValue()
+formRef.current?.setValue(val)
+formRef.current?.reset()
+formRef.current?.focus('/path')
+formRef.current?.showError(true)
+
+// 4. Submit with loading state
+const { submit, pending } = useFormSubmit(formRef);
+```
+
+</ForAI>

@@ -1,0 +1,126 @@
+---
+sidebar_position: 1
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import LangTabs from '@site/src/components/LangTabs';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@winglet/common-utils" />
+
+<LangTabs
+  en={<>
+    <p>
+      Comprehensive utility library for JavaScript/TypeScript projects.
+      Provides array processing, object manipulation, Promise handling, type checking,
+      scheduling, hashing, and more — all with tree-shakeable sub-path exports.
+    </p>
+  </>}
+  kr={<>
+    <p>
+      JavaScript/TypeScript 프로젝트를 위한 종합 유틸리티 라이브러리입니다.
+      배열 처리, 객체 조작, Promise 핸들링, 타입 체크, 스케줄링, 해싱 등을
+      트리 쉐이킹 가능한 서브패스 익스포트로 제공합니다.
+    </p>
+  </>}
+/>
+
+## Installation
+
+```bash
+yarn add @winglet/common-utils
+```
+
+## Sub-path Exports
+
+| Import path | Contents |
+|---|---|
+| `@winglet/common-utils` | All exports |
+| `@winglet/common-utils/array` | `chunk`, `unique`, `uniqueBy`, `groupBy`, `difference`, `intersection`, `sortWithReference` |
+| `@winglet/common-utils/filter` | `isString`, `isNumber`, `isObject`, `isArray`, `isNil`, `isPlainObject`, `isTruthy` … |
+| `@winglet/common-utils/object` | `clone`, `merge`, `equals`, `serializeObject`, `transformKeys`, `removeUndefined` |
+| `@winglet/common-utils/function` | `debounce`, `throttle`, `getTrackableHandler` |
+| `@winglet/common-utils/promise` | `delay`, `timeout`, `withTimeout`, `waitAndExecute` |
+| `@winglet/common-utils/scheduler` | `scheduleMacrotask`, `scheduleMicrotask`, `scheduleNextTick` |
+| `@winglet/common-utils/hash` | Murmur3 hash, polynomial hash |
+| `@winglet/common-utils/convert` | Type conversion utilities |
+| `@winglet/common-utils/console` | Console helpers |
+| `@winglet/common-utils/math` | Math utilities |
+
+## Usage Examples
+
+```ts
+import { chunk, unique, intersection } from '@winglet/common-utils/array';
+import { isObject, isNil } from '@winglet/common-utils/filter';
+import { debounce } from '@winglet/common-utils/function';
+
+// Array utilities
+chunk([1, 2, 3, 4, 5], 2);        // [[1,2], [3,4], [5]]
+unique([1, 2, 2, 3]);              // [1, 2, 3]
+intersection([1, 2, 3], [2, 3, 4]); // [2, 3]
+
+// Type checking
+isObject({});   // true
+isNil(null);    // true
+
+// Function enhancement
+const debouncedSave = debounce(save, 300);
+```
+
+```ts
+import { clone, merge, equals } from '@winglet/common-utils/object';
+import { delay, withTimeout } from '@winglet/common-utils/promise';
+
+// Deep clone and merge
+const copy = clone(original);
+const merged = merge(defaults, overrides);
+equals({ a: 1 }, { a: 1 }); // true
+
+// Promise utilities
+await delay(1000);
+await withTimeout(fetchData(), 5000); // throws TimeoutError if >5s
+```
+
+## Error Classes
+
+- `BaseError` — foundation error class
+- `AbortError` — operation cancellation
+- `InvalidTypeError` — type validation failures
+- `TimeoutError` — timeout scenarios
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@winglet/common-utils` v0.10.0
+**Purpose**: Comprehensive JS/TS utility library with tree-shakeable sub-path exports.
+
+### Key exports by sub-path
+```
+/array     → chunk, map, filter, forEach, forEachReverse, groupBy, sortWithReference,
+             unique, uniqueBy, uniqueWith, difference, differenceBy, differenceWith,
+             intersection, intersectionBy, intersectionWith
+/filter    → isString, isNumber, isBoolean, isSymbol, isObject, isPlainObject,
+             isArray, isArrayLike, isDate, isRegex, isBlob, isFile, isNil, isNotNil,
+             isTruthy, isEmptyArray, isCloneable, isValidRegexPattern
+/object    → clone, merge, equals, stableEquals, serializeObject, stableSerialize,
+             transformKeys, transformValues, sortObjectKeys, removeUndefined,
+             getObjectKeys, getSymbols
+/function  → debounce, throttle, getTrackableHandler
+/promise   → delay, timeout, withTimeout, waitAndExecute, waitAndReturn
+/scheduler → scheduleMacrotask, scheduleCancelableMacrotask, scheduleMicrotask, scheduleNextTick
+/hash      → murmur3 hash, polynomial hash (base36)
+```
+
+### Error hierarchy
+```
+BaseError → AbortError, InvalidTypeError, TimeoutError
+```
+
+### Important constraints
+- Zero runtime dependencies
+- All functions are pure (side-effect free) where possible
+- Sub-path exports enable optimal tree-shaking
+- ES2020 target
+
+</ForAI>

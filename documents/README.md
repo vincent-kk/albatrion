@@ -1,41 +1,42 @@
-# Website
+# Albatrion Documentation Site
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+Technical documentation for Albatrion monorepo packages, built with [Docusaurus 3](https://docusaurus.io/).
 
-### Installation
+## Packages
 
-```
-$ yarn
-```
+| Namespace | Packages | Description |
+|-----------|----------|-------------|
+| `@canard` | schema-form, 7 plugins | JSON Schema-driven React form engine |
+| `@winglet` | 6 packages | Shared utility libraries |
+| `@lerx` | promise-modal | Promise-based modal management |
+| `@slats` | claude-assets-sync | AI agent asset synchronization |
 
-### Local Development
+## Development
 
-```
-$ yarn start
-```
+```bash
+# Install dependencies (from monorepo root)
+yarn
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+# Start dev server
+yarn workspace documents start
 
-### Build
+# Build
+yarn workspace documents build
 
-```
-$ yarn build
-```
-
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
-
-### Deployment
-
-Using SSH:
-
-```
-$ USE_SSH=true yarn deploy
+# Serve production build locally
+yarn workspace documents serve
 ```
 
-Not using SSH:
+## Features
 
-```
-$ GIT_USER=<Your GitHub username> yarn deploy
-```
+- **Interactive Playground**: Sandpack-based live code editor for `@canard/schema-form`
+- **Bilingual Tabs**: In-page EN/KR language switching via `<LangTabs>` component
+- **AI-Friendly Output**: `llms.txt` and `llms-full.txt` generated via `docusaurus-plugin-llms`
+- **Local Search**: Offline-capable search via `@easyops-cn/docusaurus-search-local`
+- **Fast Builds**: Rspack bundler via `@docusaurus/faster`
 
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+## Adding Documentation
+
+1. Create `.mdx` files under `docs/{namespace}/{package}/`
+2. Use shared components: `<LangTabs>`, `<ForAI>`, `<PackageHeader>`
+3. Run `yarn workspace documents build` to verify

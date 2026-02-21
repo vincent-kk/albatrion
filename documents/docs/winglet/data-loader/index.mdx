@@ -1,0 +1,127 @@
+---
+sidebar_position: 5
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import LangTabs from '@site/src/components/LangTabs';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@winglet/data-loader" />
+
+<LangTabs
+  en={<>
+    <p>
+      Batching and caching utility for asynchronous data fetching, inspired by GraphQL DataLoader.
+      Automatically collects individual <code>load()</code> calls within the same tick into a single
+      batch request, eliminating the N+1 query problem with a built-in promise cache.
+    </p>
+  </>}
+  kr={<>
+    <p>
+      GraphQL DataLoader에서 영감을 받은 비동기 데이터 페칭용 배칭 및 캐싱 유틸리티입니다.
+      같은 틱 내의 개별 <code>load()</code> 호출을 자동으로 하나의 배치 요청으로 모아
+      N+1 쿼리 문제를 해소하며, 내장 Promise 캐시를 제공합니다.
+    </p>
+  </>}
+/>
+
+## Installation
+
+```bash
+yarn add @winglet/data-loader
+```
+
+## API
+
+### Constructor
+
+```ts
+import { DataLoader } from '@winglet/data-loader';
+
+const loader = new DataLoader<Key, Value>(batchLoader, options?);
+```
+
+`batchLoader` receives an array of keys and must return a `Promise` resolving to values (or `Error`) in the same order.
+
+### Instance Methods
+
+| Method | Description |
+|---|---|
+| `load(key)` | Returns `Promise<Value>` for a single key; batches automatically |
+| `loadMany(keys)` | Returns `Promise<(Value \| Error)[]>` for multiple keys |
+| `clear(key)` | Removes a single key from the cache |
+| `clearAll()` | Clears the entire cache |
+| `prime(key, value)` | Pre-populates the cache |
+
+### Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `batch` | `boolean` | `true` | Enable request batching |
+| `maxBatchSize` | `number` | `Infinity` | Max keys per batch |
+| `cache` | `boolean` | `true` | Enable promise caching |
+| `cacheKeyFn` | `(key) => CacheKey` | identity | Map key to cache key |
+| `cacheMap` | `MapLike` | `new Map()` | Custom cache implementation |
+| `scheduler` | `(fn) => void` | `process.nextTick` | Controls batching timing |
+
+## Usage Examples
+
+```ts
+import { DataLoader } from '@winglet/data-loader';
+
+const userLoader = new DataLoader<number, User>(async (ids) => {
+  const users = await fetchUsersByIds(ids);
+  return ids.map(id => users.find(u => u.id === id) ?? new Error(`Not found: ${id}`));
+});
+
+// These three calls batch into a single fetchUsersByIds([1, 2, 3])
+const [alice, bob, carol] = await Promise.all([
+  userLoader.load(1),
+  userLoader.load(2),
+  userLoader.load(3),
+]);
+```
+
+```ts
+// Cache management
+userLoader.prime(4, { id: 4, name: 'Dave' });
+userLoader.clear(1);
+userLoader.clearAll();
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@winglet/data-loader` v0.10.0
+**Purpose**: Request batching and caching for async data fetching. Solves N+1 problem.
+
+### Exports
+```ts
+import { DataLoader } from '@winglet/data-loader';
+import type { DataLoaderOptions } from '@winglet/data-loader';
+```
+
+### Constructor
+```ts
+new DataLoader<Key, Value, CacheKey = Key>(
+  batchLoader: (keys: readonly Key[]) => Promise<(Value | Error)[]>,
+  options?: DataLoaderOptions<Key, Value, CacheKey>
+)
+```
+
+### Methods
+```
+load(key): Promise<Value>
+loadMany(keys): Promise<(Value | Error)[]>
+clear(key): this
+clearAll(): this
+prime(key, value): this
+```
+
+### Constraints
+- `batchLoader` must return values in **same order** as input keys
+- Failed keys should resolve to `Error` instances, not rejected promises
+- Cache stores promises (not values) so concurrent loads share one request
+
+</ForAI>

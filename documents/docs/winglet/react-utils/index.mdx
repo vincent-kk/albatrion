@@ -1,0 +1,130 @@
+---
+sidebar_position: 2
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import LangTabs from '@site/src/components/LangTabs';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@winglet/react-utils" />
+
+<LangTabs
+  en={<>
+    <p>
+      React utility library providing custom hooks, higher-order components (HOCs),
+      a Portal system, and helper functions.
+      Supports React 16–19, with full TypeScript types and tree-shakeable sub-path exports.
+    </p>
+  </>}
+  kr={<>
+    <p>
+      커스텀 훅, 고차 컴포넌트(HOC), 포털 시스템, 헬퍼 함수를 제공하는 React 유틸리티 라이브러리입니다.
+      React 16~19를 지원하며, 완전한 TypeScript 타입과 트리 쉐이킹 가능한 서브패스 익스포트를 제공합니다.
+    </p>
+  </>}
+/>
+
+## Installation
+
+```bash
+yarn add @winglet/react-utils
+# peer deps: react >=16 <20, react-dom >=16 <20
+```
+
+## Sub-path Exports
+
+| Import path | Contents |
+|---|---|
+| `@winglet/react-utils` | All exports |
+| `@winglet/react-utils/hook` | Custom hooks |
+| `@winglet/react-utils/hoc` | Higher-order components |
+| `@winglet/react-utils/portal` | Portal component system |
+| `@winglet/react-utils/filter` | React type-checking utilities |
+| `@winglet/react-utils/object` | React-specific object utilities |
+| `@winglet/react-utils/render` | Component rendering helpers |
+
+## Key Exports
+
+### Hooks (`/hook`)
+
+| Hook | Description |
+|---|---|
+| `useConstant(factory)` | Memoizes a value on first render only |
+| `useHandle(fn)` | Stable callback that always calls the latest function |
+| `useMemorize(deps, factory)` | Enhanced memoization with intuitive API |
+| `useSnapshot(value)` | Returns a stable snapshot of a value |
+| `useDebounce(value, delay)` | Debounced value |
+| `useWindowSize()` | Tracks browser window dimensions |
+| `useEffectUntil(effect, condition)` | Runs effect until condition is true |
+| `useOnMount(fn)` | Runs callback once on mount |
+| `useOnUnmount(fn)` | Runs callback once on unmount |
+
+### HOCs (`/hoc`)
+
+- `withErrorBoundary(Component, options)` — wraps with error boundary
+- `withErrorBoundaryForwardRef(Component, options)` — with ref forwarding
+- `withUploader(Component, options)` — file upload handling
+
+### Portal (`/portal`)
+
+- `Portal` — renders children at a designated anchor in the DOM
+- `Portal.Anchor` — declares where portal content mounts
+- `withPortal(Component)` — HOC providing portal context
+
+## Usage Examples
+
+```tsx
+import { useConstant, useHandle, useWindowSize } from '@winglet/react-utils/hook';
+
+function MyComponent({ onSave }: { onSave: () => void }) {
+  const manager = useConstant(() => new ExpensiveManager());
+  const handleSave = useHandle(onSave); // stable ref
+  const { width, height } = useWindowSize();
+
+  return <div>{width}x{height}</div>;
+}
+```
+
+```tsx
+import { withErrorBoundary } from '@winglet/react-utils/hoc';
+import { Portal, withPortal } from '@winglet/react-utils/portal';
+
+const SafeWidget = withErrorBoundary(Widget, {
+  fallback: <p>Something went wrong.</p>,
+});
+
+const App = withPortal(() => (
+  <>
+    <Portal.Anchor name="modal" />
+    <Portal name="modal"><Modal /></Portal>
+  </>
+));
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@winglet/react-utils` v0.10.0
+**Peer deps**: `react >=16 <20`, `react-dom >=16 <20`
+**Purpose**: React hooks, HOCs, portal system, and render utilities.
+
+### Key exports by sub-path
+```
+/hook    → useConstant, useTruthyConstant, useMemorize, useHandle, useSnapshot,
+           useSnapshotReference, useReference, useVersion, useDebounce, useTimeout,
+           useWindowSize, useEffectUntil, useLayoutEffectUntil, useOnMount,
+           useOnMountLayout, useOnUnmount, useOnUnmountLayout, useRestProperties
+/hoc     → withErrorBoundary, withErrorBoundaryForwardRef, withUploader
+/portal  → Portal, Portal.Anchor, withPortal
+/filter  → isReactComponent, isReactElement
+/render  → renderComponent, remainOnlyReactComponent
+```
+
+### Usage patterns
+- `useConstant(factory)` — initializes once, never re-creates
+- `useHandle(fn)` — stable ref-backed callback (replaces useCallback with empty deps)
+- `withErrorBoundary(Component, { fallback })` — wraps with error boundary
+- Portal system requires `withPortal` HOC at tree root and `Portal.Anchor` to declare target
+
+</ForAI>

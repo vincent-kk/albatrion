@@ -2,33 +2,34 @@ import type * as Preset from '@docusaurus/preset-classic';
 import type { Config } from '@docusaurus/types';
 import { themes as prismThemes } from 'prism-react-renderer';
 
-// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
-
 const config: Config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
+  title: 'Albatrion',
+  tagline: 'Technical documentation for Albatrion packages',
   favicon: 'img/favicon.ico',
 
-  // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
+  url: 'https://albatrion.dev',
   baseUrl: '/',
 
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'vincent-kk',
+  projectName: 'albatrion',
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
-  // Even if you don't use internationalization, you can use this field to set
-  // useful metadata like html lang. For example, if your site is Chinese, you
-  // may want to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
+  },
+
+  future: {
+    experimental_faster: {
+      swcJsLoader: true,
+      swcJsMinimizer: true,
+      swcHtmlMinimizer: true,
+      lightningCssMinimizer: true,
+      mdxCrossCompilerCache: true,
+      rspackBundler: true,
+    },
   },
 
   presets: [
@@ -37,26 +38,10 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/vincent-kk/albatrion/tree/master/documents/',
         },
-        blog: {
-          showReadingTime: true,
-          feedOptions: {
-            type: ['rss', 'atom'],
-            xslt: true,
-          },
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-          // Useful options to enforce blogging best practices
-          onInlineTags: 'warn',
-          onInlineAuthors: 'warn',
-          onUntruncatedBlogPosts: 'warn',
-        },
+        blog: false,
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -64,37 +49,44 @@ const config: Config = {
     ],
   ],
 
-  themeConfig: {
-    // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
-    navbar: {
-      title: 'My Site',
-      logo: {
-        alt: 'My Site Logo',
-        src: 'img/logo.svg',
+  plugins: ['docusaurus-plugin-llms'],
+
+  themes: [
+    [
+      '@easyops-cn/docusaurus-search-local',
+      {
+        hashed: true,
+        language: ['en'],
+        indexBlog: false,
+        docsRouteBasePath: '/docs',
       },
+    ],
+  ],
+
+  themeConfig: {
+    navbar: {
+      title: 'Albatrion',
       items: [
         {
           position: 'left',
           label: '@canard',
-          to: '/docs/canard',
+          to: '/docs/canard/',
         },
         {
           position: 'left',
           label: '@lerx',
-          to: '/docs/lerx',
+          to: '/docs/lerx/',
         },
         {
           position: 'left',
           label: '@winglet',
-          to: '/docs/winglet',
+          to: '/docs/winglet/',
         },
         {
           position: 'left',
-          label: 'Schema Form',
-          to: '/schema-form',
+          label: '@slats',
+          to: '/docs/slats/',
         },
-        { to: '/blog', label: 'Blog', position: 'left' },
         {
           href: 'https://github.com/vincent-kk/albatrion',
           label: 'GitHub',
@@ -106,42 +98,29 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          title: 'Packages',
           items: [
-            {
-              label: 'Tutorial',
-              to: '/docs/intro',
-            },
-          ],
-        },
-        {
-          title: 'Community',
-          items: [
-            {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
+            { label: '@canard/schema-form', to: '/docs/canard/schema-form/' },
+            { label: '@lerx/promise-modal', to: '/docs/lerx/promise-modal/' },
+            { label: '@winglet utilities', to: '/docs/winglet/' },
           ],
         },
         {
           title: 'More',
           items: [
             {
-              label: 'Blog',
-              to: '/blog',
-            },
-            {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/vincent-kk/albatrion',
             },
           ],
         },
       ],
-      copyright: `Copyright © 2024 Albatrion.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Albatrion.`,
     },
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
+      additionalLanguages: ['json', 'bash'],
     },
   } satisfies Preset.ThemeConfig,
 };

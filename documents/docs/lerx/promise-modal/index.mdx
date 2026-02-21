@@ -1,0 +1,182 @@
+---
+sidebar_position: 1
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import LangTabs from '@site/src/components/LangTabs';
+import ForAI from '@site/src/components/ForAI';
+
+# @lerx/promise-modal
+
+<PackageHeader
+  name="@lerx/promise-modal"
+  description="Promise-based modal utility for React — alert, confirm, and prompt as async functions, usable inside and outside components."
+/>
+
+<LangTabs
+  en={<>
+    <p>
+      <code>@lerx/promise-modal</code> turns modal interactions into awaitable promises.
+      Call <code>alert</code>, <code>confirm</code>, or <code>prompt</code> from anywhere — event handlers,
+      async functions, or outside the React tree — and await the user's response.
+    </p>
+    <ul>
+      <li>Works inside and outside React components</li>
+      <li>Supports alert, confirm, and prompt modal types</li>
+      <li>Fully customizable component slots (foreground, background, title, footer, etc.)</li>
+      <li>Per-modal and global configuration</li>
+      <li>Component-lifecycle-scoped modals via <code>useModal</code></li>
+    </ul>
+  </>}
+  kr={<>
+    <p>
+      <code>@lerx/promise-modal</code>은 모달 인터랙션을 awaitable 프로미스로 전환합니다.
+      이벤트 핸들러, 비동기 함수, React 트리 외부 등 어디서든 <code>alert</code>, <code>confirm</code>,
+      <code>prompt</code>를 호출하고 사용자 응답을 await할 수 있습니다.
+    </p>
+    <ul>
+      <li>React 컴포넌트 내부 및 외부 모두에서 사용 가능</li>
+      <li>alert, confirm, prompt 모달 타입 지원</li>
+      <li>컴포넌트 슬롯 완전 커스터마이징 (foreground, background, title, footer 등)</li>
+      <li>모달별 및 전역 설정</li>
+      <li><code>useModal</code>을 통한 컴포넌트 라이프사이클 연동 모달</li>
+    </ul>
+  </>}
+/>
+
+## Requirements
+
+- React 18 or 19
+- Node.js 16.11.0+
+
+## Setup
+
+### 1. Wrap your app with `ModalProvider`
+
+```tsx
+import { ModalProvider } from '@lerx/promise-modal';
+
+function App() {
+  return (
+    <ModalProvider>
+      <YourApp />
+    </ModalProvider>
+  );
+}
+```
+
+### 2. Call modal functions anywhere
+
+```tsx
+import { alert, confirm, prompt } from '@lerx/promise-modal';
+
+// In an event handler, async function, or outside React:
+async function handleDelete() {
+  const ok = await confirm({
+    title: 'Delete item',
+    content: 'This cannot be undone.',
+    footer: { confirm: 'Delete', cancel: 'Cancel' },
+  });
+  if (ok) await deleteItem();
+}
+```
+
+### 3. Use `useModal` inside components for lifecycle-scoped modals
+
+```tsx
+import { useModal } from '@lerx/promise-modal';
+
+function MyComponent() {
+  const modal = useModal();
+  // Modals opened via `modal.*` are closed automatically when MyComponent unmounts.
+  return <button onClick={() => modal.alert({ title: 'Hi' })}>Open</button>;
+}
+```
+
+## ModalProvider with custom components and options
+
+```tsx
+import { ModalProvider } from '@lerx/promise-modal';
+import { CustomBackground, CustomForeground, CustomFooter } from './components';
+
+function App() {
+  return (
+    <ModalProvider
+      ForegroundComponent={CustomForeground}
+      BackgroundComponent={CustomBackground}
+      FooterComponent={CustomFooter}
+      options={{
+        duration: 250,                   // animation duration in ms
+        backdrop: 'rgba(0,0,0,0.35)',    // backdrop CSS color
+        manualDestroy: false,            // auto-destroy on confirm/close
+        closeOnBackdropClick: true,      // close when backdrop clicked
+        zIndex: 1000,                    // z-index for modal stack
+      }}
+      context={{ theme: 'light', locale: 'en-US' }}
+    >
+      <YourApp />
+    </ModalProvider>
+  );
+}
+```
+
+<ForAI>
+
+## AI Agent Reference
+
+### Package identity
+
+- npm: `@lerx/promise-modal`
+- Import: `import { alert, confirm, prompt, ModalProvider, useModal } from '@lerx/promise-modal'`
+- Peer deps: `react@^18 || ^19`, `react-dom@^18 || ^19`
+
+### Mandatory setup
+
+`ModalProvider` must be mounted once at the app root before any modal function is called. Without it, `alert`/`confirm`/`prompt` have no DOM target and will not render.
+
+### Core pattern
+
+```ts
+// Static functions — usable anywhere, including outside React
+import { alert, confirm, prompt } from '@lerx/promise-modal';
+
+await alert({ title: string, content: ReactNode });
+const confirmed: boolean = await confirm({ title: string, content: ReactNode });
+const value: T = await prompt<T>({ title: string, defaultValue: T, Input: ... });
+```
+
+### Component-scoped modals
+
+```ts
+// useModal — inside React components only; auto-closes on unmount
+const { alert, confirm, prompt } = useModal();
+```
+
+### ModalProvider props summary
+
+| Prop | Type | Description |
+|---|---|---|
+| `ForegroundComponent` | `ComponentType<PropsWithChildren<ModalFrameProps>>` | Modal container/card |
+| `BackgroundComponent` | `ComponentType<ModalFrameProps>` | Backdrop overlay |
+| `TitleComponent` | `ComponentType<WrapperComponentProps>` | Title wrapper |
+| `SubtitleComponent` | `ComponentType<WrapperComponentProps>` | Subtitle wrapper |
+| `ContentComponent` | `ComponentType<WrapperComponentProps>` | Content wrapper |
+| `FooterComponent` | `ComponentType<FooterComponentProps>` | Footer with action buttons |
+| `options` | `ModalOptions` | Global defaults |
+| `context` | `Dictionary` | Passed to all modal component slots |
+| `usePathname` | `() => { pathname: string }` | Custom router hook |
+| `root` | `HTMLElement \| null` | Custom DOM mount target |
+
+### ModalOptions
+
+```ts
+interface ModalOptions {
+  zIndex?: number;
+  duration?: number | string;  // ms or CSS duration string e.g. '250ms'
+  backdrop?: string | CSSProperties;
+  manualDestroy?: boolean;
+  closeOnBackdropClick?: boolean;
+}
+```
+
+</ForAI>

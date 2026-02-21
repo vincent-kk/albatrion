@@ -1,0 +1,166 @@
+---
+sidebar_position: 8
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import LangTabs from '@site/src/components/LangTabs';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@canard/schema-form-antd-mobile-plugin" />
+
+<LangTabs
+  en={<>
+    <p>
+      Ant Design Mobile UI plugin for <code>@canard/schema-form</code>.
+      Provides 10 touch-optimized form input components built on <code>antd-mobile ^5.0.0</code>.
+      Designed for mobile web applications — switches and sliders are preferred over desktop-style inputs.
+    </p>
+  </>}
+  kr={<>
+    <p>
+      <code>@canard/schema-form</code>를 위한 Ant Design Mobile UI 플러그인입니다.
+      <code>antd-mobile ^5.0.0</code> 기반의 10개 터치 최적화 폼 입력 컴포넌트를 제공합니다.
+      모바일 웹 애플리케이션을 위해 설계되었으며, 데스크탑 방식의 입력 대신 스위치와 슬라이더를 선호합니다.
+    </p>
+  </>}
+/>
+
+## Installation
+
+```bash
+yarn add @canard/schema-form-antd-mobile-plugin antd-mobile@>=5.0.0
+```
+
+### Peer Dependencies
+
+```bash
+yarn add dayjs@>=1 react@>=18 react-dom@>=18
+```
+
+Note: `antd-mobile` is a direct dependency of this plugin, not a peer dependency.
+
+## Quick Setup
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-antd-mobile-plugin';
+
+registerPlugin(plugin);
+```
+
+## Component Mapping
+
+Components are selected automatically based on JSON Schema properties. Priority order matches the list below (top = highest priority).
+
+| Component | type | format | formType | enum | Notes |
+|---|---|---|---|---|---|
+| `FormTypeInputBooleanSwitch` | `boolean` | — | `"switch"` | — | Switch toggle with custom labels |
+| `FormTypeInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | Checkbox group; items must be string schema |
+| `FormTypeInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
+| `FormTypeInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | Radio group |
+| `FormTypeInputArray` | `array` | — | — | — | Dynamic list with add/remove |
+| `FormTypeInputSlider` | `number` \| `integer` | `"slider"` | — | — | Slider; also supports range slider for numeric-item arrays |
+| `FormTypeInputTextarea` | `string` | `"textarea"` or formType `"textarea"` | — | — | Multi-line textarea |
+| `FormTypeInputString` | `string` | — | — | — | Default text input (password supported via `format: "password"`) |
+| `FormTypeInputNumber` | `number` \| `integer` | — | — | — | Stepper component |
+| `FormTypeInputBoolean` | `boolean` | — | — | — | Checkbox with indeterminate state |
+
+### Slider Range Support
+
+`FormTypeInputSlider` activates for numeric range arrays:
+
+```ts
+// Single value slider
+{ type: 'number', format: 'slider' }
+
+// Range slider (array of two numbers)
+{
+  type: 'array',
+  format: 'slider',          // or: items with numeric type + format:'slider'
+  items: { type: 'number' }
+}
+```
+
+## Schema Extension Properties
+
+```ts
+{
+  formType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'textarea',
+  format?:   'slider' | 'textarea' | 'password',
+}
+```
+
+## Usage Example
+
+```tsx
+import { Form } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name:    { type: 'string' },
+    count:   { type: 'integer' },
+    active:  { type: 'boolean', formType: 'switch' },
+    rating:  { type: 'number', format: 'slider', minimum: 0, maximum: 5 },
+    tags:    {
+      type: 'array',
+      formType: 'checkbox',
+      items: { type: 'string', enum: ['js', 'ts', 'react'] },
+    },
+  },
+};
+
+<Form jsonSchema={schema} onChange={setValue} />
+```
+
+## Context: Custom Switch Labels
+
+```tsx
+// Pass checkboxLabels through context for BooleanSwitch
+<Form
+  jsonSchema={schema}
+  context={{ checkboxLabels: { active: { true: 'On', false: 'Off' } } }}
+/>
+```
+
+<ForAI>
+
+## AI Reference Summary
+
+**Package**: `@canard/schema-form-antd-mobile-plugin` v0.10.0
+**Purpose**: Ant Design Mobile UI plugin for `@canard/schema-form`. Mobile-first, touch-optimized.
+**UI library**: `antd-mobile ^5.0.0` (direct dependency, not peer)
+**Component count**: 10
+**Peer deps**: `dayjs >=1`, `react >=18 <20`, `react-dom >=18 <20`
+
+### Key export
+```ts
+import { plugin } from '@canard/schema-form-antd-mobile-plugin';
+// plugin: SchemaFormPlugin (FormGroup, FormLabel, FormInput, FormError, formTypeInputDefinitions)
+registerPlugin(plugin);
+```
+
+### Component list (priority order)
+1. `FormTypeInputBooleanSwitch` — `boolean` + `formType:"switch"`
+2. `FormTypeInputStringCheckbox` — `array` + `formType:"checkbox"` + string items with enum
+3. `FormTypeInputStringSwitch` — `string` + `formType:"switch"` + 2-value enum
+4. `FormTypeInputRadioGroup` — `string|number|integer` + `formType:"radio"|"radiogroup"` + enum
+5. `FormTypeInputArray` — `array` (dynamic list)
+6. `FormTypeInputSlider` — `(number|integer)` + `format:"slider"` OR `array` with numeric items + slider format
+7. `FormTypeInputTextarea` — `string` + `format:"textarea"` or `formType:"textarea"`
+8. `FormTypeInputString` — `string` (default; password via `format:"password"`)
+9. `FormTypeInputNumber` — `number|integer` (Stepper component)
+10. `FormTypeInputBoolean` — `boolean` (Checkbox, default)
+
+### Mobile-specific features
+- `FormTypeInputNumber` uses `Stepper` (mobile-friendly) instead of `InputNumber`
+- `FormTypeInputSlider` supports range sliders for array types
+- `FormTypeInputBooleanSwitch` supports custom on/off labels via context
+- No date/time pickers (not included in mobile plugin)
+
+### Important constraints
+- No `FormTypeInputDate`, `FormTypeInputTime`, `FormTypeInputStringEnum` — not supported in this plugin
+- `antd-mobile` is a direct dependency; do not add as peer
+- Plugin must be registered before any `<Form>` renders
+
+</ForAI>
