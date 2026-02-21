@@ -33,6 +33,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.0.0",
     "@canard/schema-form": "workspace:^",
+    "@canard/schema-form-ajv8-plugin": "workspace:^",
     "@canard/schema-form-antd-mobile-plugin": "workspace:^",
     "@canard/schema-form-antd5-plugin": "workspace:^",
     "@canard/schema-form-mui-plugin": "workspace:^",

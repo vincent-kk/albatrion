@@ -17,14 +17,18 @@ Supports MUI's `size`, `variant`, and `fullWidth` context options.
 
 ## Component Catalog
 
-Try each component below — every `FormTypeInput` provided by this plugin, rendered individually:
+### Preview
 
-<BrowserOnly fallback={<div>Loading catalog...</div>}>
+<BrowserOnly fallback={<div>Loading preview...</div>}>
   {() => {
-    const Demo = require('@site/src/components/demos/catalog/MuiCatalogDemo').default;
-    return <Demo />;
+    const Demo = require('@site/src/components/demos/InputShowcase').default;
+    return <Demo componentName="FormTypeInputString" schema={{ type: 'string', title: 'Text Input' }} />;
   }}
 </BrowserOnly>
+
+:::tip Full Catalog
+See all 15 components in the [Component Catalog](./demos) page.
+:::
 
 ## Installation
 

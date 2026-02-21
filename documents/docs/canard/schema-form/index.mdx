@@ -16,53 +16,21 @@ a **UI plugin** for form rendering components.
 Declare your data shape once in JSON Schema — the library builds, validates,
 and manages the full form state tree automatically.
 
-## Live Demos
+## Live Demo
 
-Try the interactive forms below to see what `@canard/schema-form` can build from JSON Schema alone.
-
-### User Profile
-
-Basic field types: text input, number, textarea, boolean switch.
+Try the interactive form below to see what `@canard/schema-form` can build from JSON Schema alone.
+This conference registration form demonstrates conditional fields, computed values, and 10+ input types — all driven by a single schema.
 
 <BrowserOnly fallback={<div>Loading demo...</div>}>
   {() => {
-    const Demo = require('@site/src/components/demos/showcase/UserProfileDemo').default;
+    const Demo = require('@site/src/components/demos/showcase/HeroDemo').default;
     return <Demo />;
   }}
 </BrowserOnly>
 
-### Payment Form
-
-Numbers, date pickers, enum selects, and boolean switches in a realistic form.
-
-<BrowserOnly fallback={<div>Loading demo...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/showcase/PaymentFormDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
-
-### Customer Survey
-
-Radio groups, checkbox arrays, sliders, and date pickers for data collection.
-
-<BrowserOnly fallback={<div>Loading demo...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/showcase/SurveyFormDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
-
-### Application Settings
-
-Nested objects with grouped fields, multiple switches, and radio selections.
-
-<BrowserOnly fallback={<div>Loading demo...</div>}>
-  {() => {
-    const Demo = require('@site/src/components/demos/showcase/NestedSettingsDemo').default;
-    return <Demo />;
-  }}
-</BrowserOnly>
+:::tip More Examples
+Explore 10 interactive examples covering if/then/else, oneOf, computed values, and more in the [Examples](./examples) section.
+:::
 
 :::tip UI Plugins
 Each form above is rendered with the [antd5-plugin](../schema-form-antd5-plugin/). See individual plugin pages for component catalogs: [antd5](../schema-form-antd5-plugin/) | [antd6](../schema-form-antd6-plugin/) | [MUI](../schema-form-mui-plugin/) | [antd-mobile](../schema-form-antd-mobile-plugin/)

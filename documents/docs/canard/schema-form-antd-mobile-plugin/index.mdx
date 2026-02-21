@@ -16,14 +16,18 @@ Designed for mobile web applications — switches and sliders are preferred over
 
 ## Component Catalog
 
-Try each component below — every `FormTypeInput` provided by this plugin, rendered individually:
+### Preview
 
-<BrowserOnly fallback={<div>Loading catalog...</div>}>
+<BrowserOnly fallback={<div>Loading preview...</div>}>
   {() => {
-    const Demo = require('@site/src/components/demos/catalog/AntdMobileCatalogDemo').default;
-    return <Demo />;
+    const Demo = require('@site/src/components/demos/InputShowcase').default;
+    return <Demo componentName="FormTypeInputString" schema={{ type: 'string', title: 'Text Input' }} />;
   }}
 </BrowserOnly>
+
+:::tip Full Catalog
+See all 10 components in the [Component Catalog](./demos) page.
+:::
 
 ## Installation
 

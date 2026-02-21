@@ -1,0 +1,36 @@
+---
+sidebar_label: '튜플 배열'
+sidebar_position: 10
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# 튜플 배열 (prefixItems)
+
+JSON Schema Draft 2020-12의 `prefixItems`를 사용한 고정 길이 이종 배열을 보여줍니다. 배열의 각 위치에 고유한 스키마가 지정되어 구조화된 튜플을 만듭니다.
+
+:::info 주요 기능
+- `prefixItems` — 배열 항목의 위치별 스키마 지정
+- 좌표: `[number, number, number]` — 3D 좌표
+- RGB: `[number, number, number]` + `items: false` — 엄격한 튜플
+- 인물: `[string, number, boolean]` — 혼합 타입
+- 주소: `[string, string, string]` + `items: false`
+:::
+
+:::caution Draft 2020-12 필수 요건
+`prefixItems`는 **Draft 2020-12** 키워드입니다. 사용하려면 `@canard/schema-form-ajv8-plugin/2020` 유효성 검사 플러그인을 등록해야 합니다:
+
+```ts
+import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin/2020';
+registerPlugin(ajv8Plugin);
+```
+
+이 플러그인이 없으면 스키마 유효성 검사기가 `prefixItems`를 처리할 수 없어 폼이 렌더링되지 않습니다.
+:::
+
+<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/TupleArraysDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

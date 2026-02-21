@@ -1,0 +1,25 @@
+---
+sidebar_label: 'Product Catalog'
+sidebar_position: 6
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Product Catalog with Nested Branching
+
+A product registration form with two levels of `oneOf` branching. The product type determines the first-level fields, and for physical products, the shipping method creates a second level of conditional fields.
+
+:::info Key Features
+- Nested `oneOf` — two levels of schema branching
+- Physical products: weight + dimensions + shipping (with nested oneOf)
+- Digital products: file size + format + download link
+- Service products: duration + availability array
+- Shipping oneOf: standard (days) vs express (hours)
+:::
+
+<BrowserOnly fallback={<div>Loading demo...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/ProductCatalogDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

@@ -1,0 +1,25 @@
+---
+sidebar_label: '동적 빌링'
+sidebar_position: 4
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# 동적 빌링 폼
+
+계정 유형, 구독 플랜, 결제 방법의 조합에 따라 필수 필드가 달라지는 캐스케이딩 조건 폼입니다. 3단계 `if/then/else` 로직을 보여줍니다.
+
+:::info 주요 기능
+- 3개 필드 캐스케이딩 조건 (계정유형 × 구독플랜 × 결제방법)
+- 기업 + 세금계산서 → 모든 회계 서류 필수
+- 기업 + 카드 → 기본 회사 정보 필수
+- 개인 + 유료 플랜 → 청구지 주소 필수
+- 개인 + 무료 플랜 → 이메일만 필수
+:::
+
+<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/DynamicBillingDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

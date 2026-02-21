@@ -16,14 +16,18 @@ covering strings, numbers, booleans, dates, ranges, and selection controls.
 
 ## Component Catalog
 
-Try each component below — every `FormTypeInput` provided by this plugin, rendered individually:
+### Preview
 
-<BrowserOnly fallback={<div>Loading catalog...</div>}>
+<BrowserOnly fallback={<div>Loading preview...</div>}>
   {() => {
-    const Demo = require('@site/src/components/demos/catalog/Antd5CatalogDemo').default;
-    return <Demo />;
+    const Demo = require('@site/src/components/demos/InputShowcase').default;
+    return <Demo componentName="FormTypeInputString" schema={{ type: 'string', title: 'Text Input' }} />;
   }}
 </BrowserOnly>
+
+:::tip Full Catalog
+See all 18 components in the [Component Catalog](./demos) page.
+:::
 
 ## Installation
 

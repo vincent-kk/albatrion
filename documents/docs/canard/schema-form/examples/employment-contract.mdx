@@ -1,0 +1,24 @@
+---
+sidebar_label: 'Employment Contract'
+sidebar_position: 5
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Employment Contract Form
+
+Uses `oneOf` with `const` field matching to display completely different field sets based on the selected employment type. Full-time employees see salary and benefits, while contractors see hourly rates and working hours.
+
+:::info Key Features
+- `oneOf` with `const` — exclusive schema branching
+- full_time: salary + bonus + benefits (nested object) + probation
+- part_time: contract type + weekly hours
+- contractor: contract type + conditional working hours (`computed.active`)
+:::
+
+<BrowserOnly fallback={<div>Loading demo...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/EmploymentContractDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

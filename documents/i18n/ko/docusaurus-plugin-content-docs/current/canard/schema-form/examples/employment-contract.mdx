@@ -1,0 +1,24 @@
+---
+sidebar_label: '고용 계약'
+sidebar_position: 5
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# 고용 계약 폼
+
+`oneOf`와 `const` 필드 매칭을 사용하여 고용 형태에 따라 완전히 다른 필드셋을 표시합니다. 정규직은 연봉과 복리후생을, 계약직은 시급과 근무시간을 보여줍니다.
+
+:::info 주요 기능
+- `oneOf` + `const` — 배타적 스키마 분기
+- 정규직: 연봉 + 보너스 + 복리후생(중첩 객체) + 수습기간
+- 파트타임: 계약유형 + 주간 근무시간
+- 계약직: 계약유형 + 조건부 근무시간 (`computed.active`)
+:::
+
+<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/EmploymentContractDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

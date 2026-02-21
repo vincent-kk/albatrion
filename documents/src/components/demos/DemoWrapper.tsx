@@ -1,30 +1,15 @@
-import React, { useState } from 'react';
-import { Form, registerPlugin } from '@canard/schema-form';
-import { plugin } from '@canard/schema-form-antd5-plugin';
+import React from 'react';
 
-registerPlugin(plugin);
+interface DemoWrapperProps {
+  schema: object;
+  values: unknown;
+  children: React.ReactNode;
+}
 
-const schema = {
-  type: 'object',
-  properties: {
-    name: { type: 'string', title: 'Full Name' },
-    email: { type: 'string', title: 'Email' },
-    age: { type: 'integer', title: 'Age', minimum: 0, maximum: 150 },
-    bio: { type: 'string', title: 'About You', format: 'textarea' },
-    newsletter: {
-      type: 'boolean',
-      title: 'Subscribe to newsletter',
-      formType: 'switch',
-    },
-  },
-  required: ['name', 'email'],
-};
-
-export default function UserProfileDemo() {
-  const [values, setValues] = useState<unknown>({});
-
+export default function DemoWrapper({ schema, values, children }: DemoWrapperProps) {
   return (
     <div
+      className="demo-form"
       style={{
         border: '1px solid var(--ifm-color-emphasis-300)',
         borderRadius: 8,
@@ -32,7 +17,18 @@ export default function UserProfileDemo() {
         background: 'var(--ifm-background-surface-color)',
       }}
     >
-      <Form jsonSchema={schema as any} onChange={setValues} />
+      <style>{`
+        .demo-form .ant-select {
+          min-width: 200px !important;
+        }
+        .demo-form .ant-select-selector {
+          min-width: 200px !important;
+        }
+        .demo-form .ant-input-number {
+          min-width: 120px !important;
+        }
+      `}</style>
+      {children}
       <details style={{ marginTop: 16 }}>
         <summary
           style={{

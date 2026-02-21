@@ -1,0 +1,26 @@
+---
+sidebar_label: '기본 폼'
+sidebar_position: 1
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# 기본 폼
+
+가장 일반적인 필드 타입을 보여주는 간단한 폼입니다. 하나의 JSON Schema로 텍스트 입력, 숫자, 날짜, 열거형 셀렉트, 텍스트영역, 스위치 토글이 어떻게 렌더링되는지 확인하세요.
+
+:::info 주요 기능
+- `type: string` — 텍스트 입력
+- `type: integer` — 숫자 입력
+- `format: date` — 날짜 선택
+- `enum` — 드롭다운 셀렉트
+- `format: textarea` — 여러 줄 텍스트
+- `formType: switch` — 토글 스위치
+:::
+
+<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/BasicFormDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

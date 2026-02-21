@@ -1,0 +1,24 @@
+---
+sidebar_label: 'Conditional Registration'
+sidebar_position: 3
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Conditional Registration Form
+
+An event registration form with multi-level `if/then/else` conditions. Different required fields appear based on the combination of participant type and region.
+
+:::info Key Features
+- Nested `if/then/else` with multiple condition levels
+- Condition 1: adult + international → passport + visa required
+- Condition 2: adult + domestic → national ID required
+- Condition 3: minor → guardian consent + contact required
+:::
+
+<BrowserOnly fallback={<div>Loading demo...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/ConditionalRegistrationDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

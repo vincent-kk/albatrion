@@ -1,0 +1,26 @@
+---
+sidebar_label: '역할 기반 접근 제어'
+sidebar_position: 8
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# 역할 기반 필드 접근 제어
+
+`&visible`과 `&active` computed 속성의 차이를 보여줍니다. visible 필드는 UI에서 숨겨지지만 **폼 데이터에 보존**됩니다. active 필드는 UI에서 숨겨지고 조건이 false일 때 **폼 데이터에서도 제거**됩니다.
+
+:::info 주요 기능
+- `&visible` — UI에서 숨김, 데이터는 보존
+- `&active` — UI에서 숨김, 데이터도 제거
+- Guest: 최소한의 필드만 표시
+- Member: 멤버십 관련 필드 표시
+- Admin: 관리자 권한 및 코드 필드 표시
+- Form values를 비교하여 데이터 차이 확인
+:::
+
+<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/RoleBasedAccessDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

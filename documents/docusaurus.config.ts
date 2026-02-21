@@ -56,7 +56,26 @@ const config: Config = {
     ],
   ],
 
-  plugins: ['docusaurus-plugin-llms'],
+  plugins: [
+    'docusaurus-plugin-llms',
+    function ajvEsmFixPlugin() {
+      return {
+        name: 'ajv-esm-fix',
+        configureWebpack() {
+          return {
+            module: {
+              rules: [
+                {
+                  test: /\.m?js$/,
+                  resolve: { fullySpecified: false },
+                },
+              ],
+            },
+          };
+        },
+      };
+    },
+  ],
 
   themes: [
     [
