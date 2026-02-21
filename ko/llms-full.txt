@@ -1,0 +1,5369 @@
+# Albatrion
+
+> Technical documentation for Albatrion packages
+
+This file contains all documentation content in a single document following the llmstxt.org standard.
+
+## @canard
+
+
+JSON Schema-based form generation ecosystem for React.
+
+## Packages
+
+| Package | Description |
+|---------|-------------|
+| [`@canard/schema-form`](./schema-form/) | Core form engine — renders React forms from JSON Schema |
+| [`@canard/schema-form-ajv6-plugin`](./schema-form-ajv6-plugin/) | AJV 6 validation plugin (Draft-04/06/07) |
+| [`@canard/schema-form-ajv7-plugin`](./schema-form-ajv7-plugin/) | AJV 7 validation plugin (Draft-07/2019-09) |
+| [`@canard/schema-form-ajv8-plugin`](./schema-form-ajv8-plugin/) | AJV 8 validation plugin (Draft-2020-12) |
+| [`@canard/schema-form-antd5-plugin`](./schema-form-antd5-plugin/) | Ant Design v5 UI plugin |
+| [`@canard/schema-form-antd6-plugin`](./schema-form-antd6-plugin/) | Ant Design v6 UI plugin |
+| [`@canard/schema-form-antd-mobile-plugin`](./schema-form-antd-mobile-plugin/) | Ant Design Mobile UI plugin |
+| [`@canard/schema-form-mui-plugin`](./schema-form-mui-plugin/) | Material UI v7 plugin |
+
+---
+
+## API Reference
+
+import ForAI from '@site/src/components/ForAI';
+
+# API Reference
+
+## `<Form>`
+
+Main schema-driven form component. Accepts a JSON Schema and manages the full
+node tree lifecycle. Supports both controlled and uncontrolled usage via
+`defaultValue` / `onChange` or imperative `ref` API.
+
+### Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `jsonSchema` | `JsonSchema` | — | **Required.** JSON Schema defining the form structure |
+| `defaultValue` | `Value` | `undefined` | Initial form value |
+| `onChange` | `(value: Value) => void` | — | Called when any field value changes |
+| `onSubmit` | `(value: Value) => Promise<void> \| void` | — | Called on valid form submit (after validation passes) |
+| `onValidate` | `(errors: JsonSchemaError[]) => void` | — | Called after each validation run |
+| `onStateChange` | `(state: NodeStateFlags) => void` | — | Called when dirty/touched/validated state changes |
+| `showError` | `boolean \| ShowError` | `ShowError.DirtyTouched` | When to display validation errors |
+| `validationMode` | `ValidationMode` | `OnChange \| OnRequest` | When validation runs |
+| `validatorFactory` | `ValidatorFactory` | plugin default | Override validator factory per form |
+| `readOnly` | `boolean` | `false` | Apply `readOnly` to all inputs |
+| `disabled` | `boolean` | `false` | Apply `disabled` to all inputs |
+| `errors` | `JsonSchemaError[]` | `undefined` | Inject external validation errors |
+| `formTypeInputDefinitions` | `FormTypeInputDefinition[]` | `[]` | Form-level input component definitions |
+| `formTypeInputMap` | `FormTypeInputMap` | `{}` | Path-based input component overrides |
+| `CustomFormTypeRenderer` | `ComponentType<FormTypeRendererProps>` | plugin default | Override the entire field renderer |
+| `formatError` | `FormatError` | plugin default | Custom error message formatter |
+| `context` | `Dictionary` | `{}` | User-defined context, available in all input components |
+| `children` | `ReactNode \| (props: FormChildrenProps) => ReactNode` | — | Custom layout or render prop |
+| `ref` | `Ref<FormHandle>` | — | Imperative handle |
+
+### ShowError Values
+
+```ts
+import { ShowError } from '@canard/schema-form';
+
+ShowError.Dirty        // show when node.dirty === true
+ShowError.Touched      // show when node.touched === true
+ShowError.DirtyTouched // show when dirty AND touched (default)
+// Also accepts: true (always show), false (never show)
+```
+
+### ValidationMode Values
+
+```ts
+import { ValidationMode } from '@canard/schema-form';
+
+ValidationMode.None      // disable validation
+ValidationMode.OnChange  // validate on every value change
+ValidationMode.OnRequest // validate only when validate() called explicitly
+// Combine with bitwise OR: ValidationMode.OnChange | ValidationMode.OnRequest
+```
+
+## `FormHandle` (ref API)
+
+Obtained via `useRef<FormHandle<typeof schema>>(null)` and passed
+to `ref` prop. All methods are safe to call after mount.
+
+```ts
+interface FormHandle<Schema, Value> {
+  node:        InferSchemaNode<Schema> | undefined; // root node
+  getValue():  Value;
+  setValue(value: Value | ((prev: Value) => Value), options?: SetValueOption): void;
+  getState():  NodeStateFlags;
+  setState(state: NodeStateFlags): void;
+  clearState(): void;
+  getErrors(): JsonSchemaError[];
+  validate():  Promise<JsonSchemaError[]>;
+  showError(visible: boolean): void;
+  focus(path: string): void;    // focuses input at path
+  select(path: string): void;   // selects input at path
+  findNode(path: string):  SchemaNode | null;
+  findNodes(path: string): SchemaNode[];
+  reset(): void;                // remounts the form (re-reads jsonSchema + defaultValue)
+  submit: TrackableHandlerFunction; // callable + subscribe(listener) + pending
+  getAttachedFilesMap(): AttachedFilesMap;
+}
+```
+
+```ts
+// Usage
+const formRef = useRef<FormHandle<typeof schema>>(null);
+
+const errors = await formRef.current?.validate();
+formRef.current?.setValue({ name: 'Alice' });
+formRef.current?.focus('/email');
+formRef.current?.reset();
+```
+
+### SetValueOption
+
+```ts
+import { SetValueOption } from '@canard/schema-form';
+
+// Bitwise flags (can be combined)
+SetValueOption.Overwrite  // replace entire value (default)
+SetValueOption.Merge      // deep merge with current value
+SetValueOption.Isolate    // compute dependencies synchronously
+```
+
+## Form Sub-Components
+
+All sub-components require a `<Form>` ancestor and use its internal context.
+
+### `Form.Group`
+
+Renders a complete field group: label + input + error. Wraps `Form.Label`, `Form.Input`, and `Form.Error` together using the plugin's `FormGroup` component.
+
+```ts
+interface FormGroupProps<Value> extends ChildNodeComponentProps {
+  path?:              string;
+  FormTypeInput?:     ComponentType<FormTypeInputProps<Value>>;
+  FormTypeRenderer?:  ComponentType<FormTypeRendererProps>;
+  Wrapper?:           ComponentType<PropsWithChildren<Dictionary>>;
+  // + any extra props forwarded to the input component
+  className?: string;
+  style?:     CSSProperties;
+  placeholder?: string;
+  readOnly?:  boolean;
+  disabled?:  boolean;
+}
+```
+
+```tsx
+<Form.Group path="/email" />
+<Form.Group path="/birthDate" FormTypeInput={DatePicker} />
+<Form.Group path="/address" Wrapper={({ children }) => <fieldset>{children}</fieldset>} />
+```
+
+### `Form.Label`
+
+Renders only the label using the plugin's `FormLabel` component.
+
+```tsx
+<Form.Label path="/email" className="required-label" />
+```
+
+### `Form.Input`
+
+Renders only the input using the plugin's `FormInput` component.
+
+```tsx
+<Form.Input path="/email" placeholder="user@example.com" autoComplete="email" />
+```
+
+### `Form.Error`
+
+Renders only the error message using the plugin's `FormError` component.
+
+```tsx
+<Form.Error path="/email" className="error-text" />
+```
+
+### `Form.Render`
+
+Low-level slot for custom rendering. Passes raw `FormTypeRendererProps` to a render prop or component. Use when you need full control over how a field is presented.
+
+```tsx
+<Form.Render path="/status">
+  {(props) => (
+    
+      <props.Input />
+      {props.errorVisible && {props.errorMessage}}
+    
+  )}
+</Form.Render>
+```
+
+### `FormProvider`
+
+Context provider for sharing plugin configuration across a subtree without global registration. Useful when multiple form instances in the same app need different plugins.
+
+```tsx
+import { FormProvider } from '@canard/schema-form';
+
+<FormProvider
+  formTypeInputDefinitions={customDefinitions}
+  CustomFormTypeRenderer={MyRenderer}
+  formatError={myFormatError}
+>
+  <Form jsonSchema={schema} />
+</FormProvider>
+```
+
+## Hooks
+
+### `useFormSubmit`
+
+```ts
+const { submit, pending } = useFormSubmit(formRef);
+// submit: () => Promise<void>
+// pending: boolean | undefined
+```
+
+Synchronizes with the form's internal submit handler via `useSyncExternalStore`. `pending` is `true` while the `onSubmit` promise is in flight.
+
+```tsx
+function SubmitButton({ formRef }) {
+  const { submit, pending } = useFormSubmit(formRef);
+  return (
+    <button onClick={submit} disabled={pending}>
+      {pending ? 'Submitting…' : 'Submit'}
+    </button>
+  );
+}
+```
+
+### `useSchemaNodeTracker`
+
+```ts
+const version = useSchemaNodeTracker(node, eventMask?);
+// Returns an incrementing number; triggers re-render on matching events.
+// Default mask: all events (BIT_MASK_ALL)
+```
+
+```tsx
+function PriceDisplay({ node }: { node: NumberNode }) {
+  useSchemaNodeTracker(node); // re-render whenever node emits any event
+  return {node.value};
+}
+```
+
+### `useSchemaNodeSubscribe`
+
+```ts
+useSchemaNodeSubscribe(node, (event) => {
+  console.log(event.type, node.value);
+});
+// Raw event subscription — does NOT trigger re-render by itself.
+```
+
+### `useChildNodeComponentMap`
+
+```ts
+const componentMap = useChildNodeComponentMap(objectNode);
+// Returns a Map<string, ChildNodeComponent> keyed by field name.
+// Use inside custom FormTypeInput components to render child fields.
+```
+
+### `useChildNodeErrors`
+
+```ts
+const errors = useChildNodeErrors(node);
+// Returns flattened array of all errors from node and its descendants.
+```
+
+## `registerPlugin`
+
+```ts
+registerPlugin(plugin: SchemaFormPlugin | null): void
+```
+
+Globally registers a plugin. Deduplicated by stable content hash — calling with the same plugin object twice is a no-op.
+
+Call `registerPlugin(null)` to reset all plugins to system defaults.
+
+## `SchemaFormPlugin` Interface
+
+```ts
+interface SchemaFormPlugin {
+  FormGroup?:               ComponentType<FormTypeRendererProps>;
+  FormLabel?:               ComponentType<FormTypeRendererProps>;
+  FormInput?:               ComponentType<FormTypeRendererProps>;
+  FormError?:               ComponentType<FormTypeRendererProps>;
+  formTypeInputDefinitions?: FormTypeInputDefinition[];
+  validator?:               ValidatorPlugin;
+  formatError?:             FormatError;
+}
+```
+
+## `ValidatorPlugin` Interface
+
+```ts
+interface ValidatorPlugin {
+  bind(instance: any): void;
+  compile(jsonSchema: JsonSchema): ValidateFunction;
+}
+
+type ValidateFunction = (
+  value: any
+) => JsonSchemaError[] | null | Promise<JsonSchemaError[] | null>;
+```
+
+## `FormTypeInputProps` Interface
+
+All custom input components registered via `formTypeInputDefinitions` receive these props.
+
+```ts
+interface FormTypeInputProps<Value, Context, WatchValues, Schema, Node> {
+  jsonSchema:         Schema;
+  node:               Node;
+  type:               JsonSchemaType;     // 'string' | 'number' | 'boolean' | ...
+  name:               string;
+  path:               string;
+  required:           boolean;
+  nullable:           boolean;
+  readOnly:           boolean;
+  disabled:           boolean;
+  value:              Value | undefined;
+  defaultValue:       Value | undefined;
+  onChange:           SetStateFnWithOptions<Value | undefined>;
+  errors:             JsonSchemaError[];
+  errorVisible:       boolean;
+  watchValues:        WatchValues;        // values from computed.watch paths
+  onFileAttach:       (file: File | File[] | undefined) => void;
+  ChildNodeComponents: ChildNodeComponent[];
+  placeholder?:       string;
+  className?:         string;
+  style?:             CSSProperties;
+  context:            Context;
+  [alt: string]:      any;               // extra props from Form.Group
+}
+```
+
+## `SchemaNode` Interface
+
+```ts
+interface SchemaNode {
+  // Identity
+  readonly type:       string;           // node type ('string', 'object', etc.)
+  readonly schemaType: JsonSchemaType;
+  readonly jsonSchema: JsonSchema;
+  readonly required:   boolean;
+  readonly nullable:   boolean;
+
+  // Tree structure
+  readonly depth:      number;
+  readonly isRoot:     boolean;
+  readonly parentNode: SchemaNode | null;
+  readonly name:       string;
+  readonly path:       string;
+
+  // Value
+  readonly value:        any;
+  readonly defaultValue: any;
+  readonly enhancedValue: any;  // includes virtual field values
+  setValue(input: any | ((prev: any) => any), option?: SetValueOption): void;
+
+  // Computed properties
+  readonly visible:   boolean;
+  readonly active:    boolean;
+  readonly readOnly:  boolean;
+  readonly disabled:  boolean;
+
+  // State
+  readonly dirty:      boolean;
+  readonly touched:    boolean;
+  readonly validated:  boolean;
+  readonly initialized: boolean;
+  readonly errors:     JsonSchemaError[];
+  readonly globalErrors: JsonSchemaError[];
+  readonly globalState:  NodeStateFlags;
+
+  // Validation
+  validate(): Promise<JsonSchemaError[]>;
+
+  // Navigation
+  find(path: string):    SchemaNode | undefined;
+  findAll(path: string): SchemaNode[];
+
+  // Events
+  publish(event: NodeEventType): void;
+  subscribe(listener: NodeListener): () => void;
+}
+```
+
+## `ArrayNode` Methods
+
+```ts
+interface ArrayNode extends SchemaNode {
+  readonly length:   number;
+  readonly children: Array<{ node: SchemaNode }>;
+  push(value?: any): void;    // add item (respects maxItems)
+  remove(index: number): void;
+  clear(): void;              // remove all items (respects minItems)
+}
+```
+
+## Node Type Guards
+
+```ts
+import {
+  isArrayNode, isObjectNode, isStringNode, isBooleanNode,
+  isNumberNode, isBranchNode, isTerminalNode, isVirtualNode,
+  isSchemaNode,
+} from '@canard/schema-form';
+
+if (isArrayNode(node)) {
+  node.push();  // TypeScript knows it's ArrayNode here
+}
+```
+
+## Error Guards
+
+```ts
+import {
+  isSchemaFormError,
+  isJsonSchemaError,
+  isValidationError,
+  isUnhandledError,
+} from '@canard/schema-form';
+```
+
+## `FormatError` Function
+
+```ts
+type FormatError = (
+  error:   JsonSchemaError,
+  node:    SchemaNode,
+  context: Dictionary,
+) => ReactNode;
+
+// Example
+const formatError: FormatError = (error, node, context) => {
+  if (error.keyword === 'required')
+    return `${node.jsonSchema.title ?? node.name} is required`;
+  if (error.keyword === 'minLength')
+    return `Minimum ${error.details?.limit} characters required`;
+  return error.message;
+};
+```
+
+## `JSONPointer`
+
+```ts
+import { JSONPointer } from '@canard/schema-form';
+
+// Static utilities for RFC 6901 JSONPointer strings
+JSONPointer.escape('path/with/slashes');  // → 'path~1with~1slashes'
+JSONPointer.unescape('path~1with~1slashes');  // → 'path/with/slashes'
+```
+
+<ForAI>
+
+## AI API Quick-Reference
+
+```ts
+// ── registerPlugin ─────────────────────────────────────────────
+registerPlugin(plugin: SchemaFormPlugin | null): void
+// null → reset all plugins
+
+// ── Form props (all optional except jsonSchema) ─────────────────
+jsonSchema:                Schema                           // required
+defaultValue?:             Value
+onChange?:                 (value: Value) => void
+onSubmit?:                 (value: Value) => Promise<void> | void
+onValidate?:               (errors: JsonSchemaError[]) => void
+onStateChange?:            (state: NodeStateFlags) => void
+showError?:                boolean | ShowError              // default: DirtyTouched
+validationMode?:           ValidationMode                  // default: OnChange|OnRequest
+readOnly?:                 boolean
+disabled?:                 boolean
+errors?:                   JsonSchemaError[]
+formTypeInputDefinitions?: FormTypeInputDefinition[]
+formTypeInputMap?:         FormTypeInputMap
+CustomFormTypeRenderer?:   ComponentType<FormTypeRendererProps>
+formatError?:              FormatError
+validatorFactory?:         ValidatorFactory
+context?:                  Dictionary
+children?:                 ReactNode | (props: FormChildrenProps) => ReactNode
+ref?:                      Ref<FormHandle>
+
+// ── FormHandle ──────────────────────────────────────────────────
+node?:              SchemaNode
+getValue():         Value
+setValue(v, opts?): void
+getState():         NodeStateFlags
+setState(s):        void
+clearState():       void
+getErrors():        JsonSchemaError[]
+validate():         Promise<JsonSchemaError[]>
+showError(b):       void
+focus(path):        void
+select(path):       void
+findNode(path):     SchemaNode | null
+findNodes(path):    SchemaNode[]
+reset():            void
+submit:             TrackableHandlerFunction   // .pending, .subscribe()
+getAttachedFilesMap(): AttachedFilesMap
+
+// ── SchemaNode key members ──────────────────────────────────────
+node.value / node.defaultValue / node.enhancedValue
+node.setValue(input, option?)
+node.errors / node.globalErrors
+node.dirty / node.touched / node.validated / node.initialized
+node.visible / node.active / node.readOnly / node.disabled
+node.required / node.nullable
+node.path / node.name / node.depth / node.isRoot
+node.find(path) / node.findAll(path)
+node.validate()
+node.publish(NodeEventType.RequestRemount)
+node.subscribe(listener) → unsubscribe
+
+// ── ArrayNode additional ────────────────────────────────────────
+arrayNode.length / arrayNode.children
+arrayNode.push(value?) / arrayNode.remove(index) / arrayNode.clear()
+
+// ── Hooks ───────────────────────────────────────────────────────
+useFormSubmit(ref)                     → { submit, pending }
+useSchemaNodeTracker(node, mask?)      → version: number
+useSchemaNodeSubscribe(node, listener) → void
+useChildNodeComponentMap(node)         → Map<string, ChildNodeComponent>
+useChildNodeErrors(node)               → JsonSchemaError[]
+```
+
+</ForAI>
+
+---
+
+## Core Concepts
+
+import ForAI from '@site/src/components/ForAI';
+
+# Core Concepts
+
+## JSON Schema as the Single Source of Truth
+
+The form structure, field types, validation rules, and conditional logic are all
+encoded in a single JSON Schema object. The library parses this schema at mount
+time and constructs an internal **node tree** — one node per schema
+field. You never manually define form fields or validation rules in component code.
+
+```ts
+const schema = {
+  type: 'object',
+  properties: {
+    title:    { type: 'string', minLength: 1 },
+    price:    { type: 'number', minimum: 0 },
+    inStock:  { type: 'boolean' },
+    tags:     { type: 'array', items: { type: 'string' } },
+  },
+  required: ['title', 'price'],
+};
+// → ObjectNode
+//     ├── StringNode  (title)
+//     ├── NumberNode  (price)
+//     ├── BooleanNode (inStock)
+//     └── ArrayNode   (tags)
+//           └── StringNode (items)
+```
+
+## Node Tree
+
+Each node is a reactive object that owns its own value, validation errors,
+and state flags (`dirty`, `touched`, `validated`).
+Changes propagate upward: when a leaf node's value changes, all ancestor nodes
+receive an `UpdateValue` event and update their aggregated value.
+
+### Node State Flags
+
+| Property | Type | Description |
+|---|---|---|
+| `value` | `any` | Current value |
+| `defaultValue` | `any` | Value at initialization |
+| `errors` | `JsonSchemaError[]` | Validation errors for this node |
+| `dirty` | `boolean` | Value changed since initialization |
+| `touched` | `boolean` | User has interacted with this field |
+| `validated` | `boolean` | Validation has been run |
+| `visible` | `boolean` | Computed — controls visibility |
+| `active` | `boolean` | Computed — controls active state |
+| `readOnly` | `boolean` | Computed or inherited |
+| `disabled` | `boolean` | Computed or inherited |
+| `initialized` | `boolean` | Node has completed initialization |
+| `required` | `boolean` | Field is required in parent schema |
+| `nullable` | `boolean` | Schema type includes `"null"` |
+
+### Node Navigation
+
+```ts
+// Absolute path from root (RFC 6901 JSONPointer)
+const node = rootNode.find('/address/street');
+
+// Relative path from current node
+const sibling = node.find('./city');
+
+// Find all matching nodes
+const allItems = rootNode.findAll('/items/*');
+```
+
+## Plugin Architecture
+
+The library is split into two independent plugin layers. You can mix and match
+any validator with any UI library.
+
+```
+┌─────────────────────────────────────────────────────┐
+│                  SchemaFormPlugin                    │
+│                                                      │
+│  FormGroup   FormLabel   FormInput   FormError       │  ← UI layer
+│  formTypeInputDefinitions                            │
+├─────────────────────────────────────────────────────┤
+│                  ValidatorPlugin                     │
+│                                                      │
+│  bind(instance)                                      │  ← Validation layer
+│  compile(jsonSchema) → ValidateFunction              │
+└─────────────────────────────────────────────────────┘
+```
+
+### Plugin Merge Behavior
+
+When multiple plugins are registered, the merge rules are:
+
+| Property | Merge strategy |
+|---|---|
+| `FormGroup`, `FormLabel`, `FormInput`, `FormError` | Last wins |
+| `formTypeInputDefinitions` | Prepended (first match wins) |
+| `validator` | Last wins |
+| `formatError` | Last wins |
+
+## FormType System
+
+A `FormTypeInputDefinition` pairs a **test condition** with
+a **React component**. The library evaluates all registered definitions
+in priority order and uses the first matching component to render a field.
+
+The test can be a plain object (declarative) or a function (imperative):
+
+```ts
+// Object test — declarative
+const definition: FormTypeInputDefinition = {
+  test: { type: 'string', format: 'date' },  // matches date fields
+  Component: DatePickerInput,
+};
+
+// Function test — imperative
+const definition: FormTypeInputDefinition = {
+  test: (hint) => hint.jsonSchema.widget === 'richtext',
+  Component: RichTextEditor,
+};
+
+// Hint object available in test function:
+type Hint = {
+  type: JsonSchemaType;       // 'string' | 'number' | 'boolean' | ...
+  path: string;               // JSONPointer path
+  required: boolean;
+  nullable: boolean;
+  jsonSchema: JsonSchema;
+  format?: string;
+  formType?: string;          // custom jsonSchema.formType field
+};
+```
+
+### FormTypeInputMap (path-based override)
+
+```ts
+// Map specific paths to specific components
+const formTypeInputMap: FormTypeInputMap = {
+  '/user/avatar':     AvatarUploader,
+  '/items/*/price':   CurrencyInput,   // * matches any segment
+};
+
+<Form jsonSchema={schema} formTypeInputMap={formTypeInputMap} />
+```
+
+## Computed Properties
+
+Fields can react to sibling or parent values using JSONPointer expressions in
+the `computed` (or `&computed`) key. Dependencies are
+tracked automatically from the expression, or declared explicitly via `watch`.
+
+```ts
+{
+  type: 'object',
+  properties: {
+    isPremium: { type: 'boolean' },
+    discount: {
+      type: 'number',
+      computed: {
+        visible:  '../isPremium === true',   // show only for premium
+        readOnly: '../isPremium === false',  // lock if not premium
+        watch: ['../isPremium'],             // explicit dep (optional)
+      },
+    },
+  },
+}
+```
+
+Supported computed keys: `visible`, `active`, `readOnly`, `disabled`, `watch`.
+
+### JSONPointer Extensions (computed scope only)
+
+| Syntax | Meaning |
+|---|---|
+| `../field` | Parent node's `field` |
+| `./field` | Current node's `field` (relative) |
+| `..` | Navigate to parent |
+| `*` | Wildcard — any segment (FormTypeInputMap only) |
+
+## Schema Composition
+
+The library supports all standard JSON Schema composition keywords.
+`oneOf` and `anyOf` branches can use the custom
+`&if` expression to bind activation to a field value.
+
+```ts
+// Standard if/then/else
+{
+  if:   { properties: { type: { enum: ['movie'] } } },
+  then: { properties: { releaseDate: { type: 'string', format: 'date' } } },
+  else: { properties: { version:     { type: 'string' } } },
+}
+
+// oneOf with &if expression (exclusive branches)
+{
+  oneOf: [
+    { '&if': "./type === 'movie'", properties: { director: { type: 'string' } } },
+    { '&if': "./type === 'game'",  properties: { platform: { type: 'string' } } },
+  ],
+}
+
+// anyOf with &if (non-exclusive, multiple can be active)
+{
+  anyOf: [
+    { '&if': './flag1 === true', properties: { field1: { type: 'string' } } },
+    { '&if': './flag2 === true', properties: { field2: { type: 'string' } } },
+  ],
+}
+
+// allOf (always merged)
+{
+  allOf: [
+    { properties: { firstName: { type: 'string' } } },
+    { properties: { lastName:  { type: 'string' } } },
+    { required: ['firstName', 'lastName'] },
+  ],
+}
+```
+
+### Conditional setValue Filtering
+
+When a **parent node** calls `setValue()`, fields that
+do not match the active `oneOf`/`anyOf` branch are
+automatically removed from the value. When a **child node** calls
+`setValue()`, this filtering is bypassed — the value propagates
+regardless of the current branch condition.
+
+## Validation System
+
+### ValidationMode
+
+```ts
+enum ValidationMode {
+  None      = 0,   // No automatic validation
+  OnChange  = 1,   // Validate after every setValue()
+  OnRequest = 2,   // Validate only when validate() is called
+}
+
+// Default: OnChange | OnRequest (bitwise OR)
+<Form validationMode={ValidationMode.OnChange | ValidationMode.OnRequest} />
+```
+
+### ShowError
+
+```ts
+enum ShowError {
+  Dirty        = 1,  // show when node.dirty === true
+  Touched      = 2,  // show when node.touched === true
+  DirtyTouched = 3,  // show when both dirty AND touched (default)
+}
+
+<Form showError={ShowError.DirtyTouched} />  // default
+<Form showError={true} />                    // always show
+<Form showError={false} />                   // never show
+```
+
+### Error Structure
+
+```ts
+interface JsonSchemaError {
+  dataPath: string;   // JSONPointer to the failing field
+  keyword:  string;   // JSON Schema keyword (e.g., 'minLength', 'required')
+  message:  string;
+  details:  any;      // keyword-specific details
+  source:   any;      // raw error from the validator library
+}
+```
+
+## Event System
+
+Nodes communicate through a batched event system. Events scheduled in the same
+synchronous call stack are merged into a single batch and dispatched in the next
+microtask. `UpdateValue` is the exception — it fires synchronously
+(immediate mode) after initialization completes.
+
+```ts
+// Key event types (NodeEventType enum)
+UpdateValue              // value changed — synchronous after init
+UpdateState              // dirty/touched/validated changed
+UpdateError              // validation errors changed
+UpdateComputedProperties // computed visible/readOnly/disabled changed
+UpdateChildren           // array/object children added or removed
+RequestRefresh           // internal: sync uncontrolled component
+RequestRemount           // external: force full component remount
+```
+
+<ForAI>
+
+## AI Concept Glossary
+
+| Term | Definition |
+|---|---|
+| `SchemaNode` | Base interface for all nodes — the public API surface |
+| `StringNode` / `NumberNode` / `BooleanNode` / `NullNode` | Terminal nodes — no children |
+| `ObjectNode` / `ArrayNode` | Branch nodes — have children |
+| `VirtualNode` | Non-schema node created for conditional branches (`oneOf`/`anyOf`) |
+| `BranchStrategy` | Strategy for complex nested structures with child nodes |
+| `TerminalStrategy` | Strategy for simple non-nested structures |
+| `FormTypeInputDefinition` | `{ test, Component }` pair — maps a schema pattern to a React component |
+| `FormTypeInputMap` | `{ [jsonPointerPath]: Component }` — path-based component override |
+| `FormTypeInputProps` | Props interface all custom input components must satisfy |
+| `FormTypeRendererProps` | Props for `FormGroup`/`FormLabel`/`FormInput`/`FormError` renderer components |
+| `SchemaFormPlugin` | Plugin object with optional renderer components + `formTypeInputDefinitions` + `validator` + `formatError` |
+| `ValidatorPlugin` | `{ bind(instance), compile(jsonSchema) → ValidateFunction }` |
+| `ValidateFunction` | `(value) => JsonSchemaError[] \| null \| Promise<...>` |
+| `computed` / `&computed` | JSON Schema extension for reactive field properties |
+| `&if` | JSON Schema extension — expression to activate a `oneOf`/`anyOf` branch |
+| `enhancedValue` | Value including virtual/conditional field values — used for validation |
+| `ShowError` | Enum controlling when validation errors are displayed |
+| `ValidationMode` | Enum controlling when validation runs |
+| `NodeEventType` | Enum of all events nodes can emit |
+| `SetValueOption` | Bitwise options for `setValue()` — `Overwrite`, `Merge`, `Isolate` |
+| `FormHandle` | Ref interface for imperative form control |
+| `FormProvider` | Context provider for sharing plugin config across a subtree |
+| `JSONPointer` | RFC 6901 path string (e.g., `/address/street`) — extended with `..`, `.`, `*` |
+
+</ForAI>
+
+---
+
+## Auto-Calculated Fields
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Auto-Calculated Fields
+
+Demonstrates `computed.derived` — fields whose values are automatically calculated from other fields using mathematical expressions. Change the price, quantity, tax rate, or discount to see the final price update in real-time.
+
+:::info Key Features
+- `computed.derived` — auto-calculated field values
+- Complex math expressions with parent path references (`../field`)
+- Real-time recalculation on dependency changes
+:::
+
+<BrowserOnly fallback={Loading demo...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/AutoCalculationDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+---
+
+## Basic Form
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Basic Form
+
+A simple form demonstrating the most common field types. This example shows how `@canard/schema-form` renders text inputs, numbers, dates, enums, textareas, and switches from a single JSON Schema.
+
+:::info Key Features
+- `type: string` — text input
+- `type: integer` — number input
+- `format: date` — date picker
+- `enum` — dropdown select
+- `format: textarea` — multi-line text
+- `formType: switch` — toggle switch
+:::
+
+<BrowserOnly fallback={Loading demo...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/BasicFormDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+---
+
+## Conditional Registration Form
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Conditional Registration Form
+
+An event registration form with multi-level `if/then/else` conditions. Different required fields appear based on the combination of participant type and region.
+
+:::info Key Features
+- Nested `if/then/else` with multiple condition levels
+- Condition 1: adult + international → passport + visa required
+- Condition 2: adult + domestic → national ID required
+- Condition 3: minor → guardian consent + contact required
+:::
+
+<BrowserOnly fallback={Loading demo...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/ConditionalRegistrationDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+---
+
+## Dynamic Billing Form
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Dynamic Billing Form
+
+A cascading conditional form where the combination of account type, subscription plan, and payment method determines which fields are required. This demonstrates 3-level `if/then/else` logic.
+
+:::info Key Features
+- 3-field cascading conditions (accountType × subscriptionPlan × paymentMethod)
+- Business + invoice → all accounting fields required
+- Business + card → basic company info required
+- Personal + premium → billing address required
+- Personal + free → only email required
+:::
+
+<BrowserOnly fallback={Loading demo...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/DynamicBillingDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+---
+
+## Employment Contract Form
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Employment Contract Form
+
+Uses `oneOf` with `const` field matching to display completely different field sets based on the selected employment type. Full-time employees see salary and benefits, while contractors see hourly rates and working hours.
+
+:::info Key Features
+- `oneOf` with `const` — exclusive schema branching
+- full_time: salary + bonus + benefits (nested object) + probation
+- part_time: contract type + weekly hours
+- contractor: contract type + conditional working hours (`computed.active`)
+:::
+
+<BrowserOnly fallback={Loading demo...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/EmploymentContractDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+---
+
+## Examples
+
+import ForAI from '@site/src/components/ForAI';
+
+# Examples
+
+Explore interactive demos and code patterns for `@canard/schema-form`.
+
+## Interactive Demos
+
+Try these live demos to see JSON Schema features in action:
+
+### Getting Started
+- [Basic Form](./basic-form) — Common field types: text, number, date, enum, switch
+- [Auto-Calculation](./auto-calculation) — Computed derived values with live formula
+
+### Advanced Patterns
+- [Conditional Registration](./conditional-registration) — Multi-level if/then/else conditions
+- [Dynamic Billing](./dynamic-billing) — Cascading conditions across 3 fields
+- [Employment Contract](./employment-contract) — oneOf with const-based field switching
+- [Product Catalog](./product-catalog) — Nested oneOf with multi-level branching
+- [Media Registration](./media-registration) — Complex oneOf with arrays and nested objects
+- [Role-Based Access](./role-based-access) — Field visibility vs activity control
+- [Nested Profile & Security](./nested-profile) — Deep nesting with conditional validation
+- [Tuple Arrays](./tuple-arrays) — Fixed-length typed arrays with prefixItems
+
+---
+
+## Code Examples
+
+## Basic Form — Primitive Fields
+
+```tsx
+import { Form, ShowError } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name:      { type: 'string',  title: 'Name',     minLength: 1, maxLength: 100 },
+    age:       { type: 'number',  title: 'Age',      minimum: 0, maximum: 150 },
+    email:     { type: 'string',  title: 'Email',    format: 'email' },
+    isActive:  { type: 'boolean', title: 'Active' },
+    bio:       { type: 'string',  title: 'Bio',      maxLength: 500 },
+  },
+  required: ['name', 'email'],
+} as const;
+
+function BasicForm() {
+  return (
+    <Form
+      jsonSchema={schema}
+      showError={ShowError.DirtyTouched}
+      onSubmit={async (value) => {
+        console.log(value);
+        // value is typed as { name: string; age?: number; email: string; ... }
+      }}
+    />
+  );
+}
+```
+
+## Nullable Fields
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    name:     { type: 'string' },
+    nickname: { type: ['string', 'null'] as const },  // nullable
+    score:    { type: ['number', 'null'] as const },   // nullable
+  },
+} as const;
+
+// Custom input that handles null
+const NullableTextInput: FC<FormTypeInputProps<string | null>> = ({
+  value, onChange, nullable, placeholder,
+}) => (
+  <input
+    value={value ?? ''}
+    placeholder={nullable ? `${placeholder} (optional)` : placeholder}
+    onChange={(e) => onChange(e.target.value || (nullable ? null : ''))}
+  />
+);
+```
+
+## Conditional Rendering — if/then/else
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    accountType: {
+      type: 'string',
+      title: 'Account Type',
+      enum: ['personal', 'business'],
+    },
+  },
+  if: {
+    properties: { accountType: { const: 'business' } },
+  },
+  then: {
+    properties: {
+      companyName: { type: 'string', title: 'Company Name', minLength: 1 },
+      taxId:       { type: 'string', title: 'Tax ID' },
+    },
+    required: ['companyName'],
+  },
+  else: {
+    properties: {
+      dateOfBirth: { type: 'string', title: 'Date of Birth', format: 'date' },
+    },
+  },
+} as const;
+
+function AccountForm() {
+  return <Form jsonSchema={schema} />;
+  // When accountType='business': shows companyName + taxId
+  // When accountType='personal': shows dateOfBirth
+}
+```
+
+## oneOf — Exclusive Branches
+
+Use `&if` to bind each branch activation to a field value. Only the matching branch's fields appear in the form.
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    paymentMethod: {
+      type: 'string',
+      title: 'Payment Method',
+      enum: ['card', 'bank', 'paypal'],
+    },
+  },
+  oneOf: [
+    {
+      '&if': "./paymentMethod === 'card'",
+      properties: {
+        cardNumber: { type: 'string', title: 'Card Number', pattern: '^[0-9]{16}$' },
+        expiryDate: { type: 'string', title: 'Expiry',      format: 'date' },
+        cvv:        { type: 'string', title: 'CVV',         pattern: '^[0-9]{3,4}$' },
+      },
+      required: ['cardNumber', 'expiryDate', 'cvv'],
+    },
+    {
+      '&if': "./paymentMethod === 'bank'",
+      properties: {
+        accountNumber: { type: 'string', title: 'Account Number' },
+        routingNumber:  { type: 'string', title: 'Routing Number' },
+      },
+      required: ['accountNumber', 'routingNumber'],
+    },
+    {
+      '&if': "./paymentMethod === 'paypal'",
+      properties: {
+        paypalEmail: { type: 'string', title: 'PayPal Email', format: 'email' },
+      },
+      required: ['paypalEmail'],
+    },
+  ],
+} as const;
+```
+
+## anyOf — Non-Exclusive Branches
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    notifyBySms:   { type: 'boolean', title: 'Notify by SMS' },
+    notifyByEmail: { type: 'boolean', title: 'Notify by Email' },
+  },
+  anyOf: [
+    {
+      '&if': './notifyBySms === true',
+      properties: {
+        phoneNumber: { type: 'string', title: 'Phone Number', format: 'phone' },
+      },
+      required: ['phoneNumber'],
+    },
+    {
+      '&if': './notifyByEmail === true',
+      properties: {
+        notificationEmail: { type: 'string', title: 'Notification Email', format: 'email' },
+      },
+      required: ['notificationEmail'],
+    },
+  ],
+} as const;
+// Both branches can be active simultaneously
+```
+
+## allOf — Schema Composition
+
+```tsx
+const basePersonSchema = {
+  properties: {
+    firstName: { type: 'string', title: 'First Name', minLength: 1 },
+    lastName:  { type: 'string', title: 'Last Name',  minLength: 1 },
+  },
+  required: ['firstName', 'lastName'],
+};
+
+const contactInfoSchema = {
+  properties: {
+    email:  { type: 'string', title: 'Email',  format: 'email' },
+    phone:  { type: 'string', title: 'Phone' },
+  },
+  required: ['email'],
+};
+
+const schema = {
+  type: 'object',
+  allOf: [basePersonSchema, contactInfoSchema],
+} as const;
+```
+
+## Array Fields
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    tags: {
+      type: 'array',
+      title: 'Tags',
+      items: { type: 'string', minLength: 1 },
+      minItems: 1,
+      maxItems: 10,
+    },
+    addresses: {
+      type: 'array',
+      title: 'Addresses',
+      items: {
+        type: 'object',
+        properties: {
+          street: { type: 'string', title: 'Street' },
+          city:   { type: 'string', title: 'City'   },
+          zip:    { type: 'string', title: 'ZIP'    },
+        },
+        required: ['street', 'city'],
+      },
+    },
+  },
+} as const;
+
+// Access array node imperatively
+function ArrayManager({ formRef }) {
+  const addAddress = () => {
+    const node = formRef.current?.findNode('/addresses');
+    if (isArrayNode(node)) node.push();
+  };
+
+  const removeAddress = (index: number) => {
+    const node = formRef.current?.findNode('/addresses');
+    if (isArrayNode(node)) node.remove(index);
+  };
+}
+```
+
+## Computed Properties — Reactive Fields
+
+```tsx
+const schema = {
+  type: 'object',
+  properties: {
+    isPremium:    { type: 'boolean', title: 'Premium Member' },
+    discount:     {
+      type: 'number',
+      title: 'Discount %',
+      minimum: 0,
+      maximum: 100,
+      computed: {
+        visible:  '../isPremium === true',
+        readOnly: '../isPremium === false',
+      },
+    },
+    memberSince:  {
+      type: 'string',
+      title: 'Member Since',
+      format: 'date',
+      computed: {
+        visible: '../isPremium === true',
+        watch: ['../isPremium'],
+      },
+    },
+    totalOrders: { type: 'number', title: 'Total Orders' },
+    averageOrder: {
+      type: 'number',
+      title: 'Average Order Value',
+      computed: {
+        // visible when total orders > 0
+        visible: '../totalOrders > 0',
+        watch: ['../totalOrders'],
+      },
+    },
+  },
+} as const;
+```
+
+## Custom FormTypeInput Component
+
+```tsx
+import type { FC } from 'react';
+import type { FormTypeInputProps } from '@canard/schema-form';
+
+// Custom rating input for { type: 'number', formType: 'rating' }
+const RatingInput: FC<FormTypeInputProps<number>> = ({
+  value,
+  onChange,
+  readOnly,
+  disabled,
+  jsonSchema,
+}) => {
+  const max = jsonSchema.maximum ?? 5;
+  return (
+    
+      {Array.from({ length: max }, (_, i) => i + 1).map((star) => (
+        <button
+          key={star}
+          type="button"
+          disabled={disabled || readOnly}
+          className={star <= (value ?? 0) ? 'active' : ''}
+          onClick={() => onChange(star)}
+        >
+          ★
+        </button>
+      ))}
+    
+  );
+};
+
+// Register
+registerPlugin({
+  formTypeInputDefinitions: [
+    {
+      test: (hint) => hint.formType === 'rating',
+      Component: RatingInput,
+    },
+  ],
+});
+
+// Use in schema
+const schema = {
+  type: 'object',
+  properties: {
+    rating: { type: 'number', formType: 'rating', minimum: 1, maximum: 5 },
+  },
+};
+```
+
+## Validation and Error Display
+
+```tsx
+import { Form, ShowError, ValidationMode } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    username: {
+      type: 'string',
+      title: 'Username',
+      minLength: 3,
+      maxLength: 20,
+      pattern: '^[a-zA-Z0-9_]+$',
+      errorMessages: {
+        minLength: 'Username must be at least 3 characters',
+        maxLength: 'Username cannot exceed 20 characters',
+        pattern:   'Only letters, numbers, and underscores allowed',
+      },
+    },
+  },
+  required: ['username'],
+} as const;
+
+// Show errors immediately (e.g., for a server-rendered form)
+<Form
+  jsonSchema={schema}
+  showError={true}
+  validationMode={ValidationMode.OnChange}
+/>
+
+// Show errors only after submission attempt
+<Form
+  jsonSchema={schema}
+  showError={ShowError.Dirty}
+  validationMode={ValidationMode.OnRequest}
+  ref={formRef}
+/>
+// then: await formRef.current?.validate(); formRef.current?.showError(true);
+
+// Inject server-side errors
+<Form
+  jsonSchema={schema}
+  errors={[
+    { dataPath: '/username', keyword: 'unique', message: 'Username already taken' },
+  ]}
+  showError={true}
+/>
+```
+
+## Submit and Reset
+
+```tsx
+import { useRef } from 'react';
+import { Form, type FormHandle, useFormSubmit } from '@canard/schema-form';
+
+const schema = { type: 'object', properties: { name: { type: 'string' } } } as const;
+
+function MyForm() {
+  const formRef = useRef<FormHandle<typeof schema>>(null);
+  const { submit, pending } = useFormSubmit(formRef);
+
+  const handleSubmit = async (value: any) => {
+    await api.save(value);
+  };
+
+  const handleReset = () => {
+    formRef.current?.reset();
+  };
+
+  return (
+    <>
+      <Form
+        ref={formRef}
+        jsonSchema={schema}
+        onSubmit={handleSubmit}
+      />
+      <button onClick={submit} disabled={pending}>
+        {pending ? 'Saving…' : 'Save'}
+      </button>
+      <button type="button" onClick={handleReset}>
+        Reset
+      </button>
+    </>
+  );
+}
+```
+
+## Controlled vs Uncontrolled
+
+```tsx
+// ── Uncontrolled (recommended for most cases) ─────────────────
+// Use defaultValue + onChange. Form manages internal state.
+<Form
+  jsonSchema={schema}
+  defaultValue={{ name: 'Alice' }}
+  onChange={(value) => console.log(value)}
+/>
+
+// ── Imperative (for programmatic updates) ──────────────────────
+// Use ref to read/write values imperatively.
+formRef.current?.getValue();
+formRef.current?.setValue({ name: 'Bob' });
+
+// ── FormHandle setValue with merge ────────────────────────────
+// Merge only changed fields (deep merge)
+formRef.current?.setValue(
+  { address: { city: 'Seoul' } },
+  SetValueOption.Merge
+);
+```
+
+## Custom Layout with Form.Group
+
+```tsx
+const profileSchema = {
+  type: 'object',
+  properties: {
+    avatar:     { type: 'string', title: 'Avatar',      formType: 'image-upload' },
+    firstName:  { type: 'string', title: 'First Name',  minLength: 1 },
+    lastName:   { type: 'string', title: 'Last Name',   minLength: 1 },
+    bio:        { type: 'string', title: 'Bio',         maxLength: 500 },
+    website:    { type: 'string', title: 'Website',     format: 'uri' },
+  },
+  required: ['firstName', 'lastName'],
+} as const;
+
+function ProfileForm() {
+  return (
+    <Form jsonSchema={profileSchema} onSubmit={handleSubmit}>
+      
+        <Form.Group path="/avatar" />
+      
+      
+        <Form.Group path="/firstName" placeholder="First name" />
+        <Form.Group path="/lastName"  placeholder="Last name" />
+      
+      <Form.Group path="/bio"     placeholder="Tell us about yourself" />
+      <Form.Group path="/website" placeholder="https://..." />
+    </Form>
+  );
+}
+```
+
+## Watching Node State in Custom Components
+
+```tsx
+import { useSchemaNodeTracker } from '@canard/schema-form';
+
+function FieldStatus({ node }: { node: SchemaNode }) {
+  // Re-renders on any node event
+  useSchemaNodeTracker(node);
+
+  return (
+    
+      Value: {JSON.stringify(node.value)}
+      Dirty: {node.dirty ? 'yes' : 'no'}
+      Errors: {node.errors.length}
+      Visible: {node.visible ? 'yes' : 'no'}
+    
+  );
+}
+```
+
+## Programmatic Node Access
+
+```tsx
+import { isArrayNode, isObjectNode } from '@canard/schema-form';
+
+function FormController({ formRef }) {
+  const fillDefaults = () => {
+    formRef.current?.setValue({
+      status: 'draft',
+      createdAt: new Date().toISOString(),
+    }, SetValueOption.Merge);
+  };
+
+  const addTag = () => {
+    const tagsNode = formRef.current?.findNode('/tags');
+    if (isArrayNode(tagsNode)) tagsNode.push('new-tag');
+  };
+
+  const clearTags = () => {
+    const tagsNode = formRef.current?.findNode('/tags');
+    if (isArrayNode(tagsNode)) tagsNode.clear();
+  };
+
+  const validateField = async () => {
+    const emailNode = formRef.current?.findNode('/email');
+    if (emailNode) {
+      const errors = await emailNode.validate();
+      console.log('Email errors:', errors);
+    }
+  };
+}
+```
+
+## Type Inference
+
+```tsx
+import type { InferValueType } from '@winglet/json-schema';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name:     { type: 'string' },
+    age:      { type: 'number' },
+    nickname: { type: ['string', 'null'] as const },
+  },
+  required: ['name'],
+} as const;
+
+// Inferred type: { name: string; age?: number; nickname?: string | null }
+type FormValue = InferValueType<typeof schema>;
+
+// Type-safe ref
+const formRef = useRef<FormHandle<typeof schema>>(null);
+// formRef.current?.getValue() returns FormValue
+```
+
+<ForAI>
+
+## AI Example Patterns
+
+```ts
+// Pattern: register once at app entry
+registerPlugin(validatorPlugin); // e.g., ajvValidatorPlugin
+registerPlugin(uiPlugin);        // e.g., antd5Plugin
+
+// Pattern: minimal form
+<Form jsonSchema={schema} onSubmit={async (value) => { ... }} />
+
+// Pattern: controlled read
+<Form jsonSchema={schema} onChange={setValue} defaultValue={initial} />
+
+// Pattern: imperative ref
+const ref = useRef<FormHandle<typeof schema>>(null);
+<Form ref={ref} jsonSchema={schema} />
+await ref.current?.validate();
+ref.current?.getValue();
+ref.current?.setValue(patch, SetValueOption.Merge);
+ref.current?.focus('/fieldPath');
+ref.current?.reset();
+
+// Pattern: submit with loading
+const { submit, pending } = useFormSubmit(ref);
+<button onClick={submit} disabled={pending}>Submit</button>
+
+// Pattern: custom input component
+const MyInput: FC<FormTypeInputProps<string>> = ({ value, onChange, errors }) => (
+  <input value={value ?? ''} onChange={e => onChange(e.target.value)} />
+);
+registerPlugin({ formTypeInputDefinitions: [{ test: { type: 'string' }, Component: MyInput }] });
+
+// Pattern: conditional field (oneOf with &if)
+oneOf: [
+  { '&if': "./type === 'A'", properties: { fieldA: { type: 'string' } } },
+  { '&if': "./type === 'B'", properties: { fieldB: { type: 'string' } } },
+]
+
+// Pattern: reactive visibility
+computed: { visible: '../otherField === true' }
+
+// Pattern: array manipulation
+const node = ref.current?.findNode('/items');
+if (isArrayNode(node)) { node.push(); node.remove(0); node.clear(); }
+
+// Pattern: inject server errors
+<Form errors={serverErrors} showError={true} />
+
+// Pattern: path-based component override
+<Form formTypeInputMap={{ '/profile/photo': ImageUploader, '/items/*/sku': SkuInput }} />
+```
+
+</ForAI>
+
+---
+
+## Media Registration Form
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Media Registration Form
+
+A complex media catalog form with `oneOf` branching at multiple levels. Games show stages (dynamic array), platforms (checkbox), and system specs. Movies show genres, release platforms, and actor lists.
+
+:::info Key Features
+- `&if` expression-based oneOf matching
+- Nested object-level oneOf (details branch)
+- Root-level oneOf (owner field changes placeholder)
+- Dynamic arrays with default values
+- Checkbox groups for multi-select
+:::
+
+<BrowserOnly fallback={Loading demo...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/MediaRegistrationDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+---
+
+## Nested Profile & Security Settings
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Nested Profile & Security Settings
+
+A deeply nested form with user profile, preferences, and security settings. Demonstrates conditional validation within nested objects, the `computed.active` property, and array fields with pattern validation.
+
+:::info Key Features
+- 3+ levels of object nesting
+- `if/then` inside nested object (profile.type)
+- `computed.active` — gender field disabled for age < 18
+- Nested notifications with boolean toggles
+- `oneOf` with const for privacy selection
+- Array with regex pattern validation (backup codes)
+- `minItems`/`maxItems` constraints
+:::
+
+<BrowserOnly fallback={Loading demo...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/NestedProfileDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+---
+
+## Product Catalog with Nested Branching
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Product Catalog with Nested Branching
+
+A product registration form with two levels of `oneOf` branching. The product type determines the first-level fields, and for physical products, the shipping method creates a second level of conditional fields.
+
+:::info Key Features
+- Nested `oneOf` — two levels of schema branching
+- Physical products: weight + dimensions + shipping (with nested oneOf)
+- Digital products: file size + format + download link
+- Service products: duration + availability array
+- Shipping oneOf: standard (days) vs express (hours)
+:::
+
+<BrowserOnly fallback={Loading demo...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/ProductCatalogDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+---
+
+## Role-Based Field Access Control
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Role-Based Field Access Control
+
+Demonstrates the difference between `&visible` and `&active` computed properties. Visible fields are hidden from the UI but **preserved in form data**. Active fields are both hidden and **removed from form data** when their condition is false.
+
+:::info Key Features
+- `&visible` — field hidden from UI but data preserved
+- `&active` — field hidden from UI and data removed
+- Guest: minimal fields
+- Member: membership-specific fields appear
+- Admin: admin permissions and code appear
+- Compare Form values to see data differences
+:::
+
+<BrowserOnly fallback={Loading demo...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/RoleBasedAccessDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+---
+
+## Tuple Arrays (prefixItems)
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Tuple Arrays (prefixItems)
+
+Demonstrates `prefixItems` from JSON Schema Draft 2020-12 for fixed-length, heterogeneous arrays. Each position in the array has its own schema with a specific type, creating structured tuples.
+
+:::info Key Features
+- `prefixItems` — positional schemas for array items
+- Coordinate: `[number, number, number]` — 3D point
+- RGB: `[number, number, number]` with `items: false` — strict tuple
+- Person: `[string, number, boolean]` — mixed types
+- Address: `[string, string, string]` with `items: false`
+:::
+
+:::caution Draft 2020-12 Requirement
+`prefixItems` is a **Draft 2020-12** keyword. To use it, you must register the `@canard/schema-form-ajv8-plugin/2020` validator plugin:
+
+```ts
+import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin/2020';
+registerPlugin(ajv8Plugin);
+```
+
+Without this plugin, the schema validator cannot process `prefixItems`, so validation will not work. The form itself will still render normally.
+:::
+
+<BrowserOnly fallback={Loading demo...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/TupleArraysDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+---
+
+## @canard/schema-form
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+<PackageHeader name="@canard/schema-form" />
+
+JSON Schema-driven React form engine with a two-layer plugin architecture:
+a **Validator plugin** for JSON Schema validation and
+a **UI plugin** for form rendering components.
+Declare your data shape once in JSON Schema — the library builds, validates,
+and manages the full form state tree automatically.
+
+## Live Demo
+
+Try the interactive form below to see what `@canard/schema-form` can build from JSON Schema alone.
+This conference registration form demonstrates conditional fields, computed values, and 10+ input types — all driven by a single schema.
+
+<BrowserOnly fallback={Loading demo...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/showcase/HeroDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+:::tip More Examples
+Explore 10 interactive examples covering if/then/else, oneOf, computed values, and more in the [Examples](./examples) section.
+:::
+
+:::tip UI Plugins
+Each form above is rendered with the [antd5-plugin](../schema-form-antd5-plugin/). See individual plugin pages for component catalogs: [antd5](../schema-form-antd5-plugin/) | [antd6](../schema-form-antd6-plugin/) | [MUI](../schema-form-mui-plugin/) | [antd-mobile](../schema-form-antd-mobile-plugin/)
+:::
+
+## Architecture
+
+```
+JSON Schema
+    │
+    ▼
+nodeFromJsonSchema()          ← builds a typed node tree
+    │
+    ├── StringNode / NumberNode / BooleanNode / NullNode   (terminal)
+    ├── ObjectNode / ArrayNode                             (branch)
+    └── VirtualNode                                        (conditional / computed)
+    │
+    ▼
+Plugin System
+    ├── ValidatorPlugin       ← compile(jsonSchema) → ValidateFunction
+    └── SchemaFormPlugin      ← FormGroup / FormLabel / FormInput / FormError
+                                 + formTypeInputDefinitions
+    │
+    ▼
+<Form>  →  React component tree
+```
+
+## Plugin System
+
+The library ships with *no default validator and no default UI components*.
+Both must be supplied via plugins before rendering any form.
+Plugins are registered globally with `registerPlugin()` and affect every
+`<Form>` in the application.
+
+  Validator plugin — integrates any validation library (AJV, Zod, Yup, etc.) by implementing <code>compile(jsonSchema)</code>.
+  UI plugin — provides <code>FormGroup</code>, <code>FormLabel</code>, <code>FormInput</code>, <code>FormError</code> renderer components and <code>formTypeInputDefinitions</code> for per-field input components.
+
+Official plugin packages:
+
+  <code>@canard/schema-form-ajv8-plugin</code> — AJV 8 validator
+  <code>@canard/schema-form-antd5-plugin</code> — Ant Design 5 UI
+  <code>@canard/schema-form-mui6-plugin</code> — MUI 6 UI
+
+## Node Types
+
+| Node | Schema types | Strategy |
+|---|---|---|
+| `StringNode` | `"string"` | terminal |
+| `NumberNode` | `"number"`, `"integer"` | terminal |
+| `BooleanNode` | `"boolean"` | terminal |
+| `NullNode` | `"null"` | terminal |
+| `ObjectNode` | `"object"` | branch (BranchStrategy or TerminalStrategy) |
+| `ArrayNode` | `"array"` | branch (BranchStrategy or TerminalStrategy) |
+| `VirtualNode` | conditional / oneOf / anyOf branches | special |
+
+## FormTypeInput Resolution Order
+
+When rendering a field, the library resolves which input component to use in this priority order (highest first):
+
+  Direct <code>FormTypeInput</code> prop on <code>Form.Group</code>
+  <code>formTypeInputMap</code> path mapping on <code>&lt;Form&gt;</code>
+  Form-level <code>formTypeInputDefinitions</code> prop
+  <code>FormProvider</code> <code>formTypeInputDefinitions</code>
+  Plugin-provided <code>formTypeInputDefinitions</code>
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@canard/schema-form` v0.10.5
+**Purpose**: JSON Schema-driven dynamic form generation for React with two-layer plugin architecture.
+
+### Plugin system
+```ts
+import type { SchemaFormPlugin } from '@canard/schema-form';
+import type { ValidatorPlugin } from '@canard/schema-form';
+import { registerPlugin } from '@canard/schema-form';
+```
+
+### Form component
+```ts
+import { Form } from '@canard/schema-form';
+import type { FormProps } from '@canard/schema-form';
+import type { FormHandle } from '@canard/schema-form';        // ref API: submit(), reset(), validate(), getValues()
+import type { FormChildrenProps } from '@canard/schema-form';  // render-prop children
+import type { FormLabelProps } from '@canard/schema-form';
+import type { FormErrorProps } from '@canard/schema-form';
+```
+
+### Node types
+```ts
+import type { SchemaNode } from '@canard/schema-form';
+import type { StringNode, NumberNode, BooleanNode, NullNode } from '@canard/schema-form';  // terminal
+import type { ObjectNode, ArrayNode } from '@canard/schema-form';                          // branch
+import type { VirtualNode } from '@canard/schema-form';                                    // conditional
+```
+
+### Enums
+```ts
+import { NodeState } from '@canard/schema-form';       // Initialized | Mounted | Unmounted
+import { ValidationMode } from '@canard/schema-form';  // OnChange | OnBlur | OnSubmit
+import { NodeEventType } from '@canard/schema-form';   // ValueChange | StateChange | ...
+import { SetValueOption } from '@canard/schema-form';  // Merge | Replace
+```
+
+### Type guards & error utilities
+```ts
+import { isArrayNode, isBooleanNode, isBranchNode, isNumberNode } from '@canard/schema-form';
+import { isSchemaFormError, isJsonSchemaError, isUnhandledError, isValidationError } from '@canard/schema-form';
+import { JSONPointer } from '@canard/schema-form';
+```
+
+### Architecture
+- No default validator or UI — both via plugins: `registerPlugin(plugin)`
+- Node tree: JSON Schema → nodeFromJsonSchema() → typed node tree
+- Input resolution: Direct prop > formTypeInputMap > form-level > FormProvider > plugin
+
+</ForAI>
+
+---
+
+## Schema Form Playground
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Schema Form Playground
+
+Edit the JSON Schema and code to see the form render in real-time.
+
+<BrowserOnly fallback={Loading playground...}>
+  {() => {
+    const SchemaFormPlayground = require('@site/src/components/SchemaFormPlayground').default;
+    return <SchemaFormPlayground />;
+  }}
+</BrowserOnly>
+
+---
+
+## Quick Start
+
+import ForAI from '@site/src/components/ForAI';
+
+# Quick Start
+
+## Installation
+
+```bash
+# Core library
+yarn add @canard/schema-form
+
+# Validator plugin (AJV 8)
+yarn add @canard/schema-form-ajv8-plugin ajv
+
+# UI plugin — pick one
+yarn add @canard/schema-form-antd5-plugin   # Ant Design 5
+yarn add @canard/schema-form-mui6-plugin    # MUI 6
+```
+
+## Register Plugins
+
+Register plugins **once** at application entry point, before any
+`<Form>` renders. The call is idempotent — duplicate registrations
+are ignored by content hash.
+
+```ts title="src/main.tsx (or index.tsx)"
+import { registerPlugin } from '@canard/schema-form';
+import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { antd5Plugin } from '@canard/schema-form-antd5-plugin';
+
+registerPlugin(ajvValidatorPlugin);
+registerPlugin(antd5Plugin);
+```
+
+## Minimal Form
+
+```tsx
+import { Form } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name:  { type: 'string',  title: 'Name',  minLength: 1 },
+    email: { type: 'string',  title: 'Email', format: 'email' },
+    age:   { type: 'number',  title: 'Age',   minimum: 0 },
+  },
+  required: ['name', 'email'],
+} as const;
+
+function MyForm() {
+  return (
+    <Form
+      jsonSchema={schema}
+      onSubmit={async (value) => {
+        console.log('submitted:', value);
+      }}
+    />
+  );
+}
+```
+
+## With onChange and Ref
+
+```tsx
+import { useRef, useState } from 'react';
+import { Form, type FormHandle, ShowError } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    username: { type: 'string', title: 'Username', minLength: 3 },
+    password: { type: 'string', title: 'Password', minLength: 8 },
+  },
+  required: ['username', 'password'],
+} as const;
+
+function LoginForm() {
+  const formRef = useRef<FormHandle<typeof schema>>(null);
+  const [value, setValue] = useState<any>({});
+
+  const handleSubmit = async (data: typeof value) => {
+    await api.login(data);
+  };
+
+  return (
+    <>
+      <Form
+        ref={formRef}
+        jsonSchema={schema}
+        onChange={setValue}
+        onSubmit={handleSubmit}
+        showError={ShowError.DirtyTouched}
+      />
+      <button onClick={() => formRef.current?.submit()}>
+        Login
+      </button>
+    </>
+  );
+}
+```
+
+## Custom Layout with Form.Group
+
+Use `Form.Group`, `Form.Label`, `Form.Input`,
+and `Form.Error` sub-components to build a custom layout.
+Each takes a `path` prop (JSONPointer string).
+
+```tsx
+<Form jsonSchema={schema} onSubmit={handleSubmit}>
+  
+    <Form.Group path="/firstName" />
+    <Form.Group path="/lastName" />
+  
+  <Form.Group path="/email" />
+  <Form.Group path="/birthDate" />
+</Form>
+```
+
+## Using the Children Render Prop
+
+```tsx
+<Form jsonSchema={schema}>
+  {({ value, errors, node }) => (
+    <>
+      <Form.Input path="/email" />
+      <Form.Error path="/email" />
+      {value?.role === 'admin' && <Form.Group path="/permissions" />}
+      <button disabled={(errors?.length ?? 0) > 0}>Submit</button>
+    </>
+  )}
+</Form>
+```
+
+<ForAI>
+
+## AI Quick Reference
+
+```ts
+// 1. Register at app entry (once)
+registerPlugin(validatorPlugin);
+registerPlugin(uiPlugin);
+
+// 2. Render
+<Form
+  jsonSchema={schema}          // required
+  defaultValue={initialValue}  // optional
+  onChange={setValue}
+  onSubmit={async (value) => { /* validated value */ }}
+  onValidate={(errors) => { /* called after each validation */ }}
+  showError={ShowError.DirtyTouched}  // default
+  validationMode={ValidationMode.OnChange | ValidationMode.OnRequest}
+  ref={formRef}
+/>
+
+// 3. Imperative API via ref
+formRef.current?.submit()
+formRef.current?.validate()     // Promise<JsonSchemaError[]>
+formRef.current?.getValue()
+formRef.current?.setValue(val)
+formRef.current?.reset()
+formRef.current?.focus('/path')
+formRef.current?.showError(true)
+
+// 4. Submit with loading state
+const { submit, pending } = useFormSubmit(formRef);
+```
+
+</ForAI>
+
+---
+
+## @canard/schema-form-ajv6-plugin
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@canard/schema-form-ajv6-plugin" />
+
+AJV 6.x validator plugin for `@canard/schema-form`.
+Supports JSON Schema Draft-04, Draft-06, and Draft-07.
+Use this plugin for legacy schemas or when you need Draft-04/06 support.
+For new projects, prefer `@canard/schema-form-ajv8-plugin`.
+
+:::tip Official Documentation
+- [AJV 6 Documentation](https://ajv.js.org/v6/)
+- [JSON Schema Draft-07](https://json-schema.org/draft-07/json-schema-release-notes)
+:::
+
+## Installation
+
+```bash
+yarn add @canard/schema-form-ajv6-plugin
+# ajv@^6 is bundled as a direct dependency
+```
+
+## Quick Setup
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv6-plugin';
+
+registerPlugin(plugin);
+```
+
+## Default Configuration
+
+```ts
+// Internal defaults applied when no custom AJV instance is bound
+{
+  allErrors: true,      // collect all errors, not just the first
+  nullable: true,       // allow null values
+  verbose: true,        // include additional error context
+  format: false,        // format validation disabled for performance
+}
+```
+
+## Custom AJV Instance
+
+```ts
+import Ajv from 'ajv';
+import { plugin } from '@canard/schema-form-ajv6-plugin';
+
+const ajv = new Ajv({ allErrors: true, nullable: true });
+
+// Bind before registerPlugin — or rebind at any time
+plugin.validator.bind(ajv);
+```
+
+## Using `createValidatorFactory` Directly
+
+```ts
+import Ajv from 'ajv';
+import { createValidatorFactory } from '@canard/schema-form-ajv6-plugin';
+
+const ajv = new Ajv({ allErrors: true });
+const validate = createValidatorFactory(ajv)(myJsonSchema);
+
+const errors = await validate(formData); // null | ValidationError[]
+```
+
+## AJV 6.x Notes
+
+- Error `dataPath` uses **JSONPath** format (`$.foo.bar`). The plugin automatically transforms it to **JSONPointer** format (`/foo/bar`) for `schema-form` compatibility.
+- `nullable: true` enables `{ type: ['string', 'null'] }` shorthand.
+- AJV 6 does not support Draft 2019-09 or Draft 2020-12. See the [validator comparison](#) for details.
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@canard/schema-form-ajv6-plugin` v0.10.0
+**Purpose**: AJV 6.x validator plugin — use for legacy JSON Schema Draft-04/06/07.
+
+### Exports
+```ts
+import { plugin } from '@canard/schema-form-ajv6-plugin';
+import { createValidatorFactory } from '@canard/schema-form-ajv6-plugin';
+```
+
+### Usage
+```ts
+registerPlugin(plugin);                         // use default AJV config
+plugin.validator.bind(new Ajv({ ... }));        // bind custom AJV instance
+createValidatorFactory(ajv)(schema);            // standalone usage without plugin
+```
+
+### Default AJV config
+`{ allErrors: true, nullable: true, verbose: true, format: false }`
+
+### Key behaviors
+- Error `dataPath` auto-transformed from JSONPath (`$.foo`) to JSONPointer (`/foo`)
+- `nullable: true` → supports `{ type: ['string', 'null'] }`
+- Does NOT support Draft 2019-09 / 2020-12 → use ajv8-plugin instead
+
+</ForAI>
+
+---
+
+## @canard/schema-form-ajv7-plugin
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@canard/schema-form-ajv7-plugin" />
+
+AJV 7.x validator plugin for `@canard/schema-form`.
+Supports JSON Schema Draft-07 and Draft 2019-09.
+Useful as a migration step between AJV 6 and AJV 8,
+or when you need Draft 2019-09 support without upgrading to AJV 8.
+
+:::tip Official Documentation
+- [AJV Documentation](https://ajv.js.org/)
+- [JSON Schema Draft 2019-09](https://json-schema.org/draft/2019-09/release-notes)
+:::
+
+## Installation
+
+```bash
+yarn add @canard/schema-form-ajv7-plugin
+# ajv@^7 is bundled as a direct dependency
+```
+
+## Quick Setup
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv7-plugin';
+
+registerPlugin(plugin);
+```
+
+## Default Configuration
+
+```ts
+// Internal defaults applied when no custom AJV instance is bound
+{
+  allErrors: true,          // collect all errors, not just the first
+  strict: false,            // disable strict mode for schema compatibility
+  validateFormats: false,   // format validation disabled for performance
+}
+```
+
+## Custom AJV Instance
+
+```ts
+import Ajv from 'ajv';
+import { plugin } from '@canard/schema-form-ajv7-plugin';
+
+const ajv = new Ajv({ allErrors: true, strict: false });
+
+plugin.validator.bind(ajv);
+```
+
+## Using `createValidatorFactory` Directly
+
+```ts
+import Ajv from 'ajv';
+import { createValidatorFactory } from '@canard/schema-form-ajv7-plugin';
+
+const ajv = new Ajv({ allErrors: true });
+const validate = createValidatorFactory(ajv)(myJsonSchema);
+
+const errors = await validate(formData); // null | ValidationError[]
+```
+
+## AJV 7.x Notes
+
+- Error paths use **JSONPointer** format natively — no path transformation needed (unlike AJV 6).
+- `strict: false` is set by default for compatibility with schemas that use custom keywords.
+- Does not support Draft 2020-12. Use `@canard/schema-form-ajv8-plugin/2020` for that.
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@canard/schema-form-ajv7-plugin` v0.10.0
+**Purpose**: AJV 7.x validator plugin — Draft-07 and Draft 2019-09 support.
+
+### Exports
+```ts
+import { plugin } from '@canard/schema-form-ajv7-plugin';
+import { createValidatorFactory } from '@canard/schema-form-ajv7-plugin';
+```
+
+### Usage
+```ts
+registerPlugin(plugin);                         // use default AJV config
+plugin.validator.bind(new Ajv({ ... }));        // bind custom AJV instance
+createValidatorFactory(ajv)(schema);            // standalone usage without plugin
+```
+
+### Default AJV config
+`{ allErrors: true, strict: false, validateFormats: false }`
+
+### Key behaviors
+- Native JSONPointer error paths (no transform needed unlike AJV 6)
+- `strict: false` for custom keyword compatibility
+- Does NOT support Draft 2020-12 → use ajv8-plugin/2020
+
+</ForAI>
+
+---
+
+## @canard/schema-form-ajv8-plugin
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@canard/schema-form-ajv8-plugin" />
+
+AJV 8.x validator plugin for `@canard/schema-form` — the recommended validator plugin.
+Supports JSON Schema Draft-07, Draft 2019-09, and Draft 2020-12.
+Three subpath exports let you pick exactly the draft you need.
+
+:::tip Official Documentation
+- [AJV 8 Documentation](https://ajv.js.org/)
+- [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12/json-schema-core)
+:::
+
+## Installation
+
+```bash
+yarn add @canard/schema-form-ajv8-plugin
+# ajv@^8 is bundled as a direct dependency
+```
+
+## Subpath Exports
+
+| Import path | Draft support | AJV internal import |
+|---|---|---|
+| `@canard/schema-form-ajv8-plugin` | Draft-07 (default) | `ajv` |
+| `@canard/schema-form-ajv8-plugin/2019` | Draft 2019-09 | `ajv/dist/2019` |
+| `@canard/schema-form-ajv8-plugin/2020` | Draft 2020-12 | `ajv/dist/2020` |
+
+## Quick Setup
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
+
+registerPlugin(plugin);
+```
+
+```ts
+// Draft 2019-09
+import { plugin } from '@canard/schema-form-ajv8-plugin/2019';
+registerPlugin(plugin);
+```
+
+```ts
+// Draft 2020-12
+import { plugin } from '@canard/schema-form-ajv8-plugin/2020';
+registerPlugin(plugin);
+```
+
+## Default Configuration
+
+```ts
+// Internal defaults applied when no custom AJV instance is bound
+// Same across all three subpath exports
+{
+  allErrors: true,          // collect all errors, not just the first
+  strictSchema: false,      // allow extra schema properties (custom keywords, formType, etc.)
+  validateFormats: false,   // format validation disabled for performance
+}
+```
+
+## Custom AJV Instance
+
+```ts
+import Ajv from 'ajv';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
+
+const ajv = new Ajv({ allErrors: true, strictSchema: false });
+
+plugin.validator.bind(ajv);
+```
+
+```ts
+// Draft 2020-12 with format validation enabled
+import Ajv2020 from 'ajv/dist/2020';
+import addFormats from 'ajv-formats';
+import { plugin } from '@canard/schema-form-ajv8-plugin/2020';
+
+const ajv = new Ajv2020({ allErrors: true, strictSchema: false });
+addFormats(ajv);
+plugin.validator.bind(ajv);
+```
+
+## Using `createValidatorFactory` Directly
+
+```ts
+import Ajv from 'ajv';
+import { createValidatorFactory } from '@canard/schema-form-ajv8-plugin';
+
+const ajv = new Ajv({ allErrors: true });
+const validate = createValidatorFactory(ajv)(myJsonSchema);
+
+const errors = await validate(formData); // null | ValidationError[]
+```
+
+## Validator Plugin Comparison
+
+| Feature | ajv6-plugin | ajv7-plugin | ajv8-plugin |
+|---|---|---|---|
+| Draft-04 | Yes | No | No |
+| Draft-06 | Yes | No | No |
+| Draft-07 | Yes | Yes | Yes |
+| Draft 2019-09 | No | Yes | Yes (`/2019`) |
+| Draft 2020-12 | No | No | Yes (`/2020`) |
+| Subpath exports | No | No | Yes |
+| Path transformation | JSONPath→JSONPointer | None needed | None needed |
+| Recommended for | Legacy schemas | Migration path | **New projects** |
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@canard/schema-form-ajv8-plugin` v0.10.0
+**Purpose**: AJV 8.x validator plugin — recommended for new projects. Supports Draft-07, 2019-09, 2020-12.
+
+### Exports (3 subpath variants, each exports the same API)
+```ts
+import { plugin, createValidatorFactory } from '@canard/schema-form-ajv8-plugin';       // Draft-07
+import { plugin, createValidatorFactory } from '@canard/schema-form-ajv8-plugin/2019';  // Draft 2019-09
+import { plugin, createValidatorFactory } from '@canard/schema-form-ajv8-plugin/2020';  // Draft 2020-12
+```
+
+### Usage
+```ts
+registerPlugin(plugin);                         // use default AJV config
+plugin.validator.bind(new Ajv({ ... }));        // bind custom AJV instance
+createValidatorFactory(ajv)(schema);            // standalone usage without plugin
+```
+
+### Default AJV config (all subpaths)
+`{ allErrors: true, strictSchema: false, validateFormats: false }`
+
+### Draft selection guide
+| Subpath | AJV import | Use when |
+|---|---|---|
+| `/` (default) | `ajv` | Draft-07 schemas (most common) |
+| `/2019` | `ajv/dist/2019` | Need `$recursiveRef`, `unevaluatedProperties` |
+| `/2020` | `ajv/dist/2020` | Need `$dynamicRef`, `prefixItems` |
+
+</ForAI>
+
+---
+
+## Ant Design Mobile Component Catalog
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Ant Design Mobile Component Catalog
+
+Interactive catalog of all 10 form input components provided by `@canard/schema-form-antd-mobile-plugin`.
+Each component is automatically selected based on JSON Schema properties like `type`, `format`, `formType`, and `enum`.
+
+<BrowserOnly fallback={Loading catalog...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/catalog/AntdMobileCatalogDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+---
+
+## @canard/schema-form-antd-mobile-plugin
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+<PackageHeader name="@canard/schema-form-antd-mobile-plugin" />
+
+Ant Design Mobile UI plugin for `@canard/schema-form`.
+Provides 10 touch-optimized form input components built on `antd-mobile ^5.0.0`.
+Designed for mobile web applications — switches and sliders are preferred over desktop-style inputs.
+
+## Component Catalog
+
+### Preview
+
+<BrowserOnly fallback={Loading preview...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/InputShowcase').default;
+    return <Demo componentName="FormTypeInputString" schema={{ type: 'string', title: 'Text Input' }} />;
+  }}
+</BrowserOnly>
+
+:::tip Full Catalog
+See all 10 components in the [Component Catalog](./demos) page.
+:::
+
+## Installation
+
+```bash
+yarn add @canard/schema-form-antd-mobile-plugin antd-mobile@>=5.0.0
+```
+
+### Peer Dependencies
+
+```bash
+yarn add dayjs@>=1 react@>=18 react-dom@>=18
+```
+
+Note: `antd-mobile` is a direct dependency of this plugin, not a peer dependency.
+
+## Quick Setup
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-antd-mobile-plugin';
+
+registerPlugin(plugin);
+```
+
+## Component Mapping
+
+Components are selected automatically based on JSON Schema properties. Priority order matches the list below (top = highest priority).
+
+| Component | type | format | formType | enum | Notes |
+|---|---|---|---|---|---|
+| `FormTypeInputBooleanSwitch` | `boolean` | — | `"switch"` | — | Switch toggle with custom labels |
+| `FormTypeInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | Checkbox group; items must be string schema |
+| `FormTypeInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
+| `FormTypeInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | Radio group |
+| `FormTypeInputArray` | `array` | — | — | — | Dynamic list with add/remove |
+| `FormTypeInputSlider` | `number` \| `integer` | `"slider"` | — | — | Slider; also supports range slider for numeric-item arrays |
+| `FormTypeInputTextarea` | `string` | `"textarea"` or formType `"textarea"` | — | — | Multi-line textarea |
+| `FormTypeInputString` | `string` | — | — | — | Default text input (password supported via `format: "password"`) |
+| `FormTypeInputNumber` | `number` \| `integer` | — | — | — | Stepper component |
+| `FormTypeInputBoolean` | `boolean` | — | — | — | Checkbox with indeterminate state |
+
+### Slider Range Support
+
+`FormTypeInputSlider` activates for numeric range arrays:
+
+```ts
+// Single value slider
+{ type: 'number', format: 'slider' }
+
+// Range slider (array of two numbers)
+{
+  type: 'array',
+  format: 'slider',          // or: items with numeric type + format:'slider'
+  items: { type: 'number' }
+}
+```
+
+## Schema Extension Properties
+
+```ts
+{
+  formType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'textarea',
+  format?:   'slider' | 'textarea' | 'password',
+}
+```
+
+## Usage Example
+
+```tsx
+import { Form } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name:    { type: 'string' },
+    count:   { type: 'integer' },
+    active:  { type: 'boolean', formType: 'switch' },
+    rating:  { type: 'number', format: 'slider', minimum: 0, maximum: 5 },
+    tags:    {
+      type: 'array',
+      formType: 'checkbox',
+      items: { type: 'string', enum: ['js', 'ts', 'react'] },
+    },
+  },
+};
+
+<Form jsonSchema={schema} onChange={setValue} />
+```
+
+## Context: Custom Switch Labels
+
+```tsx
+// Pass checkboxLabels through context for BooleanSwitch
+<Form
+  jsonSchema={schema}
+  context={{ checkboxLabels: { active: { true: 'On', false: 'Off' } } }}
+/>
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@canard/schema-form-antd-mobile-plugin` v0.10.0
+**Purpose**: Ant Design Mobile UI plugin — 10 touch-optimized form components for mobile web.
+
+### Exports
+```ts
+import { plugin } from '@canard/schema-form-antd-mobile-plugin';
+```
+
+### Peer dependencies
+`antd-mobile@>=5.0.0` (direct dep), `dayjs@>=1`, `react@>=18`
+
+### Component mapping (priority order, high → low)
+| Component | Trigger |
+|---|---|
+| BooleanSwitch | `boolean` + `formType: "switch"` |
+| StringCheckbox | `array` + `formType: "checkbox"` + items.enum |
+| StringSwitch | `string` + `formType: "switch"` + 2 enum values |
+| RadioGroup | `string\|number` + `formType: "radio"` + enum |
+| Array | `array` (dynamic list) |
+| Slider | `number` + `format: "slider"` (also supports range arrays) |
+| Textarea | `string` + `format: "textarea"` |
+| String | `string` (default) |
+| Number | `number\|integer` (Stepper component) |
+| Boolean | `boolean` (default checkbox with indeterminate) |
+
+### Context: custom switch labels
+```ts
+context={{ checkboxLabels: { fieldName: { true: 'On', false: 'Off' } } }}
+```
+
+### Key differences from antd5/antd6
+- No Date/Time/Month/URI pickers (mobile-specific)
+- Number uses Stepper component (not text input)
+- Slider supports range arrays: `{ type: 'array', format: 'slider', items: { type: 'number' } }`
+
+</ForAI>
+
+---
+
+## Ant Design 5 Component Catalog
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Ant Design 5 Component Catalog
+
+Interactive catalog of all 18 form input components provided by `@canard/schema-form-antd5-plugin`.
+Each component is automatically selected based on JSON Schema properties like `type`, `format`, `formType`, and `enum`.
+
+<BrowserOnly fallback={Loading catalog...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/catalog/Antd5CatalogDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+---
+
+## @canard/schema-form-antd5-plugin
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+<PackageHeader name="@canard/schema-form-antd5-plugin" />
+
+Ant Design v5 UI plugin for `@canard/schema-form`.
+Provides 18 form input components built on `antd ^5.10.0`,
+covering strings, numbers, booleans, dates, ranges, and selection controls.
+
+## Component Catalog
+
+### Preview
+
+<BrowserOnly fallback={Loading preview...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/InputShowcase').default;
+    return <Demo componentName="FormTypeInputString" schema={{ type: 'string', title: 'Text Input' }} />;
+  }}
+</BrowserOnly>
+
+:::tip Full Catalog
+See all 18 components in the [Component Catalog](./demos) page.
+:::
+
+## Installation
+
+```bash
+yarn add @canard/schema-form-antd5-plugin
+```
+
+### Peer Dependencies
+
+```bash
+yarn add antd@>=5.10.0 dayjs@>=1 react@>=18 react-dom@>=18
+```
+
+## Quick Setup
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-antd5-plugin';
+
+registerPlugin(plugin);
+```
+
+## Component Mapping
+
+Components are selected automatically based on JSON Schema properties. Priority order matches the list below (top = highest priority).
+
+| Component | type | format | formType | enum | Notes |
+|---|---|---|---|---|---|
+| `FormTypeInputBooleanSwitch` | `boolean` | — | `"switch"` | — | Switch toggle |
+| `FormTypeInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | Checkbox group; items must be string schema |
+| `FormTypeInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
+| `FormTypeInputUri` | `string` | `"uri"` or formType `"uri"` | — | — | URI input with protocol selector |
+| `FormTypeInputMonth` | `string` | `"month"` | — | — | Month picker |
+| `FormTypeInputDate` | `string` | `"date"` | — | — | Date picker |
+| `FormTypeInputTime` | `string` | `"time"` | — | — | Time picker |
+| `FormTypeInputMonthRange` | `array` | `"month-range"` or formType `"monthRange"` | — | — | Month range picker; items must be string schema |
+| `FormTypeInputDateRange` | `array` | `"date-range"` or formType `"dateRange"` | — | — | Date range picker; items must be string schema |
+| `FormTypeInputTimeRange` | `array` | `"time-range"` or formType `"timeRange"` | — | — | Time range picker; items must be string schema |
+| `FormTypeInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | Radio button group |
+| `FormTypeInputStringEnum` | `string` | — | — | required | Select dropdown; also handles string-item arrays with enum |
+| `FormTypeInputArray` | `array` | — | — | — | Dynamic list with add/remove |
+| `FormTypeInputSlider` | `number` \| `integer` | — | `"slider"` | — | Slider input |
+| `FormTypeInputTextarea` | `string` | `"textarea"` or formType `"textarea"` | — | — | Multi-line textarea |
+| `FormTypeInputString` | `string` | — | — | — | Default text input (password supported via `format: "password"`) |
+| `FormTypeInputNumber` | `number` \| `integer` | — | — | — | Numeric input |
+| `FormTypeInputBoolean` | `boolean` | — | — | — | Checkbox |
+
+## Schema Extension Properties
+
+```ts
+// Custom schema properties recognized by this plugin
+{
+  formType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' |
+             'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange',
+  // Standard JSON Schema properties also used for routing:
+  format?: 'date' | 'time' | 'month' | 'password' | 'uri' |
+           'textarea' | 'date-range' | 'month-range' | 'time-range',
+}
+```
+
+## Usage Example
+
+```tsx
+import { Form } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name:      { type: 'string' },
+    age:       { type: 'integer' },
+    active:    { type: 'boolean', formType: 'switch' },
+    role:      { type: 'string', enum: ['admin', 'user', 'guest'] },
+    birthday:  { type: 'string', format: 'date' },
+    bio:       { type: 'string', format: 'textarea' },
+    score:     { type: 'number', formType: 'slider', minimum: 0, maximum: 100 },
+  },
+};
+
+<Form jsonSchema={schema} onChange={setValue} />
+```
+
+## Context
+
+The plugin reads `context` passed to `<Form context={...}>` for size configuration:
+
+```ts
+type AntdContext = {
+  size?: 'small' | 'middle' | 'large';
+};
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@canard/schema-form-antd5-plugin` v0.10.0
+**Purpose**: Ant Design v5 UI plugin — 18 form input components for `@canard/schema-form`.
+
+### Exports
+```ts
+import { plugin } from '@canard/schema-form-antd5-plugin';
+```
+
+### Peer dependencies
+`antd@>=5.10.0`, `dayjs@>=1`, `react@>=18`
+
+### Component mapping (priority order, high → low)
+| Component | Trigger |
+|---|---|
+| BooleanSwitch | `boolean` + `formType: "switch"` |
+| StringCheckbox | `array` + `formType: "checkbox"` + items.enum |
+| StringSwitch | `string` + `formType: "switch"` + 2 enum values |
+| Uri | `string` + `format: "uri"` |
+| Month / Date / Time | `string` + `format: "month"/"date"/"time"` |
+| MonthRange / DateRange / TimeRange | `array` + `format: "*-range"` |
+| RadioGroup | `string\|number` + `formType: "radio"` + enum |
+| StringEnum | `string` + enum |
+| Array | `array` (dynamic list) |
+| Slider | `number` + `formType: "slider"` |
+| Textarea | `string` + `format: "textarea"` |
+| String | `string` (default) |
+| Number | `number\|integer` (default) |
+| Boolean | `boolean` (default checkbox) |
+
+### Context type
+```ts
+type AntdContext = { size?: 'small' | 'middle' | 'large' };
+```
+
+### Schema extensions
+`formType`: `'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange'`
+
+</ForAI>
+
+---
+
+## @canard/schema-form-antd6-plugin
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@canard/schema-form-antd6-plugin" />
+
+Ant Design v6 UI plugin for `@canard/schema-form`.
+Provides 18 form input components built on `antd ^6.0.0`.
+Identical component set and API as `@canard/schema-form-antd5-plugin` —
+use this package when your project runs Ant Design v6.
+
+## Component Catalog
+
+:::tip
+This plugin has the same API and components as the antd5 plugin. See the [antd5-plugin Component Catalog](../schema-form-antd5-plugin) for an interactive catalog of all 18 components — the only difference is the Ant Design version dependency.
+:::
+
+## Installation
+
+```bash
+yarn add @canard/schema-form-antd6-plugin
+```
+
+### Peer Dependencies
+
+```bash
+yarn add antd@>=6.0.0 dayjs@>=1 react@>=18 react-dom@>=18
+```
+
+## Quick Setup
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-antd6-plugin';
+
+registerPlugin(plugin);
+```
+
+## Component Mapping
+
+Components are selected automatically based on JSON Schema properties. Priority order matches the list below (top = highest priority).
+
+| Component | type | format | formType | enum | Notes |
+|---|---|---|---|---|---|
+| `FormTypeInputBooleanSwitch` | `boolean` | — | `"switch"` | — | Switch toggle |
+| `FormTypeInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | Checkbox group; items must be string schema |
+| `FormTypeInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
+| `FormTypeInputUri` | `string` | `"uri"` or formType `"uri"` | — | — | URI input with protocol selector |
+| `FormTypeInputMonth` | `string` | `"month"` | — | — | Month picker |
+| `FormTypeInputDate` | `string` | `"date"` | — | — | Date picker |
+| `FormTypeInputTime` | `string` | `"time"` | — | — | Time picker |
+| `FormTypeInputMonthRange` | `array` | `"month-range"` or formType `"monthRange"` | — | — | Month range picker; items must be string schema |
+| `FormTypeInputDateRange` | `array` | `"date-range"` or formType `"dateRange"` | — | — | Date range picker; items must be string schema |
+| `FormTypeInputTimeRange` | `array` | `"time-range"` or formType `"timeRange"` | — | — | Time range picker; items must be string schema |
+| `FormTypeInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | Radio button group |
+| `FormTypeInputStringEnum` | `string` | — | — | required | Select dropdown; also handles string-item arrays with enum |
+| `FormTypeInputArray` | `array` | — | — | — | Dynamic list with add/remove |
+| `FormTypeInputSlider` | `number` \| `integer` | — | `"slider"` | — | Slider input |
+| `FormTypeInputTextarea` | `string` | `"textarea"` or formType `"textarea"` | — | — | Multi-line textarea |
+| `FormTypeInputString` | `string` | — | — | — | Default text input (password supported via `format: "password"`) |
+| `FormTypeInputNumber` | `number` \| `integer` | — | — | — | Numeric input |
+| `FormTypeInputBoolean` | `boolean` | — | — | — | Checkbox |
+
+## Schema Extension Properties
+
+```ts
+// Custom schema properties recognized by this plugin
+{
+  formType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' |
+             'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange',
+  // Standard JSON Schema properties also used for routing:
+  format?: 'date' | 'time' | 'month' | 'password' | 'uri' |
+           'textarea' | 'date-range' | 'month-range' | 'time-range',
+}
+```
+
+## Usage Example
+
+```tsx
+import { Form } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name:      { type: 'string' },
+    age:       { type: 'integer' },
+    active:    { type: 'boolean', formType: 'switch' },
+    role:      { type: 'string', enum: ['admin', 'user', 'guest'] },
+    birthday:  { type: 'string', format: 'date' },
+    bio:       { type: 'string', format: 'textarea' },
+    score:     { type: 'number', formType: 'slider', minimum: 0, maximum: 100 },
+  },
+};
+
+<Form jsonSchema={schema} onChange={setValue} />
+```
+
+## Context
+
+The plugin reads `context` passed to `<Form context={...}>` for size configuration:
+
+```ts
+type AntdContext = {
+  size?: 'small' | 'middle' | 'large';
+};
+```
+
+## v5 vs v6
+
+The antd5 and antd6 plugins are API-identical. The only difference is the `antd` peer dependency version. Switch packages by replacing the import and peer dependency:
+
+```ts
+// antd5
+import { plugin } from '@canard/schema-form-antd5-plugin';
+// antd6
+import { plugin } from '@canard/schema-form-antd6-plugin';
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@canard/schema-form-antd6-plugin` v0.10.0
+**Purpose**: Ant Design v6 UI plugin — API-identical to antd5-plugin, targets `antd@>=6.0.0`.
+
+### Exports
+```ts
+import { plugin } from '@canard/schema-form-antd6-plugin';
+```
+
+### Peer dependencies
+`antd@>=6.0.0`, `dayjs@>=1`, `react@>=18`
+
+### Component mapping
+Same 18 components as antd5-plugin (see `@canard/schema-form-antd5-plugin` docs).
+
+### Context type
+```ts
+type AntdContext = { size?: 'small' | 'middle' | 'large' };
+```
+
+### Migration from antd5
+Only change the import — API and component set are identical:
+```ts
+// import { plugin } from '@canard/schema-form-antd5-plugin';
+import { plugin } from '@canard/schema-form-antd6-plugin';
+```
+
+</ForAI>
+
+---
+
+## MUI Component Catalog
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# MUI Component Catalog
+
+Interactive catalog of all 15 form input components provided by `@canard/schema-form-mui-plugin`.
+Each component is automatically selected based on JSON Schema properties like `type`, `format`, `formType`, and `enum`.
+
+<BrowserOnly fallback={Loading catalog...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/catalog/MuiCatalogDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+---
+
+## @canard/schema-form-mui-plugin
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+<PackageHeader name="@canard/schema-form-mui-plugin" />
+
+Material UI v7 plugin for `@canard/schema-form`.
+Provides 15 form input components built on `@mui/material ^7.0.0`
+with MUI X date/time pickers.
+Supports MUI's `size`, `variant`, and `fullWidth` context options.
+
+## Component Catalog
+
+### Preview
+
+<BrowserOnly fallback={Loading preview...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/InputShowcase').default;
+    return <Demo componentName="FormTypeInputString" schema={{ type: 'string', title: 'Text Input' }} />;
+  }}
+</BrowserOnly>
+
+:::tip Full Catalog
+See all 15 components in the [Component Catalog](./demos) page.
+:::
+
+## Installation
+
+```bash
+yarn add @canard/schema-form-mui-plugin
+```
+
+### Peer Dependencies
+
+```bash
+yarn add @mui/material@>=7.0.0 @mui/x-date-pickers@>=8.0.0 \
+         @mui/icons-material@>=7.0.0 \
+         @emotion/react@>=11.0.0 @emotion/styled@>=11.0.0 \
+         dayjs@>=1 react@>=18 react-dom@>=18
+```
+
+## Quick Setup
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-mui-plugin';
+
+registerPlugin(plugin);
+```
+
+## Component Mapping
+
+Components are selected automatically based on JSON Schema properties. Priority order matches the list below (top = highest priority).
+
+| Component | type | format | formType | enum | Notes |
+|---|---|---|---|---|---|
+| `FormTypeInputBooleanSwitch` | `boolean` | — | `"switch"` | — | MUI Switch |
+| `FormTypeInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | MUI Checkbox group; items must be string schema |
+| `FormTypeInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
+| `FormTypeInputUri` | `string` | `"uri"` or formType `"uri"` | — | — | URI input with protocol dropdown |
+| `FormTypeInputMonth` | `string` | `"month"` | — | — | MUI X MonthPicker |
+| `FormTypeInputDate` | `string` | `"date"` | — | — | MUI X DatePicker |
+| `FormTypeInputTime` | `string` | `"time"` | — | — | MUI X TimePicker (HH:mm:00Z format) |
+| `FormTypeInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | MUI RadioGroup |
+| `FormTypeInputStringEnum` | `string` | — | — | required | MUI Select dropdown |
+| `FormTypeInputArray` | `array` | — | — | — | Dynamic list with add/remove |
+| `FormTypeInputSlider` | `number` \| `integer` | — | `"slider"` | — | MUI Slider |
+| `FormTypeInputTextarea` | `string` | `"textarea"` or formType `"textarea"` | — | — | MUI TextField multiline |
+| `FormTypeInputString` | `string` | — | — | — | MUI TextField (password via `format:"password"`) |
+| `FormTypeInputNumber` | `number` \| `integer` | — | — | — | MUI TextField type=number |
+| `FormTypeInputBoolean` | `boolean` | — | — | — | MUI Checkbox with indeterminate |
+
+## Schema Extension Properties
+
+```ts
+{
+  formType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri',
+  format?:   'date' | 'time' | 'month' | 'password' | 'uri' | 'textarea',
+}
+```
+
+## Usage Example
+
+```tsx
+import { Form } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name:     { type: 'string' },
+    age:      { type: 'integer' },
+    active:   { type: 'boolean', formType: 'switch' },
+    role:     { type: 'string', enum: ['admin', 'user', 'guest'] },
+    birthday: { type: 'string', format: 'date' },
+    bio:      { type: 'string', format: 'textarea' },
+    score:    { type: 'number', formType: 'slider', minimum: 0, maximum: 100 },
+  },
+};
+
+<Form jsonSchema={schema} onChange={setValue} />
+```
+
+## MUI Context
+
+Pass MUI styling options through `<Form context={...}>`:
+
+```ts
+type MuiContext = {
+  size?:      'small' | 'medium';
+  variant?:   'outlined' | 'filled' | 'standard';
+  fullWidth?: boolean;
+};
+```
+
+```tsx
+<Form
+  jsonSchema={schema}
+  context={{ size: 'small', variant: 'outlined', fullWidth: true }}
+  onChange={setValue}
+/>
+```
+
+## Date/Time Picker Setup
+
+MUI X date pickers require a `LocalizationProvider`. Wrap your app:
+
+```tsx
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+
+<LocalizationProvider dateAdapter={AdapterDayjs}>
+  <Form jsonSchema={schema} onChange={setValue} />
+</LocalizationProvider>
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@canard/schema-form-mui-plugin` v0.10.0
+**Purpose**: Material UI v7 plugin — 15 form input components with MUI X date/time pickers.
+
+### Exports
+```ts
+import { plugin } from '@canard/schema-form-mui-plugin';
+import type { MuiContext } from '@canard/schema-form-mui-plugin';
+```
+
+### Peer dependencies
+`@mui/material@>=7`, `@mui/x-date-pickers@>=8`, `@mui/icons-material@>=7`, `@emotion/react@>=11`, `@emotion/styled@>=11`, `dayjs@>=1`, `react@>=18`
+
+### Component mapping (priority order, high → low)
+| Component | Trigger |
+|---|---|
+| BooleanSwitch | `boolean` + `formType: "switch"` |
+| StringCheckbox | `array` + `formType: "checkbox"` + items.enum |
+| StringSwitch | `string` + `formType: "switch"` + 2 enum values |
+| Uri | `string` + `format: "uri"` |
+| Month / Date / Time | `string` + `format: "month"/"date"/"time"` (MUI X pickers) |
+| RadioGroup | `string\|number` + `formType: "radio"` + enum |
+| StringEnum | `string` + enum (MUI Select) |
+| Array | `array` (dynamic list) |
+| Slider | `number` + `formType: "slider"` |
+| Textarea | `string` + `format: "textarea"` (multiline TextField) |
+| String | `string` (TextField, password via `format: "password"`) |
+| Number | `number\|integer` (TextField type=number) |
+| Boolean | `boolean` (Checkbox with indeterminate) |
+
+### Context type
+```ts
+type MuiContext = { size?: 'small' | 'medium'; variant?: 'outlined' | 'filled' | 'standard'; fullWidth?: boolean };
+```
+
+### Required setup for date/time pickers
+```tsx
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+<LocalizationProvider dateAdapter={AdapterDayjs}><Form ... /></LocalizationProvider>
+```
+
+</ForAI>
+
+---
+
+## @lerx
+
+
+React UI utility libraries.
+
+## Packages
+
+| Package | Description |
+|---------|-------------|
+| [`@lerx/promise-modal`](./promise-modal/) | Promise-based modal utility — use modals outside React components |
+
+---
+
+## API Reference(Promise-modal)
+
+import ForAI from '@site/src/components/ForAI';
+
+# API Reference
+
+Complete reference for all exported functions, components, hooks, and types.
+
+---
+
+## Core Functions
+
+### `alert(options)`
+
+Displays a notification modal. Returns a promise that resolves when the user closes the modal.
+
+```ts
+function alert(options: AlertProps): Promise<void>
+```
+
+**`AlertProps`**
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `title` | `ReactNode` | — | Modal title |
+| `subtitle` | `ReactNode` | — | Modal subtitle |
+| `content` | `ReactNode \| ComponentType<AlertContentProps>` | — | Modal body content |
+| `subtype` | `'info' \| 'success' \| 'warning' \| 'error'` | — | Semantic type passed to components |
+| `footer` | `AlertFooterRender \| { confirm?: ReactNode; hideConfirm?: boolean } \| false` | — | Footer config; `false` hides footer |
+| `background` | `ModalBackground` | — | Data passed to `BackgroundComponent` |
+| `dimmed` | `boolean` | — | Whether to dim backdrop |
+| `duration` | `number` | — | Per-modal animation duration override (ms) |
+| `manualDestroy` | `boolean` | `false` | If `true`, modal is not destroyed automatically after closing animation |
+| `closeOnBackdropClick` | `boolean` | `true` | Close when backdrop is clicked |
+| `group` | `string` | — | Group identifier for ordering |
+| `handleResolve` | `(result: void \| null) => void` | — | Called when promise resolves |
+| `ForegroundComponent` | `ComponentType<PropsWithChildren<ModalFrameProps>>` | — | Per-modal foreground override |
+| `BackgroundComponent` | `ComponentType<ModalFrameProps>` | — | Per-modal background override |
+
+```ts
+await alert({
+  title: 'Success',
+  content: 'Item saved.',
+  subtype: 'success',
+  footer: { confirm: 'OK' },
+});
+```
+
+---
+
+### `confirm(options)`
+
+Displays a confirmation modal. Returns a promise that resolves to `true` (confirmed) or `false` (cancelled).
+
+```ts
+function confirm(options: ConfirmProps): Promise<boolean>
+```
+
+**`ConfirmProps`** extends `AlertProps` with:
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `footer` | `ConfirmFooterRender \| FooterOptions \| false` | — | Footer config |
+
+**`FooterOptions`**
+
+```ts
+interface FooterOptions {
+  confirm?: ReactNode;
+  hideConfirm?: boolean;
+  cancel?: ReactNode;
+  hideCancel?: boolean;
+}
+```
+
+```ts
+const confirmed = await confirm({
+  title: 'Delete item',
+  content: 'This cannot be undone.',
+  footer: { confirm: 'Delete', cancel: 'Cancel' },
+});
+if (confirmed) await deleteItem();
+```
+
+---
+
+### `prompt<T>(options)`
+
+Displays an input modal. Returns a promise that resolves to the value entered by the user, or `undefined` if cancelled (unless `returnOnCancel` is set).
+
+```ts
+function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined>
+```
+
+**`PromptProps<T>`** extends `AlertProps` with:
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `Input` | `(props: PromptInputProps<T>) => ReactNode` | **required** | Input component renderer |
+| `defaultValue` | `T` | — | Initial value |
+| `disabled` | `(value: T \| undefined) => boolean` | — | Disables confirm button when returns `true` |
+| `returnOnCancel` | `boolean` | `false` | If `true`, resolves with `defaultValue` on cancel |
+| `footer` | `PromptFooterRender<T> \| FooterOptions \| false` | — | Footer config |
+
+**`PromptInputProps<T>`**
+
+```ts
+interface PromptInputProps<T, Context = object> {
+  value?: T;
+  defaultValue?: T;
+  onChange: (value: T | undefined) => void;
+  onConfirm: () => void;
+  onCancel: () => void;
+  context: Context;
+}
+```
+
+```ts
+const name = await prompt<string>({
+  title: 'Enter name',
+  defaultValue: '',
+  Input: ({ value, onChange }) => (
+    <input value={value ?? ''} onChange={e => onChange(e.target.value)} />
+  ),
+  disabled: value => !value || value.length < 2,
+});
+```
+
+---
+
+## Components
+
+### `ModalProvider`
+
+Must be mounted once at the app root. Initializes the modal service and provides configuration to all modal calls.
+
+```ts
+import { ModalProvider, type ModalProviderProps, type ModalProviderHandle } from '@lerx/promise-modal';
+```
+
+**Props (`ModalProviderProps`)**
+
+| Prop | Type | Description |
+|---|---|---|
+| `ForegroundComponent` | `ComponentType<PropsWithChildren<ModalFrameProps>>` | Global modal container/card component |
+| `BackgroundComponent` | `ComponentType<ModalFrameProps>` | Global backdrop component |
+| `TitleComponent` | `ComponentType<WrapperComponentProps>` | Global title wrapper |
+| `SubtitleComponent` | `ComponentType<WrapperComponentProps>` | Global subtitle wrapper |
+| `ContentComponent` | `ComponentType<WrapperComponentProps>` | Global content wrapper |
+| `FooterComponent` | `ComponentType<FooterComponentProps>` | Global footer component |
+| `options` | `ModalOptions` | Global defaults for all modals |
+| `context` | `Record<string, any>` | Arbitrary data passed to every component slot |
+| `usePathname` | `() => { pathname: string }` | Custom hook for route-aware modal cleanup |
+| `root` | `HTMLElement \| null` | DOM element to mount modals into |
+
+**Handle (`ModalProviderHandle`)** — accessed via `ref`:
+
+```ts
+interface ModalProviderHandle {
+  initialize: (element: HTMLElement) => void;
+}
+```
+
+```tsx
+const ref = useRef<ModalProviderHandle>(null);
+// Mount modals into a specific DOM node:
+ref.current?.initialize(containerElement);
+
+<ModalProvider ref={ref}>...</ModalProvider>
+```
+
+---
+
+## Hooks
+
+### `useModal(configuration?)`
+
+Returns `alert`, `confirm`, and `prompt` handlers tied to the component's lifecycle. All modals opened through this hook are automatically closed when the component unmounts.
+
+```ts
+function useModal(configuration?: OverridableHandleProps): {
+  alert: (options: AlertProps) => Promise<void>;
+  confirm: (options: ConfirmProps) => Promise<boolean>;
+  prompt: <T, B>(options: PromptProps<T, B>) => Promise<T | undefined>;
+}
+```
+
+The optional `configuration` object provides default values merged into every call from this hook instance.
+
+---
+
+### `useInitializeModal(options?)`
+
+Provides manual control over modal service initialization. Useful when you need to mount modals into a specific DOM container.
+
+```ts
+function useInitializeModal(options?: { mode?: 'auto' | 'manual' }): {
+  initialize: (element: HTMLElement) => void;
+  portal: ReactNode;
+}
+```
+
+---
+
+### `useActiveModalCount()`
+
+Returns the number of currently active (open) modals.
+
+```ts
+function useActiveModalCount(): number
+```
+
+---
+
+### `useModalOptions()`
+
+Returns the current global modal configuration options.
+
+```ts
+function useModalOptions(): ConfigurationContextProps
+```
+
+---
+
+### `useModalDuration()`
+
+Returns the modal animation duration from configuration.
+
+```ts
+function useModalDuration(): {
+  duration: string;     // CSS duration string, e.g. '250ms'
+  milliseconds: number; // numeric value, e.g. 250
+}
+```
+
+---
+
+### `useModalBackdrop()`
+
+Returns the modal backdrop CSS value from configuration.
+
+```ts
+function useModalBackdrop(): string | CSSProperties
+```
+
+---
+
+### `useModalAnimation(visible, handlers)`
+
+Fires callbacks when the modal's visibility state changes. Use inside custom `ForegroundComponent` implementations to drive CSS transitions.
+
+```ts
+function useModalAnimation(
+  visible: boolean,
+  handlers: {
+    onVisible?: () => void;
+    onHidden?: () => void;
+  }
+): void
+```
+
+---
+
+### `useDestroyAfter(modalId, delayMs)`
+
+Automatically destroys a modal after the specified delay. Used in custom foreground components (e.g., toast notifications).
+
+```ts
+function useDestroyAfter(modalId: number, delayMs: number): void
+```
+
+---
+
+### `useSubscribeModal(modal)`
+
+Subscribes to a modal node's state changes and returns the current version number. Causes the component to re-render when the modal updates.
+
+```ts
+function useSubscribeModal(modal: ModalNode): number
+```
+
+---
+
+## Types
+
+### `ModalFrameProps<Context, B>`
+
+Props received by `ForegroundComponent` and `BackgroundComponent`.
+
+```ts
+interface ModalFrameProps<Context = object, B = any> {
+  id: number;
+  type: 'alert' | 'confirm' | 'prompt';
+  alive: boolean;
+  visible: boolean;
+  initiator: string;
+  manualDestroy: boolean;
+  closeOnBackdropClick: boolean;
+  background?: ModalBackground;
+  onConfirm: () => void;
+  onClose: () => void;
+  onChange: (value: any) => void;
+  onDestroy: () => void;
+  onChangeOrder: () => void;
+  context: Context;
+}
+```
+
+### `FooterComponentProps<Context>`
+
+Props received by `FooterComponent`.
+
+```ts
+interface FooterComponentProps<Context = object> {
+  confirmLabel?: ReactNode;
+  hideConfirm?: boolean;
+  cancelLabel?: ReactNode;
+  hideCancel?: boolean;
+  disabled?: boolean;
+  onConfirm: () => void;
+  onCancel?: () => void;
+  context: Context;
+}
+```
+
+### `WrapperComponentProps<Context>`
+
+Props received by `TitleComponent`, `SubtitleComponent`, `ContentComponent`.
+
+```ts
+type WrapperComponentProps<Context = object> = PropsWithChildren<{
+  context: Context;
+}>;
+```
+
+### `ModalBackground`
+
+```ts
+interface ModalBackground {
+  data?: B;
+}
+```
+
+### `ModalOptions`
+
+```ts
+interface ModalOptions {
+  zIndex?: number;
+  duration?: number | string;
+  backdrop?: string | CSSProperties;
+  manualDestroy?: boolean;
+  closeOnBackdropClick?: boolean;
+}
+```
+
+### `AlertContentProps`, `ConfirmContentProps`, `PromptContentProps`
+
+Props received by a `content` component when passed as a `ComponentType`.
+
+```ts
+// AlertContentProps
+type AlertContentProps<Context = object> = {
+  onConfirm: () => void;
+  context: Context;
+};
+
+// ConfirmContentProps
+type ConfirmContentProps<Context = object> = {
+  onConfirm: () => void;
+  onCancel: () => void;
+  context: Context;
+};
+
+// PromptContentProps = ConfirmContentProps
+```
+
+<ForAI>
+
+## AI Agent Reference — Full API Signatures
+
+### Exports
+
+```ts
+// Core functions (usable outside React)
+export function alert(options: AlertProps): Promise<void>
+export function confirm(options: ConfirmProps): Promise<boolean>
+export function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined>
+
+// Provider
+export const ModalProvider: ForwardRefExoticComponent<ModalProviderProps & RefAttributes<ModalProviderHandle>>
+export type ModalProviderProps = BootstrapProviderProps
+export interface ModalProviderHandle { initialize: (element: HTMLElement) => void }
+
+// Hooks
+export function useModal(configuration?: OverridableHandleProps): { alert, confirm, prompt }
+export function useInitializeModal(options?: { mode?: 'auto' | 'manual' }): { initialize, portal }
+export function useActiveModalCount(): number
+export function useModalOptions(): ConfigurationContextProps
+export function useModalDuration(): { duration: string; milliseconds: number }
+export function useModalBackdrop(): string | CSSProperties
+export function useModalAnimation(visible: boolean, handlers: { onVisible?(); onHidden?() }): void
+export function useDestroyAfter(modalId: number, delayMs: number): void
+export function useSubscribeModal(modal: ModalNode): number
+
+// Types
+export type { ModalOptions, ModalFrameProps, FooterComponentProps, ModalBackground }
+export type { PromptInputProps, AlertContentProps, ConfirmContentProps, PromptContentProps }
+export type { WrapperComponentProps }
+```
+
+### BaseModal fields (shared by alert/confirm/prompt)
+
+```ts
+interface BaseModal<T, B> {
+  group?: string;
+  title?: ReactNode;
+  subtitle?: ReactNode;
+  background?: ModalBackground;   // { data?: B }
+  dimmed?: boolean;
+  duration?: number;
+  manualDestroy?: boolean;
+  closeOnBackdropClick?: boolean;
+  handleResolve?: (result: T | null) => void;
+  ForegroundComponent?: ComponentType<PropsWithChildren<ModalFrameProps>>;
+  BackgroundComponent?: ComponentType<ModalFrameProps>;
+}
+```
+
+### Key behavioral rules
+
+- `alert` resolves `void` when any close action fires.
+- `confirm` resolves `true` on confirm, `false` on cancel or backdrop click.
+- `prompt` resolves the current input value on confirm, `undefined` on cancel (or `defaultValue` if `returnOnCancel: true`).
+- `manualDestroy: true` keeps the modal node alive after `onClose`; the caller must call `onDestroy` to remove it from the DOM.
+- Static `alert`/`confirm`/`prompt` are singletons that persist across component unmounts. `useModal` variants are closed on unmount.
+- Custom `ForegroundComponent` receives `visible` (boolean) for driving enter/exit animations and `onDestroy` for deferred cleanup.
+
+</ForAI>
+
+---
+
+## Examples(Promise-modal)
+
+import ForAI from '@site/src/components/ForAI';
+
+# Examples
+
+Practical usage patterns for common modal scenarios.
+
+---
+
+## Basic alert / confirm / prompt
+
+```tsx
+import { alert, confirm, prompt } from '@lerx/promise-modal';
+
+// Alert — resolves void on close
+await alert({ title: 'Done', content: 'Your changes were saved.' });
+
+// Confirm — resolves boolean
+const ok = await confirm({
+  title: 'Delete item',
+  content: 'This cannot be undone.',
+  footer: { confirm: 'Delete', cancel: 'Cancel' },
+});
+
+// Prompt — resolves typed value
+const name = await prompt<string>({
+  title: 'Enter name',
+  defaultValue: '',
+  Input: ({ value, onChange }) => (
+    <input value={value ?? ''} onChange={e => onChange(e.target.value)} />
+  ),
+  disabled: v => !v || v.trim().length < 2,
+});
+```
+
+---
+
+## Subtypes
+
+The `subtype` prop is forwarded to component slots so you can apply different styles per semantic type.
+
+```tsx
+await alert({ title: 'Info',    content: '...', subtype: 'info' });
+await alert({ title: 'Success', content: '...', subtype: 'success' });
+await alert({ title: 'Warning', content: '...', subtype: 'warning' });
+await alert({ title: 'Error',   content: '...', subtype: 'error' });
+```
+
+---
+
+## Custom footer text
+
+```tsx
+await alert({
+  title: 'Notice',
+  content: 'Please acknowledge.',
+  footer: { confirm: 'I understand' },
+});
+
+const result = await confirm({
+  title: 'Publish?',
+  content: 'This will go live immediately.',
+  footer: { confirm: 'Publish now', cancel: 'Not yet' },
+});
+```
+
+---
+
+## Prompt with complex value
+
+```tsx
+type UserInfo = { name: string; age: number };
+
+const user = await prompt<UserInfo>({
+  title: 'User info',
+  defaultValue: { name: '', age: 0 },
+  Input: ({ value, onChange }) => (
+    
+      <input
+        value={value?.name ?? ''}
+        onChange={e => onChange({ ...value!, name: e.target.value })}
+        placeholder="Name"
+      />
+      <input
+        type="number"
+        value={value?.age ?? 0}
+        onChange={e => onChange({ ...value!, age: Number(e.target.value) })}
+        placeholder="Age"
+      />
+    
+  ),
+  disabled: v => !v?.name,
+});
+```
+
+---
+
+## Custom modal components
+
+Override component slots globally on `ModalProvider` or per-call on individual modal options.
+
+```tsx
+import { ModalProvider, alert, type ModalFrameProps, type WrapperComponentProps, type FooterComponentProps } from '@lerx/promise-modal';
+
+// Foreground — receives ModalFrameProps + children
+const MyForeground = ({ children, type }: React.PropsWithChildren<ModalFrameProps>) => (
+  
+    {children}
+  
+);
+
+// Title wrapper
+const MyTitle = ({ children }: WrapperComponentProps) => (
+  {children}
+);
+
+// Footer — receives onConfirm, onCancel, disabled, labels
+const MyFooter = ({ onConfirm, onCancel, confirmLabel, cancelLabel, disabled }: FooterComponentProps) => (
+  
+    {onCancel && <button onClick={onCancel}>{cancelLabel ?? 'Cancel'}</button>}
+    <button onClick={onConfirm} disabled={disabled}>{confirmLabel ?? 'OK'}</button>
+  
+);
+
+function App() {
+  return (
+    <ModalProvider
+      ForegroundComponent={MyForeground}
+      TitleComponent={MyTitle}
+      FooterComponent={MyFooter}
+    >
+      <YourApp />
+    </ModalProvider>
+  );
+}
+```
+
+### Per-call component override
+
+```tsx
+await alert({
+  title: 'Special modal',
+  content: 'Uses a different foreground just for this call.',
+  ForegroundComponent: ({ children }) => (
+    
+      {children}
+    
+  ),
+});
+```
+
+---
+
+## Background data
+
+Pass typed data to `BackgroundComponent` via `background.data`.
+
+```tsx
+type BgData = 'danger' | 'normal';
+
+const MyBackground = ({ background, children, onClick }: ModalFrameProps<object, BgData>) => {
+  const color = background?.data === 'danger' ? 'rgba(200,0,0,0.4)' : 'rgba(0,0,0,0.35)';
+  return (
+    
+      {children}
+    
+  );
+};
+
+await confirm({
+  title: 'Delete account',
+  content: 'This is permanent.',
+  background: { data: 'danger' },
+});
+```
+
+---
+
+## Async operations in modals
+
+```tsx
+async function handleSubmit() {
+  const confirmed = await confirm({
+    title: 'Submit order',
+    content: 'Proceed with checkout?',
+  });
+  if (!confirmed) return;
+
+  // Show a loading-style alert while work completes
+  const done = submitOrder();
+  await alert({
+    title: 'Processing',
+    content: 'Please wait...',
+    manualDestroy: true,   // keep alive until we call onDestroy
+    closeOnBackdropClick: false,
+    footer: false,
+  });
+  await done;
+}
+```
+
+---
+
+## Nested / sequential modals
+
+```tsx
+async function multiStep() {
+  const go = await confirm({
+    title: 'Start',
+    content: 'This takes multiple steps.',
+    footer: { confirm: 'Continue', cancel: 'Cancel' },
+  });
+  if (!go) return;
+
+  const name = await prompt<string>({
+    title: 'Your name',
+    defaultValue: '',
+    Input: ({ value, onChange }) => (
+      <input value={value ?? ''} onChange={e => onChange(e.target.value)} />
+    ),
+  });
+  if (!name) return;
+
+  const final = await confirm({
+    title: 'Confirm',
+    content: `Submit as "${name}"?`,
+    subtype: 'warning',
+  });
+
+  if (final) {
+    await alert({ title: 'Done', content: `Submitted as ${name}.`, subtype: 'success' });
+  }
+}
+```
+
+---
+
+## Component-lifecycle-scoped modals (`useModal`)
+
+Modals opened via `useModal` are automatically closed when the component unmounts. Useful for forms and detail views.
+
+```tsx
+import { useModal } from '@lerx/promise-modal';
+
+function ItemEditor({ itemId }: { itemId: string }) {
+  const modal = useModal();
+
+  const handleDelete = async () => {
+    const ok = await modal.confirm({
+      title: 'Delete item',
+      content: `Delete item ${itemId}?`,
+    });
+    if (ok) await deleteItem(itemId);
+  };
+
+  return <button onClick={handleDelete}>Delete</button>;
+  // If ItemEditor unmounts while the confirm modal is open, it will be closed automatically.
+}
+```
+
+---
+
+## Custom anchor (render modals into a specific DOM node)
+
+```tsx
+import { useRef, useEffect } from 'react';
+import { ModalProvider, type ModalProviderHandle, alert } from '@lerx/promise-modal';
+
+function CustomAnchorExample() {
+  const providerRef = useRef<ModalProviderHandle>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (providerRef.current && containerRef.current) {
+      providerRef.current.initialize(containerRef.current);
+    }
+  }, []);
+
+  return (
+    <ModalProvider ref={providerRef}>
+      
+      <button onClick={() => alert({ title: 'In container', content: 'Rendered inside the div above.' })}>
+        Open
+      </button>
+    </ModalProvider>
+  );
+}
+```
+
+---
+
+## Toast notifications
+
+Build toast messages using `alert` with a custom `ForegroundComponent` and `useDestroyAfter`.
+
+```tsx
+import { useRef, useEffect } from 'react';
+import {
+  alert,
+  type ModalFrameProps,
+  useModalAnimation,
+  useModalDuration,
+  useDestroyAfter,
+} from '@lerx/promise-modal';
+
+function ToastForeground({ id, visible, children, onClose, hideAfterMs = 3000 }: React.PropsWithChildren<ModalFrameProps & { hideAfterMs?: number }>) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { milliseconds } = useModalDuration();
+
+  useEffect(() => {
+    const t = setTimeout(onClose, hideAfterMs);
+    return () => clearTimeout(t);
+  }, [onClose, hideAfterMs]);
+
+  useModalAnimation(visible, {
+    onVisible: () => ref.current?.classList.add('toast--visible'),
+    onHidden:  () => ref.current?.classList.remove('toast--visible'),
+  });
+
+  useDestroyAfter(id, milliseconds);
+
+  return (
+    
+      {children}
+    
+  );
+}
+
+let destroyPrevToast: (() => void) | undefined;
+
+export function toast(message: React.ReactNode, duration = 3000) {
+  destroyPrevToast?.();
+  return alert({
+    content: message,
+    footer: false,
+    dimmed: false,
+    closeOnBackdropClick: false,
+    ForegroundComponent: (props: ModalFrameProps) => {
+      destroyPrevToast = props.onDestroy;
+      return <ToastForeground {...props} hideAfterMs={duration} />;
+    },
+  });
+}
+```
+
+---
+
+## Context: theme / locale in modal components
+
+Pass shared data to all modal component slots via the `context` prop on `ModalProvider`.
+
+```tsx
+// Provider setup
+<ModalProvider context={{ theme: 'dark', locale: 'ko-KR' }}>
+  <App />
+</ModalProvider>
+
+// In a custom component slot — context is always injected
+const MyTitle = ({ children, context }: WrapperComponentProps<{ theme: string }>) => (
+  {children}
+);
+
+// In a prompt Input — context is also available
+const myPrompt = await prompt<string>({
+  title: 'Name',
+  defaultValue: '',
+  Input: ({ value, onChange, context }) => (
+    <input
+      value={value ?? ''}
+      onChange={e => onChange(e.target.value)}
+      placeholder={context.locale === 'ko-KR' ? '이름 입력' : 'Enter name'}
+    />
+  ),
+});
+```
+
+<ForAI>
+
+## AI Agent Reference — Examples Summary
+
+### Pattern index
+
+| Goal | Key APIs |
+|---|---|
+| Simple notification | `await alert({ title, content })` |
+| Yes/no decision | `const ok = await confirm(...)` |
+| User text input | `const val = await prompt<T>({ Input, defaultValue })` |
+| Typed input validation | `prompt({ disabled: v => condition })` |
+| Custom look | `ModalProvider` slots or per-call `ForegroundComponent` |
+| Background data | `alert({ background: { data: myData } })` |
+| Sequential workflow | `await confirm(...)` then `await prompt(...)` then `await alert(...)` |
+| Auto-close on unmount | `const modal = useModal(); await modal.confirm(...)` |
+| Custom DOM target | `ModalProviderHandle.initialize(element)` |
+| Toast | `alert({ footer: false, dimmed: false, ForegroundComponent: toastComponent })` |
+| Theme/locale in components | `ModalProvider context={...}` + `WrapperComponentProps.context` |
+
+### Important constraints for code generation
+
+1. `ModalProvider` must exist in the React tree before any `alert`/`confirm`/`prompt` call renders.
+2. `prompt` requires the `Input` prop — it is not optional.
+3. Custom `ForegroundComponent` must forward `children` (it wraps title, content, footer slots).
+4. `BackgroundComponent` does NOT receive `children` — it is a sibling layer, not a wrapper.
+5. `manualDestroy: true` requires calling `onDestroy()` explicitly; otherwise the modal DOM node leaks.
+6. `useDestroyAfter` and `useModalAnimation` must be called inside a `ForegroundComponent` rendered by the modal system (they read modal context internally).
+7. `footer: false` hides the footer entirely — no confirm/cancel buttons.
+8. `disabled` in `prompt` controls the confirm button state; it does not prevent the modal from being closed via backdrop or cancel.
+
+</ForAI>
+
+---
+
+## @lerx/promise-modal
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# @lerx/promise-modal
+
+<PackageHeader
+  name="@lerx/promise-modal"
+  description="Promise-based modal utility for React — alert, confirm, and prompt as async functions, usable inside and outside components."
+/>
+
+`@lerx/promise-modal` turns modal interactions into awaitable promises.
+Call `alert`, `confirm`, or `prompt` from anywhere — event handlers,
+async functions, or outside the React tree — and await the user's response.
+
+  Works inside and outside React components
+  Supports alert, confirm, and prompt modal types
+  Fully customizable component slots (foreground, background, title, footer, etc.)
+  Per-modal and global configuration
+  Component-lifecycle-scoped modals via <code>useModal</code>
+
+## Live Demo
+
+Click the buttons below to try `alert`, `confirm`, and `prompt` — each returns a Promise that resolves with the user's response:
+
+<BrowserOnly fallback={Loading demo...}>
+  {() => {
+    const Demo = require('@site/src/components/demos/PromiseModalDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+## Requirements
+
+- React 18 or 19
+- Node.js 16.11.0+
+
+## Setup
+
+### 1. Wrap your app with `ModalProvider`
+
+```tsx
+import { ModalProvider } from '@lerx/promise-modal';
+
+function App() {
+  return (
+    <ModalProvider>
+      <YourApp />
+    </ModalProvider>
+  );
+}
+```
+
+### 2. Call modal functions anywhere
+
+```tsx
+import { alert, confirm, prompt } from '@lerx/promise-modal';
+
+// In an event handler, async function, or outside React:
+async function handleDelete() {
+  const ok = await confirm({
+    title: 'Delete item',
+    content: 'This cannot be undone.',
+    footer: { confirm: 'Delete', cancel: 'Cancel' },
+  });
+  if (ok) await deleteItem();
+}
+```
+
+### 3. Use `useModal` inside components for lifecycle-scoped modals
+
+```tsx
+import { useModal } from '@lerx/promise-modal';
+
+function MyComponent() {
+  const modal = useModal();
+  // Modals opened via `modal.*` are closed automatically when MyComponent unmounts.
+  return <button onClick={() => modal.alert({ title: 'Hi' })}>Open</button>;
+}
+```
+
+## ModalProvider with custom components and options
+
+```tsx
+import { ModalProvider } from '@lerx/promise-modal';
+import { CustomBackground, CustomForeground, CustomFooter } from './components';
+
+function App() {
+  return (
+    <ModalProvider
+      ForegroundComponent={CustomForeground}
+      BackgroundComponent={CustomBackground}
+      FooterComponent={CustomFooter}
+      options={{
+        duration: 250,                   // animation duration in ms
+        backdrop: 'rgba(0,0,0,0.35)',    // backdrop CSS color
+        manualDestroy: false,            // auto-destroy on confirm/close
+        closeOnBackdropClick: true,      // close when backdrop clicked
+        zIndex: 1000,                    // z-index for modal stack
+      }}
+      context={{ theme: 'light', locale: 'en-US' }}
+    >
+      <YourApp />
+    </ModalProvider>
+  );
+}
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@lerx/promise-modal` v0.10.5
+**Purpose**: Promise-based modal management for React — alert, confirm, prompt as async functions.
+
+### Core functions (usable anywhere, including outside React)
+```ts
+import { alert, confirm, prompt } from '@lerx/promise-modal';
+```
+
+### Provider
+```ts
+import { ModalProvider } from '@lerx/promise-modal';
+import type { ModalProviderHandle, ModalProviderProps } from '@lerx/promise-modal';
+```
+
+### Hooks (inside React components)
+```ts
+import { useModal } from '@lerx/promise-modal';              // lifecycle-scoped modals
+import { useInitializeModal } from '@lerx/promise-modal';    // provider initialization
+import { useActiveModalCount } from '@lerx/promise-modal';   // open modal count
+import { useModalAnimation } from '@lerx/promise-modal';     // animation state
+import { useModalDuration } from '@lerx/promise-modal';      // animation duration
+import { useModalOptions } from '@lerx/promise-modal';       // current options
+import { useModalBackdrop } from '@lerx/promise-modal';      // backdrop state
+import { useDestroyAfter } from '@lerx/promise-modal';       // auto-destroy timer
+import { useSubscribeModal } from '@lerx/promise-modal';     // modal event subscription
+```
+
+### Types
+```ts
+import type { ModalOptions } from '@lerx/promise-modal';
+import type { ModalFrameProps, ModalBackground } from '@lerx/promise-modal';
+import type { FooterComponentProps, PromptInputProps } from '@lerx/promise-modal';
+import type { AlertContentProps, ConfirmContentProps, PromptContentProps } from '@lerx/promise-modal';
+import type { WrapperComponentProps } from '@lerx/promise-modal';
+```
+
+### Architecture
+- `ModalProvider` wraps app → enables global modal rendering
+- `alert/confirm/prompt` → returns `Promise<boolean | string | void>`
+- `useModal()` → returns lifecycle-scoped instance (auto-closes on unmount)
+
+</ForAI>
+
+---
+
+## @slats/claude-assets-sync
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+# @slats/claude-assets-sync
+
+<PackageHeader
+  name="@slats/claude-assets-sync"
+  description="CLI tool to sync Claude commands and skills from npm packages to your project's .claude/ directory."
+/>
+
+Allows npm package authors to distribute Claude Code commands and skills alongside their packages.
+When users install these packages, they can sync the assets to their local `.claude/` directory for immediate use.
+
+  Multi-package sync in a single command
+  Version tracking — skips re-sync when version is unchanged
+  Flat file structure with prefixed filenames (default)
+  Interactive add/list UI (ink-based terminal UI)
+  Status monitoring with npm registry update checks
+  Dry-run mode to preview changes before applying
+  Legacy nested structure support and migration tool
+
+## Installation
+
+```bash
+# One-time use (recommended)
+npx @slats/claude-assets-sync -p @canard/schema-form
+
+# Global install
+npm install -g @slats/claude-assets-sync
+```
+
+## Commands
+
+### sync (default)
+
+Sync Claude assets from one or more npm packages.
+
+```bash
+npx @slats/claude-assets-sync [options] -p <package>
+```
+
+| Option | Description |
+|--------|-------------|
+| `-p, --package <name>` | Package to sync (repeatable) |
+| `-f, --force` | Force sync even if version matches |
+| `--dry-run` | Preview changes without writing files |
+| `-l, --local` | Read from local workspace instead of node_modules |
+| `-r, --ref <ref>` | Git ref (branch, tag, commit) to fetch from |
+| `--no-flat` | Use legacy nested directory structure |
+
+```bash
+# Sync a single package
+npx @slats/claude-assets-sync -p @canard/schema-form
+
+# Sync multiple packages
+npx @slats/claude-assets-sync -p @canard/schema-form -p @lerx/promise-modal
+
+# Preview without writing
+npx @slats/claude-assets-sync -p @canard/schema-form --dry-run
+
+# Force re-sync
+npx @slats/claude-assets-sync -p @canard/schema-form --force
+
+# Sync from a specific branch
+npx @slats/claude-assets-sync -p @canard/schema-form -r main
+```
+
+### add
+
+Add a package with interactive file selection (TTY).
+
+```bash
+npx @slats/claude-assets-sync add -p <package> [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-p, --package <name>` | Package to add (required) |
+| `-l, --local` | Read from local workspace |
+| `-r, --ref <ref>` | Git ref to fetch from |
+
+**Keyboard controls in interactive mode:**
+
+| Key | Action |
+|-----|--------|
+| `↑` / `↓` | Navigate items |
+| `Space` | Toggle selection |
+| `→` / `←` | Expand / collapse directory |
+| `Enter` | Confirm and sync |
+| `a` | Select all |
+| `n` | Deselect all |
+| `q` | Cancel |
+
+```bash
+npx @slats/claude-assets-sync add -p @lerx/promise-modal
+```
+
+### list
+
+List all synced packages with an interactive tree view.
+
+```bash
+npx @slats/claude-assets-sync list [--json]
+```
+
+**View mode keys:** `e` edit, `r` refresh, `q` quit
+**Edit mode keys:** `d` delete file, `a` add file, `Esc` exit edit
+
+```bash
+# Interactive tree view
+npx @slats/claude-assets-sync list
+
+# JSON output for scripting
+npx @slats/claude-assets-sync list --json
+```
+
+```
+┌─ Synced Packages ─────────────────────────────┐
+│                                               │
+│ ▼ @canard/schema-form@1.0.0                   │
+│   ├─ commands/                                │
+│   │  └─ @canard-schema-form-my-command.md     │
+│   └─ skills/                                  │
+│      └─ @canard-schema-form-my-skill.md       │
+│                                               │
+│ [e] Edit  [r] Refresh  [q] Quit               │
+└───────────────────────────────────────────────┘
+```
+
+### status
+
+Show sync status and check for available updates.
+
+```bash
+npx @slats/claude-assets-sync status [--no-remote]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--no-remote` | Skip npm registry check |
+
+Status indicators: `✓` up-to-date, `⚠` update available, `✗` error
+
+```
+┌─ Package Status ──────────────────────────────┐
+│ ✓ @canard/schema-form                         │
+│   Local: 1.0.0  Synced: 1.0.0  Assets: 2     │
+│ ⚠ @lerx/promise-modal                         │
+│   Local: 0.6.0  Synced: 0.5.0                │
+├─ Summary ────────────────────────────────────┤
+│   Total: 2  ✓ 1  ⚠ 1                          │
+└───────────────────────────────────────────────┘
+```
+
+### remove
+
+Remove a synced package and its assets.
+
+```bash
+npx @slats/claude-assets-sync remove -p <package> [--yes] [--dry-run]
+```
+
+```bash
+npx @slats/claude-assets-sync remove -p @canard/schema-form --yes
+```
+
+### migrate
+
+Migrate from legacy nested structure to flat structure.
+
+```bash
+npx @slats/claude-assets-sync migrate [--dry-run]
+```
+
+## Directory Structure
+
+### Flat (default)
+
+```
+your-project/
+└── .claude/
+    ├── commands/
+    │   ├── @canard-schema-form-my-command.md
+    │   └── @lerx-promise-modal-another-command.md
+    └── skills/
+        ├── @canard-schema-form-my-skill.md
+        └── @lerx-promise-modal-another-skill.md
+```
+
+A single `.sync-meta.json` tracks all packages in each asset directory.
+
+### Nested (legacy, `--no-flat`)
+
+```
+your-project/
+└── .claude/
+    ├── commands/
+    │   └── @canard/schema-form/
+    │       ├── my-command.md
+    │       └── .sync-meta.json
+    └── skills/
+        └── @lerx/promise-modal/
+            ├── my-skill.md
+            └── .sync-meta.json
+```
+
+## .sync-meta.json
+
+```json
+{
+  "version": "0.0.1",
+  "syncedAt": "2025-02-05T10:30:00.000Z",
+  "packages": {
+    "@canard-schema-form": {
+      "originalName": "@canard/schema-form",
+      "version": "1.0.0",
+      "files": {
+        "commands": [
+          { "original": "my-command.md", "transformed": "@canard-schema-form-my-command.md" }
+        ],
+        "skills": [
+          { "original": "my-skill.md", "transformed": "@canard-schema-form-my-skill.md" }
+        ]
+      }
+    }
+  }
+}
+```
+
+## Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `GITHUB_TOKEN` | GitHub personal access token (raises rate limit to 5,000 req/hr) | unauthenticated (60 req/hr) |
+| `VERBOSE` | Enable debug logging | disabled |
+
+```bash
+GITHUB_TOKEN=ghp_xxxxxxxxxxxx npx @slats/claude-assets-sync -p @package1 -p @package2
+```
+
+## For Package Authors
+
+Add a `claude` field to your `package.json` and place assets under the declared path:
+
+```json
+{
+  "name": "@your-scope/your-package",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/your-repo.git",
+    "directory": "packages/your-package"
+  },
+  "claude": {
+    "assetPath": "docs/claude"
+  }
+}
+```
+
+```
+your-package/
+└── docs/claude/
+    ├── commands/
+    │   └── your-command.md
+    └── skills/
+        └── your-skill.md
+```
+
+- Asset files must be Markdown (`.md`)
+- `repository.type` and `repository.url` are required
+- `assetPath` is relative to the package root
+
+## Sync Flow
+
+```
+1. Read package.json from node_modules (or local workspace)
+2. Extract claude.assetPath
+3. Parse repository URL → GitHub owner/repo
+4. Compare version against .sync-meta.json (skip if unchanged, unless --force)
+5. Fetch file list from GitHub API (commands/ and skills/ under assetPath)
+6. Download each file from raw.githubusercontent.com
+7. Write to .claude/{type}/{prefixed-name}.md
+8. Update .sync-meta.json
+```
+
+## Programmatic API
+
+```ts
+import { syncPackage, syncPackages } from '@slats/claude-assets-sync';
+import type { CliOptions, SyncResult } from '@slats/claude-assets-sync';
+
+// Sync a single package
+const result: SyncResult = await syncPackage('@canard/schema-form', {
+  force: false,
+  dryRun: false,
+  flat: true,
+});
+
+// Sync multiple packages
+const results = await syncPackages(['@canard/schema-form', '@lerx/promise-modal'], {
+  force: true,
+});
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@slats/claude-assets-sync` v0.0.6
+**Purpose**: Claude Code asset synchronization CLI tool.
+
+### Exports
+```ts
+import { syncPackage } from '@slats/claude-assets-sync';
+import { syncPackages } from '@slats/claude-assets-sync';
+import { createProgram } from '@slats/claude-assets-sync';
+import { run } from '@slats/claude-assets-sync';
+import { migrateToFlat } from '@slats/claude-assets-sync';
+import { needsMigration } from '@slats/claude-assets-sync';
+import type { MigrationResult } from '@slats/claude-assets-sync';
+import type { AssetType } from '@slats/claude-assets-sync';
+import type { CliOptions } from '@slats/claude-assets-sync';
+import type { ClaudeConfig } from '@slats/claude-assets-sync';
+import type { GitHubRepoInfo } from '@slats/claude-assets-sync';
+import type { PackageInfo } from '@slats/claude-assets-sync';
+import type { SyncMeta } from '@slats/claude-assets-sync';
+import type { SyncResult } from '@slats/claude-assets-sync';
+import type { UnifiedSyncMeta } from '@slats/claude-assets-sync';
+import type { PackageSyncInfo } from '@slats/claude-assets-sync';
+import type { FileMapping } from '@slats/claude-assets-sync';
+```
+
+</ForAI>
+
+---
+
+## @slats
+
+
+Developer tooling packages for Claude Code integration.
+
+## Packages
+
+| Package | Description |
+|---------|-------------|
+| [`@slats/claude-assets-sync`](./claude-assets-sync/) | CLI tool to sync Claude commands and skills from npm packages to your project's `.claude/` directory |
+
+---
+
+## @winglet/common-utils
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@winglet/common-utils" />
+
+Comprehensive utility library for JavaScript/TypeScript projects.
+Provides array processing, object manipulation, Promise handling, type checking,
+scheduling, hashing, and more — all with tree-shakeable sub-path exports.
+
+## Installation
+
+```bash
+yarn add @winglet/common-utils
+```
+
+## Sub-path Exports
+
+| Import path | Contents |
+|---|---|
+| `@winglet/common-utils` | All exports |
+| `@winglet/common-utils/array` | `chunk`, `unique`, `uniqueBy`, `groupBy`, `difference`, `intersection`, `sortWithReference` |
+| `@winglet/common-utils/filter` | `isString`, `isNumber`, `isObject`, `isArray`, `isNil`, `isPlainObject`, `isTruthy` … |
+| `@winglet/common-utils/object` | `clone`, `merge`, `equals`, `serializeObject`, `transformKeys`, `removeUndefined` |
+| `@winglet/common-utils/function` | `debounce`, `throttle`, `getTrackableHandler` |
+| `@winglet/common-utils/promise` | `delay`, `timeout`, `withTimeout`, `waitAndExecute` |
+| `@winglet/common-utils/scheduler` | `scheduleMacrotask`, `scheduleMicrotask`, `scheduleNextTick` |
+| `@winglet/common-utils/hash` | Murmur3 hash, polynomial hash |
+| `@winglet/common-utils/convert` | Type conversion utilities |
+| `@winglet/common-utils/console` | Console helpers |
+| `@winglet/common-utils/math` | Math utilities |
+
+## Usage Examples
+
+```ts
+import { chunk, unique, intersection } from '@winglet/common-utils/array';
+import { isObject, isNil } from '@winglet/common-utils/filter';
+import { debounce } from '@winglet/common-utils/function';
+
+// Array utilities
+chunk([1, 2, 3, 4, 5], 2);        // [[1,2], [3,4], [5]]
+unique([1, 2, 2, 3]);              // [1, 2, 3]
+intersection([1, 2, 3], [2, 3, 4]); // [2, 3]
+
+// Type checking
+isObject({});   // true
+isNil(null);    // true
+
+// Function enhancement
+const debouncedSave = debounce(save, 300);
+```
+
+```ts
+import { clone, merge, equals } from '@winglet/common-utils/object';
+import { delay, withTimeout } from '@winglet/common-utils/promise';
+
+// Deep clone and merge
+const copy = clone(original);
+const merged = merge(defaults, overrides);
+equals({ a: 1 }, { a: 1 }); // true
+
+// Promise utilities
+await delay(1000);
+await withTimeout(fetchData(), 5000); // throws TimeoutError if >5s
+```
+
+## Error Classes
+
+- `BaseError` — foundation error class
+- `AbortError` — operation cancellation
+- `InvalidTypeError` — type validation failures
+- `TimeoutError` — timeout scenarios
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@winglet/common-utils` v0.10.0
+**Purpose**: General-purpose TypeScript utility functions.
+
+### Key exports
+```
+./lib → cacheMapFactory
+        cacheWeakMapFactory
+        counterFactory
+        getKeys
+        getTypeTag
+        hasOwnProperty
+        getRandomBoolean
+        getRandomNumber
+        getRandomString
+./error → BaseError
+          ErrorDetails (type)
+          AbortError
+          isAbortError
+          InvalidTypeError
+          isInvalidTypeError
+          TimeoutError
+          isTimeoutError
+./constant → VOID_FUNCTION
+             NULL_FUNCTION
+             FALSE_FUNCTION
+             TRUE_FUNCTION
+             IDENTITY_FUNCTION
+             NOOP_FUNCTION
+             MILLISECOND
+             SECOND
+             MINUTE
+             HOUR
+             DAY
+             ARGUMENTS_TAG
+             ARRAY_BUFFER_TAG
+             ARRAY_TAG
+             BIG_INT_64_ARRAY_TAG
+             BIG_UINT_64_ARRAY_TAG
+             BOOLEAN_TAG
+             DATA_VIEW_TAG
+             DATE_TAG
+             ERROR_TAG
+./filter → isArray
+           isArrayBuffer
+           isArrayIndex
+           isArrayLike
+           isBlob
+           isBoolean
+           isBuffer
+           isCloneable
+           isDataView
+           isDate
+           isEmpty
+           isEmptyArray
+           isEmptyObject
+           isEmptyPlainObject
+           isError
+           isFalsy
+           isFile
+           isFunction
+           isInteger
+           isMap
+./array → at
+          chunk
+          difference
+          differenceBy
+          differenceLite
+          differenceWith
+          forEach
+          forEachDual
+          forEachReverse
+          groupBy
+          intersection
+          intersectionBy
+          intersectionLite
+          intersectionWith
+          map
+          orderedMerge
+          primitiveArrayEqual
+          sortWithReference
+          unique
+          uniqueBy
+./console → printError
+./convert → convertMsFromDuration
+./function → getTrackableHandler
+             TrackableHandlerFunction (type)
+             TrackableHandlerOptions (type)
+             debounce
+             DebouncedFn (type)
+             throttle
+             ThrottledFn (type)
+./hash → Murmur3
+         polynomialHash
+./object → clone
+           cloneLite
+           countKey
+           countObjectKey
+           equals
+           getEmptyObject
+           getFirstKey
+           getObjectKeys
+           getSymbols
+           hasUndefined
+           merge
+           removePrototype
+           removeUndefined
+           serializeNative
+           serializeObject
+           serializeWithFullSortedKeys
+           shallowClone
+           stableEquals
+           stableSerialize
+           sortObjectKeys
+./promise → delay
+            timeout
+            withTimeout
+            waitAndExecute
+            waitAndReturn
+./scheduler → MessageChannelScheduler
+              SchedulerOptions (type)
+              setImmediate
+              clearImmediate
+              getPendingCount
+              destroyGlobalScheduler
+              isMessageChannelSchedulerError
+              cancelMacrotask
+              scheduleMacrotask
+              scheduleCancelableMacrotask
+              cancelMacrotaskSafe
+              scheduleMacrotaskSafe
+              scheduleCancelableMacrotaskSafe
+              scheduleMicrotask
+              scheduleNextTick
+```
+
+</ForAI>
+
+---
+
+## @winglet/data-loader
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@winglet/data-loader" />
+
+Batching and caching utility for asynchronous data fetching, inspired by GraphQL DataLoader.
+Automatically collects individual `load()` calls within the same tick into a single
+batch request, eliminating the N+1 query problem with a built-in promise cache.
+
+## Installation
+
+```bash
+yarn add @winglet/data-loader
+```
+
+## API
+
+### Constructor
+
+```ts
+import { DataLoader } from '@winglet/data-loader';
+
+const loader = new DataLoader<Key, Value>(batchLoader, options?);
+```
+
+`batchLoader` receives an array of keys and must return a `Promise` resolving to values (or `Error`) in the same order.
+
+### Instance Methods
+
+| Method | Description |
+|---|---|
+| `load(key)` | Returns `Promise<Value>` for a single key; batches automatically |
+| `loadMany(keys)` | Returns `Promise<(Value \| Error)[]>` for multiple keys |
+| `clear(key)` | Removes a single key from the cache |
+| `clearAll()` | Clears the entire cache |
+| `prime(key, value)` | Pre-populates the cache |
+
+### Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `batch` | `boolean` | `true` | Enable request batching |
+| `maxBatchSize` | `number` | `Infinity` | Max keys per batch |
+| `cache` | `boolean` | `true` | Enable promise caching |
+| `cacheKeyFn` | `(key) => CacheKey` | identity | Map key to cache key |
+| `cacheMap` | `MapLike` | `new Map()` | Custom cache implementation |
+| `scheduler` | `(fn) => void` | `process.nextTick` | Controls batching timing |
+
+## Usage Examples
+
+```ts
+import { DataLoader } from '@winglet/data-loader';
+
+const userLoader = new DataLoader<number, User>(async (ids) => {
+  const users = await fetchUsersByIds(ids);
+  return ids.map(id => users.find(u => u.id === id) ?? new Error(`Not found: ${id}`));
+});
+
+// These three calls batch into a single fetchUsersByIds([1, 2, 3])
+const [alice, bob, carol] = await Promise.all([
+  userLoader.load(1),
+  userLoader.load(2),
+  userLoader.load(3),
+]);
+```
+
+```ts
+// Cache management
+userLoader.prime(4, { id: 4, name: 'Dave' });
+userLoader.clear(1);
+userLoader.clearAll();
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@winglet/data-loader` v0.10.0
+**Purpose**: Request batching and caching for async data fetching (inspired by GraphQL DataLoader).
+
+### Exports
+```ts
+import { DataLoader } from '@winglet/data-loader';
+import type { DataLoaderOptions } from '@winglet/data-loader';
+```
+
+### Constructor
+```ts
+const loader = new DataLoader<Key, Value>(batchLoadFn, options?);
+// batchLoadFn: (keys: Key[]) => Promise<(Value | Error)[]>
+```
+
+### Instance methods
+| Method | Returns | Description |
+|---|---|---|
+| `load(key)` | `Promise<Value>` | Single key; auto-batched within same tick |
+| `loadMany(keys)` | `Promise<(Value\|Error)[]>` | Multiple keys |
+| `clear(key)` | `this` | Remove single cache entry |
+| `clearAll()` | `this` | Clear entire cache |
+| `prime(key, value)` | `this` | Pre-populate cache |
+
+### Options
+| Option | Type | Default |
+|---|---|---|
+| `batch` | `boolean` | `true` |
+| `maxBatchSize` | `number` | `Infinity` |
+| `cache` | `boolean` | `true` |
+| `cacheKeyFn` | `(key) => CacheKey` | identity |
+| `cacheMap` | `MapLike` | `new Map()` |
+| `scheduler` | `(fn) => void` | `process.nextTick` |
+
+</ForAI>
+
+---
+
+## @winglet
+
+
+TypeScript utility libraries for common operations.
+
+## Packages
+
+| Package | Description |
+|---------|-------------|
+| [`@winglet/common-utils`](./common-utils/) | Array, object, Promise, and type utilities |
+| [`@winglet/react-utils`](./react-utils/) | React hooks, HOCs, and Portal system |
+| [`@winglet/json`](./json/) | JSON Pointer (RFC 6901) and JSON Patch (RFC 6902) |
+| [`@winglet/json-schema`](./json-schema/) | JSON Schema traversal, filtering, and validation |
+| [`@winglet/data-loader`](./data-loader/) | Async data batching and caching |
+| [`@winglet/style-utils`](./style-utils/) | CSS class composition and scoped styles |
+
+---
+
+## @winglet/json
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@winglet/json" />
+
+TypeScript library for safe JSON data manipulation.
+Implements RFC 6901 (JSON Pointer) and RFC 6902 (JSON Patch)
+with prototype pollution protection, immutable operations, and sub-path exports.
+
+## Installation
+
+```bash
+yarn add @winglet/json
+```
+
+## Sub-path Exports
+
+| Import path | Contents |
+|---|---|
+| `@winglet/json` | All exports |
+| `@winglet/json/pointer` | Full JSON Pointer API |
+| `@winglet/json/pointer-manipulator` | `getValue`, `setValue`, `compilePointer` |
+| `@winglet/json/pointer-patch` | JSON Patch operations |
+| `@winglet/json/pointer-escape` | `escapePath`, `unescapePath` |
+| `@winglet/json/path` | JSON Path constants |
+
+## Key Exports
+
+### Pointer Manipulation (`/pointer-manipulator`)
+
+- `getValue(object, pointer, options?)` — read a value at a JSON Pointer path
+- `setValue(object, pointer, value, options?)` — write a value at the path
+- `compilePointer(pointer)` — compile a pointer to reusable segments
+
+### JSON Patch (`/pointer-patch`)
+
+- `compare(a, b, options?)` — generate RFC 6902 patch between two objects
+- `applyPatch(object, patches, options?)` — apply a patch array
+- `difference(a, b)` — generate RFC 7396 merge patch
+- `mergePatch(object, patch)` — apply a merge patch
+
+### Options
+
+| Option | Default | Description |
+|---|---|---|
+| `immutable` | `true` | Return new object instead of mutating |
+| `protectPrototype` | `true` | Block `__proto__`, `constructor`, `prototype` |
+| `strict` | `false` | Throw on missing paths |
+
+## Usage Examples
+
+```ts
+import { getValue, setValue } from '@winglet/json/pointer-manipulator';
+
+const data = { user: { name: 'Alice', roles: ['admin'] } };
+
+getValue(data, '/user/name');              // 'Alice'
+setValue(data, '/user/name', 'Bob');        // new object, original unchanged
+```
+
+```ts
+import { compare, applyPatch } from '@winglet/json/pointer-patch';
+
+const a = { x: 1, y: 2 };
+const b = { x: 1, y: 3, z: 4 };
+
+const patch = compare(a, b);
+// [{ op: 'replace', path: '/y', value: 3 }, { op: 'add', path: '/z', value: 4 }]
+
+applyPatch(a, patch); // { x: 1, y: 3, z: 4 }
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@winglet/json` v0.10.0
+**Purpose**: RFC 6901 JSON Pointer and RFC 6902 JSON Patch with security protections.
+
+### Key exports
+```
+./path → JSONPath
+./path-common → convertJsonPathToPointer
+                getJSONPath
+./pointer → JSONPointer
+./pointer-common → convertJsonPointerToPath
+                   getJSONPointer
+./pointer-escape → escapeSegment
+                   escapePath
+                   unescapePath
+                   unescapeSegment
+./pointer-manipulator → getValue
+                        setValue
+                        compilePointer
+./pointer-patch → applyPatch
+                  ApplyPatchOptions (type)
+                  compare
+                  CompareOptions (type)
+                  difference
+                  mergePatch
+                  Patch (type)
+                  TestPatch (type)
+                  AddPatch (type)
+                  ReplacePatch (type)
+                  RemovePatch (type)
+                  CopyPatch (type)
+                  MovePatch (type)
+```
+
+</ForAI>
+
+---
+
+## @winglet/json-schema
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@winglet/json-schema" />
+
+Utility library for JSON Schema manipulation.
+Provides depth-first schema traversal with a visitor pattern, `$ref` resolution,
+circular reference detection, and schema type-guard functions.
+
+## Installation
+
+```bash
+yarn add @winglet/json-schema
+```
+
+## Sub-path Exports
+
+| Import path | Contents |
+|---|---|
+| `@winglet/json-schema` | All exports |
+| `@winglet/json-schema/scanner` | `JsonSchemaScanner` (synchronous) |
+| `@winglet/json-schema/async-scanner` | `JsonSchemaScannerAsync` |
+| `@winglet/json-schema/filter` | Schema type-guard functions |
+
+## Key Exports
+
+### Schema Scanner
+
+- `JsonSchemaScanner` — depth-first traversal with `enter`/`exit` visitor callbacks
+- `JsonSchemaScannerAsync` — async variant for remote `$ref` resolution
+
+### Schema Filters (`/filter`)
+
+Type-guard functions for each JSON Schema type:
+
+- `isObjectSchema`, `isArraySchema`, `isStringSchema`, `isNumberSchema`, `isBooleanSchema`, `isNullSchema`
+- Nullable/Non-nullable variants: `isNonNullableObjectSchema`, `isNullableObjectSchema`, etc.
+- `isCompatibleSchemaType`, `isIdenticalSchemaType`
+
+### Types
+
+- `InferValueType<Schema>` — infers TypeScript type from a JSON Schema definition
+
+## Usage Examples
+
+```ts
+import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    age:  { type: 'number' },
+  },
+};
+
+const scanner = new JsonSchemaScanner({
+  visitor: {
+    enter(entry) {
+      console.log(entry.path, entry.schema.type);
+    },
+  },
+});
+
+scanner.scan(schema);
+// '' 'object'
+// '/properties/name' 'string'
+// '/properties/age' 'number'
+```
+
+```ts
+import { isObjectSchema, isArraySchema } from '@winglet/json-schema/filter';
+
+isObjectSchema({ type: 'object', properties: {} }); // true
+isArraySchema({ type: 'array', items: {} });         // true
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@winglet/json-schema` v0.10.0
+**Purpose**: JSON Schema traversal, type-guard filters, and $ref resolution.
+
+### Key exports
+```
+./scanner → JsonSchemaScanner
+            JsonScannerOptions (type)
+            SchemaVisitor (type)
+            SchemaEntry (type)
+./async-scanner → JsonSchemaScannerAsync
+                  JsonScannerOptionsAsync (type)
+                  SchemaVisitor (type)
+                  SchemaEntry (type)
+./filter → isArraySchema
+           isNonNullableArraySchema
+           isNullableArraySchema
+           isBooleanSchema
+           isNonNullableBooleanSchema
+           isNullableBooleanSchema
+           isNullSchema
+           isNonNullableNumberSchema
+           isNullableNumberSchema
+           isNumberSchema
+           isNonNullableObjectSchema
+           isNullableObjectSchema
+           isObjectSchema
+           isNonNullableStringSchema
+           isNullableStringSchema
+           isStringSchema
+           hasNullInType
+           isCompatibleSchemaType
+           isIdenticalSchemaType
+```
+
+</ForAI>
+
+---
+
+## @winglet/react-utils
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@winglet/react-utils" />
+
+React utility library providing custom hooks, higher-order components (HOCs),
+a Portal system, and helper functions.
+Supports React 16–19, with full TypeScript types and tree-shakeable sub-path exports.
+
+## Installation
+
+```bash
+yarn add @winglet/react-utils
+# peer deps: react >=16 <20, react-dom >=16 <20
+```
+
+## Sub-path Exports
+
+| Import path | Contents |
+|---|---|
+| `@winglet/react-utils` | All exports |
+| `@winglet/react-utils/hook` | Custom hooks |
+| `@winglet/react-utils/hoc` | Higher-order components |
+| `@winglet/react-utils/portal` | Portal component system |
+| `@winglet/react-utils/filter` | React type-checking utilities |
+| `@winglet/react-utils/object` | React-specific object utilities |
+| `@winglet/react-utils/render` | Component rendering helpers |
+
+## Key Exports
+
+### Hooks (`/hook`)
+
+| Hook | Description |
+|---|---|
+| `useConstant(factory)` | Memoizes a value on first render only |
+| `useHandle(fn)` | Stable callback that always calls the latest function |
+| `useMemorize(deps, factory)` | Enhanced memoization with intuitive API |
+| `useSnapshot(value)` | Returns a stable snapshot of a value |
+| `useDebounce(value, delay)` | Debounced value |
+| `useWindowSize()` | Tracks browser window dimensions |
+| `useEffectUntil(effect, condition)` | Runs effect until condition is true |
+| `useOnMount(fn)` | Runs callback once on mount |
+| `useOnUnmount(fn)` | Runs callback once on unmount |
+
+### HOCs (`/hoc`)
+
+- `withErrorBoundary(Component, options)` — wraps with error boundary
+- `withErrorBoundaryForwardRef(Component, options)` — with ref forwarding
+- `withUploader(Component, options)` — file upload handling
+
+### Portal (`/portal`)
+
+- `Portal` — renders children at a designated anchor in the DOM
+- `Portal.Anchor` — declares where portal content mounts
+- `withPortal(Component)` — HOC providing portal context
+
+## Usage Examples
+
+```tsx
+import { useConstant, useHandle, useWindowSize } from '@winglet/react-utils/hook';
+
+function MyComponent({ onSave }: { onSave: () => void }) {
+  const manager = useConstant(() => new ExpensiveManager());
+  const handleSave = useHandle(onSave); // stable ref
+  const { width, height } = useWindowSize();
+
+  return {width}x{height};
+}
+```
+
+```tsx
+import { withErrorBoundary } from '@winglet/react-utils/hoc';
+import { Portal, withPortal } from '@winglet/react-utils/portal';
+
+const SafeWidget = withErrorBoundary(Widget, {
+  fallback: Something went wrong.,
+});
+
+const App = withPortal(() => (
+  <>
+    <Portal.Anchor name="modal" />
+    <Portal name="modal"><Modal /></Portal>
+  </>
+));
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@winglet/react-utils` v0.10.0
+**Purpose**: React hooks, HOCs, portal system, and render utilities.
+
+### Key exports
+```
+./portal → Portal — Portal system for rendering React components at different DOM locations while maintaining component hierarchy.
+./hoc → withErrorBoundary
+        withErrorBoundaryForwardRef
+        withUploader
+./hook → useConstant
+         useDebounce
+         useEffectUntil
+         useLayoutEffectUntil
+         useHandle
+         useMemorize
+         useOnMount
+         useOnMountLayout
+         useOnUnmount
+         useOnUnmountLayout
+         useReference
+         useRestProperties
+         useSnapshot
+         useSnapshotReference
+         useTimeout
+         useTruthyConstant
+         useVersion
+         useWindowSize
+./filter → isClassComponent
+           isFunctionComponent
+           isMemoComponent
+           isReactComponent
+           isReactElement
+./object → remainOnlyReactComponent
+./render → renderComponent
+```
+
+</ForAI>
+
+---
+
+## @winglet/style-utils
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@winglet/style-utils" />
+
+CSS and style management utilities for TypeScript projects.
+Provides scoped style injection with Shadow DOM support, CSS compression,
+and className concatenation helpers — all with zero runtime dependencies.
+
+## Installation
+
+```bash
+yarn add @winglet/style-utils
+```
+
+## Sub-path Exports
+
+| Import path | Contents |
+|---|---|
+| `@winglet/style-utils` | All exports |
+| `@winglet/style-utils/style-manager` | `styleManagerFactory`, `destroyScope` |
+| `@winglet/style-utils/util` | `cx`, `cxLite`, `compressCss` |
+
+## Key Exports
+
+### Style Manager (`/style-manager`)
+
+- `styleManagerFactory(scopeId, options?)` — returns a scoped `addStyle` function that injects CSS into the document (or Shadow Root)
+- `destroyScope(scopeId)` — removes all styles and cleans up the scope
+
+Uses `adoptedStyleSheets` in modern browsers, falls back to `<style>` element injection. Updates batched via `requestAnimationFrame`.
+
+### Class Name Utilities (`/util`)
+
+- `cx(...inputs)` — concatenates class names; accepts strings, objects, and arrays
+- `cxLite(...inputs)` — lightweight variant filtering truthy strings only
+- `compressCss(css)` — single-pass CSS compression
+
+## Usage Examples
+
+```ts
+import { cx, cxLite } from '@winglet/style-utils/util';
+
+cx('button', { 'button--active': isActive }, ['base']);
+// → 'button button--active base'
+
+cxLite('button', isActive && 'button--active');
+// → 'button button--active'
+```
+
+```ts
+import { styleManagerFactory, destroyScope } from '@winglet/style-utils/style-manager';
+import { compressCss } from '@winglet/style-utils/util';
+
+const addStyle = styleManagerFactory('my-widget');
+
+const removeStyle = addStyle('theme', compressCss(`
+  .container { display: flex; padding: 16px; }
+  .title     { font-size: 1.25rem; }
+`));
+
+// Cleanup
+removeStyle();               // remove one style block
+destroyScope('my-widget');   // tear down entire scope
+```
+
+```ts
+// Shadow DOM support
+const addStyle = styleManagerFactory('shadow-scope', {
+  shadowRoot: element.shadowRoot,
+});
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@winglet/style-utils` v0.10.0
+**Purpose**: Scoped CSS injection, CSS compression, and className utilities.
+
+### Key exports
+```
+./style-manager → styleManagerFactory(scopeId, options?) → addStyle(key, css) → removeStyle()
+                  destroyScope(scopeId)
+./util          → cx(...inputs)          — className concat (strings, objects, arrays)
+                  cxLite(...inputs)       — lightweight (truthy strings only)
+                  compressCss(css)        — single-pass CSS compression
+```
+
+### styleManagerFactory options
+```ts
+{ shadowRoot?: ShadowRoot }  // Enable Shadow DOM support
+```
+
+### Behaviors
+- Uses `adoptedStyleSheets` in modern browsers, falls back to `<style>` injection
+- Style updates batched via `requestAnimationFrame`
+- `destroyScope()` removes all styles + cleans up for the given scopeId
+
+</ForAI>

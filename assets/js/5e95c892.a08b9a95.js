@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_albatrion_documents=self.webpackChunk_albatrion_documents||[]).push([["1668"],{68347(e,r,s){s.r(r),s.d(r,{default:()=>o});var a=s(62540);s(63696);var n=s(11750),t=s(4326),u=s(46065),c=s(73971),l=s(72055);function o(e){return(0,a.jsx)(t.e3,{className:(0,n.A)(u.G.wrapper.docsPages),children:(0,a.jsx)(l.A,{children:(0,c.v)(e.route.routes)})})}}}]);

@@ -1,0 +1,48 @@
+# Albatrion
+
+> Technical documentation for Albatrion packages
+
+This file contains links to documentation sections following the llmstxt.org standard.
+
+## Table of Contents
+
+- [@canard](https://albatrion.dev/docs/canard): JSON Schema-based form generation ecosystem for React.
+- [API Reference](https://albatrion.dev/ko/docs/canard/schema-form/api-reference): import ForAI from '@site/src/components/ForAI';
+- [Core Concepts](https://albatrion.dev/ko/docs/canard/schema-form/core-concepts): import ForAI from '@site/src/components/ForAI';
+- [Auto-Calculated Fields](https://albatrion.dev/ko/docs/canard/schema-form/examples/auto-calculation): import BrowserOnly from '@docusaurus/BrowserOnly';
+- [Basic Form](https://albatrion.dev/ko/docs/canard/schema-form/examples/basic-form): import BrowserOnly from '@docusaurus/BrowserOnly';
+- [Conditional Registration Form](https://albatrion.dev/ko/docs/canard/schema-form/examples/conditional-registration): import BrowserOnly from '@docusaurus/BrowserOnly';
+- [Dynamic Billing Form](https://albatrion.dev/ko/docs/canard/schema-form/examples/dynamic-billing): import BrowserOnly from '@docusaurus/BrowserOnly';
+- [Employment Contract Form](https://albatrion.dev/ko/docs/canard/schema-form/examples/employment-contract): import BrowserOnly from '@docusaurus/BrowserOnly';
+- [Examples](https://albatrion.dev/docs/canard/schema-form/examples): import ForAI from '@site/src/components/ForAI';
+- [Media Registration Form](https://albatrion.dev/ko/docs/canard/schema-form/examples/media-registration): import BrowserOnly from '@docusaurus/BrowserOnly';
+- [Nested Profile & Security Settings](https://albatrion.dev/ko/docs/canard/schema-form/examples/nested-profile): import BrowserOnly from '@docusaurus/BrowserOnly';
+- [Product Catalog with Nested Branching](https://albatrion.dev/ko/docs/canard/schema-form/examples/product-catalog): import BrowserOnly from '@docusaurus/BrowserOnly';
+- [Role-Based Field Access Control](https://albatrion.dev/ko/docs/canard/schema-form/examples/role-based-access): import BrowserOnly from '@docusaurus/BrowserOnly';
+- [Tuple Arrays (prefixItems)](https://albatrion.dev/ko/docs/canard/schema-form/examples/tuple-arrays): import BrowserOnly from '@docusaurus/BrowserOnly';
+- [@canard/schema-form](https://albatrion.dev/docs/canard/schema-form): import PackageHeader from '@site/src/components/PackageHeader';
+- [Schema Form Playground](https://albatrion.dev/ko/docs/canard/schema-form/playground): import BrowserOnly from '@docusaurus/BrowserOnly';
+- [Quick Start](https://albatrion.dev/ko/docs/canard/schema-form/quick-start): import ForAI from '@site/src/components/ForAI';
+- [@canard/schema-form-ajv6-plugin](https://albatrion.dev/docs/canard/schema-form-ajv6-plugin): import PackageHeader from '@site/src/components/PackageHeader';
+- [@canard/schema-form-ajv7-plugin](https://albatrion.dev/docs/canard/schema-form-ajv7-plugin): import PackageHeader from '@site/src/components/PackageHeader';
+- [@canard/schema-form-ajv8-plugin](https://albatrion.dev/docs/canard/schema-form-ajv8-plugin): import PackageHeader from '@site/src/components/PackageHeader';
+- [Ant Design Mobile Component Catalog](https://albatrion.dev/ko/docs/canard/schema-form-antd-mobile-plugin/demos): import BrowserOnly from '@docusaurus/BrowserOnly';
+- [@canard/schema-form-antd-mobile-plugin](https://albatrion.dev/docs/canard/schema-form-antd-mobile-plugin): import PackageHeader from '@site/src/components/PackageHeader';
+- [Ant Design 5 Component Catalog](https://albatrion.dev/ko/docs/canard/schema-form-antd5-plugin/demos): import BrowserOnly from '@docusaurus/BrowserOnly';
+- [@canard/schema-form-antd5-plugin](https://albatrion.dev/docs/canard/schema-form-antd5-plugin): import PackageHeader from '@site/src/components/PackageHeader';
+- [@canard/schema-form-antd6-plugin](https://albatrion.dev/docs/canard/schema-form-antd6-plugin): import PackageHeader from '@site/src/components/PackageHeader';
+- [MUI Component Catalog](https://albatrion.dev/ko/docs/canard/schema-form-mui-plugin/demos): import BrowserOnly from '@docusaurus/BrowserOnly';
+- [@canard/schema-form-mui-plugin](https://albatrion.dev/docs/canard/schema-form-mui-plugin): import PackageHeader from '@site/src/components/PackageHeader';
+- [@lerx](https://albatrion.dev/docs/lerx): React UI utility libraries.
+- [API Reference](https://albatrion.dev/ko/docs/lerx/promise-modal/api-reference): import ForAI from '@site/src/components/ForAI';
+- [Examples](https://albatrion.dev/ko/docs/lerx/promise-modal/examples): import ForAI from '@site/src/components/ForAI';
+- [@lerx/promise-modal](https://albatrion.dev/docs/lerx/promise-modal): import PackageHeader from '@site/src/components/PackageHeader';
+- [@slats/claude-assets-sync](https://albatrion.dev/docs/slats/claude-assets-sync): import PackageHeader from '@site/src/components/PackageHeader';
+- [@slats](https://albatrion.dev/docs/slats): Developer tooling packages for Claude Code integration.
+- [@winglet/common-utils](https://albatrion.dev/docs/winglet/common-utils): import PackageHeader from '@site/src/components/PackageHeader';
+- [@winglet/data-loader](https://albatrion.dev/docs/winglet/data-loader): import PackageHeader from '@site/src/components/PackageHeader';
+- [@winglet](https://albatrion.dev/docs/winglet): TypeScript utility libraries for common operations.
+- [@winglet/json](https://albatrion.dev/docs/winglet/json): import PackageHeader from '@site/src/components/PackageHeader';
+- [@winglet/json-schema](https://albatrion.dev/docs/winglet/json-schema): import PackageHeader from '@site/src/components/PackageHeader';
+- [@winglet/react-utils](https://albatrion.dev/docs/winglet/react-utils): import PackageHeader from '@site/src/components/PackageHeader';
+- [@winglet/style-utils](https://albatrion.dev/docs/winglet/style-utils): import PackageHeader from '@site/src/components/PackageHeader';
