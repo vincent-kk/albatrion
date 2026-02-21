@@ -1,0 +1,14 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.canard.category.schema-form": {
+    "message": "schema-form",
+    "description": "The label for category schema-form in sidebar canard"
+  },
+  "sidebar.lerx.category.promise-modal": {
+    "message": "promise-modal",
+    "description": "The label for category promise-modal in sidebar lerx"
+  }
+}

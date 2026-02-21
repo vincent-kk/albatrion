@@ -53,7 +53,7 @@ const FormTypeInputArray = ({
             </div>
           );
         })}
-      {!readOnly && (
+      {!readOnly && node.maxItems > node.length && (
         <div style={{ marginLeft: 20 }}>
           <Add title="add" disabled={disabled} onClick={handleClick} />
         </div>

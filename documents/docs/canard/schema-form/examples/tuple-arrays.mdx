@@ -1,0 +1,36 @@
+---
+sidebar_label: 'Tuple Arrays'
+sidebar_position: 10
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Tuple Arrays (prefixItems)
+
+Demonstrates `prefixItems` from JSON Schema Draft 2020-12 for fixed-length, heterogeneous arrays. Each position in the array has its own schema with a specific type, creating structured tuples.
+
+:::info Key Features
+- `prefixItems` — positional schemas for array items
+- Coordinate: `[number, number, number]` — 3D point
+- RGB: `[number, number, number]` with `items: false` — strict tuple
+- Person: `[string, number, boolean]` — mixed types
+- Address: `[string, string, string]` with `items: false`
+:::
+
+:::caution Draft 2020-12 Requirement
+`prefixItems` is a **Draft 2020-12** keyword. To use it, you must register the `@canard/schema-form-ajv8-plugin/2020` validator plugin:
+
+```ts
+import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin/2020';
+registerPlugin(ajv8Plugin);
+```
+
+Without this plugin, the schema validator cannot process `prefixItems`, so validation will not work. The form itself will still render normally.
+:::
+
+<BrowserOnly fallback={<div>Loading demo...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/TupleArraysDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

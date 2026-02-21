@@ -1,0 +1,108 @@
+---
+title: '@canard/schema-form-ajv6-plugin'
+sidebar_label: 'ajv6-plugin'
+sidebar_position: 3
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@canard/schema-form-ajv6-plugin" />
+
+`@canard/schema-form`를 위한 AJV 6.x 검증 플러그인입니다.
+JSON Schema Draft-04, Draft-06, Draft-07을 지원합니다.
+레거시 스키마 또는 Draft-04/06 지원이 필요한 경우에 사용하세요.
+신규 프로젝트에는 `@canard/schema-form-ajv8-plugin`을 권장합니다.
+
+:::tip 공식 문서
+- [AJV 6 Documentation](https://ajv.js.org/v6/)
+- [JSON Schema Draft-07](https://json-schema.org/draft-07/json-schema-release-notes)
+:::
+
+## Installation
+
+```bash
+yarn add @canard/schema-form-ajv6-plugin
+# ajv@^6 is bundled as a direct dependency
+```
+
+## Quick Setup
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv6-plugin';
+
+registerPlugin(plugin);
+```
+
+## Default Configuration
+
+```ts
+// Internal defaults applied when no custom AJV instance is bound
+{
+  allErrors: true,      // collect all errors, not just the first
+  nullable: true,       // allow null values
+  verbose: true,        // include additional error context
+  format: false,        // format validation disabled for performance
+}
+```
+
+## Custom AJV Instance
+
+```ts
+import Ajv from 'ajv';
+import { plugin } from '@canard/schema-form-ajv6-plugin';
+
+const ajv = new Ajv({ allErrors: true, nullable: true });
+
+// Bind before registerPlugin — or rebind at any time
+plugin.validator.bind(ajv);
+```
+
+## Using `createValidatorFactory` Directly
+
+```ts
+import Ajv from 'ajv';
+import { createValidatorFactory } from '@canard/schema-form-ajv6-plugin';
+
+const ajv = new Ajv({ allErrors: true });
+const validate = createValidatorFactory(ajv)(myJsonSchema);
+
+const errors = await validate(formData); // null | ValidationError[]
+```
+
+## AJV 6.x Notes
+
+- Error `dataPath` uses **JSONPath** format (`$.foo.bar`). The plugin automatically transforms it to **JSONPointer** format (`/foo/bar`) for `schema-form` compatibility.
+- `nullable: true` enables `{ type: ['string', 'null'] }` shorthand.
+- AJV 6 does not support Draft 2019-09 or Draft 2020-12. See the [validator comparison](#) for details.
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@canard/schema-form-ajv6-plugin` v0.10.0
+**Purpose**: AJV 6.x validator plugin — use for legacy JSON Schema Draft-04/06/07.
+
+### Exports
+```ts
+import { plugin } from '@canard/schema-form-ajv6-plugin';
+import { createValidatorFactory } from '@canard/schema-form-ajv6-plugin';
+```
+
+### Usage
+```ts
+registerPlugin(plugin);                         // use default AJV config
+plugin.validator.bind(new Ajv({ ... }));        // bind custom AJV instance
+createValidatorFactory(ajv)(schema);            // standalone usage without plugin
+```
+
+### Default AJV config
+`{ allErrors: true, nullable: true, verbose: true, format: false }`
+
+### Key behaviors
+- Error `dataPath` auto-transformed from JSONPath (`$.foo`) to JSONPointer (`/foo`)
+- `nullable: true` → supports `{ type: ['string', 'null'] }`
+- Does NOT support Draft 2019-09 / 2020-12 → use ajv8-plugin instead
+
+</ForAI>

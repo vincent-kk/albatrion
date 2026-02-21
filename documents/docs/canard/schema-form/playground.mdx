@@ -1,0 +1,17 @@
+---
+sidebar_label: 'Playground'
+sidebar_position: 99
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Schema Form Playground
+
+Edit the JSON Schema and code to see the form render in real-time.
+
+<BrowserOnly fallback={<div>Loading playground...</div>}>
+  {() => {
+    const SchemaFormPlayground = require('@site/src/components/SchemaFormPlayground').default;
+    return <SchemaFormPlayground />;
+  }}
+</BrowserOnly>

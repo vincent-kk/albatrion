@@ -50,7 +50,10 @@ describe('list command', () => {
             originalName: '@canard/schema-form',
             version: '0.10.0',
             files: {
-              commands: [{ name: 'schema-form.md', isDirectory: false }, { name: 'generate.md', isDirectory: false }],
+              commands: [
+                { name: 'schema-form.md', isDirectory: false },
+                { name: 'generate.md', isDirectory: false },
+              ],
               skills: [{ name: 'expert.md', isDirectory: false }],
               agents: [],
             },
@@ -97,7 +100,10 @@ describe('list command', () => {
             version: '0.10.0',
             files: {
               commands: [{ name: 'schema-form.md', isDirectory: false }],
-              skills: [{ name: 'expert.md', isDirectory: false }, { name: 'validator.md', isDirectory: false }],
+              skills: [
+                { name: 'expert.md', isDirectory: false },
+                { name: 'validator.md', isDirectory: false },
+              ],
             },
           },
         },
@@ -173,8 +179,15 @@ describe('list command', () => {
             originalName: '@canard/schema-form',
             version: '0.10.0',
             files: {
-              commands: [{ name: 'cmd1.md', isDirectory: false }, { name: 'cmd2.md', isDirectory: false }],
-              skills: [{ name: 'skill1.md', isDirectory: false }, { name: 'skill2.md', isDirectory: false }, { name: 'skill3.md', isDirectory: false }],
+              commands: [
+                { name: 'cmd1.md', isDirectory: false },
+                { name: 'cmd2.md', isDirectory: false },
+              ],
+              skills: [
+                { name: 'skill1.md', isDirectory: false },
+                { name: 'skill2.md', isDirectory: false },
+                { name: 'skill3.md', isDirectory: false },
+              ],
               agents: [{ name: 'agent1.md', isDirectory: false }],
             },
           },
@@ -266,7 +279,10 @@ describe('list command', () => {
             files: {
               commands: [{ name: 'cmd.md', isDirectory: false }],
               skills: [{ name: 'skill.md', isDirectory: false }],
-              docs: [{ name: 'doc1.md', isDirectory: false }, { name: 'doc2.md', isDirectory: false }],
+              docs: [
+                { name: 'doc1.md', isDirectory: false },
+                { name: 'doc2.md', isDirectory: false },
+              ],
               rules: [{ name: 'rule.md', isDirectory: false }],
             },
           },

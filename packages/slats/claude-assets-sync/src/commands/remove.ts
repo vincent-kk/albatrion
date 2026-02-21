@@ -57,7 +57,12 @@ export const runRemoveCommand = async (
     if (firstUnit.transformed) {
       // Flat structure: remove prefixed files/directories from shared directory
       for (const unit of units) {
-        const targetPath = path.join(cwd, '.claude', assetType, unit.transformed!);
+        const targetPath = path.join(
+          cwd,
+          '.claude',
+          assetType,
+          unit.transformed!,
+        );
         filesToRemove.push({ assetType, path: targetPath });
       }
     } else {

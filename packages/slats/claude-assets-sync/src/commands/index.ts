@@ -82,7 +82,10 @@ export const COMMANDS = {
     name: 'update',
     description: 'Update package metadata in .sync-meta.json',
     options: [
-      { flag: '-p, --package <name>', description: 'Package name to update (default: all)' },
+      {
+        flag: '-p, --package <name>',
+        description: 'Package name to update (default: all)',
+      },
       { flag: '-l, --local', description: 'Read from local workspace' },
       { flag: '-r, --ref <ref>', description: 'Git ref to fetch from' },
       { flag: '--dry-run', description: 'Preview changes without writing' },

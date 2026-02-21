@@ -1,8 +1,8 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { parseGitHubRepo } from '@/claude-assets-sync/utils/package.js';
 import { toFlatFileName } from '@/claude-assets-sync/utils/nameTransform.js';
+import { parseGitHubRepo } from '@/claude-assets-sync/utils/package.js';
 import type {
   GitHubEntry,
   PackageInfo,
@@ -155,11 +155,7 @@ async function scanRemoteAssets(
       : `${assetBasePath}/${assetType}`;
 
     try {
-      const entries = await fetchDirectoryContents(
-        repoInfo,
-        assetPath,
-        tag,
-      );
+      const entries = await fetchDirectoryContents(repoInfo, assetPath, tag);
 
       if (entries && entries.length > 0) {
         // Fetch contents for directory entries
@@ -317,9 +313,7 @@ function buildTreeFromGitHubEntries(
       });
     } else if (entry.type === 'dir') {
       const dirEntries = dirContentsMap?.get(entry.name);
-      const hasSkillMd = dirEntries
-        ? isDirectorySkill(dirEntries)
-        : false;
+      const hasSkillMd = dirEntries ? isDirectorySkill(dirEntries) : false;
 
       if (hasSkillMd) {
         const skillPath = `${basePath}/${entry.name}`;
@@ -369,7 +363,6 @@ function buildTreeFromGitHubEntries(
     expanded: true,
   };
 }
-
 
 /**
  * Check if entries represent a directory-based skill

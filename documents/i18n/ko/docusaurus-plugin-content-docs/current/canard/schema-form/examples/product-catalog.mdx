@@ -1,0 +1,25 @@
+---
+sidebar_label: '상품 카탈로그'
+sidebar_position: 6
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# 중첩 분기를 가진 상품 카탈로그
+
+2단계 `oneOf` 분기를 가진 상품 등록 폼입니다. 상품 유형이 1차 분기를 결정하고, 물리적 상품의 경우 배송 방법이 2차 분기를 만듭니다.
+
+:::info 주요 기능
+- 중첩 `oneOf` — 2단계 스키마 분기
+- 물리적 상품: 무게 + 치수 + 배송 (중첩 oneOf 포함)
+- 디지털 상품: 파일 크기 + 포맷 + 다운로드 링크
+- 서비스 상품: 기간 + 이용 가능 요일 배열
+- 배송 oneOf: 일반(일수) vs 특급(시간)
+:::
+
+<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/ProductCatalogDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

@@ -1,0 +1,106 @@
+---
+title: '@winglet/style-utils'
+sidebar_label: 'style-utils'
+sidebar_position: 6
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@winglet/style-utils" />
+
+CSS and style management utilities for TypeScript projects.
+Provides scoped style injection with Shadow DOM support, CSS compression,
+and className concatenation helpers — all with zero runtime dependencies.
+
+## Installation
+
+```bash
+yarn add @winglet/style-utils
+```
+
+## Sub-path Exports
+
+| Import path | Contents |
+|---|---|
+| `@winglet/style-utils` | All exports |
+| `@winglet/style-utils/style-manager` | `styleManagerFactory`, `destroyScope` |
+| `@winglet/style-utils/util` | `cx`, `cxLite`, `compressCss` |
+
+## Key Exports
+
+### Style Manager (`/style-manager`)
+
+- `styleManagerFactory(scopeId, options?)` — returns a scoped `addStyle` function that injects CSS into the document (or Shadow Root)
+- `destroyScope(scopeId)` — removes all styles and cleans up the scope
+
+Uses `adoptedStyleSheets` in modern browsers, falls back to `<style>` element injection. Updates batched via `requestAnimationFrame`.
+
+### Class Name Utilities (`/util`)
+
+- `cx(...inputs)` — concatenates class names; accepts strings, objects, and arrays
+- `cxLite(...inputs)` — lightweight variant filtering truthy strings only
+- `compressCss(css)` — single-pass CSS compression
+
+## Usage Examples
+
+```ts
+import { cx, cxLite } from '@winglet/style-utils/util';
+
+cx('button', { 'button--active': isActive }, ['base']);
+// → 'button button--active base'
+
+cxLite('button', isActive && 'button--active');
+// → 'button button--active'
+```
+
+```ts
+import { styleManagerFactory, destroyScope } from '@winglet/style-utils/style-manager';
+import { compressCss } from '@winglet/style-utils/util';
+
+const addStyle = styleManagerFactory('my-widget');
+
+const removeStyle = addStyle('theme', compressCss(`
+  .container { display: flex; padding: 16px; }
+  .title     { font-size: 1.25rem; }
+`));
+
+// Cleanup
+removeStyle();               // remove one style block
+destroyScope('my-widget');   // tear down entire scope
+```
+
+```ts
+// Shadow DOM support
+const addStyle = styleManagerFactory('shadow-scope', {
+  shadowRoot: element.shadowRoot,
+});
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@winglet/style-utils` v0.10.0
+**Purpose**: Scoped CSS injection, CSS compression, and className utilities.
+
+### Key exports
+```
+./style-manager → styleManagerFactory(scopeId, options?) → addStyle(key, css) → removeStyle()
+                  destroyScope(scopeId)
+./util          → cx(...inputs)          — className concat (strings, objects, arrays)
+                  cxLite(...inputs)       — lightweight (truthy strings only)
+                  compressCss(css)        — single-pass CSS compression
+```
+
+### styleManagerFactory options
+```ts
+{ shadowRoot?: ShadowRoot }  // Enable Shadow DOM support
+```
+
+### Behaviors
+- Uses `adoptedStyleSheets` in modern browsers, falls back to `<style>` injection
+- Style updates batched via `requestAnimationFrame`
+- `destroyScope()` removes all styles + cleans up for the given scopeId
+
+</ForAI>

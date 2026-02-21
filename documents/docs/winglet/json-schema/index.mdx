@@ -1,0 +1,122 @@
+---
+title: '@winglet/json-schema'
+sidebar_label: 'json-schema'
+sidebar_position: 4
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@winglet/json-schema" />
+
+Utility library for JSON Schema manipulation.
+Provides depth-first schema traversal with a visitor pattern, `$ref` resolution,
+circular reference detection, and schema type-guard functions.
+
+## Installation
+
+```bash
+yarn add @winglet/json-schema
+```
+
+## Sub-path Exports
+
+| Import path | Contents |
+|---|---|
+| `@winglet/json-schema` | All exports |
+| `@winglet/json-schema/scanner` | `JsonSchemaScanner` (synchronous) |
+| `@winglet/json-schema/async-scanner` | `JsonSchemaScannerAsync` |
+| `@winglet/json-schema/filter` | Schema type-guard functions |
+
+## Key Exports
+
+### Schema Scanner
+
+- `JsonSchemaScanner` — depth-first traversal with `enter`/`exit` visitor callbacks
+- `JsonSchemaScannerAsync` — async variant for remote `$ref` resolution
+
+### Schema Filters (`/filter`)
+
+Type-guard functions for each JSON Schema type:
+
+- `isObjectSchema`, `isArraySchema`, `isStringSchema`, `isNumberSchema`, `isBooleanSchema`, `isNullSchema`
+- Nullable/Non-nullable variants: `isNonNullableObjectSchema`, `isNullableObjectSchema`, etc.
+- `isCompatibleSchemaType`, `isIdenticalSchemaType`
+
+### Types
+
+- `InferValueType<Schema>` — infers TypeScript type from a JSON Schema definition
+
+## Usage Examples
+
+```ts
+import { JsonSchemaScanner } from '@winglet/json-schema/scanner';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    age:  { type: 'number' },
+  },
+};
+
+const scanner = new JsonSchemaScanner({
+  visitor: {
+    enter(entry) {
+      console.log(entry.path, entry.schema.type);
+    },
+  },
+});
+
+scanner.scan(schema);
+// '' 'object'
+// '/properties/name' 'string'
+// '/properties/age' 'number'
+```
+
+```ts
+import { isObjectSchema, isArraySchema } from '@winglet/json-schema/filter';
+
+isObjectSchema({ type: 'object', properties: {} }); // true
+isArraySchema({ type: 'array', items: {} });         // true
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@winglet/json-schema` v0.10.0
+**Purpose**: JSON Schema traversal, type-guard filters, and $ref resolution.
+
+### Key exports
+```
+./scanner → JsonSchemaScanner
+            JsonScannerOptions (type)
+            SchemaVisitor (type)
+            SchemaEntry (type)
+./async-scanner → JsonSchemaScannerAsync
+                  JsonScannerOptionsAsync (type)
+                  SchemaVisitor (type)
+                  SchemaEntry (type)
+./filter → isArraySchema
+           isNonNullableArraySchema
+           isNullableArraySchema
+           isBooleanSchema
+           isNonNullableBooleanSchema
+           isNullableBooleanSchema
+           isNullSchema
+           isNonNullableNumberSchema
+           isNullableNumberSchema
+           isNumberSchema
+           isNonNullableObjectSchema
+           isNullableObjectSchema
+           isObjectSchema
+           isNonNullableStringSchema
+           isNullableStringSchema
+           isStringSchema
+           hasNullInType
+           isCompatibleSchemaType
+           isIdenticalSchemaType
+```
+
+</ForAI>

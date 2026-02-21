@@ -1,0 +1,147 @@
+---
+title: '@canard/schema-form-ajv8-plugin'
+sidebar_label: 'ajv8-plugin'
+sidebar_position: 5
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@canard/schema-form-ajv8-plugin" />
+
+AJV 8.x validator plugin for `@canard/schema-form` — the recommended validator plugin.
+Supports JSON Schema Draft-07, Draft 2019-09, and Draft 2020-12.
+Three subpath exports let you pick exactly the draft you need.
+
+:::tip Official Documentation
+- [AJV 8 Documentation](https://ajv.js.org/)
+- [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12/json-schema-core)
+:::
+
+## Installation
+
+```bash
+yarn add @canard/schema-form-ajv8-plugin
+# ajv@^8 is bundled as a direct dependency
+```
+
+## Subpath Exports
+
+| Import path | Draft support | AJV internal import |
+|---|---|---|
+| `@canard/schema-form-ajv8-plugin` | Draft-07 (default) | `ajv` |
+| `@canard/schema-form-ajv8-plugin/2019` | Draft 2019-09 | `ajv/dist/2019` |
+| `@canard/schema-form-ajv8-plugin/2020` | Draft 2020-12 | `ajv/dist/2020` |
+
+## Quick Setup
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
+
+registerPlugin(plugin);
+```
+
+```ts
+// Draft 2019-09
+import { plugin } from '@canard/schema-form-ajv8-plugin/2019';
+registerPlugin(plugin);
+```
+
+```ts
+// Draft 2020-12
+import { plugin } from '@canard/schema-form-ajv8-plugin/2020';
+registerPlugin(plugin);
+```
+
+## Default Configuration
+
+```ts
+// Internal defaults applied when no custom AJV instance is bound
+// Same across all three subpath exports
+{
+  allErrors: true,          // collect all errors, not just the first
+  strictSchema: false,      // allow extra schema properties (custom keywords, formType, etc.)
+  validateFormats: false,   // format validation disabled for performance
+}
+```
+
+## Custom AJV Instance
+
+```ts
+import Ajv from 'ajv';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
+
+const ajv = new Ajv({ allErrors: true, strictSchema: false });
+
+plugin.validator.bind(ajv);
+```
+
+```ts
+// Draft 2020-12 with format validation enabled
+import Ajv2020 from 'ajv/dist/2020';
+import addFormats from 'ajv-formats';
+import { plugin } from '@canard/schema-form-ajv8-plugin/2020';
+
+const ajv = new Ajv2020({ allErrors: true, strictSchema: false });
+addFormats(ajv);
+plugin.validator.bind(ajv);
+```
+
+## Using `createValidatorFactory` Directly
+
+```ts
+import Ajv from 'ajv';
+import { createValidatorFactory } from '@canard/schema-form-ajv8-plugin';
+
+const ajv = new Ajv({ allErrors: true });
+const validate = createValidatorFactory(ajv)(myJsonSchema);
+
+const errors = await validate(formData); // null | ValidationError[]
+```
+
+## Validator Plugin Comparison
+
+| Feature | ajv6-plugin | ajv7-plugin | ajv8-plugin |
+|---|---|---|---|
+| Draft-04 | Yes | No | No |
+| Draft-06 | Yes | No | No |
+| Draft-07 | Yes | Yes | Yes |
+| Draft 2019-09 | No | Yes | Yes (`/2019`) |
+| Draft 2020-12 | No | No | Yes (`/2020`) |
+| Subpath exports | No | No | Yes |
+| Path transformation | JSONPath→JSONPointer | None needed | None needed |
+| Recommended for | Legacy schemas | Migration path | **New projects** |
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@canard/schema-form-ajv8-plugin` v0.10.0
+**Purpose**: AJV 8.x validator plugin — recommended for new projects. Supports Draft-07, 2019-09, 2020-12.
+
+### Exports (3 subpath variants, each exports the same API)
+```ts
+import { plugin, createValidatorFactory } from '@canard/schema-form-ajv8-plugin';       // Draft-07
+import { plugin, createValidatorFactory } from '@canard/schema-form-ajv8-plugin/2019';  // Draft 2019-09
+import { plugin, createValidatorFactory } from '@canard/schema-form-ajv8-plugin/2020';  // Draft 2020-12
+```
+
+### Usage
+```ts
+registerPlugin(plugin);                         // use default AJV config
+plugin.validator.bind(new Ajv({ ... }));        // bind custom AJV instance
+createValidatorFactory(ajv)(schema);            // standalone usage without plugin
+```
+
+### Default AJV config (all subpaths)
+`{ allErrors: true, strictSchema: false, validateFormats: false }`
+
+### Draft selection guide
+| Subpath | AJV import | Use when |
+|---|---|---|
+| `/` (default) | `ajv` | Draft-07 schemas (most common) |
+| `/2019` | `ajv/dist/2019` | Need `$recursiveRef`, `unevaluatedProperties` |
+| `/2020` | `ajv/dist/2020` | Need `$dynamicRef`, `prefixItems` |
+
+</ForAI>

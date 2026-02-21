@@ -5,7 +5,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { scanPackageAssets } from '../core/packageScanner';
 import type { PackageInfo } from '../utils/types';
-
 import {
   type TestFixture,
   createTestFixture,

@@ -1,0 +1,27 @@
+---
+sidebar_label: '중첩 프로필'
+sidebar_position: 9
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# 중첩 프로필 & 보안 설정
+
+사용자 프로필, 환경설정, 보안 설정이 깊게 중첩된 폼입니다. 중첩 객체 내의 조건부 유효성 검사, `computed.active` 속성, 패턴 유효성 검사가 적용된 배열 필드를 보여줍니다.
+
+:::info 주요 기능
+- 3단계 이상의 객체 중첩
+- 중첩 객체 내 `if/then` (profile.type)
+- `computed.active` — 18세 미만일 때 성별 필드 비활성화
+- 중첩된 알림 설정 (boolean 토글)
+- privacy 선택을 위한 `oneOf` + `const`
+- 정규식 패턴 유효성 검사가 적용된 배열 (백업 코드)
+- `minItems`/`maxItems` 제약 조건
+:::
+
+<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/NestedProfileDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

@@ -1,0 +1,320 @@
+---
+sidebar_label: 'Core Concepts'
+sidebar_position: 3
+---
+
+import ForAI from '@site/src/components/ForAI';
+
+# Core Concepts
+
+## JSON Schema as the Single Source of Truth
+
+The form structure, field types, validation rules, and conditional logic are all
+encoded in a single JSON Schema object. The library parses this schema at mount
+time and constructs an internal **node tree** — one node per schema
+field. You never manually define form fields or validation rules in component code.
+
+```ts
+const schema = {
+  type: 'object',
+  properties: {
+    title:    { type: 'string', minLength: 1 },
+    price:    { type: 'number', minimum: 0 },
+    inStock:  { type: 'boolean' },
+    tags:     { type: 'array', items: { type: 'string' } },
+  },
+  required: ['title', 'price'],
+};
+// → ObjectNode
+//     ├── StringNode  (title)
+//     ├── NumberNode  (price)
+//     ├── BooleanNode (inStock)
+//     └── ArrayNode   (tags)
+//           └── StringNode (items)
+```
+
+## Node Tree
+
+Each node is a reactive object that owns its own value, validation errors,
+and state flags (`dirty`, `touched`, `validated`).
+Changes propagate upward: when a leaf node's value changes, all ancestor nodes
+receive an `UpdateValue` event and update their aggregated value.
+
+### Node State Flags
+
+| Property | Type | Description |
+|---|---|---|
+| `value` | `any` | Current value |
+| `defaultValue` | `any` | Value at initialization |
+| `errors` | `JsonSchemaError[]` | Validation errors for this node |
+| `dirty` | `boolean` | Value changed since initialization |
+| `touched` | `boolean` | User has interacted with this field |
+| `validated` | `boolean` | Validation has been run |
+| `visible` | `boolean` | Computed — controls visibility |
+| `active` | `boolean` | Computed — controls active state |
+| `readOnly` | `boolean` | Computed or inherited |
+| `disabled` | `boolean` | Computed or inherited |
+| `initialized` | `boolean` | Node has completed initialization |
+| `required` | `boolean` | Field is required in parent schema |
+| `nullable` | `boolean` | Schema type includes `"null"` |
+
+### Node Navigation
+
+```ts
+// Absolute path from root (RFC 6901 JSONPointer)
+const node = rootNode.find('/address/street');
+
+// Relative path from current node
+const sibling = node.find('./city');
+
+// Find all matching nodes
+const allItems = rootNode.findAll('/items/*');
+```
+
+## Plugin Architecture
+
+The library is split into two independent plugin layers. You can mix and match
+any validator with any UI library.
+
+```
+┌─────────────────────────────────────────────────────┐
+│                  SchemaFormPlugin                    │
+│                                                      │
+│  FormGroup   FormLabel   FormInput   FormError       │  ← UI layer
+│  formTypeInputDefinitions                            │
+├─────────────────────────────────────────────────────┤
+│                  ValidatorPlugin                     │
+│                                                      │
+│  bind(instance)                                      │  ← Validation layer
+│  compile(jsonSchema) → ValidateFunction              │
+└─────────────────────────────────────────────────────┘
+```
+
+### Plugin Merge Behavior
+
+When multiple plugins are registered, the merge rules are:
+
+| Property | Merge strategy |
+|---|---|
+| `FormGroup`, `FormLabel`, `FormInput`, `FormError` | Last wins |
+| `formTypeInputDefinitions` | Prepended (first match wins) |
+| `validator` | Last wins |
+| `formatError` | Last wins |
+
+## FormType System
+
+A `FormTypeInputDefinition` pairs a **test condition** with
+a **React component**. The library evaluates all registered definitions
+in priority order and uses the first matching component to render a field.
+
+The test can be a plain object (declarative) or a function (imperative):
+
+```ts
+// Object test — declarative
+const definition: FormTypeInputDefinition = {
+  test: { type: 'string', format: 'date' },  // matches date fields
+  Component: DatePickerInput,
+};
+
+// Function test — imperative
+const definition: FormTypeInputDefinition = {
+  test: (hint) => hint.jsonSchema.widget === 'richtext',
+  Component: RichTextEditor,
+};
+
+// Hint object available in test function:
+type Hint = {
+  type: JsonSchemaType;       // 'string' | 'number' | 'boolean' | ...
+  path: string;               // JSONPointer path
+  required: boolean;
+  nullable: boolean;
+  jsonSchema: JsonSchema;
+  format?: string;
+  formType?: string;          // custom jsonSchema.formType field
+};
+```
+
+### FormTypeInputMap (path-based override)
+
+```ts
+// Map specific paths to specific components
+const formTypeInputMap: FormTypeInputMap = {
+  '/user/avatar':     AvatarUploader,
+  '/items/*/price':   CurrencyInput,   // * matches any segment
+};
+
+<Form jsonSchema={schema} formTypeInputMap={formTypeInputMap} />
+```
+
+## Computed Properties
+
+Fields can react to sibling or parent values using JSONPointer expressions in
+the `computed` (or `&computed`) key. Dependencies are
+tracked automatically from the expression, or declared explicitly via `watch`.
+
+```ts
+{
+  type: 'object',
+  properties: {
+    isPremium: { type: 'boolean' },
+    discount: {
+      type: 'number',
+      computed: {
+        visible:  '../isPremium === true',   // show only for premium
+        readOnly: '../isPremium === false',  // lock if not premium
+        watch: ['../isPremium'],             // explicit dep (optional)
+      },
+    },
+  },
+}
+```
+
+Supported computed keys: `visible`, `active`, `readOnly`, `disabled`, `watch`.
+
+### JSONPointer Extensions (computed scope only)
+
+| Syntax | Meaning |
+|---|---|
+| `../field` | Parent node's `field` |
+| `./field` | Current node's `field` (relative) |
+| `..` | Navigate to parent |
+| `*` | Wildcard — any segment (FormTypeInputMap only) |
+
+## Schema Composition
+
+The library supports all standard JSON Schema composition keywords.
+`oneOf` and `anyOf` branches can use the custom
+`&if` expression to bind activation to a field value.
+
+```ts
+// Standard if/then/else
+{
+  if:   { properties: { type: { enum: ['movie'] } } },
+  then: { properties: { releaseDate: { type: 'string', format: 'date' } } },
+  else: { properties: { version:     { type: 'string' } } },
+}
+
+// oneOf with &if expression (exclusive branches)
+{
+  oneOf: [
+    { '&if': "./type === 'movie'", properties: { director: { type: 'string' } } },
+    { '&if': "./type === 'game'",  properties: { platform: { type: 'string' } } },
+  ],
+}
+
+// anyOf with &if (non-exclusive, multiple can be active)
+{
+  anyOf: [
+    { '&if': './flag1 === true', properties: { field1: { type: 'string' } } },
+    { '&if': './flag2 === true', properties: { field2: { type: 'string' } } },
+  ],
+}
+
+// allOf (always merged)
+{
+  allOf: [
+    { properties: { firstName: { type: 'string' } } },
+    { properties: { lastName:  { type: 'string' } } },
+    { required: ['firstName', 'lastName'] },
+  ],
+}
+```
+
+### Conditional setValue Filtering
+
+When a **parent node** calls `setValue()`, fields that
+do not match the active `oneOf`/`anyOf` branch are
+automatically removed from the value. When a **child node** calls
+`setValue()`, this filtering is bypassed — the value propagates
+regardless of the current branch condition.
+
+## Validation System
+
+### ValidationMode
+
+```ts
+enum ValidationMode {
+  None      = 0,   // No automatic validation
+  OnChange  = 1,   // Validate after every setValue()
+  OnRequest = 2,   // Validate only when validate() is called
+}
+
+// Default: OnChange | OnRequest (bitwise OR)
+<Form validationMode={ValidationMode.OnChange | ValidationMode.OnRequest} />
+```
+
+### ShowError
+
+```ts
+enum ShowError {
+  Dirty        = 1,  // show when node.dirty === true
+  Touched      = 2,  // show when node.touched === true
+  DirtyTouched = 3,  // show when both dirty AND touched (default)
+}
+
+<Form showError={ShowError.DirtyTouched} />  // default
+<Form showError={true} />                    // always show
+<Form showError={false} />                   // never show
+```
+
+### Error Structure
+
+```ts
+interface JsonSchemaError {
+  dataPath: string;   // JSONPointer to the failing field
+  keyword:  string;   // JSON Schema keyword (e.g., 'minLength', 'required')
+  message:  string;
+  details:  any;      // keyword-specific details
+  source:   any;      // raw error from the validator library
+}
+```
+
+## Event System
+
+Nodes communicate through a batched event system. Events scheduled in the same
+synchronous call stack are merged into a single batch and dispatched in the next
+microtask. `UpdateValue` is the exception — it fires synchronously
+(immediate mode) after initialization completes.
+
+```ts
+// Key event types (NodeEventType enum)
+UpdateValue              // value changed — synchronous after init
+UpdateState              // dirty/touched/validated changed
+UpdateError              // validation errors changed
+UpdateComputedProperties // computed visible/readOnly/disabled changed
+UpdateChildren           // array/object children added or removed
+RequestRefresh           // internal: sync uncontrolled component
+RequestRemount           // external: force full component remount
+```
+
+<ForAI>
+
+## AI Concept Glossary
+
+| Term | Definition |
+|---|---|
+| `SchemaNode` | Base interface for all nodes — the public API surface |
+| `StringNode` / `NumberNode` / `BooleanNode` / `NullNode` | Terminal nodes — no children |
+| `ObjectNode` / `ArrayNode` | Branch nodes — have children |
+| `VirtualNode` | Non-schema node created for conditional branches (`oneOf`/`anyOf`) |
+| `BranchStrategy` | Strategy for complex nested structures with child nodes |
+| `TerminalStrategy` | Strategy for simple non-nested structures |
+| `FormTypeInputDefinition` | `{ test, Component }` pair — maps a schema pattern to a React component |
+| `FormTypeInputMap` | `{ [jsonPointerPath]: Component }` — path-based component override |
+| `FormTypeInputProps` | Props interface all custom input components must satisfy |
+| `FormTypeRendererProps` | Props for `FormGroup`/`FormLabel`/`FormInput`/`FormError` renderer components |
+| `SchemaFormPlugin` | Plugin object with optional renderer components + `formTypeInputDefinitions` + `validator` + `formatError` |
+| `ValidatorPlugin` | `{ bind(instance), compile(jsonSchema) → ValidateFunction }` |
+| `ValidateFunction` | `(value) => JsonSchemaError[] \| null \| Promise<...>` |
+| `computed` / `&computed` | JSON Schema extension for reactive field properties |
+| `&if` | JSON Schema extension — expression to activate a `oneOf`/`anyOf` branch |
+| `enhancedValue` | Value including virtual/conditional field values — used for validation |
+| `ShowError` | Enum controlling when validation errors are displayed |
+| `ValidationMode` | Enum controlling when validation runs |
+| `NodeEventType` | Enum of all events nodes can emit |
+| `SetValueOption` | Bitwise options for `setValue()` — `Overwrite`, `Merge`, `Isolate` |
+| `FormHandle` | Ref interface for imperative form control |
+| `FormProvider` | Context provider for sharing plugin config across a subtree |
+| `JSONPointer` | RFC 6901 path string (e.g., `/address/street`) — extended with `..`, `.`, `*` |
+
+</ForAI>

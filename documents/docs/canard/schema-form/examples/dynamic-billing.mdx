@@ -1,0 +1,25 @@
+---
+sidebar_label: 'Dynamic Billing'
+sidebar_position: 4
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Dynamic Billing Form
+
+A cascading conditional form where the combination of account type, subscription plan, and payment method determines which fields are required. This demonstrates 3-level `if/then/else` logic.
+
+:::info Key Features
+- 3-field cascading conditions (accountType × subscriptionPlan × paymentMethod)
+- Business + invoice → all accounting fields required
+- Business + card → basic company info required
+- Personal + premium → billing address required
+- Personal + free → only email required
+:::
+
+<BrowserOnly fallback={<div>Loading demo...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/DynamicBillingDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

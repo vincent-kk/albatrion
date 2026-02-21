@@ -1,0 +1,26 @@
+{
+  "title": {
+    "message": "Albatrion",
+    "description": "The title in the navbar"
+  },
+"item.label.@canard": {
+    "message": "@canard",
+    "description": "Navbar item with label @canard"
+  },
+  "item.label.@lerx": {
+    "message": "@lerx",
+    "description": "Navbar item with label @lerx"
+  },
+  "item.label.@winglet": {
+    "message": "@winglet",
+    "description": "Navbar item with label @winglet"
+  },
+  "item.label.@slats": {
+    "message": "@slats",
+    "description": "Navbar item with label @slats"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Navbar item with label GitHub"
+  }
+}

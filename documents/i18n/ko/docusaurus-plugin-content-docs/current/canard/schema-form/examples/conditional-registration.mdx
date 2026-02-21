@@ -1,0 +1,24 @@
+---
+sidebar_label: '조건부 등록'
+sidebar_position: 3
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# 조건부 등록 폼
+
+다단계 `if/then/else` 조건을 가진 이벤트 참가 신청서입니다. 참가자 유형과 지역의 조합에 따라 서로 다른 필수 입력 필드가 나타납니다.
+
+:::info 주요 기능
+- 다단계 `if/then/else` 중첩 조건
+- 조건 1: 성인 + 해외 → 여권번호 + 비자정보 필수
+- 조건 2: 성인 + 국내 → 주민등록번호 필수
+- 조건 3: 미성년자 → 보호자 동의 + 연락처 필수
+:::
+
+<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/ConditionalRegistrationDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

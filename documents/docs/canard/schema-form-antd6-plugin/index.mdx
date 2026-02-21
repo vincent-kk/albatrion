@@ -1,0 +1,154 @@
+---
+title: '@canard/schema-form-antd6-plugin'
+sidebar_label: 'antd6-plugin'
+sidebar_position: 7
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+
+<PackageHeader name="@canard/schema-form-antd6-plugin" />
+
+Ant Design v6 UI plugin for `@canard/schema-form`.
+Provides 18 form input components built on `antd ^6.0.0`.
+Identical component set and API as `@canard/schema-form-antd5-plugin` —
+use this package when your project runs Ant Design v6.
+
+## Component Catalog
+
+:::tip
+This plugin has the same API and components as the antd5 plugin. See the [antd5-plugin Component Catalog](../schema-form-antd5-plugin) for an interactive catalog of all 18 components — the only difference is the Ant Design version dependency.
+:::
+
+## Installation
+
+```bash
+yarn add @canard/schema-form-antd6-plugin
+```
+
+### Peer Dependencies
+
+```bash
+yarn add antd@>=6.0.0 dayjs@>=1 react@>=18 react-dom@>=18
+```
+
+## Quick Setup
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-antd6-plugin';
+
+registerPlugin(plugin);
+```
+
+## Component Mapping
+
+Components are selected automatically based on JSON Schema properties. Priority order matches the list below (top = highest priority).
+
+| Component | type | format | formType | enum | Notes |
+|---|---|---|---|---|---|
+| `FormTypeInputBooleanSwitch` | `boolean` | — | `"switch"` | — | Switch toggle |
+| `FormTypeInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | Checkbox group; items must be string schema |
+| `FormTypeInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
+| `FormTypeInputUri` | `string` | `"uri"` or formType `"uri"` | — | — | URI input with protocol selector |
+| `FormTypeInputMonth` | `string` | `"month"` | — | — | Month picker |
+| `FormTypeInputDate` | `string` | `"date"` | — | — | Date picker |
+| `FormTypeInputTime` | `string` | `"time"` | — | — | Time picker |
+| `FormTypeInputMonthRange` | `array` | `"month-range"` or formType `"monthRange"` | — | — | Month range picker; items must be string schema |
+| `FormTypeInputDateRange` | `array` | `"date-range"` or formType `"dateRange"` | — | — | Date range picker; items must be string schema |
+| `FormTypeInputTimeRange` | `array` | `"time-range"` or formType `"timeRange"` | — | — | Time range picker; items must be string schema |
+| `FormTypeInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | Radio button group |
+| `FormTypeInputStringEnum` | `string` | — | — | required | Select dropdown; also handles string-item arrays with enum |
+| `FormTypeInputArray` | `array` | — | — | — | Dynamic list with add/remove |
+| `FormTypeInputSlider` | `number` \| `integer` | — | `"slider"` | — | Slider input |
+| `FormTypeInputTextarea` | `string` | `"textarea"` or formType `"textarea"` | — | — | Multi-line textarea |
+| `FormTypeInputString` | `string` | — | — | — | Default text input (password supported via `format: "password"`) |
+| `FormTypeInputNumber` | `number` \| `integer` | — | — | — | Numeric input |
+| `FormTypeInputBoolean` | `boolean` | — | — | — | Checkbox |
+
+## Schema Extension Properties
+
+```ts
+// Custom schema properties recognized by this plugin
+{
+  formType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' |
+             'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange',
+  // Standard JSON Schema properties also used for routing:
+  format?: 'date' | 'time' | 'month' | 'password' | 'uri' |
+           'textarea' | 'date-range' | 'month-range' | 'time-range',
+}
+```
+
+## Usage Example
+
+```tsx
+import { Form } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name:      { type: 'string' },
+    age:       { type: 'integer' },
+    active:    { type: 'boolean', formType: 'switch' },
+    role:      { type: 'string', enum: ['admin', 'user', 'guest'] },
+    birthday:  { type: 'string', format: 'date' },
+    bio:       { type: 'string', format: 'textarea' },
+    score:     { type: 'number', formType: 'slider', minimum: 0, maximum: 100 },
+  },
+};
+
+<Form jsonSchema={schema} onChange={setValue} />
+```
+
+## Context
+
+The plugin reads `context` passed to `<Form context={...}>` for size configuration:
+
+```ts
+type AntdContext = {
+  size?: 'small' | 'middle' | 'large';
+};
+```
+
+## v5 vs v6
+
+The antd5 and antd6 plugins are API-identical. The only difference is the `antd` peer dependency version. Switch packages by replacing the import and peer dependency:
+
+```ts
+// antd5
+import { plugin } from '@canard/schema-form-antd5-plugin';
+// antd6
+import { plugin } from '@canard/schema-form-antd6-plugin';
+```
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@canard/schema-form-antd6-plugin` v0.10.0
+**Purpose**: Ant Design v6 UI plugin — API-identical to antd5-plugin, targets `antd@>=6.0.0`.
+
+### Exports
+```ts
+import { plugin } from '@canard/schema-form-antd6-plugin';
+```
+
+### Peer dependencies
+`antd@>=6.0.0`, `dayjs@>=1`, `react@>=18`
+
+### Component mapping
+Same 18 components as antd5-plugin (see `@canard/schema-form-antd5-plugin` docs).
+
+### Context type
+```ts
+type AntdContext = { size?: 'small' | 'middle' | 'large' };
+```
+
+### Migration from antd5
+Only change the import — API and component set are identical:
+```ts
+// import { plugin } from '@canard/schema-form-antd5-plugin';
+import { plugin } from '@canard/schema-form-antd6-plugin';
+```
+
+</ForAI>

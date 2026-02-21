@@ -1,0 +1,25 @@
+---
+sidebar_label: 'Media Registration'
+sidebar_position: 7
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Media Registration Form
+
+A complex media catalog form with `oneOf` branching at multiple levels. Games show stages (dynamic array), platforms (checkbox), and system specs. Movies show genres, release platforms, and actor lists.
+
+:::info Key Features
+- `&if` expression-based oneOf matching
+- Nested object-level oneOf (details branch)
+- Root-level oneOf (owner field changes placeholder)
+- Dynamic arrays with default values
+- Checkbox groups for multi-select
+:::
+
+<BrowserOnly fallback={<div>Loading demo...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/MediaRegistrationDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

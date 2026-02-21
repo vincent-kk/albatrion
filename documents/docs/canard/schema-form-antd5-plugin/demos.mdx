@@ -1,0 +1,18 @@
+---
+sidebar_label: 'Component Catalog'
+sidebar_position: 2
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Ant Design 5 Component Catalog
+
+Interactive catalog of all 18 form input components provided by `@canard/schema-form-antd5-plugin`.
+Each component is automatically selected based on JSON Schema properties like `type`, `format`, `formType`, and `enum`.
+
+<BrowserOnly fallback={<div>Loading catalog...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/catalog/Antd5CatalogDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

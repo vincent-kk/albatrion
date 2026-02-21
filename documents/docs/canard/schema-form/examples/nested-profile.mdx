@@ -1,0 +1,27 @@
+---
+sidebar_label: 'Nested Profile'
+sidebar_position: 9
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Nested Profile & Security Settings
+
+A deeply nested form with user profile, preferences, and security settings. Demonstrates conditional validation within nested objects, the `computed.active` property, and array fields with pattern validation.
+
+:::info Key Features
+- 3+ levels of object nesting
+- `if/then` inside nested object (profile.type)
+- `computed.active` — gender field disabled for age < 18
+- Nested notifications with boolean toggles
+- `oneOf` with const for privacy selection
+- Array with regex pattern validation (backup codes)
+- `minItems`/`maxItems` constraints
+:::
+
+<BrowserOnly fallback={<div>Loading demo...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/NestedProfileDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

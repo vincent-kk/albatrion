@@ -117,9 +117,7 @@ describe('E2E: Full Sync Flow', () => {
       expect(
         skillFiles.find((f) => f.name === 'schema-form-expert.md'),
       ).toBeDefined();
-      expect(
-        skillFiles.find((f) => f.name === 'validation.md'),
-      ).toBeDefined();
+      expect(skillFiles.find((f) => f.name === 'validation.md')).toBeDefined();
     });
 
     it('should skip sync when version matches', async () => {
@@ -425,8 +423,16 @@ describe('E2E: Full Sync Flow', () => {
       // Should have new timestamp
       expect(updatedMeta!.syncedAt).not.toBe('2020-01-01T00:00:00.000Z');
       // Commands use SkillUnit[] with original filenames in hybrid mode
-      expect(updatedMeta!.packages[prefix].files.commands.some(u => u.name === 'schema-form.md')).toBe(true);
-      expect(updatedMeta!.packages[prefix].files.commands.some(u => u.name === 'old-file.md')).toBe(false);
+      expect(
+        updatedMeta!.packages[prefix].files.commands.some(
+          (u) => u.name === 'schema-form.md',
+        ),
+      ).toBe(true);
+      expect(
+        updatedMeta!.packages[prefix].files.commands.some(
+          (u) => u.name === 'old-file.md',
+        ),
+      ).toBe(false);
     });
   });
 

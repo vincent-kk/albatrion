@@ -1,0 +1,156 @@
+---
+title: '@canard/schema-form'
+sidebar_label: 'schema-form'
+sidebar_position: 1
+---
+
+import PackageHeader from '@site/src/components/PackageHeader';
+import ForAI from '@site/src/components/ForAI';
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+<PackageHeader name="@canard/schema-form" />
+
+JSON Schema-driven React form engine with a two-layer plugin architecture:
+a **Validator plugin** for JSON Schema validation and
+a **UI plugin** for form rendering components.
+Declare your data shape once in JSON Schema — the library builds, validates,
+and manages the full form state tree automatically.
+
+## Live Demo
+
+Try the interactive form below to see what `@canard/schema-form` can build from JSON Schema alone.
+This conference registration form demonstrates conditional fields, computed values, and 10+ input types — all driven by a single schema.
+
+<BrowserOnly fallback={<div>Loading demo...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/showcase/HeroDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+:::tip More Examples
+Explore 10 interactive examples covering if/then/else, oneOf, computed values, and more in the [Examples](./examples) section.
+:::
+
+:::tip UI Plugins
+Each form above is rendered with the [antd5-plugin](../schema-form-antd5-plugin/). See individual plugin pages for component catalogs: [antd5](../schema-form-antd5-plugin/) | [antd6](../schema-form-antd6-plugin/) | [MUI](../schema-form-mui-plugin/) | [antd-mobile](../schema-form-antd-mobile-plugin/)
+:::
+
+## Architecture
+
+```
+JSON Schema
+    │
+    ▼
+nodeFromJsonSchema()          ← builds a typed node tree
+    │
+    ├── StringNode / NumberNode / BooleanNode / NullNode   (terminal)
+    ├── ObjectNode / ArrayNode                             (branch)
+    └── VirtualNode                                        (conditional / computed)
+    │
+    ▼
+Plugin System
+    ├── ValidatorPlugin       ← compile(jsonSchema) → ValidateFunction
+    └── SchemaFormPlugin      ← FormGroup / FormLabel / FormInput / FormError
+                                 + formTypeInputDefinitions
+    │
+    ▼
+<Form>  →  React component tree
+```
+
+## Plugin System
+
+The library ships with *no default validator and no default UI components*.
+Both must be supplied via plugins before rendering any form.
+Plugins are registered globally with `registerPlugin()` and affect every
+`<Form>` in the application.
+
+<ul>
+  <li><strong>Validator plugin</strong> — integrates any validation library (AJV, Zod, Yup, etc.) by implementing <code>compile(jsonSchema)</code>.</li>
+  <li><strong>UI plugin</strong> — provides <code>FormGroup</code>, <code>FormLabel</code>, <code>FormInput</code>, <code>FormError</code> renderer components and <code>formTypeInputDefinitions</code> for per-field input components.</li>
+</ul>
+
+Official plugin packages:
+
+<ul>
+  <li><code>@canard/schema-form-ajv8-plugin</code> — AJV 8 validator</li>
+  <li><code>@canard/schema-form-antd5-plugin</code> — Ant Design 5 UI</li>
+  <li><code>@canard/schema-form-mui6-plugin</code> — MUI 6 UI</li>
+</ul>
+
+## Node Types
+
+| Node | Schema types | Strategy |
+|---|---|---|
+| `StringNode` | `"string"` | terminal |
+| `NumberNode` | `"number"`, `"integer"` | terminal |
+| `BooleanNode` | `"boolean"` | terminal |
+| `NullNode` | `"null"` | terminal |
+| `ObjectNode` | `"object"` | branch (BranchStrategy or TerminalStrategy) |
+| `ArrayNode` | `"array"` | branch (BranchStrategy or TerminalStrategy) |
+| `VirtualNode` | conditional / oneOf / anyOf branches | special |
+
+## FormTypeInput Resolution Order
+
+When rendering a field, the library resolves which input component to use in this priority order (highest first):
+<ol>
+  <li>Direct <code>FormTypeInput</code> prop on <code>Form.Group</code></li>
+  <li><code>formTypeInputMap</code> path mapping on <code>&lt;Form&gt;</code></li>
+  <li>Form-level <code>formTypeInputDefinitions</code> prop</li>
+  <li><code>FormProvider</code> <code>formTypeInputDefinitions</code></li>
+  <li>Plugin-provided <code>formTypeInputDefinitions</code></li>
+</ol>
+
+<ForAI>
+
+## AI Reference
+
+**Package**: `@canard/schema-form` v0.10.5
+**Purpose**: JSON Schema-driven dynamic form generation for React with two-layer plugin architecture.
+
+### Plugin system
+```ts
+import type { SchemaFormPlugin } from '@canard/schema-form';
+import type { ValidatorPlugin } from '@canard/schema-form';
+import { registerPlugin } from '@canard/schema-form';
+```
+
+### Form component
+```ts
+import { Form } from '@canard/schema-form';
+import type { FormProps } from '@canard/schema-form';
+import type { FormHandle } from '@canard/schema-form';        // ref API: submit(), reset(), validate(), getValues()
+import type { FormChildrenProps } from '@canard/schema-form';  // render-prop children
+import type { FormLabelProps } from '@canard/schema-form';
+import type { FormErrorProps } from '@canard/schema-form';
+```
+
+### Node types
+```ts
+import type { SchemaNode } from '@canard/schema-form';
+import type { StringNode, NumberNode, BooleanNode, NullNode } from '@canard/schema-form';  // terminal
+import type { ObjectNode, ArrayNode } from '@canard/schema-form';                          // branch
+import type { VirtualNode } from '@canard/schema-form';                                    // conditional
+```
+
+### Enums
+```ts
+import { NodeState } from '@canard/schema-form';       // Initialized | Mounted | Unmounted
+import { ValidationMode } from '@canard/schema-form';  // OnChange | OnBlur | OnSubmit
+import { NodeEventType } from '@canard/schema-form';   // ValueChange | StateChange | ...
+import { SetValueOption } from '@canard/schema-form';  // Merge | Replace
+```
+
+### Type guards & error utilities
+```ts
+import { isArrayNode, isBooleanNode, isBranchNode, isNumberNode } from '@canard/schema-form';
+import { isSchemaFormError, isJsonSchemaError, isUnhandledError, isValidationError } from '@canard/schema-form';
+import { JSONPointer } from '@canard/schema-form';
+```
+
+### Architecture
+- No default validator or UI — both via plugins: `registerPlugin(plugin)`
+- Node tree: JSON Schema → nodeFromJsonSchema() → typed node tree
+- Input resolution: Direct prop > formTypeInputMap > form-level > FormProvider > plugin
+
+</ForAI>

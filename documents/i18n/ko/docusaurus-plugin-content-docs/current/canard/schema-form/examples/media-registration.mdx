@@ -1,0 +1,25 @@
+---
+sidebar_label: '미디어 등록'
+sidebar_position: 7
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# 미디어 등록 폼
+
+다단계 `oneOf` 분기를 가진 복합 미디어 카탈로그 폼입니다. 게임은 스테이지(동적 배열), 플랫폼(체크박스), 시스템 사양을 보여주고, 영화는 장르, 개봉 플랫폼, 배우 목록을 보여줍니다.
+
+:::info 주요 기능
+- `&if` 표현식 기반 oneOf 매칭
+- 중첩 객체 레벨 oneOf (details 분기)
+- 루트 레벨 oneOf (owner 필드 플레이스홀더 변경)
+- 기본값을 가진 동적 배열
+- 다중 선택을 위한 체크박스 그룹
+:::
+
+<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/MediaRegistrationDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

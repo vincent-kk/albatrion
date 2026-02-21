@@ -137,6 +137,16 @@ export class TerminalStrategy implements ArrayNodeStrategy {
     return this.__value__?.length ?? 0;
   }
 
+  /** Minimum number of items required in the array (from JSON Schema minItems) */
+  public get minItems() {
+    return this.__minItems__;
+  }
+
+  /** Maximum number of items allowed in the array (from JSON Schema maxItems) */
+  public get maxItems() {
+    return this.__maxItems__;
+  }
+
   /**
    * Applies input value to the array node.
    * @param input - Array value to set

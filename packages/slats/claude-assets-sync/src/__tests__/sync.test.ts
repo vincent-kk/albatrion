@@ -781,7 +781,9 @@ describe('syncPackage - local source', () => {
     );
 
     const logCalls = consoleSpy.mock.calls.map((args) => args.join(' '));
-    expect(logCalls.some((msg) => msg.includes('local docs from node_modules'))).toBe(true);
+    expect(
+      logCalls.some((msg) => msg.includes('local docs from node_modules')),
+    ).toBe(true);
   });
 
   it('should use local source in legacy mode (flat: false)', async () => {
@@ -828,7 +830,13 @@ describe('syncPackage - local source', () => {
 
     const result = await syncPackage(
       '@canard/schema-form',
-      { force: false, dryRun: false, local: false, ref: 'v0.10.0', flat: false },
+      {
+        force: false,
+        dryRun: false,
+        local: false,
+        ref: 'v0.10.0',
+        flat: false,
+      },
       fixture.tempDir,
     );
 

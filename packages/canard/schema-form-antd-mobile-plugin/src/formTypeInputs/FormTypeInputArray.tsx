@@ -55,7 +55,7 @@ const FormTypeInputArray = ({
           );
         })}
 
-      {!readOnly && (
+      {!readOnly && node.maxItems > node.length && (
         <div>
           <Add disabled={disabled} onClick={handleClick} />
         </div>

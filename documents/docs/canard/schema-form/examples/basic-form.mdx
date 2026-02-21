@@ -1,0 +1,26 @@
+---
+sidebar_label: 'Basic Form'
+sidebar_position: 1
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+# Basic Form
+
+A simple form demonstrating the most common field types. This example shows how `@canard/schema-form` renders text inputs, numbers, dates, enums, textareas, and switches from a single JSON Schema.
+
+:::info Key Features
+- `type: string` — text input
+- `type: integer` — number input
+- `format: date` — date picker
+- `enum` — dropdown select
+- `format: textarea` — multi-line text
+- `formType: switch` — toggle switch
+:::
+
+<BrowserOnly fallback={<div>Loading demo...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/examples/BasicFormDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>

@@ -132,10 +132,7 @@ export const createProgram = (): Command => {
       'Read packages from local workspace instead of node_modules',
       false,
     )
-    .option(
-      '-r, --ref <ref>',
-      'Git ref (branch, tag, or commit) to fetch from',
-    )
+    .option('-r, --ref <ref>', 'Git ref (branch, tag, or commit) to fetch from')
     .option('--dry-run', 'Preview changes without writing files', false)
     .option('--sync', 'Re-sync files after updating metadata', false)
     .action(async (opts) => {

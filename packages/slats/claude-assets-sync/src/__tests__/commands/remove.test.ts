@@ -54,7 +54,10 @@ describe('remove command', () => {
             originalName: '@canard/schema-form',
             version: '0.10.0',
             files: {
-              commands: [{ name: 'schema-form.md', isDirectory: false }, { name: 'generate.md', isDirectory: false }],
+              commands: [
+                { name: 'schema-form.md', isDirectory: false },
+                { name: 'generate.md', isDirectory: false },
+              ],
               skills: [{ name: 'expert.md', isDirectory: false }],
             },
           },
@@ -98,7 +101,10 @@ describe('remove command', () => {
             originalName: '@canard/schema-form',
             version: '0.10.0',
             files: {
-              commands: [{ name: 'schema-form.md', isDirectory: false }, { name: 'generate.md', isDirectory: false }],
+              commands: [
+                { name: 'schema-form.md', isDirectory: false },
+                { name: 'generate.md', isDirectory: false },
+              ],
             },
           },
         },

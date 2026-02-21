@@ -11,7 +11,6 @@ import {
   fetchLocalDirectoryContents,
 } from '../core/localSource';
 import type { AssetType } from '../utils/types';
-
 import {
   type TestFixture,
   createTestFixture,
@@ -240,10 +239,7 @@ describe('fetchLocalAssetFiles', () => {
     writeFileSync(join(docsPath, 'commands', 'cmd.md'), '# Command');
     writeFileSync(join(docsPath, 'skills', 'skill.md'), '# Skill');
 
-    const result = await fetchLocalAssetFiles(docsPath, [
-      'commands',
-      'skills',
-    ]);
+    const result = await fetchLocalAssetFiles(docsPath, ['commands', 'skills']);
 
     expect(result.commands.length).toBe(1);
     expect(result.commands[0].name).toBe('cmd.md');
@@ -260,10 +256,7 @@ describe('fetchLocalAssetFiles', () => {
     );
     mkdirSync(docsPath, { recursive: true });
 
-    const result = await fetchLocalAssetFiles(docsPath, [
-      'commands',
-      'skills',
-    ]);
+    const result = await fetchLocalAssetFiles(docsPath, ['commands', 'skills']);
 
     expect(result.commands).toEqual([]);
     expect(result.skills).toEqual([]);
@@ -353,8 +346,20 @@ describe('downloadLocalAssetFiles', () => {
     writeFileSync(join(docsPath, 'skills', 'two.md'), content2);
 
     const entries = [
-      { name: 'one.md', path: '', type: 'file' as const, download_url: null, sha: '' },
-      { name: 'two.md', path: '', type: 'file' as const, download_url: null, sha: '' },
+      {
+        name: 'one.md',
+        path: '',
+        type: 'file' as const,
+        download_url: null,
+        sha: '',
+      },
+      {
+        name: 'two.md',
+        path: '',
+        type: 'file' as const,
+        download_url: null,
+        sha: '',
+      },
     ];
 
     const result = await downloadLocalAssetFiles(
@@ -379,8 +384,20 @@ describe('downloadLocalAssetFiles', () => {
     writeFileSync(join(docsPath, 'commands', 'good.md'), '# Good');
 
     const entries = [
-      { name: 'good.md', path: '', type: 'file' as const, download_url: null, sha: '' },
-      { name: 'missing.md', path: '', type: 'file' as const, download_url: null, sha: '' },
+      {
+        name: 'good.md',
+        path: '',
+        type: 'file' as const,
+        download_url: null,
+        sha: '',
+      },
+      {
+        name: 'missing.md',
+        path: '',
+        type: 'file' as const,
+        download_url: null,
+        sha: '',
+      },
     ];
 
     const result = await downloadLocalAssetFiles(
