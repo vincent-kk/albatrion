@@ -6,6 +6,7 @@ sidebar_position: 9
 
 import PackageHeader from '@site/src/components/PackageHeader';
 import ForAI from '@site/src/components/ForAI';
+import BrowserOnly from '@docusaurus/BrowserOnly';
 
 <PackageHeader name="@canard/schema-form-mui-plugin" />
 
@@ -14,19 +15,16 @@ Provides 15 form input components built on `@mui/material ^7.0.0`
 with MUI X date/time pickers.
 Supports MUI's `size`, `variant`, and `fullWidth` context options.
 
-## Visual Guide
+## Component Catalog
 
-When configured with a JSON Schema, this plugin renders Material UI form components following Material Design guidelines:
-- **Text fields** → `TextField` with outlined/filled variants
-- **Numbers** → `TextField` with number type
-- **Booleans** → `Checkbox` or `Switch`
-- **Enums** → `Select` or `RadioGroup`
-- **Dates** → MUI `DatePicker`
-- **Arrays** → Dynamic list with add/remove IconButtons
+Try each component below — every `FormTypeInput` provided by this plugin, rendered individually:
 
-:::info Screenshots
-Visual demo screenshot will be added at `/img/demos/schema-form-mui-demo.png`.
-:::
+<BrowserOnly fallback={<div>Loading catalog...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/catalog/MuiCatalogDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
 
 ## Installation
 

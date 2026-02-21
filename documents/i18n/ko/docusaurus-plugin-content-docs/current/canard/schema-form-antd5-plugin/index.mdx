@@ -6,6 +6,7 @@ sidebar_position: 6
 
 import PackageHeader from '@site/src/components/PackageHeader';
 import ForAI from '@site/src/components/ForAI';
+import BrowserOnly from '@docusaurus/BrowserOnly';
 
 <PackageHeader name="@canard/schema-form-antd5-plugin" />
 
@@ -13,19 +14,16 @@ import ForAI from '@site/src/components/ForAI';
 `antd ^5.10.0` 기반의 18개 폼 입력 컴포넌트를 제공하며,
 문자열, 숫자, 불리언, 날짜, 범위, 선택 컨트롤을 모두 포함합니다.
 
-## Visual Guide
+## 컴포넌트 카탈로그
 
-JSON Schema를 설정하면 이 플러그인이 자동으로 Ant Design 5 폼 컴포넌트를 렌더링합니다:
-- **텍스트 필드** → `Input` component
-- **숫자** → `InputNumber` with step controls
-- **불리언** → `Checkbox` or `Switch` (via `formType: "switch"`)
-- **열거형** → `Select` dropdown or `Radio.Group`
-- **날짜** → `DatePicker`, `MonthPicker`, `TimePicker`
-- **배열** → Dynamic list with add/remove buttons
+아래에서 이 플러그인이 제공하는 모든 `FormTypeInput` 컴포넌트를 개별적으로 확인해보세요:
 
-:::info 스크린샷
-비주얼 데모 스크린샷이 `/img/demos/schema-form-antd5-demo.png`에 추가될 예정입니다.
-:::
+<BrowserOnly fallback={<div>카탈로그 로딩 중...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/catalog/Antd5CatalogDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
 
 ## Installation
 

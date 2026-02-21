@@ -6,6 +6,7 @@ sidebar_position: 8
 
 import PackageHeader from '@site/src/components/PackageHeader';
 import ForAI from '@site/src/components/ForAI';
+import BrowserOnly from '@docusaurus/BrowserOnly';
 
 <PackageHeader name="@canard/schema-form-antd-mobile-plugin" />
 
@@ -13,18 +14,16 @@ import ForAI from '@site/src/components/ForAI';
 `antd-mobile ^5.0.0` 기반의 10개 터치 최적화 폼 입력 컴포넌트를 제공합니다.
 모바일 웹 애플리케이션을 위해 설계되었으며, 데스크탑 방식의 입력 대신 스위치와 슬라이더를 선호합니다.
 
-## Visual Guide
+## 컴포넌트 카탈로그
 
-JSON Schema를 설정하면 이 플러그인이 자동으로 터치 인터페이스에 최적화된 Ant Design Mobile 폼 컴포넌트를 렌더링합니다:
-- **텍스트 필드** → Mobile `Input` component
-- **숫자** → Mobile `Stepper` control
-- **불리언** → `Checkbox` or `Switch`
-- **열거형** → `Picker` or `CheckList`
-- **날짜** → Mobile `DatePicker`, `CalendarPicker`
+아래에서 이 플러그인이 제공하는 모든 `FormTypeInput` 컴포넌트를 개별적으로 확인해보세요:
 
-:::info 스크린샷
-비주얼 데모 스크린샷이 `/img/demos/schema-form-antd-mobile-demo.png`에 추가될 예정입니다.
-:::
+<BrowserOnly fallback={<div>카탈로그 로딩 중...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/catalog/AntdMobileCatalogDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
 
 ## Installation
 

@@ -6,6 +6,7 @@ sidebar_position: 1
 
 import PackageHeader from '@site/src/components/PackageHeader';
 import ForAI from '@site/src/components/ForAI';
+import BrowserOnly from '@docusaurus/BrowserOnly';
 
 <PackageHeader name="@canard/schema-form" />
 
@@ -15,19 +16,56 @@ a **UI plugin** for form rendering components.
 Declare your data shape once in JSON Schema — the library builds, validates,
 and manages the full form state tree automatically.
 
-## Visual Guide
+## Live Demos
 
-Each UI plugin renders JSON Schema as native framework components. Select a plugin to see its form output:
+Try the interactive forms below to see what `@canard/schema-form` can build from JSON Schema alone.
 
-| Plugin | Framework | Preview |
-|---|---|---|
-| [antd5-plugin](/docs/canard/schema-form-antd5-plugin/) | Ant Design 5 | Text inputs, selects, date pickers, switches |
-| [antd6-plugin](/docs/canard/schema-form-antd6-plugin/) | Ant Design 6 | Text inputs, selects, date pickers, switches |
-| [antd-mobile-plugin](/docs/canard/schema-form-antd-mobile-plugin/) | Ant Design Mobile | Mobile-optimized form controls |
-| [mui-plugin](/docs/canard/schema-form-mui-plugin/) | Material UI | Material Design form components |
+### User Profile
 
-:::info Screenshots
-Visual demo screenshots for each plugin will be added to this section. See individual plugin pages for usage examples.
+Basic field types: text input, number, textarea, boolean switch.
+
+<BrowserOnly fallback={<div>Loading demo...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/showcase/UserProfileDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+### Payment Form
+
+Numbers, date pickers, enum selects, and boolean switches in a realistic form.
+
+<BrowserOnly fallback={<div>Loading demo...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/showcase/PaymentFormDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+### Customer Survey
+
+Radio groups, checkbox arrays, sliders, and date pickers for data collection.
+
+<BrowserOnly fallback={<div>Loading demo...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/showcase/SurveyFormDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+### Application Settings
+
+Nested objects with grouped fields, multiple switches, and radio selections.
+
+<BrowserOnly fallback={<div>Loading demo...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/showcase/NestedSettingsDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+:::tip UI Plugins
+Each form above is rendered with the [antd5-plugin](../schema-form-antd5-plugin/). See individual plugin pages for component catalogs: [antd5](../schema-form-antd5-plugin/) | [antd6](../schema-form-antd6-plugin/) | [MUI](../schema-form-mui-plugin/) | [antd-mobile](../schema-form-antd-mobile-plugin/)
 :::
 
 ## Architecture

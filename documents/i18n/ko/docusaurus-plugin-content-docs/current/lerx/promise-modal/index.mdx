@@ -6,6 +6,7 @@ sidebar_position: 1
 
 import PackageHeader from '@site/src/components/PackageHeader';
 import ForAI from '@site/src/components/ForAI';
+import BrowserOnly from '@docusaurus/BrowserOnly';
 
 # @lerx/promise-modal
 
@@ -24,18 +25,16 @@ import ForAI from '@site/src/components/ForAI';
 - 모달별 및 전역 설정
 - `useModal`을 통한 컴포넌트 라이프사이클 연동 모달
 
-## Visual Guide
+## 라이브 데모
 
-Promise Modal은 모달 다이얼로그를 위한 프로그래밍 방식의 API를 제공합니다. React 상태 변수로 모달 상태를 관리하는 대신, Promise를 반환하는 함수를 호출합니다:
+아래 버튼을 클릭하여 `alert`, `confirm`, `prompt`를 직접 사용해보세요 — 각각 사용자 응답으로 resolve되는 Promise를 반환합니다:
 
-1. **호출** `openModal(MyComponent, props)` from any code
-2. **모달 표시** with your component rendered inside
-3. **사용자 상호작용** and the modal resolves/rejects the Promise
-4. **결과 반환** as a resolved Promise value
-
-:::info 스크린샷
-비주얼 데모 스크린샷이 `/img/demos/promise-modal-demo.png`에 추가될 예정입니다.
-:::
+<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/PromiseModalDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
 
 ## Requirements
 

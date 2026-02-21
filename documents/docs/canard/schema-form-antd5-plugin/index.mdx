@@ -6,6 +6,7 @@ sidebar_position: 6
 
 import PackageHeader from '@site/src/components/PackageHeader';
 import ForAI from '@site/src/components/ForAI';
+import BrowserOnly from '@docusaurus/BrowserOnly';
 
 <PackageHeader name="@canard/schema-form-antd5-plugin" />
 
@@ -13,19 +14,16 @@ Ant Design v5 UI plugin for `@canard/schema-form`.
 Provides 18 form input components built on `antd ^5.10.0`,
 covering strings, numbers, booleans, dates, ranges, and selection controls.
 
-## Visual Guide
+## Component Catalog
 
-When configured with a JSON Schema, this plugin renders Ant Design 5 form components automatically:
-- **Text fields** → `Input` component
-- **Numbers** → `InputNumber` with step controls
-- **Booleans** → `Checkbox` or `Switch` (via `formType: "switch"`)
-- **Enums** → `Select` dropdown or `Radio.Group`
-- **Dates** → `DatePicker`, `MonthPicker`, `TimePicker`
-- **Arrays** → Dynamic list with add/remove buttons
+Try each component below — every `FormTypeInput` provided by this plugin, rendered individually:
 
-:::info Screenshots
-Visual demo screenshot will be added at `/img/demos/schema-form-antd5-demo.png`.
-:::
+<BrowserOnly fallback={<div>Loading catalog...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/catalog/Antd5CatalogDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
 
 ## Installation
 

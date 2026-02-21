@@ -6,6 +6,7 @@ sidebar_position: 1
 
 import PackageHeader from '@site/src/components/PackageHeader';
 import ForAI from '@site/src/components/ForAI';
+import BrowserOnly from '@docusaurus/BrowserOnly';
 
 <PackageHeader name="@canard/schema-form" />
 
@@ -14,19 +15,56 @@ JSON Schema 검증을 위한 **Validator 플러그인**과
 폼 렌더링 컴포넌트를 위한 **UI 플러그인**.
 JSON Schema에 데이터 구조를 한 번 선언하면, 라이브러리가 전체 폼 상태 트리를 자동으로 구축하고 검증합니다.
 
-## Visual Guide
+## 라이브 데모
 
-각 UI 플러그인은 JSON Schema를 네이티브 프레임워크 컴포넌트로 렌더링합니다. 플러그인을 선택하면 폼 출력을 확인할 수 있습니다:
+아래 인터랙티브 폼을 직접 사용해보세요 — JSON Schema만으로 `@canard/schema-form`이 만들 수 있는 폼들입니다.
 
-| Plugin | Framework | Preview |
-|---|---|---|
-| [antd5-plugin](/docs/canard/schema-form-antd5-plugin/) | Ant Design 5 | Text inputs, selects, date pickers, switches |
-| [antd6-plugin](/docs/canard/schema-form-antd6-plugin/) | Ant Design 6 | Text inputs, selects, date pickers, switches |
-| [antd-mobile-plugin](/docs/canard/schema-form-antd-mobile-plugin/) | Ant Design Mobile | Mobile-optimized form controls |
-| [mui-plugin](/docs/canard/schema-form-mui-plugin/) | Material UI | Material Design form components |
+### 사용자 프로필
 
-:::info 스크린샷
-각 플러그인의 비주얼 데모 스크린샷이 이 섹션에 추가될 예정입니다. 사용 예제는 개별 플러그인 페이지를 참조하세요.
+기본 필드 타입: 텍스트 입력, 숫자, 텍스트영역, 불리언 스위치.
+
+<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/showcase/UserProfileDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+### 결제 폼
+
+숫자, 날짜 피커, enum 셀렉트, 불리언 스위치를 활용한 실제 폼.
+
+<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/showcase/PaymentFormDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+### 고객 설문조사
+
+라디오 그룹, 체크박스 배열, 슬라이더, 날짜 피커를 활용한 데이터 수집 폼.
+
+<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/showcase/SurveyFormDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+### 애플리케이션 설정
+
+중첩 객체를 활용한 그룹화된 필드, 다중 스위치, 라디오 선택.
+
+<BrowserOnly fallback={<div>데모 로딩 중...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/showcase/NestedSettingsDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
+
+:::tip UI 플러그인
+위의 모든 폼은 [antd5-plugin](../schema-form-antd5-plugin/)으로 렌더링됩니다. 개별 플러그인 페이지에서 컴포넌트 카탈로그를 확인하세요: [antd5](../schema-form-antd5-plugin/) | [antd6](../schema-form-antd6-plugin/) | [MUI](../schema-form-mui-plugin/) | [antd-mobile](../schema-form-antd-mobile-plugin/)
 :::
 
 ## Architecture

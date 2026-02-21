@@ -6,6 +6,7 @@ sidebar_position: 8
 
 import PackageHeader from '@site/src/components/PackageHeader';
 import ForAI from '@site/src/components/ForAI';
+import BrowserOnly from '@docusaurus/BrowserOnly';
 
 <PackageHeader name="@canard/schema-form-antd-mobile-plugin" />
 
@@ -13,18 +14,16 @@ Ant Design Mobile UI plugin for `@canard/schema-form`.
 Provides 10 touch-optimized form input components built on `antd-mobile ^5.0.0`.
 Designed for mobile web applications — switches and sliders are preferred over desktop-style inputs.
 
-## Visual Guide
+## Component Catalog
 
-When configured with a JSON Schema, this plugin renders Ant Design Mobile form components optimized for touch interfaces:
-- **Text fields** → Mobile `Input` component
-- **Numbers** → Mobile `Stepper` control
-- **Booleans** → `Checkbox` or `Switch`
-- **Enums** → `Picker` or `CheckList`
-- **Dates** → Mobile `DatePicker`, `CalendarPicker`
+Try each component below — every `FormTypeInput` provided by this plugin, rendered individually:
 
-:::info Screenshots
-Visual demo screenshot will be added at `/img/demos/schema-form-antd-mobile-demo.png`.
-:::
+<BrowserOnly fallback={<div>Loading catalog...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/catalog/AntdMobileCatalogDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
 
 ## Installation
 

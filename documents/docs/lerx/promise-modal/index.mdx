@@ -6,6 +6,7 @@ sidebar_position: 1
 
 import PackageHeader from '@site/src/components/PackageHeader';
 import ForAI from '@site/src/components/ForAI';
+import BrowserOnly from '@docusaurus/BrowserOnly';
 
 # @lerx/promise-modal
 
@@ -25,18 +26,16 @@ async functions, or outside the React tree — and await the user's response.
   <li>Component-lifecycle-scoped modals via <code>useModal</code></li>
 </ul>
 
-## Visual Guide
+## Live Demo
 
-Promise Modal provides a programmatic API for modal dialogs. Instead of managing modal state with React state variables, you call a function that returns a Promise:
+Click the buttons below to try `alert`, `confirm`, and `prompt` — each returns a Promise that resolves with the user's response:
 
-1. **Call** `openModal(MyComponent, props)` from any code
-2. **Modal appears** with your component rendered inside
-3. **User interacts** and the modal resolves/rejects the Promise
-4. **Result returned** as a resolved Promise value
-
-:::info Screenshots
-Visual demo screenshot will be added at `/img/demos/promise-modal-demo.png`.
-:::
+<BrowserOnly fallback={<div>Loading demo...</div>}>
+  {() => {
+    const Demo = require('@site/src/components/demos/PromiseModalDemo').default;
+    return <Demo />;
+  }}
+</BrowserOnly>
 
 ## Requirements
 
