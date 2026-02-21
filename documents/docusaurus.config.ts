@@ -5,10 +5,10 @@ import { themes as prismThemes } from 'prism-react-renderer';
 const config: Config = {
   title: 'Albatrion',
   tagline: 'Technical documentation for Albatrion packages',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/image2_22_c.png',
 
-  url: 'https://albatrion.dev',
-  baseUrl: '/',
+  url: 'https://vincent-kk.github.io',
+  baseUrl: '/albatrion/',
 
   organizationName: 'vincent-kk',
   projectName: 'albatrion',

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # GitHub Pages deployment script for Albatrion documentation
-# Wraps `docusaurus deploy` with automatic SSH/HTTPS detection
+# Builds with Docusaurus and publishes build/ via gh-pages (avoids empty-branch git rm issue)
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
@@ -15,7 +15,6 @@ if [[ ! -f "docusaurus.config.ts" ]]; then
   exit 1
 fi
 
-# Detect remote URL protocol
 REMOTE_URL=$(git -C "$(git rev-parse --show-toplevel)" remote get-url origin 2>/dev/null || echo "")
 
 if [[ -z "$REMOTE_URL" ]]; then
@@ -24,31 +23,16 @@ if [[ -z "$REMOTE_URL" ]]; then
 fi
 
 echo "Remote URL: $REMOTE_URL"
-echo "Deploying to GitHub Pages..."
+echo "Building and deploying to GitHub Pages (gh-pages branch)..."
 echo ""
 
-if [[ "$REMOTE_URL" == git@* ]] || [[ "$REMOTE_URL" == ssh://* ]]; then
-  # SSH remote
-  echo "Detected SSH remote. Using USE_SSH=true."
-  export USE_SSH=true
-else
-  # HTTPS remote
-  if [[ -z "${GIT_USER:-}" ]]; then
-    # Extract GitHub username from HTTPS remote URL
-    GIT_USER_CANDIDATE=$(echo "$REMOTE_URL" | sed -E 's|https://github.com/([^/]+)/.*|\1|')
-    if [[ -n "$GIT_USER_CANDIDATE" ]]; then
-      export GIT_USER="$GIT_USER_CANDIDATE"
-      echo "Using GIT_USER from remote URL: $GIT_USER"
-    else
-      echo "Error: HTTPS remote detected but GIT_USER is not set."
-      echo "Set it with: GIT_USER=<github-username> yarn deploy:gh-pages"
-      echo "Or use SSH remote: git remote set-url origin git@github.com:vincent-kk/albatrion.git"
-      exit 1
-    fi
-  else
-    echo "Using GIT_USER: $GIT_USER"
-  fi
+# Build first (creates documents/build)
+yarn docusaurus build
+
+if [[ ! -d "build" ]]; then
+  echo "Error: Build failed or build/ directory not found."
+  exit 1
 fi
 
-echo ""
-yarn docusaurus deploy
+# Publish build contents to gh-pages branch (handles empty branch; no git rm -rf .)
+npx gh-pages -d build -b gh-pages -r "$REMOTE_URL"
