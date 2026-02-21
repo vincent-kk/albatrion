@@ -1,4 +1,5 @@
 ---
+sidebar_label: 'schema-form'
 sidebar_position: 1
 ---
 
@@ -126,40 +127,51 @@ Plugin System
 ## AI Reference
 
 **Package**: `@canard/schema-form` v0.10.5
-**Purpose**: JSON Schema-driven dynamic form generation for React.
+**Purpose**: JSON Schema-driven dynamic form generation for React with two-layer plugin architecture.
 
-### Exports
+### Plugin system
 ```ts
 import type { SchemaFormPlugin } from '@canard/schema-form';
 import type { ValidatorPlugin } from '@canard/schema-form';
 import { registerPlugin } from '@canard/schema-form';
-import { Form } from '@canard/schema-form';
-import type { FormChildrenProps } from '@canard/schema-form';
-import type { FormErrorProps } from '@canard/schema-form';
-import type { FormHandle } from '@canard/schema-form';
-import type { FormLabelProps } from '@canard/schema-form';
-import type { FormProps } from '@canard/schema-form';
-import { isSchemaFormError } from '@canard/schema-form';
-import { isJsonSchemaError } from '@canard/schema-form';
-import { isUnhandledError } from '@canard/schema-form';
-import { isValidationError } from '@canard/schema-form';
-import { JSONPointer } from '@canard/schema-form';
-import type { SchemaNode } from '@canard/schema-form';
-import type { ArrayNode } from '@canard/schema-form';
-import type { BooleanNode } from '@canard/schema-form';
-import type { NullNode } from '@canard/schema-form';
-import type { NumberNode } from '@canard/schema-form';
-import type { ObjectNode } from '@canard/schema-form';
-import type { StringNode } from '@canard/schema-form';
-import type { VirtualNode } from '@canard/schema-form';
-import { NodeState } from '@canard/schema-form';
-import { ValidationMode } from '@canard/schema-form';
-import { NodeEventType } from '@canard/schema-form';
-import { SetValueOption } from '@canard/schema-form';
-import { isArrayNode } from '@canard/schema-form';
-import { isBooleanNode } from '@canard/schema-form';
-import { isBranchNode } from '@canard/schema-form';
-import { isNumberNode } from '@canard/schema-form';
 ```
+
+### Form component
+```ts
+import { Form } from '@canard/schema-form';
+import type { FormProps } from '@canard/schema-form';
+import type { FormHandle } from '@canard/schema-form';        // ref API: submit(), reset(), validate(), getValues()
+import type { FormChildrenProps } from '@canard/schema-form';  // render-prop children
+import type { FormLabelProps } from '@canard/schema-form';
+import type { FormErrorProps } from '@canard/schema-form';
+```
+
+### Node types
+```ts
+import type { SchemaNode } from '@canard/schema-form';
+import type { StringNode, NumberNode, BooleanNode, NullNode } from '@canard/schema-form';  // terminal
+import type { ObjectNode, ArrayNode } from '@canard/schema-form';                          // branch
+import type { VirtualNode } from '@canard/schema-form';                                    // conditional
+```
+
+### Enums
+```ts
+import { NodeState } from '@canard/schema-form';       // Initialized | Mounted | Unmounted
+import { ValidationMode } from '@canard/schema-form';  // OnChange | OnBlur | OnSubmit
+import { NodeEventType } from '@canard/schema-form';   // ValueChange | StateChange | ...
+import { SetValueOption } from '@canard/schema-form';  // Merge | Replace
+```
+
+### Type guards & error utilities
+```ts
+import { isArrayNode, isBooleanNode, isBranchNode, isNumberNode } from '@canard/schema-form';
+import { isSchemaFormError, isJsonSchemaError, isUnhandledError, isValidationError } from '@canard/schema-form';
+import { JSONPointer } from '@canard/schema-form';
+```
+
+### Architecture
+- No default validator or UI — both via plugins: `registerPlugin(plugin)`
+- Node tree: JSON Schema → nodeFromJsonSchema() → typed node tree
+- Input resolution: Direct prop > formTypeInputMap > form-level > FormProvider > plugin
 
 </ForAI>

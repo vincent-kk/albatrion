@@ -1,4 +1,5 @@
 ---
+sidebar_label: 'antd6-plugin'
 sidebar_position: 7
 ---
 
@@ -133,9 +134,28 @@ import { plugin } from '@canard/schema-form-antd6-plugin';
 ## AI Reference
 
 **Package**: `@canard/schema-form-antd6-plugin` v0.10.0
+**Purpose**: Ant Design v6 UI plugin — API-identical to antd5-plugin, targets `antd@>=6.0.0`.
 
 ### Exports
 ```ts
+import { plugin } from '@canard/schema-form-antd6-plugin';
+```
+
+### Peer dependencies
+`antd@>=6.0.0`, `dayjs@>=1`, `react@>=18`
+
+### Component mapping
+Same 18 components as antd5-plugin (see `@canard/schema-form-antd5-plugin` docs).
+
+### Context type
+```ts
+type AntdContext = { size?: 'small' | 'middle' | 'large' };
+```
+
+### Migration from antd5
+Only change the import — API and component set are identical:
+```ts
+// import { plugin } from '@canard/schema-form-antd5-plugin';
 import { plugin } from '@canard/schema-form-antd6-plugin';
 ```
 

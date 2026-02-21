@@ -1,4 +1,5 @@
 ---
+sidebar_label: 'antd5-plugin'
 sidebar_position: 6
 ---
 
@@ -120,10 +121,40 @@ type AntdContext = {
 ## AI Reference
 
 **Package**: `@canard/schema-form-antd5-plugin` v0.10.0
+**Purpose**: Ant Design v5 UI plugin — 18 form input components for `@canard/schema-form`.
 
 ### Exports
 ```ts
 import { plugin } from '@canard/schema-form-antd5-plugin';
 ```
+
+### Peer dependencies
+`antd@>=5.10.0`, `dayjs@>=1`, `react@>=18`
+
+### Component mapping (priority order, high → low)
+| Component | Trigger |
+|---|---|
+| BooleanSwitch | `boolean` + `formType: "switch"` |
+| StringCheckbox | `array` + `formType: "checkbox"` + items.enum |
+| StringSwitch | `string` + `formType: "switch"` + 2 enum values |
+| Uri | `string` + `format: "uri"` |
+| Month / Date / Time | `string` + `format: "month"/"date"/"time"` |
+| MonthRange / DateRange / TimeRange | `array` + `format: "*-range"` |
+| RadioGroup | `string\|number` + `formType: "radio"` + enum |
+| StringEnum | `string` + enum |
+| Array | `array` (dynamic list) |
+| Slider | `number` + `formType: "slider"` |
+| Textarea | `string` + `format: "textarea"` |
+| String | `string` (default) |
+| Number | `number\|integer` (default) |
+| Boolean | `boolean` (default checkbox) |
+
+### Context type
+```ts
+type AntdContext = { size?: 'small' | 'middle' | 'large' };
+```
+
+### Schema extensions
+`formType`: `'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange'`
 
 </ForAI>

@@ -1,4 +1,5 @@
 ---
+sidebar_label: 'mui-plugin'
 sidebar_position: 9
 ---
 
@@ -140,11 +141,44 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 ## AI Reference
 
 **Package**: `@canard/schema-form-mui-plugin` v0.10.0
+**Purpose**: Material UI v7 plugin — 15 form input components with MUI X date/time pickers.
 
 ### Exports
 ```ts
 import { plugin } from '@canard/schema-form-mui-plugin';
 import type { MuiContext } from '@canard/schema-form-mui-plugin';
+```
+
+### Peer dependencies
+`@mui/material@>=7`, `@mui/x-date-pickers@>=8`, `@mui/icons-material@>=7`, `@emotion/react@>=11`, `@emotion/styled@>=11`, `dayjs@>=1`, `react@>=18`
+
+### Component mapping (priority order, high → low)
+| Component | Trigger |
+|---|---|
+| BooleanSwitch | `boolean` + `formType: "switch"` |
+| StringCheckbox | `array` + `formType: "checkbox"` + items.enum |
+| StringSwitch | `string` + `formType: "switch"` + 2 enum values |
+| Uri | `string` + `format: "uri"` |
+| Month / Date / Time | `string` + `format: "month"/"date"/"time"` (MUI X pickers) |
+| RadioGroup | `string\|number` + `formType: "radio"` + enum |
+| StringEnum | `string` + enum (MUI Select) |
+| Array | `array` (dynamic list) |
+| Slider | `number` + `formType: "slider"` |
+| Textarea | `string` + `format: "textarea"` (multiline TextField) |
+| String | `string` (TextField, password via `format: "password"`) |
+| Number | `number\|integer` (TextField type=number) |
+| Boolean | `boolean` (Checkbox with indeterminate) |
+
+### Context type
+```ts
+type MuiContext = { size?: 'small' | 'medium'; variant?: 'outlined' | 'filled' | 'standard'; fullWidth?: boolean };
+```
+
+### Required setup for date/time pickers
+```tsx
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+<LocalizationProvider dateAdapter={AdapterDayjs}><Form ... /></LocalizationProvider>
 ```
 
 </ForAI>

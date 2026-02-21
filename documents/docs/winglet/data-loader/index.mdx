@@ -1,4 +1,5 @@
 ---
+sidebar_label: 'data-loader'
 sidebar_position: 5
 ---
 
@@ -94,12 +95,37 @@ userLoader.clearAll();
 ## AI Reference
 
 **Package**: `@winglet/data-loader` v0.10.0
-**Purpose**: Request batching and caching for async data fetching.
+**Purpose**: Request batching and caching for async data fetching (inspired by GraphQL DataLoader).
 
 ### Exports
 ```ts
 import { DataLoader } from '@winglet/data-loader';
 import type { DataLoaderOptions } from '@winglet/data-loader';
 ```
+
+### Constructor
+```ts
+const loader = new DataLoader<Key, Value>(batchLoadFn, options?);
+// batchLoadFn: (keys: Key[]) => Promise<(Value | Error)[]>
+```
+
+### Instance methods
+| Method | Returns | Description |
+|---|---|---|
+| `load(key)` | `Promise<Value>` | Single key; auto-batched within same tick |
+| `loadMany(keys)` | `Promise<(Value\|Error)[]>` | Multiple keys |
+| `clear(key)` | `this` | Remove single cache entry |
+| `clearAll()` | `this` | Clear entire cache |
+| `prime(key, value)` | `this` | Pre-populate cache |
+
+### Options
+| Option | Type | Default |
+|---|---|---|
+| `batch` | `boolean` | `true` |
+| `maxBatchSize` | `number` | `Infinity` |
+| `cache` | `boolean` | `true` |
+| `cacheKeyFn` | `(key) => CacheKey` | identity |
+| `cacheMap` | `MapLike` | `new Map()` |
+| `scheduler` | `(fn) => void` | `process.nextTick` |
 
 </ForAI>

@@ -1,4 +1,5 @@
 ---
+sidebar_label: 'ajv7-plugin'
 sidebar_position: 4
 ---
 
@@ -88,11 +89,27 @@ const errors = await validate(formData); // null | ValidationError[]
 ## AI Reference
 
 **Package**: `@canard/schema-form-ajv7-plugin` v0.10.0
+**Purpose**: AJV 7.x validator plugin — Draft-07 and Draft 2019-09 support.
 
 ### Exports
 ```ts
 import { plugin } from '@canard/schema-form-ajv7-plugin';
 import { createValidatorFactory } from '@canard/schema-form-ajv7-plugin';
 ```
+
+### Usage
+```ts
+registerPlugin(plugin);                         // use default AJV config
+plugin.validator.bind(new Ajv({ ... }));        // bind custom AJV instance
+createValidatorFactory(ajv)(schema);            // standalone usage without plugin
+```
+
+### Default AJV config
+`{ allErrors: true, strict: false, validateFormats: false }`
+
+### Key behaviors
+- Native JSONPointer error paths (no transform needed unlike AJV 6)
+- `strict: false` for custom keyword compatibility
+- Does NOT support Draft 2020-12 → use ajv8-plugin/2020
 
 </ForAI>

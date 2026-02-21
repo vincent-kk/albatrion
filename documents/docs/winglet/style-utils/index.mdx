@@ -1,4 +1,5 @@
 ---
+sidebar_label: 'style-utils'
 sidebar_position: 6
 ---
 
@@ -98,8 +99,21 @@ const addStyle = styleManagerFactory('shadow-scope', {
 
 ### Key exports
 ```
-./style-manager → destroyScope
-                  styleManagerFactory
+./style-manager → styleManagerFactory(scopeId, options?) → addStyle(key, css) → removeStyle()
+                  destroyScope(scopeId)
+./util          → cx(...inputs)          — className concat (strings, objects, arrays)
+                  cxLite(...inputs)       — lightweight (truthy strings only)
+                  compressCss(css)        — single-pass CSS compression
 ```
+
+### styleManagerFactory options
+```ts
+{ shadowRoot?: ShadowRoot }  // Enable Shadow DOM support
+```
+
+### Behaviors
+- Uses `adoptedStyleSheets` in modern browsers, falls back to `<style>` injection
+- Style updates batched via `requestAnimationFrame`
+- `destroyScope()` removes all styles + cleans up for the given scopeId
 
 </ForAI>

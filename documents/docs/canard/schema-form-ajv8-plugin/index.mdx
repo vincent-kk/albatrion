@@ -1,4 +1,5 @@
 ---
+sidebar_label: 'ajv8-plugin'
 sidebar_position: 5
 ---
 
@@ -125,12 +126,30 @@ const errors = await validate(formData); // null | ValidationError[]
 ## AI Reference
 
 **Package**: `@canard/schema-form-ajv8-plugin` v0.10.0
+**Purpose**: AJV 8.x validator plugin — recommended for new projects. Supports Draft-07, 2019-09, 2020-12.
 
-### Key exports
+### Exports (3 subpath variants, each exports the same API)
+```ts
+import { plugin, createValidatorFactory } from '@canard/schema-form-ajv8-plugin';       // Draft-07
+import { plugin, createValidatorFactory } from '@canard/schema-form-ajv8-plugin/2019';  // Draft 2019-09
+import { plugin, createValidatorFactory } from '@canard/schema-form-ajv8-plugin/2020';  // Draft 2020-12
 ```
-Main export → plugin
-./2019 → plugin
-./2020 → plugin
+
+### Usage
+```ts
+registerPlugin(plugin);                         // use default AJV config
+plugin.validator.bind(new Ajv({ ... }));        // bind custom AJV instance
+createValidatorFactory(ajv)(schema);            // standalone usage without plugin
 ```
+
+### Default AJV config (all subpaths)
+`{ allErrors: true, strictSchema: false, validateFormats: false }`
+
+### Draft selection guide
+| Subpath | AJV import | Use when |
+|---|---|---|
+| `/` (default) | `ajv` | Draft-07 schemas (most common) |
+| `/2019` | `ajv/dist/2019` | Need `$recursiveRef`, `unevaluatedProperties` |
+| `/2020` | `ajv/dist/2020` | Need `$dynamicRef`, `prefixItems` |
 
 </ForAI>

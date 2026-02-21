@@ -1,4 +1,5 @@
 ---
+sidebar_label: 'promise-modal'
 sidebar_position: 1
 ---
 
@@ -125,34 +126,44 @@ function App() {
 ## AI Reference
 
 **Package**: `@lerx/promise-modal` v0.10.5
-**Purpose**: Promise-based modal management for React.
+**Purpose**: Promise-based modal management for React — alert, confirm, prompt as async functions.
 
-### Exports
+### Core functions (usable anywhere, including outside React)
 ```ts
-import { useModalOptions } from '@lerx/promise-modal';
-import { useModalBackdrop } from '@lerx/promise-modal';
-import { useInitializeModal } from '@lerx/promise-modal';
+import { alert, confirm, prompt } from '@lerx/promise-modal';
+```
+
+### Provider
+```ts
 import { ModalProvider } from '@lerx/promise-modal';
-import type { ModalProviderHandle } from '@lerx/promise-modal';
-import type { ModalProviderProps } from '@lerx/promise-modal';
-import { useModal } from '@lerx/promise-modal';
-import { useActiveModalCount } from '@lerx/promise-modal';
-import { useDestroyAfter } from '@lerx/promise-modal';
-import { useModalAnimation } from '@lerx/promise-modal';
-import { useModalDuration } from '@lerx/promise-modal';
-import { useSubscribeModal } from '@lerx/promise-modal';
-import { alert } from '@lerx/promise-modal';
-import { confirm } from '@lerx/promise-modal';
-import { prompt } from '@lerx/promise-modal';
+import type { ModalProviderHandle, ModalProviderProps } from '@lerx/promise-modal';
+```
+
+### Hooks (inside React components)
+```ts
+import { useModal } from '@lerx/promise-modal';              // lifecycle-scoped modals
+import { useInitializeModal } from '@lerx/promise-modal';    // provider initialization
+import { useActiveModalCount } from '@lerx/promise-modal';   // open modal count
+import { useModalAnimation } from '@lerx/promise-modal';     // animation state
+import { useModalDuration } from '@lerx/promise-modal';      // animation duration
+import { useModalOptions } from '@lerx/promise-modal';       // current options
+import { useModalBackdrop } from '@lerx/promise-modal';      // backdrop state
+import { useDestroyAfter } from '@lerx/promise-modal';       // auto-destroy timer
+import { useSubscribeModal } from '@lerx/promise-modal';     // modal event subscription
+```
+
+### Types
+```ts
 import type { ModalOptions } from '@lerx/promise-modal';
-import type { ModalFrameProps } from '@lerx/promise-modal';
-import type { FooterComponentProps } from '@lerx/promise-modal';
-import type { ModalBackground } from '@lerx/promise-modal';
-import type { PromptInputProps } from '@lerx/promise-modal';
-import type { AlertContentProps } from '@lerx/promise-modal';
-import type { ConfirmContentProps } from '@lerx/promise-modal';
-import type { PromptContentProps } from '@lerx/promise-modal';
+import type { ModalFrameProps, ModalBackground } from '@lerx/promise-modal';
+import type { FooterComponentProps, PromptInputProps } from '@lerx/promise-modal';
+import type { AlertContentProps, ConfirmContentProps, PromptContentProps } from '@lerx/promise-modal';
 import type { WrapperComponentProps } from '@lerx/promise-modal';
 ```
+
+### Architecture
+- `ModalProvider` wraps app → enables global modal rendering
+- `alert/confirm/prompt` → returns `Promise<boolean | string | void>`
+- `useModal()` → returns lifecycle-scoped instance (auto-closes on unmount)
 
 </ForAI>

@@ -1,4 +1,5 @@
 ---
+sidebar_label: 'ajv6-plugin'
 sidebar_position: 3
 ---
 
@@ -90,11 +91,27 @@ const errors = await validate(formData); // null | ValidationError[]
 ## AI Reference
 
 **Package**: `@canard/schema-form-ajv6-plugin` v0.10.0
+**Purpose**: AJV 6.x validator plugin — use for legacy JSON Schema Draft-04/06/07.
 
 ### Exports
 ```ts
 import { plugin } from '@canard/schema-form-ajv6-plugin';
 import { createValidatorFactory } from '@canard/schema-form-ajv6-plugin';
 ```
+
+### Usage
+```ts
+registerPlugin(plugin);                         // use default AJV config
+plugin.validator.bind(new Ajv({ ... }));        // bind custom AJV instance
+createValidatorFactory(ajv)(schema);            // standalone usage without plugin
+```
+
+### Default AJV config
+`{ allErrors: true, nullable: true, verbose: true, format: false }`
+
+### Key behaviors
+- Error `dataPath` auto-transformed from JSONPath (`$.foo`) to JSONPointer (`/foo`)
+- `nullable: true` → supports `{ type: ['string', 'null'] }`
+- Does NOT support Draft 2019-09 / 2020-12 → use ajv8-plugin instead
 
 </ForAI>
